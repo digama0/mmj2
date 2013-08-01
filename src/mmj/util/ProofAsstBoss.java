@@ -145,6 +145,13 @@ public class ProofAsstBoss extends Boss {
         }
 
         if (runParm.name
+            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_PROOF_FORMAT) == 0)
+        {
+            editProofAsstProofFormat(runParm);
+            return true;
+        }
+
+        if (runParm.name
             .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_INCOMPLETE_STEP_CURSOR) == 0)
         {
             editProofAsstIncompleteStepCursor(runParm);
@@ -483,6 +490,26 @@ public class ProofAsstBoss extends Boss {
             PaConstants.ERRMSG_INVALID_SOFT_DJ_VARS_ERROR_OPTION_1
                 + runParm.values[0]
                 + PaConstants.ERRMSG_INVALID_SOFT_DJ_VARS_ERROR_OPTION_2);
+    }
+
+    /**
+     * edit ProofAsstProofFormat RunParm.
+     * @param runParm
+     *        run parm parsed into RunParmArrayEntry object
+     */
+    protected void editProofAsstProofFormat(final RunParmArrayEntry runParm)
+        throws IllegalArgumentException
+    {
+
+        editRunParmValuesLength(runParm,
+            UtilConstants.RUNPARM_PROOF_ASST_PROOF_FORMAT, 1);
+        if (getProofAsstPreferences().setProofFormatOption(
+            runParm.values[0].trim()))
+            return; // ok, valid!
+
+        throw new IllegalArgumentException(
+            PaConstants.ERRMSG_INVALID_PROOF_FORMAT_1 + runParm.values[0]
+                + PaConstants.ERRMSG_INVALID_PROOF_FORMAT_2);
     }
 
     /**

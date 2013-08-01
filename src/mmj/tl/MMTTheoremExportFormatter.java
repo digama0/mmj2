@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import mmj.lang.*;
+import mmj.lang.ParseTree.RPNStep;
 import mmj.mmio.MMIOConstants;
 import mmj.pa.*;
 
@@ -498,7 +499,14 @@ public class MMTTheoremExportFormatter {
 
         final StringBuffer sb = startNewLine(leftOffset);
 
-        outputProof(theorem.getProof(), leftOffset, rightCol);
+        final Stmt[] s = theorem.getProof();
+        final RPNStep[] rpn = new RPNStep[s.length];
+        for (int i = 0; i < s.length; i++)
+            if (s[i] != null) {
+                rpn[i] = new RPNStep();
+                rpn[i].stmt = s[i];
+            }
+        outputProof(rpn, leftOffset, rightCol);
     }
 
     private void outputProofLine(final ProofWorksheet proofWorksheet) {
@@ -513,19 +521,24 @@ public class MMTTheoremExportFormatter {
         outputProof(proofWorksheet.getQedStepProofRPN(), leftOffset, rightCol);
     }
 
-    private void outputProof(final Stmt[] proof, final int left, final int right)
+    private void outputProof(final RPNStep[] proof, final int left,
+        final int right)
     {
 
         StringBuffer sb = startNewLine(left);
 
         String stepLabel;
         int col = left;
-        for (final Stmt element : proof) {
+        for (final RPNStep element : proof) {
 
             if (element == null)
                 stepLabel = MMIOConstants.MISSING_PROOF_STEP;
+            else if (element.backRef == 0)
+                stepLabel = element.stmt.getLabel();
+            else if (element.backRef < 0)
+                stepLabel = -element.backRef + ":" + element.stmt.getLabel();
             else
-                stepLabel = element.getLabel();
+                stepLabel = element.backRef + "";
 
             col += stepLabel.length();
             if (col > right) {

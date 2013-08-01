@@ -2235,6 +2235,54 @@ public class ProofUnifier {
         }
     }
 
+    public static void separateMandAndOptFrame(
+        final ProofWorksheet proofWorksheet, final DerivationStep qedStep,
+        final ArrayList mandHypList, final ArrayList optHypList,
+        final boolean addLogHyps)
+    {
+        qedStep.formulaParseTree.getRoot()
+            .accumVarHypUsedListBySeq(mandHypList);
+
+        if (proofWorksheet.hypStepCnt > 0) {
+
+            ProofWorkStmt proofWorkStmt;
+            final ProofStepStmt proofStepStmt;
+
+            int hypsFound = 0;
+            int stepIndex = 0;
+            while (true) {
+
+                proofWorkStmt = (ProofWorkStmt)proofWorksheet.proofWorkStmtList
+                    .get(stepIndex);
+
+                if (proofWorkStmt.isHypothesisStep()) {
+                    ((ProofStepStmt)proofWorkStmt).formulaParseTree.getRoot()
+                        .accumVarHypUsedListBySeq(mandHypList);
+                    if (++hypsFound >= proofWorksheet.hypStepCnt)
+                        break;
+                }
+
+                if (++stepIndex > proofWorksheet.proofWorkStmtList.size())
+                    break;
+            }
+
+            if (hypsFound != proofWorksheet.hypStepCnt)
+                throw new IllegalArgumentException(
+                    PaConstants.ERRMSG_HYP_STEP_CNT_IN_WORKKSHEET_ERROR_1);
+        }
+
+        final Hyp[] frameHypArray = proofWorksheet.comboFrame.hypArray;
+
+        for (final Hyp element : frameHypArray)
+            if (element.isVarHyp()) {
+                final VarHyp vH = (VarHyp)element;
+                if (!vH.containedInVarHypListBySeq(mandHypList))
+                    vH.accumVarHypListBySeq(optHypList);
+            }
+            else if (addLogHyps)
+                mandHypList.add(element);
+    }
+
     /**
      *  Any remaining Work Vars left in the Proof Worksheet
      *  after unification are converted to dummy variables.
@@ -2273,52 +2321,11 @@ public class ProofUnifier {
         final ArrayList mandatoryVarHypList = new ArrayList(
             proofWorksheet.comboFrame.hypArray.length);
 
-        qedStep.formulaParseTree.getRoot().accumVarHypUsedListBySeq(
-            mandatoryVarHypList);
-
-        if (proofWorksheet.hypStepCnt > 0) {
-
-            ProofWorkStmt proofWorkStmt;
-            final ProofStepStmt proofStepStmt;
-
-            int hypsFound = 0;
-            int stepIndex = 0;
-            while (true) {
-
-                proofWorkStmt = (ProofWorkStmt)proofWorksheet.proofWorkStmtList
-                    .get(stepIndex);
-
-                if (proofWorkStmt.isHypothesisStep()) {
-                    ((ProofStepStmt)proofWorkStmt).formulaParseTree.getRoot()
-                        .accumVarHypUsedListBySeq(mandatoryVarHypList);
-                    if (++hypsFound >= proofWorksheet.hypStepCnt)
-                        break;
-                }
-
-                if (++stepIndex > proofWorksheet.proofWorkStmtList.size())
-                    break;
-            }
-
-            if (hypsFound != proofWorksheet.hypStepCnt)
-                throw new IllegalArgumentException(
-                    PaConstants.ERRMSG_HYP_STEP_CNT_IN_WORKKSHEET_ERROR_1);
-        }
-
         final ArrayList optionalVarHypList = new ArrayList(
             proofWorksheet.comboFrame.hypArray.length);
 
-        final Hyp[] frameHypArray = proofWorksheet.comboFrame.hypArray;
-
-        for (int i = 0; i < frameHypArray.length; i++) {
-
-            if (!frameHypArray[i].isVarHyp())
-                continue;
-
-            vH = (VarHyp)frameHypArray[i];
-
-            if (!vH.containedInVarHypListBySeq(mandatoryVarHypList))
-                vH.accumVarHypListBySeq(optionalVarHypList);
-        }
+        separateMandAndOptFrame(proofWorksheet, qedStep, mandatoryVarHypList,
+            optionalVarHypList, false);
 
         // 2) initialize list of disjointWorkVarList's and
         // optionalVarHypsInUseList

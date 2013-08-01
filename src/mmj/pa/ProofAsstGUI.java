@@ -1413,6 +1413,17 @@ public class ProofAsstGUI {
             .setText(PaConstants.PA_GUI_TL_MENU_AUDIT_MESSAGES_TEXT);
         tlMenu.add(setTLAuditMessagesItem);
 
+        final JMenuItem setProofCompressionItem = new JMenuItem(
+            new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    doSetProofCompressionItemAction();
+                }
+            });
+        setProofCompressionItem
+            .setText(PaConstants.PA_GUI_TL_MENU_COMPRESSION_TEXT);
+        tlMenu.add(setProofCompressionItem);
+
         final JMenuItem setTLStoreMMIndentAmtItem = new JMenuItem(
             new AbstractAction() {
                 @Override
@@ -2344,6 +2355,45 @@ public class ProofAsstGUI {
                 + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
                 + TlConstants.ERRMSG_INVALID_DJ_VARS_OPTION_1 + s
                 + TlConstants.ERRMSG_INVALID_DJ_VARS_OPTION_2;
+        }
+    }
+
+    private void doSetProofCompressionItemAction() {
+        final String newProofCompression = getNewProofCompression();
+
+        if (newProofCompression != null)
+            proofAsstPreferences.setProofFormatOption(newProofCompression);
+    }
+
+    private String getNewProofCompression() {
+
+        String s = proofAsstPreferences.getProofFormatNumber() + "";
+
+        final String softDjErrorOptionListString = proofAsstPreferences
+            .getSoftDjErrorOptionListString();
+
+        final String origPromptString = PaConstants.PROOF_ASST_COMPRESSION_LIST;
+
+        String promptString = origPromptString;
+
+        promptLoop: while (true) {
+            s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
+            if (s == null)
+                return s; // cancelled input
+            s = s.trim();
+            if (s.equals("")) {
+                promptString = origPromptString;
+                continue;
+            }
+            if (s.equals("1"))
+                return PaConstants.PROOF_ASST_PROOF_NORMAL;
+            if (s.equals("2"))
+                return PaConstants.PROOF_ASST_PROOF_PACKED;
+            if (s.equals("3"))
+                return PaConstants.PROOF_ASST_PROOF_COMPRESSED;
+            promptString = origPromptString
+                + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
+                + "Not a valid option; try again";
         }
     }
 

@@ -14,6 +14,9 @@
 package mmj.lang;
 
 import java.util.*;
+import java.util.Map.Entry;
+
+import mmj.lang.ParseTree.RPNStep;
 
 /**
  *  ProofCompression provides Compression and Decompression
@@ -593,5 +596,128 @@ public class ProofCompression {
         for (int i = 0; i < repeatedSubproofCnt; i++)
             temp[i] = repeatedSubproof[i];
         repeatedSubproof = temp;
+    }
+
+    public ArrayList<Stmt> compress(final String theoremLabel, final int width,
+        final ArrayList<Hyp> mandHypArray, final ArrayList<Hyp> optHypArray,
+        final RPNStep[] rpnProof, final StringBuffer letters)
+    {
+        this.theoremLabel = theoremLabel;
+        final ArrayList<Stmt> parenStmt = new ArrayList<Stmt>();
+        int x = 2;
+        for (final RPNStep s : rpnProof)
+            if (s != null && s.stmt != null && optHypArray.contains(s.stmt)
+                && !parenStmt.contains(s.stmt))
+            {
+                parenStmt.add(s.stmt);
+                final int l = s.stmt.getLabel().length() + 1;
+                if (x + l > width)
+                    x = l;
+                else
+                    x += l;
+            }
+        final HashMap<Stmt, Integer> unsortedMap = new HashMap<Stmt, Integer>();
+        for (final RPNStep s : rpnProof)
+            if (s != null && s.backRef <= 0 && s.stmt != null
+                && !mandHypArray.contains(s.stmt)
+                && !parenStmt.contains(s.stmt))
+            {
+                final Integer i = unsortedMap.get(s.stmt);
+                if (i == null)
+                    unsortedMap.put(s.stmt, 0);
+                else
+                    unsortedMap.put(s.stmt, i + 1);
+            }
+        final PriorityQueue<Entry<Stmt, Integer>> sortedByBackrefs = new PriorityQueue<Map.Entry<Stmt, Integer>>(
+            unsortedMap.size(), new Comparator<Entry<Stmt, Integer>>() {
+                @Override
+                public int compare(final Entry<Stmt, Integer> e1,
+                    final Entry<Stmt, Integer> e2)
+                {
+                    return e2.getValue() - e1.getValue();
+                }
+            });
+        sortedByBackrefs.addAll(unsortedMap.entrySet());
+        int i = mandHypArray.size() + parenStmt.size();
+        int cutoff = LangConstants.COMPRESS_LOW_BASE;
+        while (cutoff <= i)
+            cutoff *= LangConstants.COMPRESS_HIGH_BASE;
+        int d = 0;
+        final List<List<Stmt>> sortedByLength = new ArrayList<List<Stmt>>();
+        sortedByLength.add(new LinkedList<Stmt>());
+        Entry<Stmt, Integer> e;
+        while ((e = sortedByBackrefs.poll()) != null) {
+            if (i++ == cutoff) {
+                cutoff *= LangConstants.COMPRESS_HIGH_BASE;
+                d++;
+                sortedByLength.add(new LinkedList<Stmt>());
+            }
+            sortedByLength.get(d).add(e.getKey());
+        }
+        for (final List<Stmt> list : sortedByLength) {
+            Collections.sort(list, new Comparator<Stmt>() {
+                @Override
+                public int compare(final Stmt s1, final Stmt s2) {
+                    return s2.getLabel().length() - s1.getLabel().length();
+                }
+            });
+            while (list.size() > 0) {
+                boolean found = false;
+                if (x + 2 < width) // assume minimum size 2 for label
+                    for (final Stmt s : list) {
+                        final int l = s.getLabel().length() + 1;
+                        if (x + l <= width) {
+                            found = true;
+                            x += l;
+                            list.remove(s);
+                            parenStmt.add(s);
+                            break;
+                        }
+                    }
+                if (!found) {
+                    final Stmt s = list.remove(0);
+                    final int l = s.getLabel().length() + 1;
+                    if (x + l >= width)
+                        x = l;
+                    else
+                        x += l;
+                    parenStmt.add(s);
+                }
+            }
+        }
+        for (final RPNStep s : rpnProof) {
+            if (s == null) {
+                letters.append((char)LangConstants.COMPRESS_UNKNOWN_CHAR);
+                continue;
+            }
+            int letter = 0;
+            if (s.backRef > 0)
+                letter = mandHypArray.size() + parenStmt.size() + s.backRef;
+            else {
+                int index = mandHypArray.indexOf(s.stmt);
+                if (index != -1)
+                    letter = index + 1;
+                else {
+                    index = parenStmt.indexOf(s.stmt);
+                    if (index == -1)
+                        throw new RuntimeException("shouldn't happen");
+                    letter = mandHypArray.size() + index + 1;
+                }
+            }
+            String code = ""
+                + (char)LangConstants.COMPRESS_LOW_DIGIT_CHARS[(letter - 1)
+                    % LangConstants.COMPRESS_LOW_BASE];
+            letter = (letter - 1) / LangConstants.COMPRESS_LOW_BASE;
+            while (letter > 0) {
+                code = (char)LangConstants.COMPRESS_HIGH_DIGIT_CHARS[(letter - 1)
+                    % LangConstants.COMPRESS_HIGH_BASE]
+                    + code;
+                letter = (letter - 1) / LangConstants.COMPRESS_HIGH_BASE;
+            }
+            if (s.backRef < 0)
+                code += (char)LangConstants.COMPRESS_REPEAT_CHAR;
+            letters.append(code);
+        }
+        return parenStmt;
     }
 }

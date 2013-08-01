@@ -310,6 +310,74 @@ public class ParseTree {
     }
 
     /**
+     * Compresses ("squishes") the tree to re-use repeated subtrees.
+     */
+    public void squishTree() {
+        if (root != null)
+            squishTree(root);
+    }
+
+    private boolean squishTree(final ParseNode node) {
+        node.firstAppearance = 0;
+        if (node.child == null || node.child.length == 0)
+            return false;
+        for (final ParseNode element : node.child)
+            if (squishTree(element))
+                findDup(element, node, root);
+        return true;
+    }
+
+    private void findDup(final ParseNode cmp, final ParseNode cmpParent,
+        final ParseNode node)
+    {
+        for (int i = 0; i < node.child.length; i++) {
+            final ParseNode n = node.child[i];
+            if (node != cmpParent && cmp.isDeepDup(n)) {
+                node.child[i] = cmp;
+                cmp.firstAppearance = -1;
+            }
+            else
+                findDup(cmp, cmpParent, n);
+        }
+    }
+
+    public RPNStep[] convertToSquishedRPN() {
+        squishTree();
+        final ArrayList<RPNStep> list = new ArrayList<RPNStep>();
+        if (root != null)
+            convertToSquishedRPN(1, list, root);
+        return list.toArray(new RPNStep[0]);
+    }
+
+    private int convertToSquishedRPN(int backrefs,
+        final ArrayList<RPNStep> list, final ParseNode node)
+    {
+        if (node.firstAppearance > 0) {
+            final RPNStep s = new RPNStep();
+            s.backRef = node.firstAppearance;
+            list.add(s);
+        }
+        else {
+            if (node.child != null)
+                for (final ParseNode n : node.child)
+                    backrefs = convertToSquishedRPN(backrefs, list, n);
+            final RPNStep s = new RPNStep();
+            s.stmt = node.stmt;
+            if (node.firstAppearance < 0) {
+                node.firstAppearance = backrefs++;
+                s.backRef = -node.firstAppearance;
+            }
+            list.add(s);
+        }
+        return backrefs;
+    }
+
+    public static class RPNStep {
+        public Stmt stmt;
+        public int backRef;
+    }
+
+    /**
      *  Count parse nodes in a ParseTree.
      *  <p>
      *  If root is null, count = zero.

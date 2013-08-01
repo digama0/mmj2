@@ -129,6 +129,18 @@ public class ParseNode {
     public ParseNode[] child;
 
     /**
+     * Cached size of node subtree.
+     */
+    private int size;
+
+    /**
+     * This temporary variable is 0 if the node has one parent, -1 if the node
+     * has multiple parents, and a positive integer when the RPN index of the
+     * first parent is known.
+     */
+    public int firstAppearance;
+
+    /**
      *  Default constructor.
      */
     public ParseNode() {}
@@ -329,6 +341,8 @@ public class ParseNode {
         if (that == null || stmt != that.stmt
             || child.length != that.child.length)
             return false;
+        if (this == that)
+            return true;
         for (int i = 0; i < child.length; i++)
             if (!child[i].isDeepDup(that.child[i]))
                 return false;
@@ -519,11 +533,13 @@ public class ParseNode {
      *  Counts nodes in a ParseNode sub-tree.
      */
     public int countParseNodes() {
+        if (size != 0)
+            return size;
         int n = 1;
         if (child != null)
             for (final ParseNode element : child)
                 n += element.countParseNodes();
-        return n;
+        return size = n;
     }
 
     /**

@@ -462,6 +462,21 @@ public class PaConstants {
             PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_REPLACEMENTS,
             PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_DIFFERENCES};
 
+    /**
+     * ProofAsstProofFormat Normal option
+     */
+    public static final String PROOF_ASST_PROOF_NORMAL = "Normal";
+
+    /**
+     * ProofAsstProofFormat Packed option
+     */
+    public static final String PROOF_ASST_PROOF_PACKED = "Packed";
+
+    /**
+     * ProofAsstProofFormat Compressed option
+     */
+    public static final String PROOF_ASST_PROOF_COMPRESSED = "Compressed";
+
     // ----------------------------------------------------------
     // Constants for ProofAsstPreferences.java
     // ----------------------------------------------------------
@@ -517,6 +532,9 @@ public class PaConstants {
     public static final int PROOF_ASST_RPN_PROOF_RIGHT_COL_DEFAULT = 70;
 
     public static final String PROOF_ASST_SOFT_DJ_ERROR_OPTION_LIST = "Valid Soft Dj Vars Error Options: ";
+
+    public static final String PROOF_ASST_COMPRESSION_LIST = "Valid Proof Compression Options:\n\n"
+        + "1 - Normal\n2 - Packed\n3 - Compressed (Default)\n\nEnter Proof Compression Number";
 
     public static final String PROOF_ASST_FONT_FAMILY_LIST = "Valid font family names defined in your system: ";
 
@@ -1140,9 +1158,9 @@ public class PaConstants {
     public static final String PA_GUI_TL_MENU_STORE_MM_INDENT_AMT_TEXT = "Set Store MM Indent Amt";
 
     /**
-     *  ProofAsstGUI TL Menu Store MM Right Col Item Text
+     * ProofAsstGUI TL Menu Proof Compression Item Text
      */
-    public static final String PA_GUI_TL_MENU_STORE_MM_RIGHT_COL_TEXT = "Set Store MM Right Col";
+    public static final String PA_GUI_TL_MENU_COMPRESSION_TEXT = "Set Proof Compression";
 
     /**
      *  ProofAsstGUI TL Menu Load Theorems From MMT Folder Item Text
@@ -1168,6 +1186,11 @@ public class PaConstants {
      *  ProofAsstGUI TL Menu Verify All Proofs Item Text
      */
     public static final String PA_GUI_TL_MENU_VERIFY_ALL_PROOFS_TEXT = "Verify All Proofs";
+
+    /**
+     * ProofAsstGUI TL Menu Store MM Right Col Item Text
+     */
+    public static final String PA_GUI_TL_MENU_STORE_MM_RIGHT_COL_TEXT = "Set Store MM Right Col";
 
     /**
      *  Prompt for Set Theorem Loader Audit Messages Menu Item
@@ -2896,6 +2919,10 @@ public class PaConstants {
 
     public static final String ERRMSG_INVALID_STEP_SELECTOR_SHOW_SUBSTITUTIONS_1 = "E-PA-0507 Invalid StepSelectorShowSubstitutions option = ";
     public static final String ERRMSG_INVALID_STEP_SELECTOR_SHOW_SUBSTITUTIONS_2 = ". Must equal 'yes', 'no', 'on', 'off', 'true' or 'false'.";
+
+    public static final String ERRMSG_INVALID_PROOF_FORMAT_1 = "E-PA-0508 Invalid option input = ";
+    public static final String ERRMSG_INVALID_PROOF_FORMAT_2 = " for ProofAsstProofFormat RunParm. Choices are:"
+        + " 'Normal', 'Packed', and 'Compressed'.";
 
     // ----------------------------------------------------------
     // Messages from DerivationStep.java

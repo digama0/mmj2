@@ -620,8 +620,8 @@ public class WorkVarManager {
         Object o;
         String s;
         for (final WorkVar[] element : declaredWorkVar)
-            for (int j = 0; j < element.length; j++) {
-                s = element[j].getId();
+            for (final WorkVar var : element) {
+                s = var.getId();
                 o = symTbl.get(s);
                 if (o == null) {
                     o = stmtTbl.get(s);

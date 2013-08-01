@@ -78,6 +78,7 @@ import java.util.*;
 
 import mmj.gmff.GMFFException;
 import mmj.lang.*;
+import mmj.lang.ParseTree.RPNStep;
 import mmj.mmio.MMIOError;
 import mmj.tl.*;
 import mmj.util.OutputBoss;
@@ -1614,7 +1615,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 return;
             }
 
-            final Stmt[] rpnProof = proofWorksheet.getQedStepProofRPN();
+            final RPNStep[] rpnProof = proofAsstPreferences
+                .getProofFormatPacked() ? proofWorksheet
+                .getQedStepSquishedRPN() : proofWorksheet.getQedStepProofRPN();
 
             if (rpnProof == null) {
                 /*
@@ -1623,7 +1626,28 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                  */
             }
             else {
-                proofWorksheet.addGeneratedProofStmt(rpnProof);
+                if (proofAsstPreferences.getProofFormatCompressed()) {
+                    final StringBuffer letters = new StringBuffer();
+
+                    final ArrayList mandHypList = new ArrayList(), optHypList = new ArrayList();
+                    ProofUnifier.separateMandAndOptFrame(proofWorksheet,
+                        proofWorksheet.getQedStep(), mandHypList, optHypList,
+                        true);
+
+                    final int width = proofWorksheet.proofAsstPreferences
+                        .getRPNProofRightCol()
+                        - proofWorksheet.proofAsstPreferences
+                            .getRPNProofLeftCol() + 1;
+                    final ArrayList<Stmt> parenList = logicalSystem
+                        .getProofCompression().compress(
+                            proofWorksheet.getTheoremLabel(), width,
+                            mandHypList, optHypList, rpnProof, letters);
+
+                    proofWorksheet.addGeneratedProofStmt(parenList,
+                        letters.toString());
+                }
+                else
+                    proofWorksheet.addGeneratedProofStmt(rpnProof);
                 if (proofAsstPreferences.getDjVarsSoftErrorsGenerate()
                     && proofWorksheet.proofSoftDjVarsErrorList != null
                     && !proofWorksheet.proofSoftDjVarsErrorList.isEmpty())
@@ -1775,22 +1799,10 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
     private void checkAndCompareUpdateDJs(final ProofWorksheet proofWorksheet) {
         if (proofWorksheet.getQedStepProofRPN() == null
-
-        ||
-
-        proofWorksheet.newTheorem
-
-        ||
-
-        !proofAsstPreferences.getDjVarsSoftErrorsGenerate()
-
-        ||
-
-        proofWorksheet.proofSoftDjVarsErrorList == null
-
-        ||
-
-        proofWorksheet.proofSoftDjVarsErrorList.size() == 0)
+            || proofWorksheet.newTheorem
+            || !proofAsstPreferences.getDjVarsSoftErrorsGenerate()
+            || proofWorksheet.proofSoftDjVarsErrorList == null
+            || proofWorksheet.proofSoftDjVarsErrorList.size() == 0)
             return;
 
         if (proofAsstPreferences.getImportCompareDJs())

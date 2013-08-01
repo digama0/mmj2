@@ -114,6 +114,7 @@ import java.io.IOException;
 import java.util.*;
 
 import mmj.lang.*;
+import mmj.lang.ParseTree.RPNStep;
 import mmj.mmio.MMIOError;
 import mmj.mmio.Tokenizer;
 import mmj.tmff.TMFFPreferences;
@@ -732,12 +733,28 @@ public class ProofWorksheet {
      *  @return      the RPN proof of the final DerivationStep
      *           in the ProofWorksheet.
      */
-    public Stmt[] getQedStepProofRPN() {
-        Stmt[] rpn = null;
+    public RPNStep[] getQedStepProofRPN() {
+        RPNStep[] rpn = null;
+        if (qedStep != null) {
+            final ParseTree p = qedStep.getProofTree();
+            if (p != null) {
+                final Stmt[] s = p.convertToRPN();
+                rpn = new RPNStep[s.length];
+                for (int i = 0; i < s.length; i++)
+                    if (s[i] != null) {
+                        rpn[i] = new RPNStep();
+                        rpn[i].stmt = s[i];
+                    }
+            }
+        }
+        return rpn;
+    }
+    public RPNStep[] getQedStepSquishedRPN() {
+        RPNStep[] rpn = null;
         if (qedStep != null) {
             final ParseTree p = qedStep.getProofTree();
             if (p != null)
-                rpn = p.convertToRPN();
+                rpn = p.convertToSquishedRPN();
         }
         return rpn;
     }
@@ -933,7 +950,7 @@ public class ProofWorksheet {
         HypothesisStep renumberHypothesisStep;
         DerivationStep renumberDerivationStep;
 
-        int renumber = 0;
+        int renumber = 100;
         String renumberStep;
         String oldStep;
 
@@ -1688,8 +1705,18 @@ public class ProofWorksheet {
      *
      *  @param rpnProof Proof Stmt array.
      */
-    public void addGeneratedProofStmt(final Stmt[] rpnProof) {
+    public void addGeneratedProofStmt(final RPNStep[] rpnProof) {
         final GeneratedProofStmt x = new GeneratedProofStmt(this, rpnProof);
+        // add just before footer
+        proofWorkStmtList.add(proofWorkStmtList.size() - 1, x);
+        generatedProofStmt = x;
+    }
+
+    public void addGeneratedProofStmt(final ArrayList<Stmt> parenList,
+        final String letters)
+    {
+        final GeneratedProofStmt x = new GeneratedProofStmt(this, parenList,
+            letters);
         // add just before footer
         proofWorkStmtList.add(proofWorkStmtList.size() - 1, x);
         generatedProofStmt = x;

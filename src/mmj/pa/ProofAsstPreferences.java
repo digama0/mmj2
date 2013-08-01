@@ -128,6 +128,9 @@ public class ProofAsstPreferences {
     private boolean djVarsSoftErrorsGenerateRepl;
     private boolean djVarsSoftErrorsGenerateDiffs;
 
+    private boolean proofFormatPacked;
+    private boolean proofFormatCompressed;
+
     private WorkVarManager workVarManager;
 
     private StepUnifier stepUnifier;
@@ -194,6 +197,8 @@ public class ProofAsstPreferences {
         backgroundColor = PaConstants.DEFAULT_BACKGROUND_COLOR;
 
         setDjVarsSoftErrorsOption(PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_DEFAULT);
+
+        setProofFormatOption(PaConstants.PROOF_ASST_PROOF_COMPRESSED);
 
         setIncompleteStepCursor(PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_DEFAULT);
 
@@ -1121,6 +1126,12 @@ public class ProofAsstPreferences {
     public boolean getDjVarsSoftErrorsGenerateDiffs() {
         return djVarsSoftErrorsGenerateDiffs;
     }
+    public boolean getProofFormatCompressed() {
+        return proofFormatCompressed;
+    }
+    public boolean getProofFormatPacked() {
+        return proofFormatPacked;
+    }
 
     public String getDjVarsSoftErrorsOptionNbr() {
         final String s = getDjVarsSoftErrorsOption();
@@ -1144,6 +1155,24 @@ public class ProofAsstPreferences {
             return PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_DIFFERENCES;
 
         throw new IllegalArgumentException("");
+    }
+
+    public String getProofFormatOption() {
+        if (proofFormatCompressed)
+            return PaConstants.PROOF_ASST_PROOF_COMPRESSED;
+        if (proofFormatPacked)
+            return PaConstants.PROOF_ASST_PROOF_PACKED;
+
+        return PaConstants.PROOF_ASST_PROOF_NORMAL;
+    }
+
+    public int getProofFormatNumber() {
+        if (proofFormatCompressed)
+            return 3;
+        if (proofFormatPacked)
+            return 2;
+
+        return 1;
     }
 
     public boolean setDjVarsSoftErrorsOption(final String s) {
@@ -1226,6 +1255,32 @@ public class ProofAsstPreferences {
             djVarsSoftErrorsGenerateRepl = false;
             djVarsSoftErrorsGenerateDiffs = false;
 
+            return true; // no error
+        }
+
+        return false;
+    }
+
+    public boolean setProofFormatOption(final String s) {
+        if (s == null)
+            return false; // error
+
+        if (s.compareToIgnoreCase(PaConstants.PROOF_ASST_PROOF_NORMAL) == 0) {
+            proofFormatPacked = false;
+            proofFormatCompressed = false;
+            return true; // no error
+        }
+
+        if (s.compareToIgnoreCase(PaConstants.PROOF_ASST_PROOF_PACKED) == 0) {
+            proofFormatPacked = true;
+            proofFormatCompressed = false;
+            return true; // no error
+        }
+
+        if (s.compareToIgnoreCase(PaConstants.PROOF_ASST_PROOF_COMPRESSED) == 0)
+        {
+            proofFormatPacked = true;
+            proofFormatCompressed = true;
             return true; // no error
         }
 

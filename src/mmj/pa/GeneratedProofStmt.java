@@ -39,6 +39,9 @@
 
 package mmj.pa;
 
+import java.util.ArrayList;
+
+import mmj.lang.ParseTree.RPNStep;
 import mmj.lang.Stmt;
 
 public class GeneratedProofStmt extends ProofWorkStmt {
@@ -56,7 +59,8 @@ public class GeneratedProofStmt extends ProofWorkStmt {
      *
      *  @param rpnProof Proof Stmt Array in RPN format
      */
-    public GeneratedProofStmt(final ProofWorksheet w, final Stmt[] rpnProof) {
+    public GeneratedProofStmt(final ProofWorksheet w, final RPNStep[] rpnProof)
+    {
         super(w);
 
         lineCnt = 1;
@@ -77,8 +81,15 @@ public class GeneratedProofStmt extends ProofWorkStmt {
         String x;
         int ps = 0;
         while (true) {
-            if (ps < rpnProof.length)
-                x = rpnProof[ps].getLabel();
+            if (ps < rpnProof.length) {
+                if (rpnProof[ps].backRef == 0)
+                    x = rpnProof[ps].stmt.getLabel();
+                else if (rpnProof[ps].backRef < 0)
+                    x = -rpnProof[ps].backRef + ":"
+                        + rpnProof[ps].stmt.getLabel();
+                else
+                    x = rpnProof[ps].backRef + "";
+            }
             else if (ps > rpnProof.length) {
                 stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
                 ++lineCnt;
@@ -107,6 +118,83 @@ public class GeneratedProofStmt extends ProofWorkStmt {
                 ++col;
             }
         }
+    }
+
+    public GeneratedProofStmt(final ProofWorksheet w,
+        final ArrayList<Stmt> parenList, final String letters)
+    {
+        super(w);
+
+        lineCnt = 1;
+
+        stmtText = new StringBuffer(parenList.size() * 5 + letters.length()); // 5=guess
+        final int left = w.proofAsstPreferences.getRPNProofLeftCol();
+        final int right = w.proofAsstPreferences.getRPNProofRightCol();
+        final StringBuffer indentLeft = new StringBuffer(left - 1);
+        for (int i = 1; i < left; i++)
+            indentLeft.append(' ');
+
+        stmtText.append(PaConstants.GENERATED_PROOF_STMT_TOKEN);
+        stmtText.append(' ');
+        int col = 4;
+        for (; col < left; col++)
+            stmtText.append(' ');
+        col++;
+        stmtText.append('(');
+
+        final String x;
+        for (int i = 0; i <= parenList.size(); i++) {
+            String label;
+            if (i == parenList.size())
+                label = ")";
+            else
+                label = parenList.get(i).getLabel();
+            if (col + label.length() < right) {
+                stmtText.append(' ');
+                col++;
+            }
+            else {
+                stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
+                ++lineCnt;
+                stmtText.append(indentLeft);
+                col = left;
+            }
+            stmtText.append(label);
+            col += label.length();
+        }
+        if (col + 1 < right) {
+            stmtText.append(' ');
+            col++;
+        }
+        else {
+            stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
+            ++lineCnt;
+            stmtText.append(indentLeft);
+            col = left;
+        }
+        int lIndex = 0;
+        while (true) {
+            final int avail = right - col;
+            if (lIndex + avail >= letters.length()) {
+                stmtText.append(letters.substring(lIndex));
+                col += letters.length() - lIndex;
+                break;
+            }
+            stmtText.append(letters.substring(lIndex, lIndex += avail));
+            stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
+            ++lineCnt;
+            stmtText.append(indentLeft);
+            col = left;
+        }
+        if (col + 2 < right)
+            stmtText.append(' ');
+        else {
+            stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
+            ++lineCnt;
+            stmtText.append(indentLeft);
+        }
+        stmtText.append(PaConstants.END_PROOF_STMT_TOKEN);
+        stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
     }
 
     @Override

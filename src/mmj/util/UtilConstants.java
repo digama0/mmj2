@@ -1069,6 +1069,23 @@ public class UtilConstants {
     public static final String RUNPARM_PROOF_ASST_DJ_VARS_SOFT_ERRORS = "ProofAsstDjVarsSoftErrors";
 
     /**
+     * ProofAsstProofFormat
+     * <p>
+     * <code>
+     *  "ProofAsstProofFormat":
+     * 
+     *      "Normal" -- Uncompressed RPN proof
+     *      "Packed" -- RPN proof with backreferences
+     *      "Compressed"
+     *               -- Full compression (with all caps encoding)
+     * 
+     *  Optional, default is "Compressed"
+     * 
+     *  </code>
+     */
+    public static final String RUNPARM_PROOF_ASST_PROOF_FORMAT = "ProofAsstProofFormat";
+
+    /**
      *  ProofAsstForegroundColorRGB
      *  <p><code>
      *  "ProofAsstForegroundColorRGB":
