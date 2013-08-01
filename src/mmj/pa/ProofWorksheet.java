@@ -110,18 +110,17 @@
 
 package mmj.pa;
 
-import  java.io.File;
-import  java.io.IOException;
-import  java.util.ArrayList;
-import  java.util.LinkedList;
-import  java.util.Iterator;
-import  java.util.HashMap;
-import  java.util.NoSuchElementException;
-import  mmj.util.DelimitedTextParser;
-import  mmj.lang.*;
-import  mmj.verify.*;
-import  mmj.mmio.*;
-import  mmj.tmff.*;
+import java.io.IOException;
+import java.util.*;
+
+import mmj.lang.*;
+import mmj.mmio.MMIOError;
+import mmj.mmio.Tokenizer;
+import mmj.tmff.TMFFPreferences;
+import mmj.tmff.TMFFStateParams;
+import mmj.util.DelimitedTextParser;
+import mmj.verify.Grammar;
+import mmj.verify.ProofDerivationStepEntry;
 
 /**
  *  ProofWorksheet is generated from a text area (String)
@@ -193,77 +192,68 @@ import  mmj.tmff.*;
  */
 public class ProofWorksheet {
 
-    ProofAsstPreferences        proofAsstPreferences;
-    LogicalSystem               logicalSystem;
-    Grammar                     grammar;
-    Messages                    messages;
-    Tokenizer                   proofTextTokenizer;
-    TMFFPreferences             tmffPreferences;
-    TMFFStateParams             tmffSP;
-    StringBuffer                tmffFormulaSB;
+    ProofAsstPreferences proofAsstPreferences;
+    LogicalSystem logicalSystem;
+    Grammar grammar;
+    Messages messages;
+    Tokenizer proofTextTokenizer;
+    TMFFPreferences tmffPreferences;
+    TMFFStateParams tmffSP;
+    StringBuffer tmffFormulaSB;
 
+    StepSelectorResults stepSelectorResults = null;
+    StepRequest stepRequest = null;
 
-    StepSelectorResults         stepSelectorResults = null;
-    StepRequest                 stepRequest         = null;
-
-    /* friendly */  boolean            structuralErrors;
-    /* friendly */  int                nbrDerivStepsReadyForUnify
-                                  = 0;
+    /* friendly */boolean structuralErrors;
+    /* friendly */int nbrDerivStepsReadyForUnify = 0;
 
     /*  hasWorkVarsOrDerives is set to true in DerivationStep
         and is used in ProofUnifier to decide whether or not
      *  to make a preliminary pass through the Proof Worksheet
      *  to deal with WorkVars and/or DeriveStep/DeriveFormula.
      */
-    /* friendly */  boolean hasWorkVarsOrDerives;
+    /* friendly */boolean hasWorkVarsOrDerives;
 
+    /* friendly */boolean newTheorem = true;
+    /* friendly */Theorem theorem;
+    /* friendly */Stmt locAfter;
 
-    /* friendly */  boolean            newTheorem
-                                  = true;
-    /* friendly */  Theorem            theorem;
-    /* friendly */  Stmt               locAfter;
+    /* friendly */int maxSeq = Integer.MAX_VALUE;
 
-    /* friendly */  int                maxSeq
-                                  = Integer.MAX_VALUE;
+    /* friendly */MandFrame comboFrame;
+    /* friendly */HashMap comboVarMap;
 
-    /* friendly */  MandFrame          comboFrame;
-    /* friendly */  HashMap            comboVarMap;
-
-    public VarHyp getVarHypFromComboFrame(Var v) {
-        Hyp[] a                   = comboFrame.hypArray;
-        for (int i = 0; i < a.length; i++) {
-            if (a[i].isVarHyp() &&
-                ((VarHyp)a[i]).getVar() == v) {
-                return (VarHyp)a[i];
-            }
-        }
+    public VarHyp getVarHypFromComboFrame(final Var v) {
+        final Hyp[] a = comboFrame.hypArray;
+        for (final Hyp element : a)
+            if (element.isVarHyp() && ((VarHyp)element).getVar() == v)
+                return (VarHyp)element;
         return null;
     }
 
-    /* friendly */  ArrayList          proofWorkStmtList;
-    /* friendly */  HeaderStmt         headerStmt;
+    /* friendly */ArrayList proofWorkStmtList;
+    /* friendly */HeaderStmt headerStmt;
 
-    /* friendly */  FooterStmt         footerStmt;
+    /* friendly */FooterStmt footerStmt;
 
-    /* friendly */  DerivationStep     qedStep;
+    /* friendly */DerivationStep qedStep;
 
-                    //set when created after successful unification...
-    /* friendly */  GeneratedProofStmt generatedProofStmt;
+    // set when created after successful unification...
+    /* friendly */GeneratedProofStmt generatedProofStmt;
 
-    /* friendly */  int                greatestStepNbr;
+    /* friendly */int greatestStepNbr;
 
-    /* friendly */  int                dvStmtCnt;
-    /* friendly */  DistinctVariablesStmt[]
-                                dvStmtArray;
+    /* friendly */int dvStmtCnt;
+    /* friendly */DistinctVariablesStmt[] dvStmtArray;
 
-    /* friendly */  int                hypStepCnt;
+    /* friendly */int hypStepCnt;
 
-    /* friendly */  ProofAsstCursor    proofCursor;
+    /* friendly */ProofAsstCursor proofCursor;
 
-    /* friendly */  ProofAsstCursor    proofInputCursor;
+    /* friendly */ProofAsstCursor proofInputCursor;
 
-                    //this is an an ArrayList of ArrayLists
-    /* friendly */  ArrayList proofSoftDjVarsErrorList;
+    // this is an an ArrayList of ArrayLists
+    /* friendly */ArrayList proofSoftDjVarsErrorList;
 
     /**
      *  Constructor for skeletal ProofWorksheet.
@@ -284,18 +274,17 @@ public class ProofWorksheet {
      *  @param proofCursor ProofAsstCursor set to position
      *                     of error.
      */
-    public ProofWorksheet(
-                ProofAsstPreferences proofAsstPreferences,
-                Messages             messages,
-                boolean              structuralErrors,
-                ProofAsstCursor      proofCursor) {
+    public ProofWorksheet(final ProofAsstPreferences proofAsstPreferences,
+        final Messages messages, final boolean structuralErrors,
+        final ProofAsstCursor proofCursor)
+    {
 
-        this.proofAsstPreferences =  proofAsstPreferences;
-        this.messages             =  messages;
+        this.proofAsstPreferences = proofAsstPreferences;
+        this.messages = messages;
         setStructuralErrors(structuralErrors);
-        this.proofCursor          =  proofCursor;
-        proofInputCursor          =  new ProofAsstCursor();
-        proofWorkStmtList         =  new ArrayList();
+        this.proofCursor = proofCursor;
+        proofInputCursor = new ProofAsstCursor();
+        proofWorkStmtList = new ArrayList();
     }
 
     /**
@@ -312,30 +301,26 @@ public class ProofWorksheet {
      *  @param messages the mmj.lang.Messages object used to store
      *                  error and informational messages.
      */
-    public ProofWorksheet(
-                Tokenizer            proofTextTokenizer,
-                ProofAsstPreferences proofAsstPreferences,
-                LogicalSystem        logicalSystem,
-                Grammar              grammar,
-                Messages             messages) {
+    public ProofWorksheet(final Tokenizer proofTextTokenizer,
+        final ProofAsstPreferences proofAsstPreferences,
+        final LogicalSystem logicalSystem, final Grammar grammar,
+        final Messages messages)
+    {
 
-        this.proofTextTokenizer   =  proofTextTokenizer;
-        this.proofAsstPreferences =  proofAsstPreferences;
-        this.logicalSystem        =  logicalSystem;
-        this.grammar              =  grammar;
-        this.messages             =  messages;
+        this.proofTextTokenizer = proofTextTokenizer;
+        this.proofAsstPreferences = proofAsstPreferences;
+        this.logicalSystem = logicalSystem;
+        this.grammar = grammar;
+        this.messages = messages;
 
-        proofCursor               =  new ProofAsstCursor();
-        proofInputCursor          =  new ProofAsstCursor();
+        proofCursor = new ProofAsstCursor();
+        proofInputCursor = new ProofAsstCursor();
 
-        proofWorkStmtList         =  new ArrayList();
+        proofWorkStmtList = new ArrayList();
 
         // initialize StepUnifier prior to parsing input
         // tokens, which may contain work variables!!!
-        proofAsstPreferences.
-            getStepUnifier().
-                startProofWorksheet();
-
+        proofAsstPreferences.getStepUnifier().startProofWorksheet();
 
         initTMFF();
     }
@@ -357,31 +342,29 @@ public class ProofWorksheet {
      *  @param messages the mmj.lang.Messages object used to store
      *                  error and informational messages.
      */
-    public ProofWorksheet(
-                String               newTheoremLabel,
-                ProofAsstPreferences proofAsstPreferences,
-                LogicalSystem        logicalSystem,
-                Grammar              grammar,
-                Messages             messages) {
+    public ProofWorksheet(final String newTheoremLabel,
+        final ProofAsstPreferences proofAsstPreferences,
+        final LogicalSystem logicalSystem, final Grammar grammar,
+        final Messages messages)
+    {
 
-        this.proofAsstPreferences =  proofAsstPreferences;
-        this.logicalSystem        =  logicalSystem;
-        this.grammar              =  grammar;
-        this.messages             =  messages;
+        this.proofAsstPreferences = proofAsstPreferences;
+        this.logicalSystem = logicalSystem;
+        this.grammar = grammar;
+        this.messages = messages;
 
-        proofCursor               =  new ProofAsstCursor();
-        proofInputCursor          =  new ProofAsstCursor();
+        proofCursor = new ProofAsstCursor();
+        proofInputCursor = new ProofAsstCursor();
 
-        proofWorkStmtList         =  new ArrayList();
+        proofWorkStmtList = new ArrayList();
 
         initTMFF();
 
-        //build header
+        // build header
         buildHeader(newTheoremLabel);
 
-        if (isNewTheorem()) {
+        if (isNewTheorem())
             buildDummyProofBody();
-        }
         else {
             buildTheoremDescription(theorem);
             buildEmptyTheoremProofBody(theorem);
@@ -411,58 +394,50 @@ public class ProofWorksheet {
      *  @param messages the mmj.lang.Messages object used to store
      *                  error and informational messages.
      */
-    public ProofWorksheet(
-                Theorem              theorem,
-                ArrayList            proofDerivationStepList,
-                boolean              deriveFormulas,
-                ProofAsstPreferences proofAsstPreferences,
-                LogicalSystem        logicalSystem,
-                Grammar              grammar,
-                Messages             messages) {
+    public ProofWorksheet(final Theorem theorem,
+        final ArrayList proofDerivationStepList, final boolean deriveFormulas,
+        final ProofAsstPreferences proofAsstPreferences,
+        final LogicalSystem logicalSystem, final Grammar grammar,
+        final Messages messages)
+    {
 
-        this.proofAsstPreferences =  proofAsstPreferences;
-        this.logicalSystem        =  logicalSystem;
-        this.grammar              =  grammar;
-        this.messages             =  messages;
+        this.proofAsstPreferences = proofAsstPreferences;
+        this.logicalSystem = logicalSystem;
+        this.grammar = grammar;
+        this.messages = messages;
 
-        proofCursor               =  new ProofAsstCursor();
-        proofInputCursor          =  new ProofAsstCursor();
+        proofCursor = new ProofAsstCursor();
+        proofInputCursor = new ProofAsstCursor();
 
         initTMFF();
 
-        this.theorem              =  theorem;
+        this.theorem = theorem;
 
         setMaxSeq(theorem.getSeq());
 
         setNewTheorem(false);
 
-        loadComboFrameAndVarMap(); //for formula parsing
+        loadComboFrameAndVarMap(); // for formula parsing
 
-        proofWorkStmtList         =  new ArrayList();
+        proofWorkStmtList = new ArrayList();
 
         buildHeader(theorem.getLabel());
 
         buildTheoremDescription(theorem);
 
-        buildExportTheoremProofBody(theorem,
-                                    proofDerivationStepList,
-                                    deriveFormulas);
+        buildExportTheoremProofBody(theorem, proofDerivationStepList,
+            deriveFormulas);
         buildFooter();
     }
 
-
     private void initTMFF() {
-        tmffPreferences           =
-            proofAsstPreferences.getTMFFPreferences();
+        tmffPreferences = proofAsstPreferences.getTMFFPreferences();
 
-        tmffFormulaSB             = new StringBuffer();
+        tmffFormulaSB = new StringBuffer();
 
-        tmffSP                    =
-            new TMFFStateParams(tmffFormulaSB,
-                                0, //prevColNbr
-                                tmffPreferences);
+        tmffSP = new TMFFStateParams(tmffFormulaSB, 0, // prevColNbr
+            tmffPreferences);
     }
-
 
     /**
      *  Gets structuralErrors switch for ProofWorksheet.
@@ -488,8 +463,8 @@ public class ProofWorksheet {
      *  <p>
      *  @param structuralErrors boolean, true or false.
      */
-    public void setStructuralErrors(boolean structuralErrors) {
-        this.structuralErrors     = structuralErrors;
+    public void setStructuralErrors(final boolean structuralErrors) {
+        this.structuralErrors = structuralErrors;
     }
 
     /**
@@ -525,10 +500,9 @@ public class ProofWorksheet {
         return newTheorem;
     }
 
-    public void setNewTheorem(boolean newTheorem) {
-        this.newTheorem           = newTheorem;
+    public void setNewTheorem(final boolean newTheorem) {
+        this.newTheorem = newTheorem;
     }
-
 
     /**
      *  Returns the ProofWorksheet's Theorem reference.
@@ -559,8 +533,8 @@ public class ProofWorksheet {
         return maxSeq;
     }
 
-    public void setMaxSeq(int maxSeq) {
-        this.maxSeq               = maxSeq;
+    public void setMaxSeq(final int maxSeq) {
+        this.maxSeq = maxSeq;
     }
 
     /**
@@ -610,7 +584,6 @@ public class ProofWorksheet {
         return comboFrame;
     }
 
-
     /**
      *  Gets the hypStepCnt counter of the number of HypothesisStep
      *  statements in the ProofWorksheet.
@@ -628,21 +601,18 @@ public class ProofWorksheet {
      *  @param h the LogHyp sought in the ProofWorkStmtList.
      *  @return the HypothesisStep if found, or null.
      */
-    public HypothesisStep getHypothesisStepFromList(LogHyp h) {
-        Iterator iterator         = getProofWorkStmtListIterator();
+    public HypothesisStep getHypothesisStepFromList(final LogHyp h) {
+        final Iterator iterator = getProofWorkStmtListIterator();
         while (iterator.hasNext()) {
-            ProofWorkStmt w       = (ProofWorkStmt)iterator.next();
+            final ProofWorkStmt w = (ProofWorkStmt)iterator.next();
             if (w.isHypothesisStep()) {
-                HypothesisStep hypothesisStep
-                                  = (HypothesisStep)w;
-                if (h == hypothesisStep.getRef()) {
+                final HypothesisStep hypothesisStep = (HypothesisStep)w;
+                if (h == hypothesisStep.getRef())
                     return hypothesisStep;
-                }
             }
         }
         return null;
     }
-
 
     /**
      *  Returns an Iterator over the ProofWorksheet
@@ -679,17 +649,15 @@ public class ProofWorksheet {
      *  <p>
      *  @return line number in ProofWorksheet text area.
      */
-    public int computeProofWorkStmtLineNbr(ProofWorkStmt x) {
-        int           total       = 0;
+    public int computeProofWorkStmtLineNbr(final ProofWorkStmt x) {
+        int total = 0;
         ProofWorkStmt y;
-        Iterator      iterator    = getProofWorkStmtListIterator();
+        final Iterator iterator = getProofWorkStmtListIterator();
         while (iterator.hasNext()) {
-            y                     =
-                (ProofWorkStmt)iterator.next();
-            if (x == y) {
+            y = (ProofWorkStmt)iterator.next();
+            if (x == y)
                 return total + 1;
-            }
-            total                += y.getLineCnt();
+            total += y.getLineCnt();
         }
         return total;
     }
@@ -700,18 +668,15 @@ public class ProofWorksheet {
      *  <p>
      *  @return ProofWorkStmt at the input line number, or null.
      */
-    public ProofWorkStmt
-                        computeProofWorkStmtOfLineNbr(int n) {
-        int           total       = 0;
+    public ProofWorkStmt computeProofWorkStmtOfLineNbr(final int n) {
+        int total = 0;
         ProofWorkStmt y;
-        Iterator      iterator    = getProofWorkStmtListIterator();
+        final Iterator iterator = getProofWorkStmtListIterator();
         while (iterator.hasNext()) {
-            y                     =
-                (ProofWorkStmt)iterator.next();
-            if (total + y.getLineCnt() >= n) {
+            y = (ProofWorkStmt)iterator.next();
+            if (total + y.getLineCnt() >= n)
                 return y;
-            }
-            total                += y.getLineCnt();
+            total += y.getLineCnt();
         }
         return null;
     }
@@ -724,16 +689,15 @@ public class ProofWorksheet {
      *          ProofWorkStmt's.
      */
     public int computeTotalLineCnt() {
-        Iterator iterator         = proofWorkStmtList.iterator();
+        final Iterator iterator = proofWorkStmtList.iterator();
         ProofWorkStmt x;
-        int           total       = 0;
+        int total = 0;
         while (iterator.hasNext()) {
             x = (ProofWorkStmt)iterator.next();
-            total                += x.getLineCnt();
+            total += x.getLineCnt();
         }
         return total;
     }
-
 
     /**
      *  Returns the ProofWorksheet FooterStmt object.
@@ -769,25 +733,20 @@ public class ProofWorksheet {
      *           in the ProofWorksheet.
      */
     public Stmt[] getQedStepProofRPN() {
-        Stmt[] rpn                = null;
+        Stmt[] rpn = null;
         if (qedStep != null) {
-            ParseTree p           = qedStep.getProofTree();
-            if (p != null) {
-                rpn               = p.convertToRPN();
-            }
+            final ParseTree p = qedStep.getProofTree();
+            if (p != null)
+                rpn = p.convertToRPN();
         }
         return rpn;
     }
 
-
-
-    private int updateNextGreatestStepNbr(int stepNbr) {
-        if (stepNbr > greatestStepNbr) {
-            greatestStepNbr       = stepNbr;
-        }
+    private int updateNextGreatestStepNbr(final int stepNbr) {
+        if (stepNbr > greatestStepNbr)
+            greatestStepNbr = stepNbr;
         return greatestStepNbr;
     }
-
 
     /**
      *  Get the ProofWorksheet ProofCursor object.
@@ -803,8 +762,8 @@ public class ProofWorksheet {
      *
      *  @param proofCursor object for ProofWorksheet.
      */
-    public void setProofCursor(ProofAsstCursor proofCursor) {
-        this.proofCursor          = proofCursor;
+    public void setProofCursor(final ProofAsstCursor proofCursor) {
+        this.proofCursor = proofCursor;
     }
 
     /**
@@ -817,9 +776,8 @@ public class ProofWorksheet {
     public void posCursorAtLastIncompleteOrQedStmt() {
         if (!proofCursor.cursorIsSet) {
             posCursorAtLastIncompleteStmt();
-            if (!proofCursor.cursorIsSet) {
-				posCursorAtQedStmt();
-            }
+            if (!proofCursor.cursorIsSet)
+                posCursorAtQedStmt();
         }
     }
 
@@ -833,9 +791,8 @@ public class ProofWorksheet {
     public void posCursorAtFirstIncompleteOrQedStmt() {
         if (!proofCursor.cursorIsSet) {
             posCursorAtFirstIncompleteStmt();
-            if (!proofCursor.cursorIsSet) {
-				posCursorAtQedStmt();
-            }
+            if (!proofCursor.cursorIsSet)
+                posCursorAtQedStmt();
         }
     }
 
@@ -844,12 +801,9 @@ public class ProofWorksheet {
      *  cursor is not already set.
      */
     public void posCursorAtQedStmt() {
-        if (!proofCursor.cursorIsSet) {
-			proofCursor.
-				setCursorAtProofWorkStmt(
-					qedStep,
-					PaConstants.FIELD_ID_REF);
-        }
+        if (!proofCursor.cursorIsSet)
+            proofCursor.setCursorAtProofWorkStmt(qedStep,
+                PaConstants.FIELD_ID_REF);
     }
 
 //	public boolean hasIncompleteStmt() {
@@ -872,16 +826,13 @@ public class ProofWorksheet {
     public void posCursorAtLastIncompleteStmt() {
 
         ProofWorkStmt s;
-        int i                     = proofWorkStmtList.size();
+        int i = proofWorkStmtList.size();
         while (--i > 0) {
-            s                     =
-                (ProofWorkStmt)proofWorkStmtList.get(i);
+            s = (ProofWorkStmt)proofWorkStmtList.get(i);
 
             if (s.stmtIsIncomplete()) {
-                proofCursor.
-                    setCursorAtProofWorkStmt(
-                        s,
-                        PaConstants.FIELD_ID_REF);
+                proofCursor.setCursorAtProofWorkStmt(s,
+                    PaConstants.FIELD_ID_REF);
                 break;
             }
         }
@@ -895,34 +846,28 @@ public class ProofWorksheet {
     public void posCursorAtFirstIncompleteStmt() {
 
         ProofWorkStmt s;
-        Iterator i                = getProofWorkStmtListIterator();
+        final Iterator i = getProofWorkStmtListIterator();
         while (i.hasNext()) {
-            s                     = (ProofWorkStmt)i.next();
+            s = (ProofWorkStmt)i.next();
 
             if (s.stmtIsIncomplete()) {
-                proofCursor.
-                    setCursorAtProofWorkStmt(
-                        s,
-                        PaConstants.FIELD_ID_REF);
+                proofCursor.setCursorAtProofWorkStmt(s,
+                    PaConstants.FIELD_ID_REF);
                 break;
             }
         }
     }
 
     public void outputCursorInstrumentationIfEnabled() {
-        if (proofAsstPreferences.getOutputCursorInstrumentation()) {
-            messages.accumInfoMessage(
-                proofCursor.
-                    outputCursorInstrumentation(
-                        getErrorLabelIfPossible()));
-        }
+        if (proofAsstPreferences.getOutputCursorInstrumentation())
+            messages.accumInfoMessage(proofCursor
+                .outputCursorInstrumentation(getErrorLabelIfPossible()));
     }
 
     public String getErrorLabelIfPossible() {
-        String label              = getTheoremLabel();
-        if (label == null) {
+        final String label = getTheoremLabel();
+        if (label == null)
             return PaConstants.PA_UNKNOWN_THEOREM_LABEL;
-        }
         return label;
     }
 
@@ -932,14 +877,11 @@ public class ProofWorksheet {
      *  @return      String containing theorem label, may be null;
      */
     public String getTheoremLabel() {
-        if (headerStmt != null) {
+        if (headerStmt != null)
             return headerStmt.theoremLabel;
-        }
-        else {
+        else
             return null;
-        }
     }
-
 
     /**
      *  Searches up to an exclusive endpoint in the
@@ -954,23 +896,21 @@ public class ProofWorksheet {
      *  @return ProofStepStmt matching the formula or null
      *          if Not Found.
      */
-    public ProofStepStmt findMatchingStepFormula(
-                             Formula       searchFormula,
-                             ProofStepStmt exclusiveEndpointStep) {
+    public ProofStepStmt findMatchingStepFormula(final Formula searchFormula,
+        final ProofStepStmt exclusiveEndpointStep)
+    {
 
-        Iterator      iterator    = getProofWorkStmtListIterator();
+        final Iterator iterator = getProofWorkStmtListIterator();
         ProofWorkStmt o;
         ProofStepStmt matchStep;
         while (iterator.hasNext()) {
-            o                     = (ProofWorkStmt)iterator.next();
-            if (o == exclusiveEndpointStep) {
+            o = (ProofWorkStmt)iterator.next();
+            if (o == exclusiveEndpointStep)
                 break;
-            }
             if (o.isProofStep()) {
-                matchStep         = (ProofStepStmt)o;
-                if (matchStep.formula.equals(searchFormula)) {
+                matchStep = (ProofStepStmt)o;
+                if (matchStep.formula.equals(searchFormula))
                     return matchStep;
-                }
             }
         }
         return null;
@@ -984,50 +924,45 @@ public class ProofWorksheet {
      *  @param  renumberInterval is the number to add to each
      *          new step number. Commonly equal to 1.
      */
-    public void renumberProofSteps(int renumberInterval) {
+    public void renumberProofSteps(final int renumberInterval) {
 
-        Iterator       iterator   = getProofWorkStmtListIterator();
-        ProofWorkStmt  o;
+        final Iterator iterator = getProofWorkStmtListIterator();
+        ProofWorkStmt o;
 
-        ProofStepStmt  renumberProofStepStmt;
+        ProofStepStmt renumberProofStepStmt;
         HypothesisStep renumberHypothesisStep;
         DerivationStep renumberDerivationStep;
 
-        int            renumber   = 0;
-        String         renumberStep;
-        String         oldStep;
+        int renumber = 0;
+        String renumberStep;
+        String oldStep;
 
-        HashMap renumberHashMap   =
-            new HashMap(getProofWorkStmtListCnt() * 2);
+        final HashMap renumberHashMap = new HashMap(
+            getProofWorkStmtListCnt() * 2);
 
         while (iterator.hasNext()) {
-            o                     = (ProofWorkStmt)iterator.next();
-            if (!o.isProofStep()) {
+            o = (ProofWorkStmt)iterator.next();
+            if (!o.isProofStep())
                 continue;
-            }
 
             renumberProofStepStmt = (ProofStepStmt)o;
-            oldStep               = renumberProofStepStmt.step;
+            oldStep = renumberProofStepStmt.step;
 
-            renumber             += renumberInterval;
-            renumberStep          = Integer.toString(renumber);
+            renumber += renumberInterval;
+            renumberStep = Integer.toString(renumber);
 
-            if (!oldStep.equals(renumberStep) &&
-                !oldStep.equals(PaConstants.QED_STEP_NBR)) {
-                renumberHashMap.put(oldStep,
-                                    renumberStep);
-            }
+            if (!oldStep.equals(renumberStep)
+                && !oldStep.equals(PaConstants.QED_STEP_NBR))
+                renumberHashMap.put(oldStep, renumberStep);
 
-            //no attempt at polymorphism, just quick and dirty fix
+            // no attempt at polymorphism, just quick and dirty fix
             if (o.isHypothesisStep()) {
-                renumberHypothesisStep
-                                  = (HypothesisStep)o;
+                renumberHypothesisStep = (HypothesisStep)o;
                 renumberHypothesisStep.renum(renumberHashMap);
                 continue;
             }
             if (o.isDerivationStep()) {
-                renumberDerivationStep
-                                  = (DerivationStep)o;
+                renumberDerivationStep = (DerivationStep)o;
                 renumberDerivationStep.renum(renumberHashMap);
                 continue;
             }
@@ -1042,24 +977,21 @@ public class ProofWorksheet {
      *                         cursor.
 
      */
-    public void tmffReformat(boolean inputCursorStep) {
-        ProofWorkStmt o           = null;
+    public void tmffReformat(final boolean inputCursorStep) {
+        ProofWorkStmt o = null;
         if (inputCursorStep) {
-            if (proofInputCursor.cursorIsSet &&
-                (o = proofInputCursor.proofWorkStmt) != null) {
+            if (proofInputCursor.cursorIsSet
+                && (o = proofInputCursor.proofWorkStmt) != null)
                 o.tmffReformat();
-            }
         }
         else {
-            Iterator i            = getProofWorkStmtListIterator();
-            while (i.hasNext()) {
+            final Iterator i = getProofWorkStmtListIterator();
+            while (i.hasNext())
                 (o = (ProofWorkStmt)i.next()).tmffReformat();
-            }
         }
 
-        if (o == getQedStep()) {
+        if (o == getQedStep())
             doubleSpaceQedStep();
-        }
     }
 
     /**
@@ -1067,10 +999,9 @@ public class ProofWorksheet {
      *  the footer step has a blank line before it.
      */
     public void doubleSpaceQedStep() {
-        DerivationStep d          = getQedStep();
+        final DerivationStep d = getQedStep();
         if (d != null) {
-            d.stmtText.append(
-                PaConstants.PROOF_WORKSHEET_NEW_LINE);
+            d.stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
             d.lineCnt++;
         }
 
@@ -1097,58 +1028,43 @@ public class ProofWorksheet {
      *  @return DerivationStep added to the ProofWorksheet.
      */
     public DerivationStep addDerivStepForDeriveFeature(
-                                ArrayList      workVarList,
-                                Formula        formula,
-                                ParseTree      formulaParseTree,
-                                DerivationStep derivStep) {
+        final ArrayList workVarList, final Formula formula,
+        final ParseTree formulaParseTree, final DerivationStep derivStep)
+    {
 
-        String           generatedStep
-                                  =
-           Integer.toString(
-               generateNewDerivedStepNbr());
+        final String generatedStep = Integer
+            .toString(generateNewDerivedStepNbr());
 
         ProofStepStmt[] generatedHyp;
-        String[]        generatedHypStep;
+        String[] generatedHypStep;
 
-        boolean         generatedHypFldIncomplete
-                                  = false;
-        boolean         generatedFormulaIsIncomplete
-                                  = false;
+        boolean generatedHypFldIncomplete = false;
+        boolean generatedFormulaIsIncomplete = false;
 
         if (workVarList.size() > 0) {
-            generatedHyp          = new ProofStepStmt[1];
-            generatedHypStep      = new String[1];
-            generatedHypStep[0]   = PaConstants.DEFAULT_STMT_LABEL;
-            generatedHypFldIncomplete
-                                  = true;
-            generatedFormulaIsIncomplete
-                                  = true;
+            generatedHyp = new ProofStepStmt[1];
+            generatedHypStep = new String[1];
+            generatedHypStep[0] = PaConstants.DEFAULT_STMT_LABEL;
+            generatedHypFldIncomplete = true;
+            generatedFormulaIsIncomplete = true;
         }
         else {
-            generatedHyp          = new ProofStepStmt[0];
-            generatedHypStep      = new String[0];
+            generatedHyp = new ProofStepStmt[0];
+            generatedHypStep = new String[0];
         }
 
-        DerivationStep out        =
-            new DerivationStep(
-                this,
-                generatedStep,
-                generatedHyp,
-                generatedHypStep,
-                formula,
-                formulaParseTree,
-                generatedFormulaIsIncomplete,
-                generatedHypFldIncomplete,
-                true,  //generated by derive
-                workVarList);
+        final DerivationStep out = new DerivationStep(this, generatedStep,
+            generatedHyp, generatedHypStep, formula, formulaParseTree,
+            generatedFormulaIsIncomplete, generatedHypFldIncomplete, true, // generated
+                                                                           // by
+                                                                           // derive
+            workVarList);
 
-        for (int i = 0; i < proofWorkStmtList.size(); i++) {
+        for (int i = 0; i < proofWorkStmtList.size(); i++)
             if (proofWorkStmtList.get(i) == derivStep) {
-                proofWorkStmtList.add(i,
-                                      out);
+                proofWorkStmtList.add(i, out);
                 return out;
             }
-        }
 
         throw new IllegalArgumentException(
             PaConstants.ERRMSG_DERIVE_FEATURE_STEP_NOTFND_1);
@@ -1162,14 +1078,10 @@ public class ProofWorksheet {
      *  @return value of new greatestStepNbr.
      */
     public int generateNewDerivedStepNbr() {
-        updateNextGreatestStepNbr(
-            greatestStepNbr
-            +
-            PaConstants.GREATEST_STEP_NBR_INCREMENT_AMT);
+        updateNextGreatestStepNbr(greatestStepNbr
+            + PaConstants.GREATEST_STEP_NBR_INCREMENT_AMT);
         return greatestStepNbr;
     }
-
-
 
     /**
      *   Load the ProofWorksheet starting with the input token.
@@ -1226,426 +1138,302 @@ public class ProofWorksheet {
      *  @return      String token starting the next ProofWorksheet
      *           or null.
      */
-    public String loadWorksheet(String      nextToken,
-                                int         inputCursorPos,
-                                StepRequest stepRequestIn)
-                            throws IOException,
-                                   MMIOError,
-                                   ProofAsstException {
+    public String loadWorksheet(String nextToken, final int inputCursorPos,
+        final StepRequest stepRequestIn) throws IOException, MMIOError,
+        ProofAsstException
+    {
 
         /*  If StepSelectorDialog user chose an Assrt
             then we'll splice it into the relevant step
             (first occurrence), otherwise if user selected
             null, drop the StepRequest completely.
          */
-        boolean stepSelectorChoiceRequired
-                                  = false;
-        stepRequest               = stepRequestIn;
-        if (stepRequest            != null &&
-            stepRequest.request ==
-            PaConstants.STEP_REQUEST_SELECTOR_CHOICE) {
-            if (stepRequest.param1  == null) {
-                stepRequest           = null;
-            }
-            else {
-                stepSelectorChoiceRequired
-                                      = true;
-            }
-        }
+        boolean stepSelectorChoiceRequired = false;
+        stepRequest = stepRequestIn;
+        if (stepRequest != null
+            && stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_CHOICE)
+            if (stepRequest.param1 == null)
+                stepRequest = null;
+            else
+                stepSelectorChoiceRequired = true;
 
+        final ArrayList stepsWithLocalRefs = new ArrayList();
 
-        ArrayList stepsWithLocalRefs
-                                  = new ArrayList();
-
-        if (nextToken.length() == 0) {
-            triggerLoadStructureException(
-                PaConstants.ERRMSG_PROOF_EMPTY_1);
-        }
-        if (!nextToken.equals(PaConstants.HEADER_STMT_TOKEN)) {
-            triggerLoadStructureException(
-                PaConstants.ERRMSG_HDR_TOKEN_ERR_1
+        if (nextToken.length() == 0)
+            triggerLoadStructureException(PaConstants.ERRMSG_PROOF_EMPTY_1);
+        if (!nextToken.equals(PaConstants.HEADER_STMT_TOKEN))
+            triggerLoadStructureException(PaConstants.ERRMSG_HDR_TOKEN_ERR_1
                 + nextToken);
-        }
 
-        DelimitedTextParser stepHypRefParser =
-            new DelimitedTextParser();
-        stepHypRefParser.setParseDelimiter(
-            PaConstants.FIELD_DELIMITER_COLON);
+        final DelimitedTextParser stepHypRefParser = new DelimitedTextParser();
+        stepHypRefParser.setParseDelimiter(PaConstants.FIELD_DELIMITER_COLON);
         stepHypRefParser.setQuoterEnabled(false);
 
-        String  prefixField       = null;
-        String  stepField         = null;
-        String  hypField          = null;
-        String  refField          = null;
-        String  localRefField     = null;
-        String  extraField        = null;
-
-
+        String prefixField = null;
+        String stepField = null;
+        String hypField = null;
+        String refField = null;
+        String localRefField = null;
+        String extraField = null;
 
         stmtLoop: while (true) {
             if (nextToken.length() == 0) {
                 // eof
-                if (qedStep == null) {
-                    triggerLoadStructureException(
-                        PaConstants.ERRMSG_QED_MISSING_1
+                if (qedStep == null)
+                    triggerLoadStructureException(PaConstants.ERRMSG_QED_MISSING_1
                         + getErrorLabelIfPossible()
                         + PaConstants.ERRMSG_QED_MISSING_2);
-                }
-                if (footerStmt == null) {
-                    triggerLoadStructureException(
-                        PaConstants.ERRMSG_FOOTER_MISSING_1
+                if (footerStmt == null)
+                    triggerLoadStructureException(PaConstants.ERRMSG_FOOTER_MISSING_1
                         + getErrorLabelIfPossible()
                         + PaConstants.ERRMSG_FOOTER_MISSING_2);
-                }
                 break;
             }
 
-            if (nextToken.length() !=
-                proofTextTokenizer.getCurrentColumnNbr()) {
-                triggerLoadStructureException(
-                    PaConstants.ERRMSG_COL1_ERROR_1
+            if (nextToken.length() != proofTextTokenizer.getCurrentColumnNbr())
+                triggerLoadStructureException(PaConstants.ERRMSG_COL1_ERROR_1
                     + getErrorLabelIfPossible()
                     + PaConstants.ERRMSG_COL1_ERROR_2
                     + (int)proofTextTokenizer.getCurrentLineNbr()
-                    + PaConstants.ERRMSG_COL1_ERROR_3
-                    + nextToken);
-            }
+                    + PaConstants.ERRMSG_COL1_ERROR_3 + nextToken);
 
             if (nextToken.equals(PaConstants.HEADER_STMT_TOKEN)) {
-                if (headerStmt != null) {
-                    triggerLoadStructureException(
-                        PaConstants.ERRMSG_MULT_HDR_ERROR_1
+                if (headerStmt != null)
+                    triggerLoadStructureException(PaConstants.ERRMSG_MULT_HDR_ERROR_1
                         + getErrorLabelIfPossible()
                         + PaConstants.ERRMSG_MULT_HDR_ERROR_2);
-                }
-                headerStmt        = new HeaderStmt(this);
-                nextToken         = headerStmt.load(nextToken);
+                headerStmt = new HeaderStmt(this);
+                nextToken = headerStmt.load(nextToken);
                 proofWorkStmtList.add(headerStmt);
 
-                setInputCursorStmtIfHere(headerStmt,
-                                         inputCursorPos,
-                                         nextToken,
-                                         proofTextTokenizer);
+                setInputCursorStmtIfHere(headerStmt, inputCursorPos, nextToken,
+                    proofTextTokenizer);
                 continue stmtLoop;
             }
 
             if (nextToken.equals(PaConstants.FOOTER_STMT_TOKEN)) {
-                if (qedStep == null) {
-                    triggerLoadStructureException(
-                        PaConstants.ERRMSG_QED_MISSING2_1
+                if (qedStep == null)
+                    triggerLoadStructureException(PaConstants.ERRMSG_QED_MISSING2_1
                         + getErrorLabelIfPossible()
                         + PaConstants.ERRMSG_QED_MISSING2_2);
-                }
-                FooterStmt footerStmt
-                                  = new FooterStmt(this);
-                nextToken         = footerStmt.load(nextToken);
+                final FooterStmt footerStmt = new FooterStmt(this);
+                nextToken = footerStmt.load(nextToken);
                 proofWorkStmtList.add(footerStmt);
 
-                setInputCursorStmtIfHere(footerStmt,
-                                         inputCursorPos,
-                                         nextToken,
-                                         proofTextTokenizer);
+                setInputCursorStmtIfHere(footerStmt, inputCursorPos, nextToken,
+                    proofTextTokenizer);
                 break;
             }
 
-            if (nextToken.equals(
-                    PaConstants.GENERATED_PROOF_STMT_TOKEN)) {
-                GeneratedProofStmt x
-                                  = new GeneratedProofStmt(this);
-                nextToken         = x.load(nextToken);
+            if (nextToken.equals(PaConstants.GENERATED_PROOF_STMT_TOKEN)) {
+                final GeneratedProofStmt x = new GeneratedProofStmt(this);
+                nextToken = x.load(nextToken);
 
-                setInputCursorPosIfHere(inputCursorPos,
-                                        nextToken,
-                                        proofTextTokenizer);
+                setInputCursorPosIfHere(inputCursorPos, nextToken,
+                    proofTextTokenizer);
                 continue stmtLoop;
             }
 
-            if (nextToken.equals(
-                    PaConstants.DISTINCT_VARIABLES_STMT_TOKEN)) {
-                DistinctVariablesStmt x
-                                  = new DistinctVariablesStmt(this);
-                nextToken         = x.load(nextToken);
+            if (nextToken.equals(PaConstants.DISTINCT_VARIABLES_STMT_TOKEN)) {
+                final DistinctVariablesStmt x = new DistinctVariablesStmt(this);
+                nextToken = x.load(nextToken);
                 proofWorkStmtList.add(x);
                 ++dvStmtCnt;
 
-                setInputCursorStmtIfHere(x,
-                                         inputCursorPos,
-                                         nextToken,
-                                         proofTextTokenizer);
+                setInputCursorStmtIfHere(x, inputCursorPos, nextToken,
+                    proofTextTokenizer);
                 continue stmtLoop;
             }
 
-            int origStepHypRefLength  = nextToken.length();
+            final int origStepHypRefLength = nextToken.length();
 
-            prefixField           =
-                (nextToken.substring(0,1)).toLowerCase();
+            prefixField = nextToken.substring(0, 1).toLowerCase();
 
-            if (prefixField.equals(
-                    PaConstants.COMMENT_STMT_TOKEN_PREFIX)) {
-                CommentStmt x     = new CommentStmt(this);
-                nextToken         = x.load(nextToken);
+            if (prefixField.equals(PaConstants.COMMENT_STMT_TOKEN_PREFIX)) {
+                final CommentStmt x = new CommentStmt(this);
+                nextToken = x.load(nextToken);
                 proofWorkStmtList.add(x);
 
-                setInputCursorStmtIfHere(x,
-                                         inputCursorPos,
-                                         nextToken,
-                                         proofTextTokenizer);
+                setInputCursorStmtIfHere(x, inputCursorPos, nextToken,
+                    proofTextTokenizer);
                 continue stmtLoop;
             }
 
             // now work on ProofSteps, starting with step/hyp/ref
             // fields.
-            if (prefixField.equals(PaConstants.HYP_STEP_PREFIX)) {
-                stepHypRefParser.setParseString(
-                    nextToken.substring(1));
-            }
+            if (prefixField.equals(PaConstants.HYP_STEP_PREFIX))
+                stepHypRefParser.setParseString(nextToken.substring(1));
             else {
-                prefixField       = null;
-                stepHypRefParser.setParseString(
-                    nextToken);
+                prefixField = null;
+                stepHypRefParser.setParseString(nextToken);
             }
 
-            extraField            = null;
-            refField              = null;
-            localRefField         = null;
-            stepField             = stepHypRefParser.nextField();
+            extraField = null;
+            refField = null;
+            localRefField = null;
+            stepField = stepHypRefParser.nextField();
             if (stepField != null) {
-                hypField          = stepHypRefParser.nextField();
+                hypField = stepHypRefParser.nextField();
                 if (hypField != null) {
-                    if (hypField.length() == 0) {
-                        hypField  = null;
-                    }
-                    refField      = stepHypRefParser.nextField();
+                    if (hypField.length() == 0)
+                        hypField = null;
+                    refField = stepHypRefParser.nextField();
                     if (refField != null) {
-                        if (refField.length() == 0) {
-                            refField
-                                  = null;
+                        if (refField.length() == 0)
+                            refField = null;
+                        else if (refField.charAt(0) == PaConstants.LOCAL_REF_ESCAPE_CHAR)
+                        {
+                            if (refField.length() > 1)
+                                localRefField = refField.substring(1);
+                            else
+                                localRefField = "";
+                            refField = null;
                         }
-                        else {
-                            if (refField.charAt(0) ==
-                               PaConstants.LOCAL_REF_ESCAPE_CHAR) {
-                                if (refField.length() > 1) {
-                                    localRefField
-                                  = refField.substring(1);
-                                }
-                                else {
-                                    localRefField
-                                  = "";
-                                }
-                                refField
-                                  = null;
-                            }
-                        }
-                        extraField
-                                  = stepHypRefParser.nextField();
+                        extraField = stepHypRefParser.nextField();
                     }
                 }
-                stepField             =
-                    validateStepField(prefixField, //throws exception
-                                      stepField);
+                stepField = validateStepField(prefixField, // throws exception
+                    stepField);
             }
-            else {
-                triggerLoadStructureException(
-                    PaConstants.ERRMSG_SHR_BAD_1
-                    + getErrorLabelIfPossible()
-                    + PaConstants.ERRMSG_SHR_BAD_2
+            else
+                triggerLoadStructureException(PaConstants.ERRMSG_SHR_BAD_1
+                    + getErrorLabelIfPossible() + PaConstants.ERRMSG_SHR_BAD_2
                     + (int)proofTextTokenizer.getCurrentLineNbr()
-                    + PaConstants.ERRMSG_SHR_BAD_3
-                    + nextToken);
-            }
+                    + PaConstants.ERRMSG_SHR_BAD_3 + nextToken);
 
-            if (extraField != null) {
-                triggerLoadStructureException(
-                    PaConstants.ERRMSG_SHR_BAD2_1
-                    + getErrorLabelIfPossible()
-                    + PaConstants.ERRMSG_SHR_BAD2_2
-                    + stepField
-                    + PaConstants.ERRMSG_SHR_BAD2_3
+            if (extraField != null)
+                triggerLoadStructureException(PaConstants.ERRMSG_SHR_BAD2_1
+                    + getErrorLabelIfPossible() + PaConstants.ERRMSG_SHR_BAD2_2
+                    + stepField + PaConstants.ERRMSG_SHR_BAD2_3
                     + (int)proofTextTokenizer.getCurrentLineNbr()
-                    + PaConstants.ERRMSG_SHR_BAD2_4
-                    + nextToken);
-            }
+                    + PaConstants.ERRMSG_SHR_BAD2_4 + nextToken);
 
-            int lineStartCharNbr  =
-                (int)proofTextTokenizer.getCurrentCharNbr();
+            final int lineStartCharNbr = (int)proofTextTokenizer
+                .getCurrentCharNbr();
 
             if (prefixField != null) {
-                if (hypField != null) {
-                    triggerLoadStructureException(
-                        PaConstants.ERRMSG_HYP_HAS_HYP_1
+                if (hypField != null)
+                    triggerLoadStructureException(PaConstants.ERRMSG_HYP_HAS_HYP_1
                         + getErrorLabelIfPossible()
                         + PaConstants.ERRMSG_HYP_HAS_HYP_2
                         + stepField
                         + PaConstants.ERRMSG_HYP_HAS_HYP_3);
-                }
 
-                if (localRefField != null) {
-                    triggerLoadStructureException(
-                        PaConstants.ERRMSG_HYP_HAS_LOCAL_REF_1
+                if (localRefField != null)
+                    triggerLoadStructureException(PaConstants.ERRMSG_HYP_HAS_LOCAL_REF_1
                         + getErrorLabelIfPossible()
                         + PaConstants.ERRMSG_HYP_HAS_LOCAL_REF_2
                         + stepField
                         + PaConstants.ERRMSG_HYP_HAS_LOCAL_REF_3);
-                }
 
-                if (qedStep != null) {
-                    triggerLoadStructureException(
-                        PaConstants.ERRMSG_QED_NOT_END_1
+                if (qedStep != null)
+                    triggerLoadStructureException(PaConstants.ERRMSG_QED_NOT_END_1
                         + getErrorLabelIfPossible()
                         + PaConstants.ERRMSG_QED_NOT_END_2
                         + stepField
                         + PaConstants.ERRMSG_QED_NOT_END_3);
-                }
-                if (stepSelectorChoiceRequired &&
-                    stepField.equals(stepRequest.step)) {
-                    triggerLoadStructureException(
-                        PaConstants.ERRMSG_HYP_HAS_SELECTOR_CHOICE_1
+                if (stepSelectorChoiceRequired
+                    && stepField.equals(stepRequest.step))
+                    triggerLoadStructureException(PaConstants.ERRMSG_HYP_HAS_SELECTOR_CHOICE_1
                         + getErrorLabelIfPossible()
                         + PaConstants.ERRMSG_HYP_HAS_SELECTOR_CHOICE_2
                         + stepField
-                        + PaConstants.ERRMSG_HYP_HAS_SELECTOR_CHOICE_3
-                        );
-                }
-                HypothesisStep x  = new HypothesisStep(this);
-                nextToken         =
-                    x.loadHypothesisStep(origStepHypRefLength,
-                                         lineStartCharNbr,
-                                         stepField,
-                                         refField);
+                        + PaConstants.ERRMSG_HYP_HAS_SELECTOR_CHOICE_3);
+                final HypothesisStep x = new HypothesisStep(this);
+                nextToken = x.loadHypothesisStep(origStepHypRefLength,
+                    lineStartCharNbr, stepField, refField);
                 proofWorkStmtList.add(x);
                 ++hypStepCnt;
 
-                setInputCursorStmtIfHere(x,
-                                         inputCursorPos,
-                                         nextToken,
-                                         proofTextTokenizer);
+                setInputCursorStmtIfHere(x, inputCursorPos, nextToken,
+                    proofTextTokenizer);
                 continue stmtLoop;
             }
 
             if (stepField.equals(PaConstants.QED_STEP_NBR)) {
-                if (qedStep != null) {
-                    triggerLoadStructureException(
-                        PaConstants.ERRMSG_MULT_QED_ERROR_1
+                if (qedStep != null)
+                    triggerLoadStructureException(PaConstants.ERRMSG_MULT_QED_ERROR_1
                         + getErrorLabelIfPossible()
                         + PaConstants.ERRMSG_MULT_QED_ERROR_2
                         + stepField
                         + PaConstants.ERRMSG_MULT_QED_ERROR_3);
-                }
 
-                if (localRefField != null) {
-                    triggerLoadStructureException(
-                        PaConstants.ERRMSG_QED_HAS_LOCAL_REF_1
+                if (localRefField != null)
+                    triggerLoadStructureException(PaConstants.ERRMSG_QED_HAS_LOCAL_REF_1
                         + getErrorLabelIfPossible()
                         + PaConstants.ERRMSG_QED_HAS_LOCAL_REF_2
                         + stepField
                         + PaConstants.ERRMSG_QED_HAS_LOCAL_REF_3);
+
+                if (stepSelectorChoiceRequired
+                    && stepField.equals(stepRequest.step))
+                {
+                    refField = ((Assrt)stepRequest.param1).getLabel();
+                    stepSelectorChoiceRequired = false;
+                    stepRequest = null; // done, so null it.
                 }
 
-                if (stepSelectorChoiceRequired &&
-                    stepField.equals(stepRequest.step)) {
-                    refField      =
-                        ((Assrt)(stepRequest.param1)).getLabel();
-                    stepSelectorChoiceRequired
-                                  = false;
-                    stepRequest   = null; //done, so null it.
-                }
-
-                qedStep           = new DerivationStep(this);
-                nextToken         =
-                    qedStep.loadDerivationStep(origStepHypRefLength,
-                                               lineStartCharNbr,
-                                               stepField,
-                                               hypField,
-                                               refField);
+                qedStep = new DerivationStep(this);
+                nextToken = qedStep.loadDerivationStep(origStepHypRefLength,
+                    lineStartCharNbr, stepField, hypField, refField);
                 proofWorkStmtList.add(qedStep);
 
-                setInputCursorStmtIfHere(qedStep,
-                                         inputCursorPos,
-                                         nextToken,
-                                         proofTextTokenizer);
+                setInputCursorStmtIfHere(qedStep, inputCursorPos, nextToken,
+                    proofTextTokenizer);
             }
             else {
-                if (qedStep != null) {
-                    triggerLoadStructureException(
-                        PaConstants.ERRMSG_QED_NOT_END2_1
+                if (qedStep != null)
+                    triggerLoadStructureException(PaConstants.ERRMSG_QED_NOT_END2_1
                         + getErrorLabelIfPossible()
                         + PaConstants.ERRMSG_QED_NOT_END2_2
                         + stepField
                         + PaConstants.ERRMSG_QED_NOT_END2_3);
-                }
 
-                DerivationStep x  = new DerivationStep(this);
+                final DerivationStep x = new DerivationStep(this);
 
                 if (localRefField != null) {
 
-                    if (stepSelectorChoiceRequired &&
-                        stepField.equals(stepRequest.step)) {
-                        triggerLoadStructureException(
-                            PaConstants.
-                                ERRMSG_LOCAL_REF_HAS_SELECTOR_CHOICE_1
+                    if (stepSelectorChoiceRequired
+                        && stepField.equals(stepRequest.step))
+                        triggerLoadStructureException(PaConstants.ERRMSG_LOCAL_REF_HAS_SELECTOR_CHOICE_1
                             + getErrorLabelIfPossible()
-                            + PaConstants.
-                                ERRMSG_LOCAL_REF_HAS_SELECTOR_CHOICE_2
+                            + PaConstants.ERRMSG_LOCAL_REF_HAS_SELECTOR_CHOICE_2
                             + stepField
-                            + PaConstants.
-                                ERRMSG_LOCAL_REF_HAS_SELECTOR_CHOICE_3
-                            );
-                    }
+                            + PaConstants.ERRMSG_LOCAL_REF_HAS_SELECTOR_CHOICE_3);
 
-                    nextToken     =
-                        x.loadLocalRefDerivationStep(
-                                         origStepHypRefLength,
-                                         lineStartCharNbr,
-                                         stepField,
-                                         hypField,
-                                         localRefField);
+                    nextToken = x.loadLocalRefDerivationStep(
+                        origStepHypRefLength, lineStartCharNbr, stepField,
+                        hypField, localRefField);
                     stepsWithLocalRefs.add(x);
                 }
                 else {
 
-                    if (stepSelectorChoiceRequired &&
-                        stepField.equals(stepRequest.step)) {
-                        refField      =
-                            ((Assrt)(stepRequest.param1)).getLabel();
-                        stepSelectorChoiceRequired
-                                      = false;
-                        stepRequest   = null; //done, so null it.
+                    if (stepSelectorChoiceRequired
+                        && stepField.equals(stepRequest.step))
+                    {
+                        refField = ((Assrt)stepRequest.param1).getLabel();
+                        stepSelectorChoiceRequired = false;
+                        stepRequest = null; // done, so null it.
                     }
 
-                    nextToken     =
-                        x.loadDerivationStep(
-                                         origStepHypRefLength,
-                                         lineStartCharNbr,
-                                         stepField,
-                                         hypField,
-                                         refField);
+                    nextToken = x.loadDerivationStep(origStepHypRefLength,
+                        lineStartCharNbr, stepField, hypField, refField);
                 }
                 proofWorkStmtList.add(x);
 
-                if (setInputCursorStmtIfHere(x,
-                                         inputCursorPos,
-                                         nextToken,
-                                         proofTextTokenizer)) {
-                    if (localRefField != null &&
-                        stepRequest   != null &&
-                        stepRequest.request == PaConstants.
-                            STEP_REQUEST_SELECTOR_SEARCH) {
-                        triggerLoadStructureException(
-                            PaConstants.
-                                ERRMSG_LOCAL_REF_HAS_SELECTOR_SEARCH_1
+                if (setInputCursorStmtIfHere(x, inputCursorPos, nextToken,
+                    proofTextTokenizer))
+                    if (localRefField != null
+                        && stepRequest != null
+                        && stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH)
+                        triggerLoadStructureException(PaConstants.ERRMSG_LOCAL_REF_HAS_SELECTOR_SEARCH_1
                             + getErrorLabelIfPossible()
-                            + PaConstants.
-                                ERRMSG_LOCAL_REF_HAS_SELECTOR_SEARCH_2
+                            + PaConstants.ERRMSG_LOCAL_REF_HAS_SELECTOR_SEARCH_2
                             + stepField
-                            + PaConstants.
-                                ERRMSG_LOCAL_REF_HAS_SELECTOR_SEARCH_3
-                            );
-                    }
-                }
+                            + PaConstants.ERRMSG_LOCAL_REF_HAS_SELECTOR_SEARCH_3);
             }
         }
         // end of stmtLoop! oy.
-
 
         /*
          *  =====================================================
@@ -1653,64 +1441,47 @@ public class ProofWorksheet {
          *  =====================================================
          */
 
-        if (stepRequest != null     &&
-            stepRequest.request == PaConstants.
-                                    STEP_REQUEST_SELECTOR_SEARCH) {
-            if (!proofInputCursor.cursorIsSet          ||
-                proofInputCursor.proofWorkStmt == null ||
-                !proofInputCursor.proofWorkStmt.isDerivationStep()) {
-                triggerLoadStructureException(
-                    PaConstants.ERRMSG_SELECTOR_SEARCH_STEP_NOTFND_1
+        if (stepRequest != null
+            && stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH)
+        {
+            if (!proofInputCursor.cursorIsSet
+                || proofInputCursor.proofWorkStmt == null
+                || !proofInputCursor.proofWorkStmt.isDerivationStep())
+                triggerLoadStructureException(PaConstants.ERRMSG_SELECTOR_SEARCH_STEP_NOTFND_1
                     + getErrorLabelIfPossible()
-                    + PaConstants.ERRMSG_SELECTOR_SEARCH_STEP_NOTFND_2
-                    );
-            }
-            stepRequest.step      =
-                ((DerivationStep)
-                    proofInputCursor.
-                        proofWorkStmt).
-                            step;
-            stepRequest.param1    = proofInputCursor.proofWorkStmt;
+                    + PaConstants.ERRMSG_SELECTOR_SEARCH_STEP_NOTFND_2);
+            stepRequest.step = ((DerivationStep)proofInputCursor.proofWorkStmt).step;
+            stepRequest.param1 = proofInputCursor.proofWorkStmt;
         }
 
-        if (stepSelectorChoiceRequired) {
-            triggerLoadStructureException(
-                PaConstants.ERRMSG_SELECTOR_CHOICE_STEP_NOTFND_1
+        if (stepSelectorChoiceRequired)
+            triggerLoadStructureException(PaConstants.ERRMSG_SELECTOR_CHOICE_STEP_NOTFND_1
                 + getErrorLabelIfPossible()
                 + PaConstants.ERRMSG_SELECTOR_CHOICE_STEP_NOTFND_2);
-        }
 
-        if (stepsWithLocalRefs.size() > 0) {
+        if (stepsWithLocalRefs.size() > 0)
             makeLocalRefRevisionsToWorksheet(stepsWithLocalRefs);
-        }
 
         loadWorksheetStmtArrays();
 
-        if (dvStmtCnt > 0) {
+        if (dvStmtCnt > 0)
             updateComboFrameDjVars();
-        }
 
         /**
          *   Verify correct number of hyp proof steps
          *   entered for theorem, regard it as a
          *   structural defect if the count is wrong!!!
          */
-        if (!isNewTheorem()
-            &&
-            theorem.getLogHypArrayLength() != hypStepCnt) {
-
-            throw new ProofAsstException(
-                1,                                            //line
-                (PaConstants.PROOF_TEXT_HEADER_1.length() + 1), //col
-                -1,                                           //char
+        if (!isNewTheorem() && theorem.getLogHypArrayLength() != hypStepCnt)
+            throw new ProofAsstException(1, // line
+                PaConstants.PROOF_TEXT_HEADER_1.length() + 1, // col
+                -1, // char
                 PaConstants.ERRMSG_THRM_NBR_HYPS_ERROR_1
-                + getErrorLabelIfPossible()
-                + PaConstants.ERRMSG_THRM_NBR_HYPS_ERROR_2
-                + hypStepCnt
-                + PaConstants.ERRMSG_THRM_NBR_HYPS_ERROR_3
-                + theorem.getLogHypArrayLength()
-                + PaConstants.ERRMSG_THRM_NBR_HYPS_ERROR_4);
-        }
+                    + getErrorLabelIfPossible()
+                    + PaConstants.ERRMSG_THRM_NBR_HYPS_ERROR_2 + hypStepCnt
+                    + PaConstants.ERRMSG_THRM_NBR_HYPS_ERROR_3
+                    + theorem.getLogHypArrayLength()
+                    + PaConstants.ERRMSG_THRM_NBR_HYPS_ERROR_4);
 
         /**
          *  Compute level numbers for the proof steps.
@@ -1721,52 +1492,33 @@ public class ProofWorksheet {
 
     }
 
-
-    private boolean setInputCursorStmtIfHere(
-                        ProofWorkStmt      proofWorkStmt,
-                        int                inputCursorPos,
-                        String             nextToken,
-                        Tokenizer          proofTextTokenizer) {
+    private boolean setInputCursorStmtIfHere(final ProofWorkStmt proofWorkStmt,
+        final int inputCursorPos, final String nextToken,
+        final Tokenizer proofTextTokenizer)
+    {
         if (inputCursorPos == -1
-            ||
-            proofInputCursor.cursorIsSet
-            ||
-            inputCursorPos >
-            (proofTextTokenizer.getCurrentCharNbr()
-             - nextToken.length())
-            ) {
+            || proofInputCursor.cursorIsSet
+            || inputCursorPos > proofTextTokenizer.getCurrentCharNbr()
+                - nextToken.length())
             return false;
-        }
         else {
-            proofInputCursor.
-                setCursorAtProofWorkStmt(
-                    proofWorkStmt,
-                    PaConstants.FIELD_ID_REF);
+            proofInputCursor.setCursorAtProofWorkStmt(proofWorkStmt,
+                PaConstants.FIELD_ID_REF);
             return true;
         }
     }
 
-    private void setInputCursorPosIfHere(
-                        int                inputCursorPos,
-                        String             nextToken,
-                        Tokenizer          proofTextTokenizer) {
+    private void setInputCursorPosIfHere(final int inputCursorPos,
+        final String nextToken, final Tokenizer proofTextTokenizer)
+    {
         if (inputCursorPos == -1
-            ||
-            proofInputCursor.cursorIsSet
-            ||
-            inputCursorPos >
-            (proofTextTokenizer.getCurrentCharNbr()
-             - nextToken.length())
-            ) {
-        }
-        else {
-            proofInputCursor.
-                setCursorAtCaret(inputCursorPos,
-                                 -1,
-                                 -1);
-        }
+            || proofInputCursor.cursorIsSet
+            || inputCursorPos > proofTextTokenizer.getCurrentCharNbr()
+                - nextToken.length())
+        {}
+        else
+            proofInputCursor.setCursorAtCaret(inputCursorPos, -1, -1);
     }
-
 
     /*
      *  Modify each Hyp "pointers" to a step with a localRef
@@ -1774,42 +1526,33 @@ public class ProofWorksheet {
      *  delete each localRef step from the ProofWorksheet.
      */
     private void makeLocalRefRevisionsToWorksheet(
-                            ArrayList stepsWithLocalRefs) {
-        ProofWorkStmt  x;
+        final ArrayList stepsWithLocalRefs)
+    {
+        ProofWorkStmt x;
         DerivationStep dI;
         DerivationStep dJ;
-        boolean        stepUpdated;
+        boolean stepUpdated;
 
-        loopI: for (int i = proofWorkStmtList.size() - 1;
-                    i > 0;
-                    i--) {
-            x                     =
-                (ProofWorkStmt)proofWorkStmtList.get(i);
+        loopI: for (int i = proofWorkStmtList.size() - 1; i > 0; i--) {
+            x = (ProofWorkStmt)proofWorkStmtList.get(i);
 
-            if (!x.isDerivationStep()) {
+            if (!x.isDerivationStep())
                 continue loopI;
-            }
-            dI                    = (DerivationStep)x;
+            dI = (DerivationStep)x;
 
-            if (dI.hyp.length == 0 ||
-                dI.localRef != null) {
+            if (dI.hyp.length == 0 || dI.localRef != null)
                 continue loopI;
-            }
 
-            stepUpdated           = false;
+            stepUpdated = false;
             for (int j = stepsWithLocalRefs.size() - 1; j >= 0; j--) {
-                dJ                =
-                    (DerivationStep)stepsWithLocalRefs.get(j);
+                dJ = (DerivationStep)stepsWithLocalRefs.get(j);
 
-                loopK: for (int k = dI.hyp.length - 1; k >= 0; k--) {
+                loopK: for (int k = dI.hyp.length - 1; k >= 0; k--)
                     if (dI.hyp[k] == dJ) {
-                        stepUpdated
-                                  = true;
-                        dI.hypStep[k]
-                                  = dJ.localRef.step;
+                        stepUpdated = true;
+                        dI.hypStep[k] = dJ.localRef.step;
                         dI.hyp[k] = dJ.localRef;
                     }
-                }
             }
             if (stepUpdated) {
 
@@ -1819,20 +1562,15 @@ public class ProofWorksheet {
             }
         }
 
-        for (int j = stepsWithLocalRefs.size() - 1; j >= 0; j--) {
-            removeFromProofWorkStmtList(
-                (ProofWorkStmt)stepsWithLocalRefs.
-                    get(j));
-        }
+        for (int j = stepsWithLocalRefs.size() - 1; j >= 0; j--)
+            removeFromProofWorkStmtList((ProofWorkStmt)stepsWithLocalRefs
+                .get(j));
     }
 
     // fix the cursor: localRef step going byebye!
-    private void removeFromProofWorkStmtList(ProofWorkStmt x) {
-        if (proofInputCursor.cursorIsSet &&
-            x == proofInputCursor.proofWorkStmt) {
-            proofInputCursor.proofWorkStmt
-                              = null;
-        }
+    private void removeFromProofWorkStmtList(final ProofWorkStmt x) {
+        if (proofInputCursor.cursorIsSet && x == proofInputCursor.proofWorkStmt)
+            proofInputCursor.proofWorkStmt = null;
         proofWorkStmtList.remove(x);
     }
 
@@ -1848,23 +1586,16 @@ public class ProofWorksheet {
         ProofWorkStmt s;
 
         for (int i = proofWorkStmtList.size() - 1; i > 0; i--) {
-            s                     =
-                (ProofWorkStmt)proofWorkStmtList.get(i);
+            s = (ProofWorkStmt)proofWorkStmtList.get(i);
             if (s == qedStep) {
-                int stepIndex     = i;
+                int stepIndex = i;
                 while (true) {
-                    if (s.isDerivationStep()) {
-                        ((DerivationStep)s).
-                            loadDerivationStepHypLevels();
-                    }
-                    if (--stepIndex > 0) {
-                        s         =
-                            (ProofWorkStmt)proofWorkStmtList.
-                                get(stepIndex);
-                    }
-                    else {
+                    if (s.isDerivationStep())
+                        ((DerivationStep)s).loadDerivationStepHypLevels();
+                    if (--stepIndex > 0)
+                        s = (ProofWorkStmt)proofWorkStmtList.get(stepIndex);
+                    else
                         return;
-                    }
                 }
             }
         }
@@ -1895,32 +1626,27 @@ public class ProofWorksheet {
      *  @param  messages Messages object.
      *  @return      Proof Error Message Text area as String.
      */
-    public static String getOutputMessageText(Messages messages) {
+    public static String getOutputMessageText(final Messages messages) {
 
-        if (messages.getErrorMessageCnt() == 0 &&
-            messages.getInfoMessageCnt() == 0) {
+        if (messages.getErrorMessageCnt() == 0
+            && messages.getInfoMessageCnt() == 0)
             return null;
-        }
 
-        StringBuffer sb           =
-            new StringBuffer(
-                (messages.getErrorMessageCnt() +
-                 messages.getInfoMessageCnt())
-                 * 80); //guessing average message length
-        String[] msgArray         =
-            messages.getErrorMessageArray();
-        int msgCount              =
-            messages.getErrorMessageCnt();
+        final StringBuffer sb = new StringBuffer(
+            (messages.getErrorMessageCnt() + messages.getInfoMessageCnt()) * 80); // guessing
+                                                                                  // average
+                                                                                  // message
+                                                                                  // length
+        String[] msgArray = messages.getErrorMessageArray();
+        int msgCount = messages.getErrorMessageCnt();
         for (int i = 0; i < msgCount; i++) {
             sb.append(msgArray[i]);
             sb.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
             sb.append(PaConstants.ERROR_TEXT_SPACER_LINE);
             sb.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
         }
-        msgArray                  =
-            messages.getInfoMessageArray();
-        msgCount                  =
-            messages.getInfoMessageCnt();
+        msgArray = messages.getInfoMessageArray();
+        msgCount = messages.getInfoMessageCnt();
         for (int i = 0; i < msgCount; i++) {
             sb.append(msgArray[i]);
             sb.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
@@ -1942,13 +1668,11 @@ public class ProofWorksheet {
      *  @return      Proof Text area as String.
      */
     public String getOutputProofText() {
-        if (hasStructuralErrors()) {
+        if (hasStructuralErrors())
             return null;
-        }
 
-        StringBuffer sb           =
-            new StringBuffer(proofWorkStmtList.size() * 80);
-        Iterator iterator         = proofWorkStmtList.iterator();
+        final StringBuffer sb = new StringBuffer(proofWorkStmtList.size() * 80);
+        final Iterator iterator = proofWorkStmtList.iterator();
         ProofWorkStmt x;
         while (iterator.hasNext()) {
             x = (ProofWorkStmt)iterator.next();
@@ -1964,14 +1688,11 @@ public class ProofWorksheet {
      *
      *  @param rpnProof Proof Stmt array.
      */
-    public void addGeneratedProofStmt(Stmt[] rpnProof) {
-        GeneratedProofStmt x =
-            new GeneratedProofStmt(this,
-                                   rpnProof);
-        //add just before footer
-        proofWorkStmtList.add((proofWorkStmtList.size() - 1),
-                               x);
-        generatedProofStmt        = x;
+    public void addGeneratedProofStmt(final Stmt[] rpnProof) {
+        final GeneratedProofStmt x = new GeneratedProofStmt(this, rpnProof);
+        // add just before footer
+        proofWorkStmtList.add(proofWorkStmtList.size() - 1, x);
+        generatedProofStmt = x;
     }
 
     /**
@@ -2023,109 +1744,78 @@ public class ProofWorksheet {
      */
     public void generateAndAddDjVarsStmts() {
 
-        DjVars[] diffDvArray      =
-            DjVars.sortAndCombineDvListOfLists(
-                proofSoftDjVarsErrorList);
+        final DjVars[] diffDvArray = DjVars
+            .sortAndCombineDvListOfLists(proofSoftDjVarsErrorList);
 
         DjVars[] replDvArray;
-        if (proofAsstPreferences.
-                getDjVarsSoftErrorsGenerateNew()) {
+        if (proofAsstPreferences.getDjVarsSoftErrorsGenerateNew())
             // don't use existing $d's if GenerateNew
-            replDvArray           = diffDvArray;
-        }
-        else {
-            replDvArray           =
-                DjVars.sortAndCombineDvArrays(
-                    comboFrame.djVarsArray,
-                    diffDvArray);
-        }
+            replDvArray = diffDvArray;
+        else
+            replDvArray = DjVars.sortAndCombineDvArrays(comboFrame.djVarsArray,
+                diffDvArray);
 
         ArrayList dvGroups1;
-        if (proofAsstPreferences.
-                getDjVarsSoftErrorsGenerateDiffs()) {
+        if (proofAsstPreferences.getDjVarsSoftErrorsGenerateDiffs())
+            dvGroups1 = MandFrame.consolidateDvGroups(diffDvArray);
+        else
+            dvGroups1 = MandFrame.consolidateDvGroups(replDvArray);
 
-            dvGroups1             =
-                MandFrame.consolidateDvGroups(
-                    diffDvArray);
+        final ArrayList dvGroups = DistinctVariablesStmt
+            .eliminateDvGroupsAlreadyPresent(dvStmtArray, dvGroups1);
 
-        }
-        else {
-            dvGroups1             =
-                MandFrame.consolidateDvGroups(
-                    replDvArray);
-        }
+        final int newDvStmtCnt = dvStmtCnt + dvGroups.size();
 
-        ArrayList dvGroups        =
-            DistinctVariablesStmt.
-                eliminateDvGroupsAlreadyPresent(
-                    dvStmtArray,
-                    dvGroups1);
+        final DistinctVariablesStmt[] newDvStmtArray = new DistinctVariablesStmt[newDvStmtCnt];
 
-        int newDvStmtCnt          = dvStmtCnt +
-                                    dvGroups.size();
-
-        DistinctVariablesStmt[] newDvStmtArray
-                                  =
-            new DistinctVariablesStmt[newDvStmtCnt];
-
-        int loadIndex             = 0;
+        int loadIndex = 0;
         while (loadIndex < dvStmtArray.length) {
-            newDvStmtArray[loadIndex]
-                              = dvStmtArray[loadIndex];
+            newDvStmtArray[loadIndex] = dvStmtArray[loadIndex];
             ++loadIndex;
-        } //ok, now create the rest...
+        } // ok, now create the rest...
 
         DistinctVariablesStmt x;
-        Iterator iterator         = dvGroups.iterator();
+        final Iterator iterator = dvGroups.iterator();
         while (iterator.hasNext()) {
-            x                     =
-                new DistinctVariablesStmt(
-                    this,
-                    (ArrayList)iterator.next());
+            x = new DistinctVariablesStmt(this, (ArrayList)iterator.next());
 
-            //add just before footer
-            proofWorkStmtList.add((proofWorkStmtList.size() - 1),
-                                  x);
+            // add just before footer
+            proofWorkStmtList.add(proofWorkStmtList.size() - 1, x);
 
-            newDvStmtArray[loadIndex++]
-                                  = x;
+            newDvStmtArray[loadIndex++] = x;
         }
 
-        dvStmtCnt                 = newDvStmtCnt;
-        dvStmtArray               = newDvStmtArray;
-        comboFrame.djVarsArray    = replDvArray;
+        dvStmtCnt = newDvStmtCnt;
+        dvStmtArray = newDvStmtArray;
+        comboFrame.djVarsArray = replDvArray;
     }
-
 
     public Cnst getProvableLogicStmtTyp() {
-        return (grammar.getProvableLogicStmtTypArray())[0];
+        return grammar.getProvableLogicStmtTypArray()[0];
     }
 
-    public ProofWorkStmt findFirstMatchingRefOrStep(String localRef) {
-        Iterator iterator         = proofWorkStmtList.iterator();
+    public ProofWorkStmt findFirstMatchingRefOrStep(final String localRef) {
+        final Iterator iterator = proofWorkStmtList.iterator();
         ProofWorkStmt x;
         while (iterator.hasNext()) {
             x = (ProofWorkStmt)iterator.next();
-            if (x.hasMatchingRefLabel(localRef) ||
-                x.hasMatchingStepNbr(localRef)) {
+            if (x.hasMatchingRefLabel(localRef)
+                || x.hasMatchingStepNbr(localRef))
                 return x;
-            }
         }
         return null;
     }
 
-    public ProofWorkStmt findMatchingStepNbr(String newStepNbr) {
-        Iterator iterator         = proofWorkStmtList.iterator();
+    public ProofWorkStmt findMatchingStepNbr(final String newStepNbr) {
+        final Iterator iterator = proofWorkStmtList.iterator();
         ProofWorkStmt x;
         while (iterator.hasNext()) {
             x = (ProofWorkStmt)iterator.next();
-            if (x.hasMatchingStepNbr(newStepNbr)) {
+            if (x.hasMatchingStepNbr(newStepNbr))
                 return x;
-            }
         }
         return null;
     }
-
 
     /**
      *  Load the combo frame and var array object
@@ -2147,344 +1837,263 @@ public class ProofWorksheet {
      *  it would be redundant.)
      */
     public void loadComboFrameAndVarMap() {
-        if (isNewTheorem()) {
-            comboFrame            =
-                new MandFrame(
-                        (ScopeDef)
-                            (logicalSystem.getScopeDefList(
-                                )).get(0),
-                        getMaxSeq());
-        }
-        else {
-            comboFrame            =
-                new MandFrame(theorem.getMandFrame(),
-                              theorem.getOptFrame());
-
-        }
-        comboVarMap               = comboFrame.getVarMap();
+        if (isNewTheorem())
+            comboFrame = new MandFrame((ScopeDef)logicalSystem
+                .getScopeDefList().get(0), getMaxSeq());
+        else
+            comboFrame = new MandFrame(theorem.getMandFrame(),
+                theorem.getOptFrame());
+        comboVarMap = comboFrame.getVarMap();
     }
 
     private void updateComboFrameDjVars() {
-        Var[][] dvGroupArray  = new Var[dvStmtCnt][];
-        for (int i = 0; i < dvStmtCnt; i++) {
-            dvGroupArray[i]   = dvStmtArray[i].getDv();
-        }
+        final Var[][] dvGroupArray = new Var[dvStmtCnt][];
+        for (int i = 0; i < dvStmtCnt; i++)
+            dvGroupArray[i] = dvStmtArray[i].getDv();
         comboFrame.addDjVarGroups(dvGroupArray);
     }
 
-
-    private String validateStepField(String prefixField,
-                                     String stepField)
-                                         throws ProofAsstException {
-        if (stepField.equals("") ||
-            stepField.equals(PaConstants.DEFAULT_STMT_LABEL)) {
-            triggerLoadStructureException(
-                PaConstants.ERRMSG_STEP_NBR_MISSING_1
+    private String validateStepField(final String prefixField,
+        final String stepField) throws ProofAsstException
+    {
+        if (stepField.equals("")
+            || stepField.equals(PaConstants.DEFAULT_STMT_LABEL))
+            triggerLoadStructureException(PaConstants.ERRMSG_STEP_NBR_MISSING_1
                 + getErrorLabelIfPossible()
                 + PaConstants.ERRMSG_STEP_NBR_MISSING_2);
-        }
 
-        String outputStep         = stepField.toLowerCase();
+        String outputStep = stepField.toLowerCase();
         if (outputStep.equals(PaConstants.QED_STEP_NBR)) {
-            if (prefixField != null) {
-                triggerLoadStructureException(
-                    PaConstants.ERRMSG_QED_HYP_STEP_1
+            if (prefixField != null)
+                triggerLoadStructureException(PaConstants.ERRMSG_QED_HYP_STEP_1
                     + getErrorLabelIfPossible()
-                    + PaConstants.ERRMSG_QED_HYP_STEP_2
-                    + outputStep
+                    + PaConstants.ERRMSG_QED_HYP_STEP_2 + outputStep
                     + PaConstants.ERRMSG_QED_HYP_STEP_3);
-            }
             return outputStep;
         }
 
         try {
-            Integer stepInteger   = new Integer(stepField);
-            if (stepInteger <= 0) {
-                triggerLoadStructureException(
-                    PaConstants.ERRMSG_STEP_LE_0_1
+            final Integer stepInteger = new Integer(stepField);
+            if (stepInteger <= 0)
+                triggerLoadStructureException(PaConstants.ERRMSG_STEP_LE_0_1
                     + getErrorLabelIfPossible()
-                    + PaConstants.ERRMSG_STEP_LE_0_2
-                    + stepField
+                    + PaConstants.ERRMSG_STEP_LE_0_2 + stepField
                     + PaConstants.ERRMSG_STEP_LE_0_3);
-            }
-            updateNextGreatestStepNbr(stepInteger); //derive feature
-            outputStep                = stepInteger.toString();
-        }
-        catch (NumberFormatException e) {
-            triggerLoadStructureException(
-                PaConstants.ERRMSG_STEP_NOT_INT_1
-                + getErrorLabelIfPossible()
-                + PaConstants.ERRMSG_STEP_NOT_INT_2
-                + stepField
-                + PaConstants.ERRMSG_STEP_NOT_INT_3);
+            updateNextGreatestStepNbr(stepInteger); // derive feature
+            outputStep = stepInteger.toString();
+        } catch (final NumberFormatException e) {
+            triggerLoadStructureException(PaConstants.ERRMSG_STEP_NOT_INT_1
+                + getErrorLabelIfPossible() + PaConstants.ERRMSG_STEP_NOT_INT_2
+                + stepField + PaConstants.ERRMSG_STEP_NOT_INT_3);
         }
 
-        ProofWorkStmt x           =
-            findMatchingStepNbr(outputStep);
-        if (x != null) {
-            triggerLoadStructureException(
-                PaConstants.ERRMSG_STEP_NBR_DUP_1
-                + getErrorLabelIfPossible()
-                + PaConstants.ERRMSG_STEP_NBR_DUP_2
-                + outputStep
-                + PaConstants.ERRMSG_STEP_NBR_DUP_3);
-        }
+        final ProofWorkStmt x = findMatchingStepNbr(outputStep);
+        if (x != null)
+            triggerLoadStructureException(PaConstants.ERRMSG_STEP_NBR_DUP_1
+                + getErrorLabelIfPossible() + PaConstants.ERRMSG_STEP_NBR_DUP_2
+                + outputStep + PaConstants.ERRMSG_STEP_NBR_DUP_3);
         return outputStep;
     }
 
-    public void triggerLoadStructureException(String errorMessage)
-                        throws ProofAsstException {
+    public void triggerLoadStructureException(final String errorMessage)
+        throws ProofAsstException
+    {
         setStructuralErrors(true);
-        throw new ProofAsstException(
-            proofTextTokenizer.getCurrentLineNbr(),
+        throw new ProofAsstException(proofTextTokenizer.getCurrentLineNbr(),
             proofTextTokenizer.getCurrentColumnNbr(),
-            proofTextTokenizer.getCurrentCharNbr(),
-            errorMessage
-                 + PaConstants.ERRMSG_READER_POSITION_LITERAL);
+            proofTextTokenizer.getCurrentCharNbr(), errorMessage
+                + PaConstants.ERRMSG_READER_POSITION_LITERAL);
     }
 
-    public void triggerLoadStructureException(String errorMessage,
-                                               int    errorFldChars)
-                        throws ProofAsstException {
+    public void triggerLoadStructureException(final String errorMessage,
+        final int errorFldChars) throws ProofAsstException
+    {
         setStructuralErrors(true);
-        throw new ProofAsstException(
-            proofTextTokenizer.getCurrentLineNbr(),
+        throw new ProofAsstException(proofTextTokenizer.getCurrentLineNbr(),
             proofTextTokenizer.getCurrentColumnNbr(),
-            (proofTextTokenizer.getCurrentCharNbr()
-                - errorFldChars
-                + 1),
-            errorMessage
-                 + PaConstants.ERRMSG_READER_POSITION_LITERAL);
+            proofTextTokenizer.getCurrentCharNbr() - errorFldChars + 1,
+            errorMessage + PaConstants.ERRMSG_READER_POSITION_LITERAL);
     }
 
-    private void buildHeader(String newTheoremLabel) {
+    private void buildHeader(final String newTheoremLabel) {
         String theoremLabel;
         if (newTheoremLabel != null) {
             theoremLabel = newTheoremLabel.trim();
-            if (theoremLabel.equals("")) {
+            if (theoremLabel.equals(""))
                 theoremLabel = PaConstants.DEFAULT_STMT_LABEL;
-            }
         }
-        else {
+        else
             theoremLabel = PaConstants.DEFAULT_STMT_LABEL;
-        }
 
-        headerStmt                =
-            new HeaderStmt(this,
-                           theoremLabel,
-                           PaConstants.DEFAULT_STMT_LABEL);
+        headerStmt = new HeaderStmt(this, theoremLabel,
+            PaConstants.DEFAULT_STMT_LABEL);
 
         proofWorkStmtList.add(headerStmt);
     }
 
+    private void buildEmptyTheoremProofBody(final Theorem t) {
 
-    private void buildEmptyTheoremProofBody(Theorem t) {
+        final String[] dummyHypStep = {""};
 
-        String[]       dummyHypStep
-                                  = { "" };
-
-        DerivationStep derivationStep;
+        final DerivationStep derivationStep;
         HypothesisStep hypothesisStep;
 
-        LogHyp[]       logHypArray = t.getLogHypArray();
+        final LogHyp[] logHypArray = t.getLogHypArray();
 
-        int            stepNbr     = 0;
+        int stepNbr = 0;
 
-        for (int i = 0; i < logHypArray.length; i++) {
+        for (final LogHyp element : logHypArray) {
 
-            hypothesisStep        =
-                new HypothesisStep(
-                        this,
-                        String.valueOf(++stepNbr),   //step
-                        logHypArray[i].getLabel(),   //refLabel
-                        logHypArray[i].getFormula(), //formula
-                        logHypArray[i].getExprParseTree(),
-                        false,                       //set caret
-                        0);                          //proofLevel 0
+            hypothesisStep = new HypothesisStep(this,
+                String.valueOf(++stepNbr), // step
+                element.getLabel(), // refLabel
+                element.getFormula(), // formula
+                element.getExprParseTree(), false, // set caret
+                0); // proofLevel 0
 
             proofWorkStmtList.add(hypothesisStep);
         }
 
-        qedStep                   =
-            new DerivationStep(
-                    this,
-                    PaConstants.QED_STEP_NBR,      //step
+        qedStep = new DerivationStep(this, PaConstants.QED_STEP_NBR, // step
 
-                    dummyHypStep,                  //hypStep
-                    null,                          //refLabel
-                    t.getFormula(),                //formula
-                    t.getExprParseTree(),          //parseTree
-                    true,                          //set caret
-                    0);                            //proofLevel 0
+            dummyHypStep, // hypStep
+            null, // refLabel
+            t.getFormula(), // formula
+            t.getExprParseTree(), // parseTree
+            true, // set caret
+            0); // proofLevel 0
 
         proofWorkStmtList.add(qedStep);
 
-        hypStepCnt                = logHypArray.length;
+        hypStepCnt = logHypArray.length;
 
-      /*
-       *  No need to loadWorksheetStmtArrays here because this
-       *  worksheet is headed straight for output on the GUI,
-       *  not Unification.
-       */
-      //loadWorksheetStmtArrays();
+        /*
+         *  No need to loadWorksheetStmtArrays here because this
+         *  worksheet is headed straight for output on the GUI,
+         *  not Unification.
+         */
+        // loadWorksheetStmtArrays();
 
     }
 
-    private void buildTheoremDescription(Theorem theorem) {
-        String description        = theorem.getDescription();
-        if (description != null) {
-            proofWorkStmtList.add(
-                new CommentStmt(this,
-                                description,
-                                true)); // true = doublespace after desc
-        }
+    private void buildTheoremDescription(final Theorem theorem) {
+        final String description = theorem.getDescription();
+        if (description != null)
+            proofWorkStmtList.add(new CommentStmt(this, description, true)); // true
+                                                                             // =
+                                                                             // doublespace
+                                                                             // after
+                                                                             // desc
     }
 
-    private void buildExportTheoremProofBody(
-                                Theorem   theorem,
-                                ArrayList proofDerivationStepList,
-                                boolean   deriveFormulas) {
+    private void buildExportTheoremProofBody(final Theorem theorem,
+        final ArrayList proofDerivationStepList, final boolean deriveFormulas)
+    {
 
-        DerivationStep derivationStep
-                                  = null;
-        HypothesisStep hypothesisStep
-                                  = null;
+        DerivationStep derivationStep = null;
+        HypothesisStep hypothesisStep = null;
 
 //      derivStepCnt              = 0;
-        hypStepCnt                = 0;
+        hypStepCnt = 0;
 
         ProofDerivationStepEntry e;
 
-        int            stepCnt    = proofDerivationStepList.size();
+        final int stepCnt = proofDerivationStepList.size();
         for (int i = 0; i < stepCnt; i++) {
-            e                     =
-                (ProofDerivationStepEntry)
-                    proofDerivationStepList.get(i);
+            e = (ProofDerivationStepEntry)proofDerivationStepList.get(i);
 
             if (deriveFormulas
-                &&
-                e.step.compareToIgnoreCase(
-                    PaConstants.QED_STEP_NBR) != 0
-                && !e.isHyp) {
-                derivationStep    =
-                    new DerivationStep(this,
-                                       e.step,
-                                       e.hypStep,
-                                       e.refLabel,
-                                       null, //formula,
-                                       null, //formulaParseTree,
-                                       false, //no caret
-                                       e.proofLevel);
+                && e.step.compareToIgnoreCase(PaConstants.QED_STEP_NBR) != 0
+                && !e.isHyp)
+            {
+                derivationStep = new DerivationStep(this, e.step, e.hypStep,
+                    e.refLabel, null, // formula,
+                    null, // formulaParseTree,
+                    false, // no caret
+                    e.proofLevel);
                 proofWorkStmtList.add(derivationStep);
                 continue;
             }
 
-            if (e.formulaParseTree == null) {
-                e.formulaParseTree
-                                  =
-                    grammar.
-                        parseFormulaWithoutSafetyNet(
-                            e.formula,
-                            comboFrame.hypArray,
-                            getMaxSeq());
-            }
+            if (e.formulaParseTree == null)
+                e.formulaParseTree = grammar.parseFormulaWithoutSafetyNet(
+                    e.formula, comboFrame.hypArray, getMaxSeq());
 
             if (e.isHyp) {
                 ++hypStepCnt;
-                hypothesisStep    =
-                    new HypothesisStep(this,
-                                       e.step,
-                                       e.refLabel,
-                                       e.formula,
-                                       e.formulaParseTree,
-                                       false,
-                                       e.proofLevel);
+                hypothesisStep = new HypothesisStep(this, e.step, e.refLabel,
+                    e.formula, e.formulaParseTree, false, e.proofLevel);
                 proofWorkStmtList.add(hypothesisStep);
             }
             else {
-                derivationStep    =
-                    new DerivationStep(this,
-                                       e.step,
-                                       e.hypStep,
-                                       e.refLabel,
-                                       e.formula,
-                                       e.formulaParseTree,
-                                       false, //no caret
-                                       e.proofLevel);
+                derivationStep = new DerivationStep(this, e.step, e.hypStep,
+                    e.refLabel, e.formula, e.formulaParseTree, false, // no
+                                                                      // caret
+                    e.proofLevel);
                 proofWorkStmtList.add(derivationStep);
             }
         }
 
-        qedStep                   = derivationStep; //final step...
+        qedStep = derivationStep; // final step...
 
-      /*
-       *  No need to loadWorksheetStmtArrays here because this
-       *  worksheet is headed straight for output on the GUI,
-       *  not Unification.
-       */
-      //loadWorksheetStmtArrays();
+        /*
+         *  No need to loadWorksheetStmtArrays here because this
+         *  worksheet is headed straight for output on the GUI,
+         *  not Unification.
+         */
+        // loadWorksheetStmtArrays();
     }
 
     private void buildDummyProofBody() {
 
-        Formula        dummyFormula
-                                  =
-            Formula.constructTempDummyFormula(
-                getProvableLogicStmtTyp(),
-                PaConstants.DEFAULT_STMT_LABEL);
+        final Formula dummyFormula = Formula.constructTempDummyFormula(
+            getProvableLogicStmtTyp(), PaConstants.DEFAULT_STMT_LABEL);
 
-        String[] dummyHypStep     = { "?" };
+        final String[] dummyHypStep = {"?"};
 
-        HypothesisStep hs         =
-            new HypothesisStep(this,
-                               "1",             //step
-                               null,            //refLabel
-                               dummyFormula,    //formula,
-                               null,            //parseTree
-                               true,            //set caret
-                               0);              //proofLevel 0
+        final HypothesisStep hs = new HypothesisStep(this, "1", // step
+            null, // refLabel
+            dummyFormula, // formula,
+            null, // parseTree
+            true, // set caret
+            0); // proofLevel 0
 
         proofWorkStmtList.add(hs);
 
-        DerivationStep ds         =
-            new DerivationStep(this,
-                               "2",             //step
-                               dummyHypStep,    //hypStep
-                               null,            //refLabel
-                               dummyFormula,    //formula,
-                               null,            //parseTree
-                               false,           //set caret
-                               0);              //proofLevel 0
+        final DerivationStep ds = new DerivationStep(this, "2", // step
+            dummyHypStep, // hypStep
+            null, // refLabel
+            dummyFormula, // formula,
+            null, // parseTree
+            false, // set caret
+            0); // proofLevel 0
 
         proofWorkStmtList.add(ds);
 
-        qedStep                   =
-            new DerivationStep(this,
-                              PaConstants.QED_STEP_NBR, //step
-                              dummyHypStep,     //hypStep
-                              null,             //refLabel
-                              dummyFormula,     //formula,
-                              null,             //parseTree
-                              false,            //set caret
-                              0);               //proofLevel 0
+        qedStep = new DerivationStep(this, PaConstants.QED_STEP_NBR, // step
+            dummyHypStep, // hypStep
+            null, // refLabel
+            dummyFormula, // formula,
+            null, // parseTree
+            false, // set caret
+            0); // proofLevel 0
 
         proofWorkStmtList.add(qedStep);
 
-        hypStepCnt                = 1;
+        hypStepCnt = 1;
 
-      /*
-       *  No need to loadWorksheetStmtArrays here because this
-       *  worksheet is headed straight for output on the GUI,
-       *  not Unification.
-       */
-      //loadWorksheetStmtArrays();
+        /*
+         *  No need to loadWorksheetStmtArrays here because this
+         *  worksheet is headed straight for output on the GUI,
+         *  not Unification.
+         */
+        // loadWorksheetStmtArrays();
 
     }
 
     private void buildFooter() {
 
-        footerStmt                =
-            new FooterStmt(this);
+        footerStmt = new FooterStmt(this);
         footerStmt.loadDefault();
 
         proofWorkStmtList.add(footerStmt);
@@ -2492,18 +2101,15 @@ public class ProofWorksheet {
 
     private void loadWorksheetStmtArrays() {
         // load proof steps and $d's into convenient arrays
-        dvStmtArray               =
-            new DistinctVariablesStmt[dvStmtCnt];
+        dvStmtArray = new DistinctVariablesStmt[dvStmtCnt];
 
-        Iterator iterator         = proofWorkStmtList.iterator();
+        final Iterator iterator = proofWorkStmtList.iterator();
         ProofWorkStmt x;
-        int           dv          = 0;
+        int dv = 0;
         while (iterator.hasNext()) {
             x = (ProofWorkStmt)iterator.next();
-            if (x instanceof DistinctVariablesStmt) {
-                dvStmtArray[dv++]
-                          = (DistinctVariablesStmt)x;
-            }
+            if (x instanceof DistinctVariablesStmt)
+                dvStmtArray[dv++] = (DistinctVariablesStmt)x;
         }
     }
 }

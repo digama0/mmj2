@@ -26,7 +26,8 @@
  */
 
 package mmj.lang;
-import java.util.*;
+
+import java.util.ArrayList;
 
 /**
  *  Interface for loading Metamath statements into a Logic System.
@@ -50,7 +51,7 @@ public interface SystemLoader {
      *
      * @throws   LangException if duplicate symbol, etc.
      */
-    Cnst    addCnst(String       id)            throws LangException;
+    Cnst addCnst(String id) throws LangException;
 
     /**
      *  Add Var to Logical System.
@@ -62,7 +63,7 @@ public interface SystemLoader {
      *
      * @throws  LangException if duplicate symbol, etc.
      */
-    Var     addVar(String        id)            throws LangException;
+    Var addVar(String id) throws LangException;
 
     /**
      *  Add VarHyp to Logical System.
@@ -76,9 +77,8 @@ public interface SystemLoader {
      * @throws       LangException if duplicate symbol, etc.
      *               (see <code>mmj.lang.LangConstants.java</code>)
      */
-    VarHyp  addVarHyp(String     labelS,
-                      String     typS,
-                      String     varS)          throws LangException;
+    VarHyp addVarHyp(String labelS, String typS, String varS)
+        throws LangException;
 
     /**
      *  Add DjVars (Disjoint Variables Restriction) to Logical
@@ -94,8 +94,7 @@ public interface SystemLoader {
      * @throws   LangException if duplicate vars, etc.
      *           (see <code>mmj.lang.LangConstants.java</code>)
      */
-    DjVars  addDjVars(String     djVar1S,
-                      String     djVar2S)       throws LangException;
+    DjVars addDjVars(String djVar1S, String djVar2S) throws LangException;
 
     /**
      *  Add LogHyp (Logical Hypothesis) to Logical System.
@@ -111,9 +110,8 @@ public interface SystemLoader {
      * @throws   LangException if duplicate label, undefined vars,
      *           etc.
      */
-    LogHyp  addLogHyp(String     labelS,
-                      String     typS,
-                      ArrayList  symList)       throws LangException;
+    LogHyp addLogHyp(String labelS, String typS, ArrayList symList)
+        throws LangException;
 
     /**
      *  Add Axiom to Logical System.
@@ -128,9 +126,8 @@ public interface SystemLoader {
      * @throws       LangException if duplicate label, undefined vars,
      *               etc.
      */
-    Axiom   addAxiom(String      labelS,
-                     String      typS,
-                     ArrayList   symList)       throws LangException;
+    Axiom addAxiom(String labelS, String typS, ArrayList symList)
+        throws LangException;
 
     /**
      *  Add Theorem to Logical System.
@@ -149,11 +146,8 @@ public interface SystemLoader {
      * @throws       LangException if duplicate label, undefined vars,
      *               etc.
      */
-    Theorem addTheorem(String    labelS,
-                       String    typS,
-                       ArrayList symList,
-                       ArrayList proofList)
-                                                throws LangException;
+    Theorem addTheorem(String labelS, String typS, ArrayList symList,
+        ArrayList proofList) throws LangException;
 
     /**
      *  Add Theorem to Logical System.
@@ -177,20 +171,15 @@ public interface SystemLoader {
      * @throws       LangException if duplicate label, undefined vars,
      *               etc.
      */
-    Theorem addTheorem(String    labelS,
-                       String    typS,
-                       ArrayList symList,
-                       ArrayList proofList,
-                       ArrayList proofBlockList)
-                                     throws LangException;
-
+    Theorem addTheorem(String labelS, String typS, ArrayList symList,
+        ArrayList proofList, ArrayList proofBlockList) throws LangException;
 
     /**
      *  Begin a new (nested) scope level for the Logical System.
      *
      *  @see mmj.lang.ScopeDef
      */
-    void    beginScope();
+    void beginScope();
 
     /**
      *  Ends a (nested) scope level for the Logical System.
@@ -200,7 +189,7 @@ public interface SystemLoader {
      *  @throws   LangException if scope is already at the global
      *            scope level.
      */
-    void    endScope()                          throws LangException;
+    void endScope() throws LangException;
 
     /**
      *  EOF processing for Logical System after file loaded.
@@ -215,9 +204,8 @@ public interface SystemLoader {
      *               scope level UNLESS premature EOF signalled.
      *               (see <code>mmj.lang.LangConstants.java</code>)
      */
-    void    finalizeEOF(Messages  messages,
-                        boolean   prematureEOF)  throws LangException;
-
+    void finalizeEOF(Messages messages, boolean prematureEOF)
+        throws LangException;
 
     /**
      *  Is BookManager enabled?
@@ -262,6 +250,6 @@ public interface SystemLoader {
      * @param  comment Typesetting definition comment ("$t) from
      *         Metamath file minus the "$(" and "$)" tokens.
      */
-	void cacheTypesettingCommentForGMFF(String comment);
+    void cacheTypesettingCommentForGMFF(String comment);
 
 }

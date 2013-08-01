@@ -33,8 +33,9 @@
 
 package mmj.pa;
 
-import  java.io.IOException;
-import  mmj.mmio.*;
+import java.io.IOException;
+
+import mmj.mmio.MMIOError;
 
 /**
  *  General object representing an item on a ProofWorksheet.
@@ -45,19 +46,17 @@ public abstract class ProofWorkStmt {
      *  Reference to parent Proof Worksheet added when
      *  these inner classes were de-nested.
      */
-    ProofWorksheet    w;
-
+    ProofWorksheet w;
 
     /**
      *  Output format content of statement
      */
-    StringBuffer      stmtText;
+    StringBuffer stmtText;
 
     /**
      *  Get count of number of lines used by this ProofWorkStmt.
      */
-    int               lineCnt;
-
+    int lineCnt;
 
     /**
      *  Default ProofWorkStmt constructor.
@@ -65,9 +64,9 @@ public abstract class ProofWorkStmt {
      *  Every ProofWorkStmt starts out with "valid"
      *  status and lineCnt = 1!
      */
-    public ProofWorkStmt(ProofWorksheet w) {
-        this.w                    = w;
-        lineCnt                   = 1;
+    public ProofWorkStmt(final ProofWorksheet w) {
+        this.w = w;
+        lineCnt = 1;
     }
 
     /**
@@ -102,7 +101,6 @@ public abstract class ProofWorkStmt {
      *  Reformats Derivation Step using TMFF.
      */
     public abstract void tmffReformat();
-
 
     /**
      *  Is this a proof step?
@@ -141,7 +139,7 @@ public abstract class ProofWorkStmt {
      *  @return false because a generic ProofWorkStmt
      *                does not have a step number.
      */
-    public boolean hasMatchingStepNbr(String newStepNbr) {
+    public boolean hasMatchingStepNbr(final String newStepNbr) {
         return false;
     }
 
@@ -156,7 +154,7 @@ public abstract class ProofWorkStmt {
      *  @return false because a generic ProofWorkStmt
      *                does not have a Ref label.
      */
-    public boolean hasMatchingRefLabel(String newRefLabel) {
+    public boolean hasMatchingRefLabel(final String newRefLabel) {
         return false;
     }
 
@@ -177,20 +175,16 @@ public abstract class ProofWorkStmt {
      *   - return nextToken after trailing whitespace,
      *     the start of the next statement.
      */
-    public String load(String firstToken)
-                            throws IOException,
-                                   MMIOError,
-                                   ProofAsstException {
-        int currLineNbr       =
-            (int)w.proofTextTokenizer.getCurrentLineNbr();
+    public String load(final String firstToken) throws IOException, MMIOError,
+        ProofAsstException
+    {
+        final int currLineNbr = (int)w.proofTextTokenizer.getCurrentLineNbr();
 
-        stmtText              = new StringBuffer();
+        stmtText = new StringBuffer();
 
-        String nextT          =
-            loadAllStmtTextGetNextStmt(firstToken);
+        final String nextT = loadAllStmtTextGetNextStmt(firstToken);
 
-        updateLineCntUsingTokenizer(currLineNbr,
-                                    nextT);
+        updateLineCntUsingTokenizer(currLineNbr, nextT);
         return nextT;
     }
 
@@ -200,7 +194,7 @@ public abstract class ProofWorkStmt {
      *
      *  @param sb StringBuffer to append to stmtText.
      */
-    public void appendToProofText(StringBuffer sb) {
+    public void appendToProofText(final StringBuffer sb) {
         sb.append(stmtText);
     }
 
@@ -236,26 +230,20 @@ public abstract class ProofWorkStmt {
     protected void setStmtCursorToCurrLineColumn() {
 
         // compute nbr lines before this one
-        int total             =
-            w.computeProofWorkStmtLineNbr(null);
+        final int total = w.computeProofWorkStmtLineNbr(null);
 
         // sets cursor pos only if not already set.
-        w.proofCursor.setCursorAtCaret(
-            -1,                     // charNbr not set
-            total + 1,
-            stmtText.length() + 1);
+        w.proofCursor.setCursorAtCaret(-1, // charNbr not set
+            total + 1, stmtText.length() + 1);
     }
 
-    protected int updateLineCntUsingTokenizer(
-                                int    prevLineNbr,
-                                String nextT) {
-        int currLineNbr       =
-            (int)w.proofTextTokenizer.getCurrentLineNbr();
-        lineCnt               += (currLineNbr
-                                  - prevLineNbr);
-        if (nextT.length() > 0) {
-            --lineCnt; //reduce because we're at the
-        }              // next stmt now
+    protected int updateLineCntUsingTokenizer(final int prevLineNbr,
+        final String nextT)
+    {
+        final int currLineNbr = (int)w.proofTextTokenizer.getCurrentLineNbr();
+        lineCnt += currLineNbr - prevLineNbr;
+        if (nextT.length() > 0)
+            --lineCnt; // reduce because we're at the
 
         return currLineNbr;
     }
@@ -271,55 +259,36 @@ public abstract class ProofWorkStmt {
      *  position within the ProofWorkStmt.
      *
      */
-    protected String loadStmtTextGetRequiredToken(
-                        String prevToken)
-                            throws IOException,
-                                   MMIOError,
-                                   ProofAsstException {
-        String outToken       = null;
+    protected String loadStmtTextGetRequiredToken(final String prevToken)
+        throws IOException, MMIOError, ProofAsstException
+    {
+        String outToken = null;
         stmtText.append(prevToken);
 
-        int lenW              =
-            w.proofTextTokenizer.getWhiteSpace(
-                                    stmtText,
-                                    stmtText.length());
+        final int lenW = w.proofTextTokenizer.getWhiteSpace(stmtText,
+            stmtText.length());
         if (lenW >= 0) {
-            StringBuffer outSB
-                              = new StringBuffer();
-            int lenT = w.proofTextTokenizer.getToken(outSB,
-                                                   0);
+            final StringBuffer outSB = new StringBuffer();
+            final int lenT = w.proofTextTokenizer.getToken(outSB, 0);
             if (lenT > 0) {
-                outToken      = outSB.toString();
-                if (w.proofTextTokenizer.getCurrentColumnNbr()
-                    ==
-                    lenT) {
-                    //oops, token begins in col 1, new stmt!
-                    w.triggerLoadStructureException(
-                        PaConstants.ERRMSG_STMT_NOT_DONE_1
+                outToken = outSB.toString();
+                if (w.proofTextTokenizer.getCurrentColumnNbr() == lenT)
+                    // oops, token begins in col 1, new stmt!
+                    w.triggerLoadStructureException(PaConstants.ERRMSG_STMT_NOT_DONE_1
                         + w.getErrorLabelIfPossible()
-                        + PaConstants.
-                            ERRMSG_STMT_NOT_DONE_2
-                        + outToken);
-                }
+                        + PaConstants.ERRMSG_STMT_NOT_DONE_2 + outToken);
             }
-            else {
-                w.triggerLoadStructureException(
-                    PaConstants.ERRMSG_PREMATURE_END_1
+            else
+                w.triggerLoadStructureException(PaConstants.ERRMSG_PREMATURE_END_1
                     + w.getErrorLabelIfPossible()
-                    + PaConstants.
-                        ERRMSG_PREMATURE_END_2);
-            }
+                    + PaConstants.ERRMSG_PREMATURE_END_2);
         }
-        else {
-            w.triggerLoadStructureException(
-                PaConstants.ERRMSG_PREMATURE_END2_1
+        else
+            w.triggerLoadStructureException(PaConstants.ERRMSG_PREMATURE_END2_1
                 + w.getErrorLabelIfPossible()
-                + PaConstants.
-                    ERRMSG_PREMATURE_END2_2);
-        }
+                + PaConstants.ERRMSG_PREMATURE_END2_2);
         return outToken;
     }
-
 
     /**
      *  Loads input token into ProofWorkStmt's stmtText
@@ -331,26 +300,19 @@ public abstract class ProofWorkStmt {
      *  file reached.
      *
      */
-    protected String loadStmtTextGetOptionalToken(
-                        String prevToken)
-                            throws IOException,
-                                   MMIOError,
-                                   ProofAsstException {
+    protected String loadStmtTextGetOptionalToken(final String prevToken)
+        throws IOException, MMIOError, ProofAsstException
+    {
         stmtText.append(prevToken);
-        int lenW              =
-            w.proofTextTokenizer.getWhiteSpace(
-                                    stmtText,
-                                    stmtText.length());
+        final int lenW = w.proofTextTokenizer.getWhiteSpace(stmtText,
+            stmtText.length());
         if (lenW >= 0) {
-            StringBuffer outSB
-                              = new StringBuffer();
-            int lenT = w.proofTextTokenizer.getToken(outSB,
-                                                   0);
-            if (lenT > 0) {
+            final StringBuffer outSB = new StringBuffer();
+            final int lenT = w.proofTextTokenizer.getToken(outSB, 0);
+            if (lenT > 0)
                 return outSB.toString();
-            }
         }
-        return new String(""); //eof!
+        return new String(""); // eof!
     }
 
     /**
@@ -367,41 +329,28 @@ public abstract class ProofWorkStmt {
      *  file reached.
      *
      */
-    protected String loadStmtTextGetNextStmt(
-                        String prevToken)
-                            throws IOException,
-                                   MMIOError,
-                                   ProofAsstException {
+    protected String loadStmtTextGetNextStmt(final String prevToken)
+        throws IOException, MMIOError, ProofAsstException
+    {
         stmtText.append(prevToken);
-        int lenW              =
-            w.proofTextTokenizer.getWhiteSpace(
-                                    stmtText,
-                                    stmtText.length());
+        final int lenW = w.proofTextTokenizer.getWhiteSpace(stmtText,
+            stmtText.length());
         if (lenW >= 0) {
-            StringBuffer outSB
-                              = new StringBuffer();
-            int lenT = w.proofTextTokenizer.getToken(outSB,
-                                                   0);
+            final StringBuffer outSB = new StringBuffer();
+            final int lenT = w.proofTextTokenizer.getToken(outSB, 0);
             if (lenT > 0) {
-                String outToken
-                              = outSB.toString();
-                if (w.proofTextTokenizer.getCurrentColumnNbr()
-                    ==
-                    lenT) {
+                final String outToken = outSB.toString();
+                if (w.proofTextTokenizer.getCurrentColumnNbr() == lenT)
                     // token starting in col 1, new Stmt!
                     return outToken;
-                }
-                //oops, token does not begin in col 1.
-                w.triggerLoadStructureException(
-                    PaConstants.ERRMSG_EXTRA_TOKEN_1
+                // oops, token does not begin in col 1.
+                w.triggerLoadStructureException(PaConstants.ERRMSG_EXTRA_TOKEN_1
                     + w.getErrorLabelIfPossible()
-                    + PaConstants.
-                        ERRMSG_EXTRA_TOKEN_2
-                    + outToken);
+                    + PaConstants.ERRMSG_EXTRA_TOKEN_2 + outToken);
 
             }
         }
-        return new String(""); //eof!
+        return new String(""); // eof!
     }
 
     /**
@@ -414,43 +363,32 @@ public abstract class ProofWorkStmt {
      *  file reached.
      *
      */
-    protected String loadAllStmtTextGetNextStmt(
-                                         String prevToken)
-                            throws IOException,
-                                   MMIOError,
-                                   ProofAsstException {
+    protected String loadAllStmtTextGetNextStmt(final String prevToken)
+        throws IOException, MMIOError, ProofAsstException
+    {
         stmtText.append(prevToken);
 
-        int          len;
+        int len;
         StringBuffer outSB;
 
         while (true) {
-            len               =
-            w.proofTextTokenizer.getWhiteSpace(
-                                    stmtText,
-                                    stmtText.length());
+            len = w.proofTextTokenizer.getWhiteSpace(stmtText,
+                stmtText.length());
             if (len >= 0) {
-                outSB         = new StringBuffer();
-                len           =
-                    w.proofTextTokenizer.getToken(outSB,
-                                                0);
+                outSB = new StringBuffer();
+                len = w.proofTextTokenizer.getToken(outSB, 0);
                 if (len > 0) {
-                    if (w.proofTextTokenizer.getCurrentColumnNbr()
-                        ==
-                        len) {
+                    if (w.proofTextTokenizer.getCurrentColumnNbr() == len)
                         // token starting in col 1, new Stmt!
                         return outSB.toString();
-                    }
                     stmtText.append(outSB);
                 }
-                else {
+                else
                     break;
-                }
             }
-            else {
+            else
                 break;
-            }
         }
-        return new String(""); //eof!
+        return new String(""); // eof!
     }
 }

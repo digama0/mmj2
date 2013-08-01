@@ -13,6 +13,7 @@
  */
 
 package mmj.pa;
+
 import mmj.lang.*;
 
 /**
@@ -74,33 +75,32 @@ public class StepUnifier {
 
     // Proof Step Formula assigned number -1
     // while logical hypotheses have indexes 0 -> n.
-    public static int       F_LEVEL_NBR
-                                  = -1;
+    public static int F_LEVEL_NBR = -1;
 
     // "commit" means that finalizeAndLoadAssrtSubst()
     // will, if false, not update VarHyp's at finalization
     // time. This allows StepUnifier to be used to
     // generate "trial" unifications which are not actually
     // applied to a Proof Worksheet.
-    private boolean         commit;
+    private boolean commit;
 
-    private WorkVarManager  workVarManager;
+    private final WorkVarManager workVarManager;
 
     // "applied" is just an array of UnifySubst's
     // without regard for their internal linked-list
     // "next" pointers. It holds the UnifySubst data
     // currently applied to the VarHyp storage areas
     // and is used for any backouts of those changes.
-    private UnifySubst[]    applied;
-    private int             appliedCnt;
-    private int[]           levelAppliedCnt;
+    private UnifySubst[] applied;
+    private int appliedCnt;
+    private int[] levelAppliedCnt;
 
-    private int             currLevel;
-    private UnifySubst      currLevelDeferred;
-    private UnifySubst      currLevelDeferredLast;
+    private int currLevel;
+    private UnifySubst currLevelDeferred;
+    private UnifySubst currLevelDeferredLast;
 
-    private Hyp[]           assrtHypArray;
-    private LogHyp[]        assrtLogHypArray;
+    private Hyp[] assrtHypArray;
+    private LogHyp[] assrtLogHypArray;
 
     private ProofStepStmt[] derivStepHypArray;
 
@@ -136,7 +136,7 @@ public class StepUnifier {
      *      substAnswer[i][j] == something else
      *          means that unifyLogHypFormula() was successful
      */
-    private UnifySubst[][]  substAnswer;
+    private UnifySubst[][] substAnswer;
 
     /*
      * This array cross-references the input sorted arrays
@@ -149,25 +149,22 @@ public class StepUnifier {
      *
      * in the final, completed deriv step unification.
      */
-    private int[]           derivAssrtXRef;
+    private int[] derivAssrtXRef;
 
     /*
      * these come into play when unifying sorted Log Hyps
      */
-    private boolean[]       assrtHypUsed;
-    private int[]           impossibleCnt;
+    private boolean[] assrtHypUsed;
+    private int[] impossibleCnt;
 
     /**
      *  Constructor for StepUnifier.
      *
      *  @param workVarManager instance of WorkVarManager.
      */
-    public StepUnifier(
-                            WorkVarManager workVarManager) {
-        this.workVarManager       = workVarManager;
-        applied                   =
-            new UnifySubst[
-                PaConstants.STEP_UNIFIER_APPLIED_ARRAY_LEN_INIT];
+    public StepUnifier(final WorkVarManager workVarManager) {
+        this.workVarManager = workVarManager;
+        applied = new UnifySubst[PaConstants.STEP_UNIFIER_APPLIED_ARRAY_LEN_INIT];
 
     }
 
@@ -235,8 +232,7 @@ public class StepUnifier {
      *           any work variables (or not...)
      */
     public ParseNode[] finalizeAndLoadAssrtSubst() {
-        ParseNode[] assrtSubst    =
-            new ParseNode[assrtHypArray.length];
+        final ParseNode[] assrtSubst = new ParseNode[assrtHypArray.length];
         if (commit) {
             workVarManager.resolveWorkVarUpdates();
             loadAssrtSubst(assrtSubst);
@@ -249,20 +245,15 @@ public class StepUnifier {
         return assrtSubst;
     }
 
-    private void loadAssrtSubst(ParseNode[] assrtSubst) {
-        for (int i = 0; i < assrtHypArray.length; i++) {
+    private void loadAssrtSubst(final ParseNode[] assrtSubst) {
+        for (int i = 0; i < assrtHypArray.length; i++)
             if (assrtHypArray[i].isVarHyp()) {
-                assrtSubst[i]     =
-                    ((VarHyp)assrtHypArray[i]).paSubst;
-                if (assrtSubst[i].hasUpdatedWorkVar()) {
-                    assrtSubst[i] =
-                        assrtSubst[i].
-                            cloneResolvingUpdatedWorkVars();
-                }
+                assrtSubst[i] = ((VarHyp)assrtHypArray[i]).paSubst;
+                if (assrtSubst[i].hasUpdatedWorkVar())
+                    assrtSubst[i] = assrtSubst[i]
+                        .cloneResolvingUpdatedWorkVars();
             }
-        }
     }
-
 
     /**
      *  Returns an int array of indexes that cross references
@@ -306,7 +297,6 @@ public class StepUnifier {
         backoutOneLevelApplieds(F_LEVEL_NBR);
     }
 
-
     /**
      *  Initialize for start of new Proof Step unification.
      *
@@ -316,32 +306,26 @@ public class StepUnifier {
      * @return true if the proof step formula unifies with
      *         the input assertion's formula; otherwise false.
      */
-    public boolean unifyAndMergeStepFormula(
-                                    boolean   commit,
-                                    ParseNode assrtRoot,
-                                    ParseNode stepRoot,
-                                    Hyp[]     assrtHypArray,
-                                    LogHyp[]  assrtLogHypArray)
-                                throws VerifyException {
+    public boolean unifyAndMergeStepFormula(final boolean commit,
+        final ParseNode assrtRoot, final ParseNode stepRoot,
+        final Hyp[] assrtHypArray, final LogHyp[] assrtLogHypArray)
+        throws VerifyException
+    {
 
         // INITIALIZE/START ProofStep
         // ==========================
-        this.commit               = commit;
-        this.assrtHypArray        = assrtHypArray;
-        this.assrtLogHypArray     = assrtLogHypArray;
+        this.commit = commit;
+        this.assrtHypArray = assrtHypArray;
+        this.assrtLogHypArray = assrtLogHypArray;
 
         // initializeTargetVarHypPASubst
-        for (int i = 0; i < assrtHypArray.length; i++) {
-            if (assrtHypArray[i].isVarHyp()) {
-                ((VarHyp)assrtHypArray[i]).paSubst
-                                  = null;
-            }
-        }
+        for (int i = 0; i < assrtHypArray.length; i++)
+            if (assrtHypArray[i].isVarHyp())
+                ((VarHyp)assrtHypArray[i]).paSubst = null;
 
         // allocateNewProofStepStuff
-        appliedCnt                = 0;
-        levelAppliedCnt           =
-            new int[assrtLogHypArray.length + 1];
+        appliedCnt = 0;
+        levelAppliedCnt = new int[assrtLogHypArray.length + 1];
 
         // OK, DO IT!
         // ==========
@@ -351,15 +335,13 @@ public class StepUnifier {
             return true;
         }
 
-        currLevel                 = F_LEVEL_NBR;
-        currLevelDeferred         = UnifySubst.EMPTY_LIST;
-        currLevelDeferredLast     = null;
-        if (unifyLevel(assrtRoot,
-                       stepRoot)) {
+        currLevel = F_LEVEL_NBR;
+        currLevelDeferred = UnifySubst.EMPTY_LIST;
+        currLevelDeferredLast = null;
+        if (unifyLevel(assrtRoot, stepRoot)) {
             allocWorkVarsForUnassignedSourceVars();
-            if (mergeCurrLevelSubst()) {
+            if (mergeCurrLevelSubst())
                 return true;
-            }
         }
 
         backoutCurrLevelApplieds();
@@ -378,42 +360,27 @@ public class StepUnifier {
      *  @return array assrtSubst, a ParseNode array parallel
      *                to assrt.MandFrame.hyp.     */
     public ParseNode[] unifyAndMergeHypsUnsorted(
-                                ProofStepStmt[] derivStepHypArray) {
+        final ProofStepStmt[] derivStepHypArray)
+    {
 
-        this.derivStepHypArray    = derivStepHypArray;
+        this.derivStepHypArray = derivStepHypArray;
         ParseNode sourceRoot;
 
-        for (currLevel = 0;
-             currLevel < assrtLogHypArray.length;
-             currLevel++) {
+        for (currLevel = 0; currLevel < assrtLogHypArray.length; currLevel++) {
 
-            if (derivStepHypArray[currLevel] == null) {
-                sourceRoot        = null;
-            }
-            else {
-                sourceRoot        =
-                    derivStepHypArray[currLevel].
-                        formulaParseTree.
-                            getRoot();
-            }
+            if (derivStepHypArray[currLevel] == null)
+                sourceRoot = null;
+            else
+                sourceRoot = derivStepHypArray[currLevel].formulaParseTree
+                    .getRoot();
 
-            if ((unifyLogHypFormula(
-                    assrtLogHypArray[currLevel].
-                        getExprParseTree().
-                            getRoot(),
-                    sourceRoot))
-                !=
-                UnifySubst.IMPOSSIBLE) {
-
-                if (mergeCurrLevelSubst()) {
+            if (unifyLogHypFormula(assrtLogHypArray[currLevel]
+                .getExprParseTree().getRoot(), sourceRoot) != UnifySubst.IMPOSSIBLE)
+                if (mergeCurrLevelSubst())
                     continue;
-                }
 
-            }
-
-            for (int i = currLevel; i >= 0; i--) {
+            for (int i = currLevel; i >= 0; i--)
                 backoutOneLevelApplieds(i);
-            }
             return null;
         }
 
@@ -450,184 +417,140 @@ public class StepUnifier {
      *  @return array assrtSubst, a ParseNode array parallel
      *                to assrt.MandFrame.hyp.
      */
-    public ParseNode[] unifyAndMergeHypsSorted(
-                                LogHyp[]        assrtLogHypArray,
-                                ProofStepStmt[] derivStepHypArray) {
+    public ParseNode[] unifyAndMergeHypsSorted(final LogHyp[] assrtLogHypArray,
+        final ProofStepStmt[] derivStepHypArray)
+    {
 
-        this.derivStepHypArray    = derivStepHypArray;
-        this.assrtLogHypArray     = assrtLogHypArray;
+        this.derivStepHypArray = derivStepHypArray;
+        this.assrtLogHypArray = assrtLogHypArray;
 
-        substAnswer               =
-            new UnifySubst[assrtLogHypArray.length][];
+        substAnswer = new UnifySubst[assrtLogHypArray.length][];
 
-        for (int i = 0; i < assrtLogHypArray.length; i++) {
-            substAnswer[i]        =
-                new UnifySubst[assrtLogHypArray.length];
-        }
+        for (int i = 0; i < assrtLogHypArray.length; i++)
+            substAnswer[i] = new UnifySubst[assrtLogHypArray.length];
 
         // ok! add complexity to keep track of substAnswer :)
-        impossibleCnt             =
-            new int[assrtLogHypArray.length];
+        impossibleCnt = new int[assrtLogHypArray.length];
 
-        assrtHypUsed              =
-            new boolean[assrtLogHypArray.length];
+        assrtHypUsed = new boolean[assrtLogHypArray.length];
 
-        derivAssrtXRef            =
-            new int[assrtLogHypArray.length];
-        for (int i = 0; i < derivAssrtXRef.length; i++) {
-            derivAssrtXRef[i]     = -1;
-        }
+        derivAssrtXRef = new int[assrtLogHypArray.length];
+        for (int i = 0; i < derivAssrtXRef.length; i++)
+            derivAssrtXRef[i] = -1;
 
-        boolean status            = false;
-        currLevel                 = 0;
-        while (true) {
-
+        boolean status = false;
+        currLevel = 0;
+        while (true)
             if (!findNextUnifiedAssrtHyp()) { // !find at this level
 
-                if (impossibleCnt[currLevel] >=  // no satisfaction
-                    assrtLogHypArray.length) {   // with any
-                    break;                       // assrtLogHyp!
-                }
+                if (impossibleCnt[currLevel] >= // no satisfaction
+                assrtLogHypArray.length)
+                    break; // assrtLogHyp!
 
-                if (--currLevel < 0) {
-                    break;                  //no prev levels to try
-                }
+                if (--currLevel < 0)
+                    break; // no prev levels to try
 
                 // backout previous level's merged substitutions
                 backoutOneLevelApplieds(currLevel);
             }
-            else { // ok, found one at this level --> so go deeper!
-
-                if (++currLevel >= assrtLogHypArray.length) {
-                    //success! yay!!!
-                    status        = true;
-                    break;
-                }
+            else if (++currLevel >= assrtLogHypArray.length) {
+                // success! yay!!!
+                status = true;
+                break;
             }
-        }
 
         // tidy up :-0)
-        substAnswer               = null;
-        impossibleCnt             = null;
-        assrtHypUsed              = null;
+        substAnswer = null;
+        impossibleCnt = null;
+        assrtHypUsed = null;
 
-        if (status) {
+        if (status)
             return finalizeAndLoadAssrtSubst();
-        }
         else {
             // backout all applied subst including level "F" (-1)
-            for (int i = currLevel; i >= -1; i--) {
+            for (int i = currLevel; i >= -1; i--)
                 backoutOneLevelApplieds(i);
-            }
             return null;
         }
     }
 
     private boolean findNextUnifiedAssrtHyp() {
 
-        UnifySubst[] currLevelSubstAnswer
-                                  = substAnswer[currLevel];
+        final UnifySubst[] currLevelSubstAnswer = substAnswer[currLevel];
 
-        int nextAssrtHypIndex     = derivAssrtXRef[currLevel];
+        int nextAssrtHypIndex = derivAssrtXRef[currLevel];
         if (nextAssrtHypIndex != -1) {
-            assrtHypUsed[nextAssrtHypIndex]
-                                  = false;
-            derivAssrtXRef[currLevel]
-                                  = -1;
+            assrtHypUsed[nextAssrtHypIndex] = false;
+            derivAssrtXRef[currLevel] = -1;
         }
 
-        int governorLimit         = assrtLogHypArray.length;
+        int governorLimit = assrtLogHypArray.length;
         while (governorLimit-- > 0) {
             ++nextAssrtHypIndex;
-            if (nextAssrtHypIndex >= assrtLogHypArray.length) {
+            if (nextAssrtHypIndex >= assrtLogHypArray.length)
                 return false;
-            }
-            if (assrtHypUsed[nextAssrtHypIndex]) {
+            if (assrtHypUsed[nextAssrtHypIndex])
                 continue;
-            }
-            if (currLevelSubstAnswer[nextAssrtHypIndex] ==
-                UnifySubst.IMPOSSIBLE) {
+            if (currLevelSubstAnswer[nextAssrtHypIndex] == UnifySubst.IMPOSSIBLE)
                 continue;
-            }
             if (currLevelSubstAnswer[nextAssrtHypIndex] == null) {
                 if (unifyAndMergeSubstAnswer(currLevelSubstAnswer,
-                                             nextAssrtHypIndex)) {
-                    derivAssrtXRef[currLevel]
-                                  = nextAssrtHypIndex;
-                    assrtHypUsed[nextAssrtHypIndex]
-                                  = true;
+                    nextAssrtHypIndex))
+                {
+                    derivAssrtXRef[currLevel] = nextAssrtHypIndex;
+                    assrtHypUsed[nextAssrtHypIndex] = true;
                     return true;
                 }
-                if (currLevelSubstAnswer[nextAssrtHypIndex]
-                        == UnifySubst.IMPOSSIBLE) {
+                if (currLevelSubstAnswer[nextAssrtHypIndex] == UnifySubst.IMPOSSIBLE)
                     ++impossibleCnt[currLevel];
-                }
                 continue;
             }
 
-            //here we (attempt to) merge in the previously computed
-            //substitutions for a LogHyp
-            currLevelDeferred     =
-                currLevelSubstAnswer[nextAssrtHypIndex];
+            // here we (attempt to) merge in the previously computed
+            // substitutions for a LogHyp
+            currLevelDeferred = currLevelSubstAnswer[nextAssrtHypIndex];
             if (mergeCurrLevelSubst()) {
-                derivAssrtXRef[currLevel]
-                              = nextAssrtHypIndex;
-                assrtHypUsed[nextAssrtHypIndex]
-                              = true;
+                derivAssrtXRef[currLevel] = nextAssrtHypIndex;
+                assrtHypUsed[nextAssrtHypIndex] = true;
                 return true;
             }
-            else {
+            else
                 backoutCurrLevelApplieds();
-            }
         }
 
         return false;
     }
 
     private boolean unifyAndMergeSubstAnswer(
-                        UnifySubst[]    currLevelSubstAnswer,
-                        int             assrtLogHypIndex) {
+        final UnifySubst[] currLevelSubstAnswer, final int assrtLogHypIndex)
+    {
 
         ParseNode sourceRoot;
-        if (derivStepHypArray[currLevel] == null) {
-            sourceRoot        = null;
-        }
-        else {
-            sourceRoot        =
-                derivStepHypArray[currLevel].
-                    formulaParseTree.
-                        getRoot();
-        }
-        if ((currLevelSubstAnswer[assrtLogHypIndex]
-                              =
-                unifyLogHypFormula(
-                    assrtLogHypArray[assrtLogHypIndex].
-                        getExprParseTree().
-                            getRoot(),
-                    sourceRoot))
-            != UnifySubst.IMPOSSIBLE) {
-
-            if (mergeCurrLevelSubst()) {
+        if (derivStepHypArray[currLevel] == null)
+            sourceRoot = null;
+        else
+            sourceRoot = derivStepHypArray[currLevel].formulaParseTree
+                .getRoot();
+        if ((currLevelSubstAnswer[assrtLogHypIndex] = unifyLogHypFormula(
+            assrtLogHypArray[assrtLogHypIndex].getExprParseTree().getRoot(),
+            sourceRoot)) != UnifySubst.IMPOSSIBLE)
+            if (mergeCurrLevelSubst())
                 return true;
-            }
-        }
 
         backoutCurrLevelApplieds();
         return false;
     }
 
-    private UnifySubst unifyLogHypFormula(ParseNode targetRoot,
-                                          ParseNode sourceRoot) {
+    private UnifySubst unifyLogHypFormula(final ParseNode targetRoot,
+        final ParseNode sourceRoot)
+    {
 
-        currLevelDeferred     = UnifySubst.EMPTY_LIST;
+        currLevelDeferred = UnifySubst.EMPTY_LIST;
         currLevelDeferredLast = null;
 
-        if (sourceRoot != null) {
-            if (!unifyLevel(targetRoot,
-                            sourceRoot)) {
+        if (sourceRoot != null)
+            if (!unifyLevel(targetRoot, sourceRoot))
                 return UnifySubst.IMPOSSIBLE;
-            }
-        }
 
         return currLevelDeferred;
     }
@@ -635,189 +558,145 @@ public class StepUnifier {
     private boolean mergeCurrLevelSubst() {
 
         if (currLevelDeferred != UnifySubst.EMPTY_LIST) {
-            UnifySubst curr       = currLevelDeferred;
+            UnifySubst curr = currLevelDeferred;
             while (curr != null) {
-                if (!mergeSubst(curr)) {
+                if (!mergeSubst(curr))
                     return false;
-                }
-                curr              = curr.next;
+                curr = curr.next;
             }
         }
         return true;
     }
 
-    private void allocWorkVarsForUnassignedSourceVars()
-                            throws VerifyException {
+    private void allocWorkVarsForUnassignedSourceVars() throws VerifyException {
 
-        VarHyp     sourceVarHyp;
+        VarHyp sourceVarHyp;
         WorkVarHyp workVarHyp;
         for (int i = 0; i < assrtHypArray.length; i++) {
 
-            if (!assrtHypArray[i].isVarHyp()) {
+            if (!assrtHypArray[i].isVarHyp())
                 continue;
-            }
 
-            sourceVarHyp          = (VarHyp)assrtHypArray[i];
-            if (sourceVarHyp.paSubst != null) {
+            sourceVarHyp = (VarHyp)assrtHypArray[i];
+            if (sourceVarHyp.paSubst != null)
                 continue;
-            }
 
-            workVarHyp            =
-                workVarManager.allocWorkVarHyp(
-                    sourceVarHyp.getTyp());
+            workVarHyp = workVarManager.allocWorkVarHyp(sourceVarHyp.getTyp());
 
-            addToAppliedArray(
-                new UnifySubst(workVarHyp,
-                               null,  //null toNode
-                               true), //generatedDuringAccum
-                F_LEVEL_NBR); //fLevel
+            addToAppliedArray(new UnifySubst(workVarHyp, null, // null toNode
+                true), // generatedDuringAccum
+                F_LEVEL_NBR); // fLevel
 
-            sourceVarHyp.paSubst  = new ParseNode(workVarHyp);
+            sourceVarHyp.paSubst = new ParseNode(workVarHyp);
 
-            addToAppliedArray(
-                new UnifySubst(sourceVarHyp,
-                               sourceVarHyp.paSubst,
-                               true), //generatedDuringAccum
-                F_LEVEL_NBR); //fLevel
+            addToAppliedArray(new UnifySubst(sourceVarHyp,
+                sourceVarHyp.paSubst, true), // generatedDuringAccum
+                F_LEVEL_NBR); // fLevel
         }
     }
 
-    private boolean unifyLevel(ParseNode targetNode,
-                               ParseNode sourceNode) {
+    private boolean unifyLevel(final ParseNode targetNode,
+        final ParseNode sourceNode)
+    {
 
-        if (targetNode.stmt.getTyp() !=
-            sourceNode.stmt.getTyp()) {
+        if (targetNode.stmt.getTyp() != sourceNode.stmt.getTyp())
             return false;
-        }
 
         if (targetNode.stmt.isVarHyp()) {
-            VarHyp targetVarHyp   = (VarHyp)targetNode.stmt;
-            UnifySubst targetSubst
-                                  =
-                new UnifySubst(targetVarHyp, //fromHyp
-                               sourceNode,   //toNode
-                               false);       //generatedDuringAccum
+            final VarHyp targetVarHyp = (VarHyp)targetNode.stmt;
+            final UnifySubst targetSubst = new UnifySubst(targetVarHyp, // fromHyp
+                sourceNode, // toNode
+                false); // generatedDuringAccum
 
-            if (currLevel == F_LEVEL_NBR &&
-                targetVarHyp.paSubst == null) {
-                targetVarHyp.paSubst
-                                  = sourceNode;
-                addToAppliedArray(targetSubst,
-                                  F_LEVEL_NBR); //fLevel index
+            if (currLevel == F_LEVEL_NBR && targetVarHyp.paSubst == null) {
+                targetVarHyp.paSubst = sourceNode;
+                addToAppliedArray(targetSubst, F_LEVEL_NBR); // fLevel index
             }
-            else {
+            else
                 addToCurrLevelDeferred(targetSubst);
-            }
             return true;
         }
 
         if (targetNode.stmt == sourceNode.stmt) {
-            for (int i = 0; i < targetNode.child.length; i++) {
-                if (!unifyLevel(targetNode.child[i],
-                                sourceNode.child[i])) {
+            for (int i = 0; i < targetNode.child.length; i++)
+                if (!unifyLevel(targetNode.child[i], sourceNode.child[i]))
                     return false;
-                }
-            }
             return true;
         }
 
         if (sourceNode.stmt.isWorkVarHyp()) {
-            addToCurrLevelDeferred(
-                new UnifySubst((VarHyp)sourceNode.stmt,
-                               targetNode,
-                               false));
+            addToCurrLevelDeferred(new UnifySubst((VarHyp)sourceNode.stmt,
+                targetNode, false));
             return true;
         }
 
         return false;
     }
 
-    private boolean mergeSubst(UnifySubst curr) {
+    private boolean mergeSubst(final UnifySubst curr) {
 
-        ParseNode toParseNode     = curr.toNode;
+        ParseNode toParseNode = curr.toNode;
 
         if (curr.fromHyp.isWorkVarHyp()) {
 
-            if (!curr.generatedDuringAccum) {
-                toParseNode       =
-                    curr.toNode.cloneTargetToSourceVars();
-            }
+            if (!curr.generatedDuringAccum)
+                toParseNode = curr.toNode.cloneTargetToSourceVars();
 
             if (curr.fromHyp.paSubst == null) {
 
-                int returnCode    =
-                    toParseNode.
-                        checkWorkVarHasOccursIn(
-                            (WorkVarHyp)curr.fromHyp);
+                final int returnCode = toParseNode
+                    .checkWorkVarHasOccursIn((WorkVarHyp)curr.fromHyp);
 
-                if (returnCode ==
-                    LangConstants.WV_OCCURS_IN_RENAME_LOOP) {
+                if (returnCode == LangConstants.WV_OCCURS_IN_RENAME_LOOP)
                     return true; // ok, but no assignment update!
-                }
 
-                if (returnCode ==
-                    LangConstants.WV_OCCURS_IN_ERROR) {
-                    return false; //naughty!
-                }
+                if (returnCode == LangConstants.WV_OCCURS_IN_ERROR)
+                    return false; // naughty!
             }
         }
 
         if (curr.fromHyp.paSubst == null) {
-            curr.fromHyp.paSubst  = toParseNode;
-            addToAppliedArray(curr,
-                              currLevel);
+            curr.fromHyp.paSubst = toParseNode;
+            addToAppliedArray(curr, currLevel);
             return true;
         }
 
-        return subunify(curr.fromHyp.paSubst,
-                        toParseNode);
+        return subunify(curr.fromHyp.paSubst, toParseNode);
     }
 
     // clone of mergeSubst()
-    private boolean mergeSubst2(VarHyp    currFromHyp,
-                                ParseNode currToNode,
-                                boolean   currGeneratedDuringAccum) {
+    private boolean mergeSubst2(final VarHyp currFromHyp,
+        final ParseNode currToNode, final boolean currGeneratedDuringAccum)
+    {
 
-        ParseNode toParseNode     = currToNode;
+        ParseNode toParseNode = currToNode;
 
         if (currFromHyp.isWorkVarHyp()) {
 
-            if (!currGeneratedDuringAccum) {
-                toParseNode       =
-                    currToNode.cloneTargetToSourceVars();
-            }
+            if (!currGeneratedDuringAccum)
+                toParseNode = currToNode.cloneTargetToSourceVars();
 
             if (currFromHyp.paSubst == null) {
 
-                int returnCode    =
-                    toParseNode.
-                        checkWorkVarHasOccursIn(
-                            (WorkVarHyp)currFromHyp);
+                final int returnCode = toParseNode
+                    .checkWorkVarHasOccursIn((WorkVarHyp)currFromHyp);
 
-                if (returnCode ==
-                    LangConstants.WV_OCCURS_IN_RENAME_LOOP) {
+                if (returnCode == LangConstants.WV_OCCURS_IN_RENAME_LOOP)
                     return true; // ok, but no assignment update!
-                }
 
-                if (returnCode ==
-                    LangConstants.WV_OCCURS_IN_ERROR) {
-                    return false; //naughty!
-                }
+                if (returnCode == LangConstants.WV_OCCURS_IN_ERROR)
+                    return false; // naughty!
             }
         }
 
         if (currFromHyp.paSubst == null) {
-            currFromHyp.paSubst   = toParseNode;
-            addToAppliedArray(
-                new UnifySubst(currFromHyp,
-                               currToNode,
-                               currGeneratedDuringAccum),
-                currLevel);
+            currFromHyp.paSubst = toParseNode;
+            addToAppliedArray(new UnifySubst(currFromHyp, currToNode,
+                currGeneratedDuringAccum), currLevel);
             return true;
         }
 
-        return subunify(currFromHyp.paSubst,
-                        toParseNode);
+        return subunify(currFromHyp.paSubst, toParseNode);
     }
 
     /**
@@ -835,36 +714,23 @@ public class StepUnifier {
      *        there are no substitutions to the
      *        source variables themselves.)
      */
-    private boolean subunify(ParseNode n1,
-                             ParseNode n2) {
+    private boolean subunify(final ParseNode n1, final ParseNode n2) {
 
         if (n1.stmt == n2.stmt) {
-            if (!n1.stmt.isVarHyp()) {
-                for (int i = 0; i < n1.child.length; i++) {
-                    if (!subunify(n1.child[i],
-                                  n2.child[i])) {
+            if (!n1.stmt.isVarHyp())
+                for (int i = 0; i < n1.child.length; i++)
+                    if (!subunify(n1.child[i], n2.child[i]))
                         return false;
-                    }
-                }
-            }
             return true;
         }
 
-        if (n1.stmt.getTyp() !=
-            n2.stmt.getTyp()) {
+        if (n1.stmt.getTyp() != n2.stmt.getTyp())
             return false;
-        }
 
-        if (n1.stmt.isWorkVarHyp()) {
-            return mergeSubst2((VarHyp)n1.stmt,
-                               n2,
-                               true);    // generatedDuringAccum
-        }
-        if (n2.stmt.isWorkVarHyp()) {
-            return mergeSubst2((VarHyp)n2.stmt,
-                               n1,
-                               true);    // generatedDuringAccum
-        }
+        if (n1.stmt.isWorkVarHyp())
+            return mergeSubst2((VarHyp)n1.stmt, n2, true); // generatedDuringAccum
+        if (n2.stmt.isWorkVarHyp())
+            return mergeSubst2((VarHyp)n2.stmt, n1, true); // generatedDuringAccum
 
         return false;
     }
@@ -875,35 +741,29 @@ public class StepUnifier {
     // ***************************************************
     // ===================================================
 
-    private void addToCurrLevelDeferred(UnifySubst deferredSubst) {
+    private void addToCurrLevelDeferred(final UnifySubst deferredSubst) {
 
-        currLevelDeferredLast     =
-            deferredSubst.insert(currLevelDeferredLast);
+        currLevelDeferredLast = deferredSubst.insert(currLevelDeferredLast);
 
-        if (currLevelDeferred == UnifySubst.EMPTY_LIST) {
-            currLevelDeferred     = deferredSubst;
-        }
+        if (currLevelDeferred == UnifySubst.EMPTY_LIST)
+            currLevelDeferred = deferredSubst;
     }
 
-    private void addToAppliedArray(UnifySubst unifySubst,
-                                   int        levelIndex) {
+    private void addToAppliedArray(final UnifySubst unifySubst, int levelIndex)
+    {
         if (appliedCnt >= applied.length) {
-            if (appliedCnt >=
-                    PaConstants.STEP_UNIFIER_APPLIED_ARRAY_LEN_MAX) {
+            if (appliedCnt >= PaConstants.STEP_UNIFIER_APPLIED_ARRAY_LEN_MAX)
                 throw new IllegalArgumentException(
                     PaConstants.ERRMSG_ADD_TO_APPLIED_ARRAY_OFLOW_1);
-            }
-            int n                 =
-                applied.length +
-                PaConstants.STEP_UNIFIER_APPLIED_ARRAY_LEN_INIT;
-            UnifySubst[] x        = new UnifySubst[n];
-            for (int i = 0; i < appliedCnt; i++) {
-                x[i]              = applied[i];
-            }
-            applied               = x;
+            final int n = applied.length
+                + PaConstants.STEP_UNIFIER_APPLIED_ARRAY_LEN_INIT;
+            final UnifySubst[] x = new UnifySubst[n];
+            for (int i = 0; i < appliedCnt; i++)
+                x[i] = applied[i];
+            applied = x;
         }
 
-        applied[appliedCnt++]     = unifySubst;
+        applied[appliedCnt++] = unifySubst;
         ++levelAppliedCnt[++levelIndex];
     }
 
@@ -912,39 +772,33 @@ public class StepUnifier {
     }
 
     private void backoutAllHLevelApplieds() {
-        for (int i = levelAppliedCnt.length - 2;
-                 i >= 0;
-                 i--) {
+        for (int i = levelAppliedCnt.length - 2; i >= 0; i--)
             backoutOneLevelApplieds(i);
-        }
     }
 
     private void backoutOneLevelApplieds(int levelNbr) {
 
-        int backoutCnt            = levelAppliedCnt[++levelNbr];
+        int backoutCnt = levelAppliedCnt[++levelNbr];
 
         UnifySubst appliedSubst;
-        while(backoutCnt-- > 0) {
-            appliedSubst          = applied[--appliedCnt];
+        while (backoutCnt-- > 0) {
+            appliedSubst = applied[--appliedCnt];
 
             // Erase fromHyp.paSubst value because we never
             // apply a substitution value more than once per
             // variable during unification -- so if the VarHyp
             // is mentioned in array "applied", erase .paSubst.
-            appliedSubst.fromHyp.paSubst
-                                  = null;
+            appliedSubst.fromHyp.paSubst = null;
 
-            if (appliedSubst.fromHyp.isWorkVarHyp() &&
-                appliedSubst.toNode == null) {
-
+            if (appliedSubst.fromHyp.isWorkVarHyp()
+                && appliedSubst.toNode == null)
                 // appliedSubst.toNode == null means that
                 // allocation was requested during unification;
                 // the WorkVarHyp was not part of the original
                 // formula, so it can be deallocated.
                 workVarManager.dealloc(appliedSubst.fromHyp);
-            }
 
-            applied[appliedCnt]   = null;
+            applied[appliedCnt] = null;
         }
 
         levelAppliedCnt[levelNbr] = 0;

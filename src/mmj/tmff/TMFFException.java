@@ -31,7 +31,7 @@ public class TMFFException extends Exception {
      *
      *  @param   errorMessage  error message.
      */
-    public TMFFException(String errorMessage) {
+    public TMFFException(final String errorMessage) {
         super(errorMessage);
     }
 }

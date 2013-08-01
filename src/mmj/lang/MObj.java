@@ -26,7 +26,7 @@
 
 package mmj.lang;
 
-import java.util.*;
+import java.util.Comparator;
 
 /**
  *  MObj (Metamath Object) is root of Sym and Stmt.
@@ -64,21 +64,20 @@ public abstract class MObj implements Comparable {
      *  context (@see mmj.verify.Grammar).
      *
      */
-    protected final  int seq;
+    protected final int seq;
 
     /**
      *  isTempObject flag denotes a dummy or temporary object
      *  that is not stored in the Sym table or Stmt table
      *  and has the lifespan of a single transaction.
      */
-    protected boolean isTempObject
-                                  = false;
+    protected boolean isTempObject = false;
 
     /**
      *  description is derived from Metamath comments (initially...
      *  and may be present only for Theorems.)
      */
-    protected String description  = null;
+    protected String description = null;
 
     /**
      *  chapterNbr assigned by BookManager which is optionally
@@ -89,7 +88,7 @@ public abstract class MObj implements Comparable {
      *  1 within the set of loaded Metamath input files
      *  (see mmj.lang.BookManager.java for more info.)
      */
-    protected int chapterNbr      = 0;
+    protected int chapterNbr = 0;
 
     /**
      *  sectionNbr assigned by BookManager which is optionally
@@ -107,8 +106,7 @@ public abstract class MObj implements Comparable {
      *  divisible by 4, syntax by 3, and so on (see
      *  mmj.lang.BookManager.java for more info.)
      */
-    protected int sectionNbr      = 0;
-
+    protected int sectionNbr = 0;
 
     /**
      *  sectionMObjNbr is assigned by BookManager which is optionally
@@ -119,12 +117,12 @@ public abstract class MObj implements Comparable {
      *  1 within Section (see mmj.lang.BookManager.java for more
      *  info.)
      */
-    protected int sectionMObjNbr  = 0;
+    protected int sectionMObjNbr = 0;
 
     /**
      *  Construct MObj with sequence number.
      */
-    protected MObj(int inSeq) {
+    protected MObj(final int inSeq) {
         seq = inSeq;
     }
 
@@ -165,16 +163,16 @@ public abstract class MObj implements Comparable {
      *  <p>
      *  @param isTempObject boolean flag denoting dummy/temp objects.
      */
-    public void setIsTempObject(boolean isTempObject) {
-        this.isTempObject         = isTempObject;
+    public void setIsTempObject(final boolean isTempObject) {
+        this.isTempObject = isTempObject;
     }
-
 
     /**
      *  Converts to MObj to String.
      *
      *  @return returns MObj string;
      */
+    @Override
     public String toString() {
         return Integer.toString(seq);
     }
@@ -184,6 +182,7 @@ public abstract class MObj implements Comparable {
      *
      * @return hashcode for the MObj
      */
+    @Override
     public int hashCode() {
         return seq;
     }
@@ -198,10 +197,10 @@ public abstract class MObj implements Comparable {
      *  or greater than the input parameter obj.
      *
      */
-    public int compareTo(Object obj) {
-        return (seq - ((MObj)obj).seq );
+    @Override
+    public int compareTo(final Object obj) {
+        return seq - ((MObj)obj).seq;
     }
-
 
     /*
      *  Compare for equality with another MObj.
@@ -212,19 +211,19 @@ public abstract class MObj implements Comparable {
      *
      *  @return returns true if equal, otherwise false.
      */
-    public boolean equals(Object obj) {
-        return (this == obj) ? true
-                : !(obj instanceof MObj) ? false
-                        : (seq == ((MObj)obj).seq);
+    @Override
+    public boolean equals(final Object obj) {
+        return this == obj ? true : !(obj instanceof MObj) ? false
+            : seq == ((MObj)obj).seq;
     }
 
     /**
      *  SEQ sequences by MObj.seq.
      */
-    static public final Comparator SEQ
-            = new Comparator() {
-        public int compare(Object o1, Object o2) {
-            return ( ((MObj)o1).seq - ((MObj)o2).seq );
+    static public final Comparator SEQ = new Comparator() {
+        @Override
+        public int compare(final Object o1, final Object o2) {
+            return ((MObj)o1).seq - ((MObj)o2).seq;
         }
     };
 
@@ -232,20 +231,14 @@ public abstract class MObj implements Comparable {
      *  SECTION_AND_MOBJ_NBR sequences by sectionNbr and
      *  sectionMObjNbr;
      */
-    static public final Comparator SECTION_AND_MOBJ_NBR
-            = new Comparator() {
-        public int compare(Object o1, Object o2) {
-            return ( ((MObj)o1).sectionNbr ==
-                     ((MObj)o2).sectionNbr )
-                     ?
-                        ( ((MObj)o1).sectionMObjNbr -
-                          ((MObj)o2).sectionMObjNbr )
-                     :
-                        ( ((MObj)o1).sectionNbr -
-                          ((MObj)o2).sectionNbr );
+    static public final Comparator SECTION_AND_MOBJ_NBR = new Comparator() {
+        @Override
+        public int compare(final Object o1, final Object o2) {
+            return ((MObj)o1).sectionNbr == ((MObj)o2).sectionNbr ? ((MObj)o1).sectionMObjNbr
+                - ((MObj)o2).sectionMObjNbr
+                : ((MObj)o1).sectionNbr - ((MObj)o2).sectionNbr;
         }
     };
-
 
     /*
      *  Returns description text derived from Metamath comments.
@@ -267,8 +260,8 @@ public abstract class MObj implements Comparable {
      *  <p>
      *  @param description description text derived from Metamath comments.
      */
-    public void setDescription(String description) {
-        this.description          = description;
+    public void setDescription(final String description) {
+        this.description = description;
     }
 
     /**
@@ -285,8 +278,8 @@ public abstract class MObj implements Comparable {
      *  <p>
      *  @param chapterNbr for the MObj.
      */
-    public void setChapterNbr(int chapterNbr) {
-        this.chapterNbr           = chapterNbr;
+    public void setChapterNbr(final int chapterNbr) {
+        this.chapterNbr = chapterNbr;
     }
 
     /**
@@ -303,8 +296,8 @@ public abstract class MObj implements Comparable {
      *  <p>
      *  @param sectionNbr for the MObj.
      */
-    public void setSectionNbr(int sectionNbr) {
-        this.sectionNbr           = sectionNbr;
+    public void setSectionNbr(final int sectionNbr) {
+        this.sectionNbr = sectionNbr;
     }
 
     /**
@@ -321,9 +314,8 @@ public abstract class MObj implements Comparable {
      *  <p>
      *  @param sectionMObjNbr for the MObj.
      */
-    public void setSectionMObjNbr(int sectionMObjNbr) {
-        this.sectionMObjNbr       = sectionMObjNbr;
+    public void setSectionMObjNbr(final int sectionMObjNbr) {
+        this.sectionMObjNbr = sectionMObjNbr;
     }
-
 
 }

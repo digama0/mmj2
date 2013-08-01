@@ -15,9 +15,11 @@
 
 package mmj.gmff;
 
-import  java.util.*;
-import  mmj.lang.Messages;
-import  mmj.util.UtilConstants;
+import java.util.ArrayList;
+import java.util.Comparator;
+
+import mmj.lang.Messages;
+import mmj.util.UtilConstants;
 
 /**
  *  GMFFUserTextEscapes holds the parameters from a single
@@ -36,11 +38,10 @@ import  mmj.util.UtilConstants;
  *  because, in theory, different export types could
  *  have different escape codes.
  */
-public class GMFFUserTextEscapes
-                                implements Comparable {
+public class GMFFUserTextEscapes implements Comparable {
 
-    public final    String  				exportType;
-	public 			ArrayList<EscapePair> 	escapePairList;
+    public final String exportType;
+    public ArrayList<EscapePair> escapePairList;
 
     /**
      *  Constructor with ArrayList of Escape Pairs.
@@ -48,12 +49,12 @@ public class GMFFUserTextEscapes
      *  @param exportType key
      *  @param escapePairList ArrayList of <code>EscapePair</code>
      */
-    public GMFFUserTextEscapes(
-                    String  				exportType,
-                    ArrayList<EscapePair> 	escapePairList) {
+    public GMFFUserTextEscapes(final String exportType,
+        final ArrayList<EscapePair> escapePairList)
+    {
 
-        this.exportType         = exportType;
-        this.escapePairList     = escapePairList;
+        this.exportType = exportType;
+        this.escapePairList = escapePairList;
 
     }
 
@@ -63,16 +64,14 @@ public class GMFFUserTextEscapes
      *  @param exportType key
      *  @param escapePairs Array of <code>EscapePair</code>
      */
-    public GMFFUserTextEscapes(
-                    String  				exportType,
-                    EscapePair[]		 	escapePairs) {
+    public GMFFUserTextEscapes(final String exportType,
+        final EscapePair[] escapePairs)
+    {
 
-        this.exportType         = exportType;
-        this.escapePairList     =
-        	new ArrayList<EscapePair>(escapePairs.length);
-        for (int i = 0; i < escapePairs.length; i++) {
-			escapePairList.add(escapePairs[i]);
-		}
+        this.exportType = exportType;
+        escapePairList = new ArrayList<EscapePair>(escapePairs.length);
+        for (final EscapePair escapePair : escapePairs)
+            escapePairList.add(escapePair);
     }
 
     /**
@@ -83,20 +82,20 @@ public class GMFFUserTextEscapes
      */
     public String generateAuditReportText() {
 
-		StringBuffer sb         = new StringBuffer();
+        final StringBuffer sb = new StringBuffer();
 
-		sb.append(UtilConstants.RUNPARM_GMFF_USER_TEXT_ESCAPES);
-		sb.append(GMFFConstants.AUDIT_REPORT_COMMA);
-		sb.append(exportType);
-		for (EscapePair ep: escapePairList) {
-			sb.append(GMFFConstants.AUDIT_REPORT_COMMA);
-			sb.append(ep.num);
-			sb.append(GMFFConstants.AUDIT_REPORT_COMMA);
-			sb.append(GMFFConstants.AUDIT_REPORT_DOUBLE_QUOTE);
-			sb.append(ep.replacement);
-			sb.append(GMFFConstants.AUDIT_REPORT_DOUBLE_QUOTE);
-		}
-		return sb.toString();
+        sb.append(UtilConstants.RUNPARM_GMFF_USER_TEXT_ESCAPES);
+        sb.append(GMFFConstants.AUDIT_REPORT_COMMA);
+        sb.append(exportType);
+        for (final EscapePair ep : escapePairList) {
+            sb.append(GMFFConstants.AUDIT_REPORT_COMMA);
+            sb.append(ep.num);
+            sb.append(GMFFConstants.AUDIT_REPORT_COMMA);
+            sb.append(GMFFConstants.AUDIT_REPORT_DOUBLE_QUOTE);
+            sb.append(ep.replacement);
+            sb.append(GMFFConstants.AUDIT_REPORT_DOUBLE_QUOTE);
+        }
+        return sb.toString();
     }
 
     /**
@@ -112,27 +111,23 @@ public class GMFFUserTextEscapes
      *  @param messages The Messages object.
      *  @return true if valid otherwise false.
      */
-	public boolean areUserTextEscapesValid(
-					ArrayList<GMFFExportParms> exportParmsList,
-					Messages messages) {
+    public boolean areUserTextEscapesValid(
+        final ArrayList<GMFFExportParms> exportParmsList,
+        final Messages messages)
+    {
 
-		boolean valid           = true;
+        boolean valid = true;
 
-		if (isExportTypeValid(exportParmsList,
-		                      messages)) {
-		}
-		else {
-			valid               = false;
-		}
+        if (isExportTypeValid(exportParmsList, messages)) {}
+        else
+            valid = false;
 
-		if (isEscapePairListValid(messages)) {
-		}
-		else {
-			valid               = false;
-		}
+        if (isEscapePairListValid(messages)) {}
+        else
+            valid = false;
 
-		return valid;
-	}
+        return valid;
+    }
 
     /**
      *  Validates export type.
@@ -148,24 +143,22 @@ public class GMFFUserTextEscapes
      *  @param messages The Messages object.
      *  @return true if valid otherwise false.
      */
-	public boolean isExportTypeValid(
-						ArrayList<GMFFExportParms> exportParmsList,
-						Messages                   messages) {
+    public boolean isExportTypeValid(
+        final ArrayList<GMFFExportParms> exportParmsList,
+        final Messages messages)
+    {
 
-		if (GMFFExportParms.isPresentWithNoWhitespace(exportType)) {
-			for (GMFFExportParms ep: exportParmsList) {
-				if (ep.exportType.equals(exportType)) {
-					return true;
-				}
-			}
-		}
+        if (GMFFExportParms.isPresentWithNoWhitespace(exportType))
+            for (final GMFFExportParms ep : exportParmsList)
+                if (ep.exportType.equals(exportType))
+                    return true;
 
-		messages.accumErrorMessage(
-			GMFFConstants.ERRMSG_ESCAPE_EXPORT_TYPE_BAD_MISSING_1
-			+ exportType);
+        messages
+            .accumErrorMessage(GMFFConstants.ERRMSG_ESCAPE_EXPORT_TYPE_BAD_MISSING_1
+                + exportType);
 
-		return false;
-	}
+        return false;
+    }
 
     /**
      *  Validates each <code>EscapePair</code> in the list.
@@ -177,29 +170,27 @@ public class GMFFUserTextEscapes
      *  @param messages The Messages object.
      *  @return true if valid otherwise false.
      */
-	public boolean isEscapePairListValid(Messages messages) {
+    public boolean isEscapePairListValid(final Messages messages) {
 
-		boolean valid           = true;
+        boolean valid = true;
 
-		for (EscapePair ep: escapePairList) {
-			try {
-				ep.validateEscapePair(exportType);
+        for (final EscapePair ep : escapePairList)
+            try {
+                ep.validateEscapePair(exportType);
 
-			}
-			catch (GMFFException e) {
-				messages.accumErrorMessage(
-					e.getMessage());
-				valid           = false;
-			}
-		}
-		return valid;
-	}
+            } catch (final GMFFException e) {
+                messages.accumErrorMessage(e.getMessage());
+                valid = false;
+            }
+        return valid;
+    }
 
     /**
      *  converts to String
      *
      *  @return returns GMFFUserTextEscapes.exportType string;
      */
+    @Override
     public String toString() {
         return exportType;
     }
@@ -210,6 +201,7 @@ public class GMFFUserTextEscapes
      * @return hashcode for the GMFFUserTextEscapes
      *        (GMFFUserTextEscapes.exportType.hashcode())
      */
+    @Override
     public int hashCode() {
         return exportType.hashCode();
     }
@@ -226,11 +218,11 @@ public class GMFFUserTextEscapes
      *
      * @return returns true if equal, otherwise false.
      */
-    public boolean equals(Object obj) {
-        return (this == obj) ? true
-                : !(obj instanceof GMFFUserTextEscapes) ? false
-                        : exportType.equals(
-                            ((GMFFUserTextEscapes)obj).exportType);
+    @Override
+    public boolean equals(final Object obj) {
+        return this == obj ? true
+            : !(obj instanceof GMFFUserTextEscapes) ? false : exportType
+                .equals(((GMFFUserTextEscapes)obj).exportType);
     }
 
     /**
@@ -244,19 +236,19 @@ public class GMFFUserTextEscapes
      * or greater than the input parameter obj.
      *
      */
-    public int compareTo(Object obj) {
-        return exportType.compareTo(
-                ((GMFFUserTextEscapes)obj).exportType);
+    @Override
+    public int compareTo(final Object obj) {
+        return exportType.compareTo(((GMFFUserTextEscapes)obj).exportType);
     }
 
     /**
      *  EXPORT_TYPE sequences by GMFFUserTextEscapes.exportType.
      */
-    static public final Comparator EXPORT_TYPE
-            = new Comparator() {
-        public int compare(Object o1, Object o2) {
-            return (((GMFFUserTextEscapes)o1).exportType.compareTo(
-                    ((GMFFUserTextEscapes)o2).exportType));
+    static public final Comparator EXPORT_TYPE = new Comparator() {
+        @Override
+        public int compare(final Object o1, final Object o2) {
+            return ((GMFFUserTextEscapes)o1).exportType
+                .compareTo(((GMFFUserTextEscapes)o2).exportType);
         }
     };
 }

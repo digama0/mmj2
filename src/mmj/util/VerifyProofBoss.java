@@ -21,10 +21,13 @@
  */
 
 package mmj.util;
-import java.io.*;
-import mmj.mmio.*;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import mmj.lang.*;
-import mmj.verify.*;
+import mmj.mmio.MMIOException;
+import mmj.verify.VerifyProofs;
 
 /**
  *  Responsible for building, loading, maintaining and fetching
@@ -46,16 +49,16 @@ public class VerifyProofBoss extends Boss {
 
     protected VerifyProofs verifyProofs;
 
-    protected boolean      allProofsVerifiedSuccessfully;
+    protected boolean allProofsVerifiedSuccessfully;
 
-    protected boolean      allStatementsParsedSuccessfully;
+    protected boolean allStatementsParsedSuccessfully;
 
     /**
      *  Constructor with BatchFramework for access to environment.
      *
      *  @param batchFramework for access to environment.
      */
-    public VerifyProofBoss(BatchFramework batchFramework) {
+    public VerifyProofBoss(final BatchFramework batchFramework) {
         super(batchFramework);
     }
 
@@ -77,7 +80,6 @@ public class VerifyProofBoss extends Boss {
         return allStatementsParsedSuccessfully;
     }
 
-
     /**
      *  Return initialized VerifyProofs object
      *
@@ -88,50 +90,41 @@ public class VerifyProofBoss extends Boss {
         return verifyProofs;
     }
 
-
     /**
      *  Executes a single command from the RunParmFile.
      *
      *  @param runParm the RunParmFile line to execute.
      */
-    public boolean doRunParmCommand(
-                          RunParmArrayEntry runParm)
+    @Override
+    public boolean doRunParmCommand(final RunParmArrayEntry runParm)
 
-                        throws IllegalArgumentException,
-                               MMIOException,
-                               FileNotFoundException,
-                               IOException,
-                               VerifyException {
+    throws IllegalArgumentException, MMIOException, FileNotFoundException,
+        IOException, VerifyException
+    {
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_CLEAR)
-            == 0) {
-            verifyProofs      = null;
-            allProofsVerifiedSuccessfully
-                              = false;
-            allStatementsParsedSuccessfully
-                              = false;
+        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR) == 0)
+        {
+            verifyProofs = null;
+            allProofsVerifiedSuccessfully = false;
+            allStatementsParsedSuccessfully = false;
             return false; // not "consumed"
         }
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_LOAD_FILE)
-            == 0) {
-            allProofsVerifiedSuccessfully
-                              = false;
-            allStatementsParsedSuccessfully
-                              = false;
+        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_FILE) == 0)
+        {
+            allProofsVerifiedSuccessfully = false;
+            allStatementsParsedSuccessfully = false;
             return false; // not "consumed"
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_VERIFY_PROOF)
-            == 0) {
+        if (runParm.name
+            .compareToIgnoreCase(UtilConstants.RUNPARM_VERIFY_PROOF) == 0)
+        {
             doVerifyProof(runParm);
             return true; // not "consumed"
         }
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_VERIFY_PARSE)
-            == 0) {
+        if (runParm.name
+            .compareToIgnoreCase(UtilConstants.RUNPARM_VERIFY_PARSE) == 0)
+        {
             doVerifyParse(runParm);
             return true; // not "consumed"
         }
@@ -146,52 +139,37 @@ public class VerifyProofBoss extends Boss {
      *
      *  @param runParm RunParmFile line.
      */
-    public  void doVerifyProof(RunParmArrayEntry runParm)
-                        throws IllegalArgumentException,
-                               IOException,
-                               VerifyException {
+    public void doVerifyProof(final RunParmArrayEntry runParm)
+        throws IllegalArgumentException, IOException, VerifyException
+    {
 
-        editRunParmValuesLength(
-                 runParm,
-                 UtilConstants.RUNPARM_VERIFY_PROOF,
-                 1);
+        editRunParmValuesLength(runParm, UtilConstants.RUNPARM_VERIFY_PROOF, 1);
 
-        LogicalSystem logicalSystem
-                                  =
-            batchFramework.logicalSystemBoss.getLogicalSystem();
+        final LogicalSystem logicalSystem = batchFramework.logicalSystemBoss
+            .getLogicalSystem();
 
         initializeVerifyProofsIfNeeded();
 
-        Messages messages         =
-            batchFramework.outputBoss.getMessages();
+        final Messages messages = batchFramework.outputBoss.getMessages();
 
-        if (!batchFramework.logicalSystemBoss.getLoadProofs()) {
-            messages.accumInfoMessage(
-                UtilConstants.ERRMSG_IGNORING_VERIFY_PROOF_RUNPARM);
-        }
+        if (!batchFramework.logicalSystemBoss.getLoadProofs())
+            messages
+                .accumInfoMessage(UtilConstants.ERRMSG_IGNORING_VERIFY_PROOF_RUNPARM);
         else {
-            String optionValue    = runParm.values[0].trim();
-            if (optionValue.compareTo(
-                UtilConstants.RUNPARM_OPTION_VALUE_ALL)
-                == 0) {
-                verifyProofs.verifyAllProofs(
-                    messages,
+            final String optionValue = runParm.values[0].trim();
+            if (optionValue.compareTo(UtilConstants.RUNPARM_OPTION_VALUE_ALL) == 0)
+            {
+                verifyProofs.verifyAllProofs(messages,
                     logicalSystem.getStmtTbl());
-                if (messages.getErrorMessageCnt() == 0) {
+                if (messages.getErrorMessageCnt() == 0)
                     allProofsVerifiedSuccessfully = true;
-                }
-                else {
+                else
                     allProofsVerifiedSuccessfully = true;
-                }
             }
             else {
-                Theorem theorem   =
-                    editRunParmValueTheorem(
-                        optionValue,
-                        UtilConstants.RUNPARM_VERIFY_PROOF,
-                        logicalSystem);
-                String errmsg     =
-                    verifyProofs.verifyOneProof(theorem);
+                final Theorem theorem = editRunParmValueTheorem(optionValue,
+                    UtilConstants.RUNPARM_VERIFY_PROOF, logicalSystem);
+                final String errmsg = verifyProofs.verifyOneProof(theorem);
                 if (errmsg != null) {
                     messages.accumErrorMessage(errmsg);
                     allProofsVerifiedSuccessfully = false;
@@ -205,61 +183,43 @@ public class VerifyProofBoss extends Boss {
 
     }
 
-
     /**
      *  Executes the VerifyParse command, prints any messages,
      *  etc.
      *
      *  @param runParm RunParmFile line.
      */
-    public void doVerifyParse(RunParmArrayEntry runParm)
-                        throws IllegalArgumentException,
-                               IOException,
-                               VerifyException {
+    public void doVerifyParse(final RunParmArrayEntry runParm)
+        throws IllegalArgumentException, IOException, VerifyException
+    {
 
-        editRunParmValuesLength(
-                 runParm,
-                 UtilConstants.RUNPARM_VERIFY_PARSE,
-                 1);
+        editRunParmValuesLength(runParm, UtilConstants.RUNPARM_VERIFY_PARSE, 1);
 
-        LogicalSystem logicalSystem
-                              =
-            batchFramework.logicalSystemBoss.getLogicalSystem();
+        final LogicalSystem logicalSystem = batchFramework.logicalSystemBoss
+            .getLogicalSystem();
 
         initializeVerifyProofsIfNeeded();
 
-        Messages messages     =
-            batchFramework.outputBoss.getMessages();
+        final Messages messages = batchFramework.outputBoss.getMessages();
 
-        String optionValue    = runParm.values[0].trim();
-        if (optionValue.compareTo(
-            UtilConstants.RUNPARM_OPTION_VALUE_ALL)
-            == 0) {
-            verifyProofs.verifyAllExprRPNAsProofs(
-                messages,
+        final String optionValue = runParm.values[0].trim();
+        if (optionValue.compareTo(UtilConstants.RUNPARM_OPTION_VALUE_ALL) == 0)
+        {
+            verifyProofs.verifyAllExprRPNAsProofs(messages,
                 logicalSystem.getStmtTbl());
-            if (messages.getErrorMessageCnt() == 0) {
-                allStatementsParsedSuccessfully
-                                  = true;
-            }
-            else {
-                allStatementsParsedSuccessfully
-                                  = false;
-            }
+            if (messages.getErrorMessageCnt() == 0)
+                allStatementsParsedSuccessfully = true;
+            else
+                allStatementsParsedSuccessfully = false;
 
         }
         else {
-            Stmt stmt =
-                editRunParmValueStmt(
-                    optionValue,
-                    UtilConstants.RUNPARM_VERIFY_PARSE,
-                    logicalSystem);
-            String errmsg     =
-                verifyProofs.verifyExprRPNAsProof(stmt);
+            final Stmt stmt = editRunParmValueStmt(optionValue,
+                UtilConstants.RUNPARM_VERIFY_PARSE, logicalSystem);
+            final String errmsg = verifyProofs.verifyExprRPNAsProof(stmt);
             if (errmsg != null) {
                 messages.accumErrorMessage(errmsg);
-                allStatementsParsedSuccessfully
-                                  = false;
+                allStatementsParsedSuccessfully = false;
             }
         }
 
@@ -271,11 +231,9 @@ public class VerifyProofBoss extends Boss {
 
     protected void initializeVerifyProofsIfNeeded() {
         if (verifyProofs == null) {
-            verifyProofs          = new VerifyProofs();
-            allProofsVerifiedSuccessfully
-                                  = false;
-            allStatementsParsedSuccessfully
-                                  = false;
+            verifyProofs = new VerifyProofs();
+            allProofsVerifiedSuccessfully = false;
+            allStatementsParsedSuccessfully = false;
         }
     }
 }

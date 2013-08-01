@@ -26,7 +26,8 @@
  */
 
 package mmj.lang;
-import java.util.*;
+
+import java.util.ArrayList;
 
 /**
  *  A simple tree structure to hold a ParseNode root.
@@ -46,7 +47,7 @@ public class ParseTree {
      *  someone asks for it (see below in setMaxDepth(),
      *  getMaxDepth() and calcMaxDepth()).
      */
-    private int maxDepth          = -1;
+    private int maxDepth = -1;
 
     /**
      *  Computed value for Parse Tree containing no
@@ -69,18 +70,17 @@ public class ParseTree {
      *  someone asks for it (see below in setLevelOneTwo(),
      *  and resetLevelOneTwo() and calcMaxDepth()).
      */
-    private String levelOneTwo    = null;
+    private String levelOneTwo = null;
 
     /**
      *  Constructor - default, creates empty ParseTree.
      */
-    public ParseTree() {
-    }
+    public ParseTree() {}
 
     /**
      *  Constructor - creates ParseTree using a ParseNode root.
      */
-    public ParseTree(ParseNode root) {
+    public ParseTree(final ParseNode root) {
         this.root = root;
     }
 
@@ -98,7 +98,7 @@ public class ParseTree {
      *
      *  @param root of tree.
      */
-    public void setRoot(ParseNode root) {
+    public void setRoot(final ParseNode root) {
         this.root = root;
         resetMaxDepth();
         resetLevelOneTwo();
@@ -114,14 +114,11 @@ public class ParseTree {
      *
      *  @return true if duplicate found, else false.
      */
-    public boolean isDup(int         parseCount,
-                         ParseTree[] parseTreeArray) {
-        //search in reverse, perhaps most recent more likely dup?
-        for (--parseCount; parseCount >= 0; parseCount--) {
-            if (isDup(parseTreeArray[parseCount])) {
+    public boolean isDup(int parseCount, final ParseTree[] parseTreeArray) {
+        // search in reverse, perhaps most recent more likely dup?
+        for (--parseCount; parseCount >= 0; parseCount--)
+            if (isDup(parseTreeArray[parseCount]))
                 return true;
-            }
-        }
         return false;
     }
 
@@ -134,18 +131,16 @@ public class ParseTree {
      *
      *  @return true if duplicate, else false.
      */
-    public boolean isDup(ParseTree parseTree) {
+    public boolean isDup(final ParseTree parseTree) {
 
         boolean deepDup = false;
 
         if (root == null) {
-            if (parseTree.root == null) {
+            if (parseTree.root == null)
                 deepDup = true;
-            }
         }
-        else {
+        else
             deepDup = root.isDeepDup(parseTree.root);
-        }
         return deepDup;
     }
 
@@ -167,11 +162,11 @@ public class ParseTree {
      *
      *  @return new ParseTree.
      */
-    public ParseTree deepCloneWNodeSub(ParseNode matchNode,
-                                       ParseNode substNode) {
+    public ParseTree deepCloneWNodeSub(final ParseNode matchNode,
+        final ParseNode substNode)
+    {
 
-        return new ParseTree(root.deepCloneWNodeSub(matchNode,
-                                                    substNode));
+        return new ParseTree(root.deepCloneWNodeSub(matchNode, substNode));
     }
 
     /**
@@ -191,15 +186,11 @@ public class ParseTree {
      *
      *  @return new ParseTree.
      */
-    public ParseTree deepCloneApplyingAssrtSubst(
-                                    Hyp[]       assrtHypArray,
-                                    ParseNode[] assrtSubst,
-                                    ArrayList   workVarList) {
-        return new ParseTree(
-                    root.deepCloneApplyingAssrtSubst(
-                        assrtHypArray,
-                        assrtSubst,
-                        workVarList));
+    public ParseTree deepCloneApplyingAssrtSubst(final Hyp[] assrtHypArray,
+        final ParseNode[] assrtSubst, final ArrayList workVarList)
+    {
+        return new ParseTree(root.deepCloneApplyingAssrtSubst(assrtHypArray,
+            assrtSubst, workVarList));
     }
 
     /**
@@ -213,15 +204,12 @@ public class ParseTree {
      *
      *  @return new ParseTree.
      */
-    public ParseTree deepCloneApplyingAssrtSubst(
-                                    Hyp[]       assrtHypArray,
-                                    ParseNode[] assrtSubst) {
-        return new ParseTree(
-                    root.deepCloneApplyingAssrtSubst(
-                        assrtHypArray,
-                        assrtSubst));
+    public ParseTree deepCloneApplyingAssrtSubst(final Hyp[] assrtHypArray,
+        final ParseNode[] assrtSubst)
+    {
+        return new ParseTree(root.deepCloneApplyingAssrtSubst(assrtHypArray,
+            assrtSubst));
     }
-
 
     /**
      *  (Deep) Clone a ParseTree while substituting a set of
@@ -233,14 +221,8 @@ public class ParseTree {
      *  @return new ParseTree.
      */
     public ParseTree deepCloneApplyingWorkVarUpdates() {
-        return new ParseTree(
-                    root.deepCloneApplyingWorkVarUpdates());
+        return new ParseTree(root.deepCloneApplyingWorkVarUpdates());
     }
-
-
-
-
-
 
     /**
      *  Finds first VarHyp within parseTree.root.child[i].
@@ -252,11 +234,10 @@ public class ParseTree {
      *
      *  @return first VarHyp ParseNode at/under child[i].
      */
-    public ParseNode findChildVarHypNode(int childIndex) {
-        ParseNode[] child = root.getChild();
+    public ParseNode findChildVarHypNode(final int childIndex) {
+        final ParseNode[] child = root.getChild();
         return child[childIndex].findFirstVarHypNode();
     }
-
 
     /**
      *  Build a ParseTree from an RPN Stmt array.
@@ -274,19 +255,17 @@ public class ParseTree {
      *          this moment to try to squeeze structure out of an
      *          incomplete or invalid RPN/Proof):
      */
-    public static ParseTree convertRPNtoParseTree(Stmt[] rpn) {
+    public static ParseTree convertRPNtoParseTree(final Stmt[] rpn) {
 
-        int       stmtPosInRPN = rpn.length - 1;
+        int stmtPosInRPN = rpn.length - 1;
 
-        ParseTree outParseTree = new ParseTree(new ParseNode());
+        final ParseTree outParseTree = new ParseTree(new ParseNode());
 
-        stmtPosInRPN = outParseTree.root.loadParseNodeFromRPN(
-                                            rpn,
-                                            stmtPosInRPN);
-        if (stmtPosInRPN != 0) {
+        stmtPosInRPN = outParseTree.root
+            .loadParseNodeFromRPN(rpn, stmtPosInRPN);
+        if (stmtPosInRPN != 0)
             throw new IllegalArgumentException(
                 LangConstants.ERRMSG_RPN_CONV_TO_TREE_FAILURE);
-        }
 
         return outParseTree;
     }
@@ -317,24 +296,18 @@ public class ParseTree {
      *  @return RPN Stmt array.
      */
     public Stmt[] convertToRPN() {
-        Stmt[] outRPN = new Stmt[countParseNodes()];
-        if (root == null) {
+        final Stmt[] outRPN = new Stmt[countParseNodes()];
+        if (root == null)
             return outRPN;
-        }
 
-        int    dest   = outRPN.length - 1;
+        int dest = outRPN.length - 1;
 
-        dest          = root.convertToRPN(outRPN,
-                                          dest);
-        if (dest != -1) {
+        dest = root.convertToRPN(outRPN, dest);
+        if (dest != -1)
             throw new IllegalStateException(
-                LangConstants.ERRMSG_TREE_CONV_TO_RPN_FAILURE
-                + (dest * -1));
-        }
+                LangConstants.ERRMSG_TREE_CONV_TO_RPN_FAILURE + dest * -1);
         return outRPN;
     }
-
-
 
     /**
      *  Count parse nodes in a ParseTree.
@@ -345,9 +318,8 @@ public class ParseTree {
      */
     public int countParseNodes() {
 
-        if (root == null) {
+        if (root == null)
             return 0;
-        }
         return root.countParseNodes();
     }
 
@@ -359,9 +331,8 @@ public class ParseTree {
      *  @return maximum depth of the parse tree
      */
     public int getMaxDepth() {
-        if (maxDepth == -1) {
+        if (maxDepth == -1)
             setMaxDepth(root.calcMaxDepth());
-        }
         return maxDepth;
     }
 
@@ -370,8 +341,8 @@ public class ParseTree {
      *
      *  @return maximum depth of the parse tree
      */
-    private void setMaxDepth(int maxDepth) {
-        this.maxDepth             = maxDepth;
+    private void setMaxDepth(final int maxDepth) {
+        this.maxDepth = maxDepth;
     }
 
     /**
@@ -379,7 +350,7 @@ public class ParseTree {
      *  initial value.
      */
     public void resetMaxDepth() {
-        maxDepth                  = -1;
+        maxDepth = -1;
     }
 
     /**
@@ -390,19 +361,18 @@ public class ParseTree {
      *  @return levelOneTwo key string.
      */
     public String getLevelOneTwo() {
-        if (levelOneTwo != null) {
+        if (levelOneTwo != null)
             return levelOneTwo;
-        }
-        Stmt stmt                 = root.getStmt();
-        StringBuffer answer       = new StringBuffer();
+        Stmt stmt = root.getStmt();
+        final StringBuffer answer = new StringBuffer();
         if (!stmt.isVarHyp()) {
             answer.append(stmt.getLabel());
             answer.append(' ');
-            ParseNode[] child     = root.getChild();
+            final ParseNode[] child = root.getChild();
             if (child.length > 0) {
-                int i             = 0;
+                int i = 0;
                 while (true) {
-                    stmt          = child[i].getStmt();
+                    stmt = child[i].getStmt();
                     if (stmt.isVarHyp()) {
                         setLevelOneTwo("");
                         return levelOneTwo;
@@ -416,13 +386,11 @@ public class ParseTree {
                 }
                 setLevelOneTwo(answer.toString());
             }
-            else {
+            else
                 setLevelOneTwo("");
-            }
         }
-        else {
+        else
             setLevelOneTwo("");
-        }
         return levelOneTwo;
     }
 
@@ -431,8 +399,8 @@ public class ParseTree {
      *
      *  @param levelOneTwo string key.
      */
-    private void setLevelOneTwo(String levelOneTwo) {
-        this.levelOneTwo          = levelOneTwo;
+    private void setLevelOneTwo(final String levelOneTwo) {
+        this.levelOneTwo = levelOneTwo;
     }
 
     /**
@@ -440,7 +408,7 @@ public class ParseTree {
      *  default value;
      */
     public void resetLevelOneTwo() {
-        levelOneTwo               = null;
+        levelOneTwo = null;
     }
 
     /**
@@ -453,11 +421,12 @@ public class ParseTree {
      *  @return String containing ParseTree statement labels in RPN
      *          order.
      */
+    @Override
     public String toString() {
-        Stmt[] rpn = convertToRPN();
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < rpn.length; i++) {
-            sb.append(rpn[i].getLabel());
+        final Stmt[] rpn = convertToRPN();
+        final StringBuffer sb = new StringBuffer();
+        for (final Stmt element : rpn) {
+            sb.append(element.getLabel());
             sb.append(" ");
         }
         return new String(sb);

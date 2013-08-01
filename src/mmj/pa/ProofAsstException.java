@@ -17,9 +17,9 @@ package mmj.pa;
  */
 public class ProofAsstException extends Exception {
 
-    public long lineNbr           = -1;
-    public long columnNbr         = -1;
-    public long charNbr           = -1;
+    public long lineNbr = -1;
+    public long columnNbr = -1;
+    public long charNbr = -1;
 
     /**
      * Default Constructor.
@@ -33,7 +33,7 @@ public class ProofAsstException extends Exception {
      *
      * @param   errorMessage  error message.
      */
-    public ProofAsstException(String errorMessage) {
+    public ProofAsstException(final String errorMessage) {
         super(errorMessage);
     }
 
@@ -49,18 +49,14 @@ public class ProofAsstException extends Exception {
      *  @param   charNbr       character number of the error
      *  @param   errorMessage  error message.
      */
-    public ProofAsstException(long    lineNbr,
-                              long    columnNbr,
-                              long    charNbr,
-                              String  errorMessage) {
-        super(errorMessage
-              + PaConstants.ERRMSG_TXT_LINE
-              + lineNbr
-              + PaConstants.ERRMSG_TXT_COLUMN
-              + columnNbr);
-        this.lineNbr              = lineNbr;
-        this.columnNbr            = columnNbr;
-        this.charNbr              = charNbr;
+    public ProofAsstException(final long lineNbr, final long columnNbr,
+        final long charNbr, final String errorMessage)
+    {
+        super(errorMessage + PaConstants.ERRMSG_TXT_LINE + lineNbr
+            + PaConstants.ERRMSG_TXT_COLUMN + columnNbr);
+        this.lineNbr = lineNbr;
+        this.columnNbr = columnNbr;
+        this.charNbr = charNbr;
     }
 
     /**
@@ -70,10 +66,9 @@ public class ProofAsstException extends Exception {
      * @param   charNbr       character number of the error
      * @param   errorMessage  error message.
      */
-    public ProofAsstException(long    charNbr,
-                              String  errorMessage) {
+    public ProofAsstException(final long charNbr, final String errorMessage) {
         super(errorMessage);
-        this.charNbr              = charNbr;
+        this.charNbr = charNbr;
     }
 
 }

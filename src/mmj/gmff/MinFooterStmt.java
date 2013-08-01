@@ -6,7 +6,6 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-
 /**
  *  MinFooterStmt.java  0.01 11/01/2011
  *
@@ -29,7 +28,6 @@ package mmj.gmff;
  */
 public class MinFooterStmt extends MinProofWorkStmt {
 
-
     /**
      *  Standard MinFooterStmt constructor.
      *  <p>
@@ -39,11 +37,9 @@ public class MinFooterStmt extends MinProofWorkStmt {
      *   			the lines and "chunks" making up the
      *              <code>MinProofWorkStmt</code>.
      */
-    public MinFooterStmt(MinProofWorksheet w,
-                          String[][]        slc) {
+    public MinFooterStmt(final MinProofWorksheet w, final String[][] slc) {
 
-        super(w,
-              slc);
+        super(w, slc);
     }
 
     /**
@@ -63,25 +59,21 @@ public class MinFooterStmt extends MinProofWorkStmt {
      *				the export data build.
      *  @param exportBuffer The <code>StringBuffer</code> to which
      *               exported data is to be output.
-  	 *  @throws GMFFException if errors are encountered during the
-  	 *               export process.
+     *  @throws GMFFException if errors are encountered during the
+     *               export process.
      */
-	public void buildModelAExport(
-						 	GMFFExporter gmffExporter,
-		               	 	StringBuffer exportBuffer)
-				            	throws GMFFException {
+    @Override
+    public void buildModelAExport(final GMFFExporter gmffExporter,
+        final StringBuffer exportBuffer) throws GMFFException
+    {
 
-		String modelAFooter0     =
-			gmffExporter.getOptionalModelFile(
-				GMFFConstants.MODEL_A_FOOTER0_NAME);
-		if (modelAFooter0 == null) {
-			return;
-		}
+        final String modelAFooter0 = gmffExporter
+            .getOptionalModelFile(GMFFConstants.MODEL_A_FOOTER0_NAME);
+        if (modelAFooter0 == null)
+            return;
 
-		// well all righty then...
+        // well all righty then...
 
-		gmffExporter.appendModelFileText(
-			exportBuffer,
-			modelAFooter0);
-	}
+        gmffExporter.appendModelFileText(exportBuffer, modelAFooter0);
+    }
 }

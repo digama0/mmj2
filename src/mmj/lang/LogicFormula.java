@@ -6,7 +6,6 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-
 /*
  * @(#)LogicFormula.java  0.02 02/01/2006
  *
@@ -32,10 +31,8 @@ public class LogicFormula extends Formula {
      *  @param workCnt length of formula.
      *  @param workFormula Formula Sym array.
      */
-    public LogicFormula(int     workCnt,
-                        Sym[]   workFormula) {
-        super(workCnt,
-              workFormula);
+    public LogicFormula(final int workCnt, final Sym[] workFormula) {
+        super(workCnt, workFormula);
     }
 
     /**
@@ -51,19 +48,13 @@ public class LogicFormula extends Formula {
      *                     Strings
      *  @param exprHypList ArrayList of Hyps, updated in function.
      */
-    public LogicFormula(Map       symTbl,
-                        String    typS,
-                        ArrayList symList,
-                        ArrayList exprHypList)
-                                      throws LangException {
-        super(symTbl,
-              symList.size() + 1,
-              typS);
-        verifyExprSymsDefAndActive(symTbl,
-                                   symList,
-                                   exprHypList);
+    public LogicFormula(final Map symTbl, final String typS,
+        final ArrayList symList, final ArrayList exprHypList)
+        throws LangException
+    {
+        super(symTbl, symList.size() + 1, typS);
+        verifyExprSymsDefAndActive(symTbl, symList, exprHypList);
     }
-
 
     /**
      *  Verifies that each Sym id in Expression is active
@@ -101,35 +92,27 @@ public class LogicFormula extends Formula {
      * @throws  LangException if duplicate symbol, etc.
      *          (see <code>mmj.lang.LangConstants.java</code>)
      */
-    public void verifyExprSymsDefAndActive(Map       symTbl,
-                                           ArrayList symList,
-                                           ArrayList hypList)
-                                               throws LangException {
-        String       symS;
-        VarHyp       varHyp;
+    public void verifyExprSymsDefAndActive(final Map symTbl,
+        final ArrayList symList, final ArrayList hypList) throws LangException
+    {
+        String symS;
+        VarHyp varHyp;
 
-        ListIterator x      = symList.listIterator();
+        final ListIterator x = symList.listIterator();
         while (x.hasNext()) {
             symS = (String)x.next();
             sym[cnt] = (Sym)symTbl.get(symS);
-            if (sym[cnt] == null) {
+            if (sym[cnt] == null)
+                throw new LangException(LangConstants.ERRMSG_EXPR_SYM_NOT_DEF
+                    + symS);
+            if (!sym[cnt].isActive())
                 throw new LangException(
-                    LangConstants.ERRMSG_EXPR_SYM_NOT_DEF +
-                        symS);
-            }
-            if (!(sym[cnt].isActive())) {
-                throw new LangException(
-                    LangConstants.ERRMSG_EXPR_SYM_NOT_ACTIVE +
-                        symS);
-            }
+                    LangConstants.ERRMSG_EXPR_SYM_NOT_ACTIVE + symS);
             if (sym[cnt].isVar()) {
-                if ((varHyp = ((Var)sym[cnt]).getActiveVarHyp())
-                    == null) {
+                if ((varHyp = ((Var)sym[cnt]).getActiveVarHyp()) == null)
                     throw new LangException(
-                        LangConstants.ERRMSG_EXPR_VAR_W_O_ACTIVE_VAR_HYP +
-                            symS);
-                }
-                //add varHyp to mandatory hypotheses in hypList
+                        LangConstants.ERRMSG_EXPR_VAR_W_O_ACTIVE_VAR_HYP + symS);
+                // add varHyp to mandatory hypotheses in hypList
                 Formula.accumHypInList(hypList, varHyp);
             }
             ++cnt;

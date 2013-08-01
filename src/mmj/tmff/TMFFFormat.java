@@ -27,42 +27,33 @@ package mmj.tmff;
 public class TMFFFormat {
 
     private TMFFScheme formatScheme;
-    private int        formatNbr;
+    private int formatNbr;
 
     /**
      *  Default constructor.
      */
-    public TMFFFormat() {
-    }
+    public TMFFFormat() {}
 
-    public static int validateFormatNbr(String formatNbrString) {
+    public static int validateFormatNbr(final String formatNbrString) {
         try {
-            return TMFFFormat.validateFormatNbr(
-                       Integer.parseInt(
-                           formatNbrString.trim()));
-        }
-        catch (NumberFormatException e) {
+            return TMFFFormat.validateFormatNbr(Integer
+                .parseInt(formatNbrString.trim()));
+        } catch (final NumberFormatException e) {
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_BAD_NEW_FORMAT_NBR_1
-                + formatNbrString
-                + TMFFConstants.ERRMSG_BAD_NEW_FORMAT_NBR_2
-                + TMFFConstants.TMFF_MAX_FORMAT_NBR);
+                TMFFConstants.ERRMSG_BAD_NEW_FORMAT_NBR_1 + formatNbrString
+                    + TMFFConstants.ERRMSG_BAD_NEW_FORMAT_NBR_2
+                    + TMFFConstants.TMFF_MAX_FORMAT_NBR);
         }
 
     }
 
-    public static int validateFormatNbr(int formatNbr) {
+    public static int validateFormatNbr(final int formatNbr) {
 
-         if (formatNbr < 0
-             ||
-             formatNbr >
-            TMFFConstants.TMFF_MAX_FORMAT_NBR) {
+        if (formatNbr < 0 || formatNbr > TMFFConstants.TMFF_MAX_FORMAT_NBR)
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_BAD_NEW_FORMAT_NBR_1
-                + formatNbr
-                + TMFFConstants.ERRMSG_BAD_NEW_FORMAT_NBR_2
-                + TMFFConstants.TMFF_MAX_FORMAT_NBR);
-        }
+                TMFFConstants.ERRMSG_BAD_NEW_FORMAT_NBR_1 + formatNbr
+                    + TMFFConstants.ERRMSG_BAD_NEW_FORMAT_NBR_2
+                    + TMFFConstants.TMFF_MAX_FORMAT_NBR);
 
         return formatNbr;
     }
@@ -73,35 +64,25 @@ public class TMFFFormat {
      *  @param param String array of RunParm values.
      *  @param tmffPreferences TMFFPreferences object.
      */
-    public TMFFFormat(String[]   param,
-                      TMFFPreferences tmffPreferences) {
+    public TMFFFormat(final String[] param,
+        final TMFFPreferences tmffPreferences)
+    {
 
-        if (param.length < 1   ||
-            param[0] == null   ||
-            param[0].length() == 0) {
+        if (param.length < 1 || param[0] == null || param[0].length() == 0)
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_FORMAT_NBR_MISSING_1);
-        }
-        this.formatNbr            =
-            TMFFFormat.validateFormatNbr(param[0]);
+        formatNbr = TMFFFormat.validateFormatNbr(param[0]);
 
-        if (param.length < 2   ||
-            param[1] == null   ||
-            param[1].length() == 0) {
+        if (param.length < 2 || param[1] == null || param[1].length() == 0)
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_SCHEME_NAME_MISSING_1);
-        }
 
-        this.formatScheme         =
-            tmffPreferences.getDefinedScheme(param[1]);
-        if (this.formatScheme == null) {
+        formatScheme = tmffPreferences.getDefinedScheme(param[1]);
+        if (formatScheme == null)
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_FORMAT_SCHEME_NAME_NOTFND2_1
-                + param[1]);
-        }
+                TMFFConstants.ERRMSG_FORMAT_SCHEME_NAME_NOTFND2_1 + param[1]);
 
     }
-
 
     /**
      *  Standard constructor for TMFFFormat.
@@ -115,20 +96,18 @@ public class TMFFFormat {
      *                  to this format.
      *
      */
-    public TMFFFormat(String     formatNbrString,
-                      TMFFScheme formatScheme) {
+    public TMFFFormat(final String formatNbrString,
+        final TMFFScheme formatScheme)
+    {
 
-        this.formatNbr            =
-            TMFFFormat.validateFormatNbr(formatNbrString);
+        formatNbr = TMFFFormat.validateFormatNbr(formatNbrString);
 
-        if (formatScheme == null) {
+        if (formatScheme == null)
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_FORMAT_SCHEME_MISSING_1);
-        }
 
-        this.formatScheme         = formatScheme;
+        this.formatScheme = formatScheme;
     }
-
 
     /**
      *  Standard constructor for TMFFFormat.
@@ -141,18 +120,15 @@ public class TMFFFormat {
      *                  to this format.
      *
      */
-    public TMFFFormat(int        formatNbr,
-                      TMFFScheme formatScheme) {
+    public TMFFFormat(final int formatNbr, final TMFFScheme formatScheme) {
 
-        this.formatNbr            =
-            TMFFFormat.validateFormatNbr(formatNbr);
+        this.formatNbr = TMFFFormat.validateFormatNbr(formatNbr);
 
-        if (formatScheme == null) {
+        if (formatScheme == null)
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_FORMAT_SCHEME_MISSING_1);
-        }
 
-        this.formatScheme        = formatScheme;
+        this.formatScheme = formatScheme;
     }
 
     /**
@@ -172,19 +148,17 @@ public class TMFFFormat {
      *
      *  @param formatScheme pre-instantiated TMFFScheme.
      */
-    public void setFormatScheme(TMFFScheme formatScheme) {
-        if (formatScheme == null) {
+    public void setFormatScheme(final TMFFScheme formatScheme) {
+        if (formatScheme == null)
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_FORMAT_SCHEME_MISSING_1);
-        }
-        if (getFormatNbr() == 0) {
+        if (getFormatNbr() == 0)
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_CANNOT_UPD_FORMAT_0_1
-                + TMFFConstants.TMFF_UNFORMATTED_FORMAT_NBR_0
-                + TMFFConstants.ERRMSG_CANNOT_UPD_FORMAT_0_2);
-        }
+                    + TMFFConstants.TMFF_UNFORMATTED_FORMAT_NBR_0
+                    + TMFFConstants.ERRMSG_CANNOT_UPD_FORMAT_0_2);
 
-        this.formatScheme           = formatScheme;
+        this.formatScheme = formatScheme;
     }
 
     /**
@@ -201,17 +175,12 @@ public class TMFFFormat {
      *  <p>
      *  @param formatNbr non-null, non-empty String.
      */
-    public void setFormatNbr(int formatNbr) {
-         if (formatNbr < 1
-             ||
-             formatNbr >
-            TMFFConstants.TMFF_MAX_FORMAT_NBR) {
+    public void setFormatNbr(final int formatNbr) {
+        if (formatNbr < 1 || formatNbr > TMFFConstants.TMFF_MAX_FORMAT_NBR)
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_BAD_UPD_FORMAT_NBR_1
-                + formatNbr
-                + TMFFConstants.ERRMSG_BAD_UPD_FORMAT_NBR_2
-                + TMFFConstants.TMFF_MAX_FORMAT_NBR);
-        }
-        this.formatNbr           = formatNbr;
+                TMFFConstants.ERRMSG_BAD_UPD_FORMAT_NBR_1 + formatNbr
+                    + TMFFConstants.ERRMSG_BAD_UPD_FORMAT_NBR_2
+                    + TMFFConstants.TMFF_MAX_FORMAT_NBR);
+        this.formatNbr = formatNbr;
     }
 }

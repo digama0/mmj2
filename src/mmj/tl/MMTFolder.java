@@ -20,10 +20,11 @@
  */
 
 package mmj.tl;
-import java.io.*;
-import java.util.*;
-import mmj.lang.*;
 
+import java.io.File;
+import java.util.List;
+
+import mmj.lang.*;
 
 /**
  *   MMTFolder is a helper class for the Theorem Loader.
@@ -36,7 +37,7 @@ public class MMTFolder {
      *   Default constructor for MMTFolder.
      */
     public MMTFolder() {
-        folderFile                = null;
+        folderFile = null;
     }
 
     /**
@@ -50,55 +51,44 @@ public class MMTFolder {
      *              doesn't exist, is not a directory, or if there
      *              is a SecurityException.
      */
-    public MMTFolder(File   filePath,
-                     String mmtFolderName)
-                                throws TheoremLoaderException {
+    public MMTFolder(final File filePath, final String mmtFolderName)
+        throws TheoremLoaderException
+    {
 
-        if (mmtFolderName                 == null ||
-            mmtFolderName.trim().length() == 0) {
+        if (mmtFolderName == null || mmtFolderName.trim().length() == 0)
             throw new TheoremLoaderException(
                 TlConstants.ERRMSG_MMT_FOLDER_NAME_BLANK_1);
-        }
 
         try {
-            folderFile            = new File(mmtFolderName);
-            if (filePath == null
-            		||
-             	folderFile.isAbsolute()) {
-			}
-			else {
-				folderFile        =
-					new File(filePath,
-					    	 mmtFolderName);
-			}
+            folderFile = new File(mmtFolderName);
+            if (filePath == null || folderFile.isAbsolute()) {}
+            else
+                folderFile = new File(filePath, mmtFolderName);
             if (folderFile.exists()) {
                 if (folderFile.isDirectory()) {
                     // okey dokey!
                 }
-                else {
+                else
                     throw new TheoremLoaderException(
                         TlConstants.ERRMSG_NOT_A_MMT_FOLDER_1
 //                      + mmtFolderName
-                        + folderFile.getAbsolutePath()
-                        + TlConstants.ERRMSG_NOT_A_MMT_FOLDER_2);
-                }
+                            + folderFile.getAbsolutePath()
+                            + TlConstants.ERRMSG_NOT_A_MMT_FOLDER_2);
             }
-            else {
+            else
                 throw new TheoremLoaderException(
                     TlConstants.ERRMSG_MMT_FOLDER_NOTFND_1
 //                  + mmtFolderName
-                    + folderFile.getAbsolutePath()
-                    + TlConstants.ERRMSG_MMT_FOLDER_NOTFND_2);
-            }
+                        + folderFile.getAbsolutePath()
+                        + TlConstants.ERRMSG_MMT_FOLDER_NOTFND_2);
 
-        }
-        catch(SecurityException e) {
+        } catch (final SecurityException e) {
             throw new TheoremLoaderException(
                 TlConstants.ERRMSG_MMT_FOLDER_MISC_ERROR_1
 //              + mmtFolderName
-                + folderFile.getAbsolutePath()
-                + TlConstants.ERRMSG_MMT_FOLDER_MISC_ERROR_2
-                + e.getMessage());
+                    + folderFile.getAbsolutePath()
+                    + TlConstants.ERRMSG_MMT_FOLDER_MISC_ERROR_2
+                    + e.getMessage());
         }
     }
 
@@ -110,40 +100,35 @@ public class MMTFolder {
      *              doesn't exist, is not a directory, or if there
      *              is a SecurityException.
      */
-    public MMTFolder(File file)
-                                throws TheoremLoaderException {
-        if (file == null) {
+    public MMTFolder(final File file) throws TheoremLoaderException {
+        if (file == null)
             throw new TheoremLoaderException(
                 TlConstants.ERRMSG_MMT_FOLDER_FILE_NULL_1);
-        }
 
         try {
-            folderFile            = file;
+            folderFile = file;
             if (folderFile.exists()) {
                 if (folderFile.isDirectory()) {
                     // okey dokey!
                 }
-                else {
+                else
                     throw new TheoremLoaderException(
                         TlConstants.ERRMSG_NOT_A_MMT_FOLDER_1
-                        + folderFile.getAbsolutePath()
-                        + TlConstants.ERRMSG_NOT_A_MMT_FOLDER_2);
-                }
+                            + folderFile.getAbsolutePath()
+                            + TlConstants.ERRMSG_NOT_A_MMT_FOLDER_2);
             }
-            else {
+            else
                 throw new TheoremLoaderException(
                     TlConstants.ERRMSG_MMT_FOLDER_NOTFND_1
-                    + folderFile.getAbsolutePath()
-                    + TlConstants.ERRMSG_MMT_FOLDER_NOTFND_2);
-            }
+                        + folderFile.getAbsolutePath()
+                        + TlConstants.ERRMSG_MMT_FOLDER_NOTFND_2);
 
-        }
-        catch(SecurityException e) {
+        } catch (final SecurityException e) {
             throw new TheoremLoaderException(
                 TlConstants.ERRMSG_MMT_FOLDER_MISC_ERROR_1
-                + folderFile.getAbsolutePath()
-                + TlConstants.ERRMSG_MMT_FOLDER_MISC_ERROR_2
-                + e.getMessage());
+                    + folderFile.getAbsolutePath()
+                    + TlConstants.ERRMSG_MMT_FOLDER_MISC_ERROR_2
+                    + e.getMessage());
         }
     }
 
@@ -170,31 +155,24 @@ public class MMTFolder {
      *              directory.
      */
     public MMTTheoremSet constructMMTTheoremSet(
-                            LogicalSystem   logicalSystem,
-                            Messages        messages,
-                            TlPreferences   tlPreferences)
-                                throws TheoremLoaderException {
+        final LogicalSystem logicalSystem, final Messages messages,
+        final TlPreferences tlPreferences) throws TheoremLoaderException
+    {
 
-        if (folderFile == null) {
+        if (folderFile == null)
             throw new TheoremLoaderException(
                 TlConstants.ERRMSG_MMT_FOLDER_UNSPECIFIED_1);
-        }
 
-        File[] fileArray          =
-            folderFile.listFiles(new MMTFileFilter());
+        final File[] fileArray = folderFile.listFiles(new MMTFileFilter());
 
-        if (fileArray == null) {
+        if (fileArray == null)
             throw new TheoremLoaderException(
                 TlConstants.ERRMSG_MMT_FOLDER_READ_ERROR_1
-                + folderFile.getAbsolutePath()
-                + TlConstants.ERRMSG_MMT_FOLDER_READ_ERROR_2
-                );
-        }
+                    + folderFile.getAbsolutePath()
+                    + TlConstants.ERRMSG_MMT_FOLDER_READ_ERROR_2);
 
-        return new MMTTheoremSet(fileArray,
-                                 logicalSystem,
-                                 messages,
-                                 tlPreferences);
+        return new MMTTheoremSet(fileArray, logicalSystem, messages,
+            tlPreferences);
 
     }
 
@@ -216,28 +194,20 @@ public class MMTFolder {
      *              valid MMT Theorem file in the directory (i.e. not
      *              found), or if there is a security exception.
      */
-    public MMTTheoremSet constructMMTTheoremSet(
-                            String          theoremLabel,
-                            LogicalSystem   logicalSystem,
-                            Messages        messages,
-                            TlPreferences   tlPreferences)
-                                throws TheoremLoaderException {
+    public MMTTheoremSet constructMMTTheoremSet(final String theoremLabel,
+        final LogicalSystem logicalSystem, final Messages messages,
+        final TlPreferences tlPreferences) throws TheoremLoaderException
+    {
 
-        if (folderFile == null) {
+        if (folderFile == null)
             throw new TheoremLoaderException(
                 TlConstants.ERRMSG_MMT_FOLDER_UNSPECIFIED_1);
-        }
 
-        MMTTheoremFile mmtTheoremFile
-                                  =
-            new MMTTheoremFile(this,
-                               theoremLabel,
-                               true); // true = input file
+        final MMTTheoremFile mmtTheoremFile = new MMTTheoremFile(this,
+            theoremLabel, true); // true = input file
 
-        return new MMTTheoremSet(mmtTheoremFile,
-                                 logicalSystem,
-                                 messages,
-                                 tlPreferences);
+        return new MMTTheoremSet(mmtTheoremFile, logicalSystem, messages,
+            tlPreferences);
     }
 
     /**
@@ -260,20 +230,16 @@ public class MMTFolder {
      *              an empty string, or if there is an I/O error
      *              during the attempt to create an MMTTheoremFile.
      */
-    public MMTTheoremFile storeMMTTheoremFile(String theoremLabel,
-                                              List   mmtTheoremLines)
-                                    throws TheoremLoaderException {
+    public MMTTheoremFile storeMMTTheoremFile(final String theoremLabel,
+        final List mmtTheoremLines) throws TheoremLoaderException
+    {
 
-        if (folderFile == null) {
+        if (folderFile == null)
             throw new TheoremLoaderException(
                 TlConstants.ERRMSG_MMT_FOLDER_UNSPECIFIED_1);
-        }
 
-        MMTTheoremFile mmtTheoremFile
-                                  =
-            new MMTTheoremFile(this,
-                               theoremLabel,
-                               false); //false = not input file
+        final MMTTheoremFile mmtTheoremFile = new MMTTheoremFile(this,
+            theoremLabel, false); // false = not input file
 
         mmtTheoremFile.writeTheoremToMMTFolder(mmtTheoremLines);
 
@@ -287,9 +253,8 @@ public class MMTFolder {
      *              underlying File is null.TheoremFile.
      */
     public String getAbsolutePath() {
-        if (folderFile == null) {
+        if (folderFile == null)
             return null;
-        }
         return folderFile.getAbsolutePath();
     }
 

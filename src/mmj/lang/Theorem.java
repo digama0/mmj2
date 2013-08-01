@@ -78,8 +78,8 @@ import java.util.*;
  *       Nomenclature and Entity-Relationship Notes</a>
  */
 public class Theorem extends Assrt {
-    private   Stmt[]   proof;
-    private   OptFrame optFrame;
+    private Stmt[] proof;
+    private final OptFrame optFrame;
 
     /**
      *  Construct Theorem using the entire enchilada from
@@ -98,27 +98,16 @@ public class Theorem extends Assrt {
      *  @see mmj.lang.Theorem#editProofListDefAndActive(
      *                          Map stmtTbl, ArrayList proofList)
      */
-    public Theorem(int       seq,
-                   ArrayList scopeDefList,
-                   Map       symTbl,
-                   Map       stmtTbl,
-                   String    labelS,
-                   String    typS,
-                   ArrayList symList,
-                   ArrayList proofList)
-                                            throws LangException {
-        super(seq,
-              scopeDefList,
-              symTbl,
-              stmtTbl,
-              labelS,
-              typS,
-              symList);
+    public Theorem(final int seq, final ArrayList scopeDefList,
+        final Map symTbl, final Map stmtTbl, final String labelS,
+        final String typS, final ArrayList symList, final ArrayList proofList)
+        throws LangException
+    {
+        super(seq, scopeDefList, symTbl, stmtTbl, labelS, typS, symList);
 
-        optFrame    = buildOptFrame(scopeDefList);
+        optFrame = buildOptFrame(scopeDefList);
 
-        proof = editProofListDefAndActive(stmtTbl,
-                                          proofList);
+        proof = editProofListDefAndActive(stmtTbl, proofList);
 
     }
 
@@ -144,40 +133,21 @@ public class Theorem extends Assrt {
      *  @see mmj.lang.Theorem#editProofListDefAndActive(
      *                          Map stmtTbl, ArrayList proofList)
      */
-    public Theorem(int              seq,
-                   ArrayList        scopeDefList,
-                   Map              symTbl,
-                   Map              stmtTbl,
-                   String           labelS,
-                   String           typS,
-                   ArrayList        symList,
-                   ArrayList        proofList,
-                   ArrayList        proofBlockList,
-                   ProofCompression proofCompression)
-                                            throws LangException {
-        super(seq,
-              scopeDefList,
-              symTbl,
-              stmtTbl,
-              labelS,
-              typS,
-              symList);
+    public Theorem(final int seq, final ArrayList scopeDefList,
+        final Map symTbl, final Map stmtTbl, final String labelS,
+        final String typS, final ArrayList symList, final ArrayList proofList,
+        final ArrayList proofBlockList, final ProofCompression proofCompression)
+        throws LangException
+    {
+        super(seq, scopeDefList, symTbl, stmtTbl, labelS, typS, symList);
 
-        optFrame                  = buildOptFrame(scopeDefList);
+        optFrame = buildOptFrame(scopeDefList);
 
-        proof                     =
-            proofCompression.decompress(
-                labelS,
-                seq,
-                stmtTbl,
-                mandFrame.hypArray,
-                optFrame.optHypArray,
-                proofList,
-                proofBlockList);
+        proof = proofCompression
+            .decompress(labelS, seq, stmtTbl, mandFrame.hypArray,
+                optFrame.optHypArray, proofList, proofBlockList);
 
     }
-
-
 
     /**
      *  Is the Assrt an Axiom?
@@ -186,10 +156,10 @@ public class Theorem extends Assrt {
      *
      *  @return true (a Theorem is not an Axiom :)
      */
+    @Override
     public boolean isAxiom() {
         return false;
     }
-
 
     /**
      *  Return Theorem's proof.
@@ -214,11 +184,10 @@ public class Theorem extends Assrt {
      *  @see mmj.lang.Theorem#editProofListDefAndActive(
      *                          Map stmtTbl, ArrayList proofList)
      */
-    public Stmt[] setProof(Map       stmtTbl,
-                           ArrayList proofList)
-                                  throws LangException {
-        proof       = editProofListDefAndActive(stmtTbl,
-                                                proofList);
+    public Stmt[] setProof(final Map stmtTbl, final ArrayList proofList)
+        throws LangException
+    {
+        proof = editProofListDefAndActive(stmtTbl, proofList);
         return proof;
     }
 
@@ -272,61 +241,46 @@ public class Theorem extends Assrt {
      * @throws    LangException
      *            (see <code>mmj.lang.LangConstants.java</code>)
      */
-    public Stmt[] editProofListDefAndActive(Map       stmtTbl,
-                                            ArrayList proofList)
-                                               throws LangException {
+    public Stmt[] editProofListDefAndActive(final Map stmtTbl,
+        final ArrayList proofList) throws LangException
+    {
 
-        String  stepS;
-        Stmt    stepTbl;
-        int     stepCount  = proofList.size();
-        int     theoremSeq = getSeq();
+        String stepS;
+        Stmt stepTbl;
+        final int stepCount = proofList.size();
+        final int theoremSeq = getSeq();
 
-        if (stepCount < 1) {
-            throw new LangException(
-                LangConstants.ERRMSG_PROOF_HAS_NO_STEPS);
-        }
+        if (stepCount < 1)
+            throw new LangException(LangConstants.ERRMSG_PROOF_HAS_NO_STEPS);
 
-        Stmt[] proofArray = new Stmt[stepCount];
+        final Stmt[] proofArray = new Stmt[stepCount];
 
         for (int i = 0; i < stepCount; i++) {
             stepS = (String)proofList.get(i);
-            if (stepS.equals(LangConstants.MISSING_PROOF_STEP)) {
+            if (stepS.equals(LangConstants.MISSING_PROOF_STEP))
                 proofArray[i] = null;
-            }
             else {
                 stepTbl = (Stmt)stmtTbl.get(stepS);
-                if (stepTbl == null) {
+                if (stepTbl == null)
                     throw new LangException(
-                        LangConstants.ERRMSG_PROOF_STEP_LABEL_NOTFND
-                        + stepS);
-                }
-                if (stepTbl.seq >= theoremSeq) {
+                        LangConstants.ERRMSG_PROOF_STEP_LABEL_NOTFND + stepS);
+                if (stepTbl.seq >= theoremSeq)
                     throw new LangException(
-                        LangConstants.ERRMSG_FORWARD_PROOF_STEP_LABEL
-                        + stepS
-                        + LangConstants.
-                            ERRMSG_FORWARD_PROOF_STEP_LABEL_2
-                        + getLabel()
-                        );
-                }
-                if (stepTbl.isHyp()) {
+                        LangConstants.ERRMSG_FORWARD_PROOF_STEP_LABEL + stepS
+                            + LangConstants.ERRMSG_FORWARD_PROOF_STEP_LABEL_2
+                            + getLabel());
+                if (stepTbl.isHyp())
                     /**
                      *  this is a little "tricky" -- "active" applies
                      *  only to global hypotheses or when the source
                      *  file is being loaded.
                      */
-                    if (stepTbl.isActive()) {
-                    }
-                    else {
-                        if (isProofStepInExtendedFrame(stepTbl)) {
-                        }
-                        else {
-                            throw new LangException(
-                         LangConstants.ERRMSG_PROOF_STEP_HYP_INACTIVE
+                    if (stepTbl.isActive()) {}
+                    else if (isProofStepInExtendedFrame(stepTbl)) {}
+                    else
+                        throw new LangException(
+                            LangConstants.ERRMSG_PROOF_STEP_HYP_INACTIVE
                                 + stepS);
-                        }
-                    }
-                }
                 proofArray[i] = stepTbl;
             }
         }
@@ -346,17 +300,13 @@ public class Theorem extends Assrt {
      *  @return true if proof step == a Hyp in either the
      *   MandFrame or OptFrame of the Theorem.
      */
-    public  boolean isProofStepInExtendedFrame(Stmt proofStep) {
-        for (int i = 0; i < mandFrame.hypArray.length; i++) {
-            if (proofStep == mandFrame.hypArray[i]) {
+    public boolean isProofStepInExtendedFrame(final Stmt proofStep) {
+        for (final Hyp element : mandFrame.hypArray)
+            if (proofStep == element)
                 return true;
-            }
-        }
-        for (int i = 0; i < optFrame.optHypArray.length; i++) {
-            if (proofStep == optFrame.optHypArray[i]) {
+        for (final Hyp element : optFrame.optHypArray)
+            if (proofStep == element)
                 return true;
-            }
-        }
         return false;
     }
 
@@ -380,14 +330,14 @@ public class Theorem extends Assrt {
      * @return OptFrame -- Optional variable hypotheses and disjoint
      *                     variable restrictions.
      */
-    private OptFrame buildOptFrame(ArrayList scopeDefList) {
+    private OptFrame buildOptFrame(final ArrayList scopeDefList) {
 
-        OptFrame  oF   = new OptFrame();
+        final OptFrame oF = new OptFrame();
 
         ListIterator scopeIterator;
-        ScopeDef     scopeDef;
-        ArrayList    optHypList  = new ArrayList();
-        VarHyp       varHyp;
+        ScopeDef scopeDef;
+        final ArrayList optHypList = new ArrayList();
+        VarHyp varHyp;
 
         scopeIterator = scopeDefList.listIterator();
         while (scopeIterator.hasNext()) {
@@ -395,20 +345,18 @@ public class Theorem extends Assrt {
 
             for (int i = 0; i < scopeDef.scopeVarHyp.size(); i++) {
                 varHyp = (VarHyp)scopeDef.scopeVarHyp.get(i);
-                if (!isHypInMandHypArray(varHyp)) {
-                    accumHypInList(optHypList,
-                                   varHyp);
-                }
+                if (!isHypInMandHypArray(varHyp))
+                    accumHypInList(optHypList, varHyp);
             }
         }
 
-        //could not get this to compile.?!
-        //oF.optHypArray      = optHypList.toArray(oF.optHypArray);
-        oF.optHypArray        = loadHypArray(optHypList);
+        // could not get this to compile.?!
+        // oF.optHypArray = optHypList.toArray(oF.optHypArray);
+        oF.optHypArray = loadHypArray(optHypList);
 
-        ListIterator    djVarsIterator;
-        ArrayList       optDjVarsList = new ArrayList();
-        DjVars          djVars;
+        ListIterator djVarsIterator;
+        final ArrayList optDjVarsList = new ArrayList();
+        DjVars djVars;
         scopeIterator = scopeDefList.listIterator();
         while (scopeIterator.hasNext()) {
             scopeDef = (ScopeDef)scopeIterator.next();
@@ -416,20 +364,15 @@ public class Theorem extends Assrt {
             djVarsIterator = scopeDef.scopeDjVars.listIterator();
             while (djVarsIterator.hasNext()) {
                 djVars = (DjVars)djVarsIterator.next();
-                if ((!optDjVarsList.contains(djVars))
-                    &&
-                    (!MandFrame.isVarPairInDjArray(
-                                        mandFrame,
-                                        djVars.getVarLo(),
-                                        djVars.getVarHi()))
-                   ) {
+                if (!optDjVarsList.contains(djVars)
+                    && !MandFrame.isVarPairInDjArray(mandFrame,
+                        djVars.getVarLo(), djVars.getVarHi()))
                     optDjVarsList.add(djVars);
-                }
             }
         }
 
-        //could not get this to compile
-        //oF.optDjVarsArray      = optDjVarsList.toArray(oF.optDjVarsArray);
+        // could not get this to compile
+        // oF.optDjVarsArray = optDjVarsList.toArray(oF.optDjVarsArray);
         oF.optDjVarsArray = DjVars.loadDjVarsArray(optDjVarsList);
 
         return oF;
@@ -461,17 +404,16 @@ public class Theorem extends Assrt {
      *          appended to the input StringBuffer --
      *          or -1 if maxDepth or maxLength exceeded.
      */
-    public int renderParsedSubExpr(StringBuffer sb,
-                                   int          maxDepth,
-                                   int          maxLength,
-                                   ParseNode[]  child) {
+    @Override
+    public int renderParsedSubExpr(final StringBuffer sb, final int maxDepth,
+        final int maxLength, final ParseNode[] child)
+    {
 
         throw new IllegalArgumentException(
-                LangConstants.ERRMSG_BAD_PARSE_STMT_1
-                + getLabel()
+            LangConstants.ERRMSG_BAD_PARSE_STMT_1 + getLabel()
                 + LangConstants.ERRMSG_BAD_PARSE_STMT_2);
 
-        //return -1;
+        // return -1;
     }
 
     /**
@@ -482,13 +424,13 @@ public class Theorem extends Assrt {
      *  @param newOptDjVarsArray previous Optional DjVars
      *
      */
-    public void proofUpdates(Stmt[]   newProof,
-                             DjVars[] newDjVarsArray,
-                             DjVars[] newOptDjVarsArray) {
+    public void proofUpdates(final Stmt[] newProof,
+        final DjVars[] newDjVarsArray, final DjVars[] newOptDjVarsArray)
+    {
 
-        proof                     = newProof;
-        mandFrame.djVarsArray     = newDjVarsArray;
-        optFrame.optDjVarsArray   = newOptDjVarsArray;
+        proof = newProof;
+        mandFrame.djVarsArray = newDjVarsArray;
+        optFrame.optDjVarsArray = newOptDjVarsArray;
     }
 
     /**
@@ -515,46 +457,30 @@ public class Theorem extends Assrt {
      *  @throws LangException if validation error.
      *
      */
-    public void loadMandAndOptDjVarsUpdateLists(
-                                Map       symTbl,
-                                ArrayList inputDjVarsStmtList,
-                                List      mandDjVarsUpdateList,
-                                List      optDjVarsUpdateList)
-                                    throws LangException {
+    public void loadMandAndOptDjVarsUpdateLists(final Map symTbl,
+        final ArrayList inputDjVarsStmtList, final List mandDjVarsUpdateList,
+        final List optDjVarsUpdateList) throws LangException
+    {
 
-        Iterator i                = inputDjVarsStmtList.iterator();
+        final Iterator i = inputDjVarsStmtList.iterator();
         while (i.hasNext()) {
-            ArrayList symList     = (ArrayList)i.next();
-            Var[]     varArray    = new Var[symList.size()];
-            for (int j = 0; j < varArray.length; j++) {
-                varArray[j]       =
-                    Var.verifyVarDef(symTbl,
-                                     ((String)symList.get(j)));
-            }
-            for (int m = 0; m < (varArray.length - 1); m++) {
+            final ArrayList symList = (ArrayList)i.next();
+            final Var[] varArray = new Var[symList.size()];
+            for (int j = 0; j < varArray.length; j++)
+                varArray[j] = Var.verifyVarDef(symTbl, (String)symList.get(j));
+            for (int m = 0; m < varArray.length - 1; m++)
                 for (int n = m + 1; n < varArray.length; n++) {
-                    DjVars djVars = new DjVars(varArray[m],
-                                               varArray[n]);
-                    if (mandFrame.areBothDjVarsInHypArray(djVars)) {
+                    final DjVars djVars = new DjVars(varArray[m], varArray[n]);
+                    if (mandFrame.areBothDjVarsInHypArray(djVars))
                         mandDjVarsUpdateList.add(djVars);
-                    }
-                    else {
-                        if (DjVars.areBothDjVarsInExtendedFrame(
-                                            djVars,
-                                            mandFrame,
-                                            optFrame)) {
-                            optDjVarsUpdateList.add(djVars);
-                        }
-                        else {
-                            throw new LangException(
-                                LangConstants.
-                                 ERRMSG_DJ_VARS_VARS_NOT_DEF_IN_EXT_FRAME
-                                 + djVars.toString());
-                        }
-
-                    }
+                    else if (DjVars.areBothDjVarsInExtendedFrame(djVars,
+                        mandFrame, optFrame))
+                        optDjVarsUpdateList.add(djVars);
+                    else
+                        throw new LangException(
+                            LangConstants.ERRMSG_DJ_VARS_VARS_NOT_DEF_IN_EXT_FRAME
+                                + djVars.toString());
                 }
-            }
         }
     }
 
@@ -566,18 +492,15 @@ public class Theorem extends Assrt {
      *  @param optDjVarsUpdateList List of DjVars object
      *         to be stored.
      */
-    public void replaceDjVars(List mandDjVarsUpdateList,
-                              List optDjVarsUpdateList) {
+    public void replaceDjVars(final List mandDjVarsUpdateList,
+        final List optDjVarsUpdateList)
+    {
 
-        mandFrame.djVarsArray     =
-            DjVars.sortAndCombineDvArrays(
-                null,
-                DjVars.loadDjVarsArray(mandDjVarsUpdateList));
+        mandFrame.djVarsArray = DjVars.sortAndCombineDvArrays(null,
+            DjVars.loadDjVarsArray(mandDjVarsUpdateList));
 
-        optFrame.optDjVarsArray   =
-            DjVars.sortAndCombineDvArrays(
-                null,
-                DjVars.loadDjVarsArray(optDjVarsUpdateList));
+        optFrame.optDjVarsArray = DjVars.sortAndCombineDvArrays(null,
+            DjVars.loadDjVarsArray(optDjVarsUpdateList));
     }
 
     /**
@@ -589,28 +512,24 @@ public class Theorem extends Assrt {
      *  @param optDjVarsUpdateList List of DjVars object
      *         to be stored.
      */
-    public void mergeDjVars(List mandDjVarsUpdateList,
-                            List optDjVarsUpdateList) {
+    public void mergeDjVars(final List mandDjVarsUpdateList,
+        final List optDjVarsUpdateList)
+    {
 
-        mandFrame.djVarsArray     =
-            DjVars.sortAndCombineDvArrays(
-                mandFrame.djVarsArray,
+        mandFrame.djVarsArray = DjVars
+            .sortAndCombineDvArrays(mandFrame.djVarsArray,
                 DjVars.loadDjVarsArray(mandDjVarsUpdateList));
 
-        optFrame.optDjVarsArray   =
-            DjVars.sortAndCombineDvArrays(
-                optFrame.optDjVarsArray,
-                DjVars.loadDjVarsArray(optDjVarsUpdateList));
+        optFrame.optDjVarsArray = DjVars.sortAndCombineDvArrays(
+            optFrame.optDjVarsArray,
+            DjVars.loadDjVarsArray(optDjVarsUpdateList));
     }
 
-    private boolean isHypInMandHypArray(Hyp hyp) {
-        for (int i = 0; i < mandFrame.hypArray.length; i++) {
-            if (hyp == mandFrame.hypArray[i]) {
+    private boolean isHypInMandHypArray(final Hyp hyp) {
+        for (final Hyp element : mandFrame.hypArray)
+            if (hyp == element)
                 return true;
-            }
-        }
         return false;
     }
-
 
 }

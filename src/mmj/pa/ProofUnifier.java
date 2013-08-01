@@ -63,15 +63,13 @@
  */
 
 package mmj.pa;
-import  java.util.Iterator;
-import  java.util.Collection;
-import  java.util.Collections;
-import  java.util.ArrayList;
-import  java.util.List;
-import  mmj.lang.*;
-import  mmj.verify.*;
-import  mmj.util.MergeSortedArrayLists;
 
+import java.util.*;
+
+import mmj.lang.*;
+import mmj.util.MergeSortedArrayLists;
+import mmj.verify.Grammar;
+import mmj.verify.VerifyProofs;
 
 /**
  *  ProofUnifier is a separate class simply to break out
@@ -161,28 +159,27 @@ import  mmj.util.MergeSortedArrayLists;
  */
 public class ProofUnifier {
 
-    private     ProofAsstPreferences proofAsstPreferences;
-    private     LogicalSystem        logicalSystem;
-    private     Grammar              grammar;
-    private     VerifyProofs         verifyProofs;
-    private     StepSelectorSearch   stepSelectorSearch;
+    private final ProofAsstPreferences proofAsstPreferences;
+    private final LogicalSystem logicalSystem;
+    private final Grammar grammar;
+    private final VerifyProofs verifyProofs;
+    private StepSelectorSearch stepSelectorSearch;
 
-    private     Messages             messages;
-    private     ProofWorksheet       proofWorksheet;
+    private Messages messages;
+    private ProofWorksheet proofWorksheet;
 
-    private     Cnst                 provableLogicStmtTyp;
+    private Cnst provableLogicStmtTyp;
 
-    //only one lookup table for now - sorted by MObj.seq
-    private     ArrayList            unifySearchList
-                                  = null;
+    // only one lookup table for now - sorted by MObj.seq
+    private ArrayList unifySearchList = null;
+
     public ArrayList getUnifySearchListByMObjSeq() {
         return unifySearchList;
     }
 
+    private boolean tablesInitialized = false;
 
-    private     boolean tablesInitialized
-                                  = false;
-    public  boolean getTablesInitialized() {
+    public boolean getTablesInitialized() {
         return tablesInitialized;
     }
 
@@ -190,64 +187,51 @@ public class ProofUnifier {
     // in VerifyProofs for a single step --
     private ArrayList holdSoftDjVarsErrorList;
 
+    private final ParseNode[] unifyNodeStack = new ParseNode[PaConstants.UNIFIER_NODE_STACK_SIZE];
 
-    private     ParseNode[]          unifyNodeStack
-                                  =
-        new ParseNode[PaConstants.UNIFIER_NODE_STACK_SIZE];
-
-    private     ParseNode[]          compareNodeStack
-                                  =
-        new ParseNode[PaConstants.UNIFIER_NODE_STACK_SIZE];
+    private final ParseNode[] compareNodeStack = new ParseNode[PaConstants.UNIFIER_NODE_STACK_SIZE];
 
     /*
      *  Global "work" areas for processing a single
      *  theorem:
      */
 
-    private     Assrt                assrt;
-    private     int                  assrtNbrLogHyps;
-    private     ParseTree            assrtParseTree;
+    private Assrt assrt;
+    private int assrtNbrLogHyps;
+    private ParseTree assrtParseTree;
 
-    //these are global, deep in the unification process
-    private     VarHyp[]             assrtVarHypArray;
-    private     ParseNode[]          assrtFormulaSubst;
-    private     Hyp[]                assrtHypArray;
-    private     ParseNode[]          assrtSubst;
-    private     LogHyp[]             assrtLogHypArray;
+    // these are global, deep in the unification process
+    private VarHyp[] assrtVarHypArray;
+    private ParseNode[] assrtFormulaSubst;
+    private Hyp[] assrtHypArray;
+    private ParseNode[] assrtSubst;
+    private LogHyp[] assrtLogHypArray;
 
-    private     DerivationStep
-                                     derivStep;
+    private DerivationStep derivStep;
 
-    private     int                  dsa1Count;
-    private     DerivationStep[]
-                                     dsa1;
+    private int dsa1Count;
+    private DerivationStep[] dsa1;
 
-    private     ProofStepStmt[]
-                                     derivStepHypArray;
-    private     ParseNode[][][]      substAnswer;
-    private     ParseNode[]          substAnswerImpossible
-                                  = new ParseNode[0];
+    private ProofStepStmt[] derivStepHypArray;
+    private ParseNode[][][] substAnswer;
+    private final ParseNode[] substAnswerImpossible = new ParseNode[0];
 
-    private     int[]                levelCleanupCnt
-                                  =
-        new int[PaConstants.UNIFIER_MAX_LOG_HYPS];
+    private final int[] levelCleanupCnt = new int[PaConstants.UNIFIER_MAX_LOG_HYPS];
 
-    private     int[][]              levelCleanup
-                                  =
-        new int[PaConstants.UNIFIER_MAX_LOG_HYPS][];
+    private final int[][] levelCleanup = new int[PaConstants.UNIFIER_MAX_LOG_HYPS][];
 
-    private     boolean[]            assrtHypUsed;
-    private     int[]                derivAssrtXRef;
-    private     int[]                impossibleCnt;
+    private boolean[] assrtHypUsed;
+    private int[] derivAssrtXRef;
+    private int[] impossibleCnt;
 
-  // ***********************************************************
-  // ***********************************************************
-  // ****************                         ******************
-  // ALL NEW CODE FOR unifyStepWithWorkVars() FOLLOWS!!!!!!!!!!!
-  // ****************                         ******************
-  // ***********************************************************
-  // ***********************************************************
-    private StepUnifier stepUnifier;
+    // ***********************************************************
+    // ***********************************************************
+    // **************** ******************
+    // ALL NEW CODE FOR unifyStepWithWorkVars() FOLLOWS!!!!!!!!!!!
+    // **************** ******************
+    // ***********************************************************
+    // ***********************************************************
+    private final StepUnifier stepUnifier;
 
     /**
      *  Standard constructor for set up.
@@ -257,17 +241,16 @@ public class ProofUnifier {
      *  @param grammar the mmj.verify.Grammar object
      *  @param verifyProofs the mmj.verify.VerifyProofs object
      */
-    public ProofUnifier(ProofAsstPreferences proofAsstPreferences,
-                        LogicalSystem        logicalSystem,
-                        Grammar              grammar,
-                        VerifyProofs         verifyProofs) {
-        this.proofAsstPreferences =  proofAsstPreferences;
-        this.logicalSystem        =  logicalSystem;
-        this.grammar              =  grammar;
-        this.verifyProofs         =  verifyProofs;
+    public ProofUnifier(final ProofAsstPreferences proofAsstPreferences,
+        final LogicalSystem logicalSystem, final Grammar grammar,
+        final VerifyProofs verifyProofs)
+    {
+        this.proofAsstPreferences = proofAsstPreferences;
+        this.logicalSystem = logicalSystem;
+        this.grammar = grammar;
+        this.verifyProofs = verifyProofs;
 
-        stepUnifier          =
-            proofAsstPreferences.getStepUnifierInstance();
+        stepUnifier = proofAsstPreferences.getStepUnifierInstance();
 
     }
 
@@ -292,58 +275,41 @@ public class ProofUnifier {
      *
      *  @return boolean true if tables initialized successfully.
      */
-    public boolean initializeLookupTables(Messages messages) {
+    public boolean initializeLookupTables(final Messages messages) {
 
-        provableLogicStmtTyp      =  getProvableLogicStmtTyp();
+        provableLogicStmtTyp = getProvableLogicStmtTyp();
 
-        ArrayList unifySearchListUnsorted
-                                  =
-            new ArrayList(logicalSystem.getStmtTbl().size());
+        final ArrayList unifySearchListUnsorted = new ArrayList(logicalSystem
+            .getStmtTbl().size());
 
-        Collection collection     =
-            logicalSystem.getStmtTbl().values();
+        final Collection collection = logicalSystem.getStmtTbl().values();
 
-        Iterator collIterator     = collection.iterator();
-        Stmt     stmt;
+        final Iterator collIterator = collection.iterator();
+        Stmt stmt;
         while (collIterator.hasNext()) {
-            stmt                  = (Stmt)collIterator.next();
+            stmt = (Stmt)collIterator.next();
             if (stmt.isAssrt()
-                &&
-                stmt.getFormula().getTyp() ==
-                    provableLogicStmtTyp) {
-                if (proofAsstPreferences.
-                        checkUnifySearchExclude(
-                            (Assrt)stmt)) {
-                    //exclude it, don't add to list.
+                && stmt.getFormula().getTyp() == provableLogicStmtTyp)
+                if (proofAsstPreferences.checkUnifySearchExclude((Assrt)stmt)) {
+                    // exclude it, don't add to list.
                 }
-                else {
+                else
                     unifySearchListUnsorted.add(stmt);
-                }
-            }
         }
 
-        int listSize              =
-            ((unifySearchListUnsorted.size()
-              *
-              (100 +
-                 proofAsstPreferences.
-                     getAssrtListFreespace()))
-             / 100);
-        unifySearchList           = new ArrayList(listSize);
+        final int listSize = unifySearchListUnsorted.size()
+            * (100 + proofAsstPreferences.getAssrtListFreespace()) / 100;
+        unifySearchList = new ArrayList(listSize);
 
-        Iterator iterator         =
-            unifySearchListUnsorted.iterator();
-        while (iterator.hasNext()) {
+        final Iterator iterator = unifySearchListUnsorted.iterator();
+        while (iterator.hasNext())
             unifySearchList.add(iterator.next());
-        }
 
-        Collections.sort(unifySearchList,
-                         MObj.SEQ);
+        Collections.sort(unifySearchList, MObj.SEQ);
 
-        Assrt[] excl              =
-            proofAsstPreferences.getUnifySearchExclude();
+        final Assrt[] excl = proofAsstPreferences.getUnifySearchExclude();
         if (excl.length > 0) {
-            StringBuffer sb       = new StringBuffer();
+            final StringBuffer sb = new StringBuffer();
             sb.append(PaConstants.ERRMSG_UNIFY_SEARCH_EXCLUDE_1);
             sb.append(excl[0].getLabel());
             for (int i = 1; i < excl.length; i++) {
@@ -353,13 +319,10 @@ public class ProofUnifier {
             messages.accumInfoMessage(sb.toString());
         }
 
-        stepSelectorSearch        =
-            new StepSelectorSearch(proofAsstPreferences,
-                                   verifyProofs,
-                                   provableLogicStmtTyp,
-                                   unifySearchList);
+        stepSelectorSearch = new StepSelectorSearch(proofAsstPreferences,
+            verifyProofs, provableLogicStmtTyp, unifySearchList);
 
-        tablesInitialized         = true;
+        tablesInitialized = true;
 
         return tablesInitialized;
     }
@@ -374,19 +337,15 @@ public class ProofUnifier {
      *         which were added to the LogicalSystem.
      */
     public void mergeListOfAssrtAddsSortedBySeq(
-                            ArrayList listOfAssrtAddsSortedBySeq) {
+        final ArrayList listOfAssrtAddsSortedBySeq)
+    {
 
-        MergeSortedArrayLists m   =
-            new MergeSortedArrayLists(unifySearchList,
-                                      listOfAssrtAddsSortedBySeq,
-                                      MObj.SEQ,
-                                      true); // abortIfDupsFound
+        final MergeSortedArrayLists m = new MergeSortedArrayLists(
+            unifySearchList, listOfAssrtAddsSortedBySeq, MObj.SEQ, true); // abortIfDupsFound
 
-        stepSelectorSearch.
-            mergeListOfAssrtAddsSortedBySeq(
-                listOfAssrtAddsSortedBySeq);
+        stepSelectorSearch
+            .mergeListOfAssrtAddsSortedBySeq(listOfAssrtAddsSortedBySeq);
     }
-
 
     /**
      *  Unifies the proof steps in a Proof Worksheet.
@@ -414,78 +373,55 @@ public class ProofUnifier {
      *                  error and informational messages.
      */
     public void unifyAllProofDerivationSteps(
-                    ProofWorksheet proofWorksheet,
-                    Messages       messages)
-                        throws VerifyException {
+        final ProofWorksheet proofWorksheet, final Messages messages)
+        throws VerifyException
+    {
 
-        if (!getTablesInitialized()) {
+        if (!getTablesInitialized())
             throw new IllegalArgumentException(
                 PaConstants.ERRMSG_UNIFY_TABLES_NOT_INIT_1);
-        }
 
-        this.proofWorksheet       = proofWorksheet;
+        this.proofWorksheet = proofWorksheet;
 
-        holdSoftDjVarsErrorList   = new ArrayList();
+        holdSoftDjVarsErrorList = new ArrayList();
 
-        this.messages             = messages;
+        this.messages = messages;
 
         // ...also loads dsa1 array for input to
         // parallelStepUnificationMethod
         unifyStepsHavingRefLabels();
 
         if (proofWorksheet.stepRequest != null
-                &&
-            proofWorksheet.stepRequest.request ==
-            PaConstants.STEP_REQUEST_SELECTOR_SEARCH) {
-
+            && proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH)
             return; // our work here is complete :-)
-        }
 
-        if (dsa1Count > 0) {
-            //still some left to unify!
+        if (dsa1Count > 0)
+            // still some left to unify!
             parallelStepUnificationMethod();
-        }
 
-        DerivationStep d          =
-            proofWorksheet.getQedStep();
+        final DerivationStep d = proofWorksheet.getQedStep();
 
-        if (d.unificationStatus ==
-              PaConstants.UNIFICATION_STATUS_UNIFIED
-                ||
-            d.unificationStatus ==
-              PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS) {
-
-            //do fixup before convertWorkVarsToDummyVars()
+        if (d.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED
+            || d.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
+            // do fixup before convertWorkVarsToDummyVars()
             chainWorkVarAndIncompleteHypStatuses();
-        }
 
-        if (d.unificationStatus ==
-            PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS) {
+        if (d.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
             try {
                 convertWorkVarsToDummyVars(d);
-            }
-            catch (VerifyException e) {
+            } catch (final VerifyException e) {
                 messages.accumErrorMessage(e.getMessage());
-                proofWorksheet.
-                    getProofCursor().
-                        setCursorAtProofWorkStmt(
-                            d,
-                            PaConstants.FIELD_ID_REF);
+                proofWorksheet.getProofCursor().setCursorAtProofWorkStmt(d,
+                    PaConstants.FIELD_ID_REF);
             }
-        }
 
-        boolean hasHardDjVarsErrors
-                                  =
-            buildProofsAndErrorUnUnifiedSteps();
+        final boolean hasHardDjVarsErrors = buildProofsAndErrorUnUnifiedSteps();
 
-        if (d.proofTree != null
-            &&
-            !hasHardDjVarsErrors) {
+        if (d.proofTree != null && !hasHardDjVarsErrors) {
             // Well, Allrighty then!
         }
-        else {
+        else
             reportAlternateUnifications();
-        }
     }
 
     /*
@@ -495,82 +431,45 @@ public class ProofUnifier {
      */
     private void chainWorkVarAndIncompleteHypStatuses() {
 
-        Iterator proofWorkStmtIterator
-                                  =
-            proofWorksheet.getProofWorkStmtListIterator();
+        final Iterator proofWorkStmtIterator = proofWorksheet
+            .getProofWorkStmtListIterator();
 
         ProofWorkStmt proofWorkStmtObject;
 
         while (proofWorkStmtIterator.hasNext()) {
 
-            proofWorkStmtObject   =
-                (ProofWorkStmt)proofWorkStmtIterator.next();
+            proofWorkStmtObject = (ProofWorkStmt)proofWorkStmtIterator.next();
 
-            if (proofWorkStmtObject.isDerivationStep()) {
-                derivStep         =
-                  (DerivationStep)proofWorkStmtObject;
-            }
-            else {
+            if (proofWorkStmtObject.isDerivationStep())
+                derivStep = (DerivationStep)proofWorkStmtObject;
+            else
                 continue;
-            }
 
-            if (derivStep.unificationStatus !=
-                PaConstants.UNIFICATION_STATUS_UNIFIED
-                    &&
-                derivStep.unificationStatus !=
-                PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS) {
+            if (derivStep.unificationStatus != PaConstants.UNIFICATION_STATUS_UNIFIED
+                && derivStep.unificationStatus != PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
                 continue;
-            }
 
             for (int i = 0; i < derivStep.hyp.length; i++) {
 
-                if (!derivStep.hyp[i].isDerivationStep()) {
+                if (!derivStep.hyp[i].isDerivationStep())
                     continue;
-                }
-                DerivationStep dH = (DerivationStep)derivStep.hyp[i];
+                final DerivationStep dH = (DerivationStep)derivStep.hyp[i];
 
-                if (derivStep.unificationStatus ==
-                        PaConstants.UNIFICATION_STATUS_UNIFIED) {
+                if (derivStep.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED)
                     if (dH.workVarList != null
-                        ||
-                        dH.unificationStatus ==
-                          PaConstants.
-                            UNIFICATION_STATUS_UNIFIED_W_WORK_VARS) {
-                        derivStep.unificationStatus
-                                  =
-                          PaConstants.
-                            UNIFICATION_STATUS_UNIFIED_W_WORK_VARS;
-                    }
-                }
+                        || dH.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
+                        derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS;
 
-                if (dH.unificationStatus ==
-                    PaConstants.
-                        UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS) {
-                    derivStep.unificationStatus
-                                              =
-                        PaConstants.
-                            UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS;
-                }
+                if (dH.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS)
+                    derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS;
 
                 if (dH.hypFldIncomplete
-                    ||
-                    dH.unificationStatus ==
-                      PaConstants.
-                        UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS
-                    ||
-                   (dH.unificationStatus !=
-                      PaConstants.
-                        UNIFICATION_STATUS_UNIFIED
-                        &&
-                     dH.unificationStatus !=
-                      PaConstants.
-                        UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
-                    ) {
+                    || dH.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS
+                    || dH.unificationStatus != PaConstants.UNIFICATION_STATUS_UNIFIED
+                    && dH.unificationStatus != PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
+                {
 
-                    derivStep.unificationStatus
-                                  =
-                      PaConstants.
-                        UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS;
+                    derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS;
 
                     break;
                 }
@@ -602,91 +501,60 @@ public class ProofUnifier {
      *  Note: the input ProofWorksheet has been fully
      *  validated prior to its visit here.
      */
-    private void unifyStepsHavingRefLabels()
-                        throws VerifyException {
+    private void unifyStepsHavingRefLabels() throws VerifyException {
 
         // 1) Make pass for steps with Ref labels involving work vars
         if (proofWorksheet.hasWorkVarsOrDerives
-            ||
-            (proofWorksheet.stepRequest != null &&
-             proofWorksheet.stepRequest.request ==
-             PaConstants.STEP_REQUEST_SELECTOR_SEARCH)
-            ) {
+            || proofWorksheet.stepRequest != null
+            && proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH)
             unifyStepsInvolvingWorkVars();
-        }
 
         if (proofWorksheet.stepRequest != null
-                &&
-            proofWorksheet.stepRequest.request ==
-            PaConstants.STEP_REQUEST_SELECTOR_SEARCH) {
-
+            && proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH)
             return; // our work here is complete :-)
-        }
 
         // 2) Make pass for steps with Ref labels that don't
-        //    involve work vars or derives.
-        dsa1Count                 = 0;
-        dsa1                      =
-            new DerivationStep[
-                    proofWorksheet.getProofWorkStmtListCnt()];
+        // involve work vars or derives.
+        dsa1Count = 0;
+        dsa1 = new DerivationStep[proofWorksheet.getProofWorkStmtListCnt()];
 
-
-        ProofWorkStmt    proofWorkStmtObject;
-        Iterator         proofWorkStmtIterator
-                                  =
-            proofWorksheet.
-                      getProofWorkStmtListIterator();
+        ProofWorkStmt proofWorkStmtObject;
+        final Iterator proofWorkStmtIterator = proofWorksheet
+            .getProofWorkStmtListIterator();
         stepLoop: while (proofWorkStmtIterator.hasNext()) {
 
-            proofWorkStmtObject   =
-                (ProofWorkStmt)proofWorkStmtIterator.next();
+            proofWorkStmtObject = (ProofWorkStmt)proofWorkStmtIterator.next();
 
-            if (!proofWorkStmtObject.isDerivationStep()) {
+            if (!proofWorkStmtObject.isDerivationStep())
                 continue stepLoop;
-            }
 
-            derivStep             =
-                (DerivationStep)proofWorkStmtObject;
+            derivStep = (DerivationStep)proofWorkStmtObject;
 
-            if (derivStep.hypFldIncomplete) { // Ref == null too!
-
+            if (derivStep.hypFldIncomplete)
                 continue stepLoop;
-            }
 
-            if (derivStep.ref == null
-                &&
-                derivStep.hasWorkVarsInStepOrItsHyps()) {
-
+            if (derivStep.ref == null && derivStep.hasWorkVarsInStepOrItsHyps())
                 continue stepLoop;
-            }
 
-            if (derivStep.unificationStatus !=
-                PaConstants.UNIFICATION_STATUS_NOT_UNIFIED) {
-
+            if (derivStep.unificationStatus != PaConstants.UNIFICATION_STATUS_NOT_UNIFIED)
                 // already unified/failed in
                 // unifyStepsInvolvingWorkVars()
                 continue stepLoop;
-            }
 
             // this is b.s. but in theory a hyp step could have
             // failed in deriveFormula...
-            hypLoop: for (int i = 0; i < derivStep.hyp.length; i++) {
-
+            hypLoop: for (int i = 0; i < derivStep.hyp.length; i++)
                 if (derivStep.hyp[i] != null
-                    &&
-                    derivStep.hyp[i].formulaParseTree == null) {
+                    && derivStep.hyp[i].formulaParseTree == null)
+                {
 
-                    //this will
-                    //just be bypassed and considered incomplete
-                    //based on the idea that the failed earlier
-                    //step will generate a message
-                    derivStep.unificationStatus
-                                  =
-                      PaConstants.
-                                UNIFICATION_STATUS_ATTEMPT_CANCELLED;
+                    // this will
+                    // just be bypassed and considered incomplete
+                    // based on the idea that the failed earlier
+                    // step will generate a message
+                    derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_ATTEMPT_CANCELLED;
                     continue stepLoop;
                 }
-            }
 
             // build array of steps for parallel unification loop
             if (derivStep.ref == null) {
@@ -694,20 +562,16 @@ public class ProofUnifier {
                 continue stepLoop;
             }
 
-            assrt                 = (Assrt)derivStep.ref;
-            assrtNbrLogHyps       = assrt.getLogHypArrayLength();
+            assrt = (Assrt)derivStep.ref;
+            assrtNbrLogHyps = assrt.getLogHypArrayLength();
 
-            if (derivStep.hyp.length !=
-                assrtNbrLogHyps) {
+            if (derivStep.hyp.length != assrtNbrLogHyps)
                 throw new IllegalArgumentException(
                     PaConstants.ERRMSG_STEP_REF_HYP_NBR_ERR_1
-                    + getErrorLabelIfPossible(proofWorksheet)
-                    + PaConstants.
-                        ERRMSG_STEP_REF_HYP_NBR_ERR_2
-                    + derivStep.step
-                    + PaConstants.
-                        ERRMSG_STEP_REF_HYP_NBR_ERR_3);
-            }
+                        + getErrorLabelIfPossible(proofWorksheet)
+                        + PaConstants.ERRMSG_STEP_REF_HYP_NBR_ERR_2
+                        + derivStep.step
+                        + PaConstants.ERRMSG_STEP_REF_HYP_NBR_ERR_3);
 
             if (!unifyStepWithoutWorkVars()) {
 
@@ -715,197 +579,136 @@ public class ProofUnifier {
                 continue stepLoop;
             }
 
-            if (derivStep.djVarsErrorStatus !=
-                PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS) {
-
+            if (derivStep.djVarsErrorStatus != PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS)
                 // unified but build alternates list!!!
                 dsa1[dsa1Count++] = derivStep;
-            }
             continue stepLoop;
         }
 
     }
 
-    private void parallelStepUnificationMethod()
-                        throws VerifyException {
+    private void parallelStepUnificationMethod() throws VerifyException {
 
-        int      maxSeq       = proofWorksheet.getMaxSeq();
-        int      nbrCompleted = 0;
-        Stmt     stmt;
+        final int maxSeq = proofWorksheet.getMaxSeq();
+        int nbrCompleted = 0;
+        Stmt stmt;
 
-        Iterator stmtIterator = unifySearchList.iterator();
+        final Iterator stmtIterator = unifySearchList.iterator();
         assrtLoop: while (stmtIterator.hasNext()) {
 
-            stmt                  = (Stmt)stmtIterator.next();
-            if (stmt.getSeq() >= maxSeq) {
-
+            stmt = (Stmt)stmtIterator.next();
+            if (stmt.getSeq() >= maxSeq)
                 // halt the scan -- the list is sorted!!!
                 break assrtLoop;
-            }
 
-            assrt                 = (Assrt)stmt;
-            assrtNbrLogHyps       = assrt.getLogHypArrayLength();
+            assrt = (Assrt)stmt;
+            assrtNbrLogHyps = assrt.getLogHypArrayLength();
 
-            int i                 = -1;
-            int max               = dsa1Count; //fool optimizer
+            int i = -1;
+            final int max = dsa1Count; // fool optimizer
             loopDSA1: while (true) {
-                if (++i >= max) {
+                if (++i >= max)
                     break loopDSA1;
-                }
-                derivStep         = dsa1[i];
+                derivStep = dsa1[i];
 
-                if (derivStep.hyp.length == assrtNbrLogHyps) {
-                    if (unifyStepWithoutWorkVars()) {
-                        if (derivStep.djVarsErrorStatus ==
-                            PaConstants.
-                                DJ_VARS_ERROR_STATUS_NO_ERRORS) {
+                if (derivStep.hyp.length == assrtNbrLogHyps)
+                    if (unifyStepWithoutWorkVars())
+                        if (derivStep.djVarsErrorStatus == PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS)
+                        {
                             // stick fork in it, this one is done!
-                            dsa1[i]
-                                  = null;
+                            dsa1[i] = null;
                             ++nbrCompleted;
                         }
-                    }
-                }
                 continue loopDSA1;
             }
 
-            //this could be optimized a little :-)
+            // this could be optimized a little :-)
             if (nbrCompleted > 0) {
-                loopJ: for (int j = 0; j < dsa1Count - 1; j++) {
+                loopJ: for (int j = 0; j < dsa1Count - 1; j++)
                     if (dsa1[j] == null) {
-                        int m     = j;
-                        int n     = j;
+                        int m = j;
+                        int n = j;
                         loopN: while (true) {
-                            if (++n >= dsa1Count) {
+                            if (++n >= dsa1Count)
                                 break loopJ;
-                            }
-                            if (dsa1[n] == null) {
+                            if (dsa1[n] == null)
                                 continue loopN;
-                            }
                             break loopN;
                         }
-                        while (n < dsa1Count) {
-                            dsa1[m++]
-                                  = dsa1[n++];
-                        }
+                        while (n < dsa1Count)
+                            dsa1[m++] = dsa1[n++];
                     }
-                }
-                dsa1Count        -= nbrCompleted;
-                nbrCompleted      = 0;
+                dsa1Count -= nbrCompleted;
+                nbrCompleted = 0;
             }
 
-            if (dsa1Count > 0) {
+            if (dsa1Count > 0)
                 continue assrtLoop;
-            }
             break assrtLoop;
         }
     }
 
     private boolean buildProofsAndErrorUnUnifiedSteps() {
-        //ok, finish: error un-unified steps and
-        //            build proofs for the unified steps!
+        // ok, finish: error un-unified steps and
+        // build proofs for the unified steps!
 
-        boolean hardDjVarsErrorsFound
-                                  = false;
+        boolean hardDjVarsErrorsFound = false;
 
-        Iterator proofWorkStmtIterator
-                                  =
-            proofWorksheet.getProofWorkStmtListIterator();
+        final Iterator proofWorkStmtIterator = proofWorksheet
+            .getProofWorkStmtListIterator();
 
         ProofWorkStmt proofWorkStmtObject;
 
         while (proofWorkStmtIterator.hasNext()) {
 
-            proofWorkStmtObject   =
-                (ProofWorkStmt)proofWorkStmtIterator.next();
+            proofWorkStmtObject = (ProofWorkStmt)proofWorkStmtIterator.next();
 
-            if (proofWorkStmtObject.isDerivationStep()) {
-                derivStep         =
-                  (DerivationStep)proofWorkStmtObject;
-            }
-            else {
+            if (proofWorkStmtObject.isDerivationStep())
+                derivStep = (DerivationStep)proofWorkStmtObject;
+            else
                 continue;
-            }
 
-            if (derivStep.djVarsErrorStatus ==
-                    PaConstants.
-                        DJ_VARS_ERROR_STATUS_HARD_ERRORS) {
-                hardDjVarsErrorsFound
-                                  = true;
-            }
+            if (derivStep.djVarsErrorStatus == PaConstants.DJ_VARS_ERROR_STATUS_HARD_ERRORS)
+                hardDjVarsErrorsFound = true;
 
-            if (derivStep.unificationStatus ==
-                    PaConstants.
-                        UNIFICATION_STATUS_NOT_UNIFIED) {
-                if (derivStep.hypFldIncomplete) {
-                }
-                else {
+            if (derivStep.unificationStatus == PaConstants.UNIFICATION_STATUS_NOT_UNIFIED)
+            {
+                if (derivStep.hypFldIncomplete) {}
+                else
                     markUnificationFailure();
-                }
             }
-            else {
-                if (derivStep.unificationStatus ==
-                        PaConstants.
-                            UNIFICATION_STATUS_UNIFIED
-                    ||
-                    derivStep.unificationStatus ==
-                        PaConstants.
-                            UNIFICATION_STATUS_UNIFIED_W_WORK_VARS) {
-                    attemptProofOfDerivStep();
-                }
-            }
+            else if (derivStep.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED
+                || derivStep.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
+                attemptProofOfDerivStep();
 
-            if (derivStep.djVarsErrorStatus ==
-                    PaConstants.
-                        DJ_VARS_ERROR_STATUS_NO_ERRORS) {
-
+            if (derivStep.djVarsErrorStatus == PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS)
                 continue;
-            }
 
             // accum ArrayLists of DjVars into ProofWorksheet
             // ArrayList of Arraylists of DjVars...
-            if (derivStep.djVarsErrorStatus ==
-                PaConstants.
-                    DJ_VARS_ERROR_STATUS_SOFT_ERRORS
-                &&
-                derivStep.softDjVarsErrorList != null
-                &&
-                !derivStep.softDjVarsErrorList.isEmpty()) {
+            if (derivStep.djVarsErrorStatus == PaConstants.DJ_VARS_ERROR_STATUS_SOFT_ERRORS
+                && derivStep.softDjVarsErrorList != null
+                && !derivStep.softDjVarsErrorList.isEmpty())
+            {
                 // that means we are generating $d's!
-                if (proofWorksheet.proofSoftDjVarsErrorList
-                    == null) {
-                    proofWorksheet.proofSoftDjVarsErrorList
-                                  = new ArrayList();
-                }
-                proofWorksheet.proofSoftDjVarsErrorList.
-                    add(derivStep.softDjVarsErrorList);
+                if (proofWorksheet.proofSoftDjVarsErrorList == null)
+                    proofWorksheet.proofSoftDjVarsErrorList = new ArrayList();
+                proofWorksheet.proofSoftDjVarsErrorList
+                    .add(derivStep.softDjVarsErrorList);
             }
 
-            if (derivStep.djVarsErrorStatus ==
-                PaConstants.
-                    DJ_VARS_ERROR_STATUS_HARD_ERRORS
-                ||
-                (proofAsstPreferences.
-                        getDjVarsSoftErrorsReport()
-                 &&
-                 derivStep.djVarsErrorStatus ==
-                    PaConstants.
-                        DJ_VARS_ERROR_STATUS_SOFT_ERRORS)) {
+            if (derivStep.djVarsErrorStatus == PaConstants.DJ_VARS_ERROR_STATUS_HARD_ERRORS
+                || proofAsstPreferences.getDjVarsSoftErrorsReport()
+                && derivStep.djVarsErrorStatus == PaConstants.DJ_VARS_ERROR_STATUS_SOFT_ERRORS)
+            {
 
-                if (derivStep.alternateRefList != null) {
-                    messages.accumErrorMessage(
-                        derivStep.heldDjErrorMessage
+                if (derivStep.alternateRefList != null)
+                    messages.accumErrorMessage(derivStep.heldDjErrorMessage
                         + buildAlternateRefMessage(derivStep));
-                }
-                else {
-                    messages.accumErrorMessage(
-                        derivStep.heldDjErrorMessage);
-                }
-                proofWorksheet.
-                    getProofCursor().
-                        setCursorAtProofWorkStmt(
-                            derivStep,
-                            PaConstants.FIELD_ID_REF);
+                else
+                    messages.accumErrorMessage(derivStep.heldDjErrorMessage);
+                proofWorksheet.getProofCursor().setCursorAtProofWorkStmt(
+                    derivStep, PaConstants.FIELD_ID_REF);
             }
         }
         return hardDjVarsErrorsFound;
@@ -913,51 +716,41 @@ public class ProofUnifier {
 
     private void reportAlternateUnifications() {
 
-        Iterator proofWorkStmtIterator
-                                  =
-            proofWorksheet.getProofWorkStmtListIterator();
+        final Iterator proofWorkStmtIterator = proofWorksheet
+            .getProofWorkStmtListIterator();
 
         ProofWorkStmt proofWorkStmtObject;
         while (proofWorkStmtIterator.hasNext()) {
 
-            proofWorkStmtObject   =
-                (ProofWorkStmt)proofWorkStmtIterator.next();
+            proofWorkStmtObject = (ProofWorkStmt)proofWorkStmtIterator.next();
 
             if (proofWorkStmtObject.isDerivationStep()) {
 
-                derivStep     =
-                  (DerivationStep)proofWorkStmtObject;
+                derivStep = (DerivationStep)proofWorkStmtObject;
 
-                if (derivStep.djVarsErrorStatus == //already
-                    PaConstants.                   //reported
-                        DJ_VARS_ERROR_STATUS_NO_ERRORS
-                    &&
-                    derivStep.alternateRefList != null
-                    &&
-                    derivStep.alternateRefList.size() > 0) {
-                    messages.accumErrorMessage(
-                        buildAlternateRefMessage(derivStep));
-                    proofWorksheet.
-                        getProofCursor().
-                            setCursorAtProofWorkStmt(
-                                derivStep,
-                                PaConstants.FIELD_ID_REF);
+                if (derivStep.djVarsErrorStatus == // already
+                PaConstants. // reported
+                DJ_VARS_ERROR_STATUS_NO_ERRORS
+                    && derivStep.alternateRefList != null
+                    && derivStep.alternateRefList.size() > 0)
+                {
+                    messages
+                        .accumErrorMessage(buildAlternateRefMessage(derivStep));
+                    proofWorksheet.getProofCursor().setCursorAtProofWorkStmt(
+                        derivStep, PaConstants.FIELD_ID_REF);
                 }
 
             }
         }
     }
 
-    private String buildAlternateRefMessage(
-                    DerivationStep derivStep) {
-        if (derivStep.alternateRefList.size() == 0) {
+    private String buildAlternateRefMessage(final DerivationStep derivStep) {
+        if (derivStep.alternateRefList.size() == 0)
             return null;
-        }
 
-        Iterator iterator         =
-            derivStep.alternateRefList.iterator();
+        final Iterator iterator = derivStep.alternateRefList.iterator();
 
-        StringBuffer sb           = new StringBuffer();
+        final StringBuffer sb = new StringBuffer();
         sb.append("\n");
         sb.append(PaConstants.ERRMSG_ALT_UNIFY_REFS_1);
         sb.append(getErrorLabelIfPossible(proofWorksheet));
@@ -965,10 +758,8 @@ public class ProofUnifier {
         sb.append(derivStep.step);
         sb.append(PaConstants.ERRMSG_ALT_UNIFY_REFS_3);
         sb.append(((Stmt)iterator.next()).getLabel());
-        while (iterator.hasNext()) {
-            sb.append(", "
-                      + ((Stmt)iterator.next()).getLabel());
-        }
+        while (iterator.hasNext())
+            sb.append(", " + ((Stmt)iterator.next()).getLabel());
 
         return sb.toString();
     }
@@ -1006,105 +797,78 @@ public class ProofUnifier {
     private void attemptProofOfDerivStep() {
 
         ProofStepStmt holdHypProofStepStmt;
-        ParseNode     holdHypNode;
-        int substIndex            = -1;
+        ParseNode holdHypNode;
+        int substIndex = -1;
         for (int i = 0; i < derivStep.hyp.length; i++) {
 
-            holdHypProofStepStmt  = derivStep.hyp[i];
+            holdHypProofStepStmt = derivStep.hyp[i];
 
-            //Must be a HypothesisStep (otherwise status
-            //would have been changed)
+            // Must be a HypothesisStep (otherwise status
+            // would have been changed)
             if (holdHypProofStepStmt.isHypothesisStep()) {
 
-                if (proofWorksheet.isNewTheorem() &&
-                    holdHypProofStepStmt.ref == null) {
-                    buildNewTheoremLogHyp(
-                                    i,
-                                    (HypothesisStep)
-                                        holdHypProofStepStmt);
-                }
-                holdHypNode       =
-                    new ParseNode(holdHypProofStepStmt.ref);
+                if (proofWorksheet.isNewTheorem()
+                    && holdHypProofStepStmt.ref == null)
+                    buildNewTheoremLogHyp(i,
+                        (HypothesisStep)holdHypProofStepStmt);
+                holdHypNode = new ParseNode(holdHypProofStepStmt.ref);
                 holdHypNode.setChild(new ParseNode[0]);
             }
             else {
-                DerivationStep d  =
-                    (DerivationStep)holdHypProofStepStmt;
-                ParseTree hypProofTree
-                                  = d.proofTree;
+                final DerivationStep d = (DerivationStep)holdHypProofStepStmt;
+                final ParseTree hypProofTree = d.proofTree;
                 if (hypProofTree != null) {
-                    holdHypNode   = hypProofTree.getRoot();
-                    if (d.unificationStatus ==
-                          PaConstants.
-                            UNIFICATION_STATUS_UNIFIED_W_WORK_VARS) {
-                        derivStep.unificationStatus
-                                  =
-                          PaConstants.
-                            UNIFICATION_STATUS_UNIFIED_W_WORK_VARS;
-                    }
+                    holdHypNode = hypProofTree.getRoot();
+                    if (d.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
+                        derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS;
                 }
                 else {
                     // No need for message as the prev step has one.
-                    derivStep.unificationStatus
-                                  =
-                      PaConstants.
-                        UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS;
+                    derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS;
                     return;
                 }
             }
 
-            while (++substIndex < derivStep.assrtSubst.length) {
+            while (++substIndex < derivStep.assrtSubst.length)
                 if (derivStep.assrtSubst[substIndex] == null) {
-                    derivStep.assrtSubst[substIndex]
-                                  = holdHypNode;
+                    derivStep.assrtSubst[substIndex] = holdHypNode;
                     break;
                 }
-            }
 
             // If no empty entry in array for hyp's proof tree root
             // then we are FUBAR
-            if (substIndex >= derivStep.assrtSubst.length) {
+            if (substIndex >= derivStep.assrtSubst.length)
                 throw new IllegalArgumentException(
                     PaConstants.ERRMSG_ASSRT_SUBST_SLOT_1
-                    + getErrorLabelIfPossible(proofWorksheet)
-                    + PaConstants.ERRMSG_ASSRT_SUBST_SLOT_2
-                    + derivStep.step
-                    + PaConstants.ERRMSG_ASSRT_SUBST_SLOT_3
-                    + i);
-            }
+                        + getErrorLabelIfPossible(proofWorksheet)
+                        + PaConstants.ERRMSG_ASSRT_SUBST_SLOT_2
+                        + derivStep.step
+                        + PaConstants.ERRMSG_ASSRT_SUBST_SLOT_3 + i);
         }
 
-        ParseNode proofRoot       =
-            new ParseNode(derivStep.ref);
+        final ParseNode proofRoot = new ParseNode(derivStep.ref);
 
         // Note that the proof tree root has a "child" array
         // that is merely a parallel array of the ref's
         // hypArray (holding VarHyp and LogHyp entires)!
         proofRoot.setChild(derivStep.assrtSubst);
 
-        derivStep.proofTree       =
-            new ParseTree(proofRoot);
+        derivStep.proofTree = new ParseTree(proofRoot);
 
-        if (proofAsstPreferences.
-                getRecheckProofAsstUsingProofVerifier()) {
+        if (proofAsstPreferences.getRecheckProofAsstUsingProofVerifier())
             if (!checkDerivStepProofUsingVerify()) {
-                messages.accumErrorMessage(
-                    PaConstants.ERRMSG_VERIFY_RECHECK_ERR_1
-                    + getErrorLabelIfPossible(proofWorksheet)
-                    + PaConstants.ERRMSG_VERIFY_RECHECK_ERR_2
-                    + derivStep.step
-                    + PaConstants.ERRMSG_VERIFY_RECHECK_ERR_3);
+                messages
+                    .accumErrorMessage(PaConstants.ERRMSG_VERIFY_RECHECK_ERR_1
+                        + getErrorLabelIfPossible(proofWorksheet)
+                        + PaConstants.ERRMSG_VERIFY_RECHECK_ERR_2
+                        + derivStep.step
+                        + PaConstants.ERRMSG_VERIFY_RECHECK_ERR_3);
 
-                derivStep.verifyProofError
-                                  = true;
-                proofWorksheet.
-                    getProofCursor().
-                        setCursorAtProofWorkStmt(
-                            derivStep,
-                            PaConstants.FIELD_ID_REF);
+                derivStep.verifyProofError = true;
+                proofWorksheet.getProofCursor().setCursorAtProofWorkStmt(
+                    derivStep, PaConstants.FIELD_ID_REF);
                 return;
             }
-        }
     }
 
     /*
@@ -1113,40 +877,29 @@ public class ProofUnifier {
      *  do other things like verify proof or generate the
      *  RPN, we can use existing code!
      */
-    private void buildNewTheoremLogHyp(
-                    int                           hypIndexNbr,
-                    HypothesisStep hypothesisStep) {
+    private void buildNewTheoremLogHyp(final int hypIndexNbr,
+        final HypothesisStep hypothesisStep)
+    {
 
-        hypothesisStep.ref        =
-            LogHyp.BuildTempLogHypObject(
-                proofWorksheet.getMaxSeq()
-                    + hypIndexNbr
-                    + 1,
-                hypothesisStep.refLabel,
-                hypothesisStep.formula,
-                proofWorksheet.getComboFrame().hypArray,
-                hypothesisStep.formulaParseTree);
+        hypothesisStep.ref = LogHyp.BuildTempLogHypObject(
+            proofWorksheet.getMaxSeq() + hypIndexNbr + 1,
+            hypothesisStep.refLabel, hypothesisStep.formula,
+            proofWorksheet.getComboFrame().hypArray,
+            hypothesisStep.formulaParseTree);
     }
 
     private boolean checkDerivStepProofUsingVerify() {
-        String errmsg             =
-            verifyProofs.verifyDerivStepProof(
-                proofWorksheet.getTheoremLabel()
-                    + PaConstants.DOT_STEP_CAPTION
-                    + derivStep.step,
-                derivStep.formula,
-                derivStep.proofTree,
-                proofWorksheet.getComboFrame());
+        final String errmsg = verifyProofs.verifyDerivStepProof(
+            proofWorksheet.getTheoremLabel() + PaConstants.DOT_STEP_CAPTION
+                + derivStep.step, derivStep.formula, derivStep.proofTree,
+            proofWorksheet.getComboFrame());
 
         if (errmsg != null) {
 
             messages.accumErrorMessage(errmsg);
 
-            proofWorksheet.
-                getProofCursor().
-                    setCursorAtProofWorkStmt(
-                        derivStep,
-                        PaConstants.FIELD_ID_REF);
+            proofWorksheet.getProofCursor().setCursorAtProofWorkStmt(derivStep,
+                PaConstants.FIELD_ID_REF);
             return false;
         }
 
@@ -1165,8 +918,7 @@ public class ProofUnifier {
      *   the proof tree for this step.)
      *
      */
-    private boolean unifyStepWithoutWorkVars()
-                        throws VerifyException {
+    private boolean unifyStepWithoutWorkVars() throws VerifyException {
 
         /*
          *  FIRST we traverse a lengthy set of heuristics
@@ -1196,39 +948,27 @@ public class ProofUnifier {
          *
          */
 
-        if (!checkAssrtLevelMatch()) {
+        if (!checkAssrtLevelMatch())
             return false;
-        }
 
-        if (!checkHypLevelMatch()) {
-
+        if (!checkHypLevelMatch())
             return false;
-        }
 
-        if (!derivStep.deriveStepFormula) {
-
-            if (derivStep.formulaParseTree.getMaxDepth() > 0 &&
-                assrtParseTree.getMaxDepth() >
-                derivStep.formulaParseTree.getMaxDepth()) {
+        if (!derivStep.deriveStepFormula)
+            if (derivStep.formulaParseTree.getMaxDepth() > 0
+                && assrtParseTree.getMaxDepth() > derivStep.formulaParseTree
+                    .getMaxDepth())
                 return false;
-            }
-        }
 
-        if (!derivStep.deriveStepHyps
-            &&
-            derivStep.logHypsMaxDepth > 0) {  //may need recompute
-            if (assrt.getLogHypsMaxDepth() >
-                derivStep.logHypsMaxDepth) {
-
+        if (!derivStep.deriveStepHyps && derivStep.logHypsMaxDepth > 0)
+            if (assrt.getLogHypsMaxDepth() > derivStep.logHypsMaxDepth)
                 return false;
-            }
-        }
 
         /*
          *  SECOND, we attempt to unify the assertion's
          *  formula with the proof step's formula.
          */
-        assrtVarHypArray          = assrt.getMandVarHypArray();
+        assrtVarHypArray = assrt.getMandVarHypArray();
 
         // Creates ParseNode[] of assrtVarHypArray.length size.
         // It is a parallel array, parallel to assrtVarHypArray.
@@ -1237,30 +977,23 @@ public class ProofUnifier {
         // we're trying to do this as efficiently as possible
         // because this code is executed a bazillion times
         // for each step/assrt combo and we want to fail fast.
-        if (derivStep.deriveStepFormula) {
-            assrtFormulaSubst     =
-                new ParseNode[assrtVarHypArray.length];
-        }
+        if (derivStep.deriveStepFormula)
+            assrtFormulaSubst = new ParseNode[assrtVarHypArray.length];
         else {
-            assrtFormulaSubst         =
-                assrtParseTree.getRoot(
-                    ).unifyWithSubtree(
-                        derivStep.formulaParseTree.getRoot(),
-                        assrtVarHypArray,
-                        unifyNodeStack,
-                        compareNodeStack);
-            if (assrtFormulaSubst == null) {
+            assrtFormulaSubst = assrtParseTree.getRoot().unifyWithSubtree(
+                derivStep.formulaParseTree.getRoot(), assrtVarHypArray,
+                unifyNodeStack, compareNodeStack);
+            if (assrtFormulaSubst == null)
                 return false;
-            }
         }
 
-        assrtHypArray             = assrt.getMandFrame().hypArray;
-        assrtSubst                = initLoadAssrtSubst();
+        assrtHypArray = assrt.getMandFrame().hypArray;
+        assrtSubst = initLoadAssrtSubst();
 
         if (derivStep.hyp.length == 0) {
-            markStepUnified(false,         // usedUnifyWithWorkVars,
-                            false,         // no "swap",
-                            null);         // no rearrange
+            markStepUnified(false, // usedUnifyWithWorkVars,
+                false, // no "swap",
+                null); // no rearrange
             return true; // Special Case 0
         }
 
@@ -1275,35 +1008,28 @@ public class ProofUnifier {
          *  not have to go through this misery a second
          *  time!
          */
-        assrtLogHypArray          = assrt.getLogHypArray();
-        derivStepHypArray         = derivStep.hyp;
+        assrtLogHypArray = assrt.getLogHypArray();
+        derivStepHypArray = derivStep.hyp;
 
         /*
          *  A temporary-use array to hold results
          */
-        ParseNode[][] assrtLogHypSubstArray
-                                  =
-            new ParseNode[assrtLogHypArray.length][];
+        final ParseNode[][] assrtLogHypSubstArray = new ParseNode[assrtLogHypArray.length][];
 
-        int iH                    = 0;
+        int iH = 0;
         while (true) {
-            if (unifyAndMergeSubst(assrtLogHypSubstArray,
-                                   iH,     //assrtLogHypIndex
-                                   iH)) {  //stepLogHypIndex
+            if (unifyAndMergeSubst(assrtLogHypSubstArray, iH, // assrtLogHypIndex
+                iH))
                 if (++iH >= assrtLogHypArray.length) {
-                    markStepUnified(
-                                false,         // usedUnifyWithWorkVars,
-                                false,         // no "swap",
-                                null);         // no rearrange
+                    markStepUnified(false, // usedUnifyWithWorkVars,
+                        false, // no "swap",
+                        null); // no rearrange
                     return true;
                 }
-                else {
+                else
                     continue;
-                }
-            }
-            if (assrtLogHypArray.length == 1) {
-                return false; //Special Case 1
-            }
+            if (assrtLogHypArray.length == 1)
+                return false; // Special Case 1
             break;
         }
 
@@ -1314,23 +1040,19 @@ public class ProofUnifier {
          *  special case for 2 LogHyp's -- just switch
          *  the user's input order and try again.
          */
-        if (assrtLogHypArray.length == 2) { //Special Case 2
-            if (iH > 0) {  //cleanup needed at level 0!
-                assrtSubst        = initLoadAssrtSubst();
-            }
-            if (unifyAndMergeSubst(assrtLogHypSubstArray,
-                                   0,     //assrtLogHypIndex
-                                   1)) {  //stepLogHypIndex
-                if (unifyAndMergeSubst(assrtLogHypSubstArray,
-                                       1,     //assrtLogHypIndex
-                                       0)) {  //stepLogHypIndex
-                    markStepUnified(
-                                false,         // usedUnifyWithWorkVars,
-                                true,          // yes "swap",
-                                null);         // no rearrange
+        if (assrtLogHypArray.length == 2) { // Special Case 2
+            if (iH > 0)
+                assrtSubst = initLoadAssrtSubst();
+            if (unifyAndMergeSubst(assrtLogHypSubstArray, 0, // assrtLogHypIndex
+                1))
+                if (unifyAndMergeSubst(assrtLogHypSubstArray, 1, // assrtLogHypIndex
+                    0))
+                { // stepLogHypIndex
+                    markStepUnified(false, // usedUnifyWithWorkVars,
+                        true, // yes "swap",
+                        null); // no rearrange
                     return true;
                 }
-            }
             return false;
         }
 
@@ -1384,12 +1106,11 @@ public class ProofUnifier {
          *  fix for the proof step's logical hypotheses -- that
          *  I see now.)
          */
-        //don't bother caching the sorted assrtLogHypArray because
-        //that would be useful only if we expected multiple steps
-        //to satisfy unification to this point, and that is unlikely.
-        assrtLogHypArray          = assrt.getSortedLogHypArray();
-        derivStepHypArray         = derivStep.getSortedHypArray();
-
+        // don't bother caching the sorted assrtLogHypArray because
+        // that would be useful only if we expected multiple steps
+        // to satisfy unification to this point, and that is unlikely.
+        assrtLogHypArray = assrt.getSortedLogHypArray();
+        derivStepHypArray = derivStep.getSortedHypArray();
 
         /*
          *  SIX
@@ -1421,56 +1142,44 @@ public class ProofUnifier {
          *      substAnswer[i][j] == something else --> means
          *          success!
          */
-        substAnswer               =
-            new ParseNode[assrtLogHypArray.length][][];
-        for (int i = 0; i < assrtLogHypArray.length; i++) {
-            substAnswer[i]        =
-                new ParseNode[assrtLogHypArray.length][];
-        }
+        substAnswer = new ParseNode[assrtLogHypArray.length][][];
+        for (int i = 0; i < assrtLogHypArray.length; i++)
+            substAnswer[i] = new ParseNode[assrtLogHypArray.length][];
 
         /*
          *  SEVEN: go baby.
          *
          */
 
-        //not sure if worth it...but...
+        // not sure if worth it...but...
         salvagePreliminaryAnswers(assrtLogHypSubstArray);
 
         // Now, for last time, re-init assrtSubt!
-        assrtSubst            = initLoadAssrtSubst();
+        assrtSubst = initLoadAssrtSubst();
 
         // ok! add complexity to keep track of substAnswer :)
-        impossibleCnt             =
-            new int[assrtLogHypArray.length];
+        impossibleCnt = new int[assrtLogHypArray.length];
 
-        assrtHypUsed              =
-            new boolean[assrtLogHypArray.length];
+        assrtHypUsed = new boolean[assrtLogHypArray.length];
 
-        derivAssrtXRef            =
-            new int[assrtLogHypArray.length];
-        for (int i = 0; i < derivAssrtXRef.length; i++) {
-            derivAssrtXRef[i]     = -1;
-        }
+        derivAssrtXRef = new int[assrtLogHypArray.length];
+        for (int i = 0; i < derivAssrtXRef.length; i++)
+            derivAssrtXRef[i] = -1;
 
-        int currLevel             = 0;
+        int currLevel = 0;
         while (true) {
             if (!findNextUnifiedAssrtHyp(currLevel)) {
-                if (impossibleCnt[currLevel] >=
-                    assrtLogHypArray.length) {
-
+                if (impossibleCnt[currLevel] >= assrtLogHypArray.length)
                     return false;
-                }
-                if (--currLevel < 0) {
+                if (--currLevel < 0)
                     return false;
-                }
-                cleanupOneAssrtSubstLevel(currLevel); //backout prev
+                cleanupOneAssrtSubstLevel(currLevel); // backout prev
                 continue;
             }
             if (++currLevel >= assrtLogHypArray.length) {
-                markStepUnified(
-                            false,           // usedUnifyWithWorkVars,
-                            false,           // no "swap",
-                            derivAssrtXRef); // yes, rearrange
+                markStepUnified(false, // usedUnifyWithWorkVars,
+                    false, // no "swap",
+                    derivAssrtXRef); // yes, rearrange
                 return true;
             }
             continue;
@@ -1479,33 +1188,25 @@ public class ProofUnifier {
 
     private boolean checkAssrtLevelMatch() {
 
-        if (derivStep.workVarList != null) {
+        if (derivStep.workVarList != null)
             return true;
-        }
 
-        assrtParseTree            =
-            assrt.getExprParseTree();
+        assrtParseTree = assrt.getExprParseTree();
 
         if (!derivStep.deriveStepFormula) {
-            String assrtLevelOneTwo
-                                  = assrtParseTree.getLevelOneTwo();
+            final String assrtLevelOneTwo = assrtParseTree.getLevelOneTwo();
             if (assrtLevelOneTwo.length() > 0) {
-                if (!assrtLevelOneTwo.equals(
-                    derivStep.formulaParseTree.getLevelOneTwo())) {
-                    return false; //unification impossible!
-                }
+                if (!assrtLevelOneTwo.equals(derivStep.formulaParseTree
+                    .getLevelOneTwo()))
+                    return false; // unification impossible!
             }
-            else { //this checks LevelOne
-                Stmt assrtParseRootStmt
-                                  =
-                    assrtParseTree.getRoot().getStmt();
+            else { // this checks LevelOne
+                final Stmt assrtParseRootStmt = assrtParseTree.getRoot()
+                    .getStmt();
 
-                if (assrtParseRootStmt !=
-                    derivStep.formulaParseTree.getRoot().getStmt()
-                    &&
-                    !assrtParseRootStmt.isVarHyp()) {
-                    return false; //unification impossible!
-                }
+                if (assrtParseRootStmt != derivStep.formulaParseTree.getRoot()
+                    .getStmt() && !assrtParseRootStmt.isVarHyp())
+                    return false; // unification impossible!
             }
         }
         return true;
@@ -1514,113 +1215,87 @@ public class ProofUnifier {
     private boolean checkHypLevelMatch() {
 
         if (!derivStep.deriveStepHyps) {
-            String assrtLogHypsL1HiLoKey
-                                  = assrt.getLogHypsL1HiLoKey();
-            //note: derivStep L1HiLo may be "" if its hyps are derived!
-            //      this step's L1HiLo is not recomputed after
-            //      its log hyps' formulas are derived in
-            //      ProofUnifier -- that will slow things down
-            //      some (unless recomputation is triggered by
-            //      "Derive" formula.)
+            final String assrtLogHypsL1HiLoKey = assrt.getLogHypsL1HiLoKey();
+            // note: derivStep L1HiLo may be "" if its hyps are derived!
+            // this step's L1HiLo is not recomputed after
+            // its log hyps' formulas are derived in
+            // ProofUnifier -- that will slow things down
+            // some (unless recomputation is triggered by
+            // "Derive" formula.)
             if (assrtLogHypsL1HiLoKey.length() > 0
-                &&
-                derivStep.logHypsL1HiLoKey.length() > 0  //see note
-                &&
-                !assrtLogHypsL1HiLoKey.equals(
-                    derivStep.logHypsL1HiLoKey)) {
+                && derivStep.logHypsL1HiLoKey.length() > 0 // see note
+                && !assrtLogHypsL1HiLoKey.equals(derivStep.logHypsL1HiLoKey))
                 return false;
-            }
         }
         return true;
     }
 
-    private boolean findNextUnifiedAssrtHyp(int currLevel) {
+    private boolean findNextUnifiedAssrtHyp(final int currLevel) {
 
-        ParseNode[][] currLevelSubstAnswer
-                                  = substAnswer[currLevel];
+        final ParseNode[][] currLevelSubstAnswer = substAnswer[currLevel];
 
-        int nextAssrtHypIndex     = derivAssrtXRef[currLevel];
+        int nextAssrtHypIndex = derivAssrtXRef[currLevel];
         if (nextAssrtHypIndex != -1) {
-            assrtHypUsed[nextAssrtHypIndex]
-                                  = false;
-            derivAssrtXRef[currLevel]
-                                  = -1;
+            assrtHypUsed[nextAssrtHypIndex] = false;
+            derivAssrtXRef[currLevel] = -1;
         }
 
-        int governorLimit         = assrtLogHypArray.length;
+        int governorLimit = assrtLogHypArray.length;
         while (governorLimit-- > 0) {
             ++nextAssrtHypIndex;
-            if (nextAssrtHypIndex >= assrtLogHypArray.length) {
+            if (nextAssrtHypIndex >= assrtLogHypArray.length)
                 return false;
-            }
-            if (assrtHypUsed[nextAssrtHypIndex]) {
+            if (assrtHypUsed[nextAssrtHypIndex])
                 continue;
-            }
-            if (currLevelSubstAnswer[nextAssrtHypIndex] ==
-                substAnswerImpossible) {
+            if (currLevelSubstAnswer[nextAssrtHypIndex] == substAnswerImpossible)
                 continue;
-            }
             if (derivStepHypArray[currLevel] == null
-                && derivStep.deriveStepHyps) {
+                && derivStep.deriveStepHyps)
+            {
                 // skip following heuristic
             }
             else {
-                int maxDepth      =
-                    derivStepHypArray[currLevel].
-                        formulaParseTree.
-                            getMaxDepth();
+                final int maxDepth = derivStepHypArray[currLevel].formulaParseTree
+                    .getMaxDepth();
                 if (maxDepth > 0
-                    &&
-                    assrtLogHypArray[nextAssrtHypIndex].
-                        getExprParseTree().
-                            getMaxDepth()
-                    >   maxDepth) {
-                    currLevelSubstAnswer[nextAssrtHypIndex] =
-                        substAnswerImpossible;
+                    && assrtLogHypArray[nextAssrtHypIndex].getExprParseTree()
+                        .getMaxDepth() > maxDepth)
+                {
+                    currLevelSubstAnswer[nextAssrtHypIndex] = substAnswerImpossible;
                     ++impossibleCnt[currLevel];
                     continue;
                 }
             }
             if (currLevelSubstAnswer[nextAssrtHypIndex] == null) {
-                if (unifyAndMergeSubst(currLevelSubstAnswer,
-                                       nextAssrtHypIndex,  //hyp
-                                       currLevel)) {       //stephyp
-                    derivAssrtXRef[currLevel]
-                                  = nextAssrtHypIndex;
-                    assrtHypUsed[nextAssrtHypIndex]
-                                  = true;
+                if (unifyAndMergeSubst(currLevelSubstAnswer, nextAssrtHypIndex, // hyp
+                    currLevel))
+                { // stephyp
+                    derivAssrtXRef[currLevel] = nextAssrtHypIndex;
+                    assrtHypUsed[nextAssrtHypIndex] = true;
                     return true;
                 }
-                if (currLevelSubstAnswer[nextAssrtHypIndex]
-                        == null) {
-                    currLevelSubstAnswer[nextAssrtHypIndex] =
-                        substAnswerImpossible;
+                if (currLevelSubstAnswer[nextAssrtHypIndex] == null) {
+                    currLevelSubstAnswer[nextAssrtHypIndex] = substAnswerImpossible;
                     ++impossibleCnt[currLevel];
                 }
                 continue;
             }
-            VarHyp[] assrtLogHypVarHypArray
-                                  =
-                assrtLogHypArray[nextAssrtHypIndex].
-                    getMandVarHypArray();
+            final VarHyp[] assrtLogHypVarHypArray = assrtLogHypArray[nextAssrtHypIndex]
+                .getMandVarHypArray();
 
-            //here we (attempt to) merge in the previously computed
-            //substitutions for a LogHyp
-            if (mergeLogHypSubst(
-                    currLevel,
-                    assrtLogHypVarHypArray,
-                    currLevelSubstAnswer[nextAssrtHypIndex])) {
-                derivAssrtXRef[currLevel]
-                              = nextAssrtHypIndex;
-                assrtHypUsed[nextAssrtHypIndex]
-                              = true;
+            // here we (attempt to) merge in the previously computed
+            // substitutions for a LogHyp
+            if (mergeLogHypSubst(currLevel, assrtLogHypVarHypArray,
+                currLevelSubstAnswer[nextAssrtHypIndex]))
+            {
+                derivAssrtXRef[currLevel] = nextAssrtHypIndex;
+                assrtHypUsed[nextAssrtHypIndex] = true;
                 return true;
             }
             continue;
         }
         return false;
     }
-
 
     /**
      *  Attempt to recover the initial unification results
@@ -1637,106 +1312,81 @@ public class ProofUnifier {
      *  because of the empty values in substAnswer.
      */
     private void salvagePreliminaryAnswers(
-                            ParseNode[][] assrtLogHypSubstArray) {
+        final ParseNode[][] assrtLogHypSubstArray)
+    {
 
-        LogHyp                         holdLogHyp;
-        ProofStepStmt   holdStep;
+        LogHyp holdLogHyp;
+        ProofStepStmt holdStep;
 
-        LogHyp[]                       origSeqLogHypArray
-            = assrt.getLogHypArray();
-        ProofStepStmt[] origSeqStepArray
-            = derivStep.hyp;
+        final LogHyp[] origSeqLogHypArray = assrt.getLogHypArray();
+        final ProofStepStmt[] origSeqStepArray = derivStep.hyp;
 
         int answerRow;
         int answerCol;
         for (int i = 0; i < assrtLogHypArray.length; i++) {
-            if (assrtLogHypSubstArray[i] == null) {
+            if (assrtLogHypSubstArray[i] == null)
                 return;
-            }
-            holdLogHyp            = origSeqLogHypArray[i];
-            holdStep              = origSeqStepArray[i];
-            answerRow             = -1;
-            for (int j = 0; j < assrtLogHypArray.length; j++) {
+            holdLogHyp = origSeqLogHypArray[i];
+            holdStep = origSeqStepArray[i];
+            answerRow = -1;
+            for (int j = 0; j < assrtLogHypArray.length; j++)
                 if (derivStepHypArray[j] == holdStep) {
-                    answerRow     = j;
+                    answerRow = j;
                     break;
                 }
-            }
-            answerCol             = -1;
-            for (int j = 0; j < assrtLogHypArray.length; j++) {
+            answerCol = -1;
+            for (int j = 0; j < assrtLogHypArray.length; j++)
                 if (assrtLogHypArray[j] == holdLogHyp) {
-                    answerCol     = j;
+                    answerCol = j;
                     break;
                 }
-            }
-            substAnswer[answerRow][answerCol]
-                                  =
-                assrtLogHypSubstArray[i];
+            substAnswer[answerRow][answerCol] = assrtLogHypSubstArray[i];
         }
     }
 
     private boolean unifyAndMergeSubst(
-                        ParseNode[][]   assrtLogHypSubstArray,
-                        int             assrtLogHypIndex,
-                        int             stepLogHypIndex) {
+        final ParseNode[][] assrtLogHypSubstArray, final int assrtLogHypIndex,
+        final int stepLogHypIndex)
+    {
 
-        VarHyp[] assrtLogHypVarHypArray
-                              =
-            assrtLogHypArray[assrtLogHypIndex].getMandVarHypArray();
+        final VarHyp[] assrtLogHypVarHypArray = assrtLogHypArray[assrtLogHypIndex]
+            .getMandVarHypArray();
 
-        if (derivStepHypArray[stepLogHypIndex] == null) {
+        if (derivStepHypArray[stepLogHypIndex] == null)
+            assrtLogHypSubstArray[assrtLogHypIndex] = new ParseNode[assrtLogHypVarHypArray.length];
+        else
+            assrtLogHypSubstArray[assrtLogHypIndex] = assrtLogHypArray[assrtLogHypIndex]
+                .getExprParseTree()
+                .getRoot()
+                .unifyWithSubtree(
+                    derivStepHypArray[stepLogHypIndex].formulaParseTree
+                        .getRoot(),
+                    assrtLogHypVarHypArray, unifyNodeStack, compareNodeStack);
 
-            assrtLogHypSubstArray[assrtLogHypIndex]
-                                  =
-                new ParseNode[assrtLogHypVarHypArray.length];
-
-        }
-        else {
-            assrtLogHypSubstArray[assrtLogHypIndex]
-                              =
-                assrtLogHypArray[assrtLogHypIndex].
-                    getExprParseTree().getRoot().
-                        unifyWithSubtree(
-                            derivStepHypArray[stepLogHypIndex].
-                                formulaParseTree.getRoot(),
-                            assrtLogHypVarHypArray,
-                            unifyNodeStack,
-                            compareNodeStack);
-        }
-
-        if (assrtLogHypSubstArray[assrtLogHypIndex] != null) {
-            if (mergeLogHypSubst(
-                             stepLogHypIndex,
-                             assrtLogHypVarHypArray,
-                             assrtLogHypSubstArray[
-                                 assrtLogHypIndex])) {
+        if (assrtLogHypSubstArray[assrtLogHypIndex] != null)
+            if (mergeLogHypSubst(stepLogHypIndex, assrtLogHypVarHypArray,
+                assrtLogHypSubstArray[assrtLogHypIndex]))
                 return true;
-            }
-        }
         return false;
     }
 
-    private boolean mergeLogHypSubst(
-                        int         cleanupIndex,
-                        VarHyp[]    assrtLogHypVarHypArray,
-                        ParseNode[] assrtLogHypSubst) {
+    private boolean mergeLogHypSubst(final int cleanupIndex,
+        final VarHyp[] assrtLogHypVarHypArray,
+        final ParseNode[] assrtLogHypSubst)
+    {
 
-        levelCleanupCnt[cleanupIndex]
-                                  = 0;
-        levelCleanup[cleanupIndex]
-                                  = new int[assrtHypArray.length];
+        levelCleanupCnt[cleanupIndex] = 0;
+        levelCleanup[cleanupIndex] = new int[assrtHypArray.length];
 
-        int hypIndex              = 0;
-        int substIndex            = 0;
+        int hypIndex = 0;
+        int substIndex = 0;
 
-        substLoop: while (substIndex <
-                          assrtLogHypVarHypArray.length) {
+        substLoop: while (substIndex < assrtLogHypVarHypArray.length) {
 
-            hypLoop: while (hypIndex <
-                            assrtHypArray.length) {
+            hypLoop: while (hypIndex < assrtHypArray.length) {
 
-                if (assrtHypArray[hypIndex] !=
-                    assrtLogHypVarHypArray[substIndex]) {
+                if (assrtHypArray[hypIndex] != assrtLogHypVarHypArray[substIndex])
+                {
 
                     ++hypIndex;
                     continue hypLoop;
@@ -1744,7 +1394,8 @@ public class ProofUnifier {
 
                 // a null unification
                 if (assrtLogHypSubst[substIndex] == null
-                    && derivStep.deriveStepHyps) {
+                    && derivStep.deriveStepHyps)
+                {
                     ++hypIndex;
                     ++substIndex;
                     continue substLoop;
@@ -1752,46 +1403,41 @@ public class ProofUnifier {
 
                 if (assrtSubst[hypIndex] == null) {
 
-                    assrtSubst[hypIndex]
-                                  = assrtLogHypSubst[substIndex];
-                    levelCleanup[cleanupIndex]
-                                [levelCleanupCnt[cleanupIndex]++]
-                                  = hypIndex;
+                    assrtSubst[hypIndex] = assrtLogHypSubst[substIndex];
+                    levelCleanup[cleanupIndex][levelCleanupCnt[cleanupIndex]++] = hypIndex;
                     ++hypIndex;
                     ++substIndex;
                     continue substLoop;
                 }
 
-                if (assrtSubst[hypIndex].
-                        isDeepDup(assrtLogHypSubst[substIndex],
-                                  compareNodeStack)) {
+                if (assrtSubst[hypIndex].isDeepDup(
+                    assrtLogHypSubst[substIndex], compareNodeStack))
+                {
                     ++hypIndex;
                     ++substIndex;
                     continue substLoop;
                 }
                 cleanupOneAssrtSubstLevel(cleanupIndex);
 
-
                 return false;
             }
             throw new IllegalArgumentException(
                 PaConstants.ERRMSG_MERGE_LOGHYP_SUBST_ERR_1
-                + getErrorLabelIfPossible(proofWorksheet)
-                + PaConstants.ERRMSG_MERGE_LOGHYP_SUBST_ERR_2
-                + derivStep.step
-                + PaConstants.ERRMSG_MERGE_LOGHYP_SUBST_ERR_3);
+                    + getErrorLabelIfPossible(proofWorksheet)
+                    + PaConstants.ERRMSG_MERGE_LOGHYP_SUBST_ERR_2
+                    + derivStep.step
+                    + PaConstants.ERRMSG_MERGE_LOGHYP_SUBST_ERR_3);
         }
 
         return true;
     }
 
-    private void cleanupOneAssrtSubstLevel(int level) {
+    private void cleanupOneAssrtSubstLevel(final int level) {
         int cnt;
-        if ((cnt                  = levelCleanupCnt[level]) > 0) {
-            int[] cleaner         = levelCleanup[level];
-            for (int i = 0; i < cnt; i++) {
-                assrtSubst[cleaner[i]]     = null;
-            }
+        if ((cnt = levelCleanupCnt[level]) > 0) {
+            final int[] cleaner = levelCleanup[level];
+            for (int i = 0; i < cnt; i++)
+                assrtSubst[cleaner[i]] = null;
         }
     }
 
@@ -1816,57 +1462,44 @@ public class ProofUnifier {
      *
      */
     private ParseNode[] initLoadAssrtSubst() {
-        ParseNode[] outSubst      =
-            new ParseNode[assrtHypArray.length];
+        final ParseNode[] outSubst = new ParseNode[assrtHypArray.length];
 
-        int hypIndex              = 0;
-        int substIndex            = 0;
+        int hypIndex = 0;
+        int substIndex = 0;
 
-        substLoop: while (substIndex <
-                          assrtFormulaSubst.length) {
-            hypLoop: while (hypIndex <
-                             assrtHypArray.length) {
-                if (assrtVarHypArray[substIndex] !=
-                    assrtHypArray[hypIndex]) {
+        substLoop: while (substIndex < assrtFormulaSubst.length) {
+            hypLoop: while (hypIndex < assrtHypArray.length) {
+                if (assrtVarHypArray[substIndex] != assrtHypArray[hypIndex]) {
                     ++hypIndex;
                     continue hypLoop;
                 }
-                outSubst[hypIndex++]
-                                  = assrtFormulaSubst[substIndex++];
+                outSubst[hypIndex++] = assrtFormulaSubst[substIndex++];
                 continue substLoop;
             }
             throw new IllegalArgumentException(
                 PaConstants.ERRMSG_INIT_FORMULA_SUBST_ERR_1
-                + getErrorLabelIfPossible(proofWorksheet)
-                + PaConstants.ERRMSG_INIT_FORMULA_SUBST_ERR_2
-                + derivStep.step
-                + PaConstants.ERRMSG_INIT_FORMULA_SUBST_ERR_3);
+                    + getErrorLabelIfPossible(proofWorksheet)
+                    + PaConstants.ERRMSG_INIT_FORMULA_SUBST_ERR_2
+                    + derivStep.step
+                    + PaConstants.ERRMSG_INIT_FORMULA_SUBST_ERR_3);
         }
 
         return outSubst;
     }
 
-    private void markStepUnified(
-                        boolean usedUnifyWithWorkVars,
-                        boolean swapHyps,
-                        int[]   rearrangeDerivAssrtXRef) {
+    private void markStepUnified(final boolean usedUnifyWithWorkVars,
+        final boolean swapHyps, final int[] rearrangeDerivAssrtXRef)
+    {
 
-        String djMsg              = null;
+        String djMsg = null;
 
         // if not first unification for this step
-        if (derivStep.unificationStatus ==
-                PaConstants.
-                    UNIFICATION_STATUS_UNIFIED
-            ||
-            derivStep.unificationStatus ==
-                PaConstants.
-                    UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS
-            ||
-            derivStep.unificationStatus ==
-                PaConstants.
-                    UNIFICATION_STATUS_UNIFIED_W_WORK_VARS) {
+        if (derivStep.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED
+            || derivStep.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS
+            || derivStep.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
+        {
 
-            //yes, ok to check/recheck Dj Vars if Work Vars involved...
+            // yes, ok to check/recheck Dj Vars if Work Vars involved...
 //          if (derivStep.hasWorkVarsInStepOrItsHyps()) {
 //              return;
 //          }
@@ -1874,105 +1507,74 @@ public class ProofUnifier {
             // ref was entered and now we're seeing the
             // original ref again on the pass through the
             // assertions, so bypass it to save time...
-            if (assrt == derivStep.ref) {
+            if (assrt == derivStep.ref)
                 return;
-            }
 
-            djMsg                 =
-                checkDerivStepUnifyAgainstDjVars(derivStep,
-                                                 assrt,
-                                                 assrtSubst);
+            djMsg = checkDerivStepUnifyAgainstDjVars(derivStep, assrt,
+                assrtSubst);
 
-            if (derivStep.djVarsErrorStatus ==
-                PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS) {
+            if (derivStep.djVarsErrorStatus == PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS)
+            {
                 addToAlternatesList(assrt);
                 return;
             }
 
-            if (derivStep.djVarsErrorStatus ==
-                PaConstants.DJ_VARS_ERROR_STATUS_HARD_ERRORS) {
+            if (derivStep.djVarsErrorStatus == PaConstants.DJ_VARS_ERROR_STATUS_HARD_ERRORS)
+            {
                 if (djMsg == null) {
-                    derivStep.heldDjErrorMessage
-                              = null;
+                    derivStep.heldDjErrorMessage = null;
                     if (holdSoftDjVarsErrorList == null
-                        ||
-                        holdSoftDjVarsErrorList.isEmpty()) {
-                        derivStep.djVarsErrorStatus
-                                  =
-                            PaConstants.
-                                DJ_VARS_ERROR_STATUS_NO_ERRORS;
-                    }
+                        || holdSoftDjVarsErrorList.isEmpty())
+                        derivStep.djVarsErrorStatus = PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS;
                     else {
-                        derivStep.djVarsErrorStatus
-                                  =
-                            PaConstants.
-                                DJ_VARS_ERROR_STATUS_SOFT_ERRORS;
-                        if (proofAsstPreferences.
-                                getDjVarsSoftErrorsReport()) {
-                            derivStep.buildSoftDjErrorMessage(
-                                holdSoftDjVarsErrorList);
-                        }
+                        derivStep.djVarsErrorStatus = PaConstants.DJ_VARS_ERROR_STATUS_SOFT_ERRORS;
+                        if (proofAsstPreferences.getDjVarsSoftErrorsReport())
+                            derivStep
+                                .buildSoftDjErrorMessage(holdSoftDjVarsErrorList);
                     }
                     addToAlternatesList((Assrt)derivStep.ref);
-                    rearrangeHyps(swapHyps,
-                                  rearrangeDerivAssrtXRef);
+                    rearrangeHyps(swapHyps, rearrangeDerivAssrtXRef);
                     saveOtherDerivStepResults();
                 }
-                else { // no improvement, but interesting
+                else
                     addToAlternatesList(assrt);
-                }
                 return;
             }
             else { // ok, has DJ_VARS_ERROR_STATUS_SOFT_ERRORS
                 if (djMsg == null
-                    &&
-                    (holdSoftDjVarsErrorList == null
-                        ||
-                     holdSoftDjVarsErrorList.isEmpty())) {
+                    && (holdSoftDjVarsErrorList == null || holdSoftDjVarsErrorList
+                        .isEmpty()))
+                {
 
-                    derivStep.djVarsErrorStatus
-                                  =
-                            PaConstants.
-                                DJ_VARS_ERROR_STATUS_NO_ERRORS;
+                    derivStep.djVarsErrorStatus = PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS;
 
-                    derivStep.heldDjErrorMessage
-                                  = null;
+                    derivStep.heldDjErrorMessage = null;
                     addToAlternatesList((Assrt)derivStep.ref);
-                    rearrangeHyps(swapHyps,
-                                  rearrangeDerivAssrtXRef);
+                    rearrangeHyps(swapHyps, rearrangeDerivAssrtXRef);
                     saveOtherDerivStepResults();
                 }
-                else { // no improvement, but interesting
+                else
                     addToAlternatesList(assrt);
-                }
                 return;
             }
         }
 
         // OK! First unification for this step
-        derivStep.unificationStatus
-                                  =
-            PaConstants.
-                UNIFICATION_STATUS_UNIFIED;
+        derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED;
 
-        rearrangeHyps(swapHyps,
-                      rearrangeDerivAssrtXRef);
+        rearrangeHyps(swapHyps, rearrangeDerivAssrtXRef);
 
         if (usedUnifyWithWorkVars) {
 
-            if (derivStep.deriveStepFormula) {
+            if (derivStep.deriveStepFormula)
                 generateDerivStepFormula();
-            }
 
             if (derivStep.deriveStepHyps) {
-                derivStep.nbrHypsGenerated
-                                      = 0; //oy
+                derivStep.nbrHypsGenerated = 0; // oy
                 generateDerivStepHyps();
             }
 
-            saveOtherDerivStepRefStuff(derivStep,
-                                       assrt,
-                                       assrtSubst);
+            saveOtherDerivStepRefStuff(derivStep, assrt, assrtSubst);
 
             // this *must* follow the derives so that the
             // following proof steps can take into account
@@ -1980,126 +1582,81 @@ public class ProofUnifier {
             doUpdateWorksheetWorkVars(derivStep);
 
         }
-        else {
+        else
+            saveOtherDerivStepRefStuff(derivStep, assrt, assrtSubst);
 
-            saveOtherDerivStepRefStuff(derivStep,
-                                       assrt,
-                                       assrtSubst);
-        }
-
-        if (derivStep.workVarList != null) {
-            derivStep.unificationStatus
-                                  =
-                PaConstants.
-                    UNIFICATION_STATUS_UNIFIED_W_WORK_VARS;
-        }
+        if (derivStep.workVarList != null)
+            derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS;
         for (int i = 0; i < derivStep.hyp.length; i++) {
-            if (!derivStep.hyp[i].isDerivationStep()) {
+            if (!derivStep.hyp[i].isDerivationStep())
                 continue;
-            }
-            DerivationStep dH     = (DerivationStep)derivStep.hyp[i];
+            final DerivationStep dH = (DerivationStep)derivStep.hyp[i];
 
             if (dH.workVarList != null
-                ||
-                dH.unificationStatus ==
-                    PaConstants.
-                        UNIFICATION_STATUS_UNIFIED_W_WORK_VARS) {
-                derivStep.unificationStatus
-                              =
-                    PaConstants.
-                        UNIFICATION_STATUS_UNIFIED_W_WORK_VARS;
-            }
+                || dH.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
+                derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS;
 
             if (dH.hypFldIncomplete) {
-                messages.accumInfoMessage(
-                    PaConstants.ERRMSG_INCOMPLETE_HYPS_1
+                messages.accumInfoMessage(PaConstants.ERRMSG_INCOMPLETE_HYPS_1
                     + getErrorLabelIfPossible(proofWorksheet)
-                    + PaConstants.ERRMSG_INCOMPLETE_HYPS_2
-                    + derivStep.step
-                    + PaConstants.ERRMSG_INCOMPLETE_HYPS_3
-                    + derivStep.refLabel
+                    + PaConstants.ERRMSG_INCOMPLETE_HYPS_2 + derivStep.step
+                    + PaConstants.ERRMSG_INCOMPLETE_HYPS_3 + derivStep.refLabel
                     + PaConstants.ERRMSG_INCOMPLETE_HYPS_4);
 
-                derivStep.unificationStatus
-                                          =
-                    PaConstants.
-                        UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS;
+                derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS;
                 break;
             }
         }
 
-        doInitialStepDjEdits(derivStep,
-                             assrt,
-                             assrtSubst);
+        doInitialStepDjEdits(derivStep, assrt, assrtSubst);
 
         saveOtherDjVarsEditResults(derivStep);
     }
 
     private void saveOtherDerivStepResults() {
 
-        saveOtherDerivStepRefStuff(derivStep,
-                                   assrt,
-                                   assrtSubst);
+        saveOtherDerivStepRefStuff(derivStep, assrt, assrtSubst);
         saveOtherDjVarsEditResults(derivStep);
     }
 
-
     // updates derivation step
-    //     - djVarsErrorStatus
-    //     - heldDjErrorMessage
-    private void doInitialStepDjEdits(DerivationStep d,
-                                      Assrt          assrt,
-                                      ParseNode[]    assrtSubst) {
+    // - djVarsErrorStatus
+    // - heldDjErrorMessage
+    private void doInitialStepDjEdits(final DerivationStep d,
+        final Assrt assrt, final ParseNode[] assrtSubst)
+    {
 
-        String djMsg              =
-            checkDerivStepUnifyAgainstDjVars(d,
-                                             assrt,
-                                             assrtSubst);
+        final String djMsg = checkDerivStepUnifyAgainstDjVars(d, assrt,
+            assrtSubst);
         if (djMsg == null) {
-            d.heldDjErrorMessage  = null;
+            d.heldDjErrorMessage = null;
             if (holdSoftDjVarsErrorList == null
-                ||
-                holdSoftDjVarsErrorList.isEmpty()) { //clean!
-
-                d.djVarsErrorStatus
-                                  =
-                    PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS;
-
-            }
+                || holdSoftDjVarsErrorList.isEmpty())
+                d.djVarsErrorStatus = PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS;
             else {
-                d.djVarsErrorStatus
-                                  =
-                    PaConstants.DJ_VARS_ERROR_STATUS_SOFT_ERRORS;
+                d.djVarsErrorStatus = PaConstants.DJ_VARS_ERROR_STATUS_SOFT_ERRORS;
 
-                if (proofAsstPreferences.
-                        getDjVarsSoftErrorsReport()) {
-                    d.buildSoftDjErrorMessage(
-                        holdSoftDjVarsErrorList);
-                }
+                if (proofAsstPreferences.getDjVarsSoftErrorsReport())
+                    d.buildSoftDjErrorMessage(holdSoftDjVarsErrorList);
             }
         }
         else { // HARD dj error on first unification for this step
 
-            d.djVarsErrorStatus   =
-                PaConstants.
-                    DJ_VARS_ERROR_STATUS_HARD_ERRORS;
+            d.djVarsErrorStatus = PaConstants.DJ_VARS_ERROR_STATUS_HARD_ERRORS;
 
-            d.heldDjErrorMessage  = djMsg;
+            d.heldDjErrorMessage = djMsg;
         }
     }
 
-    private void addToAlternatesList(Assrt a) {
-        if (derivStep.alternateRefList == null) {
-            derivStep.alternateRefList =
-                new ArrayList();
-        }
+    private void addToAlternatesList(final Assrt a) {
+        if (derivStep.alternateRefList == null)
+            derivStep.alternateRefList = new ArrayList();
         derivStep.alternateRefList.add(a);
     }
 
-    private void saveOtherDerivStepRefStuff(
-                        DerivationStep d,
-                        Assrt          assrt,
-                        ParseNode[]    assrtSubst) {
+    private void saveOtherDerivStepRefStuff(final DerivationStep d,
+        final Assrt assrt, final ParseNode[] assrtSubst)
+    {
 
         d.setAssrtSubst(assrtSubst);
         d.setRef(assrt);
@@ -2107,23 +1664,17 @@ public class ProofUnifier {
         d.reloadStepHypRefInStmtText();
     }
 
-    private void saveOtherDjVarsEditResults(
-                            DerivationStep d) {
+    private void saveOtherDjVarsEditResults(final DerivationStep d) {
 
         if (holdSoftDjVarsErrorList == null
-            ||
-            holdSoftDjVarsErrorList.isEmpty()) {
+            || holdSoftDjVarsErrorList.isEmpty())
             d.softDjVarsErrorList = null;
-        }
         else {
-            d.softDjVarsErrorList =
-                new ArrayList(holdSoftDjVarsErrorList.size());
-            Iterator i            =
-                holdSoftDjVarsErrorList.iterator();
-            while (i.hasNext()) {
-                d.softDjVarsErrorList.
-                    add(i.next());
-            }
+            d.softDjVarsErrorList = new ArrayList(
+                holdSoftDjVarsErrorList.size());
+            final Iterator i = holdSoftDjVarsErrorList.iterator();
+            while (i.hasNext())
+                d.softDjVarsErrorList.add(i.next());
         }
     }
 
@@ -2138,258 +1689,191 @@ public class ProofUnifier {
      *  *been* unified and changing the Hyp order would
      *  be unhelpful.
      */
-    private void rearrangeHyps(boolean swapHyps,
-                               int[]   rearrangeDerivAssrtXRef) {
+    private void rearrangeHyps(final boolean swapHyps,
+        final int[] rearrangeDerivAssrtXRef)
+    {
 
         if (swapHyps) {
-            derivStep.swapHyps(0, 1); //go undercover and do the deed
+            derivStep.swapHyps(0, 1); // go undercover and do the deed
             return;
         }
-        if (rearrangeDerivAssrtXRef == null) {
+        if (rearrangeDerivAssrtXRef == null)
             return;
-        }
 
-        ProofStepStmt[] newDerivStepHypArray
-                               =
-            new ProofStepStmt
-                [assrtLogHypArray.length];
+        final ProofStepStmt[] newDerivStepHypArray = new ProofStepStmt[assrtLogHypArray.length];
 
-        String[] newHypStep       =
-            new String[assrtLogHypArray.length];
+        final String[] newHypStep = new String[assrtLogHypArray.length];
 
-        LogHyp[] origLogHypArray  = assrt.getLogHypArray();
-        LogHyp   holdLogHyp;
-        xrefLoop: for (int i = 0;
-                       i < rearrangeDerivAssrtXRef.length;
-                       i++) {
-            holdLogHyp            =
-                assrtLogHypArray[rearrangeDerivAssrtXRef[i]];
-            for (int j = 0; j < origLogHypArray.length; j++) {
+        final LogHyp[] origLogHypArray = assrt.getLogHypArray();
+        LogHyp holdLogHyp;
+        xrefLoop: for (int i = 0; i < rearrangeDerivAssrtXRef.length; i++) {
+            holdLogHyp = assrtLogHypArray[rearrangeDerivAssrtXRef[i]];
+            for (int j = 0; j < origLogHypArray.length; j++)
                 if (holdLogHyp == origLogHypArray[j]) {
-                    newDerivStepHypArray[j]
-                                  = derivStepHypArray[i];
+                    newDerivStepHypArray[j] = derivStepHypArray[i];
 
                     // this takes into account a null unification
                     // with a "?" Hyp entry and the ith LogHyp,
                     // (is set up to fail quickly if we're not doing
                     // deriveStepHups :)
                     if (newDerivStepHypArray[j] == null
-                        && derivStep.deriveStepHyps) {
-                        newHypStep[j]
-                                  = PaConstants.DEFAULT_STMT_LABEL;
-                    }
-                    else {
-                        newHypStep[j]
-                                  = newDerivStepHypArray[j].step;
-                    }
+                        && derivStep.deriveStepHyps)
+                        newHypStep[j] = PaConstants.DEFAULT_STMT_LABEL;
+                    else
+                        newHypStep[j] = newDerivStepHypArray[j].step;
                     continue xrefLoop;
                 }
-            }
             throw new IllegalArgumentException(
                 PaConstants.ERRMSG_REARRANGE_HYPS_ERR_1
-                + getErrorLabelIfPossible(proofWorksheet)
-                + PaConstants.ERRMSG_REARRANGE_HYPS_ERR_2
-                + derivStep.step
-                + PaConstants.ERRMSG_REARRANGE_HYPS_ERR_3);
+                    + getErrorLabelIfPossible(proofWorksheet)
+                    + PaConstants.ERRMSG_REARRANGE_HYPS_ERR_2 + derivStep.step
+                    + PaConstants.ERRMSG_REARRANGE_HYPS_ERR_3);
         }
-        derivStep.hyp             = newDerivStepHypArray;
-        derivStep.hypStep         = newHypStep;
+        derivStep.hyp = newDerivStepHypArray;
+        derivStep.hypStep = newHypStep;
 
         // tidy up just in case (no bogus references left around...)
-        derivStepHypArray         = derivStep.hyp; //redundant? maybe
+        derivStepHypArray = derivStep.hyp; // redundant? maybe
     }
 
-    private String checkDerivStepUnifyAgainstDjVars(
-                        DerivationStep d,
-                        Assrt          checkUnificationRef,
-                        ParseNode[]    checkUnificationAssrtSubst) {
+    private String checkDerivStepUnifyAgainstDjVars(final DerivationStep d,
+        final Assrt checkUnificationRef,
+        final ParseNode[] checkUnificationAssrtSubst)
+    {
 
-        if (holdSoftDjVarsErrorList != null) {
+        if (holdSoftDjVarsErrorList != null)
             holdSoftDjVarsErrorList.clear();
-        }
 
-        if (checkUnificationRef.
-                getMandFrame().
-                    djVarsArray.length == 0) {
-            return null; //success, no error message
-        }
+        if (checkUnificationRef.getMandFrame().djVarsArray.length == 0)
+            return null; // success, no error message
 
-        String errmsg             =
-            verifyProofs.verifyDerivStepDjVars(
-                d.step,  //step number output string,
-                proofWorksheet.getTheoremLabel()
-                    + PaConstants.DOT_STEP_CAPTION
-                    + derivStep.step,
-                checkUnificationRef,
-                checkUnificationAssrtSubst,
-                proofWorksheet.getComboFrame(),
-                proofAsstPreferences.
-                    getDjVarsSoftErrorsIgnore(),
-                proofAsstPreferences.
-                    getDjVarsSoftErrorsGenerateNew(),
-                holdSoftDjVarsErrorList);
+        final String errmsg = verifyProofs.verifyDerivStepDjVars(
+            d.step, // step number output string,
+            proofWorksheet.getTheoremLabel() + PaConstants.DOT_STEP_CAPTION
+                + derivStep.step, checkUnificationRef,
+            checkUnificationAssrtSubst, proofWorksheet.getComboFrame(),
+            proofAsstPreferences.getDjVarsSoftErrorsIgnore(),
+            proofAsstPreferences.getDjVarsSoftErrorsGenerateNew(),
+            holdSoftDjVarsErrorList);
 
-        if (errmsg == null) {
+        if (errmsg == null)
             return null;
-        }
 
-        return (PaConstants.ERRMSG_DV_VERIFY_ERR_1
-                + getErrorLabelIfPossible(proofWorksheet)
-                + PaConstants.ERRMSG_DV_VERIFY_ERR_2
-                + d.step
-                + PaConstants.ERRMSG_DV_VERIFY_ERR_3
-                + checkUnificationRef.getLabel()
-                + PaConstants.ERRMSG_DV_VERIFY_ERR_4
-                + errmsg);
+        return PaConstants.ERRMSG_DV_VERIFY_ERR_1
+            + getErrorLabelIfPossible(proofWorksheet)
+            + PaConstants.ERRMSG_DV_VERIFY_ERR_2 + d.step
+            + PaConstants.ERRMSG_DV_VERIFY_ERR_3
+            + checkUnificationRef.getLabel()
+            + PaConstants.ERRMSG_DV_VERIFY_ERR_4 + errmsg;
     }
 
-    private void markRefUnificationFailure(Assrt assrt) {
+    private void markRefUnificationFailure(final Assrt assrt) {
 
-        derivStep.unificationStatus
-                                  =
-            PaConstants.UNIFICATION_STATUS_UNIFICATION_ERROR;
+        derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFICATION_ERROR;
 
-        messages.accumErrorMessage(
-            PaConstants.ERRMSG_REF_UNIFY_ERR_1
-                + getErrorLabelIfPossible(proofWorksheet)
-                + PaConstants.ERRMSG_REF_UNIFY_ERR_2
-                + derivStep.step
-                + PaConstants.ERRMSG_REF_UNIFY_ERR_3
-                + derivStep.refLabel
-                + PaConstants.ERRMSG_REF_UNIFY_ERR_4);
+        messages.accumErrorMessage(PaConstants.ERRMSG_REF_UNIFY_ERR_1
+            + getErrorLabelIfPossible(proofWorksheet)
+            + PaConstants.ERRMSG_REF_UNIFY_ERR_2 + derivStep.step
+            + PaConstants.ERRMSG_REF_UNIFY_ERR_3 + derivStep.refLabel
+            + PaConstants.ERRMSG_REF_UNIFY_ERR_4);
 
-        proofWorksheet.
-            getProofCursor().
-                setCursorAtProofWorkStmt(
-                    derivStep,
-                    PaConstants.FIELD_ID_REF);
+        proofWorksheet.getProofCursor().setCursorAtProofWorkStmt(derivStep,
+            PaConstants.FIELD_ID_REF);
     }
 
     private void markUnificationFailure() {
 
-        if (derivStep.generatedByDeriveFeature
-                &&
-            derivStep.hyp.length == 0) {
+        if (derivStep.generatedByDeriveFeature && derivStep.hyp.length == 0) {
 
             // An attempt was made -- to get lucky --
             // unifying the generated hypothesis step,
             // but since it failed, there is no error,
             // just an incompleteness for the user to
             // deal with.
-            derivStep.hypFldIncomplete
-                                  = true;
-            derivStep.hyp         =
-                new ProofStepStmt[1];
-            derivStep.hypStep     =
-                new String[1];
-            derivStep.hypStep[0]  = PaConstants.DEFAULT_STMT_LABEL;
+            derivStep.hypFldIncomplete = true;
+            derivStep.hyp = new ProofStepStmt[1];
+            derivStep.hypStep = new String[1];
+            derivStep.hypStep[0] = PaConstants.DEFAULT_STMT_LABEL;
             derivStep.reloadStepHypRefInStmtText();
         }
         else {
 
-            derivStep.unificationStatus
-                                  =
-                PaConstants.UNIFICATION_STATUS_UNIFICATION_ERROR;
+            derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFICATION_ERROR;
 
-            messages.accumErrorMessage(
-                PaConstants.ERRMSG_STEP_UNIFY_ERR_1
-                    + getErrorLabelIfPossible(proofWorksheet)
-                    + PaConstants.ERRMSG_STEP_UNIFY_ERR_2
-                    + derivStep.step
-                    + PaConstants.ERRMSG_STEP_UNIFY_ERR_3);
+            messages.accumErrorMessage(PaConstants.ERRMSG_STEP_UNIFY_ERR_1
+                + getErrorLabelIfPossible(proofWorksheet)
+                + PaConstants.ERRMSG_STEP_UNIFY_ERR_2 + derivStep.step
+                + PaConstants.ERRMSG_STEP_UNIFY_ERR_3);
 
-            proofWorksheet.
-                getProofCursor().
-                    setCursorAtProofWorkStmt(
-                        derivStep,
-                        PaConstants.FIELD_ID_REF);
+            proofWorksheet.getProofCursor().setCursorAtProofWorkStmt(derivStep,
+                PaConstants.FIELD_ID_REF);
         }
     }
 
-    private String getErrorLabelIfPossible(
-                    ProofWorksheet proofWorksheet) {
-        String label          = "unknownLabel";
-        if (proofWorksheet != null
-            &&
-            proofWorksheet.getTheoremLabel() != null) {
-            label             =
-                proofWorksheet.getTheoremLabel();
-        }
+    private String getErrorLabelIfPossible(final ProofWorksheet proofWorksheet)
+    {
+        String label = "unknownLabel";
+        if (proofWorksheet != null && proofWorksheet.getTheoremLabel() != null)
+            label = proofWorksheet.getTheoremLabel();
         return label;
     }
 
     private Cnst getProvableLogicStmtTyp() {
-        return (grammar.getProvableLogicStmtTypArray())[0];
+        return grammar.getProvableLogicStmtTypArray()[0];
     }
 
     private void generateDerivStepHyps() {
 
-        LogHyp[]  logHypArray     = assrt.getLogHypArray();
-        LogHyp    holdLogHyp;
+        final LogHyp[] logHypArray = assrt.getLogHypArray();
+        LogHyp holdLogHyp;
         ParseTree logHypParseTree;
         ArrayList workVarList;
         ParseTree generatedFormulaParseTree;
-        Formula   generatedFormula;
+        Formula generatedFormula;
 
-        ProofStepStmt  foundMatchingFormulaStep;
+        ProofStepStmt foundMatchingFormulaStep;
         DerivationStep generatedDerivStep;
 
-        boolean   formulaIsIncomplete;
+        final boolean formulaIsIncomplete;
 
         for (int i = 0; i < derivStepHypArray.length; i++) {
-            if (derivStepHypArray[i] != null) {
+            if (derivStepHypArray[i] != null)
                 continue;
-            }
 
-            holdLogHyp            = logHypArray[i];
-            logHypParseTree       = holdLogHyp.getExprParseTree();
-            workVarList           = new ArrayList(3); //3=guess
+            holdLogHyp = logHypArray[i];
+            logHypParseTree = holdLogHyp.getExprParseTree();
+            workVarList = new ArrayList(3); // 3=guess
 
-            generatedFormulaParseTree
-                                  =
-                logHypParseTree.deepCloneApplyingAssrtSubst(
-                    assrtHypArray,
-                    assrtSubst,
+            generatedFormulaParseTree = logHypParseTree
+                .deepCloneApplyingAssrtSubst(assrtHypArray, assrtSubst,
                     workVarList);
 
-            generatedFormula      =
-                verifyProofs.convertRPNToFormula(
-                    generatedFormulaParseTree.convertToRPN(),
-                    " "); //abend diagnostic, leave blank for now.
+            generatedFormula = verifyProofs.convertRPNToFormula(
+                generatedFormulaParseTree.convertToRPN(), " "); // abend
+                                                                // diagnostic,
+                                                                // leave blank
+                                                                // for now.
 
-            //oops, almost forgot this.
+            // oops, almost forgot this.
             generatedFormula.setTyp(provableLogicStmtTyp);
 
-            foundMatchingFormulaStep
-                                  =
-                    proofWorksheet.findMatchingStepFormula(
-                        generatedFormula,
-                        derivStep);
+            foundMatchingFormulaStep = proofWorksheet.findMatchingStepFormula(
+                generatedFormula, derivStep);
 
             if (foundMatchingFormulaStep != null) {
-                derivStep.hyp[i]  = foundMatchingFormulaStep;
-                derivStep.hypStep[i]
-                                  = foundMatchingFormulaStep.step;
-                derivStep.hyp[i].
-                    loadProofLevel(
-                        derivStep.
-                            proofLevel + 1);
+                derivStep.hyp[i] = foundMatchingFormulaStep;
+                derivStep.hypStep[i] = foundMatchingFormulaStep.step;
+                derivStep.hyp[i].loadProofLevel(derivStep.proofLevel + 1);
                 continue;
             }
 
-            generatedDerivStep    =
-                proofWorksheet.addDerivStepForDeriveFeature(
-                    workVarList,
-                    generatedFormula,
-                    generatedFormulaParseTree,
-                    derivStep);
+            generatedDerivStep = proofWorksheet.addDerivStepForDeriveFeature(
+                workVarList, generatedFormula, generatedFormulaParseTree,
+                derivStep);
 
-            derivStep.hyp[i]      = generatedDerivStep;
-            derivStep.hypStep[i]  = generatedDerivStep.step;
-            derivStep.hyp[i].
-                loadProofLevel(
-                    derivStep.
-                        proofLevel + 1);
+            derivStep.hyp[i] = generatedDerivStep;
+            derivStep.hypStep[i] = generatedDerivStep.step;
+            derivStep.hyp[i].loadProofLevel(derivStep.proofLevel + 1);
 
             ++derivStep.nbrHypsGenerated;
         }
@@ -2397,144 +1881,105 @@ public class ProofUnifier {
 
     private void generateDerivStepFormula() {
 
-        ParseTree origParseTree
-                              = assrt.getExprParseTree();
+        final ParseTree origParseTree = assrt.getExprParseTree();
 
         // keeps count of dummies in new formula
-        ArrayList workVarList = new ArrayList(3); //3 is a guess.
+        final ArrayList workVarList = new ArrayList(3); // 3 is a guess.
 
-        ParseTree generatedFormulaParseTree
-                              =
-            origParseTree.deepCloneApplyingAssrtSubst(
-                assrtHypArray,
-                assrtSubst,
-                workVarList);
+        final ParseTree generatedFormulaParseTree = origParseTree
+            .deepCloneApplyingAssrtSubst(assrtHypArray, assrtSubst, workVarList);
 
-        Formula generatedFormula
-                              =
-            verifyProofs.convertRPNToFormula(
-                generatedFormulaParseTree.convertToRPN(),
-                PaConstants.DOT_STEP_CAPTION
-                    + derivStep.step);
+        final Formula generatedFormula = verifyProofs.convertRPNToFormula(
+            generatedFormulaParseTree.convertToRPN(),
+            PaConstants.DOT_STEP_CAPTION + derivStep.step);
 
-        //oops, almost forgot this.
+        // oops, almost forgot this.
         generatedFormula.setTyp(provableLogicStmtTyp);
 
-        derivStep.loadGeneratedFormulaIntoDerivStep(
-            generatedFormula,
-            generatedFormulaParseTree,
-            false); //false = stmtText not already loaded!
+        derivStep.loadGeneratedFormulaIntoDerivStep(generatedFormula,
+            generatedFormulaParseTree, false); // false = stmtText not already
+                                               // loaded!
 
-        if (workVarList.size() > 0) {
-            derivStep.formulaFldIncomplete
-                                  = true;
-        }
+        if (workVarList.size() > 0)
+            derivStep.formulaFldIncomplete = true;
         derivStep.updateWorkVarList(workVarList);
     }
 
-  // ***********************************************************
-  // ***********************************************************
-  // ************                               ****************
-  // NEW CODE FOR Unifying Steps With Work Vars FOLLOWS!!!!!
-  // ************                               ****************
-  // ***********************************************************
-  // ***********************************************************
+    // ***********************************************************
+    // ***********************************************************
+    // ************ ****************
+    // NEW CODE FOR Unifying Steps With Work Vars FOLLOWS!!!!!
+    // ************ ****************
+    // ***********************************************************
+    // ***********************************************************
 
-    private void unifyStepsInvolvingWorkVars()
-                        throws VerifyException {
+    private void unifyStepsInvolvingWorkVars() throws VerifyException {
 
-        int            wIndex     = -1;
-        int            wIndexInsertedCnt
-                                  = 0;
-        ProofWorkStmt  proofWorkStmtObject;
+        int wIndex = -1;
+        int wIndexInsertedCnt = 0;
+        ProofWorkStmt proofWorkStmtObject;
 
-        ProofWorkStmt selectorSearchStmt
-                                  = null;
+        ProofWorkStmt selectorSearchStmt = null;
         if (proofWorksheet.stepRequest != null
-                &&
-            proofWorksheet.stepRequest.request ==
-            PaConstants.STEP_REQUEST_SELECTOR_SEARCH) {
-            selectorSearchStmt    =
-                (DerivationStep)proofWorksheet.stepRequest.param1;
-        }
+            && proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH)
+            selectorSearchStmt = (DerivationStep)proofWorksheet.stepRequest.param1;
 
         stepLoop: while (true) {
 
-            wIndex                = wIndex +
-                                    1      +
-                                    wIndexInsertedCnt;
-            if (wIndex >= proofWorksheet.proofWorkStmtList.size()) {
+            wIndex = wIndex + 1 + wIndexInsertedCnt;
+            if (wIndex >= proofWorksheet.proofWorkStmtList.size())
                 break;
-            }
-            wIndexInsertedCnt     = 0;
+            wIndexInsertedCnt = 0;
 
-            proofWorkStmtObject   =
-                (ProofWorkStmt)
-                    proofWorksheet.proofWorkStmtList.get(wIndex);
-            if (!proofWorkStmtObject.isDerivationStep()) {
+            proofWorkStmtObject = (ProofWorkStmt)proofWorksheet.proofWorkStmtList
+                .get(wIndex);
+            if (!proofWorkStmtObject.isDerivationStep())
                 continue stepLoop;
-            }
 
-            derivStep             =
-                (DerivationStep)proofWorkStmtObject;
-
+            derivStep = (DerivationStep)proofWorkStmtObject;
 
             if (selectorSearchStmt == derivStep) {
 
-                proofWorksheet.stepSelectorResults
-                                  =
-                    stepSelectorSearch.
-                        loadStepSelectorResults(
-                            derivStep);
+                proofWorksheet.stepSelectorResults = stepSelectorSearch
+                    .loadStepSelectorResults(derivStep);
                 return; // our work here is complete ;-)
             }
 
-            if (derivStep.ref     == null) {
+            if (derivStep.ref == null)
                 continue stepLoop;
-            }
 
-            if (derivStep.deriveStepFormula
-                ||
-                derivStep.deriveStepHyps
-                ||
-                derivStep.hasWorkVarsInStepOrItsHyps()) {
+            if (derivStep.deriveStepFormula || derivStep.deriveStepHyps
+                || derivStep.hasWorkVarsInStepOrItsHyps())
+            {
                 // ok...
             }
-            else {
+            else
                 continue stepLoop;
-            }
 
+            assrt = (Assrt)derivStep.ref;
+            assrtNbrLogHyps = assrt.getLogHypArrayLength();
 
-            assrt                 = (Assrt)derivStep.ref;
-            assrtNbrLogHyps       = assrt.getLogHypArrayLength();
-
-            if (derivStep.hyp.length !=
-                assrtNbrLogHyps) {
+            if (derivStep.hyp.length != assrtNbrLogHyps)
                 throw new IllegalArgumentException(
                     PaConstants.ERRMSG_STEP_REF_HYP_NBR_ERR_1
-                    + getErrorLabelIfPossible(proofWorksheet)
-                    + PaConstants.
-                        ERRMSG_STEP_REF_HYP_NBR_ERR_2
-                    + derivStep.step
-                    + PaConstants.
-                        ERRMSG_STEP_REF_HYP_NBR_ERR_3);
-            }
+                        + getErrorLabelIfPossible(proofWorksheet)
+                        + PaConstants.ERRMSG_STEP_REF_HYP_NBR_ERR_2
+                        + derivStep.step
+                        + PaConstants.ERRMSG_STEP_REF_HYP_NBR_ERR_3);
 
-            hypLoop: for (int i = 0; i < derivStep.hyp.length; i++) {
+            hypLoop: for (int i = 0; i < derivStep.hyp.length; i++)
                 // this is BS -- but a hyp[i]'s deriveStepFormula
                 // could have errored out...
-                if (derivStep.hyp[i] != null &&
-                    derivStep.hyp[i].formulaParseTree == null) {
+                if (derivStep.hyp[i] != null
+                    && derivStep.hyp[i].formulaParseTree == null)
+                {
 
-                    derivStep.unificationStatus
-                                  =
-                        //this will
-                        //just be bypassed and considered incomplete
-                        PaConstants.
-                            UNIFICATION_STATUS_ATTEMPT_CANCELLED;
+                    derivStep.unificationStatus =
+                    // this will
+                    // just be bypassed and considered incomplete
+                    PaConstants.UNIFICATION_STATUS_ATTEMPT_CANCELLED;
                     continue stepLoop;
                 }
-            }
 
             if (!unifyStepWithWorkVars()) {
 
@@ -2543,84 +1988,69 @@ public class ProofUnifier {
                 continue stepLoop;
             }
 
-            wIndexInsertedCnt     = derivStep.nbrHypsGenerated; //oy
+            wIndexInsertedCnt = derivStep.nbrHypsGenerated; // oy
 
         }
     }
 
-    private boolean unifyStepWithWorkVars()
-                        throws VerifyException {
+    private boolean unifyStepWithWorkVars() throws VerifyException {
 
         // unify step formula, return false if error
-        if (!unifyStepFormulaWithWorkVars()) {
-
+        if (!unifyStepFormulaWithWorkVars())
             return false;
-        }
 
         if (derivStep.hyp.length == 0) {
-            assrtSubst            =
-                stepUnifier.finalizeAndLoadAssrtSubst();
-            markStepUnified(true,  // usedUnifyWithWorkVars,
-                            false, // no "swap",
-                            null); // no rearrange
+            assrtSubst = stepUnifier.finalizeAndLoadAssrtSubst();
+            markStepUnified(true, // usedUnifyWithWorkVars,
+                false, // no "swap",
+                null); // no rearrange
             return true;
         }
 
         derivStepHypArray = derivStep.hyp;
-        if ((assrtSubst           =
-                stepUnifier.
-                    unifyAndMergeHypsUnsorted(
-                        derivStepHypArray))
-             != null) {
+        if ((assrtSubst = stepUnifier
+            .unifyAndMergeHypsUnsorted(derivStepHypArray)) != null)
+        {
 
-            markStepUnified(true,  // usedUnifyWithWorkVars,
-                            false, // no "swap",
-                            null); // no rearrange
+            markStepUnified(true, // usedUnifyWithWorkVars,
+                false, // no "swap",
+                null); // no rearrange
             return true;
         }
 
-        assrtLogHypArray          = assrt.getSortedLogHypArray();
-        derivStepHypArray         = derivStep.getSortedHypArray();
+        assrtLogHypArray = assrt.getSortedLogHypArray();
+        derivStepHypArray = derivStep.getSortedHypArray();
 
-        if ((assrtSubst           =
-                stepUnifier.
-                    unifyAndMergeHypsSorted(
-                        assrtLogHypArray,
-                        derivStepHypArray))
-            != null) {
+        if ((assrtSubst = stepUnifier.unifyAndMergeHypsSorted(assrtLogHypArray,
+            derivStepHypArray)) != null)
+        {
 
-            derivAssrtXRef        =
-                stepUnifier.getDerivAssrtXRef();
+            derivAssrtXRef = stepUnifier.getDerivAssrtXRef();
 
-            markStepUnified(
-                true,  // usedUnifyWithWorkVars,
+            markStepUnified(true, // usedUnifyWithWorkVars,
                 false, // no "swap",
-                derivAssrtXRef); //rearrange
+                derivAssrtXRef); // rearrange
 
             return true;
         }
         return false;
     }
 
-    private boolean unifyStepFormulaWithWorkVars()
-                            throws VerifyException {
+    private boolean unifyStepFormulaWithWorkVars() throws VerifyException {
 
-        assrtVarHypArray          = assrt.getMandVarHypArray();
-        assrtHypArray             = assrt.getMandFrame().hypArray;
-        assrtLogHypArray          = assrt.getLogHypArray();
-        assrtParseTree            = assrt.getExprParseTree();
+        assrtVarHypArray = assrt.getMandVarHypArray();
+        assrtHypArray = assrt.getMandFrame().hypArray;
+        assrtLogHypArray = assrt.getLogHypArray();
+        assrtParseTree = assrt.getExprParseTree();
 
-        ParseNode stepRoot        = null;
-        if (derivStep.formulaParseTree != null) {
-            stepRoot              =
-                derivStep.formulaParseTree.getRoot();
-        }
-        return stepUnifier.unifyAndMergeStepFormula(
-                                      true,    //commit = true
-                                      assrtParseTree.getRoot(),
-                                      stepRoot,
-                                      assrtHypArray,
-                                      assrtLogHypArray);
+        ParseNode stepRoot = null;
+        if (derivStep.formulaParseTree != null)
+            stepRoot = derivStep.formulaParseTree.getRoot();
+        return stepUnifier
+            .unifyAndMergeStepFormula(
+                true, // commit = true
+                assrtParseTree.getRoot(), stepRoot, assrtHypArray,
+                assrtLogHypArray);
 
     }
 
@@ -2650,73 +2080,56 @@ public class ProofUnifier {
      *        fields too.)
      *
      */
-    private void doUpdateWorksheetWorkVars(
-                        DerivationStep currentDerivStep) {
+    private void doUpdateWorksheetWorkVars(final DerivationStep currentDerivStep)
+    {
 
-        Iterator proofWorkStmtIterator
-                                  =
-            proofWorksheet.getProofWorkStmtListIterator();
+        final Iterator proofWorkStmtIterator = proofWorksheet
+            .getProofWorkStmtListIterator();
 
         ProofWorkStmt proofWorkStmtObject;
 
         DerivationStep d;
         while (proofWorkStmtIterator.hasNext()) {
 
-            proofWorkStmtObject   =
-                (ProofWorkStmt)proofWorkStmtIterator.next();
+            proofWorkStmtObject = (ProofWorkStmt)proofWorkStmtIterator.next();
 
-            if (!proofWorkStmtObject.isDerivationStep()) {
+            if (!proofWorkStmtObject.isDerivationStep())
                 continue;
-            }
 
-            d                     =
-                (DerivationStep)proofWorkStmtObject;
+            d = (DerivationStep)proofWorkStmtObject;
 
-            if (d.workVarList != null) {
+            if (d.workVarList != null)
                 doUpdateDerivationStepWorkVars(d);
-            }
 
-            if (d == currentDerivStep) {
-                continue; //skip the rest of this stuff...
-            }
+            if (d == currentDerivStep)
+                continue; // skip the rest of this stuff...
 
             doUpdateDerivationStepAssrtSubst(d);
 
-            int saveUnificationStatus
-                                  = d.unificationStatus;
+            final int saveUnificationStatus = d.unificationStatus;
             doUpdateWorkVarUnificationStatus(d);
 
             if (saveUnificationStatus != d.unificationStatus
-                &&
-                d.unificationStatus ==
-                PaConstants.
-                    UNIFICATION_STATUS_UNIFIED) {
+                && d.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED)
+            {
                 // must redo DjVars edits!!!
-                doInitialStepDjEdits(d,
-                                     (Assrt)d.ref,
-                                     d.assrtSubst);
+                doInitialStepDjEdits(d, (Assrt)d.ref, d.assrtSubst);
                 saveOtherDjVarsEditResults(d);
             }
         }
     }
 
-    private void doUpdateDerivationStepWorkVars(
-                                DerivationStep d) {
+    private void doUpdateDerivationStepWorkVars(final DerivationStep d) {
 
-        //ok, see if workVarList Work Vars actually updated
-        ArrayList newWorkVarList
-                                  =
-            new ArrayList(d.workVarList.size());
+        // ok, see if workVarList Work Vars actually updated
+        ArrayList newWorkVarList = new ArrayList(d.workVarList.size());
 
-        ArrayList updatedWorkVarList
-                                  =
-            new ArrayList(d.workVarList.size());
+        final ArrayList updatedWorkVarList = new ArrayList(d.workVarList.size());
 
         WorkVar workVar;
 
-        WorkVarManager workVarManager
-                                  =
-            proofAsstPreferences.getWorkVarManager();
+        final WorkVarManager workVarManager = proofAsstPreferences
+            .getWorkVarManager();
 
         // !isAllocated(workVar) means update made and the work var
         // will be removed from use, replaced by the updates
@@ -2724,31 +2137,25 @@ public class ProofUnifier {
         // step.)
         for (int i = 0; i < d.workVarList.size(); i++) {
 
-            workVar               = (WorkVar)d.workVarList.get(i);
-            if (workVarManager.isAllocated(workVar)) {
+            workVar = (WorkVar)d.workVarList.get(i);
+            if (workVarManager.isAllocated(workVar))
                 newWorkVarList.add(workVar);
-            }
-            else {
+            else
                 updatedWorkVarList.add(workVar);
-            }
         }
-        if (updatedWorkVarList.size() == 0) {
-            return;  //no change to derivation step!!!
-        }
+        if (updatedWorkVarList.size() == 0)
+            return; // no change to derivation step!!!
 
         // ok, accum newWorkVarList using list of updated work vars
         // (i.e. &w1 = &w2 -> &w3 has possibly new work vars &w2
         // and &w3)
         ParseNode substNode;
         for (int i = 0; i < updatedWorkVarList.size(); i++) {
-            workVar               =
-                (WorkVar)updatedWorkVarList.get(i);
-            substNode             =
-                ((WorkVarHyp)(workVar.getActiveVarHyp())).paSubst;
-            if (substNode == null) {
+            workVar = (WorkVar)updatedWorkVarList.get(i);
+            substNode = ((WorkVarHyp)workVar.getActiveVarHyp()).paSubst;
+            if (substNode == null)
                 throw new IllegalArgumentException(
                     PaConstants.ERRMSG_UPD_WV_ASSIGNED_NULL_VALUE_1);
-            }
             substNode.accumSetOfWorkVarsUsed(newWorkVarList);
         }
 
@@ -2762,106 +2169,69 @@ public class ProofUnifier {
          *        steps that refer to curr step as a hyp
          */
         // null means step no longer has work variables!!!
-        if (newWorkVarList.size() == 0) {
-            newWorkVarList        = null;
-        }
+        if (newWorkVarList.size() == 0)
+            newWorkVarList = null;
 
-        doUpdateDerivationStepFormulaStuff(d,
-                                           newWorkVarList);
+        doUpdateDerivationStepFormulaStuff(d, newWorkVarList);
     }
 
-    private void doUpdateDerivationStepFormulaStuff(
-                            DerivationStep d,
-                            ArrayList      newWorkVarList) {
+    private void doUpdateDerivationStepFormulaStuff(final DerivationStep d,
+        final ArrayList newWorkVarList)
+    {
 
+        final ParseTree newFormulaParseTree = d.formulaParseTree
+            .deepCloneApplyingWorkVarUpdates();
 
-        ParseTree newFormulaParseTree
-                                  =
-            d.formulaParseTree.
-                deepCloneApplyingWorkVarUpdates();
-
-        Formula newFormula        =
-                verifyProofs.convertRPNToFormula(
-                    newFormulaParseTree.convertToRPN(),
-                    " "); //abend diagnostic, leave blank for now.
+        final Formula newFormula = verifyProofs.convertRPNToFormula(
+            newFormulaParseTree.convertToRPN(), " "); // abend diagnostic, leave
+                                                      // blank for now.
 
         newFormula.setTyp(provableLogicStmtTyp);
 
-        boolean stmtTextAlreadyUpdated
-                                  = false;
-        if (!proofAsstPreferences.getAutoReformat()) {
-            stmtTextAlreadyUpdated
-                                  =
-                d.updateStmtTextWithWorkVarUpdates(verifyProofs);
-        }
+        boolean stmtTextAlreadyUpdated = false;
+        if (!proofAsstPreferences.getAutoReformat())
+            stmtTextAlreadyUpdated = d
+                .updateStmtTextWithWorkVarUpdates(verifyProofs);
 
         d.updateWorkVarList(newWorkVarList);
 
-
-        d.loadGeneratedFormulaIntoDerivStep(
-                newFormula,
-                newFormulaParseTree,
-                stmtTextAlreadyUpdated);
+        d.loadGeneratedFormulaIntoDerivStep(newFormula, newFormulaParseTree,
+            stmtTextAlreadyUpdated);
     }
 
-    private void doUpdateDerivationStepAssrtSubst(
-                                DerivationStep d) {
+    private void doUpdateDerivationStepAssrtSubst(final DerivationStep d) {
 
-        if (d.assrtSubst == null) { // then not unified yet...
+        if (d.assrtSubst == null)
             return;
-        }
 
-        for (int i = 0; i < d.assrtSubst.length; i++) {
+        for (int i = 0; i < d.assrtSubst.length; i++)
             // note: log hyp array entries will be null at
-            //       this point (prior to proof construction).
-            if (d.assrtSubst[i] != null) {
-
-                d.assrtSubst[i]   =
-                    d.assrtSubst[i].
-                        deepCloneApplyingWorkVarUpdates();
-            }
-        }
+            // this point (prior to proof construction).
+            if (d.assrtSubst[i] != null)
+                d.assrtSubst[i] = d.assrtSubst[i]
+                    .deepCloneApplyingWorkVarUpdates();
     }
 
-    private void doUpdateWorkVarUnificationStatus(DerivationStep d) {
-        //ok, now adjust unification status for the revised
-        //work var situation
+    private void doUpdateWorkVarUnificationStatus(final DerivationStep d) {
+        // ok, now adjust unification status for the revised
+        // work var situation
 
         // this weird looking if statement means status is
         // unified but not equal to UNIFIED_W_INCOMPLETE_HYPS
-        if (d.unificationStatus ==
-                PaConstants.
-                    UNIFICATION_STATUS_UNIFIED_W_WORK_VARS
-            ||
-            d.unificationStatus ==
-                PaConstants.
-                    UNIFICATION_STATUS_UNIFIED) {
-            d.unificationStatus   =
-                PaConstants.
-                    UNIFICATION_STATUS_UNIFIED;
-            if (d.workVarList != null) {
-                d.unificationStatus
-                                  =
-                    PaConstants.
-                        UNIFICATION_STATUS_UNIFIED_W_WORK_VARS;
-            }
-            else {
+        if (d.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS
+            || d.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED)
+        {
+            d.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED;
+            if (d.workVarList != null)
+                d.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS;
+            else
                 for (int i = 0; i < d.hyp.length; i++) {
-                    if (!d.hyp[i].isDerivationStep()) {
+                    if (!d.hyp[i].isDerivationStep())
                         continue;
-                    }
-                    if (d.hyp[i].workVarList != null ||
-                        ((DerivationStep)
-                          d.hyp[i]).unificationStatus ==
-                            PaConstants.
-                             UNIFICATION_STATUS_UNIFIED_W_WORK_VARS) {
-                        d.unificationStatus
-                                      =
-                            PaConstants.
-                             UNIFICATION_STATUS_UNIFIED_W_WORK_VARS;
-                    }
+                    if (d.hyp[i].workVarList != null
+                        || ((DerivationStep)d.hyp[i]).unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
+                        d.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS;
                 }
-            }
         }
     }
 
@@ -2887,445 +2257,354 @@ public class ProofUnifier {
      *  and convert back to Variables. This requires using
      *  the step.formulaParseTree instead of step.formula.
      */
-    private void convertWorkVarsToDummyVars(DerivationStep qedStep)
-                        throws VerifyException {
+    private void convertWorkVarsToDummyVars(final DerivationStep qedStep)
+        throws VerifyException
+    {
 
-        VarHyp    vH;
-        Cnst      typ;
-        ArrayList x;
+        VarHyp vH;
+        Cnst typ;
+        final ArrayList x;
 
         // 1) construct mandatoryVarHypList and optionalVarHypList
-        //    (new theorems not in the database require these to
-        //    be computed, so we do the computations for both old
-        //    and new to "simplify".)
+        // (new theorems not in the database require these to
+        // be computed, so we do the computations for both old
+        // and new to "simplify".)
 
-        ArrayList mandatoryVarHypList
-                                  =
-            new ArrayList(
-                proofWorksheet.comboFrame.hypArray.length);
+        final ArrayList mandatoryVarHypList = new ArrayList(
+            proofWorksheet.comboFrame.hypArray.length);
 
-        qedStep.
-            formulaParseTree.
-                getRoot().
-                    accumVarHypUsedListBySeq(
-                        mandatoryVarHypList);
+        qedStep.formulaParseTree.getRoot().accumVarHypUsedListBySeq(
+            mandatoryVarHypList);
 
         if (proofWorksheet.hypStepCnt > 0) {
 
             ProofWorkStmt proofWorkStmt;
-            ProofStepStmt proofStepStmt;
+            final ProofStepStmt proofStepStmt;
 
-            int hypsFound         = 0;
-            int stepIndex         = 0;
+            int hypsFound = 0;
+            int stepIndex = 0;
             while (true) {
 
-                proofWorkStmt     =
-                    (ProofWorkStmt)proofWorksheet.
-                        proofWorkStmtList.
-                            get(stepIndex);
+                proofWorkStmt = (ProofWorkStmt)proofWorksheet.proofWorkStmtList
+                    .get(stepIndex);
 
                 if (proofWorkStmt.isHypothesisStep()) {
-                    ((ProofStepStmt)proofWorkStmt).
-                        formulaParseTree.
-                            getRoot().
-                                accumVarHypUsedListBySeq(
-                                    mandatoryVarHypList);
-                    if (++hypsFound >= proofWorksheet.hypStepCnt) {
+                    ((ProofStepStmt)proofWorkStmt).formulaParseTree.getRoot()
+                        .accumVarHypUsedListBySeq(mandatoryVarHypList);
+                    if (++hypsFound >= proofWorksheet.hypStepCnt)
                         break;
-                    }
                 }
 
-                if (++stepIndex >
-                    proofWorksheet.proofWorkStmtList.size()) {
+                if (++stepIndex > proofWorksheet.proofWorkStmtList.size())
                     break;
-                }
             }
 
-            if (hypsFound != proofWorksheet.hypStepCnt) {
+            if (hypsFound != proofWorksheet.hypStepCnt)
                 throw new IllegalArgumentException(
-                    PaConstants.
-                        ERRMSG_HYP_STEP_CNT_IN_WORKKSHEET_ERROR_1);
-            }
+                    PaConstants.ERRMSG_HYP_STEP_CNT_IN_WORKKSHEET_ERROR_1);
         }
 
-        ArrayList optionalVarHypList
-                                  =
-            new ArrayList(
-                proofWorksheet.comboFrame.hypArray.length);
+        final ArrayList optionalVarHypList = new ArrayList(
+            proofWorksheet.comboFrame.hypArray.length);
 
-        Hyp[] frameHypArray       =
-            proofWorksheet.comboFrame.hypArray;
+        final Hyp[] frameHypArray = proofWorksheet.comboFrame.hypArray;
 
         for (int i = 0; i < frameHypArray.length; i++) {
 
-            if (!frameHypArray[i].isVarHyp()) {
+            if (!frameHypArray[i].isVarHyp())
                 continue;
-            }
 
-            vH                    = (VarHyp)frameHypArray[i];
+            vH = (VarHyp)frameHypArray[i];
 
-            if (!vH.containedInVarHypListBySeq(
-                    mandatoryVarHypList)) {
-
-                vH.accumVarHypListBySeq(
-                    optionalVarHypList);
-            }
+            if (!vH.containedInVarHypListBySeq(mandatoryVarHypList))
+                vH.accumVarHypListBySeq(optionalVarHypList);
         }
 
-     // 2) initialize list of disjointWorkVarList's and
-     //    optionalVarHypsInUseList
+        // 2) initialize list of disjointWorkVarList's and
+        // optionalVarHypsInUseList
 
-        ArrayList disjointWorkVarList       //list of lists
-                                  = new ArrayList();
-        ArrayList optionalVarHypsInUseList  //list of Var Hyps
-                                  = new ArrayList();
+        final ArrayList disjointWorkVarList // list of lists
+        = new ArrayList();
+        final ArrayList optionalVarHypsInUseList // list of Var Hyps
+        = new ArrayList();
 
-     // 3) make recursive pass through the qed derivation
-     //    subtree loading the disjointWorkVarHypList and
-     //    optionalVarHypsInUseList
+        // 3) make recursive pass through the qed derivation
+        // subtree loading the disjointWorkVarHypList and
+        // optionalVarHypsInUseList
 
-        recursiveLoadWvAndOptsUsedLists(qedStep,
-                                        optionalVarHypList,
-                                        optionalVarHypsInUseList,
-                                        disjointWorkVarList);
+        recursiveLoadWvAndOptsUsedLists(qedStep, optionalVarHypList,
+            optionalVarHypsInUseList, disjointWorkVarList);
 
+        // 3.5 see doc in function below
+        final ArrayList disjointWorkVarHypList = buildDisjointWorkVarHypList(disjointWorkVarList);
 
-     // 3.5 see doc in function below
-        ArrayList disjointWorkVarHypList
-                                  =
-            buildDisjointWorkVarHypList(disjointWorkVarList);
-
-     // 4) construct unusedOptionalVarHypTypList and
-     //    unusedOptionalVarHypsByTypList using
-     //    optionalVarHypList and optionalVarHypsInUseList
-        ArrayList unusedOptionalVarHypTypList  //list of Cnst
-                                  = new ArrayList();
-        ArrayList unusedOptionalVarHypsByTypList //list of lists
-                                  = new ArrayList();
+        // 4) construct unusedOptionalVarHypTypList and
+        // unusedOptionalVarHypsByTypList using
+        // optionalVarHypList and optionalVarHypsInUseList
+        final ArrayList unusedOptionalVarHypTypList // list of Cnst
+        = new ArrayList();
+        final ArrayList unusedOptionalVarHypsByTypList // list of lists
+        = new ArrayList();
         for (int i = 0; i < optionalVarHypList.size(); i++) {
 
-            vH                    =
-                (VarHyp)optionalVarHypList.get(i);
+            vH = (VarHyp)optionalVarHypList.get(i);
 
-            if (vH.containedInVarHypListBySeq(
-                    optionalVarHypsInUseList)) {
+            if (vH.containedInVarHypListBySeq(optionalVarHypsInUseList))
                 continue;
-            }
 
             // ok, optional varHyp "vH" is unused
 
-            typ                   = vH.getTyp();
+            typ = vH.getTyp();
 
-            int typIndex          = -1;
-            for (int j = 0;
-                 j < unusedOptionalVarHypTypList.size();
-                 j++) {
-
+            int typIndex = -1;
+            for (int j = 0; j < unusedOptionalVarHypTypList.size(); j++)
                 if (typ == (Cnst)unusedOptionalVarHypTypList.get(j)) {
-                    typIndex      = j;
+                    typIndex = j;
                     break;
                 }
-            }
 
             if (typIndex == -1) {
 
                 unusedOptionalVarHypTypList.add(typ);
 
-                typIndex          =
-                    unusedOptionalVarHypTypList.size() - 1;
+                typIndex = unusedOptionalVarHypTypList.size() - 1;
 
-                unusedOptionalVarHypsByTypList.add(
-                    new ArrayList());
+                unusedOptionalVarHypsByTypList.add(new ArrayList());
             }
 
-            ArrayList typUnusedOptionalVarHyps
-                                  =
-                (ArrayList)unusedOptionalVarHypsByTypList.
-                    get(typIndex);
+            final ArrayList typUnusedOptionalVarHyps = (ArrayList)unusedOptionalVarHypsByTypList
+                .get(typIndex);
 
             vH.accumVarHypListBySeq(typUnusedOptionalVarHyps);
         }
 
-    // 5) for each disjointWorkVarHypList:
-    //        - for each Type Code in a disjointWorkVarHypList
-    //          - start at index 0 in unusedOptionalVarHypsList
-    //          - assign next unusedOptionalVarHypList element
-    //            of the current Type to the corresponding
-    //            VarHyp.paSubst;
-    //            --> if not enough unusedOptionalVarHyp entries,
-    //                kick out an error message and quit.
-    //
+        // 5) for each disjointWorkVarHypList:
+        // - for each Type Code in a disjointWorkVarHypList
+        // - start at index 0 in unusedOptionalVarHypsList
+        // - assign next unusedOptionalVarHypList element
+        // of the current Type to the corresponding
+        // VarHyp.paSubst;
+        // --> if not enough unusedOptionalVarHyp entries,
+        // kick out an error message and quit.
+        //
         for (int i = 0; i < disjointWorkVarHypList.size(); i++) {
-            ArrayList workVarHypList =
-                (ArrayList)disjointWorkVarHypList.get(i);
+            final ArrayList workVarHypList = (ArrayList)disjointWorkVarHypList
+                .get(i);
 
-            for (int j = 0;
-                     j < unusedOptionalVarHypTypList.size();
-                     j++) {
-                typ               =
-                    (Cnst)unusedOptionalVarHypTypList.get(j);
+            for (int j = 0; j < unusedOptionalVarHypTypList.size(); j++) {
+                typ = (Cnst)unusedOptionalVarHypTypList.get(j);
 
-                ArrayList typUnusedOptionalVarHyps
-                                  =
-                    (ArrayList)unusedOptionalVarHypsByTypList.get(j);
+                final ArrayList typUnusedOptionalVarHyps = (ArrayList)unusedOptionalVarHypsByTypList
+                    .get(j);
 
-                int next          = 0;
+                int next = 0;
                 for (int k = 0; k < workVarHypList.size(); k++) {
-                    vH            = (VarHyp)workVarHypList.get(k);
-                    if (vH.getTyp() != typ) {
+                    vH = (VarHyp)workVarHypList.get(k);
+                    if (vH.getTyp() != typ)
                         continue;
-                    }
-                    if (next >= typUnusedOptionalVarHyps.size()) {
+                    if (next >= typUnusedOptionalVarHyps.size())
                         throw new VerifyException(
-                            PaConstants.
-                                ERRMSG_WV_CLEANUP_SHORTAGE_1
-                            + proofWorksheet.
-                                getTheorem().
-                                    getLabel()
-                            + PaConstants.
-                                ERRMSG_WV_CLEANUP_SHORTAGE_2
-                            + typ
-                            + PaConstants.
-                                ERRMSG_WV_CLEANUP_SHORTAGE_3
-                            + typUnusedOptionalVarHyps.size()
-                            + PaConstants.
-                                ERRMSG_WV_CLEANUP_SHORTAGE_4
-                            );
-                    }
+                            PaConstants.ERRMSG_WV_CLEANUP_SHORTAGE_1
+                                + proofWorksheet.getTheorem().getLabel()
+                                + PaConstants.ERRMSG_WV_CLEANUP_SHORTAGE_2
+                                + typ
+                                + PaConstants.ERRMSG_WV_CLEANUP_SHORTAGE_3
+                                + typUnusedOptionalVarHyps.size()
+                                + PaConstants.ERRMSG_WV_CLEANUP_SHORTAGE_4);
 
-                    vH.paSubst    =   //this is a really key step :-)
-                        new ParseNode(
-                            (VarHyp)typUnusedOptionalVarHyps.
-                                get(next));
+                    vH.paSubst = // this is a really key step :-)
+                    new ParseNode((VarHyp)typUnusedOptionalVarHyps.get(next));
 
                     ++next;
                 }
             }
         }
 
-     // 6) make recursive pass through the qed derivation
-     //    subtree by calling convertStepWorkVarsToDummies
-     //    passing the 'qed' derivation step.
-     //
-     //    NOTE: redo the Dj Vars edits for any derivation
-     //          step with Work Variables or with an
-     //          immediate hypothesis containing Work Variables.
-     //
+        // 6) make recursive pass through the qed derivation
+        // subtree by calling convertStepWorkVarsToDummies
+        // passing the 'qed' derivation step.
+        //
+        // NOTE: redo the Dj Vars edits for any derivation
+        // step with Work Variables or with an
+        // immediate hypothesis containing Work Variables.
+        //
         recursiveConvertStepWorkVarHypsToDummies(qedStep);
 
     }
 
-    private void recursiveConvertStepWorkVarHypsToDummies(
-                                            DerivationStep d) {
-        boolean redoDjVarsEdits   = false;
+    private void recursiveConvertStepWorkVarHypsToDummies(final DerivationStep d)
+    {
+        boolean redoDjVarsEdits = false;
         DerivationStep dH;
-        for (int i = 0; i < d.hyp.length; i++) {
-            if (d.hyp[i].isDerivationStep()) {
-                dH                = (DerivationStep)d.hyp[i];
-                if (dH.workVarList != null) {
-                    redoDjVarsEdits
-                                  = true;
-                }
+        for (final ProofStepStmt element : d.hyp)
+            if (element.isDerivationStep()) {
+                dH = (DerivationStep)element;
+                if (dH.workVarList != null)
+                    redoDjVarsEdits = true;
                 recursiveConvertStepWorkVarHypsToDummies(dH);
             }
-        }
 
         if (d.workVarList != null) {
-            redoDjVarsEdits       = true;
-            doUpdateDerivationStepFormulaStuff(d,
-                                               null);
+            redoDjVarsEdits = true;
+            doUpdateDerivationStepFormulaStuff(d, null);
         }
 
         doUpdateDerivationStepAssrtSubst(d);
 
-        if (d.unificationStatus ==
-                PaConstants.
-                    UNIFICATION_STATUS_UNIFIED_W_WORK_VARS) {
-            d.unificationStatus   =
-                PaConstants.
-                    UNIFICATION_STATUS_UNIFIED;
-        }
+        if (d.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
+            d.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED;
 
         if (redoDjVarsEdits) {
-            doInitialStepDjEdits(d,
-                                 (Assrt)d.ref,
-                                 d.assrtSubst);
+            doInitialStepDjEdits(d, (Assrt)d.ref, d.assrtSubst);
             saveOtherDjVarsEditResults(d);
         }
     }
 
     // note: neither the 'qed' step, nor the theorem
-    //       hypotheses can contain work variables or
-    //       optional/dummy variables.
-    private void recursiveLoadWvAndOptsUsedLists(
-                            DerivationStep d,
-                            ArrayList      optionalVarHypList,
-                            ArrayList      optionalVarHypsInUseList,
-                            ArrayList      disjointWorkVarList) {
+    // hypotheses can contain work variables or
+    // optional/dummy variables.
+    private void recursiveLoadWvAndOptsUsedLists(final DerivationStep d,
+        final ArrayList optionalVarHypList,
+        final ArrayList optionalVarHypsInUseList,
+        final ArrayList disjointWorkVarList)
+    {
 
         for (int i = 0; i < d.hyp.length; i++) {
-            if (!d.hyp[i].isDerivationStep()) {
+            if (!d.hyp[i].isDerivationStep())
                 continue;
-            }
             recursiveLoadWvAndOptsUsedLists((DerivationStep)d.hyp[i],
-                                            optionalVarHypList,
-                                            optionalVarHypsInUseList,
-                                            disjointWorkVarList);
+                optionalVarHypList, optionalVarHypsInUseList,
+                disjointWorkVarList);
         }
 
         // accumulate optional formula var hyps into "in use" list
-        if (d.step.compareToIgnoreCase(PaConstants.QED_STEP_NBR)
-            != 0) {
-            d.formulaParseTree.
-                getRoot().
-                    accumListVarHypUsedListBySeq(
-                        optionalVarHypList,
-                        optionalVarHypsInUseList);
-        }
+        if (d.step.compareToIgnoreCase(PaConstants.QED_STEP_NBR) != 0)
+            d.formulaParseTree.getRoot().accumListVarHypUsedListBySeq(
+                optionalVarHypList, optionalVarHypsInUseList);
 
         // accumulate a new workVarList containing the step
         // AND its hyp work vars. (later we make the conversion
         // from WorkVar to WorkVarHyp, but not yet...)
-        ArrayList stepAndHypWorkVarList
-                                  = new ArrayList();
-        if (d.workVarList != null) {
-            mergeVarList1IntoList2(d.workVarList,
-                                   stepAndHypWorkVarList);
-        }
+        final ArrayList stepAndHypWorkVarList = new ArrayList();
+        if (d.workVarList != null)
+            mergeVarList1IntoList2(d.workVarList, stepAndHypWorkVarList);
         for (int i = 0; i < d.hyp.length; i++) {
-            if (!d.hyp[i].isDerivationStep()) {
+            if (!d.hyp[i].isDerivationStep())
                 continue;
-            }
-            if (((DerivationStep)d.hyp[i]).workVarList != null) {
-                mergeVarList1IntoList2(
-                    ((DerivationStep)d.hyp[i]).workVarList,
+            if (((DerivationStep)d.hyp[i]).workVarList != null)
+                mergeVarList1IntoList2(((DerivationStep)d.hyp[i]).workVarList,
                     stepAndHypWorkVarList);
-            }
         }
 
-        if (stepAndHypWorkVarList.size() == 0) {
+        if (stepAndHypWorkVarList.size() == 0)
             return;
-        }
 
         // if stepAndHypWorkVarList disjoint with all other lists
         // in disjointWorkVarList, add it; otherwise,
         // union it with the first list having a var in common:
         ArrayList x;
-        Var       v;
-        boolean   isDisjoint      = true;
+        Var v;
+        boolean isDisjoint = true;
         loopI: for (int i = 0; i < disjointWorkVarList.size(); i++) {
 
-            x                     =
-                (ArrayList)disjointWorkVarList.get(i);
+            x = (ArrayList)disjointWorkVarList.get(i);
 
-            loopJ: for (int j = 0;
-                        j < stepAndHypWorkVarList.size();
-                        j++) {
+            loopJ: for (int j = 0; j < stepAndHypWorkVarList.size(); j++) {
 
-                v                 = (Var)stepAndHypWorkVarList.get(j);
+                v = (Var)stepAndHypWorkVarList.get(j);
 
                 if (v.containedInVarListBySeq(x)) {
 
-                    isDisjoint    = false;
+                    isDisjoint = false;
 
-                    mergeVarList1IntoList2(stepAndHypWorkVarList,
-                                           x);
+                    mergeVarList1IntoList2(stepAndHypWorkVarList, x);
                     break loopI;
                 }
             }
         }
-        if (isDisjoint) {
+        if (isDisjoint)
             disjointWorkVarList.add(stepAndHypWorkVarList);
-        }
     }
 
-     // 3.5) NOTE!!! The disjointWorkVarList is just
-     //      a preliminary list. Assume we have steps
-     //      63->65 in proof of ax11eq (we do):
-     //
-     //  63::a9e  |- E. &S3 &S3 = w
-     //  64::a9e  |- E. &S5 &S5 = z
-     //  65::ax-1 |- ( &S5 = &S3 -> ( x = y -> &S5 = &S3 ) )
-     //
-     //      And assume the disjointWorkVarHypList of lists
-     //      was built in proof step order. The initial
-     //      result would be { { &W3 , &W5 }, { &W5 } }
-     //      and in 5) below, the second occurrence of
-     //      &W5 would wipe out the first, so if the
-     //      first assigned "v" to &W5, the second would
-     //      change that to "u" and then both &W3 and
-     //      &W5 would be set to "u", which would cause
-     //      a bug for ax11eq (and 88 other theorems!).
-     //
-     //      So, reprocess the list in to merge+eliminate
-     //      any entries that are not truly disjoint, and
-     //      make the conversion from WorkVar to WorkVarHyp.
+    // 3.5) NOTE!!! The disjointWorkVarList is just
+    // a preliminary list. Assume we have steps
+    // 63->65 in proof of ax11eq (we do):
+    //
+    // 63::a9e |- E. &S3 &S3 = w
+    // 64::a9e |- E. &S5 &S5 = z
+    // 65::ax-1 |- ( &S5 = &S3 -> ( x = y -> &S5 = &S3 ) )
+    //
+    // And assume the disjointWorkVarHypList of lists
+    // was built in proof step order. The initial
+    // result would be { { &W3 , &W5 }, { &W5 } }
+    // and in 5) below, the second occurrence of
+    // &W5 would wipe out the first, so if the
+    // first assigned "v" to &W5, the second would
+    // change that to "u" and then both &W3 and
+    // &W5 would be set to "u", which would cause
+    // a bug for ax11eq (and 88 other theorems!).
+    //
+    // So, reprocess the list in to merge+eliminate
+    // any entries that are not truly disjoint, and
+    // make the conversion from WorkVar to WorkVarHyp.
     private ArrayList buildDisjointWorkVarHypList(
-                            ArrayList inVarListOfLists) {
+        final ArrayList inVarListOfLists)
+    {
 
-        ArrayList outVarHypListOfLists
-                                  =
-            new ArrayList(inVarListOfLists.size());
+        final ArrayList outVarHypListOfLists = new ArrayList(
+            inVarListOfLists.size());
 
-        int       iMax            = inVarListOfLists.size();
-        int       jMax            = iMax;
+        final int iMax = inVarListOfLists.size();
+        final int jMax = iMax;
 
         ArrayList candidateI;
         ArrayList candidateJ;
 
         loopI: for (int i = 0; i < iMax; i++) {
 
-            candidateI            =
-                (ArrayList)inVarListOfLists.get(i);
+            candidateI = (ArrayList)inVarListOfLists.get(i);
 
             loopJ: for (int j = i + 1; j < jMax; j++) {
 
-                candidateJ        = (ArrayList)inVarListOfLists.get(j);
+                candidateJ = (ArrayList)inVarListOfLists.get(j);
 
-                if (isVarList1DisjointWithList2(candidateI,
-                                                candidateJ)) {
+                if (isVarList1DisjointWithList2(candidateI, candidateJ))
                     continue loopJ;
-                }
 
-                mergeVarList1IntoList2(candidateI,
-                                       candidateJ);
+                mergeVarList1IntoList2(candidateI, candidateJ);
                 continue loopI;
             }
 
             // convert WorkVarList to WorkVarHyp list
             // note: WorkVars are always global and "active"
-            ArrayList workVarHypList
-                                  = new ArrayList(candidateI.size());
-            for (int k = 0; k < candidateI.size(); k++) {
-                workVarHypList.add(
-                    ((Var)candidateI.get(k)).getActiveVarHyp());
-            }
-            outVarHypListOfLists.add(
-                workVarHypList);
+            final ArrayList workVarHypList = new ArrayList(candidateI.size());
+            for (int k = 0; k < candidateI.size(); k++)
+                workVarHypList.add(((Var)candidateI.get(k)).getActiveVarHyp());
+            outVarHypListOfLists.add(workVarHypList);
         }
 
         return outVarHypListOfLists;
     }
 
-    private boolean isVarList1DisjointWithList2(
-                                        ArrayList list1,
-                                        ArrayList list2) {
+    private boolean isVarList1DisjointWithList2(final ArrayList list1,
+        final ArrayList list2)
+    {
 
         Var v;
         for (int i = 0; i < list1.size(); i++) {
-            v                     = (Var)list1.get(i);
-            if (v.containedInVarListBySeq(list2)) {
+            v = (Var)list1.get(i);
+            if (v.containedInVarListBySeq(list2))
                 return false;
-            }
         }
         return true;
     }
 
-    private void mergeVarList1IntoList2(ArrayList list1,
-                                        ArrayList list2) {
+    private void mergeVarList1IntoList2(final ArrayList list1,
+        final ArrayList list2)
+    {
         Var v;
         for (int i = 0; i < list1.size(); i++) {
-            v                     = (Var)list1.get(i);
+            v = (Var)list1.get(i);
             v.accumVarListBySeq(list2);
         }
     }

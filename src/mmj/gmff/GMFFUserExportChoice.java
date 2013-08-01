@@ -15,8 +15,9 @@
 
 package mmj.gmff;
 
-import  java.util.*;
-import  mmj.util.UtilConstants;
+import java.util.ArrayList;
+
+import mmj.util.UtilConstants;
 
 /**
  *  GMFFUserExportChoice holds the parameters from a single
@@ -34,7 +35,7 @@ import  mmj.util.UtilConstants;
  */
 public class GMFFUserExportChoice {
 
-    public String                  exportTypeOrAll;
+    public String exportTypeOrAll;
 
     /**
      *  The standard constructor for GMFFUserExportChoice.
@@ -42,9 +43,9 @@ public class GMFFUserExportChoice {
      *  @param exportTypeOrAll String containing either a
      *			single Export Type or the literal "ALL".
      */
-    public GMFFUserExportChoice(String exportTypeOrAll) {
+    public GMFFUserExportChoice(final String exportTypeOrAll) {
 
-        this.exportTypeOrAll	= exportTypeOrAll;
+        this.exportTypeOrAll = exportTypeOrAll;
     }
 
     /**
@@ -53,12 +54,11 @@ public class GMFFUserExportChoice {
      *  <p>
      *  @return String containing the relevant fields.
      */
-	public String generateAuditReportText() {
-		String s                = new String(
-			UtilConstants.RUNPARM_GMFF_USER_EXPORT_CHOICE
-			+ GMFFConstants.AUDIT_REPORT_COMMA
-			+ exportTypeOrAll);
-	    return s;
+    public String generateAuditReportText() {
+        final String s = new String(
+            UtilConstants.RUNPARM_GMFF_USER_EXPORT_CHOICE
+                + GMFFConstants.AUDIT_REPORT_COMMA + exportTypeOrAll);
+        return s;
     }
 
     /**
@@ -69,27 +69,23 @@ public class GMFFUserExportChoice {
      *             used in the Export Parms.)
      *  @throws GMFFException if User Export Choice invalid.
      */
-	public void validateUserExportChoice(
-					ArrayList<GMFFExportParms> exportParmsList)
-						throws GMFFException {
+    public void validateUserExportChoice(
+        final ArrayList<GMFFExportParms> exportParmsList) throws GMFFException
+    {
 
-		if (GMFFExportParms.isPresentWithNoWhitespace(exportTypeOrAll)) {
+        if (GMFFExportParms.isPresentWithNoWhitespace(exportTypeOrAll)) {
 
-			if (exportTypeOrAll.compareToIgnoreCase(
-					GMFFConstants.USER_EXPORT_CHOICE_ALL)
-				== 0) {
-				return;
-			}
+            if (exportTypeOrAll
+                .compareToIgnoreCase(GMFFConstants.USER_EXPORT_CHOICE_ALL) == 0)
+                return;
 
-			for (GMFFExportParms ep: exportParmsList) {
-				if (ep.exportType.equals(exportTypeOrAll)) {
-					return;
-				}
-			}
-		}
+            for (final GMFFExportParms ep : exportParmsList)
+                if (ep.exportType.equals(exportTypeOrAll))
+                    return;
+        }
 
-		throw new GMFFException(
-			GMFFConstants.ERRMSG_USER_EXPORT_CHOICE_BAD_MISSING_1
-			+ exportTypeOrAll);
-	}
+        throw new GMFFException(
+            GMFFConstants.ERRMSG_USER_EXPORT_CHOICE_BAD_MISSING_1
+                + exportTypeOrAll);
+    }
 }

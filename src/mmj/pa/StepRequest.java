@@ -14,7 +14,6 @@
  */
 
 package mmj.pa;
-import mmj.lang.Assrt;
 
 /**
  *  StepRequest contains the StepSelector search results
@@ -23,9 +22,9 @@ import mmj.lang.Assrt;
  */
 public class StepRequest {
 
-    /* friendly */ int            request;
-    /* friendly */ String         step;
-    /* friendly */ Object         param1;
+    /* friendly */int request;
+    /* friendly */String step;
+    /* friendly */Object param1;
 
     /**
      *  Constructor for StepRequest
@@ -34,25 +33,21 @@ public class StepRequest {
      *  @param step for which the Step Selector was run.
      *  @param param1 parameter depending on code.
      */
-    public StepRequest(int      request,
-                       String   step,
-                       Object   param1) {
+    public StepRequest(final int request, final String step, final Object param1)
+    {
 
-        this.request              = request;
-        this.step                 = step;
-        this.param1               = param1;
+        this.request = request;
+        this.step = step;
+        this.param1 = param1;
     }
     /**
      *  Constructor for StepRequest
      *
      *  @param request code
      */
-    public StepRequest(int      request) {
+    public StepRequest(final int request) {
 
-        this(request,
-             null,
-             null);
+        this(request, null, null);
     }
 
 }
-

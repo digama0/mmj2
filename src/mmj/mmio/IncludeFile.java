@@ -13,8 +13,9 @@
  *      -->Modified for mmj2 Paths Enhancement
  */
 package mmj.mmio;
+
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
 
 /**
  * Nitty-gritty IncludeFile work switching Tokenizers and
@@ -33,12 +34,12 @@ import java.util.*;
 
 public class IncludeFile {
 
-    private     String      fileName                = null;
-    private     File        fileObject              = null;
+    private String fileName = null;
+    private File fileObject = null;
 
-    private     long        restartCharsToBypass    = 0;
-    private     Tokenizer   tokenizer               = null;
-    private     Tokenizer   prevTokenizer           = null;
+    private long restartCharsToBypass = 0;
+    private Tokenizer tokenizer = null;
+    private Tokenizer prevTokenizer = null;
 
     /**
      * <p>
@@ -76,38 +77,26 @@ public class IncludeFile {
      *
      * @throws    FileNotFoundException if bogus include file name.
      */
-    public static Tokenizer initIncludeFile(
-                                ArrayList     fileList,
-                                File          f,
-                                String        fileName,
-                                Statementizer statementizer)
-                                    throws FileNotFoundException,
-                                           IOException {
+    public static Tokenizer initIncludeFile(final ArrayList fileList,
+        final File f, final String fileName, final Statementizer statementizer)
+        throws FileNotFoundException, IOException
+    {
 
         if (!fileList.isEmpty()) {
-            IncludeFile prevI     =
-                (IncludeFile)fileList.get(fileList.size() - 1);
-            prevI.restartCharsToBypass
-                                  =
-                prevI.tokenizer.getCurrentCharNbr();
+            final IncludeFile prevI = (IncludeFile)fileList
+                .get(fileList.size() - 1);
+            prevI.restartCharsToBypass = prevI.tokenizer.getCurrentCharNbr();
             prevI.tokenizer.close();
         }
 
-        IncludeFile i             = new IncludeFile();
-        i.fileObject              = f;
-        i.fileName                = fileName;
-        i.restartCharsToBypass    = 0;
-        i.tokenizer               =
-            new Tokenizer(
-                new BufferedReader(
-                    new InputStreamReader(
-                        new FileInputStream(f)
-                        ),
-                    MMIOConstants.READER_BUFFER_SIZE
-                    ),
-                fileName);
-        i.prevTokenizer           = statementizer.setTokenizer(
-                                                        i.tokenizer);
+        final IncludeFile i = new IncludeFile();
+        i.fileObject = f;
+        i.fileName = fileName;
+        i.restartCharsToBypass = 0;
+        i.tokenizer = new Tokenizer(new BufferedReader(new InputStreamReader(
+            new FileInputStream(f)), MMIOConstants.READER_BUFFER_SIZE),
+            fileName);
+        i.prevTokenizer = statementizer.setTokenizer(i.tokenizer);
         fileList.add(i);
 
         return i.tokenizer;
@@ -130,33 +119,29 @@ public class IncludeFile {
      *
      *  @throws    FileNotFoundException if bogus include file name.
      */
-    public static Tokenizer termIncludeFile(
-                                ArrayList     fileList,
-                                Statementizer statementizer)
-                                    throws FileNotFoundException,
-                                           IOException {
+    public static Tokenizer termIncludeFile(final ArrayList fileList,
+        final Statementizer statementizer) throws FileNotFoundException,
+        IOException
+    {
         Tokenizer retTokenizer;
 
-        if (fileList.isEmpty()) {
+        if (fileList.isEmpty())
             throw new IllegalArgumentException(
                 MMIOConstants.ERRMSG_INCLUDE_FILE_ARRAY_EMPTY);
-        }
 
         // closes current file and tokenizer and removes from fileList
-        IncludeFile currI         =
-                (IncludeFile)fileList.get(fileList.size() - 1);
+        IncludeFile currI = (IncludeFile)fileList.get(fileList.size() - 1);
         currI.tokenizer.close();
 
         // save previous -- this will be the top level, original,
         // Metamath source tokenizer, still open and ready to go
         // if this is the only remaining include file in fileList.
-        retTokenizer              = currI.prevTokenizer;
+        retTokenizer = currI.prevTokenizer;
 
         fileList.remove(fileList.size() - 1);
 
-        if (fileList.isEmpty()) {
+        if (fileList.isEmpty())
             statementizer.setTokenizer(retTokenizer);
-        }
         else {
             /**
              *  otherwise...we are terminating a nested include
@@ -165,23 +150,15 @@ public class IncludeFile {
              *  where it left off (when the $[ xx.mm $] include
              *  statement was read.)
              */
-            currI                 =
-                (IncludeFile)fileList.get(fileList.size() - 1);
+            currI = (IncludeFile)fileList.get(fileList.size() - 1);
 
-            currI.tokenizer       =
-                new Tokenizer(
-                    new BufferedReader(
-                        new InputStreamReader(
-                            new FileInputStream(currI.fileObject)
-                            ),
-                        MMIOConstants.READER_BUFFER_SIZE
-                        ),
-                    currI.fileName,
-                    currI.restartCharsToBypass);
+            currI.tokenizer = new Tokenizer(new BufferedReader(
+                new InputStreamReader(new FileInputStream(currI.fileObject)),
+                MMIOConstants.READER_BUFFER_SIZE), currI.fileName,
+                currI.restartCharsToBypass);
 
-            currI.restartCharsToBypass
-                                  = 0;
-            retTokenizer          = currI.tokenizer;
+            currI.restartCharsToBypass = 0;
+            retTokenizer = currI.tokenizer;
         }
         return retTokenizer;
     }

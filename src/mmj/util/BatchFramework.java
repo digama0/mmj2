@@ -40,16 +40,15 @@
 
 package mmj.util;
 
-import java.io.*;
-import java.util.*;
-import mmj.mmio.*;
-import mmj.lang.*;
-import mmj.verify.*;
-import mmj.pa.*;
-import mmj.tmff.*;
-import mmj.svc.*;
-import mmj.tl.*;
-import mmj.gmff.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import mmj.gmff.GMFFException;
+import mmj.lang.TheoremLoaderException;
+import mmj.lang.VerifyException;
+import mmj.mmio.MMIOException;
 
 /**
  *  BatchFramework is a quick hack to run mmj2 without
@@ -104,57 +103,50 @@ import mmj.gmff.*;
  */
 public abstract class BatchFramework {
 
-    protected    boolean batchFrameworkInitialized
-                                   = false;
+    protected boolean batchFrameworkInitialized = false;
 
-	protected    CommandLineArguments
-	                               commandLineArguments;
+    protected CommandLineArguments commandLineArguments;
 
-    /*friendly*/ Paths             paths;
+    /*friendly*/Paths paths;
 
-    /*friendly*/ MMJ2FailPopupWindow
-                                   mmj2FailPopupWindow;
+    /*friendly*/MMJ2FailPopupWindow mmj2FailPopupWindow;
 
-    /*friendly*/ boolean           displayMMJ2FailPopupWindow
-                                =
-		UtilConstants.DISPLAY_MMJ2_FAIL_POPUP_WINDOW_DEFAULT;
+    /*friendly*/boolean displayMMJ2FailPopupWindow = UtilConstants.DISPLAY_MMJ2_FAIL_POPUP_WINDOW_DEFAULT;
 
-    protected    RunParmFile       runParmFile;
-    /*friendly*/ int               runParmCnt;
+    protected RunParmFile runParmFile;
+    /*friendly*/int runParmCnt;
 
-	/*friendly*/ String            currentRunParmCommand;
+    /*friendly*/String currentRunParmCommand;
 
-    /*friendly*/ String            runParmExecutableCaption;
-    /*friendly*/ String            runParmCommentCaption;
+    /*friendly*/String runParmExecutableCaption;
+    /*friendly*/String runParmCommentCaption;
 
-    /*friendly*/ ArrayList         bossList;
+    /*friendly*/ArrayList bossList;
 
-    /*friendly*/ OutputBoss        outputBoss;
+    /*friendly*/OutputBoss outputBoss;
 
-    /*friendly*/ LogicalSystemBoss logicalSystemBoss;
+    /*friendly*/LogicalSystemBoss logicalSystemBoss;
 
-    /*friendly*/ VerifyProofBoss   verifyProofBoss;
+    /*friendly*/VerifyProofBoss verifyProofBoss;
 
-    /*friendly*/ GrammarBoss       grammarBoss;
+    /*friendly*/GrammarBoss grammarBoss;
 
-    /*friendly*/ ProofAsstBoss     proofAsstBoss;
+    /*friendly*/ProofAsstBoss proofAsstBoss;
 
-    /*friendly*/ TMFFBoss          tmffBoss;
+    /*friendly*/TMFFBoss tmffBoss;
 
-    /*friendly*/ WorkVarBoss       workVarBoss;
+    /*friendly*/WorkVarBoss workVarBoss;
 
-    /*friendly*/ SvcBoss           svcBoss;
+    /*friendly*/SvcBoss svcBoss;
 
-    /*friendly*/ TheoremLoaderBoss theoremLoaderBoss;
+    /*friendly*/TheoremLoaderBoss theoremLoaderBoss;
 
-    /*friendly*/ GMFFBoss          gmffBoss;
-
+    /*friendly*/GMFFBoss gmffBoss;
 
     /**
      *  Default Constructor.
      */
-    public BatchFramework() {
-    }
+    public BatchFramework() {}
 
     /**
      *  Initialize BatchFramework with Boss list and
@@ -173,53 +165,51 @@ public abstract class BatchFramework {
      */
     public void initializeBatchFramework() {
         batchFrameworkInitialized = true;
-        bossList                  = new ArrayList();
+        bossList = new ArrayList();
 
-        outputBoss                = new OutputBoss(this);
+        outputBoss = new OutputBoss(this);
         addBossToBossList(outputBoss);
 
-        verifyProofBoss           = new VerifyProofBoss(this);
+        verifyProofBoss = new VerifyProofBoss(this);
         addBossToBossList(verifyProofBoss);
 
-        grammarBoss               = new GrammarBoss(this);
+        grammarBoss = new GrammarBoss(this);
         addBossToBossList(grammarBoss);
 
-        proofAsstBoss             = new ProofAsstBoss(this);
+        proofAsstBoss = new ProofAsstBoss(this);
         addBossToBossList(proofAsstBoss);
 
-        tmffBoss                  = new TMFFBoss(this);
+        tmffBoss = new TMFFBoss(this);
         addBossToBossList(tmffBoss);
 
-        workVarBoss               = new WorkVarBoss(this);
+        workVarBoss = new WorkVarBoss(this);
         addBossToBossList(workVarBoss);
 
-        svcBoss                   = new SvcBoss(this);
+        svcBoss = new SvcBoss(this);
         addBossToBossList(svcBoss);
 
-        theoremLoaderBoss        = new TheoremLoaderBoss(this);
+        theoremLoaderBoss = new TheoremLoaderBoss(this);
         addBossToBossList(theoremLoaderBoss);
 
-        gmffBoss                 = new GMFFBoss(this);
+        gmffBoss = new GMFFBoss(this);
         addBossToBossList(gmffBoss);
-
 
         addAnyExtraBossesToBossList();
 
-        //NOTE: LogicalSystemBoss should be at the end
-        //      because the "LoadFile" RunParm is a signal
-        //      to many other the other bosses that they
-        //      need to re-initialize their state (for
-        //      example, Grammar requires reinitialization
-        //      for new input .mm files.)
-        logicalSystemBoss         = new LogicalSystemBoss(this);
+        // NOTE: LogicalSystemBoss should be at the end
+        // because the "LoadFile" RunParm is a signal
+        // to many other the other bosses that they
+        // need to re-initialize their state (for
+        // example, Grammar requires reinitialization
+        // for new input .mm files.)
+        logicalSystemBoss = new LogicalSystemBoss(this);
         addBossToBossList(logicalSystemBoss);
 
         setRunParmExecutableCaption();
         setRunParmCommentCaption();
 
-        mmj2FailPopupWindow     =
-        	new MMJ2FailPopupWindow(this,
-        	                        displayMMJ2FailPopupWindow);
+        mmj2FailPopupWindow = new MMJ2FailPopupWindow(this,
+            displayMMJ2FailPopupWindow);
     }
 
     /**
@@ -242,79 +232,61 @@ public abstract class BatchFramework {
      *          or 16, if BatchFramework failed to complete
      *          (probably due to a RunParmFile error.)
      */
-    public int runIt(String[] args) {
+    public int runIt(final String[] args) {
 
-        int    retCd            = 0;
-        String failMessage      = null;
+        int retCd = 0;
+        String failMessage = null;
 
-        if (!batchFrameworkInitialized) {
+        if (!batchFrameworkInitialized)
             initializeBatchFramework();
-        }
 
         try {
-			commandLineArguments
-								=
-				new CommandLineArguments(args);
+            commandLineArguments = new CommandLineArguments(args);
 
-			paths               =
-				commandLineArguments.getPaths();
+            paths = commandLineArguments.getPaths();
 
-			runParmFile         =
-				commandLineArguments.getRunParmFile();
+            runParmFile = commandLineArguments.getRunParmFile();
 
-			displayMMJ2FailPopupWindow
-			                    =
-				commandLineArguments.getDisplayMMJ2FailPopupWindow();
+            displayMMJ2FailPopupWindow = commandLineArguments
+                .getDisplayMMJ2FailPopupWindow();
 
-			mmj2FailPopupWindow.
-				setEnabled(
-					displayMMJ2FailPopupWindow);
+            mmj2FailPopupWindow.setEnabled(displayMMJ2FailPopupWindow);
 
-			mmj2FailPopupWindow.initiateStartupMode();
+            mmj2FailPopupWindow.initiateStartupMode();
 
-		}
-        catch(Exception e) {
-			failMessage         =
-				UtilConstants.ERRMSG_RUNPARM_FILE_BOGUS_1
+        } catch (final Exception e) {
+            failMessage = UtilConstants.ERRMSG_RUNPARM_FILE_BOGUS_1
                 + e.getMessage();
-            System.err.println(
-				failMessage);
-            retCd               = 16;
+            System.err.println(failMessage);
+            retCd = 16;
         }
 
-		if (retCd == 0) {
-			try {
-				while (runParmFile.hasNext()) {
-					executeRunParmCommand(runParmFile.next());
-				}
-			}
-			catch (Exception e) {
-				failMessage         = e.getMessage();
-				System.err.println(failMessage);
-				e.printStackTrace(System.err);
-				retCd               = 16;
-				try {
-					outputBoss.sysErrPrintln(failMessage);
-				}
-				catch(IOException f) {
-					failMessage     = failMessage
-									+ f.getMessage();
-					System.err.println(failMessage);
-				}
-			}
-			catch (Error e) {
-				failMessage         = e.getMessage();
-				retCd               = 16;
-				System.err.println(failMessage);
-				e.printStackTrace(System.err);
-			}
-		}
+        if (retCd == 0)
+            try {
+                while (runParmFile.hasNext())
+                    executeRunParmCommand(runParmFile.next());
+            } catch (final Exception e) {
+                failMessage = e.getMessage();
+                System.err.println(failMessage);
+                e.printStackTrace(System.err);
+                retCd = 16;
+                try {
+                    outputBoss.sysErrPrintln(failMessage);
+                } catch (final IOException f) {
+                    failMessage = failMessage + f.getMessage();
+                    System.err.println(failMessage);
+                }
+            } catch (final Error e) {
+                failMessage = e.getMessage();
+                retCd = 16;
+                System.err.println(failMessage);
+                e.printStackTrace(System.err);
+            }
 
-		if (failMessage != null) {
-			mmj2FailPopupWindow.displayFailMessage(failMessage);
-		}
+        if (failMessage != null)
+            mmj2FailPopupWindow.displayFailMessage(failMessage);
 
-		outputBoss.close();
+        outputBoss.close();
 
         return retCd;
     }
@@ -324,7 +296,7 @@ public abstract class BatchFramework {
      *
      *  @param boss
      */
-    public void addBossToBossList(Boss boss) {
+    public void addBossToBossList(final Boss boss) {
         bossList.add(boss);
     }
 
@@ -337,16 +309,14 @@ public abstract class BatchFramework {
      *  each RunParmFile line that hasn't already been
      *  "consumed" by other bosses.
      */
-    public void addAnyExtraBossesToBossList() {
-    }
+    public void addAnyExtraBossesToBossList() {}
 
     /**
      *  Override this to alter what prints out before
      *  an executable RunParmFile line is processed.
      */
     public void setRunParmExecutableCaption() {
-        runParmExecutableCaption   =
-            UtilConstants.ERRMSG_RUNPARM_EXECUTABLE_CAPTION;
+        runParmExecutableCaption = UtilConstants.ERRMSG_RUNPARM_EXECUTABLE_CAPTION;
     }
 
     /**
@@ -354,8 +324,7 @@ public abstract class BatchFramework {
      *  a RunParmFile comment line.
      */
     public void setRunParmCommentCaption() {
-        runParmCommentCaption   =
-            UtilConstants.ERRMSG_RUNPARM_COMMENT_CAPTION;
+        runParmCommentCaption = UtilConstants.ERRMSG_RUNPARM_COMMENT_CAPTION;
     }
 
     /**
@@ -364,59 +333,40 @@ public abstract class BatchFramework {
      *  @param runParm RunParmFileLine parsed into a
      *         RunParmArrayEntry object.
      */
-    public void executeRunParmCommand(RunParmArrayEntry runParm)
-                            throws IllegalArgumentException,
-                                   MMIOException,
-                                   FileNotFoundException,
-                                   IOException,
-                                   VerifyException,
-                                   TheoremLoaderException,
-                                   GMFFException {
+    public void executeRunParmCommand(final RunParmArrayEntry runParm)
+        throws IllegalArgumentException, MMIOException, FileNotFoundException,
+        IOException, VerifyException, TheoremLoaderException, GMFFException
+    {
 
-
-        boolean  consumed;
+        boolean consumed;
         Iterator iterator;
         ++runParmCnt;
 
-		//capture this for use by MMJ2FailPopupWindow
-        currentRunParmCommand   = runParm.name;
+        // capture this for use by MMJ2FailPopupWindow
+        currentRunParmCommand = runParm.name;
 
-        if (runParm.commentLine != null) {
-            printCommentRunParmLine(
-                             runParmCommentCaption,
-                             runParmCnt,
-                             runParm);
-        }
+        if (runParm.commentLine != null)
+            printCommentRunParmLine(runParmCommentCaption, runParmCnt, runParm);
         else {
-            printExecutableRunParmLine(
-                             runParmExecutableCaption,
-                             runParmCnt,
-                             runParm);
+            printExecutableRunParmLine(runParmExecutableCaption, runParmCnt,
+                runParm);
 
-            if (runParm.name.compareToIgnoreCase(
-                UtilConstants.RUNPARM_JAVA_GARBAGE_COLLECTION)
-                == 0) {
+            if (runParm.name
+                .compareToIgnoreCase(UtilConstants.RUNPARM_JAVA_GARBAGE_COLLECTION) == 0)
                 System.gc();
-            }
             else {
                 consumed = false;
                 iterator = bossList.iterator();
-                while (iterator.hasNext()
-                       &&
-                       !consumed) {
-                    consumed      =
-                        ((Boss)iterator.next()
-                            ).doRunParmCommand(runParm);
-                }
-                if (!consumed &&
-                    runParm.name.compareToIgnoreCase(
-                        UtilConstants.RUNPARM_CLEAR)
-                    != 0) {
+                while (iterator.hasNext() && !consumed)
+                    consumed = ((Boss)iterator.next())
+                        .doRunParmCommand(runParm);
+                if (!consumed
+                    && runParm.name
+                        .compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR) != 0)
                     throw new IllegalArgumentException(
                         UtilConstants.ERRMSG_RUNPARM_NAME_INVALID_1
-                        + runParm.name
-                        + UtilConstants.ERRMSG_RUNPARM_NAME_INVALID_2);
-                }
+                            + runParm.name
+                            + UtilConstants.ERRMSG_RUNPARM_NAME_INVALID_2);
             }
         }
     }
@@ -429,16 +379,13 @@ public abstract class BatchFramework {
      *                 command name.
      *  @return true if equal, ignoring case, otherwise false.
      */
-	public boolean isCurrentRunParmCommand(String command) {
-		if (currentRunParmCommand != null
-				&&
-		    currentRunParmCommand.compareToIgnoreCase(command) == 0) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
+    public boolean isCurrentRunParmCommand(final String command) {
+        if (currentRunParmCommand != null
+            && currentRunParmCommand.compareToIgnoreCase(command) == 0)
+            return true;
+        else
+            return false;
+    }
 
     /**
      *  Override this to change or eliminate the printout
@@ -449,17 +396,12 @@ public abstract class BatchFramework {
      *  @param runParm RunParmFile line parsed into
      *                 object RunParmArrayEntry.
      */
-    public void printExecutableRunParmLine(
-                                 String            caption,
-                                 int               cnt,
-                                 RunParmArrayEntry runParm)
-                            throws IOException {
-        outputBoss.sysOutPrintln(
-                        caption
-                        + cnt
-                        + UtilConstants.ERRMSG_EQUALS_LITERAL
-                        + runParm,
-                        UtilConstants.RUNPARM_LINE_DUMP_VERBOSITY);
+    public void printExecutableRunParmLine(final String caption, final int cnt,
+        final RunParmArrayEntry runParm) throws IOException
+    {
+        outputBoss.sysOutPrintln(caption + cnt
+            + UtilConstants.ERRMSG_EQUALS_LITERAL + runParm,
+            UtilConstants.RUNPARM_LINE_DUMP_VERBOSITY);
     }
 
     /**
@@ -471,17 +413,12 @@ public abstract class BatchFramework {
      *  @param runParm RunParmFile line parsed into
      *                 object RunParmArrayEntry.
      */
-    public void printCommentRunParmLine(
-                                 String            caption,
-                                 int               cnt,
-                                 RunParmArrayEntry runParm)
-                            throws IOException {
-        outputBoss.sysOutPrintln(
-                        caption
-                        + cnt
-                        + UtilConstants.ERRMSG_EQUALS_LITERAL
-                        + runParm,
-                        UtilConstants.RUNPARM_LINE_DUMP_VERBOSITY);
+    public void printCommentRunParmLine(final String caption, final int cnt,
+        final RunParmArrayEntry runParm) throws IOException
+    {
+        outputBoss.sysOutPrintln(caption + cnt
+            + UtilConstants.ERRMSG_EQUALS_LITERAL + runParm,
+            UtilConstants.RUNPARM_LINE_DUMP_VERBOSITY);
     }
 
     /**
@@ -490,11 +427,10 @@ public abstract class BatchFramework {
      *  @return canonical path of RunParmFile or empty string
      *          if RunParmFile is null.
      */
-	public String getRunParmFileAbsolutePath() {
-		String s                = new String("");
-		if (runParmFile != null) {
-			s                   = runParmFile.getAbsolutePath();
-		}
-		return s;
-	}
+    public String getRunParmFileAbsolutePath() {
+        String s = new String("");
+        if (runParmFile != null)
+            s = runParmFile.getAbsolutePath();
+        return s;
+    }
 }

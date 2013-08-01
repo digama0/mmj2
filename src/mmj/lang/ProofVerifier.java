@@ -10,7 +10,8 @@
  */
 
 package mmj.lang;
-import java.util.*;
+
+import java.util.Map;
 
 /**
  *  Interface to proof verification.
@@ -35,8 +36,7 @@ public interface ProofVerifier {
      *  @param messages Messages object for output error messages.
      *  @param stmtTbl  Statement Table (map).
      */
-    void verifyAllProofs(Messages messages,
-                         Map      stmtTbl);
+    void verifyAllProofs(Messages messages, Map stmtTbl);
 
     /**
      *  Verify grammatical parse RPN as if it were a proof.
@@ -63,9 +63,6 @@ public interface ProofVerifier {
      *  @param messages Messages object for output error messages.
      *  @param stmtTbl  Statement Table (map).
      */
-    void verifyAllExprRPNAsProofs(Messages messages,
-                                  Map      stmtTbl);
+    void verifyAllExprRPNAsProofs(Messages messages, Map stmtTbl);
 
 }
-
-

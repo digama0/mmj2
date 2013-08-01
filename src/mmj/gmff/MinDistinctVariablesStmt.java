@@ -6,7 +6,6 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-
 /**
  *  MinDistinctVariablesStmt.java  0.01 11/01/2011
  *
@@ -28,7 +27,6 @@ package mmj.gmff;
  */
 public class MinDistinctVariablesStmt extends MinProofWorkStmt {
 
-
     /**
      *  Standard MinDistinctVariablesStmt constructor.
      *  <p>
@@ -38,11 +36,11 @@ public class MinDistinctVariablesStmt extends MinProofWorkStmt {
      *   			the lines and "chunks" making up the
      *              <code>MinProofWorkStmt</code>.
      */
-   public MinDistinctVariablesStmt(MinProofWorksheet w,
-                                    String[][]        slc) {
+    public MinDistinctVariablesStmt(final MinProofWorksheet w,
+        final String[][] slc)
+    {
 
-		super(w,
-		      slc);
+        super(w, slc);
     }
 
     /**
@@ -81,97 +79,67 @@ public class MinDistinctVariablesStmt extends MinProofWorkStmt {
      *  @throws GMFFException if errors are encountered during the
      *               export process.
      */
-	public void buildModelAExport(
-						 	GMFFExporter gmffExporter,
-		               	 	StringBuffer exportBuffer)
-				            	throws GMFFException {
+    @Override
+    public void buildModelAExport(final GMFFExporter gmffExporter,
+        final StringBuffer exportBuffer) throws GMFFException
+    {
 
-		String modelADistinctVar0     =
-			gmffExporter.getOptionalModelFile(
-				GMFFConstants.MODEL_A_DISTINCTVAR0_NAME);
-		if (modelADistinctVar0 == null) {
-			return;
-		}
+        final String modelADistinctVar0 = gmffExporter
+            .getOptionalModelFile(GMFFConstants.MODEL_A_DISTINCTVAR0_NAME);
+        if (modelADistinctVar0 == null)
+            return;
 
-		String modelADistinctVar1X   =
-			gmffExporter.getOptionalModelFile(
-				GMFFConstants.MODEL_A_DISTINCTVAR1X_NAME);
-		if (modelADistinctVar1X == null) {
-			return;
-		}
-		String modelADistinctVar2    =
-			gmffExporter.getOptionalModelFile(
-				GMFFConstants.MODEL_A_DISTINCTVAR2_NAME);
-		if (modelADistinctVar2 == null) {
-			return;
-		}
-		String modelADistinctVar3X   =
-			gmffExporter.getOptionalModelFile(
-				GMFFConstants.MODEL_A_DISTINCTVAR3X_NAME);
-		if (modelADistinctVar3X == null) {
-			return;
-		}
-		String modelADistinctVar4    =
-			gmffExporter.getOptionalModelFile(
-				GMFFConstants.MODEL_A_DISTINCTVAR4_NAME);
-		if (modelADistinctVar4 == null) {
-			return;
-		}
+        final String modelADistinctVar1X = gmffExporter
+            .getOptionalModelFile(GMFFConstants.MODEL_A_DISTINCTVAR1X_NAME);
+        if (modelADistinctVar1X == null)
+            return;
+        final String modelADistinctVar2 = gmffExporter
+            .getOptionalModelFile(GMFFConstants.MODEL_A_DISTINCTVAR2_NAME);
+        if (modelADistinctVar2 == null)
+            return;
+        final String modelADistinctVar3X = gmffExporter
+            .getOptionalModelFile(GMFFConstants.MODEL_A_DISTINCTVAR3X_NAME);
+        if (modelADistinctVar3X == null)
+            return;
+        final String modelADistinctVar4 = gmffExporter
+            .getOptionalModelFile(GMFFConstants.MODEL_A_DISTINCTVAR4_NAME);
+        if (modelADistinctVar4 == null)
+            return;
 
-		// well all righty then...
+        // well all righty then...
 
-		String[] lineChunks;
-		String   chunk;
+        String[] lineChunks;
+        String chunk;
 
-		for (int i = 0; i < stmtLineChunks.length; i++) {
+        for (int i = 0; i < stmtLineChunks.length; i++) {
 
-			lineChunks          = stmtLineChunks[i];
+            lineChunks = stmtLineChunks[i];
 
-			gmffExporter.appendModelFileText(
-				exportBuffer,
-				modelADistinctVar0);
+            gmffExporter.appendModelFileText(exportBuffer, modelADistinctVar0);
 
-			int startOfFormulaSymbols
-			                    = -1;
-			int j;
-			for (j = 0; j < lineChunks.length; j++) {
-				chunk           = lineChunks[j];
-				if (chunk.length() > 0 &&
-				    !isChunkWhitespace(chunk)) {
+            int startOfFormulaSymbols = -1;
+            int j;
+            for (j = 0; j < lineChunks.length; j++) {
+                chunk = lineChunks[j];
+                if (chunk.length() > 0 && !isChunkWhitespace(chunk)) {
 
-					startOfFormulaSymbols
-							    = j;
-					break;
-				}
-			}
+                    startOfFormulaSymbols = j;
+                    break;
+                }
+            }
 
-			String linePart1    =
-				getCleanedLineString(i,
-				                     0,
-				                     j);
+            final String linePart1 = getCleanedLineString(i, 0, j);
 
-			if (modelADistinctVar1X.length() > 0) {
-				gmffExporter.escapeAndAppendProofText(
-					exportBuffer,
-					linePart1);
-			}
+            if (modelADistinctVar1X.length() > 0)
+                gmffExporter.escapeAndAppendProofText(exportBuffer, linePart1);
 
-			gmffExporter.appendModelFileText(
-				exportBuffer,
-				modelADistinctVar2);
+            gmffExporter.appendModelFileText(exportBuffer, modelADistinctVar2);
 
-			if (startOfFormulaSymbols != -1 &&
-				modelADistinctVar3X.length() > 0) {
+            if (startOfFormulaSymbols != -1 && modelADistinctVar3X.length() > 0)
+                typesetFormulaSymbols(gmffExporter, exportBuffer, lineChunks,
+                    startOfFormulaSymbols);
 
-				typesetFormulaSymbols(gmffExporter,
-		               	 			  exportBuffer,
-									  lineChunks,
-				            		  startOfFormulaSymbols);
-			}
-
-			gmffExporter.appendModelFileText(
-				exportBuffer,
-				modelADistinctVar4);
-		}
-	}
+            gmffExporter.appendModelFileText(exportBuffer, modelADistinctVar4);
+        }
+    }
 }

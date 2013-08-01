@@ -6,7 +6,6 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-
 /**
  *  GMFFMandatoryModelNotFoundException.java  0.01 11/01/2011
  *
@@ -19,8 +18,9 @@ package mmj.gmff;
 /**
  *  Custom exception for GMFF.
  */
-public class GMFFMandatoryModelNotFoundException
-			extends GMFFFileNotFoundException {
+public class GMFFMandatoryModelNotFoundException extends
+    GMFFFileNotFoundException
+{
 
     /**
      * Default Constructor.
@@ -34,7 +34,7 @@ public class GMFFMandatoryModelNotFoundException
      *
      * @param   errorMessage  error message.
      */
-    public GMFFMandatoryModelNotFoundException(String errorMessage) {
+    public GMFFMandatoryModelNotFoundException(final String errorMessage) {
         super(errorMessage);
     }
 }

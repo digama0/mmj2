@@ -13,7 +13,9 @@
  */
 
 package mmj.pa;
-import mmj.lang.*;
+
+import mmj.lang.ParseNode;
+import mmj.lang.VarHyp;
 
 /**
  *  UnifySubst is a data structure for use in proof
@@ -22,41 +24,36 @@ import mmj.lang.*;
  */
 public class UnifySubst {
 
-    /* friendly */ VarHyp     fromHyp;
+    /* friendly */VarHyp fromHyp;
 
-    /* friendly */ ParseNode  toNode;
+    /* friendly */ParseNode toNode;
 
-    /* friendly */ UnifySubst next;
+    /* friendly */UnifySubst next;
 
-    /* friendly */ boolean    generatedDuringAccum;
+    /* friendly */boolean generatedDuringAccum;
 
-    public static UnifySubst  IMPOSSIBLE
-                                  = new UnifySubst();
-    public static UnifySubst  EMPTY_LIST
-                                  = new UnifySubst();
+    public static UnifySubst IMPOSSIBLE = new UnifySubst();
+    public static UnifySubst EMPTY_LIST = new UnifySubst();
 
-    public UnifySubst() {
+    public UnifySubst() {}
+
+    public UnifySubst(final VarHyp fromHyp, final ParseNode toNode) {
+        this.fromHyp = fromHyp;
+        this.toNode = toNode;
     }
 
-    public UnifySubst(VarHyp    fromHyp,
-                      ParseNode toNode) {
-        this.fromHyp              = fromHyp;
-        this.toNode               = toNode;
-    }
-
-    public UnifySubst(VarHyp    fromHyp,
-                      ParseNode toNode,
-                      boolean   generatedDuringAccum) {
-        this.fromHyp              = fromHyp;
-        this.toNode               = toNode;
+    public UnifySubst(final VarHyp fromHyp, final ParseNode toNode,
+        final boolean generatedDuringAccum)
+    {
+        this.fromHyp = fromHyp;
+        this.toNode = toNode;
         this.generatedDuringAccum = generatedDuringAccum;
     }
 
-    public UnifySubst insert(UnifySubst last) {
-        next                      = null;
-        if (last != null) {
-            last.next             = this;
-        }
+    public UnifySubst insert(final UnifySubst last) {
+        next = null;
+        if (last != null)
+            last.next = this;
         return this;
     }
 }

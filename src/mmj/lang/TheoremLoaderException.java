@@ -30,7 +30,7 @@ public class TheoremLoaderException extends LangException {
      *
      *  @param   errorMessage  error message.
      */
-    public TheoremLoaderException(String errorMessage) {
+    public TheoremLoaderException(final String errorMessage) {
         super(errorMessage);
     }
 }

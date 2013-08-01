@@ -6,7 +6,6 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-
 /**
  *  MinProofWorkStmt.java  0.01 11/01/2011
  *
@@ -16,10 +15,9 @@
 
 package mmj.gmff;
 
-import  java.util.ArrayList;
-import  java.lang.IllegalArgumentException;
-import  mmj.pa.PaConstants;
+import java.util.ArrayList;
 
+import mmj.pa.PaConstants;
 
 /**
  *  General object representing a statement in a MinProofWorksheet.
@@ -32,17 +30,16 @@ public abstract class MinProofWorkStmt {
      */
     MinProofWorksheet w;
 
-	/**
-	 *  Array of Array of Strings, each of
-	 *  which is either Metamath whitespace or a Metamath
-	 *  token.
-	 *  <p>
-	 *  The outer array represents a line of a Proof
-	 *  Worksheet and the inner array the "chunks"
-	 *  which comprise a single line.
-	 */
-	String[][] stmtLineChunks;
-
+    /**
+     *  Array of Array of Strings, each of
+     *  which is either Metamath whitespace or a Metamath
+     *  token.
+     *  <p>
+     *  The outer array represents a line of a Proof
+     *  Worksheet and the inner array the "chunks"
+     *  which comprise a single line.
+     */
+    String[][] stmtLineChunks;
 
     /**
      *  Standard MinProofWorkStmt constructor.
@@ -53,11 +50,10 @@ public abstract class MinProofWorkStmt {
      *   			the lines and "chunks" making up the
      *              <code>MinProofWorkStmt</code>.
      */
-    public MinProofWorkStmt(MinProofWorksheet w,
-                            String[][]        slc) {
+    public MinProofWorkStmt(final MinProofWorksheet w, final String[][] slc) {
 
-        this.w                    = w;
-		stmtLineChunks            = slc;
+        this.w = w;
+        stmtLineChunks = slc;
     }
 
     /**
@@ -94,99 +90,59 @@ public abstract class MinProofWorkStmt {
      *          	  or if the first line has no <code>String</code>
      *             chunks.
      */
-	public static MinProofWorkStmt constructStmt(
-			MinProofWorksheet 				minProofWorksheet,
-			ArrayList<ArrayList<String>>	lineList) {
+    public static MinProofWorkStmt constructStmt(
+        final MinProofWorksheet minProofWorksheet,
+        final ArrayList<ArrayList<String>> lineList)
+    {
 
-    	String[][] slc          = new String[lineList.size()][];
-		int row                 = 0;
-    	for (ArrayList<String> line: lineList) {
-			String[] lc         = new String[line.size()];
-			int col             = 0;
-			for (String s: line) {
-				lc[col++]       = s;
-			}
-            slc[row++]          = lc;
-		}
+        final String[][] slc = new String[lineList.size()][];
+        int row = 0;
+        for (final ArrayList<String> line : lineList) {
+            final String[] lc = new String[line.size()];
+            int col = 0;
+            for (final String s : line)
+                lc[col++] = s;
+            slc[row++] = lc;
+        }
 
-		if (slc.length    == 0 ||
-		    slc[0].length == 0) {
-			minProofWorksheet.setStructuralErrors(true);
-		    throw new IllegalArgumentException(
-				GMFFConstants.ERRMSG_INVALID_LINE_LIST_ERROR_1
-				+ minProofWorksheet.getTheoremLabel()
-				+ GMFFConstants.ERRMSG_INVALID_LINE_LIST_ERROR_1B
-				+ (minProofWorksheet.getLineCnt() -
-				   lineList.size() +
-				   1));
-		}
+        if (slc.length == 0 || slc[0].length == 0) {
+            minProofWorksheet.setStructuralErrors(true);
+            throw new IllegalArgumentException(
+                GMFFConstants.ERRMSG_INVALID_LINE_LIST_ERROR_1
+                    + minProofWorksheet.getTheoremLabel()
+                    + GMFFConstants.ERRMSG_INVALID_LINE_LIST_ERROR_1B
+                    + (minProofWorksheet.getLineCnt() - lineList.size() + 1));
+        }
 
-		String startChunk         = slc[0][0].toUpperCase();
-		try {
-			if ((startChunk.length() > 0 &&
-				 Character.isDigit(startChunk.charAt(0)))
-				||
-			   (startChunk.startsWith(
-					PaConstants.
-						QED_STEP_NBR_CAPS))
-				 ) {
-				return new MinDerivationStep(minProofWorksheet,
-											 slc);
-			}
-			if (startChunk.startsWith(
-					PaConstants.
-						HYP_STEP_PREFIX.toUpperCase())) {
-				return new MinHypothesisStep(minProofWorksheet,
-                                             slc);
-			}
-			if (startChunk.equals(
-					PaConstants.
-						COMMENT_STMT_TOKEN_PREFIX)) {
-				return new MinCommentStmt(minProofWorksheet,
-										  slc);
-			}
-			if (startChunk.equals(
-					PaConstants.
-						HEADER_STMT_TOKEN)) {
-				return new MinHeaderStmt(minProofWorksheet,
-										 slc);
-			}
-			if (startChunk.equals(
-					PaConstants.
-						DISTINCT_VARIABLES_STMT_TOKEN.toUpperCase())) {
-				return new MinDistinctVariablesStmt(minProofWorksheet,
-													slc);
-			}
-			if (startChunk.equals(
-					PaConstants.
-						GENERATED_PROOF_STMT_TOKEN)) {
-				return new MinGeneratedProofStmt(minProofWorksheet,
-												 slc);
-			}
-			if (startChunk.equals(
-					PaConstants.
-						FOOTER_STMT_TOKEN)) {
-				return new MinFooterStmt(minProofWorksheet,
-										 slc);
-			}
-			minProofWorksheet.triggerBogusStmtLineStart(
-				startChunk,
-				(minProofWorksheet.getLineCnt() -
-				 lineList.size() +
-				 1)
-				);
-		}
-		catch (IllegalArgumentException e) {
-			minProofWorksheet.triggerConstructorError(
-				e.toString(),
-				(minProofWorksheet.getLineCnt() -
-				 lineList.size() +
-				 1)
-				);
+        final String startChunk = slc[0][0].toUpperCase();
+        try {
+            if (startChunk.length() > 0
+                && Character.isDigit(startChunk.charAt(0))
+                || startChunk.startsWith(PaConstants.QED_STEP_NBR_CAPS))
+                return new MinDerivationStep(minProofWorksheet, slc);
+            if (startChunk
+                .startsWith(PaConstants.HYP_STEP_PREFIX.toUpperCase()))
+                return new MinHypothesisStep(minProofWorksheet, slc);
+            if (startChunk.equals(PaConstants.COMMENT_STMT_TOKEN_PREFIX))
+                return new MinCommentStmt(minProofWorksheet, slc);
+            if (startChunk.equals(PaConstants.HEADER_STMT_TOKEN))
+                return new MinHeaderStmt(minProofWorksheet, slc);
+            if (startChunk.equals(PaConstants.DISTINCT_VARIABLES_STMT_TOKEN
+                .toUpperCase()))
+                return new MinDistinctVariablesStmt(minProofWorksheet, slc);
+            if (startChunk.equals(PaConstants.GENERATED_PROOF_STMT_TOKEN))
+                return new MinGeneratedProofStmt(minProofWorksheet, slc);
+            if (startChunk.equals(PaConstants.FOOTER_STMT_TOKEN))
+                return new MinFooterStmt(minProofWorksheet, slc);
+            minProofWorksheet.triggerBogusStmtLineStart(startChunk,
+                minProofWorksheet.getLineCnt() - lineList.size() + 1);
+        } catch (final IllegalArgumentException e) {
+            minProofWorksheet.triggerConstructorError(e.toString(),
+                minProofWorksheet.getLineCnt() - lineList.size() + 1);
 
-		}
-		return null;
-	}
+        }
+        return null;
+    }
 
     /**
      *  Formats export data for the Proof Worksheet statement
@@ -215,13 +171,11 @@ public abstract class MinProofWorkStmt {
      *				the export data build.
      *  @param exportBuffer The <code>StringBuffer</code> to which
      *               exported data is to be output.
-  	 *  @throws GMFFException if errors are encountered during the
-  	 *               export process.
+     *  @throws GMFFException if errors are encountered during the
+     *               export process.
      */
-	public abstract void buildModelAExport(
-		    			 		GMFFExporter gmffExporter,
-		     			 		StringBuffer exportBuffer)
-				            		throws GMFFException;
+    public abstract void buildModelAExport(GMFFExporter gmffExporter,
+        StringBuffer exportBuffer) throws GMFFException;
 
     /**
      *  Utility function to typeset and reformat a portion of
@@ -248,47 +202,37 @@ public abstract class MinProofWorkStmt {
      *               operation (which proceeds through the end
      *               of the array -- effectively we are just
      *               bypassing an initial part of the array.)
-  	 *  @throws GMFFException if errors are encountered during the
-  	 *               export process.
+     *  @throws GMFFException if errors are encountered during the
+     *               export process.
      */
-	public void typesetFormulaSymbols(
-						GMFFExporter gmffExporter,
-			 			StringBuffer exportBuffer,
-						String[]     lineChunks,
-				        int          startOfFormulaSymbols) {
+    public void typesetFormulaSymbols(final GMFFExporter gmffExporter,
+        final StringBuffer exportBuffer, final String[] lineChunks,
+        final int startOfFormulaSymbols)
+    {
 
-		String   chunk;
+        String chunk;
 
-		for (int t = startOfFormulaSymbols;
-			 t < lineChunks.length;
-			 t++) {
+        for (int t = startOfFormulaSymbols; t < lineChunks.length; t++) {
 
-			chunk       		= lineChunks[t];
-			if (chunk.length() == 0) {
-				continue;
-			}
+            chunk = lineChunks[t];
+            if (chunk.length() == 0)
+                continue;
 
-			if (!isChunkWhitespace(chunk)) {
-				gmffExporter.typesetAndAppendToken(
-					exportBuffer,
-					chunk,
-					w.getTheoremLabel());
-				continue;
-			}
+            if (!isChunkWhitespace(chunk)) {
+                gmffExporter.typesetAndAppendToken(exportBuffer, chunk,
+                    w.getTheoremLabel());
+                continue;
+            }
 
-			if (chunk.length() > 1) {
-				StringBuffer sb
-								= new StringBuffer(
-										chunk.length() - 1);
-				for (int z = 1; z < chunk.length(); z++) {
-					sb.append(" ");
-				}
-				gmffExporter.escapeAndAppendProofText(
-					exportBuffer,
-					sb.toString());
-			}
-		}
-	}
+            if (chunk.length() > 1) {
+                final StringBuffer sb = new StringBuffer(chunk.length() - 1);
+                for (int z = 1; z < chunk.length(); z++)
+                    sb.append(" ");
+                gmffExporter.escapeAndAppendProofText(exportBuffer,
+                    sb.toString());
+            }
+        }
+    }
 
     /**
      *  Converts whitespace chunks in line of the
@@ -307,14 +251,12 @@ public abstract class MinProofWorkStmt {
      *			concatenated with whitespace chunks converted to
      *           spaces.
      */
-	public String getCleanedLineString(int lineIndex) {
+    public String getCleanedLineString(final int lineIndex) {
 
-		return getCleanedLineString(
-					lineIndex,
-	                0,
-	                stmtLineChunks[lineIndex].length);
+        return getCleanedLineString(lineIndex, 0,
+            stmtLineChunks[lineIndex].length);
 
-	}
+    }
 
     /**
      *  Converts whitespace chunks in part of a line of the
@@ -337,37 +279,30 @@ public abstract class MinProofWorkStmt {
      *			concatenated with whitespace chunks converted to
      *           spaces.
      */
-	public String getCleanedLineString(int lineIndex,
-	                                   int fromChunkIndex,
-	                                   int toChunkIndex) {
+    public String getCleanedLineString(final int lineIndex,
+        final int fromChunkIndex, final int toChunkIndex)
+    {
 
-		StringBuffer sb         = new StringBuffer(100);
-		String[]     lineChunk  = stmtLineChunks[lineIndex];
-		String       chunk;
-		for (int i = fromChunkIndex; i < toChunkIndex; i++) {
-			chunk               = lineChunk[i];
-			if (chunk.length() > 0) {
-				if (isChunkWhitespace(chunk)) {
-					for (int j = 0; j < chunk.length(); j++) {
-						sb.append(" ");
-					}
-				}
-				else {
-					sb.append(chunk);
-				}
-			}
-		}
+        final StringBuffer sb = new StringBuffer(100);
+        final String[] lineChunk = stmtLineChunks[lineIndex];
+        String chunk;
+        for (int i = fromChunkIndex; i < toChunkIndex; i++) {
+            chunk = lineChunk[i];
+            if (chunk.length() > 0)
+                if (isChunkWhitespace(chunk))
+                    for (int j = 0; j < chunk.length(); j++)
+                        sb.append(" ");
+                else
+                    sb.append(chunk);
+        }
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 
-	protected boolean isChunkWhitespace(String s) {
-		for (int i = 0; i < s.length(); i++) {
-			if (!Character.isWhitespace(
-					s.charAt(i))) {
-				return false;
-			}
-		}
-		return true;
-	}
+    protected boolean isChunkWhitespace(final String s) {
+        for (int i = 0; i < s.length(); i++)
+            if (!Character.isWhitespace(s.charAt(i)))
+                return false;
+        return true;
+    }
 }

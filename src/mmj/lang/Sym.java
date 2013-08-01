@@ -18,7 +18,8 @@
 
 package mmj.lang;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.Map;
 
 /**
  *  Sym holds a declared Metamath symbol and is the base
@@ -31,8 +32,7 @@ import java.util.*;
  *  @see <a href="../../MetamathERNotes.html">
  *       Nomenclature and Entity-Relationship Notes</a>
  */
-public abstract class Sym extends MObj
-                                implements Comparable {
+public abstract class Sym extends MObj implements Comparable {
     /**
      *  "id" is the character string that uniquely identifies
      *  the Sym.
@@ -63,7 +63,7 @@ public abstract class Sym extends MObj
      *  Note: label must NOT be changed after Stmt added to stmtTbl
      *        because stmtTbl is a Map (map behavior undefined)
      */
-    private final String  id;
+    private final String id;
 
     /**
      *  Construct using sequence number and id string.
@@ -73,13 +73,11 @@ public abstract class Sym extends MObj
      *
      *  @throws IllegalArgumentException if id string is empty
      */
-    protected Sym(int    seq,
-                  String id) {
+    protected Sym(final int seq, final String id) {
         super(seq);
-        if (id.length() == 0) {
+        if (id.length() == 0)
             throw new IllegalArgumentException(
                 LangConstants.ERRMSG_SYM_ID_STRING_EMPTY);
-        }
         this.id = id;
     }
 
@@ -94,23 +92,16 @@ public abstract class Sym extends MObj
      *  @throws LangException if Sym.id duplicates the id of
      *          another Sym (Cnst or Var) or a Stmt label.
      */
-    public Sym(int     seq,
-               Map     symTbl,
-               Map     stmtTbl,
-               String  id)
-                            throws LangException {
-        this(seq,
-             id);
-        if (symTbl.containsKey(id)) {
+    public Sym(final int seq, final Map symTbl, final Map stmtTbl,
+        final String id) throws LangException
+    {
+        this(seq, id);
+        if (symTbl.containsKey(id))
+            throw new LangException(LangConstants.ERRMSG_DUP_VAR_OR_CNST_SYM
+                + id);
+        if (stmtTbl.containsKey(id))
             throw new LangException(
-                LangConstants.ERRMSG_DUP_VAR_OR_CNST_SYM +
-                id);
-        }
-        if (stmtTbl.containsKey(id)) {
-            throw new LangException(
-                LangConstants.ERRMSG_SYM_ID_DUP_OF_STMT_LABEL_1 +
-                id);
-        }
+                LangConstants.ERRMSG_SYM_ID_DUP_OF_STMT_LABEL_1 + id);
     }
 
     /**
@@ -145,6 +136,7 @@ public abstract class Sym extends MObj
      *  @return Returns <code>true</code> if Sym is a Cnst MObj,
      *  otherwise <code>false</code>.
      */
+    @Override
     public abstract boolean isCnst();
 
     /**
@@ -161,6 +153,7 @@ public abstract class Sym extends MObj
      *  @return returns Sym.id string;
      *
      */
+    @Override
     public String toString() {
         return id;
     }
@@ -170,6 +163,7 @@ public abstract class Sym extends MObj
      *
      * @return hashcode for the Sym (Sym.id.hashcode())
      */
+    @Override
     public int hashCode() {
         return id.hashCode();
     }
@@ -188,10 +182,10 @@ public abstract class Sym extends MObj
      *
      * @return returns true if equal, otherwise false.
      */
-    public boolean equals(Object obj) {
-        return (this == obj) ? true
-                : !(obj instanceof Sym) ? false
-                        : id.equals(((Sym)obj).id);
+    @Override
+    public boolean equals(final Object obj) {
+        return this == obj ? true : !(obj instanceof Sym) ? false : id
+            .equals(((Sym)obj).id);
     }
 
     /**
@@ -204,17 +198,18 @@ public abstract class Sym extends MObj
      * or greater than the input parameter obj.
      *
      */
-    public int compareTo(Object obj) {
+    @Override
+    public int compareTo(final Object obj) {
         return id.compareTo(((Sym)obj).id);
     }
 
     /**
      *  ID sequences by Sym.id.
      */
-    static public final Comparator ID
-            = new Comparator() {
-        public int compare(Object o1, Object o2) {
-            return (((Sym)o1).id.compareTo(((Sym)o2).id));
+    static public final Comparator ID = new Comparator() {
+        @Override
+        public int compare(final Object o1, final Object o2) {
+            return ((Sym)o1).id.compareTo(((Sym)o2).id);
         }
     };
 }

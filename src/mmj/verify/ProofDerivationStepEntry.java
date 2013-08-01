@@ -23,10 +23,11 @@
  */
 
 package mmj.verify;
-import mmj.lang.Formula;
-import mmj.lang.ParseTree;
+
 import java.util.ArrayList;
 
+import mmj.lang.Formula;
+import mmj.lang.ParseTree;
 
 /**
  *  Proof Derivation Step Entry is a simple data structure
@@ -42,7 +43,6 @@ import java.util.ArrayList;
  */
 public class ProofDerivationStepEntry {
 
-
     /**
      *  isHyp indicates if this step is one of the Theorem's
      *  logical hypothesis steps.
@@ -54,7 +54,7 @@ public class ProofDerivationStepEntry {
      *  'n' is the last derivation step of the proof -- and
      *  the final step number is "qed".
      */
-    public String    step;
+    public String step;
 
     /**
      *  hypStepNbr contains the stepNbr's of previous steps
@@ -62,7 +62,7 @@ public class ProofDerivationStepEntry {
      *  in the current step. There may be 0, 1, ... n
      *  hyps.
      */
-    public String[]  hypStep;
+    public String[] hypStep;
 
     /**
      *  refLabel is the label of the Assrt used to justify
@@ -74,7 +74,7 @@ public class ProofDerivationStepEntry {
      *  database sequence and so there could be ambiguity about
      *  which step is referring to which hypothesis.
      */
-    public String    refLabel;
+    public String refLabel;
 
     /**
      *  formula is the formula resulting from the derivation
@@ -85,7 +85,7 @@ public class ProofDerivationStepEntry {
      *  is what the ProofDerivationStepEntry will be used
      *  to generate.
      */
-    public Formula   formula;
+    public Formula formula;
 
     /**
      *  formulaParseTree is here for use in TMFF, Text Mode
@@ -107,7 +107,7 @@ public class ProofDerivationStepEntry {
      *  qed step has level 0 and each hypothesis is one
      *  level higher.
      */
-    public int       proofLevel;
+    public int proofLevel;
 
     /**
      *  Compute proof level numbers for a proof stored
@@ -115,36 +115,30 @@ public class ProofDerivationStepEntry {
      *
      *  @param pList ProofDerivationStepEntry ArrayList
      */
-    public static void computeProofLevels(ArrayList pList) {
+    public static void computeProofLevels(final ArrayList pList) {
 
         ProofDerivationStepEntry d;
         ProofDerivationStepEntry h;
-        Object                   o;
+        Object o;
 
         try { // very defensive programming against possible future
               // code changes elsewhere...approaching farce :-)
 
             for (int i = pList.size() - 1; i > 0; i--) {
 
-                d                 =
-                    (ProofDerivationStepEntry)pList.get(i);
+                d = (ProofDerivationStepEntry)pList.get(i);
 
-                for (int j = 0; j < d.hypStep.length; j++) {
+                for (final String element : d.hypStep) {
 
-                    o             = pList.get(
-                                        Integer.parseInt(
-                                            d.hypStep[j])
-                                            - 1);
+                    o = pList.get(Integer.parseInt(element) - 1);
                     if (o != null) {
 
-                        h         = (ProofDerivationStepEntry)o;
+                        h = (ProofDerivationStepEntry)o;
 
-                        if (h.step.equals(d.hypStep[j])) {
+                        if (h.step.equals(element)) {
 
-                            if (h.proofLevel == 0) {
-                                h.proofLevel
-                                  = d.proofLevel + 1;
-                            }
+                            if (h.proofLevel == 0)
+                                h.proofLevel = d.proofLevel + 1;
 
                             continue;
                         }
@@ -152,8 +146,7 @@ public class ProofDerivationStepEntry {
                     throw new IllegalArgumentException("");
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (final Exception e) {
             computeProofLevelsSlowly(pList);
         }
     }
@@ -171,37 +164,30 @@ public class ProofDerivationStepEntry {
      *
      *  @param pList ProofDerivationStepEntry ArrayList
      */
-    public static void computeProofLevelsSlowly(ArrayList pList) {
+    public static void computeProofLevelsSlowly(final ArrayList pList) {
 
         ProofDerivationStepEntry d;
         ProofDerivationStepEntry h;
 
-        for (int i = 0; i < pList.size(); i++) {
+        for (int i = 0; i < pList.size(); i++)
             ((ProofDerivationStepEntry)pList.get(i)).proofLevel = 0;
-        }
 
         for (int i = pList.size() - 1; i > 0; i--) {
-            d                     =
-                (ProofDerivationStepEntry)pList.get(i);
+            d = (ProofDerivationStepEntry)pList.get(i);
 
-            loopJ: for (int j = 0; j < d.hypStep.length; j++) {
-
+            loopJ: for (int j = 0; j < d.hypStep.length; j++)
                 for (int k = i - 1; k >= 0; k--) {
 
-                    h             =
-                        (ProofDerivationStepEntry)pList.get(k);
+                    h = (ProofDerivationStepEntry)pList.get(k);
 
                     if (d.hypStep[j].equals(h.step)) {
 
-                        if (h.proofLevel == 0) {
-                            h.proofLevel
-                                  = d.proofLevel + 1;
-                        }
+                        if (h.proofLevel == 0)
+                            h.proofLevel = d.proofLevel + 1;
 
                         continue loopJ;
                     }
                 }
-            }
         }
     }
 }

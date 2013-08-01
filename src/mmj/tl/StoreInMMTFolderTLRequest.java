@@ -14,8 +14,10 @@
  */
 
 package mmj.tl;
+
 import mmj.lang.*;
-import mmj.pa.*;
+import mmj.pa.ProofAsst;
+import mmj.pa.ProofWorksheet;
 
 /**
  *  StoreInMMTFolderTLRequest implements a user request for a
@@ -34,8 +36,7 @@ public class StoreInMMTFolderTLRequest extends TLRequest {
     /**
      *  Constructor for StoreInMMTFolderTLRequest
      */
-    public StoreInMMTFolderTLRequest() {
-    }
+    public StoreInMMTFolderTLRequest() {}
 
     /**
      *  Implements the request to store a ProofWorksheet in
@@ -49,22 +50,16 @@ public class StoreInMMTFolderTLRequest extends TLRequest {
      *  @throws TheoremLoaderException if there are any data errors
      *         encountered while performing the requested function.
      */
-    public void doIt(TheoremLoader  theoremLoader,
-                     ProofWorksheet proofWorksheet,
-                     LogicalSystem  logicalSystem,
-                     Messages       messages,
-                     ProofAsst      proofAsst)
-                                    throws TheoremLoaderException {
-        theoremLoader.
-            storeInMMTFolder(
-                proofWorksheet,
-                logicalSystem,
-                messages,
-                proofAsst);
+    @Override
+    public void doIt(final TheoremLoader theoremLoader,
+        final ProofWorksheet proofWorksheet, final LogicalSystem logicalSystem,
+        final Messages messages, final ProofAsst proofAsst)
+        throws TheoremLoaderException
+    {
+        theoremLoader.storeInMMTFolder(proofWorksheet, logicalSystem, messages,
+            proofAsst);
 
-        messages.
-            accumInfoMessage(
-                TlConstants.
-                    ERRMSG_STORE_IN_MMT_FOLDER_NO_MSGS);
+        messages
+            .accumInfoMessage(TlConstants.ERRMSG_STORE_IN_MMT_FOLDER_NO_MSGS);
     }
 }

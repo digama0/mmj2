@@ -6,7 +6,6 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-
 /**
  *  MinHeaderStmt.java  0.01 11/01/2011
  *
@@ -16,9 +15,8 @@
 
 package mmj.gmff;
 
-import java.lang.IndexOutOfBoundsException;
-import mmj.pa.PaConstants;
 import mmj.mmio.Statementizer;
+import mmj.pa.PaConstants;
 
 /**
  *  Object representing the Header statement on a
@@ -34,7 +32,6 @@ import mmj.mmio.Statementizer;
  *  <code>structuralErrors = true</code>.
  */
 public class MinHeaderStmt extends MinProofWorkStmt {
-
 
     /**
      *  Standard MinHeaderStmt constructor.
@@ -65,13 +62,11 @@ public class MinHeaderStmt extends MinProofWorkStmt {
      *              whitespace or Metamath tokens. Hence the
      *              acronym "slc" refers to Statement Line Chunks.
      */
-    public MinHeaderStmt(MinProofWorksheet w,
-                         String[][]        slc) {
+    public MinHeaderStmt(final MinProofWorksheet w, final String[][] slc) {
 
-		super(w,
-		      slc);
+        super(w, slc);
 
-		validateHeader();
+        validateHeader();
     }
 
     /**
@@ -98,111 +93,78 @@ public class MinHeaderStmt extends MinProofWorkStmt {
      *				the export data build.
      *  @param exportBuffer The <code>StringBuffer</code> to which
      *               exported data is to be output.
-  	 *  @throws GMFFException if errors are encountered during the
-  	 *               export process.
+     *  @throws GMFFException if errors are encountered during the
+     *               export process.
      */
-	public void buildModelAExport(
-						 	GMFFExporter gmffExporter,
-		               	 	StringBuffer exportBuffer)
-				            	throws GMFFException {
+    @Override
+    public void buildModelAExport(final GMFFExporter gmffExporter,
+        final StringBuffer exportBuffer) throws GMFFException
+    {
 
-		String modelAHeader0     =
-			gmffExporter.getOptionalModelFile(
-				GMFFConstants.MODEL_A_HEADER0_NAME);
-		if (modelAHeader0 == null) {
-			return;
-		}
+        final String modelAHeader0 = gmffExporter
+            .getOptionalModelFile(GMFFConstants.MODEL_A_HEADER0_NAME);
+        if (modelAHeader0 == null)
+            return;
 
-		String modelAHeader1X   =
-			gmffExporter.getOptionalModelFile(
-				GMFFConstants.MODEL_A_HEADER1X_NAME);
-		if (modelAHeader1X == null) {
-			return;
-		}
-		String modelAHeader2    =
-			gmffExporter.getOptionalModelFile(
-				GMFFConstants.MODEL_A_HEADER2_NAME);
-		if (modelAHeader2 == null) {
-			return;
-		}
-		String modelAHeader3X   =
-			gmffExporter.getOptionalModelFile(
-				GMFFConstants.MODEL_A_HEADER3X_NAME);
-		if (modelAHeader3X == null) {
-			return;
-		}
-		String modelAHeader4      =
-			gmffExporter.getOptionalModelFile(
-				GMFFConstants.MODEL_A_HEADER4_NAME);
-		if (modelAHeader4 == null) {
-			return;
-		}
-		String modelAHeader5X     =
-			gmffExporter.getOptionalModelFile(
-				GMFFConstants.MODEL_A_HEADER5X_NAME);
-		if (modelAHeader5X == null) {
-			return;
-		}
-		String modelAHeader6      =
-			gmffExporter.getOptionalModelFile(
-				GMFFConstants.MODEL_A_HEADER6_NAME);
-		if (modelAHeader6 == null) {
-			return;
-		}
-		String modelAHeader7      =
-			gmffExporter.getOptionalModelFile(
-				GMFFConstants.MODEL_A_HEADER7_NAME);
-		if (modelAHeader7 == null) {
-			return;
-		}
+        final String modelAHeader1X = gmffExporter
+            .getOptionalModelFile(GMFFConstants.MODEL_A_HEADER1X_NAME);
+        if (modelAHeader1X == null)
+            return;
+        final String modelAHeader2 = gmffExporter
+            .getOptionalModelFile(GMFFConstants.MODEL_A_HEADER2_NAME);
+        if (modelAHeader2 == null)
+            return;
+        final String modelAHeader3X = gmffExporter
+            .getOptionalModelFile(GMFFConstants.MODEL_A_HEADER3X_NAME);
+        if (modelAHeader3X == null)
+            return;
+        final String modelAHeader4 = gmffExporter
+            .getOptionalModelFile(GMFFConstants.MODEL_A_HEADER4_NAME);
+        if (modelAHeader4 == null)
+            return;
+        final String modelAHeader5X = gmffExporter
+            .getOptionalModelFile(GMFFConstants.MODEL_A_HEADER5X_NAME);
+        if (modelAHeader5X == null)
+            return;
+        final String modelAHeader6 = gmffExporter
+            .getOptionalModelFile(GMFFConstants.MODEL_A_HEADER6_NAME);
+        if (modelAHeader6 == null)
+            return;
+        final String modelAHeader7 = gmffExporter
+            .getOptionalModelFile(GMFFConstants.MODEL_A_HEADER7_NAME);
+        if (modelAHeader7 == null)
+            return;
 
-		// well all righty then...
+        // well all righty then...
 
-		gmffExporter.appendModelFileText(
-			exportBuffer,
-		    modelAHeader0);
+        gmffExporter.appendModelFileText(exportBuffer, modelAHeader0);
 
-		if (modelAHeader1X.length() > 0) {
-			gmffExporter.escapeAndAppendProofText(
-				exportBuffer,
-				w.getTheoremLabel());
-		}
+        if (modelAHeader1X.length() > 0)
+            gmffExporter.escapeAndAppendProofText(exportBuffer,
+                w.getTheoremLabel());
 
-		gmffExporter.appendModelFileText(
-			exportBuffer,
-		    modelAHeader2);
+        gmffExporter.appendModelFileText(exportBuffer, modelAHeader2);
 
-		if (modelAHeader3X.length() > 0) {
-			gmffExporter.escapeAndAppendProofText(
-				exportBuffer,
-				w.getTheoremLabel());
-		}
+        if (modelAHeader3X.length() > 0)
+            gmffExporter.escapeAndAppendProofText(exportBuffer,
+                w.getTheoremLabel());
 
-		gmffExporter.appendModelFileText(
-			exportBuffer,
-			modelAHeader4);
+        gmffExporter.appendModelFileText(exportBuffer, modelAHeader4);
 
-		if (modelAHeader5X.length() > 0) {
-			gmffExporter.escapeAndAppendProofText(
-				exportBuffer,
-				w.getTheoremLabel());
-		}
+        if (modelAHeader5X.length() > 0)
+            gmffExporter.escapeAndAppendProofText(exportBuffer,
+                w.getTheoremLabel());
 
-		gmffExporter.appendModelFileText(
-			exportBuffer,
-			modelAHeader6);
+        gmffExporter.appendModelFileText(exportBuffer, modelAHeader6);
 
-		gmffExporter.appendModelFileText(
-			exportBuffer,
-			modelAHeader7);
-	}
+        gmffExporter.appendModelFileText(exportBuffer, modelAHeader7);
+    }
 
-
-	/**
-	 *  Performs the minimal set of validation checks
-	 *  to ensure that the theorem label can be used
-	 *  to generate a file name by the GMFF Extract process.
-	 *  <p>
+    /**
+     *  Performs the minimal set of validation checks
+     *  to ensure that the theorem label can be used
+     *  to generate a file name by the GMFF Extract process.
+     *  <p>
      *  <ul>
      *  <li>Starting in column 1 the header must equal
      *  <pre>$( <MM> <PROOF_ASST> THEOREM=</pre>
@@ -220,27 +182,19 @@ public class MinHeaderStmt extends MinProofWorkStmt {
      *  <br>
      *  @return true if theorem label valid, otherwise false.
      */
-	public boolean isTheoremLabelMinimallyValid() {
+    public boolean isTheoremLabelMinimallyValid() {
 
-		boolean valid           = true;
+        boolean valid = true;
 
-		String theoremLabel     = w.getTheoremLabel();
+        final String theoremLabel = w.getTheoremLabel();
 
-        if (theoremLabel == null            ||
-            theoremLabel.equals("")         ||
-            theoremLabel.equals(
-                PaConstants.
-                	DEFAULT_STMT_LABEL)     ||
-            (!Statementizer.
-            	areLabelCharsValid(
-                    theoremLabel))          ||
-            (Statementizer.
-            	isLabelOnProhibitedList(
-                    theoremLabel))) {
-			valid               = false;
-		}
+        if (theoremLabel == null || theoremLabel.equals("")
+            || theoremLabel.equals(PaConstants.DEFAULT_STMT_LABEL)
+            || !Statementizer.areLabelCharsValid(theoremLabel)
+            || Statementizer.isLabelOnProhibitedList(theoremLabel))
+            valid = false;
 
-		return valid;
+        return valid;
     }
 
     /**
@@ -254,65 +208,37 @@ public class MinHeaderStmt extends MinProofWorkStmt {
      *  to mark the Proof Worksheet with <code>structuralErrors</code>
      *  and to accumulate an error message.
      */
-	private void validateHeader() {
-		try {
-			if (stmtLineChunks[
-					0][PaConstants.HEADER_MM_TOKEN_CHUNK_INDEX].
-						equals(
-				PaConstants.HEADER_MM_TOKEN)
+    private void validateHeader() {
+        try {
+            if (stmtLineChunks[0][PaConstants.HEADER_MM_TOKEN_CHUNK_INDEX]
+                .equals(PaConstants.HEADER_MM_TOKEN)
 
-				&&
-				stmtLineChunks[
-					0][PaConstants.HEADER_PROOF_ASST_TOKEN_CHUNK_INDEX].
-						equals(
-				PaConstants.HEADER_PROOF_ASST_TOKEN)
+                && stmtLineChunks[0][PaConstants.HEADER_PROOF_ASST_TOKEN_CHUNK_INDEX]
+                    .equals(PaConstants.HEADER_PROOF_ASST_TOKEN)
 
-				&&
-				stmtLineChunks[
-					0][PaConstants.HEADER_THEOREM_EQUAL_PREFIX_CHUNK_INDEX].
-						startsWith(
-				PaConstants.HEADER_THEOREM_EQUAL_PREFIX)
+                && stmtLineChunks[0][PaConstants.HEADER_THEOREM_EQUAL_PREFIX_CHUNK_INDEX]
+                    .startsWith(PaConstants.HEADER_THEOREM_EQUAL_PREFIX)
 
-				&&
-				stmtLineChunks[
-					0][PaConstants.HEADER_LOC_AFTER_EQUAL_PREFIX_CHUNK_INDEX].
-						startsWith(
-				PaConstants.HEADER_LOC_AFTER_EQUAL_PREFIX)
-			   ) {
+                && stmtLineChunks[0][PaConstants.HEADER_LOC_AFTER_EQUAL_PREFIX_CHUNK_INDEX]
+                    .startsWith(PaConstants.HEADER_LOC_AFTER_EQUAL_PREFIX))
+            {
 
-				w.setTheoremLabel(
-					stmtLineChunks[
-						0][PaConstants.
-							HEADER_THEOREM_EQUAL_PREFIX_CHUNK_INDEX].
-						substring(
-            				PaConstants.
-            					HEADER_THEOREM_EQUAL_PREFIX.length()).
-            						trim());
-				w.setLocAfter(
-					stmtLineChunks[
-						0][PaConstants.
-            				HEADER_LOC_AFTER_EQUAL_PREFIX_CHUNK_INDEX].
-						substring(
-            				PaConstants.
-            					HEADER_LOC_AFTER_EQUAL_PREFIX.length()).
-            						trim());
+                w.setTheoremLabel(stmtLineChunks[0][PaConstants.HEADER_THEOREM_EQUAL_PREFIX_CHUNK_INDEX]
+                    .substring(PaConstants.HEADER_THEOREM_EQUAL_PREFIX.length())
+                    .trim());
+                w.setLocAfter(stmtLineChunks[0][PaConstants.HEADER_LOC_AFTER_EQUAL_PREFIX_CHUNK_INDEX]
+                    .substring(
+                        PaConstants.HEADER_LOC_AFTER_EQUAL_PREFIX.length())
+                    .trim());
 
-				if (!isTheoremLabelMinimallyValid()) {
-					w.triggerInvalidTheoremLabel(
-						w.getTheoremLabel(),
-						(w.getLineCnt() -
-						 stmtLineChunks.length +
-						 1));
-				}
-				return;
-			}
-		}
-		catch (IndexOutOfBoundsException e) {
-		}
+                if (!isTheoremLabelMinimallyValid())
+                    w.triggerInvalidTheoremLabel(w.getTheoremLabel(),
+                        w.getLineCnt() - stmtLineChunks.length + 1);
+                return;
+            }
+        } catch (final IndexOutOfBoundsException e) {}
 
-		w.triggerInvalidHeaderConstants(
-			(w.getLineCnt() -
-			 stmtLineChunks.length +
-			 1));
-	}
+        w.triggerInvalidHeaderConstants(w.getLineCnt() - stmtLineChunks.length
+            + 1);
+    }
 }

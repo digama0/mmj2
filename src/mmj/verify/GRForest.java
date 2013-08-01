@@ -25,10 +25,10 @@
 
 package mmj.verify;
 
-import mmj.lang.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
-
+import mmj.lang.Cnst;
 
 /**
  *
@@ -85,18 +85,15 @@ public class GRForest {
      *  pointers to GRNodes within the current level's tree.
      */
     public static GRNode findCnstSubSeq(GRNode root,
-                                        Cnst[] ruleFormatExpr,
-                                        int    seqNext,
-                                        int    seqLast) {
+        final Cnst[] ruleFormatExpr, int seqNext, final int seqLast)
+    {
         GRNode match = null;
         while (true) {
-            if (root == null ||
-               (match = root.find(ruleFormatExpr[seqNext])) == null) {
+            if (root == null
+                || (match = root.find(ruleFormatExpr[seqNext])) == null)
                 return null;
-            }
-            if (++seqNext > seqLast) {
+            if (++seqNext > seqLast)
                 return match;
-            }
             root = match.elementDownLevelRoot();
         }
     }
@@ -105,20 +102,18 @@ public class GRForest {
      *  findLen1CnstNotationRule -- searches GrNode tree for a
      *  length of 1 Notation Rule matching the input Cnst.
      */
-    public static NotationRule findLen1CnstNotationRule(GRNode root,
-                                                        Cnst   cnst) {
-        if (root == null) {
+    public static NotationRule findLen1CnstNotationRule(final GRNode root,
+        final Cnst cnst)
+    {
+        if (root == null)
             return null;
-        }
 
-        GRNode match = root.find(cnst);
-        if (match == null) {
+        final GRNode match = root.find(cnst);
+        if (match == null)
             return null;
-        }
 
         return match.elementNotationRule();
     }
-
 
     /*
      *  addNotationRule --
@@ -141,54 +136,45 @@ public class GRForest {
      *          the input is a duplicate (error); otherwise
      *          the returned node is new and good.
      */
-    public static GRNode addNotationRule(Cnst[] ruleFormatExpr,
-                                         NotationRule notationRule)
-                        throws IllegalArgumentException {
-        int                 prevLevel           = -1;
-        int                 currLevel           = 0;
-        GRNode              match               = null;
-        GRNode              currLevelRoot       = null;
-        GRNode              revCurrLevelRoot    = null;
-        GRNode              prevLevelRoot       = null;
-        GRNode              foundLevelNode      = null;
+    public static GRNode addNotationRule(final Cnst[] ruleFormatExpr,
+        final NotationRule notationRule) throws IllegalArgumentException
+    {
+        int prevLevel = -1;
+        int currLevel = 0;
+        GRNode match = null;
+        GRNode currLevelRoot = null;
+        GRNode revCurrLevelRoot = null;
+        GRNode prevLevelRoot = null;
+        GRNode foundLevelNode = null;
 
-        if (ruleFormatExpr.length > 0) {
+        if (ruleFormatExpr.length > 0)
             currLevelRoot = ruleFormatExpr[currLevel].getGRRoot();
-        }
-        else {
+        else
             throw new IllegalArgumentException(
                 GrammarConstants.ERRMSG_GRFOREST_EXPR_LENGTH_ZERO);
-        }
-        if (notationRule == null) {
+        if (notationRule == null)
             throw new IllegalArgumentException(
                 GrammarConstants.ERRMSG_GRFOREST_RULE_NULL);
-        }
 
         while (true) {
             if (currLevelRoot == null
-                ||
-               (foundLevelNode = currLevelRoot.find(
-                                          ruleFormatExpr[currLevel]))
-                    == null) {
+                || (foundLevelNode = currLevelRoot
+                    .find(ruleFormatExpr[currLevel])) == null)
                 break;
-            }
-            match           = foundLevelNode;
-            prevLevel       = currLevel;
-            prevLevelRoot   = currLevelRoot;
-            if (++currLevel >= ruleFormatExpr.length) {
+            match = foundLevelNode;
+            prevLevel = currLevel;
+            prevLevelRoot = currLevelRoot;
+            if (++currLevel >= ruleFormatExpr.length)
                 break;
-            }
-            currLevelRoot   = match.elementDownLevelRoot();
+            currLevelRoot = match.elementDownLevelRoot();
         }
 
         if (currLevel >= ruleFormatExpr.length) {
             NotationRule existingRule;
-            if ((existingRule = match.elementNotationRule())
-                 != null) {
-                if (existingRule == notationRule) {
+            if ((existingRule = match.elementNotationRule()) != null) {
+                if (existingRule == notationRule)
                     throw new IllegalArgumentException(
                         GrammarConstants.ERRMSG_GRFOREST_RULE_DUP);
-                }
                 return match;
             }
             match.elementNotationRule(notationRule);
@@ -205,28 +191,22 @@ public class GRForest {
          *            Plus, we may have to update Cnst.gRRoot.
          */
 
-        revCurrLevelRoot = GRForest.addToTree(
-                                        ruleFormatExpr[currLevel],
-                                        currLevelRoot);
-        if (prevLevelRoot == null) {
+        revCurrLevelRoot = GRForest.addToTree(ruleFormatExpr[currLevel],
+            currLevelRoot);
+        if (prevLevelRoot == null)
             ruleFormatExpr[0].setGRRoot(revCurrLevelRoot);
-        }
-        else {
+        else
             match.elementDownLevelRoot(revCurrLevelRoot);
-        }
 
         int nbrAddNodes = ruleFormatExpr.length;
-        if (prevLevel != -1) {
-            nbrAddNodes -= (prevLevel + 1);
-        }
-        GRNode[] addNodeArray = new GRNode[nbrAddNodes];
+        if (prevLevel != -1)
+            nbrAddNodes -= prevLevel + 1;
+        final GRNode[] addNodeArray = new GRNode[nbrAddNodes];
 
-        addNodeArray[0] = revCurrLevelRoot.find(
-                                          ruleFormatExpr[currLevel]);
-        if (addNodeArray[0] == null) {
+        addNodeArray[0] = revCurrLevelRoot.find(ruleFormatExpr[currLevel]);
+        if (addNodeArray[0] == null)
             throw new IllegalArgumentException(
                 GrammarConstants.ERRMSG_GRFOREST_NODE_LOST);
-        }
 
         addNodeArray[0].elementUpLevel(match);
 
@@ -234,10 +214,8 @@ public class GRForest {
         int dest;
         for (dest = 1; dest < nbrAddNodes; dest++, src++) {
             addNodeArray[dest] = new GRNode(ruleFormatExpr[src]);
-            addNodeArray[dest].elementUpLevel(
-                                            addNodeArray[dest - 1]);
-            addNodeArray[dest - 1].elementDownLevelRoot(
-                                            addNodeArray[dest]);
+            addNodeArray[dest].elementUpLevel(addNodeArray[dest - 1]);
+            addNodeArray[dest - 1].elementDownLevelRoot(addNodeArray[dest]);
         }
 
         dest = nbrAddNodes - 1;
@@ -247,47 +225,35 @@ public class GRForest {
         return addNodeArray[dest];
     }
 
-
-    protected static GRNode addToTree(Cnst    elementCnst,
-                                      GRNode  oldRoot)
-                                    throws IllegalArgumentException {
-        if (oldRoot == null) {
+    protected static GRNode addToTree(final Cnst elementCnst,
+        final GRNode oldRoot) throws IllegalArgumentException
+    {
+        if (oldRoot == null)
             return new GRNode(elementCnst);
-        }
 
-        GRNode t = oldRoot; //insert oper can change the root!
-        int    diff;
+        GRNode t = oldRoot; // insert oper can change the root!
+        int diff;
         while (true) {
-            if ((diff = t.elementCnst().compareTo(elementCnst)) == 0) {
+            if ((diff = t.elementCnst().compareTo(elementCnst)) == 0)
                 throw new IllegalArgumentException(
                     "adding new node but already exists in tree!");
-            }
             if (diff < 0) {
-                if (t.left() != null) {
+                if (t.left() != null)
                     t = t.left();
-                }
-                else {
-                    return t.insertLeft(new GRNode(elementCnst),
-                                        oldRoot);
-                }
+                else
+                    return t.insertLeft(new GRNode(elementCnst), oldRoot);
             }
-            else {
-                if (t.right() != null) {
-                    t = t.right();
-                }
-                else {
-                    return t.insertRight(new GRNode(elementCnst),
-                                         oldRoot);
-                }
-            }
+            else if (t.right() != null)
+                t = t.right();
+            else
+                return t.insertRight(new GRNode(elementCnst), oldRoot);
         }
     }
 
-    public static Collection getRuleCollection(GRNode root) {
-        ArrayList ruleCollection = new ArrayList();
-        if (root != null) {
+    public static Collection getRuleCollection(final GRNode root) {
+        final ArrayList ruleCollection = new ArrayList();
+        if (root != null)
             root.loadRuleCollection(ruleCollection);
-        }
         return ruleCollection;
     }
 }

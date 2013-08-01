@@ -44,6 +44,7 @@
 package mmj.lang;
 
 import java.util.*;
+
 import mmj.mmio.SrcStmt;
 
 /**
@@ -82,12 +83,12 @@ public class Formula {
      *  <p>
      *  In a valid Formula, <code>cnt == sym.length</code>.
      */
-    int     cnt;
+    int cnt;
 
     /**
      *  Formula is just an array of Sym with a Count.
      */
-    Sym[]   sym;
+    Sym[] sym;
 
     /**
      *  Construct a temporary dummy Formula for transient
@@ -101,21 +102,18 @@ public class Formula {
      *                  or whitespace (else renderFormula
      *                  may come out wrong!)
      */
-    public static Formula constructTempDummyFormula(
-                              Cnst   typ,
-                              String dummySym) {
+    public static Formula constructTempDummyFormula(final Cnst typ,
+        final String dummySym)
+    {
 
-        Cnst dummyCnst            =
-            new Cnst(Integer.MAX_VALUE,
-                     dummySym);
+        final Cnst dummyCnst = new Cnst(Integer.MAX_VALUE, dummySym);
         dummyCnst.setIsTempObject(true);
 
-        Sym[] tempSym             = new Sym[2];
-        tempSym[0]                = typ;
-        tempSym[1]                = dummyCnst;
+        final Sym[] tempSym = new Sym[2];
+        tempSym[0] = typ;
+        tempSym[1] = dummyCnst;
 
-        return new Formula(tempSym.length,
-                           tempSym);
+        return new Formula(tempSym.length, tempSym);
     }
 
     /**
@@ -124,20 +122,18 @@ public class Formula {
      *  @param workCnt the correct length of the formula.
      *  @param workFormula the formula's Sym array.
      */
-    public Formula(int     workCnt,
-                   Sym[]   workFormula) {
+    public Formula(final int workCnt, final Sym[] workFormula) {
         cnt = workCnt;
         sym = new Sym[cnt];
 
-      //arraycopy was tried and it turned out to be slower!
-      //System.arraycopy(workFormula,
-      //                 0,
-      //                 sym,
-      //                 0,
-      //                 cnt);
-        for (int i = 0; i < cnt; i++) {
+        // arraycopy was tried and it turned out to be slower!
+        // System.arraycopy(workFormula,
+        // 0,
+        // sym,
+        // 0,
+        // cnt);
+        for (int i = 0; i < cnt; i++)
             sym[i] = workFormula[i];
-        }
     }
 
     /**
@@ -148,14 +144,13 @@ public class Formula {
      *
      *  @param symList ArrayList containing formula symbols
      */
-    public Formula(ArrayList symList) {
+    public Formula(final ArrayList symList) {
 
-        cnt                       = symList.size();
-        sym                       = new Sym[cnt];
+        cnt = symList.size();
+        sym = new Sym[cnt];
         setTyp((Cnst)symList.get(0));
-        for (int i = 1; i < cnt; i++) {
-            sym[i]                = (Sym)symList.get(i);
-        }
+        for (int i = 1; i < cnt; i++)
+            sym[i] = (Sym)symList.get(i);
     }
 
     /**
@@ -165,14 +160,12 @@ public class Formula {
      *  @param sz      Size of the formula
      *  @param typS    Formula Type code
      */
-    protected Formula(Map     symTbl,
-                      int     sz,
-                      String  typS)
-                          throws LangException {
+    protected Formula(final Map symTbl, final int sz, final String typS)
+        throws LangException
+    {
         sym = new Sym[sz];
         cnt = 1;
-        setTyp(symTbl,
-               typS);
+        setTyp(symTbl, typS);
     }
 
     /**
@@ -189,7 +182,7 @@ public class Formula {
      *
      *  @param typ Formula Type Code (sym[0]).
      */
-    public void setTyp(Cnst typ) {
+    public void setTyp(final Cnst typ) {
         sym[0] = typ;
     }
 
@@ -199,11 +192,10 @@ public class Formula {
      *  @return Formula's Expression (sym[1]...sym[cnt - 1]).
      */
     public Sym[] getExpr() {
-        Sym[] expr = new Sym[cnt - 1];
+        final Sym[] expr = new Sym[cnt - 1];
 
-        for (int f = 1, e = 0; f < cnt; f++, e++) {
+        for (int f = 1, e = 0; f < cnt; f++, e++)
             expr[e] = sym[f];
-        }
         return expr;
     }
 
@@ -236,25 +228,18 @@ public class Formula {
      *  @throws LangException if Type Code is undefined or
      *          not defined as a Cnst.
      */
-    public Sym setTyp(Map       symTbl,
-                      String    typS)
-                                     throws LangException {
+    public Sym setTyp(final Map symTbl, final String typS) throws LangException
+    {
 
-        Sym typC = (Sym)symTbl.get(typS);
-        if (typC == null) {
+        final Sym typC = (Sym)symTbl.get(typS);
+        if (typC == null)
+            throw new LangException(LangConstants.ERRMSG_STMT_TYP_UNDEF + typS);
+        if (!typC.isCnst())
             throw new LangException(
-                LangConstants.ERRMSG_STMT_TYP_UNDEF +
-                    typS);
-        }
-        if (!typC.isCnst()) {
-            throw new LangException(
-                LangConstants.ERRMSG_STMT_TYP_NOT_DEF_AS_CNST +
-                    typS);
-        }
+                LangConstants.ERRMSG_STMT_TYP_NOT_DEF_AS_CNST + typS);
         sym[0] = typC;
-        return   typC;
+        return typC;
     }
-
 
     /**
      *  Builds a "custom" version of an Expression in which
@@ -282,39 +267,29 @@ public class Formula {
      *  @throws IllegalArgumentException if unable to find
      *          a VarHyp for one of the Formula's Var's.
      */
-    public ParseNodeHolder[] getParseNodeHolderExpr(
-                                            VarHyp[] varHypArray) {
-        ParseNodeHolder[] parseNodeHolderExpr
-                            = new ParseNodeHolder[cnt - 1];
-        int               dest = 0;
-        VarHyp            vH;
+    public ParseNodeHolder[] getParseNodeHolderExpr(final VarHyp[] varHypArray)
+    {
+        final ParseNodeHolder[] parseNodeHolderExpr = new ParseNodeHolder[cnt - 1];
+        int dest = 0;
+        VarHyp vH;
 
-        //start at i = 1 to bypass the Cnst at Formula.sym[0]
+        // start at i = 1 to bypass the Cnst at Formula.sym[0]
         for (int i = 1; i < cnt; i++) {
             if (sym[i].isVar()) {
                 vH = ((Var)sym[i]).getVarHyp(varHypArray);
                 if (vH == null) {
-                    if (((Var)sym[i]).getIsWorkVar()) {
-                        vH        =
-                            ((Var)sym[i]).getActiveVarHyp();
-                    }
-                    if (vH == null) {
+                    if (((Var)sym[i]).getIsWorkVar())
+                        vH = ((Var)sym[i]).getActiveVarHyp();
+                    if (vH == null)
                         throw new IllegalArgumentException(
-                            LangConstants.
-                                ERRMSG_FORMULA_VAR_HYP_NOTFND_1 +
-                                 sym[i]                         +
-                            LangConstants.
-                                ERRMSG_FORMULA_CAPTION          +
-                                 toString());
-                    }
+                            LangConstants.ERRMSG_FORMULA_VAR_HYP_NOTFND_1
+                                + sym[i] + LangConstants.ERRMSG_FORMULA_CAPTION
+                                + toString());
                 }
-                parseNodeHolderExpr[dest] =
-                    new ParseNodeHolder(vH);
+                parseNodeHolderExpr[dest] = new ParseNodeHolder(vH);
             }
-            else { //is Cnst, so no ParseNode, must an MObj to hold...
-                parseNodeHolderExpr[dest] =
-                    new ParseNodeHolder((Cnst)sym[i]);
-            }
+            else
+                parseNodeHolderExpr[dest] = new ParseNodeHolder((Cnst)sym[i]);
             ++dest;
         }
         return parseNodeHolderExpr;
@@ -333,44 +308,32 @@ public class Formula {
      *  @throws IllegalArgumentException if unable to find
      *          a VarHyp for one of the Formula's Var's.
      */
-    public ParseNodeHolder[] getParseNodeHolderExpr(
-                                            Hyp[] hypArray) {
-        ParseNodeHolder[] parseNodeHolderExpr
-                            = new ParseNodeHolder[cnt - 1];
-        int               dest = 0;
-        VarHyp            vH;
+    public ParseNodeHolder[] getParseNodeHolderExpr(final Hyp[] hypArray) {
+        final ParseNodeHolder[] parseNodeHolderExpr = new ParseNodeHolder[cnt - 1];
+        int dest = 0;
+        VarHyp vH;
 
-        //start at i = 1 to bypass the Cnst at Formula.sym[0]
+        // start at i = 1 to bypass the Cnst at Formula.sym[0]
         for (int i = 1; i < cnt; i++) {
             if (sym[i].isVar()) {
                 vH = ((Var)sym[i]).getVarHyp(hypArray);
                 if (vH == null) {
-                    if (((Var)sym[i]).getIsWorkVar()) {
-                        vH        =
-                            ((Var)sym[i]).getActiveVarHyp();
-                    }
-                    if (vH == null) {
+                    if (((Var)sym[i]).getIsWorkVar())
+                        vH = ((Var)sym[i]).getActiveVarHyp();
+                    if (vH == null)
                         throw new IllegalArgumentException(
-                            LangConstants.
-                                ERRMSG_FORMULA_VAR_HYP_NOTFND_1 +
-                                 sym[i]                         +
-                            LangConstants.
-                                ERRMSG_FORMULA_CAPTION          +
-                                 toString());
-                    }
+                            LangConstants.ERRMSG_FORMULA_VAR_HYP_NOTFND_1
+                                + sym[i] + LangConstants.ERRMSG_FORMULA_CAPTION
+                                + toString());
                 }
-                parseNodeHolderExpr[dest] =
-                    new ParseNodeHolder(vH);
+                parseNodeHolderExpr[dest] = new ParseNodeHolder(vH);
             }
-            else { //is Cnst, so no ParseNode, must an MObj to hold...
-                parseNodeHolderExpr[dest] =
-                    new ParseNodeHolder((Cnst)sym[i]);
-            }
+            else
+                parseNodeHolderExpr[dest] = new ParseNodeHolder((Cnst)sym[i]);
             ++dest;
         }
         return parseNodeHolderExpr;
     }
-
 
     /**
      *  Builds a "rule format" version of the Formula's Expression.
@@ -388,27 +351,23 @@ public class Formula {
      *  @throws IllegalArgumentException if unable to find
      *          a VarHyp for one of the Formula's Var's.
      */
-    public Cnst[] buildRuleFormatExpr(VarHyp[] varHypArray) {
-        Cnst[]  ruleFormatExpr  = new Cnst[cnt - 1];
-        int     dest            = 0;
-        VarHyp  vH;
+    public Cnst[] buildRuleFormatExpr(final VarHyp[] varHypArray) {
+        final Cnst[] ruleFormatExpr = new Cnst[cnt - 1];
+        int dest = 0;
+        VarHyp vH;
 
-        //start at i = 1 to bypass the Cnst at Formula.sym[0]
+        // start at i = 1 to bypass the Cnst at Formula.sym[0]
         for (int i = 1; i < cnt; i++) {
             if (sym[i].isVar()) {
                 vH = ((Var)sym[i]).getVarHyp(varHypArray);
-                if (vH == null) {
+                if (vH == null)
                     throw new IllegalArgumentException(
-                        LangConstants.ERRMSG_FORMULA_VAR_HYP_NOTFND_1 +
-                             sym[i]                                   +
-                        LangConstants.ERRMSG_FORMULA_CAPTION          +
-                             toString());
-                }
+                        LangConstants.ERRMSG_FORMULA_VAR_HYP_NOTFND_1 + sym[i]
+                            + LangConstants.ERRMSG_FORMULA_CAPTION + toString());
                 ruleFormatExpr[dest] = vH.getTyp();
             }
-            else { // not Var, must be Cnst!
+            else
                 ruleFormatExpr[dest] = (Cnst)sym[i];
-            }
             ++dest;
         }
         return ruleFormatExpr;
@@ -430,32 +389,27 @@ public class Formula {
      *  @throws IllegalArgumentException if unable to find
      *          a VarHyp for one of the Formula's Var's.
      */
-    public VarHyp[] buildMandVarHypArray(Hyp[] tempHypArray) {
-        ArrayList hypList = new ArrayList();
-        VarHyp    vH;
-        //start at i = 1 to bypass the Cnst at Formula.sym[0]
+    public VarHyp[] buildMandVarHypArray(final Hyp[] tempHypArray) {
+        final ArrayList hypList = new ArrayList();
+        VarHyp vH;
+        // start at i = 1 to bypass the Cnst at Formula.sym[0]
         for (int i = 1; i < cnt; i++) {
-            if (!sym[i].isVar()) {
+            if (!sym[i].isVar())
                 continue;
-            }
             vH = ((Var)sym[i]).getVarHyp(tempHypArray);
             if (vH != null) {
-                Formula.accumHypInList(hypList,
-                                       vH);
+                Formula.accumHypInList(hypList, vH);
                 continue;
             }
             throw new IllegalArgumentException(
-                LangConstants.ERRMSG_FORMULA_VAR_HYP_NOTFND_1 +
-                     sym[i]                                   +
-                LangConstants.ERRMSG_FORMULA_CAPTION          +
-                     toString());
+                LangConstants.ERRMSG_FORMULA_VAR_HYP_NOTFND_1 + sym[i]
+                    + LangConstants.ERRMSG_FORMULA_CAPTION + toString());
         }
-        VarHyp[] out              = new VarHyp[hypList.size()];
-        Iterator iterator         = hypList.iterator();
-        int outIndex              = 0;
-        while (iterator.hasNext()) {
-            out[outIndex++]       = (VarHyp)iterator.next();
-        }
+        final VarHyp[] out = new VarHyp[hypList.size()];
+        final Iterator iterator = hypList.iterator();
+        int outIndex = 0;
+        while (iterator.hasNext())
+            out[outIndex++] = (VarHyp)iterator.next();
         return out;
     }
 
@@ -464,6 +418,7 @@ public class Formula {
      *
      * @return hashcode for the Formula
      */
+    @Override
     public int hashCode() {
         return toString().hashCode();
     }
@@ -481,22 +436,17 @@ public class Formula {
      *
      *  @return returns true if equal, otherwise false.
      */
-    public boolean exprEquals(Object obj) {
-        if (this == obj) {
+    public boolean exprEquals(final Object obj) {
+        if (this == obj)
             return true;
-        }
-        if (!(obj instanceof Formula)) {
+        if (!(obj instanceof Formula))
             return false;
-        }
 
-        if (cnt != ((Formula)obj).cnt) {
+        if (cnt != ((Formula)obj).cnt)
             return false;
-        }
-        for (int i = 1; i < cnt; i++) {
-            if (sym[i] != ((Formula)obj).sym[i]) {
+        for (int i = 1; i < cnt; i++)
+            if (sym[i] != ((Formula)obj).sym[i])
                 return false;
-            }
-        }
         return true;
     }
 
@@ -509,21 +459,16 @@ public class Formula {
      *                  identical to the Formula otherwise
      *                  false.
      */
-    public boolean srcStmtEquals(SrcStmt srcStmt) {
+    public boolean srcStmtEquals(final SrcStmt srcStmt) {
 
-        if (cnt != (srcStmt.symList.size() + 1)        ||
-            sym[0].getId().compareTo(srcStmt.typ) != 0) {
+        if (cnt != srcStmt.symList.size() + 1
+            || sym[0].getId().compareTo(srcStmt.typ) != 0)
             return false;
-        }
-        for (int i = 1; i < cnt; i++) {
-            if (sym[i].getId().compareTo(
-                (String)srcStmt.symList.get(i - 1)) != 0) {
+        for (int i = 1; i < cnt; i++)
+            if (sym[i].getId().compareTo((String)srcStmt.symList.get(i - 1)) != 0)
                 return false;
-            }
-        }
         return true;
     }
-
 
     /**
      *  Compare for equality with another Formula.
@@ -536,22 +481,18 @@ public class Formula {
      *
      *  @return returns true if equal, otherwise false.
      */
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj)
             return true;
-        }
-        if (!(obj instanceof Formula)) {
+        if (!(obj instanceof Formula))
             return false;
-        }
 
-        if (cnt != ((Formula)obj).cnt) {
+        if (cnt != ((Formula)obj).cnt)
             return false;
-        }
-        for (int i = 0; i < cnt; i++) {
-            if (sym[i] != ((Formula)obj).sym[i]) {
+        for (int i = 0; i < cnt; i++)
+            if (sym[i] != ((Formula)obj).sym[i])
                 return false;
-            }
-        }
         return true;
     }
 
@@ -569,10 +510,11 @@ public class Formula {
      *
      *  @return String for the Formula
      */
+    @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer(sym.length * 3);
+        final StringBuffer sb = new StringBuffer(sym.length * 3);
         sb.append(sym[0].getId());
-        for (int i=1; i < sym.length; i++) {
+        for (int i = 1; i < sym.length; i++) {
             sb.append(' ');
             sb.append(sym[i].getId());
         }
@@ -590,16 +532,15 @@ public class Formula {
      *  @return String for the expression portion of Formula
      */
     public String exprToString() {
-        StringBuffer sb           = new StringBuffer(sym.length * 3);
-        String ws                 = "";
-        for (int i=1; i < sym.length; i++) {
+        final StringBuffer sb = new StringBuffer(sym.length * 3);
+        String ws = "";
+        for (int i = 1; i < sym.length; i++) {
             sb.append(ws);
             sb.append(sym[i].getId());
-            ws                    = " ";
+            ws = " ";
         }
         return sb.toString();
     }
-
 
     /**
      *
@@ -622,28 +563,25 @@ public class Formula {
      *                              use by formulas.
      *  @return nbrLines used by the output formula.
      */
-    public int toProofWorksheetStringBuffer(
-                                StringBuffer sb,
-                                int          leftColContinuation,
-                                int          marginRight) {
+    public int toProofWorksheetStringBuffer(final StringBuffer sb,
+        final int leftColContinuation, final int marginRight)
+    {
 
-        int          nbrLines     = 1;
+        int nbrLines = 1;
 
-        String       s;
+        String s;
 
-        int          currCol  = leftColContinuation - 1;
+        int currCol = leftColContinuation - 1;
 
-        for (int i = 0; i < sym.length; i++) {
-            s                     = sym[i].toString();
-            currCol              += s.length();
+        for (final Sym element : sym) {
+            s = element.toString();
+            currCol += s.length();
             if (currCol > marginRight) {
                 sb.append('\n');
                 ++nbrLines;
-                currCol           = leftColContinuation
-                                    + sym[0].getId().length();
-                for (int j = 0; j < currCol; j++) {
+                currCol = leftColContinuation + sym[0].getId().length();
+                for (int j = 0; j < currCol; j++)
                     sb.append(' ');
-                }
             }
             sb.append(s);
             if (currCol < marginRight) {
@@ -669,28 +607,24 @@ public class Formula {
      *  @param  endToken            string such as "$." or "$="
      *  @return final StringBuffer line in use.
      */
-    public StringBuffer toStringBufferLineList(
-                                LinkedList   list,
-                                StringBuffer sb,
-                                int          leftColContinuation,
-                                int          marginRight,
-                                String       endToken) {
+    public StringBuffer toStringBufferLineList(final LinkedList list,
+        StringBuffer sb, final int leftColContinuation, final int marginRight,
+        final String endToken)
+    {
 
-        String       s;
+        String s;
 
-        int          currCol  = leftColContinuation - 1;
+        int currCol = leftColContinuation - 1;
 
-        for (int i = 0; i < sym.length; i++) {
-            s                     = sym[i].toString();
-            currCol              += s.length();
+        for (final Sym element : sym) {
+            s = element.toString();
+            currCol += s.length();
             if (currCol > marginRight) {
                 list.add(sb);
-                sb                = new StringBuffer(marginRight);
-                currCol           = leftColContinuation
-                                    + sym[0].getId().length();
-                for (int j = 0; j < currCol; j++) {
+                sb = new StringBuffer(marginRight);
+                currCol = leftColContinuation + sym[0].getId().length();
+                for (int j = 0; j < currCol; j++)
                     sb.append(' ');
-                }
             }
             sb.append(s);
             if (currCol < marginRight) {
@@ -701,7 +635,7 @@ public class Formula {
         if (endToken != null) {
             if (currCol + endToken.length() > marginRight) {
                 list.add(sb);
-                sb                = new StringBuffer(marginRight);
+                sb = new StringBuffer(marginRight);
             }
             sb.append(endToken);
         }
@@ -722,29 +656,26 @@ public class Formula {
      * @param hypNew candidate Hyp to be added to hypList if
      *               not already there.
      */
-    public static void accumHypInList(ArrayList hypList,
-                                      Hyp       hypNew) {
-        int i           = 0;
-        int iEnd        = hypList.size();
-        int newSeq      = hypNew.seq;
+    public static void accumHypInList(final ArrayList hypList, final Hyp hypNew)
+    {
+        int i = 0;
+        final int iEnd = hypList.size();
+        final int newSeq = hypNew.seq;
         int existingSeq;
 
         while (true) {
             if (i < iEnd) {
                 existingSeq = ((Hyp)hypList.get(i)).seq;
-                if (newSeq < existingSeq) {
-                    //insert here, at "i"
+                if (newSeq < existingSeq)
+                    // insert here, at "i"
                     break;
-                }
-                if (newSeq == existingSeq) {
-                    //don't add, already here.
+                if (newSeq == existingSeq)
+                    // don't add, already here.
                     return;
-                }
             }
-            else {
-                //insert at end, which happens to be here at "i"
+            else
+                // insert at end, which happens to be here at "i"
                 break;
-            }
             ++i;
         }
         hypList.add(i, hypNew);
@@ -761,17 +692,14 @@ public class Formula {
      *          contains no constants.
      */
     public int computeWidthOfWidestExprCnst() {
-        int max                   = -1;
+        int max = -1;
         int len;
-        for (int i = 1; i < cnt; i++) {
+        for (int i = 1; i < cnt; i++)
             if (sym[i].isCnst()) {
-                len               =
-                    sym[i].getId().length();
-                if (len > max) {
-                    max           = len;
-                }
+                len = sym[i].getId().length();
+                if (len > max)
+                    max = len;
             }
-        }
         return max;
     }
 }

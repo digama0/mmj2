@@ -6,7 +6,6 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-
 /**
  *  GMFFException.java  0.01 11/01/2011
  *
@@ -33,7 +32,7 @@ public class GMFFException extends Exception {
      *
      * @param   errorMessage  error message.
      */
-    public GMFFException(String errorMessage) {
+    public GMFFException(final String errorMessage) {
         super(errorMessage);
     }
 }

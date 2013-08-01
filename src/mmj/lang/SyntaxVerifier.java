@@ -16,7 +16,8 @@
  */
 
 package mmj.lang;
-import java.util.*;
+
+import java.util.Map;
 
 /**
  *  Interface to Syntax Verification (aka "Grammar",
@@ -52,14 +53,10 @@ public interface SyntaxVerifier {
      *
      *  @return Array of Stmt containing RPN.
      */
-    ParseTree parseFormula(Messages    messages,
+    ParseTree parseFormula(Messages messages,
 //  Stmt[] parseFormula(Messages    messages,
-                           Map         symTbl,
-                           Map         stmtTbl,
-                           Formula     formula,
-                           VarHyp[]    varHypArray,
-                           int         highestSeq,
-                           Stmt        defaultStmtForRPN);
+        Map symTbl, Map stmtTbl, Formula formula, VarHyp[] varHypArray,
+        int highestSeq, Stmt defaultStmtForRPN);
 
     /**
      *  Parse a single Statement.
@@ -79,9 +76,7 @@ public interface SyntaxVerifier {
      */
     ParseTree parseOneStmt(Messages messages,
 //  Stmt[] parseOneStmt(Messages messages,
-                           Map      symTbl,
-                           Map      stmtTbl,
-                           Stmt     stmt);
+        Map symTbl, Map stmtTbl, Stmt stmt);
 
     /**
      *  Parse all Statement Formulas and update stmtTbl with results.
@@ -91,9 +86,7 @@ public interface SyntaxVerifier {
      *  @param symTbl      Symbol Table (Map).
      *  @param stmtTbl     Statement Table (Map).
      */
-    void parseAllFormulas(Messages    messages,
-                          Map         symTbl,
-                          Map         stmtTbl);
+    void parseAllFormulas(Messages messages, Map symTbl, Map stmtTbl);
 
     /**
      *  Initializes the grammar.
@@ -111,9 +104,5 @@ public interface SyntaxVerifier {
      *
      *  @return true if grammar initializes successfully, else false.
      */
-    boolean initializeGrammar(Messages    messages,
-                              Map         symTbl,
-                              Map         stmtTbl);
+    boolean initializeGrammar(Messages messages, Map symTbl, Map stmtTbl);
 }
-
-

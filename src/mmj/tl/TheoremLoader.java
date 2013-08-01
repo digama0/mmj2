@@ -14,10 +14,12 @@
  */
 
 package mmj.tl;
-import java.io.*;
-import java.util.*;
+
+import java.util.LinkedList;
+
 import mmj.lang.*;
-import mmj.pa.*;
+import mmj.pa.ProofAsst;
+import mmj.pa.ProofWorksheet;
 
 /**
  *  The Theorem Loader facility's main control module.
@@ -27,15 +29,15 @@ import mmj.pa.*;
  */
 public class TheoremLoader {
 
-    private TlPreferences tlPreferences;
+    private final TlPreferences tlPreferences;
 
     /**
      *  Main constructor for TheoremLoader.
      *  <p>
      *  @param tlPreferences TlPreferences object.
      */
-    public TheoremLoader(TlPreferences tlPreferences) {
-        this.tlPreferences        = tlPreferences;
+    public TheoremLoader(final TlPreferences tlPreferences) {
+        this.tlPreferences = tlPreferences;
     }
 
     /**
@@ -55,23 +57,16 @@ public class TheoremLoader {
      *          be unified.
      */
     public ProofWorksheet unifyPlusStoreInLogSysAndMMTFolder(
-                        String         proofWorksheetText,
-                        LogicalSystem  logicalSystem,
-                        Messages       messages,
-                        ProofAsst      proofAsst,
-                        String         inputProofWorksheetFileName)
-                            throws TheoremLoaderException {
+        final String proofWorksheetText, final LogicalSystem logicalSystem,
+        final Messages messages, final ProofAsst proofAsst,
+        final String inputProofWorksheetFileName) throws TheoremLoaderException
+    {
 
-        ProofWorksheet proofWorksheet
-                                  =
-            getUnifiedProofWorksheet(proofWorksheetText,
-                                     proofAsst,
-                                     inputProofWorksheetFileName);
+        final ProofWorksheet proofWorksheet = getUnifiedProofWorksheet(
+            proofWorksheetText, proofAsst, inputProofWorksheetFileName);
 
-        storeInLogSysAndMMTFolder(proofWorksheet,
-                                  logicalSystem,
-                                  messages,
-                                  proofAsst);
+        storeInLogSysAndMMTFolder(proofWorksheet, logicalSystem, messages,
+            proofAsst);
 
         return proofWorksheet;
     }
@@ -93,23 +88,15 @@ public class TheoremLoader {
      *          be unified.
      */
     public ProofWorksheet unifyPlusStoreInMMTFolder(
-                            String         proofWorksheetText,
-                            LogicalSystem  logicalSystem,
-                            Messages       messages,
-                            ProofAsst      proofAsst,
-                            String         inputProofWorksheetFileName)
-                            throws TheoremLoaderException {
+        final String proofWorksheetText, final LogicalSystem logicalSystem,
+        final Messages messages, final ProofAsst proofAsst,
+        final String inputProofWorksheetFileName) throws TheoremLoaderException
+    {
 
-        ProofWorksheet proofWorksheet
-                                  =
-            getUnifiedProofWorksheet(proofWorksheetText,
-                                     proofAsst,
-                                     inputProofWorksheetFileName);
+        final ProofWorksheet proofWorksheet = getUnifiedProofWorksheet(
+            proofWorksheetText, proofAsst, inputProofWorksheetFileName);
 
-        storeInMMTFolder(proofWorksheet,
-                         logicalSystem,
-                         messages,
-                         proofAsst);
+        storeInMMTFolder(proofWorksheet, logicalSystem, messages, proofAsst);
 
         return proofWorksheet;
     }
@@ -127,21 +114,15 @@ public class TheoremLoader {
      *          including the case where the ProofWorksheet is not
      *          already unified.
      */
-    public void storeInLogSysAndMMTFolder(
-                                ProofWorksheet proofWorksheet,
-                                LogicalSystem  logicalSystem,
-                                Messages       messages,
-                                ProofAsst      proofAsst)
-                                    throws TheoremLoaderException {
+    public void storeInLogSysAndMMTFolder(final ProofWorksheet proofWorksheet,
+        final LogicalSystem logicalSystem, final Messages messages,
+        final ProofAsst proofAsst) throws TheoremLoaderException
+    {
 
-        storeInMMTFolder(proofWorksheet,
-                         logicalSystem,
-                         messages,
-                         proofAsst);
+        storeInMMTFolder(proofWorksheet, logicalSystem, messages, proofAsst);
 
         loadTheoremsFromMMTFolder(proofWorksheet.getTheoremLabel(),
-                                  logicalSystem,
-                                  messages);
+            logicalSystem, messages);
     }
 
     /**
@@ -156,35 +137,24 @@ public class TheoremLoader {
      *          including the case where the ProofWorksheet is not
      *          already unified.
      */
-    public void storeInMMTFolder(
-                                ProofWorksheet proofWorksheet,
-                                LogicalSystem  logicalSystem,
-                                Messages       messages,
-                                ProofAsst      proofAsst)
-                                    throws TheoremLoaderException {
+    public void storeInMMTFolder(final ProofWorksheet proofWorksheet,
+        final LogicalSystem logicalSystem, final Messages messages,
+        final ProofAsst proofAsst) throws TheoremLoaderException
+    {
 
-        if (proofWorksheet.getGeneratedProofStmt() == null) {
+        if (proofWorksheet.getGeneratedProofStmt() == null)
             throw new TheoremLoaderException(
-                TlConstants.
-                    ERRMSG_EXPORT_FORMAT_PROOF_WORKSHEET_ERR_2_1
-                + proofWorksheet.getErrorLabelIfPossible());
-        }
+                TlConstants.ERRMSG_EXPORT_FORMAT_PROOF_WORKSHEET_ERR_2_1
+                    + proofWorksheet.getErrorLabelIfPossible());
 
-        MMTTheoremExportFormatter mmtTheoremExportFormatter
-                                  =
-            new MMTTheoremExportFormatter(tlPreferences);
+        final MMTTheoremExportFormatter mmtTheoremExportFormatter = new MMTTheoremExportFormatter(
+            tlPreferences);
 
-        LinkedList mmtTheoremLines
-                                  =
-            mmtTheoremExportFormatter.
-                buildStringBufferLineList(
-                    proofWorksheet);
+        final LinkedList mmtTheoremLines = mmtTheoremExportFormatter
+            .buildStringBufferLineList(proofWorksheet);
 
-        tlPreferences.
-            getMMTFolder().
-                storeMMTTheoremFile(
-                    proofWorksheet.getTheoremLabel(),
-                    mmtTheoremLines);
+        tlPreferences.getMMTFolder().storeMMTTheoremFile(
+            proofWorksheet.getTheoremLabel(), mmtTheoremLines);
 
     }
 
@@ -199,18 +169,12 @@ public class TheoremLoader {
      *  @param messages Messages object.
      *  @throws TheoremLoaderException if data errors encountered.
      */
-    public void loadTheoremsFromMMTFolder(
-                                LogicalSystem logicalSystem,
-                                Messages      messages)
-                                    throws TheoremLoaderException {
+    public void loadTheoremsFromMMTFolder(final LogicalSystem logicalSystem,
+        final Messages messages) throws TheoremLoaderException
+    {
 
-        MMTTheoremSet mmtTheoremSet
-                                  =
-            tlPreferences.
-                getMMTFolder().
-                    constructMMTTheoremSet(logicalSystem,
-                                           messages,
-                                           tlPreferences);
+        final MMTTheoremSet mmtTheoremSet = tlPreferences.getMMTFolder()
+            .constructMMTTheoremSet(logicalSystem, messages, tlPreferences);
 
         mmtTheoremSet.updateLogicalSystem();
     }
@@ -227,20 +191,14 @@ public class TheoremLoader {
      *  @param messages Messages object.
      *  @throws TheoremLoaderException if data errors encountered.
      */
-    public void loadTheoremsFromMMTFolder(
-                                String        theoremLabel,
-                                LogicalSystem logicalSystem,
-                                Messages      messages)
-                                    throws TheoremLoaderException {
+    public void loadTheoremsFromMMTFolder(final String theoremLabel,
+        final LogicalSystem logicalSystem, final Messages messages)
+        throws TheoremLoaderException
+    {
 
-        MMTTheoremSet mmtTheoremSet
-                                  =
-            tlPreferences.
-                getMMTFolder().
-                    constructMMTTheoremSet(theoremLabel,
-                                           logicalSystem,
-                                           messages,
-                                           tlPreferences);
+        final MMTTheoremSet mmtTheoremSet = tlPreferences.getMMTFolder()
+            .constructMMTTheoremSet(theoremLabel, logicalSystem, messages,
+                tlPreferences);
 
         mmtTheoremSet.updateLogicalSystem();
     }
@@ -258,26 +216,19 @@ public class TheoremLoader {
      *  @param messages Messages object.
      *  @throws TheoremLoaderException if data errors encountered.
      */
-    public void extractTheoremToMMTFolder(
-                                Theorem       theorem,
-                                LogicalSystem logicalSystem,
-                                Messages      messages)
-                                    throws TheoremLoaderException {
+    public void extractTheoremToMMTFolder(final Theorem theorem,
+        final LogicalSystem logicalSystem, final Messages messages)
+        throws TheoremLoaderException
+    {
 
-        MMTTheoremExportFormatter mmtTheoremExportFormatter
-                                  =
-            new MMTTheoremExportFormatter(tlPreferences);
+        final MMTTheoremExportFormatter mmtTheoremExportFormatter = new MMTTheoremExportFormatter(
+            tlPreferences);
 
-        LinkedList mmtTheoremLines
-                                  =
-            mmtTheoremExportFormatter.
-                buildStringBufferLineList(
-                    theorem);
+        final LinkedList mmtTheoremLines = mmtTheoremExportFormatter
+            .buildStringBufferLineList(theorem);
 
-        tlPreferences.
-            getMMTFolder().
-                storeMMTTheoremFile(theorem.getLabel(),
-                                    mmtTheoremLines);
+        tlPreferences.getMMTFolder().storeMMTTheoremFile(theorem.getLabel(),
+            mmtTheoremLines);
     }
 
     /**
@@ -291,31 +242,23 @@ public class TheoremLoader {
      *          in the proof.
      */
     public ProofWorksheet getUnifiedProofWorksheet(
-                                String    proofWorksheetText,
-                                ProofAsst proofAsst,
-                                String    filenameOrDataSourceId)
-                                    throws TheoremLoaderException {
+        final String proofWorksheetText, final ProofAsst proofAsst,
+        final String filenameOrDataSourceId) throws TheoremLoaderException
+    {
 
-        ProofWorksheet proofWorksheet
-                                  =
-            proofAsst.unify(false, // renumReq
-                            proofWorksheetText,
-                            null,  // preprocessRequest
-                            null,  // stepRequest
-                            null,   //no TL request
-                            -1);   // inputCursorPos
+        final ProofWorksheet proofWorksheet = proofAsst.unify(false, // renumReq
+            proofWorksheetText, null, // preprocessRequest
+            null, // stepRequest
+            null, // no TL request
+            -1); // inputCursorPos
 
-        if (proofWorksheet.getGeneratedProofStmt() == null) {
+        if (proofWorksheet.getGeneratedProofStmt() == null)
             throw new TheoremLoaderException(
-                TlConstants.
-                    ERRMSG_THEOREM_LOADER_TEXT_UNIFY_ERROR_1
-                + proofWorksheet.getErrorLabelIfPossible()
-                + TlConstants.
-                    ERRMSG_THEOREM_LOADER_TEXT_UNIFY_ERROR_2
-                + filenameOrDataSourceId
-                + '\n'
-                + proofWorksheet.getOutputMessageText());
-        }
+                TlConstants.ERRMSG_THEOREM_LOADER_TEXT_UNIFY_ERROR_1
+                    + proofWorksheet.getErrorLabelIfPossible()
+                    + TlConstants.ERRMSG_THEOREM_LOADER_TEXT_UNIFY_ERROR_2
+                    + filenameOrDataSourceId + '\n'
+                    + proofWorksheet.getOutputMessageText());
 
         return proofWorksheet;
     }

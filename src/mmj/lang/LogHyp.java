@@ -37,7 +37,8 @@
 
 package mmj.lang;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
 
 /**
  *  LogHyp -- Logical Hypothesis -- corresponds to
@@ -62,7 +63,7 @@ public class LogHyp extends Hyp {
      *  varHypArray in LogHyp is similar to varHypArray in Assrt.
 
      */
-    private VarHyp[]  varHypArray;
+    private VarHyp[] varHypArray;
 
     /**
      *  Construct LogHyp using sequence number plus label,
@@ -77,30 +78,19 @@ public class LogHyp extends Hyp {
      *
      *  @throws LangException if duplicate, etc.
      */
-    public LogHyp(int       seq,
-                  Map       symTbl,
-                  Map       stmtTbl,
-                  ArrayList symList,
-                  String    labelS,
-                  String    typS)
-                            throws LangException {
-        super(seq,
-              symTbl,
-              stmtTbl,
-              labelS,
-              true);   //true = "active"
+    public LogHyp(final int seq, final Map symTbl, final Map stmtTbl,
+        final ArrayList symList, final String labelS, final String typS)
+        throws LangException
+    {
+        super(seq, symTbl, stmtTbl, labelS, true); // true = "active"
 
-        ArrayList exprHypList = new ArrayList();
+        final ArrayList exprHypList = new ArrayList();
 
-        formula = new LogicFormula(symTbl,
-                                   typS,
-                                   symList,
-                                   exprHypList);
+        formula = new LogicFormula(symTbl, typS, symList, exprHypList);
 
         varHypArray = new VarHyp[exprHypList.size()];
-        for (int i=0; i < varHypArray.length; i++) {
+        for (int i = 0; i < varHypArray.length; i++)
             varHypArray[i] = (VarHyp)exprHypList.get(i);
-        }
 
     }
 
@@ -114,19 +104,14 @@ public class LogHyp extends Hyp {
      *  @param tempVarHypArray     LogHyp.varHypArray
      *  @param tempLogHypParseTree Stmt.exprParseTree
      */
-    protected LogHyp(int       tempLogHypSeq,
-                     String    tempLogHypLabel,
-                     Formula   tempLogHypFormula,
-                     VarHyp[]  tempVarHypArray,
-                     ParseTree tempLogHypParseTree) {
-        super(tempLogHypSeq,
-              tempLogHypLabel,
-              tempLogHypFormula,
-              tempLogHypParseTree,
-              true);   //true = "active"
-        varHypArray               = tempVarHypArray;
+    protected LogHyp(final int tempLogHypSeq, final String tempLogHypLabel,
+        final Formula tempLogHypFormula, final VarHyp[] tempVarHypArray,
+        final ParseTree tempLogHypParseTree)
+    {
+        super(tempLogHypSeq, tempLogHypLabel, tempLogHypFormula,
+            tempLogHypParseTree, true); // true = "active"
+        varHypArray = tempVarHypArray;
     }
-
 
     /**
      *  Construct a LogHyp object that is temporary, in the
@@ -145,20 +130,15 @@ public class LogHyp extends Hyp {
      *                       but perhaps other Hyps as well
      *  @param tempLogHypParseTree Stmt.exprParseTree
      */
-    public static LogHyp BuildTempLogHypObject(
-                            int       tempLogHypSeq,
-                            String    tempLogHypLabel,
-                            Formula   tempLogHypFormula,
-                            Hyp[]     tempHypArray,
-                            ParseTree tempLogHypParseTree) {
+    public static LogHyp BuildTempLogHypObject(final int tempLogHypSeq,
+        final String tempLogHypLabel, final Formula tempLogHypFormula,
+        final Hyp[] tempHypArray, final ParseTree tempLogHypParseTree)
+    {
 
-        VarHyp[] tempVarHypArray =
-            tempLogHypFormula.buildMandVarHypArray(tempHypArray);
-        return new LogHyp(tempLogHypSeq,
-                          tempLogHypLabel,
-                          tempLogHypFormula,
-                          tempVarHypArray,
-                          tempLogHypParseTree);
+        final VarHyp[] tempVarHypArray = tempLogHypFormula
+            .buildMandVarHypArray(tempHypArray);
+        return new LogHyp(tempLogHypSeq, tempLogHypLabel, tempLogHypFormula,
+            tempVarHypArray, tempLogHypParseTree);
     }
 
     /**
@@ -169,6 +149,7 @@ public class LogHyp extends Hyp {
      *
      *  @return varHyp Array for this LogHyp.
      */
+    @Override
     public VarHyp[] getMandVarHypArray() {
         return varHypArray;
     }
@@ -179,10 +160,10 @@ public class LogHyp extends Hyp {
      *
      *  @return varHyp Array for this LogHyp.
      */
+    @Override
     public int getMandHypArrayLength() {
         return varHypArray.length;
     }
-
 
     /**
      *  Set the VarHyp array for this VarHyp (they're all
@@ -190,8 +171,8 @@ public class LogHyp extends Hyp {
      *
      *  @param varHypArray array of VarHyp's used in Formula.
      */
-    public void setMandVarHypArray(VarHyp[] varHypArray) {
-        this.varHypArray    = varHypArray;
+    public void setMandVarHypArray(final VarHyp[] varHypArray) {
+        this.varHypArray = varHypArray;
     }
 
     /**
@@ -201,6 +182,7 @@ public class LogHyp extends Hyp {
      *
      *  @return false.
      */
+    @Override
     public boolean isVarHyp() {
         return false;
     }
@@ -212,6 +194,7 @@ public class LogHyp extends Hyp {
      *
      *  @return false.
      */
+    @Override
     public boolean isWorkVarHyp() {
         return false;
     }
@@ -223,6 +206,7 @@ public class LogHyp extends Hyp {
      *
      *  @return true
      */
+    @Override
     public boolean isLogHyp() {
         return true;
     }
@@ -253,18 +237,16 @@ public class LogHyp extends Hyp {
      *          appended to the input StringBuffer --
      *          or -1 if maxDepth or maxLength exceeded.
      */
-    public int renderParsedSubExpr(StringBuffer sb,
-                                   int          maxDepth,
-                                   int          maxLength,
-                                   ParseNode[]  child) {
+    @Override
+    public int renderParsedSubExpr(final StringBuffer sb, final int maxDepth,
+        final int maxLength, final ParseNode[] child)
+    {
 
         throw new IllegalArgumentException(
-                LangConstants.ERRMSG_BAD_PARSE_STMT_1
-                + getLabel()
+            LangConstants.ERRMSG_BAD_PARSE_STMT_1 + getLabel()
                 + LangConstants.ERRMSG_BAD_PARSE_STMT_2);
 
-        //return -1;
+        // return -1;
     }
-
 
 }

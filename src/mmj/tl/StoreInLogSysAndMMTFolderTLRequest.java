@@ -14,8 +14,10 @@
  */
 
 package mmj.tl;
+
 import mmj.lang.*;
-import mmj.pa.*;
+import mmj.pa.ProofAsst;
+import mmj.pa.ProofWorksheet;
 
 /**
  *  StoreInLogSysAndMMTFolderTLRequest implements a user request for a
@@ -35,8 +37,7 @@ public class StoreInLogSysAndMMTFolderTLRequest extends TLRequest {
     /**
      *  Constructor for StoreInLogSysAndMMTFolderTLRequest
      */
-    public StoreInLogSysAndMMTFolderTLRequest() {
-    }
+    public StoreInLogSysAndMMTFolderTLRequest() {}
 
     /**
      *  Implements the request to store a ProofWorksheet in
@@ -50,22 +51,16 @@ public class StoreInLogSysAndMMTFolderTLRequest extends TLRequest {
      *  @throws TheoremLoaderException if there are any data errors
      *         encountered while performing the requested function.
      */
-    public void doIt(TheoremLoader  theoremLoader,
-                     ProofWorksheet proofWorksheet,
-                     LogicalSystem  logicalSystem,
-                     Messages       messages,
-                     ProofAsst      proofAsst)
-                                    throws TheoremLoaderException {
-        theoremLoader.
-            storeInLogSysAndMMTFolder(
-                proofWorksheet,
-                logicalSystem,
-                messages,
-                proofAsst);
+    @Override
+    public void doIt(final TheoremLoader theoremLoader,
+        final ProofWorksheet proofWorksheet, final LogicalSystem logicalSystem,
+        final Messages messages, final ProofAsst proofAsst)
+        throws TheoremLoaderException
+    {
+        theoremLoader.storeInLogSysAndMMTFolder(proofWorksheet, logicalSystem,
+            messages, proofAsst);
 
-        messages.
-            accumInfoMessage(
-                TlConstants.
-                    ERRMSG_STORE_IN_LOG_SYS_AND_MMT_FOLDER_NO_MSGS);
+        messages
+            .accumInfoMessage(TlConstants.ERRMSG_STORE_IN_LOG_SYS_AND_MMT_FOLDER_NO_MSGS);
     }
 }

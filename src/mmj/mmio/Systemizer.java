@@ -54,7 +54,8 @@
 package mmj.mmio;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.ListIterator;
 
 import mmj.lang.*;
 
@@ -80,26 +81,26 @@ import mmj.lang.*;
  */
 public class Systemizer {
 
-    private   Tokenizer         tokenizer;
-    private   Statementizer     statementizer;
+    private Tokenizer tokenizer;
+    private Statementizer statementizer;
 
-    private   Messages          messages;
+    private Messages messages;
 
-    private   SystemLoader      systemLoader;
+    private SystemLoader systemLoader;
 
-    private   boolean           eofReached          = false;
-    private   ArrayList         fileList            = null;
-    private   ArrayList         filesAlreadyLoaded  = null;
+    private boolean eofReached = false;
+    private ArrayList fileList = null;
+    private ArrayList filesAlreadyLoaded = null;
 
-    private   SrcStmt           currSrcStmt         = null;
+    private SrcStmt currSrcStmt = null;
 
-    private   LoadLimit         loadLimit           = null;
+    private LoadLimit loadLimit = null;
 
-    private   boolean           loadComments        = false;
+    private boolean loadComments = false;
 
-    private   boolean           loadProofs          = true;
+    private boolean loadProofs = true;
 
-    private   ArrayList         defaultProofList    = null;
+    private ArrayList defaultProofList = null;
 
     /**
      * Construct <code>Systemizer</code> from a
@@ -114,25 +115,23 @@ public class Systemizer {
      *        customizing parameters and ready to be loaded with
      *        data.
      */
-    public Systemizer(Messages      messages,
-                      SystemLoader  systemLoader)      {
+    public Systemizer(final Messages messages, final SystemLoader systemLoader)
+    {
 
-        this.messages       = messages;
-        this.systemLoader   = systemLoader;
+        this.messages = messages;
+        this.systemLoader = systemLoader;
 
-        filesAlreadyLoaded  = new ArrayList();
-        tokenizer           = null;
-        statementizer       = null;
+        filesAlreadyLoaded = new ArrayList();
+        tokenizer = null;
+        statementizer = null;
 
-        loadLimit           = new LoadLimit();
+        loadLimit = new LoadLimit();
 
-        loadComments        =
-            MMIOConstants.LOAD_COMMENTS_DEFAULT;
+        loadComments = MMIOConstants.LOAD_COMMENTS_DEFAULT;
 
-        loadProofs          =
-            MMIOConstants.LOAD_PROOFS_DEFAULT;
+        loadProofs = MMIOConstants.LOAD_PROOFS_DEFAULT;
 
-        defaultProofList    = new ArrayList(1);
+        defaultProofList = new ArrayList(1);
         defaultProofList.add(MMIOConstants.MISSING_PROOF_STEP);
 
     }
@@ -152,7 +151,7 @@ public class Systemizer {
      *  @param systemLoader <code>SystemLoader</code>
      *         can be input or changed after construction.
      */
-    public void setSystemLoader(SystemLoader systemLoader) {
+    public void setSystemLoader(final SystemLoader systemLoader) {
         this.systemLoader = systemLoader;
     }
 
@@ -173,10 +172,9 @@ public class Systemizer {
      *         be set or changed after construction.
      *
      */
-    public void setMessages(Messages messages) {
+    public void setMessages(final Messages messages) {
         this.messages = messages;
     }
-
 
     /**
      *  Set LoadLimit Stmt Nbr parm
@@ -185,7 +183,7 @@ public class Systemizer {
      *         to be loaded.
      *
      */
-    public void setLimitLoadEndpointStmtNbr(int stmtNbr) {
+    public void setLimitLoadEndpointStmtNbr(final int stmtNbr) {
         loadLimit.setLoadEndpointStmtNbr(stmtNbr);
     }
 
@@ -195,7 +193,7 @@ public class Systemizer {
      *  @param stmtLabel last Metamath statement label to load.
      *
      */
-    public void setLimitLoadEndpointStmtLabel(String stmtLabel) {
+    public void setLimitLoadEndpointStmtLabel(final String stmtLabel) {
         loadLimit.setLoadEndpointStmtLabel(stmtLabel);
     }
 
@@ -208,8 +206,8 @@ public class Systemizer {
      *  @param loadComments true/false load Metamath Comments.
      *
      */
-    public void setLoadComments(boolean loadComments) {
-        this.loadComments         = loadComments;
+    public void setLoadComments(final boolean loadComments) {
+        this.loadComments = loadComments;
     }
 
     /**
@@ -223,8 +221,8 @@ public class Systemizer {
      *         Theorem objects.
      *
      */
-    public void setLoadProofs(boolean loadProofs) {
-        this.loadProofs         = loadProofs;
+    public void setLoadProofs(final boolean loadProofs) {
+        this.loadProofs = loadProofs;
     }
 
     /**
@@ -254,29 +252,22 @@ public class Systemizer {
      * @throws    IOException if I/O error
      *
      */
-    public Messages load(File   filePath,
-                         Reader readerIn,
-                         String sourceId)
-                            throws IOException {
+    public Messages load(final File filePath, final Reader readerIn,
+        final String sourceId) throws IOException
+    {
 
-        tokenizer                 =
-            new Tokenizer(readerIn, sourceId);
-        statementizer             =
-            new Statementizer(tokenizer);
+        tokenizer = new Tokenizer(readerIn, sourceId);
+        statementizer = new Statementizer(tokenizer);
 
-        //init stack of include files
-        fileList                  = new ArrayList();
+        // init stack of include files
+        fileList = new ArrayList();
 
-        eofReached                = false;
+        eofReached = false;
         getNextStmt();
-        if (eofReached &&
-            messages.getErrorMessageCnt() == 0) {
-            handleParseErrorMessage(
-                MMIOConstants.ERRMSG_INPUT_FILE_EMPTY);
-        }
+        if (eofReached && messages.getErrorMessageCnt() == 0)
+            handleParseErrorMessage(MMIOConstants.ERRMSG_INPUT_FILE_EMPTY);
         else {
-            while (!eofReached    &&
-                   !messages.maxErrorMessagesReached()) {
+            while (!eofReached && !messages.maxErrorMessagesReached()) {
                 loadStmt(filePath);
                 if (loadLimit.getEndpointReached()) {
                     finalizePrematureEOF();
@@ -285,9 +276,8 @@ public class Systemizer {
                 }
                 getNextStmt();
             }
-            if (eofReached == true) {
+            if (eofReached == true)
                 finalizeEOF();
-            }
         }
         tokenizer.close();
         return messages;
@@ -299,7 +289,7 @@ public class Systemizer {
      * @param filePath -- File object holding directory path
      *          for fileNameIn -- and used to look up Metamath include
      *          files. May be null, or absolute path, or relative.
-	 *
+     *
      * @param fileNameIn -- input .mm file name String.
      *
      * @param sourceId  -- test such as filename or test ID.
@@ -312,42 +302,26 @@ public class Systemizer {
      * @throws MMIOError if file requested does not exist.
      *
      */
-    public Messages load(File   filePath,
-                         String fileNameIn,
-                         String sourceId)
-                            throws MMIOException,
-                                   IOException {
+    public Messages load(final File filePath, final String fileNameIn,
+        final String sourceId) throws MMIOException, IOException
+    {
         Reader readerIn;
-        File f                  = new File(fileNameIn);
+        File f = new File(fileNameIn);
         try {
-            f                   =
-            	isInFilesAlreadyLoaded(filesAlreadyLoaded,
-                                       filePath,
-                                       fileNameIn);
-            if (f == null) {
-                throw new MMIOException(
-                    MMIOConstants.ERRMSG_LOAD_REQ_FILE_DUP +
-                        fileNameIn);
-            }
+            f = isInFilesAlreadyLoaded(filesAlreadyLoaded, filePath, fileNameIn);
+            if (f == null)
+                throw new MMIOException(MMIOConstants.ERRMSG_LOAD_REQ_FILE_DUP
+                    + fileNameIn);
 
-            readerIn = new BufferedReader(
-                           new InputStreamReader(
-                               new FileInputStream(f)
-                               ),
-                           MMIOConstants.READER_BUFFER_SIZE
-                           );
-        }
-        catch (FileNotFoundException e) {
-            throw new MMIOError(
-                MMIOConstants.ERRMSG_LOAD_REQ_FILE_NOTFND +
-                    // fileNameIn);
+            readerIn = new BufferedReader(new InputStreamReader(
+                new FileInputStream(f)), MMIOConstants.READER_BUFFER_SIZE);
+        } catch (final FileNotFoundException e) {
+            throw new MMIOError(MMIOConstants.ERRMSG_LOAD_REQ_FILE_NOTFND +
+            // fileNameIn);
                 f.getAbsolutePath());
         }
 
-
-        return load(filePath,
-                    readerIn,
-                    sourceId);
+        return load(filePath, readerIn, sourceId);
     }
 
     /**
@@ -365,13 +339,10 @@ public class Systemizer {
      * @throws MMIOError if file requested does not exist.
      *
      */
-    public Messages load(File   filePath,
-                         String fileNameIn)
-                            throws MMIOException,
-                                   IOException {
-        return load(filePath,
-                    fileNameIn,
-                    fileNameIn);
+    public Messages load(final File filePath, final String fileNameIn)
+        throws MMIOException, IOException
+    {
+        return load(filePath, fileNameIn, fileNameIn);
     }
 
     // =========================================================
@@ -389,10 +360,9 @@ public class Systemizer {
      * keep processing until the maximum number of parse
      * errors is reached, or end of file.
      */
-    private   void getNextStmt()
-                            throws IOException {
+    private void getNextStmt() throws IOException {
         currSrcStmt = null;
-        while (true) {
+        while (true)
             try {
                 currSrcStmt = statementizer.getStmt();
                 if (currSrcStmt == null) {
@@ -400,26 +370,22 @@ public class Systemizer {
                         eofReached = true;
                         return;
                     }
-                    else {
+                    else
                         termIncludeFile();
-                    }
                 }
                 else {
                     loadLimit.checkEndpointReached(currSrcStmt);
                     return;
                 }
-            }
-            catch (MMIOException e) {
+            } catch (final MMIOException e) {
                 handleParseErrorMessage(e.getMessage());
                 if (messages.maxErrorMessagesReached()) {
                     eofReached = true;
                     return;
                 }
-                else {
+                else
                     statementizer.bypassErrorStmt();
-                }
             }
-        }
     }
 
     /**
@@ -431,13 +397,12 @@ public class Systemizer {
      * logic is bogus!
      *
      */
-    private   void loadStmt(File filePath)
-                            throws IOException {
+    private void loadStmt(final File filePath) throws IOException {
         try {
             switch (currSrcStmt.keyword.charAt(1)) {
 
-                //these case statements are sequenced by guesstimated
-                //frequency of occurrence in www.metamath.org\set.mm
+            // these case statements are sequenced by guesstimated
+            // frequency of occurrence in www.metamath.org\set.mm
 
                 case MMIOConstants.MM_BEGIN_COMMENT_KEYWORD_CHAR:
                     loadComment(currSrcStmt.comment);
@@ -485,14 +450,11 @@ public class Systemizer {
 
                 default:
                     throw new IllegalArgumentException(
-                        MMIOConstants.ERRMSG_INV_KEYWORD +
-                            currSrcStmt.keyword);
+                        MMIOConstants.ERRMSG_INV_KEYWORD + currSrcStmt.keyword);
             }
-        }
-        catch (MMIOException e) {
+        } catch (final MMIOException e) {
             handleParseErrorMessage(e.getMessage());
-        }
-        catch (LangException e) {
+        } catch (final LangException e) {
             handleLangErrorMessage(e.getMessage());
         }
     }
@@ -510,67 +472,54 @@ public class Systemizer {
      *  Sends each constant symbol to SystemLoader,
      *  which handles final validations, etc.
      */
-    private void loadCnst()
-                        throws LangException {
+    private void loadCnst() throws LangException {
 
-        ListIterator x = currSrcStmt.symList.listIterator();
-        while (x.hasNext()) {
+        final ListIterator x = currSrcStmt.symList.listIterator();
+        while (x.hasNext())
             systemLoader.addCnst((String)x.next());
-        }
     }
 
     /**
      *  Sends each var symbol to SystemLoader,
      *  which handles final validations, etc.
      */
-    private void loadVar()
-                        throws LangException {
+    private void loadVar() throws LangException {
 
-        ListIterator x = currSrcStmt.symList.listIterator();
-        while (x.hasNext()) {
+        final ListIterator x = currSrcStmt.symList.listIterator();
+        while (x.hasNext())
             systemLoader.addVar((String)x.next());
-        }
     }
 
     /**
      *  Sends variable hypothesis to SystemLoader.
      */
-    private void loadVarHyp()
-                        throws LangException {
+    private void loadVarHyp() throws LangException {
 
-        //note: only one symbol in variable hypothesis, hence get(0);
-        systemLoader.addVarHyp(currSrcStmt.label,
-                         currSrcStmt.typ,
-                         (String)(currSrcStmt.symList.get(0)));
+        // note: only one symbol in variable hypothesis, hence get(0);
+        systemLoader.addVarHyp(currSrcStmt.label, currSrcStmt.typ,
+            (String)currSrcStmt.symList.get(0));
 
     }
 
     /**
      *  Sends logical hypothesis to SystemLoader.
      */
-    private void loadLogHyp()
-                        throws LangException {
+    private void loadLogHyp() throws LangException {
 
-        systemLoader.addLogHyp(currSrcStmt.label,
-                         currSrcStmt.typ,
-                         currSrcStmt.symList);
+        systemLoader.addLogHyp(currSrcStmt.label, currSrcStmt.typ,
+            currSrcStmt.symList);
     }
 
     /**
      *  Sends axiom to SystemLoader.
      */
-    private void loadAxiom()
-                        throws LangException {
+    private void loadAxiom() throws LangException {
 
-        Axiom axiom               =
-            systemLoader.addAxiom(currSrcStmt.label,
-                            currSrcStmt.typ,
-                            currSrcStmt.symList);
+        final Axiom axiom = systemLoader.addAxiom(currSrcStmt.label,
+            currSrcStmt.typ, currSrcStmt.symList);
 
-        if (loadComments &&
-            currSrcStmt.comment != null) {
+        if (loadComments && currSrcStmt.comment != null)
             axiom.setDescription(currSrcStmt.comment);
-        }
 
     }
 
@@ -590,67 +539,50 @@ public class Systemizer {
      *  is available for the Theorem, store the description
      *  in the new Theorem object.
      */
-    private void loadTheorem()
-                        throws LangException {
+    private void loadTheorem() throws LangException {
 
         Theorem theorem;
         if (loadProofs) {
-            if (currSrcStmt.proofBlockList == null) {
-                theorem               =
-                    systemLoader.addTheorem(currSrcStmt.label,
-                                      currSrcStmt.typ,
-                                      currSrcStmt.symList,
-                                      currSrcStmt.proofList);
-            }
-            else {
-                theorem               =
-                    systemLoader.addTheorem(currSrcStmt.label,
-                                      currSrcStmt.typ,
-                                      currSrcStmt.symList,
-                                      currSrcStmt.proofList,
-                                      currSrcStmt.proofBlockList);
-            }
+            if (currSrcStmt.proofBlockList == null)
+                theorem = systemLoader
+                    .addTheorem(currSrcStmt.label, currSrcStmt.typ,
+                        currSrcStmt.symList, currSrcStmt.proofList);
+            else
+                theorem = systemLoader.addTheorem(currSrcStmt.label,
+                    currSrcStmt.typ, currSrcStmt.symList,
+                    currSrcStmt.proofList, currSrcStmt.proofBlockList);
         }
-        else {
-            theorem               =
-                systemLoader.addTheorem(currSrcStmt.label,
-                                  currSrcStmt.typ,
-                                  currSrcStmt.symList,
-                                  defaultProofList);
-        }
+        else
+            theorem = systemLoader.addTheorem(currSrcStmt.label,
+                currSrcStmt.typ, currSrcStmt.symList, defaultProofList);
 
-        if (loadComments &&
-            currSrcStmt.comment != null) {
+        if (loadComments && currSrcStmt.comment != null)
             theorem.setDescription(currSrcStmt.comment);
-        }
     }
 
     /**
      *  Sends End Scope command to SystemLoader.
      */
-    private void loadEndScope()
-                        throws LangException {
+    private void loadEndScope() throws LangException {
         systemLoader.endScope();
     }
 
     /**
      *  Sends Dj Vars to SystemLoader.
      */
-    private void loadDjVar()
-                        throws LangException {
+    private void loadDjVar() throws LangException {
 
-        int     iEnd = currSrcStmt.symList.size() - 1;
-        String  djVarI;
+        final int iEnd = currSrcStmt.symList.size() - 1;
+        String djVarI;
 
-        int     jEnd = iEnd + 1;
-        String  djVarJ;
+        final int jEnd = iEnd + 1;
+        String djVarJ;
 
         for (int i = 0; i < iEnd; i++) {
             djVarI = (String)currSrcStmt.symList.get(i);
             for (int j = i + 1; j < jEnd; j++) {
                 djVarJ = (String)currSrcStmt.symList.get(j);
-                    systemLoader.addDjVars(djVarI,
-                                           djVarJ);
+                systemLoader.addDjVars(djVarI, djVarJ);
             }
         }
     }
@@ -665,34 +597,26 @@ public class Systemizer {
      *        non-whitespace token after the "$(" in the comment.
      *  <p>
      */
-    private void loadComment(String comment) {
+    private void loadComment(final String comment) {
 
-		//for GMFFManager, grab this $t comment!
-        int i                     =
-            Statementizer.bypassWhitespace(comment,1);
-        if (comment.startsWith(
-				MMIOConstants.TYPESETTING_COMMENT_ID_STRING,
-                i)) {
-			systemLoader.cacheTypesettingCommentForGMFF(comment);
-			return; //exit, this not the droid you looking for.
-		}
+        // for GMFFManager, grab this $t comment!
+        final int i = Statementizer.bypassWhitespace(comment, 1);
+        if (comment.startsWith(MMIOConstants.TYPESETTING_COMMENT_ID_STRING, i))
+        {
+            systemLoader.cacheTypesettingCommentForGMFF(comment);
+            return; // exit, this not the droid you looking for.
+        }
 
         if (systemLoader.isBookManagerEnabled()) {
-            String s              =
-                Statementizer.getTitleIfApplicable(
-                    comment,
-                    MMIOConstants.CHAPTER_ID_STRING);
-            if (s != null) {
+            String s = Statementizer.getTitleIfApplicable(comment,
+                MMIOConstants.CHAPTER_ID_STRING);
+            if (s != null)
                 systemLoader.addNewChapter(s);
-            }
             else {
-                s                 =
-                Statementizer.getTitleIfApplicable(
-                    comment,
+                s = Statementizer.getTitleIfApplicable(comment,
                     MMIOConstants.SECTION_ID_STRING);
-                if (s != null) {
+                if (s != null)
                     systemLoader.addNewSection(s);
-                }
             }
         }
     }
@@ -702,33 +626,22 @@ public class Systemizer {
      * sure to save the new tokenizer reference for
      * use in error reporting.
      */
-    private void initIncludeFile(File filePath)
-                        throws MMIOException,
-                               IOException {
+    private void initIncludeFile(final File filePath) throws MMIOException,
+        IOException
+    {
 
-		File f = new File(currSrcStmt.includeFileName);
+        File f = new File(currSrcStmt.includeFileName);
         try {
-            f                     = isInFilesAlreadyLoaded(
-                                        filesAlreadyLoaded,
-                                        filePath,
-                                        currSrcStmt.includeFileName);
-            if (f == null) {
-                raiseParseException(
-                    MMIOConstants.ERRMSG_INCL_FILE_DUP +
-                        currSrcStmt.includeFileName);
-            }
-            tokenizer             =
-                IncludeFile.initIncludeFile(
-                    fileList,
-                    f,
-                    currSrcStmt.includeFileName,
-                    statementizer);
-        }
-        catch (FileNotFoundException e) {
-            raiseParseException(
-                MMIOConstants.ERRMSG_INCL_FILE_NOTFND_1
-                + f.getAbsolutePath()
-                + MMIOConstants.ERRMSG_INCL_FILE_NOTFND_2);
+            f = isInFilesAlreadyLoaded(filesAlreadyLoaded, filePath,
+                currSrcStmt.includeFileName);
+            if (f == null)
+                raiseParseException(MMIOConstants.ERRMSG_INCL_FILE_DUP
+                    + currSrcStmt.includeFileName);
+            tokenizer = IncludeFile.initIncludeFile(fileList, f,
+                currSrcStmt.includeFileName, statementizer);
+        } catch (final FileNotFoundException e) {
+            raiseParseException(MMIOConstants.ERRMSG_INCL_FILE_NOTFND_1
+                + f.getAbsolutePath() + MMIOConstants.ERRMSG_INCL_FILE_NOTFND_2);
         }
     }
 
@@ -739,42 +652,30 @@ public class Systemizer {
      * there is a logic error...or someone deleted the parent
      * file while we were busy processing a nested include file.)
      */
-    private   void termIncludeFile()
-                            throws IOException {
+    private void termIncludeFile() throws IOException {
         try {
-            tokenizer =
-                IncludeFile.termIncludeFile(fileList,
-                                            statementizer);
-        }
-        catch (FileNotFoundException e) {
+            tokenizer = IncludeFile.termIncludeFile(fileList, statementizer);
+        } catch (final FileNotFoundException e) {
             throw new IllegalStateException(
                 MMIOConstants.ERRMSG_INCLUDE_FILE_LIST_ERR);
 
         }
     }
 
-    private   File isInFilesAlreadyLoaded(
-                                       ArrayList filesAlreadyLoaded,
-                                       File      filePath,
-                                       String    fileNameIn) {
+    private File isInFilesAlreadyLoaded(final ArrayList filesAlreadyLoaded,
+        final File filePath, final String fileNameIn)
+    {
 
-        File f                  = new File(fileNameIn);
-        if (filePath == null
-        		||
-            f.isAbsolute()) {
-		}
-		else {
-			f                   = new File(filePath,
-			                               fileNameIn);
-		}
+        File f = new File(fileNameIn);
+        if (filePath == null || f.isAbsolute()) {}
+        else
+            f = new File(filePath, fileNameIn);
 
-        String absPath          = f.getAbsolutePath();
+        final String absPath = f.getAbsolutePath();
 
-        for (int i = 0; i < filesAlreadyLoaded.size(); i++) {
-            if (((String)filesAlreadyLoaded.get(i)).equals(absPath)) {
+        for (int i = 0; i < filesAlreadyLoaded.size(); i++)
+            if (((String)filesAlreadyLoaded.get(i)).equals(absPath))
                 return null;
-            }
-        }
         filesAlreadyLoaded.add(absPath);
 
         return f;
@@ -782,109 +683,86 @@ public class Systemizer {
 
     private void finalizePrematureEOF() {
         try {
-            while (true) {
-                if (fileList.isEmpty()) {
+            while (true)
+                if (fileList.isEmpty())
                     break;
-                }
-                else {
+                else
                     termIncludeFile();
-                }
-            }
-        }
-        catch (IOException e) {
+        } catch (final IOException e) {
             handleParseErrorMessage(e.getMessage());
         }
 
         try {
-            systemLoader.finalizeEOF(messages,
-                                     true);  //premature eof
-        }
-        catch (LangException e) {
+            systemLoader.finalizeEOF(messages, true); // premature eof
+        } catch (final LangException e) {
             handleLangEOFErrorMessage(e.getMessage());
         }
     }
 
     private void finalizeEOF() {
         try {
-            systemLoader.finalizeEOF(messages,
-                                     false);  // !premature eof
-        }
-        catch (LangException e) {
+            systemLoader.finalizeEOF(messages, false); // !premature eof
+        } catch (final LangException e) {
             handleLangEOFErrorMessage(e.getMessage());
         }
     }
 
-    private   void handleLangErrorMessage(String eMessage) {
-        messages.accumErrorMessage(
-            eMessage
-            + MMIOConstants.ERRMSG_TXT_SOURCE_ID
-            + tokenizer.getSourceId()
-            + MMIOConstants.ERRMSG_TXT_LINE
-            + tokenizer.getCurrentLineNbr()
-            + MMIOConstants.ERRMSG_TXT_COLUMN
-            + tokenizer.getCurrentColumnNbr());
+    private void handleLangErrorMessage(final String eMessage) {
+        messages
+            .accumErrorMessage(eMessage + MMIOConstants.ERRMSG_TXT_SOURCE_ID
+                + tokenizer.getSourceId() + MMIOConstants.ERRMSG_TXT_LINE
+                + tokenizer.getCurrentLineNbr()
+                + MMIOConstants.ERRMSG_TXT_COLUMN
+                + tokenizer.getCurrentColumnNbr());
 
     }
 
-    private   void handleLangEOFErrorMessage(String eMessage) {
-        messages.accumErrorMessage(
-            eMessage
-            + MMIOConstants.ERRMSG_TXT_SOURCE_ID
-            + MMIOConstants.EOF_ERRMSG
+    private void handleLangEOFErrorMessage(final String eMessage) {
+        messages.accumErrorMessage(eMessage
+            + MMIOConstants.ERRMSG_TXT_SOURCE_ID + MMIOConstants.EOF_ERRMSG
             + tokenizer.getSourceId());
     }
 
-
-    private   void handleParseErrorMessage(String eMessage) {
+    private void handleParseErrorMessage(final String eMessage) {
         messages.accumErrorMessage(eMessage);
     }
 
-
-    private   void raiseParseException(String errmsg)
-                                    throws MMIOException {
-        throw new MMIOException(
-            tokenizer.getSourceId(),
-            tokenizer.getCurrentLineNbr(),
-            tokenizer.getCurrentColumnNbr(),
-            tokenizer.getCurrentCharNbr(),
-            errmsg);
+    private void raiseParseException(final String errmsg) throws MMIOException {
+        throw new MMIOException(tokenizer.getSourceId(),
+            tokenizer.getCurrentLineNbr(), tokenizer.getCurrentColumnNbr(),
+            tokenizer.getCurrentCharNbr(), errmsg);
     }
 
     private class LoadLimit {
-        int    loadEndpointStmtNbr;
+        int loadEndpointStmtNbr;
         String loadEndpointStmtLabel;
         boolean endpointReached;
+
         public LoadLimit() {
-            loadEndpointStmtNbr   = 0;
+            loadEndpointStmtNbr = 0;
             loadEndpointStmtLabel = null;
-            endpointReached       = false;
+            endpointReached = false;
         }
-        public void setLoadEndpointStmtNbr(
-                        int loadEndpointStmtNbr) {
-            this.loadEndpointStmtNbr
-                                  = loadEndpointStmtNbr;
+        public void setLoadEndpointStmtNbr(final int loadEndpointStmtNbr) {
+            this.loadEndpointStmtNbr = loadEndpointStmtNbr;
         }
-        public void setLoadEndpointStmtLabel(
-                        String loadEndpointStmtLabel) {
-            this.loadEndpointStmtLabel
-                                  = loadEndpointStmtLabel;
+        public void setLoadEndpointStmtLabel(final String loadEndpointStmtLabel)
+        {
+            this.loadEndpointStmtLabel = loadEndpointStmtLabel;
         }
-        public boolean checkEndpointReached(SrcStmt srcStmt) {
-            if (loadEndpointStmtNbr > 0 &&
-                srcStmt.seq >= loadEndpointStmtNbr) {
-                endpointReached   = true;
-                messages.accumInfoMessage(
-                    MMIOConstants.
-                        ERRMSG_LOAD_LIMIT_STMT_NBR_REACHED
+        public boolean checkEndpointReached(final SrcStmt srcStmt) {
+            if (loadEndpointStmtNbr > 0 && srcStmt.seq >= loadEndpointStmtNbr) {
+                endpointReached = true;
+                messages
+                    .accumInfoMessage(MMIOConstants.ERRMSG_LOAD_LIMIT_STMT_NBR_REACHED
                         + loadEndpointStmtNbr);
             }
-            if (loadEndpointStmtLabel != null &&
-                srcStmt.label         != null &&
-                srcStmt.label.equals(loadEndpointStmtLabel)) {
-                endpointReached   = true;
-                messages.accumInfoMessage(
-                    MMIOConstants.
-                        ERRMSG_LOAD_LIMIT_STMT_LABEL_REACHED
+            if (loadEndpointStmtLabel != null && srcStmt.label != null
+                && srcStmt.label.equals(loadEndpointStmtLabel))
+            {
+                endpointReached = true;
+                messages
+                    .accumInfoMessage(MMIOConstants.ERRMSG_LOAD_LIMIT_STMT_LABEL_REACHED
                         + loadEndpointStmtLabel);
             }
             return endpointReached;

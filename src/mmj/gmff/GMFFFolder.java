@@ -15,8 +15,8 @@
 
 package mmj.gmff;
 
-import  java.io.*;
-import  java.util.*;
+import java.io.File;
+import java.util.*;
 
 /**
  *   GMFFFolder is a helper class for GMFF reading and
@@ -24,7 +24,7 @@ import  java.util.*;
  */
 public class GMFFFolder {
 
-    private File   folderFile;
+    private File folderFile;
 
     /**
      *  Constructor for GMFFFolder using pathname String.
@@ -44,62 +44,47 @@ public class GMFFFolder {
      *            a readable directory, security protected,
      *            or just plain invalid.
      */
-    public GMFFFolder(File   filePath,
-                      String folderName,
-                      String exportType)
-                      	throws GMFFException {
+    public GMFFFolder(final File filePath, final String folderName,
+        final String exportType) throws GMFFException
+    {
 
-        if (folderName                 == null ||
-            folderName.trim().length() == 0) {
+        if (folderName == null || folderName.trim().length() == 0)
             throw new GMFFException(
                 GMFFConstants.ERRMSG_GMFF_FOLDER_NAME_BLANK_1);
-        }
 
         try {
-            folderFile            = new File(folderName);
-            if (filePath == null
-            		||
-            	folderFile.isAbsolute()) {
-			}
-			else {
-				folderFile        =
-					new File(filePath,
-					         folderName);
-			}
+            folderFile = new File(folderName);
+            if (filePath == null || folderFile.isAbsolute()) {}
+            else
+                folderFile = new File(filePath, folderName);
             if (folderFile.exists()) {
                 if (folderFile.isDirectory()) {
                     // okey dokey!
                 }
-                else {
+                else
                     throw new GMFFException(
-                        GMFFConstants.ERRMSG_NOT_A_GMFF_FOLDER_1
-                        + folderName
-                        + GMFFConstants.ERRMSG_NOT_A_GMFF_FOLDER_2
-                        + exportType
-                        + GMFFConstants.ERRMSG_NOT_A_GMFF_FOLDER_3
-                        + getAbsolutePath());
-                }
+                        GMFFConstants.ERRMSG_NOT_A_GMFF_FOLDER_1 + folderName
+                            + GMFFConstants.ERRMSG_NOT_A_GMFF_FOLDER_2
+                            + exportType
+                            + GMFFConstants.ERRMSG_NOT_A_GMFF_FOLDER_3
+                            + getAbsolutePath());
             }
-            else {
+            else
                 throw new GMFFException(
-                        GMFFConstants.ERRMSG_GMFF_FOLDER_NOTFND_1
-                        + folderName
+                    GMFFConstants.ERRMSG_GMFF_FOLDER_NOTFND_1 + folderName
                         + GMFFConstants.ERRMSG_GMFF_FOLDER_NOTFND_2
                         + exportType
                         + GMFFConstants.ERRMSG_GMFF_FOLDER_NOTFND_3
                         + getAbsolutePath());
-            }
-        }
-        catch(SecurityException e) {
+        } catch (final SecurityException e) {
             throw new GMFFException(
-                GMFFConstants.ERRMSG_GMFF_FOLDER_MISC_ERROR_1
-                + folderName
-                + GMFFConstants.ERRMSG_GMFF_FOLDER_MISC_ERROR_2
-                + exportType
-                + GMFFConstants.ERRMSG_GMFF_FOLDER_MISC_ERROR_3
-                + getAbsolutePath()
-                + GMFFConstants.ERRMSG_GMFF_FOLDER_MISC_ERROR_4
-                + e.getMessage());
+                GMFFConstants.ERRMSG_GMFF_FOLDER_MISC_ERROR_1 + folderName
+                    + GMFFConstants.ERRMSG_GMFF_FOLDER_MISC_ERROR_2
+                    + exportType
+                    + GMFFConstants.ERRMSG_GMFF_FOLDER_MISC_ERROR_3
+                    + getAbsolutePath()
+                    + GMFFConstants.ERRMSG_GMFF_FOLDER_MISC_ERROR_4
+                    + e.getMessage());
         }
     }
 
@@ -124,31 +109,24 @@ public class GMFFFolder {
      *          file name.
      *  @throws GMFFException is security exception.
      */
-	public File[] listFiles(String fileType,
-	                        String lowestNamePrefix)
-						throws GMFFException {
+    public File[] listFiles(final String fileType, final String lowestNamePrefix)
+        throws GMFFException
+    {
 
-        File[] fileArray          =
-            folderFile.
-            	listFiles(
-					new GMFFFileFilter(
-						fileType,
-						lowestNamePrefix));
+        final File[] fileArray = folderFile.listFiles(new GMFFFileFilter(
+            fileType, lowestNamePrefix));
 
-        if (fileArray == null) {
+        if (fileArray == null)
             throw new GMFFException(
                 GMFFConstants.ERRMSG_GMFF_FOLDER_READ_ERROR_1
-                + folderFile.getAbsolutePath()
-                + GMFFConstants.ERRMSG_GMFF_FOLDER_READ_ERROR_2);
-        }
+                    + folderFile.getAbsolutePath()
+                    + GMFFConstants.ERRMSG_GMFF_FOLDER_READ_ERROR_2);
 
-        if (fileArray.length > 1) {
-			return sortFileArrayByNamePrefix(fileArray,
-			                                 fileType);
-		}
+        if (fileArray.length > 1)
+            return sortFileArrayByNamePrefix(fileArray, fileType);
 
         return fileArray;
-	}
+    }
 
     /**
      *  Returns the File object for the GMFFFolder.
@@ -166,40 +144,36 @@ public class GMFFFolder {
      *              underlying File is null.
      */
     public String getAbsolutePath() {
-        if (folderFile == null) {
+        if (folderFile == null)
             return null;
-        }
         return folderFile.getAbsolutePath();
     }
 
-	private File[] sortFileArrayByNamePrefix(File[] fileArray,
-	                                         String fileType) {
+    private File[] sortFileArrayByNamePrefix(final File[] fileArray,
+        final String fileType)
+    {
 
-		TreeMap treeMap         = new TreeMap();
+        final TreeMap treeMap = new TreeMap();
 
-		for (int i = 0; i < fileArray.length; i++) {
+        for (final File element : fileArray) {
 
-			String name         = fileArray[i].getName();
+            final String name = element.getName();
 
-		    String namePrefix   =
-		    	name.substring(0,
-							   (name.length() -
-								fileType.length()));
+            final String namePrefix = name.substring(0, name.length()
+                - fileType.length());
 
-			treeMap.put(namePrefix,
-			            fileArray[i]);
-		}
+            treeMap.put(namePrefix, element);
+        }
 
-		File[] fileArrayOut     = new File[fileArray.length];
+        final File[] fileArrayOut = new File[fileArray.length];
 
-		Collection sortedFiles  = treeMap.values();
-		Iterator iterator       = sortedFiles.iterator();
-		int i                   = 0;
-		while (iterator.hasNext()) {
-			fileArrayOut[i++]   = (File)iterator.next();
-		}
+        final Collection sortedFiles = treeMap.values();
+        final Iterator iterator = sortedFiles.iterator();
+        int i = 0;
+        while (iterator.hasNext())
+            fileArrayOut[i++] = (File)iterator.next();
 
-		return fileArrayOut;
+        return fileArrayOut;
 
-	}
+    }
 }

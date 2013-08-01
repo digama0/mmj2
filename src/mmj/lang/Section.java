@@ -25,10 +25,10 @@ package mmj.lang;
  */
 public class Section {
 
-    private Chapter sectionChapter;
-    private int     sectionNbr;
-    private String  sectionTitle;
-    private int     lastMObjNbr;
+    private final Chapter sectionChapter;
+    private final int sectionNbr;
+    private String sectionTitle;
+    private int lastMObjNbr;
 
     /**
      *  Sole constructor for Section..
@@ -41,13 +41,13 @@ public class Section {
      *         or the default title (must be at least
      *         an empty String!)
      */
-    public Section(Chapter sectionChapter,
-                   int     sectionNbr,
-                   String  sectionTitle) {
+    public Section(final Chapter sectionChapter, final int sectionNbr,
+        final String sectionTitle)
+    {
 
-        this.sectionChapter       = sectionChapter;
-        this.sectionNbr           = sectionNbr;
-        this.sectionTitle         = sectionTitle;
+        this.sectionChapter = sectionChapter;
+        this.sectionNbr = sectionNbr;
+        this.sectionTitle = sectionTitle;
 
         sectionChapter.storeNewSection(this);
     }
@@ -79,11 +79,10 @@ public class Section {
      *          meaning that the MObj has a zero sectionMObjNbr
      *          prior to the update.
      */
-    public boolean assignChapterSectionNbrs(MObj mObj) {
-        int n                     = mObj.getSectionMObjNbr();
-        if (n != 0) {
+    public boolean assignChapterSectionNbrs(final MObj mObj) {
+        final int n = mObj.getSectionMObjNbr();
+        if (n != 0)
             return false;
-        }
         mObj.setSectionMObjNbr(++lastMObjNbr);
         mObj.setChapterNbr(sectionChapter.getChapterNbr());
         mObj.setSectionNbr(sectionNbr);
@@ -125,8 +124,8 @@ public class Section {
      *  @param sectionTitle Description or Title of the
      *         Section.
      */
-    public void setSectionTitle(String sectionTitle) {
-        this.sectionTitle         = sectionTitle;
+    public void setSectionTitle(final String sectionTitle) {
+        this.sectionTitle = sectionTitle;
     }
 
     /**
@@ -149,18 +148,15 @@ public class Section {
      *  @return String of information about the Section
      *          formatted into a single line.
      */
+    @Override
     public String toString() {
-        return new String(
-            LangConstants.SECTION_TOSTRING_LITERAL_1
-          + sectionChapter.getChapterNbr()
-          + LangConstants.SECTION_TOSTRING_LITERAL_2
-          + getSectionNbr()
-          + getSectionCategoryDisplayCaption()
-          + LangConstants.SECTION_TOSTRING_LITERAL_3
-          + getSectionTitle()
-          + LangConstants.SECTION_TOSTRING_LITERAL_4
-          + LangConstants.SECTION_TOSTRING_LITERAL_5
-          + getLastMObjNbr());
+        return new String(LangConstants.SECTION_TOSTRING_LITERAL_1
+            + sectionChapter.getChapterNbr()
+            + LangConstants.SECTION_TOSTRING_LITERAL_2 + getSectionNbr()
+            + getSectionCategoryDisplayCaption()
+            + LangConstants.SECTION_TOSTRING_LITERAL_3 + getSectionTitle()
+            + LangConstants.SECTION_TOSTRING_LITERAL_4
+            + LangConstants.SECTION_TOSTRING_LITERAL_5 + getLastMObjNbr());
     }
 
     /**
@@ -172,9 +168,7 @@ public class Section {
      *  @return caption for the Section category code.
      */
     public String getSectionCategoryDisplayCaption() {
-        return LangConstants.
-                SECTION_DISPLAY_CAPTION[
-                    getSectionCategoryCd()];
+        return LangConstants.SECTION_DISPLAY_CAPTION[getSectionCategoryCd()];
     }
 
     /**
@@ -196,16 +190,13 @@ public class Section {
      *  @param s section number
      *  @return the Section Category Code.
      */
-    public static int getSectionCategoryCd(int s) {
+    public static int getSectionCategoryCd(final int s) {
 
-        int n                     =
-            s % LangConstants.SECTION_NBR_CATEGORIES;
+        final int n = s % LangConstants.SECTION_NBR_CATEGORIES;
 
-        if (n == 0) {
+        if (n == 0)
             return LangConstants.SECTION_NBR_CATEGORIES;
-        }
-        else {
+        else
             return n;
-        }
     }
 }

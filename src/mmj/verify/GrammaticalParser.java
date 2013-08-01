@@ -43,9 +43,7 @@ public interface GrammaticalParser {
      *
      *  @return number of ParseTree's returned in parseTreeArrayIn.
      */
-    public int parseExpr(ParseTree[]       parseTreeArrayIn,
-                         Cnst              formulaTypIn,
-                         ParseNodeHolder[] parseNodeHolderExprIn,
-                         int               highestSeqIn)
-                                                    throws VerifyException;
+    public int parseExpr(ParseTree[] parseTreeArrayIn, Cnst formulaTypIn,
+        ParseNodeHolder[] parseNodeHolderExprIn, int highestSeqIn)
+        throws VerifyException;
 }

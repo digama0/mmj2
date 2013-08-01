@@ -18,8 +18,8 @@
  */
 
 package mmj.mmio;
-import java.util.*;
 
+import java.util.ArrayList;
 
 /**
  *  Simple data structure holding "work" components of a
@@ -28,8 +28,7 @@ import java.util.*;
  *  @see <a href="../../MetamathERNotes.html">
  *       Nomenclature and Entity-Relationship Notes</a>
  */
-public class SrcStmt
-        extends Object {
+public class SrcStmt extends Object {
 
     /**
      *  Every SrcStmt has a sequence number, even a comment.
@@ -41,18 +40,18 @@ public class SrcStmt
      *        use a multiplier or transform the sequence number
      *        in some other way.
      */
-    public      int             seq             = 0;
+    public int seq = 0;
 
     /**
      *  VarHyp, LogHyp, Theorem and Axiom have labels.
      */
-    public      String          label           = null;
+    public String label = null;
 
     /**
      *  Every SrcStmt has a keyword, even a comment
      *  (char 1 = '$', always.)
      */
-    public      String          keyword         = null;
+    public String keyword = null;
 
     /**
      *  VarHyp, LogHyp, Theorem and Axiom have typ, which
@@ -60,7 +59,7 @@ public class SrcStmt
      *  externally, is the first symbol following the Metamath
      *  statement's keyword ($a, $p, etc.)
      */
-    public      String          typ             = null;
+    public String typ = null;
 
     /**
      *  symlist is the 2nd through nth symbols in the Metamath
@@ -75,7 +74,7 @@ public class SrcStmt
      *      Axiom, LogHyp & Theorem: zero or more
      *  </code>
      */
-    public      ArrayList       symList         = null;
+    public ArrayList symList = null;
 
     /**
      *  Only Theorem statements ($p) have proofList.
@@ -89,7 +88,7 @@ public class SrcStmt
      *        portion of a compressed proof (but not
      *        the parentheses.)
      */
-    public      ArrayList       proofList       = null;
+    public ArrayList proofList = null;
 
     /**
      *  Theorem compressed proof block list.
@@ -99,8 +98,7 @@ public class SrcStmt
      *  Metamath compressed proof symbols (see Metamath.pdf
      *  Appendix B).
      */
-    public      ArrayList       proofBlockList   = null;
-
+    public ArrayList proofBlockList = null;
 
     /**
      *   Comment statement --
@@ -110,7 +108,7 @@ public class SrcStmt
      *   are present, including the intervening whitespace
      *   newlines.
      */
-    public      String          comment         = null;
+    public String comment = null;
 
     /**
      *   Include File Name from "$[" statement.
@@ -118,7 +116,7 @@ public class SrcStmt
      *   Does not include the $[, $] tokens or
      *   the whitespace chunks, just the file name.
      */
-    public      String          includeFileName = null;
+    public String includeFileName = null;
 
     /**
      *  Default constructor.
@@ -134,7 +132,7 @@ public class SrcStmt
      * @param seqNbr the sequence number of the source statement
      *
      */
-    public SrcStmt(int seqNbr) {
+    public SrcStmt(final int seqNbr) {
         seq = seqNbr;
     }
 
@@ -145,8 +143,7 @@ public class SrcStmt
      * @param keyword the MetaMath source keyword token
      *
      */
-    public SrcStmt(int    seqNbr,
-                   String keyword) {
+    public SrcStmt(final int seqNbr, final String keyword) {
         this(seqNbr);
         this.keyword = keyword;
     }

@@ -10,8 +10,8 @@
  */
 
 package mmj.verify;
-import mmj.lang.Cnst;
 
+import mmj.lang.Cnst;
 
 /**
  *  EarleyItem is a work item generated as part of the EarleyParse
@@ -42,7 +42,7 @@ public class EarleyItem {
      *  a unique key, which is essential for maintaining
      *  Earley Itemsets.
      */
-    int          atIndex;
+    int atIndex;
 
     /**
      *  Index of the Earley "dot" (or "gap") used instead
@@ -52,7 +52,7 @@ public class EarleyItem {
      *  sym in the rule's expr, while a value equal to
      *  expr.length means that the EarleyItem is completed.
      */
-    int          dotIndex;
+    int dotIndex;
 
     /**
      *  If item completed, equals "null", else equal to
@@ -61,7 +61,7 @@ public class EarleyItem {
      *  Used to avoid repetitious and annoying "hunting trips"
      *  into the rule's forest.
      */
-    Cnst         afterDot;
+    Cnst afterDot;
 
     /*
      *  Compare for equality with another EarleyItem.
@@ -73,31 +73,29 @@ public class EarleyItem {
      *
      *  @return returns true if equal, otherwise false.
      */
-    public boolean equals(Object obj) {
-        return (this == obj) ? true
-            : !(obj instanceof EarleyItem) ? false
-                    : rule != ((EarleyItem)obj).rule ? false
-                        : atIndex != ((EarleyItem)obj).atIndex? false
-                            : true;
+    @Override
+    public boolean equals(final Object obj) {
+        return this == obj ? true : !(obj instanceof EarleyItem) ? false
+            : rule != ((EarleyItem)obj).rule ? false
+                : atIndex != ((EarleyItem)obj).atIndex ? false : true;
     }
 
     /**
      *  Converts EarleyItem to a string (solely for diagnostic
      *  purposes).
      */
+    @Override
     public String toString() {
-        StringBuffer s = new StringBuffer();
+        final StringBuffer s = new StringBuffer();
         s.append(GrammarConstants.ERRMSG_AT_CAPTION);
         s.append(atIndex);
         s.append(GrammarConstants.ERRMSG_DOT_CAPTION);
         s.append(dotIndex);
         s.append(GrammarConstants.ERRMSG_AFTER_DOT_CAPTION);
-        if (afterDot == null) {
+        if (afterDot == null)
             s.append(" ");
-        }
-        else {
+        else
             s.append(afterDot);
-        }
         s.append(" ");
         s.append(rule.ruleNbr);
         s.append(GrammarConstants.ERRMSG_COLON_CAPTION);

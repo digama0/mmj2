@@ -22,8 +22,7 @@
 
 package mmj.util;
 
-import mmj.svc.*;
-
+import mmj.svc.SvcCallback;
 
 /**
  *  BatchMMJ2 is the main batch mmj2 program to process a
@@ -49,14 +48,13 @@ public class BatchMMJ2 extends BatchFramework {
      *
      * @param args see class description.
      */
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
 
-        BatchMMJ2 batchMMJ2 = new BatchMMJ2();
+        final BatchMMJ2 batchMMJ2 = new BatchMMJ2();
 
-        int returnCode = batchMMJ2.runIt(args);
-        if (returnCode != 0) {
+        final int returnCode = batchMMJ2.runIt(args);
+        if (returnCode != 0)
             System.exit(returnCode);
-        }
     }
 
     /*
@@ -118,12 +116,12 @@ public class BatchMMJ2 extends BatchFramework {
      * @return zero if no errors, otherwise severe error
      *         is signified and processing should terminate!
      */
-    public int generateSvcCallback(String[]    args,
-                                   SvcCallback svcCallback) {
+    public int generateSvcCallback(final String[] args,
+        final SvcCallback svcCallback)
+    {
 
-        if (!batchFrameworkInitialized) {
+        if (!batchFrameworkInitialized)
             initializeBatchFramework();
-        }
 
         svcBoss.setSvcCallback(svcCallback);
         return runIt(args);
@@ -139,25 +137,18 @@ public class BatchMMJ2 extends BatchFramework {
      * @throws  IllegalArgumentException if Java version is
      *          too ancient.
      */
-    public static void checkVersion()
-                                throws IllegalArgumentException {
-        String javaVersion        =
-            System.getProperty(
-                UtilConstants.JAVA_VERSION_PROPERTY_NAME);
+    public static void checkVersion() throws IllegalArgumentException {
+        final String javaVersion = System
+            .getProperty(UtilConstants.JAVA_VERSION_PROPERTY_NAME);
 
-        int maj                   =
-            Integer.parseInt(javaVersion.substring(0,1));
+        final int maj = Integer.parseInt(javaVersion.substring(0, 1));
 
-        int min                   =
-            Integer.parseInt(javaVersion.substring(2,3));
+        final int min = Integer.parseInt(javaVersion.substring(2, 3));
 
-        if (maj < UtilConstants.JAVA_VERSION_MMJ2_MAJ ||
-            (maj == UtilConstants.JAVA_VERSION_MMJ2_MAJ
-             &&
-             min < UtilConstants.JAVA_VERSION_MMJ2_MIN)) {
+        if (maj < UtilConstants.JAVA_VERSION_MMJ2_MAJ
+            || maj == UtilConstants.JAVA_VERSION_MMJ2_MAJ
+            && min < UtilConstants.JAVA_VERSION_MMJ2_MIN)
             throw new IllegalArgumentException(
-                UtilConstants.JAVA_VERSION_MMJ2_RUNTIME_ERROR_MSG
-                + javaVersion);
-        }
+                UtilConstants.JAVA_VERSION_MMJ2_RUNTIME_ERROR_MSG + javaVersion);
     }
 }

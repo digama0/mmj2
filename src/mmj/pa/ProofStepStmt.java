@@ -45,86 +45,83 @@
 
 package mmj.pa;
 
-import  java.io.StringReader;
-import  java.io.IOException;
-import  java.util.ArrayList;
-import  java.util.HashMap;
-import  mmj.lang.*;
-import  mmj.mmio.*;
-import  mmj.tmff.*;
-import  mmj.verify.*;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
 
+import mmj.lang.*;
+import mmj.mmio.MMIOError;
+import mmj.mmio.Tokenizer;
+import mmj.verify.VerifyProofs;
 
 public abstract class ProofStepStmt extends ProofWorkStmt {
 
-    //this is obtained from the input proof text line
-    //on input, and for generated statements, is
-    //obtained from ProofAsstPreferences.
-    int               formulaStartColNbr; //to be honored!
+    // this is obtained from the input proof text line
+    // on input, and for generated statements, is
+    // obtained from ProofAsstPreferences.
+    int formulaStartColNbr; // to be honored!
 
-    //obtained on input, used for carat positioning
-    //on errors during input validation.
-    int               formulaStartCharNbr;
+    // obtained on input, used for carat positioning
+    // on errors during input validation.
+    int formulaStartCharNbr;
 
-    String            step;
+    String step;
 
-    Stmt              ref;
+    Stmt ref;
 
-    String            refLabel;
+    String refLabel;
 
-    ProofStepStmt     localRef;
+    ProofStepStmt localRef;
 
-    Formula           formula;
-
+    Formula formula;
 
     // null if no workVars in formula, otherwise
     // contains list of workVars in formula
-    ArrayList         workVarList;
+    ArrayList workVarList;
 
     // if parse tree null, unification cannot be attempted
     // for the step or for other steps that refer
     // to this step as an hypothesis.
-    ParseTree         formulaParseTree;
+    ParseTree formulaParseTree;
 
+    // new fields for Proof Assistant "Derive" Feature:
+    boolean generatedByDeriveFeature; // for Derive
 
-    //new fields for Proof Assistant "Derive" Feature:
-    boolean           generatedByDeriveFeature; // for Derive
-
-    //new fields in replacement of ProofWorkStmt.status
-    //these will only ever be set to true on DerivationStep's.
+    // new fields in replacement of ProofWorkStmt.status
+    // these will only ever be set to true on DerivationStep's.
     //
-    //  -- set to true if "?" is entered in
-    //     the Hyp field of a step and a Ref
-    //     is not entered, signifying that
-    //     the step is not ready for unification
-    //     (because the user doesn't know the
-    //     Hyps that correlate with the formula
-    //     and we cannot perform a search with
-    //     this incomplete information.)
-    //  -- NOTE: this is not set to true in the
-    //     case where deriveStepHyps == true;
-    //     "hypFldIncomplete" is a special situation
-    //     in which unification cannot be attempted;
-    //     it is not an "error" by the user,
-    //     just a delayed entry...
-    boolean           hypFldIncomplete;
+    // -- set to true if "?" is entered in
+    // the Hyp field of a step and a Ref
+    // is not entered, signifying that
+    // the step is not ready for unification
+    // (because the user doesn't know the
+    // Hyps that correlate with the formula
+    // and we cannot perform a search with
+    // this incomplete information.)
+    // -- NOTE: this is not set to true in the
+    // case where deriveStepHyps == true;
+    // "hypFldIncomplete" is a special situation
+    // in which unification cannot be attempted;
+    // it is not an "error" by the user,
+    // just a delayed entry...
+    boolean hypFldIncomplete;
     //
-    //  -- set to true if the formula contains
-    //     dummy/work variables and a Ref is
-    //     not entered, signifying that the
-    //     step is not ready for unification
-    //     (the standard unification search
-    //     will not work properly with temp/work
-    //     variables).
+    // -- set to true if the formula contains
+    // dummy/work variables and a Ref is
+    // not entered, signifying that the
+    // step is not ready for unification
+    // (the standard unification search
+    // will not work properly with temp/work
+    // variables).
     //
-    //  -- NOTE: this is not set to true in the
-    //     case where deriveStepFormula == true;
-    //     "formulaFldIncomplete" is a special
-    //     situation where unification cannot be
-    //     attempted, but it is not an "error" by
-    //     the user, just a delayed entry...and it
-    //     might occur on a generated proof step.
-    boolean           formulaFldIncomplete;
+    // -- NOTE: this is not set to true in the
+    // case where deriveStepFormula == true;
+    // "formulaFldIncomplete" is a special
+    // situation where unification cannot be
+    // attempted, but it is not an "error" by
+    // the user, just a delayed entry...and it
+    // might occur on a generated proof step.
+    boolean formulaFldIncomplete;
 
     // this is the step's level in the proof tree,
     // where the 'qed' step has level 0, and any
@@ -135,12 +132,12 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     // are generated by the Derive feature. The
     // proofLevel number is used for proof formatting
     // indentation by TMFF.
-    int               proofLevel;
+    int proofLevel;
 
     /**
      *  Default Constructor.
      */
-    public ProofStepStmt(ProofWorksheet w) {
+    public ProofStepStmt(final ProofWorksheet w) {
         super(w);
     }
 
@@ -160,20 +157,17 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      *  @param setCaret true means position caret of
      *                  TextArea to this statement.
      */
-    public ProofStepStmt(ProofWorksheet w,
-                         String   step,
-                         String   refLabel,
-                         boolean  setCaret) {
+    public ProofStepStmt(final ProofWorksheet w, final String step,
+        final String refLabel, final boolean setCaret)
+    {
 
         super(w);
-        this.step             = step;
-        this.refLabel         = refLabel;
+        this.step = step;
+        this.refLabel = refLabel;
 
-        if (setCaret) {
-            w.proofCursor.
-                setCursorAtProofWorkStmt(this,
-                                         PaConstants.FIELD_ID_REF);
-        }
+        if (setCaret)
+            w.proofCursor.setCursorAtProofWorkStmt(this,
+                PaConstants.FIELD_ID_REF);
 
     }
 
@@ -182,10 +176,10 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      *  <p>
      *  @return true;
      */
+    @Override
     public boolean isProofStep() {
         return true;
     }
-
 
 //this is not needed but left code in place just in case
 //  /**
@@ -207,10 +201,9 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      *
      *  @param proofLevel value to store if existing level is zero.
      */
-    public void loadProofLevel(int proofLevel) {
-        if (this.proofLevel == 0) {
-            this.proofLevel       = proofLevel;
-        }
+    public void loadProofLevel(final int proofLevel) {
+        if (this.proofLevel == 0)
+            this.proofLevel = proofLevel;
     }
 
     /**
@@ -225,19 +218,19 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      *  @return column of input fieldId or default value
      *         of 1 if there is an error.
      */
-    public int computeFieldIdCol(int fieldId) {
-        int  outCol               = 1;
-        if (fieldId == PaConstants.FIELD_ID_REF) {
-            outCol                = computeFieldIdColRef();
-        }
+    @Override
+    public int computeFieldIdCol(final int fieldId) {
+        int outCol = 1;
+        if (fieldId == PaConstants.FIELD_ID_REF)
+            outCol = computeFieldIdColRef();
         return outCol;
     }
 
     /**
      *  Reformats Derivation Step using TMFF.
      */
-    public void tmffReformat() {
-    }
+    @Override
+    public void tmffReformat() {}
 
     /**
      *  Function used for cursor positioning.
@@ -252,26 +245,23 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      *         of 1 if there is an error.
      */
     public int computeFieldIdColRef() {
-        int  outCol               = 1;
+        int outCol = 1;
 
         char c;
-        int  nbrColons            = 0;
-        int  i                    = 0;
+        int nbrColons = 0;
+        int i = 0;
         while (i < stmtText.length()) {
-            c                     = stmtText.charAt(i++);
+            c = stmtText.charAt(i++);
             if (c == PaConstants.FIELD_DELIMITER_COLON) {
                 if (nbrColons > 0) {
-                    outCol        = i + 1; // +1 to *next* column!
+                    outCol = i + 1; // +1 to *next* column!
                     break;
                 }
                 ++nbrColons;
                 continue;
             }
-            if (c == ' '  ||
-                c == '\t' ||
-                c == '\n') {
+            if (c == ' ' || c == '\t' || c == '\n')
                 break;
-            }
             continue;
         }
 
@@ -284,12 +274,12 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      *  <p>
      *  @param parseTree the new ParseTree for the step.
      */
-    public void updateFormulaParseTree(ParseTree parseTree) {
+    public void updateFormulaParseTree(final ParseTree parseTree) {
         if (parseTree != null) {
             parseTree.resetMaxDepth();
             parseTree.resetLevelOneTwo();
         }
-        formulaParseTree          = parseTree;
+        formulaParseTree = parseTree;
     }
 
     /**
@@ -300,18 +290,14 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      *  @param workVarList ArrayList of WorkVar listing the
      *         WorkVar used in the step formula.
      */
-    public void updateWorkVarList(ArrayList workVarList) {
-        if (workVarList != null &&
-            workVarList.size() == 0) {
-            this.workVarList      = null;
-        }
-        else {
-            this.workVarList      = workVarList;
-        }
+    public void updateWorkVarList(final ArrayList workVarList) {
+        if (workVarList != null && workVarList.size() == 0)
+            this.workVarList = null;
+        else
+            this.workVarList = workVarList;
 
-        if (this.workVarList == null) {
-            formulaFldIncomplete  = false;
-        }
+        if (this.workVarList == null)
+            formulaFldIncomplete = false;
     }
 
     /**
@@ -325,150 +311,107 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      * @return true if stmtText updated successfully.
      */
     public boolean updateStmtTextWithWorkVarUpdates(
-                            VerifyProofs verifyProofs) {
+        final VerifyProofs verifyProofs)
+    {
 
         // 0) BSTF - Better Safe Than Sorry
-        if (stmtText.length() == 0 ||
-            workVarList       == null) {
+        if (stmtText.length() == 0 || workVarList == null)
             return false; // no changes to make, AsIs ok.
-        }
 
         // 1) Build from/to search strings for updating the
-        //    formula portion of stmtText.
+        // formula portion of stmtText.
 
-        String[]  wvArray         =
-            new String[workVarList.size()];
+        final String[] wvArray = new String[workVarList.size()];
 
-        String[]  wvSubstStringArray
-                                 =
-            new String[workVarList.size()];
+        final String[] wvSubstStringArray = new String[workVarList.size()];
 
-        WorkVar   workVar;
+        WorkVar workVar;
         ParseNode substNode;
-        Formula   formula;
-        int       wvCnt           = 0;
+        Formula formula;
+        int wvCnt = 0;
         for (int i = 0; i < workVarList.size(); i++) {
-            workVar               =
-                (WorkVar)workVarList.get(i);
-            substNode             =
-                ((WorkVarHyp)(workVar.getActiveVarHyp())).paSubst;
-            if (substNode == null) {
+            workVar = (WorkVar)workVarList.get(i);
+            substNode = ((WorkVarHyp)workVar.getActiveVarHyp()).paSubst;
+            if (substNode == null)
                 continue;
-            }
-            wvArray[wvCnt]        = workVar.getId();
-            formula               =
-                verifyProofs.convertRPNToFormula(
-                    substNode.convertToRPN(),
-                    "");
-            wvSubstStringArray[wvCnt]
-                                  = formula.exprToString();
+            wvArray[wvCnt] = workVar.getId();
+            formula = verifyProofs.convertRPNToFormula(
+                substNode.convertToRPN(), "");
+            wvSubstStringArray[wvCnt] = formula.exprToString();
             ++wvCnt;
         }
 
-        if (wvCnt == 0) {
+        if (wvCnt == 0)
             return true; // no changes to make, AsIs ok.
-        }
 
         // 2) Create a mmj.mmio.Tokenizer to parse the
-        //    stmtText string. Then bypass the first
-        //    token (the Step/Hyp/Ref field) and any
-        //    white space: the 2nd token will be the
-        //    start of the formula. Apply updates!
+        // stmtText string. Then bypass the first
+        // token (the Step/Hyp/Ref field) and any
+        // white space: the 2nd token will be the
+        // start of the formula. Apply updates!
 
         try {
-            StringBuffer outStmtText
-                                  =
-                new StringBuffer(stmtText.length() + 10);
-
+            final StringBuffer outStmtText = new StringBuffer(
+                stmtText.length() + 10);
 
             int outStmtTextOffset = 0;
-            int len               = 0;
+            int len = 0;
 
-            Tokenizer tokenizer   =
-                new Tokenizer(
-                    new StringReader(
-                        stmtText.toString()),
-                    "");
+            final Tokenizer tokenizer = new Tokenizer(new StringReader(
+                stmtText.toString()), "");
 
             // bypass 1st token and surrounding whitespace
-            len                   =
-                tokenizer.getWhiteSpace(outStmtText,
-                                        outStmtTextOffset);
-            if (len < 0) {
-                return false; //bogus stmtText?
-            }
-            outStmtTextOffset    += len;
+            len = tokenizer.getWhiteSpace(outStmtText, outStmtTextOffset);
+            if (len < 0)
+                return false; // bogus stmtText?
+            outStmtTextOffset += len;
 
-            len                   =
-                tokenizer.getToken(outStmtText,
-                                   outStmtTextOffset);
-            if (len < 0) { //eof
-                return false; //bogus stmtText?
-            }
-            outStmtTextOffset    += len;
+            len = tokenizer.getToken(outStmtText, outStmtTextOffset);
+            if (len < 0)
+                return false; // bogus stmtText?
+            outStmtTextOffset += len;
 
-            len                   =
-                tokenizer.getWhiteSpace(outStmtText,
-                                        outStmtTextOffset);
-            if (len < 0) {
-                return false; //bogus stmtText?
-            }
-            outStmtTextOffset    += len;
+            len = tokenizer.getWhiteSpace(outStmtText, outStmtTextOffset);
+            if (len < 0)
+                return false; // bogus stmtText?
+            outStmtTextOffset += len;
 
-            len                   =
-                tokenizer.getToken(outStmtText,
-                                   outStmtTextOffset);
-            if (len < 0) { //eof
-                return false; //bogus stmtText?
-            }
+            len = tokenizer.getToken(outStmtText, outStmtTextOffset);
+            if (len < 0)
+                return false; // bogus stmtText?
 
             // ok, now we have the 2nd token in hand! proceed..
             String token;
-            int    end;
+            int end;
             loopToken: while (true) {
-                end               = outStmtTextOffset + len;
-                token             =
-                    outStmtText.
-                        substring(outStmtTextOffset,
-                                  end);
+                end = outStmtTextOffset + len;
+                token = outStmtText.substring(outStmtTextOffset, end);
                 loopWV: for (int i = 0; i < wvCnt; i++) {
-                    if (!token.equals(wvArray[i])) {
+                    if (!token.equals(wvArray[i]))
                         continue loopWV;
-                    }
-                    outStmtText.replace(outStmtTextOffset,
-                                        end,
-                                        wvSubstStringArray[i]);
-                    end           = outStmtTextOffset +
-                                    wvSubstStringArray[i].length();
+                    outStmtText.replace(outStmtTextOffset, end,
+                        wvSubstStringArray[i]);
+                    end = outStmtTextOffset + wvSubstStringArray[i].length();
                     break loopWV;
                 }
                 outStmtTextOffset = end;
 
-                len               =
-                    tokenizer.getWhiteSpace(outStmtText,
-                                            outStmtTextOffset);
-                if (len < 0) {
+                len = tokenizer.getWhiteSpace(outStmtText, outStmtTextOffset);
+                if (len < 0)
                     break loopToken;
-                }
-                outStmtTextOffset
-                                 += len;
-                len               =
-                    tokenizer.getToken(outStmtText,
-                                       outStmtTextOffset);
-                if (len < 0) { //eof
+                outStmtTextOffset += len;
+                len = tokenizer.getToken(outStmtText, outStmtTextOffset);
+                if (len < 0)
                     break loopToken;
-                }
             }
 
-            stmtText              = outStmtText;
+            stmtText = outStmtText;
 
             return true;
 
-        }
-        catch (IOException e) {
+        } catch (final IOException e) {
             throw new IllegalArgumentException(e.getMessage());
-        }
-        catch (MMIOError e) {
+        } catch (final MMIOError e) {
             throw new IllegalArgumentException(e.getMessage());
         }
     }
@@ -488,137 +431,100 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      *                    syms in this formula.
      *  @return      String showing the proof text statement
      */
-    public String loadStmtTextWithFormula(boolean workVarsOk)
-                        throws IOException,
-                               MMIOError,
-                               ProofAsstException {
-        int currLineNbr       =
-            (int)w.proofTextTokenizer.getCurrentLineNbr();
+    public String loadStmtTextWithFormula(final boolean workVarsOk)
+        throws IOException, MMIOError, ProofAsstException
+    {
+        final int currLineNbr = (int)w.proofTextTokenizer.getCurrentLineNbr();
 
-        stmtText              = new StringBuffer();
+        stmtText = new StringBuffer();
 
         // input "" because we're skipping step/hyp/ref token
         // for now...and inserting them in stmtText later.
-        String nextT          =
-            loadStmtTextGetOptionalToken("");
+        String nextT = loadStmtTextGetOptionalToken("");
 
-        int colNbr            =
-            (int)w.proofTextTokenizer.getCurrentColumnNbr();
+        final int colNbr = (int)w.proofTextTokenizer.getCurrentColumnNbr();
 
         // formula considered optional with new "Derive"
         // feature -- callers need to interrogate the step's
         // formula field to see if it was input.
-        if (nextT.length() == 0  ||
-            nextT.length() == colNbr) {
+        if (nextT.length() == 0 || nextT.length() == colNbr)
             return nextT;
-        }
 
-        formulaStartColNbr    = colNbr;
+        formulaStartColNbr = colNbr;
 
         // save char nbr for later use positioning caret
-        formulaStartCharNbr   =
-            (int)w.proofTextTokenizer.getCurrentCharNbr();
+        formulaStartCharNbr = (int)w.proofTextTokenizer.getCurrentCharNbr();
 
-        if (!nextT.equals(
-                w.getProvableLogicStmtTyp().getId())) {
-            w.triggerLoadStructureException(
-                PaConstants.ERRMSG_BAD_TYP_CD2_1
+        if (!nextT.equals(w.getProvableLogicStmtTyp().getId()))
+            w.triggerLoadStructureException(PaConstants.ERRMSG_BAD_TYP_CD2_1
                 + w.getErrorLabelIfPossible()
-                + PaConstants.ERRMSG_BAD_TYP_CD2_2
-                + step
-                + PaConstants.ERRMSG_BAD_TYP_CD2_3
-                + nextT
+                + PaConstants.ERRMSG_BAD_TYP_CD2_2 + step
+                + PaConstants.ERRMSG_BAD_TYP_CD2_3 + nextT
                 + PaConstants.ERRMSG_BAD_TYP_CD2_4
-                + w.getProvableLogicStmtTyp().getId(),
-                nextT.length());
-        }
+                + w.getProvableLogicStmtTyp().getId(), nextT.length());
 
-        ArrayList symList = new ArrayList();
+        final ArrayList symList = new ArrayList();
         symList.add(w.getProvableLogicStmtTyp());
 
-        nextT                 =
-            loadStmtTextGetRequiredToken(nextT);
+        nextT = loadStmtTextGetRequiredToken(nextT);
         Sym sym;
         while (true) {
-            sym               = (Sym)w.comboVarMap.get(nextT);
+            sym = (Sym)w.comboVarMap.get(nextT);
             if (sym == null) {
-                sym           =
-                    (Sym)w.logicalSystem.getSymTbl().get(nextT);
+                sym = (Sym)w.logicalSystem.getSymTbl().get(nextT);
                 if (sym == null) {
-                    if ((sym  =
-                         w.proofAsstPreferences.
-                            getWorkVarManager().
-                                alloc(nextT)) != null) {
-                        if (!workVarsOk) {
+                    if ((sym = w.proofAsstPreferences.getWorkVarManager()
+                        .alloc(nextT)) != null)
+                    {
+                        if (!workVarsOk)
                             w.triggerLoadStructureException(
                                 PaConstants.ERRMSG_WV_LOC_ERR_1
-                                + w.getErrorLabelIfPossible()
-                                + PaConstants.ERRMSG_WV_LOC_ERR_2
-                                + step
-                                + PaConstants.ERRMSG_WV_LOC_ERR_3
-                                + nextT
-                                + PaConstants.ERRMSG_WV_LOC_ERR_4,
+                                    + w.getErrorLabelIfPossible()
+                                    + PaConstants.ERRMSG_WV_LOC_ERR_2 + step
+                                    + PaConstants.ERRMSG_WV_LOC_ERR_3 + nextT
+                                    + PaConstants.ERRMSG_WV_LOC_ERR_4,
                                 nextT.length());
-                        }
-                        w.hasWorkVarsOrDerives
-                                  = true;
+                        w.hasWorkVarsOrDerives = true;
                         accumWorkVarList((WorkVar)sym);
                     }
-                    else {
+                    else
                         w.triggerLoadStructureException(
                             PaConstants.ERRMSG_SYM_NOTFND_1
-                            + w.getErrorLabelIfPossible()
-                            + PaConstants.ERRMSG_SYM_NOTFND_2
-                            + step
-                            + PaConstants.ERRMSG_SYM_NOTFND_3
-                            + nextT
-                            + PaConstants.ERRMSG_SYM_NOTFND_4,
+                                + w.getErrorLabelIfPossible()
+                                + PaConstants.ERRMSG_SYM_NOTFND_2 + step
+                                + PaConstants.ERRMSG_SYM_NOTFND_3 + nextT
+                                + PaConstants.ERRMSG_SYM_NOTFND_4,
                             nextT.length());
-                    }
                 }
-                else {
-                    if (!sym.isCnst()) {
-                        w.triggerLoadStructureException(
-                            PaConstants.ERRMSG_VAR_SCOPE_1
+                else if (!sym.isCnst())
+                    w.triggerLoadStructureException(
+                        PaConstants.ERRMSG_VAR_SCOPE_1
                             + w.getErrorLabelIfPossible()
-                            + PaConstants.ERRMSG_VAR_SCOPE_2
-                            + step
-                            + PaConstants.ERRMSG_VAR_SCOPE_3
-                            + nextT,
-                            nextT.length());
-                    }
-                }
+                            + PaConstants.ERRMSG_VAR_SCOPE_2 + step
+                            + PaConstants.ERRMSG_VAR_SCOPE_3 + nextT,
+                        nextT.length());
             }
-            if (sym.getSeq() >= w.getMaxSeq()) {
-                w.triggerLoadStructureException(
-                    PaConstants.ERRMSG_SYM_MAXSEQ_1
+            if (sym.getSeq() >= w.getMaxSeq())
+                w.triggerLoadStructureException(PaConstants.ERRMSG_SYM_MAXSEQ_1
                     + w.getErrorLabelIfPossible()
-                    + PaConstants.ERRMSG_SYM_MAXSEQ_2
-                    + step
-                    + PaConstants.ERRMSG_SYM_MAXSEQ_3
-                    + nextT
-                    + PaConstants.ERRMSG_SYM_MAXSEQ_4,
-                    nextT.length());
-            }
+                    + PaConstants.ERRMSG_SYM_MAXSEQ_2 + step
+                    + PaConstants.ERRMSG_SYM_MAXSEQ_3 + nextT
+                    + PaConstants.ERRMSG_SYM_MAXSEQ_4, nextT.length());
 
             symList.add(sym);
 
-            nextT                 =
-                loadStmtTextGetOptionalToken(nextT);
+            nextT = loadStmtTextGetOptionalToken(nextT);
 
-            if (nextT.length() == 0  ||
-                nextT.length() ==
-                   w.proofTextTokenizer.getCurrentColumnNbr()) {
+            if (nextT.length() == 0
+                || nextT.length() == w.proofTextTokenizer.getCurrentColumnNbr())
                 break;
-            }
         }
 
-        formula               = new Formula(symList);
+        formula = new Formula(symList);
 
         // keep track of step line number here because
         // we are processing the raw input tokens here.
-        updateLineCntUsingTokenizer(currLineNbr,
-                                    nextT);
+        updateLineCntUsingTokenizer(currLineNbr, nextT);
 
         return nextT;
     }
@@ -633,14 +539,12 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      *  @return true if ProofStepStmt Ref label matches
      *               the input string.
      */
-    public boolean hasMatchingRefLabel(String ref) {
-        if (refLabel != null &&
-            refLabel.equals(ref)) {
+    @Override
+    public boolean hasMatchingRefLabel(final String ref) {
+        if (refLabel != null && refLabel.equals(ref))
             return true;
-        }
-        else {
+        else
             return false;
-        }
     }
 
     /**
@@ -649,13 +553,12 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      *  @param newStepNbr step number to compare
      *  @return      true if equal, false if not equal.
      */
-    public boolean hasMatchingStepNbr(String newStepNbr) {
-        if (step.equals(newStepNbr)) {
+    @Override
+    public boolean hasMatchingStepNbr(final String newStepNbr) {
+        if (step.equals(newStepNbr))
             return true;
-        }
-        else {
+        else
             return false;
-        }
     }
 
     /**
@@ -663,8 +566,8 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      *
      *  @param ref Stmt in LogicalSystem
      */
-    public void setRef(Stmt ref) {
-        this.ref              = ref;
+    public void setRef(final Stmt ref) {
+        this.ref = ref;
     }
 
     /**
@@ -685,8 +588,8 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      *
      *  @param refLabel Ref label for the step.
      */
-    public void setRefLabel(String refLabel) {
-        this.refLabel         = refLabel;
+    public void setRefLabel(final String refLabel) {
+        this.refLabel = refLabel;
     }
 
     /**
@@ -698,10 +601,9 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
         return refLabel;
     }
 
+    @Override
     public String getStmtDiagnosticInfo() {
-        return this.getClass().getName()
-               + " "
-               + step;
+        return this.getClass().getName() + " " + step;
     }
 
     /**
@@ -716,45 +618,36 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      *  @param newTextPrefix revised first token of text area.
      */
     public static void reviseStepHypRefInStmtTextArea(
-                        StringBuffer textArea,
-                        StringBuffer newTextPrefix) {
+        final StringBuffer textArea, final StringBuffer newTextPrefix)
+    {
 
-        int  pos              = 0;
+        int pos = 0;
         char c;
-        //bypass non-whitespace at start of line
+        // bypass non-whitespace at start of line
         while (pos < textArea.length()) {
             c = textArea.charAt(pos);
-            if (c == ' '  ||
-                c == '\t' ||
-                c == '\n') {
+            if (c == ' ' || c == '\t' || c == '\n')
                 break;
-            }
             ++pos;
         }
         while (pos < textArea.length()) {
             c = textArea.charAt(pos);
-            if (c == ' ' ||
-                c == '\t') {
+            if (c == ' ' || c == '\t')
                 ++pos;
-            }
-            else {
+            else
                 break;
-            }
         }
 
         newTextPrefix.append(' ');
 
-        int padding           = pos - newTextPrefix.length();
+        int padding = pos - newTextPrefix.length();
         if (padding > 0) {
-            do {
+            do
                 newTextPrefix.append(' ');
-
-            } while (--padding > 0);
+            while (--padding > 0);
             pos = newTextPrefix.length();
         }
-        textArea.replace(0,
-                         pos,
-                         newTextPrefix.toString());
+        textArea.replace(0, pos, newTextPrefix.toString());
     }
 
     /**
@@ -763,10 +656,9 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      *  (This assumes that stepHypRef requires only one
      *  line, which, theoretically could be wrong!)
      */
-    protected int loadStmtText(
-                    StringBuffer stepHypRef,
-                    Formula      formula,
-                    ParseTree    parseTree) {
+    protected int loadStmtText(final StringBuffer stepHypRef,
+        final Formula formula, final ParseTree parseTree)
+    {
 
         stepHypRef.append(' ');
 
@@ -774,59 +666,44 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
 
         w.tmffSP.setPrevColNbr(stepHypRef.length());
 
-        int    nbrLines       =
-                   w.tmffPreferences.renderFormula(w.tmffSP,
-                                                   parseTree,
-                                                   formula,
-                                                   proofLevel);
+        final int nbrLines = w.tmffPreferences.renderFormula(w.tmffSP,
+            parseTree, formula, proofLevel);
 
-        stepHypRef.append(
-            PaConstants.PROOF_WORKSHEET_NEW_LINE);
+        stepHypRef.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
 
         return nbrLines;
     }
 
-    protected void accumWorkVarList(WorkVar workVar) {
+    protected void accumWorkVarList(final WorkVar workVar) {
         if (workVarList == null) {
             workVarList = new ArrayList(3); // arbitrary guess...
             workVarList.add(workVar);
         }
-        else {
-            if (!workVarList.contains(workVar)) {
-                workVarList.add(workVar);
-            }
-        }
+        else if (!workVarList.contains(workVar))
+            workVarList.add(workVar);
     }
 
     // on existing formulas we retrieve parse tree from Stmt
-    protected void getNewFormulaStepParseTree()
-                        throws ProofAsstException {
-        formulaParseTree      =
-            w.grammar.parseFormulaWithoutSafetyNet(
-                formula,
-                w.comboFrame.hypArray,  //is array, confusingly...
-                w.getMaxSeq());
-        if (formulaParseTree == null) {
-                w.triggerLoadStructureException(
-                    PaConstants.ERRMSG_PARSE_ERR_1
-                    + w.getErrorLabelIfPossible()
-                    + PaConstants.ERRMSG_PARSE_ERR_2
-                    + step
+    protected void getNewFormulaStepParseTree() throws ProofAsstException {
+        formulaParseTree = w.grammar.parseFormulaWithoutSafetyNet(formula,
+            w.comboFrame.hypArray, // is array, confusingly...
+            w.getMaxSeq());
+        if (formulaParseTree == null)
+            w.triggerLoadStructureException(
+                PaConstants.ERRMSG_PARSE_ERR_1 + w.getErrorLabelIfPossible()
+                    + PaConstants.ERRMSG_PARSE_ERR_2 + step
                     + PaConstants.ERRMSG_PARSE_ERR_3,
-                    (int)w.proofTextTokenizer.getCurrentCharNbr()
-                        + 1
-                        - formulaStartCharNbr);
-        }
+                (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
+                    - formulaStartCharNbr);
     }
 
     // assumes formula already loaded (first), and possibly
     // preceded by space characters.
-    protected void loadStepHypRefIntoStmtText(
-                            int          origStepHypRefLength,
-                            StringBuffer stepHypRef) {
+    protected void loadStepHypRefIntoStmtText(final int origStepHypRefLength,
+        final StringBuffer stepHypRef)
+    {
 
-        int    diff           = stepHypRef.length()
-                                - origStepHypRefLength;
+        int diff = stepHypRef.length() - origStepHypRefLength;
         while (diff < 0) {
             stepHypRef.append(' ');
             ++diff;
@@ -836,17 +713,14 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
             return;
         }
 
-        int    nbrSpaces      = 0;
-        char   c;
+        int nbrSpaces = 0;
+        char c;
         while (nbrSpaces < stmtText.length()) {
             c = stmtText.charAt(nbrSpaces);
-            if (c == ' ' ||
-                c == '\t') {
+            if (c == ' ' || c == '\t')
                 ++nbrSpaces;
-            }
-            else {
+            else
                 break;
-            }
         }
 
         if (nbrSpaces == 0) {
@@ -855,24 +729,16 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
             return;
         }
 
-        if (diff < nbrSpaces) {
-            stmtText.replace(0,
-                             diff,
-                             stepHypRef.toString());
-        }
-        else {
-            stmtText.replace(0,
-                             nbrSpaces - 1,
-                             stepHypRef.toString());
-        }
+        if (diff < nbrSpaces)
+            stmtText.replace(0, diff, stepHypRef.toString());
+        else
+            stmtText.replace(0, nbrSpaces - 1, stepHypRef.toString());
     }
 
-
     // assumes StmtText already contains StepHypRef
-    protected void reviseStepHypRefInStmtText(
-                        StringBuffer newStepHypRef) {
-        ProofStepStmt.reviseStepHypRefInStmtTextArea(stmtText,
-                                                     newStepHypRef);
+    protected void reviseStepHypRefInStmtText(final StringBuffer newStepHypRef)
+    {
+        ProofStepStmt.reviseStepHypRefInStmtTextArea(stmtText, newStepHypRef);
     }
 
 }

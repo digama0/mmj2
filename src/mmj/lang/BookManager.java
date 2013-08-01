@@ -15,7 +15,9 @@
  */
 
 package mmj.lang;
+
 import java.util.*;
+
 import mmj.mmio.MMIOConstants;
 import mmj.tl.*;
 
@@ -83,27 +85,25 @@ import mmj.tl.*;
  */
 public class BookManager implements TheoremLoaderCommitListener {
 
-    private boolean   enabled;
-    private String    provableLogicStmtTypeParm;
+    private final boolean enabled;
+    private final String provableLogicStmtTypeParm;
 
     private ArrayList chapterList;
     private ArrayList sectionList;
 
-    private Chapter   currChapter;
+    private Chapter currChapter;
 
-    private Section   currSymSection;
-    private Section   currVarHypSection;
-    private Section   currSyntaxSection;
-    private Section   currLogicSection;
+    private Section currSymSection;
+    private Section currVarHypSection;
+    private Section currSyntaxSection;
+    private Section currLogicSection;
 
-    private int       inputSectionCounter;
+    private int inputSectionCounter;
 
-    private int       totalNbrMObjs;
+    private int totalNbrMObjs;
 
-    private String    nextChapterTitle
-                                  = MMIOConstants.DEFAULT_TITLE;
-    private String    nextSectionTitle
-                                  = MMIOConstants.DEFAULT_TITLE;
+    private String nextChapterTitle = MMIOConstants.DEFAULT_TITLE;
+    private String nextSectionTitle = MMIOConstants.DEFAULT_TITLE;
 
     /**
      *  Sole constructor for BookManager.
@@ -116,26 +116,23 @@ public class BookManager implements TheoremLoaderCommitListener {
      *         (normally = "|-" in Metamath, matched against
      *         the first symbol of the object's formula).
      */
-    public BookManager(boolean enabled,
-                       String  provableLogicStmtTypeParm) {
+    public BookManager(final boolean enabled,
+        final String provableLogicStmtTypeParm)
+    {
 
-        this.enabled              = enabled;
+        this.enabled = enabled;
 
-        this.provableLogicStmtTypeParm
-                                  = provableLogicStmtTypeParm;
-
+        this.provableLogicStmtTypeParm = provableLogicStmtTypeParm;
 
         if (enabled) {
-            chapterList               =
-                new ArrayList(
-                    LangConstants.ALLOC_NBR_BOOK_CHAPTERS_INITIAL);
-            sectionList               =
-                new ArrayList(
-                    LangConstants.ALLOC_NBR_BOOK_SECTIONS_INITIAL);
+            chapterList = new ArrayList(
+                LangConstants.ALLOC_NBR_BOOK_CHAPTERS_INITIAL);
+            sectionList = new ArrayList(
+                LangConstants.ALLOC_NBR_BOOK_SECTIONS_INITIAL);
         }
         else {
-            chapterList               = new ArrayList(1);
-            sectionList               = new ArrayList(1);
+            chapterList = new ArrayList(1);
+            sectionList = new ArrayList(1);
         }
     }
 
@@ -152,40 +149,34 @@ public class BookManager implements TheoremLoaderCommitListener {
      *   @param mmtTheoremSet the set of MMTTheoremFile object
      *          added or updated by TheoremLoader.
      */
-    public void commit(MMTTheoremSet mmtTheoremSet) {
-        if (!enabled) {
+    @Override
+    public void commit(final MMTTheoremSet mmtTheoremSet) {
+        if (!enabled)
             return;
-        }
 
-        List addList              =
-            mmtTheoremSet.
-                buildSortedListOfAdds(
-                    TheoremStmtGroup.SEQ);
+        final List addList = mmtTheoremSet
+            .buildSortedListOfAdds(TheoremStmtGroup.SEQ);
 
-        if (addList.size() == 0) {
+        if (addList.size() == 0)
             return;
-        }
 
         TheoremStmtGroup t;
-        int              insertSectionNbr;
+        int insertSectionNbr;
 
-        Iterator         iterator = addList.iterator();
+        final Iterator iterator = addList.iterator();
         while (iterator.hasNext()) {
-            t                     = (TheoremStmtGroup)iterator.next();
+            t = (TheoremStmtGroup)iterator.next();
 
             /* ok, if object inserted then section is the
                section of the thing it was inserted after
                (converted for stmt type appropriate section nbr).
                otherwise, if appended add to final section.
              */
-            insertSectionNbr      = t.getInsertSectionNbr();
-            if (insertSectionNbr > 0) {
-                commitInsertTheoremStmtGroup(t,
-                                             insertSectionNbr);
-            }
-            else {
+            insertSectionNbr = t.getInsertSectionNbr();
+            if (insertSectionNbr > 0)
+                commitInsertTheoremStmtGroup(t, insertSectionNbr);
+            else
                 commitAppendTheoremStmtGroup(t);
-            }
         }
     }
 
@@ -207,17 +198,13 @@ public class BookManager implements TheoremLoaderCommitListener {
      *  @param chapterNbr Chapter number.
      *  @return Chapter or null if no such chapter exists.
      */
-    public Chapter getChapter(int chapterNbr) {
-        if (!enabled) {
+    public Chapter getChapter(final int chapterNbr) {
+        if (!enabled)
             return null;
-        }
-        Chapter chapter           = null;
+        Chapter chapter = null;
         try {
-            chapter               =
-               (Chapter)(chapterList.get(chapterNbr - 1));
-        }
-        catch (IndexOutOfBoundsException e) {
-        }
+            chapter = (Chapter)chapterList.get(chapterNbr - 1);
+        } catch (final IndexOutOfBoundsException e) {}
         return chapter;
     }
 
@@ -228,15 +215,13 @@ public class BookManager implements TheoremLoaderCommitListener {
      *  @param sectionNbr Section number.
      *  @return Chapter or null if no such section exists.
      */
-    public Chapter getChapterForSectionNbr(int sectionNbr) {
-        if (!enabled) {
+    public Chapter getChapterForSectionNbr(final int sectionNbr) {
+        if (!enabled)
             return null;
-        }
-        Chapter chapter           = null;
-        Section section           = getSection(sectionNbr);
-        if (section != null) {
-            chapter               = section.getSectionChapter();
-        }
+        Chapter chapter = null;
+        final Section section = getSection(sectionNbr);
+        if (section != null)
+            chapter = section.getSectionChapter();
         return chapter;
     }
 
@@ -250,17 +235,13 @@ public class BookManager implements TheoremLoaderCommitListener {
      *  @return Chapter or null if no such section exists or
      *          BookManager is not enabled.
      */
-    public Section getSection(int sectionNbr) {
-        if (!enabled) {
+    public Section getSection(final int sectionNbr) {
+        if (!enabled)
             return null;
-        }
-        Section section           = null;
+        Section section = null;
         try {
-            section               =
-               (Section)(sectionList.get(sectionNbr - 1));
-        }
-        catch (IndexOutOfBoundsException e) {
-        }
+            section = (Section)sectionList.get(sectionNbr - 1);
+        } catch (final IndexOutOfBoundsException e) {}
         return section;
     }
 
@@ -271,12 +252,11 @@ public class BookManager implements TheoremLoaderCommitListener {
      *  <p>
      *  @param chapterTitle Chapter Title or descriptive String.
      */
-    public void addNewChapter(String chapterTitle) {
-        if (!enabled) {
+    public void addNewChapter(final String chapterTitle) {
+        if (!enabled)
             return;
-        }
-        nextChapterTitle          = chapterTitle;
-        nextSectionTitle          = null;
+        nextChapterTitle = chapterTitle;
+        nextSectionTitle = null;
     }
 
     /**
@@ -295,11 +275,10 @@ public class BookManager implements TheoremLoaderCommitListener {
      *  <p>
      *  @param sectionTitle or descriptive String.
      */
-    public void addNewSection(String sectionTitle) {
-        if (!enabled) {
+    public void addNewSection(final String sectionTitle) {
+        if (!enabled)
             return;
-        }
-        nextSectionTitle          = sectionTitle;
+        nextSectionTitle = sectionTitle;
     }
 
     /**
@@ -324,26 +303,18 @@ public class BookManager implements TheoremLoaderCommitListener {
      *  <p>
      *  @param axiom newly created Axiom.
      */
-    public void assignChapterSectionNbrs(Axiom axiom) {
+    public void assignChapterSectionNbrs(final Axiom axiom) {
         if (enabled) {
 
             prepareChapterSectionForMObj();
 
-            if (axiom.getTyp().getId().equals(
-                provableLogicStmtTypeParm)) {
+            if (axiom.getTyp().getId().equals(provableLogicStmtTypeParm)) {
 
-                if (currLogicSection.
-                        assignChapterSectionNbrs(axiom)) {
+                if (currLogicSection.assignChapterSectionNbrs(axiom))
                     ++totalNbrMObjs;
-                }
             }
-            else {
-
-                if (currSyntaxSection.
-                        assignChapterSectionNbrs(axiom)) {
-                    ++totalNbrMObjs;
-                }
-            }
+            else if (currSyntaxSection.assignChapterSectionNbrs(axiom))
+                ++totalNbrMObjs;
         }
     }
 
@@ -366,14 +337,13 @@ public class BookManager implements TheoremLoaderCommitListener {
      *  <p>
      *  @param theorem newly created Theorem.
      */
-    public void assignChapterSectionNbrs(Theorem theorem) {
+    public void assignChapterSectionNbrs(final Theorem theorem) {
         if (enabled) {
 
             prepareChapterSectionForMObj();
 
-            if (currLogicSection.assignChapterSectionNbrs(theorem)) {
+            if (currLogicSection.assignChapterSectionNbrs(theorem))
                 ++totalNbrMObjs;
-            }
         }
     }
 
@@ -394,14 +364,13 @@ public class BookManager implements TheoremLoaderCommitListener {
      *  <p>
      *  @param logHyp newly created LogHyp.
      */
-    public void assignChapterSectionNbrs(LogHyp logHyp) {
+    public void assignChapterSectionNbrs(final LogHyp logHyp) {
         if (enabled) {
 
             prepareChapterSectionForMObj();
 
-            if (currLogicSection.assignChapterSectionNbrs(logHyp)) {
+            if (currLogicSection.assignChapterSectionNbrs(logHyp))
                 ++totalNbrMObjs;
-            }
         }
     }
 
@@ -421,14 +390,13 @@ public class BookManager implements TheoremLoaderCommitListener {
      *  <p>
      *  @param varHyp newly created VarHyp
      */
-    public void assignChapterSectionNbrs(VarHyp varHyp) {
+    public void assignChapterSectionNbrs(final VarHyp varHyp) {
         if (enabled) {
 
             prepareChapterSectionForMObj();
 
-            if (currVarHypSection.assignChapterSectionNbrs(varHyp)) {
+            if (currVarHypSection.assignChapterSectionNbrs(varHyp))
                 ++totalNbrMObjs;
-            }
         }
     }
 
@@ -449,14 +417,13 @@ public class BookManager implements TheoremLoaderCommitListener {
      *  <p>
      *  @param sym newly created Sym.
      */
-    public void assignChapterSectionNbrs(Sym sym) {
+    public void assignChapterSectionNbrs(final Sym sym) {
         if (enabled) {
 
             prepareChapterSectionForMObj();
 
-            if (currSymSection.assignChapterSectionNbrs(sym)) {
+            if (currSymSection.assignChapterSectionNbrs(sym))
                 ++totalNbrMObjs;
-            }
         }
     }
 
@@ -504,10 +471,8 @@ public class BookManager implements TheoremLoaderCommitListener {
      *  @param logicalSystem the mmj2 LogicalSystem object.
      *  @return ArrayList of Sections.
      */
-    public Iterator getSectionMObjIterator(
-                                    LogicalSystem logicalSystem) {
-        MObj[][] sectionArray     =
-            getSectionMObjArray(logicalSystem);
+    public Iterator getSectionMObjIterator(final LogicalSystem logicalSystem) {
+        final MObj[][] sectionArray = getSectionMObjArray(logicalSystem);
 
         return new SectionMObjIterator(sectionArray);
     }
@@ -523,33 +488,28 @@ public class BookManager implements TheoremLoaderCommitListener {
      *  @return two-dimensional array of MObjs by Section
      *          and MObjNbr within Section.
      */
-    public MObj[][] getSectionMObjArray(LogicalSystem logicalSystem) {
+    public MObj[][] getSectionMObjArray(final LogicalSystem logicalSystem) {
 
         MObj[][] sectionArray;
 
         if (!enabled) {
-            sectionArray          = new MObj[0][];
+            sectionArray = new MObj[0][];
             return sectionArray;
         }
 
-        sectionArray              = new MObj[sectionList.size()][];
+        sectionArray = new MObj[sectionList.size()][];
 
-        Iterator iterator         = sectionList.iterator();
-        int      i                = 0;
-        while (iterator.hasNext()) {
-            sectionArray[i++]     =
-                new MObj[((Section)iterator.next()).getLastMObjNbr()];
-        }
+        Iterator iterator = sectionList.iterator();
+        int i = 0;
+        while (iterator.hasNext())
+            sectionArray[i++] = new MObj[((Section)iterator.next())
+                .getLastMObjNbr()];
 
-        iterator                  =
-            logicalSystem.getSymTbl().values().iterator();
-        loadSectionArrayEntry(sectionArray,
-                              iterator);
+        iterator = logicalSystem.getSymTbl().values().iterator();
+        loadSectionArrayEntry(sectionArray, iterator);
 
-        iterator                  =
-            logicalSystem.getStmtTbl().values().iterator();
-        loadSectionArrayEntry(sectionArray,
-                              iterator);
+        iterator = logicalSystem.getStmtTbl().values().iterator();
+        loadSectionArrayEntry(sectionArray, iterator);
 
         return sectionArray;
     }
@@ -559,11 +519,11 @@ public class BookManager implements TheoremLoaderCommitListener {
      *  array of MObjs by Section and MObjNbr within Section.
      */
     public class SectionMObjIterator implements Iterator {
-        private int         prevI;
-        private int         prevJ;
-        private int         nextI;
-        private int         nextJ;
-        private MObj[][]    mArray;
+        private int prevI;
+        private int prevJ;
+        private int nextI;
+        private int nextJ;
+        private final MObj[][] mArray;
 
         /**
          *  Sole Constructor.
@@ -577,10 +537,10 @@ public class BookManager implements TheoremLoaderCommitListener {
          *  @param s two-dimensional array of MObjs by Section
          *         and MObjNbr within Section.
          */
-        public SectionMObjIterator(MObj[][] s) {
-            mArray                = s;
-            prevI                 = 0;
-            prevJ                 = -1;
+        public SectionMObjIterator(final MObj[][] s) {
+            mArray = s;
+            prevI = 0;
+            prevJ = -1;
         }
 
         /**
@@ -590,12 +550,12 @@ public class BookManager implements TheoremLoaderCommitListener {
          *  @throws NoSuchElementException if there are no more
          *          MObjs to return.
          */
+        @Override
         public Object next() {
-            if (!hasNext()) {
+            if (!hasNext())
                 throw new NoSuchElementException();
-            }
-            prevI                 = nextI;
-            prevJ                 = nextJ;
+            prevI = nextI;
+            prevJ = nextJ;
             return mArray[prevI][prevJ];
         }
 
@@ -606,15 +566,15 @@ public class BookManager implements TheoremLoaderCommitListener {
          *  @return true if there is a next() MObj within
          *          the two-dimensional array.
          */
+        @Override
         public boolean hasNext() {
-            nextI                 = prevI;
-            nextJ                 = prevJ + 1;
+            nextI = prevI;
+            nextJ = prevJ + 1;
             while (nextI < mArray.length) {
-                if (nextJ < mArray[nextI].length) {
+                if (nextJ < mArray[nextI].length)
                     return true;
-                }
                 ++nextI;
-                nextJ             = 0;
+                nextJ = 0;
             }
             return false;
         }
@@ -624,37 +584,32 @@ public class BookManager implements TheoremLoaderCommitListener {
          *  <p>
          *  @throws UnsupportedOperationException if called.
          */
+        @Override
         public void remove() {
             throw new UnsupportedOperationException();
         }
     }
 
-
     private void prepareChapterSectionForMObj() {
         if (nextChapterTitle != null) {
 
-            if (nextSectionTitle == null) {
-                nextSectionTitle  = nextChapterTitle;
-            }
+            if (nextSectionTitle == null)
+                nextSectionTitle = nextChapterTitle;
 
             constructNewChapter();
-            nextChapterTitle      = null;
-            nextSectionTitle      = null;
+            nextChapterTitle = null;
+            nextSectionTitle = null;
         }
-        else {
-            if (nextSectionTitle != null) {
+        else if (nextSectionTitle != null) {
 
-                constructNewSection();
-                nextSectionTitle  = null;
-            }
+            constructNewSection();
+            nextSectionTitle = null;
         }
     }
 
     private void constructNewChapter() {
 
-        currChapter               =
-            new Chapter(nextChapterNbr(),
-                        nextChapterTitle);
+        currChapter = new Chapter(nextChapterNbr(), nextChapterTitle);
         chapterList.add(currChapter);
 
         constructNewSection();
@@ -662,110 +617,81 @@ public class BookManager implements TheoremLoaderCommitListener {
 
     private void constructNewSection() {
 
-        int n                     =
-            inputSectionCounter++
-            *
-            LangConstants.SECTION_NBR_CATEGORIES;
+        final int n = inputSectionCounter++
+            * LangConstants.SECTION_NBR_CATEGORIES;
 
-        currSymSection            =
-            new Section(currChapter,
-                        (n + LangConstants.SECTION_SYM_CD),
-                        nextSectionTitle);
+        currSymSection = new Section(currChapter, n
+            + LangConstants.SECTION_SYM_CD, nextSectionTitle);
         sectionList.add(currSymSection);
 
-        currVarHypSection         =
-            new Section(currChapter,
-                        (n + LangConstants.SECTION_VAR_HYP_CD),
-                        nextSectionTitle);
+        currVarHypSection = new Section(currChapter, n
+            + LangConstants.SECTION_VAR_HYP_CD, nextSectionTitle);
         sectionList.add(currVarHypSection);
 
-        currSyntaxSection          =
-            new Section(currChapter,
-                        (n + LangConstants.SECTION_SYNTAX_CD),
-                        nextSectionTitle);
+        currSyntaxSection = new Section(currChapter, n
+            + LangConstants.SECTION_SYNTAX_CD, nextSectionTitle);
         sectionList.add(currSyntaxSection);
 
-        currLogicSection          =
-            new Section(currChapter,
-                        (n + LangConstants.SECTION_LOGIC_CD),
-                        nextSectionTitle);
+        currLogicSection = new Section(currChapter, n
+            + LangConstants.SECTION_LOGIC_CD, nextSectionTitle);
         sectionList.add(currLogicSection);
     }
 
     private int nextChapterNbr() {
         int chapterNbr;
-        if (currChapter == null) {
-            chapterNbr            = 1;
-        }
-        else {
-            chapterNbr            = currChapter.getChapterNbr() + 1;
-        }
+        if (currChapter == null)
+            chapterNbr = 1;
+        else
+            chapterNbr = currChapter.getChapterNbr() + 1;
         return chapterNbr;
     }
 
-    private void loadSectionArrayEntry(MObj[][] sectionArray,
-                                       Iterator iterator) {
+    private void loadSectionArrayEntry(final MObj[][] sectionArray,
+        final Iterator iterator)
+    {
         MObj mObj;
         while (iterator.hasNext()) {
-            mObj                  = (MObj)iterator.next();
-            sectionArray[
-                mObj.sectionNbr - 1][
-                    mObj.sectionMObjNbr - 1]
-                                  = mObj;
+            mObj = (MObj)iterator.next();
+            sectionArray[mObj.sectionNbr - 1][mObj.sectionMObjNbr - 1] = mObj;
         }
     }
 
-    private void commitAppendTheoremStmtGroup(TheoremStmtGroup t) {
+    private void commitAppendTheoremStmtGroup(final TheoremStmtGroup t) {
 
-        LogHyp[] logHypArray      = t.getLogHypArray();
-        for (int i = 0; i < logHypArray.length; i++) {
-            assignChapterSectionNbrs(logHypArray[i]);
-        }
+        final LogHyp[] logHypArray = t.getLogHypArray();
+        for (final LogHyp element : logHypArray)
+            assignChapterSectionNbrs(element);
         assignChapterSectionNbrs(t.getTheorem());
     }
 
-    private void commitInsertTheoremStmtGroup(
-                            TheoremStmtGroup t,
-                            int              insertSectionNbr) {
+    private void commitInsertTheoremStmtGroup(final TheoremStmtGroup t,
+        final int insertSectionNbr)
+    {
 
         // 'x' is the actual section number to be used for
         // insertions. Note that only 'logic' theorems can
         // be added using Theorem Loader! The input section
         // number could be any category, so we reverse out
         // the input category code and add back in "logic".
-        int x                     =
-            (insertSectionNbr
-               -
-               Section.getSectionCategoryCd(  //old category cd
-                   insertSectionNbr))
-             +
-             LangConstants.SECTION_LOGIC_CD;  //new category cd
+        final int x = insertSectionNbr - Section.getSectionCategoryCd( // old
+                                                                       // category
+                                                                       // cd
+            insertSectionNbr) + LangConstants.SECTION_LOGIC_CD; // new category
+                                                                // cd
 
-        Section insertSection     = getSection(x);
-        if (insertSection == null) {
+        final Section insertSection = getSection(x);
+        if (insertSection == null)
             throw new IllegalArgumentException(
-                LangConstants.
-                    ERRMSG_BM_UPDATE_W_MMT_SECTION_NOTFND_1
-                + x
-                + LangConstants.
-                    ERRMSG_BM_UPDATE_W_MMT_SECTION_NOTFND_2
-                + t.getTheoremLabel()
-                + LangConstants.
-                    ERRMSG_BM_UPDATE_W_MMT_SECTION_NOTFND_3);
-        }
+                LangConstants.ERRMSG_BM_UPDATE_W_MMT_SECTION_NOTFND_1 + x
+                    + LangConstants.ERRMSG_BM_UPDATE_W_MMT_SECTION_NOTFND_2
+                    + t.getTheoremLabel()
+                    + LangConstants.ERRMSG_BM_UPDATE_W_MMT_SECTION_NOTFND_3);
 
-        LogHyp[] logHypArray      = t.getLogHypArray();
-        for (int i = 0; i < logHypArray.length; i++) {
-            if (insertSection.
-                    assignChapterSectionNbrs(
-                        logHypArray[i])) {
+        final LogHyp[] logHypArray = t.getLogHypArray();
+        for (final LogHyp element : logHypArray)
+            if (insertSection.assignChapterSectionNbrs(element))
                 ++totalNbrMObjs;
-            }
-        }
-        if (insertSection.
-                assignChapterSectionNbrs(
-                    t.getTheorem())) {
+        if (insertSection.assignChapterSectionNbrs(t.getTheorem()))
             ++totalNbrMObjs;
-        }
     }
 }

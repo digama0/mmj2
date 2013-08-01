@@ -30,7 +30,7 @@ public class LangException extends Exception {
      *
      *  @param   errorMessage  error message.
      */
-    public LangException(String errorMessage) {
+    public LangException(final String errorMessage) {
         super(errorMessage);
     }
 }

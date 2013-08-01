@@ -40,10 +40,10 @@ package mmj.tmff;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import mmj.pa.PaConstants;
-import mmj.lang.ParseNode;
-import mmj.lang.ParseTree;
+
 import mmj.lang.Formula;
+import mmj.lang.ParseTree;
+import mmj.pa.PaConstants;
 
 /**
  *  Holds user settings/preferences used by the
@@ -60,38 +60,36 @@ import mmj.lang.Formula;
  */
 public class TMFFPreferences {
 
-    private   int            formulaLeftCol;
+    private int formulaLeftCol;
 
-    private   int            formulaRightCol;
+    private int formulaRightCol;
 
-    private   int            textColumns;
+    private int textColumns;
 
-    private   int            textRows;
+    private int textRows;
 
-    private   boolean        lineWrap;
+    private boolean lineWrap;
 
-    private   int            currFormatNbr;
+    private int currFormatNbr;
 
-    private   int            altFormatNbr;
-    private   int            useIndent;
-    private   int            altIndent;
+    private int altFormatNbr;
+    private int useIndent;
+    private int altIndent;
 
     /*
      * See toggleAltFormatAndIndentParms() for info on how
      * these are used.
      */
-    private   boolean        inAltFormatNow;
-    private   int            prevFormatNbr;
-    private   int            prevIndent;
-
+    private boolean inAltFormatNow;
+    private int prevFormatNbr;
+    private int prevIndent;
 
     /*
      *  The TMFFSchemes defined for use. We'll use the HashMap
      *  to check for duplicates and process updates (via
      *  RunParms in BatchMMJ2.)
      */
-    private   HashMap        tmffSchemeMap;
-
+    private HashMap tmffSchemeMap;
 
     /*
      *  The (4) Formats available for use: 0, 1, 2, 3
@@ -99,13 +97,13 @@ public class TMFFPreferences {
      *  Number 0 is the default Format, which is coded to
      *  output the "old" way: unformatted.
      */
-    private   TMFFFormat[]   tmffFormatArray;
+    private TMFFFormat[] tmffFormatArray;
 
     /*
      *  These output the "old" way: unformatted strings.
      */
-    private   TMFFScheme     tmffUnformattedScheme;
-    private   TMFFFormat     tmffUnformattedFormat;
+    private TMFFScheme tmffUnformattedScheme;
+    private TMFFFormat tmffUnformattedFormat;
 
     /**
      *  Default constructor for TMFFPreferences.
@@ -126,39 +124,26 @@ public class TMFFPreferences {
      *  for the run.
      */
     public void loadPreferenceDefaults() {
-        formulaLeftCol            =
-            PaConstants.PROOF_ASST_FORMULA_LEFT_COL_DEFAULT;
-        formulaRightCol           =
-            PaConstants.PROOF_ASST_FORMULA_RIGHT_COL_DEFAULT;
-        textColumns               =
-            PaConstants.PROOF_ASST_TEXT_COLUMNS_DEFAULT;
-        textRows                  =
-            PaConstants.PROOF_ASST_TEXT_ROWS_DEFAULT;
+        formulaLeftCol = PaConstants.PROOF_ASST_FORMULA_LEFT_COL_DEFAULT;
+        formulaRightCol = PaConstants.PROOF_ASST_FORMULA_RIGHT_COL_DEFAULT;
+        textColumns = PaConstants.PROOF_ASST_TEXT_COLUMNS_DEFAULT;
+        textRows = PaConstants.PROOF_ASST_TEXT_ROWS_DEFAULT;
 
-        lineWrap                  =
-            PaConstants.PROOF_ASST_LINE_WRAP_DEFAULT;
+        lineWrap = PaConstants.PROOF_ASST_LINE_WRAP_DEFAULT;
 
-        currFormatNbr             =
-            TMFFConstants.TMFF_CURR_FORMAT_NBR_DEFAULT;
-        altFormatNbr              =
-            TMFFConstants.TMFF_ALT_FORMAT_NBR_DEFAULT;
+        currFormatNbr = TMFFConstants.TMFF_CURR_FORMAT_NBR_DEFAULT;
+        altFormatNbr = TMFFConstants.TMFF_ALT_FORMAT_NBR_DEFAULT;
 
-        useIndent                 =
-            TMFFConstants.TMFF_USE_INDENT_DEFAULT;
-        altIndent                 =
-            TMFFConstants.TMFF_ALT_INDENT_DEFAULT;
+        useIndent = TMFFConstants.TMFF_USE_INDENT_DEFAULT;
+        altIndent = TMFFConstants.TMFF_ALT_INDENT_DEFAULT;
 
-        inAltFormatNow            = false;
-        prevFormatNbr             =
-            TMFFConstants.TMFF_CURR_FORMAT_NBR_DEFAULT;
-        prevIndent                =
-            TMFFConstants.TMFF_USE_INDENT_DEFAULT;
+        inAltFormatNow = false;
+        prevFormatNbr = TMFFConstants.TMFF_CURR_FORMAT_NBR_DEFAULT;
+        prevIndent = TMFFConstants.TMFF_USE_INDENT_DEFAULT;
 
-        tmffFormatArray           =
-            new TMFFFormat[
-                TMFFConstants.TMFF_MAX_FORMAT_NBR + 1];
+        tmffFormatArray = new TMFFFormat[TMFFConstants.TMFF_MAX_FORMAT_NBR + 1];
 
-        tmffSchemeMap             = new HashMap();
+        tmffSchemeMap = new HashMap();
 
         /*
          *  Load default Schemes
@@ -166,15 +151,9 @@ public class TMFFPreferences {
 
         TMFFScheme s;
 
-        for (int i = 0;
-             i < TMFFConstants.
-                     TMFF_DEFAULT_DEFINE_SCHEME_PARAMS.
-                        length;
-             i++) {
-            s                     =
-                new TMFFScheme(
-                    TMFFConstants.
-                        TMFF_DEFAULT_DEFINE_SCHEME_PARAMS[i]);
+        for (final String[] element : TMFFConstants.TMFF_DEFAULT_DEFINE_SCHEME_PARAMS)
+        {
+            s = new TMFFScheme(element);
             putToSchemeMap(s);
         }
 
@@ -184,39 +163,23 @@ public class TMFFPreferences {
 
         TMFFFormat f;
 
-        for (int i = 0;
-             i < TMFFConstants.
-                     TMFF_DEFAULT_DEFINE_FORMAT_PARAMS.
-                         length;
-             i++) {
-            s                     =
-                getDefinedScheme(
-                    TMFFConstants.
-                        TMFF_DEFAULT_DEFINE_FORMAT_PARAMS[i][1]);
-            if (s == null) {
+        for (final String[] element : TMFFConstants.TMFF_DEFAULT_DEFINE_FORMAT_PARAMS)
+        {
+            s = getDefinedScheme(element[1]);
+            if (s == null)
                 throw new IllegalArgumentException(
                     TMFFConstants.ERRMSG_FORMAT_SCHEME_NAME_NOTFND_1
-                    + TMFFConstants.
-                        TMFF_DEFAULT_DEFINE_FORMAT_PARAMS[i][1]);
-            }
-            f                     =
-                new TMFFFormat(
-                    TMFFConstants.
-                        TMFF_DEFAULT_DEFINE_FORMAT_PARAMS[i][0],
-                    s);
+                        + element[1]);
+            f = new TMFFFormat(element[0], s);
 
-            tmffFormatArray[f.getFormatNbr()]
-                                  = f;
+            tmffFormatArray[f.getFormatNbr()] = f;
         }
 
         /*
          *  Load default Format 0 holders
          */
-        tmffUnformattedFormat     =
-            tmffFormatArray[
-                TMFFConstants.TMFF_UNFORMATTED_FORMAT_NBR_0];
-        tmffUnformattedScheme     =
-            tmffUnformattedFormat.getFormatScheme();
+        tmffUnformattedFormat = tmffFormatArray[TMFFConstants.TMFF_UNFORMATTED_FORMAT_NBR_0];
+        tmffUnformattedScheme = tmffUnformattedFormat.getFormatScheme();
 
     }
 
@@ -235,15 +198,11 @@ public class TMFFPreferences {
      *  @return true if TMFF is enabled, else false.
      */
     public boolean isTMFFEnabled() {
-        if (getCurrFormatNbr() ==
-            TMFFConstants.TMFF_UNFORMATTED_FORMAT_NBR_0) {
+        if (getCurrFormatNbr() == TMFFConstants.TMFF_UNFORMATTED_FORMAT_NBR_0)
             return false;
-        }
-        else {
+        else
             return true;
-        }
     }
-
 
     /**
      *  Formats a formula and outputs it to a StringBuffer
@@ -267,59 +226,43 @@ public class TMFFPreferences {
      *                  was encountered and the formula could
      *                  not be formatted.
      */
-    public int renderFormula(TMFFStateParams tmffSP,
-                             ParseTree       parseTree,
-                             Formula         formula,
-                             int             proofLevel) {
+    public int renderFormula(final TMFFStateParams tmffSP,
+        final ParseTree parseTree, final Formula formula, final int proofLevel)
+    {
 
-
-        int nbrLines              = -1;
+        int nbrLines = -1;
 
         if (parseTree != null) {
 
-            int savedLength       = tmffSP.sb.length();
-            int savedColNbr       = tmffSP.prevColNbr;
-            int savedLeftmostColNbr
-                                  = tmffSP.getLeftmostColNbr();
+            final int savedLength = tmffSP.sb.length();
+            final int savedColNbr = tmffSP.prevColNbr;
+            final int savedLeftmostColNbr = tmffSP.getLeftmostColNbr();
 
-            tmffSP.setLeftmostColNbr(getFormulaLeftCol(),
-                                     getUseIndent(),
-                                     proofLevel);
-            nbrLines              =
-                getCurrFormat().
-                    getFormatScheme().
-                        getTMFFMethod().
-                            renderFormula(tmffSP,
-                                          parseTree,
-                                          formula);
+            tmffSP.setLeftmostColNbr(getFormulaLeftCol(), getUseIndent(),
+                proofLevel);
+            nbrLines = getCurrFormat().getFormatScheme().getTMFFMethod()
+                .renderFormula(tmffSP, parseTree, formula);
 
             tmffSP.setLeftmostColNbr(savedLeftmostColNbr);
 
-            if (nbrLines > 0) {
+            if (nbrLines > 0)
                 return nbrLines;
-            }
 
-            tmffSP.sb.setLength(savedLength);    //clean up mess.
-            tmffSP.prevColNbr     = savedColNbr; //clean up mess
+            tmffSP.sb.setLength(savedLength); // clean up mess.
+            tmffSP.prevColNbr = savedColNbr; // clean up mess
         }
-
 
         // Note: TMFFUnformatted overrides renderFormula
-        nbrLines                  =
-            getTMFFUnformattedScheme().
-                getTMFFMethod().
-                    renderFormula(tmffSP,
-                                  null, //parse tree not needed!
-                                  formula);
-        if (nbrLines < 1) {
+        nbrLines = getTMFFUnformattedScheme().getTMFFMethod().renderFormula(
+            tmffSP, null, // parse tree not needed!
+            formula);
+        if (nbrLines < 1)
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_RENDER_FORMULA_ERROR_1);
-        }
 
         return nbrLines;
 
     }
-
 
     /**
      *  Formats a formula and outputs it to a StringBuffer
@@ -342,49 +285,37 @@ public class TMFFPreferences {
      *                  was encountered and the formula could
      *                  not be formatted.
      */
-    public int renderFormula(TMFFStateParams tmffSP,
-                             ParseTree       parseTree,
-                             Formula         formula) {
+    public int renderFormula(final TMFFStateParams tmffSP,
+        final ParseTree parseTree, final Formula formula)
+    {
 
-
-        int nbrLines              = -1;
+        int nbrLines = -1;
 
         if (parseTree != null) {
 
-            int savedLength       = tmffSP.sb.length();
-            int savedColNbr       = tmffSP.prevColNbr;
+            final int savedLength = tmffSP.sb.length();
+            final int savedColNbr = tmffSP.prevColNbr;
 
-            nbrLines              =
-                getCurrFormat().
-                    getFormatScheme().
-                        getTMFFMethod().
-                            renderFormula(tmffSP,
-                                          parseTree,
-                                          formula);
-            if (nbrLines > 0) {
+            nbrLines = getCurrFormat().getFormatScheme().getTMFFMethod()
+                .renderFormula(tmffSP, parseTree, formula);
+            if (nbrLines > 0)
                 return nbrLines;
-            }
 
-            tmffSP.sb.setLength(savedLength);    //clean up mess.
-            tmffSP.prevColNbr     = savedColNbr; //clean up mess
+            tmffSP.sb.setLength(savedLength); // clean up mess.
+            tmffSP.prevColNbr = savedColNbr; // clean up mess
         }
 
         // Note: TMFFUnformatted overrides renderFormula
-        nbrLines                  =
-            getTMFFUnformattedScheme().
-                getTMFFMethod().
-                    renderFormula(tmffSP,
-                                  null, //parse tree not needed!
-                                  formula);
-        if (nbrLines < 1) {
+        nbrLines = getTMFFUnformattedScheme().getTMFFMethod().renderFormula(
+            tmffSP, null, // parse tree not needed!
+            formula);
+        if (nbrLines < 1)
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_RENDER_FORMULA_ERROR_1);
-        }
 
         return nbrLines;
 
     }
-
 
     /**
      *  Returns the TMFFFormat presently in use.
@@ -405,7 +336,6 @@ public class TMFFPreferences {
         return tmffUnformattedFormat;
     }
 
-
     /**
      *  Returns the default Scheme
      *
@@ -415,7 +345,6 @@ public class TMFFPreferences {
         return tmffUnformattedScheme;
     }
 
-
     /**
      *  Set formula left column used in formatting proof
      *  text areas.
@@ -423,8 +352,8 @@ public class TMFFPreferences {
      *  @param formulaLeftCol formula LeftCol used for formatting
      *                     formula text areas
      */
-    public void setFormulaLeftCol(int formulaLeftCol) {
-        this.formulaLeftCol       = formulaLeftCol;
+    public void setFormulaLeftCol(final int formulaLeftCol) {
+        this.formulaLeftCol = formulaLeftCol;
     }
 
     /**
@@ -445,8 +374,8 @@ public class TMFFPreferences {
      *  @param formulaRightCol formula RightCol used for
      *                     formatting formula text areas
      */
-    public void setFormulaRightCol(int formulaRightCol) {
-        this.formulaRightCol      = formulaRightCol;
+    public void setFormulaRightCol(final int formulaRightCol) {
+        this.formulaRightCol = formulaRightCol;
     }
 
     /**
@@ -472,8 +401,8 @@ public class TMFFPreferences {
      *  <p>
      *  @param textColumns number of text columns.
      */
-    public void setTextColumns(int textColumns) {
-        this.textColumns          = textColumns;
+    public void setTextColumns(final int textColumns) {
+        this.textColumns = textColumns;
     }
 
     /**
@@ -491,8 +420,8 @@ public class TMFFPreferences {
      *  <p>
      *  @param textRows number of text rows.
      */
-    public void setTextRows(int textRows) {
-        this.textRows          = textRows;
+    public void setTextRows(final int textRows) {
+        this.textRows = textRows;
     }
 
     /**
@@ -515,8 +444,8 @@ public class TMFFPreferences {
      *  <p>
      *  @param lineWrap setting, on or off.
      */
-    public void setLineWrap(boolean lineWrap) {
-        this.lineWrap             = lineWrap;
+    public void setLineWrap(final boolean lineWrap) {
+        this.lineWrap = lineWrap;
     }
 
     /**
@@ -534,25 +463,19 @@ public class TMFFPreferences {
      *  @param param String array containing current Format
      *               number in array element 0.
      */
-    public void setCurrFormatNbr(String[] param) {
+    public void setCurrFormatNbr(final String[] param) {
 
-        if (param.length < 1   ||
-            param[0] == null   ||
-            param[0].length() == 0) {
+        if (param.length < 1 || param[0] == null || param[0].length() == 0)
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_FORMAT_NBR_MISSING2_1);
-        }
 
         try {
-            setCurrFormatNbr(
-                Integer.parseInt(param[0].trim()));
-        }
-        catch (NumberFormatException e) {
+            setCurrFormatNbr(Integer.parseInt(param[0].trim()));
+        } catch (final NumberFormatException e) {
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_BAD_PREF_FORMAT_NBR_1
-                + param[0].trim()
-                + TMFFConstants.ERRMSG_BAD_PREF_FORMAT_NBR_2
-                + TMFFConstants.TMFF_MAX_FORMAT_NBR);
+                TMFFConstants.ERRMSG_BAD_PREF_FORMAT_NBR_1 + param[0].trim()
+                    + TMFFConstants.ERRMSG_BAD_PREF_FORMAT_NBR_2
+                    + TMFFConstants.TMFF_MAX_FORMAT_NBR);
         }
     }
 
@@ -562,25 +485,19 @@ public class TMFFPreferences {
      *  @param param String array containing alternate Format
      *               number in array element 0.
      */
-    public void setAltFormatNbr(String[] param) {
+    public void setAltFormatNbr(final String[] param) {
 
-        if (param.length < 1   ||
-            param[0] == null   ||
-            param[0].length() == 0) {
+        if (param.length < 1 || param[0] == null || param[0].length() == 0)
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_ALT_FORMAT_NBR_MISSING2_1);
-        }
 
         try {
-            setAltFormatNbr(
-                Integer.parseInt(param[0].trim()));
-        }
-        catch (NumberFormatException e) {
+            setAltFormatNbr(Integer.parseInt(param[0].trim()));
+        } catch (final NumberFormatException e) {
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_BAD_ALT_FORMAT_NBR_1
-                + param[0].trim()
-                + TMFFConstants.ERRMSG_BAD_ALT_FORMAT_NBR_2
-                + TMFFConstants.TMFF_MAX_FORMAT_NBR);
+                TMFFConstants.ERRMSG_BAD_ALT_FORMAT_NBR_1 + param[0].trim()
+                    + TMFFConstants.ERRMSG_BAD_ALT_FORMAT_NBR_2
+                    + TMFFConstants.TMFF_MAX_FORMAT_NBR);
         }
     }
 
@@ -590,25 +507,19 @@ public class TMFFPreferences {
      *  @param param String array containing alternate Indent
      *               amount in array element 0.
      */
-    public void setUseIndent(String[] param) {
+    public void setUseIndent(final String[] param) {
 
-        if (param.length < 1   ||
-            param[0] == null   ||
-            param[0].length() == 0) {
+        if (param.length < 1 || param[0] == null || param[0].length() == 0)
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_USE_INDENT_MISSING2_1);
-        }
 
         try {
-            setUseIndent(
-                Integer.parseInt(param[0].trim()));
-        }
-        catch (NumberFormatException e) {
+            setUseIndent(Integer.parseInt(param[0].trim()));
+        } catch (final NumberFormatException e) {
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_BAD_USE_INDENT_1
-                + param[0].trim()
-                + TMFFConstants.ERRMSG_BAD_USE_INDENT_2
-                + TMFFConstants.TMFF_MAX_INDENT);
+                TMFFConstants.ERRMSG_BAD_USE_INDENT_1 + param[0].trim()
+                    + TMFFConstants.ERRMSG_BAD_USE_INDENT_2
+                    + TMFFConstants.TMFF_MAX_INDENT);
         }
     }
 
@@ -618,25 +529,19 @@ public class TMFFPreferences {
      *  @param param String array containing alternate Indent
      *               amount in array element 0.
      */
-    public void setAltIndent(String[] param) {
+    public void setAltIndent(final String[] param) {
 
-        if (param.length < 1   ||
-            param[0] == null   ||
-            param[0].length() == 0) {
+        if (param.length < 1 || param[0] == null || param[0].length() == 0)
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_ALT_INDENT_MISSING2_1);
-        }
 
         try {
-            setAltIndent(
-                Integer.parseInt(param[0].trim()));
-        }
-        catch (NumberFormatException e) {
+            setAltIndent(Integer.parseInt(param[0].trim()));
+        } catch (final NumberFormatException e) {
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_BAD_ALT_INDENT_1
-                + param[0].trim()
-                + TMFFConstants.ERRMSG_BAD_ALT_INDENT_2
-                + TMFFConstants.TMFF_MAX_INDENT);
+                TMFFConstants.ERRMSG_BAD_ALT_INDENT_1 + param[0].trim()
+                    + TMFFConstants.ERRMSG_BAD_ALT_INDENT_2
+                    + TMFFConstants.TMFF_MAX_INDENT);
         }
     }
 
@@ -650,27 +555,19 @@ public class TMFFPreferences {
      *  @return Indent amount if input is valid.
      *  @throws TMFFException if input is invalid.
      */
-    public int validateIndentString(String s)
-                                        throws TMFFException {
+    public int validateIndentString(String s) throws TMFFException {
         if (s != null) {
-            s                     = s.trim();
-            if (s.length() > 0) {
+            s = s.trim();
+            if (s.length() > 0)
                 try {
-                    int n         = Integer.parseInt(s);
-                    if (n >= 0 &&
-                        n <= TMFFConstants.TMFF_MAX_INDENT) {
+                    final int n = Integer.parseInt(s);
+                    if (n >= 0 && n <= TMFFConstants.TMFF_MAX_INDENT)
                         return n;
-                    }
-                }
-                catch (NumberFormatException e) {
-                }
-            }
+                } catch (final NumberFormatException e) {}
         }
-        throw new TMFFException(
-            TMFFConstants.ERRMSG_ERR_INDENT_INPUT_1
+        throw new TMFFException(TMFFConstants.ERRMSG_ERR_INDENT_INPUT_1
             + Integer.toString(TMFFConstants.TMFF_MAX_INDENT));
     }
-
 
     /**
      *  A slightly redundant routine to validate an input
@@ -682,24 +579,17 @@ public class TMFFPreferences {
      *  @return Format Number if input is valid.
      *  @throws TMFFException if input is invalid.
      */
-    public int validateFormatNbrString(String s)
-                                        throws TMFFException {
+    public int validateFormatNbrString(String s) throws TMFFException {
         if (s != null) {
-            s                     = s.trim();
-            if (s.length() > 0) {
+            s = s.trim();
+            if (s.length() > 0)
                 try {
-                    int n         = Integer.parseInt(s);
-                    if (n >= 0 &&
-                        n <= TMFFConstants.TMFF_MAX_FORMAT_NBR) {
+                    final int n = Integer.parseInt(s);
+                    if (n >= 0 && n <= TMFFConstants.TMFF_MAX_FORMAT_NBR)
                         return n;
-                    }
-                }
-                catch (NumberFormatException e) {
-                }
-            }
+                } catch (final NumberFormatException e) {}
         }
-        throw new TMFFException(
-            TMFFConstants.ERRMSG_ERR_FORMAT_NBR_INPUT_1
+        throw new TMFFException(TMFFConstants.ERRMSG_ERR_FORMAT_NBR_INPUT_1
             + Integer.toString(TMFFConstants.TMFF_MAX_FORMAT_NBR));
     }
 
@@ -716,18 +606,12 @@ public class TMFFPreferences {
      */
     public String getFormatListString() {
 
-        StringBuffer sb           = new StringBuffer();
+        final StringBuffer sb = new StringBuffer();
 
-        for (int i = 0; i < tmffFormatArray.length; i++) {
-            sb.append(
-                Integer.toString(
-                    tmffFormatArray[i].
-                        getFormatNbr()));
+        for (final TMFFFormat element : tmffFormatArray) {
+            sb.append(Integer.toString(element.getFormatNbr()));
             sb.append(" - ");
-            sb.append(
-                tmffFormatArray[i].
-                    getFormatScheme().
-                        getSchemeName());
+            sb.append(element.getFormatScheme().getSchemeName());
             sb.append('\n');
         }
 
@@ -739,18 +623,14 @@ public class TMFFPreferences {
      *  <p>
      *  @param currFormatNbr 0 thru max number.
      */
-    public void setCurrFormatNbr(int currFormatNbr) {
+    public void setCurrFormatNbr(final int currFormatNbr) {
         if (currFormatNbr < 0
-            ||
-            currFormatNbr >
-            TMFFConstants.TMFF_MAX_FORMAT_NBR) {
+            || currFormatNbr > TMFFConstants.TMFF_MAX_FORMAT_NBR)
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_BAD_PREF_FORMAT_NBR_1
-                + currFormatNbr
-                + TMFFConstants.ERRMSG_BAD_PREF_FORMAT_NBR_2
-                + TMFFConstants.TMFF_MAX_FORMAT_NBR);
-        }
-        this.currFormatNbr        = currFormatNbr;
+                TMFFConstants.ERRMSG_BAD_PREF_FORMAT_NBR_1 + currFormatNbr
+                    + TMFFConstants.ERRMSG_BAD_PREF_FORMAT_NBR_2
+                    + TMFFConstants.TMFF_MAX_FORMAT_NBR);
+        this.currFormatNbr = currFormatNbr;
     }
 
     /**
@@ -785,14 +665,14 @@ public class TMFFPreferences {
         if (inAltFormatNow) {
             setCurrFormatNbr(prevFormatNbr);
             setUseIndent(prevIndent);
-            inAltFormatNow        = false;
+            inAltFormatNow = false;
         }
         else {
-            prevFormatNbr         = getCurrFormatNbr();
-            prevIndent            = getUseIndent();
+            prevFormatNbr = getCurrFormatNbr();
+            prevIndent = getUseIndent();
             setCurrFormatNbr(altFormatNbr);
             setUseIndent(altIndent);
-            inAltFormatNow        = true;
+            inAltFormatNow = true;
         }
     }
 
@@ -801,18 +681,14 @@ public class TMFFPreferences {
      *  <p>
      *  @param altFormatNbr 0 thru max number.
      */
-    public void setAltFormatNbr(int altFormatNbr) {
+    public void setAltFormatNbr(final int altFormatNbr) {
         if (altFormatNbr < 0
-            ||
-            altFormatNbr >
-            TMFFConstants.TMFF_MAX_FORMAT_NBR) {
+            || altFormatNbr > TMFFConstants.TMFF_MAX_FORMAT_NBR)
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_BAD_ALT_FORMAT_NBR_1
-                + altFormatNbr
-                + TMFFConstants.ERRMSG_BAD_ALT_FORMAT_NBR_2
-                + TMFFConstants.TMFF_MAX_FORMAT_NBR);
-        }
-        this.altFormatNbr        = altFormatNbr;
+                TMFFConstants.ERRMSG_BAD_ALT_FORMAT_NBR_1 + altFormatNbr
+                    + TMFFConstants.ERRMSG_BAD_ALT_FORMAT_NBR_2
+                    + TMFFConstants.TMFF_MAX_FORMAT_NBR);
+        this.altFormatNbr = altFormatNbr;
     }
 
     /**
@@ -829,18 +705,13 @@ public class TMFFPreferences {
      *  <p>
      *  @param useIndent 0 thru max number.
      */
-    public void setUseIndent(int useIndent) {
-        if (useIndent < 0
-            ||
-            useIndent >
-            TMFFConstants.TMFF_MAX_INDENT) {
+    public void setUseIndent(final int useIndent) {
+        if (useIndent < 0 || useIndent > TMFFConstants.TMFF_MAX_INDENT)
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_BAD_USE_INDENT_1
-                + useIndent
-                + TMFFConstants.ERRMSG_BAD_USE_INDENT_2
-                + TMFFConstants.TMFF_MAX_INDENT);
-        }
-        this.useIndent        = useIndent;
+                TMFFConstants.ERRMSG_BAD_USE_INDENT_1 + useIndent
+                    + TMFFConstants.ERRMSG_BAD_USE_INDENT_2
+                    + TMFFConstants.TMFF_MAX_INDENT);
+        this.useIndent = useIndent;
     }
 
     /**
@@ -857,18 +728,13 @@ public class TMFFPreferences {
      *  <p>
      *  @param altIndent 0 thru max number.
      */
-    public void setAltIndent(int altIndent) {
-        if (altIndent < 0
-            ||
-            altIndent >
-            TMFFConstants.TMFF_MAX_INDENT) {
+    public void setAltIndent(final int altIndent) {
+        if (altIndent < 0 || altIndent > TMFFConstants.TMFF_MAX_INDENT)
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_BAD_ALT_INDENT_1
-                + altIndent
-                + TMFFConstants.ERRMSG_BAD_ALT_INDENT_2
-                + TMFFConstants.TMFF_MAX_INDENT);
-        }
-        this.altIndent        = altIndent;
+                TMFFConstants.ERRMSG_BAD_ALT_INDENT_1 + altIndent
+                    + TMFFConstants.ERRMSG_BAD_ALT_INDENT_2
+                    + TMFFConstants.TMFF_MAX_INDENT);
+        this.altIndent = altIndent;
     }
 
     /**
@@ -887,7 +753,7 @@ public class TMFFPreferences {
      *
      *  @return TMFF format number in use.
      */
-    public boolean addDefinedScheme(TMFFScheme s) {
+    public boolean addDefinedScheme(final TMFFScheme s) {
         if (getDefinedScheme(s.getSchemeName()) == null) {
             putToSchemeMap(s);
             return true;
@@ -900,9 +766,8 @@ public class TMFFPreferences {
      *  <p>
      *  @param newFormat to store into the Preferences data.
      */
-    public void updateDefinedFormat(TMFFFormat newFormat) {
-        tmffFormatArray[newFormat.getFormatNbr()]
-                                  = newFormat;
+    public void updateDefinedFormat(final TMFFFormat newFormat) {
+        tmffFormatArray[newFormat.getFormatNbr()] = newFormat;
     }
 
     /**
@@ -916,30 +781,21 @@ public class TMFFPreferences {
      *
      *  @param newScheme to update into the Preferences data.
      */
-    public void updateDefinedScheme(TMFFScheme newScheme) {
+    public void updateDefinedScheme(final TMFFScheme newScheme) {
 
-        TMFFScheme oldScheme      =
-            getDefinedScheme(newScheme.getSchemeName());
-        if (oldScheme == null) {
+        final TMFFScheme oldScheme = getDefinedScheme(newScheme.getSchemeName());
+        if (oldScheme == null)
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_UPDATE_SCHEME_NOTFND_BUG_1
-                + newScheme.getSchemeName());
-        }
+                    + newScheme.getSchemeName());
 
-        for (int i = 0; i < tmffFormatArray.length; i++) {
-            if (tmffFormatArray[i].
-                    getFormatScheme().
-                        getSchemeName().
-                            compareToIgnoreCase(
-                                oldScheme.getSchemeName())
-                == 0) {
-                tmffFormatArray[i].setFormatScheme(newScheme);
-            }
-        }
+        for (final TMFFFormat element : tmffFormatArray)
+            if (element.getFormatScheme().getSchemeName()
+                .compareToIgnoreCase(oldScheme.getSchemeName()) == 0)
+                element.setFormatScheme(newScheme);
 
         putToSchemeMap(newScheme);
     }
-
 
     /**
      *  Get already defined Scheme from Preferences data.
@@ -948,17 +804,16 @@ public class TMFFPreferences {
      *
      *  @return TMFF format number in use.
      */
-    public TMFFScheme getDefinedScheme(String definedSchemeName) {
+    public TMFFScheme getDefinedScheme(final String definedSchemeName) {
         return getFromSchemeMap(definedSchemeName);
     }
 
-    private void putToSchemeMap(TMFFScheme s) {
-        tmffSchemeMap.put(s.getSchemeName().toLowerCase(),
-                          s);
+    private void putToSchemeMap(final TMFFScheme s) {
+        tmffSchemeMap.put(s.getSchemeName().toLowerCase(), s);
     }
 
-    private TMFFScheme getFromSchemeMap(String k) {
-        return (TMFFScheme) tmffSchemeMap.get(k.toLowerCase());
+    private TMFFScheme getFromSchemeMap(final String k) {
+        return (TMFFScheme)tmffSchemeMap.get(k.toLowerCase());
     }
 
     /**
@@ -977,26 +832,18 @@ public class TMFFPreferences {
      *  @return boolean - returns false if maxDepth invalid
      *                    (i.e. not a positive integer).
      */
-    public boolean updateMaxDepthAcrossMethods(int maxDepth) {
+    public boolean updateMaxDepthAcrossMethods(final int maxDepth) {
 
         try {
             TMFFMethod.validateMaxDepth(maxDepth);
-        }
-        catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             return false;
         }
 
-        Iterator   i              =
-            tmffSchemeMap.
-                values().
-                    iterator();
+        final Iterator i = tmffSchemeMap.values().iterator();
 
-        while (i.hasNext()) {
-            ((TMFFScheme)i.next()).
-                getTMFFMethod().
-                    updateMaxDepth(
-                        maxDepth);
-        }
+        while (i.hasNext())
+            ((TMFFScheme)i.next()).getTMFFMethod().updateMaxDepth(maxDepth);
 
         return true;
     }

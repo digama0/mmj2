@@ -31,14 +31,10 @@ public class WorkVar extends Var {
      *  @param id   Sym id string
      *  @param workVarIndex WorkVarManager Work Var Index value
      */
-    public WorkVar(int    seq,
-                   String id,
-                   int    workVarIndex) {
-        super(seq,
-              id,
-              true);  // true = "active"
+    public WorkVar(final int seq, final String id, final int workVarIndex) {
+        super(seq, id, true); // true = "active"
 
-        this.setIsWorkVar(true);
-        this.workVarIndex         = workVarIndex;
+        setIsWorkVar(true);
+        this.workVarIndex = workVarIndex;
     }
 }

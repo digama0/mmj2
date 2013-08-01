@@ -6,7 +6,6 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-
 /*
  *  Hyp.java  0.05 08/01/2007
  *
@@ -31,7 +30,7 @@
 
 package mmj.lang;
 
-import java.util.*;
+import java.util.Map;
 
 /**
  *  Hyp unifies VarHyp (Variable Hypothesis) and LogHyp
@@ -54,7 +53,7 @@ public abstract class Hyp extends Stmt {
      *  Only an "active" hypothesis can be referred to by
      *  another statement.
      */
-    protected boolean   active;
+    protected boolean active;
 
     /**
      *  Construct using sequence number and label string.
@@ -66,16 +65,10 @@ public abstract class Hyp extends Stmt {
      *
      *  @throws LangException if duplicate, etc.
      */
-    public Hyp(int     seq,
-               Map     symTbl,
-               Map     stmtTbl,
-               String  labelS,
-               boolean active)
-                            throws LangException {
-        super (seq,
-               symTbl,
-               stmtTbl,
-               labelS);
+    public Hyp(final int seq, final Map symTbl, final Map stmtTbl,
+        final String labelS, final boolean active) throws LangException
+    {
+        super(seq, symTbl, stmtTbl, labelS);
         setActive(active);
     }
 
@@ -89,15 +82,11 @@ public abstract class Hyp extends Stmt {
      *  @param tempParseTree Stmt.exprParseTree
      *  @param tempActive    Hyp.active
      */
-    protected Hyp(int       tempSeq,
-                  String    tempLabel,
-                  Formula   tempFormula,
-                  ParseTree tempParseTree,
-                  boolean   tempActive) {
-        super(tempSeq,
-              tempLabel,
-              tempFormula,
-              tempParseTree);
+    protected Hyp(final int tempSeq, final String tempLabel,
+        final Formula tempFormula, final ParseTree tempParseTree,
+        final boolean tempActive)
+    {
+        super(tempSeq, tempLabel, tempFormula, tempParseTree);
         setActive(tempActive);
     }
 
@@ -108,7 +97,8 @@ public abstract class Hyp extends Stmt {
      *
      *  @return true or false.
      */
-    public abstract boolean  isVarHyp();
+    @Override
+    public abstract boolean isVarHyp();
 
     /**
      *  Is the Hyp a WorkVarHyp?
@@ -117,7 +107,8 @@ public abstract class Hyp extends Stmt {
      *
      *  @return true or false.
      */
-    public abstract boolean  isWorkVarHyp();
+    @Override
+    public abstract boolean isWorkVarHyp();
 
     /**
      *  Is the Hyp a LogHyp?
@@ -126,14 +117,15 @@ public abstract class Hyp extends Stmt {
      *
      *  @return true or false.
      */
-    public abstract boolean  isLogHyp();
+    @Override
+    public abstract boolean isLogHyp();
 
     /**
      *  Set Hyp.active, true or false.
      *
      *  @param active  true or false.
      */
-    public void setActive(boolean active) {
+    public void setActive(final boolean active) {
         this.active = active;
     }
 
@@ -142,6 +134,7 @@ public abstract class Hyp extends Stmt {
      *
      *  @return Hyp.active, true or false.
      */
+    @Override
     public boolean isActive() {
         return active;
     }
@@ -153,6 +146,7 @@ public abstract class Hyp extends Stmt {
      *
      *  @return false (a Hyp cannot be an Assrt.)
      */
+    @Override
     public boolean isAssrt() {
         return false;
     }
@@ -164,6 +158,7 @@ public abstract class Hyp extends Stmt {
      *
      *  @return true -- by definition :)
      */
+    @Override
     public boolean isHyp() {
         return true;
     }

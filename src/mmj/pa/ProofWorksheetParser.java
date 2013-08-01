@@ -18,15 +18,13 @@
 
 package mmj.pa;
 
-import  java.io.File;
-import  java.io.Reader;
-import  java.io.StringReader;
-import  java.io.FileReader;
-import  java.io.BufferedReader;
-import  java.io.IOException;
-import  mmj.lang.*;
-import  mmj.verify.*;
-import  mmj.mmio.*;
+import java.io.*;
+
+import mmj.lang.LogicalSystem;
+import mmj.lang.Messages;
+import mmj.mmio.MMIOError;
+import mmj.mmio.Tokenizer;
+import mmj.verify.Grammar;
 
 /**
  *  ProofWorksheetParser handles the details of
@@ -52,15 +50,15 @@ import  mmj.mmio.*;
  */
 public class ProofWorksheetParser {
 
-    //global variables stored here for mere convenience
-    private     Reader               proofTextReader;
-    private     ProofAsstPreferences proofAsstPreferences;
-    private     LogicalSystem        logicalSystem;
-    private     Grammar              grammar;
-    private     Messages             messages;
+    // global variables stored here for mere convenience
+    private final Reader proofTextReader;
+    private final ProofAsstPreferences proofAsstPreferences;
+    private final LogicalSystem logicalSystem;
+    private final Grammar grammar;
+    private final Messages messages;
 
-    private     String               nextToken;
-    private     Tokenizer            proofTextTokenizer;
+    private String nextToken;
+    private final Tokenizer proofTextTokenizer;
 
     /**
      *  Constructor.
@@ -73,30 +71,25 @@ public class ProofWorksheetParser {
      *  @param messages the mmj.lang.Messages object used to store
      *                  error and informational messages.
      */
-    public ProofWorksheetParser(
-                Reader               proofTextReader,
-                String               proofTextSource,
-                ProofAsstPreferences proofAsstPreferences,
-                LogicalSystem        logicalSystem,
-                Grammar              grammar,
-                Messages             messages)
-                            throws IOException,
-                                   MMIOError {
+    public ProofWorksheetParser(final Reader proofTextReader,
+        final String proofTextSource,
+        final ProofAsstPreferences proofAsstPreferences,
+        final LogicalSystem logicalSystem, final Grammar grammar,
+        final Messages messages) throws IOException, MMIOError
+    {
 
-        this.proofTextReader      = proofTextReader;
+        this.proofTextReader = proofTextReader;
         this.proofAsstPreferences = proofAsstPreferences;
-        this.logicalSystem        = logicalSystem;
-        this.grammar              = grammar;
-        this.messages             = messages;
+        this.logicalSystem = logicalSystem;
+        this.grammar = grammar;
+        this.messages = messages;
 
-        proofTextTokenizer        = new Tokenizer(proofTextReader,
-                                                  proofTextSource);
+        proofTextTokenizer = new Tokenizer(proofTextReader, proofTextSource);
 
-        StringBuffer strBuf       = new StringBuffer();
-        int          offset       = 0;
-        proofTextTokenizer.getToken(strBuf,
-                                    offset);
-        nextToken                 = new String(strBuf);
+        final StringBuffer strBuf = new StringBuffer();
+        final int offset = 0;
+        proofTextTokenizer.getToken(strBuf, offset);
+        nextToken = new String(strBuf);
     }
 
     /**
@@ -110,21 +103,14 @@ public class ProofWorksheetParser {
      *  @param messages the mmj.lang.Messages object used to store
      *                  error and informational messages.
      */
-    public ProofWorksheetParser(
-                String               proofText,
-                String               proofTextSource,
-                ProofAsstPreferences proofAsstPreferences,
-                LogicalSystem        logicalSystem,
-                Grammar              grammar,
-                Messages             messages)
-                            throws IOException,
-                                   MMIOError {
-        this(new StringReader(proofText),
-             proofTextSource,
-             proofAsstPreferences,
-             logicalSystem,
-             grammar,
-             messages);
+    public ProofWorksheetParser(final String proofText,
+        final String proofTextSource,
+        final ProofAsstPreferences proofAsstPreferences,
+        final LogicalSystem logicalSystem, final Grammar grammar,
+        final Messages messages) throws IOException, MMIOError
+    {
+        this(new StringReader(proofText), proofTextSource,
+            proofAsstPreferences, logicalSystem, grammar, messages);
     }
 
     /**
@@ -139,22 +125,15 @@ public class ProofWorksheetParser {
      *  @param messages the mmj.lang.Messages object used to store
      *                  error and informational messages.
      */
-     public ProofWorksheetParser(
-                File                 proofFile,
-                String               proofTextSource,
-                ProofAsstPreferences proofAsstPreferences,
-                LogicalSystem        logicalSystem,
-                Grammar              grammar,
-                Messages             messages)
-                            throws IOException,
-                                   MMIOError {
+    public ProofWorksheetParser(final File proofFile,
+        final String proofTextSource,
+        final ProofAsstPreferences proofAsstPreferences,
+        final LogicalSystem logicalSystem, final Grammar grammar,
+        final Messages messages) throws IOException, MMIOError
+    {
 
-        this(new BufferedReader(new FileReader(proofFile)),
-             proofTextSource,
-             proofAsstPreferences,
-             logicalSystem,
-             grammar,
-             messages);
+        this(new BufferedReader(new FileReader(proofFile)), proofTextSource,
+            proofAsstPreferences, logicalSystem, grammar, messages);
     }
 
     /**
@@ -164,13 +143,10 @@ public class ProofWorksheetParser {
      *  automatically!
      */
     public void closeReader() {
-        if (proofTextReader != null) {
+        if (proofTextReader != null)
             try {
                 proofTextReader.close();
-            }
-            catch (IOException e) {
-            }
-        }
+            } catch (final IOException e) {}
     }
 
     /**
@@ -180,12 +156,10 @@ public class ProofWorksheetParser {
      *           exists to be processed.
      */
     public boolean hasNext() {
-        if (nextToken.length() > 0) {
+        if (nextToken.length() > 0)
             return true;
-        }
-        else {
+        else
             return false;
-        }
     }
 
     /**
@@ -194,12 +168,10 @@ public class ProofWorksheetParser {
      *
      *  @return      ProofWorksheet or throws an exception!
      */
-    public ProofWorksheet next()
-                    throws IOException,
-                           MMIOError,
-                           ProofAsstException {
-        return next(-1,
-                    null);
+    public ProofWorksheet next() throws IOException, MMIOError,
+        ProofAsstException
+    {
+        return next(-1, null);
     }
 
     /**
@@ -214,31 +186,23 @@ public class ProofWorksheetParser {
      *
      *  @return      ProofWorksheet or throws an exception!
      */
-    public ProofWorksheet next(int         inputCursorPos,
-                               StepRequest stepRequest)
-                    throws IOException,
-                           MMIOError,
-                           ProofAsstException {
+    public ProofWorksheet next(final int inputCursorPos,
+        final StepRequest stepRequest) throws IOException, MMIOError,
+        ProofAsstException
+    {
 
-        ProofWorksheet proofWorksheet
-                                  =
-            new ProofWorksheet(proofTextTokenizer,
-                               proofAsstPreferences,
-                               logicalSystem,
-                               grammar,
-                               messages);
+        final ProofWorksheet proofWorksheet = new ProofWorksheet(
+            proofTextTokenizer, proofAsstPreferences, logicalSystem, grammar,
+            messages);
 
         /*
          * loadWorksheet() returns next token *after* this
          * worksheet, if any -- for use when processing a
          */
-        nextToken                 =
-            proofWorksheet.loadWorksheet(nextToken,
-                                         inputCursorPos,
-                                         stepRequest);
+        nextToken = proofWorksheet.loadWorksheet(nextToken, inputCursorPos,
+            stepRequest);
 
         return proofWorksheet;
     }
 
 }
-

@@ -21,12 +21,9 @@
 
 package mmj.lang;
 
-import mmj.verify.GRNode;
-import mmj.verify.NotationRule;
-import mmj.verify.TypeConversionRule;
-import mmj.verify.NullsPermittedRule;
-
 import java.util.*;
+
+import mmj.verify.*;
 
 /**
  *  Cnst holds a declared Metamath constant symbol.
@@ -59,15 +56,14 @@ public class Cnst extends Sym {
      *  by Type Code inside WorkVarManager.
      *  <p>
      */
-    /* friendly */ int workVarTypIndex;
-
+    /* friendly */int workVarTypIndex;
 
     /**
      *  IsVarTyp says that this Cnst is used in a
      *  $f VarHyp statement as the Type Code of a variable
      *  (i.e. "wff" or "set").
      */
-    private   boolean isVarTyp;
+    private boolean isVarTyp;
 
     /**
      *  isProvableLogicStmtTyp says that this Cnst is defined by
@@ -76,7 +72,7 @@ public class Cnst extends Sym {
      *
      *  @see mmj.verify.Grammar
      */
-    private   boolean isProvableLogicStmtTyp;
+    private boolean isProvableLogicStmtTyp;
 
     /**
      *  isLogicStmtTyp says that this Cnst is defined by
@@ -85,7 +81,7 @@ public class Cnst extends Sym {
      *
      *  @see mmj.verify.Grammar
      */
-    private   boolean isLogicStmtTyp;
+    private boolean isLogicStmtTyp;
 
     /**
      *  isSyntaxAxiomTyp says that this Cnst is used as the
@@ -93,8 +89,7 @@ public class Cnst extends Sym {
      *
      *  @see mmj.verify.Grammar
      */
-    private   boolean isSyntaxAxiomTyp;
-
+    private boolean isSyntaxAxiomTyp;
 
     /**
      *  isGrammaticalTyp says that this Cnst is a Type Code
@@ -104,7 +99,7 @@ public class Cnst extends Sym {
      *
      *  @see mmj.verify.Grammar
      */
-    private   boolean isGrammaticalTyp;
+    private boolean isGrammaticalTyp;
 
     /**
      *  nbrOccInCnstSyntaxAxioms counts how many times the
@@ -118,7 +113,7 @@ public class Cnst extends Sym {
      *        a Formula following the Type Code, which is
      *        always the first symbol of a Formula.
      */
-    private   int nbrOccInCnstSyntaxAxioms;
+    private int nbrOccInCnstSyntaxAxioms;
 
     /**
      *  nbrOccInSyntaxAxioms counts how many times
@@ -142,7 +137,7 @@ public class Cnst extends Sym {
      *        a Formula following the Type Code, which is
      *        always the first symbol of a Formula.
      */
-    private   int nbrOccInSyntaxAxioms;
+    private int nbrOccInSyntaxAxioms;
 
     /**
      *  GrammarRule Tree (forest) root node for Grammar
@@ -174,7 +169,7 @@ public class Cnst extends Sym {
      *  @see mmj.verify.NotationRule
      *  @see mmj.verify.BottomUpParser
      */
-    private   GRNode gRRoot;
+    private GRNode gRRoot;
 
     /**
      *  convFromTypGRArray - Array of Type Conversion GrammarRules,
@@ -183,7 +178,7 @@ public class Cnst extends Sym {
      *  exist for the Cnst object (which may or may not
      *  be a Type Code.)
      */
-    private   TypeConversionRule[] convFromTypGRArray;
+    private TypeConversionRule[] convFromTypGRArray;
 
     /**
      *  nullsPermittedGR - set to Nulls Permitted GrammarRule if
@@ -191,8 +186,7 @@ public class Cnst extends Sym {
      *  with this Type Code, otherwise, if nulls are not
      *  permitted, nullsPermittedGR is set to null :0)
      */
-    private   NullsPermittedRule nullsPermittedGR;
-
+    private NullsPermittedRule nullsPermittedGR;
 
     /**
      *  len1CnstNotationRule -- Notation Rule for Syntax Axiom
@@ -200,15 +194,14 @@ public class Cnst extends Sym {
      *  a Cnst (example, Cnst "c0" from set.mm would have a
      *  reference to c0's NotationRule in the "c0" Cnst, here.)
      */
-    private   NotationRule len1CnstNotationRule;
-
+    private NotationRule len1CnstNotationRule;
 
     /**
      *  earleyRules -- a list of the Grammar Rules with Type
      *  Code equal to this Cnst, sorted by
      *  GrammarRule.MAX_SEQ_NBR for mmj.verify.earleyParser.
      */
-    private   LinkedList earleyRules;
+    private LinkedList earleyRules;
 
     /**
      *  earleyFIRST -- a Set of <code>Cnst</code>s that can
@@ -221,8 +214,7 @@ public class Cnst extends Sym {
      *  Used by mmj.verify.earleyParser for Prediction
      *  Lookahead.
      */
-    private   HashSet earleyFIRST;
-
+    private HashSet earleyFIRST;
 
     /**
      *  Construct using sequence number and id string.
@@ -230,12 +222,10 @@ public class Cnst extends Sym {
      *  @param seq  MObj.seq number
      *  @param id   Sym id string
      */
-    protected Cnst(int    seq,
-                   String id) {
-        super(seq,
-              id);
-        isVarTyp                  = false;
-        workVarTypIndex           = -1;
+    protected Cnst(final int seq, final String id) {
+        super(seq, id);
+        isVarTyp = false;
+        workVarTypIndex = -1;
     }
 
     /**
@@ -249,17 +239,12 @@ public class Cnst extends Sym {
      *  @throws LangException if Sym.id duplicates the id of
      *          another Sym (Cnst or Var) or Stmt label.
      */
-    public Cnst(int     seq,
-                Map     symTbl,
-                Map     stmtTbl,
-                String  id)
-                            throws LangException {
-        super(seq,
-              symTbl,
-              stmtTbl,
-              id);
-        isVarTyp                  = false;
-        workVarTypIndex           = -1;
+    public Cnst(final int seq, final Map symTbl, final Map stmtTbl,
+        final String id) throws LangException
+    {
+        super(seq, symTbl, stmtTbl, id);
+        isVarTyp = false;
+        workVarTypIndex = -1;
     }
 
     /**
@@ -268,6 +253,7 @@ public class Cnst extends Sym {
      *  @return Returns <code>true</code> if Sym is a Cnst MObj,
      *  otherwise <code>false</code>.
      */
+    @Override
     public boolean isCnst() {
         return true;
     }
@@ -278,6 +264,7 @@ public class Cnst extends Sym {
      *  @return Returns <code>true</code> if Sym is a Var MObj,
      *  otherwise <code>false</code>.
      */
+    @Override
     public boolean isVar() {
         return false;
     }
@@ -291,10 +278,10 @@ public class Cnst extends Sym {
      *
      *  @return is Sym "active"
      */
+    @Override
     public boolean isActive() {
         return true;
     }
-
 
     /**
      *  Convenient lookup function to find a TypeConversionRule
@@ -306,14 +293,11 @@ public class Cnst extends Sym {
      *  @return TypeConversionRule to convert from the input
      *          Type Code to this Type Code or null if not found.
      */
-    public TypeConversionRule findFromTypConversionRule(Cnst typ) {
-        if (convFromTypGRArray != null) {
-            for (int i = 0; i < convFromTypGRArray.length; i++) {
-                if (convFromTypGRArray[i].getConvTyp() == typ) {
-                    return convFromTypGRArray[i];
-                }
-            }
-        }
+    public TypeConversionRule findFromTypConversionRule(final Cnst typ) {
+        if (convFromTypGRArray != null)
+            for (final TypeConversionRule element : convFromTypGRArray)
+                if (element.getConvTyp() == typ)
+                    return element;
         return null;
     }
 
@@ -339,7 +323,7 @@ public class Cnst extends Sym {
      *
      *  @param isVarTyp true or false
      */
-    public void setIsVarTyp(boolean isVarTyp) {
+    public void setIsVarTyp(final boolean isVarTyp) {
         this.isVarTyp = isVarTyp;
     }
 
@@ -365,11 +349,10 @@ public class Cnst extends Sym {
      *
      *  @param isProvableLogicStmtTyp
      */
-    public void setIsProvableLogicStmtTyp(
-                    boolean isProvableLogicStmtTyp) {
+    public void setIsProvableLogicStmtTyp(final boolean isProvableLogicStmtTyp)
+    {
         this.isProvableLogicStmtTyp = isProvableLogicStmtTyp;
     }
-
 
     /**
      *  get isLogicStmtTyp.
@@ -393,11 +376,9 @@ public class Cnst extends Sym {
      *
      *  @param isLogicStmtTyp
      */
-    public void setIsLogicStmtTyp(
-                    boolean isLogicStmtTyp) {
+    public void setIsLogicStmtTyp(final boolean isLogicStmtTyp) {
         this.isLogicStmtTyp = isLogicStmtTyp;
     }
-
 
     /**
      *  get isSyntaxAxiomTyp.
@@ -419,8 +400,7 @@ public class Cnst extends Sym {
      *
      *  @param isSyntaxAxiomTyp
      */
-    public void setIsSyntaxAxiomTyp(
-                    boolean isSyntaxAxiomTyp) {
+    public void setIsSyntaxAxiomTyp(final boolean isSyntaxAxiomTyp) {
         this.isSyntaxAxiomTyp = isSyntaxAxiomTyp;
     }
 
@@ -448,8 +428,7 @@ public class Cnst extends Sym {
      *
      *  @param isGrammaticalTyp
      */
-    public void setIsGrammaticalTyp(
-                    boolean isGrammaticalTyp) {
+    public void setIsGrammaticalTyp(final boolean isGrammaticalTyp) {
         this.isGrammaticalTyp = isGrammaticalTyp;
     }
 
@@ -480,10 +459,9 @@ public class Cnst extends Sym {
      *  @param gRRoot  the grammar rule forest root for this Cnst.
      *                 Null if there is no forest for this Cnst.
      */
-    public void setGRRoot(GRNode gRRoot) {
+    public void setGRRoot(final GRNode gRRoot) {
         this.gRRoot = gRRoot;
     }
-
 
     /**
      *  get nbrOccInCnstSyntaxAxioms.
@@ -523,12 +501,10 @@ public class Cnst extends Sym {
      *
      *  @param nbrOccInCnstSyntaxAxioms
      */
-    public void setNbrOccInCnstSyntaxAxioms(
-                                int nbrOccInCnstSyntaxAxioms) {
-        this.nbrOccInCnstSyntaxAxioms =
-             nbrOccInCnstSyntaxAxioms;
+    public void setNbrOccInCnstSyntaxAxioms(final int nbrOccInCnstSyntaxAxioms)
+    {
+        this.nbrOccInCnstSyntaxAxioms = nbrOccInCnstSyntaxAxioms;
     }
-
 
     /**
      *  get nbrOccInSyntaxAxioms.
@@ -572,10 +548,8 @@ public class Cnst extends Sym {
      *
      *  @param nbrOccInSyntaxAxioms
      */
-    public void setNbrOccInSyntaxAxioms(
-                                int nbrOccInSyntaxAxioms) {
-        this.nbrOccInSyntaxAxioms =
-             nbrOccInSyntaxAxioms;
+    public void setNbrOccInSyntaxAxioms(final int nbrOccInSyntaxAxioms) {
+        this.nbrOccInSyntaxAxioms = nbrOccInSyntaxAxioms;
     }
 
     /**
@@ -600,9 +574,9 @@ public class Cnst extends Sym {
      *  @param convFromTypGRArray (may be null).
      */
     public void setConvFromTypGRArray(
-                        TypeConversionRule[] convFromTypGRArray) {
-        this.convFromTypGRArray =
-             convFromTypGRArray;
+        final TypeConversionRule[] convFromTypGRArray)
+    {
+        this.convFromTypGRArray = convFromTypGRArray;
     }
 
     /**
@@ -630,26 +604,22 @@ public class Cnst extends Sym {
      *  @throws IllegalStateException is new rule is a duplicate
      *          in the Cnst.convFromTypGRArray.
      */
-    public int convFromTypGRArrayAdd(TypeConversionRule r) {
+    public int convFromTypGRArrayAdd(final TypeConversionRule r) {
         int ruleIndex = 0;
         if (convFromTypGRArray != null) {
             ruleIndex = convFromTypGRArray.length;
-            Cnst typ = r.getBaseSyntaxAxiom().getTyp();
-            if (findFromTypConversionRule(r.getConvTyp()) != null) {
+            final Cnst typ = r.getBaseSyntaxAxiom().getTyp();
+            if (findFromTypConversionRule(r.getConvTyp()) != null)
                 throw new IllegalStateException(
                     LangConstants.ERRMSG_TYP_CONV_DUP_1
-                    + r.getBaseSyntaxAxiom().getLabel()
-                    + LangConstants.ERRMSG_TYP_CONV_DUP_2
-                    + typ);
-            }
+                        + r.getBaseSyntaxAxiom().getLabel()
+                        + LangConstants.ERRMSG_TYP_CONV_DUP_2 + typ);
         }
 
-        TypeConversionRule[] x =
-            new TypeConversionRule[ruleIndex + 1];
+        final TypeConversionRule[] x = new TypeConversionRule[ruleIndex + 1];
 
-        for (int i = 0; i < ruleIndex; i++) {
+        for (int i = 0; i < ruleIndex; i++)
             x[i] = convFromTypGRArray[i];
-        }
 
         x[ruleIndex] = r;
         setConvFromTypGRArray(x);
@@ -683,9 +653,9 @@ public class Cnst extends Sym {
      *  @param nullsPermittedRule or null if nulls are not
      *          permitted for this Type Code.
      */
-    public void setNullsPermittedGR(
-              NullsPermittedRule nullsPermittedRule) {
-        this.nullsPermittedGR = nullsPermittedRule;
+    public void setNullsPermittedGR(final NullsPermittedRule nullsPermittedRule)
+    {
+        nullsPermittedGR = nullsPermittedRule;
     }
 
     /**
@@ -714,8 +684,8 @@ public class Cnst extends Sym {
      *  @param len1CnstNotationRule or null if there is
      *          not a len1CnstNotationRule for this Cnst.
      */
-    public void setLen1CnstNotationRule(
-              NotationRule len1CnstNotationRule) {
+    public void setLen1CnstNotationRule(final NotationRule len1CnstNotationRule)
+    {
         this.len1CnstNotationRule = len1CnstNotationRule;
     }
 
@@ -741,8 +711,7 @@ public class Cnst extends Sym {
      *
      *  @param earleyRules List for this Type Code or null.
      */
-    public void setEarleyRules(
-              LinkedList earleyRules) {
+    public void setEarleyRules(final LinkedList earleyRules) {
         this.earleyRules = earleyRules;
     }
 
@@ -780,8 +749,7 @@ public class Cnst extends Sym {
      *
      *  @param earleyFIRST (or null).
      */
-    public void setEarleyFIRST(
-              HashSet earleyFIRST) {
+    public void setEarleyFIRST(final HashSet earleyFIRST) {
         this.earleyFIRST = earleyFIRST;
     }
 
@@ -791,11 +759,9 @@ public class Cnst extends Sym {
      *  in the ruleFormatExpr is the first symbol of any grammar
      *  rule with this Type Code.
      */
-    public boolean earleyFIRSTContainsSymbol(Cnst exprFIRST) {
-        if (earleyFIRST != null &&
-            earleyFIRST.contains(exprFIRST)) {
+    public boolean earleyFIRSTContainsSymbol(final Cnst exprFIRST) {
+        if (earleyFIRST != null && earleyFIRST.contains(exprFIRST))
             return true;
-        }
         return false;
     }
 }

@@ -6,7 +6,6 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-
 /*
  *  TMFFFlat.java  0.01 11/01/2006
  *
@@ -15,9 +14,8 @@
  */
 
 package mmj.tmff;
-import mmj.lang.Formula;
-import mmj.lang.ParseNode;
-import mmj.lang.ParseTree;
+
+import mmj.lang.*;
 
 /**
  *  TMFFFlat renders a formula into a single line of text.
@@ -56,7 +54,7 @@ public class TMFFFlat extends TMFFMethod {
      *                  Doesn't apply to TMFFFlat but provided
      *                  as common element to TMFFMethod class...
      */
-    public TMFFFlat(String maxDepthString) {
+    public TMFFFlat(final String maxDepthString) {
         super(Integer.MAX_VALUE);
     }
 
@@ -73,10 +71,9 @@ public class TMFFFlat extends TMFFMethod {
      *                  Doesn't apply to TMFFFlat but provided
      *                  as common element to TMFFMethod class...
      */
-    public TMFFFlat(int maxDepth) {
+    public TMFFFlat(final int maxDepth) {
         super(Integer.MAX_VALUE);
     }
-
 
     /**
      *  Formats a formula and outputs it to a StringBuffer
@@ -101,52 +98,42 @@ public class TMFFFlat extends TMFFMethod {
      *                  was encountered and the formula could
      *                  not be formatted.
      */
-    public int renderFormula(TMFFStateParams tmffSP,
-                             ParseTree       parseTree,
-                             Formula         formula) {
+    @Override
+    public int renderFormula(final TMFFStateParams tmffSP,
+        final ParseTree parseTree, final Formula formula)
+    {
 
         if (parseTree != null) {
-            int savedRightmostColNbr
-                                  = tmffSP.rightmostColNbr;
-            tmffSP.rightmostColNbr
-                                  = Integer.MAX_VALUE;
-            tmffSP.currLineNbr    = 1;
+            final int savedRightmostColNbr = tmffSP.rightmostColNbr;
+            tmffSP.rightmostColNbr = Integer.MAX_VALUE;
+            tmffSP.currLineNbr = 1;
 
-            if (tmffSP.appendTokenAtGivenPosition(
-                    formula.getTyp().getId(),
-                    tmffSP.leftmostColNbr)
-                < 0) {
-                tmffSP.currLineNbr
-                              = -1;
-                tmffSP.rightmostColNbr
-                              = savedRightmostColNbr; //restore
+            if (tmffSP.appendTokenAtGivenPosition(formula.getTyp().getId(),
+                tmffSP.leftmostColNbr) < 0)
+            {
+                tmffSP.currLineNbr = -1;
+                tmffSP.rightmostColNbr = savedRightmostColNbr; // restore
             }
-            else {
-                if (renderSubExpr(tmffSP,
-                                  parseTree.getRoot(),
-                                  tmffSP.prevColNbr + 2)
-                    < 0) {
+            else if (renderSubExpr(tmffSP, parseTree.getRoot(),
+                tmffSP.prevColNbr + 2) < 0)
+            {
 
-                    tmffSP.currLineNbr
-                              = -1;
-                    tmffSP.rightmostColNbr
-                              = savedRightmostColNbr; //restore
-                }
+                tmffSP.currLineNbr = -1;
+                tmffSP.rightmostColNbr = savedRightmostColNbr; // restore
             }
         }
-        else {
-            tmffSP.currLineNbr    = -1;
-        }
+        else
+            tmffSP.currLineNbr = -1;
 
         return tmffSP.currLineNbr;
 
     }
 
     // return -1 if error else 0
-    protected int renderSubExprWithBreaks(
-                                TMFFStateParams tmffSP,
-                                ParseNode       currNode,
-                                int             leftmostColNbr) {
+    @Override
+    protected int renderSubExprWithBreaks(final TMFFStateParams tmffSP,
+        final ParseNode currNode, final int leftmostColNbr)
+    {
 
         throw new IllegalArgumentException(
             TMFFConstants.ERRMSG_UNFORMATTED_BAD_CALL_FLAT_1);
@@ -168,7 +155,8 @@ public class TMFFFlat extends TMFFMethod {
      *
      *  @return boolean - true only if update performed.
      */
-    public boolean updateMaxDepth(int maxDepth) {
+    @Override
+    public boolean updateMaxDepth(final int maxDepth) {
 
         return false;
     }

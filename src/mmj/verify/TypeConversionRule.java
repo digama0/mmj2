@@ -21,8 +21,10 @@
  */
 
 package mmj.verify;
+
+import java.util.Iterator;
+
 import mmj.lang.*;
-import java.util.*;
 
 /**
  *  A Type Conversion Rule is a Grammar Rules that says that
@@ -130,17 +132,17 @@ import java.util.*;
  *       Nomenclature and Entity-Relationship Notes</a>
  */
 public class TypeConversionRule extends GrammarRule {
-/**
- *  convTyp is the "from" or source Typ Cd for The Type
- *  Conversion Rule, which is converted "to" the Rule's
- *  Type Code.
- *  <p>
- *   Note that there is no need to store
- *   the "to" Type code here in the TypeConversionRule
- *   because it can easily be derived from the Type Code
- *   via GrammarRule.getBaseSyntaxAxiom().getTyp() AND from the
- *   root node's Stmt of GrammarRule.paramTransformationTree.
- */
+    /**
+     *  convTyp is the "from" or source Typ Cd for The Type
+     *  Conversion Rule, which is converted "to" the Rule's
+     *  Type Code.
+     *  <p>
+     *   Note that there is no need to store
+     *   the "to" Type code here in the TypeConversionRule
+     *   because it can easily be derived from the Type Code
+     *   via GrammarRule.getBaseSyntaxAxiom().getTyp() AND from the
+     *   root node's Stmt of GrammarRule.paramTransformationTree.
+     */
     protected Cnst convTyp;
 
     /**
@@ -157,11 +159,10 @@ public class TypeConversionRule extends GrammarRule {
      *  @param grammar         The Grammar.
      *  @param baseSyntaxAxiom Syntax Axiom.
      */
-    public TypeConversionRule(Grammar     grammar,
-                              Axiom       baseSyntaxAxiom,
-                              Cnst        convTyp) {
-        super(grammar,
-              baseSyntaxAxiom);
+    public TypeConversionRule(final Grammar grammar,
+        final Axiom baseSyntaxAxiom, final Cnst convTyp)
+    {
+        super(grammar, baseSyntaxAxiom);
         this.convTyp = convTyp;
     }
 
@@ -192,49 +193,37 @@ public class TypeConversionRule extends GrammarRule {
      *                              substituted.
      *  @param nullsPermittedRule the modifying rule.
      */
-    public TypeConversionRule(
-                        Grammar            grammar,
-                        NotationRule       oldNotationRule,
-                        int                matchIndex,
-                        NullsPermittedRule nullsPermittedRule) {
+    public TypeConversionRule(final Grammar grammar,
+        final NotationRule oldNotationRule, final int matchIndex,
+        final NullsPermittedRule nullsPermittedRule)
+    {
         super(grammar);
 
-        ParseTree substParseTransformationTree =
-                        nullsPermittedRule.paramTransformationTree;
-        int       substMaxSeqNbr               =
-                        nullsPermittedRule.getMaxSeqNbr();
+        final ParseTree substParseTransformationTree = nullsPermittedRule.paramTransformationTree;
+        final int substMaxSeqNbr = nullsPermittedRule.getMaxSeqNbr();
 
-        if (oldNotationRule.getMaxSeqNbr() > substMaxSeqNbr) {
+        if (oldNotationRule.getMaxSeqNbr() > substMaxSeqNbr)
             setMaxSeqNbr(oldNotationRule.getMaxSeqNbr());
-        }
-        else {
+        else
             setMaxSeqNbr(substMaxSeqNbr);
-        }
 
         setNbrHypParamsUsed(1);
 
-        paramTransformationTree =
-            oldNotationRule.paramTransformationTree.deepCloneWNodeSub(
-                oldNotationRule.paramVarHypNode[matchIndex],
+        paramTransformationTree = oldNotationRule.paramTransformationTree
+            .deepCloneWNodeSub(oldNotationRule.paramVarHypNode[matchIndex],
                 substParseTransformationTree.getRoot());
 
-        paramVarHypNode =
-            new ParseNode[oldNotationRule.paramVarHypNode.length];
+        paramVarHypNode = new ParseNode[oldNotationRule.paramVarHypNode.length];
         for (int i = 0; i < paramVarHypNode.length; i++) {
-            //bypass VarHyp being nulled and those already null...
-            if (i == matchIndex ||
-                oldNotationRule.paramVarHypNode[i] == null) {
+            // bypass VarHyp being nulled and those already null...
+            if (i == matchIndex || oldNotationRule.paramVarHypNode[i] == null)
                 continue;
-            }
-            paramVarHypNode[i] =
-                paramTransformationTree.findChildVarHypNode(i);
-            if (paramVarHypNode[i] == null) {
+            paramVarHypNode[i] = paramTransformationTree.findChildVarHypNode(i);
+            if (paramVarHypNode[i] == null)
                 throw new IllegalStateException(
                     GrammarConstants.ERRMSG_TYPCONV_VARHYP_NOTFND_1
-                    + oldNotationRule.getBaseSyntaxAxiom().getLabel()
-                    +
-                    GrammarConstants.ERRMSG_TYPCONV_VARHYP_NOTFND_2);
-            }
+                        + oldNotationRule.getBaseSyntaxAxiom().getLabel()
+                        + GrammarConstants.ERRMSG_TYPCONV_VARHYP_NOTFND_2);
             convTyp = paramVarHypNode[i].getStmt().getTyp();
         }
     }
@@ -265,42 +254,34 @@ public class TypeConversionRule extends GrammarRule {
      *                              substituted.
      *  @param typeConversionRule the modifying rule.
      */
-    public TypeConversionRule(
-                    Grammar            grammar,
-                    TypeConversionRule oldTCRule,
-                    int                matchIndex,
-                    TypeConversionRule typeConversionRule) {
+    public TypeConversionRule(final Grammar grammar,
+        final TypeConversionRule oldTCRule, final int matchIndex,
+        final TypeConversionRule typeConversionRule)
+    {
         super(grammar);
 
-        ParseTree substParseTransformationTree =
-                  typeConversionRule.paramTransformationTree;
-        int       substMaxSeqNbr               =
-                  typeConversionRule.getMaxSeqNbr();
+        final ParseTree substParseTransformationTree = typeConversionRule.paramTransformationTree;
+        final int substMaxSeqNbr = typeConversionRule.getMaxSeqNbr();
 
-        if (oldTCRule.getMaxSeqNbr() > substMaxSeqNbr) {
+        if (oldTCRule.getMaxSeqNbr() > substMaxSeqNbr)
             setMaxSeqNbr(oldTCRule.getMaxSeqNbr());
-        }
-        else {
+        else
             setMaxSeqNbr(substMaxSeqNbr);
-        }
 
         setNbrHypParamsUsed(1);
 
-        paramTransformationTree =
-            oldTCRule.paramTransformationTree.deepCloneWNodeSub(
-                oldTCRule.paramVarHypNode[matchIndex],
+        paramTransformationTree = oldTCRule.paramTransformationTree
+            .deepCloneWNodeSub(oldTCRule.paramVarHypNode[matchIndex],
                 substParseTransformationTree.getRoot());
 
-        paramVarHypNode =
-            new ParseNode[oldTCRule.paramVarHypNode.length];
-        paramVarHypNode[matchIndex] =
-                paramTransformationTree.findChildVarHypNode(matchIndex);
-        if (paramVarHypNode[matchIndex] == null) {
+        paramVarHypNode = new ParseNode[oldTCRule.paramVarHypNode.length];
+        paramVarHypNode[matchIndex] = paramTransformationTree
+            .findChildVarHypNode(matchIndex);
+        if (paramVarHypNode[matchIndex] == null)
             throw new IllegalStateException(
                 GrammarConstants.ERRMSG_TYPCONV_2_VARHYP_NOTFND_1
-                + oldTCRule.getBaseSyntaxAxiom().getLabel()
-                + GrammarConstants.ERRMSG_TYPCONV_2_VARHYP_NOTFND_2);
-        }
+                    + oldTCRule.getBaseSyntaxAxiom().getLabel()
+                    + GrammarConstants.ERRMSG_TYPCONV_2_VARHYP_NOTFND_2);
         convTyp = paramVarHypNode[matchIndex].getStmt().getTyp();
     }
 
@@ -315,30 +296,25 @@ public class TypeConversionRule extends GrammarRule {
      *
      *  @return new TypeConversionRule object.
      */
-    protected static TypeConversionRule buildBaseRule(
-                           Grammar           grammar,
-                           Axiom             baseSyntaxAxiom,
-                           ParseNodeHolder[] parseNodeHolderExpr) {
-        Cnst     toTyp       = baseSyntaxAxiom.getTyp();
-        Cnst     fromTyp     =
-            parseNodeHolderExpr[0].parseNode.getStmt().getTyp();
+    protected static TypeConversionRule buildBaseRule(final Grammar grammar,
+        final Axiom baseSyntaxAxiom, final ParseNodeHolder[] parseNodeHolderExpr)
+    {
+        final Cnst toTyp = baseSyntaxAxiom.getTyp();
+        final Cnst fromTyp = parseNodeHolderExpr[0].parseNode.getStmt()
+            .getTyp();
 
-        if (TypeConversionRule.isLoop(fromTyp,
-                                      toTyp)) {
-            grammar.accumErrorMsgInList(
-                GrammarConstants.ERRMSG_TYPCONV_AXIOM_LOOP_1
-                + baseSyntaxAxiom.getLabel()
-                + GrammarConstants.ERRMSG_TYPCONV_AXIOM_LOOP_2
-                + fromTyp
-                + GrammarConstants.ERRMSG_TYPCONV_AXIOM_LOOP_3
-                + toTyp);
+        if (TypeConversionRule.isLoop(fromTyp, toTyp)) {
+            grammar
+                .accumErrorMsgInList(GrammarConstants.ERRMSG_TYPCONV_AXIOM_LOOP_1
+                    + baseSyntaxAxiom.getLabel()
+                    + GrammarConstants.ERRMSG_TYPCONV_AXIOM_LOOP_2
+                    + fromTyp
+                    + GrammarConstants.ERRMSG_TYPCONV_AXIOM_LOOP_3 + toTyp);
             return null;
         }
 
-        TypeConversionRule typeConversionRule =
-            new TypeConversionRule(grammar,
-                                   baseSyntaxAxiom,
-                                   fromTyp);
+        final TypeConversionRule typeConversionRule = new TypeConversionRule(
+            grammar, baseSyntaxAxiom, fromTyp);
         typeConversionRule.setIsBaseRule(true);
         return typeConversionRule;
 
@@ -362,14 +338,11 @@ public class TypeConversionRule extends GrammarRule {
      *
      *  @return true if it is a loop, else false.
      */
-    public static boolean isLoop(Cnst fromTyp,
-                                 Cnst toTyp) {
+    public static boolean isLoop(final Cnst fromTyp, final Cnst toTyp) {
         boolean isLoop = false;
         if (fromTyp == toTyp
-            ||
-            fromTyp.findFromTypConversionRule(toTyp) != null) {
+            || fromTyp.findFromTypConversionRule(toTyp) != null)
             isLoop = true;
-        }
         return isLoop;
 
     }
@@ -383,13 +356,12 @@ public class TypeConversionRule extends GrammarRule {
      *
      *  @return GrammarRule if duplicate found, or null.
      */
-    public GrammarRule getDupRule(Grammar grammar,
-                                  Cnst[]  ruleFormatExprIn) {
+    @Override
+    public GrammarRule getDupRule(final Grammar grammar,
+        final Cnst[] ruleFormatExprIn)
+    {
 
-        return getBaseSyntaxAxiom(
-                   ).getTyp(
-                       ).findFromTypConversionRule(
-                           convTyp);
+        return getBaseSyntaxAxiom().getTyp().findFromTypConversionRule(convTyp);
 
     }
 
@@ -400,10 +372,12 @@ public class TypeConversionRule extends GrammarRule {
      *  @param grammar          The Grammar object (Mr Big).
      *  @param ruleFormatExprIn the expression to add.
      */
-    public void addToGrammar(Grammar grammar,
-                             Cnst[]  ruleFormatExprIn) {
-        this.setRuleFormatExpr(ruleFormatExprIn);
-        (getGrammarRuleTyp()).convFromTypGRArrayAdd(this);
+    @Override
+    public void addToGrammar(final Grammar grammar,
+        final Cnst[] ruleFormatExprIn)
+    {
+        setRuleFormatExpr(ruleFormatExprIn);
+        getGrammarRuleTyp().convFromTypGRArrayAdd(this);
         grammar.typeConversionGRListAdd(this);
     }
 
@@ -444,41 +418,30 @@ public class TypeConversionRule extends GrammarRule {
      *
      *  @param grammar The Grammar.
      */
-    public void deriveAdditionalRules(Grammar grammar) {
-        Iterator iterator =
-            grammar.getNullsPermittedGRList().iterator();
+    @Override
+    public void deriveAdditionalRules(final Grammar grammar) {
+        Iterator iterator = grammar.getNullsPermittedGRList().iterator();
         NullsPermittedRule nullsPermittedRule;
         while (iterator.hasNext()) {
-            nullsPermittedRule =
-                (NullsPermittedRule)iterator.next();
-            this.deriveRulesUsingNullsPermitted(
-                        grammar,
-                        nullsPermittedRule);
+            nullsPermittedRule = (NullsPermittedRule)iterator.next();
+            deriveRulesUsingNullsPermitted(grammar, nullsPermittedRule);
         }
 
         iterator = grammar.getTypeConversionGRList().iterator();
         TypeConversionRule typeConversionRule;
         while (iterator.hasNext()) {
-            typeConversionRule =
-                (TypeConversionRule)iterator.next();
-            typeConversionRule.deriveRulesUsingTypeConversion(
-                        grammar,
-                        this);
+            typeConversionRule = (TypeConversionRule)iterator.next();
+            typeConversionRule.deriveRulesUsingTypeConversion(grammar, this);
             // 21 September 2005 fix! go other way also!
-            this.deriveRulesUsingTypeConversion(
-                        grammar,
-                        typeConversionRule);
-            
+            deriveRulesUsingTypeConversion(grammar, typeConversionRule);
+
         }
 
         iterator = grammar.getNotationGRSet().iterator();
         NotationRule notationRule;
         while (iterator.hasNext()) {
-            notationRule =
-                (NotationRule)iterator.next();
-            notationRule.deriveRulesUsingTypeConversion(
-                        grammar,
-                        this);
+            notationRule = (NotationRule)iterator.next();
+            notationRule.deriveRulesUsingTypeConversion(grammar, this);
         }
     }
 
@@ -494,30 +457,23 @@ public class TypeConversionRule extends GrammarRule {
      *  @param grammar The Grammar.
      *  @param nullsPermittedRule the modifying rule.
      */
-    protected void deriveRulesUsingNullsPermitted(
-                        Grammar               grammar,
-                        NullsPermittedRule    nullsPermittedRule) {
-        if (getNbrHypParamsUsed() != 1) {
+    protected void deriveRulesUsingNullsPermitted(final Grammar grammar,
+        final NullsPermittedRule nullsPermittedRule)
+    {
+        if (getNbrHypParamsUsed() != 1)
             throw new IllegalStateException(
                 GrammarConstants.ERRMSG_TYPCONV_NBRHYP_NE_1_1
-                + getNbrHypParamsUsed()
-                + GrammarConstants.ERRMSG_TYPCONV_NBRHYP_NE_1_2
-                + getBaseSyntaxAxiom().getLabel()
-                + GrammarConstants.ERRMSG_TYPCONV_NBRHYP_NE_1_3
-                + ruleNbr);
-        }
+                    + getNbrHypParamsUsed()
+                    + GrammarConstants.ERRMSG_TYPCONV_NBRHYP_NE_1_2
+                    + getBaseSyntaxAxiom().getLabel()
+                    + GrammarConstants.ERRMSG_TYPCONV_NBRHYP_NE_1_3 + ruleNbr);
 
-        int matchIndex =
-            findMatchingVarHypTyp(
-                0,   //start search at beginning
-                nullsPermittedRule.getGrammarRuleTyp());
+        final int matchIndex = findMatchingVarHypTyp(0, // start search at
+                                                        // beginning
+            nullsPermittedRule.getGrammarRuleTyp());
         if (matchIndex >= 0) {
-            NullsPermittedRule nPR =
-                new NullsPermittedRule(
-                    grammar,
-                    this,
-                    matchIndex,
-                    nullsPermittedRule);
+            final NullsPermittedRule nPR = new NullsPermittedRule(grammar,
+                this, matchIndex, nullsPermittedRule);
             grammar.derivedRuleQueueAdd(nPR);
         }
     }
@@ -534,37 +490,29 @@ public class TypeConversionRule extends GrammarRule {
      *  @param grammar            The Grammar.
      *  @param typeConversionRule the modifying rule.
      */
-    protected void deriveRulesUsingTypeConversion(
-                        Grammar               grammar,
-                        TypeConversionRule    typeConversionRule) {
-        if (getNbrHypParamsUsed() != 1) {
+    protected void deriveRulesUsingTypeConversion(final Grammar grammar,
+        final TypeConversionRule typeConversionRule)
+    {
+        if (getNbrHypParamsUsed() != 1)
             throw new IllegalStateException(
                 GrammarConstants.ERRMSG_TYPCONV_NBRHYP_NE_1_1
-                + getNbrHypParamsUsed()
-                + GrammarConstants.ERRMSG_TYPCONV_NBRHYP_NE_1_2
-                + getBaseSyntaxAxiom().getLabel()
-                + GrammarConstants.ERRMSG_TYPCONV_NBRHYP_NE_1_3
-                + ruleNbr);
-        }
+                    + getNbrHypParamsUsed()
+                    + GrammarConstants.ERRMSG_TYPCONV_NBRHYP_NE_1_2
+                    + getBaseSyntaxAxiom().getLabel()
+                    + GrammarConstants.ERRMSG_TYPCONV_NBRHYP_NE_1_3 + ruleNbr);
 
-        int matchIndex =
-            findMatchingVarHypTyp(
-                0,   //start search at beginning
-                typeConversionRule.getGrammarRuleTyp());
+        final int matchIndex = findMatchingVarHypTyp(0, // start search at
+                                                        // beginning
+            typeConversionRule.getGrammarRuleTyp());
         if (matchIndex >= 0) {
-            TypeConversionRule tCR =
-                new TypeConversionRule(
-                    grammar,
-                    this,
-                    matchIndex,
-                    typeConversionRule);
-                /**
-                 *  Don't convert a hyp to its own type. On derived
-                 *  rules just ignore this artifact.
-                 */
-            if (tCR.getConvTyp() != tCR.getGrammarRuleTyp()) {
+            final TypeConversionRule tCR = new TypeConversionRule(grammar,
+                this, matchIndex, typeConversionRule);
+            /**
+             *  Don't convert a hyp to its own type. On derived
+             *  rules just ignore this artifact.
+             */
+            if (tCR.getConvTyp() != tCR.getGrammarRuleTyp())
                 grammar.derivedRuleQueueAdd(tCR);
-            }
         }
     }
 
@@ -586,8 +534,9 @@ public class TypeConversionRule extends GrammarRule {
      *
      *  @return ruleFormatExpr for the Type Conversion Rule.
      */
+    @Override
     public Cnst[] getForestRuleExpr() {
-        Cnst[] expr = new Cnst[1];
+        final Cnst[] expr = new Cnst[1];
         expr[0] = getConvTyp();
         return expr;
     }

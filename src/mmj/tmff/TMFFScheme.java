@@ -22,13 +22,12 @@ package mmj.tmff;
 public class TMFFScheme {
 
     private TMFFMethod tmffMethod;
-    private String     schemeName;
+    private String schemeName;
 
     /**
      *  Default constructor for TMFFScheme.
      */
-    public TMFFScheme() {
-    }
+    public TMFFScheme() {}
 
     /**
      *  Constructor for TMFFScheme used by TMFFBoss and
@@ -38,25 +37,18 @@ public class TMFFScheme {
      *               the BatchMMJ2 RunParm command
      *               TMFFDefineScheme.
      */
-    public TMFFScheme(String[] param) {
+    public TMFFScheme(final String[] param) {
 
-        if (param.length < 1   ||
-            param[0] == null   ||
-            param[0].length() == 0) {
+        if (param.length < 1 || param[0] == null || param[0].length() == 0)
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_SCHEME_NAME_REQUIRED_1);
-        }
-        this.schemeName           = param[0];
+        schemeName = param[0];
 
-        if (param.length < 2   ||
-            param[1] == null   ||
-            param[1].length() == 0) {
+        if (param.length < 2 || param[1] == null || param[1].length() == 0)
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_SCHEME_METHOD_MISSING_1);
-        }
 
-        tmffMethod                =
-            TMFFMethod.ConstructMethodWithUserParams(param);
+        tmffMethod = TMFFMethod.ConstructMethodWithUserParams(param);
     }
 
     /**
@@ -66,20 +58,16 @@ public class TMFFScheme {
      *                  user.
      *  @param method TMFFMethod to be assigned to the scheme.
      */
-    public TMFFScheme(String schemeName,
-                      TMFFMethod method) {
-        if (schemeName == null ||
-            schemeName.length() == 0) {
+    public TMFFScheme(final String schemeName, final TMFFMethod method) {
+        if (schemeName == null || schemeName.length() == 0)
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_SCHEME_NAME_REQUIRED_1);
-        }
-        this.schemeName           = schemeName;
+        this.schemeName = schemeName;
 
-        if (method == null) {
+        if (method == null)
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_SCHEME_METHOD_MISSING_1);
-        }
-        tmffMethod                = method;
+        tmffMethod = method;
 
     }
 
@@ -97,23 +85,18 @@ public class TMFFScheme {
      *  <p>
      *  @param tmffMethod pre-instantiated TMFFMethod.
      */
-    public void setTMFFMethod(TMFFMethod tmffMethod) {
-        if (tmffMethod == null) {
+    public void setTMFFMethod(final TMFFMethod tmffMethod) {
+        if (tmffMethod == null)
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_SCHEME_METHOD_MISSING_1);
-        }
-        if (TMFFConstants.
-                TMFF_UNFORMATTED_SCHEME_NAME.
-                    compareToIgnoreCase(
-                        getSchemeName())
-            == 0) {
+        if (TMFFConstants.TMFF_UNFORMATTED_SCHEME_NAME
+            .compareToIgnoreCase(getSchemeName()) == 0)
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_SCHEME_CANNOT_BE_UPDATED_1
-                + TMFFConstants.TMFF_UNFORMATTED_SCHEME_NAME
-                + TMFFConstants.ERRMSG_SCHEME_CANNOT_BE_UPDATED_2);
-        }
+                    + TMFFConstants.TMFF_UNFORMATTED_SCHEME_NAME
+                    + TMFFConstants.ERRMSG_SCHEME_CANNOT_BE_UPDATED_2);
 
-        this.tmffMethod           = tmffMethod;
+        this.tmffMethod = tmffMethod;
     }
 
     /**
@@ -137,24 +120,18 @@ public class TMFFScheme {
      *  <p>
      *  @param schemeName non-null, non-empty String.
      */
-    public void setSchemeName(String schemeName) {
-        if (schemeName == null ||
-            schemeName.length() == 0) {
+    public void setSchemeName(final String schemeName) {
+        if (schemeName == null || schemeName.length() == 0)
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_SCHEME_NAME_REQUIRED_1);
-        }
 
-        if (TMFFConstants.
-                TMFF_UNFORMATTED_SCHEME_NAME.
-                    compareToIgnoreCase(
-                        schemeName)
-            == 0) {
+        if (TMFFConstants.TMFF_UNFORMATTED_SCHEME_NAME
+            .compareToIgnoreCase(schemeName) == 0)
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_SCHEME_NM_CANT_BE_ASSIGNED_1
-                + TMFFConstants.TMFF_UNFORMATTED_SCHEME_NAME
-                + TMFFConstants.ERRMSG_SCHEME_NM_CANT_BE_ASSIGNED_2);
-        }
+                    + TMFFConstants.TMFF_UNFORMATTED_SCHEME_NAME
+                    + TMFFConstants.ERRMSG_SCHEME_NM_CANT_BE_ASSIGNED_2);
 
-        this.schemeName           = schemeName;
+        this.schemeName = schemeName;
     }
 }

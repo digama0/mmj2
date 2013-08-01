@@ -6,7 +6,6 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-
 /**
  *  GMFFFileNotFoundException.java  0.01 11/01/2011
  *
@@ -33,7 +32,7 @@ public class GMFFFileNotFoundException extends GMFFException {
      *
      * @param   errorMessage  error message.
      */
-    public GMFFFileNotFoundException(String errorMessage) {
+    public GMFFFileNotFoundException(final String errorMessage) {
         super(errorMessage);
     }
 }

@@ -6,7 +6,6 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-
 /*
  *  TMFFAlignColumn.java  0.02 08/01/2007
  *
@@ -21,13 +20,8 @@
  */
 
 package mmj.tmff;
-import mmj.lang.Assrt;
-import mmj.lang.Axiom;
-import mmj.lang.Formula;
-import mmj.lang.ParseNode;
-import mmj.lang.Stmt;
-import mmj.lang.Sym;
-import mmj.lang.VarHyp;
+
+import mmj.lang.*;
 
 /**
  *  TMFFAlignColumn aligns portions of a sub-expression into
@@ -80,9 +74,9 @@ import mmj.lang.VarHyp;
  */
 public class TMFFAlignColumn extends TMFFMethod {
 
-    protected     int alignAtNbr;
-    protected     int alignAtValue;
-    protected     int alignByValue;
+    protected int alignAtNbr;
+    protected int alignAtValue;
+    protected int alignByValue;
 
     /**
      *  Helper to calculate the arbitrary code number
@@ -93,13 +87,11 @@ public class TMFFAlignColumn extends TMFFMethod {
      *  @return TMFFConstants.ALIGN_CNST if the input Sym
      *  is a Cnst, else, TMFFConstants.ALIGN_VAR.
      */
-    public static int getAlignTypeValue(Sym sym) {
-        if (sym.isCnst()) {
+    public static int getAlignTypeValue(final Sym sym) {
+        if (sym.isCnst())
             return TMFFConstants.ALIGN_CNST;
-        }
-        else {
+        else
             return TMFFConstants.ALIGN_VAR;
-        }
     }
 
     /**
@@ -112,25 +104,16 @@ public class TMFFAlignColumn extends TMFFMethod {
      *  @return numeric equivalent to byValue string
      *          (see TMFFConstants.ALIGN_*).
      */
-    public static int validateByValue(String byValue) {
+    public static int validateByValue(final String byValue) {
         if (byValue != null) {
 
-            for (int i = 0;
-                 i < TMFFConstants.ALIGN_TYPE.length;
-                 i++) {
-
-                if (TMFFConstants.ALIGN_TYPE[i].
-                        compareToIgnoreCase(
-                            byValue)
-                    == 0) {
+            for (int i = 0; i < TMFFConstants.ALIGN_TYPE.length; i++)
+                if (TMFFConstants.ALIGN_TYPE[i].compareToIgnoreCase(byValue) == 0)
                     return ++i;
-                }
-            }
 
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_BAD_BY_VALUE_1
-                + byValue
-                + TMFFConstants.ERRMSG_BAD_BY_VALUE_2);
+                TMFFConstants.ERRMSG_BAD_BY_VALUE_1 + byValue
+                    + TMFFConstants.ERRMSG_BAD_BY_VALUE_2);
         }
         throw new IllegalArgumentException(
             TMFFConstants.ERRMSG_MISSING_BY_VALUE_1);
@@ -146,25 +129,16 @@ public class TMFFAlignColumn extends TMFFMethod {
      *  @return numeric equivalent to byValue string
      *          (see TMFFConstants.ALIGN_*).
      */
-    public static int validateAtValue(String atValue) {
+    public static int validateAtValue(final String atValue) {
         if (atValue != null) {
 
-            for (int i = 0;
-                 i < TMFFConstants.ALIGN_TYPE.length;
-                 i++) {
-
-                if (TMFFConstants.ALIGN_TYPE[i].
-                        compareToIgnoreCase(
-                            atValue)
-                    == 0) {
+            for (int i = 0; i < TMFFConstants.ALIGN_TYPE.length; i++)
+                if (TMFFConstants.ALIGN_TYPE[i].compareToIgnoreCase(atValue) == 0)
                     return ++i;
-                }
-            }
 
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_BAD_AT_VALUE_1
-                + atValue
-                + TMFFConstants.ERRMSG_BAD_AT_VALUE_2);
+                TMFFConstants.ERRMSG_BAD_AT_VALUE_1 + atValue
+                    + TMFFConstants.ERRMSG_BAD_AT_VALUE_2);
         }
         throw new IllegalArgumentException(
             TMFFConstants.ERRMSG_MISSING_AT_VALUE_1);
@@ -179,17 +153,15 @@ public class TMFFAlignColumn extends TMFFMethod {
      *  @return numeric equivalent to byValue string
      *          (see TMFFConstants.ALIGN_*).
      */
-    public static int validateAtNbr(String atNbrString) {
+    public static int validateAtNbr(final String atNbrString) {
 
         try {
-            return TMFFAlignColumn.validateAtNbr(
-                Integer.parseInt(atNbrString.trim()));
-        }
-        catch (NumberFormatException e) {
+            return TMFFAlignColumn.validateAtNbr(Integer.parseInt(atNbrString
+                .trim()));
+        } catch (final NumberFormatException e) {
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_BAD_AT_NBR_1
-                + atNbrString
-                + TMFFConstants.ERRMSG_BAD_AT_NBR_2);
+                TMFFConstants.ERRMSG_BAD_AT_NBR_1 + atNbrString
+                    + TMFFConstants.ERRMSG_BAD_AT_NBR_2);
         }
     }
 
@@ -202,14 +174,12 @@ public class TMFFAlignColumn extends TMFFMethod {
      *  @return numeric equivalent to byValue string
      *          (see TMFFConstants.ALIGN_*).
      */
-    public static int validateAtNbr(int atNbr) {
-        if (atNbr < TMFFConstants.MIN_ALIGN_AT_NBR ||
-            atNbr > TMFFConstants.MAX_ALIGN_AT_NBR) {
+    public static int validateAtNbr(final int atNbr) {
+        if (atNbr < TMFFConstants.MIN_ALIGN_AT_NBR
+            || atNbr > TMFFConstants.MAX_ALIGN_AT_NBR)
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_BAD_AT_NBR_1
-                + atNbr
-                + TMFFConstants.ERRMSG_BAD_AT_NBR_2);
-        }
+                TMFFConstants.ERRMSG_BAD_AT_NBR_1 + atNbr
+                    + TMFFConstants.ERRMSG_BAD_AT_NBR_2);
         return atNbr;
     }
 
@@ -241,22 +211,17 @@ public class TMFFAlignColumn extends TMFFMethod {
      *                  'Var', 'Cnst' or 'Sym'.
      *
      */
-    public TMFFAlignColumn(int    maxDepth,
-                           String byValue,
-                           int    atNbr,
-                           String atValue) {
+    public TMFFAlignColumn(final int maxDepth, final String byValue,
+        final int atNbr, final String atValue)
+    {
         super(maxDepth);
 
-        alignByValue              =
-            TMFFAlignColumn.validateByValue(byValue);
+        alignByValue = TMFFAlignColumn.validateByValue(byValue);
 
-        alignAtNbr                =
-            TMFFAlignColumn.validateAtNbr(atNbr);
+        alignAtNbr = TMFFAlignColumn.validateAtNbr(atNbr);
 
-        alignAtValue              =
-            TMFFAlignColumn.validateAtValue(atValue);
+        alignAtValue = TMFFAlignColumn.validateAtValue(atValue);
     }
-
 
     /**
      *  Constructor for TMFFAlignColumn from user parameters.
@@ -279,20 +244,17 @@ public class TMFFAlignColumn extends TMFFMethod {
      *                  'Var', 'Cnst' or 'Sym'.
      *
      */
-    public TMFFAlignColumn(String maxDepthString,
-                           String byValueString,
-                           String atNbrString,
-                           String atValueString) {
+    public TMFFAlignColumn(final String maxDepthString,
+        final String byValueString, final String atNbrString,
+        final String atValueString)
+    {
         super(maxDepthString);
 
-        alignByValue              =
-            TMFFAlignColumn.validateByValue(byValueString);
+        alignByValue = TMFFAlignColumn.validateByValue(byValueString);
 
-        alignAtNbr                =
-            TMFFAlignColumn.validateAtNbr(atNbrString);
+        alignAtNbr = TMFFAlignColumn.validateAtNbr(atNbrString);
 
-        alignAtValue              =
-            TMFFAlignColumn.validateAtValue(atValueString);
+        alignAtValue = TMFFAlignColumn.validateAtValue(atValueString);
     }
 
     /**
@@ -303,154 +265,123 @@ public class TMFFAlignColumn extends TMFFMethod {
      *
      *  @return boolean - true only if update performed.
      */
-    public boolean updateMaxDepth(int maxDepth) {
+    @Override
+    public boolean updateMaxDepth(final int maxDepth) {
 
-        this.maxDepth             =
-            TMFFMethod.validateMaxDepth(maxDepth);
+        this.maxDepth = TMFFMethod.validateMaxDepth(maxDepth);
 
         return true;
     }
 
     // return -1 if error else 0
-    protected int renderSubExprWithBreaks(
-                                TMFFStateParams tmffSP,
-                                ParseNode       currNode,
-                                int             leftmostColNbr) {
+    @Override
+    protected int renderSubExprWithBreaks(final TMFFStateParams tmffSP,
+        final ParseNode currNode, final int leftmostColNbr)
+    {
 
-        int       symAlignType    = 0;
-        int       alignTypeCnt    = 0;
+        int symAlignType = 0;
+        int alignTypeCnt = 0;
 
-        boolean   align           = false;
-        int       alignPosition   = -1;
-        String    token;
-        int       pos;
-
+        boolean align = false;
+        int alignPosition = -1;
+        String token;
+        int pos;
 
         ParseNode subNode;
 
-        int[]     reseq           = null;
+        int[] reseq = null;
 
-        Axiom     axiom           = null;
+        Axiom axiom = null;
 
-        Stmt      stmt            = currNode.getStmt();
+        final Stmt stmt = currNode.getStmt();
 
-        Sym[]     formulaSymArray =
-                        stmt.getFormula().getSym();
+        final Sym[] formulaSymArray = stmt.getFormula().getSym();
 
-        VarHyp[]  mandVarHypArray =
-                        stmt.getMandVarHypArray();
+        final VarHyp[] mandVarHypArray = stmt.getMandVarHypArray();
 
         if (stmt.isVarHyp()) {
             // ok, valid and no hyp resequencing
         }
-        else {
-            if (stmt.isAssrt()          &&
-                ((Assrt)stmt).isAxiom()) {
-                axiom             = (Axiom)stmt;
-                if (axiom.getIsSyntaxAxiom()) {
-                    reseq         =
-                        axiom.getSyntaxAxiomVarHypReseq();
-                }
-                else {
-                    throw new IllegalArgumentException(
-                        TMFFConstants.ERRMSG_BAD_SUB_EXPR_NODE_1);
-                }
-            }
+        else if (stmt.isAssrt() && ((Assrt)stmt).isAxiom()) {
+            axiom = (Axiom)stmt;
+            if (axiom.getIsSyntaxAxiom())
+                reseq = axiom.getSyntaxAxiomVarHypReseq();
+            else
+                throw new IllegalArgumentException(
+                    TMFFConstants.ERRMSG_BAD_SUB_EXPR_NODE_1);
         }
 
-        int       symI            = 0;  //start at 2nd formula sym
-        int       varI            = -1; //start at 0 = 1st var index
+        int symI = 0; // start at 2nd formula sym
+        int varI = -1; // start at 0 = 1st var index
         while (true) {
 
-            align                 = false;
+            align = false;
 
-            if (++symI >= formulaSymArray.length) {
+            if (++symI >= formulaSymArray.length)
                 return 0;
-            }
 
-            symAlignType          =
-                TMFFAlignColumn.getAlignTypeValue(
-                    formulaSymArray[symI]);
+            symAlignType = TMFFAlignColumn
+                .getAlignTypeValue(formulaSymArray[symI]);
 
-            pos                   = tmffSP.prevColNbr + 2; //default
+            pos = tmffSP.prevColNbr + 2; // default
             if (alignPosition == -1) {
                 if (symAlignType == alignAtValue
-                    ||
-                    (alignAtValue ==
-                     TMFFConstants.ALIGN_SYM)) {
+                    || alignAtValue == TMFFConstants.ALIGN_SYM)
+                {
 
                     ++alignTypeCnt;
 
                     if (alignTypeCnt >= alignAtNbr) {
-                        align     = true;
-                        alignPosition
-                                  = pos;
+                        align = true;
+                        alignPosition = pos;
                     }
                 }
             }
-            else {
-                if (symAlignType == alignByValue
-                    ||
-                    (alignByValue ==
-                     TMFFConstants.ALIGN_SYM)) {
-                    align         = true;
-                    pos           = alignPosition;
-                }
+            else if (symAlignType == alignByValue
+                || alignByValue == TMFFConstants.ALIGN_SYM)
+            {
+                align = true;
+                pos = alignPosition;
             }
 
             if (symAlignType == TMFFConstants.ALIGN_CNST) {
 
-                token             = formulaSymArray[symI].getId();
+                token = formulaSymArray[symI].getId();
 
-                if ((!align)
-                       &&
-                    (pos + token.length() >
-                     tmffSP.rightmostColNbr)) {
+                if (!align && pos + token.length() > tmffSP.rightmostColNbr) {
 
                     tmffSP.newlineSB();
-                    pos  = alignPosition + 4;
+                    pos = alignPosition + 4;
                 }
 
-                if (tmffSP.appendTokenAtGivenPosition(token,
-                                                      pos)
-                    < 0) {
+                if (tmffSP.appendTokenAtGivenPosition(token, pos) < 0)
                     return -1;
-                }
 
-                continue; //loop to next sym
+                continue; // loop to next sym
             }
 
-            if (pos > tmffSP.rightmostColNbr) {
+            if (pos > tmffSP.rightmostColNbr)
                 return -1;
-            }
 
-            //fix for problem 20070705.2
-            if (currNode.getChild().length == 0) {
+            // fix for problem 20070705.2
+            if (currNode.getChild().length == 0)
                 return -1;
-            }
 
             ++varI;
-            if (reseq == null) {
-                subNode           =
-                        (currNode.getChild())[varI];
-            }
-            else {
-                subNode           =
-                        (currNode.getChild())[reseq[varI]];
-            }
+            if (reseq == null)
+                subNode = currNode.getChild()[varI];
+            else
+                subNode = currNode.getChild()[reseq[varI]];
 
             // finagle: we want to pad to position pos - 2 because
-            //          the output tokens will be prefixed by " ".
-            int padPos            = pos - 2;
+            // the output tokens will be prefixed by " ".
+            final int padPos = pos - 2;
 
             tmffSP.padSBToGivenPosition(padPos);
 
-            if (renderSubExpr(tmffSP,
-                              subNode,
-                              pos)        // new leftmostColNbr
-                < 0) {
+            if (renderSubExpr(tmffSP, subNode, pos) // new leftmostColNbr
+            < 0)
                 return -1;
-            }
         }
     }
 }

@@ -6,7 +6,6 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-
 /*
  *  ParseNode.java  0.09 03/01/2008
  *
@@ -47,7 +46,8 @@
  */
 
 package mmj.lang;
-import  java.util.ArrayList;
+
+import java.util.ArrayList;
 
 /**
  *  Parse Node is an n-way tree node for Metamath Stmt trees.
@@ -121,27 +121,26 @@ public class ParseNode {
     /**
      *  Stmt object reference, either a Hyp or an Assrt.
      */
-    public         Stmt            stmt;
+    public Stmt stmt;
 
     /**
      *  Child node array of length 0 to n.
      */
-    public         ParseNode[]     child;
+    public ParseNode[] child;
 
     /**
      *  Default constructor.
      */
-    public ParseNode() {
-    }
+    public ParseNode() {}
 
     /**
      *  Construct with a Stmt.
      *
      *  @param stmt a proof step.
      */
-    public ParseNode(Stmt stmt) {
+    public ParseNode(final Stmt stmt) {
         this.stmt = stmt;
-        child     = null;
+        child = null;
     }
 
     /**
@@ -149,9 +148,9 @@ public class ParseNode {
      *
      *  @param varHyp a proof or parse step.
      */
-    public ParseNode(VarHyp varHyp) {
-        this.stmt = varHyp;
-        this.child = new ParseNode[0];
+    public ParseNode(final VarHyp varHyp) {
+        stmt = varHyp;
+        child = new ParseNode[0];
     }
 
     /**
@@ -168,10 +167,9 @@ public class ParseNode {
      *
      *  @param stmt a proof or parse step.
      */
-    public void setStmt(Stmt stmt) {
+    public void setStmt(final Stmt stmt) {
         this.stmt = stmt;
     }
-
 
     /**
      *  Return ParseNode's Child ParseNode array.
@@ -187,7 +185,7 @@ public class ParseNode {
      *
      *  @param child ParseNode array.
      */
-    public void setChild(ParseNode[] child) {
+    public void setChild(final ParseNode[] child) {
         this.child = child;
     }
 
@@ -212,83 +210,65 @@ public class ParseNode {
      *          for the corresponding VarHyps in the input
      *          varHypArray (may contain nulls).
      */
-    public ParseNode[] unifyWithSubtree(
-                            ParseNode   subtreeRoot,
-                            VarHyp[]    varHypArray,
-                            ParseNode[] unifyNodeStack,
-                            ParseNode[] compareNodeStack) {
+    public ParseNode[] unifyWithSubtree(final ParseNode subtreeRoot,
+        final VarHyp[] varHypArray, final ParseNode[] unifyNodeStack,
+        final ParseNode[] compareNodeStack)
+    {
 
-        unifyNodeStack[0]         = this;
-        unifyNodeStack[1]         = subtreeRoot;
+        unifyNodeStack[0] = this;
+        unifyNodeStack[1] = subtreeRoot;
 
-        int         stackCnt      = 2;
+        int stackCnt = 2;
 
-        ParseNode[] substArray    =
-            new ParseNode[varHypArray.length];
+        final ParseNode[] substArray = new ParseNode[varHypArray.length];
 
-        ParseNode   myNode;
-        ParseNode   subtreeNode;
+        ParseNode myNode;
+        ParseNode subtreeNode;
 
         stackLoop: while (stackCnt > 0) {
-            subtreeNode           = unifyNodeStack[--stackCnt];
-            myNode                = unifyNodeStack[--stackCnt];
+            subtreeNode = unifyNodeStack[--stackCnt];
+            myNode = unifyNodeStack[--stackCnt];
 
             if (myNode.stmt != subtreeNode.stmt) {
-                if (!myNode.stmt.isVarHyp() ||
-                    myNode.stmt.getTyp() !=
-                    subtreeNode.stmt.getTyp()) {
-                    //mismatch and/or myNode not VarHyp
+                if (!myNode.stmt.isVarHyp()
+                    || myNode.stmt.getTyp() != subtreeNode.stmt.getTyp())
+                    // mismatch and/or myNode not VarHyp
                     return null;
-                }
-                //ok, subst syntax node/VarHyp for VarHyp if Typ equal
             }
-            else {
-                if (myNode.stmt.isVarHyp()) {
-                    //ok, a vacuous, subst VarHyp x for Varhyp x!
+            else if (myNode.stmt.isVarHyp()) {
+                // ok, a vacuous, subst VarHyp x for Varhyp x!
+            }
+            else { // ok, matching syntax nodes
+                for (int i = myNode.child.length - 1; i >= 0; i--) {
+                    unifyNodeStack[stackCnt++] = myNode.child[i];
+                    unifyNodeStack[stackCnt++] = subtreeNode.child[i];
                 }
-                else { //ok, matching syntax nodes
-                    for (int i = (myNode.child.length - 1);
-                         i >= 0;
-                         i--) {
-                        unifyNodeStack[stackCnt++]
-                                      = myNode.child[i];
-                        unifyNodeStack[stackCnt++]
-                                      = subtreeNode.child[i];
-                    }
-                    continue stackLoop;
-                }
+                continue stackLoop;
             }
 
-            //ok, accum the subst while checking for (erroneous)
-            //two different subst values for a single VarHyp
-            for (int i = 0; i < varHypArray.length; i++) {
+            // ok, accum the subst while checking for (erroneous)
+            // two different subst values for a single VarHyp
+            for (int i = 0; i < varHypArray.length; i++)
                 if (varHypArray[i] == myNode.stmt) {
-                    if (substArray[i] == null) {
-                        substArray[i]
-                                  = subtreeNode;
-                    }
-                    else {
-                        if (!substArray[i].isDeepDup(
-                                            subtreeNode,
-                                            compareNodeStack)) {
-                            return null; //bad subst, 2 diff values
-                        }
-                    }
-                    continue stackLoop; //next!!!
+                    if (substArray[i] == null)
+                        substArray[i] = subtreeNode;
+                    else if (!substArray[i].isDeepDup(subtreeNode,
+                        compareNodeStack))
+                        return null; // bad subst, 2 diff values
+                    continue stackLoop; // next!!!
                 }
-            }
 
-            //if we're here then we messed up!
-            StringBuffer testSB = new StringBuffer();
-            for (int i = 0; i < varHypArray.length; i++) {
-                testSB.append(varHypArray[i].getLabel());
+            // if we're here then we messed up!
+            final StringBuffer testSB = new StringBuffer();
+            for (final VarHyp element : varHypArray) {
+                testSB.append(element.getLabel());
                 testSB.append(' ');
             }
             throw new IllegalArgumentException(
                 LangConstants.ERRMSG_UNIFY_SUBST_HYP_NOTFND_1
-                + myNode.stmt.getLabel()
-                + LangConstants.ERRMSG_UNIFY_SUBST_HYP_NOTFND_2
-                + testSB.toString());
+                    + myNode.stmt.getLabel()
+                    + LangConstants.ERRMSG_UNIFY_SUBST_HYP_NOTFND_2
+                    + testSB.toString());
         }
         return substArray;
     }
@@ -305,38 +285,34 @@ public class ParseNode {
      *
      *  @return true if the sub-trees have identical contents.
      */
-    public boolean isDeepDup(ParseNode   that,
-                             ParseNode[] compareNodeStack) {
+    public boolean isDeepDup(final ParseNode that,
+        final ParseNode[] compareNodeStack)
+    {
 
-        ParseNode myNode          = this;
-        ParseNode thatNode        = that;
+        ParseNode myNode = this;
+        ParseNode thatNode = that;
 
-        int stackCnt              = 0;
+        int stackCnt = 0;
         int i;
-        while (thatNode             != null                  &&
-               myNode.stmt          == thatNode.stmt         &&
-               myNode.child.length  == thatNode.child.length) {
+        while (thatNode != null && myNode.stmt == thatNode.stmt
+            && myNode.child.length == thatNode.child.length)
+        {
 
-            i                     = myNode.child.length - 1;
+            i = myNode.child.length - 1;
             if (i < 0) {
-                if (stackCnt <= 0) {
+                if (stackCnt <= 0)
                     return true;
-                }
-                thatNode          =
-                    compareNodeStack[--stackCnt];
-                myNode            =
-                    compareNodeStack[--stackCnt];
+                thatNode = compareNodeStack[--stackCnt];
+                myNode = compareNodeStack[--stackCnt];
             }
             else {
                 while (i > 0) {
-                    compareNodeStack[stackCnt++]
-                                  = myNode.child[i];
-                    compareNodeStack[stackCnt++]
-                                  = thatNode.child[i];
+                    compareNodeStack[stackCnt++] = myNode.child[i];
+                    compareNodeStack[stackCnt++] = thatNode.child[i];
                     --i;
                 }
-                thatNode          = thatNode.child[0];
-                myNode            = myNode.child[0];
+                thatNode = thatNode.child[0];
+                myNode = myNode.child[0];
             }
         }
         return false;
@@ -349,17 +325,13 @@ public class ParseNode {
      *
      *  @return true if the sub-trees have identical contents.
      */
-    public boolean isDeepDup(ParseNode that) {
-        if (that         == null      ||
-            stmt         != that.stmt ||
-            child.length != that.child.length) {
+    public boolean isDeepDup(final ParseNode that) {
+        if (that == null || stmt != that.stmt
+            || child.length != that.child.length)
             return false;
-        }
-        for (int i = 0; i < child.length; i++) {
-            if (!child[i].isDeepDup(that.child[i])) {
+        for (int i = 0; i < child.length; i++)
+            if (!child[i].isDeepDup(that.child[i]))
                 return false;
-            }
-        }
         return true;
     }
 
@@ -379,22 +351,17 @@ public class ParseNode {
      *  @return deep clone of original node with substituted
      *          child nodes.
      */
-    public ParseNode deepCloneWithGrammarHypSubs(
-                            ParseNode[]       matchNode,
-                            ParseNodeHolder[] expandedReseqParam) {
-        ParseNode out     = new ParseNode(stmt);
-        out.child         = new ParseNode[expandedReseqParam.length];
-        for (int i = 0; i < out.child.length; i++) {
-            if (expandedReseqParam[i] == null) {
+    public ParseNode deepCloneWithGrammarHypSubs(final ParseNode[] matchNode,
+        final ParseNodeHolder[] expandedReseqParam)
+    {
+        final ParseNode out = new ParseNode(stmt);
+        out.child = new ParseNode[expandedReseqParam.length];
+        for (int i = 0; i < out.child.length; i++)
+            if (expandedReseqParam[i] == null)
                 out.child[i] = child[i].deepClone();
-            }
-            else {
-                out.child[i] =
-                    child[i].deepCloneWNodeSub(
-                        matchNode[i],
-                        expandedReseqParam[i].parseNode);
-            }
-        }
+            else
+                out.child[i] = child[i].deepCloneWNodeSub(matchNode[i],
+                    expandedReseqParam[i].parseNode);
         return out;
     }
 
@@ -413,22 +380,19 @@ public class ParseNode {
      *
      *  @return output ParseNode, unchanged or substituted.
      */
-    public ParseNode deepCloneWNodeSub(ParseNode matchNode,
-                                       ParseNode substNode) {
-        if (this == matchNode) {
+    public ParseNode deepCloneWNodeSub(final ParseNode matchNode,
+        final ParseNode substNode)
+    {
+        if (this == matchNode)
             return substNode;
-        }
-        ParseNode out = new ParseNode(stmt);
+        final ParseNode out = new ParseNode(stmt);
         if (child != null) {
             out.child = new ParseNode[child.length];
-            for (int i = 0; i < child.length; i++) {
-                out.child[i] = child[i].deepCloneWNodeSub(matchNode,
-                                                          substNode);
-            }
+            for (int i = 0; i < child.length; i++)
+                out.child[i] = child[i].deepCloneWNodeSub(matchNode, substNode);
         }
         return out;
     }
-
 
     /**
      *  Deep clone of a ParseNode sub-tree.
@@ -437,12 +401,11 @@ public class ParseNode {
      *          content.
      */
     public ParseNode deepClone() {
-        ParseNode out = new ParseNode();
-        out.stmt      = stmt;
-        out.child     = new ParseNode[child.length];
-        for (int i = 0; i < child.length; i++) {
+        final ParseNode out = new ParseNode();
+        out.stmt = stmt;
+        out.child = new ParseNode[child.length];
+        for (int i = 0; i < child.length; i++)
             out.child[i] = child[i].deepClone();
-        }
         return out;
     }
 
@@ -463,35 +426,26 @@ public class ParseNode {
      *
      *  @return new ParseNode.
      */
-    public ParseNode deepCloneApplyingAssrtSubst(
-                                    Hyp[]       assrtHypArray,
-                                    ParseNode[] assrtSubst,
-                                    ArrayList   workVarList) {
+    public ParseNode deepCloneApplyingAssrtSubst(final Hyp[] assrtHypArray,
+        final ParseNode[] assrtSubst, final ArrayList workVarList)
+    {
         if (!stmt.isVarHyp()) {
-            ParseNode out         = new ParseNode(stmt);
-            out.child             = new ParseNode[child.length];
-            for (int i = 0; i < child.length; i++) {
-                out.child[i]      =
-                    child[i].deepCloneApplyingAssrtSubst(
-                        assrtHypArray,
-                        assrtSubst,
-                        workVarList);
-            }
+            final ParseNode out = new ParseNode(stmt);
+            out.child = new ParseNode[child.length];
+            for (int i = 0; i < child.length; i++)
+                out.child[i] = child[i].deepCloneApplyingAssrtSubst(
+                    assrtHypArray, assrtSubst, workVarList);
             return out;
         }
 
-        for (int i = 0; i < assrtHypArray.length; i++) {
+        for (int i = 0; i < assrtHypArray.length; i++)
             if (assrtHypArray[i] == stmt) {
-                assrtSubst[i].
-                    accumSetOfWorkVarsUsed(
-                        workVarList);
+                assrtSubst[i].accumSetOfWorkVarsUsed(workVarList);
                 return assrtSubst[i];
             }
-        }
 
         throw new IllegalArgumentException(
-            LangConstants.ERRMSG_ASSRT_SUBST_HYP_NOTFND_1
-            + stmt.getLabel());
+            LangConstants.ERRMSG_ASSRT_SUBST_HYP_NOTFND_1 + stmt.getLabel());
     }
 
     /**
@@ -504,34 +458,25 @@ public class ParseNode {
      *
      *  @return new ParseNode.
      */
-    public ParseNode deepCloneApplyingAssrtSubst(
-                                    Hyp[]       assrtHypArray,
-                                    ParseNode[] assrtSubst) {
+    public ParseNode deepCloneApplyingAssrtSubst(final Hyp[] assrtHypArray,
+        final ParseNode[] assrtSubst)
+    {
         if (!stmt.isVarHyp()) {
-            ParseNode out         = new ParseNode(stmt);
-            out.child             = new ParseNode[child.length];
-            for (int i = 0; i < child.length; i++) {
-                out.child[i]      =
-                    child[i].deepCloneApplyingAssrtSubst(
-                        assrtHypArray,
-                        assrtSubst);
-            }
+            final ParseNode out = new ParseNode(stmt);
+            out.child = new ParseNode[child.length];
+            for (int i = 0; i < child.length; i++)
+                out.child[i] = child[i].deepCloneApplyingAssrtSubst(
+                    assrtHypArray, assrtSubst);
             return out;
         }
 
-        for (int i = 0; i < assrtHypArray.length; i++) {
-            if (assrtHypArray[i] == stmt) {
+        for (int i = 0; i < assrtHypArray.length; i++)
+            if (assrtHypArray[i] == stmt)
                 return assrtSubst[i];
-            }
-        }
 
         throw new IllegalArgumentException(
-            LangConstants.ERRMSG_ASSRT_SUBST_HYP_NOTFND_1
-            + stmt.getLabel());
+            LangConstants.ERRMSG_ASSRT_SUBST_HYP_NOTFND_1 + stmt.getLabel());
     }
-
-
-
 
     /**
      *  Finds *first* VarHyp node in a sub-tree.
@@ -543,15 +488,13 @@ public class ParseNode {
      *          children that is a VarHyp.
      */
     public ParseNode findFirstVarHypNode() {
-        if (stmt.isVarHyp()) {
+        if (stmt.isVarHyp())
             return this;
-        }
         ParseNode out;
-        for (int i = 0; i < child.length; i++) {
-            out = child[i].findFirstVarHypNode();
-            if (out != null) {
+        for (final ParseNode element : child) {
+            out = element.findFirstVarHypNode();
+            if (out != null)
                 return out;
-            }
         }
         return null;
     }
@@ -562,31 +505,24 @@ public class ParseNode {
      *  @return maximum depth of parse sub-tree
      */
     public int calcMaxDepth() {
-        if (stmt.isWorkVarHyp()) {
+        if (stmt.isWorkVarHyp())
             return 0;
-        }
-        int childMaxDepth         = 0;
+        int childMaxDepth = 0;
         int childDepth;
-        for (int i = 0; i < child.length; i++) {
-            if ((childDepth       = child[i].calcMaxDepth())
-                 > childMaxDepth) {
+        for (final ParseNode element : child)
+            if ((childDepth = element.calcMaxDepth()) > childMaxDepth)
                 childMaxDepth = childDepth;
-            }
-        }
         return childMaxDepth + 1;
     }
-
 
     /**
      *  Counts nodes in a ParseNode sub-tree.
      */
     public int countParseNodes() {
         int n = 1;
-        if (child != null) {
-            for (int i = 0; i < child.length; i++) {
-                n += child[i].countParseNodes();
-            }
-        }
+        if (child != null)
+            for (final ParseNode element : child)
+                n += element.countParseNodes();
         return n;
     }
 
@@ -600,17 +536,14 @@ public class ParseNode {
      */
     public Stmt[] convertToRPN() {
 
-        Stmt[] outRPN = new Stmt[countParseNodes()];
+        final Stmt[] outRPN = new Stmt[countParseNodes()];
 
-        int    dest   = outRPN.length - 1;
+        int dest = outRPN.length - 1;
 
-        dest          = convertToRPN(outRPN,
-                                     dest);
-        if (dest != -1) {
+        dest = convertToRPN(outRPN, dest);
+        if (dest != -1)
             throw new IllegalStateException(
-                LangConstants.ERRMSG_SUBTREE_CONV_TO_RPN_FAILURE
-                + (dest * -1));
-        }
+                LangConstants.ERRMSG_SUBTREE_CONV_TO_RPN_FAILURE + dest * -1);
         return outRPN;
     }
 
@@ -625,16 +558,12 @@ public class ParseNode {
      *
      *  @return dest of *next* output Stmt array item.
      */
-    public int convertToRPN(Stmt[] outRPN,
-                            int    dest) {
+    public int convertToRPN(final Stmt[] outRPN, int dest) {
         outRPN[dest--] = stmt;
 
-        if (child != null) {
-            for (int i = (child.length - 1); i >= 0; i--) {
-                dest = child[i].convertToRPN(outRPN,
-                                             dest);
-            }
-        }
+        if (child != null)
+            for (int i = child.length - 1; i >= 0; i--)
+                dest = child[i].convertToRPN(outRPN, dest);
 
         return dest;
     }
@@ -650,28 +579,21 @@ public class ParseNode {
      *  @throws LangException if ParseTree cannot be built from the
      *          RPN (null statment or RPN incomplete.)
      */
-    public int loadParseNodeFromRPN(Stmt[] rpn,
-                                    int    stmtPosInRPN) {
-        if ((stmt = rpn[stmtPosInRPN]) == null) {
+    public int loadParseNodeFromRPN(final Stmt[] rpn, int stmtPosInRPN) {
+        if ((stmt = rpn[stmtPosInRPN]) == null)
             throw new IllegalArgumentException(
-                LangConstants.ERRMSG_PARSED_RPN_INCOMPLETE +
-                    stmtPosInRPN);
-        }
+                LangConstants.ERRMSG_PARSED_RPN_INCOMPLETE + stmtPosInRPN);
 
-        int nbrChildNodes = stmt.getMandHypArrayLength();
+        final int nbrChildNodes = stmt.getMandHypArrayLength();
 
         child = new ParseNode[nbrChildNodes];
 
-        for (int i = (nbrChildNodes - 1); i >= 0; i--) {
-            if ((--stmtPosInRPN) < 0) {
+        for (int i = nbrChildNodes - 1; i >= 0; i--) {
+            if (--stmtPosInRPN < 0)
                 throw new IllegalArgumentException(
-                    LangConstants.ERRMSG_RPN_INVALID_NOT_ENOUGH_STMTS
-                    );
-            }
-            child[i]     = new ParseNode();
-            stmtPosInRPN =
-                child[i].loadParseNodeFromRPN(rpn,
-                                              stmtPosInRPN);
+                    LangConstants.ERRMSG_RPN_INVALID_NOT_ENOUGH_STMTS);
+            child[i] = new ParseNode();
+            stmtPosInRPN = child[i].loadParseNodeFromRPN(rpn, stmtPosInRPN);
         }
         return stmtPosInRPN;
     }
@@ -717,19 +639,15 @@ public class ParseNode {
      *          appended to the input StringBuffer --
      *          or -1 if maxDepth or maxLength exceeded.
      */
-    public int renderParsedSubExpr(StringBuffer sb,
-                                   int          maxDepth,
-                                   int          maxLength) {
+    public int renderParsedSubExpr(final StringBuffer sb, final int maxDepth,
+        final int maxLength)
+    {
 
-        int rollbackToLength      = sb.length();
-        int outputSubExprLength   =
-                stmt.renderParsedSubExpr(sb,
-                                         maxDepth,
-                                         maxLength,
-                                         child);
-        if (outputSubExprLength < 0) {
+        final int rollbackToLength = sb.length();
+        final int outputSubExprLength = stmt.renderParsedSubExpr(sb, maxDepth,
+            maxLength, child);
+        if (outputSubExprLength < 0)
             sb.setLength(rollbackToLength);
-        }
 
         return outputSubExprLength;
     }
@@ -750,25 +668,21 @@ public class ParseNode {
      */
     public ParseNode cloneTargetToSourceVars() {
 
-        ParseNode out             = new ParseNode();
+        final ParseNode out = new ParseNode();
 
         if (stmt.isVarHyp()) {
-            ParseNode vHNode      = ((VarHyp)stmt).paSubst;
-            if (vHNode == null) {
+            final ParseNode vHNode = ((VarHyp)stmt).paSubst;
+            if (vHNode == null)
                 throw new IllegalArgumentException(
-                    LangConstants.
-                        ERRMSG_NULL_TARGET_VAR_HYP_PA_SUBST_1);
-            }
-            out.stmt              = vHNode.stmt;
-            out.child             = vHNode.child;
+                    LangConstants.ERRMSG_NULL_TARGET_VAR_HYP_PA_SUBST_1);
+            out.stmt = vHNode.stmt;
+            out.child = vHNode.child;
         }
         else {
-            out.stmt              = stmt;
-            out.child             = new ParseNode[child.length];
-            for (int i = 0; i < child.length; i++) {
-                out.child[i]      =
-                    child[i].cloneTargetToSourceVars();
-            }
+            out.stmt = stmt;
+            out.child = new ParseNode[child.length];
+            for (int i = 0; i < child.length; i++)
+                out.child[i] = child[i].cloneTargetToSourceVars();
         }
         return out;
     }
@@ -797,51 +711,39 @@ public class ParseNode {
      *              1 = occurs in error (invalid loop)
      *             -1 = valid rename
      */
-    public int checkWorkVarHasOccursIn(
-                            WorkVarHyp searchWorkVarHyp) {
+    public int checkWorkVarHasOccursIn(final WorkVarHyp searchWorkVarHyp) {
 
         if (stmt.isWorkVarHyp()) {
 
-            Stmt targetStmt       =
-                checkWorkVarHasOccursInValidRename(
-                    searchWorkVarHyp);
+            final Stmt targetStmt = checkWorkVarHasOccursInValidRename(searchWorkVarHyp);
 
-            if (targetStmt == null) {
+            if (targetStmt == null)
                 return LangConstants.WV_OCCURS_IN_NOT_AT_ALL;
-            }
 
-            if (targetStmt == searchWorkVarHyp) {
+            if (targetStmt == searchWorkVarHyp)
                 return LangConstants.WV_OCCURS_IN_RENAME_LOOP;
-            }
 
             // else...found a "->" or "ph" or other non-WorkVarHyp
 
         }
-        if (hasOccursIn(searchWorkVarHyp)) {
+        if (hasOccursIn(searchWorkVarHyp))
             return LangConstants.WV_OCCURS_IN_ERROR;
-        }
-
-        else {
+        else
             return LangConstants.WV_OCCURS_IN_NOT_AT_ALL;
-        }
     }
 
     private Stmt checkWorkVarHasOccursInValidRename(
-                                     WorkVarHyp searchWorkVarHyp) {
-        if (stmt == searchWorkVarHyp     //valid rename
-                ||
-            !stmt.isWorkVarHyp()) {      //bogus
+        final WorkVarHyp searchWorkVarHyp)
+    {
+        if (stmt == searchWorkVarHyp // valid rename
+            || !stmt.isWorkVarHyp())
             return stmt;
-        }
 
-        if (((VarHyp)stmt).paSubst == null) {
-            return null;                 // found nothing
-        }
+        if (((VarHyp)stmt).paSubst == null)
+            return null; // found nothing
 
-        return ((VarHyp)stmt).
-                    paSubst.
-                        checkWorkVarHasOccursInValidRename(
-                            searchWorkVarHyp);
+        return ((VarHyp)stmt).paSubst
+            .checkWorkVarHasOccursInValidRename(searchWorkVarHyp);
     }
 
     /**
@@ -855,25 +757,19 @@ public class ParseNode {
      *  @param searchStmt is what we are looking for.
      *  @return true iff input searchStmt found in subtree.
      */
-    private boolean hasOccursIn(WorkVarHyp searchWorkVarHyp) {
-        if (searchWorkVarHyp == stmt) {
+    private boolean hasOccursIn(final WorkVarHyp searchWorkVarHyp) {
+        if (searchWorkVarHyp == stmt)
             return true;
-        }
         if (stmt.isWorkVarHyp()) {
-            if (((VarHyp)stmt).paSubst != null) {
-                return (((VarHyp)stmt).paSubst.
-                            hasOccursIn(searchWorkVarHyp));
-            }
+            if (((VarHyp)stmt).paSubst != null)
+                return ((VarHyp)stmt).paSubst.hasOccursIn(searchWorkVarHyp);
             return false;
         }
-        for (int i = 0; i < child.length; i++) {
-            if (child[i].hasOccursIn(searchWorkVarHyp)) {
+        for (final ParseNode element : child)
+            if (element.hasOccursIn(searchWorkVarHyp))
                 return true;
-            }
-        }
         return false;
     }
-
 
     /**
      *  Returns true if subtree contains a WorkVar
@@ -883,19 +779,14 @@ public class ParseNode {
      */
     public boolean hasUpdatedWorkVar() {
         if (stmt.isVarHyp()) {
-            if (stmt.isWorkVarHyp()) {
-                if (((VarHyp)stmt).paSubst != null) {
+            if (stmt.isWorkVarHyp())
+                if (((VarHyp)stmt).paSubst != null)
                     return true;
-                }
-            }
         }
-        else {
-            for (int i = 0; i < child.length; i++) {
-                if (child[i].hasUpdatedWorkVar()) {
+        else
+            for (final ParseNode element : child)
+                if (element.hasUpdatedWorkVar())
                     return true;
-                }
-            }
-        }
         return false;
     }
 
@@ -910,26 +801,18 @@ public class ParseNode {
 
         if (stmt.isVarHyp()) {
 
-            if (((VarHyp)stmt).isWorkVarHyp()) {
-
-                if (((VarHyp)stmt).paSubst != null) {
-
-                    return ((VarHyp)stmt).
-                               paSubst.
-                                   cloneResolvingUpdatedWorkVars();
-                }
-            }
-            return  new ParseNode((VarHyp)stmt);
+            if (((VarHyp)stmt).isWorkVarHyp())
+                if (((VarHyp)stmt).paSubst != null)
+                    return ((VarHyp)stmt).paSubst
+                        .cloneResolvingUpdatedWorkVars();
+            return new ParseNode((VarHyp)stmt);
         }
         else {
 
-            ParseNode out         = new ParseNode(stmt);
-            out.child             = new ParseNode[child.length];
-            for (int i = 0; i < child.length; i++) {
-
-                out.child[i]      =
-                    child[i].cloneResolvingUpdatedWorkVars();
-            }
+            final ParseNode out = new ParseNode(stmt);
+            out.child = new ParseNode[child.length];
+            for (int i = 0; i < child.length; i++)
+                out.child[i] = child[i].cloneResolvingUpdatedWorkVars();
             return out;
         }
     }
@@ -940,23 +823,17 @@ public class ParseNode {
      *
      *  @param workVarList ArrayList of WorkVar objects in subtree.
      */
-    public void accumSetOfWorkVarsUsed(ArrayList workVarList) {
+    public void accumSetOfWorkVarsUsed(final ArrayList workVarList) {
         if (stmt.isWorkVarHyp()) {
-            Var v                 = ((VarHyp)stmt).getVar();
-            for (int i = 0; i < workVarList.size(); i++) {
-                if (workVarList.get(i) == v) {
+            final Var v = ((VarHyp)stmt).getVar();
+            for (int i = 0; i < workVarList.size(); i++)
+                if (workVarList.get(i) == v)
                     return;
-                }
-            }
             workVarList.add(v);
         }
-        else { // note: child.length == 0 for VarHyp nodes...
-            for (int i = 0; i < child.length; i++) {
-                child[i].
-                    accumSetOfWorkVarsUsed(
-                        workVarList);
-            }
-        }
+        else
+            for (final ParseNode element : child)
+                element.accumSetOfWorkVarsUsed(workVarList);
     }
 
     /**
@@ -965,20 +842,12 @@ public class ParseNode {
      *
      *  @param varHypList ArrayList of VarHyp objects in subtree.
      */
-    public void accumVarHypUsedListBySeq(ArrayList varHypList) {
-        if (stmt.isVarHyp()) {
-            ((VarHyp)stmt).
-                accumVarHypListBySeq(
-                    varHypList);
-        }
-        else { // note: child.length == 0 for VarHyp nodes...
-            for (int i = 0; i < child.length; i++) {
-                child[i].
-                    accumVarHypUsedListBySeq(
-                        varHypList);
-
-            }
-        }
+    public void accumVarHypUsedListBySeq(final ArrayList varHypList) {
+        if (stmt.isVarHyp())
+            ((VarHyp)stmt).accumVarHypListBySeq(varHypList);
+        else
+            for (final ParseNode element : child)
+                element.accumVarHypUsedListBySeq(varHypList);
     }
 
     /**
@@ -998,27 +867,21 @@ public class ParseNode {
      *                 which are in the formula and are
      *                 in the input varList.
      */
-    public void accumListVarHypUsedListBySeq(
-                                ArrayList varHypList,
-                                ArrayList varHypInUseList) {
+    public void accumListVarHypUsedListBySeq(final ArrayList varHypList,
+        final ArrayList varHypInUseList)
+    {
 
         VarHyp vH;
         if (stmt.isVarHyp()) {
-            vH                    = (VarHyp)stmt;
-            if (vH.containedInVarHypListBySeq(varHypList)) {
+            vH = (VarHyp)stmt;
+            if (vH.containedInVarHypListBySeq(varHypList))
                 vH.accumVarHypListBySeq(varHypInUseList);
-            }
         }
-        else { // note: child.length == 0 for VarHyp nodes...
-            for (int i = 0; i < child.length; i++) {
-                child[i].
-                    accumListVarHypUsedListBySeq(
-                        varHypList,
-                        varHypInUseList);
-            }
-        }
+        else
+            for (final ParseNode element : child)
+                element.accumListVarHypUsedListBySeq(varHypList,
+                    varHypInUseList);
     }
-
 
     /**
      *  (Deep) Clone a ParseNode while applying updates to
@@ -1031,17 +894,13 @@ public class ParseNode {
      */
     public ParseNode deepCloneApplyingWorkVarUpdates() {
 
-        if (stmt.isWorkVarHyp() &&
-            ((VarHyp)stmt).paSubst != null) {
+        if (stmt.isWorkVarHyp() && ((VarHyp)stmt).paSubst != null)
             return ((VarHyp)stmt).paSubst;
-        }
 
-        ParseNode out         = new ParseNode(stmt);
-        out.child             = new ParseNode[child.length];
-        for (int i = 0; i < child.length; i++) {
-            out.child[i]      =
-                child[i].deepCloneApplyingWorkVarUpdates();
-        }
+        final ParseNode out = new ParseNode(stmt);
+        out.child = new ParseNode[child.length];
+        for (int i = 0; i < child.length; i++)
+            out.child[i] = child[i].deepCloneApplyingWorkVarUpdates();
         return out;
     }
 

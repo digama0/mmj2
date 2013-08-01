@@ -15,14 +15,13 @@
 
 package mmj.mmio;
 
-
 /**
  * Thrown when a parsing error is found in a MetaMath source stream.
  */
 public class MMIOError extends Error {
-    public long lineNbr           = -1;
-    public long columnNbr         = -1;
-    public long charNbr           = -1;
+    public long lineNbr = -1;
+    public long columnNbr = -1;
+    public long charNbr = -1;
 
     /**
      * Default Constructor, <code>MMIOError</code>.
@@ -37,7 +36,7 @@ public class MMIOError extends Error {
      *
      * @param   errorMessage  error message.
      */
-    public MMIOError(String errorMessage) {
+    public MMIOError(final String errorMessage) {
         super(errorMessage);
     }
 
@@ -51,20 +50,14 @@ public class MMIOError extends Error {
      * @param   charNbr       character number of the error
      * @param   errorMessage  error message.
      */
-    public MMIOError(String  sourceId,
-                     long    lineNbr,
-                     long    columnNbr,
-                     long    charNbr,
-                     String  errorMessage) {
-        super(errorMessage
-              + MMIOConstants.ERRMSG_TXT_SOURCE_ID
-              + sourceId
-              + MMIOConstants.ERRMSG_TXT_LINE
-              + lineNbr
-              + MMIOConstants.ERRMSG_TXT_COLUMN
-              + columnNbr);
-        this.lineNbr              = lineNbr;
-        this.columnNbr            = columnNbr;
-        this.charNbr              = charNbr;
+    public MMIOError(final String sourceId, final long lineNbr,
+        final long columnNbr, final long charNbr, final String errorMessage)
+    {
+        super(errorMessage + MMIOConstants.ERRMSG_TXT_SOURCE_ID + sourceId
+            + MMIOConstants.ERRMSG_TXT_LINE + lineNbr
+            + MMIOConstants.ERRMSG_TXT_COLUMN + columnNbr);
+        this.lineNbr = lineNbr;
+        this.columnNbr = columnNbr;
+        this.charNbr = charNbr;
     }
 }

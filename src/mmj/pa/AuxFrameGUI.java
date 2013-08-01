@@ -25,9 +25,11 @@
 package mmj.pa;
 
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
 import javax.swing.*;
-import javax.swing.text.*;
+import javax.swing.text.DefaultEditorKit;
 
 /**
  *  A base class to display an auxiliary frame of information
@@ -41,46 +43,33 @@ import javax.swing.text.*;
  */
 public class AuxFrameGUI {
 
-    protected  ProofAsstPreferences
-                         proofAsstPreferences;
+    protected ProofAsstPreferences proofAsstPreferences;
 
-    protected  JFrame    frame;
+    protected JFrame frame;
 
-    protected  JTextArea frameTextArea;
+    protected JTextArea frameTextArea;
 
-    protected  JScrollPane
-                         frameScrollPane;
+    protected JScrollPane frameScrollPane;
 
-    protected  String    frameTitle
-                                  =
-        PaConstants.AUX_FRAME_TITLE_DEFAULT;
+    protected String frameTitle = PaConstants.AUX_FRAME_TITLE_DEFAULT;
 
-    protected  String    frameText
-                                  =
-        PaConstants.AUX_FRAME_TEXT_DEFAULT;
+    protected String frameText = PaConstants.AUX_FRAME_TEXT_DEFAULT;
 
-    protected  int       frameRows
-                                  =
-        PaConstants.AUX_FRAME_NBR_ROWS_DEFAULT;
+    protected int frameRows = PaConstants.AUX_FRAME_NBR_ROWS_DEFAULT;
 
-    protected  int       frameColumns
-                                  =
-        PaConstants.AUX_FRAME_NBR_COLUMNS_DEFAULT;
+    protected int frameColumns = PaConstants.AUX_FRAME_NBR_COLUMNS_DEFAULT;
 
-    protected  String    frameFontFamily
-                                  =
-        PaConstants.AUX_FRAME_FONT_FAMILY;
+    protected String frameFontFamily = PaConstants.AUX_FRAME_FONT_FAMILY;
 
-    protected  Font      frameFont;
+    protected Font frameFont;
 
-    protected  boolean   wordWrap = false;
+    protected boolean wordWrap = false;
 
     /**
      *  Default constructor.
      */
     public AuxFrameGUI() {
-        proofAsstPreferences      =
-            new ProofAsstPreferences();
+        proofAsstPreferences = new ProofAsstPreferences();
     }
 
     /**
@@ -88,8 +77,7 @@ public class AuxFrameGUI {
      *
      *  @param proofAsstPreferences variable settings
      */
-    public AuxFrameGUI(
-                ProofAsstPreferences proofAsstPreferences) {
+    public AuxFrameGUI(final ProofAsstPreferences proofAsstPreferences) {
         this.proofAsstPreferences = proofAsstPreferences;
     }
 
@@ -97,9 +85,8 @@ public class AuxFrameGUI {
      *  Make the frame disappear and go away.
      */
     public void dispose() {
-        if (frame != null) {
+        if (frame != null)
             frame.dispose();
-        }
     }
 
     /**
@@ -107,8 +94,8 @@ public class AuxFrameGUI {
      *
      *  @param wordWrap true or false.
      */
-    public void setWrapStyleWord(boolean wordWrap) {
-        this.wordWrap             = true;
+    public void setWrapStyleWord(final boolean wordWrap) {
+        this.wordWrap = true;
     }
 
     /**
@@ -120,7 +107,7 @@ public class AuxFrameGUI {
      *
      *  @param frameTitle String title to show.
      */
-    public void setFrameTitle(String frameTitle) {
+    public void setFrameTitle(final String frameTitle) {
         this.frameTitle = frameTitle;
     }
 
@@ -132,11 +119,10 @@ public class AuxFrameGUI {
      *
      *  @param frameText String text area to show.
      */
-    public void changeFrameText(String frameText) {
+    public void changeFrameText(final String frameText) {
         setFrameText(frameText);
         frameTextArea.setText(frameText);
     }
-
 
     /**
      *  Set the text to be displayed in the frame when
@@ -150,7 +136,7 @@ public class AuxFrameGUI {
      *
      *  @param frameText String text area to show.
      */
-    public void setFrameText(String frameText) {
+    public void setFrameText(final String frameText) {
         this.frameText = frameText;
     }
 
@@ -169,16 +155,14 @@ public class AuxFrameGUI {
 
             frameTextArea.setCaretPosition(0);
 
-            JViewport v           = frameScrollPane.getViewport();
+            final JViewport v = frameScrollPane.getViewport();
 
-            v.scrollRectToVisible(
-                new Rectangle(0,      // x
-                              0,      // y
-                              1,      // width
-                              1));    // height
-        }
-        catch (Exception e) {
-            //ignore, don't care, did our best.
+            v.scrollRectToVisible(new Rectangle(0, // x
+                0, // y
+                1, // width
+                1)); // height
+        } catch (final Exception e) {
+            // ignore, don't care, did our best.
         }
     }
 
@@ -191,38 +175,33 @@ public class AuxFrameGUI {
         return frame;
     }
 
-	/**
-	 *  Builds the JFrame with default settings.
-	 */
+    /**
+     *  Builds the JFrame with default settings.
+     */
     public JFrame buildFrame() {
 
-        Font   frameFont          =
-                    new Font(frameFontFamily,
-                             Font.BOLD,
-                             proofAsstPreferences.getFontSize());
+        final Font frameFont = new Font(frameFontFamily, Font.BOLD,
+            proofAsstPreferences.getFontSize());
 
-        frame                     = new JFrame(frameTitle);
+        frame = new JFrame(frameTitle);
 
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-        frameTextArea             = new JTextArea(frameText,
-                                                  frameRows,
-                                                  frameColumns);
+        frameTextArea = new JTextArea(frameText, frameRows, frameColumns);
 
         frameTextArea.setFont(frameFont);
         frameTextArea.setLineWrap(true);
         frameTextArea.setWrapStyleWord(wordWrap);
         frameTextArea.setEditable(true);
 
-        JScrollPane frameScrollPane
-                                  = new JScrollPane(frameTextArea);
+        final JScrollPane frameScrollPane = new JScrollPane(frameTextArea);
 
-        frameScrollPane.setVerticalScrollBarPolicy(
-            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        frameScrollPane
+            .setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         frame.getContentPane().add(frameScrollPane);
 
-        JMenuBar menuBar          = new JMenuBar();
+        final JMenuBar menuBar = new JMenuBar();
         menuBar.add(buildEditMenu());
         frame.setJMenuBar(menuBar);
 
@@ -231,44 +210,34 @@ public class AuxFrameGUI {
 
     private JMenu buildEditMenu() {
 
-        JMenu editMenu            = new JMenu("Edit");
+        final JMenu editMenu = new JMenu("Edit");
         editMenu.setMnemonic(KeyEvent.VK_E);
 
-
-        JMenuItem cutItem         =
-            new JMenuItem(
-                new DefaultEditorKit.CutAction());
+        final JMenuItem cutItem = new JMenuItem(
+            new DefaultEditorKit.CutAction());
         cutItem.setText("Cut");
         cutItem.setMnemonic(KeyEvent.VK_T);
-        cutItem.setAccelerator(KeyStroke.getKeyStroke(
-                    KeyEvent.VK_X, ActionEvent.CTRL_MASK));
+        cutItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,
+            ActionEvent.CTRL_MASK));
         editMenu.add(cutItem);
 
-
-        JMenuItem copyItem         =
-            new JMenuItem(
-                new DefaultEditorKit.CopyAction());
+        final JMenuItem copyItem = new JMenuItem(
+            new DefaultEditorKit.CopyAction());
         copyItem.setText("Copy");
         copyItem.setMnemonic(KeyEvent.VK_C);
-        copyItem.setAccelerator(KeyStroke.getKeyStroke(
-                    KeyEvent.VK_C, ActionEvent.CTRL_MASK));
+        copyItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
+            ActionEvent.CTRL_MASK));
         editMenu.add(copyItem);
 
-
-
-        JMenuItem pasteItem         =
-            new JMenuItem(
-                new DefaultEditorKit.PasteAction());
+        final JMenuItem pasteItem = new JMenuItem(
+            new DefaultEditorKit.PasteAction());
         pasteItem.setText("Paste");
         pasteItem.setMnemonic(KeyEvent.VK_P);
-        pasteItem.setAccelerator(KeyStroke.getKeyStroke(
-                    KeyEvent.VK_V, ActionEvent.CTRL_MASK));
+        pasteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V,
+            ActionEvent.CTRL_MASK));
         editMenu.add(pasteItem);
 
-
         return editMenu;
-
-
 
     }
 
@@ -291,13 +260,14 @@ public class AuxFrameGUI {
          *
          *  @param showFrame is the Frame to be displayed
          */
-        public FrameShower(JFrame showFrame) {
-            f                     = showFrame;
+        public FrameShower(final JFrame showFrame) {
+            f = showFrame;
         }
 
         /**
          *  Run code to display the frame on the event queue thread.
          */
+        @Override
         public void run() {
             f.pack();
             f.setVisible(true);
@@ -313,9 +283,8 @@ public class AuxFrameGUI {
      *
      *  @param jFrame is the Frame to be displayed
      */
-    public void showFrame(JFrame jFrame) {
-        Runnable     runner       =
-            new FrameShower(jFrame);
+    public void showFrame(final JFrame jFrame) {
+        final Runnable runner = new FrameShower(jFrame);
 
         EventQueue.invokeLater(runner);
     }
@@ -325,8 +294,8 @@ public class AuxFrameGUI {
      *
      *  @param args Command line argument String array (not used).
      */
-    public static void main(String[] args) {
-        AuxFrameGUI aux           = new AuxFrameGUI();
+    public static void main(final String[] args) {
+        final AuxFrameGUI aux = new AuxFrameGUI();
         aux.showFrame(aux.buildFrame());
     }
 }

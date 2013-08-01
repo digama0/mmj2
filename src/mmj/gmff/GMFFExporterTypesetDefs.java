@@ -6,7 +6,6 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-
 /**
  *  GMFFExporterTypesetDefs.java  0.01 11/01/2011
  *
@@ -17,9 +16,9 @@
 package mmj.gmff;
 
 import java.util.*;
+
 import mmj.lang.Messages;
 import mmj.mmio.MMIOConstants;
-
 
 /**
  *  <code>GMFFExporterTypesetDefs</code> holds the typesetting
@@ -54,9 +53,8 @@ import mmj.mmio.MMIOConstants;
  *  <p>
  */
 public class GMFFExporterTypesetDefs {
-    public          String  typesetDefKeyword;
-    public          Map     typesetDefMap;
-
+    public String typesetDefKeyword;
+    public Map typesetDefMap;
 
     /**
      *  Standard constructor.
@@ -68,13 +66,12 @@ public class GMFFExporterTypesetDefs {
      *           the mmj2 Symbol table; every Sym should
      *           have a typesetting definition.
      */
-    public GMFFExporterTypesetDefs(
-                    String  typesetDefKeyword,
-                    int     initMapSize) {
+    public GMFFExporterTypesetDefs(final String typesetDefKeyword,
+        final int initMapSize)
+    {
 
-        this.typesetDefKeyword
-                                = typesetDefKeyword;
-        typesetDefMap           = new HashMap(initMapSize);
+        this.typesetDefKeyword = typesetDefKeyword;
+        typesetDefMap = new HashMap(initMapSize);
     }
 
     /**
@@ -83,13 +80,13 @@ public class GMFFExporterTypesetDefs {
      *  <p>
      *  @return String containing the relevant fields.
      */
-	public String generateAuditReportText() {
-		String s                = new String(
-			GMFFConstants.INITIALIZATION_AUDIT_REPORT_6_TD_2
-			+ typesetDefKeyword
-			+ GMFFConstants.INITIALIZATION_AUDIT_REPORT_6_TD_3
-			+ typesetDefMap.size());
-	    return s;
+    public String generateAuditReportText() {
+        final String s = new String(
+            GMFFConstants.INITIALIZATION_AUDIT_REPORT_6_TD_2
+                + typesetDefKeyword
+                + GMFFConstants.INITIALIZATION_AUDIT_REPORT_6_TD_3
+                + typesetDefMap.size());
+        return s;
     }
 
     /**
@@ -98,31 +95,27 @@ public class GMFFExporterTypesetDefs {
      *  <p>
      *  @param messages The Messages object.
      */
-    public void printTypesetDefs(Messages messages) {
-		StringBuffer sb         =
-			new StringBuffer(
-				GMFFConstants.
-					METAMATH_DOLLAR_T_BUFFER_SIZE);
-		sb.append(GMFFConstants.ERRMSG_TYPESET_DEFS_AUDIT_1);
-		sb.append(typesetDefKeyword);
-		sb.append(MMIOConstants.NEW_LINE_CHAR);
+    public void printTypesetDefs(final Messages messages) {
+        final StringBuffer sb = new StringBuffer(
+            GMFFConstants.METAMATH_DOLLAR_T_BUFFER_SIZE);
+        sb.append(GMFFConstants.ERRMSG_TYPESET_DEFS_AUDIT_1);
+        sb.append(typesetDefKeyword);
+        sb.append(MMIOConstants.NEW_LINE_CHAR);
 
-		Set set = typesetDefMap.keySet();
-		ArrayList arrayList = new ArrayList(set.size());
-		arrayList.addAll(set);
-		Collections.sort(arrayList);
-		Iterator iterator = arrayList.iterator();
-		while (iterator.hasNext()) {
-			String sym          =
-				(String)iterator.next();
-			sb.append(GMFFConstants.ERRMSG_TYPESET_DEFS_AUDIT_2);
-			sb.append(sym);
-			String repl         =
-				(String)typesetDefMap.get(sym);
-			sb.append(GMFFConstants.ERRMSG_TYPESET_DEFS_AUDIT_3);
-			sb.append(repl);
-			sb.append(MMIOConstants.NEW_LINE_CHAR);
-		}
-		messages.accumInfoMessage(sb.toString());
-	}
+        final Set set = typesetDefMap.keySet();
+        final ArrayList arrayList = new ArrayList(set.size());
+        arrayList.addAll(set);
+        Collections.sort(arrayList);
+        final Iterator iterator = arrayList.iterator();
+        while (iterator.hasNext()) {
+            final String sym = (String)iterator.next();
+            sb.append(GMFFConstants.ERRMSG_TYPESET_DEFS_AUDIT_2);
+            sb.append(sym);
+            final String repl = (String)typesetDefMap.get(sym);
+            sb.append(GMFFConstants.ERRMSG_TYPESET_DEFS_AUDIT_3);
+            sb.append(repl);
+            sb.append(MMIOConstants.NEW_LINE_CHAR);
+        }
+        messages.accumInfoMessage(sb.toString());
+    }
 }

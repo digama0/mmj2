@@ -51,16 +51,15 @@
  */
 
 package mmj.pa;
-import  mmj.lang.Assrt;
-import  mmj.lang.WorkVarManager;
-import  mmj.tmff.TMFFPreferences;
 
-import  java.io.File;
-import  java.awt.Color;
-import  java.awt.Font;
-import  java.awt.GraphicsEnvironment;
-import  java.util.Iterator;
-import  java.util.TreeSet;
+import java.awt.*;
+import java.io.File;
+import java.util.Iterator;
+import java.util.TreeSet;
+
+import mmj.lang.Assrt;
+import mmj.lang.WorkVarManager;
+import mmj.tmff.TMFFPreferences;
 
 /**
  *  Holds user settings/preferences used by the
@@ -68,195 +67,149 @@ import  java.util.TreeSet;
  */
 public class ProofAsstPreferences {
 
-    private   File           proofFolder;
+    private File proofFolder;
 
-    private   File           startupProofWorksheetFile;
+    private File startupProofWorksheetFile;
 
-    private   String         defaultFileNameSuffix;
+    private String defaultFileNameSuffix;
 
-    private   int            fontSize;
+    private int fontSize;
 
-    private   String         fontFamily;
+    private String fontFamily;
 
-    private   boolean        fontBold;
+    private boolean fontBold;
 
-    private   int            errorMessageRows;
-    private   int            errorMessageColumns;
-    private   boolean        textAtTop;
+    private int errorMessageRows;
+    private int errorMessageColumns;
+    private boolean textAtTop;
 
-    private   TMFFPreferences
-                             tmffPreferences;
+    private TMFFPreferences tmffPreferences;
 
-    private   int            rpnProofLeftCol;
+    private int rpnProofLeftCol;
 
-    private   int            rpnProofRightCol;
+    private int rpnProofRightCol;
 
     // using VerifyProofs engine.
-    private   boolean        recheckProofAsstUsingProofVerifier;
+    private boolean recheckProofAsstUsingProofVerifier;
 
-    private   boolean        exportFormatUnified;
+    private boolean exportFormatUnified;
 
     // randomizes LogHyps on output proof steps as a test of
     // proof assistant!
-    private   boolean        exportHypsRandomized;
+    private boolean exportHypsRandomized;
 
-    private   boolean        exportDeriveFormulas;
+    private boolean exportDeriveFormulas;
 
-    private   boolean        importCompareDJs;
-    private   boolean        importUpdateDJs;
+    private boolean importCompareDJs;
+    private boolean importUpdateDJs;
 
-    private   Assrt[]        unifySearchExclude;
+    private Assrt[] unifySearchExclude;
 
-    private   int            stepSelectorMaxResults;
-    private   boolean        stepSelectorShowSubstitutions;
-    private   int            stepSelectorDialogPaneWidth;
-    private   int            stepSelectorDialogPaneHeight;
+    private int stepSelectorMaxResults;
+    private boolean stepSelectorShowSubstitutions;
+    private int stepSelectorDialogPaneWidth;
+    private int stepSelectorDialogPaneHeight;
 
-    private   int            assrtListFreespace;
+    private int assrtListFreespace;
 
-    private   boolean        outputCursorInstrumentation;
-    private   boolean        autoReformat;
+    private boolean outputCursorInstrumentation;
+    private boolean autoReformat;
 
-    private   boolean        undoRedoEnabled;
+    private boolean undoRedoEnabled;
 
-    private   Color          foregroundColor;
+    private Color foregroundColor;
 
-    private   Color          backgroundColor;
+    private Color backgroundColor;
 
-    private   boolean        djVarsSoftErrorsIgnore;
-    private   boolean        djVarsSoftErrorsReport;
-    private   boolean        djVarsSoftErrorsGenerate;
-    private   boolean        djVarsSoftErrorsGenerateNew;
-    private   boolean        djVarsSoftErrorsGenerateRepl;
-    private   boolean        djVarsSoftErrorsGenerateDiffs;
+    private boolean djVarsSoftErrorsIgnore;
+    private boolean djVarsSoftErrorsReport;
+    private boolean djVarsSoftErrorsGenerate;
+    private boolean djVarsSoftErrorsGenerateNew;
+    private boolean djVarsSoftErrorsGenerateRepl;
+    private boolean djVarsSoftErrorsGenerateDiffs;
 
-    private   WorkVarManager workVarManager;
+    private WorkVarManager workVarManager;
 
-    private   StepUnifier    stepUnifier;
+    private StepUnifier stepUnifier;
 
-    private   String         incompleteStepCursor;
-    private   boolean        incompleteStepCursorFirst;
-    private   boolean        incompleteStepCursorLast;
-    private   boolean        incompleteStepCursorAsIs;
+    private String incompleteStepCursor;
+    private boolean incompleteStepCursorFirst;
+    private boolean incompleteStepCursorLast;
+    private boolean incompleteStepCursorAsIs;
 
     /**
      *  Default constructor.
      */
     public ProofAsstPreferences() {
-        proofFolder               = null;
+        proofFolder = null;
         startupProofWorksheetFile = null;
 
-        defaultFileNameSuffix     =
-            PaConstants.PA_GUI_DEFAULT_FILE_NAME_SUFFIX;
+        defaultFileNameSuffix = PaConstants.PA_GUI_DEFAULT_FILE_NAME_SUFFIX;
 
+        fontSize = PaConstants.PROOF_ASST_FONT_SIZE_DEFAULT;
+        fontBold = PaConstants.PROOF_ASST_FONT_BOLD_DEFAULT;
+        fontFamily = PaConstants.PROOF_ASST_FONT_FAMILY_DEFAULT;
 
-        fontSize                  =
-            PaConstants.PROOF_ASST_FONT_SIZE_DEFAULT;
-        fontBold                  =
-            PaConstants.PROOF_ASST_FONT_BOLD_DEFAULT;
-        fontFamily                =
-            PaConstants.PROOF_ASST_FONT_FAMILY_DEFAULT;
+        errorMessageRows = PaConstants.PROOF_ASST_ERROR_MESSAGE_ROWS_DEFAULT;
+        errorMessageColumns = PaConstants.PROOF_ASST_ERROR_MESSAGE_COLUMNS_DEFAULT;
+        textAtTop = PaConstants.PROOF_ASST_TEXT_AT_TOP_DEFAULT;
 
+        tmffPreferences = new TMFFPreferences();
 
-        errorMessageRows          =
-            PaConstants.PROOF_ASST_ERROR_MESSAGE_ROWS_DEFAULT;
-        errorMessageColumns       =
-            PaConstants.PROOF_ASST_ERROR_MESSAGE_COLUMNS_DEFAULT;
-        textAtTop                 =
-            PaConstants.PROOF_ASST_TEXT_AT_TOP_DEFAULT;
+        rpnProofLeftCol = PaConstants.PROOF_ASST_RPN_PROOF_LEFT_COL_DEFAULT;
+        rpnProofRightCol = PaConstants.PROOF_ASST_RPN_PROOF_RIGHT_COL_DEFAULT;
 
+        recheckProofAsstUsingProofVerifier = PaConstants.RECHECK_PROOF_ASST_USING_PROOF_VERIFIER_DEFAULT;
 
-        tmffPreferences           = new TMFFPreferences();
+        exportFormatUnified = PaConstants.PROOF_ASST_EXPORT_FORMAT_UNIFIED_DEFAULT;
 
+        exportHypsRandomized = PaConstants.PROOF_ASST_EXPORT_HYPS_RANDOMIZED_DEFAULT;
 
-        rpnProofLeftCol           =
-            PaConstants.PROOF_ASST_RPN_PROOF_LEFT_COL_DEFAULT;
-        rpnProofRightCol          =
-            PaConstants.PROOF_ASST_RPN_PROOF_RIGHT_COL_DEFAULT;
+        exportDeriveFormulas = PaConstants.PROOF_ASST_EXPORT_DERIVE_FORMULAS_DEFAULT;
 
+        importCompareDJs = PaConstants.PROOF_ASST_IMPORT_COMPARE_DJS_DEFAULT;
 
-        recheckProofAsstUsingProofVerifier
-                                  =
-            PaConstants.
-                RECHECK_PROOF_ASST_USING_PROOF_VERIFIER_DEFAULT;
+        importUpdateDJs = PaConstants.PROOF_ASST_IMPORT_UPDATE_DJS_DEFAULT;
 
+        unifySearchExclude = new Assrt[0];
 
-        exportFormatUnified       =
-            PaConstants.PROOF_ASST_EXPORT_FORMAT_UNIFIED_DEFAULT;
+        stepSelectorMaxResults = PaConstants.STEP_SELECTOR_MAX_RESULTS_DEFAULT;
 
-        exportHypsRandomized      =
-            PaConstants.PROOF_ASST_EXPORT_HYPS_RANDOMIZED_DEFAULT;
+        stepSelectorShowSubstitutions = PaConstants.STEP_SELECTOR_SHOW_SUBSTITUTIONS_DEFAULT;
 
-        exportDeriveFormulas      =
-            PaConstants.PROOF_ASST_EXPORT_DERIVE_FORMULAS_DEFAULT;
+        stepSelectorDialogPaneWidth = PaConstants.STEP_SELECTOR_DIALOG_PANE_WIDTH_DEFAULT;
 
-        importCompareDJs          =
-            PaConstants.PROOF_ASST_IMPORT_COMPARE_DJS_DEFAULT;
+        stepSelectorDialogPaneHeight = PaConstants.STEP_SELECTOR_DIALOG_PANE_HEIGHT_DEFAULT;
 
-        importUpdateDJs           =
-            PaConstants.PROOF_ASST_IMPORT_UPDATE_DJS_DEFAULT;
+        assrtListFreespace = PaConstants.ASSRT_LIST_FREESPACE_DEFAULT;
 
+        outputCursorInstrumentation = PaConstants.OUTPUT_CURSOR_INSTRUMENTATION_DEFAULT;
 
-        unifySearchExclude        = new Assrt[0];
+        autoReformat = PaConstants.AUTO_REFORMAT_DEFAULT;
 
+        undoRedoEnabled = PaConstants.UNDO_REDO_ENABLED_DEFAULT;
 
-        stepSelectorMaxResults    =
-            PaConstants.STEP_SELECTOR_MAX_RESULTS_DEFAULT;
+        foregroundColor = PaConstants.DEFAULT_FOREGROUND_COLOR;
 
-        stepSelectorShowSubstitutions
-                                  =
-            PaConstants.STEP_SELECTOR_SHOW_SUBSTITUTIONS_DEFAULT;
+        backgroundColor = PaConstants.DEFAULT_BACKGROUND_COLOR;
 
-        stepSelectorDialogPaneWidth
-                                  =
-            PaConstants.STEP_SELECTOR_DIALOG_PANE_WIDTH_DEFAULT;
+        setDjVarsSoftErrorsOption(PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_DEFAULT);
 
-        stepSelectorDialogPaneHeight
-                                  =
-            PaConstants.STEP_SELECTOR_DIALOG_PANE_HEIGHT_DEFAULT;
-
-
-        assrtListFreespace
-                                  =
-            PaConstants.ASSRT_LIST_FREESPACE_DEFAULT;
-
-
-        outputCursorInstrumentation
-                                  =
-            PaConstants.OUTPUT_CURSOR_INSTRUMENTATION_DEFAULT;
-
-        autoReformat
-                                  =
-            PaConstants.AUTO_REFORMAT_DEFAULT;
-
-        undoRedoEnabled           =
-            PaConstants.UNDO_REDO_ENABLED_DEFAULT;
-
-        foregroundColor           =
-            PaConstants.DEFAULT_FOREGROUND_COLOR;
-
-        backgroundColor           =
-            PaConstants.DEFAULT_BACKGROUND_COLOR;
-
-        setDjVarsSoftErrorsOption(
-            PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_DEFAULT);
-
-        setIncompleteStepCursor(
-            PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_DEFAULT);
+        setIncompleteStepCursor(PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_DEFAULT);
 
         // Note: this default constructor is available for test
-        //       of ProofAsstGUI in batch mode -- but is
-        //       mainly used by mmj.util.ProofAsstBoss, which
-        //       is responsible for loading workVarManager!
-        //       "null" is not a valid default and would
-        //       eventually result in an exception if not
-        //       updated with an actual WorkVarmanager. We
-        //       are *not* invoking the default WorkVarManager()
-        //       constructor here because, in all likelyhood,
-        //       all of its work would need to be thrown away
-        //       and redone with the correct WorkVar settings.
-        workVarManager            = null;
-        stepUnifier               = null;
+        // of ProofAsstGUI in batch mode -- but is
+        // mainly used by mmj.util.ProofAsstBoss, which
+        // is responsible for loading workVarManager!
+        // "null" is not a valid default and would
+        // eventually result in an exception if not
+        // updated with an actual WorkVarmanager. We
+        // are *not* invoking the default WorkVarManager()
+        // constructor here because, in all likelyhood,
+        // all of its work would need to be thrown away
+        // and redone with the correct WorkVar settings.
+        workVarManager = null;
+        stepUnifier = null;
     }
 
     /**
@@ -266,8 +219,8 @@ public class ProofAsstPreferences {
      *  @param proofFolder proof folder used for storing
      *                     proof text areas
      */
-    public void setProofFolder(File proofFolder) {
-        this.proofFolder          = proofFolder;
+    public void setProofFolder(final File proofFolder) {
+        this.proofFolder = proofFolder;
     }
 
     /**
@@ -289,9 +242,9 @@ public class ProofAsstPreferences {
      *  @param startupProofWorksheetFile File object or null.
      */
     public void setStartupProofWorksheetFile(
-              File startupProofWorksheetFile) {
-        this.startupProofWorksheetFile
-                                  = startupProofWorksheetFile;
+        final File startupProofWorksheetFile)
+    {
+        this.startupProofWorksheetFile = startupProofWorksheetFile;
     }
 
     /**
@@ -309,9 +262,8 @@ public class ProofAsstPreferences {
      *
      *  @param defaultFileNameSuffix such as ".txt" or ".mmp"
      */
-    public void setDefaultFileNameSuffix(String defaultFileNameSuffix) {
-        this.defaultFileNameSuffix
-                                  = defaultFileNameSuffix;
+    public void setDefaultFileNameSuffix(final String defaultFileNameSuffix) {
+        this.defaultFileNameSuffix = defaultFileNameSuffix;
     }
 
     /**
@@ -335,8 +287,8 @@ public class ProofAsstPreferences {
      *  <p>
      *  @param fontFamily for ProofAsstGUI
      */
-    public synchronized void setFontFamily(String fontFamily) {
-        this.fontFamily           = fontFamily;
+    public synchronized void setFontFamily(final String fontFamily) {
+        this.fontFamily = fontFamily;
     }
 
     /**
@@ -355,8 +307,8 @@ public class ProofAsstPreferences {
      *  <p>
      *  @param fontBold yes or no parameter.
      */
-    public synchronized void setFontBold(boolean fontBold) {
-        this.fontBold             = fontBold;
+    public synchronized void setFontBold(final boolean fontBold) {
+        this.fontBold = fontBold;
     }
 
     /**
@@ -367,7 +319,6 @@ public class ProofAsstPreferences {
     public synchronized boolean getFontBold() {
         return fontBold;
     }
-
 
     /**
      *  Set font size used in ProofAsstGUI.
@@ -384,8 +335,8 @@ public class ProofAsstPreferences {
      *
      *  @param fontSize font size for ProofAsstGUI
      */
-    public synchronized void setFontSize(int fontSize) {
-        this.fontSize             = fontSize;
+    public synchronized void setFontSize(final int fontSize) {
+        this.fontSize = fontSize;
     }
 
     /**
@@ -407,7 +358,7 @@ public class ProofAsstPreferences {
      *  <p>
      *  @param lineWrap setting, on or off.
      */
-    public void setLineWrap(boolean lineWrap) {
+    public void setLineWrap(final boolean lineWrap) {
         tmffPreferences.setLineWrap(lineWrap);
     }
 
@@ -432,7 +383,7 @@ public class ProofAsstPreferences {
      *  <p>
      *  @param textColumns number of text columns.
      */
-    public void setTextColumns(int textColumns) {
+    public void setTextColumns(final int textColumns) {
         tmffPreferences.setTextColumns(textColumns);
     }
 
@@ -450,13 +401,12 @@ public class ProofAsstPreferences {
         return tmffPreferences.getTextColumns();
     }
 
-
     /**
      *  Set number of text rows used to display formulas.
      *  <p>
      *  @param textRows number of text rows.
      */
-    public void setTextRows(int textRows) {
+    public void setTextRows(final int textRows) {
         tmffPreferences.setTextRows(textRows);
     }
 
@@ -473,8 +423,8 @@ public class ProofAsstPreferences {
      *  <p>
      *  @param errorMessageRows number of error message rows.
      */
-    public void setErrorMessageRows(int errorMessageRows) {
-        this.errorMessageRows     = errorMessageRows;
+    public void setErrorMessageRows(final int errorMessageRows) {
+        this.errorMessageRows = errorMessageRows;
     }
 
     /**
@@ -490,8 +440,8 @@ public class ProofAsstPreferences {
      *  <p>
      *  @param errorMessageColumns number of error message columns.
      */
-    public void setErrorMessageColumns(int errorMessageColumns) {
-        this.errorMessageColumns     = errorMessageColumns;
+    public void setErrorMessageColumns(final int errorMessageColumns) {
+        this.errorMessageColumns = errorMessageColumns;
     }
 
     /**
@@ -507,8 +457,8 @@ public class ProofAsstPreferences {
      *  <p>
      *  @param textAtTop number of error message columns.
      */
-    public void setTextAtTop(boolean textAtTop) {
-        this.textAtTop     = textAtTop;
+    public void setTextAtTop(final boolean textAtTop) {
+        this.textAtTop = textAtTop;
     }
 
     /**
@@ -526,7 +476,7 @@ public class ProofAsstPreferences {
      *  @param formulaLeftCol formula LeftCol used for formatting
      *                     formula text areas
      */
-    public void setFormulaLeftCol(int formulaLeftCol) {
+    public void setFormulaLeftCol(final int formulaLeftCol) {
         tmffPreferences.setFormulaLeftCol(formulaLeftCol);
     }
 
@@ -548,7 +498,7 @@ public class ProofAsstPreferences {
      *  @param formulaRightCol formula RightCol used for
      *                     formatting formula text areas
      */
-    public void setFormulaRightCol(int formulaRightCol) {
+    public void setFormulaRightCol(final int formulaRightCol) {
         tmffPreferences.setFormulaRightCol(formulaRightCol);
     }
 
@@ -569,8 +519,8 @@ public class ProofAsstPreferences {
      *
      *  @param rpnProofLeftCol left column for RPN label
      */
-    public void setRPNProofLeftCol(int rpnProofLeftCol) {
-        this.rpnProofLeftCol      = rpnProofLeftCol;
+    public void setRPNProofLeftCol(final int rpnProofLeftCol) {
+        this.rpnProofLeftCol = rpnProofLeftCol;
     }
 
     /**
@@ -583,15 +533,14 @@ public class ProofAsstPreferences {
         return rpnProofLeftCol;
     }
 
-
     /**
      *  Set right column number for RPN statement labels
      *  when creating ProofAsstWorksheet.GeneratedProofStmt
      *
      *  @param rpnProofRightCol right column for RPN label
      */
-    public void setRPNProofRightCol(int rpnProofRightCol) {
-        this.rpnProofRightCol      = rpnProofRightCol;
+    public void setRPNProofRightCol(final int rpnProofRightCol) {
+        this.rpnProofRightCol = rpnProofRightCol;
     }
 
     /**
@@ -612,10 +561,9 @@ public class ProofAsstPreferences {
      *  @param recheckProofAsstUsingProofVerifier
      */
     public void setRecheckProofAsstUsingProofVerifier(
-                   boolean recheckProofAsstUsingProofVerifier) {
-        this.recheckProofAsstUsingProofVerifier
-                                  =
-             recheckProofAsstUsingProofVerifier;
+        final boolean recheckProofAsstUsingProofVerifier)
+    {
+        this.recheckProofAsstUsingProofVerifier = recheckProofAsstUsingProofVerifier;
     }
 
     /**
@@ -642,10 +590,8 @@ public class ProofAsstPreferences {
      *
      *  @param exportFormatUnified yes/no.
      */
-    public void setExportFormatUnified(
-                   boolean exportFormatUnified) {
-        this.exportFormatUnified =
-             exportFormatUnified;
+    public void setExportFormatUnified(final boolean exportFormatUnified) {
+        this.exportFormatUnified = exportFormatUnified;
     }
 
     /**
@@ -679,10 +625,8 @@ public class ProofAsstPreferences {
      *
      *  @param exportHypsRandomized yes/no.
      */
-    public void setExportHypsRandomized(
-                   boolean exportHypsRandomized) {
-        this.exportHypsRandomized =
-             exportHypsRandomized;
+    public void setExportHypsRandomized(final boolean exportHypsRandomized) {
+        this.exportHypsRandomized = exportHypsRandomized;
     }
 
     /**
@@ -717,10 +661,8 @@ public class ProofAsstPreferences {
      *
      *  @param exportDeriveFormulas yes/no.
      */
-    public void setExportDeriveFormulas(
-                   boolean exportDeriveFormulas) {
-        this.exportDeriveFormulas =
-             exportDeriveFormulas;
+    public void setExportDeriveFormulas(final boolean exportDeriveFormulas) {
+        this.exportDeriveFormulas = exportDeriveFormulas;
     }
 
     /**
@@ -748,10 +690,8 @@ public class ProofAsstPreferences {
      *
      *  @param importCompareDJs yes/no.
      */
-    public void setImportCompareDJs(
-                   boolean importCompareDJs) {
-        this.importCompareDJs =
-             importCompareDJs;
+    public void setImportCompareDJs(final boolean importCompareDJs) {
+        this.importCompareDJs = importCompareDJs;
     }
 
     /**
@@ -765,7 +705,6 @@ public class ProofAsstPreferences {
         return importCompareDJs;
     }
 
-
     /**
      *  Set on/off indicator instructing the Proof Assistant Batch
      *  Test Import to update the originals that are stored in
@@ -774,10 +713,8 @@ public class ProofAsstPreferences {
      *
      *  @param importUpdateDJs yes/no.
      */
-    public void setImportUpdateDJs(
-                   boolean importUpdateDJs) {
-        this.importUpdateDJs =
-             importUpdateDJs;
+    public void setImportUpdateDJs(final boolean importUpdateDJs) {
+        this.importUpdateDJs = importUpdateDJs;
     }
 
     /**
@@ -791,7 +728,6 @@ public class ProofAsstPreferences {
         return importUpdateDJs;
     }
 
-
     /**
      *  Set array of assertions that will be excluded from the
      *  proof unification search process.
@@ -803,9 +739,8 @@ public class ProofAsstPreferences {
      *
      *  @param unifySearchExclude array
      */
-    public void setUnifySearchExclude(Assrt[] unifySearchExclude) {
-        this.unifySearchExclude =
-             unifySearchExclude;
+    public void setUnifySearchExclude(final Assrt[] unifySearchExclude) {
+        this.unifySearchExclude = unifySearchExclude;
     }
 
     /**
@@ -835,12 +770,10 @@ public class ProofAsstPreferences {
      *  <p>
      *  @return      true if assertion should be excluded
      */
-    public boolean checkUnifySearchExclude(Assrt assrt) {
-        for (int i = 0; i < unifySearchExclude.length; i++) {
-            if (assrt == unifySearchExclude[i]) {
+    public boolean checkUnifySearchExclude(final Assrt assrt) {
+        for (final Assrt element : unifySearchExclude)
+            if (assrt == element)
                 return true;
-            }
-        }
         return false;
     }
 
@@ -852,9 +785,9 @@ public class ProofAsstPreferences {
      *  @param outputCursorInstrumentation true or false.
      */
     public void setOutputCursorInstrumentation(
-                        boolean outputCursorInstrumentation) {
-        this.outputCursorInstrumentation
-                                  = outputCursorInstrumentation;
+        final boolean outputCursorInstrumentation)
+    {
+        this.outputCursorInstrumentation = outputCursorInstrumentation;
     }
 
     /**
@@ -875,9 +808,8 @@ public class ProofAsstPreferences {
      *
      *  @param autoReformat true or false.
      */
-    public void setAutoReformat(
-                        boolean autoReformat) {
-        this.autoReformat         = autoReformat;
+    public void setAutoReformat(final boolean autoReformat) {
+        this.autoReformat = autoReformat;
     }
 
     /**
@@ -897,8 +829,8 @@ public class ProofAsstPreferences {
      *
      *  @param undoRedoEnabled true or false.
      */
-    public void setUndoRedoEnabled(boolean undoRedoEnabled) {
-        this.undoRedoEnabled      = undoRedoEnabled;
+    public void setUndoRedoEnabled(final boolean undoRedoEnabled) {
+        this.undoRedoEnabled = undoRedoEnabled;
     }
 
     /**
@@ -911,14 +843,13 @@ public class ProofAsstPreferences {
         return undoRedoEnabled;
     }
 
-
     /**
      *  Sets foreground color for Proof Asst GUI.
      *
      *  @param foregroundColor Color object
      */
-    public void setForegroundColor(Color foregroundColor) {
-        this.foregroundColor      = foregroundColor;
+    public void setForegroundColor(final Color foregroundColor) {
+        this.foregroundColor = foregroundColor;
     }
 
     /**
@@ -930,14 +861,13 @@ public class ProofAsstPreferences {
         return foregroundColor;
     }
 
-
     /**
      *  Sets background color for Proof Asst GUI.
      *
      *  @param backgroundColor Color object
      */
-    public void setBackgroundColor(Color backgroundColor) {
-        this.backgroundColor      = backgroundColor;
+    public void setBackgroundColor(final Color backgroundColor) {
+        this.backgroundColor = backgroundColor;
     }
 
     /**
@@ -954,9 +884,8 @@ public class ProofAsstPreferences {
      *
      *  @param tmffPreferences instance of TMFFPreferences.
      */
-    public void setTMFFPreferences(
-                   TMFFPreferences tmffPreferences) {
-        this.tmffPreferences      = tmffPreferences;
+    public void setTMFFPreferences(final TMFFPreferences tmffPreferences) {
+        this.tmffPreferences = tmffPreferences;
     }
 
     /**
@@ -973,9 +902,8 @@ public class ProofAsstPreferences {
      *
      *  @param workVarManager instance of WorkVarManager.
      */
-    public void setWorkVarManager(
-                   WorkVarManager workVarManager) {
-        this.workVarManager      = workVarManager;
+    public void setWorkVarManager(final WorkVarManager workVarManager) {
+        this.workVarManager = workVarManager;
     }
 
     /**
@@ -992,9 +920,8 @@ public class ProofAsstPreferences {
      *
      *  @param stepUnifier instance of StepUnifier or null.
      */
-    public void setStepUnifier(
-                   StepUnifier stepUnifier) {
-        this.stepUnifier      = stepUnifier;
+    public void setStepUnifier(final StepUnifier stepUnifier) {
+        this.stepUnifier = stepUnifier;
     }
 
     /**
@@ -1012,11 +939,9 @@ public class ProofAsstPreferences {
      *  @return stepUnifier instance.
      */
     public StepUnifier getStepUnifierInstance() {
-        StepUnifier s             = getStepUnifier();
+        StepUnifier s = getStepUnifier();
         if (s == null) {
-            s                     =
-                new StepUnifier(
-                    getWorkVarManager());
+            s = new StepUnifier(getWorkVarManager());
             setStepUnifier(s);
         }
         return s;
@@ -1032,17 +957,13 @@ public class ProofAsstPreferences {
      */
     public String getSoftDjErrorOptionListString() {
 
-        StringBuffer sb           = new StringBuffer();
+        final StringBuffer sb = new StringBuffer();
 
-        for (int i = 0;
-             i < PaConstants.
-                    PROOF_ASST_DJ_VARS_SOFT_ERRORS_TABLE.length;
-             i++) {
+        for (int i = 0; i < PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_TABLE.length; i++)
+        {
             sb.append(i + 1);
             sb.append(" - ");
-            sb.append(
-                PaConstants.
-                    PROOF_ASST_DJ_VARS_SOFT_ERRORS_TABLE[i]);
+            sb.append(PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_TABLE[i]);
             sb.append('\n');
         }
 
@@ -1050,7 +971,6 @@ public class ProofAsstPreferences {
 
         return sb.toString();
     }
-
 
     /**
      *  A simple routine to build a list of all defined Fonts
@@ -1062,62 +982,52 @@ public class ProofAsstPreferences {
      */
     public String getFontListString() {
 
-        GraphicsEnvironment g     =
-            GraphicsEnvironment.getLocalGraphicsEnvironment();
+        final GraphicsEnvironment g = GraphicsEnvironment
+            .getLocalGraphicsEnvironment();
 
-        Font[] f                  = g.getAllFonts();
+        final Font[] f = g.getAllFonts();
 
-        TreeSet t                 = new TreeSet();
+        final TreeSet t = new TreeSet();
 
-        for (int i = 0; i < f.length; i++) {
-            t.add(
-                f[i].
-                    getFamily());
-        }
+        for (final Font element : f)
+            t.add(element.getFamily());
 
-        StringBuffer sb           = new StringBuffer();
+        final StringBuffer sb = new StringBuffer();
 
-        int      lineLength       =
-                    PaConstants.FONT_LIST_STARTING_LINE_LENGTH;
-        int      maxNbrOfLines    =
-                    PaConstants.FONT_LIST_MAX_LINES;
+        final int lineLength = PaConstants.FONT_LIST_STARTING_LINE_LENGTH;
+        final int maxNbrOfLines = PaConstants.FONT_LIST_MAX_LINES;
 
-        int      loopCnt          = 0;
-        int      lineCnt;
-        int      lineMax;
+        int loopCnt = 0;
+        int lineCnt;
+        int lineMax;
         Iterator iterator;
-        if (t.size() > 0) {
-
+        if (t.size() > 0)
             loopA: while (true) {
 
                 ++loopCnt;
-                lineMax           = loopCnt * lineLength;
+                lineMax = loopCnt * lineLength;
                 sb.setLength(0);
-                lineCnt           = 1;
-                iterator          = t.iterator();
+                lineCnt = 1;
+                iterator = t.iterator();
                 sb.append((String)iterator.next());
 
                 loopB: while (iterator.hasNext()) {
 
-                    if (sb.length() > (lineMax * lineCnt)) {
+                    if (sb.length() > lineMax * lineCnt) {
                         sb.append('\n');
                         ++lineCnt;
-                        if (lineCnt > maxNbrOfLines) {
+                        if (lineCnt > maxNbrOfLines)
                             continue loopA;
-                        }
                     }
-                    else {
+                    else
                         sb.append(", ");
-                    }
                     sb.append((String)iterator.next());
                     continue loopB;
                 }
                 break loopA;
             }
-        }
-        else {
+        else
             sb.append(" ");
-        }
 
         sb.append('\n');
 
@@ -1136,36 +1046,25 @@ public class ProofAsstPreferences {
      *  @throws ProofAsstException if input familyName not
      *          installed in the system.
      */
-    public String validateFontFamily(String familyName)
-                        throws ProofAsstException {
+    public String validateFontFamily(final String familyName)
+        throws ProofAsstException
+    {
 
         String n;
-        if (familyName == null) {
-            n                     = new String(" ");
-        }
-        else {
-            n                     = familyName.trim();
-        }
+        if (familyName == null)
+            n = new String(" ");
+        else
+            n = familyName.trim();
 
-        Font[] f                  =
-            GraphicsEnvironment.
-                getLocalGraphicsEnvironment().
-                    getAllFonts();
+        final Font[] f = GraphicsEnvironment.getLocalGraphicsEnvironment()
+            .getAllFonts();
 
-        for (int i = 0; i < f.length; i++) {
-            if (f[i].
-                    getFamily().
-                        compareToIgnoreCase(
-                            n)
-                == 0) {
-                return f[i].getFamily();
-            }
-        }
+        for (final Font element : f)
+            if (element.getFamily().compareToIgnoreCase(n) == 0)
+                return element.getFamily();
         throw new ProofAsstException(
-            PaConstants.ERRMSG_INVALID_FONT_FAMILY_NAME_1
-                + familyName);
+            PaConstants.ERRMSG_INVALID_FONT_FAMILY_NAME_1 + familyName);
     }
-
 
     /**
      *  A stupid routine to validate the entered number
@@ -1184,38 +1083,25 @@ public class ProofAsstPreferences {
      *  @throws ProofAsstException if input option number
      *          is out of range or is not a number.
      */
-    public String validateDjVarsSoftErrorsOptionNbr(
-                                            String option)
-                        throws ProofAsstException {
+    public String validateDjVarsSoftErrorsOptionNbr(String option)
+        throws ProofAsstException
+    {
 
-        int n                     = -1;
-        if (option != null) {
+        int n = -1;
+        if (option != null)
             try {
-                n                 = Integer.parseInt(option);
-            }
-            catch (NumberFormatException e) {
-            }
-        }
-        else {
+                n = Integer.parseInt(option);
+            } catch (final NumberFormatException e) {}
+        else
             option = "";
-        }
 
         if (n < 1
-            ||
-            n > PaConstants.
-                    PROOF_ASST_DJ_VARS_SOFT_ERRORS_TABLE.length) {
-
+            || n > PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_TABLE.length)
             throw new ProofAsstException(
-                PaConstants.
-                    ERRMSG_INVALID_SOFT_DJ_ERROR_OPTION_NBR
-                + option);
-        }
+                PaConstants.ERRMSG_INVALID_SOFT_DJ_ERROR_OPTION_NBR + option);
 
-        return PaConstants.
-                    PROOF_ASST_DJ_VARS_SOFT_ERRORS_TABLE[
-                        n - 1];
+        return PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_TABLE[n - 1];
     }
-
 
     public boolean getDjVarsSoftErrorsIgnore() {
         return djVarsSoftErrorsIgnore;
@@ -1236,175 +1122,111 @@ public class ProofAsstPreferences {
         return djVarsSoftErrorsGenerateDiffs;
     }
 
-
     public String getDjVarsSoftErrorsOptionNbr() {
-        String s                  =
-            getDjVarsSoftErrorsOption();
-        for (int i = 0;
-             i < PaConstants.
-                    PROOF_ASST_DJ_VARS_SOFT_ERRORS_TABLE.length;
-             i++) {
-            if (s.compareTo(
-                    PaConstants.
-                        PROOF_ASST_DJ_VARS_SOFT_ERRORS_TABLE[i])
-                == 0) {
+        final String s = getDjVarsSoftErrorsOption();
+        for (int i = 0; i < PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_TABLE.length; i++)
+            if (s
+                .compareTo(PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_TABLE[i]) == 0)
                 return Integer.toString(i + 1);
-            }
-        }
         throw new IllegalArgumentException("");
     }
-
-
 
     public String getDjVarsSoftErrorsOption() {
-        if (djVarsSoftErrorsIgnore) {
-            return
-                PaConstants.
-                    PROOF_ASST_DJ_VARS_SOFT_ERRORS_IGNORE;
-        }
-        if (djVarsSoftErrorsReport) {
-            return
-                PaConstants.
-                    PROOF_ASST_DJ_VARS_SOFT_ERRORS_REPORT;
-        }
-        if (djVarsSoftErrorsGenerateNew) {
-            return
-                PaConstants.
-                    PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_NEW;
-        }
-        if (djVarsSoftErrorsGenerateRepl) {
-            return
-              PaConstants.
-                PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_REPLACEMENTS;
-        }
-        if (djVarsSoftErrorsGenerateDiffs) {
-            return
-              PaConstants.
-                PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_DIFFERENCES;
-        }
+        if (djVarsSoftErrorsIgnore)
+            return PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_IGNORE;
+        if (djVarsSoftErrorsReport)
+            return PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_REPORT;
+        if (djVarsSoftErrorsGenerateNew)
+            return PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_NEW;
+        if (djVarsSoftErrorsGenerateRepl)
+            return PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_REPLACEMENTS;
+        if (djVarsSoftErrorsGenerateDiffs)
+            return PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_DIFFERENCES;
 
         throw new IllegalArgumentException("");
     }
 
-
-    public boolean setDjVarsSoftErrorsOption(String s) {
-        if (s == null) {
-            return false; //error
-        }
+    public boolean setDjVarsSoftErrorsOption(final String s) {
+        if (s == null)
+            return false; // error
 
         // Note: do not modify any settings unless
-        //       the input is valid -- therefore,
-        //       no default settings are made here
-        //       ...
-        //       [  ]
+        // the input is valid -- therefore,
+        // no default settings are made here
+        // ...
+        // [ ]
         //
 
-        if (s.compareToIgnoreCase(
-              PaConstants.
-                PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_REPLACEMENTS)
-            == 0) {
+        if (s
+            .compareToIgnoreCase(PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_REPLACEMENTS) == 0)
+        {
 
-            djVarsSoftErrorsIgnore
-                                  = false;
-            djVarsSoftErrorsReport
-                                  = false;
+            djVarsSoftErrorsIgnore = false;
+            djVarsSoftErrorsReport = false;
 
-            djVarsSoftErrorsGenerate
-                                  = true;
-            djVarsSoftErrorsGenerateNew
-                                  = false;
-            djVarsSoftErrorsGenerateRepl
-                                  = true;
-            djVarsSoftErrorsGenerateDiffs
-                                  = false;
-            return true; //no error
+            djVarsSoftErrorsGenerate = true;
+            djVarsSoftErrorsGenerateNew = false;
+            djVarsSoftErrorsGenerateRepl = true;
+            djVarsSoftErrorsGenerateDiffs = false;
+            return true; // no error
         }
 
-        if (s.compareToIgnoreCase(
-              PaConstants.
-                PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_NEW)
-            == 0) {
+        if (s
+            .compareToIgnoreCase(PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_NEW) == 0)
+        {
 
-            djVarsSoftErrorsIgnore
-                                  = false;
-            djVarsSoftErrorsReport
-                                  = false;
+            djVarsSoftErrorsIgnore = false;
+            djVarsSoftErrorsReport = false;
 
-            djVarsSoftErrorsGenerate
-                                  = true;
-            djVarsSoftErrorsGenerateNew
-                                  = true;
-            djVarsSoftErrorsGenerateRepl
-                                  = false;
-            djVarsSoftErrorsGenerateDiffs
-                                  = false;
-            return true; //no error
+            djVarsSoftErrorsGenerate = true;
+            djVarsSoftErrorsGenerateNew = true;
+            djVarsSoftErrorsGenerateRepl = false;
+            djVarsSoftErrorsGenerateDiffs = false;
+            return true; // no error
         }
 
+        if (s
+            .compareToIgnoreCase(PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_DIFFERENCES) == 0)
+        {
 
-        if (s.compareToIgnoreCase(
-              PaConstants.
-                PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_DIFFERENCES)
-            == 0) {
+            djVarsSoftErrorsIgnore = false;
+            djVarsSoftErrorsReport = false;
 
-            djVarsSoftErrorsIgnore
-                                  = false;
-            djVarsSoftErrorsReport
-                                  = false;
-
-            djVarsSoftErrorsGenerate
-                                  = true;
-            djVarsSoftErrorsGenerateNew
-                                  = false;
-            djVarsSoftErrorsGenerateRepl
-                                  = false;
-            djVarsSoftErrorsGenerateDiffs
-                                  = true;
-            return true; //no error
+            djVarsSoftErrorsGenerate = true;
+            djVarsSoftErrorsGenerateNew = false;
+            djVarsSoftErrorsGenerateRepl = false;
+            djVarsSoftErrorsGenerateDiffs = true;
+            return true; // no error
         }
 
-        if (s.compareToIgnoreCase(
-                PaConstants.
-                    PROOF_ASST_DJ_VARS_SOFT_ERRORS_REPORT)
-            == 0) {
+        if (s
+            .compareToIgnoreCase(PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_REPORT) == 0)
+        {
 
-            djVarsSoftErrorsIgnore
-                                  = false;
-            djVarsSoftErrorsReport
-                                  = true;
+            djVarsSoftErrorsIgnore = false;
+            djVarsSoftErrorsReport = true;
 
-            djVarsSoftErrorsGenerate
-                                  = false;
-            djVarsSoftErrorsGenerateNew
-                                  = false;
-            djVarsSoftErrorsGenerateRepl
-                                  = false;
-            djVarsSoftErrorsGenerateDiffs
-                                  = false;
+            djVarsSoftErrorsGenerate = false;
+            djVarsSoftErrorsGenerateNew = false;
+            djVarsSoftErrorsGenerateRepl = false;
+            djVarsSoftErrorsGenerateDiffs = false;
 
-            return true; //no error
+            return true; // no error
         }
 
-        if (s.compareToIgnoreCase(
-                PaConstants.
-                    PROOF_ASST_DJ_VARS_SOFT_ERRORS_IGNORE)
-            == 0) {
+        if (s
+            .compareToIgnoreCase(PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_IGNORE) == 0)
+        {
 
-            djVarsSoftErrorsIgnore
-                                  = true;
-            djVarsSoftErrorsReport
-                                  = false;
+            djVarsSoftErrorsIgnore = true;
+            djVarsSoftErrorsReport = false;
 
-            djVarsSoftErrorsGenerate
-                                  = false;
-            djVarsSoftErrorsGenerateNew
-                                  = false;
-            djVarsSoftErrorsGenerateRepl
-                                  = false;
-            djVarsSoftErrorsGenerateDiffs
-                                  = false;
+            djVarsSoftErrorsGenerate = false;
+            djVarsSoftErrorsGenerateNew = false;
+            djVarsSoftErrorsGenerateRepl = false;
+            djVarsSoftErrorsGenerateDiffs = false;
 
-            return true; //no error
+            return true; // no error
         }
 
         return false;
@@ -1425,39 +1247,26 @@ public class ProofAsstPreferences {
      *  @throws ProofAsstException if input option number
      *          is out of range or is not a number.
      */
-    public String validateIncompleteStepCursorOptionNbr(
-                                            String option)
-                        throws ProofAsstException {
+    public String validateIncompleteStepCursorOptionNbr(String option)
+        throws ProofAsstException
+    {
 
-        int n                     = -1;
-        if (option != null) {
+        int n = -1;
+        if (option != null)
             try {
-                n                 = Integer.parseInt(option);
-            }
-            catch (NumberFormatException e) {
-            }
-        }
-        else {
+                n = Integer.parseInt(option);
+            } catch (final NumberFormatException e) {}
+        else
             option = "";
-        }
 
         if (n < 1
-            ||
-            n > PaConstants.
-                    PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE.length) {
-
+            || n > PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE.length)
             throw new ProofAsstException(
-                PaConstants.
-                    ERRMSG_INVALID_INCOMPLETE_STEP_CURSOR_OPTION_NBR
-                + option);
-        }
+                PaConstants.ERRMSG_INVALID_INCOMPLETE_STEP_CURSOR_OPTION_NBR
+                    + option);
 
-        return PaConstants.
-                    PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE[
-                        n - 1];
+        return PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE[n - 1];
     }
-
-
 
     /**
      *  Validates ProofAsstIncompleteStepCursor option
@@ -1466,61 +1275,48 @@ public class ProofAsstPreferences {
      *  @param s either "First", "Last" or "AsIs".
      *  @return true if valid otherwise false.
      */
-    public boolean setIncompleteStepCursor(String s) {
-        if (s == null) {
-            return false; //error
-        }
+    public boolean setIncompleteStepCursor(final String s) {
+        if (s == null)
+            return false; // error
 
         // Note: do not modify any settings unless
-        //       the input is valid -- therefore,
-        //       no default settings are made here
-        //       ...
-        //       [  ]
+        // the input is valid -- therefore,
+        // no default settings are made here
+        // ...
+        // [ ]
         //
 
-        if (s.compareToIgnoreCase(
-              PaConstants.
-                PROOF_ASST_INCOMPLETE_STEP_CURSOR_FIRST)
-            == 0) {
+        if (s
+            .compareToIgnoreCase(PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_FIRST) == 0)
+        {
 
-            incompleteStepCursor  = s;
-            incompleteStepCursorFirst
-                                  = true;
-            incompleteStepCursorLast
-                                  = false;
-            incompleteStepCursorAsIs
-                                  = false;
-            return true; //no error
+            incompleteStepCursor = s;
+            incompleteStepCursorFirst = true;
+            incompleteStepCursorLast = false;
+            incompleteStepCursorAsIs = false;
+            return true; // no error
         }
 
-        if (s.compareToIgnoreCase(
-              PaConstants.
-                PROOF_ASST_INCOMPLETE_STEP_CURSOR_LAST)
-            == 0) {
+        if (s
+            .compareToIgnoreCase(PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_LAST) == 0)
+        {
 
-            incompleteStepCursor  = s;
-            incompleteStepCursorFirst
-                                  = false;
-            incompleteStepCursorLast
-                                  = true;
-            incompleteStepCursorAsIs
-                                  = false;
-            return true; //no error
+            incompleteStepCursor = s;
+            incompleteStepCursorFirst = false;
+            incompleteStepCursorLast = true;
+            incompleteStepCursorAsIs = false;
+            return true; // no error
         }
 
-        if (s.compareToIgnoreCase(
-              PaConstants.
-                PROOF_ASST_INCOMPLETE_STEP_CURSOR_ASIS)
-            == 0) {
+        if (s
+            .compareToIgnoreCase(PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_ASIS) == 0)
+        {
 
-            incompleteStepCursor  = s;
-            incompleteStepCursorFirst
-                                  = false;
-            incompleteStepCursorLast
-                                  = false;
-            incompleteStepCursorAsIs
-                                  = true;
-            return true; //no error
+            incompleteStepCursor = s;
+            incompleteStepCursorFirst = false;
+            incompleteStepCursorLast = false;
+            incompleteStepCursorAsIs = true;
+            return true; // no error
         }
 
         return false;
@@ -1534,7 +1330,6 @@ public class ProofAsstPreferences {
     public String getIncompleteStepCursor() {
         return incompleteStepCursor;
     }
-
 
     /**
      *  Get incompleteStepCursorFirst parameter.
@@ -1569,19 +1364,11 @@ public class ProofAsstPreferences {
      *  @return incompleteStepCursor option number.
      */
     public String getIncompleteStepCursorOptionNbr() {
-        String s                  =
-            getIncompleteStepCursor();
-        for (int i = 0;
-             i < PaConstants.
-                    PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE.length;
-             i++) {
-            if (s.compareTo(
-                    PaConstants.
-                        PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE[i])
-                == 0) {
+        final String s = getIncompleteStepCursor();
+        for (int i = 0; i < PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE.length; i++)
+            if (s
+                .compareTo(PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE[i]) == 0)
                 return Integer.toString(i + 1);
-            }
-        }
         throw new IllegalArgumentException("");
     }
 
@@ -1593,17 +1380,13 @@ public class ProofAsstPreferences {
      */
     public String getIncompleteStepCursorOptionListString() {
 
-        StringBuffer sb           = new StringBuffer();
+        final StringBuffer sb = new StringBuffer();
 
-        for (int i = 0;
-             i < PaConstants.
-                    PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE.length;
-             i++) {
+        for (int i = 0; i < PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE.length; i++)
+        {
             sb.append(i + 1);
             sb.append(" - ");
-            sb.append(
-                PaConstants.
-                    PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE[i]);
+            sb.append(PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE[i]);
             sb.append('\n');
         }
 
@@ -1611,7 +1394,6 @@ public class ProofAsstPreferences {
 
         return sb.toString();
     }
-
 
     /**
      *  A stupid routine to validate StepSelectorMaxResults.
@@ -1624,37 +1406,22 @@ public class ProofAsstPreferences {
      *  @return maxResults number.
      *  @throws ProofAsstException if input maxResults invalid.
      */
-    public int validateStepSelectorMaxResults(
-                            String maxResultsString)
-                        throws IllegalArgumentException {
+    public int validateStepSelectorMaxResults(final String maxResultsString)
+        throws IllegalArgumentException
+    {
 
-        int n                     = -1;
-        if (maxResultsString != null) {
+        int n = -1;
+        if (maxResultsString != null)
             try {
-                n                 =
-                    Integer.
-                        parseInt(
-                            maxResultsString);
-            }
-            catch (NumberFormatException e) {
-            }
-        }
+                n = Integer.parseInt(maxResultsString);
+            } catch (final NumberFormatException e) {}
 
-        if (n < 1
-            ||
-            n > PaConstants.
-                    STEP_SELECTOR_MAX_RESULTS_MAXIMUM) {
-
+        if (n < 1 || n > PaConstants.STEP_SELECTOR_MAX_RESULTS_MAXIMUM)
             throw new IllegalArgumentException(
-                PaConstants.
-                    ERRMSG_INVALID_STEP_SELECTOR_MAX_RESULTS_NBR_1
-                + maxResultsString
-                + PaConstants.
-                    ERRMSG_INVALID_STEP_SELECTOR_MAX_RESULTS_NBR_2
-                + PaConstants.
-                    STEP_SELECTOR_MAX_RESULTS_MAXIMUM
-                );
-        }
+                PaConstants.ERRMSG_INVALID_STEP_SELECTOR_MAX_RESULTS_NBR_1
+                    + maxResultsString
+                    + PaConstants.ERRMSG_INVALID_STEP_SELECTOR_MAX_RESULTS_NBR_2
+                    + PaConstants.STEP_SELECTOR_MAX_RESULTS_MAXIMUM);
 
         return n;
     }
@@ -1664,10 +1431,8 @@ public class ProofAsstPreferences {
      *
      *  @param stepSelectorMaxResults number
      */
-    public void setStepSelectorMaxResults(
-                                int stepSelectorMaxResults) {
-        this.stepSelectorMaxResults
-                                  = stepSelectorMaxResults;
+    public void setStepSelectorMaxResults(final int stepSelectorMaxResults) {
+        this.stepSelectorMaxResults = stepSelectorMaxResults;
     }
 
     /**
@@ -1691,34 +1456,26 @@ public class ProofAsstPreferences {
      *  @throws ProofAsstException if invalid value.
      */
     public boolean validateStepSelectorShowSubstitutions(
-                                 String showSubstitutionsString)
-                        throws IllegalArgumentException {
+        final String showSubstitutionsString) throws IllegalArgumentException
+    {
         String s;
         if (showSubstitutionsString != null) {
-            s                     =
-                showSubstitutionsString.trim().toLowerCase();
-            if (s.equals(PaConstants.SYNONYM_TRUE_1) ||
-                s.equals(PaConstants.SYNONYM_TRUE_2) ||
-                s.equals(PaConstants.SYNONYM_TRUE_3)) {
+            s = showSubstitutionsString.trim().toLowerCase();
+            if (s.equals(PaConstants.SYNONYM_TRUE_1)
+                || s.equals(PaConstants.SYNONYM_TRUE_2)
+                || s.equals(PaConstants.SYNONYM_TRUE_3))
                 return true;
-            }
-            if (s.equals(PaConstants.SYNONYM_FALSE_1) ||
-                s.equals(PaConstants.SYNONYM_FALSE_2) ||
-                s.equals(PaConstants.SYNONYM_FALSE_3)) {
+            if (s.equals(PaConstants.SYNONYM_FALSE_1)
+                || s.equals(PaConstants.SYNONYM_FALSE_2)
+                || s.equals(PaConstants.SYNONYM_FALSE_3))
                 return false;
-            }
         }
-        else {
-            s                     = " ";
-        }
+        else
+            s = " ";
 
         throw new IllegalArgumentException(
-            PaConstants.
-                ERRMSG_INVALID_STEP_SELECTOR_SHOW_SUBSTITUTIONS_1
-            + s
-            + PaConstants.
-                ERRMSG_INVALID_STEP_SELECTOR_SHOW_SUBSTITUTIONS_2
-            );
+            PaConstants.ERRMSG_INVALID_STEP_SELECTOR_SHOW_SUBSTITUTIONS_1 + s
+                + PaConstants.ERRMSG_INVALID_STEP_SELECTOR_SHOW_SUBSTITUTIONS_2);
     }
 
     /**
@@ -1727,9 +1484,9 @@ public class ProofAsstPreferences {
      *  @param stepSelectorShowSubstitutions option.
      */
     public void setStepSelectorShowSubstitutions(
-                        boolean stepSelectorShowSubstitutions) {
-        this.stepSelectorShowSubstitutions
-                                  = stepSelectorShowSubstitutions;
+        final boolean stepSelectorShowSubstitutions)
+    {
+        this.stepSelectorShowSubstitutions = stepSelectorShowSubstitutions;
     }
 
     /**
@@ -1747,9 +1504,9 @@ public class ProofAsstPreferences {
      *  @param stepSelectorDialogPaneWidth option.
      */
     public void setStepSelectorDialogPaneWidth(
-                        int stepSelectorDialogPaneWidth) {
-        this.stepSelectorDialogPaneWidth
-                                  = stepSelectorDialogPaneWidth;
+        final int stepSelectorDialogPaneWidth)
+    {
+        this.stepSelectorDialogPaneWidth = stepSelectorDialogPaneWidth;
     }
 
     /**
@@ -1767,9 +1524,9 @@ public class ProofAsstPreferences {
      *  @param stepSelectorDialogPaneHeight option.
      */
     public void setStepSelectorDialogPaneHeight(
-                        int stepSelectorDialogPaneHeight) {
-        this.stepSelectorDialogPaneHeight
-                                  = stepSelectorDialogPaneHeight;
+        final int stepSelectorDialogPaneHeight)
+    {
+        this.stepSelectorDialogPaneHeight = stepSelectorDialogPaneHeight;
     }
 
     /**
@@ -1786,10 +1543,8 @@ public class ProofAsstPreferences {
      *
      *  @param assrtListFreespace option.
      */
-    public void setAssrtListFreespace(
-                        int assrtListFreespace) {
-        this.assrtListFreespace
-                                  = assrtListFreespace;
+    public void setAssrtListFreespace(final int assrtListFreespace) {
+        this.assrtListFreespace = assrtListFreespace;
     }
 
     /**

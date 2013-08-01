@@ -11,8 +11,9 @@
 
 package mmj.verify;
 
+import java.util.List;
+
 import mmj.lang.*;
-import java.util.*;
 
 /**
  *  Bottom Up Parser, too slow and stupid for set.mm use.
@@ -23,45 +24,43 @@ import java.util.*;
  *  @deprecated abandoned in favor of EarleyParser.java
  *  @see <a href="EarleyParser.html">EarleyParser</a>
  */
+@Deprecated
 public class BottomUpParser implements GrammaticalParser {
 
+    private int retryCnt = -1;
 
-    private   int               retryCnt    = -1;
+    // *******************************************
+    // all following variables are work items used
+    // within a single execution but are stored
+    // globally to avoid having to pass around
+    // a bazillion call paramaters.
+    // *******************************************
 
+    private int parseCnt = 0;
 
-    //*******************************************
-    //all following variables are work items used
-    //within a single execution but are stored
-    //globally to avoid having to pass around
-    //a bazillion call paramaters.
-    //*******************************************
+    private int pStackIndex;
+    private int pStackMax;
+    private int pStackHighwater;
+    private Cnst[][] pStackRFE;
+    private int[] pStackRFECnt;
+    private int[] pStackFromIndex;
+    private int[] pStackThruIndex;
+    private NotationRule[] pStackNotationRule;
+    private boolean[] pStackIsMatch;
+    private boolean[] pStackIsGimme;
+    private ParseNodeHolder[] rewrittenExpr;
+    private ParseNodeHolder[] paramArray;
 
-    private   int               parseCnt    = 0;
+    private final Grammar grammar;
+    private int maxFormulaLength;
 
-    private   int               pStackIndex;
-    private   int               pStackMax;
-    private   int               pStackHighwater;
-    private   Cnst[][]          pStackRFE;
-    private   int[]             pStackRFECnt;
-    private   int[]             pStackFromIndex;
-    private   int[]             pStackThruIndex;
-    private   NotationRule[]    pStackNotationRule;
-    private   boolean[]         pStackIsMatch;
-    private   boolean[]         pStackIsGimme;
-    private   ParseNodeHolder[] rewrittenExpr;
-    private   ParseNodeHolder[] paramArray;
+    private ParseTree[] parseTreeArray;
+    private Cnst formulaTyp;
+    private ParseNodeHolder[] parseNodeHolderExpr;
+    private int highestSeq;
 
-    private   Grammar           grammar;
-    private   int               maxFormulaLength;
-
-    private   ParseTree[]       parseTreeArray;
-    private   Cnst              formulaTyp;
-    private   ParseNodeHolder[] parseNodeHolderExpr;
-    private   int               highestSeq;
-
-    private   int               governor;
-    private   int               governorLimit;
-
+    private int governor;
+    private int governorLimit;
 
     /**
      *  Construct using reference to Grammar and a parameter
@@ -70,13 +69,12 @@ public class BottomUpParser implements GrammaticalParser {
      *  @param grammarIn Grammar object
      *  @param maxFormulaLengthIn gives us a hint about what to expect.
      */
-    public BottomUpParser(Grammar grammarIn,
-                          int     maxFormulaLengthIn) {
-        grammar          = grammarIn;
+    public BottomUpParser(final Grammar grammarIn, final int maxFormulaLengthIn)
+    {
+        grammar = grammarIn;
         maxFormulaLength = maxFormulaLengthIn;
-        if (maxFormulaLength < 100) {
+        if (maxFormulaLength < 100)
             maxFormulaLength = 100;
-        }
     }
 
     /**
@@ -123,50 +121,43 @@ public class BottomUpParser implements GrammaticalParser {
      *        grammatical ambiguity, by definition, since there is
      *        more than one way to parse the formula.
      */
-    public int parseExpr(ParseTree[]       parseTreeArrayIn,
-                         Cnst              formulaTypIn,
-                         ParseNodeHolder[] parseNodeHolderExprIn,
-                         int               highestSeqIn)
-                                            throws VerifyException {
-        parseTreeArray            = parseTreeArrayIn;
-        formulaTyp                = formulaTypIn;
-        parseNodeHolderExpr       = parseNodeHolderExprIn;
-        highestSeq                = highestSeqIn;
+    @Override
+    public int parseExpr(final ParseTree[] parseTreeArrayIn,
+        final Cnst formulaTypIn, final ParseNodeHolder[] parseNodeHolderExprIn,
+        final int highestSeqIn) throws VerifyException
+    {
+        parseTreeArray = parseTreeArrayIn;
+        formulaTyp = formulaTypIn;
+        parseNodeHolderExpr = parseNodeHolderExprIn;
+        highestSeq = highestSeqIn;
 
         parseCnt = 0;
 
-        if (parseNodeHolderExpr.length == 0) {
+        if (parseNodeHolderExpr.length == 0)
             return BottomUpParserSpecialCase1();
-        }
 
-        if (parseNodeHolderExpr.length == 1 &&
-             !(parseNodeHolderExpr[0].mObj.isCnst())) {
+        if (parseNodeHolderExpr.length == 1
+            && !parseNodeHolderExpr[0].mObj.isCnst())
             return BottomUpParserSpecialCase2();
-        }
 
         boolean needToRetry = true;
         reInitArrays(0);
-        while (needToRetry) {
+        while (needToRetry)
             try {
-                parseCnt    = 0;
+                parseCnt = 0;
                 parse();
                 needToRetry = false;
-            }
-            catch(ArrayIndexOutOfBoundsException e) {
-                if (++retryCnt >
-                    GrammarConstants.MAX_PARSE_RETRIES) {
+            } catch (final ArrayIndexOutOfBoundsException e) {
+                if (++retryCnt > GrammarConstants.MAX_PARSE_RETRIES)
                     throw new IllegalStateException(
                         GrammarConstants.ERRMSG_MAX_RETRIES_EXCEEDED_1
-                      + GrammarConstants.MAX_PARSE_RETRIES
-                      + GrammarConstants.ERRMSG_MAX_RETRIES_EXCEEDED_2
-                        );
-                }
-                System.err.println(
-                    GrammarConstants.ERRMSG_RETRY_TO_BE_INITIATED
-                    + e.getMessage());
+                            + GrammarConstants.MAX_PARSE_RETRIES
+                            + GrammarConstants.ERRMSG_MAX_RETRIES_EXCEEDED_2);
+                System.err
+                    .println(GrammarConstants.ERRMSG_RETRY_TO_BE_INITIATED
+                        + e.getMessage());
                 reInitArrays(retryCnt);
             }
-        }
 
         return parseCnt;
     }
@@ -192,48 +183,35 @@ public class BottomUpParser implements GrammaticalParser {
      * Type Code is "wff" then if there is a Nulls Permitted Rule
      * for "wff", return that, else no parse is possible.)
      */
-    private   int BottomUpParserSpecialCase1() {
+    private int BottomUpParserSpecialCase1() {
 
-        ParseNodeHolder[]   paramArray = new ParseNodeHolder[0];
-        NullsPermittedRule  gR;
+        final ParseNodeHolder[] paramArray = new ParseNodeHolder[0];
+        NullsPermittedRule gR;
 
         if (formulaTyp.getIsProvableLogicStmtTyp()) {
-            Cnst[] logicStmtTypArray = grammar.getLogicStmtTypArray();
-            for (int i = 0;
-                 i < logicStmtTypArray.length;
-                 i++) {
-                gR                =
-                   logicStmtTypArray[i].getNullsPermittedGR();
-                if (gR != null &&
-                    gR.getMaxSeqNbr() <= highestSeq) {
-                    parseTreeArray[parseCnt++] =
-                        new ParseTree(
-                            gR.buildGrammaticalParseNode(
-                                paramArray));
-                    if (parseCnt >= parseTreeArray.length) {
+            final Cnst[] logicStmtTypArray = grammar.getLogicStmtTypArray();
+            for (final Cnst element : logicStmtTypArray) {
+                gR = element.getNullsPermittedGR();
+                if (gR != null && gR.getMaxSeqNbr() <= highestSeq) {
+                    parseTreeArray[parseCnt++] = new ParseTree(
+                        gR.buildGrammaticalParseNode(paramArray));
+                    if (parseCnt >= parseTreeArray.length)
                         break;
-                    }
                 }
             }
         }
         else {
-            List nullsPermittedGRList
-                                  = grammar.getNullsPermittedGRList();
-            int i = nullsPermittedGRList.indexOf(formulaTyp);
+            final List nullsPermittedGRList = grammar.getNullsPermittedGRList();
+            final int i = nullsPermittedGRList.indexOf(formulaTyp);
             if (i != -1) {
-                gR                 =
-                    (NullsPermittedRule)nullsPermittedGRList.get(i);
-                if (gR.getMaxSeqNbr() <= highestSeq) {
-                    parseTreeArray[parseCnt++] =
-                        new ParseTree(
-                            gR.buildGrammaticalParseNode(
-                                paramArray));
-                }
+                gR = (NullsPermittedRule)nullsPermittedGRList.get(i);
+                if (gR.getMaxSeqNbr() <= highestSeq)
+                    parseTreeArray[parseCnt++] = new ParseTree(
+                        gR.buildGrammaticalParseNode(paramArray));
             }
         }
         return parseCnt;
     }
-
 
     /**
      *  BottomUpParserSpecialCase2 --
@@ -251,35 +229,31 @@ public class BottomUpParser implements GrammaticalParser {
      *  variable hypotheses through the parser, therefore we
      *  ignore that scenario in this special case.)
      */
-    private   int BottomUpParserSpecialCase2() {
+    private int BottomUpParserSpecialCase2() {
 
-        TypeConversionRule  gR;
+        TypeConversionRule gR;
 
-        if (formulaTyp.getIsProvableLogicStmtTyp()) {
-            parseTreeArray[parseCnt++] =
-                new ParseTree(parseNodeHolderExpr[0].parseNode);
-        }
+        if (formulaTyp.getIsProvableLogicStmtTyp())
+            parseTreeArray[parseCnt++] = new ParseTree(
+                parseNodeHolderExpr[0].parseNode);
         else {
-            gR = formulaTyp.findFromTypConversionRule(
-                   ((VarHyp)parseNodeHolderExpr[0].mObj).getTyp());
-            if (gR != null &&
-                gR.getMaxSeqNbr() <= highestSeq) {
-                parseTreeArray[parseCnt++] =
-                    new ParseTree(
-                        gR.buildGrammaticalParseNode(
-                            parseNodeHolderExpr));
-            }
+            gR = formulaTyp
+                .findFromTypConversionRule(((VarHyp)parseNodeHolderExpr[0].mObj)
+                    .getTyp());
+            if (gR != null && gR.getMaxSeqNbr() <= highestSeq)
+                parseTreeArray[parseCnt++] = new ParseTree(
+                    gR.buildGrammaticalParseNode(parseNodeHolderExpr));
         }
         return parseCnt;
     }
 
-    private   void parse() throws VerifyException {
+    private void parse() throws VerifyException {
 
-        pStackFromIndex[0]        = 0;
-        pStackThruIndex[0]        = 0;
-        pStackNotationRule[0]     = null;
-        pStackIsMatch[0]          = false;
-        pStackIsGimme[0]          = false;
+        pStackFromIndex[0] = 0;
+        pStackThruIndex[0] = 0;
+        pStackNotationRule[0] = null;
+        pStackIsMatch[0] = false;
+        pStackIsGimme[0] = false;
 
         /**
          *  Initial pass turns input parse expression into
@@ -288,66 +262,45 @@ public class BottomUpParser implements GrammaticalParser {
          */
 
         Cnst cnst;
-        for (int i = 0; i < parseNodeHolderExpr.length; i++) {
+        for (int i = 0; i < parseNodeHolderExpr.length; i++)
             if (parseNodeHolderExpr[i].mObj.isCnst()) {
                 cnst = (Cnst)parseNodeHolderExpr[i].mObj;
-                if (cnst.getIsGrammaticalTyp()) {
+                if (cnst.getIsGrammaticalTyp())
                     throw new VerifyException(
-                      GrammarConstants.ERRMSG_EXPR_USES_TYP_AS_CNST_1
-                      + cnst.toString()
-                      +
-                      GrammarConstants.ERRMSG_EXPR_USES_TYP_AS_CNST_2
-                      );
-                }
-                else {
-                    pStackRFE[0][i]
-                                  =
-                        (Cnst)parseNodeHolderExpr[i].mObj;
-                }
+                        GrammarConstants.ERRMSG_EXPR_USES_TYP_AS_CNST_1
+                            + cnst.toString()
+                            + GrammarConstants.ERRMSG_EXPR_USES_TYP_AS_CNST_2);
+                else
+                    pStackRFE[0][i] = (Cnst)parseNodeHolderExpr[i].mObj;
             }
-            else {
-                pStackRFE[0][i]   =
-                    parseNodeHolderExpr[i].parseNode.getStmt(
-                        ).getTyp();
-            }
-        }
-        pStackRFECnt[0]           = parseNodeHolderExpr.length;
-        pStackIndex               = 0;
+            else
+                pStackRFE[0][i] = parseNodeHolderExpr[i].parseNode.getStmt()
+                    .getTyp();
+        pStackRFECnt[0] = parseNodeHolderExpr.length;
+        pStackIndex = 0;
 
-
-        governor                  = 0;
-        governorLimit             = parseNodeHolderExpr.length
+        governor = 0;
+        governorLimit = parseNodeHolderExpr.length
             * GrammarConstants.BOTTOM_UP_GOVERNOR_LIMIT;
-        if (parseTreeArray.length > 1) {
-            governorLimit        *=
-            GrammarConstants.BOTTOM_UP_GOVERNOR_LIMIT_MAX;
-        }
+        if (parseTreeArray.length > 1)
+            governorLimit *= GrammarConstants.BOTTOM_UP_GOVERNOR_LIMIT_MAX;
 
         stackLoop: do {
-            if (++governor > governorLimit) {
+            if (++governor > governorLimit)
                 throw new VerifyException(
-                 GrammarConstants.ERRMSG_BU_GOVERNOR_LIMIT_EXCEEDED_1
-                 + governorLimit
-                 +
-                 GrammarConstants.ERRMSG_BU_GOVERNOR_LIMIT_EXCEEDED_2
-                 );
-            }
+                    GrammarConstants.ERRMSG_BU_GOVERNOR_LIMIT_EXCEEDED_1
+                        + governorLimit
+                        + GrammarConstants.ERRMSG_BU_GOVERNOR_LIMIT_EXCEEDED_2);
 
             if (findMatch()) {
-                if (pStackRFECnt[pStackIndex] ==
-                        (pStackThruIndex[pStackIndex] -
-                         pStackFromIndex[pStackIndex])
-                         + 1) {
-                    ParseTree pTree
-                                  = generateParseTree();
-                    if (!pTree.isDup(parseCnt,
-                                     parseTreeArray)) {
-                        parseTreeArray[parseCnt++]
-                                  = pTree;
-                        if (parseCnt
-                                 >= parseTreeArray.length) {
+                if (pStackRFECnt[pStackIndex] == pStackThruIndex[pStackIndex]
+                    - pStackFromIndex[pStackIndex] + 1)
+                {
+                    final ParseTree pTree = generateParseTree();
+                    if (!pTree.isDup(parseCnt, parseTreeArray)) {
+                        parseTreeArray[parseCnt++] = pTree;
+                        if (parseCnt >= parseTreeArray.length)
                             break stackLoop;
-                        }
                     }
                 }
                 else {
@@ -355,76 +308,63 @@ public class BottomUpParser implements GrammaticalParser {
                     ++pStackIndex;
                 }
             }
-            else {
+            else
                 --pStackIndex;
-            }
         } while (pStackIndex >= 0);
 
     }
 
-    private   boolean findMatch() {
+    private boolean findMatch() {
 
-        while (pStackIsGimme[pStackIndex]) {
-            if (--pStackIndex < 0) {
+        while (pStackIsGimme[pStackIndex])
+            if (--pStackIndex < 0)
                 return false;
-            }
-        }
 
-        if (pStackIsMatch[pStackIndex]) {
+        if (pStackIsMatch[pStackIndex])
             return findNonGimmeMatch();
-        }
         else {
-            if (findGimmeMatch()) {
+            if (findGimmeMatch())
                 return true;
-            }
             return findNonGimmeMatch();
         }
     }
 
-    private   boolean findNonGimmeMatch() {
+    private boolean findNonGimmeMatch() {
 
-        int                 left;
-        int                 curr;
-        GRNode              currLevelRoot;
-        GRNode              foundLevelNode;
-        NotationRule        foundNotationRule;
-        Cnst[]              rfe = pStackRFE[pStackIndex];
+        int left;
+        int curr;
+        GRNode currLevelRoot;
+        GRNode foundLevelNode;
+        NotationRule foundNotationRule;
+        final Cnst[] rfe = pStackRFE[pStackIndex];
         if (!pStackIsMatch[pStackIndex]) {
-            left            = 0;
-            curr            = 0;
-            currLevelRoot   = rfe[0].getGRRoot();
+            left = 0;
+            curr = 0;
+            currLevelRoot = rfe[0].getGRRoot();
         }
         else {
-            left            = pStackFromIndex[pStackIndex];
-            curr            = pStackThruIndex[pStackIndex] + 1;
-            currLevelRoot   =
-                pStackNotationRule[pStackIndex].getGRTail(
-                    ).elementDownLevelRoot();
+            left = pStackFromIndex[pStackIndex];
+            curr = pStackThruIndex[pStackIndex] + 1;
+            currLevelRoot = pStackNotationRule[pStackIndex].getGRTail()
+                .elementDownLevelRoot();
         }
 
         outerLoop: do {
             innerLoop: do {
-                if (curr >= pStackRFECnt[pStackIndex] ||
-                    currLevelRoot == null) {
+                if (curr >= pStackRFECnt[pStackIndex] || currLevelRoot == null)
                     break innerLoop;
-                }
-                if ((foundLevelNode = currLevelRoot.find(rfe[curr]))
-                     == null) {
+                if ((foundLevelNode = currLevelRoot.find(rfe[curr])) == null)
                     break innerLoop;
-                }
-                foundNotationRule =
-                    foundLevelNode.elementNotationRule();
+                foundNotationRule = foundLevelNode.elementNotationRule();
                 if (foundNotationRule != null
-                    &&
-                    (foundNotationRule.getIsGimmeMatchNbr() != 1)
-                    &&
-                    foundNotationRule.getMaxSeqNbr() <= highestSeq) {
-                    pStackNotationRule[pStackIndex]  =
-                                                    foundNotationRule;
-                    pStackFromIndex[pStackIndex]     = left;
-                    pStackThruIndex[pStackIndex]     = curr;
-                    pStackIsMatch[pStackIndex]       = true;
-                    pStackIsGimme[pStackIndex]       = false;
+                    && foundNotationRule.getIsGimmeMatchNbr() != 1
+                    && foundNotationRule.getMaxSeqNbr() <= highestSeq)
+                {
+                    pStackNotationRule[pStackIndex] = foundNotationRule;
+                    pStackFromIndex[pStackIndex] = left;
+                    pStackThruIndex[pStackIndex] = curr;
+                    pStackIsMatch[pStackIndex] = true;
+                    pStackIsGimme[pStackIndex] = false;
 
                     return true;
                 }
@@ -432,116 +372,101 @@ public class BottomUpParser implements GrammaticalParser {
                 currLevelRoot = foundLevelNode.elementDownLevelRoot();
             } while (true);
 
-            if (++left >= pStackRFECnt[pStackIndex]) {
+            if (++left >= pStackRFECnt[pStackIndex])
                 break outerLoop;
-            }
-            curr            = left;
-            currLevelRoot   = rfe[curr].getGRRoot();
+            curr = left;
+            currLevelRoot = rfe[curr].getGRRoot();
         } while (true);
 
         return false;
     }
 
-    private   boolean findGimmeMatch() {
+    private boolean findGimmeMatch() {
 
-        int                 left;
-        int                 curr;
-        GRNode              currLevelRoot;
-        GRNode              foundLevelNode;
-        NotationRule        foundNotationRule;
-        Cnst[]              rfe = pStackRFE[pStackIndex];
+        int left;
+        int curr;
+        GRNode currLevelRoot;
+        GRNode foundLevelNode;
+        NotationRule foundNotationRule;
+        final Cnst[] rfe = pStackRFE[pStackIndex];
         if (!pStackIsMatch[pStackIndex]) {
-            left            = 0;
-            curr            = 0;
-            currLevelRoot   = rfe[0].getGRRoot();
+            left = 0;
+            curr = 0;
+            currLevelRoot = rfe[0].getGRRoot();
         }
         else {
-            left            = pStackFromIndex[pStackIndex];
-            curr            = pStackThruIndex[pStackIndex] + 1;
-            currLevelRoot   =
-                pStackNotationRule[pStackIndex].getGRTail(
-                    ).elementDownLevelRoot();
+            left = pStackFromIndex[pStackIndex];
+            curr = pStackThruIndex[pStackIndex] + 1;
+            currLevelRoot = pStackNotationRule[pStackIndex].getGRTail()
+                .elementDownLevelRoot();
         }
 
         outerLoop: do {
             innerLoop: do {
-                if (curr >= pStackRFECnt[pStackIndex] ||
-                    currLevelRoot == null) {
+                if (curr >= pStackRFECnt[pStackIndex] || currLevelRoot == null)
                     break innerLoop;
-                }
-                if ((foundLevelNode = currLevelRoot.find(rfe[curr]))
-                     == null) {
+                if ((foundLevelNode = currLevelRoot.find(rfe[curr])) == null)
                     break innerLoop;
-                }
-                foundNotationRule =
-                    foundLevelNode.elementNotationRule();
+                foundNotationRule = foundLevelNode.elementNotationRule();
                 if (foundNotationRule != null
-                    &&
-                    (foundNotationRule.getIsGimmeMatchNbr() == 1)
-                    &&
-                    foundNotationRule.getMaxSeqNbr() <= highestSeq) {
+                    && foundNotationRule.getIsGimmeMatchNbr() == 1
+                    && foundNotationRule.getMaxSeqNbr() <= highestSeq)
+                {
 
-                    pStackNotationRule[pStackIndex]  =
-                                                foundNotationRule;
-                    pStackFromIndex[pStackIndex]     = left;
-                    pStackThruIndex[pStackIndex]     = curr;
-                    pStackIsMatch[pStackIndex]       = true;
-                    pStackIsGimme[pStackIndex]       = true;
+                    pStackNotationRule[pStackIndex] = foundNotationRule;
+                    pStackFromIndex[pStackIndex] = left;
+                    pStackThruIndex[pStackIndex] = curr;
+                    pStackIsMatch[pStackIndex] = true;
+                    pStackIsGimme[pStackIndex] = true;
                     return true;
                 }
                 ++curr;
                 currLevelRoot = foundLevelNode.elementDownLevelRoot();
             } while (true);
 
-            if (++left >= pStackRFECnt[pStackIndex]) {
+            if (++left >= pStackRFECnt[pStackIndex])
                 break outerLoop;
-            }
-            curr            = left;
-            currLevelRoot   = rfe[curr].getGRRoot();
+            curr = left;
+            currLevelRoot = rfe[curr].getGRRoot();
         } while (true);
 
         return false;
     }
 
-    private   void applyNextNotationRuleMatch() {
+    private void applyNextNotationRuleMatch() {
 
-        int nextEntry                  = pStackIndex + 1;
+        final int nextEntry = pStackIndex + 1;
 
-        Cnst[] rfe                     = pStackRFE[pStackIndex];
-        Cnst[] rewrittenExpr           = pStackRFE[nextEntry];
+        final Cnst[] rfe = pStackRFE[pStackIndex];
+        final Cnst[] rewrittenExpr = pStackRFE[nextEntry];
 
-        pStackRFECnt[nextEntry]        = pStackRFECnt[pStackIndex]   -
-                                       (pStackThruIndex[pStackIndex] -
-                                        pStackFromIndex[pStackIndex]);
-        pStackFromIndex[nextEntry]     = 0;
-        pStackThruIndex[nextEntry]     = 0;
-        pStackNotationRule[nextEntry]  = null;
-        pStackIsMatch[nextEntry]       = false;
-        pStackIsGimme[nextEntry]       = false;
+        pStackRFECnt[nextEntry] = pStackRFECnt[pStackIndex]
+            - (pStackThruIndex[pStackIndex] - pStackFromIndex[pStackIndex]);
+        pStackFromIndex[nextEntry] = 0;
+        pStackThruIndex[nextEntry] = 0;
+        pStackNotationRule[nextEntry] = null;
+        pStackIsMatch[nextEntry] = false;
+        pStackIsGimme[nextEntry] = false;
 
-        int   src            = 0;
-        int   dest           = 0;
+        int src = 0;
+        int dest = 0;
 
-        while (src < pStackFromIndex[pStackIndex]) {
+        while (src < pStackFromIndex[pStackIndex])
             rewrittenExpr[dest++] = rfe[src++];
-        }
 
-        rewrittenExpr[dest++] =
-            pStackNotationRule[pStackIndex].getGrammarRuleTyp();
+        rewrittenExpr[dest++] = pStackNotationRule[pStackIndex]
+            .getGrammarRuleTyp();
         src = pStackThruIndex[pStackIndex] + 1;
 
-        while (src < pStackRFECnt[pStackIndex]) {
+        while (src < pStackRFECnt[pStackIndex])
             rewrittenExpr[dest++] = rfe[src++];
-        }
         return;
     }
 
+    private ParseTree generateParseTree() {
 
-    private   ParseTree generateParseTree() {
-
-        for (int i = 0; i < parseNodeHolderExpr.length; i++) {
+        for (int i = 0; i < parseNodeHolderExpr.length; i++)
             rewrittenExpr[i] = parseNodeHolderExpr[i];
-        }
 
         int from;
         int thru;
@@ -549,97 +474,81 @@ public class BottomUpParser implements GrammaticalParser {
         int j;
         int src;
         int dest;
-        for (int stackIndex = 0; stackIndex <= pStackIndex;
-                                                    stackIndex++) {
-            from            = pStackFromIndex[stackIndex];
-            thru            = pStackThruIndex[stackIndex];
-            exprCnt         = pStackRFECnt[stackIndex];
+        for (int stackIndex = 0; stackIndex <= pStackIndex; stackIndex++) {
+            from = pStackFromIndex[stackIndex];
+            thru = pStackThruIndex[stackIndex];
+            exprCnt = pStackRFECnt[stackIndex];
 
-            //load var hyps and previously generated parse node
-            //holders int paramArray
+            // load var hyps and previously generated parse node
+            // holders int paramArray
             j = 0;
-            for (int i = from; i <= thru; i++) {
-                if (!rewrittenExpr[i].mObj.isCnst()) {
+            for (int i = from; i <= thru; i++)
+                if (!rewrittenExpr[i].mObj.isCnst())
                     paramArray[j++] = rewrittenExpr[i];
-                }
-            }
 
-            //store new ParseNodeHolder for the Notation Rule Match
+            // store new ParseNodeHolder for the Notation Rule Match
             dest = from;
-            rewrittenExpr[dest++] =
-                new ParseNodeHolder(
-                    pStackNotationRule[
-                        stackIndex].buildGrammaticalParseNode(
-                            paramArray));
+            rewrittenExpr[dest++] = new ParseNodeHolder(
+                pStackNotationRule[stackIndex]
+                    .buildGrammaticalParseNode(paramArray));
 
-            //shift left all remaining elements
+            // shift left all remaining elements
             src = thru + 1;
-            if (src != dest) {
-                while (src < exprCnt) {
+            if (src != dest)
+                while (src < exprCnt)
                     rewrittenExpr[dest++] = rewrittenExpr[src++];
-                }
-            }
         }
 
-        //the final rewrittenExpr has one element, and all we
-        //want from it is its ParseNode, the root of our new tree.
+        // the final rewrittenExpr has one element, and all we
+        // want from it is its ParseNode, the root of our new tree.
         return new ParseTree(rewrittenExpr[0].parseNode);
     }
 
-
-    private   void reInitArrays(int retry) throws VerifyException {
+    private void reInitArrays(final int retry) throws VerifyException {
         if (retryCnt == -1) {
-            retryCnt               = 0;
+            retryCnt = 0;
             initArrays(maxFormulaLength);
             return;
         }
         retryCnt = retry;
 
-        if (pStackIndex > pStackHighwater) {
+        if (pStackIndex > pStackHighwater)
             pStackHighwater = pStackIndex;
-        }
 
         if (retryCnt == 0) {
             pStackIndex = -1;
             return;
         }
 
-        if (pStackMax <
-            GrammarConstants.BOTTOM_UP_STACK_HARD_FAILURE_MAX) {
+        if (pStackMax < GrammarConstants.BOTTOM_UP_STACK_HARD_FAILURE_MAX) {
             pStackMax *= 2;
-            if (pStackMax >
-                GrammarConstants.BOTTOM_UP_STACK_HARD_FAILURE_MAX) {
-                pStackMax         =
-                    GrammarConstants.BOTTOM_UP_STACK_HARD_FAILURE_MAX;
-            }
+            if (pStackMax > GrammarConstants.BOTTOM_UP_STACK_HARD_FAILURE_MAX)
+                pStackMax = GrammarConstants.BOTTOM_UP_STACK_HARD_FAILURE_MAX;
             initArrays(pStackMax);
         }
-        else {
+        else
             throw new VerifyException(
-                GrammarConstants.ERRMSG_BU_PARSE_STACK_OVERFLOW_1
-                + pStackMax
-                + GrammarConstants.ERRMSG_BU_PARSE_STACK_OVERFLOW_2);
-        }
+                GrammarConstants.ERRMSG_BU_PARSE_STACK_OVERFLOW_1 + pStackMax
+                    + GrammarConstants.ERRMSG_BU_PARSE_STACK_OVERFLOW_2);
 
     }
 
-    private   void initArrays(int max) {
+    private void initArrays(final int max) {
 
-        pStackIndex               = -1;
-        pStackMax                 = max;
-        pStackHighwater           = 0;
-        pStackRFE                 = new Cnst[pStackMax][];
-        for (int i = 0; i < pStackMax; i++) {
-            pStackRFE[i]          = new Cnst[pStackMax];
-        }
-        pStackRFECnt              = new int[pStackMax];
-        pStackFromIndex           = new int[pStackMax];
-        pStackThruIndex           = new int[pStackMax];
-        pStackNotationRule        = new NotationRule[pStackMax];
-        pStackIsMatch             = new boolean[pStackMax];
-        pStackIsGimme             = new boolean[pStackMax];
+        pStackIndex = -1;
+        pStackMax = max;
+        pStackHighwater = 0;
+        pStackRFE = new Cnst[pStackMax][];
+        for (int i = 0; i < pStackMax; i++)
+            pStackRFE[i] = new Cnst[pStackMax];
+        pStackRFECnt = new int[pStackMax];
+        pStackFromIndex = new int[pStackMax];
+        pStackThruIndex = new int[pStackMax];
+        pStackNotationRule = new NotationRule[pStackMax];
+        pStackIsMatch = new boolean[pStackMax];
+        pStackIsGimme = new boolean[pStackMax];
 
-        rewrittenExpr             = new ParseNodeHolder[pStackMax];
-        paramArray                = new ParseNodeHolder[pStackMax];
+        rewrittenExpr = new ParseNodeHolder[pStackMax];
+        paramArray = new ParseNodeHolder[pStackMax];
     }
 }

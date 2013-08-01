@@ -90,22 +90,20 @@
 
 package mmj.pa;
 
-import mmj.pa.*;
-import mmj.lang.Assrt;
-import mmj.lang.Theorem;
-import mmj.lang.Messages;
-import mmj.tmff.TMFFException;
-import mmj.tmff.TMFFConstants;
-import mmj.tl.*;
-
-import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
+
 import javax.swing.*;
-import javax.swing.text.*;
 import javax.swing.event.*;
-import javax.swing.filechooser.*;
+import javax.swing.text.DefaultEditorKit;
 import javax.swing.undo.*;
+
+import mmj.lang.Messages;
+import mmj.lang.Theorem;
+import mmj.tl.*;
+import mmj.tmff.TMFFConstants;
+import mmj.tmff.TMFFException;
 
 /**
  *  The <code>ProofAsstGUI</code> class is the main user
@@ -132,55 +130,52 @@ import javax.swing.undo.*;
 public class ProofAsstGUI {
 
     // save constructor parms: proofAsst, proofAsstPreferences
-    private ProofAsst               proofAsst;
-    private ProofAsstPreferences
-                                    proofAsstPreferences;
+    private final ProofAsst proofAsst;
+    private final ProofAsstPreferences proofAsstPreferences;
 
-    private TheoremLoader           theoremLoader;
-    private TlPreferences           tlPreferences;
+    private TheoremLoader theoremLoader;
+    private TlPreferences tlPreferences;
 
-    private JFrame                  mainFrame;
+    private JFrame mainFrame;
 
-    private JTextArea               proofTextArea;
+    private JTextArea proofTextArea;
 
-    private JScrollPane             proofTextScrollPane;
+    private JScrollPane proofTextScrollPane;
 
-    private JSplitPane              myPane;
-    private JTextArea               proofMessageArea;
-    private JScrollPane             proofMessageScrollPane;
+    private JSplitPane myPane;
+    private JTextArea proofMessageArea;
+    private JScrollPane proofMessageScrollPane;
 
-    private String                  proofTheoremLabel = "";
+    private String proofTheoremLabel = "";
 
-    private ProofTextChanged        proofTextChanged;
-    private int                     nbrTimesSavedSinceNew;
+    private ProofTextChanged proofTextChanged;
+    private int nbrTimesSavedSinceNew;
 
-    private UndoManager             undoManager;
-    private ProofAsstGUIUndoableEditListener
-            proofAsstGUIUndoableEditListener;
-    private JMenuItem               editUndoItem;
-    private JMenuItem               editRedoItem;
+    private UndoManager undoManager;
+    private ProofAsstGUIUndoableEditListener proofAsstGUIUndoableEditListener;
+    private JMenuItem editUndoItem;
+    private JMenuItem editRedoItem;
 
-    private JFileChooser            fileChooser;
-    private String                  screenTitle;
+    private JFileChooser fileChooser;
+    private String screenTitle;
 
-    private JFileChooser            mmtFolderChooser;
+    private JFileChooser mmtFolderChooser;
 
-    private JMenuItem               cancelRequestItem;
+    private JMenuItem cancelRequestItem;
 
-    private JMenuItem               fontStyleBoldItem;
-    private JMenuItem               fontStylePlainItem;
+    private JMenuItem fontStyleBoldItem;
+    private JMenuItem fontStylePlainItem;
 
-    private JPopupMenu              popupMenu;
+    private JPopupMenu popupMenu;
 
-    private RequestThreadStuff
-                                    requestThreadStuff;
+    private RequestThreadStuff requestThreadStuff;
 
-    private Font                    proofFont;
+    private Font proofFont;
 
-    private RequestMessagesGUI      requestMessagesGUI;
+    private RequestMessagesGUI requestMessagesGUI;
 
-    private StepSelectorDialog      stepSelectorDialog;
-    private ProofAsstGUI            proofAsstGUI;
+    private StepSelectorDialog stepSelectorDialog;
+    private final ProofAsstGUI proofAsstGUI;
 
     /**
      *  Sequence number of Proof Worksheet theorem.
@@ -189,7 +184,7 @@ public class ProofAsstGUI {
      *  Otherwise, set to LOC_AFTER stmt sequnce + 1
      *  if LOC_AFTER input (else Integer.MAX_VALUE).
      */
-    private int currProofMaxSeq   = Integer.MAX_VALUE;
+    private int currProofMaxSeq = Integer.MAX_VALUE;
 
     /**
      *  Get sequence number of Proof Worksheet theorem.
@@ -213,8 +208,8 @@ public class ProofAsstGUI {
      *
      *  @param currProofMaxSeq number of Proof Worksheet theorem.
      */
-    public void setCurrProofMaxSeq(int currProofMaxSeq) {
-        this.currProofMaxSeq      = currProofMaxSeq;
+    public void setCurrProofMaxSeq(final int currProofMaxSeq) {
+        this.currProofMaxSeq = currProofMaxSeq;
     }
 
     /**
@@ -222,14 +217,12 @@ public class ProofAsstGUI {
      *  ProofAsstGUI invoked directly from command line.
      */
     public ProofAsstGUI() {
-        proofAsst                 = null;
-        proofAsstPreferences      = new ProofAsstPreferences();
-        proofAsstGUI              = this;
+        proofAsst = null;
+        proofAsstPreferences = new ProofAsstPreferences();
+        proofAsstGUI = this;
 
-        buildFileChooser(
-            new File(
-                    PaConstants.SAMPLE_PROOF_LABEL
-                    + proofAsstPreferences.getDefaultFileNameSuffix()));
+        buildFileChooser(new File(PaConstants.SAMPLE_PROOF_LABEL
+            + proofAsstPreferences.getDefaultFileNameSuffix()));
 
         updateScreenTitle(fileChooser.getSelectedFile());
 
@@ -243,79 +236,65 @@ public class ProofAsstGUI {
      *  @param proofAsstPreferences variable settings
      *  @param theoremLoader mmj.tl.TheoremLoader object
      */
-    public ProofAsstGUI(ProofAsst            proofAsst,
-                        ProofAsstPreferences proofAsstPreferences,
-                        TheoremLoader        theoremLoader) {
+    public ProofAsstGUI(final ProofAsst proofAsst,
+        final ProofAsstPreferences proofAsstPreferences,
+        final TheoremLoader theoremLoader)
+    {
 
-        this.proofAsst            = proofAsst;
+        this.proofAsst = proofAsst;
         this.proofAsstPreferences = proofAsstPreferences;
 
-        this.theoremLoader        = theoremLoader;
-        tlPreferences             = theoremLoader.getTlPreferences();
+        this.theoremLoader = theoremLoader;
+        tlPreferences = theoremLoader.getTlPreferences();
         buildMMTFolderChooser();
 
-        proofAsstGUI              = this;
+        proofAsstGUI = this;
 
-        File startupProofWorksheetFile
-                                  =
-            proofAsstPreferences.getStartupProofWorksheetFile();
-
+        final File startupProofWorksheetFile = proofAsstPreferences
+            .getStartupProofWorksheetFile();
 
         if (startupProofWorksheetFile == null) {
-            if (proofAsstPreferences.getProofFolder() != null) {
-                buildFileChooser(
-                    new File(
-                        proofAsstPreferences.getProofFolder(),
-                        PaConstants.SAMPLE_PROOF_LABEL
-                        + proofAsstPreferences.
-                            getDefaultFileNameSuffix()));
-            }
-            else {
-                buildFileChooser(
-                    new File(
-                        PaConstants.SAMPLE_PROOF_LABEL
-                        + proofAsstPreferences.
-                            getDefaultFileNameSuffix()));
-            }
+            if (proofAsstPreferences.getProofFolder() != null)
+                buildFileChooser(new File(
+                    proofAsstPreferences.getProofFolder(),
+                    PaConstants.SAMPLE_PROOF_LABEL
+                        + proofAsstPreferences.getDefaultFileNameSuffix()));
+            else
+                buildFileChooser(new File(PaConstants.SAMPLE_PROOF_LABEL
+                    + proofAsstPreferences.getDefaultFileNameSuffix()));
             updateScreenTitle(fileChooser.getSelectedFile());
             buildGUI(PaConstants.SAMPLE_PROOF_TEXT);
         }
         else {
-            buildFileChooser(
-                startupProofWorksheetFile);
+            buildFileChooser(startupProofWorksheetFile);
             updateScreenTitle(fileChooser.getSelectedFile());
-            buildGUI(
-                readProofTextFromFile(
-                    startupProofWorksheetFile));
+            buildGUI(readProofTextFromFile(startupProofWorksheetFile));
         }
     }
 
-    public void unifyWithStepSelectorChoice(
-                            StepRequest stepRequest) {
+    public void unifyWithStepSelectorChoice(final StepRequest stepRequest) {
 
         startUnificationAction(false, // no renum
-                               null,  // no preprocess request
-                               stepRequest, // s/b SELECTOR_CHOICE
-                               null); // no TL Request
+            null, // no preprocess request
+            stepRequest, // s/b SELECTOR_CHOICE
+            null); // no TL Request
     }
 
-    private void buildGUI(String newProofText) {
+    private void buildGUI(final String newProofText) {
 
-        displayRequestMessagesGUI(
-            PaConstants.PROOF_ASST_GUI_STARTUP_MSG);
+        displayRequestMessagesGUI(PaConstants.PROOF_ASST_GUI_STARTUP_MSG);
 
         JFrame.setDefaultLookAndFeelDecorated(true);
 
-        mainFrame                 = buildMainFrame();
+        mainFrame = buildMainFrame();
 
-        JMenuBar menuBar          = buildProofMenuBar();
+        final JMenuBar menuBar = buildProofMenuBar();
 
         mainFrame.setJMenuBar(menuBar);
 
-        popupMenu                 = buildPopupMenu();
+        popupMenu = buildPopupMenu();
 
-        myPane                    =
-            new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        myPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 
         if (proofAsstPreferences.getTextAtTop()) {
             buildGUIProofTextStuff(newProofText);
@@ -330,45 +309,32 @@ public class ProofAsstGUI {
 
     }
 
-    private void buildGUIProofTextStuff(String newProofText) {
-        proofTextArea             =
-            buildProofTextArea(newProofText);
+    private void buildGUIProofTextStuff(final String newProofText) {
+        proofTextArea = buildProofTextArea(newProofText);
 
-        proofTextScrollPane       =
-            buildProofTextScrollPane(
-                proofTextArea);
+        proofTextScrollPane = buildProofTextScrollPane(proofTextArea);
 
-        proofTextArea.
-            addMouseListener(new PopupMenuListener());
+        proofTextArea.addMouseListener(new PopupMenuListener());
 
-        proofTextArea.
-            addMouseListener(new MouseAdapter() {
-                public void mouseClicked(MouseEvent e) {
-                    if (e.getClickCount() == 2) {
-                        unifyWithStepSelectorChoice(
-                            new StepRequest(
-                                PaConstants.
-                                    STEP_REQUEST_SELECTOR_SEARCH));
-
-                    }
-                }
-            });
+        proofTextArea.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(final MouseEvent e) {
+                if (e.getClickCount() == 2)
+                    unifyWithStepSelectorChoice(new StepRequest(
+                        PaConstants.STEP_REQUEST_SELECTOR_SEARCH));
+            }
+        });
 
         myPane.add(proofTextScrollPane);
 
     }
 
     private void buildGUIMessageTextStuff() {
-        proofMessageArea          =
-            buildProofMessageArea(
-                PaConstants.PROOF_ASST_GUI_STARTUP_MSG);
+        proofMessageArea = buildProofMessageArea(PaConstants.PROOF_ASST_GUI_STARTUP_MSG);
 
-        proofMessageScrollPane    =
-            buildProofMessageScrollPane(
-                proofMessageArea);
+        proofMessageScrollPane = buildProofMessageScrollPane(proofMessageArea);
 
-        proofMessageArea.addMouseListener(
-            new PopupMenuListener());
+        proofMessageArea.addMouseListener(new PopupMenuListener());
 
         myPane.add(proofMessageScrollPane);
     }
@@ -378,87 +344,64 @@ public class ProofAsstGUI {
     }
 
     private void buildMMTFolderChooser() {
-        MMTFolder mmtFolder       = tlPreferences.getMMTFolder();
-        if (mmtFolder.getFolderFile() == null) {
-            mmtFolderChooser      =
-                new JFileChooser();
-        }
+        final MMTFolder mmtFolder = tlPreferences.getMMTFolder();
+        if (mmtFolder.getFolderFile() == null)
+            mmtFolderChooser = new JFileChooser();
         else {
-            mmtFolderChooser      =
-                new JFileChooser(mmtFolder.getFolderFile());
-            mmtFolderChooser.
-                setSelectedFile(mmtFolder.getFolderFile());
+            mmtFolderChooser = new JFileChooser(mmtFolder.getFolderFile());
+            mmtFolderChooser.setSelectedFile(mmtFolder.getFolderFile());
         }
 
-        mmtFolderChooser.
-            setFileSelectionMode(
-                JFileChooser.DIRECTORIES_ONLY);
-        mmtFolderChooser.
-            setAcceptAllFileFilterUsed(false);
+        mmtFolderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        mmtFolderChooser.setAcceptAllFileFilterUsed(false);
     }
 
-    private void buildFileChooser(File defaultFile) {
+    private void buildFileChooser(final File defaultFile) {
 
-        fileChooser               =
-            new JFileChooser(proofAsstPreferences.getProofFolder());
+        fileChooser = new JFileChooser(proofAsstPreferences.getProofFolder());
 
-        fileChooser.addChoosableFileFilter(
-            new proofAsstFileFilter());
+        fileChooser.addChoosableFileFilter(new proofAsstFileFilter());
 
         fileChooser.setAcceptAllFileFilterUsed(false);
 
         fileChooser.setSelectedFile(defaultFile);
     }
 
-    private void updateFileChooserFileForProofLabel(String label) {
-        File prevFile             =
-                fileChooser.getSelectedFile();
+    private void updateFileChooserFileForProofLabel(final String label) {
+        final File prevFile = fileChooser.getSelectedFile();
 
-        String prevParent         = null;
+        String prevParent = null;
 
-        if (prevFile != null) {
-            prevParent            = prevFile.getParent();
-        }
+        if (prevFile != null)
+            prevParent = prevFile.getParent();
 
-        File newFile              =
-            new File(prevParent,
-                     label
-                     + proofAsstPreferences.
-                        getDefaultFileNameSuffix());
+        final File newFile = new File(prevParent, label
+            + proofAsstPreferences.getDefaultFileNameSuffix());
 
         fileChooser.setSelectedFile(newFile);
 
     }
 
-
-    private class proofAsstFileFilter
-                extends javax.swing.filechooser.FileFilter {
-        public boolean accept(File file) {
-            if (file.isDirectory()) {
+    private class proofAsstFileFilter extends
+        javax.swing.filechooser.FileFilter
+    {
+        @Override
+        public boolean accept(final File file) {
+            if (file.isDirectory())
                 return true;
-            }
-            String fileName = file.getName();
+            final String fileName = file.getName();
             if (fileName != null
-                &&
-                (fileName.endsWith(
-                    PaConstants.
-                        PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP)
-                     ||
-                 fileName.endsWith(
-                    PaConstants.
-                        PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP2)
-                     ||
-                 fileName.endsWith(
-                    PaConstants.
-                        PA_GUI_FILE_CHOOSER_FILE_SUFFIX_TXT)
-                     ||
-                 fileName.endsWith(
-                    PaConstants.
-                        PA_GUI_FILE_CHOOSER_FILE_SUFFIX_TXT2))) {
+                && (fileName
+                    .endsWith(PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP)
+                    || fileName
+                        .endsWith(PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP2)
+                    || fileName
+                        .endsWith(PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_TXT) || fileName
+                        .endsWith(PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_TXT2)))
                 return true;
-            }
             return false;
         }
+        @Override
         public String getDescription() {
             return PaConstants.PA_GUI_FILE_CHOOSER_DESCRIPTION;
         }
@@ -467,23 +410,26 @@ public class ProofAsstGUI {
 
     private class ProofTextChanged implements DocumentListener {
         boolean changes;
-        public ProofTextChanged(boolean changes) {
+
+        public ProofTextChanged(final boolean changes) {
             this.changes = changes;
         }
         public synchronized boolean getChanges() {
             return changes;
         }
-        public synchronized void setChanges(
-                                    boolean changes) {
+        public synchronized void setChanges(final boolean changes) {
             this.changes = changes;
         }
-        public void changedUpdate(DocumentEvent e) {
+        @Override
+        public void changedUpdate(final DocumentEvent e) {
             setChanges(true);
         }
-        public void insertUpdate(DocumentEvent e) {
+        @Override
+        public void insertUpdate(final DocumentEvent e) {
             setChanges(true);
         }
-        public void removeUpdate(DocumentEvent e) {
+        @Override
+        public void removeUpdate(final DocumentEvent e) {
             setChanges(true);
         }
     }
@@ -495,33 +441,30 @@ public class ProofAsstGUI {
         }
     }
 
-    private class ProofAsstGUIUndoableEditListener
-                   implements UndoableEditListener {
+    private class ProofAsstGUIUndoableEditListener implements
+        UndoableEditListener
+    {
+        @Override
         public void undoableEditHappened(
-                        UndoableEditEvent undoableEditEvent) {
-            undoManager.addEdit(
-                undoableEditEvent.getEdit());
+            final UndoableEditEvent undoableEditEvent)
+        {
+            undoManager.addEdit(undoableEditEvent.getEdit());
             updateUndoRedoItems();
         }
     }
 
     private void updateUndoRedoItems() {
 
-        if (undoManager.canUndo()) {
+        if (undoManager.canUndo())
             editUndoItem.setEnabled(true);
-        }
-        else {
+        else
             editUndoItem.setEnabled(false);
-        }
 
-        if (undoManager.canRedo()) {
+        if (undoManager.canRedo())
             editRedoItem.setEnabled(true);
-        }
-        else {
+        else
             editRedoItem.setEnabled(false);
-        }
     }
-
 
     public JFrame getMainFrame() {
         return mainFrame;
@@ -529,141 +472,108 @@ public class ProofAsstGUI {
     private String getProofTextAreaText() {
         return proofTextArea.getText();
     }
-    private void setProofTextAreaText(String s) {
+    private void setProofTextAreaText(final String s) {
         proofTextArea.setText(s);
     }
 
-    private void setProofTextAreaCursorPos(
-                                ProofWorksheet w,
-                                int            proofTextLength) {
+    private void setProofTextAreaCursorPos(final ProofWorksheet w,
+        final int proofTextLength)
+    {
 
-        ProofAsstCursor cursor
-                                  = w.getProofCursor();
+        final ProofAsstCursor cursor = w.getProofCursor();
 
         if (cursor.proofWorkStmt != null) {
 
-            int n                 =
-                w.computeProofWorkStmtLineNbr(cursor.proofWorkStmt);
+            final int n = w.computeProofWorkStmtLineNbr(cursor.proofWorkStmt);
 
             if (n < 1) {
-                //default it
-                cursor.caretLine  = 1;
-                cursor.caretCol   = 1;
+                // default it
+                cursor.caretLine = 1;
+                cursor.caretCol = 1;
             }
             else {
-                cursor.caretLine  = n;
-                cursor.caretCol   =
-                    cursor.proofWorkStmt.
-                        computeFieldIdCol(
-                            cursor.fieldId);
+                cursor.caretLine = n;
+                cursor.caretCol = cursor.proofWorkStmt
+                    .computeFieldIdCol(cursor.fieldId);
             }
 
-            cursor.proofWorkStmt  = null;
-            cursor.caretCharNbr   = -1; // just in case
-            cursor.scrollToLine   = -1; // just in case
-            cursor.scrollToCol    = -1; // just in case
+            cursor.proofWorkStmt = null;
+            cursor.caretCharNbr = -1; // just in case
+            cursor.scrollToLine = -1; // just in case
+            cursor.scrollToCol = -1; // just in case
         }
 
-        setProofTextAreaCursorPos(cursor,
-                                  proofTextLength);
+        setProofTextAreaCursorPos(cursor, proofTextLength);
     }
 
-    private void setProofTextAreaCursorPos(
-                            ProofAsstCursor cursor,
-                            int             proofTextLength) {
+    private void setProofTextAreaCursorPos(final ProofAsstCursor cursor,
+        final int proofTextLength)
+    {
         try {
 
-            int caretPosition     = 0;
-            int row               = 0;
-            int col               = 0;
+            int caretPosition = 0;
+            int row = 0;
+            int col = 0;
 
-            if (cursor.caretCharNbr > 0) {
-                caretPosition     = cursor.caretCharNbr - 1;
-            }
-            else {
-                if (cursor.caretLine > 0) {
-                    row           = cursor.caretLine - 1;
-                    if (cursor.caretCol > 0) {
-                        col       = cursor.caretCol - 1;
-                    }
-                    else {
-                        col       = 0;
-                    }
-                    int offset    =
-                        proofTextArea.getLineStartOffset(row);
-                    caretPosition = offset + col;
-                }
+            if (cursor.caretCharNbr > 0)
+                caretPosition = cursor.caretCharNbr - 1;
+            else if (cursor.caretLine > 0) {
+                row = cursor.caretLine - 1;
+                if (cursor.caretCol > 0)
+                    col = cursor.caretCol - 1;
+                else
+                    col = 0;
+                final int offset = proofTextArea.getLineStartOffset(row);
+                caretPosition = offset + col;
             }
 
             // just to be safe instead of sorry...
-            if (caretPosition >= proofTextLength) {
-                caretPosition     = proofTextLength - 1;
-            }
-            if (caretPosition < 0) {
-                caretPosition     = 0;
-            }
+            if (caretPosition >= proofTextLength)
+                caretPosition = proofTextLength - 1;
+            if (caretPosition < 0)
+                caretPosition = 0;
 
-        	proofTextArea.setCaretPosition(caretPosition);
+            proofTextArea.setCaretPosition(caretPosition);
 
-            JViewport v           =
-                proofTextScrollPane.getViewport();
+            final JViewport v = proofTextScrollPane.getViewport();
 
-            int vHeight           = v.getView().getHeight();
+            final int vHeight = v.getView().getHeight();
 
-            row                   = 0;
-            col                   = 0;
+            row = 0;
+            col = 0;
 
             if (cursor.scrollToLine != cursor.caretLine
-                &&
-                cursor.scrollToLine > 0
-                &&
-                cursor.caretLine > 0) {
-                row               = cursor.scrollToLine - 1;
-            }
-            else {
-                if (cursor.caretCharNbr > 0) {
-                    row           =
-                        proofTextArea.getLineOfOffset(
-                            cursor.caretCharNbr - 1);
-                }
-                else {
-                    if (cursor.caretLine > 0) {
-                        row       = cursor.caretLine - 1;
-                    }
-                }
-            }
+                && cursor.scrollToLine > 0 && cursor.caretLine > 0)
+                row = cursor.scrollToLine - 1;
+            else if (cursor.caretCharNbr > 0)
+                row = proofTextArea.getLineOfOffset(cursor.caretCharNbr - 1);
+            else if (cursor.caretLine > 0)
+                row = cursor.caretLine - 1;
 
-            if (cursor.scrollToCol > 0) {
-                col               = cursor.scrollToCol - 1;
-            }
+            if (cursor.scrollToCol > 0)
+                col = cursor.scrollToCol - 1;
 
-            int vPos              =
-                (vHeight * row) /
-                proofTextArea.getLineCount();
+            final int vPos = vHeight * row / proofTextArea.getLineCount();
 
-            if (cursor.getDontScroll()) {
-				cursor.setDontScroll(false);
-			}
-			else {
-				v.scrollRectToVisible(
-					new Rectangle(col,    // x
-								  vPos,   // y
-								  1,      // width
-								  1));    // height
-			}
-        }
-        catch (Exception e) {
-            //ignore, don't care, did our best.
+            if (cursor.getDontScroll())
+                cursor.setDontScroll(false);
+            else
+                v.scrollRectToVisible(new Rectangle(col, // x
+                    vPos, // y
+                    1, // width
+                    1)); // height
+        } catch (final Exception e) {
+            // ignore, don't care, did our best.
         }
     }
 
     private String getProofTheoremLabel() {
         return proofTheoremLabel;
     }
-    private void setProofTheoremLabel(String s) {
+    private void setProofTheoremLabel(final String s) {
         proofTheoremLabel = s;
     }
-    private void setNbrTimesSavedSinceNew(int n) {
+    private void setNbrTimesSavedSinceNew(final int n) {
         nbrTimesSavedSinceNew = n;
     }
     private void incNbrTimesSavedSinceNew() {
@@ -674,11 +584,11 @@ public class ProofAsstGUI {
     }
 
     private void updateScreenTitle() {
-        screenTitle               = buildScreenTitle(null);
+        screenTitle = buildScreenTitle(null);
     }
 
-    private void updateScreenTitle(File file) {
-        screenTitle               = buildScreenTitle(file);
+    private void updateScreenTitle(final File file) {
+        screenTitle = buildScreenTitle(file);
     }
 
     /*
@@ -690,75 +600,55 @@ public class ProofAsstGUI {
      *              if title length > textColumns - 15
      *                  build title using just ProofAsstGUI caption.
      */
-    private String buildScreenTitle(File file) {
-        int maxLength             =
-            proofAsstPreferences.getTextColumns()
-            - 15;
+    private String buildScreenTitle(final File file) {
+        final int maxLength = proofAsstPreferences.getTextColumns() - 15;
 
-        if (file == null ||
-            file.getName().length() > maxLength) {
+        if (file == null || file.getName().length() > maxLength)
             return PaConstants.PROOF_ASST_FRAME_TITLE;
-        }
 
-        StringBuffer s            = new StringBuffer(maxLength);
+        final StringBuffer s = new StringBuffer(maxLength);
 
         s.append(PaConstants.PROOF_ASST_FRAME_TITLE);
 
-        if (appendToScreenTitle(s, " - ") < 0) {
+        if (appendToScreenTitle(s, " - ") < 0)
             return s.toString();
-        }
 
-        if (appendToScreenTitle(s, file.getPath()) < 0) {
-            if (appendToScreenTitle(s, file.getName()) < 0) {
+        if (appendToScreenTitle(s, file.getPath()) < 0)
+            if (appendToScreenTitle(s, file.getName()) < 0)
                 return file.getName();
-            }
-        }
         return s.toString();
     }
-    private int appendToScreenTitle(StringBuffer s,
-                                    String       t) {
-        if (t.length() > s.capacity()) {
+    private int appendToScreenTitle(final StringBuffer s, final String t) {
+        if (t.length() > s.capacity())
             return -1;
-        }
         s.append(t);
         return 0;
     }
 
     private JFrame buildMainFrame() {
 
-        JFrame frame              =
-            new JFrame(screenTitle);
+        final JFrame frame = new JFrame(screenTitle);
 
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
-        frame.addWindowListener(
-            new WindowAdapter() {
-                public void windowClosing(WindowEvent e) {
-                    if (saveIfAskedBeforeExit(
-                            PaConstants.
-                                PA_GUI_ACTION_BEFORE_SAVE_EXIT)
-                        == JOptionPane.CANCEL_OPTION) {
-                        return;
-                    }
-                    System.exit(0);
-                }
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(final WindowEvent e) {
+                if (saveIfAskedBeforeExit(PaConstants.PA_GUI_ACTION_BEFORE_SAVE_EXIT) == JOptionPane.CANCEL_OPTION)
+                    return;
+                System.exit(0);
             }
-        );
-
+        });
 
         return frame;
     }
 
-    private JTextArea buildProofMessageArea(String text) {
-        JTextArea textArea        =
-            new JTextArea(
-                text,
-                proofAsstPreferences.getErrorMessageRows(),
-                proofAsstPreferences.getErrorMessageColumns());
-        Font   frameFont          =
-                    new Font(PaConstants.AUX_FRAME_FONT_FAMILY,
-                             Font.BOLD,
-                             proofAsstPreferences.getFontSize());
+    private JTextArea buildProofMessageArea(final String text) {
+        final JTextArea textArea = new JTextArea(text,
+            proofAsstPreferences.getErrorMessageRows(),
+            proofAsstPreferences.getErrorMessageColumns());
+        final Font frameFont = new Font(PaConstants.AUX_FRAME_FONT_FAMILY,
+            Font.BOLD, proofAsstPreferences.getFontSize());
 
         textArea.setFont(frameFont);
         textArea.setLineWrap(true);
@@ -768,49 +658,40 @@ public class ProofAsstGUI {
     }
 
     private JScrollPane buildProofMessageScrollPane(
-                            JTextArea proofMessageArea) {
-        JScrollPane scrollPane    = new JScrollPane(proofMessageArea);
-        scrollPane.setVerticalScrollBarPolicy(
-            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        final JTextArea proofMessageArea)
+    {
+        final JScrollPane scrollPane = new JScrollPane(proofMessageArea);
+        scrollPane
+            .setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         return scrollPane;
     }
 
-    private JTextArea buildProofTextArea(String text) {
+    private JTextArea buildProofTextArea(final String text) {
 
-        JTextArea textArea        =
-                new JTextArea(
-                    text,
-                    proofAsstPreferences.getTextRows(),
-                    proofAsstPreferences.getTextColumns());
+        final JTextArea textArea = new JTextArea(text,
+            proofAsstPreferences.getTextRows(),
+            proofAsstPreferences.getTextColumns());
 
         buildProofFont();
 
         textArea.setFont(proofFont);
         textArea.setLineWrap(proofAsstPreferences.getLineWrap());
-        textArea.setCursor(null);  //use arrow instead of thingamabob
-        textArea.setTabSize(
-            PaConstants.PROOF_TEXT_TAB_LENGTH); //disable it using 1.
-        textArea.setForeground(
-            proofAsstPreferences.getForegroundColor());
-        textArea.setBackground(
-            proofAsstPreferences.getBackgroundColor());
+        textArea.setCursor(null); // use arrow instead of thingamabob
+        textArea.setTabSize(PaConstants.PROOF_TEXT_TAB_LENGTH); // disable it
+                                                                // using 1.
+        textArea.setForeground(proofAsstPreferences.getForegroundColor());
+        textArea.setBackground(proofAsstPreferences.getBackgroundColor());
 
-        proofTextChanged          = new ProofTextChanged(false);
-        (textArea.getDocument()).
-            addDocumentListener(
-                proofTextChanged);
+        proofTextChanged = new ProofTextChanged(false);
+        textArea.getDocument().addDocumentListener(proofTextChanged);
 
         if (proofAsstPreferences.getUndoRedoEnabled()) {
-            undoManager           =
-                new UndoManager();
+            undoManager = new UndoManager();
 
-            proofAsstGUIUndoableEditListener
-                                  =
-                new ProofAsstGUIUndoableEditListener();
+            proofAsstGUIUndoableEditListener = new ProofAsstGUIUndoableEditListener();
 
-            (textArea.getDocument()).
-                addUndoableEditListener(
-                    proofAsstGUIUndoableEditListener);
+            textArea.getDocument().addUndoableEditListener(
+                proofAsstGUIUndoableEditListener);
         }
 
         setNbrTimesSavedSinceNew(0);
@@ -819,124 +700,99 @@ public class ProofAsstGUI {
     }
 
     private void buildProofFont() {
-        if (proofAsstPreferences.getFontBold()) {
-            proofFont             =
-                new Font(proofAsstPreferences.getFontFamily(),
-                         Font.BOLD,
-                         proofAsstPreferences.getFontSize());
-        }
-        else {
-            proofFont             =
-                new Font(proofAsstPreferences.getFontFamily(),
-                         Font.PLAIN,
-                         proofAsstPreferences.getFontSize());
-        }
+        if (proofAsstPreferences.getFontBold())
+            proofFont = new Font(proofAsstPreferences.getFontFamily(),
+                Font.BOLD, proofAsstPreferences.getFontSize());
+        else
+            proofFont = new Font(proofAsstPreferences.getFontFamily(),
+                Font.PLAIN, proofAsstPreferences.getFontSize());
     }
 
-    private JScrollPane buildProofTextScrollPane(
-                            JTextArea proofTextArea) {
+    private JScrollPane buildProofTextScrollPane(final JTextArea proofTextArea)
+    {
 
-        JScrollPane scrollPane    = new JScrollPane(proofTextArea);
+        final JScrollPane scrollPane = new JScrollPane(proofTextArea);
 
-        scrollPane.setVerticalScrollBarPolicy(
-            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane
+            .setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         return scrollPane;
     }
 
     private JPopupMenu buildPopupMenu() {
-        JPopupMenu m              = new JPopupMenu();
+        final JPopupMenu m = new JPopupMenu();
 
         JMenuItem i;
 
-        i                         =
-            new JMenuItem(new DefaultEditorKit.CutAction());
+        i = new JMenuItem(new DefaultEditorKit.CutAction());
         i.setText(PaConstants.PA_GUI_EDIT_MENU_CUT_ITEM_TEXT);
         m.add(i);
 
-        i                         =
-            new JMenuItem(new DefaultEditorKit.CopyAction());
+        i = new JMenuItem(new DefaultEditorKit.CopyAction());
         i.setText(PaConstants.PA_GUI_EDIT_MENU_COPY_ITEM_TEXT);
         m.add(i);
 
-        i                         =
-            new JMenuItem(new DefaultEditorKit.PasteAction());
+        i = new JMenuItem(new DefaultEditorKit.PasteAction());
         i.setText(PaConstants.PA_GUI_EDIT_MENU_PASTE_ITEM_TEXT);
         m.add(i);
 
-        i                         =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doTMFFReformatAction(true);
-                    }
-                });
-        i.setText(
-            PaConstants.PA_GUI_POPUP_MENU_REFORMAT_STEP_TEXT);
+        i = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                doTMFFReformatAction(true);
+            }
+        });
+        i.setText(PaConstants.PA_GUI_POPUP_MENU_REFORMAT_STEP_TEXT);
         m.add(i);
 
-
-        i                         =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doTMFFReformatSwapAltAction(true);
-                    }
-                });
-        i.setText(
-            PaConstants.PA_GUI_POPUP_MENU_REFORMAT_SWAP_ALT_STEP_TEXT);
+        i = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                doTMFFReformatSwapAltAction(true);
+            }
+        });
+        i.setText(PaConstants.PA_GUI_POPUP_MENU_REFORMAT_SWAP_ALT_STEP_TEXT);
         m.add(i);
 
-
-        i                         =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        unifyWithStepSelectorChoice(
-                            new StepRequest(
-                                PaConstants.
-                                    STEP_REQUEST_SELECTOR_SEARCH));
-                    }
-                });
-        i.setText(
-            PaConstants.
-                PA_GUI_UNIFY_MENU_STEP_SELECTOR_SEARCH_ITEM_TEXT);
+        i = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                unifyWithStepSelectorChoice(new StepRequest(
+                    PaConstants.STEP_REQUEST_SELECTOR_SEARCH));
+            }
+        });
+        i.setText(PaConstants.PA_GUI_UNIFY_MENU_STEP_SELECTOR_SEARCH_ITEM_TEXT);
         m.add(i);
 
-        i                         =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        reshowStepSelectorDialogAction();
-                }
-            });
-        i.setText(
-            PaConstants.
-                PA_GUI_UNIFY_MENU_RESHOW_STEP_SELECTOR_DIALOG_ITEM_TEXT);
+        i = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                reshowStepSelectorDialogAction();
+            }
+        });
+        i.setText(PaConstants.PA_GUI_UNIFY_MENU_RESHOW_STEP_SELECTOR_DIALOG_ITEM_TEXT);
         m.add(i);
 
         return m;
     }
 
     private class PopupMenuListener extends MouseAdapter {
-        public void mousePressed(MouseEvent e) {
+        @Override
+        public void mousePressed(final MouseEvent e) {
             popupMenuForMouse(e);
         }
-        public void mouseReleased(MouseEvent e) {
+        @Override
+        public void mouseReleased(final MouseEvent e) {
             popupMenuForMouse(e);
         }
-        public void popupMenuForMouse(MouseEvent e) {
-            if (e.isPopupTrigger()) {
-                popupMenu.show(
-                    e.getComponent(),
-                    e.getX(),
-                    e.getY());
-            }
+        public void popupMenuForMouse(final MouseEvent e) {
+            if (e.isPopupTrigger())
+                popupMenu.show(e.getComponent(), e.getX(), e.getY());
         }
     }
 
     private JMenuBar buildProofMenuBar() {
-        JMenuBar m                = new JMenuBar();
+        final JMenuBar m = new JMenuBar();
         m.add(buildFileMenu());
         m.add(buildEditMenu());
         m.add(buildCancelMenu());
@@ -949,481 +805,389 @@ public class ProofAsstGUI {
 
     private JMenu buildFileMenu() {
 
-        JMenu fileMenu            =
-            new JMenu(PaConstants.PA_GUI_FILE_MENU_TITLE);
+        final JMenu fileMenu = new JMenu(PaConstants.PA_GUI_FILE_MENU_TITLE);
         fileMenu.setMnemonic(KeyEvent.VK_F);
 
-
-        JMenuItem fileSaveItem   =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doFileSaveAction(false);
-                    }
-                });
-        fileSaveItem.setText(
-            PaConstants.PA_GUI_FILE_MENU_SAVE_ITEM_TEXT);
+        final JMenuItem fileSaveItem = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                doFileSaveAction(false);
+            }
+        });
+        fileSaveItem.setText(PaConstants.PA_GUI_FILE_MENU_SAVE_ITEM_TEXT);
         fileSaveItem.setMnemonic(KeyEvent.VK_S);
-        fileSaveItem.setAccelerator(KeyStroke.getKeyStroke(
-                    KeyEvent.VK_S, ActionEvent.CTRL_MASK));
+        fileSaveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+            ActionEvent.CTRL_MASK));
         fileMenu.add(fileSaveItem);
 
-
-        JMenuItem fileNewItem     =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doFileNewAction();
-                    }
-                });
-        fileNewItem.setText(
-            PaConstants.PA_GUI_FILE_MENU_NEW_ITEM_TEXT);
+        final JMenuItem fileNewItem = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                doFileNewAction();
+            }
+        });
+        fileNewItem.setText(PaConstants.PA_GUI_FILE_MENU_NEW_ITEM_TEXT);
         fileNewItem.setMnemonic(KeyEvent.VK_N);
         fileMenu.add(fileNewItem);
 
-
-        JMenuItem fileNewNextItem     =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doFileNewNextAction();
-                    }
-                });
-        fileNewNextItem.setText(
-            PaConstants.PA_GUI_FILE_MENU_NEW_NEXT_ITEM_TEXT);
+        final JMenuItem fileNewNextItem = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                doFileNewNextAction();
+            }
+        });
+        fileNewNextItem
+            .setText(PaConstants.PA_GUI_FILE_MENU_NEW_NEXT_ITEM_TEXT);
         fileNewNextItem.setMnemonic(KeyEvent.VK_E);
         fileMenu.add(fileNewNextItem);
 
-
-        JMenuItem fileOpenItem    =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doFileOpenAction();
-                    }
-                });
-        fileOpenItem.setText(
-            PaConstants.PA_GUI_FILE_MENU_OPEN_ITEM_TEXT);
+        final JMenuItem fileOpenItem = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                doFileOpenAction();
+            }
+        });
+        fileOpenItem.setText(PaConstants.PA_GUI_FILE_MENU_OPEN_ITEM_TEXT);
         fileOpenItem.setMnemonic(KeyEvent.VK_P);
-        fileOpenItem.setAccelerator(KeyStroke.getKeyStroke(
-                    KeyEvent.VK_P, ActionEvent.CTRL_MASK));
+        fileOpenItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,
+            ActionEvent.CTRL_MASK));
         fileMenu.add(fileOpenItem);
 
-
-        JMenuItem fileGetProofItem
-                                  =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doFileGetProofAction();
-                    }
-                });
-        fileGetProofItem.setText(
-            PaConstants.PA_GUI_FILE_MENU_GET_PROOF_ITEM_TEXT);
+        final JMenuItem fileGetProofItem = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                doFileGetProofAction();
+            }
+        });
+        fileGetProofItem
+            .setText(PaConstants.PA_GUI_FILE_MENU_GET_PROOF_ITEM_TEXT);
         fileGetProofItem.setMnemonic(KeyEvent.VK_G);
-        fileGetProofItem.setAccelerator(KeyStroke.getKeyStroke(
-                    KeyEvent.VK_G, ActionEvent.CTRL_MASK));
+        fileGetProofItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
+            ActionEvent.CTRL_MASK));
         fileMenu.add(fileGetProofItem);
 
-
-        JMenuItem fileGetFwdProofItem    =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doFileGetFwdProofAction();
-                    }
-                });
-        fileGetFwdProofItem.setText(
-            PaConstants.PA_GUI_FILE_MENU_GET_FWD_PROOF_ITEM_TEXT);
+        final JMenuItem fileGetFwdProofItem = new JMenuItem(
+            new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    doFileGetFwdProofAction();
+                }
+            });
+        fileGetFwdProofItem
+            .setText(PaConstants.PA_GUI_FILE_MENU_GET_FWD_PROOF_ITEM_TEXT);
         fileGetFwdProofItem.setMnemonic(KeyEvent.VK_F);
         fileGetFwdProofItem.setAccelerator(KeyStroke.getKeyStroke(
-                    KeyEvent.VK_F, ActionEvent.CTRL_MASK));
+            KeyEvent.VK_F, ActionEvent.CTRL_MASK));
         fileMenu.add(fileGetFwdProofItem);
 
-
-        JMenuItem fileGetBwdProofItem    =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doFileGetBwdProofAction();
-                    }
-                });
-        fileGetBwdProofItem.setText(
-            PaConstants.PA_GUI_FILE_MENU_GET_BWD_PROOF_ITEM_TEXT);
+        final JMenuItem fileGetBwdProofItem = new JMenuItem(
+            new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    doFileGetBwdProofAction();
+                }
+            });
+        fileGetBwdProofItem
+            .setText(PaConstants.PA_GUI_FILE_MENU_GET_BWD_PROOF_ITEM_TEXT);
         fileGetBwdProofItem.setMnemonic(KeyEvent.VK_B);
         fileGetBwdProofItem.setAccelerator(KeyStroke.getKeyStroke(
-                    KeyEvent.VK_B, ActionEvent.CTRL_MASK));
+            KeyEvent.VK_B, ActionEvent.CTRL_MASK));
         fileMenu.add(fileGetBwdProofItem);
 
-
-
-        JMenuItem fileCloseItem   =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doFileCloseAction();
-                    }
-                });
-        fileCloseItem.setText(
-            PaConstants.PA_GUI_FILE_MENU_CLOSE_ITEM_TEXT);
+        final JMenuItem fileCloseItem = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                doFileCloseAction();
+            }
+        });
+        fileCloseItem.setText(PaConstants.PA_GUI_FILE_MENU_CLOSE_ITEM_TEXT);
         fileCloseItem.setMnemonic(KeyEvent.VK_L);
         fileMenu.add(fileCloseItem);
 
-
-
-        JMenuItem fileSaveAsItem  =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doFileSaveAsAction();
-                    }
-                });
-        fileSaveAsItem.setText(
-            PaConstants.PA_GUI_FILE_MENU_SAVE_AS_ITEM_TEXT);
+        final JMenuItem fileSaveAsItem = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                doFileSaveAsAction();
+            }
+        });
+        fileSaveAsItem.setText(PaConstants.PA_GUI_FILE_MENU_SAVE_AS_ITEM_TEXT);
         fileSaveAsItem.setMnemonic(KeyEvent.VK_A);
         fileMenu.add(fileSaveAsItem);
 
-
-        JMenuItem fileExportViaGMFFItem  =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doFileExportViaGMFFAction();
-                    }
-                });
-        fileExportViaGMFFItem.setText(
-            PaConstants.PA_GUI_FILE_MENU_EXPORT_VIA_GMFF_ITEM_TEXT);
+        final JMenuItem fileExportViaGMFFItem = new JMenuItem(
+            new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    doFileExportViaGMFFAction();
+                }
+            });
+        fileExportViaGMFFItem
+            .setText(PaConstants.PA_GUI_FILE_MENU_EXPORT_VIA_GMFF_ITEM_TEXT);
         fileExportViaGMFFItem.setAccelerator(KeyStroke.getKeyStroke(
-                    KeyEvent.VK_1, ActionEvent.CTRL_MASK));
+            KeyEvent.VK_1, ActionEvent.CTRL_MASK));
 
         fileMenu.add(fileExportViaGMFFItem);
 
-
-
-        JMenuItem fileExitItem    =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doFileExitAction();
-                    }
-                });
-        fileExitItem.setText(
-            PaConstants.PA_GUI_FILE_MENU_EXIT_ITEM_TEXT);
+        final JMenuItem fileExitItem = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                doFileExitAction();
+            }
+        });
+        fileExitItem.setText(PaConstants.PA_GUI_FILE_MENU_EXIT_ITEM_TEXT);
         fileExitItem.setMnemonic(KeyEvent.VK_X);
-        fileExitItem.setAccelerator(KeyStroke.getKeyStroke(
-                    KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
+        fileExitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
+            ActionEvent.CTRL_MASK));
         fileMenu.add(fileExitItem);
 
         return fileMenu;
     }
 
-
     private JMenu buildEditMenu() {
-        JMenu editMenu            =
-            new JMenu(
-                PaConstants.PA_GUI_EDIT_MENU_TITLE);
+        final JMenu editMenu = new JMenu(PaConstants.PA_GUI_EDIT_MENU_TITLE);
         editMenu.setMnemonic(KeyEvent.VK_E);
 
         if (proofAsstPreferences.getUndoRedoEnabled()) {
-            editUndoItem          =
-                new JMenuItem(
-                    new AbstractAction() {
-                        public void actionPerformed(ActionEvent e) {
-                            startRequestAction(
-                                new RequestEditUndo());
-                        }
-                    });
-            editUndoItem.setText(
-                PaConstants.PA_GUI_EDIT_MENU_UNDO_ITEM_TEXT);
+            editUndoItem = new JMenuItem(new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    startRequestAction(new RequestEditUndo());
+                }
+            });
+            editUndoItem.setText(PaConstants.PA_GUI_EDIT_MENU_UNDO_ITEM_TEXT);
             editUndoItem.setMnemonic(KeyEvent.VK_U);
             editUndoItem.setEnabled(false);
-            editUndoItem.setAccelerator(KeyStroke.getKeyStroke(
-                    KeyEvent.VK_Z, ActionEvent.CTRL_MASK));
+            editUndoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z,
+                ActionEvent.CTRL_MASK));
             editMenu.add(editUndoItem);
 
-            editRedoItem          =
-                new JMenuItem(
-                    new AbstractAction() {
-                        public void actionPerformed(ActionEvent e) {
-                            startRequestAction(
-                                new RequestEditRedo());
-                        }
-                    });
-            editRedoItem.setText(
-                PaConstants.PA_GUI_EDIT_MENU_REDO_ITEM_TEXT);
+            editRedoItem = new JMenuItem(new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    startRequestAction(new RequestEditRedo());
+                }
+            });
+            editRedoItem.setText(PaConstants.PA_GUI_EDIT_MENU_REDO_ITEM_TEXT);
             editRedoItem.setMnemonic(KeyEvent.VK_R);
             editRedoItem.setEnabled(false);
-            editRedoItem.setAccelerator(KeyStroke.getKeyStroke(
-                    KeyEvent.VK_Y, ActionEvent.CTRL_MASK));
+            editRedoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y,
+                ActionEvent.CTRL_MASK));
             editMenu.add(editRedoItem);
         }
 
-
-        JMenuItem cutItem         =
-            new JMenuItem(
-                new DefaultEditorKit.CutAction());
-        cutItem.setText(
-            PaConstants.PA_GUI_EDIT_MENU_CUT_ITEM_TEXT);
+        final JMenuItem cutItem = new JMenuItem(
+            new DefaultEditorKit.CutAction());
+        cutItem.setText(PaConstants.PA_GUI_EDIT_MENU_CUT_ITEM_TEXT);
         cutItem.setMnemonic(KeyEvent.VK_T);
-        cutItem.setAccelerator(KeyStroke.getKeyStroke(
-                    KeyEvent.VK_X, ActionEvent.CTRL_MASK));
+        cutItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,
+            ActionEvent.CTRL_MASK));
         editMenu.add(cutItem);
 
-
-        JMenuItem copyItem        =
-            new JMenuItem(
-                new DefaultEditorKit.CopyAction());
-        copyItem.setText(
-            PaConstants.PA_GUI_EDIT_MENU_COPY_ITEM_TEXT);
+        final JMenuItem copyItem = new JMenuItem(
+            new DefaultEditorKit.CopyAction());
+        copyItem.setText(PaConstants.PA_GUI_EDIT_MENU_COPY_ITEM_TEXT);
         copyItem.setMnemonic(KeyEvent.VK_C);
-        copyItem.setAccelerator(KeyStroke.getKeyStroke(
-                    KeyEvent.VK_C, ActionEvent.CTRL_MASK));
+        copyItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
+            ActionEvent.CTRL_MASK));
         editMenu.add(copyItem);
 
-
-        JMenuItem pasteItem       =
-            new JMenuItem(
-                new DefaultEditorKit.PasteAction());
-        pasteItem.setText(
-            PaConstants.PA_GUI_EDIT_MENU_PASTE_ITEM_TEXT);
+        final JMenuItem pasteItem = new JMenuItem(
+            new DefaultEditorKit.PasteAction());
+        pasteItem.setText(PaConstants.PA_GUI_EDIT_MENU_PASTE_ITEM_TEXT);
         pasteItem.setMnemonic(KeyEvent.VK_P);
-        pasteItem.setAccelerator(KeyStroke.getKeyStroke(
-                    KeyEvent.VK_V, ActionEvent.CTRL_MASK));
+        pasteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V,
+            ActionEvent.CTRL_MASK));
         editMenu.add(pasteItem);
 
-
-        JMenuItem setIncompleteStepCursorItem
-                                  =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doSetIncompleteStepCursorItemAction();
-                    }
-                });
-        setIncompleteStepCursorItem.setText(
-            PaConstants.
-              PA_GUI_EDIT_MENU_SET_INCOMPLETE_STEP_CURSOR_ITEM_TEXT);
+        final JMenuItem setIncompleteStepCursorItem = new JMenuItem(
+            new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    doSetIncompleteStepCursorItemAction();
+                }
+            });
+        setIncompleteStepCursorItem
+            .setText(PaConstants.PA_GUI_EDIT_MENU_SET_INCOMPLETE_STEP_CURSOR_ITEM_TEXT);
         editMenu.add(setIncompleteStepCursorItem);
 
-
-        JMenuItem setSoftDjErrorItem
-                                  =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doSetSoftDjErrorItemAction();
-                    }
-                });
-        setSoftDjErrorItem.setText(
-            PaConstants.PA_GUI_EDIT_MENU_SET_SOFT_DJ_ERROR_ITEM_TEXT);
+        final JMenuItem setSoftDjErrorItem = new JMenuItem(new AbstractAction()
+        {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                doSetSoftDjErrorItemAction();
+            }
+        });
+        setSoftDjErrorItem
+            .setText(PaConstants.PA_GUI_EDIT_MENU_SET_SOFT_DJ_ERROR_ITEM_TEXT);
         editMenu.add(setSoftDjErrorItem);
 
-
-        JMenuItem setFontFamilyItem     =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doSetFontFamilyItemAction();
-                    }
-                });
-        setFontFamilyItem.setText(
-            PaConstants.PA_GUI_EDIT_MENU_SET_FONT_FAMILY_ITEM_TEXT);
+        final JMenuItem setFontFamilyItem = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                doSetFontFamilyItemAction();
+            }
+        });
+        setFontFamilyItem
+            .setText(PaConstants.PA_GUI_EDIT_MENU_SET_FONT_FAMILY_ITEM_TEXT);
         editMenu.add(setFontFamilyItem);
 
+        fontStyleBoldItem = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                if (!proofAsstPreferences.getFontBold()) {
+                    proofAsstPreferences.setFontBold(true);
+                    proofFont = proofFont.deriveFont(Font.BOLD);
+                    proofTextArea.setFont(proofFont);
+                    fontStyleBoldItem.setEnabled(false);
+                    fontStylePlainItem.setEnabled(true);
+                }
 
-        fontStyleBoldItem  =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        if (!proofAsstPreferences.getFontBold()) {
-                            proofAsstPreferences.setFontBold(true);
-                            proofFont
-                                  = proofFont.deriveFont(Font.BOLD);
-                            proofTextArea.setFont(proofFont);
-                            fontStyleBoldItem.setEnabled(false);
-                            fontStylePlainItem.setEnabled(true);
-                        }
-
-                    }
-                });
-        fontStyleBoldItem.setText(
-            PaConstants.PA_GUI_EDIT_MENU_FONT_STYLE_BOLD_ITEM_TEXT);
-        if (proofAsstPreferences.getFontBold()) {
+            }
+        });
+        fontStyleBoldItem
+            .setText(PaConstants.PA_GUI_EDIT_MENU_FONT_STYLE_BOLD_ITEM_TEXT);
+        if (proofAsstPreferences.getFontBold())
             fontStyleBoldItem.setEnabled(false);
-        }
-        else {
+        else
             fontStyleBoldItem.setEnabled(true);
-        }
         editMenu.add(fontStyleBoldItem);
 
+        fontStylePlainItem = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                if (proofAsstPreferences.getFontBold()) {
+                    proofAsstPreferences.setFontBold(false);
+                    proofFont = proofFont.deriveFont(Font.PLAIN);
+                    proofTextArea.setFont(proofFont);
+                    fontStylePlainItem.setEnabled(false);
+                    fontStyleBoldItem.setEnabled(true);
+                }
 
-        fontStylePlainItem  =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        if (proofAsstPreferences.getFontBold()) {
-                            proofAsstPreferences.setFontBold(false);
-                            proofFont
-                                  = proofFont.deriveFont(Font.PLAIN);
-                            proofTextArea.setFont(proofFont);
-                            fontStylePlainItem.setEnabled(false);
-                            fontStyleBoldItem.setEnabled(true);
-                        }
-
-                    }
-                });
-        fontStylePlainItem.setText(
-            PaConstants.PA_GUI_EDIT_MENU_FONT_STYLE_PLAIN_ITEM_TEXT);
-        if (proofAsstPreferences.getFontBold()) {
+            }
+        });
+        fontStylePlainItem
+            .setText(PaConstants.PA_GUI_EDIT_MENU_FONT_STYLE_PLAIN_ITEM_TEXT);
+        if (proofAsstPreferences.getFontBold())
             fontStylePlainItem.setEnabled(true);
-        }
-        else {
+        else
             fontStylePlainItem.setEnabled(false);
-        }
         editMenu.add(fontStylePlainItem);
 
+        final JMenuItem largerFontItem = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                int fontSize = proofAsstPreferences.getFontSize()
+                    + PaConstants.PROOF_ASST_FONT_SIZE_CHG_AMT;
 
-        JMenuItem largerFontItem  =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        int fontSize
-                                  =
-                            proofAsstPreferences.getFontSize()
-                            +
-                            PaConstants.PROOF_ASST_FONT_SIZE_CHG_AMT;
+                // 2007-12-06 - FIX BUG
+                if (fontSize > PaConstants.PROOF_ASST_FONT_SIZE_MAX)
+                    fontSize = PaConstants.PROOF_ASST_FONT_SIZE_MAX;
 
-                        //2007-12-06 - FIX BUG
-                        if (fontSize >
-                            PaConstants.PROOF_ASST_FONT_SIZE_MAX) {
-                            fontSize
-                                  =
-                            PaConstants.PROOF_ASST_FONT_SIZE_MAX;
-                        }
+                proofAsstPreferences.setFontSize(fontSize);
 
-                        proofAsstPreferences.setFontSize(fontSize);
+                final Font f = proofFont.deriveFont((float)fontSize); // bad
+                                                                      // Sun!
+                proofFont = f;
+                proofTextArea.setFont(proofFont);
 
-                        Font f    = proofFont.deriveFont(
-                                        (float)fontSize); // bad Sun!
-                        proofFont = f;
-                        proofTextArea.setFont(proofFont);
-
-                    }
-                });
-        largerFontItem.setText(
-            PaConstants.PA_GUI_EDIT_MENU_INC_FONT_ITEM_TEXT);
+            }
+        });
+        largerFontItem.setText(PaConstants.PA_GUI_EDIT_MENU_INC_FONT_ITEM_TEXT);
         largerFontItem.setAccelerator(KeyStroke.getKeyStroke(
-                    KeyEvent.VK_EQUALS, ActionEvent.CTRL_MASK));
+            KeyEvent.VK_EQUALS, ActionEvent.CTRL_MASK));
         editMenu.add(largerFontItem);
 
+        final JMenuItem smallerFontItem = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                int fontSize = proofAsstPreferences.getFontSize()
+                    - PaConstants.PROOF_ASST_FONT_SIZE_CHG_AMT;
 
-        JMenuItem smallerFontItem =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        int fontSize
-                                  =
-                            proofAsstPreferences.getFontSize()
-                            -
-                            PaConstants.PROOF_ASST_FONT_SIZE_CHG_AMT;
+                // 2007-12-06 - FIX BUG
+                if (fontSize < PaConstants.PROOF_ASST_FONT_SIZE_MIN)
+                    fontSize = PaConstants.PROOF_ASST_FONT_SIZE_MIN;
 
-                        //2007-12-06 - FIX BUG
-                        if (fontSize <
-                            PaConstants.PROOF_ASST_FONT_SIZE_MIN) {
-                            fontSize
-                                  =
-                            PaConstants.PROOF_ASST_FONT_SIZE_MIN;
-                        }
+                proofAsstPreferences.setFontSize(fontSize);
 
-                        proofAsstPreferences.setFontSize(fontSize);
+                final Font f = proofFont.deriveFont((float)fontSize); // bad
+                                                                      // Sun!
+                proofFont = f;
+                proofTextArea.setFont(proofFont);
 
-                        Font f    = proofFont.deriveFont(
-                                        (float)fontSize); // bad Sun!
-                        proofFont = f;
-                        proofTextArea.setFont(proofFont);
-
-                    }
-                });
-        smallerFontItem.setText(
-            PaConstants.PA_GUI_EDIT_MENU_DEC_FONT_ITEM_TEXT);
+            }
+        });
+        smallerFontItem
+            .setText(PaConstants.PA_GUI_EDIT_MENU_DEC_FONT_ITEM_TEXT);
         smallerFontItem.setAccelerator(KeyStroke.getKeyStroke(
-                    KeyEvent.VK_MINUS, ActionEvent.CTRL_MASK));
+            KeyEvent.VK_MINUS, ActionEvent.CTRL_MASK));
         editMenu.add(smallerFontItem);
 
-        JMenuItem setForegroundColorItem
-                                  =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doSetForegroundColorItemAction();
-                    }
-                });
-        setForegroundColorItem.setText(
-            PaConstants.PA_GUI_EDIT_MENU_SET_FOREGROUND_ITEM_TEXT);
+        final JMenuItem setForegroundColorItem = new JMenuItem(
+            new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    doSetForegroundColorItemAction();
+                }
+            });
+        setForegroundColorItem
+            .setText(PaConstants.PA_GUI_EDIT_MENU_SET_FOREGROUND_ITEM_TEXT);
         editMenu.add(setForegroundColorItem);
 
-        JMenuItem setBackgroundColorItem
-                                  =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doSetBackgroundColorItemAction();
-                    }
-                });
-        setBackgroundColorItem.setText(
-            PaConstants.PA_GUI_EDIT_MENU_SET_BACKGROUND_ITEM_TEXT);
+        final JMenuItem setBackgroundColorItem = new JMenuItem(
+            new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    doSetBackgroundColorItemAction();
+                }
+            });
+        setBackgroundColorItem
+            .setText(PaConstants.PA_GUI_EDIT_MENU_SET_BACKGROUND_ITEM_TEXT);
         editMenu.add(setBackgroundColorItem);
 
-
-        JMenuItem setFormatNbrItem     =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doSetFormatNbrItemAction();
-                    }
-                });
-        setFormatNbrItem.setText(
-            PaConstants.PA_GUI_EDIT_MENU_SET_FORMAT_NBR_ITEM_TEXT);
+        final JMenuItem setFormatNbrItem = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                doSetFormatNbrItemAction();
+            }
+        });
+        setFormatNbrItem
+            .setText(PaConstants.PA_GUI_EDIT_MENU_SET_FORMAT_NBR_ITEM_TEXT);
         editMenu.add(setFormatNbrItem);
 
-        JMenuItem setIndentItem   =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doSetIndentItemAction();
-                    }
-                });
-        setIndentItem.setText(
-            PaConstants.PA_GUI_EDIT_MENU_SET_INDENT_ITEM_TEXT);
+        final JMenuItem setIndentItem = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                doSetIndentItemAction();
+            }
+        });
+        setIndentItem
+            .setText(PaConstants.PA_GUI_EDIT_MENU_SET_INDENT_ITEM_TEXT);
         editMenu.add(setIndentItem);
 
-        JMenuItem reformatItem     =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doTMFFReformatAction(false);
-                    }
-                });
-        reformatItem.setText(
-            PaConstants.PA_GUI_EDIT_MENU_REFORMAT_ITEM_TEXT);
+        final JMenuItem reformatItem = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                doTMFFReformatAction(false);
+            }
+        });
+        reformatItem.setText(PaConstants.PA_GUI_EDIT_MENU_REFORMAT_ITEM_TEXT);
         reformatItem.setMnemonic(KeyEvent.VK_R);
-        reformatItem.setAccelerator(KeyStroke.getKeyStroke(
-                    KeyEvent.VK_R, ActionEvent.CTRL_MASK));
+        reformatItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,
+            ActionEvent.CTRL_MASK));
         editMenu.add(reformatItem);
 
-        JMenuItem reformatSwapAltItem
-                                  =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doTMFFReformatSwapAltAction(false);
-                    }
-                });
-        reformatSwapAltItem.setText(
-            PaConstants.PA_GUI_EDIT_MENU_REFORMAT_SWAP_ALT_ITEM_TEXT);
+        final JMenuItem reformatSwapAltItem = new JMenuItem(
+            new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    doTMFFReformatSwapAltAction(false);
+                }
+            });
+        reformatSwapAltItem
+            .setText(PaConstants.PA_GUI_EDIT_MENU_REFORMAT_SWAP_ALT_ITEM_TEXT);
         reformatSwapAltItem.setMnemonic(KeyEvent.VK_O);
         reformatSwapAltItem.setAccelerator(KeyStroke.getKeyStroke(
-                    KeyEvent.VK_O, ActionEvent.CTRL_MASK));
+            KeyEvent.VK_O, ActionEvent.CTRL_MASK));
         editMenu.add(reformatSwapAltItem);
 
         return editMenu;
@@ -1431,344 +1195,277 @@ public class ProofAsstGUI {
 
     private JMenu buildCancelMenu() {
 
-        JMenu cancelMenu          =
-            new JMenu(
-                PaConstants.PA_GUI_CANCEL_MENU_TITLE);
+        final JMenu cancelMenu = new JMenu(PaConstants.PA_GUI_CANCEL_MENU_TITLE);
         cancelMenu.setMnemonic(KeyEvent.VK_C);
 
-
-        cancelRequestItem =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        cancelRequestAction();
-                    }
-                });
-        cancelRequestItem.setText(
-            PaConstants.PA_GUI_CANCEL_MENU_KILL_ITEM_TEXT);
+        cancelRequestItem = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                cancelRequestAction();
+            }
+        });
+        cancelRequestItem
+            .setText(PaConstants.PA_GUI_CANCEL_MENU_KILL_ITEM_TEXT);
         cancelRequestItem.setMnemonic(KeyEvent.VK_K);
-        cancelRequestItem.setAccelerator(KeyStroke.getKeyStroke(
-                    KeyEvent.VK_K, ActionEvent.CTRL_MASK));
+        cancelRequestItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K,
+            ActionEvent.CTRL_MASK));
         cancelRequestItem.setEnabled(false);
         cancelMenu.add(cancelRequestItem);
 
         return cancelMenu;
     }
 
-
     private JMenu buildUnifyMenu() {
 
-        JMenu unifyMenu           =
-            new JMenu(
-                PaConstants.PA_GUI_UNIFY_MENU_TITLE);
+        final JMenu unifyMenu = new JMenu(PaConstants.PA_GUI_UNIFY_MENU_TITLE);
         unifyMenu.setMnemonic(KeyEvent.VK_U);
 
+        final JMenuItem startUnificationItem = new JMenuItem(
+            new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    startUnificationAction(false, // no renum
+                        null, // no preprocess request
+                        null, // no Step Request
+                        null); // no TL Request
 
-        JMenuItem startUnificationItem
-                                   =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        startUnificationAction(
-                            false, // no renum
-                            null,  // no preprocess request
-                            null,  // no Step Request
-                            null); // no TL Request
-
-                    }
-                });
-        startUnificationItem.setText(
-            PaConstants.PA_GUI_UNIFY_MENU_START_ITEM_TEXT);
+                }
+            });
+        startUnificationItem
+            .setText(PaConstants.PA_GUI_UNIFY_MENU_START_ITEM_TEXT);
         startUnificationItem.setMnemonic(KeyEvent.VK_U);
         startUnificationItem.setAccelerator(KeyStroke.getKeyStroke(
-                    KeyEvent.VK_U, ActionEvent.CTRL_MASK));
+            KeyEvent.VK_U, ActionEvent.CTRL_MASK));
         unifyMenu.add(startUnificationItem);
 
-
-        JMenuItem startUnifyWRenumItem
-                                   =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        startUnificationAction(
-                            true,   // yes, renum
-                            null,   // no preprocess request
-                            null,   // no Step Request
-                            null);  // no TL Request
-                    }
-                });
-        startUnifyWRenumItem.setText(
-            PaConstants.PA_GUI_UNIFY_MENU_START_UR_ITEM_TEXT);
+        final JMenuItem startUnifyWRenumItem = new JMenuItem(
+            new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    startUnificationAction(true, // yes, renum
+                        null, // no preprocess request
+                        null, // no Step Request
+                        null); // no TL Request
+                }
+            });
+        startUnifyWRenumItem
+            .setText(PaConstants.PA_GUI_UNIFY_MENU_START_UR_ITEM_TEXT);
         startUnifyWRenumItem.setMnemonic(KeyEvent.VK_R);
         unifyMenu.add(startUnifyWRenumItem);
 
-        JMenuItem startUnifyWRederiveItem
-                                   =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        startUnificationAction(
-                            true,   // yes, renum
-                            new EraseWffsPreprocessRequest(),
-                            null,   // no Step Request
-                            null);  // no TL Request
-                    }
-                });
-        startUnifyWRederiveItem.setText(
-            PaConstants.PA_GUI_UNIFY_MENU_REDERIVE_ITEM_TEXT);
+        final JMenuItem startUnifyWRederiveItem = new JMenuItem(
+            new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    startUnificationAction(true, // yes, renum
+                        new EraseWffsPreprocessRequest(), null, // no Step
+                                                                // Request
+                        null); // no TL Request
+                }
+            });
+        startUnifyWRederiveItem
+            .setText(PaConstants.PA_GUI_UNIFY_MENU_REDERIVE_ITEM_TEXT);
         startUnifyWRederiveItem.setMnemonic(KeyEvent.VK_D);
         unifyMenu.add(startUnifyWRederiveItem);
 
-        JMenuItem startUnifyWStepSelectorSearchItem
-                                  =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        unifyWithStepSelectorChoice(
-                            new StepRequest(
-                                PaConstants.
-                                    STEP_REQUEST_SELECTOR_SEARCH));
-                    }
-                });
-        startUnifyWStepSelectorSearchItem.setText(
-            PaConstants.
-                PA_GUI_UNIFY_MENU_STEP_SELECTOR_SEARCH_ITEM_TEXT);
-        startUnifyWStepSelectorSearchItem.
-            setMnemonic(KeyEvent.VK_S);
-        startUnifyWStepSelectorSearchItem.
-            setAccelerator(
-                KeyStroke.getKeyStroke(
-                    KeyEvent.VK_8,
-                    ActionEvent.CTRL_MASK));
+        final JMenuItem startUnifyWStepSelectorSearchItem = new JMenuItem(
+            new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    unifyWithStepSelectorChoice(new StepRequest(
+                        PaConstants.STEP_REQUEST_SELECTOR_SEARCH));
+                }
+            });
+        startUnifyWStepSelectorSearchItem
+            .setText(PaConstants.PA_GUI_UNIFY_MENU_STEP_SELECTOR_SEARCH_ITEM_TEXT);
+        startUnifyWStepSelectorSearchItem.setMnemonic(KeyEvent.VK_S);
+        startUnifyWStepSelectorSearchItem.setAccelerator(KeyStroke
+            .getKeyStroke(KeyEvent.VK_8, ActionEvent.CTRL_MASK));
         unifyMenu.add(startUnifyWStepSelectorSearchItem);
 
-        //clone of startUnificationItem
-        JMenuItem reshowStepSelectorDialogItem
-                                  =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        reshowStepSelectorDialogAction();
-                    }
-                });
-        reshowStepSelectorDialogItem.setText(
-            PaConstants.
-              PA_GUI_UNIFY_MENU_RESHOW_STEP_SELECTOR_DIALOG_ITEM_TEXT);
-        reshowStepSelectorDialogItem.
-            setMnemonic(KeyEvent.VK_D);
-        reshowStepSelectorDialogItem.
-            setAccelerator(
-                KeyStroke.getKeyStroke(
-                    KeyEvent.VK_9,
-                    ActionEvent.CTRL_MASK));
+        // clone of startUnificationItem
+        final JMenuItem reshowStepSelectorDialogItem = new JMenuItem(
+            new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    reshowStepSelectorDialogAction();
+                }
+            });
+        reshowStepSelectorDialogItem
+            .setText(PaConstants.PA_GUI_UNIFY_MENU_RESHOW_STEP_SELECTOR_DIALOG_ITEM_TEXT);
+        reshowStepSelectorDialogItem.setMnemonic(KeyEvent.VK_D);
+        reshowStepSelectorDialogItem.setAccelerator(KeyStroke.getKeyStroke(
+            KeyEvent.VK_9, ActionEvent.CTRL_MASK));
         unifyMenu.add(reshowStepSelectorDialogItem);
 
-        JMenuItem setMaxResultsItem     =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doSetMaxResultsItemAction();
-                    }
-                });
-        setMaxResultsItem.setText(
-            PaConstants.PA_GUI_UNIFY_MENU_SET_MAX_RESULTS_ITEM_TEXT);
+        final JMenuItem setMaxResultsItem = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                doSetMaxResultsItemAction();
+            }
+        });
+        setMaxResultsItem
+            .setText(PaConstants.PA_GUI_UNIFY_MENU_SET_MAX_RESULTS_ITEM_TEXT);
         unifyMenu.add(setMaxResultsItem);
 
-        JMenuItem setShowSubstitutionsItem     =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doSetShowSubstitutionsItemAction();
-                    }
-                });
-        setShowSubstitutionsItem.setText(
-            PaConstants.PA_GUI_UNIFY_MENU_SET_SHOW_SUBST_ITEM_TEXT);
+        final JMenuItem setShowSubstitutionsItem = new JMenuItem(
+            new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    doSetShowSubstitutionsItemAction();
+                }
+            });
+        setShowSubstitutionsItem
+            .setText(PaConstants.PA_GUI_UNIFY_MENU_SET_SHOW_SUBST_ITEM_TEXT);
         unifyMenu.add(setShowSubstitutionsItem);
-
 
         return unifyMenu;
     }
 
-
     private JMenu buildTLMenu() {
 
-        JMenu tlMenu              =
-            new JMenu(
-                PaConstants.PA_GUI_TL_MENU_TITLE);
+        final JMenu tlMenu = new JMenu(PaConstants.PA_GUI_TL_MENU_TITLE);
         tlMenu.setMnemonic(KeyEvent.VK_T);
 
-
-        JMenuItem unifyPlusStoreInLogSysAndMMTFolder
-                                  =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doUnifyPlusStoreInLogSysAndMMTFolderItemAction();
-                    }
-                });
-        unifyPlusStoreInLogSysAndMMTFolder.setText(
-            PaConstants.
-                PA_GUI_TL_MENU_UNIFY_PLUS_STORE_IN_LOG_SYS_AND_MMT_FOLDER_TEXT);
+        final JMenuItem unifyPlusStoreInLogSysAndMMTFolder = new JMenuItem(
+            new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    doUnifyPlusStoreInLogSysAndMMTFolderItemAction();
+                }
+            });
+        unifyPlusStoreInLogSysAndMMTFolder
+            .setText(PaConstants.PA_GUI_TL_MENU_UNIFY_PLUS_STORE_IN_LOG_SYS_AND_MMT_FOLDER_TEXT);
         tlMenu.add(unifyPlusStoreInLogSysAndMMTFolder);
 
-
-        JMenuItem unifyPlusStoreInMMTFolderItem
-                                  =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doUnifyPlusStoreInMMTFolderItemAction();
-                    }
-                });
-        unifyPlusStoreInMMTFolderItem.setText(
-            PaConstants.
-                PA_GUI_TL_MENU_UNIFY_PLUS_STORE_IN_MMT_FOLDER_TEXT);
+        final JMenuItem unifyPlusStoreInMMTFolderItem = new JMenuItem(
+            new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    doUnifyPlusStoreInMMTFolderItemAction();
+                }
+            });
+        unifyPlusStoreInMMTFolderItem
+            .setText(PaConstants.PA_GUI_TL_MENU_UNIFY_PLUS_STORE_IN_MMT_FOLDER_TEXT);
         tlMenu.add(unifyPlusStoreInMMTFolderItem);
 
-
-        JMenuItem loadTheoremsFromMMTFolderItem
-                                  =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doLoadTheoremsFromMMTFolderItemAction();
-                    }
-                });
-        loadTheoremsFromMMTFolderItem.setText(
-            PaConstants.
-                PA_GUI_TL_MENU_LOAD_THEOREMS_FROM_MMT_FOLDER_TEXT);
+        final JMenuItem loadTheoremsFromMMTFolderItem = new JMenuItem(
+            new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    doLoadTheoremsFromMMTFolderItemAction();
+                }
+            });
+        loadTheoremsFromMMTFolderItem
+            .setText(PaConstants.PA_GUI_TL_MENU_LOAD_THEOREMS_FROM_MMT_FOLDER_TEXT);
         tlMenu.add(loadTheoremsFromMMTFolderItem);
 
-
-        JMenuItem extractTheoremToMMTFolderItem
-                                  =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doExtractTheoremToMMTFolderItemAction();
-                    }
-                });
-        extractTheoremToMMTFolderItem.setText(
-            PaConstants.
-                PA_GUI_TL_MENU_EXTRACT_THEOREM_TO_MMT_FOLDER_TEXT);
+        final JMenuItem extractTheoremToMMTFolderItem = new JMenuItem(
+            new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    doExtractTheoremToMMTFolderItemAction();
+                }
+            });
+        extractTheoremToMMTFolderItem
+            .setText(PaConstants.PA_GUI_TL_MENU_EXTRACT_THEOREM_TO_MMT_FOLDER_TEXT);
         tlMenu.add(extractTheoremToMMTFolderItem);
 
-
-        JMenuItem verifyAllProofs
-                                  =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doVerifyAllProofsItemAction();
-                    }
-                });
-        verifyAllProofs.setText(
-            PaConstants.
-                PA_GUI_TL_MENU_VERIFY_ALL_PROOFS_TEXT);
+        final JMenuItem verifyAllProofs = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                doVerifyAllProofsItemAction();
+            }
+        });
+        verifyAllProofs
+            .setText(PaConstants.PA_GUI_TL_MENU_VERIFY_ALL_PROOFS_TEXT);
         tlMenu.add(verifyAllProofs);
 
-
-        JMenuItem setTLMMTFolderItem
-                                  =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doSetTLMMTFolderItemAction();
-                    }
-                });
-        setTLMMTFolderItem.setText(
-            PaConstants.PA_GUI_TL_MENU_MMT_FOLDER_TEXT);
+        final JMenuItem setTLMMTFolderItem = new JMenuItem(new AbstractAction()
+        {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                doSetTLMMTFolderItemAction();
+            }
+        });
+        setTLMMTFolderItem.setText(PaConstants.PA_GUI_TL_MENU_MMT_FOLDER_TEXT);
         tlMenu.add(setTLMMTFolderItem);
 
-
-        JMenuItem setTLDjVarsOptionItem
-                                  =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doSetTLDjVarsOptionItemAction();
-                    }
-                });
-        setTLDjVarsOptionItem.setText(
-            PaConstants.PA_GUI_TL_MENU_DJ_VARS_OPTION_TEXT);
+        final JMenuItem setTLDjVarsOptionItem = new JMenuItem(
+            new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    doSetTLDjVarsOptionItemAction();
+                }
+            });
+        setTLDjVarsOptionItem
+            .setText(PaConstants.PA_GUI_TL_MENU_DJ_VARS_OPTION_TEXT);
         tlMenu.add(setTLDjVarsOptionItem);
 
-
-        JMenuItem setTLAuditMessagesItem
-                                  =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doSetTLAuditMessagesItemAction();
-                    }
-                });
-        setTLAuditMessagesItem.setText(
-            PaConstants.PA_GUI_TL_MENU_AUDIT_MESSAGES_TEXT);
+        final JMenuItem setTLAuditMessagesItem = new JMenuItem(
+            new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    doSetTLAuditMessagesItemAction();
+                }
+            });
+        setTLAuditMessagesItem
+            .setText(PaConstants.PA_GUI_TL_MENU_AUDIT_MESSAGES_TEXT);
         tlMenu.add(setTLAuditMessagesItem);
 
-
-        JMenuItem setTLStoreMMIndentAmtItem
-                                  =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doSetTLStoreMMIndentAmtItemAction();
-                    }
-                });
-        setTLStoreMMIndentAmtItem.setText(
-            PaConstants.PA_GUI_TL_MENU_STORE_MM_INDENT_AMT_TEXT);
+        final JMenuItem setTLStoreMMIndentAmtItem = new JMenuItem(
+            new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    doSetTLStoreMMIndentAmtItemAction();
+                }
+            });
+        setTLStoreMMIndentAmtItem
+            .setText(PaConstants.PA_GUI_TL_MENU_STORE_MM_INDENT_AMT_TEXT);
         tlMenu.add(setTLStoreMMIndentAmtItem);
 
-
-        JMenuItem setTLStoreMMRightColItem
-                                  =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doSetTLStoreMMRightColItemAction();
-                    }
-                });
-        setTLStoreMMRightColItem.setText(
-            PaConstants.PA_GUI_TL_MENU_STORE_MM_RIGHT_COL_TEXT);
+        final JMenuItem setTLStoreMMRightColItem = new JMenuItem(
+            new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    doSetTLStoreMMRightColItemAction();
+                }
+            });
+        setTLStoreMMRightColItem
+            .setText(PaConstants.PA_GUI_TL_MENU_STORE_MM_RIGHT_COL_TEXT);
         tlMenu.add(setTLStoreMMRightColItem);
 
-
-        JMenuItem setTLStoreFormulasAsIsItem
-                                  =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doSetTLStoreFormulasAsIsItemAction();
-                    }
-                });
-        setTLStoreFormulasAsIsItem.setText(
-            PaConstants.PA_GUI_TL_MENU_STORE_FORMULAS_AS_IS_TEXT);
+        final JMenuItem setTLStoreFormulasAsIsItem = new JMenuItem(
+            new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    doSetTLStoreFormulasAsIsItemAction();
+                }
+            });
+        setTLStoreFormulasAsIsItem
+            .setText(PaConstants.PA_GUI_TL_MENU_STORE_FORMULAS_AS_IS_TEXT);
         tlMenu.add(setTLStoreFormulasAsIsItem);
-
 
         return tlMenu;
     }
 
-
     private JMenu buildGMFFMenu() {
 
-        JMenu gmffMenu            =
-            new JMenu(
-                PaConstants.PA_GUI_GMFF_MENU_TITLE);
+        final JMenu gmffMenu = new JMenu(PaConstants.PA_GUI_GMFF_MENU_TITLE);
         gmffMenu.setMnemonic(KeyEvent.VK_G);
 
-		//this item is a copy of the File Menu item
-        JMenuItem fileExportViaGMFFItem  =
-            new JMenuItem(
-                new AbstractAction() {
-                    public void actionPerformed(ActionEvent e) {
-                        doFileExportViaGMFFAction();
-                    }
-                });
-        fileExportViaGMFFItem.setText(
-            PaConstants.PA_GUI_FILE_MENU_EXPORT_VIA_GMFF_ITEM_TEXT);
+        // this item is a copy of the File Menu item
+        final JMenuItem fileExportViaGMFFItem = new JMenuItem(
+            new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    doFileExportViaGMFFAction();
+                }
+            });
+        fileExportViaGMFFItem
+            .setText(PaConstants.PA_GUI_FILE_MENU_EXPORT_VIA_GMFF_ITEM_TEXT);
         fileExportViaGMFFItem.setAccelerator(KeyStroke.getKeyStroke(
-                    KeyEvent.VK_1, ActionEvent.CTRL_MASK));
+            KeyEvent.VK_1, ActionEvent.CTRL_MASK));
 
         gmffMenu.add(fileExportViaGMFFItem);
 
@@ -1777,64 +1474,46 @@ public class ProofAsstGUI {
 
     private JMenu buildHelpMenu() {
 
-        JMenu helpMenu            =
-            new JMenu(
-                PaConstants.PA_GUI_HELP_MENU_TITLE);
+        final JMenu helpMenu = new JMenu(PaConstants.PA_GUI_HELP_MENU_TITLE);
         helpMenu.setMnemonic(KeyEvent.VK_H);
 
-        JMenuItem generalInfoItem =
-            new JMenuItem(
-                PaConstants.PA_GUI_HELP_MENU_GENERAL_ITEM_TEXT);
-        generalInfoItem.addActionListener(
-            new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    HelpGeneralInfoGUI h
-                                  = new HelpGeneralInfoGUI(
-                                            proofAsstPreferences);
-                    h.showFrame(h.buildFrame());
-                }
+        final JMenuItem generalInfoItem = new JMenuItem(
+            PaConstants.PA_GUI_HELP_MENU_GENERAL_ITEM_TEXT);
+        generalInfoItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                final HelpGeneralInfoGUI h = new HelpGeneralInfoGUI(
+                    proofAsstPreferences);
+                h.showFrame(h.buildFrame());
             }
-        );
+        });
         helpMenu.add(generalInfoItem);
 
-        JMenuItem helpAboutItem =
-            new JMenuItem(
-                PaConstants.PA_GUI_HELP_ABOUT_ITEM_TEXT);
-        helpAboutItem.addActionListener(
-            new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    Runtime r     = Runtime.getRuntime();
-                    r.gc(); //run garbage collector
-                    String about  = new String(
-                        PaConstants.HELP_ABOUT_TEXT_1
+        final JMenuItem helpAboutItem = new JMenuItem(
+            PaConstants.PA_GUI_HELP_ABOUT_ITEM_TEXT);
+        helpAboutItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                final Runtime r = Runtime.getRuntime();
+                r.gc(); // run garbage collector
+                final String about = new String(PaConstants.HELP_ABOUT_TEXT_1
 
-                      + PaConstants.HELP_ABOUT_TEXT_2
-                      + r.maxMemory()
-                      + PaConstants.PROOF_WORKSHEET_NEW_LINE
+                + PaConstants.HELP_ABOUT_TEXT_2 + r.maxMemory()
+                    + PaConstants.PROOF_WORKSHEET_NEW_LINE
 
-                      + PaConstants.HELP_ABOUT_TEXT_3
-                      + r.freeMemory()
-                      + PaConstants.PROOF_WORKSHEET_NEW_LINE
+                    + PaConstants.HELP_ABOUT_TEXT_3 + r.freeMemory()
+                    + PaConstants.PROOF_WORKSHEET_NEW_LINE
 
-                      + PaConstants.HELP_ABOUT_TEXT_4
-                      + r.totalMemory()
-                      + PaConstants.PROOF_WORKSHEET_NEW_LINE);
-                    try {
-                        JOptionPane.
-                            showMessageDialog(
-                                getMainFrame(),
-                                about,
-                                PaConstants.HELP_ABOUT_TITLE,
-                                JOptionPane.INFORMATION_MESSAGE);
-                    }
-                    catch (HeadlessException f) {
-                    }
-                }
+                    + PaConstants.HELP_ABOUT_TEXT_4 + r.totalMemory()
+                    + PaConstants.PROOF_WORKSHEET_NEW_LINE);
+                try {
+                    JOptionPane.showMessageDialog(getMainFrame(), about,
+                        PaConstants.HELP_ABOUT_TITLE,
+                        JOptionPane.INFORMATION_MESSAGE);
+                } catch (final HeadlessException f) {}
             }
-        );
+        });
         helpMenu.add(helpAboutItem);
-
-
 
         return helpMenu;
     }
@@ -1846,65 +1525,51 @@ public class ProofAsstGUI {
      */
 
     private void doSetFormatNbrItemAction() {
-        int oldFormatNbr          =
-            proofAsstPreferences.
-                getTMFFPreferences().
-                    getCurrFormatNbr();
+        final int oldFormatNbr = proofAsstPreferences.getTMFFPreferences()
+            .getCurrFormatNbr();
 
-        int newFormatNbr          =
-            getNewFormatNbr(oldFormatNbr);
+        final int newFormatNbr = getNewFormatNbr(oldFormatNbr);
 
         if (newFormatNbr != oldFormatNbr) {
-            if (newFormatNbr < 0) {
+            if (newFormatNbr < 0)
                 return;
-            }
-            proofAsstPreferences.
-                getTMFFPreferences().
-                    setCurrFormatNbr(newFormatNbr);
-          //TWEAK: 2008-02-01 -> Do not reformat when
-          //                     format number is changed.
-          //doTMFFReformatAction(false);
-          //END-TWEAK: 2008-02-01
+            proofAsstPreferences.getTMFFPreferences().setCurrFormatNbr(
+                newFormatNbr);
+            // TWEAK: 2008-02-01 -> Do not reformat when
+            // format number is changed.
+            // doTMFFReformatAction(false);
+            // END-TWEAK: 2008-02-01
         }
     }
 
     private void doSetIndentItemAction() {
-        int oldIndent             =
-            proofAsstPreferences.
-                getTMFFPreferences().
-                    getUseIndent();
+        final int oldIndent = proofAsstPreferences.getTMFFPreferences()
+            .getUseIndent();
 
-        int newIndent             =
-            getNewIndent(oldIndent);
+        final int newIndent = getNewIndent(oldIndent);
 
         if (newIndent != oldIndent) {
-            if (newIndent < 0) {
+            if (newIndent < 0)
                 return;
-            }
-            proofAsstPreferences.
-                getTMFFPreferences().
-                    setUseIndent(newIndent);
-          //TWEAK: 2008-02-01 -> Do not reformat when
-          //                     indent amount is changed.
-          //doTMFFReformatAction(false);
-          //END-TWEAK: 2008-02-01
+            proofAsstPreferences.getTMFFPreferences().setUseIndent(newIndent);
+            // TWEAK: 2008-02-01 -> Do not reformat when
+            // indent amount is changed.
+            // doTMFFReformatAction(false);
+            // END-TWEAK: 2008-02-01
         }
     }
 
     private void doSetForegroundColorItemAction() {
-        Color oldColor            =
-            proofAsstPreferences.getForegroundColor();
-        String colorChooserTitle  = new String(
+        final Color oldColor = proofAsstPreferences.getForegroundColor();
+        final String colorChooserTitle = new String(
             PaConstants.PA_GUI_EDIT_MENU_SET_FOREGROUND_ITEM_TEXT
-            + PaConstants.COLOR_CHOOSE_TITLE_2
-            + Integer.toString(oldColor.getRed())
-            + PaConstants.COLOR_CHOOSE_TITLE_SEPARATOR
-            + Integer.toString(oldColor.getGreen())
-            + PaConstants.COLOR_CHOOSE_TITLE_SEPARATOR
-            + Integer.toString(oldColor.getBlue()));
-        Color newColor            =
-            getNewColor(oldColor,
-                        colorChooserTitle);
+                + PaConstants.COLOR_CHOOSE_TITLE_2
+                + Integer.toString(oldColor.getRed())
+                + PaConstants.COLOR_CHOOSE_TITLE_SEPARATOR
+                + Integer.toString(oldColor.getGreen())
+                + PaConstants.COLOR_CHOOSE_TITLE_SEPARATOR
+                + Integer.toString(oldColor.getBlue()));
+        final Color newColor = getNewColor(oldColor, colorChooserTitle);
         if (!newColor.equals(oldColor)) {
             proofAsstPreferences.setForegroundColor(newColor);
             proofTextArea.setForeground(newColor);
@@ -1912,168 +1577,121 @@ public class ProofAsstGUI {
     }
 
     private void doSetBackgroundColorItemAction() {
-        Color oldColor            =
-            proofAsstPreferences.getBackgroundColor();
-        String colorChooserTitle  = new String(
+        final Color oldColor = proofAsstPreferences.getBackgroundColor();
+        final String colorChooserTitle = new String(
             PaConstants.PA_GUI_EDIT_MENU_SET_BACKGROUND_ITEM_TEXT
-            + PaConstants.COLOR_CHOOSE_TITLE_2
-            + Integer.toString(oldColor.getRed())
-            + PaConstants.COLOR_CHOOSE_TITLE_SEPARATOR
-            + Integer.toString(oldColor.getGreen())
-            + PaConstants.COLOR_CHOOSE_TITLE_SEPARATOR
-            + Integer.toString(oldColor.getBlue()));
-        Color newColor            =
-            getNewColor(oldColor,
-                        colorChooserTitle);
+                + PaConstants.COLOR_CHOOSE_TITLE_2
+                + Integer.toString(oldColor.getRed())
+                + PaConstants.COLOR_CHOOSE_TITLE_SEPARATOR
+                + Integer.toString(oldColor.getGreen())
+                + PaConstants.COLOR_CHOOSE_TITLE_SEPARATOR
+                + Integer.toString(oldColor.getBlue()));
+        final Color newColor = getNewColor(oldColor, colorChooserTitle);
         if (!newColor.equals(oldColor)) {
             proofAsstPreferences.setBackgroundColor(newColor);
             proofTextArea.setBackground(newColor);
         }
     }
 
-    private Color getNewColor(Color  oldColor,
-                              String title) {
-        Color newColor            =
-            JColorChooser.showDialog(
-                proofTextArea,
-                title,
-                oldColor);
-        if (newColor == null) {
-            newColor              = oldColor;
-        }
+    private Color getNewColor(final Color oldColor, final String title) {
+        Color newColor = JColorChooser.showDialog(proofTextArea, title,
+            oldColor);
+        if (newColor == null)
+            newColor = oldColor;
         return newColor;
     }
 
     private void doSetIncompleteStepCursorItemAction() {
 
-        String newIncompleteStepCursorOption
-                                  =
-            getNewIncompleteStepCursorOption();
+        final String newIncompleteStepCursorOption = getNewIncompleteStepCursorOption();
 
-        if (newIncompleteStepCursorOption != null) {
-            proofAsstPreferences.
-                setIncompleteStepCursor(
-                    newIncompleteStepCursorOption);
-        }
+        if (newIncompleteStepCursorOption != null)
+            proofAsstPreferences
+                .setIncompleteStepCursor(newIncompleteStepCursorOption);
     }
 
     private void doSetSoftDjErrorItemAction() {
 
-        String newSoftDjErrorOption
-                                  =
-            getNewSoftDjErrorOption();
+        final String newSoftDjErrorOption = getNewSoftDjErrorOption();
 
-        if (newSoftDjErrorOption != null) {
-            proofAsstPreferences.
-                setDjVarsSoftErrorsOption(
-                    newSoftDjErrorOption);
-        }
+        if (newSoftDjErrorOption != null)
+            proofAsstPreferences
+                .setDjVarsSoftErrorsOption(newSoftDjErrorOption);
     }
 
     private void doSetFontFamilyItemAction() {
-        String oldFontFamily      =
-            proofAsstPreferences.getFontFamily();
+        final String oldFontFamily = proofAsstPreferences.getFontFamily();
 
-        String newFontFamily      =
-            getNewFontFamily(oldFontFamily);
+        final String newFontFamily = getNewFontFamily(oldFontFamily);
 
-        if (newFontFamily != null &&
-            newFontFamily.compareToIgnoreCase(oldFontFamily) != 0) {
+        if (newFontFamily != null
+            && newFontFamily.compareToIgnoreCase(oldFontFamily) != 0)
             if (newFontFamily.length() > 0) {
                 proofAsstPreferences.setFontFamily(newFontFamily);
                 buildProofFont();
                 proofTextArea.setFont(proofFont);
             }
-        }
     }
 
-    private void doTMFFReformatAction(boolean inputCursorStep) {
+    private void doTMFFReformatAction(final boolean inputCursorStep) {
 
-        if (saveIfAskedBeforeAction(
-                PaConstants.PA_GUI_ACTION_BEFORE_SAVE_NEW)
-            ==
-            JOptionPane.CANCEL_OPTION) {
+        if (saveIfAskedBeforeAction(PaConstants.PA_GUI_ACTION_BEFORE_SAVE_NEW) == JOptionPane.CANCEL_OPTION)
             return;
-        }
 
         // note: pass boolean "changes" to reformat task
-        //       so that reformat alone does not count
-        //       as changes -- after the reformat we'll
-        //       set that proofTextChanged status back
-        //       to the way it was here!
-        startRequestAction(
-            new RequestTMFFReformat(
-                    inputCursorStep,
-                    proofTextChanged.getChanges()));
+        // so that reformat alone does not count
+        // as changes -- after the reformat we'll
+        // set that proofTextChanged status back
+        // to the way it was here!
+        startRequestAction(new RequestTMFFReformat(inputCursorStep,
+            proofTextChanged.getChanges()));
     }
 
-    private void doTMFFReformatSwapAltAction(boolean inputCursorStep) {
+    private void doTMFFReformatSwapAltAction(final boolean inputCursorStep) {
 
-        if (saveIfAskedBeforeAction(
-                PaConstants.PA_GUI_ACTION_BEFORE_SAVE_NEW)
-            ==
-            JOptionPane.CANCEL_OPTION) {
+        if (saveIfAskedBeforeAction(PaConstants.PA_GUI_ACTION_BEFORE_SAVE_NEW) == JOptionPane.CANCEL_OPTION)
             return;
-        }
 
-        proofAsstPreferences.
-            getTMFFPreferences().
-                toggleAltFormatAndIndentParms();
+        proofAsstPreferences.getTMFFPreferences()
+            .toggleAltFormatAndIndentParms();
 
         // note: pass boolean "changes" to reformat task
-        //       so that reformat alone does not count
-        //       as changes -- after the reformat we'll
-        //       set that proofTextChanged status back
-        //       to the way it was here!
-        startRequestAction(
-            new RequestTMFFReformat(
-                    inputCursorStep,
-                    proofTextChanged.getChanges()));
+        // so that reformat alone does not count
+        // as changes -- after the reformat we'll
+        // set that proofTextChanged status back
+        // to the way it was here!
+        startRequestAction(new RequestTMFFReformat(inputCursorStep,
+            proofTextChanged.getChanges()));
     }
 
-    private int getNewFormatNbr(int oldFormatNbr) {
-        int newFormatNbr          = -1;
-        String s                  =
-            Integer.toString(oldFormatNbr);
+    private int getNewFormatNbr(final int oldFormatNbr) {
+        int newFormatNbr = -1;
+        String s = Integer.toString(oldFormatNbr);
 
-        String formatListString   =
-            proofAsstPreferences.
-                getTMFFPreferences().
-                    getFormatListString();
+        final String formatListString = proofAsstPreferences
+            .getTMFFPreferences().getFormatListString();
 
-        String origPromptString   =
-               formatListString
-               + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
-               + PaConstants.PA_GUI_SET_FORMAT_NBR_PROMPT;
+        final String origPromptString = formatListString
+            + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
+            + PaConstants.PA_GUI_SET_FORMAT_NBR_PROMPT;
 
-        String promptString       = origPromptString;
+        String promptString = origPromptString;
 
         promptLoop: while (true) {
-            s                     =
-                (JOptionPane.
-                    showInputDialog(
-                        getMainFrame(),
-                        promptString,
-                        s)
-                );
-            if (s == null) {
-                break promptLoop; //cancelled input
-            }
-            s                     = s.trim();
+            s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
+            if (s == null)
+                break promptLoop; // cancelled input
+            s = s.trim();
             if (s.equals("")) {
-                promptString      = origPromptString;
+                promptString = origPromptString;
                 continue;
             }
             try {
-                newFormatNbr      =
-                    proofAsstPreferences.
-                        getTMFFPreferences().
-                            validateFormatNbrString(s);
+                newFormatNbr = proofAsstPreferences.getTMFFPreferences()
+                    .validateFormatNbrString(s);
                 break promptLoop;
-            }
-            catch (TMFFException e) {
-                promptString      =
-                    origPromptString
+            } catch (final TMFFException e) {
+                promptString = origPromptString
                     + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
                     + e.getMessage();
             }
@@ -2082,44 +1700,30 @@ public class ProofAsstGUI {
         return newFormatNbr;
     }
 
-    private int getNewIndent(int oldIndent) {
-        int newIndent          = -1;
-        String s                  =
-            Integer.toString(oldIndent);
+    private int getNewIndent(final int oldIndent) {
+        int newIndent = -1;
+        String s = Integer.toString(oldIndent);
 
-        String origPromptString   =
-               PaConstants.PA_GUI_SET_INDENT_PROMPT
-               + Integer.toString(
-                   TMFFConstants.TMFF_MAX_INDENT);
+        final String origPromptString = PaConstants.PA_GUI_SET_INDENT_PROMPT
+            + Integer.toString(TMFFConstants.TMFF_MAX_INDENT);
 
-        String promptString       = origPromptString;
+        String promptString = origPromptString;
 
         promptLoop: while (true) {
-            s                     =
-                (JOptionPane.
-                    showInputDialog(
-                        getMainFrame(),
-                        promptString,
-                        s)
-                );
-            if (s == null) {
-                break promptLoop; //cancelled input
-            }
-            s                     = s.trim();
+            s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
+            if (s == null)
+                break promptLoop; // cancelled input
+            s = s.trim();
             if (s.equals("")) {
-                promptString      = origPromptString;
+                promptString = origPromptString;
                 continue;
             }
             try {
-                newIndent      =
-                    proofAsstPreferences.
-                        getTMFFPreferences().
-                            validateIndentString(s);
+                newIndent = proofAsstPreferences.getTMFFPreferences()
+                    .validateIndentString(s);
                 break promptLoop;
-            }
-            catch (TMFFException e) {
-                promptString      =
-                    origPromptString
+            } catch (final TMFFException e) {
+                promptString = origPromptString
                     + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
                     + e.getMessage();
             }
@@ -2130,49 +1734,33 @@ public class ProofAsstGUI {
 
     private String getNewIncompleteStepCursorOption() {
 
-        String s                  =
-            proofAsstPreferences.getIncompleteStepCursorOptionNbr();
+        String s = proofAsstPreferences.getIncompleteStepCursorOptionNbr();
 
-        String incompleteStepCursorOptionListString
-                                  =
-            proofAsstPreferences.
-                getIncompleteStepCursorOptionListString();
+        final String incompleteStepCursorOptionListString = proofAsstPreferences
+            .getIncompleteStepCursorOptionListString();
 
-        String origPromptString   =
-               PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_OPTION_LIST
-               + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
-               + incompleteStepCursorOptionListString
-               + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
-               + PaConstants.
-                PA_GUI_SET_INCOMPLETE_STEP_CURSOR_OPTION_PROMPT;
+        final String origPromptString = PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_OPTION_LIST
+            + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
+            + incompleteStepCursorOptionListString
+            + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
+            + PaConstants.PA_GUI_SET_INCOMPLETE_STEP_CURSOR_OPTION_PROMPT;
 
-        String promptString       = origPromptString;
+        String promptString = origPromptString;
 
         promptLoop: while (true) {
-            s                     =
-                (JOptionPane.
-                    showInputDialog(
-                        getMainFrame(),
-                        promptString,
-                        s)
-                );
-            if (s == null) {
-                return s; //cancelled input
-            }
-            s                     = s.trim();
+            s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
+            if (s == null)
+                return s; // cancelled input
+            s = s.trim();
             if (s.equals("")) {
-                promptString      = origPromptString;
+                promptString = origPromptString;
                 continue;
             }
             try {
-                return(
-                    proofAsstPreferences.
-                        validateIncompleteStepCursorOptionNbr(
-                            s));
-            }
-            catch (ProofAsstException e) {
-                promptString      =
-                    origPromptString
+                return proofAsstPreferences
+                    .validateIncompleteStepCursorOptionNbr(s);
+            } catch (final ProofAsstException e) {
+                promptString = origPromptString
                     + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
                     + e.getMessage();
             }
@@ -2181,96 +1769,66 @@ public class ProofAsstGUI {
 
     private String getNewSoftDjErrorOption() {
 
-        String s                  =
-            proofAsstPreferences.getDjVarsSoftErrorsOptionNbr();
+        String s = proofAsstPreferences.getDjVarsSoftErrorsOptionNbr();
 
-        String softDjErrorOptionListString
-                                  =
-            proofAsstPreferences.
-                getSoftDjErrorOptionListString();
+        final String softDjErrorOptionListString = proofAsstPreferences
+            .getSoftDjErrorOptionListString();
 
-        String origPromptString   =
-               PaConstants.PROOF_ASST_SOFT_DJ_ERROR_OPTION_LIST
-               + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
-               + softDjErrorOptionListString
-               + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
-               + PaConstants.PA_GUI_SET_SOFT_DJ_ERROR_OPTION_PROMPT;
+        final String origPromptString = PaConstants.PROOF_ASST_SOFT_DJ_ERROR_OPTION_LIST
+            + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
+            + softDjErrorOptionListString
+            + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
+            + PaConstants.PA_GUI_SET_SOFT_DJ_ERROR_OPTION_PROMPT;
 
-        String promptString       = origPromptString;
+        String promptString = origPromptString;
 
         promptLoop: while (true) {
-            s                     =
-                (JOptionPane.
-                    showInputDialog(
-                        getMainFrame(),
-                        promptString,
-                        s)
-                );
-            if (s == null) {
-                return s; //cancelled input
-            }
-            s                     = s.trim();
+            s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
+            if (s == null)
+                return s; // cancelled input
+            s = s.trim();
             if (s.equals("")) {
-                promptString      = origPromptString;
+                promptString = origPromptString;
                 continue;
             }
             try {
-                return(
-                    proofAsstPreferences.
-                        validateDjVarsSoftErrorsOptionNbr(
-                            s));
-            }
-            catch (ProofAsstException e) {
-                promptString      =
-                    origPromptString
+                return proofAsstPreferences
+                    .validateDjVarsSoftErrorsOptionNbr(s);
+            } catch (final ProofAsstException e) {
+                promptString = origPromptString
                     + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
                     + e.getMessage();
             }
         }
     }
 
+    private String getNewFontFamily(final String oldFontFamily) {
 
-    private String getNewFontFamily(String oldFontFamily) {
+        String s = oldFontFamily;
 
-        String s                  = oldFontFamily;
+        final String fontListString = proofAsstPreferences.getFontListString();
 
-        String fontListString     =
-            proofAsstPreferences.getFontListString();
+        final String origPromptString = PaConstants.PROOF_ASST_FONT_FAMILY_LIST
+            + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING + fontListString
+            + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
+            + PaConstants.PA_GUI_SET_FONT_FAMILY_PROMPT;
 
-        String origPromptString   =
-               PaConstants.PROOF_ASST_FONT_FAMILY_LIST
-               + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
-               + fontListString
-               + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
-               + PaConstants.PA_GUI_SET_FONT_FAMILY_PROMPT;
-
-        String promptString       = origPromptString;
+        String promptString = origPromptString;
 
         promptLoop: while (true) {
-            s                     =
-                (JOptionPane.
-                    showInputDialog(
-                        getMainFrame(),
-                        promptString,
-                        s)
-                );
-            if (s == null) {
-                break promptLoop; //cancelled input
-            }
-            s                     = s.trim();
+            s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
+            if (s == null)
+                break promptLoop; // cancelled input
+            s = s.trim();
             if (s.equals("")) {
-                promptString      = origPromptString;
+                promptString = origPromptString;
                 continue;
             }
             try {
-                s                 =
-                    proofAsstPreferences.
-                        validateFontFamily(s);
+                s = proofAsstPreferences.validateFontFamily(s);
                 break promptLoop;
-            }
-            catch (ProofAsstException e) {
-                promptString      =
-                    origPromptString
+            } catch (final ProofAsstException e) {
+                promptString = origPromptString
                     + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
                     + e.getMessage();
             }
@@ -2286,27 +1844,18 @@ public class ProofAsstGUI {
      */
 
     private void doFileExitAction() {
-        if (saveIfAskedBeforeExit(
-                PaConstants.PA_GUI_ACTION_BEFORE_SAVE_EXIT)
-            ==
-            JOptionPane.CANCEL_OPTION) {
+        if (saveIfAskedBeforeExit(PaConstants.PA_GUI_ACTION_BEFORE_SAVE_EXIT) == JOptionPane.CANCEL_OPTION)
             return;
-        }
         System.exit(0);
     }
 
     private void doFileCloseAction() {
-        if (saveIfAskedBeforeAction(
-                PaConstants.PA_GUI_ACTION_BEFORE_SAVE_CLOSE)
-            ==
-            JOptionPane.CANCEL_OPTION) {
+        if (saveIfAskedBeforeAction(PaConstants.PA_GUI_ACTION_BEFORE_SAVE_CLOSE) == JOptionPane.CANCEL_OPTION)
             return;
-        }
 
         setProofTextAreaText("");
 
-        startRequestAction(
-            new RequestUpdateMainFrameTitle(null));
+        startRequestAction(new RequestUpdateMainFrameTitle(null));
 
         clearUndoRedoCaches();
         proofTextChanged.setChanges(false);
@@ -2315,261 +1864,176 @@ public class ProofAsstGUI {
     }
 
     private void doFileNewAction() {
-        if (saveIfAskedBeforeAction(
-                PaConstants.PA_GUI_ACTION_BEFORE_SAVE_NEW)
-            ==
-            JOptionPane.CANCEL_OPTION) {
+        if (saveIfAskedBeforeAction(PaConstants.PA_GUI_ACTION_BEFORE_SAVE_NEW) == JOptionPane.CANCEL_OPTION)
             return;
-        }
 
-        String newTheoremLabel = getNewTheoremLabel();
+        final String newTheoremLabel = getNewTheoremLabel();
 
-        startRequestAction(
-            new RequestNewProof(
-                newTheoremLabel));
+        startRequestAction(new RequestNewProof(newTheoremLabel));
     }
 
     private void doFileNewNextAction() {
-        if (saveIfAskedBeforeAction(
-                PaConstants.PA_GUI_ACTION_BEFORE_SAVE_NEW)
-            ==
-            JOptionPane.CANCEL_OPTION) {
+        if (saveIfAskedBeforeAction(PaConstants.PA_GUI_ACTION_BEFORE_SAVE_NEW) == JOptionPane.CANCEL_OPTION)
             return;
-        }
 
-        startRequestAction(
-            new RequestNewNextProof(
-                getCurrProofMaxSeq()));
+        startRequestAction(new RequestNewNextProof(getCurrProofMaxSeq()));
 
     }
 
-
     private void doFileGetProofAction() {
-        if (saveIfAskedBeforeAction(
-                PaConstants.PA_GUI_ACTION_BEFORE_SAVE_NEW)
-            ==
-            JOptionPane.CANCEL_OPTION) {
+        if (saveIfAskedBeforeAction(PaConstants.PA_GUI_ACTION_BEFORE_SAVE_NEW) == JOptionPane.CANCEL_OPTION)
             return;
-        }
 
-        Theorem oldTheorem        = getTheorem();
+        final Theorem oldTheorem = getTheorem();
 
-        if (oldTheorem == null) {
+        if (oldTheorem == null)
             return;
-        }
 
-        startRequestAction(
-            new RequestGetProof(oldTheorem,
-                                true,
-                                false));
+        startRequestAction(new RequestGetProof(oldTheorem, true, false));
 
     }
 
     private void doFileGetFwdProofAction() {
-        if (saveIfAskedBeforeAction(
-                PaConstants.PA_GUI_ACTION_BEFORE_SAVE_NEW)
-            ==
-            JOptionPane.CANCEL_OPTION) {
+        if (saveIfAskedBeforeAction(PaConstants.PA_GUI_ACTION_BEFORE_SAVE_NEW) == JOptionPane.CANCEL_OPTION)
             return;
-        }
 
-        startRequestAction(
-            new RequestFwdProof(getCurrProofMaxSeq(),
-                                true,   // proof unified
-                                false)); // hyps Randomized
+        startRequestAction(new RequestFwdProof(getCurrProofMaxSeq(), true, // proof
+                                                                           // unified
+            false)); // hyps Randomized
     }
 
     private void doFileGetBwdProofAction() {
-        if (saveIfAskedBeforeAction(
-                PaConstants.PA_GUI_ACTION_BEFORE_SAVE_NEW)
-            ==
-            JOptionPane.CANCEL_OPTION) {
+        if (saveIfAskedBeforeAction(PaConstants.PA_GUI_ACTION_BEFORE_SAVE_NEW) == JOptionPane.CANCEL_OPTION)
             return;
-        }
 
-        startRequestAction(
-            new RequestBwdProof(getCurrProofMaxSeq(),
-                                true,   // proof unified
-                                false)); // hyps Randomized
+        startRequestAction(new RequestBwdProof(getCurrProofMaxSeq(), true, // proof
+                                                                           // unified
+            false)); // hyps Randomized
     }
 
     private String getNewTheoremLabel() {
         String s;
         while (true) {
-            s                     =
-                (JOptionPane.showInputDialog(
-                    getMainFrame(),
-                    PaConstants.
-                        PA_GUI_NEW_THEOREM_LABEL_PROMPT));
-            if (s == null) {             //cancelled input
+            s = JOptionPane.showInputDialog(getMainFrame(),
+                PaConstants.PA_GUI_NEW_THEOREM_LABEL_PROMPT);
+            if (s == null)
                 return s;
-            }
-            s                     = s.trim();
-            if (!s.equals("")) {
+            s = s.trim();
+            if (!s.equals(""))
                 return s;
-            }
         }
     }
 
-
     private Theorem getTheorem() {
-        String s                  = new String("");
+        String s = new String("");
 
-        String promptString       =
-            PaConstants.PA_GUI_GET_THEOREM_LABEL_PROMPT;
+        String promptString = PaConstants.PA_GUI_GET_THEOREM_LABEL_PROMPT;
 
         Theorem theorem;
 
         while (true) {
-            s                     =
-                (JOptionPane.
-                    showInputDialog(
-                        getMainFrame(),
-                        promptString,
-                        s)
-                );
-            if (s == null) {
-                return null;  //cancelled input
-            }
-            s                     = s.trim();
+            s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
+            if (s == null)
+                return null; // cancelled input
+            s = s.trim();
             if (s.equals("")) {
-                promptString       =
-                    PaConstants.PA_GUI_GET_THEOREM_LABEL_PROMPT;
+                promptString = PaConstants.PA_GUI_GET_THEOREM_LABEL_PROMPT;
                 continue;
             }
-            theorem               = proofAsst.getTheorem(s);
-            if (theorem != null) {
+            theorem = proofAsst.getTheorem(s);
+            if (theorem != null)
                 return theorem;
-            }
-            promptString          =
-                new String(
-                    PaConstants.PA_GUI_GET_THEOREM_LABEL_PROMPT_2_1
-                    + s
-                    + PaConstants.
-                        PA_GUI_GET_THEOREM_LABEL_PROMPT_2_2);
+            promptString = new String(
+                PaConstants.PA_GUI_GET_THEOREM_LABEL_PROMPT_2_1 + s
+                    + PaConstants.PA_GUI_GET_THEOREM_LABEL_PROMPT_2_2);
         }
     }
 
     private void doFileOpenAction() {
-        if (saveIfAskedBeforeAction(
-                PaConstants.PA_GUI_ACTION_BEFORE_SAVE_OPEN)
-            ==
-            JOptionPane.CANCEL_OPTION) {
+        if (saveIfAskedBeforeAction(PaConstants.PA_GUI_ACTION_BEFORE_SAVE_OPEN) == JOptionPane.CANCEL_OPTION)
             return;
-        }
 
-        int    returnVal;
-        File   file;
-        String s;
+        int returnVal;
+        File file;
+        final String s;
         while (true) {
-            returnVal             =
-                fileChooser.showOpenDialog(
-                    getMainFrame());
+            returnVal = fileChooser.showOpenDialog(getMainFrame());
             if (returnVal == JFileChooser.APPROVE_OPTION) {
-                file              = fileChooser.getSelectedFile();
-                if (file.exists()) {
-                    startRequestAction(
-                        new RequestFileOpen(file));
-                }
-                else {
-                    if (getYesNoAnswer(
-                            PaConstants.ERRMSG_PA_GUI_FILE_NOTFND_1
-                             + file.getAbsolutePath()
-                             + PaConstants.
-                                ERRMSG_PA_GUI_FILE_NOTFND_2)
-                        == JOptionPane.YES_OPTION) {
-                        continue;
-                    }
-                }
+                file = fileChooser.getSelectedFile();
+                if (file.exists())
+                    startRequestAction(new RequestFileOpen(file));
+                else if (getYesNoAnswer(PaConstants.ERRMSG_PA_GUI_FILE_NOTFND_1
+                    + file.getAbsolutePath()
+                    + PaConstants.ERRMSG_PA_GUI_FILE_NOTFND_2) == JOptionPane.YES_OPTION)
+                    continue;
             }
             break;
         }
     }
 
-    private int saveIfAskedBeforeExit(String actionCaption) {
-        int answer                = JOptionPane.NO_OPTION;
+    private int saveIfAskedBeforeExit(final String actionCaption) {
+        int answer = JOptionPane.NO_OPTION;
         if (proofTextChanged.getChanges()) {
-            answer                =
-                getYesNoCancelAnswer(
-                    PaConstants.ERRMSG_PA_GUI_SAVE_BEFORE_ACTION_1
-                    + actionCaption
-                    + PaConstants.ERRMSG_PA_GUI_SAVE_BEFORE_ACTION_2);
+            answer = getYesNoCancelAnswer(PaConstants.ERRMSG_PA_GUI_SAVE_BEFORE_ACTION_1
+                + actionCaption
+                + PaConstants.ERRMSG_PA_GUI_SAVE_BEFORE_ACTION_2);
 
-            if (answer == JOptionPane.YES_OPTION) {
-                doFileSaveAction(true); //saving before exit...
-            }
+            if (answer == JOptionPane.YES_OPTION)
+                doFileSaveAction(true); // saving before exit...
         }
         return answer;
     }
 
-    private int saveIfAskedBeforeAction(String actionCaption) {
-        int answer                = JOptionPane.NO_OPTION;
+    private int saveIfAskedBeforeAction(final String actionCaption) {
+        int answer = JOptionPane.NO_OPTION;
         if (proofTextChanged.getChanges()) {
-            answer                =
-                getYesNoCancelAnswer(
-                    PaConstants.ERRMSG_PA_GUI_SAVE_BEFORE_ACTION_1
-                    + actionCaption
-                    + PaConstants.ERRMSG_PA_GUI_SAVE_BEFORE_ACTION_2);
+            answer = getYesNoCancelAnswer(PaConstants.ERRMSG_PA_GUI_SAVE_BEFORE_ACTION_1
+                + actionCaption
+                + PaConstants.ERRMSG_PA_GUI_SAVE_BEFORE_ACTION_2);
 
-            if (answer == JOptionPane.YES_OPTION) {
+            if (answer == JOptionPane.YES_OPTION)
                 doFileSaveAction(false);
-            }
         }
         return answer;
     }
 
-
-    private int getYesNoCancelAnswer(String messageAboutIt) {
-        int answer                = JOptionPane.YES_OPTION; //default
+    private int getYesNoCancelAnswer(final String messageAboutIt) {
+        int answer = JOptionPane.YES_OPTION; // default
         try {
-            answer                =
-                JOptionPane.showConfirmDialog(
-                            getMainFrame(),
-                            messageAboutIt,
-                            PaConstants.PA_GUI_YES_NO_CANCEL_TITLE,
-                            JOptionPane.YES_NO_CANCEL_OPTION,
-                            JOptionPane.QUESTION_MESSAGE
-                            );
-        }
-        catch (HeadlessException e) {
-        }
+            answer = JOptionPane.showConfirmDialog(getMainFrame(),
+                messageAboutIt, PaConstants.PA_GUI_YES_NO_CANCEL_TITLE,
+                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+        } catch (final HeadlessException e) {}
 
         // Per Norm, window close should default to cancel!
-        if (answer == JOptionPane.CLOSED_OPTION) {
-            answer                = JOptionPane.CANCEL_OPTION;
-        }
+        if (answer == JOptionPane.CLOSED_OPTION)
+            answer = JOptionPane.CANCEL_OPTION;
         return answer;
     }
 
-    private String readProofTextFromFile(File file) {
+    private String readProofTextFromFile(final File file) {
         String newProofText;
 
-        char[]       cBuffer      = new char[1024];
+        final char[] cBuffer = new char[1024];
 
-        StringBuffer sb           = new StringBuffer(cBuffer.length);
+        final StringBuffer sb = new StringBuffer(cBuffer.length);
 
-        int          len          = 0;
+        int len = 0;
         try {
-            BufferedReader r      =
-                new BufferedReader(
-                    new FileReader(
-                        file));
-            while ((len = r.read(cBuffer, 0, cBuffer.length)) != -1) {
+            final BufferedReader r = new BufferedReader(new FileReader(file));
+            while ((len = r.read(cBuffer, 0, cBuffer.length)) != -1)
                 sb.append(cBuffer, 0, len);
-            }
             r.close();
-            newProofText          = new String(sb);
-        }
-        catch (IOException e) {
-            newProofText =
-                PaConstants.ERRMSG_PA_GUI_READ_PROOF_IO_ERR_1
+            newProofText = new String(sb);
+        } catch (final IOException e) {
+            newProofText = PaConstants.ERRMSG_PA_GUI_READ_PROOF_IO_ERR_1
                 + e.getMessage();
         }
 
         return newProofText;
     }
 
-    private void doFileSaveAction(boolean exitingNow) {
+    private void doFileSaveAction(final boolean exitingNow) {
 
         File file;
         if (getNbrTimesSavedSinceNew() > 0) {
@@ -2579,22 +2043,18 @@ public class ProofAsstGUI {
                 updateMainFrameTitleIfNecessary(exitingNow);
                 return;
             }
-            else {
-                setNbrTimesSavedSinceNew(0); //should not happen
-            }
+            else
+                setNbrTimesSavedSinceNew(0); // should not happen
         }
 
-        int returnVal             =
-                fileChooser.showSaveDialog(getMainFrame());
+        final int returnVal = fileChooser.showSaveDialog(getMainFrame());
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            file                  = fileChooser.getSelectedFile();
-            if (file.exists()) {
+            file = fileChooser.getSelectedFile();
+            if (file.exists())
                 saveOldProofTextFile(file);
-            }
-            else {
+            else
                 saveNewProofTextFile(file);
-            }
             updateMainFrameTitleIfNecessary(exitingNow);
         }
     }
@@ -2602,28 +2062,22 @@ public class ProofAsstGUI {
     private void doFileSaveAsAction() {
         File newFile;
 
-        File oldFile              = fileChooser.getSelectedFile();
+        final File oldFile = fileChooser.getSelectedFile();
 
-        int  returnVal            =
-                fileChooser.showSaveDialog(getMainFrame());
+        final int returnVal = fileChooser.showSaveDialog(getMainFrame());
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            newFile               = fileChooser.getSelectedFile();
+            newFile = fileChooser.getSelectedFile();
             if (newFile.exists()) {
-                if (getYesNoAnswer(
-                        PaConstants.ERRMSG_PA_GUI_FILE_EXISTS_1
-                        + newFile.getAbsolutePath()
-                        + PaConstants.ERRMSG_PA_GUI_FILE_EXISTS_2)
-                    == JOptionPane.YES_OPTION) {
+                if (getYesNoAnswer(PaConstants.ERRMSG_PA_GUI_FILE_EXISTS_1
+                    + newFile.getAbsolutePath()
+                    + PaConstants.ERRMSG_PA_GUI_FILE_EXISTS_2) == JOptionPane.YES_OPTION)
                     saveOldProofTextFile(newFile);
-                }
-                else {
+                else
                     fileChooser.setSelectedFile(oldFile);
-                }
             }
-            else {
+            else
                 saveNewProofTextFile(newFile);
-            }
         }
         updateMainFrameTitleIfNecessary(false);
 
@@ -2631,60 +2085,42 @@ public class ProofAsstGUI {
         // user changes the THEOREM= label now...because they
         // used SaveAs we are taking them at their word that
         // this is the file name to use regardless!!!
-        setProofTheoremLabel(null); //tricky - avoid title update
+        setProofTheoremLabel(null); // tricky - avoid title update
 
     }
 
-    private void updateMainFrameTitleIfNecessary(
-                                    boolean exitingNow) {
+    private void updateMainFrameTitleIfNecessary(final boolean exitingNow) {
         if (!exitingNow) {
-            String newScreenTitle =
-                buildScreenTitle(
-                    fileChooser.getSelectedFile());
-            if (screenTitle.compareTo(newScreenTitle) != 0) {
-                startRequestAction(
-                    new RequestUpdateMainFrameTitle());
-            }
+            final String newScreenTitle = buildScreenTitle(fileChooser
+                .getSelectedFile());
+            if (screenTitle.compareTo(newScreenTitle) != 0)
+                startRequestAction(new RequestUpdateMainFrameTitle());
         }
     }
 
-    private int getYesNoAnswer(String messageAboutIt) {
-        int answer                = JOptionPane.YES_OPTION; //default
+    private int getYesNoAnswer(final String messageAboutIt) {
+        int answer = JOptionPane.YES_OPTION; // default
         try {
-            answer                =
-                JOptionPane.showConfirmDialog(
-                            getMainFrame(),
-                            messageAboutIt,
-                            PaConstants.PA_GUI_YES_NO_TITLE,
-                            JOptionPane.YES_NO_OPTION,
-                            JOptionPane.QUESTION_MESSAGE
-                            );
-        }
-        catch (HeadlessException e) {
-        }
+            answer = JOptionPane.showConfirmDialog(getMainFrame(),
+                messageAboutIt, PaConstants.PA_GUI_YES_NO_TITLE,
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        } catch (final HeadlessException e) {}
         return answer;
     }
 
-    private void saveNewProofTextFile(File file) {
+    private void saveNewProofTextFile(final File file) {
         try {
-            BufferedWriter w      =
-                new BufferedWriter(
-                    new FileWriter(
-                        file));
-            String s              = getProofTextAreaText();
+            final BufferedWriter w = new BufferedWriter(new FileWriter(file));
+            final String s = getProofTextAreaText();
             w.write(s, 0, s.length());
             w.close();
-        }
-        catch (Throwable e) {
-            String s              =
-                PaConstants.ERRMSG_PA_GUI_SAVE_IO_ERROR_1
-               + e.getMessage();
+        } catch (final Throwable e) {
+            final String s = PaConstants.ERRMSG_PA_GUI_SAVE_IO_ERROR_1
+                + e.getMessage();
 
-            JOptionPane.showMessageDialog(
-                    getMainFrame(),
-                    s,
-                    PaConstants.PA_GUI_SAVE_NEW_PROOF_TEXT_TITLE,
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(getMainFrame(), s,
+                PaConstants.PA_GUI_SAVE_NEW_PROOF_TEXT_TITLE,
+                JOptionPane.ERROR_MESSAGE);
         }
 
         proofTextChanged.setChanges(false);
@@ -2692,25 +2128,18 @@ public class ProofAsstGUI {
         setNbrTimesSavedSinceNew(1);
     }
 
-    private void saveOldProofTextFile(File file) {
+    private void saveOldProofTextFile(final File file) {
         try {
-            BufferedWriter w      =
-                new BufferedWriter(
-                    new FileWriter(
-                        file));
-            String s              = getProofTextAreaText();
+            final BufferedWriter w = new BufferedWriter(new FileWriter(file));
+            final String s = getProofTextAreaText();
             w.write(s, 0, s.length());
             w.close();
-        }
-        catch (Throwable e) {
-            String s              =
-                PaConstants.ERRMSG_PA_GUI_SAVE_IO_ERROR2_1
-                    + e.getMessage();
-            JOptionPane.showMessageDialog(
-                    getMainFrame(),
-                    s,
-                    PaConstants.PA_GUI_SAVE_OLD_PROOF_TEXT_TITLE,
-                    JOptionPane.ERROR_MESSAGE);
+        } catch (final Throwable e) {
+            final String s = PaConstants.ERRMSG_PA_GUI_SAVE_IO_ERROR2_1
+                + e.getMessage();
+            JOptionPane.showMessageDialog(getMainFrame(), s,
+                PaConstants.PA_GUI_SAVE_OLD_PROOF_TEXT_TITLE,
+                JOptionPane.ERROR_MESSAGE);
         }
 
         proofTextChanged.setChanges(false);
@@ -2720,63 +2149,44 @@ public class ProofAsstGUI {
     }
 
     private void doFileExportViaGMFFAction() {
-        startRequestAction(
-            new RequestExportViaGMFF());
-	}
+        startRequestAction(new RequestExportViaGMFF());
+    }
 
     // ------------------------------------------------------
-    // | Unify menu stuff                                   |
+    // | Unify menu stuff |
     // ------------------------------------------------------
-
 
     private void doSetShowSubstitutionsItemAction() {
 
-        boolean newShowSubstitutions
-                                  = getNewShowSubstitutions();
+        final boolean newShowSubstitutions = getNewShowSubstitutions();
 
-        proofAsstPreferences.
-             setStepSelectorShowSubstitutions(
-                        newShowSubstitutions);
+        proofAsstPreferences
+            .setStepSelectorShowSubstitutions(newShowSubstitutions);
     }
 
     private boolean getNewShowSubstitutions() {
 
-        String s                  =
-            Boolean.toString(
-                proofAsstPreferences.
-                    getStepSelectorShowSubstitutions());
+        String s = Boolean.toString(proofAsstPreferences
+            .getStepSelectorShowSubstitutions());
 
-        String origPromptString   =
-            PaConstants.PA_GUI_SET_SHOW_SUBST_OPTION_PROMPT;
+        final String origPromptString = PaConstants.PA_GUI_SET_SHOW_SUBST_OPTION_PROMPT;
 
-        String promptString       = origPromptString;
+        String promptString = origPromptString;
 
         promptLoop: while (true) {
-            s                     =
-                (JOptionPane.
-                    showInputDialog(
-                        getMainFrame(),
-                        promptString,
-                        s)
-                );
-            if (s == null) { //cancelled input
-                return proofAsstPreferences.
-                           getStepSelectorShowSubstitutions();
-            }
-            s                     = s.trim();
+            s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
+            if (s == null)
+                return proofAsstPreferences.getStepSelectorShowSubstitutions();
+            s = s.trim();
             if (s.equals("")) {
-                promptString      = origPromptString;
+                promptString = origPromptString;
                 continue;
             }
             try {
-                return(
-                    proofAsstPreferences.
-                        validateStepSelectorShowSubstitutions(
-                            s));
-            }
-            catch (IllegalArgumentException e) {
-                promptString      =
-                    origPromptString
+                return proofAsstPreferences
+                    .validateStepSelectorShowSubstitutions(s);
+            } catch (final IllegalArgumentException e) {
+                promptString = origPromptString
                     + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
                     + e.getMessage();
             }
@@ -2785,76 +2195,53 @@ public class ProofAsstGUI {
 
     private void doSetMaxResultsItemAction() {
 
-        int newMaxResults         = getNewMaxResults();
+        final int newMaxResults = getNewMaxResults();
 
-        if (newMaxResults != -1) {
-            proofAsstPreferences.
-                    setStepSelectorMaxResults(
-                        newMaxResults);
-        }
+        if (newMaxResults != -1)
+            proofAsstPreferences.setStepSelectorMaxResults(newMaxResults);
     }
 
     private int getNewMaxResults() {
 
-        String s                  =
-            Integer.toString(
-                proofAsstPreferences.
-                    getStepSelectorMaxResults());
+        String s = Integer.toString(proofAsstPreferences
+            .getStepSelectorMaxResults());
 
-        String origPromptString   =
-            PaConstants.PA_GUI_SET_MAX_RESULTS_OPTION_PROMPT;
+        final String origPromptString = PaConstants.PA_GUI_SET_MAX_RESULTS_OPTION_PROMPT;
 
-        String promptString       = origPromptString;
+        String promptString = origPromptString;
 
         promptLoop: while (true) {
-            s                     =
-                (JOptionPane.
-                    showInputDialog(
-                        getMainFrame(),
-                        promptString,
-                        s)
-                );
-            if (s == null) {
-                return -1; //cancelled input
-            }
-            s                     = s.trim();
+            s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
+            if (s == null)
+                return -1; // cancelled input
+            s = s.trim();
             if (s.equals("")) {
-                promptString      = origPromptString;
+                promptString = origPromptString;
                 continue;
             }
             try {
-                return(
-                    proofAsstPreferences.
-                        validateStepSelectorMaxResults(
-                            s));
-            }
-            catch (IllegalArgumentException e) {
-                promptString      =
-                    origPromptString
+                return proofAsstPreferences.validateStepSelectorMaxResults(s);
+            } catch (final IllegalArgumentException e) {
+                promptString = origPromptString
                     + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
                     + e.getMessage();
             }
         }
     }
 
-    private void startUnificationAction(
-                            boolean           renumReq,
-                            PreprocessRequest preprocessRequest,
-                            StepRequest       stepRequest,
-                            TLRequest         tlRequest) {
-        RequestUnify request      =
-            new RequestUnify(proofTextChanged.getChanges(),
-                             renumReq,
-                             preprocessRequest,
-                             stepRequest,
-                             tlRequest);
+    private void startUnificationAction(final boolean renumReq,
+        final PreprocessRequest preprocessRequest,
+        final StepRequest stepRequest, final TLRequest tlRequest)
+    {
+        final RequestUnify request = new RequestUnify(
+            proofTextChanged.getChanges(), renumReq, preprocessRequest,
+            stepRequest, tlRequest);
         startRequestAction(request);
     }
 
     private void reshowStepSelectorDialogAction() {
-        if (stepSelectorDialog != null) {
+        if (stepSelectorDialog != null)
             stepSelectorDialog.setVisible(true);
-        }
     }
 
     /*
@@ -2862,92 +2249,68 @@ public class ProofAsstGUI {
      *  we may need the memory space.
      */
     private void disposeOfOldSelectorDialog() {
-        if (stepSelectorDialog != null) {
+        if (stepSelectorDialog != null)
             stepSelectorDialog.dispose();
-        }
     }
 
-
     // ------------------------------------------------------
-    // | TL menu stuff                                      |
+    // | TL menu stuff |
     // ------------------------------------------------------
-
 
     private void doUnifyPlusStoreInLogSysAndMMTFolderItemAction() {
-        startUnificationAction(
-            false, // no renum
-            null,  // no preprocess request
-            null, //  no step selector request
+        startUnificationAction(false, // no renum
+            null, // no preprocess request
+            null, // no step selector request
             new StoreInLogSysAndMMTFolderTLRequest());
     }
 
     private void doUnifyPlusStoreInMMTFolderItemAction() {
-        startUnificationAction(
-            false, // no renum
-            null,  // no preprocess request
-            null, //  no step selector request
+        startUnificationAction(false, // no renum
+            null, // no preprocess request
+            null, // no step selector request
             new StoreInMMTFolderTLRequest());
     }
 
     private void doLoadTheoremsFromMMTFolderItemAction() {
-        startRequestAction(
-            new RequestLoadTheoremsFromMMTFolder());
+        startRequestAction(new RequestLoadTheoremsFromMMTFolder());
     }
 
     private void doExtractTheoremToMMTFolderItemAction() {
-        Theorem theorem           = getTheorem();
-        if (theorem != null) {
-            startRequestAction(
-                new RequestExtractTheoremToMMTFolder(
-                        theorem));
-        }
+        final Theorem theorem = getTheorem();
+        if (theorem != null)
+            startRequestAction(new RequestExtractTheoremToMMTFolder(theorem));
     }
 
     private void doVerifyAllProofsItemAction() {
-        startRequestAction(
-            new RequestVerifyAllProofs());
+        startRequestAction(new RequestVerifyAllProofs());
     }
 
     private void doSetTLMMTFolderItemAction() {
-        MMTFolder mmtFolder       = getNewMMTFolder();
+        final MMTFolder mmtFolder = getNewMMTFolder();
     }
 
     private MMTFolder getNewMMTFolder() {
 
-        String title              = "";
-        File file                 =
-            tlPreferences.getMMTFolder().getFolderFile();
-        if (file != null) {
-            title                 = file.getAbsolutePath();
-        }
+        String title = "";
+        File file = tlPreferences.getMMTFolder().getFolderFile();
+        if (file != null)
+            title = file.getAbsolutePath();
         mmtFolderChooser.setDialogTitle(title);
 
-        int    returnVal;
-        String s;
+        int returnVal;
+        final String s;
         String errMsg;
         while (true) {
-            returnVal             =
-                mmtFolderChooser.
-                    showDialog(
-                        getMainFrame(),
-                        PaConstants.
-                            PA_GUI_SET_TL_MMT_FOLDER_OPTION_PROMPT_1
-                        );
+            returnVal = mmtFolderChooser.showDialog(getMainFrame(),
+                PaConstants.PA_GUI_SET_TL_MMT_FOLDER_OPTION_PROMPT_1);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
-                file              =
-                    mmtFolderChooser.getSelectedFile();
-                errMsg            =
-                    tlPreferences.setMMTFolder(file);
-                if (errMsg == null) {
+                file = mmtFolderChooser.getSelectedFile();
+                errMsg = tlPreferences.setMMTFolder(file);
+                if (errMsg == null)
                     break;
-                }
-                if (getYesNoAnswer(
-                        errMsg
-                        + PaConstants.
-                            PA_GUI_SET_TL_MMT_FOLDER_OPTION_PROMPT_2)
-                    == JOptionPane.YES_OPTION) {
+                if (getYesNoAnswer(errMsg
+                    + PaConstants.PA_GUI_SET_TL_MMT_FOLDER_OPTION_PROMPT_2) == JOptionPane.YES_OPTION)
                     continue;
-                }
             }
             break;
         }
@@ -2955,254 +2318,166 @@ public class ProofAsstGUI {
     }
 
     private void doSetTLDjVarsOptionItemAction() {
-        String newDjVarsOption
-                                  = getNewTLDjVarsOption();
+        final String newDjVarsOption = getNewTLDjVarsOption();
     }
 
     private String getNewTLDjVarsOption() {
 
-        String s                  =
-            tlPreferences.
-                getDjVarsOption();
+        String s = tlPreferences.getDjVarsOption();
 
-        String origPromptString   =
-            PaConstants.
-                PA_GUI_SET_TL_DJ_VARS_OPTION_PROMPT;
+        final String origPromptString = PaConstants.PA_GUI_SET_TL_DJ_VARS_OPTION_PROMPT;
 
-        String promptString       = origPromptString;
+        String promptString = origPromptString;
 
         promptLoop: while (true) {
-            s                     =
-                (JOptionPane.
-                    showInputDialog(
-                        getMainFrame(),
-                        promptString,
-                        s)
-                );
-            if (s == null) { //cancelled input
-                return tlPreferences.
-                           getDjVarsOption();
-            }
-            s                     = s.trim();
+            s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
+            if (s == null)
+                return tlPreferences.getDjVarsOption();
+            s = s.trim();
             if (s.equals("")) {
-                promptString      = origPromptString;
+                promptString = origPromptString;
                 continue;
             }
-            if (tlPreferences.setDjVarsOption(s)) {
-                return tlPreferences.
-                           getDjVarsOption();
-            }
-            promptString          =
-                origPromptString
+            if (tlPreferences.setDjVarsOption(s))
+                return tlPreferences.getDjVarsOption();
+            promptString = origPromptString
                 + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
-                + TlConstants.ERRMSG_INVALID_DJ_VARS_OPTION_1
-                + s
+                + TlConstants.ERRMSG_INVALID_DJ_VARS_OPTION_1 + s
                 + TlConstants.ERRMSG_INVALID_DJ_VARS_OPTION_2;
         }
     }
 
     private void doSetTLStoreMMIndentAmtItemAction() {
-        int newStoreMMIndentAmt
-                                  = getNewTLStoreMMIndentAmt();
+        final int newStoreMMIndentAmt = getNewTLStoreMMIndentAmt();
     }
 
     private int getNewTLStoreMMIndentAmt() {
 
-        String s                  =
-            Integer.toString(
-                tlPreferences.
-                    getStoreMMIndentAmt());
+        String s = Integer.toString(tlPreferences.getStoreMMIndentAmt());
 
-        String origPromptString   =
-            PaConstants.
-                PA_GUI_SET_TL_STORE_MM_INDENT_AMT_OPTION_PROMPT;
+        final String origPromptString = PaConstants.PA_GUI_SET_TL_STORE_MM_INDENT_AMT_OPTION_PROMPT;
 
-        String promptString       = origPromptString;
+        String promptString = origPromptString;
 
         promptLoop: while (true) {
-            s                     =
-                (JOptionPane.
-                    showInputDialog(
-                        getMainFrame(),
-                        promptString,
-                        s)
-                );
-            if (s == null) { //cancelled input
-                return tlPreferences.
-                           getStoreMMIndentAmt();
-            }
-            s                     = s.trim();
+            s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
+            if (s == null)
+                return tlPreferences.getStoreMMIndentAmt();
+            s = s.trim();
             if (s.equals("")) {
-                promptString      = origPromptString;
+                promptString = origPromptString;
                 continue;
             }
-            if (tlPreferences.setStoreMMIndentAmt(s)) {
-                return tlPreferences.
-                           getStoreMMIndentAmt();
-            }
-            promptString          =
-                origPromptString
+            if (tlPreferences.setStoreMMIndentAmt(s))
+                return tlPreferences.getStoreMMIndentAmt();
+            promptString = origPromptString
                 + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
-                + TlConstants.ERRMSG_INVALID_STORE_MM_INDENT_AMT_1
-                + s
+                + TlConstants.ERRMSG_INVALID_STORE_MM_INDENT_AMT_1 + s
                 + TlConstants.ERRMSG_INVALID_STORE_MM_INDENT_AMT_2;
         }
     }
 
     private void doSetTLStoreMMRightColItemAction() {
-        int newStoreMMRightCol
-                                  = getNewTLStoreMMRightCol();
+        final int newStoreMMRightCol = getNewTLStoreMMRightCol();
     }
 
     private int getNewTLStoreMMRightCol() {
 
-        String s                  =
-            Integer.toString(
-                tlPreferences.
-                    getStoreMMRightCol());
+        String s = Integer.toString(tlPreferences.getStoreMMRightCol());
 
-        String origPromptString   =
-            PaConstants.
-                PA_GUI_SET_TL_STORE_MM_RIGHT_COL_OPTION_PROMPT;
+        final String origPromptString = PaConstants.PA_GUI_SET_TL_STORE_MM_RIGHT_COL_OPTION_PROMPT;
 
-        String promptString       = origPromptString;
+        String promptString = origPromptString;
 
         promptLoop: while (true) {
-            s                     =
-                (JOptionPane.
-                    showInputDialog(
-                        getMainFrame(),
-                        promptString,
-                        s)
-                );
-            if (s == null) { //cancelled input
-                return tlPreferences.
-                           getStoreMMRightCol();
-            }
-            s                     = s.trim();
+            s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
+            if (s == null)
+                return tlPreferences.getStoreMMRightCol();
+            s = s.trim();
             if (s.equals("")) {
-                promptString      = origPromptString;
+                promptString = origPromptString;
                 continue;
             }
-            if (tlPreferences.setStoreMMRightCol(s)) {
-                return tlPreferences.
-                           getStoreMMRightCol();
-            }
-            promptString          =
-                origPromptString
+            if (tlPreferences.setStoreMMRightCol(s))
+                return tlPreferences.getStoreMMRightCol();
+            promptString = origPromptString
                 + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
-                + TlConstants.ERRMSG_INVALID_STORE_MM_RIGHT_COL_1
-                + s
+                + TlConstants.ERRMSG_INVALID_STORE_MM_RIGHT_COL_1 + s
                 + TlConstants.ERRMSG_INVALID_STORE_MM_RIGHT_COL_2;
         }
     }
 
     private void doSetTLStoreFormulasAsIsItemAction() {
-        boolean newStoreFormulasAsIs
-                                  = getNewTLStoreFormulasAsIs();
+        final boolean newStoreFormulasAsIs = getNewTLStoreFormulasAsIs();
     }
 
     private boolean getNewTLStoreFormulasAsIs() {
 
-        String s                  =
-            Boolean.toString(
-                tlPreferences.
-                    getStoreFormulasAsIs());
+        String s = Boolean.toString(tlPreferences.getStoreFormulasAsIs());
 
-        String origPromptString   =
-            PaConstants.
-                PA_GUI_SET_TL_STORE_FORMULAS_AS_IS_OPTION_PROMPT;
+        final String origPromptString = PaConstants.PA_GUI_SET_TL_STORE_FORMULAS_AS_IS_OPTION_PROMPT;
 
-        String promptString       = origPromptString;
+        String promptString = origPromptString;
 
         promptLoop: while (true) {
-            s                     =
-                (JOptionPane.
-                    showInputDialog(
-                        getMainFrame(),
-                        promptString,
-                        s)
-                );
-            if (s == null) { //cancelled input
-                return tlPreferences.
-                           getStoreFormulasAsIs();
-            }
-            s                     = s.trim();
+            s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
+            if (s == null)
+                return tlPreferences.getStoreFormulasAsIs();
+            s = s.trim();
             if (s.equals("")) {
-                promptString      = origPromptString;
+                promptString = origPromptString;
                 continue;
             }
-            if (tlPreferences.setStoreFormulasAsIs(s)) {
-                return tlPreferences.
-                           getStoreFormulasAsIs();
-            }
-            promptString          =
-                origPromptString
+            if (tlPreferences.setStoreFormulasAsIs(s))
+                return tlPreferences.getStoreFormulasAsIs();
+            promptString = origPromptString
                 + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
-                + TlConstants.ERRMSG_INVALID_STORE_FORMULAS_ASIS_1
-                + s
+                + TlConstants.ERRMSG_INVALID_STORE_FORMULAS_ASIS_1 + s
                 + TlConstants.ERRMSG_INVALID_STORE_FORMULAS_ASIS_2;
         }
     }
 
     private void doSetTLAuditMessagesItemAction() {
-        boolean newAuditMessages  = getNewTLAuditMessages();
+        final boolean newAuditMessages = getNewTLAuditMessages();
     }
 
     private boolean getNewTLAuditMessages() {
 
-        String s                  =
-            Boolean.toString(
-                tlPreferences.
-                    getAuditMessages());
+        String s = Boolean.toString(tlPreferences.getAuditMessages());
 
-        String origPromptString   =
-            PaConstants.PA_GUI_SET_TL_AUDIT_MESSAGES_OPTION_PROMPT;
+        final String origPromptString = PaConstants.PA_GUI_SET_TL_AUDIT_MESSAGES_OPTION_PROMPT;
 
-        String promptString       = origPromptString;
+        String promptString = origPromptString;
 
         promptLoop: while (true) {
-            s                     =
-                (JOptionPane.
-                    showInputDialog(
-                        getMainFrame(),
-                        promptString,
-                        s)
-                );
-            if (s == null) { //cancelled input
-                return tlPreferences.
-                           getAuditMessages();
-            }
-            s                     = s.trim();
+            s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
+            if (s == null)
+                return tlPreferences.getAuditMessages();
+            s = s.trim();
             if (s.equals("")) {
-                promptString      = origPromptString;
+                promptString = origPromptString;
                 continue;
             }
-            if (tlPreferences.setAuditMessages(s)) {
-                return tlPreferences.
-                           getAuditMessages();
-            }
-            promptString          =
-                origPromptString
+            if (tlPreferences.setAuditMessages(s))
+                return tlPreferences.getAuditMessages();
+            promptString = origPromptString
                 + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
-                + TlConstants.ERRMSG_INVALID_AUDIT_MESSAGES_1
-                + s
+                + TlConstants.ERRMSG_INVALID_AUDIT_MESSAGES_1 + s
                 + TlConstants.ERRMSG_INVALID_AUDIT_MESSAGES_2;
 
         }
     }
 
-
     // ------------------------------------------------------
-    // | Inner classes to make requests for processing      |
-    // | that occur on separate threads off of the event    |
-    // | loop.                                              |
+    // | Inner classes to make requests for processing |
+    // | that occur on separate threads off of the event |
+    // | loop. |
     // ------------------------------------------------------
 
     abstract class Request {
         ProofWorksheet w;
-        Request() {
-        }
+
+        Request() {}
         abstract void send();
         abstract void receive();
 
@@ -3210,104 +2485,96 @@ public class ProofAsstGUI {
 
     class RequestExtractTheoremToMMTFolder extends Request {
         Messages messages;
-        Theorem  theorem;
-        RequestExtractTheoremToMMTFolder(Theorem theorem) {
+        Theorem theorem;
+
+        RequestExtractTheoremToMMTFolder(final Theorem theorem) {
             super();
-            this.theorem          = theorem;
+            this.theorem = theorem;
         }
+        @Override
         void send() {
-            messages              =
-                proofAsst.extractTheoremToMMTFolder(theorem);
+            messages = proofAsst.extractTheoremToMMTFolder(theorem);
         }
+        @Override
         void receive() {
-            String s              =
-                ProofWorksheet.getOutputMessageText(messages);
-            if (s == null) {
-                s                 =
-                  PaConstants.
-                   ERRMSG_PA_GUI_EXTRACT_THEOREMS_TO_MMT_FOLDER_NO_MSGS;
-            }
+            String s = ProofWorksheet.getOutputMessageText(messages);
+            if (s == null)
+                s = PaConstants.ERRMSG_PA_GUI_EXTRACT_THEOREMS_TO_MMT_FOLDER_NO_MSGS;
             displayRequestMessages(s);
         }
     }
 
     class RequestLoadTheoremsFromMMTFolder extends Request {
         Messages messages;
+
         RequestLoadTheoremsFromMMTFolder() {
             super();
         }
+        @Override
         void send() {
-            messages              =
-                proofAsst.loadTheoremsFromMMTFolder();
+            messages = proofAsst.loadTheoremsFromMMTFolder();
         }
+        @Override
         void receive() {
-            String s              =
-                ProofWorksheet.getOutputMessageText(messages);
-            if (s == null) {
-                s                 =
-                  PaConstants.
-                   ERRMSG_PA_GUI_LOAD_THEOREMS_FROM_MMT_FOLDER_NO_MSGS;
-            }
+            String s = ProofWorksheet.getOutputMessageText(messages);
+            if (s == null)
+                s = PaConstants.ERRMSG_PA_GUI_LOAD_THEOREMS_FROM_MMT_FOLDER_NO_MSGS;
             displayRequestMessages(s);
         }
     }
 
     class RequestExportViaGMFF extends Request {
         Messages messages;
+
         RequestExportViaGMFF() {
             super();
         }
+        @Override
         void send() {
-            messages              =
-                proofAsst.exportViaGMFF(
-					getProofTextAreaText());
+            messages = proofAsst.exportViaGMFF(getProofTextAreaText());
         }
+        @Override
         void receive() {
-            String s              =
-                ProofWorksheet.getOutputMessageText(messages);
-            if (s == null) {
-                s                 =
-                  PaConstants.
-                   ERRMSG_PA_GUI_EXPORT_VIA_GMFF_NO_MSGS;
-            }
+            String s = ProofWorksheet.getOutputMessageText(messages);
+            if (s == null)
+                s = PaConstants.ERRMSG_PA_GUI_EXPORT_VIA_GMFF_NO_MSGS;
             displayRequestMessages(s);
         }
     }
 
-
     class RequestVerifyAllProofs extends Request {
         Messages messages;
+
         RequestVerifyAllProofs() {
             super();
         }
+        @Override
         void send() {
-            messages              =
-                proofAsst.verifyAllProofs();
+            messages = proofAsst.verifyAllProofs();
         }
+        @Override
         void receive() {
-            String s              =
-                ProofWorksheet.getOutputMessageText(messages);
-            if (s == null) {
-                s                 =
-                    PaConstants.
-                        ERRMSG_PA_GUI_VERIFY_ALL_PROOFS_NO_MSGS;
-            }
+            String s = ProofWorksheet.getOutputMessageText(messages);
+            if (s == null)
+                s = PaConstants.ERRMSG_PA_GUI_VERIFY_ALL_PROOFS_NO_MSGS;
             displayRequestMessages(s);
         }
     }
 
     class RequestUpdateMainFrameTitle extends Request {
         File newFile;
+
         RequestUpdateMainFrameTitle() {
             super();
-            newFile               = fileChooser.getSelectedFile();
+            newFile = fileChooser.getSelectedFile();
         }
-        RequestUpdateMainFrameTitle(File f) {
+        RequestUpdateMainFrameTitle(final File f) {
             super();
-            newFile               = f;
+            newFile = f;
         }
-        void send() {
-        }
+        @Override
+        void send() {}
+        @Override
         void receive() {
             updateScreenTitle(newFile);
             updateMainFrameTitle();
@@ -3318,16 +2585,15 @@ public class ProofAsstGUI {
         RequestEditUndo() {
             super();
         }
-        void send() {
-        }
+        @Override
+        void send() {}
+        @Override
         void receive() {
             try {
                 undoManager.undo();
                 updateUndoRedoItems();
-            }
-            catch(CannotUndoException e) {
-                displayRequestMessages(
-                    e.getMessage());
+            } catch (final CannotUndoException e) {
+                displayRequestMessages(e.getMessage());
             }
         }
     }
@@ -3336,83 +2602,72 @@ public class ProofAsstGUI {
         RequestEditRedo() {
             super();
         }
-        void send() {
-        }
+        @Override
+        void send() {}
+        @Override
         void receive() {
             try {
                 undoManager.redo();
                 updateUndoRedoItems();
-            }
-            catch(CannotRedoException e) {
-                displayRequestMessages(
-                    e.getMessage());
+            } catch (final CannotRedoException e) {
+                displayRequestMessages(e.getMessage());
             }
         }
     }
 
     class RequestUnify extends Request {
-        boolean             renumReq;
-        PreprocessRequest   preprocessRequest;
-        StepRequest         stepRequest;
-        TLRequest           tlRequest;
-        boolean             textChangedBeforeUnify;
-        RequestUnify(boolean            textChangedBeforeUnify,
-                     boolean            renumReq,
-                     PreprocessRequest  preprocessRequest,
-                     StepRequest        stepRequest,
-                     TLRequest          tlRequest) {
+        boolean renumReq;
+        PreprocessRequest preprocessRequest;
+        StepRequest stepRequest;
+        TLRequest tlRequest;
+        boolean textChangedBeforeUnify;
+
+        RequestUnify(final boolean textChangedBeforeUnify,
+            final boolean renumReq, final PreprocessRequest preprocessRequest,
+            final StepRequest stepRequest, final TLRequest tlRequest)
+        {
             super();
-            this.textChangedBeforeUnify
-                                  =
-                 textChangedBeforeUnify;
-            this.renumReq         = renumReq;
-            this.preprocessRequest
-                                  = preprocessRequest;
-            this.stepRequest      = stepRequest;
-            this.tlRequest        = tlRequest;
+            this.textChangedBeforeUnify = textChangedBeforeUnify;
+            this.renumReq = renumReq;
+            this.preprocessRequest = preprocessRequest;
+            this.stepRequest = stepRequest;
+            this.tlRequest = tlRequest;
         }
+        @Override
         void send() {
-            w                     =
-                proofAsst.
-                    unify(renumReq,
-                          getProofTextAreaText(),
-                          preprocessRequest,
-                          stepRequest,
-                          tlRequest,
-                          proofTextArea.getCaretPosition() + 1);
+            w = proofAsst.unify(renumReq, getProofTextAreaText(),
+                preprocessRequest, stepRequest, tlRequest,
+                proofTextArea.getCaretPosition() + 1);
 
         }
+        @Override
         void receive() {
             if (w.stepSelectorResults != null) {
                 disposeOfOldSelectorDialog();
-                stepSelectorDialog =
-                    new StepSelectorDialog(
-                            mainFrame,
-                            w.stepSelectorResults,
-                            proofAsstGUI,
-                            proofAsstPreferences,
-                            proofFont);
+                stepSelectorDialog = new StepSelectorDialog(mainFrame,
+                    w.stepSelectorResults, proofAsstGUI, proofAsstPreferences,
+                    proofFont);
             }
-            else {
+            else
                 displayProofWorksheet(w);
-            }
-            proofTextChanged.setChanges(
-                textChangedBeforeUnify);
+            proofTextChanged.setChanges(textChangedBeforeUnify);
         }
     }
 
     class RequestNewProof extends Request {
         String newTheoremLabel;
-        RequestNewProof(String newTheoremLabel) {
+
+        RequestNewProof(final String newTheoremLabel) {
             super();
             this.newTheoremLabel = newTheoremLabel;
         }
+        @Override
         void send() {
-            w                     =
-                proofAsst.startNewProof(newTheoremLabel);
+            w = proofAsst.startNewProof(newTheoremLabel);
         }
-        void receive(){
-            setProofTheoremLabel(""); //tricky - force title update
+        @Override
+        void receive() {
+            setProofTheoremLabel(""); // tricky - force title update
             displayProofWorksheet(w);
 
             clearUndoRedoCaches();
@@ -3422,20 +2677,20 @@ public class ProofAsstGUI {
         }
     }
 
-
     class RequestNewNextProof extends Request {
-        int     currProofMaxSeq;
+        int currProofMaxSeq;
 
-        RequestNewNextProof(int currProofMaxSeq) {
+        RequestNewNextProof(final int currProofMaxSeq) {
             super();
-            this.currProofMaxSeq  = currProofMaxSeq;
+            this.currProofMaxSeq = currProofMaxSeq;
         }
+        @Override
         void send() {
-            w                     =
-                proofAsst.startNewNextProof(currProofMaxSeq);
+            w = proofAsst.startNewNextProof(currProofMaxSeq);
         }
+        @Override
         void receive() {
-            setProofTheoremLabel(""); //tricky - force title update
+            setProofTheoremLabel(""); // tricky - force title update
             displayProofWorksheet(w);
 
             clearUndoRedoCaches();
@@ -3446,30 +2701,29 @@ public class ProofAsstGUI {
     }
 
     class RequestFileOpen extends Request {
-        File   selectedFile;
+        File selectedFile;
         String s;
 
-        RequestFileOpen(File selectedFile) {
+        RequestFileOpen(final File selectedFile) {
 
             super();
-            this.selectedFile     = selectedFile;
+            this.selectedFile = selectedFile;
         }
+        @Override
         void send() {
-            s                     =
-                readProofTextFromFile(selectedFile);
+            s = readProofTextFromFile(selectedFile);
         }
+        @Override
         void receive() {
             setProofTextAreaText(s);
 
-            setProofTheoremLabel(null); //tricky - avoid title update
+            setProofTheoremLabel(null); // tricky - avoid title update
             updateScreenTitle(fileChooser.getSelectedFile());
             updateMainFrameTitle();
 
             clearUndoRedoCaches();
 
-            setProofTextAreaCursorPos(
-                ProofAsstCursor.
-                    makeProofStartCursor(),
+            setProofTextAreaCursorPos(ProofAsstCursor.makeProofStartCursor(),
                 s.length());
 
             proofTextChanged.setChanges(false);
@@ -3483,22 +2737,22 @@ public class ProofAsstGUI {
         boolean proofUnified;
         boolean hypsRandomized;
 
-        RequestGetProof(Theorem oldTheorem,
-                        boolean proofUnified,
-                        boolean hypsRandomized) {
+        RequestGetProof(final Theorem oldTheorem, final boolean proofUnified,
+            final boolean hypsRandomized)
+        {
             super();
-            this.oldTheorem       = oldTheorem;
-            this.proofUnified     = proofUnified;
-            this.hypsRandomized   = hypsRandomized;
+            this.oldTheorem = oldTheorem;
+            this.proofUnified = proofUnified;
+            this.hypsRandomized = hypsRandomized;
         }
+        @Override
         void send() {
-            w                     =
-                proofAsst.getExistingProof(oldTheorem,
-                                           proofUnified,
-                                           hypsRandomized);
+            w = proofAsst.getExistingProof(oldTheorem, proofUnified,
+                hypsRandomized);
         }
+        @Override
         void receive() {
-            setProofTheoremLabel(""); //tricky - force title update
+            setProofTheoremLabel(""); // tricky - force title update
             displayProofWorksheet(w);
             clearUndoRedoCaches();
             proofTextChanged.setChanges(false);
@@ -3508,26 +2762,26 @@ public class ProofAsstGUI {
     }
 
     class RequestFwdProof extends Request {
-        int     currProofMaxSeq;
+        int currProofMaxSeq;
         boolean proofUnified;
         boolean hypsRandomized;
 
-        RequestFwdProof(int     currProofMaxSeq,
-                        boolean proofUnified,
-                        boolean hypsRandomized) {
+        RequestFwdProof(final int currProofMaxSeq, final boolean proofUnified,
+            final boolean hypsRandomized)
+        {
             super();
-            this.currProofMaxSeq  = currProofMaxSeq;
-            this.proofUnified     = proofUnified;
-            this.hypsRandomized   = hypsRandomized;
+            this.currProofMaxSeq = currProofMaxSeq;
+            this.proofUnified = proofUnified;
+            this.hypsRandomized = hypsRandomized;
         }
+        @Override
         void send() {
-            w                     =
-                proofAsst.getNextProof(currProofMaxSeq,
-                                       proofUnified,
-                                       hypsRandomized);
+            w = proofAsst.getNextProof(currProofMaxSeq, proofUnified,
+                hypsRandomized);
         }
+        @Override
         void receive() {
-            setProofTheoremLabel(""); //tricky - force title update
+            setProofTheoremLabel(""); // tricky - force title update
             displayProofWorksheet(w);
             clearUndoRedoCaches();
             proofTextChanged.setChanges(false);
@@ -3537,26 +2791,27 @@ public class ProofAsstGUI {
     }
 
     class RequestBwdProof extends Request {
-        int     currProofMaxSeq;
+        int currProofMaxSeq;
         boolean proofUnified;
         boolean hypsRandomized;
 
-        RequestBwdProof(int     currProofMaxSeq,
-                        boolean proofUnified,
-                        boolean hypsRandomized) {
+        RequestBwdProof(final int currProofMaxSeq, final boolean proofUnified,
+            final boolean hypsRandomized)
+        {
             super();
-            this.currProofMaxSeq  = currProofMaxSeq;
-            this.proofUnified     = proofUnified;
-            this.hypsRandomized   = hypsRandomized;
+            this.currProofMaxSeq = currProofMaxSeq;
+            this.proofUnified = proofUnified;
+            this.hypsRandomized = hypsRandomized;
         }
+        @Override
         void send() {
-            w                     =
-                proofAsst.getPreviousProof(getCurrProofMaxSeq(),
-                                           true,   // proof unified
-                                           false); // hyps Randomized
+            w = proofAsst.getPreviousProof(getCurrProofMaxSeq(), true, // proof
+                                                                       // unified
+                false); // hyps Randomized
         }
+        @Override
         void receive() {
-            setProofTheoremLabel(""); //tricky - force title update
+            setProofTheoremLabel(""); // tricky - force title update
             displayProofWorksheet(w);
             clearUndoRedoCaches();
             proofTextChanged.setChanges(false);
@@ -3569,34 +2824,30 @@ public class ProofAsstGUI {
         boolean inputCursorStep;
         boolean textChangedBeforeReformat;
 
-        RequestTMFFReformat(boolean inputCursorStep,
-                            boolean textChangedBeforeReformat) {
+        RequestTMFFReformat(final boolean inputCursorStep,
+            final boolean textChangedBeforeReformat)
+        {
             super();
-            this.inputCursorStep  = inputCursorStep;
-            this.textChangedBeforeReformat
-                                  =
-                 textChangedBeforeReformat;
+            this.inputCursorStep = inputCursorStep;
+            this.textChangedBeforeReformat = textChangedBeforeReformat;
         }
+        @Override
         void send() {
-            w                     =
-                proofAsst.
-                    tmffReformat(
-                        inputCursorStep,
-                        getProofTextAreaText(),
-                        proofTextArea.getCaretPosition() + 1);
+            w = proofAsst.tmffReformat(inputCursorStep, getProofTextAreaText(),
+                proofTextArea.getCaretPosition() + 1);
         }
 
-        void receive(){
+        @Override
+        void receive() {
             displayProofWorksheet(w);
-            proofTextChanged.setChanges(
-                textChangedBeforeReformat);
+            proofTextChanged.setChanges(textChangedBeforeReformat);
         }
     }
 
     // ------------------------------------------------------
-    // | Inner classes to manage thread requests            |
-    // | that occur on separate threads off of the event    |
-    // | loop.                                              |
+    // | Inner classes to manage thread requests |
+    // | that occur on separate threads off of the event |
+    // | loop. |
     // ------------------------------------------------------
 
     public class RequestThreadStuff {
@@ -3617,7 +2868,7 @@ public class ProofAsstGUI {
          *
          *  @param t Thread used in RequestThreadStuff
          */
-        public synchronized void setRequestThread(Thread t) {
+        public synchronized void setRequestThread(final Thread t) {
             requestThread = t;
         }
 
@@ -3629,7 +2880,6 @@ public class ProofAsstGUI {
         public synchronized Thread getRequestThread() {
             return requestThread;
         }
-
 
         /**
          *  Start the Thread used in the RequestThreadStuff object.
@@ -3643,10 +2893,9 @@ public class ProofAsstGUI {
          *  if it exists (not null).
          */
         public void cancelRequestThread() {
-            Thread requestThread = getRequestThread();
-            if (requestThread != null) {
+            final Thread requestThread = getRequestThread();
+            if (requestThread != null)
                 requestThread.interrupt();
-            }
         }
 
         /**
@@ -3657,66 +2906,58 @@ public class ProofAsstGUI {
          *
          *  @param r Request object reference
          */
-         public RequestThreadStuff(Request r) {
+        public RequestThreadStuff(final Request r) {
 
-            request               = r;
+            request = r;
 
             displayRequestResults = new Runnable() {
+                @Override
                 public void run() {
                     try {
                         request.receive();
-                    }
-                    finally {
+                    } finally {
                         tidyUpRequestStuff();
                     }
                 }
             };
 
-            sendRequest           = new Runnable() {
+            sendRequest = new Runnable() {
+                @Override
                 public void run() {
                     try {
                         request.send();
-                        EventQueue.invokeLater(
-                            displayRequestResults);
-                    }
-                    finally {
+                        EventQueue.invokeLater(displayRequestResults);
+                    } finally {
                         setRequestThread(null);
                     }
                 }
             };
 
-            setRequestThread(
-                new Thread(sendRequest));
+            setRequestThread(new Thread(sendRequest));
         }
     }
 
-    private synchronized RequestThreadStuff
-                      getRequestThreadStuff() {
+    private synchronized RequestThreadStuff getRequestThreadStuff() {
         return requestThreadStuff;
     }
 
-    private synchronized void setRequestThreadStuff(
-                                 RequestThreadStuff x) {
-        requestThreadStuff        = x;
+    private synchronized void setRequestThreadStuff(final RequestThreadStuff x)
+    {
+        requestThreadStuff = x;
     }
 
-    private synchronized void startRequestAction(Request r) {
+    private synchronized void startRequestAction(final Request r) {
         if (getRequestThreadStuff() == null) {
 
-            setRequestThreadStuff(
-                new RequestThreadStuff(r));
+            setRequestThreadStuff(new RequestThreadStuff(r));
 
             getRequestThreadStuff().startRequestThread();
 
             cancelRequestItem.setEnabled(true);
-            getMainFrame().
-                setCursor(
-                    Cursor.getPredefinedCursor(
-                        Cursor.WAIT_CURSOR));
-            proofTextArea.
-                setCursor(
-                    Cursor.getPredefinedCursor(
-                        Cursor.WAIT_CURSOR));
+            getMainFrame().setCursor(
+                Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            proofTextArea.setCursor(Cursor
+                .getPredefinedCursor(Cursor.WAIT_CURSOR));
         }
     }
 
@@ -3735,49 +2976,42 @@ public class ProofAsstGUI {
         proofTextArea.setCursor(null);
     }
 
-    private void displayProofWorksheet(ProofWorksheet w) {
+    private void displayProofWorksheet(final ProofWorksheet w) {
 
         // keep this number for browsing forward and back!
         setCurrProofMaxSeq(w.getMaxSeq());
 
-        String s                  = w.getOutputProofText();
-        int    proofTextLength    = Integer.MAX_VALUE;
-        if (s != null) { //no structural errors...
+        String s = w.getOutputProofText();
+        int proofTextLength = Integer.MAX_VALUE;
+        if (s != null) { // no structural errors...
             setProofTextAreaText(s);
-            proofTextLength       = s.length();
+            proofTextLength = s.length();
         }
 
-        s                         = w.getTheoremLabel();
-        if (s != null &&
-            getProofTheoremLabel() != null) {
-            if (s.compareToIgnoreCase(getProofTheoremLabel())
-                != 0) {
+        s = w.getTheoremLabel();
+        if (s != null && getProofTheoremLabel() != null)
+            if (s.compareToIgnoreCase(getProofTheoremLabel()) != 0) {
                 updateFileChooserFileForProofLabel(s);
                 updateScreenTitle(fileChooser.getSelectedFile());
                 updateMainFrameTitle();
                 setProofTheoremLabel(s);
                 setNbrTimesSavedSinceNew(0);
             }
-        }
 
-        setProofTextAreaCursorPos(w,
-                                  proofTextLength);
+        setProofTextAreaCursorPos(w, proofTextLength);
 
-        s                         = w.getOutputMessageText();
+        s = w.getOutputMessageText();
         displayRequestMessages(s);
 
     }
 
-    private void displayRequestMessages(String s) {
+    private void displayRequestMessages(final String s) {
 
         String messages;
-        if (s == null) {
-            messages              =
-                PaConstants.ERRMSG_NO_MESSAGES_MSG_1;
-        }
-        else {
-            messages              = s;
-        }
+        if (s == null)
+            messages = PaConstants.ERRMSG_NO_MESSAGES_MSG_1;
+        else
+            messages = s;
 
         proofMessageArea.setText(s);
         setCursorToStartOfMessageArea();
@@ -3786,17 +3020,14 @@ public class ProofAsstGUI {
 
     }
 
-    private void displayRequestMessagesGUI(String messages) {
+    private void displayRequestMessagesGUI(final String messages) {
 
-        RequestMessagesGUI u      = getRequestMessagesGUI();
+        RequestMessagesGUI u = getRequestMessagesGUI();
         if (u == null) {
-            if (messages == null) {
+            if (messages == null)
                 return;
-            }
 
-            u                     =
-                new RequestMessagesGUI(messages,
-                                       proofAsstPreferences);
+            u = new RequestMessagesGUI(messages, proofAsstPreferences);
             setRequestMessagesGUI(u);
             u.showFrame(u.buildFrame());
         }
@@ -3821,40 +3052,32 @@ public class ProofAsstGUI {
 
             proofMessageArea.setCaretPosition(0);
 
-            JViewport v           =
-                proofMessageScrollPane.getViewport();
+            final JViewport v = proofMessageScrollPane.getViewport();
 
-            v.scrollRectToVisible(
-                new Rectangle(0,      // x
-                              0,      // y
-                              1,      // width
-                              1));    // height
-        }
-        catch (Exception e) {
-            //ignore, don't care, did our best.
+            v.scrollRectToVisible(new Rectangle(0, // x
+                0, // y
+                1, // width
+                1)); // height
+        } catch (final Exception e) {
+            // ignore, don't care, did our best.
         }
     }
 
-    private synchronized void
-                setRequestMessagesGUI(RequestMessagesGUI u) {
+    private synchronized void setRequestMessagesGUI(final RequestMessagesGUI u)
+    {
 
-        this.requestMessagesGUI = u;
+        requestMessagesGUI = u;
     }
-    private synchronized RequestMessagesGUI
-                getRequestMessagesGUI() {
+    private synchronized RequestMessagesGUI getRequestMessagesGUI() {
 
         return requestMessagesGUI;
     }
-    private synchronized void
-                disposeOfRequestMessagesGUI() {
+    private synchronized void disposeOfRequestMessagesGUI() {
 
-        RequestMessagesGUI u    = getRequestMessagesGUI();
-        if (u != null) {
+        final RequestMessagesGUI u = getRequestMessagesGUI();
+        if (u != null)
             u.dispose();
-        }
     }
-
-
 
     /**
      *  ==============================
@@ -3864,9 +3087,11 @@ public class ProofAsstGUI {
 
     private static class FrameShower implements Runnable {
         JFrame f;
-        public FrameShower(JFrame frame) {
+
+        public FrameShower(final JFrame frame) {
             f = frame;
         }
+        @Override
         public void run() {
             f.pack();
             f.setVisible(true);
@@ -3880,9 +3105,8 @@ public class ProofAsstGUI {
         showFrame(getMainFrame());
     }
 
-    private void showFrame(JFrame jFrame) {
-        Runnable     runner       =
-            new FrameShower(jFrame);
+    private void showFrame(final JFrame jFrame) {
+        final Runnable runner = new FrameShower(jFrame);
 
         EventQueue.invokeLater(runner);
     }
@@ -3892,8 +3116,8 @@ public class ProofAsstGUI {
      *
      *  @param args String array holding command line parms
      */
-    public static void main(String[] args) {
-        ProofAsstGUI proofAsstGUI = new ProofAsstGUI();
+    public static void main(final String[] args) {
+        final ProofAsstGUI proofAsstGUI = new ProofAsstGUI();
         proofAsstGUI.showMainFrame();
     }
 }

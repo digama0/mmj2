@@ -14,8 +14,10 @@
  */
 
 package mmj.verify;
+
+import java.util.Comparator;
+
 import mmj.lang.*;
-import java.util.*;
 
 /**
  *  GrammarRule is the superclass of NotationRule,
@@ -70,7 +72,7 @@ public abstract class GrammarRule {
      *  not storing the baseSyntaxAxiom redundantly as a separate
      *  element.
      */
-    protected ParseTree   paramTransformationTree;
+    protected ParseTree paramTransformationTree;
 
     /**
      *  paramVarHypNode -- as unbelievable as this sounds -- has
@@ -94,7 +96,6 @@ public abstract class GrammarRule {
      */
     protected int maxSeqNbr;
 
-
     /**
      *  nbrHypParamsUsed == the number of hypotheses actually
      *  in use in the paramTransformationTree for the
@@ -109,7 +110,7 @@ public abstract class GrammarRule {
      *  and for Constant type Grammar Rules derived from Syntax
      *  Axioms where nulls are permitted.
      */
-    protected int         nbrHypParamsUsed;
+    protected int nbrHypParamsUsed;
 
     /**
      *  ruleFormatExpr contains the GrammarRule's Expression
@@ -130,7 +131,7 @@ public abstract class GrammarRule {
      *  need to rework mmj.util.Dump a bit, I think.)
      *  <p>
      */
-    protected Cnst[]  ruleFormatExpr;
+    protected Cnst[] ruleFormatExpr;
 
     /**
      *  ruleHypPos[i] is an index of a VarHyp's position within
@@ -139,7 +140,7 @@ public abstract class GrammarRule {
      *  Array length = nbrHypParamsUsed and is sequenced by
      *  hyp position within the ruleFormatExpr.
      */
-    protected int[]   ruleHypPos;
+    protected int[] ruleHypPos;
 
     /**
      *  isBaseRule indicates that the GrammarRule is
@@ -160,8 +161,7 @@ public abstract class GrammarRule {
      *  @param grammar The Grammar object (Mr Big).
      *  @param ruleFormatExpr the expression to add.
      */
-    public abstract void addToGrammar(Grammar grammar,
-                                      Cnst[]  ruleFormatExpr);
+    public abstract void addToGrammar(Grammar grammar, Cnst[] ruleFormatExpr);
 
     /**
      *  deriveAdditionalRules based on the addition of a
@@ -211,7 +211,7 @@ public abstract class GrammarRule {
      *  @return GrammarRule if duplicate found, or null.
      */
     public abstract GrammarRule getDupRule(Grammar grammar,
-                                           Cnst[]  ruleFormatExpr);
+        Cnst[] ruleFormatExpr);
 
     /**
      *  Return the GrammarRule's ruleFormatExpr from the
@@ -225,19 +225,17 @@ public abstract class GrammarRule {
      */
     public abstract Cnst[] getForestRuleExpr();
 
-
     /**
      *  Default constructor.
      */
-    public GrammarRule() {
-    }
+    public GrammarRule() {}
 
     /**
      *  Constructor -- create skeleton GrammarRule w/ruleNbr.
      *
      *  @param grammar The Grammar.
      */
-    public GrammarRule(Grammar grammar) {
+    public GrammarRule(final Grammar grammar) {
 
         ruleNbr = grammar.assignNextGrammarRuleNbr();
     }
@@ -249,25 +247,21 @@ public abstract class GrammarRule {
      *  @param grammar         The Grammar.
      *  @param baseSyntaxAxiom Syntax Axiom.
      */
-    public GrammarRule(Grammar grammar,
-                       Axiom   baseSyntaxAxiom) {
+    public GrammarRule(final Grammar grammar, final Axiom baseSyntaxAxiom) {
 
-        ruleNbr                 = grammar.assignNextGrammarRuleNbr();
-        maxSeqNbr               = baseSyntaxAxiom.getSeq();
-        VarHyp[] varHypArray    =
-            baseSyntaxAxiom.getMandVarHypArray();
-        nbrHypParamsUsed        = varHypArray.length;
+        ruleNbr = grammar.assignNextGrammarRuleNbr();
+        maxSeqNbr = baseSyntaxAxiom.getSeq();
+        final VarHyp[] varHypArray = baseSyntaxAxiom.getMandVarHypArray();
+        nbrHypParamsUsed = varHypArray.length;
 
-        ParseNode paramTransformationRoot
-                                = new ParseNode(baseSyntaxAxiom);
+        final ParseNode paramTransformationRoot = new ParseNode(baseSyntaxAxiom);
 
-        paramTransformationTree =
-            new ParseTree(paramTransformationRoot);
+        paramTransformationTree = new ParseTree(paramTransformationRoot);
 
-        ParseNode[] child       = new ParseNode[nbrHypParamsUsed];
+        final ParseNode[] child = new ParseNode[nbrHypParamsUsed];
         paramTransformationRoot.setChild(child);
 
-        paramVarHypNode         = new ParseNode[nbrHypParamsUsed];
+        paramVarHypNode = new ParseNode[nbrHypParamsUsed];
 
         for (int i = 0; i < nbrHypParamsUsed; i++) {
             child[i] = new ParseNode(varHypArray[i]);
@@ -279,27 +273,22 @@ public abstract class GrammarRule {
     /**
      *  RULE_NBR sequences by GrammarRule.ruleNbr
      */
-    static public final Comparator RULE_NBR
-            = new Comparator() {
-        public int compare(Object o1, Object o2) {
-            return ((GrammarRule)o1).ruleNbr -
-                   ((GrammarRule)o2).ruleNbr;
+    static public final Comparator RULE_NBR = new Comparator() {
+        @Override
+        public int compare(final Object o1, final Object o2) {
+            return ((GrammarRule)o1).ruleNbr - ((GrammarRule)o2).ruleNbr;
         }
     };
-
 
     /**
      *  MAX_SEQ_NBR sequences by GrammarRule.maxSeqNbr & ruleNbr
      */
-    static public final Comparator MAX_SEQ_NBR
-            = new Comparator() {
-        public int compare(Object o1, Object o2) {
-            int c = ((GrammarRule)o1).maxSeqNbr -
-                    ((GrammarRule)o2).maxSeqNbr;
-            if (c == 0) {
-                c = ((GrammarRule)o1).ruleNbr -
-                    ((GrammarRule)o2).ruleNbr;
-            }
+    static public final Comparator MAX_SEQ_NBR = new Comparator() {
+        @Override
+        public int compare(final Object o1, final Object o2) {
+            int c = ((GrammarRule)o1).maxSeqNbr - ((GrammarRule)o2).maxSeqNbr;
+            if (c == 0)
+                c = ((GrammarRule)o1).ruleNbr - ((GrammarRule)o2).ruleNbr;
             return c;
         }
     };
@@ -318,42 +307,33 @@ public abstract class GrammarRule {
      *
      *  @return true if rule added successfully, else false.
      */
-    public static boolean add(Axiom   baseSyntaxAxiom,
-                              Grammar grammar) {
+    public static boolean add(final Axiom baseSyntaxAxiom, final Grammar grammar)
+    {
 
-        boolean     errorsFound    = false;
+        boolean errorsFound = false;
 
-        ParseNodeHolder[] parseNodeHolderExpr =
-                baseSyntaxAxiom.getFormula(
-                    ).getParseNodeHolderExpr(
-                        baseSyntaxAxiom.getMandVarHypArray());
+        final ParseNodeHolder[] parseNodeHolderExpr = baseSyntaxAxiom
+            .getFormula().getParseNodeHolderExpr(
+                baseSyntaxAxiom.getMandVarHypArray());
 
         GrammarRule baseRule;
-        if ((baseRule = GrammarRule.buildBaseRule(
-                                        grammar,
-                                        baseSyntaxAxiom,
-                                        parseNodeHolderExpr))
-             == null) {
+        if ((baseRule = GrammarRule.buildBaseRule(grammar, baseSyntaxAxiom,
+            parseNodeHolderExpr)) == null)
             return false;
-        }
 
-        Cnst[] rfe =
-            ParseNodeHolder.buildRuleFormatExpr(parseNodeHolderExpr);
+        Cnst[] rfe = ParseNodeHolder.buildRuleFormatExpr(parseNodeHolderExpr);
 
         GrammarRule dupRule;
-        if ((dupRule = baseRule.getDupRule(grammar,
-                                           rfe))
-                != null) {
-            grammar.accumErrorMsgInList(
-                GrammarConstants.ERRMSG_BASE_RULE_IS_DUP_1
-                + baseSyntaxAxiom.getLabel()
-                + GrammarConstants.ERRMSG_BASE_RULE_IS_DUP_2
-                + dupRule.getBaseSyntaxAxiom().getLabel());
+        if ((dupRule = baseRule.getDupRule(grammar, rfe)) != null) {
+            grammar
+                .accumErrorMsgInList(GrammarConstants.ERRMSG_BASE_RULE_IS_DUP_1
+                    + baseSyntaxAxiom.getLabel()
+                    + GrammarConstants.ERRMSG_BASE_RULE_IS_DUP_2
+                    + dupRule.getBaseSyntaxAxiom().getLabel());
             return false;
         }
 
-        baseRule.addToGrammar(grammar,
-                              rfe);
+        baseRule.addToGrammar(grammar, rfe);
 // we're not implementing this unless absolutely necessary for
 // EarleyParser
 //      grammar.baseGRSetAdd(baseRule);
@@ -361,8 +341,7 @@ public abstract class GrammarRule {
         baseRule.deriveAdditionalRules(grammar);
 
         GrammarRule derivedRule;
-        while ((derivedRule = grammar.derivedRuleQueueRead())
-                != null) {
+        while ((derivedRule = grammar.derivedRuleQueueRead()) != null) {
 
             rfe = derivedRule.buildRuleFormatExpr();
 
@@ -372,63 +351,50 @@ public abstract class GrammarRule {
              *  different type code then set "errors found"
              *  to indicate an error, and then continue...
              */
-            dupRule = derivedRule.getDupRule(grammar,
-                                             rfe);
+            dupRule = derivedRule.getDupRule(grammar, rfe);
             if (dupRule != null) {
-                if (dupRule.getBaseSyntaxAxiom().getTyp() !=
-                    derivedRule.getBaseSyntaxAxiom().getTyp()) {
+                if (dupRule.getBaseSyntaxAxiom().getTyp() != derivedRule
+                    .getBaseSyntaxAxiom().getTyp())
+                {
                     errorsFound = true;
                     grammar.accumErrorMsgInList(
-                        // mod Sep-23-2005 chg msg text
+                    // mod Sep-23-2005 chg msg text
                         GrammarConstants.ERRMSG_DUP_RULE_DIFF_TYP_1
-                        + derivedRule.getBaseSyntaxAxiom().getTyp()
-                        + GrammarConstants.ERRMSG_DUP_RULE_DIFF_TYP_2
-                        + GrammarRule.showRuleFormatExprAsString(rfe)
-                        + GrammarConstants.ERRMSG_DUP_RULE_DIFF_TYP_3
-                        + dupRule.getBaseSyntaxAxiom().getTyp()
-                        + GrammarConstants.ERRMSG_DUP_RULE_DIFF_TYP_4
-                        + derivedRule.getBaseSyntaxAxiom()
-                        + GrammarConstants.ERRMSG_DUP_RULE_DIFF_TYP_5
-                        + dupRule.getBaseSyntaxAxiom()
-                        );
-                        
+                            + derivedRule.getBaseSyntaxAxiom().getTyp()
+                            + GrammarConstants.ERRMSG_DUP_RULE_DIFF_TYP_2
+                            + GrammarRule.showRuleFormatExprAsString(rfe)
+                            + GrammarConstants.ERRMSG_DUP_RULE_DIFF_TYP_3
+                            + dupRule.getBaseSyntaxAxiom().getTyp()
+                            + GrammarConstants.ERRMSG_DUP_RULE_DIFF_TYP_4
+                            + derivedRule.getBaseSyntaxAxiom()
+                            + GrammarConstants.ERRMSG_DUP_RULE_DIFF_TYP_5
+                            + dupRule.getBaseSyntaxAxiom());
+
                 }
                 continue;
             }
 
-            derivedRule.addToGrammar(grammar,
-                                     rfe);
+            derivedRule.addToGrammar(grammar, rfe);
             derivedRule.deriveAdditionalRules(grammar);
         }
         return !errorsFound;
     }
 
-    private static GrammarRule buildBaseRule(
-                            Grammar           grammar,
-                            Axiom             syntaxAxiom,
-                            ParseNodeHolder[] parseNodeHolderExpr) {
+    private static GrammarRule buildBaseRule(final Grammar grammar,
+        final Axiom syntaxAxiom, final ParseNodeHolder[] parseNodeHolderExpr)
+    {
 
         GrammarRule grammarRule;
 
-        if (parseNodeHolderExpr.length == 0) {
-            grammarRule = NullsPermittedRule.buildBaseRule(
-                                             grammar,
-                                             syntaxAxiom);
-        }
-        else {
-            if (parseNodeHolderExpr.length == 1 &&
-                !(parseNodeHolderExpr[0].mObj.isCnst())) {
-                grammarRule = TypeConversionRule.buildBaseRule(
-                                             grammar,
-                                             syntaxAxiom,
-                                             parseNodeHolderExpr);
-            }
-            else {
-                grammarRule = NotationRule.buildBaseRule(
-                                             grammar,
-                                             syntaxAxiom);
-            }
-        }
+        if (parseNodeHolderExpr.length == 0)
+            grammarRule = NullsPermittedRule
+                .buildBaseRule(grammar, syntaxAxiom);
+        else if (parseNodeHolderExpr.length == 1
+            && !parseNodeHolderExpr[0].mObj.isCnst())
+            grammarRule = TypeConversionRule.buildBaseRule(grammar,
+                syntaxAxiom, parseNodeHolderExpr);
+        else
+            grammarRule = NotationRule.buildBaseRule(grammar, syntaxAxiom);
 
         return grammarRule;
     }
@@ -438,6 +404,7 @@ public abstract class GrammarRule {
      *
      * @return hashcode for the GrammarRule
      */
+    @Override
     public int hashCode() {
         return ruleNbr;
     }
@@ -452,10 +419,9 @@ public abstract class GrammarRule {
      * or greater than the input parameter obj.
      *
      */
-    public int compareTo(Object obj) {
-        return (ruleNbr - ((GrammarRule)obj).ruleNbr);
+    public int compareTo(final Object obj) {
+        return ruleNbr - ((GrammarRule)obj).ruleNbr;
     }
-
 
     /**
      * Compare for equality with another GrammarRule.
@@ -466,10 +432,10 @@ public abstract class GrammarRule {
      *
      * @return returns true if equal, otherwise false.
      */
-    public boolean equals(Object obj) {
-        return (this == obj) ? true
-                : !(obj instanceof GrammarRule) ? false
-                        : (ruleNbr == ((GrammarRule)obj).ruleNbr);
+    @Override
+    public boolean equals(final Object obj) {
+        return this == obj ? true : !(obj instanceof GrammarRule) ? false
+            : ruleNbr == ((GrammarRule)obj).ruleNbr;
     }
 
     /**
@@ -513,7 +479,7 @@ public abstract class GrammarRule {
      *
      *  @param maxSeqNbr GrammarRule's maxSeqNbr.
      */
-    public void setMaxSeqNbr(int maxSeqNbr) {
+    public void setMaxSeqNbr(final int maxSeqNbr) {
         this.maxSeqNbr = maxSeqNbr;
     }
 
@@ -531,7 +497,7 @@ public abstract class GrammarRule {
      *
      *  @param nbrHypParamsUsed GrammarRule's nbrHypParamsUsed.
      */
-    public void setNbrHypParamsUsed(int nbrHypParamsUsed) {
+    public void setNbrHypParamsUsed(final int nbrHypParamsUsed) {
         this.nbrHypParamsUsed = nbrHypParamsUsed;
     }
 
@@ -585,15 +551,13 @@ public abstract class GrammarRule {
      *
      *  @param rfe GrammarRule's ruleFormatExpr.
      */
-    public void setRuleFormatExpr(Cnst[] rfe) {
+    public void setRuleFormatExpr(final Cnst[] rfe) {
         ruleFormatExpr = rfe;
-        ruleHypPos     = new int[nbrHypParamsUsed];
+        ruleHypPos = new int[nbrHypParamsUsed];
         int j = 0;
-        for (int i = 0; i < ruleFormatExpr.length; i++) {
-            if (ruleFormatExpr[i].getIsVarTyp()) {
+        for (int i = 0; i < ruleFormatExpr.length; i++)
+            if (ruleFormatExpr[i].getIsVarTyp())
                 ruleHypPos[j++] = i;
-            }
-        }
     }
 
     /**
@@ -603,8 +567,7 @@ public abstract class GrammarRule {
      *  @return GrammarRule's ruleFormatExpr as String.
      */
     public String getRuleFormatExprAsString() {
-        return GrammarRule.showRuleFormatExprAsString(
-                                            ruleFormatExpr);
+        return GrammarRule.showRuleFormatExprAsString(ruleFormatExpr);
     }
 
     /**
@@ -614,16 +577,14 @@ public abstract class GrammarRule {
      *  @param  rfe ruleFormatExpr.
      *  @return GrammarRule's ruleFormatExpr as String.
      */
-    public static String showRuleFormatExprAsString(Cnst[] rfe) {
-        StringBuffer s =
-            new StringBuffer(rfe.length * 4);
-        for (int i = 0; i < rfe.length; i++) {
-            s.append(rfe[i]);
+    public static String showRuleFormatExprAsString(final Cnst[] rfe) {
+        final StringBuffer s = new StringBuffer(rfe.length * 4);
+        for (final Cnst element : rfe) {
+            s.append(element);
             s.append(" ");
         }
         return new String(s);
     }
-
 
     /**
      *  Return the first symbol of a GrammarRule's ruleFormatExpr.
@@ -631,12 +592,10 @@ public abstract class GrammarRule {
      *  @return first symbol of a GrammarRule's ruleFormatExpr.
      */
     public Cnst getRuleFormatExprFirst() {
-        if (ruleFormatExpr.length > 0) {
+        if (ruleFormatExpr.length > 0)
             return ruleFormatExpr[0];
-        }
-        else {
+        else
             return null;
-        }
     }
 
     /**
@@ -645,13 +604,11 @@ public abstract class GrammarRule {
      *  @return i-th symbol of a GrammarRule's ruleFormatExpr or
      *          null of i is beyond the end of the expression.
      */
-    public Cnst getRuleFormatExprIthSymbol(int i) {
-        if (i > ruleFormatExpr.length) {
+    public Cnst getRuleFormatExprIthSymbol(final int i) {
+        if (i > ruleFormatExpr.length)
             return null;
-        }
-        else {
+        else
             return ruleFormatExpr[i - 1];
-        }
     }
 
     /**
@@ -668,10 +625,9 @@ public abstract class GrammarRule {
      *
      *  @param isBaseRule flag.
      */
-    public void setIsBaseRule(boolean isBaseRule) {
+    public void setIsBaseRule(final boolean isBaseRule) {
         this.isBaseRule = isBaseRule;
     }
-
 
     /**
      *  return parseNodeHolderExpr version of the GrammarRule's
@@ -693,51 +649,39 @@ public abstract class GrammarRule {
      *  @return parseNodeHolder format expression.
      */
     public ParseNodeHolder[] getParseNodeHolderExpr() {
-        Sym[] baseSym = getBaseSyntaxAxiom().getFormula().getSym();
-        ParseNodeHolder[] parseNodeHolderExpr =
-            new ParseNodeHolder[
-                        baseSym.length
-                        - 1
-                        - (paramVarHypNode.length
-                            - nbrHypParamsUsed)];
+        final Sym[] baseSym = getBaseSyntaxAxiom().getFormula().getSym();
+        final ParseNodeHolder[] parseNodeHolderExpr = new ParseNodeHolder[baseSym.length
+            - 1 - (paramVarHypNode.length - nbrHypParamsUsed)];
 
-        int[]    varHypReseq  = getSyntaxAxiomVarHypReseq();
-        VarHyp[] substVarHyp  = new VarHyp[paramVarHypNode.length];
-        int      paramNbr;
+        final int[] varHypReseq = getSyntaxAxiomVarHypReseq();
+        final VarHyp[] substVarHyp = new VarHyp[paramVarHypNode.length];
+        int paramNbr;
 
         if (varHypReseq == null) {
-            for (int i = 0; i < paramVarHypNode.length; i++) {
-                if (paramVarHypNode[i] != null) {
-                    substVarHyp[i] =
-                        (VarHyp)paramVarHypNode[i].getStmt();
-                }
-            }
+            for (int i = 0; i < paramVarHypNode.length; i++)
+                if (paramVarHypNode[i] != null)
+                    substVarHyp[i] = (VarHyp)paramVarHypNode[i].getStmt();
         }
-        else {
+        else
             for (int i = 0; i < paramVarHypNode.length; i++) {
                 paramNbr = varHypReseq[i];
-                if (paramVarHypNode[paramNbr] != null) {
-                    substVarHyp[i] =
-                        (VarHyp)paramVarHypNode[paramNbr].getStmt();
-                }
+                if (paramVarHypNode[paramNbr] != null)
+                    substVarHyp[i] = (VarHyp)paramVarHypNode[paramNbr]
+                        .getStmt();
             }
-        }
         int dest = 0;
         paramNbr = 0;
-        //start at 1 because first Sym in Formula is Type Code.
-        for (int i = 1; i < baseSym.length; i++) {
-            if (baseSym[i].isCnst()) {
-                parseNodeHolderExpr[dest++] =
-                    new ParseNodeHolder((Cnst)baseSym[i]);
-            }
+        // start at 1 because first Sym in Formula is Type Code.
+        for (int i = 1; i < baseSym.length; i++)
+            if (baseSym[i].isCnst())
+                parseNodeHolderExpr[dest++] = new ParseNodeHolder(
+                    (Cnst)baseSym[i]);
             else {
-                if (substVarHyp[paramNbr] != null) {
-                    parseNodeHolderExpr[dest++] =
-                        new ParseNodeHolder(substVarHyp[paramNbr]);
-                }
+                if (substVarHyp[paramNbr] != null)
+                    parseNodeHolderExpr[dest++] = new ParseNodeHolder(
+                        substVarHyp[paramNbr]);
                 ++paramNbr;
             }
-        }
         return parseNodeHolderExpr;
     }
 
@@ -764,49 +708,37 @@ public abstract class GrammarRule {
      *  @return ruleFormatExpr expression.
      */
     public Cnst[] buildRuleFormatExpr() {
-        Sym[] baseSym = getBaseSyntaxAxiom().getFormula().getSym();
-        Cnst[] rfe =
-            new Cnst[baseSym.length
-                        - 1
-                        - (paramVarHypNode.length
-                            - nbrHypParamsUsed)];
+        final Sym[] baseSym = getBaseSyntaxAxiom().getFormula().getSym();
+        final Cnst[] rfe = new Cnst[baseSym.length - 1
+            - (paramVarHypNode.length - nbrHypParamsUsed)];
 
-        int[]    varHypReseq  = getSyntaxAxiomVarHypReseq();
-        VarHyp[] substVarHyp  = new VarHyp[paramVarHypNode.length];
-        int      paramNbr;
+        final int[] varHypReseq = getSyntaxAxiomVarHypReseq();
+        final VarHyp[] substVarHyp = new VarHyp[paramVarHypNode.length];
+        int paramNbr;
 
         if (varHypReseq == null) {
-            for (int i = 0; i < paramVarHypNode.length; i++) {
-                if (paramVarHypNode[i] != null) {
-                    substVarHyp[i] =
-                        (VarHyp)paramVarHypNode[i].getStmt();
-                }
-            }
+            for (int i = 0; i < paramVarHypNode.length; i++)
+                if (paramVarHypNode[i] != null)
+                    substVarHyp[i] = (VarHyp)paramVarHypNode[i].getStmt();
         }
-        else {
+        else
             for (int i = 0; i < paramVarHypNode.length; i++) {
                 paramNbr = varHypReseq[i];
-                if (paramVarHypNode[paramNbr] != null) {
-                    substVarHyp[i] =
-                        (VarHyp)paramVarHypNode[paramNbr].getStmt();
-                }
+                if (paramVarHypNode[paramNbr] != null)
+                    substVarHyp[i] = (VarHyp)paramVarHypNode[paramNbr]
+                        .getStmt();
             }
-        }
         int dest = 0;
         paramNbr = 0;
-        //start at 1 because first Sym in Formula is Type Code.
-        for (int i = 1; i < baseSym.length; i++) {
-            if (baseSym[i].isCnst()) {
+        // start at 1 because first Sym in Formula is Type Code.
+        for (int i = 1; i < baseSym.length; i++)
+            if (baseSym[i].isCnst())
                 rfe[dest++] = (Cnst)baseSym[i];
-            }
             else {
-                if (substVarHyp[paramNbr] != null) {
-                    rfe[dest++] =
-                        substVarHyp[paramNbr].getTyp();
-                }
+                if (substVarHyp[paramNbr] != null)
+                    rfe[dest++] = substVarHyp[paramNbr].getTyp();
                 ++paramNbr;
             }
-        }
         return rfe;
     }
 
@@ -850,35 +782,26 @@ public abstract class GrammarRule {
      *        nodes of the Grammar Rule's paramTransformationTree.
      */
     public ParseNode buildGrammaticalParseNode(
-                                ParseNodeHolder[] paramArray) {
+        final ParseNodeHolder[] paramArray)
+    {
 
-        int[] varHypReseq  = getSyntaxAxiomVarHypReseq();
+        final int[] varHypReseq = getSyntaxAxiomVarHypReseq();
 
-        ParseNodeHolder[] expandedReseqParam =
-            new ParseNodeHolder[paramVarHypNode.length];
+        final ParseNodeHolder[] expandedReseqParam = new ParseNodeHolder[paramVarHypNode.length];
 
-        int src  = 0;
+        int src = 0;
         if (varHypReseq == null) {
-            for (int i = 0; i < paramVarHypNode.length; i++) {
-                if (paramVarHypNode[i] != null) {
-                    expandedReseqParam[i] =
-                        paramArray[src++];
-                }
-            }
+            for (int i = 0; i < paramVarHypNode.length; i++)
+                if (paramVarHypNode[i] != null)
+                    expandedReseqParam[i] = paramArray[src++];
         }
-        else {
-            for (int i = 0; i < paramVarHypNode.length; i++) {
-                if (paramVarHypNode[i] != null) {
-                    expandedReseqParam[varHypReseq[i]] =
-                        paramArray[src++];
-                }
-            }
-        }
+        else
+            for (int i = 0; i < paramVarHypNode.length; i++)
+                if (paramVarHypNode[i] != null)
+                    expandedReseqParam[varHypReseq[i]] = paramArray[src++];
 
-        return paramTransformationTree.getRoot(
-                 ).deepCloneWithGrammarHypSubs(
-                     paramVarHypNode,
-                     expandedReseqParam);
+        return paramTransformationTree.getRoot().deepCloneWithGrammarHypSubs(
+            paramVarHypNode, expandedReseqParam);
 
     }
 
@@ -901,29 +824,19 @@ public abstract class GrammarRule {
      *          here just to be on the safe side -- we'd rather
      *          have a blow-up than deliver bogus answers?)
      */
-    protected int findMatchingVarHypTyp(int  nextSearch,
-                                        Cnst searchTyp) {
-        for ( ; nextSearch < paramVarHypNode.length; nextSearch++) {
+    protected int findMatchingVarHypTyp(int nextSearch, final Cnst searchTyp) {
+        for (; nextSearch < paramVarHypNode.length; nextSearch++)
             if (paramVarHypNode[nextSearch] != null) {
-                if (!paramVarHypNode[
-                        nextSearch].getStmt().isVarHyp()) {
+                if (!paramVarHypNode[nextSearch].getStmt().isVarHyp())
                     throw new IllegalStateException(
-                    GrammarConstants.ERRMSG_BOGUS_PARAM_VARHYP_NODE_1
-                        + nextSearch
-                        +
-                    GrammarConstants.ERRMSG_BOGUS_PARAM_VARHYP_NODE_2
-                        + paramVarHypNode[
-                            nextSearch].getStmt().getLabel()
-                        +
-                    GrammarConstants.ERRMSG_BOGUS_PARAM_VARHYP_NODE_3
-                        );
-                }
-                if (paramVarHypNode[nextSearch].getStmt().getTyp() ==
-                    searchTyp) {
+                        GrammarConstants.ERRMSG_BOGUS_PARAM_VARHYP_NODE_1
+                            + nextSearch
+                            + GrammarConstants.ERRMSG_BOGUS_PARAM_VARHYP_NODE_2
+                            + paramVarHypNode[nextSearch].getStmt().getLabel()
+                            + GrammarConstants.ERRMSG_BOGUS_PARAM_VARHYP_NODE_3);
+                if (paramVarHypNode[nextSearch].getStmt().getTyp() == searchTyp)
                     return nextSearch;
-                }
             }
-        }
         return -1;
     }
 

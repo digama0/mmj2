@@ -6,7 +6,6 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-
 /**
  *  MinProofStepStmt.java  0.01 11/01/2011
  *
@@ -26,8 +25,7 @@ package mmj.gmff;
  *  <code>MinDerivationStep</code>, the latter includes the
  *  final step, the "qed" step.
  */
- public class MinProofStepStmt extends MinProofWorkStmt {
-
+public class MinProofStepStmt extends MinProofWorkStmt {
 
     /**
      *  Standard MinProofStepStmt constructor.
@@ -40,11 +38,9 @@ package mmj.gmff;
      *              whitespace or Metamath tokens. Hence the
      *              acronym "slc" refers to Statement Line Chunks.
      */
-    public MinProofStepStmt(MinProofWorksheet w,
-                            String[][]        slc) {
+    public MinProofStepStmt(final MinProofWorksheet w, final String[][] slc) {
 
-        super(w,
-              slc);
+        super(w, slc);
     }
 
     /**
@@ -79,85 +75,58 @@ package mmj.gmff;
      *				the export data build.
      *  @param exportBuffer The <code>StringBuffer</code> to which
      *               exported data is to be output.
-  	 *  @throws GMFFException if errors are encountered during the
-  	 *               export process.
+     *  @throws GMFFException if errors are encountered during the
+     *               export process.
      */
-	public void buildModelAExport(
-						 	GMFFExporter gmffExporter,
-		               	 	StringBuffer exportBuffer)
-				            	throws GMFFException {
+    @Override
+    public void buildModelAExport(final GMFFExporter gmffExporter,
+        final StringBuffer exportBuffer) throws GMFFException
+    {
 
-		String modelAStep1X     =
-			gmffExporter.getMandatoryModelFile(
-				GMFFConstants.MODEL_A_STEP1X_NAME,
-				w.getTheoremLabel());
+        final String modelAStep1X = gmffExporter.getMandatoryModelFile(
+            GMFFConstants.MODEL_A_STEP1X_NAME, w.getTheoremLabel());
 
-		String modelAStep3X     =
-			gmffExporter.getMandatoryModelFile(
-				GMFFConstants.MODEL_A_STEP3X_NAME,
-				w.getTheoremLabel());
+        final String modelAStep3X = gmffExporter.getMandatoryModelFile(
+            GMFFConstants.MODEL_A_STEP3X_NAME, w.getTheoremLabel());
 
-		String[] lineChunks;
-		String   chunk;
+        String[] lineChunks;
+        String chunk;
 
-		for (int i = 0; i < stmtLineChunks.length; i++) {
-			lineChunks          = stmtLineChunks[i];
+        for (int i = 0; i < stmtLineChunks.length; i++) {
+            lineChunks = stmtLineChunks[i];
 
-			gmffExporter.appendMandatoryModelFile(
-				exportBuffer,
-				GMFFConstants.MODEL_A_STEP0_NAME,
-				w.getTheoremLabel());
+            gmffExporter.appendMandatoryModelFile(exportBuffer,
+                GMFFConstants.MODEL_A_STEP0_NAME, w.getTheoremLabel());
 
-			int startOfFormulaSymbols
-			                    = -1;
-			int nbrNonWhitespaceTokensFound
-			                    = 0;
-			int j;
-			for (j = 0; j < lineChunks.length; j++) {
-				chunk           = lineChunks[j];
-				if (chunk.length() > 0 &&
-				    !isChunkWhitespace(chunk)) {
+            int startOfFormulaSymbols = -1;
+            int nbrNonWhitespaceTokensFound = 0;
+            int j;
+            for (j = 0; j < lineChunks.length; j++) {
+                chunk = lineChunks[j];
+                if (chunk.length() > 0 && !isChunkWhitespace(chunk)) {
 
-					++nbrNonWhitespaceTokensFound;
-					if (i == 0 &&
-						nbrNonWhitespaceTokensFound < 2) {
-						continue;
-					}
-					startOfFormulaSymbols
-							    = j;
-					break;
-				}
-			}
+                    ++nbrNonWhitespaceTokensFound;
+                    if (i == 0 && nbrNonWhitespaceTokensFound < 2)
+                        continue;
+                    startOfFormulaSymbols = j;
+                    break;
+                }
+            }
 
-			String linePart1    =
-				getCleanedLineString(i,
-				                     0,
-				                     j);
+            final String linePart1 = getCleanedLineString(i, 0, j);
 
-			if (modelAStep1X.length() > 0) {
-				gmffExporter.escapeAndAppendProofText(
-					exportBuffer,
-					linePart1);
-			}
+            if (modelAStep1X.length() > 0)
+                gmffExporter.escapeAndAppendProofText(exportBuffer, linePart1);
 
-			gmffExporter.appendMandatoryModelFile(
-				exportBuffer,
-				GMFFConstants.MODEL_A_STEP2_NAME,
-				w.getTheoremLabel());
+            gmffExporter.appendMandatoryModelFile(exportBuffer,
+                GMFFConstants.MODEL_A_STEP2_NAME, w.getTheoremLabel());
 
-			if (startOfFormulaSymbols != -1 &&
-				modelAStep3X.length() > 0) {
+            if (startOfFormulaSymbols != -1 && modelAStep3X.length() > 0)
+                typesetFormulaSymbols(gmffExporter, exportBuffer, lineChunks,
+                    startOfFormulaSymbols);
 
-				typesetFormulaSymbols(gmffExporter,
-		               	 			  exportBuffer,
-									  lineChunks,
-				            		  startOfFormulaSymbols);
-			}
-
-			gmffExporter.appendMandatoryModelFile(
-				exportBuffer,
-				GMFFConstants.MODEL_A_STEP4_NAME,
-				w.getTheoremLabel());
-		}
-	}
+            gmffExporter.appendMandatoryModelFile(exportBuffer,
+                GMFFConstants.MODEL_A_STEP4_NAME, w.getTheoremLabel());
+        }
+    }
 }

@@ -66,60 +66,58 @@ package mmj.util;
  */
 public class DelimitedTextParser {
 
-
     /**
      *  The delimiter character in use.
      */
-    private   char    delimiter     =
-        UtilConstants.RUNPARM_FIELD_DELIMITER_DEFAULT;
+    private char delimiter = UtilConstants.RUNPARM_FIELD_DELIMITER_DEFAULT;
 
     /**
      *  The quote character in use.
      */
-    private   char    quoter        =
-        UtilConstants.RUNPARM_FIELD_QUOTER_DEFAULT;
+    private char quoter = UtilConstants.RUNPARM_FIELD_QUOTER_DEFAULT;
 
     /**
      *  Quoted field parsing enabled flag.
      */
-    private   boolean quoterEnabled = true;
+    private boolean quoterEnabled = true;
 
     /**
      *  The line being parsed.
      */
-    private   String  line          = null;
+    private String line = null;
 
     /**
      *  Offset of the next character to be parsed.
      */
-    private   int     next          = 0;
+    private int next = 0;
 
     /**
      *  Offset of the last character to be parsed (line length).
      */
-    private   int     max           = -1;
+    private int max = -1;
 
     /**
      *  Output field.
      */
-    private   String  fieldOut      = null;
+    private String fieldOut = null;
 
     /**
      *  End of Line flag.
      */
-    private   boolean reachedEOL    = false;
+    private boolean reachedEOL = false;
 
     /**
      *  Default constructor.
      */
-    public DelimitedTextParser() { }
+    public DelimitedTextParser() {}
 
     /**
      *  Constructs parser for a String using default parse
      *  parameters.
      */
-    public DelimitedTextParser(String lineIn)
-                        throws IllegalArgumentException {
+    public DelimitedTextParser(final String lineIn)
+        throws IllegalArgumentException
+    {
         setParseString(lineIn);
     }
 
@@ -133,10 +131,10 @@ public class DelimitedTextParser {
      *  @throws NullPointerException if the input String
      *          reference is null.
      */
-    public DelimitedTextParser(char fieldDelimiter,
-                               char fieldQuoter) {
-        delimiter    = fieldDelimiter;
-        quoter       = fieldQuoter;
+    public DelimitedTextParser(final char fieldDelimiter, final char fieldQuoter)
+    {
+        delimiter = fieldDelimiter;
+        quoter = fieldQuoter;
     }
 
     /**
@@ -150,12 +148,11 @@ public class DelimitedTextParser {
      *  @throws NullPointerException if the input String
      *          reference is null.
      */
-    public DelimitedTextParser(String lineIn,
-                               char   fieldDelimiter,
-                               char   fieldQuoter)
-                        throws IllegalArgumentException {
-        delimiter    = fieldDelimiter;
-        quoter       = fieldQuoter;
+    public DelimitedTextParser(final String lineIn, final char fieldDelimiter,
+        final char fieldQuoter) throws IllegalArgumentException
+    {
+        delimiter = fieldDelimiter;
+        quoter = fieldQuoter;
         setParseString(lineIn);
     }
 
@@ -168,17 +165,17 @@ public class DelimitedTextParser {
      *  @throws NullPointerException if the input String
      *          reference is null.
      */
-    public void setParseString(String lineIn)
-                        throws IllegalArgumentException {
-        if (lineIn == null) {
+    public void setParseString(final String lineIn)
+        throws IllegalArgumentException
+    {
+        if (lineIn == null)
             throw new IllegalArgumentException(
                 UtilConstants.ERRMSG_PARSER_INPUT_STRING_NULL);
-        }
 
-        line        = lineIn;
-        next        = 0;
-        max         = lineIn.length();
-        reachedEOL  = false;
+        line = lineIn;
+        next = 0;
+        max = lineIn.length();
+        reachedEOL = false;
     }
 
     /**
@@ -196,7 +193,7 @@ public class DelimitedTextParser {
      * @param quoterEnabled Set to true for enabled or false for
      *        disabled.
      */
-    public void setQuoterEnabled(boolean quoterEnabled) {
+    public void setQuoterEnabled(final boolean quoterEnabled) {
         this.quoterEnabled = quoterEnabled;
     }
 
@@ -205,12 +202,10 @@ public class DelimitedTextParser {
      * delimiter = comma, quoter = quote, quoter is enabled.
      */
     public void resetParseDefaults() {
-        delimiter                 =
-            UtilConstants.RUNPARM_FIELD_DELIMITER_DEFAULT;
-        quoter                    =
-            UtilConstants.RUNPARM_FIELD_QUOTER_DEFAULT;
+        delimiter = UtilConstants.RUNPARM_FIELD_DELIMITER_DEFAULT;
+        quoter = UtilConstants.RUNPARM_FIELD_QUOTER_DEFAULT;
 
-        quoterEnabled   = true;
+        quoterEnabled = true;
     }
 
     /**
@@ -218,7 +213,7 @@ public class DelimitedTextParser {
      *
      * @param delimiter the field delimiter character.
      */
-    public void setParseDelimiter(char delimiter) {
+    public void setParseDelimiter(final char delimiter) {
         this.delimiter = delimiter;
     }
 
@@ -236,7 +231,7 @@ public class DelimitedTextParser {
      *
      *  @param quoter character that encloses input fields.
      */
-    public void setParseQuoter(char quoter) {
+    public void setParseQuoter(final char quoter) {
         this.quoter = quoter;
     }
 
@@ -261,197 +256,170 @@ public class DelimitedTextParser {
      *          nextField invoked again after reaching the end of the
      *          line.
      */
-    public String nextField()
-                        throws IllegalArgumentException,
-                               IllegalStateException {
-        int left    = 0;
-        int right   = 0;
-        fieldOut    = null;
+    public String nextField() throws IllegalArgumentException,
+        IllegalStateException
+    {
+        int left = 0;
+        int right = 0;
+        fieldOut = null;
 
         if (next < max) {
             if (quoterEnabled && line.charAt(next) == quoter) {
                 left = ++next;
                 right = line.indexOf(quoter, left);
-                if (right == -1) {
+                if (right == -1)
                     throw new IllegalArgumentException(
                         UtilConstants.ERRMSG_UNMATCHED_QUOTE_CHAR);
-                }
                 else {
                     fieldOut = line.substring(left, right);
                     next = right + 1;
-                    if (next < max) {
-                        if (line.charAt(next) == delimiter) {
+                    if (next < max)
+                        if (line.charAt(next) == delimiter)
                             ++next;
-                        }
-                        else {
+                        else
                             throw new IllegalStateException(
                                 UtilConstants.ERRMSG_MISSING_DELIM);
-                        }
-                    }
                 }
             }
             else if (line.charAt(next) == delimiter) {
-                left = right = next++;   //set up empty string
+                left = right = next++; // set up empty string
                 fieldOut = line.substring(left, right);
             }
-            else {  //next char not a delimiter or a quoter
+            else { // next char not a delimiter or a quoter
                 left = next++;
                 right = line.indexOf(delimiter, next);
-                if (right == -1) {
+                if (right == -1)
                     right = max;
-                }
                 fieldOut = line.substring(left, right);
                 next = right + 1;
             }
         }
-        else if ((next == max)
-                && (max > 0)
-                && (line.charAt(max - 1) == delimiter)) {
+        else if (next == max && max > 0 && line.charAt(max - 1) == delimiter) {
             fieldOut = new String("");
             ++next;
         }
-        else if (reachedEOL) {
+        else if (reachedEOL)
             throw new IllegalArgumentException(
                 UtilConstants.ERRMSG_PARSER_LINE_ALREADY_REACHED);
-        }
-        else {
+        else
             reachedEOL = true;
-        }
         return fieldOut;
     }
-
 
     /**
      *  Test code -- just run, requires no command line params.
      *
      *  @param args not used.
      */
-    public static void main(String[] args) {
-    /*    test cases:
-            1.  line with 1 field
-                a)  empty line
-                b)  undelimited (' ')
-                c)  delimited empty string  ('""')
-                d)  delimited non-empty string ('" "')
-            2.  line with 2 fields
-                a)  line contains only 1 char, a delimiter (',')
-                b)  line contains two empty delimited strings and
-                    a delimiter
-                    ('"",""')
-                c)  line contains
+    public static void main(final String[] args) {
+        /*    test cases:
+                1.  line with 1 field
+                    a)  empty line
+                    b)  undelimited (' ')
+                    c)  delimited empty string  ('""')
+                    d)  delimited non-empty string ('" "')
+                2.  line with 2 fields
+                    a)  line contains only 1 char, a delimiter (',')
+                    b)  line contains two empty delimited strings and
+                        a delimiter
+                        ('"",""')
+                    c)  line contains
 
-                etc...
+                    etc...
 
-    */
+        */
 
-    /*
-      Enclose all testing in error handling code.
-    */
+        /*
+          Enclose all testing in error handling code.
+        */
 
-        //goofy self-instantiation to build an object
-        //so that non-static methods can be easily invoked
-        //in the testing code.
+        // goofy self-instantiation to build an object
+        // so that non-static methods can be easily invoked
+        // in the testing code.
 
-        boolean normalEOJ   = false;
+        boolean normalEOJ = false;
 
-        int testCaseCount   = 12;
-        int testCaseNbr     = 0;
-        int fieldNbr        = 0;
+        final int testCaseCount = 12;
+        int testCaseNbr = 0;
+        final int fieldNbr = 0;
 
-        String[] testCaseString = {
-            "|a|,b,c,,e",           //01
-            "",                     //02
-            " ",                    //03
-            "|",                    //04
-            "||",                   //05
-            "|||",                  //06
-            "| |",                  //07
-            ",",                    //08
-            "||,||",                //09
-            "|a|,|b|",              //10
-            " a|, b|",              //11
-            ",,,"                   //12
+        final String[] testCaseString = {"|a|,b,c,,e", // 01
+                "", // 02
+                " ", // 03
+                "|", // 04
+                "||", // 05
+                "|||", // 06
+                "| |", // 07
+                ",", // 08
+                "||,||", // 09
+                "|a|,|b|", // 10
+                " a|, b|", // 11
+                ",,," // 12
         };
 
-        char[] testCaseQuoter = {
-            '|',                    //01
-            '|',                    //02
-            '|',                    //03
-            '|',                    //04
-            '|',                    //05
-            '|',                    //06
-            '|',                    //07
-            '|',                    //08
-            '|',                    //09
-            '|',                    //10
-            '|',                    //11
-            '|'                     //12
+        final char[] testCaseQuoter = {'|', // 01
+                '|', // 02
+                '|', // 03
+                '|', // 04
+                '|', // 05
+                '|', // 06
+                '|', // 07
+                '|', // 08
+                '|', // 09
+                '|', // 10
+                '|', // 11
+                '|' // 12
         };
 
-        char[] testCaseDelimiter = {
-            ',',                    //01
-            ',',                    //02
-            ',',                    //03
-            ',',                    //04
-            ',',                    //05
-            ',',                    //06
-            ',',                    //07
-            ',',                    //08
-            ',',                    //09
-            ',',                    //10
-            ',',                    //11
-            ','                     //12
+        final char[] testCaseDelimiter = {',', // 01
+                ',', // 02
+                ',', // 03
+                ',', // 04
+                ',', // 05
+                ',', // 06
+                ',', // 07
+                ',', // 08
+                ',', // 09
+                ',', // 10
+                ',', // 11
+                ',' // 12
         };
-
-
 
         try {
 
-            DelimitedTextParser d = new DelimitedTextParser(
-                    "|a|,b,c,,e",  //line in
-                    ',',           //delimiter
-                    '|');          //quote char
+            final DelimitedTextParser d = new DelimitedTextParser("|a|,b,c,,e", // line
+                                                                                // in
+                ',', // delimiter
+                '|'); // quote char
             String s;
             int i = 0;
-            while ((i < 99) && ((s = d.nextField()) != null) ) {
+            while (i < 99 && (s = d.nextField()) != null) {
                 ++i;
-                if (s.length() == 0) {
-                    System.out.println(
-                            "nextField " + i + " is an empty string");
-                }
-                else {
+                if (s.length() == 0)
+                    System.out
+                        .println("nextField " + i + " is an empty string");
+                else
                     System.out.println("nextField " + i + " " + s);
-                }
             }
-            for (   i = 0, testCaseNbr = 1;
-                    testCaseNbr <= testCaseCount;
-                    i++, testCaseNbr++) {
-                runTestCase(d,
-                        testCaseNbr,
-                        testCaseString[i],
-                        testCaseDelimiter[i],
-                        testCaseQuoter[i]);
-            }
+            for (i = 0, testCaseNbr = 1; testCaseNbr <= testCaseCount; i++, testCaseNbr++)
+                runTestCase(d, testCaseNbr, testCaseString[i],
+                    testCaseDelimiter[i], testCaseQuoter[i]);
             normalEOJ = true;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             printThrownDiagnostics(e);
-        } catch (Error e) {
+        } catch (final Error e) {
             printThrownDiagnostics(e);
         } finally {
-            System.out.println("Reached Finally in main()! " +
-                               "Flag 'normalEOJ' = " + normalEOJ);
+            System.out.println("Reached Finally in main()! "
+                + "Flag 'normalEOJ' = " + normalEOJ);
         }
     }
 
-    private static void runTestCase (
-            DelimitedTextParser parser,
-            int                 testCaseNbr,
-            String              line,
-            char                delim,
-            char                quoter) {
-        System.out.println("* * * * * Test Case "
-                + testCaseNbr
-                + " * * * * *");
+    private static void runTestCase(final DelimitedTextParser parser,
+        final int testCaseNbr, final String line, final char delim,
+        final char quoter)
+    {
+        System.out.println("* * * * * Test Case " + testCaseNbr + " * * * * *");
         parser.setParseDelimiter(delim);
         parser.setParseQuoter(quoter);
         parser.setParseString(line);
@@ -463,43 +431,34 @@ public class DelimitedTextParser {
         try {
             do {
                 fieldOut = parser.nextField();
-                if (fieldOut == null) {
+                if (fieldOut == null)
                     System.out.println("End of line reached.");
-                }
                 else {
                     ++fieldNbr;
-                    if (fieldOut.length() == 0) {
-                        System.out.println("Field "
-                                + fieldNbr
-                                + " is empty string.");
-                    }
-                    else {
-                        System.out.println("Field "
-                                + fieldNbr
-                                + " ='"
-                                + fieldOut
-                                + "'");
-                    }
+                    if (fieldOut.length() == 0)
+                        System.out.println("Field " + fieldNbr
+                            + " is empty string.");
+                    else
+                        System.out.println("Field " + fieldNbr + " ='"
+                            + fieldOut + "'");
                 }
             } while (fieldOut != null);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             printThrownDiagnostics(e);
-        } catch (Error e) {
+        } catch (final Error e) {
             printThrownDiagnostics(e);
         }
     }
 
-    private static void printThrownDiagnostics(Throwable e) {
-        System.out.println(
-                "DelimitedTextParser:main caught Exception:"
-                + e.getLocalizedMessage());
+    private static void printThrownDiagnostics(final Throwable e) {
+        System.out.println("DelimitedTextParser:main caught Exception:"
+            + e.getLocalizedMessage());
         e.printStackTrace(System.out);
     }
 
-    private static void printThrownDiagnosticsAndAbort(Throwable e) {
-        System.out.println(
-                "DelimitedTextParser:main caught Exception:"
-                + e.getLocalizedMessage());
+    private static void printThrownDiagnosticsAndAbort(final Throwable e) {
+        System.out.println("DelimitedTextParser:main caught Exception:"
+            + e.getLocalizedMessage());
         e.printStackTrace(System.out);
         System.exit(-1);
     }

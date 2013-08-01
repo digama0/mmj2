@@ -33,8 +33,9 @@
 
 package mmj.verify;
 
-import mmj.lang.*;
 import java.util.*;
+
+import mmj.lang.*;
 
 /**
  *  EarleyParser is my implementation of the Earley Parse
@@ -135,61 +136,58 @@ import java.util.*;
  */
 public class EarleyParser implements GrammaticalParser {
 
-    private   int                   retryCnt    = -1;
+    private int retryCnt = -1;
 
-    private   int                   pMax;
+    private int pMax;
 
-    private   int                   pItemSetMax;
-    private   int                   pItemSetHighwater;
-    private   int[]                 pItemSetCnt;
-    private   int                   pItemSetIndex;
+    private int pItemSetMax;
+    private int pItemSetHighwater;
+    private int[] pItemSetCnt;
+    private int pItemSetIndex;
 
-    private   int                   pCompletedItemSetMax;
-    private   int                   pCompletedItemSetHighwater;
-    private   int[]                 pCompletedItemSetCnt;
-    private   int                   pCompletedItemSetIndex;
+    private int pCompletedItemSetMax;
+    private int pCompletedItemSetHighwater;
+    private int[] pCompletedItemSetCnt;
+    private int pCompletedItemSetIndex;
 
-    private   int                   pBringForwardTypMax;
-    private   int[]                 pBringForwardTypCnt;
-    private   int                   pBringForwardTypIndex;
+    private int pBringForwardTypMax;
+    private int[] pBringForwardTypCnt;
+    private int pBringForwardTypIndex;
 
-    private   int                   pPredictorTypMax;
-    private   int                   pPredictorTypCnt;
+    private int pPredictorTypMax;
+    private int pPredictorTypCnt;
 
-    private   EarleyItem[][]        pItem;
-    private   EarleyItem[][]        pCompletedItem;
+    private EarleyItem[][] pItem;
+    private EarleyItem[][] pCompletedItem;
 
-    private   Cnst[][]              pBringForwardTyp;
-    private   Cnst[]                pPredictorTyp;
+    private Cnst[][] pBringForwardTyp;
+    private Cnst[] pPredictorTyp;
 
-
-    private   ParseNodeHolder[] emptyParamArray =
-                                    new ParseNodeHolder[0];
+    private final ParseNodeHolder[] emptyParamArray = new ParseNodeHolder[0];
 
     /**
      *  these are stored globally only to avoid parameter passing.
      */
 
-    private   Grammar               grammar;
+    private final Grammar grammar;
 
-    private   ParseTree[]           parseTreeArray;
-    private   Cnst                  formulaTyp;
-    private   ParseNodeHolder[]     parseNodeHolderExpr;
-    private   int                   highestSeq;
+    private ParseTree[] parseTreeArray;
+    private Cnst formulaTyp;
+    private ParseNodeHolder[] parseNodeHolderExpr;
+    private int highestSeq;
 
-    private   int                   parseCnt;
+    private int parseCnt;
 
-    private   Cnst                  startRuleTyp;
-    private   ParseNodeHolder[]     expr;
+    private Cnst startRuleTyp;
+    private ParseNodeHolder[] expr;
 
-    private   int                   twinTreesNeeded;
-    private   int                   twinTreesCnt;
+    private int twinTreesNeeded;
+    private int twinTreesCnt;
 
-    //rules only loaded once
-    private   int                   rulesTypMax;
-    private   int                   rulesTypCnt;
-    private   Cnst[][]              ruleTypAndFIRSTTyp;
-
+    // rules only loaded once
+    private int rulesTypMax;
+    private int rulesTypCnt;
+    private Cnst[][] ruleTypAndFIRSTTyp;
 
     /**
      *  Construct using reference to Grammar and a parameter
@@ -198,34 +196,27 @@ public class EarleyParser implements GrammaticalParser {
      *  @param grammarIn Grammar object
      *  @param maxFormulaLengthIn gives us a hint about what to expect.
      */
-    public EarleyParser(Grammar grammarIn,
-                        int     maxFormulaLengthIn) {
+    public EarleyParser(final Grammar grammarIn, final int maxFormulaLengthIn) {
 
-        grammar                   = grammarIn;
+        grammar = grammarIn;
 
-        pMax                      = maxFormulaLengthIn + 1;
-        if (pMax < 10) {
+        pMax = maxFormulaLengthIn + 1;
+        if (pMax < 10)
             pMax = 10;
-        }
 
-        pItemSetMax               =
-            grammar.getNotationGRSet().size();
+        pItemSetMax = grammar.getNotationGRSet().size();
 
-        if (pItemSetMax <
-                GrammarConstants.EARLEY_PARSE_MIN_ITEMSET_MAXIMUM) {
-            pItemSetMax           =
-                GrammarConstants.EARLEY_PARSE_MIN_ITEMSET_MAXIMUM;
-        }
+        if (pItemSetMax < GrammarConstants.EARLEY_PARSE_MIN_ITEMSET_MAXIMUM)
+            pItemSetMax = GrammarConstants.EARLEY_PARSE_MIN_ITEMSET_MAXIMUM;
 
-        pCompletedItemSetMax      = (pItemSetMax /
-                GrammarConstants.EARLEY_PARSE_CITEMSET_ITEMSET_RATIO);
+        pCompletedItemSetMax = pItemSetMax
+            / GrammarConstants.EARLEY_PARSE_CITEMSET_ITEMSET_RATIO;
 
-        pBringForwardTypMax       = grammar.getVarHypTypSet().size()
-                                    + 2;
+        pBringForwardTypMax = grammar.getVarHypTypSet().size() + 2;
 
-        pPredictorTypMax          = pBringForwardTypMax;
+        pPredictorTypMax = pBringForwardTypMax;
 
-        //defer array building until reInitArrays(0) in parseExpr
+        // defer array building until reInitArrays(0) in parseExpr
     }
 
     /**
@@ -266,73 +257,62 @@ public class EarleyParser implements GrammaticalParser {
      *         grammatical ambiguity, by definition, since there is
      *         more than one way to parse the formula.
      */
-    public int parseExpr(ParseTree[]       parseTreeArrayIn,
-                         Cnst              formulaTypIn,
-                         ParseNodeHolder[] parseNodeHolderExprIn,
-                         int               highestSeqIn)
-                                            throws VerifyException {
-        parseTreeArray            = parseTreeArrayIn;
-        formulaTyp                = formulaTypIn;
-        parseNodeHolderExpr       = parseNodeHolderExprIn;
-        highestSeq                = highestSeqIn;
+    @Override
+    public int parseExpr(final ParseTree[] parseTreeArrayIn,
+        final Cnst formulaTypIn, final ParseNodeHolder[] parseNodeHolderExprIn,
+        final int highestSeqIn) throws VerifyException
+    {
+        parseTreeArray = parseTreeArrayIn;
+        formulaTyp = formulaTypIn;
+        parseNodeHolderExpr = parseNodeHolderExprIn;
+        highestSeq = highestSeqIn;
 
         parseCnt = 0;
 
-        if (parseNodeHolderExpr.length == 0) {
+        if (parseNodeHolderExpr.length == 0)
             return EarleyParserSpecialCase1();
-        }
 
-		//patch: 06/17/2011
-        //if (parseNodeHolderExpr.length == 1 &&
-        //     !(parseNodeHolderExpr[0].mObj.isCnst())) {
-        //    return EarleyParserSpecialCase2();
-        //}
+        // patch: 06/17/2011
+        // if (parseNodeHolderExpr.length == 1 &&
+        // !(parseNodeHolderExpr[0].mObj.isCnst())) {
+        // return EarleyParserSpecialCase2();
+        // }
         if (parseNodeHolderExpr.length == 1) {
-			MObj mObj                =  parseNodeHolderExpr[0].mObj;
-            if (!mObj.isCnst()) {
+            final MObj mObj = parseNodeHolderExpr[0].mObj;
+            if (!mObj.isCnst())
                 return EarleyParserSpecialCase2();
-			}
-			// ok, is expression w/one symbol, a constant...
-			// see if we can consider it parsed and get out of here...
-			EarleyParserSpecialCase3((Cnst)mObj);
-			if (parseCnt > 0) {
-				return parseCnt;
-			}
-		}
-        prepareCnstGimmesEtc();  // loads expr, etc.
+            // ok, is expression w/one symbol, a constant...
+            // see if we can consider it parsed and get out of here...
+            EarleyParserSpecialCase3((Cnst)mObj);
+            if (parseCnt > 0)
+                return parseCnt;
+        }
+        prepareCnstGimmesEtc(); // loads expr, etc.
 
         if (expr.length > pMax) {
             pMax = expr.length + 10;
-            initArrays(pMax,
-                       pItemSetMax,
-                       pCompletedItemSetMax,
-                       pBringForwardTypMax,
-                       pPredictorTypMax);
+            initArrays(pMax, pItemSetMax, pCompletedItemSetMax,
+                pBringForwardTypMax, pPredictorTypMax);
         }
 
         boolean needToRetry = true;
         reInitArrays(0);
-        while (needToRetry) {
+        while (needToRetry)
             try {
-                parseCnt    = 0;
-                parse();           // parse expr now...
+                parseCnt = 0;
+                parse(); // parse expr now...
                 needToRetry = false;
-            }
-            catch(ArrayIndexOutOfBoundsException e) {
-                if (++retryCnt >
-                    GrammarConstants.MAX_PARSE_RETRIES) {
+            } catch (final ArrayIndexOutOfBoundsException e) {
+                if (++retryCnt > GrammarConstants.MAX_PARSE_RETRIES)
                     throw new IllegalStateException(
                         GrammarConstants.ERRMSG_MAX_RETRIES_EXCEEDED_1
-                      + GrammarConstants.MAX_PARSE_RETRIES
-                      + GrammarConstants.ERRMSG_MAX_RETRIES_EXCEEDED_2
-                        );
-                }
-                System.err.println(
-                    GrammarConstants.ERRMSG_RETRY_TO_BE_INITIATED
-                    + e.getMessage());
+                            + GrammarConstants.MAX_PARSE_RETRIES
+                            + GrammarConstants.ERRMSG_MAX_RETRIES_EXCEEDED_2);
+                System.err
+                    .println(GrammarConstants.ERRMSG_RETRY_TO_BE_INITIATED
+                        + e.getMessage());
                 reInitArrays(retryCnt);
             }
-        }
 
         return parseCnt;
     }
@@ -360,48 +340,34 @@ public class EarleyParser implements GrammaticalParser {
      *
      *  @return parse count -- number of parse trees generated.
      */
-    private   int EarleyParserSpecialCase1() {
+    private int EarleyParserSpecialCase1() {
 
-        NullsPermittedRule  gR;
+        NullsPermittedRule gR;
 
         if (formulaTyp.getIsProvableLogicStmtTyp()) {
-            Cnst[] logicStmtTypArray = grammar.getLogicStmtTypArray();
-            for (int i = 0;
-                 i < logicStmtTypArray.length;
-                 i++) {
-                gR                =
-                    logicStmtTypArray[i].getNullsPermittedGR();
-                if (gR != null &&
-                    gR.getMaxSeqNbr() <= highestSeq) {
-                    parseTreeArray[parseCnt++] =
-                        new ParseTree(
-                            gR.buildGrammaticalParseNode(
-                                emptyParamArray));
-                    if (parseCnt >= parseTreeArray.length) {
+            final Cnst[] logicStmtTypArray = grammar.getLogicStmtTypArray();
+            for (final Cnst element : logicStmtTypArray) {
+                gR = element.getNullsPermittedGR();
+                if (gR != null && gR.getMaxSeqNbr() <= highestSeq) {
+                    parseTreeArray[parseCnt++] = new ParseTree(
+                        gR.buildGrammaticalParseNode(emptyParamArray));
+                    if (parseCnt >= parseTreeArray.length)
                         break;
-                    }
                 }
             }
         }
         else {
-            List nullsPermittedGRList
-                                  = grammar.getNullsPermittedGRList();
-            int i = nullsPermittedGRList.indexOf(formulaTyp);
+            final List nullsPermittedGRList = grammar.getNullsPermittedGRList();
+            final int i = nullsPermittedGRList.indexOf(formulaTyp);
             if (i != -1) {
-                gR =
-                    (NullsPermittedRule)
-                        nullsPermittedGRList.get(i);
-                if (gR.getMaxSeqNbr() <= highestSeq) {
-                    parseTreeArray[parseCnt++] =
-                        new ParseTree(
-                            gR.buildGrammaticalParseNode(
-                                emptyParamArray));
-                }
+                gR = (NullsPermittedRule)nullsPermittedGRList.get(i);
+                if (gR.getMaxSeqNbr() <= highestSeq)
+                    parseTreeArray[parseCnt++] = new ParseTree(
+                        gR.buildGrammaticalParseNode(emptyParamArray));
             }
         }
         return parseCnt;
     }
-
 
     /**
      *  EarleyParserSpecialCase2 --
@@ -421,24 +387,20 @@ public class EarleyParser implements GrammaticalParser {
      *
      *  @return parse count -- number of parse trees generated.
      */
-    private   int EarleyParserSpecialCase2() {
+    private int EarleyParserSpecialCase2() {
 
-        TypeConversionRule  gR;
+        TypeConversionRule gR;
 
-        if (formulaTyp.getIsProvableLogicStmtTyp()) {
-            parseTreeArray[parseCnt++] =
-                new ParseTree(parseNodeHolderExpr[0].parseNode);
-        }
+        if (formulaTyp.getIsProvableLogicStmtTyp())
+            parseTreeArray[parseCnt++] = new ParseTree(
+                parseNodeHolderExpr[0].parseNode);
         else {
-            gR = formulaTyp.findFromTypConversionRule(
-                   ((VarHyp)parseNodeHolderExpr[0].mObj).getTyp());
-            if (gR != null &&
-                gR.getMaxSeqNbr() <= highestSeq) {
-                parseTreeArray[parseCnt++] =
-                    new ParseTree(
-                        gR.buildGrammaticalParseNode(
-                            parseNodeHolderExpr));
-            }
+            gR = formulaTyp
+                .findFromTypConversionRule(((VarHyp)parseNodeHolderExpr[0].mObj)
+                    .getTyp());
+            if (gR != null && gR.getMaxSeqNbr() <= highestSeq)
+                parseTreeArray[parseCnt++] = new ParseTree(
+                    gR.buildGrammaticalParseNode(parseNodeHolderExpr));
         }
         return parseCnt;
     }
@@ -457,66 +419,53 @@ public class EarleyParser implements GrammaticalParser {
      *  parse tree and exit!
      *
      */
-    private void EarleyParserSpecialCase3(Cnst cnst)
-                                            throws VerifyException {
+    private void EarleyParserSpecialCase3(final Cnst cnst)
+        throws VerifyException
+    {
 
-		if (cnst.getIsGrammaticalTyp()) {
-			throw new VerifyException(
-			  GrammarConstants.ERRMSG_EXPR_USES_TYP_AS_CNST_1
-			  + cnst.toString()
-			  +
-			  GrammarConstants.ERRMSG_EXPR_USES_TYP_AS_CNST_2
-			  );
-		}
+        if (cnst.getIsGrammaticalTyp())
+            throw new VerifyException(
+                GrammarConstants.ERRMSG_EXPR_USES_TYP_AS_CNST_1
+                    + cnst.toString()
+                    + GrammarConstants.ERRMSG_EXPR_USES_TYP_AS_CNST_2);
 
-        NotationRule notationRule = cnst.getLen1CnstNotationRule();
-        if (notationRule != null                       &&
-            // notationRule.getIsGimmeMatchNbr() == 1  &&
-                // don't need to check gimmeMatchNbr because expression
-                // length is one so this is the only possible parse...
-            notationRule.getMaxSeqNbr() <= highestSeq) {
-
-			parseTreeArray[parseCnt++]
-			                      =
-				new ParseTree(
-					notationRule.buildGrammaticalParseNode(
-						emptyParamArray));
-		}
+        final NotationRule notationRule = cnst.getLen1CnstNotationRule();
+        if (notationRule != null &&
+        // notationRule.getIsGimmeMatchNbr() == 1 &&
+        // don't need to check gimmeMatchNbr because expression
+        // length is one so this is the only possible parse...
+            notationRule.getMaxSeqNbr() <= highestSeq)
+            parseTreeArray[parseCnt++] = new ParseTree(
+                notationRule.buildGrammaticalParseNode(emptyParamArray));
         return;
-	}
+    }
 
-    private  void prepareCnstGimmesEtc()
-                                throws VerifyException {
+    private void prepareCnstGimmesEtc() throws VerifyException {
 
-        Cnst         cnst;
+        Cnst cnst;
         NotationRule notationRule;
 
-        expr                 = new ParseNodeHolder[
-                                     parseNodeHolderExpr.length + 1];
-        int          src     = 0;
+        expr = new ParseNodeHolder[parseNodeHolderExpr.length + 1];
+        int src = 0;
         for (int dest = 1; dest < expr.length; src++, dest++) {
 
             if (parseNodeHolderExpr[src].mObj.isCnst()) {
-                cnst         = (Cnst)parseNodeHolderExpr[src].mObj;
-                if (cnst.getIsGrammaticalTyp()) {
+                cnst = (Cnst)parseNodeHolderExpr[src].mObj;
+                if (cnst.getIsGrammaticalTyp())
                     throw new VerifyException(
-                      GrammarConstants.ERRMSG_EXPR_USES_TYP_AS_CNST_1
-                      + cnst.toString()
-                      +
-                      GrammarConstants.ERRMSG_EXPR_USES_TYP_AS_CNST_2
-                      );
-                }
+                        GrammarConstants.ERRMSG_EXPR_USES_TYP_AS_CNST_1
+                            + cnst.toString()
+                            + GrammarConstants.ERRMSG_EXPR_USES_TYP_AS_CNST_2);
 
                 notationRule = cnst.getLen1CnstNotationRule();
-                if (notationRule != null                    &&
-                    notationRule.getIsGimmeMatchNbr() == 1  &&
-                    //added following check on 06/17/2011
-                    notationRule.getMaxSeqNbr() <= highestSeq) {
+                if (notationRule != null
+                    && notationRule.getIsGimmeMatchNbr() == 1 &&
+                    // added following check on 06/17/2011
+                    notationRule.getMaxSeqNbr() <= highestSeq)
+                {
 
-                    expr[dest] = new
-                        ParseNodeHolder(
-                            notationRule.buildGrammaticalParseNode(
-                                emptyParamArray));
+                    expr[dest] = new ParseNodeHolder(
+                        notationRule.buildGrammaticalParseNode(emptyParamArray));
 
                     continue;
                 }
@@ -527,36 +476,33 @@ public class EarleyParser implements GrammaticalParser {
 
     private void parse() throws VerifyException {
 
-        int  p               = 1;
-        int  pLast           = expr.length - 1; // [0] unused
+        int p = 1;
+        final int pLast = expr.length - 1; // [0] unused
 
-        Cnst eP              = expr[1].getCnstOrTyp();
-        Cnst ePPlus1         = null;
-        if (expr.length > 2) {
-            ePPlus1          = expr[2].getCnstOrTyp();
-        }
+        Cnst eP = expr[1].getCnstOrTyp();
+        Cnst ePPlus1 = null;
+        if (expr.length > 2)
+            ePPlus1 = expr[2].getCnstOrTyp();
 
         initDataStructureContents(0);
 
         /**
          *  Derive Start Rule Type code(s).
          */
-        startRuleTyp         = null;
+        startRuleTyp = null;
         if (formulaTyp.getIsProvableLogicStmtTyp()) {
             if (grammar.getLogicStmtTypArray().length > 0) {
-                startRuleTyp = (grammar.getLogicStmtTypArray())[0];
+                startRuleTyp = grammar.getLogicStmtTypArray()[0];
                 addToPredictorTypSet(startRuleTyp);
             }
-            else {
+            else
                 throw new IllegalStateException(
                     GrammarConstants.ERRMSG_START_RULE_TYPE_UNDEF_1
-                    + formulaTyp
-                    +
-                    GrammarConstants.ERRMSG_START_RULE_TYPE_UNDEF_2);
-            }
+                        + formulaTyp
+                        + GrammarConstants.ERRMSG_START_RULE_TYPE_UNDEF_2);
         }
         else {
-            startRuleTyp     = formulaTyp;
+            startRuleTyp = formulaTyp;
             addToPredictorTypSet(startRuleTyp);
 
             /**
@@ -564,58 +510,44 @@ public class EarleyParser implements GrammaticalParser {
              *  because a Start Type may have only a Type Conversion
              *  Rule and not be picked up otherwise in The Predictor.
              */
-            TypeConversionRule[] fromRules
-                             =  startRuleTyp.getConvFromTypGRArray();
-            if (fromRules != null) {
-                for (int i = 0; i < fromRules.length; i++) {
-                    addToPredictorTypSet(fromRules[i].getConvTyp());
-                }
-            }
+            final TypeConversionRule[] fromRules = startRuleTyp
+                .getConvFromTypGRArray();
+            if (fromRules != null)
+                for (final TypeConversionRule fromRule : fromRules)
+                    addToPredictorTypSet(fromRule.getConvTyp());
         }
 
-        earleyPredictor(0,  // to load itemset[0], initial itemset
-                        eP,
-                        highestSeq);
+        earleyPredictor(0, // to load itemset[0], initial itemset
+            eP, highestSeq);
 
-        int earleyCnt        = 0;
+        int earleyCnt = 0;
         do {
             initDataStructureContents(p);
-            earleyCnt        = earleyScanner(p,
-                                         eP);
-            earleyCnt       += earleyCompletor(p);
-            earleyCnt       += earleyPredictor(p,
-                                           ePPlus1,
-                                           highestSeq);
+            earleyCnt = earleyScanner(p, eP);
+            earleyCnt += earleyCompletor(p);
+            earleyCnt += earleyPredictor(p, ePPlus1, highestSeq);
             ++p;
-            if (p > pLast ||
-                earleyCnt == 0 ) {
+            if (p > pLast || earleyCnt == 0)
                 break;
-            }
             eP = ePPlus1;
-            if (p >= pLast) {
-                ePPlus1      = null;
-            }
-            else {
-                ePPlus1      = expr[p + 1].getCnstOrTyp();
-            }
-        }
-        while (true);
+            if (p >= pLast)
+                ePPlus1 = null;
+            else
+                ePPlus1 = expr[p + 1].getCnstOrTyp();
+        } while (true);
 // /* --
 //      dumpItemSets();
 // */
 
-        if (earleyCnt == 0 &&
-            p <= pLast) {
+        if (earleyCnt == 0 && p <= pLast)
             parseCnt = (p - 1) * -1;
-        }
-        else {
+        else
             buildTrees();
-        }
     }
 
-    private   int earleyPredictor(int  currPos,
-                                  Cnst nextSym,
-                                  int  maxSeq) {
+    private int earleyPredictor(final int currPos, final Cnst nextSym,
+        final int maxSeq)
+    {
 // /* --
 //      StringBuffer s = new StringBuffer();
 //      s.append("--- earleyPredictor:");
@@ -630,147 +562,126 @@ public class EarleyParser implements GrammaticalParser {
 //      s.append("]");
 //      System.out.println(s);
 // */
-        int          predictedCnt = 0;
-        LinkedList   typRules;
+        int predictedCnt = 0;
+        LinkedList typRules;
         NotationRule notationRule;
-        Cnst         ruleExprFirstSym;
-        Iterator     ruleIterator;
+        Cnst ruleExprFirstSym;
+        Iterator ruleIterator;
 
         /**
          *  Double loop to thwart loop optimizer in javac.
          *  Problem is that pPredictorTypCnt is
          *  updated indirectly inside the loop...Uh-oh.
          */
-        int          qStart    = 0;
-        int          qMax      = pPredictorTypCnt;
+        int qStart = 0;
+        int qMax = pPredictorTypCnt;
         while (true) {
 
-            typLoop: for (int i = qStart;
-                              i < qMax;
-                              i++) {
+            typLoop: for (int i = qStart; i < qMax; i++) {
 
-                if ((typRules = pPredictorTyp[i].getEarleyRules())
-                    == null) {
+                if ((typRules = pPredictorTyp[i].getEarleyRules()) == null)
                     continue typLoop;
-                }
-                if (!pPredictorTyp[i].earleyFIRSTContainsSymbol(
-                                                       nextSym)) {
+                if (!pPredictorTyp[i].earleyFIRSTContainsSymbol(nextSym))
                     continue typLoop;
-                }
 
                 ruleIterator = typRules.iterator();
 
                 ruleLoop: while (ruleIterator.hasNext()) {
-                    notationRule =
-                        (NotationRule)ruleIterator.next();
-                    if (notationRule.getMaxSeqNbr() > maxSeq) {
-                        continue typLoop; //done with typ
-                    }
+                    notationRule = (NotationRule)ruleIterator.next();
+                    if (notationRule.getMaxSeqNbr() > maxSeq)
+                        continue typLoop; // done with typ
 
-                    ruleExprFirstSym =
-                        notationRule.getRuleFormatExprFirst();
-                   /**
-                    *  oops? confusing here...remove following check?
-                    *  just add the blasted thing!?#$? I think not...
-                    *  we already know that the rule Type FIRST set
-                    *  contains nextSym -- ok,fine -- but now we want
-                    *  to weed out the list of mismatched Terminals
-                    *  where "(" not = "-.", and where
-                    *  ruleExprFirstSym is a Type Code and that
-                    *  Type's EarleyFIRST set does not contain
-                    *  nextSym. (Initially the code checked
-                    *  for == (equal) and that excluded far
-                    *  too many -- the valid ones! haha. OK,
-                    *  here goes...
-                    */
-                    if (ruleExprFirstSym == nextSym ||
-                        ruleExprFirstSym.earleyFIRSTContainsSymbol(
-                                                        nextSym)) {
-                        addPredictionToItemSet(
-                                    currPos,           //itemset nbr
-                                    notationRule,      //rule
-                                    ruleExprFirstSym); //dotAfter
+                    ruleExprFirstSym = notationRule.getRuleFormatExprFirst();
+                    /**
+                     *  oops? confusing here...remove following check?
+                     *  just add the blasted thing!?#$? I think not...
+                     *  we already know that the rule Type FIRST set
+                     *  contains nextSym -- ok,fine -- but now we want
+                     *  to weed out the list of mismatched Terminals
+                     *  where "(" not = "-.", and where
+                     *  ruleExprFirstSym is a Type Code and that
+                     *  Type's EarleyFIRST set does not contain
+                     *  nextSym. (Initially the code checked
+                     *  for == (equal) and that excluded far
+                     *  too many -- the valid ones! haha. OK,
+                     *  here goes...
+                     */
+                    if (ruleExprFirstSym == nextSym
+                        || ruleExprFirstSym.earleyFIRSTContainsSymbol(nextSym))
+                    {
+                        addPredictionToItemSet(currPos, // itemset nbr
+                            notationRule, // rule
+                            ruleExprFirstSym); // dotAfter
                         ++predictedCnt;
                     }
                 }
             }
-            if (qMax >= pPredictorTypCnt) {
+            if (qMax >= pPredictorTypCnt)
                 break;
-            }
-            qStart             = qMax;
-            qMax               = pPredictorTypCnt;
+            qStart = qMax;
+            qMax = pPredictorTypCnt;
         }
         return predictedCnt;
     }
 
-    private   int earleyScanner(int  currPos,
-                                Cnst currSym) {
+    private int earleyScanner(final int currPos, final Cnst currSym) {
 // /* --
 //      System.out.println(
 //          "--- earleyScanner:"
 //          + " currPos "  + currPos
 //          + " currSym "  + currSym);
 // */
-        return getMatchesCloneAndUpdateDot(
-                    currPos - 1,  // scan set number
-                    currPos,      // comp/active Set Nbr
-                    currSym);     // scan symbol
+        return getMatchesCloneAndUpdateDot(currPos - 1, // scan set number
+            currPos, // comp/active Set Nbr
+            currSym); // scan symbol
 
     }
 
-    private int earleyCompletor(int currPos) {
+    private int earleyCompletor(final int currPos) {
 // /*--
 //      System.out.println(
 //          "--- earleyCompletor:"
 //          + " currPos "  + currPos);
 // */
-        int          outputCnt = 0;
+        int outputCnt = 0;
 
-        EarleyItem[] completedItemSet
-                               = pCompletedItem[currPos];
-        EarleyItem   completedItem;
-        int          mMinus1;
-        Cnst         typR;
+        final EarleyItem[] completedItemSet = pCompletedItem[currPos];
+        EarleyItem completedItem;
+        int mMinus1;
+        Cnst typR;
 
         /**
          *  Double loop to thwart loop optimizer in javac.
          *  Problem is that pCompletedItemSetCnt[currPos] is
          *  updated indirectly inside the loop...Uh-oh.
          */
-        int          qStart    = 0;
-        int          qMax      = pCompletedItemSetCnt[currPos];
+        int qStart = 0;
+        int qMax = pCompletedItemSetCnt[currPos];
         while (true) {
 
-            for (pCompletedItemSetIndex = qStart;
-                 pCompletedItemSetIndex < qMax;
-                 pCompletedItemSetIndex++) {
-                completedItem  =
-                    completedItemSet[pCompletedItemSetIndex];
-                mMinus1        =
-                    completedItem.atIndex - 1;
-                typR           =
-                    completedItem.rule.getGrammarRuleTyp();
-                if (addToBringForwardTypSet(mMinus1,
-                                            typR)) {
-                    outputCnt +=
-                        getMatchesCloneAndUpdateDot(
-                                mMinus1,  // scan set number
-                                currPos,  // comp/active Set Nbr
-                                typR);    // scan symbol
-                }
+            for (pCompletedItemSetIndex = qStart; pCompletedItemSetIndex < qMax; pCompletedItemSetIndex++)
+            {
+                completedItem = completedItemSet[pCompletedItemSetIndex];
+                mMinus1 = completedItem.atIndex - 1;
+                typR = completedItem.rule.getGrammarRuleTyp();
+                if (addToBringForwardTypSet(mMinus1, typR))
+                    outputCnt += getMatchesCloneAndUpdateDot(mMinus1, // scan
+                                                                      // set
+                                                                      // number
+                        currPos, // comp/active Set Nbr
+                        typR); // scan symbol
             }
-            if (qMax >= pCompletedItemSetCnt[currPos]) {
+            if (qMax >= pCompletedItemSetCnt[currPos])
                 break;
-            }
-            qStart             = qMax;
-            qMax               = pCompletedItemSetCnt[currPos];
+            qStart = qMax;
+            qMax = pCompletedItemSetCnt[currPos];
         }
         return outputCnt;
     }
 
-    private int getMatchesCloneAndUpdateDot(int  scanSetNbr,
-                                            int  outputSetNbr,
-                                            Cnst scanSymbol) {
+    private int getMatchesCloneAndUpdateDot(final int scanSetNbr,
+        final int outputSetNbr, final Cnst scanSymbol)
+    {
 // /* --
 //      System.out.println(
 //          "--- getMatchesCloneAndUpdateDot:"
@@ -778,41 +689,34 @@ public class EarleyParser implements GrammaticalParser {
 //          + " outputSetNbr " + outputSetNbr
 //          + " scanSymbol "   + scanSymbol);
 // */
-        int             outputCnt = 0;
-        EarleyItem[]    scanItemSet = pItem[scanSetNbr];
-        EarleyItem      earleyItem;
-        NotationRule    notationRule;
-        int             newDotIndex;
-        Cnst            newAfterDot;
+        int outputCnt = 0;
+        final EarleyItem[] scanItemSet = pItem[scanSetNbr];
+        EarleyItem earleyItem;
+        final NotationRule notationRule;
+        int newDotIndex;
+        Cnst newAfterDot;
 
         scanLoop: for (int i = 0; i < pItemSetCnt[scanSetNbr]; i++) {
             earleyItem = scanItemSet[i];
-            if (earleyItem.afterDot != scanSymbol) {
+            if (earleyItem.afterDot != scanSymbol)
                 continue scanLoop;
-            }
             newDotIndex = earleyItem.dotIndex + 1;
-            newAfterDot =
-                earleyItem.rule.getRuleFormatExprIthSymbol(
-                                                        newDotIndex);
-            if (newAfterDot == null) {
-                addItemToCompletedItemSet(outputSetNbr,
-                                          earleyItem);
-            }
-            else {
-                addActiveItemToItemSet(outputSetNbr,
-                                       earleyItem,
-                                       newDotIndex,
-                                       newAfterDot);
-            }
+            newAfterDot = earleyItem.rule
+                .getRuleFormatExprIthSymbol(newDotIndex);
+            if (newAfterDot == null)
+                addItemToCompletedItemSet(outputSetNbr, earleyItem);
+            else
+                addActiveItemToItemSet(outputSetNbr, earleyItem, newDotIndex,
+                    newAfterDot);
             ++outputCnt;
         }
 
         return outputCnt;
     }
 
-    private void addItemToCompletedItemSet(
-                                   int          scanSetNbr,
-                                   EarleyItem   oldItem) {
+    private void addItemToCompletedItemSet(final int scanSetNbr,
+        final EarleyItem oldItem)
+    {
 // /* --
 //      System.out.println(
 //          "--- addItemToCompletedItemSet:"
@@ -820,48 +724,39 @@ public class EarleyParser implements GrammaticalParser {
 //          + " oldItem "      + oldItem);
 // */
 
-
-        pCompletedItemSetIndex    =
-                                   pCompletedItemSetCnt[scanSetNbr];
-        EarleyItem[] pCompletedSet
-                                  = pCompletedItem[scanSetNbr];
+        pCompletedItemSetIndex = pCompletedItemSetCnt[scanSetNbr];
+        final EarleyItem[] pCompletedSet = pCompletedItem[scanSetNbr];
 
         /**
          *  Eliminate dups. This may be a redundant check. I
          *  think it is because of the Completor and BringForward
          *  Type Sets -- belt *and* suspenders?
          */
-        for (int i = 0; i < pCompletedItemSetIndex; i++) {
-            if (oldItem.equals(pCompletedSet[i])) {
+        for (int i = 0; i < pCompletedItemSetIndex; i++)
+            if (oldItem.equals(pCompletedSet[i]))
                 return;
-            }
-        }
 
         /**
          *  OK dummy, *now* increment the counter :)
          */
         ++pCompletedItemSetCnt[scanSetNbr];
 
-        EarleyItem completedItem  =
-            pCompletedSet[pCompletedItemSetIndex];
+        EarleyItem completedItem = pCompletedSet[pCompletedItemSetIndex];
 
         if (completedItem == null) {
-            completedItem         = new EarleyItem();
-            pCompletedSet[pCompletedItemSetIndex]
-                                  = completedItem;
+            completedItem = new EarleyItem();
+            pCompletedSet[pCompletedItemSetIndex] = completedItem;
         }
 
-        completedItem.rule        = oldItem.rule;
-        completedItem.atIndex     = oldItem.atIndex;
-        completedItem.dotIndex    = oldItem.dotIndex + 1;
-        completedItem.afterDot    = null;
+        completedItem.rule = oldItem.rule;
+        completedItem.atIndex = oldItem.atIndex;
+        completedItem.dotIndex = oldItem.dotIndex + 1;
+        completedItem.afterDot = null;
     }
 
-    private   void addActiveItemToItemSet(
-                                   int          outputSetNbr,
-                                   EarleyItem   oldItem,
-                                   int          newDotIndex,
-                                   Cnst         newAfterDot) {
+    private void addActiveItemToItemSet(final int outputSetNbr,
+        final EarleyItem oldItem, final int newDotIndex, final Cnst newAfterDot)
+    {
 // /*
 //      System.out.println(
 //          "--- addActiveItemToItemSet:"
@@ -871,27 +766,24 @@ public class EarleyParser implements GrammaticalParser {
 //          + " newAfterDot "    + newAfterDot);
 // */
 
-        pItemSetIndex             = pItemSetCnt[outputSetNbr]++;
-        EarleyItem activeItem     = pItem[outputSetNbr][pItemSetIndex];
+        pItemSetIndex = pItemSetCnt[outputSetNbr]++;
+        EarleyItem activeItem = pItem[outputSetNbr][pItemSetIndex];
         if (activeItem == null) {
-            activeItem            = new EarleyItem();
-            pItem[outputSetNbr][pItemSetIndex]
-                                  = activeItem;
+            activeItem = new EarleyItem();
+            pItem[outputSetNbr][pItemSetIndex] = activeItem;
         }
-        activeItem.rule           = oldItem.rule;
-        activeItem.atIndex        = oldItem.atIndex;
-        activeItem.dotIndex       = newDotIndex;
-        activeItem.afterDot       = newAfterDot;
-        if (newAfterDot.getIsVarTyp()) {
+        activeItem.rule = oldItem.rule;
+        activeItem.atIndex = oldItem.atIndex;
+        activeItem.dotIndex = newDotIndex;
+        activeItem.afterDot = newAfterDot;
+        if (newAfterDot.getIsVarTyp())
             addToPredictorTypSet(newAfterDot);
-        }
     }
 
-
-    private   void addPredictionToItemSet(
-                        int          currPos,            //itemset nbr
-                        NotationRule notationRule,       //rule
-                        Cnst         ruleExprFirstSym) { //dotAfter
+    private void addPredictionToItemSet(final int currPos, // itemset nbr
+        final NotationRule notationRule, // rule
+        final Cnst ruleExprFirstSym)
+    { // dotAfter
 // /*
 //      System.out.println(
 //          "--- addPredictionToItemSet:"
@@ -902,55 +794,47 @@ public class EarleyParser implements GrammaticalParser {
 //              + notationRule.getBaseSyntaxAxiom().getLabel()
 //          + " ruleExprFirstSym "  + ruleExprFirstSym);
 // */
-        pItemSetIndex         = pItemSetCnt[currPos]++;
+        pItemSetIndex = pItemSetCnt[currPos]++;
         EarleyItem earleyItem = pItem[currPos][pItemSetIndex];
         if (earleyItem == null) {
-            earleyItem        = new EarleyItem();
-            pItem[currPos][pItemSetIndex]
-                              = earleyItem;
+            earleyItem = new EarleyItem();
+            pItem[currPos][pItemSetIndex] = earleyItem;
         }
-        earleyItem.rule       = notationRule;
-        earleyItem.atIndex    = currPos + 1;
-        earleyItem.dotIndex   = 1;
-        earleyItem.afterDot   = ruleExprFirstSym;
-        if (ruleExprFirstSym != null &&
-            ruleExprFirstSym.getIsVarTyp()) {
+        earleyItem.rule = notationRule;
+        earleyItem.atIndex = currPos + 1;
+        earleyItem.dotIndex = 1;
+        earleyItem.afterDot = ruleExprFirstSym;
+        if (ruleExprFirstSym != null && ruleExprFirstSym.getIsVarTyp())
             addToPredictorTypSet(ruleExprFirstSym);
-        }
     }
 
-    private   void addToPredictorTypSet(Cnst typ) {
-        for (int i = 0; i < pPredictorTypCnt; i++) {
-            if (typ == pPredictorTyp[i]) {
+    private void addToPredictorTypSet(final Cnst typ) {
+        for (int i = 0; i < pPredictorTypCnt; i++)
+            if (typ == pPredictorTyp[i])
                 return;
-            }
-        }
         pPredictorTyp[pPredictorTypCnt++] = typ;
     }
 
-    private   boolean addToBringForwardTypSet(int  prevSetNbr,
-                                              Cnst typ) {
-        Cnst[] bringForwardTyp = pBringForwardTyp[prevSetNbr];
-        for (int i = 0; i < pBringForwardTypCnt[prevSetNbr]; i++) {
-            if (bringForwardTyp[i] == typ) {
+    private boolean addToBringForwardTypSet(final int prevSetNbr, final Cnst typ)
+    {
+        final Cnst[] bringForwardTyp = pBringForwardTyp[prevSetNbr];
+        for (int i = 0; i < pBringForwardTypCnt[prevSetNbr]; i++)
+            if (bringForwardTyp[i] == typ)
                 return false;
-            }
-        }
         pBringForwardTypIndex = pBringForwardTypCnt[prevSetNbr]++;
         bringForwardTyp[pBringForwardTypIndex] = typ;
         return true;
     }
 
-    private   void initDataStructureContents(int p) {
-        pItemSetCnt[p]              = 0;
-        pItemSetIndex               = 0;
-        pCompletedItemSetCnt[p]     = 0;
-        pCompletedItemSetIndex      = 0;
+    private void initDataStructureContents(final int p) {
+        pItemSetCnt[p] = 0;
+        pItemSetIndex = 0;
+        pCompletedItemSetCnt[p] = 0;
+        pCompletedItemSetIndex = 0;
         // we use all bringForward up to p for each p!
-        for (int i = 0; i <= p; i++) {
-            pBringForwardTypCnt[i]  = 0;
-        }
-        pPredictorTypCnt            = 0;
+        for (int i = 0; i <= p; i++)
+            pBringForwardTypCnt[i] = 0;
+        pPredictorTypCnt = 0;
 
     }
 
@@ -958,104 +842,83 @@ public class EarleyParser implements GrammaticalParser {
      *  loadEarleyFIRSTandRules --
      *  "clever" optimizations makes this really long :) sigh.
      */
-    private   void loadEarleyFIRSTandRules() {
+    private void loadEarleyFIRSTandRules() {
 
-        int firstCapacity  = (grammar.getSymTblSize() * 4) / 3;
+        final int firstCapacity = grammar.getSymTblSize() * 4 / 3;
 
-        //rules only loaded once
-        rulesTypMax    = grammar.getVarHypTypSet().size() + 2;
-        rulesTypCnt    = 0;
+        // rules only loaded once
+        rulesTypMax = grammar.getVarHypTypSet().size() + 2;
+        rulesTypCnt = 0;
         ruleTypAndFIRSTTyp = new Cnst[rulesTypMax][];
-        for (int i = 0; i < rulesTypMax; i++) {
-            ruleTypAndFIRSTTyp[i]  = new Cnst[rulesTypMax];
-        }
+        for (int i = 0; i < rulesTypMax; i++)
+            ruleTypAndFIRSTTyp[i] = new Cnst[rulesTypMax];
 
         NotationRule notationRule;
-        Cnst         typ;
-        Cnst         first;
-        LinkedList   ruleSet;
-        HashSet      firstSet;
-        HashSet      nonTerminalHashSet;
+        Cnst typ;
+        Cnst first;
+        LinkedList ruleSet;
+        HashSet firstSet;
+        final HashSet nonTerminalHashSet;
 
-        Iterator iterator  = grammar.getNotationGRSet().iterator();
+        final Iterator iterator = grammar.getNotationGRSet().iterator();
         while (iterator.hasNext()) {
-            notationRule   = (NotationRule)iterator.next();
-            typ            = notationRule.getGrammarRuleTyp();
-            if ((ruleSet   = typ.getEarleyRules()) == null) {
-                ruleSet    = new LinkedList();
+            notationRule = (NotationRule)iterator.next();
+            typ = notationRule.getGrammarRuleTyp();
+            if ((ruleSet = typ.getEarleyRules()) == null) {
+                ruleSet = new LinkedList();
                 typ.setEarleyRules(ruleSet);
             }
             ruleSet.add(notationRule);
 
             first = notationRule.getRuleFormatExprFirst();
-            if (first.getIsVarTyp()) {
+            if (first.getIsVarTyp())
                 addTypToRuleTypAndFIRSTTyp(typ, first);
-            }
-            else {
+            else
                 addTypToRuleTypAndFIRSTTyp(typ, null);
-            }
 
-            firstSet       = typ.getEarleyFIRST();
+            firstSet = typ.getEarleyFIRST();
             if (firstSet == null) {
-                firstSet   = new HashSet(firstCapacity);
+                firstSet = new HashSet(firstCapacity);
                 typ.setEarleyFIRST(firstSet);
             }
             firstSet.add(first);
         }
 
-        boolean changed  = true;
+        boolean changed = true;
         while (changed) {
             changed = false;
-            for (int i = 0; i < rulesTypCnt; i++) {
-                for (int j = 1;
-                     ruleTypAndFIRSTTyp[i][j] != null;
-                     j++) {
-                    for (int ji = 0; ji < rulesTypCnt; ji++) {
-                        if (ruleTypAndFIRSTTyp[i][j] ==
-                            ruleTypAndFIRSTTyp[ji][0]) {
-                            for (int m = 1;
-                                 ruleTypAndFIRSTTyp[ji][m] != null;
-                                 m++) {
-                                if (addToFIRSTTyp(
-                                        i,
-                                        ruleTypAndFIRSTTyp[ji][m])) {
+            for (int i = 0; i < rulesTypCnt; i++)
+                for (int j = 1; ruleTypAndFIRSTTyp[i][j] != null; j++)
+                    for (int ji = 0; ji < rulesTypCnt; ji++)
+                        if (ruleTypAndFIRSTTyp[i][j] == ruleTypAndFIRSTTyp[ji][0])
+                            for (int m = 1; ruleTypAndFIRSTTyp[ji][m] != null; m++)
+                                if (addToFIRSTTyp(i, ruleTypAndFIRSTTyp[ji][m]))
                                     changed = true;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
         }
 
         HashSet hashSetI;
         HashSet hashSetJ;
         for (int i = 0; i < rulesTypCnt; i++) {
             hashSetI = ruleTypAndFIRSTTyp[i][0].getEarleyFIRST();
-            for (int j = 1;
-                 ruleTypAndFIRSTTyp[i][j] != null;
-                 j++) {
+            for (int j = 1; ruleTypAndFIRSTTyp[i][j] != null; j++) {
                 /**
                  *  a grammatical Type Code may not have any Syntax
                  *  Axioms -- and no earleyRules or earleyFIRST.
                  */
                 hashSetJ = ruleTypAndFIRSTTyp[i][j].getEarleyFIRST();
-                if (hashSetJ        != null &&
-                    hashSetJ.size() != 0) {
+                if (hashSetJ != null && hashSetJ.size() != 0)
                     hashSetI.addAll(hashSetJ);
-                }
             }
         }
     }
 
-    private   void addTypToRuleTypAndFIRSTTyp(Cnst typ,
-                                              Cnst firstTyp) {
+    private void addTypToRuleTypAndFIRSTTyp(final Cnst typ, final Cnst firstTyp)
+    {
         int i = 0;
-        typLoop: while (true) {
+        typLoop: while (true)
             if (i < rulesTypCnt) {
-                if (typ == ruleTypAndFIRSTTyp[i][0]) {
+                if (typ == ruleTypAndFIRSTTyp[i][0])
                     break;
-                }
                 else {
                     ++i;
                     continue typLoop;
@@ -1066,19 +929,15 @@ public class EarleyParser implements GrammaticalParser {
                 ++rulesTypCnt;
                 break;
             }
-        }
 
         // don't add null or Typ to itself
-        if (firstTyp == null ||
-            firstTyp == typ) {
+        if (firstTyp == null || firstTyp == typ)
             return;
-        }
 
-        int j = 1; //skip Typ which is in [i][0]
+        int j = 1; // skip Typ which is in [i][0]
         firstLoop: while (true) {
-            if (ruleTypAndFIRSTTyp[i][j] == firstTyp) {
+            if (ruleTypAndFIRSTTyp[i][j] == firstTyp)
                 return;
-            }
             if (ruleTypAndFIRSTTyp[i][j] == null) {
                 ruleTypAndFIRSTTyp[i][j] = firstTyp;
                 return;
@@ -1087,18 +946,14 @@ public class EarleyParser implements GrammaticalParser {
         }
     }
 
-    private   boolean addToFIRSTTyp(int  typIndex,
-                                    Cnst firstTyp) {
-        if (firstTyp == null ||
-            ruleTypAndFIRSTTyp[typIndex][0] == firstTyp) {
+    private boolean addToFIRSTTyp(final int typIndex, final Cnst firstTyp) {
+        if (firstTyp == null || ruleTypAndFIRSTTyp[typIndex][0] == firstTyp)
             return false;
-        }
 
-        int j = 1; //skip Typ which is in [i][0]
+        int j = 1; // skip Typ which is in [i][0]
         while (true) {
-            if (ruleTypAndFIRSTTyp[typIndex][j] == firstTyp) {
+            if (ruleTypAndFIRSTTyp[typIndex][j] == firstTyp)
                 return false;
-            }
             if (ruleTypAndFIRSTTyp[typIndex][j] == null) {
                 ruleTypAndFIRSTTyp[typIndex][j] = firstTyp;
                 return true;
@@ -1147,30 +1002,24 @@ public class EarleyParser implements GrammaticalParser {
 //      }
 //  }
 
-    private   void reInitArrays(int retry) throws VerifyException {
+    private void reInitArrays(final int retry) throws VerifyException {
         if (retryCnt == -1) {
             retryCnt = 0;
             loadEarleyFIRSTandRules();
-            initArrays(pMax,
-                       pItemSetMax,
-                       pCompletedItemSetMax,
-                       pBringForwardTypMax,
-                       pPredictorTypMax);
+            initArrays(pMax, pItemSetMax, pCompletedItemSetMax,
+                pBringForwardTypMax, pPredictorTypMax);
             return;
         }
         retryCnt = retry;
 
-        if (pItemSetIndex > pItemSetHighwater) {
+        if (pItemSetIndex > pItemSetHighwater)
             pItemSetHighwater = pItemSetIndex;
-        }
 
-        if (pCompletedItemSetIndex > pCompletedItemSetHighwater) {
+        if (pCompletedItemSetIndex > pCompletedItemSetHighwater)
             pCompletedItemSetHighwater = pCompletedItemSetIndex;
-        }
 
-        if (retryCnt == 0) {
+        if (retryCnt == 0)
             return;
-        }
 
         /**
          *  "active" item set size cannot? be larger than the number
@@ -1178,143 +1027,112 @@ public class EarleyParser implements GrammaticalParser {
          *  be much smaller. Hmmmmm...better safe than sorry.
          */
         int hardFailureMaximum;
-        if (grammar.getNotationGRSet().size() <
-                GrammarConstants.EARLEY_PARSE_MIN_ITEMSET_MAXIMUM) {
+        if (grammar.getNotationGRSet().size() < GrammarConstants.EARLEY_PARSE_MIN_ITEMSET_MAXIMUM)
+            hardFailureMaximum = 2 * GrammarConstants.EARLEY_PARSE_MIN_ITEMSET_MAXIMUM;
+        else
+            hardFailureMaximum = 2 * grammar.getNotationGRSet().size();
 
-            hardFailureMaximum    = 2 *
-                GrammarConstants.EARLEY_PARSE_MIN_ITEMSET_MAXIMUM;
-        }
-        else {
-            hardFailureMaximum    = 2 *
-                grammar.getNotationGRSet().size();
-        }
-
-        if (pItemSetIndex >= pItemSetMax) {
+        if (pItemSetIndex >= pItemSetMax)
             if (pItemSetMax < hardFailureMaximum) {
                 pItemSetMax *= 2;
-                if (pItemSetMax > hardFailureMaximum) {
+                if (pItemSetMax > hardFailureMaximum)
                     pItemSetMax = hardFailureMaximum;
-                }
             }
-            else {
+            else
                 throw new VerifyException(
                     GrammarConstants.ERRMSG_EARLEY_ITEMSET_OVERFLOW_1
-                    + pItemSetMax
-                    +
-                    GrammarConstants.ERRMSG_EARLEY_ITEMSET_OVERFLOW_2
-                    );
-            }
-        }
+                        + pItemSetMax
+                        + GrammarConstants.ERRMSG_EARLEY_ITEMSET_OVERFLOW_2);
 
-        if (pCompletedItemSetIndex >= pCompletedItemSetMax) {
+        if (pCompletedItemSetIndex >= pCompletedItemSetMax)
             if (pCompletedItemSetMax < hardFailureMaximum) {
                 pCompletedItemSetMax *= 2;
-                if (pCompletedItemSetMax > hardFailureMaximum) {
+                if (pCompletedItemSetMax > hardFailureMaximum)
                     pCompletedItemSetMax = hardFailureMaximum;
-                }
             }
-            else {
+            else
                 throw new VerifyException(
-                  GrammarConstants.ERRMSG_EARLEY_C_ITEMSET_OVERFLOW_1
-                  + pCompletedItemSetMax
-                  +
-                  GrammarConstants.ERRMSG_EARLEY_C_ITEMSET_OVERFLOW_2
-                  );
-            }
-        }
+                    GrammarConstants.ERRMSG_EARLEY_C_ITEMSET_OVERFLOW_1
+                        + pCompletedItemSetMax
+                        + GrammarConstants.ERRMSG_EARLEY_C_ITEMSET_OVERFLOW_2);
 
-
-        initArrays(pMax,
-                   pItemSetMax,
-                   pCompletedItemSetMax,
-                   pBringForwardTypMax,
-                   pPredictorTypMax);
+        initArrays(pMax, pItemSetMax, pCompletedItemSetMax,
+            pBringForwardTypMax, pPredictorTypMax);
 
     }
 
-    private   void initArrays(int max,
-                              int itemSetMax,
-                              int completedItemSetMax,
-                              int bringForwardTypMax,
-                              int predictorTypMax) {
+    private void initArrays(final int max, final int itemSetMax,
+        final int completedItemSetMax, final int bringForwardTypMax,
+        final int predictorTypMax)
+    {
 
-        pMax                    = max;
-        pItemSetMax             = itemSetMax;
-        pCompletedItemSetMax    = completedItemSetMax;
-        pBringForwardTypMax     = bringForwardTypMax;
-        pPredictorTypMax        = predictorTypMax;
+        pMax = max;
+        pItemSetMax = itemSetMax;
+        pCompletedItemSetMax = completedItemSetMax;
+        pBringForwardTypMax = bringForwardTypMax;
+        pPredictorTypMax = predictorTypMax;
 
-        pItem                   = new EarleyItem[pMax][];
-        pCompletedItem          = new EarleyItem[pMax][];
-        pBringForwardTyp        = new Cnst[pMax][];
+        pItem = new EarleyItem[pMax][];
+        pCompletedItem = new EarleyItem[pMax][];
+        pBringForwardTyp = new Cnst[pMax][];
         for (int i = 0; i < pMax; i++) {
-            pItem[i]            = new EarleyItem[pItemSetMax];
-            pCompletedItem[i]   = new EarleyItem[
-                                                pCompletedItemSetMax];
+            pItem[i] = new EarleyItem[pItemSetMax];
+            pCompletedItem[i] = new EarleyItem[pCompletedItemSetMax];
             pBringForwardTyp[i] = new Cnst[pBringForwardTypMax];
         }
 
-        pItemSetCnt             = new int[pMax];
-        pCompletedItemSetCnt    = new int[pMax];
-        pBringForwardTypCnt     = new int[pMax];
+        pItemSetCnt = new int[pMax];
+        pCompletedItemSetCnt = new int[pMax];
+        pBringForwardTypCnt = new int[pMax];
 
-        pPredictorTyp           = new Cnst[pPredictorTypMax];
+        pPredictorTyp = new Cnst[pPredictorTypMax];
 
     }
 
-
     // -----------------------------------------------------------
     // -----------------------------------------------------------
     // -----------------------------------------------------------
-    // ------------------                     --------------------
-    // ------------------ t r e e   b u i l d --------------------
-    // -------------------                    --------------------
-    // -------------------      s t u f f     --------------------
-    // -------------------                    --------------------
-    // -------------------      b e l o w     --------------------
-    // -------------------                    --------------------
+    // ------------------ --------------------
+    // ------------------ t r e e b u i l d --------------------
+    // ------------------- --------------------
+    // ------------------- s t u f f --------------------
+    // ------------------- --------------------
+    // ------------------- b e l o w --------------------
+    // ------------------- --------------------
     // -----------------------------------------------------------
     // -----------------------------------------------------------
     // -----------------------------------------------------------
-
 
     /**
      *  build tree(s) from Completed Itemsets, Start Rule Type
      *  and expr. Fun stuff :)
      */
-    private   void buildTrees() {
+    private void buildTrees() {
 
         try {
-            buildTreeForTyp(startRuleTyp,
-                            null);
+            buildTreeForTyp(startRuleTyp, null);
             if (parseCnt < parseTreeArray.length) {
-                TypeConversionRule[] fromRule =
-                    startRuleTyp.getConvFromTypGRArray();
-                if (fromRule != null) {
-                    for (int i = 0;
-                         parseCnt < parseTreeArray.length &&
-                         i < fromRule.length;
-                         i++) {
-                        buildTreeForTyp(fromRule[i].getConvTyp(),
-                                        fromRule[i]);
-                    }
-                }
+                final TypeConversionRule[] fromRule = startRuleTyp
+                    .getConvFromTypGRArray();
+                if (fromRule != null)
+                    for (int i = 0; parseCnt < parseTreeArray.length
+                        && i < fromRule.length; i++)
+                        buildTreeForTyp(fromRule[i].getConvTyp(), fromRule[i]);
             }
-        }
-        catch(ArrayIndexOutOfBoundsException e) {
+        } catch (final ArrayIndexOutOfBoundsException e) {
             /*
              *  Catch this and rename to prevent retry
              *  in other EarleyParser code.
              */
             throw new IllegalStateException(
-                GrammarConstants.ERRMSG_FATAL_ARRAY_INDEX_ERROR,
-                e);  //chained exception
+                GrammarConstants.ERRMSG_FATAL_ARRAY_INDEX_ERROR, e); // chained
+                                                                     // exception
         }
     }
 
-    private   void buildTreeForTyp(
-                    Cnst               searchTyp,
-                    TypeConversionRule typeConversionRule) {
+    private void buildTreeForTyp(final Cnst searchTyp,
+        final TypeConversionRule typeConversionRule)
+    {
 
 // /*
 //      if (typeConversionRule == null) {
@@ -1335,45 +1153,32 @@ public class EarleyParser implements GrammaticalParser {
 //      }
 // */
 
-        int               exprFrom
-                                  = 1;
-        int               exprThru
-                                  = expr.length - 1;
-        EarleyItem[]      completedSet
-                                  = pCompletedItem[exprThru];
-        EarleyItem        earleyItem;
-        EarleyRuleMap     earleyRuleMap;
-        ParseNodeHolder   firstRootHolder;
-        ParseNodeHolder   nextRootHolder;
-        ParseNodeHolder[] convParam
-                                  = new ParseNodeHolder[1];
-        itemLoop: for (int i = (pCompletedItemSetCnt[exprThru] - 1);
-                       i >= 0;
-                       i--) {
+        final int exprFrom = 1;
+        final int exprThru = expr.length - 1;
+        final EarleyItem[] completedSet = pCompletedItem[exprThru];
+        EarleyItem earleyItem;
+        EarleyRuleMap earleyRuleMap;
+        ParseNodeHolder firstRootHolder;
+        ParseNodeHolder nextRootHolder;
+        final ParseNodeHolder[] convParam = new ParseNodeHolder[1];
+        itemLoop: for (int i = pCompletedItemSetCnt[exprThru] - 1; i >= 0; i--)
+        {
             earleyItem = completedSet[i];
-            if (earleyItem.atIndex != exprFrom ||
-                earleyItem.rule.getGrammarRuleTyp() != searchTyp) {
+            if (earleyItem.atIndex != exprFrom
+                || earleyItem.rule.getGrammarRuleTyp() != searchTyp)
                 continue itemLoop;
-            }
-            twinTreesCnt          = 0;
-            twinTreesNeeded       = parseTreeArray.length
-                                          - parseCnt
-                                          - 1;
-            earleyRuleMap         = new EarleyRuleMap(i,
-                                                      exprFrom,
-                                                      exprThru);
+            twinTreesCnt = 0;
+            twinTreesNeeded = parseTreeArray.length - parseCnt - 1;
+            earleyRuleMap = new EarleyRuleMap(i, exprFrom, exprThru);
             earleyRuleMap.loadRuleMap();
-            if (earleyRuleMap.ruleMapParseNodeHolder == null) {
+            if (earleyRuleMap.ruleMapParseNodeHolder == null)
                 throw new IllegalStateException(
-                  GrammarConstants.ERRMSG_EARLEY_HYP_PARAMS_NOTFND_1
-                   + exprThru
-                   +
-                   GrammarConstants.ERRMSG_EARLEY_HYP_PARAMS_NOTFND_2
-                   + exprFrom
-                   +
-                   GrammarConstants.ERRMSG_EARLEY_HYP_PARAMS_NOTFND_3
-                   + earleyItem.toString());
-            }
+                    GrammarConstants.ERRMSG_EARLEY_HYP_PARAMS_NOTFND_1
+                        + exprThru
+                        + GrammarConstants.ERRMSG_EARLEY_HYP_PARAMS_NOTFND_2
+                        + exprFrom
+                        + GrammarConstants.ERRMSG_EARLEY_HYP_PARAMS_NOTFND_3
+                        + earleyItem.toString());
 
 // /*
 //      System.out.println(
@@ -1382,39 +1187,33 @@ public class EarleyParser implements GrammaticalParser {
 //      + earleyRuleMap.ruleMapParseNodeHolder.dumpTwinChainToString(
 //          ));
 // /*
-            firstRootHolder       =
-                earleyRuleMap.ruleMapParseNodeHolder;
-            nextRootHolder        = firstRootHolder;
+            firstRootHolder = earleyRuleMap.ruleMapParseNodeHolder;
+            nextRootHolder = firstRootHolder;
             do {
-                if (typeConversionRule == null) {
-                    parseTreeArray[parseCnt++]
-                                  = new ParseTree(
+                if (typeConversionRule == null)
+                    parseTreeArray[parseCnt++] = new ParseTree(
                         nextRootHolder.parseNode);
-                }
                 else {
-                    convParam[0]  = nextRootHolder;
-                    parseTreeArray[parseCnt++]
-                                  = new ParseTree(
-                        typeConversionRule.buildGrammaticalParseNode(
-                            convParam));
+                    convParam[0] = nextRootHolder;
+                    parseTreeArray[parseCnt++] = new ParseTree(
+                        typeConversionRule.buildGrammaticalParseNode(convParam));
                 }
-                if (parseCnt >= parseTreeArray.length) {
+                if (parseCnt >= parseTreeArray.length)
                     break itemLoop;
-                }
-                nextRootHolder    = nextRootHolder.fwd;
-            } while (nextRootHolder != firstRootHolder &&
-                     parseCnt < parseTreeArray.length);
+                nextRootHolder = nextRootHolder.fwd;
+            } while (nextRootHolder != firstRootHolder
+                && parseCnt < parseTreeArray.length);
         }
     }
 
     // -----------------------------------------------------------
     // -----------------------------------------------------------
     // -----------------------------------------------------------
-    // ------------------                       ------------------
-    // ------------------ I N N E R   C L A S S ------------------
-    // -------------------                      ------------------
-    // -------------------    EarleyRuleMap     ------------------
-    // -------------------                      ------------------
+    // ------------------ ------------------
+    // ------------------ I N N E R C L A S S ------------------
+    // ------------------- ------------------
+    // ------------------- EarleyRuleMap ------------------
+    // ------------------- ------------------
     // -----------------------------------------------------------
     // -----------------------------------------------------------
     // -----------------------------------------------------------
@@ -1431,7 +1230,7 @@ public class EarleyParser implements GrammaticalParser {
      *  as mysterious to the author just 5 minutes after completion
      *  of testing as quantum physics or politics.)
      */
-    private   class EarleyRuleMap {
+    private class EarleyRuleMap {
 
         /**
          *  Index into completedItemSet[exprThru] of EarleyItem
@@ -1450,32 +1249,31 @@ public class EarleyParser implements GrammaticalParser {
          *         should or can be done.
          *  </ul>
          */
-        int             itemIndex;
+        int itemIndex;
 
         /**
          *  Type Code from EarleyItem.rule, here for convenience
          */
-        Cnst            typ;
+        Cnst typ;
 
         /**
          *  Index position of this map as a
          *  GrammarRule hypothesis within a higher
          *  level map's GrammarRule.
          */
-        int             hypPos;
-
+        int hypPos;
 
         /**
          *  Index location of start of parameter in the
          *  expression being parsed.
          */
-        int             exprFrom;
+        int exprFrom;
 
         /**
          *  Index location of end of parameter in the
          *  expression being parsed.
          */
-        int             exprThru;
+        int exprThru;
 
         /**
          *  Array of (sub)EarleyRuleMaps, one element for each
@@ -1512,25 +1310,24 @@ public class EarleyParser implements GrammaticalParser {
          */
         ParseNodeHolder firstParseNodeHolder;
 
-
         /**
          *  default constructor
          */
-        private   EarleyRuleMap() {
-            itemIndex             = -1;
-            hypPos                = -1;
+        private EarleyRuleMap() {
+            itemIndex = -1;
+            hypPos = -1;
         }
 
         /**
          *  creates rule map
          */
-        private   EarleyRuleMap(int itemIndex,
-                                int exprFrom,
-                                int exprThru) {
-            this.itemIndex        = itemIndex;
-            this.exprFrom         = exprFrom;
-            this.exprThru         = exprThru;
-            hypPos                = -1;
+        private EarleyRuleMap(final int itemIndex, final int exprFrom,
+            final int exprThru)
+        {
+            this.itemIndex = itemIndex;
+            this.exprFrom = exprFrom;
+            this.exprThru = exprThru;
+            hypPos = -1;
         }
 
         /**
@@ -1540,14 +1337,13 @@ public class EarleyParser implements GrammaticalParser {
          *                where a sub-map must be constructed.
          *  @param ruleFormatExpr expression from grammar rule.
          */
-        private   EarleyRuleMap(int    hypPos,
-                                Cnst[] ruleFormatExpr) {
-            itemIndex             = -1;
-            typ                   = ruleFormatExpr[hypPos];
-            this.hypPos           = hypPos;
+        private EarleyRuleMap(final int hypPos, final Cnst[] ruleFormatExpr) {
+            itemIndex = -1;
+            typ = ruleFormatExpr[hypPos];
+            this.hypPos = hypPos;
         }
 
-        private   void loadRuleMap() {
+        private void loadRuleMap() {
 // /*
 //          System.out.println(
 //              "--- loadRuleMap:"
@@ -1559,31 +1355,25 @@ public class EarleyParser implements GrammaticalParser {
 //          );
 // */
 
-            EarleyItem earleyItem =
-                pCompletedItem[exprThru][itemIndex];
+            final EarleyItem earleyItem = pCompletedItem[exprThru][itemIndex];
 
-            GrammarRule rule      = earleyItem.rule;
-            Cnst[] ruleFormatExpr = rule.getRuleFormatExpr();
+            final GrammarRule rule = earleyItem.rule;
+            final Cnst[] ruleFormatExpr = rule.getRuleFormatExpr();
 
             /**
              *  if ruleFormatExpr longer than parse expr
              *  subsequence then this is the wrong rule;
              *  it can only be <= parse expr length.
              */
-            if (ruleFormatExpr.length > (1
-                                         + exprThru
-                                         - exprFrom)) {
+            if (ruleFormatExpr.length > 1 + exprThru - exprFrom)
                 return;
-            }
 
-            typ                   = rule.getGrammarRuleTyp();
+            typ = rule.getGrammarRuleTyp();
 
-            int nbrHyps           = rule.getNbrHypParamsUsed();
-            hypMap                = new EarleyRuleMap[nbrHyps];
+            final int nbrHyps = rule.getNbrHypParamsUsed();
+            hypMap = new EarleyRuleMap[nbrHyps];
             if (nbrHyps == 0) {
-                if (ruleFormatExpr.length == (1
-                                              + exprThru
-                                              - exprFrom)) {
+                if (ruleFormatExpr.length == 1 + exprThru - exprFrom) {
                     /**
                      *  A rare "all constant" grammar
                      *  rule. Presumably an identical match
@@ -1591,30 +1381,22 @@ public class EarleyParser implements GrammaticalParser {
                      *  EarleyParse has a big bug! So, generate
                      *  the parse node and vamoose, we're done.
                      */
-                    ruleMapParseNodeHolder
-                                  = new
-                        ParseNodeHolder(
-                            rule.buildGrammaticalParseNode(
-                                emptyParamArray));
+                    ruleMapParseNodeHolder = new ParseNodeHolder(
+                        rule.buildGrammaticalParseNode(emptyParamArray));
                     ruleMapParseNodeHolder.initTwinChain();
                 }
                 return;
             }
 
-            if (!findFirstSetOfHypMapRules(hypMap,
-                                           rule,
-                                           exprFrom,
-                                           exprThru,
-                                           ruleFormatExpr)) {
+            if (!findFirstSetOfHypMapRules(hypMap, rule, exprFrom, exprThru,
+                ruleFormatExpr))
                 return;
-            }
 
             do {
                 finishLoadingHypMapEntries();
                 updateParseNodeHolderWithParams(rule);
-                if (twinTreesCnt >= twinTreesNeeded) {
+                if (twinTreesCnt >= twinTreesNeeded)
                     break;
-                }
                 /**
                  *  Try to find another set of matching
                  *  hyp's for the rule, beginning where
@@ -1627,19 +1409,14 @@ public class EarleyParser implements GrammaticalParser {
                  *  at the same from/thru sub-sequence of
                  *  the expression.
                  */
-                if (!loadMatchingHypsForRule(
-                        hypMap,
-                        0,                 // startMapIndex!
-                        exprFrom,
-                        exprThru,
-                        ruleFormatExpr)) {
+                if (!loadMatchingHypsForRule(hypMap, 0, // startMapIndex!
+                    exprFrom, exprThru, ruleFormatExpr))
                     break;
-                }
                 ++twinTreesCnt;
             } while (true);
         }
 
-        private   void finishLoadingHypMapEntries() {
+        private void finishLoadingHypMapEntries() {
 // */
 //          System.out.println(
 //              "--- finishLoadingHypMapEntries():"
@@ -1647,27 +1424,21 @@ public class EarleyParser implements GrammaticalParser {
 //              );
 // */
 
-            for (int i = 0; i < hypMap.length; i++) {
+            for (int i = 0; i < hypMap.length; i++)
                 if (hypMap[i].ruleMapParseNodeHolder == null) {
                     hypMap[i].loadRuleMap();
-                    if (hypMap[i].ruleMapParseNodeHolder == null) {
+                    if (hypMap[i].ruleMapParseNodeHolder == null)
                         throw new IllegalStateException(
-                GrammarConstants.ERRMSG_EARLEY_HYPMAP_PARAMS_NOTFND_1
-                            + i
-                            +
-                GrammarConstants.ERRMSG_EARLEY_HYPMAP_PARAMS_NOTFND_2
-                            + hypMap[i].exprFrom
-                            +
-                GrammarConstants.ERRMSG_EARLEY_HYPMAP_PARAMS_NOTFND_3
-                            + hypMap[i].exprThru
-                            +
-                GrammarConstants.ERRMSG_EARLEY_HYPMAP_PARAMS_NOTFND_4
-                            + pCompletedItem[
-                                hypMap[i].exprThru][
-                                hypMap[i].itemIndex].toString());
-                    }
+                            GrammarConstants.ERRMSG_EARLEY_HYPMAP_PARAMS_NOTFND_1
+                                + i
+                                + GrammarConstants.ERRMSG_EARLEY_HYPMAP_PARAMS_NOTFND_2
+                                + hypMap[i].exprFrom
+                                + GrammarConstants.ERRMSG_EARLEY_HYPMAP_PARAMS_NOTFND_3
+                                + hypMap[i].exprThru
+                                + GrammarConstants.ERRMSG_EARLEY_HYPMAP_PARAMS_NOTFND_4
+                                + pCompletedItem[hypMap[i].exprThru][hypMap[i].itemIndex]
+                                    .toString());
                 }
-            }
         }
 
         /**
@@ -1685,8 +1456,7 @@ public class EarleyParser implements GrammaticalParser {
          *  *assumes* that the routine that generated these
          *  twins has already done so. Uh oh :)
          */
-        private   void updateParseNodeHolderWithParams(
-                                                GrammarRule rule) {
+        private void updateParseNodeHolderWithParams(final GrammarRule rule) {
 // */
 //          System.out.println(
 //              "--- updateParseNodeHolderWithParams():"
@@ -1697,32 +1467,24 @@ public class EarleyParser implements GrammaticalParser {
 //              );
 // */
 
-            ParseNodeHolder[] paramArray
-                                  = new ParseNodeHolder[
-                                        hypMap.length];
+            final ParseNodeHolder[] paramArray = new ParseNodeHolder[hypMap.length];
             for (int i = 0; i < hypMap.length; i++) {
-                hypMap[i].firstParseNodeHolder
-                                  = hypMap[i].ruleMapParseNodeHolder;
-                paramArray[i]     = hypMap[i].ruleMapParseNodeHolder;
+                hypMap[i].firstParseNodeHolder = hypMap[i].ruleMapParseNodeHolder;
+                paramArray[i] = hypMap[i].ruleMapParseNodeHolder;
             }
 
-            int             spin;
-            boolean         carry;
+            int spin;
+            boolean carry;
             twinLoop: do {
-                ParseNodeHolder next
-                                  = new
-                    ParseNodeHolder(
-                        rule.buildGrammaticalParseNode(
-                            paramArray));
+                final ParseNodeHolder next = new ParseNodeHolder(
+                    rule.buildGrammaticalParseNode(paramArray));
 
                 if (ruleMapParseNodeHolder == null) {
-                    ruleMapParseNodeHolder
-                                  = next;
+                    ruleMapParseNodeHolder = next;
                     ruleMapParseNodeHolder.initTwinChain();
                 }
-                else {
+                else
                     ruleMapParseNodeHolder.addToTwinChain(next);
-                }
 
 // */
 //              System.out.println(
@@ -1744,22 +1506,19 @@ public class EarleyParser implements GrammaticalParser {
                  *  if the final position overflows with a
                  *  carry then that means we are done.
                  */
-                spin              = hypMap.length - 1;
+                spin = hypMap.length - 1;
                 spinLoop: do {
-                    if (paramArray[spin].fwd !=
-                            hypMap[spin].firstParseNodeHolder) {
-                        paramArray[spin]
-                                  = paramArray[spin].fwd;
-                        carry     = false;
+                    if (paramArray[spin].fwd != hypMap[spin].firstParseNodeHolder)
+                    {
+                        paramArray[spin] = paramArray[spin].fwd;
+                        carry = false;
                         break spinLoop;
                     }
-                    paramArray[spin]
-                                  = hypMap[spin].firstParseNodeHolder;
-                    carry         = true;
+                    paramArray[spin] = hypMap[spin].firstParseNodeHolder;
+                    carry = true;
                 } while (--spin >= 0);
             } while (!carry);
         }
-
 
         /**
          *  We are given a closed subsequence of expr, exprFrom and
@@ -1798,12 +1557,10 @@ public class EarleyParser implements GrammaticalParser {
          *   @return true for success, false for "no cigar".
          *
          */
-        private   boolean findFirstSetOfHypMapRules(
-                              EarleyRuleMap[] hypMap,
-                              GrammarRule         rule,
-                              int                 exprFromR,
-                              int                 exprThruR,
-                              Cnst[]              ruleFormatExpr) {
+        private boolean findFirstSetOfHypMapRules(final EarleyRuleMap[] hypMap,
+            final GrammarRule rule, final int exprFromR, final int exprThruR,
+            final Cnst[] ruleFormatExpr)
+        {
 
 // */
 //          System.out.println(
@@ -1817,12 +1574,9 @@ public class EarleyParser implements GrammaticalParser {
 //              );
 // */
 
-            int[]  hypPos         = rule.getRuleHypPos();
-            for (int i = 0; i < hypMap.length; i++) {
-                hypMap[i]         = new EarleyRuleMap(
-                                            hypPos[i],
-                                            ruleFormatExpr);
-            }
+            final int[] hypPos = rule.getRuleHypPos();
+            for (int i = 0; i < hypMap.length; i++)
+                hypMap[i] = new EarleyRuleMap(hypPos[i], ruleFormatExpr);
 
             /**
              *  The known quantities are the leftmost position
@@ -1830,13 +1584,10 @@ public class EarleyParser implements GrammaticalParser {
              *  position of the last rule hypothesis. Everything
              *  else must be deduced, starting from these facts.
              */
-            hypMap[0].exprFrom         = exprFromR + hypPos[0];
-            int lastMapIndex           = hypMap.length - 1;
-            hypMap[lastMapIndex].exprThru
-                                    = exprThruR -
-                                      (ruleFormatExpr.length -
-                                       1 -
-                                       hypPos[lastMapIndex]);
+            hypMap[0].exprFrom = exprFromR + hypPos[0];
+            final int lastMapIndex = hypMap.length - 1;
+            hypMap[lastMapIndex].exprThru = exprThruR
+                - (ruleFormatExpr.length - 1 - hypPos[lastMapIndex]);
 
             /**
              *  Verify that the terminal symbols to the right
@@ -1848,19 +1599,16 @@ public class EarleyParser implements GrammaticalParser {
              *  expr!
              */
             if (!verifyRightTweeners(hypMap[lastMapIndex].exprThru,
-                                     hypMap[lastMapIndex].hypPos,
-                                     ruleFormatExpr.length,
-                                     ruleFormatExpr)) {
+                hypMap[lastMapIndex].hypPos, ruleFormatExpr.length,
+                ruleFormatExpr))
                 throw new IllegalStateException(
                     GrammarConstants.ERRMSG_RIGHT_TWEENER_ERROR_1
-                    + hypMap[lastMapIndex].exprThru
-                    + GrammarConstants.ERRMSG_RIGHT_TWEENER_ERROR_2
-                    + hypMap[lastMapIndex].hypPos
-                    + GrammarConstants.ERRMSG_RIGHT_TWEENER_ERROR_3
-                    + GrammarRule.showRuleFormatExprAsString(
-                            ruleFormatExpr)
-                    );
-            }
+                        + hypMap[lastMapIndex].exprThru
+                        + GrammarConstants.ERRMSG_RIGHT_TWEENER_ERROR_2
+                        + hypMap[lastMapIndex].hypPos
+                        + GrammarConstants.ERRMSG_RIGHT_TWEENER_ERROR_3
+                        + GrammarRule
+                            .showRuleFormatExprAsString(ruleFormatExpr));
 
             /**
              *  Verify that the terminal symbols to the left
@@ -1871,20 +1619,16 @@ public class EarleyParser implements GrammaticalParser {
              *  that the rule DOES match this subsequence of
              *  expr!
              */
-            if (!verifyRightTweeners(exprFromR - 1,
-                                     -1,
-                                     hypMap[0].hypPos,
-                                     ruleFormatExpr)) {
+            if (!verifyRightTweeners(exprFromR - 1, -1, hypMap[0].hypPos,
+                ruleFormatExpr))
                 throw new IllegalStateException(
                     GrammarConstants.ERRMSG_LEFT_TWEENER_ERROR_1
-                    + (exprFromR - 1)
-                    + GrammarConstants.ERRMSG_LEFT_TWEENER_ERROR_2
-                    + hypMap[0].hypPos
-                    + GrammarConstants.ERRMSG_LEFT_TWEENER_ERROR_3
-                    + GrammarRule.showRuleFormatExprAsString(
-                            ruleFormatExpr)
-                    );
-            }
+                        + (exprFromR - 1)
+                        + GrammarConstants.ERRMSG_LEFT_TWEENER_ERROR_2
+                        + hypMap[0].hypPos
+                        + GrammarConstants.ERRMSG_LEFT_TWEENER_ERROR_3
+                        + GrammarRule
+                            .showRuleFormatExprAsString(ruleFormatExpr));
 
             /**
              *  Now, load the hypMap in reverse order while
@@ -1894,19 +1638,14 @@ public class EarleyParser implements GrammaticalParser {
              *  to reverse course and re-do part of the
              *  search.
              */
-            return loadMatchingHypsForRule(hypMap,
-                                           lastMapIndex,
-                                           exprFromR,
-                                           exprThruR,
-                                           ruleFormatExpr);
+            return loadMatchingHypsForRule(hypMap, lastMapIndex, exprFromR,
+                exprThruR, ruleFormatExpr);
         }
 
-        private   boolean loadMatchingHypsForRule(
-                                EarleyRuleMap[] hypMap,
-                                int             startMapIndex,
-                                int             exprFromR,
-                                int             exprThruR,
-                                Cnst[]          ruleFormatExpr) {
+        private boolean loadMatchingHypsForRule(final EarleyRuleMap[] hypMap,
+            final int startMapIndex, final int exprFromR, final int exprThruR,
+            final Cnst[] ruleFormatExpr)
+        {
 
 // */
 //          System.out.println(
@@ -1917,9 +1656,8 @@ public class EarleyParser implements GrammaticalParser {
 //              );
 // */
 
-
-            int mapIndex          = startMapIndex;
-            int lastMapIndex      = hypMap.length - 1;
+            int mapIndex = startMapIndex;
+            final int lastMapIndex = hypMap.length - 1;
             mapLoop: while (true) {
 
 // */
@@ -1928,37 +1666,29 @@ public class EarleyParser implements GrammaticalParser {
 //              + " mapIndex = " + mapIndex
 //              );
 // */
-                if (loadOneHypMapEntry(hypMap,
-                                      mapIndex,
-                                      exprFromR,
-                                      exprThruR,
-                                      ruleFormatExpr)) {
-                    if (mapIndex == 0) {
+                if (loadOneHypMapEntry(hypMap, mapIndex, exprFromR, exprThruR,
+                    ruleFormatExpr))
+                {
+                    if (mapIndex == 0)
                         return true;
-                    }
                     --mapIndex;
                     continue mapLoop;
                 }
-                if (mapIndex >= lastMapIndex) {
+                if (mapIndex >= lastMapIndex)
                     return false;
-                }
                 for (int z = mapIndex; z >= 0; z--) {
-                    hypMap[z].itemIndex
-                                  = -1;
-                    hypMap[z].ruleMapParseNodeHolder
-                                  = null;
+                    hypMap[z].itemIndex = -1;
+                    hypMap[z].ruleMapParseNodeHolder = null;
                 }
                 ++mapIndex;
                 continue mapLoop;
             }
         }
 
-        private   boolean loadOneHypMapEntry(
-                              EarleyRuleMap[] hypMap,
-                              int             mapIndex,
-                              int             exprFromR,
-                              int             exprThruR,
-                              Cnst[]          ruleFormatExpr) {
+        private boolean loadOneHypMapEntry(final EarleyRuleMap[] hypMap,
+            final int mapIndex, final int exprFromR, final int exprThruR,
+            final Cnst[] ruleFormatExpr)
+        {
 
 // */
 //          System.out.println(
@@ -1973,37 +1703,27 @@ public class EarleyParser implements GrammaticalParser {
 //              );
 // */
 
-            EarleyRuleMap hypMapEntry
-                                  = hypMap[mapIndex];
+            final EarleyRuleMap hypMapEntry = hypMap[mapIndex];
 
             /**
              *  -2 = already loaded without a rule, nothing more
              *       to do on subsequent call.
              */
-            if (hypMapEntry.itemIndex == -2) {
+            if (hypMapEntry.itemIndex == -2)
                 return false;
-            }
 
-            hypMapEntry.ruleMapParseNodeHolder
-                                  = null; //init to null just in case
+            hypMapEntry.ruleMapParseNodeHolder = null; // init to null just in
+                                                       // case
 
-            EarleyRuleMap prevMapEntry
-                                  = null;
-            if (mapIndex > 0) {
-                prevMapEntry      = hypMap[mapIndex - 1];
-            }
+            EarleyRuleMap prevMapEntry = null;
+            if (mapIndex > 0)
+                prevMapEntry = hypMap[mapIndex - 1];
 
+            final EarleyItem[] completedSet = pCompletedItem[hypMapEntry.exprThru];
+            EarleyItem earleyItem;
 
-            EarleyItem[]      completedSet
-                                  = pCompletedItem[
-                                        hypMapEntry.exprThru];
-            EarleyItem        earleyItem;
-
-            if (hypMapEntry.itemIndex < 0) {
-                hypMapEntry.itemIndex
-                                  =
-                    pCompletedItemSetCnt[hypMapEntry.exprThru];
-            }
+            if (hypMapEntry.itemIndex < 0)
+                hypMapEntry.itemIndex = pCompletedItemSetCnt[hypMapEntry.exprThru];
             itemLoop: while (true) {
 
 // */
@@ -2014,31 +1734,22 @@ public class EarleyParser implements GrammaticalParser {
 //                  );
 // */
 
-
-                if (--hypMapEntry.itemIndex < 0) {
+                if (--hypMapEntry.itemIndex < 0)
                     break itemLoop;
-                }
 
-                earleyItem        = completedSet[
-                                        hypMapEntry.itemIndex];
+                earleyItem = completedSet[hypMapEntry.itemIndex];
 
-                if (earleyItem.rule.getGrammarRuleTyp() !=
-                    hypMapEntry.typ)      {
+                if (earleyItem.rule.getGrammarRuleTyp() != hypMapEntry.typ)
                     continue itemLoop;
-                }
 
-                if (mapIndex == 0) {
-                    if (hypMapEntry.exprFrom == earleyItem.atIndex) {
-                        return true; //successful mapping
-                    }
-                    else {
-                        continue itemLoop; //does not fit the facts!
-                    }
-                }
+                if (mapIndex == 0)
+                    if (hypMapEntry.exprFrom == earleyItem.atIndex)
+                        return true; // successful mapping
+                    else
+                        continue itemLoop; // does not fit the facts!
 
-                if (earleyItem.atIndex < exprFromR) {
-                    continue itemLoop;     //does not fit the facts;
-                }
+                if (earleyItem.atIndex < exprFromR)
+                    continue itemLoop; // does not fit the facts;
 
                 /**
                  *  map shorter subsequence of expr to earleyItem rule
@@ -2047,19 +1758,15 @@ public class EarleyParser implements GrammaticalParser {
                 hypMapEntry.exprFrom = earleyItem.atIndex;
 
                 prevMapEntry.exprThru = hypMapEntry.exprFrom
-                                        - (hypMapEntry.hypPos
-                                           - prevMapEntry.hypPos);
-                if (prevMapEntry.exprThru < exprFromR) {
-                    continue itemLoop; //does not fit the facts
-                }
+                    - (hypMapEntry.hypPos - prevMapEntry.hypPos);
+                if (prevMapEntry.exprThru < exprFromR)
+                    continue itemLoop; // does not fit the facts
 
-                if (!verifyRightTweeners(
-                        prevMapEntry.exprThru,   //exprPos
-                        prevMapEntry.hypPos,     //ruleFormatExprPos
-                        hypMapEntry.hypPos,      //ruleCompareStop
-                        ruleFormatExpr)) {       //ruleFormatExpr
-                    continue itemLoop; //does not fit the facts
-                }
+                if (!verifyRightTweeners(prevMapEntry.exprThru, // exprPos
+                    prevMapEntry.hypPos, // ruleFormatExprPos
+                    hypMapEntry.hypPos, // ruleCompareStop
+                    ruleFormatExpr))
+                    continue itemLoop; // does not fit the facts
 
                 /**
                  *  Reset the itemIndex of the previous hypMapEntry
@@ -2073,8 +1780,6 @@ public class EarleyParser implements GrammaticalParser {
                  */
                 prevMapEntry.itemIndex = -1;
 
-
-
                 return true; // bingo
             }
 
@@ -2086,7 +1791,6 @@ public class EarleyParser implements GrammaticalParser {
 //              );
 // */
 
-
             /**
              *  ok, no success here with the Completed ItemSets,
              *  but we must also try for a one symbol match directly
@@ -2094,50 +1798,37 @@ public class EarleyParser implements GrammaticalParser {
              *  or other pre-parsed Stmt already loaded into
              *  expr.
              */
-            if (expr[hypMapEntry.exprThru].mObj.isCnst()  ||
-                expr[hypMapEntry.exprThru].parseNode.getStmt(
-                                                        ).getTyp()
-                !=
-                hypMapEntry.typ) {
+            if (expr[hypMapEntry.exprThru].mObj.isCnst()
+                || expr[hypMapEntry.exprThru].parseNode.getStmt().getTyp() != hypMapEntry.typ)
                 return false;
-            }
 
-            if (mapIndex == 0) {
+            if (mapIndex == 0)
                 if (hypMapEntry.exprFrom == hypMapEntry.exprThru) {
-                    hypMapEntry.itemIndex
-                                  = -2; // code = no rule
-                    hypMapEntry.ruleMapParseNodeHolder
-                                  = expr[hypMapEntry.exprThru];
+                    hypMapEntry.itemIndex = -2; // code = no rule
+                    hypMapEntry.ruleMapParseNodeHolder = expr[hypMapEntry.exprThru];
 
                     hypMapEntry.ruleMapParseNodeHolder.initTwinChain();
                     return true;
                 }
-                else {
+                else
                     return false;
-                }
-            }
 
-            hypMapEntry.exprFrom     = hypMapEntry.exprThru;
+            hypMapEntry.exprFrom = hypMapEntry.exprThru;
 
             prevMapEntry.exprThru = hypMapEntry.exprFrom
-                                    - (hypMapEntry.hypPos
-                                       - prevMapEntry.hypPos);
+                - (hypMapEntry.hypPos - prevMapEntry.hypPos);
 
-            if (prevMapEntry.exprThru < exprFromR) {
-                return false;               //does not fit the facts
-            }
+            if (prevMapEntry.exprThru < exprFromR)
+                return false; // does not fit the facts
 
-            if (!verifyRightTweeners(
-                    prevMapEntry.exprThru,   //exprPos
-                    prevMapEntry.hypPos,     //ruleFormatExprPos
-                    hypMapEntry.hypPos,      //ruleCompareStop
-                    ruleFormatExpr)) {       //ruleFormatExpr
+            if (!verifyRightTweeners(prevMapEntry.exprThru, // exprPos
+                prevMapEntry.hypPos, // ruleFormatExprPos
+                hypMapEntry.hypPos, // ruleCompareStop
+                ruleFormatExpr))
                 return false;
-            }
 
             hypMapEntry.itemIndex = -2; // code = no rule
-            hypMapEntry.ruleMapParseNodeHolder
-                                  = expr[hypMapEntry.exprThru];
+            hypMapEntry.ruleMapParseNodeHolder = expr[hypMapEntry.exprThru];
             hypMapEntry.ruleMapParseNodeHolder.initTwinChain();
 
             /**
@@ -2155,19 +1846,14 @@ public class EarleyParser implements GrammaticalParser {
             return true;
         }
 
-        private   boolean verifyRightTweeners(int    exprPos,
-                                              int    rulePos,
-                                              int    ruleCompareStop,
-                                              Cnst[] ruleFormatExpr) {
-            while (++rulePos < ruleCompareStop) {
-                if (expr[++exprPos].getCnstOrTyp() !=
-                    ruleFormatExpr[rulePos]) {
+        private boolean verifyRightTweeners(int exprPos, int rulePos,
+            final int ruleCompareStop, final Cnst[] ruleFormatExpr)
+        {
+            while (++rulePos < ruleCompareStop)
+                if (expr[++exprPos].getCnstOrTyp() != ruleFormatExpr[rulePos])
                     return false;
-                }
-            }
             return true;
         }
     }
 
 }
-

@@ -29,11 +29,13 @@
 
 package mmj.pa;
 
-import  java.io.IOException;
-import  java.util.ArrayList;
-import  java.util.Iterator;
-import  mmj.mmio.*;
-import  mmj.lang.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import mmj.lang.Sym;
+import mmj.lang.Var;
+import mmj.mmio.MMIOError;
 
 /**
  *  DistinctVariablesStmt represents a single Metamath
@@ -52,7 +54,7 @@ public class DistinctVariablesStmt extends ProofWorkStmt {
      *  <p>
      *  @param w ProofWorksheet object
      */
-    public DistinctVariablesStmt(ProofWorksheet w) {
+    public DistinctVariablesStmt(final ProofWorksheet w) {
         super(w);
     }
 
@@ -63,29 +65,26 @@ public class DistinctVariablesStmt extends ProofWorkStmt {
      *  @param w ProofWorksheet object
      *  @param dvGroup ArrayList of Var which are distinct.
      */
-    public DistinctVariablesStmt(ProofWorksheet w,
-                                 ArrayList      dvGroup) {
+    public DistinctVariablesStmt(final ProofWorksheet w, final ArrayList dvGroup)
+    {
         super(w);
 
-        stmtText                  =
-            new StringBuffer(dvGroup.size() * 4); //guess
+        stmtText = new StringBuffer(dvGroup.size() * 4); // guess
 
-        stmtText.append(
-            PaConstants.DISTINCT_VARIABLES_STMT_TOKEN);
+        stmtText.append(PaConstants.DISTINCT_VARIABLES_STMT_TOKEN);
         stmtText.append(' ');
 
-        dv                        = new Var[dvGroup.size()];
-        int dvCnt                 = 0;
-        Iterator i                = dvGroup.iterator();
+        dv = new Var[dvGroup.size()];
+        int dvCnt = 0;
+        final Iterator i = dvGroup.iterator();
         while (i.hasNext()) {
-            Var v                 = (Var)i.next();
-            dv[dvCnt++]           = v;
+            final Var v = (Var)i.next();
+            dv[dvCnt++] = v;
             stmtText.append(v.toString());
             stmtText.append(' ');
         }
 
-        stmtText.append(
-            PaConstants.PROOF_WORKSHEET_NEW_LINE);
+        stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
     }
 
     /**
@@ -103,39 +102,34 @@ public class DistinctVariablesStmt extends ProofWorkStmt {
      *  @return non-redundant dvGroups ArrayList.
      */
     public static ArrayList eliminateDvGroupsAlreadyPresent(
-                                DistinctVariablesStmt[] dvStmtArray,
-                                ArrayList               dvGroupsIn) {
-        ArrayList out             =
-            new ArrayList(dvStmtArray.length +
-                          dvGroupsIn.size());
+        final DistinctVariablesStmt[] dvStmtArray, final ArrayList dvGroupsIn)
+    {
+        final ArrayList out = new ArrayList(dvStmtArray.length
+            + dvGroupsIn.size());
 
-        Iterator  x               = dvGroupsIn.iterator();
+        final Iterator x = dvGroupsIn.iterator();
         ArrayList dvGroup;
         loopX: while (x.hasNext()) {
 
-            dvGroup               = (ArrayList)x.next();
+            dvGroup = (ArrayList)x.next();
 
             loopI: for (int i = 0; i < dvStmtArray.length; i++) {
 
-                Var[] dvI         = dvStmtArray[i].dv;
+                final Var[] dvI = dvStmtArray[i].dv;
 
-                if (dvGroup.size() > dvI.length) {
+                if (dvGroup.size() > dvI.length)
                     // match impossible
                     continue loopI;
-                }
 
-                Var   varY;
+                Var varY;
                 loopY: for (int y = 0; y < dvGroup.size(); y++) {
 
-                    varY          = (Var)dvGroup.get(y);
+                    varY = (Var)dvGroup.get(y);
 
-                    loopJ: for (int j = 0; j < dvI.length; j++) {
-
-                        if (varY == dvI[j]) {
+                    loopJ: for (int j = 0; j < dvI.length; j++)
+                        if (varY == dvI[j])
                             continue loopY; // found one!
-                        }
-                    }
-                    //didn't find one!
+                    // didn't find one!
                     continue loopI;
                 }
                 // found all Vars in dvGroup in one dvStmt!
@@ -151,6 +145,7 @@ public class DistinctVariablesStmt extends ProofWorkStmt {
      *  Returns false, DistinctVariablesStmt never "incomplete"
      *  in ProofWorksheet terms.
      */
+    @Override
     public boolean stmtIsIncomplete() {
         return false;
     }
@@ -166,7 +161,8 @@ public class DistinctVariablesStmt extends ProofWorkStmt {
      *  @return column of input fieldId or default value
      *         of 1 if there is an error.
      */
-    public int computeFieldIdCol(int fieldId) {
+    @Override
+    public int computeFieldIdCol(final int fieldId) {
         return 1;
     }
 
@@ -175,8 +171,8 @@ public class DistinctVariablesStmt extends ProofWorkStmt {
      *  <p>
      *  Does nothing as there is no formula to reformat.
      */
-    public void tmffReformat() {
-    }
+    @Override
+    public void tmffReformat() {}
 
     /**
      *  Gets dv, the array of distinct variables in the
@@ -212,106 +208,77 @@ public class DistinctVariablesStmt extends ProofWorkStmt {
      *
      *  @return      first token of the next statement.
      */
-    public String load(String firstToken)
-                            throws IOException,
-                                   MMIOError,
-                                   ProofAsstException {
-        int currLineNbr       =
-            (int)w.proofTextTokenizer.getCurrentLineNbr();
+    @Override
+    public String load(final String firstToken) throws IOException, MMIOError,
+        ProofAsstException
+    {
+        final int currLineNbr = (int)w.proofTextTokenizer.getCurrentLineNbr();
 
-        stmtText              = new StringBuffer();
+        stmtText = new StringBuffer();
 
-        String firstDv        =
-            loadStmtTextGetRequiredToken(firstToken);
+        final String firstDv = loadStmtTextGetRequiredToken(firstToken);
 
-        ArrayList dvList      = new ArrayList();
+        final ArrayList dvList = new ArrayList();
 
-        validateDvAndAccumInList(firstDv,
-                                 dvList);
+        validateDvAndAccumInList(firstDv, dvList);
 
-        String nextT          =
-            loadStmtTextGetRequiredToken(firstDv);
+        String nextT = loadStmtTextGetRequiredToken(firstDv);
 
         while (true) {
-            validateDvAndAccumInList(nextT,
-                                     dvList);
-            nextT             =
-                loadStmtTextGetOptionalToken(nextT);
+            validateDvAndAccumInList(nextT, dvList);
+            nextT = loadStmtTextGetOptionalToken(nextT);
 
-            if (nextT.length() == 0  ||
-                nextT.length() ==
-                   w.proofTextTokenizer.getCurrentColumnNbr()) {
+            if (nextT.length() == 0
+                || nextT.length() == w.proofTextTokenizer.getCurrentColumnNbr())
                 break;
-            }
         }
 
-        dv                    = new Var[dvList.size()];
+        dv = new Var[dvList.size()];
 
-        Iterator iterator     = dvList.iterator();
-        int i                 = 0;
-        while (iterator.hasNext()) {
-            dv[i++]           = (Var)iterator.next();
-        }
+        final Iterator iterator = dvList.iterator();
+        int i = 0;
+        while (iterator.hasNext())
+            dv[i++] = (Var)iterator.next();
 
-        updateLineCntUsingTokenizer(currLineNbr,
-                                    nextT);
+        updateLineCntUsingTokenizer(currLineNbr, nextT);
         return nextT;
     }
 
-    private void validateDvAndAccumInList(String    nextT,
-                                          ArrayList dvList)
-                     throws ProofAsstException {
-        Sym sym               =
-                (Sym)w.logicalSystem.getSymTbl().get(nextT);
-        if (sym == null) {
-            w.triggerLoadStructureException(
-                PaConstants.ERRMSG_DV_SYM_ERR_1
-                + w.getErrorLabelIfPossible()
-                + PaConstants.ERRMSG_DV_SYM_ERR_2
-                + nextT
-                + PaConstants.ERRMSG_DV_SYM_ERR_3);
-        }
+    private void validateDvAndAccumInList(final String nextT,
+        final ArrayList dvList) throws ProofAsstException
+    {
+        final Sym sym = (Sym)w.logicalSystem.getSymTbl().get(nextT);
+        if (sym == null)
+            w.triggerLoadStructureException(PaConstants.ERRMSG_DV_SYM_ERR_1
+                + w.getErrorLabelIfPossible() + PaConstants.ERRMSG_DV_SYM_ERR_2
+                + nextT + PaConstants.ERRMSG_DV_SYM_ERR_3);
 
-        if (sym.getSeq() >= w.getMaxSeq()) {
-            w.triggerLoadStructureException(
-                PaConstants.ERRMSG_DV_SYM_MAXSEQ_1
+        if (sym.getSeq() >= w.getMaxSeq())
+            w.triggerLoadStructureException(PaConstants.ERRMSG_DV_SYM_MAXSEQ_1
                 + w.getErrorLabelIfPossible()
-                + PaConstants.ERRMSG_DV_SYM_MAXSEQ_2
-                + nextT
+                + PaConstants.ERRMSG_DV_SYM_MAXSEQ_2 + nextT
                 + PaConstants.ERRMSG_DV_SYM_MAXSEQ_3);
-        }
 
-        if (!sym.isVar()) {
-            w.triggerLoadStructureException(
-                PaConstants.ERRMSG_DV_SYM_CNST_1
+        if (!sym.isVar())
+            w.triggerLoadStructureException(PaConstants.ERRMSG_DV_SYM_CNST_1
                 + w.getErrorLabelIfPossible()
-                + PaConstants.ERRMSG_DV_SYM_CNST_2
-                + nextT
+                + PaConstants.ERRMSG_DV_SYM_CNST_2 + nextT
                 + PaConstants.ERRMSG_DV_SYM_CNST_3);
-        }
-        Var v             = (Var)sym;
+        final Var v = (Var)sym;
 
-        if (w.getVarHypFromComboFrame(v) == null) {
-            w.triggerLoadStructureException(
-                PaConstants.ERRMSG_DV_VAR_SCOPE_ERR_1
+        if (w.getVarHypFromComboFrame(v) == null)
+            w.triggerLoadStructureException(PaConstants.ERRMSG_DV_VAR_SCOPE_ERR_1
                 + w.getErrorLabelIfPossible()
                 + PaConstants.ERRMSG_DV_VAR_SCOPE_ERR_2
                 + nextT
                 + PaConstants.ERRMSG_DV_VAR_SCOPE_ERR_3);
-        }
 
-        int found         = dvList.indexOf(v);
-        if (found == -1) {
+        final int found = dvList.indexOf(v);
+        if (found == -1)
             dvList.add(v);
-        }
-        else {
-            w.triggerLoadStructureException(
-                PaConstants.ERRMSG_DV_VAR_DUP_1
-                + w.getErrorLabelIfPossible()
-                + PaConstants.ERRMSG_DV_VAR_DUP_2
-                + nextT
-                + PaConstants.ERRMSG_DV_VAR_DUP_3);
-        }
+        else
+            w.triggerLoadStructureException(PaConstants.ERRMSG_DV_VAR_DUP_1
+                + w.getErrorLabelIfPossible() + PaConstants.ERRMSG_DV_VAR_DUP_2
+                + nextT + PaConstants.ERRMSG_DV_VAR_DUP_3);
     }
 }
-

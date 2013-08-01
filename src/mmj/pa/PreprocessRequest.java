@@ -25,11 +25,8 @@ public abstract class PreprocessRequest {
     /**
      *  Constructor for PreprocessRequest
      */
-    public PreprocessRequest() {
-    }
+    public PreprocessRequest() {}
 
-    public abstract String doIt(String proofTextArea)
-                        throws ProofAsstException;
+    public abstract String doIt(String proofTextArea) throws ProofAsstException;
 
 }
-

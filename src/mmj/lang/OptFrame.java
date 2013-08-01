@@ -29,14 +29,14 @@ public class OptFrame {
      *  in scope of a theorem that are not present in "hypArray"
      *  (above).
      */
-    public Hyp[]     optHypArray;
+    public Hyp[] optHypArray;
 
     /**
      *  FIRST DRAFT :) -->
      *  "optDjVarsArray" includes all of DjVars (pairs) in scope
      *  which are not present in djVarsArray (above).
      */
-    public DjVars[]  optDjVarsArray;
+    public DjVars[] optDjVarsArray;
 
     /**
      *  Checks to see if a certain pair of variables is
@@ -58,21 +58,18 @@ public class OptFrame {
      *
      *  @return true if param var pair in OptFrame DjVars array.
      */
-    public static boolean isVarPairInDjArray(OptFrame frame,
-                                             Var vLo,
-                                             Var vHi) {
+    public static boolean isVarPairInDjArray(final OptFrame frame, Var vLo,
+        Var vHi)
+    {
         Var vSwap;
-        if ((vLo.compareTo(vHi)) > 0) {
+        if (vLo.compareTo(vHi) > 0) {
             vSwap = vHi;
             vHi = vLo;
             vLo = vSwap;
         }
-        for (int i = 0; i < frame.optDjVarsArray.length; i++) {
-            if (frame.optDjVarsArray[i].varLo  == vLo &&
-                frame.optDjVarsArray[i].varHi == vHi) {
+        for (final DjVars element : frame.optDjVarsArray)
+            if (element.varLo == vLo && element.varHi == vHi)
                 return true;
-            }
-        }
         return false;
     }
 }

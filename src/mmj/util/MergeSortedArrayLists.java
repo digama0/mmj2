@@ -10,8 +10,8 @@
  */
 
 package mmj.util;
+
 import java.util.*;
-import mmj.lang.Assrt;
 
 /**
  *  Class <code>MergeSortedArrayLists</code> merges elements
@@ -36,24 +36,21 @@ import mmj.lang.Assrt;
  */
 public class MergeSortedArrayLists {
 
-    private int         destGetIndex
-                                  = 0;
-    private int         destPutIndex
-                                  = 0;
+    private int destGetIndex = 0;
+    private int destPutIndex = 0;
 
-    private Object      nextDest;
-    private Object      nextSrc;
+    private Object nextDest;
+    private Object nextSrc;
 
-    private ArrayList   dest;
+    private ArrayList dest;
 
-    private List        src;
-    private Iterator    srcIterator;
+    private List src;
+    private Iterator srcIterator;
 
-    private LinkedList  buf;
-    private int         maxDestBuf;
+    private LinkedList buf;
+    private int maxDestBuf;
 
-    private int         compareResult;
-
+    private int compareResult;
 
     /**
      *  Does in-place merge of source List into the
@@ -82,11 +79,10 @@ public class MergeSortedArrayLists {
      *          equals a destList object and abortIfDupsFound
      *          is true (the normal situation for Theorem Loader.)
      */
-    public MergeSortedArrayLists(ArrayList  destList,
-                                 List       srcList,
-                                 Comparator comparator,
-                                 boolean    abortIfDupsFound)
-                                    throws IllegalArgumentException {
+    public MergeSortedArrayLists(final ArrayList destList, final List srcList,
+        final Comparator comparator, final boolean abortIfDupsFound)
+        throws IllegalArgumentException
+    {
 
 //doh
 //      Iterator iterator = destList.iterator();
@@ -107,53 +103,47 @@ public class MergeSortedArrayLists {
 //      }
 //
 
-        src                       = srcList;
-        srcIterator               = src.iterator();
-        if ((nextSrc              = getNextSrc()) == null) {
+        src = srcList;
+        srcIterator = src.iterator();
+        if ((nextSrc = getNextSrc()) == null)
             return;
-        }
 
-        buf                       = new LinkedList();
+        buf = new LinkedList();
 
-        dest                      = destList;
-        maxDestBuf                = dest.size();
+        dest = destList;
+        maxDestBuf = dest.size();
 
-        dest.ensureCapacity(dest.size() +
-                            src.size());
+        dest.ensureCapacity(dest.size() + src.size());
 
-        if ((nextDest             = getNextDest()) == null) {
+        if ((nextDest = getNextDest()) == null) {
             finishUsingSrc();
             return;
         }
 
         while (true) {
-            compareResult         = comparator.compare(nextSrc,
-                                                       nextDest);
-            if (compareResult > 0) { //nextDest < nextSrc
+            compareResult = comparator.compare(nextSrc, nextDest);
+            if (compareResult > 0) { // nextDest < nextSrc
                 put(nextDest);
-                if ((nextDest     = getNextDest()) == null) {
+                if ((nextDest = getNextDest()) == null) {
                     finishUsingSrc();
                     break;
                 }
             }
-            else {  //nextSrc <= nextDest
+            else { // nextSrc <= nextDest
                 if (compareResult == 0) {
-                    if (abortIfDupsFound) {
+                    if (abortIfDupsFound)
                         throw new IllegalArgumentException(
-                            UtilConstants.
-                                ERRMSG_MERGE_SORTED_LISTS_DUP_ERROR_1
-                            + nextSrc.toString()
-                            + UtilConstants.
-                                ERRMSG_MERGE_SORTED_LISTS_DUP_ERROR_2);
-                    }
+                            UtilConstants.ERRMSG_MERGE_SORTED_LISTS_DUP_ERROR_1
+                                + nextSrc.toString()
+                                + UtilConstants.ERRMSG_MERGE_SORTED_LISTS_DUP_ERROR_2);
                     if ((nextDest = getNextDest()) == null) {
                         finishUsingSrc();
                         break;
                     }
                 }
-                //nextSrc < nextDest
+                // nextSrc < nextDest
                 put(nextSrc);
-                if ((nextSrc      = getNextSrc()) == null) {
+                if ((nextSrc = getNextSrc()) == null) {
                     finishUsingDest();
                     break;
                 }
@@ -164,54 +154,47 @@ public class MergeSortedArrayLists {
     private void finishUsingSrc() {
         while (nextSrc != null) {
             put(nextSrc);
-            nextSrc               = getNextSrc();
+            nextSrc = getNextSrc();
         }
     }
 
     private void finishUsingDest() {
         while (nextDest != null) {
             put(nextDest);
-            nextDest              = getNextDest();
+            nextDest = getNextDest();
         }
     }
 
-    private void put(Object object) {
+    private void put(final Object object) {
         /*
            !!! before outputting to dest, make sure that the dest
            list element is in the buffer if it is one of the
            original dest elements.
          */
         if (destPutIndex < dest.size()) {
-            if (destGetIndex <= destPutIndex) {
-//              inline: loadNextBufElement();
-                if (destGetIndex < maxDestBuf) {
+            if (destGetIndex <= destPutIndex)
+                // inline: loadNextBufElement();
+                if (destGetIndex < maxDestBuf)
                     buf.addLast(dest.get(destGetIndex++));
-                }
-            }
-            dest.set(destPutIndex,
-                     object);
+            dest.set(destPutIndex, object);
         }
-        else {
+        else
             dest.add(object);
-        }
         ++destPutIndex;
     }
 
     private Object getNextSrc() {
-        if (srcIterator.hasNext()) {
+        if (srcIterator.hasNext())
             return srcIterator.next();
-        }
-        else {
+        else
             return null;
-        }
     }
 
     private Object getNextDest() {
         if (buf.size() == 0) {
 //          inline: return loadNextBufElementVirtual();
-            if (destGetIndex < maxDestBuf) {
+            if (destGetIndex < maxDestBuf)
                 return dest.get(destGetIndex++);
-            }
             return null;
         }
         return buf.removeFirst();

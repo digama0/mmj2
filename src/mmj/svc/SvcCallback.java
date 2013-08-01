@@ -14,14 +14,18 @@
  */
 
 package mmj.svc;
-import  java.io.File;
-import  java.util.Map;
-import  mmj.lang.*;
-import  mmj.pa.*;
-import  mmj.util.*;
-import  mmj.verify.*;
-import  mmj.tl.*;
 
+import java.io.File;
+import java.util.Map;
+
+import mmj.lang.*;
+import mmj.pa.ProofAsst;
+import mmj.pa.ProofAsstPreferences;
+import mmj.tl.TheoremLoader;
+import mmj.tl.TlPreferences;
+import mmj.util.OutputBoss;
+import mmj.verify.Grammar;
+import mmj.verify.VerifyProofs;
 
 /**
  *  Interface for using mmj2 as a service.
@@ -127,18 +131,10 @@ public interface SvcCallback {
      * @param svcArgs               Map of Svc key/value pair arguments
      *                              (specified via RunParm).
      */
-    void go(Messages                 messages,
-            OutputBoss               outputBoss,
-            LogicalSystem            logicalSystem,
-            VerifyProofs             verifyProofs,
-            Grammar                  grammar,
-            WorkVarManager           workVarManager,
-            ProofAsstPreferences     proofAsstPreferences,
-            ProofAsst                proofAsst,
-            TlPreferences            tlPreferences,
-            TheoremLoader            theoremLoader,
-            File                     svcFolder,
-            Map                      svcArgs
-            );
+    void go(Messages messages, OutputBoss outputBoss,
+        LogicalSystem logicalSystem, VerifyProofs verifyProofs,
+        Grammar grammar, WorkVarManager workVarManager,
+        ProofAsstPreferences proofAsstPreferences, ProofAsst proofAsst,
+        TlPreferences tlPreferences, TheoremLoader theoremLoader,
+        File svcFolder, Map svcArgs);
 }
-

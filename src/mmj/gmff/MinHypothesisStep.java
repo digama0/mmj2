@@ -6,7 +6,6 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-
 /**
  *  MinHypothesisStep.java  0.01 11/01/2011
  *
@@ -27,7 +26,6 @@ package mmj.gmff;
  */
 public class MinHypothesisStep extends MinProofStepStmt {
 
-
     /**
      *  Standard <code>MinHypothesisStep</code> constructor.
      *  <p>
@@ -39,11 +37,8 @@ public class MinHypothesisStep extends MinProofStepStmt {
      *              whitespace or Metamath tokens. Hence the
      *              acronym "slc" refers to Statement Line Chunks.
      */
-    public MinHypothesisStep(MinProofWorksheet w,
-                             String[][]        slc) {
+    public MinHypothesisStep(final MinProofWorksheet w, final String[][] slc) {
 
-        super(w,
-              slc);
+        super(w, slc);
     }
 }
-

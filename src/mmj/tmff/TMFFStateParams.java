@@ -6,7 +6,6 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-
 /*
  *  TMFFStateParams.java  0.02 11/01/2007
  *
@@ -34,21 +33,20 @@ package mmj.tmff;
  */
 public class TMFFStateParams {
 
-    /* friendly */ int          leftmostColNbr;
-    /* friendly */ int          rightmostColNbr;
-    /* friendly */ boolean      lineWrapOn;
-    /* friendly */ StringBuffer sb;
-    /* friendly */ int          prevColNbr;
-    /* friendly */ int          textColumns;
-    /* friendly */ int          currFormatNbr; //prev char's output pos or 0
+    /* friendly */int leftmostColNbr;
+    /* friendly */int rightmostColNbr;
+    /* friendly */boolean lineWrapOn;
+    /* friendly */StringBuffer sb;
+    /* friendly */int prevColNbr;
+    /* friendly */int textColumns;
+    /* friendly */int currFormatNbr; // prev char's output pos or 0
 
     /**
      *  currLineNbr is used internally and need not be
      *  set by programs calling TMFF. It refers to the
      *  line number within a formula (1, 2, etc.)
      */
-    public    int          currLineNbr;
-
+    public int currLineNbr;
 
     /**
      *  Simple constructor for TMFFStateParams.
@@ -125,22 +123,20 @@ public class TMFFStateParams {
      *         level.
      *
      */
-    public TMFFStateParams(StringBuffer inSb,
-                           int          inPrevColNbr,
-                           int          inLeftmostColNbr,
-                           int          inRightmostColNbr,
-                           int          inTextColumns,
-                           boolean      inLineWrapOn,
-                           int          inCurrFormatNbr) {
+    public TMFFStateParams(final StringBuffer inSb, final int inPrevColNbr,
+        final int inLeftmostColNbr, final int inRightmostColNbr,
+        final int inTextColumns, final boolean inLineWrapOn,
+        final int inCurrFormatNbr)
+    {
 
-        sb                        = inSb;
-        prevColNbr                = inPrevColNbr;
-        leftmostColNbr            = inLeftmostColNbr;
-        rightmostColNbr           = inRightmostColNbr;
-        textColumns               = inTextColumns;
-        lineWrapOn                = inLineWrapOn;
-        currFormatNbr             = inCurrFormatNbr;
-        currLineNbr               = 1;
+        sb = inSb;
+        prevColNbr = inPrevColNbr;
+        leftmostColNbr = inLeftmostColNbr;
+        rightmostColNbr = inRightmostColNbr;
+        textColumns = inTextColumns;
+        lineWrapOn = inLineWrapOn;
+        currFormatNbr = inCurrFormatNbr;
+        currLineNbr = 1;
     }
 
     /**
@@ -164,36 +160,30 @@ public class TMFFStateParams {
      *  @param tmffPreferences - current TMFFPreferences.
      *
      */
-    public TMFFStateParams(StringBuffer    inSb,
-                           int             inPrevColNbr,
-                           TMFFPreferences tmffPreferences) {
-        this(inSb,
-             inPrevColNbr,
-             tmffPreferences.getFormulaLeftCol(),
-             tmffPreferences.getFormulaRightCol(),
-             tmffPreferences.getTextColumns(),
-             tmffPreferences.getLineWrap(),
-             tmffPreferences.getCurrFormatNbr());
+    public TMFFStateParams(final StringBuffer inSb, final int inPrevColNbr,
+        final TMFFPreferences tmffPreferences)
+    {
+        this(inSb, inPrevColNbr, tmffPreferences.getFormulaLeftCol(),
+            tmffPreferences.getFormulaRightCol(), tmffPreferences
+                .getTextColumns(), tmffPreferences.getLineWrap(),
+            tmffPreferences.getCurrFormatNbr());
     }
-
 
     /**
      *  Puts token to string buffer with at least one space
      *  following previous output character.
      * @return -1 if error, else 0.
      */
-    public int appendTokenAtGivenPosition(String token,
-                                           int    pos) {
+    public int appendTokenAtGivenPosition(final String token, final int pos) {
 
         padSBToGivenPosition(pos - 1);
 
         sb.append(token);
 
-        prevColNbr               += token.length();
+        prevColNbr += token.length();
 
-        if (prevColNbr > rightmostColNbr) {
+        if (prevColNbr > rightmostColNbr)
             return -1;
-        }
         return 0;
     }
 
@@ -207,29 +197,27 @@ public class TMFFStateParams {
      *  pad to column 7, then column 7 ends up containing
      *  a space.
      */
-    public void padSBToGivenPosition(int pos) {
+    public void padSBToGivenPosition(final int pos) {
 
-        int padLength             = pos - prevColNbr;
+        int padLength = pos - prevColNbr;
 
-        if (padLength == 0) {
-        }
+        if (padLength == 0) {}
         else {
             if (padLength < 0) {
                 newlineSB();
-                padLength         = pos;
+                padLength = pos;
             }
 
-            padSB(' ',
-                  padLength);
+            padSB(' ', padLength);
         }
 
     }
 
-    public void setSB(StringBuffer sb) {
-        this.sb                   = sb;
+    public void setSB(final StringBuffer sb) {
+        this.sb = sb;
     }
-    public void setPrevColNbr(int prevColNbr) {
-        this.prevColNbr           = prevColNbr;
+    public void setPrevColNbr(final int prevColNbr) {
+        this.prevColNbr = prevColNbr;
     }
 
     /**
@@ -262,45 +250,37 @@ public class TMFFStateParams {
      *  @param useIndent indent column amount per proof step level
      *  @param proofLevel step formula level number within proof
      */
-    public void setLeftmostColNbr(int formulaLeftCol,
-                                  int useIndent,
-                                  int proofLevel) {
-        setLeftmostColNbr(formulaLeftCol
-                          + (useIndent
-                             * proofLevel));
+    public void setLeftmostColNbr(final int formulaLeftCol,
+        final int useIndent, final int proofLevel)
+    {
+        setLeftmostColNbr(formulaLeftCol + useIndent * proofLevel);
 
-        if (leftmostColNbr >= rightmostColNbr) {
+        if (leftmostColNbr >= rightmostColNbr)
             setLeftmostColNbr(formulaLeftCol);
-        }
     }
 
-    public void setLeftmostColNbr(int leftmostColNbr) {
-        this.leftmostColNbr       = leftmostColNbr;
+    public void setLeftmostColNbr(final int leftmostColNbr) {
+        this.leftmostColNbr = leftmostColNbr;
     }
     public int getLeftmostColNbr() {
         return leftmostColNbr;
     }
 
     public void newlineSB() {
-        if (!lineWrapOn) {
+        if (!lineWrapOn)
             sb.append('\n');
-        }
         else {
-            int padLength         = textColumns
-                                    - prevColNbr;
-            padSB(' ',
-                  padLength);
+            final int padLength = textColumns - prevColNbr;
+            padSB(' ', padLength);
         }
         ++currLineNbr;
-        prevColNbr                = 0;
+        prevColNbr = 0;
     }
 
-    public void padSB(char padChar,
-                         int  padLength) {
-        prevColNbr               += padLength;
-        while (padLength-- > 0) {
+    public void padSB(final char padChar, int padLength) {
+        prevColNbr += padLength;
+        while (padLength-- > 0)
             sb.append(padChar);
-        }
     }
 
     public int getAvailLengthOnCurrLine() {

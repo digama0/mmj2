@@ -10,8 +10,10 @@
  */
 
 package mmj.verify;
+
+import java.util.Iterator;
+
 import mmj.lang.*;
-import java.util.*;
 
 /**
  *  A Nulls Permitted Rule is a Grammar Rules that says that
@@ -77,10 +79,9 @@ public class NullsPermittedRule extends GrammarRule {
      *  @param grammar         The Grammar.
      *  @param baseSyntaxAxiom Syntax Axiom.
      */
-    public NullsPermittedRule(Grammar grammar,
-                              Axiom   baseSyntaxAxiom) {
-        super(grammar,
-              baseSyntaxAxiom);
+    public NullsPermittedRule(final Grammar grammar, final Axiom baseSyntaxAxiom)
+    {
+        super(grammar, baseSyntaxAxiom);
     }
 
     /**
@@ -92,13 +93,12 @@ public class NullsPermittedRule extends GrammarRule {
      *
      *  @return new NullsPermittedRule object.
      */
-    public static NullsPermittedRule buildBaseRule(
-                           Grammar           grammar,
-                           Axiom             baseSyntaxAxiom) {
+    public static NullsPermittedRule buildBaseRule(final Grammar grammar,
+        final Axiom baseSyntaxAxiom)
+    {
 
-        NullsPermittedRule nullsPermittedRule =
-           new NullsPermittedRule(grammar,
-                                  baseSyntaxAxiom);
+        final NullsPermittedRule nullsPermittedRule = new NullsPermittedRule(
+            grammar, baseSyntaxAxiom);
         nullsPermittedRule.setIsBaseRule(true);
         return nullsPermittedRule;
     }
@@ -133,35 +133,27 @@ public class NullsPermittedRule extends GrammarRule {
      *                              substituted.
      *  @param nullsPermittedRule the modifying rule.
      */
-    public NullsPermittedRule(
-                        Grammar            grammar,
-                        GrammarRule        oldGrammarRule,
-                        int                matchIndex,
-                        NullsPermittedRule nullsPermittedRule) {
+    public NullsPermittedRule(final Grammar grammar,
+        final GrammarRule oldGrammarRule, final int matchIndex,
+        final NullsPermittedRule nullsPermittedRule)
+    {
         super(grammar);
 
-        ParseTree substParseTransformationTree =
-                  nullsPermittedRule.paramTransformationTree;
-        int       substMaxSeqNbr               =
-                  nullsPermittedRule.getMaxSeqNbr();
+        final ParseTree substParseTransformationTree = nullsPermittedRule.paramTransformationTree;
+        final int substMaxSeqNbr = nullsPermittedRule.getMaxSeqNbr();
 
-        if (oldGrammarRule.getMaxSeqNbr() > substMaxSeqNbr) {
+        if (oldGrammarRule.getMaxSeqNbr() > substMaxSeqNbr)
             setMaxSeqNbr(oldGrammarRule.getMaxSeqNbr());
-        }
-        else {
+        else
             setMaxSeqNbr(substMaxSeqNbr);
-        }
 
         setNbrHypParamsUsed(0);
-        paramVarHypNode  =
-            new ParseNode[oldGrammarRule.paramVarHypNode.length];
+        paramVarHypNode = new ParseNode[oldGrammarRule.paramVarHypNode.length];
 
-        paramTransformationTree =
-            oldGrammarRule.paramTransformationTree.deepCloneWNodeSub(
-                oldGrammarRule.paramVarHypNode[matchIndex],
+        paramTransformationTree = oldGrammarRule.paramTransformationTree
+            .deepCloneWNodeSub(oldGrammarRule.paramVarHypNode[matchIndex],
                 substParseTransformationTree.getRoot());
     }
-
 
     /**
      *  Return a duplicate of the input ruleFormatExpr if it
@@ -172,19 +164,18 @@ public class NullsPermittedRule extends GrammarRule {
      *
      *  @return GrammarRule if duplicate found, or null.
      */
-    public GrammarRule getDupRule(Grammar grammar,
-                             Cnst[]  ruleFormatExprIn) {
+    @Override
+    public GrammarRule getDupRule(final Grammar grammar,
+        final Cnst[] ruleFormatExprIn)
+    {
 
         NullsPermittedRule dupCheck;
-        Iterator iterator =
-            grammar.getNullsPermittedGRList().iterator();
-        Cnst ruleTyp = getGrammarRuleTyp();
+        final Iterator iterator = grammar.getNullsPermittedGRList().iterator();
+        final Cnst ruleTyp = getGrammarRuleTyp();
         while (iterator.hasNext()) {
             dupCheck = (NullsPermittedRule)iterator.next();
-            if (ruleTyp ==
-                dupCheck.getGrammarRuleTyp()) {
+            if (ruleTyp == dupCheck.getGrammarRuleTyp())
                 return dupCheck;
-            }
         }
         return null;
     }
@@ -196,11 +187,13 @@ public class NullsPermittedRule extends GrammarRule {
      *  @param grammar          The Grammar object (Mr Big).
      *  @param ruleFormatExprIn the expression to add.
      */
-    public void addToGrammar(Grammar grammar,
-                             Cnst[]  ruleFormatExprIn) {
-        this.setRuleFormatExpr(ruleFormatExprIn);
+    @Override
+    public void addToGrammar(final Grammar grammar,
+        final Cnst[] ruleFormatExprIn)
+    {
+        setRuleFormatExpr(ruleFormatExprIn);
         grammar.nullsPermittedGRListAdd(this);
-        (getGrammarRuleTyp()).setNullsPermittedGR(this);
+        getGrammarRuleTyp().setNullsPermittedGR(this);
     }
 
     /**
@@ -246,26 +239,20 @@ public class NullsPermittedRule extends GrammarRule {
      *
      *  @param grammar The Grammar.
      */
-    public void deriveAdditionalRules(Grammar grammar) {
-        Iterator iterator =
-            grammar.getTypeConversionGRList().iterator();
+    @Override
+    public void deriveAdditionalRules(final Grammar grammar) {
+        Iterator iterator = grammar.getTypeConversionGRList().iterator();
         TypeConversionRule typeConversionRule;
         while (iterator.hasNext()) {
-            typeConversionRule =
-                (TypeConversionRule)iterator.next();
-            typeConversionRule.deriveRulesUsingNullsPermitted(
-                        grammar,
-                        this);
+            typeConversionRule = (TypeConversionRule)iterator.next();
+            typeConversionRule.deriveRulesUsingNullsPermitted(grammar, this);
         }
 
         iterator = grammar.getNotationGRSet().iterator();
         NotationRule notationRule;
         while (iterator.hasNext()) {
-            notationRule =
-                (NotationRule)iterator.next();
-            notationRule.deriveRulesUsingNullsPermitted(
-                        grammar,
-                        this);
+            notationRule = (NotationRule)iterator.next();
+            notationRule.deriveRulesUsingNullsPermitted(grammar, this);
         }
     }
 
@@ -278,8 +265,9 @@ public class NullsPermittedRule extends GrammarRule {
      *
      *  @return ruleFormatExpr for the Nulls Permitted Rule.
      */
+    @Override
     public Cnst[] getForestRuleExpr() {
-        Cnst[] expr = new Cnst[0];
+        final Cnst[] expr = new Cnst[0];
         return expr;
     }
 }

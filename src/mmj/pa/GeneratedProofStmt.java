@@ -39,15 +39,15 @@
 
 package mmj.pa;
 
-import  mmj.lang.*;
+import mmj.lang.Stmt;
 
 public class GeneratedProofStmt extends ProofWorkStmt {
-  //boolean           dummyField?
+    // boolean dummyField?
 
     /**
      *  Default Constructor.
      */
-    public GeneratedProofStmt(ProofWorksheet w) {
+    public GeneratedProofStmt(final ProofWorksheet w) {
         super(w);
     }
 
@@ -56,66 +56,51 @@ public class GeneratedProofStmt extends ProofWorkStmt {
      *
      *  @param rpnProof Proof Stmt Array in RPN format
      */
-    public GeneratedProofStmt(ProofWorksheet w,
-                              Stmt[] rpnProof) {
+    public GeneratedProofStmt(final ProofWorksheet w, final Stmt[] rpnProof) {
         super(w);
 
-        lineCnt               = 1;
+        lineCnt = 1;
 
-        stmtText              =
-            new StringBuffer(rpnProof.length * 5); //5=guess
-        int left              =
-            w.proofAsstPreferences.getRPNProofLeftCol();
-        int right             =
-            w.proofAsstPreferences.getRPNProofRightCol();
-        StringBuffer indentLeft
-                              = new StringBuffer(left - 1);
-        for (int i = 1; i < left; i++) {
+        stmtText = new StringBuffer(rpnProof.length * 5); // 5=guess
+        final int left = w.proofAsstPreferences.getRPNProofLeftCol();
+        final int right = w.proofAsstPreferences.getRPNProofRightCol();
+        final StringBuffer indentLeft = new StringBuffer(left - 1);
+        for (int i = 1; i < left; i++)
             indentLeft.append(' ');
-        }
 
         stmtText.append(PaConstants.GENERATED_PROOF_STMT_TOKEN);
         stmtText.append(' ');
-        int col               = 4;
-        for ( ; col < left; col++) {
+        int col = 4;
+        for (; col < left; col++)
             stmtText.append(' ');
-        }
 
         String x;
-        int ps                = 0;
+        int ps = 0;
         while (true) {
-            if (ps < rpnProof.length) {
-                x             = rpnProof[ps].getLabel();
+            if (ps < rpnProof.length)
+                x = rpnProof[ps].getLabel();
+            else if (ps > rpnProof.length) {
+                stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
+                ++lineCnt;
+                break;
             }
-            else {
-                if (ps > rpnProof.length) {
-                    stmtText.append(
-                        PaConstants.PROOF_WORKSHEET_NEW_LINE);
-                    ++lineCnt;
-                    break;
-                }
-                else {
-                    x         =
-                        PaConstants.END_PROOF_STMT_TOKEN;
-                }
-            }
+            else
+                x = PaConstants.END_PROOF_STMT_TOKEN;
             ++ps;
-            col              += x.length();
+            col += x.length();
             if (col == right) {
                 stmtText.append(x);
-                stmtText.append(
-                    PaConstants.PROOF_WORKSHEET_NEW_LINE);
+                stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
                 ++lineCnt;
                 stmtText.append(indentLeft);
-                col           = left;
+                col = left;
             }
             else {
                 if (col > right) {
-                    stmtText.append(
-                        PaConstants.PROOF_WORKSHEET_NEW_LINE);
+                    stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
                     ++lineCnt;
                     stmtText.append(indentLeft);
-                    col       = left;
+                    col = left;
                 }
                 stmtText.append(x);
                 stmtText.append(' ');
@@ -124,6 +109,7 @@ public class GeneratedProofStmt extends ProofWorkStmt {
         }
     }
 
+    @Override
     public boolean stmtIsIncomplete() {
         return false;
     }
@@ -139,15 +125,15 @@ public class GeneratedProofStmt extends ProofWorkStmt {
      *  @return column of input fieldId or default value
      *         of 1 if there is an error.
      */
-    public int computeFieldIdCol(int fieldId) {
+    @Override
+    public int computeFieldIdCol(final int fieldId) {
         return 1;
     }
 
     /**
      *  Reformats Derivation Step using TMFF.
      */
-    public void tmffReformat() {
-    }
+    @Override
+    public void tmffReformat() {}
 
 }
-

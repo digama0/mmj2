@@ -14,10 +14,13 @@
  */
 
 package mmj.tl;
-import java.util.*;
+
+import java.util.Iterator;
+import java.util.LinkedList;
+
 import mmj.lang.*;
-import mmj.pa.*;
 import mmj.mmio.MMIOConstants;
+import mmj.pa.*;
 
 /**
  *  Converts a thing into a list Metamath-formatted file lines.
@@ -34,24 +37,24 @@ import mmj.mmio.MMIOConstants;
  */
 public class MMTTheoremExportFormatter {
 
-    private TlPreferences   tlPreferences;
+    private final TlPreferences tlPreferences;
 
-    private int             indentAmt;
-    private int             rightCol;
-    private boolean         storeFormulasAsIs;
+    private int indentAmt;
+    private int rightCol;
+    private boolean storeFormulasAsIs;
 
-    private LinkedList      list;
+    private LinkedList list;
 
-    private boolean         needScopeLines;
+    private boolean needScopeLines;
 
     /**
      *  Basic constructor.
      *  <p>
      *  @param tlPreferences TlPreferences object.
      */
-    public MMTTheoremExportFormatter(TlPreferences tlPreferences) {
+    public MMTTheoremExportFormatter(final TlPreferences tlPreferences) {
 
-        this.tlPreferences        = tlPreferences;
+        this.tlPreferences = tlPreferences;
     }
 
     /**
@@ -62,35 +65,29 @@ public class MMTTheoremExportFormatter {
      *  @return LinkedList of StringBuffer objects each containing
      *         one line of text in Metamath-format (without newlines.)
      */
-    public LinkedList buildStringBufferLineList(Theorem theorem) {
+    public LinkedList buildStringBufferLineList(final Theorem theorem) {
         init(theorem);
 
-        if (needScopeLines) {
+        if (needScopeLines)
             outputBeginScope();
-        }
 
-        if (theorem.getMandFrame().djVarsArray.length > 0    ||
-            theorem.getOptFrame().optDjVarsArray.length > 0) {
+        if (theorem.getMandFrame().djVarsArray.length > 0
+            || theorem.getOptFrame().optDjVarsArray.length > 0)
             outputDjVarsLines(theorem);
-        }
 
-        if (theorem.getLogHypArrayLength() > 0) {
+        if (theorem.getLogHypArrayLength() > 0)
             outputLogHypLines(theorem);
-        }
 
-        String description        = theorem.getDescription();
-        if (description != null &&
-            description.length() > 0) {
+        final String description = theorem.getDescription();
+        if (description != null && description.length() > 0)
             outputDescription(description);
-        }
 
         outputConclusionLine(theorem);
 
         outputProofLine(theorem);
 
-        if (needScopeLines) {
+        if (needScopeLines)
             outputEndScope();
-        }
 
         return list;
     }
@@ -106,154 +103,111 @@ public class MMTTheoremExportFormatter {
      *             null or is not unified.
      */
     public LinkedList buildStringBufferLineList(
-                            ProofWorksheet proofWorksheet)
-                                throws TheoremLoaderException {
+        final ProofWorksheet proofWorksheet) throws TheoremLoaderException
+    {
 
-        if (proofWorksheet                         == null ||
-            proofWorksheet.getGeneratedProofStmt() == null) {
+        if (proofWorksheet == null
+            || proofWorksheet.getGeneratedProofStmt() == null)
             throw new TheoremLoaderException(
-                TlConstants.
-                    ERRMSG_EXPORT_FORMAT_PROOF_WORKSHEET_ERR_1);
-        }
+                TlConstants.ERRMSG_EXPORT_FORMAT_PROOF_WORKSHEET_ERR_1);
 
         init(proofWorksheet);
 
-        if (needScopeLines) {
+        if (needScopeLines)
             outputBeginScope();
-        }
-
 
         // we output the ProofWorksheet's $d lines regardless
         // of whether the theorem is new.
-        DistinctVariablesStmt[] dvStmtArray
-                                  =
-            proofWorksheet.getDvStmtArray();
+        final DistinctVariablesStmt[] dvStmtArray = proofWorksheet
+            .getDvStmtArray();
 
-        if (dvStmtArray != null &&
-            dvStmtArray.length > 0) {
+        if (dvStmtArray != null && dvStmtArray.length > 0)
             outputDjVarsLines(dvStmtArray);
-        }
-
 
         // now logical hypotheses
         if (proofWorksheet.isNewTheorem()) {
-            if (proofWorksheet.getHypStepCnt() > 0) {
+            if (proofWorksheet.getHypStepCnt() > 0)
                 outputLogHypLines(proofWorksheet);
-            }
         }
         else {
-            Theorem theorem       = proofWorksheet.getTheorem();
-            if (theorem.getLogHypArrayLength() > 0) {
-                if (storeFormulasAsIs) {
+            final Theorem theorem = proofWorksheet.getTheorem();
+            if (theorem.getLogHypArrayLength() > 0)
+                if (storeFormulasAsIs)
                     outputLogHypLines(theorem);
-                }
-                else {
-                    outputLogHypLines(theorem,
-                                      proofWorksheet);
-                }
-            }
+                else
+                    outputLogHypLines(theorem, proofWorksheet);
         }
-
 
         // we output the ProofWorksheet's description regardless
         // of whether the theorem is new.
-        String description        = null;
-        Iterator iterator         =
-            proofWorksheet.getProofWorkStmtListIterator();
+        String description = null;
+        final Iterator iterator = proofWorksheet.getProofWorkStmtListIterator();
         while (iterator.hasNext()) {
-            ProofWorkStmt proofWorkStmt
-                                  = (ProofWorkStmt)iterator.next();
+            final ProofWorkStmt proofWorkStmt = (ProofWorkStmt)iterator.next();
             if (proofWorkStmt instanceof CommentStmt) {
-                description       =
-                    proofWorkStmt.
-                        getStmtText().
-                            toString().
-                                substring(1); // erase "*" at start
+                description = proofWorkStmt.getStmtText().toString()
+                    .substring(1); // erase "*" at start
                 break;
             }
         }
-        if (description != null) {
+        if (description != null)
             outputDescription(description);
-        }
-
 
         // now the conclusion formula + start of proof token
-        if (proofWorksheet.isNewTheorem() ||
-            storeFormulasAsIs) {
+        if (proofWorksheet.isNewTheorem() || storeFormulasAsIs)
             outputConclusionLine(proofWorksheet);
-        }
-        else {
+        else
             outputConclusionLine(proofWorksheet.getTheorem());
-        }
-
 
         // we output the ProofWorksheet's proof regardless
         // of whether the theorem is new.
         outputProofLine(proofWorksheet);
 
-        if (needScopeLines) {
+        if (needScopeLines)
             outputEndScope();
-        }
 
         return list;
     }
 
-    private void init(Theorem theorem) {
+    private void init(final Theorem theorem) {
 
         init();
 
-        if (theorem.getLogHypArrayLength() > 0               ||
-            theorem.getMandFrame().djVarsArray.length > 0    ||
-            theorem.getOptFrame().optDjVarsArray.length > 0) {
-            needScopeLines        = true;
-        }
+        if (theorem.getLogHypArrayLength() > 0
+            || theorem.getMandFrame().djVarsArray.length > 0
+            || theorem.getOptFrame().optDjVarsArray.length > 0)
+            needScopeLines = true;
     }
 
-    private void init(ProofWorksheet proofWorksheet) {
+    private void init(final ProofWorksheet proofWorksheet) {
 
         init();
 
-        DistinctVariablesStmt[] dvStmtArray
-                                  =
-            proofWorksheet.getDvStmtArray();
+        final DistinctVariablesStmt[] dvStmtArray = proofWorksheet
+            .getDvStmtArray();
 
-        if (dvStmtArray != null &&
-            dvStmtArray.length > 0) {
-            needScopeLines        = true;
+        if (dvStmtArray != null && dvStmtArray.length > 0)
+            needScopeLines = true;
+        else if (proofWorksheet.isNewTheorem()) {
+            if (proofWorksheet.getHypStepCnt() > 0)
+                needScopeLines = true;
         }
-        else {
-            if (proofWorksheet.isNewTheorem()) {
-                if (proofWorksheet.getHypStepCnt() > 0) {
-                    needScopeLines
-                                  = true;
-                }
-            }
-            else {
-                if (proofWorksheet.
-                        getTheorem().
-                            getLogHypArrayLength() > 0) {
-                    needScopeLines
-                                  = true;
-                }
-            }
-        }
+        else if (proofWorksheet.getTheorem().getLogHypArrayLength() > 0)
+            needScopeLines = true;
     }
 
     private void init() {
-        list                      = new LinkedList();
+        list = new LinkedList();
 
-        needScopeLines            = false;
+        needScopeLines = false;
 
-        indentAmt                 =
-            tlPreferences.getStoreMMIndentAmt();
-        rightCol                  =
-            tlPreferences.getStoreMMRightCol();
-        storeFormulasAsIs         =
-            tlPreferences.getStoreFormulasAsIs();
+        indentAmt = tlPreferences.getStoreMMIndentAmt();
+        rightCol = tlPreferences.getStoreMMRightCol();
+        storeFormulasAsIs = tlPreferences.getStoreFormulasAsIs();
     }
 
     private void outputBeginScope() {
-        StringBuffer sb           = startNewLine(indentAmt);
+        final StringBuffer sb = startNewLine(indentAmt);
         sb.append(MMIOConstants.MM_KEYWORD_1ST_CHAR);
         sb.append(MMIOConstants.MM_BEGIN_SCOPE_KEYWORD_CHAR);
         list.add(sb);
@@ -261,18 +215,17 @@ public class MMTTheoremExportFormatter {
 
     private void outputEndScope() {
 
-        StringBuffer sb           = startNewLine(indentAmt);
+        final StringBuffer sb = startNewLine(indentAmt);
         sb.append(MMIOConstants.MM_KEYWORD_1ST_CHAR);
         sb.append(MMIOConstants.MM_END_SCOPE_KEYWORD_CHAR);
         list.add(sb);
     }
 
-    private void outputLogHypLines(Theorem theorem) {
+    private void outputLogHypLines(final Theorem theorem) {
 
-        LogHyp[] array            = theorem.getLogHypArray();
-        for (int i = 0; i < array.length; i++) {
-            outputOneLogHypsLines(array[i]);
-        }
+        final LogHyp[] array = theorem.getLogHypArray();
+        for (final LogHyp element : array)
+            outputOneLogHypsLines(element);
     }
 
     /*
@@ -283,23 +236,19 @@ public class MMTTheoremExportFormatter {
         necessarily going to be the same as the order they
         appear in the ProofWorksheet.
      */
-    private void outputLogHypLines(Theorem        theorem,
-                                   ProofWorksheet proofWorksheet) {
+    private void outputLogHypLines(final Theorem theorem,
+        final ProofWorksheet proofWorksheet)
+    {
 
         HypothesisStep hypothesisStep;
 
-        LogHyp[] logHypArray      = theorem.getLogHypArray();
-        for (int i = 0; i < logHypArray.length; i++) {
-            hypothesisStep        =
-                proofWorksheet.
-                    getHypothesisStepFromList(
-                        logHypArray[i]);
-            if (hypothesisStep == null) {
+        final LogHyp[] logHypArray = theorem.getLogHypArray();
+        for (final LogHyp element : logHypArray) {
+            hypothesisStep = proofWorksheet.getHypothesisStepFromList(element);
+            if (hypothesisStep == null)
                 throw new IllegalArgumentException(
-                    TlConstants.
-                        ERRMSG_HYP_MISSING_FOR_EXPORTED_PROOF_WORKSHEET_1
-                    + logHypArray[i].getLabel());
-            }
+                    TlConstants.ERRMSG_HYP_MISSING_FOR_EXPORTED_PROOF_WORKSHEET_1
+                        + element.getLabel());
             outputOneLogHypsLines(hypothesisStep);
         }
     }
@@ -313,101 +262,83 @@ public class MMTTheoremExportFormatter {
        database order.) So we output the HypothesisSteps in order
        of appearance in the ProofWorksheet.
      */
-    private void outputLogHypLines(ProofWorksheet proofWorksheet) {
+    private void outputLogHypLines(final ProofWorksheet proofWorksheet) {
 
-        Iterator iterator         =
-            proofWorksheet.getProofWorkStmtListIterator();
+        final Iterator iterator = proofWorksheet.getProofWorkStmtListIterator();
         HypothesisStep hypothesisStep;
-        ProofWorkStmt  w;
+        ProofWorkStmt w;
         while (iterator.hasNext()) {
-            w                     = (ProofWorkStmt)iterator.next();
+            w = (ProofWorkStmt)iterator.next();
             if (w.isHypothesisStep()) {
-                hypothesisStep    = (HypothesisStep)w;
+                hypothesisStep = (HypothesisStep)w;
                 outputOneLogHypsLines(hypothesisStep);
             }
         }
     }
 
-    private void outputOneLogHypsLines(
-                                HypothesisStep hypothesisStep) {
-        int leftOffset            = indentAmt;
-        if (needScopeLines) {
-            leftOffset           += indentAmt;
-        }
+    private void outputOneLogHypsLines(final HypothesisStep hypothesisStep) {
+        int leftOffset = indentAmt;
+        if (needScopeLines)
+            leftOffset += indentAmt;
 
-        StringBuffer prefix       = startNewLine(leftOffset);
+        final StringBuffer prefix = startNewLine(leftOffset);
         prefix.append(hypothesisStep.getRefLabel());
         prefix.append(' ');
         prefix.append(MMIOConstants.MM_KEYWORD_1ST_CHAR);
         prefix.append(MMIOConstants.MM_LOG_HYP_KEYWORD_CHAR);
 
-        int continuationOffset    = prefix.length() + indentAmt;
+        final int continuationOffset = prefix.length() + indentAmt;
 
-        StringBuffer stmtText     = hypothesisStep.getStmtText();
-        StringBuffer textArea     =
-            new StringBuffer(stmtText.capacity());
+        final StringBuffer stmtText = hypothesisStep.getStmtText();
+        final StringBuffer textArea = new StringBuffer(stmtText.capacity());
         textArea.append(stmtText);
 
-        ProofStepStmt.reviseStepHypRefInStmtTextArea(textArea,
-                                                     prefix);
+        ProofStepStmt.reviseStepHypRefInStmtTextArea(textArea, prefix);
 
-        String s                  = textArea.toString();
-        String[] textLines        =
-            s.split(MMIOConstants.MM_JAVA_REGEX_NEWLINE);
+        final String s = textArea.toString();
+        final String[] textLines = s.split(MMIOConstants.MM_JAVA_REGEX_NEWLINE);
 
-        for (int i = 0; i < textLines.length - 1 ; i++) {
-            if (textLines[i].length() > 0) {
+        for (int i = 0; i < textLines.length - 1; i++)
+            if (textLines[i].length() > 0)
                 list.add(new StringBuffer(textLines[i]));
-            }
-        }
 
-        StringBuffer sb           = new StringBuffer(rightCol);
+        StringBuffer sb = new StringBuffer(rightCol);
 
-        String lastLine           = textLines[textLines.length - 1];
+        final String lastLine = textLines[textLines.length - 1];
 
-        int finalNonWhitespace    = lastLine.length() - 1;
-        while (finalNonWhitespace >= 0) {
-            if (Character.isWhitespace(
-                    lastLine.charAt(finalNonWhitespace))) {
+        int finalNonWhitespace = lastLine.length() - 1;
+        while (finalNonWhitespace >= 0)
+            if (Character.isWhitespace(lastLine.charAt(finalNonWhitespace)))
                 --finalNonWhitespace;
-            }
-            else {
+            else
                 break;
-            }
-        }
-        if (finalNonWhitespace < 0) {
+        if (finalNonWhitespace < 0)
             sb.append(lastLine);
-        }
         else {
-            int space             = finalNonWhitespace + 1;
-            if (space < lastLine.length()) {
-                sb.append(lastLine.substring(0,space));
-            }
-            else {
+            final int space = finalNonWhitespace + 1;
+            if (space < lastLine.length())
+                sb.append(lastLine.substring(0, space));
+            else
                 sb.append(lastLine);
-            }
         }
         sb.append(' ');
 
-        if (sb.length() +
-            MMIOConstants.MM_END_STMT_KEYWORD.length()
-                >
-            rightCol) {
+        if (sb.length() + MMIOConstants.MM_END_STMT_KEYWORD.length() > rightCol)
+        {
             list.add(sb);
-            sb                    = startNewLine(continuationOffset);
+            sb = startNewLine(continuationOffset);
         }
         sb.append(MMIOConstants.MM_END_STMT_KEYWORD);
         list.add(sb);
     }
 
-    private void outputOneLogHypsLines(LogHyp logHyp) {
+    private void outputOneLogHypsLines(final LogHyp logHyp) {
 
-        int leftOffset            = indentAmt;
-        if (needScopeLines) {
-            leftOffset           += indentAmt;
-        }
+        int leftOffset = indentAmt;
+        if (needScopeLines)
+            leftOffset += indentAmt;
 
-        StringBuffer sb           = startNewLine(leftOffset);
+        StringBuffer sb = startNewLine(leftOffset);
 
         sb.append(logHyp.getLabel());
         sb.append(' ');
@@ -416,64 +347,50 @@ public class MMTTheoremExportFormatter {
         sb.append(MMIOConstants.MM_LOG_HYP_KEYWORD_CHAR);
         sb.append(' ');
 
-        int continuationOffset    = sb.length();
+        final int continuationOffset = sb.length();
 
-        Formula formula           = logHyp.getFormula();
+        final Formula formula = logHyp.getFormula();
 
-        sb                        =
-            formula.toStringBufferLineList(
-                list,
-                sb,
-                continuationOffset + 1,
-                rightCol,
-                MMIOConstants.MM_END_STMT_KEYWORD);
+        sb = formula.toStringBufferLineList(list, sb, continuationOffset + 1,
+            rightCol, MMIOConstants.MM_END_STMT_KEYWORD);
 
         list.add(sb);
 
     }
 
-    private void outputDescription(String description) {
+    private void outputDescription(final String description) {
 
-        int leftOffset            = indentAmt;
-        if (needScopeLines) {
-            leftOffset           += indentAmt;
-        }
+        int leftOffset = indentAmt;
+        if (needScopeLines)
+            leftOffset += indentAmt;
 
-        StringBuffer sb           = startNewLine(leftOffset);
+        StringBuffer sb = startNewLine(leftOffset);
 
         sb.append(MMIOConstants.MM_START_COMMENT_KEYWORD);
         sb.append(' ');
 
-        int col                   = sb.length();
-        int continuationOffset    = col;
+        int col = sb.length();
+        final int continuationOffset = col;
 
         // split description using "\\s" whitespace regular expression.
-        String[] tokenArray       =
-            description.split(MMIOConstants.MM_JAVA_REGEX_WHITESPACE);
+        final String[] tokenArray = description
+            .split(MMIOConstants.MM_JAVA_REGEX_WHITESPACE);
 
         String token;
-        int    i                  = -1;
+        int i = -1;
         while (++i < tokenArray.length) {
-            if (tokenArray[i].length() == 0) {
+            if (tokenArray[i].length() == 0)
                 continue;
-            }
-            token                 = tokenArray[i];
-            if (token.equals(
-                MMIOConstants.MM_LABEL_IN_COMMENT_ESCAPE_STRING)) { // "~"
-                if (i < tokenArray.length - 1) {
-                    token         =
-                        new String(tokenArray[i]
-                                   + " "
-                                   + tokenArray[++i]);
-                }
-            }
+            token = tokenArray[i];
+            if (token.equals(MMIOConstants.MM_LABEL_IN_COMMENT_ESCAPE_STRING))
+                if (i < tokenArray.length - 1)
+                    token = new String(tokenArray[i] + " " + tokenArray[++i]);
 
-            col                  += token.length();
+            col += token.length();
             if (col > rightCol) {
                 list.add(sb);
-                sb                = startNewLine(continuationOffset);
-                col               = continuationOffset +
-                                    token.length();
+                sb = startNewLine(continuationOffset);
+                col = continuationOffset + token.length();
             }
             sb.append(token);
             if (col < rightCol) {
@@ -482,25 +399,23 @@ public class MMTTheoremExportFormatter {
             }
         }
 
-        if (col + MMIOConstants.MM_END_COMMENT_KEYWORD.length() >
-            rightCol) {
+        if (col + MMIOConstants.MM_END_COMMENT_KEYWORD.length() > rightCol) {
 
             list.add(sb);
-            sb                    = startNewLine(continuationOffset);
+            sb = startNewLine(continuationOffset);
         }
 
         sb.append(MMIOConstants.MM_END_COMMENT_KEYWORD);
         list.add(sb);
     }
 
-    private void outputConclusionLine(Theorem theorem) {
+    private void outputConclusionLine(final Theorem theorem) {
 
-        int leftOffset            = indentAmt;
-        if (needScopeLines) {
-            leftOffset           += indentAmt;
-        }
+        int leftOffset = indentAmt;
+        if (needScopeLines)
+            leftOffset += indentAmt;
 
-        StringBuffer sb           = startNewLine(leftOffset);
+        StringBuffer sb = startNewLine(leftOffset);
 
         sb.append(theorem.getLabel());
         sb.append(' ');
@@ -509,146 +424,114 @@ public class MMTTheoremExportFormatter {
         sb.append(MMIOConstants.MM_PROVABLE_ASSRT_KEYWORD_CHAR);
         sb.append(' ');
 
-        int continuationOffset    = sb.length();
+        final int continuationOffset = sb.length();
 
-        Formula formula           = theorem.getFormula();
+        final Formula formula = theorem.getFormula();
 
-        sb                        =
-            formula.toStringBufferLineList(
-                list,
-                sb,
-                continuationOffset + 1,
-                rightCol,
-                MMIOConstants.MM_START_PROOF_KEYWORD);
+        sb = formula.toStringBufferLineList(list, sb, continuationOffset + 1,
+            rightCol, MMIOConstants.MM_START_PROOF_KEYWORD);
 
         list.add(sb);
     }
 
-    private void outputConclusionLine(
-                                ProofWorksheet proofWorksheet) {
-        int leftOffset            = indentAmt;
-        if (needScopeLines) {
-            leftOffset           += indentAmt;
-        }
+    private void outputConclusionLine(final ProofWorksheet proofWorksheet) {
+        int leftOffset = indentAmt;
+        if (needScopeLines)
+            leftOffset += indentAmt;
 
-        StringBuffer prefix       = startNewLine(leftOffset);
+        final StringBuffer prefix = startNewLine(leftOffset);
         prefix.append(proofWorksheet.getTheoremLabel());
         prefix.append(' ');
         prefix.append(MMIOConstants.MM_KEYWORD_1ST_CHAR);
         prefix.append(MMIOConstants.MM_PROVABLE_ASSRT_KEYWORD_CHAR);
 
-        int continuationOffset    = prefix.length() + indentAmt;
+        final int continuationOffset = prefix.length() + indentAmt;
 
-        StringBuffer stmtText     =
-            proofWorksheet.getQedStep().getStmtText();
-        StringBuffer textArea     =
-            new StringBuffer(stmtText.capacity());
+        final StringBuffer stmtText = proofWorksheet.getQedStep().getStmtText();
+        final StringBuffer textArea = new StringBuffer(stmtText.capacity());
         textArea.append(stmtText);
 
-        ProofStepStmt.reviseStepHypRefInStmtTextArea(textArea,
-                                                     prefix);
+        ProofStepStmt.reviseStepHypRefInStmtTextArea(textArea, prefix);
 
-        String s                  = textArea.toString();
-        String[] textLines        =
-            s.split(MMIOConstants.MM_JAVA_REGEX_NEWLINE);
+        final String s = textArea.toString();
+        final String[] textLines = s.split(MMIOConstants.MM_JAVA_REGEX_NEWLINE);
 
-        for (int i = 0; i < textLines.length - 1 ; i++) {
-            if (textLines[i].length() > 0) {
+        for (int i = 0; i < textLines.length - 1; i++)
+            if (textLines[i].length() > 0)
                 list.add(new StringBuffer(textLines[i]));
-            }
-        }
 
-        StringBuffer sb           = new StringBuffer(rightCol);
+        StringBuffer sb = new StringBuffer(rightCol);
 
-        String lastLine           = textLines[textLines.length - 1];
+        final String lastLine = textLines[textLines.length - 1];
 
-        int finalNonWhitespace      = lastLine.length() - 1;
-        while (finalNonWhitespace >= 0) {
-            if (Character.isWhitespace(
-                    lastLine.charAt(finalNonWhitespace))) {
+        int finalNonWhitespace = lastLine.length() - 1;
+        while (finalNonWhitespace >= 0)
+            if (Character.isWhitespace(lastLine.charAt(finalNonWhitespace)))
                 --finalNonWhitespace;
-            }
-            else {
+            else
                 break;
-            }
-        }
-        if (finalNonWhitespace < 0) {
+        if (finalNonWhitespace < 0)
             sb.append(lastLine);
-        }
         else {
-            int space             = finalNonWhitespace + 1;
-            if (space < lastLine.length()) {
-                sb.append(lastLine.substring(0,space));
-            }
-            else {
+            final int space = finalNonWhitespace + 1;
+            if (space < lastLine.length())
+                sb.append(lastLine.substring(0, space));
+            else
                 sb.append(lastLine);
-            }
         }
         sb.append(' ');
 
-        if (sb.length() +
-            MMIOConstants.MM_START_PROOF_KEYWORD.length()
-                >
-            rightCol) {
+        if (sb.length() + MMIOConstants.MM_START_PROOF_KEYWORD.length() > rightCol)
+        {
             list.add(sb);
-            sb                    = startNewLine(continuationOffset);
+            sb = startNewLine(continuationOffset);
         }
-        sb.append(MMIOConstants.MM_START_PROOF_KEYWORD );
+        sb.append(MMIOConstants.MM_START_PROOF_KEYWORD);
         list.add(sb);
     }
 
-    private void outputProofLine(Theorem theorem) {
-        int leftOffset            = indentAmt;
-        if (needScopeLines) {
-            leftOffset           += indentAmt;
-        }
-        leftOffset               += indentAmt;
+    private void outputProofLine(final Theorem theorem) {
+        int leftOffset = indentAmt;
+        if (needScopeLines)
+            leftOffset += indentAmt;
+        leftOffset += indentAmt;
 
-        StringBuffer sb           = startNewLine(leftOffset);
+        final StringBuffer sb = startNewLine(leftOffset);
 
-        outputProof(theorem.getProof(),
-                    leftOffset,
-                    rightCol);
+        outputProof(theorem.getProof(), leftOffset, rightCol);
     }
 
-    private void outputProofLine(ProofWorksheet proofWorksheet) {
+    private void outputProofLine(final ProofWorksheet proofWorksheet) {
 
-        int leftOffset            = indentAmt;
-        if (needScopeLines) {
-            leftOffset           += indentAmt;
-        }
-        leftOffset               += indentAmt;
+        int leftOffset = indentAmt;
+        if (needScopeLines)
+            leftOffset += indentAmt;
+        leftOffset += indentAmt;
 
-        StringBuffer sb           = startNewLine(leftOffset);
+        final StringBuffer sb = startNewLine(leftOffset);
 
-        outputProof(proofWorksheet.getQedStepProofRPN(),
-                    leftOffset,
-                    rightCol);
+        outputProof(proofWorksheet.getQedStepProofRPN(), leftOffset, rightCol);
     }
 
-    private void outputProof(Stmt[]       proof,
-                             int          left,
-                             int          right) {
+    private void outputProof(final Stmt[] proof, final int left, final int right)
+    {
 
-        StringBuffer sb           = startNewLine(left);
+        StringBuffer sb = startNewLine(left);
 
-        String       stepLabel;
-        int          col          = left;
-        for (int i = 0; i < proof.length; i++) {
+        String stepLabel;
+        int col = left;
+        for (final Stmt element : proof) {
 
-            if (proof[i] == null) {
-                stepLabel         = MMIOConstants.MISSING_PROOF_STEP;
-            }
-            else {
-                stepLabel         = proof[i].getLabel();
-            }
+            if (element == null)
+                stepLabel = MMIOConstants.MISSING_PROOF_STEP;
+            else
+                stepLabel = element.getLabel();
 
-            col                  += stepLabel.length();
+            col += stepLabel.length();
             if (col > right) {
                 list.add(sb);
-                sb                = startNewLine(left);
-                col               = left
-                                    + stepLabel.length();
+                sb = startNewLine(left);
+                col = left + stepLabel.length();
             }
 
             sb.append(stepLabel);
@@ -659,16 +542,15 @@ public class MMTTheoremExportFormatter {
             }
             else {
                 list.add(sb);
-                sb                = startNewLine(left);
-                col               = left;
+                sb = startNewLine(left);
+                col = left;
             }
         }
 
-        if (col + MMIOConstants.MM_END_STMT_KEYWORD.length() >
-            right) {
+        if (col + MMIOConstants.MM_END_STMT_KEYWORD.length() > right) {
 
             list.add(sb);
-            sb                    = startNewLine(left);
+            sb = startNewLine(left);
         }
 
         sb.append(MMIOConstants.MM_END_STMT_KEYWORD);
@@ -676,49 +558,44 @@ public class MMTTheoremExportFormatter {
         list.add(sb);
     }
 
-    private void outputDjVarsLines(Theorem theorem) {
+    private void outputDjVarsLines(final Theorem theorem) {
 
-        LinkedList djStmtTextList =
-            DjVars.
-                buildMetamathDjVarsStatementList(
-                    theorem);
+        final LinkedList djStmtTextList = DjVars
+            .buildMetamathDjVarsStatementList(theorem);
 
         outputDjVarsLines(djStmtTextList);
     }
 
     private void outputDjVarsLines(
-                    DistinctVariablesStmt[] distinctVariableStmtArray) {
+        final DistinctVariablesStmt[] distinctVariableStmtArray)
+    {
 
-        LinkedList djStmtTextList =
-            DjVars.
-                buildMetamathDjVarsStatementList(
-                    distinctVariableStmtArray);
+        final LinkedList djStmtTextList = DjVars
+            .buildMetamathDjVarsStatementList(distinctVariableStmtArray);
 
         outputDjVarsLines(djStmtTextList);
     }
 
-    private void outputDjVarsLines(LinkedList djStmtTextList) {
+    private void outputDjVarsLines(final LinkedList djStmtTextList) {
 
-        int leftOffset            = indentAmt;
-        if (needScopeLines) {
-            leftOffset           += indentAmt;
-        }
+        int leftOffset = indentAmt;
+        if (needScopeLines)
+            leftOffset += indentAmt;
 
-        StringBuffer sb           = startNewLine(leftOffset);
-        int col                   = leftOffset;
+        StringBuffer sb = startNewLine(leftOffset);
+        int col = leftOffset;
 
         // if a single $d statement exceeds the line length
         // let it go beyond? is it worth fooling with? no...
-        Iterator     i            = djStmtTextList.iterator();
+        final Iterator i = djStmtTextList.iterator();
         StringBuffer dsb;
         while (i.hasNext()) {
-            dsb                   = (StringBuffer)i.next();
-            col                  += dsb.length();
+            dsb = (StringBuffer)i.next();
+            col += dsb.length();
             if (col > rightCol) {
                 list.add(sb);
-                sb                = startNewLine(leftOffset);
-                col               = leftOffset +
-                                    dsb.length();
+                sb = startNewLine(leftOffset);
+                col = leftOffset + dsb.length();
             }
             sb.append(dsb.toString());
 
@@ -731,18 +608,15 @@ public class MMTTheoremExportFormatter {
         list.add(sb);
     }
 
-    private StringBuffer startNewLine(int n) {
+    private StringBuffer startNewLine(final int n) {
 
-        StringBuffer sb           = new StringBuffer(rightCol);
-        indent(sb,
-               n);
+        final StringBuffer sb = new StringBuffer(rightCol);
+        indent(sb, n);
         return sb;
     }
 
-    private void indent(StringBuffer sb,
-                        int          n) {
-        while (n-- > 0) {
+    private void indent(final StringBuffer sb, int n) {
+        while (n-- > 0)
             sb.append(' ');
-        }
     }
 }

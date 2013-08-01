@@ -11,7 +11,7 @@
 
 package mmj.verify;
 
-import mmj.lang.*;
+import mmj.lang.Sym;
 
 /**
  *  SubstMapEntry is a data structure used in an array in
@@ -43,18 +43,17 @@ public class SubstMapEntry {
      * substFrom -- a Var to be replaced by an expression
      *              or variable.
      */
-    public    Sym       substFrom;
+    public Sym substFrom;
 
     /**
      *  substTo -- an expression or variable to replace substFrom.
      */
-    public    Sym[]     substTo;
+    public Sym[] substTo;
 
     /**
      *  Default Constructor.
      */
-    public SubstMapEntry() {
-    }
+    public SubstMapEntry() {}
 
     /**
      *  Construct using substFrom and substTo.
@@ -63,9 +62,8 @@ public class SubstMapEntry {
      *
      *  @param substTo   expression or variable to replace substFrom.
      */
-    public SubstMapEntry(Sym   substFrom,
-                         Sym[] substTo) {
+    public SubstMapEntry(final Sym substFrom, final Sym[] substTo) {
         this.substFrom = substFrom;
-        this.substTo   = substTo;
+        this.substTo = substTo;
     }
 }

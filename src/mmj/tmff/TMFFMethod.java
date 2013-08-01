@@ -6,7 +6,6 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-
 /*
  *  TMFFMethod.java  0.01 11/01/2006
  *
@@ -15,9 +14,8 @@
  */
 
 package mmj.tmff;
-import mmj.lang.ParseNode;
-import mmj.lang.ParseTree;
-import mmj.lang.Formula;
+
+import mmj.lang.*;
 
 /**
  *  TMFFMethod is the base class for text mode formula
@@ -31,10 +29,8 @@ public abstract class TMFFMethod {
 
     protected int maxDepth;
 
-    protected abstract int renderSubExprWithBreaks(
-                               TMFFStateParams tmffSP,
-                               ParseNode       currNode,
-                               int             leftmostColNbr);
+    protected abstract int renderSubExprWithBreaks(TMFFStateParams tmffSP,
+        ParseNode currNode, int leftmostColNbr);
 
     /**
      *  Updates maxDepth for a TMFFMethod if the Method
@@ -53,7 +49,6 @@ public abstract class TMFFMethod {
      */
     public abstract boolean updateMaxDepth(int maxDepth);
 
-
     /**
      *  Validates the maxDepth parameter.
      *
@@ -61,11 +56,10 @@ public abstract class TMFFMethod {
      *
      *  @return maxDepth parameter.
      */
-    public static int validateMaxDepth(int maxDepth) {
-        if (maxDepth < 1) {
+    public static int validateMaxDepth(final int maxDepth) {
+        if (maxDepth < 1)
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_BAD_MAX_DEPTH_1);
-        }
         return maxDepth;
     }
 
@@ -76,12 +70,11 @@ public abstract class TMFFMethod {
      *
      *  @return maxDepth parameter.
      */
-    public static int validateMaxDepth(String maxDepthString) {
+    public static int validateMaxDepth(final String maxDepthString) {
         try {
-            return TMFFMethod.validateMaxDepth(
-                Integer.parseInt(maxDepthString.trim()));
-        }
-        catch (NumberFormatException e) {
+            return TMFFMethod.validateMaxDepth(Integer.parseInt(maxDepthString
+                .trim()));
+        } catch (final NumberFormatException e) {
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_BAD_MAX_DEPTH_1);
         }
@@ -90,8 +83,7 @@ public abstract class TMFFMethod {
     /**
      *  Default constructor.
      */
-    public TMFFMethod() {
-    }
+    public TMFFMethod() {}
 
     /**
      *  Constructor for TMFFMethod using user parameters.
@@ -102,11 +94,10 @@ public abstract class TMFFMethod {
      *                  counting leaf nodes, and non-Notation
      *                  Syntax Axioms such as Type Conversions.
      */
-    public TMFFMethod(String maxDepthString) {
+    public TMFFMethod(final String maxDepthString) {
 
-        this.maxDepth = TMFFMethod.validateMaxDepth(maxDepthString);
+        maxDepth = TMFFMethod.validateMaxDepth(maxDepthString);
     }
-
 
     /**
      *  Standard constructor for TMFFMethod.
@@ -116,7 +107,7 @@ public abstract class TMFFMethod {
      *                  counting leaf nodes, and non-Notation
      *                  Syntax Axioms such as Type Conversions.
      */
-    public TMFFMethod(int maxDepth) {
+    public TMFFMethod(final int maxDepth) {
 
         this.maxDepth = TMFFMethod.validateMaxDepth(maxDepth);
     }
@@ -133,69 +124,52 @@ public abstract class TMFFMethod {
      *  @return TMFFMethod constructed according to the user
      *                  parameters.
      */
-    public static TMFFMethod ConstructMethodWithUserParams(
-                    String[] param) {
+    public static TMFFMethod ConstructMethodWithUserParams(final String[] param)
+    {
 
-        String methodName         = null;
-        String param3             = null;
-        String param4             = null;
-        String param5             = null;
-        String param6             = null;
-        int    pIndex             = 1;
-        if (param.length > pIndex)                    {
-            methodName            = param[pIndex++];
-            if (param.length > pIndex)                {
-                param3            = param[pIndex++];
-                if (param.length > pIndex)            {
-                    param4        = param[pIndex++];
-                    if (param.length > pIndex)        {
-                        param5    = param[pIndex++];
-                        if (param.length > pIndex)    {
-                            param6
-                                  = param[pIndex++];
-                        }
+        String methodName = null;
+        String param3 = null;
+        String param4 = null;
+        String param5 = null;
+        String param6 = null;
+        int pIndex = 1;
+        if (param.length > pIndex) {
+            methodName = param[pIndex++];
+            if (param.length > pIndex) {
+                param3 = param[pIndex++];
+                if (param.length > pIndex) {
+                    param4 = param[pIndex++];
+                    if (param.length > pIndex) {
+                        param5 = param[pIndex++];
+                        if (param.length > pIndex)
+                            param6 = param[pIndex++];
                     }
                 }
             }
         }
 
-        if (methodName == null) {
+        if (methodName == null)
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_MISSING_USER_METHOD_NAME_1);
-        }
 
-        if (methodName.compareToIgnoreCase(
-                TMFFConstants.TMFF_METHOD_USER_NAME_ALIGN_COLUMN)
-            == 0) {
-            return new TMFFAlignColumn(param3,
-                                       param4,
-                                       param5,
-                                       param6);
-        }
+        if (methodName
+            .compareToIgnoreCase(TMFFConstants.TMFF_METHOD_USER_NAME_ALIGN_COLUMN) == 0)
+            return new TMFFAlignColumn(param3, param4, param5, param6);
 
-        if (methodName.compareToIgnoreCase(
-                TMFFConstants.
-                    TMFF_METHOD_USER_NAME_TWO_COLUMN_ALIGNMENT)
-            == 0) {
+        if (methodName
+            .compareToIgnoreCase(TMFFConstants.TMFF_METHOD_USER_NAME_TWO_COLUMN_ALIGNMENT) == 0)
             return new TMFFTwoColumnAlignment(param3);
-        }
 
-
-        if (methodName.compareToIgnoreCase(
-                TMFFConstants.TMFF_METHOD_USER_NAME_FLAT)
-            == 0) {
+        if (methodName
+            .compareToIgnoreCase(TMFFConstants.TMFF_METHOD_USER_NAME_FLAT) == 0)
             return new TMFFFlat(param3);
-        }
 
-        if (methodName.compareToIgnoreCase(
-                TMFFConstants.TMFF_METHOD_USER_NAME_UNFORMATTED)
-            == 0) {
+        if (methodName
+            .compareToIgnoreCase(TMFFConstants.TMFF_METHOD_USER_NAME_UNFORMATTED) == 0)
             return new TMFFUnformatted(param3);
-        }
 
         throw new IllegalArgumentException(
-            TMFFConstants.ERRMSG_BAD_USER_METHOD_NAME_1
-            + methodName);
+            TMFFConstants.ERRMSG_BAD_USER_METHOD_NAME_1 + methodName);
     }
 
     /**
@@ -226,32 +200,21 @@ public abstract class TMFFMethod {
      *                  was encountered and the formula could
      *                  not be formatted.
      */
-    public int renderFormula(TMFFStateParams tmffSP,
-                             ParseTree       parseTree,
-                             Formula         formula) {
+    public int renderFormula(final TMFFStateParams tmffSP,
+        final ParseTree parseTree, final Formula formula)
+    {
 
-        tmffSP.currLineNbr        = 1;
+        tmffSP.currLineNbr = 1;
         if (parseTree != null) {
-            if (tmffSP.appendTokenAtGivenPosition(
-                    formula.getTyp().getId(),
-                    tmffSP.leftmostColNbr)
-                < 0) {
-                tmffSP.currLineNbr
-                                  = -1;
-            }
-            else {
-                if (renderSubExpr(tmffSP,
-                                  parseTree.getRoot(),
-                                  tmffSP.prevColNbr + 2)
-                   < 0) {
-                    tmffSP.currLineNbr
-                                  = -1;
-                }
-            }
+            if (tmffSP.appendTokenAtGivenPosition(formula.getTyp().getId(),
+                tmffSP.leftmostColNbr) < 0)
+                tmffSP.currLineNbr = -1;
+            else if (renderSubExpr(tmffSP, parseTree.getRoot(),
+                tmffSP.prevColNbr + 2) < 0)
+                tmffSP.currLineNbr = -1;
         }
-        else {
-            tmffSP.currLineNbr    = -1;
-        }
+        else
+            tmffSP.currLineNbr = -1;
 
         return tmffSP.currLineNbr;
 
@@ -279,26 +242,18 @@ public abstract class TMFFMethod {
      *
      *  @return -1 if error else 0.
      */
-    protected int renderSubExpr(TMFFStateParams tmffSP,
-                                ParseNode       currNode,
-                                int             leftmostColNbr) {
-        int subExprOutputLength =
-            currNode.renderParsedSubExpr(
-                               tmffSP.sb,
-                               maxDepth,
-                               tmffSP.getAvailLengthOnCurrLine());
+    protected int renderSubExpr(final TMFFStateParams tmffSP,
+        final ParseNode currNode, final int leftmostColNbr)
+    {
+        final int subExprOutputLength = currNode.renderParsedSubExpr(tmffSP.sb,
+            maxDepth, tmffSP.getAvailLengthOnCurrLine());
 
         if (subExprOutputLength < 0) {
-            if (renderSubExprWithBreaks(tmffSP,
-                                        currNode,
-                                        leftmostColNbr)
-                < 0) {
+            if (renderSubExprWithBreaks(tmffSP, currNode, leftmostColNbr) < 0)
                 return -1;
-            }
         }
-        else {
-            tmffSP.prevColNbr    += subExprOutputLength;
-        }
+        else
+            tmffSP.prevColNbr += subExprOutputLength;
         return 0;
     }
 }

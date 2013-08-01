@@ -6,7 +6,6 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-
 /**
  *  MinProofWorksheet.java  0.01 11/01/2011
  *
@@ -16,12 +15,12 @@
 
 package mmj.gmff;
 
-import  java.util.*;
-import  java.io.*;
+import java.io.*;
+import java.util.ArrayList;
 
-import  mmj.lang.Messages;
-import  mmj.mmio.Tokenizer;
-import  mmj.pa.PaConstants;
+import mmj.lang.Messages;
+import mmj.mmio.Tokenizer;
+import mmj.pa.PaConstants;
 
 /**
  *  <code>MinProofWorksheet</code> is a minimalist
@@ -40,13 +39,13 @@ public class MinProofWorksheet {
     /**
      *  <code>Messages</code> object stored here for convenience.
      */
-    private Messages messages;
+    private final Messages messages;
 
     /**
      *  <code>ArrayList</code> of <code>MinProofWorkStmt</code>
      *  type objects.
      */
-    private ArrayList minProofWorkStmtList;
+    private final ArrayList minProofWorkStmtList;
 
     /**
      *  <code>theoremLabel</code> extracted from
@@ -72,27 +71,26 @@ public class MinProofWorksheet {
     private int lineCnt;
 
     /**
-	 *  "fatal" structural errors? Unable to obtain
-	 *  theorem label from a valid ProofWorkseet Header;
-	 *  Or if it contains invalid Metamath characters.
-	 */
-    private boolean structuralErrors
-                                = true;
+     *  "fatal" structural errors? Unable to obtain
+     *  theorem label from a valid ProofWorkseet Header;
+     *  Or if it contains invalid Metamath characters.
+     */
+    private boolean structuralErrors = true;
 
-     /**
-      *  Constructor for MinProofWorksheet.
-      *
-      *  Builds an empty MinProofWorksheet marked as
-      *  invalid so that it can be cached in ProofWorksheetCache
-      *  regardless of its validity and successful loading.
-      *
-      *  @param messages The <code>Messages</code> object.
-      *
-      */
-	public MinProofWorksheet(Messages messages) {
-		this.messages           = messages;
-		minProofWorkStmtList    = new ArrayList();
-	}
+    /**
+     *  Constructor for MinProofWorksheet.
+     *
+     *  Builds an empty MinProofWorksheet marked as
+     *  invalid so that it can be cached in ProofWorksheetCache
+     *  regardless of its validity and successful loading.
+     *
+     *  @param messages The <code>Messages</code> object.
+     *
+     */
+    public MinProofWorksheet(final Messages messages) {
+        this.messages = messages;
+        minProofWorkStmtList = new ArrayList();
+    }
 
     /**
      *  Loads the Proof Worksheet text into the MinProofWorksheet.
@@ -119,68 +117,54 @@ public class MinProofWorksheet {
      *
      *  @param proofText String data holding Proof Worksheet text.
      */
-	public void load(String proofText) {
-		setStructuralErrors(false);
+    public void load(final String proofText) {
+        setStructuralErrors(false);
 
-        LineNumberReader lineReader
-                                =
-        	new LineNumberReader(
-				new StringReader(proofText));
+        final LineNumberReader lineReader = new LineNumberReader(
+            new StringReader(proofText));
 
-        ArrayList<ArrayList<String>> lineList
-        						= new ArrayList<ArrayList<String>>();
+        final ArrayList<ArrayList<String>> lineList = new ArrayList<ArrayList<String>>();
         ArrayList<String> tokenList;
-        String 	  line;
+        String line;
 
-        MinProofWorkStmt minProofWorkStmt
-                                = null;
+        MinProofWorkStmt minProofWorkStmt = null;
 
         try {
-			line                = lineReader.readLine();
-			if (line == null) {
-				triggerEmptyProofError();
-			}
-			if (line.length()  == 0 ||
-			    line.charAt(0) == ' ') {
-				triggerBogusLine1Error();
-			}
-			do {
-				do {
-					tokenList   = tokenize(line);
-					if (structuralErrors) {
-						return;
-					}
-					lineList.add(tokenList);
-					++lineCnt;
-				} while ((line = lineReader.readLine()) != null &&
-				         (line.length()   == 0   ||
-				          line.charAt(0)  == ' '));
+            line = lineReader.readLine();
+            if (line == null)
+                triggerEmptyProofError();
+            if (line.length() == 0 || line.charAt(0) == ' ')
+                triggerBogusLine1Error();
+            do {
+                do {
+                    tokenList = tokenize(line);
+                    if (structuralErrors)
+                        return;
+                    lineList.add(tokenList);
+                    ++lineCnt;
+                } while ((line = lineReader.readLine()) != null
+                    && (line.length() == 0 || line.charAt(0) == ' '));
 
-  				minProofWorkStmt
-  				                =
-                    MinProofWorkStmt.constructStmt(this,
-  					                               lineList);
+                minProofWorkStmt = MinProofWorkStmt.constructStmt(this,
+                    lineList);
 
-				if (minProofWorkStmt == null) {
-					setStructuralErrors(true);
-				}
-				else {
-					minProofWorkStmtList.add(minProofWorkStmt);
-					lineList.clear();
-				}
-			} while (!structuralErrors &&
-			         line != null);
-		}
-		catch (IOException e) {
-			setStructuralErrors(true);
-			messages.accumErrorMessage(
-				GMFFConstants.ERRMSG_LOAD_READLINE_IO_ERROR_1
-				+ (lineCnt + 1)
-				+ GMFFConstants.ERRMSG_LOAD_READLINE_IO_ERROR_2
-				+ e.toString());
-		}
+                if (minProofWorkStmt == null)
+                    setStructuralErrors(true);
+                else {
+                    minProofWorkStmtList.add(minProofWorkStmt);
+                    lineList.clear();
+                }
+            } while (!structuralErrors && line != null);
+        } catch (final IOException e) {
+            setStructuralErrors(true);
+            messages
+                .accumErrorMessage(GMFFConstants.ERRMSG_LOAD_READLINE_IO_ERROR_1
+                    + (lineCnt + 1)
+                    + GMFFConstants.ERRMSG_LOAD_READLINE_IO_ERROR_2
+                    + e.toString());
+        }
 
-	}
+    }
 
     /**
      *  Returns the list of Proof Worksheet statements.
@@ -188,9 +172,8 @@ public class MinProofWorksheet {
      *  @return minProofWorkStmtList.
      */
     public ArrayList getMinProofWorkStmtList() {
-		return minProofWorkStmtList;
-	}
-
+        return minProofWorkStmtList;
+    }
 
     /**
      *  Returns the Proof Worksheet <code>structuralErrors</code>
@@ -199,8 +182,8 @@ public class MinProofWorksheet {
      *  @return structuralErrors indicator.
      */
     public boolean getStructuralErrors() {
-		return structuralErrors;
-	}
+        return structuralErrors;
+    }
 
     /**
      *  Sets the Proof Worksheet <code>structuralErrors</code>
@@ -208,9 +191,9 @@ public class MinProofWorksheet {
      *
      *  @param structuralErrors boolean indicator.
      */
-    public void setStructuralErrors(boolean structuralErrors) {
-		this.structuralErrors   = structuralErrors;
-	}
+    public void setStructuralErrors(final boolean structuralErrors) {
+        this.structuralErrors = structuralErrors;
+    }
 
     /**
      *  Returns the Proof Worksheet <code>theoremLabel</code>
@@ -219,8 +202,8 @@ public class MinProofWorksheet {
      *  @return theoremLabel field.
      */
     public String getTheoremLabel() {
-		return theoremLabel;
-	}
+        return theoremLabel;
+    }
 
     /**
      *  Sets the Proof Worksheet <code>theoremLabel</code>
@@ -228,9 +211,9 @@ public class MinProofWorksheet {
      *
      *  @param s Theorem Label field.
      */
-	public void setTheoremLabel(String s) {
-		theoremLabel            = s;
-	}
+    public void setTheoremLabel(final String s) {
+        theoremLabel = s;
+    }
 
     /**
      *  Returns the Proof Worksheet <code>locAfter</code>
@@ -239,8 +222,8 @@ public class MinProofWorksheet {
      *  @return locAfter field.
      */
     public String getLocAfter() {
-		return locAfter;
-	}
+        return locAfter;
+    }
 
     /**
      *  Sets the Proof Worksheet <code>locAfter</code>
@@ -248,9 +231,9 @@ public class MinProofWorksheet {
      *
      *  @param s locAfter field.
      */
-	public void setLocAfter(String s) {
-		locAfter            = s;
-	}
+    public void setLocAfter(final String s) {
+        locAfter = s;
+    }
 
     /**
      *  Returns the Proof Worksheet <code>lineCnt</code>
@@ -258,9 +241,9 @@ public class MinProofWorksheet {
      *
      *  @return lineCnt field.
      */
-	public int getLineCnt() {
-		return lineCnt;
-	}
+    public int getLineCnt() {
+        return lineCnt;
+    }
 
     /**
      *  <code>tokenize</code> breaks up a line of text from a Proof
@@ -290,119 +273,101 @@ public class MinProofWorksheet {
      *              Metamath tokens, or just one empty <code>
      *              String</code> if the line is empty.
      */
-	/* friendly */ ArrayList<String> tokenize(String line) {
+    /* friendly */ArrayList<String> tokenize(final String line) {
 
-		ArrayList<String> tokenList
-								= new ArrayList<String>();
+        final ArrayList<String> tokenList = new ArrayList<String>();
 
-	    StringBuffer sb         = new StringBuffer();
+        StringBuffer sb = new StringBuffer();
 
-	    int len;
+        int len;
 
-	    try {
-			Tokenizer tokenizer =
-				new Tokenizer(
-					new StringReader(line),
-					"");
+        try {
+            final Tokenizer tokenizer = new Tokenizer(new StringReader(line),
+                "");
 
-	    	len                 = tokenizer.getWhiteSpace(sb,0);
-			if (len < 0) { //empty line
-				tokenList.add("");
-			}
-			else {
-				while (len >= 0) {
-					if (len > 0) {
-						tokenList.add(sb.toString());
-					}
-					sb                  = new StringBuffer();
-					if ((len = tokenizer.getToken(sb,0)) >= 0) {
-    					tokenList.add(sb.toString());
-						sb              = new StringBuffer();
-						len             = tokenizer.getWhiteSpace(sb,0);
-					}
-				}
-			}
-		}
-		catch (IOException e) {
-			triggerTokenizerIO_Error(e.toString(),
-			                         lineCnt);
-		}
-		return tokenList;
-	}
+            len = tokenizer.getWhiteSpace(sb, 0);
+            if (len < 0)
+                tokenList.add("");
+            else
+                while (len >= 0) {
+                    if (len > 0)
+                        tokenList.add(sb.toString());
+                    sb = new StringBuffer();
+                    if ((len = tokenizer.getToken(sb, 0)) >= 0) {
+                        tokenList.add(sb.toString());
+                        sb = new StringBuffer();
+                        len = tokenizer.getWhiteSpace(sb, 0);
+                    }
+                }
+        } catch (final IOException e) {
+            triggerTokenizerIO_Error(e.toString(), lineCnt);
+        }
+        return tokenList;
+    }
 
-	/* friendly */ void triggerTokenizerIO_Error(
-		                                 String e,
-                                         int    lineNbr) {
-		setStructuralErrors(true);
-		messages.accumErrorMessage(
-			GMFFConstants.ERRMSG_TOKENIZER_IO_ERROR_1
-			+ getTheoremLabel()
-			+ GMFFConstants.ERRMSG_TOKENIZER_IO_ERROR_1B
-			+ lineNbr
-			+ GMFFConstants.ERRMSG_TOKENIZER_IO_ERROR_2
-			+ e);
-	}
+    /* friendly */void triggerTokenizerIO_Error(final String e,
+        final int lineNbr)
+    {
+        setStructuralErrors(true);
+        messages.accumErrorMessage(GMFFConstants.ERRMSG_TOKENIZER_IO_ERROR_1
+            + getTheoremLabel() + GMFFConstants.ERRMSG_TOKENIZER_IO_ERROR_1B
+            + lineNbr + GMFFConstants.ERRMSG_TOKENIZER_IO_ERROR_2 + e);
+    }
 
-	/* friendly */ void triggerEmptyProofError() {
-		setStructuralErrors(true);
-		messages.accumErrorMessage(
-			GMFFConstants.ERRMSG_EMPTY_PROOF_1
-			+ getTheoremLabel()
-			+ GMFFConstants.ERRMSG_EMPTY_PROOF_1B);
-	}
+    /* friendly */void triggerEmptyProofError() {
+        setStructuralErrors(true);
+        messages.accumErrorMessage(GMFFConstants.ERRMSG_EMPTY_PROOF_1
+            + getTheoremLabel() + GMFFConstants.ERRMSG_EMPTY_PROOF_1B);
+    }
 
-	/* friendly */ void triggerBogusLine1Error() {
-		setStructuralErrors(true);
-		messages.accumErrorMessage(
-			GMFFConstants.ERRMSG_BOGUS_LINE_1_1
-			+ getTheoremLabel()
-			+ GMFFConstants.ERRMSG_BOGUS_LINE_1_1B);
-	}
+    /* friendly */void triggerBogusLine1Error() {
+        setStructuralErrors(true);
+        messages.accumErrorMessage(GMFFConstants.ERRMSG_BOGUS_LINE_1_1
+            + getTheoremLabel() + GMFFConstants.ERRMSG_BOGUS_LINE_1_1B);
+    }
 
-	/* friendly */ void triggerBogusStmtLineStart(
-		                                  String chunk,
-	                                      int    lineNbr) {
-		setStructuralErrors(true);
-		messages.accumErrorMessage(
-			GMFFConstants.ERRMSG_WORK_STMT_LINE_START_ERROR_1
-			+ getTheoremLabel()
-			+ GMFFConstants.ERRMSG_WORK_STMT_LINE_START_ERROR_1B
-			+ lineNbr
-			+ GMFFConstants.ERRMSG_WORK_STMT_LINE_START_ERROR_2
-			+ chunk
-			+ GMFFConstants.ERRMSG_WORK_STMT_LINE_START_ERROR_3);
-	}
+    /* friendly */void triggerBogusStmtLineStart(final String chunk,
+        final int lineNbr)
+    {
+        setStructuralErrors(true);
+        messages
+            .accumErrorMessage(GMFFConstants.ERRMSG_WORK_STMT_LINE_START_ERROR_1
+                + getTheoremLabel()
+                + GMFFConstants.ERRMSG_WORK_STMT_LINE_START_ERROR_1B
+                + lineNbr
+                + GMFFConstants.ERRMSG_WORK_STMT_LINE_START_ERROR_2
+                + chunk
+                + GMFFConstants.ERRMSG_WORK_STMT_LINE_START_ERROR_3);
+    }
 
-	/* friendly */ void triggerConstructorError(
-		                                String e,
-	                                    int    lineNbr) {
-		setStructuralErrors(true);
-		messages.accumErrorMessage(
-			GMFFConstants.ERRMSG_WORK_STMT_CONSTRUCTOR_ERROR_1
-			+ getTheoremLabel()
-			+ GMFFConstants.ERRMSG_WORK_STMT_CONSTRUCTOR_ERROR_1B
-			+ lineNbr
-			+ GMFFConstants.ERRMSG_WORK_STMT_CONSTRUCTOR_ERROR_2
-			+ e);
-	}
+    /* friendly */void triggerConstructorError(final String e,
+        final int lineNbr)
+    {
+        setStructuralErrors(true);
+        messages
+            .accumErrorMessage(GMFFConstants.ERRMSG_WORK_STMT_CONSTRUCTOR_ERROR_1
+                + getTheoremLabel()
+                + GMFFConstants.ERRMSG_WORK_STMT_CONSTRUCTOR_ERROR_1B
+                + lineNbr
+                + GMFFConstants.ERRMSG_WORK_STMT_CONSTRUCTOR_ERROR_2 + e);
+    }
 
-	/* friendly */ void triggerInvalidTheoremLabel(
-		                            String theoremLabel,
-	                                int    lineNbr) {
-		setStructuralErrors(true);
-		messages.accumErrorMessage(
-			GMFFConstants.ERRMSG_INVALID_THEOREM_LABEL_ERROR_1
-			+ theoremLabel
-			+ GMFFConstants.ERRMSG_INVALID_THEOREM_LABEL_ERROR_2
-			+ lineNbr);
-	}
+    /* friendly */void triggerInvalidTheoremLabel(final String theoremLabel,
+        final int lineNbr)
+    {
+        setStructuralErrors(true);
+        messages
+            .accumErrorMessage(GMFFConstants.ERRMSG_INVALID_THEOREM_LABEL_ERROR_1
+                + theoremLabel
+                + GMFFConstants.ERRMSG_INVALID_THEOREM_LABEL_ERROR_2 + lineNbr);
+    }
 
-	/* friendly */ void triggerInvalidHeaderConstants(int lineNbr) {
-		setStructuralErrors(true);
-		messages.accumErrorMessage(
-			GMFFConstants.ERRMSG_INVALID_HEADER_CONSTANTS_ERROR_1
-			+ getTheoremLabel()
-			+ GMFFConstants.ERRMSG_INVALID_HEADER_CONSTANTS_ERROR_1B
-			+ lineNbr);
-	}
+    /* friendly */void triggerInvalidHeaderConstants(final int lineNbr) {
+        setStructuralErrors(true);
+        messages
+            .accumErrorMessage(GMFFConstants.ERRMSG_INVALID_HEADER_CONSTANTS_ERROR_1
+                + getTheoremLabel()
+                + GMFFConstants.ERRMSG_INVALID_HEADER_CONSTANTS_ERROR_1B
+                + lineNbr);
+    }
 }

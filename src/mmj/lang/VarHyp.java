@@ -32,7 +32,8 @@
 
 package mmj.lang;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
 
 /**
  *  VarHyp -- Variable Hypothesis -- corresponds to
@@ -90,7 +91,7 @@ public class VarHyp extends Hyp {
      */
     public ParseNode paSubst;
 
-    private   boolean isWorkVarHypInd;
+    private boolean isWorkVarHypInd;
 
     /**
      *  Construct VarHyp using sequence number plus label,
@@ -105,28 +106,17 @@ public class VarHyp extends Hyp {
      *
      *  @throws LangException if duplicate, etc.
      */
-    public VarHyp(int     seq,
-                  Map     symTbl,
-                  Map     stmtTbl,
-                  String  varS,
-                  String  labelS,
-                  String  typS)
-                            throws LangException {
-        super(seq,
-              symTbl,
-              stmtTbl,
-              labelS,
-              true);   //true = "active"
+    public VarHyp(final int seq, final Map symTbl, final Map stmtTbl,
+        final String varS, final String labelS, final String typS)
+        throws LangException
+    {
+        super(seq, symTbl, stmtTbl, labelS, true); // true = "active"
 
-        formula = new VarHypFormula(symTbl,
-                                    typS,
-                                    varS);
+        formula = new VarHypFormula(symTbl, typS, varS);
 
-        if (getVar().getActiveVarHyp() != null) {
+        if (getVar().getActiveVarHyp() != null)
             throw new LangException(
-                LangConstants.ERRMSG_MULT_ACTIVE_HYP_FOR_VAR +
-                    labelS);
-        }
+                LangConstants.ERRMSG_MULT_ACTIVE_HYP_FOR_VAR + labelS);
 
     }
 
@@ -138,22 +128,19 @@ public class VarHyp extends Hyp {
      *  @param tempVarHypLabel     Stmt.label
      *  @param tempVarHypFormula   Stmt.formula
      */
-    protected VarHyp(int       tempVarHypSeq,
-                     String    tempVarHypLabel,
-                     Formula   tempVarHypFormula) {
+    protected VarHyp(final int tempVarHypSeq, final String tempVarHypLabel,
+        final Formula tempVarHypFormula)
+    {
 
-        super(tempVarHypSeq,
-              tempVarHypLabel,
-              tempVarHypFormula,
-              null,     // null tempVarHypParseTree for a moment...
-              true);    // true = "active"
+        super(tempVarHypSeq, tempVarHypLabel, tempVarHypFormula, null, // null
+                                                                       // tempVarHypParseTree
+                                                                       // for a
+                                                                       // moment...
+            true); // true = "active"
 
         getVar().setActiveVarHyp(this);
 
-        setExprParseTree(
-            new ParseTree(
-                new ParseNode(
-                    this)));
+        setExprParseTree(new ParseTree(new ParseNode(this)));
 
     }
 
@@ -167,13 +154,12 @@ public class VarHyp extends Hyp {
      *
      *  @param active true or false.
      */
-    public void setActive(boolean active) {
+    @Override
+    public void setActive(final boolean active) {
         this.active = active;
-        if (!active) {
+        if (!active)
             getVar().setActiveVarHyp(null);
-        }
     }
-
 
     /**
      *  Gets the Var for this VarHyp.
@@ -199,7 +185,7 @@ public class VarHyp extends Hyp {
      *
      *  @param var the new Var for the VarHypFormula.
      */
-    public void setVar(Var var) {
+    public void setVar(final Var var) {
         ((VarHypFormula)formula).setVarHypVar(var);
     }
 
@@ -210,6 +196,7 @@ public class VarHyp extends Hyp {
      *
      *  @return true
      */
+    @Override
     public boolean isVarHyp() {
         return true;
     }
@@ -219,6 +206,7 @@ public class VarHyp extends Hyp {
      *
      *  @return true or false
      */
+    @Override
     public boolean isWorkVarHyp() {
         return isWorkVarHypInd;
     }
@@ -228,8 +216,8 @@ public class VarHyp extends Hyp {
      *
      *  @param isWorkVarHypInd set to true is WorkVarHyp
      */
-    protected void setIsWorkVarHypInd(boolean isWorkVarHypInd) {
-        this.isWorkVarHypInd      = isWorkVarHypInd;
+    protected void setIsWorkVarHypInd(final boolean isWorkVarHypInd) {
+        this.isWorkVarHypInd = isWorkVarHypInd;
     }
 
     /**
@@ -239,6 +227,7 @@ public class VarHyp extends Hyp {
      *
      *  @return false.
      */
+    @Override
     public boolean isLogHyp() {
         return false;
     }
@@ -252,11 +241,11 @@ public class VarHyp extends Hyp {
      *
      *  @return Mandatory VarHyp Array for this VarHyp.
      */
+    @Override
     public VarHyp[] getMandVarHypArray() {
-        VarHyp[] vH = new VarHyp[0];
+        final VarHyp[] vH = new VarHyp[0];
         return vH;
     }
-
 
     /**
      *  Return the mandatory Hyp array length for this VarHyp.
@@ -264,6 +253,7 @@ public class VarHyp extends Hyp {
      *
      *  @return Mandatory VarHyp Array Length for this VarHyp.
      */
+    @Override
     public int getMandHypArrayLength() {
         return 0;
     }
@@ -314,17 +304,16 @@ public class VarHyp extends Hyp {
      *          appended to the input StringBuffer --
      *          or -1 if maxDepth or maxLength exceeded.
      */
-    public int renderParsedSubExpr(StringBuffer sb,
-                                   int          maxDepth,
-                                   int          maxLength,
-                                   ParseNode[]  child) {
+    @Override
+    public int renderParsedSubExpr(final StringBuffer sb, final int maxDepth,
+        final int maxLength, final ParseNode[] child)
+    {
 
-        String s                  = getVar().getId();
-        int    sLen               = s.length() + 1; //include ' '
+        final String s = getVar().getId();
+        final int sLen = s.length() + 1; // include ' '
 
-        if (sLen > maxLength) {
+        if (sLen > maxLength)
             return -1;
-        }
 
         sb.append(' ');
         sb.append(s);
@@ -343,29 +332,26 @@ public class VarHyp extends Hyp {
      *  @param varHypList  ArrayList of Var Hyps, updated here.
      *
      */
-    public void accumVarHypListBySeq(ArrayList varHypList) {
+    public void accumVarHypListBySeq(final ArrayList varHypList) {
 
-        int i           = 0;
-        int iEnd        = varHypList.size();
-        int newSeq      = this.seq;
+        int i = 0;
+        final int iEnd = varHypList.size();
+        final int newSeq = seq;
         int existingSeq;
 
         while (true) {
             if (i < iEnd) {
-                existingSeq       = ((VarHyp)varHypList.get(i)).seq;
-                if (newSeq < existingSeq) {
-                    //insert here, at "i"
+                existingSeq = ((VarHyp)varHypList.get(i)).seq;
+                if (newSeq < existingSeq)
+                    // insert here, at "i"
                     break;
-                }
-                if (newSeq == existingSeq) {
-                    //don't add, already here.
+                if (newSeq == existingSeq)
+                    // don't add, already here.
                     return;
-                }
             }
-            else {
-                //insert at end, which happens to be here at "i"
+            else
+                // insert at end, which happens to be here at "i"
                 break;
-            }
             ++i;
         }
         varHypList.add(i, this);
@@ -379,16 +365,14 @@ public class VarHyp extends Hyp {
      *  @param varHypList ArrayList of Var Hyps
      *  @return true if found, else false.
      */
-    public boolean containedInVarHypListBySeq(ArrayList varHypList) {
+    public boolean containedInVarHypListBySeq(final ArrayList varHypList) {
         VarHyp vH;
         for (int i = 0; i < varHypList.size(); i++) {
-            vH                    = (VarHyp)varHypList.get(i);
-            if (this.seq < vH.seq) {
+            vH = (VarHyp)varHypList.get(i);
+            if (seq < vH.seq)
                 break;
-            }
-            if (vH == this) {
+            if (vH == this)
                 return true;
-            }
         }
         return false;
     }

@@ -26,11 +26,9 @@
 
 package mmj.lang;
 
-import  java.util.ArrayList;
-import  java.util.Iterator;
-import  java.util.HashMap;
+import java.util.*;
 
-import  mmj.pa.DistinctVariablesStmt;
+import mmj.pa.DistinctVariablesStmt;
 
 /**
  *  Mandatory "Frame" of an Assrt (assertion).
@@ -46,8 +44,7 @@ public class MandFrame {
     /**
      *  Default Constructor.
      */
-    public MandFrame() {
-    }
+    public MandFrame() {}
 
     /**
      *  These are the "mandatories" that are referenced in an
@@ -59,14 +56,13 @@ public class MandFrame {
      *  Theorem plus the variable hypotheses for variables
      *  referenced by *those* logical hypotheses.
      */
-    public Hyp[]  hypArray;
+    public Hyp[] hypArray;
 
     /**
      *  These are the disjoint variable (pair)restrictions, if any,
      *  that apply to the Assrt and any of its proof steps.
      */
-    public DjVars[]  djVarsArray;
-
+    public DjVars[] djVarsArray;
 
     /**
      *  Checks to see if a certain pair of variables is
@@ -88,21 +84,18 @@ public class MandFrame {
      *
      *  @return true if param var pair in MandFrame DjVars array.
      */
-    public static boolean isVarPairInDjArray(MandFrame frame,
-                                             Var vLo,
-                                             Var vHi) {
+    public static boolean isVarPairInDjArray(final MandFrame frame, Var vLo,
+        Var vHi)
+    {
         Var vSwap;
-        if ((vLo.compareTo(vHi)) > 0) {
+        if (vLo.compareTo(vHi) > 0) {
             vSwap = vHi;
             vHi = vLo;
             vLo = vSwap;
         }
-        for (int i = 0; i < frame.djVarsArray.length; i++) {
-            if (frame.djVarsArray[i].varLo == vLo &&
-                frame.djVarsArray[i].varHi == vHi) {
+        for (final DjVars element : frame.djVarsArray)
+            if (element.varLo == vLo && element.varHi == vHi)
                 return true;
-            }
-        }
         return false;
     }
 
@@ -115,29 +108,24 @@ public class MandFrame {
      *  @return array of DjVars objects.
      */
     public static DjVars[] buildConsolidatedDvArray(
-               DistinctVariablesStmt[] distinctVariablesStmtArray) {
+        final DistinctVariablesStmt[] distinctVariablesStmtArray)
+    {
 
-        ArrayList dvArrayList     = new ArrayList();
+        final ArrayList dvArrayList = new ArrayList();
 
-        Var[][]   dvGroupArray    =
-            new Var[distinctVariablesStmtArray.length][];
-        for (int i = 0; i < distinctVariablesStmtArray.length; i++) {
-            dvGroupArray[i]       =
-                distinctVariablesStmtArray[i].getDv();
-        }
+        final Var[][] dvGroupArray = new Var[distinctVariablesStmtArray.length][];
+        for (int i = 0; i < distinctVariablesStmtArray.length; i++)
+            dvGroupArray[i] = distinctVariablesStmtArray[i].getDv();
 
         try {
-            MandFrame.loadDvGroupsIntoList(dvArrayList,
-                                           dvGroupArray);
-        }
-        catch (LangException e) {
-            //this should never happen because we're
-            //checking for dups and bypassing them,
-            //so blow up on this occurrence!
+            MandFrame.loadDvGroupsIntoList(dvArrayList, dvGroupArray);
+        } catch (final LangException e) {
+            // this should never happen because we're
+            // checking for dups and bypassing them,
+            // so blow up on this occurrence!
             throw new IllegalArgumentException(
-                LangConstants.
-                    ERRMSG_DUP_DJ_VARS_AFTER_CONSOLIDATION_ERR_1
-                + e.getMessage());
+                LangConstants.ERRMSG_DUP_DJ_VARS_AFTER_CONSOLIDATION_ERR_1
+                    + e.getMessage());
         }
 
         return DjVars.loadDjVarsArray(dvArrayList);
@@ -163,29 +151,24 @@ public class MandFrame {
      *  @param arrayList list of DjVars objects
      *  @param dvGroupArray array of Var[] arrays.
      */
-    public static void loadDvGroupsIntoList(ArrayList arrayList,
-                                            Var[][] dvGroupArray)
-                                       throws LangException {
+    public static void loadDvGroupsIntoList(final ArrayList arrayList,
+        final Var[][] dvGroupArray) throws LangException
+    {
         DjVars djVars;
-        int    found;
+        int found;
 
         if (dvGroupArray != null) {
             Var[] dvGroup;
-            for (int i = 0; i < dvGroupArray.length; i++) {
-                dvGroup           = dvGroupArray[i];
-                for (int j = 0; j < dvGroup.length - 1; j++) {
-                    for (int k = j + 1; k < dvGroup.length; k++) {
+            for (final Var[] element : dvGroupArray) {
+                dvGroup = element;
+                for (int j = 0; j < dvGroup.length - 1; j++)
+                    for (int k = j + 1; k < dvGroup.length; k++)
                         if (!dvGroup[j].equals(dvGroup[k])) {
-                            djVars
-                                  = new DjVars(dvGroup[j],
-                                               dvGroup[k]);
+                            djVars = new DjVars(dvGroup[j], dvGroup[k]);
                             found = arrayList.indexOf(djVars);
-                            if (found == -1) {
+                            if (found == -1)
                                 arrayList.add(djVars);
-                            }
                         }
-                    }
-                }
             }
         }
     }
@@ -223,13 +206,13 @@ public class MandFrame {
      *  equal to varHi.
      *  <p>
      */
-    public static ArrayList consolidateDvGroups(DjVars[] dvArray) {
+    public static ArrayList consolidateDvGroups(final DjVars[] dvArray) {
 
-        ArrayList     dvGroupList = new ArrayList(); //the output
+        final ArrayList dvGroupList = new ArrayList(); // the output
 
         // "done" is a parallel array for dvArray. done[i] set to
         // true when dvArray[i] has been stored in the output.
-        boolean[]  done           = new boolean[dvArray.length];
+        final boolean[] done = new boolean[dvArray.length];
 
         // "checked" is an ArrayList of Integers used to hold
         // the indexes of dvArray elements that match the
@@ -239,53 +222,50 @@ public class MandFrame {
         // corresponding dvArray elements can be marked "done" --
         // and if the candidate is rejected, the checked contents
         // are discarded (this saves an extra scan of dvArray).
-        ArrayList  checked        = new ArrayList();
+        final ArrayList checked = new ArrayList();
 
         // choices are to insert a new Var just *before* the end
         // of a dvGroup's last Var or *at* the end. See below...
-        boolean    insertInDvGroupBeforeEnd;
-        int        insertIndex;
+        boolean insertInDvGroupBeforeEnd;
+        int insertIndex;
 
         // currVarLoFirst and Last define a "chunk" of the
         // input wherein each DjVars object has a matching
         // varLo.
-        int        currVarLoFirst = 0;
-        int        currVarLoLast;
+        int currVarLoFirst = 0;
+        int currVarLoLast;
         Var currVarLo;
 
         // pass through the dvArray "chunks", one at a time.
         while (currVarLoFirst < dvArray.length) {
 
-            currVarLo             = dvArray[currVarLoFirst].varLo;
+            currVarLo = dvArray[currVarLoFirst].varLo;
 
             // here we find the index of the last dvArray element
             // in the "chunk" with a matching varLo
-            currVarLoLast         = currVarLoFirst + 1;
-            while (true) {
-                if (currVarLoLast < dvArray.length &&
-                    dvArray[currVarLoLast].varLo == currVarLo) {
+            currVarLoLast = currVarLoFirst + 1;
+            while (true)
+                if (currVarLoLast < dvArray.length
+                    && dvArray[currVarLoLast].varLo == currVarLo)
                     ++currVarLoLast;
-                }
                 else {
                     --currVarLoLast;
                     break;
                 }
-            }
 
             // for each dvArray element within the varLo
             // chunk (subset) of dvArray, create a new dvGroup --
             // unless the dvArray element is already marked "done":
             for (int i = currVarLoFirst; i <= currVarLoLast; i++) {
 
-                if (done[i]) {
+                if (done[i])
                     continue;
-                }
 
                 // the minimum length of a dvGroup is 2
-                ArrayList dvGroup = new ArrayList();
+                final ArrayList dvGroup = new ArrayList();
                 dvGroup.add(dvArray[i].varLo);
                 dvGroup.add(dvArray[i].varHi);
-                done[i]           = true;
+                done[i] = true;
 
                 // Now, for each dvArray element in
                 // the current chunk (has matching varLo),
@@ -293,45 +273,34 @@ public class MandFrame {
                 // every Var in the new dvGroup. If so, insert!
                 // Insert before end of DvGroup if j < i --
                 // otherwise at end.
-                insertInDvGroupBeforeEnd
-                                  = true;
-                for (int j  = currVarLoFirst;
-                         j <= currVarLoLast;
-                         j++) {
+                insertInDvGroupBeforeEnd = true;
+                for (int j = currVarLoFirst; j <= currVarLoLast; j++) {
                     if (j == i) {
-                        insertInDvGroupBeforeEnd
-                                  = false;
+                        insertInDvGroupBeforeEnd = false;
                         continue;
                     }
-                    if (MandFrame.areAllDisjoint(dvArray[j].varHi,
-                                                 dvGroup,
-                                                 dvArray,
-                                                 currVarLoLast,
-                                                 checked)) {
+                    if (MandFrame.areAllDisjoint(dvArray[j].varHi, dvGroup,
+                        dvArray, currVarLoLast, checked))
+                    {
 
-                        //success! consolidated another one!
-                        done[j]   = true;
+                        // success! consolidated another one!
+                        done[j] = true;
                         if (insertInDvGroupBeforeEnd) {
-                            insertIndex
-                                  = dvGroup.size() - 1;
-                            dvGroup.add(   //shift last Var right
+                            insertIndex = dvGroup.size() - 1;
+                            dvGroup.add( // shift last Var right
                                 dvGroup.get(insertIndex));
-                            dvGroup.set(   // add new prior to last
-                                insertIndex,
-                                dvArray[j].varHi) ;
+                            dvGroup.set( // add new prior to last
+                                insertIndex, dvArray[j].varHi);
                         }
-                        else {
+                        else
                             dvGroup.add(dvArray[j].varHi);
-                        }
 
                         // use "checked" to mark as "done" every
                         // dvArray element that participated --
                         // their disjoint variable restriction info
                         // is now reflected in the dvGroup's info!
-                        for (int k = 0; k < checked.size(); k++) {
-                            done[(Integer)checked.get(k)]
-                                  = true;
-                        }
+                        for (int k = 0; k < checked.size(); k++)
+                            done[(Integer)checked.get(k)] = true;
                     }
                 }
 
@@ -341,7 +310,7 @@ public class MandFrame {
                 dvGroupList.add(dvGroup);
             }
 
-            currVarLoFirst        = currVarLoLast + 1; //next chunk!
+            currVarLoFirst = currVarLoLast + 1; // next chunk!
         }
 
         return dvGroupList;
@@ -367,47 +336,36 @@ public class MandFrame {
      *  @param scopeDef ScopeDef, intended to be global scope.
      *  @param maxSeq MObj.seq must be < maxSeq
      */
-    public MandFrame(ScopeDef scopeDef,
-                     int      maxSeq) {
+    public MandFrame(final ScopeDef scopeDef, final int maxSeq) {
 
         ArrayList arrayList;
-        Iterator  iterator;
-        Hyp       hyp;
-        DjVars    djVars;
+        Iterator iterator;
+        Hyp hyp;
+        DjVars djVars;
 
         if (maxSeq < Integer.MAX_VALUE) {
-            arrayList                    =
-                new ArrayList(scopeDef.scopeVarHyp.size());
-            iterator              =
-                scopeDef.scopeVarHyp.iterator();
+            arrayList = new ArrayList(scopeDef.scopeVarHyp.size());
+            iterator = scopeDef.scopeVarHyp.iterator();
             while (iterator.hasNext()) {
-                hyp               = (Hyp)iterator.next();
-                if (hyp.getSeq() < maxSeq) {
+                hyp = (Hyp)iterator.next();
+                if (hyp.getSeq() < maxSeq)
                     arrayList.add(hyp);
-                }
             }
         }
-        else {
+        else
             arrayList = scopeDef.scopeVarHyp;
-        }
-        hypArray                  =
-            Assrt.loadHypArray(arrayList);
+        hypArray = Assrt.loadHypArray(arrayList);
 
-
-        arrayList                         =
-            new ArrayList(scopeDef.scopeDjVars.size());
-        iterator                  =
-                scopeDef.scopeDjVars.iterator();
+        arrayList = new ArrayList(scopeDef.scopeDjVars.size());
+        iterator = scopeDef.scopeDjVars.iterator();
         while (iterator.hasNext()) {
-            djVars                = (DjVars)iterator.next();
-            if (djVars.getVarLo().getSeq() < maxSeq &&
-                djVars.getVarHi().getSeq() < maxSeq) {
+            djVars = (DjVars)iterator.next();
+            if (djVars.getVarLo().getSeq() < maxSeq
+                && djVars.getVarHi().getSeq() < maxSeq)
                 arrayList.add(djVars);
-            }
         }
 
-        djVarsArray               =
-            DjVars.loadDjVarsArray(arrayList);
+        djVarsArray = DjVars.loadDjVarsArray(arrayList);
     }
 
     /**
@@ -421,40 +379,28 @@ public class MandFrame {
      *  @param mandFrame a Theorem's MandFrame
      *  @param optFrame  a Theorem's OptFrame
      */
-    public MandFrame(MandFrame mandFrame,
-                     OptFrame  optFrame) {
+    public MandFrame(final MandFrame mandFrame, final OptFrame optFrame) {
 
         ArrayList arrayList;
-        Hyp       hyp;
+        final Hyp hyp;
 
-        arrayList                 =
-                new ArrayList(mandFrame.hypArray.length
-                              +
-                              optFrame.optHypArray.length);
+        arrayList = new ArrayList(mandFrame.hypArray.length
+            + optFrame.optHypArray.length);
 
-        for (int i = 0; i < mandFrame.hypArray.length; i++) {
-            Assrt.accumHypInList(arrayList,
-                                 mandFrame.hypArray[i]);
-        }
-        for (int i = 0; i < optFrame.optHypArray.length; i++) {
-            Assrt.accumHypInList(arrayList,
-                                 optFrame.optHypArray[i]);
-        }
-        hypArray                  =
-            Assrt.loadHypArray(arrayList);
+        for (final Hyp element : mandFrame.hypArray)
+            Assrt.accumHypInList(arrayList, element);
+        for (final Hyp element : optFrame.optHypArray)
+            Assrt.accumHypInList(arrayList, element);
+        hypArray = Assrt.loadHypArray(arrayList);
 
-        djVarsArray               =
-            new DjVars[mandFrame.djVarsArray.length
-                          +
-                       optFrame.optDjVarsArray.length];
+        djVarsArray = new DjVars[mandFrame.djVarsArray.length
+            + optFrame.optDjVarsArray.length];
 
-        int djCnt                 = 0;
-        for (int i = 0; i < mandFrame.djVarsArray.length; i++) {
-            djVarsArray[djCnt++]  = mandFrame.djVarsArray[i];
-        }
-        for (int i = 0; i < optFrame.optDjVarsArray.length; i++) {
-            djVarsArray[djCnt++]  = optFrame.optDjVarsArray[i];
-        }
+        int djCnt = 0;
+        for (int i = 0; i < mandFrame.djVarsArray.length; i++)
+            djVarsArray[djCnt++] = mandFrame.djVarsArray[i];
+        for (final DjVars element : optFrame.optDjVarsArray)
+            djVarsArray[djCnt++] = element;
 
     }
 
@@ -471,26 +417,22 @@ public class MandFrame {
      * @return boolean -- true if both DjVars variables are present
      *                    in hypArray, otherwise false.
      */
-    public boolean areBothDjVarsInHypArray(DjVars djVars) {
+    public boolean areBothDjVarsInHypArray(final DjVars djVars) {
         boolean loFound = false;
         boolean hiFound = false;
-        Hyp     hyp;
-        VarHyp  varHyp;
+        final Hyp hyp;
+        VarHyp varHyp;
         for (int i = 0; i < hypArray.length; i++) {
-            if (!hypArray[i].isVarHyp()) {
+            if (!hypArray[i].isVarHyp())
                 continue;
-            }
 
-            varHyp                = (VarHyp)hypArray[i];
-            if (varHyp.getVar() == djVars.varLo) {
+            varHyp = (VarHyp)hypArray[i];
+            if (varHyp.getVar() == djVars.varLo)
                 loFound = true;
-            }
-            if (varHyp.getVar() == djVars.varHi) {
+            if (varHyp.getVar() == djVars.varHi)
                 hiFound = true;
-            }
-            if (loFound && hiFound) {
+            if (loFound && hiFound)
                 return true;
-            }
         }
         return false;
     }
@@ -507,30 +449,24 @@ public class MandFrame {
      *  @throws LangException if a two variables in a DvGroup
      *          are identical (e.g. [ph ph ch]).
      */
-    public void addDjVarGroups(Var[][] dvGroupArray) {
-        ArrayList arrayList       =
-            new ArrayList(djVarsArray.length +
-                          dvGroupArray.length);
-        for (int i = 0; i < djVarsArray.length; i++) {
-            arrayList.add(djVarsArray[i]);
-        }
+    public void addDjVarGroups(final Var[][] dvGroupArray) {
+        final ArrayList arrayList = new ArrayList(djVarsArray.length
+            + dvGroupArray.length);
+        for (final DjVars element : djVarsArray)
+            arrayList.add(element);
 
         try {
-            MandFrame.loadDvGroupsIntoList(arrayList,
-                                           dvGroupArray);
-        }
-        catch (LangException e) {
-            //this should never happen because we're
-            //checking for dups and bypassing them,
-            //so blow up on this occurrence!
+            MandFrame.loadDvGroupsIntoList(arrayList, dvGroupArray);
+        } catch (final LangException e) {
+            // this should never happen because we're
+            // checking for dups and bypassing them,
+            // so blow up on this occurrence!
             throw new IllegalArgumentException(
-                LangConstants.
-                    ERRMSG_DUP_DJ_VARS_AFTER_CONSOLIDATION_ERR_2
-                + e.getMessage());
+                LangConstants.ERRMSG_DUP_DJ_VARS_AFTER_CONSOLIDATION_ERR_2
+                    + e.getMessage());
         }
 
-        djVarsArray               =
-            DjVars.loadDjVarsArray(arrayList);
+        djVarsArray = DjVars.loadDjVarsArray(arrayList);
 
     }
 
@@ -550,18 +486,13 @@ public class MandFrame {
      *  @return HashMap of Vars for VarHyps in MandFrame.hypArray.
      */
     public HashMap getVarMap() {
-        HashMap varMap            =
-            new HashMap(((hypArray.length * 3) / 2)
-                         + 1);
-        Var    v;
-        for (int i = 0; i < hypArray.length; i++) {
-            if (hypArray[i].isVarHyp()) {
-                v                 =
-                    ((VarHyp)hypArray[i]).getVar();
-                varMap.put(v.getId(),
-                           v);
+        final HashMap varMap = new HashMap(hypArray.length * 3 / 2 + 1);
+        Var v;
+        for (final Hyp element : hypArray)
+            if (element.isVarHyp()) {
+                v = ((VarHyp)element).getVar();
+                varMap.put(v.getId(), v);
             }
-        }
         return varMap;
     }
 
@@ -587,39 +518,31 @@ public class MandFrame {
      *  all of the matches (dvArray is *also* sorted
      *  in ascending order.)
      */
-    private static boolean areAllDisjoint(
-                                    Var       dvArrayVar,
-                                    ArrayList dvGroup,
-                                    DjVars[]  dvArray,
-                                    int       searchIndex,
-                                    ArrayList checked) {
+    private static boolean areAllDisjoint(final Var dvArrayVar,
+        final ArrayList dvGroup, final DjVars[] dvArray, int searchIndex,
+        final ArrayList checked)
+    {
         checked.clear();
 
-
-        DjVars search             = new DjVars();
-        int    compare;
+        final DjVars search = new DjVars();
+        int compare;
         Loop1: for (int i = 1; i < dvGroup.size(); i++) {
 
-            search.varLo          = (Var)dvGroup.get(i);
+            search.varLo = (Var)dvGroup.get(i);
             if (search.varLo.compareTo(dvArrayVar) > 0) {
-                search.varHi      = search.varLo;
-                search.varLo      = dvArrayVar;
+                search.varHi = search.varLo;
+                search.varLo = dvArrayVar;
             }
-            else {
-                search.varHi    = dvArrayVar;
-            }
+            else
+                search.varHi = dvArrayVar;
 
             Loop2: while (true) {
-                if (++searchIndex >= dvArray.length) {
-                    return false; //not found
-                }
-                if ((compare =
-                     dvArray[searchIndex].compareTo(search))
-                    > 0) {
-                    return false; //not found
-                }
+                if (++searchIndex >= dvArray.length)
+                    return false; // not found
+                if ((compare = dvArray[searchIndex].compareTo(search)) > 0)
+                    return false; // not found
                 if (compare == 0) {
-                    //found!
+                    // found!
                     checked.add(new Integer(searchIndex));
                     continue Loop1;
                 }

@@ -6,7 +6,6 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-
 /**
  *  ProofWorksheetCache.java  0.01 11/01/2011
  *
@@ -16,9 +15,8 @@
 
 package mmj.gmff;
 
-import  mmj.pa.ProofWorksheet;
-import  mmj.lang.Messages;
-
+import mmj.lang.Messages;
+import mmj.pa.ProofWorksheet;
 
 /**
  *  <code>ProofWorksheetCache</code is an
@@ -36,10 +34,10 @@ import  mmj.lang.Messages;
  */
 public class ProofWorksheetCache {
 
-	public String            	proofText;
+    public String proofText;
 
-	public MinProofWorksheet 	cachedMinProofWorksheet = null;
-	public ProofWorksheet    	cachedProofWorksheet    = null;
+    public MinProofWorksheet cachedMinProofWorksheet = null;
+    public ProofWorksheet cachedProofWorksheet = null;
 
     /**
      *  Constructor for ProofWorksheetCache.
@@ -50,9 +48,9 @@ public class ProofWorksheetCache {
      *  @param proofText String data holding Proof Worksheet text.
      *
      */
-	public ProofWorksheetCache(String proofText) {
-		this.proofText            = proofText;
-	}
+    public ProofWorksheetCache(final String proofText) {
+        this.proofText = proofText;
+    }
 
     /**
      *  Loads the cached <code>MinProofWorksheet</code> using
@@ -63,20 +61,17 @@ public class ProofWorksheetCache {
      *  @return MinProofWorksheet either cached or newly loaded.
      *  @throws GMFFException if errors found during loading.
      */
-	public MinProofWorksheet loadMinProofWorksheet(Messages messages)
-	                 		throws GMFFException {
+    public MinProofWorksheet loadMinProofWorksheet(final Messages messages)
+        throws GMFFException
+    {
 
-		if (cachedMinProofWorksheet == null) {
+        if (cachedMinProofWorksheet == null) {
 
-			cachedMinProofWorksheet
-								=
-				new MinProofWorksheet(messages);
+            cachedMinProofWorksheet = new MinProofWorksheet(messages);
 
-			cachedMinProofWorksheet.
-				load(
-					proofText);
-		}
+            cachedMinProofWorksheet.load(proofText);
+        }
 
-		return cachedMinProofWorksheet;
-	}
+        return cachedMinProofWorksheet;
+    }
 }

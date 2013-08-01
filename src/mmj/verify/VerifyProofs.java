@@ -63,9 +63,9 @@
 
 package mmj.verify;
 
-import mmj.lang.*;
 import java.util.*;
-import java.io.*;
+
+import mmj.lang.*;
 
 /**
  *  VerifyProofs implements the proof verification process
@@ -138,59 +138,55 @@ import java.io.*;
  */
 public class VerifyProofs implements ProofVerifier {
 
+    private int retryCnt = -1;
 
-    private   int               retryCnt    = -1;
+    // *******************************************
+    // all following variables are work items used
+    // within a single execution but are stored
+    // globally to avoid having to pass around
+    // a bazillion call paramaters.
+    // *******************************************
 
+    private int pStackCnt;
+    private int pStackMax;
+    private int pStackHighwater;
+    private Formula[] pStack;
 
-    //*******************************************
-    //all following variables are work items used
-    //within a single execution but are stored
-    //globally to avoid having to pass around
-    //a bazillion call paramaters.
-    //*******************************************
+    // "work" expression/formula
+    private int wExprCnt;
+    private int wExprMax;
+    private int wExprHighwater;
+    private Sym[] wExpr;
 
-    private   int               pStackCnt;
-    private   int               pStackMax;
-    private   int               pStackHighwater;
-    private   Formula[]         pStack;
+    private int substCnt;
+    private int substMax;
+    private int substHighwater;
+    private SubstMapEntry[] subst;
 
-    //"work" expression/formula
-    private   int               wExprCnt;
-    private   int               wExprMax;
-    private   int               wExprHighwater;
-    private   Sym[]             wExpr;
+    private boolean isExprRPNVerify;
+    private Stmt proofStmt;
+    private String proofStmtLabel;
+    private Formula proofStmtFormula;
+    private MandFrame proofStmtFrame;
+    private OptFrame proofStmtOptFrame;
+    private Stmt[] proof;
 
-    private   int               substCnt;
-    private   int               substMax;
-    private   int               substHighwater;
-    private   SubstMapEntry[]   subst;
+    private boolean proofDjVarsSoftErrorsIgnore;
 
-    private   boolean           isExprRPNVerify;
-    private   Stmt              proofStmt;
-    private   String            proofStmtLabel;
-    private   Formula           proofStmtFormula;
-    private   MandFrame         proofStmtFrame;
-    private   OptFrame          proofStmtOptFrame;
-    private   Stmt[]            proof;
+    private ArrayList proofSoftDjVarsErrorList;
 
-    private   boolean           proofDjVarsSoftErrorsIgnore;
+    private MandFrame dummyMandFrame = new MandFrame();
+    private OptFrame dummyOptFrame = new OptFrame();
 
-    private   ArrayList         proofSoftDjVarsErrorList;
+    private Assrt stepAssrt;
+    private String stepLabel;
+    private Formula stepFormula;
+    private MandFrame stepFrame;
+    private Formula stepSubstFormula;
+    private int stepNbr;
+    private String stepNbrOutputString;
 
-
-
-    private   MandFrame         dummyMandFrame = new MandFrame();
-    private   OptFrame          dummyOptFrame  = new OptFrame();
-
-    private   Assrt             stepAssrt;
-    private   String            stepLabel;
-    private   Formula           stepFormula;
-    private   MandFrame         stepFrame;
-    private   Formula           stepSubstFormula;
-    private   int               stepNbr;
-    private   String            stepNbrOutputString;
-    //*******************************************
-
+    // *******************************************
 
     /**
      *  Constructor - default.
@@ -198,9 +194,8 @@ public class VerifyProofs implements ProofVerifier {
      */
     public VerifyProofs() {
 
-        //don't allocate the stacks until verification requested.
-        retryCnt                  = -1;
-
+        // don't allocate the stacks until verification requested.
+        retryCnt = -1;
 
         /**
          *  Load dummy MandFrame and OptFrame objects for
@@ -208,14 +203,12 @@ public class VerifyProofs implements ProofVerifier {
          *  engine.
          *
          */
-        dummyMandFrame            = new MandFrame();
-        dummyMandFrame.hypArray   = null; // <-load this for use...
-        dummyMandFrame.djVarsArray
-                                  = new DjVars[0];
-        dummyOptFrame             = new OptFrame();
+        dummyMandFrame = new MandFrame();
+        dummyMandFrame.hypArray = null; // <-load this for use...
+        dummyMandFrame.djVarsArray = new DjVars[0];
+        dummyOptFrame = new OptFrame();
         dummyOptFrame.optHypArray = new Hyp[0];
-        dummyOptFrame.optDjVarsArray
-                                  = new DjVars[0];
+        dummyOptFrame.optDjVarsArray = new DjVars[0];
 
     }
 
@@ -225,26 +218,23 @@ public class VerifyProofs implements ProofVerifier {
      *  @param messages Messages object for output error messages.
      *  @param stmtTbl  Statement Table (map).
      */
-    public void verifyAllProofs(Messages messages,
-                                Map      stmtTbl) {
+    @Override
+    public void verifyAllProofs(final Messages messages, final Map stmtTbl) {
 
-        Collection stmtTblColl = stmtTbl.values();
+        final Collection stmtTblColl = stmtTbl.values();
 
-        Iterator i = stmtTblColl.iterator();
+        final Iterator i = stmtTblColl.iterator();
         Stmt stmt;
         String errMsg;
-        while (i.hasNext() &&
-               !messages.maxErrorMessagesReached()) {
+        while (i.hasNext() && !messages.maxErrorMessagesReached()) {
             stmt = (Stmt)i.next();
             if (stmt instanceof Theorem) {
                 errMsg = verifyOneProof((Theorem)stmt);
-                if (errMsg != null) {
+                if (errMsg != null)
                     messages.accumErrorMessage(errMsg);
-                }
             }
         }
     }
-
 
     /**
      *  Verify a single proof.
@@ -253,43 +243,37 @@ public class VerifyProofs implements ProofVerifier {
      *
      *  @return String error message if error(s), or null.
      */
-    public String verifyOneProof(Theorem theorem) {
+    @Override
+    public String verifyOneProof(final Theorem theorem) {
 
-        String  errMsg            = null;
-        boolean needToRetry       = true;
+        String errMsg = null;
+        boolean needToRetry = true;
 
         try {
             reInitArrays(0);
-            while (needToRetry) {
+            while (needToRetry)
                 try {
-                    errMsg        = null;
+                    errMsg = null;
                     loadTheoremGlobalVerifyVars(theorem);
-                    proofDjVarsSoftErrorsIgnore
-                                  = false;
-                    proofSoftDjVarsErrorList
-                                  = null;
+                    proofDjVarsSoftErrorsIgnore = false;
+                    proofSoftDjVarsErrorList = null;
 
                     verifyProof();
-                    needToRetry   = false;
-                }
-                catch(ArrayIndexOutOfBoundsException e) {
+                    needToRetry = false;
+                } catch (final ArrayIndexOutOfBoundsException e) {
                     ++retryCnt;
                     reInitArrays(retryCnt);
+                } catch (final VerifyException e) {
+                    needToRetry = false;
+                    errMsg = e.getMessage();
                 }
-                catch(VerifyException e) {
-                    needToRetry   = false;
-                    errMsg        = e.getMessage();
-                }
-            }
-        }
-        catch(VerifyException e) {
+        } catch (final VerifyException e) {
             errMsg = e.getMessage();
         }
 
         return errMsg;
 
     }
-
 
     /**
      *  Verify all Statements' grammatical parse RPNs.
@@ -302,23 +286,22 @@ public class VerifyProofs implements ProofVerifier {
      *  @param messages Messages object for output error messages.
      *  @param stmtTbl  Statement Table (map).
      */
-    public void verifyAllExprRPNAsProofs(Messages messages,
-                                         Map      stmtTbl) {
+    @Override
+    public void verifyAllExprRPNAsProofs(final Messages messages,
+        final Map stmtTbl)
+    {
 
-        Collection stmtTblColl = stmtTbl.values();
-        Iterator i = stmtTblColl.iterator();
+        final Collection stmtTblColl = stmtTbl.values();
+        final Iterator i = stmtTblColl.iterator();
         Stmt stmt;
         String errMsg;
-        while (i.hasNext() &&
-               !messages.maxErrorMessagesReached()) {
+        while (i.hasNext() && !messages.maxErrorMessagesReached()) {
             stmt = (Stmt)i.next();
             errMsg = verifyExprRPNAsProof(stmt);
-            if (errMsg != null) {
+            if (errMsg != null)
                 messages.accumErrorMessage(errMsg);
-            }
         }
     }
-
 
     /**
      *  Verify grammatical parse RPN as if it were a proof.
@@ -332,44 +315,37 @@ public class VerifyProofs implements ProofVerifier {
      *
      *  @return String error message if error(s), or null.
      */
-    public String verifyExprRPNAsProof(Stmt exprRPNStmt) {
+    @Override
+    public String verifyExprRPNAsProof(final Stmt exprRPNStmt) {
 
-        String  errMsg            = null;
-        boolean needToRetry       = true;
+        String errMsg = null;
+        boolean needToRetry = true;
 
         try {
             reInitArrays(0);
-            while (needToRetry) {
+            while (needToRetry)
                 try {
-                    errMsg        = null;
+                    errMsg = null;
                     loadExprRPNGlobalVerifyVars(exprRPNStmt);
-                    proofDjVarsSoftErrorsIgnore
-                                  = false;
-                    proofSoftDjVarsErrorList
-                                  = null;
+                    proofDjVarsSoftErrorsIgnore = false;
+                    proofSoftDjVarsErrorList = null;
                     verifyProof();
-                    needToRetry   = false;
-                }
-                catch(ArrayIndexOutOfBoundsException e) {
+                    needToRetry = false;
+                } catch (final ArrayIndexOutOfBoundsException e) {
                     ++retryCnt;
                     reInitArrays(retryCnt);
+                } catch (final VerifyException e) {
+                    needToRetry = false;
+                    errMsg = ProofConstants.ERRMSG_RPN_VERIFY_AS_PROOF_FAILURE
+                        + e.getMessage();
                 }
-                catch(VerifyException e) {
-                    needToRetry   = false;
-                    errMsg        =
-                     ProofConstants.ERRMSG_RPN_VERIFY_AS_PROOF_FAILURE
-                     + e.getMessage();
-                }
-            }
-        }
-        catch(VerifyException e) {
-            errMsg                = e.getMessage();
+        } catch (final VerifyException e) {
+            errMsg = e.getMessage();
         }
 
         return errMsg;
 
     }
-
 
     /**
      *  Verify a single proof derivation step.
@@ -392,56 +368,47 @@ public class VerifyProofs implements ProofVerifier {
      *  @return String error message if error(s), or null.
      */
     public String verifyDerivStepProof(
-                                String    derivStepStmtLabel, //theorem
-                                Formula   derivStepFormula,
-                                ParseTree derivStepProofTree,
-                                MandFrame derivStepComboFrame) {
+        final String derivStepStmtLabel, // theorem
+        final Formula derivStepFormula, final ParseTree derivStepProofTree,
+        final MandFrame derivStepComboFrame)
+    {
 
-        isExprRPNVerify           = false;
+        isExprRPNVerify = false;
 
-        proofStmt                 = null; //not needed.
-        proofStmtLabel            = derivStepStmtLabel; //theorem
-        proofStmtFormula          = derivStepFormula;
-        proof                     =
-            derivStepProofTree.convertToRPN();
-        proofStmtFrame            = derivStepComboFrame;
-        proofStmtOptFrame         = dummyOptFrame;
+        proofStmt = null; // not needed.
+        proofStmtLabel = derivStepStmtLabel; // theorem
+        proofStmtFormula = derivStepFormula;
+        proof = derivStepProofTree.convertToRPN();
+        proofStmtFrame = derivStepComboFrame;
+        proofStmtOptFrame = dummyOptFrame;
 
-        String  errMsg            = null;
-        boolean needToRetry       = true;
+        String errMsg = null;
+        boolean needToRetry = true;
 
         try {
             reInitArrays(0);
-            while (needToRetry) {
+            while (needToRetry)
                 try {
-                    errMsg        = null;
-                    proofDjVarsSoftErrorsIgnore
-                                  = false;
-                    proofSoftDjVarsErrorList
-                                  = null;
+                    errMsg = null;
+                    proofDjVarsSoftErrorsIgnore = false;
+                    proofSoftDjVarsErrorList = null;
                     verifyProof();
-                    needToRetry   = false;
-                }
-                catch(ArrayIndexOutOfBoundsException e) {
+                    needToRetry = false;
+                } catch (final ArrayIndexOutOfBoundsException e) {
                     ++retryCnt;
                     reInitArrays(retryCnt);
+                } catch (final VerifyException e) {
+                    needToRetry = false;
+                    errMsg = ProofConstants.ERRMSG_DERIV_STEP_PROOF_FAILURE
+                        + e.getMessage();
                 }
-                catch(VerifyException e) {
-                    needToRetry   = false;
-                    errMsg        =
-                     ProofConstants.ERRMSG_DERIV_STEP_PROOF_FAILURE
-                     + e.getMessage();
-                }
-            }
-        }
-        catch(VerifyException e) {
+        } catch (final VerifyException e) {
             errMsg = e.getMessage();
         }
 
         return errMsg;
 
     }
-
 
     /**
      *  Verify that a single proof derivation step
@@ -472,62 +439,53 @@ public class VerifyProofs implements ProofVerifier {
      *  @return String error message if error(s), or null.
      */
     public String verifyDerivStepDjVars(
-                        String      derivStepNbr,
-                        String      derivStepStmtLabel, //theorem
-                        Assrt       derivStepRef,
-                        ParseNode[] derivStepAssrtSubst,
-                        MandFrame   derivStepComboFrame,
-                        boolean     djVarsSoftErrorsIgnore,
-                        boolean     djVarsSoftErrorsGenerateNew,
-                        ArrayList   softDjVarsErrorList) {
+        final String derivStepNbr,
+        final String derivStepStmtLabel, // theorem
+        final Assrt derivStepRef, final ParseNode[] derivStepAssrtSubst,
+        final MandFrame derivStepComboFrame,
+        final boolean djVarsSoftErrorsIgnore,
+        final boolean djVarsSoftErrorsGenerateNew,
+        final ArrayList softDjVarsErrorList)
+    {
 
-        stepNbrOutputString       = derivStepNbr;
-        stepAssrt                 = derivStepRef;
-        stepLabel                 = stepAssrt.getLabel(); //ref label
-        stepFrame                 = derivStepRef.getMandFrame();
-        proofStmt                 = null; //not needed.
-        proofStmtLabel            = derivStepStmtLabel;   //theorem
-        proofStmtFrame            = derivStepComboFrame;
-        proofStmtOptFrame         = dummyOptFrame;
+        stepNbrOutputString = derivStepNbr;
+        stepAssrt = derivStepRef;
+        stepLabel = stepAssrt.getLabel(); // ref label
+        stepFrame = derivStepRef.getMandFrame();
+        proofStmt = null; // not needed.
+        proofStmtLabel = derivStepStmtLabel; // theorem
+        proofStmtFrame = derivStepComboFrame;
+        proofStmtOptFrame = dummyOptFrame;
 
-        proofDjVarsSoftErrorsIgnore
-                                  = djVarsSoftErrorsIgnore;
+        proofDjVarsSoftErrorsIgnore = djVarsSoftErrorsIgnore;
 
-        proofSoftDjVarsErrorList  = softDjVarsErrorList;
+        proofSoftDjVarsErrorList = softDjVarsErrorList;
 
-
-        String  errMsg            = null;
-        boolean needToRetry       = true;
+        String errMsg = null;
+        boolean needToRetry = true;
 
         try {
             reInitArrays(0);
-            while (needToRetry) {
+            while (needToRetry)
                 try {
                     errMsg = null;
                     loadDerivStepDjVarsSubst(derivStepAssrtSubst);
                     if (substCnt > 0) {
-                        if (djVarsSoftErrorsGenerateNew) {
+                        if (djVarsSoftErrorsGenerateNew)
                             // do not use existing $d's
-                            proofStmtFrame
-                                  = dummyMandFrame;
-                        }
+                            proofStmtFrame = dummyMandFrame;
                         checkDjVars();
                     }
-                    needToRetry   = false;
-                }
-                catch(ArrayIndexOutOfBoundsException e) {
+                    needToRetry = false;
+                } catch (final ArrayIndexOutOfBoundsException e) {
                     ++retryCnt;
-                    proofStmtFrame
-                                  = derivStepComboFrame; //reset
+                    proofStmtFrame = derivStepComboFrame; // reset
                     reInitArrays(retryCnt);
+                } catch (final VerifyException e) {
+                    needToRetry = false;
+                    errMsg = e.getMessage();
                 }
-                catch(VerifyException e) {
-                    needToRetry   = false;
-                    errMsg        = e.getMessage();
-                }
-            }
-        }
-        catch(VerifyException e) {
+        } catch (final VerifyException e) {
             errMsg = e.getMessage();
         }
 
@@ -553,58 +511,40 @@ public class VerifyProofs implements ProofVerifier {
      *  @return ArrayList of ProofDerivationStepEntry objects.
      *  @throws VerifyException if the proof is invalid.
      */
-    public ArrayList getProofDerivationSteps(
-                                        Theorem theorem,
-                                        boolean exportFormatUnified,
-                                        boolean hypsRandomized,
-                                        Cnst    provableLogicStmtTyp)
-                            throws VerifyException {
+    public ArrayList getProofDerivationSteps(final Theorem theorem,
+        final boolean exportFormatUnified, final boolean hypsRandomized,
+        final Cnst provableLogicStmtTyp) throws VerifyException
+    {
 
-        ArrayList derivStepList   = null;
+        ArrayList derivStepList = null;
 
-        LogHyp[]  theoremLogHypArray
-                                  = theorem.getLogHypArray();
-        ProofDerivationStepEntry[] theoremHypStepArray
-                                  =
-            new ProofDerivationStepEntry[theoremLogHypArray.length];
+        final LogHyp[] theoremLogHypArray = theorem.getLogHypArray();
+        final ProofDerivationStepEntry[] theoremHypStepArray = new ProofDerivationStepEntry[theoremLogHypArray.length];
         for (int i = 0; i < theoremLogHypArray.length; i++) {
-            ProofDerivationStepEntry e
-                                  = new ProofDerivationStepEntry();
-            e.isHyp               = true;
-            e.step                = Integer.toString(i + 1);
-            e.hypStep             = new String[0];
-            e.refLabel            =
-                theoremLogHypArray[i].getLabel();
-            e.formula             =
-                theoremLogHypArray[i].getFormula();
-            e.formulaParseTree    =
-                theoremLogHypArray[i].getExprParseTree();
+            final ProofDerivationStepEntry e = new ProofDerivationStepEntry();
+            e.isHyp = true;
+            e.step = Integer.toString(i + 1);
+            e.hypStep = new String[0];
+            e.refLabel = theoremLogHypArray[i].getLabel();
+            e.formula = theoremLogHypArray[i].getFormula();
+            e.formulaParseTree = theoremLogHypArray[i].getExprParseTree();
 
-            theoremHypStepArray[i]
-                                  = e;
+            theoremHypStepArray[i] = e;
         }
 
-        boolean   needToRetry     = true;
+        boolean needToRetry = true;
         reInitArrays(0);
-        while (needToRetry) {
+        while (needToRetry)
             try {
                 loadTheoremGlobalVerifyVars(theorem);
-                derivStepList     = new ArrayList();
-                loadProofDerivStepList(theorem,
-                                       derivStepList,
-                                       theoremHypStepArray,
-                                       exportFormatUnified,
-                                       hypsRandomized,
-                                       provableLogicStmtTyp);
-                needToRetry       = false;
-            }
-            catch(IllegalArgumentException e) {
-            }
-        }
+                derivStepList = new ArrayList();
+                loadProofDerivStepList(theorem, derivStepList,
+                    theoremHypStepArray, exportFormatUnified, hypsRandomized,
+                    provableLogicStmtTyp);
+                needToRetry = false;
+            } catch (final IllegalArgumentException e) {}
 
-        ProofDerivationStepEntry.
-            computeProofLevels(
-                derivStepList);
+        ProofDerivationStepEntry.computeProofLevels(derivStepList);
 
         return derivStepList;
 
@@ -621,88 +561,68 @@ public class VerifyProofs implements ProofVerifier {
      *  <p>
      *  This is a clone of verifyProof()!!!!
      */
-    private void loadProofDerivStepList(
-                    Theorem                    theorem,
-                    ArrayList                  derivStepList,
-                    ProofDerivationStepEntry[] theoremHypStepArray,
-                    boolean                    exportFormatUnified,
-                    boolean                    hypsRandomized,
-                    Cnst                       provableLogicStmtTyp)
-                                    throws VerifyException {
+    private void loadProofDerivStepList(final Theorem theorem,
+        final ArrayList derivStepList,
+        final ProofDerivationStepEntry[] theoremHypStepArray,
+        final boolean exportFormatUnified, final boolean hypsRandomized,
+        final Cnst provableLogicStmtTyp) throws VerifyException
+    {
 
-        for (int i = 0; i < theoremHypStepArray.length; i++) {
-            derivStepList.add(theoremHypStepArray[i]);
-        }
+        for (final ProofDerivationStepEntry element : theoremHypStepArray)
+            derivStepList.add(element);
 
-        Stack undischargedStack   = new Stack();
+        final Stack undischargedStack = new Stack();
 
-        nextStep: for (stepNbr = 0;
-                       stepNbr < proof.length;
-                       stepNbr++) {
+        nextStep: for (stepNbr = 0; stepNbr < proof.length; stepNbr++) {
 
-            if (proof[stepNbr] == null) {
-                raiseVerifyException(
-                    Integer.toString(stepNbr + 1),
-                    " ",
+            if (proof[stepNbr] == null)
+                raiseVerifyException(Integer.toString(stepNbr + 1), " ",
                     ProofConstants.ERRMSG_PROOF_STEP_INCOMPLETE);
-            }
 
-            stepFormula           = proof[stepNbr].getFormula();
-            stepLabel             = proof[stepNbr].getLabel();
+            stepFormula = proof[stepNbr].getFormula();
+            stepLabel = proof[stepNbr].getLabel();
             if (proof[stepNbr].isHyp()) {
-                pStack[pStackCnt++]
-                                  = stepFormula;
+                pStack[pStackCnt++] = stepFormula;
                 if (proof[stepNbr].isLogHyp()) {
-                    int i         = 0;
+                    int i = 0;
                     while (i < theoremHypStepArray.length) {
-                        if (stepLabel.equals(
-                                theoremHypStepArray[i].refLabel)) {
-                            undischargedStack.push(
-                                theoremHypStepArray[i]);
+                        if (stepLabel.equals(theoremHypStepArray[i].refLabel)) {
+                            undischargedStack.push(theoremHypStepArray[i]);
                             break;
                         }
                         ++i;
                     }
-                    if (i >= theoremHypStepArray.length) {
+                    if (i >= theoremHypStepArray.length)
                         raiseVerifyException(
                             Integer.toString(stepNbr + 1),
                             stepLabel,
-                            ProofConstants.
-                                ERRMSG_BOGUS_PROOF_LOGHYP_STMT_1
-                            + proofStmtLabel
-                            + ProofConstants.
-                                ERRMSG_BOGUS_PROOF_LOGHYP_STMT_2
-                            + stepLabel
-                            + ProofConstants.
-                                ERRMSG_BOGUS_PROOF_LOGHYP_STMT_3);
-                    }
+                            ProofConstants.ERRMSG_BOGUS_PROOF_LOGHYP_STMT_1
+                                + proofStmtLabel
+                                + ProofConstants.ERRMSG_BOGUS_PROOF_LOGHYP_STMT_2
+                                + stepLabel
+                                + ProofConstants.ERRMSG_BOGUS_PROOF_LOGHYP_STMT_3);
                 }
                 continue nextStep;
             }
 
-            stepAssrt             = (Assrt)(proof[stepNbr]);
-            stepFrame             = stepAssrt.getMandFrame();
-            if (stepFrame.hypArray.length == 0) {  //constant
-                pStack[pStackCnt++]
-                                  = stepFormula;
+            stepAssrt = (Assrt)proof[stepNbr];
+            stepFrame = stepAssrt.getMandFrame();
+            if (stepFrame.hypArray.length == 0) { // constant
+                pStack[pStackCnt++] = stepFormula;
                 if (stepFormula.getTyp() != provableLogicStmtTyp
-                    ||
-                   (stepAssrt.isAxiom()
-                    &&
-                    ((Axiom)stepAssrt).getIsSyntaxAxiom())) {
-                    //ok, bypass syntax axioms and syntax theorems
+                    || stepAssrt.isAxiom()
+                    && ((Axiom)stepAssrt).getIsSyntaxAxiom())
+                {
+                    // ok, bypass syntax axioms and syntax theorems
                 }
                 else {
-                    ProofDerivationStepEntry e
-                                  = new ProofDerivationStepEntry();
-                    e.isHyp       = false;
-                    e.step        =
-                        Integer.toString(derivStepList.size() + 1);
-                    e.hypStep     = new String[0];
-                    if (exportFormatUnified) {
-                        e.refLabel    = stepLabel;
-                    }
-                    e.formula     = stepFormula;
+                    final ProofDerivationStepEntry e = new ProofDerivationStepEntry();
+                    e.isHyp = false;
+                    e.step = Integer.toString(derivStepList.size() + 1);
+                    e.hypStep = new String[0];
+                    if (exportFormatUnified)
+                        e.refLabel = stepLabel;
+                    e.formula = stepFormula;
                     derivStepList.add(e);
                     undischargedStack.push(e);
                 }
@@ -712,121 +632,92 @@ public class VerifyProofs implements ProofVerifier {
             findUniqueSubstMapping();
 
             pStackCnt -= stepFrame.hypArray.length;
-            if (pStackCnt < 0) {
-                raiseVerifyException(
-                    Integer.toString(stepNbr + 1),
-                    stepLabel,
+            if (pStackCnt < 0)
+                raiseVerifyException(Integer.toString(stepNbr + 1), stepLabel,
                     ProofConstants.ERRMSG_PROOF_STACK_UNDERFLOW);
-            }
 
-            stepSubstFormula    = applySubstMapping(stepFormula);
+            stepSubstFormula = applySubstMapping(stepFormula);
             pStack[pStackCnt++] = stepSubstFormula;
 
             if (stepFormula.getTyp() != provableLogicStmtTyp
-                ||
-               (stepAssrt.isAxiom()
-                &&
-                ((Axiom)stepAssrt).getIsSyntaxAxiom())) {
-                //ok, bypass syntax axioms and syntax theorems
+                || stepAssrt.isAxiom() && ((Axiom)stepAssrt).getIsSyntaxAxiom())
+            {
+                // ok, bypass syntax axioms and syntax theorems
             }
             else {
-                ProofDerivationStepEntry e
-                                  = new ProofDerivationStepEntry();
-                e.isHyp           = false;
-                e.step            =
-                    Integer.toString(derivStepList.size() + 1);
-                int logHypCnt     = stepAssrt.getLogHypArrayLength();
-                e.hypStep         = new String[logHypCnt];
-                int i             = logHypCnt;
-                if (i > undischargedStack.size()) {
-                    raiseVerifyException(
-                        Integer.toString(stepNbr + 1),
+                final ProofDerivationStepEntry e = new ProofDerivationStepEntry();
+                e.isHyp = false;
+                e.step = Integer.toString(derivStepList.size() + 1);
+                final int logHypCnt = stepAssrt.getLogHypArrayLength();
+                e.hypStep = new String[logHypCnt];
+                int i = logHypCnt;
+                if (i > undischargedStack.size())
+                    raiseVerifyException(Integer.toString(stepNbr + 1),
                         stepLabel,
                         ProofConstants.ERRMSG_LOGHYP_STACK_DEFICIENT_1
                             + proofStmtLabel
-                            + ProofConstants.
-                                  ERRMSG_LOGHYP_STACK_DEFICIENT_1);
-                }
+                            + ProofConstants.ERRMSG_LOGHYP_STACK_DEFICIENT_1);
                 while (--i >= 0) {
-                    ProofDerivationStepEntry h
-                                  =
-                        (ProofDerivationStepEntry)
-                            undischargedStack.pop();
-                    e.hypStep[i]  = h.step;
+                    final ProofDerivationStepEntry h = (ProofDerivationStepEntry)undischargedStack
+                        .pop();
+                    e.hypStep[i] = h.step;
                 }
-                if (hypsRandomized) {
+                if (hypsRandomized)
                     doRandomizeHypSteps(e.hypStep);
-                }
-                if (exportFormatUnified) {
-                    e.refLabel    = stepLabel;
-                }
-                e.formula         = stepSubstFormula;
+                if (exportFormatUnified)
+                    e.refLabel = stepLabel;
+                e.formula = stepSubstFormula;
                 derivStepList.add(e);
                 undischargedStack.push(e);
             }
         }
 
-        if (pStackCnt != 1) {
-            if (proof.length == 0) {
-                raiseVerifyException(
-                    Integer.toString(stepNbr),
-                    " ",
+        if (pStackCnt != 1)
+            if (proof.length == 0)
+                raiseVerifyException(Integer.toString(stepNbr), " ",
                     ProofConstants.ERRMSG_PROOF_HAS_ZERO_STEPS);
-            }
-            else {
-                raiseVerifyException(
-                    Integer.toString(stepNbr),
-                    " ",
+            else
+                raiseVerifyException(Integer.toString(stepNbr), " ",
                     ProofConstants.ERRMSG_PROOF_STACK_GT_1_AT_END);
-            }
-        }
 
-        if (!proofStmtFormula.equals(pStack[0])) {
+        if (!proofStmtFormula.equals(pStack[0]))
             raiseVerifyException(
                 Integer.toString(stepNbr + 1),
                 " ",
                 ProofConstants.ERRMSG_FINAL_STACK_ENTRY_UNEQUAL2
-                + pStack[0].toString());
-        }
+                    + pStack[0].toString());
 
 //      PATCH: Release 11/01/2011 bugfix
 //      if (derivStepList.size() == 0) {
-		if (derivStepList.size() <= theoremHypStepArray.length) {
-//      END-PATCH
-            raiseVerifyException(
-                Integer.toString(stepNbr),
-                " ",
-                ProofConstants.ERRMSG_NO_DERIV_STEPS_CREATED_1
-                + proofStmtLabel
-                + ProofConstants.ERRMSG_NO_DERIV_STEPS_CREATED_2);
-        }
+        if (derivStepList.size() <= theoremHypStepArray.length)
+            // END-PATCH
+            raiseVerifyException(Integer.toString(stepNbr), " ",
+                ProofConstants.ERRMSG_NO_DERIV_STEPS_CREATED_1 + proofStmtLabel
+                    + ProofConstants.ERRMSG_NO_DERIV_STEPS_CREATED_2);
         else {
-            int qedIndex          = derivStepList.size() - 1;
-            ProofDerivationStepEntry qedStep
-                                  =
-                (ProofDerivationStepEntry)derivStepList.get(qedIndex);
-            qedStep.step          = ProofConstants.QED_STEP_NBR;
-            qedStep.formulaParseTree
-                                  = theorem.getExprParseTree();
+            final int qedIndex = derivStepList.size() - 1;
+            final ProofDerivationStepEntry qedStep = (ProofDerivationStepEntry)derivStepList
+                .get(qedIndex);
+            qedStep.step = ProofConstants.QED_STEP_NBR;
+            qedStep.formulaParseTree = theorem.getExprParseTree();
         }
     }
 
-    private void doRandomizeHypSteps(String[] hypStep) {
-        if (hypStep.length < 2) {
+    private void doRandomizeHypSteps(final String[] hypStep) {
+        if (hypStep.length < 2)
             return;
-        }
 
         String s;
 
-        int    swap;
+        int swap;
 
-        Random random             = new Random(System.nanoTime());
+        final Random random = new Random(System.nanoTime());
 
         for (int i = 0; i < hypStep.length; i++) {
-            swap                  = random.nextInt(hypStep.length);
-            s                     = hypStep[swap];
-            hypStep[swap]         = hypStep[i];
-            hypStep[i]            = s;
+            swap = random.nextInt(hypStep.length);
+            s = hypStep[swap];
+            hypStep[swap] = hypStep[i];
+            hypStep[i] = s;
         }
     }
 
@@ -841,89 +732,74 @@ public class VerifyProofs implements ProofVerifier {
      *  array elements corresponding to variable hypotheses
      *  in the stepAssrt's hypArray (ignoring LogHyp entries).
      */
-    private void loadDerivStepDjVarsSubst(
-                    ParseNode[] derivStepAssrtSubst) {
+    private void loadDerivStepDjVarsSubst(final ParseNode[] derivStepAssrtSubst)
+    {
 
-        Hyp[]       hypArray      = stepFrame.hypArray;
+        final Hyp[] hypArray = stepFrame.hypArray;
 
-        Stack       nodeStack     = new Stack();
+        final Stack nodeStack = new Stack();
 
-        ParseNode   node;
+        ParseNode node;
         ParseNode[] child;
 
-        substCnt                  = 0;
+        substCnt = 0;
         for (int i = 0; i < hypArray.length; i++) {
-            if (!hypArray[i].isVarHyp()) {
+            if (!hypArray[i].isVarHyp())
                 continue;
-            }
 
-            wExprCnt              = 0;
+            wExprCnt = 0;
             nodeStack.push(derivStepAssrtSubst[i]);
-            while(!nodeStack.isEmpty()) {
-                node               = (ParseNode)nodeStack.pop();
-                if (node.getStmt().isVarHyp()) {
-                    wExpr[wExprCnt++]
-                                   =
-                        (Sym)(((VarHyp)node.getStmt()).getVar());
-                }
+            while (!nodeStack.isEmpty()) {
+                node = (ParseNode)nodeStack.pop();
+                if (node.getStmt().isVarHyp())
+                    wExpr[wExprCnt++] = ((VarHyp)node.getStmt()).getVar();
                 else {
-                    child              = node.getChild();
-                    for (int j = 0; j < child.length; j++) {
-                        nodeStack.push(child[j]);
-                    }
+                    child = node.getChild();
+                    for (final ParseNode element : child)
+                        nodeStack.push(element);
                 }
             }
-            if (wExprCnt == 0) {
+            if (wExprCnt == 0)
                 continue;
-            }
 
-            if (subst[substCnt] == null) {
-                subst[substCnt]   = new SubstMapEntry();
-            }
-            subst[substCnt].substFrom
-                                  =
-                (Sym)(((VarHyp)stepFrame.hypArray[i]).getVar());
+            if (subst[substCnt] == null)
+                subst[substCnt] = new SubstMapEntry();
+            subst[substCnt].substFrom = ((VarHyp)stepFrame.hypArray[i])
+                .getVar();
 
-            Sym[] s               = new Sym[wExprCnt];
-            for (int w = 0; w < wExprCnt; w++) {
-                s[w]              = wExpr[w];
-            }
-            subst[substCnt].substTo
-                                  = s;
+            final Sym[] s = new Sym[wExprCnt];
+            for (int w = 0; w < wExprCnt; w++)
+                s[w] = wExpr[w];
+            subst[substCnt].substTo = s;
             ++substCnt;
         }
     }
 
-    private   void loadTheoremGlobalVerifyVars(
-                                Theorem theoremToProve) {
-        isExprRPNVerify           = false;
-        proofStmt                 = theoremToProve;
-        proofStmtLabel            = theoremToProve.getLabel();
-        proofStmtFormula          = theoremToProve.getFormula();
-        proof                     = theoremToProve.getProof();
-        proofStmtFrame            = theoremToProve.getMandFrame();
-        proofStmtOptFrame         = theoremToProve.getOptFrame();
+    private void loadTheoremGlobalVerifyVars(final Theorem theoremToProve) {
+        isExprRPNVerify = false;
+        proofStmt = theoremToProve;
+        proofStmtLabel = theoremToProve.getLabel();
+        proofStmtFormula = theoremToProve.getFormula();
+        proof = theoremToProve.getProof();
+        proofStmtFrame = theoremToProve.getMandFrame();
+        proofStmtOptFrame = theoremToProve.getOptFrame();
     }
 
-    private   void loadExprRPNGlobalVerifyVars(
-                                Stmt exprRPNStmt) {
-        isExprRPNVerify           = true;
-        proofStmt                 = exprRPNStmt;
-        proofStmtLabel            = exprRPNStmt.getLabel();
-        proofStmtFormula          = exprRPNStmt.getFormula();
-        proof                     = exprRPNStmt.getExprRPN();
+    private void loadExprRPNGlobalVerifyVars(final Stmt exprRPNStmt) {
+        isExprRPNVerify = true;
+        proofStmt = exprRPNStmt;
+        proofStmtLabel = exprRPNStmt.getLabel();
+        proofStmtFormula = exprRPNStmt.getFormula();
+        proof = exprRPNStmt.getExprRPN();
 
-        if (proof == null) {
-            throw new IllegalArgumentException(
-                "Proof is null for Stmt ="
+        if (proof == null)
+            throw new IllegalArgumentException("Proof is null for Stmt ="
                 + exprRPNStmt.getLabel());
-        }
 
-        dummyMandFrame.hypArray   = exprRPNStmt.getMandVarHypArray();
-        proofStmtFrame            = dummyMandFrame;
-        proofStmtOptFrame         = dummyOptFrame;
+        dummyMandFrame.hypArray = exprRPNStmt.getMandVarHypArray();
+        proofStmtFrame = dummyMandFrame;
+        proofStmtOptFrame = dummyOptFrame;
     }
-
 
     /**
      * <code>verifyProof</code>
@@ -956,19 +832,13 @@ public class VerifyProofs implements ProofVerifier {
      *        reallocate arrays with larger size...<br>
      * </code>
      */
-    private   void verifyProof()
-                                        throws VerifyException {
+    private void verifyProof() throws VerifyException {
 
-        nextStep: for (stepNbr = 0;
-                       stepNbr < proof.length;
-                       stepNbr++) {
+        nextStep: for (stepNbr = 0; stepNbr < proof.length; stepNbr++) {
 
-            if (proof[stepNbr] == null) {
-                raiseVerifyException(
-                    Integer.toString(stepNbr + 1),
-                    " ",
+            if (proof[stepNbr] == null)
+                raiseVerifyException(Integer.toString(stepNbr + 1), " ",
                     ProofConstants.ERRMSG_PROOF_STEP_INCOMPLETE);
-            }
 
             stepFormula = proof[stepNbr].getFormula();
             if (proof[stepNbr].isHyp()) {
@@ -976,7 +846,7 @@ public class VerifyProofs implements ProofVerifier {
                 continue nextStep;
             }
 
-            stepAssrt = (Assrt)(proof[stepNbr]);
+            stepAssrt = (Assrt)proof[stepNbr];
             stepFrame = stepAssrt.getMandFrame();
             if (stepFrame.hypArray.length == 0) {
                 pStack[pStackCnt++] = stepFormula;
@@ -991,53 +861,37 @@ public class VerifyProofs implements ProofVerifier {
              *  Optimization: don't go thru checkDjVars needlessly.
              */
             if (stepFrame.djVarsArray.length > 0) {
-                stepNbrOutputString
-                                  = Integer.toString(stepNbr + 1);
+                stepNbrOutputString = Integer.toString(stepNbr + 1);
                 checkDjVars();
             }
 
             pStackCnt -= stepFrame.hypArray.length;
-            if (pStackCnt < 0) {
-                raiseVerifyException(
-                    Integer.toString(stepNbr + 1),
-                    stepLabel,
+            if (pStackCnt < 0)
+                raiseVerifyException(Integer.toString(stepNbr + 1), stepLabel,
                     ProofConstants.ERRMSG_PROOF_STACK_UNDERFLOW);
-            }
 
-            stepSubstFormula    = applySubstMapping(stepFormula);
+            stepSubstFormula = applySubstMapping(stepFormula);
             pStack[pStackCnt++] = stepSubstFormula;
 
         }
 
-        if (pStackCnt != 1) {
-            if (proof.length == 0) {
-                raiseVerifyException(
-                    Integer.toString(stepNbr),
-                    " ",
+        if (pStackCnt != 1)
+            if (proof.length == 0)
+                raiseVerifyException(Integer.toString(stepNbr), " ",
                     ProofConstants.ERRMSG_PROOF_HAS_ZERO_STEPS);
-            }
-            else {
-                raiseVerifyException(
-                    Integer.toString(stepNbr),
-                    " ",
+            else
+                raiseVerifyException(Integer.toString(stepNbr), " ",
                     ProofConstants.ERRMSG_PROOF_STACK_GT_1_AT_END);
-            }
-        }
 
-        if (!proofStmtFormula.equals(pStack[0])) {
-            if (isExprRPNVerify &&
-                proofStmtFormula.exprEquals(pStack[0])) {
-            }
-            else {
+        if (!proofStmtFormula.equals(pStack[0]))
+            if (isExprRPNVerify && proofStmtFormula.exprEquals(pStack[0])) {}
+            else
                 raiseVerifyException(
                     Integer.toString(stepNbr + 1),
                     " ",
                     ProofConstants.ERRMSG_FINAL_STACK_ENTRY_UNEQUAL
-                    + pStack[0].toString());
-            }
-        }
+                        + pStack[0].toString());
     }
-
 
     /**
      * <code>findUniqueSubstMapping</code>
@@ -1071,88 +925,68 @@ public class VerifyProofs implements ProofVerifier {
      * output: VerifyException thrown if DjVars (restriction)
      *         violation found.
      */
-    private   void findUniqueSubstMapping()
-                            throws VerifyException {
+    private void findUniqueSubstMapping() throws VerifyException {
 
-        Hyp     hyp;
-        Var     var;
+        Hyp hyp;
+        final Var var;
         Formula workFormula;
 
-        substCnt            = stepFrame.hypArray.length;
-        int stackMatchBegin = pStackCnt - substCnt;
+        substCnt = stepFrame.hypArray.length;
+        final int stackMatchBegin = pStackCnt - substCnt;
 
-        if (stackMatchBegin < 0) { //Bugfix for 11/01/2006 Release
-            raiseVerifyException(
-                Integer.toString(stepNbr + 1),
-                stepLabel,
-                ProofConstants.
-                    ERRMSG_STACK_SIZE_MISMATCH_FOR_STEP_HYPS);
-        }
+        if (stackMatchBegin < 0)
+            raiseVerifyException(Integer.toString(stepNbr + 1), stepLabel,
+                ProofConstants.ERRMSG_STACK_SIZE_MISMATCH_FOR_STEP_HYPS);
 
         // 1) scan stepFrame.hypArray, pulling out VarHyp's and
-        //    creating the subst array entries for them (subst
-        //    is parallel by index to hypArray and pStack, with
-        //    unused entries left null...initially.)
-        nextHyp: for (int i = 0, pStackIndex = stackMatchBegin;
-                      i < substCnt;
-                      i++, pStackIndex++) {
+        // creating the subst array entries for them (subst
+        // is parallel by index to hypArray and pStack, with
+        // unused entries left null...initially.)
+        nextHyp: for (int i = 0, pStackIndex = stackMatchBegin; i < substCnt; i++, pStackIndex++)
+        {
             hyp = stepFrame.hypArray[i];
-            if (hyp.getTyp() != pStack[pStackIndex].getTyp()) {
+            if (hyp.getTyp() != pStack[pStackIndex].getTyp())
                 raiseVerifyException(
                     Integer.toString(stepNbr + 1),
                     stepLabel,
                     ProofConstants.ERRMSG_HYP_TYP_MISMATCH_STACK_TYP
-                    + hyp.getTyp()
-                    + ProofConstants.ERRMSG_STACK_ITEM_TYP
-                    + pStack[pStackIndex].getTyp());
-            }
+                        + hyp.getTyp() + ProofConstants.ERRMSG_STACK_ITEM_TYP
+                        + pStack[pStackIndex].getTyp());
             if (!hyp.isVarHyp()) {
                 subst[i] = null;
                 continue nextHyp;
             }
 
-            if (subst[i] == null) {
-                subst[i] = new SubstMapEntry(
-                                   (Sym)(((VarHyp)hyp).getVar()),
-                                   pStack[pStackIndex].getExpr());
-            }
+            if (subst[i] == null)
+                subst[i] = new SubstMapEntry(((VarHyp)hyp).getVar(),
+                    pStack[pStackIndex].getExpr());
             else {
-                subst[i].substFrom =
-                            (Sym)(((VarHyp)hyp).getVar());
-                subst[i].substTo   =
-                            pStack[pStackIndex].getExpr();
+                subst[i].substFrom = ((VarHyp)hyp).getVar();
+                subst[i].substTo = pStack[pStackIndex].getExpr();
             }
 
         }
 
         // 2) now! go back through hypArray applying the generated
-        //    substitutions to the non-VarHyp formulas -- which are
-        //    then compared to the corresponding entries on pStack
-        //    to make sure the substitutions "work"...and that the
-        //    proofstep is therefore "legal".
-        nextLogHyp: for (int i = 0, pStackIndex = stackMatchBegin;
-                         i < substCnt;
-                         i++, pStackIndex++) {
+        // substitutions to the non-VarHyp formulas -- which are
+        // then compared to the corresponding entries on pStack
+        // to make sure the substitutions "work"...and that the
+        // proofstep is therefore "legal".
+        nextLogHyp: for (int i = 0, pStackIndex = stackMatchBegin; i < substCnt; i++, pStackIndex++)
+        {
 
             hyp = stepFrame.hypArray[i];
-            if (hyp.isVarHyp()) {
+            if (hyp.isVarHyp())
                 continue nextLogHyp;
-            }
             workFormula = applySubstMapping(hyp.getFormula());
-            if (!workFormula.equals(pStack[pStackIndex])) {
-                raiseVerifyException(
-                    Integer.toString(stepNbr + 1),
-                    stepLabel,
+            if (!workFormula.equals(pStack[pStackIndex]))
+                raiseVerifyException(Integer.toString(stepNbr + 1), stepLabel,
                     ProofConstants.ERRMSG_STEP_LOG_HYP_SUBST_UNEQUAL
-                    + ProofConstants.ERRMSG_STACK
-                    + pStack[pStackIndex]
-                    + ProofConstants.ERRMSG_SUBST_HYP
-                    + workFormula);
-            }
+                        + ProofConstants.ERRMSG_STACK + pStack[pStackIndex]
+                        + ProofConstants.ERRMSG_SUBST_HYP + workFormula);
 
         }
     }
-
 
     /**
      * <code>applySubstMapping</code>
@@ -1169,38 +1003,31 @@ public class VerifyProofs implements ProofVerifier {
      * NOTE: DO NOT substitute for the Type constant at the beginning
      *       of the formula.
      */
-    private   Formula applySubstMapping(Formula f) {
+    private Formula applySubstMapping(final Formula f) {
         SubstMapEntry substMapEntry;
-        Sym           fSym;
-        int           fCnt      = f.getCnt();
-        Sym[]         fSymArray = f.getSym();
-        wExpr[0]                = fSymArray[0];
-        wExprCnt                = 1;
+        Sym fSym;
+        final int fCnt = f.getCnt();
+        final Sym[] fSymArray = f.getSym();
+        wExpr[0] = fSymArray[0];
+        wExprCnt = 1;
 
         nextFSym: for (int i = 1; i < fCnt; i++) {
             fSym = fSymArray[i];
             nextSubst: for (int j = 0; j < substCnt; j++) {
-                if ((substMapEntry = subst[j]) == null) {
-                    //this wasn't a VarHyp subst entry
+                if ((substMapEntry = subst[j]) == null)
+                    // this wasn't a VarHyp subst entry
                     continue nextSubst;
-                }
                 if (fSym == substMapEntry.substFrom) {
-                    for (int k = 0;
-                         k < substMapEntry.substTo.length;
-                         k++) {
-                        wExpr[wExprCnt++] = substMapEntry.substTo[k];
-                    }
+                    for (final Sym element : substMapEntry.substTo)
+                        wExpr[wExprCnt++] = element;
                     continue nextFSym;
                 }
             }
-            wExpr[wExprCnt++] = fSym; //no subst, use orig sym!
+            wExpr[wExprCnt++] = fSym; // no subst, use orig sym!
         }
 
-        return (new Formula(wExprCnt,
-                            wExpr));
+        return new Formula(wExprCnt, wExpr);
     }
-
-
 
     /**
      * <code>checkDjVars</code>
@@ -1229,71 +1056,28 @@ public class VerifyProofs implements ProofVerifier {
      *         violation found!
      *
      */
-    private   void checkDjVars()
-                                throws VerifyException {
+    private void checkDjVars() throws VerifyException {
 
+        // 1) see if any pairs of variables in subst[].substFrom are
+        // listed as DjVars in the proof step's stepFrame
 
-        //1) see if any pairs of variables in subst[].substFrom are
-        //   listed as DjVars in the proof step's stepFrame
+        final int xMax = substCnt - 1;
+        final int yMax = xMax + 1;
 
-        int xMax   = substCnt - 1;
-        int yMax   = xMax + 1;
-
-        for (int fromX = 0; fromX < xMax; fromX++) {
-            if (subst[fromX] != null) {
-                for (int fromY = fromX + 1; fromY < yMax; fromY++) {
-                    if (subst[fromY] != null) {
-                        if (!MandFrame.isVarPairInDjArray(
-                              stepFrame,
-                              (Var)(subst[fromX].substFrom),
-                              (Var)(subst[fromY].substFrom))) {
-                        // sigh...whew...not a DjVars pair being
-                        // substituted!
+        for (int fromX = 0; fromX < xMax; fromX++)
+            if (subst[fromX] != null)
+                for (int fromY = fromX + 1; fromY < yMax; fromY++)
+                    if (subst[fromY] != null)
+                        if (!MandFrame.isVarPairInDjArray(stepFrame,
+                            (Var)subst[fromX].substFrom,
+                            (Var)subst[fromY].substFrom))
+                        {
+                            // sigh...whew...not a DjVars pair being
+                            // substituted!
                         }
-                        else {
-
-                        //2) ok! we see that fromX and fromY in
-                        //   substFrom[] are listed as a DjVars pair
-                        //   by the theorem referenced in the proof
-                        //   step! (Complicated? It gets worse...)
-                        //
-                        //   A) So, now...make sure that the "to"
-                        //    expressions do not have any variables in
-                        //    common (i.e. "a + u" and "b + u" would
-                        //    be a violation on the "u").
-                        //
-                        //   AND...(hang tough...the horror show is
-                        //   almost over now...just one more Labor of
-                        //   Hercules...)
-                        //
-                        //   B) we must check that each possible pair
-                        //   of variables, taken one each from substTo
-                        //   [fromX] and substTo[fromY], has a
-                        //   corresponding DjVars restriction in the
-                        //   mand/opt frames of the theorem being
-                        //   proved! ...the tension builds...will the
-                        //   CPU melt? will the bearings on the CPU
-                        //   fan hold out for just a bit longer???
-                        //
-                        //throws VerifyException if common vars found...
-
+                        else
                             checkSubstToVars(fromX, fromY);
-
-
-                        //3) It's a miracle. We made it. Let's take a
-                        //   5 millisecond coffee break...before doing
-                        //   the next pair of vars in this proof
-                        //   step... perhaps the JVM has some garbage
-                        //   collecion he wants to do...
-                        //
-                        //      // <(;-)
-                        }
-                    }
-                }
-            }
-        }
     }
-
 
     /**
      * <code>checkSubstToVars</code>
@@ -1336,97 +1120,67 @@ public class VerifyProofs implements ProofVerifier {
      *         violation found!
      *
      */
-    private   void checkSubstToVars(int x,
-                                    int y)
-                                            throws VerifyException {
+    private void checkSubstToVars(final int x, final int y)
+        throws VerifyException
+    {
         Sym symI;
         Sym symJ;
         for (int i = 0; i < subst[x].substTo.length; i++) {
             symI = subst[x].substTo[i];
-            if (symI.isVar()) {
-                nextSymJ: for (int j = 0;
-                               j < subst[y].substTo.length;
-                               j++) {
+            if (symI.isVar())
+                nextSymJ: for (int j = 0; j < subst[y].substTo.length; j++) {
                     symJ = subst[y].substTo[j];
-                    if (!symJ.isVar()) {
+                    if (!symJ.isVar())
                         continue nextSymJ;
-                    }
-                    if (symI == symJ) {
-                        raiseVerifyException(
-                            stepNbrOutputString,
-                            stepLabel,
-                            ProofConstants.ERRMSG_SUBST_TO_VARS_MATCH
-                            + symI
-                            + ProofConstants.ERRMSG_EQUALS_LITERAL
-                            + symJ);
-                    }
+                    if (symI == symJ)
+                        raiseVerifyException(stepNbrOutputString, stepLabel,
+                            ProofConstants.ERRMSG_SUBST_TO_VARS_MATCH + symI
+                                + ProofConstants.ERRMSG_EQUALS_LITERAL + symJ);
 
-                    //this is for the benefit of ProofAsst...
-                    if (proofDjVarsSoftErrorsIgnore) {
+                    // this is for the benefit of ProofAsst...
+                    if (proofDjVarsSoftErrorsIgnore)
                         continue nextSymJ;
-                    }
 
-                    if (!MandFrame.isVarPairInDjArray(
-                            proofStmtFrame,
-                            (Var)symI,
-                            (Var)symJ)
-                        &&
-                        !OptFrame.isVarPairInDjArray(
-                            proofStmtOptFrame,
-                            (Var)symI,
-                            (Var)symJ)
-                        &&  // don't report "soft" Dj WorkVar errors
+                    if (!MandFrame.isVarPairInDjArray(proofStmtFrame,
+                        (Var)symI, (Var)symJ)
+                        && !OptFrame.isVarPairInDjArray(proofStmtOptFrame,
+                            (Var)symI, (Var)symJ)
+                        && // don't report "soft" Dj WorkVar errors
                         !((Var)symI).getIsWorkVar()
-                        &&
-                        !((Var)symJ).getIsWorkVar()
-                        ) {
-                        //this is for the benefit of ProofAsst...
+                        && !((Var)symJ).getIsWorkVar())
+                    {
+                        // this is for the benefit of ProofAsst...
                         if (proofSoftDjVarsErrorList != null) {
                             try {
-                                proofSoftDjVarsErrorList.
-                                    add(
-                                        new DjVars(
-                                            (Var)symI,
-                                            (Var)symJ));
-                            }
-                            catch(LangException e) {
+                                proofSoftDjVarsErrorList.add(new DjVars(
+                                    (Var)symI, (Var)symJ));
+                            } catch (final LangException e) {
                                 throw new IllegalArgumentException(e);
                             }
                             continue nextSymJ;
                         }
 
-                        raiseVerifyException(
-                            stepNbrOutputString,
-                            stepLabel,
-                            ProofConstants.ERRMSG_SUBST_TO_VARS_NOT_DJ
-                            + symI
-                            + ProofConstants.ERRMSG_AND_LITERAL
-                            + symJ);
+                        raiseVerifyException(stepNbrOutputString, stepLabel,
+                            ProofConstants.ERRMSG_SUBST_TO_VARS_NOT_DJ + symI
+                                + ProofConstants.ERRMSG_AND_LITERAL + symJ);
                     }
                 }
-
-            }
         }
     }
 
-
-    public void raiseVerifyException(String stepNbrIndexString,
-                                     String stepLabel,
-                                     String errmsg)
-                                        throws VerifyException {
-        throw new VerifyException(errmsg
-            + ProofConstants.ERRMSG_THEOREM_LABEL
-            + proofStmtLabel
-            + ProofConstants.ERRMSG_THEOREM_STEP_NBR
-            + stepNbrIndexString
-            + ProofConstants.ERRMSG_THEOREM_STEP_LABEL
+    public void raiseVerifyException(final String stepNbrIndexString,
+        final String stepLabel, final String errmsg) throws VerifyException
+    {
+        throw new VerifyException(errmsg + ProofConstants.ERRMSG_THEOREM_LABEL
+            + proofStmtLabel + ProofConstants.ERRMSG_THEOREM_STEP_NBR
+            + stepNbrIndexString + ProofConstants.ERRMSG_THEOREM_STEP_LABEL
             + stepLabel);
     }
 
-    //*
+    // *
     // *******attempting to dynamically resize arrays as needed...
-    //        in the face of the unknowable.
-    //*
+    // in the face of the unknowable.
+    // *
     public int getPStackHighwater() {
         return pStackHighwater;
     }
@@ -1437,119 +1191,95 @@ public class VerifyProofs implements ProofVerifier {
         return substHighwater;
     }
 
-    private   void reInitArrays(int retry) throws VerifyException {
+    private void reInitArrays(final int retry) throws VerifyException {
         if (retryCnt == -1) {
             initArrays();
             return;
         }
         retryCnt = retry;
 
-        if (pStackCnt > pStackHighwater) {
+        if (pStackCnt > pStackHighwater)
             pStackHighwater = pStackCnt;
-        }
-        if (wExprCnt > wExprHighwater) {
+        if (wExprCnt > wExprHighwater)
             wExprHighwater = wExprCnt;
-        }
-        if (substCnt > wExprHighwater) {
+        if (substCnt > wExprHighwater)
             substHighwater = substCnt;
-        }
 
         if (retry == 0) {
             pStackCnt = 0;
-            wExprCnt  = 0;
-            substCnt  = 0;
+            wExprCnt = 0;
+            substCnt = 0;
             return;
         }
 
         if (pStackMax < ProofConstants.PROOF_PSTACK_HARD_FAILURE_LEN) {
             if (pStackMax < pStackCnt + 10) {
                 pStackMax *= 2;
-                if (pStackMax >
-                        ProofConstants.PROOF_PSTACK_HARD_FAILURE_LEN) {
-                    pStackMax =
-                        ProofConstants.PROOF_PSTACK_HARD_FAILURE_LEN;
-                }
+                if (pStackMax > ProofConstants.PROOF_PSTACK_HARD_FAILURE_LEN)
+                    pStackMax = ProofConstants.PROOF_PSTACK_HARD_FAILURE_LEN;
                 pStack = new Formula[pStackMax];
             }
             pStackCnt = 0;
         }
-        else {
+        else
             throw new VerifyException(
-                ProofConstants.ERRMSG_PSTACK_ARRAY_OVERFLOW
-                    + pStackMax
-                    + ProofConstants.ERRMSG_THEOREM_LABEL
-                    + proofStmtLabel);
-        }
+                ProofConstants.ERRMSG_PSTACK_ARRAY_OVERFLOW + pStackMax
+                    + ProofConstants.ERRMSG_THEOREM_LABEL + proofStmtLabel);
 
         if (wExprMax < ProofConstants.PROOF_WEXPR_HARD_FAILURE_LEN) {
             if (wExprMax < wExprCnt + 10) {
                 wExprMax *= 2;
-                if (wExprMax >
-                        ProofConstants.PROOF_WEXPR_HARD_FAILURE_LEN) {
-                    wExprMax =
-                        ProofConstants.PROOF_WEXPR_HARD_FAILURE_LEN;
-                }
+                if (wExprMax > ProofConstants.PROOF_WEXPR_HARD_FAILURE_LEN)
+                    wExprMax = ProofConstants.PROOF_WEXPR_HARD_FAILURE_LEN;
                 wExpr = new Sym[wExprMax];
             }
             wExprCnt = 0;
         }
-        else {
+        else
             throw new VerifyException(
-                ProofConstants.ERRMSG_WEXPR_ARRAY_OVERFLOW
-                    + wExprMax
-                    + ProofConstants.ERRMSG_THEOREM_LABEL
-                    + proofStmtLabel);
-        }
+                ProofConstants.ERRMSG_WEXPR_ARRAY_OVERFLOW + wExprMax
+                    + ProofConstants.ERRMSG_THEOREM_LABEL + proofStmtLabel);
 
         if (substMax < ProofConstants.PROOF_SUBST_HARD_FAILURE_LEN) {
             if (substMax < substCnt + 10) {
                 substMax *= 2;
-                if (substMax >
-                        ProofConstants.PROOF_SUBST_HARD_FAILURE_LEN) {
-                    substMax =
-                        ProofConstants.PROOF_SUBST_HARD_FAILURE_LEN;
-                }
+                if (substMax > ProofConstants.PROOF_SUBST_HARD_FAILURE_LEN)
+                    substMax = ProofConstants.PROOF_SUBST_HARD_FAILURE_LEN;
                 subst = new SubstMapEntry[substMax];
-                for (int i = 0; i < substMax; i++) {
+                for (int i = 0; i < substMax; i++)
                     subst[i] = new SubstMapEntry();
-                }
             }
             substCnt = 0;
         }
-        else {
+        else
             throw new VerifyException(
-                ProofConstants.ERRMSG_SUBST_ARRAY_OVERFLOW
-                    + substMax
-                    + ProofConstants.ERRMSG_THEOREM_LABEL
-                    + proofStmtLabel);
-        }
+                ProofConstants.ERRMSG_SUBST_ARRAY_OVERFLOW + substMax
+                    + ProofConstants.ERRMSG_THEOREM_LABEL + proofStmtLabel);
 
-        if (retryCnt > ProofConstants.PROOF_ABSOLUTE_MAX_RETRIES) {
+        if (retryCnt > ProofConstants.PROOF_ABSOLUTE_MAX_RETRIES)
             throw new IllegalArgumentException(
                 ProofConstants.ERRMSG_PROOF_ABS_MAX_RETRY_EXCEEDED);
-        }
     }
 
-    private   void initArrays() {
-        retryCnt        = 0;
+    private void initArrays() {
+        retryCnt = 0;
 
-        pStackCnt       = 0;
-        pStackMax       = ProofConstants.PROOF_PSTACK_INIT_LEN;
+        pStackCnt = 0;
+        pStackMax = ProofConstants.PROOF_PSTACK_INIT_LEN;
         pStackHighwater = 0;
-        pStack          = new Formula[pStackMax];
+        pStack = new Formula[pStackMax];
 
-        wExprCnt        = 0;
-        wExprMax        = ProofConstants.PROOF_WEXPR_INIT_LEN;
-        wExprHighwater  = 0;
-        wExpr           = new Sym[wExprMax];
+        wExprCnt = 0;
+        wExprMax = ProofConstants.PROOF_WEXPR_INIT_LEN;
+        wExprHighwater = 0;
+        wExpr = new Sym[wExprMax];
 
-        substCnt        = 0;
-        substMax        = ProofConstants.PROOF_SUBST_INIT_LEN;
-        substHighwater  = 0;
-        subst           = new SubstMapEntry[substMax];
-        for (int i = 0; i < substMax; i++) {
+        substCnt = 0;
+        substMax = ProofConstants.PROOF_SUBST_INIT_LEN;
+        substHighwater = 0;
+        subst = new SubstMapEntry[substMax];
+        for (int i = 0; i < substMax; i++)
             subst[i] = new SubstMapEntry();
-        }
     }
 
     /**
@@ -1560,112 +1290,87 @@ public class VerifyProofs implements ProofVerifier {
      *
      *  @return Formula generated from RPN
      */
-    public Formula convertRPNToFormula(
-                                Stmt[] formulaRPN,
-                                String stepLabelForMessages) {
+    public Formula convertRPNToFormula(final Stmt[] formulaRPN,
+        final String stepLabelForMessages)
+    {
 
-        proof                     = formulaRPN;
-        proofStmtLabel            = stepLabelForMessages;
+        proof = formulaRPN;
+        proofStmtLabel = stepLabelForMessages;
 
-        String  errMsg            = null;
-        boolean needToRetry       = true;
+        String errMsg = null;
+        boolean needToRetry = true;
 
-        Formula out               = null;
+        Formula out = null;
         try {
             reInitArrays(0);
-            while (needToRetry) {
+            while (needToRetry)
                 try {
-                    errMsg        = null;
-                    out           = generateFormulaFromRPN();
-                    needToRetry   = false;
-                }
-                catch(ArrayIndexOutOfBoundsException e) {
+                    errMsg = null;
+                    out = generateFormulaFromRPN();
+                    needToRetry = false;
+                } catch (final ArrayIndexOutOfBoundsException e) {
                     ++retryCnt;
                     reInitArrays(retryCnt);
-                }
-                catch(VerifyException e) {
+                } catch (final VerifyException e) {
                     needToRetry = false;
-                    errMsg      = e.getMessage();
+                    errMsg = e.getMessage();
                 }
-            }
-        }
-        catch(VerifyException e) {
+        } catch (final VerifyException e) {
             errMsg = e.getMessage();
         }
 
-        if (errMsg != null) {
+        if (errMsg != null)
             throw new IllegalArgumentException(
-                ProofConstants.ERRMSG_RPN_TO_FORMULA_CONV_FAILURE
-                 + errMsg);
-        }
+                ProofConstants.ERRMSG_RPN_TO_FORMULA_CONV_FAILURE + errMsg);
 
         return out;
 
     }
 
-    private Formula generateFormulaFromRPN()
-                                        throws VerifyException {
+    private Formula generateFormulaFromRPN() throws VerifyException {
 
-        nextStep: for (stepNbr = 0;
-                       stepNbr < proof.length;
-                       stepNbr++) {
+        nextStep: for (stepNbr = 0; stepNbr < proof.length; stepNbr++) {
 
-            if (proof[stepNbr] == null) {
-                raiseVerifyException(
-                    Integer.toString(stepNbr + 1),
-                    " ",
+            if (proof[stepNbr] == null)
+                raiseVerifyException(Integer.toString(stepNbr + 1), " ",
                     ProofConstants.ERRMSG_PROOF_STEP_INCOMPLETE);
-            }
 
-            stepFormula           = proof[stepNbr].getFormula();
+            stepFormula = proof[stepNbr].getFormula();
             if (proof[stepNbr].isHyp()) {
-                pStack[pStackCnt++]
-                                  = stepFormula;
+                pStack[pStackCnt++] = stepFormula;
                 continue nextStep;
             }
 
-            stepAssrt             = (Assrt)(proof[stepNbr]);
-            stepFrame             = stepAssrt.getMandFrame();
+            stepAssrt = (Assrt)proof[stepNbr];
+            stepFrame = stepAssrt.getMandFrame();
             if (stepFrame.hypArray.length == 0) {
-                pStack[pStackCnt++]
-                                  = stepFormula;
+                pStack[pStackCnt++] = stepFormula;
                 continue nextStep;
             }
 
-            stepLabel             = stepAssrt.getLabel();
+            stepLabel = stepAssrt.getLabel();
 
             findUniqueSubstMapping();
 
-            pStackCnt            -= stepFrame.hypArray.length;
-            if (pStackCnt < 0) {
-                raiseVerifyException(
-                    Integer.toString(stepNbr + 1),
-                    stepLabel,
+            pStackCnt -= stepFrame.hypArray.length;
+            if (pStackCnt < 0)
+                raiseVerifyException(Integer.toString(stepNbr + 1), stepLabel,
                     ProofConstants.ERRMSG_PROOF_STACK_UNDERFLOW);
-            }
 
-            stepSubstFormula      = applySubstMapping(stepFormula);
-            pStack[pStackCnt++]   = stepSubstFormula;
+            stepSubstFormula = applySubstMapping(stepFormula);
+            pStack[pStackCnt++] = stepSubstFormula;
 
         }
 
-        if (pStackCnt != 1) {
-            if (proof.length == 0) {
-                raiseVerifyException(
-                    Integer.toString(stepNbr),
-                    " ",
+        if (pStackCnt != 1)
+            if (proof.length == 0)
+                raiseVerifyException(Integer.toString(stepNbr), " ",
                     ProofConstants.ERRMSG_PROOF_HAS_ZERO_STEPS);
-            }
-            else {
-                raiseVerifyException(
-                    Integer.toString(stepNbr),
-                    " ",
+            else
+                raiseVerifyException(Integer.toString(stepNbr), " ",
                     ProofConstants.ERRMSG_PROOF_STACK_GT_1_AT_END);
-            }
-        }
 
-        return (new Formula(pStack[0].getCnt(),
-                            pStack[0].getSym()));
+        return new Formula(pStack[0].getCnt(), pStack[0].getSym());
     }
 
 }

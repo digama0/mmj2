@@ -18,11 +18,9 @@ package mmj.pa;
  */
 public class RequestMessagesGUI extends AuxFrameGUI {
 
-    private String defaultTitle   =
-        PaConstants.REQUEST_MESSAGES_GUI_TITLE_DEFAULT;
+    private final String defaultTitle = PaConstants.REQUEST_MESSAGES_GUI_TITLE_DEFAULT;
 
-    private String defaultText    =
-        PaConstants.REQUEST_MESSAGES_GUI_TEXT_DEFAULT;
+    private final String defaultText = PaConstants.REQUEST_MESSAGES_GUI_TEXT_DEFAULT;
 
     /**
      *  Default constructor.
@@ -39,7 +37,7 @@ public class RequestMessagesGUI extends AuxFrameGUI {
      *
      *  @param errorText String to display.
      */
-    public RequestMessagesGUI(String errorText) {
+    public RequestMessagesGUI(final String errorText) {
         super();
         setFrameText(errorText);
         setFrameTitle(defaultTitle);
@@ -53,23 +51,22 @@ public class RequestMessagesGUI extends AuxFrameGUI {
      *  @param errorText String to display.
      *  @param proofAsstPreferences variable settings
      */
-    public RequestMessagesGUI(
-                String               errorText,
-                ProofAsstPreferences proofAsstPreferences) {
+    public RequestMessagesGUI(final String errorText,
+        final ProofAsstPreferences proofAsstPreferences)
+    {
         super(proofAsstPreferences);
         setFrameText(errorText);
         setFrameTitle(defaultTitle);
         setWrapStyleWord(true);
     }
 
-
     /**
      *  Testing entry point for use with default settings.
      *
      *  @param args Command line String args array.
      */
-    public static void main(String[] args) {
-        RequestMessagesGUI e    = new RequestMessagesGUI();
+    public static void main(final String[] args) {
+        final RequestMessagesGUI e = new RequestMessagesGUI();
         e.showFrame(e.buildFrame());
     }
 }

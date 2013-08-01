@@ -17,7 +17,8 @@
 
 package mmj.lang;
 
-import java.io.*;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.Hashtable;
 
 /**
@@ -50,12 +51,12 @@ public class Messages {
     /**
      *  Count of error messages stored in Messages object.
      */
-    protected int      errorMessageCnt;
+    protected int errorMessageCnt;
 
     /**
      *  Count of info messages stored in Messages object.
      */
-     protected int      infoMessageCnt;
+    protected int infoMessageCnt;
 
     /**
      *  String array of error messages in Messages object.
@@ -76,7 +77,7 @@ public class Messages {
      */
     public Messages() {
         this(LangConstants.MAX_ERROR_MESSAGES_DEFAULT,
-             LangConstants.MAX_INFO_MESSAGES_DEFAULT);
+            LangConstants.MAX_INFO_MESSAGES_DEFAULT);
     }
 
     /**
@@ -87,23 +88,20 @@ public class Messages {
      *
      *  @throws IllegalArgumentException if "max" params < 1.
      */
-    public Messages(int maxErrorMessages,
-                    int maxInfoMessages) {
+    public Messages(final int maxErrorMessages, final int maxInfoMessages) {
 
-        if (maxErrorMessages < 1) {
+        if (maxErrorMessages < 1)
             throw new IllegalArgumentException(
                 LangConstants.ERRMSG_MAX_ERROR_MSG_LT_1);
-        }
-        if (maxInfoMessages < 1) {
+        if (maxInfoMessages < 1)
             throw new IllegalArgumentException(
                 LangConstants.ERRMSG_MAX_INFO_MSG_LT_1);
-        }
 
-        errorMessageCnt          = 0;
-        infoMessageCnt           = 0;
+        errorMessageCnt = 0;
+        infoMessageCnt = 0;
 
-        errorMessageArray        = new String[maxErrorMessages];
-        infoMessageArray         = new String[maxInfoMessages];
+        errorMessageArray = new String[maxErrorMessages];
+        infoMessageArray = new String[maxInfoMessages];
     }
 
     /**
@@ -113,13 +111,12 @@ public class Messages {
      *
      *  @throws IllegalArgumentException if "max" param < 1.
      */
-    public void reallocateErrorMessages(int maxErrorMessages) {
-        if (maxErrorMessages < 1) {
+    public void reallocateErrorMessages(final int maxErrorMessages) {
+        if (maxErrorMessages < 1)
             throw new IllegalArgumentException(
                 LangConstants.ERRMSG_MAX_ERROR_MSG_LT_1);
-        }
-        errorMessageCnt          = 0;
-        errorMessageArray        = new String[maxErrorMessages];
+        errorMessageCnt = 0;
+        errorMessageArray = new String[maxErrorMessages];
     }
 
     /**
@@ -129,15 +126,13 @@ public class Messages {
      *
      *  @throws IllegalArgumentException if "max" param < 1.
      */
-    public void reallocateInfoMessages(int maxInfoMessages) {
-        if (maxInfoMessages < 1) {
+    public void reallocateInfoMessages(final int maxInfoMessages) {
+        if (maxInfoMessages < 1)
             throw new IllegalArgumentException(
                 LangConstants.ERRMSG_MAX_INFO_MSG_LT_1);
-        }
-        infoMessageCnt           = 0;
-        infoMessageArray         = new String[maxInfoMessages];
+        infoMessageCnt = 0;
+        infoMessageArray = new String[maxInfoMessages];
     }
-
 
     /**
      *  Accum error message in Messages repository.
@@ -149,10 +144,9 @@ public class Messages {
      *
      *  @return true if message stored, false if no room left.
      */
-    public boolean accumErrorMessage(String errorMessage) {
+    public boolean accumErrorMessage(final String errorMessage) {
         if (errorMessageCnt < errorMessageArray.length) {
-            errorMessageArray[errorMessageCnt++]
-                                  = errorMessage;
+            errorMessageArray[errorMessageCnt++] = errorMessage;
             return true;
         }
         return false;
@@ -168,10 +162,9 @@ public class Messages {
      *
      *  @return true if message stored, false if no room left.
      */
-    public boolean accumInfoMessage(String infoMessage) {
+    public boolean accumInfoMessage(final String infoMessage) {
         if (infoMessageCnt < infoMessageArray.length) {
-            infoMessageArray[infoMessageCnt++]
-                                  = infoMessage;
+            infoMessageArray[infoMessageCnt++] = infoMessage;
             return true;
         }
         return false;
@@ -195,9 +188,8 @@ public class Messages {
      *          false.
      */
     public boolean maxErrorMessagesReached() {
-        if (errorMessageCnt < errorMessageArray.length) {
+        if (errorMessageCnt < errorMessageArray.length)
             return false;
-        }
         return true;
     }
 
@@ -249,7 +241,7 @@ public class Messages {
      *  Print all messages to printStream and
      *  clear message arrays.
      */
-    public void printAndClearMessages(PrintStream printStream) {
+    public void printAndClearMessages(final PrintStream printStream) {
         printMessages(printStream);
         clearMessages();
     }
@@ -257,7 +249,7 @@ public class Messages {
     /**
      *  Print all messages to printStream.
      */
-    public void printMessages(PrintStream printStream) {
+    public void printMessages(final PrintStream printStream) {
         printInfoMessages(printStream);
         printErrorMessages(printStream);
     }
@@ -266,7 +258,7 @@ public class Messages {
      *  Write all messages to printWriter and
      *  clear message arrays.
      */
-    public void writeAndClearMessages(PrintWriter printWriter) {
+    public void writeAndClearMessages(final PrintWriter printWriter) {
         writeMessages(printWriter);
         clearMessages();
     }
@@ -274,7 +266,7 @@ public class Messages {
     /**
      *  Write all messages to printWriter.
      */
-    public void writeMessages(PrintWriter printWriter) {
+    public void writeMessages(final PrintWriter printWriter) {
         writeInfoMessages(printWriter);
         writeErrorMessages(printWriter);
     }
@@ -296,37 +288,33 @@ public class Messages {
     /**
      *  Print error messages to printStream.
      */
-    public void printErrorMessages(PrintStream printStream) {
-        for (int i = 0; i < errorMessageCnt; i++) {
+    public void printErrorMessages(final PrintStream printStream) {
+        for (int i = 0; i < errorMessageCnt; i++)
             printStream.println(errorMessageArray[i]);
-        }
     }
 
     /**
      *  Write error messages to printWriter.
      */
-    public void writeErrorMessages(PrintWriter printWriter) {
-        for (int i = 0; i < errorMessageCnt; i++) {
+    public void writeErrorMessages(final PrintWriter printWriter) {
+        for (int i = 0; i < errorMessageCnt; i++)
             printWriter.println(errorMessageArray[i]);
-        }
     }
 
     /**
      *  Print info messages to printStream.
      */
-    public void printInfoMessages(PrintStream printStream) {
-        for (int i = 0; i < infoMessageCnt; i++) {
+    public void printInfoMessages(final PrintStream printStream) {
+        for (int i = 0; i < infoMessageCnt; i++)
             printStream.println(infoMessageArray[i]);
-        }
     }
 
     /**
      *  Write info messages to printWriter.
      */
-    public void writeInfoMessages(PrintWriter printWriter) {
-        for (int i = 0; i < infoMessageCnt; i++) {
+    public void writeInfoMessages(final PrintWriter printWriter) {
+        for (int i = 0; i < infoMessageCnt; i++)
             printWriter.println(infoMessageArray[i]);
-        }
     }
 
     /**
@@ -334,73 +322,57 @@ public class Messages {
      */
     public void clearMessages() {
         errorMessageCnt = 0;
-        infoMessageCnt  = 0;
+        infoMessageCnt = 0;
     }
 
     /**
      *
      */
-    public void startInstrumentationTimer(String timerID) {
+    public void startInstrumentationTimer(final String timerID) {
 
-        if (instrumentationTable == null) {
-            instrumentationTable  = new Hashtable();
-        }
+        if (instrumentationTable == null)
+            instrumentationTable = new Hashtable();
 
-        instrumentationTable.put(timerID.trim(),
-                                 new InstrumentationTimer());
+        instrumentationTable.put(timerID.trim(), new InstrumentationTimer());
     }
 
     /**
      *
      */
-    public void stopInstrumentationTimer(String inTimerID) {
+    public void stopInstrumentationTimer(final String inTimerID) {
 
-        InstrumentationTimer tNow = new InstrumentationTimer();
+        final InstrumentationTimer tNow = new InstrumentationTimer();
 
-        String timerID            = inTimerID.trim();
+        final String timerID = inTimerID.trim();
 
-        if (instrumentationTable == null) {
-            instrumentationTable  = new Hashtable();
-        }
+        if (instrumentationTable == null)
+            instrumentationTable = new Hashtable();
 
-        InstrumentationTimer tThen
-                                  =
-            (InstrumentationTimer)instrumentationTable.get(timerID);
+        final InstrumentationTimer tThen = (InstrumentationTimer)instrumentationTable
+            .get(timerID);
 
-        if (tThen == null) {
+        if (tThen == null)
             throw new IllegalArgumentException(
-                LangConstants.ERRMSG_TIMER_ID_NOTFND_1
-                + timerID
-                + LangConstants.ERRMSG_TIMER_ID_NOTFND_2);
-        }
+                LangConstants.ERRMSG_TIMER_ID_NOTFND_1 + timerID
+                    + LangConstants.ERRMSG_TIMER_ID_NOTFND_2);
 
-        accumInfoMessage(
-            LangConstants.ERRMSG_TIMER_ID_1
-            + timerID
+        accumInfoMessage(LangConstants.ERRMSG_TIMER_ID_1 + timerID
 
-            + LangConstants.ERRMSG_TIMER_ID_2
-            + (tNow.millisTime -
-               tThen.millisTime)
+        + LangConstants.ERRMSG_TIMER_ID_2
+            + (tNow.millisTime - tThen.millisTime)
 
-            + LangConstants.ERRMSG_TIMER_ID_3
-            + tNow.totalMemory
+            + LangConstants.ERRMSG_TIMER_ID_3 + tNow.totalMemory
             + LangConstants.ERRMSG_TIMER_ID_4
-            + (tNow.totalMemory -
-               tThen.totalMemory)
+            + (tNow.totalMemory - tThen.totalMemory)
 
-            + LangConstants.ERRMSG_TIMER_ID_5
-            + tNow.maxMemory
+            + LangConstants.ERRMSG_TIMER_ID_5 + tNow.maxMemory
             + LangConstants.ERRMSG_TIMER_ID_6
-            + (tNow.maxMemory -
-               tThen.maxMemory)
+            + (tNow.maxMemory - tThen.maxMemory)
 
-            + LangConstants.ERRMSG_TIMER_ID_7
-            + tNow.freeMemory
+            + LangConstants.ERRMSG_TIMER_ID_7 + tNow.freeMemory
             + LangConstants.ERRMSG_TIMER_ID_8
-            + (tNow.freeMemory -
-               tThen.freeMemory)
-            + LangConstants.ERRMSG_TIMER_ID_9
-            );
+            + (tNow.freeMemory - tThen.freeMemory)
+            + LangConstants.ERRMSG_TIMER_ID_9);
     }
 
     public class InstrumentationTimer {
@@ -408,12 +380,13 @@ public class Messages {
         public long freeMemory;
         public long totalMemory;
         public long maxMemory;
+
         public InstrumentationTimer() {
-            millisTime            = System.currentTimeMillis();
-            Runtime r             = Runtime.getRuntime();
-            freeMemory            = r.freeMemory();
-            totalMemory           = r.totalMemory();
-            maxMemory             = r.maxMemory();
+            millisTime = System.currentTimeMillis();
+            final Runtime r = Runtime.getRuntime();
+            freeMemory = r.freeMemory();
+            totalMemory = r.totalMemory();
+            maxMemory = r.maxMemory();
         }
     }
 }

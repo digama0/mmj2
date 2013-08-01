@@ -18,7 +18,8 @@
 
 package mmj.mmio;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.Reader;
 
 /**
  * Parse a Metamath .mm file into Metamath tokens.
@@ -76,19 +77,18 @@ import java.io.*;
  *  @see <a href="../../MetamathERNotes.html">
  *       Nomenclature and Entity-Relationship Notes</a>
  */
-public class Tokenizer
-        extends Object {
+public class Tokenizer extends Object {
 
-    private   Reader            reader                  = null;
-    private   String            sourceId                = null;
+    private Reader reader = null;
+    private String sourceId = null;
 
-    private   long              lineNbr                 = 1;
-    private   long              columnNbr               = 0;
-    private   long              charNbr                 = 0;
+    private long lineNbr = 1;
+    private long columnNbr = 0;
+    private long charNbr = 0;
 
-    private   int               prevChar                = -1;
-    private   int               currChar                = -1;
-    private   int               nextChar                = -1;
+    private int prevChar = -1;
+    private int currChar = -1;
+    private int nextChar = -1;
 
     /**
      * Constructs Tokenizer from a Reader.
@@ -104,19 +104,16 @@ public class Tokenizer
      * @throws IOException if I/O error
      *
      */
-    public Tokenizer(Reader  r, String s)
-            throws  IOException {
+    public Tokenizer(final Reader r, final String s) throws IOException {
 
-        reader                  = r;
-        sourceId                = s;
+        reader = r;
+        sourceId = s;
 
         nextChar = reader.read();
-        if (nextChar == -1) {
+        if (nextChar == -1)
             lineNbr = 0;
-        }
-        else {
+        else
             nextChar &= 0x00ff;
-        }
 
         return;
     }
@@ -142,26 +139,18 @@ public class Tokenizer
      *         is less than zero.
      *
      */
-    public Tokenizer(Reader r, String s, long nbrCharsToBypass)
-            throws  IOException,
-                    IllegalArgumentException {
+    public Tokenizer(final Reader r, final String s, final long nbrCharsToBypass)
+        throws IOException, IllegalArgumentException
+    {
         this(r, s);
-        if (nbrCharsToBypass < 0) {
+        if (nbrCharsToBypass < 0)
             throw new IllegalArgumentException();
-        }
 
-        while (nbrCharsToBypass > charNbr &&
-               (getChar()) != -1) {
-        }
+        while (nbrCharsToBypass > charNbr && getChar() != -1) {}
 
-        if (nbrCharsToBypass != charNbr) {
-            throw new MMIOError(
-                sourceId,
-                lineNbr,
-                columnNbr,
-                charNbr,
+        if (nbrCharsToBypass != charNbr)
+            throw new MMIOError(sourceId, lineNbr, columnNbr, charNbr,
                 MMIOConstants.ERRMSG_SKIP_AHEAD_FAILED + charNbr);
-        }
         return;
     }
 
@@ -180,8 +169,9 @@ public class Tokenizer
      * @throws IOException if I/O error
      * @throws MMIOError if invalid character read
      */
-    public int getToken(StringBuffer strBuf, int offset)
-            throws IOException {
+    public int getToken(final StringBuffer strBuf, int offset)
+        throws IOException
+    {
 
         int x;
         int len = 0;
@@ -192,18 +182,13 @@ public class Tokenizer
          *  get, and at the end of a token, the following whitespace,
          *  if any, still lies ahead.)
          */
-        while (((x = peekNextChar()) != -1)
-                &&
-                ((MMIOConstants.VALID_CHAR_ARRAY[x] &
-                  MMIOConstants.WHITE_SPACE)
-                  != 0)) {
+        while ((x = peekNextChar()) != -1
+            && (MMIOConstants.VALID_CHAR_ARRAY[x] & MMIOConstants.WHITE_SPACE) != 0)
             getChar();
-        }
 
-        if (x == -1) {
+        if (x == -1)
             len = -1;
-        }
-        else {
+        else
             /**
              *  get the printables as a single token, stopping at EOF
              *  or an end-comment, making sure not to read beyond the
@@ -212,12 +197,8 @@ public class Tokenizer
             do {
                 strBuf.insert(offset++, (char)getChar());
                 ++len;
-            } while (((x = peekNextChar()) != -1)
-                     &&
-                     ((MMIOConstants.VALID_CHAR_ARRAY[x] &
-                       MMIOConstants.PRINTABLE)
-                       != 0));
-        }
+            } while ((x = peekNextChar()) != -1
+                && (MMIOConstants.VALID_CHAR_ARRAY[x] & MMIOConstants.PRINTABLE) != 0);
 
         return len;
     }
@@ -236,25 +217,22 @@ public class Tokenizer
      * @throws       IOException if I/O error
      * @throws       MMIOError if invalid character read
      */
-    public int getWhiteSpace(StringBuffer strBuf, int offset)
-            throws IOException {
+    public int getWhiteSpace(final StringBuffer strBuf, int offset)
+        throws IOException
+    {
 
         int x;
         int len = 0;
-        while (((x = peekNextChar()) != -1)
-               &&
-                ((MMIOConstants.VALID_CHAR_ARRAY[x] &
-                  MMIOConstants.WHITE_SPACE)
-                != 0)) {
+        while ((x = peekNextChar()) != -1
+            && (MMIOConstants.VALID_CHAR_ARRAY[x] & MMIOConstants.WHITE_SPACE) != 0)
+        {
             strBuf.insert(offset++, (char)getChar());
             ++len;
         }
-        if ((len == 0) && (x == -1)) {
+        if (len == 0 && x == -1)
             return -1;
-        }
-        else {
+        else
             return len;
-        }
     }
 
     /**
@@ -330,12 +308,9 @@ public class Tokenizer
     public void close() {
 
         try {
-            if (reader != null) {
+            if (reader != null)
                 reader.close();
-            }
-        }
-        catch (Exception e) {
-        }
+        } catch (final Exception e) {}
 
         return;
     }
@@ -354,10 +329,8 @@ public class Tokenizer
      *
      * @throws       IOException if I/O error
      */
-    public long countNbrLines()
-            throws IOException {
-        while (getChar() != -1) {
-        }
+    public long countNbrLines() throws IOException {
+        while (getChar() != -1) {}
         return getCurrentLineNbr();
     }
 
@@ -387,18 +360,14 @@ public class Tokenizer
      * @throws       MMIOError if invalid character read
      *
      */
-    private   int getChar()
-                        throws  MMIOError,
-                                IOException {
+    private int getChar() throws MMIOError, IOException {
         prevChar = currChar;
-        if (nextChar == -1) {
+        if (nextChar == -1)
             return -1;
-        }
         currChar = nextChar;
         nextChar = reader.read();
-        if (nextChar != -1) {
+        if (nextChar != -1)
             nextChar &= 0x00ff;
-        }
 
         ++columnNbr;
         ++charNbr;
@@ -407,25 +376,15 @@ public class Tokenizer
             ++lineNbr;
             columnNbr = 1;
         }
-        else {
-            if (prevChar == '\r' &&
-                currChar != '\n') {
-                ++lineNbr;
-                columnNbr = 1;
-            }
+        else if (prevChar == '\r' && currChar != '\n') {
+            ++lineNbr;
+            columnNbr = 1;
         }
 
-        if (currChar >= 0 &&
-            MMIOConstants.VALID_CHAR_ARRAY[currChar] > 0) {
-        }
-        else {
-            throw new MMIOError(
-                sourceId,
-                lineNbr,
-                columnNbr,
-                charNbr,
+        if (currChar >= 0 && MMIOConstants.VALID_CHAR_ARRAY[currChar] > 0) {}
+        else
+            throw new MMIOError(sourceId, lineNbr, columnNbr, charNbr,
                 MMIOConstants.ERRMSG_INV_INPUT_CHAR + currChar);
-        }
 
         return currChar;
     }

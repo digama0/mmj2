@@ -11,7 +11,7 @@
 
 package mmj.lang;
 
-import java.util.*;
+import java.util.Map;
 
 /**
  *  VarHypFormula is a convenience class for VarHyp.
@@ -27,10 +27,8 @@ public class VarHypFormula extends Formula {
      *  @param workCnt length of formula.
      *  @param workFormula Formula Sym array.
      */
-    public VarHypFormula(int     workCnt,
-                         Sym[]   workFormula) {
-        super(workCnt,
-              workFormula);
+    public VarHypFormula(final int workCnt, final Sym[] workFormula) {
+        super(workCnt, workFormula);
     }
 
     /**
@@ -42,17 +40,14 @@ public class VarHypFormula extends Formula {
      *  @param typS   Type Code String.
      *  @param varS   Var id String.
      */
-    public VarHypFormula(Map       symTbl,
-                         String    typS,
-                         String    varS)
-                                       throws LangException {
-        super(symTbl,
-              2,        // formula size
-              typS);
+    public VarHypFormula(final Map symTbl, final String typS, final String varS)
+        throws LangException
+    {
+        super(symTbl, 2, // formula size
+            typS);
 
         cnt = 2;
-        setVarHypVar(symTbl,
-                     varS);
+        setVarHypVar(symTbl, varS);
     }
 
     /**
@@ -69,7 +64,7 @@ public class VarHypFormula extends Formula {
      *
      *  @param var  the VarHypFormula's Var (sym[1]).
      */
-    public void setVarHypVar(Var var) {
+    public void setVarHypVar(final Var var) {
         sym[1] = var;
     }
 
@@ -79,12 +74,11 @@ public class VarHypFormula extends Formula {
      *  @param symTbl Symbol Table (Map).
      *  @param varS   the VarHypFormula's Var id String.
      */
-    public Var setVarHypVar(Map     symTbl,
-                            String  varS)
-                                        throws LangException {
+    public Var setVarHypVar(final Map symTbl, final String varS)
+        throws LangException
+    {
 
-        sym[1] = Var.verifyVarDefAndActive(symTbl,
-                                           varS);
+        sym[1] = Var.verifyVarDefAndActive(symTbl, varS);
         return (Var)sym[1];
     }
 }

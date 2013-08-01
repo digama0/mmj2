@@ -6,7 +6,6 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-
 /**
  *  MinCommentStmt.java  0.01 11/01/2011
  *
@@ -31,7 +30,6 @@ package mmj.gmff;
  */
 public class MinCommentStmt extends MinProofWorkStmt {
 
-
     /**
      *  Standard MinCommentStmt constructor.
      *  <p>
@@ -43,11 +41,9 @@ public class MinCommentStmt extends MinProofWorkStmt {
      *              whitespace or Metamath tokens. Hence the
      *              acronym "slc" refers to Statement Line Chunks.
      */
-    public MinCommentStmt(MinProofWorksheet w,
-                          String[][]        slc) {
+    public MinCommentStmt(final MinProofWorksheet w, final String[][] slc) {
 
-        super(w,
-              slc);
+        super(w, slc);
     }
 
     /**
@@ -73,51 +69,39 @@ public class MinCommentStmt extends MinProofWorkStmt {
      *				the export data build.
      *  @param exportBuffer The <code>StringBuffer</code> to which
      *               exported data is to be output.
-  	 *  @throws GMFFException if errors are encountered during the
-  	 *               export process.
+     *  @throws GMFFException if errors are encountered during the
+     *               export process.
      */
-	public void buildModelAExport(
-						 	GMFFExporter gmffExporter,
-		               	 	StringBuffer exportBuffer)
-				            	throws GMFFException {
+    @Override
+    public void buildModelAExport(final GMFFExporter gmffExporter,
+        final StringBuffer exportBuffer) throws GMFFException
+    {
 
-		String modelAComment0     =
-			gmffExporter.getOptionalModelFile(
-				GMFFConstants.MODEL_A_COMMENT0_NAME);
-		if (modelAComment0 == null) {
-			return;
-		}
+        final String modelAComment0 = gmffExporter
+            .getOptionalModelFile(GMFFConstants.MODEL_A_COMMENT0_NAME);
+        if (modelAComment0 == null)
+            return;
 
-		String modelAComment1X   =
-			gmffExporter.getOptionalModelFile(
-				GMFFConstants.MODEL_A_COMMENT1X_NAME);
-		if (modelAComment1X == null) {
-			return;
-		}
-		String modelAComment2    =
-			gmffExporter.getOptionalModelFile(
-				GMFFConstants.MODEL_A_COMMENT2_NAME);
-		if (modelAComment2 == null) {
-			return;
-		}
+        final String modelAComment1X = gmffExporter
+            .getOptionalModelFile(GMFFConstants.MODEL_A_COMMENT1X_NAME);
+        if (modelAComment1X == null)
+            return;
+        final String modelAComment2 = gmffExporter
+            .getOptionalModelFile(GMFFConstants.MODEL_A_COMMENT2_NAME);
+        if (modelAComment2 == null)
+            return;
 
-		// well all righty then...
+        // well all righty then...
 
-		for (int i = 0; i < stmtLineChunks.length; i++) {
+        for (int i = 0; i < stmtLineChunks.length; i++) {
 
-			gmffExporter.appendModelFileText(
-				exportBuffer,
-				modelAComment0);
+            gmffExporter.appendModelFileText(exportBuffer, modelAComment0);
 
-			if (modelAComment1X.length() > 0) {
-				gmffExporter.escapeAndAppendProofText(
-					exportBuffer,
-					getCleanedLineString(i));
-			}
+            if (modelAComment1X.length() > 0)
+                gmffExporter.escapeAndAppendProofText(exportBuffer,
+                    getCleanedLineString(i));
 
-			gmffExporter.appendModelFileText(
-				exportBuffer,
-				modelAComment2);
-		}
-	}
+            gmffExporter.appendModelFileText(exportBuffer, modelAComment2);
+        }
+    }
 }

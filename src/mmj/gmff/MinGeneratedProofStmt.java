@@ -6,7 +6,6 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-
 /**
  *  MinGeneratedProofStmt.java  0.01 11/01/2011
  *
@@ -36,7 +35,6 @@ package mmj.gmff;
  */
 public class MinGeneratedProofStmt extends MinProofWorkStmt {
 
-
     /**
      *  Standard MinGeneratedProofStmt constructor.
      *  <p>
@@ -46,13 +44,11 @@ public class MinGeneratedProofStmt extends MinProofWorkStmt {
      *   			the lines and "chunks" making up the
      *              <code>MinProofWorkStmt</code>.
      */
-    public MinGeneratedProofStmt(MinProofWorksheet w,
-                          String[][]        slc) {
+    public MinGeneratedProofStmt(final MinProofWorksheet w, final String[][] slc)
+    {
 
-        super(w,
-              slc);
+        super(w, slc);
     }
-
 
     /**
      *  Formats export data for the Generated Proof statement
@@ -77,51 +73,39 @@ public class MinGeneratedProofStmt extends MinProofWorkStmt {
      *				the export data build.
      *  @param exportBuffer The <code>StringBuffer</code> to which
      *               exported data is to be output.
-  	 *  @throws GMFFException if errors are encountered during the
-  	 *               export process.
+     *  @throws GMFFException if errors are encountered during the
+     *               export process.
      */
-	public void buildModelAExport(
-						 	GMFFExporter gmffExporter,
-		               	 	StringBuffer exportBuffer)
-				            	throws GMFFException {
+    @Override
+    public void buildModelAExport(final GMFFExporter gmffExporter,
+        final StringBuffer exportBuffer) throws GMFFException
+    {
 
-		String modelAGenProof0     =
-			gmffExporter.getOptionalModelFile(
-				GMFFConstants.MODEL_A_GENPROOF0_NAME);
-		if (modelAGenProof0 == null) {
-			return;
-		}
+        final String modelAGenProof0 = gmffExporter
+            .getOptionalModelFile(GMFFConstants.MODEL_A_GENPROOF0_NAME);
+        if (modelAGenProof0 == null)
+            return;
 
-		String modelAGenProof1X   =
-			gmffExporter.getOptionalModelFile(
-				GMFFConstants.MODEL_A_GENPROOF1X_NAME);
-		if (modelAGenProof1X == null) {
-			return;
-		}
-		String modelAGenProof2    =
-			gmffExporter.getOptionalModelFile(
-				GMFFConstants.MODEL_A_GENPROOF2_NAME);
-		if (modelAGenProof2 == null) {
-			return;
-		}
+        final String modelAGenProof1X = gmffExporter
+            .getOptionalModelFile(GMFFConstants.MODEL_A_GENPROOF1X_NAME);
+        if (modelAGenProof1X == null)
+            return;
+        final String modelAGenProof2 = gmffExporter
+            .getOptionalModelFile(GMFFConstants.MODEL_A_GENPROOF2_NAME);
+        if (modelAGenProof2 == null)
+            return;
 
-		// well all righty then...
+        // well all righty then...
 
-		for (int i = 0; i < stmtLineChunks.length; i++) {
+        for (int i = 0; i < stmtLineChunks.length; i++) {
 
-			gmffExporter.appendModelFileText(
-				exportBuffer,
-				modelAGenProof0);
+            gmffExporter.appendModelFileText(exportBuffer, modelAGenProof0);
 
-			if (modelAGenProof1X.length() > 0) {
-				gmffExporter.escapeAndAppendProofText(
-					exportBuffer,
-					getCleanedLineString(i));
-			}
+            if (modelAGenProof1X.length() > 0)
+                gmffExporter.escapeAndAppendProofText(exportBuffer,
+                    getCleanedLineString(i));
 
-			gmffExporter.appendModelFileText(
-				exportBuffer,
-				modelAGenProof2);
-		}
-	}
+            gmffExporter.appendModelFileText(exportBuffer, modelAGenProof2);
+        }
+    }
 }

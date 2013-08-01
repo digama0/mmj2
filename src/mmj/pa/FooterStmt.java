@@ -42,18 +42,20 @@
 
 package mmj.pa;
 
-import  java.io.IOException;
-import  mmj.mmio.*;
+import java.io.IOException;
+
+import mmj.mmio.MMIOError;
 
 public class FooterStmt extends ProofWorkStmt {
 
     /**
      *  Default Constructor.
      */
-    public FooterStmt (ProofWorksheet w) {
+    public FooterStmt(final ProofWorksheet w) {
         super(w);
     }
 
+    @Override
     public boolean stmtIsIncomplete() {
         return false;
     }
@@ -69,23 +71,22 @@ public class FooterStmt extends ProofWorkStmt {
      *  @return column of input fieldId or default value
      *         of 1 if there is an error.
      */
-    public int computeFieldIdCol(int fieldId) {
+    @Override
+    public int computeFieldIdCol(final int fieldId) {
         return 1;
     }
 
     /**
      *  Reformats Derivation Step using TMFF.
      */
-    public void tmffReformat() {
-    }
+    @Override
+    public void tmffReformat() {}
 
     /**
      *  Loads FooterStmt with standard contents of a FooterStmt.
      */
     public void loadDefault() {
-        stmtText              =
-            new StringBuffer(
-                PaConstants.PROOF_TEXT_FOOTER.length() + 2);
+        stmtText = new StringBuffer(PaConstants.PROOF_TEXT_FOOTER.length() + 2);
 
         stmtText.append(PaConstants.PROOF_TEXT_FOOTER);
         stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
@@ -114,20 +115,17 @@ public class FooterStmt extends ProofWorkStmt {
      *
      *  @return      first token of the next statement.
      */
-    public String load(String firstToken)
-                            throws IOException,
-                                   MMIOError,
-                                   ProofAsstException {
-        int currLineNbr       =
-            (int)w.proofTextTokenizer.getCurrentLineNbr();
+    @Override
+    public String load(final String firstToken) throws IOException, MMIOError,
+        ProofAsstException
+    {
+        final int currLineNbr = (int)w.proofTextTokenizer.getCurrentLineNbr();
 
-        stmtText              = new StringBuffer();
+        stmtText = new StringBuffer();
 
-        String nextT          =
-            loadStmtTextGetNextStmt(firstToken);
+        final String nextT = loadStmtTextGetNextStmt(firstToken);
 
-        updateLineCntUsingTokenizer(currLineNbr,
-                                    nextT);
+        updateLineCntUsingTokenizer(currLineNbr, nextT);
         return nextT;
     }
 }

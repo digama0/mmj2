@@ -41,7 +41,8 @@
  */
 package mmj.lang;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.Map;
 
 /**
  *  Stmt is the parent class of all Metamath <code>Hyp</code>s
@@ -84,13 +85,12 @@ import java.util.*;
  *  @see <a href="../../MetamathERNotes.html">
  *       Nomenclature and Entity-Relationship Notes</a>
  */
-public abstract class Stmt extends MObj
-                                implements Comparable {
+public abstract class Stmt extends MObj implements Comparable {
     /**
      *  note: label must NOT be changed after Stmt added to stmtTbl
      *        because stmtTbl is a Map (map behavior undefined)
      */
-    private final String   label;
+    private final String label;
 
     /*
      *  Formula is a separate class because of the need to
@@ -168,9 +168,7 @@ public abstract class Stmt extends MObj
      *  value is calculated dynamically, if and when
      *  needed in Assrt.
      */
-    protected String logHypsL1HiLoKey
-                                  = null;
-
+    protected String logHypsL1HiLoKey = null;
 
     /**
      *  Construct using sequence number and id string.
@@ -184,29 +182,22 @@ public abstract class Stmt extends MObj
      *          is a duplicate of another label in stmtTbl
      *          or an id in the symTbl.
      */
-    public Stmt(int     seq,
-                Map     symTbl,
-                Map     stmtTbl,
-                String  labelS)
-                            throws LangException {
+    public Stmt(final int seq, final Map symTbl, final Map stmtTbl,
+        final String labelS) throws LangException
+    {
         super(seq);
 
-        if (labelS.length() == 0) {
+        if (labelS.length() == 0)
             throw new IllegalArgumentException(
                 LangConstants.ERRMSG_STMT_LABEL_STRING_EMPTY);
-        }
-        if (stmtTbl.containsKey(labelS)) {
+        if (stmtTbl.containsKey(labelS))
+            throw new LangException(LangConstants.ERRMSG_DUP_STMT_LABEL
+                + labelS);
+        if (symTbl.containsKey(labelS))
             throw new LangException(
-                LangConstants.ERRMSG_DUP_STMT_LABEL +
-                labelS);
-        }
-        if (symTbl.containsKey(labelS)) {
-            throw new LangException(
-                LangConstants.ERRMSG_STMT_LABEL_DUP_OF_SYM_ID_1 +
-                labelS);
-        }
+                LangConstants.ERRMSG_STMT_LABEL_DUP_OF_SYM_ID_1 + labelS);
 
-        this.label  = labelS;
+        label = labelS;
     }
 
     /**
@@ -218,13 +209,12 @@ public abstract class Stmt extends MObj
      *  @param tempFormula   Stmt.formula
      *  @param tempParseTree Stmt.exprParseTree
      */
-    protected Stmt(int      tempSeq,
-                  String    tempLabel,
-                  Formula   tempFormula,
-                  ParseTree tempParseTree ) {
+    protected Stmt(final int tempSeq, final String tempLabel,
+        final Formula tempFormula, final ParseTree tempParseTree)
+    {
         super(tempSeq);
-        label                     = tempLabel;
-        formula                   = tempFormula;
+        label = tempLabel;
+        formula = tempFormula;
         setExprParseTree(tempParseTree);
         setIsTempObject(true);
     }
@@ -247,7 +237,7 @@ public abstract class Stmt extends MObj
      *
      *  @return is Stmt "active"
      */
-    public abstract boolean  isActive();
+    public abstract boolean isActive();
 
     /**
      *  Is Stmt an Assrt?
@@ -258,7 +248,7 @@ public abstract class Stmt extends MObj
      *
      *  @return is Stmt an Assrt -- true or false :)
      */
-    public abstract boolean  isAssrt();
+    public abstract boolean isAssrt();
 
     /**
      *  Is Stmt a Hyp?
@@ -269,7 +259,7 @@ public abstract class Stmt extends MObj
      *
      *  @return is Stmt a Hyp -- true or false :)
      */
-    public abstract boolean  isHyp();
+    public abstract boolean isHyp();
 
     /**
      *  Is Stmt a VarHyp?
@@ -278,7 +268,7 @@ public abstract class Stmt extends MObj
      *
      *  @return is Stmt a VarHyp -- true or false :)
      */
-    public abstract boolean  isVarHyp();
+    public abstract boolean isVarHyp();
 
     /**
      *  Is Stmt a WorkVarHyp?
@@ -287,7 +277,7 @@ public abstract class Stmt extends MObj
      *
      *  @return is Stmt a WorkVarHyp -- true or false :)
      */
-    public abstract boolean  isWorkVarHyp();
+    public abstract boolean isWorkVarHyp();
 
     /**
      *  Is Stmt a LogHyp?
@@ -296,8 +286,7 @@ public abstract class Stmt extends MObj
      *
      *  @return is Stmt a LogHyp -- true or false :)
      */
-    public abstract boolean  isLogHyp();
-
+    public abstract boolean isLogHyp();
 
     /**
      *  Return mandatory VarHyp Array
@@ -362,11 +351,8 @@ public abstract class Stmt extends MObj
      *          appended to the input StringBuffer --
      *          or -1 if maxDepth or maxLength exceeded.
      */
-    public abstract int renderParsedSubExpr(
-                                StringBuffer sb,
-                                int          maxDepth,
-                                int          maxLength,
-                                ParseNode[]  child);
+    public abstract int renderParsedSubExpr(StringBuffer sb, int maxDepth,
+        int maxLength, ParseNode[] child);
 
     /**
      *  Is the Stmt a Cnst?
@@ -378,6 +364,7 @@ public abstract class Stmt extends MObj
      *
      *  @return Is the Stmt a Cnst, true or false (hint...)
      */
+    @Override
     public boolean isCnst() {
         return false;
     }
@@ -400,7 +387,6 @@ public abstract class Stmt extends MObj
         return formula;
     }
 
-
     /**
      *  Return Stmt Type Code.
      *
@@ -411,21 +397,20 @@ public abstract class Stmt extends MObj
     }
 
     // note: this one looks a little too dangerous to
-    //       implement w/out a pressing need and further
-    //       thought. LogHyp and Assrt both have type-specific
-    //       setFormula methods if there is a real need to
-    //       do this.
-    //public void setFormula(Formula formula) {
-    //    this.formula = formula;
-    //}
-
+    // implement w/out a pressing need and further
+    // thought. LogHyp and Assrt both have type-specific
+    // setFormula methods if there is a real need to
+    // do this.
+    // public void setFormula(Formula formula) {
+    // this.formula = formula;
+    // }
 
     /**
      *  Set Stmt Type Code.
      *
      *  @param typ  Stmt Type Code.
      */
-    public void setTyp(Cnst typ) {
+    public void setTyp(final Cnst typ) {
         formula.setTyp(typ);
     }
 
@@ -435,10 +420,9 @@ public abstract class Stmt extends MObj
      *  @return exprRPN.
      */
     public Stmt[] getExprRPN() {
-        //return exprRPN; 12/14/2005 ProofAsst fix
-        if (exprParseTree == null) {
+        // return exprRPN; 12/14/2005 ProofAsst fix
+        if (exprParseTree == null)
             return null;
-        }
         return exprParseTree.convertToRPN();
     }
 
@@ -447,15 +431,12 @@ public abstract class Stmt extends MObj
      *
      *  @param exprRPN array of Stmt!
      */
-    public void setExprRPN(Stmt[] exprRPN) {
+    public void setExprRPN(final Stmt[] exprRPN) {
 //      this.exprRPN = exprRPN; 12/14/2006 fix for ProofAsst
-        if (exprRPN == null) {
+        if (exprRPN == null)
             setExprParseTree(null);
-        }
-        else {
-            setExprParseTree(
-                ParseTree.convertRPNtoParseTree(exprRPN));
-        }
+        else
+            setExprParseTree(ParseTree.convertRPNtoParseTree(exprRPN));
     }
 
     /**
@@ -468,8 +449,8 @@ public abstract class Stmt extends MObj
      *
      *  @param logHypsMaxDepth
      */
-    public void setLogHypsMaxDepth(int logHypsMaxDepth) {
-        this.logHypsMaxDepth      = logHypsMaxDepth;
+    public void setLogHypsMaxDepth(final int logHypsMaxDepth) {
+        this.logHypsMaxDepth = logHypsMaxDepth;
     }
 
     /**
@@ -477,7 +458,7 @@ public abstract class Stmt extends MObj
      *  in an Assrt to the default value.
      */
     public void resetLogHypsMaxDepth() {
-        logHypsMaxDepth           = -1;
+        logHypsMaxDepth = -1;
     }
 
     /**
@@ -490,8 +471,8 @@ public abstract class Stmt extends MObj
      *
      *  @param logHypsL1HiLoKey computed value.
      */
-    public void setLogHypsL1HiLoKey(String logHypsL1HiLoKey) {
-        this.logHypsL1HiLoKey     = logHypsL1HiLoKey;
+    public void setLogHypsL1HiLoKey(final String logHypsL1HiLoKey) {
+        this.logHypsL1HiLoKey = logHypsL1HiLoKey;
     }
 
     /**
@@ -499,7 +480,7 @@ public abstract class Stmt extends MObj
      *  LogHyps to the default value.
      */
     public void resetLogHypsL1HiLoKey() {
-        logHypsL1HiLoKey          = null;
+        logHypsL1HiLoKey = null;
     }
 
     /**
@@ -511,18 +492,16 @@ public abstract class Stmt extends MObj
         return exprParseTree;
     }
 
-
     /**
      *  Set exprParseTree, the statement's parse tree.
      *
      *  @param parseTree Parse Tree from Grammar
      */
-    public void setExprParseTree(ParseTree parseTree) {
-        this.exprParseTree = parseTree;
+    public void setExprParseTree(final ParseTree parseTree) {
+        exprParseTree = parseTree;
         resetLogHypsMaxDepth();
         resetLogHypsL1HiLoKey();
     }
-
 
     /**
      *  Converts to String.
@@ -532,6 +511,7 @@ public abstract class Stmt extends MObj
      *  @return returns Stmt string;
      *
      */
+    @Override
     public String toString() {
         return label;
     }
@@ -541,6 +521,7 @@ public abstract class Stmt extends MObj
      *
      * @return hashcode for the Stmt
      */
+    @Override
     public int hashCode() {
         return label.hashCode();
     }
@@ -553,10 +534,10 @@ public abstract class Stmt extends MObj
      *
      * @return returns true if equal, otherwise false.
      */
-    public boolean equals(Object obj) {
-        return (this == obj) ? true
-                : !(obj instanceof Stmt) ? false
-                        : label.equals(((Stmt)obj).label);
+    @Override
+    public boolean equals(final Object obj) {
+        return this == obj ? true : !(obj instanceof Stmt) ? false : label
+            .equals(((Stmt)obj).label);
     }
 
     /**
@@ -568,27 +549,28 @@ public abstract class Stmt extends MObj
      * or greater than the input parameter obj.
      *
      */
-    public int compareTo(Object obj) {
+    @Override
+    public int compareTo(final Object obj) {
         return label.compareTo(((Stmt)obj).label);
     }
 
     /**
      *  LABEL sequences by Stmt.label
      */
-    static public final Comparator LABEL
-            = new Comparator() {
-        public int compare(Object o1, Object o2) {
-            return (((Stmt)o1).label.compareTo(((Stmt)o2).label));
+    static public final Comparator LABEL = new Comparator() {
+        @Override
+        public int compare(final Object o1, final Object o2) {
+            return ((Stmt)o1).label.compareTo(((Stmt)o2).label);
         }
     };
 
     /**
      *  SEQ sequences by Stmt.seq
      */
-    static public final Comparator SEQ
-            = new Comparator() {
-        public int compare(Object o1, Object o2) {
-            return ( ((Stmt)o1).seq - ((Stmt)o2).seq );
+    static public final Comparator SEQ = new Comparator() {
+        @Override
+        public int compare(final Object o1, final Object o2) {
+            return ((Stmt)o1).seq - ((Stmt)o2).seq;
         }
     };
 }

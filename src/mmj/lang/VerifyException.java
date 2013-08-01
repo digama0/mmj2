@@ -30,7 +30,7 @@ public class VerifyException extends LangException {
      *
      *  @param   errorMessage  error message.
      */
-    public VerifyException(String errorMessage) {
+    public VerifyException(final String errorMessage) {
         super(errorMessage);
     }
 }

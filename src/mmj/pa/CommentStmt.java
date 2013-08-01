@@ -6,7 +6,6 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-
 // =================================================
 // ===                   Class                   ===
 // ===                                           ===
@@ -40,16 +39,15 @@
  */
 
 package mmj.pa;
-import  java.io.IOException;
-import  java.io.LineNumberReader;
-import  java.io.StringReader;
+
+import java.io.*;
 
 public class CommentStmt extends ProofWorkStmt {
 
     /**
      *  Default Constructor.
      */
-    public CommentStmt(ProofWorksheet w) {
+    public CommentStmt(final ProofWorksheet w) {
         super(w);
     }
 
@@ -74,37 +72,31 @@ public class CommentStmt extends ProofWorkStmt {
      *  @param doubleSpace set to true if extra newline
      *         should be added after the comment text.
      */
-    public CommentStmt(ProofWorksheet w,
-                       String         s,
-                       boolean        doubleSpace) {
+    public CommentStmt(final ProofWorksheet w, final String s,
+        final boolean doubleSpace)
+    {
         super(w);
 
-        stmtText              = new StringBuffer(s.length() + 2);
+        stmtText = new StringBuffer(s.length() + 2);
 
-        String linePrefix     =
-            new String(PaConstants.COMMENT_STMT_TOKEN_PREFIX
-                       + " ");
+        String linePrefix = new String(PaConstants.COMMENT_STMT_TOKEN_PREFIX
+            + " ");
 
-        String secondLinePrefix
-                              = new String("  ");
+        final String secondLinePrefix = new String("  ");
 
         try {
-            LineNumberReader r    =
-                new LineNumberReader(
-                    new StringReader(s));
+            final LineNumberReader r = new LineNumberReader(new StringReader(s));
 
             String line;
-            while ((line          = r.readLine()) != null) {
+            while ((line = r.readLine()) != null) {
                 stmtText.append(linePrefix);
                 stmtText.append(line.trim());
                 stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
                 ++lineCnt;
-                linePrefix        = secondLinePrefix;
+                linePrefix = secondLinePrefix;
             }
-        }
-        catch(IOException e) {
-            stmtText.append(
-                PaConstants.PROOF_WORKSHEET_COMMENT_STMT_IO_ERROR);
+        } catch (final IOException e) {
+            stmtText.append(PaConstants.PROOF_WORKSHEET_COMMENT_STMT_IO_ERROR);
             stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
         }
 
@@ -112,14 +104,13 @@ public class CommentStmt extends ProofWorkStmt {
             stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
             ++lineCnt;
         }
-        if (doubleSpace) {
+        if (doubleSpace)
             stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
-        }
-        else {
+        else
             --lineCnt;
-        }
     }
 
+    @Override
     public boolean stmtIsIncomplete() {
         return false;
     }
@@ -135,16 +126,15 @@ public class CommentStmt extends ProofWorkStmt {
      *  @return column of input fieldId or default value
      *         of 1 if there is an error.
      */
-    public int computeFieldIdCol(int fieldId) {
+    @Override
+    public int computeFieldIdCol(final int fieldId) {
         return 1;
     }
 
     /**
      *  Reformats Derivation Step using TMFF.
      */
-    public void tmffReformat() {
-    }
+    @Override
+    public void tmffReformat() {}
 
 }
-
-

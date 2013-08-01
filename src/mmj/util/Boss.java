@@ -55,15 +55,17 @@
  */
 
 package mmj.util;
-import java.io.*;
-import java.nio.charset.*;
-import java.util.Map;
+
 import java.awt.Color;
-import mmj.mmio.*;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
+import java.util.Map;
+
+import mmj.gmff.GMFFException;
 import mmj.lang.*;
-import mmj.pa.*;
-import mmj.tl.*;
-import mmj.gmff.*;
+import mmj.mmio.MMIOException;
+import mmj.pa.PaConstants;
 
 /**
  *  Boss is the superclass of GrammarBoss, LogicalSystemBoss,
@@ -83,8 +85,8 @@ public abstract class Boss {
      *
      *  @param batchFramework for access to environment.
      */
-    public Boss(BatchFramework batchFramework) {
-        this.batchFramework       = batchFramework;
+    public Boss(final BatchFramework batchFramework) {
+        this.batchFramework = batchFramework;
     }
 
     /**
@@ -92,16 +94,9 @@ public abstract class Boss {
      *
      *  @param runParm the RunParmFile line to execute.
      */
-    public abstract boolean
-        doRunParmCommand(RunParmArrayEntry runParm)
-                        throws IllegalArgumentException,
-                               MMIOException,
-                               FileNotFoundException,
-                               IOException,
-                               VerifyException,
-                               TheoremLoaderException,
-                               GMFFException;
-
+    public abstract boolean doRunParmCommand(RunParmArrayEntry runParm)
+        throws IllegalArgumentException, MMIOException, FileNotFoundException,
+        IOException, VerifyException, TheoremLoaderException, GMFFException;
 
     // =======================================================
     // === bazillions of subroutines used by Boss subclasses
@@ -115,23 +110,16 @@ public abstract class Boss {
      *  @param runParm RunParmFile line parsed into RunParmArrayEntry.
      *  @param valueCaption name of RunParm, for error message output.
      */
-    protected File editExistingFolderRunParm(
-		                File              filePath,
-                        RunParmArrayEntry runParm,
-                        String            valueCaption,
-                        int               valueFieldNbr)
-                    throws IllegalArgumentException {
+    protected File editExistingFolderRunParm(final File filePath,
+        final RunParmArrayEntry runParm, final String valueCaption,
+        final int valueFieldNbr) throws IllegalArgumentException
+    {
 
-        String folderNameParm     =
-            editExistingFolderNameParm(
-                runParm,
-                valueCaption,
-                valueFieldNbr);
+        final String folderNameParm = editExistingFolderNameParm(runParm,
+            valueCaption, valueFieldNbr);
 
-        return buildFileObjectForExistingFolder(
-			       filePath,
-                   valueCaption,
-                   folderNameParm);
+        return buildFileObjectForExistingFolder(filePath, valueCaption,
+            folderNameParm);
     }
 
     /**
@@ -142,23 +130,16 @@ public abstract class Boss {
      *  @param runParm RunParmFile line parsed into RunParmArrayEntry.
      *  @param valueCaption name of RunParm, for error message output.
      */
-    protected File editExistingFileRunParm(
-		                File              filePath,
-                        RunParmArrayEntry runParm,
-                        String            valueCaption,
-                        int               valueFieldNbr)
-                    throws IllegalArgumentException {
+    protected File editExistingFileRunParm(final File filePath,
+        final RunParmArrayEntry runParm, final String valueCaption,
+        final int valueFieldNbr) throws IllegalArgumentException
+    {
 
-        String fileNameParm     =
-            editFileNameParm(
-                runParm,
-                valueCaption,
-                valueFieldNbr);
+        final String fileNameParm = editFileNameParm(runParm, valueCaption,
+            valueFieldNbr);
 
-        return buildFileObjectForExistingFile(
-			       filePath,
-                   valueCaption,
-                   fileNameParm);
+        return buildFileObjectForExistingFile(filePath, valueCaption,
+            fileNameParm);
     }
 
     /**
@@ -172,38 +153,27 @@ public abstract class Boss {
      *  @return String validated file name suffix
      */
     protected String editProofWorksheetFileNameSuffix(
-                        RunParmArrayEntry runParm,
-                        String            valueCaption,
-                        int               valueFieldNbr)
-                            throws IllegalArgumentException {
-        editRunParmValuesLength(
-            runParm,
-            valueCaption,
-            1);
-        String fileNameSuffixParm   =
-            runParm.values[valueFieldNbr - 1].trim();
-        if (fileNameSuffixParm.compareTo(
-            PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_TXT)  == 0
-            ||
-            fileNameSuffixParm.compareTo(
-            PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_TXT2) == 0
-            ||
-            fileNameSuffixParm.compareTo(
-            PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP) == 0
-            ||
-            fileNameSuffixParm.compareTo(
-            PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP2) == 0) {
+        final RunParmArrayEntry runParm, final String valueCaption,
+        final int valueFieldNbr) throws IllegalArgumentException
+    {
+        editRunParmValuesLength(runParm, valueCaption, 1);
+        final String fileNameSuffixParm = runParm.values[valueFieldNbr - 1]
+            .trim();
+        if (fileNameSuffixParm
+            .compareTo(PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_TXT) == 0
+            || fileNameSuffixParm
+                .compareTo(PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_TXT2) == 0
+            || fileNameSuffixParm
+                .compareTo(PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP) == 0
+            || fileNameSuffixParm
+                .compareTo(PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP2) == 0)
             return fileNameSuffixParm;
-        }
 
         throw new IllegalArgumentException(
-            UtilConstants.ERRMSG_BAD_FILE_NAME_SUFFIX_1
-            + valueCaption
-            + UtilConstants.ERRMSG_BAD_FILE_NAME_SUFFIX_2
-            + valueFieldNbr
-            + UtilConstants.ERRMSG_BAD_FILE_NAME_SUFFIX_3);
+            UtilConstants.ERRMSG_BAD_FILE_NAME_SUFFIX_1 + valueCaption
+                + UtilConstants.ERRMSG_BAD_FILE_NAME_SUFFIX_2 + valueFieldNbr
+                + UtilConstants.ERRMSG_BAD_FILE_NAME_SUFFIX_3);
     }
-
 
     /**
      *  Validate name of folder
@@ -216,24 +186,16 @@ public abstract class Boss {
      *  @return String validated folder name.
      */
     protected String editExistingFolderNameParm(
-                        RunParmArrayEntry runParm,
-                        String            valueCaption,
-                        int               valueFieldNbr)
-                            throws IllegalArgumentException {
-        editRunParmValuesLength(
-            runParm,
-            valueCaption,
-            1);
-        String folderNameParm   =
-            runParm.values[valueFieldNbr - 1].trim();
-        if (folderNameParm.length() == 0) {
+        final RunParmArrayEntry runParm, final String valueCaption,
+        final int valueFieldNbr) throws IllegalArgumentException
+    {
+        editRunParmValuesLength(runParm, valueCaption, 1);
+        final String folderNameParm = runParm.values[valueFieldNbr - 1].trim();
+        if (folderNameParm.length() == 0)
             throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_FOLDER_NAME_BLANK_1
-                + valueCaption
-                + UtilConstants.ERRMSG_FOLDER_NAME_BLANK_2
-                + valueFieldNbr
-                + UtilConstants.ERRMSG_FOLDER_NAME_BLANK_3);
-        }
+                UtilConstants.ERRMSG_FOLDER_NAME_BLANK_1 + valueCaption
+                    + UtilConstants.ERRMSG_FOLDER_NAME_BLANK_2 + valueFieldNbr
+                    + UtilConstants.ERRMSG_FOLDER_NAME_BLANK_3);
         return folderNameParm;
     }
 
@@ -248,58 +210,43 @@ public abstract class Boss {
      *
      *  @return File           File object for folder
      */
-    protected File buildFileObjectForExistingFolder(
-		            File   filePath,
-                    String valueCaption,
-                    String folderNameParm)
-                        throws IllegalArgumentException {
+    protected File buildFileObjectForExistingFolder(final File filePath,
+        final String valueCaption, final String folderNameParm)
+        throws IllegalArgumentException
+    {
 
-        File        folder        = new File(folderNameParm);
+        File folder = new File(folderNameParm);
         try {
-            if (filePath == null
-            		||
-           		folder.isAbsolute()) {
-			}
-			else {
-				folder            =
-					new File(
-						filePath,
-						folderNameParm);
-			}
+            if (filePath == null || folder.isAbsolute()) {}
+            else
+                folder = new File(filePath, folderNameParm);
             if (folder.exists()) {
                 if (folder.isDirectory()) {
                     // okey dokey!
                 }
-                else {
+                else
                     throw new IllegalArgumentException(
-                        UtilConstants.ERRMSG_NOT_A_FOLDER_1
-                        + valueCaption
-                        + UtilConstants.ERRMSG_NOT_A_FOLDER_2
+                        UtilConstants.ERRMSG_NOT_A_FOLDER_1 + valueCaption
+                            + UtilConstants.ERRMSG_NOT_A_FOLDER_2
 //                      + folderNameParm
-                        + folder.getAbsolutePath()
-                        + UtilConstants.ERRMSG_NOT_A_FOLDER_3);
-                }
+                            + folder.getAbsolutePath()
+                            + UtilConstants.ERRMSG_NOT_A_FOLDER_3);
             }
-            else {
+            else
                 throw new IllegalArgumentException(
-                    UtilConstants.ERRMSG_FOLDER_NOTFND_1
-                    + valueCaption
-                    + UtilConstants.ERRMSG_FOLDER_NOTFND_2
+                    UtilConstants.ERRMSG_FOLDER_NOTFND_1 + valueCaption
+                        + UtilConstants.ERRMSG_FOLDER_NOTFND_2
 //                  + folderNameParm
-                    + folder.getAbsolutePath()
-                    + UtilConstants.ERRMSG_FOLDER_NOTFND_3);
-            }
+                        + folder.getAbsolutePath()
+                        + UtilConstants.ERRMSG_FOLDER_NOTFND_3);
 
-        }
-        catch(Exception e) {
+        } catch (final Exception e) {
             throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_FOLDER_MISC_ERROR_1
-                + valueCaption
-                + UtilConstants.ERRMSG_FOLDER_MISC_ERROR_2
+                UtilConstants.ERRMSG_FOLDER_MISC_ERROR_1 + valueCaption
+                    + UtilConstants.ERRMSG_FOLDER_MISC_ERROR_2
 //              + folderNameParm
-                + folder.getAbsolutePath()
-                + UtilConstants.ERRMSG_FOLDER_MISC_ERROR_3
-                + e.getMessage());
+                    + folder.getAbsolutePath()
+                    + UtilConstants.ERRMSG_FOLDER_MISC_ERROR_3 + e.getMessage());
         }
         return folder;
     }
@@ -316,62 +263,46 @@ public abstract class Boss {
      *
      *  @return File           File object for file.
      */
-    protected File buildFileObjectForExistingFile(
-		            File   filePath,
-                    String valueCaption,
-                    String fileNameParm)
-                        throws IllegalArgumentException {
+    protected File buildFileObjectForExistingFile(final File filePath,
+        final String valueCaption, final String fileNameParm)
+        throws IllegalArgumentException
+    {
 
-        File file               = new File(fileNameParm);
+        File file = new File(fileNameParm);
         try {
-            if (filePath == null
-            		||
-            	file.isAbsolute()) {
-			}
-			else {
-				file            =
-					new File(
-						filePath,
-						fileNameParm);
-			}
+            if (filePath == null || file.isAbsolute()) {}
+            else
+                file = new File(filePath, fileNameParm);
             if (file.exists()) {
                 if (!file.isDirectory()) {
                     // okey dokey!
                 }
-                else {
+                else
                     throw new IllegalArgumentException(
-                        UtilConstants.ERRMSG_NOT_A_FILE_1
-                        + valueCaption
-                        + UtilConstants.ERRMSG_NOT_A_FILE_2
+                        UtilConstants.ERRMSG_NOT_A_FILE_1 + valueCaption
+                            + UtilConstants.ERRMSG_NOT_A_FILE_2
 //                      + fileNameParm
-                        + file.getAbsolutePath()
-                        + UtilConstants.ERRMSG_NOT_A_FILE_3);
-                }
+                            + file.getAbsolutePath()
+                            + UtilConstants.ERRMSG_NOT_A_FILE_3);
             }
-            else {
+            else
                 throw new IllegalArgumentException(
-                    UtilConstants.ERRMSG_FILE_NOTFND_1
-                    + valueCaption
-                    + UtilConstants.ERRMSG_FILE_NOTFND_2
+                    UtilConstants.ERRMSG_FILE_NOTFND_1 + valueCaption
+                        + UtilConstants.ERRMSG_FILE_NOTFND_2
 //                  + fileNameParm
-                    + file.getAbsolutePath()
-                    + UtilConstants.ERRMSG_FILE_NOTFND_3);
-            }
+                        + file.getAbsolutePath()
+                        + UtilConstants.ERRMSG_FILE_NOTFND_3);
 
-        }
-        catch(Exception e) {
+        } catch (final Exception e) {
             throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_FILE_MISC_ERROR_1
-                + valueCaption
-                + UtilConstants.ERRMSG_FILE_MISC_ERROR_2
+                UtilConstants.ERRMSG_FILE_MISC_ERROR_1 + valueCaption
+                    + UtilConstants.ERRMSG_FILE_MISC_ERROR_2
 //              + fileNameParm
-                + file.getAbsolutePath()
-                + UtilConstants.ERRMSG_FILE_MISC_ERROR_3
-                + e.getMessage());
+                    + file.getAbsolutePath()
+                    + UtilConstants.ERRMSG_FILE_MISC_ERROR_3 + e.getMessage());
         }
         return file;
     }
-
 
     /**
      *  Validate PrintWriter RunParm and its options.
@@ -381,39 +312,21 @@ public abstract class Boss {
      *  @param runParm RunParmFile line parsed into RunParmArrayEntry.
      *  @param valueCaption name of RunParm, for error message output.
      */
-    protected PrintWriter editPrintWriterRunParm(
-		                File              filePath,
-                        RunParmArrayEntry runParm,
-                        String            valueCaption)
-                    throws IllegalArgumentException {
+    protected PrintWriter editPrintWriterRunParm(final File filePath,
+        final RunParmArrayEntry runParm, final String valueCaption)
+        throws IllegalArgumentException
+    {
 
-        String fileNameParm   =
-            editFileNameParm(
-                runParm,
-                valueCaption,
-                1);
+        final String fileNameParm = editFileNameParm(runParm, valueCaption, 1);
 
-        String fileUsageParm  =
-            editFileUsageParm(
-                runParm,
-                valueCaption,
-                2);
+        final String fileUsageParm = editFileUsageParm(runParm, valueCaption, 2);
 
-        String fileCharsetParm
-                              =
-            editFileCharsetParm(
-                runParm,
-                valueCaption,
-                3);
+        final String fileCharsetParm = editFileCharsetParm(runParm,
+            valueCaption, 3);
 
-        return doConstructPrintWriter(
-			       filePath,
-                   valueCaption,
-                   fileNameParm,
-                   fileUsageParm,
-                   fileCharsetParm);
+        return doConstructPrintWriter(filePath, valueCaption, fileNameParm,
+            fileUsageParm, fileCharsetParm);
     }
-
 
     /**
      *  Construct a PrintWriter using RunParm options.
@@ -429,100 +342,60 @@ public abstract class Boss {
      *
      *  @return PrintWriter object.
      */
-    protected PrintWriter doConstructPrintWriter(
-		            File   filePath,
-                    String valueCaption,
-                    String fileNameParm,
-                    String fileUsageParm,
-                    String fileCharsetParm)
-                        throws IllegalArgumentException {
+    protected PrintWriter doConstructPrintWriter(final File filePath,
+        final String valueCaption, final String fileNameParm,
+        final String fileUsageParm, final String fileCharsetParm)
+        throws IllegalArgumentException
+    {
 
-        PrintWriter printWriter
-                              = null;
-        File        file      = new File(fileNameParm);
+        PrintWriter printWriter = null;
+        File file = new File(fileNameParm);
         try {
-            if (filePath == null
-            		||
-            	file.isAbsolute()) {
-			}
-			else {
-				file          =
-					new File(filePath,
-					         fileNameParm);
-			}
-            if (file.exists()) {
-                if (fileUsageParm.compareTo(
-                      UtilConstants.RUNPARM_OPTION_FILE_OUT_NEW)
-                    == 0) {
+            if (filePath == null || file.isAbsolute()) {}
+            else
+                file = new File(filePath, fileNameParm);
+            if (file.exists())
+                if (fileUsageParm
+                    .compareTo(UtilConstants.RUNPARM_OPTION_FILE_OUT_NEW) == 0)
                     throw new IllegalArgumentException(
                         UtilConstants.ERRMSG_FILE_USAGE_ERR_EXISTS_1
-                        + valueCaption
-                        + UtilConstants.ERRMSG_FILE_USAGE_ERR_EXISTS_2
+                            + valueCaption
+                            + UtilConstants.ERRMSG_FILE_USAGE_ERR_EXISTS_2
 //                      + fileNameParm
-                        + file.getAbsolutePath()
-                        + UtilConstants.ERRMSG_FILE_USAGE_ERR_EXISTS_3
-                        + UtilConstants.RUNPARM_OPTION_FILE_OUT_NEW
-                        + UtilConstants.ERRMSG_FILE_USAGE_ERR_EXISTS_4
-                        );
+                            + file.getAbsolutePath()
+                            + UtilConstants.ERRMSG_FILE_USAGE_ERR_EXISTS_3
+                            + UtilConstants.RUNPARM_OPTION_FILE_OUT_NEW
+                            + UtilConstants.ERRMSG_FILE_USAGE_ERR_EXISTS_4);
+                else if (file.isFile() && file.canWrite()
+                    && !file.isDirectory())
+                {
+                    // okey dokey!
                 }
-                else {
-                    if (file.isFile()
-                        &&
-                        file.canWrite()
-                        &&
-                        !file.isDirectory()) {
-                        // okey dokey!
-                    }
-                    else {
-                        throw new IllegalArgumentException(
+                else
+                    throw new IllegalArgumentException(
                         UtilConstants.ERRMSG_FILE_UPDATE_NOT_ALLOWED_1
-                        + valueCaption
-                        +
-                        UtilConstants.ERRMSG_FILE_UPDATE_NOT_ALLOWED_2
+                            + valueCaption
+                            + UtilConstants.ERRMSG_FILE_UPDATE_NOT_ALLOWED_2
 //                      + fileNameParm
-                        + file.getAbsolutePath()
-                        +
-                        UtilConstants.ERRMSG_FILE_UPDATE_NOT_ALLOWED_3
-                        +
-                        UtilConstants.RUNPARM_OPTION_FILE_OUT_UPDATE
-                        +
-                        UtilConstants.ERRMSG_FILE_UPDATE_NOT_ALLOWED_4
-                        );
-                    }
-                }
-            }
+                            + file.getAbsolutePath()
+                            + UtilConstants.ERRMSG_FILE_UPDATE_NOT_ALLOWED_3
+                            + UtilConstants.RUNPARM_OPTION_FILE_OUT_UPDATE
+                            + UtilConstants.ERRMSG_FILE_UPDATE_NOT_ALLOWED_4);
 
-            if (fileCharsetParm.length() == 0) {
-                printWriter       =
-                    new PrintWriter(
-                        new BufferedWriter(
-                            new FileWriter(file)
-                            )
-                        );
-            }
-            else {
-                printWriter       =
-                    new PrintWriter(
-                        new BufferedWriter(
-                            new OutputStreamWriter(
-                                new FileOutputStream(
-                                    file),
-                                fileCharsetParm
-                            )
-                        )
-                    );
-
-            }
-        }
-        catch(Exception e) {
+            if (fileCharsetParm.length() == 0)
+                printWriter = new PrintWriter(new BufferedWriter(
+                    new FileWriter(file)));
+            else
+                printWriter = new PrintWriter(new BufferedWriter(
+                    new OutputStreamWriter(new FileOutputStream(file),
+                        fileCharsetParm)));
+        } catch (final Exception e) {
             throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_FILE_MISC_ERROR_1
-                + valueCaption
-                + UtilConstants.ERRMSG_FILE_MISC_ERROR_2
+                UtilConstants.ERRMSG_FILE_MISC_ERROR_1 + valueCaption
+                    + UtilConstants.ERRMSG_FILE_MISC_ERROR_2
 //              + fileNameParm
-                + file.getAbsolutePath()
-                + UtilConstants.ERRMSG_FILE_MISC_ERROR_3
-                + e.getMessage());
+                    + file.getAbsolutePath()
+                    + UtilConstants.ERRMSG_FILE_MISC_ERROR_3 + e.getMessage());
         }
         return printWriter;
     }
@@ -538,74 +411,51 @@ public abstract class Boss {
      *
      *  @return BufferedReader file object.
      */
-    protected Reader doConstructBufferedFileReader(
-                    String valueCaption,
-                    String fileNameParm,
-                    File   parentDirectory)
-                        throws IllegalArgumentException {
+    protected Reader doConstructBufferedFileReader(final String valueCaption,
+        final String fileNameParm, final File parentDirectory)
+        throws IllegalArgumentException
+    {
 
         Reader bufferedFileReader = null;
 
-        File           file       = new File(fileNameParm);
-        if (parentDirectory == null ||
-            file.isAbsolute()) {
-            //ok, use as-is
+        File file = new File(fileNameParm);
+        if (parentDirectory == null || file.isAbsolute()) {
+            // ok, use as-is
         }
-        else {
+        else
             // fileName relative to parentDirectory.
-            file                  = new File(parentDirectory,
-                                             fileNameParm);
-        }
+            file = new File(parentDirectory, fileNameParm);
 
         try {
-            if (!file.exists()) {
+            if (!file.exists())
                 throw new IllegalArgumentException(
-                    UtilConstants.ERRMSG_FILE_NOTFND_1
-                    + valueCaption
-                    + UtilConstants.ERRMSG_FILE_NOTFND_2
+                    UtilConstants.ERRMSG_FILE_NOTFND_1 + valueCaption
+                        + UtilConstants.ERRMSG_FILE_NOTFND_2
 //                  + fileNameParm
-                    + file.getAbsolutePath()
-                    + UtilConstants.ERRMSG_FILE_NOTFND_3
-                    );
+                        + file.getAbsolutePath()
+                        + UtilConstants.ERRMSG_FILE_NOTFND_3);
+            if (file.isFile() && file.canRead() && !file.isDirectory()) {
+                // okey dokey!
             }
-            if (file.isFile()
-                &&
-                file.canRead()
-                &&
-                !file.isDirectory()) {
-                        // okey dokey!
-            }
-            else {
+            else
                 throw new IllegalArgumentException(
-                    UtilConstants.ERRMSG_FILE_READ_NOT_ALLOWED_1
-                    + valueCaption
-                    +
-                    UtilConstants.ERRMSG_FILE_READ_NOT_ALLOWED_2
+                    UtilConstants.ERRMSG_FILE_READ_NOT_ALLOWED_1 + valueCaption
+                        + UtilConstants.ERRMSG_FILE_READ_NOT_ALLOWED_2
 //                  + fileNameParm
-                    + file.getAbsolutePath()
-                    +
-                    UtilConstants.ERRMSG_FILE_READ_NOT_ALLOWED_3
-                    );
-            }
+                        + file.getAbsolutePath()
+                        + UtilConstants.ERRMSG_FILE_READ_NOT_ALLOWED_3);
 
-            bufferedFileReader    =
-                new BufferedReader(
-                    new FileReader(file));
-        }
-        catch(Exception e) {
+            bufferedFileReader = new BufferedReader(new FileReader(file));
+        } catch (final Exception e) {
             throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_FILE_MISC_ERROR_1
-                + valueCaption
-                + UtilConstants.ERRMSG_FILE_MISC_ERROR_2
+                UtilConstants.ERRMSG_FILE_MISC_ERROR_1 + valueCaption
+                    + UtilConstants.ERRMSG_FILE_MISC_ERROR_2
 //              + fileNameParm
-                + file.getAbsolutePath()
-                + UtilConstants.ERRMSG_FILE_MISC_ERROR_3
-                + e.getMessage());
+                    + file.getAbsolutePath()
+                    + UtilConstants.ERRMSG_FILE_MISC_ERROR_3 + e.getMessage());
         }
         return bufferedFileReader;
     }
-
-
 
     /**
      *  Construct a Buffered File Writer using RunParm
@@ -620,85 +470,60 @@ public abstract class Boss {
      *  @return BufferedWriter file object.
      */
     protected BufferedWriter doConstructBufferedFileWriter(
-                    String valueCaption,
-                    String fileNameParm,
-                    String fileUsageParm,
-                    File   parentDirectory)
-                        throws IllegalArgumentException {
+        final String valueCaption, final String fileNameParm,
+        final String fileUsageParm, final File parentDirectory)
+        throws IllegalArgumentException
+    {
 
-        BufferedWriter bufferedFileWriter
-                                  = null;
-        File           file       = new File(fileNameParm);
-        if (parentDirectory == null ||
-            file.isAbsolute()) {
-            //ok, use as-is
+        BufferedWriter bufferedFileWriter = null;
+        File file = new File(fileNameParm);
+        if (parentDirectory == null || file.isAbsolute()) {
+            // ok, use as-is
         }
-        else {
+        else
             // fileName relative to parentDirectory.
-            file                  = new File(parentDirectory,
-                                             fileNameParm);
-        }
+            file = new File(parentDirectory, fileNameParm);
 
         try {
-            if (file.exists()) {
-                if (fileUsageParm.compareTo(
-                      UtilConstants.RUNPARM_OPTION_FILE_OUT_NEW)
-                    == 0) {
+            if (file.exists())
+                if (fileUsageParm
+                    .compareTo(UtilConstants.RUNPARM_OPTION_FILE_OUT_NEW) == 0)
                     throw new IllegalArgumentException(
                         UtilConstants.ERRMSG_FILE_USAGE_ERR_EXISTS_1
-                        + valueCaption
-                        + UtilConstants.ERRMSG_FILE_USAGE_ERR_EXISTS_2
+                            + valueCaption
+                            + UtilConstants.ERRMSG_FILE_USAGE_ERR_EXISTS_2
 //                      + fileNameParm
-                        + file.getAbsolutePath()
-                        + UtilConstants.ERRMSG_FILE_USAGE_ERR_EXISTS_3
-                        + UtilConstants.RUNPARM_OPTION_FILE_OUT_NEW
-                        + UtilConstants.ERRMSG_FILE_USAGE_ERR_EXISTS_4
-                        );
+                            + file.getAbsolutePath()
+                            + UtilConstants.ERRMSG_FILE_USAGE_ERR_EXISTS_3
+                            + UtilConstants.RUNPARM_OPTION_FILE_OUT_NEW
+                            + UtilConstants.ERRMSG_FILE_USAGE_ERR_EXISTS_4);
+                else if (file.isFile() && file.canWrite()
+                    && !file.isDirectory())
+                {
+                    // okey dokey!
                 }
-                else {
-                    if (file.isFile()
-                        &&
-                        file.canWrite()
-                        &&
-                        !file.isDirectory()) {
-                        // okey dokey!
-                    }
-                    else {
-                        throw new IllegalArgumentException(
+                else
+                    throw new IllegalArgumentException(
                         UtilConstants.ERRMSG_FILE_UPDATE_NOT_ALLOWED_1
-                        + valueCaption
-                        +
-                        UtilConstants.ERRMSG_FILE_UPDATE_NOT_ALLOWED_2
+                            + valueCaption
+                            + UtilConstants.ERRMSG_FILE_UPDATE_NOT_ALLOWED_2
 //                      + fileNameParm
-                        + file.getAbsolutePath()
-                        +
-                        UtilConstants.ERRMSG_FILE_UPDATE_NOT_ALLOWED_3
-                        +
-                        UtilConstants.RUNPARM_OPTION_FILE_OUT_UPDATE
-                        +
-                        UtilConstants.ERRMSG_FILE_UPDATE_NOT_ALLOWED_4
-                        );
-                    }
-                }
-            }
+                            + file.getAbsolutePath()
+                            + UtilConstants.ERRMSG_FILE_UPDATE_NOT_ALLOWED_3
+                            + UtilConstants.RUNPARM_OPTION_FILE_OUT_UPDATE
+                            + UtilConstants.ERRMSG_FILE_UPDATE_NOT_ALLOWED_4);
 
-            bufferedFileWriter    =
-                new BufferedWriter(
-                    new FileWriter(file));
-        }
-        catch(Exception e) {
+            bufferedFileWriter = new BufferedWriter(new FileWriter(file));
+        } catch (final Exception e) {
             throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_FILE_MISC_ERROR_1
-                + valueCaption
-                + UtilConstants.ERRMSG_FILE_MISC_ERROR_2
+                UtilConstants.ERRMSG_FILE_MISC_ERROR_1 + valueCaption
+                    + UtilConstants.ERRMSG_FILE_MISC_ERROR_2
 //              + fileNameParm
-                + file.getAbsolutePath()
-                + UtilConstants.ERRMSG_FILE_MISC_ERROR_3
-                + e.getMessage());
+                    + file.getAbsolutePath()
+                    + UtilConstants.ERRMSG_FILE_MISC_ERROR_3 + e.getMessage());
         }
         return bufferedFileWriter;
     }
-
 
     /**
      *  Validate File Name.
@@ -710,25 +535,17 @@ public abstract class Boss {
      *
      *  @return String validated file name.
      */
-    protected String editFileNameParm(
-                        RunParmArrayEntry runParm,
-                        String            valueCaption,
-                        int               valueFieldNbr)
-                            throws IllegalArgumentException {
-        editRunParmValuesLength(
-            runParm,
-            valueCaption,
-            1);
-        String fileNameParm   =
-            runParm.values[valueFieldNbr - 1].trim();
-        if (fileNameParm.length() == 0) {
+    protected String editFileNameParm(final RunParmArrayEntry runParm,
+        final String valueCaption, final int valueFieldNbr)
+        throws IllegalArgumentException
+    {
+        editRunParmValuesLength(runParm, valueCaption, 1);
+        final String fileNameParm = runParm.values[valueFieldNbr - 1].trim();
+        if (fileNameParm.length() == 0)
             throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_FILE_NAME_BLANK_1
-                + valueCaption
-                + UtilConstants.ERRMSG_FILE_NAME_BLANK_2
-                + valueFieldNbr
-                + UtilConstants.ERRMSG_FILE_NAME_BLANK_3);
-        }
+                UtilConstants.ERRMSG_FILE_NAME_BLANK_1 + valueCaption
+                    + UtilConstants.ERRMSG_FILE_NAME_BLANK_2 + valueFieldNbr
+                    + UtilConstants.ERRMSG_FILE_NAME_BLANK_3);
         return fileNameParm;
     }
 
@@ -742,48 +559,38 @@ public abstract class Boss {
      *
      *  @return String validated file usage parm.
      */
-    protected String editFileUsageParm(
-                        RunParmArrayEntry runParm,
-                        String            valueCaption,
-                        int               valueFieldNbr)
-                            throws IllegalArgumentException {
+    protected String editFileUsageParm(final RunParmArrayEntry runParm,
+        final String valueCaption, final int valueFieldNbr)
+        throws IllegalArgumentException
+    {
 
-        if (runParm.values.length < valueFieldNbr ) {
+        if (runParm.values.length < valueFieldNbr)
             return UtilConstants.OPTION_FILE_OUT_USAGE_DEFAULT;
-        }
 
-        String fileUsageParm  =
-            runParm.values[valueFieldNbr - 1].trim();
-        if (fileUsageParm.length() == 0) {
+        final String fileUsageParm = runParm.values[valueFieldNbr - 1].trim();
+        if (fileUsageParm.length() == 0)
             return UtilConstants.OPTION_FILE_OUT_USAGE_DEFAULT;
-        }
 
-        if (fileUsageParm.compareToIgnoreCase(
-                UtilConstants.RUNPARM_OPTION_FILE_OUT_NEW)
-            == 0) {
+        if (fileUsageParm
+            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_FILE_OUT_NEW) == 0)
             return UtilConstants.RUNPARM_OPTION_FILE_OUT_NEW;
-        }
 
-        if (fileUsageParm.compareToIgnoreCase(
-                UtilConstants.RUNPARM_OPTION_FILE_OUT_UPDATE)
-            == 0) {
+        if (fileUsageParm
+            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_FILE_OUT_UPDATE) == 0)
             return UtilConstants.RUNPARM_OPTION_FILE_OUT_UPDATE;
-        }
 
         throw new IllegalArgumentException(
-            UtilConstants.ERRMSG_FILE_USAGE_PARM_UNRECOG_1
-            + valueCaption
-            + UtilConstants.ERRMSG_FILE_USAGE_PARM_UNRECOG_2
-            + valueFieldNbr
-            + UtilConstants.ERRMSG_FILE_USAGE_PARM_UNRECOG_3
-            + UtilConstants.RUNPARM_OPTION_FILE_OUT_NEW
-            + UtilConstants.ERRMSG_FILE_USAGE_PARM_UNRECOG_4
-            + UtilConstants.RUNPARM_OPTION_FILE_OUT_UPDATE
-            + UtilConstants.ERRMSG_FILE_USAGE_PARM_UNRECOG_5
-            + fileUsageParm
-            + UtilConstants.ERRMSG_FILE_USAGE_PARM_UNRECOG_6);
+            UtilConstants.ERRMSG_FILE_USAGE_PARM_UNRECOG_1 + valueCaption
+                + UtilConstants.ERRMSG_FILE_USAGE_PARM_UNRECOG_2
+                + valueFieldNbr
+                + UtilConstants.ERRMSG_FILE_USAGE_PARM_UNRECOG_3
+                + UtilConstants.RUNPARM_OPTION_FILE_OUT_NEW
+                + UtilConstants.ERRMSG_FILE_USAGE_PARM_UNRECOG_4
+                + UtilConstants.RUNPARM_OPTION_FILE_OUT_UPDATE
+                + UtilConstants.ERRMSG_FILE_USAGE_PARM_UNRECOG_5
+                + fileUsageParm
+                + UtilConstants.ERRMSG_FILE_USAGE_PARM_UNRECOG_6);
     }
-
 
     /**
      *  Validate File Charset Parm ("" or "UTF-8", etc).
@@ -795,49 +602,40 @@ public abstract class Boss {
      *
      *  @return String validated file usage parm.
      */
-    protected String editFileCharsetParm(
-                        RunParmArrayEntry runParm,
-                        String            valueCaption,
-                        int               valueFieldNbr)
-                            throws IllegalArgumentException {
+    protected String editFileCharsetParm(final RunParmArrayEntry runParm,
+        final String valueCaption, final int valueFieldNbr)
+        throws IllegalArgumentException
+    {
 
-        if (runParm.values.length < valueFieldNbr ) {
+        if (runParm.values.length < valueFieldNbr)
             return new String("");
-        }
 
-        String fileCharsetParm  =
-            runParm.values[valueFieldNbr - 1].trim();
-        if (fileCharsetParm.length() == 0) {
+        final String fileCharsetParm = runParm.values[valueFieldNbr - 1].trim();
+        if (fileCharsetParm.length() == 0)
             return new String("");
-        }
 
         boolean isSupported;
         try {
-            isSupported       =
-                Charset.isSupported(fileCharsetParm);
-        }
-        catch(IllegalCharsetNameException e) {
+            isSupported = Charset.isSupported(fileCharsetParm);
+        } catch (final IllegalCharsetNameException e) {
             throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_FILE_CHARSET_INVALID_1
-                + valueCaption
-                + UtilConstants.ERRMSG_FILE_CHARSET_INVALID_2
-                + valueFieldNbr
-                + UtilConstants.ERRMSG_FILE_CHARSET_INVALID_3
-                + fileCharsetParm
-                + UtilConstants.ERRMSG_FILE_CHARSET_INVALID_4
-                + e.getMessage());
+                UtilConstants.ERRMSG_FILE_CHARSET_INVALID_1 + valueCaption
+                    + UtilConstants.ERRMSG_FILE_CHARSET_INVALID_2
+                    + valueFieldNbr
+                    + UtilConstants.ERRMSG_FILE_CHARSET_INVALID_3
+                    + fileCharsetParm
+                    + UtilConstants.ERRMSG_FILE_CHARSET_INVALID_4
+                    + e.getMessage());
         }
 
-        if (!isSupported) {
+        if (!isSupported)
             throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_FILE_CHARSET_UNSUPPORTED_1
-                + valueCaption
-                + UtilConstants.ERRMSG_FILE_CHARSET_UNSUPPORTED_2
-                + valueFieldNbr
-                + UtilConstants.ERRMSG_FILE_CHARSET_UNSUPPORTED_3
-                + fileCharsetParm
-                + UtilConstants.ERRMSG_FILE_CHARSET_UNSUPPORTED_4);
-        }
+                UtilConstants.ERRMSG_FILE_CHARSET_UNSUPPORTED_1 + valueCaption
+                    + UtilConstants.ERRMSG_FILE_CHARSET_UNSUPPORTED_2
+                    + valueFieldNbr
+                    + UtilConstants.ERRMSG_FILE_CHARSET_UNSUPPORTED_3
+                    + fileCharsetParm
+                    + UtilConstants.ERRMSG_FILE_CHARSET_UNSUPPORTED_4);
         return fileCharsetParm;
     }
 
@@ -855,19 +653,16 @@ public abstract class Boss {
      *  @return boolean true(yes) or false(no)
      */
     protected Boolean getSelectorAllRunParmOption(
-                    RunParmArrayEntry runParm,
-                    String            valueCaption,
-                    int               valueFieldNbr) {
+        final RunParmArrayEntry runParm, final String valueCaption,
+        final int valueFieldNbr)
+    {
 
         if (runParm.values.length >= valueFieldNbr
-            &&
-            (runParm.values[valueFieldNbr - 1].trim()).
-                equals(UtilConstants.RUNPARM_OPTION_VALUE_ALL)) {
+            && runParm.values[valueFieldNbr - 1].trim().equals(
+                UtilConstants.RUNPARM_OPTION_VALUE_ALL))
             return Boolean.valueOf(true);
-        }
-        else {
+        else
             return null;
-        }
     }
 
     /**
@@ -885,30 +680,22 @@ public abstract class Boss {
      *  @return boolean true(yes) or false(no)
      */
     protected Integer getSelectorCountRunParmOption(
-                    RunParmArrayEntry runParm,
-                    String            valueCaption,
-                    int               valueFieldNbr)
-                        throws IllegalArgumentException {
+        final RunParmArrayEntry runParm, final String valueCaption,
+        final int valueFieldNbr) throws IllegalArgumentException
+    {
 
-        Integer count             = null;
-        if (runParm.values.length >= valueFieldNbr) {
+        Integer count = null;
+        if (runParm.values.length >= valueFieldNbr)
             try {
                 // NumberFormatException if not integer
-                count                 =
-                    Integer.valueOf(
-                        runParm.values[valueFieldNbr - 1].trim());
+                count = Integer.valueOf(runParm.values[valueFieldNbr - 1]
+                    .trim());
                 // IllegalArgumentException if not > 0
-                count                 =
-                    Integer.valueOf(
-                        editRunParmValueReqPosInt(
-                            runParm,
-                            valueCaption,
-                            valueFieldNbr));
+                count = Integer.valueOf(editRunParmValueReqPosInt(runParm,
+                    valueCaption, valueFieldNbr));
+            } catch (final NumberFormatException e) {
+                count = null;
             }
-            catch (NumberFormatException e) {
-                count                 = null;
-            }
-        }
         return count;
     }
 
@@ -927,46 +714,34 @@ public abstract class Boss {
      *  @return Theorem or null
      */
     protected Theorem getSelectorTheoremRunParmOption(
-                    RunParmArrayEntry runParm,
-                    String            valueCaption,
-                    int               valueFieldNbr,
-                    Map               stmtTbl)
-                        throws IllegalArgumentException {
+        final RunParmArrayEntry runParm, final String valueCaption,
+        final int valueFieldNbr, final Map stmtTbl)
+        throws IllegalArgumentException
+    {
 
-        Object  mapValue;
-        String  label;
+        Object mapValue;
+        String label;
         if (runParm.values.length >= valueFieldNbr) {
-            label             =
-                runParm.values[valueFieldNbr - 1].trim();
-            mapValue          =
-                stmtTbl.get(label);
-            if (mapValue == null) {
+            label = runParm.values[valueFieldNbr - 1].trim();
+            mapValue = stmtTbl.get(label);
+            if (mapValue == null)
                 throw new IllegalArgumentException(
-                    UtilConstants.ERRMSG_SELECTOR_NOT_A_STMT_1
-                    + valueCaption
-                    + UtilConstants.ERRMSG_SELECTOR_NOT_A_STMT_2
-                    + valueFieldNbr
-                    + UtilConstants.ERRMSG_SELECTOR_NOT_A_STMT_3
-                    + label
-                    + UtilConstants.ERRMSG_SELECTOR_NOT_A_STMT_4);
-            }
-            if (mapValue instanceof Theorem) {
+                    UtilConstants.ERRMSG_SELECTOR_NOT_A_STMT_1 + valueCaption
+                        + UtilConstants.ERRMSG_SELECTOR_NOT_A_STMT_2
+                        + valueFieldNbr
+                        + UtilConstants.ERRMSG_SELECTOR_NOT_A_STMT_3 + label
+                        + UtilConstants.ERRMSG_SELECTOR_NOT_A_STMT_4);
+            if (mapValue instanceof Theorem)
                 return (Theorem)mapValue;
-            }
             throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_SELECTOR_NOT_A_THEOREM_1
-                + valueCaption
-                + UtilConstants.ERRMSG_SELECTOR_NOT_A_THEOREM_2
-                + valueFieldNbr
-                + UtilConstants.
-                    ERRMSG_SELECTOR_NOT_A_THEOREM_3
-                + label
-                + UtilConstants.
-                    ERRMSG_SELECTOR_NOT_A_THEOREM_4);
+                UtilConstants.ERRMSG_SELECTOR_NOT_A_THEOREM_1 + valueCaption
+                    + UtilConstants.ERRMSG_SELECTOR_NOT_A_THEOREM_2
+                    + valueFieldNbr
+                    + UtilConstants.ERRMSG_SELECTOR_NOT_A_THEOREM_3 + label
+                    + UtilConstants.ERRMSG_SELECTOR_NOT_A_THEOREM_4);
         }
         return null;
     }
-
 
     /**
      *  Validate Required Yes/No Parm.
@@ -978,40 +753,25 @@ public abstract class Boss {
      *
      *  @return boolean true(yes) or false(no)
      */
-    protected boolean editYesNoRunParm(
-                    RunParmArrayEntry runParm,
-                    String            valueCaption,
-                    int               valueFieldNbr)
-                        throws IllegalArgumentException {
+    protected boolean editYesNoRunParm(final RunParmArrayEntry runParm,
+        final String valueCaption, final int valueFieldNbr)
+        throws IllegalArgumentException
+    {
 
-        editRunParmValuesLength(
-            runParm,
-            valueCaption,
-            valueFieldNbr);
+        editRunParmValuesLength(runParm, valueCaption, valueFieldNbr);
         boolean yesNoBoolean;
-        String yesNoParm      =
-            (runParm.values[valueFieldNbr - 1]).toLowerCase().trim();
+        final String yesNoParm = runParm.values[valueFieldNbr - 1]
+            .toLowerCase().trim();
         if (yesNoParm.equals(UtilConstants.RUNPARM_OPTION_YES)
-            ||
-            yesNoParm.equals(
-                UtilConstants.RUNPARM_OPTION_YES_ABBREVIATED)) {
-            yesNoBoolean          = true;
-        }
-        else {
-            if (yesNoParm.equals(
-                    UtilConstants.RUNPARM_OPTION_NO)
-                ||
-                yesNoParm.equals(
-                    UtilConstants.RUNPARM_OPTION_NO_ABBREVIATED)) {
-                yesNoBoolean      = false;
-            }
-            else {
-                throw new IllegalArgumentException(
-                    UtilConstants.ERRMSG_RECHECK_PA_1
-                    + valueCaption
+            || yesNoParm.equals(UtilConstants.RUNPARM_OPTION_YES_ABBREVIATED))
+            yesNoBoolean = true;
+        else if (yesNoParm.equals(UtilConstants.RUNPARM_OPTION_NO)
+            || yesNoParm.equals(UtilConstants.RUNPARM_OPTION_NO_ABBREVIATED))
+            yesNoBoolean = false;
+        else
+            throw new IllegalArgumentException(
+                UtilConstants.ERRMSG_RECHECK_PA_1 + valueCaption
                     + UtilConstants.ERRMSG_RECHECK_PA_2);
-            }
-        }
         return yesNoBoolean;
     }
 
@@ -1025,33 +785,23 @@ public abstract class Boss {
      *
      *  @return boolean true(yes) or false(no)
      */
-    protected boolean editOnOffRunParm(
-                    RunParmArrayEntry runParm,
-                    String            valueCaption,
-                    int               valueFieldNbr)
-                        throws IllegalArgumentException {
+    protected boolean editOnOffRunParm(final RunParmArrayEntry runParm,
+        final String valueCaption, final int valueFieldNbr)
+        throws IllegalArgumentException
+    {
 
-        editRunParmValuesLength(
-            runParm,
-            valueCaption,
-            valueFieldNbr);
+        editRunParmValuesLength(runParm, valueCaption, valueFieldNbr);
         boolean onOffBoolean;
-        String onOffParm          =
-            (runParm.values[valueFieldNbr - 1]).toLowerCase().trim();
-        if (onOffParm.equals(UtilConstants.RUNPARM_OPTION_ON)) {
-            onOffBoolean          = true;
-        }
-        else {
-            if (onOffParm.equals(UtilConstants.RUNPARM_OPTION_OFF)) {
-                onOffBoolean      = false;
-            }
-            else {
-                throw new IllegalArgumentException(
-                    UtilConstants.ERRMSG_BAD_ON_OFF_PARM_1
-                    + valueCaption
+        final String onOffParm = runParm.values[valueFieldNbr - 1]
+            .toLowerCase().trim();
+        if (onOffParm.equals(UtilConstants.RUNPARM_OPTION_ON))
+            onOffBoolean = true;
+        else if (onOffParm.equals(UtilConstants.RUNPARM_OPTION_OFF))
+            onOffBoolean = false;
+        else
+            throw new IllegalArgumentException(
+                UtilConstants.ERRMSG_BAD_ON_OFF_PARM_1 + valueCaption
                     + UtilConstants.ERRMSG_BAD_ON_OFF_PARM_2);
-            }
-        }
         return onOffBoolean;
     }
 
@@ -1064,49 +814,34 @@ public abstract class Boss {
      *  @return int positive integer.
      */
     protected Color editRunParmValueReqRGBColor(
-                    RunParmArrayEntry runParm,
-                    String            valueCaption)
-                        throws IllegalArgumentException {
+        final RunParmArrayEntry runParm, final String valueCaption)
+        throws IllegalArgumentException
+    {
 
-        editRunParmValuesLength(
-            runParm,
-            valueCaption,
+        editRunParmValuesLength(runParm, valueCaption,
             UtilConstants.RUNPARM_NBR_RGB_COLOR_VALUES);
 
-        int[] rgb                 =
-            new int[UtilConstants.RUNPARM_NBR_RGB_COLOR_VALUES];
+        final int[] rgb = new int[UtilConstants.RUNPARM_NBR_RGB_COLOR_VALUES];
 
-        for (int valueFieldNbr    = 0;
-             valueFieldNbr <
-                UtilConstants.RUNPARM_NBR_RGB_COLOR_VALUES;
-             valueFieldNbr++) {
+        for (int valueFieldNbr = 0; valueFieldNbr < UtilConstants.RUNPARM_NBR_RGB_COLOR_VALUES; valueFieldNbr++)
+        {
 
-            rgb[valueFieldNbr]    =
-                editRunParmValueInteger(
-                    runParm.values[valueFieldNbr],
-                    valueCaption);
+            rgb[valueFieldNbr] = editRunParmValueInteger(
+                runParm.values[valueFieldNbr], valueCaption);
 
-            if (rgb[valueFieldNbr] <
-                UtilConstants.RUNPARM_OPTION_MIN_RGB_COLOR
-                ||
-                rgb[valueFieldNbr] >
-                UtilConstants.RUNPARM_OPTION_MAX_RGB_COLOR) {
-
+            if (rgb[valueFieldNbr] < UtilConstants.RUNPARM_OPTION_MIN_RGB_COLOR
+                || rgb[valueFieldNbr] > UtilConstants.RUNPARM_OPTION_MAX_RGB_COLOR)
                 throw new IllegalArgumentException(
-                    UtilConstants.ERRMSG_RUNPARM_RGB_RANGE_1
-                    + valueCaption
-                    + UtilConstants.ERRMSG_RUNPARM_RGB_RANGE_2
-                    + UtilConstants.RUNPARM_OPTION_MIN_RGB_COLOR
-                    + UtilConstants.ERRMSG_RUNPARM_RGB_RANGE_3
-                    + UtilConstants.RUNPARM_OPTION_MAX_RGB_COLOR
-                    + UtilConstants.ERRMSG_RUNPARM_RGB_RANGE_4
-                    + Integer.toString(rgb[valueFieldNbr]));
-            }
+                    UtilConstants.ERRMSG_RUNPARM_RGB_RANGE_1 + valueCaption
+                        + UtilConstants.ERRMSG_RUNPARM_RGB_RANGE_2
+                        + UtilConstants.RUNPARM_OPTION_MIN_RGB_COLOR
+                        + UtilConstants.ERRMSG_RUNPARM_RGB_RANGE_3
+                        + UtilConstants.RUNPARM_OPTION_MAX_RGB_COLOR
+                        + UtilConstants.ERRMSG_RUNPARM_RGB_RANGE_4
+                        + Integer.toString(rgb[valueFieldNbr]));
         }
 
-        return new Color(rgb[0],
-                         rgb[1],
-                         rgb[2]);
+        return new Color(rgb[0], rgb[1], rgb[2]);
     }
 
     /**
@@ -1119,23 +854,15 @@ public abstract class Boss {
      *
      *  @return int positive integer.
      */
-    protected int editRunParmValueReqPosInt(
-                    RunParmArrayEntry runParm,
-                    String            valueCaption,
-                    int               valueFieldNbr)
-                        throws IllegalArgumentException {
+    protected int editRunParmValueReqPosInt(final RunParmArrayEntry runParm,
+        final String valueCaption, final int valueFieldNbr)
+        throws IllegalArgumentException
+    {
 
-        editRunParmValuesLength(
-            runParm,
-            valueCaption,
-            valueFieldNbr);
-        Integer i             =
-            editRunParmValueInteger(
-                runParm.values[valueFieldNbr - 1],
-                valueCaption);
-        return editRunParmPositiveInteger(
-                    i,
-                    valueCaption);
+        editRunParmValuesLength(runParm, valueCaption, valueFieldNbr);
+        final Integer i = editRunParmValueInteger(
+            runParm.values[valueFieldNbr - 1], valueCaption);
+        return editRunParmPositiveInteger(i, valueCaption);
     }
 
     /**
@@ -1149,22 +876,14 @@ public abstract class Boss {
      *  @return int positive integer.
      */
     protected int editRunParmValueReqNonNegativeInt(
-                    RunParmArrayEntry runParm,
-                    String            valueCaption,
-                    int               valueFieldNbr)
-                        throws IllegalArgumentException {
+        final RunParmArrayEntry runParm, final String valueCaption,
+        final int valueFieldNbr) throws IllegalArgumentException
+    {
 
-        editRunParmValuesLength(
-            runParm,
-            valueCaption,
-            valueFieldNbr);
-        Integer i             =
-            editRunParmValueInteger(
-                runParm.values[valueFieldNbr - 1],
-                valueCaption);
-        return editRunParmNonNegativeInteger(
-                    i,
-                    valueCaption);
+        editRunParmValuesLength(runParm, valueCaption, valueFieldNbr);
+        final Integer i = editRunParmValueInteger(
+            runParm.values[valueFieldNbr - 1], valueCaption);
+        return editRunParmNonNegativeInteger(i, valueCaption);
     }
 
     /**
@@ -1177,23 +896,16 @@ public abstract class Boss {
      *
      *  @return int integer.
      */
-    protected int editRunParmValueReqInt(
-                    RunParmArrayEntry runParm,
-                    String            valueCaption,
-                    int               valueFieldNbr)
-                        throws IllegalArgumentException {
+    protected int editRunParmValueReqInt(final RunParmArrayEntry runParm,
+        final String valueCaption, final int valueFieldNbr)
+        throws IllegalArgumentException
+    {
 
-        editRunParmValuesLength(
-            runParm,
-            valueCaption,
-            valueFieldNbr);
-        Integer i             =
-            editRunParmValueInteger(
-                runParm.values[valueFieldNbr - 1],
-                valueCaption);
+        editRunParmValuesLength(runParm, valueCaption, valueFieldNbr);
+        final Integer i = editRunParmValueInteger(
+            runParm.values[valueFieldNbr - 1], valueCaption);
         return i;
     }
-
 
     /**
      *  Validate Required Number of RunParm fields.
@@ -1204,22 +916,18 @@ public abstract class Boss {
      *  @param requiredNbrValueFields required number of fields
      *                        in the RunParm line.
      */
-    protected void editRunParmValuesLength(
-                     RunParmArrayEntry runParm,
-                     String            valueCaption,
-                     int               requiredNbrValueFields)
-                        throws IllegalArgumentException {
+    protected void editRunParmValuesLength(final RunParmArrayEntry runParm,
+        final String valueCaption, final int requiredNbrValueFields)
+        throws IllegalArgumentException
+    {
 
-        if (runParm.values.length < requiredNbrValueFields) {
+        if (runParm.values.length < requiredNbrValueFields)
             throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_RUNPARM_NOT_ENOUGH_FIELDS_1
-                + valueCaption
-                + UtilConstants.ERRMSG_RUNPARM_NOT_ENOUGH_FIELDS_2
-                + requiredNbrValueFields
-                + UtilConstants.ERRMSG_RUNPARM_NOT_ENOUGH_FIELDS_3);
-        }
+                UtilConstants.ERRMSG_RUNPARM_NOT_ENOUGH_FIELDS_1 + valueCaption
+                    + UtilConstants.ERRMSG_RUNPARM_NOT_ENOUGH_FIELDS_2
+                    + requiredNbrValueFields
+                    + UtilConstants.ERRMSG_RUNPARM_NOT_ENOUGH_FIELDS_3);
     }
-
 
     /**
      *  Validate Integer Parm.
@@ -1230,21 +938,18 @@ public abstract class Boss {
      *
      *  @return int an integer.
      */
-    protected Integer editRunParmValueInteger(
-                String integerString,
-                String valueCaption)
-                    throws IllegalArgumentException {
+    protected Integer editRunParmValueInteger(final String integerString,
+        final String valueCaption) throws IllegalArgumentException
+    {
 
         Integer i = null;
         try {
             i = Integer.valueOf(integerString.trim());
-        }
-        catch(NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_RUNPARM_NBR_FORMAT_ERROR_1
-                + valueCaption
-                + UtilConstants.ERRMSG_RUNPARM_NBR_FORMAT_ERROR_2
-                + e.getMessage());
+                UtilConstants.ERRMSG_RUNPARM_NBR_FORMAT_ERROR_1 + valueCaption
+                    + UtilConstants.ERRMSG_RUNPARM_NBR_FORMAT_ERROR_2
+                    + e.getMessage());
         }
         return i;
     }
@@ -1258,18 +963,14 @@ public abstract class Boss {
      *
      *  @return int a positive integer.
      */
-    protected int editRunParmPositiveInteger(
-                    Integer i,
-                    String  valueCaption)
-                        throws IllegalArgumentException {
-        int n = i.intValue();
-        if (n <= 0) {
+    protected int editRunParmPositiveInteger(final Integer i,
+        final String valueCaption) throws IllegalArgumentException
+    {
+        final int n = i.intValue();
+        if (n <= 0)
             throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_RUNPARM_NBR_LE_ZERO_1
-                + valueCaption
-                + UtilConstants.ERRMSG_RUNPARM_NBR_LE_ZERO_2
-                + i.toString());
-        }
+                UtilConstants.ERRMSG_RUNPARM_NBR_LE_ZERO_1 + valueCaption
+                    + UtilConstants.ERRMSG_RUNPARM_NBR_LE_ZERO_2 + i.toString());
         return n;
     }
 
@@ -1283,18 +984,14 @@ public abstract class Boss {
      *
      *  @return int a positive integer.
      */
-    protected int editRunParmNonNegativeInteger(
-                    Integer i,
-                    String  valueCaption)
-                        throws IllegalArgumentException {
-        int n = i.intValue();
-        if (n < 0) {
+    protected int editRunParmNonNegativeInteger(final Integer i,
+        final String valueCaption) throws IllegalArgumentException
+    {
+        final int n = i.intValue();
+        if (n < 0)
             throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_RUNPARM_NBR_LT_ZERO_1
-                + valueCaption
-                + UtilConstants.ERRMSG_RUNPARM_NBR_LT_ZERO_2
-                + i.toString());
-        }
+                UtilConstants.ERRMSG_RUNPARM_NBR_LT_ZERO_1 + valueCaption
+                    + UtilConstants.ERRMSG_RUNPARM_NBR_LT_ZERO_2 + i.toString());
         return n;
     }
 
@@ -1309,26 +1006,20 @@ public abstract class Boss {
      *
      *  @return Theorem if stmtLabel is valid.
      */
-    protected Theorem editRunParmValueTheorem(
-                String        stmtLabel,
-                String        valueCaption,
-                LogicalSystem logicalSystem)
-                    throws IllegalArgumentException {
-        Stmt stmt             =
-            editRunParmValueStmt(stmtLabel,
-                                 valueCaption,
-                                 logicalSystem);
-        if (stmt instanceof Theorem) {
+    protected Theorem editRunParmValueTheorem(final String stmtLabel,
+        final String valueCaption, final LogicalSystem logicalSystem)
+        throws IllegalArgumentException
+    {
+        final Stmt stmt = editRunParmValueStmt(stmtLabel, valueCaption,
+            logicalSystem);
+        if (stmt instanceof Theorem)
             return (Theorem)stmt;
-        }
-        else {
+        else
             throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_RUNPARM_STMT_NOT_THEOREM_1
-                + valueCaption
-                + UtilConstants.ERRMSG_RUNPARM_STMT_NOT_THEOREM_2
-                + stmtLabel
-                + UtilConstants.ERRMSG_RUNPARM_STMT_NOT_THEOREM_3);
-        }
+                UtilConstants.ERRMSG_RUNPARM_STMT_NOT_THEOREM_1 + valueCaption
+                    + UtilConstants.ERRMSG_RUNPARM_STMT_NOT_THEOREM_2
+                    + stmtLabel
+                    + UtilConstants.ERRMSG_RUNPARM_STMT_NOT_THEOREM_3);
     }
 
     /**
@@ -1342,31 +1033,24 @@ public abstract class Boss {
      *
      *  @return Stmt if stmtLabel is valid.
      */
-    protected Stmt editRunParmValueStmt(
-                String        stmtLabel,
-                String        valueCaption,
-                LogicalSystem logicalSystem)
-                    throws IllegalArgumentException {
-        if (stmtLabel.length() == 0) {
+    protected Stmt editRunParmValueStmt(final String stmtLabel,
+        final String valueCaption, final LogicalSystem logicalSystem)
+        throws IllegalArgumentException
+    {
+        if (stmtLabel.length() == 0)
             throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_RUNPARM_STMT_LABEL_BLANK_1
-                + valueCaption
-                + UtilConstants.ERRMSG_RUNPARM_STMT_LABEL_BLANK_2);
-        }
+                UtilConstants.ERRMSG_RUNPARM_STMT_LABEL_BLANK_1 + valueCaption
+                    + UtilConstants.ERRMSG_RUNPARM_STMT_LABEL_BLANK_2);
 
-        Stmt stmt             =
-            (Stmt)(logicalSystem.getStmtTbl().get(stmtLabel));
-        if (stmt == null) {
+        final Stmt stmt = (Stmt)logicalSystem.getStmtTbl().get(stmtLabel);
+        if (stmt == null)
             throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_RUNPARM_STMT_LABEL_NOTFND_1
-                + valueCaption
-                + UtilConstants.ERRMSG_RUNPARM_STMT_LABEL_NOTFND_2
-                + stmtLabel
-                + UtilConstants.ERRMSG_RUNPARM_STMT_LABEL_NOTFND_3);
-        }
+                UtilConstants.ERRMSG_RUNPARM_STMT_LABEL_NOTFND_1 + valueCaption
+                    + UtilConstants.ERRMSG_RUNPARM_STMT_LABEL_NOTFND_2
+                    + stmtLabel
+                    + UtilConstants.ERRMSG_RUNPARM_STMT_LABEL_NOTFND_3);
         return stmt;
     }
-
 
     /**
      *  Validate RunParm String with length greater than
@@ -1381,45 +1065,36 @@ public abstract class Boss {
      *  @return String if valid.
      */
     protected String editRunParmPrintableNoBlanksString(
-                    RunParmArrayEntry runParm,
-                    String            valueCaption,
-                    int               valueFieldNbr)
-                        throws IllegalArgumentException {
+        final RunParmArrayEntry runParm, final String valueCaption,
+        final int valueFieldNbr) throws IllegalArgumentException
+    {
 
-        editRunParmValuesLength(
-            runParm,
-            valueCaption,
-            valueFieldNbr);
+        editRunParmValuesLength(runParm, valueCaption, valueFieldNbr);
 
-        String printableNoBlanksString
-                                  =
-            runParm.values[valueFieldNbr - 1].trim();
+        final String printableNoBlanksString = runParm.values[valueFieldNbr - 1]
+            .trim();
 
-        boolean   err             = true;
-        char      c;
+        boolean err = true;
+        char c;
         if (printableNoBlanksString.length() > 0) {
-            err                   = false;
-            for (int i = 0;
-                 i < printableNoBlanksString.length();
-                 i++) {
+            err = false;
+            for (int i = 0; i < printableNoBlanksString.length(); i++) {
 
-                c                 = printableNoBlanksString.charAt(i);
-                if (c > 127                   ||
-                    Character.isWhitespace(c) ||
-                    Character.isISOControl(c)) {
-                    err           = true;
+                c = printableNoBlanksString.charAt(i);
+                if (c > 127 || Character.isWhitespace(c)
+                    || Character.isISOControl(c))
+                {
+                    err = true;
                     break;
                 }
             }
         }
 
-        if (err) {
+        if (err)
             throw new IllegalArgumentException(
                 UtilConstants.ERRMSG_RUNPARM_NONBLANK_PRINT_STR_BAD_1
-                + valueCaption
-                + UtilConstants.
-                    ERRMSG_RUNPARM_NONBLANK_PRINT_STR_BAD_2);
-        }
+                    + valueCaption
+                    + UtilConstants.ERRMSG_RUNPARM_NONBLANK_PRINT_STR_BAD_2);
         return printableNoBlanksString;
     }
 }

@@ -10,8 +10,10 @@
  */
 
 package mmj.verify;
+
+import java.util.Iterator;
+
 import mmj.lang.*;
-import java.util.*;
 
 /**
  *  GrammarAmbiguity was separated out from Grammar because
@@ -46,17 +48,16 @@ import java.util.*;
  */
 public class GrammarAmbiguity {
 
-    private  Grammar grammar;
-    private  boolean doCompleteGrammarAmbiguityEdits;
-    private  boolean errorsFound;
+    private final Grammar grammar;
+    private final boolean doCompleteGrammarAmbiguityEdits;
+    private final boolean errorsFound;
 
-    public GrammarAmbiguity(
-                Grammar grammar,
-                boolean doCompleteGrammarAmbiguityEdits) {
-        this.grammar                            = grammar;
-        this.doCompleteGrammarAmbiguityEdits    =
-             doCompleteGrammarAmbiguityEdits;
-        errorsFound                             = false;
+    public GrammarAmbiguity(final Grammar grammar,
+        final boolean doCompleteGrammarAmbiguityEdits)
+    {
+        this.grammar = grammar;
+        this.doCompleteGrammarAmbiguityEdits = doCompleteGrammarAmbiguityEdits;
+        errorsFound = false;
     }
 
     /**
@@ -69,26 +70,23 @@ public class GrammarAmbiguity {
      */
     public boolean fullAmbiguityEdits() {
 
-        if (grammar.getVarHypTypSet().size() !=
-            grammar.getSyntaxAxiomTypSet().size()) {
-            grammar.accumInfoMsgInList(
-                GrammarConstants.ERRMSG_UNDEF_NON_TERMINAL_1
+        if (grammar.getVarHypTypSet().size() != grammar.getSyntaxAxiomTypSet()
+            .size())
+            grammar
+                .accumInfoMsgInList(GrammarConstants.ERRMSG_UNDEF_NON_TERMINAL_1
                     + grammar.getSyntaxAxiomTypSet().size()
                     + GrammarConstants.ERRMSG_UNDEF_NON_TERMINAL_2
                     + grammar.getVarHypTypSet().size()
                     + GrammarConstants.ERRMSG_UNDEF_NON_TERMINAL_3);
-        }
 
-        if (grammar.getNotationGRSet().size() ==
-            grammar.getNotationGRGimmeMatchCnt()) {
-            grammar.accumInfoMsgInList(
-                GrammarConstants.ERRMSG_GRAMMAR_UNAMBIGUOUS);
-        }
+        if (grammar.getNotationGRSet().size() == grammar
+            .getNotationGRGimmeMatchCnt())
+            grammar
+                .accumInfoMsgInList(GrammarConstants.ERRMSG_GRAMMAR_UNAMBIGUOUS);
 
-        //stopped here
+        // stopped here
         return !errorsFound;
     }
-
 
     /**
      *  The Primary Objective of basicAmbiguityEdits is to make
@@ -239,57 +237,50 @@ public class GrammarAmbiguity {
      */
     public boolean basicAmbiguityEdits() {
 
-        boolean             errorsFound    = false;
+        boolean errorsFound = false;
 
-        Iterator            iterI;
-        Iterator            iterJ;
+        Iterator iterI;
+        Iterator iterJ;
 
-        NotationRule        rI;
-        NotationRule        rJ;
+        NotationRule rI;
+        NotationRule rJ;
 
-        ParseNodeHolder[]   parseNodeHolderExpr;
-        Axiom               baseSyntaxAxiom;
-        String              errmsg;
+        ParseNodeHolder[] parseNodeHolderExpr;
+        Axiom baseSyntaxAxiom;
+        String errmsg;
 
-        Cnst[]              exprI;
-        Cnst[]              exprJ;
+        Cnst[] exprI;
+        Cnst[] exprJ;
 
-        int                 maxPfxI;
-        int                 maxSfxJ;
-        int                 maxPfx;
-        int                 lenPfxI;
-        int                 embedPosJ;
+        int maxPfxI;
+        int maxSfxJ;
+        int maxPfx;
+        int lenPfxI;
+        int embedPosJ;
 
-        boolean             isOverlapIJ;
-        boolean             isEmbedIJ;
+        boolean isOverlapIJ;
+        boolean isEmbedIJ;
 
         iterI = grammar.getNotationGRSet().iterator();
         loopI: while (iterI.hasNext()) {
             rI = (NotationRule)iterI.next();
-            if (rI.getIsGimmeMatchNbr() == 1) {
+            if (rI.getIsGimmeMatchNbr() == 1)
                 continue loopI;
-            }
 
             /**
              *  try to parse Grammar Rule -- should not be
              *  possible
              */
             parseNodeHolderExpr = rI.getParseNodeHolderExpr();
-            baseSyntaxAxiom     = rI.getBaseSyntaxAxiom();
+            baseSyntaxAxiom = rI.getBaseSyntaxAxiom();
             try {
-                errmsg =
-                    grammar.grammaticalParseSyntaxExpr(
-                             baseSyntaxAxiom.getFormula().getTyp(),
-                             parseNodeHolderExpr,
-                             Integer.MAX_VALUE,
-                             baseSyntaxAxiom.getLabel());
-                if (errmsg != null) {
+                errmsg = grammar.grammaticalParseSyntaxExpr(baseSyntaxAxiom
+                    .getFormula().getTyp(), parseNodeHolderExpr,
+                    Integer.MAX_VALUE, baseSyntaxAxiom.getLabel());
+                if (errmsg != null)
                     grammar.accumInfoMsgInList(errmsg);
-                }
-            }
-            catch (VerifyException e) {
-                grammar.accumErrorMsgInList(
-                    e.getMessage()
+            } catch (final VerifyException e) {
+                grammar.accumErrorMsgInList(e.getMessage()
                     + GrammarConstants.ERRMSG_LABEL_CAPTION
                     + baseSyntaxAxiom.getLabel());
                 errorsFound = true;
@@ -299,20 +290,19 @@ public class GrammarAmbiguity {
              *  OK, now continue checking for embeds and
              *  overlaps...
              */
-            exprI   = rI.getRuleFormatExpr();
+            exprI = rI.getRuleFormatExpr();
 
             maxPfxI = exprI.length - 1;
 
             iterJ = grammar.getNotationGRSet().iterator();
             loopJ: while (iterJ.hasNext()) {
-                rJ      = (NotationRule)iterJ.next();
-                if (rJ.getIsGimmeMatchNbr() == 1) {
+                rJ = (NotationRule)iterJ.next();
+                if (rJ.getIsGimmeMatchNbr() == 1)
                     continue loopJ;
-                }
-                exprJ   = rJ.getRuleFormatExpr();
+                exprJ = rJ.getRuleFormatExpr();
                 maxSfxJ = exprJ.length - 1;
 
-                maxPfx  = (maxSfxJ < maxPfxI) ? maxSfxJ : maxPfxI;
+                maxPfx = maxSfxJ < maxPfxI ? maxSfxJ : maxPfxI;
 
                 /**
                  *  OK, compare all prefixes of I with suffixes of J
@@ -320,23 +310,13 @@ public class GrammarAmbiguity {
                  *  then compare I with contents of J (embedding)
                  */
                 isOverlapIJ = false;
-                overlapLoop: for (lenPfxI = 1;
-                                  lenPfxI <= maxPfx;
-                                  lenPfxI++) {
-                    if (doesIPfxOverlapJSfx(exprI,
-                                            lenPfxI,
-                                            exprJ)) {
+                overlapLoop: for (lenPfxI = 1; lenPfxI <= maxPfx; lenPfxI++)
+                    if (doesIPfxOverlapJSfx(exprI, lenPfxI, exprJ)) {
                         isOverlapIJ = true;
-                        if (!doCompleteGrammarAmbiguityEdits) {
+                        if (!doCompleteGrammarAmbiguityEdits)
                             break overlapLoop;
-                        }
-                        recordOverlap(rI,
-                                      exprI,
-                                      lenPfxI,
-                                      rJ,
-                                      exprJ);
+                        recordOverlap(rI, exprI, lenPfxI, rJ, exprJ);
                     }
-                }
 
                 /**
                  *  OK, unless I == J, see if I is embedded in J.
@@ -349,29 +329,16 @@ public class GrammarAmbiguity {
                  *  we don't actually have to check for I != J.
                  */
                 isEmbedIJ = false;
-                if (exprI.length < exprJ.length) {
-                    embedLoop: for (embedPosJ =
-                                        exprJ.length - exprI.length;
-                                    embedPosJ >= 0;
-                                    embedPosJ--) {
-                        if (isIEmbeddedInJ(exprI,
-                                           exprJ,
-                                           embedPosJ)) {
+                if (exprI.length < exprJ.length)
+                    embedLoop: for (embedPosJ = exprJ.length - exprI.length; embedPosJ >= 0; embedPosJ--)
+                        if (isIEmbeddedInJ(exprI, exprJ, embedPosJ)) {
                             isEmbedIJ = true;
-                            if (!doCompleteGrammarAmbiguityEdits) {
+                            if (!doCompleteGrammarAmbiguityEdits)
                                 break embedLoop;
-                            }
-                            recordEmbed(rI,
-                                        exprI,
-                                        rJ,
-                                        exprJ,
-                                        embedPosJ);
+                            recordEmbed(rI, exprI, rJ, exprJ, embedPosJ);
                         }
-                    }
-                }
 
-                if (isOverlapIJ ||
-                    isEmbedIJ)  {
+                if (isOverlapIJ || isEmbedIJ) {
                     rI.setIsGimmeMatchNbr(-1);
                     rJ.setIsGimmeMatchNbr(-1);
                 }
@@ -386,50 +353,38 @@ public class GrammarAmbiguity {
         iterI = grammar.getNotationGRSet().iterator();
         int gimmeMatchNbr;
         while (iterI.hasNext()) {
-            rI            = (NotationRule)iterI.next();
+            rI = (NotationRule)iterI.next();
             gimmeMatchNbr = rI.getIsGimmeMatchNbr();
             if (gimmeMatchNbr < 0) {
                 // definitely NOT
             }
-            else {
-                if (gimmeMatchNbr == 1) {
-                    grammar.incNotationGRGimmeMatchCnt();
-                }
-                else {
-                    if (!errorsFound) {
-                        // by process of elimination...
-                        rI.setIsGimmeMatchNbr(1);
-                        grammar.incNotationGRGimmeMatchCnt();
-                    }
-                }
+            else if (gimmeMatchNbr == 1)
+                grammar.incNotationGRGimmeMatchCnt();
+            else if (!errorsFound) {
+                // by process of elimination...
+                rI.setIsGimmeMatchNbr(1);
+                grammar.incNotationGRGimmeMatchCnt();
             }
         }
 
         return !errorsFound;
     }
 
-    private   boolean doesIPfxOverlapJSfx(Cnst[] exprI,
-                                       int    lenPfxI,
-                                       Cnst[] exprJ) {
-        for (int posJ = exprJ.length - lenPfxI,
-                 posI = 0;
-             posI < lenPfxI;
-             posI++, posJ++) {
-            if (exprI[posI] != exprJ[posJ]) {
+    private boolean doesIPfxOverlapJSfx(final Cnst[] exprI, final int lenPfxI,
+        final Cnst[] exprJ)
+    {
+        for (int posJ = exprJ.length - lenPfxI, posI = 0; posI < lenPfxI; posI++, posJ++)
+            if (exprI[posI] != exprJ[posJ])
                 return false;
-            }
-        }
         return true;
     }
 
-    private   boolean isIEmbeddedInJ(Cnst[] exprI,
-                                  Cnst[] exprJ,
-                                  int    embedPosJ) {
-        for (int posI = 0; posI < exprI.length; posI++, embedPosJ++) {
-            if (exprI[posI] != exprJ[embedPosJ]) {
+    private boolean isIEmbeddedInJ(final Cnst[] exprI, final Cnst[] exprJ,
+        int embedPosJ)
+    {
+        for (int posI = 0; posI < exprI.length; posI++, embedPosJ++)
+            if (exprI[posI] != exprJ[embedPosJ])
                 return false;
-            }
-        }
         return true;
     }
 
@@ -440,22 +395,16 @@ public class GrammarAmbiguity {
      *  Note: rI and rJ may be the same rule!
      *
      */
-    private   void recordOverlap(NotationRule rI,
-                                 Cnst[]       exprI,
-                                 int          lenPfx,
-                                 NotationRule rJ,
-                                 Cnst[]       exprJ) {
-        //stopped here
+    private void recordOverlap(final NotationRule rI, final Cnst[] exprI,
+        final int lenPfx, final NotationRule rJ, final Cnst[] exprJ)
+    {
+        // stopped here
     }
 
-
-    private   void recordEmbed(NotationRule rI,
-                               Cnst[]       exprI,
-                               NotationRule rJ,
-                               Cnst[]       exprJ,
-                               int          embedPosJ) {
-        //stopped here
+    private void recordEmbed(final NotationRule rI, final Cnst[] exprI,
+        final NotationRule rJ, final Cnst[] exprJ, final int embedPosJ)
+    {
+        // stopped here
     }
-
 
 }

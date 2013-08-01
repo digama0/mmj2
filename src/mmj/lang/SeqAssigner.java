@@ -16,6 +16,7 @@
 package mmj.lang;
 
 import java.util.*;
+
 import mmj.tl.*;
 
 /**
@@ -70,16 +71,16 @@ import mmj.tl.*;
  */
 public class SeqAssigner implements TheoremLoaderCommitListener {
 
-    private     int     mObjCount;
-    private     int     nbrIntervals;
-    private     int     intervalSize;
+    private int mObjCount;
+    private int nbrIntervals;
+    private final int intervalSize;
 
-    private     boolean checkpointInitialized;
+    private boolean checkpointInitialized;
 
-    private     int     checkpointMObjCount;
-    private     int     checkpointNbrIntervals;
+    private int checkpointMObjCount;
+    private int checkpointNbrIntervals;
 
-    private     HashMap intervalTbl;
+    private final HashMap intervalTbl;
 
     /**
      *  Validates Interval Size parameter.
@@ -90,22 +91,16 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
      * @param n interval size for MObj.seq numbers.
      * @throws IllegalArgumentException if invalid interval size.
      */
-   public static void validateIntervalSize(int n) {
+    public static void validateIntervalSize(final int n) {
 
-        if (n <
-            LangConstants.SEQ_ASSIGNER_MIN_INTERVAL_SIZE ||
-            n >
-            LangConstants.SEQ_ASSIGNER_MAX_INTERVAL_SIZE) {
+        if (n < LangConstants.SEQ_ASSIGNER_MIN_INTERVAL_SIZE
+            || n > LangConstants.SEQ_ASSIGNER_MAX_INTERVAL_SIZE)
             throw new IllegalArgumentException(
-                LangConstants.ERRMSG_INTERVAL_SIZE_RANGE_ERR_1
-                + n
-                + LangConstants.ERRMSG_INTERVAL_SIZE_RANGE_ERR_2
-                + LangConstants.
-                    SEQ_ASSIGNER_MIN_INTERVAL_SIZE
-                + LangConstants.ERRMSG_INTERVAL_SIZE_RANGE_ERR_3
-                + LangConstants.
-                    SEQ_ASSIGNER_MAX_INTERVAL_SIZE);
-        }
+                LangConstants.ERRMSG_INTERVAL_SIZE_RANGE_ERR_1 + n
+                    + LangConstants.ERRMSG_INTERVAL_SIZE_RANGE_ERR_2
+                    + LangConstants.SEQ_ASSIGNER_MIN_INTERVAL_SIZE
+                    + LangConstants.ERRMSG_INTERVAL_SIZE_RANGE_ERR_3
+                    + LangConstants.SEQ_ASSIGNER_MAX_INTERVAL_SIZE);
     }
 
     /**
@@ -116,34 +111,24 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
      *  <p>
      * @param n interval table initial size for MObj.seq numbers.
      */
-    public static void validateIntervalTblInitialSize(int n) {
+    public static void validateIntervalTblInitialSize(final int n) {
 
-        if (n <
-            LangConstants.SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_MIN
-            ||
-            n >
-            LangConstants.SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_MAX)
-                                                                    {
+        if (n < LangConstants.SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_MIN
+            || n > LangConstants.SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_MAX)
             throw new IllegalArgumentException(
-                LangConstants.ERRMSG_INTERVAL_TBL_SIZE_RANGE_ERR_1
-                + n
-                + LangConstants.ERRMSG_INTERVAL_TBL_SIZE_RANGE_ERR_2
-                + LangConstants.
-                    SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_MIN
-                + LangConstants.ERRMSG_INTERVAL_TBL_SIZE_RANGE_ERR_3
-                + LangConstants.
-                    SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_MAX);
-        }
+                LangConstants.ERRMSG_INTERVAL_TBL_SIZE_RANGE_ERR_1 + n
+                    + LangConstants.ERRMSG_INTERVAL_TBL_SIZE_RANGE_ERR_2
+                    + LangConstants.SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_MIN
+                    + LangConstants.ERRMSG_INTERVAL_TBL_SIZE_RANGE_ERR_3
+                    + LangConstants.SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_MAX);
     }
 
     /**
      * Construct with default set of parameters.
      */
     public SeqAssigner() {
-        this(LangConstants.
-                SEQ_ASSIGNER_INTERVAL_SIZE_DEFAULT,
-             LangConstants.
-                SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_DEFAULT);
+        this(LangConstants.SEQ_ASSIGNER_INTERVAL_SIZE_DEFAULT,
+            LangConstants.SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_DEFAULT);
     }
 
     /**
@@ -154,20 +139,14 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
      *        recording insertions in the sequence number interval
      *        gaps.
      */
-    public SeqAssigner(int intervalSize,
-                       int intervalTblInitialSize) {
+    public SeqAssigner(final int intervalSize, final int intervalTblInitialSize)
+    {
 
-        SeqAssigner.
-            validateIntervalSize(
-                intervalSize);
-        this.intervalSize         = intervalSize;
+        SeqAssigner.validateIntervalSize(intervalSize);
+        this.intervalSize = intervalSize;
 
-
-        SeqAssigner.
-            validateIntervalTblInitialSize(
-                intervalTblInitialSize);
-        intervalTbl               =
-            new HashMap(intervalTblInitialSize);
+        SeqAssigner.validateIntervalTblInitialSize(intervalTblInitialSize);
+        intervalTbl = new HashMap(intervalTblInitialSize);
     }
 
     /**
@@ -185,17 +164,14 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
 
         ++mObjCount;
 
-        long seq                  = ++nbrIntervals
-                                    * intervalSize;
-        if ((seq + intervalSize) < Integer.MAX_VALUE) {
+        final long seq = ++nbrIntervals * intervalSize;
+        if (seq + intervalSize < Integer.MAX_VALUE)
             return (int)seq;
-        }
 
         throw new IllegalArgumentException(
-            LangConstants.ERRMSG_SEQ_ASSIGNER_OUT_OF_NUMBERS_1
-            + seq
-            + LangConstants.ERRMSG_SEQ_ASSIGNER_OUT_OF_NUMBERS_2
-            + mObjCount);
+            LangConstants.ERRMSG_SEQ_ASSIGNER_OUT_OF_NUMBERS_1 + seq
+                + LangConstants.ERRMSG_SEQ_ASSIGNER_OUT_OF_NUMBERS_2
+                + mObjCount);
     }
 
     /**
@@ -226,55 +202,43 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
      *          sequence number is beyond the number range
      *          available to a Java "int".
      */
-    public int nextInsertSeq(int locAfterSeq) {
+    public int nextInsertSeq(final int locAfterSeq) {
 
-        if (intervalSize == 1) {
+        if (intervalSize == 1)
             return -1;
-        }
 
-        Integer intervalNumber    =
-            convertSeqToIntervalNumber(
-                locAfterSeq);
-        int i                     = intervalNumber.intValue();
+        final Integer intervalNumber = convertSeqToIntervalNumber(locAfterSeq);
+        final int i = intervalNumber.intValue();
 
-        if (i >= nbrIntervals ||
-            i == 0) {
+        if (i >= nbrIntervals || i == 0)
             // use append instead to conserve gap sequence numbers
             return -1;
-        }
 
-        boolean bitSetFound       = false;
-        BitSet  bitSet            = getBitSet(intervalNumber);
-        if (bitSet == null) {
-            bitSet                = initBitSet();
-        }
-        else {
-            bitSetFound           = true;
-        }
+        boolean bitSetFound = false;
+        BitSet bitSet = getBitSet(intervalNumber);
+        if (bitSet == null)
+            bitSet = initBitSet();
+        else
+            bitSetFound = true;
 
         int bitNumber;
         try {
-            if (bitSet.get(intervalSize - 1)) {
+            if (bitSet.get(intervalSize - 1))
                 // full!
                 return -1;
-            }
-            bitNumber             = bitSet.nextClearBit(1);
-        }
-        catch (IndexOutOfBoundsException e) {
+            bitNumber = bitSet.nextClearBit(1);
+        } catch (final IndexOutOfBoundsException e) {
             return -1; // gap full, must append!
         }
 
-        bitSet.set(bitNumber,
-                   true);
+        bitSet.set(bitNumber, true);
 
-        if (!bitSetFound) {
-            putBitSet(intervalNumber,
-                      bitSet);
-        }
+        if (!bitSetFound)
+            putBitSet(intervalNumber, bitSet);
 
-        //overflow of 'int' not possible here because a higher
-        //interval is already in use.
-        int seq                   =  (i * intervalSize) + bitNumber;
+        // overflow of 'int' not possible here because a higher
+        // interval is already in use.
+        final int seq = i * intervalSize + bitNumber;
 
         return seq;
     }
@@ -287,13 +251,12 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
      *          is already on.
      */
     public void turnOnCheckpointing() {
-        if (checkpointInitialized) {
+        if (checkpointInitialized)
             throw new IllegalArgumentException(
                 LangConstants.ERRMSG_SEQ_ASSIGNER_CHECKPOINT_STATE_1);
-        }
-        checkpointMObjCount       = mObjCount;
-        checkpointNbrIntervals    = nbrIntervals;
-        checkpointInitialized     = true;
+        checkpointMObjCount = mObjCount;
+        checkpointNbrIntervals = nbrIntervals;
+        checkpointInitialized = true;
     }
 
     /**
@@ -303,12 +266,12 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
      *  @throws IllegalArgumentException if checkpointing
      *          is not already on.
      */
-    public void commit(MMTTheoremSet mmtTheoremSet) {
+    @Override
+    public void commit(final MMTTheoremSet mmtTheoremSet) {
 
-        if (!checkpointInitialized) {
+        if (!checkpointInitialized)
             throw new IllegalArgumentException(
                 LangConstants.ERRMSG_SEQ_ASSIGNER_COMMIT_STATE_1);
-        }
 
         turnOffCheckpointing();
     }
@@ -332,180 +295,144 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
      *  @throws IllegalArgumentException if a checkpoint was
      *          not taken prior to the rollback request.
      */
-    public void rollback(MMTTheoremSet mmtTheoremSet,
-                         Messages      messages,
-                         boolean       auditMessages) {
+    public void rollback(final MMTTheoremSet mmtTheoremSet,
+        final Messages messages, final boolean auditMessages)
+    {
 
-        if (!checkpointInitialized) {
+        if (!checkpointInitialized)
             throw new IllegalArgumentException(
                 LangConstants.ERRMSG_SEQ_ASSIGNER_ROLLBACK_STATE_1);
-        }
 
         boolean[] wasLogHypInsertedArray;
         boolean[] wasLogHypAppendedArray;
-        int[]     assignedLogHypSeq;
-        int       assignedTheoremSeq;
-        LogHyp[]  logHypArray;
-        boolean   wasTheoremInserted;
-        boolean   wasTheoremAppended;
-        Theorem   theorem;
+        int[] assignedLogHypSeq;
+        int assignedTheoremSeq;
+        LogHyp[] logHypArray;
+        boolean wasTheoremInserted;
+        boolean wasTheoremAppended;
+        Theorem theorem;
 
         TheoremStmtGroup t;
-        Iterator         iterator = mmtTheoremSet.iterator();
+        final Iterator iterator = mmtTheoremSet.iterator();
         while (iterator.hasNext()) {
-            t                     = (TheoremStmtGroup)iterator.next();
+            t = (TheoremStmtGroup)iterator.next();
 
-            if (!t.getIsTheoremNew()) {
+            if (!t.getIsTheoremNew())
                 continue;
-            }
 
-            wasLogHypInsertedArray
-                                  = t.getWasLogHypInsertedArray();
-            wasLogHypAppendedArray
-                                  = t.getWasLogHypAppendedArray();
+            wasLogHypInsertedArray = t.getWasLogHypInsertedArray();
+            wasLogHypAppendedArray = t.getWasLogHypAppendedArray();
 
-            assignedLogHypSeq     = t.getAssignedLogHypSeq();
-            assignedTheoremSeq    = t.getAssignedTheoremSeq();
+            assignedLogHypSeq = t.getAssignedLogHypSeq();
+            assignedTheoremSeq = t.getAssignedTheoremSeq();
 
-            logHypArray           = t.getLogHypArray();
-            wasTheoremInserted    = t.getWasTheoremInserted();
-            wasTheoremAppended    = t.getWasTheoremAppended();
-            theorem               = t.getTheorem();
+            logHypArray = t.getLogHypArray();
+            wasTheoremInserted = t.getWasTheoremInserted();
+            wasTheoremAppended = t.getWasTheoremAppended();
+            theorem = t.getTheorem();
 
-            for (int i = 0; i < wasLogHypInsertedArray.length; i++) {
+            for (int i = 0; i < wasLogHypInsertedArray.length; i++)
                 if (wasLogHypInsertedArray[i]) {
-                    if (auditMessages) {
-                        outputRollbackAuditMessage(
-                            messages,
+                    if (auditMessages)
+                        outputRollbackAuditMessage(messages,
                             assignedLogHypSeq[i],
                             LangConstants.ERRMSG_LOGHYP_CAPTION,
                             logHypArray[i],
                             LangConstants.ERRMSG_INSERTED_CAPTION);
-                    }
                     unassignInsertedSeq(assignedLogHypSeq[i]);
                 }
-            }
 
-            for (int i = 0; i < wasLogHypAppendedArray.length; i++) {
-                if (wasLogHypAppendedArray[i]) {
-                    if (auditMessages) {
-                        outputRollbackAuditMessage(
-                            messages,
+            for (int i = 0; i < wasLogHypAppendedArray.length; i++)
+                if (wasLogHypAppendedArray[i])
+                    if (auditMessages)
+                        outputRollbackAuditMessage(messages,
                             assignedLogHypSeq[i],
                             LangConstants.ERRMSG_LOGHYP_CAPTION,
                             logHypArray[i],
                             LangConstants.ERRMSG_APPENDED_CAPTION);
-                    }
-                }
-            }
 
             if (wasTheoremInserted) {
-                if (auditMessages) {
-                    outputRollbackAuditMessage(
-                        messages,
-                        assignedTheoremSeq,
-                        LangConstants.ERRMSG_THEOREM_CAPTION,
-                        theorem,
+                if (auditMessages)
+                    outputRollbackAuditMessage(messages, assignedTheoremSeq,
+                        LangConstants.ERRMSG_THEOREM_CAPTION, theorem,
                         LangConstants.ERRMSG_INSERTED_CAPTION);
-                }
                 unassignInsertedSeq(assignedTheoremSeq);
 
             }
 
-            if (wasTheoremAppended) {
-                if (auditMessages) {
-                    outputRollbackAuditMessage(
-                        messages,
-                        assignedTheoremSeq,
-                        LangConstants.ERRMSG_THEOREM_CAPTION,
-                        theorem,
+            if (wasTheoremAppended)
+                if (auditMessages)
+                    outputRollbackAuditMessage(messages, assignedTheoremSeq,
+                        LangConstants.ERRMSG_THEOREM_CAPTION, theorem,
                         LangConstants.ERRMSG_APPENDED_CAPTION);
-                }
-            }
         }
 
-        mObjCount                 = checkpointMObjCount;
-        nbrIntervals              = checkpointNbrIntervals;
+        mObjCount = checkpointMObjCount;
+        nbrIntervals = checkpointNbrIntervals;
 
         turnOffCheckpointing();
     }
 
-    private void outputRollbackAuditMessage(
-                                        Messages messages,
-                                        int      seq,
-                                        String   stmtCaption,
-                                        Stmt     stmt,
-                                        String   updateCaption) {
+    private void outputRollbackAuditMessage(final Messages messages,
+        final int seq, final String stmtCaption, final Stmt stmt,
+        final String updateCaption)
+    {
 
-        StringBuffer sb           = new StringBuffer();
-        sb.append(
-            LangConstants.ERRMSG_SEQ_ASSIGNER_ROLLBACK_AUDIT_1);
+        final StringBuffer sb = new StringBuffer();
+        sb.append(LangConstants.ERRMSG_SEQ_ASSIGNER_ROLLBACK_AUDIT_1);
         sb.append(seq);
-        sb.append(
-            LangConstants.ERRMSG_SEQ_ASSIGNER_ROLLBACK_AUDIT_2);
+        sb.append(LangConstants.ERRMSG_SEQ_ASSIGNER_ROLLBACK_AUDIT_2);
         sb.append(stmtCaption);
         if (stmt == null) {
             sb.append("n/a");
-            sb.append(
-                LangConstants.ERRMSG_SEQ_ASSIGNER_ROLLBACK_AUDIT_3);
+            sb.append(LangConstants.ERRMSG_SEQ_ASSIGNER_ROLLBACK_AUDIT_3);
             sb.append(updateCaption);
-            sb.append(
-                LangConstants.ERRMSG_SEQ_ASSIGNER_ROLLBACK_AUDIT_4);
+            sb.append(LangConstants.ERRMSG_SEQ_ASSIGNER_ROLLBACK_AUDIT_4);
         }
         else {
             sb.append(stmt.getLabel());
-            sb.append(
-                LangConstants.ERRMSG_SEQ_ASSIGNER_ROLLBACK_AUDIT_3);
+            sb.append(LangConstants.ERRMSG_SEQ_ASSIGNER_ROLLBACK_AUDIT_3);
             sb.append(updateCaption);
-            sb.append(
-                LangConstants.ERRMSG_SEQ_ASSIGNER_ROLLBACK_AUDIT_4);
+            sb.append(LangConstants.ERRMSG_SEQ_ASSIGNER_ROLLBACK_AUDIT_4);
         }
         messages.accumInfoMessage(sb.toString());
     }
 
     private void turnOffCheckpointing() {
-        checkpointInitialized     = false;
+        checkpointInitialized = false;
     }
 
-    private void unassignInsertedSeq(int seq) {
+    private void unassignInsertedSeq(final int seq) {
 
-        BitSet bitSet             =
-            getBitSet(
-                convertSeqToIntervalNumber(
-                    seq));
+        final BitSet bitSet = getBitSet(convertSeqToIntervalNumber(seq));
 
         if (bitSet != null) {
-            int bit               = seq % intervalSize;
-            if (bit != 0) {
-                bitSet.set(bit,
-                           false);
-            }
+            final int bit = seq % intervalSize;
+            if (bit != 0)
+                bitSet.set(bit, false);
         }
     }
 
-    private Integer convertSeqToIntervalNumber(int seq) {
+    private Integer convertSeqToIntervalNumber(final int seq) {
 
         return new Integer(seq / intervalSize);
     }
 
-    private BitSet getBitSet(Integer intervalNumber) {
+    private BitSet getBitSet(final Integer intervalNumber) {
 
         return (BitSet)intervalTbl.get(intervalNumber);
     }
 
-    private void putBitSet(Integer intervalNumber,
-                           BitSet  bitSet) {
+    private void putBitSet(final Integer intervalNumber, final BitSet bitSet) {
 
-        intervalTbl.put(intervalNumber,
-                        bitSet);
+        intervalTbl.put(intervalNumber, bitSet);
     }
 
     private BitSet initBitSet() {
 
-        BitSet bitSet             = new BitSet(intervalSize);
+        final BitSet bitSet = new BitSet(intervalSize);
 
-        bitSet.set(0,
-                   true);
+        bitSet.set(0, true);
 
         return bitSet;
     }

@@ -34,8 +34,7 @@ public class HelpGeneralInfoGUI extends AuxFrameGUI {
      *
      *  @param proofAsstPreferences variable settings
      */
-    public HelpGeneralInfoGUI(
-                ProofAsstPreferences proofAsstPreferences) {
+    public HelpGeneralInfoGUI(final ProofAsstPreferences proofAsstPreferences) {
         super(proofAsstPreferences);
         setFrameValues();
     }
@@ -45,8 +44,8 @@ public class HelpGeneralInfoGUI extends AuxFrameGUI {
         setFrameTitle(PaConstants.GENERAL_HELP_FRAME_TITLE);
     }
 
-    public static void main(String[] args) {
-        HelpGeneralInfoGUI h      = new HelpGeneralInfoGUI();
+    public static void main(final String[] args) {
+        final HelpGeneralInfoGUI h = new HelpGeneralInfoGUI();
         h.showFrame(h.buildFrame());
     }
 }

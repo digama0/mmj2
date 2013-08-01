@@ -15,9 +15,8 @@
 
 package mmj.gmff;
 
-import java.io.FileFilter;
 import java.io.File;
-
+import java.io.FileFilter;
 
 /**
  *   GMFFFileFilter is used by the GMFFFolder to select
@@ -29,8 +28,8 @@ import java.io.File;
  */
 public class GMFFFileFilter implements FileFilter {
 
-	String fileSuffix;
-	String lowestNamePrefix;
+    String fileSuffix;
+    String lowestNamePrefix;
 
     /**
      *  GMFF Constructor for GMFFFileFilter allowing
@@ -44,12 +43,12 @@ public class GMFFFileFilter implements FileFilter {
      *          have names >= lowestNamePrefix, ignoring
      *          case.
      */
-	public GMFFFileFilter(String fileSuffix,
-	                      String lowestNamePrefix) {
-		super();
-		this.fileSuffix         = fileSuffix.toLowerCase();
-		this.lowestNamePrefix   = lowestNamePrefix;
-	}
+    public GMFFFileFilter(final String fileSuffix, final String lowestNamePrefix)
+    {
+        super();
+        this.fileSuffix = fileSuffix.toLowerCase();
+        this.lowestNamePrefix = lowestNamePrefix;
+    }
 
     /**
      *  FileFilter for MMT Folders.
@@ -60,33 +59,27 @@ public class GMFFFileFilter implements FileFilter {
      *  <li>has matching file suffix, ignoring case
      *      (e.g. ".mmp"), and
      *  <li><code>(namePrefix.compareToIgnoreCase(
-	 *                 lowestNamePrefix) >= 0)</code>
-	 *  </ul>
-	 *  <p>
+     *                 lowestNamePrefix) >= 0)</code>
+     *  </ul>
+     *  <p>
      *  @param pathname entry in directory.
      *  @return true if selected.
      */
-    public boolean accept(File pathname) {
-		if (pathname.isFile()
-            &&
-            pathname.canRead()) {
+    @Override
+    public boolean accept(final File pathname) {
+        if (pathname.isFile() && pathname.canRead()) {
 
-			String name         = pathname.getName();
+            final String name = pathname.getName();
 
-			if (name.toLowerCase().endsWith(fileSuffix)) {
+            if (name.toLowerCase().endsWith(fileSuffix)) {
 
-				String namePrefix
-				                =
-					name.substring(0,
-						           (name.length() -
-						            fileSuffix.length()));
+                final String namePrefix = name.substring(0, name.length()
+                    - fileSuffix.length());
 
-				if (namePrefix.compareToIgnoreCase(
-						lowestNamePrefix) >= 0) {
-					return true;
-				}
-			}
-		}
-		return false;
+                if (namePrefix.compareToIgnoreCase(lowestNamePrefix) >= 0)
+                    return true;
+            }
+        }
+        return false;
     }
 }

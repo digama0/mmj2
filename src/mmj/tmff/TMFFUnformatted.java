@@ -20,9 +20,8 @@
  */
 
 package mmj.tmff;
-import mmj.lang.Formula;
-import mmj.lang.ParseNode;
-import mmj.lang.ParseTree;
+
+import mmj.lang.*;
 
 /**
  *  TMFFUnformatted overrides basic the TMFFMethod
@@ -48,7 +47,7 @@ public class TMFFUnformatted extends TMFFMethod {
      *  @param maxDepthString not used, provided for commonality with
      *                  other TMFFMethods.
      */
-    public TMFFUnformatted(String maxDepthString) {
+    public TMFFUnformatted(final String maxDepthString) {
         super(Integer.MAX_VALUE);
     }
 
@@ -61,10 +60,9 @@ public class TMFFUnformatted extends TMFFMethod {
      *  @param maxDepth not used, provided for commonality with
      *                  other TMFFMethods.
      */
-    public TMFFUnformatted(int    maxDepth) {
+    public TMFFUnformatted(final int maxDepth) {
         super(Integer.MAX_VALUE);
     }
-
 
     /**
      *  Outputs a formula and outputs it to a StringBuffer
@@ -86,31 +84,27 @@ public class TMFFUnformatted extends TMFFMethod {
      *                  was encountered and the formula could
      *                  not be formatted.
      */
-    public int renderFormula(TMFFStateParams tmffSP,
-                             ParseTree       parseTree,
-                             Formula         formula) {
+    @Override
+    public int renderFormula(final TMFFStateParams tmffSP,
+        final ParseTree parseTree, final Formula formula)
+    {
 
-        tmffSP.currLineNbr        = 0;
+        tmffSP.currLineNbr = 0;
 
         tmffSP.padSBToGivenPosition(tmffSP.leftmostColNbr - 1);
 
-        if (formula == null) {
-            tmffSP.currLineNbr   += 1;
-        }
-        else {
-            tmffSP.currLineNbr   +=
-                formula.toProofWorksheetStringBuffer(
-                                            tmffSP.sb,
-                                            tmffSP.prevColNbr + 1,
-                                            tmffSP.rightmostColNbr);
-        }
+        if (formula == null)
+            tmffSP.currLineNbr += 1;
+        else
+            tmffSP.currLineNbr += formula.toProofWorksheetStringBuffer(
+                tmffSP.sb, tmffSP.prevColNbr + 1, tmffSP.rightmostColNbr);
         return tmffSP.currLineNbr;
     }
 
-    protected int renderSubExprWithBreaks(
-                                TMFFStateParams tmffSP,
-                                ParseNode       currNode,
-                                int             leftmostColNbr) {
+    @Override
+    protected int renderSubExprWithBreaks(final TMFFStateParams tmffSP,
+        final ParseNode currNode, final int leftmostColNbr)
+    {
         throw new IllegalArgumentException(
             TMFFConstants.ERRMSG_UNFORMATTED_BAD_CALL_UNF_1);
     }
@@ -130,7 +124,8 @@ public class TMFFUnformatted extends TMFFMethod {
      *
      *  @return boolean - true only if update performed.
      */
-    public boolean updateMaxDepth(int maxDepth) {
+    @Override
+    public boolean updateMaxDepth(final int maxDepth) {
 
         return false;
     }

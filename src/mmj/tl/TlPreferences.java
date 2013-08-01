@@ -18,8 +18,11 @@
  */
 
 package mmj.tl;
-import mmj.lang.*;
+
 import java.io.File;
+
+import mmj.lang.LogicalSystem;
+import mmj.lang.TheoremLoaderException;
 
 /**
  *  Holds user settings/preferences used by the
@@ -27,48 +30,42 @@ import java.io.File;
  */
 public class TlPreferences {
 
-    private   MMTFolder      mmtFolder;
+    private MMTFolder mmtFolder;
 
-    private   String         djVarsOption;
-    private   boolean        djVarsMerge;
-    private   boolean        djVarsReplace;
-    private   boolean        djVarsNoUpdate;
+    private String djVarsOption;
+    private boolean djVarsMerge;
+    private boolean djVarsReplace;
+    private boolean djVarsNoUpdate;
 
-    private   boolean        auditMessages;
-    private   boolean        storeFormulasAsIs;
+    private boolean auditMessages;
+    private boolean storeFormulasAsIs;
 
-    private   int            storeMMIndentAmt;
-    private   int            storeMMRightCol;
+    private int storeMMIndentAmt;
+    private int storeMMRightCol;
 
-    private   String         provableLogicStmtTypeParm;
+    private String provableLogicStmtTypeParm;
 
     /**
      *  Constructor for TlPreferences.
      *  <p>
      *  @param logicalSystem LogicalSystem object.
      */
-    public TlPreferences(LogicalSystem logicalSystem) {
+    public TlPreferences(final LogicalSystem logicalSystem) {
 
-        mmtFolder                 = new MMTFolder();
+        mmtFolder = new MMTFolder();
 
-        setDjVarsOption(
-            TlConstants.THEOREM_LOADER_DJ_VARS_OPTION_DEFAULT);
+        setDjVarsOption(TlConstants.THEOREM_LOADER_DJ_VARS_OPTION_DEFAULT);
 
-        setAuditMessages(
-            TlConstants.THEOREM_LOADER_AUDIT_MESSAGES_DEFAULT);
+        setAuditMessages(TlConstants.THEOREM_LOADER_AUDIT_MESSAGES_DEFAULT);
 
-        setStoreFormulasAsIs(
-            TlConstants.THEOREM_LOADER_STORE_FORMULAS_ASIS_DEFAULT);
+        setStoreFormulasAsIs(TlConstants.THEOREM_LOADER_STORE_FORMULAS_ASIS_DEFAULT);
 
-        setStoreMMIndentAmt(
-            TlConstants.THEOREM_LOADER_STORE_MM_INDENT_AMT_DEFAULT);
+        setStoreMMIndentAmt(TlConstants.THEOREM_LOADER_STORE_MM_INDENT_AMT_DEFAULT);
 
-        setStoreMMRightCol(
-            TlConstants.THEOREM_LOADER_STORE_MM_RIGHT_COL_DEFAULT);
+        setStoreMMRightCol(TlConstants.THEOREM_LOADER_STORE_MM_RIGHT_COL_DEFAULT);
 
-        setProvableLogicStmtTypeParm(
-            logicalSystem.
-                getProvableLogicStmtTypeParm());
+        setProvableLogicStmtTypeParm(logicalSystem
+            .getProvableLogicStmtTypeParm());
     }
 
     /**
@@ -174,52 +171,48 @@ public class TlPreferences {
      *  @param s Dj Vars Option string.
      *  @return true if Dj Vars Option valid, else false.
      */
-    public boolean setDjVarsOption(String s) {
-        if (s == null) {
-            return false; //error
-        }
+    public boolean setDjVarsOption(final String s) {
+        if (s == null)
+            return false; // error
 
         // Note: do not modify any settings unless
-        //       the input is valid -- therefore,
-        //       no default settings are made here
-        //       ...
-        //       [  ]
+        // the input is valid -- therefore,
+        // no default settings are made here
+        // ...
+        // [ ]
         //
 
-        if (s.compareToIgnoreCase(
-              TlConstants.
-                THEOREM_LOADER_DJ_VARS_OPTION_NO_UPDATE)
-            == 0) {
+        if (s
+            .compareToIgnoreCase(TlConstants.THEOREM_LOADER_DJ_VARS_OPTION_NO_UPDATE) == 0)
+        {
 
-            djVarsNoUpdate        = true;
-            djVarsMerge           = false;
-            djVarsReplace         = false;
-            djVarsOption          = s;
-            return true; //no error
+            djVarsNoUpdate = true;
+            djVarsMerge = false;
+            djVarsReplace = false;
+            djVarsOption = s;
+            return true; // no error
         }
 
-        if (s.compareToIgnoreCase(
-              TlConstants.
-                THEOREM_LOADER_DJ_VARS_OPTION_MERGE)
-            == 0) {
+        if (s
+            .compareToIgnoreCase(TlConstants.THEOREM_LOADER_DJ_VARS_OPTION_MERGE) == 0)
+        {
 
-            djVarsNoUpdate        = false;
-            djVarsMerge           = true;
-            djVarsReplace         = false;
-            djVarsOption          = s;
-            return true; //no error
+            djVarsNoUpdate = false;
+            djVarsMerge = true;
+            djVarsReplace = false;
+            djVarsOption = s;
+            return true; // no error
         }
 
-        if (s.compareToIgnoreCase(
-              TlConstants.
-                THEOREM_LOADER_DJ_VARS_OPTION_REPLACE)
-            == 0) {
+        if (s
+            .compareToIgnoreCase(TlConstants.THEOREM_LOADER_DJ_VARS_OPTION_REPLACE) == 0)
+        {
 
-            djVarsNoUpdate        = false;
-            djVarsMerge           = false;
-            djVarsReplace         = true;
-            djVarsOption          = s;
-            return true; //no error
+            djVarsNoUpdate = false;
+            djVarsMerge = false;
+            djVarsReplace = true;
+            djVarsOption = s;
+            return true; // no error
         }
 
         return false;
@@ -234,34 +227,29 @@ public class TlPreferences {
      *  @param s Audit Messages option.
      *  @return true if Audit Messages Option valid, else false.
      */
-    public boolean setAuditMessages(String s) {
-        if (s == null) {
-            return false; //error
-        }
+    public boolean setAuditMessages(final String s) {
+        if (s == null)
+            return false; // error
 
         // Note: do not modify any settings unless
-        //       the input is valid -- therefore,
-        //       no default settings are made here
-        //       ...
-        //       [  ]
+        // the input is valid -- therefore,
+        // no default settings are made here
+        // ...
+        // [ ]
         //
 
-        if (s.compareToIgnoreCase(
-                TlConstants.SYNONYM_TRUE_1) == 0   ||
-            s.compareToIgnoreCase(
-                TlConstants.SYNONYM_TRUE_2) == 0   ||
-            s.compareToIgnoreCase(
-                TlConstants.SYNONYM_TRUE_3) == 0)  {
+        if (s.compareToIgnoreCase(TlConstants.SYNONYM_TRUE_1) == 0
+            || s.compareToIgnoreCase(TlConstants.SYNONYM_TRUE_2) == 0
+            || s.compareToIgnoreCase(TlConstants.SYNONYM_TRUE_3) == 0)
+        {
             setAuditMessages(true);
             return true;
         }
 
-        if (s.compareToIgnoreCase(
-                TlConstants.SYNONYM_FALSE_1) == 0  ||
-            s.compareToIgnoreCase(
-                TlConstants.SYNONYM_FALSE_2) == 0  ||
-            s.compareToIgnoreCase(
-                TlConstants.SYNONYM_FALSE_3) == 0) {
+        if (s.compareToIgnoreCase(TlConstants.SYNONYM_FALSE_1) == 0
+            || s.compareToIgnoreCase(TlConstants.SYNONYM_FALSE_2) == 0
+            || s.compareToIgnoreCase(TlConstants.SYNONYM_FALSE_3) == 0)
+        {
             setAuditMessages(false);
             return true;
         }
@@ -274,8 +262,8 @@ public class TlPreferences {
      *  <p>
      *  @param b auditMessages flag.
      */
-    public void setAuditMessages(boolean b) {
-        auditMessages             = b;
+    public void setAuditMessages(final boolean b) {
+        auditMessages = b;
     }
 
     /**
@@ -287,34 +275,29 @@ public class TlPreferences {
      *  @param s Store Formulas AsIs option.
      *  @return true if Store Formulas AsIs Option valid, else false.
      */
-    public boolean setStoreFormulasAsIs(String s) {
-        if (s == null) {
-            return false; //error
-        }
+    public boolean setStoreFormulasAsIs(final String s) {
+        if (s == null)
+            return false; // error
 
         // Note: do not modify any settings unless
-        //       the input is valid -- therefore,
-        //       no default settings are made here
-        //       ...
-        //       [  ]
+        // the input is valid -- therefore,
+        // no default settings are made here
+        // ...
+        // [ ]
         //
 
-        if (s.compareToIgnoreCase(
-                TlConstants.SYNONYM_TRUE_1) == 0   ||
-            s.compareToIgnoreCase(
-                TlConstants.SYNONYM_TRUE_2) == 0   ||
-            s.compareToIgnoreCase(
-                TlConstants.SYNONYM_TRUE_3) == 0)  {
+        if (s.compareToIgnoreCase(TlConstants.SYNONYM_TRUE_1) == 0
+            || s.compareToIgnoreCase(TlConstants.SYNONYM_TRUE_2) == 0
+            || s.compareToIgnoreCase(TlConstants.SYNONYM_TRUE_3) == 0)
+        {
             setStoreFormulasAsIs(true);
             return true;
         }
 
-        if (s.compareToIgnoreCase(
-                TlConstants.SYNONYM_FALSE_1) == 0  ||
-            s.compareToIgnoreCase(
-                TlConstants.SYNONYM_FALSE_2) == 0  ||
-            s.compareToIgnoreCase(
-                TlConstants.SYNONYM_FALSE_3) == 0) {
+        if (s.compareToIgnoreCase(TlConstants.SYNONYM_FALSE_1) == 0
+            || s.compareToIgnoreCase(TlConstants.SYNONYM_FALSE_2) == 0
+            || s.compareToIgnoreCase(TlConstants.SYNONYM_FALSE_3) == 0)
+        {
             setStoreFormulasAsIs(false);
             return true;
         }
@@ -327,8 +310,8 @@ public class TlPreferences {
      *  <p>
      *  @param b storeFormulasAsIs flag.
      */
-    public void setStoreFormulasAsIs(boolean b) {
-        storeFormulasAsIs         = b;
+    public void setStoreFormulasAsIs(final boolean b) {
+        storeFormulasAsIs = b;
     }
 
     /**
@@ -340,35 +323,27 @@ public class TlPreferences {
      *  @param s Store MM Indent Amt string.
      *  @return true if Store MM Indent Amt Option valid, else false.
      */
-    public boolean setStoreMMIndentAmt(String s) {
+    public boolean setStoreMMIndentAmt(final String s) {
 
         // Note: do not modify any settings unless
-        //       the input is valid -- therefore,
-        //       no default settings are made here
-        //       ...
-        //       [  ]
+        // the input is valid -- therefore,
+        // no default settings are made here
+        // ...
+        // [ ]
         //
 
-        if (s != null) {
-
+        if (s != null)
             try {
-                int n             = Integer.parseInt(s);
+                final int n = Integer.parseInt(s);
 
-                if (n >=
-                        TlConstants.
-                            THEOREM_LOADER_STORE_MM_INDENT_AMT_MIN
-                    &&
-                    n <=
-                        TlConstants.
-                            THEOREM_LOADER_STORE_MM_INDENT_AMT_MAX) {
+                if (n >= TlConstants.THEOREM_LOADER_STORE_MM_INDENT_AMT_MIN
+                    && n <= TlConstants.THEOREM_LOADER_STORE_MM_INDENT_AMT_MAX)
+                {
 
                     setStoreMMIndentAmt(n);
                     return true;
                 }
-            }
-            catch (NumberFormatException e) {
-            }
-        }
+            } catch (final NumberFormatException e) {}
         return false;
     }
 
@@ -377,10 +352,9 @@ public class TlPreferences {
      *  <p>
      *  @param n storeMMIndentAmt.
      */
-    public void setStoreMMIndentAmt(int n) {
-        storeMMIndentAmt          = n;
+    public void setStoreMMIndentAmt(final int n) {
+        storeMMIndentAmt = n;
     }
-
 
     /**
      *  Validate and set the Store MM Right Col Option.
@@ -391,35 +365,27 @@ public class TlPreferences {
      *  @param s Store MM Right Col string.
      *  @return true if Store MM Right Col Option valid, else false.
      */
-    public boolean setStoreMMRightCol(String s) {
+    public boolean setStoreMMRightCol(final String s) {
 
         // Note: do not modify any settings unless
-        //       the input is valid -- therefore,
-        //       no default settings are made here
-        //       ...
-        //       [  ]
+        // the input is valid -- therefore,
+        // no default settings are made here
+        // ...
+        // [ ]
         //
 
-        if (s != null) {
-
+        if (s != null)
             try {
-                int n             = Integer.parseInt(s);
+                final int n = Integer.parseInt(s);
 
-                if (n >=
-                        TlConstants.
-                            THEOREM_LOADER_STORE_MM_RIGHT_COL_MIN
-                    &&
-                    n <=
-                        TlConstants.
-                            THEOREM_LOADER_STORE_MM_RIGHT_COL_MAX) {
+                if (n >= TlConstants.THEOREM_LOADER_STORE_MM_RIGHT_COL_MIN
+                    && n <= TlConstants.THEOREM_LOADER_STORE_MM_RIGHT_COL_MAX)
+                {
 
                     setStoreMMRightCol(n);
                     return true;
                 }
-            }
-            catch (NumberFormatException e) {
-            }
-        }
+            } catch (final NumberFormatException e) {}
         return false;
     }
 
@@ -428,8 +394,8 @@ public class TlPreferences {
      *  <p>
      *  @param n storeMMRightCol.
      */
-    public void setStoreMMRightCol(int n) {
-        storeMMRightCol           = n;
+    public void setStoreMMRightCol(final int n) {
+        storeMMRightCol = n;
     }
 
     /**
@@ -442,11 +408,9 @@ public class TlPreferences {
      *  @return true if Provable Logic Stmt Type Parm. valid,
      *          else false.
      */
-    public boolean setProvableLogicStmtTypeParm(String s) {
-        if (s == null ||
-            s.length() == 0) {
-            return false; //error
-        }
+    public boolean setProvableLogicStmtTypeParm(final String s) {
+        if (s == null || s.length() == 0)
+            return false; // error
 
         provableLogicStmtTypeParm = s;
 
@@ -464,17 +428,12 @@ public class TlPreferences {
      *  @param s MMT Folder pathname, absolute or relative.
      *  @return null if no errors, otherwise error message string.
      */
-    public String setMMTFolder(File   filePath,
-                               String s) {
+    public String setMMTFolder(final File filePath, final String s) {
         try {
-            mmtFolder             =
-            	new MMTFolder(
-					filePath,
-					s);
+            mmtFolder = new MMTFolder(filePath, s);
 
             return null;
-        }
-        catch (TheoremLoaderException e) {
+        } catch (final TheoremLoaderException e) {
             return e.getMessage();
         }
     }
@@ -488,12 +447,11 @@ public class TlPreferences {
      *  @param file MMT Folder File object.
      *  @return null if no errors, otherwise error message string.
      */
-    public String setMMTFolder(File file) {
+    public String setMMTFolder(final File file) {
         try {
-            mmtFolder             = new MMTFolder(file);
+            mmtFolder = new MMTFolder(file);
             return null;
-        }
-        catch (TheoremLoaderException e) {
+        } catch (final TheoremLoaderException e) {
             return e.getMessage();
         }
     }

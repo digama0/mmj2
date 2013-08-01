@@ -44,7 +44,7 @@ public class ParseNodeHolder {
     /**
      *  mObj contains either a Cnst, a Var or a Stmt.
      */
-    public MObj      mObj;
+    public MObj mObj;
 
     /**
      *  ParseNode associated with mObj, may be null.
@@ -70,8 +70,7 @@ public class ParseNodeHolder {
     /**
      *  Default constructor.
      */
-    public ParseNodeHolder() {
-    }
+    public ParseNodeHolder() {}
 
     /**
      *  Constructor -- input is a ParseNode, so derive MObj
@@ -79,8 +78,8 @@ public class ParseNodeHolder {
      *
      *  @param parseNode
      */
-    public ParseNodeHolder(ParseNode parseNode) {
-        this.mObj      = parseNode.getStmt();
+    public ParseNodeHolder(final ParseNode parseNode) {
+        mObj = parseNode.getStmt();
         this.parseNode = parseNode;
     }
 
@@ -90,8 +89,8 @@ public class ParseNodeHolder {
      *
      *  @param cnst
      */
-    public ParseNodeHolder(Cnst cnst) {
-        this.mObj = cnst;
+    public ParseNodeHolder(final Cnst cnst) {
+        mObj = cnst;
     }
 
     /**
@@ -100,9 +99,9 @@ public class ParseNodeHolder {
      *
      *  @param varHyp
      */
-    public ParseNodeHolder(VarHyp varHyp) {
-        this.mObj = varHyp;
-        this.parseNode = new ParseNode(varHyp);
+    public ParseNodeHolder(final VarHyp varHyp) {
+        mObj = varHyp;
+        parseNode = new ParseNode(varHyp);
     }
 
     /**
@@ -116,11 +115,11 @@ public class ParseNodeHolder {
      *  @return ruleFormatExpr version of ParseNodeHolder array.
      */
     public static Cnst[] buildRuleFormatExpr(
-                ParseNodeHolder[] parseNodeHolderExpr) {
-        Cnst[] ruleFormatExpr = new Cnst[parseNodeHolderExpr.length];
-        for (int i = 0; i < ruleFormatExpr.length; i++) {
+        final ParseNodeHolder[] parseNodeHolderExpr)
+    {
+        final Cnst[] ruleFormatExpr = new Cnst[parseNodeHolderExpr.length];
+        for (int i = 0; i < ruleFormatExpr.length; i++)
             ruleFormatExpr[i] = parseNodeHolderExpr[i].getCnstOrTyp();
-        }
         return ruleFormatExpr;
     }
 
@@ -133,9 +132,8 @@ public class ParseNodeHolder {
      *  @return cnst Cnst or Type Code.
      */
     public Cnst getCnstOrTyp() {
-        if (mObj.isCnst()) {
+        if (mObj.isCnst())
             return (Cnst)mObj;
-        }
         return parseNode.getStmt().getTyp();
     }
 
@@ -146,12 +144,10 @@ public class ParseNodeHolder {
      *          parseNodeHolder.stmt.
      */
     public String getCnstIdOrLabel() {
-        if (mObj.isCnst()) {
+        if (mObj.isCnst())
             return ((Cnst)mObj).getId();
-        }
         return parseNode.getStmt().getLabel();
     }
-
 
     /**
      *  Copy "twin chain" to string for diagnostic use.
@@ -159,15 +155,13 @@ public class ParseNodeHolder {
      *  @return String representing twin chain.
      */
     public String dumpTwinChainToString() {
-        StringBuffer s            = new StringBuffer();
-        ParseNodeHolder next      = this;
+        final StringBuffer s = new StringBuffer();
+        ParseNodeHolder next = this;
         do {
             s.append(next.getCnstIdOrLabel());
             s.append(" ");
-            next                  = next.fwd;
-        }
-        while (next != null &&
-               next != this);
+            next = next.fwd;
+        } while (next != null && next != this);
         return new String(s);
     }
 
@@ -184,14 +178,13 @@ public class ParseNodeHolder {
      *  <p>
      *  Inserts at the front of the list.
      */
-    public void addToTwinChain(ParseNodeHolder x) {
-        if (fwd == null) {
+    public void addToTwinChain(final ParseNodeHolder x) {
+        if (fwd == null)
             initTwinChain();
-        }
-        x.fwd     = this.fwd;
-        x.bwd     = this;
+        x.fwd = fwd;
+        x.bwd = this;
         x.fwd.bwd = x;
-        this.fwd  = x;
+        fwd = x;
 
     }
 

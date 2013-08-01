@@ -24,8 +24,8 @@ package mmj.lang;
  */
 public class Chapter {
 
-    private int     chapterNbr;
-    private String  chapterTitle;
+    private final int chapterNbr;
+    private final String chapterTitle;
 
     private Section firstSection;
     private Section lastSection;
@@ -39,10 +39,9 @@ public class Chapter {
      *         or the default title (must be at least
      *         an empty String!)
      */
-   public Chapter(int     chapterNbr,
-                   String chapterTitle) {
-        this.chapterNbr           = chapterNbr;
-        this.chapterTitle         = chapterTitle;
+    public Chapter(final int chapterNbr, final String chapterTitle) {
+        this.chapterNbr = chapterNbr;
+        this.chapterTitle = chapterTitle;
     }
 
     /**
@@ -50,11 +49,10 @@ public class Chapter {
      *  <p>
      *  @param section The new Section in the Chapter.
      */
-    public void storeNewSection(Section section) {
-        if (firstSection == null) {
-            firstSection          = section;
-        }
-        lastSection               = section;
+    public void storeNewSection(final Section section) {
+        if (firstSection == null)
+            firstSection = section;
+        lastSection = section;
     }
 
     /**
@@ -101,16 +99,14 @@ public class Chapter {
      *  @return String of information about the Chapter
      *          formatted into a single line.
      */
+    @Override
     public String toString() {
-        return new String(
-            LangConstants.CHAPTER_TOSTRING_LITERAL_1
-          + getChapterNbr()
-          + LangConstants.CHAPTER_TOSTRING_LITERAL_2
-          + getChapterTitle()
-          + LangConstants.CHAPTER_TOSTRING_LITERAL_3
-          + LangConstants.CHAPTER_TOSTRING_LITERAL_4
-          + getFirstSection().getSectionNbr()
-          + LangConstants.CHAPTER_TOSTRING_LITERAL_5
-          + getLastSection().getSectionNbr());
+        return new String(LangConstants.CHAPTER_TOSTRING_LITERAL_1
+            + getChapterNbr() + LangConstants.CHAPTER_TOSTRING_LITERAL_2
+            + getChapterTitle() + LangConstants.CHAPTER_TOSTRING_LITERAL_3
+            + LangConstants.CHAPTER_TOSTRING_LITERAL_4
+            + getFirstSection().getSectionNbr()
+            + LangConstants.CHAPTER_TOSTRING_LITERAL_5
+            + getLastSection().getSectionNbr());
     }
 }

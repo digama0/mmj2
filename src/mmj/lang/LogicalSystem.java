@@ -51,9 +51,9 @@
 package mmj.lang;
 
 import java.util.*;
-import mmj.verify.GrammarConstants;
-import mmj.tl.*;
+
 import mmj.gmff.GMFFManager;
+import mmj.tl.*;
 
 /**
  * The <code>LogicalSystem</code>, along with the rest of the
@@ -85,33 +85,32 @@ import mmj.gmff.GMFFManager;
  */
 public class LogicalSystem implements SystemLoader {
 
-    private   String           provableLogicStmtTypeParm;
-    private   String           logicStmtTypeParm;
+    private final String provableLogicStmtTypeParm;
+    private final String logicStmtTypeParm;
 
-    private   BookManager      bookManager;
+    private final BookManager bookManager;
 
-    private   GMFFManager      gmffManager;
+    private final GMFFManager gmffManager;
 
-    private   SeqAssigner      seqAssigner;
-    private   LinkedList       theoremLoaderCommitListeners;
+    private final SeqAssigner seqAssigner;
+    private final LinkedList theoremLoaderCommitListeners;
 
-    private   ArrayList        scopeDefList;
-    private   ScopeDef         currScopeDef;
-    private   int              scopeLvl;
-    private   int              mObjCount
-                                  = 0;
+    private final ArrayList scopeDefList;
+    private ScopeDef currScopeDef;
+    private int scopeLvl;
+    private int mObjCount = 0;
 
-    private   ProofVerifier    proofVerifier;
-    private   SyntaxVerifier   syntaxVerifier;
-    private   ProofCompression proofCompression;
+    private ProofVerifier proofVerifier;
+    private SyntaxVerifier syntaxVerifier;
+    private ProofCompression proofCompression;
 
     // Sym table (was sorted, asc order by Sym.id, but HashMap is
     // faster...)
-    private   Map              symTbl;
+    private final Map symTbl;
 
     // stmtTbl (was asc order by Stmt.label, but HashMap is
     // faster...)
-    private   Map              stmtTbl;
+    private final Map stmtTbl;
 
     /**
      * Construct with full set of parameters.
@@ -157,54 +156,45 @@ public class LogicalSystem implements SystemLoader {
      *        desired.
      *
      */
-    public LogicalSystem(String         provableLogicStmtTypeParm,
-                         String         logicStmtTypeParm,
-                         GMFFManager    gmffManager,
-                         BookManager    bookManager,
-                         SeqAssigner    seqAssigner,
-                         int            symTblInitialSize,
-                         int            stmtTblInitialSize,
-                         ProofVerifier  proofVerifier,
-                         SyntaxVerifier syntaxVerifier) {
+    public LogicalSystem(final String provableLogicStmtTypeParm,
+        final String logicStmtTypeParm, final GMFFManager gmffManager,
+        final BookManager bookManager, final SeqAssigner seqAssigner,
+        final int symTblInitialSize, final int stmtTblInitialSize,
+        final ProofVerifier proofVerifier, final SyntaxVerifier syntaxVerifier)
+    {
 
         mObjCount = 0;
 
-        this.provableLogicStmtTypeParm
-                                  = provableLogicStmtTypeParm;
-        this.logicStmtTypeParm    = logicStmtTypeParm;
+        this.provableLogicStmtTypeParm = provableLogicStmtTypeParm;
+        this.logicStmtTypeParm = logicStmtTypeParm;
 
-		this.gmffManager          = gmffManager;
-        this.bookManager          = bookManager;
+        this.gmffManager = gmffManager;
+        this.bookManager = bookManager;
 
-        this.seqAssigner          = seqAssigner;
-        theoremLoaderCommitListeners
-                                  = new LinkedList();
+        this.seqAssigner = seqAssigner;
+        theoremLoaderCommitListeners = new LinkedList();
 
-        if (symTblInitialSize <
-            LangConstants.SYM_TBL_INITIAL_SIZE_MINIMUM) {
+        if (symTblInitialSize < LangConstants.SYM_TBL_INITIAL_SIZE_MINIMUM)
             throw new IllegalArgumentException(
                 LangConstants.ERRMSG_SYM_TBL_TOO_SMALL
-                + LangConstants.SYM_TBL_INITIAL_SIZE_MINIMUM);
-        }
+                    + LangConstants.SYM_TBL_INITIAL_SIZE_MINIMUM);
 
-        if (stmtTblInitialSize <
-            LangConstants.STMT_TBL_INITIAL_SIZE_MINIMUM) {
+        if (stmtTblInitialSize < LangConstants.STMT_TBL_INITIAL_SIZE_MINIMUM)
             throw new IllegalArgumentException(
                 LangConstants.ERRMSG_STMT_TBL_TOO_SMALL
-                + LangConstants.STMT_TBL_INITIAL_SIZE_MINIMUM);
-        }
+                    + LangConstants.STMT_TBL_INITIAL_SIZE_MINIMUM);
 
-        symTbl                     =  new HashMap(symTblInitialSize);
-        stmtTbl                    =  new HashMap(stmtTblInitialSize);
+        symTbl = new HashMap(symTblInitialSize);
+        stmtTbl = new HashMap(stmtTblInitialSize);
 
-        this.syntaxVerifier        =  syntaxVerifier;
-        this.proofVerifier         =  proofVerifier;
+        this.syntaxVerifier = syntaxVerifier;
+        this.proofVerifier = proofVerifier;
 
-        //init stack of scope levels
-        scopeDefList               = new ArrayList();
-        beginScope();   //initialize global scope level
+        // init stack of scope levels
+        scopeDefList = new ArrayList();
+        beginScope(); // initialize global scope level
 
-		gmffManager.setSymTbl(symTbl);
+        gmffManager.setSymTbl(symTbl);
     }
 
     /**
@@ -232,20 +222,14 @@ public class LogicalSystem implements SystemLoader {
      *
      * @throws   LangException if duplicate symbol, etc.
      */
-    public Cnst addCnst(String id)
-                        throws LangException {
-        if (scopeLvl != 0) {
+    @Override
+    public Cnst addCnst(final String id) throws LangException {
+        if (scopeLvl != 0)
             throw new LangException(
                 LangConstants.ERRMSG_MUST_DEF_CNST_AT_GLOBAL_LVL);
-        }
 
-        Cnst c = new Cnst(seqAssigner.nextSeq(),
-                          symTbl,
-                          stmtTbl,
-                          id);
-        Sym existingSym           =
-            (Sym)symTbl.put(id,
-                            c);
+        final Cnst c = new Cnst(seqAssigner.nextSeq(), symTbl, stmtTbl, id);
+        final Sym existingSym = (Sym)symTbl.put(id, c);
 
         dupCheckSymAdd(existingSym);
 
@@ -280,20 +264,17 @@ public class LogicalSystem implements SystemLoader {
      *
      * @throws  LangException if duplicate symbol, etc.
      */
-    public Var addVar(String id)
-                        throws LangException {
+    @Override
+    public Var addVar(final String id) throws LangException {
 
-        Var v = Var.declareVar(seqAssigner.nextSeq(),
-                               symTbl,
-                               stmtTbl,
-                               id);
+        final Var v = Var
+            .declareVar(seqAssigner.nextSeq(), symTbl, stmtTbl, id);
         currScopeDef.scopeVar.add(v);
 
         bookManager.assignChapterSectionNbrs(v);
 
         return v;
     }
-
 
     /**
      *  Add VarHyp to Logical System.
@@ -333,27 +314,21 @@ public class LogicalSystem implements SystemLoader {
      * @throws       LangException if duplicate symbol, etc.
      *               (see <code>mmj.lang.LangConstants.java</code>)
      */
-    public VarHyp addVarHyp(String labelS,
-                            String typS,
-                            String varS)
-                        throws LangException {
+    @Override
+    public VarHyp addVarHyp(final String labelS, final String typS,
+        final String varS) throws LangException
+    {
 
-        VarHyp vH = new VarHyp(seqAssigner.nextSeq(),
-                               symTbl,
-                               stmtTbl,
-                               varS,
-                               labelS,
-                               typS);
+        final VarHyp vH = new VarHyp(seqAssigner.nextSeq(), symTbl, stmtTbl,
+            varS, labelS, typS);
 
-        Stmt existingStmt         =
-            (Stmt)stmtTbl.put(labelS,
-                              vH);
+        final Stmt existingStmt = (Stmt)stmtTbl.put(labelS, vH);
 
         dupCheckStmtAdd(existingStmt);
 
-        (vH.getVar()).setActiveVarHyp(vH);
+        vH.getVar().setActiveVarHyp(vH);
 
-        (vH.getTyp()).setIsVarTyp(true);
+        vH.getTyp().setIsVarTyp(true);
 
         currScopeDef.scopeVarHyp.add(vH);
 
@@ -361,7 +336,6 @@ public class LogicalSystem implements SystemLoader {
 
         return vH;
     }
-
 
     /**
      *  Add DjVars (Disjoint Variables Restriction) to Logical
@@ -395,25 +369,21 @@ public class LogicalSystem implements SystemLoader {
      * @throws   LangException if duplicate vars, etc.
      *           (see <code>mmj.lang.LangConstants.java</code>)
      */
-    public DjVars addDjVars(String djVar1S,
-                            String djVar2S)
-                        throws LangException {
+    @Override
+    public DjVars addDjVars(final String djVar1S, final String djVar2S)
+        throws LangException
+    {
 
-        DjVars djVars = new DjVars(symTbl,
-                                   djVar1S,
-                                   djVar2S);
+        DjVars djVars = new DjVars(symTbl, djVar1S, djVar2S);
 
-        int i = currScopeDef.scopeDjVars.indexOf(djVars);
-        if (i == -1) {
+        final int i = currScopeDef.scopeDjVars.indexOf(djVars);
+        if (i == -1)
             currScopeDef.scopeDjVars.add(djVars);
-        }
-        else {
+        else
             djVars = (DjVars)currScopeDef.scopeDjVars.get(i);
-        }
 
         return djVars;
     }
-
 
     /**
      *  Add LogHyp (Logical Hypothesis) to Logical System.
@@ -457,22 +427,15 @@ public class LogicalSystem implements SystemLoader {
      * @throws   LangException if duplicate label, undefined vars,
      *           etc.
      */
-    public LogHyp addLogHyp(String    labelS,
-                            String    typS,
-                            ArrayList symList)
-                                throws LangException {
+    @Override
+    public LogHyp addLogHyp(final String labelS, final String typS,
+        final ArrayList symList) throws LangException
+    {
 
-        LogHyp logHyp = new LogHyp(seqAssigner.nextSeq(),
-                                   symTbl,
-                                   stmtTbl,
-                                   symList,
-                                   labelS,
-                                   typS);
+        final LogHyp logHyp = new LogHyp(seqAssigner.nextSeq(), symTbl,
+            stmtTbl, symList, labelS, typS);
 
-        Stmt existingStmt         =
-            (Stmt)stmtTbl.
-                put(labelS,
-                    logHyp);
+        final Stmt existingStmt = (Stmt)stmtTbl.put(labelS, logHyp);
 
         dupCheckStmtAdd(existingStmt);
 
@@ -481,7 +444,6 @@ public class LogicalSystem implements SystemLoader {
         bookManager.assignChapterSectionNbrs(logHyp);
 
         return logHyp;
-
 
     }
 
@@ -504,24 +466,14 @@ public class LogicalSystem implements SystemLoader {
      * @throws   LangException if duplicate label, undefined vars,
      *           etc.
      */
-    public LogHyp addLogHypForTheoremLoader(
-                            int       seq,
-                            String    labelS,
-                            String    typS,
-                            ArrayList symList)
-                                throws LangException {
+    public LogHyp addLogHypForTheoremLoader(final int seq, final String labelS,
+        final String typS, final ArrayList symList) throws LangException
+    {
 
-        LogHyp logHyp = new LogHyp(seq,
-                                   symTbl,
-                                   stmtTbl,
-                                   symList,
-                                   labelS,
-                                   typS);
+        final LogHyp logHyp = new LogHyp(seq, symTbl, stmtTbl, symList, labelS,
+            typS);
 
-        Stmt existingStmt         =
-            (Stmt)stmtTbl.
-                put(labelS,
-                    logHyp);
+        final Stmt existingStmt = (Stmt)stmtTbl.put(labelS, logHyp);
 
         dupCheckStmtAdd(existingStmt);
 
@@ -529,7 +481,6 @@ public class LogicalSystem implements SystemLoader {
 
         return logHyp;
     }
-
 
     /**
      *  Add Axiom to Logical System.
@@ -561,22 +512,15 @@ public class LogicalSystem implements SystemLoader {
      * @throws       LangException if duplicate label, undefined vars,
      *               etc.
      */
-    public Axiom addAxiom(String    labelS,
-                          String    typS,
-                          ArrayList symList)
-                                        throws LangException {
+    @Override
+    public Axiom addAxiom(final String labelS, final String typS,
+        final ArrayList symList) throws LangException
+    {
 
-        Axiom axiom = new Axiom(seqAssigner.nextSeq(),
-                                scopeDefList,
-                                symTbl,
-                                stmtTbl,
-                                labelS,
-                                typS,
-                                symList);
+        final Axiom axiom = new Axiom(seqAssigner.nextSeq(), scopeDefList,
+            symTbl, stmtTbl, labelS, typS, symList);
 
-        Stmt existingStmt         =
-            (Stmt)stmtTbl.put(labelS,
-                              axiom);
+        final Stmt existingStmt = (Stmt)stmtTbl.put(labelS, axiom);
 
         dupCheckStmtAdd(existingStmt);
 
@@ -584,7 +528,6 @@ public class LogicalSystem implements SystemLoader {
 
         return axiom;
     }
-
 
     /**
      *  Add Theorem to Logical System.
@@ -630,25 +573,16 @@ public class LogicalSystem implements SystemLoader {
      * @throws       LangException if duplicate label, undefined vars,
      *               etc.
      */
-    public Theorem addTheorem(String    labelS,
-                              String    typS,
-                              ArrayList symList,
-                              ArrayList proofList)
-                                            throws LangException {
+    @Override
+    public Theorem addTheorem(final String labelS, final String typS,
+        final ArrayList symList, final ArrayList proofList)
+        throws LangException
+    {
 
-        Theorem theorem = new Theorem(seqAssigner.nextSeq(),
-                                      scopeDefList,
-                                      symTbl,
-                                      stmtTbl,
-                                      labelS,
-                                      typS,
-                                      symList,
-                                      proofList);
+        final Theorem theorem = new Theorem(seqAssigner.nextSeq(),
+            scopeDefList, symTbl, stmtTbl, labelS, typS, symList, proofList);
 
-        Stmt existingStmt         =
-            (Stmt)stmtTbl.
-                put(labelS,
-                    theorem);
+        final Stmt existingStmt = (Stmt)stmtTbl.put(labelS, theorem);
 
         dupCheckStmtAdd(existingStmt);
 
@@ -678,32 +612,19 @@ public class LogicalSystem implements SystemLoader {
      * @throws       LangException if duplicate label, undefined vars,
      *               etc.
      */
-    public Theorem addTheoremForTheoremLoader(
-                              int       seq,
-                              String    labelS,
-                              String    typS,
-                              ArrayList symList,
-                              ArrayList proofList)
-                                            throws LangException {
-        Theorem theorem = new Theorem(seq,
-                                      scopeDefList,
-                                      symTbl,
-                                      stmtTbl,
-                                      labelS,
-                                      typS,
-                                      symList,
-                                      proofList);
+    public Theorem addTheoremForTheoremLoader(final int seq,
+        final String labelS, final String typS, final ArrayList symList,
+        final ArrayList proofList) throws LangException
+    {
+        final Theorem theorem = new Theorem(seq, scopeDefList, symTbl, stmtTbl,
+            labelS, typS, symList, proofList);
 
-        Stmt existingStmt         =
-            (Stmt)stmtTbl.
-                put(labelS,
-                    theorem);
+        final Stmt existingStmt = (Stmt)stmtTbl.put(labelS, theorem);
 
         dupCheckStmtAdd(existingStmt);
 
         return theorem;
     }
-
 
     /**
      *  Add Theorem to Logical System.
@@ -734,27 +655,17 @@ public class LogicalSystem implements SystemLoader {
      * @throws       LangException if duplicate label, undefined vars,
      *               etc.
      */
-    public Theorem addTheorem(String    labelS,
-                              String    typS,
-                              ArrayList symList,
-                              ArrayList proofList,
-                              ArrayList proofBlockList)
-                                            throws LangException {
+    @Override
+    public Theorem addTheorem(final String labelS, final String typS,
+        final ArrayList symList, final ArrayList proofList,
+        final ArrayList proofBlockList) throws LangException
+    {
 
-        Theorem theorem = new Theorem(seqAssigner.nextSeq(),
-                                      scopeDefList,
-                                      symTbl,
-                                      stmtTbl,
-                                      labelS,
-                                      typS,
-                                      symList,
-                                      proofList,
-                                      proofBlockList,
-                                      getProofCompression());
+        final Theorem theorem = new Theorem(seqAssigner.nextSeq(),
+            scopeDefList, symTbl, stmtTbl, labelS, typS, symList, proofList,
+            proofBlockList, getProofCompression());
 
-        Stmt existingStmt         =
-            (Stmt)stmtTbl.put(labelS,
-                              theorem);
+        final Stmt existingStmt = (Stmt)stmtTbl.put(labelS, theorem);
 
         dupCheckStmtAdd(existingStmt);
 
@@ -762,7 +673,6 @@ public class LogicalSystem implements SystemLoader {
 
         return theorem;
     }
-
 
     /**
      *  Begin a new (nested) scope level for the Logical System.
@@ -775,14 +685,14 @@ public class LogicalSystem implements SystemLoader {
      *
      *  @see mmj.lang.ScopeDef
      */
+    @Override
     public void beginScope() {
         currScopeDef = new ScopeDef();
         scopeDefList.add(currScopeDef);
 
-        //global scope level = 0
-        scopeLvl     = scopeDefList.size() - 1;
+        // global scope level = 0
+        scopeLvl = scopeDefList.size() - 1;
     }
-
 
     /**
      *  Ends a (nested) scope level for the Logical System.
@@ -808,20 +718,18 @@ public class LogicalSystem implements SystemLoader {
      *  @throws   LangException if scope is already at the global
      *            scope level.
      */
-    public void endScope()
-                        throws LangException {
+    @Override
+    public void endScope() throws LangException {
 
-        if (scopeLvl < 1) {
+        if (scopeLvl < 1)
             throw new LangException(
                 LangConstants.ERRMSG_CANNOT_END_GLOBAL_SCOPE);
-        }
 
-        ListIterator    x;
+        ListIterator x;
 
         x = currScopeDef.scopeLogHyp.listIterator();
-        while (x.hasNext()) {
+        while (x.hasNext())
             ((LogHyp)x.next()).setActive(false);
-        }
 
         x = currScopeDef.scopeVarHyp.listIterator();
         VarHyp vH;
@@ -833,19 +741,17 @@ public class LogicalSystem implements SystemLoader {
              *  when deactivating VarHyp, go to its Var and remove
              *  set its "activeVarHyp" value to null.
              */
-            (vH.getVar()).setActiveVarHyp(null);
+            vH.getVar().setActiveVarHyp(null);
         }
 
         x = currScopeDef.scopeVar.listIterator();
-        while (x.hasNext()) {
+        while (x.hasNext())
             ((Var)x.next()).setActive(false);
-        }
 
         scopeDefList.remove(scopeLvl);
-        scopeLvl = scopeDefList.size() - 1; //global scope level = 0
+        scopeLvl = scopeDefList.size() - 1; // global scope level = 0
         currScopeDef = (ScopeDef)scopeDefList.get(scopeLvl);
     }
-
 
     /**
      *  EOF processing for Logical System after file loaded.
@@ -868,12 +774,13 @@ public class LogicalSystem implements SystemLoader {
      *               scope level UNLESS premature EOF signalled.
      *               (see <code>mmj.lang.LangConstants.java</code>)
      */
-   public void finalizeEOF(Messages messages,
-                           boolean  prematureEOF)
-                                throws LangException {
-        setProofCompression(null); //free up memory
-        if (scopeLvl != 0) {
-            if (prematureEOF) {
+    @Override
+    public void finalizeEOF(final Messages messages, final boolean prematureEOF)
+        throws LangException
+    {
+        setProofCompression(null); // free up memory
+        if (scopeLvl != 0)
+            if (prematureEOF)
                 while (true) {
                     if (scopeLvl > 0) {
                         endScope();
@@ -881,14 +788,10 @@ public class LogicalSystem implements SystemLoader {
                     }
                     break;
                 }
-            }
-            else {
-                messages.accumErrorMessage(
-                    LangConstants.ERRMSG_MISSING_END_SCOPE_AT_EOF);
-            }
-        }
+            else
+                messages
+                    .accumErrorMessage(LangConstants.ERRMSG_MISSING_END_SCOPE_AT_EOF);
     }
-
 
     /**
      *  Does Syntactical Analysis of the grammar and all
@@ -897,11 +800,9 @@ public class LogicalSystem implements SystemLoader {
      *  @param messages  <code>Messages</code> object for
      *                   reporting errors.
      */
-    public void verifyAllSyntax(Messages messages)
-                                            throws VerifyException {
-        syntaxVerifier.parseAllFormulas(messages,
-                                        symTbl,
-                                        stmtTbl);
+    public void verifyAllSyntax(final Messages messages) throws VerifyException
+    {
+        syntaxVerifier.parseAllFormulas(messages, symTbl, stmtTbl);
 
     }
 
@@ -912,10 +813,8 @@ public class LogicalSystem implements SystemLoader {
      *  @param messages  <code>Messages</code> object for
      *                   reporting errors.
      */
-    public void verifyProofs(Messages messages)
-                                            throws VerifyException {
-        proofVerifier.verifyAllProofs(messages,
-                                      stmtTbl);
+    public void verifyProofs(final Messages messages) throws VerifyException {
+        proofVerifier.verifyAllProofs(messages, stmtTbl);
     }
 
     /**
@@ -935,10 +834,10 @@ public class LogicalSystem implements SystemLoader {
      *  @param messages  <code>Messages</code> object for
      *                   reporting errors.
      */
-    public void verifyAllExprRPNAsProofs(Messages messages)
-                                            throws VerifyException {
-        proofVerifier.verifyAllExprRPNAsProofs(messages,
-                                               stmtTbl);
+    public void verifyAllExprRPNAsProofs(final Messages messages)
+        throws VerifyException
+    {
+        proofVerifier.verifyAllExprRPNAsProofs(messages, stmtTbl);
     }
 
     /**
@@ -989,11 +888,11 @@ public class LogicalSystem implements SystemLoader {
      *
      *  @return the old ProofVerifier in use in LogicalSystem.
      */
-    public ProofVerifier setProofVerifier(
-                            ProofVerifier newProofVerifier) {
-        ProofVerifier oldProofVerifier = proofVerifier;
-        proofVerifier                  = newProofVerifier;
-        return        oldProofVerifier;
+    public ProofVerifier setProofVerifier(final ProofVerifier newProofVerifier)
+    {
+        final ProofVerifier oldProofVerifier = proofVerifier;
+        proofVerifier = newProofVerifier;
+        return oldProofVerifier;
     }
 
     /**
@@ -1011,10 +910,11 @@ public class LogicalSystem implements SystemLoader {
      *  @return the old SyntaxVerifier in use in LogicalSystem.
      */
     public SyntaxVerifier setSyntaxVerifier(
-                             SyntaxVerifier newSyntaxVerifier) {
-        SyntaxVerifier oldSyntaxVerifier = syntaxVerifier;
-        syntaxVerifier                   = newSyntaxVerifier;
-        return        oldSyntaxVerifier;
+        final SyntaxVerifier newSyntaxVerifier)
+    {
+        final SyntaxVerifier oldSyntaxVerifier = syntaxVerifier;
+        syntaxVerifier = newSyntaxVerifier;
+        return oldSyntaxVerifier;
     }
 
     /**
@@ -1028,7 +928,7 @@ public class LogicalSystem implements SystemLoader {
      *  @return symTbl map of all <code>Cnst</code>s and
      *        <code>Var</code>s.
      */
-    public Map     getSymTbl() {
+    public Map getSymTbl() {
         return symTbl;
     }
 
@@ -1043,7 +943,7 @@ public class LogicalSystem implements SystemLoader {
      *  @return stmtTbl map of all <code>Hyp</code>s and
      *        <code>Assrt</code>s.
      */
-    public Map     getStmtTbl() {
+    public Map getStmtTbl() {
         return stmtTbl;
     }
 
@@ -1056,10 +956,8 @@ public class LogicalSystem implements SystemLoader {
      *  @return ProofCompression instance.
      */
     public ProofCompression getProofCompression() {
-        if (proofCompression == null) {
-            setProofCompression(
-                new ProofCompression());
-        }
+        if (proofCompression == null)
+            setProofCompression(new ProofCompression());
         return proofCompression;
     }
 
@@ -1070,9 +968,8 @@ public class LogicalSystem implements SystemLoader {
      *
      *  @param proofCompression instance or null.
      */
-    public void setProofCompression(
-                        ProofCompression proofCompression) {
-        this.proofCompression     = proofCompression;
+    public void setProofCompression(final ProofCompression proofCompression) {
+        this.proofCompression = proofCompression;
     }
 
     /**
@@ -1123,9 +1020,10 @@ public class LogicalSystem implements SystemLoader {
      * @param  comment Typesetting definition comment ("$t) from
      *         Metamath file minus the "$(" and "$)" tokens.
      */
-	public void cacheTypesettingCommentForGMFF(String comment) {
-		gmffManager. cacheTypesettingCommentForGMFF(comment);
-	}
+    @Override
+    public void cacheTypesettingCommentForGMFF(final String comment) {
+        gmffManager.cacheTypesettingCommentForGMFF(comment);
+    }
 
     /**
      *  Returns the Book Manager.
@@ -1143,10 +1041,10 @@ public class LogicalSystem implements SystemLoader {
      *  <p>
      * @param  chapterTitle Title of chapter or blank or empty String.
      */
-    public void addNewChapter(String chapterTitle) {
-        if (isBookManagerEnabled()) {
+    @Override
+    public void addNewChapter(final String chapterTitle) {
+        if (isBookManagerEnabled())
             bookManager.addNewChapter(chapterTitle);
-        }
     }
 
     /**
@@ -1156,10 +1054,10 @@ public class LogicalSystem implements SystemLoader {
      *  <p>
      * @param  sectionTitle Title of section or blank or empty String.
      */
-    public void addNewSection(String sectionTitle) {
-        if (isBookManagerEnabled()) {
+    @Override
+    public void addNewSection(final String sectionTitle) {
+        if (isBookManagerEnabled())
             bookManager.addNewSection(sectionTitle);
-        }
     }
 
     /**
@@ -1170,6 +1068,7 @@ public class LogicalSystem implements SystemLoader {
      *  <p>
      * @return true if BookManager is enabled.
      */
+    @Override
     public boolean isBookManagerEnabled() {
         return bookManager.isEnabled();
     }
@@ -1198,11 +1097,11 @@ public class LogicalSystem implements SystemLoader {
      *  @param t TheoremLoaderCommitListener object.
      */
     public void accumTheoremLoaderCommitListener(
-                                TheoremLoaderCommitListener t) {
+        final TheoremLoaderCommitListener t)
+    {
 
-        if (!theoremLoaderCommitListeners.contains(t)) {
+        if (!theoremLoaderCommitListeners.contains(t))
             theoremLoaderCommitListeners.add(t);
-        }
     }
 
     /**
@@ -1213,7 +1112,8 @@ public class LogicalSystem implements SystemLoader {
      *  @param t TheoremLoaderCommitListener object.
      */
     public void removeTheoremLoaderCommitListener(
-                                TheoremLoaderCommitListener t) {
+        final TheoremLoaderCommitListener t)
+    {
 
         theoremLoaderCommitListeners.remove(t);
     }
@@ -1241,56 +1141,44 @@ public class LogicalSystem implements SystemLoader {
      *  @throws IllegalArgumentException if the rollback operation
      *         fails.
      */
-    public void theoremLoaderRollback(MMTTheoremSet mmtTheoremSet,
-                                      String        errorMessage,
-                                      Messages      messages,
-                                      boolean       auditMessages) {
+    public void theoremLoaderRollback(final MMTTheoremSet mmtTheoremSet,
+        final String errorMessage, final Messages messages,
+        final boolean auditMessages)
+    {
 
-        String abortMessage       = null;
+        String abortMessage = null;
         try {
             // almost forgot :-) should be only one level to undo...
-            if (getScopeLvl() > 0) {
+            if (getScopeLvl() > 0)
                 endScope();
-            }
 
             // only seqAssigner is rolled back because the other
             // places where stmtTbl entries are distributed are
             // not updated until the Theorem Loader updates are
             // committed (see LogicalSystem.theoremLoaderCommit()).
-            if (seqAssigner != null) {
-                seqAssigner.rollback(mmtTheoremSet,
-                                     messages,
-                                     auditMessages);
-            }
+            if (seqAssigner != null)
+                seqAssigner.rollback(mmtTheoremSet, messages, auditMessages);
 
-            Iterator i            = mmtTheoremSet.iterator();
+            final Iterator i = mmtTheoremSet.iterator();
             TheoremStmtGroup g;
             while (i.hasNext()) {
-                g                 = (TheoremStmtGroup)i.next();
+                g = (TheoremStmtGroup)i.next();
                 g.reverseStmtTblUpdates(stmtTbl);
             }
             return;
-        }
-        catch (LangException e) {
-            abortMessage          = new String(
-                LangConstants.
-                    ERRMSG_THEOREM_LOADER_ROLLBACK_FAILED_1
-                + " (1) "
-                + errorMessage
-                + LangConstants.
-                    ERRMSG_THEOREM_LOADER_ROLLBACK_FAILED_2
+        } catch (final LangException e) {
+            abortMessage = new String(
+                LangConstants.ERRMSG_THEOREM_LOADER_ROLLBACK_FAILED_1 + " (1) "
+                    + errorMessage
+                    + LangConstants.ERRMSG_THEOREM_LOADER_ROLLBACK_FAILED_2
 
-                + e.getMessage());
-        }
-        catch (IllegalArgumentException e) {
-            abortMessage          = new String(
-                LangConstants.
-                    ERRMSG_THEOREM_LOADER_ROLLBACK_FAILED_1
-                + " (2) "
-                + errorMessage
-                + LangConstants.
-                    ERRMSG_THEOREM_LOADER_ROLLBACK_FAILED_2
-                + e.getMessage());
+                    + e.getMessage());
+        } catch (final IllegalArgumentException e) {
+            abortMessage = new String(
+                LangConstants.ERRMSG_THEOREM_LOADER_ROLLBACK_FAILED_1 + " (2) "
+                    + errorMessage
+                    + LangConstants.ERRMSG_THEOREM_LOADER_ROLLBACK_FAILED_2
+                    + e.getMessage());
         }
         throw new IllegalArgumentException(abortMessage);
     }
@@ -1311,48 +1199,38 @@ public class LogicalSystem implements SystemLoader {
      *  @throws IllegalArgumentException if the commit operation
      *         fails.
      */
-    public void theoremLoaderCommit(MMTTheoremSet mmtTheoremSet) {
+    public void theoremLoaderCommit(final MMTTheoremSet mmtTheoremSet) {
 
         try {
-            if (seqAssigner != null) {
+            if (seqAssigner != null)
                 seqAssigner.commit(mmtTheoremSet);
-            }
 
-            if (bookManager != null) {
+            if (bookManager != null)
                 bookManager.commit(mmtTheoremSet);
-            }
 
-            Iterator i                =
-                theoremLoaderCommitListeners.iterator();
-            while (i.hasNext()) {
-                ((TheoremLoaderCommitListener)i.next()).
-                    commit(
-                        mmtTheoremSet);
-            }
-        }
-        catch (Exception e) {
+            final Iterator i = theoremLoaderCommitListeners.iterator();
+            while (i.hasNext())
+                ((TheoremLoaderCommitListener)i.next()).commit(mmtTheoremSet);
+        } catch (final Exception e) {
             throw new IllegalArgumentException(
-                LangConstants.
-                    ERRMSG_THEOREM_LOADER_COMMIT_FAILED
-                + e.getMessage());
+                LangConstants.ERRMSG_THEOREM_LOADER_COMMIT_FAILED
+                    + e.getMessage());
         }
     }
 
-    private void dupCheckSymAdd(Sym existingSym) {
+    private void dupCheckSymAdd(final Sym existingSym) {
 
-        if (existingSym != null) {
+        if (existingSym != null)
             throw new IllegalArgumentException(
                 LangConstants.ERRMSG_DUP_SYM_MAP_PUT_ATTEMPT
-                + existingSym.getId());
-        }
+                    + existingSym.getId());
     }
 
-    private void dupCheckStmtAdd(Stmt existingStmt) {
+    private void dupCheckStmtAdd(final Stmt existingStmt) {
 
-        if (existingStmt != null) {
+        if (existingStmt != null)
             throw new IllegalArgumentException(
                 LangConstants.ERRMSG_DUP_STMT_MAP_PUT_ATTEMPT
-                + existingStmt.getLabel());
-        }
+                    + existingStmt.getLabel());
     }
 }

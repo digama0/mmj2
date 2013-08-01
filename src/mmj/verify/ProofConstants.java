@@ -41,7 +41,6 @@
 
 package mmj.verify;
 
-
 /**
  *  Constants used in mmj.verify.VerifyProofs class.
  *  <p>
@@ -112,177 +111,129 @@ package mmj.verify;
  */
 public class ProofConstants {
 
-    //from VerifyProofs.java
+    // from VerifyProofs.java
 
     /**
      *  Absolute Maximum Retries!
      */
-    public static final int    PROOF_ABSOLUTE_MAX_RETRIES
-                                  = 7;
+    public static final int PROOF_ABSOLUTE_MAX_RETRIES = 7;
 
     /**
      *  Proof stack initial size.
      */
-    public static final int    PROOF_PSTACK_INIT_LEN
-                                  = 400;
+    public static final int PROOF_PSTACK_INIT_LEN = 400;
     /**
      *  Proof stack "hard failure" maximum size.
      */
-    public static final int    PROOF_PSTACK_HARD_FAILURE_LEN
-                                  = 6400;
+    public static final int PROOF_PSTACK_HARD_FAILURE_LEN = 6400;
     /**
      *  Work expression (array) initial size.
      */
-    public static final int    PROOF_WEXPR_INIT_LEN
-                                  = 4000;
+    public static final int PROOF_WEXPR_INIT_LEN = 4000;
     /**
      *  Work expression (array) "hard failure" maximum size.
      */
-    public static final int    PROOF_WEXPR_HARD_FAILURE_LEN
-                                  = 32000;
+    public static final int PROOF_WEXPR_HARD_FAILURE_LEN = 32000;
     /**
      *  Substitution map array initial size.
      */
-    public static final int    PROOF_SUBST_INIT_LEN
-                                  = 400;
+    public static final int PROOF_SUBST_INIT_LEN = 400;
     /**
      *  Substitution map array "hard failure" maximum size.
      */
-    public static final int    PROOF_SUBST_HARD_FAILURE_LEN
-                                  = 6400;
+    public static final int PROOF_SUBST_HARD_FAILURE_LEN = 6400;
 
     /**
      *  QED ProofDerivationStepEntry last step number
      */
     public static final String QED_STEP_NBR = "qed";
 
+    public static final String ERRMSG_PSTACK_ARRAY_OVERFLOW = "A-PR-0001 VerifyProofs pStack array overflow. Bug?"
+        + " Increase PROOF_WORK_HARD_FAILURE_LEN" + " and recompile? Max at ";
 
+    public static final String ERRMSG_WEXPR_ARRAY_OVERFLOW = "A-PR-0002 VerifyProofs wExpr array overflow. Bug?"
+        + " Increase PROOF_WEXPR_HARD_FAILURE_LEN" + " and recompile? Max at ";
 
-    public static final String ERRMSG_PSTACK_ARRAY_OVERFLOW =
-        "A-PR-0001 VerifyProofs pStack array overflow. Bug?"
-        + " Increase PROOF_WORK_HARD_FAILURE_LEN"
-        + " and recompile? Max at ";
+    public static final String ERRMSG_SUBST_ARRAY_OVERFLOW = "A-PR-0003 VerifyProofs subst array overflow. Bug?"
+        + " Increase PROOF_SUBST_HARD_FAILURE_LEN" + " and recompile? Max at ";
 
-    public static final String ERRMSG_WEXPR_ARRAY_OVERFLOW =
-        "A-PR-0002 VerifyProofs wExpr array overflow. Bug?"
-        + " Increase PROOF_WEXPR_HARD_FAILURE_LEN"
-        + " and recompile? Max at ";
+    public static final String ERRMSG_PROOF_STEP_INCOMPLETE = "E-PR-0004 VerifyProof: proof incomplete. ";
 
-    public static final String ERRMSG_SUBST_ARRAY_OVERFLOW =
-        "A-PR-0003 VerifyProofs subst array overflow. Bug?"
-        + " Increase PROOF_SUBST_HARD_FAILURE_LEN"
-        + " and recompile? Max at ";
+    // ==>E-PR-0005 is overridden when a file is input
+    // by
+    // E-IO-0025 Proof must have at least one step...
+    // so this double-check doesn't hurt but...
+    public static final String ERRMSG_PROOF_HAS_ZERO_STEPS = "E-PR-0005 VerifyProof: proof has zero steps.";
 
-    public static final String ERRMSG_PROOF_STEP_INCOMPLETE =
-        "E-PR-0004 VerifyProof: proof incomplete. ";
-
-    //  ==>E-PR-0005 is overridden when a file is input
-    //     by
-    //     E-IO-0025 Proof must have at least one step...
-    //     so this double-check doesn't hurt but...
-    public static final String ERRMSG_PROOF_HAS_ZERO_STEPS =
-        "E-PR-0005 VerifyProof: proof has zero steps.";
-
-    public static final String ERRMSG_PROOF_STACK_GT_1_AT_END =
-        "E-PR-0006 VerifyProof: stack has more than one"
+    public static final String ERRMSG_PROOF_STACK_GT_1_AT_END = "E-PR-0006 VerifyProof: stack has more than one"
         + " entry at end of proof!";
 
-    public static final String ERRMSG_FINAL_STACK_ENTRY_UNEQUAL =
-        "E-PR-0007 VerifyProof: assertion to be proved not"
+    public static final String ERRMSG_FINAL_STACK_ENTRY_UNEQUAL = "E-PR-0007 VerifyProof: assertion to be proved not"
         + " = final stack entry: ";
 
-    public static final String ERRMSG_THEOREM_LABEL =
-        " Theorem: ";
-    public static final String ERRMSG_THEOREM_STEP_NBR =
-        " Step#: ";
-    public static final String ERRMSG_THEOREM_STEP_LABEL =
-        " Step Label: ";
+    public static final String ERRMSG_THEOREM_LABEL = " Theorem: ";
+    public static final String ERRMSG_THEOREM_STEP_NBR = " Step#: ";
+    public static final String ERRMSG_THEOREM_STEP_LABEL = " Step Label: ";
 
-    public static final String ERRMSG_HYP_TYP_MISMATCH_STACK_TYP =
-        "E-PR-0008 VerifyProof: proof stack item type"
+    public static final String ERRMSG_HYP_TYP_MISMATCH_STACK_TYP = "E-PR-0008 VerifyProof: proof stack item type"
         + " not = hypothesis type: ";
 
-    public static final String ERRMSG_STACK_ITEM_TYP =
-        " Stack item type = ";
+    public static final String ERRMSG_STACK_ITEM_TYP = " Stack item type = ";
 
-    public static final String ERRMSG_SUBST_TO_VARS_MATCH =
-        "E-PR-0009 VerifyProof: DjVars restriction violated!"
+    public static final String ERRMSG_SUBST_TO_VARS_MATCH = "E-PR-0009 VerifyProof: DjVars restriction violated!"
         + " Substitution (to) variables match: ";
 
-    public static final String ERRMSG_SUBST_TO_VARS_NOT_DJ =
-        "E-PR-0010 VerifyProof: Substitution (to) vars subject"
+    public static final String ERRMSG_SUBST_TO_VARS_NOT_DJ = "E-PR-0010 VerifyProof: Substitution (to) vars subject"
         + " to DjVars restriction by proof step but"
         + " not listed as DjVars in theorem to be proved: ";
 
-    public static final String ERRMSG_STACK =
-        " STACK = ";
+    public static final String ERRMSG_STACK = " STACK = ";
 
-    public static final String ERRMSG_SUBST_HYP =
-        " SUBST-HYP = ";
+    public static final String ERRMSG_SUBST_HYP = " SUBST-HYP = ";
 
-    public static final String ERRMSG_STEP_LOG_HYP_SUBST_UNEQUAL =
-        "E-PR-0011 Verify Proof: invalid substitution, stack"
+    public static final String ERRMSG_STEP_LOG_HYP_SUBST_UNEQUAL = "E-PR-0011 Verify Proof: invalid substitution, stack"
         + " and subst-hypothesis not equal! ";
 
-    public static final String ERRMSG_RPN_VERIFY_AS_PROOF_FAILURE =
-        "E-PR-0012 The Statement's exprRPN (from"
+    public static final String ERRMSG_RPN_VERIFY_AS_PROOF_FAILURE = "E-PR-0012 The Statement's exprRPN (from"
         + " grammatical parsing) failed verification"
         + " in the VerifyProofs engine as follows: ";
 
-    public static final String ERRMSG_PROOF_STACK_UNDERFLOW =
-        "E-PR-0013 VerifyProof: stack 'underflow'! Bug?";
+    public static final String ERRMSG_PROOF_STACK_UNDERFLOW = "E-PR-0013 VerifyProof: stack 'underflow'! Bug?";
 
-    public static final String ERRMSG_EQUALS_LITERAL =
-        " = ";
+    public static final String ERRMSG_EQUALS_LITERAL = " = ";
 
-    public static final String ERRMSG_AND_LITERAL =
-        " and ";
+    public static final String ERRMSG_AND_LITERAL = " and ";
 
-    public static final String ERRMSG_PROOF_ABS_MAX_RETRY_EXCEEDED =
-        "E-PR-0014 Loop in VerifyProofs!?! Absolute maximum"
-        + " number of retries performed, unsuccessfully."
-        + " This is a bug!";
+    public static final String ERRMSG_PROOF_ABS_MAX_RETRY_EXCEEDED = "E-PR-0014 Loop in VerifyProofs!?! Absolute maximum"
+        + " number of retries performed, unsuccessfully." + " This is a bug!";
 
-    public static final String ERRMSG_DERIV_STEP_PROOF_FAILURE =
-        "E-PR-0015 The derivation proof step failed verification"
+    public static final String ERRMSG_DERIV_STEP_PROOF_FAILURE = "E-PR-0015 The derivation proof step failed verification"
         + " in the VerifyProofs engine as follows: ";
 
-    public static final String ERRMSG_RPN_TO_FORMULA_CONV_FAILURE =
-        "A-PR-0016 Programmer Error! Ooops. convertRPNToFormula()"
+    public static final String ERRMSG_RPN_TO_FORMULA_CONV_FAILURE = "A-PR-0016 Programmer Error! Ooops. convertRPNToFormula()"
         + " failed with this message: ";
 
-    public static final String ERRMSG_BOGUS_PROOF_LOGHYP_STMT_1 =
-        "E-PR-0017 Failure to generate proof derivation step:"
+    public static final String ERRMSG_BOGUS_PROOF_LOGHYP_STMT_1 = "E-PR-0017 Failure to generate proof derivation step:"
         + " Theorem ";
-    public static final String ERRMSG_BOGUS_PROOF_LOGHYP_STMT_2 =
-        " LogHyp ";
-    public static final String ERRMSG_BOGUS_PROOF_LOGHYP_STMT_3 =
-        " specified in proof that is not found in the"
+    public static final String ERRMSG_BOGUS_PROOF_LOGHYP_STMT_2 = " LogHyp ";
+    public static final String ERRMSG_BOGUS_PROOF_LOGHYP_STMT_3 = " specified in proof that is not found in the"
         + " theorem's LogHyp array.";
 
-    public static final String ERRMSG_LOGHYP_STACK_DEFICIENT_1 =
-        "E-PR-0018 Theorem ";
-    public static final String ERRMSG_LOGHYP_STACK_DEFICIENT_2 =
-        " has invalid proof? Proof Worksheet generation halted"
+    public static final String ERRMSG_LOGHYP_STACK_DEFICIENT_1 = "E-PR-0018 Theorem ";
+    public static final String ERRMSG_LOGHYP_STACK_DEFICIENT_2 = " has invalid proof? Proof Worksheet generation halted"
         + " because the undischargedStack does not have enough"
         + " entries to satisfy the step's logical hypotheses.";
 
-    public static final String ERRMSG_FINAL_STACK_ENTRY_UNEQUAL2 =
-        "E-PR-0019 Proof Worksheet generation halted because"
+    public static final String ERRMSG_FINAL_STACK_ENTRY_UNEQUAL2 = "E-PR-0019 Proof Worksheet generation halted because"
         + " VerifyProof found the assertion to be proved not"
         + " = final stack entry: ";
 
-    public static final String ERRMSG_NO_DERIV_STEPS_CREATED_1 =
-        "E-PR-0020 Theorem ";
-    public static final String ERRMSG_NO_DERIV_STEPS_CREATED_2 =
-        " Proof Worksheet generation halted because theorem"
+    public static final String ERRMSG_NO_DERIV_STEPS_CREATED_1 = "E-PR-0020 Theorem ";
+    public static final String ERRMSG_NO_DERIV_STEPS_CREATED_2 = " Proof Worksheet generation halted because theorem"
         + " has invalid proof? No proof steps created"
         + " for Proof Worksheet!";
 
-    public static final String
-                    ERRMSG_STACK_SIZE_MISMATCH_FOR_STEP_HYPS =
-        "E-PR-0021 VerifyProof: proof stack does not contain"
+    public static final String ERRMSG_STACK_SIZE_MISMATCH_FOR_STEP_HYPS = "E-PR-0021 VerifyProof: proof stack does not contain"
         + " enough items to satisfy the current step's hypotheses";
-
 
 }

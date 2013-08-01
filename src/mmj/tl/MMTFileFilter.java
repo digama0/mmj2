@@ -14,9 +14,9 @@
  */
 
 package mmj.tl;
-import java.io.FileFilter;
-import java.io.File;
 
+import java.io.File;
+import java.io.FileFilter;
 
 /**
  *   MMTFileFilter is used by the Theorem Loader to select
@@ -35,18 +35,12 @@ public class MMTFileFilter implements FileFilter {
      *  @return true if entry in directory has pathname ending
      *          in ".mmt" and is a readable file.
      */
-    public boolean accept(File pathname) {
-        if (pathname.
-                getName().
-                    toLowerCase().
-                        endsWith(
-                            TlConstants.FILE_SUFFIX_MMT)
-            &&
-            pathname.isFile()
-            &&
-            pathname.canRead()) {
+    @Override
+    public boolean accept(final File pathname) {
+        if (pathname.getName().toLowerCase()
+            .endsWith(TlConstants.FILE_SUFFIX_MMT)
+            && pathname.isFile() && pathname.canRead())
             return true;
-        }
         return false;
     }
 }

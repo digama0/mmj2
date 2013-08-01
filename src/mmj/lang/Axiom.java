@@ -23,7 +23,8 @@
 
 package mmj.lang;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
 
 /**
  *  Axiom embodies Metamath $a statements, the "axiomatic
@@ -108,7 +109,7 @@ public class Axiom extends Assrt {
      *  VarHyp's from order of appearance in the Axiom's
      *  Formula to database sequence.
      */
-    private   int[]  syntaxAxiomVarHypReseq;
+    private int[] syntaxAxiomVarHypReseq;
 
     /**
      *  Is this Axiom a "Syntax Axiom"? Hmmm...
@@ -118,14 +119,14 @@ public class Axiom extends Assrt {
      *  (i.e. "|-", the default.)
      *  @see mmj.verify.Grammar
      */
-    private   boolean isSyntaxAxiom;
+    private boolean isSyntaxAxiom;
 
     /**
      *  Set to true for Syntax Axiom whose Formula Expression
      *  contains a Sym such that
      *  ((Cnst)sym[i])).getNbrOccInSyntaxAxioms == 1.
      */
-    private   boolean syntaxAxiomHasUniqueCnst;
+    private boolean syntaxAxiomHasUniqueCnst;
 
     /**
      *  Used for the TMFF project, and pertains only to
@@ -141,7 +142,7 @@ public class Axiom extends Assrt {
      *  Axioms and the computation is quick enough that it
      *  must as well just get done and stay done.
      */
-    private   int     widthOfWidestExprCnst;
+    private final int widthOfWidestExprCnst;
 
     /**
      *  Construct using the whole enchilada of parameters!
@@ -154,24 +155,13 @@ public class Axiom extends Assrt {
      *  @param typS         Axiom Formula Type Code String
      *  @param symList      Axiom Expression Sym String List.
      */
-    public Axiom(int       seq,
-                 ArrayList scopeDefList,
-                 Map       symTbl,
-                 Map       stmtTbl,
-                 String    labelS,
-                 String    typS,
-                 ArrayList symList)
-                                throws LangException {
-        super(seq,
-              scopeDefList,
-              symTbl,
-              stmtTbl,
-              labelS,
-              typS,
-              symList);
+    public Axiom(final int seq, final ArrayList scopeDefList, final Map symTbl,
+        final Map stmtTbl, final String labelS, final String typS,
+        final ArrayList symList) throws LangException
+    {
+        super(seq, scopeDefList, symTbl, stmtTbl, labelS, typS, symList);
 
-        widthOfWidestExprCnst     =
-            formula.computeWidthOfWidestExprCnst();
+        widthOfWidestExprCnst = formula.computeWidthOfWidestExprCnst();
     }
 
     /**
@@ -196,10 +186,8 @@ public class Axiom extends Assrt {
      *
      *  @param syntaxAxiomVarHypReseq  array of int.
      */
-    public void setSyntaxAxiomVarHypReseq(
-             int[] syntaxAxiomVarHypReseq) {
-        this.syntaxAxiomVarHypReseq =
-             syntaxAxiomVarHypReseq;
+    public void setSyntaxAxiomVarHypReseq(final int[] syntaxAxiomVarHypReseq) {
+        this.syntaxAxiomVarHypReseq = syntaxAxiomVarHypReseq;
     }
 
     /**
@@ -209,6 +197,7 @@ public class Axiom extends Assrt {
      *
      *  @return true (this is an Axiom :)
      */
+    @Override
     public boolean isAxiom() {
         return true;
     }
@@ -238,7 +227,7 @@ public class Axiom extends Assrt {
      *
      *  @param isSyntaxAxiom true or false.
      */
-    public void setIsSyntaxAxiom(boolean isSyntaxAxiom) {
+    public void setIsSyntaxAxiom(final boolean isSyntaxAxiom) {
         this.isSyntaxAxiom = isSyntaxAxiom;
     }
 
@@ -252,7 +241,7 @@ public class Axiom extends Assrt {
      *  @return syntaxAxiomHasUniqueCnst true or false.
      */
     public boolean getSyntaxAxiomHasUniqueCnst() {
-        return        syntaxAxiomHasUniqueCnst;
+        return syntaxAxiomHasUniqueCnst;
     }
 
     /**
@@ -265,9 +254,9 @@ public class Axiom extends Assrt {
      *  @param syntaxAxiomHasUniqueCnst true or false.
      */
     public void setSyntaxAxiomHasUniqueCnst(
-           boolean syntaxAxiomHasUniqueCnst) {
-        this.syntaxAxiomHasUniqueCnst =
-             syntaxAxiomHasUniqueCnst;
+        final boolean syntaxAxiomHasUniqueCnst)
+    {
+        this.syntaxAxiomHasUniqueCnst = syntaxAxiomHasUniqueCnst;
     }
 
     /**
@@ -316,33 +305,25 @@ public class Axiom extends Assrt {
      *          appended to the input StringBuffer --
      *          or -1 if maxDepth or maxLength exceeded.
      */
-    public int renderParsedSubExpr(StringBuffer sb,
-                                   int          maxDepth,
-                                   int          maxLength,
-                                   ParseNode[]  child) {
+    @Override
+    public int renderParsedSubExpr(final StringBuffer sb, final int maxDepth,
+        int maxLength, final ParseNode[] child)
+    {
 
-        if (!getIsSyntaxAxiom()) {
-			throw new IllegalArgumentException(
-					LangConstants.ERRMSG_BAD_PARSE_STMT_1
-					+ getLabel()
-					+ LangConstants.ERRMSG_BAD_PARSE_STMT_2);
-        }
+        if (!getIsSyntaxAxiom())
+            throw new IllegalArgumentException(
+                LangConstants.ERRMSG_BAD_PARSE_STMT_1 + getLabel()
+                    + LangConstants.ERRMSG_BAD_PARSE_STMT_2);
 
         /*
          *  For TypeConversion Syntax Axiom, make recursive
          *  call to output leaf node Var symbol
          *  (remember: Type Conversions can be chained!)
          */
-        if (formula.sym.length == 2
-            &&
-            varHypArray.length == 1) {
+        if (formula.sym.length == 2 && varHypArray.length == 1)
             // is Type Conversion Syntax Axiom...has to be!
-            return (child[0].getStmt()).renderParsedSubExpr(
-                                              sb,
-                                              maxDepth,
-                                              maxLength,
-                                              child[0].getChild());
-        }
+            return child[0].getStmt().renderParsedSubExpr(sb, maxDepth,
+                maxLength, child[0].getChild());
 
         /*
          *  Process the syntax axiom's expression, outputting
@@ -352,77 +333,60 @@ public class Axiom extends Assrt {
          *  may be in a different sequence than the formula's
          *  variables, so resequence if necessary.
          */
-        String    s;
-        int       sLen;
-        int       varCnt          = -1;
+        String s;
+        int sLen;
+        int varCnt = -1;
         ParseNode subNode;
-        int       substNbrHyps;
-        int       totSLen         = 0;
+        int substNbrHyps;
+        int totSLen = 0;
         for (int i = 1; i < formula.sym.length; i++) {
             if (formula.sym[i].isCnst()) {
-                s                 = formula.sym[i].getId();
-                sLen              = s.length() + 1;
+                s = formula.sym[i].getId();
+                sLen = s.length() + 1;
 
-                if (sLen > maxLength) {
+                if (sLen > maxLength)
                     return -1;
-                }
 
                 sb.append(' ');
                 sb.append(s);
-                maxLength        -= sLen;
-                totSLen          += sLen;
+                maxLength -= sLen;
+                totSLen += sLen;
                 continue;
             }
 
             ++varCnt;
-            if (syntaxAxiomVarHypReseq == null) {
-                subNode           = child[varCnt];
-            }
-            else {
-                subNode           =
-                    child[syntaxAxiomVarHypReseq[varCnt]];
-            }
+            if (syntaxAxiomVarHypReseq == null)
+                subNode = child[varCnt];
+            else
+                subNode = child[syntaxAxiomVarHypReseq[varCnt]];
 
-            substNbrHyps          =
-                subNode.getStmt().getMandVarHypArray().length;
+            substNbrHyps = subNode.getStmt().getMandVarHypArray().length;
 
             /* If child node is TypeConversion, NullsPermitted or
              * NamedTypedConstant Syntax Axiom substituting
              * into this variable we output it without checking
              * "maxDepth" -- and we don't count this node's depth.
              */
-            if (substNbrHyps == 0  // all Cnst or is NullsPermitted
-                   ||
-                (substNbrHyps == 1 &&
-                 subNode.getStmt().getFormula().getCnt() == 2)) {
-                sLen              =
-                    (subNode.getStmt()).renderParsedSubExpr(
-                                              sb,
-                                              maxDepth,
-                                              maxLength,
-                                              subNode.getChild());
-            }
+            if (substNbrHyps == 0 // all Cnst or is NullsPermitted
+                || substNbrHyps == 1
+                && subNode.getStmt().getFormula().getCnt() == 2)
+                sLen = subNode.getStmt().renderParsedSubExpr(sb, maxDepth,
+                    maxLength, subNode.getChild());
             else {
                 /* See following call to outputSubExpr to
                  * see how maxDepth is recursively decremented.
                  */
-                if (maxDepth < 2) { // we're at level 1 now, bye!
+                if (maxDepth < 2)
                     return -1;
-                }
-                sLen              =
-                    (subNode.getStmt()).renderParsedSubExpr(
-                                              sb,
-                                              maxDepth - 1,
-                                              maxLength,
-                                              subNode.getChild());
+                sLen = subNode.getStmt().renderParsedSubExpr(sb, maxDepth - 1,
+                    maxLength, subNode.getChild());
             }
 
-            if (sLen < 0) {
+            if (sLen < 0)
                 return sLen;
-            }
 
-            maxLength            -= sLen;
-            totSLen              += sLen;
+            maxLength -= sLen;
+            totSLen += sLen;
         }
 
         return totSLen;

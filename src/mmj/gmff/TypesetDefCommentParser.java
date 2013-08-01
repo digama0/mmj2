@@ -6,7 +6,6 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-
 /**
  *  TypesetDefCommentParser.java  0.01 11/01/2011
  *
@@ -16,9 +15,11 @@
 
 package mmj.gmff;
 
-import  java.util.*;
-import  mmj.lang.Messages;
-import  mmj.mmio.MMIOConstants;
+import java.util.ArrayList;
+import java.util.Map;
+
+import mmj.lang.Messages;
+import mmj.mmio.MMIOConstants;
 
 /**
  * <code>TypesetDefCommentParser</code> parses, validates and loads
@@ -76,19 +77,18 @@ import  mmj.mmio.MMIOConstants;
  */
 public class TypesetDefCommentParser {
 
-	Messages messages;
-	String[] typesetDefKeyword;
-	Map[]    typesetDefMap;
+    Messages messages;
+    String[] typesetDefKeyword;
+    Map[] typesetDefMap;
 
-	// global variables for current $t parse
-	String   comment; // the Metamath $t comment stripped of $( and $)
-	int		 currIndex;
-	int      maxIndex;
-	int      defErrorIndex;
-	String   currKeyword;
-	String   currSym;
-	String   currReplacement;
-
+    // global variables for current $t parse
+    String comment; // the Metamath $t comment stripped of $( and $)
+    int currIndex;
+    int maxIndex;
+    int defErrorIndex;
+    String currKeyword;
+    String currSym;
+    String currReplacement;
 
     /**
      * The only constructor.
@@ -99,29 +99,28 @@ public class TypesetDefCommentParser {
      *
      * @param messages The mmj2 <code> Messages object.
      */
-	public TypesetDefCommentParser(
-			ArrayList<GMFFExporterTypesetDefs> exporterTypesetDefsList,
-			Messages                           messages)
-							throws GMFFException {
+    public TypesetDefCommentParser(
+        final ArrayList<GMFFExporterTypesetDefs> exporterTypesetDefsList,
+        final Messages messages) throws GMFFException
+    {
 
-		this.messages           = messages;
+        this.messages = messages;
 
-		typesetDefKeyword   	= new String[exporterTypesetDefsList.size()];
-		typesetDefMap       	= new Map[exporterTypesetDefsList.size()];
+        typesetDefKeyword = new String[exporterTypesetDefsList.size()];
+        typesetDefMap = new Map[exporterTypesetDefsList.size()];
 
-		int i					= 0;
-		for (GMFFExporterTypesetDefs d: exporterTypesetDefsList) {
+        int i = 0;
+        for (final GMFFExporterTypesetDefs d : exporterTypesetDefsList) {
 
-			typesetDefKeyword[i]
-			                    = d.typesetDefKeyword;
+            typesetDefKeyword[i] = d.typesetDefKeyword;
 
-			typesetDefMap[i]    = d.typesetDefMap;
+            typesetDefMap[i] = d.typesetDefMap;
 
-			++i;
-		}
-	}
+            ++i;
+        }
+    }
 
-	/**
+    /**
      * Parses, validates and loads <code>Map</code> collections
      * with symbol typesetting definitions with keywords matching
      * the constructor <code>exporterTypesetDefsList</code> list.
@@ -133,637 +132,515 @@ public class TypesetDefCommentParser {
      * @throws GMFFException if parse or validation errors
      * 			encountered.
      *
-	 */
-	public void doIt(String typesetDefComment)
-							throws GMFFException {
+     */
+    public void doIt(final String typesetDefComment) throws GMFFException {
 
-	    comment                 = typesetDefComment;
+        comment = typesetDefComment;
 
-		currIndex               = 0;
-		defErrorIndex           = currIndex;
-	    maxIndex                = typesetDefComment.length();
+        currIndex = 0;
+        defErrorIndex = currIndex;
+        maxIndex = typesetDefComment.length();
 
-		// NOTE: each of routines below leaves currIndex
-		//       pointing to the next non-whitespace/
-		//       non-comment char following whatever it was
-		//       trying to get or bypass -- or currIndex
-		//       will be set to maxIndex (or greater.)
+        // NOTE: each of routines below leaves currIndex
+        // pointing to the next non-whitespace/
+        // non-comment char following whatever it was
+        // trying to get or bypass -- or currIndex
+        // will be set to maxIndex (or greater.)
 
-		validateDollarTToken();
+        validateDollarTToken();
 
-		mainLoop: while (currIndex < maxIndex) {
+        mainLoop: while (currIndex < maxIndex) {
 
-		    initCurrDefVars();
-			defErrorIndex       = currIndex;
+            initCurrDefVars();
+            defErrorIndex = currIndex;
 
-			getCurrKeyword();
-			if (currIndex >= maxIndex) {
-				triggerErrorPrematureEndOfDef();
-			}
+            getCurrKeyword();
+            if (currIndex >= maxIndex)
+                triggerErrorPrematureEndOfDef();
 
-			for (int i = 0; i < typesetDefKeyword.length; i++) {
+            for (int i = 0; i < typesetDefKeyword.length; i++)
+                if (currKeyword.equals(typesetDefKeyword[i])) {
 
-				if (currKeyword.equals(typesetDefKeyword[i])) {
+                    loadCurrTypesetDef();
 
-					loadCurrTypesetDef();
+                    storeInTypesetDefMap(i, currSym, currReplacement);
+                    continue mainLoop;
+                }
+            bypassOtherDef();
+        }
+        return;
+    }
 
-					storeInTypesetDefMap(i,
-					                     currSym,
-					                     currReplacement);
-					continue mainLoop;
-				}
-			}
-			bypassOtherDef();
-		}
-		return;
-	}
+    private void initCurrDefVars() {
+        currKeyword = new String("");
+        currSym = new String("");
+        currReplacement = new String("");
+    }
 
-	private void initCurrDefVars() {
-	    currKeyword             = new String("");
-		currSym                 = new String("");
-		currReplacement         = new String("");
-	}
+    /*
+     *  Confirm "$t" is first non-whitespace of $t Comment
+     *  statement (the "$(" and "$)" are not present in the comment).
+    *  - bypass whitespace/comments following $t
+    *  - upon exit, currIndex must point to non-whitespace,
+    *    non-comment character OR maxIndex!
+     */
+    private void validateDollarTToken() throws GMFFException {
 
-   /*
-    *  Confirm "$t" is first non-whitespace of $t Comment
-    *  statement (the "$(" and "$)" are not present in the comment).
-	*  - bypass whitespace/comments following $t
-	*  - upon exit, currIndex must point to non-whitespace,
-	*    non-comment character OR maxIndex!
-    */
-	private void validateDollarTToken()
-					throws GMFFException {
+        bypassWhitespace();
 
-    	bypassWhitespace();
-
-		if (currIndex >= maxIndex
-		    	||
-            (!comment.startsWith(
-				  MMIOConstants.TYPESETTING_COMMENT_ID_STRING,
-                  currIndex))) {
-
+        if (currIndex >= maxIndex
+            || !comment.startsWith(MMIOConstants.TYPESETTING_COMMENT_ID_STRING,
+                currIndex))
             triggerErrorMissingDollarTToken();
-		}
 
-		currIndex              +=
-			MMIOConstants.TYPESETTING_COMMENT_ID_STRING.length();
+        currIndex += MMIOConstants.TYPESETTING_COMMENT_ID_STRING.length();
 
-		bypassWhitespaceAndComments();
-	}
+        bypassWhitespaceAndComments();
+    }
 
-   /*
-	*  Load keyword into currKeyword.
-    *  - accum one char at a time
-	*  - trigger invalid keyword error if quote,
-	*    single quote, plus symbol, semicolon, asterisk
-	*    not preceded by slash, or slash not followed
-	*    by asterisk found -- or if end result is
-	*    empty string.
-	*  - terminate accumulation when whitespace
-	*    or c-comment start or end of file reached.
-	*  - if keyword invalid throw exception.
-	*  - bypass whitespace/comments after keyword.
-	*  - upon exit, currIndex must point to non-whitespace,
-	*    non-comment character OR maxIndex!
-	*/
-	private void getCurrKeyword()
-					throws GMFFException {
-
-		StringBuffer sb         = new StringBuffer();
-		char         nextChar;
-
-		while (currIndex < maxIndex) {
-
-			nextChar            = comment.charAt(currIndex);
-
-			// look for end of keyword
-			if (Character.isWhitespace(nextChar)
-			    ||
-			    comment.startsWith(
-					MMIOConstants.TYPESETTING_C_COMMENT_START,
-					currIndex)) {
-				break;
-			}
-
-			// look for bogus keyword
-			if (nextChar == MMIOConstants.
-								TYPESETTING_SINGLE_QUOTE_CHAR
-				||
-				nextChar == MMIOConstants.
-								TYPESETTING_DOUBLE_QUOTE_CHAR
-				||
-				nextChar == MMIOConstants.
-								TYPESETTING_PLUS_CHAR
-				||
-				nextChar == MMIOConstants.
-								TYPESETTING_SLASH_CHAR
-				||
-				nextChar == MMIOConstants.
-								TYPESETTING_ASTERISK_CHAR
-				||
-				nextChar == MMIOConstants.
-								TYPESETTING_SEMICOLON_CHAR) {
-
-    			triggerErrorInvalidKeywordChar(nextChar,
-    			                               sb);
-			}
-
-			sb.append(nextChar);
-			++currIndex;
-		}
-
-		if (sb.length() == 0) {
-        	triggerErrorKeywordEmptyString();
-		}
-
-		currKeyword             = sb.toString();
-		bypassWhitespaceAndComments();
-	}
-
-   /*
-	*  Load a Sym's definition:
-	*  - positioned at entry to a character which
-	*    is not whitespace or the start of a comment.
-	*  - get sym quoted string,
-	*  - confirm "as" literal exists
-	*  - get consolidated replacement quoted string
-	*  - confirm ";" exists
-	*  - bypass whitespace/comments between elements
-	*  - bypass whitespace/comments after ";"
-	*  - if any missing elements or other errors throw exception
-	*  - upon exit, currIndex must point to non-whitespace,
-	*    non-comment character OR maxIndex!
-	*/
-	private void loadCurrTypesetDef()
-					throws GMFFException {
-
-		getCurrSym();
-		if (currIndex >= maxIndex) {
-			triggerErrorPrematureEndOfDef();
-		}
-
-    	confirmAsLiteralExists();
-		if (currIndex >= maxIndex) {
-			triggerErrorPrematureEndOfDef();
-		}
-
-    	getConsolidatedReplacementString();
-		if (currIndex >= maxIndex) {
-			triggerErrorPrematureEndOfDef();
-		}
-
-    	confirmEndOfDefSemiColon();
-	}
-
-   /*
-	*  Get sym being defined:
-	*  - pull sym chars out of quote-delimited string
-	*  - error if whitespace betweem quotes
-	*  - error if sym turns out to be empty string
-	*  - end quote must match starting quote
-	*  - upon exit, currIndex must point to non-whitespace,
-	*    non-comment character OR maxIndex!
-	*/
-	private void getCurrSym()
-					throws GMFFException {
-
-		currSym                 = getQuoteDelimitedString();
-
-		if (currSym.length() == 0) {
-    		triggerErrorInvalidSym();
-		}
-		for (int i = 0; i < currSym.length(); i++) {
-			if (Character.isWhitespace(currSym.charAt(i))) {
-				triggerErrorInvalidSym();
-			}
-		}
-		bypassWhitespaceAndComments();
-	}
-
-   /*
-	*  Confirm currIndex points to "as" (without the quotes)
-	*  _ currIndex should already be positioned to the "a"
-	*  - generate missing-as error if not!
-	*  - upon exit, currIndex must point to non-whitespace,
-	*    non-comment character OR maxIndex!
-	*/
-	private void confirmAsLiteralExists()
-					throws GMFFException {
-		if (!comment.startsWith(MMIOConstants.TYPESETTING_AS_LITERAL,
-		                       currIndex)) {
-       		triggerErrorAsLiteralMissing();
-		}
-		currIndex              +=
-			MMIOConstants.TYPESETTING_AS_LITERAL.length();
-
-		bypassWhitespaceAndComments();
-	}
-
-   /*
-	*  Get either one quoted string or a group joined by "+"
-	*  characters:
-	*  - trigger error if "+" not followed by quoted string
-	*  - concatenate quoted strings and store in currReplacement
-	*/
-	private void getConsolidatedReplacementString()
-					throws GMFFException {
-
-		StringBuffer sb         = new StringBuffer();
-		sb.append(getQuoteDelimitedString());
-		bypassWhitespaceAndComments();
-		while (currIndex < maxIndex
-		       &&
-		       comment.charAt(currIndex) ==
-		       		MMIOConstants.TYPESETTING_PLUS_CHAR) {
-			++currIndex;
-			bypassWhitespaceAndComments();
-			if (currIndex >= maxIndex) {
-				triggerErrorPrematureEndOfDef();
-			}
-			sb.append(getQuoteDelimitedString());
-			bypassWhitespaceAndComments();
-		}
-		currReplacement         = sb.toString();
-	}
-
-   /*
-    * Trigger error if semicolon not present at currIndex.
-    * - then bypass whitespace and comments
+    /*
+    *  Load keyword into currKeyword.
+     *  - accum one char at a time
+    *  - trigger invalid keyword error if quote,
+    *    single quote, plus symbol, semicolon, asterisk
+    *    not preceded by slash, or slash not followed
+    *    by asterisk found -- or if end result is
+    *    empty string.
+    *  - terminate accumulation when whitespace
+    *    or c-comment start or end of file reached.
+    *  - if keyword invalid throw exception.
+    *  - bypass whitespace/comments after keyword.
+    *  - upon exit, currIndex must point to non-whitespace,
+    *    non-comment character OR maxIndex!
     */
-	private void confirmEndOfDefSemiColon()
-					throws GMFFException {
-		if (comment.charAt(currIndex) ==
-			MMIOConstants.TYPESETTING_SEMICOLON_CHAR) {
-		}
-		else {
-    		triggerErrorMissingSemicolon();
-		}
-		++currIndex;
+    private void getCurrKeyword() throws GMFFException {
 
-		bypassWhitespaceAndComments();
-	}
+        final StringBuffer sb = new StringBuffer();
+        char nextChar;
 
-   /*
-	*  Bypass "other" (unknown/no-interest) definition:
-	*  - bypass quoted strings
-	*  - bypass characters that are not quoted strings
-	*    or comments;
-	*  - confirm ";" exists
-	*  - bypass whitespace/comments between elements
-	*  - bypass whitespace/comments after ";"
-	*  - if any errors throw exception
-	*  - upon exit, currIndex must point to non-whitespace,
-	*    non-comment character OR maxIndex!
-	*/
-	private void bypassOtherDef()
-					throws GMFFException{
-		char nextChar;
-		while (currIndex < maxIndex) {
+        while (currIndex < maxIndex) {
 
-			nextChar            = comment.charAt(currIndex);
+            nextChar = comment.charAt(currIndex);
 
-			if (nextChar == MMIOConstants.
-								TYPESETTING_SEMICOLON_CHAR) {
-				++currIndex;
-				bypassWhitespaceAndComments();
-				return;
-			}
+            // look for end of keyword
+            if (Character.isWhitespace(nextChar)
+                || comment.startsWith(
+                    MMIOConstants.TYPESETTING_C_COMMENT_START, currIndex))
+                break;
 
-			if (nextChar == MMIOConstants.
-								TYPESETTING_SINGLE_QUOTE_CHAR
-					||
-				nextChar == MMIOConstants.
-								TYPESETTING_DOUBLE_QUOTE_CHAR) {
-				getStringInsideDelimiters(nextChar);
-			}
-			else {
-				// nextChar is something...not whitespace or comment
-				// or quote...just bypass it.
-				++currIndex;
-			}
-			bypassWhitespaceAndComments();
-		}
-		triggerErrorMissingSemicolon();
-	}
+            // look for bogus keyword
+            if (nextChar == MMIOConstants.TYPESETTING_SINGLE_QUOTE_CHAR
+                || nextChar == MMIOConstants.TYPESETTING_DOUBLE_QUOTE_CHAR
+                || nextChar == MMIOConstants.TYPESETTING_PLUS_CHAR
+                || nextChar == MMIOConstants.TYPESETTING_SLASH_CHAR
+                || nextChar == MMIOConstants.TYPESETTING_ASTERISK_CHAR
+                || nextChar == MMIOConstants.TYPESETTING_SEMICOLON_CHAR)
+                triggerErrorInvalidKeywordChar(nextChar, sb);
 
-   /*
-    *  Extract text in between delimiters
-    *  - position currIndex after end delimiter upon exit
-    *  - don't bypass whitespace/comments afterwards
-    *    simply because the calling routines wanted to
-    *    do it themselves :-)
+            sb.append(nextChar);
+            ++currIndex;
+        }
+
+        if (sb.length() == 0)
+            triggerErrorKeywordEmptyString();
+
+        currKeyword = sb.toString();
+        bypassWhitespaceAndComments();
+    }
+
+    /*
+    *  Load a Sym's definition:
+    *  - positioned at entry to a character which
+    *    is not whitespace or the start of a comment.
+    *  - get sym quoted string,
+    *  - confirm "as" literal exists
+    *  - get consolidated replacement quoted string
+    *  - confirm ";" exists
+    *  - bypass whitespace/comments between elements
+    *  - bypass whitespace/comments after ";"
+    *  - if any missing elements or other errors throw exception
+    *  - upon exit, currIndex must point to non-whitespace,
+    *    non-comment character OR maxIndex!
     */
-	private String getQuoteDelimitedString()
-	                throws GMFFException {
-		char nextChar           = comment.charAt(currIndex);
-		if (nextChar == MMIOConstants.
-							TYPESETTING_SINGLE_QUOTE_CHAR
-				||
-			nextChar == MMIOConstants.
-							TYPESETTING_DOUBLE_QUOTE_CHAR) {
-		}
-		else {
-	    	triggerErrorNotAQuotedString(nextChar);
-		}
-		return getStringInsideDelimiters(nextChar);
-	}
+    private void loadCurrTypesetDef() throws GMFFException {
 
-   /*
-    *  Extract text in between delimiters.
-    *  - If two consecutive occurrences of delimiter character found
-	*    then output one occurrence as text, not a delimiter!
-    *  - The end delimiter is followed by a) end of string; or
-	*    b) anything except an end delimiter character.
+        getCurrSym();
+        if (currIndex >= maxIndex)
+            triggerErrorPrematureEndOfDef();
+
+        confirmAsLiteralExists();
+        if (currIndex >= maxIndex)
+            triggerErrorPrematureEndOfDef();
+
+        getConsolidatedReplacementString();
+        if (currIndex >= maxIndex)
+            triggerErrorPrematureEndOfDef();
+
+        confirmEndOfDefSemiColon();
+    }
+
+    /*
+    *  Get sym being defined:
+    *  - pull sym chars out of quote-delimited string
+    *  - error if whitespace betweem quotes
+    *  - error if sym turns out to be empty string
+    *  - end quote must match starting quote
+    *  - upon exit, currIndex must point to non-whitespace,
+    *    non-comment character OR maxIndex!
     */
-  	private String getStringInsideDelimiters(char delimChar)
-  					throws GMFFException {
-		StringBuffer sb         = new StringBuffer();
-		char    	 currChar;
+    private void getCurrSym() throws GMFFException {
 
-		// loop through comment extracting text characters
-		// until end-delimiter found or end of comment
-		while (++currIndex < comment.length()) {
-			currChar            = comment.charAt(currIndex);
-			if (currChar != delimChar) {
+        currSym = getQuoteDelimitedString();
+
+        if (currSym.length() == 0)
+            triggerErrorInvalidSym();
+        for (int i = 0; i < currSym.length(); i++)
+            if (Character.isWhitespace(currSym.charAt(i)))
+                triggerErrorInvalidSym();
+        bypassWhitespaceAndComments();
+    }
+
+    /*
+    *  Confirm currIndex points to "as" (without the quotes)
+    *  _ currIndex should already be positioned to the "a"
+    *  - generate missing-as error if not!
+    *  - upon exit, currIndex must point to non-whitespace,
+    *    non-comment character OR maxIndex!
+    */
+    private void confirmAsLiteralExists() throws GMFFException {
+        if (!comment
+            .startsWith(MMIOConstants.TYPESETTING_AS_LITERAL, currIndex))
+            triggerErrorAsLiteralMissing();
+        currIndex += MMIOConstants.TYPESETTING_AS_LITERAL.length();
+
+        bypassWhitespaceAndComments();
+    }
+
+    /*
+    *  Get either one quoted string or a group joined by "+"
+    *  characters:
+    *  - trigger error if "+" not followed by quoted string
+    *  - concatenate quoted strings and store in currReplacement
+    */
+    private void getConsolidatedReplacementString() throws GMFFException {
+
+        final StringBuffer sb = new StringBuffer();
+        sb.append(getQuoteDelimitedString());
+        bypassWhitespaceAndComments();
+        while (currIndex < maxIndex
+            && comment.charAt(currIndex) == MMIOConstants.TYPESETTING_PLUS_CHAR)
+        {
+            ++currIndex;
+            bypassWhitespaceAndComments();
+            if (currIndex >= maxIndex)
+                triggerErrorPrematureEndOfDef();
+            sb.append(getQuoteDelimitedString());
+            bypassWhitespaceAndComments();
+        }
+        currReplacement = sb.toString();
+    }
+
+    /*
+     * Trigger error if semicolon not present at currIndex.
+     * - then bypass whitespace and comments
+     */
+    private void confirmEndOfDefSemiColon() throws GMFFException {
+        if (comment.charAt(currIndex) == MMIOConstants.TYPESETTING_SEMICOLON_CHAR)
+        {}
+        else
+            triggerErrorMissingSemicolon();
+        ++currIndex;
+
+        bypassWhitespaceAndComments();
+    }
+
+    /*
+    *  Bypass "other" (unknown/no-interest) definition:
+    *  - bypass quoted strings
+    *  - bypass characters that are not quoted strings
+    *    or comments;
+    *  - confirm ";" exists
+    *  - bypass whitespace/comments between elements
+    *  - bypass whitespace/comments after ";"
+    *  - if any errors throw exception
+    *  - upon exit, currIndex must point to non-whitespace,
+    *    non-comment character OR maxIndex!
+    */
+    private void bypassOtherDef() throws GMFFException {
+        char nextChar;
+        while (currIndex < maxIndex) {
+
+            nextChar = comment.charAt(currIndex);
+
+            if (nextChar == MMIOConstants.TYPESETTING_SEMICOLON_CHAR) {
+                ++currIndex;
+                bypassWhitespaceAndComments();
+                return;
+            }
+
+            if (nextChar == MMIOConstants.TYPESETTING_SINGLE_QUOTE_CHAR
+                || nextChar == MMIOConstants.TYPESETTING_DOUBLE_QUOTE_CHAR)
+                getStringInsideDelimiters(nextChar);
+            else
+                // nextChar is something...not whitespace or comment
+                // or quote...just bypass it.
+                ++currIndex;
+            bypassWhitespaceAndComments();
+        }
+        triggerErrorMissingSemicolon();
+    }
+
+    /*
+     *  Extract text in between delimiters
+     *  - position currIndex after end delimiter upon exit
+     *  - don't bypass whitespace/comments afterwards
+     *    simply because the calling routines wanted to
+     *    do it themselves :-)
+     */
+    private String getQuoteDelimitedString() throws GMFFException {
+        final char nextChar = comment.charAt(currIndex);
+        if (nextChar == MMIOConstants.TYPESETTING_SINGLE_QUOTE_CHAR
+            || nextChar == MMIOConstants.TYPESETTING_DOUBLE_QUOTE_CHAR)
+        {}
+        else
+            triggerErrorNotAQuotedString(nextChar);
+        return getStringInsideDelimiters(nextChar);
+    }
+
+    /*
+     *  Extract text in between delimiters.
+     *  - If two consecutive occurrences of delimiter character found
+    *    then output one occurrence as text, not a delimiter!
+     *  - The end delimiter is followed by a) end of string; or
+    *    b) anything except an end delimiter character.
+     */
+    private String getStringInsideDelimiters(final char delimChar)
+        throws GMFFException
+    {
+        final StringBuffer sb = new StringBuffer();
+        char currChar;
+
+        // loop through comment extracting text characters
+        // until end-delimiter found or end of comment
+        while (++currIndex < comment.length()) {
+            currChar = comment.charAt(currIndex);
+            if (currChar != delimChar) {
                 sb.append(currChar);
                 continue;
-			}
+            }
 
-			// ok: found delimiter. see if two in a row
-			if (++currIndex < comment.length()) {
-				currChar        = comment.charAt(currIndex);
-				//if two in a row convert the two into one text char
-				if (currChar == delimChar) {
-					sb.append(currChar);
-					continue;
-				}
-				// following char not a delim so we're done
-			}
-			// - currIndex now positioned after end-delimiter or
-			//   beyond the end of the comment.
-			// - return string inside delimiter!
-			return sb.toString(); // end delim found!
-		}
+            // ok: found delimiter. see if two in a row
+            if (++currIndex < comment.length()) {
+                currChar = comment.charAt(currIndex);
+                // if two in a row convert the two into one text char
+                if (currChar == delimChar) {
+                    sb.append(currChar);
+                    continue;
+                }
+                // following char not a delim so we're done
+            }
+            // - currIndex now positioned after end-delimiter or
+            // beyond the end of the comment.
+            // - return string inside delimiter!
+            return sb.toString(); // end delim found!
+        }
 
-		throw new GMFFException(
-			GMFFConstants.ERRMSG_MISSING_END_DELIM_1
-			+ getParseLocInfo());
-	}
+        throw new GMFFException(GMFFConstants.ERRMSG_MISSING_END_DELIM_1
+            + getParseLocInfo());
+    }
 
-   /*
-    *  Load sym's typesetting definition into the Map
-    *  for its keyword.
-    *  - generate info message if duplicate def for sym
-    */
-	private void storeInTypesetDefMap(int             i,
-                					  String          currSym,
-						              String          currReplacement) {
-		String oldReplacement   =
-			(String)(typesetDefMap[i].get(currSym));
+    /*
+     *  Load sym's typesetting definition into the Map
+     *  for its keyword.
+     *  - generate info message if duplicate def for sym
+     */
+    private void storeInTypesetDefMap(final int i, final String currSym,
+        final String currReplacement)
+    {
+        final String oldReplacement = (String)typesetDefMap[i].get(currSym);
 
-		if (oldReplacement != null) {
+        if (oldReplacement != null)
             triggerInfoMsgDupSymTypesetDef();
-		}
-		else {
-			typesetDefMap[i].put(currSym,
-			                     currReplacement);
-		}
-	}
+        else
+            typesetDefMap[i].put(currSym, currReplacement);
+    }
 
-   /*
-	*  Bypass whitespace characters and c-style comments:
-	*  - there may or may not be whitespace and/or comments
-	*  - there may be multiple whitespace/comment sequences
-	*  - currIndex may be >= maxIndex upon entry
-	*  - if Slash-Asterisk found call bypassComment() routine
-	*    - bypassComment() must confirm Asterisk-Slash exists
-	*      and that there is not a comment inside of
-	*      the comment.
-	*  - upon exit, currIndex must point to non-whitespace,
-	*    non-comment character OR maxIndex!
-	*/
-	private void bypassWhitespaceAndComments()
-						throws GMFFException {
-		while (currIndex < maxIndex) {
-			bypassWhitespace();
-			if (comment.startsWith(
-					MMIOConstants.TYPESETTING_C_COMMENT_START,
-					currIndex)) {
-                bypassComment();
-				continue;
-			}
-			break;
-		}
-	}
-
-   /*
-	*  Bypass a c-style comment (Slash-Asterisk variety):
-	*  - upon entry currIndex points to starting "/"
-	*  - must confirm Asterisk-Slash exists prior to end of file
-	*  - must confirm comment does not contain a Slash-Asterisk
-	*    inside the comment (no nesting of comments).
-	*  - upon exit, currIndex must point to first character
-	*    after Asteisk-Slash comment end OR OR maxIndex!
-	*/
-	private void bypassComment()
-						throws GMFFException {
-		currIndex              +=
-			MMIOConstants.TYPESETTING_C_COMMENT_START.length();
-
-		int endCommentIndex     =
-				comment.indexOf(
-					MMIOConstants.TYPESETTING_C_COMMENT_END,
-					currIndex);
-
-		if (endCommentIndex == -1) {
-            triggerErrorMissingEndComment();
-		}
-
-		int nextStartCommentIndex
-		                        =
-				comment.indexOf(
-					MMIOConstants.TYPESETTING_C_COMMENT_START,
-					currIndex);
-
-		currIndex               =
-			endCommentIndex
-		    + MMIOConstants.TYPESETTING_C_COMMENT_END.length();
-
-		if (nextStartCommentIndex == -1
-		    ||
-		    nextStartCommentIndex >= currIndex) {
-			// ok, bueno
-		}
-		else {
-            triggerErrorNestedComments();
-		}
-	}
-
-   /*
-	*  Bypass whitespace characters:
-	*  - there may be no whitespace characters
-	*  - currIndex may be >= maxIndex upon entry
-	*  - upon exit, currIndex must point to non-whitespace,
-	*    character OR maxIndex!
-	*/
-	private void bypassWhitespace() {
-		while (currIndex < maxIndex) {
-			if (Character.isWhitespace(
-					comment.charAt(
-						currIndex))) {
-				++currIndex;
-				continue;
-			}
-			break;
-		}
-	}
-
-	private void triggerErrorPrematureEndOfDef()
-					throws GMFFException {
-		String s                = getParseLocInfo();
-		throw new GMFFException(
-			GMFFConstants.ERRMSG_PREMATURE_END_OF_DEF_1
-			+ s);
-	}
-
-    private void triggerErrorMissingDollarTToken()
-					throws GMFFException {
-		String s                = getParseLocInfo();
-		throw new GMFFException(
-			GMFFConstants.ERRMSG_MISSING_DOLLAR_T_TOKEN_1
-			+ s);
-	}
-
-	private void triggerErrorNestedComments()
-					throws GMFFException {
-		String s                = getParseLocInfo();
-		throw new GMFFException(
-			GMFFConstants.ERRMSG_NESTED_COMMENTS_1
-			+ s);
-	}
-
-	private void triggerErrorMissingEndComment()
-					throws GMFFException {
-		String s                = getParseLocInfo();
-		throw new GMFFException(
-			GMFFConstants.ERRMSG_MISSING_END_COMMENT_1
-			+ s);
-	}
-
-	private void triggerErrorInvalidKeywordChar(char nextChar,
-	                                            StringBuffer sb)
-					throws GMFFException {
-		String s                = getParseLocInfo();
-		throw new GMFFException(
-			GMFFConstants.ERRMSG_INVALID_KEYWORD_CHAR_1
-			+ nextChar
-			+ GMFFConstants.ERRMSG_INVALID_KEYWORD_CHAR_2
-			+ sb
-			+ s);
-	}
-
-	private void triggerErrorKeywordEmptyString()
-					throws GMFFException {
-		String s                = getParseLocInfo();
-		throw new GMFFException(
-			GMFFConstants.ERRMSG_KEYWORD_EMPTY_STRING_1
-			+ s);
-	}
-
-	private void triggerErrorInvalidSym()
-					throws GMFFException {
-		String s                = getParseLocInfo();
-		throw new GMFFException(
-			GMFFConstants.ERRMSG_INVALID_SYM_1
-			+ s);
-	}
-
-    private void triggerErrorAsLiteralMissing()
-					throws GMFFException {
-		String s                = getParseLocInfo();
-		throw new GMFFException(
-			GMFFConstants.ERRMSG_AS_LITERAL_MISSING_1
-			+ s);
-	}
-
-	private void triggerErrorMissingSemicolon()
-					throws GMFFException {
-		String s                = getParseLocInfo();
-		throw new GMFFException(
-			GMFFConstants.ERRMSG_MISSING_SEMICOLON_1
-			+ s);
-	}
-
-	private void triggerErrorNotAQuotedString(char nextChar)
-					throws GMFFException {
-		String s                = getParseLocInfo();
-		throw new GMFFException(
-			GMFFConstants.ERRMSG_NOT_A_QUOTED_STRING_1
-			+ nextChar
-			+ s);
-	}
-
-	private void triggerErrorMissingEndDelim()
-					throws GMFFException {
-		String s                = getParseLocInfo();
-		throw new GMFFException(
-			GMFFConstants.ERRMSG_MISSING_END_DELIM_1
-			+ s);
-	}
-
-	private void triggerInfoMsgDupSymTypesetDef() {
-		String s                = getParseLocInfo();
-		messages.accumInfoMessage(
-			GMFFConstants.ERRMSG_DUP_SYM_TYPESET_DEF_1
-			+ s);
-	}
-
-   /*
-    *  Returns a string containing the line number of
-    *  defErrorIndex which is set by parsing functions
-    *  as they proceed just in case there is an error.
-    *  - Counts Newline characters to determine line
-    *    number.
-    *  - If doesn't find any Newline characters then
-    *    looks for Carriage Returns :-)
+    /*
+    *  Bypass whitespace characters and c-style comments:
+    *  - there may or may not be whitespace and/or comments
+    *  - there may be multiple whitespace/comment sequences
+    *  - currIndex may be >= maxIndex upon entry
+    *  - if Slash-Asterisk found call bypassComment() routine
+    *    - bypassComment() must confirm Asterisk-Slash exists
+    *      and that there is not a comment inside of
+    *      the comment.
+    *  - upon exit, currIndex must point to non-whitespace,
+    *    non-comment character OR maxIndex!
     */
-	private String getParseLocInfo() {
+    private void bypassWhitespaceAndComments() throws GMFFException {
+        while (currIndex < maxIndex) {
+            bypassWhitespace();
+            if (comment.startsWith(MMIOConstants.TYPESETTING_C_COMMENT_START,
+                currIndex))
+            {
+                bypassComment();
+                continue;
+            }
+            break;
+        }
+    }
 
-		int errLine             =
-				countLines(MMIOConstants.NEW_LINE_CHAR);
+    /*
+    *  Bypass a c-style comment (Slash-Asterisk variety):
+    *  - upon entry currIndex points to starting "/"
+    *  - must confirm Asterisk-Slash exists prior to end of file
+    *  - must confirm comment does not contain a Slash-Asterisk
+    *    inside the comment (no nesting of comments).
+    *  - upon exit, currIndex must point to first character
+    *    after Asteisk-Slash comment end OR OR maxIndex!
+    */
+    private void bypassComment() throws GMFFException {
+        currIndex += MMIOConstants.TYPESETTING_C_COMMENT_START.length();
 
-		if (errLine < 2) {
-			errLine             =
-				countLines(MMIOConstants.CARRIAGE_RETURN_CHAR);
-		}
+        final int endCommentIndex = comment.indexOf(
+            MMIOConstants.TYPESETTING_C_COMMENT_END, currIndex);
 
-		return new String (
-			GMFFConstants.ERRMSG_LOC_INFO_1
-			+ errLine
-			+ GMFFConstants.ERRMSG_LOC_INFO_2
-			+ currKeyword
-			+ GMFFConstants.ERRMSG_LOC_INFO_3
-			+ currSym);
-	}
+        if (endCommentIndex == -1)
+            triggerErrorMissingEndComment();
 
-	private int countLines(char nextLineChar) {
+        final int nextStartCommentIndex = comment.indexOf(
+            MMIOConstants.TYPESETTING_C_COMMENT_START, currIndex);
 
-		int lineNbr             = 1;
-		int nextLineIndex       = 0;
+        currIndex = endCommentIndex
+            + MMIOConstants.TYPESETTING_C_COMMENT_END.length();
 
-		while (true) {
-			int i               =
-				comment.indexOf(nextLineChar,
-							    nextLineIndex);
-			if (i == -1 ||
-			    i >= defErrorIndex) {
-				break;
-			}
+        if (nextStartCommentIndex == -1 || nextStartCommentIndex >= currIndex) {
+            // ok, bueno
+        }
+        else
+            triggerErrorNestedComments();
+    }
 
-			++lineNbr;
-			nextLineIndex        = i + 1;
-		}
+    /*
+    *  Bypass whitespace characters:
+    *  - there may be no whitespace characters
+    *  - currIndex may be >= maxIndex upon entry
+    *  - upon exit, currIndex must point to non-whitespace,
+    *    character OR maxIndex!
+    */
+    private void bypassWhitespace() {
+        while (currIndex < maxIndex) {
+            if (Character.isWhitespace(comment.charAt(currIndex))) {
+                ++currIndex;
+                continue;
+            }
+            break;
+        }
+    }
 
-		return lineNbr;
-	}
+    private void triggerErrorPrematureEndOfDef() throws GMFFException {
+        final String s = getParseLocInfo();
+        throw new GMFFException(GMFFConstants.ERRMSG_PREMATURE_END_OF_DEF_1 + s);
+    }
+
+    private void triggerErrorMissingDollarTToken() throws GMFFException {
+        final String s = getParseLocInfo();
+        throw new GMFFException(GMFFConstants.ERRMSG_MISSING_DOLLAR_T_TOKEN_1
+            + s);
+    }
+
+    private void triggerErrorNestedComments() throws GMFFException {
+        final String s = getParseLocInfo();
+        throw new GMFFException(GMFFConstants.ERRMSG_NESTED_COMMENTS_1 + s);
+    }
+
+    private void triggerErrorMissingEndComment() throws GMFFException {
+        final String s = getParseLocInfo();
+        throw new GMFFException(GMFFConstants.ERRMSG_MISSING_END_COMMENT_1 + s);
+    }
+
+    private void triggerErrorInvalidKeywordChar(final char nextChar,
+        final StringBuffer sb) throws GMFFException
+    {
+        final String s = getParseLocInfo();
+        throw new GMFFException(GMFFConstants.ERRMSG_INVALID_KEYWORD_CHAR_1
+            + nextChar + GMFFConstants.ERRMSG_INVALID_KEYWORD_CHAR_2 + sb + s);
+    }
+
+    private void triggerErrorKeywordEmptyString() throws GMFFException {
+        final String s = getParseLocInfo();
+        throw new GMFFException(GMFFConstants.ERRMSG_KEYWORD_EMPTY_STRING_1 + s);
+    }
+
+    private void triggerErrorInvalidSym() throws GMFFException {
+        final String s = getParseLocInfo();
+        throw new GMFFException(GMFFConstants.ERRMSG_INVALID_SYM_1 + s);
+    }
+
+    private void triggerErrorAsLiteralMissing() throws GMFFException {
+        final String s = getParseLocInfo();
+        throw new GMFFException(GMFFConstants.ERRMSG_AS_LITERAL_MISSING_1 + s);
+    }
+
+    private void triggerErrorMissingSemicolon() throws GMFFException {
+        final String s = getParseLocInfo();
+        throw new GMFFException(GMFFConstants.ERRMSG_MISSING_SEMICOLON_1 + s);
+    }
+
+    private void triggerErrorNotAQuotedString(final char nextChar)
+        throws GMFFException
+    {
+        final String s = getParseLocInfo();
+        throw new GMFFException(GMFFConstants.ERRMSG_NOT_A_QUOTED_STRING_1
+            + nextChar + s);
+    }
+
+    private void triggerErrorMissingEndDelim() throws GMFFException {
+        final String s = getParseLocInfo();
+        throw new GMFFException(GMFFConstants.ERRMSG_MISSING_END_DELIM_1 + s);
+    }
+
+    private void triggerInfoMsgDupSymTypesetDef() {
+        final String s = getParseLocInfo();
+        messages.accumInfoMessage(GMFFConstants.ERRMSG_DUP_SYM_TYPESET_DEF_1
+            + s);
+    }
+
+    /*
+     *  Returns a string containing the line number of
+     *  defErrorIndex which is set by parsing functions
+     *  as they proceed just in case there is an error.
+     *  - Counts Newline characters to determine line
+     *    number.
+     *  - If doesn't find any Newline characters then
+     *    looks for Carriage Returns :-)
+     */
+    private String getParseLocInfo() {
+
+        int errLine = countLines(MMIOConstants.NEW_LINE_CHAR);
+
+        if (errLine < 2)
+            errLine = countLines(MMIOConstants.CARRIAGE_RETURN_CHAR);
+
+        return new String(GMFFConstants.ERRMSG_LOC_INFO_1 + errLine
+            + GMFFConstants.ERRMSG_LOC_INFO_2 + currKeyword
+            + GMFFConstants.ERRMSG_LOC_INFO_3 + currSym);
+    }
+
+    private int countLines(final char nextLineChar) {
+
+        int lineNbr = 1;
+        int nextLineIndex = 0;
+
+        while (true) {
+            final int i = comment.indexOf(nextLineChar, nextLineIndex);
+            if (i == -1 || i >= defErrorIndex)
+                break;
+
+            ++lineNbr;
+            nextLineIndex = i + 1;
+        }
+
+        return lineNbr;
+    }
 }

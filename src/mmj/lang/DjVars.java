@@ -30,6 +30,7 @@
 package mmj.lang;
 
 import java.util.*;
+
 import mmj.mmio.MMIOConstants;
 import mmj.pa.DistinctVariablesStmt;
 
@@ -92,15 +93,14 @@ public class DjVars implements Comparable {
      *
      *  @return Array of DjVars copied from hyplist.
      */
-    public static DjVars[] loadDjVarsArray(List djVarsList) {
+    public static DjVars[] loadDjVarsArray(final List djVarsList) {
 
-        DjVars[] djVarsArray      = new DjVars[djVarsList.size()];
+        final DjVars[] djVarsArray = new DjVars[djVarsList.size()];
 
-        Iterator iterator         = djVarsList.iterator();
-        int      n                = 0;
-        while (iterator.hasNext()) {
-            djVarsArray[n++]      = (DjVars)iterator.next();
-        }
+        final Iterator iterator = djVarsList.iterator();
+        int n = 0;
+        while (iterator.hasNext())
+            djVarsArray[n++] = (DjVars)iterator.next();
         return djVarsArray;
     }
 
@@ -117,50 +117,41 @@ public class DjVars implements Comparable {
      *  @return true if both DjVars variables are used in
      *          VarHyps in the Extended Frame, otherwise false.
      */
-    public static boolean areBothDjVarsInExtendedFrame(
-                                            DjVars    djVars,
-                                            MandFrame mandFrame,
-                                            OptFrame  optFrame) {
+    public static boolean areBothDjVarsInExtendedFrame(final DjVars djVars,
+        final MandFrame mandFrame, final OptFrame optFrame)
+    {
 
         boolean loFound = false;
         boolean hiFound = false;
-        Hyp     hyp;
-        VarHyp  varHyp;
+        final Hyp hyp;
+        VarHyp varHyp;
 
-        Hyp[]   hypArray          = mandFrame.hypArray;
+        Hyp[] hypArray = mandFrame.hypArray;
         for (int i = 0; i < hypArray.length; i++) {
-            if (!hypArray[i].isVarHyp()) {
+            if (!hypArray[i].isVarHyp())
                 continue;
-            }
 
-            varHyp                = (VarHyp)hypArray[i];
-            if (varHyp.getVar() == djVars.varLo) {
+            varHyp = (VarHyp)hypArray[i];
+            if (varHyp.getVar() == djVars.varLo)
                 loFound = true;
-            }
-            if (varHyp.getVar() == djVars.varHi) {
+            if (varHyp.getVar() == djVars.varHi)
                 hiFound = true;
-            }
-            if (loFound && hiFound) {
+            if (loFound && hiFound)
                 return true;
-            }
         }
 
-        hypArray                  = optFrame.optHypArray;
+        hypArray = optFrame.optHypArray;
         for (int i = 0; i < hypArray.length; i++) {
-            if (!hypArray[i].isVarHyp()) {
+            if (!hypArray[i].isVarHyp())
                 continue;
-            }
 
-            varHyp                = (VarHyp)hypArray[i];
-            if (varHyp.getVar() == djVars.varLo) {
+            varHyp = (VarHyp)hypArray[i];
+            if (varHyp.getVar() == djVars.varLo)
                 loFound = true;
-            }
-            if (varHyp.getVar() == djVars.varHi) {
+            if (varHyp.getVar() == djVars.varHi)
                 hiFound = true;
-            }
-            if (loFound && hiFound) {
+            if (loFound && hiFound)
                 return true;
-            }
         }
 
         return false;
@@ -178,36 +169,31 @@ public class DjVars implements Comparable {
      *  @return true if both DjVars variables are used in
      *          VarHyps in the Extended Frame, otherwise false.
      */
-    public static boolean isDjVarsVarInExtendedFrame(
-                                            Var       djVarsVar,
-                                            MandFrame mandFrame,
-                                            OptFrame  optFrame) {
+    public static boolean isDjVarsVarInExtendedFrame(final Var djVarsVar,
+        final MandFrame mandFrame, final OptFrame optFrame)
+    {
 
-        Hyp     hyp;
-        VarHyp  varHyp;
+        final Hyp hyp;
+        VarHyp varHyp;
 
-        Hyp[]   hypArray          = mandFrame.hypArray;
+        Hyp[] hypArray = mandFrame.hypArray;
         for (int i = 0; i < hypArray.length; i++) {
-            if (!hypArray[i].isVarHyp()) {
+            if (!hypArray[i].isVarHyp())
                 continue;
-            }
 
-            varHyp                = (VarHyp)hypArray[i];
-            if (varHyp.getVar() == djVarsVar) {
+            varHyp = (VarHyp)hypArray[i];
+            if (varHyp.getVar() == djVarsVar)
                 return true;
-            }
         }
 
-        hypArray                  = optFrame.optHypArray;
+        hypArray = optFrame.optHypArray;
         for (int i = 0; i < hypArray.length; i++) {
-            if (!hypArray[i].isVarHyp()) {
+            if (!hypArray[i].isVarHyp())
                 continue;
-            }
 
-            varHyp                = (VarHyp)hypArray[i];
-            if (varHyp.getVar() == djVarsVar) {
+            varHyp = (VarHyp)hypArray[i];
+            if (varHyp.getVar() == djVarsVar)
                 return true;
-            }
         }
         return false;
     }
@@ -226,26 +212,18 @@ public class DjVars implements Comparable {
      *                        (not containing any newlines).
      */
     public static LinkedList buildMetamathDjVarsStatementList(
-                DistinctVariablesStmt[] distinctVariablesStmtArray) {
+        final DistinctVariablesStmt[] distinctVariablesStmtArray)
+    {
 
-        DjVars[] dvArray          =
-            MandFrame.
-                buildConsolidatedDvArray(
-                    distinctVariablesStmtArray);
+        final DjVars[] dvArray = MandFrame
+            .buildConsolidatedDvArray(distinctVariablesStmtArray);
 
-        DjVars[] sortedDvArray    =
-            DjVars.sortAndCombineDvArrays(
-                dvArray,
-                null);
+        final DjVars[] sortedDvArray = DjVars.sortAndCombineDvArrays(dvArray,
+            null);
 
-        ArrayList dvGroups        =
-            MandFrame.
-                consolidateDvGroups(
-                    sortedDvArray);
+        final ArrayList dvGroups = MandFrame.consolidateDvGroups(sortedDvArray);
 
-        return  DjVars.
-                    convertDvGroupsListToMetamathList(
-                        dvGroups);
+        return DjVars.convertDvGroupsListToMetamathList(dvGroups);
     }
 
     /**
@@ -257,22 +235,18 @@ public class DjVars implements Comparable {
      *                        (not containing any newlines).
      */
     public static LinkedList buildMetamathDjVarsStatementList(
-                                    Theorem theorem) {
+        final Theorem theorem)
+    {
 
-        DjVars[] comboDvArray     =
-            DjVars.sortAndCombineDvArrays(
-                theorem.getMandFrame().djVarsArray,
-                theorem.getOptFrame().optDjVarsArray);
+        final DjVars[] comboDvArray = DjVars.sortAndCombineDvArrays(
+            theorem.getMandFrame().djVarsArray,
+            theorem.getOptFrame().optDjVarsArray);
 
-        ArrayList comboDvGroups   =
-            MandFrame.consolidateDvGroups(
-                comboDvArray);
+        final ArrayList comboDvGroups = MandFrame
+            .consolidateDvGroups(comboDvArray);
 
-        return  DjVars.
-                    convertDvGroupsListToMetamathList(
-                        comboDvGroups);
+        return DjVars.convertDvGroupsListToMetamathList(comboDvGroups);
     }
-
 
     /**
      *  Converts a ArrayList of ArrayLists containing distinct
@@ -285,18 +259,19 @@ public class DjVars implements Comparable {
      *                      not containing any newlines.
      */
     public static LinkedList convertDvGroupsListToMetamathList(
-                                    ArrayList comboDvGroups) {
+        final ArrayList comboDvGroups)
+    {
 
-        LinkedList list           = new LinkedList();
-        StringBuffer sb           = new StringBuffer();
+        final LinkedList list = new LinkedList();
+        StringBuffer sb = new StringBuffer();
 
-        Iterator i                = comboDvGroups.iterator();
+        final Iterator i = comboDvGroups.iterator();
         while (i.hasNext()) {
 
             sb.append(MMIOConstants.MM_KEYWORD_1ST_CHAR);
             sb.append(MMIOConstants.MM_DJ_VAR_KEYWORD_CHAR);
 
-            Iterator j            = ((ArrayList)i.next()).iterator();
+            final Iterator j = ((ArrayList)i.next()).iterator();
             while (j.hasNext()) {
                 sb.append(' ');
                 sb.append(((Var)j.next()).toString());
@@ -306,11 +281,10 @@ public class DjVars implements Comparable {
             sb.append(MMIOConstants.MM_END_STMT_KEYWORD);
 
             list.add(sb);
-            sb                    = new StringBuffer();
+            sb = new StringBuffer();
         }
         return list;
     }
-
 
     /**
      *  Merges two arrays of DjVars returning a single
@@ -321,32 +295,24 @@ public class DjVars implements Comparable {
      *  @param array2 2nd array of DjVars objects, may be null.
      *  @return consolidated, sorted array of DjVars objects.
      */
-    public static DjVars[] sortAndCombineDvArrays(
-                                        DjVars[] array1,
-                                        DjVars[] array2) {
+    public static DjVars[] sortAndCombineDvArrays(final DjVars[] array1,
+        final DjVars[] array2)
+    {
 
-        LinkedList mergedList     = new LinkedList();
+        final LinkedList mergedList = new LinkedList();
 
-        if (array1 != null) {
-            for (int i = 0; i < array1.length; i++) {
-                DjVars.sortAndCombineDvPair(mergedList,
-                                            array1[i]);
-            }
-        }
-        if (array2 != null) {
-            for (int i = 0; i < array2.length; i++) {
-                DjVars.sortAndCombineDvPair(mergedList,
-                                            array2[i]);
-            }
-        }
+        if (array1 != null)
+            for (final DjVars element : array1)
+                DjVars.sortAndCombineDvPair(mergedList, element);
+        if (array2 != null)
+            for (final DjVars element : array2)
+                DjVars.sortAndCombineDvPair(mergedList, element);
 
-        DjVars[] dvArray          =
-            new DjVars[mergedList.size()];
-        Iterator i                = mergedList.iterator();
-        int      c                = 0;
-        while (i.hasNext()) {
-            dvArray[c++]          = (DjVars)i.next();
-        }
+        final DjVars[] dvArray = new DjVars[mergedList.size()];
+        final Iterator i = mergedList.iterator();
+        int c = 0;
+        while (i.hasNext())
+            dvArray[c++] = (DjVars)i.next();
 
         return dvArray;
     }
@@ -359,82 +325,74 @@ public class DjVars implements Comparable {
      *  @param list1 List containing List elements of DjVars objects.
      *  @return consolidated, sorted array of DjVars objects.
      */
-    public static DjVars[] sortAndCombineDvListOfLists(List list1) {
+    public static DjVars[] sortAndCombineDvListOfLists(final List list1) {
 
-        LinkedList mergedList     = new LinkedList();
+        final LinkedList mergedList = new LinkedList();
 
         Iterator i;
         Iterator j;
-        Object   o;
-        DjVars   djVars;
+        Object o;
+        DjVars djVars;
         if (list1 != null) {
-            i                     = list1.iterator();
+            i = list1.iterator();
             while (i.hasNext()) {
-                o                 = i.next();
+                o = i.next();
                 if (o != null) {
-                    j             = ((List)o).iterator();
+                    j = ((List)o).iterator();
                     while (j.hasNext()) {
-                        djVars    = (DjVars)j.next();
-                        DjVars.sortAndCombineDvPair(
-                            mergedList,
-                            djVars);
+                        djVars = (DjVars)j.next();
+                        DjVars.sortAndCombineDvPair(mergedList, djVars);
                     }
                 }
             }
         }
 
-        DjVars[] dvArray          =
-            new DjVars[mergedList.size()];
-        i                         = mergedList.iterator();
-        int      c                = 0;
-        while (i.hasNext()) {
-            dvArray[c++]          = (DjVars)i.next();
-        }
+        final DjVars[] dvArray = new DjVars[mergedList.size()];
+        i = mergedList.iterator();
+        int c = 0;
+        while (i.hasNext())
+            dvArray[c++] = (DjVars)i.next();
 
         return dvArray;
     }
-
 
     /**
      *  Consolidates a DjVars object into an existing LinkedList
      *  maintaining the list in compareTo order.
      */
-    private static void sortAndCombineDvPair(
-                                        LinkedList mergedList,
-                                        DjVars     dvPair) {
+    private static void sortAndCombineDvPair(final LinkedList mergedList,
+        final DjVars dvPair)
+    {
         ListIterator iterator;
 
-        DjVars       d;
+        DjVars d;
 
-        int          compValue;
+        int compValue;
 
-        iterator                  = mergedList.listIterator(0);
+        iterator = mergedList.listIterator(0);
 
         while (iterator.hasNext()) {
 
-            d                 = (DjVars)iterator.next();
+            d = (DjVars)iterator.next();
 
-            if ((compValue = d.compareTo(dvPair)) < 0) {
-                continue;            //keep scanning list forward
-            }
+            if ((compValue = d.compareTo(dvPair)) < 0)
+                continue; // keep scanning list forward
 
-            if (compValue == 0) {
-                return;              //dup found, don't add...
-            }
+            if (compValue == 0)
+                return; // dup found, don't add...
 
             iterator.previous();
             iterator.add(dvPair);
             return;
         }
 
-        mergedList.add(dvPair);     //add at end and continue
+        mergedList.add(dvPair); // add at end and continue
     }
 
     /**
      *  Default constructor.
      */
-    public DjVars() {
-    }
+    public DjVars() {}
 
     /**
      *  Construct using two Var id Strings.
@@ -459,21 +417,15 @@ public class DjVars implements Comparable {
      *  @throws LangException if the two Var id's are identical,
      *          or are not defined and active vars.
      */
-    public DjVars(Map     symTbl,
-                  String  loS,
-                  String  hiS)
-                                throws LangException {
+    public DjVars(final Map symTbl, final String loS, final String hiS)
+        throws LangException
+    {
 
-        Var lo = Var.verifyVarDefAndActive(symTbl,
-                                           loS);
-        Var hi = Var.verifyVarDefAndActive(symTbl,
-                                           hiS);
-        int compare = (loS.compareTo(hiS));
-        if (compare == 0) {
-            throw new LangException(
-                LangConstants.ERRMSG_DJ_VARS_ARE_DUPS +
-                loS);
-        }
+        final Var lo = Var.verifyVarDefAndActive(symTbl, loS);
+        final Var hi = Var.verifyVarDefAndActive(symTbl, hiS);
+        final int compare = loS.compareTo(hiS);
+        if (compare == 0)
+            throw new LangException(LangConstants.ERRMSG_DJ_VARS_ARE_DUPS + loS);
         if (compare > 0) {
             varLo = hi;
             varHi = lo;
@@ -483,7 +435,6 @@ public class DjVars implements Comparable {
             varHi = hi;
         }
     }
-
 
     /**
      *  Construct using two Var's.
@@ -497,14 +448,11 @@ public class DjVars implements Comparable {
      *
      *  @throws LangException if the two Var id's are identical.
      */
-    public DjVars(Var lo, Var hi)
-                            throws LangException {
-        int compare = (lo.compareTo(hi));
-        if (compare == 0) {
-            throw new LangException(
-                LangConstants.ERRMSG_DJ_VARS_ARE_DUPS +
-                lo.getId());
-        }
+    public DjVars(final Var lo, final Var hi) throws LangException {
+        final int compare = lo.compareTo(hi);
+        if (compare == 0)
+            throw new LangException(LangConstants.ERRMSG_DJ_VARS_ARE_DUPS
+                + lo.getId());
         if (compare > 0) {
             varLo = hi;
             varHi = lo;
@@ -529,7 +477,7 @@ public class DjVars implements Comparable {
      *
      *  @param varLo the "low" Var based on Var.id.
      */
-    public void setVarLo(Var varLo) {
+    public void setVarLo(final Var varLo) {
         this.varLo = varLo;
     }
 
@@ -547,7 +495,7 @@ public class DjVars implements Comparable {
      *
      *  @param varHi the "high" Var based on Var.id.
      */
-    public void setVarHi(Var varHi) {
+    public void setVarHi(final Var varHi) {
         this.varHi = varHi;
     }
 
@@ -557,12 +505,11 @@ public class DjVars implements Comparable {
      *  @return returns DjVars string;
      *
      */
+    @Override
     public String toString() {
-        return (LangConstants.DJVARS_LEFT_BRACKET
-                + varLo.getId()
-                + LangConstants.DJVARS_SEPARATOR
-                + varHi.getId()
-                + LangConstants.DJVARS_RIGHT_BRACKET);
+        return LangConstants.DJVARS_LEFT_BRACKET + varLo.getId()
+            + LangConstants.DJVARS_SEPARATOR + varHi.getId()
+            + LangConstants.DJVARS_RIGHT_BRACKET;
     }
 
     /*
@@ -570,8 +517,9 @@ public class DjVars implements Comparable {
      *
      * @return hashcode for the Order.
      */
+    @Override
     public int hashCode() {
-        return (this.toString()).hashCode();
+        return toString().hashCode();
     }
 
     /*
@@ -583,11 +531,10 @@ public class DjVars implements Comparable {
      *
      * @return returns true if equal, otherwise false.
      */
-    public boolean equals(Object obj) {
-        return (this == obj) ? true
-                : !(obj instanceof DjVars) ? false
-                        : ((varLo == ((DjVars)obj).varLo) &&
-                           (varHi == ((DjVars)obj).varHi));
+    @Override
+    public boolean equals(final Object obj) {
+        return this == obj ? true : !(obj instanceof DjVars) ? false
+            : varLo == ((DjVars)obj).varLo && varHi == ((DjVars)obj).varHi;
     }
 
     /**
@@ -600,13 +547,11 @@ public class DjVars implements Comparable {
      * or greater than the input parameter obj.
      *
      */
-    public int compareTo(Object obj) {
-        int compare               =
-            varLo.compareTo(((DjVars)obj).varLo);
-        if (compare == 0) {
-            compare               =
-            varHi.compareTo(((DjVars)obj).varHi);
-        }
+    @Override
+    public int compareTo(final Object obj) {
+        int compare = varLo.compareTo(((DjVars)obj).varLo);
+        if (compare == 0)
+            compare = varHi.compareTo(((DjVars)obj).varHi);
         return compare;
 
 //      return  ((this.toString()).compareTo(

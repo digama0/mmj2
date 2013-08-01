@@ -79,7 +79,7 @@ public abstract class Assrt extends Stmt {
      *  LogHyp's!</b>.
      *  <p>
      */
-    protected VarHyp[]  varHypArray;
+    protected VarHyp[] varHypArray;
 
     /**
      *  logHypArray contains *exactly* the Assrt's Formula's
@@ -93,7 +93,7 @@ public abstract class Assrt extends Stmt {
      *  well as the actual number of LogHyp's.
      *  <p>
      */
-    protected LogHyp[]  logHypArray;
+    protected LogHyp[] logHypArray;
 
     /**
      *  sortedLogHypArray contains the contents of logHypArray
@@ -101,7 +101,7 @@ public abstract class Assrt extends Stmt {
      *  <p>
      *  The sorted LogHyps are for the benefit of ProofAssistant.
      */
-    protected LogHyp[]  sortedLogHypArray;
+    protected LogHyp[] sortedLogHypArray;
 
     /**
      *  The assertion's Mandatory Frame.
@@ -121,29 +121,18 @@ public abstract class Assrt extends Stmt {
      *
      *  @throws LangException variety of errors :)
      */
-    public Assrt(int       seq,
-                 ArrayList scopeDefList,
-                 Map       symTbl,
-                 Map       stmtTbl,
-                 String    labelS,
-                 String    typS,
-                 ArrayList symList)
-                                throws LangException {
-        super (seq,
-               symTbl,
-               stmtTbl,
-               labelS);
+    public Assrt(final int seq, final ArrayList scopeDefList, final Map symTbl,
+        final Map stmtTbl, final String labelS, final String typS,
+        final ArrayList symList) throws LangException
+    {
+        super(seq, symTbl, stmtTbl, labelS);
 
-        ArrayList exprHypList = new ArrayList();
-        formula               = new LogicFormula(symTbl,
-                                                 typS,
-                                                 symList,
-                                                 exprHypList);
+        final ArrayList exprHypList = new ArrayList();
+        formula = new LogicFormula(symTbl, typS, symList, exprHypList);
 
-        varHypArray           = Assrt.loadVarHypArray(exprHypList);
+        varHypArray = Assrt.loadVarHypArray(exprHypList);
 
-        mandFrame             = buildMandFrame(scopeDefList,
-                                               exprHypList);
+        mandFrame = buildMandFrame(scopeDefList, exprHypList);
 
         loadLogHypArray();
     }
@@ -160,6 +149,7 @@ public abstract class Assrt extends Stmt {
      *  @return varHypArray which contains only mandatory
      *        VarHyp's.
      */
+    @Override
     public VarHyp[] getMandVarHypArray() {
         return varHypArray;
     }
@@ -187,28 +177,27 @@ public abstract class Assrt extends Stmt {
      *  <p>
      *  @param logHypArray for the Assrt.
      */
-    public void setLogHypArray(LogHyp[] logHypArray) {
+    public void setLogHypArray(final LogHyp[] logHypArray) {
         this.logHypArray = logHypArray;
     }
-
 
     /**
      *  Return the *mandatory* Hyp Array.Length
      *
      *  @return hypArray length from the Assrt's MandFrame.
      */
+    @Override
     public int getMandHypArrayLength() {
         return mandFrame.hypArray.length;
     }
-
 
     /**
      *  Set the *mandatory* VarHyp Array.
      *
      *  @param varHypArray VarHyp's used by the Assrt.
      */
-    public void setMandVarHypArray(VarHyp[] varHypArray) {
-        this.varHypArray    = varHypArray;
+    public void setMandVarHypArray(final VarHyp[] varHypArray) {
+        this.varHypArray = varHypArray;
     }
 
     /**
@@ -225,7 +214,7 @@ public abstract class Assrt extends Stmt {
      *
      *  @param mandFrame  Assrt's MandFrame.
      */
-    public void setMandFrame(MandFrame mandFrame) {
+    public void setMandFrame(final MandFrame mandFrame) {
         this.mandFrame = mandFrame;
     }
 
@@ -250,6 +239,7 @@ public abstract class Assrt extends Stmt {
      *
      *  @return true (assertions are always "active")
      */
+    @Override
     public boolean isActive() {
         // assertions are always active at global scope.
         return true;
@@ -262,6 +252,7 @@ public abstract class Assrt extends Stmt {
      *
      *  @return true (an Assrt is an Assrt :)
      */
+    @Override
     public boolean isAssrt() {
         return true;
     }
@@ -275,7 +266,6 @@ public abstract class Assrt extends Stmt {
      */
     public abstract boolean isAxiom();
 
-
     /**
      *  Is the Stmt an Hyp?
      *  <p>
@@ -283,6 +273,7 @@ public abstract class Assrt extends Stmt {
      *
      *  @return false (an Assrt is not an Hyp :)
      */
+    @Override
     public boolean isHyp() {
         return false;
     }
@@ -295,6 +286,7 @@ public abstract class Assrt extends Stmt {
      *  @return false (an Assrt is not a Hyp, ergo it is not
      *                a VarHyp :)
      */
+    @Override
     public boolean isVarHyp() {
         return false;
     }
@@ -307,10 +299,10 @@ public abstract class Assrt extends Stmt {
      *  @return false (an Assrt is not a Hyp, ergo it is not
      *                a WorkVarHyp :)
      */
+    @Override
     public boolean isWorkVarHyp() {
         return false;
     }
-
 
     /**
      *  Is the Stmt a LogHyp?
@@ -320,10 +312,10 @@ public abstract class Assrt extends Stmt {
      *  @return false (an Assrt is not a Hyp, ergo it is not
      *                a LogHyp :)
      */
+    @Override
     public boolean isLogHyp() {
         return false;
     }
-
 
     /**
      *  Loads the logHypArray using mandFrame.
@@ -336,29 +328,21 @@ public abstract class Assrt extends Stmt {
      */
     public void loadLogHypArray() {
 
-        Hyp[]  hyp                = mandFrame.hypArray;
+        final Hyp[] hyp = mandFrame.hypArray;
 
-        int    logHypCount        = 0;
-        for (int i = 0; i < hyp.length; i++) {
-            if (hyp[i].isLogHyp()) {
+        int logHypCount = 0;
+        for (final Hyp element : hyp)
+            if (element.isLogHyp())
                 ++logHypCount;
-            }
-        }
-        logHypArray               = new LogHyp[logHypCount];
+        logHypArray = new LogHyp[logHypCount];
 
-        logHypCount               = 0;
-        for (int i = 0; i < hyp.length; i++) {
-            if (hyp[i].isLogHyp()) {
-                logHypArray[logHypCount++]
-                                  = (LogHyp)hyp[i];
-            }
-        }
+        logHypCount = 0;
+        for (final Hyp element : hyp)
+            if (element.isLogHyp())
+                logHypArray[logHypCount++] = (LogHyp)element;
 
         loadSortedLogHypArray();
     }
-
-
-
 
     /**
      *  Load the Assrt's MandFrame.
@@ -394,15 +378,15 @@ public abstract class Assrt extends Stmt {
      *                       Assrt.
      *
      */
-    private MandFrame buildMandFrame(ArrayList scopeDefList,
-                                     ArrayList hypList) {
+    private MandFrame buildMandFrame(final ArrayList scopeDefList,
+        final ArrayList hypList)
+    {
 
+        ListIterator scopeIterator;
+        ScopeDef scopeDef;
 
-        ListIterator    scopeIterator;
-        ScopeDef        scopeDef;
-
-        LogHyp          logHyp;
-        VarHyp[]        varHypArray;
+        LogHyp logHyp;
+        VarHyp[] varHypArray;
 
         scopeIterator = scopeDefList.listIterator();
         while (scopeIterator.hasNext()) {
@@ -412,19 +396,16 @@ public abstract class Assrt extends Stmt {
                 logHyp = (LogHyp)scopeDef.scopeLogHyp.get(i);
                 varHypArray = logHyp.getMandVarHypArray();
 
-                for (int j = 0; j < varHypArray.length; j++) {
-                    Assrt.accumHypInList(hypList,
-                                         varHypArray[j]);
-                }
+                for (final VarHyp element : varHypArray)
+                    Assrt.accumHypInList(hypList, element);
 
-                Assrt.accumHypInList(hypList,
-                                     logHyp);
+                Assrt.accumHypInList(hypList, logHyp);
             }
         }
 
-        ListIterator    djVarsIterator;
-        ArrayList       djVarsList = new ArrayList();
-        DjVars          djVars;
+        ListIterator djVarsIterator;
+        final ArrayList djVarsList = new ArrayList();
+        DjVars djVars;
 
         scopeIterator = scopeDefList.listIterator();
         while (scopeIterator.hasNext()) {
@@ -434,25 +415,19 @@ public abstract class Assrt extends Stmt {
             while (djVarsIterator.hasNext()) {
 
                 djVars = (DjVars)djVarsIterator.next();
-                if (
-                    (areBothDjVarsInHypList(hypList,
-                                            djVars))
-                    &&
-                    (!djVarsList.contains(djVars))
-                   ) {
+                if (areBothDjVarsInHypList(hypList, djVars)
+                    && !djVarsList.contains(djVars))
                     djVarsList.add(djVars);
-                }
             }
         }
 
-        MandFrame mF        = new MandFrame();
+        final MandFrame mF = new MandFrame();
 
-        mF.hypArray         = Assrt.loadHypArray(hypList);
-        mF.djVarsArray      = DjVars.loadDjVarsArray(djVarsList);
+        mF.hypArray = Assrt.loadHypArray(hypList);
+        mF.djVarsArray = DjVars.loadDjVarsArray(djVarsList);
 
         return mF;
     }
-
 
     /**
      *  Checks to see whether or not both variables in a DjVars
@@ -469,28 +444,25 @@ public abstract class Assrt extends Stmt {
      * @return boolean -- true if both DjVars variables are present
      *                    in hypList, otherwise false.
      */
-    private boolean areBothDjVarsInHypList(ArrayList hypList,
-                                           DjVars    djVars) {
+    private boolean areBothDjVarsInHypList(final ArrayList hypList,
+        final DjVars djVars)
+    {
         boolean loFound = false;
         boolean hiFound = false;
-        Hyp     hyp;
+        Hyp hyp;
         for (int i = 0; i < hypList.size(); i++) {
             hyp = (Hyp)hypList.get(i);
             if (hyp.isVarHyp()) {
-                if (((VarHyp)hyp).getVar() == djVars.varLo) {
+                if (((VarHyp)hyp).getVar() == djVars.varLo)
                     loFound = true;
-                }
-                if (((VarHyp)hyp).getVar() == djVars.varHi) {
+                if (((VarHyp)hyp).getVar() == djVars.varHi)
                     hiFound = true;
-                }
-                if (loFound && hiFound) {
+                if (loFound && hiFound)
                     return true;
-                }
             }
         }
         return false;
     }
-
 
     /**
      *  Accumulate unique hypotheses (no duplicates), storing
@@ -509,29 +481,26 @@ public abstract class Assrt extends Stmt {
      *  @param hypNew  Candidate Hyp to be added to hypList if
      *                 not already there.
      */
-    public static void accumHypInList(ArrayList hypList,
-                                      Hyp       hypNew) {
-        int i           = 0;
-        int iEnd        = hypList.size();
-        int newSeq      = hypNew.seq;
+    public static void accumHypInList(final ArrayList hypList, final Hyp hypNew)
+    {
+        int i = 0;
+        final int iEnd = hypList.size();
+        final int newSeq = hypNew.seq;
         int existingSeq;
 
         while (true) {
             if (i < iEnd) {
                 existingSeq = ((Hyp)hypList.get(i)).seq;
-                if (newSeq < existingSeq) {
-                    //insert here, at "i"
+                if (newSeq < existingSeq)
+                    // insert here, at "i"
                     break;
-                }
-                if (newSeq == existingSeq) {
-                    //don't add, already here.
+                if (newSeq == existingSeq)
+                    // don't add, already here.
                     return;
-                }
             }
-            else {
-                //insert at end, which happens to be here at "i"
+            else
+                // insert at end, which happens to be here at "i"
                 break;
-            }
             ++i;
         }
         hypList.add(i, hypNew);
@@ -548,11 +517,10 @@ public abstract class Assrt extends Stmt {
      *
      *  @return Array of Hyp's copied from hyplist.
      */
-    public static Hyp[] loadHypArray(ArrayList hypList) {
-        Hyp[] hypArray = new Hyp[hypList.size()];
-        for (int i=0; i < hypArray.length; i++) {
+    public static Hyp[] loadHypArray(final ArrayList hypList) {
+        final Hyp[] hypArray = new Hyp[hypList.size()];
+        for (int i = 0; i < hypArray.length; i++)
             hypArray[i] = (Hyp)hypList.get(i);
-        }
         return hypArray;
     }
 
@@ -566,11 +534,10 @@ public abstract class Assrt extends Stmt {
      *
      *  @return Array of VarHyp copied from hyplist.
      */
-    public static VarHyp[] loadVarHypArray(ArrayList hypList) {
-        VarHyp[] varHypArray = new VarHyp[hypList.size()];
-        for (int i=0; i < varHypArray.length; i++) {
+    public static VarHyp[] loadVarHypArray(final ArrayList hypList) {
+        final VarHyp[] varHypArray = new VarHyp[hypList.size()];
+        for (int i = 0; i < varHypArray.length; i++)
             varHypArray[i] = (VarHyp)hypList.get(i);
-        }
         return varHypArray;
     }
 
@@ -585,14 +552,9 @@ public abstract class Assrt extends Stmt {
         if (logHypsMaxDepth == -1) {
             int hypMaxDepth = 0;
             int hypDepth;
-            for (int i = 0; i < logHypArray.length; i++) {
-                if ((hypDepth =
-                        logHypArray[i].getExprParseTree(
-                            ).getMaxDepth())
-                    > hypMaxDepth) {
+            for (final LogHyp element : logHypArray)
+                if ((hypDepth = element.getExprParseTree().getMaxDepth()) > hypMaxDepth)
                     hypMaxDepth = hypDepth;
-                }
-            }
             setLogHypsMaxDepth(hypMaxDepth);
         }
 
@@ -607,40 +569,34 @@ public abstract class Assrt extends Stmt {
      *  @return Level 1 HiLoKey of parse trees for logHypArray.
      */
     public String getLogHypsL1HiLoKey() {
-        if (logHypsL1HiLoKey == null) {
+        if (logHypsL1HiLoKey == null)
             if (logHypArray.length > 0) {
-                Stmt   hStmt;
-                int    n;
-                String low        = null;
-                String high       = null;
-                int    lowNbr     = Integer.MAX_VALUE;
-                int    highNbr    = Integer.MIN_VALUE;
-                for (int i = 0; i < logHypArray.length; i++) {
-                    hStmt         =
-                        logHypArray[i].getExprParseTree(
-                            ).getRoot(
-                                ).getStmt();
+                Stmt hStmt;
+                int n;
+                String low = null;
+                String high = null;
+                int lowNbr = Integer.MAX_VALUE;
+                int highNbr = Integer.MIN_VALUE;
+                for (final LogHyp element : logHypArray) {
+                    hStmt = element.getExprParseTree().getRoot().getStmt();
                     if (hStmt.isVarHyp()) {
                         setLogHypsL1HiLoKey("");
                         return logHypsL1HiLoKey;
                     }
                     n = hStmt.getSeq();
                     if (n < lowNbr) {
-                        lowNbr    = n;
-                        low       = hStmt.getLabel();
+                        lowNbr = n;
+                        low = hStmt.getLabel();
                     }
                     if (n > highNbr) {
-                        highNbr   = n;
-                        high      = hStmt.getLabel();
+                        highNbr = n;
+                        high = hStmt.getLabel();
                     }
                 }
-                setLogHypsL1HiLoKey(
-                    new String(high + " " + low));
+                setLogHypsL1HiLoKey(new String(high + " " + low));
             }
-            else {
+            else
                 setLogHypsL1HiLoKey("");
-            }
-        }
         return logHypsL1HiLoKey;
     }
 
@@ -674,17 +630,13 @@ public abstract class Assrt extends Stmt {
     /**
      *  NBR_LOG_HYP_SEQ sequences by Stmt.seq
      */
-    static public final Comparator NBR_LOG_HYP_SEQ
-            = new Comparator() {
-        public int compare(Object o1, Object o2) {
-            int n                 =
-                ((Assrt)o1).logHypArray.length -
-                ((Assrt)o2).logHypArray.length;
-            if (n == 0) {
-                n                 =
-                ((Assrt)o1).seq -
-                ((Assrt)o2).seq;
-            }
+    static public final Comparator NBR_LOG_HYP_SEQ = new Comparator() {
+        @Override
+        public int compare(final Object o1, final Object o2) {
+            int n = ((Assrt)o1).logHypArray.length
+                - ((Assrt)o2).logHypArray.length;
+            if (n == 0)
+                n = ((Assrt)o1).seq - ((Assrt)o2).seq;
             return n;
         }
     };
@@ -707,62 +659,50 @@ public abstract class Assrt extends Stmt {
      */
     private void loadSortedLogHypArray() {
 
-        LogHyp[]  outArray        =
-                            new LogHyp[logHypArray.length];
+        final LogHyp[] outArray = new LogHyp[logHypArray.length];
 
-        int       outEnd;
-        int       outIndex;
-        int       iFormulaLength;
-        int       diff;
-        LogHyp    holdLogHyp1;
+        int outEnd;
+        int outIndex;
+        int iFormulaLength;
+        int diff;
+        LogHyp holdLogHyp1;
 
         iLoop: for (int i = 0; i < logHypArray.length; i++) {
-            outEnd                = i;
-            holdLogHyp1           = logHypArray[i];
-            iFormulaLength        =
-                holdLogHyp1.getFormula().getCnt();
-            outIndex              = 0;
+            outEnd = i;
+            holdLogHyp1 = logHypArray[i];
+            iFormulaLength = holdLogHyp1.getFormula().getCnt();
+            outIndex = 0;
             outLoop: while (true) {
                 if (outIndex >= outEnd) {
-                    outArray[outEnd]
-                                  = holdLogHyp1;
+                    outArray[outEnd] = holdLogHyp1;
                     continue iLoop;
                 }
-                diff              =
-                    outArray[outIndex].getFormula().getCnt()
+                diff = outArray[outIndex].getFormula().getCnt()
                     - iFormulaLength;
                 if (diff > 0) {
                     ++outIndex;
-                    continue outLoop; //look for shorter formula
+                    continue outLoop; // look for shorter formula
                 }
-                if (diff < 0  ||
-                    hypVarsInCommonWithAssrt(holdLogHyp1)) {
-                    break outLoop; //insert here at outIndex
-                }
+                if (diff < 0 || hypVarsInCommonWithAssrt(holdLogHyp1))
+                    break outLoop; // insert here at outIndex
                 equalLoop: while (true) {
-                    ++outIndex; //find formula with diff length
-                    if (outIndex < outEnd) {
-                        if (outArray[outIndex].getFormula().getCnt()
-                            ==
-                            iFormulaLength) {
+                    ++outIndex; // find formula with diff length
+                    if (outIndex < outEnd)
+                        if (outArray[outIndex].getFormula().getCnt() == iFormulaLength)
                             continue equalLoop;
-                        }
-                    }
-                    break outLoop; //insert here at outIndex
+                    break outLoop; // insert here at outIndex
                 }
             }
             /*
              * end of outLoop: insert here at outIndex, which means
              * shifting whatever is here downwards by one.
              */
-            for (int k = outEnd; k > outIndex; k--) {
-                outArray[k]       = outArray[k - 1];
-            }
-            outArray[outIndex]
-                                  = holdLogHyp1;
+            for (int k = outEnd; k > outIndex; k--)
+                outArray[k] = outArray[k - 1];
+            outArray[outIndex] = holdLogHyp1;
         }
 
-        sortedLogHypArray         = outArray; //whew!
+        sortedLogHypArray = outArray; // whew!
     }
 
     /**
@@ -772,31 +712,25 @@ public abstract class Assrt extends Stmt {
      *  Note: both of the VarHyp arrays are sorted in database
      *        order (*.getSeq());
      */
-    private boolean hypVarsInCommonWithAssrt(LogHyp holdLogHyp1) {
-        VarHyp[] h                =
-                    holdLogHyp1.getMandVarHypArray();
+    private boolean hypVarsInCommonWithAssrt(final LogHyp holdLogHyp1) {
+        final VarHyp[] h = holdLogHyp1.getMandVarHypArray();
 
-        if (varHypArray.length == 0 ||
-            h.length           == 0) {
+        if (varHypArray.length == 0 || h.length == 0)
             return false;
-        }
 
-        int iA                    = 0;
-        int iH                    = 0;
+        int iA = 0;
+        int iH = 0;
 
         while (true) {
-            if (h[iH] == varHypArray[iA]) {
+            if (h[iH] == varHypArray[iA])
                 return true;
-            }
             if (h[iH].getSeq() < varHypArray[iA].getSeq()) {
-                if (++iH < h.length) {
+                if (++iH < h.length)
                     continue;
-                }
                 break;
             }
-            if (++iA < varHypArray.length) {
+            if (++iA < varHypArray.length)
                 continue;
-            }
             break;
         }
 

@@ -14,6 +14,7 @@
  */
 
 package mmj.pa;
+
 import mmj.lang.Assrt;
 
 /**
@@ -23,10 +24,9 @@ import mmj.lang.Assrt;
  */
 public class StepSelectorResults {
 
-    /* friendly */ String         step;
-    /* friendly */ Assrt[]        refArray;
-    /* friendly */ String[]       selectionArray;
-
+    /* friendly */String step;
+    /* friendly */Assrt[] refArray;
+    /* friendly */String[] selectionArray;
 
     /**
      *  Constructor for StepSelectorResults
@@ -38,13 +38,12 @@ public class StepSelectorResults {
      *         the dialog display including a final item
      *         containing either "***MORE***" or "***END***".
      */
-    public StepSelectorResults(String   step,
-                               Assrt[]  refArray,
-                               String[] selectionArray) {
+    public StepSelectorResults(final String step, final Assrt[] refArray,
+        final String[] selectionArray)
+    {
 
-        this.step                 = step;
-        this.refArray             = refArray;
-        this.selectionArray       = selectionArray;
+        this.step = step;
+        this.refArray = refArray;
+        this.selectionArray = selectionArray;
     }
 }
-

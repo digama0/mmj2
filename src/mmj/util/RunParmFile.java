@@ -34,57 +34,44 @@ import java.io.*;
  */
 public class RunParmFile {
 
-    private   String              runParmFileNameArgument;
+    private final String runParmFileNameArgument;
 
-	private   File                runParmFile;
+    private File runParmFile;
 
-    private   BufferedReader      runParmFileReader;
+    private BufferedReader runParmFileReader;
 
-    private   String              inputLine
-    							= null;
+    private String inputLine = null;
 
-    private   int                 lineCount
-    							= 0;
+    private int lineCount = 0;
 
-    private   boolean             eofReached
-    							= false;
+    private boolean eofReached = false;
 
-    private   char                delimiter
-    							=
-    	UtilConstants.RUNPARM_FIELD_DELIMITER_DEFAULT;
+    private final char delimiter = UtilConstants.RUNPARM_FIELD_DELIMITER_DEFAULT;
 
-    private   char                quoter
-    							=
-        UtilConstants.RUNPARM_FIELD_QUOTER_DEFAULT;
+    private final char quoter = UtilConstants.RUNPARM_FIELD_QUOTER_DEFAULT;
 
-	/**
-	 *  Dumps the absolute path names to System.out for
-	 *  testing purposes.
-	 */
-	public static void displayArgumentOptionReport(
-						Paths  paths,
-		               	String runParmFileNameArgument)
-		               	    throws IOException {
+    /**
+     *  Dumps the absolute path names to System.out for
+     *  testing purposes.
+     */
+    public static void displayArgumentOptionReport(final Paths paths,
+        final String runParmFileNameArgument) throws IOException
+    {
 
-		File   f;
-		String absolutePath     = null;
+        File f;
+        String absolutePath = null;
 
-		if (runParmFileNameArgument != null) {
-			f                   =
-				paths.
-					buildMMJ2FilePath(
-						runParmFileNameArgument);
-			if (f != null) {
-				absolutePath    = f.getAbsolutePath();
-			}
-		}
+        if (runParmFileNameArgument != null) {
+            f = paths.buildMMJ2FilePath(runParmFileNameArgument);
+            if (f != null)
+                absolutePath = f.getAbsolutePath();
+        }
 
-		System.out.println(
-			UtilConstants.RUN_PARM_FILE_REPORT_LINE_1
-			+ absolutePath
+        System.out.println(UtilConstants.RUN_PARM_FILE_REPORT_LINE_1
+            + absolutePath
 //			+ UtilConstants.RUN_PARM_FILE_REPORT_LINE_2
-			);
-	}
+            );
+    }
 
     /**
      *  Construct using <code>Paths</code> object and
@@ -95,59 +82,46 @@ public class RunParmFile {
      *
      *  @throws IllegalArgumentException see UtilConstants.
      */
-    public RunParmFile(Paths  paths,
-		               String runParmFileNameArgument)
-                throws  IOException,
-                        IllegalArgumentException {
+    public RunParmFile(final Paths paths, final String runParmFileNameArgument)
+        throws IOException, IllegalArgumentException
+    {
 
-		this.runParmFileNameArgument
-		                        = runParmFileNameArgument;
+        this.runParmFileNameArgument = runParmFileNameArgument;
 
-		try {
-			runParmFile             =
-				paths.
-					buildMMJ2FilePath(
-						runParmFileNameArgument);
-		}
-		catch (NullPointerException e) {
+        try {
+            runParmFile = paths.buildMMJ2FilePath(runParmFileNameArgument);
+        } catch (final NullPointerException e) {
             throw new IllegalArgumentException(
                 UtilConstants.ERRMSG_RUNPARM_FILE_NOT_FOUND_1
-                + runParmFileNameArgument
-                + UtilConstants.ERRMSG_RUNPARM_FILE_NOT_FOUND_2
-                + e.getMessage());
+                    + runParmFileNameArgument
+                    + UtilConstants.ERRMSG_RUNPARM_FILE_NOT_FOUND_2
+                    + e.getMessage());
         }
 
-		try {
-			runParmFileReader 	=
-				new BufferedReader(
-					new InputStreamReader(
-						new FileInputStream(
-							runParmFile)));
-        }
-        catch(FileNotFoundException e) {
+        try {
+            runParmFileReader = new BufferedReader(new InputStreamReader(
+                new FileInputStream(runParmFile)));
+        } catch (final FileNotFoundException e) {
             throw new IllegalArgumentException(
                 UtilConstants.ERRMSG_RUNPARM_FILE_NOT_FOUND_1
-                + runParmFile.getAbsolutePath()
-                + UtilConstants.ERRMSG_RUNPARM_FILE_NOT_FOUND_2
-                + e.getMessage());
-        }
-        catch(SecurityException e) {
+                    + runParmFile.getAbsolutePath()
+                    + UtilConstants.ERRMSG_RUNPARM_FILE_NOT_FOUND_2
+                    + e.getMessage());
+        } catch (final SecurityException e) {
             throw new IllegalArgumentException(
                 UtilConstants.ERRMSG_RUNPARM_FILE_NOT_FOUND_1
-                + runParmFile.getAbsolutePath()
-                + UtilConstants.ERRMSG_RUNPARM_FILE_NOT_FOUND_2
-                + e.getMessage());
+                    + runParmFile.getAbsolutePath()
+                    + UtilConstants.ERRMSG_RUNPARM_FILE_NOT_FOUND_2
+                    + e.getMessage());
         }
 
-		inputLine               = runParmFileReader.readLine();
-        if (inputLine == null) {
+        inputLine = runParmFileReader.readLine();
+        if (inputLine == null)
             throw new IllegalStateException(
-                    UtilConstants.ERRMSG_RUNPARM_FILE_EMPTY
+                UtilConstants.ERRMSG_RUNPARM_FILE_EMPTY
                     + runParmFile.getAbsolutePath());
-        }
 
         lineCount = 1;
-
 
     }
 
@@ -157,12 +131,10 @@ public class RunParmFile {
      *  @return true if another line of input is available.
      */
     public boolean hasNext() {
-        if (inputLine == null) {
+        if (inputLine == null)
             return false;
-        }
         return true;
     }
-
 
     /**
      *  Returns next line of RunParmFile formatted as
@@ -174,31 +146,26 @@ public class RunParmFile {
      *  @throws IllegalArgumentException if parsing problem.
      *  @throws IOException if I/O error on RunParmFile.
      */
-    public RunParmArrayEntry next()
-            throws  IOException,
-                    IllegalArgumentException,
-                    IllegalStateException {
+    public RunParmArrayEntry next() throws IOException,
+        IllegalArgumentException, IllegalStateException
+    {
 
-        RunParmArrayEntry ae    = null;
+        RunParmArrayEntry ae = null;
 
         if (inputLine == null) {
-            if (eofReached) {
+            if (eofReached)
                 throw new IllegalStateException(
                     UtilConstants.ERRMSG_RUNPARM_NEXT_AFTER_EOF
-                    + runParmFile.getAbsolutePath());
-            }
-            eofReached          = true;
+                        + runParmFile.getAbsolutePath());
+            eofReached = true;
         }
         else {
             ++lineCount;
 
-            ae                  =
-            	new RunParmArrayEntry(
-                	new DelimitedTextParser(inputLine,
-				                            delimiter,
-										    quoter));
+            ae = new RunParmArrayEntry(new DelimitedTextParser(inputLine,
+                delimiter, quoter));
 
-            inputLine           = runParmFileReader.readLine();
+            inputLine = runParmFileReader.readLine();
         }
 
         return ae;
@@ -212,18 +179,16 @@ public class RunParmFile {
         return;
     }
 
-
     /**
      *  Returns the canonical path name of the RunParmFile.
      *  <p>
      *  @return canonical path of RunParmFile or empty string
      *          if RunParmFile is null.
      */
-	public String getAbsolutePath() {
-		String s                = new String("");
-		if (runParmFile != null) {
-			s                   = runParmFile.getAbsolutePath();
-		}
-		return s;
-	}
+    public String getAbsolutePath() {
+        String s = new String("");
+        if (runParmFile != null)
+            s = runParmFile.getAbsolutePath();
+        return s;
+    }
 }

@@ -15,9 +15,10 @@
 
 package mmj.pa;
 
-import  java.util.LinkedList;
-import  java.util.ListIterator;
-import  mmj.lang.Assrt;
+import java.util.LinkedList;
+import java.util.ListIterator;
+
+import mmj.lang.Assrt;
 
 /**
  *  StepSelectorStore accumulates StepSelector results.
@@ -30,14 +31,14 @@ import  mmj.lang.Assrt;
  */
 public class StepSelectorStore {
 
-    private ProofAsstPreferences  proofAsstPreferences;
+    private final ProofAsstPreferences proofAsstPreferences;
 
-    private int                   maxResults;
-    private int                   cntResults;
+    private final int maxResults;
+    private int cntResults;
 
-    private int                   totalNbrLines;
+    private int totalNbrLines;
 
-    private LinkedList            storeList;
+    private final LinkedList storeList;
 
     /**
      *  Simple factory to hide constructor details.
@@ -46,7 +47,8 @@ public class StepSelectorStore {
      *             needed by StepSelector and friends.
      */
     public static StepSelectorStore createStepSelectorStore(
-                ProofAsstPreferences proofAsstPreferences) {
+        final ProofAsstPreferences proofAsstPreferences)
+    {
 
         return new StepSelectorStore(proofAsstPreferences);
 
@@ -58,17 +60,15 @@ public class StepSelectorStore {
      *  @param proofAsstPreferences contains parameters
      *             needed by StepSelector and friends.
      */
-    public StepSelectorStore(
-                ProofAsstPreferences proofAsstPreferences) {
+    public StepSelectorStore(final ProofAsstPreferences proofAsstPreferences) {
 
         this.proofAsstPreferences = proofAsstPreferences;
 
-        maxResults                =
-            proofAsstPreferences.getStepSelectorMaxResults();
+        maxResults = proofAsstPreferences.getStepSelectorMaxResults();
 
-        storeList                 = new LinkedList();
-        cntResults                = 0;
-        totalNbrLines             = 0;
+        storeList = new LinkedList();
+        cntResults = 0;
+        totalNbrLines = 0;
     }
 
     /**
@@ -95,39 +95,31 @@ public class StepSelectorStore {
      *  @return StepSelectorResults object for display on the
      *          StepSelectorDialog.
      */
-    public StepSelectorResults createStepSelectorResults(
-                                    String  step,
-                                    boolean storeOverflow) {
-        String[] endLiteral       = new String[1];
-        if (storeOverflow) {
-            endLiteral[0]         =
-                PaConstants.STEP_SELECTOR_LIST_MORE_LITERAL;
-        }
-        else {
-            endLiteral[0]         =
-                PaConstants.STEP_SELECTOR_LIST_END_LITERAL;
-        }
-        add(null,
-            endLiteral);
+    public StepSelectorResults createStepSelectorResults(final String step,
+        final boolean storeOverflow)
+    {
+        final String[] endLiteral = new String[1];
+        if (storeOverflow)
+            endLiteral[0] = PaConstants.STEP_SELECTOR_LIST_MORE_LITERAL;
+        else
+            endLiteral[0] = PaConstants.STEP_SELECTOR_LIST_END_LITERAL;
+        add(null, endLiteral);
 
-        Assrt[]   refArray        = new Assrt[totalNbrLines];
-        String[]  selectionArray  = new String[totalNbrLines];
+        final Assrt[] refArray = new Assrt[totalNbrLines];
+        final String[] selectionArray = new String[totalNbrLines];
 
         StepSelectorItem item;
-        ListIterator iterator     = storeList.listIterator();
-        int          n            = 0;
+        final ListIterator iterator = storeList.listIterator();
+        int n = 0;
         while (iterator.hasNext()) {
-            item                  =
-                (StepSelectorItem)iterator.next();
-            for (int i = 0; i < item.selection.length; i++) {
-                refArray[n]       = item.assrt;
-                selectionArray[n] = item.selection[i];
+            item = (StepSelectorItem)iterator.next();
+            for (final String element : item.selection) {
+                refArray[n] = item.assrt;
+                selectionArray[n] = element;
                 ++n;
             }
         }
-        return new StepSelectorResults(step,
-                                       refArray,
-                                       selectionArray);
+        return new StepSelectorResults(step, refArray, selectionArray);
     }
 
     /**
@@ -141,19 +133,15 @@ public class StepSelectorStore {
      *
      *  @return true if store is now full, otherwise false.
      */
-    public boolean add(Assrt    assrt,
-                       String[] selection) {
+    public boolean add(final Assrt assrt, final String[] selection) {
 
-        storeList.add(
-            new StepSelectorItem(assrt,
-                                 selection));
+        storeList.add(new StepSelectorItem(assrt, selection));
 
         ++cntResults;
-        totalNbrLines            += selection.length;
+        totalNbrLines += selection.length;
 
         return isFull();
     }
-
 
     /**
      *  Checks to see if the store has fewer result items
@@ -163,11 +151,9 @@ public class StepSelectorStore {
      *  @return true if store is full otherwise false.
      */
     public boolean isFull() {
-        if (cntResults < maxResults) {
+        if (cntResults < maxResults)
             return false;
-        }
-        else {
+        else
             return true;
-        }
     }
 }

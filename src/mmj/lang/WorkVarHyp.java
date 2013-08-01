@@ -32,15 +32,12 @@ public class WorkVarHyp extends VarHyp {
      *  @param workVarHypLabel     Stmt.label
      *  @param workVarHypFormula   Stmt.formula
      */
-    public WorkVarHyp(int       workVarHypSeq,
-                      String    workVarHypLabel,
-                      Formula   workVarHypFormula,
-                      int       workVarIndex) {
+    public WorkVarHyp(final int workVarHypSeq, final String workVarHypLabel,
+        final Formula workVarHypFormula, final int workVarIndex)
+    {
 
-        super(workVarHypSeq,
-              workVarHypLabel,
-              workVarHypFormula);
-        this.workVarIndex         = workVarIndex;
+        super(workVarHypSeq, workVarHypLabel, workVarHypFormula);
+        this.workVarIndex = workVarIndex;
         setIsWorkVarHypInd(true);
     }
 }
