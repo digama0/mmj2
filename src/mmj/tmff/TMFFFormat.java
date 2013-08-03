@@ -7,22 +7,20 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  TMFFFormat.java  0.01 11/01/2006
+ * TMFFFormat.java  0.01 11/01/2006
  *
- *  Aug-31-2006: - new, holds TMFF Format :)
+ * Aug-31-2006: - new, holds TMFF Format :)
  */
 
 package mmj.tmff;
 
 /**
- *  TMFFFormat holds an instantiated TMFFScheme and a
- *  format number assigned by the user.
- *  <p>
- *  In the future additional schemes might be assigned
- *  for Syntax Axiom level processing -- which is why
- *  TMFFFormat was created, though it seems redundant
- *  now.
- *
+ * TMFFFormat holds an instantiated TMFFScheme and a format number assigned by
+ * the user.
+ * <p>
+ * In the future additional schemes might be assigned for Syntax Axiom level
+ * processing -- which is why TMFFFormat was created, though it seems redundant
+ * now.
  */
 public class TMFFFormat {
 
@@ -30,7 +28,7 @@ public class TMFFFormat {
     private int formatNbr;
 
     /**
-     *  Default constructor.
+     * Default constructor.
      */
     public TMFFFormat() {}
 
@@ -59,10 +57,10 @@ public class TMFFFormat {
     }
 
     /**
-     *  Constructor for TMFFFormat using user parameters.
-     *  <p>
-     *  @param param String array of RunParm values.
-     *  @param tmffPreferences TMFFPreferences object.
+     * Constructor for TMFFFormat using user parameters.
+     *
+     * @param param String array of RunParm values.
+     * @param tmffPreferences TMFFPreferences object.
      */
     public TMFFFormat(final String[] param,
         final TMFFPreferences tmffPreferences)
@@ -85,16 +83,12 @@ public class TMFFFormat {
     }
 
     /**
-     *  Standard constructor for TMFFFormat.
-     *
-     *  @param formatNbrString number 1, 2, 3, etc., up to a
-     *                  predefined
-     *                  maximum value (presently 3). This number is
-     *                  used elsewhere to identify Formats.
-     *
-     *  @param formatScheme the instantiated TMFFScheme assigned
-     *                  to this format.
-     *
+     * Standard constructor for TMFFFormat.
+     * 
+     * @param formatNbrString number 1, 2, 3, etc., up to a predefined maximum
+     *            value (presently 3). This number is used elsewhere to identify
+     *            Formats.
+     * @param formatScheme the instantiated TMFFScheme assigned to this format.
      */
     public TMFFFormat(final String formatNbrString,
         final TMFFScheme formatScheme)
@@ -110,15 +104,12 @@ public class TMFFFormat {
     }
 
     /**
-     *  Standard constructor for TMFFFormat.
-     *
-     *  @param formatNbr number 1, 2, 3, etc., up to a predefined
-     *                  maximum value (presently 3). This number is
-     *                  used elsewhere to identify Formats.
-     *
-     *  @param formatScheme the instantiated TMFFScheme assigned
-     *                  to this format.
-     *
+     * Standard constructor for TMFFFormat.
+     * 
+     * @param formatNbr number 1, 2, 3, etc., up to a predefined maximum value
+     *            (presently 3). This number is used elsewhere to identify
+     *            Formats.
+     * @param formatScheme the instantiated TMFFScheme assigned to this format.
      */
     public TMFFFormat(final int formatNbr, final TMFFScheme formatScheme) {
 
@@ -132,21 +123,21 @@ public class TMFFFormat {
     }
 
     /**
-     *  Get the TMFFScheme instance assigned to this TMFFFormat.
-     *
-     *  @return formatScheme instance.
+     * Get the TMFFScheme instance assigned to this TMFFFormat.
+     * 
+     * @return formatScheme instance.
      */
     public TMFFScheme getFormatScheme() {
         return formatScheme;
     }
 
     /**
-     *  Set TMFFScheme assigned to this TMFFFormat.
-     *  <p>
-     *  Note: the Scheme for format number 0 cannot
-     *        be updated, it is 'RESERVED' for 'Unformatted'.
-     *
-     *  @param formatScheme pre-instantiated TMFFScheme.
+     * Set TMFFScheme assigned to this TMFFFormat.
+     * <p>
+     * Note: the Scheme for format number 0 cannot be updated, it is 'RESERVED'
+     * for 'Unformatted'.
+     * 
+     * @param formatScheme pre-instantiated TMFFScheme.
      */
     public void setFormatScheme(final TMFFScheme formatScheme) {
         if (formatScheme == null)
@@ -162,18 +153,18 @@ public class TMFFFormat {
     }
 
     /**
-     *  Get the number assigned to this TMFFFormat.
-     *
-     *  @return formatNbr string.
+     * Get the number assigned to this TMFFFormat.
+     * 
+     * @return formatNbr string.
      */
     public int getFormatNbr() {
         return formatNbr;
     }
 
     /**
-     *  Set Number assigned to this TMFFFormat.
-     *  <p>
-     *  @param formatNbr non-null, non-empty String.
+     * Set Number assigned to this TMFFFormat.
+     *
+     * @param formatNbr non-null, non-empty String.
      */
     public void setFormatNbr(final int formatNbr) {
         if (formatNbr < 1 || formatNbr > TMFFConstants.TMFF_MAX_FORMAT_NBR)

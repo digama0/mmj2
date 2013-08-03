@@ -7,10 +7,10 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  MMTTheoremFile.java  0.01 08/01/2008
+ * MMTTheoremFile.java  0.01 08/01/2008
  *
- *  Version 0.01:
- *      --> new.
+ * Version 0.01:
+ *     --> new.
  */
 
 package mmj.tl;
@@ -22,7 +22,7 @@ import mmj.lang.TheoremLoaderException;
 import mmj.mmio.*;
 
 /**
- *  MMTTheoremFile is a little helper class for MMT Theorem files.
+ * MMTTheoremFile is a little helper class for MMT Theorem files.
  */
 public class MMTTheoremFile {
 
@@ -30,10 +30,11 @@ public class MMTTheoremFile {
     private String label;
 
     /**
-     *  Constructor using an input File object.
-     *  <p>
-     *  @throws TheoremLoaderException if the filename doesn't
-     *          have filetype ".mmt".
+     * Constructor using an input File object.
+     *
+     * @param theoremFile the File from which to initialize this object
+     * @throws TheoremLoaderException if the filename doesn't have filetype
+     *             ".mmt".
      */
     public MMTTheoremFile(final File theoremFile) throws TheoremLoaderException
     {
@@ -54,19 +55,17 @@ public class MMTTheoremFile {
     }
 
     /**
-     *  Constructor using a MMTFolder and a theoremLabel designating
-     *  a MMT Theorem File in the MMT Folder.
-     *  <p>
-     *  @param mmtFolder the MMTFolder to look in.
-     *  @param theoremLabel the label of the theorem in the MMT Theorem
-     *         file.
-     *  @param inputFile boolean set to true if the MMTTheoremFile
-     *         is supposed to be an inputFile (and therefore must
-     *         exist), otherwise false.
-     *  @throws TheoremLoaderException if the theoremLabel is blank
-     *          or null, or if the theorem is not found in the MMT
-     *          Folder and the inputFile parameter is true, or if
-     *          there is a SecurityException.
+     * Constructor using a MMTFolder and a theoremLabel designating a MMT
+     * Theorem File in the MMT Folder.
+     *
+     * @param mmtFolder the MMTFolder to look in.
+     * @param theoremLabel the label of the theorem in the MMT Theorem file.
+     * @param inputFile boolean set to true if the MMTTheoremFile is supposed to
+     *            be an inputFile (and therefore must exist), otherwise false.
+     * @throws TheoremLoaderException if the theoremLabel is blank or null, or
+     *             if the theorem is not found in the MMT Folder and the
+     *             inputFile parameter is true, or if there is a
+     *             SecurityException.
      */
     public MMTTheoremFile(final MMTFolder mmtFolder, final String theoremLabel,
         final boolean inputFile) throws TheoremLoaderException
@@ -109,12 +108,12 @@ public class MMTTheoremFile {
     }
 
     /**
-     *  Builds an mmj2 Statementizer object for use in parsing an
-     *  input MMT Theorem File.
-     *  <p>
-     *  @return mmj2 Statementizer object.
-     *  @throws TheoremLoaderException if the file doesn't actually
-     *          exist or if there is an I/O error.
+     * Builds an mmj2 Statementizer object for use in parsing an input MMT
+     * Theorem File.
+     *
+     * @return mmj2 Statementizer object.
+     * @throws TheoremLoaderException if the file doesn't actually exist or if
+     *             there is an I/O error.
      */
     public Statementizer constructStatementizer() throws TheoremLoaderException
     {
@@ -148,16 +147,15 @@ public class MMTTheoremFile {
     }
 
     /**
-     *  Writes Theorem to the MMT Folder using an input List of
-     *  StringBuilder lines.
-     *  <p>
-     *  Note: the input lines do not contain newline characters,
-     *        which are written here in platform neutral code
-     *        using writeLine().
-     *  <p>
-     *  @param mmtTheoremLines List of StringBuilder lines.
-     *  @throws TheoremLoaderException if there is an I/O error
-     *         while writing the MMTTheoremFile lines.
+     * Writes Theorem to the MMT Folder using an input List of StringBuilder
+     * lines.
+     * <p>
+     * Note: the input lines do not contain newline characters, which are
+     * written here in platform neutral code using writeLine().
+     *
+     * @param mmtTheoremLines List of StringBuilder lines.
+     * @throws TheoremLoaderException if there is an I/O error while writing the
+     *             MMTTheoremFile lines.
      */
     public void writeTheoremToMMTFolder(
         final List<StringBuilder> mmtTheoremLines)
@@ -188,13 +186,13 @@ public class MMTTheoremFile {
     }
 
     /**
-     *  Closes the Writer used for the MMTTheoremFile.
-     *  <p>
-     *  Does nothing if input Writer is null.
-     *  <p>
-     *  @param w Writer object or null.
-     *  @throws TheoremLoaderException if there is an I/O error
-     *         during the close operation.
+     * Closes the Writer used for the MMTTheoremFile.
+     * <p>
+     * Does nothing if input Writer is null.
+     *
+     * @param w Writer object or null.
+     * @throws TheoremLoaderException if there is an I/O error during the close
+     *             operation.
      */
     public void close(final Writer w) throws TheoremLoaderException {
         try {
@@ -210,11 +208,11 @@ public class MMTTheoremFile {
     }
 
     /**
-     *  Closes the Reader used for the MMTTheoremFile.
-     *  <p>
-     *  Does nothing if input Writer is null.
-     *  <p>
-     *  @param readerIn Reader object or null.
+     * Closes the Reader used for the MMTTheoremFile.
+     * <p>
+     * Does nothing if input Writer is null.
+     *
+     * @param readerIn Reader object or null.
      */
     public void close(final Reader readerIn) {
         try {
@@ -224,21 +222,21 @@ public class MMTTheoremFile {
     }
 
     /**
-     *  Returns the MMTTheoremFile filename.
+     * @return the MMTTheoremFile filename.
      */
     public String getFileName() {
         return theoremFile.getName();
     }
 
     /**
-     *  Returns the MMTTheoremFile theorem label.
+     * @return the MMTTheoremFile theorem label.
      */
     public String getLabel() {
         return label;
     }
 
     /**
-     *  Returns the MMTTheoremFile absolute pathname.
+     * @return the MMTTheoremFile absolute pathname.
      */
     public String getSourceFileName() {
         return theoremFile.getAbsolutePath();

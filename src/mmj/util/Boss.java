@@ -7,51 +7,51 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  Boss.java  0.10 11/01/2011
+ * Boss.java  0.10 11/01/2011
  *
- *  Dec-10-2005
- *      -->Added folder-related routines for use by ProofAsst:
- *             editExistingFolderRunParm(
- *             editExistingFolderNameParm(
- *             buildFileObjectForExistingFolder(
- *         These are called by mmj.util.ProofAsstBoss.java
- *  Jan-16-2006
- *      -->Added editYesNoRunParm
- *      -->Added buffering in doConstructPrintWriter.
- *      -->Added doConstructBufferedFileWriter for exporting proofs
- *         from Proof Assistant.
- *      -->changed name of method editPrintWriterFileNameParm() to
- *          editFileNameParm().
+ * Dec-10-2005
+ *     -->Added folder-related routines for use by ProofAsst:
+ *            editExistingFolderRunParm(
+ *            editExistingFolderNameParm(
+ *            buildFileObjectForExistingFolder(
+ *        These are called by mmj.util.ProofAsstBoss.java
+ * Jan-16-2006
+ *     -->Added editYesNoRunParm
+ *     -->Added buffering in doConstructPrintWriter.
+ *     -->Added doConstructBufferedFileWriter for exporting proofs
+ *        from Proof Assistant.
+ *     -->changed name of method editPrintWriterFileNameParm() to
+ *         editFileNameParm().
  *
- *  Version 0.04:
- *      -->Added editRunParmPrintableNoBlanksString
- *         for ProofAsstBoss
+ * Version 0.04:
+ *     -->Added editRunParmPrintableNoBlanksString
+ *        for ProofAsstBoss
  *
- *  Sep-09-2006 - Version 0.05 - TMFF Enhancement
- *      -->Added editOnOffRunParm()
+ * Sep-09-2006 - Version 0.05 - TMFF Enhancement
+ *     -->Added editOnOffRunParm()
  *
- *  Jun-01-2007 - Version 0.06
- *      -->err msg bug fix, see "PATCH 2007-10-01"
+ * Jun-01-2007 - Version 0.06
+ *     -->err msg bug fix, see "PATCH 2007-10-01"
  *
- *  Nov-01-2007 - Version 0.07
- *      -->Misc.
+ * Nov-01-2007 - Version 0.07
+ *     -->Misc.
  *
- *  Feb-01-2008 - Version 0.08
- *      -->Remove old, commented-out code (patch note.)
+ * Feb-01-2008 - Version 0.08
+ *     -->Remove old, commented-out code (patch note.)
  *
- *  Aug-01-2008 - Version 0.09
- *      -->Add TheoremLoaderException.
- *      -->editRunParmNonNegativeInteger() and
- *         editRunParmValueReqNonNegativeInt().
+ * Aug-01-2008 - Version 0.09
+ *     -->Add TheoremLoaderException.
+ *     -->editRunParmNonNegativeInteger() and
+ *        editRunParmValueReqNonNegativeInt().
  *
- *  Nov-01-2011 - Version 0.10
- *      -->Add GMFFException
- *      -->Modified for mmj2 Paths Enhancement:
- *         --> added filePath argument to
- *             editExistingFolderRunParm() and
- *             buildFileObjectForExistingFolder() and
- *             doConstructPrintWriter() and
- *             editPrintWriterRunParm()
+ * Nov-01-2011 - Version 0.10
+ *     -->Add GMFFException
+ *     -->Modified for mmj2 Paths Enhancement:
+ *        --> added filePath argument to
+ *            editExistingFolderRunParm() and
+ *            buildFileObjectForExistingFolder() and
+ *            doConstructPrintWriter() and
+ *            editPrintWriterRunParm()
  */
 
 package mmj.util;
@@ -68,31 +68,37 @@ import mmj.mmio.MMIOException;
 import mmj.pa.PaConstants;
 
 /**
- *  Boss is the superclass of GrammarBoss, LogicalSystemBoss,
- *  etc, which are used by BatchFramework to "exercise"
- *  mmj2 in batch mode.
- *  <p>
- *  Boss consists of the abstract "doRunParmCommand" and
- *  some common parameter validation functions used
- *  in sub-classes of Boss.
+ * Boss is the superclass of GrammarBoss, LogicalSystemBoss, etc, which are used
+ * by BatchFramework to "exercise" mmj2 in batch mode.
+ * <p>
+ * Boss consists of the abstract "doRunParmCommand" and some common parameter
+ * validation functions used in sub-classes of Boss.
  */
 public abstract class Boss {
 
     protected BatchFramework batchFramework;
 
     /**
-     *  Constructor with BatchFramework for access to environment.
-     *
-     *  @param batchFramework for access to environment.
+     * Constructor with BatchFramework for access to environment.
+     * 
+     * @param batchFramework for access to environment.
      */
     public Boss(final BatchFramework batchFramework) {
         this.batchFramework = batchFramework;
     }
 
     /**
-     *  Executes a single command from the RunParmFile.
-     *
-     *  @param runParm the RunParmFile line to execute.
+     * Executes a single command from the RunParmFile.
+     * 
+     * @param runParm the RunParmFile line to execute.
+     * @return {@code true} if the RunParm was "consumed"
+     * @throws IllegalArgumentException if an error occurred in the RunParm
+     * @throws MMIOException if an error occurred in the RunParm
+     * @throws FileNotFoundException if an error occurred in the RunParm
+     * @throws IOException if an error occurred in the RunParm
+     * @throws VerifyException if an error occurred in the RunParm
+     * @throws TheoremLoaderException if an error occurred in the RunParm
+     * @throws GMFFException if an error occurred in the RunParm
      */
     public abstract boolean doRunParmCommand(RunParmArrayEntry runParm)
         throws IllegalArgumentException, MMIOException, FileNotFoundException,
@@ -103,12 +109,15 @@ public abstract class Boss {
     // =======================================================
 
     /**
-     *  Validate existing folder RunParm (must exist!)
-     *
-     *  @param filePath path used to resolve file name. May be null
-     *            or absolute or relative path.
-     *  @param runParm RunParmFile line parsed into RunParmArrayEntry.
-     *  @param valueCaption name of RunParm, for error message output.
+     * Validate existing folder RunParm (must exist!)
+     * 
+     * @param filePath path used to resolve file name. May be null or absolute
+     *            or relative path.
+     * @param runParm RunParmFile line parsed into RunParmArrayEntry.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param valueFieldNbr number of field in RunParm line.
+     * @return File object for folder
+     * @throws IllegalArgumentException if an error occurred
      */
     protected File editExistingFolderRunParm(final File filePath,
         final RunParmArrayEntry runParm, final String valueCaption,
@@ -123,12 +132,15 @@ public abstract class Boss {
     }
 
     /**
-     *  Validate existing folder RunParm (must exist!)
-     *
-     *  @param filePath path name for building files. May be null,
-     *            relative or absolute.
-     *  @param runParm RunParmFile line parsed into RunParmArrayEntry.
-     *  @param valueCaption name of RunParm, for error message output.
+     * Validate existing folder RunParm (must exist!)
+     * 
+     * @param filePath path name for building files. May be null, relative or
+     *            absolute.
+     * @param runParm RunParmFile line parsed into RunParmArrayEntry.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param valueFieldNbr number of field in RunParm line.
+     * @return File object for file.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected File editExistingFileRunParm(final File filePath,
         final RunParmArrayEntry runParm, final String valueCaption,
@@ -143,14 +155,13 @@ public abstract class Boss {
     }
 
     /**
-     *  Validate Proof Worksheet File Name Suffix
-     *
-     *  @param runParm        RunParmFile line.
-     *  @param valueCaption   name of RunParm, for error message
-     *                        output.
-     *  @param valueFieldNbr  number of field in RunParm line.
-     *
-     *  @return String validated file name suffix
+     * Validate Proof Worksheet File Name Suffix
+     * 
+     * @param runParm RunParmFile line.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param valueFieldNbr number of field in RunParm line.
+     * @return String validated file name suffix
+     * @throws IllegalArgumentException if an error occurred
      */
     protected String editProofWorksheetFileNameSuffix(
         final RunParmArrayEntry runParm, final String valueCaption,
@@ -176,14 +187,13 @@ public abstract class Boss {
     }
 
     /**
-     *  Validate name of folder
-     *
-     *  @param runParm        RunParmFile line.
-     *  @param valueCaption   name of RunParm, for error message
-     *                        output.
-     *  @param valueFieldNbr  number of field in RunParm line.
-     *
-     *  @return String validated folder name.
+     * Validate name of folder
+     * 
+     * @param runParm RunParmFile line.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param valueFieldNbr number of field in RunParm line.
+     * @return String validated folder name.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected String editExistingFolderNameParm(
         final RunParmArrayEntry runParm, final String valueCaption,
@@ -200,15 +210,14 @@ public abstract class Boss {
     }
 
     /**
-     *  Build a File object for a Folder Name
-     *
-     *  @param filePath path used to resolve file name. May be null
-     *            or absolute or relative path.
-     *  @param valueCaption    name of RunParm, for error message
-     *                         output.
-     *  @param folderNameParm  name of folder
-     *
-     *  @return File           File object for folder
+     * Build a File object for a Folder Name
+     * 
+     * @param filePath path used to resolve file name. May be null or absolute
+     *            or relative path.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param folderNameParm name of folder
+     * @return File File object for folder
+     * @throws IllegalArgumentException if an error occurred
      */
     protected File buildFileObjectForExistingFolder(final File filePath,
         final String valueCaption, final String folderNameParm)
@@ -252,16 +261,14 @@ public abstract class Boss {
     }
 
     /**
-     *  Build a File object for an existing File Name
-     *
-     *  @param filePath path name for building files. May be null,
-     *            relative or absolute.
-     *
-     *  @param valueCaption    name of RunParm, for error message
-     *                         output.
-     *  @param fileNameParm    name of file
-     *
-     *  @return File           File object for file.
+     * Build a File object for an existing File Name
+     * 
+     * @param filePath path name for building files. May be null, relative or
+     *            absolute.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param fileNameParm name of file
+     * @return File File object for file.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected File buildFileObjectForExistingFile(final File filePath,
         final String valueCaption, final String fileNameParm)
@@ -305,12 +312,14 @@ public abstract class Boss {
     }
 
     /**
-     *  Validate PrintWriter RunParm and its options.
-     *
-     *  @param filePath path for building files. May be null,
-     *                   absolute, or relative.
-     *  @param runParm RunParmFile line parsed into RunParmArrayEntry.
-     *  @param valueCaption name of RunParm, for error message output.
+     * Validate PrintWriter RunParm and its options.
+     * 
+     * @param filePath path for building files. May be null, absolute, or
+     *            relative.
+     * @param runParm RunParmFile line parsed into RunParmArrayEntry.
+     * @param valueCaption name of RunParm, for error message output.
+     * @return PrintWriter object.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected PrintWriter editPrintWriterRunParm(final File filePath,
         final RunParmArrayEntry runParm, final String valueCaption)
@@ -329,18 +338,16 @@ public abstract class Boss {
     }
 
     /**
-     *  Construct a PrintWriter using RunParm options.
-     *
-     *  @param filePath        path for building files. May be null,
-     *                         absolute or relative.
-     *  @param valueCaption    name of RunParm, for error message
-     *                         output.
-     *  @param fileNameParm    RunParmFile line parsed into
-     *                         RunParmArrayEntry.
-     *  @param fileUsageParm   "new" or "update"
-     *  @param fileCharsetParm optional, "UTF-8", etc.
-     *
-     *  @return PrintWriter object.
+     * Construct a PrintWriter using RunParm options.
+     * 
+     * @param filePath path for building files. May be null, absolute or
+     *            relative.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param fileNameParm RunParmFile line parsed into RunParmArrayEntry.
+     * @param fileUsageParm "new" or "update"
+     * @param fileCharsetParm optional, "UTF-8", etc.
+     * @return PrintWriter object.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected PrintWriter doConstructPrintWriter(final File filePath,
         final String valueCaption, final String fileNameParm,
@@ -401,15 +408,14 @@ public abstract class Boss {
     }
 
     /**
-     *  Construct a Buffered File Reader using RunParm
-     *  options plus an optional parent directory File object.
-     *
-     *  @param valueCaption    name of RunParm, for error message
-     *                         output.
-     *  @param fileNameParm    RunParmFile line parsed into
-     *                         RunParmArrayEntry.
-     *
-     *  @return BufferedReader file object.
+     * Construct a Buffered File Reader using RunParm options plus an optional
+     * parent directory File object.
+     * 
+     * @param valueCaption name of RunParm, for error message output.
+     * @param fileNameParm RunParmFile line parsed into RunParmArrayEntry.
+     * @param parentDirectory the root directory
+     * @return BufferedReader file object.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected Reader doConstructBufferedFileReader(final String valueCaption,
         final String fileNameParm, final File parentDirectory)
@@ -458,16 +464,15 @@ public abstract class Boss {
     }
 
     /**
-     *  Construct a Buffered File Writer using RunParm
-     *  options plus an optional parent directory File object.
-     *
-     *  @param valueCaption    name of RunParm, for error message
-     *                         output.
-     *  @param fileNameParm    RunParmFile line parsed into
-     *                         RunParmArrayEntry.
-     *  @param fileUsageParm   "new" or "update"
-     *
-     *  @return BufferedWriter file object.
+     * Construct a Buffered File Writer using RunParm options plus an optional
+     * parent directory File object.
+     * 
+     * @param valueCaption name of RunParm, for error message output.
+     * @param fileNameParm RunParmFile line parsed into RunParmArrayEntry.
+     * @param fileUsageParm "new" or "update"
+     * @param parentDirectory the root directory
+     * @return BufferedWriter file object.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected BufferedWriter doConstructBufferedFileWriter(
         final String valueCaption, final String fileNameParm,
@@ -526,14 +531,13 @@ public abstract class Boss {
     }
 
     /**
-     *  Validate File Name.
-     *
-     *  @param runParm        RunParmFile line.
-     *  @param valueCaption   name of RunParm, for error message
-     *                        output.
-     *  @param valueFieldNbr  number of field in RunParm line.
-     *
-     *  @return String validated file name.
+     * Validate File Name.
+     * 
+     * @param runParm RunParmFile line.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param valueFieldNbr number of field in RunParm line.
+     * @return String validated file name.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected String editFileNameParm(final RunParmArrayEntry runParm,
         final String valueCaption, final int valueFieldNbr)
@@ -550,14 +554,13 @@ public abstract class Boss {
     }
 
     /**
-     *  Validate File Usage Parm ("new" or "update").
-     *
-     *  @param runParm        RunParmFile line.
-     *  @param valueCaption   name of RunParm, for error message
-     *                        output.
-     *  @param valueFieldNbr  number of field in RunParm line.
-     *
-     *  @return String validated file usage parm.
+     * Validate File Usage Parm ("new" or "update").
+     * 
+     * @param runParm RunParmFile line.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param valueFieldNbr number of field in RunParm line.
+     * @return String validated file usage parm.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected String editFileUsageParm(final RunParmArrayEntry runParm,
         final String valueCaption, final int valueFieldNbr)
@@ -593,14 +596,13 @@ public abstract class Boss {
     }
 
     /**
-     *  Validate File Charset Parm ("" or "UTF-8", etc).
-     *
-     *  @param runParm        RunParmFile line.
-     *  @param valueCaption   name of RunParm, for error message
-     *                        output.
-     *  @param valueFieldNbr  number of field in RunParm line.
-     *
-     *  @return String validated file usage parm.
+     * Validate File Charset Parm ("" or "UTF-8", etc).
+     * 
+     * @param runParm RunParmFile line.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param valueFieldNbr number of field in RunParm line.
+     * @return String validated file usage parm.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected String editFileCharsetParm(final RunParmArrayEntry runParm,
         final String valueCaption, final int valueFieldNbr)
@@ -640,17 +642,14 @@ public abstract class Boss {
     }
 
     /**
-     *  Get SelectorAll RunParm Option if present or null.
-     *  <p>
-     *  If "*" input returns true Boolean value
-     *  otherwise, null;
-     *
-     *  @param runParm        RunParmFile line.
-     *  @param valueCaption   name of RunParm, for error message
-     *                        output.
-     *  @param valueFieldNbr  number of field in RunParm line.
-     *
-     *  @return boolean true(yes) or false(no)
+     * Get SelectorAll RunParm Option if present or null.
+     * <p>
+     * If "*" input returns true Boolean value otherwise, null;
+     * 
+     * @param runParm RunParmFile line.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param valueFieldNbr number of field in RunParm line.
+     * @return boolean true(yes) or false(no)
      */
     protected Boolean getSelectorAllRunParmOption(
         final RunParmArrayEntry runParm, final String valueCaption,
@@ -666,18 +665,16 @@ public abstract class Boss {
     }
 
     /**
-     *  Get SelectorCount RunParm Option if present or null.
-     *  <p>
-     *  If positive integer input returns Integer value,
-     *  otherwise, if negative or zero integer, throws
-     *  an exception. If none of the above returns null;
-     *
-     *  @param runParm        RunParmFile line.
-     *  @param valueCaption   name of RunParm, for error message
-     *                        output.
-     *  @param valueFieldNbr  number of field in RunParm line.
-     *
-     *  @return boolean true(yes) or false(no)
+     * Get SelectorCount RunParm Option if present or null.
+     * <p>
+     * If positive integer input returns Integer value, otherwise, if negative
+     * or zero integer, throws an exception. If none of the above returns null;
+     * 
+     * @param runParm RunParmFile line.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param valueFieldNbr number of field in RunParm line.
+     * @return boolean true(yes) or false(no)
+     * @throws IllegalArgumentException if an error occurred
      */
     protected Integer getSelectorCountRunParmOption(
         final RunParmArrayEntry runParm, final String valueCaption,
@@ -700,18 +697,17 @@ public abstract class Boss {
     }
 
     /**
-     *  Get SelectorTheorem RunParm Option if present or null.
-     *  <p>
-     *  If present, and not a valid Theorem label, an
-     *  IllegalArgumentException is thrown.
-     *
-     *  @param runParm        RunParmFile line.
-     *  @param valueCaption   name of RunParm, for error message
-     *                        output.
-     *  @param valueFieldNbr  number of field in RunParm line.
-     *  @param stmtTbl        stmtTbl map from LogicalSystem.
-     *
-     *  @return Theorem or null
+     * Get SelectorTheorem RunParm Option if present or null.
+     * <p>
+     * If present, and not a valid Theorem label, an IllegalArgumentException is
+     * thrown.
+     * 
+     * @param runParm RunParmFile line.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param valueFieldNbr number of field in RunParm line.
+     * @param stmtTbl stmtTbl map from LogicalSystem.
+     * @return Theorem or null
+     * @throws IllegalArgumentException if an error occurred
      */
     protected Theorem getSelectorTheoremRunParmOption(
         final RunParmArrayEntry runParm, final String valueCaption,
@@ -744,14 +740,13 @@ public abstract class Boss {
     }
 
     /**
-     *  Validate Required Yes/No Parm.
-     *
-     *  @param runParm        RunParmFile line.
-     *  @param valueCaption   name of RunParm, for error message
-     *                        output.
-     *  @param valueFieldNbr  number of field in RunParm line.
-     *
-     *  @return boolean true(yes) or false(no)
+     * Validate Required Yes/No Parm.
+     * 
+     * @param runParm RunParmFile line.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param valueFieldNbr number of field in RunParm line.
+     * @return boolean true(yes) or false(no)
+     * @throws IllegalArgumentException if an error occurred
      */
     protected boolean editYesNoRunParm(final RunParmArrayEntry runParm,
         final String valueCaption, final int valueFieldNbr)
@@ -776,14 +771,13 @@ public abstract class Boss {
     }
 
     /**
-     *  Validate Required On/Off Parm.
-     *
-     *  @param runParm        RunParmFile line.
-     *  @param valueCaption   name of RunParm, for error message
-     *                        output.
-     *  @param valueFieldNbr  number of field in RunParm line.
-     *
-     *  @return boolean true(yes) or false(no)
+     * Validate Required On/Off Parm.
+     * 
+     * @param runParm RunParmFile line.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param valueFieldNbr number of field in RunParm line.
+     * @return boolean true(yes) or false(no)
+     * @throws IllegalArgumentException if an error occurred
      */
     protected boolean editOnOffRunParm(final RunParmArrayEntry runParm,
         final String valueCaption, final int valueFieldNbr)
@@ -806,12 +800,12 @@ public abstract class Boss {
     }
 
     /**
-     *  Validate Required, RGB Color Parms
-     *
-     *  @param runParm        RunParmFile line.
-     *  @param valueCaption   name of RunParm, for error message
-     *                        output.
-     *  @return int positive integer.
+     * Validate Required, RGB Color Parms
+     * 
+     * @param runParm RunParmFile line.
+     * @param valueCaption name of RunParm, for error message output.
+     * @return int positive integer.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected Color editRunParmValueReqRGBColor(
         final RunParmArrayEntry runParm, final String valueCaption)
@@ -845,14 +839,13 @@ public abstract class Boss {
     }
 
     /**
-     *  Validate Required, Positive Integer Parm.
-     *
-     *  @param runParm        RunParmFile line.
-     *  @param valueCaption   name of RunParm, for error message
-     *                        output.
-     *  @param valueFieldNbr  number of field in RunParm line.
-     *
-     *  @return int positive integer.
+     * Validate Required, Positive Integer Parm.
+     * 
+     * @param runParm RunParmFile line.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param valueFieldNbr number of field in RunParm line.
+     * @return int positive integer.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected int editRunParmValueReqPosInt(final RunParmArrayEntry runParm,
         final String valueCaption, final int valueFieldNbr)
@@ -866,14 +859,13 @@ public abstract class Boss {
     }
 
     /**
-     *  Validate Required, Non-negative Integer Parm.
-     *
-     *  @param runParm        RunParmFile line.
-     *  @param valueCaption   name of RunParm, for error message
-     *                        output.
-     *  @param valueFieldNbr  number of field in RunParm line.
-     *
-     *  @return int positive integer.
+     * Validate Required, Non-negative Integer Parm.
+     * 
+     * @param runParm RunParmFile line.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param valueFieldNbr number of field in RunParm line.
+     * @return int positive integer.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected int editRunParmValueReqNonNegativeInt(
         final RunParmArrayEntry runParm, final String valueCaption,
@@ -887,14 +879,13 @@ public abstract class Boss {
     }
 
     /**
-     *  Validate Required Integer Parm.
-     *
-     *  @param runParm        RunParmFile line.
-     *  @param valueCaption   name of RunParm, for error message
-     *                        output.
-     *  @param valueFieldNbr  number of field in RunParm line.
-     *
-     *  @return int integer.
+     * Validate Required Integer Parm.
+     * 
+     * @param runParm RunParmFile line.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param valueFieldNbr number of field in RunParm line.
+     * @return int integer.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected int editRunParmValueReqInt(final RunParmArrayEntry runParm,
         final String valueCaption, final int valueFieldNbr)
@@ -908,13 +899,13 @@ public abstract class Boss {
     }
 
     /**
-     *  Validate Required Number of RunParm fields.
-     *
-     *  @param runParm        RunParmFile line.
-     *  @param valueCaption   name of RunParm, for error message
-     *                        output.
-     *  @param requiredNbrValueFields required number of fields
-     *                        in the RunParm line.
+     * Validate Required Number of RunParm fields.
+     * 
+     * @param runParm RunParmFile line.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param requiredNbrValueFields required number of fields in the RunParm
+     *            line.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editRunParmValuesLength(final RunParmArrayEntry runParm,
         final String valueCaption, final int requiredNbrValueFields)
@@ -930,13 +921,12 @@ public abstract class Boss {
     }
 
     /**
-     *  Validate Integer Parm.
-     *
-     *  @param integerString  String supposedly containing a number.
-     *  @param valueCaption   name of RunParm, for error message
-     *                        output.
-     *
-     *  @return int an integer.
+     * Validate Integer Parm.
+     * 
+     * @param integerString String supposedly containing a number.
+     * @param valueCaption name of RunParm, for error message output.
+     * @return int an integer.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected Integer editRunParmValueInteger(final String integerString,
         final String valueCaption) throws IllegalArgumentException
@@ -955,13 +945,12 @@ public abstract class Boss {
     }
 
     /**
-     *  Validate Positive Integer Parm.
-     *
-     *  @param i              an integer, supposedly positive.
-     *  @param valueCaption   name of RunParm, for error message
-     *                        output.
-     *
-     *  @return int a positive integer.
+     * Validate Positive Integer Parm.
+     * 
+     * @param i an integer, supposedly positive.
+     * @param valueCaption name of RunParm, for error message output.
+     * @return int a positive integer.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected int editRunParmPositiveInteger(final Integer i,
         final String valueCaption) throws IllegalArgumentException
@@ -975,14 +964,12 @@ public abstract class Boss {
     }
 
     /**
-     *  Validate Non-Negative Integer Parm.
-     *
-     *  @param i              an integer, supposedly greater than
-     *                        or equal to zero.
-     *  @param valueCaption   name of RunParm, for error message
-     *                        output.
-     *
-     *  @return int a positive integer.
+     * Validate Non-Negative Integer Parm.
+     * 
+     * @param i an integer, supposedly greater than or equal to zero.
+     * @param valueCaption name of RunParm, for error message output.
+     * @return int a positive integer.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected int editRunParmNonNegativeInteger(final Integer i,
         final String valueCaption) throws IllegalArgumentException
@@ -996,15 +983,14 @@ public abstract class Boss {
     }
 
     /**
-     *  Validate RunParm Theorem Label String.
-     *
-     *  @param stmtLabel      String, supposedly a Theorem label.
-     *  @param valueCaption   name of RunParm, for error message
-     *                        output.
-     *  @param logicalSystem  Uh-oh, Mr. Big. Heavy validation
-     *                        using LogicalSystem.stmtTbl.
-     *
-     *  @return Theorem if stmtLabel is valid.
+     * Validate RunParm Theorem Label String.
+     * 
+     * @param stmtLabel String, supposedly a Theorem label.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param logicalSystem Uh-oh, Mr. Big. Heavy validation using
+     *            LogicalSystem.stmtTbl.
+     * @return Theorem if stmtLabel is valid.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected Theorem editRunParmValueTheorem(final String stmtLabel,
         final String valueCaption, final LogicalSystem logicalSystem)
@@ -1023,15 +1009,14 @@ public abstract class Boss {
     }
 
     /**
-     *  Validate RunParm Statement Label String.
-     *
-     *  @param stmtLabel      String, supposedly a Stmt label.
-     *  @param valueCaption   name of RunParm, for error message
-     *                        output.
-     *  @param logicalSystem  Uh-oh, Mr. Big. Heavy validation
-     *                        using LogicalSystem.stmtTbl.
-     *
-     *  @return Stmt if stmtLabel is valid.
+     * Validate RunParm Statement Label String.
+     * 
+     * @param stmtLabel String, supposedly a Stmt label.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param logicalSystem Uh-oh, Mr. Big. Heavy validation using
+     *            LogicalSystem.stmtTbl.
+     * @return Stmt if stmtLabel is valid.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected Stmt editRunParmValueStmt(final String stmtLabel,
         final String valueCaption, final LogicalSystem logicalSystem)
@@ -1053,16 +1038,14 @@ public abstract class Boss {
     }
 
     /**
-     *  Validate RunParm String with length greater than
-     *  zero and no embedded blanks or unprintable characters.
-     *
-     *  @param runParm        RunParmFile line.
-     *  @param valueCaption   name of RunParm, for error message
-     *                        output.
-     *  @param valueFieldNbr  required number of fields
-     *                        in the RunParm line.
-     *
-     *  @return String if valid.
+     * Validate RunParm String with length greater than zero and no embedded
+     * blanks or unprintable characters.
+     * 
+     * @param runParm RunParmFile line.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param valueFieldNbr required number of fields in the RunParm line.
+     * @return String if valid.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected String editRunParmPrintableNoBlanksString(
         final RunParmArrayEntry runParm, final String valueCaption,

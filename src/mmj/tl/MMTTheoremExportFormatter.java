@@ -7,10 +7,10 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  MMTTheoremExportFormatter.java  0.01 08/01/2008
+ * MMTTheoremExportFormatter.java  0.01 08/01/2008
  *
- *  Version 0.01:
- *      --> new.
+ * Version 0.01:
+ *     --> new.
  */
 
 package mmj.tl;
@@ -24,17 +24,16 @@ import mmj.mmio.MMIOConstants;
 import mmj.pa.*;
 
 /**
- *  Converts a thing into a list Metamath-formatted file lines.
- *  <p>
- *  The output Metamath .mm file text lines are formatted according
- *  to the Theorem Loader Preferences.
- *  <p>
- *  Note: output lines do not contain newlines.
- *  <p>
- *  Note: this code handles Theorems and ProofWorksheets, and
- *  in theory there could be subclasses involved, but it seemed
- *  ok to just put all of the formatting code in one spot here
- *  as a quick and dirty bit of coding.
+ * Converts a thing into a list Metamath-formatted file lines.
+ * <p>
+ * The output Metamath .mm file text lines are formatted according to the
+ * Theorem Loader Preferences.
+ * <p>
+ * Note: output lines do not contain newlines.
+ * <p>
+ * Note: this code handles Theorems and ProofWorksheets, and in theory there
+ * could be subclasses involved, but it seemed ok to just put all of the
+ * formatting code in one spot here as a quick and dirty bit of coding.
  */
 public class MMTTheoremExportFormatter {
 
@@ -49,9 +48,9 @@ public class MMTTheoremExportFormatter {
     private boolean needScopeLines;
 
     /**
-     *  Basic constructor.
-     *  <p>
-     *  @param tlPreferences TlPreferences object.
+     * Basic constructor.
+     *
+     * @param tlPreferences TlPreferences object.
      */
     public MMTTheoremExportFormatter(final TlPreferences tlPreferences) {
 
@@ -59,15 +58,14 @@ public class MMTTheoremExportFormatter {
     }
 
     /**
-     *  Converts a Theorem in the LogicalSystem into a list of
-     *  StringBuilder lines formatted into Metamath format.
-     *  <p>
-     *  @param theorem Theorem in the Logical System.
-     *  @return LinkedList of StringBuilder objects each containing
-     *         one line of text in Metamath-format (without newlines.)
+     * Converts a Theorem in the LogicalSystem into a list of StringBuilder
+     * lines formatted into Metamath format.
+     *
+     * @param theorem Theorem in the Logical System.
+     * @return LinkedList of StringBuilder objects each containing one line of
+     *         text in Metamath-format (without newlines.)
      */
-    public List<StringBuilder> buildStringBuilderLineList(
-        final Theorem theorem)
+    public List<StringBuilder> buildStringBuilderLineList(final Theorem theorem)
     {
         init(theorem);
 
@@ -96,14 +94,14 @@ public class MMTTheoremExportFormatter {
     }
 
     /**
-     *  Converts a ProofWorksheet into a list of
-     *  StringBuilder lines formatted into Metamath format.
-     *  <p>
-     *  @param proofWorksheet ProofWorksheet object
-     *  @return LinkedList of StringBuilder objects each containing
-     *         one line of text in Metamath-format (without newlines.)
-     *  @throws TheoremLoaderException if the ProofWorksheet is
-     *             null or is not unified.
+     * Converts a ProofWorksheet into a list of StringBuilder lines formatted
+     * into Metamath format.
+     *
+     * @param proofWorksheet ProofWorksheet object
+     * @return LinkedList of StringBuilder objects each containing one line of
+     *         text in Metamath-format (without newlines.)
+     * @throws TheoremLoaderException if the ProofWorksheet is null or is not
+     *             unified.
      */
     public List<StringBuilder> buildStringBuilderLineList(
         final ProofWorksheet proofWorksheet) throws TheoremLoaderException

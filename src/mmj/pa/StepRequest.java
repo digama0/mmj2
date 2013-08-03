@@ -7,18 +7,17 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  StepRequest.java  0.01 03/01/2008
+ * StepRequest.java  0.01 03/01/2008
  *
- *  Version 0.01:
- *  ==> New.
+ * Version 0.01:
+ * ==> New.
  */
 
 package mmj.pa;
 
 /**
- *  StepRequest contains the StepSelector search results
- *  and is passed to the ProofAsstGUI for use in generating the
- *  StepSelectorDialog.
+ * StepRequest contains the StepSelector search results and is passed to the
+ * ProofAsstGUI for use in generating the StepSelectorDialog.
  */
 public class StepRequest {
 
@@ -27,11 +26,11 @@ public class StepRequest {
     /* friendly */Object param1;
 
     /**
-     *  Constructor for StepRequest
-     *
-     *  @param request code
-     *  @param step for which the Step Selector was run.
-     *  @param param1 parameter depending on code.
+     * Constructor for StepRequest
+     * 
+     * @param request code
+     * @param step for which the Step Selector was run.
+     * @param param1 parameter depending on code.
      */
     public StepRequest(final int request, final String step, final Object param1)
     {
@@ -41,9 +40,9 @@ public class StepRequest {
         this.param1 = param1;
     }
     /**
-     *  Constructor for StepRequest
-     *
-     *  @param request code
+     * Constructor for StepRequest
+     * 
+     * @param request code
      */
     public StepRequest(final int request) {
 

@@ -7,10 +7,10 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  StepSelectorDialog.java  0.01 03/01/2008
+ * StepSelectorDialog.java  0.01 03/01/2008
  *
- *  Version 0.01:
- *  ==> New.
+ * Version 0.01:
+ * ==> New.
  */
 
 package mmj.pa;
@@ -21,9 +21,8 @@ import java.awt.event.*;
 import javax.swing.*;
 
 /**
- *  StepSelectorDialog is used by ProofAsstGUI to allow the
- *  user to choose from a list of unifying assertions for a given
- *  proof step.
+ * StepSelectorDialog is used by ProofAsstGUI to allow the user to choose from a
+ * list of unifying assertions for a given proof step.
  */
 public class StepSelectorDialog extends JDialog {
 
@@ -51,7 +50,6 @@ public class StepSelectorDialog extends JDialog {
         final JButton cancelButton = new JButton(
             PaConstants.STEP_SELECTOR_DIALOG_HIDE_BUTTON_CAPTION);
         cancelButton.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(final ActionEvent e) {
                 setVisible(false);
             }
@@ -60,7 +58,6 @@ public class StepSelectorDialog extends JDialog {
         final JButton setButton = new JButton(
             PaConstants.STEP_SELECTOR_DIALOG_SET_BUTTON_CAPTION);
         setButton.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(final ActionEvent e) {
                 doSetButtonAction();
             }
@@ -74,7 +71,6 @@ public class StepSelectorDialog extends JDialog {
             .setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         stepSelectorDialogList.addMouseListener(new MouseAdapter() {
-            @Override
             public void mouseClicked(final MouseEvent e) {
                 if (e.getClickCount() == 2)
                     setButton.doClick();

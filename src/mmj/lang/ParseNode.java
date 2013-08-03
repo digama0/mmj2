@@ -7,42 +7,42 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  ParseNode.java  0.09 03/01/2008
+ * ParseNode.java  0.09 03/01/2008
  *
- *  Sep-30-2005: use getMandHypArrayLength() instead of
- *               getMandHypArray().
+ * Sep-30-2005: use getMandHypArrayLength() instead of
+ *              getMandHypArray().
  *
- *  Jan-6-2006:  - added calcMaxDepth() for Proof Assistant.
- *               - added new non-recursive isDeepDup() and
- *                  unifyWithSubtree().
- *  Mar-5-2006:  - misc. comments.
- *               - unifyWithSubtree() has hardcoded msg needs
- *                 fixin'.
- *  Aug-27-2006: - added renderParsedSubExpr() for TMFF project
+ * Jan-6-2006:  - added calcMaxDepth() for Proof Assistant.
+ *              - added new non-recursive isDeepDup() and
+ *                 unifyWithSubtree().
+ * Mar-5-2006:  - misc. comments.
+ *              - unifyWithSubtree() has hardcoded msg needs
+ *                fixin'.
+ * Aug-27-2006: - added renderParsedSubExpr() for TMFF project
  *
- *  Jun-01-2007: - version 0.06
- *      --> efficiency and logic tweaks in
- *          mmj.lang.ParseNode.java#unifyWithSubtree() and
- *          mmj.lang.ParseNode.java#isDeepDup()
+ * Jun-01-2007: - version 0.06
+ *     --> efficiency and logic tweaks in
+ *         mmj.lang.ParseNode.java#unifyWithSubtree() and
+ *         mmj.lang.ParseNode.java#isDeepDup()
  *
- *  Aug-1-2007  - version 0.07
- *      --> misc. Work Var Enhancements:
- *          -- added cloneNodeToUseWorkVars()
- *          -- changed "stmt" and "child" to public
- *             because the inconvenience is intolerable.
- *          -- Modified deepCloneApplyingAssrtSubst() to maintain
- *             workVarList instead of keeping count of "dummy"
- *             objects inserted.
+ * Aug-1-2007  - version 0.07
+ *     --> misc. Work Var Enhancements:
+ *         -- added cloneNodeToUseWorkVars()
+ *         -- changed "stmt" and "child" to public
+ *            because the inconvenience is intolerable.
+ *         -- Modified deepCloneApplyingAssrtSubst() to maintain
+ *            workVarList instead of keeping count of "dummy"
+ *            objects inserted.
  *
- *  Feb-1-2008  - version 0.08
- *          -- Add convertToRPN() version of converting
- *             just a sub-tree (not an entire tree)
- *             to RPN.
+ * Feb-1-2008  - version 0.08
+ *         -- Add convertToRPN() version of converting
+ *            just a sub-tree (not an entire tree)
+ *            to RPN.
  *
- *  Apr-1-2008 -- version 0.09
- *          -- Clone deepCloneApplyingAssrtSubst()
- *             so that input variable "workVarList" is
- *             optional, and if null will not be used.
+ * Apr-1-2008 -- version 0.09
+ *         -- Clone deepCloneApplyingAssrtSubst()
+ *            so that input variable "workVarList" is
+ *            optional, and if null will not be used.
  */
 
 package mmj.lang;
@@ -50,81 +50,64 @@ package mmj.lang;
 import java.util.List;
 
 /**
- *  Parse Node is an n-way tree node for Metamath Stmt trees.
- *  <p>
- *  ParseNode is dual use, and provides the tree node structure for
- *  grammatical/syntax parses -- these parse trees can be
- *  readily converted to Reverse Polish Notation (see Stmt.exprRPN)
- *  -- and for proof trees, which are normally stored in Metamath
- *  .mm files in RPN format but can easily be converted to
- *  ParseTrees.
- *  <p>
- *  The difference between
- *  proof and grammatical parse trees is content
- *  and purpose, there is no structural difference.
- *  <p>
- *  Proof step Stmt references are not restricted to Syntax
- *  Axiom and Variable Hypotheses, and can contain references
- *  to Logical Hypotheses, Logical Axioms and other
- *  Theorems. Logical Axioms and Theorems have
- *  Frames (see MandFrame and OptFrame) whose hypArrays
- *  contain Variable Hypotheses AND Logical Hypotheses,
- *  therefore there may be more children nodes under an
- *  Assertion's ParseNode than there are under a Syntax
- *  Axiom's ParseNode.
- *
- *  Both proof parse trees and grammatical parse trees
- *  are required to reproduce/generate the original
- *  Statement's Formula's Expression (the 2nd through
- *  nth Symbols of the Formula), but a Proof is, in
- *  addition required to produce the entire Formula,
- *  which includes the Type Code and the Expression.
- *  <p>
- *  Thus, the difference between a proof and a grammatical
- *  parse is that a proof derives a theorem's Formula
- *  from Axioms with the same Type Code as the statement
- *  being proved; a grammatical parse is not under this
- *  obligation (it must generate some Type Code however!)
- *  <p>
- *  Also:
- *  <ul>
- *  <li>Grammatical parse trees contain Stmt references
- *  to either Syntax Axioms or Variable Hypotheses. The
- *  children of a Syntax Axiom (which is an Assrt) are
- *  either VarHyp's or Syntax Axioms. The number of
- *  children of a Syntax Axiom node is equal to the
- *  size of the Syntax Axiom's Assrt.varHypArray -- which
- *  for Syntax Axioms is the same as the Syntax Axiom's
- *  Assrt.MandFrame.hypArray varHyp, because a Syntax
- *  Axiom has no Logical Hypotheses.</li>
- *
- *  <li>Proof Trees contain Stmt references to Assertions
- *  (Assrt, which includes Axiom and Theorem),
- *  and Hypotheses (Hyp, which includes VarHyp and LogHyp.)
- *  The children of an Assertion Proof Tree Node correspond
- *  to the Assrt.MandFrame.hypArray, one to one in database
- *  sequence. The children of a Hypothesis Proof Tree node
- *  depend on whether the Hypothesis is a Logical Hypothesis
- *  (LogHyp) or a Variable Hypothesis (VarHyp); if a LogHyp,
- *  then the children correspond to the LogHyp.varHypArray,
- *  while if a VarHyp there is only one child (even a VarHyp
- *  node represents an Expression for substitution in the
- *  proof and may have children of its own -- for example,
- *  a VarHyp sub-node of a ProofTree may actually contain
- *  a Stmt reference to "wi" where the "wi" statement has its
- *  own VarHyp's.)</li>
- *
+ * Parse Node is an n-way tree node for Metamath Stmt trees.
+ * <p>
+ * ParseNode is dual use, and provides the tree node structure for
+ * grammatical/syntax parses -- these parse trees can be readily converted to
+ * Reverse Polish Notation (see Stmt.exprRPN) -- and for proof trees, which are
+ * normally stored in Metamath .mm files in RPN format but can easily be
+ * converted to ParseTrees.
+ * <p>
+ * The difference between proof and grammatical parse trees is content and
+ * purpose, there is no structural difference.
+ * <p>
+ * Proof step Stmt references are not restricted to Syntax Axiom and Variable
+ * Hypotheses, and can contain references to Logical Hypotheses, Logical Axioms
+ * and other Theorems. Logical Axioms and Theorems have Frames (see MandFrame
+ * and OptFrame) whose hypArrays contain Variable Hypotheses AND Logical
+ * Hypotheses, therefore there may be more children nodes under an Assertion's
+ * ParseNode than there are under a Syntax Axiom's ParseNode. Both proof parse
+ * trees and grammatical parse trees are required to reproduce/generate the
+ * original Statement's Formula's Expression (the 2nd through nth Symbols of the
+ * Formula), but a Proof is, in addition required to produce the entire Formula,
+ * which includes the Type Code and the Expression.
+ * <p>
+ * Thus, the difference between a proof and a grammatical parse is that a proof
+ * derives a theorem's Formula from Axioms with the same Type Code as the
+ * statement being proved; a grammatical parse is not under this obligation (it
+ * must generate some Type Code however!)
+ * <p>
+ * Also:
+ * <ul>
+ * <li>Grammatical parse trees contain Stmt references to either Syntax Axioms
+ * or Variable Hypotheses. The children of a Syntax Axiom (which is an Assrt)
+ * are either VarHyp's or Syntax Axioms. The number of children of a Syntax
+ * Axiom node is equal to the size of the Syntax Axiom's Assrt.varHypArray --
+ * which for Syntax Axioms is the same as the Syntax Axiom's
+ * Assrt.MandFrame.hypArray varHyp, because a Syntax Axiom has no Logical
+ * Hypotheses.</li>
+ * <li>Proof Trees contain Stmt references to Assertions (Assrt, which includes
+ * Axiom and Theorem), and Hypotheses (Hyp, which includes VarHyp and LogHyp.)
+ * The children of an Assertion Proof Tree Node correspond to the
+ * Assrt.MandFrame.hypArray, one to one in database sequence. The children of a
+ * Hypothesis Proof Tree node depend on whether the Hypothesis is a Logical
+ * Hypothesis (LogHyp) or a Variable Hypothesis (VarHyp); if a LogHyp, then the
+ * children correspond to the LogHyp.varHypArray, while if a VarHyp there is
+ * only one child (even a VarHyp node represents an Expression for substitution
+ * in the proof and may have children of its own -- for example, a VarHyp
+ * sub-node of a ProofTree may actually contain a Stmt reference to "wi" where
+ * the "wi" statement has its own VarHyp's.)</li>
  */
 
 public class ParseNode {
 
     /**
-     *  Stmt object reference, either a Hyp or an Assrt.
+     * Stmt object reference, either a Hyp or an Assrt.
      */
     public Stmt stmt;
 
     /**
-     *  Child node array of length 0 to n.
+     * Child node array of length 0 to n.
      */
     public ParseNode[] child;
 
@@ -141,14 +124,14 @@ public class ParseNode {
     public int firstAppearance;
 
     /**
-     *  Default constructor.
+     * Default constructor.
      */
     public ParseNode() {}
 
     /**
-     *  Construct with a Stmt.
-     *
-     *  @param stmt a proof step.
+     * Construct with a Stmt.
+     * 
+     * @param stmt a proof step.
      */
     public ParseNode(final Stmt stmt) {
         this.stmt = stmt;
@@ -156,9 +139,9 @@ public class ParseNode {
     }
 
     /**
-     *  Construct using a VarHyp.
-     *
-     *  @param varHyp a proof or parse step.
+     * Construct using a VarHyp.
+     * 
+     * @param varHyp a proof or parse step.
      */
     public ParseNode(final VarHyp varHyp) {
         stmt = varHyp;
@@ -166,61 +149,56 @@ public class ParseNode {
     }
 
     /**
-     *  Return ParseNode's Stmt.
-     *
-     *  @return stmt (could be null depending on the context).
+     * Return ParseNode's Stmt.
+     * 
+     * @return stmt (could be null depending on the context).
      */
     public Stmt getStmt() {
         return stmt;
     }
 
     /**
-     *  Set ParseNode's Stmt.
-     *
-     *  @param stmt a proof or parse step.
+     * Set ParseNode's Stmt.
+     * 
+     * @param stmt a proof or parse step.
      */
     public void setStmt(final Stmt stmt) {
         this.stmt = stmt;
     }
 
     /**
-     *  Return ParseNode's Child ParseNode array.
-     *
-     *  @return child ParseNode array.
+     * Return ParseNode's Child ParseNode array.
+     * 
+     * @return child ParseNode array.
      */
     public ParseNode[] getChild() {
         return child;
     }
 
     /**
-     *  Return ParseNode's Child ParseNode array.
-     *
-     *  @param child ParseNode array.
+     * Return ParseNode's Child ParseNode array.
+     * 
+     * @param child ParseNode array.
      */
     public void setChild(final ParseNode[] child) {
         this.child = child;
     }
 
     /**
-     *  Unify an input parse subtree (expression) with
-     *  this subtree and return an array of substitions
-     *  if successful, or null.
-     *
-     *  Using fixed size work stacks here, set to 1000
-     *  in Proof Assistant. Hard to imagine exceeding
-     *  the size so we'll accept the possibility of
-     *  array out-of-bounds exception and just recompile
-     *  if needed (for now...
-     *  see mmj.pa.PaConstants.UNIFIER_NODE_STACK_SIZE ).
-     *
-     *  @param subtreeRoot root of parse subtree to unify with this
-     *  @param varHypArray the VarHyp's in this subtree
-     *  @param unifyNodeStack fixed size work stack
-     *  @param compareNodeStack fixed size work stack
-     *
-     *  @return array of subtrees that represent substitutions
-     *          for the corresponding VarHyps in the input
-     *          varHypArray (may contain nulls).
+     * Unify an input parse subtree (expression) with this subtree and return an
+     * array of substitions if successful, or null. Using fixed size work stacks
+     * here, set to 1000 in Proof Assistant. Hard to imagine exceeding the size
+     * so we'll accept the possibility of array out-of-bounds exception and just
+     * recompile if needed (for now... see
+     * mmj.pa.PaConstants.UNIFIER_NODE_STACK_SIZE ).
+     * 
+     * @param subtreeRoot root of parse subtree to unify with this
+     * @param varHypArray the VarHyp's in this subtree
+     * @param unifyNodeStack fixed size work stack
+     * @param compareNodeStack fixed size work stack
+     * @return array of subtrees that represent substitutions for the
+     *         corresponding VarHyps in the input varHypArray (may contain
+     *         nulls).
      */
     public ParseNode[] unifyWithSubtree(final ParseNode subtreeRoot,
         final VarHyp[] varHypArray, final ParseNode[] unifyNodeStack,
@@ -286,16 +264,13 @@ public class ParseNode {
     }
 
     /**
-     *  Determine if sub-tree is a duplicate of this sub-tree.
-     *
-     *  This is the non-recursive version of isDeepDup(),
-     *  which can be used equivalently instead.
-     *
-     *  @param that ParseNode to compare to this ParseNode.
-     *  @param compareNodeStack fixed length work stack for
-     *                          ParseNodes.
-     *
-     *  @return true if the sub-trees have identical contents.
+     * Determine if sub-tree is a duplicate of this sub-tree. This is the
+     * non-recursive version of isDeepDup(), which can be used equivalently
+     * instead.
+     * 
+     * @param that ParseNode to compare to this ParseNode.
+     * @param compareNodeStack fixed length work stack for ParseNodes.
+     * @return true if the sub-trees have identical contents.
      */
     public boolean isDeepDup(final ParseNode that,
         final ParseNode[] compareNodeStack)
@@ -331,11 +306,10 @@ public class ParseNode {
     }
 
     /**
-     *  Determine if sub-tree is a duplicate of this sub-tree.
-     *
-     *  @param that ParseNode to compare to this ParseNode.
-     *
-     *  @return true if the sub-trees have identical contents.
+     * Determine if sub-tree is a duplicate of this sub-tree.
+     * 
+     * @param that ParseNode to compare to this ParseNode.
+     * @return true if the sub-trees have identical contents.
      */
     public boolean isDeepDup(final ParseNode that) {
         if (that == null || stmt != that.stmt
@@ -350,20 +324,15 @@ public class ParseNode {
     }
 
     /**
-     *  Clones a ParseNode while substituting for any child
-     *  nodes that match the corresponding matchNode array
-     *  node.
-     *
-     *  see GrammarRule.buildGrammaticalParseNode
-     *  for an example. (this is kind of ugly to look at!)
-     *
-     *  @param matchNode ParseNode array of matching ParseNodes.
-     *  @param expandedReseqParam ParseNodeHolder array of
-     *          nodes to splice in to the original tree where
-     *          a matchNode is found.
-     *
-     *  @return deep clone of original node with substituted
-     *          child nodes.
+     * Clones a ParseNode while substituting for any child nodes that match the
+     * corresponding matchNode array node. see
+     * GrammarRule.buildGrammaticalParseNode for an example. (this is kind of
+     * ugly to look at!)
+     * 
+     * @param matchNode ParseNode array of matching ParseNodes.
+     * @param expandedReseqParam ParseNodeHolder array of nodes to splice in to
+     *            the original tree where a matchNode is found.
+     * @return deep clone of original node with substituted child nodes.
      */
     public ParseNode deepCloneWithGrammarHypSubs(final ParseNode[] matchNode,
         final ParseNodeHolder[] expandedReseqParam)
@@ -380,19 +349,17 @@ public class ParseNode {
     }
 
     /**
-     *  Clones a sub-tree and splices in a substitution
-     *  node when a given "matchNode" is found.
-     *  <p>
-     *  Basically, this is used to splice an expression's
-     *  sub-tree into a VarHyp sub-tree. Note that the
-     *  original tree is on top, so we're layering another
-     *  formula on top, with substituted expressions
-     *  replacing the formula's hypotheses.
-     *
-     *  @param matchNode ParseNode to look for and replace.
-     *  @param substNode ParseNode to replace matchNode.
-     *
-     *  @return output ParseNode, unchanged or substituted.
+     * Clones a sub-tree and splices in a substitution node when a given
+     * "matchNode" is found.
+     * <p>
+     * Basically, this is used to splice an expression's sub-tree into a VarHyp
+     * sub-tree. Note that the original tree is on top, so we're layering
+     * another formula on top, with substituted expressions replacing the
+     * formula's hypotheses.
+     * 
+     * @param matchNode ParseNode to look for and replace.
+     * @param substNode ParseNode to replace matchNode.
+     * @return output ParseNode, unchanged or substituted.
      */
     public ParseNode deepCloneWNodeSub(final ParseNode matchNode,
         final ParseNode substNode)
@@ -409,10 +376,9 @@ public class ParseNode {
     }
 
     /**
-     *  Deep clone of a ParseNode sub-tree.
-     *
-     *  @return ParseNode sub-tree matching the original's
-     *          content.
+     * Deep clone of a ParseNode sub-tree.
+     * 
+     * @return ParseNode sub-tree matching the original's content.
      */
     public ParseNode deepClone() {
         final ParseNode out = new ParseNode();
@@ -424,21 +390,19 @@ public class ParseNode {
     }
 
     /**
-     *  (Deep) Clone a ParseNode while substituting a set of
-     *  VarHyp substitutions specified by a parallel Hyp array
-     *  and keeping track of the Work Vars output.
-     *  <p>
-     *  This function is a helper for mmj.pa.ProofUnifier
-     *  and its friend mmj.pa.ProofWorksheet.
-     *
-     *  @param assrtHypArray parallel array for assrtSubst
-     *  @param assrtSubst array of ParseNode sub-tree roots
-     *                    specifying hyp substitutions.
-     *  @param workVarList arrayList of WorkVar updated to contain
-     *                       set of Work Vars used in the subtree.
-     *                       substituted into the output.
-     *
-     *  @return new ParseNode.
+     * (Deep) Clone a ParseNode while substituting a set of VarHyp substitutions
+     * specified by a parallel Hyp array and keeping track of the Work Vars
+     * output.
+     * <p>
+     * This function is a helper for mmj.pa.ProofUnifier and its friend
+     * mmj.pa.ProofWorksheet.
+     * 
+     * @param assrtHypArray parallel array for assrtSubst
+     * @param assrtSubst array of ParseNode sub-tree roots specifying hyp
+     *            substitutions.
+     * @param workVarList arrayList of WorkVar updated to contain set of Work
+     *            Vars used in the subtree. substituted into the output.
+     * @return new ParseNode.
      */
     public ParseNode deepCloneApplyingAssrtSubst(final Hyp[] assrtHypArray,
         final ParseNode[] assrtSubst, final List<Var> workVarList)
@@ -463,14 +427,13 @@ public class ParseNode {
     }
 
     /**
-     *  (Deep) Clone a ParseNode while substituting a set of
-     *  VarHyp substitutions specified by a parallel Hyp array.
-     *
-     *  @param assrtHypArray parallel array for assrtSubst
-     *  @param assrtSubst array of ParseNode sub-tree roots
-     *                    specifying hyp substitutions.
-     *
-     *  @return new ParseNode.
+     * (Deep) Clone a ParseNode while substituting a set of VarHyp substitutions
+     * specified by a parallel Hyp array.
+     * 
+     * @param assrtHypArray parallel array for assrtSubst
+     * @param assrtSubst array of ParseNode sub-tree roots specifying hyp
+     *            substitutions.
+     * @return new ParseNode.
      */
     public ParseNode deepCloneApplyingAssrtSubst(final Hyp[] assrtHypArray,
         final ParseNode[] assrtSubst)
@@ -493,13 +456,13 @@ public class ParseNode {
     }
 
     /**
-     *  Finds *first* VarHyp node in a sub-tree.
-     *  <p>
-     *  This is useful mainly for GrammarRule parse trees which
-     *  have at most one VarHyp per ParseTree.root.child[i].
-     *
-     *  @return first ParseNode among sub-trees of a ParseNode's
-     *          children that is a VarHyp.
+     * Finds *first* VarHyp node in a sub-tree.
+     * <p>
+     * This is useful mainly for GrammarRule parse trees which have at most one
+     * VarHyp per ParseTree.root.child[i].
+     * 
+     * @return first ParseNode among sub-trees of a ParseNode's children that is
+     *         a VarHyp.
      */
     public ParseNode findFirstVarHypNode() {
         if (stmt.isVarHyp())
@@ -514,9 +477,9 @@ public class ParseNode {
     }
 
     /**
-     *  Calculates the maximum depth of a parse sub-tree.
-     *
-     *  @return maximum depth of parse sub-tree
+     * Calculates the maximum depth of a parse sub-tree.
+     * 
+     * @return maximum depth of parse sub-tree
      */
     public int calcMaxDepth() {
         if (stmt.isWorkVarHyp())
@@ -530,7 +493,9 @@ public class ParseNode {
     }
 
     /**
-     *  Counts nodes in a ParseNode sub-tree.
+     * Counts nodes in a ParseNode sub-tree.
+     * 
+     * @return the number of nodes
      */
     public int countParseNodes() {
         if (size != 0)
@@ -543,12 +508,12 @@ public class ParseNode {
     }
 
     /**
-     *  Converts a sub-tree expression to Reverse Polish Notation.
-     *  <p>
-     *  Intended for creating the RPN for an expression
-     *  rather than an entire formula (with ParseTree).
-     *
-     *  @return RPN Stmt array.
+     * Converts a sub-tree expression to Reverse Polish Notation.
+     * <p>
+     * Intended for creating the RPN for an expression rather than an entire
+     * formula (with ParseTree).
+     * 
+     * @return RPN Stmt array.
      */
     public Stmt[] convertToRPN() {
 
@@ -564,15 +529,13 @@ public class ParseNode {
     }
 
     /**
-     *  Converts a sub-tree to Reverse Polish Notation.
-     *  <p>
-     *  Works in reverse order.
-     *
-     *  @param outRPN Stmt Array where RPN will be stored.
-     *  @param dest location in output array to write the
-     *         next Stmt reference.
-     *
-     *  @return dest of *next* output Stmt array item.
+     * Converts a sub-tree to Reverse Polish Notation.
+     * <p>
+     * Works in reverse order.
+     * 
+     * @param outRPN Stmt Array where RPN will be stored.
+     * @param dest location in output array to write the next Stmt reference.
+     * @return dest of *next* output Stmt array item.
      */
     public int convertToRPN(final Stmt[] outRPN, int dest) {
         outRPN[dest--] = stmt;
@@ -585,15 +548,13 @@ public class ParseNode {
     }
 
     /**
-     *  Builds a ParseNode sub-tree from a Stmt array in RPN format.
-     *
-     *  @param rpn Stmt array in RPN format.
-     *  @param stmtPosInRPN location of next Stmt in array
-     *
-     *  @return location of next Stmt in array
-     *
-     *  @throws LangException if ParseTree cannot be built from the
-     *          RPN (null statment or RPN incomplete.)
+     * Builds a ParseNode sub-tree from a Stmt array in RPN format.
+     * 
+     * @param rpn Stmt array in RPN format.
+     * @param stmtPosInRPN location of next Stmt in array
+     * @return location of next Stmt in array
+     * @throws IllegalArgumentException if ParseTree cannot be built from the
+     *             RPN (null statment or RPN incomplete.)
      */
     public int loadParseNodeFromRPN(final Stmt[] rpn, int stmtPosInRPN) {
         if ((stmt = rpn[stmtPosInRPN]) == null)
@@ -615,45 +576,31 @@ public class ParseNode {
     }
 
     /**
-     *  Converts a parse sub-tree into a sub-expression
-     *  which is output into a String Buffer.
-     *  <p>
-     *  Note: this will not work for a proof node! The
-     *        ParseNode's stmt must be a VarHyp or
-     *        a Syntax Axiom.
-     *  <p>
-     *  The output sub-expression is generated into
-     *  text not to exceed the given maxLength. If the
-     *  number of output characters exceeds maxLength
-     *  output terminates after tidying StringBuilder.
-     *  <p>
-     *  The depth of the sub-tree is checked against
-     *  the input maxDepth parameter, and if the depth
-     *  exceeds this number, output terminates after
-     *  tidying StringBuilder.
-     *  <p>
-     *  Depth is computed as 1 for each Notation Syntax
-     *  Axiom Node. VarHyp nodes and Nulls Permitted,
-     *  Type Conversion and NamedTypedConstant Syntax
-     *  Axiom nodes are assigned depth = 0 for purposes of
-     *  depth checking.
-     *  <p>
-     *  @param sb            StringBuilder already initialized
-     *                       for appending characters.
+     * Converts a parse sub-tree into a sub-expression which is output into a
+     * String Buffer.
+     * <p>
+     * Note: this will not work for a proof node! The ParseNode's stmt must be a
+     * VarHyp or a Syntax Axiom.
+     * <p>
+     * The output sub-expression is generated into text not to exceed the given
+     * maxLength. If the number of output characters exceeds maxLength output
+     * terminates after tidying StringBuilder.
+     * <p>
+     * The depth of the sub-tree is checked against the input maxDepth
+     * parameter, and if the depth exceeds this number, output terminates after
+     * tidying StringBuilder.
+     * <p>
+     * Depth is computed as 1 for each Notation Syntax Axiom Node. VarHyp nodes
+     * and Nulls Permitted, Type Conversion and NamedTypedConstant Syntax Axiom
+     * nodes are assigned depth = 0 for purposes of depth checking.
      *
-     *  @param maxDepth      maximum depth of Notation Syntax
-     *                       axioms in sub-tree to be printed.
-     *                       Set to Integer.MAX_VALUE to turn
-     *                       off depth checking.
-     *
-     *  @param maxLength     maximum length of output
-     *                       sub-expression.
-     *                       Set to Integer.MAX_VALUE to turn
-     *                       off depth checking.
-     *
-     *  @return length of sub-expression characters
-     *          appended to the input StringBuilder --
-     *          or -1 if maxDepth or maxLength exceeded.
+     * @param sb StringBuilder already initialized for appending characters.
+     * @param maxDepth maximum depth of Notation Syntax axioms in sub-tree to be
+     *            printed. Set to Integer.MAX_VALUE to turn off depth checking.
+     * @param maxLength maximum length of output sub-expression. Set to
+     *            Integer.MAX_VALUE to turn off depth checking.
+     * @return length of sub-expression characters appended to the input
+     *         StringBuilder -- or -1 if maxDepth or maxLength exceeded.
      */
     public int renderParsedSubExpr(final StringBuilder sb, final int maxDepth,
         final int maxLength)
@@ -669,18 +616,16 @@ public class ParseNode {
     }
 
     /**
-     *  Deep clone of a ParseNode sub-tree converting
-     *  Target Variables to Source Variables.
-     *  <p>
-     *  Note: this is used by UnifyWorkManager and only
-     *        for "raw" substitutions which means that
-     *        any variables in the tree being cloned are,
-     *        by definition, target variables; we do not
-     *        expect any of them to be work variables,
-     *        and furthermore, we expect all of them
-     *        to have assigned values.
-     *
-     *  @return ParseNode sub-tree converted to use WorkVarHyps.
+     * Deep clone of a ParseNode sub-tree converting Target Variables to Source
+     * Variables.
+     * <p>
+     * Note: this is used by UnifyWorkManager and only for "raw" substitutions
+     * which means that any variables in the tree being cloned are, by
+     * definition, target variables; we do not expect any of them to be work
+     * variables, and furthermore, we expect all of them to have assigned
+     * values.
+     * 
+     * @return ParseNode sub-tree converted to use WorkVarHyps.
      */
     public ParseNode cloneTargetToSourceVars() {
 
@@ -704,28 +649,22 @@ public class ParseNode {
     }
 
     /**
-     *      Check to see if or how the input searchWorkVarHyp
-     *      occurs within the current ParseNode stmt and its
-     *      subtree and any substitutions made to VarHyps via
-     *      paSubst.
-     *      <p>
-     *      Note that this function is only called if the
-     *      searchWorkVarHyp.paSubst == null (which
-     *      means we are considering assigning a substitution).
-     *      to it. AND note that it is called only if the
-     *      currentNode.stmt.isWorkVarHyp().
-     *      <p>
-     *      The reason for this hokeyness is that set.mm
-     *      contains loops of renames, such as &W1 := & W3 := &W1,
-     *      etc. Not to mention &W1 := &W2 := &W3 := &W1.
-     *      THESE are "ok" as long as the subtree depth
-     *      remains 1 (e.g. not &W1 := ( &W2 -> &W1 ).
-     *
-     * @param  searchWorkVarHyp the object of the search.
-     * @return occurs Type:
-     *              0 = no occurrences,
-     *              1 = occurs in error (invalid loop)
-     *             -1 = valid rename
+     * Check to see if or how the input searchWorkVarHyp occurs within the
+     * current ParseNode stmt and its subtree and any substitutions made to
+     * VarHyps via paSubst.
+     * <p>
+     * Note that this function is only called if the searchWorkVarHyp.paSubst ==
+     * null (which means we are considering assigning a substitution). to it.
+     * AND note that it is called only if the currentNode.stmt.isWorkVarHyp().
+     * <p>
+     * The reason for this hokeyness is that set.mm contains loops of renames,
+     * such as &W1 := & W3 := &W1, etc. Not to mention &W1 := &W2 := &W3 := &W1.
+     * THESE are "ok" as long as the subtree depth remains 1 (e.g. not &W1 := (
+     * &W2 -> &W1 ).
+     * 
+     * @param searchWorkVarHyp the object of the search.
+     * @return occurs Type: 0 = no occurrences, 1 = occurs in error (invalid
+     *         loop) -1 = valid rename
      */
     public int checkWorkVarHasOccursIn(final WorkVarHyp searchWorkVarHyp) {
 
@@ -763,15 +702,13 @@ public class ParseNode {
     }
 
     /**
-     *  Looks for an occurrence of a given WorkVarHyp within
-     *  a subtree.
-     *  <p>
-     *  This is used in UnifyWorkManager to perform the
-     *  "occurs in" check used by Robinson's unification
-     *  algorithm.
-     *  <p>
-     *  @param searchStmt is what we are looking for.
-     *  @return true iff input searchStmt found in subtree.
+     * Looks for an occurrence of a given WorkVarHyp within a subtree.
+     * <p>
+     * This is used in UnifyWorkManager to perform the "occurs in" check used by
+     * Robinson's unification algorithm.
+     *
+     * @param searchWorkVarHyp is what we are looking for.
+     * @return true iff input searchStmt found in subtree.
      */
     private boolean hasOccursIn(final WorkVarHyp searchWorkVarHyp) {
         if (searchWorkVarHyp == stmt)
@@ -788,10 +725,10 @@ public class ParseNode {
     }
 
     /**
-     *  Returns true if subtree contains a WorkVar
-     *  which has a non-null assigned substitution update.
-     *  <p>
-     *  @return true if subtree contains an updated WorkVar.
+     * Returns true if subtree contains a WorkVar which has a non-null assigned
+     * substitution update.
+     *
+     * @return true if subtree contains an updated WorkVar.
      */
     public boolean hasUpdatedWorkVar() {
         if (stmt.isVarHyp()) {
@@ -807,11 +744,10 @@ public class ParseNode {
     }
 
     /**
-     *  Clone subtree replacing any updated Work Vars
-     *  with clones of their updating subtrees.
-     *
-     *  @return cloned subtree containing no Work Vars
-     *          which have updates.
+     * Clone subtree replacing any updated Work Vars with clones of their
+     * updating subtrees.
+     * 
+     * @return cloned subtree containing no Work Vars which have updates.
      */
     public ParseNode cloneResolvingUpdatedWorkVars() {
 
@@ -834,10 +770,9 @@ public class ParseNode {
     }
 
     /**
-     *  Updates an ArrayList to maintain a set of Work Vars
-     *  used in a subtree.
-     *
-     *  @param workVarList List of WorkVar objects in subtree.
+     * Updates an ArrayList to maintain a set of Work Vars used in a subtree.
+     * 
+     * @param workVarList List of WorkVar objects in subtree.
      */
     public void accumSetOfWorkVarsUsed(final List<Var> workVarList) {
         if (stmt.isWorkVarHyp()) {
@@ -853,10 +788,9 @@ public class ParseNode {
     }
 
     /**
-     *  Updates an ArrayList to maintain a set of Var Hyps
-     *  used in a subtree.
-     *
-     *  @param varHypList List of VarHyp objects in subtree.
+     * Updates an ArrayList to maintain a set of Var Hyps used in a subtree.
+     * 
+     * @param varHypList List of VarHyp objects in subtree.
      */
     public void accumVarHypUsedListBySeq(final List<Hyp> varHypList) {
         if (stmt.isVarHyp())
@@ -867,21 +801,18 @@ public class ParseNode {
     }
 
     /**
-     *  Accumulate Var Hyps used in the subtree
-     *  which are also in an input list of Var Hyps.
-     *  <p>
-     *  Lists are maintained without duplicates and are
-     *  in ascending database sequence.
-     *  <p>
-     *  Note: in ProofUnifier this is used to accumulate
-     *  a list of optional variables that are in use
-     *  in a proof.
-     *  <p>
-     *  @param varHypList List of Var Hyps being sought
-     *                 for accumulation.
-     *  @param varHypInUseList List of Var Hyps accumulated
-     *                 which are in the formula and are
-     *                 in the input varList.
+     * Accumulate Var Hyps used in the subtree which are also in an input list
+     * of Var Hyps.
+     * <p>
+     * Lists are maintained without duplicates and are in ascending database
+     * sequence.
+     * <p>
+     * Note: in ProofUnifier this is used to accumulate a list of optional
+     * variables that are in use in a proof.
+     *
+     * @param varHypList List of Var Hyps being sought for accumulation.
+     * @param varHypInUseList List of Var Hyps accumulated which are in the
+     *            formula and are in the input varList.
      */
     public void accumListVarHypUsedListBySeq(final List<Hyp> varHypList,
         final List<Hyp> varHypInUseList)
@@ -900,13 +831,12 @@ public class ParseNode {
     }
 
     /**
-     *  (Deep) Clone a ParseNode while applying updates to
-     *  WorkVars.
-     *  <p>
-     *  This function is a helper for mmj.pa.ProofUnifier
-     *  and its friend mmj.pa.ProofWorksheet.
-     *
-     *  @return new ParseNode subtree.
+     * (Deep) Clone a ParseNode while applying updates to WorkVars.
+     * <p>
+     * This function is a helper for mmj.pa.ProofUnifier and its friend
+     * mmj.pa.ProofWorksheet.
+     * 
+     * @return new ParseNode subtree.
      */
     public ParseNode deepCloneApplyingWorkVarUpdates() {
 

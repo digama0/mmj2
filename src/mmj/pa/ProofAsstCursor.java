@@ -7,32 +7,31 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  ProofAsstCursor.java  0.05 11/01/2011
+ * ProofAsstCursor.java  0.05 11/01/2011
  *
- *  Sep-15-2006 -- Version 0.01:
- *     ---> New. Simple data structure to hold caret/scroll params.
+ * Sep-15-2006 -- Version 0.01:
+ *    ---> New. Simple data structure to hold caret/scroll params.
  *
- *  Version 0.02 -- 06/01/2007
- *     ---> Un-nesting of Proof Worksheet inner classes.
+ * Version 0.02 -- 06/01/2007
+ *    ---> Un-nesting of Proof Worksheet inner classes.
  *
- *  Nov-01-2007 -- Version 0.03
- *     ---> Add fieldId to cursor (see PaConstant.FIELD_ID_*).
+ * Nov-01-2007 -- Version 0.03
+ *    ---> Add fieldId to cursor (see PaConstant.FIELD_ID_*).
  *
- *  Feb-01-2008 -- Version 0.04
- *     ---> Add outputCursorInstrumentation() for use in
- *          regression testing.
+ * Feb-01-2008 -- Version 0.04
+ *    ---> Add outputCursorInstrumentation() for use in
+ *         regression testing.
  *
- *  Version 0.05 - Nov-01-2011:  comment update.
- *  ==> Add dontScroll for use with incompleteStepCursorAsIs
- *      ProofAsstCursor positioning.
+ * Version 0.05 - Nov-01-2011:  comment update.
+ * ==> Add dontScroll for use with incompleteStepCursorAsIs
+ *     ProofAsstCursor positioning.
 
  */
 
 package mmj.pa;
 
 /**
- *  Simple data structure to hold caret/scroll params for
- *  the Proof Asst GUI.
+ * Simple data structure to hold caret/scroll params for the Proof Asst GUI.
  */
 public class ProofAsstCursor {
 
@@ -67,7 +66,7 @@ public class ProofAsstCursor {
     }
 
     /**
-     *  Default constructor.
+     * Default constructor.
      */
     public ProofAsstCursor() {
         cursorIsSet = false;

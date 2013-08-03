@@ -7,121 +7,116 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  MMIOConstants.java  0.07 11/01/2011
+ * MMIOConstants.java  0.07 11/01/2011
  *
- *  Sep-25-2005:
- *      ->Error message id's changed from "E-" TO "A-" because
- *        their severity halts the run immediately (...abort):
- *          "E-IO-0001 Invalid input character, decimal value = ";
- *          "E-IO-0002 Unable to position reader at char nbr ";
- *          "E-IO-0032 Load() file not found. File name = ";
- *      ->Added " " to message text:
- *          E-IO-0014  Label input for keyword that should not have
- *                     one
- *      ->Removed message, never used:
- *          E-IO-0018
+ * Sep-25-2005:
+ *     ->Error message id's changed from "E-" TO "A-" because
+ *       their severity halts the run immediately (...abort):
+ *         "E-IO-0001 Invalid input character, decimal value = ";
+ *         "E-IO-0002 Unable to position reader at char nbr ";
+ *         "E-IO-0032 Load() file not found. File name = ";
+ *     ->Added " " to message text:
+ *         E-IO-0014  Label input for keyword that should not have
+ *                    one
+ *     ->Removed message, never used:
+ *         E-IO-0018
  *
- *  Dec-10-2005:
- *      ->Add info messages for new LoadLimit feature that
- *        halts file loading after a user-input statement
- *        number or label is reached.
+ * Dec-10-2005:
+ *     ->Add info messages for new LoadLimit feature that
+ *       halts file loading after a user-input statement
+ *       number or label is reached.
  *
- *  Version 0.04:
- *      ->Add MM_BEGIN_COMPRESSED_PROOF_LIST_CHAR
- *        and MM_END_COMPRESSED_PROOF_LIST_CHAR
+ * Version 0.04:
+ *     ->Add MM_BEGIN_COMPRESSED_PROOF_LIST_CHAR
+ *       and MM_END_COMPRESSED_PROOF_LIST_CHAR
  *
- *  Sep-02-2006 -- Version 0.05 --
- *      -> comment update for TMFF project messages.
- *      -> add LOAD_COMMENTS_DEFAULT = true
- *  Oct-27-2006
- *      -> add LOAD_PROOFS_DEFAULT   = true
+ * Sep-02-2006 -- Version 0.05 --
+ *     -> comment update for TMFF project messages.
+ *     -> add LOAD_COMMENTS_DEFAULT = true
+ * Oct-27-2006
+ *     -> add LOAD_PROOFS_DEFAULT   = true
  *
- *  Version 0.06 AUG-01-2008 --
- *      -- Added new static constants identifying Metmath
- *         comment statements which contain Chapter and
- *         Section titles (called Section and Sub-Section
- *         by Norm.)
+ * Version 0.06 AUG-01-2008 --
+ *     -- Added new static constants identifying Metmath
+ *        comment statements which contain Chapter and
+ *        Section titles (called Section and Sub-Section
+ *        by Norm.)
  *
- *         MMIOConstants.CHAPTER_ID_C1     = '#';
- *         MMIOConstants.CHAPTER_ID_C2     = '*';
- *         MMIOConstants.SECTION_ID_C1     = '=';
- *         MMIOConstants.SECTION_ID_C2     = '-';
- *      -- Add "~" Metamath .mm comment label escape char
- *         and "\\s", the Java Regex whitespace pattern
- *         and "\\n", the Java Regex newline pattern
+ *        MMIOConstants.CHAPTER_ID_C1     = '#';
+ *        MMIOConstants.CHAPTER_ID_C2     = '*';
+ *        MMIOConstants.SECTION_ID_C1     = '=';
+ *        MMIOConstants.SECTION_ID_C2     = '-';
+ *     -- Add "~" Metamath .mm comment label escape char
+ *        and "\\s", the Java Regex whitespace pattern
+ *        and "\\n", the Java Regex newline pattern
  *
- *  Version 0.07 - Nov-01-2011:  comment update.
- *      -- Add MMIOConstants.TYPESETTING_COMMENT_ID_STRING
- *         for Systemizer.
+ * Version 0.07 - Nov-01-2011:  comment update.
+ *     -- Add MMIOConstants.TYPESETTING_COMMENT_ID_STRING
+ *        for Systemizer.
  */
 
 package mmj.mmio;
 
+import mmj.gmff.GMFFConstants;
+import mmj.pa.PaConstants;
+import mmj.util.UtilConstants;
+import mmj.verify.GrammarConstants;
+import mmj.verify.ProofConstants;
+
 /**
  * Constants used to parse MetaMath source statements.
  * <p>
- * Contains gnasty 7-bit ASCII code-set dependencies! Gasp...
- * I can't even begin to explain the ugliness of this
- * bit-manipulating, symbol-tweaking horror show. Old school
- * all the way :) Needs to be fixed to move into the 21st
- * Century with Unicode -- that will be where we have 3D
- * holo-IO infinite virtual blackboards and virtual reality
- * gloves and voice recognition units that handle math
- * symbols...in Phase IV of the project :)
+ * Contains gnasty 7-bit ASCII code-set dependencies! Gasp... I can't even begin
+ * to explain the ugliness of this bit-manipulating, symbol-tweaking horror
+ * show. Old school all the way :) Needs to be fixed to move into the 21st
+ * Century with Unicode -- that will be where we have 3D holo-IO infinite
+ * virtual blackboards and virtual reality gloves and voice recognition units
+ * that handle math symbols...in Phase IV of the project :)
  * <p>
  * From Metamath.pdf, 4.1:
  * <p>
- * The only characters that are allowed to appear in a Metamath
- * source file are the 94 printable characters on standard ascii
- * keyboards, which are digits, upper and lower case letters,
- * and the following 32 special characters (plus the following
- * non-printable (white space) characters: space, tab, carriage
+ * The only characters that are allowed to appear in a Metamath source file are
+ * the 94 printable characters on standard ascii keyboards, which are digits,
+ * upper and lower case letters, and the following 32 special characters (plus
+ * the following non-printable (white space) characters: space, tab, carriage
  * return, line feed, and form feed.:
  * <ul>
- * <li> <code>` ~ ! @ # $ % ^ & * ( ) - _ = + </code>
+ * <li> {@code ` ~ ! @ # $ % ^ & * ( ) - _ = + }
  * <li> <code>[ ] { } ; : ' " , . < > / ? \ | </code>
- *
- *  <p>
- *  There are two primary types of constants: parameters that
- *  are "hardcoded" which affect/control processing, and
- *  error/info messages.
- *  <p>
- *  Each mmj message begins with a code, such as this:<br>
- *  <code>
- *  E-LA-0007<br>
- *  <p>
- *  where the format of the code is "X-YY-9999"<br>
- *
- *  <b>X</b>     : error level
- *  <ul>
- *      <li>E = Error
- *      <li>I = Information
- *      <li>A = Abort (processing terminates, usually a bug).
- *  </ul><br>
- *  <br>
- *
- *  <b>YY</b>    : source code
- *  <ul>
- *      <li>GM = mmj.gmff package (see mmj.gmff.GMFFConstants)
- *      <li>GR = mmj.verify.Grammar and related code
- *               (see mmj.verify.GrammarConstants)
- *      <li>IO = mmj.mmio package (see mmj.mmio.MMIOConstants)
- *      <li>LA = mmj.lang package (see mmj.lang.GMFFConstants)
- *      <li>PA = mmj.pa package (proof assistant)
- *               (see mmj.pa.PaConstants)
- *      <li>PR = mmj.verify.VerifyProof and related code
- *               (see mmj.verify.ProofConstants)
- *      <li>TL = mmj.tl package (Theorem Loader).
- *      <li>TM = mmj.tmff.AlignColumn and related code
- *      <li>UT = mmj.util package.
- *               (see mmj.util.UtilConstants)
- *  </ul><br>
- *  <br>
- *  <b>9999</b>   : sequential number within the source code, 0001
- *       through 9999.
- *
- *  </code>
- *
+ * <p>
+ * There are two primary types of constants: parameters that are "hardcoded"
+ * which affect/control processing, and error/info messages.
+ * <p>
+ * Each mmj message begins with a code, such as this:
+ * <p>
+ * <code>E-LA-0007</code>
+ * <p>
+ * where the format of the code is {@code X-YY-9999}<br>
+ * <p>
+ * <b>{@code X}</b> : error level
+ * <ul>
+ * <li>{@code E} = Error
+ * <li>{@code I} = Information
+ * <li>{@code A} = Abort (processing terminates, usually a bug).
+ * </ul>
+ * <p>
+ * <b>{@code YY}</b> : source code
+ * <ul>
+ * <li>{@code GM} = mmj.gmff package (see {@link GMFFConstants})
+ * <li>{@code GR} = mmj.verify.Grammar and related code (see
+ * {@link GrammarConstants})
+ * <li>{@code IO} = mmj.mmio package (see {@link MMIOConstants})
+ * <li>{@code LA} = mmj.lang package (see {@link GMFFConstants})
+ * <li>{@code PA} = mmj.pa package (proof assistant) (see {@link PaConstants})
+ * <li>{@code PR} = mmj.verify.VerifyProof and related code (see
+ * {@link ProofConstants})
+ * <li>{@code TL} = mmj.tl package (Theorem Loader).
+ * <li>{@code TM} = mmj.tmff.AlignColumn and related code
+ * <li>{@code UT} = mmj.util package. (see {@link UtilConstants})
+ * </ul>
+ * <p>
+ * <b>{@code 9999}</b> : sequential number within the source code, 0001 through
+ * 9999.
  */
 public class MMIOConstants {
 
@@ -270,35 +265,33 @@ public class MMIOConstants {
     public static final char CARRIAGE_RETURN_CHAR = '\r';
 
     /**
-     *  Load Comments Default equal true.
-     *  <p>
-     *  If set to true then Metamath comments, at least on
-     *  theorems, will be loaded into LogicalSystem.
-     *  <p>
-     *  If a Metamath comment statement immediately precedes
-     *  a $p (Theorem) statement then the comment is stored
-     *  on the mmj.lang.MObj in the "description" field.
-     *  Later, perhaps, descriptions will be obtained for
-     *  all MObj's, but for now we just need them for
-     *  Proof Assistant.
+     * Load Comments Default equal true.
+     * <p>
+     * If set to true then Metamath comments, at least on theorems, will be
+     * loaded into LogicalSystem.
+     * <p>
+     * If a Metamath comment statement immediately precedes a $p (Theorem)
+     * statement then the comment is stored on the mmj.lang.MObj in the
+     * "description" field. Later, perhaps, descriptions will be obtained for
+     * all MObj's, but for now we just need them for Proof Assistant.
      */
     public static final boolean LOAD_COMMENTS_DEFAULT = true;
 
     /**
-     *  Missing Proof Step label.
-     *
-     *  Equal "?". Every proof must have at least one step
-     *  according to Metamath.pdf.
+     * Missing Proof Step label.
+     * <p>
+     * Equal "?". Every proof must have at least one step according to
+     * Metamath.pdf.
      */
     public static final String MISSING_PROOF_STEP = "?";
 
     /**
-     *  Load Proofs Default equal true.
-     *  <p>
-     *  If set to true then Metamath proofs will be loaded as
-     *  input. Otherwise, a single step = "?" will be passed
-     *  to the SystemLoader when adding a Theorem.
-     *  <p>
+     * Load Proofs Default equal true.
+     * <p>
+     * If set to true then Metamath proofs will be loaded as input. Otherwise, a
+     * single step = "?" will be passed to the SystemLoader when adding a
+     * Theorem.
+     * <p>
      */
     public static final boolean LOAD_PROOFS_DEFAULT = true;
 

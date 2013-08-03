@@ -7,17 +7,17 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  LogicalSystemBoss.java  0.05 1/01/2012
+ * LogicalSystemBoss.java  0.05 1/01/2012
  *
- *  Version 0.04 08/01/2008
- *  --> Moved processing of ProvableLogicStmtType and
- *                          LogicStmtType RunParms
- *      to here from GrammarBoss.
- *  --> Added BookManager parms.
- *  --> Added SeqAssigner parms.
+ * Version 0.04 08/01/2008
+ * --> Moved processing of ProvableLogicStmtType and
+ *                         LogicStmtType RunParms
+ *     to here from GrammarBoss.
+ * --> Added BookManager parms.
+ * --> Added SeqAssigner parms.
  *
- *  Version 0.05 - Nov-01-2011:
- *      - Added GMFFManager stuff
+ * Version 0.05 - Nov-01-2011:
+ *     - Added GMFFManager stuff
  */
 
 package mmj.util;
@@ -31,21 +31,17 @@ import mmj.mmio.*;
 import mmj.verify.GrammarConstants;
 
 /**
- *  Responsible for building, loading, maintaining and fetching
- *  LogicalSystem, and for executing RunParms involving it.
- *  <ul>
- *  <li>If non-executable parm, validate, store and "consume"
- *  <li>If loadfile parm, validate, store values, load,
- *      get error status, print-and-clear messages, and
- *      "consume". Remember that Messages object may have
- *      changed since Systemizer was created, so update
- *      as needed!
- *  <li>If clear, set logicalSystem and systemizer to null;
- *  <li>Provide getter method for logical system and
- *    getIsLoaded method --> if get of logical system
- *    attempted before load then throw exception.
- *  </ul>
- *
+ * Responsible for building, loading, maintaining and fetching LogicalSystem,
+ * and for executing RunParms involving it.
+ * <ul>
+ * <li>If non-executable parm, validate, store and "consume"
+ * <li>If loadfile parm, validate, store values, load, get error status,
+ * print-and-clear messages, and "consume". Remember that Messages object may
+ * have changed since Systemizer was created, so update as needed!
+ * <li>If clear, set logicalSystem and systemizer to null;
+ * <li>Provide getter method for logical system and getIsLoaded method --> if
+ * get of logical system attempted before load then throw exception.
+ * </ul>
  */
 public class LogicalSystemBoss extends Boss {
 
@@ -76,9 +72,9 @@ public class LogicalSystemBoss extends Boss {
     protected boolean logicalSystemLoaded;
 
     /**
-     *  Constructor with BatchFramework for access to environment.
-     *
-     *  @param batchFramework for access to environment.
+     * Constructor with BatchFramework for access to environment.
+     * 
+     * @param batchFramework for access to environment.
      */
     public LogicalSystemBoss(final BatchFramework batchFramework) {
         super(batchFramework);
@@ -86,20 +82,19 @@ public class LogicalSystemBoss extends Boss {
     }
 
     /**
-     *  Returns true if LogicalSystem loaded successfully.
-     *
-     *  @return true if LogicalSystem loaded successfully.
+     * Returns true if LogicalSystem loaded successfully.
+     * 
+     * @return true if LogicalSystem loaded successfully.
      */
     public boolean getLogicalSystemLoaded() {
         return logicalSystemLoaded;
     }
 
     /**
-     *  Executes a single command from the RunParmFile.
-     *
-     *  @param runParm the RunParmFile line to execute.
+     * Executes a single command from the RunParmFile.
+     * 
+     * @param runParm the RunParmFile line to execute.
      */
-    @Override
     public boolean doRunParmCommand(final RunParmArrayEntry runParm)
         throws IllegalArgumentException, MMIOException, FileNotFoundException,
         IOException, VerifyException
@@ -220,15 +215,14 @@ public class LogicalSystemBoss extends Boss {
     }
 
     /**
-     *  Get reference to LogicalSystem.
-     *
-     *  If LogicalSystem has not been successfully loaded
-     *  with a .mm file -- and no load errors -- then
-     *  throw an exception. Either the RunParmFile lines
-     *  are misordered or the LoadFile command is missing,
-     *  or the Metamath file has errors, or?
-     *
-     *  @return LogicalSystem object reference.
+     * Get reference to LogicalSystem.
+     * <p>
+     * If LogicalSystem has not been successfully loaded with a .mm file -- and
+     * no load errors -- then throw an exception. Either the RunParmFile lines
+     * are misordered or the LoadFile command is missing, or the Metamath file
+     * has errors, or?
+     * 
+     * @return LogicalSystem object reference.
      */
     public LogicalSystem getLogicalSystem() {
         if (!logicalSystemLoaded)
@@ -242,22 +236,21 @@ public class LogicalSystemBoss extends Boss {
     }
 
     /**
-     *  Execute the LoadFile command:
-     *  validates RunParm, loads the Metamath file, prints
-     *  any error messages and keeps a reference to the
-     *  loaded LogicalSystem for future reference.
-     *  <p>
-     *  Note: Systemizer does not (yet) have a Tokenizer
-     *        setter method or constructor. This would
-     *        be needed to enable use of non-ASCII
-     *        codesets (there is only one Tokenizer
-     *        at present and it hardcodes character
-     *        values based on the Metamath.pdf
-     *        specification.) To make this change it
-     *        would be necessary to create a Tokenizer
-     *        interface.
-     *
-     *  @param runParm RunParmFile line.
+     * Execute the LoadFile command: validates RunParm, loads the Metamath file,
+     * prints any error messages and keeps a reference to the loaded
+     * LogicalSystem for future reference.
+     * <p>
+     * Note: Systemizer does not (yet) have a Tokenizer setter method or
+     * constructor. This would be needed to enable use of non-ASCII codesets
+     * (there is only one Tokenizer at present and it hardcodes character values
+     * based on the Metamath.pdf specification.) To make this change it would be
+     * necessary to create a Tokenizer interface.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
+     * @throws MMIOException if an error occurred
+     * @throws FileNotFoundException if an error occurred
+     * @throws IOException if an error occurred
      */
     public void doLoadFile(final RunParmArrayEntry runParm)
         throws IllegalArgumentException, MMIOException, FileNotFoundException,
@@ -326,19 +319,20 @@ public class LogicalSystemBoss extends Boss {
     }
 
     /**
-     *  Returns the current value of the LoadProofs RunParm
-     *  or its default setting.
-     *
-     *  @return LoadProofs RunParm value (or its default).
+     * Returns the current value of the LoadProofs RunParm or its default
+     * setting.
+     * 
+     * @return LoadProofs RunParm value (or its default).
      */
     public boolean getLoadProofs() {
         return loadProofs;
     }
 
     /**
-     *  Validate Symbol Table Initial Size Parameter.
-     *
-     *  @param runParm RunParmFile line.
+     * Validate Symbol Table Initial Size Parameter.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editSymTblInitialSize(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -348,11 +342,12 @@ public class LogicalSystemBoss extends Boss {
     }
 
     /**
-     *  Validate Load Endpoint Statement Number Parameter.
-     *
-     *  Must be a positive integer.
-     *
-     *  @param runParm RunParmFile line.
+     * Validate Load Endpoint Statement Number Parameter.
+     * <p>
+     * Must be a positive integer.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editLoadEndpointStmtNbr(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -362,11 +357,12 @@ public class LogicalSystemBoss extends Boss {
     }
 
     /**
-     *  Validate Load Endpoint Statement Label Parameter.
-     *
-     *  Must not be blank.
-     *
-     *  @param runParm RunParmFile line.
+     * Validate Load Endpoint Statement Label Parameter.
+     * <p>
+     * Must not be blank.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editLoadEndpointStmtLabel(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -380,11 +376,12 @@ public class LogicalSystemBoss extends Boss {
     }
 
     /**
-     *  Validate Load Comments Parameter.
-     *
-     *  Must equal yes or no.
-     *
-     *  @param runParm RunParmFile line.
+     * Validate Load Comments Parameter.
+     * <p>
+     * Must equal yes or no.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editLoadComments(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -395,11 +392,12 @@ public class LogicalSystemBoss extends Boss {
     }
 
     /**
-     *  Validate Load Proofs Parameter.
-     *
-     *  Must equal yes or no.
-     *
-     *  @param runParm RunParmFile line.
+     * Validate Load Proofs Parameter.
+     * <p>
+     * Must equal yes or no.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editLoadProofs(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -410,9 +408,10 @@ public class LogicalSystemBoss extends Boss {
     }
 
     /**
-     *  Validate Statement Table Initial Size Parameter.
-     *
-     *  @param runParm RunParmFile line.
+     * Validate Statement Table Initial Size Parameter.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editStmtTblInitialSize(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -422,9 +421,10 @@ public class LogicalSystemBoss extends Boss {
     }
 
     /**
-     *  Validate Provable Logic Statement Type Runparm.
-     *
-     *  @param runParm RunParmFile line.
+     * Validate Provable Logic Statement Type Runparm.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editProvableLogicStmtType(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -442,9 +442,10 @@ public class LogicalSystemBoss extends Boss {
     }
 
     /**
-     *  Validate Logic Statement Type Runparm.
-     *
-     *  @param runParm RunParmFile line.
+     * Validate Logic Statement Type Runparm.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editLogicStmtType(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -460,11 +461,12 @@ public class LogicalSystemBoss extends Boss {
     }
 
     /**
-     *  Validate Book Manager Enabled Parameter.
-     *
-     *  Must equal yes or no.
-     *
-     *  @param runParm RunParmFile line.
+     * Validate Book Manager Enabled Parameter.
+     * <p>
+     * Must equal yes or no.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editBookManagerEnabled(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -480,11 +482,12 @@ public class LogicalSystemBoss extends Boss {
     }
 
     /**
-     *  Validate SeqAssigner Interval Size Parameter.
-     *
-     *  Must be a positive integer within a given range.
-     *
-     *  @param runParm RunParmFile line.
+     * Validate SeqAssigner Interval Size Parameter.
+     * <p>
+     * Must be a positive integer within a given range.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editSeqAssignerIntervalSize(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -495,11 +498,12 @@ public class LogicalSystemBoss extends Boss {
     }
 
     /**
-     *  Validate SeqAssigner Interval Table Initial Size Parameter.
-     *
-     *  Must be a positive integer within a given range.
-     *
-     *  @param runParm RunParmFile line.
+     * Validate SeqAssigner Interval Table Initial Size Parameter.
+     * <p>
+     * Must be a positive integer within a given range.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editSeqAssignerIntervalTblInitialSize(
         final RunParmArrayEntry runParm) throws IllegalArgumentException

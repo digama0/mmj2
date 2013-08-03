@@ -7,17 +7,17 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  TMFFTwoColumnAlignment.java  0.02 08/01/2007
+ * TMFFTwoColumnAlignment.java  0.02 08/01/2007
  *
- *  Oct-06-2006: - new, "TwoColumnAlignment" Method for formula
- *                 rendering in text mode in the new mmj2 feature
- *                 "TMFF".
+ * Oct-06-2006: - new, "TwoColumnAlignment" Method for formula
+ *                rendering in text mode in the new mmj2 feature
+ *                "TMFF".
  *
- *  Aug-01-2007  - renderSubExprWithBreaks() fixed to avoid
- *                 ArrayIndexOutOfBoundsException when
- *                 invoked with a VarHyp parse node (problem
- *                 is that a VarHyp ParseNode.child array
- *                 has length = 0.
+ * Aug-01-2007  - renderSubExprWithBreaks() fixed to avoid
+ *                ArrayIndexOutOfBoundsException when
+ *                invoked with a VarHyp parse node (problem
+ *                is that a VarHyp ParseNode.child array
+ *                has length = 0.
  */
 
 package mmj.tmff;
@@ -25,94 +25,87 @@ package mmj.tmff;
 import mmj.lang.*;
 
 /**
- *  TMFFTwoColumnAlignment aligns portions of a sub-expression into
- *  a two columns when splitting the sub-expression across
- *  multiple lines: the left column is used for constants and
- *  the right column is used for variables. However, if the
- *  expression contains only constants or only variables then
- *  only one column is used.
- *  <p>
- *  TMFFTwoColumnAlignment renders a parsed sub-expression
- *  and if the expression exceeds the input length
- *  or tree depth parameters, the sub-expression is
- *  broken up across multiple lines.
- *  <p>
- *  <p>
- *  <code>
- *  Example:
- *
- *      maxDepth = 1
- *
- *         render "( a -> b )" as follows:
- *
- *                "(  a
- *                 -> b )"
- *
- *             where "a" and "b" are metavariables that
- *             may be replaced by sub-expressions of
- *             arbitrary length and depth.
- *
- *             Note that the trailing constant is appended
- *             to the current line (or if no more room exists
- *             then it is indented 4 columns from the right
- *             column's position.
- *
- *  Example:
- *      maxDepth = 1
- *
- *         render "a (_ b" as follows:
- *
- *                "   a
- *                 (_ b"
- *
- *             where "a" and "b" are metavariables that
- *             may be replaced by sub-expressions of
- *             arbitrary length and depth.
- *
- *  <p>
+ * TMFFTwoColumnAlignment aligns portions of a sub-expression into a two columns
+ * when splitting the sub-expression across multiple lines: the left column is
+ * used for constants and the right column is used for variables. However, if
+ * the expression contains only constants or only variables then only one column
+ * is used.
+ * <p>
+ * TMFFTwoColumnAlignment renders a parsed sub-expression and if the expression
+ * exceeds the input length or tree depth parameters, the sub-expression is
+ * broken up across multiple lines.
+ * <p>
+ * <p>
+ * 
+ * <pre>
+ * Example:
+ * 
+ *     maxDepth = 1
+ * 
+ *        render "( a -> b )" as follows:
+ * 
+ *               "(  a
+ *                -> b )"
+ * 
+ *            where "a" and "b" are metavariables that
+ *            may be replaced by sub-expressions of
+ *            arbitrary length and depth.
+ * 
+ *            Note that the trailing constant is appended
+ *            to the current line (or if no more room exists
+ *            then it is indented 4 columns from the right
+ *            column's position.
+ * 
+ * Example:
+ *     maxDepth = 1
+ * 
+ *        render "a (_ b" as follows:
+ * 
+ *               "   a
+ *                (_ b"
+ * 
+ *            where "a" and "b" are metavariables that
+ *            may be replaced by sub-expressions of
+ *            arbitrary length and depth.
+ * </pre>
  */
 public class TMFFTwoColumnAlignment extends TMFFMethod {
 
     /**
-     *  Default constructor.
+     * Default constructor.
      */
     public TMFFTwoColumnAlignment() {
         super();
     }
 
     /**
-     *  Standard constructor for TMFFTwoColumnAlignment.
-     *
-     *  @param maxDepth maximum sub-tree depth for a sub-expression
-     *                  that will not trigger a line-break, not
-     *                  counting leaf nodes, and non-Notation
-     *                  Syntax Axioms such as Type Conversions.
+     * Standard constructor for TMFFTwoColumnAlignment.
+     * 
+     * @param maxDepth maximum sub-tree depth for a sub-expression that will not
+     *            trigger a line-break, not counting leaf nodes, and
+     *            non-Notation Syntax Axioms such as Type Conversions.
      */
     public TMFFTwoColumnAlignment(final int maxDepth) {
         super(maxDepth);
     }
 
     /**
-     *  Constructor for TMFFTwoColumnAlignment from user parameters.
-     *
-     *  @param maxDepthString maximum sub-tree depth for a sub-expression
-     *                  that will not trigger a line-break, not
-     *                  counting leaf nodes, and non-Notation
-     *                  Syntax Axioms such as Type Conversions.
+     * Constructor for TMFFTwoColumnAlignment from user parameters.
+     * 
+     * @param maxDepthString maximum sub-tree depth for a sub-expression that
+     *            will not trigger a line-break, not counting leaf nodes, and
+     *            non-Notation Syntax Axioms such as Type Conversions.
      */
     public TMFFTwoColumnAlignment(final String maxDepthString) {
         super(maxDepthString);
     }
 
     /**
-     *  Updates maxDepth for a TMFFMethod if the Method
-     *  allows updates.
-     *
-     *  @param maxDepth parameter.
-     *
-     *  @return boolean - true only if update performed.
+     * Updates maxDepth for a TMFFMethod if the Method allows updates.
+     * 
+     * @param maxDepth parameter.
+     * @return boolean - true only if update performed.
      */
-    @Override
     public boolean updateMaxDepth(final int maxDepth) {
 
         this.maxDepth = TMFFMethod.validateMaxDepth(maxDepth);
@@ -121,7 +114,6 @@ public class TMFFTwoColumnAlignment extends TMFFMethod {
     }
 
     // return -1 if error else 0
-    @Override
     protected int renderSubExprWithBreaks(final TMFFStateParams tmffSP,
         final ParseNode currNode, final int leftmostColNbr)
     {

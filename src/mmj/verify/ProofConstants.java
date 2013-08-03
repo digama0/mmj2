@@ -7,144 +7,128 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  ProofConstants.java  0.07 11/01/2011
+ * ProofConstants.java  0.07 11/01/2011
  *
- *  Sep-25-2005:
- *      -->misc. message typos fixed.
- *      -->noted, a few of the "E-PR-" messages are
- *         overridden by "E-IO-" messages because
- *         mmj.lang.LogicalSystem.java is double-checking.
- *  Jan-16-2006:
- *      --> added QED_STEP_NBR literal for use in
- *          creating ProofDerivationStepEntry objects
- *          in VerifyProofs.java.
- *      --> added failsafe PROOF_ABSOLUTE_MAX_RETRIES (sigh)
- *          and ERRMSG_PROOF_ABS_MAX_RETRY_EXCEEDED
+ * Sep-25-2005:
+ *     -->misc. message typos fixed.
+ *     -->noted, a few of the "E-PR-" messages are
+ *        overridden by "E-IO-" messages because
+ *        mmj.lang.LogicalSystem.java is double-checking.
+ * Jan-16-2006:
+ *     --> added QED_STEP_NBR literal for use in
+ *         creating ProofDerivationStepEntry objects
+ *         in VerifyProofs.java.
+ *     --> added failsafe PROOF_ABSOLUTE_MAX_RETRIES (sigh)
+ *         and ERRMSG_PROOF_ABS_MAX_RETRY_EXCEEDED
  *
- *  Version 0.05:
- *      --> Added message for VerifyProofs.convertRPNToFormula()
- *          used when RPN -> Formula conversion fails (abend!)
+ * Version 0.05:
+ *     --> Added message for VerifyProofs.convertRPNToFormula()
+ *         used when RPN -> Formula conversion fails (abend!)
  *
- *  Sep-06-2006:
- *     -->  comment update for TMFF project messages.
- *     -->  convert VerifyProofs hardcoded messages to
- *          ProofConstants.java. Oops.
- *     -->  Fixed bug: a proof of "wph wps ax-mp" resulted in
- *          ArrayIndexOutOfBoundsException in FindUniqueSubstMapping()
- *          so message ERRMSG_STACK_MISMATCH_STEP, E-PR-0021, was
- *          added to detect this underflow condition and generate
- *          a cryptic but helpful message :)
+ * Sep-06-2006:
+ *    -->  comment update for TMFF project messages.
+ *    -->  convert VerifyProofs hardcoded messages to
+ *         ProofConstants.java. Oops.
+ *    -->  Fixed bug: a proof of "wph wps ax-mp" resulted in
+ *         ArrayIndexOutOfBoundsException in FindUniqueSubstMapping()
+ *         so message ERRMSG_STACK_MISMATCH_STEP, E-PR-0021, was
+ *         added to detect this underflow condition and generate
+ *         a cryptic but helpful message :)
  *
- *  Version 0.07 - Nov-01-2011:  comment update.
- *
+ * Version 0.07 - Nov-01-2011:  comment update.
  */
 
 package mmj.verify;
 
+import mmj.gmff.GMFFConstants;
+import mmj.mmio.MMIOConstants;
+import mmj.pa.PaConstants;
+import mmj.util.UtilConstants;
+
 /**
- *  Constants used in mmj.verify.VerifyProofs class.
- *  <p>
- *  VerifyProofs uses fixed size arrays that are reused
- *  from one proof to the next. This is much faster than
- *  reallocating everything for each proof, but it means
- *  that each instance of VerifyProofs requires massive
- *  storage and can only work on one proof at a time.
- *  It also means that Metamath databases like set.mm
- *  can overflow the arrays (set.mm is unbelievable!)
- *  Therefore, VerifyProofs dynamically reallocates
- *  its array after an overflow, up to a point; it
- *  throws an exception if a predetermined maximum size
- *  is exceeded, based on the idea that a bug in the
- *  code is more likely than a work formula having 32,000
- *  symbols. The numbers can be changed here, in ProofConstants,
- *  up or down (have fun :).
- *  <p>
- *  <code>
- *  =============================================================
- *  </code>
- *  <p>
- *  <p>
- *  There are two primary types of constants: parameters that
- *  are "hardcoded" which affect/control processing, and
- *  error/info messages.
- *  <p>
- *  Each mmj message begins with a code, such as this:<br>
- *  <code>
- *  E-LA-0007<br>
- *  <p>
- *  where the format of the code is "X-YY-9999"<br>
- *
- *  <b>X</b>     : error level
- *  <ul>
- *      <li>E = Error
- *      <li>I = Information
- *      <li>A = Abort (processing terminates, usually a bug).
- *  </ul><br>
- *  <br>
- *
- *  <b>YY</b>    : source code
- *  <ul>
- *      <li>GM = mmj.gmff package (see mmj.gmff.GMFFConstants)
- *      <li>GR = mmj.verify.Grammar and related code
- *               (see mmj.verify.GrammarConstants)
- *      <li>IO = mmj.mmio package (see mmj.mmio.MMIOConstants)
- *      <li>LA = mmj.lang package (see mmj.lang.GMFFConstants)
- *      <li>PA = mmj.pa package (proof assistant)
- *               (see mmj.pa.PaConstants)
- *      <li>PR = mmj.verify.VerifyProof and related code
- *               (see mmj.verify.ProofConstants)
- *      <li>TL = mmj.tl package (Theorem Loader).
- *      <li>TM = mmj.tmff.AlignColumn and related code
- *      <li>UT = mmj.util package.
- *               (see mmj.util.UtilConstants)
- *  </ul><br>
- *  <br>
- *  <b>9999</b>   : sequential number within the source code, 0001
- *       through 9999.
- *
- *  </code>
- *  <p>
- *  <code>
- *  =============================================================
- *  </code>
- *  <p>
+ * Constants used in mmj.verify.VerifyProofs class.
+ * <p>
+ * VerifyProofs uses fixed size arrays that are reused from one proof to the
+ * next. This is much faster than reallocating everything for each proof, but it
+ * means that each instance of VerifyProofs requires massive storage and can
+ * only work on one proof at a time. It also means that Metamath databases like
+ * set.mm can overflow the arrays (set.mm is unbelievable!) Therefore,
+ * VerifyProofs dynamically reallocates its array after an overflow, up to a
+ * point; it throws an exception if a predetermined maximum size is exceeded,
+ * based on the idea that a bug in the code is more likely than a work formula
+ * having 32,000 symbols. The numbers can be changed here, in ProofConstants, up
+ * or down (have fun :).
+ * <hr>
+ * There are two primary types of constants: parameters that are "hardcoded"
+ * which affect/control processing, and error/info messages.
+ * <p>
+ * Each mmj message begins with a code, such as this:
+ * <p>
+ * <code>E-LA-0007</code>
+ * <p>
+ * where the format of the code is {@code X-YY-9999}
+ * <p>
+ * <b>{@code X}</b> : error level
+ * <ul>
+ * <li>{@code E} = Error
+ * <li>{@code I} = Information
+ * <li>{@code A} = Abort (processing terminates, usually a bug).
+ * </ul>
+ * <p>
+ * <b>{@code YY}</b> : source code
+ * <ul>
+ * <li>{@code GM} = mmj.gmff package (see {@link GMFFConstants})
+ * <li>{@code GR} = mmj.verify.Grammar and related code (see
+ * {@link GrammarConstants})
+ * <li>{@code IO} = mmj.mmio package (see {@link MMIOConstants})
+ * <li>{@code LA} = mmj.lang package (see {@link GMFFConstants})
+ * <li>{@code PA} = mmj.pa package (proof assistant) (see {@link PaConstants})
+ * <li>{@code PR} = mmj.verify.VerifyProof and related code (see
+ * {@link ProofConstants})
+ * <li>{@code TL} = mmj.tl package (Theorem Loader).
+ * <li>{@code TM} = mmj.tmff.AlignColumn and related code
+ * <li>{@code UT} = mmj.util package. (see {@link UtilConstants})
+ * </ul>
+ * <p>
+ * <b>{@code 9999}</b> : sequential number within the source code, 0001 through
+ * 9999.
  */
 public class ProofConstants {
 
     // from VerifyProofs.java
 
     /**
-     *  Absolute Maximum Retries!
+     * Absolute Maximum Retries!
      */
     public static final int PROOF_ABSOLUTE_MAX_RETRIES = 7;
 
     /**
-     *  Proof stack initial size.
+     * Proof stack initial size.
      */
     public static final int PROOF_PSTACK_INIT_LEN = 400;
     /**
-     *  Proof stack "hard failure" maximum size.
+     * Proof stack "hard failure" maximum size.
      */
     public static final int PROOF_PSTACK_HARD_FAILURE_LEN = 6400;
     /**
-     *  Work expression (array) initial size.
+     * Work expression (array) initial size.
      */
     public static final int PROOF_WEXPR_INIT_LEN = 4000;
     /**
-     *  Work expression (array) "hard failure" maximum size.
+     * Work expression (array) "hard failure" maximum size.
      */
     public static final int PROOF_WEXPR_HARD_FAILURE_LEN = 32000;
     /**
-     *  Substitution map array initial size.
+     * Substitution map array initial size.
      */
     public static final int PROOF_SUBST_INIT_LEN = 400;
     /**
-     *  Substitution map array "hard failure" maximum size.
+     * Substitution map array "hard failure" maximum size.
      */
     public static final int PROOF_SUBST_HARD_FAILURE_LEN = 6400;
 
     /**
-     *  QED ProofDerivationStepEntry last step number
+     * QED ProofDerivationStepEntry last step number
      */
     public static final String QED_STEP_NBR = "qed";
 

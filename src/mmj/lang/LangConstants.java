@@ -6,265 +6,259 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-/**
- *  LangConstants.java  0.10 11/01/2011
+/*
+ * LangConstants.java  0.10 11/01/2011
  *
- *  Aug-30-2005: misc. message typos fixed.
+ * Aug-30-2005: misc. message typos fixed.
  *
- *  Sep-25-2005:
- *      -->misc. message typos fixed.
- *      -->noted, a few of the "E-LA-" messages are
- *         overridden by "E-IO-" messages because
- *         mmj.lang.LogicalSystem.java is double-checking.
- *      -->Error message id's changed from "E-" TO "A-" because
- *         their severity halts the run immediately (...abort):
- *             "E-LA-0030 ParseTree conversion to RPN failed."
- *             "E-LA-0033 Statement Label string is empty.";
- *             "E-LA-0034 Sym Id string is empty.";
+ * Sep-25-2005:
+ *     -->misc. message typos fixed.
+ *     -->noted, a few of the "E-LA-" messages are
+ *        overridden by "E-IO-" messages because
+ *        mmj.lang.LogicalSystem.java is double-checking.
+ *     -->Error message id's changed from "E-" TO "A-" because
+ *        their severity halts the run immediately (...abort):
+ *            "E-LA-0030 ParseTree conversion to RPN failed."
+ *            "E-LA-0033 Statement Label string is empty.";
+ *            "E-LA-0034 Sym Id string is empty.";
  *
- *  Version 0.03:
- *      --> Added new messages for ParseNode.java
- *              ERRMSG_ASSRT_SUBST_HYP_NOTFND_1
- *              ERRMSG_UNIFY_SUBST_HYP_NOTFND_1
- *      --> Added stuff for ProofCompression.java to use :)
+ * Version 0.03:
+ *     --> Added new messages for ParseNode.java
+ *             ERRMSG_ASSRT_SUBST_HYP_NOTFND_1
+ *             ERRMSG_UNIFY_SUBST_HYP_NOTFND_1
+ *     --> Added stuff for ProofCompression.java to use :)
  *
- *  Version 0.04:
- *  Aug-27-2006: Added error message
- *               A-LA-0201 ERRMSG_BAD_PARSE_STMT_1
- *               for TMFF project.
+ * Version 0.04:
+ * Aug-27-2006: Added error message
+ *              A-LA-0201 ERRMSG_BAD_PARSE_STMT_1
+ *              for TMFF project.
  *
- *  Sep-02-2006: comment update for TMFF project messages.
- *  Oct-12-2006: New error messages supporting
- *               Metamath.pdf spec change of 6-24-2006
- *               prohibiting Stmt label and Sym id namespace
- *               collisions.
- *  Oct-15-2006: Set max error messages and max info messages
- *               to 15,000 to match the standard RunParms.txt file.
+ * Sep-02-2006: comment update for TMFF project messages.
+ * Oct-12-2006: New error messages supporting
+ *              Metamath.pdf spec change of 6-24-2006
+ *              prohibiting Stmt label and Sym id namespace
+ *              collisions.
+ * Oct-15-2006: Set max error messages and max info messages
+ *              to 15,000 to match the standard RunParms.txt file.
  *
- *  Version 0.05 -- 06/01/2007
- *      --> Added messages for use in stopInstrumentationTimer()
+ * Version 0.05 -- 06/01/2007
+ *     --> Added messages for use in stopInstrumentationTimer()
  *
- *  Version 0.06 -- 08/01/2007
- *      --> Misc. Work Var Enhancements.
+ * Version 0.06 -- 08/01/2007
+ *     --> Misc. Work Var Enhancements.
  *
- *  Version 0.07 -- 02/01/2008
- *      --> Modified E-LA-0028 and E-LA-0029 messages to
- *          spell out "SymbolTable" and "StatementTable".
- *      --> Add ERRMSG_SUBTREE_CONV_TO_RPN_FAILURE for
- *          use by ParseNode.converToRPN()
- *      --> Increase SYM_TBL_INITIAL_SIZE_DEFAULT and
- *                  STMT_TBL_INITIAL_SIZE_DEFAULT.
+ * Version 0.07 -- 02/01/2008
+ *     --> Modified E-LA-0028 and E-LA-0029 messages to
+ *         spell out "SymbolTable" and "StatementTable".
+ *     --> Add ERRMSG_SUBTREE_CONV_TO_RPN_FAILURE for
+ *         use by ParseNode.converToRPN()
+ *     --> Increase SYM_TBL_INITIAL_SIZE_DEFAULT and
+ *                 STMT_TBL_INITIAL_SIZE_DEFAULT.
  *
- *  Version 0.08 -- 08/01/2008
- *      --> Add constants for BookManager.java
- *      --> Add constants for SeqAssigner.java
- *      --> Add stuff for Theorem Loader.
- *      --> Add ERRMSG_DUP_SYM_MAP_PUT_ATTEMPT (A-LA-0041)
- *          and ERRMSG_DUP_STMT_MAP_PUT_ATTEMPT (A-LA-0042)
- *          for duplicate checking by LogicalSystem.
- *      --> Add ERRMSG_DUP_DJ_VARS_AFTER_CONSOLIDATION_ERR_1
- *          and ERRMSG_DUP_DJ_VARS_AFTER_CONSOLIDATION_ERR_2
+ * Version 0.08 -- 08/01/2008
+ *     --> Add constants for BookManager.java
+ *     --> Add constants for SeqAssigner.java
+ *     --> Add stuff for Theorem Loader.
+ *     --> Add ERRMSG_DUP_SYM_MAP_PUT_ATTEMPT (A-LA-0041)
+ *         and ERRMSG_DUP_STMT_MAP_PUT_ATTEMPT (A-LA-0042)
+ *         for duplicate checking by LogicalSystem.
+ *     --> Add ERRMSG_DUP_DJ_VARS_AFTER_CONSOLIDATION_ERR_1
+ *         and ERRMSG_DUP_DJ_VARS_AFTER_CONSOLIDATION_ERR_2
  *
- *  Version 0.09 -- 07/01/2011
- *      --> Update SYM_TBL_INITIAL_SIZE_DEFAULT to 1500 and
- *                 STMT_TBL_INITIAL_SIZE_DEFAULT to 45000.
+ * Version 0.09 -- 07/01/2011
+ *     --> Update SYM_TBL_INITIAL_SIZE_DEFAULT to 1500 and
+ *                STMT_TBL_INITIAL_SIZE_DEFAULT to 45000.
  *
- *  Version 0.10 - Nov-01-2011:  comment update.
- *      --> Add stmt label to ERRMSG_BAD_PARSE_STMT_1
+ * Version 0.10 - Nov-01-2011:  comment update.
+ *     --> Add stmt label to ERRMSG_BAD_PARSE_STMT_1
  */
 
 package mmj.lang;
 
+import mmj.gmff.GMFFConstants;
+import mmj.mmio.MMIOConstants;
+import mmj.pa.PaConstants;
+import mmj.util.UtilConstants;
+import mmj.verify.GrammarConstants;
+import mmj.verify.ProofConstants;
+
 /**
- *  Constants used in mmj.lang package.
- *  <p>
- *  There are two primary types of constants: parameters that
- *  are "hardcoded" which affect/control processing, and
- *  error/info messages.
- *  <p>
- *  Each mmj message begins with a code, such as this:<br>
- *  <code>
- *  E-LA-0007<br>
- *  <p>
- *  where the format of the code is "X-YY-9999"<br>
- *
- *  <b>X</b>     : error level
- *  <ul>
- *      <li>E = Error
- *      <li>I = Information
- *      <li>A = Abort (processing terminates, usually a bug).
- *  </ul><br>
- *  <br>
- *
- *  <b>YY</b>    : source code
- *  <ul>
- *      <li>GM = mmj.gmff package (see mmj.gmff.GMFFConstants)
- *      <li>GR = mmj.verify.Grammar and related code
- *               (see mmj.verify.GrammarConstants)
- *      <li>IO = mmj.mmio package (see mmj.mmio.MMIOConstants)
- *      <li>LA = mmj.lang package (see mmj.lang.GMFFConstants)
- *      <li>PA = mmj.pa package (proof assistant)
- *               (see mmj.pa.PaConstants)
- *      <li>PR = mmj.verify.VerifyProof and related code
- *               (see mmj.verify.ProofConstants)
- *      <li>TL = mmj.tl package (Theorem Loader).
- *      <li>TM = mmj.tmff.AlignColumn and related code
- *      <li>UT = mmj.util package.
- *               (see mmj.util.UtilConstants)
- *  </ul><br>
- *  <br>
- *  <b>9999</b>   : sequential number within the source code, 0001
- *       through 9999.
- *
- *  </code>
+ * Constants used in mmj.lang package.
+ * <p>
+ * There are two primary types of constants: parameters that are "hardcoded"
+ * which affect/control processing, and error/info messages.
+ * <p>
+ * Each mmj message begins with a code, such as this:
+ * <p>
+ * <code>E-LA-0007</code>
+ * <p>
+ * where the format of the code is {@code X-YY-9999}<br>
+ * <p>
+ * <b>{@code X}</b> : error level
+ * <ul>
+ * <li>{@code E} = Error
+ * <li>{@code I} = Information
+ * <li>{@code A} = Abort (processing terminates, usually a bug).
+ * </ul>
+ * <p>
+ * <b>{@code YY}</b> : source code
+ * <ul>
+ * <li>{@code GM} = mmj.gmff package (see {@link GMFFConstants})
+ * <li>{@code GR} = mmj.verify.Grammar and related code (see
+ * {@link GrammarConstants})
+ * <li>{@code IO} = mmj.mmio package (see {@link MMIOConstants})
+ * <li>{@code LA} = mmj.lang package (see {@link GMFFConstants})
+ * <li>{@code PA} = mmj.pa package (proof assistant) (see {@link PaConstants})
+ * <li>{@code PR} = mmj.verify.VerifyProof and related code (see
+ * {@link ProofConstants})
+ * <li>{@code TL} = mmj.tl package (Theorem Loader).
+ * <li>{@code TM} = mmj.tmff.AlignColumn and related code
+ * <li>{@code UT} = mmj.util package. (see {@link UtilConstants})
+ * </ul>
+ * <p>
+ * <b>{@code 9999}</b> : sequential number within the source code, 0001 through
+ * 9999.
  */
 public class LangConstants {
 
     /**
-     *  for LogicalSystem.java
+     * for LogicalSystem.java
      */
 
     /**
-     *  Default initial size of Symbol Table, large
-     *  enough to handle set.mm times 1.5.
-     *
-     *  The system will grow the table, as needed.
+     * Default initial size of Symbol Table, large enough to handle set.mm times
+     * 1.5.
+     * <p>
+     * The system will grow the table, as needed.
      */
     public static final int SYM_TBL_INITIAL_SIZE_DEFAULT = 1500;
 
     /**
-     *  Minimum size of Symbol Table.
-     *
-     *  An arbitrary small number greater than zero :)
+     * Minimum size of Symbol Table.
+     * <p>
+     * An arbitrary small number greater than zero :)
      */
     public static final int SYM_TBL_INITIAL_SIZE_MINIMUM = 10;
 
     /**
-     *  Default initial size of Statement Table, large
-     *  enough to handle set.mm times 1.5.
-     *
-     *  An arbitrary small number greater than zero :)
+     * Default initial size of Statement Table, large enough to handle set.mm
+     * times 1.5.
+     * <p>
+     * An arbitrary small number greater than zero :)
      */
     public static final int STMT_TBL_INITIAL_SIZE_DEFAULT = 45000;
 
     /**
-     *  Minimum size of Statement Table.
-     *
-     *  An arbitrary small number greater than zero :)
+     * Minimum size of Statement Table.
+     * <p>
+     * An arbitrary small number greater than zero :)
      */
     public static final int STMT_TBL_INITIAL_SIZE_MINIMUM = 100;
 
 //  DEPRECATED/DELETED AS OF 08/01/2008 RELEASE
 //  SEE LangConstants.SEQ_ASSIGNER_INTERVAL_SIZE_DEFAULT
 //  /**
-//   *  First .mm MObj (Sym/Stmt/etc) .seq = 10, second, 20, etc.
-//   *
-//   *  MObj.seq numbers are assigned sequentially in
-//   *  input/database sequence, but a gapping interval
-//   *  is applied via multiples of this number.
+//   * First .mm MObj (Sym/Stmt/etc) .seq = 10, second, 20, etc.
+//   * <p>
+//   * MObj.seq numbers are assigned sequentially in
+//   * input/database sequence, but a gapping interval
+//   * is applied via multiples of this number.
 //   */
 //  public static final int      MOBJ_SEQ_NBR_INCREMENT
 //                                = 10;
 
     /**
-     *  Default ProofVerifier is null, meaning no proof
-     *  verification is done automatically.
-     *
-     *  The ProofVerifier can be added after the .mm file
-     *  is loaded.
+     * Default ProofVerifier is null, meaning no proof verification is done
+     * automatically.
+     * <p>
+     * The ProofVerifier can be added after the .mm file is loaded.
      */
     public static final ProofVerifier PROOF_VERIFIER_DEFAULT = null;
 
-    /*
-     *  Default SyntaxVerifier is null, meaning no grammar
-     *  or syntax parsing/verification is done automatically.
-     *
-     *  The SyntaxVerifier can be added after the .mm file
-     *  is loaded.
+    /**
+     * Default SyntaxVerifier is null, meaning no grammar or syntax
+     * parsing/verification is done automatically.
+     * <p>
+     * The SyntaxVerifier can be added after the .mm file is loaded.
      */
     public static final SyntaxVerifier SYNTAX_VERIFIER_DEFAULT = null;
 
     /**
-     *  Default maximum number of error messages in
-     *  mmj.lang.Messages.java, the mmj message repository
-     *  during processing.
-     *
-     *  The number of error messages is important, and
-     *  is used to halt processing when the maximum is
-     *  reached. Also, Proof Verification and/or Syntax
-     *  Verification will not take place unless the
-     *  .mm file was loaded with zero errors.
-     *
-     *  Set this number to 9999 if desired, it is not
-     *  a problem unless you are short on memory.
-     *
+     * Default maximum number of error messages in mmj.lang.Messages.java, the
+     * mmj message repository during processing.
+     * <p>
+     * The number of error messages is important, and is used to halt processing
+     * when the maximum is reached. Also, Proof Verification and/or Syntax
+     * Verification will not take place unless the .mm file was loaded with zero
+     * errors.
+     * <p>
+     * Set this number to 9999 if desired, it is not a problem unless you are
+     * short on memory.
      */
     public static final int MAX_ERROR_MESSAGES_DEFAULT = 15000;
 
     /**
-     *  Default maximum number of "info" messages in
-     *  mmj.lang.Messages.java, the mmj message repository
-     *  during processing.
-     *
-     *  There are not many info messages in mmj at this
-     *  time. Basically they fall into the category of
-     *  "warnings", but in the future might include
-     *  audit or statistical data ("instrumentation").
+     * Default maximum number of "info" messages in mmj.lang.Messages.java, the
+     * mmj message repository during processing.
+     * <p>
+     * There are not many info messages in mmj at this time. Basically they fall
+     * into the category of "warnings", but in the future might include audit or
+     * statistical data ("instrumentation").
      */
     public static final int MAX_INFO_MESSAGES_DEFAULT = 15000;
 
     // ====================================================
 
     /**
-     *  for SeqAssigner.java
+     * for SeqAssigner.java
      */
 
     /**
-     *  Sequence Number minimum interval size.
-     *  <p>
-     *  SEQ_ASSIGNER_MIN_INTERVAL_SIZE = 1.
+     * Sequence Number minimum interval size.
+     * <p>
+     * SEQ_ASSIGNER_MIN_INTERVAL_SIZE = 1.
      */
     public static final int SEQ_ASSIGNER_MIN_INTERVAL_SIZE = 1;
 
     /**
-     *  Sequence Number maximum interval size.
-     *  <p>
-     *  SEQ_ASSIGNER_MAX_INTERVAL_SIZE = 10000.
+     * Sequence Number maximum interval size.
+     * <p>
+     * SEQ_ASSIGNER_MAX_INTERVAL_SIZE = 10000.
      */
     public static final int SEQ_ASSIGNER_MAX_INTERVAL_SIZE = 10000;
 
     /**
-     *  Sequence Number default interval size.
-     *  <p>
-     *  SEQ_ASSIGNER_INTERVAL_SIZE_DEFAULT = 1000.
+     * Sequence Number default interval size.
+     * <p>
+     * SEQ_ASSIGNER_INTERVAL_SIZE_DEFAULT = 1000.
      */
     public static final int SEQ_ASSIGNER_INTERVAL_SIZE_DEFAULT = 1000;
 
     /**
-     *  Sequence Number Interval Table HashMap minimum initial size.
-     *  <p>
-     *  SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_MIN = 10.
+     * Sequence Number Interval Table HashMap minimum initial size.
+     * <p>
+     * SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_MIN = 10.
      */
     public static final int SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_MIN = 10;
 
     /**
-     *  Sequence Number Interval Table HashMap maximum initial size.
-     *  <p>
-     *  SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_MAX = 10000.
+     * Sequence Number Interval Table HashMap maximum initial size.
+     * <p>
+     * SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_MAX = 10000.
      */
     public static final int SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_MAX = 10000;
 
     /**
-     *  Sequence Number Interval Table HashMap initial size.
-     *  <p>
-     *  SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_DEFAULT = 100.
+     * Sequence Number Interval Table HashMap initial size.
+     * <p>
+     * SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_DEFAULT = 100.
      */
     public static final int SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_DEFAULT = 100;
 
     // ====================================================
 
     /**
-     *  for ProofCompression.java
+     * for ProofCompression.java
      */
 
     public static final int COMPRESS_LOW_BASE = 20;
@@ -314,7 +308,7 @@ public class LangConstants {
     // ====================================================
 
     /**
-     *  for WorkVarManager.java
+     * for WorkVarManager.java
      */
 
     public static final int NBR_WORK_VARS_FOR_TYPE_MIN = 10;
@@ -330,8 +324,8 @@ public class LangConstants {
     // ====================================================
 
     /**
-     *  for ParseNode.java to commo to mmj.pa.StepUnifier...
-     *  (see ParseNode.checkWorkVarHasOccursIn())
+     * for ParseNode.java to commo to mmj.pa.StepUnifier... (see
+     * ParseNode.checkWorkVarHasOccursIn())
      */
 
     public static final int WV_OCCURS_IN_RENAME_LOOP = -1;
@@ -343,32 +337,31 @@ public class LangConstants {
     // ====================================================
 
     /**
-     *  for BookManager.java
+     * for BookManager.java
      */
 
     /**
-     *  The BookManager is enabled by default even though
-     *  it is possibly of little use to the average mmj2 user.
+     * The BookManager is enabled by default even though it is possibly of
+     * little use to the average mmj2 user.
      */
     public final static boolean BOOK_MANAGER_ENABLED_DEFAULT = true;
 
     /**
-     *  This sets the initial size of the ArrayList used to
-     *  store Chapters in the BookManager.
-     *  <p>
-     *  If the number of input Chapters exceeds this value
-     *  the ArrayList is automatically resized. As of August 2008
-     *  there were 33 Chapters in set.mm
+     * This sets the initial size of the ArrayList used to store Chapters in the
+     * BookManager.
+     * <p>
+     * If the number of input Chapters exceeds this value the ArrayList is
+     * automatically resized. As of August 2008 there were 33 Chapters in set.mm
      */
     public final static int ALLOC_NBR_BOOK_CHAPTERS_INITIAL = 50;
 
     /**
-     *  This sets the initial size of the ArrayList used to
-     *  store Sections in the BookManager.
-     *  <p>
-     *  If the number of input Sections exceeds this value
-     *  the ArrayList is automatically resized. As of August 2008
-     *  there were about 1250 Sections in set.mm
+     * This sets the initial size of the ArrayList used to store Sections in the
+     * BookManager.
+     * <p>
+     * If the number of input Sections exceeds this value the ArrayList is
+     * automatically resized. As of August 2008 there were about 1250 Sections
+     * in set.mm
      */
     public final static int ALLOC_NBR_BOOK_SECTIONS_INITIAL = 1500;
 
@@ -385,7 +378,7 @@ public class LangConstants {
     // ====================================================
 
     /**
-     *  for Chapter.java
+     * for Chapter.java
      */
 
     public final static String CHAPTER_TOSTRING_LITERAL_1 = "Chapter ";
@@ -401,7 +394,7 @@ public class LangConstants {
     // ====================================================
 
     /**
-     *  for Section.java
+     * for Section.java
      */
 
     public final static String SECTION_TOSTRING_LITERAL_1 = "Chapter ";
@@ -584,7 +577,7 @@ public class LangConstants {
     // =======================================================
 
     /**
-     *  Messages for ProofCompression.java
+     * Messages for ProofCompression.java
      */
 
     public static final String ERRMSG_COMPRESS_OTHER_NOTFND_1 = "E-LA-0101 Theorem ";
@@ -668,7 +661,7 @@ public class LangConstants {
     // =======================================================
 
     /**
-     *  Messages for ProofCompression.java
+     * Messages for ProofCompression.java
      */
 
     public static final String ERRMSG_BAD_PARSE_STMT_1 = "A-LA-0201 Stmt Label ";
@@ -680,7 +673,7 @@ public class LangConstants {
     // =======================================================
 
     /**
-     *  Messages for Messages.java
+     * Messages for Messages.java
      */
 
     public static final String ERRMSG_TIMER_ID_NOTFND_1 = "E-LA-0301 TimerID ";
@@ -701,7 +694,7 @@ public class LangConstants {
     // =======================================================
 
     /**
-     *  Messages for WorkVarManager.java
+     * Messages for WorkVarManager.java
      */
 
     public static final String ERRMSG_DEFINE_WORK_VAR_TYPE_BAD_1 = "A-LA-0401 DefineWorkVarType error on RunParm or"
@@ -747,7 +740,7 @@ public class LangConstants {
     // =======================================================
 
     /**
-     *  Messages for ParseNode.java
+     * Messages for ParseNode.java
      */
 
     public static final String ERRMSG_NULL_TARGET_VAR_HYP_PA_SUBST_1 = "A-LA-0501"
@@ -759,7 +752,7 @@ public class LangConstants {
     // =======================================================
 
     /**
-     *  Messages for SeqAssigner.java
+     * Messages for SeqAssigner.java
      */
 
     public static final String ERRMSG_INTERVAL_SIZE_RANGE_ERR_1 = "A-LA-0601"
@@ -807,7 +800,7 @@ public class LangConstants {
     // =======================================================
 
     /**
-     *  Messages for Theorem.java
+     * Messages for Theorem.java
      */
 
     public static final String ERRMSG_DJ_VARS_VARS_NOT_DEF_IN_EXT_FRAME = "A-LA-0701"
@@ -818,7 +811,7 @@ public class LangConstants {
     // =======================================================
 
     /**
-     *  Messages for BookManager.java
+     * Messages for BookManager.java
      */
 
     public static final String ERRMSG_BM_UPDATE_W_MMT_SECTION_NOTFND_1 = "E-LA-0801"
@@ -830,7 +823,7 @@ public class LangConstants {
     // =======================================================
 
     /**
-     *  Messages for MandFrame.java
+     * Messages for MandFrame.java
      */
 
     public static final String ERRMSG_DUP_DJ_VARS_AFTER_CONSOLIDATION_ERR_1 = "A-LA-0901"

@@ -6,10 +6,10 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  UnifySubst.java  0.01 08/01/2007
+ * UnifySubst.java  0.01 08/01/2007
  *
- *  Version 0.01 08/01/2007
- *               - new.
+ * Version 0.01 08/01/2007
+ *              - new.
  */
 
 package mmj.pa;
@@ -18,9 +18,8 @@ import mmj.lang.ParseNode;
 import mmj.lang.VarHyp;
 
 /**
- *  UnifySubst is a data structure for use in proof
- *  unification.
- *  <p>
+ * UnifySubst is a data structure for use in proof unification.
+ * <p>
  */
 public class UnifySubst {
 

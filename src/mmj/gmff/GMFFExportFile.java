@@ -6,11 +6,11 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-/**
- *  GMFFExportFile.java  0.01 11/01/2011
+/*
+ * GMFFExportFile.java  0.01 11/01/2011
  *
- *  Version 0.01:
- *  Nov-01-2011: new.
+ * Version 0.01:
+ * Nov-01-2011: new.
  */
 
 package mmj.gmff;
@@ -18,8 +18,8 @@ package mmj.gmff;
 import java.io.*;
 
 /**
- *  GMFFExportFile is a little helper class for GMFF
- *  to handle the ugly IO details.
+ * GMFFExportFile is a little helper class for GMFF to handle the ugly IO
+ * details.
  */
 public class GMFFExportFile {
 
@@ -31,17 +31,16 @@ public class GMFFExportFile {
     private File exportFile;
 
     /**
-     *  Standard constructor.
-     *  <p>
-     *  @param exportFolder    where output files written
-     *  @param exportFileName  Output File Name.
-     *  @param charsetEncoding Charset Encoding Name (see doc).
-     *  @param exportType      Export Type (e.g. "html" or "althtml")
-     *  @param append          true only if open in append mode
-     *  @throws GMFFException if Export File is null or empty,
-     *            or not a writeable file, or if there is a file
-     *            security error, or if charsetEncoding name is
-     *            null or empty.
+     * Standard constructor.
+     *
+     * @param exportFolder where output files written
+     * @param exportFileName Output File Name.
+     * @param charsetEncoding Charset Encoding Name (see doc).
+     * @param exportType Export Type (e.g. "html" or "althtml")
+     * @param append true only if open in append mode
+     * @throws GMFFException if Export File is null or empty, or not a writeable
+     *             file, or if there is a file security error, or if
+     *             charsetEncoding name is null or empty.
      */
     public GMFFExportFile(final GMFFFolder exportFolder,
         final String exportFileName, final String charsetEncoding,
@@ -97,12 +96,11 @@ public class GMFFExportFile {
     }
 
     /**
-     *  Writes the export buffer and closes the file.
-     *  <p>
-     *  @param exportBuffer text to be written out.
-     *  @throws GMFFException if I/O exception, security
-     *           exception or if the charsetEncoding name
-     *           is not supported.
+     * Writes the export buffer and closes the file.
+     *
+     * @param exportBuffer text to be written out.
+     * @throws GMFFException if I/O exception, security exception or if the
+     *             charsetEncoding name is not supported.
      */
     public void writeFileContents(final StringBuilder exportBuffer)
         throws GMFFException
@@ -147,13 +145,13 @@ public class GMFFExportFile {
     }
 
     /**
-     *  Closes the Writer used for the Export File.
-     *  <p>
-     *  Does nothing if input Writer is null.
-     *  <p>
-     *  @param w Writer object or null.
-     *  @throws GMFFException if there is an I/O error
-     *         during the close operation.
+     * Closes the Writer used for the Export File.
+     * <p>
+     * Does nothing if input Writer is null.
+     *
+     * @param w Writer object or null.
+     * @throws GMFFException if there is an I/O error during the close
+     *             operation.
      */
     public void close(final Writer w) throws GMFFException {
         try {
@@ -173,10 +171,10 @@ public class GMFFExportFile {
     }
 
     /**
-     *  Returns the absolute pathname of the GMFFExportFile
-     *  <p>
-     *  @return Absolute pathname of the GMFFExportFile or null if the
-     *              underlying File is null.
+     * Returns the absolute pathname of the GMFFExportFile
+     *
+     * @return Absolute pathname of the GMFFExportFile or null if the underlying
+     *         File is null.
      */
     public String getAbsolutePath() {
         if (exportFile == null)

@@ -6,59 +6,59 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-/**
- *  GMFFConstants.java  0.01 11/01/2011
+/*
+ * GMFFConstants.java  0.01 11/01/2011
  *
- *  Version 0.01:
- *  Nov-01-2011: new.
+ * Version 0.01:
+ * Nov-01-2011: new.
  */
 
 package mmj.gmff;
 
 import java.io.File;
 
+import mmj.mmio.MMIOConstants;
+import mmj.pa.PaConstants;
+import mmj.util.UtilConstants;
+import mmj.verify.GrammarConstants;
+import mmj.verify.ProofConstants;
+
 /**
- *  Constants used in mmj.gmff package.
- *  <p>
- *  There are two primary types of constants: parameters that
- *  are "hardcoded" which affect/control processing, and
- *  error/info messages.
- *  <p>
- *  Each mmj message begins with a code, such as this:<br>
- *  <code>
- *  E-LA-0007<br>
- *  <p>
- *  where the format of the code is "X-YY-9999"<br>
- *
- *  <b>X</b>     : error level
- *  <ul>
- *      <li>E = Error
- *      <li>I = Information
- *      <li>A = Abort (processing terminates, usually a bug).
- *  </ul><br>
- *  <br>
- *
- *  <b>YY</b>    : source code
- *  <ul>
- *      <li>GM = mmj.gmff package (see mmj.gmff.GMFFConstants)
- *      <li>GR = mmj.verify.Grammar and related code
- *               (see mmj.verify.GrammarConstants)
- *      <li>IO = mmj.mmio package (see mmj.mmio.MMIOConstants)
- *      <li>LA = mmj.lang package (see mmj.lang.GMFFConstants)
- *      <li>PA = mmj.pa package (proof assistant)
- *               (see mmj.pa.PaConstants)
- *      <li>PR = mmj.verify.VerifyProof and related code
- *               (see mmj.verify.ProofConstants)
- *      <li>TL = mmj.tl package (Theorem Loader).
- *      <li>TM = mmj.tmff.AlignColumn and related code
- *      <li>UT = mmj.util package.
- *               (see mmj.util.UtilConstants)
- *  </ul><br>
- *  <br>
- *  <b>9999</b>   : sequential number within the source code, 0001
- *       through 9999.
- *
- *  </code>
+ * Constants used in mmj.gmff package.
+ * <p>
+ * There are two primary types of constants: parameters that are "hardcoded"
+ * which affect/control processing, and error/info messages.
+ * <p>
+ * Each mmj message begins with a code, such as this:
+ * <p>
+ * <code>E-LA-0007</code>
+ * <p>
+ * where the format of the code is {@code X-YY-9999}
+ * <p>
+ * <b>{@code X}</b> : error level
+ * <ul>
+ * <li>{@code E} = Error
+ * <li>{@code I} = Information
+ * <li>{@code A} = Abort (processing terminates, usually a bug).
+ * </ul>
+ * <p>
+ * <b>{@code YY}</b> : source code
+ * <ul>
+ * <li>{@code GM} = mmj.gmff package (see {@link GMFFConstants})
+ * <li>{@code GR} = mmj.verify.Grammar and related code (see
+ * {@link GrammarConstants})
+ * <li>{@code IO} = mmj.mmio package (see {@link MMIOConstants})
+ * <li>{@code LA} = mmj.lang package (see {@link GMFFConstants})
+ * <li>{@code PA} = mmj.pa package (proof assistant) (see {@link PaConstants})
+ * <li>{@code PR} = mmj.verify.VerifyProof and related code (see
+ * {@link ProofConstants})
+ * <li>{@code TL} = mmj.tl package (Theorem Loader).
+ * <li>{@code TM} = mmj.tmff.AlignColumn and related code
+ * <li>{@code UT} = mmj.util package. (see {@link UtilConstants})
+ * </ul>
+ * <p>
+ * <b>{@code 9999}</b> : sequential number within the source code, 0001 through
+ * 9999.
  */
 public class GMFFConstants {
 

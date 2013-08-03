@@ -6,9 +6,8 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-/**
- *  ProofCompression.java 0.01 04/01/2006
- *
+/*
+ * ProofCompression.java 0.01 04/01/2006
  */
 
 package mmj.lang;
@@ -19,9 +18,8 @@ import java.util.Map.Entry;
 import mmj.lang.ParseTree.RPNStep;
 
 /**
- *  ProofCompression provides Compression and Decompression
- *  Services for Metamath proofs as described in Metamath(dot)pdf
- *  at metamath(dot)org.
+ * ProofCompression provides Compression and Decompression Services for Metamath
+ * proofs as described in Metamath(dot)pdf at metamath(dot)org.
  */
 public class ProofCompression {
 
@@ -36,110 +34,106 @@ public class ProofCompression {
     private String theoremLabel; // for error msgs
 
     /*
-     *  mandHyp contains the Theorem's MandFrame.hypArray
+     * mandHyp contains the Theorem's MandFrame.hypArray
      */
     private Hyp[] mandHyp;
 
     /*
-     *  optHyp contains the Theorem's OptFrame.optHypArray
+     * optHyp contains the Theorem's OptFrame.optHypArray
      */
     private Hyp[] optHyp;
 
     /*
-     *  otherHyp contains the VarHyp entries inside
-     *  the parenthesized portion of a compressed
-     *  proof (they occur before the Assrt entries in
-     *  the parentheses.) There may be zero
-     *  otherHyp entries.
+     * otherHyp contains the VarHyp entries inside
+     * the parenthesized portion of a compressed
+     * proof (they occur before the Assrt entries in
+     * the parentheses.) There may be zero
+     * otherHyp entries.
      */
     private int otherHypCnt;
     private int otherHypMax;
     private VarHyp[] otherHyp;
 
     /*
-     *  otherAssrt contains the Assrt entries inside
-     *  the parenthesized portion of a compressed
-     *  proof (they occur after the VarHyp entries in
-     *  the parentheses.) There may be zero
-     *  otherAssrt entries.
+     * otherAssrt contains the Assrt entries inside
+     * the parenthesized portion of a compressed
+     * proof (they occur after the VarHyp entries in
+     * the parentheses.) There may be zero
+     * otherAssrt entries.
      */
     private int otherAssrtCnt;
     private int otherAssrtMax;
     private Assrt[] otherAssrt;
 
-    /*  repeatedSubproof is an array of indexes
-     *  pointing to a step[i], which is the last
-     *  step in a subproof that is repeated later
-     *  in the proof. The start index of the
-     *  subproof is computed as:
-     *
-     *      startIndex = i - subproofLength[i] + 1.
-     *
+    /**
+     * repeatedSubproof is an array of indexes pointing to a step[i], which is
+     * the last step in a subproof that is repeated later in the proof. The
+     * start index of the subproof is computed as:
+     * 
+     * <pre>
+     * startIndex = i - subproofLength[i] + 1.
+     * </pre>
      */
+    private int[] repeatedSubproof;
     private int repeatedSubproofCnt;
     private int repeatedSubproofMax;
-    private int[] repeatedSubproof;
 
-    /*  step and subproofLength are parallel arrays,
-     *  where subproofLength[i] contains the length
-     *  of the subproof at step[i].
-     *
-     *  step[i] may be null, which is the case when
-     *  the input proof step = "?".
-     *
-     *  There must always be at least one proof step,
-     *  even if it is just a "?".
+    /**
+     * step and subproofLength are parallel arrays, where subproofLength[i]
+     * contains the length of the subproof at step[i].
+     * <p>
+     * step[i] may be null, which is the case when the input proof step = "?".
+     * <p>
+     * There must always be at least one proof step, even if it is just a "?".
      */
+    private Stmt[] step;
     private int stepCnt;
     private int stepMax;
-    private Stmt[] step;
 
-    /*  subproofLength and step are parallel arrays,
-     *  where subproofLength[i] contains the length
-     *  of the subproof at step[i].
-     *
-     *  If step[i] == null, subproofLength[i] = 1.
-     *
-     *  When step[i].isHyp(), subproofLength[i] = 1.
-     *
-     *  When step[i].isAssrt(), subproofLength[i] =
-     *
-     *      1 plus the sum of subproofLength for n
-     *      prior subproofLength entries,
-     *
-     *      where n =
-     *
-     *      ((Assrt)step[i]).getMandFrame().hypArray.length
-     *      [that is the source data, but is actually
-     *      computed using other code...].
-     *
-     *      The prior subproofLength entry indexes, "P", are
-     *      determined working backwards:
-     *
-     *          P(n)     = i - 1
-     *                   = subproofLength for nth
+    /**
+     * subproofLength and step are parallel arrays, where subproofLength[i]
+     * contains the length of the subproof at step[i].
+     * <p>
+     * If {@code step[i] == null}, subproofLength[i] = 1.
+     * <p>
+     * When {@code step[i].isHyp()}, subproofLength[i] = 1.
+     * <p>
+     * When {@code step[i].isAssrt()}, subproofLength[i] = 1 plus the sum of
+     * subproofLength for n prior subproofLength entries, where
+     * 
+     * <pre>
+     * n = ((Assrt)step[i]).getMandFrame().hypArray.length
+     * </pre>
+     * 
+     * [that is the source data, but is actually computed using other code...].
+     * <p>
+     * The prior subproofLength entry indexes, "P", are determined working
+     * backwards:
+     * 
+     * <pre>
+     *         P(n)     = i - 1
+     *                  = subproofLength for nth
+     *                    mand hyp of step[i]
+     * 
+     *         P(n - 1) = P(n) - subproofLength[P(n)]
+     *                  =  subproofLength for (n - 1)th
      *                     mand hyp of step[i]
-     *
-     *          P(n - 1) = P(n) - subproofLength[P(n)]
-     *                   =  subproofLength for (n - 1)th
-     *                      mand hyp of step[i]
-     *
-     *
-     *          P(n - 2) = P(n - 1) - subproofLength[P(n - 1)]
-     *                   =  subproofLength for (n - 2)th
-     *                      mand hyp of step[i]
-     *
-     *          ...etc.
-     *
-     *  There must always be at least one proof step,
-     *  even if it is just a "?".
+     * 
+     *         P(n - 2) = P(n - 1) - subproofLength[P(n - 1)]
+     *                  =  subproofLength for (n - 2)th
+     *                     mand hyp of step[i]
+     * 
+     *         ...etc.
+     * </pre>
+     * 
+     * There must always be at least one proof step, even if it is just a "?".
      */
     private int[] subproofLength; // is parallel array!
 
     // *******************************************
 
     /**
-     *  Constructor - default.
+     * Constructor - default.
      */
     public ProofCompression() {
 
@@ -147,29 +141,21 @@ public class ProofCompression {
     }
 
     /**
-     *  Decompress a single proof.
-     *  <p>
-     *  @param theoremLabel Theorem's label, used in error messages
-     *                      that may be generated during processing.
+     * Decompress a single proof.
      *
-     *  @param stmtTbl      Stmt lookup map for translating labels
-     *                      into Stmt object references.
-     *
-     *  @param mandHypArray The theorem's MandFrame.hypArray.
-     *
-     *  @param optHypArray  The theorem's OptFrame.optHypArray.
-     *
-     *  @param otherRefList List of String containing labels
-     *                      of Stmt's provided in the parenthesized
-     *                      portion of a compressed proof.
-     *
-     *  @param proofBlockList List of String containing
-     *                        the compressed portion of the
-     *                        proof.
-     *
-     *
-     *  @return Stmt array containing decompressed Metamath RPN
-     *          proof.
+     * @param theoremLabel Theorem's label, used in error messages that may be
+     *            generated during processing.
+     * @param seq the sequence number of the theorem
+     * @param stmtTbl Stmt lookup map for translating labels into Stmt object
+     *            references.
+     * @param mandHypArray The theorem's MandFrame.hypArray.
+     * @param optHypArray The theorem's OptFrame.optHypArray.
+     * @param otherRefList List of String containing labels of Stmt's provided
+     *            in the parenthesized portion of a compressed proof.
+     * @param proofBlockList List of String containing the compressed portion of
+     *            the proof.
+     * @return Stmt array containing decompressed Metamath RPN proof.
+     * @throws LangException if an error occurred
      */
     public Stmt[] decompress(final String theoremLabel, final int seq,
         final Map<String, Stmt> stmtTbl, final Hyp[] mandHypArray,
@@ -240,9 +226,8 @@ public class ProofCompression {
                         + otherLabel);
 
             /**
-             *  this is a little "tricky" -- "active" applies
-             *  only to global hypotheses or when the source
-             *  file is being loaded.
+             * this is a little "tricky" -- "active" applies only to global
+             * hypotheses or when the source file is being loaded.
              */
             if (!otherStmt.isActive() && !isProofStepInExtendedFrame(otherStmt))
                 throw new LangException(
@@ -254,19 +239,17 @@ public class ProofCompression {
     }
 
     /**
-     *  Checks to see whether or not a proof step is
-     *  contained in the Theorem's Extended Frame.
-     *  <p>
-     *  Cloned this from mmj.lang.Theorem.java.
-     *  <p>
-     *  First checks to see if the proof step is in the
-     *  MandFrame's hypArray. If not it checks the
-     *  OptFrame's hypArray
-     *
-     *  @param proofStep a Statement reference.
-     *
-     *  @return true if proof step == a Hyp in either the
-     *   MandFrame or OptFrame of the Theorem.
+     * Checks to see whether or not a proof step is contained in the Theorem's
+     * Extended Frame.
+     * <p>
+     * Cloned this from mmj.lang.Theorem.java.
+     * <p>
+     * First checks to see if the proof step is in the MandFrame's hypArray. If
+     * not it checks the OptFrame's hypArray
+     * 
+     * @param proofStep a Statement reference.
+     * @return true if proof step == a Hyp in either the MandFrame or OptFrame
+     *         of the Theorem.
      */
     public boolean isProofStepInExtendedFrame(final Stmt proofStep) {
         for (final Hyp element : mandHyp)
@@ -422,22 +405,22 @@ public class ProofCompression {
             decompressNbr += nextCharCode + 1; // 'A' = 1 etc
 
             /*
-             *  Whew! finally...we have decompressed a number!
-             *  But what does the number signify?
+             * Whew! finally...we have decompressed a number!
+             * But what does the number signify?
              *
-             *  1 thru mandHyp.length              = mandHyp
-             *  mandHyp.length + 1 thru otherHypCnt = otherHyp
-             *  otherHypCnt + 1 thru otherAssrtCnt = otherAssrt
-             *  otherAssrtCnt + 1 thru repeatedSubproofCnt
-             *                                     = repeatedSubproof
-             *  otherSubproofCnt + 1 and beyond    = error! bogus!@#
+             * 1 thru mandHyp.length              = mandHyp
+             * mandHyp.length + 1 thru otherHypCnt = otherHyp
+             * otherHypCnt + 1 thru otherAssrtCnt = otherAssrt
+             * otherAssrtCnt + 1 thru repeatedSubproofCnt
+             *                                    = repeatedSubproof
+             * otherSubproofCnt + 1 and beyond    = error! bogus!@#
              *
-             *  The above mentioned arrays (mandHyp, otherHyp, etc.)
-             *  begin indexing at 0, so we need to subtract 1
-             *  from "decompressNbr" to index into the arrays,
-             *  but "decompressNbr = 0" has special significance --
-             *  it means "no previous decompression in progress",
-             *  so we'll use "workNbr" to mess around with.
+             * The above mentioned arrays (mandHyp, otherHyp, etc.)
+             * begin indexing at 0, so we need to subtract 1
+             * from "decompressNbr" to index into the arrays,
+             * but "decompressNbr = 0" has special significance --
+             * it means "no previous decompression in progress",
+             * so we'll use "workNbr" to mess around with.
              */
 
             workNbr = decompressNbr - 1;
@@ -627,7 +610,6 @@ public class ProofCompression {
             }
         final PriorityQueue<Entry<Stmt, Integer>> sortedByBackrefs = new PriorityQueue<Map.Entry<Stmt, Integer>>(
             unsortedMap.size(), new Comparator<Entry<Stmt, Integer>>() {
-                @Override
                 public int compare(final Entry<Stmt, Integer> e1,
                     final Entry<Stmt, Integer> e2)
                 {
@@ -653,7 +635,6 @@ public class ProofCompression {
         }
         for (final List<Stmt> list : sortedByLength) {
             Collections.sort(list, new Comparator<Stmt>() {
-                @Override
                 public int compare(final Stmt s1, final Stmt s2) {
                     return s2.getLabel().length() - s1.getLabel().length();
                 }

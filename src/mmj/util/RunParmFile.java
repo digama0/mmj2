@@ -7,12 +7,12 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  RunParmFile.java.java  0.04 11/01/2011
+ * RunParmFile.java.java  0.04 11/01/2011
  *
- *  Nov-1-2006: Version 0.03:
- *          --> Fixed bug involving "" input parms.
- *  Nov-01-2011 - Version 0.04
- *          --> Modified for mmj2 Paths Enhancement
+ * Nov-1-2006: Version 0.03:
+ *         --> Fixed bug involving "" input parms.
+ * Nov-01-2011 - Version 0.04
+ *         --> Modified for mmj2 Paths Enhancement
  */
 
 package mmj.util;
@@ -20,17 +20,14 @@ package mmj.util;
 import java.io.*;
 
 /**
- *  RunParmFile reads lines designed to be parsed by
- *  DelimitedTextParser and returns RunParmArrayEntry
- *  objects.
- *  <p>
- *  Comment lines are identified in RunParmFileArrayEntry
- *  and this class knows nothing whatsoever about mmj
- *  or Metamath.
- *  <p>
- *  Coincidentally (ha), the "String[] args" parameter
- *  for the constructor is the same as the BatchMMJ2
- *  command line parms.
+ * RunParmFile reads lines designed to be parsed by DelimitedTextParser and
+ * returns RunParmArrayEntry objects.
+ * <p>
+ * Comment lines are identified in RunParmFileArrayEntry and this class knows
+ * nothing whatsoever about mmj or Metamath.
+ * <p>
+ * Coincidentally (ha), the "String[] args" parameter for the constructor is the
+ * same as the BatchMMJ2 command line parms.
  */
 public class RunParmFile {
 
@@ -47,8 +44,11 @@ public class RunParmFile {
     private final char quoter = UtilConstants.RUNPARM_FIELD_QUOTER_DEFAULT;
 
     /**
-     *  Dumps the absolute path names to System.out for
-     *  testing purposes.
+     * Dumps the absolute path names to System.out for testing purposes.
+     * 
+     * @param paths the path names
+     * @param runParmFileNameArgument if an error occurred
+     * @throws IOException if an error occurred
      */
     public static void displayArgumentOptionReport(final Paths paths,
         final String runParmFileNameArgument) throws IOException
@@ -70,13 +70,12 @@ public class RunParmFile {
     }
 
     /**
-     *  Construct using <code>Paths</code> object and
-     *  runParmFileName argument.
-     *  <p>
-     *  @param paths mmj2 Paths object.
-     *  @param runParmFileNameArgument file name of RunParm file.
+     * Construct using {@code Paths} object and runParmFileName argument.
      *
-     *  @throws IllegalArgumentException see UtilConstants.
+     * @param paths mmj2 Paths object.
+     * @param runParmFileNameArgument file name of RunParm file.
+     * @throws IOException if an error occurred
+     * @throws IllegalArgumentException see UtilConstants.
      */
     public RunParmFile(final Paths paths, final String runParmFileNameArgument)
         throws IOException, IllegalArgumentException
@@ -118,9 +117,9 @@ public class RunParmFile {
     }
 
     /**
-     *  Checks to see if another line of input is available.
-     *
-     *  @return true if another line of input is available.
+     * Checks to see if another line of input is available.
+     * 
+     * @return true if another line of input is available.
      */
     public boolean hasNext() {
         if (inputLine == null)
@@ -129,14 +128,13 @@ public class RunParmFile {
     }
 
     /**
-     *  Returns next line of RunParmFile formatted as
-     *  a fully parsed RunParmArrayEntry object.
-     *
-     *  @return RunParmArrayEntry object.
-     *
-     *  @throws IllegalStateException if called after EOF.
-     *  @throws IllegalArgumentException if parsing problem.
-     *  @throws IOException if I/O error on RunParmFile.
+     * Returns next line of RunParmFile formatted as a fully parsed
+     * RunParmArrayEntry object.
+     * 
+     * @return RunParmArrayEntry object.
+     * @throws IllegalStateException if called after EOF.
+     * @throws IllegalArgumentException if parsing problem.
+     * @throws IOException if I/O error on RunParmFile.
      */
     public RunParmArrayEntry next() throws IOException,
         IllegalArgumentException, IllegalStateException
@@ -162,7 +160,9 @@ public class RunParmFile {
     }
 
     /**
-     *  Close RunParmFile.
+     * Close RunParmFile.
+     * 
+     * @throws IOException if IO error
      */
     public void close() throws IOException {
         runParmFileReader.close();
@@ -170,10 +170,10 @@ public class RunParmFile {
     }
 
     /**
-     *  Returns the canonical path name of the RunParmFile.
-     *  <p>
-     *  @return canonical path of RunParmFile or empty string
-     *          if RunParmFile is null.
+     * Returns the canonical path name of the RunParmFile.
+     *
+     * @return canonical path of RunParmFile or empty string if RunParmFile is
+     *         null.
      */
     public String getAbsolutePath() {
         String s = new String("");

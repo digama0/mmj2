@@ -6,31 +6,28 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-/**
- *  ModelAExporter.java  0.01 11/01/2011
+/*
+ * ModelAExporter.java  0.01 11/01/2011
  *
- *  Version 0.01:
- *  Nov-01-2011: new.
+ * Version 0.01:
+ * Nov-01-2011: new.
  */
 
 package mmj.gmff;
 
-
 /**
- *  <code>ModelAExporter</code> is an extension of
- *  <code>GMFFExporter</code> which implements export
- *  of Proof Worksheets using Model A.
+ * {@code ModelAExporter} is an extension of {@code GMFFExporter} which
+ * implements export of Proof Worksheets using Model A.
  */
 public class ModelAExporter extends GMFFExporter {
 
     /**
-     *  The only constructor.
-     *
-     *  @param gmffManager The <code>GMFFManager</code> object
-     *  @param gmffExportParms The <code>GMFFExportParms</code> for
-     *				for this exporter.
-     *  @param gmffUserTextEscapes The <code>gmffUserTextEscapes</code>
-     *				for this exporter.
+     * The only constructor.
+     * 
+     * @param gmffManager The {@code GMFFManager} object
+     * @param gmffExportParms The {@code GMFFExportParms} for for this exporter.
+     * @param gmffUserTextEscapes The {@code gmffUserTextEscapes} for this
+     *            exporter.
      */
     public ModelAExporter(final GMFFManager gmffManager,
         final GMFFExportParms gmffExportParms,
@@ -41,32 +38,28 @@ public class ModelAExporter extends GMFFExporter {
     }
 
     /**
-     *  Exports a Proof Worksheet in Model A format and
-     *  returns a confirmation message showing the absolute
-     *  path of the output file.
-     *  <p>
-     *  Model A uses the <code>MinProofWorksheet</code> class
-     *  instead of the standard mmj2 <code>ProofWorksheet.
-     *  <p>
-     *  If the loaded Proof Worksheet has <code>structuralErrors</code>
-     *  the export is not attempted (error message accumed in the
-     *  <code>Messages</code> object. Note that teh MinProofWorksheet
-     *  class has extremely lenient standards about
-     *  <code>structuralErrors</code>.
-     *
-     *  @param p <code>ProofWorksheetCache</code> object
-     *				containing the proof to be exported.
-     *  @param appendFileName File Name minus File Type of
-     *              append file if the regular file name
-     *              is to be overridden (see documentation
-     *              of appendFileNames in GMFFDoc\GMFFRunParms.txt).
-     *  @return Confirmation message of the successful export
-     *              showing the absolute path of the output file --
-     *              or <code>null</code> if the export failed
-     *              (error messages are accumed in the
-     *              <code>Messages</code> object.)
+     * Exports a Proof Worksheet in Model A format and returns a confirmation
+     * message showing the absolute path of the output file.
+     * <p>
+     * Model A uses the {@code MinProofWorksheet} class instead of the standard
+     * mmj2 <code>ProofWorksheet.
+     * <p>
+     * If the loaded Proof Worksheet has {@code structuralErrors}
+     * the export is not attempted (error message accumed in the
+     * {@code Messages} object. Note that teh MinProofWorksheet
+     * class has extremely lenient standards about
+     * {@code structuralErrors}.
+     * 
+     * @param p {@code ProofWorksheetCache} object containing the proof to be
+     *            exported.
+     * @param appendFileName File Name minus File Type of append file if the
+     *            regular file name is to be overridden (see documentation of
+     *            appendFileNames in GMFFDoc\GMFFRunParms.txt).
+     * @return Confirmation message of the successful export showing the
+     *         absolute path of the output file -- or {@code null} if the export
+     *         failed (error messages are accumed in the {@code Messages}
+     *         object.)
      */
-    @Override
     public String exportProofWorksheet(final ProofWorksheetCache p,
         final String appendFileName)
     {

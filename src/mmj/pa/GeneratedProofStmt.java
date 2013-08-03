@@ -13,28 +13,23 @@
 // ===                                                 ===
 // =======================================================
 
-/**
- *  GeneratedProofStmt.java  0.07 08/01/2008
- *  <code>
- *  Version 0.04:
- *      - Un-nested inner class
- *      - replace ProofWorkStmt.status
+/*
+ * GeneratedProofStmt.java  0.07 08/01/2008
+ * 
+ * Version 0.04:
+ *     - Un-nested inner class
+ *     - replace ProofWorkStmt.status
  *
- *  Nov-01-2007 Version 0.05
- *  - add abstract method computeFieldIdCol(int fieldId)
- *    for use in ProofAsstGUI (just in time) cursor
- *    positioning logic.
+ * Nov-01-2007 Version 0.05
+ * - add abstract method computeFieldIdCol(int fieldId)
+ *   for use in ProofAsstGUI (just in time) cursor
+ *   positioning logic.
  *
- *  Feb-01-2008 Version 0.06
- *  - add tmffReformat().
+ * Feb-01-2008 Version 0.06
+ * - add tmffReformat().
  *
- *  Aug-01-2008 Version 0.07
- *  - remove stmtHasError() method.
- *
- *  </code>
- *  GeneratedProofStatement is added automatically after
- *  successful unification.
- *  <p>
+ * Aug-01-2008 Version 0.07
+ * - remove stmtHasError() method.
  */
 
 package mmj.pa;
@@ -44,20 +39,27 @@ import java.util.List;
 import mmj.lang.ParseTree.RPNStep;
 import mmj.lang.Stmt;
 
+/**
+ * GeneratedProofStatement is added automatically after successful unification.
+ * <p>
+ */
 public class GeneratedProofStmt extends ProofWorkStmt {
     // boolean dummyField?
 
     /**
-     *  Default Constructor.
+     * Default Constructor.
+     * 
+     * @param w the owner ProofWorksheet
      */
     public GeneratedProofStmt(final ProofWorksheet w) {
         super(w);
     }
 
     /**
-     *  Standard Constructor for GeneratedProofStmt.
-     *
-     *  @param rpnProof Proof Stmt Array in RPN format
+     * Standard Constructor for GeneratedProofStmt.
+     * 
+     * @param w the owner ProofWorksheet
+     * @param rpnProof Proof Stmt Array in RPN format
      */
     public GeneratedProofStmt(final ProofWorksheet w, final RPNStep[] rpnProof)
     {
@@ -202,15 +204,12 @@ public class GeneratedProofStmt extends ProofWorkStmt {
     }
 
     /**
-     *  Function used for cursor positioning.
-     *  <p>
-     *
-     *  @param fieldId value identify ProofWorkStmt field
-     *         for cursor positioning, as defined in
-     *         PaConstants.FIELD_ID_*.
-     *
-     *  @return column of input fieldId or default value
-     *         of 1 if there is an error.
+     * Function used for cursor positioning.
+     * 
+     * @param fieldId value identify ProofWorkStmt field for cursor positioning,
+     *            as defined in PaConstants.FIELD_ID_*.
+     * @return column of input fieldId or default value of 1 if there is an
+     *         error.
      */
     @Override
     public int computeFieldIdCol(final int fieldId) {
@@ -218,7 +217,7 @@ public class GeneratedProofStmt extends ProofWorkStmt {
     }
 
     /**
-     *  Reformats Derivation Step using TMFF.
+     * Reformats Derivation Step using TMFF.
      */
     @Override
     public void tmffReformat() {}

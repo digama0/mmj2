@@ -7,17 +7,16 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  VerifyProofBoss.java  0.04 08/01/2008
+ * VerifyProofBoss.java  0.04 08/01/2008
  *
- *  Dec-03-2005
- *  --> Added getVerifyProofs() for Proof Assistant's usage.
+ * Dec-03-2005
+ * --> Added getVerifyProofs() for Proof Assistant's usage.
  *
- *  Version 0.04 -- 08/01/2008
- *  --> Modify to load ProofVerifier into LogicalSystem
- *      after VerifyProof has been performed -- then
- *      new theorem adds, via TheoremLoader, will know
- *      to do VerifyProof.
- *
+ * Version 0.04 -- 08/01/2008
+ * --> Modify to load ProofVerifier into LogicalSystem
+ *     after VerifyProof has been performed -- then
+ *     new theorem adds, via TheoremLoader, will know
+ *     to do VerifyProof.
  */
 
 package mmj.util;
@@ -30,20 +29,17 @@ import mmj.mmio.MMIOException;
 import mmj.verify.VerifyProofs;
 
 /**
- *  Responsible for building, loading, maintaining and fetching
- *  ProofVerifier, and for executing RunParms involving it.
- *  <ul>
- *  <li>If non-executable parm, validate, store and "consume"
- *  <li>If Verify Proof or VerifyParse parm, validate, run,
- *      get error status, print-and-clear messages, and
- *      "consume". Remember that Messages, LogicalSystem
- *      and other objects may have changed. Don't worry
- *      about whether or not file is loaded, the
- *      LogicalSystemBoss will throw an exception if
- *      attempt is made to retrieve LogicalSystem if
- *      it is not loaded and error free.
- *  <li>If clear, set ProofVerifier to null.
- *  </ul>
+ * Responsible for building, loading, maintaining and fetching ProofVerifier,
+ * and for executing RunParms involving it.
+ * <ul>
+ * <li>If non-executable parm, validate, store and "consume"
+ * <li>If Verify Proof or VerifyParse parm, validate, run, get error status,
+ * print-and-clear messages, and "consume". Remember that Messages,
+ * LogicalSystem and other objects may have changed. Don't worry about whether
+ * or not file is loaded, the LogicalSystemBoss will throw an exception if
+ * attempt is made to retrieve LogicalSystem if it is not loaded and error free.
+ * <li>If clear, set ProofVerifier to null.
+ * </ul>
  */
 public class VerifyProofBoss extends Boss {
 
@@ -54,36 +50,36 @@ public class VerifyProofBoss extends Boss {
     protected boolean allStatementsParsedSuccessfully;
 
     /**
-     *  Constructor with BatchFramework for access to environment.
-     *
-     *  @param batchFramework for access to environment.
+     * Constructor with BatchFramework for access to environment.
+     * 
+     * @param batchFramework for access to environment.
      */
     public VerifyProofBoss(final BatchFramework batchFramework) {
         super(batchFramework);
     }
 
     /**
-     *  Returns true if all proofs verified successfully.
-     *
-     *  @return true if all proofs verified successfully.
+     * Returns true if all proofs verified successfully.
+     * 
+     * @return true if all proofs verified successfully.
      */
     public boolean getAllProofsVerifiedSuccessfully() {
         return allProofsVerifiedSuccessfully;
     }
 
     /**
-     *  Returns true if all statements parsed successfully.
-     *
-     *  @return true if all statements parsed successfully.
+     * Returns true if all statements parsed successfully.
+     * 
+     * @return true if all statements parsed successfully.
      */
     public boolean getAllStatementsParsedSuccessfully() {
         return allStatementsParsedSuccessfully;
     }
 
     /**
-     *  Return initialized VerifyProofs object
-     *
-     *  @return VerifyProofs object
+     * Return initialized VerifyProofs object
+     * 
+     * @return VerifyProofs object
      */
     public VerifyProofs getVerifyProofs() {
         initializeVerifyProofsIfNeeded();
@@ -91,11 +87,10 @@ public class VerifyProofBoss extends Boss {
     }
 
     /**
-     *  Executes a single command from the RunParmFile.
-     *
-     *  @param runParm the RunParmFile line to execute.
+     * Executes a single command from the RunParmFile.
+     * 
+     * @param runParm the RunParmFile line to execute.
      */
-    @Override
     public boolean doRunParmCommand(final RunParmArrayEntry runParm)
 
     throws IllegalArgumentException, MMIOException, FileNotFoundException,
@@ -134,10 +129,12 @@ public class VerifyProofBoss extends Boss {
     }
 
     /**
-     *  Executes the VerifyProof command, prints any messages,
-     *  etc.
-     *
-     *  @param runParm RunParmFile line.
+     * Executes the VerifyProof command, prints any messages, etc.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
+     * @throws IOException if an error occurred
+     * @throws VerifyException if an error occurred
      */
     public void doVerifyProof(final RunParmArrayEntry runParm)
         throws IllegalArgumentException, IOException, VerifyException
@@ -184,10 +181,12 @@ public class VerifyProofBoss extends Boss {
     }
 
     /**
-     *  Executes the VerifyParse command, prints any messages,
-     *  etc.
-     *
-     *  @param runParm RunParmFile line.
+     * Executes the VerifyParse command, prints any messages, etc.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
+     * @throws IOException if an error occurred
+     * @throws VerifyException if an error occurred
      */
     public void doVerifyParse(final RunParmArrayEntry runParm)
         throws IllegalArgumentException, IOException, VerifyException

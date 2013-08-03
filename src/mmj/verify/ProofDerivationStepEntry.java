@@ -5,21 +5,21 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-/**
- *  ProofDerivationStepEntry.java 0.03 11/01/2007
+/*
+ * ProofDerivationStepEntry.java 0.03 11/01/2007
  *
- *  16-Jan-2006 Created for interface between
- *              mmj.verify.VerifyProofs.getProofDerivationSteps()
- *                  and
- *              mmj.pa.ProofAsst.exportToFile().
+ * 16-Jan-2006 Created for interface between
+ *             mmj.verify.VerifyProofs.getProofDerivationSteps()
+ *                 and
+ *             mmj.pa.ProofAsst.exportToFile().
  *
- *  06-Sep-2006 Added formulaParseTree for use in TMFF.
+ * 06-Sep-2006 Added formulaParseTree for use in TMFF.
  *
- *  Nov-01-2007 Version 0.06
- *  - add proofLevel for TMFF useIndent
- *  - add static computeProofLevels() method to compute all
- *    proofLevels for an ArrayList (proof) of
- *    ProofDerivationStepEntry.
+ * Nov-01-2007 Version 0.06
+ * - add proofLevel for TMFF useIndent
+ * - add static computeProofLevels() method to compute all
+ *   proofLevels for an ArrayList (proof) of
+ *   ProofDerivationStepEntry.
  */
 
 package mmj.verify;
@@ -30,90 +30,77 @@ import mmj.lang.Formula;
 import mmj.lang.ParseTree;
 
 /**
- *  Proof Derivation Step Entry is a simple data structure
- *  used to hold a non-syntax axiom assertion proof step
- *  (i.e. a derivation step.)
- *
- *  We use mmj.verify.VerifyProofs to generate the
- *  ProofDerivationStepEntry objects for a theorem
- *  because VerifyProofs already has the complete
- *  mechanism for dealing with a Metamath proof and
- *  generating the formula resulting from each derivation
- *  step.
+ * Proof Derivation Step Entry is a simple data structure used to hold a
+ * non-syntax axiom assertion proof step (i.e. a derivation step.)
+ * <p>
+ * We use mmj.verify.VerifyProofs to generate the ProofDerivationStepEntry
+ * objects for a theorem because VerifyProofs already has the complete mechanism
+ * for dealing with a Metamath proof and generating the formula resulting from
+ * each derivation step.
  */
 public class ProofDerivationStepEntry {
 
     /**
-     *  isHyp indicates if this step is one of the Theorem's
-     *  logical hypothesis steps.
+     * isHyp indicates if this step is one of the Theorem's logical hypothesis
+     * steps.
      */
     public boolean isHyp;
 
     /**
-     *  stepNbr is an integer ranging from 1 through n - 1, where
-     *  'n' is the last derivation step of the proof -- and
-     *  the final step number is "qed".
+     * stepNbr is an integer ranging from 1 through n - 1, where 'n' is the last
+     * derivation step of the proof -- and the final step number is "qed".
      */
     public String step;
 
     /**
-     *  hypStepNbr contains the stepNbr's of previous steps
-     *  that are to be used as hypotheses for the Ref Assrt
-     *  in the current step. There may be 0, 1, ... n
-     *  hyps.
+     * hypStepNbr contains the stepNbr's of previous steps that are to be used
+     * as hypotheses for the Ref Assrt in the current step. There may be 0, 1,
+     * ... n hyps.
      */
     public String[] hypStep;
 
     /**
-     *  refLabel is the label of the Assrt used to justify
-     *  the step, and which creates the derivation of the
-     *  step's formula.
-     *  <p>
-     *  refLabel is always present on hypothesis steps because
-     *  a Theorem's proof may not refer to the hypotheses in
-     *  database sequence and so there could be ambiguity about
-     *  which step is referring to which hypothesis.
+     * refLabel is the label of the Assrt used to justify the step, and which
+     * creates the derivation of the step's formula.
+     * <p>
+     * refLabel is always present on hypothesis steps because a Theorem's proof
+     * may not refer to the hypotheses in database sequence and so there could
+     * be ambiguity about which step is referring to which hypothesis.
      */
     public String refLabel;
 
     /**
-     *  formula is the formula resulting from the derivation
-     *  using the Ref and its hypotheses. Except for the
-     *  hypothesis steps and the final step, the formulas
-     *  are intermediate results that are not seen -- except
-     *  here and in a Proof Assistant ProofWorksheet, which
-     *  is what the ProofDerivationStepEntry will be used
-     *  to generate.
+     * formula is the formula resulting from the derivation using the Ref and
+     * its hypotheses. Except for the hypothesis steps and the final step, the
+     * formulas are intermediate results that are not seen -- except here and in
+     * a Proof Assistant ProofWorksheet, which is what the
+     * ProofDerivationStepEntry will be used to generate.
      */
     public Formula formula;
 
     /**
-     *  formulaParseTree is here for use in TMFF, Text Mode
-     *  Formula Formatting.
-     *
-     *  formulaParseTree of the formula, or null if either
-     *  the parse failed or has not yet been attempted
-     *  (VerifyProofs.getProofDerivationSteps() and
-     *  VerifyProofs.loadProofDerivStepList() will load
-     *  the parse tree for the theorem's formula and
-     *  its logical hypotheses, but the proof step parse
-     *  trees are not available there -- so ProofWorksheet
-     *  will fill in the missing parses.)
+     * formulaParseTree is here for use in TMFF, Text Mode Formula Formatting.
+     * <p>
+     * formulaParseTree of the formula, or null if either the parse failed or
+     * has not yet been attempted (VerifyProofs.getProofDerivationSteps() and
+     * VerifyProofs.loadProofDerivStepList() will load the parse tree for the
+     * theorem's formula and its logical hypotheses, but the proof step parse
+     * trees are not available there -- so ProofWorksheet will fill in the
+     * missing parses.)
      */
     public ParseTree formulaParseTree;
 
     /**
-     *  Level number of the step within the proof where the
-     *  qed step has level 0 and each hypothesis is one
-     *  level higher.
+     * Level number of the step within the proof where the qed step has level 0
+     * and each hypothesis is one level higher.
      */
     public int proofLevel;
 
     /**
-     *  Compute proof level numbers for a proof stored
-     *  in a ProofDerivationStepEntry ArrayList.
-     *
-     *  @param pList ProofDerivationStepEntry ArrayList
+     * Compute proof level numbers for a proof stored in a
+     * ProofDerivationStepEntry ArrayList.
+     * 
+     * @param pList ProofDerivationStepEntry ArrayList
      */
     public static void computeProofLevels(
         final List<ProofDerivationStepEntry> pList)
@@ -154,17 +141,15 @@ public class ProofDerivationStepEntry {
     }
 
     /**
-     *  Compute proof level numbers for a proof stored
-     *  in a ProofDerivationStepEntry ArrayList.
-     *
-     *  This routine is coded because there may be incomplete
-     *  or invalid proofs that the normal routine cannot
-     *  handle...and yet, 99.99% of the time we are dealing
-     *  with complete, valid proofs so it is deemed
-     *  preferable to try to do the computation the quick
-     *  way first and see what happens.
-     *
-     *  @param pList ProofDerivationStepEntry ArrayList
+     * Compute proof level numbers for a proof stored in a
+     * ProofDerivationStepEntry ArrayList.
+     * <p>
+     * This routine is coded because there may be incomplete or invalid proofs
+     * that the normal routine cannot handle...and yet, 99.99% of the time we
+     * are dealing with complete, valid proofs so it is deemed preferable to try
+     * to do the computation the quick way first and see what happens.
+     * 
+     * @param pList ProofDerivationStepEntry ArrayList
      */
     public static void computeProofLevelsSlowly(
         final List<ProofDerivationStepEntry> pList)

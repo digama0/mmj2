@@ -7,10 +7,10 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  StepSelectorStore.java  0.01 03/01/2008
+ * StepSelectorStore.java  0.01 03/01/2008
  *
- *  Version 0.01:
- *  ==> New.
+ * Version 0.01:
+ * ==> New.
  */
 
 package mmj.pa;
@@ -21,13 +21,12 @@ import java.util.List;
 import mmj.lang.Assrt;
 
 /**
- *  StepSelectorStore accumulates StepSelector results.
- *  <p>
- *  The design is rudimentary because it does not sort
- *  or select which results to keep -- at this time.
- *  <p>
- *  Its main purpose is to provide a simple data store
- *  for StepSelectorSearch.
+ * StepSelectorStore accumulates StepSelector results.
+ * <p>
+ * The design is rudimentary because it does not sort or select which results to
+ * keep -- at this time.
+ * <p>
+ * Its main purpose is to provide a simple data store for StepSelectorSearch.
  */
 public class StepSelectorStore {
 
@@ -39,10 +38,11 @@ public class StepSelectorStore {
     private final List<StepSelectorItem> storeList;
 
     /**
-     *  Simple factory to hide constructor details.
-     *
-     *  @param proofAsstPreferences contains parameters
-     *             needed by StepSelector and friends.
+     * Simple factory to hide constructor details.
+     * 
+     * @param proofAsstPreferences contains parameters needed by StepSelector
+     *            and friends.
+     * @return the new StepSelectorStore
      */
     public static StepSelectorStore createStepSelectorStore(
         final ProofAsstPreferences proofAsstPreferences)
@@ -53,10 +53,10 @@ public class StepSelectorStore {
     }
 
     /**
-     *  Simple constructor for the most basic StepSelectorStore.
-     *
-     *  @param proofAsstPreferences contains parameters
-     *             needed by StepSelector and friends.
+     * Simple constructor for the most basic StepSelectorStore.
+     * 
+     * @param proofAsstPreferences contains parameters needed by StepSelector
+     *            and friends.
      */
     public StepSelectorStore(final ProofAsstPreferences proofAsstPreferences) {
 
@@ -68,28 +68,21 @@ public class StepSelectorStore {
     }
 
     /**
-     *  Creates a StepSelectorResults object using the contents
-     *  of the data store.
-     *  <p>
-     *  An extra item is added to the StepSelectorResults. If
-     *  the store contains one extra result (beyond the specified
-     *  StepSelectorMaxResults parameter), then "***MORE***" is
-     *  output at the end of the StepSelectorResults selection
-     *  array along with a null Assrt. Otherwise it outputs
-     *  "***END***". The purpose it to inform the user that
-     *  rerunning the StepSelector may or may not be useful.
-     *  <p>
-     *
-     *  @param step Step String corresponding to the ProofWorksheet
-     *              step (number) for which the StepSelector was
-     *              run.
-     *
-     *  @param storeOverflow indicates whether or not additional
-     *              results were available but not added to the
-     *              store because it was full.
-     *
-     *  @return StepSelectorResults object for display on the
-     *          StepSelectorDialog.
+     * Creates a StepSelectorResults object using the contents of the data
+     * store.
+     * <p>
+     * An extra item is added to the StepSelectorResults. If the store contains
+     * one extra result (beyond the specified StepSelectorMaxResults parameter),
+     * then "***MORE***" is output at the end of the StepSelectorResults
+     * selection array along with a null Assrt. Otherwise it outputs
+     * "***END***". The purpose it to inform the user that rerunning the
+     * StepSelector may or may not be useful.
+     * 
+     * @param step Step String corresponding to the ProofWorksheet step (number)
+     *            for which the StepSelector was run.
+     * @param storeOverflow indicates whether or not additional results were
+     *            available but not added to the store because it was full.
+     * @return StepSelectorResults object for display on the StepSelectorDialog.
      */
     public StepSelectorResults createStepSelectorResults(final String step,
         final boolean storeOverflow)
@@ -115,15 +108,13 @@ public class StepSelectorStore {
     }
 
     /**
-     *  Adds a StepSelectorSearch result to the data store
-     *  if the store is not already full.
-     *
-     *  @param assrt Assertion that is unifiable with the proof
-     *                         step.
-     *  @param selection Strings showing formula as it will appear
-     *                   in the StepSelectorDialog.
-     *
-     *  @return true if store is now full, otherwise false.
+     * Adds a StepSelectorSearch result to the data store if the store is not
+     * already full.
+     * 
+     * @param assrt Assertion that is unifiable with the proof step.
+     * @param selection Strings showing formula as it will appear in the
+     *            StepSelectorDialog.
+     * @return true if store is now full, otherwise false.
      */
     public boolean add(final Assrt assrt, final String[] selection) {
 
@@ -136,11 +127,10 @@ public class StepSelectorStore {
     }
 
     /**
-     *  Checks to see if the store has fewer result items
-     *  than permitted according the Proof Assistant
-     *  Preferences StepSelectorMaxResults value.
-     *
-     *  @return true if store is full otherwise false.
+     * Checks to see if the store has fewer result items than permitted
+     * according the Proof Assistant Preferences StepSelectorMaxResults value.
+     * 
+     * @return true if store is full otherwise false.
      */
     public boolean isFull() {
         if (cntResults < maxResults)

@@ -6,11 +6,11 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-/**
- *  MinProofWorkStmt.java  0.01 11/01/2011
+/*
+ * MinProofWorkStmt.java  0.01 11/01/2011
  *
- *  Version 0.01:
- *  Nov-01-2011: new.
+ * Version 0.01:
+ * Nov-01-2011: new.
  */
 
 package mmj.gmff;
@@ -20,35 +20,30 @@ import java.util.List;
 import mmj.pa.PaConstants;
 
 /**
- *  General object representing a statement in a MinProofWorksheet.
+ * General object representing a statement in a MinProofWorksheet.
  */
 public abstract class MinProofWorkStmt {
 
     /**
-     *  Reference to parent MinProofWorksheet for
-     *  convenience.
+     * Reference to parent MinProofWorksheet for convenience.
      */
     MinProofWorksheet w;
 
     /**
-     *  Array of Array of Strings, each of
-     *  which is either Metamath whitespace or a Metamath
-     *  token.
-     *  <p>
-     *  The outer array represents a line of a Proof
-     *  Worksheet and the inner array the "chunks"
-     *  which comprise a single line.
+     * Array of Array of Strings, each of which is either Metamath whitespace or
+     * a Metamath token.
+     * <p>
+     * The outer array represents a line of a Proof Worksheet and the inner
+     * array the "chunks" which comprise a single line.
      */
     String[][] stmtLineChunks;
 
     /**
-     *  Standard MinProofWorkStmt constructor.
-     *  <p>
-     *  @param w <code>MinProofWorksheet</code> of
-     *				which this statement is a part.
-     *  @param slc Array of Array of String representing
-     *   			the lines and "chunks" making up the
-     *              <code>MinProofWorkStmt</code>.
+     * Standard MinProofWorkStmt constructor.
+     *
+     * @param w {@code MinProofWorksheet} of which this statement is a part.
+     * @param slc Array of Array of String representing the lines and "chunks"
+     *            making up the {@code MinProofWorkStmt}.
      */
     public MinProofWorkStmt(final MinProofWorksheet w, final String[][] slc) {
 
@@ -57,38 +52,28 @@ public abstract class MinProofWorkStmt {
     }
 
     /**
-     *  <code>constructStmt</code> builds a
-     *  <code>MinProofWorkStmt</code> from an
-     *  List of an List of String chunks which
-     *  are either Metamath whitespace or Metamath tokens.
-     *  <p>
-     *  The first line of a statement identifies the type
-     *  of Proof Worksheet statement. <code>constructStmt</code>
-     *  validates those simply in order to be able to
-     *  determine which type of Proof Worksheet statement
-     *  must be constructed. In addition it checks to see
-     *  if the starting portion--up to theorem label-- is
-     *  valid, and then it extracts the theorem label and
-     *  stores it in the input minProofWorksheet object.
-     *  <b>
-     *  Errors result in accum'ing of error message(s) in
-     *  the <code>Messages</code> as well as setting of
-     *  <code>structuralError</code> in the input
-     *  <code>MinProofWorksheet</code> object.
-     *
-     *  @param minProofWorksheet GMFF version of
-     *			  <code>ProofWorksheet</code>
-     *  @param lineList List of List of String chunks
-     *             representing the text of a <code>ProofWorksheet</code>
-     *             broken into Metamath whitespace and tokens
-     *             grouped by line of the <code>ProofWorksheet</code>.
-     *  @return MinProofWorkStmt returns a specific type of
-     *             <code>MinProofWorkStmt</code> according to
-     *             the first token of the first line of the
-     *             statement text.
-     *  @throws IllegalArgumentException if lineList is empty
-     *          	  or if the first line has no <code>String</code>
-     *             chunks.
+     * {@code constructStmt} builds a {@code MinProofWorkStmt} from an List of
+     * an List of String chunks which are either Metamath whitespace or Metamath
+     * tokens.
+     * <p>
+     * The first line of a statement identifies the type of Proof Worksheet
+     * statement. {@code constructStmt} validates those simply in order to be
+     * able to determine which type of Proof Worksheet statement must be
+     * constructed. In addition it checks to see if the starting portion--up to
+     * theorem label-- is valid, and then it extracts the theorem label and
+     * stores it in the input minProofWorksheet object. <b> Errors result in
+     * accum'ing of error message(s) in the {@code Messages} as well as setting
+     * of {@code structuralError} in the input {@code MinProofWorksheet} object.
+     * 
+     * @param minProofWorksheet GMFF version of {@code ProofWorksheet}
+     * @param lineList List of List of String chunks representing the text of a
+     *            {@code ProofWorksheet} broken into Metamath whitespace and
+     *            tokens grouped by line of the {@code ProofWorksheet}.
+     * @return MinProofWorkStmt returns a specific type of
+     *         {@code MinProofWorkStmt} according to the first token of the
+     *         first line of the statement text.
+     * @throws IllegalArgumentException if lineList is empty or if the first
+     *             line has no {@code String} chunks.
      */
     public static MinProofWorkStmt constructStmt(
         final MinProofWorksheet minProofWorksheet,
@@ -145,65 +130,57 @@ public abstract class MinProofWorkStmt {
     }
 
     /**
-     *  Formats export data for the Proof Worksheet statement
-     *  according to the <code>Model A</code> specifications
-     *  and loads the data into a specified buffer.
-     *  <p>
-     *  Export data is based on model files which vary according
-     *  to the Model Id and Proof Worksheet statement type.
-     *  In general, model files contain fragments of export
-     *  data, such as html fragments -- but a model file may also
-     *  represent a placeholder for insertion of formatted text from
-     *  the Proof Worksheet. Model files are also categorized as
-     *  Required or Optional. Required model files, if not found
-     *  when read by the program trigger an error message and
-     *  prevent export of the entire proof. Optional model files
-     *  if not found when read simply prevent export of part
-     *  of the proof -- for example, Comments -- and no error
-     *  messages are generated. Placeholder model files, whether
-     *  Required or Optional, which exist but contain no data
-     *  indicate to the program that proof text is not to be
-     *  output at this location in the export text.
-     *  <p>
-     *  Additional information may be found \GMFFDoc\GMFFModels.txt.
-     *  <p>
-     *  @param gmffExporter The <code>GMFFExporter</code> requesting
-     *				the export data build.
-     *  @param exportBuffer The <code>StringBuilder</code> to which
-     *               exported data is to be output.
-     *  @throws GMFFException if errors are encountered during the
-     *               export process.
+     * Formats export data for the Proof Worksheet statement according to the
+     * {@code Model A} specifications and loads the data into a specified
+     * buffer.
+     * <p>
+     * Export data is based on model files which vary according to the Model Id
+     * and Proof Worksheet statement type. In general, model files contain
+     * fragments of export data, such as html fragments -- but a model file may
+     * also represent a placeholder for insertion of formatted text from the
+     * Proof Worksheet. Model files are also categorized as Required or
+     * Optional. Required model files, if not found when read by the program
+     * trigger an error message and prevent export of the entire proof. Optional
+     * model files if not found when read simply prevent export of part of the
+     * proof -- for example, Comments -- and no error messages are generated.
+     * Placeholder model files, whether Required or Optional, which exist but
+     * contain no data indicate to the program that proof text is not to be
+     * output at this location in the export text.
+     * <p>
+     * Additional information may be found \GMFFDoc\GMFFModels.txt.
+     *
+     * @param gmffExporter The {@code GMFFExporter} requesting the export data
+     *            build.
+     * @param exportBuffer The {@code StringBuilder} to which exported data is
+     *            to be output.
+     * @throws GMFFException if errors are encountered during the export
+     *             process.
      */
     public abstract void buildModelAExport(GMFFExporter gmffExporter,
         StringBuilder exportBuffer) throws GMFFException;
 
     /**
-     *  Utility function to typeset and reformat a portion of
-     *  a <code>String</code> array containing Metamath
-     *  tokens representing at least a portion of a formula.
-     *  <p>
-     *  There are two types of "chunks" to be typeset: whitespace
-     *  chunks and non-whitespace chunks. Non-whitespace chunks
-     *  are presumed to be Metamath ASCII symbols which are
-     *  converted into export data (e.g. html) using the
-     *  Metamath $t comment statement data. Whitespace chunks
-     *  are cleaned so that they contain only spaces, and
-     *  in addition, are shortened by one character for
-     *  readability.
-     *  <p>
-     *  @param gmffExporter The <code>GMFFExporter</code> requesting
-     *				the export data build.
-     *  @param exportBuffer The <code>StringBuilder</code> to which
-     *               exported data is to be output.
-     *  @param lineChunks <code>String</code> array containing
-     *               Metamath tokens or whitespace.
-     *  @param startOfFormulaSymbols index into <code>lineChunks</code>
-     *               indicating the beginning of the typesetting
-     *               operation (which proceeds through the end
-     *               of the array -- effectively we are just
-     *               bypassing an initial part of the array.)
-     *  @throws GMFFException if errors are encountered during the
-     *               export process.
+     * Utility function to typeset and reformat a portion of a {@code String}
+     * array containing Metamath tokens representing at least a portion of a
+     * formula.
+     * <p>
+     * There are two types of "chunks" to be typeset: whitespace chunks and
+     * non-whitespace chunks. Non-whitespace chunks are presumed to be Metamath
+     * ASCII symbols which are converted into export data (e.g. html) using the
+     * Metamath $t comment statement data. Whitespace chunks are cleaned so that
+     * they contain only spaces, and in addition, are shortened by one character
+     * for readability.
+     *
+     * @param gmffExporter The {@code GMFFExporter} requesting the export data
+     *            build.
+     * @param exportBuffer The {@code StringBuilder} to which exported data is
+     *            to be output.
+     * @param lineChunks {@code String} array containing Metamath tokens or
+     *            whitespace.
+     * @param startOfFormulaSymbols index into {@code lineChunks} indicating the
+     *            beginning of the typesetting operation (which proceeds through
+     *            the end of the array -- effectively we are just bypassing an
+     *            initial part of the array.)
      */
     public void typesetFormulaSymbols(final GMFFExporter gmffExporter,
         final StringBuilder exportBuffer, final String[] lineChunks,
@@ -235,21 +212,17 @@ public abstract class MinProofWorkStmt {
     }
 
     /**
-     *  Converts whitespace chunks in line of the
-     *  <code>MinProofWorkStmt</code> to spaces.
-     *  <p>
-     *  By the time a Proof Worksheet statement gets
-     *  to this part of the code, the only non-space
-     *  whitespace character is Tab -- and on the
-     *  Proof Assistant GUI Tab characters equate to
-     *  one space. To be really safe, all whitespace
-     *  chunk characters are converted to spaces.
-     *  <p>
-     *  @param lineIndex index of line in <code>stmtLineChunks</code>
-     *			to be "cleaned".
-     *  @return String containing all chunks in the line
-     *			concatenated with whitespace chunks converted to
-     *           spaces.
+     * Converts whitespace chunks in line of the {@code MinProofWorkStmt} to
+     * spaces.
+     * <p>
+     * By the time a Proof Worksheet statement gets to this part of the code,
+     * the only non-space whitespace character is Tab -- and on the Proof
+     * Assistant GUI Tab characters equate to one space. To be really safe, all
+     * whitespace chunk characters are converted to spaces.
+     *
+     * @param lineIndex index of line in {@code stmtLineChunks} to be "cleaned".
+     * @return String containing all chunks in the line concatenated with
+     *         whitespace chunks converted to spaces.
      */
     public String getCleanedLineString(final int lineIndex) {
 
@@ -259,25 +232,20 @@ public abstract class MinProofWorkStmt {
     }
 
     /**
-     *  Converts whitespace chunks in part of a line of the
-     *  <code>MinProofWorkStmt</code> to spaces.
-     *  <p>
-     *  By the time a Proof Worksheet statement gets
-     *  to this part of the code, the only non-space
-     *  whitespace character is Tab -- and on the
-     *  Proof Assistant GUI Tab characters equate to
-     *  one space. To be really safe, all whitespace
-     *  chunk characters are converted to spaces.
-     *  <p>
-     *  @param lineIndex index of line in <code>stmtLineChunks</code>
-     *			to be "cleaned".
-     *  @param fromChunkIndex index of first chunk in the line
-     *           to be "cleaned".
-     *  @param toChunkIndex exclusive endpoint (i.e. not thru)
-     *           of chunk cleanup operation :-)
-     *  @return String containing all designated chunks in the line
-     *			concatenated with whitespace chunks converted to
-     *           spaces.
+     * Converts whitespace chunks in part of a line of the
+     * {@code MinProofWorkStmt} to spaces.
+     * <p>
+     * By the time a Proof Worksheet statement gets to this part of the code,
+     * the only non-space whitespace character is Tab -- and on the Proof
+     * Assistant GUI Tab characters equate to one space. To be really safe, all
+     * whitespace chunk characters are converted to spaces.
+     *
+     * @param lineIndex index of line in {@code stmtLineChunks} to be "cleaned".
+     * @param fromChunkIndex index of first chunk in the line to be "cleaned".
+     * @param toChunkIndex exclusive endpoint (i.e. not thru) of chunk cleanup
+     *            operation :-)
+     * @return String containing all designated chunks in the line concatenated
+     *         with whitespace chunks converted to spaces.
      */
     public String getCleanedLineString(final int lineIndex,
         final int fromChunkIndex, final int toChunkIndex)

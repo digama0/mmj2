@@ -12,35 +12,35 @@
  * Dec-22-2006
  * --> added charNbr to MMIOException
  * --> made areLabelCharsValid(String s) static and created a
- *     static boolean isLabelOnProhibitedList(String s) for
- *     use in mmj.pa.ProofWorksheet.java.
+ *    static boolean isLabelOnProhibitedList(String s) for
+ *    use in mmj.pa.ProofWorksheet.java.
  *
  * Apr-01-2006 -- Version 0.04:
  * --> Added compressed proof capability
  *
  * Nov-01-2006 -- Version 0.05:
  * --> Modified to include immediately preceding Metamath comment
- *     text, if such a $( comment command exists, to the
- *     SrcStmt.comment field of a Theorem's SrcStmt. This
- *     will be available for display on the mmj2 Proof Assistant.
+ *    text, if such a $( comment command exists, to the
+ *    SrcStmt.comment field of a Theorem's SrcStmt. This
+ *    will be available for display on the mmj2 Proof Assistant.
  *
  * Aug-01-2007 -- Version 0.06:
  * --> Made isValidMathSymbol() static and public for use in
- *     mmj.lang.WorkVarManager.
+ *    mmj.lang.WorkVarManager.
  *
  * Aug-01-2008 -- Version 0.07:
  * --> Modified getAxiomaticAssrtSrcStmt() to load the previous
- *     comment into the SrcStmt of axioms (previously only
- *     theorem comments were hoovered up.)
+ *    comment into the SrcStmt of axioms (previously only
+ *    theorem comments were hoovered up.)
  * --> Added static getTitleIfApplicable(), bypassWhitespace()
- *     and bypassNonWhitespace() methods for use in pulling
- *     Chapter and Section titles out of Metamath comments.
- *     The bypassXXX() modules are general and could be
- *     used in non-BookManager/Chapter/Section endeavors...
+ *    and bypassNonWhitespace() methods for use in pulling
+ *    Chapter and Section titles out of Metamath comments.
+ *    The bypassXXX() modules are general and could be
+ *    used in non-BookManager/Chapter/Section endeavors...
  * --> added a close(), getTokenizer() and getSource() functions.
  *
- *  Version 0.08 - Nov-01-2011:
- *     - optimize getTitleIfApplicable()
+ * Version 0.08 - Nov-01-2011:
+ *    - optimize getTitleIfApplicable()
  */
 
 package mmj.mmio;
@@ -49,16 +49,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * Load input MetaMath tokens for a single Metamath
- * statement into a "work" structure, <code>SrcStmt</code>.
+ * Load input MetaMath tokens for a single Metamath statement into a "work"
+ * structure, {@code SrcStmt}.
  * <p>
- * (This is actually a somewhat inefficient intermediate
- * step on the way to loading the source into memory,
- * but is done this way to simplify the main code
- * and to improve testability.)
- *
- *  @see <a href="../../MetamathERNotes.html">
- *       Nomenclature and Entity-Relationship Notes</a>
+ * (This is actually a somewhat inefficient intermediate step on the way to
+ * loading the source into memory, but is done this way to simplify the main
+ * code and to improve testability.)
+ * 
+ * @see <a href="../../MetamathERNotes.html"> Nomenclature and
+ *      Entity-Relationship Notes</a>
  */
 public class Statementizer {
 
@@ -73,14 +72,13 @@ public class Statementizer {
     private String prevStmtComment = null;
 
     /**
-     *  Retrieves Chapter or Section title from a Comment
-     *  String based on an identifying pair of characters.
-     *
-     *  @param s String containing Metamath Comment.
-     *  @param idString identifying string of Chapter or
-     *            Section title.
-     *  @return Title of Chapter or Section, or null if the
-     *          Comment does not match the search criteria.
+     * Retrieves Chapter or Section title from a Comment String based on an
+     * identifying pair of characters.
+     * 
+     * @param s String containing Metamath Comment.
+     * @param idString identifying string of Chapter or Section title.
+     * @return Title of Chapter or Section, or null if the Comment does not
+     *         match the search criteria.
      */
     public static String getTitleIfApplicable(final String s,
         final String idString)
@@ -126,14 +124,12 @@ public class Statementizer {
     }
 
     /**
-     *  Bypasses Metamath whitespace in a String.
-     *  <p>
-     *  @param s String containing Metamath characters.
-     *  @param i index within String marking beginning
-     *           of scan for whitespace.
-     *  @return index of first non-whitespace character
-     *          or position beyond the end of the input
-     *          String.
+     * Bypasses Metamath whitespace in a String.
+     * 
+     * @param s String containing Metamath characters.
+     * @param i index within String marking beginning of scan for whitespace.
+     * @return index of first non-whitespace character or position beyond the
+     *         end of the input String.
      */
     public static int bypassWhitespace(final String s, int i) {
         int x;
@@ -153,14 +149,13 @@ public class Statementizer {
     }
 
     /**
-     *  Bypasses Metamath non-whitespace in a String.
-     *  <p>
-     *  @param s String containing Metamath characters.
-     *  @param i index within String marking beginning
-     *           of scan for non-whitespace.
-     *  @return index of first whitespace character
-     *          or position beyond the end of the input
-     *          String.
+     * Bypasses Metamath non-whitespace in a String.
+     * 
+     * @param s String containing Metamath characters.
+     * @param i index within String marking beginning of scan for
+     *            non-whitespace.
+     * @return index of first whitespace character or position beyond the end of
+     *         the input String.
      */
     public static int bypassNonWhitespace(final String s, int i) {
         int x;
@@ -178,17 +173,15 @@ public class Statementizer {
     }
 
     /**
-     *  Checks to see if a String is in the list of
-     *  prohibited Metamath labels.
-     *  <p>
-     *  See Metamath.pdf specification for the source list.
-     *  <p>
-     *  Note: there are about 50 labels. This sequential table
-     *        searc would probably be faster with a HashMap.
-     *  <p>
-     *  @param s String to check against the Prohibited Label list.
-     *  @return true if string is on the Prohibited Label list,
-     *               otherwise false.
+     * Checks to see if a String is in the list of prohibited Metamath labels.
+     * <p>
+     * See Metamath.pdf specification for the source list.
+     * <p>
+     * Note: there are about 50 labels. This sequential table searc would
+     * probably be faster with a HashMap.
+     * 
+     * @param s String to check against the Prohibited Label list.
+     * @return true if string is on the Prohibited Label list, otherwise false.
      */
     public static boolean isLabelOnProhibitedList(final String s) {
         for (final String element : MMIOConstants.PROHIBITED_LABELS)
@@ -198,14 +191,14 @@ public class Statementizer {
     }
 
     /**
-     *  Checks to see if each character in a String is a valid
-     *  Metamath character.
-     *  <p>
-     *  See Metamath.pdf specification for the source list.
-     *  <p>
-     *  @param s String of characters to check for validity.
-     *  @return true if every character in the input String is
-     *               a valid Metamath character.
+     * Checks to see if each character in a String is a valid Metamath
+     * character.
+     * <p>
+     * See Metamath.pdf specification for the source list.
+     * 
+     * @param s String of characters to check for validity.
+     * @return true if every character in the input String is a valid Metamath
+     *         character.
      */
     public static boolean areLabelCharsValid(final String s) {
         for (int i = 0; i < s.length(); i++)
@@ -215,14 +208,12 @@ public class Statementizer {
     }
 
     /**
-     * Checks to see whether or not a String contains only
-     * symbols defined in Metamath as valid math symbols.
-     * <p>
-     *
+     * Checks to see whether or not a String contains only symbols defined in
+     * Metamath as valid math symbols.
+     * 
      * @param s input token, should be pre-trimmed.
-     *
-     * @return true if input string contains only valid Metamath
-     *                 math symbol characters; otherwise false.
+     * @return true if input string contains only valid Metamath math symbol
+     *         characters; otherwise false.
      */
     public static boolean isValidMathSymbol(final String s) {
         for (int i = 0; i < s.length(); i++)
@@ -233,18 +224,15 @@ public class Statementizer {
 
     /**
      * Construct a Statementizer from a Tokenizer.
-     *
-     * @param t input <code>Tokenizer</code> stream.
-     *
-     * @throws       IOException if I/O error
-     *
+     * 
+     * @param t input {@code Tokenizer} stream.
      */
     public Statementizer(final Tokenizer t) {
         tokenizer = t;
     }
 
     /**
-     *  Closes the Tokenizer input stream.
+     * Closes the Tokenizer input stream.
      */
     public void close() {
         if (tokenizer != null)
@@ -256,11 +244,9 @@ public class Statementizer {
     /**
      * Return number of last statement parsed.
      * <p>
-     * Statement number is simply a counter of the
-     * <code>SrcStmt</code> processed so far. It
-     * is not the same as
-     * <code>mmj.lang.MObj.seq</i>.
-     *
+     * Statement number is simply a counter of the {@code SrcStmt} processed so
+     * far. It is not the same as <code>mmj.lang.MObj.seq</i>.
+     * 
      * @return stmtNbr
      */
     public int getStmtNbr() {
@@ -268,16 +254,13 @@ public class Statementizer {
     }
 
     /**
-     * Attempts to bypass the current statement in the
-     * input Metamath file.
+     * Attempts to bypass the current statement in the input Metamath file.
      * <p>
-     * Bypass is intended to give the next
-     * next invocation of <code>getStmt()</code>
-     * a good chance of finding a complete statement to
-     * parse, thus avoiding multiple error messages
-     * caused by a single error.
-     *
-     * @throws       IOException if I/O error
+     * Bypass is intended to give the next next invocation of {@code getStmt()}
+     * a good chance of finding a complete statement to parse, thus avoiding
+     * multiple error messages caused by a single error.
+     * 
+     * @throws IOException if I/O error
      */
     public void bypassErrorStmt() throws IOException {
         while (true) {
@@ -295,18 +278,15 @@ public class Statementizer {
     /**
      * Sets statement number of the last statement parsed.
      * <p>
-     * This may come in handy in conjunction with
-     * included files -- construct a new Statementizer
-     * for the included file, set the stmtNbr, process,
-     * then continue processing with the old Statementizer...
-     * after setting its stmtNbr. Or...just use the
-     * <code>setTokenizer</code> method to switch
+     * This may come in handy in conjunction with included files -- construct a
+     * new Statementizer for the included file, set the stmtNbr, process, then
+     * continue processing with the old Statementizer... after setting its
+     * stmtNbr. Or...just use the {@code setTokenizer} method to switch
      * Tokenizers! Easy.
-     *
+     * 
      * @param s Metamath statement (sequence) number.
-     *
-     * @throws IllegalArgumentException if input statement
-     *         number is less than zero.
+     * @throws IllegalArgumentException if input statement number is less than
+     *             zero.
      */
     public void setStmtNbr(final int s) throws IllegalArgumentException {
         if (s < 0)
@@ -318,16 +298,12 @@ public class Statementizer {
     /**
      * Switches the Tokenizer reader in use.
      * <p>
-     * Intended for use with included MetaMath files
-     * (<code>$[ xx.mm $]</code> command.)
-     *
-     * @param t input <code>Tokenizer</code>.
-     *
+     * Intended for use with included MetaMath files ({@code $[ xx.mm $]}
+     * command.)
+     * 
+     * @param t input {@code Tokenizer}.
      * @return previous Tokenizer in use.
-     *
-     * @throws IllegalArgumentException if input
-     *         Tokenizer is null.
-     *
+     * @throws IllegalArgumentException if input Tokenizer is null.
      */
     public Tokenizer setTokenizer(final Tokenizer t)
         throws IllegalArgumentException
@@ -342,7 +318,7 @@ public class Statementizer {
 
     /**
      * Returns the current Source information from the Tokenizer.
-     * <p>
+     * 
      * @return the Source info from the Tokenizer in use.
      */
     public String getSourceId() {
@@ -351,7 +327,7 @@ public class Statementizer {
 
     /**
      * Returns the current Tokenizer.
-     * <p>
+     * 
      * @return the Tokenizer in use.
      */
     public Tokenizer getTokenizer() {
@@ -360,11 +336,10 @@ public class Statementizer {
 
     /**
      * Return next MetaMath SrcStmt.
-     *
-     * @return next MetaMath <code>SrcStmt</code> or null if EOF.
-     *
-     * @throws       IOException if I/O error
-     * @throws       MMIOException if invalid SrcStmt read.
+     * 
+     * @return next MetaMath {@code SrcStmt} or null if EOF.
+     * @throws IOException if I/O error
+     * @throws MMIOException if invalid SrcStmt read.
      */
     public SrcStmt getStmt() throws MMIOException, IOException {
 
@@ -495,7 +470,6 @@ public class Statementizer {
      * embedded comments.
      *
      * @return -1 if EOF or length of next non-comment token.
-     *
      */
     private int getNextNonCommentTokenLen() throws IOException {
 
@@ -728,19 +702,20 @@ public class Statementizer {
         }
     }
 
-    /*
-     *  Note: the compressed blocks are not validated
-     *        here even though everything else is normally
-     *        validated as much as possible as soon as
-     *        possible. Here, we could edit for A->Z or ?
-     *        but to save time we defer to
-     *        mmj.lang.ProofCompression.java which does
-     *        thorough character, by character validation.
-     *
-     *        It is necessary to check for "$." however
-     *        but in the event that the "$." is missing
-     *        the program would keep chunking along, until
-     *        the end of the *next* statement or EOF.
+    /**
+     * Note: the compressed blocks are not validated here even though everything
+     * else is normally validated as much as possible as soon as possible. Here,
+     * we could edit for A->Z or ? but to save time we defer to
+     * mmj.lang.ProofCompression.java which does thorough character, by
+     * character validation.
+     * <p>
+     * It is necessary to check for "$." however but in the event that the "$."
+     * is missing the program would keep chunking along, until the end of the
+     * *next* statement or EOF.
+     * 
+     * @param x the statement to load from
+     * @throws MMIOException if an error occurs
+     * @throws IOException if an error occurs
      */
     private void loadCompressedProofBlockList(final SrcStmt x)
         throws MMIOException, IOException
@@ -787,8 +762,7 @@ public class Statementizer {
                 }
                 s.append(workToken);
                 /**
-                 *  must not contain embedded $( or $) character
-                 *  sequences
+                 * must not contain embedded $( or $) character sequences
                  */
                 if (workToken.indexOf(MMIOConstants.MM_END_COMMENT_KEYWORD) < 0
                     && workToken

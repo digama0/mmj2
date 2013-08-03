@@ -7,37 +7,36 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  OutputBoss.java  0.08 11/01/2011
+ * OutputBoss.java  0.08 11/01/2011
  *
- *  22-Jan-2006 --> added sysOutPrint and sysErrPrint
- *                  for use by Proof Assistant.
+ * 22-Jan-2006 --> added sysOutPrint and sysErrPrint
+ *                 for use by Proof Assistant.
  *
- *  Version 0.04 Sep-03-2006:
- *      -->Add TMFF stuff
+ * Version 0.04 Sep-03-2006:
+ *     -->Add TMFF stuff
  *
- *  Version 0.05 06/01/2007:
- *      -->Add OutputVerbosity RunParm
- *      -->Add StartInstrumentationTimer and
- *         StopInstrumentationTimer.
+ * Version 0.05 06/01/2007:
+ *     -->Add OutputVerbosity RunParm
+ *     -->Add StartInstrumentationTimer and
+ *        StopInstrumentationTimer.
  *
- *  Version 0.06 11/01/2007:
- *      -->Fix bug: MaxErrorMessages and MaxInfoMessages
- *         parms not taking effect correctly!
+ * Version 0.06 11/01/2007:
+ *     -->Fix bug: MaxErrorMessages and MaxInfoMessages
+ *        parms not taking effect correctly!
  *
- *  Version 0.07 08/01/2008:
- *      -->Add new Print commands for mmj.lang.BookManager:
- *             - PrintBookManagerChapters
- *             - PrintBookManagerSections
- *             - PrintBookManagerSectionDetails
+ * Version 0.07 08/01/2008:
+ *     -->Add new Print commands for mmj.lang.BookManager:
+ *            - PrintBookManagerChapters
+ *            - PrintBookManagerSections
+ *            - PrintBookManagerSectionDetails
  *
- *  Version 0.08 - Nov-01-2011:
- *  ==> mmj2 Paths Enhancement changes
- *      -->Added code for MMJ2FailPopupWindow
- *      -->change editSysErrFile() and
+ * Version 0.08 - Nov-01-2011:
+ * ==> mmj2 Paths Enhancement changes
+ *     -->Added code for MMJ2FailPopupWindow
+ *     -->change editSysErrFile() and
                   editSysOutFile() to pass mmj2Path as filePath
- *        argument to Boss.editPrintWriterRunParm().
- *      -->add setDefaults() routine.
- *
+ *       argument to Boss.editPrintWriterRunParm().
+ *     -->add setDefaults() routine.
  */
 
 package mmj.util;
@@ -50,23 +49,20 @@ import mmj.tmff.TMFFPreferences;
 import mmj.verify.Grammar;
 
 /**
- *  Responsible for managing and using Messages, Dump and
- *  writing to sysOut/sysErr.
- *  <p>
- *  OutputBoss' main responsibility is directing output to
- *  the user-designated destination, so it provides its own
- *  "print-and-clear-messages" function for the other Boss
- *  classes to use.
- *  <p>
- *  A key point to note is that in BatchMMJ2, Messages are
- *  printed and cleared immediately after being generated, they
- *  are not accumulated for some later purpose. Therefore,
- *  OutputBoss uses messages.reallocateInfoMessages and
- *  messages.reallocateErrorMessages when a MaxErrorMessages
- *  or MaxInfoMessages runparm is changed. It also uses
- *  LangConstants.MAX_ERROR_MESSAGES_DEFAULT and
- *  LangConstants.MAX_INFO_MESSAGES_DEFAULT if the
- *  relevant runParms are *not* input.
+ * Responsible for managing and using Messages, Dump and writing to
+ * sysOut/sysErr.
+ * <p>
+ * OutputBoss' main responsibility is directing output to the user-designated
+ * destination, so it provides its own "print-and-clear-messages" function for
+ * the other Boss classes to use.
+ * <p>
+ * A key point to note is that in BatchMMJ2, Messages are printed and cleared
+ * immediately after being generated, they are not accumulated for some later
+ * purpose. Therefore, OutputBoss uses messages.reallocateInfoMessages and
+ * messages.reallocateErrorMessages when a MaxErrorMessages or MaxInfoMessages
+ * runparm is changed. It also uses LangConstants.MAX_ERROR_MESSAGES_DEFAULT and
+ * LangConstants.MAX_INFO_MESSAGES_DEFAULT if the relevant runParms are *not*
+ * input.
  */
 public class OutputBoss extends Boss {
 
@@ -84,9 +80,9 @@ public class OutputBoss extends Boss {
     protected int outputVerbosityParm;
 
     /**
-     *  Constructor with BatchFramework for access to environment.
-     *
-     *  @param batchFramework for access to environment.
+     * Constructor with BatchFramework for access to environment.
+     * 
+     * @param batchFramework for access to environment.
      */
     public OutputBoss(final BatchFramework batchFramework) {
         super(batchFramework);
@@ -94,11 +90,10 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Executes a single command from the RunParmFile.
-     *
-     *  @param runParm the RunParmFile line to execute.
+     * Executes a single command from the RunParmFile.
+     * 
+     * @param runParm the RunParmFile line to execute.
      */
-    @Override
     public boolean doRunParmCommand(final RunParmArrayEntry runParm)
         throws IllegalArgumentException, MMIOException, FileNotFoundException,
         IOException, VerifyException
@@ -209,18 +204,16 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Print all error/info messages, then clear the messages
-     *  from the Messages repository.
-     *  <p>
-     *  Note: startup errors are gathered and displayed  here
-     *        via calls to methods in <code>MMJ2FailPopupWindow</code>.
-     *        The gathering and displaying are separate because
-     *        when the popup window is shown the error messages
-     *        should already be displayed on the Command Prompt
-     *        window -- but that process clears the messages
-     *        from the <code>Messages</code> object. So the
-     *        messages are accumulated by <code>MMJ2FailPopupWindow</code>
-     *        before being displayed on the Command Prompt window...
+     * Print all error/info messages, then clear the messages from the Messages
+     * repository.
+     * <p>
+     * Note: startup errors are gathered and displayed here via calls to methods
+     * in {@code MMJ2FailPopupWindow}. The gathering and displaying are separate
+     * because when the popup window is shown the error messages should already
+     * be displayed on the Command Prompt window -- but that process clears the
+     * messages from the {@code Messages} object. So the messages are
+     * accumulated by {@code MMJ2FailPopupWindow} before being displayed on the
+     * Command Prompt window...
      */
     public void printAndClearMessages() {
 
@@ -235,9 +228,9 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Get a Messages object.
-     *
-     *  @return Messages object, ready to go.
+     * Get a Messages object.
+     * 
+     * @return Messages object, ready to go.
      */
     public Messages getMessages() {
         if (messages == null)
@@ -246,12 +239,12 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Common routine for printing a line to SysOut
-     *  if the input verbosity number is less than
-     *  or equal to the OutputVerbosity RunParm
-     *
-     *  @param s line to print.
-     *  @param v verbosity of line to print.
+     * Common routine for printing a line to SysOut if the input verbosity
+     * number is less than or equal to the OutputVerbosity RunParm
+     * 
+     * @param s line to print.
+     * @param v verbosity of line to print.
+     * @throws IOException if an error occurred
      */
     public void sysOutPrintln(final String s, final int v) throws IOException {
         if (v > outputVerbosityParm) {}
@@ -261,9 +254,10 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Common routine for printing a line to SysOut.
-     *
-     *  @param s line to print.
+     * Common routine for printing a line to SysOut.
+     * 
+     * @param s line to print.
+     * @throws IOException if an error occurred
      */
     public void sysOutPrintln(final String s) throws IOException {
         if (sysOut == null)
@@ -275,13 +269,12 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Common routine for printing to SysOut.
-     *  if the input verbosity number is less than
-     *  or equal to the OutputVerbosity RunParm
-     *
-     *  @param s string to print.
-     *  @param v verbosity of string to print.
-     *
+     * Common routine for printing to SysOut. if the input verbosity number is
+     * less than or equal to the OutputVerbosity RunParm
+     * 
+     * @param s string to print.
+     * @param v verbosity of string to print.
+     * @throws IOException if an error occurred
      */
     public void sysOutPrint(final String s, final int v) throws IOException {
 
@@ -291,9 +284,10 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Common routine for printing to SysOut.
-     *
-     *  @param s string to print.
+     * Common routine for printing to SysOut.
+     * 
+     * @param s string to print.
+     * @throws IOException if an error occurred
      */
     public void sysOutPrint(final String s) throws IOException {
         if (sysOut == null)
@@ -305,9 +299,10 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Common routine for printing a line to SysErr.
-     *
-     *  @param s line to print.
+     * Common routine for printing a line to SysErr.
+     * 
+     * @param s line to print.
+     * @throws IOException if an error occurred
      */
     public void sysErrPrintln(final String s) throws IOException {
         if (sysErr == null)
@@ -319,9 +314,10 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Common routine for printing to SysErr.
-     *
-     *  @param s String to print.
+     * Common routine for printing to SysErr.
+     * 
+     * @param s String to print.
+     * @throws IOException if an error occurred
      */
     public void sysErrPrint(final String s) throws IOException {
         if (sysErr == null)
@@ -333,7 +329,7 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Close SysOut and SysErr.
+     * Close SysOut and SysErr.
      */
     public void close() {
         closeSysOut();
@@ -341,10 +337,10 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Executes the PrintSyntaxDetails command, prints any
-     *  messages, etc.
-     *
-     *  @param runParm RunParmFile line.
+     * Executes the PrintSyntaxDetails command, prints any messages, etc.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
      */
     public void doPrintSyntaxDetails(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -361,10 +357,10 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Executes the PrintStatementDetails command, prints any
-     *  messages, etc.
-     *
-     *  @param runParm RunParmFile line.
+     * Executes the PrintStatementDetails command, prints any messages, etc.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
      */
     public void doPrintStatementDetails(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -392,9 +388,10 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Executes the PrintBookManagerChapters command.
-     *
-     *  @param runParm RunParmFile line.
+     * Executes the PrintBookManagerChapters command.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
      */
     public void doPrintBookManagerChapters(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -415,9 +412,10 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Executes the PrintBookManagerSections command.
-     *
-     *  @param runParm RunParmFile line.
+     * Executes the PrintBookManagerSections command.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
      */
     public void doPrintBookManagerSections(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -438,9 +436,10 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Executes the PrintBookManagerSectionDetails command
-     *
-     *  @param runParm RunParmFile line.
+     * Executes the PrintBookManagerSectionDetails command
+     * 
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
      */
     public void doPrintBookManagerSectionDetails(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -469,9 +468,9 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Get a Dump object.
-     *
-     *  @return Dump object, ready to go.
+     * Get a Dump object.
+     * 
+     * @return Dump object, ready to go.
      */
     public Dump getDump() {
         if (dump == null)
@@ -488,7 +487,10 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Validate System Output File Runparm.
+     * Validate System Output File Runparm.
+     * 
+     * @param runParm RunParmFile line parsed into RunParmArrayEntry.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editSysOutFile(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -502,7 +504,10 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Validate System Error File Runparm.
+     * Validate System Error File Runparm.
+     * 
+     * @param runParm RunParmFile line parsed into RunParmArrayEntry.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editSysErrFile(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -516,7 +521,10 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Validate Max Error Messages Runparm.
+     * Validate Max Error Messages Runparm.
+     * 
+     * @param runParm RunParmFile line parsed into RunParmArrayEntry.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editMaxErrorMessages(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -531,7 +539,10 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Validate Max Info Messages Runparm.
+     * Validate Max Info Messages Runparm.
+     * 
+     * @param runParm RunParmFile line parsed into RunParmArrayEntry.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editMaxInfoMessages(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -546,7 +557,10 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Validate Caption Runparm.
+     * Validate Caption Runparm.
+     * 
+     * @param runParm RunParmFile line parsed into RunParmArrayEntry.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editCaption(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -559,9 +573,9 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Get Caption Parm Option.
-     *
-     *  @return Caption string.
+     * Get Caption Parm Option.
+     * 
+     * @return Caption string.
      */
     protected String getCaption() {
         if (captionParm == null)
@@ -571,7 +585,10 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Validate Max Statement Print Count RunParm.
+     * Validate Max Statement Print Count RunParm.
+     * 
+     * @param runParm RunParmFile line parsed into RunParmArrayEntry.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editMaxStatementPrintCount(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -582,7 +599,10 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Validate OutputVerbosity Runparm.
+     * Validate OutputVerbosity Runparm.
+     * 
+     * @param runParm RunParmFile line parsed into RunParmArrayEntry.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editOutputVerbosity(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -593,7 +613,10 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Validate StartInstrumentationTimer Runparm.
+     * Validate StartInstrumentationTimer Runparm.
+     * 
+     * @param runParm RunParmFile line parsed into RunParmArrayEntry.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editStartInstrumentationTimer(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -606,7 +629,10 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Validate StopInstrumentationTimer Runparm.
+     * Validate StopInstrumentationTimer Runparm.
+     * 
+     * @param runParm RunParmFile line parsed into RunParmArrayEntry.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editStopInstrumentationTimer(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -620,15 +646,15 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Checks to see if BookManager is initialized and enabled.
-     *  <p>
-     *  Caution: throws IllegalArgumentException if BookManager
-     *           is not enabled! Ouch.
-     *  <p>
-     *  @param runParm RunParmFile line.
-     *  @param valueCaption String identifying RunParm value
-     *  @param logicalSystem the LogicalSystem in use.
-     *  @return BookManager object in enabled status.
+     * Checks to see if BookManager is initialized and enabled.
+     * <p>
+     * Caution: throws IllegalArgumentException if BookManager is not enabled!
+     * Ouch.
+     *
+     * @param runParm RunParmFile line.
+     * @param valueCaption String identifying RunParm value
+     * @param logicalSystem the LogicalSystem in use.
+     * @return BookManager object in enabled status.
      */
     protected BookManager checkBookManagerReady(
         final RunParmArrayEntry runParm, final String valueCaption,
@@ -644,16 +670,16 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Checks to see if BookManager is initialized and enabled.
-     *  <p>
-     *  Caution: throws IllegalArgumentException if Section Number
-     *           is not a positive interer, or if it is not
-     *           found within the BookManager! Ouch.
-     *  <p>
-     *  @param runParm RunParmFile line.
-     *  @param valueCaption String identifying RunParm value
-     *  @param valueFieldNbr number of value field within RunParm.
-     *  @return Section BookManager section.
+     * Checks to see if BookManager is initialized and enabled.
+     * <p>
+     * Caution: throws IllegalArgumentException if Section Number is not a
+     * positive interer, or if it is not found within the BookManager! Ouch.
+     *
+     * @param runParm RunParmFile line.
+     * @param valueCaption String identifying RunParm value
+     * @param valueFieldNbr number of value field within RunParm.
+     * @param bookManager the BookManager to check
+     * @return Section BookManager section.
      */
     protected Section editBookManagerSectionNbr(
         final RunParmArrayEntry runParm, final String valueCaption,
@@ -674,7 +700,7 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Initialize Messages Object.
+     * Initialize Messages Object.
      */
     protected void initializeMessages() {
 
@@ -690,7 +716,9 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Check SysErr to see if I/O Error has occurred.
+     * Check SysErr to see if I/O Error has occurred.
+     * 
+     * @throws IOException if an error occurred
      */
     protected void checkSysErrError() throws IOException {
 
@@ -702,7 +730,9 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Check SysOut to see if I/O Error has occurred.
+     * Check SysOut to see if I/O Error has occurred.
+     * 
+     * @throws IOException if an error occurred
      */
     protected void checkSysOutError() throws IOException {
 
@@ -714,7 +744,7 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Close SysOut.
+     * Close SysOut.
      */
     protected void closeSysOut() {
         if (sysOut != null)
@@ -722,7 +752,7 @@ public class OutputBoss extends Boss {
     }
 
     /**
-     *  Close SysErr.
+     * Close SysErr.
      */
     protected void closeSysErr() {
         if (sysErr != null)

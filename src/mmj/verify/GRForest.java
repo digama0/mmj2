@@ -30,58 +30,47 @@ import java.util.*;
 import mmj.lang.Cnst;
 
 /**
- *
- * RedBlack trees.
- * @author Doug Lea
- * @version 0.93
- *
- * <P> For an introduction to this package see <A HREF="index.html"> Overview </A>.
- */
-
-/**
- *  GRForest is a collection of static functions that
- *  operate on GRNode Trees.
- *  <p>
- *  Each tree's root is stored in mmj.lang.Cnst.gRRoot(dot).
- *  <p>
- *  A tree contains every Notation Grammar Rule that begins
- *  with the gRRoot's Cnst. Each leaf node has a reference (pointer)
- *  to a sub-tree, and so on. This enables all Rules whose
- *  expressions begin with "(" to share a common root.
- *  <p>
- *  The purpose of GRForest and GRNode was to provide a
- *  searchable repository of NotationRule information,
- *  and it is used for that purpose in mmj.verify.BottomUpParser.java.
- *  However, the Bottom Up algorithm is to inefficient for
- *  Metamath's set.mm and has been "deprecated" (to put it
- *  politely), in favor of mmj.verify.EarleyParser.java.
- *
- *  So, GRForest and GRNode are teetering on obsolescence
- *  and could be removed from without too much trouble.
- *  The only use for them still is checking for duplicate
- *  Rule expressions, and there is obviously a cheaper
- *  way to do that than with these things...(I'm guessing
- *  that since each GrammarRule carries its own expression
- *  that the hash code for each rule could be pre-computed
- *  and even stored, if desired, and then used as the
- *  key to a HashSet. Bada bing, bada boom.)
- *
- *  Therefore, I am not going to document these any further.
- *
+ * GRForest is a collection of static functions that operate on GRNode Trees.
+ * <p>
+ * Each tree's root is stored in mmj.lang.Cnst.gRRoot(dot).
+ * <p>
+ * A tree contains every Notation Grammar Rule that begins with the gRRoot's
+ * Cnst. Each leaf node has a reference (pointer) to a sub-tree, and so on. This
+ * enables all Rules whose expressions begin with "(" to share a common root.
+ * <p>
+ * The purpose of GRForest and GRNode was to provide a searchable repository of
+ * NotationRule information, and it is used for that purpose in
+ * {@link BottomUpParser} However, the Bottom Up algorithm is too inefficient
+ * for Metamath's set.mm and has been "deprecated" (to put it politely), in
+ * favor of {@link EarleyParser}.
+ * <p>
+ * So, GRForest and GRNode are teetering on obsolescence and could be removed
+ * from without too much trouble. The only use for them still is checking for
+ * duplicate Rule expressions, and there is obviously a cheaper way to do that
+ * than with these things...(I'm guessing that since each GrammarRule carries
+ * its own expression that the hash code for each rule could be pre-computed and
+ * even stored, if desired, and then used as the key to a HashSet. Bada bing,
+ * bada boom.)
+ * <p>
+ * Therefore, I am not going to document these any further.
  */
 public class GRForest {
 
-    /*
-     *  findCnstSubSeq -- searches GrNode tree/subtree down
-     *  through the "forest" of trees. Each element of the
-     *  input Cnst array represents a level of the forest,
-     *  with ruleFormatExpr[0] in the top tree -- the matching
-     *  GRNode contains a link down to the root of the tree
-     *  in the level below, which represents the Cnst values
-     *  in a ruleFormatExpr[1] that begin with the parent level's
-     *  Cnst. In other words, each tree node can point to a tree
-     *  below it -- as well as having left/right/parent/child
-     *  pointers to GRNodes within the current level's tree.
+    /**
+     * searches GrNode tree/subtree down through the "forest" of trees. Each
+     * element of the input Cnst array represents a level of the forest, with
+     * ruleFormatExpr[0] in the top tree -- the matching GRNode contains a link
+     * down to the root of the tree in the level below, which represents the
+     * Cnst values in a ruleFormatExpr[1] that begin with the parent level's
+     * Cnst. In other words, each tree node can point to a tree below it -- as
+     * well as having left/right/parent/child pointers to GRNodes within the
+     * current level's tree.
+     * 
+     * @param root the root node
+     * @param ruleFormatExpr an array containing the sequence to search for
+     * @param seqNext the start index into ruleFormatExpr
+     * @param seqLast the end index into ruleFormatExpr
+     * @return the GRNode containing the match, or {@code null}
      */
     public static GRNode findCnstSubSeq(GRNode root,
         final Cnst[] ruleFormatExpr, int seqNext, final int seqLast)
@@ -97,9 +86,13 @@ public class GRForest {
         }
     }
 
-    /*
-     *  findLen1CnstNotationRule -- searches GrNode tree for a
-     *  length of 1 Notation Rule matching the input Cnst.
+    /**
+     * searches GrNode tree for a length of 1 Notation Rule matching the input
+     * Cnst.
+     * 
+     * @param root the root node
+     * @param cnst the Cnst to search for
+     * @return the associated NotationRule
      */
     public static NotationRule findLen1CnstNotationRule(final GRNode root,
         final Cnst cnst)
@@ -114,29 +107,27 @@ public class GRForest {
         return match.elementNotationRule();
     }
 
-    /*
-     *  addNotationRule --
-     *  <ol>
-     *  <li>get root, blow up if helpful to consistency;</li>
-     *  <li>find last element of input expr that has a
-     *      node under the forest root;</li>
-     *  <li>if last element of input expr is the
-     *      final element of the array and it already has
-     *      a NotationRule return the found node -- but if
-     *      the NotationRule is null, update the rule with
-     *      the input rule and return the found node.</li>
-     *  <li>prepare a linked chain of all nodes that do
-     *      not already exist and splice them into the forest,
-     *      returning the last node to the caller.</li>
-     *  </ol>
-     *
-     *  @return tailNode of chain -- if returned node's
-     *          NotationRule differs from input, then
-     *          the input is a duplicate (error); otherwise
-     *          the returned node is new and good.
+    /**
+     * <ol>
+     * <li>get root, blow up if helpful to consistency;</li>
+     * <li>find last element of input expr that has a node under the forest
+     * root;</li>
+     * <li>if last element of input expr is the final element of the array and
+     * it already has a NotationRule return the found node -- but if the
+     * NotationRule is null, update the rule with the input rule and return the
+     * found node.</li>
+     * <li>prepare a linked chain of all nodes that do not already exist and
+     * splice them into the forest, returning the last node to the caller.</li>
+     * </ol>
+     * 
+     * @param ruleFormatExpr the expression to add.
+     * @param notationRule the NotationRule for the expression
+     * @return tailNode of chain -- if returned node's NotationRule differs from
+     *         input, then the input is a duplicate (error); otherwise the
+     *         returned node is new and good.
      */
     public static GRNode addNotationRule(final Cnst[] ruleFormatExpr,
-        final NotationRule notationRule) throws IllegalArgumentException
+        final NotationRule notationRule)
     {
         int prevLevel = -1;
         int currLevel = 0;
@@ -182,12 +173,10 @@ public class GRForest {
         }
 
         /**
-         * Situation: NO complete match found, SO we have either
-         *            a partial match, on at least one node, or
-         *            a totally null match. We'll need to
-         *            compute the number of new nodes, create
-         *            them and then splice them into the forest.
-         *            Plus, we may have to update Cnst.gRRoot.
+         * Situation: NO complete match found, SO we have either a partial
+         * match, on at least one node, or a totally null match. We'll need to
+         * compute the number of new nodes, create them and then splice them
+         * into the forest. Plus, we may have to update Cnst.gRRoot.
          */
 
         revCurrLevelRoot = GRForest.addToTree(ruleFormatExpr[currLevel],

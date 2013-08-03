@@ -7,10 +7,10 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  StoreInMMTFolderTLRequest.java  0.01 08/01/2008
+ * StoreInMMTFolderTLRequest.java  0.01 08/01/2008
  *
- *  Version 0.01:
- *  ==> New.
+ * Version 0.01:
+ * ==> New.
  */
 
 package mmj.tl;
@@ -20,37 +20,34 @@ import mmj.pa.ProofAsst;
 import mmj.pa.ProofWorksheet;
 
 /**
- *  StoreInMMTFolderTLRequest implements a user request for a
- *  TheoremLoader operation.
- *  <p>
- *  This class is basically just a name which is used by the
- *  ProofAsstGUI to identify the user's request, and a call
- *  to implement the request.
- *  <p>
- *  The input ProofWorksheet must be already successfully unified,
- *  or else a TheoremLoaderException is thrown. The ProofWorksheet
- *  is converted to Metamath .mm format and stored in the MMT Folder,
+ * StoreInMMTFolderTLRequest implements a user request for a TheoremLoader
+ * operation.
+ * <p>
+ * This class is basically just a name which is used by the ProofAsstGUI to
+ * identify the user's request, and a call to implement the request.
+ * <p>
+ * The input ProofWorksheet must be already successfully unified, or else a
+ * TheoremLoaderException is thrown. The ProofWorksheet is converted to Metamath
+ * .mm format and stored in the MMT Folder,
  */
 public class StoreInMMTFolderTLRequest extends TLRequest {
 
     /**
-     *  Constructor for StoreInMMTFolderTLRequest
+     * Constructor for StoreInMMTFolderTLRequest
      */
     public StoreInMMTFolderTLRequest() {}
 
     /**
-     *  Implements the request to store a ProofWorksheet in
-     *  the MMT Folder.
-     *  <p>
-     *  @param theoremLoader TheoremLoader object.
-     *  @param proofWorksheet ProofWorksheet object.
-     *  @param logicalSystem LogicalSystem object.
-     *  @param messages Messages object.
-     *  @param proofAsst ProofAsst object.
-     *  @throws TheoremLoaderException if there are any data errors
-     *         encountered while performing the requested function.
+     * Implements the request to store a ProofWorksheet in the MMT Folder.
+     *
+     * @param theoremLoader TheoremLoader object.
+     * @param proofWorksheet ProofWorksheet object.
+     * @param logicalSystem LogicalSystem object.
+     * @param messages Messages object.
+     * @param proofAsst ProofAsst object.
+     * @throws TheoremLoaderException if there are any data errors encountered
+     *             while performing the requested function.
      */
-    @Override
     public void doIt(final TheoremLoader theoremLoader,
         final ProofWorksheet proofWorksheet, final LogicalSystem logicalSystem,
         final Messages messages, final ProofAsst proofAsst)

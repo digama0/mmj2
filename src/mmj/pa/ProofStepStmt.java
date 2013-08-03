@@ -6,41 +6,38 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-/**
- *  ProofStepStmt.java  0.07 08/01/2008
- *  <code>
- *  Version 0.04: 06/01/2007
- *      - Un-nested inner class
+/*
+ * ProofStepStmt.java  0.07 08/01/2008
+ * {@code 
+ * Version 0.04: 06/01/2007
+ *     - Un-nested inner class
  *
- *  Version 0.05: 08/01/2007
- *      - added workVarsList to ProofStepStmt
- *      - Work Var Enhancement misc. changes.
+ * Version 0.05: 08/01/2007
+ *     - added workVarsList to ProofStepStmt
+ *     - Work Var Enhancement misc. changes.
  *
- *  Nov-01-2007 Version 0.06
- *  - add abstract method computeFieldIdCol(int fieldId)
- *    for use in ProofAsstGUI (just in time) cursor
- *    positioning logic.
- *  - add proofLevel number field to ProofStepStmt.
- *  - add hasMatchingRefLabel()
- *  - add localRef to ProofStepStmt
+ * Nov-01-2007 Version 0.06
+ * - add abstract method computeFieldIdCol(int fieldId)
+ *   for use in ProofAsstGUI (just in time) cursor
+ *   positioning logic.
+ * - add proofLevel number field to ProofStepStmt.
+ * - add hasMatchingRefLabel()
+ * - add localRef to ProofStepStmt
  *
- *  Feb-01-2008 Version 0.06
- *  - add tmffReformat().
- *  - add getStmtDiagnosticInfo()
- *  - add updateStmtTextWithWorkVarUpdates()
- *  </code>
+ * Feb-01-2008 Version 0.06
+ * - add tmffReformat().
+ * - add getStmtDiagnosticInfo()
+ * - add updateStmtTextWithWorkVarUpdates()
+ * }
  *
- *  Aug-01-2008 Version 0.07
- *  - modified reviseStepHypRefInStmtText() to use a new
- *    static method reviseStepHypRefInStmtTextArea() so
- *    that the existing stmtText area can be repurposed
- *    to create Metamath statements which use the existing
- *    formula text formatting.
- *  - added getRef().
- *  - remove stmtHasError() method
- *
- *  ProofStepStmt represents the commonalities of
- *  DerivationStep and HypothesisStep.
+ * Aug-01-2008 Version 0.07
+ * - modified reviseStepHypRefInStmtText() to use a new
+ *   static method reviseStepHypRefInStmtTextArea() so
+ *   that the existing stmtText area can be repurposed
+ *   to create Metamath statements which use the existing
+ *   formula text formatting.
+ * - added getRef().
+ * - remove stmtHasError() method
  */
 
 package mmj.pa;
@@ -55,15 +52,22 @@ import mmj.mmio.MMIOError;
 import mmj.mmio.Tokenizer;
 import mmj.verify.VerifyProofs;
 
+/**
+ * ProofStepStmt represents the commonalities of DerivationStep and
+ * HypothesisStep.
+ */
 public abstract class ProofStepStmt extends ProofWorkStmt {
 
-    // this is obtained from the input proof text line
-    // on input, and for generated statements, is
-    // obtained from ProofAsstPreferences.
+    /**
+     * this is obtained from the input proof text line on input, and for
+     * generated statements, is obtained from ProofAsstPreferences.
+     */
     int formulaStartColNbr; // to be honored!
 
-    // obtained on input, used for carat positioning
-    // on errors during input validation.
+    /**
+     * obtained on input, used for carat positioning on errors during input
+     * validation.
+     */
     int formulaStartCharNbr;
 
     String step;
@@ -76,87 +80,81 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
 
     Formula formula;
 
-    // null if no workVars in formula, otherwise
-    // contains list of workVars in formula
+    /**
+     * null if no workVars in formula, otherwise contains list of workVars in
+     * formula
+     */
     List<Var> workVarList;
 
-    // if parse tree null, unification cannot be attempted
-    // for the step or for other steps that refer
-    // to this step as an hypothesis.
+    /**
+     * if parse tree null, unification cannot be attempted for the step or for
+     * other steps that refer to this step as an hypothesis.
+     */
     ParseTree formulaParseTree;
 
-    // new fields for Proof Assistant "Derive" Feature:
+    /** new fields for Proof Assistant "Derive" Feature */
     boolean generatedByDeriveFeature; // for Derive
 
-    // new fields in replacement of ProofWorkStmt.status
-    // these will only ever be set to true on DerivationStep's.
-    //
-    // -- set to true if "?" is entered in
-    // the Hyp field of a step and a Ref
-    // is not entered, signifying that
-    // the step is not ready for unification
-    // (because the user doesn't know the
-    // Hyps that correlate with the formula
-    // and we cannot perform a search with
-    // this incomplete information.)
-    // -- NOTE: this is not set to true in the
-    // case where deriveStepHyps == true;
-    // "hypFldIncomplete" is a special situation
-    // in which unification cannot be attempted;
-    // it is not an "error" by the user,
-    // just a delayed entry...
+    /**
+     * new fields in replacement of ProofWorkStmt.status these will only ever be
+     * set to true on DerivationStep's.
+     * <ul>
+     * <li>set to true if "?" is entered in the Hyp field of a step and a Ref is
+     * not entered, signifying that the step is not ready for unification
+     * (because the user doesn't know the Hyps that correlate with the formula
+     * and we cannot perform a search with this incomplete information.)
+     * <li>NOTE: this is not set to true in the case where deriveStepHyps ==
+     * true; "hypFldIncomplete" is a special situation in which unification
+     * cannot be attempted; it is not an "error" by the user, just a delayed
+     * entry...
+     */
     boolean hypFldIncomplete;
-    //
-    // -- set to true if the formula contains
-    // dummy/work variables and a Ref is
-    // not entered, signifying that the
-    // step is not ready for unification
-    // (the standard unification search
-    // will not work properly with temp/work
-    // variables).
-    //
-    // -- NOTE: this is not set to true in the
-    // case where deriveStepFormula == true;
-    // "formulaFldIncomplete" is a special
-    // situation where unification cannot be
-    // attempted, but it is not an "error" by
-    // the user, just a delayed entry...and it
-    // might occur on a generated proof step.
+    /**
+     * Set to true if the formula contains dummy/work variables and a Ref is not
+     * entered, signifying that the step is not ready for unification (the
+     * standard unification search will not work properly with temp/work
+     * variables).
+     * <p>
+     * NOTE: this is not set to true in the case where
+     * {@code deriveStepFormula ==
+     * true}; {@code formulaFldIncomplete} is a special situation where
+     * unification cannot be attempted, but it is not an "error" by the user,
+     * just a delayed entry...and it might occur on a generated proof step.
+     */
     boolean formulaFldIncomplete;
 
-    // this is the step's level in the proof tree,
-    // where the 'qed' step has level 0, and any
-    // "island" (not used as Hyp) steps also have
-    // level 0. The default is 0 and the value is
-    // computed during the finale of Proof Worksheet
-    // parsing, and then when new steps (if any)
-    // are generated by the Derive feature. The
-    // proofLevel number is used for proof formatting
-    // indentation by TMFF.
+    /**
+     * this is the step's level in the proof tree, where the 'qed' step has
+     * level 0, and any "island" (not used as Hyp) steps also have level 0. The
+     * default is 0 and the value is computed during the finale of Proof
+     * Worksheet parsing, and then when new steps (if any) are generated by the
+     * Derive feature. The proofLevel number is used for proof formatting
+     * indentation by TMFF.
+     */
     int proofLevel;
 
     /**
-     *  Default Constructor.
+     * Default Constructor.
+     * 
+     * @param w the owning ProofWorksheet
      */
     public ProofStepStmt(final ProofWorksheet w) {
         super(w);
     }
 
     /**
-     *  Constructor for incomplete ProofStepStmt destined
-     *  only for output to the GUI.
-     *  <p>
-     *  Creates "incomplete" ProofStepStmt which is
-     *  destined only for output to the GUI, hence,
-     *  the object references, etc. are not loaded.
-     *  After display to the GUI this worksheet
-     *  disappears -- recreated via "load" each time
-     *  the user selects "StartUnification".
-     *
-     *  @param step step number of the ProofStepStmt
-     *  @param refLabel Ref label of the ProofStepStmt
-     *  @param setCaret true means position caret of
-     *                  TextArea to this statement.
+     * Constructor for incomplete ProofStepStmt destined only for output to the
+     * GUI.
+     * <p>
+     * Creates "incomplete" ProofStepStmt which is destined only for output to
+     * the GUI, hence, the object references, etc. are not loaded. After display
+     * to the GUI this worksheet disappears -- recreated via "load" each time
+     * the user selects "StartUnification".
+     * 
+     * @param w The owning ProofWorksheet
+     * @param step step number of the ProofStepStmt
+     * @param refLabel Ref label of the ProofStepStmt
+     * @param setCaret true means position caret of TextArea to this statement.
      */
     public ProofStepStmt(final ProofWorksheet w, final String step,
         final String refLabel, final boolean setCaret)
@@ -173,18 +171,17 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     }
 
     /**
-     *  Is this ProofWorkStmt a proof step?
-     *  <p>
-     *  @return true;
+     * Is this ProofWorkStmt a proof step?
+     *
+     * @return true;
      */
-    @Override
     public boolean isProofStep() {
         return true;
     }
 
 //this is not needed but left code in place just in case
 //  /**
-//   *  Initializes the proofLevel number to zero.
+//   * Initializes the proofLevel number to zero.
 //   */
 //  public void initProofLevel() {
 //      proofLevel                = 0;
@@ -192,15 +189,13 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
 //
 
     /**
-     *  Loads the proofLevel number with the input proofLevel
-     *  but only if the existing proofLevel is zero.
-     *  <p>
-     *  Note: does not update a non-zero proofLevel because
-     *        a step can be used more than once as an
-     *        hypothesis, so different level numbers could
-     *        result.
-     *
-     *  @param proofLevel value to store if existing level is zero.
+     * Loads the proofLevel number with the input proofLevel but only if the
+     * existing proofLevel is zero.
+     * <p>
+     * Note: does not update a non-zero proofLevel because a step can be used
+     * more than once as an hypothesis, so different level numbers could result.
+     * 
+     * @param proofLevel value to store if existing level is zero.
      */
     public void loadProofLevel(final int proofLevel) {
         if (this.proofLevel == 0)
@@ -208,18 +203,13 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     }
 
     /**
-     *  Computes column number in the proof step text
-     *  of the input field id.
-     *  <p>
+     * Computes column number in the proof step text of the input field id.
      *
-     *  @param fieldId value identify ProofWorkStmt field
-     *         for cursor positioning, as defined in
-     *         PaConstants.FIELD_ID_*.
-     *
-     *  @return column of input fieldId or default value
-     *         of 1 if there is an error.
+     * @param fieldId value identify ProofWorkStmt field for cursor positioning,
+     *            as defined in PaConstants.FIELD_ID_*.
+     * @return column of input fieldId or default value of 1 if there is an
+     *         error.
      */
-    @Override
     public int computeFieldIdCol(final int fieldId) {
         int outCol = 1;
         if (fieldId == PaConstants.FIELD_ID_REF)
@@ -227,23 +217,18 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
         return outCol;
     }
 
-    /**
-     *  Reformats Derivation Step using TMFF.
-     */
-    @Override
+    /** Reformats Derivation Step using TMFF. */
     public void tmffReformat() {}
 
     /**
-     *  Function used for cursor positioning.
-     *  <p>
-     *  The function looks for the Ref in the 2nd colon in the
-     *  ProofWorkStmt.stmtText and sets the output
-     *  column to the column *after* the 2nd colon --
-     *  but returns 1 if whitespace is found before
-     *  the 2nd colon in the stmtText.
-     *
-     *  @return column of Ref subfield in proof step
-     *         of 1 if there is an error.
+     * Function used for cursor positioning.
+     * <p>
+     * The function looks for the Ref in the 2nd colon in the
+     * ProofWorkStmt.stmtText and sets the output column to the column *after*
+     * the 2nd colon -- but returns 1 if whitespace is found before the 2nd
+     * colon in the stmtText.
+     * 
+     * @return column of Ref subfield in proof step of 1 if there is an error.
      */
     public int computeFieldIdColRef() {
         int outCol = 1;
@@ -270,10 +255,10 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     }
 
     /**
-     *  Updates the ProofStepStmt ParseTree, resetting
-     *  maxDepth and levelOneTwo data.
-     *  <p>
-     *  @param parseTree the new ParseTree for the step.
+     * Updates the ProofStepStmt ParseTree, resetting maxDepth and levelOneTwo
+     * data.
+     *
+     * @param parseTree the new ParseTree for the step.
      */
     public void updateFormulaParseTree(final ParseTree parseTree) {
         if (parseTree != null) {
@@ -284,12 +269,11 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     }
 
     /**
-     *  Updates the workVarList for the ProofStepStmt and
-     *  if the revised workVarList is null turns off the
-     *  formulaFldIncomplete flag.
-     *  <p>
-     *  @param workVarList List of WorkVar listing the
-     *         WorkVar used in the step formula.
+     * Updates the workVarList for the ProofStepStmt and if the revised
+     * workVarList is null turns off the formulaFldIncomplete flag.
+     *
+     * @param workVarList List of WorkVar listing the WorkVar used in the step
+     *            formula.
      */
     public void updateWorkVarList(final List<Var> workVarList) {
         if (workVarList != null && workVarList.isEmpty())
@@ -302,13 +286,15 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     }
 
     /**
-     *  Updates stmtText in place using substitution values
-     *  assigned to work variables used in the step.
-     *  <p>
-     *  NOTE: This is a dirty little hack :-)
-     *  </p?
-     * @param verifyProofs instance of VerifyProofs for
-     *          use converting an RPN list to a formula.
+     * Updates stmtText in place using substitution values assigned to work
+     * variables used in the step.
+     * <p>
+     * NOTE: This is a dirty little hack :-)
+     * </p
+     * ?
+     * 
+     * @param verifyProofs instance of VerifyProofs for use converting an RPN
+     *            list to a formula.
      * @return true if stmtText updated successfully.
      */
     public boolean updateStmtTextWithWorkVarUpdates(
@@ -418,19 +404,20 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     }
 
     /**
-     *  Loads stmtText and formula fields with the input
-     *  tokens.
-     *  <p>
-     *  The formula is loaded and validated before Step/Hyp/Ref
-     *  so that the formula symbols can be validated as
-     *  they are read in. We return to validate Step/Hyp/Ref
-     *  after doing the formula. The big problem being solved
-     *  here is positioning the caret as accurately as possible
-     *  to the first reported error on the line.
-     *
-     *  @param workVarsOk indicator to allow/disallow WorkVar
-     *                    syms in this formula.
-     *  @return      String showing the proof text statement
+     * Loads stmtText and formula fields with the input tokens.
+     * <p>
+     * The formula is loaded and validated before Step/Hyp/Ref so that the
+     * formula symbols can be validated as they are read in. We return to
+     * validate Step/Hyp/Ref after doing the formula. The big problem being
+     * solved here is positioning the caret as accurately as possible to the
+     * first reported error on the line.
+     * 
+     * @param workVarsOk indicator to allow/disallow WorkVar syms in this
+     *            formula.
+     * @return String showing the proof text statement
+     * @throws IOException if an error occurred
+     * @throws MMIOError if an error occurred
+     * @throws ProofAsstException if an error occurred
      */
     public String loadStmtTextWithFormula(final boolean workVarsOk)
         throws IOException, MMIOError, ProofAsstException
@@ -530,17 +517,13 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
         return nextT;
     }
 
-    /*
-     *  Function to determine whether the
-     *  ProofWorkStmt Ref Label matches the input string
-     *  (always false in base class.)
-     *  <p>
-     *  @param Ref string to compare to ProofWorkStmt
-     *         refLabel string.
-     *  @return true if ProofStepStmt Ref label matches
-     *               the input string.
+    /**
+     * Function to determine whether the ProofWorkStmt Ref Label matches the
+     * input string (always false in base class.)
+     *
+     * @param ref string to compare to ProofWorkStmt refLabel string.
+     * @return true if ProofStepStmt Ref label matches the input string.
      */
-    @Override
     public boolean hasMatchingRefLabel(final String ref) {
         if (refLabel != null && refLabel.equals(ref))
             return true;
@@ -549,12 +532,11 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     }
 
     /**
-     *  Compares input Step number to this step.
-     *
-     *  @param newStepNbr step number to compare
-     *  @return      true if equal, false if not equal.
+     * Compares input Step number to this step.
+     * 
+     * @param newStepNbr step number to compare
+     * @return true if equal, false if not equal.
      */
-    @Override
     public boolean hasMatchingStepNbr(final String newStepNbr) {
         if (step.equals(newStepNbr))
             return true;
@@ -563,60 +545,58 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     }
 
     /**
-     *  Sets the Ref Stmt for the step.
-     *
-     *  @param ref Stmt in LogicalSystem
+     * Sets the Ref Stmt for the step.
+     * 
+     * @param ref Stmt in LogicalSystem
      */
     public void setRef(final Stmt ref) {
         this.ref = ref;
     }
 
     /**
-     *  Gets the Ref Stmt for the step.
-     *
-     *  @return Ref stmt for the ProofStepStmt;
+     * Gets the Ref Stmt for the step.
+     * 
+     * @return Ref stmt for the ProofStepStmt;
      */
     public Stmt getRef() {
         return ref;
     }
 
     /**
-     *  Sets the Ref label for the step.
-     *  <p>
-     *  Note: refLabel is input first and Ref is derived,
-     *        but for new Theorems, Ref may not exist,
-     *        which is why we carry both around at all times.
-     *
-     *  @param refLabel Ref label for the step.
+     * Sets the Ref label for the step.
+     * <p>
+     * Note: refLabel is input first and Ref is derived, but for new Theorems,
+     * Ref may not exist, which is why we carry both around at all times.
+     * 
+     * @param refLabel Ref label for the step.
      */
     public void setRefLabel(final String refLabel) {
         this.refLabel = refLabel;
     }
 
     /**
-     *  Gets the Ref label for the step.
-     *  <p>
-     *  @return Ref label for the step.
+     * Gets the Ref label for the step.
+     *
+     * @return Ref label for the step.
      */
     public String getRefLabel() {
         return refLabel;
     }
 
-    @Override
     public String getStmtDiagnosticInfo() {
         return this.getClass().getName() + " " + step;
     }
 
     /**
-     *  Updates the first token of the text area.
-     *  <p>
-     *  Assumes text already contains StepHypRef token.
-     *  <p>
-     *  Objective is to avoid changing the position of the
-     *  other tokens within the text area -- as much as possible.
-     *  <p>
-     *  @param textArea step stmtText area or similar text area.
-     *  @param newTextPrefix revised first token of text area.
+     * Updates the first token of the text area.
+     * <p>
+     * Assumes text already contains StepHypRef token.
+     * <p>
+     * Objective is to avoid changing the position of the other tokens within
+     * the text area -- as much as possible.
+     *
+     * @param textArea step stmtText area or similar text area.
+     * @param newTextPrefix revised first token of text area.
      */
     public static void reviseStepHypRefInStmtTextArea(
         final StringBuilder textArea, final StringBuilder newTextPrefix)
@@ -652,10 +632,15 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     }
 
     /**
-     *  Renders formula into stepHypRef string buffer
-     *  and returns the number of lines in the formula.
-     *  (This assumes that stepHypRef requires only one
-     *  line, which, theoretically could be wrong!)
+     * Renders formula into stepHypRef string buffer and returns the number of
+     * lines in the formula. (This assumes that stepHypRef requires only one
+     * line, which, theoretically could be wrong!)
+     * 
+     * @param stepHypRef the string buffer
+     * @param formula the formula
+     * @param parseTree of the Formula to be rendered. If left null, the formula
+     *            will be output in unformatted
+     * @return number of lines in the formula
      */
     protected int loadStmtText(final StringBuilder stepHypRef,
         final Formula formula, final ParseTree parseTree)

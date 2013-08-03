@@ -7,40 +7,39 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  BatchFramework.java  0.09 11/01/2011
+ * BatchFramework.java  0.09 11/01/2011
  *
- *  Sep-25-2005:
- *      -->Start counting RunParmFile lines at 1. Duh.
- *  Dec-03-2005:
- *      -->Add ProofAsst stuff
- *      -->Added exception/error message and stack trace
- *         print directly to System.err in runIt() because
- *         NullPointException was just dumping with the
- *         helpful message "null".
- *  Sep-03-2006:
- *      -->Add TMFF stuff
- *  Jun-01-2007 - Version 0.06
- *      -->OutputVerbosity RunParm stuff.
- *  Sep-01-2007 - Version 0.07
- *      -->Add WorkVarBoss.
- *  Aug-01-2008 - Version 0.08
- *      -->Add SvcBoss.
- *      -->Make sure LogicalSystemBoss is at the end of the
- *         Boss list. This gives other bosses a chance to
- *         see the LoadFile command and re-initialize
- *         themselves (rare situation: only if multiple
- *         sets of commands in a single RunParm file.)
- *      -->Add TheoremLoaderBoss
- *  Nov-01-2011 - Version 0.09
- *      -->Add GMFFBoss.
- *      -->Add GMFFException.
- *      -->Modified for mmj2 Paths Enhancement
- *      -->Added code for MMJ2FailPopupWindow
+ * Sep-25-2005:
+ *     -->Start counting RunParmFile lines at 1. Duh.
+ * Dec-03-2005:
+ *     -->Add ProofAsst stuff
+ *     -->Added exception/error message and stack trace
+ *        print directly to System.err in runIt() because
+ *        NullPointException was just dumping with the
+ *        helpful message "null".
+ * Sep-03-2006:
+ *     -->Add TMFF stuff
+ * Jun-01-2007 - Version 0.06
+ *     -->OutputVerbosity RunParm stuff.
+ * Sep-01-2007 - Version 0.07
+ *     -->Add WorkVarBoss.
+ * Aug-01-2008 - Version 0.08
+ *     -->Add SvcBoss.
+ *     -->Make sure LogicalSystemBoss is at the end of the
+ *        Boss list. This gives other bosses a chance to
+ *        see the LoadFile command and re-initialize
+ *        themselves (rare situation: only if multiple
+ *        sets of commands in a single RunParm file.)
+ *     -->Add TheoremLoaderBoss
+ * Nov-01-2011 - Version 0.09
+ *     -->Add GMFFBoss.
+ *     -->Add GMFFException.
+ *     -->Modified for mmj2 Paths Enhancement
+ *     -->Added code for MMJ2FailPopupWindow
  */
 
 package mmj.util;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,55 +50,40 @@ import mmj.lang.VerifyException;
 import mmj.mmio.MMIOException;
 
 /**
- *  BatchFramework is a quick hack to run mmj2 without
- *  the JUnit training wheels.
- *  <p>
- *  An example of using this "framework" is BatchMMJ2
- *  which sub-classes BatchFramework and is invoked
- *  via "main(String[] args)", passing those parameters
- *  in turn, to BatchFramework.
- *  <p>
- *  A RunParmFile is used to provide flexibility for
- *  many, many parameters in the future, and to allow
- *  for files using different code sets.
- *  <p>
- *  This code is experimental and goofy looking :)
- *  No warranty provided... The theme is that the
- *  order of input RunParmFile commands is unknown
- *  and therefore, each function must not make any
- *  assumptions about what has been done previously.
- *  <p>
- *  "Boss" classes are used to manage "state"
- *  information, and "get" commands build
- *  objects as needed, invoking functions under the
- *  control of other Bosses to obtain needed objects
- *  (which are *not* to be retained given the dynamic
- *  flux of state information.) This all seems very
- *  inefficient but the overhead is very small
- *  compared to the amount of work performed by each
- *  RunParmFile command.
- *  <p>
- *  A list of Bosses in use during a given run is
- *  maintained and each input RunParm line is
- *  sent to each Boss, in turn, which may or may
- *  not do anything with the command. Upon exit,
- *  a Boss returns "consumed" to indicate that
- *  the RunParm need not be sent to any other
- *  Bosses, that the job is done. Adding a new
- *  function, such as "Soundness checking" should
- *  be simple.
- *  <p>
- *  An alternate way to use BatchFramework is to
- *  instantiate one but instead of executing "runIt",
- *  invoke initializeBatchFramework() and then
- *  directly call routines in the various Boss
- *  classes, passing them hand-coded RunParmArrayEntry
- *  objects built using the UtilConstants RunParm
- *  name and value literals.. In other words, don't
- *  use a RunParmFile. This approach provides a
- *  short-cut for invoking mmj2 functions, to which
- *  new functions could be easily applied.
- *
+ * BatchFramework is a quick hack to run mmj2 without the JUnit training wheels.
+ * <p>
+ * An example of using this "framework" is BatchMMJ2 which sub-classes
+ * BatchFramework and is invoked via "main(String[] args)", passing those
+ * parameters in turn, to BatchFramework.
+ * <p>
+ * A RunParmFile is used to provide flexibility for many, many parameters in the
+ * future, and to allow for files using different code sets.
+ * <p>
+ * This code is experimental and goofy looking :) No warranty provided... The
+ * theme is that the order of input RunParmFile commands is unknown and
+ * therefore, each function must not make any assumptions about what has been
+ * done previously.
+ * <p>
+ * "Boss" classes are used to manage "state" information, and "get" commands
+ * build objects as needed, invoking functions under the control of other Bosses
+ * to obtain needed objects (which are *not* to be retained given the dynamic
+ * flux of state information.) This all seems very inefficient but the overhead
+ * is very small compared to the amount of work performed by each RunParmFile
+ * command.
+ * <p>
+ * A list of Bosses in use during a given run is maintained and each input
+ * RunParm line is sent to each Boss, in turn, which may or may not do anything
+ * with the command. Upon exit, a Boss returns "consumed" to indicate that the
+ * RunParm need not be sent to any other Bosses, that the job is done. Adding a
+ * new function, such as "Soundness checking" should be simple.
+ * <p>
+ * An alternate way to use BatchFramework is to instantiate one but instead of
+ * executing "runIt", invoke initializeBatchFramework() and then directly call
+ * routines in the various Boss classes, passing them hand-coded
+ * RunParmArrayEntry objects built using the UtilConstants RunParm name and
+ * value literals.. In other words, don't use a RunParmFile. This approach
+ * provides a short-cut for invoking mmj2 functions, to which new functions
+ * could be easily applied.
  */
 public abstract class BatchFramework {
 
@@ -144,24 +128,20 @@ public abstract class BatchFramework {
     /*friendly*/GMFFBoss gmffBoss;
 
     /**
-     *  Default Constructor.
+     * Default Constructor.
      */
     public BatchFramework() {}
 
     /**
-     *  Initialize BatchFramework with Boss list and
-     *  any captions that may have been overridden.
-     *
-     *  The purpose of doing this here is to allow a
-     *  BatchFramework to be constructed without
-     *  executing any runparms from a file: every
-     *  "doRunParm" function is public and can be
-     *  called from a program (assuming the program
-     *  can create a valid RunParmArrayEntry to
-     *  provide RunParm option values.) This provides
-     *  a shortcut to invoking complicated mmj2 functions
-     *  that would otherwise require lots of setup
-     *  and parameters.
+     * Initialize BatchFramework with Boss list and any captions that may have
+     * been overridden.
+     * <p>
+     * The purpose of doing this here is to allow a BatchFramework to be
+     * constructed without executing any runparms from a file: every "doRunParm"
+     * function is public and can be called from a program (assuming the program
+     * can create a valid RunParmArrayEntry to provide RunParm option values.)
+     * This provides a shortcut to invoking complicated mmj2 functions that
+     * would otherwise require lots of setup and parameters.
      */
     public void initializeBatchFramework() {
         batchFrameworkInitialized = true;
@@ -213,24 +193,22 @@ public abstract class BatchFramework {
     }
 
     /**
-     *  Uses command line run parms to build <code>RunParmFile</code>
-     *  and <code>Paths</code> objects, performs other initialization
-     *  and processes each RunParmFile line.
-     *  <p>
-     *  The <code>MMJ2FailPopupWindow</code> object is initialized
-     *  in startupMode and gathers/displays error messages during
-     *  startup logic. See <code>OutputBoss.printAndClearMessages()</code>
-     *  which does the gathering and displaying of startup errors.
-     *  Abnormal termination -- "Fail" -- error messages are
-     *  displayed here by calling the MMJ2 Fail Popup Window directly.
-     *
-     *  @param args command line parms for RunParmFile constructor.
-     *              (See CommandLineArguments.java for detailed doc
-     *
-     *  @return return code 0 if BatchFramework was successful
-     *          (however many mmj/Metamath errors were found),
-     *          or 16, if BatchFramework failed to complete
-     *          (probably due to a RunParmFile error.)
+     * Uses command line run parms to build {@code RunParmFile} and
+     * {@code Paths} objects, performs other initialization and processes each
+     * RunParmFile line.
+     * <p>
+     * The {@code MMJ2FailPopupWindow} object is initialized in startupMode and
+     * gathers/displays error messages during startup logic. See
+     * {@code OutputBoss.printAndClearMessages()} which does the gathering and
+     * displaying of startup errors. Abnormal termination -- "Fail" -- error
+     * messages are displayed here by calling the MMJ2 Fail Popup Window
+     * directly.
+     * 
+     * @param args command line parms for RunParmFile constructor. (See
+     *            CommandLineArguments.java for detailed doc
+     * @return return code 0 if BatchFramework was successful (however many
+     *         mmj/Metamath errors were found), or 16, if BatchFramework failed
+     *         to complete (probably due to a RunParmFile error.)
      */
     public int runIt(final String[] args) {
 
@@ -292,50 +270,53 @@ public abstract class BatchFramework {
     }
 
     /**
-     *  Add a processing Boss to the Boss List.
-     *
-     *  @param boss
+     * Add a processing Boss to the Boss List.
+     * 
+     * @param boss The processing Boss
      */
     public void addBossToBossList(final Boss boss) {
         bossList.add(boss);
     }
 
     /**
-     *  Placeholder to be overridden to dynamically add
-     *  a new processing Boss to the list.
-     *  <p>
-     *  Override this to include extra processing. Each
-     *  Boss on the bossList will get a chance to process
-     *  each RunParmFile line that hasn't already been
-     *  "consumed" by other bosses.
+     * Placeholder to be overridden to dynamically add a new processing Boss to
+     * the list.
+     * <p>
+     * Override this to include extra processing. Each Boss on the bossList will
+     * get a chance to process each RunParmFile line that hasn't already been
+     * "consumed" by other bosses.
      */
     public void addAnyExtraBossesToBossList() {}
 
     /**
-     *  Override this to alter what prints out before
-     *  an executable RunParmFile line is processed.
+     * Override this to alter what prints out before an executable RunParmFile
+     * line is processed.
      */
     public void setRunParmExecutableCaption() {
         runParmExecutableCaption = UtilConstants.ERRMSG_RUNPARM_EXECUTABLE_CAPTION;
     }
 
     /**
-     *  Override this to alter what prints out for
-     *  a RunParmFile comment line.
+     * Override this to alter what prints out for a RunParmFile comment line.
      */
     public void setRunParmCommentCaption() {
         runParmCommentCaption = UtilConstants.ERRMSG_RUNPARM_COMMENT_CAPTION;
     }
 
     /**
-     *  Processes a single RunParmFile line.
-     *
-     *  @param runParm RunParmFileLine parsed into a
-     *         RunParmArrayEntry object.
+     * Processes a single RunParmFile line.
+     * 
+     * @param runParm RunParmFileLine parsed into a RunParmArrayEntry object.
+     * @throws IOException if an error occurred in the RunParm
+     * @throws GMFFException if an error occurred in the RunParm
+     * @throws MMIOException if an error occurred in the RunParm
+     * @throws TheoremLoaderException if an error occurred in the RunParm
+     * @throws VerifyException if an error occurred in the RunParm
+     * @throws IllegalArgumentException if an error occurred in the RunParm
      */
     public void executeRunParmCommand(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException, MMIOException, FileNotFoundException,
-        IOException, VerifyException, TheoremLoaderException, GMFFException
+        throws IOException, IllegalArgumentException, VerifyException,
+        TheoremLoaderException, MMIOException, GMFFException
     {
         ++runParmCnt;
 
@@ -368,12 +349,10 @@ public abstract class BatchFramework {
     }
 
     /**
-     *  Compares the current RunParmArrayEntry name to an input
-     *  command.
-     *  <p>
-     *  @param command RunParm command to compare to the current
-     *                 command name.
-     *  @return true if equal, ignoring case, otherwise false.
+     * Compares the current RunParmArrayEntry name to an input command.
+     *
+     * @param command RunParm command to compare to the current command name.
+     * @return true if equal, ignoring case, otherwise false.
      */
     public boolean isCurrentRunParmCommand(final String command) {
         if (currentRunParmCommand != null
@@ -384,13 +363,13 @@ public abstract class BatchFramework {
     }
 
     /**
-     *  Override this to change or eliminate the printout
-     *  of each executable RunParmFile line.
-     *
-     *  @param caption to print
-     *  @param cnt     RunParmFile line number
-     *  @param runParm RunParmFile line parsed into
-     *                 object RunParmArrayEntry.
+     * Override this to change or eliminate the printout of each executable
+     * RunParmFile line.
+     * 
+     * @param caption to print
+     * @param cnt RunParmFile line number
+     * @param runParm RunParmFile line parsed into object RunParmArrayEntry.
+     * @throws IOException if an error occurred in the RunParm
      */
     public void printExecutableRunParmLine(final String caption, final int cnt,
         final RunParmArrayEntry runParm) throws IOException
@@ -401,13 +380,13 @@ public abstract class BatchFramework {
     }
 
     /**
-     *  Override this to change or eliminate the printout
-     *  of each Comment RunParmFile line.
-     *
-     *  @param caption to print
-     *  @param cnt     RunParmFile line number
-     *  @param runParm RunParmFile line parsed into
-     *                 object RunParmArrayEntry.
+     * Override this to change or eliminate the printout of each Comment
+     * RunParmFile line.
+     * 
+     * @param caption to print
+     * @param cnt RunParmFile line number
+     * @param runParm RunParmFile line parsed into object RunParmArrayEntry.
+     * @throws IOException if an error occurred in the RunParm
      */
     public void printCommentRunParmLine(final String caption, final int cnt,
         final RunParmArrayEntry runParm) throws IOException
@@ -418,10 +397,10 @@ public abstract class BatchFramework {
     }
 
     /**
-     *  Returns the canonical path name of the RunParmFile.
-     *  <p>
-     *  @return canonical path of RunParmFile or empty string
-     *          if RunParmFile is null.
+     * Returns the canonical path name of the RunParmFile.
+     *
+     * @return canonical path of RunParmFile or empty string if RunParmFile is
+     *         null.
      */
     public String getRunParmFileAbsolutePath() {
         String s = new String("");

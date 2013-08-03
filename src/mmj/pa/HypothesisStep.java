@@ -13,32 +13,21 @@
 // ===                                           ===
 // =================================================
 
-/**
- *  HypothesisStep.java  0.07 08/01/2008
- *  <code>
- *  Version 0.04: 06/01/2007
- *      - Un-nested inner class
+/*
+ * HypothesisStep.java  0.07 08/01/2008
+ * 
+ * Version 0.04: 06/01/2007
+ *     - Un-nested inner class
  *
- *  Version 0.05: 08/01/2007
- *      - Work Var Enhancement misc. changes.
+ * Version 0.05: 08/01/2007
+ *     - Work Var Enhancement misc. changes.
  *
- *  Nov-01-2007 Version 0.06
- *  - Modify constructor used for proof export to accept
- *    a proofLevel parameter.
+ * Nov-01-2007 Version 0.06
+ * - Modify constructor used for proof export to accept
+ *   a proofLevel parameter.
  *
- *  Aug-01-2008 Version 0.07
- *  - Remove stmtHasError() method.
- *
- *  </code>
- *
- *  HypothesisStep represents a Logical Hypothesis of
- *  the Theorem being proved.
- *  <p>
- *  On the GUI a HypothesisStep is shown with an 'h'
- *  prefix to step number.
- *  <p>
- *  A HypothesisStep cannot have Hyp's in its Step/Hyp/Ref
- *  field. Nor does it have a proof, just a parse tree.
+ * Aug-01-2008 Version 0.07
+ * - Remove stmtHasError() method.
  */
 
 package mmj.pa;
@@ -50,33 +39,41 @@ import mmj.lang.*;
 import mmj.mmio.MMIOError;
 import mmj.mmio.Statementizer;
 
+/**
+ * HypothesisStep represents a Logical Hypothesis of the Theorem being proved.
+ * <p>
+ * On the GUI a HypothesisStep is shown with an 'h' prefix to step number.
+ * <p>
+ * A HypothesisStep cannot have Hyp's in its Step/Hyp/Ref field. Nor does it
+ * have a proof, just a parse tree.
+ */
 public class HypothesisStep extends ProofStepStmt {
 
     /**
-     *  Default Constructor.
+     * Default Constructor.
+     * 
+     * @param w the owning ProofWorksheet
      */
     public HypothesisStep(final ProofWorksheet w) {
         super(w);
     }
 
     /**
-     *  Constructor for incomplete DerivationStep destined
-     *  only for output to the GUI.
-     *  <p>
-     *  Creates "incomplete" HypothesisStep which is
-     *  destined only for output to the GUI, hence,
-     *  the object references, etc. are not loaded.
-     *  After display to the GUI this worksheet
-     *  disappears -- recreated via "load" each time
-     *  the user selects "StartUnification".
-     *
-     *  @param step step number of the proof step
-     *  @param refLabel Ref label of the proof step
-     *  @param formula the proof step formula
-     *  @param parseTree formula ParseTree (can be null)
-     *  @param setCaret true means position caret of
-     *                  TextArea to this statement.
-     *  @param proofLevel level of step in proof.
+     * Constructor for incomplete DerivationStep destined only for output to the
+     * GUI.
+     * <p>
+     * Creates "incomplete" HypothesisStep which is destined only for output to
+     * the GUI, hence, the object references, etc. are not loaded. After display
+     * to the GUI this worksheet disappears -- recreated via "load" each time
+     * the user selects "StartUnification".
+     * 
+     * @param w the owning ProofWorksheet
+     * @param step step number of the proof step
+     * @param refLabel Ref label of the proof step
+     * @param formula the proof step formula
+     * @param parseTree formula ParseTree (can be null)
+     * @param setCaret true means position caret of TextArea to this statement.
+     * @param proofLevel level of step in proof.
      */
     public HypothesisStep(final ProofWorksheet w, final String step,
         final String refLabel, final Formula formula,
@@ -94,27 +91,23 @@ public class HypothesisStep extends ProofStepStmt {
         lineCnt = loadStmtText(stmtText, formula, parseTree);
     }
 
-    @Override
     public boolean isHypothesisStep() {
         return true;
     }
-    @Override
     public boolean isDerivationStep() {
         return false;
     }
 
-    @Override
     public boolean stmtIsIncomplete() {
         return false;
     }
 
     /**
-     *  Compares input Ref label to this step.
-     *
-     *  @param newRefLabel ref label to compare
-     *  @return      true if equal, false if not equal.
+     * Compares input Ref label to this step.
+     * 
+     * @param newRefLabel ref label to compare
+     * @return true if equal, false if not equal.
      */
-    @Override
     public boolean hasMatchingRefLabel(final String newRefLabel) {
         if (refLabel.equals(newRefLabel))
             return true;
@@ -123,11 +116,11 @@ public class HypothesisStep extends ProofStepStmt {
     }
 
     /**
-     *  Renumbers step numbers using a HashMap containing
-     *  old and new step number pairs.
-     *
-     *  @param renumberMap contains key/value pairs defining
-     *                         newly assigned step numbers.
+     * Renumbers step numbers using a HashMap containing old and new step number
+     * pairs.
+     * 
+     * @param renumberMap contains key/value pairs defining newly assigned step
+     *            numbers.
      */
     public void renum(final Map<String, String> renumberMap) {
 
@@ -140,40 +133,36 @@ public class HypothesisStep extends ProofStepStmt {
     }
 
     /**
-     *  Reformats Hypothesis Step using TMFF.
-     *
-     *  Note: This isn't guaranteed to work unless the
-     *        Proof Worksheet is free of structural errors.
-     *        Also, a formula which has not yet been parsed
-     *        or which failed to parse successfully will
-     *        contain a null parse tree and be formatted
-     *        using Format 0 - "Unformatted".
+     * Reformats Hypothesis Step using TMFF.
+     * <p>
+     * Note: This isn't guaranteed to work unless the Proof Worksheet is free of
+     * structural errors. Also, a formula which has not yet been parsed or which
+     * failed to parse successfully will contain a null parse tree and be
+     * formatted using Format 0 - "Unformatted".
      */
-    @Override
     public void tmffReformat() {
         stmtText = buildStepHypRefSB();
         lineCnt = loadStmtText(stmtText, formula, formulaParseTree);
     }
 
     /**
-     *  Loads HypothesisStep with step and ref.
-     *  <p>
-     *  This method is passed the contents of the first
-     *  token which has already been parsed into step,
-     *  and ref fields and loads them into the
-     *  HypothesisStep -- which already contains the
-     *  step's formula! This back-asswardness is a
-     *  result of trying to maintain cursor/caret
-     *  control when the formula is validated. Messy...
-     *
-     *  @param origStepHypRefLength length of first token of
-     *                              statement
-     *  @param lineStartCharNbr character number in the input
-     *                          stream of the statement start
-     *  @param stepField step number field
-     *  @param refField step ref field
-     *
-     *  @return      first token of next statement.
+     * Loads HypothesisStep with step and ref.
+     * <p>
+     * This method is passed the contents of the first token which has already
+     * been parsed into step, and ref fields and loads them into the
+     * HypothesisStep -- which already contains the step's formula! This
+     * back-asswardness is a result of trying to maintain cursor/caret control
+     * when the formula is validated. Messy...
+     * 
+     * @param origStepHypRefLength length of first token of statement
+     * @param lineStartCharNbr character number in the input stream of the
+     *            statement start
+     * @param stepField step number field
+     * @param refField step ref field
+     * @return first token of next statement.
+     * @throws IOException if an error occurred
+     * @throws MMIOError if an error occurred
+     * @throws ProofAsstException if an error occurred
      */
     public String loadHypothesisStep(final int origStepHypRefLength,
         final int lineStartCharNbr, final String stepField,
@@ -211,17 +200,23 @@ public class HypothesisStep extends ProofStepStmt {
     }
 
     /**
-     *      If Ref field input
-     *          see if it matches one of theorem's log hyps
-     *          if no match, throw exception
-     *          if match, compare log hyp formula to
-     *            proof step formula,
-     *          if formulas not equal, throw exception
-     *      else (Ref field not input)
-     *          look up Ref label using formula
-     *          if not found, throw exception
-     *      end-if
-     *      save Ref stmt
+     * <code>
+     * If Ref field input
+     *     see if it matches one of theorem's log hyps
+     *     if no match, throw exception
+     *     if match, compare log hyp formula to
+     *       proof step formula,
+     *     if formulas not equal, throw exception
+     * else (Ref field not input)
+     *     look up Ref label using formula
+     *     if not found, throw exception
+     * end-if
+     * save Ref stmt
+     * </code>
+     * 
+     * @param lineStartCharNbr character number in the input stream of the
+     *            statement start
+     * @throws ProofAsstException if an error occurred
      */
     private void getValidOldTheoremLogHypRef(final int lineStartCharNbr)
         throws ProofAsstException
@@ -307,20 +302,26 @@ public class HypothesisStep extends ProofStepStmt {
     }
 
     /**
-     *      If Ref field not input,
-     *          generates ref field as theoremLabel
-     *             + "." + sequence number of hyp
-     *      End-if
-     *
-     *      See if it is a dup of another proof step ref
-     *      If dup, throw exception
-     *
-     *      See if it already exists in database
-     *      If exists, throw exception.
-     *
-     *      See if it is a valid label according to
-     *      the Metamath.pdf spec -- not on the prohibited
-     *      list and no offfending characters...
+     * <code>
+     * If Ref field not input,
+     *     generates ref field as theoremLabel
+     *        + "." + sequence number of hyp
+     * End-if
+     * 
+     * See if it is a dup of another proof step ref
+     * If dup, throw exception
+     * 
+     * See if it already exists in database
+     * If exists, throw exception.
+     * 
+     * See if it is a valid label according to
+     * the Metamath.pdf spec -- not on the prohibited
+     * list and no offending characters...
+     * </code>
+     * 
+     * @param lineStartCharNbr character number in the input stream of the
+     *            statement start
+     * @throws ProofAsstException if an error occurred
      */
     private void getValidNewTheoremLogHypRef(final int lineStartCharNbr)
         throws ProofAsstException

@@ -5,8 +5,8 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-/**
- *  BottomUpParser.java  0.02 08/26/2005
+/*
+ * BottomUpParser.java  0.02 08/26/2005
  */
 
 package mmj.verify;
@@ -16,13 +16,12 @@ import java.util.List;
 import mmj.lang.*;
 
 /**
- *  Bottom Up Parser, too slow and stupid for set.mm use.
- *
- *  @see <a href="http://www.cs.vu.nl/%7Edick/PTAPG.html">
- *       Parsing Techniques -- A Practical Guide</a>
- *
- *  @deprecated abandoned in favor of EarleyParser.java
- *  @see <a href="EarleyParser.html">EarleyParser</a>
+ * Bottom Up Parser, too slow and stupid for set.mm use.
+ * 
+ * @see <a href="http://www.cs.vu.nl/%7Edick/PTAPG.html"> Parsing Techniques --
+ *      A Practical Guide</a>
+ * @deprecated abandoned in favor of EarleyParser.java
+ * @see <a href="EarleyParser.html">EarleyParser</a>
  */
 @Deprecated
 public class BottomUpParser implements GrammaticalParser {
@@ -63,11 +62,11 @@ public class BottomUpParser implements GrammaticalParser {
     private int governorLimit;
 
     /**
-     *  Construct using reference to Grammar and a parameter
-     *  signifying the maximum length of a formula in the database.
-     *
-     *  @param grammarIn Grammar object
-     *  @param maxFormulaLengthIn gives us a hint about what to expect.
+     * Construct using reference to Grammar and a parameter signifying the
+     * maximum length of a formula in the database.
+     * 
+     * @param grammarIn Grammar object
+     * @param maxFormulaLengthIn gives us a hint about what to expect.
      */
     public BottomUpParser(final Grammar grammarIn, final int maxFormulaLengthIn)
     {
@@ -78,50 +77,39 @@ public class BottomUpParser implements GrammaticalParser {
     }
 
     /**
-     * BottomUpParser - returns 'n' = the number of ParseTree
-     * objects generated for the input formula and stored in
-     * parseTreeArray.
+     * BottomUpParser - returns 'n' = the number of ParseTree objects generated
+     * for the input formula and stored in parseTreeArray.
      * <p>
-     * The user can control whether or not the
-     * first successful parse is returned by passing in an array
-     * of length = 1.
-     * <p>
-     * @param parseTreeArrayIn -- holds generated ParseTrees, therefore,
-     *        length must be greater than 0. The user can control
-     *        whether or not the first successful parse is returned
-     *        by passing in an array of length = 1. If the array
-     *        length is greater than 1 the function attempts to fill
-     *        the array with alternate parses (which if found, would
-     *        indicate grammatical ambiguity.) Returned ParseTree
-     *        objects are stored in array order -- 0, 1, 2, ... --
-     *        and the contents of unused array entries is unspecified.
-     *        If more than one ParseTree is returned, the returned
-     *        ParseTrees are guaranteed to be different (no duplicate
-     *        ParseTrees are returned!)
-     *
-     * @param formulaTypIn -- Cnst Type Code of the Formula to
-     *        be parsed.
-     *
-     *        Note that first symbol is the formula's Type Code. The
-     *        Type Code is used only when parsing a null expression
-     *        (length zero), in which case a Nulls Permitted Rule is
-     *        sought.
-     *
-     * @param parseNodeHolderExprIn - Formula's Expression,
-     *        preloaded into a ParseNodeHolder[] (see
-     *        Formula.getParseNodeHolderExpr(mandVarHypArray).
-     *
-     * @param highestSeqIn -- restricts the parse to statements with a
-     *        sequence number less than or equal to highestSeq. Set
-     *        this to Integer.MAX_VALUE to enable grammatical parsing
-     *        using all available rules.
-     *
-     * @return int -- specifies the number of ParseTree objects stored
-     *        into parseTreeArray. A number greater than 1 indicates
-     *        grammatical ambiguity, by definition, since there is
-     *        more than one way to parse the formula.
+     * The user can control whether or not the first successful parse is
+     * returned by passing in an array of length = 1.
+     * 
+     * @param parseTreeArrayIn -- holds generated ParseTrees, therefore, length
+     *            must be greater than 0. The user can control whether or not
+     *            the first successful parse is returned by passing in an array
+     *            of length = 1. If the array length is greater than 1 the
+     *            function attempts to fill the array with alternate parses
+     *            (which if found, would indicate grammatical ambiguity.)
+     *            Returned ParseTree objects are stored in array order -- 0, 1,
+     *            2, ... -- and the contents of unused array entries is
+     *            unspecified. If more than one ParseTree is returned, the
+     *            returned ParseTrees are guaranteed to be different (no
+     *            duplicate ParseTrees are returned!)
+     * @param formulaTypIn -- Cnst Type Code of the Formula to be parsed. Note
+     *            that first symbol is the formula's Type Code. The Type Code is
+     *            used only when parsing a null expression (length zero), in
+     *            which case a Nulls Permitted Rule is sought.
+     * @param parseNodeHolderExprIn - Formula's Expression, preloaded into a
+     *            ParseNodeHolder[] (see
+     *            Formula.getParseNodeHolderExpr(mandVarHypArray).
+     * @param highestSeqIn -- restricts the parse to statements with a sequence
+     *            number less than or equal to highestSeq. Set this to
+     *            Integer.MAX_VALUE to enable grammatical parsing using all
+     *            available rules.
+     * @return int -- specifies the number of ParseTree objects stored into
+     *         parseTreeArray. A number greater than 1 indicates grammatical
+     *         ambiguity, by definition, since there is more than one way to
+     *         parse the formula.
      */
-    @Override
     public int parseExpr(final ParseTree[] parseTreeArrayIn,
         final Cnst formulaTypIn, final ParseNodeHolder[] parseNodeHolderExprIn,
         final int highestSeqIn) throws VerifyException
@@ -163,25 +151,23 @@ public class BottomUpParser implements GrammaticalParser {
     }
 
     /**
-     * BottomUpParserSpecialCase1 --
-     * Expression length = 0 occurs on Nulls Permitted Syntax
-     * Axioms or, in theory, on a Logical Hypothesis, Logical
-     * Axiom or Theorem, statements beginning with a valid
-     * Theorem TypeCode such as "|-".
+     * BottomUpParserSpecialCase1 -- Expression length = 0 occurs on Nulls
+     * Permitted Syntax Axioms or, in theory, on a Logical Hypothesis, Logical
+     * Axiom or Theorem, statements beginning with a valid Theorem TypeCode such
+     * as "|-".
      * <p>
-     * In both cases, the parse
-     * should return a Nulls Permitted result, but the question
-     * is, for which Type Code? Answer: if the parsed Formula
-     * Type Code is a Provable Logic Statement Type code, then
-     * return a Nulls Permitted parse for one of the Logical
-     * Statement Type Codes (and if 2 results are possible then
-     * that is an ambiguity); otherwise, if the parsed Formula
-     * Type Code is not a Provable Logic Statement Type Code,
-     * then return a Nulls Permitted parse result for any of
-     * the non-Provable Logic Statement Type Codes, which
-     * includes the Logical Statement Type Codes (eg. if Formula
-     * Type Code is "wff" then if there is a Nulls Permitted Rule
-     * for "wff", return that, else no parse is possible.)
+     * In both cases, the parse should return a Nulls Permitted result, but the
+     * question is, for which Type Code? Answer: if the parsed Formula Type Code
+     * is a Provable Logic Statement Type code, then return a Nulls Permitted
+     * parse for one of the Logical Statement Type Codes (and if 2 results are
+     * possible then that is an ambiguity); otherwise, if the parsed Formula
+     * Type Code is not a Provable Logic Statement Type Code, then return a
+     * Nulls Permitted parse result for any of the non-Provable Logic Statement
+     * Type Codes, which includes the Logical Statement Type Codes (eg. if
+     * Formula Type Code is "wff" then if there is a Nulls Permitted Rule for
+     * "wff", return that, else no parse is possible.)
+     * 
+     * @return {@code parseCnt}
      */
     private int BottomUpParserSpecialCase1() {
 
@@ -215,20 +201,19 @@ public class BottomUpParser implements GrammaticalParser {
     }
 
     /**
-     *  BottomUpParserSpecialCase2 --
-     *  Special Case 2) Expression with Length = 1 containing
-     *  just a Variable occurs on Type Conversion Syntax Axioms,
-     *  on Variable Hypothesis Statements and on Logical
-     *  Statements (see ax-mp in set(dot)mm).
-     *  <p>
-     *  If the parsed Formula's
-     *  Type Code is a Provable Logic Statement Type Code then
-     *  the parse result should be just a Variable Hypothesis
-     *  parse tree -- otherwise, the parse result should be a
-     *  Type Conversion parse tree (NOTE: when parsing a
-     *  Metamath database in its entirety, we do not send
-     *  variable hypotheses through the parser, therefore we
-     *  ignore that scenario in this special case.)
+     * BottomUpParserSpecialCase2 -- Special Case 2) Expression with Length = 1
+     * containing just a Variable occurs on Type Conversion Syntax Axioms, on
+     * Variable Hypothesis Statements and on Logical Statements (see ax-mp in
+     * set(dot)mm).
+     * <p>
+     * If the parsed Formula's Type Code is a Provable Logic Statement Type Code
+     * then the parse result should be just a Variable Hypothesis parse tree --
+     * otherwise, the parse result should be a Type Conversion parse tree (NOTE:
+     * when parsing a Metamath database in its entirety, we do not send variable
+     * hypotheses through the parser, therefore we ignore that scenario in this
+     * special case.)
+     * 
+     * @return {@code parseCnt}
      */
     private int BottomUpParserSpecialCase2() {
 
@@ -257,9 +242,8 @@ public class BottomUpParser implements GrammaticalParser {
         pStackIsGimme[0] = false;
 
         /**
-         *  Initial pass turns input parse expression into
-         *  "rule format" containing Type Codes instead of
-         *  variable hypotheses.
+         * Initial pass turns input parse expression into "rule format"
+         * containing Type Codes instead of variable hypotheses.
          */
 
         Cnst cnst;

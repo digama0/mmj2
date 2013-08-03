@@ -7,154 +7,153 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  PaConstants.java  0.10 11/01/2011
+ * PaConstants.java  0.10 11/01/2011
  *
- *  Version 0.02
- *  -- added new constants for Proof Assistant "Derive" Feature,
- *     including:
- *         - GREATEST_STEP_NBR_INCREMENT_AMT
- *         - MAX_UNIFY_ALTERNATES
- *         - DUMMY_VAR_PREFIX
- *  -- new messages, including
- *         ProofWorksheet:
- *             -- ERRMSG_DERIVE_FEATURE_STEP_NOTFND_1
- *  -- new items for ProofAsstGUI renumber feature:
- *         -- PA_GUI_UNIFY_MENU_START_UR_ITEM_TEXT
- *  -- new for ProofAsst:
- *         -- PROOF_STEP_RENUMBER_INTERVAL
+ * Version 0.02
+ * -- added new constants for Proof Assistant "Derive" Feature,
+ *    including:
+ *        - GREATEST_STEP_NBR_INCREMENT_AMT
+ *        - MAX_UNIFY_ALTERNATES
+ *        - DUMMY_VAR_PREFIX
+ * -- new messages, including
+ *        ProofWorksheet:
+ *            -- ERRMSG_DERIVE_FEATURE_STEP_NOTFND_1
+ * -- new items for ProofAsstGUI renumber feature:
+ *        -- PA_GUI_UNIFY_MENU_START_UR_ITEM_TEXT
+ * -- new for ProofAsst:
+ *        -- PROOF_STEP_RENUMBER_INTERVAL
  *
- *  Nov-01-2006 - Version 0.03
- *      - comment update for TMFF project messages.
- *      - Update Proof Text defaults - formula left col = 15,
- *        formula right col = 79.
- *      - removed unnecessary message ERRMSG_FRAME_ERR_1,
- *        E-PA-0336.
- *      - other misc. stuff added to Proof Assistant, like color.
- *      - rewrite Help text.
+ * Nov-01-2006 - Version 0.03
+ *     - comment update for TMFF project messages.
+ *     - Update Proof Text defaults - formula left col = 15,
+ *       formula right col = 79.
+ *     - removed unnecessary message ERRMSG_FRAME_ERR_1,
+ *       E-PA-0336.
+ *     - other misc. stuff added to Proof Assistant, like color.
+ *     - rewrite Help text.
  *
- *  Jun-01-2007 - Version 0.04
- *      - replace generic ProofWorkStmt.status
- *      - etc.
+ * Jun-01-2007 - Version 0.04
+ *     - replace generic ProofWorkStmt.status
+ *     - etc.
  *
- *  Aug-01-2007 - Version 0.05
- *      - Misc Work Variable Enhancements
+ * Aug-01-2007 - Version 0.05
+ *     - Misc Work Variable Enhancements
  *
- *  Nov-01-2007 Version 0.06
- *            - Add FIELD_ID_* constants for use in cursor
- *              positioning.
- *            - Changed E-PA-0403 to info message I-PA-0403.
- *            - Added stuff for new "Set Indent" and
- *              "Reformat Proof: Swap Alt" menu items.
- *            - Add new constant, LOCAL_REF_ESCAPE_CHAR
- *              for the new "Local Ref" escape character
- *            - Add ERRMSG_HYP_HAS_LOCAL_REF_1, "E-PA-0377"
- *            - Add ERRMSG_QED_HAS_LOCAL_REF_1, "E-PA-0378"
- *            - Add ERRMSG_BAD_LOCAL_REF_1,     "E-PA-0379"
- *            - Update GeneralHelp screen text for new Edit
- *              menu items and release date (1-Nov-2007).
- *            - Add "ProofAsstErrorMessageRows"    RunParm
- *            - Add "ProofAsstErrorMessageColumns" RunParm
- *            - Add "ProofAsstTextAtTop"           RunParm
- *            - Add I-PA-0119, ERRMSG_PA_RPN_PROOF_GENERATED_1
- *              for ProofAsst.java (previously, no message
- *              resulted in this situation.)
+ * Nov-01-2007 Version 0.06
+ *           - Add FIELD_ID_* constants for use in cursor
+ *             positioning.
+ *           - Changed E-PA-0403 to info message I-PA-0403.
+ *           - Added stuff for new "Set Indent" and
+ *             "Reformat Proof: Swap Alt" menu items.
+ *           - Add new constant, LOCAL_REF_ESCAPE_CHAR
+ *             for the new "Local Ref" escape character
+ *           - Add ERRMSG_HYP_HAS_LOCAL_REF_1, "E-PA-0377"
+ *           - Add ERRMSG_QED_HAS_LOCAL_REF_1, "E-PA-0378"
+ *           - Add ERRMSG_BAD_LOCAL_REF_1,     "E-PA-0379"
+ *           - Update GeneralHelp screen text for new Edit
+ *             menu items and release date (1-Nov-2007).
+ *           - Add "ProofAsstErrorMessageRows"    RunParm
+ *           - Add "ProofAsstErrorMessageColumns" RunParm
+ *           - Add "ProofAsstTextAtTop"           RunParm
+ *           - Add I-PA-0119, ERRMSG_PA_RPN_PROOF_GENERATED_1
+ *             for ProofAsst.java (previously, no message
+ *             resulted in this situation.)
  *
- *  Feb-01-2008 Version 0.07
- *            - add PROOF_ASST_FONT_SIZE_CHG_AMT (=2) to replace
- *              program hardcoding.
- *            - add PA_GUI_POPUP_MENU_REFORMAT_STEP_TEXT and
- *                  PA_GUI_POPUP_MENU_REFORMAT_SWAP_ALT_STEP_TEXT
- *              for new single step reformatting option on popup
- *              menu.
- *            - add PROOF_ASST_GUI_STARTUP_MSG to replace hardcoded
- *              "Greetings, friend." message in ProofAsstGUI.
- *            - add PROOF_ASST_INCOMPLETE_STEP_CURSOR_DEFAULT,
- *                  PROOF_ASST_INCOMPLETE_STEP_CURSOR_FIRST
- *                  PROOF_ASST_INCOMPLETE_STEP_CURSOR_LAST
- *              and PROOF_ASST_INCOMPLETE_STEP_CURSOR_ASIS.
- *            - add OUTPUT_CURSOR_INSTRUMENTATION_DEFAULT
- *              and ERRMSG_PA_CURSOR_INSTRUMENTATION message
- *            - add PROOF_ASST_AUTO_REFORMAT_DEFAULT
- *            - Modify HELP_ABOUT_TEXT_1 for copyright dates
- *              and GENERAL_HELP_INFO_TEXT for new/chgd options.
+ * Feb-01-2008 Version 0.07
+ *           - add PROOF_ASST_FONT_SIZE_CHG_AMT (=2) to replace
+ *             program hardcoding.
+ *           - add PA_GUI_POPUP_MENU_REFORMAT_STEP_TEXT and
+ *                 PA_GUI_POPUP_MENU_REFORMAT_SWAP_ALT_STEP_TEXT
+ *             for new single step reformatting option on popup
+ *             menu.
+ *           - add PROOF_ASST_GUI_STARTUP_MSG to replace hardcoded
+ *             "Greetings, friend." message in ProofAsstGUI.
+ *           - add PROOF_ASST_INCOMPLETE_STEP_CURSOR_DEFAULT,
+ *                 PROOF_ASST_INCOMPLETE_STEP_CURSOR_FIRST
+ *                 PROOF_ASST_INCOMPLETE_STEP_CURSOR_LAST
+ *             and PROOF_ASST_INCOMPLETE_STEP_CURSOR_ASIS.
+ *           - add OUTPUT_CURSOR_INSTRUMENTATION_DEFAULT
+ *             and ERRMSG_PA_CURSOR_INSTRUMENTATION message
+ *           - add PROOF_ASST_AUTO_REFORMAT_DEFAULT
+ *           - Modify HELP_ABOUT_TEXT_1 for copyright dates
+ *             and GENERAL_HELP_INFO_TEXT for new/chgd options.
  *
- *  Mar-01-2008 Version 0.08
- *            - Various constants for StepSelector classes.
- *            - Remove Hints feature
+ * Mar-01-2008 Version 0.08
+ *           - Various constants for StepSelector classes.
+ *           - Remove Hints feature
  *
- *  Aug-01-2008 Version 0.09
- *            - Add new ERRMSG_DV_VAR_SCOPE_ERR_1 error message
- *              for $d variables not active in the current scope
- *              (which means that new theorem variables must be
- *              active globally in proof assistant, while existing
- *              theorem variables must be defined in the theorem's
- *              extended frame (mandatory frame + optional frame).
- *            - New TheoremLoader stuff in the ProofAsstGUI.
+ * Aug-01-2008 Version 0.09
+ *           - Add new ERRMSG_DV_VAR_SCOPE_ERR_1 error message
+ *             for $d variables not active in the current scope
+ *             (which means that new theorem variables must be
+ *             active globally in proof assistant, while existing
+ *             theorem variables must be defined in the theorem's
+ *             extended frame (mandatory frame + optional frame).
+ *           - New TheoremLoader stuff in the ProofAsstGUI.
  *
- *  Version 0.10 - Nov-01-2011:  comment update.
- *            - Modify for copyright dates/release information.
- *            - Added PA_GUI_FILE_MENU_EXPORT_VIA_GMFF_ITEM_TEXT
- *            _ Added ERRMSG_PA_GUI_EXPORT_VIA_GMFF_NO_MSGS
- *               ("I-PA-0210 OK! Export Via GMFF complete."
- *              + " No error or info messages were generated.";)
- *            _ Added ERRMSG_PA_GUI_EXPORT_VIA_GMFF_FAILED
- *              ("E-PA-0124 Oops! Export Via GMFF failed."
- *              + " One or more error messages were generated."
- *              + " See following messages";)
- *            - set PROOF_ASST_FORMULA_RIGHT_COL_DEFAULT = 70
- *              (was 79. now matches RunParmsComplete.txt);
- *            - set PA_GUI_DEFAULT_FILE_NAME_SUFFIX to
- *              .mmp (PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP2);
- *              was .txt (PA_GUI_FILE_CHOOSER_FILE_SUFFIX_TXT2);
+ * Version 0.10 - Nov-01-2011:  comment update.
+ *           - Modify for copyright dates/release information.
+ *           - Added PA_GUI_FILE_MENU_EXPORT_VIA_GMFF_ITEM_TEXT
+ *           _ Added ERRMSG_PA_GUI_EXPORT_VIA_GMFF_NO_MSGS
+ *              ("I-PA-0210 OK! Export Via GMFF complete."
+ *             + " No error or info messages were generated.";)
+ *           _ Added ERRMSG_PA_GUI_EXPORT_VIA_GMFF_FAILED
+ *             ("E-PA-0124 Oops! Export Via GMFF failed."
+ *             + " One or more error messages were generated."
+ *             + " See following messages";)
+ *           - set PROOF_ASST_FORMULA_RIGHT_COL_DEFAULT = 70
+ *             (was 79. now matches RunParmsComplete.txt);
+ *           - set PA_GUI_DEFAULT_FILE_NAME_SUFFIX to
+ *             .mmp (PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP2);
+ *             was .txt (PA_GUI_FILE_CHOOSER_FILE_SUFFIX_TXT2);
  */
 
 package mmj.pa;
 
 import java.awt.Color;
 
+import mmj.gmff.GMFFConstants;
+import mmj.mmio.MMIOConstants;
+import mmj.util.UtilConstants;
+import mmj.verify.GrammarConstants;
+import mmj.verify.ProofConstants;
+
 /**
  * (Most) Constants used in mmj.pa classes
- *
- *  <p>
- *  There are two primary types of constants: parameters that
- *  are "hardcoded" which affect/control processing, and
- *  error/info messages.
- *  <p>
- *  Each mmj message begins with a code, such as this:<br>
- *  <code>
- *  E-LA-0007<br>
- *  <p>
- *  where the format of the code is "X-YY-9999"<br>
- *
- *  <b>X</b>     : error level
- *  <ul>
- *      <li>E = Error
- *      <li>I = Information
- *      <li>A = Abort (processing terminates, usually a bug).
- *  </ul><br>
- *  <br>
- *
- *  <b>YY</b>    : source code
- *  <ul>
- *      <li>GM = mmj.gmff package (see mmj.gmff.GMFFConstants)
- *      <li>GR = mmj.verify.Grammar and related code
- *               (see mmj.verify.GrammarConstants)
- *      <li>IO = mmj.mmio package (see mmj.mmio.MMIOConstants)
- *      <li>LA = mmj.lang package (see mmj.lang.GMFFConstants)
- *      <li>PA = mmj.pa package (proof assistant)
- *               (see mmj.pa.PaConstants)
- *      <li>PR = mmj.verify.VerifyProof and related code
- *               (see mmj.verify.ProofConstants)
- *      <li>TL = mmj.tl package (Theorem Loader).
- *      <li>TM = mmj.tmff.AlignColumn and related code
- *      <li>UT = mmj.util package.
- *               (see mmj.util.UtilConstants)
- *  </ul><br>
- *  <br>
- *  <b>9999</b>   : sequential number within the source code, 0001
- *       through 9999.
- *
- *  </code>
+ * <p>
+ * There are two primary types of constants: parameters that are "hardcoded"
+ * which affect/control processing, and error/info messages.
+ * <p>
+ * Each mmj message begins with a code, such as this:
+ * <p>
+ * <code>E-LA-0007</code>
+ * <p>
+ * where the format of the code is {@code X-YY-9999}<br>
+ * <p>
+ * <b>{@code X}</b> : error level
+ * <ul>
+ * <li>{@code E} = Error
+ * <li>{@code I} = Information
+ * <li>{@code A} = Abort (processing terminates, usually a bug).
+ * </ul>
+ * <p>
+ * <b>{@code YY}</b> : source code
+ * <ul>
+ * <li>{@code GM} = mmj.gmff package (see {@link GMFFConstants})
+ * <li>{@code GR} = mmj.verify.Grammar and related code (see
+ * {@link GrammarConstants})
+ * <li>{@code IO} = mmj.mmio package (see {@link MMIOConstants})
+ * <li>{@code LA} = mmj.lang package (see {@link GMFFConstants})
+ * <li>{@code PA} = mmj.pa package (proof assistant) (see {@link PaConstants})
+ * <li>{@code PR} = mmj.verify.VerifyProof and related code (see
+ * {@link ProofConstants})
+ * <li>{@code TL} = mmj.tl package (Theorem Loader).
+ * <li>{@code TM} = mmj.tmff.AlignColumn and related code
+ * <li>{@code UT} = mmj.util package. (see {@link UtilConstants})
+ * </ul>
+ * <p>
+ * <b>{@code 9999}</b> : sequential number within the source code, 0001 through
+ * 9999.
  */
 public class PaConstants {
 
@@ -171,54 +170,52 @@ public class PaConstants {
     // ----------------------------------------------------------
 
     /**
-     *  PROOF_STEP_RENUMBER_INTERVAL = 1
-     *  <p>
-     *  Renumber by interval: 1, 2, ...n or 10, 20, ... etc.
-     *  This is hardcoded, but a RunParm could be added.
+     * PROOF_STEP_RENUMBER_INTERVAL = 1
+     * <p>
+     * Renumber by interval: 1, 2, ...n or 10, 20, ... etc. This is hardcoded,
+     * but a RunParm could be added.
      */
     public static final int PROOF_STEP_RENUMBER_INTERVAL = 1;
 
     /**
-     *  PROOF_ASST_INCOMPLETE_STEP_CURSOR_LAST = "Last".
-     *  <p>
-     *  Controls how cursor positioned after Unification
-     *  if there are no errors and at least one "incomplete"
-     *  proof step: set cursor to Last incomplete proof step.
+     * PROOF_ASST_INCOMPLETE_STEP_CURSOR_LAST = "Last".
+     * <p>
+     * Controls how cursor positioned after Unification if there are no errors
+     * and at least one "incomplete" proof step: set cursor to Last incomplete
+     * proof step.
      */
     public static final String PROOF_ASST_INCOMPLETE_STEP_CURSOR_LAST = "Last";
 
     /**
-     *  PROOF_ASST_INCOMPLETE_STEP_CURSOR_FIRST = "First".
-     *  <p>
-     *  Controls how cursor positioned after Unification
-     *  if there are no errors and at least one "incomplete"
-     *  proof step: set cursor to First incomplete proof step.
+     * PROOF_ASST_INCOMPLETE_STEP_CURSOR_FIRST = "First".
+     * <p>
+     * Controls how cursor positioned after Unification if there are no errors
+     * and at least one "incomplete" proof step: set cursor to First incomplete
+     * proof step.
      */
     public static final String PROOF_ASST_INCOMPLETE_STEP_CURSOR_FIRST = "First";
 
     /**
-     *  PROOF_ASST_INCOMPLETE_STEP_CURSOR_ASIS = "AsIs".
-     *  <p>
-     *  Controls how cursor positioned after Unification
-     *  if there are no errors and at least one "incomplete"
-     *  proof step: set cursor where it was when Ctrl-U
-     *  was presed (same step but on Ref field.)
+     * PROOF_ASST_INCOMPLETE_STEP_CURSOR_ASIS = "AsIs".
+     * <p>
+     * Controls how cursor positioned after Unification if there are no errors
+     * and at least one "incomplete" proof step: set cursor where it was when
+     * Ctrl-U was presed (same step but on Ref field.)
      */
     public static final String PROOF_ASST_INCOMPLETE_STEP_CURSOR_ASIS = "AsIs";
 
     /**
-     *  PROOF_ASST_INCOMPLETE_STEP_CURSOR_DEFAULT = "AsIs".
-     *  <p>
-     *  Controls how cursor positioned after Unification
-     *  if there are no errors and at least one "incomplete"
-     *  proof step.
+     * PROOF_ASST_INCOMPLETE_STEP_CURSOR_DEFAULT = "AsIs".
+     * <p>
+     * Controls how cursor positioned after Unification if there are no errors
+     * and at least one "incomplete" proof step.
      */
     public static final String PROOF_ASST_INCOMPLETE_STEP_CURSOR_DEFAULT = PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_ASIS; // "AsIs";
 
     /**
-     *  PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE
-     *  <p>
-     *  Used in ProofAsstGUI to display the choices.
+     * PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE
+     * <p>
+     * Used in ProofAsstGUI to display the choices.
      */
     public static final String[] PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE = {
             PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_ASIS,
@@ -226,15 +223,14 @@ public class PaConstants {
             PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_LAST};
 
     /**
-     *  Caption of list of options for Incomplete Step Cursor
-     *  positioning.
-     *  <p>
-     *  Used in ProofAsstGUI to display the choices.
+     * Caption of list of options for Incomplete Step Cursor positioning.
+     * <p>
+     * Used in ProofAsstGUI to display the choices.
      */
     public static final String PROOF_ASST_INCOMPLETE_STEP_CURSOR_OPTION_LIST = "Valid Incomplete Step Cursor Options: ";
 
     /**
-     *  Prompt for Set Incomplete Step Cursor option Action dialog.
+     * Prompt for Set Incomplete Step Cursor option Action dialog.
      */
     public static final String PA_GUI_SET_INCOMPLETE_STEP_CURSOR_OPTION_PROMPT = "Enter Incomplete Step Cursor Option Number";
 
@@ -243,16 +239,16 @@ public class PaConstants {
     // ----------------------------------------------------------
 
     /**
-     *  FIELD_ID_NONE = -1
-     *  <p>
-     *  Field Id not present.
+     * FIELD_ID_NONE = -1
+     * <p>
+     * Field Id not present.
      */
     public static final int FIELD_ID_NONE = -1;
 
     /**
-     *  FIELD_ID_REF = 1
-     *  <p>
-     *  Field Id for Ref sub-field of ProofStepStmt in ProofWorksheet.
+     * FIELD_ID_REF = 1
+     * <p>
+     * Field Id for Ref sub-field of ProofStepStmt in ProofWorksheet.
      */
     public static final int FIELD_ID_REF = 1;
 
@@ -261,88 +257,78 @@ public class PaConstants {
     // ----------------------------------------------------------
 
     /**
-     *  UNIFIER_NODE_STACK_SIZE = 1000
-     *  <p>
-     *  Stacks used for parse node unification and comparisons
-     *  are held in fixed length arrays for the duration,
-     *  across multiple executions of the GUI. The size
-     *  is a function of the depth of the deepest parse tree
-     *  and the number of child nodes at each level on the
-     *  longest path. Ergo, 1000 should be, five or ten times
-     *  as big as needed. This could be made into a RunParm
-     *  should be, probably...
+     * UNIFIER_NODE_STACK_SIZE = 1000
+     * <p>
+     * Stacks used for parse node unification and comparisons are held in fixed
+     * length arrays for the duration, across multiple executions of the GUI.
+     * The size is a function of the depth of the deepest parse tree and the
+     * number of child nodes at each level on the longest path. Ergo, 1000
+     * should be, five or ten times as big as needed. This could be made into a
+     * RunParm should be, probably...
      */
     public static final int UNIFIER_NODE_STACK_SIZE = 1000;
 
     /**
-     *  UNIFIER_MAX_LOG_HYPS = 100
-     *  <p>
-     *  Fixed size arrays are used for "cleanup" of LogHyp
-     *  substitutions (backing out partial unification results).
-     *  The necessary size of these arrays is basically just
-     *  the maximum number of LogHyp's for any Theorem.
-     *  <p>
-     *  Set.mm has one Theorem with 19 LogHyp's...
-     *  <p>
-     *  This could be made into a RunParm...
-     *  should be, probably...
+     * UNIFIER_MAX_LOG_HYPS = 100
+     * <p>
+     * Fixed size arrays are used for "cleanup" of LogHyp substitutions (backing
+     * out partial unification results). The necessary size of these arrays is
+     * basically just the maximum number of LogHyp's for any Theorem.
+     * <p>
+     * Set.mm has one Theorem with 19 LogHyp's...
+     * <p>
+     * This could be made into a RunParm... should be, probably...
      */
     public static final int UNIFIER_MAX_LOG_HYPS = 100;
 
     /**
-     *  DOT_STEP_CAPTION = ".Step"
-     *  <p>
-     *  This is appended to the Theorem label to create
-     *  a simulated theorem label when a proof step's
-     *  proof is rechecked using VerifyProofs.java.
+     * DOT_STEP_CAPTION = ".Step"
+     * <p>
+     * This is appended to the Theorem label to create a simulated theorem label
+     * when a proof step's proof is rechecked using VerifyProofs.java.
      */
     public static final String DOT_STEP_CAPTION = ".Step ";
 
     /**
-     *  MAX_UNIFY_ALTERNATES = 10
-     *  <p>
-     *  Alternate assertion Ref's are presented in an
-     *  error message if the input Ref fails to unify.
-     *  However, to prevent an out-of-control situation
-     *  a "governor" is used. This is important now that
-     *  the Proof Assistant "Derive" Feature is in place.
-     *  <p>
+     * MAX_UNIFY_ALTERNATES = 10
+     * <p>
+     * Alternate assertion Ref's are presented in an error message if the input
+     * Ref fails to unify. However, to prevent an out-of-control situation a
+     * "governor" is used. This is important now that the Proof Assistant
+     * "Derive" Feature is in place.
+     * <p>
      */
     public static final int MAX_UNIFY_ALTERNATES = 10;
 
     /**
-     *  DUMMY_VAR_PREFIX = $
-     *  <p>
-     *  Prefix string for "dummy" (temp) variables
-     *  generated in the Proof Assistant "Derive"
-     *  feature for un-determined and out-of-scope
-     *  variable substitutions.
-     *  <p>
-     *  In normal practice dummy variables will be
-     *  composed of the dummy variable prefix string
-     *  and a number -- e.g. "$1", "$2", etc.
-     *  <p>
+     * DUMMY_VAR_PREFIX = $
+     * <p>
+     * Prefix string for "dummy" (temp) variables generated in the Proof
+     * Assistant "Derive" feature for un-determined and out-of-scope variable
+     * substitutions.
+     * <p>
+     * In normal practice dummy variables will be composed of the dummy variable
+     * prefix string and a number -- e.g. "$1", "$2", etc.
+     * <p>
      */
     public static final String DUMMY_VAR_PREFIX = "$";
 
     /**
-     *  ASSRT_LIST_FREESPACE_DEFAULT = 5
-     *  <p>
-     *  Padding percentage for ProofUnifier's Assrt lists
-     *  10 percent causes the ArrayList to be allocated as
-     *  1100 if the size of the input list is 1000.
-     *  <p>
-     *  Padding is provided for efficiency with the new
-     *  TheoremLoader so that new theorems added to the
-     *  unifySearchList don't force a complete recopy.
-     *  <p>
+     * ASSRT_LIST_FREESPACE_DEFAULT = 5
+     * <p>
+     * Padding percentage for ProofUnifier's Assrt lists 10 percent causes the
+     * ArrayList to be allocated as 1100 if the size of the input list is 1000.
+     * <p>
+     * Padding is provided for efficiency with the new TheoremLoader so that new
+     * theorems added to the unifySearchList don't force a complete recopy.
+     * <p>
      */
     public static final int ASSRT_LIST_FREESPACE_DEFAULT = 5;
 
     /**
-     *  ASSRT_LIST_FREESPACE_MAX = 1000
-     *  <p>
-     *  Maximum padding percentage for ProofUnifier's Assrt lists.
+     * ASSRT_LIST_FREESPACE_MAX = 1000
+     * <p>
+     * Maximum padding percentage for ProofUnifier's Assrt lists.
      */
     public static final int ASSRT_LIST_FREESPACE_MAX = 1000;
 
@@ -351,107 +337,107 @@ public class PaConstants {
     // ----------------------------------------------------------
 
     /**
-     *  PROOF_ASST_FONT_SIZE_MIN = 8.
+     * PROOF_ASST_FONT_SIZE_MIN = 8.
      */
     public static final int PROOF_ASST_FONT_SIZE_MIN = 8;
 
     /**
-     *  PROOF_ASST_FONT_SIZE_MAX = 72.
+     * PROOF_ASST_FONT_SIZE_MAX = 72.
      */
     public static final int PROOF_ASST_FONT_SIZE_MAX = 72;
 
     /**
-     *  PROOF_ASST_FONT_SIZE_CHG_AMT = 2.
+     * PROOF_ASST_FONT_SIZE_CHG_AMT = 2.
      */
     public static final int PROOF_ASST_FONT_SIZE_CHG_AMT = 2;
 
     /**
-     *  PROOF_ASST_TEXT_COLUMNS_MIN = 40
+     * PROOF_ASST_TEXT_COLUMNS_MIN = 40
      */
     public static final int PROOF_ASST_TEXT_COLUMNS_MIN = 40;
 
     /**
-     *  PROOF_ASST_TEXT_COLUMNS_MAX = 999
+     * PROOF_ASST_TEXT_COLUMNS_MAX = 999
      */
     public static final int PROOF_ASST_TEXT_COLUMNS_MAX = 999;
 
     /**
-     *  PROOF_ASST_TEXT_ROWS_MIN = 2
+     * PROOF_ASST_TEXT_ROWS_MIN = 2
      */
     public static final int PROOF_ASST_TEXT_ROWS_MIN = 2;
 
     /**
-     *  PROOF_ASST_TEXT_ROWS_MAX = 99
+     * PROOF_ASST_TEXT_ROWS_MAX = 99
      */
     public static final int PROOF_ASST_TEXT_ROWS_MAX = 99;
 
     /**
-     *  PROOF_ASST_ERROR_MESSAGE_ROWS_MIN = 2
+     * PROOF_ASST_ERROR_MESSAGE_ROWS_MIN = 2
      */
     public static final int PROOF_ASST_ERROR_MESSAGE_ROWS_MIN = 2;
 
     /**
-     *  PROOF_ASST_ERROR_MESSAGE_ROWS_MAX = 99
+     * PROOF_ASST_ERROR_MESSAGE_ROWS_MAX = 99
      */
     public static final int PROOF_ASST_ERROR_MESSAGE_ROWS_MAX = 99;
 
     /**
-     *  PROOF_ASST_ERROR_MESSAGE_COLUMNS_MIN = 40
+     * PROOF_ASST_ERROR_MESSAGE_COLUMNS_MIN = 40
      */
     public static final int PROOF_ASST_ERROR_MESSAGE_COLUMNS_MIN = 40;
 
     /**
-     *  PROOF_ASST_ERROR_MESSAGE_COLUMNS_MAX = 999
+     * PROOF_ASST_ERROR_MESSAGE_COLUMNS_MAX = 999
      */
     public static final int PROOF_ASST_ERROR_MESSAGE_COLUMNS_MAX = 999;
 
     /**
-     *  PROOF_ASST_FORMULA_LEFT_COL_MIN
+     * PROOF_ASST_FORMULA_LEFT_COL_MIN
      */
     public static final int PROOF_ASST_FORMULA_LEFT_COL_MIN = 2;
 
     /**
-     *  PROOF_ASST_FORMULA_RIGHT_COL_MAX
+     * PROOF_ASST_FORMULA_RIGHT_COL_MAX
      */
     public static final int PROOF_ASST_FORMULA_RIGHT_COL_MAX = Integer.MAX_VALUE;
 
     /**
-     *  PROOF_ASST_RPN_PROOF_LEFT_COL_MIN
+     * PROOF_ASST_RPN_PROOF_LEFT_COL_MIN
      */
     public static final int PROOF_ASST_RPN_PROOF_LEFT_COL_MIN = 4;
 
     /**
-     *  PROOF_ASST_RPN_PROOF_RIGHT_COL_MAX
+     * PROOF_ASST_RPN_PROOF_RIGHT_COL_MAX
      */
     public static final int PROOF_ASST_RPN_PROOF_RIGHT_COL_MAX = Integer.MAX_VALUE;
 
     /**
-     *  ProofAsstDjVarsSoftErrors Ignore option
+     * ProofAsstDjVarsSoftErrors Ignore option
      */
     public static final String PROOF_ASST_DJ_VARS_SOFT_ERRORS_IGNORE = "Ignore";
 
     /**
-     *  ProofAsstDjVarsSoftErrors Report option
+     * ProofAsstDjVarsSoftErrors Report option
      */
     public static final String PROOF_ASST_DJ_VARS_SOFT_ERRORS_REPORT = "Report";
 
     /**
-     *  ProofAsstDjVarsSoftErrors GenerateNew option
+     * ProofAsstDjVarsSoftErrors GenerateNew option
      */
     public static final String PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_NEW = "GenerateNew";
 
     /**
-     *  ProofAsstDjVarsSoftErrors GenerateReplacements option
+     * ProofAsstDjVarsSoftErrors GenerateReplacements option
      */
     public static final String PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_REPLACEMENTS = "GenerateReplacements";
 
     /**
-     *  ProofAsstDjVarsSoftErrors GenerateDifferences option
+     * ProofAsstDjVarsSoftErrors GenerateDifferences option
      */
     public static final String PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_DIFFERENCES = "GenerateDifferences";
 
     /**
-     *  ProofAsstDjVarsSoftErrors Default value
+     * ProofAsstDjVarsSoftErrors Default value
      */
     public static final String PROOF_ASST_DJ_VARS_SOFT_ERRORS_DEFAULT = PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_REPLACEMENTS;
 
@@ -482,52 +468,52 @@ public class PaConstants {
     // ----------------------------------------------------------
 
     /**
-     *  PROOF_ASST_FONT_SIZE_DEFAULT = 14
+     * PROOF_ASST_FONT_SIZE_DEFAULT = 14
      */
     public static final int PROOF_ASST_FONT_SIZE_DEFAULT = 14;
 
     /**
-     *  PROOF_ASST_FONT_FAMILY_DEFAULT = Monospaced
+     * PROOF_ASST_FONT_FAMILY_DEFAULT = Monospaced
      */
     public static final String PROOF_ASST_FONT_FAMILY_DEFAULT = "Monospaced";
 
     /**
-     *  PROOF_ASST_FONT_BOLD_DEFAULT = yes
+     * PROOF_ASST_FONT_BOLD_DEFAULT = yes
      */
     public static final boolean PROOF_ASST_FONT_BOLD_DEFAULT = true;
 
     /**
-     *  PROOF_ASST_ERROR_MESSAGE_ROWS_DEFAULT = 4
+     * PROOF_ASST_ERROR_MESSAGE_ROWS_DEFAULT = 4
      */
     public static final int PROOF_ASST_ERROR_MESSAGE_ROWS_DEFAULT = 4;
 
     /**
-     *  PROOF_ASST_ERROR_MESSAGE_COLUMNS_DEFAULT = 80
+     * PROOF_ASST_ERROR_MESSAGE_COLUMNS_DEFAULT = 80
      */
     public static final int PROOF_ASST_ERROR_MESSAGE_COLUMNS_DEFAULT = 80;
 
     /**
-     *  PROOF_ASST_TEXT_AT_TOP_DEFAULT = yes
+     * PROOF_ASST_TEXT_AT_TOP_DEFAULT = yes
      */
     public static final boolean PROOF_ASST_TEXT_AT_TOP_DEFAULT = true;
 
     /**
-     *  PROOF_ASST_FORMULA_LEFT_COL_DEFAULT
+     * PROOF_ASST_FORMULA_LEFT_COL_DEFAULT
      */
     public static final int PROOF_ASST_FORMULA_LEFT_COL_DEFAULT = 20;
 
     /**
-     *  PROOF_ASST_FORMULA_RIGHT_COL_DEFAULT
+     * PROOF_ASST_FORMULA_RIGHT_COL_DEFAULT
      */
     public static final int PROOF_ASST_FORMULA_RIGHT_COL_DEFAULT = 79;
 
     /**
-     *  PROOF_ASST_RPN_PROOF_LEFT_COL_DEFAULT
+     * PROOF_ASST_RPN_PROOF_LEFT_COL_DEFAULT
      */
     public static final int PROOF_ASST_RPN_PROOF_LEFT_COL_DEFAULT = 5;
 
     /**
-     *  PROOF_ASST_RPN_PROOF_RIGHT_COL_DEFAULT
+     * PROOF_ASST_RPN_PROOF_RIGHT_COL_DEFAULT
      */
     public static final int PROOF_ASST_RPN_PROOF_RIGHT_COL_DEFAULT = 70;
 
@@ -542,202 +528,187 @@ public class PaConstants {
     public static final int FONT_LIST_STARTING_LINE_LENGTH = 70;
 
     /**
-     *  Number of columns in window. Used for calculating
-     *  how many spaces must be output to effect a
-     *  (visual) line break without actually outputting
-     *  a NewLine.
-     *  <p>
+     * Number of columns in window. Used for calculating how many spaces must be
+     * output to effect a (visual) line break without actually outputting a
+     * NewLine.
+     * <p>
      */
     public static final int PROOF_ASST_TEXT_COLUMNS_DEFAULT = 80;
 
     /**
-     *  LineWrap mode default, set to off (false).
+     * LineWrap mode default, set to off (false).
      */
     public static final boolean PROOF_ASST_LINE_WRAP_DEFAULT = false;
 
     /**
-     *  Default Option Value 4 "un-unified" for
-     *  ProofAsstExportToFile RunParm and Option
-     *  Value 3 for ProofAsstBatchTest (when no
-     *  input file specified).
-     *  <p>
-     *  Means that Ref (statement labels) should NOT be included on
-     *  exported derivation proof steps. This is the default.
+     * Default Option Value 4 "un-unified" for ProofAsstExportToFile RunParm and
+     * Option Value 3 for ProofAsstBatchTest (when no input file specified).
+     * <p>
+     * Means that Ref (statement labels) should NOT be included on exported
+     * derivation proof steps. This is the default.
      */
     public static final boolean PROOF_ASST_EXPORT_FORMAT_UNIFIED_DEFAULT = false;
 
     /**
-     *  Default Option Value 5 "NotRandomized" for
-     *  ProofAsstExportToFile RunParm and Option
-     *  Value 4 for ProofAsstBatchTest (when no
-     *  input file specified).
-     *  <p>
-     *  Means that Ref (statement labels) should NOT be included on
-     *  exported derivation proof steps. This is the default.
+     * Default Option Value 5 "NotRandomized" for ProofAsstExportToFile RunParm
+     * and Option Value 4 for ProofAsstBatchTest (when no input file specified).
+     * <p>
+     * Means that Ref (statement labels) should NOT be included on exported
+     * derivation proof steps. This is the default.
      */
     public static final boolean PROOF_ASST_EXPORT_HYPS_RANDOMIZED_DEFAULT = false;
 
     /**
-     *  Default Option Value 6 "NoPrint" for
-     *  ProofAsstExportToFile RunParm and Option
-     *  Value 5 for ProofAsstBatchTest (when no
-     *  input file specified).
-     *  <p>
-     *  Means that an extra print copy of each Proof Worksheet
-     *  should not be sent to the SystemOutputFile (or
-     *  System.out).
+     * Default Option Value 6 "NoPrint" for ProofAsstExportToFile RunParm and
+     * Option Value 5 for ProofAsstBatchTest (when no input file specified).
+     * <p>
+     * Means that an extra print copy of each Proof Worksheet should not be sent
+     * to the SystemOutputFile (or System.out).
      */
     public static final boolean PROOF_ASST_PRINT_DEFAULT = false;
 
     /**
-     *  Default Option Value 7 "NoDeriveFormulas" for
-     *  ProofAsstExportToFile RunParm and Option
-     *  Value 6 for ProofAsstBatchTest.
+     * Default Option Value 7 "NoDeriveFormulas" for ProofAsstExportToFile
+     * RunParm and Option Value 6 for ProofAsstBatchTest.
      */
     public static final boolean PROOF_ASST_EXPORT_DERIVE_FORMULAS_DEFAULT = false;
 
     /**
-     *  Default Option Value 7 "NoCompareDJs" for
-     *  for ProofAsstBatchTest.
+     * Default Option Value 7 "NoCompareDJs" for for ProofAsstBatchTest.
      */
     public static final boolean PROOF_ASST_IMPORT_COMPARE_DJS_DEFAULT = false;
 
     /**
-     *  Default Option Value 8 "NoCompareDJs" for
-     *  for ProofAsstBatchTest.
+     * Default Option Value 8 "NoCompareDJs" for for ProofAsstBatchTest.
      */
     public static final boolean PROOF_ASST_IMPORT_UPDATE_DJS_DEFAULT = false;
 
     /**
-     *  Default Option Value 9 "NoAsciiRetest" for
-     *  for ProofAsstBatchTest.
+     * Default Option Value 9 "NoAsciiRetest" for for ProofAsstBatchTest.
      */
     public static final boolean PROOF_ASST_ASCII_RETEST_DEFAULT = false;
 
     /**
-     *  RECHECK_PROOF_ASST_USING_PROOF_VERIFIER_DEFAULT
+     * RECHECK_PROOF_ASST_USING_PROOF_VERIFIER_DEFAULT
      */
     public static final boolean RECHECK_PROOF_ASST_USING_PROOF_VERIFIER_DEFAULT = false;
 
     /**
-     *  Default value for StepSelectorMaxResults RunParm.
-     *  <p>
-     *  Specifies the maximum number of results to be
-     *  displayed by the StepSelectorDialog.
-     *  <p>
-     *  STEP_SELECTOR_MAX_RESULTS_DEFAULT = 50
+     * Default value for StepSelectorMaxResults RunParm.
+     * <p>
+     * Specifies the maximum number of results to be displayed by the
+     * StepSelectorDialog.
+     * <p>
+     * STEP_SELECTOR_MAX_RESULTS_DEFAULT = 50
      */
     public static final int STEP_SELECTOR_MAX_RESULTS_DEFAULT = 50;
 
     /**
-     *  Maximum value for StepSelectorMaxResults RunParm.
-     *  <p>
-     *  Specifies the maximum number of results to be
-     *  displayed by the StepSelectorDialog.
-     *  <p>
-     *  STEP_SELECTOR_MAX_RESULTS_MAXIMUM = 9999
+     * Maximum value for StepSelectorMaxResults RunParm.
+     * <p>
+     * Specifies the maximum number of results to be displayed by the
+     * StepSelectorDialog.
+     * <p>
+     * STEP_SELECTOR_MAX_RESULTS_MAXIMUM = 9999
      */
     public static final int STEP_SELECTOR_MAX_RESULTS_MAXIMUM = 9999;
 
     /**
-     *  Default value for StepSelectorShowSubstitutions RunParm.
-     *  <p>
-     *  Specifies whether or not substitutions resulting from
-     *  unification are made into assertion formulas shown on
-     *  the StepSelectorDialog.
-     *  <p>
-     *  STEP_SELECTOR_SHOW_SUBSTITUTIONS_DEFAULT = true
+     * Default value for StepSelectorShowSubstitutions RunParm.
+     * <p>
+     * Specifies whether or not substitutions resulting from unification are
+     * made into assertion formulas shown on the StepSelectorDialog.
+     * <p>
+     * STEP_SELECTOR_SHOW_SUBSTITUTIONS_DEFAULT = true
      */
     public static final boolean STEP_SELECTOR_SHOW_SUBSTITUTIONS_DEFAULT = true;
 
     /**
-     *  Default value for StepSelectorDialogPaneWidth RunParm.
-     *  <p>
-     *  STEP_SELECTOR_DIALOG_PANE_WIDTH_DEFAULT = 720
+     * Default value for StepSelectorDialogPaneWidth RunParm.
+     * <p>
+     * STEP_SELECTOR_DIALOG_PANE_WIDTH_DEFAULT = 720
      */
     public static final int STEP_SELECTOR_DIALOG_PANE_WIDTH_DEFAULT = 720;
 
     /**
-     *  Minimum value for StepSelectorDialogPaneWidth RunParm.
-     *  <p>
-     *  STEP_SELECTOR_DIALOG_PANE_WIDTH_MIN = 100
+     * Minimum value for StepSelectorDialogPaneWidth RunParm.
+     * <p>
+     * STEP_SELECTOR_DIALOG_PANE_WIDTH_MIN = 100
      */
     public static final int STEP_SELECTOR_DIALOG_PANE_WIDTH_MIN = 100;
 
     /**
-     *  Maximum value for StepSelectorDialogPaneWidth RunParm.
-     *  <p>
-     *  STEP_SELECTOR_DIALOG_PANE_WIDTH_MAX = 9999
+     * Maximum value for StepSelectorDialogPaneWidth RunParm.
+     * <p>
+     * STEP_SELECTOR_DIALOG_PANE_WIDTH_MAX = 9999
      */
     public static final int STEP_SELECTOR_DIALOG_PANE_WIDTH_MAX = 9999;
 
     /**
-     *  Default value for StepSelectorDialogPaneHeight RunParm.
-     *  <p>
-     *  STEP_SELECTOR_DIALOG_PANE_HEIGHT_DEFAULT = 720
+     * Default value for StepSelectorDialogPaneHeight RunParm.
+     * <p>
+     * STEP_SELECTOR_DIALOG_PANE_HEIGHT_DEFAULT = 720
      */
     public static final int STEP_SELECTOR_DIALOG_PANE_HEIGHT_DEFAULT = 440;
 
     /**
-     *  Minimum value for StepSelectorDialogPaneHeight RunParm.
-     *  <p>
-     *  STEP_SELECTOR_DIALOG_PANE_HEIGHT_MIN = 100
+     * Minimum value for StepSelectorDialogPaneHeight RunParm.
+     * <p>
+     * STEP_SELECTOR_DIALOG_PANE_HEIGHT_MIN = 100
      */
     public static final int STEP_SELECTOR_DIALOG_PANE_HEIGHT_MIN = 100;
 
     /**
-     *  Maximum value for StepSelectorDialogPaneHeight RunParm.
-     *  <p>
-     *  STEP_SELECTOR_DIALOG_PANE_HEIGHT_MAX = 9999
+     * Maximum value for StepSelectorDialogPaneHeight RunParm.
+     * <p>
+     * STEP_SELECTOR_DIALOG_PANE_HEIGHT_MAX = 9999
      */
     public static final int STEP_SELECTOR_DIALOG_PANE_HEIGHT_MAX = 9999;
 
     /**
-     *  Default value for ProofAsstOutputCursorInstrumentation
-     *  RunParm.
-     *  <p>
-     *  Controls whether or not "instrumentation" info messages
-     *  are output by the ProofAsst for regression test purposes.
-     *  <p>
-     *  OUTPUT_CURSOR_INSTRUMENTATION_DEFAULT = false
+     * Default value for ProofAsstOutputCursorInstrumentation RunParm.
+     * <p>
+     * Controls whether or not "instrumentation" info messages are output by the
+     * ProofAsst for regression test purposes.
+     * <p>
+     * OUTPUT_CURSOR_INSTRUMENTATION_DEFAULT = false
      */
     public static final boolean OUTPUT_CURSOR_INSTRUMENTATION_DEFAULT = false;
 
     /**
-     *  Default value for ProofAsstAutoReformat RunParm.
-     *  <p>
-     *  Controls whether or not proof step formulas are automatically
-     *  reformatted after Work Variables are resolved.
-     *  <p>
-     *  AUTO_REFORMAT_DEFAULT = true
+     * Default value for ProofAsstAutoReformat RunParm.
+     * <p>
+     * Controls whether or not proof step formulas are automatically reformatted
+     * after Work Variables are resolved.
+     * <p>
+     * AUTO_REFORMAT_DEFAULT = true
      */
     public static final boolean AUTO_REFORMAT_DEFAULT = true;
 
     /**
-     *  Default value for UndoRedoEnabled RunParm.
-     *  <p>
-     *  Controls whether or not the Proof Assistant GUI
-     *  provides Undo/Redo support.
-     *  <p>
-     *  Normally this is turned on, but if desired, say
-     *  for performance reasons, the user can disable
-     *  Undo/Redo at start-up time via RunParm.
-     *  <p>
-     *  UNDO_REDO_ENABLED_DEFAULT = true
+     * Default value for UndoRedoEnabled RunParm.
+     * <p>
+     * Controls whether or not the Proof Assistant GUI provides Undo/Redo
+     * support.
+     * <p>
+     * Normally this is turned on, but if desired, say for performance reasons,
+     * the user can disable Undo/Redo at start-up time via RunParm.
+     * <p>
+     * UNDO_REDO_ENABLED_DEFAULT = true
      */
     public static final boolean UNDO_REDO_ENABLED_DEFAULT = true;
 
     /**
-     *  Default Foreground Color.
-     *  <p>
-     *  DEFAULT_FOREGROUND_COLOR = Color.BLACK
+     * Default Foreground Color.
+     * <p>
+     * DEFAULT_FOREGROUND_COLOR = Color.BLACK
      */
     public static final Color DEFAULT_FOREGROUND_COLOR = Color.BLACK;
 
     /**
-     *  Default Background Color.
-     *  <p>
-     *  DEFAULT_BACKGROUND_COLOR = Color.WHITE
+     * Default Background Color.
+     * <p>
+     * DEFAULT_BACKGROUND_COLOR = Color.WHITE
      */
     public static final Color DEFAULT_BACKGROUND_COLOR = Color.WHITE;
 
@@ -746,27 +717,27 @@ public class PaConstants {
     // ----------------------------------------------------------
 
     /**
-     *  AUX_FRAME_NBR_ROWS_DEFAULT = 25
+     * AUX_FRAME_NBR_ROWS_DEFAULT = 25
      */
     public static final int AUX_FRAME_NBR_ROWS_DEFAULT = 25;
 
     /**
-     *  AUX_FRAME_NBR_COLUMNS_DEFAULT = 80
+     * AUX_FRAME_NBR_COLUMNS_DEFAULT = 80
      */
     public static final int AUX_FRAME_NBR_COLUMNS_DEFAULT = 80;
 
     /**
-     *  AUX_FRAME_TITLE_DEFAULT
+     * AUX_FRAME_TITLE_DEFAULT
      */
     public static final String AUX_FRAME_TITLE_DEFAULT = "AuxFrameGUI default title";
 
     /**
-     *  AUX_FRAME_TEXT_DEFAULT
+     * AUX_FRAME_TEXT_DEFAULT
      */
     public static final String AUX_FRAME_TEXT_DEFAULT = "AuxFrameGUI default text";
 
     /**
-     *  AUX_FRAME_FONT_FAMILY = Monospaced
+     * AUX_FRAME_FONT_FAMILY = Monospaced
      */
     public static final String AUX_FRAME_FONT_FAMILY = "Monospaced";
 
@@ -775,12 +746,12 @@ public class PaConstants {
     // ----------------------------------------------------------
 
     /**
-     *  REQUEST_MESSAGES_GUI_TITLE_DEFAULT
+     * REQUEST_MESSAGES_GUI_TITLE_DEFAULT
      */
     public static final String REQUEST_MESSAGES_GUI_TITLE_DEFAULT = "Request Messages";
 
     /**
-     *  REQUEST_MESSAGES_GUI_TEXT_DEFAULT
+     * REQUEST_MESSAGES_GUI_TEXT_DEFAULT
      */
     public static final String REQUEST_MESSAGES_GUI_TEXT_DEFAULT = "No errors!";
 
@@ -789,39 +760,36 @@ public class PaConstants {
     // ----------------------------------------------------------
 
     /**
-     *  PROOF_ASST_GUI_STARTUP_MSG
+     * PROOF_ASST_GUI_STARTUP_MSG
      */
     public static final String PROOF_ASST_GUI_STARTUP_MSG = "Hi! I am mmj2 Release 20111101 as of 15-Oct-2011 03:34.\n"
         + "Send mmj2 support? Paypal to siskiyousis at gmail.com\n"
         + "Need mmj2 help? Email x178g243 at yahoo.com.";
 
     /**
-     *  PROOF_TEXT_FONT_FAMILY = Monospaced
+     * PROOF_TEXT_FONT_FAMILY = Monospaced
      */
     public static final String PROOF_TEXT_FONT_FAMILY = "Monospaced";
 
     /**
-     *  PROOF_ASST_TEXT_ROWS_DEFAULT = 21
+     * PROOF_ASST_TEXT_ROWS_DEFAULT = 21
      */
     public static final int PROOF_ASST_TEXT_ROWS_DEFAULT = 21;
 
     /**
-     *  PROOF_TEXT_TAB_LENGTH = 1
-     *
-     *  This is set to 1 to effectively disable the tab
-     *  character. The reason is that the GUI tries to
-     *  keep track of column numbers and tab characters
-     *  complicate things unacceptably...
+     * This is set to 1 to effectively disable the tab character. The reason is
+     * that the GUI tries to keep track of column numbers and tab characters
+     * complicate things unacceptably...
      */
     public static final int PROOF_TEXT_TAB_LENGTH = 1;
 
     /**
-     *  SAMPLE_PROOF_LABEL
+     * SAMPLE_PROOF_LABEL
      */
     public static final String SAMPLE_PROOF_LABEL = "syllogism";
 
     /**
-     *  SAMPLE_PROOF_TEXT
+     * SAMPLE_PROOF_TEXT
      */
     public static final String SAMPLE_PROOF_TEXT = "$( <MM> <PROOF_ASST> THEOREM="
         + PaConstants.SAMPLE_PROOF_LABEL
@@ -834,326 +802,315 @@ public class PaConstants {
         + "qed:1,4:       |- ( ph -> ch ) \n" + "\n" + "$)\n";
 
     /**
-     *  PROOF_ASST_FRAME_TITLE
+     * PROOF_ASST_FRAME_TITLE
      */
     public static final String PROOF_ASST_FRAME_TITLE = "ProofAsstGUI";
 
 //  /**
-//   *  PA_GUI_FILE_CHOOSER_DEFAULT
-//   *
-//   *  This is the initial filename value on the File Chooser dialog.
+//   * This is the initial filename value on the File Chooser dialog.
 //   */
 //  public static final String PA_GUI_FILE_CHOOSER_DEFAULT
 //                                = "tempProofLabel.mmp";
 
     /**
-     *  PA_GUI_FILE_CHOOSER_DESCRIPTION
-     *
-     *  Description displayed on File Chooser dialog screen.
+     * Description displayed on File Chooser dialog screen.
      */
     public static final String PA_GUI_FILE_CHOOSER_DESCRIPTION = "Text and mmj2 Proof Asst files";
 
     /**
-     *  ProofAsstGUI File Chooser valid file name suffix ".TXT".
+     * ProofAsstGUI File Chooser valid file name suffix ".TXT".
      */
     public static final String PA_GUI_FILE_CHOOSER_FILE_SUFFIX_TXT = ".TXT";
 
     /**
-     *  ProofAsstGUI File Chooser valid file name suffix ".txt"
+     * ProofAsstGUI File Chooser valid file name suffix ".txt"
      */
     public static final String PA_GUI_FILE_CHOOSER_FILE_SUFFIX_TXT2 = ".txt";
 
     /**
-     *  ProofAsstGUI File Chooser valid file name suffix ".MMP".
+     * ProofAsstGUI File Chooser valid file name suffix ".MMP".
      */
     public static final String PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP = ".MMP";
 
     /**
-     *  ProofAsstGUI File Chooser valid file name suffix ".mmp"
+     * ProofAsstGUI File Chooser valid file name suffix ".mmp"
      */
     public static final String PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP2 = ".mmp";
 
     /**
-     *  ProofAsstGUI Default file name suffix
+     * ProofAsstGUI Default file name suffix
      */
     public static final String PA_GUI_DEFAULT_FILE_NAME_SUFFIX = PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP2; // .txt
 
     /**
-     *  ProofAsstGUI Save before window closes question
+     * ProofAsstGUI Save before window closes question
      */
     public static final String PA_GUI_SAVE_BEFORE_CLOSE_QUESTION = "Save changes before Window Closes?";
 
     /**
-     *  ProofAsstGUI File Menu Title
+     * ProofAsstGUI File Menu Title
      */
     public static final String PA_GUI_FILE_MENU_TITLE = "File";
 
     /**
-     *  ProofAsstGUI File Menu New Item Text
+     * ProofAsstGUI File Menu New Item Text
      */
     public static final String PA_GUI_FILE_MENU_NEW_ITEM_TEXT = "New Proof";
 
     /**
-     *  ProofAsstGUI File Menu New Next Item Text
+     * ProofAsstGUI File Menu New Next Item Text
      */
     public static final String PA_GUI_FILE_MENU_NEW_NEXT_ITEM_TEXT = "New-Next Proof";
 
     /**
-     *  ProofAsstGUI File Menu Open Item Text
+     * ProofAsstGUI File Menu Open Item Text
      */
     public static final String PA_GUI_FILE_MENU_OPEN_ITEM_TEXT = "Open Proof File";
 
     /**
-     *  ProofAsstGUI File Menu Get Proof Item Text
+     * ProofAsstGUI File Menu Get Proof Item Text
      */
     public static final String PA_GUI_FILE_MENU_GET_PROOF_ITEM_TEXT = "Get Proof";
 
     /**
-     *  ProofAsstGUI File Menu Get Forward Proof Item Text
+     * ProofAsstGUI File Menu Get Forward Proof Item Text
      */
     public static final String PA_GUI_FILE_MENU_GET_FWD_PROOF_ITEM_TEXT = "Forward-Get Proof";
 
     /**
-     *  ProofAsstGUI File Menu Get Backward Proof Item Text
+     * ProofAsstGUI File Menu Get Backward Proof Item Text
      */
     public static final String PA_GUI_FILE_MENU_GET_BWD_PROOF_ITEM_TEXT = "Backward-Get Proof";
 
     /**
-     *  ProofAsstGUI File Menu Close Item Text
+     * ProofAsstGUI File Menu Close Item Text
      */
     public static final String PA_GUI_FILE_MENU_CLOSE_ITEM_TEXT = "Close Proof File";
 
     /**
-     *  ProofAsstGUI File Menu Save Item Text
+     * ProofAsstGUI File Menu Save Item Text
      */
     public static final String PA_GUI_FILE_MENU_SAVE_ITEM_TEXT = "Save Proof File";
 
     /**
-     *  ProofAsstGUI File Menu Save As Item Text
+     * ProofAsstGUI File Menu Save As Item Text
      */
     public static final String PA_GUI_FILE_MENU_SAVE_AS_ITEM_TEXT = "SaveAs...";
 
     /**
-     *  ProofAsstGUI File Menu Export Via GMFF Item Text
+     * ProofAsstGUI File Menu Export Via GMFF Item Text
      */
     public static final String PA_GUI_FILE_MENU_EXPORT_VIA_GMFF_ITEM_TEXT = "Export Via GMFF";
 
     /**
-     *  ProofAsstGUI File Menu Exit Item Text
+     * ProofAsstGUI File Menu Exit Item Text
      */
     public static final String PA_GUI_FILE_MENU_EXIT_ITEM_TEXT = "Exit/Quit";
 
     /**
-     *  ProofAsstGUI Edit Menu Title
+     * ProofAsstGUI Edit Menu Title
      */
     public static final String PA_GUI_EDIT_MENU_TITLE = "Edit";
 
     /**
-     *  ProofAsstGUI Edit Menu Undo Item Text
+     * ProofAsstGUI Edit Menu Undo Item Text
      */
     public static final String PA_GUI_EDIT_MENU_UNDO_ITEM_TEXT = "Undo";
 
     /**
-     *  ProofAsstGUI Edit Menu Redo Item Text
+     * ProofAsstGUI Edit Menu Redo Item Text
      */
     public static final String PA_GUI_EDIT_MENU_REDO_ITEM_TEXT = "Redo";
 
     /**
-     *  ProofAsstGUI Edit Menu Cut Item Text
+     * ProofAsstGUI Edit Menu Cut Item Text
      */
     public static final String PA_GUI_EDIT_MENU_CUT_ITEM_TEXT = "Cut";
 
     /**
-     *  ProofAsstGUI Edit Menu Copy Item Text
+     * ProofAsstGUI Edit Menu Copy Item Text
      */
     public static final String PA_GUI_EDIT_MENU_COPY_ITEM_TEXT = "Copy";
 
     /**
-     *  ProofAsstGUI Edit Menu Paste Item Text
+     * ProofAsstGUI Edit Menu Paste Item Text
      */
     public static final String PA_GUI_EDIT_MENU_PASTE_ITEM_TEXT = "Paste";
 
     /**
-     *  ProofAsstGUI Edit Menu Set Foreground Color Item Text
+     * ProofAsstGUI Edit Menu Set Foreground Color Item Text
      */
     public static final String PA_GUI_EDIT_MENU_SET_FOREGROUND_ITEM_TEXT = "Set Foreground Color";
 
     /**
-     *  ProofAsstGUI Edit Menu Set Background Color Item Text
+     * ProofAsstGUI Edit Menu Set Background Color Item Text
      */
     public static final String PA_GUI_EDIT_MENU_SET_BACKGROUND_ITEM_TEXT = "Set Background Color";
 
     /**
-     *  ProofAsstGUI Literal Used in Color Chooser Dialog Title
+     * ProofAsstGUI Literal Used in Color Chooser Dialog Title
      */
     public static final String COLOR_CHOOSE_TITLE_2 = " -- presently = ";
 
     /**
-     *  ProofAsstGUI Literal Used in Color Chooser Dialog Title
+     * ProofAsstGUI Literal Used in Color Chooser Dialog Title
      */
     public static final String COLOR_CHOOSE_TITLE_SEPARATOR = ",";
 
     /**
-     *  ProofAsstGUI Edit Menu Set Format Nbr Item Text
+     * ProofAsstGUI Edit Menu Set Format Nbr Item Text
      */
     public static final String PA_GUI_EDIT_MENU_SET_FORMAT_NBR_ITEM_TEXT = "Set Format Number";
 
     /**
-     *  ProofAsstGUI Edit Menu Set Indent Item Text
+     * ProofAsstGUI Edit Menu Set Indent Item Text
      */
     public static final String PA_GUI_EDIT_MENU_SET_INDENT_ITEM_TEXT = "Set Indent";
 
     /**
-     *  ProofAsstGUI Edit Menu Set Incomplete Step Cursor Item Text
+     * ProofAsstGUI Edit Menu Set Incomplete Step Cursor Item Text
      */
     public static final String PA_GUI_EDIT_MENU_SET_INCOMPLETE_STEP_CURSOR_ITEM_TEXT = "Set Incomplete Step Cursor";
 
     /**
-     *  ProofAsstGUI Edit Menu Set Soft Dj Error Item Text
+     * ProofAsstGUI Edit Menu Set Soft Dj Error Item Text
      */
     public static final String PA_GUI_EDIT_MENU_SET_SOFT_DJ_ERROR_ITEM_TEXT = "Set Soft Dj Vars Error Handling";
 
     /**
-     *  ProofAsstGUI Edit Menu Set Font Family Item Text
+     * ProofAsstGUI Edit Menu Set Font Family Item Text
      */
     public static final String PA_GUI_EDIT_MENU_SET_FONT_FAMILY_ITEM_TEXT = "Set Font Family";
 
     /**
-     *  ProofAsstGUI Edit Menu Font Style Bold Item Text
+     * ProofAsstGUI Edit Menu Font Style Bold Item Text
      */
     public static final String PA_GUI_EDIT_MENU_FONT_STYLE_BOLD_ITEM_TEXT = "Set Font Style BOLD";
 
     /**
-     *  ProofAsstGUI Edit Menu Font Style Plain Item Text
+     * ProofAsstGUI Edit Menu Font Style Plain Item Text
      */
     public static final String PA_GUI_EDIT_MENU_FONT_STYLE_PLAIN_ITEM_TEXT = "Set Font Style PLAIN";
 
     /**
-     *  ProofAsstGUI Edit Menu Increase Font Size Item Text
+     * ProofAsstGUI Edit Menu Increase Font Size Item Text
      */
     public static final String PA_GUI_EDIT_MENU_INC_FONT_ITEM_TEXT = "Larger Font Size";
 
     /**
-     *  ProofAsstGUI Edit Menu Decrease Font Size Item Text
+     * ProofAsstGUI Edit Menu Decrease Font Size Item Text
      */
     public static final String PA_GUI_EDIT_MENU_DEC_FONT_ITEM_TEXT = "Smaller Font Size";
 
     /**
-     *  ProofAsstGUI Edit Menu Reformat Item Text
+     * ProofAsstGUI Edit Menu Reformat Item Text
      */
     public static final String PA_GUI_EDIT_MENU_REFORMAT_ITEM_TEXT = "Reformat Proof";
 
     /**
-     *  ProofAsstGUI Popup Menu Reformat Step Text
+     * ProofAsstGUI Popup Menu Reformat Step Text
      */
     public static final String PA_GUI_POPUP_MENU_REFORMAT_STEP_TEXT = "Reformat Step";
 
     /**
-     *  ProofAsstGUI Edit Menu Reformat Swap Alt Item Text
+     * ProofAsstGUI Edit Menu Reformat Swap Alt Item Text
      */
     public static final String PA_GUI_EDIT_MENU_REFORMAT_SWAP_ALT_ITEM_TEXT = "Reformat Proof: Swap Alt";
 
     /**
-     *  ProofAsstGUI Popup Menu Reformat Swap Alt Step Text
+     * ProofAsstGUI Popup Menu Reformat Swap Alt Step Text
      */
     public static final String PA_GUI_POPUP_MENU_REFORMAT_SWAP_ALT_STEP_TEXT = "Reformat Step: Swap Alt";
 
     /**
-     *  ProofAsstGUI Cancel Menu Title
+     * ProofAsstGUI Cancel Menu Title
      */
     public static final String PA_GUI_CANCEL_MENU_TITLE = "Cancel";
 
     /**
-     *  ProofAsstGUI Unify Menu Kill Unification Item Text
+     * ProofAsstGUI Unify Menu Kill Unification Item Text
      */
     public static final String PA_GUI_CANCEL_MENU_KILL_ITEM_TEXT = "Cancel (Looping? Kill it!!!)";
 
     /**
-     *  ProofAsstGUI Unify Menu Title
+     * ProofAsstGUI Unify Menu Title
      */
     public static final String PA_GUI_UNIFY_MENU_TITLE = "Unify";
 
     /**
-     *  ProofAsstGUI Unify Menu Start Unification Item Text
+     * ProofAsstGUI Unify Menu Start Unification Item Text
      */
     public static final String PA_GUI_UNIFY_MENU_START_ITEM_TEXT = "Unify (check proof)";
 
     /**
-     *  ProofAsstGUI Unify Menu Start Unification With Renum
-     *  Item Text
+     * ProofAsstGUI Unify Menu Start Unification With Renum Item Text
      */
     public static final String PA_GUI_UNIFY_MENU_START_UR_ITEM_TEXT = "Unify+Renumber";
 
     /**
-     *  ProofAsstGUI Unify Menu Unify with Rederive Formulas
-     *  Item Text
+     * ProofAsstGUI Unify Menu Unify with Rederive Formulas Item Text
      */
     public static final String PA_GUI_UNIFY_MENU_REDERIVE_ITEM_TEXT = "Unify+Erase and Rederive Formulas";
 
     /**
-     *  ProofAsstGUI Unify Menu Step Selector Search
-     *  Item Text
+     * ProofAsstGUI Unify Menu Step Selector Search Item Text
      */
     public static final String PA_GUI_UNIFY_MENU_STEP_SELECTOR_SEARCH_ITEM_TEXT = "Step Selector Search";
 
     /**
-     *  ProofAsstGUI Unify Menu Reshow Step Selector Dialog
-     *  Item Text
+     * ProofAsstGUI Unify Menu Reshow Step Selector Dialog Item Text
      */
     public static final String PA_GUI_UNIFY_MENU_RESHOW_STEP_SELECTOR_DIALOG_ITEM_TEXT = "Reshow Step Selector Dialog";
 
     /**
-     *  ProofAsstGUI Unify Menu Set Step Selector Max Results
-     *  Item Text
+     * ProofAsstGUI Unify Menu Set Step Selector Max Results Item Text
      */
     public static final String PA_GUI_UNIFY_MENU_SET_MAX_RESULTS_ITEM_TEXT = "Set Step Selector Max Results";
 
     /**
-     *  ProofAsstGUI Unify Menu Set Step Selector Show Substitutions
-     *  Item Text
+     * ProofAsstGUI Unify Menu Set Step Selector Show Substitutions Item Text
      */
     public static final String PA_GUI_UNIFY_MENU_SET_SHOW_SUBST_ITEM_TEXT = "Set Step Selector Show Substitutions";
 
     /**
-     *  Prompt for SetStepSelectorMaxResults Menu Item Action dialog.
+     * Prompt for SetStepSelectorMaxResults Menu Item Action dialog.
      */
     public static final String PA_GUI_SET_MAX_RESULTS_OPTION_PROMPT = "Enter Step Selector Max Results Number (1 thru 9999)";
 
     /**
-     *  Prompt for SetStepSelectorShowSubstitutions Menu Item
-     *  Action dialog.
+     * Prompt for SetStepSelectorShowSubstitutions Menu Item Action dialog.
      */
     public static final String PA_GUI_SET_SHOW_SUBST_OPTION_PROMPT = "Enter Step Select Show Substitutions option (true or false)";
 
     // ========== new TheoremLoader stuff ===========
 
     /**
-     *  ProofAsstGUI Theorem Loader Menu Title
+     * ProofAsstGUI Theorem Loader Menu Title
      */
     public static final String PA_GUI_TL_MENU_TITLE = "TL";
 
     /**
-     *  ProofAsstGUI TL Menu DjVars Option Item Text
+     * ProofAsstGUI TL Menu DjVars Option Item Text
      */
     public static final String PA_GUI_TL_MENU_DJ_VARS_OPTION_TEXT = "Set Theorem Loader Dj Vars Option";
 
     /**
-     *  ProofAsstGUI TL Menu MMT Folder Item Text
+     * ProofAsstGUI TL Menu MMT Folder Item Text
      */
     public static final String PA_GUI_TL_MENU_MMT_FOLDER_TEXT = "Set Theorem Loader MMT Folder";
 
     /**
-     *  ProofAsstGUI TL Menu Audit Messages Item Text
+     * ProofAsstGUI TL Menu Audit Messages Item Text
      */
     public static final String PA_GUI_TL_MENU_AUDIT_MESSAGES_TEXT = "Set Theorem Loader Audit Messages";
 
     /**
-     *  ProofAsstGUI TL Menu Store MM Formulas AsIs Item Text
+     * ProofAsstGUI TL Menu Store MM Formulas AsIs Item Text
      */
     public static final String PA_GUI_TL_MENU_STORE_FORMULAS_AS_IS_TEXT = "Set Store MM Formulas AsIs";
 
     /**
-     *  ProofAsstGUI TL Menu Store MM Indent Amt Item Text
+     * ProofAsstGUI TL Menu Store MM Indent Amt Item Text
      */
     public static final String PA_GUI_TL_MENU_STORE_MM_INDENT_AMT_TEXT = "Set Store MM Indent Amt";
 
@@ -1163,27 +1120,27 @@ public class PaConstants {
     public static final String PA_GUI_TL_MENU_COMPRESSION_TEXT = "Set Proof Compression";
 
     /**
-     *  ProofAsstGUI TL Menu Load Theorems From MMT Folder Item Text
+     * ProofAsstGUI TL Menu Load Theorems From MMT Folder Item Text
      */
     public static final String PA_GUI_TL_MENU_LOAD_THEOREMS_FROM_MMT_FOLDER_TEXT = "Load Theorems From MMT Folder";
 
     /**
-     *  ProofAsstGUI TL Menu Extract Theorem To MMT Folder Item Text
+     * ProofAsstGUI TL Menu Extract Theorem To MMT Folder Item Text
      */
     public static final String PA_GUI_TL_MENU_EXTRACT_THEOREM_TO_MMT_FOLDER_TEXT = "Extract Theorem To MMT Folder";
 
     /**
-     *  ProofAsstGUI TL Menu Unify + Store In MMT Folder Item Text
+     * ProofAsstGUI TL Menu Unify + Store In MMT Folder Item Text
      */
     public static final String PA_GUI_TL_MENU_UNIFY_PLUS_STORE_IN_MMT_FOLDER_TEXT = "Unify + Store In MMT Folder";
 
     /**
-     *  ProofAsstGUI TL Menu Unify + Store In LogSys And MMT Folder Item Text
+     * ProofAsstGUI TL Menu Unify + Store In LogSys And MMT Folder Item Text
      */
     public static final String PA_GUI_TL_MENU_UNIFY_PLUS_STORE_IN_LOG_SYS_AND_MMT_FOLDER_TEXT = "Unify + Store In LogSys and MMT Folder";
 
     /**
-     *  ProofAsstGUI TL Menu Verify All Proofs Item Text
+     * ProofAsstGUI TL Menu Verify All Proofs Item Text
      */
     public static final String PA_GUI_TL_MENU_VERIFY_ALL_PROOFS_TEXT = "Verify All Proofs";
 
@@ -1193,166 +1150,158 @@ public class PaConstants {
     public static final String PA_GUI_TL_MENU_STORE_MM_RIGHT_COL_TEXT = "Set Store MM Right Col";
 
     /**
-     *  Prompt for Set Theorem Loader Audit Messages Menu Item
-     *  Action dialog.
+     * Prompt for Set Theorem Loader Audit Messages Menu Item Action dialog.
      */
     public static final String PA_GUI_SET_TL_AUDIT_MESSAGES_OPTION_PROMPT = "Enter Theorem Loader Audit Messages option (True or False)";
 
     /**
-     *  Prompt for Set Theorem Loader Store Formulas AsIs Menu Item
-     *  Action dialog.
+     * Prompt for Set Theorem Loader Store Formulas AsIs Menu Item Action
+     * dialog.
      */
     public static final String PA_GUI_SET_TL_STORE_FORMULAS_AS_IS_OPTION_PROMPT = "Enter Theorem Loader Store Formulas AsIs"
         + " option (True or False)";
 
     /**
-     *  Prompt for Set Theorem Loader Store MM Right Col Menu Item
-     *  Action dialog.
+     * Prompt for Set Theorem Loader Store MM Right Col Menu Item Action dialog.
      */
     public static final String PA_GUI_SET_TL_STORE_MM_RIGHT_COL_OPTION_PROMPT = "Enter Theorem Loader Store MM Right (margin) Col"
         + " (70 thru 9999)";
 
     /**
-     *  Prompt for Set Theorem Loader Store MM Indent Amt Menu Item
-     *  Action dialog.
+     * Prompt for Set Theorem Loader Store MM Indent Amt Menu Item Action
+     * dialog.
      */
     public static final String PA_GUI_SET_TL_STORE_MM_INDENT_AMT_OPTION_PROMPT = "Enter Theorem Loader Store MM Indent Amt"
         + " (0 thru 9)";
 
     /**
-     *  Prompt for Set Theorem Loader Dj Vars Option Item
-     *  Action dialog.
+     * Prompt for Set Theorem Loader Dj Vars Option Item Action dialog.
      */
     public static final String PA_GUI_SET_TL_DJ_VARS_OPTION_PROMPT = "Enter Theorem Loader DjVars Option:\n"
         + "Merge, Replace or NoUpdate";
 
     /**
-     *  Prompt for Set Theorem Loader MMT Folder Item
-     *  Action dialog.
+     * Prompt for Set Theorem Loader MMT Folder Item Action dialog.
      */
     public static final String PA_GUI_SET_TL_MMT_FOLDER_OPTION_PROMPT_1 = "Select MMT Folder";
 
     /**
-     *  Prompt for Set Theorem Loader MMT Folder Item
-     *  Action dialog.
+     * Prompt for Set Theorem Loader MMT Folder Item Action dialog.
      */
     public static final String PA_GUI_SET_TL_MMT_FOLDER_OPTION_PROMPT_2 = "\nTry another?";
 
     // ========== new GMFF stuff ===========
 
     /**
-     *  ProofAsstGUI GMFF Menu Title
+     * ProofAsstGUI GMFF Menu Title
      */
     public static final String PA_GUI_GMFF_MENU_TITLE = "GMFF";
 
     // ========== various ===========
 
     /**
-     *  ProofAsstGUI Help Menu Title
+     * ProofAsstGUI Help Menu Title
      */
     public static final String PA_GUI_HELP_MENU_TITLE = "Help";
 
     /**
-     *  ProofAsstGUI Help Menu General Help Information Item Text
+     * ProofAsstGUI Help Menu General Help Information Item Text
      */
     public static final String PA_GUI_HELP_MENU_GENERAL_ITEM_TEXT = "General Help Info";
 
     /**
-     *  ProofAsstGUI Help About Item Text
+     * ProofAsstGUI Help About Item Text
      */
     public static final String PA_GUI_HELP_ABOUT_ITEM_TEXT = "About mmj2";
 
     /**
-     *  ProofAsstGUI Exit Action Before Save
+     * ProofAsstGUI Exit Action Before Save
      */
     public static final String PA_GUI_ACTION_BEFORE_SAVE_EXIT = "Exit";
 
     /**
-     *  ProofAsstGUI Close Action Before Save
+     * ProofAsstGUI Close Action Before Save
      */
     public static final String PA_GUI_ACTION_BEFORE_SAVE_CLOSE = "Close";
 
     /**
-     *  ProofAsstGUI New Action Before Save
+     * ProofAsstGUI New Action Before Save
      */
     public static final String PA_GUI_ACTION_BEFORE_SAVE_NEW = "New";
 
     /**
-     *  ProofAsstGUI Open Action Before Save
+     * ProofAsstGUI Open Action Before Save
      */
     public static final String PA_GUI_ACTION_BEFORE_SAVE_OPEN = "Open";
 
     /**
-     *  ProofAsstGUI New Theorem Label Prompt
+     * ProofAsstGUI New Theorem Label Prompt
      */
     public static final String PA_GUI_NEW_THEOREM_LABEL_PROMPT = "Theorem label?";
 
     /**
-     *  ProofAsstGUI Get Proof Theorem Label Prompt
+     * ProofAsstGUI Get Proof Theorem Label Prompt
      */
     public static final String PA_GUI_GET_THEOREM_LABEL_PROMPT = "Theorem label?";
 
     /**
-     *  ProofAsstGUI Get corrected Theorem Label Prompt, Part 1.
+     * ProofAsstGUI Get corrected Theorem Label Prompt, Part 1.
      */
     public static final String PA_GUI_GET_THEOREM_LABEL_PROMPT_2_1 = "Label ";
 
     /**
-     *  ProofAsstGUI Get corrected Theorem Label Prompt, Part 2.
+     * ProofAsstGUI Get corrected Theorem Label Prompt, Part 2.
      */
     public static final String PA_GUI_GET_THEOREM_LABEL_PROMPT_2_2 = " invalid: not found or not a Theorem. Theorem label?";
 
     /**
-     *  ProofAsstGUI Get Yes/No/Cancel Answer Dialog Title
+     * ProofAsstGUI Get Yes/No/Cancel Answer Dialog Title
      */
     public static final String PA_GUI_YES_NO_CANCEL_TITLE = "getYesNoCancelAnswer()";
 
     /**
-     *  ProofAsstGUI Get Yes/No Answer Dialog Title
+     * ProofAsstGUI Get Yes/No Answer Dialog Title
      */
     public static final String PA_GUI_YES_NO_TITLE = "getYesNoAnswer()";
 
     /**
-     *  ProofAsstGUI Save New Proof Text File Dialog Title
+     * ProofAsstGUI Save New Proof Text File Dialog Title
      */
     public static final String PA_GUI_SAVE_NEW_PROOF_TEXT_TITLE = "SaveNewProofTextFile()";
 
     /**
-     *  ProofAsstGUI Save Old Proof Text File Dialog Title
+     * ProofAsstGUI Save Old Proof Text File Dialog Title
      */
     public static final String PA_GUI_SAVE_OLD_PROOF_TEXT_TITLE = "SaveOldProofTextFile()";
 
     /**
-     *  Default Theorem Label For Error Messages
+     * Default Theorem Label For Error Messages
      */
     public static final String PA_UNKNOWN_THEOREM_LABEL = "UnknownTheoremLabel";
 
     /**
-     *  Prompt for SetFormatNbr Menu Item Action dialog.
+     * Prompt for SetFormatNbr Menu Item Action dialog.
      */
     public static final String PA_GUI_SET_FORMAT_NBR_PROMPT = "Enter Format Number";
 
     /**
-     *  Prompt for SetIndent Menu Item Action dialog.
+     * Prompt for SetIndent Menu Item Action dialog.
      */
     public static final String PA_GUI_SET_INDENT_PROMPT = "Enter Indent amount, 0 through ";
 
     /**
-     *  Prompt for Set Font Family Menu Item Action dialog.
+     * Prompt for Set Font Family Menu Item Action dialog.
      */
     public static final String PA_GUI_SET_FONT_FAMILY_PROMPT = "Enter Font Family Name";
 
     /**
-     *  Prompt for Set Dj Vars Error Option Menu Item Action dialog.
+     * Prompt for Set Dj Vars Error Option Menu Item Action dialog.
      */
     public static final String PA_GUI_SET_SOFT_DJ_ERROR_OPTION_PROMPT = "Enter Soft Dj Vars Error Option Number";
 
     /**
-     *  ERROR TEXT SPACER LINE
-     *
-     *  (With word wrap 'on' in JTextArea, newlines are ignored,
-     *  so a spacer line is inserted between messages to force
-     *  separation.)
+     * (With word wrap 'on' in JTextArea, newlines are ignored, so a spacer line
+     * is inserted between messages to force separation.)
      */
     public static final String ERROR_TEXT_SPACER_LINE = " --------------------------------------------------------- ";
 
@@ -1361,12 +1310,12 @@ public class PaConstants {
     // ----------------------------------------------------------
 
     /**
-     *  Proof Assistant GUI Help About Title
+     * Proof Assistant GUI Help About Title
      */
     public static final String HELP_ABOUT_TITLE = "About mmj2";
 
     /**
-     *  Proof Assistant GUI Help About Part 1
+     * Proof Assistant GUI Help About Part 1
      */
     public static final String HELP_ABOUT_TEXT_1 = "Copyright (C) 2005 thru 2011 MEL O'CAT via X178G243 (at) yahoo (dot) com \n"
         + "License terms: GNU General Public License Version 2 or any later version.\n"
@@ -1389,17 +1338,17 @@ public class PaConstants {
         + "\n" + "Garbage Collection Run (just now) Memory Totals follow:\n";
 
     /**
-     *  Proof Assistant GUI Help About Part 2 (Max Memory)
+     * Proof Assistant GUI Help About Part 2 (Max Memory)
      */
     public static final String HELP_ABOUT_TEXT_2 = " Max Memory   = ";
 
     /**
-     *  Proof Assistant GUI Help About Part 3 (Free Memory)
+     * Proof Assistant GUI Help About Part 3 (Free Memory)
      */
     public static final String HELP_ABOUT_TEXT_3 = " Free Memory  = ";
 
     /**
-     *  Proof Assistant GUI Help About Part 4 (Total Memory)
+     * Proof Assistant GUI Help About Part 4 (Total Memory)
      */
     public static final String HELP_ABOUT_TEXT_4 = " Total Memory = ";
 
@@ -1408,12 +1357,12 @@ public class PaConstants {
     // ----------------------------------------------------------
 
     /**
-     *  Proof Assistant GUI General Help Information Frame title
+     * Proof Assistant GUI General Help Information Frame title
      */
     public static final String GENERAL_HELP_FRAME_TITLE = "Proof Assistant Help: General Information,"
         + " Release 20111101 as of 15-Oct-2011";
     /**
-     *  Proof Assistant GUI General Help Information text
+     * Proof Assistant GUI General Help Information text
      */
     public static final String GENERAL_HELP_INFO_TEXT = "  \n"
         + "The mmj2 Proof Assistant provides an easy-to-use system for creating\n"
@@ -1847,10 +1796,9 @@ public class PaConstants {
     public static final int DJ_VARS_ERROR_STATUS_HARD_ERRORS = 2;
 
     /**
-     *  Descriptions for ProofWorkStmt.status values.
-     *
-     *  This is used only for test output.
-     *
+     * Descriptions for ProofWorkStmt.status values.
+     * <p>
+     * This is used only for test output.
      */
     public static final String[] STATUS_DESC = {
             "PROOF_STMT_HAS_STRUCTURAL_ERRORS", "PROOF_STMT_VALIDATION_ERRORS",
@@ -1862,167 +1810,166 @@ public class PaConstants {
             "PROOF_STMT_PROVED_W_VERIFY_PROOFS_ERROR"};
 
     /**
-     *  Proof Worksheet Header Line, Part 1.
+     * Proof Worksheet Header Line, Part 1.
      */
     public static final String PROOF_TEXT_HEADER_1 = new String(
         "$( <MM> <PROOF_ASST> THEOREM=");
 
     /**
-     *  Proof Worksheet Header Line, Part 2.
+     * Proof Worksheet Header Line, Part 2.
      */
     public static final String PROOF_TEXT_HEADER_2 = new String("  LOC_AFTER=");
 
     /**
-     *  Proof Worksheet Statement Label Default (prompt).
+     * Proof Worksheet Statement Label Default (prompt).
      */
     public static final String DEFAULT_STMT_LABEL = new String("?");
 
     /**
-     *  Proof Worksheet Comment Statment IO Error.
+     * Proof Worksheet Comment Statment IO Error.
      */
     public static final String PROOF_WORKSHEET_COMMENT_STMT_IO_ERROR = "IO error reading comment!";
 
     /**
-     *  Proof Worksheet Statement New Line Char
+     * Proof Worksheet Statement New Line Char
      */
     public static final char PROOF_WORKSHEET_NEW_LINE = '\n';
 
     /**
-     *  Proof Worksheet Statement New Line String
+     * Proof Worksheet Statement New Line String
      */
     public static final String PROOF_WORKSHEET_NEW_LINE_STRING = "\n";
 
     /**
-     *  Proof Worksheet Footer Line
+     * Proof Worksheet Footer Line
      */
     public static final String PROOF_TEXT_FOOTER = new String("$)");
 
     /**
-     *  Header ProofWorkStmt token.
+     * Header ProofWorkStmt token.
      */
     public static final String HEADER_STMT_TOKEN = "$(";
 
     /**
-     *  Header ProofWorkStmt <MM> token
+     * Header ProofWorkStmt <MM> token
      */
     public static final String HEADER_MM_TOKEN = "<MM>";
 
     /**
-     *  Header ProofWorkStmt <MM> token chunk index.
-     *  <p>
-     *  Chunk refers to tokens plus whitespace chunks.
+     * Header ProofWorkStmt <MM> token chunk index.
+     * <p>
+     * Chunk refers to tokens plus whitespace chunks.
      */
     public static final int HEADER_MM_TOKEN_CHUNK_INDEX = 2;
 
     /**
-     *  Header ProofWorkStmt <PROOF_ASST> token
+     * Header ProofWorkStmt <PROOF_ASST> token
      */
     public static final String HEADER_PROOF_ASST_TOKEN = "<PROOF_ASST>";
 
     /**
-     *  Header ProofWorkStmt <PROOF_ASST> token chunk index.
-     *  <p>
-     *  Chunk refers to tokens plus whitespace chunks.
+     * Header ProofWorkStmt <PROOF_ASST> token chunk index.
+     * <p>
+     * Chunk refers to tokens plus whitespace chunks.
      */
     public static final int HEADER_PROOF_ASST_TOKEN_CHUNK_INDEX = 4;
 
     /**
-     *  Header ProofWorkStmt THEOREM= prefix
+     * Header ProofWorkStmt THEOREM= prefix
      */
     public static final String HEADER_THEOREM_EQUAL_PREFIX = "THEOREM=";
 
     /**
-     *  Header ProofWorkStmt THEOREM= prefix chunk index.
-     *  <p>
-     *  Chunk refers to tokens plus whitespace chunks.
+     * Header ProofWorkStmt THEOREM= prefix chunk index.
+     * <p>
+     * Chunk refers to tokens plus whitespace chunks.
      */
     public static final int HEADER_THEOREM_EQUAL_PREFIX_CHUNK_INDEX = 6;
 
     /**
-     *  Header ProofWorkStmt LOC_AFTER= prefix
+     * Header ProofWorkStmt LOC_AFTER= prefix
      */
     public static final String HEADER_LOC_AFTER_EQUAL_PREFIX = "LOC_AFTER=";
 
     /**
-     *  Header ProofWorkStmt LOC_AFTER= prefix chunk index.
-     *  <p>
-     *  Chunk refers to tokens plus whitespace chunks.
+     * Header ProofWorkStmt LOC_AFTER= prefix chunk index.
+     * <p>
+     * Chunk refers to tokens plus whitespace chunks.
      */
     public static final int HEADER_LOC_AFTER_EQUAL_PREFIX_CHUNK_INDEX = 8;
 
     /**
-     *  Footer ProofWorkStmt token.
+     * Footer ProofWorkStmt token.
      */
     public static final String FOOTER_STMT_TOKEN = "$)";
 
     /**
-     *  Generated Proof ProofWorkStmt token.
+     * Generated Proof ProofWorkStmt token.
      */
     public static final String GENERATED_PROOF_STMT_TOKEN = "$=";
 
     /**
-     *  End ProofWorkStmt token (generated proof and $d)
+     * End ProofWorkStmt token (generated proof and $d)
      */
     public static final String END_PROOF_STMT_TOKEN = "$.";
 
     /**
-     *  Distinct Variables ProofWorkStmt token.
+     * Distinct Variables ProofWorkStmt token.
      */
     public static final String DISTINCT_VARIABLES_STMT_TOKEN = "$d";
 
     /**
-     *  QED ProofStep ProofWorkStmt token prefix (CAPS)
+     * QED ProofStep ProofWorkStmt token prefix (CAPS)
      */
     public static final String QED_STEP_NBR_CAPS = "QED";
 
     /**
-     *  QED ProofStep ProofWorkStmt token prefix
+     * QED ProofStep ProofWorkStmt token prefix
      */
     public static final String QED_STEP_NBR = "qed";
 
     /**
-     *  Hyp ProofStep ProofWorkStmt token prefix
+     * Hyp ProofStep ProofWorkStmt token prefix
      */
     public static final String HYP_STEP_PREFIX = "h";
 
     /**
-     *  Comment ProofWorkStmt token prefix
+     * Comment ProofWorkStmt token prefix
      */
     public static final String COMMENT_STMT_TOKEN_PREFIX = "*";
 
     /**
-     *  Proof Step Step/HypRef Field Delimiter: Colon
+     * Proof Step Step/HypRef Field Delimiter: Colon
      */
     public static final char FIELD_DELIMITER_COLON = ':';
 
     /**
-     *  Maximum colons in Proof Step Step/Hyp/Ref Field.
+     * Maximum colons in Proof Step Step/Hyp/Ref Field.
      */
     public static final int MAX_FIELD_DELIMITER_COLONS = 2;
 
     /**
-     *  Proof Step Hyp Field Delimiter: Comma
+     * Proof Step Hyp Field Delimiter: Comma
      */
     public static final char FIELD_DELIMITER_COMMA = ',';
     /**
-     *  Local Ref Escape Character: Number Sign
+     * Local Ref Escape Character: Number Sign
      */
     public static final char LOCAL_REF_ESCAPE_CHAR = '#';
 
     /**
-     *  Proof Text Reader caption.
-     *
-     *  This is just a caption field used when creating
-     *  a mmj.mmio.Tokenizer object
+     * Proof Text Reader caption.
+     * <p>
+     * This is just a caption field used when creating a mmj.mmio.Tokenizer
+     * object
      */
     public static final String PROOF_TEXT_READER_CAPTION = "Proof Text Reader";
 
     /**
-     *  Greatest Step Number Increment Amount.
-     *
-     *  This is used to generate new greatestStepNbr values
-     *  for the ProofUnifier Derive feature.
-     *
+     * Greatest Step Number Increment Amount.
+     * <p>
+     * This is used to generate new greatestStepNbr values for the ProofUnifier
+     * Derive feature.
      */
     public static final int GREATEST_STEP_NBR_INCREMENT_AMT = 1000;
 
@@ -2031,16 +1978,16 @@ public class PaConstants {
     // ----------------------------------------------------------
 
     /**
-     *  Applied array init size.
-     *  <p>
-     *  Used for backout of unification updates.
+     * Applied array init size.
+     * <p>
+     * Used for backout of unification updates.
      */
     public static final int STEP_UNIFIER_APPLIED_ARRAY_LEN_INIT = 1000;
 
     /**
-     *  Applied array max size.
-     *  <p>
-     *  Used for backout of unification updates.
+     * Applied array max size.
+     * <p>
+     * Used for backout of unification updates.
      */
     public static final int STEP_UNIFIER_APPLIED_ARRAY_LEN_MAX = 8000;
 
@@ -2049,12 +1996,12 @@ public class PaConstants {
     // ----------------------------------------------------------
 
     /**
-     *  STEP_REQUEST_SELECTOR_SEARCH = 81.
+     * STEP_REQUEST_SELECTOR_SEARCH = 81.
      */
     public static final int STEP_REQUEST_SELECTOR_SEARCH = 81;
 
     /**
-     *  STEP_REQUEST_SELECTOR_CHOICE = 82.
+     * STEP_REQUEST_SELECTOR_CHOICE = 82.
      */
     public static final int STEP_REQUEST_SELECTOR_CHOICE = 82;
 
@@ -2063,37 +2010,34 @@ public class PaConstants {
     // ----------------------------------------------------------
 
     /**
-     *  STEP_SELECTOR_DIALOG_TITLE = 'StepSelectorDialog'.
+     * STEP_SELECTOR_DIALOG_TITLE = 'StepSelectorDialog'.
      */
     public static final String STEP_SELECTOR_DIALOG_TITLE = "StepSelectorDialog";
 
     /**
-     *  STEP_SELECTOR_DIALOG_HIDE_BUTTON_CAPTION
-     *      = 'Hide Dialog'.
+     * STEP_SELECTOR_DIALOG_HIDE_BUTTON_CAPTION = 'Hide Dialog'.
      */
     public static final String STEP_SELECTOR_DIALOG_HIDE_BUTTON_CAPTION = "Hide Dialog";
 
     /**
-     *  STEP_SELECTOR_DIALOG_SET_BUTTON_CAPTION
-     *      = 'Apply Selection To Step And Unify Proof'.
+     * STEP_SELECTOR_DIALOG_SET_BUTTON_CAPTION = 'Apply Selection To Step And
+     * Unify Proof'.
      */
     public static final String STEP_SELECTOR_DIALOG_SET_BUTTON_CAPTION = "Apply Selection To Step And Unify Proof";
 
     /**
-     *  STEP_SELECTOR_DIALOG_POPUP_SET_BUTTON_CAPTION
-     *      = 'Apply Selection To Step And Unify Proof?'.
+     * STEP_SELECTOR_DIALOG_POPUP_SET_BUTTON_CAPTION = 'Apply Selection To Step
+     * And Unify Proof?'.
      */
     public static final String STEP_SELECTOR_DIALOG_POPUP_SET_BUTTON_CAPTION = "Apply Selection To Step And Unify Proof?";
 
     /**
-     *  STEP_SELECTOR_DIALOG_LIST_CAPTION_PREFIX
-     *      = 'Step '
+     * STEP_SELECTOR_DIALOG_LIST_CAPTION_PREFIX = 'Step '
      */
     public static final String STEP_SELECTOR_DIALOG_LIST_CAPTION_PREFIX = "Step ";
 
     /**
-     *  STEP_SELECTOR_DIALOG_LIST_CAPTION_SUFFIX
-     *      = ' Unifiable Assertions'
+     * STEP_SELECTOR_DIALOG_LIST_CAPTION_SUFFIX = ' Unifiable Assertions'
      */
     public static final String STEP_SELECTOR_DIALOG_LIST_CAPTION_SUFFIX = " Unifiable Assertions";
 
@@ -2102,32 +2046,31 @@ public class PaConstants {
     // ----------------------------------------------------------
 
     /**
-     *  STEP_SELECTOR_SEARCH_HYP_LOOKUP_MAX = '3'.
-     *  <p>
-     *  95% of set.mm theorems have 0, 1 or 2 logical hypotheses
-     *  and it makes sense in StepSelectorSearch to use a
-     *  binary search to establish the first search index
-     *  for these theorem, otherwise, just scan forward.
+     * STEP_SELECTOR_SEARCH_HYP_LOOKUP_MAX = '3'.
+     * <p>
+     * 95% of set.mm theorems have 0, 1 or 2 logical hypotheses and it makes
+     * sense in StepSelectorSearch to use a binary search to establish the first
+     * search index for these theorem, otherwise, just scan forward.
      */
     public static final int STEP_SELECTOR_SEARCH_HYP_LOOKUP_MAX = 3;
 
     /**
-     *  STEP_SELECTOR_SEARCH_FORMULA_INDENT = '    '.
+     * STEP_SELECTOR_SEARCH_FORMULA_INDENT = ' '.
      */
     public static final String STEP_SELECTOR_SEARCH_FORMULA_INDENT = "    ";
 
     /**
-     *  STEP_SELECTOR_FORMULA_LABEL_SEPARATOR = ' ::= '.
+     * STEP_SELECTOR_FORMULA_LABEL_SEPARATOR = ' ::= '.
      */
     public static final String STEP_SELECTOR_FORMULA_LABEL_SEPARATOR = " ::= ";
 
     /**
-     *  STEP_SELECTOR_FORMULA_LOG_HYP_SEPARATOR = ' &&  '.
+     * STEP_SELECTOR_FORMULA_LOG_HYP_SEPARATOR = ' && '.
      */
     public static final String STEP_SELECTOR_FORMULA_LOG_HYP_SEPARATOR = " &&  ";
 
     /**
-     *  STEP_SELECTOR_FORMULA_YIELDS_SEPARATOR = ' ==> '.
+     * STEP_SELECTOR_FORMULA_YIELDS_SEPARATOR = ' ==> '.
      */
     public static final String STEP_SELECTOR_FORMULA_YIELDS_SEPARATOR = " ==> ";
 
@@ -2136,13 +2079,13 @@ public class PaConstants {
     // ----------------------------------------------------------
 
     /**
-     *  STEP_SELECTOR_LIST_MORE_LITERAL = ***MORE***
-     */
+     * STEP_SELECTOR_LIST_MORE_LITERAL = ***MORE
+     ***/
     public static final String STEP_SELECTOR_LIST_MORE_LITERAL = "***MORE***";
 
     /**
-     *  STEP_SELECTOR_LIST_END_LITERAL = ***END***
-     */
+     * STEP_SELECTOR_LIST_END_LITERAL = ***END
+     ***/
     public static final String STEP_SELECTOR_LIST_END_LITERAL = "***END***";
 
     // ----------------------------------------------------------

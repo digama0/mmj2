@@ -7,17 +7,16 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  TMFFScheme.java  0.01 11/01/2006
+ * TMFFScheme.java  0.01 11/01/2006
  *
- *  Aug-31-2006: - new, holds TMFF Scheme :)
+ * Aug-31-2006: - new, holds TMFF Scheme :)
  */
 
 package mmj.tmff;
 
 /**
- *  TMFFScheme holds an instantiated TMFFMethod and a
- *  name assigned by a user to the Scheme.
- *
+ * TMFFScheme holds an instantiated TMFFMethod and a name assigned by a user to
+ * the Scheme.
  */
 public class TMFFScheme {
 
@@ -25,17 +24,15 @@ public class TMFFScheme {
     private String schemeName;
 
     /**
-     *  Default constructor for TMFFScheme.
+     * Default constructor for TMFFScheme.
      */
     public TMFFScheme() {}
 
     /**
-     *  Constructor for TMFFScheme used by TMFFBoss and
-     *  BatchMMJ2.
-     *
-     *  @param param String parameter array corresponding to
-     *               the BatchMMJ2 RunParm command
-     *               TMFFDefineScheme.
+     * Constructor for TMFFScheme used by TMFFBoss and BatchMMJ2.
+     * 
+     * @param param String parameter array corresponding to the BatchMMJ2
+     *            RunParm command TMFFDefineScheme.
      */
     public TMFFScheme(final String[] param) {
 
@@ -52,11 +49,10 @@ public class TMFFScheme {
     }
 
     /**
-     *  Standard constructor for TMFFScheme.
-     *
-     *  @param schemeName name assigned to the scheme by the
-     *                  user.
-     *  @param method TMFFMethod to be assigned to the scheme.
+     * Standard constructor for TMFFScheme.
+     * 
+     * @param schemeName name assigned to the scheme by the user.
+     * @param method TMFFMethod to be assigned to the scheme.
      */
     public TMFFScheme(final String schemeName, final TMFFMethod method) {
         if (schemeName == null || schemeName.length() == 0)
@@ -72,18 +68,18 @@ public class TMFFScheme {
     }
 
     /**
-     *  Get the TMFFMethod instance assigned to this TMFFScheme.
-     *
-     *  @return tmffMethod instance.
+     * Get the TMFFMethod instance assigned to this TMFFScheme.
+     * 
+     * @return tmffMethod instance.
      */
     public TMFFMethod getTMFFMethod() {
         return tmffMethod;
     }
 
     /**
-     *  Set TMFFMethod assigned to this TMFFScheme.
-     *  <p>
-     *  @param tmffMethod pre-instantiated TMFFMethod.
+     * Set TMFFMethod assigned to this TMFFScheme.
+     *
+     * @param tmffMethod pre-instantiated TMFFMethod.
      */
     public void setTMFFMethod(final TMFFMethod tmffMethod) {
         if (tmffMethod == null)
@@ -100,25 +96,23 @@ public class TMFFScheme {
     }
 
     /**
-     *  Get the name assigned to this TMFFScheme.
-     *
-     *  @return schemeName string.
+     * Get the name assigned to this TMFFScheme.
+     * 
+     * @return schemeName string.
      */
     public String getSchemeName() {
         return schemeName;
     }
 
     /**
-     *  Set Name assigned to this TMFFScheme.
-     *  <p>
-     *  Must not be null or zero length! And it will
-     *  need to be unique, though that is validated
-     *  elsewhere.
-     *  <p>
-     *  Scheme Name "Unformatted" is RESERVED and
-     *  cannot be assigned.
-     *  <p>
-     *  @param schemeName non-null, non-empty String.
+     * Set Name assigned to this TMFFScheme.
+     * <p>
+     * Must not be null or zero length! And it will need to be unique, though
+     * that is validated elsewhere.
+     * <p>
+     * Scheme Name "Unformatted" is RESERVED and cannot be assigned.
+     *
+     * @param schemeName non-null, non-empty String.
      */
     public void setSchemeName(final String schemeName) {
         if (schemeName == null || schemeName.length() == 0)

@@ -7,10 +7,10 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  TheoremLoader.java  0.01 08/01/2008
+ * TheoremLoader.java  0.01 08/01/2008
  *
- *  Version 0.01:
- *      - new.
+ * Version 0.01:
+ *     - new.
  */
 
 package mmj.tl;
@@ -22,39 +22,36 @@ import mmj.pa.ProofAsst;
 import mmj.pa.ProofWorksheet;
 
 /**
- *  The Theorem Loader facility's main control module.
- *  <p>
- *  Note: this class is primarily an entry point and convenience
- *  for Theorem Loader users (batch or GUI.)
+ * The Theorem Loader facility's main control module.
+ * <p>
+ * Note: this class is primarily an entry point and convenience for Theorem
+ * Loader users (batch or GUI.)
  */
 public class TheoremLoader {
 
     private final TlPreferences tlPreferences;
 
     /**
-     *  Main constructor for TheoremLoader.
-     *  <p>
-     *  @param tlPreferences TlPreferences object.
+     * Main constructor for TheoremLoader.
+     *
+     * @param tlPreferences TlPreferences object.
      */
     public TheoremLoader(final TlPreferences tlPreferences) {
         this.tlPreferences = tlPreferences;
     }
 
     /**
-     *  Unifies mmj2 Proof Text area and stores the theorem
-     *  in the Logical System and MMT Folder.
-     *  <p>
-     *  @param proofWorksheetText text area holding an mmj2 Proof
-     *                            Worksheet.
-     *  @param logicalSystem LogicalSystem object.
-     *  @param messages Messages object.
-     *  @param proofAsst ProofAsst object.
-     *  @param inputProofWorksheetFileName String used for error
-     *                                     reporting.
-     *  @return unified ProofWorksheet object
-     *  @throws TheoremLoaderException if data errors encountered,
-     *          including the case where the ProofWorksheet cannot
-     *          be unified.
+     * Unifies mmj2 Proof Text area and stores the theorem in the Logical System
+     * and MMT Folder.
+     *
+     * @param proofWorksheetText text area holding an mmj2 Proof Worksheet.
+     * @param logicalSystem LogicalSystem object.
+     * @param messages Messages object.
+     * @param proofAsst ProofAsst object.
+     * @param inputProofWorksheetFileName String used for error reporting.
+     * @return unified ProofWorksheet object
+     * @throws TheoremLoaderException if data errors encountered, including the
+     *             case where the ProofWorksheet cannot be unified.
      */
     public ProofWorksheet unifyPlusStoreInLogSysAndMMTFolder(
         final String proofWorksheetText, final LogicalSystem logicalSystem,
@@ -72,20 +69,16 @@ public class TheoremLoader {
     }
 
     /**
-     *  Unifies mmj2 Proof Text area and stores the theorem
-     *  in the MMT Folder.
-     *  <p>
-     *  @param proofWorksheetText text area holding an mmj2 Proof
-     *                            Worksheet.
-     *  @param logicalSystem LogicalSystem object.
-     *  @param messages Messages object.
-     *  @param proofAsst ProofAsst object.
-     *  @param inputProofWorksheetFileName String used for error
-     *                                     reporting.
-     *  @return unified ProofWorksheet object
-     *  @throws TheoremLoaderException if data errors encountered,
-     *          including the case where the ProofWorksheet cannot
-     *          be unified.
+     * Unifies mmj2 Proof Text area and stores the theorem in the MMT Folder.
+     *
+     * @param proofWorksheetText text area holding an mmj2 Proof Worksheet.
+     * @param logicalSystem LogicalSystem object.
+     * @param messages Messages object.
+     * @param proofAsst ProofAsst object.
+     * @param inputProofWorksheetFileName String used for error reporting.
+     * @return unified ProofWorksheet object
+     * @throws TheoremLoaderException if data errors encountered, including the
+     *             case where the ProofWorksheet cannot be unified.
      */
     public ProofWorksheet unifyPlusStoreInMMTFolder(
         final String proofWorksheetText, final LogicalSystem logicalSystem,
@@ -102,17 +95,14 @@ public class TheoremLoader {
     }
 
     /**
-     *  Stores a unified ProofWorksheet in the Logical System and
-     *  the MMT Folder.
-     *  <p>
-     *  @param proofWorksheet ProofWorksheet object already
-     *                                       successfully unified.
-     *  @param logicalSystem LogicalSystem object.
-     *  @param messages Messages object.
-     *  @param proofAsst ProofAsst object.
-     *  @throws TheoremLoaderException if data errors encountered,
-     *          including the case where the ProofWorksheet is not
-     *          already unified.
+     * Stores a unified ProofWorksheet in the Logical System and the MMT Folder.
+     *
+     * @param proofWorksheet ProofWorksheet object already successfully unified.
+     * @param logicalSystem LogicalSystem object.
+     * @param messages Messages object.
+     * @param proofAsst ProofAsst object.
+     * @throws TheoremLoaderException if data errors encountered, including the
+     *             case where the ProofWorksheet is not already unified.
      */
     public void storeInLogSysAndMMTFolder(final ProofWorksheet proofWorksheet,
         final LogicalSystem logicalSystem, final Messages messages,
@@ -126,16 +116,14 @@ public class TheoremLoader {
     }
 
     /**
-     *  Stores a unified ProofWorksheet in the MMT Folder.
-     *  <p>
-     *  @param proofWorksheet ProofWorksheet object already
-     *                                       successfully unified.
-     *  @param logicalSystem LogicalSystem object.
-     *  @param messages Messages object.
-     *  @param proofAsst ProofAsst object.
-     *  @throws TheoremLoaderException if data errors encountered,
-     *          including the case where the ProofWorksheet is not
-     *          already unified.
+     * Stores a unified ProofWorksheet in the MMT Folder.
+     *
+     * @param proofWorksheet ProofWorksheet object already successfully unified.
+     * @param logicalSystem LogicalSystem object.
+     * @param messages Messages object.
+     * @param proofAsst ProofAsst object.
+     * @throws TheoremLoaderException if data errors encountered, including the
+     *             case where the ProofWorksheet is not already unified.
      */
     public void storeInMMTFolder(final ProofWorksheet proofWorksheet,
         final LogicalSystem logicalSystem, final Messages messages,
@@ -159,15 +147,13 @@ public class TheoremLoader {
     }
 
     /**
-     *  Loads all MMT Theorems in the MMT Folder into the Logical
-     *  System.
-     *  <p>
-     *  Note: the current MMT Folder is obtained from the
-     *        TlPreferences object.
-     *  <p>
-     *  @param logicalSystem LogicalSystem object.
-     *  @param messages Messages object.
-     *  @throws TheoremLoaderException if data errors encountered.
+     * Loads all MMT Theorems in the MMT Folder into the Logical System.
+     * <p>
+     * Note: the current MMT Folder is obtained from the TlPreferences object.
+     *
+     * @param logicalSystem LogicalSystem object.
+     * @param messages Messages object.
+     * @throws TheoremLoaderException if data errors encountered.
      */
     public void loadTheoremsFromMMTFolder(final LogicalSystem logicalSystem,
         final Messages messages) throws TheoremLoaderException
@@ -180,16 +166,15 @@ public class TheoremLoader {
     }
 
     /**
-     *  Loads one theorem from the MMT Folder into the Logical
-     *  System.
-     *  <p>
-     *  Note: the input theoremLabel is used to construct the
-     *        file name to be read from the MMT Folder.
-     *  <p>
-     *  @param theoremLabel label of the theorem to be loaded.
-     *  @param logicalSystem LogicalSystem object.
-     *  @param messages Messages object.
-     *  @throws TheoremLoaderException if data errors encountered.
+     * Loads one theorem from the MMT Folder into the Logical System.
+     * <p>
+     * Note: the input theoremLabel is used to construct the file name to be
+     * read from the MMT Folder.
+     *
+     * @param theoremLabel label of the theorem to be loaded.
+     * @param logicalSystem LogicalSystem object.
+     * @param messages Messages object.
+     * @throws TheoremLoaderException if data errors encountered.
      */
     public void loadTheoremsFromMMTFolder(final String theoremLabel,
         final LogicalSystem logicalSystem, final Messages messages)
@@ -204,17 +189,16 @@ public class TheoremLoader {
     }
 
     /**
-     *  Reads a theorem from the Logical System and writes it
-     *  to the MMT Folder.
-     *  System.
-     *  <p>
-     *  Note: the theorem Label is used to construct the
-     *        file name to be written to the MMT Folder.
-     *  <p>
-     *  @param theorem Theorem to be written to the MMT Folder.
-     *  @param logicalSystem LogicalSystem object.
-     *  @param messages Messages object.
-     *  @throws TheoremLoaderException if data errors encountered.
+     * Reads a theorem from the Logical System and writes it to the MMT Folder.
+     * System.
+     * <p>
+     * Note: the theorem Label is used to construct the file name to be written
+     * to the MMT Folder.
+     *
+     * @param theorem Theorem to be written to the MMT Folder.
+     * @param logicalSystem LogicalSystem object.
+     * @param messages Messages object.
+     * @throws TheoremLoaderException if data errors encountered.
      */
     public void extractTheoremToMMTFolder(final Theorem theorem,
         final LogicalSystem logicalSystem, final Messages messages)
@@ -232,14 +216,13 @@ public class TheoremLoader {
     }
 
     /**
-     *  Unifies an mmj2 Proof Text area.
-     *  <p>
-     *  @param proofWorksheetText text of a ProofWorksheet.
-     *  @param proofAsst ProofAsst object
-     *  @param filenameOrDataSourceId text for diagnostics
-     *  @return ProofWorksheet if unified successfully.
-     *  @throws TheoremLoaderException if there is an error
-     *          in the proof.
+     * Unifies an mmj2 Proof Text area.
+     *
+     * @param proofWorksheetText text of a ProofWorksheet.
+     * @param proofAsst ProofAsst object
+     * @param filenameOrDataSourceId text for diagnostics
+     * @return ProofWorksheet if unified successfully.
+     * @throws TheoremLoaderException if there is an error in the proof.
      */
     public ProofWorksheet getUnifiedProofWorksheet(
         final String proofWorksheetText, final ProofAsst proofAsst,

@@ -7,18 +7,18 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  StepSelectorSearch.java  0.02 08/01/2008
+ * StepSelectorSearch.java  0.02 08/01/2008
  *
- *  Version 0.01: 03/01/2008
- *  ==> New.
+ * Version 0.01: 03/01/2008
+ * ==> New.
  *
- *  Version 0.02: 08/01.2008
- *  ==> chg'd assrtArray to assrtAList, an ArrayList, as preparation
- *      for the TheoremLoader changes.
- *  ==> new stuff for Theorem Loader.
- *  ==> fixed bug in binary search by changing
- *         "mid = (low + high) / 2;"
- *      to "mid = low + ((high - low) / 2);"
+ * Version 0.02: 08/01.2008
+ * ==> chg'd assrtArray to assrtAList, an ArrayList, as preparation
+ *     for the TheoremLoader changes.
+ * ==> new stuff for Theorem Loader.
+ * ==> fixed bug in binary search by changing
+ *        "mid = (low + high) / 2;"
+ *     to "mid = low + ((high - low) / 2);"
  */
 
 package mmj.pa;
@@ -30,8 +30,8 @@ import mmj.util.MergeSortedArrayLists;
 import mmj.verify.VerifyProofs;
 
 /**
- *  StepSelectorSearch builds StepSelectorResults for
- *  a single derivation proof step.
+ * StepSelectorSearch builds StepSelectorResults for a single derivation proof
+ * step.
  */
 public class StepSelectorSearch {
 
@@ -40,13 +40,15 @@ public class StepSelectorSearch {
     private final Cnst provableLogicStmtTyp;
     private final StepUnifier stepUnifier;
 
-    /* assrtArray loaded and sorted during constructor initialization
+    /*
+     * assrtArray loaded and sorted during constructor initialization
      */
 //  private Assrt[]                assrtArray;
     private final ArrayList<Assrt> assrtAList;
 
-    /* these instance variables are "global" work items
-       stored here for convenience.
+    /*
+     * these instance variables are "global" work items
+     * stored here for convenience.
      */
     private DerivationStep derivStep;
     private ProofStepStmt[] derivStepHypArray;
@@ -59,7 +61,12 @@ public class StepSelectorSearch {
     private ParseNode[] assrtSubst;
 
     /**
-     *  Constructor for StepSelectorSearch
+     * Constructor for StepSelectorSearch
+     * 
+     * @param proofAsstPreferences the ProofAsstPreferences object
+     * @param verifyProofs the VerifyProofs object
+     * @param provableLogicStmtTyp a Provable Logic Stmt Type Code
+     * @param unifySearchList the unification search list
      */
     public StepSelectorSearch(final ProofAsstPreferences proofAsstPreferences,
         final VerifyProofs verifyProofs, final Cnst provableLogicStmtTyp,
@@ -76,9 +83,8 @@ public class StepSelectorSearch {
             throw new IllegalArgumentException(
                 PaConstants.ERRMSG_SELECTOR_SEARCH_ASSRT_LIST_EMPTY_1);
 
-//      assrtArray                =
-//          Assrt.sortListIntoArray(unifySearchList,
-//                                  Assrt.NBR_LOG_HYP_SEQ);
+//        assrtArray = Assrt.sortListIntoArray(unifySearchList,
+//            Assrt.NBR_LOG_HYP_SEQ);
 
         final int listSize = unifySearchList.size()
             * (100 + proofAsstPreferences.getAssrtListFreespace()) / 100;
@@ -103,16 +109,16 @@ public class StepSelectorSearch {
     }
 
     /**
-     *  Finds the assertions which unify with the given step
-     *  and loads them into StepSelectorResults.
-     *  <p>
-     *  Always returns at least one StepSelectorResult item,
-     *  "***END***" with Assrt = null (or n items + "***MORE***").
-     *  <p>
-     *  @param derivStep DerivationStep from ProofWorksheet
-     *  @return StepSelectorResults containing unifying assertions
-     *          and corresponding formulas.
-     *  @throws VerifyException if not enough allocatable WorkVars.
+     * Finds the assertions which unify with the given step and loads them into
+     * StepSelectorResults.
+     * <p>
+     * Always returns at least one StepSelectorResult item, "***END***" with
+     * Assrt = null (or n items + "***MORE***").
+     * 
+     * @param derivStep DerivationStep from ProofWorksheet
+     * @return StepSelectorResults containing unifying assertions and
+     *         corresponding formulas.
+     * @throws VerifyException if not enough allocatable WorkVars.
      */
     public StepSelectorResults loadStepSelectorResults(
         final DerivationStep derivStep) throws VerifyException
@@ -209,17 +215,15 @@ public class StepSelectorSearch {
     }
 
     /**
-     *   Boolean search of assrtArray using partial key
-     *   to find starting position for scan of Assertions.
-     *
-     *   Assumes that assrtArray is not empty and that it is
-     *   sorted by Assrt.NBR_LOG_HYP_SEQ.
-     *
-     *   @param nbrHyps number of hypotheses on derivation
-     *                  step.
-     *   @return if not found, then return Integer.MAX_VALUE,
-     *           otherwise the index of the first assertion
-     *           with number of LogHyps >= input nbrHyps.
+     * Boolean search of assrtArray using partial key to find starting position
+     * for scan of Assertions.
+     * <p>
+     * Assumes that assrtArray is not empty and that it is sorted by
+     * Assrt.NBR_LOG_HYP_SEQ.
+     * 
+     * @param nbrHyps number of hypotheses on derivation step.
+     * @return if not found, then return Integer.MAX_VALUE, otherwise the index
+     *         of the first assertion with number of LogHyps >= input nbrHyps.
      */
     private int computeSearchStart(final int nbrHyps) {
 
@@ -235,18 +239,18 @@ public class StepSelectorSearch {
             return Integer.MAX_VALUE;
 
         /*
-         *   OK! NOW WE HAVE A FACT:
+         * OK! NOW WE HAVE A FACT:
          *
-         *       Assrt NbrLogHyps[low] < nbrHyps <= NbrLogHyps[high].
+         *     Assrt NbrLogHyps[low] < nbrHyps <= NbrLogHyps[high].
          *
-         *   Therefore -> a valid answer exists in the array
-         *   and the extra loop (dountil mid == prev) ensures
-         *   that the final 'mid' index value is one less than
-         *   the correct answer!
+         * Therefore -> a valid answer exists in the array
+         * and the extra loop (dountil mid == prev) ensures
+         * that the final 'mid' index value is one less than
+         * the correct answer!
          *
-         *   The drawback and quirk of this algorithm is that
-         *   it never gets "lucky". The number of loops is
-         *   always log(2)n + 1 (approx.)
+         * The drawback and quirk of this algorithm is that
+         * it never gets "lucky". The number of loops is
+         * always log(2)n + 1 (approx.)
          */
         int low = 0;
         int mid = low + (high - low) / 2;
@@ -291,7 +295,7 @@ public class StepSelectorSearch {
         ParseNode stepRoot = null;
         if (derivStep.formulaParseTree != null)
             stepRoot = derivStep.formulaParseTree.getRoot();
-        return stepUnifier.unifyAndMergeStepFormula(false, // no commit!
+        return stepUnifier.unifyAndMergeStepFormula(/* commit = */false,
             assrtRoot, stepRoot, assrtHypArray, assrtLogHypArray);
     }
 

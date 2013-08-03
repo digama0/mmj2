@@ -6,59 +6,58 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-/**
- *  VerifyProofs.java 0.09 11/01/2011
+/*
+ * VerifyProofs.java 0.09 11/01/2011
  *
- *  15-Jan-2006
- *              --> added verifyDerivStepProof(),
- *                    and verifyDerivStepDjVars() for Proof Assistant.
- *                  see mmj.pa.ProofUnifier.java.
- *              --> added getProofDerivationSteps() for Proof Asst.
- *                  see mmj.pa.ProofAsst.java.
- *              --> added optimization to main loop to not call
- *                  checkDjVars unless stepFrame.djVarsArray.length
- *                  > 0. The checkDjVars routine does a LOT of
- *                  looping around before it even checks to see if
- *                  there are any DjVars!
+ * 15-Jan-2006
+ *             --> added verifyDerivStepProof(),
+ *                   and verifyDerivStepDjVars() for Proof Assistant.
+ *                 see mmj.pa.ProofUnifier.java.
+ *             --> added getProofDerivationSteps() for Proof Asst.
+ *                 see mmj.pa.ProofAsst.java.
+ *             --> added optimization to main loop to not call
+ *                 checkDjVars unless stepFrame.djVarsArray.length
+ *                 > 0. The checkDjVars routine does a LOT of
+ *                 looping around before it even checks to see if
+ *                 there are any DjVars!
  *
  * 01-April-2006: Version 0.04:
- *     --> Generate formula from RPN for Derive Feature of
- *         Proof Assistant.
+ *    --> Generate formula from RPN for Derive Feature of
+ *        Proof Assistant.
  *
  * 01-November-2006: Version 0.05:
- *     -->  Fixed bug: a proof of "wph wps ax-mp" resulted in
- *          ArrayIndexOutOfBoundsException in FindUniqueSubstMapping()
- *          so message ERRMSG_STACK_MISMATCH_STEP, E-PR-0021, was
- *          added to detect this underflow condition and generate
- *          a cryptic but helpful message :)
+ *    -->  Fixed bug: a proof of "wph wps ax-mp" resulted in
+ *         ArrayIndexOutOfBoundsException in FindUniqueSubstMapping()
+ *         so message ERRMSG_STACK_MISMATCH_STEP, E-PR-0021, was
+ *         added to detect this underflow condition and generate
+ *         a cryptic but helpful message :)
  *
  * 01-June-2007: Version 0.06
- *     -->  Added proofDjVarsSoftErrorsIgnore and
- *          proofSoftDjVarsErrorList for use by ProofAsst
- *          (specifically, mmj.pa.ProofUnifier.java).
- *          In checkDjVars(), "soft" Dj Vars errors -- those
- *          caused by missing $d statements in the theorem
- *          being proved can now be reported (as usual) or
- *          ignored, or can be returned as an ArrayList
- *          of DjVars.java objects that need to be added
- *          to the theorem being proved.
+ *    -->  Added proofDjVarsSoftErrorsIgnore and
+ *         proofSoftDjVarsErrorList for use by ProofAsst
+ *         (specifically, mmj.pa.ProofUnifier.java).
+ *         In checkDjVars(), "soft" Dj Vars errors -- those
+ *         caused by missing $d statements in the theorem
+ *         being proved can now be reported (as usual) or
+ *         ignored, or can be returned as an ArrayList
+ *         of DjVars.java objects that need to be added
+ *         to the theorem being proved.
  *
  * 01-Aug-2007: Version 0.07
- *     -->  Don't report "soft" Dj errors involving Work Vars
+ *    -->  Don't report "soft" Dj errors involving Work Vars
  *
- *  Nov-01-2007 Version 0.08
- *  - add call to ProofDerivationStepEntry.computeProofLevels()
- *    in VerifyProofs.getProofDerivationSteps() so that
- *    proof level is always available on exported proofs
- *    even if TMFF UseIndent is zero.
+ * Nov-01-2007 Version 0.08
+ * - add call to ProofDerivationStepEntry.computeProofLevels()
+ *   in VerifyProofs.getProofDerivationSteps() so that
+ *   proof level is always available on exported proofs
+ *   even if TMFF UseIndent is zero.
  *
- *  Version 0.09 - Nov-01-2011:
- *      _ Bugfix in loadProofDerivStepList():
+ * Version 0.09 - Nov-01-2011:
+ *     _ Bugfix in loadProofDerivStepList():
  *
- *        GMFFExportTheorem export of dummylink came out as follows
- *         h1::dummylink.1     |- ph
- *         hqed::dummylink.2   |- ps
- *
+ *       GMFFExportTheorem export of dummylink came out as follows
+ *        h1::dummylink.1     |- ph
+ *        hqed::dummylink.2   |- ps
  */
 
 package mmj.verify;
@@ -68,73 +67,65 @@ import java.util.*;
 import mmj.lang.*;
 
 /**
- *  VerifyProofs implements the proof verification process
- *  described in Metamath(dot)pdf.
- *  <p>
- *  It also has a new feature, verifying a syntax RPN
- *  as if it were a proof (in a sense, Stmt.exprRPN is
- *  a proof, a proof that Stmt.formula can be generated
- *  using the grammar embodied in the Metamath file...)
- *  The purpose of this feature is primarily to test
- *  the grammatical parser's output -- a double-check
- *  of the results.
- *  <p>
- *  The code is optimized for batch processing of a large
- *  number of proofs, one after the other.
- *  <p>
- *  The main "optimization" was to re-use arrays instead
- *  of allocating them for each proof. The arrays are
- *  initially allocated at a size that fits set.mm,
- *  which has some massive proofs. If an ArrayIndexOutOfBounds
- *  exception is detected, the arrays are reallocated
- *  with a larger size (an upper limit halts this process),
- *  and a "retry" is performed.
- *  <p>
- *  VerifyProofs uses class SubstMapEntry which is a simple
- *  data structure that should probably be an inner class
- *  of VerifyProofs. Other clean-ups are probably at hand
- *  for reworking this *thing*. One thing is sure, the
- *  error messages provided by VerifyProofs are much less
- *  helpful than those from metamath.exe -- but, on the other
- *  hand, since Proof Assistant is the best way to create
- *  proofs, a proof error in an existing file should be rare
- *  (creating a Metamath proof by hand is like writing
- *  assembler code.)
- *  <p>
- *  FYI, here is the basic verification algorithm, which
- *  leaves out the ugly details of disjoint variable
- *  restrictions and substitutions:
- *  <p>
- *  <code>
- *      1. init proof work stack, etc.<br>
- *      2. loop through theorem proof array, for each proof[] step:<br>
- *         - if null, exception ==> proof incomplete<br>
- *         - if stmt.isHyp(), ==> push stmt.formula onto stack<br>
- *         - else if stmt.mandFrame.hypArray.length = zero<br>
- *               ==> push stmt.formula onto stack<br>
- *                   (see ccau, for ex.)<br>
- *         - else (assertion w/hyp):<br>
- *              findVarSubstMap for assertion<br>
- *              if notfnd ==> exception...various<br>
- *              else,<br>
- *                  - check DjVars restrictions<br>
- *                  - pop 'n' entries from stack<br>
- *                      ('n' = nbr of mand hyps)<br>
- *                  - throw exception if stack underflow!<br>
- *                  - push substituted assertion formula onto stack.<br>
- *      3. if stack has more than one entry left,<br>
- *             ==>exception, > 1 stack entry left, disproved!<br>
- *      4. if stack entry not equal to stmt to be proved formula<br>
- *             ==>exception, last entry not equal! disproved!<br>
- *      5. ok! proved.<br>
- *
- *  </code>
- *
- *  @see <a href="../../mmjProofVerification.html">
- *       More on Proof Verification</a>
- *
- *  @see <a href="../../MetamathERNotes.html">
- *       Nomenclature and Entity-Relationship Notes</a>
+ * VerifyProofs implements the proof verification process described in
+ * Metamath(dot)pdf.
+ * <p>
+ * It also has a new feature, verifying a syntax RPN as if it were a proof (in a
+ * sense, Stmt.exprRPN is a proof, a proof that Stmt.formula can be generated
+ * using the grammar embodied in the Metamath file...) The purpose of this
+ * feature is primarily to test the grammatical parser's output -- a
+ * double-check of the results.
+ * <p>
+ * The code is optimized for batch processing of a large number of proofs, one
+ * after the other.
+ * <p>
+ * The main "optimization" was to re-use arrays instead of allocating them for
+ * each proof. The arrays are initially allocated at a size that fits set.mm,
+ * which has some massive proofs. If an ArrayIndexOutOfBounds exception is
+ * detected, the arrays are reallocated with a larger size (an upper limit halts
+ * this process), and a "retry" is performed.
+ * <p>
+ * VerifyProofs uses class SubstMapEntry which is a simple data structure that
+ * should probably be an inner class of VerifyProofs. Other clean-ups are
+ * probably at hand for reworking this *thing*. One thing is sure, the error
+ * messages provided by VerifyProofs are much less helpful than those from
+ * metamath.exe -- but, on the other hand, since Proof Assistant is the best way
+ * to create proofs, a proof error in an existing file should be rare (creating
+ * a Metamath proof by hand is like writing assembler code.)
+ * <p>
+ * FYI, here is the basic verification algorithm, which leaves out the ugly
+ * details of disjoint variable restrictions and substitutions:
+ * <p>
+ * 
+ * <pre>
+ *     1. init proof work stack, etc.
+ *     2. loop through theorem proof array, for each proof[] step:
+ *        - if null, exception ==> proof incomplete
+ *        - if stmt.isHyp(), ==> push stmt.formula onto stack
+ *        - else if stmt.mandFrame.hypArray.length = zero
+ *              ==> push stmt.formula onto stack
+ *                  (see ccau, for ex.)
+ *        - else (assertion w/hyp):
+ *             findVarSubstMap for assertion
+ *             if notfnd ==> exception...various
+ *             else,
+ *                 - check DjVars restrictions
+ *                 - pop 'n' entries from stack
+ *                     ('n' = nbr of mand hyps)
+ *                 - throw exception if stack underflow!
+ *                 - push substituted assertion formula onto stack.
+ *     3. if stack has more than one entry left,
+ *            ==>exception, > 1 stack entry left, disproved!
+ *     4. if stack entry not equal to stmt to be proved formula
+ *            ==>exception, last entry not equal! disproved!
+ *     5. ok! proved.
+ * 
+ * </pre>
+ * 
+ * @see <a href="../../mmjProofVerification.html"> More on Proof
+ *      Verification</a>
+ * @see <a href="../../MetamathERNotes.html"> Nomenclature and
+ *      Entity-Relationship Notes</a>
  */
 public class VerifyProofs implements ProofVerifier {
 
@@ -188,8 +179,7 @@ public class VerifyProofs implements ProofVerifier {
     // *******************************************
 
     /**
-     *  Constructor - default.
-     *
+     * Constructor - default.
      */
     public VerifyProofs() {
 
@@ -197,10 +187,8 @@ public class VerifyProofs implements ProofVerifier {
         retryCnt = -1;
 
         /**
-         *  Load dummy MandFrame and OptFrame objects for
-         *  use in validating an exprRPN using the VerifyProofs
-         *  engine.
-         *
+         * Load dummy MandFrame and OptFrame objects for use in validating an
+         * exprRPN using the VerifyProofs engine.
          */
         dummyMandFrame = new MandFrame();
         dummyMandFrame.hypArray = null; // <-load this for use...
@@ -212,12 +200,11 @@ public class VerifyProofs implements ProofVerifier {
     }
 
     /**
-     *  Verify all proofs in Statement Table.
-     *
-     *  @param messages Messages object for output error messages.
-     *  @param stmtTbl  Statement Table (map).
+     * Verify all proofs in Statement Table.
+     * 
+     * @param messages Messages object for output error messages.
+     * @param stmtTbl Statement Table (map).
      */
-    @Override
     public void verifyAllProofs(final Messages messages,
         final Map<String, Stmt> stmtTbl)
     {
@@ -233,13 +220,11 @@ public class VerifyProofs implements ProofVerifier {
     }
 
     /**
-     *  Verify a single proof.
-     *
-     *  @param theorem Theorem object reference.
-     *
-     *  @return String error message if error(s), or null.
+     * Verify a single proof.
+     * 
+     * @param theorem Theorem object reference.
+     * @return String error message if error(s), or null.
      */
-    @Override
     public String verifyOneProof(final Theorem theorem) {
 
         String errMsg = null;
@@ -272,17 +257,15 @@ public class VerifyProofs implements ProofVerifier {
     }
 
     /**
-     *  Verify all Statements' grammatical parse RPNs.
-     *  <p>
-     *  Note: even VarHyp and Syntax Axioms are assigned
-     *        default RPN's, so this should work -- unless
-     *        there are errors in the Metamath file, or
-     *        in the grammar itself.
-     *
-     *  @param messages Messages object for output error messages.
-     *  @param stmtTbl  Statement Table (map).
+     * Verify all Statements' grammatical parse RPNs.
+     * <p>
+     * Note: even VarHyp and Syntax Axioms are assigned default RPN's, so this
+     * should work -- unless there are errors in the Metamath file, or in the
+     * grammar itself.
+     * 
+     * @param messages Messages object for output error messages.
+     * @param stmtTbl Statement Table (map).
      */
-    @Override
     public void verifyAllExprRPNAsProofs(final Messages messages,
         final Map<String, Stmt> stmtTbl)
     {
@@ -296,18 +279,15 @@ public class VerifyProofs implements ProofVerifier {
     }
 
     /**
-     *  Verify grammatical parse RPN as if it were a proof.
-     *  <p>
-     *  Note: even VarHyp and Syntax Axioms are assigned
-     *        default RPN's, so this should work -- unless
-     *        there are errors in the Metamath file, or
-     *        in the grammar itself.
-     *
-     *  @param exprRPNStmt Stmt with RPN to verify.
-     *
-     *  @return String error message if error(s), or null.
+     * Verify grammatical parse RPN as if it were a proof.
+     * <p>
+     * Note: even VarHyp and Syntax Axioms are assigned default RPN's, so this
+     * should work -- unless there are errors in the Metamath file, or in the
+     * grammar itself.
+     * 
+     * @param exprRPNStmt Stmt with RPN to verify.
+     * @return String error message if error(s), or null.
      */
-    @Override
     public String verifyExprRPNAsProof(final Stmt exprRPNStmt) {
 
         String errMsg = null;
@@ -340,24 +320,19 @@ public class VerifyProofs implements ProofVerifier {
     }
 
     /**
-     *  Verify a single proof derivation step.
-     *
-     *  Note: the "comboFrame" contains the mandatory
-     *        and optional information as a matter of
-     *        convenience. The "optional" information
-     *        is kept separate in Metamath because it
-     *        needs to be available in Proof Verifier
-     *        (and elsewhere), but must not be used
-     *        when the Assertion is referenced in a
-     *        proof (especially not be pushed onto the
-     *        stack!)
-     *
-     *  @param derivStepStmtLabel label + "Step" + step number
-     *  @param derivStepFormula formula of proof step
-     *  @param derivStepProofTree step proof tree.
-     *  @param derivStepComboFrame MandFrame for step.
-     *
-     *  @return String error message if error(s), or null.
+     * Verify a single proof derivation step.
+     * <p>
+     * Note: the "comboFrame" contains the mandatory and optional information as
+     * a matter of convenience. The "optional" information is kept separate in
+     * Metamath because it needs to be available in Proof Verifier (and
+     * elsewhere), but must not be used when the Assertion is referenced in a
+     * proof (especially not be pushed onto the stack!)
+     * 
+     * @param derivStepStmtLabel label + "Step" + step number
+     * @param derivStepFormula formula of proof step
+     * @param derivStepProofTree step proof tree.
+     * @param derivStepComboFrame MandFrame for step.
+     * @return String error message if error(s), or null.
      */
     public String verifyDerivStepProof(
         final String derivStepStmtLabel, // theorem
@@ -402,32 +377,29 @@ public class VerifyProofs implements ProofVerifier {
     }
 
     /**
-     *  Verify that a single proof derivation step
-     *  does not violate the Distinct Variable Restrictions
-     *  of the step's Ref assertion.
-     *  <p>
-     *  The main complication here is converting the
-     *  parse subtrees that comprise the variable
-     *  substitutions into the form required by method
-     *  checkDjVars().
-     *  <p>
-     *  Note: the "comboFrame" contains the mandatory
-     *        and optional information as a matter of
-     *        convenience. The "optional" information
-     *        is kept separate in Metamath because it
-     *        needs to be available in Proof Verifier
-     *        (and elsewhere), but must not be used
-     *        when the Assertion is referenced in a
-     *        proof (especially not be pushed onto the
-     *        stack!)
-     *
-     *  @param derivStepNbr string, may equal "qed"
-     *  @param derivStepStmtLabel label + "Step" + step number
-     *  @param derivStepRef Assertion justifying the step
-     *  @param derivStepAssrtSubst array of substitution subtrees
-     *  @param derivStepComboFrame MandFrame for step.
-     *
-     *  @return String error message if error(s), or null.
+     * Verify that a single proof derivation step does not violate the Distinct
+     * Variable Restrictions of the step's Ref assertion.
+     * <p>
+     * The main complication here is converting the parse subtrees that comprise
+     * the variable substitutions into the form required by method
+     * checkDjVars().
+     * <p>
+     * Note: the "comboFrame" contains the mandatory and optional information as
+     * a matter of convenience. The "optional" information is kept separate in
+     * Metamath because it needs to be available in Proof Verifier (and
+     * elsewhere), but must not be used when the Assertion is referenced in a
+     * proof (especially not be pushed onto the stack!)
+     * 
+     * @param derivStepNbr string, may equal "qed"
+     * @param derivStepStmtLabel label + "Step" + step number
+     * @param derivStepRef Assertion justifying the step
+     * @param derivStepAssrtSubst array of substitution subtrees
+     * @param derivStepComboFrame MandFrame for step.
+     * @param djVarsSoftErrorsIgnore whether to ignore soft DjVars errors
+     * @param djVarsSoftErrorsGenerateNew whether to generate missing DjVars
+     *            restrictions
+     * @param softDjVarsErrorList the output list of violated DjVars
+     * @return String error message if error(s), or null.
      */
     public String verifyDerivStepDjVars(
         final String derivStepNbr,
@@ -484,22 +456,19 @@ public class VerifyProofs implements ProofVerifier {
     }
 
     /**
-     *   Builds and returns an ArrayList of proof steps
-     *   for export via the Proof Assistant.
-     *
-     *  @param theorem the theorem whose proof will be exported
-     *  @param exportFormatUnified set to true if proof step label
-     *                             is output on each step (else, it
-     *                             is only output on Logical
-     *                             Hypothesis steps.)
-     *  @param hypsRandomized      set to true if proof step hyps
-     *                             should be rearranged in random
-     *                             order (a testing feature.)
-     *  @param provableLogicStmtTyp type code of proof derivation steps
-     *                              to return.
-     *
-     *  @return List of ProofDerivationStepEntry objects.
-     *  @throws VerifyException if the proof is invalid.
+     * Builds and returns an ArrayList of proof steps for export via the Proof
+     * Assistant.
+     * 
+     * @param theorem the theorem whose proof will be exported
+     * @param exportFormatUnified set to true if proof step label is output on
+     *            each step (else, it is only output on Logical Hypothesis
+     *            steps.)
+     * @param hypsRandomized set to true if proof step hyps should be rearranged
+     *            in random order (a testing feature.)
+     * @param provableLogicStmtTyp type code of proof derivation steps to
+     *            return.
+     * @return List of ProofDerivationStepEntry objects.
+     * @throws VerifyException if the proof is invalid.
      */
     public List<ProofDerivationStepEntry> getProofDerivationSteps(
         final Theorem theorem, final boolean exportFormatUnified,
@@ -542,15 +511,26 @@ public class VerifyProofs implements ProofVerifier {
     }
 
     /**
-     *  Loads an array list of ProofDerivationStepEntry objects
-     *  for the non-syntax assertion and the logical hypothesis
-     *  steps of the proof.
-     *  <p>
-     *  Proof step labels (Ref) are output in the step entries
-     *  if either exportFormatUnified == true or if the step
-     *  is a logical hypothesis step.
-     *  <p>
-     *  This is a clone of verifyProof()!!!!
+     * Loads an array list of ProofDerivationStepEntry objects for the
+     * non-syntax assertion and the logical hypothesis steps of the proof.
+     * <p>
+     * Proof step labels (Ref) are output in the step entries if either
+     * exportFormatUnified == true or if the step is a logical hypothesis step.
+     * <p>
+     * This is a clone of verifyProof()!!!!
+     * 
+     * @param theorem the theorem whose proof will be exported
+     * @param derivStepList the list to load with ProofDerivationStepEntry
+     *            objects
+     * @param theoremHypStepArray the hypStepArray for the Theorem
+     * @param exportFormatUnified set to true if proof step label is output on
+     *            each step (else, it is only output on Logical Hypothesis
+     *            steps.)
+     * @param hypsRandomized set to true if proof step hyps should be rearranged
+     *            in random order (a testing feature.)
+     * @param provableLogicStmtTyp type code of proof derivation steps to
+     *            return.
+     * @throws VerifyException if an error occurred
      */
     private void loadProofDerivStepList(final Theorem theorem,
         final List<ProofDerivationStepEntry> derivStepList,
@@ -712,15 +692,16 @@ public class VerifyProofs implements ProofVerifier {
     }
 
     /**
-     *  Converts a single derivation step's ParseNode subtree
-     *  array into a SubstMapEntry array.
-     *
-     *  The input array of ParseNode subtrees is in the same
-     *  sequence as the stepAssrt.MandFrame.hypArray -- it is
-     *  a parallel array, in fact. So this means that we have
-     *  to travel through the input array selecting only those
-     *  array elements corresponding to variable hypotheses
-     *  in the stepAssrt's hypArray (ignoring LogHyp entries).
+     * Converts a single derivation step's ParseNode subtree array into a
+     * SubstMapEntry array.
+     * <p>
+     * The input array of ParseNode subtrees is in the same sequence as the
+     * stepAssrt.MandFrame.hypArray -- it is a parallel array, in fact. So this
+     * means that we have to travel through the input array selecting only those
+     * array elements corresponding to variable hypotheses in the stepAssrt's
+     * hypArray (ignoring LogHyp entries).
+     * 
+     * @param derivStepAssrtSubst the ParseNode subtree array
      */
     private void loadDerivStepDjVarsSubst(final ParseNode[] derivStepAssrtSubst)
     {
@@ -790,35 +771,38 @@ public class VerifyProofs implements ProofVerifier {
     }
 
     /**
-     * <code>verifyProof</code>
-     *
-     * ok!
-     * <code>
-     *      1. init proof work stack, etc.<br>
-     *      2. loop through theorem proof array, for each proof[] step:<br>
-     *         - if null, exception ==> proof incomplete<br>
-     *         - if stmt.isHyp(), ==> push stmt.formula onto stack<br>
-     *         - else if stmt.mandFrame.hypArray.length = zero<br>
-     *               ==> push stmt.formula onto stack<br>
-     *                   (see ccau, for ex.)<br>
-     *         - else (assertion w/hyp):<br>
-     *              findVarSubstMap for assertion<br>
-     *              if notfnd ==> exception...various<br>
-     *              else,<br>
-     *                  - check DjVars restrictions<br>
-     *                  - pop 'n' entries from stack<br>
-     *                      ('n' = nbr of mand hyps)<br>
-     *                  - throw exception if stack underflow!<br>
-     *                  - push substituted assertion formula onto stack.<br>
-     *      3. if stack has more than one entry left,<br>
-     *             ==>exception, > 1 stack entry left, disproved!<br>
-     *      4. if stack entry not equal to stmt to be proved formula<br>
-     *             ==>exception, last entry not equal! disproved!<br>
-     *      5. ok! proved.<br>
-     *
-     *  NOTE: try to catch ArrayIndexOutOfBoundsException and<br>
-     *        reallocate arrays with larger size...<br>
-     * </code>
+     * <ol>
+     * <li>init proof work stack, etc.
+     * <li>loop through theorem proof array, for each proof[] step:
+     * <ul>
+     * <li>if null, exception ==> proof incomplete
+     * <li>if stmt.isHyp(), ==> push stmt.formula onto stack
+     * <li>else if stmt.mandFrame.hypArray.length = zero<br>
+     * ==> push stmt.formula onto stack (see ccau, for ex.)
+     * <li>else (assertion w/hyp):
+     * <ul>
+     * <li>findVarSubstMap for assertion
+     * <li>if notfnd ==> exception...various
+     * <li>else,
+     * <ul>
+     * <li>check DjVars restrictions
+     * <li>pop 'n' entries from stack ('n' = nbr of mand hyps)
+     * <li>throw exception if stack underflow!
+     * <li>push substituted assertion formula onto stack.
+     * </ul>
+     * </ul>
+     * </ul>
+     * <li>if stack has more than one entry left, ==>exception, > 1 stack entry
+     * left, disproved!
+     * <li>if stack entry not equal to stmt to be proved formula ==>exception,
+     * last entry not equal! disproved!
+     * <li>ok! proved.
+     * </ol>
+     * <p>
+     * NOTE: try to catch ArrayIndexOutOfBoundsException and reallocate arrays
+     * with larger size... </pre>
+     * 
+     * @throws VerifyException if an error occurred
      */
     private void verifyProof() throws VerifyException {
 
@@ -846,7 +830,7 @@ public class VerifyProofs implements ProofVerifier {
             findUniqueSubstMapping();
 
             /**
-             *  Optimization: don't go thru checkDjVars needlessly.
+             * Optimization: don't go thru checkDjVars needlessly.
              */
             if (stepFrame.djVarsArray.length > 0) {
                 stepNbrOutputString = Integer.toString(stepNbr + 1);
@@ -882,14 +866,13 @@ public class VerifyProofs implements ProofVerifier {
     }
 
     /**
-     * <code>findUniqueSubstMapping</code>
-     *
      * ok, some input, work and output areas in global (class) work areas...
-     *
+     * 
+     * <pre>
      * input: -  MandFrame stepFrame  -->  (frame for theorem referenced
      *              Hyp[]  hypArray;        in proof step, contains
      *                                      mandatory hypothesis array.)
-     *
+     * 
      *        -  Formula[] pStack;         (the proof stack, which should
      *           int       pStackCnt       contain 'n' entries at the end
      *                                     that have types matching the
@@ -898,20 +881,18 @@ public class VerifyProofs implements ProofVerifier {
      *                                     substitutions which force the
      *                                     hypArray entriesto match
      *                                     (and if not, error!))
-     *
+     * 
      * output:-  SubstMapEntry[] subst --> contains output array of:
-     *
+     * 
      *              Sym substFrom (variable from proof step mandatory
      *                             hypotheses)
      *              Sym[] substTo (expression/variable to substitute
      *                             FOR each occurrence of substFrom
      *                             in the proof step's mandatory
      *                             hypotheses and assertion.)
-     *
-     * work:
-     *
-     * output: VerifyException thrown if DjVars (restriction)
-     *         violation found.
+     * </pre>
+     * 
+     * @throws VerifyException if DjVars (restriction) violation found.
      */
     private void findUniqueSubstMapping() throws VerifyException {
         substCnt = stepFrame.hypArray.length;
@@ -971,19 +952,19 @@ public class VerifyProofs implements ProofVerifier {
     }
 
     /**
-     * <code>applySubstMapping</code>
-     *
-     * ok, some input, work and output areas in global (class)
-     *     work areas
-     *
-     * input:  SubstMapEntry[] subst (and substCnt)
-     *
-     * work:   Sym[] wExpr (and wExprCnt)
-     *
+     * ok, some input, work and output areas in global (class) work areas
+     * <p>
+     * input: SubstMapEntry[] subst (and substCnt)
+     * <p>
+     * work: Sym[] wExpr (and wExprCnt)
+     * <p>
      * output: a new Formula
-     *
-     * NOTE: DO NOT substitute for the Type constant at the beginning
-     *       of the formula.
+     * <p>
+     * NOTE: DO NOT substitute for the Type constant at the beginning of the
+     * formula.
+     * 
+     * @param f the formula
+     * @return a new Formula
      */
     private Formula applySubstMapping(final Formula f) {
         SubstMapEntry substMapEntry;
@@ -1012,31 +993,27 @@ public class VerifyProofs implements ProofVerifier {
     }
 
     /**
-     * <code>checkDjVars</code>
-     *
      * ok, some input, work and output areas in global (class) work areas...
-     *
+     * 
+     * <pre>
      * input: -  MandFrame proofStmtFrame (frame for theorem to be proved)
-     *
+     * 
      *        -  MandFrame stepFrame    (frame for theorem referenced
      *                                   in proof step)
-     *
+     * 
      *        -  SubstMapEntry[] subst --> contains array of:
-     *
+     * 
      *              Sym substFrom (variable from proof step mandatory
      *                             hypotheses)
      *              Sym[] substTo (expression/variable to substitute
      *                              FOR each occurrence of substFrom
      *                              in the proof step's mandatory
      *                              hypotheses and assertion.)
-     *
+     * 
      *        -  stepNbrOutputString (already computed...)
-     *
-     * work:
-     *
-     * output: VerifyException thrown if DjVars (restriction)
-     *         violation found!
-     *
+     * </pre>
+     * 
+     * @throws VerifyException if DjVars (restriction) violation found!
      */
     private void checkDjVars() throws VerifyException {
 
@@ -1050,57 +1027,51 @@ public class VerifyProofs implements ProofVerifier {
             if (subst[fromX] != null)
                 for (int fromY = fromX + 1; fromY < yMax; fromY++)
                     if (subst[fromY] != null)
-                        if (!MandFrame.isVarPairInDjArray(stepFrame,
+                        if (MandFrame.isVarPairInDjArray(stepFrame,
                             (Var)subst[fromX].substFrom,
                             (Var)subst[fromY].substFrom))
-                        {
-                            // sigh...whew...not a DjVars pair being
-                            // substituted!
-                        }
-                        else
                             checkSubstToVars(fromX, fromY);
     }
 
     /**
-     * <code>checkSubstToVars</code>
-     *
      * Well, ALLRIGHTY THEN! Let's continue...
-     *
+     * <p>
      * but first, let's recall why we are down here in the dungeon...
-     *
-     * PURPOSE: 1) make sure that the substitution "to" expressions do not
-     *             have any variables in common (because the substitution
-     *             "from" variables have a DjVars restriction in the
-     *             theorem referenced by the proof step.)
-     *
-     *          2) we must check that each possible pair of variables,
-     *             taken one each from substTo[fromX] and substTo[fromY],
-     *             has a corresponding DjVars restriction in the mandatory
-     *             or optional frame of the theorem being proved!
-     *
+     * <p>
+     * <b>PURPOSE:</b>
+     * <ol>
+     * <li>make sure that the substitution "to" expressions do not have any
+     * variables in common (because the substitution "from" variables have a
+     * DjVars restriction in the theorem referenced by the proof step.)
+     * <li>we must check that each possible pair of variables, taken one each
+     * from substTo[fromX] and substTo[fromY], has a corresponding DjVars
+     * restriction in the mandatory or optional frame of the theorem being
+     * proved!
+     * </ol>
      * ok, some input, work and output areas in global (class) work areas...
-     *
+     * 
+     * <pre>
      * input: -  MandFrame proofStmtFrame (frame for theorem to be proved)
      *           Opt       proofStmtOptFrame (frame for theorem to be
      *                     proved)
-     *
+     * 
      *        -  SubstMapEntry[] subst --> contains array of:
-     *
+     * 
      *              Sym substFrom (variable from proof step mandatory
      *                            hypotheses)
-     *
+     * 
      *              Sym[] substTo (expression/variable to substitute FOR
      *                             each occurrence of substFrom in the
      *                             proof step's mandatory hypotheses and
      *                             assertion.)
-     *
+     * 
      *        -  stepNbr and stepLabel, ready for diagnostic purposes!
      *        -  stepNbrOutputString (already computed...)
-     * work:
-     *
-     * output: VerifyException thrown if DjVars (restriction)
-     *         violation found!
-     *
+     * </pre>
+     * 
+     * @param x the index of the first SubstMapEntry of the pair
+     * @param y the index of the second SubstMapEntry of the pair
+     * @throws VerifyException if DjVars (restriction) violation found!
      */
     private void checkSubstToVars(final int x, final int y)
         throws VerifyException
@@ -1265,12 +1236,11 @@ public class VerifyProofs implements ProofVerifier {
     }
 
     /**
-     *  Generate Formula from RPN.
-     *
-     *  @param formulaRPN to be converted to a Formula
-     *  @param stepLabelForMessages used for abend message :)
-     *
-     *  @return Formula generated from RPN
+     * Generate Formula from RPN.
+     * 
+     * @param formulaRPN to be converted to a Formula
+     * @param stepLabelForMessages used for abend message :)
+     * @return Formula generated from RPN
      */
     public Formula convertRPNToFormula(final Stmt[] formulaRPN,
         final String stepLabelForMessages)

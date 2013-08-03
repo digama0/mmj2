@@ -6,140 +6,135 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-/**
- *  TMFFConstants.java  0.03 11/01/2011
+/*
+ * TMFFConstants.java  0.03 11/01/2011
  *
- *  Aug-31-2006: new.
+ * Aug-31-2006: new.
  *
- *  Version 0.02 11/01/2007
- *      -->Add TMFF_ALT_FORMAT_NBR_DEFAULT,
- *             TMFF_USE_INDENT_DEFAULT
- *             TMFF_ALT_INDENT_DEFAULT
+ * Version 0.02 11/01/2007
+ *     -->Add TMFF_ALT_FORMAT_NBR_DEFAULT,
+ *            TMFF_USE_INDENT_DEFAULT
+ *            TMFF_ALT_INDENT_DEFAULT
  *
- *  Version 0.03 - Nov-01-2011:  comment update.
- *      - Add TMFF_CURR_FORMAT_NBR_DEFAULT (13)
+ * Version 0.03 - Nov-01-2011:  comment update.
+ *     - Add TMFF_CURR_FORMAT_NBR_DEFAULT (13)
  */
 
 package mmj.tmff;
 
+import mmj.gmff.GMFFConstants;
+import mmj.mmio.MMIOConstants;
+import mmj.pa.PaConstants;
+import mmj.util.UtilConstants;
+import mmj.verify.GrammarConstants;
+import mmj.verify.ProofConstants;
+
 /**
- *  Constants used in mmj.tmff package.
- *  <p>
- *  There are two primary types of constants: parameters that
- *  are "hardcoded" which affect/control processing, and
- *  error/info messages.
- *  <p>
- *  Each mmj message begins with a code, such as this:<br>
- *  <code>
- *  E-LA-0007<br>
- *  <p>
- *  where the format of the code is "X-YY-9999"<br>
- *
- *  <b>X</b>     : error level
- *  <ul>
- *      <li>E = Error
- *      <li>I = Information
- *      <li>A = Abort (processing terminates, usually a bug).
- *  </ul><br>
- *  <br>
- *
- *  <b>YY</b>    : source code
- *  <ul>
- *      <li>GM = mmj.gmff package (see mmj.gmff.GMFFConstants)
- *      <li>GR = mmj.verify.Grammar and related code
- *               (see mmj.verify.GrammarConstants)
- *      <li>IO = mmj.mmio package (see mmj.mmio.MMIOConstants)
- *      <li>LA = mmj.lang package (see mmj.lang.GMFFConstants)
- *      <li>PA = mmj.pa package (proof assistant)
- *               (see mmj.pa.PaConstants)
- *      <li>PR = mmj.verify.VerifyProof and related code
- *               (see mmj.verify.ProofConstants)
- *      <li>TL = mmj.tl package (Theorem Loader).
- *      <li>TM = mmj.tmff.AlignColumn and related code
- *      <li>UT = mmj.util package.
- *               (see mmj.util.UtilConstants)
- *  </ul><br>
- *  <br>
- *  <b>9999</b>   : sequential number within the source code, 0001
- *       through 9999.
- *
- *  </code>
+ * Constants used in mmj.tmff package.
+ * <p>
+ * There are two primary types of constants: parameters that are "hardcoded"
+ * which affect/control processing, and error/info messages.
+ * <p>
+ * Each mmj message begins with a code, such as this:
+ * <p>
+ * <code>E-LA-0007</code>
+ * <p>
+ * where the format of the code is {@code X-YY-9999}<br>
+ * <p>
+ * <b>{@code X}</b> : error level
+ * <ul>
+ * <li>{@code E} = Error
+ * <li>{@code I} = Information
+ * <li>{@code A} = Abort (processing terminates, usually a bug).
+ * </ul>
+ * <p>
+ * <b>{@code YY}</b> : source code
+ * <ul>
+ * <li>{@code GM} = mmj.gmff package (see {@link GMFFConstants})
+ * <li>{@code GR} = mmj.verify.Grammar and related code (see
+ * {@link GrammarConstants})
+ * <li>{@code IO} = mmj.mmio package (see {@link MMIOConstants})
+ * <li>{@code LA} = mmj.lang package (see {@link GMFFConstants})
+ * <li>{@code PA} = mmj.pa package (proof assistant) (see {@link PaConstants})
+ * <li>{@code PR} = mmj.verify.VerifyProof and related code (see
+ * {@link ProofConstants})
+ * <li>{@code TL} = mmj.tl package (Theorem Loader).
+ * <li>{@code TM} = mmj.tmff.AlignColumn and related code
+ * <li>{@code UT} = mmj.util package. (see {@link UtilConstants})
+ * </ul>
+ * <p>
+ * <b>{@code 9999}</b> : sequential number within the source code, 0001 through
+ * 9999.
  */
 public class TMFFConstants {
 
     /*  *------------------------------------------------*
-     *    For TMFFAlignColumn.java
-     *  *------------------------------------------------*
-     */
+     *   For TMFFAlignColumn.java
+     * *------------------------------------------------*/
 
     /**
-     *  Arbitrary code number signifying formatting alignment
-     *  by Sym within Syntax Axiom.
+     * Arbitrary code number signifying formatting alignment by Sym within
+     * Syntax Axiom.
      */
     public static final int ALIGN_SYM = 1;
     /**
-     *  Arbitrary code number signifying formatting alignment
-     *  by Cnst within Syntax Axiom.
+     * Arbitrary code number signifying formatting alignment by Cnst within
+     * Syntax Axiom.
      */
     public static final int ALIGN_CNST = 2;
     /**
-     *  Arbitrary code number signifying formatting alignment
-     *  by Var within Syntax Axiom.
+     * Arbitrary code number signifying formatting alignment by Var within
+     * Syntax Axiom.
      */
     public static final int ALIGN_VAR = 3;
 
     /**
-     *  List of alignment type names as input by users.
-     *  <p>
-     *  The sequence of elements of this table must match
-     *  the numeric values for ALIGN_SYM, etc. The array
-     *  index + 1 must equal the ALIGN_SYM, etc. number!!!
+     * List of alignment type names as input by users.
+     * <p>
+     * The sequence of elements of this table must match the numeric values for
+     * ALIGN_SYM, etc. The array index + 1 must equal the ALIGN_SYM, etc.
+     * number!!!
      */
     public static final String[] ALIGN_TYPE = {"Sym", "Cnst", "Var"};
 
     /**
-     *  Minimum valid (useful) AtNbr for TMFFAlignColumn.
+     * Minimum valid (useful) AtNbr for TMFFAlignColumn.
      */
     public static final int MIN_ALIGN_AT_NBR = 1;
 
     /**
-     *  Maximum valid (useful) AtNbr for TMFFAlignColumn.
+     * Maximum valid (useful) AtNbr for TMFFAlignColumn.
      */
     public static final int MAX_ALIGN_AT_NBR = 3;
 
     /*  *------------------------------------------------*
-     *    For TMFFPreferences.java
-     *  *------------------------------------------------*
-     */
+     *   For TMFFPreferences.java
+     * *------------------------------------------------*/
 
     /**
-     *  Hardcoded TMFFScheme name for Unformatted output.
-     *  This name is RESERVED and cannot be input or
-     *  modified by the user.
+     * Hardcoded TMFFScheme name for Unformatted output. This name is RESERVED
+     * and cannot be input or modified by the user.
      */
     public static final String TMFF_UNFORMATTED_SCHEME_NAME = "Unformatted";
 
     /**
-     *  Format 'Unformatted' is assigned Format Number 0.
-     *  Do not change this without careful review and
-     *  some deep thought -- some other coding changes
-     *  would be needed!
+     * Format 'Unformatted' is assigned Format Number 0. Do not change this
+     * without careful review and some deep thought -- some other coding changes
+     * would be needed!
      */
     public static final int TMFF_UNFORMATTED_FORMAT_NBR_0 = 0;
 
     /**
-     *  The highest permissible Format Number. It is
-     *  arbitrarily set to a low number, because at
-     *  some point in the future we might "enhance"
-     *  the system and be required to hold an array
-     *  of TMFFFormat objects inside each mmj.lang.Axiom,
-     *  or even every mmj.lang.MObj (though that latter
-     *  is not foreseen.)
+     * The highest permissible Format Number. It is arbitrarily set to a low
+     * number, because at some point in the future we might "enhance" the system
+     * and be required to hold an array of TMFFFormat objects inside each
+     * mmj.lang.Axiom, or even every mmj.lang.MObj (though that latter is not
+     * foreseen.)
      */
     public static final int TMFF_MAX_FORMAT_NBR = 15;
 
     /**
-     *  The highest permissible Indent amount.
+     * The highest permissible Indent amount.
      */
     public static final int TMFF_MAX_INDENT = 5;
 
@@ -179,50 +174,50 @@ public class TMFFConstants {
             {"15", "TwoColumnAlignmentDepth5"}};
 
     /**
-     *  Hardcoded user name of TMFFMethod TMFFUnformatted.
+     * Hardcoded user name of TMFFMethod TMFFUnformatted.
      */
     public static final String TMFF_METHOD_USER_NAME_UNFORMATTED = "Unformatted";
 
     /**
-     *  Hardcoded user name of TMFFMethod TMFFAlignColumn.
+     * Hardcoded user name of TMFFMethod TMFFAlignColumn.
      */
     public static final String TMFF_METHOD_USER_NAME_ALIGN_COLUMN = "AlignColumn";
 
     /**
-     *  Hardcoded user name of TMFFMethod TMFFTwoColumnAlignment.
+     * Hardcoded user name of TMFFMethod TMFFTwoColumnAlignment.
      */
     public static final String TMFF_METHOD_USER_NAME_TWO_COLUMN_ALIGNMENT = "TwoColumnAlignment";
 
     /**
-     *  Hardcoded user name of TMFFMethod TMFFFlat.
+     * Hardcoded user name of TMFFMethod TMFFFlat.
      */
     public static final String TMFF_METHOD_USER_NAME_FLAT = "Flat";
 
     /**
-     *  Default setting for Current Format Number.
-     *
-     *  "13" = TwoColumnAlignmentDepth2.
+     * Default setting for Current Format Number.
+     * <p>
+     * "13" = TwoColumnAlignmentDepth2.
      */
     public static final int TMFF_CURR_FORMAT_NBR_DEFAULT = 13;
 
     /**
-     *  Default setting for Alternate Format Number.
-     *
-     *  "7" = Flat.
+     * Default setting for Alternate Format Number.
+     * <p>
+     * "7" = Flat.
      */
     public static final int TMFF_ALT_FORMAT_NBR_DEFAULT = 7;
 
     /**
-     *  Default setting for TMFF Use Indent amount
-     *
-     *  "0" = No indentation
+     * Default setting for TMFF Use Indent amount
+     * <p>
+     * "0" = No indentation
      */
     public static final int TMFF_USE_INDENT_DEFAULT = 0;
 
     /**
-     *  Default setting for TMFF Alt Indent amount
-     *
-     *  "1" = 1 column indentation per proof level below the root.
+     * Default setting for TMFF Alt Indent amount
+     * <p>
+     * "1" = 1 column indentation per proof level below the root.
      */
     public static final int TMFF_ALT_INDENT_DEFAULT = 1;
 

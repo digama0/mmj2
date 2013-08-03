@@ -7,31 +7,31 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  Dump.java  0.07 11/01/2011
+ * Dump.java  0.07 11/01/2011
  *
- *  Sep-25-2005
- *      -> check grammar.getGrammarInitialized()
- *         in addition to "!= null"
+ * Sep-25-2005
+ *     -> check grammar.getGrammarInitialized()
+ *        in addition to "!= null"
  *
- *  Sep-06-2006:
- *      -->Add TMFF stuff.
- *      -->When printing formula, if !isTMFFEnabled()
- *         don't use TMFF --> do it the old toString() way...
+ * Sep-06-2006:
+ *     -->Add TMFF stuff.
+ *     -->When printing formula, if !isTMFFEnabled()
+ *        don't use TMFF --> do it the old toString() way...
  *
- *  Nov-01-2007 Version 0.05
- *      - Add proofLevel 0 parm to tmffPreferences.renderFormula()
- *        call. No indentation of formulas used in Dump.java.
+ * Nov-01-2007 Version 0.05
+ *     - Add proofLevel 0 parm to tmffPreferences.renderFormula()
+ *       call. No indentation of formulas used in Dump.java.
  *
- *  Aug-01-2008 Version 0.06
- *      - Add PrintBookManagerChapters(),
- *            PrintBookManagerSections(), and
- *            PrintBookManagerSectionDetails().
+ * Aug-01-2008 Version 0.06
+ *     - Add PrintBookManagerChapters(),
+ *           PrintBookManagerSections(), and
+ *           PrintBookManagerSectionDetails().
  *
- *  Version 0.07 - Nov-01-2011:  comment update.
- *      --> Add check for valid parse tree
- *          before calling TMFFPreferences.renderFormula()
- *          in dumpStmtProperties() because TMFF requires
- *          real parse trees except in format number 0.
+ * Version 0.07 - Nov-01-2011:  comment update.
+ *     --> Add check for valid parse tree
+ *         before calling TMFFPreferences.renderFormula()
+ *         in dumpStmtProperties() because TMFF requires
+ *         real parse trees except in format number 0.
  */
 
 package mmj.util;
@@ -45,20 +45,17 @@ import mmj.tmff.TMFFStateParams;
 import mmj.verify.*;
 
 /**
- *  Dump started out as just testing code that could be
- *  "throwaway". Now a bit of it is used in mmj.Util.BatchMMJ2
- *  to dump/print info from LogicalSystem and Grammar. The
- *  report is ugly but better than nothing. And it is key
- *  for doing parallel testing because almost every key
- *  data element is output to the printer.
- *  <p>
- *  Dump can employ a PrintWriter or send its stuff to
- *  System.out. The PrintWriter can be set at construction
- *  time or later via a "set" function.
- *  <p>
- *  Most of the Dump print routines are invoked by
- *  BatchMMJ2 but some are leftovers from testing.
- *  Dump is ugly but it works.
+ * Dump started out as just testing code that could be "throwaway". Now a bit of
+ * it is used in mmj.Util.BatchMMJ2 to dump/print info from LogicalSystem and
+ * Grammar. The report is ugly but better than nothing. And it is key for doing
+ * parallel testing because almost every key data element is output to the
+ * printer.
+ * <p>
+ * Dump can employ a PrintWriter or send its stuff to System.out. The
+ * PrintWriter can be set at construction time or later via a "set" function.
+ * <p>
+ * Most of the Dump print routines are invoked by BatchMMJ2 but some are
+ * leftovers from testing. Dump is ugly but it works.
  */
 public class Dump {
 
@@ -66,14 +63,16 @@ public class Dump {
     public TMFFPreferences tmffPreferences;
 
     /**
-     *  Default constructor which will print to System.out.
+     * Default constructor which will print to System.out.
      */
     public Dump() {
         setTMFFPreferences(new TMFFPreferences());
     }
 
     /**
-     *  Construct Dump using a PrintWriter for output.
+     * Construct Dump using a PrintWriter for output.
+     * 
+     * @param sysOut the PrintWriter
      */
     public Dump(final PrintWriter sysOut) {
         this.sysOut = sysOut;
@@ -81,10 +80,10 @@ public class Dump {
     }
 
     /**
-     *  Sets Dump's SysOut to a new PrintWriter, or null
-     *  to revert to writing to System.out.
-     *
-     *  @param sysOut a PrintWriter, or null for System.out output.
+     * Sets Dump's SysOut to a new PrintWriter, or null to revert to writing to
+     * System.out.
+     * 
+     * @param sysOut a PrintWriter, or null for System.out output.
      */
     public void setSysOut(final PrintWriter sysOut) {
         this.sysOut = sysOut;
@@ -92,30 +91,30 @@ public class Dump {
     }
 
     /**
-     *  Sets Dump's Text Mode Formula Formatting preference parameters
-     *  to a new set of values.
-     *  <p>
-     *  Note: mmj.util.OutputBoss uses this.
-     *  <p>
-     *  @param tmffPreferences TMFF Preference parameters.
+     * Sets Dump's Text Mode Formula Formatting preference parameters to a new
+     * set of values.
+     * <p>
+     * Note: mmj.util.OutputBoss uses this.
+     * 
+     * @param tmffPreferences TMFF Preference parameters.
      */
     public void setTMFFPreferences(final TMFFPreferences tmffPreferences) {
         this.tmffPreferences = tmffPreferences;
     }
 
     /**
-     *  Print a line from a StringBuilder.
-     *
-     *  @param sb StringBuilder line to be printed.
+     * Print a line from a StringBuilder.
+     * 
+     * @param sb StringBuilder line to be printed.
      */
     public void sysOutDumpAPrintLn(final StringBuilder sb) {
         sysOutDumpAPrintLn(sb.toString());
     }
 
     /**
-     *  Print a line from a String.
-     *
-     *  @param s String line to be printed.
+     * Print a line from a String.
+     * 
+     * @param s String line to be printed.
      */
     public void sysOutDumpAPrintLn(final String s) {
         if (sysOut == null)
@@ -125,14 +124,12 @@ public class Dump {
     }
 
     /**
-     *  "printSyntaxDetails" is used by BatchMMJ2 to print
-     *  all syntax-related information about a LogicalSystem
-     *  and its Grammar.
-     *
-     *  @param caption identifying caption for the report.
-     *  @param logicalSystem a LogicalSystem object.
-     *  @param grammar a Grammar object derived from the Logical
-     *         System.
+     * "printSyntaxDetails" is used by BatchMMJ2 to print all syntax-related
+     * information about a LogicalSystem and its Grammar.
+     * 
+     * @param caption identifying caption for the report.
+     * @param logicalSystem a LogicalSystem object.
+     * @param grammar a Grammar object derived from the Logical System.
      */
     public void printSyntaxDetails(final String caption,
         final LogicalSystem logicalSystem, final Grammar grammar)
@@ -202,10 +199,10 @@ public class Dump {
     }
 
     /**
-     *  "printOneStatementDetails" is used by BatchMMJ2 to print
-     *  information about a single Stmt.
-     *
-     *  @param stmt a Stmt object.
+     * "printOneStatementDetails" is used by BatchMMJ2 to print information
+     * about a single Stmt.
+     * 
+     * @param stmt a Stmt object.
      */
     public void printOneStatementDetails(final Stmt stmt) {
         dumpOneStmt(1, // indentNbr
@@ -213,14 +210,12 @@ public class Dump {
     }
 
     /**
-     *  "printStatementDetails" is used by BatchMMJ2 to print
-     *  Metamath Statement details, up to the limit imposed
-     *  by maxStatementPrintCountParm.
-     *
-     *  @param caption identifying caption for the report.
-     *  @param stmtTbl Statement Table (Map)
-     *  @param maxStatementPrintCountParm max number of Stmt's
-     *         to print.
+     * "printStatementDetails" is used by BatchMMJ2 to print Metamath Statement
+     * details, up to the limit imposed by maxStatementPrintCountParm.
+     * 
+     * @param caption identifying caption for the report.
+     * @param stmtTbl Statement Table (Map)
+     * @param maxStatementPrintCountParm max number of Stmt's to print.
      */
     public void printStatementDetails(final String caption,
         final Map<String, Stmt> stmtTbl, final int maxStatementPrintCountParm)
@@ -234,15 +229,14 @@ public class Dump {
     }
 
     /**
-     *  "printBookManagerChapters" is used by BatchMMJ2 to print
-     *  BookManager Chapter information.
-     *
-     *  This function is used primarily as a way to generate
-     *  test output but the RunParm "PrintBookManagerChapters"
-     *  may be useful for mmj2 users.
-     *
-     *  @param caption identifying caption for the report.
-     *  @param bookManager the BookManager in use.
+     * "printBookManagerChapters" is used by BatchMMJ2 to print BookManager
+     * Chapter information.
+     * <p>
+     * This function is used primarily as a way to generate test output but the
+     * RunParm "PrintBookManagerChapters" may be useful for mmj2 users.
+     * 
+     * @param caption identifying caption for the report.
+     * @param bookManager the BookManager in use.
      */
     public void printBookManagerChapters(final String caption,
         final BookManager bookManager)
@@ -254,15 +248,14 @@ public class Dump {
     }
 
     /**
-     *  "printBookManagerSections" is used by BatchMMJ2 to print
-     *  BookManager Section information.
-     *
-     *  This function is used primarily as a way to generate
-     *  test output but the RunParm "PrintBookManagerSections"
-     *  may be useful for mmj2 users.
-     *
-     *  @param caption identifying caption for the report.
-     *  @param bookManager the BookManager in use.
+     * "printBookManagerSections" is used by BatchMMJ2 to print BookManager
+     * Section information.
+     * <p>
+     * This function is used primarily as a way to generate test output but the
+     * RunParm "PrintBookManagerSections" may be useful for mmj2 users.
+     * 
+     * @param caption identifying caption for the report.
+     * @param bookManager the BookManager in use.
      */
     public void printBookManagerSections(final String caption,
         final BookManager bookManager)
@@ -274,18 +267,17 @@ public class Dump {
     }
 
     /**
-     *  "printBookManagerSectionDetails" is used by BatchMMJ2 to print
-     *  BookManager Section, MObj and Chapter information.
-     *
-     *  This function is used primarily as a way to generate
-     *  test output but the RunParm "PrintBookManagerSectionDetails"
-     *  may be useful for mmj2 users.
-     *
-     *  @param runParm contains RunParm name and values.
-     *  @param logicalSystem the LogicalSystem in use.
-     *  @param bookManager the BookManager in use.
-     *  @param section the Section to be printed or null if
-     *         all Sections are to be printed.
+     * "printBookManagerSectionDetails" is used by BatchMMJ2 to print
+     * BookManager Section, MObj and Chapter information.
+     * <p>
+     * This function is used primarily as a way to generate test output but the
+     * RunParm "PrintBookManagerSectionDetails" may be useful for mmj2 users.
+     * 
+     * @param runParm contains RunParm name and values.
+     * @param logicalSystem the LogicalSystem in use.
+     * @param bookManager the BookManager in use.
+     * @param section the Section to be printed or null if all Sections are to
+     *            be printed.
      */
     public void printBookManagerSectionDetails(final RunParmArrayEntry runParm,
         final LogicalSystem logicalSystem, final BookManager bookManager,
@@ -737,8 +729,7 @@ public class Dump {
         sysOutDumpAPrintLn(indentTbl[indentNbr]
             + UtilConstants.DUMP_RULE_COLLECTION_UNDERSCORE);
 
-        if (grammarRuleCollection == null || grammarRuleCollection.isEmpty())
-        {
+        if (grammarRuleCollection == null || grammarRuleCollection.isEmpty()) {
             sysOutDumpAPrintLn(indentTbl[indentNbr]
                 + UtilConstants.DUMP_RULE_COLLECTION_IS_EMPTY);
             return;
@@ -832,7 +823,7 @@ public class Dump {
 
         sb.append(UtilConstants.DUMP_RULE_COLON);
 
-        s = new Integer(notationRule.getRuleNbr()).toString();
+        s = Integer.valueOf(notationRule.getRuleNbr()).toString();
         padit = UtilConstants.DUMP_NOTATION_RULE_NBR_PADIT - s.length();
         for (int i = 0; i < padit; i++)
             sb.append('0');

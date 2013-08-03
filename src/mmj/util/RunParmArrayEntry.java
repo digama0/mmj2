@@ -6,7 +6,7 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  RunParmArrayEntry.java  0.02 08/24/2005
+ * RunParmArrayEntry.java  0.02 08/24/2005
  */
 
 package mmj.util;
@@ -15,36 +15,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *   RunParmArrayEntry holds a RunParm "name" string
- *   AND an array(0->n) of RunParm "value" strings,
- *   OR it holds a "commentLine" (but not both).
+ * RunParmArrayEntry holds a RunParm "name" string AND an array(0->n) of RunParm
+ * "value" strings, OR it holds a "commentLine" (but not both).
  */
 public class RunParmArrayEntry implements Comparable<RunParmArrayEntry> {
 
     /**
-     *  if commentLine != null then the entire
-     *  entry is a comment and there is no data
-     *  in the rest of it. This is the case when
-     *  the first character of the input line
-     *  is a blank or the line is empty.
+     * if commentLine != null then the entire entry is a comment and there is no
+     * data in the rest of it. This is the case when the first character of the
+     * input line is a blank or the line is empty.
      */
     public String commentLine;
 
     /**
-     *  name is the first field on a DelimitedTextParser
-     *  line.
-     *  <p>
-     *  Generally, this would be a keyword.
+     * name is the first field on a DelimitedTextParser line.
+     * <p>
+     * Generally, this would be a keyword.
      */
     public String name;
 
     /**
-     *  values is an array of String corresponding to
-     *  fields 1 -> n of a DelimitedTextParser.
-     *  <p>
-     *  The program knows nothing about the contents of
-     *  fields except that they are String's, and perhaps
-     *  empty ("").
+     * values is an array of String corresponding to fields 1 -> n of a
+     * DelimitedTextParser.
+     * <p>
+     * The program knows nothing about the contents of fields except that they
+     * are String's, and perhaps empty ("").
      */
     public String[] values;
 
@@ -52,20 +47,22 @@ public class RunParmArrayEntry implements Comparable<RunParmArrayEntry> {
     private String delimiter;
 
     /**
-     *  Construct a dummy RunParmArrayEntry with no parameters.
+     * Construct a dummy RunParmArrayEntry with no parameters.
      */
     public RunParmArrayEntry() {}
 
     /**
-     *  Construct a RunParmArrayEntry manually using a name
-     *  and values array.
-     *  <p>
-     *  Quoter and Delimiter characters are set to the
-     *  defaults from UtilConstants:
-     *  <ul>
-     *  <li>UtilConstants.RUNPARM_FIELD_DELIMITER_DEFAULT
-     *  <li>UtilConstants.RUNPARM_FIELD_QUOTER_DEFAULT
-     *  </ul>
+     * Construct a RunParmArrayEntry manually using a name and values array.
+     * <p>
+     * Quoter and Delimiter characters are set to the defaults from
+     * UtilConstants:
+     * <ul>
+     * <li>UtilConstants.RUNPARM_FIELD_DELIMITER_DEFAULT
+     * <li>UtilConstants.RUNPARM_FIELD_QUOTER_DEFAULT
+     * </ul>
+     * 
+     * @param name the name of the RunParm
+     * @param values the arguments to the RunParm
      */
     public RunParmArrayEntry(final String name, final String[] values) {
         this.name = name.trim();
@@ -80,23 +77,22 @@ public class RunParmArrayEntry implements Comparable<RunParmArrayEntry> {
     }
 
     /**
-     *  Construct a RunParmArrayEntry using a DelimitedTextParser
-     *  pre-loaded with text line and delimiter/quoter parms.
-     *  <p>
-     *  Checks for comment: if the input line begins with one
-     *  of the following characters then it is deemd a "comment":
-     *  <ul>
-     *  <li>UtilConstants.RUNPARM_COMMENT_CHAR_SPACE
-     *  <li>UtilConstants.RUNPARM_COMMENT_CHAR_ASTERISK
-     *  <li>UtilConstants.RUNPARM_COMMENT_CHAR_SLASH
-     *  </ul>
-     *  <p>
-     *  If the line is not a comment but is empty or null,
-     *  an IllegalArgumentException is thrown. Otherwise,
-     *  the name and values are extracted using
-     *  DelimitedTextParser.
-     *  <p>
-     *  @param parser pre-loaded DelimitedTextParser object.
+     * Construct a RunParmArrayEntry using a DelimitedTextParser pre-loaded with
+     * text line and delimiter/quoter parms.
+     * <p>
+     * Checks for comment: if the input line begins with one of the following
+     * characters then it is deemd a "comment":
+     * <ul>
+     * <li>UtilConstants.RUNPARM_COMMENT_CHAR_SPACE
+     * <li>UtilConstants.RUNPARM_COMMENT_CHAR_ASTERISK
+     * <li>UtilConstants.RUNPARM_COMMENT_CHAR_SLASH
+     * </ul>
+     * <p>
+     * If the line is not a comment but is empty or null, an
+     * IllegalArgumentException is thrown. Otherwise, the name and values are
+     * extracted using DelimitedTextParser.
+     * 
+     * @param parser pre-loaded DelimitedTextParser object.
      */
     public RunParmArrayEntry(final DelimitedTextParser parser) {
 
@@ -133,13 +129,12 @@ public class RunParmArrayEntry implements Comparable<RunParmArrayEntry> {
     }
 
     /**
-     *  Compute hashcode for RunParmArrayEntry using
-     *  name.hashCode().
-     *  <p>
-     *  This won't work well with a bunch of comment lines
-     *  thrown in, or duplicates!
-     *
-     *  @return hashcode equal to name.hashCode().
+     * Compute hashcode for RunParmArrayEntry using name.hashCode().
+     * <p>
+     * This won't work well with a bunch of comment lines thrown in, or
+     * duplicates!
+     * 
+     * @return hashcode equal to name.hashCode().
      */
     @Override
     public int hashCode() {
@@ -147,11 +142,11 @@ public class RunParmArrayEntry implements Comparable<RunParmArrayEntry> {
     }
 
     /**
-     *  Compute for equality with another RunParmArrayEntry
-     *  based on name String equals().
-     *
-     *  return true if obj is a RunParmArrayEntry and
-     *         name.equals(blah.name), else false.
+     * Compute for equality with another RunParmArrayEntry based on name String
+     * equals().
+     * 
+     * @return true if obj is a RunParmArrayEntry and name.equals(blah.name),
+     *         else false.
      */
     @Override
     public boolean equals(final Object obj) {
@@ -160,27 +155,24 @@ public class RunParmArrayEntry implements Comparable<RunParmArrayEntry> {
     }
 
     /**
-     *  Compares RunParmArrayEntry object based on the name.
-     *
-     *  @param obj RunParmArrayEntry object to compare to this.
-     *
-     *  @return returns negative, zero, or a positive int
-     *  if this RunParmArrayEntry object is less than, equal to
-     *  or greater than the input parameter obj.
+     * Compares RunParmArrayEntry object based on the name.
+     * 
+     * @param obj RunParmArrayEntry object to compare to this.
+     * @return returns negative, zero, or a positive int if this
+     *         RunParmArrayEntry object is less than, equal to or greater than
+     *         the input parameter obj.
      */
-    @Override
     public int compareTo(final RunParmArrayEntry obj) {
         return name.compareTo(obj.name);
     }
 
     /**
-     *  Converts RunParmArrayEntry to a String.
-     *
-     *  @return String version of RunParmArrayEntry, which will
-     *          be in a normalized form, with field delimiters
-     *          and quoters placed amongst name and values fields
-     *          according to the contents of those fields
-     *          (i.e. uses quotes only if necessary).
+     * Converts RunParmArrayEntry to a String.
+     * 
+     * @return String version of RunParmArrayEntry, which will be in a
+     *         normalized form, with field delimiters and quoters placed amongst
+     *         name and values fields according to the contents of those fields
+     *         (i.e. uses quotes only if necessary).
      */
     @Override
     public String toString() {

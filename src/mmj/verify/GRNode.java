@@ -22,7 +22,7 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  GRNode.java  0.02 08/28/2005
+ * GRNode.java  0.02 08/28/2005
  */
 
 package mmj.verify;
@@ -31,61 +31,45 @@ import java.util.Collection;
 
 import mmj.lang.Cnst;
 
-/*
- * GRNode implements basic capabilities of Red-Black trees,
- * an efficient kind of balanced binary tree. The particular
- * algorithms used are adaptations of those in Corman,
- * Lieserson, and Rivest's <EM>Introduction to Algorithms</EM>.
- * This class was inspired by (and code cross-checked with) a
- * similar class by Chuck McManis. The implementations of
- * rebalancings during insertion and deletion are
- * a little trickier than those versions:
- * Most standard accounts use
- * a special dummy `nil' node for such purposes, but that doesn't
- * work well in a possibly concurrent environment.
- * <P>
- * It is a pure implementation class. For harnesses, see:
- * @see RBTree
- * @author Doug Lea
- *
- * <P> For an introduction to this package see <A HREF="index.html"> Overview </A>.
- *
- */
-
 /**
- *  GRNode -- see RBCell(dot)java by Doug Lea, public domain;
- *  clone that puppy, and added Up/Down fields
- *  to create hierarchical forest of Grammar Rule Trees.
- *  <p>
- *  GRForest is a collection of static functions that
- *  operate on GRNode Trees.
- *  <p>
- *  Each tree's root is stored in mmj.lang.Cnst.gRRoot(dot).
- *  <p>
- *  A tree contains every Notation Grammar Rule that begins
- *  with the gRRoot's Cnst. Each leaf node has a reference (pointer)
- *  to a sub-tree, and so on. This enables all Rules whose
- *  expressions begin with "(" to share a common root.
- *  <p>
- *  The purpose of GRForest and GRNode was to provide a
- *  searchable repository of NotationRule information,
- *  and it is used for that purpose in mmj.verify.BottomUpParser.java.
- *  However, the Bottom Up algorithm is to inefficient for
- *  Metamath's set.mm and has been "deprecated" (to put it
- *  politely), in favor of mmj.verify.EarleyParser.java.
- *
- *  So, GRForest and GRNode are teetering on obsolescence
- *  and could be removed from without too much trouble.
- *  The only use for them still is checking for duplicate
- *  Rule expressions, and there is obviously a cheaper
- *  way to do that than with these things...(I'm guessing
- *  that since each GrammarRule carries its own expression
- *  that the hash code for each rule could be pre-computed
- *  and even stored, if desired, and then used as the
- *  key to a HashSet. Bada bing, bada boom.)
- *
- *  Therefore, I am not going to document these any further.
- *
+ * see RBCell(dot)java by Doug Lea, public domain; clone that puppy, and added
+ * Up/Down fields to create hierarchical forest of Grammar Rule Trees.
+ * <p>
+ * <i>Original documentation:</i>
+ * <p>
+ * GRNode implements basic capabilities of Red-Black trees, an efficient kind of
+ * balanced binary tree. The particular algorithms used are adaptations of those
+ * in Corman, Lieserson, and Rivest's <EM>Introduction to Algorithms</EM>. This
+ * class was inspired by (and code cross-checked with) a similar class by Chuck
+ * McManis. The implementations of rebalancings during insertion and deletion
+ * are a little trickier than those versions: Most standard accounts use a
+ * special dummy `nil' node for such purposes, but that doesn't work well in a
+ * possibly concurrent environment.
+ * <hr>
+ * <p>
+ * GRForest is a collection of static functions that operate on GRNode Trees.
+ * <p>
+ * Each tree's root is stored in mmj.lang.Cnst.gRRoot(dot).
+ * <p>
+ * A tree contains every Notation Grammar Rule that begins with the gRRoot's
+ * Cnst. Each leaf node has a reference (pointer) to a sub-tree, and so on. This
+ * enables all Rules whose expressions begin with "(" to share a common root.
+ * <p>
+ * The purpose of GRForest and GRNode was to provide a searchable repository of
+ * NotationRule information, and it is used for that purpose in
+ * mmj.verify.BottomUpParser.java. However, the Bottom Up algorithm is to
+ * inefficient for Metamath's set.mm and has been "deprecated" (to put it
+ * politely), in favor of mmj.verify.EarleyParser.java.
+ * <p>
+ * So, GRForest and GRNode are teetering on obsolescence and could be removed
+ * from without too much trouble. The only use for them still is checking for
+ * duplicate Rule expressions, and there is obviously a cheaper way to do that
+ * than with these things...(I'm guessing that since each GrammarRule carries
+ * its own expression that the hash code for each rule could be pre-computed and
+ * even stored, if desired, and then used as the key to a HashSet. Bada bing,
+ * bada boom.)
+ * <p>
+ * Therefore, I am not going to document these any further.
  */
 public class GRNode {
     static final boolean RED = false;
@@ -103,10 +87,10 @@ public class GRNode {
 
     /*
      * NotationRule -- null if this GRNode is not a leaf node for
-     *           a Grammar Rule. Note that GrammarRule has a
-     *           reference back to this leaf node (e.g., delete a
-     *           leaf node and the grammar rule must be deleted
-     *           also!)
+     *          a Grammar Rule. Note that GrammarRule has a
+     *          reference back to this leaf node (e.g., delete a
+     *          leaf node and the grammar rule must be deleted
+     *          also!)
      */
     protected NotationRule elementNotationRule_;
 
@@ -156,11 +140,10 @@ public class GRNode {
     }
 
     /*
-     *  loadRuleCollection --
-     *  Add each GrammarRule in the current subtree to
-     *  the ruleCollection. Order of adds is lowest
-     *  within the current tree, and shortest rules first.
-     *
+     * loadRuleCollection --
+     * Add each GrammarRule in the current subtree to
+     * the ruleCollection. Order of adds is lowest
+     * within the current tree, and shortest rules first.
      */
     public void loadRuleCollection(final Collection<NotationRule> ruleCollection)
     {
@@ -266,7 +249,6 @@ public class GRNode {
     /*
      * Copy all content fields from another node
      * Override this if you add any other fields in subclasses.
-     *
      */
     protected void copyContents(final GRNode t) {
         elementCnst_ = t.elementCnst_;
@@ -403,7 +385,7 @@ public class GRNode {
     }
 
     /*
-     *  From CLR
+     * From CLR
      */
     protected final GRNode rotateLeft(GRNode root) {
         final GRNode r = right_;
@@ -425,7 +407,7 @@ public class GRNode {
     }
 
     /*
-     *  From CLR
+     * From CLR
      */
     protected final GRNode rotateRight(GRNode root) {
         final GRNode l = left_;
@@ -447,7 +429,7 @@ public class GRNode {
     }
 
     /*
-     *  From CLR
+     * From CLR
      */
     protected final GRNode fixAfterInsertion(GRNode root) {
         color_ = RED;

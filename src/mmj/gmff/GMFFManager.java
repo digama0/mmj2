@@ -6,11 +6,11 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-/**
- *  GMFFManager.java  0.01 11/01/2011
+/*
+ * GMFFManager.java  0.01 11/01/2011
  *
- *  Version 0.01:
- *  Nov-01-2011: new.
+ * Version 0.01:
+ * Nov-01-2011: new.
  */
 
 package mmj.gmff;
@@ -24,34 +24,27 @@ import mmj.pa.ProofAsst;
 import mmj.pa.ProofAsstException;
 
 /**
- *  Serves as a central data store for GMFF work in progress
- *  and as the primary interface for access to GMFF services.
- *  <p>
- *  One thing that is different about <code>GMFFManager</code>
- *  than other "manager" type classes in mmj2 is that the
- *  <code>GMFFManager</code> object is instantiated by the
- *  <code>LogicalSystemBoss</code> in the <code>util</code>
- *  package rather than the <code>GMFFBoss</code>. This is
- *  because Metamath $t Comment statement(s) are accumulated
- *  during the <code>LoadFile</code> process -- though not
- *  parsed at that time. Hence, a reference to the
- *  <code>GMFFManager</code> instance is stored in
- *  <code>LogicalSystem</code>.
- *  <p>
- *  Another thing that is different than typical mmj2
- *  processing is that the GMFF RunParms which establish
- *  settings for parameters are not validated when the
- *  RunParms are initially read. Nothing in GMFF happens
- *  until the first time the user -- or a command-style
- *  GMFF RunParm -- requests that GMFF typeset something.
- *  This functionality matches the way Metamath works and
- *  also saves users who have no interest in using GMFF
- *  from aggravation if there are errors in the GMFF-related
- *  inputs. A side-effect of delayed validation of GMFF
- *  RunParms is additional complexity. <code>GMFFManager</code>
- *  deals with that complexity in <code>initialization()</code>
- *  where all of the cached RunParms are validated and merged
- *  with default settings for parameters.
+ * Serves as a central data store for GMFF work in progress and as the primary
+ * interface for access to GMFF services.
+ * <p>
+ * One thing that is different about {@code GMFFManager} than other "manager"
+ * type classes in mmj2 is that the {@code GMFFManager} object is instantiated
+ * by the {@code LogicalSystemBoss} in the {@code util} package rather than the
+ * {@code GMFFBoss}. This is because Metamath $t Comment statement(s) are
+ * accumulated during the {@code LoadFile} process -- though not parsed at that
+ * time. Hence, a reference to the {@code GMFFManager} instance is stored in
+ * {@code LogicalSystem}.
+ * <p>
+ * Another thing that is different than typical mmj2 processing is that the GMFF
+ * RunParms which establish settings for parameters are not validated when the
+ * RunParms are initially read. Nothing in GMFF happens until the first time the
+ * user -- or a command-style GMFF RunParm -- requests that GMFF typeset
+ * something. This functionality matches the way Metamath works and also saves
+ * users who have no interest in using GMFF from aggravation if there are errors
+ * in the GMFF-related inputs. A side-effect of delayed validation of GMFF
+ * RunParms is additional complexity. {@code GMFFManager} deals with that
+ * complexity in {@code initialization()} where all of the cached RunParms are
+ * validated and merged with default settings for parameters.
  */
 public class GMFFManager {
 
@@ -101,18 +94,17 @@ public class GMFFManager {
     private GMFFExporter[] selectedExporters;
 
     /**
-     *  Standard constructor.
-     *  <p>
-     *  Called by <code>LogicalSystemBoss</code> when the
-     *  first <code>LoadFile</code> RunParm is executed.
-     *  <p>
-     *  Sets up GMFF data structures but does not load
-     *  them. Sets <code>gmffInitialized</code> to <code>
-     *  false</code> to trigger initialization when the
-     *  first GMFF service request is received.
-     *  <p>
-     *  @param filePath path for building directories.
-     *  @param messages The Messages object.
+     * Standard constructor.
+     * <p>
+     * Called by {@code LogicalSystemBoss} when the first {@code LoadFile}
+     * RunParm is executed.
+     * <p>
+     * Sets up GMFF data structures but does not load them. Sets
+     * {@code gmffInitialized} to {@code  false} to trigger initialization when
+     * the first GMFF service request is received.
+     *
+     * @param filePath path for building directories.
+     * @param messages The Messages object.
      */
     public GMFFManager(final File filePath, final Messages messages) {
 
@@ -137,18 +129,19 @@ public class GMFFManager {
     }
 
     /**
-     *  Calls <code>initialize()</code>, generates an audit report
-     *  of GMFF RunParms and default settings,mand if requested,
-     *  prints the typesetting definitions obtained from the input
-     *  Metamath file(s) $t Comment statements.
-     *  <p>
-     *  This function is called by GMFFBoss in response to a
-     *  <code>GMFFInitialize</code> RunParm.
-     *  <p>
-     *  @param printTypesettingDefinitions prints data from Metamath
-     *           $t Comments for which there are <code>GMFFExportParms</code>
-     *           with matching <code>typesetDefs</code> (we don't
-     *           load data from the $t's unless it is needed.)
+     * Calls {@code initialize()}, generates an audit report of GMFF RunParms
+     * and default settings,mand if requested, prints the typesetting
+     * definitions obtained from the input Metamath file(s) $t Comment
+     * statements.
+     * <p>
+     * This function is called by GMFFBoss in response to a
+     * {@code GMFFInitialize} RunParm.
+     *
+     * @param printTypesettingDefinitions prints data from Metamath $t Comments
+     *            for which there are {@code GMFFExportParms} with matching
+     *            {@code typesetDefs} (we don't load data from the $t's unless
+     *            it is needed.)
+     * @throws GMFFException if an error occurred
      */
     public void gmffInitialize(final boolean printTypesettingDefinitions)
         throws GMFFException
@@ -163,19 +156,16 @@ public class GMFFManager {
     }
 
     /**
-     *  Caches parameters from one RunParm for later validation
-     *  and use.
-     *  <p>
-     *  Also invokes <code>forceReinitialization()</code> which
-     *  sets <code>gmffInitialized = false</code> to force
-     *  re-initialization of GMFF the next time a service request
-     *  is made.
-     *  <p>
-     *  This function is called by <code>GMFFBoss</code> in
-     *  response to a <code>GMFFExportParms</code> RunParm.
-     *  <p>
-     *  @param inputGMFFExportParms data from GMFFExportParms
-     *				RunParm.
+     * Caches parameters from one RunParm for later validation and use.
+     * <p>
+     * Also invokes {@code forceReinitialization()} which sets
+     * {@code gmffInitialized = false} to force re-initialization of GMFF the
+     * next time a service request is made.
+     * <p>
+     * This function is called by {@code GMFFBoss} in response to a
+     * {@code GMFFExportParms} RunParm.
+     *
+     * @param inputGMFFExportParms data from GMFFExportParms RunParm.
      */
     public void accumInputGMFFExportParms(
         final GMFFExportParms inputGMFFExportParms)
@@ -186,19 +176,16 @@ public class GMFFManager {
     }
 
     /**
-     *  Caches parameters from one RunParm for later validation
-     *  and use.
-     *  <p>
-     *  Also invokes <code>forceReinitialization()</code> which
-     *  sets <code>gmffInitialized = false</code> to force
-     *  re-initialization of GMFF the next time a service request
-     *  is made.
-     *  <p>
-     *  This function is called by <code>GMFFBoss</code> in
-     *  response to a <code>GMFFUserTextEscapes</code> RunParm.
-     *  <p>
-     *  @param inputGMFFUserTextEscapes data from GMFFUserTextEscapes
-     *				RunParm.
+     * Caches parameters from one RunParm for later validation and use.
+     * <p>
+     * Also invokes {@code forceReinitialization()} which sets
+     * {@code gmffInitialized = false} to force re-initialization of GMFF the
+     * next time a service request is made.
+     * <p>
+     * This function is called by {@code GMFFBoss} in response to a
+     * {@code GMFFUserTextEscapes} RunParm.
+     *
+     * @param inputGMFFUserTextEscapes data from GMFFUserTextEscapes RunParm.
      */
     public void accumInputGMFFUserTextEscapesList(
         final GMFFUserTextEscapes inputGMFFUserTextEscapes)
@@ -209,20 +196,18 @@ public class GMFFManager {
     }
 
     /**
-     *  Caches one Metamath $t Comment statement for later validation
-     *  and use.
-     *  <p>
-     *  Also invokes <code>forceReinitialization()</code> which
-     *  sets <code>gmffInitialized = false</code> to force
-     *  re-initialization of GMFF the next time a service request
-     *  is made.
-     *  <p>
-     *  This function is called by <code>LogicalSystem</code> during
-     *  processing of a <code>LoadFile</code> RunParm.
-     *  <p>
-     *  @param comment String Metamath $t Comment statement as stored
-     *              in <code>SrcStmt</code> (the "$(" and "$)" delimiters
-     *              are removed at this pointand the first token is "$t").
+     * Caches one Metamath $t Comment statement for later validation and use.
+     * <p>
+     * Also invokes {@code forceReinitialization()} which sets
+     * {@code gmffInitialized = false} to force re-initialization of GMFF the
+     * next time a service request is made.
+     * <p>
+     * This function is called by {@code LogicalSystem} during processing of a
+     * {@code LoadFile} RunParm.
+     *
+     * @param comment String Metamath $t Comment statement as stored in
+     *            {@code SrcStmt} (the "$(" and "$)" delimiters are removed at
+     *            this pointand the first token is "$t").
      */
     public void cacheTypesettingCommentForGMFF(final String comment) {
 
@@ -231,18 +216,17 @@ public class GMFFManager {
     }
 
     /**
-     *  Stores the contents of the <code>GMFFUserExportChoice</code>
-     *  from one RunParm for later validation and use.
-     *  <p>
-     *  Also invokes <code>forceReinitialization()</code> which
-     *  sets <code>gmffInitialized = false</code> to force
-     *  re-initialization of GMFF the next time a service request
-     *  is made.
-     *  <p>
-     *  This function is called by <code>GMFFBoss</code> in
-     *  response to a <code>GMFFUserExportChoice</code> RunParm.
-     *  <p>
-     *  @param choice from GMFFUserExportChoice RunParm.
+     * Stores the contents of the {@code GMFFUserExportChoice} from one RunParm
+     * for later validation and use.
+     * <p>
+     * Also invokes {@code forceReinitialization()} which sets
+     * {@code gmffInitialized = false} to force re-initialization of GMFF the
+     * next time a service request is made.
+     * <p>
+     * This function is called by {@code GMFFBoss} in response to a
+     * {@code GMFFUserExportChoice} RunParm.
+     *
+     * @param choice from GMFFUserExportChoice RunParm.
      */
     public void setInputGMFFUserExportChoice(final GMFFUserExportChoice choice)
     {
@@ -251,100 +235,88 @@ public class GMFFManager {
     }
 
     /**
-     *  Sets the <code>symTbl</code> for use in generating GMFF
-     *  exports.
-     *  <p>
-     *  This function is called by the <code>LogicalSystem</code>
-     *  constructor -- which itself is excuted during processing
-     *  of the first <code>LoadFile</code> RunParm. <code>symTbl</code>
-     *  is itself constructed during construction of <code>LogicalSystem</code>
-     *  so this function is necessary even though <code>GMFFManager</code>
-     *  is passed as an argument to the <code>LogicalSystem</code>
-     *  constructor (a somewhat circular arrangement.)
+     * Sets the {@code symTbl} for use in generating GMFF exports.
+     * <p>
+     * This function is called by the {@code LogicalSystem} constructor -- which
+     * itself is excuted during processing of the first {@code LoadFile}
+     * RunParm. {@code symTbl} is itself constructed during construction of
+     * {@code LogicalSystem} so this function is necessary even though
+     * {@code GMFFManager} is passed as an argument to the {@code LogicalSystem}
+     * constructor (a somewhat circular arrangement.)
+     * <p>
+     * {@code symTbl} is needed because an error message is generated when a
+     * symbol to be typeset is not found in the Metamath $t definitions, but
+     * only if the symbol string is really a valid symbol (and is not a
+     * {@code WorkVar}.) (GMFF not not require that Proof Worksheets be valid,
+     * just that the Proof Worksheet format is loosely followed.)
      *
-     *  <code>symTbl</code> is needed because an error message is
-     *  generated when a symbol to be typeset is not found in the
-     *  Metamath $t definitions, but only if the symbol string is
-     *  really a valid symbol (and is not a <code>WorkVar</code>.)
-     *  (GMFF not not require that Proof Worksheets be valid, just
-     *  that the Proof Worksheet format is loosely followed.)
-     *  <p>
-     *  @param symTbl The Symbol Table Map from <code>LogicalSystem</code>
+     * @param symTbl The Symbol Table Map from {@code LogicalSystem}
      */
     public void setSymTbl(final Map<String, Sym> symTbl) {
         this.symTbl = symTbl;
     }
 
     /**
-     *  Gets the <code>symTbl</code> for use in generating GMFF
-     *  exports.
-     *  <p>
-     *  @return The Symbol Table Map, <code>symTbl</code> from
-     *   			<code>LogicalSystem</code>
+     * Gets the {@code symTbl} for use in generating GMFF exports.
+     *
+     * @return The Symbol Table Map, {@code symTbl} from {@code LogicalSystem}
      */
     public Map<String, Sym> getSymTbl() {
         return symTbl;
     }
 
     /**
-     *  Gets the <code>messages</code> object.
-     *  <p>
-     *  @return The Messages object used to store error and
-     *          informational messages during mmj2 processing.
+     * Gets the {@code messages} object.
+     *
+     * @return The Messages object used to store error and informational
+     *         messages during mmj2 processing.
      */
     public Messages getMessages() {
         return messages;
     }
 
     /**
-     *  Returns the <code>gmffInitialized</code> boolean variable.
-     *  <p>
-     *  @return true if GMFF already initialized, otherwise false.
+     * Returns the {@code gmffInitialized} boolean variable.
+     *
+     * @return true if GMFF already initialized, otherwise false.
      */
     public boolean isGMFFInitialized() {
         return gmffInitialized;
     }
 
     /**
-     *  Forces GMFF to re-initialize itself the next time a service
-     *  request is received by settting <code>gmffInitialized</code>
-     *  to <code>false</code>.
+     * Forces GMFF to re-initialize itself the next time a service request is
+     * received by settting {@code gmffInitialized} to {@code false}.
      */
     public void forceReinitialization() {
         gmffInitialized = false;
     }
 
     /**
-     *  Exports one or a range of Proof Worksheets of a given
-     *  file type from a designated directory.
-     *  <p>
-     *  This function implements the <code>GMFFExportFromFolder</code>
-     *  RunParm command.
-     *  <p>
-     *  The sort sequence used to select and output Proof Worksheets
-     *  is File Name minus File Type.
-     *  <p>
-     *  Refer to mmj2\doc\gmffdoc\C:\mmj2jar\GMFFDoc\GMFFRunParms.txt
-     *  for more info about the parameters on the
-     *  <code>GMFFExportFromFolder</code>  RunParm.
-     *  <p>
-     *  @param inputDirectory The Directory to export Proof Worksheets
-     *  				      from
-     *  @param theoremLabelOrAsterisk Either a theorem label or "*".
-     *                        If theorem label input then that is used
-     *                        as the starting point, otherwise processing
-     *                        begins at the first file in the directory.
-     *  @param inputFileType  File Type to select, including the "."
-     *                        (e.g. ".mmp")
-     *  @param maxNumberToExport Limits the number of exports processed.
-     *                        Must be greater than zero and less then
-     *                        2 billionish...
-     *  @param appendFileNameIn Specifies an append-mode file name to which
-     *                        all of the exported proofs will be written --
-     *                        within the folder specified for each Export
-     *                        Type on the GMFFExportParms RunParm; overrides
-     *                        the normal name assigned to an export file.
-     *  @throws GMFFException is errors encountered.
+     * Exports one or a range of Proof Worksheets of a given file type from a
+     * designated directory.
+     * <p>
+     * This function implements the {@code GMFFExportFromFolder} RunParm
+     * command.
+     * <p>
+     * The sort sequence used to select and output Proof Worksheets is File Name
+     * minus File Type.
+     * <p>
+     * Refer to mmj2\doc\gmffdoc\C:\mmj2jar\GMFFDoc\GMFFRunParms.txt for more
+     * info about the parameters on the {@code GMFFExportFromFolder} RunParm.
+     *
+     * @param inputDirectory The Directory to export Proof Worksheets from
+     * @param theoremLabelOrAsterisk Either a theorem label or "*". If theorem
+     *            label input then that is used as the starting point, otherwise
+     *            processing begins at the first file in the directory.
+     * @param inputFileType File Type to select, including the "." (e.g. ".mmp")
+     * @param maxNumberToExport Limits the number of exports processed. Must be
+     *            greater than zero and less then 2 billionish...
+     * @param appendFileNameIn Specifies an append-mode file name to which all
+     *            of the exported proofs will be written -- within the folder
+     *            specified for each Export Type on the GMFFExportParms RunParm;
+     *            overrides the normal name assigned to an export file.
+     * @throws GMFFException is errors encountered.
      */
     public void exportFromFolder(final String inputDirectory,
         final String theoremLabelOrAsterisk, final String inputFileType,
@@ -416,36 +388,28 @@ public class GMFFManager {
     }
 
     /**
-     *  Exports one theorem or a range of theorems from
-     *  <code>LogicalSystem</code>.
-     *  <p>
-     *  This function implements the <code>GMFFExportTheorem</code>
-     *  RunParm command.
-     *  <p>
-     *  The sort sequence used to select and output thereoms
-     *  is <code>MObj.seq</code> -- that is, order of appearance
-     *  in the <code>LogicalSystem</code>.
-     *  <p>
-     *  Refer to mmj2\doc\gmffdoc\C:\mmj2jar\GMFFDoc\GMFFRunParms.txt
-     *  for more info about the parameters on the
-     *  <code>GMFFExportThereom</code> RunParm.
-     *  <p>
-     *  @param theoremLabelOrAsterisk Either a theorem label or "*".
-     *                        If theorem label input then that is used
-     *                        as the starting point, otherwise processing
-     *                        begins at the first file in the directory.
-     *  @param maxNumberToExport Limits the number of exports processed.
-     *                        Must be greater than zero and less then
-     *                        2 billionish...
-     *  @param appendFileNameIn Specifies an append-mode file name to which
-     *                        all of the exported proofs will be written --
-     *                        within the folder specified for each Export
-     *                        Type on the GMFFExportParms RunParm; overrides
-     *                        the normal name assigned to an export file.
-     *  @param proofAsst      The <code>ProofAsst</code> object, used to
-     *                        format Proof Worksheets from Metamath (RPN)
-     *                        proofs.
-     *  @throws GMFFException is errors encountered.
+     * Exports one theorem or a range of theorems from {@code LogicalSystem}.
+     * <p>
+     * This function implements the {@code GMFFExportTheorem} RunParm command.
+     * <p>
+     * The sort sequence used to select and output thereoms is {@code MObj.seq}
+     * -- that is, order of appearance in the {@code LogicalSystem}.
+     * <p>
+     * Refer to mmj2\doc\gmffdoc\C:\mmj2jar\GMFFDoc\GMFFRunParms.txt for more
+     * info about the parameters on the {@code GMFFExportThereom} RunParm.
+     *
+     * @param theoremLabelOrAsterisk Either a theorem label or "*". If theorem
+     *            label input then that is used as the starting point, otherwise
+     *            processing begins at the first file in the directory.
+     * @param maxNumberToExport Limits the number of exports processed. Must be
+     *            greater than zero and less then 2 billionish...
+     * @param appendFileNameIn Specifies an append-mode file name to which all
+     *            of the exported proofs will be written -- within the folder
+     *            specified for each Export Type on the GMFFExportParms RunParm;
+     *            overrides the normal name assigned to an export file.
+     * @param proofAsst The {@code ProofAsst} object, used to format Proof
+     *            Worksheets from Metamath (RPN) proofs.
+     * @throws GMFFException is errors encountered.
      */
     public void exportTheorem(final String theoremLabelOrAsterisk,
         final String maxNumberToExport, final String appendFileNameIn,
@@ -496,31 +460,25 @@ public class GMFFManager {
 
     }
     /**
-     *  Exports one <code>Theorem</code> from the
-     *  <code>LogicalSystem</code>.
-     *  loaded
-     *  <p>
-     *  This function is called by other functions in
-     *  <code>GMFFManager</code> but it would be perfectly
-     *  valid to call it externally.
-     *  <p>
-     *  This function calls <code>ProofAsst.exportOneTheorem</code>
-     *  which creates a Proof Worksheet from a Metamath (RPN) proof.
-     *  If the theorem's proof is incomplete or invalid, or if it
-     *  contains no assertions, an error message results (and if
-     *  input argument <code>theorem</code> is null an
-     *  <code>IllegalArgumentException</code> will result ;-)
-     *  <p>
-     *  @param theorem        <code>Theorem</code> to be exported.
-     *  @param appendFileName Specifies an append-mode file name to which
-     *                        exported proof will be written --
-     *                        within the folder specified for each Export
-     *                        Type on the GMFFExportParms RunParm; overrides
-     *                        the normal name assigned to an export file.
-     *  @param proofAsst      The <code>ProofAsst</code> object, used to
-     *                        format Proof Worksheets from Metamath (RPN)
-     *                        proofs.
-     *  @throws GMFFException is errors encountered.
+     * Exports one {@code Theorem} from the {@code LogicalSystem}. loaded
+     * <p>
+     * This function is called by other functions in {@code GMFFManager} but it
+     * would be perfectly valid to call it externally.
+     * <p>
+     * This function calls {@code ProofAsst.exportOneTheorem} which creates a
+     * Proof Worksheet from a Metamath (RPN) proof. If the theorem's proof is
+     * incomplete or invalid, or if it contains no assertions, an error message
+     * results (and if input argument {@code theorem} is null an
+     * {@code IllegalArgumentException} will result ;-)
+     *
+     * @param theorem {@code Theorem} to be exported.
+     * @param appendFileName Specifies an append-mode file name to which
+     *            exported proof will be written -- within the folder specified
+     *            for each Export Type on the GMFFExportParms RunParm; overrides
+     *            the normal name assigned to an export file.
+     * @param proofAsst The {@code ProofAsst} object, used to format Proof
+     *            Worksheets from Metamath (RPN) proofs.
+     * @throws GMFFException is errors encountered.
      */
     public void gmffExportOneTheorem(final Theorem theorem,
         final String appendFileName, final ProofAsst proofAsst)
@@ -556,31 +514,25 @@ public class GMFFManager {
     }
 
     /**
-     *  Exports one <code>Theorem</code> from the
-     *  <code>LogicalSystem</code>.
-     *  loaded
-     *  <p>
-     *  This function is called by other functions in
-     *  <code>GMFFManager</code> but it would be perfectly
-     *  valid to call it externally.
-     *  <p>
-     *  This function calls <code>ProofAsst.exportOneTheorem</code>
-     *  which creates a Proof Worksheet from a Metamath (RPN) proof.
-     *  If the theorem's proof is incomplete or invalid, or if it
-     *  contains no assertions, an error message results -- and if
-     *  input argument <code>theoremLabel</code> is null or
-     *  invalid an exception is thrown...
-     *  <p>
-     *  @param theoremLabel   label of <code>Theorem</code> to be exported.
-     *  @param appendFileName Specifies an append-mode file name to which
-     *                        exported proof will be written --
-     *                        within the folder specified for each Export
-     *                        Type on the GMFFExportParms RunParm; overrides
-     *                        the normal name assigned to an export file.
-     *  @param proofAsst      The <code>ProofAsst</code> object, used to
-     *                        format Proof Worksheets from Metamath (RPN)
-     *                        proofs.
-     *  @throws GMFFException is errors encountered.
+     * Exports one {@code Theorem} from the {@code LogicalSystem}. loaded
+     * <p>
+     * This function is called by other functions in {@code GMFFManager} but it
+     * would be perfectly valid to call it externally.
+     * <p>
+     * This function calls {@code ProofAsst.exportOneTheorem} which creates a
+     * Proof Worksheet from a Metamath (RPN) proof. If the theorem's proof is
+     * incomplete or invalid, or if it contains no assertions, an error message
+     * results -- and if input argument {@code theoremLabel} is null or invalid
+     * an exception is thrown...
+     *
+     * @param theoremLabel label of {@code Theorem} to be exported.
+     * @param appendFileName Specifies an append-mode file name to which
+     *            exported proof will be written -- within the folder specified
+     *            for each Export Type on the GMFFExportParms RunParm; overrides
+     *            the normal name assigned to an export file.
+     * @param proofAsst The {@code ProofAsst} object, used to format Proof
+     *            Worksheets from Metamath (RPN) proofs.
+     * @throws GMFFException is errors encountered.
      */
     public void gmffExportOneTheorem(final String theoremLabel,
         final String appendFileName, final ProofAsst proofAsst)
@@ -616,36 +568,33 @@ public class GMFFManager {
     }
 
     /**
-     *  Exports a single Proof Worksheet to files in the requested
-     *  formats.
-     *  <p>
-     *  This function is called by <code>ProofAsst</code> and by
-     *  various functions in <code>GMFFManager</code>.
-     *  <p>
-     *  The following functions are performed:
-     *  <p>
-     *  <ol>
-     *  <li> Initializes GMFF if necessary.
-     *  <li> Throws an exception if the parameter settings
-     *       do not include at least one active export format.
-     *  <li> Loads the input proofText into a
-     *       new <code>ProofWorksheetCache</code> object
-     *  <li> invokes each active export request passing the
-     *       <code>ProofWorksheetCache</code> and accumulating
-     *       confirmation messages from them in return.
-     *  <li> returns the accumulated confirmation messages to
-     *       the caller.
-     *  </ol>
-     *  <p>
-     *  @param proofText String containing text in the format
-     *           of an mmj2 Proof Worksheet.
-     *  @param appendFileName name of a file to which export
-     *           data should be appended (in the proper directory
-     *           for the Export Type), or <code>null</code> if
-     *           GMFF is supposed to generate the name.
-     *  @return String containing confirmation messages about
-     *           successful export(s) if no errors occurred.
-     *  @throws GMFFException if error found.
+     * Exports a single Proof Worksheet to files in the requested formats.
+     * <p>
+     * This function is called by {@code ProofAsst} and by various functions in
+     * {@code GMFFManager}.
+     * <p>
+     * The following functions are performed:
+     * <p>
+     * <ol>
+     * <li>Initializes GMFF if necessary.
+     * <li>Throws an exception if the parameter settings do not include at least
+     * one active export format.
+     * <li>Loads the input proofText into a new {@code ProofWorksheetCache}
+     * object
+     * <li>invokes each active export request passing the
+     * {@code ProofWorksheetCache} and accumulating confirmation messages from
+     * them in return.
+     * <li>returns the accumulated confirmation messages to the caller.
+     * </ol>
+     *
+     * @param proofText String containing text in the format of an mmj2 Proof
+     *            Worksheet.
+     * @param appendFileName name of a file to which export data should be
+     *            appended (in the proper directory for the Export Type), or
+     *            {@code null} if GMFF is supposed to generate the name.
+     * @return String containing confirmation messages about successful
+     *         export(s) if no errors occurred.
+     * @throws GMFFException if error found.
      */
     public String exportProofWorksheet(final String proofText,
         final String appendFileName) throws GMFFException
@@ -673,28 +622,27 @@ public class GMFFManager {
     }
 
     /**
-     *  Implements RunParm GMFFParseMMTypesetDefsComment.
-     *  <p>
-     *  This function is primarily used for testing. It
-     *  parses a file containing a single Metamath comment
-     *  statement -- of the $t variety. Because it is
-     *  intended for standalone use in testing, it does
-     *  not require GMFF initialization prior to use, and
-     *  it does not check for or trigger GMFF initialization.
-     *  <p>
-     *  The code is quick and dirty because it is just used
-     *  for testing. Efficiency not an issue.
-     *  <p>
-     *  @param typesetDefKeyword The Metamath $t keyword
-     *			to select for parsing (e.g. "htmldef")
-     *  @param myDirectory The directory containing the Metamath
-     *           .mm file to parse.
-     *  @param myMetamathTypesetCommentFileName File Name in
-     *           myDirectory to parse.
-     *  @param runParmPrintOption if true prints the input, including
-     *           the directory, file name, typesetDefKeyword and
-     *           the entire Metamath file.
-     *  @throws GMFFException if errors found.
+     * Implements RunParm GMFFParseMMTypesetDefsComment.
+     * <p>
+     * This function is primarily used for testing. It parses a file containing
+     * a single Metamath comment statement -- of the $t variety. Because it is
+     * intended for standalone use in testing, it does not require GMFF
+     * initialization prior to use, and it does not check for or trigger GMFF
+     * initialization.
+     * <p>
+     * The code is quick and dirty because it is just used for testing.
+     * Efficiency not an issue.
+     *
+     * @param typesetDefKeyword The Metamath $t keyword to select for parsing
+     *            (e.g. "htmldef")
+     * @param myDirectory The directory containing the Metamath .mm file to
+     *            parse.
+     * @param myMetamathTypesetCommentFileName File Name in myDirectory to
+     *            parse.
+     * @param runParmPrintOption if true prints the input, including the
+     *            directory, file name, typesetDefKeyword and the entire
+     *            Metamath file.
+     * @throws GMFFException if errors found.
      */
     public void parseMetamathTypesetComment(final String typesetDefKeyword,
         final String myDirectory,
@@ -741,9 +689,9 @@ public class GMFFManager {
     }
 
     /**
-     *  Generates and outputs to the Messages object an audit
-     *  report of the final results of GMFF initialization
-     *  showing the parameters and settings in use.
+     * Generates and outputs to the Messages object an audit report of the final
+     * results of GMFF initialization showing the parameters and settings in
+     * use.
      */
     public void generateInitializationAuditReport() {
         final StringBuilder sb = new StringBuilder();
@@ -788,9 +736,9 @@ public class GMFFManager {
     }
 
     /**
-     *  Generates and outputs to the Messages object an audit
-     *  report of the Metamath $t typesetting definitions
-     *  after parsing of the input Metamath file.
+     * Generates and outputs to the Messages object an audit report of the
+     * Metamath $t typesetting definitions after parsing of the input Metamath
+     * file.
      */
     public void generateTypesettingDefinitionsReport() {
 
@@ -799,39 +747,36 @@ public class GMFFManager {
     }
 
     /**
-     *  Initializes GMFF using all cached RunParms, default
-     *  settings and cached Metamath $t Comment statements.
-     *  <p>
-     *  This was surprisingly tricky to get right due to
-     *  the interrelated nature of the cached data, some
-     *  of which may be redundant and/or updates to previous
-     *  inputs. The key data element is Export Type (e.g.
-     *  "html", "althtml", "latex", etc.) -- it is the
-     *  key used to match and merge the primary inputs.
-     *  For example, two GMFFExportParms RunParms with the
-     *  same Export Type result in one output Exporter
-     *  (export request), with the last input RunParm
-     *  overriding the previous inputs.
-     *  <p>
-     *  Functions performed, in order:
-     *  <ol>
-     *  <li>set <code>gmffInitialized = false</code>
-     *      (it will only be set to <code>true</code>
-     *      if this entire gauntlet of logic is completed
-     *      without thrown exceptions.
-     *  <li>build consolidated list of Export Parms using
-     *      cached input and default settings.
-     *  <li>build consolidated list of User Text Escapes using
-     *      cached input and default settings.
-     *  <li>build list of enabled, valid <code>Exporter</code>s.
-     *  <li>load the Metamath Typeset Def list and update
-     *      the <code>Exporter</code>s to point to the defs.
-     *  <li>validate and load the User Export Choice (either
-     *      a particular Export Type or "ALL")
-     *  <li>load final list of Selected (chosen)
-     *      <code>Exporter</code>s.
-     *  <li>set <code>gmffInitialized = true</code>
-     *  </ol>
+     * Initializes GMFF using all cached RunParms, default settings and cached
+     * Metamath $t Comment statements.
+     * <p>
+     * This was surprisingly tricky to get right due to the interrelated nature
+     * of the cached data, some of which may be redundant and/or updates to
+     * previous inputs. The key data element is Export Type (e.g. "html",
+     * "althtml", "latex", etc.) -- it is the key used to match and merge the
+     * primary inputs. For example, two GMFFExportParms RunParms with the same
+     * Export Type result in one output Exporter (export request), with the last
+     * input RunParm overriding the previous inputs.
+     * <p>
+     * Functions performed, in order:
+     * <ol>
+     * <li>set {@code gmffInitialized = false} (it will only be set to
+     * {@code true} if this entire gauntlet of logic is completed without thrown
+     * exceptions.
+     * <li>build consolidated list of Export Parms using cached input and
+     * default settings.
+     * <li>build consolidated list of User Text Escapes using cached input and
+     * default settings.
+     * <li>build list of enabled, valid {@code Exporter}s.
+     * <li>load the Metamath Typeset Def list and update the {@code Exporter}s
+     * to point to the defs.
+     * <li>validate and load the User Export Choice (either a particular Export
+     * Type or "ALL")
+     * <li>load final list of Selected (chosen) {@code Exporter}s.
+     * <li>set {@code gmffInitialized = true}
+     * </ol>
+     *
+     * @throws GMFFException if an error occurred
      */
     private void initialization() throws GMFFException {
         gmffInitialized = false;
@@ -854,12 +799,13 @@ public class GMFFManager {
     }
 
     /**
-     *  Builds a list containing the default export
-     *  parms with input user export parms merged
-     *  on top.
-     *  <p>
-     *  Validates the ExportParms after building the
-     *  consolidated list.
+     * Builds a list containing the default export parms with input user export
+     * parms merged on top.
+     * <p>
+     * Validates the ExportParms after building the consolidated list.
+     * 
+     * @return the list of GMFFExportParms
+     * @throws GMFFException if an error occurred
      */
     private List<GMFFExportParms> loadExportParmsList() throws GMFFException {
 
@@ -891,11 +837,13 @@ public class GMFFManager {
     }
 
     /**
-     *  Builds a list containing the default text escapes
-     *  with user input text escapes merged on top.
-     *  <p>
-     *  Validates the text escapes after building the
-     *  consolidated list.
+     * Builds a list containing the default text escapes with user input text
+     * escapes merged on top.
+     * <p>
+     * Validates the text escapes after building the consolidated list.
+     * 
+     * @return the list of GMFFUserTextEscapes
+     * @throws GMFFException if an error occurred
      */
     private List<GMFFUserTextEscapes> loadUserTextEscapesList()
         throws GMFFException

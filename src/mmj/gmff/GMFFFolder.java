@@ -6,11 +6,11 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-/**
- *  GMFFFolder.java  0.01 11/01/2011
+/*
+ * GMFFFolder.java  0.01 11/01/2011
  *
- *  Version 0.01:
- *  Nov-01-2011: new.
+ * Version 0.01:
+ * Nov-01-2011: new.
  */
 
 package mmj.gmff;
@@ -20,30 +20,26 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- *   GMFFFolder is a helper class for GMFF reading and
- *   writing.
+ * GMFFFolder is a helper class for GMFF reading and writing.
  */
 public class GMFFFolder {
 
     private File folderFile;
 
     /**
-     *  Constructor for GMFFFolder using pathname String.
-     *  <p>
-     *  The input <code>folderName</code> String may be
-     *  an absolute or relative path name. If it is null
-     *  or an empty string, does not exist, is not a
-     *  directory, or is security protected, then an
-     *  exception is thrown.
-     *  <p>
-     *  @param filePath path name for building folder.
-     *            May be null, relative or absolute.
-     *  @param folderName relative or absolute path name
-     *  @param exportType Export Type parm related to this
-     *            folder for use in error messages.
-     *  @throws GMFFException if folderName not found, not
-     *            a readable directory, security protected,
-     *            or just plain invalid.
+     * Constructor for GMFFFolder using pathname String.
+     * <p>
+     * The input {@code folderName} String may be an absolute or relative path
+     * name. If it is null or an empty string, does not exist, is not a
+     * directory, or is security protected, then an exception is thrown.
+     *
+     * @param filePath path name for building folder. May be null, relative or
+     *            absolute.
+     * @param folderName relative or absolute path name
+     * @param exportType Export Type parm related to this folder for use in
+     *            error messages.
+     * @throws GMFFException if folderName not found, not a readable directory,
+     *             security protected, or just plain invalid.
      */
     public GMFFFolder(final File filePath, final String folderName,
         final String exportType) throws GMFFException
@@ -90,25 +86,20 @@ public class GMFFFolder {
     }
 
     /**
-     *  Returns a name-sorted array listing the files in the
-     *  directory which match the input fileType and have a name
-     *  greater than or equal to the input lowestNamePrefix.
-     *  <p>
-     *  NOTE: "fileNamePrefix" refers to the file name without
-     *        the dotted file type (e.g. "help.txt" has file
-     *        name prefix = "help".)
-     *  <p>
-     *  @param fileType dot followed by file suffix
-     *          (e.g. ".mmp"). Selected files must
-     *          have matching file suffix.
-     *  @param lowestNamePrefix Selected files must
-     *          have names >= lowestNamePrefix, ignoring
-     *          case.
-     *  @return File array sorted by file name prefix
-     *          of files within the folder with matching
-     *          file type and file name prefix >= lowest
-     *          file name.
-     *  @throws GMFFException is security exception.
+     * Returns a name-sorted array listing the files in the directory which
+     * match the input fileType and have a name greater than or equal to the
+     * input lowestNamePrefix.
+     * <p>
+     * NOTE: "fileNamePrefix" refers to the file name without the dotted file
+     * type (e.g. "help.txt" has file name prefix = "help".)
+     *
+     * @param fileType dot followed by file suffix (e.g. ".mmp"). Selected files
+     *            must have matching file suffix.
+     * @param lowestNamePrefix Selected files must have names >=
+     *            lowestNamePrefix, ignoring case.
+     * @return File array sorted by file name prefix of files within the folder
+     *         with matching file type and file name prefix >= lowest file name.
+     * @throws GMFFException is security exception.
      */
     public File[] listFiles(final String fileType, final String lowestNamePrefix)
         throws GMFFException
@@ -130,19 +121,19 @@ public class GMFFFolder {
     }
 
     /**
-     *  Returns the File object for the GMFFFolder.
-     *  <p>
-     *  @return File object for the GMFFFolder.
+     * Returns the File object for the GMFFFolder.
+     *
+     * @return File object for the GMFFFolder.
      */
     public File getFolderFile() {
         return folderFile;
     }
 
     /**
-     *  Returns the absolute pathname of the GMFFFolder.
-     *  <p>
-     *  @return Absolute pathname of the GMFFFolder or null if the
-     *              underlying File is null.
+     * Returns the absolute pathname of the GMFFFolder.
+     *
+     * @return Absolute pathname of the GMFFFolder or null if the underlying
+     *         File is null.
      */
     public String getAbsolutePath() {
         if (folderFile == null)

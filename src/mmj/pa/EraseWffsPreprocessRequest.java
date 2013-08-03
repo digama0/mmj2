@@ -7,10 +7,10 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  EraseWffsPreprocessRequest.java  0.01 03/01/2008
+ * EraseWffsPreprocessRequest.java  0.01 03/01/2008
  *
- *  Version 0.01:
- *  ==> New.
+ * Version 0.01:
+ * ==> New.
  */
 
 package mmj.pa;
@@ -18,9 +18,8 @@ package mmj.pa;
 import java.io.*;
 
 /**
- *  EraseWffsPreprocessRequest implements a user request for an
- *  erasure operation on non-QED Derivation Step formulas
- *  in a proof text area.
+ * EraseWffsPreprocessRequest implements a user request for an erasure operation
+ * on non-QED Derivation Step formulas in a proof text area.
  */
 public class EraseWffsPreprocessRequest extends PreprocessRequest {
 
@@ -29,26 +28,23 @@ public class EraseWffsPreprocessRequest extends PreprocessRequest {
     StringWriter w;
 
     /**
-     *  Constructor for EraseWffsPreprocessRequest
+     * Constructor for EraseWffsPreprocessRequest
      */
     public EraseWffsPreprocessRequest() {
         super();
     }
 
     /**
-     *  Erases formulas on non-QED Derivation Steps which
-     *  contain a Ref label.
-     *  <p>
-     *  Non-qed Derivation Steps begin in column 1 with a
-     *  digit, and if the Ref is present then there must
-     *  be two colons (":") in the first token and the
-     *  first token must not end with a ":" (otherwise
-     *  the Proof Worksheet will error out anyway.)
-     *  <p>
-     *  @param proofTextArea Proof Worksheet text string
-     *  @return proofTextArea modified by editing operation
+     * Erases formulas on non-QED Derivation Steps which contain a Ref label.
+     * <p>
+     * Non-qed Derivation Steps begin in column 1 with a digit, and if the Ref
+     * is present then there must be two colons (":") in the first token and the
+     * first token must not end with a ":" (otherwise the Proof Worksheet will
+     * error out anyway.)
+     *
+     * @param proofTextArea Proof Worksheet text string
+     * @return proofTextArea modified by editing operation
      */
-    @Override
     public String doIt(final String proofTextArea) throws ProofAsstException {
         String firstToken;
         try {

@@ -6,11 +6,11 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-/**
- *  MinHeaderStmt.java  0.01 11/01/2011
+/*
+ * MinHeaderStmt.java  0.01 11/01/2011
  *
- *  Version 0.01:
- *  Nov-01-2011: new.
+ * Version 0.01:
+ * Nov-01-2011: new.
  */
 
 package mmj.gmff;
@@ -19,48 +19,42 @@ import mmj.mmio.Statementizer;
 import mmj.pa.PaConstants;
 
 /**
- *  Object representing the Header statement on a
- *  <code>MinProofWorksheet</code>.
- *  <p>
- *  The Header statement is vitally important even
- *  on a <code>MinProofWorksheet</code>, which is
- *  validated only a minimal amount. The Header
- *  statement provides the proof's theorem label
- *  which is used to construct the export file
- *  name. So, if the Header is invalid the entire
- *  Proof Worksheet is updated with
- *  <code>structuralErrors = true</code>.
+ * Object representing the Header statement on a {@code MinProofWorksheet}.
+ * <p>
+ * The Header statement is vitally important even on a {@code MinProofWorksheet}
+ * , which is validated only a minimal amount. The Header statement provides the
+ * proof's theorem label which is used to construct the export file name. So, if
+ * the Header is invalid the entire Proof Worksheet is updated with
+ * {@code structuralErrors = true}.
  */
 public class MinHeaderStmt extends MinProofWorkStmt {
 
     /**
-     *  Standard MinHeaderStmt constructor.
-     *  <p>
-     *  The first line of the header is validated
-     *  minimally.
-     *  <br>
-     *  <ul>
-     *  <li>Starting in column 1 the header must equal
-     *  <pre>$( <MM> <PROOF_ASST> THEOREM=</pre>
-     *  <li>The theorem label must not equal "" or
-     *  blank, or "?".
-     *  <li>The theorem label must consist of only
-     *  characters which are valid for Metamath labels.
-     *  <li>The theorem label must not be on the
-     *  Metamath prohibited label list.
-     *  </ul>
-     *  <p>
-     *  The validation/load code was extracted from
-     *  <code>mmj.pa.HeaderStmt.load()</code> and
-     *  <code>mmj.pa.HeaderStmt.validateTheoremLabel()</code>.
-     *  <p>
-     *  @param w the <code>MinProofworksheet</code> object which
-     *				contains the proof step.
-     *  @param slc Array of lines each comprised
-     *				of an Array of <code>String</code>s
-     *              called "chunks", which may be either Metamath
-     *              whitespace or Metamath tokens. Hence the
-     *              acronym "slc" refers to Statement Line Chunks.
+     * Standard MinHeaderStmt constructor.
+     * <p>
+     * The first line of the header is validated minimally. <br>
+     * <ul>
+     * <li>Starting in column 1 the header must equal
+     * 
+     * <pre>
+     * $( <MM> <PROOF_ASST> THEOREM=
+     * </pre>
+     * <li>The theorem label must not equal "" or blank, or "?".
+     * <li>The theorem label must consist of only characters which are valid for
+     * Metamath labels.
+     * <li>The theorem label must not be on the Metamath prohibited label list.
+     * </ul>
+     * <p>
+     * The validation/load code was extracted from
+     * {@code mmj.pa.HeaderStmt.load()} and
+     * {@code mmj.pa.HeaderStmt.validateTheoremLabel()}.
+     *
+     * @param w the {@code MinProofworksheet} object which contains the proof
+     *            step.
+     * @param slc Array of lines each comprised of an Array of {@code String}s
+     *            called "chunks", which may be either Metamath whitespace or
+     *            Metamath tokens. Hence the acronym "slc" refers to Statement
+     *            Line Chunks.
      */
     public MinHeaderStmt(final MinProofWorksheet w, final String[][] slc) {
 
@@ -70,33 +64,30 @@ public class MinHeaderStmt extends MinProofWorkStmt {
     }
 
     /**
-     *  Formats export data for the Header statement
-     *  according to the <code>Model A</code> specifications
-     *  and loads the data into a specified buffer.
-     *  <p>
-     *  Model A model files for <code>MinHeaderStmt</code> objects
-     *  are "optional", meaning that if any of the model files are
-     *  not found, the export process is continues normally but
-     *  Header statements are not output as part of the Proof Worksheet
-     *  export.
-     *  <p>
-     *  Note the quirky handling of <code>modelAHeader1X</code>,
-     *  <code>modelAHeader3X</code>and <code>modelAHeader5X</code>.
-     *  If one of these model files is empty then no data is output
-     *  at that location. This quirky feature will generally not be
-     *  used but is provided for maximum flexibility in creating
-     *  export format models.
-     *  <p>
-     *  Additional information may be found \GMFFDoc\GMFFModels.txt.
-     *  <p>
-     *  @param gmffExporter The <code>GMFFExporter</code> requesting
-     *				the export data build.
-     *  @param exportBuffer The <code>StringBuilder</code> to which
-     *               exported data is to be output.
-     *  @throws GMFFException if errors are encountered during the
-     *               export process.
+     * Formats export data for the Header statement according to the
+     * {@code Model A} specifications and loads the data into a specified
+     * buffer.
+     * <p>
+     * Model A model files for {@code MinHeaderStmt} objects are "optional",
+     * meaning that if any of the model files are not found, the export process
+     * is continues normally but Header statements are not output as part of the
+     * Proof Worksheet export.
+     * <p>
+     * Note the quirky handling of {@code modelAHeader1X},
+     * {@code modelAHeader3X}and {@code modelAHeader5X}. If one of these model
+     * files is empty then no data is output at that location. This quirky
+     * feature will generally not be used but is provided for maximum
+     * flexibility in creating export format models.
+     * <p>
+     * Additional information may be found \GMFFDoc\GMFFModels.txt.
+     *
+     * @param gmffExporter The {@code GMFFExporter} requesting the export data
+     *            build.
+     * @param exportBuffer The {@code StringBuilder} to which exported data is
+     *            to be output.
+     * @throws GMFFException if errors are encountered during the export
+     *             process.
      */
-    @Override
     public void buildModelAExport(final GMFFExporter gmffExporter,
         final StringBuilder exportBuffer) throws GMFFException
     {
@@ -161,26 +152,27 @@ public class MinHeaderStmt extends MinProofWorkStmt {
     }
 
     /**
-     *  Performs the minimal set of validation checks
-     *  to ensure that the theorem label can be used
-     *  to generate a file name by the GMFF Extract process.
-     *  <p>
-     *  <ul>
-     *  <li>Starting in column 1 the header must equal
-     *  <pre>$( <MM> <PROOF_ASST> THEOREM=</pre>
-     *  <li>The theorem label must not equal "" or
-     *  blank, or "?".
-     *  <li>The theorem label must consist of only
-     *  characters which are valid for Metamath labels.
-     *  <li>The theorem label must not be on the
-     *  Metamath prohibited label list.
-     *  </ul>
-     *  <p>
-     *  The validation/load code was extracted from
-     *  <code>mmj.pa.HeaderStmt.load()</pre> and
-     *  <code>mmj.pa.HeaderStmt.validateTheoremLabel()</pre>.
-     *  <br>
-     *  @return true if theorem label valid, otherwise false.
+     * Performs the minimal set of validation checks to ensure that the theorem
+     * label can be used to generate a file name by the GMFF Extract process.
+     * <p>
+     * <ul>
+     * <li>Starting in column 1 the header must equal
+     * 
+     * <pre>
+     * $( <MM> <PROOF_ASST> THEOREM=
+     * </pre>
+     * <li>The theorem label must not equal "" or blank, or "?".
+     * <li>The theorem label must consist of only characters which are valid for
+     * Metamath labels.
+     * <li>The theorem label must not be on the Metamath prohibited label list.
+     * </ul>
+     * <p>
+     * The validation/load code was extracted from
+     * <code>mmj.pa.HeaderStmt.load()</pre> and
+     * <code>mmj.pa.HeaderStmt.validateTheoremLabel()</pre>.
+     * <br>
+     * 
+     * @return true if theorem label valid, otherwise false.
      */
     public boolean isTheoremLabelMinimallyValid() {
 
@@ -198,15 +190,14 @@ public class MinHeaderStmt extends MinProofWorkStmt {
     }
 
     /**
-     *  Checks to make sure that the Header contains the
-     *  proper literals in the right sequence and that
-     *  the theoremLabel is syntactically valid and is not
-     *  on the Metamath Prohibited Label list.
-     *  <p>
-     *  If an error is found, the <code>minProofWorksheet</code>
-     *  <codetriggerInvalidTheoremLabel()</code> is called
-     *  to mark the Proof Worksheet with <code>structuralErrors</code>
-     *  and to accumulate an error message.
+     * Checks to make sure that the Header contains the proper literals in the
+     * right sequence and that the theoremLabel is syntactically valid and is
+     * not on the Metamath Prohibited Label list.
+     * <p>
+     * If an error is found, the {@code minProofWorksheet}
+     * <codetriggerInvalidTheoremLabel()</code> is called to mark the Proof
+     * Worksheet with {@code structuralErrors} and to accumulate an error
+     * message.
      */
     private void validateHeader() {
         try {

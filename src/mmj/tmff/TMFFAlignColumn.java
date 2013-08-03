@@ -7,16 +7,16 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  TMFFAlignColumn.java  0.02 08/01/2007
+ * TMFFAlignColumn.java  0.02 08/01/2007
  *
- *  Aug-28-2006: - new, "AlignColumn" Method for formula rendering in
- *                 text mode in the new mmj2 feature "TMFF".
+ * Aug-28-2006: - new, "AlignColumn" Method for formula rendering in
+ *                text mode in the new mmj2 feature "TMFF".
  *
- *  Aug-01-2007  - renderSubExprWithBreaks() fixed to avoid
- *                 ArrayIndexOutOfBoundsException when
- *                 invoked with a VarHyp parse node (problem
- *                 is that a VarHyp ParseNode.child array
- *                 has length = 0.
+ * Aug-01-2007  - renderSubExprWithBreaks() fixed to avoid
+ *                ArrayIndexOutOfBoundsException when
+ *                invoked with a VarHyp parse node (problem
+ *                is that a VarHyp ParseNode.child array
+ *                has length = 0.
  */
 
 package mmj.tmff;
@@ -24,53 +24,49 @@ package mmj.tmff;
 import mmj.lang.*;
 
 /**
- *  TMFFAlignColumn aligns portions of a sub-expression into
- *  a single column when splitting the sub-expression across
- *  multiple lines.
- *  <p>
- *  TMFFAlignColumn renders a parsed sub-expression
- *  and if the expression exceeds the input length
- *  or tree depth parameters, the sub-expression is
- *  broken up across multiple lines. Either Variables,
- *  Constants or just plain Symbols can be aligned into
- *  a single column.
- *  <p>
- *  The idea here is to enable use of multiple instances
- *  of TMFFAlignColumn -- and others -- customized for
- *  specific formatting schemes. TMFFAlignColumn instances
- *  vary according to 3 parameters which designate the
- *  type of symbol objects to be aligned and the starting
- *  point within a syntax axiom formula for alignment.
- *  <p>
- *  <code>
- *  Example:
- *
- *      alignAtNbr = 3
- *      alignAtValue = Sym
- *      alignByValue = Var
- *
- *         render "( a -> b )" as follows:
- *
- *                "( a ->
- *                     b )"
- *
- *             where "a" and "b" are metavariables that
- *             may be replaced by sub-expressions of
- *             arbitrary length and depth.
- *
- *  Example:
- *
- *      alignAtNbr = 1
- *      alignAtValue = Sym
- *      alignByValue = Cnst
- *
- *         render "( a -> b )" as follows:
- *
- *                "( a
- *                 -> b
- *                 )"
- *
- *  <p>
+ * TMFFAlignColumn aligns portions of a sub-expression into a single column when
+ * splitting the sub-expression across multiple lines.
+ * <p>
+ * TMFFAlignColumn renders a parsed sub-expression and if the expression exceeds
+ * the input length or tree depth parameters, the sub-expression is broken up
+ * across multiple lines. Either Variables, Constants or just plain Symbols can
+ * be aligned into a single column.
+ * <p>
+ * The idea here is to enable use of multiple instances of TMFFAlignColumn --
+ * and others -- customized for specific formatting schemes. TMFFAlignColumn
+ * instances vary according to 3 parameters which designate the type of symbol
+ * objects to be aligned and the starting point within a syntax axiom formula
+ * for alignment.
+ * <p>
+ * 
+ * <pre>
+ * Example:
+ * 
+ *     alignAtNbr = 3
+ *     alignAtValue = Sym
+ *     alignByValue = Var
+ * 
+ *        render "( a -> b )" as follows:
+ * 
+ *               "( a ->
+ *                    b )"
+ * 
+ *            where "a" and "b" are metavariables that
+ *            may be replaced by sub-expressions of
+ *            arbitrary length and depth.
+ * 
+ * Example:
+ * 
+ *     alignAtNbr = 1
+ *     alignAtValue = Sym
+ *     alignByValue = Cnst
+ * 
+ *        render "( a -> b )" as follows:
+ * 
+ *               "( a
+ *                -> b
+ *                )"
+ * </pre>
  */
 public class TMFFAlignColumn extends TMFFMethod {
 
@@ -79,13 +75,12 @@ public class TMFFAlignColumn extends TMFFMethod {
     protected int alignByValue;
 
     /**
-     *  Helper to calculate the arbitrary code number
-     *  signifying Cnst or Var within TMFF.
-     *
-     *  @param sym to interrogate.
-     *
-     *  @return TMFFConstants.ALIGN_CNST if the input Sym
-     *  is a Cnst, else, TMFFConstants.ALIGN_VAR.
+     * Helper to calculate the arbitrary code number signifying Cnst or Var
+     * within TMFF.
+     * 
+     * @param sym to interrogate.
+     * @return TMFFConstants.ALIGN_CNST if the input Sym is a Cnst, else,
+     *         TMFFConstants.ALIGN_VAR.
      */
     public static int getAlignTypeValue(final Sym sym) {
         if (sym.isCnst())
@@ -95,14 +90,11 @@ public class TMFFAlignColumn extends TMFFMethod {
     }
 
     /**
-     *  Validates an alignment type string and converts it
-     *  into the numeric equivalent used internally by
-     *  the program (sym = 1, etc.)
-     *
-     *  @param byValue string: sym, var, cnst, etc.
-     *
-     *  @return numeric equivalent to byValue string
-     *          (see TMFFConstants.ALIGN_*).
+     * Validates an alignment type string and converts it into the numeric
+     * equivalent used internally by the program (sym = 1, etc.)
+     * 
+     * @param byValue string: sym, var, cnst, etc.
+     * @return numeric equivalent to byValue string (see TMFFConstants.ALIGN_*).
      */
     public static int validateByValue(final String byValue) {
         if (byValue != null) {
@@ -120,14 +112,11 @@ public class TMFFAlignColumn extends TMFFMethod {
     }
 
     /**
-     *  Validates an alignment type string and converts it
-     *  into the numeric equivalent used internally by
-     *  the program (sym = 1, etc.)
-     *
-     *  @param atValue string: sym, var, cnst, etc.
-     *
-     *  @return numeric equivalent to byValue string
-     *          (see TMFFConstants.ALIGN_*).
+     * Validates an alignment type string and converts it into the numeric
+     * equivalent used internally by the program (sym = 1, etc.)
+     * 
+     * @param atValue string: sym, var, cnst, etc.
+     * @return numeric equivalent to byValue string (see TMFFConstants.ALIGN_*).
      */
     public static int validateAtValue(final String atValue) {
         if (atValue != null) {
@@ -145,13 +134,11 @@ public class TMFFAlignColumn extends TMFFMethod {
     }
 
     /**
-     *  Validates an alignment number.
-     *
-     *  @param atNbrString ought to be 1, 2, or 3 (any higher
-     *                     than 3 has no apparent use.)
-     *
-     *  @return numeric equivalent to byValue string
-     *          (see TMFFConstants.ALIGN_*).
+     * Validates an alignment number.
+     * 
+     * @param atNbrString ought to be 1, 2, or 3 (any higher than 3 has no
+     *            apparent use.)
+     * @return numeric equivalent to byValue string (see TMFFConstants.ALIGN_*).
      */
     public static int validateAtNbr(final String atNbrString) {
 
@@ -166,13 +153,11 @@ public class TMFFAlignColumn extends TMFFMethod {
     }
 
     /**
-     *  Validates an alignment number.
-     *
-     *  @param atNbr ought to be 1, 2, or 3 (any higher
-     *               than 3 has no apparent use.)
-     *
-     *  @return numeric equivalent to byValue string
-     *          (see TMFFConstants.ALIGN_*).
+     * Validates an alignment number.
+     * 
+     * @param atNbr ought to be 1, 2, or 3 (any higher than 3 has no apparent
+     *            use.)
+     * @return numeric equivalent to byValue string (see TMFFConstants.ALIGN_*).
      */
     public static int validateAtNbr(final int atNbr) {
         if (atNbr < TMFFConstants.MIN_ALIGN_AT_NBR
@@ -184,32 +169,24 @@ public class TMFFAlignColumn extends TMFFMethod {
     }
 
     /**
-     *  Default constructor.
+     * Default constructor.
      */
     public TMFFAlignColumn() {
         super();
     }
 
     /**
-     *  Standard constructor for TMFFAlignColumn.
-     *
-     *  @param maxDepth maximum sub-tree depth for a sub-expression
-     *                  that will not trigger a line-break, not
-     *                  counting leaf nodes, and non-Notation
-     *                  Syntax Axioms such as Type Conversions.
-     *
-     *  @param byValue  Text indicating the alignment type
-     *                  when a Syntax Axiom is split across
-     *                  multiple lines: 'Var', 'Cnst' or 'Sym'.
-     *
-     *  @param atNbr    The nth occurrence of the atValue type
-     *                  is where an alignment column is positioned.
-     *                  Should be 1, 2, or 3.
-     *
-     *  @param atValue Text indicating the type the atNbr
-     *                  parm refers to for start of alignment:
-     *                  'Var', 'Cnst' or 'Sym'.
-     *
+     * Standard constructor for TMFFAlignColumn.
+     * 
+     * @param maxDepth maximum sub-tree depth for a sub-expression that will not
+     *            trigger a line-break, not counting leaf nodes, and
+     *            non-Notation Syntax Axioms such as Type Conversions.
+     * @param byValue Text indicating the alignment type when a Syntax Axiom is
+     *            split across multiple lines: 'Var', 'Cnst' or 'Sym'.
+     * @param atNbr The nth occurrence of the atValue type is where an alignment
+     *            column is positioned. Should be 1, 2, or 3.
+     * @param atValue Text indicating the type the atNbr parm refers to for
+     *            start of alignment: 'Var', 'Cnst' or 'Sym'.
      */
     public TMFFAlignColumn(final int maxDepth, final String byValue,
         final int atNbr, final String atValue)
@@ -224,25 +201,17 @@ public class TMFFAlignColumn extends TMFFMethod {
     }
 
     /**
-     *  Constructor for TMFFAlignColumn from user parameters.
-     *
-     *  @param maxDepthString maximum sub-tree depth for a sub-expression
-     *                  that will not trigger a line-break, not
-     *                  counting leaf nodes, and non-Notation
-     *                  Syntax Axioms such as Type Conversions.
-     *
-     *  @param byValueString  Text indicating the alignment type
-     *                  when a Syntax Axiom is split across
-     *                  multiple lines: 'Var', 'Cnst' or 'Sym'.
-     *
-     *  @param atNbrString    The nth occurrence of the atValue type
-     *                  is where an alignment column is positioned.
-     *                  Should be 1, 2, or 3.
-     *
-     *  @param atValueString Text indicating the type the atNbr
-     *                  parm refers to for start of alignment:
-     *                  'Var', 'Cnst' or 'Sym'.
-     *
+     * Constructor for TMFFAlignColumn from user parameters.
+     * 
+     * @param maxDepthString maximum sub-tree depth for a sub-expression that
+     *            will not trigger a line-break, not counting leaf nodes, and
+     *            non-Notation Syntax Axioms such as Type Conversions.
+     * @param byValueString Text indicating the alignment type when a Syntax
+     *            Axiom is split across multiple lines: 'Var', 'Cnst' or 'Sym'.
+     * @param atNbrString The nth occurrence of the atValue type is where an
+     *            alignment column is positioned. Should be 1, 2, or 3.
+     * @param atValueString Text indicating the type the atNbr parm refers to
+     *            for start of alignment: 'Var', 'Cnst' or 'Sym'.
      */
     public TMFFAlignColumn(final String maxDepthString,
         final String byValueString, final String atNbrString,
@@ -258,14 +227,11 @@ public class TMFFAlignColumn extends TMFFMethod {
     }
 
     /**
-     *  Updates maxDepth for a TMFFMethod if the Method
-     *  allows updates.
-     *
-     *  @param maxDepth parameter.
-     *
-     *  @return boolean - true only if update performed.
+     * Updates maxDepth for a TMFFMethod if the Method allows updates.
+     * 
+     * @param maxDepth parameter.
+     * @return boolean - true only if update performed.
      */
-    @Override
     public boolean updateMaxDepth(final int maxDepth) {
 
         this.maxDepth = TMFFMethod.validateMaxDepth(maxDepth);
@@ -274,7 +240,6 @@ public class TMFFAlignColumn extends TMFFMethod {
     }
 
     // return -1 if error else 0
-    @Override
     protected int renderSubExprWithBreaks(final TMFFStateParams tmffSP,
         final ParseNode currNode, final int leftmostColNbr)
     {

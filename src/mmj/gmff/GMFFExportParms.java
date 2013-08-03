@@ -6,11 +6,11 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-/**
- *  GMFFExportParms.java  0.01 11/01/2011
+/*
+ * GMFFExportParms.java  0.01 11/01/2011
  *
- *  Version 0.01:
- *  Nov-01-2011: new.
+ * Version 0.01:
+ * Nov-01-2011: new.
  */
 
 package mmj.gmff;
@@ -24,24 +24,21 @@ import mmj.lang.Messages;
 import mmj.util.UtilConstants;
 
 /**
- *  GMFFExportParms holds the parameters from a single
- *  RunParm of the same name plus a <code>File</code>
- *  object for building relative paths.
- *  <p>
- *  It is basically just a data structure with some
- *  attached utility functions on the data elements.
- *  <p>
- *  During validation however, the <code>GMFFFolders</code>
- *  for the exportDirectory and modelsDirectory are
- *  instantiated and saved for later use.
- *  <p>
- *  The reason for creating this class is that GMFF
- *  parameter type RunParms are not validated and
- *  processed until GMFF is initialized, typically
- *  when the user requests an export. So the RunParms
- *  are cached until initialization time.
- *  <p>
- *  The GMFFExportParms are keyed by exportType.
+ * GMFFExportParms holds the parameters from a single RunParm of the same name
+ * plus a {@code File} object for building relative paths.
+ * <p>
+ * It is basically just a data structure with some attached utility functions on
+ * the data elements.
+ * <p>
+ * During validation however, the {@code GMFFFolders} for the exportDirectory
+ * and modelsDirectory are instantiated and saved for later use.
+ * <p>
+ * The reason for creating this class is that GMFF parameter type RunParms are
+ * not validated and processed until GMFF is initialized, typically when the
+ * user requests an export. So the RunParms are cached until initialization
+ * time.
+ * <p>
+ * The GMFFExportParms are keyed by exportType.
  */
 public class GMFFExportParms implements Comparable<GMFFExportParms> {
 
@@ -59,11 +56,11 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
     public GMFFFolder modelsFolder;
 
     /**
-     *  A GMFF utility to confirm that a given string is not
-     *  null or empty, and that it contains no whitespace.
-     *  <p>
-     *  @param s The string to be validated.
-     *  @return true if valid, otherwise false.
+     * A GMFF utility to confirm that a given string is not null or empty, and
+     * that it contains no whitespace.
+     *
+     * @param s The string to be validated.
+     * @return true if valid, otherwise false.
      */
     public static boolean isPresentWithNoWhitespace(final String s) {
         if (s == null || s.length() == 0)
@@ -77,26 +74,24 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
     }
 
     /**
-     *  A constructor to build a GMFFExportParms object without
-     *  validating any of the parameters.
-     *  <p>
-     *  See mmj2\doc\GMFFDoc\GMFFRunParms.txt
-     *
-     *  @param exportType Export Type (e.g. "html" or "althtml")
-     *  @param onoff      OnOff ("ON" or "OFF")
-     *  @param typesetDefKeyword Metamath $t comment keyword
-     *                    (e.g. "htmldef" or "althtmldef")
-     *  @param exportDirectory where output files written
-     *  @param exportFileType File Type including the period
-     *                    (e.g. ".html")
-     *  @param modelsDirectory Directory where GMFF Models are
-     *                    stored for this Export Type
-     *  @param modelId    Model Id for this GMFFExportParms instance.
-     *  @param charsetEncoding Charset Encoding Name (see doc).
-     *  @param outputFileName Output File Name minus the file type;
-     *                    if omitted file name composed using theorem
-     *                    label.
-     *  <p>
+     * A constructor to build a GMFFExportParms object without validating any of
+     * the parameters.
+     * <p>
+     * See mmj2\doc\GMFFDoc\GMFFRunParms.txt
+     * 
+     * @param exportType Export Type (e.g. "html" or "althtml")
+     * @param onoff OnOff ("ON" or "OFF")
+     * @param typesetDefKeyword Metamath $t comment keyword (e.g. "htmldef" or
+     *            "althtmldef")
+     * @param exportDirectory where output files written
+     * @param exportFileType File Type including the period (e.g. ".html")
+     * @param modelsDirectory Directory where GMFF Models are stored for this
+     *            Export Type
+     * @param modelId Model Id for this GMFFExportParms instance.
+     * @param charsetEncoding Charset Encoding Name (see doc).
+     * @param outputFileName Output File Name minus the file type; if omitted
+     *            file name composed using theorem label.
+     *            <p>
      */
     public GMFFExportParms(final String exportType, final String onoff,
         final String typesetDefKeyword, final String exportDirectory,
@@ -121,10 +116,9 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
     }
 
     /**
-     *  Converts to Audit Report string for testing
-     *  purposes.
-     *  <p>
-     *  @return String containing the relevant fields.
+     * Converts to Audit Report string for testing purposes.
+     *
+     * @return String containing the relevant fields.
      */
     public String generateAuditReportText() {
         final String s = new String(UtilConstants.RUNPARM_GMFF_EXPORT_PARMS
@@ -142,19 +136,18 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
     }
 
     /**
-     *  Validates Export Parms data.
-     *  <p>
-     *  For ease of use, validation does not stop at the
-     *  first error found. Any errors are accumulated in
-     *  the Messages object.
-     *  <p>
-     *  However, if <code>onoff</code> set to "OFF" the
-     *  following parameters are not validated.
-     *  <p>
-     *  @param filePath path for building directories.
-     *             May be null, absolute or relative.
-     *  @param messages The Messages object.
-     *  @return true if valid otherwise false.
+     * Validates Export Parms data.
+     * <p>
+     * For ease of use, validation does not stop at the first error found. Any
+     * errors are accumulated in the Messages object.
+     * <p>
+     * However, if {@code onoff} set to "OFF" the following parameters are not
+     * validated.
+     *
+     * @param filePath path for building directories. May be null, absolute or
+     *            relative.
+     * @param messages The Messages object.
+     * @return true if valid otherwise false.
      */
     public boolean areExportParmsValid(final File filePath,
         final Messages messages)
@@ -232,13 +225,14 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
     }
 
     /**
-     *  Validates <code>exportType</code>.
-     *  <p>
-     *  <ul>
-     *  <li>Not null or empty string
-     *  <li>Must contain no whitespace
-     *  </ul>
-     *  @throws GMFFException if error found.
+     * Validates {@code exportType}.
+     * <p>
+     * <ul>
+     * <li>Not null or empty string
+     * <li>Must contain no whitespace
+     * </ul>
+     * 
+     * @throws GMFFException if error found.
      */
     public void validateExportType() throws GMFFException {
         if (!GMFFExportParms.isPresentWithNoWhitespace(exportType))
@@ -247,14 +241,15 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
     }
 
     /**
-     *  Validates <code>onOff</code>.
-     *  <p>
-     *  <ul>
-     *  <li>Not null or empty string
-     *  <li>Must contain no whitespace
-     *  <li>equal to ON or OFF
-     *  </ul>
-     *  @throws GMFFException if error found.
+     * Validates {@code onOff}.
+     * <p>
+     * <ul>
+     * <li>Not null or empty string
+     * <li>Must contain no whitespace
+     * <li>equal to ON or OFF
+     * </ul>
+     * 
+     * @throws GMFFException if error found.
      */
     public void validateOnOff() throws GMFFException {
 
@@ -269,13 +264,14 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
     }
 
     /**
-     *  Validates <code>typesetDefKeyword</code>.
-     *  <p>
-     *  <ul>
-     *  <li>Not null or empty string
-     *  <li>Must contain no whitespace
-     *  </ul>
-     *  @throws GMFFException if error found.
+     * Validates {@code typesetDefKeyword}.
+     * <p>
+     * <ul>
+     * <li>Not null or empty string
+     * <li>Must contain no whitespace
+     * </ul>
+     * 
+     * @throws GMFFException if error found.
      */
     public void validateTypesetDefKeyword() throws GMFFException {
 
@@ -288,18 +284,19 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
     }
 
     /**
-     *  Validates <code>exportDirectory</code>.
-     *  <p>
-     *  <ul>
-     *  <li>Not null or empty string
-     *  <li>Must contain no whitespace
-     *  <li>Must be able to create <code>GMFFFolder</code>
-     *      using <code>exportDirectory</code> parameter.
-     *  </ul>
-     *  @param  filePath path for building directory. May
-     *              be null, absolute or relative.
-     *  @return GMFFFolder for Export Directory parameter.
-     *  @throws GMFFException if error found.
+     * Validates {@code exportDirectory}.
+     * <p>
+     * <ul>
+     * <li>Not null or empty string
+     * <li>Must contain no whitespace
+     * <li>Must be able to create {@code GMFFFolder} using
+     * {@code exportDirectory} parameter.
+     * </ul>
+     * 
+     * @param filePath path for building directory. May be null, absolute or
+     *            relative.
+     * @return GMFFFolder for Export Directory parameter.
+     * @throws GMFFException if error found.
      */
     public GMFFFolder validateExportDirectory(final File filePath)
         throws GMFFException
@@ -326,14 +323,15 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
     }
 
     /**
-     *  Validates <code>exportFileType</code>.
-     *  <p>
-     *  <ul>
-     *  <li>Not null or empty string
-     *  <li>Must contain no whitespace
-     *  <li>Must begin with "."
-     *  </ul>
-     *  @throws GMFFException if error found.
+     * Validates {@code exportFileType}.
+     * <p>
+     * <ul>
+     * <li>Not null or empty string
+     * <li>Must contain no whitespace
+     * <li>Must begin with "."
+     * </ul>
+     * 
+     * @throws GMFFException if error found.
      */
     public void validateExportFileType() throws GMFFException {
 
@@ -347,18 +345,19 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
     }
 
     /**
-     *  Validates <code>modelstDirectory</code>.
-     *  <p>
-     *  <ul>
-     *  <li>Not null or empty string
-     *  <li>Must contain no whitespace
-     *  <li>Must be able to create <code>GMFFFolder</code>
-     *      using <code>modelsDirectory</code> parameter.
-     *  </ul>
-     *  @param  filePath path for building directory. May
-     *              be null, absolute or relative.
-     *  @return Models Folder.
-     *  @throws GMFFException if error found.
+     * Validates {@code modelstDirectory}.
+     * <p>
+     * <ul>
+     * <li>Not null or empty string
+     * <li>Must contain no whitespace
+     * <li>Must be able to create {@code GMFFFolder} using
+     * {@code modelsDirectory} parameter.
+     * </ul>
+     * 
+     * @param filePath path for building directory. May be null, absolute or
+     *            relative.
+     * @return Models Folder.
+     * @throws GMFFException if error found.
      */
     public GMFFFolder validateModelsDirectory(final File filePath)
         throws GMFFException
@@ -384,13 +383,14 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
     }
 
     /**
-     *  Validates <code>modelId</code>.
-     *  <p>
-     *  <ul>
-     *  <li>Not null or empty string
-     *  <li>Must equal "A" :-)
-     *  </ul>
-     *  @throws GMFFException if error found.
+     * Validates {@code modelId}.
+     * <p>
+     * <ul>
+     * <li>Not null or empty string
+     * <li>Must equal "A" :-)
+     * </ul>
+     * 
+     * @throws GMFFException if error found.
      */
     public void validateModelId() throws GMFFException {
 
@@ -402,13 +402,14 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
     }
 
     /**
-     *  Validates <code>charsetEncoding</code>.
-     *  <p>
-     *  <ul>
-     *  <li>Not null or empty string
-     *  <li><code>Charset.isSupported(charsetEncoding) == true</code>
-     *  </ul>
-     *  @throws GMFFException if error found.
+     * Validates {@code charsetEncoding}.
+     * <p>
+     * <ul>
+     * <li>Not null or empty string
+     * <li>{@code Charset.isSupported(charsetEncoding) == true}
+     * </ul>
+     * 
+     * @throws GMFFException if error found.
      */
     public void validateCharsetEncoding() throws GMFFException {
 
@@ -441,14 +442,15 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
     }
 
     /**
-     *  Validates <code>outputFileName</code>.
-     *  <p>
-     *  <ul>
-     *  <li>Not null or empty string
-     *  <li>Must contain no whitespace
-     *  <li>Must not contain "/", "\" or ":"
-     *  </ul>
-     *  @throws GMFFException if error found.
+     * Validates {@code outputFileName}.
+     * <p>
+     * <ul>
+     * <li>Not null or empty string
+     * <li>Must contain no whitespace
+     * <li>Must not contain "/", "\" or ":"
+     * </ul>
+     * 
+     * @throws GMFFException if error found.
      */
     public void validateOutputFileName() throws GMFFException {
 
@@ -473,22 +475,20 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
     }
 
     /**
-     *  converts to String
-     *
-     *  @return returns GMFFExportParms.exportType string;
+     * converts to String
+     * 
+     * @return returns GMFFExportParms.exportType string;
      */
-    @Override
     public String toString() {
         return exportType;
     }
 
     /**
      * Computes hashcode for this GMFFExportParms
-     *
+     * 
      * @return hashcode for the GMFFExportParms
-     *        (GMFFExportParms.exportType.hashcode())
+     *         (GMFFExportParms.exportType.hashcode())
      */
-    @Override
     public int hashCode() {
         return exportType.hashCode();
     }
@@ -496,43 +496,35 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
     /**
      * Compare for equality with another GMFFExportParms.
      * <p>
-     * Equal if and only if the GMFFExportParms exportType
-     * strings are equal
-     * and the obj to be compared to this object is not null
-     * and is a GMFFExportParms as well.
-     * <p>
-     * @param obj another GMFFExportParms -- otherwise will return false.
+     * Equal if and only if the GMFFExportParms exportType strings are equal and
+     * the obj to be compared to this object is not null and is a
+     * GMFFExportParms as well.
      *
+     * @param obj another GMFFExportParms -- otherwise will return false.
      * @return returns true if equal, otherwise false.
      */
-    @Override
     public boolean equals(final Object obj) {
         return this == obj ? true : !(obj instanceof GMFFExportParms) ? false
             : exportType.equals(((GMFFExportParms)obj).exportType);
     }
 
     /**
-     * Compares GMFFExportParms object based on the
-     * primary key, exportType.
-     *
+     * Compares GMFFExportParms object based on the primary key, exportType.
+     * 
      * @param obj GMFFExportParms object to compare to this GMFFExportParms
-     *
-     * @return returns negative, zero, or a positive int
-     * if this GMFFExportParms object is less than, equal to
-     * or greater than the input parameter obj.
-     *
+     * @return returns negative, zero, or a positive int if this GMFFExportParms
+     *         object is less than, equal to or greater than the input parameter
+     *         obj.
      */
-    @Override
     public int compareTo(final GMFFExportParms obj) {
         return exportType.compareTo(obj.exportType);
     }
 
     /**
-     *  EXPORT_TYPE sequences by GMFFExportParms.exportType.
+     * EXPORT_TYPE sequences by GMFFExportParms.exportType.
      */
     static public final Comparator<GMFFExportParms> EXPORT_TYPE = new Comparator<GMFFExportParms>()
     {
-        @Override
         public int compare(final GMFFExportParms o1, final GMFFExportParms o2) {
             return o1.compareTo(o2);
         }

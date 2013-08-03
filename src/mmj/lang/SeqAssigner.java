@@ -7,10 +7,10 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  SeqAssigner.java  0.01 08/01/2008
+ * SeqAssigner.java  0.01 08/01/2008
  *
- *  Version 0.01:
- *      --> new!
+ * Version 0.01:
+ *     --> new!
  */
 
 package mmj.lang;
@@ -20,54 +20,45 @@ import java.util.*;
 import mmj.tl.*;
 
 /**
- *  The <code>SeqAssigner</code> generates sequence numbers for
- *  Metamath objects (MObj) within the mmj2 Logical System.
- *
- *  SeqAssigner.java's job is assigning sequence numbers to
- *  Metamath objects (MObj's) as they are loaded and inserted
- *  in the mmj2 Logical System. Sequence numbers are assigned
- *  sequentially and provide the basis for the mechanism
- *  which ensures that cyclic or forward references by
- *  Metamath objects are rejected (as invalid).
- *
- *  The motivation for this new feature is assignment of sequence
- *  numbers for theorems inserted by the new Theorem Loader
- *  enhancement. Previously all Metamath objects were appended
- *  to the "end" of the Logical System and sequence numbers
- *  were assigned from 10 by 10 up to the maximum of 2**31 - 1.
- *
- *  The Theorem Loader aims to "insert" theorems and logical
- *  hypotheses into the sequence number "gaps" left over from
- *  the initial Metamath .mm file load(s) (RunParm "LoadFile").
- *
- *  The Theorem Loader determines the Metamath object
- *  dependencies of objects to be inserted and instructs
- *  SeqAssigner to assign in the gap after the referenced
- *  object with the highest sequence number. The SeqAssigner
- *  determines whether or not the "gap" is full and
- *  assigns the appropriate sequence number for each new
- *  object. A full gap results in an "append"ed sequence
- *  number, which may or may not be suitable -- if a new
- *  theorem is referred to by an existing theorem, then
- *  appending the new theorem is not acceptable (which
- *  results in an error and backout of all changes prior
- *  to detection of the error.)
- *
- *  Associated with SeqAssigner.java is a new RunParm,
- *  <code>
- *
- *       SeqAssignerIntervalSize,9999
- *
- *  </code>
- *  The default sequence number interval is 1000, thus
- *  allowing for 999 inserts into every gap. It also
- *  provides the capability to load at least 1 million
- *  Metamath objects (perhaps more) into the mmj2 Logical
- *  System. An interval size of 100 would be suitable for
- *  almost every purpose -- the exception being automated
- *  updates from an external system via the new "mmj2 Service"
- *  feature.
- *
+ * The {@code SeqAssigner} generates sequence numbers for Metamath objects
+ * (MObj) within the mmj2 Logical System.
+ * <p>
+ * SeqAssigner.java's job is assigning sequence numbers to Metamath objects
+ * (MObj's) as they are loaded and inserted in the mmj2 Logical System. Sequence
+ * numbers are assigned sequentially and provide the basis for the mechanism
+ * which ensures that cyclic or forward references by Metamath objects are
+ * rejected (as invalid).
+ * <p>
+ * The motivation for this new feature is assignment of sequence numbers for
+ * theorems inserted by the new Theorem Loader enhancement. Previously all
+ * Metamath objects were appended to the "end" of the Logical System and
+ * sequence numbers were assigned from 10 by 10 up to the maximum of 2**31 - 1.
+ * <p>
+ * The Theorem Loader aims to "insert" theorems and logical hypotheses into the
+ * sequence number "gaps" left over from the initial Metamath .mm file load(s)
+ * (RunParm "LoadFile").
+ * <p>
+ * The Theorem Loader determines the Metamath object dependencies of objects to
+ * be inserted and instructs SeqAssigner to assign in the gap after the
+ * referenced object with the highest sequence number. The SeqAssigner
+ * determines whether or not the "gap" is full and assigns the appropriate
+ * sequence number for each new object. A full gap results in an "append"ed
+ * sequence number, which may or may not be suitable -- if a new theorem is
+ * referred to by an existing theorem, then appending the new theorem is not
+ * acceptable (which results in an error and backout of all changes prior to
+ * detection of the error.)
+ * <p>
+ * Associated with SeqAssigner.java is a new RunParm,
+ * 
+ * <pre>
+ *      SeqAssignerIntervalSize,9999
+ * </pre>
+ * 
+ * The default sequence number interval is 1000, thus allowing for 999 inserts
+ * into every gap. It also provides the capability to load at least 1 million
+ * Metamath objects (perhaps more) into the mmj2 Logical System. An interval
+ * size of 100 would be suitable for almost every purpose -- the exception being
+ * automated updates from an external system via the new "mmj2 Service" feature.
  */
 public class SeqAssigner implements TheoremLoaderCommitListener {
 
@@ -83,11 +74,11 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
     private final Map<Integer, BitSet> intervalTbl;
 
     /**
-     *  Validates Interval Size parameter.
-     *  <p>
-     *  Provided this function so that the same code can be
-     *  used by LogicalSystemBoss.
-     *  <p>
+     * Validates Interval Size parameter.
+     * <p>
+     * Provided this function so that the same code can be used by
+     * LogicalSystemBoss.
+     * 
      * @param n interval size for MObj.seq numbers.
      * @throws IllegalArgumentException if invalid interval size.
      */
@@ -104,11 +95,11 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
     }
 
     /**
-     *  Validates Interval Table Initial Size parameter.
-     *  <p>
-     *  Provided this function so that the same code can be
-     *  used by LogicalSystemBoss.
-     *  <p>
+     * Validates Interval Table Initial Size parameter.
+     * <p>
+     * Provided this function so that the same code can be used by
+     * LogicalSystemBoss.
+     * 
      * @param n interval table initial size for MObj.seq numbers.
      */
     public static void validateIntervalTblInitialSize(final int n) {
@@ -133,11 +124,10 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
 
     /**
      * Construct with full set of parameters.
-     *
+     * 
      * @param intervalSize numbering interval for MObj.seq numbers.
-     * @param intervalTblInitialSize initial size of HashMap for
-     *        recording insertions in the sequence number interval
-     *        gaps.
+     * @param intervalTblInitialSize initial size of HashMap for recording
+     *            insertions in the sequence number interval gaps.
      */
     public SeqAssigner(final int intervalSize, final int intervalTblInitialSize)
     {
@@ -150,15 +140,14 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
     }
 
     /**
-     *  Constructs MObj.seq value for new object.
-     *  <p>
-     *  The return number is one of the "appended" sequence
-     *  numbers, located logically at the end of LogicalSystem.
-     *  <p>
-     *  @return new MObj.seq number.
-     *  @throws IllegalArgumentException if the next available
-     *          sequence number is beyond the number range
-     *          available to a Java "int".
+     * Constructs MObj.seq value for new object.
+     * <p>
+     * The return number is one of the "appended" sequence numbers, located
+     * logically at the end of LogicalSystem.
+     * 
+     * @return new MObj.seq number.
+     * @throws IllegalArgumentException if the next available sequence number is
+     *             beyond the number range available to a Java "int".
      */
     public int nextSeq() {
 
@@ -175,32 +164,30 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
     }
 
     /**
-     *  Constructs MObj.seq value for a Metamath object to be
-     *  inserted in the number gap between two existing object.
-     *  <p>
-     *  The return number is one of the "inserted" sequence
-     *  numbers, located logically at the end of LogicalSystem.
-     *  <p>
-     *  The input locAfterSeq designates a an "interval" which
-     *  contains the "gap" of numbers (e.g. seq 3501 is in
-     *  the 35 interval which has gap 3501 thru 3599.) The
-     *  inserted sequence number goes into this gap if the
-     *  gap is not already full. (A HashMap of BitSet is used
-     *  to keep track of the intervals and gaps, respectively.)
-     *  <p>
-     *  To conserve empty gap space, if the locAfterSeq is
-     *  assigned to the last interval in the system, then the
-     *  next sequence number is not inserted, but appended.
-     *  <p>
-     *  If the next sequence number is not inserted (meaning that
-     *  it is to be appended), then -1 is returned instead of
-     *  the assigned sequence number.
-     *  <p>
-     *  @return new MObj.seq number if number was inserted, else
-     *          -1 indicating that it must be appended.
-     *  @throws IllegalArgumentException if the next available
-     *          sequence number is beyond the number range
-     *          available to a Java "int".
+     * Constructs MObj.seq value for a Metamath object to be inserted in the
+     * number gap between two existing object.
+     * <p>
+     * The return number is one of the "inserted" sequence numbers, located
+     * logically at the end of LogicalSystem.
+     * <p>
+     * The input locAfterSeq designates a an "interval" which contains the "gap"
+     * of numbers (e.g. seq 3501 is in the 35 interval which has gap 3501 thru
+     * 3599.) The inserted sequence number goes into this gap if the gap is not
+     * already full. (A HashMap of BitSet is used to keep track of the intervals
+     * and gaps, respectively.)
+     * <p>
+     * To conserve empty gap space, if the locAfterSeq is assigned to the last
+     * interval in the system, then the next sequence number is not inserted,
+     * but appended.
+     * <p>
+     * If the next sequence number is not inserted (meaning that it is to be
+     * appended), then -1 is returned instead of the assigned sequence number.
+     * 
+     * @param locAfterSeq see description
+     * @return new MObj.seq number if number was inserted, else -1 indicating
+     *         that it must be appended.
+     * @throws IllegalArgumentException if the next available sequence number is
+     *             beyond the number range available to a Java "int".
      */
     public int nextInsertSeq(final int locAfterSeq) {
 
@@ -244,11 +231,10 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
     }
 
     /**
-     *  Bit of a misnomer as this function takes a checkpoint
-     *  in case a rollback is needed by TheoremLoader.
-     *  <p>
-     *  @throws IllegalArgumentException if checkpointing
-     *          is already on.
+     * Bit of a misnomer as this function takes a checkpoint in case a rollback
+     * is needed by TheoremLoader.
+     * 
+     * @throws IllegalArgumentException if checkpointing is already on.
      */
     public void turnOnCheckpointing() {
         if (checkpointInitialized)
@@ -260,13 +246,10 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
     }
 
     /**
-     *  Bit of a misnomer as this function merely turns off
-     *  checkpointing.
-     *  <p>
-     *  @throws IllegalArgumentException if checkpointing
-     *          is not already on.
+     * Bit of a misnomer as this function merely turns off checkpointing.
+     * 
+     * @throws IllegalArgumentException if checkpointing is not already on.
      */
-    @Override
     public void commit(final MMTTheoremSet mmtTheoremSet) {
 
         if (!checkpointInitialized)
@@ -277,23 +260,23 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
     }
 
     /**
-     *  Reverses all changes made to the SeqAssigner state
-     *  variables since the last checkpoing was taken.
-     *  <p>
-     *  Notice that only inserted sequence numbers are
-     *  individually backed out. Appended sequence numbers
-     *  are backed out en masse by reverting to the checkpointed
-     *  value of "nbrIntervals" -- that is because there is
-     *  no BitSet created for an interval until there is an
-     *  insert in the interval's gap.
-     *  <p>
-     *  Audit messages are produced primarily so that the
-     *  code is testable -- they provide "instrumentation".
-     *  <p>
-     *  @param mmtTheoremSet TheoremLoader's set of adds and
-     *         updates.
-     *  @throws IllegalArgumentException if a checkpoint was
-     *          not taken prior to the rollback request.
+     * Reverses all changes made to the SeqAssigner state variables since the
+     * last checkpoing was taken.
+     * <p>
+     * Notice that only inserted sequence numbers are individually backed out.
+     * Appended sequence numbers are backed out en masse by reverting to the
+     * checkpointed value of "nbrIntervals" -- that is because there is no
+     * BitSet created for an interval until there is an insert in the interval's
+     * gap.
+     * <p>
+     * Audit messages are produced primarily so that the code is testable --
+     * they provide "instrumentation".
+     * 
+     * @param mmtTheoremSet TheoremLoader's set of adds and updates.
+     * @param messages the Messages object for error logging
+     * @param auditMessages true to write audit messages
+     * @throws IllegalArgumentException if a checkpoint was not taken prior to
+     *             the rollback request.
      */
     public void rollback(final MMTTheoremSet mmtTheoremSet,
         final Messages messages, final boolean auditMessages)
@@ -411,7 +394,7 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
 
     private Integer convertSeqToIntervalNumber(final int seq) {
 
-        return new Integer(seq / intervalSize);
+        return Integer.valueOf(seq / intervalSize);
     }
 
     private BitSet getBitSet(final Integer intervalNumber) {

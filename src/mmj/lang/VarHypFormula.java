@@ -5,8 +5,8 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-/**
- *  VarHypFormula.java  0.01 08/07/2005
+/*
+ * VarHypFormula.java  0.01 08/07/2005
  */
 
 package mmj.lang;
@@ -14,31 +14,32 @@ package mmj.lang;
 import java.util.Map;
 
 /**
- *  VarHypFormula is a convenience class for VarHyp.
- *
- *  @see <a href="../../MetamathERNotes.html">
- *       Nomenclature and Entity-Relationship Notes</a>
+ * VarHypFormula is a convenience class for VarHyp.
+ * 
+ * @see <a href="../../MetamathERNotes.html"> Nomenclature and
+ *      Entity-Relationship Notes</a>
  */
 public class VarHypFormula extends Formula {
 
     /**
-     *  Construct using count and Sym array.
-     *
-     *  @param workCnt length of formula.
-     *  @param workFormula Formula Sym array.
+     * Construct using count and Sym array.
+     * 
+     * @param workCnt length of formula.
+     * @param workFormula Formula Sym array.
      */
     public VarHypFormula(final int workCnt, final Sym[] workFormula) {
         super(workCnt, workFormula);
     }
 
     /**
-     *  Construct using Type Code String and Var id String.
-     *  <p>
-     *  The length of a VarHyp Formula is always 2.
-     *
-     *  @param symTbl Symbol Table (map).
-     *  @param typS   Type Code String.
-     *  @param varS   Var id String.
+     * Construct using Type Code String and Var id String.
+     * <p>
+     * The length of a VarHyp Formula is always 2.
+     * 
+     * @param symTbl Symbol Table (map).
+     * @param typS Type Code String.
+     * @param varS Var id String.
+     * @throws LangException if an error occurred
      */
     public VarHypFormula(final Map<String, Sym> symTbl, final String typS,
         final String varS) throws LangException
@@ -51,28 +52,30 @@ public class VarHypFormula extends Formula {
     }
 
     /**
-     *  Return the VarHypFormula's Var (sym[1]).
-     *
-     *  @return the VarHypFormula's Var (sym[1]).
+     * Return the VarHypFormula's Var (sym[1]).
+     * 
+     * @return the VarHypFormula's Var (sym[1]).
      */
     public Var getVarHypVar() {
         return (Var)sym[1];
     }
 
     /**
-     *  Set the VarHypFormula's Var (sym[1]).
-     *
-     *  @param var  the VarHypFormula's Var (sym[1]).
+     * Set the VarHypFormula's Var (sym[1]).
+     * 
+     * @param var the VarHypFormula's Var (sym[1]).
      */
     public void setVarHypVar(final Var var) {
         sym[1] = var;
     }
 
     /**
-     *  Set the VarHypFormula's Var (sym[1]).
-     *
-     *  @param symTbl Symbol Table (Map).
-     *  @param varS   the VarHypFormula's Var id String.
+     * Set the VarHypFormula's Var (sym[1]).
+     * 
+     * @param symTbl Symbol Table (Map).
+     * @param varS the VarHypFormula's Var id String.
+     * @return the newly defined Var
+     * @throws LangException if an error occurred
      */
     public Var setVarHypVar(final Map<String, Sym> symTbl, final String varS)
         throws LangException

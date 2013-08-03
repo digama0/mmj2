@@ -7,20 +7,20 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  MObj.java  0.05 08/01/2008
+ * MObj.java  0.05 08/01/2008
  *
- *  Version 0.03:
- *      --> Added tempObject boolean for dummy/temp MObj's
- *          required in ProofAssistant.
+ * Version 0.03:
+ *     --> Added tempObject boolean for dummy/temp MObj's
+ *         required in ProofAssistant.
  *
- *  Nov-01-2006: Version 0.04 --
- *      --> added description string (derived from input
- *          Metamath comments)
+ * Nov-01-2006: Version 0.04 --
+ *     --> added description string (derived from input
+ *         Metamath comments)
  *
- *  Aug-01-2008: Version 0.05 --
- *      --> added chapterNbr, sectionNbr and sectionMObjNbr,
- *          plus Comparator SECTION_AND_MOBJ_NBR.
- *          See mmj.lang.BookManager.java for more info.
+ * Aug-01-2008: Version 0.05 --
+ *     --> added chapterNbr, sectionNbr and sectionMObjNbr,
+ *         plus Comparator SECTION_AND_MOBJ_NBR.
+ *         See mmj.lang.BookManager.java for more info.
 
  */
 
@@ -29,158 +29,146 @@ package mmj.lang;
 import java.util.Comparator;
 
 /**
- *  MObj (Metamath Object) is root of Sym and Stmt.
- *  <p>
- *  Originally coded without a common root, but eventually
- *  bowed to the inevitable. The ability to hold an
- *  array/collection of Syms and Stmts is helpful, and
- *  eventually may become an absolute necessity -- if
- *  and when a LogicalSystem can be output, we will need
- *  to store Begin and End Scope statements, and perhaps
- *  Include Files and Comments.
- *
- *  @see <a href="../../MetamathERNotes.html">
- *       Nomenclature and Entity-Relationship Notes</a>
+ * MObj (Metamath Object) is root of Sym and Stmt.
+ * <p>
+ * Originally coded without a common root, but eventually bowed to the
+ * inevitable. The ability to hold an array/collection of Syms and Stmts is
+ * helpful, and eventually may become an absolute necessity -- if and when a
+ * LogicalSystem can be output, we will need to store Begin and End Scope
+ * statements, and perhaps Include Files and Comments.
+ * 
+ * @param <THIS> this type (i.e. the subclass type for subclasses). This is
+ *            provided for a proper {@code #compareTo(MObj)} implementation.
+ * @see <a href="../../MetamathERNotes.html"> Nomenclature and
+ *      Entity-Relationship Notes</a>
  */
 public abstract class MObj<THIS extends MObj<THIS>> implements Comparable<THIS>
 {
 
     /**
-     *  Provides an ordering of Metamath objects.
-     *  <p>
-     *  The concept of database sequence is key for
-     *  Metamath. Statements can only refer to statements
-     *  previously defined -- no forward references and
-     *  no self references are allowed. Also, the sequence
-     *  of hypotheses is by MObj.seq, as is the ordering
-     *  of items on the Proof Work Stack.
-     *
-     *  Metamath allows variables to be "active" or "inactive",
-     *  based on the scope level in which they are referenced
-     *  by <code>VarHyp</code>s. This allows for an unlimited
-     *  number of <code>VarHyp</code>s with a limited set of
-     *  of <code>Var</code>s, but it complicates things
-     *  elsewhere! Even the grammatical parser has to deal
-     *  with non-terminal symbols that change depending on
-     *  context (@see mmj.verify.Grammar).
-     *
+     * Provides an ordering of Metamath objects.
+     * <p>
+     * The concept of database sequence is key for Metamath. Statements can only
+     * refer to statements previously defined -- no forward references and no
+     * self references are allowed. Also, the sequence of hypotheses is by
+     * MObj.seq, as is the ordering of items on the Proof Work Stack.
+     * <p>
+     * Metamath allows variables to be "active" or "inactive", based on the
+     * scope level in which they are referenced by {@code VarHyp}s. This allows
+     * for an unlimited number of {@code VarHyp}s with a limited set of of
+     * {@code Var}s, but it complicates things elsewhere! Even the grammatical
+     * parser has to deal with non-terminal symbols that change depending on
+     * context (@see mmj.verify.Grammar).
      */
     protected final int seq;
 
     /**
-     *  isTempObject flag denotes a dummy or temporary object
-     *  that is not stored in the Sym table or Stmt table
-     *  and has the lifespan of a single transaction.
+     * isTempObject flag denotes a dummy or temporary object that is not stored
+     * in the Sym table or Stmt table and has the lifespan of a single
+     * transaction.
      */
     protected boolean isTempObject = false;
 
     /**
-     *  description is derived from Metamath comments (initially...
-     *  and may be present only for Theorems.)
+     * description is derived from Metamath comments (initially... and may be
+     * present only for Theorems.)
      */
     protected String description = null;
 
     /**
-     *  chapterNbr assigned by BookManager which is optionally
-     *  enabled.
-     *  <p>
-     *  chapterNbr is zero if the MObj has not been assigned
-     *  to a Chapter. Chapter numbers are assigned from 1 by
-     *  1 within the set of loaded Metamath input files
-     *  (see mmj.lang.BookManager.java for more info.)
+     * chapterNbr assigned by BookManager which is optionally enabled.
+     * <p>
+     * chapterNbr is zero if the MObj has not been assigned to a Chapter.
+     * Chapter numbers are assigned from 1 by 1 within the set of loaded
+     * Metamath input files (see mmj.lang.BookManager.java for more info.)
      */
     protected int chapterNbr = 0;
 
     /**
-     *  sectionNbr assigned by BookManager which is optionally
-     *  enabled.
-     *  <p>
-     *  sectionNbr is zero if the MObj has not been assigned
-     *  to a Section. Section numbers are assigned from 1 by
-     *  1, and correspond to "sub-sections" in a Metamath
-     *  input file (see set.mm), except that each input Metamath
-     *  "sub-section" is broken down into 4 mmj2 Sections:
-     *  1: Sym (Cnst and Var), 2: VarHyp, 3: Syntax and 4: Logic
-     *  (logic includes logic axioms, theorems and logical
-     *  hypotheses). These categories are assigned in sequence
-     *  so that a "logic" section number is therefore always
-     *  divisible by 4, syntax by 3, and so on (see
-     *  mmj.lang.BookManager.java for more info.)
+     * sectionNbr assigned by BookManager which is optionally enabled.
+     * <p>
+     * sectionNbr is zero if the MObj has not been assigned to a Section.
+     * Section numbers are assigned from 1 by 1, and correspond to
+     * "sub-sections" in a Metamath input file (see set.mm), except that each
+     * input Metamath "sub-section" is broken down into 4 mmj2 Sections: 1: Sym
+     * (Cnst and Var), 2: VarHyp, 3: Syntax and 4: Logic (logic includes logic
+     * axioms, theorems and logical hypotheses). These categories are assigned
+     * in sequence so that a "logic" section number is therefore always
+     * divisible by 4, syntax by 3, and so on (see mmj.lang.BookManager.java for
+     * more info.)
      */
     protected int sectionNbr = 0;
 
     /**
-     *  sectionMObjNbr is assigned by BookManager which is optionally
-     *  enabled.
-     *  <p>
-     *  sectionMObjNbr is zero if the MObj has not been assigned
-     *  to a Section. sectionMObj numbers are assigned from 1 by
-     *  1 within Section (see mmj.lang.BookManager.java for more
-     *  info.)
+     * sectionMObjNbr is assigned by BookManager which is optionally enabled.
+     * <p>
+     * sectionMObjNbr is zero if the MObj has not been assigned to a Section.
+     * sectionMObj numbers are assigned from 1 by 1 within Section (see
+     * mmj.lang.BookManager.java for more info.)
      */
     protected int sectionMObjNbr = 0;
 
     /**
-     *  Construct MObj with sequence number.
+     * Construct MObj with sequence number.
+     * 
+     * @param inSeq the sequence number
      */
     protected MObj(final int inSeq) {
         seq = inSeq;
     }
 
-    /*
-     *  Returns isCnst (Is this MObj a Cnst?).
-     *  <p>
-     *  This gnasty thing helps out in <code>ParseNodeHolder</code>,
-     *  which ultimately relates to the problem of re-defined
-     *  <code>Var</code> and the desire to "fix" a formula by
-     *  exchanging local Var references with global VarHyp
-     *  references to simplify parsing.
+    /**
+     * This gnasty thing helps out in {@code ParseNodeHolder}, which ultimately
+     * relates to the problem of re-defined {@code Var} and the desire to "fix"
+     * a formula by exchanging local Var references with global VarHyp
+     * references to simplify parsing.
+     * 
+     * @return isCnst (Is this MObj a Cnst?).
      */
     public abstract boolean isCnst();
 
     /**
-     *  return seq number.
-     *  <p>
-     *
-     * Note: an extensive set of tests showed that direct access
-     *       to .seq is an infintesimal bit faster than getSeq() :)
-     *       So public access to MObj.seq was revoked!
+     * Note: an extensive set of tests showed that direct access to .seq is an
+     * infintesimal bit faster than getSeq() :) So public access to MObj.seq was
+     * revoked!
+     * 
+     * @return seq number.
      */
     public int getSeq() {
         return seq;
     }
 
-    /*
-     *  Returns tempObject boolean.
-     *  <p>
-     *  @return tempObject boolean flag denoting dummy/temp objects.
+    /**
+     * Returns tempObject boolean.
+     * 
+     * @return tempObject boolean flag denoting dummy/temp objects.
      */
     public boolean getIsTempObject() {
         return isTempObject;
     }
 
-    /*
-     *  Sets tempObject boolean value.
-     *  <p>
-     *  @param isTempObject boolean flag denoting dummy/temp objects.
+    /**
+     * Sets tempObject boolean value.
+     * 
+     * @param isTempObject boolean flag denoting dummy/temp objects.
      */
     public void setIsTempObject(final boolean isTempObject) {
         this.isTempObject = isTempObject;
     }
 
     /**
-     *  Converts to MObj to String.
-     *
-     *  @return returns MObj string;
+     * Converts to MObj to String.
+     * 
+     * @return returns MObj string;
      */
     @Override
     public String toString() {
         return Integer.toString(seq);
     }
 
-    /*
+    /**
      * Computes hashcode for this MObj
-     *
+     * 
      * @return hashcode for the MObj
      */
     @Override
@@ -189,28 +177,23 @@ public abstract class MObj<THIS extends MObj<THIS>> implements Comparable<THIS>
     }
 
     /**
-     *  Compares MObj object based on the seq.
-     *
-     *  @param obj MObj object to compare to this MObj
-     *
-     *  @return returns negative, zero, or a positive int
-     *  if this MObj object is less than, equal to
-     *  or greater than the input parameter obj.
-     *
+     * Compares MObj object based on the seq.
+     * 
+     * @param obj MObj object to compare to this MObj
+     * @return returns negative, zero, or a positive int if this MObj object is
+     *         less than, equal to or greater than the input parameter obj.
      */
-    @Override
     public int compareTo(final THIS obj) {
         return seq - obj.seq;
     }
 
-    /*
-     *  Compare for equality with another MObj.
-     *  <p>
-     *  Equal if and only if the MObj sequence numbers are equal.
-     *  and the obj to be compared to this object is not null
-     *  and is a MObj as well.
-     *
-     *  @return returns true if equal, otherwise false.
+    /**
+     * Compare for equality with another MObj.
+     * <p>
+     * Equal if and only if the MObj sequence numbers are equal. and the obj to
+     * be compared to this object is not null and is a MObj as well.
+     * 
+     * @return returns true if equal, otherwise false.
      */
     @Override
     public boolean equals(final Object obj) {
@@ -219,101 +202,99 @@ public abstract class MObj<THIS extends MObj<THIS>> implements Comparable<THIS>
     }
 
     /**
-     *  SEQ sequences by MObj.seq.
+     * SEQ sequences by MObj.seq.
      */
     static public final Comparator<MObj<?>> SEQ = new Comparator<MObj<?>>() {
-        @Override
         public int compare(final MObj<?> o1, final MObj<?> o2) {
             return o1.seq - o2.seq;
         }
     };
 
     /**
-     *  SECTION_AND_MOBJ_NBR sequences by sectionNbr and
-     *  sectionMObjNbr;
+     * SECTION_AND_MOBJ_NBR sequences by sectionNbr and sectionMObjNbr;
      */
     static public final Comparator<MObj<?>> SECTION_AND_MOBJ_NBR = new Comparator<MObj<?>>()
     {
-        @Override
         public int compare(final MObj<?> o1, final MObj<?> o2) {
             return o1.sectionNbr == o2.sectionNbr ? o1.sectionMObjNbr
                 - o2.sectionMObjNbr : o1.sectionNbr - o2.sectionNbr;
         }
     };
 
-    /*
-     *  Returns description text derived from Metamath comments.
-     *  <p>
-     *  This contains the complete Metamath comment statement
-     *  except for the $( and $) delimiter tokens.
-     *  <p>
-     *  @return description text derived from Metamath comments.
+    /**
+     * Returns description text derived from Metamath comments.
+     * <p>
+     * This contains the complete Metamath comment statement except for the $(
+     * and $) delimiter tokens.
+     * <p>
+     * 
+     * @return description text derived from Metamath comments.
      */
     public String getDescription() {
         return description;
     }
 
     /*
-     *  Sets description text derived from Metamath comments.
-     *  <p>
-     *  This contains the complete Metamath comment statement
-     *  except for the $( and $) delimiter tokens.
-     *  <p>
-     *  @param description description text derived from Metamath comments.
+     * Sets description text derived from Metamath comments.
+     * <p>
+     * This contains the complete Metamath comment statement
+     * except for the $( and $) delimiter tokens.
+     * <p>
+     * @param description description text derived from Metamath comments.
      */
     public void setDescription(final String description) {
         this.description = description;
     }
 
     /**
-     *  Return chapterNbr;
-     *  <p>
-     *  @return chapter number for the MObj.
+     * Return chapterNbr;
+     * 
+     * @return chapter number for the MObj.
      */
     public int getChapterNbr() {
         return chapterNbr;
     }
 
     /**
-     *  Updates chapterNbr;
-     *  <p>
-     *  @param chapterNbr for the MObj.
+     * Updates chapterNbr;
+     * 
+     * @param chapterNbr for the MObj.
      */
     public void setChapterNbr(final int chapterNbr) {
         this.chapterNbr = chapterNbr;
     }
 
     /**
-     *  Return sectionNbr;
-     *  <p>
-     *  @return section number for the MObj.
+     * Return sectionNbr;
+     * 
+     * @return section number for the MObj.
      */
     public int getSectionNbr() {
         return sectionNbr;
     }
 
     /**
-     *  Updates sectionNbr;
-     *  <p>
-     *  @param sectionNbr for the MObj.
+     * Updates sectionNbr;
+     * 
+     * @param sectionNbr for the MObj.
      */
     public void setSectionNbr(final int sectionNbr) {
         this.sectionNbr = sectionNbr;
     }
 
     /**
-     *  Return sectionMObjNbr;
-     *  <p>
-     *  @return sectionMObjNbr for the MObj.
+     * Return sectionMObjNbr;
+     * 
+     * @return sectionMObjNbr for the MObj.
      */
     public int getSectionMObjNbr() {
         return sectionMObjNbr;
     }
 
     /**
-     *  Updates sectionMObjNbr;
-     *  <p>
-     *  @param sectionMObjNbr for the MObj.
+     * Updates sectionMObjNbr;
+     * 
+     * @param sectionMObjNbr for the MObj.
      */
     public void setSectionMObjNbr(final int sectionMObjNbr) {
         this.sectionMObjNbr = sectionMObjNbr;

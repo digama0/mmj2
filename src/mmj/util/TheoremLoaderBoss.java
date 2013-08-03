@@ -7,15 +7,15 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  TheoremLoaderBoss.java  0.02 11/01/2011
+ * TheoremLoaderBoss.java  0.02 11/01/2011
  *
- *  Version 0.01:
- *      - New.
+ * Version 0.01:
+ *     - New.
  *
- *  Nov-01-2011 - Version 0.02
- *      -->Modified for mmj2 Paths Enhancement
- *         added mmj2Path to setMMTFolder() call
- *         in editTheoremLoaderMMTFolder()
+ * Nov-01-2011 - Version 0.02
+ *     -->Modified for mmj2 Paths Enhancement
+ *        added mmj2Path to setMMTFolder() call
+ *        in editTheoremLoaderMMTFolder()
  */
 
 package mmj.util;
@@ -28,7 +28,7 @@ import mmj.pa.ProofAsst;
 import mmj.tl.*;
 
 /**
- *  Responsible for building and referencing TheoremLoader.
+ * Responsible for building and referencing TheoremLoader.
  */
 public class TheoremLoaderBoss extends Boss {
 
@@ -37,24 +37,21 @@ public class TheoremLoaderBoss extends Boss {
     private TlPreferences tlPreferences;
 
     /**
-     *  Constructor with BatchFramework for access to environment.
-     *
-     *  @param batchFramework for access to environment.
+     * Constructor with BatchFramework for access to environment.
+     * 
+     * @param batchFramework for access to environment.
      */
     public TheoremLoaderBoss(final BatchFramework batchFramework) {
         super(batchFramework);
     }
 
     /**
-     *  Executes a single command from the RunParmFile.
-     *
-     *  @param runParm the RunParmFile line to execute.
-     *
-     *  @return      boolean "consumed" indicating that the
-     *           input runParm should not be processed
-     *           again.
+     * Executes a single command from the RunParmFile.
+     * 
+     * @param runParm the RunParmFile line to execute.
+     * @return boolean "consumed" indicating that the input runParm should not
+     *         be processed again.
      */
-    @Override
     public boolean doRunParmCommand(final RunParmArrayEntry runParm)
         throws IllegalArgumentException, MMIOException, FileNotFoundException,
         IOException, VerifyException, TheoremLoaderException
@@ -148,15 +145,13 @@ public class TheoremLoaderBoss extends Boss {
     }
 
     /**
-     *  Fetches a reference to the TlPreferences,
-     *  first initializing it if necessary.
-     *  <p>
-     *  Note: must re-initialize the TMFFPreferences
-     *        reference in TlPreferences because
-     *        TMFFBoss controls which instance of
-     *        TMFFPreferences is active!!!
-     *  <p>
-     *  @return TlPreferences object ready to go.
+     * Fetches a reference to the TlPreferences, first initializing it if
+     * necessary.
+     * <p>
+     * Note: must re-initialize the TMFFPreferences reference in TlPreferences
+     * because TMFFBoss controls which instance of TMFFPreferences is active!!!
+     *
+     * @return TlPreferences object ready to go.
      */
     public TlPreferences getTlPreferences() {
 
@@ -172,10 +167,10 @@ public class TheoremLoaderBoss extends Boss {
     }
 
     /**
-     *  Fetch a TheoremLoader object.
-     *  <p>
+     * Fetch a TheoremLoader object.
      *
-     *  @return TheoremLoader object, ready to go, or null;.
+     * @return TheoremLoader object, ready to go, or null;.
+     * @throws VerifyException if an error occurred
      */
     public TheoremLoader getTheoremLoader() throws VerifyException {
 
@@ -192,12 +187,11 @@ public class TheoremLoaderBoss extends Boss {
     }
 
     /**
-     *  edit TheoremLoaderDjVarsOption RunParm.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * edit TheoremLoaderDjVarsOption RunParm.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
      */
     protected void editTheoremLoaderDjVarsOption(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
     {
 
         editRunParmValuesLength(runParm,
@@ -218,12 +212,12 @@ public class TheoremLoaderBoss extends Boss {
     }
 
     /**
-     *  edit TheoremLoaderAuditMessages RunParm.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * edit TheoremLoaderAuditMessages RunParm.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
      */
     protected void editTheoremLoaderAuditMessages(
-        final RunParmArrayEntry runParm) throws IllegalArgumentException
+        final RunParmArrayEntry runParm)
     {
 
         editRunParmValuesLength(runParm,
@@ -245,13 +239,11 @@ public class TheoremLoaderBoss extends Boss {
     }
 
     /**
-     *  Validate Theorem Loader MMT Folder Runparm.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate Theorem Loader MMT Folder Runparm.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
      */
-    protected void editTheoremLoaderMMTFolder(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
+    protected void editTheoremLoaderMMTFolder(final RunParmArrayEntry runParm) {
 
         editRunParmValuesLength(runParm,
             UtilConstants.RUNPARM_THEOREM_LOADER_MMT_FOLDER, 1);
@@ -268,12 +260,12 @@ public class TheoremLoaderBoss extends Boss {
     }
 
     /**
-     *  edit TheoremLoaderStoreFormulasAsIs RunParm.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * edit TheoremLoaderStoreFormulasAsIs RunParm.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
      */
     protected void editTheoremLoaderStoreFormulasAsIs(
-        final RunParmArrayEntry runParm) throws IllegalArgumentException
+        final RunParmArrayEntry runParm)
     {
 
         editRunParmValuesLength(runParm,
@@ -295,12 +287,12 @@ public class TheoremLoaderBoss extends Boss {
     }
 
     /**
-     *  edit TheoremLoaderStoreMMIndentAmt RunParm.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * edit TheoremLoaderStoreMMIndentAmt RunParm.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
      */
     protected void editTheoremLoaderStoreMMIndentAmt(
-        final RunParmArrayEntry runParm) throws IllegalArgumentException
+        final RunParmArrayEntry runParm)
     {
 
         editRunParmValuesLength(runParm,
@@ -322,12 +314,12 @@ public class TheoremLoaderBoss extends Boss {
     }
 
     /**
-     *  edit TheoremLoaderStoreMMRightCol RunParm.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * edit TheoremLoaderStoreMMRightCol RunParm.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
      */
     protected void editTheoremLoaderStoreMMRightCol(
-        final RunParmArrayEntry runParm) throws IllegalArgumentException
+        final RunParmArrayEntry runParm)
     {
 
         editRunParmValuesLength(runParm,

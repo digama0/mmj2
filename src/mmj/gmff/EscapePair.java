@@ -6,37 +6,33 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-/**
- *  GMFFBoss.java  0.01 11/01/2011
+/*
+ * GMFFBoss.java  0.01 11/01/2011
  *
- *  Version 0.01:
- *  Nov-01-2011: new.
+ * Version 0.01:
+ * Nov-01-2011: new.
  */
 
 package mmj.gmff;
 
 /**
- *  GMFFUserTextEscapes stopped here
+ * GMFFUserTextEscapes stopped here
  */
 /**
- *  EscapesPair is a companion class to
- *  <code>GMFFUserTextEscapes</code> which holds a
- *  single escape char number and its replacement
- *  text.
- *  <p>
- *  Metamath allows only 7-bit ASCII characters but
- *  <code>EscapesPair</code> accomodates 8 bits
- *  just to avoid having to answer questions :-)
- *  <p>
- *  It is basically just a data structure with some
- *  attached utility functions on the data elements.
- *  <p>
- *  The reason for creating this class is that GMFF
- *  parameter type RunParms are not validated and
- *  processed until GMFF is initialized, typically
- *  when the user requests an export. So the RunParms
- *  are cached until initialization time.
- *  <p>
+ * EscapesPair is a companion class to {@code GMFFUserTextEscapes} which holds a
+ * single escape char number and its replacement text.
+ * <p>
+ * Metamath allows only 7-bit ASCII characters but {@code EscapesPair}
+ * accomodates 8 bits just to avoid having to answer questions :-)
+ * <p>
+ * It is basically just a data structure with some attached utility functions on
+ * the data elements.
+ * <p>
+ * The reason for creating this class is that GMFF parameter type RunParms are
+ * not validated and processed until GMFF is initialized, typically when the
+ * user requests an export. So the RunParms are cached until initialization
+ * time.
+ * <p>
  */
 
 public class EscapePair {
@@ -44,15 +40,12 @@ public class EscapePair {
     public String replacement;
 
     /**
-     *  Standard constructor.
-     *  <p>
-     *  No validation is done at this time. Just load
-     *  the data structure.
-     *  <p>
-     *  @param num the escaped character's numeric value
-     *  @param replacement the text which replaces the
-     *             escaped character.
+     * Standard constructor.
+     * <p>
+     * No validation is done at this time. Just load the data structure.
      *
+     * @param num the escaped character's numeric value
+     * @param replacement the text which replaces the escaped character.
      */
     public EscapePair(final int num, final String replacement) {
         this.num = num;
@@ -60,10 +53,10 @@ public class EscapePair {
     }
 
     /**
-     *  Validates the Num and Replacement fields
-     *  individually.
-     *  <p>
-     *  @throws GMFFException if error found.
+     * Validates the Num and Replacement fields individually.
+     *
+     * @param exportType the export type, for error reporting
+     * @throws GMFFException if error found.
      */
     public void validateEscapePair(final String exportType)
         throws GMFFException
@@ -73,11 +66,12 @@ public class EscapePair {
     }
 
     /**
-     *  Validates the Num field.
-     *  <p>
-     *  Num must be > -1 and < 256.
-     *  <p>
-     *  @throws GMFFException if error found.
+     * Validates the Num field.
+     * <p>
+     * Num must be > -1 and < 256.
+     *
+     * @param exportType the export type, for error reporting
+     * @throws GMFFException if error found.
      */
     public void validateNum(final String exportType) throws GMFFException {
 
@@ -89,11 +83,12 @@ public class EscapePair {
     }
 
     /**
-     *  Validates the Replacement field
-     *  <p>
-     *  Replacement must not be null and not an empty String.
-     *  <p>
-     *  @throws GMFFException if error found.
+     * Validates the Replacement field
+     * <p>
+     * Replacement must not be null and not an empty String.
+     *
+     * @param exportType the export type, for error reporting
+     * @throws GMFFException if error found.
      */
     public void validateReplacement(final String exportType)
         throws GMFFException

@@ -5,14 +5,14 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-/**
- *  Messages.java  0.03 06/01/2007
+/*
+ * Messages.java  0.03 06/01/2007
  *
- *  Version 0.02 -- 08/23/2005
+ * Version 0.02 -- 08/23/2005
  *
- *  Version 0.03 -- 06/01/2007
- *      --> added startInstrumentationTimer() and
- *                stopInstrumentationTimer().
+ * Version 0.03 -- 06/01/2007
+ *     --> added startInstrumentationTimer() and
+ *               stopInstrumentationTimer().
  */
 
 package mmj.lang;
@@ -22,58 +22,51 @@ import java.io.PrintWriter;
 import java.util.Hashtable;
 
 /**
- *  Repository of error and informational messages during
- *  mmj processing.
- *  <p>
- *  The number of reported errors can be limited, thus
- *  providing a "governor" on processing (to a point).
- *  <p>
- *  Keeps track of the number of error and informational
- *  messages so that processing can be terminated if
- *  desired when no further output will be accumulated,
- *  particularly with error messages... The rationale
- *  of which is that if the Metamath .mm has basic
- *  Metamath language errors, such as invalid keywords,
- *  etc., there is no point in attempting Proof
- *  Verification or Syntax Verification. Also, processes
- *  that follow the System Load require a "clean" system,
- *  and the code assumes the integrity of LogicalSystem's
- *  data.
- *  <p>
- *  Various "print" functions in Messages accept a
- *  java.io.PrintWriter object so that output
- *  can be directed somewhere besides <b>System.out</b>. This
- *  also allows for the possibility of writing in
- *  other, non-default character sets such as UTF-8.
+ * Repository of error and informational messages during mmj processing.
+ * <p>
+ * The number of reported errors can be limited, thus providing a "governor" on
+ * processing (to a point).
+ * <p>
+ * Keeps track of the number of error and informational messages so that
+ * processing can be terminated if desired when no further output will be
+ * accumulated, particularly with error messages... The rationale of which is
+ * that if the Metamath .mm has basic Metamath language errors, such as invalid
+ * keywords, etc., there is no point in attempting Proof Verification or Syntax
+ * Verification. Also, processes that follow the System Load require a "clean"
+ * system, and the code assumes the integrity of LogicalSystem's data.
+ * <p>
+ * Various "print" functions in Messages accept a java.io.PrintWriter object so
+ * that output can be directed somewhere besides <b>System.out</b>. This also
+ * allows for the possibility of writing in other, non-default character sets
+ * such as UTF-8.
  */
 public class Messages {
 
     /**
-     *  Count of error messages stored in Messages object.
+     * Count of error messages stored in Messages object.
      */
     protected int errorMessageCnt;
 
     /**
-     *  Count of info messages stored in Messages object.
+     * Count of info messages stored in Messages object.
      */
     protected int infoMessageCnt;
 
     /**
-     *  String array of error messages in Messages object.
+     * String array of error messages in Messages object.
      */
     protected String[] errorMessageArray;
 
     /**
-     *  String array of info messages in Messages object.
+     * String array of info messages in Messages object.
      */
     protected String[] infoMessageArray;
 
     protected Hashtable<String, InstrumentationTimer> instrumentationTable;
 
     /**
-     *  Default constructor using
-     *  LangConstants.MAX_ERROR_MESSAGES_DEFAULT and
-     *  LangConstants.MAX_INFO_MESSAGES_DEFAULT.
+     * Default constructor using LangConstants.MAX_ERROR_MESSAGES_DEFAULT and
+     * LangConstants.MAX_INFO_MESSAGES_DEFAULT.
      */
     public Messages() {
         this(LangConstants.MAX_ERROR_MESSAGES_DEFAULT,
@@ -81,12 +74,11 @@ public class Messages {
     }
 
     /**
-     *  Constructor using max error/info message params.
-     *
-     *  @param maxErrorMessages max error messages to be stored.
-     *  @param maxInfoMessages  max info messages to be stored.
-     *
-     *  @throws IllegalArgumentException if "max" params < 1.
+     * Constructor using max error/info message params.
+     * 
+     * @param maxErrorMessages max error messages to be stored.
+     * @param maxInfoMessages max info messages to be stored.
+     * @throws IllegalArgumentException if "max" params < 1.
      */
     public Messages(final int maxErrorMessages, final int maxInfoMessages) {
 
@@ -105,11 +97,10 @@ public class Messages {
     }
 
     /**
-     *  Reallocate error message array with new size.
-     *
-     *  @param maxErrorMessages max error messages to be stored.
-     *
-     *  @throws IllegalArgumentException if "max" param < 1.
+     * Reallocate error message array with new size.
+     * 
+     * @param maxErrorMessages max error messages to be stored.
+     * @throws IllegalArgumentException if "max" param < 1.
      */
     public void reallocateErrorMessages(final int maxErrorMessages) {
         if (maxErrorMessages < 1)
@@ -120,11 +111,10 @@ public class Messages {
     }
 
     /**
-     *  Reallocate info message array with new size.
-     *
-     *  @param maxInfoMessages max info messages to be stored.
-     *
-     *  @throws IllegalArgumentException if "max" param < 1.
+     * Reallocate info message array with new size.
+     * 
+     * @param maxInfoMessages max info messages to be stored.
+     * @throws IllegalArgumentException if "max" param < 1.
      */
     public void reallocateInfoMessages(final int maxInfoMessages) {
         if (maxInfoMessages < 1)
@@ -135,14 +125,12 @@ public class Messages {
     }
 
     /**
-     *  Accum error message in Messages repository.
-     *  <p>
-     *  Stores the new message if there is room in the
-     *  array.
-     *
-     *  @param errorMessage error message.
-     *
-     *  @return true if message stored, false if no room left.
+     * Accum error message in Messages repository.
+     * <p>
+     * Stores the new message if there is room in the array.
+     * 
+     * @param errorMessage error message.
+     * @return true if message stored, false if no room left.
      */
     public boolean accumErrorMessage(final String errorMessage) {
         if (errorMessageCnt < errorMessageArray.length) {
@@ -153,14 +141,12 @@ public class Messages {
     }
 
     /**
-     *  Accum info message in Messages repository.
-     *  <p>
-     *  Stores the new message if there is room in the
-     *  array.
-     *
-     *  @param infoMessage info message.
-     *
-     *  @return true if message stored, false if no room left.
+     * Accum info message in Messages repository.
+     * <p>
+     * Stores the new message if there is room in the array.
+     * 
+     * @param infoMessage info message.
+     * @return true if message stored, false if no room left.
      */
     public boolean accumInfoMessage(final String infoMessage) {
         if (infoMessageCnt < infoMessageArray.length) {
@@ -171,21 +157,18 @@ public class Messages {
     }
 
     /**
-     *  Return count of error messages stored in Messages object.
-     *  <p>
-     *
-     *  @return error message count.
+     * Return count of error messages stored in Messages object.
+     * 
+     * @return error message count.
      */
     public int getErrorMessageCnt() {
         return errorMessageCnt;
     }
 
     /**
-     *  Check max error messages (table full).
-     *  <p>
-     *
-     *  @return true if no room for more error messages, otherwise
-     *          false.
+     * Check max error messages (table full).
+     * 
+     * @return true if no room for more error messages, otherwise false.
      */
     public boolean maxErrorMessagesReached() {
         if (errorMessageCnt < errorMessageArray.length)
@@ -194,35 +177,34 @@ public class Messages {
     }
 
     /**
-     *  Return count of info messages stored in Messages object.
-     *  <p>
-     *
-     *  @return info message count.
+     * Return count of info messages stored in Messages object.
+     * 
+     * @return info message count.
      */
     public int getInfoMessageCnt() {
         return infoMessageCnt;
     }
 
     /**
-     *  Return error message array.
-     *
-     *  @return error message array.
+     * Return error message array.
+     * 
+     * @return error message array.
      */
     public String[] getErrorMessageArray() {
         return errorMessageArray;
     }
 
     /**
-     *  Return info message array.
-     *
-     *  @return info message array.
+     * Return info message array.
+     * 
+     * @return info message array.
      */
     public String[] getInfoMessageArray() {
         return infoMessageArray;
     }
 
     /**
-     *  Print all messages to System.out and clear message arrays.
+     * Print all messages to System.out and clear message arrays.
      */
     public void printAndClearMessages() {
         printMessages();
@@ -230,7 +212,7 @@ public class Messages {
     }
 
     /**
-     *  Print all messages to System.out.
+     * Print all messages to System.out.
      */
     public void printMessages() {
         printInfoMessages();
@@ -238,8 +220,9 @@ public class Messages {
     }
 
     /**
-     *  Print all messages to printStream and
-     *  clear message arrays.
+     * Print all messages to printStream and clear message arrays.
+     * 
+     * @param printStream the PrintStream
      */
     public void printAndClearMessages(final PrintStream printStream) {
         printMessages(printStream);
@@ -247,7 +230,9 @@ public class Messages {
     }
 
     /**
-     *  Print all messages to printStream.
+     * Print all messages to printStream.
+     * 
+     * @param printStream the PrintStream
      */
     public void printMessages(final PrintStream printStream) {
         printInfoMessages(printStream);
@@ -255,8 +240,9 @@ public class Messages {
     }
 
     /**
-     *  Write all messages to printWriter and
-     *  clear message arrays.
+     * Write all messages to printWriter and clear message arrays.
+     * 
+     * @param printWriter the PrintWriter
      */
     public void writeAndClearMessages(final PrintWriter printWriter) {
         writeMessages(printWriter);
@@ -264,7 +250,9 @@ public class Messages {
     }
 
     /**
-     *  Write all messages to printWriter.
+     * Write all messages to printWriter.
+     * 
+     * @param printWriter the PrintWriter
      */
     public void writeMessages(final PrintWriter printWriter) {
         writeInfoMessages(printWriter);
@@ -272,21 +260,23 @@ public class Messages {
     }
 
     /**
-     *  Print error messages to System.out.
+     * Print error messages to System.out.
      */
     public void printErrorMessages() {
         printErrorMessages(System.out);
     }
 
     /**
-     *  Print info messages to System.out.
+     * Print info messages to System.out.
      */
     public void printInfoMessages() {
         printInfoMessages(System.out);
     }
 
     /**
-     *  Print error messages to printStream.
+     * Print error messages to printStream.
+     * 
+     * @param printStream the PrintStream
      */
     public void printErrorMessages(final PrintStream printStream) {
         for (int i = 0; i < errorMessageCnt; i++)
@@ -294,7 +284,9 @@ public class Messages {
     }
 
     /**
-     *  Write error messages to printWriter.
+     * Write error messages to printWriter.
+     * 
+     * @param printWriter the PrintWriter
      */
     public void writeErrorMessages(final PrintWriter printWriter) {
         for (int i = 0; i < errorMessageCnt; i++)
@@ -302,7 +294,9 @@ public class Messages {
     }
 
     /**
-     *  Print info messages to printStream.
+     * Print info messages to printStream.
+     * 
+     * @param printStream the PrintStream
      */
     public void printInfoMessages(final PrintStream printStream) {
         for (int i = 0; i < infoMessageCnt; i++)
@@ -310,7 +304,9 @@ public class Messages {
     }
 
     /**
-     *  Write info messages to printWriter.
+     * Write info messages to printWriter.
+     * 
+     * @param printWriter the PrintWriter
      */
     public void writeInfoMessages(final PrintWriter printWriter) {
         for (int i = 0; i < infoMessageCnt; i++)
@@ -318,16 +314,13 @@ public class Messages {
     }
 
     /**
-     *  Empty message arrays and reset counters to zero.
+     * Empty message arrays and reset counters to zero.
      */
     public void clearMessages() {
         errorMessageCnt = 0;
         infoMessageCnt = 0;
     }
 
-    /**
-     *
-     */
     public void startInstrumentationTimer(final String timerID) {
 
         if (instrumentationTable == null)
@@ -336,9 +329,6 @@ public class Messages {
         instrumentationTable.put(timerID.trim(), new InstrumentationTimer());
     }
 
-    /**
-     *
-     */
     public void stopInstrumentationTimer(final String inTimerID) {
 
         final InstrumentationTimer tNow = new InstrumentationTimer();

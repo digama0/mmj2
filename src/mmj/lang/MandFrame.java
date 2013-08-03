@@ -7,21 +7,21 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  MandFrame.java  0.06 08/01/2008
+ * MandFrame.java  0.06 08/01/2008
  *
- *  31-Dec-2005
- *  -->added convenience routines for ProofAsst.
+ * 31-Dec-2005
+ * -->added convenience routines for ProofAsst.
  *
- *  Version 0.04 -- 07-Sep-2006
- *  -->removed unnecessary LangException declarations
- *     on constructors (doh?)
- *  --> move Assrt.loadDjVarsArray to DjVars class.
+ * Version 0.04 -- 07-Sep-2006
+ * -->removed unnecessary LangException declarations
+ *    on constructors (doh?)
+ * --> move Assrt.loadDjVarsArray to DjVars class.
  *
- *  Version 0.05 -- 01-Jun-2007
- *  --> Added consolidateDvGroups(), etc.
+ * Version 0.05 -- 01-Jun-2007
+ * --> Added consolidateDvGroups(), etc.
  *
- *  Version 0.06 -- 01-Aug-2008
- *  --> Added buildConsolidatedDvArray()
+ * Version 0.06 -- 01-Aug-2008
+ * --> Added buildConsolidatedDvArray()
  */
 
 package mmj.lang;
@@ -31,58 +31,52 @@ import java.util.*;
 import mmj.pa.DistinctVariablesStmt;
 
 /**
- *  Mandatory "Frame" of an Assrt (assertion).
- *  <p>
- *  Add MandFrame to OptFrame and you have a Metamath
- *  "Extended Frame".
- *
- *  @see <a href="../../MetamathERNotes.html">
- *       Nomenclature and Entity-Relationship Notes</a>
+ * Mandatory "Frame" of an Assrt (assertion).
+ * <p>
+ * Add MandFrame to OptFrame and you have a Metamath "Extended Frame".
+ * 
+ * @see <a href="../../MetamathERNotes.html"> Nomenclature and
+ *      Entity-Relationship Notes</a>
  */
 public class MandFrame {
 
     /**
-     *  Default Constructor.
+     * Default Constructor.
      */
     public MandFrame() {}
 
     /**
-     *  These are the "mandatories" that are referenced in an
-     *  assertion, in order of appearance in the database.
-     *  <p>
-     *  For a Theorem these include not only the variable
-     *  hypotheses for variables referenced in the assertion's
-     *  Formula, but the logical hypotheses in scope of the
-     *  Theorem plus the variable hypotheses for variables
-     *  referenced by *those* logical hypotheses.
+     * These are the "mandatories" that are referenced in an assertion, in order
+     * of appearance in the database.
+     * <p>
+     * For a Theorem these include not only the variable hypotheses for
+     * variables referenced in the assertion's Formula, but the logical
+     * hypotheses in scope of the Theorem plus the variable hypotheses for
+     * variables referenced by *those* logical hypotheses.
      */
     public Hyp[] hypArray;
 
     /**
-     *  These are the disjoint variable (pair)restrictions, if any,
-     *  that apply to the Assrt and any of its proof steps.
+     * These are the disjoint variable (pair)restrictions, if any, that apply to
+     * the Assrt and any of its proof steps.
      */
     public DjVars[] djVarsArray;
 
     /**
-     *  Checks to see if a certain pair of variables is
-     *  mentioned in a MandFrame's DjVars array.
-     *  <p>
-     *  Note: vLo and vHi are automatically switched
-     *        if vLo is not low.
-     *  <p>
-     *  Note: this function is the reason that DjVars vars
-     *        are stored as "lo" and "hi". Low and High
-     *        are irrelevant to the mathematics of this
-     *        situation. But if the vars were stored
-     *        randomly or arbitrarily, then twice as
-     *        many comparisons would be needed here.
-     *
-     *  @param frame Mandatory Frame to inspect.
-     *  @param vLo   the "low" variable in the pair.
-     *  @param vHi   the "high" variable in the pair.
-     *
-     *  @return true if param var pair in MandFrame DjVars array.
+     * Checks to see if a certain pair of variables is mentioned in a
+     * MandFrame's DjVars array.
+     * <p>
+     * Note: vLo and vHi are automatically switched if vLo is not low.
+     * <p>
+     * Note: this function is the reason that DjVars vars are stored as "lo" and
+     * "hi". Low and High are irrelevant to the mathematics of this situation.
+     * But if the vars were stored randomly or arbitrarily, then twice as many
+     * comparisons would be needed here.
+     * 
+     * @param frame Mandatory Frame to inspect.
+     * @param vLo the "low" variable in the pair.
+     * @param vHi the "high" variable in the pair.
+     * @return true if param var pair in MandFrame DjVars array.
      */
     public static boolean isVarPairInDjArray(final MandFrame frame, Var vLo,
         Var vHi)
@@ -100,12 +94,11 @@ public class MandFrame {
     }
 
     /**
-     *  Converts an array of ProofWorksheet DistinctVariablesStmt
-     *  objects into an array of DjVars objects.
-     *  <p>
-     *  @param distinctVariablesStmtArray array of
-     *         DistinctVariablesStmt object.
-     *  @return array of DjVars objects.
+     * Converts an array of ProofWorksheet DistinctVariablesStmt objects into an
+     * array of DjVars objects.
+     * 
+     * @param distinctVariablesStmtArray array of DistinctVariablesStmt object.
+     * @return array of DjVars objects.
      */
     public static DjVars[] buildConsolidatedDvArray(
         final DistinctVariablesStmt[] distinctVariablesStmtArray)
@@ -117,42 +110,24 @@ public class MandFrame {
         for (int i = 0; i < distinctVariablesStmtArray.length; i++)
             dvGroupArray[i] = distinctVariablesStmtArray[i].getDv();
 
-        try {
-            MandFrame.loadDvGroupsIntoList(dvList, dvGroupArray);
-        } catch (final LangException e) {
-            // this should never happen because we're
-            // checking for dups and bypassing them,
-            // so blow up on this occurrence!
-            throw new IllegalArgumentException(
-                LangConstants.ERRMSG_DUP_DJ_VARS_AFTER_CONSOLIDATION_ERR_1
-                    + e.getMessage());
-        }
+        MandFrame.loadDvGroupsIntoList(dvList, dvGroupArray);
 
         return dvList.toArray(new DjVars[dvList.size()]);
     }
 
     /**
-     *  Accumulates new Distinct Variables into an
-     *  List of DjVars pairs.
-     *
-     *  The dvGroupArray is Var[][], array of Var arrays.
-     *
-     *  Each Var array is of the form { x, y, z, ... }
-     *  which generates DjVars for (x,y), (x,z), (y,z),
-     *  etc. There is one Var array for each $d statement,
-     *  in other words.
-     *
-     *  Duplicate DjVars pairs are dropped without
-     *  notice, as are pairs such as (x, x).
-     *
-     *  Convenience method for ProofAsst's use with
-     *  an existing theorem.
-     *
-     *  @param arrayList list of DjVars objects
-     *  @param dvGroupArray array of Var[] arrays.
+     * Accumulates new Distinct Variables into an List of DjVars pairs. The
+     * dvGroupArray is Var[][], array of Var arrays. Each Var array is of the
+     * form { x, y, z, ... } which generates DjVars for (x,y), (x,z), (y,z),
+     * etc. There is one Var array for each $d statement, in other words.
+     * Duplicate DjVars pairs are dropped without notice, as are pairs such as
+     * (x, x). Convenience method for ProofAsst's use with an existing theorem.
+     * 
+     * @param arrayList list of DjVars objects
+     * @param dvGroupArray array of Var[] arrays.
      */
     public static void loadDvGroupsIntoList(final List<DjVars> arrayList,
-        final Var[][] dvGroupArray) throws LangException
+        final Var[][] dvGroupArray)
     {
         DjVars djVars;
         int found;
@@ -163,48 +138,55 @@ public class MandFrame {
                 dvGroup = element;
                 for (int j = 0; j < dvGroup.length - 1; j++)
                     for (int k = j + 1; k < dvGroup.length; k++)
-                        if (!dvGroup[j].equals(dvGroup[k])) {
-                            djVars = new DjVars(dvGroup[j], dvGroup[k]);
-                            found = arrayList.indexOf(djVars);
-                            if (found == -1)
-                                arrayList.add(djVars);
-                        }
+                        if (!dvGroup[j].equals(dvGroup[k]))
+                            try {
+                                djVars = new DjVars(dvGroup[j], dvGroup[k]);
+                                found = arrayList.indexOf(djVars);
+                                if (found == -1)
+                                    arrayList.add(djVars);
+                            } catch (final LangException e) {
+                                // this should never happen because we're
+                                // checking for dups and bypassing them,
+                                // so blow up on this occurrence!
+                                throw new IllegalArgumentException(
+                                    LangConstants.ERRMSG_DUP_DJ_VARS_AFTER_CONSOLIDATION_ERR_1
+                                        + e.getMessage());
+                            }
             }
         }
     }
 
     /**
-     *  Attempts to do a good job consolidating pairs of
-     *  disjoint variables into groups of three or more.
-     *  <p>
-     *  The input dvArray is assumed to be in ascending order
-     *  according to DjVars.compareTo. We assume AND
-     *  require that it be free from duplicates. Here is an
-     *  example of dvArray -- sorted and with no duplicates:
-     *  <p>
-     *
-     *  <code>
-     *  [(a,b),(a,c),(a,d),(b,c),(b,d),(b,e),(c,d),(c,f)]
-     *  </code>
-     *
-     *  The output List contains an ordered set of
-     *  Lists of disjoint variables, sorted by the
-     *  first Var character string in the list. Here is
-     *  sample output for the example above:
-     *  <p>
-     *  <code>
-     *  [ [a,b,c,d], [b,e], [c,f] ]
-     *  </code>
-     *  <p>
-     *  The algorith should be capable of consolidating
-     *  $d's into </code> [ [a,x,y,z], [b,x,y,z] ]</code>,
-     *  as well as </code> [ [x,y,z,a], [x,y,z,b] ]</code>.
-     *  <p>
-     *  Note that within a DjVars object. varLo and varHi
-     *  are loaded by Var.Id. Thus, for disjoint vars "a" and
-     *  "b", varHo = a, and varHi = b. Also, varLo is never
-     *  equal to varHi.
-     *  <p>
+     * Attempts to do a good job consolidating pairs of disjoint variables into
+     * groups of three or more.
+     * <p>
+     * The input dvArray is assumed to be in ascending order according to
+     * DjVars.compareTo. We assume AND require that it be free from duplicates.
+     * Here is an example of dvArray -- sorted and with no duplicates:
+     * <p>
+     * 
+     * <pre>
+     * [(a,b),(a,c),(a,d),(b,c),(b,d),(b,e),(c,d),(c,f)]
+     * </pre>
+     * 
+     * The output List contains an ordered set of Lists of disjoint variables,
+     * sorted by the first Var character string in the list. Here is sample
+     * output for the example above:
+     * 
+     * <pre>
+     * [ [a,b,c,d], [b,e], [c,f] ]
+     * </pre>
+     * 
+     * The algorithm should be capable of consolidating $d's into </code>[
+     * [a,x,y,z], [b,x,y,z] ]</code>, as well as </code> [ [x,y,z,a], [x,y,z,b]
+     * ]</code>.
+     * <p>
+     * Note that within a DjVars object. varLo and varHi are loaded by Var.Id.
+     * Thus, for disjoint vars "a" and "b", varHo = a, and varHi = b. Also,
+     * varLo is never equal to varHi.
+     * 
+     * @param dvArray the input list of DjVars
+     * @return the list of distinct variable groups
      */
     public static List<List<Var>> consolidateDvGroups(final DjVars[] dvArray) {
 
@@ -317,24 +299,17 @@ public class MandFrame {
     }
 
     /**
-     *  Builds a Frame using a ScopeDef and an array of
-     *  Distinct Variables, limited by an input maximum
-     *  sequence number.
-     *
-     *  Convenience method for ProofAsst's use on a new
-     *  theorem. ProofAsst allows new theorems, assuming
-     *  that all variables and hypotheses used are in
-     *  global scope, but it also provides a "LocAfter"
-     *  statement specification, so maxSeq is input to
-     *  restrict the contents of the new Frame.
-     *
-     *  LogHyp's in the scopeDef are not loaded into
-     *  the Frame -- not expected at global scope level,
-     *  and global LogHyp's are not used in ProofAsst
-     *  (haven't seen one yet, just saying).
-     *
-     *  @param scopeDef ScopeDef, intended to be global scope.
-     *  @param maxSeq MObj.seq must be < maxSeq
+     * Builds a Frame using a ScopeDef and an array of Distinct Variables,
+     * limited by an input maximum sequence number. Convenience method for
+     * ProofAsst's use on a new theorem. ProofAsst allows new theorems, assuming
+     * that all variables and hypotheses used are in global scope, but it also
+     * provides a "LocAfter" statement specification, so maxSeq is input to
+     * restrict the contents of the new Frame. LogHyp's in the scopeDef are not
+     * loaded into the Frame -- not expected at global scope level, and global
+     * LogHyp's are not used in ProofAsst (haven't seen one yet, just saying).
+     * 
+     * @param scopeDef ScopeDef, intended to be global scope.
+     * @param maxSeq MObj.seq must be < maxSeq
      */
     public MandFrame(final ScopeDef scopeDef, final int maxSeq) {
 
@@ -361,15 +336,12 @@ public class MandFrame {
     }
 
     /**
-     *  Builds a composite ("combo") Frame using a
-     *  MandFrame plus an OptFrame, augmented by
-     *  additional $d specifications.
-     *
-     *  Convenience method for ProofAsst's use with
-     *  an existing theorem.
-     *
-     *  @param mandFrame a Theorem's MandFrame
-     *  @param optFrame  a Theorem's OptFrame
+     * Builds a composite ("combo") Frame using a MandFrame plus an OptFrame,
+     * augmented by additional $d specifications. Convenience method for
+     * ProofAsst's use with an existing theorem.
+     * 
+     * @param mandFrame a Theorem's MandFrame
+     * @param optFrame a Theorem's OptFrame
      */
     public MandFrame(final MandFrame mandFrame, final OptFrame optFrame) {
 
@@ -396,17 +368,15 @@ public class MandFrame {
     }
 
     /**
-     *  Checks to see whether or not both variables in a DjVars
-     *  pair are referenced in the MandFrame's array of hypotheses.
-     *  <p>
-     *  Note: checks only the VarHyp's.
-     *  <p>
-     * @param djVars -- DjVars object containing 2 variables to
-     *                  be checked against the variables referenced
-     *                  in the MandFrame hypArray.
-     *
-     * @return boolean -- true if both DjVars variables are present
-     *                    in hypArray, otherwise false.
+     * Checks to see whether or not both variables in a DjVars pair are
+     * referenced in the MandFrame's array of hypotheses.
+     * <p>
+     * Note: checks only the VarHyp's.
+     * 
+     * @param djVars -- DjVars object containing 2 variables to be checked
+     *            against the variables referenced in the MandFrame hypArray.
+     * @return boolean -- true if both DjVars variables are present in hypArray,
+     *         otherwise false.
      */
     public boolean areBothDjVarsInHypArray(final DjVars djVars) {
         boolean loFound = false;
@@ -428,50 +398,33 @@ public class MandFrame {
     }
 
     /**
-     *  Accumulates an array of DvGroups into the djVarsArray.
-     *  <p>
-     *  FYI, a DvGroup is an array of at least 2 variables
-     *  which are by definition supposed to be distinct from
-     *  each other. So [ph th ch] is a DvGroup which could
-     *  be obtained from a $d statement like "$d ph th ch $."
-     *  <p>
-     *  @param dvGroupArray array of array of disjoint variables.
-     *  @throws LangException if a two variables in a DvGroup
-     *          are identical (e.g. [ph ph ch]).
+     * Accumulates an array of DvGroups into the djVarsArray.
+     * <p>
+     * FYI, a DvGroup is an array of at least 2 variables which are by
+     * definition supposed to be distinct from each other. So [ph th ch] is a
+     * DvGroup which could be obtained from a $d statement like "$d ph th ch $."
+     * 
+     * @param dvGroupArray array of array of disjoint variables.
      */
     public void addDjVarGroups(final Var[][] dvGroupArray) {
         final List<DjVars> arrayList = new ArrayList<DjVars>(
             Arrays.asList(djVarsArray));
 
-        try {
-            MandFrame.loadDvGroupsIntoList(arrayList, dvGroupArray);
-        } catch (final LangException e) {
-            // this should never happen because we're
-            // checking for dups and bypassing them,
-            // so blow up on this occurrence!
-            throw new IllegalArgumentException(
-                LangConstants.ERRMSG_DUP_DJ_VARS_AFTER_CONSOLIDATION_ERR_2
-                    + e.getMessage());
-        }
+        MandFrame.loadDvGroupsIntoList(arrayList, dvGroupArray);
 
         djVarsArray = arrayList.toArray(new DjVars[arrayList.size()]);
 
     }
 
     /**
-     *  Builds and returns Var HashMap derived from the
-     *  MandFrame hypArray.
-     *
-     *  The returned map of Vars contains the vars returned
-     *  from the MandFrame's VarHyps via getVar(), and does not
-     *  seek out vars used in the formulas of LogHyps mentioned
-     *  in the hypArray. Reason? The VarHyps for any LogHyps
-     *  should *already* be in the MandFrame hypArray, by
-     *  definition (of MandFrame).
-     *
-     *  Convenience method for ProofAsst's use.
-     *
-     *  @return Map of Vars for VarHyps in MandFrame.hypArray.
+     * Builds and returns Var HashMap derived from the MandFrame hypArray. The
+     * returned map of Vars contains the vars returned from the MandFrame's
+     * VarHyps via getVar(), and does not seek out vars used in the formulas of
+     * LogHyps mentioned in the hypArray. Reason? The VarHyps for any LogHyps
+     * should *already* be in the MandFrame hypArray, by definition (of
+     * MandFrame). Convenience method for ProofAsst's use.
+     * 
+     * @return Map of Vars for VarHyps in MandFrame.hypArray.
      */
     public Map<String, Var> getVarMap() {
         final Map<String, Var> varMap = new HashMap<String, Var>(
@@ -485,27 +438,30 @@ public class MandFrame {
         return varMap;
     }
 
-    /*
-     *  Here we make a single scan of dvArray
-     *  looking to match DjVars elements for the dvArray
-     *  varHi element and each of the Var elements already
-     *  in the dvGroup. This is a multiple search because
-     *  we are looking for multiple "hits".
-     *
-     *  The indexes of the matching dvArray entries are
-     *  stored in "checked", for use later in marking them
-     *  "done".
-     *
-     *  If there are *any* NOTFND's, whatsoever, return
-     *  false -- complete and total success in the search
-     *  is required (signifying that the candidate varHi
-     *  variable is disjoint with every Var in dvGroup!)
-     *
-     *  Note that the Vars in dvGroup are stored in
-     *  ascending order by Sym.Id. This enables us to
-     *  make a single pass through dvArray and perform
-     *  all of the matches (dvArray is *also* sorted
-     *  in ascending order.)
+    /**
+     * Here we make a single scan of dvArray looking to match DjVars elements
+     * for the dvArray varHi element and each of the Var elements already in the
+     * dvGroup. This is a multiple search because we are looking for multiple
+     * "hits".
+     * <p>
+     * The indexes of the matching dvArray entries are stored in "checked", for
+     * use later in marking them "done".
+     * <p>
+     * If there are *any* NOTFND's, whatsoever, return false -- complete and
+     * total success in the search is required (signifying that the candidate
+     * varHi variable is disjoint with every Var in dvGroup!)
+     * <p>
+     * Note that the Vars in dvGroup are stored in ascending order by Sym.Id.
+     * This enables us to make a single pass through dvArray and perform all of
+     * the matches (dvArray is *also* sorted in ascending order.)
+     * 
+     * @param dvArrayVar the other Var to pair with each entry in dvGroup
+     * @param dvGroup the array of Vars to search for
+     * @param dvArray the array of DjVars to match against
+     *            {@code [dvArrayVar, dvGroup]}
+     * @param searchIndex the start index into dvArray to search for matches
+     * @param checked the output array of matching dvArray entries
+     * @return if all DjVars are disjoint
      */
     private static boolean areAllDisjoint(final Var dvArrayVar,
         final List<Var> dvGroup, final DjVars[] dvArray, int searchIndex,
@@ -515,27 +471,25 @@ public class MandFrame {
 
         final DjVars search = new DjVars();
         int compare;
+        // why start at 1 not 0?
         Loop1: for (int i = 1; i < dvGroup.size(); i++) {
-
-            search.varLo = dvGroup.get(i);
-            if (search.varLo.compareTo(dvArrayVar) > 0) {
-                search.varHi = search.varLo;
-                search.varLo = dvArrayVar;
+            try {
+                search.set(dvGroup.get(i), dvArrayVar);
+            } catch (final LangException e) {
+                // Shouldn't happen
             }
-            else
-                search.varHi = dvArrayVar;
 
-            Loop2: while (true) {
+            while (true) {
                 if (++searchIndex >= dvArray.length)
                     return false; // not found
                 if ((compare = dvArray[searchIndex].compareTo(search)) > 0)
                     return false; // not found
                 if (compare == 0) {
                     // found!
-                    checked.add(new Integer(searchIndex));
+                    checked.add(Integer.valueOf(searchIndex));
                     continue Loop1;
                 }
-                continue Loop2;
+                continue;
             }
         }
         return true;

@@ -10,6 +10,7 @@
     </path>
     <target name="init">
         <mkdir dir="classes"/>
+        <mkdir dir="doc/javadoc"/>
         <copy includeemptydirs="false" todir="classes">
             <fileset dir="src">
                 <exclude name="**/*.launch"/>
@@ -19,9 +20,10 @@
     </target>
     <target name="clean">
         <delete dir="classes"/>
+        <delete dir="doc/javadoc"/>
     </target>
     <target depends="clean" name="cleanall"/>
-    <target depends="build-subprojects,build-project" name="build">
+    <target depends="build-subprojects,build-project,build-doc" name="build">
         <jar jarfile="mmj2jar/mmj2.jar" basedir="classes" includes="**/*.class">
             <manifest>
                 <attribute name="Main-Class" value="mmj.util.BatchMMJ2" />
@@ -35,6 +37,9 @@
             <src path="src"/>
             <classpath refid="mmj2.classpath"/>
         </javac>
+    </target>
+    <target name="build-doc">
+        <javadoc sourcepath="src" destdir="doc/javadoc"/>
     </target>
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
     <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">

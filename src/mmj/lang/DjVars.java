@@ -9,22 +9,22 @@
 /*
  * @(#)DjVars.java  0.05 08/01/2008
  *
- *  Version 0.02 08/23/2005
+ * Version 0.02 08/23/2005
  *
- *  Version 0.03 06/01/2007
- *      --> Add sortAndCombineDvArrays() for use by
- *          mmj.pa.ProofWorksheet.java
- *      --> move Assrt.loadDjVarsArray to DjVars class.
- *      --> fix compareTo -- make it operate on varLo
- *          and varHi instead of the toString() of
- *          djVars.
+ * Version 0.03 06/01/2007
+ *     --> Add sortAndCombineDvArrays() for use by
+ *         mmj.pa.ProofWorksheet.java
+ *     --> move Assrt.loadDjVarsArray to DjVars class.
+ *     --> fix compareTo -- make it operate on varLo
+ *         and varHi instead of the toString() of
+ *         djVars.
  *
- *  Version 0.04 08/01/2007
- *      --> added areBothDjVarsInExtendedFrame() for TheoremLoader.
+ * Version 0.04 08/01/2007
+ *     --> added areBothDjVarsInExtendedFrame() for TheoremLoader.
  *
- *  Version 0.05 08/02/2008
- *      --> added buildMetamathDjVarsStatementList() and
- *                convertDvGroupsListToMetamathList().
+ * Version 0.05 08/02/2008
+ *     --> added buildMetamathDjVarsStatementList() and
+ *               convertDvGroupsListToMetamathList().
  */
 
 package mmj.lang;
@@ -35,66 +35,52 @@ import mmj.mmio.MMIOConstants;
 import mmj.pa.DistinctVariablesStmt;
 
 /**
- *  DjVars is a simple structure that holds a pair of
- *  variables specified in a Metamath $d statement, the
- *  "Disjoint Variable Restriction" statement.
- *
- *  "Disjoint" here means different. See Pg. 96 of Metamath.pdf.
- *  Refer also to mmj.verify.VerifyProofs.java, which is where
- *  DjVars really come into play. The narrative version is
- *  tricky and tedious, and is not repeated here...
- *
- *  Another minor complication is that Metamath's "$d"
- *  statement employs a shorthand notation allowing several
- *  variable to be specified on a single $d statement. This
- *  results in multiple DjVars objects since each pair
- *  combination in the $d must be treated as a separate
- *  restriction (the combinatorial explosion is exciting
- *  when there are many variables listed!) Also, multiple
- *  $d statements are allowed to have overlapping
- *  pairs, perhaps resulting from the combinatorial explosions.
- *  This all makes it easy for the person writing the Metamath
- *  .mm file, but there is some work storing the results.
- *
- *  During loading of LogicalSystem, DjVars are maintained
- *  in mmj.lang.ScopeDef.java -- actually, a list of ScopeDef's.
- *  And DjVars are stored in mmj.lang.MandFrame.java and
- *  mmj.lang.OptFrame.java as part of a successful system
- *  load operation.
- *
- *  @see <a href="../../MetamathERNotes.html">
- *       Nomenclature and Entity-Relationship Notes</a>
+ * DjVars is a simple structure that holds a pair of variables specified in a
+ * Metamath $d statement, the "Disjoint Variable Restriction" statement.
+ * "Disjoint" here means different. See Pg. 96 of Metamath.pdf. Refer also to
+ * mmj.verify.VerifyProofs.java, which is where DjVars really come into play.
+ * The narrative version is tricky and tedious, and is not repeated here...
+ * Another minor complication is that Metamath's "$d" statement employs a
+ * shorthand notation allowing several variable to be specified on a single $d
+ * statement. This results in multiple DjVars objects since each pair
+ * combination in the $d must be treated as a separate restriction (the
+ * combinatorial explosion is exciting when there are many variables listed!)
+ * Also, multiple $d statements are allowed to have overlapping pairs, perhaps
+ * resulting from the combinatorial explosions. This all makes it easy for the
+ * person writing the Metamath .mm file, but there is some work storing the
+ * results. During loading of LogicalSystem, DjVars are maintained in
+ * mmj.lang.ScopeDef.java -- actually, a list of ScopeDef's. And DjVars are
+ * stored in mmj.lang.MandFrame.java and mmj.lang.OptFrame.java as part of a
+ * successful system load operation.
+ * 
+ * @see <a href="../../MetamathERNotes.html"> Nomenclature and
+ *      Entity-Relationship Notes</a>
  */
 public class DjVars implements Comparable<DjVars> {
 
     /**
-     *  varLo and varHi refer to the pair of DjVars after
-     *  being switched from input, as necessary, so that
-     *  for example, "a" is varLo and "b" is varHi (sorting
-     *  based on Sym.id, not MObj.seq in other words.)
+     * varLo and varHi refer to the pair of DjVars after being switched from
+     * input, as necessary, so that for example, "a" is varLo and "b" is varHi
+     * (sorting based on Sym.id, not MObj.seq in other words.)
      */
     Var varLo;
 
     /**
-     *  varLo and varHi refer to the pair of DjVars after
-     *  being switched from input, as necessary, so that
-     *  for example, "a" is varLo and "b" is varHi (sorting
-     *  based on Sym.id, not MObj.seq in other words).
+     * varLo and varHi refer to the pair of DjVars after being switched from
+     * input, as necessary, so that for example, "a" is varLo and "b" is varHi
+     * (sorting based on Sym.id, not MObj.seq in other words).
      */
     Var varHi;
 
     /**
-     *  Helper routine for Theorem Loader to confirm that
-     *  both DjVars variables are in the Extended Frame
-     *  of a theorem.
-     *  <p>
-     *
-     *  @param  djVars DjVars object to check.
-     *  @param  mandFrame Mandatory Frame from a Theorem.
-     *  @param  optFrame Optional Frame from a Theorem.
-     *
-     *  @return true if both DjVars variables are used in
-     *          VarHyps in the Extended Frame, otherwise false.
+     * Helper routine for Theorem Loader to confirm that both DjVars variables
+     * are in the Extended Frame of a theorem.
+     * 
+     * @param djVars DjVars object to check.
+     * @param mandFrame Mandatory Frame from a Theorem.
+     * @param optFrame Optional Frame from a Theorem.
+     * @return true if both DjVars variables are used in VarHyps in the Extended
+     *         Frame, otherwise false.
      */
     public static boolean areBothDjVarsInExtendedFrame(final DjVars djVars,
         final MandFrame mandFrame, final OptFrame optFrame)
@@ -136,16 +122,14 @@ public class DjVars implements Comparable<DjVars> {
     }
 
     /**
-     *  Helper routine for Proof Assistant to confirm that
-     *  a DjVars variable is defined in the Theorem's Extended Frame.
-     *  <p>
-     *
-     *  @param  djVarsVar variable object to check.
-     *  @param  mandFrame Mandatory Frame from a Theorem.
-     *  @param  optFrame Optional Frame from a Theorem.
-     *
-     *  @return true if both DjVars variables are used in
-     *          VarHyps in the Extended Frame, otherwise false.
+     * Helper routine for Proof Assistant to confirm that a DjVars variable is
+     * defined in the Theorem's Extended Frame.
+     * 
+     * @param djVarsVar variable object to check.
+     * @param mandFrame Mandatory Frame from a Theorem.
+     * @param optFrame Optional Frame from a Theorem.
+     * @return true if both DjVars variables are used in VarHyps in the Extended
+     *         Frame, otherwise false.
      */
     public static boolean isDjVarsVarInExtendedFrame(final Var djVarsVar,
         final MandFrame mandFrame, final OptFrame optFrame)
@@ -175,17 +159,17 @@ public class DjVars implements Comparable<DjVars> {
     }
 
     /**
-     *  Builds a LinkedList of StringBuilders containing the
-     *  Metamath formatted text $d statements for the theorem.
-     *  <p>
-     *  The input DistinctVariablesStmt array objects are
-     *  consolidated to remove duplicates, sorted and then
-     *  merged to create a concise set of $d statements.
-     *  <p>
-     *  @param distinctVariablesStmtArray array of Proof Worksheet
-     *              DistinctVariablesStmt objects.
-     *  @return List of StringBuilders containing $d statements
-     *                        (not containing any newlines).
+     * Builds a LinkedList of StringBuilders containing the Metamath formatted
+     * text $d statements for the theorem.
+     * <p>
+     * The input DistinctVariablesStmt array objects are consolidated to remove
+     * duplicates, sorted and then merged to create a concise set of $d
+     * statements.
+     * 
+     * @param distinctVariablesStmtArray array of Proof Worksheet
+     *            DistinctVariablesStmt objects.
+     * @return List of StringBuilders containing $d statements (not containing
+     *         any newlines).
      */
     public static List<StringBuilder> buildMetamathDjVarsStatementList(
         final DistinctVariablesStmt[] distinctVariablesStmtArray)
@@ -204,12 +188,12 @@ public class DjVars implements Comparable<DjVars> {
     }
 
     /**
-     *  Builds a LinkedList of StringBuilders containing the
-     *  Metamath format text $d statements for the theorem.
-     *  <p>
-     *  @param theorem the theorem for which $d statements are needed.
-     *  @return List of StringBuilders containing $d statements
-     *                        (not containing any newlines).
+     * Builds a LinkedList of StringBuilders containing the Metamath format text
+     * $d statements for the theorem.
+     * 
+     * @param theorem the theorem for which $d statements are needed.
+     * @return List of StringBuilders containing $d statements (not containing
+     *         any newlines).
      */
     public static List<StringBuilder> buildMetamathDjVarsStatementList(
         final Theorem theorem)
@@ -226,14 +210,13 @@ public class DjVars implements Comparable<DjVars> {
     }
 
     /**
-     *  Converts a ArrayList of Lists containing distinct
-     *  variables into a LinkedList of StringBuilders containing
-     *  Metamath format text $d statements.
-     *  <p>
-     *  @param comboDvGroups List of Lists containing
-     *                      distinct variables.
-     *  @return List of StringBuilders containing $d statements
-     *                      not containing any newlines.
+     * Converts a ArrayList of Lists containing distinct variables into a
+     * LinkedList of StringBuilders containing Metamath format text $d
+     * statements.
+     * 
+     * @param comboDvGroups List of Lists containing distinct variables.
+     * @return List of StringBuilders containing $d statements not containing
+     *         any newlines.
      */
     public static List<StringBuilder> convertDvGroupsListToMetamathList(
         final List<List<Var>> comboDvGroups)
@@ -261,13 +244,12 @@ public class DjVars implements Comparable<DjVars> {
     }
 
     /**
-     *  Merges two arrays of DjVars returning a single
-     *  array in ascending compareTo order with duplicates
-     *  eliminated.
-     *  <p>
-     *  @param array1 1st array of DjVars objects, may be null.
-     *  @param array2 2nd array of DjVars objects, may be null.
-     *  @return consolidated, sorted array of DjVars objects.
+     * Merges two arrays of DjVars returning a single array in ascending
+     * compareTo order with duplicates eliminated.
+     * 
+     * @param array1 1st array of DjVars objects, may be null.
+     * @param array2 2nd array of DjVars objects, may be null.
+     * @return consolidated, sorted array of DjVars objects.
      */
     public static DjVars[] sortAndCombineDvArrays(final DjVars[] array1,
         final DjVars[] array2)
@@ -286,12 +268,11 @@ public class DjVars implements Comparable<DjVars> {
     }
 
     /**
-     *  Merges lists of lists of DjVars returning a single
-     *  array in ascending compareTo order with duplicates
-     *  eliminated.
-     *  <p>
-     *  @param list1 List containing List elements of DjVars objects.
-     *  @return consolidated, sorted array of DjVars objects.
+     * Merges lists of lists of DjVars returning a single array in ascending
+     * compareTo order with duplicates eliminated.
+     * 
+     * @param list1 List containing List elements of DjVars objects.
+     * @return consolidated, sorted array of DjVars objects.
      */
     public static DjVars[] sortAndCombineDvListOfLists(
         final List<List<DjVars>> list1)
@@ -309,8 +290,11 @@ public class DjVars implements Comparable<DjVars> {
     }
 
     /**
-     *  Consolidates a DjVars object into an existing LinkedList
-     *  maintaining the list in compareTo order.
+     * Consolidates a DjVars object into an existing LinkedList maintaining the
+     * list in compareTo order.
+     * 
+     * @param mergedList the list to merge into
+     * @param dvPair the DjVars to merge
      */
     private static void sortAndCombineDvPair(final List<DjVars> mergedList,
         final DjVars dvPair)
@@ -337,32 +321,24 @@ public class DjVars implements Comparable<DjVars> {
     }
 
     /**
-     *  Default constructor.
+     * Default constructor.
      */
     public DjVars() {}
 
     /**
-     *  Construct using two Var id Strings.
-     *
-     *  The input variables are validated and switched
-     *  if necessary into varLo and varHi based on
-     *  Var.id.
-     *
-     *  Note: it is required that the Var's specified
-     *        be "active", but not that there be
-     *        active VarHyp's associated with them.
-     *        The $d vars on an Assrt may be specified
-     *        for use in a proof step, and it is
-     *        guaranteed that that proof step will have
-     *        its own VarHyp's (or else there would be
-     *        a different error.)
-     *
-     *  @param symTbl  Symbol Table (Map)
-     *  @param loS     Var1 id String.
-     *  @param hiS     Var2 id String.
-     *
-     *  @throws LangException if the two Var id's are identical,
-     *          or are not defined and active vars.
+     * Construct using two Var id Strings. The input variables are validated and
+     * switched if necessary into varLo and varHi based on Var.id. Note: it is
+     * required that the Var's specified be "active", but not that there be
+     * active VarHyp's associated with them. The $d vars on an Assrt may be
+     * specified for use in a proof step, and it is guaranteed that that proof
+     * step will have its own VarHyp's (or else there would be a different
+     * error.)
+     * 
+     * @param symTbl Symbol Table (Map)
+     * @param loS Var1 id String.
+     * @param hiS Var2 id String.
+     * @throws LangException if the two Var id's are identical, or are not
+     *             defined and active vars.
      */
     public DjVars(final Map<String, Sym> symTbl, final String loS,
         final String hiS) throws LangException
@@ -384,18 +360,26 @@ public class DjVars implements Comparable<DjVars> {
     }
 
     /**
-     *  Construct using two Var's.
-     *
-     *  The input variables are compared and switched
-     *  if necessary into varLo and varHi based on
-     *  Var.id.
-     *
-     *  @param lo      Var 1.
-     *  @param hi      Var 2.
-     *
-     *  @throws LangException if the two Var id's are identical.
+     * Construct using two Var's. The input variables are compared and switched
+     * if necessary into varLo and varHi based on Var.id.
+     * 
+     * @param lo Var 1.
+     * @param hi Var 2.
+     * @throws LangException if the two Var id's are identical.
      */
     public DjVars(final Var lo, final Var hi) throws LangException {
+        set(lo, hi);
+    }
+
+    /**
+     * Set the contents of this DjVars object. The input variables are compared
+     * and switched if necessary into varLo and varHi based on Var.id.
+     * 
+     * @param lo Var 1.
+     * @param hi Var 2.
+     * @throws LangException if the two Var id's are identical.
+     */
+    public void set(final Var lo, final Var hi) throws LangException {
         final int compare = lo.compareTo(hi);
         if (compare == 0)
             throw new LangException(LangConstants.ERRMSG_DJ_VARS_ARE_DUPS
@@ -411,46 +395,45 @@ public class DjVars implements Comparable<DjVars> {
     }
 
     /**
-     *  Return the "low" Dj Var, varLo.
-     *
-     *  @return varLo the "low" Var based on Var.id.
+     * Return the "low" Dj Var, varLo.
+     * 
+     * @return varLo the "low" Var based on Var.id.
      */
     public Var getVarLo() {
         return varLo;
     }
 
     /**
-     *  Set the "low" Dj Var, varLo.
-     *
-     *  @param varLo the "low" Var based on Var.id.
+     * Set the "low" Dj Var, varLo.
+     * 
+     * @param varLo the "low" Var based on Var.id.
      */
     public void setVarLo(final Var varLo) {
         this.varLo = varLo;
     }
 
     /**
-     *  Return the "high" Dj Var, varHi.
-     *
-     *  @return varHi the "high" Var based on Var.id.
+     * Return the "high" Dj Var, varHi.
+     * 
+     * @return varHi the "high" Var based on Var.id.
      */
     public Var getVarHi() {
         return varHi;
     }
 
     /**
-     *  Set the "high" Dj Var, varHi.
-     *
-     *  @param varHi the "high" Var based on Var.id.
+     * Set the "high" Dj Var, varHi.
+     * 
+     * @param varHi the "high" Var based on Var.id.
      */
     public void setVarHi(final Var varHi) {
         this.varHi = varHi;
     }
 
     /**
-     *  Converts DjVars to String.
-     *
-     *  @return returns DjVars string;
-     *
+     * Converts DjVars to String.
+     * 
+     * @return returns DjVars string;
      */
     @Override
     public String toString() {
@@ -486,15 +469,11 @@ public class DjVars implements Comparable<DjVars> {
 
     /**
      * Compares DjVars object based on the variables.
-     *
+     * 
      * @param obj Order object to compare to this Order
-     *
-     * @return returns negative, zero, or a positive int
-     * if this Order object is less than, equal to
-     * or greater than the input parameter obj.
-     *
+     * @return returns negative, zero, or a positive int if this Order object is
+     *         less than, equal to or greater than the input parameter obj.
      */
-    @Override
     public int compareTo(final DjVars obj) {
         int compare = varLo.compareTo(obj.varLo);
         if (compare == 0)

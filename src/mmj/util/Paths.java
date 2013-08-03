@@ -6,10 +6,10 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  Paths.java.java  0.01 11/01/2011
+ * Paths.java.java  0.01 11/01/2011
  *
- *  Nov-01-2011 - Version 0.01
- *          --> new
+ * Nov-01-2011 - Version 0.01
+ *         --> new
  */
 
 package mmj.util;
@@ -18,9 +18,8 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- *  <code>Paths</code> holds the path-related command
- *  line arguments and provides several path-related
- *  services.
+ * {@code Paths} holds the path-related command line arguments and provides
+ * several path-related services.
  */
 public class Paths {
 
@@ -29,13 +28,13 @@ public class Paths {
     private final File svcPath;
 
     /**
-     *  Standard constructor.
-     *
-     *  @param mmj2PathArgument null or existing mmj2 directory.
-     *  @param metamathPathArgument null or existing Metamath directory.
-     *  @param svcPathArgument null or existing Svc directory.
-     *
-     *  @throws IllegalArgumentException if errors found.
+     * Standard constructor.
+     * 
+     * @param mmj2PathArgument null or existing mmj2 directory.
+     * @param metamathPathArgument null or existing Metamath directory.
+     * @param svcPathArgument null or existing Svc directory.
+     * @throws IllegalArgumentException if errors found.
+     * @throws IOException if IO error
      */
     public Paths(final String mmj2PathArgument,
         final String metamathPathArgument, final String svcPathArgument)
@@ -95,21 +94,18 @@ public class Paths {
     }
 
     /**
-     *  Builds a <code>File</code> object relative to the
-     *  <code>mmj2Path</code>.
-     *  <p>
-     *  If the input fileName designates an absolute path
-     *  then the output <code>File</code> is not relative to
-     *  <code>mmj2Path</code> or the Current Path.
-     *  <p>
-     *  Otherwise, if <code>mmj2Path</code> is null then the
-     *  output <code>File</code> is relative to the Current Path.
-     *  <p>
-     *  @param pathName name of file or directory.
-     *  @return File object relative to mmj2Path unless
-     *          input pathName is absolute or mmj2Path
-     *          is null, in which case the output File
-     *          is relative to the current path.
+     * Builds a {@code File} object relative to the {@code mmj2Path}.
+     * <p>
+     * If the input fileName designates an absolute path then the output
+     * {@code File} is not relative to {@code mmj2Path} or the Current Path.
+     * <p>
+     * Otherwise, if {@code mmj2Path} is null then the output {@code File} is
+     * relative to the Current Path.
+     *
+     * @param pathName name of file or directory.
+     * @return File object relative to mmj2Path unless input pathName is
+     *         absolute or mmj2Path is null, in which case the output File is
+     *         relative to the current path.
      */
     public File buildMMJ2FilePath(final String pathName) {
 
@@ -123,21 +119,18 @@ public class Paths {
     }
 
     /**
-     *  Builds a <code>File</code> object relative to the
-     *  <code>metamathPath</code>.
-     *  <p>
-     *  If the input fileName designates an absolute path
-     *  then the output <code>File</code> is not relative to
-     *  <code>metamathPath</code> or the Current Path.
-     *  <p>
-     *  Otherwise, if <code>metamathPath</code> is null then the
-     *  output <code>File</code> is relative to the Current Path.
-     *  <p>
-     *  @param pathName name of file or directory.
-     *  @return File object relative to metamathPath unless
-     *          input pathName is absolute or metamathPath
-     *          is null, in which case the output File
-     *          is relative to the current path.
+     * Builds a {@code File} object relative to the {@code metamathPath}.
+     * <p>
+     * If the input fileName designates an absolute path then the output
+     * {@code File} is not relative to {@code metamathPath} or the Current Path.
+     * <p>
+     * Otherwise, if {@code metamathPath} is null then the output {@code File}
+     * is relative to the Current Path.
+     *
+     * @param pathName name of file or directory.
+     * @return File object relative to metamathPath unless input pathName is
+     *         absolute or metamathPath is null, in which case the output File
+     *         is relative to the current path.
      */
     public File buildMetamathFilePath(final String pathName) {
 
@@ -151,21 +144,18 @@ public class Paths {
     }
 
     /**
-     *  Builds a <code>File</code> object relative to the
-     *  <code>svcPath</code>.
-     *  <p>
-     *  If the input fileName designates an absolute path
-     *  then the output <code>File</code> is not relative to
-     *  <code>svcPath</code> or the Current Path.
-     *  <p>
-     *  Otherwise, if <code>svcPath</code> is null then the
-     *  output <code>File</code> is relative to the Current Path.
-     *  <p>
-     *  @param pathName name of file or directory.
-     *  @return File object relative to svcPath unless
-     *          input pathName is absolute or svcPath
-     *          is null, in which case the output File
-     *          is relative to the current path.
+     * Builds a {@code File} object relative to the {@code svcPath}.
+     * <p>
+     * If the input fileName designates an absolute path then the output
+     * {@code File} is not relative to {@code svcPath} or the Current Path.
+     * <p>
+     * Otherwise, if {@code svcPath} is null then the output {@code File} is
+     * relative to the Current Path.
+     *
+     * @param pathName name of file or directory.
+     * @return File object relative to svcPath unless input pathName is absolute
+     *         or svcPath is null, in which case the output File is relative to
+     *         the current path.
      */
     public File buildSvcFilePath(final String pathName) {
 
@@ -179,27 +169,27 @@ public class Paths {
     }
 
     /**
-     *  Gets the mmj2Path.
-     *  <p>
-     *  @return The mmj2Path File object.
+     * Gets the mmj2Path.
+     *
+     * @return The mmj2Path File object.
      */
     public File getMMJ2Path() {
         return mmj2Path;
     }
 
     /**
-     *  Gets the metamathPath.
-     *  <p>
-     *  @return The mmj2Path File object.
+     * Gets the metamathPath.
+     *
+     * @return The mmj2Path File object.
      */
     public File getMetamathPath() {
         return metamathPath;
     }
 
     /**
-     *  Gets the svcPath.
-     *  <p>
-     *  @return The mmj2Path File object.
+     * Gets the svcPath.
+     *
+     * @return The mmj2Path File object.
      */
     public File getSvcPath() {
         return svcPath;

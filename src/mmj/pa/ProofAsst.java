@@ -7,68 +7,68 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  ProofAsst.java  0.11 11/01/2011
+ * ProofAsst.java  0.11 11/01/2011
  *
- *  Version 0.03
- *      - fix vol test bug 3/27 (no qed step null pointer)
- *      - update misc. comments
- *      - add Proof Assistant 'Derive' Feature
+ * Version 0.03
+ *     - fix vol test bug 3/27 (no qed step null pointer)
+ *     - update misc. comments
+ *     - add Proof Assistant 'Derive' Feature
  *
- *  Sep-09-2006 - Version 0.04 - TMFF project
- *      - modified to support ProofAsstGUI File/GetProof
+ * Sep-09-2006 - Version 0.04 - TMFF project
+ *     - modified to support ProofAsstGUI File/GetProof
  *
- *  Jun-01-2007 - Version 0.05 -
- *      - various changes to get rid of ProofWorkStmt.status
- *      - add call to proofWorksheet.addGeneratedDjVarsStmts()
+ * Jun-01-2007 - Version 0.05 -
+ *     - various changes to get rid of ProofWorkStmt.status
+ *     - add call to proofWorksheet.addGeneratedDjVarsStmts()
  *
- *  Aug-01-2007 - Version 0.06 -
- *      - Added asciiRetest option to importFrom*
+ * Aug-01-2007 - Version 0.06 -
+ *     - Added asciiRetest option to importFrom*
  *
- *  Nov-01-2007 - Version 0.07 -
- *      - Position cursor to *last* incomplete statement
- *        instead of first.
- *      - Call proofWorksheet.posCursorAtLastIncompleteOrQedStmt()
- *        when RPN proof generated successfully, and output an
- *        info message about the success. The old code positioned
- *        the cursor (intentionally) to the end of the RPN proof.
- *        And, output I-PA-0119, ERRMSG_PA_RPN_PROOF_GENERATED_1/2.
+ * Nov-01-2007 - Version 0.07 -
+ *     - Position cursor to *last* incomplete statement
+ *       instead of first.
+ *     - Call proofWorksheet.posCursorAtLastIncompleteOrQedStmt()
+ *       when RPN proof generated successfully, and output an
+ *       info message about the success. The old code positioned
+ *       the cursor (intentionally) to the end of the RPN proof.
+ *       And, output I-PA-0119, ERRMSG_PA_RPN_PROOF_GENERATED_1/2.
  *
- *  Feb-01-2008 - Version 0.08 -
- *      - modify tmffReformat() to accept boolean argument,
- *        "inputCursorStep" which requests reformatting of
- *        just one proof step, the step underneath the cursor
- *        when the request was made.
- *      - Use new proofAsstPreferences.getIncompleteStmtCursorFirst()
- *        and     proofAsstPreferences.getIncompleteStmtCursorLast()
- *        to control cursor positioning when there are no
- *        unification errors.
- *      - "re-added back" posCursorAtFirstIncompleteOrQedStmt();
+ * Feb-01-2008 - Version 0.08 -
+ *     - modify tmffReformat() to accept boolean argument,
+ *       "inputCursorStep" which requests reformatting of
+ *       just one proof step, the step underneath the cursor
+ *       when the request was made.
+ *     - Use new proofAsstPreferences.getIncompleteStmtCursorFirst()
+ *       and     proofAsstPreferences.getIncompleteStmtCursorLast()
+ *       to control cursor positioning when there are no
+ *       unification errors.
+ *     - "re-added back" posCursorAtFirstIncompleteOrQedStmt();
  *
- *  Mar-01-2008 - Version 0.09 -
- *      - Misc. tidy up.
- *      - Add StepSelector Dialog/Search
- *      - Add PreprocessRequest option on Unify to
- *        implement Unify menu item Unify+Rederive Formulas
- *      - Remove Hints feature
+ * Mar-01-2008 - Version 0.09 -
+ *     - Misc. tidy up.
+ *     - Add StepSelector Dialog/Search
+ *     - Add PreprocessRequest option on Unify to
+ *       implement Unify menu item Unify+Rederive Formulas
+ *     - Remove Hints feature
  *
- *  Aug-01-2008 - Version 0.10 -
- *      - Add TheoremLoader to constructor and various other
- *        items related to TheoremLoader.
+ * Aug-01-2008 - Version 0.10 -
+ *     - Add TheoremLoader to constructor and various other
+ *       items related to TheoremLoader.
  *
- *  Version 0.11 - Nov-01-2011:
- *      - Added:
- *          exportViaGMFF() for use by ProofAsstGUI
- *        and
- *          getSortedSkipSeqTheoremIterable(String startTheoremLabel)
- *          getSortedTheoremIterable(int lowestMObjSeq)
- *          exportOneTheorem(String theoremLabel)
- *          exportOneTheorem(Theorem theorem)
- *        for use by GMFFManager.exportTheorem
- *      - Modified volumeTestOutputRoutine to use theorem to
- *        get label, not proof worksheet (because in some
- *        cases the proof worksheet may be invalid.)
- *      - Rewrote incompleteStepCursorPositioning() to
- *        fix "AsIs" cursor positioning bug.
+ * Version 0.11 - Nov-01-2011:
+ *     - Added:
+ *         exportViaGMFF() for use by ProofAsstGUI
+ *       and
+ *         getSortedSkipSeqTheoremIterable(String startTheoremLabel)
+ *         getSortedTheoremIterable(int lowestMObjSeq)
+ *         exportOneTheorem(String theoremLabel)
+ *         exportOneTheorem(Theorem theorem)
+ *       for use by GMFFManager.exportTheorem
+ *     - Modified volumeTestOutputRoutine to use theorem to
+ *       get label, not proof worksheet (because in some
+ *       cases the proof worksheet may be invalid.)
+ *     - Rewrote incompleteStepCursorPositioning() to
+ *       fix "AsIs" cursor positioning bug.
  */
 
 package mmj.pa;
@@ -85,20 +85,14 @@ import mmj.util.OutputBoss;
 import mmj.verify.*;
 
 /**
- * The <code>ProofAsst</code>, along with the rest of the
- * <code>mmj.pa</code> package provides a graphical user
- * interface (GUI) facility for developing Metamath proofs.
- *
- * <code>ProofAsst</code> is the go-to guy, essentially a
- * control module that knows where to go to get things done.
- * It is invoked by mmj.util.ProofAsstBoss.java, and
- * invokes mmj.pa.ProofAsstGUI, among others.
- *
+ * The {@code ProofAsst}, along with the rest of the {@code mmj.pa} package
+ * provides a graphical user interface (GUI) facility for developing Metamath
+ * proofs. {@code ProofAsst} is the go-to guy, essentially a control module that
+ * knows where to go to get things done. It is invoked by
+ * mmj.util.ProofAsstBoss.java, and invokes mmj.pa.ProofAsstGUI, among others.
  * Nomenclature: a proof-in-progress is implemented by the
- * mmj.pa.ProofWorksheet.java class.
- *
- * A large quantity of information and useful stuff is
- * contained in mmj.pa.PaConstants.java.
+ * mmj.pa.ProofWorksheet.java class. A large quantity of information and useful
+ * stuff is contained in mmj.pa.PaConstants.java.
  */
 public class ProofAsst implements TheoremLoaderCommitListener {
 
@@ -120,13 +114,13 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     private List<Theorem> sortedTheoremList;
 
     /**
-     *  Constructor.
-     *
-     *  @param proofAsstPreferences variable settings
-     *  @param logicalSystem the loaded Metamath data
-     *  @param grammar the mmj.verify.Grammar object
-     *  @param verifyProofs the mmj.verify.VerifyProofs object
-     *  @param theoremLoader the mmj.tl.TheoremLoader object
+     * Constructor.
+     * 
+     * @param proofAsstPreferences variable settings
+     * @param logicalSystem the loaded Metamath data
+     * @param grammar the mmj.verify.Grammar object
+     * @param verifyProofs the mmj.verify.VerifyProofs object
+     * @param theoremLoader the mmj.tl.TheoremLoader object
      */
     public ProofAsst(final ProofAsstPreferences proofAsstPreferences,
         final LogicalSystem logicalSystem, final Grammar grammar,
@@ -149,10 +143,10 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     }
 
     /**
-     *  Triggers the Proof Assistant GUI.
-     *
-     *  @param m the mmj.lang.Messages object used to store
-     *                  error and informational messages.
+     * Triggers the Proof Assistant GUI.
+     * 
+     * @param m the mmj.lang.Messages object used to store error and
+     *            informational messages.
      */
     public void doGUI(final Messages m) {
         messages = m;
@@ -167,20 +161,20 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     }
 
     /**
-     *  Return initializedOK flag.
-     *
-     *  @return initializedOK flag.
+     * Return initializedOK flag.
+     * 
+     * @return initializedOK flag.
      */
     public boolean getInitializedOK() {
         return initializedOK;
     }
 
     /**
-     *  Initialized Unification lookup tables, etc. for Unification.
-     *
-     *  @param messages the mmj.lang.Messages object used to store
-     *                  error and informational messages.
-     *  @return initializedOK flag.
+     * Initialized Unification lookup tables, etc. for Unification.
+     * 
+     * @param messages the mmj.lang.Messages object used to store error and
+     *            informational messages.
+     * @return initializedOK flag.
      */
     public boolean initializeLookupTables(final Messages messages) {
         this.messages = messages;
@@ -191,15 +185,12 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     }
 
     /**
-     *  Applies a set of updates from the TheoremLoader as
-     *  specified in the mmtTheoremSet object to the ProofAsst
-     *  local caches of data.
-     *  <p>
-     *  @param mmtTheoremSet MMTTheoremSet object containing
-     *         the adds and updates already made to theorems
-     *         in the LogicalSystem.
+     * Applies a set of updates from the TheoremLoader as specified in the
+     * mmtTheoremSet object to the ProofAsst local caches of data.
+     * 
+     * @param mmtTheoremSet MMTTheoremSet object containing the adds and updates
+     *            already made to theorems in the LogicalSystem.
      */
-    @Override
     public void commit(final MMTTheoremSet mmtTheoremSet) {
         if (!getInitializedOK())
             return; // the stmtTbl data has not been stored yet
@@ -215,12 +206,12 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     }
 
     /**
-     *  Verifies all proofs in the Logical System
-     *  <p>
-     *  This is here because the Proof Assistant GUI doesn't
-     *  know how to do anything...
-     *  <p>
-     *  @return Messages object.
+     * Verifies all proofs in the Logical System
+     * <p>
+     * This is here because the Proof Assistant GUI doesn't know how to do
+     * anything...
+     * 
+     * @return Messages object.
      */
     public Messages verifyAllProofs() {
         verifyProofs.verifyAllProofs(messages, logicalSystem.getStmtTbl());
@@ -228,13 +219,12 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     }
 
     /**
-     *  Invokes TheoremLoader to load all theorems in the
-     *  MMT Folder.
-     *  <p>
-     *  This is here because the Proof Assistant GUI doesn't
-     *  know how to do anything...
-     *  <p>
-     *  @return Messages object.
+     * Invokes TheoremLoader to load all theorems in the MMT Folder.
+     * <p>
+     * This is here because the Proof Assistant GUI doesn't know how to do
+     * anything...
+     * 
+     * @return Messages object.
      */
     public Messages loadTheoremsFromMMTFolder() {
         try {
@@ -246,10 +236,10 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     }
 
     /**
-     *  Invokes GMFF to export the current Proof Worksheet.
-     *  <p>
-     *  @param proofText Proof Worksheet text string.
-     *  @return Messages object.
+     * Invokes GMFF to export the current Proof Worksheet.
+     * 
+     * @param proofText Proof Worksheet text string.
+     * @return Messages object.
      */
     public Messages exportViaGMFF(final String proofText) {
 
@@ -268,13 +258,13 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     }
 
     /**
-     *  Invokes TheoremLoader to extract a theorem to the
-     *  MMT Folder.
-     *  <p>
-     *  This is here because the Proof Assistant GUI doesn't
-     *  know how to do anything...
-     *  <p>
-     *  @return Messages object.
+     * Invokes TheoremLoader to extract a theorem to the MMT Folder.
+     * <p>
+     * This is here because the Proof Assistant GUI doesn't know how to do
+     * anything...
+     * 
+     * @param theorem the theorem to extract
+     * @return Messages object.
      */
     public Messages extractTheoremToMMTFolder(final Theorem theorem) {
         try {
@@ -287,27 +277,23 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     }
 
     /**
-     *  Builds new ProofWorksheet for a theorem.
-     *  <p>
-     *  Note: this method is called by ProofAsstGUI.java!
-     *  <p>
-     *  Note that the output ProofWorksheet is skeletal and
-     *  is destined for a straight-shot, output to the GUI
-     *  screen. The ProofAsst and its components retain no
-     *  memory of a ProofWorksheet between screen actions.
-     *  Each time the user requests a new action the text
-     *  is scraped off the screen and built into a new
-     *  ProofWorksheet object!
-     *  <p>
-     *  Notice also that this function just invokes a
-     *  ProofWorksheet constructor. Why? Because the
-     *  ProofAsstGUI.java program has no access to or
-     *  knowledge of LogicalSystem, Grammar, etc. The
-     *  only external knowledge it has is ProofAsstPreferences.
-     *
-     *  @param newTheoremLabel
-     *
-     *  @return ProofWorksheet initialized skeleton proof
+     * Builds new ProofWorksheet for a theorem.
+     * <p>
+     * Note: this method is called by ProofAsstGUI.java!
+     * <p>
+     * Note that the output ProofWorksheet is skeletal and is destined for a
+     * straight-shot, output to the GUI screen. The ProofAsst and its components
+     * retain no memory of a ProofWorksheet between screen actions. Each time
+     * the user requests a new action the text is scraped off the screen and
+     * built into a new ProofWorksheet object!
+     * <p>
+     * Notice also that this function just invokes a ProofWorksheet constructor.
+     * Why? Because the ProofAsstGUI.java program has no access to or knowledge
+     * of LogicalSystem, Grammar, etc. The only external knowledge it has is
+     * ProofAsstPreferences.
+     * 
+     * @param newTheoremLabel the name of the new proof
+     * @return ProofWorksheet initialized skeleton proof
      */
     public ProofWorksheet startNewProof(final String newTheoremLabel) {
 
@@ -318,36 +304,31 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     }
 
     /**
-     *  Builds new ProofWorksheet for the next theorem after
-     *  the current theorem sequence number on the ProofAsstGUI.
-     *  <p>
-     *  Note: this method is called by ProofAsstGUI.java!
-     *  <p>
-     *  This function is provided for students who wish to
-     *  work their way through Metamath databases such as
-     *  set.mm and prove each theorem. It is like Forward-GetProof
-     *  except that it returns a skeletal Proof Worksheet,
-     *  and thus helps the student by not revealing the
-     *  contents of the existing proof in the Metamath database.
-     *  <p>
-     *  Note that the output ProofWorksheet is skeletal and
-     *  is destined for a straight-shot, output to the GUI
-     *  screen. The ProofAsst and its components retain no
-     *  memory of a ProofWorksheet between screen actions.
-     *  Each time the user requests a new action the text
-     *  is scraped off the screen and built into a new
-     *  ProofWorksheet object!
-     *  <p>
-     *  Notice also that this function just invokes a
-     *  ProofWorksheet constructor. Why? Because the
-     *  ProofAsstGUI.java program has no access to or
-     *  knowledge of LogicalSystem, Grammar, etc. The
-     *  only external knowledge it has is ProofAsstPreferences.
-     *
-     *  @param currProofMaxSeq sequence number of current proof
-     *                         on ProofAsstGUI screen.
-     *
-     *  @return ProofWorksheet initialized skeleton proof
+     * Builds new ProofWorksheet for the next theorem after the current theorem
+     * sequence number on the ProofAsstGUI.
+     * <p>
+     * Note: this method is called by ProofAsstGUI.java!
+     * <p>
+     * This function is provided for students who wish to work their way through
+     * Metamath databases such as set.mm and prove each theorem. It is like
+     * Forward-GetProof except that it returns a skeletal Proof Worksheet, and
+     * thus helps the student by not revealing the contents of the existing
+     * proof in the Metamath database.
+     * <p>
+     * Note that the output ProofWorksheet is skeletal and is destined for a
+     * straight-shot, output to the GUI screen. The ProofAsst and its components
+     * retain no memory of a ProofWorksheet between screen actions. Each time
+     * the user requests a new action the text is scraped off the screen and
+     * built into a new ProofWorksheet object!
+     * <p>
+     * Notice also that this function just invokes a ProofWorksheet constructor.
+     * Why? Because the ProofAsstGUI.java program has no access to or knowledge
+     * of LogicalSystem, Grammar, etc. The only external knowledge it has is
+     * ProofAsstPreferences.
+     * 
+     * @param currProofMaxSeq sequence number of current proof on ProofAsstGUI
+     *            screen.
+     * @return ProofWorksheet initialized skeleton proof
      */
     public ProofWorksheet startNewNextProof(final int currProofMaxSeq) {
 
@@ -378,15 +359,13 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     }
 
     /**
-     *  Fetches a Theorem using an input Label String.
-     *  <p>
-     *  Note: this method is called by ProofAsstGUI.java!
-     *  <p>
-     *  @param theoremLabel label of Theorem to retrieve from
-     *                      statement table.
-     *
-     *  @return Theorem or null if Label not found or is not
-     *          a Theorem Stmt label.
+     * Fetches a Theorem using an input Label String.
+     * <p>
+     * Note: this method is called by ProofAsstGUI.java!
+     * 
+     * @param theoremLabel label of Theorem to retrieve from statement table.
+     * @return Theorem or null if Label not found or is not a Theorem Stmt
+     *         label.
      */
     public Theorem getTheorem(final String theoremLabel) {
 
@@ -399,17 +378,14 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     }
 
     /**
-     *  Builds ProofWorksheet for an existing theorem.
-     *  <p>
-     *  Note: this method is called by ProofAsstGUI.java!
-     *  <p>
-     *
-     *  @param oldTheorem theorem to get
-     *  @param exportFormatUnified true means include step Ref
-     *         labels
-     *  @param hypsRandomized true means step Hyps randomized
-     *         on ProofWorksheet.
-     *  @return ProofWorksheet initialized.
+     * Builds ProofWorksheet for an existing theorem.
+     * <p>
+     * Note: this method is called by ProofAsstGUI.java!
+     * 
+     * @param oldTheorem theorem to get
+     * @param exportFormatUnified true means include step Ref labels
+     * @param hypsRandomized true means step Hyps randomized on ProofWorksheet.
+     * @return ProofWorksheet initialized.
      */
     public ProofWorksheet getExistingProof(final Theorem oldTheorem,
         final boolean exportFormatUnified, final boolean hypsRandomized)
@@ -432,28 +408,23 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     }
 
     /**
-     *  Builds ProofWorksheet for the next theorem after
-     *  a given MObj sequence number.
-     *  <p>
-     *  The search wraps to the start if the end is reached.
-     *  <p>
-     *  Note: The search list excludes any Theorems excluded
-     *        by the user from Proof Unification (see
-     *        RunParm ProofAsstUnifySearchExclude). The
-     *        exclusion is made for technical reasons
-     *        (expediency) -- if you don't like it a whole
-     *        lot we can change it.
-     *  <p>
-     *  Note: this method is called by ProofAsstGUI.java!
-     *  <p>
-     *  @param currProofMaxSeq sequence number of ProofWorksheet
-     *         from ProofAsstGUI currProofMaxSeq field.
-     *  @param exportFormatUnified true means include step Ref
-     *         labels
-     *  @param hypsRandomized true means step Hyps randomized
-     *         on ProofWorksheet.
-
-     *  @return ProofWorksheet initialized.
+     * Builds ProofWorksheet for the next theorem after a given MObj sequence
+     * number.
+     * <p>
+     * The search wraps to the start if the end is reached.
+     * <p>
+     * Note: The search list excludes any Theorems excluded by the user from
+     * Proof Unification (see RunParm ProofAsstUnifySearchExclude). The
+     * exclusion is made for technical reasons (expediency) -- if you don't like
+     * it a whole lot we can change it.
+     * <p>
+     * Note: this method is called by ProofAsstGUI.java!
+     * 
+     * @param currProofMaxSeq sequence number of ProofWorksheet from
+     *            ProofAsstGUI currProofMaxSeq field.
+     * @param exportFormatUnified true means include step Ref labels
+     * @param hypsRandomized true means step Hyps randomized on ProofWorksheet.
+     * @return ProofWorksheet initialized.
      */
     public ProofWorksheet getNextProof(final int currProofMaxSeq,
         final boolean exportFormatUnified, final boolean hypsRandomized)
@@ -494,27 +465,23 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     }
 
     /**
-     *  Builds ProofWorksheet for the first theorem before
-     *  a given MObj sequence number.
-     *  <p>
-     *  The search wraps to the end if the start is reached.
-     *  <p>
-     *  Note: The search list excludes any Theorems excluded
-     *        by the user from Proof Unification (see
-     *        RunParm ProofAsstUnifySearchExclude). The
-     *        exclusion is made for technical reasons
-     *        (expediency) -- if you don't like it a whole
-     *        lot we can change it.
-     *  <p>
-     *  Note: this method is called by ProofAsstGUI.java!
-     *  <p>
-     *  @param currProofMaxSeq sequence number of ProofWorksheet
-     *         from ProofAsstGUI currProofMaxSeq field.
-     *  @param exportFormatUnified true means include step Ref
-     *         labels
-     *  @param hypsRandomized true means step Hyps randomized
-     *         on ProofWorksheet.
-     *  @return ProofWorksheet initialized.
+     * Builds ProofWorksheet for the first theorem before a given MObj sequence
+     * number.
+     * <p>
+     * The search wraps to the end if the start is reached.
+     * <p>
+     * Note: The search list excludes any Theorems excluded by the user from
+     * Proof Unification (see RunParm ProofAsstUnifySearchExclude). The
+     * exclusion is made for technical reasons (expediency) -- if you don't like
+     * it a whole lot we can change it.
+     * <p>
+     * Note: this method is called by ProofAsstGUI.java!
+     * 
+     * @param currProofMaxSeq sequence number of ProofWorksheet from
+     *            ProofAsstGUI currProofMaxSeq field.
+     * @param exportFormatUnified true means include step Ref labels
+     * @param hypsRandomized true means step Hyps randomized on ProofWorksheet.
+     * @return ProofWorksheet initialized.
      */
     public ProofWorksheet getPreviousProof(final int currProofMaxSeq,
         final boolean exportFormatUnified, final boolean hypsRandomized)
@@ -555,37 +522,27 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     }
 
     /**
-     *  Attempts Unification for a proof contained in a
-     *  String proof text area.
-     *  <p>
-     *  Note: this method is called by ProofAsstGUI.java!
-     *  <p>
-     *  The ProofWorksheetParser class is used to parse
-     *  the input proof text. The reason for using this
-     *  intermediary is that the system is designed to
-     *  be able to read a file of proof texts (which is
-     *  a feature designed for testing purposes, but still
-     *  available to a user via the BatchMMJ2 facility.)
-     *
-     *  @param proofText proof text from ProofAsstGUI screen,
-     *                   or any String conforming to the
-     *                   formatting rules of ProofAsst.
-     *
-     *  @param renumReq renumbering of proof steps requested
-     *
-     *  @param preprocessRequest if not null specifies an
-     *         editing operation to be applied to the proof text
-     *         before other processing.
-     *
-     *  @param inputCursorPos caret offset plus one of input
-     *         or -1 if caret pos unavailable to caller.
-     *
-     *  @param stepRequest may be null, or StepSelector Search or
-     *                     Choice request and will be loaded into
-     *                     the ProofWorksheet.
-     *  @param tlRequest may be null or a TLRequest.
-     *
-     *  @return ProofWorksheet unified.
+     * Attempts Unification for a proof contained in a String proof text area.
+     * <p>
+     * Note: this method is called by ProofAsstGUI.java!
+     * <p>
+     * The ProofWorksheetParser class is used to parse the input proof text. The
+     * reason for using this intermediary is that the system is designed to be
+     * able to read a file of proof texts (which is a feature designed for
+     * testing purposes, but still available to a user via the BatchMMJ2
+     * facility.)
+     * 
+     * @param proofText proof text from ProofAsstGUI screen, or any String
+     *            conforming to the formatting rules of ProofAsst.
+     * @param renumReq renumbering of proof steps requested
+     * @param preprocessRequest if not null specifies an editing operation to be
+     *            applied to the proof text before other processing.
+     * @param inputCursorPos caret offset plus one of input or -1 if caret pos
+     *            unavailable to caller.
+     * @param stepRequest may be null, or StepSelector Search or Choice request
+     *            and will be loaded into the ProofWorksheet.
+     * @param tlRequest may be null or a TLRequest.
+     * @return ProofWorksheet unified.
      */
     public ProofWorksheet unify(final boolean renumReq, final String proofText,
         final PreprocessRequest preprocessRequest,
@@ -632,22 +589,20 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     }
 
     /**
-     *  Reformats a ProofWorksheet using TMFF.
-     *  <p>
-     *  Note: this method is called by ProofAsstGUI.java!
-     *  <p>
-     *  Reformatting is not attempted if the ProofWorksheet
-     *  has structural errors (returned from the parser).
-     *
-     *  @param inputCursorStep set to true to reformat just
-     *                         the proof step underneath the
-     *                         cursor.
-     *  @param proofText proof text from ProofAsstGUI screen,
-     *                   or any String conforming to the
-     *                   formatting rules of ProofAsst.
-     *  @param inputCursorPos caret offset plus one of input
-     *         or -1 if caret pos unavailable to caller.
-     *  @return ProofWorksheet reformatted, or not, if errors.
+     * Reformats a ProofWorksheet using TMFF.
+     * <p>
+     * Note: this method is called by ProofAsstGUI.java!
+     * <p>
+     * Reformatting is not attempted if the ProofWorksheet has structural errors
+     * (returned from the parser).
+     * 
+     * @param inputCursorStep set to true to reformat just the proof step
+     *            underneath the cursor.
+     * @param proofText proof text from ProofAsstGUI screen, or any String
+     *            conforming to the formatting rules of ProofAsst.
+     * @param inputCursorPos caret offset plus one of input or -1 if caret pos
+     *            unavailable to caller.
+     * @return ProofWorksheet reformatted, or not, if errors.
      */
     public ProofWorksheet tmffReformat(final boolean inputCursorStep,
         final String proofText, final int inputCursorPos)
@@ -670,21 +625,21 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     }
 
     /**
-     *  Import Theorem proofs from memory and unifies.
-     *  <p>
-     *  This is a simulation routine for testing purposes.
-     *
-     *  @param messages Messages object for output messages.
-     *  @param selectorAll true if process all theorems, false
-     *                     or null, ignore param.
-     *  @param selectorCount use if not null to restrict the
-     *                       number of theorems present.
-     *  @param selectorTheorem just process one theorem, ignore
-     *                         selectorCount and selectorAll.
-     *  @param outputBoss mmj.util.OutputBoss object, if not null
-     *                    means, please print the proof test.
-     *  @param asciiRetest instructs program to re-unify the
-     *         output Proof Worksheet text after unification.
+     * Import Theorem proofs from memory and unifies.
+     * <p>
+     * This is a simulation routine for testing purposes.
+     * 
+     * @param messages Messages object for output messages.
+     * @param selectorAll true if process all theorems, false or null, ignore
+     *            param.
+     * @param selectorCount use if not null to restrict the number of theorems
+     *            present.
+     * @param selectorTheorem just process one theorem, ignore selectorCount and
+     *            selectorAll.
+     * @param outputBoss mmj.util.OutputBoss object, if not null means, please
+     *            print the proof test.
+     * @param asciiRetest instructs program to re-unify the output Proof
+     *            Worksheet text after unification.
      */
     public void importFromMemoryAndUnify(final Messages messages,
         final Boolean selectorAll, final Integer selectorCount,
@@ -800,21 +755,20 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     }
 
     /**
-     *  Import Theorem proofs from a given Reader.
-     *  <p>
-     *
-     *  @param importReader source of proofs
-     *  @param messages Messages object for output messages.
-     *  @param selectorAll true if process all theorems, false
-     *                     or null, ignore param.
-     *  @param selectorCount use if not null to restrict the
-     *                       number of theorems present.
-     *  @param selectorTheorem just process one theorem, ignore
-     *                         selectorCount and selectorAll.
-     *  @param outputBoss mmj.util.OutputBoss object, if not null
-     *                    means, please print the proof test.
-     *  @param asciiRetest instructs program to re-unify the
-     *         output Proof Worksheet text after unification.
+     * Import Theorem proofs from a given Reader.
+     * 
+     * @param importReader source of proofs
+     * @param messages Messages object for output messages.
+     * @param selectorAll true if process all theorems, false or null, ignore
+     *            param.
+     * @param selectorCount use if not null to restrict the number of theorems
+     *            present.
+     * @param selectorTheorem just process one theorem, ignore selectorCount and
+     *            selectorAll.
+     * @param outputBoss mmj.util.OutputBoss object, if not null means, please
+     *            print the proof test.
+     * @param asciiRetest instructs program to re-unify the output Proof
+     *            Worksheet text after unification.
      */
     public void importFromFileAndUnify(
         final Reader importReader, // already open
@@ -970,13 +924,13 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     }
 
     /**
-     *  Exercises the PreprocessRequest code for one proof.
-     *  <p>
-     *  @param proofText one Proof Text Area in a String.
-     *  @param messages Messages object for output messages.
-     *  @param outputBoss mmj.util.OutputBoss object, if not null
-     *                    means, please print the proof test.
-     *  @param preprocessRequest to apply before unification
+     * Exercises the PreprocessRequest code for one proof.
+     * 
+     * @param proofText one Proof Text Area in a String.
+     * @param messages Messages object for output messages.
+     * @param outputBoss mmj.util.OutputBoss object, if not null means, please
+     *            print the proof test.
+     * @param preprocessRequest to apply before unification
      */
     public void preprocessRequestBatchTest(final String proofText,
         final Messages messages, final OutputBoss outputBoss,
@@ -1004,15 +958,14 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     }
 
     /**
-     *  Exercises the StepSelectorSearch for one proof.
-     *  <p>
-     *
-     *  @param importReader source of proofs
-     *  @param messages Messages object for output messages.
-     *  @param outputBoss mmj.util.OutputBoss object, if not null
-     *                    means, please print the proof test.
-     *  @param cursorPos offset of input cursor.
-     *  @param selectionNumber choice from StepSelectorResults
+     * Exercises the StepSelectorSearch for one proof.
+     * 
+     * @param importReader source of proofs
+     * @param messages Messages object for output messages.
+     * @param outputBoss mmj.util.OutputBoss object, if not null means, please
+     *            print the proof test.
+     * @param cursorPos offset of input cursor.
+     * @param selectionNumber choice from StepSelectorResults
      */
     public void stepSelectorBatchTest(
         final Reader importReader, // already open
@@ -1140,25 +1093,25 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     }
 
     /**
-     *  Export Theorem proofs to a given Writer.
-     *  <p>
-     *  Uses ProofAsstPreferences.getExportFormatUnified() to
-     *  determine whether output proof derivation steps contain
-     *  Ref statement labels (if "unified" then yes, add labels.)
-     *  <p>
-     *  An incomplete input proof generates an incomplete output
-     *  proof as well as an error message.
-     *
-     *  @param exportWriter destination for output proofs.
-     *  @param messages Messages object for output messages.
-     *  @param selectorAll true if process all theorems, false
-     *                     or null, ignore param.
-     *  @param selectorCount use if not null to restrict the
-     *                       number of theorems present.
-     *  @param selectorTheorem just process one theorem, ignore
-     *                         selectorCount and selectorAll.
-     *  @param outputBoss mmj.util.OutputBoss object, if not null
-     *                    means, please print the proof test.
+     * Export Theorem proofs to a given Writer.
+     * <p>
+     * Uses ProofAsstPreferences.getExportFormatUnified() to determine whether
+     * output proof derivation steps contain Ref statement labels (if "unified"
+     * then yes, add labels.)
+     * <p>
+     * An incomplete input proof generates an incomplete output proof as well as
+     * an error message.
+     * 
+     * @param exportWriter destination for output proofs.
+     * @param messages Messages object for output messages.
+     * @param selectorAll true if process all theorems, false or null, ignore
+     *            param.
+     * @param selectorCount use if not null to restrict the number of theorems
+     *            present.
+     * @param selectorTheorem just process one theorem, ignore selectorCount and
+     *            selectorAll.
+     * @param outputBoss mmj.util.OutputBoss object, if not null means, please
+     *            print the proof test.
      */
     public void exportToFile(
         final Writer exportWriter, // already open
@@ -1214,12 +1167,10 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         final List<Assrt> searchList = proofUnifier
             .getUnifySearchListByMObjSeq();
 
-        Assrt assrt;
-        for (int searchIndex = searchList.size() - 1; searchIndex >= 0; searchIndex--)
+        for (final ListIterator<Assrt> li = searchList.listIterator(searchList
+            .size()); li.hasPrevious();)
         {
-
-            assrt = searchList.get(searchIndex);
-
+            final Assrt assrt = li.previous();
             if (assrt.getSeq() < currProofMaxSeq && !assrt.isAxiom())
                 return (Theorem)assrt;
         }
@@ -1250,29 +1201,23 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     }
 
     /**
-     *  Parses a Proof Worksheet text area and returns a
-     *  Proof Worksheet plus an error flag.
-     *  <p>
-     *  Note that the ProofWorksheetParser invokes the
-     *  logic to perform parsing and "structural" edits
-     *  so that other logic such as ProofUnifier have
-     *  a clean ProofWorksheet. A "structural error"
-     *  means an error like a formula with a syntax error,
-     *  or a Hyp referring to a non-existent step, etc.
-     *
-     *  @param proofText proof text from ProofAsstGUI screen,
-     *                   or any String conforming to the
-     *                   formatting rules of ProofAsst.
-     *  @param errorFound boolean array of 1 element that is output
-     *                   as true if an error was found.
-     *  @param inputCursorPos caret offset plus one of input
-     *         or -1 if caret pos unavailable to caller.
-     *
-     *  @param stepRequest may be null, or StepSelector Search or
-     *                     Choice request and will be loaded into
-     *                     the ProofWorksheet.
-     *
-     *  @return ProofWorksheet unified.
+     * Parses a Proof Worksheet text area and returns a Proof Worksheet plus an
+     * error flag.
+     * <p>
+     * Note that the ProofWorksheetParser invokes the logic to perform parsing
+     * and "structural" edits so that other logic such as ProofUnifier have a
+     * clean ProofWorksheet. A "structural error" means an error like a formula
+     * with a syntax error, or a Hyp referring to a non-existent step, etc.
+     * 
+     * @param proofText proof text from ProofAsstGUI screen, or any String
+     *            conforming to the formatting rules of ProofAsst.
+     * @param errorFound boolean array of 1 element that is output as true if an
+     *            error was found.
+     * @param inputCursorPos caret offset plus one of input or -1 if caret pos
+     *            unavailable to caller.
+     * @param stepRequest may be null, or StepSelector Search or Choice request
+     *            and will be loaded into the ProofWorksheet.
+     * @return ProofWorksheet unified.
      */
     private ProofWorksheet getParsedProofWorksheet(final String proofText,
         final boolean[] errorFound, final int inputCursorPos,
@@ -1771,33 +1716,29 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
     }
 
-    /*
-     *  OK, at this point the proof is complete and the
-     *  Proof Worksheet's "comboFrame" has been updated
-     *  with newly computed DjVars (if GenerateDifferences
-     *  was used, the differences have been merged with
-     *  the original, so in every case, comboFrame has a
-     *  complete set of DjVars.)
-     *
-     *  In addition, this code is only executed *if*
-     *  DjVars were generated during processing of the
-     *  ProofWorksheet (if GenerateDifferences or
-     *  GenerateReplacements were used then there must
-     *  have been at least one "soft" DjVars error.)
-     *
-     *  In theory we could report Superfluous and Omitted DjVars
-     *  for the theorem's Mandatory and Optional Frames.
-     *  However, according to Norm, the interesting thing
-     *  to learn about is Superfluous Mandatory DjVars
-     *  restrictions in the theorem.
-     *
-     *  This code does not need to be efficient, as it is
-     *  used only for testing purposes, so finding Superfluous
-     *  Mandatory DjVars just means looking up each
-     *  mandFrame.djVarsArray[i] in the ProofWorksheet's
-     *  comboFrame.djVarsArray (which happens to be sorted);
-     *  if not found, then the mandFrame.djVarsArray[i]
-     *  element is Superflous...
+    /**
+     * OK, at this point the proof is complete and the Proof Worksheet's
+     * "comboFrame" has been updated with newly computed DjVars (if
+     * GenerateDifferences was used, the differences have been merged with the
+     * original, so in every case, comboFrame has a complete set of DjVars.)
+     * <p>
+     * In addition, this code is only executed *if* DjVars were generated during
+     * processing of the ProofWorksheet (if GenerateDifferences or
+     * GenerateReplacements were used then there must have been at least one
+     * "soft" DjVars error.)
+     * <p>
+     * In theory we could report Superfluous and Omitted DjVars for the
+     * theorem's Mandatory and Optional Frames. However, according to Norm, the
+     * interesting thing to learn about is Superfluous Mandatory DjVars
+     * restrictions in the theorem.
+     * <p>
+     * This code does not need to be efficient, as it is used only for testing
+     * purposes, so finding Superfluous Mandatory DjVars just means looking up
+     * each mandFrame.djVarsArray[i] in the ProofWorksheet's
+     * comboFrame.djVarsArray (which happens to be sorted); if not found, then
+     * the mandFrame.djVarsArray[i] element is Superflous...
+     * 
+     * @param proofWorksheet the owner ProofWorksheet
      */
     private void importCompareDJs(final ProofWorksheet proofWorksheet) {
         final List<DjVars> superfluous = new ArrayList<DjVars>();

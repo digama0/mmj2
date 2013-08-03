@@ -9,117 +9,112 @@
 /*
  * Assrt.java  0.08 08/01/2008
  *
- *  Sep-30-2005: change getMandHypArray() to
- *               getMandHypArrayLength().
+ * Sep-30-2005: change getMandHypArray() to
+ *              getMandHypArrayLength().
  *
- *  Dec-14-2005: - add new (redundant) logHypArray
- *                 for the convenience of ProofAsst.
- *               - made loadVarHypArray, loadHypArray,
- *                 loadDjVarsArray and accumHypInList
- *                 static for use in ProofAsst.
- *               - added isLogHyp()
- *               - added isAxiom()
- *               - added getLogHypsMaxDepth (see
- *                 associated code in Stmt.java)
+ * Dec-14-2005: - add new (redundant) logHypArray
+ *                for the convenience of ProofAsst.
+ *              - made loadVarHypArray, loadHypArray,
+ *                loadDjVarsArray and accumHypInList
+ *                static for use in ProofAsst.
+ *              - added isLogHyp()
+ *              - added isAxiom()
+ *              - added getLogHypsMaxDepth (see
+ *                associated code in Stmt.java)
  *
- *  Version 0.04 Oct-12-2006:
- *               - added SymTbl to constructor and modified to
- *                 conform to Metamath.pdf spec change of 6-24-2006
- *                 prohibiting Stmt label and Sym id namespace
- *                 collisions.
+ * Version 0.04 Oct-12-2006:
+ *              - added SymTbl to constructor and modified to
+ *                conform to Metamath.pdf spec change of 6-24-2006
+ *                prohibiting Stmt label and Sym id namespace
+ *                collisions.
  *
- *  Version 0.05 Jun-01-2007
- *               - move loadDjVarsArray to DjVars class.
+ * Version 0.05 Jun-01-2007
+ *              - move loadDjVarsArray to DjVars class.
  *
- *  Version 0.06 - 08/01/2007
- *               - Misc Work Var Enhancements.
+ * Version 0.06 - 08/01/2007
+ *              - Misc Work Var Enhancements.
  *
- *  Version 0.07 - 03/01/2008
- *               - Additions for mmj.pa.StepSelectorSearch.java:
- *                     Assrt.sortListIntoArray() and
- *                     Assrt.NBR_LOG_HYP_SEQ
- *               - Added sortedLogHypArray,
- *                       loadSortedLogHypArray()
- *                   and hypVarsInCommonWithAssrt().
- *                  Plus getSortedLogHypArray(),
- *                   and modified loadLogHypArray() to call
- *                       loadSortedLogHypArray() during
- *                       object construction.
+ * Version 0.07 - 03/01/2008
+ *              - Additions for mmj.pa.StepSelectorSearch.java:
+ *                    Assrt.sortListIntoArray() and
+ *                    Assrt.NBR_LOG_HYP_SEQ
+ *              - Added sortedLogHypArray,
+ *                      loadSortedLogHypArray()
+ *                  and hypVarsInCommonWithAssrt().
+ *                 Plus getSortedLogHypArray(),
+ *                  and modified loadLogHypArray() to call
+ *                      loadSortedLogHypArray() during
+ *                      object construction.
  *
- *  Version 0.08 - 08/01/2008
+ * Version 0.08 - 08/01/2008
  */
 
 package mmj.lang;
 
 import java.util.*;
 
+import mmj.verify.VerifyProofs;
+
 /**
- *  Assrt is an "Assertion", of which there are two
- *  main kinds, Axiom and Theorem -- known in
- *  Metamath as "Axiomatic Assertions" and "Provable
- *  Assertions". What do Assertions have in common that
- *  Hypotheses do not? "Mandatory" Frames.
- *
- *  @see <a href="../../MetamathERNotes.html">
- *       Nomenclature and Entity-Relationship Notes</a>
+ * Assrt is an "Assertion", of which there are two main kinds, Axiom and Theorem
+ * -- known in Metamath as "Axiomatic Assertions" and "Provable Assertions".
+ * What do Assertions have in common that Hypotheses do not? "Mandatory" Frames.
+ * 
+ * @see <a href="../../MetamathERNotes.html"> Nomenclature and
+ *      Entity-Relationship Notes</a>
  */
 public abstract class Assrt extends Stmt {
 
     /**
-     *  varHypArray contains *exactly* the Assrt's Formula's
-     *  VarHyp's, in database sequence.
-     *  <p>
-     *  varHypArray is an array of length zero if the Assrt's
-     *  Formula contains no variables.
-     *  <p>
-     *  Note: varHypArray is somewhat redundant, but
-     *  note that MandFrame contains not only VarHyp's used
-     *  in an Expression's Formula, but the LogHyp's that
-     *  are in scope, <b>and the VarHyp's used by those
-     *  LogHyp's!</b>.
-     *  <p>
+     * varHypArray contains *exactly* the Assrt's Formula's VarHyp's, in
+     * database sequence.
+     * <p>
+     * varHypArray is an array of length zero if the Assrt's Formula contains no
+     * variables.
+     * <p>
+     * Note: varHypArray is somewhat redundant, but note that MandFrame contains
+     * not only VarHyp's used in an Expression's Formula, but the LogHyp's that
+     * are in scope, <b>and the VarHyp's used by those LogHyp's!</b>.
+     * <p>
      */
     protected VarHyp[] varHypArray;
 
     /**
-     *  logHypArray contains *exactly* the Assrt's Formula's
-     *  LogHyp's, in database sequence.
-     *  <p>
-     *  logHypArray is an array of length zero if the Assrt
-     *  has no LogHyp's.
-     *  <p>
-     *  logHypArray is redundant with the data in MandFrame,
-     *  but ProofAsst needs quick access to the LogHyp's as
-     *  well as the actual number of LogHyp's.
-     *  <p>
+     * logHypArray contains *exactly* the Assrt's Formula's LogHyp's, in
+     * database sequence.
+     * <p>
+     * logHypArray is an array of length zero if the Assrt has no LogHyp's.
+     * <p>
+     * logHypArray is redundant with the data in MandFrame, but ProofAsst needs
+     * quick access to the LogHyp's as well as the actual number of LogHyp's.
+     * <p>
      */
     protected LogHyp[] logHypArray;
 
     /**
-     *  sortedLogHypArray contains the contents of logHypArray
-     *  as sorted by loadSortedLogHypArray().
-     *  <p>
-     *  The sorted LogHyps are for the benefit of ProofAssistant.
+     * sortedLogHypArray contains the contents of logHypArray as sorted by
+     * loadSortedLogHypArray().
+     * <p>
+     * The sorted LogHyps are for the benefit of ProofAssistant.
      */
     protected LogHyp[] sortedLogHypArray;
 
     /**
-     *  The assertion's Mandatory Frame.
+     * The assertion's Mandatory Frame.
      */
     protected MandFrame mandFrame;
 
     /**
-     *  Construct using a boatload of parameters.
-     *
-     *  @param seq           MObj.seq number
-     *  @param scopeDefList  the Scope list
-     *  @param symTbl        Symbol Table (Map)
-     *  @param stmtTbl       Statement Table (Map)
-     *  @param labelS        Label String identifying the Assrt
-     *  @param typS          Type Code String (first sym of formula)
-     *  @param symList       Formula's Expression (2nd thru nth syms)
-     *
-     *  @throws LangException variety of errors :)
+     * Construct using a boatload of parameters.
+     * 
+     * @param seq MObj.seq number
+     * @param scopeDefList the Scope list
+     * @param symTbl Symbol Table (Map)
+     * @param stmtTbl Statement Table (Map)
+     * @param labelS Label String identifying the Assrt
+     * @param typS Type Code String (first sym of formula)
+     * @param symList Formula's Expression (2nd thru nth syms)
+     * @throws LangException variety of errors :)
      */
     public Assrt(final int seq, final List<ScopeDef> scopeDefList,
         final Map<String, Sym> symTbl, final Map<String, Stmt> stmtTbl,
@@ -139,193 +134,173 @@ public abstract class Assrt extends Stmt {
     }
 
     /**
-     *  Return the *mandatory* varHypArray.
-     *  <p>
-     *  Note: the "varHypArray" contains only *mandatory*
-     *        VarHyp's, hence the name of this function,
-     *        which is intended to highlight the point.
-     *        These are the VarHyp's use in the Assrt's
-     *        Formula.
-     *
-     *  @return varHypArray which contains only mandatory
-     *        VarHyp's.
+     * Return the *mandatory* varHypArray.
+     * <p>
+     * Note: the "varHypArray" contains only *mandatory* VarHyp's, hence the
+     * name of this function, which is intended to highlight the point. These
+     * are the VarHyp's use in the Assrt's Formula.
+     * 
+     * @return varHypArray which contains only mandatory VarHyp's.
      */
-    @Override
     public VarHyp[] getMandVarHypArray() {
         return varHypArray;
     }
 
     /**
-     *  Return the logHypArray.
-     *  <p>
-     *  @return logHypArray for the Assrt.
+     * Return the logHypArray.
+     *
+     * @return logHypArray for the Assrt.
      */
     public LogHyp[] getLogHypArray() {
         return logHypArray;
     }
 
     /**
-     *  Return the logHypArray length
-     *  <p>
-     *  @return Assrt's logHypArray length.
+     * Return the logHypArray length
+     *
+     * @return Assrt's logHypArray length.
      */
     public int getLogHypArrayLength() {
         return logHypArray.length;
     }
 
     /**
-     *  Set the logHypArray.
-     *  <p>
-     *  @param logHypArray for the Assrt.
+     * Set the logHypArray.
+     *
+     * @param logHypArray for the Assrt.
      */
     public void setLogHypArray(final LogHyp[] logHypArray) {
         this.logHypArray = logHypArray;
     }
 
     /**
-     *  Return the *mandatory* Hyp Array.Length
-     *
-     *  @return hypArray length from the Assrt's MandFrame.
+     * Return the *mandatory* Hyp Array.Length
+     * 
+     * @return hypArray length from the Assrt's MandFrame.
      */
-    @Override
     public int getMandHypArrayLength() {
         return mandFrame.hypArray.length;
     }
 
     /**
-     *  Set the *mandatory* VarHyp Array.
-     *
-     *  @param varHypArray VarHyp's used by the Assrt.
+     * Set the *mandatory* VarHyp Array.
+     * 
+     * @param varHypArray VarHyp's used by the Assrt.
      */
     public void setMandVarHypArray(final VarHyp[] varHypArray) {
         this.varHypArray = varHypArray;
     }
 
     /**
-     *  Get the Assrt's MandFrame.
-     *
-     *  @return Assrt's MandFrame.
+     * Get the Assrt's MandFrame.
+     * 
+     * @return Assrt's MandFrame.
      */
     public MandFrame getMandFrame() {
         return mandFrame;
     }
 
     /**
-     *  Set the Assrt's MandFrame.
-     *
-     *  @param mandFrame  Assrt's MandFrame.
+     * Set the Assrt's MandFrame.
+     * 
+     * @param mandFrame Assrt's MandFrame.
      */
     public void setMandFrame(final MandFrame mandFrame) {
         this.mandFrame = mandFrame;
     }
 
     /**
-     *  Is the Assrt "active".
-     *  <p>
-     *  Yep. Always. An assertion is always "active"
-     *  even if it is defined inside a scope level.
-     *  (Recall that, in practice, "active" simply means
-     *  that a statement can be referred to by a
-     *  subsequent statement in a proof or parse RPN.)
-     *  <p>
-     *  That is because Metmath "scope" is designed
-     *  primarily to limit the visibility of hypotheses
-     *  so that variables can be reused with different
-     *  Types and so that logical hypotheses can be
-     *  applied to just a single assertion. In a sense,
-     *  Metamath scopes are merely notational shorthand,
-     *  and as Metamath.pdf explains, every assertion
-     *  has an "Extended Frame" (look it up for more
-     *  info.)
-     *
-     *  @return true (assertions are always "active")
+     * Is the Assrt "active".
+     * <p>
+     * Yep. Always. An assertion is always "active" even if it is defined inside
+     * a scope level. (Recall that, in practice, "active" simply means that a
+     * statement can be referred to by a subsequent statement in a proof or
+     * parse RPN.)
+     * <p>
+     * That is because Metmath "scope" is designed primarily to limit the
+     * visibility of hypotheses so that variables can be reused with different
+     * Types and so that logical hypotheses can be applied to just a single
+     * assertion. In a sense, Metamath scopes are merely notational shorthand,
+     * and as Metamath.pdf explains, every assertion has an "Extended Frame"
+     * (look it up for more info.)
+     * 
+     * @return true (assertions are always "active")
      */
-    @Override
     public boolean isActive() {
         // assertions are always active at global scope.
         return true;
     }
 
     /**
-     *  Is the Stmt an Assrt?
-     *  <p>
-     *  Someone asked the question, so it is answered...
-     *
-     *  @return true (an Assrt is an Assrt :)
+     * Is the Stmt an Assrt?
+     * <p>
+     * Someone asked the question, so it is answered...
+     * 
+     * @return true (an Assrt is an Assrt :)
      */
-    @Override
     public boolean isAssrt() {
         return true;
     }
 
     /**
-     *  Is the Assrt an Axiom?
-     *  <p>
-     *  Someone asked the question, so it is answered...
-     *
-     *  @return true (an Assrt is an Assrt :)
+     * Is the Assrt an Axiom?
+     * <p>
+     * Someone asked the question, so it is answered...
+     * 
+     * @return true (an Assrt is an Assrt :)
      */
     public abstract boolean isAxiom();
 
     /**
-     *  Is the Stmt an Hyp?
-     *  <p>
-     *  Someone asked the question, so it is answered...
-     *
-     *  @return false (an Assrt is not an Hyp :)
+     * Is the Stmt an Hyp?
+     * <p>
+     * Someone asked the question, so it is answered...
+     * 
+     * @return false (an Assrt is not an Hyp :)
      */
-    @Override
     public boolean isHyp() {
         return false;
     }
 
     /**
-     *  Is the Stmt a VarHyp?
-     *  <p>
-     *  Someone asked the question, so it is answered...
-     *
-     *  @return false (an Assrt is not a Hyp, ergo it is not
-     *                a VarHyp :)
+     * Is the Stmt a VarHyp?
+     * <p>
+     * Someone asked the question, so it is answered...
+     * 
+     * @return false (an Assrt is not a Hyp, ergo it is not a VarHyp :)
      */
-    @Override
     public boolean isVarHyp() {
         return false;
     }
 
     /**
-     *  Is the Stmt a WorkVarHyp?
-     *  <p>
-     *  Someone asked the question, so it is answered...
-     *
-     *  @return false (an Assrt is not a Hyp, ergo it is not
-     *                a WorkVarHyp :)
+     * Is the Stmt a WorkVarHyp?
+     * <p>
+     * Someone asked the question, so it is answered...
+     * 
+     * @return false (an Assrt is not a Hyp, ergo it is not a WorkVarHyp :)
      */
-    @Override
     public boolean isWorkVarHyp() {
         return false;
     }
 
     /**
-     *  Is the Stmt a LogHyp?
-     *  <p>
-     *  Someone asked the question, so it is answered...
-     *
-     *  @return false (an Assrt is not a Hyp, ergo it is not
-     *                a LogHyp :)
+     * Is the Stmt a LogHyp?
+     * <p>
+     * Someone asked the question, so it is answered...
+     * 
+     * @return false (an Assrt is not a Hyp, ergo it is not a LogHyp :)
      */
-    @Override
     public boolean isLogHyp() {
         return false;
     }
 
     /**
-     *  Loads the logHypArray using mandFrame.
-     *  <p>
-     *  This is pretty redundant, but is an add-on
-     *  for ProofAsst and is designed to be as
-     *  bombproof as possible -- the output logHypArray
-     *  is guaranteed to be in database sequence
-     *  because it is created from MandFrame.hypArray.
+     * Loads the logHypArray using mandFrame.
+     * <p>
+     * This is pretty redundant, but is an add-on for ProofAsst and is designed
+     * to be as bombproof as possible -- the output logHypArray is guaranteed to
+     * be in database sequence because it is created from MandFrame.hypArray.
      */
     public void loadLogHypArray() {
 
@@ -346,38 +321,30 @@ public abstract class Assrt extends Stmt {
     }
 
     /**
-     *  Load the Assrt's MandFrame.
-     *  <p>
-     *  <ol>
-     *     <li>add the variable hypotheses referenced in the logical
-     *         hypotheses to the variable hypotheses list in the
-     *         hypotheses list (input contains var hyps used in
-     *         assertion's expression.)
-     *     <li>add the logical hypotheses that are "in scope" to
-     *         the the hypotheses list
-     *     <li>add the DjVars that match variable hypotheses (pairs)
-     *         in the hypotheses list.
-     *
-     *     <li>convert lists to arrays
-     *     <li>return with the goodies.
-     *  </ol>
-     *  <p>
-     *  NOTE 3: "ddeeq1" in set.mm requires disjoint variables on
-     *          w and x, but w is not referenced directly in
-     *          ddeeq1; rather, it employs w in the proof.
-     *          DjVars that do not match variable hypotheses are
-     *          therefore added to the OptFrame for use in proof
-     *          verification!
-     *          @see mmj.lang.VerifyProofs#checkSubstToVars()
-     *
-     *  @param scopeDefList  Scope List as of this Stmt's definition.
-     *  @param hypList       Already partly filled in with variable
-     *                       hypotheses from the assertion's
-     *                       expression.
-     *
-     * @return MandFrame     Metamath ("mandatory") Frame for the
-     *                       Assrt.
-     *
+     * Load the Assrt's MandFrame.
+     * <p>
+     * <ol>
+     * <li>add the variable hypotheses referenced in the logical hypotheses to
+     * the variable hypotheses list in the hypotheses list (input contains var
+     * hyps used in assertion's expression.)
+     * <li>add the logical hypotheses that are "in scope" to the the hypotheses
+     * list
+     * <li>add the DjVars that match variable hypotheses (pairs) in the
+     * hypotheses list.
+     * <li>convert lists to arrays
+     * <li>return with the goodies.
+     * </ol>
+     * <p>
+     * NOTE 3: "ddeeq1" in set.mm requires disjoint variables on w and x, but w
+     * is not referenced directly in ddeeq1; rather, it employs w in the proof.
+     * DjVars that do not match variable hypotheses are therefore added to the
+     * OptFrame for use in proof verification!
+     * 
+     * @see VerifyProofs#checkSubstToVars(int,int)
+     * @param scopeDefList Scope List as of this Stmt's definition.
+     * @param hypList Already partly filled in with variable hypotheses from the
+     *            assertion's expression.
+     * @return MandFrame Metamath ("mandatory") Frame for the Assrt.
      */
     private MandFrame buildMandFrame(final List<ScopeDef> scopeDefList,
         final List<Hyp> hypList)
@@ -409,19 +376,16 @@ public abstract class Assrt extends Stmt {
     }
 
     /**
-     *  Checks to see whether or not both variables in a DjVars
-     *  pair are referenced in a list of hypotheses.
-     *  <p>
-     *  Note: checks only the VarHyp's.
-     *  <p>
-     * @param hypList  -- List containing hypotheses
+     * Checks to see whether or not both variables in a DjVars pair are
+     * referenced in a list of hypotheses.
+     * <p>
+     * Note: checks only the VarHyp's.
      *
-     * @param djVars -- DjVars object containing 2 variables to
-     *                  be checked against the variables referenced
-     *                  in hypList.
-     *
-     * @return boolean -- true if both DjVars variables are present
-     *                    in hypList, otherwise false.
+     * @param hypList -- List containing hypotheses
+     * @param djVars -- DjVars object containing 2 variables to be checked
+     *            against the variables referenced in hypList.
+     * @return boolean -- true if both DjVars variables are present in hypList,
+     *         otherwise false.
      */
     private boolean areBothDjVarsInHypList(final List<Hyp> hypList,
         final DjVars djVars)
@@ -444,21 +408,19 @@ public abstract class Assrt extends Stmt {
     }
 
     /**
-     *  Accumulate unique hypotheses (no duplicates), storing
-     *  them in an array list in order of their appearance
-     *  in the database.
-     *  <p>
-     *  The input "hypList" is updated with unique variable
-     *  hypotheses in the expression.
-     *  <p>
-     *  Because hypList is maintained in database statement
-     *  sequence order, hypList should either be empty (new)
-     *  before the call, or already be in that order.
-     *
-     *  @param hypList  List of Hyp's, updated here.
-     *
-     *  @param hypNew  Candidate Hyp to be added to hypList if
-     *                 not already there.
+     * Accumulate unique hypotheses (no duplicates), storing them in an array
+     * list in order of their appearance in the database.
+     * <p>
+     * The input "hypList" is updated with unique variable hypotheses in the
+     * expression.
+     * <p>
+     * Because hypList is maintained in database statement sequence order,
+     * hypList should either be empty (new) before the call, or already be in
+     * that order.
+     * 
+     * @param <T> the actual type of the list
+     * @param hypList List of Hyp's, updated here.
+     * @param hypNew Candidate Hyp to be added to hypList if not already there.
      */
     public static <T extends Hyp> void accumHypInList(final List<T> hypList,
         final T hypNew)
@@ -488,11 +450,10 @@ public abstract class Assrt extends Stmt {
     }
 
     /**
-     *  Dynamically computes, if needed, the larges maximum
-     *  depth of parse trees of logHypArray, and caches the
-     *  value for later use.
-     *
-     *  @return greatest maxDepth of parse trees for logHypArray.
+     * Dynamically computes, if needed, the larges maximum depth of parse trees
+     * of logHypArray, and caches the value for later use.
+     * 
+     * @return greatest maxDepth of parse trees for logHypArray.
      */
     public int getLogHypsMaxDepth() {
         if (logHypsMaxDepth == -1) {
@@ -508,11 +469,10 @@ public abstract class Assrt extends Stmt {
     }
 
     /**
-     *  Dynamically computes, if needed, the Hi and Lo keys
-     *  of Level 1 (root) of parse trees of logHypArray, and
-     *  caches the value for later use.
-     *
-     *  @return Level 1 HiLoKey of parse trees for logHypArray.
+     * Dynamically computes, if needed, the Hi and Lo keys of Level 1 (root) of
+     * parse trees of logHypArray, and caches the value for later use.
+     * 
+     * @return Level 1 HiLoKey of parse trees for logHypArray.
      */
     public String getLogHypsL1HiLoKey() {
         if (logHypsL1HiLoKey == null)
@@ -548,12 +508,12 @@ public abstract class Assrt extends Stmt {
 
 //not needed in StepSelectorSearch anymore, so comment out for now
     /**
-     *  Sorts a list of Assrt into an array.
-     *
-     *  @param assrtList List of Assrt to be sorted.
-     *  @param comparator Comparator to be used for the sort.
-     *  @return Array of Assrt with size equal to the number
-     *                of elements in the input list.
+     * Sorts a list of Assrt into an array.
+     * 
+     * @param assrtList List of Assrt to be sorted.
+     * @param comparator Comparator to be used for the sort.
+     * @return Array of Assrt with size equal to the number of elements in the
+     *         input list.
      */
     public static Assrt[] sortListIntoArray(final List<Assrt> assrtList,
         final Comparator<Assrt> comparator)
@@ -565,11 +525,10 @@ public abstract class Assrt extends Stmt {
     }
 
     /**
-     *  NBR_LOG_HYP_SEQ sequences by Stmt.seq
+     * NBR_LOG_HYP_SEQ sequences by Stmt.seq
      */
     static public final Comparator<Assrt> NBR_LOG_HYP_SEQ = new Comparator<Assrt>()
     {
-        @Override
         public int compare(final Assrt o1, final Assrt o2) {
             int n = o1.logHypArray.length - o2.logHypArray.length;
             if (n == 0)
@@ -579,20 +538,17 @@ public abstract class Assrt extends Stmt {
     };
 
     /**
-     *  Loads sortedLogHypArray from logHypArray.
-     *  <p>
-     *  The purpose of this is to finalize the state
-     *  of memory concerning the loaded database and
-     *  to get this sorting process completed for
-     *  Proof Assistanting.
-     *  <p>
-     *  Sort in descending order of formula length and
-     *  if two hyps have the same length and the new
-     *  one has variables in common with its assertion's
-     *  formula's variables, put it first in the output
-     *  (variables in common are less likely to lead
-     *  to a "false" set of unifications -- the
-     *  inconsistencies are caught quicker, in other words.)
+     * Loads sortedLogHypArray from logHypArray.
+     * <p>
+     * The purpose of this is to finalize the state of memory concerning the
+     * loaded database and to get this sorting process completed for Proof
+     * Assistanting.
+     * <p>
+     * Sort in descending order of formula length and if two hyps have the same
+     * length and the new one has variables in common with its assertion's
+     * formula's variables, put it first in the output (variables in common are
+     * less likely to lead to a "false" set of unifications -- the
+     * inconsistencies are caught quicker, in other words.)
      */
     private void loadSortedLogHypArray() {
 
@@ -643,11 +599,11 @@ public abstract class Assrt extends Stmt {
     }
 
     /**
-     *  See if the LogHyp has any variables in common with
-     *  the assertion.
-     *
-     *  Note: both of the VarHyp arrays are sorted in database
-     *        order (*.getSeq());
+     * See if the LogHyp has any variables in common with the assertion. Note:
+     * both of the VarHyp arrays are sorted in database order (*.getSeq());
+     * 
+     * @param holdLogHyp1 the LogHyp the query
+     * @return true if there is a common variable
      */
     private boolean hypVarsInCommonWithAssrt(final LogHyp holdLogHyp1) {
         final VarHyp[] h = holdLogHyp1.getMandVarHypArray();
@@ -675,9 +631,9 @@ public abstract class Assrt extends Stmt {
     }
 
     /**
-     *  Return the sortedLogHypArray.
-     *  <p>
-     *  @return sortedLogHypArray for the Assrt.
+     * Return the sortedLogHypArray.
+     *
+     * @return sortedLogHypArray for the Assrt.
      */
     public LogHyp[] getSortedLogHypArray() {
         return sortedLogHypArray;

@@ -6,11 +6,11 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-/**
- *  GMFFBoss.java  0.01 11/01/2011
+/*
+ * GMFFBoss.java  0.01 11/01/2011
  *
- *  Version 0.01:
- *  Nov-01-2011: new.
+ * Version 0.01:
+ * Nov-01-2011: new.
  */
 
 package mmj.util;
@@ -26,20 +26,19 @@ public class GMFFBoss extends Boss {
     protected GMFFManager gmffManager;
 
     /**
-     *  Constructor with BatchFramework for access to environment.
-     *
-     *  @param batchFramework for access to environment.
+     * Constructor with BatchFramework for access to environment.
+     * 
+     * @param batchFramework for access to environment.
      */
     public GMFFBoss(final BatchFramework batchFramework) {
         super(batchFramework);
     }
 
     /**
-     *  Executes a single command from the RunParmFile.
-     *
-     *  @param runParm the RunParmFile line to execute.
+     * Executes a single command from the RunParmFile.
+     * 
+     * @param runParm the RunParmFile line to execute.
      */
-    @Override
     public boolean doRunParmCommand(final RunParmArrayEntry runParm)
         throws IllegalArgumentException, GMFFException
     {
@@ -115,21 +114,18 @@ public class GMFFBoss extends Boss {
     }
 
     /**
-     *  Fetch a gmffManagerobject, building it if necessary
-     *  from previously input RunParms.
-     *  <p>
-     *  NOTE: The returned gmffManageris "ready to go" but
-     *        may not have been "initialized", which means
-     *        gmffManagervalidation, etc. The reason that
-     *        gmffManageris not initialized here is that
-     *        a previous attempt to "initialize" may have
-     *        failed due to gmffManagererrors, so to re-do
-     *        it here would result in doubled-up error
-     *        messages. The Initialize gmffManagerRunParm
-     *        Command should be used prior to PrintSyntaxDetails
-     *        if a "load and print syntax" is desired.
-     *
-     *  @return gmffManagerobject, ready to go.
+     * Fetch a gmffManagerobject, building it if necessary from previously input
+     * RunParms.
+     * <p>
+     * NOTE: The returned gmffManageris "ready to go" but may not have been
+     * "initialized", which means gmffManagervalidation, etc. The reason that
+     * gmffManageris not initialized here is that a previous attempt to
+     * "initialize" may have failed due to gmffManagererrors, so to re-do it
+     * here would result in doubled-up error messages. The Initialize
+     * gmffManagerRunParm Command should be used prior to PrintSyntaxDetails if
+     * a "load and print syntax" is desired.
+     * 
+     * @return gmffManagerobject, ready to go.
      */
     public GMFFManager getGMFFManager() {
 
@@ -140,10 +136,11 @@ public class GMFFBoss extends Boss {
     }
 
     /**
-     *  Executes GMFFManager initializeGMFF function and
-     *  prints any messages, etc.
-     *
-     *  @param runParm RunParmFile line.
+     * Executes GMFFManager initializeGMFF function and prints any messages,
+     * etc.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws GMFFException on invalid parameter
      */
     public void doGMFFInitialize(final RunParmArrayEntry runParm)
         throws GMFFException

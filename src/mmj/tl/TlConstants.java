@@ -7,73 +7,71 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  TlConstants.java  0.02 11/01/2011
+ * TlConstants.java  0.02 11/01/2011
  *
- *  Version 0.01
- *  -- new.
+ * Version 0.01
+ * -- new.
  *
- *  Version 0.02 - Nov-01-2011:  comment update.
- *
-
+ * Version 0.02 - Nov-01-2011:  comment update.
  */
 
 package mmj.tl;
 
+import mmj.gmff.GMFFConstants;
+import mmj.mmio.MMIOConstants;
+import mmj.pa.PaConstants;
+import mmj.util.UtilConstants;
+import mmj.verify.GrammarConstants;
+import mmj.verify.ProofConstants;
+
 /**
  * (Most) Constants used in mmj.tl classes
- *
- *  <p>
- *  There are two primary types of constants: parameters that
- *  are "hardcoded" which affect/control processing, and
- *  error/info messages.
- *  <p>
- *  Each mmj message begins with a code, such as this:<br>
- *  <code>
- *  E-LA-0007<br>
- *  <p>
- *  where the format of the code is "X-YY-9999"<br>
- *
- *  <b>X</b>     : error level
- *  <ul>
- *      <li>E = Error
- *      <li>I = Information
- *      <li>A = Abort (processing terminates, usually a bug).
- *  </ul><br>
- *  <br>
- *
- *  <b>YY</b>    : source code
- *  <ul>
- *      <li>GM = mmj.gmff package (see mmj.gmff.GMFFConstants)
- *      <li>GR = mmj.verify.Grammar and related code
- *               (see mmj.verify.GrammarConstants)
- *      <li>IO = mmj.mmio package (see mmj.mmio.MMIOConstants)
- *      <li>LA = mmj.lang package (see mmj.lang.GMFFConstants)
- *      <li>PA = mmj.pa package (proof assistant)
- *               (see mmj.pa.PaConstants)
- *      <li>PR = mmj.verify.VerifyProof and related code
- *               (see mmj.verify.ProofConstants)
- *      <li>TL = mmj.tl package (Theorem Loader).
- *      <li>TM = mmj.tmff.AlignColumn and related code
- *      <li>UT = mmj.util package.
- *               (see mmj.util.UtilConstants)
- *  </ul><br>
- *  <br>
- *  <b>9999</b>   : sequential number within the source code, 0001
- *       through 9999.
- *
- *  </code>
+ * <p>
+ * There are two primary types of constants: parameters that are "hardcoded"
+ * which affect/control processing, and error/info messages.
+ * <p>
+ * Each mmj message begins with a code, such as this:
+ * <p>
+ * <code>E-LA-0007</code>
+ * <p>
+ * where the format of the code is {@code X-YY-9999}<br>
+ * <p>
+ * <b>{@code X}</b> : error level
+ * <ul>
+ * <li>{@code E} = Error
+ * <li>{@code I} = Information
+ * <li>{@code A} = Abort (processing terminates, usually a bug).
+ * </ul>
+ * <p>
+ * <b>{@code YY}</b> : source code
+ * <ul>
+ * <li>{@code GM} = mmj.gmff package (see {@link GMFFConstants})
+ * <li>{@code GR} = mmj.verify.Grammar and related code (see
+ * {@link GrammarConstants})
+ * <li>{@code IO} = mmj.mmio package (see {@link MMIOConstants})
+ * <li>{@code LA} = mmj.lang package (see {@link GMFFConstants})
+ * <li>{@code PA} = mmj.pa package (proof assistant) (see {@link PaConstants})
+ * <li>{@code PR} = mmj.verify.VerifyProof and related code (see
+ * {@link ProofConstants})
+ * <li>{@code TL} = mmj.tl package (Theorem Loader).
+ * <li>{@code TM} = mmj.tmff.AlignColumn and related code
+ * <li>{@code UT} = mmj.util package. (see {@link UtilConstants})
+ * </ul>
+ * <p>
+ * <b>{@code 9999}</b> : sequential number within the source code, 0001 through
+ * 9999.
  */
 public class TlConstants {
 
     /**
-     *  SYNONYM_TRUE_1, 2 and 3 = "true", "on" and "yes".
+     * SYNONYM_TRUE_1, 2 and 3 = "true", "on" and "yes".
      */
     public static final String SYNONYM_TRUE_1 = "true";
     public static final String SYNONYM_TRUE_2 = "on";
     public static final String SYNONYM_TRUE_3 = "yes";
 
     /**
-     *  SYNONYM_FALSE_1, 2 and 3 = "false", "off" and "no".
+     * SYNONYM_FALSE_1, 2 and 3 = "false", "off" and "no".
      */
     public static final String SYNONYM_FALSE_1 = "false";
     public static final String SYNONYM_FALSE_2 = "off";
@@ -84,12 +82,12 @@ public class TlConstants {
     // ----------------------------------------------------------
 
     /**
-     *  MMTFileFilter valid file name suffix ".mmt".
+     * MMTFileFilter valid file name suffix ".mmt".
      */
     public static final String FILE_SUFFIX_MMT = ".mmt";
 
     /**
-     *  MMTTheoremFile output file buffer size = 4096.
+     * MMTTheoremFile output file buffer size = 4096.
      */
     public static final int FILE_WRITER_BUFFER_SIZE = 4096;
 
@@ -98,12 +96,12 @@ public class TlConstants {
     // ----------------------------------------------------------
 
     /**
-     *  DEFAULT_DV_SRC_STMT_LIST_SIZE ArrayList initial size = 3.
+     * DEFAULT_DV_SRC_STMT_LIST_SIZE ArrayList initial size = 3.
      */
     public static final int DEFAULT_DV_SRC_STMT_LIST_SIZE = 3;
 
     /**
-     *  DEFAULT_LOG_HYP_STMT_LIST_SIZE ArrayList initial size = 3.
+     * DEFAULT_LOG_HYP_STMT_LIST_SIZE ArrayList initial size = 3.
      */
     public static final int DEFAULT_LOG_HYP_SRC_STMT_LIST_SIZE = 3;
 
@@ -112,62 +110,62 @@ public class TlConstants {
     // ----------------------------------------------------------
 
     /**
-     *  THEOREM_LOADER_DJ_VARS_OPTION_NO_UPDATE = "NoUpdate"
+     * THEOREM_LOADER_DJ_VARS_OPTION_NO_UPDATE = "NoUpdate"
      */
     public static final String THEOREM_LOADER_DJ_VARS_OPTION_NO_UPDATE = "NoUpdate";
 
     /**
-     *  THEOREM_LOADER_DJ_VARS_OPTION_MERGE = "Merge"
+     * THEOREM_LOADER_DJ_VARS_OPTION_MERGE = "Merge"
      */
     public static final String THEOREM_LOADER_DJ_VARS_OPTION_MERGE = "Merge";
 
     /**
-     *  THEOREM_LOADER_DJ_VARS_OPTION_MERGE = "Replace"
+     * THEOREM_LOADER_DJ_VARS_OPTION_MERGE = "Replace"
      */
     public static final String THEOREM_LOADER_DJ_VARS_OPTION_REPLACE = "Replace";
 
     /**
-     *  THEOREM_LOADER_DJ_VARS_OPTION_DEFAULT = "NoUpdate"
+     * THEOREM_LOADER_DJ_VARS_OPTION_DEFAULT = "NoUpdate"
      */
     public static final String THEOREM_LOADER_DJ_VARS_OPTION_DEFAULT = TlConstants.THEOREM_LOADER_DJ_VARS_OPTION_NO_UPDATE;
 
     /**
-     *  THEOREM_LOADER_AUDIT_MESSAGES_DEFAULT = "Yes"
+     * THEOREM_LOADER_AUDIT_MESSAGES_DEFAULT = "Yes"
      */
     public static final String THEOREM_LOADER_AUDIT_MESSAGES_DEFAULT = TlConstants.SYNONYM_TRUE_1;
 
     /**
-     *  THEOREM_LOADER_STORE_FORMULAS_ASIS_DEFAULT = "yes"
+     * THEOREM_LOADER_STORE_FORMULAS_ASIS_DEFAULT = "yes"
      */
     public static final String THEOREM_LOADER_STORE_FORMULAS_ASIS_DEFAULT = TlConstants.SYNONYM_TRUE_1;
 
     /**
-     *  THEOREM_LOADER_STORE_MM_INDENT_AMT_DEFAULT = 2
+     * THEOREM_LOADER_STORE_MM_INDENT_AMT_DEFAULT = 2
      */
     public static final String THEOREM_LOADER_STORE_MM_INDENT_AMT_DEFAULT = "2";
 
     /**
-     *  THEOREM_LOADER_STORE_MM_INDENT_AMT_MIN = 0
+     * THEOREM_LOADER_STORE_MM_INDENT_AMT_MIN = 0
      */
     public static final int THEOREM_LOADER_STORE_MM_INDENT_AMT_MIN = 0;
 
     /**
-     *  THEOREM_LOADER_STORE_MM_INDENT_AMT_MAX = 9
+     * THEOREM_LOADER_STORE_MM_INDENT_AMT_MAX = 9
      */
     public static final int THEOREM_LOADER_STORE_MM_INDENT_AMT_MAX = 9;
 
     /**
-     *  THEOREM_LOADER_STORE_MM_RIGHT_COL_DEFAULT = 79
+     * THEOREM_LOADER_STORE_MM_RIGHT_COL_DEFAULT = 79
      */
     public static final String THEOREM_LOADER_STORE_MM_RIGHT_COL_DEFAULT = "79";
 
     /**
-     *  THEOREM_LOADER_STORE_MM_RIGHT_COL_MIN = 70
+     * THEOREM_LOADER_STORE_MM_RIGHT_COL_MIN = 70
      */
     public static final int THEOREM_LOADER_STORE_MM_RIGHT_COL_MIN = 70;
 
     /**
-     *  THEOREM_LOADER_STORE_MM_RIGHT_COL_MAX = 9999
+     * THEOREM_LOADER_STORE_MM_RIGHT_COL_MAX = 9999
      */
     public static final int THEOREM_LOADER_STORE_MM_RIGHT_COL_MAX = 9999;
 

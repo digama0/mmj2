@@ -13,24 +13,22 @@
 // ===                                           ===
 // =================================================
 
-/**
- *  HeaderStmt.java  0.07 08/01/2008
- *  <code>
- *  Version 0.04:
- *      - Un-nested inner class
+/*
+ * HeaderStmt.java  0.07 08/01/2008
+ * 
+ * Version 0.04:
+ *    - Un-nested inner class
  *
- *  Nov-01-2007 Version 0.05
- *  - add abstract method computeFieldIdCol(int fieldId)
- *    for use in ProofAsstGUI (just in time) cursor
- *    positioning logic.
+ * Nov-01-2007 Version 0.05
+ * - add abstract method computeFieldIdCol(int fieldId)
+ *   for use in ProofAsstGUI (just in time) cursor
+ *   positioning logic.
  *
- *  Feb-01-2008 Version 0.06
- *  - add tmffReformat().
+ * Feb-01-2008 Version 0.06
+ * - add tmffReformat().
  *
- *  Aug-01-2008 Version 0.07
- *  - remove stmtHasError() method.
- *  </code>
- *  HeaderStmt represents the first line of the ProofWorksheet.
+ * Aug-01-2008 Version 0.07
+ * - remove stmtHasError() method.
  */
 
 package mmj.pa;
@@ -42,6 +40,9 @@ import mmj.lang.Theorem;
 import mmj.mmio.MMIOError;
 import mmj.mmio.Statementizer;
 
+/**
+ * HeaderStmt represents the first line of the ProofWorksheet.
+ */
 public class HeaderStmt extends ProofWorkStmt {
     String theoremLabel;
     String locAfterLabel;
@@ -51,17 +52,20 @@ public class HeaderStmt extends ProofWorkStmt {
     boolean headerInvalid;
 
     /**
-     *  Default Constructor.
+     * Default Constructor.
+     * 
+     * @param w the owner ProofWorksheet
      */
     public HeaderStmt(final ProofWorksheet w) {
         super(w);
     }
 
     /**
-     *  Constructor used for new proof.
-     *
-     *  @param theoremLabel proof theorem label
-     *  @param locAfterLabel LOC_AFTER statement label
+     * Constructor used for new proof.
+     * 
+     * @param w the owner ProofWorksheet
+     * @param theoremLabel proof theorem label
+     * @param locAfterLabel LOC_AFTER statement label
      */
     public HeaderStmt(final ProofWorksheet w, final String theoremLabel,
         final String locAfterLabel)
@@ -98,15 +102,12 @@ public class HeaderStmt extends ProofWorkStmt {
     }
 
     /**
-     *  Function used for cursor positioning.
-     *  <p>
-     *
-     *  @param fieldId value identify ProofWorkStmt field
-     *         for cursor positioning, as defined in
-     *         PaConstants.FIELD_ID_*.
-     *
-     *  @return column of input fieldId or default value
-     *         of 1 if there is an error.
+     * Function used for cursor positioning.
+     * 
+     * @param fieldId value identify ProofWorkStmt field for cursor positioning,
+     *            as defined in PaConstants.FIELD_ID_*.
+     * @return column of input fieldId or default value of 1 if there is an
+     *         error.
      */
     @Override
     public int computeFieldIdCol(final int fieldId) {
@@ -114,31 +115,31 @@ public class HeaderStmt extends ProofWorkStmt {
     }
 
     /**
-     *  Reformats Derivation Step using TMFF.
+     * Reformats Derivation Step using TMFF.
      */
     @Override
     public void tmffReformat() {}
 
     /**
-     *   load Header statement with Tokenizer input
-     *   <p>
-     *   <code>
-     *   Output/Updates
-     *   - accum tokens and whitespace into stmtText,
-     *     checking for extra tokens or premature EOF
-     *   - throw exception if structural error found.
-     *   - set status to 0 if no errors
-     *   - return nextToken after trailing whitespace.
-     *     the start of the next statement.
-     *   - keep track of lineCnt, number of lines in
-     *     the statement.
-     *   - position cursor to field in error, as needed.
-     *   - Load Header statement fields.
-     *   </code>
-     *
-     *   @param firstToken first token of statement
-     *   @return      first token of following statement.
-     *   @throws ProofAsstException if validation error.
+     * load Header statement with Tokenizer input
+     * <p>
+     * {@code 
+     * Output/Updates
+     * - accum tokens and whitespace into stmtText,
+     *   checking for extra tokens or premature EOF
+     * - throw exception if structural error found.
+     * - set status to 0 if no errors
+     * - return nextToken after trailing whitespace.
+     *   the start of the next statement.
+     * - keep track of lineCnt, number of lines in
+     *   the statement.
+     * - position cursor to field in error, as needed.
+     * - Load Header statement fields.
+     * }
+     * 
+     * @param firstToken first token of statement
+     * @return first token of following statement.
+     * @throws ProofAsstException if validation error.
      */
     @Override
     public String load(final String firstToken) throws IOException, MMIOError,

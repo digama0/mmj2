@@ -7,28 +7,28 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  GrammarBoss.java  0.04 08/01/2008
+ * GrammarBoss.java  0.04 08/01/2008
  *
- *  Nov-26-2005:
- *      -->fix comment(s).RunParmFile lines at 1. Doh.
+ * Nov-26-2005:
+ *     -->fix comment(s).RunParmFile lines at 1. Doh.
  *
- *  Dec-14-2005: change parse to return ParseTree
- *               instead of RPN -- will store
- *               tree instead of RPN to optimize
- *               ProofAsst processing.
+ * Dec-14-2005: change parse to return ParseTree
+ *              instead of RPN -- will store
+ *              tree instead of RPN to optimize
+ *              ProofAsst processing.
  *
- *  Version 0.05 08/01/2008
- *      -->Moved processing of ProvableLogicStmtType
- *         and                 LogicStmtType
- *         to LogicalSystemBoss.
- *      -->Modified to update LogicalSystem with the grammar
- *         (SyntaxVerifier) after the "Parse" RunParm so that
- *         if new theorems are added via TheoremLoader, then
- *         LogicalSystem will know it needs to parse the
- *         new statements (as opposed to waiting for the
- *         inevitable "Parse,*" RunParm later.)
- *      -->Totally initialize after "LoadFile" RunParm,
- *         just like "Clear".
+ * Version 0.05 08/01/2008
+ *     -->Moved processing of ProvableLogicStmtType
+ *        and                 LogicStmtType
+ *        to LogicalSystemBoss.
+ *     -->Modified to update LogicalSystem with the grammar
+ *        (SyntaxVerifier) after the "Parse" RunParm so that
+ *        if new theorems are added via TheoremLoader, then
+ *        LogicalSystem will know it needs to parse the
+ *        new statements (as opposed to waiting for the
+ *        inevitable "Parse,*" RunParm later.)
+ *     -->Totally initialize after "LoadFile" RunParm,
+ *        just like "Clear".
  */
 
 package mmj.util;
@@ -42,34 +42,27 @@ import mmj.verify.Grammar;
 import mmj.verify.GrammarConstants;
 
 /**
- *  Responsible for building and using Grammar.
- *  <ul>
- *  <li>If non-executable parm, validate, store and "consume"
- *  <li>If LoadFile command, mark Grammar as "not initialized"
- *      but do not "consume" the command.
- *  <li>If InitializeGrammar command, invoke Grammar's
- *      initialize method, get error status, print and clear
- *      messages and consume.
- *  <li>Use grammar.getGrammarInitialized() to check if
- *      grammar is "initialized" -- and then store the
- *      result (we will not "set" the grammarInitialized
- *      flag in the Grammar object, but keep track of
- *      it circumstances outside of Grammar may require
- *      re-initialization.)
- *  <li>If Parse parm, initialize grammar if "not initialized"
- *      (regardless of the fact that the user may have
- *      input an Initialize RunParm followed by a Parse).
- *      Then if initialize successful, process the parse parm,
- *      print-and-clear messages and "consume" parm.
- *  <li>Remember that Messages, LogicalSystem
- *      and other objects may have changed. Don't worry
- *      about whether or not file is loaded, the
- *      LogicalSystemBoss will throw an exception if
- *      attempt is made to retrieve LogicalSystem if
- *      it is not loaded and error free.
- *  <li>If clear, set grammar, etc. to null.
- *  </ul>
- *
+ * Responsible for building and using Grammar.
+ * <ul>
+ * <li>If non-executable parm, validate, store and "consume"
+ * <li>If LoadFile command, mark Grammar as "not initialized" but do not
+ * "consume" the command.
+ * <li>If InitializeGrammar command, invoke Grammar's initialize method, get
+ * error status, print and clear messages and consume.
+ * <li>Use grammar.getGrammarInitialized() to check if grammar is "initialized"
+ * -- and then store the result (we will not "set" the grammarInitialized flag
+ * in the Grammar object, but keep track of it circumstances outside of Grammar
+ * may require re-initialization.)
+ * <li>If Parse parm, initialize grammar if "not initialized" (regardless of the
+ * fact that the user may have input an Initialize RunParm followed by a Parse).
+ * Then if initialize successful, process the parse parm, print-and-clear
+ * messages and "consume" parm.
+ * <li>Remember that Messages, LogicalSystem and other objects may have changed.
+ * Don't worry about whether or not file is loaded, the LogicalSystemBoss will
+ * throw an exception if attempt is made to retrieve LogicalSystem if it is not
+ * loaded and error free.
+ * <li>If clear, set grammar, etc. to null.
+ * </ul>
  */
 public class GrammarBoss extends Boss {
 
@@ -86,38 +79,37 @@ public class GrammarBoss extends Boss {
     protected Boolean statementAmbiguityParm;
 
     /**
-     *  Constructor with BatchFramework for access to environment.
-     *
-     *  @param batchFramework for access to environment.
+     * Constructor with BatchFramework for access to environment.
+     * 
+     * @param batchFramework for access to environment.
      */
     public GrammarBoss(final BatchFramework batchFramework) {
         super(batchFramework);
     }
 
     /**
-     *  Returns true if Grammar initialized successfully.
-     *
-     *  @return true if Grammar initialized successfully.
+     * Returns true if Grammar initialized successfully.
+     * 
+     * @return true if Grammar initialized successfully.
      */
     public boolean getGrammarInitialized() {
         return grammarInitialized;
     }
 
     /**
-     *  Returns true if all statements parsed successfully.
-     *
-     *  @return true if all statements parsed successfully.
+     * Returns true if all statements parsed successfully.
+     * 
+     * @return true if all statements parsed successfully.
      */
     public boolean getAllStatementsParsedSuccessfully() {
         return allStatementsParsedSuccessfully;
     }
 
     /**
-     *  Executes a single command from the RunParmFile.
-     *
-     *  @param runParm the RunParmFile line to execute.
+     * Executes a single command from the RunParmFile.
+     * 
+     * @param runParm the RunParmFile line to execute.
      */
-    @Override
     public boolean doRunParmCommand(final RunParmArrayEntry runParm)
         throws IllegalArgumentException, MMIOException, FileNotFoundException,
         IOException, VerifyException
@@ -195,21 +187,18 @@ public class GrammarBoss extends Boss {
     }
 
     /**
-     *  Fetch a Grammar object, building it if necessary
-     *  from previously input RunParms.
-     *  <p>
-     *  NOTE: The returned Grammar is "ready to go" but
-     *        may not have been "initialized", which means
-     *        grammar validation, etc. The reason that
-     *        grammar is not initialized here is that
-     *        a previous attempt to "initialize" may have
-     *        failed due to grammar errors, so to re-do
-     *        it here would result in doubled-up error
-     *        messages. The Initialize Grammar RunParm
-     *        Command should be used prior to PrintSyntaxDetails
-     *        if a "load and print syntax" is desired.
-     *
-     *  @return Grammar object, ready to go.
+     * Fetch a Grammar object, building it if necessary from previously input
+     * RunParms.
+     * <p>
+     * NOTE: The returned Grammar is "ready to go" but may not have been
+     * "initialized", which means grammar validation, etc. The reason that
+     * grammar is not initialized here is that a previous attempt to
+     * "initialize" may have failed due to grammar errors, so to re-do it here
+     * would result in doubled-up error messages. The Initialize Grammar RunParm
+     * Command should be used prior to PrintSyntaxDetails if a
+     * "load and print syntax" is desired.
+     * 
+     * @return Grammar object, ready to go.
      */
     public Grammar getGrammar() {
 
@@ -264,10 +253,12 @@ public class GrammarBoss extends Boss {
     }
 
     /**
-     *  Executes the InitializeGrammar command, prints any messages,
-     *  etc.
-     *
-     *  @param runParm RunParmFile line.
+     * Executes the InitializeGrammar command, prints any messages, etc.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
+     * @throws IOException if an error occurred
+     * @throws VerifyException if an error occurred
      */
     public void doInitializeGrammar(final RunParmArrayEntry runParm)
         throws IllegalArgumentException, IOException, VerifyException
@@ -278,10 +269,12 @@ public class GrammarBoss extends Boss {
     }
 
     /**
-     *  Executes the Parse command, prints any messages,
-     *  etc.
-     *
-     *  @param runParm RunParmFile line.
+     * Executes the Parse command, prints any messages, etc.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
+     * @throws IOException if an error occurred
+     * @throws VerifyException if an error occurred
      */
     public void doParse(final RunParmArrayEntry runParm)
         throws IllegalArgumentException, IOException, VerifyException
@@ -345,7 +338,7 @@ public class GrammarBoss extends Boss {
     }
 
     /**
-     *  An initializeGrammar subroutine.
+     * An initializeGrammar subroutine.
      */
     protected void initializeGrammar() {
 
@@ -362,9 +355,9 @@ public class GrammarBoss extends Boss {
 
 //PATCH 2008-08-01 move to LogicalSystemBoss
 //  /**
-///  *  Validate Provable Logic Statement Type Runparm.
+///  * Validate Provable Logic Statement Type Runparm.
 //   *
-//   *  @param runParm RunParmFile line.
+//   * @param runParm RunParmFile line.
 //   */
 //  protected void editProvableLogicStmtType(
 //                     RunParmArrayEntry runParm)
@@ -379,9 +372,9 @@ public class GrammarBoss extends Boss {
 //  }
 //
 //  /**
-//   *  Validate Logic Statement Type Runparm.
+//   * Validate Logic Statement Type Runparm.
 //   *
-//   *  @param runParm RunParmFile line.
+//   * @param runParm RunParmFile line.
 //   */
 //  protected void editLogicStmtType(
 //                     RunParmArrayEntry runParm)
@@ -396,9 +389,10 @@ public class GrammarBoss extends Boss {
 //END-PATCH 2008-08-01 move to LogicalSystemBoss
 
     /**
-     *  Validate Grammar Ambiguity Edits Runparm.
-     *
-     *  @param runParm RunParmFile line.
+     * Validate Grammar Ambiguity Edits Runparm.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editGrammarAmbiguityEdits(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -410,9 +404,10 @@ public class GrammarBoss extends Boss {
     }
 
     /**
-     *  Validate Statement Ambiguity Edits Runparm.
-     *
-     *  @param runParm RunParmFile line.
+     * Validate Statement Ambiguity Edits Runparm.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editStatementAmbiguityEdits(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -424,12 +419,12 @@ public class GrammarBoss extends Boss {
     }
 
     /**
-     *  Validate an Ambiguity Edits Runparm.
-     *
-     *  @param ambiguityParm String, "basic" or "complete".
-     *  @param valueCaption  Caption for RunParm value.
-     *
-     *  @return true signifies Complete, false signifies Basic.
+     * Validate an Ambiguity Edits Runparm.
+     * 
+     * @param ambiguityParm String, "basic" or "complete".
+     * @param valueCaption Caption for RunParm value.
+     * @return true signifies Complete, false signifies Basic.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected Boolean editAmbiguityParm(final String ambiguityParm,
         final String valueCaption) throws IllegalArgumentException

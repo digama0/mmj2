@@ -7,47 +7,47 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  ProofAsstPreferences.java  0.09 08/01/2008
+ * ProofAsstPreferences.java  0.09 08/01/2008
  *
- *  Version 0.02:
- *      - added new items for the Proof Assistant "Derive"
- *        feature:
- *              - maxUnifyAlternates
- *              - dummy VarPrefix
+ * Version 0.02:
+ *     - added new items for the Proof Assistant "Derive"
+ *       feature:
+ *             - maxUnifyAlternates
+ *             - dummy VarPrefix
  *
- *  Version 0.03
- *      - moved left/right column info to TMFFPreferences
- *        and stowed instance of TMFFPreferences here.
- *        TMFF will be treated as a necessary sub-system
- *        for Proof Assistant, and its preferences are our
- *        preferences :)
- *      - other misc. preference items added, such as color.
+ * Version 0.03
+ *     - moved left/right column info to TMFFPreferences
+ *       and stowed instance of TMFFPreferences here.
+ *       TMFF will be treated as a necessary sub-system
+ *       for Proof Assistant, and its preferences are our
+ *       preferences :)
+ *     - other misc. preference items added, such as color.
  *
- *  Version 0.04, 06/01/2007
- *      - added setDjVarsSoftErrorsOption, etc.
+ * Version 0.04, 06/01/2007
+ *     - added setDjVarsSoftErrorsOption, etc.
  *
- *  Version 0.05, 08/01/2007
- *      - added get/setWorkVarManager(), etc.
- *      - removed dummy var stuff.
+ * Version 0.05, 08/01/2007
+ *     - added get/setWorkVarManager(), etc.
+ *     - removed dummy var stuff.
  *
- *  Varsion 0.06 - 11/01/2007
- *      - Add "ProofAsstErrorMessageRows"    RunParm
- *      - Add "ProofAsstErrorMessageColumns" RunParm
- *      - Add "ProofAsstTextAtTop"           RunParm
+ * Varsion 0.06 - 11/01/2007
+ *     - Add "ProofAsstErrorMessageRows"    RunParm
+ *     - Add "ProofAsstErrorMessageColumns" RunParm
+ *     - Add "ProofAsstTextAtTop"           RunParm
  *
- *  Varsion 0.07 - 02/01/2008
- *      - Add "ProofAsstIncompleteStepCursor"        RunParm
- *      - Add "ProofAsstOutputCursorInstrumentation" RunParm
- *      - Add "ProofAsstAutoReformat"                RunParm
+ * Varsion 0.07 - 02/01/2008
+ *     - Add "ProofAsstIncompleteStepCursor"        RunParm
+ *     - Add "ProofAsstOutputCursorInstrumentation" RunParm
+ *     - Add "ProofAsstAutoReformat"                RunParm
  *
- *  Varsion 0.08 - 03/01/2008
- *      - Add "StepSelectorMaxResults"               RunParm
- *      - Add "StepSelectorShowSubstitutions"        RunParm
- *      - Remove Hints feature
- *      - Remove "ProofAsstMaxUnifyAlternates"       RunParm
+ * Varsion 0.08 - 03/01/2008
+ *     - Add "StepSelectorMaxResults"               RunParm
+ *     - Add "StepSelectorShowSubstitutions"        RunParm
+ *     - Remove Hints feature
+ *     - Remove "ProofAsstMaxUnifyAlternates"       RunParm
  *
- *  Varsion 0.09 - 08/01/2008
- *      - Add "ProofAsstAssrtListFreespace"          RunParm
+ * Varsion 0.09 - 08/01/2008
+ *     - Add "ProofAsstAssrtListFreespace"          RunParm
  */
 
 package mmj.pa;
@@ -62,8 +62,7 @@ import mmj.lang.WorkVarManager;
 import mmj.tmff.TMFFPreferences;
 
 /**
- *  Holds user settings/preferences used by the
- *  Proof Assistant.
+ * Holds user settings/preferences used by the Proof Assistant.
  */
 public class ProofAsstPreferences {
 
@@ -141,7 +140,7 @@ public class ProofAsstPreferences {
     private boolean incompleteStepCursorAsIs;
 
     /**
-     *  Default constructor.
+     * Default constructor.
      */
     public ProofAsstPreferences() {
         proofFolder = null;
@@ -218,33 +217,28 @@ public class ProofAsstPreferences {
     }
 
     /**
-     *  Set proof folder used for storing proof text areas
-     *  in ProofAsstGUI.
-     *
-     *  @param proofFolder proof folder used for storing
-     *                     proof text areas
+     * Set proof folder used for storing proof text areas in ProofAsstGUI.
+     * 
+     * @param proofFolder proof folder used for storing proof text areas
      */
     public void setProofFolder(final File proofFolder) {
         this.proofFolder = proofFolder;
     }
 
     /**
-     *  Get proof folder used for storing proof text areas
-     *  in ProofAsstGUI.
-     *
-     *  @return proofFolder proof folder used for storing
-     *                      proof text areas
+     * Get proof folder used for storing proof text areas in ProofAsstGUI.
+     * 
+     * @return proofFolder proof folder used for storing proof text areas
      */
     public File getProofFolder() {
         return proofFolder;
     }
 
     /**
-     *  Set startup Proof Worksheet File to be displayed when
-     *  the ProofAsstGUI is first displayed.
-     *  in ProofAsstGUI.
-     *
-     *  @param startupProofWorksheetFile File object or null.
+     * Set startup Proof Worksheet File to be displayed when the ProofAsstGUI is
+     * first displayed. in ProofAsstGUI.
+     * 
+     * @param startupProofWorksheetFile File object or null.
      */
     public void setStartupProofWorksheetFile(
         final File startupProofWorksheetFile)
@@ -253,527 +247,502 @@ public class ProofAsstPreferences {
     }
 
     /**
-     *  Get startup Proof Worksheet File to be displayed when
-     *  the ProofAsstGUI is first displayed.
-     *
-     *  @return startupProofWorksheetFile File object or null.
+     * Get startup Proof Worksheet File to be displayed when the ProofAsstGUI is
+     * first displayed.
+     * 
+     * @return startupProofWorksheetFile File object or null.
      */
     public File getStartupProofWorksheetFile() {
         return startupProofWorksheetFile;
     }
 
     /**
-     *  Set default file name suffix.
-     *
-     *  @param defaultFileNameSuffix such as ".txt" or ".mmp"
+     * Set default file name suffix.
+     * 
+     * @param defaultFileNameSuffix such as ".txt" or ".mmp"
      */
     public void setDefaultFileNameSuffix(final String defaultFileNameSuffix) {
         this.defaultFileNameSuffix = defaultFileNameSuffix;
     }
 
     /**
-     *  Get default file name suffix.
-     *
-     *  @return defaultFileNameSuffix such as ".txt" or ".mmp"
+     * Get default file name suffix.
+     * 
+     * @return defaultFileNameSuffix such as ".txt" or ".mmp"
      */
     public String getDefaultFileNameSuffix() {
         return defaultFileNameSuffix;
     }
 
     /**
-     *  Set Font Family Name used in ProofAsstGUI.
-     *  <p>
-     *  Note: Proof Assistant formatting of formulas (via TMFF)
-     *        REQUIRES a fixed-width font for symbol alignment!
-     *        A proportional or variable-width font can be used
-     *        but symbol alignments may be off.
-     *  <p>
-     *  Note: The default is "Monospaced", which works just fine...
-     *  <p>
-     *  @param fontFamily for ProofAsstGUI
+     * Set Font Family Name used in ProofAsstGUI.
+     * <p>
+     * Note: Proof Assistant formatting of formulas (via TMFF) REQUIRES a
+     * fixed-width font for symbol alignment! A proportional or variable-width
+     * font can be used but symbol alignments may be off.
+     * <p>
+     * Note: The default is "Monospaced", which works just fine...
+     *
+     * @param fontFamily for ProofAsstGUI
      */
     public synchronized void setFontFamily(final String fontFamily) {
         this.fontFamily = fontFamily;
     }
 
     /**
-     *  Get Font Family Name used in ProofAsstGUI.
-     *
-     *  @return font family name used in ProofAsstGUI.
+     * Get Font Family Name used in ProofAsstGUI.
+     * 
+     * @return font family name used in ProofAsstGUI.
      */
     public synchronized String getFontFamily() {
         return fontFamily;
     }
 
     /**
-     *  Set Font style to bold or regular.
-     *  <p>
-     *  Note: The default is "Bold", which seems excellent to me.
-     *  <p>
-     *  @param fontBold yes or no parameter.
+     * Set Font style to bold or regular.
+     * <p>
+     * Note: The default is "Bold", which seems excellent to me.
+     *
+     * @param fontBold yes or no parameter.
      */
     public synchronized void setFontBold(final boolean fontBold) {
         this.fontBold = fontBold;
     }
 
     /**
-     *  Get Font Bold style parameter used in ProofAsstGUI.
-     *
-     *  @return fontBold yes or no.
+     * Get Font Bold style parameter used in ProofAsstGUI.
+     * 
+     * @return fontBold yes or no.
      */
     public synchronized boolean getFontBold() {
         return fontBold;
     }
 
     /**
-     *  Set font size used in ProofAsstGUI.
-     *
-     *  NOTE: presently, font size is set in ProofAsstBoss
-     *        as part of the start-up of ProofAsstGUI, based
-     *        on a RunParm. Then during operation of
-     *        ProofAsstGUI the user can increase or decrease
-     *        the font size used, and those settings
-     *        propagate to these ProofAsstPreferences
-     *        (but are not stored externally for use in
-     *        the next session -- permanent setting should
-     *        be made in the RunParm file.)
-     *
-     *  @param fontSize font size for ProofAsstGUI
+     * Set font size used in ProofAsstGUI.
+     * <p>
+     * NOTE: presently, font size is set in ProofAsstBoss as part of the
+     * start-up of ProofAsstGUI, based on a RunParm. Then during operation of
+     * ProofAsstGUI the user can increase or decrease the font size used, and
+     * those settings propagate to these ProofAsstPreferences (but are not
+     * stored externally for use in the next session -- permanent setting should
+     * be made in the RunParm file.)
+     * 
+     * @param fontSize font size for ProofAsstGUI
      */
     public synchronized void setFontSize(final int fontSize) {
         this.fontSize = fontSize;
     }
 
     /**
-     *  Get font size used in ProofAsstGUI.
-     *
-     *  @return fontSize font size for ProofAsstGUI.
+     * Get font size used in ProofAsstGUI.
+     * 
+     * @return fontSize font size for ProofAsstGUI.
      */
     public synchronized int getFontSize() {
         return fontSize;
     }
 
     /**
-     *  Set line wrap on or off.
-     *  <p>
-     *  If line wrap is on then Newlines (carraige returns)
-     *  will not be used to split formulas. Instead, space
-     *  characters will be written to fill out the remaining
-     *  text columns on the line.
-     *  <p>
-     *  @param lineWrap setting, on or off.
+     * Set line wrap on or off.
+     * <p>
+     * If line wrap is on then Newlines (carraige returns) will not be used to
+     * split formulas. Instead, space characters will be written to fill out the
+     * remaining text columns on the line.
+     *
+     * @param lineWrap setting, on or off.
      */
     public void setLineWrap(final boolean lineWrap) {
         tmffPreferences.setLineWrap(lineWrap);
     }
 
     /**
-     *  Get the current lineWrap setting.
-     *
-     *  @return lineWrap setting.
+     * Get the current lineWrap setting.
+     * 
+     * @return lineWrap setting.
      */
     public boolean getLineWrap() {
         return tmffPreferences.getLineWrap();
     }
 
     /**
-     *  Set number of text columns used to display formulas.
-     *  <p>
-     *  This number is used to line wrapping and basically
-     *  corresponds to the window used to display formulas.
-     *  <p>
-     *  A formula can be longer than this number, and
-     *  the Frame should scroll -- assuming that lineWrap
-     *  is off and there are no NewLines.
-     *  <p>
-     *  @param textColumns number of text columns.
+     * Set number of text columns used to display formulas.
+     * <p>
+     * This number is used to line wrapping and basically corresponds to the
+     * window used to display formulas.
+     * <p>
+     * A formula can be longer than this number, and the Frame should scroll --
+     * assuming that lineWrap is off and there are no NewLines.
+     *
+     * @param textColumns number of text columns.
      */
     public void setTextColumns(final int textColumns) {
         tmffPreferences.setTextColumns(textColumns);
     }
 
     /**
-     *  Get number of text columns used to display formulas.
-     *  <p>
-     *  This number is used to line wrapping and basically
-     *  corresponds to the window used to display formulas.
-     *  <p>
-     *  A formula can be longer than this number, and
-     *  the Frame should scroll -- assuming that lineWrap
-     *  is off and there are no NewLines.
+     * Get number of text columns used to display formulas.
+     * <p>
+     * This number is used to line wrapping and basically corresponds to the
+     * window used to display formulas.
+     * <p>
+     * A formula can be longer than this number, and the Frame should scroll --
+     * assuming that lineWrap is off and there are no NewLines.
+     * 
+     * @return number of text columns used to display formulas.
      */
     public int getTextColumns() {
         return tmffPreferences.getTextColumns();
     }
 
     /**
-     *  Set number of text rows used to display formulas.
-     *  <p>
-     *  @param textRows number of text rows.
+     * Set number of text rows used to display formulas.
+     *
+     * @param textRows number of text rows.
      */
     public void setTextRows(final int textRows) {
         tmffPreferences.setTextRows(textRows);
     }
 
     /**
-     *  Get number of text rows used to display formulas.
-     *  <p>
+     * Get number of text rows used to display formulas.
+     * 
+     * @return number of text rows used to display formulas.
      */
     public int getTextRows() {
         return tmffPreferences.getTextRows();
     }
 
     /**
-     *  Set number of error message rows on the ProofAsstGUI.
-     *  <p>
-     *  @param errorMessageRows number of error message rows.
+     * Set number of error message rows on the ProofAsstGUI.
+     *
+     * @param errorMessageRows number of error message rows.
      */
     public void setErrorMessageRows(final int errorMessageRows) {
         this.errorMessageRows = errorMessageRows;
     }
 
     /**
-     *  Get number of error message rows on the ProofAsstGUI.
-     *  <p>
+     * Get number of error message rows on the ProofAsstGUI.
+     *
+     * @return number of error message rows
      */
     public int getErrorMessageRows() {
         return errorMessageRows;
     }
 
     /**
-     *  Set number of error message columns on the ProofAsstGUI.
-     *  <p>
-     *  @param errorMessageColumns number of error message columns.
+     * Set number of error message columns on the ProofAsstGUI.
+     *
+     * @param errorMessageColumns number of error message columns.
      */
     public void setErrorMessageColumns(final int errorMessageColumns) {
         this.errorMessageColumns = errorMessageColumns;
     }
 
     /**
-     *  Get number of error message columns on the ProofAsstGUI.
-     *  <p>
+     * Get number of error message columns on the ProofAsstGUI.
+     *
+     * @return number of of error message columns
      */
     public int getErrorMessageColumns() {
         return errorMessageColumns;
     }
 
     /**
-     *  Set Proof Text At Top option for ProofAsstGUI.
-     *  <p>
-     *  @param textAtTop number of error message columns.
+     * Set Proof Text At Top option for ProofAsstGUI.
+     *
+     * @param textAtTop number of error message columns.
      */
     public void setTextAtTop(final boolean textAtTop) {
         this.textAtTop = textAtTop;
     }
 
     /**
-     *  Get Proof Text At Top option for ProofAsstGUI.
-     *  <p>
+     * Get Proof Text At Top option for ProofAsstGUI.
+     *
+     * @return the value
      */
     public boolean getTextAtTop() {
         return textAtTop;
     }
 
     /**
-     *  Set formula left column used in formatting proof
-     *  text areas.
-     *
-     *  @param formulaLeftCol formula LeftCol used for formatting
-     *                     formula text areas
+     * Set formula left column used in formatting proof text areas.
+     * 
+     * @param formulaLeftCol formula LeftCol used for formatting formula text
+     *            areas
      */
     public void setFormulaLeftCol(final int formulaLeftCol) {
         tmffPreferences.setFormulaLeftCol(formulaLeftCol);
     }
 
     /**
-     *  Get formula left column used in formatting proof
-     *  text areas.
-     *
-     *  @return formulaLeftCol formula LeftCol used for
-     *                      formatting formula text areas
+     * Get formula left column used in formatting proof text areas.
+     * 
+     * @return formulaLeftCol formula LeftCol used for formatting formula text
+     *         areas
      */
     public int getFormulaLeftCol() {
         return tmffPreferences.getFormulaLeftCol();
     }
 
     /**
-     *  Set formula right column used in formatting proof
-     *  text areas.
-     *
-     *  @param formulaRightCol formula RightCol used for
-     *                     formatting formula text areas
+     * Set formula right column used in formatting proof text areas.
+     * 
+     * @param formulaRightCol formula RightCol used for formatting formula text
+     *            areas
      */
     public void setFormulaRightCol(final int formulaRightCol) {
         tmffPreferences.setFormulaRightCol(formulaRightCol);
     }
 
     /**
-     *  Get formula right column used in formatting proof
-     *  text areas.
-     *
-     *  @return formulaRightCol formula RightCol used for
-     *                      formatting formula text areas
+     * Get formula right column used in formatting proof text areas.
+     * 
+     * @return formulaRightCol formula RightCol used for formatting formula text
+     *         areas
      */
     public int getFormulaRightCol() {
         return tmffPreferences.getFormulaRightCol();
     }
 
     /**
-     *  Set left column number for RPN statement labels
-     *  when creating ProofAsstWorksheet.GeneratedProofStmt
-     *
-     *  @param rpnProofLeftCol left column for RPN label
+     * Set left column number for RPN statement labels when creating
+     * ProofAsstWorksheet.GeneratedProofStmt
+     * 
+     * @param rpnProofLeftCol left column for RPN label
      */
     public void setRPNProofLeftCol(final int rpnProofLeftCol) {
         this.rpnProofLeftCol = rpnProofLeftCol;
     }
 
     /**
-     *  Get left column number for RPN statement labels
-     *  when creating ProofAsstWorksheet.GeneratedProofStmt
-     *
-     *  @return rpnProofLeftCol left column or RPN label
+     * Get left column number for RPN statement labels when creating
+     * ProofAsstWorksheet.GeneratedProofStmt
+     * 
+     * @return rpnProofLeftCol left column or RPN label
      */
     public int getRPNProofLeftCol() {
         return rpnProofLeftCol;
     }
 
     /**
-     *  Set right column number for RPN statement labels
-     *  when creating ProofAsstWorksheet.GeneratedProofStmt
-     *
-     *  @param rpnProofRightCol right column for RPN label
+     * Set right column number for RPN statement labels when creating
+     * ProofAsstWorksheet.GeneratedProofStmt
+     * 
+     * @param rpnProofRightCol right column for RPN label
      */
     public void setRPNProofRightCol(final int rpnProofRightCol) {
         this.rpnProofRightCol = rpnProofRightCol;
     }
 
     /**
-     *  Get right column number for RPN statement labels
-     *  when creating ProofAsstWorksheet.GeneratedProofStmt
-     *
-     *  @return rpnProofRightCol right column or RPN label
+     * Get right column number for RPN statement labels when creating
+     * ProofAsstWorksheet.GeneratedProofStmt
+     * 
+     * @return rpnProofRightCol right column or RPN label
      */
     public int getRPNProofRightCol() {
         return rpnProofRightCol;
     }
 
     /**
-     *  Set on/off indicator instructing Proof Assistant
-     *  to double-check every proof steps generated proof
-     *  tree using the Proof Engine (mmj.verify.VerifyProofs.java).
-     *
-     *  @param recheckProofAsstUsingProofVerifier
+     * Set on/off indicator instructing Proof Assistant to double-check every
+     * proof steps generated proof tree using the Proof Engine
+     * (mmj.verify.VerifyProofs.java).
+     * 
+     * @param value the new value
      */
-    public void setRecheckProofAsstUsingProofVerifier(
-        final boolean recheckProofAsstUsingProofVerifier)
-    {
-        this.recheckProofAsstUsingProofVerifier = recheckProofAsstUsingProofVerifier;
+    public void setRecheckProofAsstUsingProofVerifier(final boolean value) {
+        recheckProofAsstUsingProofVerifier = value;
     }
 
     /**
-     *  Get on/off indicator instructing Proof Assistant
-     *  to double-check every proof steps generated proof
-     *  tree using the Proof Engine (mmj.verify.VerifyProofs.java).
-     *
-     *  @return recheckProofAsstUsingProofVerifier
+     * Get on/off indicator instructing Proof Assistant to double-check every
+     * proof steps generated proof tree using the Proof Engine
+     * (mmj.verify.VerifyProofs.java).
+     * 
+     * @return recheckProofAsstUsingProofVerifier
      */
     public boolean getRecheckProofAsstUsingProofVerifier() {
         return recheckProofAsstUsingProofVerifier;
     }
 
     /**
-     *  Set on/off indicator instructing the Proof Assistant Export
-     *  to use unified or "un-unified" format for exported proofs.
-     *  <p>
-     *  Note: this applies to exported proofs written via
-     *        ProofAsst.exportToFile, which is triggered via
-     *        BatchMMJ2 "RunParm ProofAsstExportToFile" as
-     *        well as the "ProofAsstBatchTest" (the latter when
-     *        no input file is specified and an "export to
-     *        memory" is implicitly requested.)
-     *
-     *  @param exportFormatUnified yes/no.
+     * Set on/off indicator instructing the Proof Assistant Export to use
+     * unified or "un-unified" format for exported proofs.
+     * <p>
+     * Note: this applies to exported proofs written via ProofAsst.exportToFile,
+     * which is triggered via BatchMMJ2 "RunParm ProofAsstExportToFile" as well
+     * as the "ProofAsstBatchTest" (the latter when no input file is specified
+     * and an "export to memory" is implicitly requested.)
+     * 
+     * @param exportFormatUnified yes/no.
      */
     public void setExportFormatUnified(final boolean exportFormatUnified) {
         this.exportFormatUnified = exportFormatUnified;
     }
 
     /**
-     *  Get on/off indicator instructing the Proof Assistant Export
-     *  to use unified or "un-unified" format for exported proofs.
-     *  <p>
-     *  Note: this applies to exported proofs written via
-     *        ProofAsst.exportToFile, which is triggered via
-     *        BatchMMJ2 "RunParm ProofAsstExportToFile" as
-     *        well as the "ProofAsstBatchTest" (the latter when
-     *        no input file is specified and an "export to
-     *        memory" is implicitly requested.)
-     *
-     *  @return exportFormatUnified yes/no.
+     * Get on/off indicator instructing the Proof Assistant Export to use
+     * unified or "un-unified" format for exported proofs.
+     * <p>
+     * Note: this applies to exported proofs written via ProofAsst.exportToFile,
+     * which is triggered via BatchMMJ2 "RunParm ProofAsstExportToFile" as well
+     * as the "ProofAsstBatchTest" (the latter when no input file is specified
+     * and an "export to memory" is implicitly requested.)
+     * 
+     * @return exportFormatUnified yes/no.
      */
     public boolean getExportFormatUnified() {
         return exportFormatUnified;
     }
 
     /**
-     *  Set on/off indicator instructing the Proof Assistant Export
-     *  to "Randomize" or "NotRandomize" the output proof step
-     *  logical hypotheses (a testing feature for Proof Assistant.)
-     *  <p>
-     *  Note: this applies to exported proofs written via
-     *        ProofAsst.exportToFile, which is triggered via
-     *        BatchMMJ2 "RunParm ProofAsstExportToFile" as
-     *        well as the "ProofAsstBatchTest" (the latter when
-     *        no input file is specified and an "export to
-     *        memory" is implicitly requested.)
-     *
-     *  @param exportHypsRandomized yes/no.
+     * Set on/off indicator instructing the Proof Assistant Export to
+     * "Randomize" or "NotRandomize" the output proof step logical hypotheses (a
+     * testing feature for Proof Assistant.)
+     * <p>
+     * Note: this applies to exported proofs written via ProofAsst.exportToFile,
+     * which is triggered via BatchMMJ2 "RunParm ProofAsstExportToFile" as well
+     * as the "ProofAsstBatchTest" (the latter when no input file is specified
+     * and an "export to memory" is implicitly requested.)
+     * 
+     * @param exportHypsRandomized yes/no.
      */
     public void setExportHypsRandomized(final boolean exportHypsRandomized) {
         this.exportHypsRandomized = exportHypsRandomized;
     }
 
     /**
-     *  Get on/off indicator instructing the Proof Assistant Export
-     *  to export "Randomized" or "NotRandomized" logical hypotheses
-     *  on proof steps.
-     *  <p>
-     *  Note: this applies to exported proofs written via
-     *        ProofAsst.exportToFile, which is triggered via
-     *        BatchMMJ2 "RunParm ProofAsstExportToFile" as
-     *        well as the "ProofAsstBatchTest" (the latter when
-     *        no input file is specified and an "export to
-     *        memory" is implicitly requested.)
-     *
-     *  @return ExportHypsRandomized
+     * Get on/off indicator instructing the Proof Assistant Export to export
+     * "Randomized" or "NotRandomized" logical hypotheses on proof steps.
+     * <p>
+     * Note: this applies to exported proofs written via ProofAsst.exportToFile,
+     * which is triggered via BatchMMJ2 "RunParm ProofAsstExportToFile" as well
+     * as the "ProofAsstBatchTest" (the latter when no input file is specified
+     * and an "export to memory" is implicitly requested.)
+     * 
+     * @return ExportHypsRandomized
      */
     public boolean getExportHypsRandomized() {
         return exportHypsRandomized;
     }
 
     /**
-     *  Set on/off indicator instructing the Proof Assistant Export
-     *  to output blank formulas -- or not -- for non-qed
-     *  derivation steps (not logical hyps).
-     *  <p>
-     *  Note: this applies to exported proofs written via
-     *        ProofAsst.exportToFile, which is triggered via
-     *        BatchMMJ2 "RunParm ProofAsstExportToFile" as
-     *        well as the "ProofAsstBatchTest" (the latter when
-     *        no input file is specified and an "export to
-     *        memory" is implicitly requested.)
-     *
-     *  @param exportDeriveFormulas yes/no.
+     * Set on/off indicator instructing the Proof Assistant Export to output
+     * blank formulas -- or not -- for non-qed derivation steps (not logical
+     * hyps).
+     * <p>
+     * Note: this applies to exported proofs written via ProofAsst.exportToFile,
+     * which is triggered via BatchMMJ2 "RunParm ProofAsstExportToFile" as well
+     * as the "ProofAsstBatchTest" (the latter when no input file is specified
+     * and an "export to memory" is implicitly requested.)
+     * 
+     * @param exportDeriveFormulas yes/no.
      */
     public void setExportDeriveFormulas(final boolean exportDeriveFormulas) {
         this.exportDeriveFormulas = exportDeriveFormulas;
     }
 
     /**
-     *  Get on/off indicator instructing the Proof Assistant Export
-     *  to output blank formulas -- or not -- for non-qed
-     *  derivation steps (not logical hyps).
-     *  <p>
-     *  Note: this applies to exported proofs written via
-     *        ProofAsst.exportToFile, which is triggered via
-     *        BatchMMJ2 "RunParm ProofAsstExportToFile" as
-     *        well as the "ProofAsstBatchTest" (the latter when
-     *        no input file is specified and an "export to
-     *        memory" is implicitly requested.)
-     *
-     *  @return exportDeriveFormulas
+     * Get on/off indicator instructing the Proof Assistant Export to output
+     * blank formulas -- or not -- for non-qed derivation steps (not logical
+     * hyps).
+     * <p>
+     * Note: this applies to exported proofs written via ProofAsst.exportToFile,
+     * which is triggered via BatchMMJ2 "RunParm ProofAsstExportToFile" as well
+     * as the "ProofAsstBatchTest" (the latter when no input file is specified
+     * and an "export to memory" is implicitly requested.)
+     * 
+     * @return exportDeriveFormulas
      */
     public boolean getExportDeriveFormulas() {
         return exportDeriveFormulas;
     }
 
     /**
-     *  Set on/off indicator instructing the Proof Assistant Batch
-     *  Test Import to compare generated Dj Vars with the originals.
-     *  <p>
+     * Set on/off indicator instructing the Proof Assistant Batch Test Import to
+     * compare generated Dj Vars with the originals.
      *
-     *  @param importCompareDJs yes/no.
+     * @param importCompareDJs yes/no.
      */
     public void setImportCompareDJs(final boolean importCompareDJs) {
         this.importCompareDJs = importCompareDJs;
     }
 
     /**
-     *  Set on/off indicator instructing the Proof Assistant Batch
-     *  Test Import to compare generated Dj Vars with the originals.
-     *  <p>
+     * Set on/off indicator instructing the Proof Assistant Batch Test Import to
+     * compare generated Dj Vars with the originals.
      *
-     *  @return importCompareDJs
+     * @return importCompareDJs
      */
     public boolean getImportCompareDJs() {
         return importCompareDJs;
     }
 
     /**
-     *  Set on/off indicator instructing the Proof Assistant Batch
-     *  Test Import to update the originals that are stored in
-     *  memory (does not update the .mm file though.)
-     *  <p>
+     * Set on/off indicator instructing the Proof Assistant Batch Test Import to
+     * update the originals that are stored in memory (does not update the .mm
+     * file though.)
      *
-     *  @param importUpdateDJs yes/no.
+     * @param importUpdateDJs yes/no.
      */
     public void setImportUpdateDJs(final boolean importUpdateDJs) {
         this.importUpdateDJs = importUpdateDJs;
     }
 
     /**
-     *  Set on/off indicator instructing the Proof Assistant Batch
-     *  Test Import to update the originals that are stored in
-     *  memory (does not update the .mm file though.)
-     *
-     *  @return importUpdateDJs
+     * Set on/off indicator instructing the Proof Assistant Batch Test Import to
+     * update the originals that are stored in memory (does not update the .mm
+     * file though.)
+     * 
+     * @return importUpdateDJs
      */
     public boolean getImportUpdateDJs() {
         return importUpdateDJs;
     }
 
     /**
-     *  Set array of assertions that will be excluded from the
-     *  proof unification search process.
-     *  <p>
-     *  This feature is primarily needed for redundant theorems
-     *  that are carried in a Metamath database because they
-     *  have a different proof (other possibilities exist.)
-     *  <p>
+     * Set array of assertions that will be excluded from the proof unification
+     * search process.
+     * <p>
+     * This feature is primarily needed for redundant theorems that are carried
+     * in a Metamath database because they have a different proof (other
+     * possibilities exist.)
      *
-     *  @param unifySearchExclude array
+     * @param unifySearchExclude array
      */
     public void setUnifySearchExclude(final Assrt[] unifySearchExclude) {
         this.unifySearchExclude = unifySearchExclude;
     }
 
     /**
-     *  Get array of assertions that will be excluded from the
-     *  proof unification search process.
-     *  <p>
-     *  This feature is primarily needed for redundant theorems
-     *  that are carried in a Metamath database because they
-     *  have a different proof (other possibilities exist.)
-     *  <p>
+     * Get array of assertions that will be excluded from the proof unification
+     * search process.
+     * <p>
+     * This feature is primarily needed for redundant theorems that are carried
+     * in a Metamath database because they have a different proof (other
+     * possibilities exist.)
      *
-     *  @return      unifySearchExclude array
+     * @return unifySearchExclude array
      */
     public Assrt[] getUnifySearchExclude() {
         return unifySearchExclude;
     }
 
     /**
-     *  Search array of assertions to see if a given assertion
-     *  should be excluded from the unification search process.
-     *  <p>
-     *  Assuming that the number of exclusions is small, we're
-     *  using an array. If the number were very large a
-     *  hash table could be used, but the array is searched
-     *  only during the first pass through the LogicalSystem
-     *  Statement Table (see ProofUnifier.java).
-     *  <p>
-     *  @return      true if assertion should be excluded
+     * Search array of assertions to see if a given assertion should be excluded
+     * from the unification search process.
+     * <p>
+     * Assuming that the number of exclusions is small, we're using an array. If
+     * the number were very large a hash table could be used, but the array is
+     * searched only during the first pass through the LogicalSystem Statement
+     * Table (see ProofUnifier.java).
+     *
+     * @param assrt the given assertion
+     * @return true if assertion should be excluded
      */
     public boolean checkUnifySearchExclude(final Assrt assrt) {
         for (final Assrt element : unifySearchExclude)
@@ -783,11 +752,10 @@ public class ProofAsstPreferences {
     }
 
     /**
-     *  Sets boolean value enabling or disabling
-     *  "instrumentation" of the OutputCursor for
-     *  regression testing.
-     *
-     *  @param outputCursorInstrumentation true or false.
+     * Sets boolean value enabling or disabling "instrumentation" of the
+     * OutputCursor for regression testing.
+     * 
+     * @param outputCursorInstrumentation true or false.
      */
     public void setOutputCursorInstrumentation(
         final boolean outputCursorInstrumentation)
@@ -796,152 +764,149 @@ public class ProofAsstPreferences {
     }
 
     /**
-     *  Gets boolean value enabling or disabling
-     *  "instrumentation" of the OutputCursor for
-     *  regression testing.
-     *
-     *  @return outputCursorInstrumentation true or false.
+     * Gets boolean value enabling or disabling "instrumentation" of the
+     * OutputCursor for regression testing.
+     * 
+     * @return outputCursorInstrumentation true or false.
      */
     public boolean getOutputCursorInstrumentation() {
         return outputCursorInstrumentation;
     }
 
     /**
-     *  Sets boolean value enabling or disabling
-     *  AutoReformat of proof step formulas after
-     *  Work Variables are resolved.
-     *
-     *  @param autoReformat true or false.
+     * Sets boolean value enabling or disabling AutoReformat of proof step
+     * formulas after Work Variables are resolved.
+     * 
+     * @param autoReformat true or false.
      */
     public void setAutoReformat(final boolean autoReformat) {
         this.autoReformat = autoReformat;
     }
 
     /**
-     *  Gets boolean value enabling or disabling
-     *  AutoReformat of proof step formulas after
-     *  Work Variables are resolved.
-     *
-     *  @return autoReformat true or false.
+     * Gets boolean value enabling or disabling AutoReformat of proof step
+     * formulas after Work Variables are resolved.
+     * 
+     * @return autoReformat true or false.
      */
     public boolean getAutoReformat() {
         return autoReformat;
     }
 
     /**
-     *  Sets boolean value enabling or disabling use of
-     *  Undo/Redo Menu Items on the Proof Assistant GUI.
-     *
-     *  @param undoRedoEnabled true or false.
+     * Sets boolean value enabling or disabling use of Undo/Redo Menu Items on
+     * the Proof Assistant GUI.
+     * 
+     * @param undoRedoEnabled true or false.
      */
     public void setUndoRedoEnabled(final boolean undoRedoEnabled) {
         this.undoRedoEnabled = undoRedoEnabled;
     }
 
     /**
-     *  Gets boolean value enabling or disabling use of
-     *  Undo/Redo Menu Items on the Proof Assistant GUI.
-     *
-     *  @return undoRedoEnabled true or false.
+     * Gets boolean value enabling or disabling use of Undo/Redo Menu Items on
+     * the Proof Assistant GUI.
+     * 
+     * @return undoRedoEnabled true or false.
      */
     public boolean getUndoRedoEnabled() {
         return undoRedoEnabled;
     }
 
     /**
-     *  Sets foreground color for Proof Asst GUI.
-     *
-     *  @param foregroundColor Color object
+     * Sets foreground color for Proof Asst GUI.
+     * 
+     * @param foregroundColor Color object
      */
     public void setForegroundColor(final Color foregroundColor) {
         this.foregroundColor = foregroundColor;
     }
 
     /**
-     *  Gets foreground color for Proof Asst GUI.
-     *
-     *  @return foregroundColor true or false.
+     * Gets foreground color for Proof Asst GUI.
+     * 
+     * @return foregroundColor true or false.
      */
     public Color getForegroundColor() {
         return foregroundColor;
     }
 
     /**
-     *  Sets background color for Proof Asst GUI.
-     *
-     *  @param backgroundColor Color object
+     * Sets background color for Proof Asst GUI.
+     * 
+     * @param backgroundColor Color object
      */
     public void setBackgroundColor(final Color backgroundColor) {
         this.backgroundColor = backgroundColor;
     }
 
     /**
-     *  Gets background color for Proof Asst GUI.
-     *
-     *  @return backgroundColor true or false.
+     * Gets background color for Proof Asst GUI.
+     * 
+     * @return backgroundColor true or false.
      */
     public Color getBackgroundColor() {
         return backgroundColor;
     }
 
     /**
-     *  Set TMFF Prefernces.
-     *
-     *  @param tmffPreferences instance of TMFFPreferences.
+     * Set TMFF Prefernces.
+     * 
+     * @param tmffPreferences instance of TMFFPreferences.
      */
     public void setTMFFPreferences(final TMFFPreferences tmffPreferences) {
         this.tmffPreferences = tmffPreferences;
     }
 
     /**
-     *  Get TMFF Preferences.
-     *
-     *  @return tmffPreferences instances.
+     * Get TMFF Preferences.
+     * 
+     * @return tmffPreferences instances.
      */
     public TMFFPreferences getTMFFPreferences() {
         return tmffPreferences;
     }
 
     /**
-     *  Set WorkVarManager
-     *
-     *  @param workVarManager instance of WorkVarManager.
+     * Set WorkVarManager
+     * 
+     * @param workVarManager instance of WorkVarManager.
      */
     public void setWorkVarManager(final WorkVarManager workVarManager) {
         this.workVarManager = workVarManager;
     }
 
     /**
-     *  Get WorkVarManager.
-     *
-     *  @return workVarManager instance.
+     * Get WorkVarManager.
+     * 
+     * @return workVarManager instance.
      */
     public WorkVarManager getWorkVarManager() {
         return workVarManager;
     }
 
     /**
-     *  Set StepUnifier
-     *
-     *  @param stepUnifier instance of StepUnifier or null.
+     * Set StepUnifier
+     * 
+     * @param stepUnifier instance of StepUnifier or null.
      */
     public void setStepUnifier(final StepUnifier stepUnifier) {
         this.stepUnifier = stepUnifier;
     }
 
     /**
-     *  Get StepUnifier.
-     *
-     *  @return stepUnifier instance.
+     * Get StepUnifier.
+     * 
+     * @return stepUnifier instance.
      */
     public StepUnifier getStepUnifier() {
         return stepUnifier;
     }
 
     /**
-     *  Get StepUnifier Instance.
-     *
-     *  @return stepUnifier instance.
+     * Get StepUnifier Instance.
+     * 
+     * @return stepUnifier instance.
      */
     public StepUnifier getStepUnifierInstance() {
         StepUnifier s = getStepUnifier();
@@ -953,12 +918,12 @@ public class ProofAsstPreferences {
     }
 
     /**
-     *  A simple routine to build a list of all options for
-     *  Soft Dj Vars error handling.
-     *  <p>
-     *  This routine is used by ProofAsstPreferences.
-     *  <p>
-     *  @return Soft Dj Vars Error List
+     * A simple routine to build a list of all options for Soft Dj Vars error
+     * handling.
+     * <p>
+     * This routine is used by ProofAsstPreferences.
+     *
+     * @return Soft Dj Vars Error List
      */
     public String getSoftDjErrorOptionListString() {
 
@@ -978,12 +943,11 @@ public class ProofAsstPreferences {
     }
 
     /**
-     *  A simple routine to build a list of all defined Fonts
-     *  Families.
-     *  <p>
-     *  This routine is used by ProofAsstPreferences.
-     *  <p>
-     *  @return Font Family List String
+     * A simple routine to build a list of all defined Fonts Families.
+     * <p>
+     * This routine is used by ProofAsstPreferences.
+     *
+     * @return Font Family List String
      */
     public String getFontListString() {
 
@@ -1029,16 +993,15 @@ public class ProofAsstPreferences {
     }
 
     /**
-     *  A stupid routine to validate a Font Family Name.
-     *  <p>
-     *  This routine is used by ProofAsstPreferences.
-     *  <p>
-     *  @param familyName font family name, which must be
-     *         available in GraphicsEnvironment.getAllFonts().
+     * A stupid routine to validate a Font Family Name.
+     * <p>
+     * This routine is used by ProofAsstPreferences.
      *
-     *  @return Family Name adjust for cap/lower variations.
-     *  @throws ProofAsstException if input familyName not
-     *          installed in the system.
+     * @param familyName font family name, which must be available in
+     *            GraphicsEnvironment.getAllFonts().
+     * @return Family Name adjust for cap/lower variations.
+     * @throws ProofAsstException if input familyName not installed in the
+     *             system.
      */
     public String validateFontFamily(final String familyName)
         throws ProofAsstException
@@ -1061,21 +1024,19 @@ public class ProofAsstPreferences {
     }
 
     /**
-     *  A stupid routine to validate the entered number
-     *  indicating a Dj Vars Soft Error Option.
-     *  <p>
-     *  The entered number, minus 1, is looked up in
-     *  PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_TABLE
-     *  using the option number as an index.
-     *  <p>
-     *  This routine is used by ProofAsstPreferences.
-     *  <p>
-     *  @param option number corresponding to Dj Vars Soft
-     *                Error Option name
+     * A stupid routine to validate the entered number indicating a Dj Vars Soft
+     * Error Option.
+     * <p>
+     * The entered number, minus 1, is looked up in
+     * PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_TABLE using the option number
+     * as an index.
+     * <p>
+     * This routine is used by ProofAsstPreferences.
      *
-     *  @return Dj Vars Soft Error Option Name String
-     *  @throws ProofAsstException if input option number
-     *          is out of range or is not a number.
+     * @param option number corresponding to Dj Vars Soft Error Option name
+     * @return Dj Vars Soft Error Option Name String
+     * @throws ProofAsstException if input option number is out of range or is
+     *             not a number.
      */
     public String validateDjVarsSoftErrorsOptionNbr(String option)
         throws ProofAsstException
@@ -1277,19 +1238,17 @@ public class ProofAsstPreferences {
     }
 
     /**
-     *  A stupid routine to validate the entered number
-     *  indicating an Incomplete Step Cursor Option.
-     *  <p>
-     *  The entered number, minus 1, is looked up in
-     *  PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE
-     *  using the option number as an index.
-     *  <p>
-     *  @param option number corresponding to Incomplete
-     *                Step Cursor option name
+     * A stupid routine to validate the entered number indicating an Incomplete
+     * Step Cursor Option.
+     * <p>
+     * The entered number, minus 1, is looked up in
+     * PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE using the option
+     * number as an index.
      *
-     *  @return Incomplete Step Cursor Option Name String
-     *  @throws ProofAsstException if input option number
-     *          is out of range or is not a number.
+     * @param option number corresponding to Incomplete Step Cursor option name
+     * @return Incomplete Step Cursor Option Name String
+     * @throws ProofAsstException if input option number is out of range or is
+     *             not a number.
      */
     public String validateIncompleteStepCursorOptionNbr(String option)
         throws ProofAsstException
@@ -1313,11 +1272,10 @@ public class ProofAsstPreferences {
     }
 
     /**
-     *  Validates ProofAsstIncompleteStepCursor option
-     *  and updates.
-     *
-     *  @param s either "First", "Last" or "AsIs".
-     *  @return true if valid otherwise false.
+     * Validates ProofAsstIncompleteStepCursor option and updates.
+     * 
+     * @param s either "First", "Last" or "AsIs".
+     * @return true if valid otherwise false.
      */
     public boolean setIncompleteStepCursor(final String s) {
         if (s == null)
@@ -1367,45 +1325,45 @@ public class ProofAsstPreferences {
     }
 
     /**
-     *  Get incompleteStepCursor parameter.
-     *
-     *  @return incompleteStepCursor parameter.
+     * Get incompleteStepCursor parameter.
+     * 
+     * @return incompleteStepCursor parameter.
      */
     public String getIncompleteStepCursor() {
         return incompleteStepCursor;
     }
 
     /**
-     *  Get incompleteStepCursorFirst parameter.
-     *
-     *  @return incompleteStepCursorFirst parameter.
+     * Get incompleteStepCursorFirst parameter.
+     * 
+     * @return incompleteStepCursorFirst parameter.
      */
     public boolean getIncompleteStepCursorFirst() {
         return incompleteStepCursorFirst;
     }
 
     /**
-     *  Get incompleteStepCursorLast parameter.
-     *
-     *  @return incompleteStepCursorLast parameter.
+     * Get incompleteStepCursorLast parameter.
+     * 
+     * @return incompleteStepCursorLast parameter.
      */
     public boolean getIncompleteStepCursorLast() {
         return incompleteStepCursorLast;
     }
 
     /**
-     *  Get incompleteStepCursorAsIs parameter.
-     *
-     *  @return incompleteStepCursorAsIs parameter.
+     * Get incompleteStepCursorAsIs parameter.
+     * 
+     * @return incompleteStepCursorAsIs parameter.
      */
     public boolean getIncompleteStepCursorAsIs() {
         return incompleteStepCursorAsIs;
     }
 
     /**
-     *  Get current incompleteStepCursor option number.
-     *
-     *  @return incompleteStepCursor option number.
+     * Get current incompleteStepCursor option number.
+     * 
+     * @return incompleteStepCursor option number.
      */
     public String getIncompleteStepCursorOptionNbr() {
         final String s = getIncompleteStepCursor();
@@ -1417,10 +1375,10 @@ public class ProofAsstPreferences {
     }
 
     /**
-     *  A simple routine to build a list of all options for
-     *  Incomplete Step Cursor options.
-     *  <p>
-     *  @return Incomplete Step Cursor option list string.
+     * A simple routine to build a list of all options for Incomplete Step
+     * Cursor options.
+     *
+     * @return Incomplete Step Cursor option list string.
      */
     public String getIncompleteStepCursorOptionListString() {
 
@@ -1440,15 +1398,13 @@ public class ProofAsstPreferences {
     }
 
     /**
-     *  A stupid routine to validate StepSelectorMaxResults.
-     *  <p>
-     *  This routine is used by ProofAsstGUI.
-     *  <p>
-     *  @param maxResultsString integer max results for
-     *         StepSelectorSearch.
+     * A stupid routine to validate StepSelectorMaxResults.
+     * <p>
+     * This routine is used by ProofAsstGUI.
      *
-     *  @return maxResults number.
-     *  @throws ProofAsstException if input maxResults invalid.
+     * @param maxResultsString integer max results for StepSelectorSearch.
+     * @return maxResults number.
+     * @throws IllegalArgumentException if an error occurred
      */
     public int validateStepSelectorMaxResults(final String maxResultsString)
         throws IllegalArgumentException
@@ -1471,33 +1427,31 @@ public class ProofAsstPreferences {
     }
 
     /**
-     *  Sets maximum number of StepSelector Results.
-     *
-     *  @param stepSelectorMaxResults number
+     * Sets maximum number of StepSelector Results.
+     * 
+     * @param stepSelectorMaxResults number
      */
     public void setStepSelectorMaxResults(final int stepSelectorMaxResults) {
         this.stepSelectorMaxResults = stepSelectorMaxResults;
     }
 
     /**
-     *  Gets maximum number of StepSelector Results.
-     *
-     *  @return stepSelectorMaxResults number
+     * Gets maximum number of StepSelector Results.
+     * 
+     * @return stepSelectorMaxResults number
      */
     public int getStepSelectorMaxResults() {
         return stepSelectorMaxResults;
     }
 
     /**
-     *  A stupid routine to validate
-     *  StepSelectorShowSubstitutions.
-     *  <p>
-     *  This routine is used by ProofAsstGUI.
-     *  <p>
-     *  @param showSubstitutionsString yes or no or true
-     *            or false or on or off.
-     *  @return boolean true or false
-     *  @throws ProofAsstException if invalid value.
+     * A stupid routine to validate StepSelectorShowSubstitutions.
+     * <p>
+     * This routine is used by ProofAsstGUI.
+     *
+     * @param showSubstitutionsString yes or no or true or false or on or off.
+     * @return boolean true or false
+     * @throws IllegalArgumentException if invalid value.
      */
     public boolean validateStepSelectorShowSubstitutions(
         final String showSubstitutionsString) throws IllegalArgumentException
@@ -1523,9 +1477,9 @@ public class ProofAsstPreferences {
     }
 
     /**
-     *  Sets StepSelectorShowSubstitutions RunParm option.
-     *
-     *  @param stepSelectorShowSubstitutions option.
+     * Sets StepSelectorShowSubstitutions RunParm option.
+     * 
+     * @param stepSelectorShowSubstitutions option.
      */
     public void setStepSelectorShowSubstitutions(
         final boolean stepSelectorShowSubstitutions)
@@ -1534,18 +1488,18 @@ public class ProofAsstPreferences {
     }
 
     /**
-     *  Gets StepSelectorShowSubstitutions RunParm option.
-     *
-     *  @return stepSelectorShowSubstitutions option
+     * Gets StepSelectorShowSubstitutions RunParm option.
+     * 
+     * @return stepSelectorShowSubstitutions option
      */
     public boolean getStepSelectorShowSubstitutions() {
         return stepSelectorShowSubstitutions;
     }
 
     /**
-     *  Sets StepSelectorDialogPaneWidth RunParm option.
-     *
-     *  @param stepSelectorDialogPaneWidth option.
+     * Sets StepSelectorDialogPaneWidth RunParm option.
+     * 
+     * @param stepSelectorDialogPaneWidth option.
      */
     public void setStepSelectorDialogPaneWidth(
         final int stepSelectorDialogPaneWidth)
@@ -1554,18 +1508,18 @@ public class ProofAsstPreferences {
     }
 
     /**
-     *  Gets StepSelectorDialogPaneWidth RunParm option.
-     *
-     *  @return stepSelectorDialogPaneWidth option
+     * Gets StepSelectorDialogPaneWidth RunParm option.
+     * 
+     * @return stepSelectorDialogPaneWidth option
      */
     public int getStepSelectorDialogPaneWidth() {
         return stepSelectorDialogPaneWidth;
     }
 
     /**
-     *  Sets StepSelectorDialogPaneHeight RunParm option.
-     *
-     *  @param stepSelectorDialogPaneHeight option.
+     * Sets StepSelectorDialogPaneHeight RunParm option.
+     * 
+     * @param stepSelectorDialogPaneHeight option.
      */
     public void setStepSelectorDialogPaneHeight(
         final int stepSelectorDialogPaneHeight)
@@ -1574,27 +1528,27 @@ public class ProofAsstPreferences {
     }
 
     /**
-     *  Gets StepSelectorDialogPaneHeight RunParm option.
-     *
-     *  @return stepSelectorDialogPaneHeight option
+     * Gets StepSelectorDialogPaneHeight RunParm option.
+     * 
+     * @return stepSelectorDialogPaneHeight option
      */
     public int getStepSelectorDialogPaneHeight() {
         return stepSelectorDialogPaneHeight;
     }
 
     /**
-     *  Sets ProofAsstAssrtListFreespace RunParm option.
-     *
-     *  @param assrtListFreespace option.
+     * Sets ProofAsstAssrtListFreespace RunParm option.
+     * 
+     * @param assrtListFreespace option.
      */
     public void setAssrtListFreespace(final int assrtListFreespace) {
         this.assrtListFreespace = assrtListFreespace;
     }
 
     /**
-     *  Gets ProofAsstAssrtListFreespace RunParm option.
-     *
-     *  @return proofAsstAssrtListFreespace option
+     * Gets ProofAsstAssrtListFreespace RunParm option.
+     * 
+     * @return proofAsstAssrtListFreespace option
      */
     public int getAssrtListFreespace() {
         return assrtListFreespace;

@@ -7,10 +7,10 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  MMTTheoremSet.java  0.01 08/01/2008
+ * MMTTheoremSet.java  0.01 08/01/2008
  *
- *  Version 0.01:
- *      --> new.
+ * Version 0.01:
+ *     --> new.
  */
 
 package mmj.tl;
@@ -21,8 +21,8 @@ import java.util.*;
 import mmj.lang.*;
 
 /**
- *   MMTTheoremSet represents a set of MMTTheoremStmtGroup objects
- *   to be loaded into the Logical System.
+ * MMTTheoremSet represents a set of MMTTheoremStmtGroup objects to be loaded
+ * into the Logical System.
  */
 public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
 
@@ -35,19 +35,18 @@ public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
     private int nbrOfAdds;
 
     /**
-     *  Constructs the MMTTheoremSet using an array of Files,
-     *  which may be obtained from the MMTFolder.
-     *  <p>
-     *  Validation of the input theorems is performed.
-     *  <p>
-     *  @param fileArray array of Files designating MMTTheoremFiles
-     *                   to be loaded into the MMTTheoremSet.
-     *  @param logicalSystem LogicalSystem object.
-     *  @param messages Messages object.
-     *  @param tlPreferences TlPreferences object.
-     *  @throws TheoremLoaderException if there are any errors
-     *          reading the input files or if there are validation
-     *          errors.
+     * Constructs the MMTTheoremSet using an array of Files, which may be
+     * obtained from the MMTFolder.
+     * <p>
+     * Validation of the input theorems is performed.
+     *
+     * @param fileArray array of Files designating MMTTheoremFiles to be loaded
+     *            into the MMTTheoremSet.
+     * @param logicalSystem LogicalSystem object.
+     * @param messages Messages object.
+     * @param tlPreferences TlPreferences object.
+     * @throws TheoremLoaderException if there are any errors reading the input
+     *             files or if there are validation errors.
      */
     public MMTTheoremSet(final File[] fileArray,
         final LogicalSystem logicalSystem, final Messages messages,
@@ -80,19 +79,16 @@ public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
     }
 
     /**
-     *  Constructs the MMTTheoremSet using a single input
-     *  MMTTheoremFile.
-     *  <p>
-     *  Validation of the input theorem is performed.
-     *  <p>
-     *  @param mmtTheoremFile MMTTheoremFile to be loaded into
-     *         the MMTTheoremSet.
-     *  @param logicalSystem LogicalSystem object.
-     *  @param messages Messages object.
-     *  @param tlPreferences TlPreferences object.
-     *  @throws TheoremLoaderException if there are any errors
-     *          reading the input files or if there are validation
-     *          errors.
+     * Constructs the MMTTheoremSet using a single input MMTTheoremFile.
+     * <p>
+     * Validation of the input theorem is performed.
+     *
+     * @param mmtTheoremFile MMTTheoremFile to be loaded into the MMTTheoremSet.
+     * @param logicalSystem LogicalSystem object.
+     * @param messages Messages object.
+     * @param tlPreferences TlPreferences object.
+     * @throws TheoremLoaderException if there are any errors reading the input
+     *             files or if there are validation errors.
      */
     public MMTTheoremSet(final MMTTheoremFile mmtTheoremFile,
         final LogicalSystem logicalSystem, final Messages messages,
@@ -117,17 +113,15 @@ public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
     }
 
     /**
-     *  Returns a List of the TheoremStmtGroups in the
-     *  MMTTheoremSet which were added to the LogicalSystem
-     *  during the load process.
-     *  <p>
-     *  Note: this method is called by mmj.lang.BookManager.java
-     *        during "commit()" processing at the end of the
-     *        TheoremLoader load process.
-     *  <p>
-     *  @param comparator Comparator for TheoremStmtGroup.
-     *  @return List of added TheoremStmtGroup objects sorted using
-     *          the input Comparator.
+     * Returns a List of the TheoremStmtGroups in the MMTTheoremSet which were
+     * added to the LogicalSystem during the load process.
+     * <p>
+     * Note: this method is called by mmj.lang.BookManager.java during
+     * "commit()" processing at the end of the TheoremLoader load process.
+     *
+     * @param comparator Comparator for TheoremStmtGroup.
+     * @return List of added TheoremStmtGroup objects sorted using the input
+     *         Comparator.
      */
     public List<TheoremStmtGroup> buildSortedListOfAdds(
         final Comparator<? super TheoremStmtGroup> comparator)
@@ -146,16 +140,14 @@ public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
     }
 
     /**
-     *  Returns a List of Theorems in the MMTTheoremSet which
-     *  were added to the LogicalSystem during the load process.
-     *  <p>
-     *  Note: this method is called by mmj.pa.ProofAsst.java
-     *        during "commit()" processing at the end of the
-     *        TheoremLoader load process.
-     *  <p>
-     *  @param comparator Comparator for mmj.lang.Assrt.
-     *  @return List of added Theorem objects sorted using
-     *          the input Comparator.
+     * Returns a List of Theorems in the MMTTheoremSet which were added to the
+     * LogicalSystem during the load process.
+     * <p>
+     * Note: this method is called by mmj.pa.ProofAsst.java during "commit()"
+     * processing at the end of the TheoremLoader load process.
+     *
+     * @param comparator Comparator for mmj.lang.Assrt.
+     * @return List of added Theorem objects sorted using the input Comparator.
      */
     public List<Theorem> buildSortedAssrtListOfAdds(
         final Comparator<? super Theorem> comparator)
@@ -172,37 +164,35 @@ public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
     }
 
     /**
-     *   Returns an Iterator over TheoremStmtGroup objects contained
-     *   in the MMTTheoremSet theoremStmtGroupTbl.
-     *   <p>
-     *   Note: this is used in LogicalSystem and SeqAssigner during
-     *         rollback() processing (fyi).
-     *   <p>
-     *   @return Iterator over TheoremStmtGroup objects contained
-     *           in the MMTTheoremSet theoremStmtGroupTbl.
+     * Returns an Iterator over TheoremStmtGroup objects contained in the
+     * MMTTheoremSet theoremStmtGroupTbl.
+     * <p>
+     * Note: this is used in LogicalSystem and SeqAssigner during rollback()
+     * processing (fyi).
+     *
+     * @return Iterator over TheoremStmtGroup objects contained in the
+     *         MMTTheoremSet theoremStmtGroupTbl.
      */
     public Iterator<TheoremStmtGroup> iterator() {
         return theoremStmtGroupTbl.values().iterator();
     }
 
     /**
-     *   Updates the LogicalSystem using the contents of the
-     *   MMTTheoremSet.
-     *   <p>
-     *   If errors are encountered during the update,
-     *   logicalSystem.theoremLoaderRollback() is called to reverse
-     *   any previous updates.
-     *   <p>
-     *   Likewise, if no errors are encountered during the update,
-     *   logicalSystem.theoremLoaderCommit() is called to finalize
-     *   the updates.
-     *   <p>
-     *   FYI, this is called by TheoremLoader.
-     *   <p>
-     *   @throws TheoremLoaderException if any errors are
-     *           encountered during the update process.
-     *   @throws IllegalArgumentException if either rollback or
-     *           commit of the updates fail.
+     * Updates the LogicalSystem using the contents of the MMTTheoremSet.
+     * <p>
+     * If errors are encountered during the update,
+     * logicalSystem.theoremLoaderRollback() is called to reverse any previous
+     * updates.
+     * <p>
+     * Likewise, if no errors are encountered during the update,
+     * logicalSystem.theoremLoaderCommit() is called to finalize the updates.
+     * <p>
+     * FYI, this is called by TheoremLoader.
+     *
+     * @throws TheoremLoaderException if any errors are encountered during the
+     *             update process.
+     * @throws IllegalArgumentException if either rollback or commit of the
+     *             updates fail.
      */
     public void updateLogicalSystem() throws TheoremLoaderException {
 

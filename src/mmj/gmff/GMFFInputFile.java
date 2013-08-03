@@ -6,11 +6,11 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-/**
- *  GMFFInputFile.java  0.01 11/01/2011
+/*
+ * GMFFInputFile.java  0.01 11/01/2011
  *
- *  Version 0.01:
- *  Nov-01-2011: new.
+ * Version 0.01:
+ * Nov-01-2011: new.
  */
 
 package mmj.gmff;
@@ -18,8 +18,7 @@ package mmj.gmff;
 import java.io.*;
 
 /**
- *  GMFFInputFile is a little helper class for reading
- *  files.
+ * GMFFInputFile is a little helper class for reading files.
  */
 public class GMFFInputFile {
 
@@ -31,19 +30,19 @@ public class GMFFInputFile {
     private File inputFile;
 
     /**
-     *  Returns the contents of a file as a <code>String</code>.
-     *  <p>
-     *  @param inputFolder a GMFFFolder holding the input file
-     *  @param inputFileName file name of file to be read.
-     *  @param exportType the Export Type associated with this
-     *           I/O operation -- used for error messages.
-     *  @param errorMessageDescriptor name or description of
-     *           what is being read (e.g. "Proof Worksheet").
-     *  @param bufferSize estimated size of the file, or at least
-     *           how large the buffer should be for reading it.
-     *  @return Contents of the file as a single String.
-     *  @throws GMFFFileNotFoundException if file not found.
-     *  @throws GMFFException if other error, such as IO exception.
+     * Returns the contents of a file as a {@code String}.
+     *
+     * @param inputFolder a GMFFFolder holding the input file
+     * @param inputFileName file name of file to be read.
+     * @param exportType the Export Type associated with this I/O operation --
+     *            used for error messages.
+     * @param errorMessageDescriptor name or description of what is being read
+     *            (e.g. "Proof Worksheet").
+     * @param bufferSize estimated size of the file, or at least how large the
+     *            buffer should be for reading it.
+     * @return Contents of the file as a single String.
+     * @throws GMFFFileNotFoundException if file not found.
+     * @throws GMFFException if other error, such as IO exception.
      */
     public static String getFileContents(final GMFFFolder inputFolder,
         final String inputFileName, final String exportType,
@@ -58,19 +57,18 @@ public class GMFFInputFile {
     }
 
     /**
-     *  Returns the contents of a file as a <code>String</code>.
-     *  <p>
-     *  @param inputFolder a GMFFFolder holding the input file
-     *  @param file  File object for the file name to be read.
-     *  @param exportType the Export Type associated with this
-     *           I/O operation -- used for error messages.
-     *  @param errorMessageDescriptor name or description of
-     *           what is being read (e.g. "Proof Worksheet").
-     *  @param bufferSize estimated size of the file, or at least
-     *           how large the buffer should be for reading it.
-     *  @return Contents of the file as a single String.
-     *  @throws GMFFFileNotFoundException if file not found.
-     *  @throws GMFFException if other error, such as IO exception.
+     * Returns the contents of a file as a {@code String}.
+     *
+     * @param file File object for the file name to be read.
+     * @param exportType the Export Type associated with this I/O operation --
+     *            used for error messages.
+     * @param errorMessageDescriptor name or description of what is being read
+     *            (e.g. "Proof Worksheet").
+     * @param bufferSize estimated size of the file, or at least how large the
+     *            buffer should be for reading it.
+     * @return Contents of the file as a single String.
+     * @throws GMFFFileNotFoundException if file not found.
+     * @throws GMFFException if other error, such as IO exception.
      */
     public static String getFileContents(final File file,
         final String exportType, final String errorMessageDescriptor,
@@ -84,18 +82,18 @@ public class GMFFInputFile {
     }
 
     /**
-     *  Standard constructor.
-     *  <p>
-     *  @param inputFolder a GMFFFolder holding the input file
-     *  @param inputFileName file name of file to be read.
-     *  @param exportType the Export Type associated with this
-     *           I/O operation -- used for error messages.
-     *  @param errorMessageDescriptor name or description of
-     *           what is being read (e.g. "Proof Worksheet").
-     *  @param bufferSize estimated size of the file, or at least
-     *           how large the buffer should be for reading it.
-     *  @throws GMFFFileNotFoundException if file not found.
-     *  @throws GMFFException if other error, such as IO exception.
+     * Standard constructor.
+     *
+     * @param inputFolder a GMFFFolder holding the input file
+     * @param inputFileName file name of file to be read.
+     * @param exportType the Export Type associated with this I/O operation --
+     *            used for error messages.
+     * @param errorMessageDescriptor name or description of what is being read
+     *            (e.g. "Proof Worksheet").
+     * @param bufferSize estimated size of the file, or at least how large the
+     *            buffer should be for reading it.
+     * @throws GMFFFileNotFoundException if file not found.
+     * @throws GMFFException if other error, such as IO exception.
      */
     public GMFFInputFile(final GMFFFolder inputFolder,
         final String inputFileName, final String exportType,
@@ -159,17 +157,15 @@ public class GMFFInputFile {
     }
 
     /**
-     *  Standard constructor.
-     *  <p>
-     *  @param inputFolder a GMFFFolder holding the input file
-     *  @param file  File object for the file name to be read.
-     *  @param exportType the Export Type associated with this
-     *           I/O operation -- used for error messages.
-     *  @param errorMessageDescriptor name or description of
-     *           what is being read (e.g. "Proof Worksheet").
-     *  @param bufferSize estimated size of the file, or at least
-     *           how large the buffer should be for reading it.
-     *  @throws GMFFException if error, such as IO exception.
+     * Standard constructor.
+     *
+     * @param file File object for the file name to be read.
+     * @param exportType the Export Type associated with this I/O operation --
+     *            used for error messages.
+     * @param errorMessageDescriptor name or description of what is being read
+     *            (e.g. "Proof Worksheet").
+     * @param bufferSize estimated size of the file, or at least how large the
+     *            buffer should be for reading it.
      */
     public GMFFInputFile(final File file, final String exportType,
         final String errorMessageDescriptor, final int bufferSize)
@@ -186,21 +182,20 @@ public class GMFFInputFile {
     }
 
     /**
-     *  Returns string containing the entire file contents.
-     *  <p>
-     *  A <code>BufferedReader</code> is created using the
-     *  specified buffer size and a <code>StringBuilder</code>
-     *  is loaded with repeated reads until end of file
-     *  reached. Then the StringBuilder is converted to a
-     *  String and returned to the called.
-     *  <p>
-     *  Obviously, this function has a problem if asked to
-     *  read a humongous file. (We should test that :-)
-     *  <p>
-     *  @return String containing the entire file contents.
-     *  @throws GMFFFileNotFoundException if file not found
-     *  @throws GMFFException if other error, such as
-     *            IOException or SecurityException.
+     * Returns string containing the entire file contents.
+     * <p>
+     * A {@code BufferedReader} is created using the specified buffer size and a
+     * {@code StringBuilder} is loaded with repeated reads until end of file
+     * reached. Then the StringBuilder is converted to a String and returned to
+     * the called.
+     * <p>
+     * Obviously, this function has a problem if asked to read a humongous file.
+     * (We should test that :-)
+     *
+     * @return String containing the entire file contents.
+     * @throws GMFFFileNotFoundException if file not found
+     * @throws GMFFException if other error, such as IOException or
+     *             SecurityException.
      */
     public String loadContentsToString() throws GMFFException,
         GMFFFileNotFoundException
@@ -258,11 +253,11 @@ public class GMFFInputFile {
     }
 
     /**
-     *  Closes the Reader used for the GMFFInputFile.
-     *  <p>
-     *  Does nothing if input Reader is null.
-     *  <p>
-     *  @param readerIn Reader object or null.
+     * Closes the Reader used for the GMFFInputFile.
+     * <p>
+     * Does nothing if input Reader is null.
+     *
+     * @param readerIn Reader object or null.
      */
     public void close(final Reader readerIn) {
         try {
@@ -272,10 +267,10 @@ public class GMFFInputFile {
     }
 
     /**
-     *  Returns the absolute pathname of the GMFFInputFile
-     *  <p>
-     *  @return Absolute pathname of the GMFFFolder or null if the
-     *              underlying File is null.
+     * Returns the absolute pathname of the GMFFInputFile
+     *
+     * @return Absolute pathname of the GMFFFolder or null if the underlying
+     *         File is null.
      */
     public String getAbsolutePath() {
         if (inputFile == null)

@@ -7,14 +7,14 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  SvcBoss.java  0.02 11/01/2011
+ * SvcBoss.java  0.02 11/01/2011
  *
- *  Version 0.01: 08/01/2008
- *      - New.
- *  Version 0.02: Nov-01-2011 -
- *      -->Modified for mmj2 Paths Enhancement:
- *         added svcPath argument to editExistingFolderRunParm()
- *         call in editSvcFolder().
+ * Version 0.01: 08/01/2008
+ *     - New.
+ * Version 0.02: Nov-01-2011 -
+ *     -->Modified for mmj2 Paths Enhancement:
+ *        added svcPath argument to editExistingFolderRunParm()
+ *        call in editSvcFolder().
  */
 
 package mmj.util;
@@ -32,9 +32,7 @@ import mmj.verify.Grammar;
 import mmj.verify.VerifyProofs;
 
 /**
- *  Manages access to the facilities which allow use
- *  of mmj2 as a service.
- *
+ * Manages access to the facilities which allow use of mmj2 as a service.
  */
 public class SvcBoss extends Boss {
 
@@ -46,44 +44,41 @@ public class SvcBoss extends Boss {
     private Map<String, String> svcArgs;
 
     /**
-     *  Constructor with BatchFramework for access to environment.
-     *
-     *  @param batchFramework for access to environment.
+     * Constructor with BatchFramework for access to environment.
+     * 
+     * @param batchFramework for access to environment.
      */
     public SvcBoss(final BatchFramework batchFramework) {
         super(batchFramework);
     }
 
     /**
-     *  Sets the SvcCallback object which allows designated
-     *  user code to use mmj2 as a service.
-     *
-     *  @param svcCallback entry point to user code.
+     * Sets the SvcCallback object which allows designated user code to use mmj2
+     * as a service.
+     * 
+     * @param svcCallback entry point to user code.
      */
     public void setSvcCallback(final SvcCallback svcCallback) {
         this.svcCallback = svcCallback;
     }
 
     /**
-     *  Gets the SvcCallback object which allows designated
-     *  user code to use mmj2 as a service.
-     *
-     *  @return svcCallback entry point to user code.
+     * Gets the SvcCallback object which allows designated user code to use mmj2
+     * as a service.
+     * 
+     * @return svcCallback entry point to user code.
      */
     public SvcCallback getSvcCallback() {
         return svcCallback;
     }
 
     /**
-     *  Executes a single command from the RunParmFile.
-     *
-     *  @param runParm the RunParmFile line to execute.
-     *
-     *  @return      boolean "consumed" indicating that the
-     *           input runParm should not be processed
-     *           again.
+     * Executes a single command from the RunParmFile.
+     * 
+     * @param runParm the RunParmFile line to execute.
+     * @return boolean "consumed" indicating that the input runParm should not
+     *         be processed again.
      */
-    @Override
     public boolean doRunParmCommand(final RunParmArrayEntry runParm)
         throws IllegalArgumentException, VerifyException
     {
@@ -134,12 +129,13 @@ public class SvcBoss extends Boss {
     }
 
     /**
-     *  Validate SvcFolder.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate SvcFolder.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws VerifyException if an error occurred
      */
     protected void editSvcFolder(final RunParmArrayEntry runParm)
-        throws VerifyException, IllegalArgumentException
+        throws VerifyException
     {
 
         editRunParmValuesLength(runParm, UtilConstants.RUNPARM_SVC_FOLDER, 1);
@@ -150,14 +146,11 @@ public class SvcBoss extends Boss {
     }
 
     /**
-     *  Validate SvcCallbackClass name and instantiate
-     *  one of them for use later.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate SvcCallbackClass name and instantiate one of them for use later.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
      */
-    protected void editSvcCallbackClass(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
+    protected void editSvcCallbackClass(final RunParmArrayEntry runParm) {
 
         editRunParmValuesLength(runParm,
             UtilConstants.RUNPARM_SVC_CALLBACK_CLASS, 1);
@@ -186,12 +179,13 @@ public class SvcBoss extends Boss {
     }
 
     /**
-     *  Validate arguments for SvcCallback.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate arguments for SvcCallback.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws VerifyException if an error occurred
      */
     protected void editSvcArg(final RunParmArrayEntry runParm)
-        throws VerifyException, IllegalArgumentException
+        throws VerifyException
     {
 
         editRunParmValuesLength(runParm, UtilConstants.RUNPARM_SVC_FOLDER, 2);
@@ -213,12 +207,13 @@ public class SvcBoss extends Boss {
     }
 
     /**
-     *  Call the designated SvcCallback object.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Call the designated SvcCallback object.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws VerifyException if an error occurred
      */
     protected void editSvcCall(final RunParmArrayEntry runParm)
-        throws VerifyException, IllegalArgumentException
+        throws VerifyException
     {
 
         final Messages messages = batchFramework.outputBoss.getMessages();

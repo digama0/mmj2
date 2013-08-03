@@ -6,7 +6,7 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  MergeSortedArrayLists.java  0.01 08/01/2008
+ * MergeSortedArrayLists.java  0.01 08/01/2008
  */
 
 package mmj.util;
@@ -14,25 +14,24 @@ package mmj.util;
 import java.util.*;
 
 /**
- *  Class <code>MergeSortedArrayLists</code> merges elements
- *  of a sorted source into a sorted destination ArrayList.
- *  <p>
- *  Does in-place merge of source List into the
- *  destination ArrayList using the input comparator
- *  to maintain the sort sequence of the destination
- *  ArrayList.
- *  <p>
- *  A buffer of destination ArrayList elements is used
- *  as the "in place" merge proceeds. The idea is to
- *  reduce the number of destination array element shifts
- *  by making a single pass through the the destination array.
- *  <p>
- *  Assumes that input lists are correctly sorted. Makes
- *  no assumptions about uniqueness of input keys.
- *  <p>
- *  If the source and destination lists contain the same
- *  key, the source element replaces the destination element.
- *  <p>
+ * Class {@code MergeSortedArrayLists} merges elements of a sorted source into a
+ * sorted destination ArrayList.
+ * <p>
+ * Does in-place merge of source List into the destination ArrayList using the
+ * input comparator to maintain the sort sequence of the destination ArrayList.
+ * <p>
+ * A buffer of destination ArrayList elements is used as the "in place" merge
+ * proceeds. The idea is to reduce the number of destination array element
+ * shifts by making a single pass through the the destination array.
+ * <p>
+ * Assumes that input lists are correctly sorted. Makes no assumptions about
+ * uniqueness of input keys.
+ * <p>
+ * If the source and destination lists contain the same key, the source element
+ * replaces the destination element.
+ * <p>
+ * 
+ * @param <T> the actual type of the destination array
  */
 public class MergeSortedArrayLists<T> {
 
@@ -53,31 +52,28 @@ public class MergeSortedArrayLists<T> {
     private int compareResult;
 
     /**
-     *  Does in-place merge of source List into the
-     *  destination ArrayList using the input comparator
-     *  to maintain the sort sequence of the destination
-     *  ArrayList.
-     *  <p>
-     *  A buffer of destination ArrayList elements is used
-     *  as the "in place" merge proceeds. The idea is to
-     *  reduce the number of destination array element shifts
-     *  by making a single pass through the the destination array.
-     *  <p>
-     *  Assumes that input lists are correctly sorted. Makes
-     *  no assumptions about uniqueness of input keys.
-     *  <p>
-     *  If the source and destination lists contain the same
-     *  key, the source element replaces the destination element.
-     *  <p>
-     *  @param destList ArrayList sorted in comparator order.
-     *  @param srcList List sorted in comparator order.
-     *  @param comparator Comparator for comparing list object.
-     *  @param abortIfDupsFound triggers IllegalObjectException
-     *         if srcList object equals a destList object
-     *
-     *  @throws IllegalArgumentException if a srcList object
-     *          equals a destList object and abortIfDupsFound
-     *          is true (the normal situation for Theorem Loader.)
+     * Does in-place merge of source List into the destination ArrayList using
+     * the input comparator to maintain the sort sequence of the destination
+     * ArrayList.
+     * <p>
+     * A buffer of destination ArrayList elements is used as the "in place"
+     * merge proceeds. The idea is to reduce the number of destination array
+     * element shifts by making a single pass through the the destination array.
+     * <p>
+     * Assumes that input lists are correctly sorted. Makes no assumptions about
+     * uniqueness of input keys.
+     * <p>
+     * If the source and destination lists contain the same key, the source
+     * element replaces the destination element.
+     * 
+     * @param destList ArrayList sorted in comparator order.
+     * @param srcList List sorted in comparator order.
+     * @param comparator Comparator for comparing list object.
+     * @param abortIfDupsFound triggers IllegalObjectException if srcList object
+     *            equals a destList object
+     * @throws IllegalArgumentException if a srcList object equals a destList
+     *             object and abortIfDupsFound is true (the normal situation for
+     *             Theorem Loader.)
      */
     public MergeSortedArrayLists(final ArrayList<T> destList,
         final List<? extends T> srcList, final Comparator<T> comparator,

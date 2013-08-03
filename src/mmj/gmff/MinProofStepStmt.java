@@ -6,37 +6,34 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-/**
- *  MinProofStepStmt.java  0.01 11/01/2011
+/*
+ * MinProofStepStmt.java  0.01 11/01/2011
  *
- *  Version 0.01:
- *  Nov-01-2011: new.
+ * Version 0.01:
+ * Nov-01-2011: new.
  */
 
 package mmj.gmff;
 
 /**
- *  General object representing a proof step statement in a
- *  MinProofWorksheet.
- *  <p>
- *  The term "proof step" in Proof Worksheet terminology
- *  is any Proof Worksheet statement that contains a formula --
- *  these are <code>MinHypothesisStep</code> and
- *  <code>MinDerivationStep</code>, the latter includes the
- *  final step, the "qed" step.
+ * General object representing a proof step statement in a MinProofWorksheet.
+ * <p>
+ * The term "proof step" in Proof Worksheet terminology is any Proof Worksheet
+ * statement that contains a formula -- these are {@code MinHypothesisStep} and
+ * {@code MinDerivationStep}, the latter includes the final step, the "qed"
+ * step.
  */
 public class MinProofStepStmt extends MinProofWorkStmt {
 
     /**
-     *  Standard MinProofStepStmt constructor.
-     *  <p>
-     *  @param w the <code>MinProofworksheet</code> object which
-     *				contains the proof step.
-     *  @param slc Array of proof step lines each comprised
-     *				of an Array of <code>String</code>s
-     *              called "chunks", which may be either Metamath
-     *              whitespace or Metamath tokens. Hence the
-     *              acronym "slc" refers to Statement Line Chunks.
+     * Standard MinProofStepStmt constructor.
+     *
+     * @param w the {@code MinProofworksheet} object which contains the proof
+     *            step.
+     * @param slc Array of proof step lines each comprised of an Array of
+     *            {@code String}s called "chunks", which may be either Metamath
+     *            whitespace or Metamath tokens. Hence the acronym "slc" refers
+     *            to Statement Line Chunks.
      */
     public MinProofStepStmt(final MinProofWorksheet w, final String[][] slc) {
 
@@ -44,41 +41,37 @@ public class MinProofStepStmt extends MinProofWorkStmt {
     }
 
     /**
-     *  Formats export data for the proof step statement
-     *  according to the <code>Model A</code> specifications
-     *  and loads the data into a specified buffer.
-     *  <p>
-     *  Model A model files for <code>MinProofStepStmt</code> objects
-     *  are "mandatory", meaning that if any of the model files are
-     *  not found, the export process is halted and an error message
-     *  is generated.
-     *  <p>
-     *  Export of a proof step involves formatting two things: the
-     *  part of each line prior to the first formula symbol on that
-     *  line, and the typesetting and formatting of each formula symbol.
-     *  <p>
-     *  We go to a lot of trouble to format the pre-formula part of
-     *  the line because it is vital to preserve the indentation
-     *  before the formula symbols -- even though the process of
-     *  generating typeset formulas will necessarily alter the
-     *  indentations of the formula's symbols.
-     *  <p>
-     *  Note the quirky handling of <code>modelAStep1X</code> and
-     *  <code>modelAStep3X</code>. If one of these model files is
-     *  empty then no data is output at that location. This quirky
-     *  feature will generally not be used but is provided for
-     *  maximum flexibility in creating export format models.
-     *  <p>
-     *  Additional information may be found \GMFFDoc\GMFFModels.txt.
-     *  <p>
-     *  @param gmffExporter The <code>GMFFExporter</code> requesting
-     *				the export data build.
-     *  @param exportBuffer The <code>StringBuilder</code> to which
-     *               exported data is to be output.
-     *  @throws GMFFException if errors are encountered during the
-     *               export process.
+     * Formats export data for the proof step statement according to the
+     * {@code Model A} specifications and loads the data into a specified
+     * buffer.
+     * <p>
+     * Model A model files for {@code MinProofStepStmt} objects are "mandatory",
+     * meaning that if any of the model files are not found, the export process
+     * is halted and an error message is generated.
+     * <p>
+     * Export of a proof step involves formatting two things: the part of each
+     * line prior to the first formula symbol on that line, and the typesetting
+     * and formatting of each formula symbol.
+     * <p>
+     * We go to a lot of trouble to format the pre-formula part of the line
+     * because it is vital to preserve the indentation before the formula
+     * symbols -- even though the process of generating typeset formulas will
+     * necessarily alter the indentations of the formula's symbols.
+     * <p>
+     * Note the quirky handling of {@code modelAStep1X} and {@code modelAStep3X}
+     * . If one of these model files is empty then no data is output at that
+     * location. This quirky feature will generally not be used but is provided
+     * for maximum flexibility in creating export format models.
+     * <p>
+     * Additional information may be found \GMFFDoc\GMFFModels.txt.
+     *
+     * @param gmffExporter The {@code GMFFExporter} requesting the export data
+     *            build.
+     * @param exportBuffer The {@code StringBuilder} to which exported data is
+     *            to be output.
+     * @throws GMFFException if errors are encountered during the export
+     *             process.
      */
-    @Override
     public void buildModelAExport(final GMFFExporter gmffExporter,
         final StringBuilder exportBuffer) throws GMFFException
     {

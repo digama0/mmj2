@@ -6,11 +6,11 @@
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
-/**
- *  TypesetDefCommentParser.java  0.01 11/01/2011
+/*
+ * TypesetDefCommentParser.java  0.01 11/01/2011
  *
- *  Version 0.01:
- *  Nov-01-2011: new.
+ * Version 0.01:
+ * Nov-01-2011: new.
  */
 
 package mmj.gmff;
@@ -21,58 +21,48 @@ import mmj.lang.Messages;
 import mmj.mmio.MMIOConstants;
 
 /**
- * <code>TypesetDefCommentParser</code> parses, validates and loads
- * <code>Map</code> collections with typesetting data from Metamath
- * Comment statements identified by a <code>$t</code> as the first
- * token after the Comment ID token <code>$(</code>.
+ * {@code TypesetDefCommentParser} parses, validates and loads {@code Map}
+ * collections with typesetting data from Metamath Comment statements identified
+ * by a {@code $t} as the first token after the Comment ID token {@code $(}.
  * <p>
- * Almost all necessary specifications for processing Metamath
- * typesetting information is contained in the <code>Metamath.pdf</code>
- * book, with the following exceptions:
+ * Almost all necessary specifications for processing Metamath typesetting
+ * information is contained in the {@code Metamath.pdf} book, with the following
+ * exceptions:
  * <ul>
- *
- * <li>Asterisk-Slash C-style comments may be
- * present and are to be treated as whitespace following the <code>
- * $t</code> token up to the terminating <code>$)</code> token.
- * (Double-Slash C-style comments are not treated as comments.)
- *
- * <li>Information in the <code>$t</code> Comment statements is of
- * the form: '<i>keyword</i> <i>xxxStuffxxx</i>;'.
- *
- * <li>GMFF is interested only in symbol typesetting definitions
- * identified by keywords <code>htmldef</code>, <code>althtmldef</code>,
- * and <code>latexdef</code> -- these keywords are input parameters,
- * not hardcoded -- but other definitions may be added in the future
- * and GMFF must be able to correctly bypass these definitions.
- *
- * <li>For unknown and ignored definition types GMFF still needs to
- * parse their quoted strings and C-style comments in order to bypass
- * them. That is because quoted strings may contain what appear to
- * be C-style comments and C-style comments may contain what appear
- * to be quoted strings -- as well as semicolons.
- *
+ * <li>Asterisk-Slash C-style comments may be present and are to be treated as
+ * whitespace following the {@code  $t} token up to the terminating {@code $)}
+ * token. (Double-Slash C-style comments are not treated as comments.)
+ * <li>Information in the {@code $t} Comment statements is of the form:
+ * '<i>keyword</i> <i>xxxStuffxxx</i>;'.
+ * <li>GMFF is interested only in symbol typesetting definitions identified by
+ * keywords {@code htmldef}, {@code althtmldef}, and {@code latexdef} -- these
+ * keywords are input parameters, not hardcoded -- but other definitions may be
+ * added in the future and GMFF must be able to correctly bypass these
+ * definitions.
+ * <li>For unknown and ignored definition types GMFF still needs to parse their
+ * quoted strings and C-style comments in order to bypass them. That is because
+ * quoted strings may contain what appear to be C-style comments and C-style
+ * comments may contain what appear to be quoted strings -- as well as
+ * semicolons.
  * </ul>
  * <p>
  * Note that the input Metamath Comment statements processed by
- * <code>TypesetDefCommentParser</code> are stripped of their
- * delimiting <code>$(</code> and <code>$)</code> tokens prior
- * to input. This is a result of the way that mmj2 parses input
- * files and stores Metamath Comments in <code>mmj.mmio.SrcStmt</code>.
+ * {@code TypesetDefCommentParser} are stripped of their delimiting {@code $(}
+ * and {@code $)} tokens prior to input. This is a result of the way that mmj2
+ * parses input files and stores Metamath Comments in {@code mmj.mmio.SrcStmt}.
  * <p>
- * <code>TypesetDefCommentParser</code> is coded as a separate
- * class in order to provide modularity, not because there are
- * separate instances of it. <code>GMFFManager</code> instantiates
- * it and then calls <code>doIt(String typesetDefComment)</code>
- * for each Metamath <code>$t</code> Comment statement to be
- * processed.
+ * {@code TypesetDefCommentParser} is coded as a separate class in order to
+ * provide modularity, not because there are separate instances of it.
+ * {@code GMFFManager} instantiates it and then calls
+ * {@code doIt(String typesetDefComment)} for each Metamath {@code $t} Comment
+ * statement to be processed.
  * <p>
- * Another curious/strange aspect of processing is that mmj2
- * accumulates Metamath typesetting Comment statements
- * in the <code>GMFFManager</code> via <code>mmj.mmio.Systemizer</code>
- * method <code>loadComment()</code> but the typesetting Comments
- * are not processed unless and until the user or a RunParm
- * command invokes GMFF's typsetting services -- at which point
- * <code>GMFFManager</code> invokes <code>TypesetDefCommentParser</code>.
+ * Another curious/strange aspect of processing is that mmj2 accumulates
+ * Metamath typesetting Comment statements in the {@code GMFFManager} via
+ * {@code mmj.mmio.Systemizer} method {@code loadComment()} but the typesetting
+ * Comments are not processed unless and until the user or a RunParm command
+ * invokes GMFF's typsetting services -- at which point {@code GMFFManager}
+ * invokes {@code TypesetDefCommentParser}.
  */
 public class TypesetDefCommentParser {
 
@@ -91,12 +81,12 @@ public class TypesetDefCommentParser {
 
     /**
      * The only constructor.
-     *
+     * 
      * @param exporterTypesetDefsList <code>List<code> of
-     *          <code>GMFFExporterTypesetDefs</code> which are
-     *          to be selected for processing and loaded with data.
-     *
+     *         {@code GMFFExporterTypesetDefs} which are
+     *         to be selected for processing and loaded with data.
      * @param messages The mmj2 <code> Messages object.
+     * @throws GMFFException if an error occurred
      */
     public TypesetDefCommentParser(
         final List<GMFFExporterTypesetDefs> exporterTypesetDefsList,
@@ -117,17 +107,13 @@ public class TypesetDefCommentParser {
     }
 
     /**
-     * Parses, validates and loads <code>Map</code> collections
-     * with symbol typesetting definitions with keywords matching
-     * the constructor <code>exporterTypesetDefsList</code> list.
-     *
-     * @param typesetDefComment Metamath <code>$t</code> Comment
-     * 			statement stripped of its <code>$(</code> beginning
-     * 			and <code>$)</code> ending tokens.
-     *
-     * @throws GMFFException if parse or validation errors
-     * 			encountered.
-     *
+     * Parses, validates and loads {@code Map} collections with symbol
+     * typesetting definitions with keywords matching the constructor
+     * {@code exporterTypesetDefsList} list.
+     * 
+     * @param typesetDefComment Metamath {@code $t} Comment statement stripped
+     *            of its {@code $(} beginning and {@code $)} ending tokens.
+     * @throws GMFFException if parse or validation errors encountered.
      */
     public void doIt(final String typesetDefComment) throws GMFFException {
 
@@ -174,11 +160,11 @@ public class TypesetDefCommentParser {
     }
 
     /*
-     *  Confirm "$t" is first non-whitespace of $t Comment
-     *  statement (the "$(" and "$)" are not present in the comment).
-    *  - bypass whitespace/comments following $t
-    *  - upon exit, currIndex must point to non-whitespace,
-    *    non-comment character OR maxIndex!
+     * Confirm "$t" is first non-whitespace of $t Comment
+     * statement (the "$(" and "$)" are not present in the comment).
+    * - bypass whitespace/comments following $t
+    * - upon exit, currIndex must point to non-whitespace,
+    *   non-comment character OR maxIndex!
      */
     private void validateDollarTToken() throws GMFFException {
 
@@ -195,19 +181,19 @@ public class TypesetDefCommentParser {
     }
 
     /*
-    *  Load keyword into currKeyword.
-     *  - accum one char at a time
-    *  - trigger invalid keyword error if quote,
-    *    single quote, plus symbol, semicolon, asterisk
-    *    not preceded by slash, or slash not followed
-    *    by asterisk found -- or if end result is
-    *    empty string.
-    *  - terminate accumulation when whitespace
-    *    or c-comment start or end of file reached.
-    *  - if keyword invalid throw exception.
-    *  - bypass whitespace/comments after keyword.
-    *  - upon exit, currIndex must point to non-whitespace,
-    *    non-comment character OR maxIndex!
+    * Load keyword into currKeyword.
+     * - accum one char at a time
+    * - trigger invalid keyword error if quote,
+    *   single quote, plus symbol, semicolon, asterisk
+    *   not preceded by slash, or slash not followed
+    *   by asterisk found -- or if end result is
+    *   empty string.
+    * - terminate accumulation when whitespace
+    *   or c-comment start or end of file reached.
+    * - if keyword invalid throw exception.
+    * - bypass whitespace/comments after keyword.
+    * - upon exit, currIndex must point to non-whitespace,
+    *   non-comment character OR maxIndex!
     */
     private void getCurrKeyword() throws GMFFException {
 
@@ -245,18 +231,18 @@ public class TypesetDefCommentParser {
     }
 
     /*
-    *  Load a Sym's definition:
-    *  - positioned at entry to a character which
-    *    is not whitespace or the start of a comment.
-    *  - get sym quoted string,
-    *  - confirm "as" literal exists
-    *  - get consolidated replacement quoted string
-    *  - confirm ";" exists
-    *  - bypass whitespace/comments between elements
-    *  - bypass whitespace/comments after ";"
-    *  - if any missing elements or other errors throw exception
-    *  - upon exit, currIndex must point to non-whitespace,
-    *    non-comment character OR maxIndex!
+    * Load a Sym's definition:
+    * - positioned at entry to a character which
+    *   is not whitespace or the start of a comment.
+    * - get sym quoted string,
+    * - confirm "as" literal exists
+    * - get consolidated replacement quoted string
+    * - confirm ";" exists
+    * - bypass whitespace/comments between elements
+    * - bypass whitespace/comments after ";"
+    * - if any missing elements or other errors throw exception
+    * - upon exit, currIndex must point to non-whitespace,
+    *   non-comment character OR maxIndex!
     */
     private void loadCurrTypesetDef() throws GMFFException {
 
@@ -276,13 +262,13 @@ public class TypesetDefCommentParser {
     }
 
     /*
-    *  Get sym being defined:
-    *  - pull sym chars out of quote-delimited string
-    *  - error if whitespace betweem quotes
-    *  - error if sym turns out to be empty string
-    *  - end quote must match starting quote
-    *  - upon exit, currIndex must point to non-whitespace,
-    *    non-comment character OR maxIndex!
+    * Get sym being defined:
+    * - pull sym chars out of quote-delimited string
+    * - error if whitespace betweem quotes
+    * - error if sym turns out to be empty string
+    * - end quote must match starting quote
+    * - upon exit, currIndex must point to non-whitespace,
+    *   non-comment character OR maxIndex!
     */
     private void getCurrSym() throws GMFFException {
 
@@ -297,11 +283,11 @@ public class TypesetDefCommentParser {
     }
 
     /*
-    *  Confirm currIndex points to "as" (without the quotes)
-    *  _ currIndex should already be positioned to the "a"
-    *  - generate missing-as error if not!
-    *  - upon exit, currIndex must point to non-whitespace,
-    *    non-comment character OR maxIndex!
+    * Confirm currIndex points to "as" (without the quotes)
+    * _ currIndex should already be positioned to the "a"
+    * - generate missing-as error if not!
+    * - upon exit, currIndex must point to non-whitespace,
+    *   non-comment character OR maxIndex!
     */
     private void confirmAsLiteralExists() throws GMFFException {
         if (!comment
@@ -313,10 +299,10 @@ public class TypesetDefCommentParser {
     }
 
     /*
-    *  Get either one quoted string or a group joined by "+"
-    *  characters:
-    *  - trigger error if "+" not followed by quoted string
-    *  - concatenate quoted strings and store in currReplacement
+    * Get either one quoted string or a group joined by "+"
+    * characters:
+    * - trigger error if "+" not followed by quoted string
+    * - concatenate quoted strings and store in currReplacement
     */
     private void getConsolidatedReplacementString() throws GMFFException {
 
@@ -351,16 +337,16 @@ public class TypesetDefCommentParser {
     }
 
     /*
-    *  Bypass "other" (unknown/no-interest) definition:
-    *  - bypass quoted strings
-    *  - bypass characters that are not quoted strings
-    *    or comments;
-    *  - confirm ";" exists
-    *  - bypass whitespace/comments between elements
-    *  - bypass whitespace/comments after ";"
-    *  - if any errors throw exception
-    *  - upon exit, currIndex must point to non-whitespace,
-    *    non-comment character OR maxIndex!
+    * Bypass "other" (unknown/no-interest) definition:
+    * - bypass quoted strings
+    * - bypass characters that are not quoted strings
+    *   or comments;
+    * - confirm ";" exists
+    * - bypass whitespace/comments between elements
+    * - bypass whitespace/comments after ";"
+    * - if any errors throw exception
+    * - upon exit, currIndex must point to non-whitespace,
+    *   non-comment character OR maxIndex!
     */
     private void bypassOtherDef() throws GMFFException {
         char nextChar;
@@ -387,11 +373,11 @@ public class TypesetDefCommentParser {
     }
 
     /*
-     *  Extract text in between delimiters
-     *  - position currIndex after end delimiter upon exit
-     *  - don't bypass whitespace/comments afterwards
-     *    simply because the calling routines wanted to
-     *    do it themselves :-)
+     * Extract text in between delimiters
+     * - position currIndex after end delimiter upon exit
+     * - don't bypass whitespace/comments afterwards
+     *   simply because the calling routines wanted to
+     *   do it themselves :-)
      */
     private String getQuoteDelimitedString() throws GMFFException {
         final char nextChar = comment.charAt(currIndex);
@@ -404,11 +390,11 @@ public class TypesetDefCommentParser {
     }
 
     /*
-     *  Extract text in between delimiters.
-     *  - If two consecutive occurrences of delimiter character found
-    *    then output one occurrence as text, not a delimiter!
-     *  - The end delimiter is followed by a) end of string; or
-    *    b) anything except an end delimiter character.
+     * Extract text in between delimiters.
+     * - If two consecutive occurrences of delimiter character found
+    *   then output one occurrence as text, not a delimiter!
+     * - The end delimiter is followed by a) end of string; or
+    *   b) anything except an end delimiter character.
      */
     private String getStringInsideDelimiters(final char delimChar)
         throws GMFFException
@@ -446,9 +432,9 @@ public class TypesetDefCommentParser {
     }
 
     /*
-     *  Load sym's typesetting definition into the Map
-     *  for its keyword.
-     *  - generate info message if duplicate def for sym
+     * Load sym's typesetting definition into the Map
+     * for its keyword.
+     * - generate info message if duplicate def for sym
      */
     private void storeInTypesetDefMap(final int i, final String currSym,
         final String currReplacement)
@@ -463,16 +449,16 @@ public class TypesetDefCommentParser {
     }
 
     /*
-    *  Bypass whitespace characters and c-style comments:
-    *  - there may or may not be whitespace and/or comments
-    *  - there may be multiple whitespace/comment sequences
-    *  - currIndex may be >= maxIndex upon entry
-    *  - if Slash-Asterisk found call bypassComment() routine
-    *    - bypassComment() must confirm Asterisk-Slash exists
-    *      and that there is not a comment inside of
-    *      the comment.
-    *  - upon exit, currIndex must point to non-whitespace,
-    *    non-comment character OR maxIndex!
+    * Bypass whitespace characters and c-style comments:
+    * - there may or may not be whitespace and/or comments
+    * - there may be multiple whitespace/comment sequences
+    * - currIndex may be >= maxIndex upon entry
+    * - if Slash-Asterisk found call bypassComment() routine
+    *   - bypassComment() must confirm Asterisk-Slash exists
+    *     and that there is not a comment inside of
+    *     the comment.
+    * - upon exit, currIndex must point to non-whitespace,
+    *   non-comment character OR maxIndex!
     */
     private void bypassWhitespaceAndComments() throws GMFFException {
         while (currIndex < maxIndex) {
@@ -488,13 +474,13 @@ public class TypesetDefCommentParser {
     }
 
     /*
-    *  Bypass a c-style comment (Slash-Asterisk variety):
-    *  - upon entry currIndex points to starting "/"
-    *  - must confirm Asterisk-Slash exists prior to end of file
-    *  - must confirm comment does not contain a Slash-Asterisk
-    *    inside the comment (no nesting of comments).
-    *  - upon exit, currIndex must point to first character
-    *    after Asteisk-Slash comment end OR OR maxIndex!
+    * Bypass a c-style comment (Slash-Asterisk variety):
+    * - upon entry currIndex points to starting "/"
+    * - must confirm Asterisk-Slash exists prior to end of file
+    * - must confirm comment does not contain a Slash-Asterisk
+    *   inside the comment (no nesting of comments).
+    * - upon exit, currIndex must point to first character
+    *   after Asteisk-Slash comment end OR OR maxIndex!
     */
     private void bypassComment() throws GMFFException {
         currIndex += MMIOConstants.TYPESETTING_C_COMMENT_START.length();
@@ -519,11 +505,11 @@ public class TypesetDefCommentParser {
     }
 
     /*
-    *  Bypass whitespace characters:
-    *  - there may be no whitespace characters
-    *  - currIndex may be >= maxIndex upon entry
-    *  - upon exit, currIndex must point to non-whitespace,
-    *    character OR maxIndex!
+    * Bypass whitespace characters:
+    * - there may be no whitespace characters
+    * - currIndex may be >= maxIndex upon entry
+    * - upon exit, currIndex must point to non-whitespace,
+    *   character OR maxIndex!
     */
     private void bypassWhitespace() {
         while (currIndex < maxIndex) {
@@ -599,13 +585,13 @@ public class TypesetDefCommentParser {
     }
 
     /*
-     *  Returns a string containing the line number of
-     *  defErrorIndex which is set by parsing functions
-     *  as they proceed just in case there is an error.
-     *  - Counts Newline characters to determine line
-     *    number.
-     *  - If doesn't find any Newline characters then
-     *    looks for Carriage Returns :-)
+     * Returns a string containing the line number of
+     * defErrorIndex which is set by parsing functions
+     * as they proceed just in case there is an error.
+     * - Counts Newline characters to determine line
+     *   number.
+     * - If doesn't find any Newline characters then
+     *   looks for Carriage Returns :-)
      */
     private String getParseLocInfo() {
 

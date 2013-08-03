@@ -13,7 +13,7 @@
 package mmj.pa;
 
 /**
- *  Custom exception for ProofAsst.
+ * Custom exception for ProofAsst.
  */
 public class ProofAsstException extends Exception {
 
@@ -30,24 +30,23 @@ public class ProofAsstException extends Exception {
 
     /**
      * Contructor with error message.
-     *
-     * @param   errorMessage  error message.
+     * 
+     * @param errorMessage error message.
      */
     public ProofAsstException(final String errorMessage) {
         super(errorMessage);
     }
 
     /**
-     *  Contructor, <code>ProofAsstException</code> with
-     *  line number, column number and error message.
-     *  <p>
-     *  Appends input stream line and column number to
-     *  input message.
-     *
-     *  @param   lineNbr       line number assigned to the error
-     *  @param   columnNbr     column number assigned to the error
-     *  @param   charNbr       character number of the error
-     *  @param   errorMessage  error message.
+     * Contructor, {@code ProofAsstException} with line number, column number
+     * and error message.
+     * <p>
+     * Appends input stream line and column number to input message.
+     * 
+     * @param lineNbr line number assigned to the error
+     * @param columnNbr column number assigned to the error
+     * @param charNbr character number of the error
+     * @param errorMessage error message.
      */
     public ProofAsstException(final long lineNbr, final long columnNbr,
         final long charNbr, final String errorMessage)
@@ -60,11 +59,11 @@ public class ProofAsstException extends Exception {
     }
 
     /**
-     * Contructor, <code>ProofAsstException</code> with
-     * character number (offset + 1) and error message.
-     *
-     * @param   charNbr       character number of the error
-     * @param   errorMessage  error message.
+     * Contructor, {@code ProofAsstException} with character number (offset + 1)
+     * and error message.
+     * 
+     * @param charNbr character number of the error
+     * @param errorMessage error message.
      */
     public ProofAsstException(final long charNbr, final String errorMessage) {
         super(errorMessage);

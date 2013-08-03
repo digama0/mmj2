@@ -7,14 +7,14 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  TlPreferences.java  0.02 11/01/2011
+ * TlPreferences.java  0.02 11/01/2011
  *
- *  Version 0.01:
- *      - new.
+ * Version 0.01:
+ *     - new.
  *
- *  Nov-01-2011 - Version 0.02
- *      -->Modified for mmj2 Paths Enhancement
- *         -> added filePath argument to setMMTFolder()
+ * Nov-01-2011 - Version 0.02
+ *     -->Modified for mmj2 Paths Enhancement
+ *        -> added filePath argument to setMMTFolder()
  */
 
 package mmj.tl;
@@ -25,8 +25,7 @@ import mmj.lang.LogicalSystem;
 import mmj.lang.TheoremLoaderException;
 
 /**
- *  Holds user settings/preferences used by the
- *  Theorem Loader.
+ * Holds user settings/preferences used by the Theorem Loader.
  */
 public class TlPreferences {
 
@@ -46,9 +45,9 @@ public class TlPreferences {
     private String provableLogicStmtTypeParm;
 
     /**
-     *  Constructor for TlPreferences.
-     *  <p>
-     *  @param logicalSystem LogicalSystem object.
+     * Constructor for TlPreferences.
+     *
+     * @param logicalSystem LogicalSystem object.
      */
     public TlPreferences(final LogicalSystem logicalSystem) {
 
@@ -69,107 +68,104 @@ public class TlPreferences {
     }
 
     /**
-     *  Get the MMTFolder in use now. Constructor for TlPreferences.
-     *  <p>
-     *  @return MMTFolder in use now, which may be pointing to a
-     *          null File object if not yet specified.
+     * Get the MMTFolder in use now. Constructor for TlPreferences.
+     *
+     * @return MMTFolder in use now, which may be pointing to a null File object
+     *         if not yet specified.
      */
     public MMTFolder getMMTFolder() {
         return mmtFolder;
     }
 
     /**
-     *  Get the Dj Vars Option string.
-     *  <p>
-     *  @return Dj Vars Option string.
+     * Get the Dj Vars Option string.
+     *
+     * @return Dj Vars Option string.
      */
     public String getDjVarsOption() {
         return djVarsOption;
     }
 
     /**
-     *  Get the Dj Vars Merge Option flag.
-     *  <p>
-     *  @return the Dj Vars Merge Option flag.
+     * Get the Dj Vars Merge Option flag.
+     *
+     * @return the Dj Vars Merge Option flag.
      */
     public boolean getDjVarsMerge() {
         return djVarsMerge;
     }
 
     /**
-     *  Get the Dj Vars Replace Option flag.
-     *  <p>
-     *  @return the Dj Vars Replace Option flag.
+     * Get the Dj Vars Replace Option flag.
+     *
+     * @return the Dj Vars Replace Option flag.
      */
     public boolean getDjVarsReplace() {
         return djVarsReplace;
     }
 
     /**
-     *  Get the Dj Vars NoUpdate Option flag.
-     *  <p>
-     *  @return the Dj Vars NoUpdate Option flag.
+     * Get the Dj Vars NoUpdate Option flag.
+     *
+     * @return the Dj Vars NoUpdate Option flag.
      */
     public boolean getDjVarsNoUpdate() {
         return djVarsNoUpdate;
     }
 
     /**
-     *  Get the auditMessages flag.
-     *  <p>
-     *  @return auditMessages flag.
+     * Get the auditMessages flag.
+     *
+     * @return auditMessages flag.
      */
     public boolean getAuditMessages() {
         return auditMessages;
     }
 
     /**
-     *  Get the storeFormulasAsIs flag.
-     *  <p>
-     *  @return storeFormulasAsIs flag.
+     * Get the storeFormulasAsIs flag.
+     *
+     * @return storeFormulasAsIs flag.
      */
     public boolean getStoreFormulasAsIs() {
         return storeFormulasAsIs;
     }
 
     /**
-     *  Get the storeMMIndentAmt.
-     *  <p>
-     *  @return storeMMIndentAmt.
+     * Get the storeMMIndentAmt.
+     *
+     * @return storeMMIndentAmt.
      */
     public int getStoreMMIndentAmt() {
         return storeMMIndentAmt;
     }
 
     /**
-     *  Get the storeMMRightCol.
-     *  <p>
-     *  @return storeMMRightCol.
+     * Get the storeMMRightCol.
+     *
+     * @return storeMMRightCol.
      */
     public int getStoreMMRightCol() {
         return storeMMRightCol;
     }
 
     /**
-     *  Get the cached value of the Provable Logic Statement
-     *  Type string value.
-     *  <p>
-     *  @return provableLogicStmtTypeParm.
+     * Get the cached value of the Provable Logic Statement Type string value.
+     *
+     * @return provableLogicStmtTypeParm.
      */
     public String getProvableLogicStmtTypeParm() {
         return provableLogicStmtTypeParm;
     }
 
     /**
-     *  Validate and set the Dj Vars Option.
-     *  <p>
-     *  If valid the dvVarsMerge, djVarsReplace and
-     *  djVarsNoUpdate flags are set, as well as the
-     *  Dj Vars option itself. If invalid no updates
-     *  are made.
-     *  <p>
-     *  @param s Dj Vars Option string.
-     *  @return true if Dj Vars Option valid, else false.
+     * Validate and set the Dj Vars Option.
+     * <p>
+     * If valid the dvVarsMerge, djVarsReplace and djVarsNoUpdate flags are set,
+     * as well as the Dj Vars option itself. If invalid no updates are made.
+     *
+     * @param s Dj Vars Option string.
+     * @return true if Dj Vars Option valid, else false.
      */
     public boolean setDjVarsOption(final String s) {
         if (s == null)
@@ -219,13 +215,12 @@ public class TlPreferences {
     }
 
     /**
-     *  Validate and set the Audit Messages Option.
-     *  <p>
-     *  If valid the auditMessages flag is set.
-     *  If invalid, no updates are made.
-     *  <p>
-     *  @param s Audit Messages option.
-     *  @return true if Audit Messages Option valid, else false.
+     * Validate and set the Audit Messages Option.
+     * <p>
+     * If valid the auditMessages flag is set. If invalid, no updates are made.
+     *
+     * @param s Audit Messages option.
+     * @return true if Audit Messages Option valid, else false.
      */
     public boolean setAuditMessages(final String s) {
         if (s == null)
@@ -258,22 +253,22 @@ public class TlPreferences {
     }
 
     /**
-     *  Set the auditMessages flag.
-     *  <p>
-     *  @param b auditMessages flag.
+     * Set the auditMessages flag.
+     *
+     * @param b auditMessages flag.
      */
     public void setAuditMessages(final boolean b) {
         auditMessages = b;
     }
 
     /**
-     *  Validate and set the Store Formulas AsIs Option.
-     *  <p>
-     *  If valid the storeFormulasAsIs flag is set.
-     *  If invalid, no updates are made.
-     *  <p>
-     *  @param s Store Formulas AsIs option.
-     *  @return true if Store Formulas AsIs Option valid, else false.
+     * Validate and set the Store Formulas AsIs Option.
+     * <p>
+     * If valid the storeFormulasAsIs flag is set. If invalid, no updates are
+     * made.
+     *
+     * @param s Store Formulas AsIs option.
+     * @return true if Store Formulas AsIs Option valid, else false.
      */
     public boolean setStoreFormulasAsIs(final String s) {
         if (s == null)
@@ -306,22 +301,21 @@ public class TlPreferences {
     }
 
     /**
-     *  Set the storeFormulasAsIs flag.
-     *  <p>
-     *  @param b storeFormulasAsIs flag.
+     * Set the storeFormulasAsIs flag.
+     *
+     * @param b storeFormulasAsIs flag.
      */
     public void setStoreFormulasAsIs(final boolean b) {
         storeFormulasAsIs = b;
     }
 
     /**
-     *  Validate and set the Store MM Indent Amt Option.
-     *  <p>
-     *  If valid the storeMMIndentAmt is set.
-     *  If invalid, no updates are made.
-     *  <p>
-     *  @param s Store MM Indent Amt string.
-     *  @return true if Store MM Indent Amt Option valid, else false.
+     * Validate and set the Store MM Indent Amt Option.
+     * <p>
+     * If valid the storeMMIndentAmt is set. If invalid, no updates are made.
+     *
+     * @param s Store MM Indent Amt string.
+     * @return true if Store MM Indent Amt Option valid, else false.
      */
     public boolean setStoreMMIndentAmt(final String s) {
 
@@ -348,22 +342,21 @@ public class TlPreferences {
     }
 
     /**
-     *  Set the storeMMIndentAmt.
-     *  <p>
-     *  @param n storeMMIndentAmt.
+     * Set the storeMMIndentAmt.
+     *
+     * @param n storeMMIndentAmt.
      */
     public void setStoreMMIndentAmt(final int n) {
         storeMMIndentAmt = n;
     }
 
     /**
-     *  Validate and set the Store MM Right Col Option.
-     *  <p>
-     *  If valid the storeMMRightCol is set.
-     *  If invalid, no updates are made.
-     *  <p>
-     *  @param s Store MM Right Col string.
-     *  @return true if Store MM Right Col Option valid, else false.
+     * Validate and set the Store MM Right Col Option.
+     * <p>
+     * If valid the storeMMRightCol is set. If invalid, no updates are made.
+     *
+     * @param s Store MM Right Col string.
+     * @return true if Store MM Right Col Option valid, else false.
      */
     public boolean setStoreMMRightCol(final String s) {
 
@@ -390,23 +383,22 @@ public class TlPreferences {
     }
 
     /**
-     *  Set the storeMMRightCol.
-     *  <p>
-     *  @param n storeMMRightCol.
+     * Set the storeMMRightCol.
+     *
+     * @param n storeMMRightCol.
      */
     public void setStoreMMRightCol(final int n) {
         storeMMRightCol = n;
     }
 
     /**
-     *  Validate and set the Provable Logic Stmt Type Parm.
-     *  <p>
-     *  If valid the provableLogicStmtTypeParm is set.
-     *  If invalid, no updates are made.
-     *  <p>
-     *  @param s Provable Logic Stmt Type Parm string.
-     *  @return true if Provable Logic Stmt Type Parm. valid,
-     *          else false.
+     * Validate and set the Provable Logic Stmt Type Parm.
+     * <p>
+     * If valid the provableLogicStmtTypeParm is set. If invalid, no updates are
+     * made.
+     *
+     * @param s Provable Logic Stmt Type Parm string.
+     * @return true if Provable Logic Stmt Type Parm. valid, else false.
      */
     public boolean setProvableLogicStmtTypeParm(final String s) {
         if (s == null || s.length() == 0)
@@ -418,15 +410,13 @@ public class TlPreferences {
     }
 
     /**
-     *  Set the MMT Folder using a pathname String.
-     *  <p>
-     *  If valid the mmtFolder is set.
-     *  If invalid, no updates are made.
-     *  <p>
-     *  @param filePath path for s. May be null, absolute
-     *           or relative.
-     *  @param s MMT Folder pathname, absolute or relative.
-     *  @return null if no errors, otherwise error message string.
+     * Set the MMT Folder using a pathname String.
+     * <p>
+     * If valid the mmtFolder is set. If invalid, no updates are made.
+     *
+     * @param filePath path for s. May be null, absolute or relative.
+     * @param s MMT Folder pathname, absolute or relative.
+     * @return null if no errors, otherwise error message string.
      */
     public String setMMTFolder(final File filePath, final String s) {
         try {
@@ -439,13 +429,12 @@ public class TlPreferences {
     }
 
     /**
-     *  Set the MMT Folder using a File object.
-     *  <p>
-     *  If valid the mmtFolder is set.
-     *  If invalid, no updates are made.
-     *  <p>
-     *  @param file MMT Folder File object.
-     *  @return null if no errors, otherwise error message string.
+     * Set the MMT Folder using a File object.
+     * <p>
+     * If valid the mmtFolder is set. If invalid, no updates are made.
+     *
+     * @param file MMT Folder File object.
+     * @return null if no errors, otherwise error message string.
      */
     public String setMMTFolder(final File file) {
         try {

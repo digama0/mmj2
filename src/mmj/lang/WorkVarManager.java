@@ -7,11 +7,10 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  WorkVarManager.java  0.01 08/01/2007
+ * WorkVarManager.java  0.01 08/01/2007
  *
- *  Aug-1-2007:
- *      --> new!
- *
+ * Aug-1-2007:
+ *     --> new!
  */
 
 package mmj.lang;
@@ -19,12 +18,12 @@ package mmj.lang;
 import java.util.*;
 
 import mmj.mmio.Statementizer;
+import mmj.pa.StepUnifier;
 import mmj.verify.Grammar;
 
 /**
- *  WorkVarManager is a "helper" class that is used to
- *  define, declare, alloc and maintain state information
- *  about a set of Work Variables.
+ * WorkVarManager is a "helper" class that is used to define, declare, alloc and
+ * maintain state information about a set of Work Variables.
  */
 public class WorkVarManager {
 
@@ -59,18 +58,15 @@ public class WorkVarManager {
     private int seqNbrForMObj;
 
     /**
-     *
-     *  Sole constructor for WorkVarManager.
-     *  <p>
-     *  Does nothing except allocate the Arraylists
-     *  to hold input definitions. Note therefore
-     *  that the WorkVarManager object is not ready
-     *  for use by ProofAsst or elsewhere until
-     *  the Work Variables are actually declared,
-     *  and a NullPointerException will result if
-     *  access is attempted before then.
-     *
-     *  @param grammar Grammar object for loaded .mm file.
+     * Sole constructor for WorkVarManager.
+     * <p>
+     * Does nothing except allocate the Arraylists to hold input definitions.
+     * Note therefore that the WorkVarManager object is not ready for use by
+     * ProofAsst or elsewhere until the Work Variables are actually declared,
+     * and a NullPointerException will result if access is attempted before
+     * then.
+     * 
+     * @param grammar Grammar object for loaded .mm file.
      */
     public WorkVarManager(final Grammar grammar) {
         final int len = grammar.getVarHypTypSet().size();
@@ -81,42 +77,35 @@ public class WorkVarManager {
     }
 
     /**
-     *  Returns true if the Work Variables have been
-     *  declared.
-     *  <p>
-     *  If no Work Variable definitions are input and
-     *  the Proof Assistant is instantiated prior to
-     *  declaration of Work Variables, ProofAsstBoss.java
-     *  will declare the Work Variables using the default
-     *  definitions. Which is why we need this function...
-     *  <p>
-     *  @return true if Work Variables declared yet.
-     *  <p>
+     * Returns true if the Work Variables have been declared.
+     * <p>
+     * If no Work Variable definitions are input and the Proof Assistant is
+     * instantiated prior to declaration of Work Variables, ProofAsstBoss.java
+     * will declare the Work Variables using the default definitions. Which is
+     * why we need this function...
+     * 
+     * @return true if Work Variables declared yet.
+     *         <p>
      */
     public boolean areWorkVarsDeclared() {
         return areWorkVarsDeclared;
     }
 
     /**
-     *  Define the Work Variables to be used for a given
-     *  grammatical type code.
-     *  <p>
-     *  The definitions are stored separately from the
-     *  tables constructed by "Declare". This allows
-     *  mixing of definitions and default values for
-     *  Work Variables.
-     *
-     *  @param grammar Grammar object for loaded .mm file.
-     *  @param grammaticalTypCdIn String holding the Cnst
-     *                 used as a Type Code (e.g. "wff").
-     *  @param workVarPrefixIn String holding the prefix to
-     *                 be used with a numeric suffix to name
-     *                 Work Variables of a given Type.
-     *  @param nbrWorkVarsIn number of Work Variables to declare
-     *                 for this Type Code.
-     *
-     *  @throws VerifyException if individual field values are
-     *                 invalid.
+     * Define the Work Variables to be used for a given grammatical type code.
+     * <p>
+     * The definitions are stored separately from the tables constructed by
+     * "Declare". This allows mixing of definitions and default values for Work
+     * Variables.
+     * 
+     * @param grammar Grammar object for loaded .mm file.
+     * @param grammaticalTypCdIn String holding the Cnst used as a Type Code
+     *            (e.g. "wff").
+     * @param workVarPrefixIn String holding the prefix to be used with a
+     *            numeric suffix to name Work Variables of a given Type.
+     * @param nbrWorkVarsIn number of Work Variables to declare for this Type
+     *            Code.
+     * @throws VerifyException if individual field values are invalid.
      */
     public void defineWorkVarType(final Grammar grammar,
         final String grammaticalTypCdIn, final String workVarPrefixIn,
@@ -143,30 +132,24 @@ public class WorkVarManager {
     }
 
     /**
-     *  Declare the Work Variables that have been defined.
-     *  <p>
-     *  The input definitions and default values for each
-     *  grammatical Type Code are used to create the Work
-     *  Variable objects and finalize the WorkVarManager
-     *  object for actual use.
-     *  <p>
-     *  Note that final validation checks are performed to
-     *  ensure that there are no duplicate Var or VarHyp
-     *  names, either among the Work Variable objects or
-     *  the other symbols and statements defined in the
-     *  LogicalSystem for the input .mm file. This means
-     *  checking for duplicate Work Var prefixes as well
-     *  as checking each WorkVar and WorkVarHyp name
-     *  against the LogicalSystem's Symbol and Statement
-     *  tables.
-     *  <p>
-     *  @param grammar Grammar object for loaded .mm file.
-     *  @param logicalSystem LogicalSystem for loaded .mm file.
-     *
-     *  @throws VerifyException if duplicate Var or VarHyp
-     *                 names result or if there is a conflict
-     *                 with the Symbol and Statement table
-     *                 namespaces.
+     * Declare the Work Variables that have been defined.
+     * <p>
+     * The input definitions and default values for each grammatical Type Code
+     * are used to create the Work Variable objects and finalize the
+     * WorkVarManager object for actual use.
+     * <p>
+     * Note that final validation checks are performed to ensure that there are
+     * no duplicate Var or VarHyp names, either among the Work Variable objects
+     * or the other symbols and statements defined in the LogicalSystem for the
+     * input .mm file. This means checking for duplicate Work Var prefixes as
+     * well as checking each WorkVar and WorkVarHyp name against the
+     * LogicalSystem's Symbol and Statement tables.
+     * 
+     * @param grammar Grammar object for loaded .mm file.
+     * @param logicalSystem LogicalSystem for loaded .mm file.
+     * @throws VerifyException if duplicate Var or VarHyp names result or if
+     *             there is a conflict with the Symbol and Statement table
+     *             namespaces.
      */
     public void declareWorkVars(final Grammar grammar,
         final LogicalSystem logicalSystem) throws VerifyException
@@ -237,14 +220,12 @@ public class WorkVarManager {
     }
 
     /**
-     *  Validates an input string as being a valid Type Code
-     *  for Work Variables.
-     *
-     *  @param grammar Grammar object for loaded .mm file.
-     *  @param grammaticalTypCdIn String Type Code (Cnst)
-     *  @return Cnst Type Code.
-     *
-     *  @throws VerifyException if input Type Code invalid.
+     * Validates an input string as being a valid Type Code for Work Variables.
+     * 
+     * @param grammar Grammar object for loaded .mm file.
+     * @param grammaticalTypCdIn String Type Code (Cnst)
+     * @return Cnst Type Code.
+     * @throws VerifyException if input Type Code invalid.
      */
     public Cnst editGrammaticalTypCd(final Grammar grammar,
         final String grammaticalTypCdIn) throws VerifyException
@@ -265,18 +246,15 @@ public class WorkVarManager {
     }
 
     /**
-     *  Validates an input string as being a valid WorkVar
-     *  Prefix.
-     *  <p>
-     *  Duplicate checking is not done here, just checking
-     *  to make sure that the input prefix characters are
-     *  valid Metamath "math symbols".
-     *  <p>
-     *  @param workVarPrefixIn String of Metamath math symbols.
-     *  @return workVarPrefix string, trimmed.
-     *
-     *  @throws VerifyException if workVarPrefixIn has non
-     *          math symbols or is null or empty.
+     * Validates an input string as being a valid WorkVar Prefix.
+     * <p>
+     * Duplicate checking is not done here, just checking to make sure that the
+     * input prefix characters are valid Metamath "math symbols".
+     * 
+     * @param workVarPrefixIn String of Metamath math symbols.
+     * @return workVarPrefix string, trimmed.
+     * @throws VerifyException if workVarPrefixIn has non math symbols or is
+     *             null or empty.
      */
     public String editWorkVarPrefix(final String workVarPrefixIn)
         throws VerifyException
@@ -297,18 +275,16 @@ public class WorkVarManager {
     }
 
     /**
-     *  Validates an input string specifying the number of
-     *  WorkVar objects to be declared for a specific Type Code.
-     *  <p>
-     *  Basically this is just a range check: greater than
-     *  some number (9) and less than some other number (999).
-     *  <p>
-     *  @param nbrWorkVarsIn Number of WorkVar objects for a
-     *                       given Type Code.
-     *  @return nbrWorkVars input int converted to Integer
-     *                       (for storage in ArrayList).
-     *
-     *  @throws VerifyException if nbrWorkVarsIn out of range.
+     * Validates an input string specifying the number of WorkVar objects to be
+     * declared for a specific Type Code.
+     * <p>
+     * Basically this is just a range check: greater than some number (9) and
+     * less than some other number (999).
+     * 
+     * @param nbrWorkVarsIn Number of WorkVar objects for a given Type Code.
+     * @return nbrWorkVars input int converted to Integer (for storage in
+     *         ArrayList).
+     * @throws VerifyException if nbrWorkVarsIn out of range.
      */
     public Integer editNbrWorkVars(final int nbrWorkVarsIn)
         throws VerifyException
@@ -326,15 +302,15 @@ public class WorkVarManager {
     }
 
     /**
-     *  Returns true if input Work Var is allocated.
-     *  <p>
-     *  Note: this is a weird function, since how could
-     *        an unallocated WorkVar be input to see
-     *        whether or not it is allocates? BUT...
-     *        consult StepUnifier.finalizeAndLoadAssrtSubst()
-     *        for explanatory remarks...
-     *
-     *  @return true if input Work Var is allocated.
+     * Returns true if input Work Var is allocated.
+     * <p>
+     * Note: this is a weird function, since how could an unallocated WorkVar be
+     * input to see whether or not it is allocates? BUT... consult
+     * {@link StepUnifier#finalizeAndLoadAssrtSubst()} for explanatory
+     * remarks...
+     * 
+     * @param workVar the Work Var to check
+     * @return true if input Work Var is allocated.
      */
     public boolean isAllocated(final WorkVar workVar) {
         return allocated[workVar.getActiveVarHyp().getTyp().workVarTypIndex][workVar.workVarIndex];
@@ -342,18 +318,16 @@ public class WorkVarManager {
     }
 
     /**
-     *  Deallocates Work Vars that have updates and
-     *  eliminates chains of WorkVar updates so that
-     *  a Work Var update subtree contains only
-     *  non-updated Work Vars.
-     *  <p>
-     *  Processing is by Type Code, in reverse order
-     *  by Work Var number within Type Code so that
-     *  subsequent alloc() calls begin with the
-     *  lowest deallocated Work Var numbers.
-     *  <p>
-     *  Example: WorkVar "A" where = B and B = C
-     *  results in update clone of A.paSubst: A = C.
+     * Deallocates Work Vars that have updates and eliminates chains of WorkVar
+     * updates so that a Work Var update subtree contains only non-updated Work
+     * Vars.
+     * <p>
+     * Processing is by Type Code, in reverse order by Work Var number within
+     * Type Code so that subsequent alloc() calls begin with the lowest
+     * deallocated Work Var numbers.
+     * <p>
+     * Example: WorkVar "A" where = B and B = C results in update clone of
+     * A.paSubst: A = C.
      */
     public void resolveWorkVarUpdates() {
 
@@ -377,24 +351,19 @@ public class WorkVarManager {
     }
 
     /**
-     *  Allocates the WorkVar specified by the input
-     *  token if necessary assuming it is a valid
-     *  WorkVar token string.
-     *  <p>
-     *  If the WorkVar is already allocated it just
-     *  returns the WorkVar instance.
-     *  <p>
-     *  The input String must consist of a prefix
-     *  which matches one of the specified WorkVar
-     *  prefixes, followed by a positive integer
-     *  within the range of WorkVar numbers specified
-     *  for the Type Code corresponding to the
-     *  prefix.
-     *  <p>
-     *  @param workVarIn token specifying a WorkVar (id)
-     *  @return allocated WorkVar or null.
-     *  @throws IllegalArgument exception if workVarIn
-     *                 is null or an empty String.
+     * Allocates the WorkVar specified by the input token if necessary assuming
+     * it is a valid WorkVar token string.
+     * <p>
+     * If the WorkVar is already allocated it just returns the WorkVar instance.
+     * <p>
+     * The input String must consist of a prefix which matches one of the
+     * specified WorkVar prefixes, followed by a positive integer within the
+     * range of WorkVar numbers specified for the Type Code corresponding to the
+     * prefix.
+     * 
+     * @param workVarIn token specifying a WorkVar (id)
+     * @return allocated WorkVar or null.
+     * @throws IllegalArgumentException if workVarIn is null or an empty String.
      */
     public WorkVar alloc(final String workVarIn) {
 
@@ -431,12 +400,12 @@ public class WorkVarManager {
     }
 
     /**
-     *  Allocates a given WorkVar.
-     *  <p>
-     *  It is hard to envision using this function...
-     *  <p>
-     *  @param workVar to be allocated.
-     *  @return allocated WorkVar.
+     * Allocates a given WorkVar.
+     * <p>
+     * It is hard to envision using this function...
+     * 
+     * @param workVar to be allocated.
+     * @return allocated WorkVar.
      */
     public WorkVar alloc(final WorkVar workVar) {
 
@@ -446,27 +415,25 @@ public class WorkVarManager {
     }
 
     /**
-     *  Allocates a new WorkVar for the input Type Code
-     *  and returns the corresponding WorkVarHyp.
-     *  <p>
-     *  @param typ Cnst Type Code of WorkVar to be allocated.
-     *  @return allocated WorkVar's WorkVarHyp.
-     *  @throws VerifyException if no remaining WorkVar
-     *          objects are available for use with the given
-     *          Type Code.
+     * Allocates a new WorkVar for the input Type Code and returns the
+     * corresponding WorkVarHyp.
+     * 
+     * @param typ Cnst Type Code of WorkVar to be allocated.
+     * @return allocated WorkVar's WorkVarHyp.
+     * @throws VerifyException if no remaining WorkVar objects are available for
+     *             use with the given Type Code.
      */
     public WorkVarHyp allocWorkVarHyp(final Cnst typ) throws VerifyException {
         return (WorkVarHyp)alloc(typ).getActiveVarHyp();
     }
 
     /**
-     *  Allocates a new WorkVar for the input Type Code.
-     *  <p>
-     *  @param typ Cnst Type Code of WorkVar to be allocated.
-     *  @return allocated WorkVar.
-     *  @throws VerifyException if no remaining WorkVar
-     *          objects are available for use with the given
-     *          Type Code.
+     * Allocates a new WorkVar for the input Type Code.
+     * 
+     * @param typ Cnst Type Code of WorkVar to be allocated.
+     * @return allocated WorkVar.
+     * @throws VerifyException if no remaining WorkVar objects are available for
+     *             use with the given Type Code.
      */
     public WorkVar alloc(final Cnst typ) throws VerifyException {
 
@@ -498,7 +465,7 @@ public class WorkVarManager {
     }
 
     /**
-     *  Deallocates all Work Variables.
+     * Deallocates all Work Variables.
      */
     public void deallocAll() {
 
@@ -512,9 +479,9 @@ public class WorkVarManager {
     }
 
     /**
-     *  Deallocates a WorkVar given a WorkVarHyp
-     *  <p>
-     *  @param varHyp workVarHyp to be deallocated.
+     * Deallocates a WorkVar given a WorkVarHyp
+     * 
+     * @param varHyp workVarHyp to be deallocated.
      */
     public void dealloc(final VarHyp varHyp) {
 
@@ -523,9 +490,9 @@ public class WorkVarManager {
     }
 
     /**
-     *  Deallocates a WorkVar.
-     *  <p>
-     *  @param workVar to be deallocated.
+     * Deallocates a WorkVar.
+     * 
+     * @param workVar to be deallocated.
      */
     public void dealloc(final WorkVar workVar) {
 
@@ -534,9 +501,9 @@ public class WorkVarManager {
     }
 
     /*
-     *  Note: prevAllocIndex set to the variable PRIOR TO
-     *        the one we are deallocating -- so that the
-     *        next allocation will reuse this one.
+     * Note: prevAllocIndex set to the variable PRIOR TO
+     *       the one we are deallocating -- so that the
+     *       next allocation will reuse this one.
      */
     private void dealloc(final int i, final int j) {
         allocated[i][j] = false;
@@ -544,16 +511,16 @@ public class WorkVarManager {
     }
 
     /**
-     *  Sets the value of prevAllocIndex for a Type Code.
-     *  <p>
-     *  In other words, if we input '1' for &W1, then the
-     *  next allocation will be &W2.
-     *  <p>
-     *  If the input prevAllocNbr is invalid a default
-     *  setting of zero is used instead.
-     *  <p>
-     *  @param typ Cnst Type Code of prevAllocIndex to set.
-     *  @param prevAllocNbr is one greater than prevAllocIndex
+     * Sets the value of prevAllocIndex for a Type Code.
+     * <p>
+     * In other words, if we input '1' for &W1, then the next allocation will be
+     * &W2.
+     * <p>
+     * If the input prevAllocNbr is invalid a default setting of zero is used
+     * instead.
+     * 
+     * @param typ Cnst Type Code of prevAllocIndex to set.
+     * @param prevAllocNbr is one greater than prevAllocIndex
      */
     public void setPrevAllocNbr(final Cnst typ, final int prevAllocNbr) {
         setPrevAllocNbr(typ.workVarTypIndex, prevAllocNbr);
@@ -566,11 +533,10 @@ public class WorkVarManager {
     }
 
     /**
-     *  Checks to make sure that the array of defined plus
-     *  default WorkVar prefix Strings contains no duplicates.
-     *
-     *  @throws VerifyException if duplicate WorkVar prefixes
-     *                          specified.
+     * Checks to make sure that the array of defined plus default WorkVar prefix
+     * Strings contains no duplicates.
+     * 
+     * @throws VerifyException if duplicate WorkVar prefixes specified.
      */
     private void checkForDuplicateWorkVarPrefixes() throws VerifyException {
 
@@ -589,12 +555,12 @@ public class WorkVarManager {
     }
 
     /**
-     *  Checks to make sure that the array of WorkVar objects
-     *  is disjoint with the Symbol and Statement tables.
-     *
-     *  @throws VerifyException if a WorkVar is found with the
-     *                          same Id as a Var or Stmt in the
-     *                          LogicalSystem for the input file.
+     * Checks to make sure that the array of WorkVar objects is disjoint with
+     * the Symbol and Statement tables.
+     * 
+     * @param logicalSystem the LogicalSystem
+     * @throws VerifyException if a WorkVar is found with the same Id as a Var or
+     *             Stmt in the LogicalSystem for the input file.
      */
     private void checkWorkVarNamespaceUniqueness(
         final LogicalSystem logicalSystem) throws VerifyException

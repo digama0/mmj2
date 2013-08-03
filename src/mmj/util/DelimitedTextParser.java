@@ -6,114 +6,106 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  DelimitedTextParser.java  0.02 08/24/2005
+ * DelimitedTextParser.java  0.02 08/24/2005
  */
 
 package mmj.util;
 
 /**
- *  Class <code>DelimitedTextParser</code> parses a line of delimited
- *  text input as a String.
- *  <p>
- *  DelimitedTextParser is intended for use with
- *  ASCII-delimited text files, which typically contain one
- *  line per record and contain text fields delimited by commas
- *  (',') and enclosed by quotes ('"').  A string may contain
- *  both quoted and unquoted fields, assuming that none of the
- *  unquoted fields contain occurrences of the delimiter
- *  character.  Input text may contain any Unicode characters.
- *  Quoting may be disabled if the input data does not contain
- *  fields enclosed by quotes.  Note that the end of the
- *  string is treated as a delimiter (the last field should not
- *  be terminated by a delimiter!)
- *  <p>
- *  Returned output fields consist of the characters between
- *  delimiters and quotes (the delimiter and quote characters
- *  are not output).  Empty fields (adjacent delimiters) are
- *  returned as zero-length Strings (example: "a,,b" will
- *  return "a", "", then "b").
- *  <p>
- *  <ol>Parse Rules:
- *  <li> A line containing N delimiters contains N + 1 fields
- *       by definition.
- *  <li> A null string is returned from nextField after the N+1th
- *       field has been returned; this indicates End of Line, and
- *       a subsequent call to nextField will result in an
- *       IllegalArgumentException.</li>
- *  <li> If quotes are used for a field then there must be a pair
- *       of quotes, left and right, surrounding the field text and
- *       each must be adjacent to a delimiter or at the start or
- *       end of the line -- if another character occurs between a
- *       delimiter and a quote then the quote will be treated as
- *       data and returned as part of the parsed field (example:
- *       ('A,B"C",D') is a line containing 3 fields, 'A',
- *       'B"C"', and 'D').</li>
- *  <li> Text inside paired quotes is returned from nextField,
- *       including occurrences of the defined delimiter character;
- *       if quoting is disabled then quote characters are always
- *       treated as data.</li>
- *  <li> An empty string is returned from nextField if there are
- *       no characters between delimiters or paired quotes, or
- *       if the line itself is an empty string (thus, a line
- *       consisting of just a single delimiter character contains
- *       two empty-string fields, by definition.)</li>
- *  <li> The defined quote and delimiter characters may be changed
- *       at any time (enabling parsing if say, the first field on a
- *       line is 'quoted' using '|' characters but the remaining
- *       fields are quoted using '"' characters,) the calling method
- *  </ol>
- *
+ * Class {@code DelimitedTextParser} parses a line of delimited text input as a
+ * String.
+ * <p>
+ * DelimitedTextParser is intended for use with ASCII-delimited text files,
+ * which typically contain one line per record and contain text fields delimited
+ * by commas (',') and enclosed by quotes ('"'). A string may contain both
+ * quoted and unquoted fields, assuming that none of the unquoted fields contain
+ * occurrences of the delimiter character. Input text may contain any Unicode
+ * characters. Quoting may be disabled if the input data does not contain fields
+ * enclosed by quotes. Note that the end of the string is treated as a delimiter
+ * (the last field should not be terminated by a delimiter!)
+ * <p>
+ * Returned output fields consist of the characters between delimiters and
+ * quotes (the delimiter and quote characters are not output). Empty fields
+ * (adjacent delimiters) are returned as zero-length Strings (example: "a,,b"
+ * will return "a", "", then "b").
+ * <p>
+ * <ol>
+ * Parse Rules:
+ * <li>A line containing N delimiters contains N + 1 fields by definition.
+ * <li>A null string is returned from nextField after the N+1th field has been
+ * returned; this indicates End of Line, and a subsequent call to nextField will
+ * result in an IllegalArgumentException.</li>
+ * <li>If quotes are used for a field then there must be a pair of quotes, left
+ * and right, surrounding the field text and each must be adjacent to a
+ * delimiter or at the start or end of the line -- if another character occurs
+ * between a delimiter and a quote then the quote will be treated as data and
+ * returned as part of the parsed field (example: ('A,B"C",D') is a line
+ * containing 3 fields, 'A', 'B"C"', and 'D').</li>
+ * <li>Text inside paired quotes is returned from nextField, including
+ * occurrences of the defined delimiter character; if quoting is disabled then
+ * quote characters are always treated as data.</li>
+ * <li>An empty string is returned from nextField if there are no characters
+ * between delimiters or paired quotes, or if the line itself is an empty string
+ * (thus, a line consisting of just a single delimiter character contains two
+ * empty-string fields, by definition.)</li>
+ * <li>The defined quote and delimiter characters may be changed at any time
+ * (enabling parsing if say, the first field on a line is 'quoted' using '|'
+ * characters but the remaining fields are quoted using '"' characters,) the
+ * calling method
+ * </ol>
  */
 public class DelimitedTextParser {
 
     /**
-     *  The delimiter character in use.
+     * The delimiter character in use.
      */
     private char delimiter = UtilConstants.RUNPARM_FIELD_DELIMITER_DEFAULT;
 
     /**
-     *  The quote character in use.
+     * The quote character in use.
      */
     private char quoter = UtilConstants.RUNPARM_FIELD_QUOTER_DEFAULT;
 
     /**
-     *  Quoted field parsing enabled flag.
+     * Quoted field parsing enabled flag.
      */
     private boolean quoterEnabled = true;
 
     /**
-     *  The line being parsed.
+     * The line being parsed.
      */
     private String line = null;
 
     /**
-     *  Offset of the next character to be parsed.
+     * Offset of the next character to be parsed.
      */
     private int next = 0;
 
     /**
-     *  Offset of the last character to be parsed (line length).
+     * Offset of the last character to be parsed (line length).
      */
     private int max = -1;
 
     /**
-     *  Output field.
+     * Output field.
      */
     private String fieldOut = null;
 
     /**
-     *  End of Line flag.
+     * End of Line flag.
      */
     private boolean reachedEOL = false;
 
     /**
-     *  Default constructor.
+     * Default constructor.
      */
     public DelimitedTextParser() {}
 
     /**
-     *  Constructs parser for a String using default parse
-     *  parameters.
+     * Constructs parser for a String using default parse parameters.
+     * 
+     * @param lineIn String to be parsed.
+     * @throws IllegalArgumentException if an error occurred
      */
     public DelimitedTextParser(final String lineIn)
         throws IllegalArgumentException
@@ -122,14 +114,12 @@ public class DelimitedTextParser {
     }
 
     /**
-     *  Constructs parser with specified quoter and delimiter
-     *  parameters (note: quoting is enabled by default).
-     *
-     *  @param  fieldDelimiter Delimiter character.
-     *  @param  fieldQuoter Quote character used to enclose fields.
-     *
-     *  @throws NullPointerException if the input String
-     *          reference is null.
+     * Constructs parser with specified quoter and delimiter parameters (note:
+     * quoting is enabled by default).
+     * 
+     * @param fieldDelimiter Delimiter character.
+     * @param fieldQuoter Quote character used to enclose fields.
+     * @throws NullPointerException if the input String reference is null.
      */
     public DelimitedTextParser(final char fieldDelimiter, final char fieldQuoter)
     {
@@ -138,15 +128,14 @@ public class DelimitedTextParser {
     }
 
     /**
-     *  Constructs parser for a String using specified parse
-     *  parameters (note: quoting is enabled by default).
-     *
-     *  @param  lineIn String to be parsed.
-     *  @param  fieldDelimiter Delimiter character.
-     *  @param  fieldQuoter Quote character used to enclose fields.
-     *
-     *  @throws NullPointerException if the input String
-     *          reference is null.
+     * Constructs parser for a String using specified parse parameters (note:
+     * quoting is enabled by default).
+     * 
+     * @param lineIn String to be parsed.
+     * @param fieldDelimiter Delimiter character.
+     * @param fieldQuoter Quote character used to enclose fields.
+     * @throws IllegalArgumentException if an error occurred
+     * @throws NullPointerException if the input String reference is null.
      */
     public DelimitedTextParser(final String lineIn, final char fieldDelimiter,
         final char fieldQuoter) throws IllegalArgumentException
@@ -157,13 +146,12 @@ public class DelimitedTextParser {
     }
 
     /**
-     *  Loads a new String into an existing parser and prepares
-     *  the parse object for parsing the first field of the string.
-     *
-     *  @param  lineIn String to be parsed.
-     *
-     *  @throws NullPointerException if the input String
-     *          reference is null.
+     * Loads a new String into an existing parser and prepares the parse object
+     * for parsing the first field of the string.
+     * 
+     * @param lineIn String to be parsed.
+     * @throws IllegalArgumentException if an error occurred
+     * @throws NullPointerException if the input String reference is null.
      */
     public void setParseString(final String lineIn)
         throws IllegalArgumentException
@@ -180,7 +168,7 @@ public class DelimitedTextParser {
 
     /**
      * Returns the original line being parsed.
-     *
+     * 
      * @return line String to be parsed.
      */
     public String getParseString() {
@@ -189,17 +177,16 @@ public class DelimitedTextParser {
 
     /**
      * Enables or disables (turns on/off) quote parsing.
-     *
-     * @param quoterEnabled Set to true for enabled or false for
-     *        disabled.
+     * 
+     * @param quoterEnabled Set to true for enabled or false for disabled.
      */
     public void setQuoterEnabled(final boolean quoterEnabled) {
         this.quoterEnabled = quoterEnabled;
     }
 
     /**
-     * Resets the parsing parameters to their default values:
-     * delimiter = comma, quoter = quote, quoter is enabled.
+     * Resets the parsing parameters to their default values: delimiter = comma,
+     * quoter = quote, quoter is enabled.
      */
     public void resetParseDefaults() {
         delimiter = UtilConstants.RUNPARM_FIELD_DELIMITER_DEFAULT;
@@ -210,7 +197,7 @@ public class DelimitedTextParser {
 
     /**
      * Sets the parse delimiter to a specified character.
-     *
+     * 
      * @param delimiter the field delimiter character.
      */
     public void setParseDelimiter(final char delimiter) {
@@ -218,43 +205,42 @@ public class DelimitedTextParser {
     }
 
     /**
-     *  Returns the parse delimiter character
-     *
-     *  @return parse delimiter character
+     * Returns the parse delimiter character
+     * 
+     * @return parse delimiter character
      */
     public char getParseDelimiter() {
         return delimiter;
     }
 
     /**
-     *  Sets the parse quoter to a specified character.
-     *
-     *  @param quoter character that encloses input fields.
+     * Sets the parse quoter to a specified character.
+     * 
+     * @param quoter character that encloses input fields.
      */
     public void setParseQuoter(final char quoter) {
         this.quoter = quoter;
     }
 
     /**
-     *  Returns the parse quote character
-     *
-     *  @return parse quote character
+     * Returns the parse quote character
+     * 
+     * @return parse quote character
      */
     public char getParseQuoter() {
         return quoter;
     }
 
     /**
-     *  Returns the next field from the input String.
-     *
-     *  @return String the next field parsed from the input String
-     *          or null if there are no more fields in the String.
-     *
-     *  @throws IllegalArgumentException thrown if
-     *          the string to be parsed is not correctly formatted
-     *          (for example, unmatched quote characters) or if
-     *          nextField invoked again after reaching the end of the
-     *          line.
+     * Returns the next field from the input String.
+     * 
+     * @return String the next field parsed from the input String or null if
+     *         there are no more fields in the String.
+     * @throws IllegalArgumentException thrown if the string to be parsed is not
+     *             correctly formatted (for example, unmatched quote characters)
+     *             or if nextField invoked again after reaching the end of the
+     *             line.
+     * @throws IllegalStateException if an error occurred
      */
     public String nextField() throws IllegalArgumentException,
         IllegalStateException
@@ -307,9 +293,9 @@ public class DelimitedTextParser {
     }
 
     /**
-     *  Test code -- just run, requires no command line params.
-     *
-     *  @param args not used.
+     * Test code -- just run, requires no command line params.
+     * 
+     * @param args not used.
      */
     public static void main(final String[] args) {
         /*    test cases:

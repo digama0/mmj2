@@ -7,62 +7,60 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  ProofAsstBoss.java  0.10 11/01/2011
+ * ProofAsstBoss.java  0.10 11/01/2011
  *
- *  Version 0.02:
- *      - New RunParms to support Proof Assistant "Derive" feature:
- *          - MaxUnifyAlternates
- *          - Dummy Var Prefix
+ * Version 0.02:
+ *     - New RunParms to support Proof Assistant "Derive" feature:
+ *         - MaxUnifyAlternates
+ *         - Dummy Var Prefix
  *
- *  Sep-03-2006:
- *      -->Add TMFF stuff
+ * Sep-03-2006:
+ *     -->Add TMFF stuff
  *
- *  Varsion 0.04 - 06/01/2007
- *      -->Modify to not validate Font Family Name
- *      -->Added ProofAsstDjVarsSoftErrors RunParm
+ * Version 0.04 - 06/01/2007
+ *     -->Modify to not validate Font Family Name
+ *     -->Added ProofAsstDjVarsSoftErrors RunParm
  *
- *  Varsion 0.05 - 08/01/2007
- *      -->Added code to get/init workVarManager instance
- *         and add it to ProofAsstPreferences before
- *         returning a ProofAsst instance in getProofAsst().
- *      -->remove Dummy Var processing (deprecate RunParm too).
- *      -->Added "AsciiRetest" option to BatchTest RunParm
+ * Version 0.05 - 08/01/2007
+ *     -->Added code to get/init workVarManager instance
+ *        and add it to ProofAsstPreferences before
+ *        returning a ProofAsst instance in getProofAsst().
+ *     -->remove Dummy Var processing (deprecate RunParm too).
+ *     -->Added "AsciiRetest" option to BatchTest RunParm
  *
+ * Version 0.06 - 11/01/2007
+ *     - Add "ProofAsstTextRows"            RunParm
+ *     - Add "ProofAsstErrorMessageRows"    RunParm
+ *     - Add "ProofAsstErrorMessageColumns" RunParm
+ *     - Add "ProofAsstTextAtTop"           RunParm
  *
- *  Varsion 0.06 - 11/01/2007
- *      - Add "ProofAsstTextRows"            RunParm
- *      - Add "ProofAsstErrorMessageRows"    RunParm
- *      - Add "ProofAsstErrorMessageColumns" RunParm
- *      - Add "ProofAsstTextAtTop"           RunParm
+ * Version 0.07 - 02/01/2008
+ *     - Add "ProofAsstIncompleteStepCursor"        RunParm
+ *     - Add "ProofAsstOutputCursorInstrumentation" RunParm
+ *     - Add "ProofAsstAutoReformat"                RunParm
  *
+ * Version 0.08 - 03/01/2008
+ *     - Add "StepSelectorMaxResults"               RunParm
+ *     - Add "StepSelectorShowSubstitutions"        RunParm
+ *     - Add "StepSelectorDialogPaneWidth"          RunParm
+ *     - Add "StepSelectorDialogPaneHeight"         RunParm
+ *     - Remove Unify+Get Hints feature, deprecate
+ *       hint-related RunParms
+ *     - Add "StepSelectorBatchTest"                RunParm
+ *     - Add "PreprocessRequestBatchTest"           RunParm
  *
- *  Varsion 0.07 - 02/01/2008
- *      - Add "ProofAsstIncompleteStepCursor"        RunParm
- *      - Add "ProofAsstOutputCursorInstrumentation" RunParm
- *      - Add "ProofAsstAutoReformat"                RunParm
+ * Version 0.09 - 08/01/2008
+ *     - Clear ProofAsstPreferences when LoadFile RunParm
+ *       encountered. It can't be hanging around after that.
+ *     - changed editProofAsstImportFileRunParm() from
+ *       protected access to public for use by TheoremLoaderBoss.
+ *     - Add ProofAsstAssrtListFreespace RunParm allowing
+ *       user to set to 0 thru 1000.
  *
- *  Varsion 0.08 - 03/01/2008
- *      - Add "StepSelectorMaxResults"               RunParm
- *      - Add "StepSelectorShowSubstitutions"        RunParm
- *      - Add "StepSelectorDialogPaneWidth"          RunParm
- *      - Add "StepSelectorDialogPaneHeight"         RunParm
- *      - Remove Unify+Get Hints feature, deprecate
- *        hint-related RunParms
- *      - Add "StepSelectorBatchTest"                RunParm
- *      - Add "PreprocessRequestBatchTest"           RunParm
- *
- *  Varsion 0.09 - 08/01/2008
- *      - Clear ProofAsstPreferences when LoadFile RunParm
- *        encountered. It can't be hanging around after that.
- *      - changed editProofAsstImportFileRunParm() from
- *        protected access to public for use by TheoremLoaderBoss.
- *      - Add ProofAsstAssrtListFreespace RunParm allowing
- *        user to set to 0 thru 1000.
- *
- *  Version 0.10 - Nov-01-2011
- *      -->Modified for mmj2 Paths Enhancement
- *         --> added mmj2Path arg to editProofAsstProofFolder() call
- *      -->Added code for MMJ2FailPopupWindow
+ * Version 0.10 - Nov-01-2011
+ *     -->Modified for mmj2 Paths Enhancement
+ *        --> added mmj2Path arg to editProofAsstProofFolder() call
+ *     -->Added code for MMJ2FailPopupWindow
 
  */
 
@@ -80,17 +78,14 @@ import mmj.verify.Grammar;
 import mmj.verify.VerifyProofs;
 
 /**
- *  Responsible for building and triggering ProofAsst.
- *  <ul>
- *  <li>Remember that Messages, LogicalSystem
- *      and other objects may have changed. Don't worry
- *      about whether or not file is loaded, the
- *      LogicalSystemBoss will throw an exception if
- *      attempt is made to retrieve LogicalSystem if
- *      it is not loaded and error free.
- *  <li>If clear, RunParm values to null, etc.
- *  </ul>
- *
+ * Responsible for building and triggering ProofAsst.
+ * <ul>
+ * <li>Remember that Messages, LogicalSystem and other objects may have changed.
+ * Don't worry about whether or not file is loaded, the LogicalSystemBoss will
+ * throw an exception if attempt is made to retrieve LogicalSystem if it is not
+ * loaded and error free.
+ * <li>If clear, RunParm values to null, etc.
+ * </ul>
  */
 public class ProofAsstBoss extends Boss {
 
@@ -99,24 +94,21 @@ public class ProofAsstBoss extends Boss {
     private ProofAsstPreferences proofAsstPreferences;
 
     /**
-     *  Constructor with BatchFramework for access to environment.
-     *
-     *  @param batchFramework for access to environment.
+     * Constructor with BatchFramework for access to environment.
+     * 
+     * @param batchFramework for access to environment.
      */
     public ProofAsstBoss(final BatchFramework batchFramework) {
         super(batchFramework);
     }
 
     /**
-     *  Executes a single command from the RunParmFile.
-     *
-     *  @param runParm the RunParmFile line to execute.
-     *
-     *  @return      boolean "consumed" indicating that the
-     *           input runParm should not be processed
-     *           again.
+     * Executes a single command from the RunParmFile.
+     * 
+     * @param runParm the RunParmFile line to execute.
+     * @return boolean "consumed" indicating that the input runParm should not
+     *         be processed again.
      */
-    @Override
     public boolean doRunParmCommand(final RunParmArrayEntry runParm)
         throws IllegalArgumentException, MMIOException, FileNotFoundException,
         IOException, VerifyException
@@ -413,10 +405,10 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Fetch a ProofAsst object.
-     *  <p>
+     * Fetch a ProofAsst object.
      *
-     *  @return ProofAsst object, ready to go, or null;.
+     * @return ProofAsst object, ready to go, or null;.
+     * @throws VerifyException if an error occurred
      */
     public ProofAsst getProofAsst() throws VerifyException {
 
@@ -471,9 +463,10 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  edit ProofAsstDjVarsSoftErrors RunParm.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * edit ProofAsstDjVarsSoftErrors RunParm.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editProofAsstDjVarsSoftErrors(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -493,8 +486,9 @@ public class ProofAsstBoss extends Boss {
 
     /**
      * edit ProofAsstProofFormat RunParm.
-     * @param runParm
-     *        run parm parsed into RunParmArrayEntry object
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editProofAsstProofFormat(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -512,9 +506,10 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  edit ProofAsstIncompleteStepCursor RunParm.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * edit ProofAsstIncompleteStepCursor RunParm.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editProofAsstIncompleteStepCursor(
         final RunParmArrayEntry runParm) throws IllegalArgumentException
@@ -533,9 +528,10 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate ProofAsstForegroundColorRGB RunParm.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate ProofAsstForegroundColorRGB RunParm.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editProofAsstForegroundColorRGB(
         final RunParmArrayEntry runParm) throws IllegalArgumentException
@@ -547,9 +543,10 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate ProofAsstBackgroundColorRGB RunParm.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate ProofAsstBackgroundColorRGB RunParm.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editProofAsstBackgroundColorRGB(
         final RunParmArrayEntry runParm) throws IllegalArgumentException
@@ -561,9 +558,10 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate ProofAsstFontSize RunParm.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate ProofAsstFontSize RunParm.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException IllegalArgumentException
      */
     protected void editProofAsstFontSize(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -582,9 +580,10 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate ProofAsstFontFamily RunParm.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate ProofAsstFontFamily RunParm.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException IllegalArgumentException
      */
     protected void editProofAsstFontFamily(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -609,9 +608,10 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate ProofAsstFontBold RunParm.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate ProofAsstFontBold RunParm.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editProofAsstFontBold(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -624,9 +624,9 @@ public class ProofAsstBoss extends Boss {
     }
 
 //  /**
-//   *  Validate ProofAsstLineWrap
+//   * Validate ProofAsstLineWrap
 //   *
-//   *  @param runParm run parm parsed into RunParmArrayEntry object
+//   * @param runParm run parm parsed into RunParmArrayEntry object
 //   */
 //  protected void editProofAsstLineWrap(
 //                      RunParmArrayEntry runParm)
@@ -642,9 +642,10 @@ public class ProofAsstBoss extends Boss {
 //  }
 
     /**
-     *  Validate ProofAsstTextColumns
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate ProofAsstTextColumns
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editProofAsstTextColumns(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -663,9 +664,10 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate ProofAsstTextRows
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate ProofAsstTextRows
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException IllegalArgumentException
      */
     protected void editProofAsstTextRows(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -684,9 +686,10 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate ProofAsstErrorMessageRows
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate ProofAsstErrorMessageRows
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException IllegalArgumentException
      */
     protected void editProofAsstErrorMessageRows(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -705,9 +708,10 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate ProofAsstErrorMessageColumns
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate ProofAsstErrorMessageColumns
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editProofAsstErrorMessageColumns(
         final RunParmArrayEntry runParm) throws IllegalArgumentException
@@ -726,9 +730,10 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate ProofAsstTextAtTop RunParm.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate ProofAsstTextAtTop RunParm.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editProofAsstTextAtTop(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -740,9 +745,10 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate ProofAsstFormulaLeftCol.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate ProofAsstFormulaLeftCol.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurre
      */
     protected void editProofAsstFormulaLeftCol(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -761,9 +767,10 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate ProofAsstFormulaRightCol.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate ProofAsstFormulaRightCol.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editProofAsstFormulaRightCol(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -782,9 +789,10 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate ProofAsstRPNProofLeftCol.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate ProofAsstRPNProofLeftCol.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurre
      */
     protected void editProofAsstRPNProofLeftCol(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -804,9 +812,10 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate ProofAsstRPNProofRightCol.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate ProofAsstRPNProofRightCol.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurre
      */
     protected void editProofAsstRPNProofRightCol(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -825,11 +834,12 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate StepSelectorMaxResults
-     *  <p>
-     *  Must be positive integer.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate StepSelectorMaxResults
+     * <p>
+     * Must be positive integer.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurre
      */
     protected void editStepSelectorMaxResults(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -844,11 +854,12 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate StepSelectorShowSubstitutions
-     *  <p>
-     *  Must be yes, no, on, off, true, false.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate StepSelectorShowSubstitutions
+     * <p>
+     * Must be yes, no, on, off, true, false.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurre
      */
     protected void editStepSelectorShowSubstitutions(
         final RunParmArrayEntry runParm) throws IllegalArgumentException
@@ -865,9 +876,10 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate StepSelectorDialogPaneWidth.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate StepSelectorDialogPaneWidth.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editStepSelectorDialogPaneWidth(
         final RunParmArrayEntry runParm) throws IllegalArgumentException
@@ -887,9 +899,10 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate StepSelectorDialogPaneHeight.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate StepSelectorDialogPaneHeight.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editStepSelectorDialogPaneHeight(
         final RunParmArrayEntry runParm) throws IllegalArgumentException
@@ -909,9 +922,10 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate ProofAsstAssrtListFreespace.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate ProofAsstAssrtListFreespace.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editProofAsstAssrtListFreespace(
         final RunParmArrayEntry runParm) throws IllegalArgumentException
@@ -928,9 +942,10 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate Proof Assistant Default File Name Suffix
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate Proof Assistant Default File Name Suffix
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editProofAsstDefaultFileNameSuffix(
         final RunParmArrayEntry runParm) throws IllegalArgumentException
@@ -945,9 +960,10 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate Proof Assistant Proof Folder Runparm.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate Proof Assistant Proof Folder Runparm.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editProofAsstProofFolder(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -962,9 +978,10 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate Proof Assistant Startup Proof Worksheet Runparm.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate Proof Assistant Startup Proof Worksheet Runparm.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editProofAsstStartupProofWorksheet(
         final RunParmArrayEntry runParm) throws IllegalArgumentException
@@ -982,9 +999,10 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate ProofAsstOutputCursorInstrumentation RunParm.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate ProofAsstOutputCursorInstrumentation RunParm.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editProofAsstOutputCursorInstrumentation(
         final RunParmArrayEntry runParm) throws IllegalArgumentException
@@ -997,9 +1015,10 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate ProofAsstAutoReformat RunParm.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate ProofAsstAutoReformat RunParm.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editProofAsstAutoReformat(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -1011,9 +1030,10 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate ProofAsstUndoRedoEnabled RunParm.
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate ProofAsstUndoRedoEnabled RunParm.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editProofAsstUndoRedoEnabled(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
@@ -1025,9 +1045,10 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate RecheckProofAsstUsingProofVerifier
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate RecheckProofAsstUsingProofVerifier
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurred
      */
     protected void editRecheckProofAsstUsingProofVerifier(
         final RunParmArrayEntry runParm) throws IllegalArgumentException
@@ -1040,9 +1061,9 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate ProofAsstUnifySearchExclude
-     *
-     *  @param runParm run parm parsed into RunParmArrayEntry object
+     * Validate ProofAsstUnifySearchExclude
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
      */
     protected void editProofAsstUnifySearchExclude(
         final RunParmArrayEntry runParm)
@@ -1088,10 +1109,12 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Exports currently loaded theorem proofs to an export
-     *  file.
-     *
-     *  @param runParm RunParmFile line.
+     * Exports currently loaded theorem proofs to an export file.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
+     * @throws IOException if an error occurred
+     * @throws VerifyException if an error occurred
      */
     public void doProofAsstExportToFile(final RunParmArrayEntry runParm)
         throws IllegalArgumentException, IOException, VerifyException
@@ -1148,9 +1171,12 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Reads and unifies theorem proofs in test mode.
-     *
-     *  @param runParm RunParmFile line.
+     * Reads and unifies theorem proofs in test mode.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
+     * @throws IOException if an error occurred
+     * @throws VerifyException if an error occurred
      */
     public void doProofAsstBatchTest(final RunParmArrayEntry runParm)
         throws IllegalArgumentException, IOException, VerifyException
@@ -1237,9 +1263,12 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Exercises the StepSelectorSearch code.
-     *
-     *  @param runParm RunParmFile line.
+     * Exercises the StepSelectorSearch code.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
+     * @throws IOException if an error occurred
+     * @throws VerifyException if an error occurred
      */
     public void doStepSelectorBatchTest(final RunParmArrayEntry runParm)
         throws IllegalArgumentException, IOException, VerifyException
@@ -1281,9 +1310,12 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Exercises the PreprocessRequest code.
-     *
-     *  @param runParm RunParmFile line.
+     * Exercises the PreprocessRequest code.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
+     * @throws IOException if an error occurred
+     * @throws VerifyException if an error occurred
      */
     public void doPreprocessRequestBatchTest(final RunParmArrayEntry runParm)
         throws IllegalArgumentException, IOException, VerifyException
@@ -1336,12 +1368,14 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate input ProofAsst Import File RunParm option
-     *  and returns Buffered File Reader object.
-     *
-     *  @param runParm RunParmFile line parsed into RunParmArrayEntry.
-     *  @param valueCaption name of RunParm, for error message output.
-     *  @param valueFieldNbr option number of file name
+     * Validate input ProofAsst Import File RunParm option and returns Buffered
+     * File Reader object.
+     * 
+     * @param runParm RunParmFile line parsed into RunParmArrayEntry.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param valueFieldNbr option number of file name
+     * @return BufferedReader file object.
+     * @throws IllegalArgumentException if an error occurred
      */
     public Reader editProofAsstImportFileRunParm(
         final RunParmArrayEntry runParm, final String valueCaption,
@@ -1360,11 +1394,13 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate output ProofAsst Export File RunParm options
-     *  and returns FileWriter object
-     *
-     *  @param runParm RunParmFile line parsed into RunParmArrayEntry.
-     *  @param valueCaption name of RunParm, for error message output.
+     * Validate output ProofAsst Export File RunParm options and returns
+     * FileWriter object
+     * 
+     * @param runParm RunParmFile line parsed into RunParmArrayEntry.
+     * @param valueCaption name of RunParm, for error message output.
+     * @return BufferedWriter file object.
+     * @throws IllegalArgumentException if an error occurred
      */
     protected BufferedWriter editProofAsstExportFileRunParm(
         final RunParmArrayEntry runParm, final String valueCaption)
@@ -1392,15 +1428,13 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate Proof Assistant Export Format Parm ("unified"
-     *  or "un-unified").
-     *
-     *  @param runParm        RunParmFile line.
-     *  @param valueCaption   name of RunParm, for error message
-     *                        output.
-     *  @param valueFieldNbr  number of field in RunParm line.
-     *
-     *  @return boolean unified or un-unified proof format parm
+     * Validate Proof Assistant Export Format Parm ("unified" or "un-unified").
+     * 
+     * @param runParm RunParmFile line.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param valueFieldNbr number of field in RunParm line.
+     * @return boolean unified or un-unified proof format parm
+     * @throws IllegalArgumentException if an error occurred
      */
     protected boolean editProofAsstExportFormatUnifiedParm(
         final RunParmArrayEntry runParm, final String valueCaption,
@@ -1437,15 +1471,14 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate Proof Assistant Export Hyps Randomized Parm
-     *  ("Randomized" or "NotRandomized").
-     *
-     *  @param runParm        RunParmFile line.
-     *  @param valueCaption   name of RunParm, for error message
-     *                        output.
-     *  @param valueFieldNbr  number of field in RunParm line.
-     *
-     *  @return boolean Randomized or NotRandomized proof format parm
+     * Validate Proof Assistant Export Hyps Randomized Parm ("Randomized" or
+     * "NotRandomized").
+     * 
+     * @param runParm RunParmFile line.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param valueFieldNbr number of field in RunParm line.
+     * @return boolean Randomized or NotRandomized proof format parm
+     * @throws IllegalArgumentException if an error occurred
      */
     protected boolean editProofAsstExportHypsRandomizedParm(
         final RunParmArrayEntry runParm, final String valueCaption,
@@ -1483,15 +1516,14 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate Proof Assistant Export DeriveFormulas Parm
-     *  ("DeriveFormulas" or "NoDeriveFormulas" or "").
-     *
-     *  @param runParm        RunParmFile line.
-     *  @param valueCaption   name of RunParm, for error message
-     *                        output.
-     *  @param valueFieldNbr  number of field in RunParm line.
-     *
-     *  @return boolean DeriveFormulas or NoDeriveFormulas parm
+     * Validate Proof Assistant Export DeriveFormulas Parm ("DeriveFormulas" or
+     * "NoDeriveFormulas" or "").
+     * 
+     * @param runParm RunParmFile line.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param valueFieldNbr number of field in RunParm line.
+     * @return boolean DeriveFormulas or NoDeriveFormulas parm
+     * @throws IllegalArgumentException if an error occurred
      */
     protected boolean editProofAsstExportDeriveFormulasParm(
         final RunParmArrayEntry runParm, final String valueCaption,
@@ -1529,15 +1561,14 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate Proof Assistant Import CompareDJs Parm
-     *  ("CompareDJs" or "NoCompareDJs" or "").
-     *
-     *  @param runParm        RunParmFile line.
-     *  @param valueCaption   name of RunParm, for error message
-     *                        output.
-     *  @param valueFieldNbr  number of field in RunParm line.
-     *
-     *  @return boolean CompareDJs or NoCompareDJs parm
+     * Validate Proof Assistant Import CompareDJs Parm ("CompareDJs" or
+     * "NoCompareDJs" or "").
+     * 
+     * @param runParm RunParmFile line.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param valueFieldNbr number of field in RunParm line.
+     * @return boolean CompareDJs or NoCompareDJs parm
+     * @throws IllegalArgumentException if an error occurred
      */
     protected boolean editProofAsstImportCompareDJsParm(
         final RunParmArrayEntry runParm, final String valueCaption,
@@ -1575,15 +1606,14 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate Proof Assistant Import UpdateDJs Parm
-     *  ("UpdateDJs" or "NoUpdateDJs" or "").
-     *
-     *  @param runParm        RunParmFile line.
-     *  @param valueCaption   name of RunParm, for error message
-     *                        output.
-     *  @param valueFieldNbr  number of field in RunParm line.
-     *
-     *  @return boolean UpdateDJs or NoUpdateDJs parm
+     * Validate Proof Assistant Import UpdateDJs Parm ("UpdateDJs" or
+     * "NoUpdateDJs" or "").
+     * 
+     * @param runParm RunParmFile line.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param valueFieldNbr number of field in RunParm line.
+     * @return boolean UpdateDJs or NoUpdateDJs parm
+     * @throws IllegalArgumentException if an error occurred
      */
     protected boolean editProofAsstImportUpdateDJsParm(
         final RunParmArrayEntry runParm, final String valueCaption,
@@ -1622,14 +1652,13 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate Proof Assistant AsciiRetest Parm.
-     *
-     *  @param runParm        RunParmFile line.
-     *  @param valueCaption   name of RunParm, for error message
-     *                        output.
-     *  @param valueFieldNbr  number of field in RunParm line.
-     *
-     *  @return boolean AsciiRetest or NoAsciiRetest parm
+     * Validate Proof Assistant AsciiRetest Parm.
+     * 
+     * @param runParm RunParmFile line.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param valueFieldNbr number of field in RunParm line.
+     * @return boolean AsciiRetest or NoAsciiRetest parm
+     * @throws IllegalArgumentException if an error occurred
      */
     protected boolean editProofAsstAsciiRetestParm(
         final RunParmArrayEntry runParm, final String valueCaption,
@@ -1665,15 +1694,13 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Validate Proof Assistant Export Print Parm
-     *  ("Print" or "NoPrint").
-     *
-     *  @param runParm        RunParmFile line.
-     *  @param valueCaption   name of RunParm, for error message
-     *                        output.
-     *  @param valueFieldNbr  number of field in RunParm line.
-     *
-     *  @return boolean Print or NoPrint of Proof Worksheets
+     * Validate Proof Assistant Export Print Parm ("Print" or "NoPrint").
+     * 
+     * @param runParm RunParmFile line.
+     * @param valueCaption name of RunParm, for error message output.
+     * @param valueFieldNbr number of field in RunParm line.
+     * @return boolean Print or NoPrint of Proof Worksheets
+     * @throws IllegalArgumentException if an error occurred
      */
     protected boolean editProofAsstPrintParm(final RunParmArrayEntry runParm,
         final String valueCaption, final int valueFieldNbr)
@@ -1708,10 +1735,12 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Executes the RunProofAsstGUI command, prints any messages,
-     *  etc.
-     *
-     *  @param runParm RunParmFile line.
+     * Executes the RunProofAsstGUI command, prints any messages, etc.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
+     * @throws IOException if an error occurred
+     * @throws VerifyException if an error occurred
      */
     public void doRunProofAsstGUI(final RunParmArrayEntry runParm)
         throws IllegalArgumentException, IOException, VerifyException
@@ -1745,15 +1774,14 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     *  Fetches a reference to the ProofAsstPreferences,
-     *  first initializing it if necessary.
-     *
-     *  Note: must re-initialize the TMFFPreferences
-     *        reference in ProofAsstPreferences because
-     *        TMFFBoss controls which instance of
-     *        TMFFPreferences is active!!!
-     *
-     *  @return ProofAsstPreferences object ready to go.
+     * Fetches a reference to the ProofAsstPreferences, first initializing it if
+     * necessary.
+     * <p>
+     * Note: must re-initialize the TMFFPreferences reference in
+     * ProofAsstPreferences because TMFFBoss controls which instance of
+     * TMFFPreferences is active!!!
+     * 
+     * @return ProofAsstPreferences object ready to go.
      */
     public ProofAsstPreferences getProofAsstPreferences() {
 

@@ -6,10 +6,10 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  CommandLineArguments.java.java  0.01 11/01/2011
+ * CommandLineArguments.java.java  0.01 11/01/2011
  *
- *  Nov-01-2011 - Version 0.01
- *          --> new
+ * Nov-01-2011 - Version 0.01
+ *         --> new
  */
 
 package mmj.util;
@@ -19,18 +19,15 @@ import java.io.IOException;
 import mmj.pa.PaConstants;
 
 /**
- *  CommandLineArguments loads the arguments on the java
- *  command line into the <code>RunParmFile</code> and
- *  <code>Paths</code> objects.
- *  <p>
- *  This class is not general purpose. It is specific
- *  to mmj2's needs and is intended to localize
- *  everything related to the Command Line Arguments
- *  for easy use by <code>BatchFramework</code>.
- *  <p>
- *  Coincidentally (ha), the "String[] args" parameter
- *  for the constructor is the same as the BatchMMJ2
- *  command line parms.
+ * CommandLineArguments loads the arguments on the java command line into the
+ * {@code RunParmFile} and {@code Paths} objects.
+ * <p>
+ * This class is not general purpose. It is specific to mmj2's needs and is
+ * intended to localize everything related to the Command Line Arguments for
+ * easy use by {@code BatchFramework}.
+ * <p>
+ * Coincidentally (ha), the "String[] args" parameter for the constructor is the
+ * same as the BatchMMJ2 command line parms.
  */
 public class CommandLineArguments {
 
@@ -46,52 +43,38 @@ public class CommandLineArguments {
     private boolean displayMMJ2FailPopupWindow = UtilConstants.DISPLAY_MMJ2_FAIL_POPUP_WINDOW_DEFAULT;
 
     /**
-     *  Construct using "String[] args" parameters then load
-     *  <code>Paths</code>, <code>RunParmFile</code>,
-     *  displayMMJ2FailPopupWindow and testOption.
-     *  <p>
-     *  <b>args:</b>
-     *  <ol>
-     *  <li>args[0] = RunParmFileName. Required.
-     *                May be relative or absolute path name.
-     *                <ul>
-     *                <li>If relative path then mmj2Path
-     *                applied as parent path if specified; otherwise
-     *                Current Path used (by system).
-     *                <li>If absolute then mmj2Path is ignored.
-     *                </ul>
-     *
-     *  <li>args[1] = displayMMJ2FailPopupWindow. Optional.
-     *                May be "y" or "n" (case-insensitive), or " ".
-     *                Default setting is "y". Triggers popup
-     *                window displaying mmj2 error message if
-     *                mmj2 startup errors or mmj2 "fatal" errors.
-     *                If any CommandLineArguments are in error the
-     *                default setting is used regardless of this
-     *                argument.
-     *
-     *  <li>args[2] = mmj2Path. Optional. May be blank or empty string.
-     *                If no path specified the default path for mmj2
-     *                files is Current Path (unless otherwise indicated
-     *                in the documentation -- e.g. ProofAsstProofFolder).
-     *
-     *  <li>args[3] = metamathPath. Optional. May be blank or empty string.
-     *                If no path specified the default path for Metamath
-     *                files is Current Path (unless otherwise indicated
-     *                in the documentation -- e.g.
-     *                GMFFParseMetamathTypesetComment).
-     *
-     *  <li>args[4] = svcPath. Optional. May be blank or empty string.
-     *                If no path specified the default path for the mmj2
-     *                Service Feature is Current Path.
-     *
-     *  </ol>
-     *
-     *  @param args Array of String. runParmFileName,
-     *                displayMMJ2FailPopupWindow, mmj2Path,
-     *                metamathPath, svcPath, testOption.
-     *
-     *  @throws IllegalArgumentException if errors found.
+     * Construct using "String[] args" parameters then load {@code Paths},
+     * {@code RunParmFile}, displayMMJ2FailPopupWindow and testOption.
+     * <p>
+     * <b>args:</b>
+     * <ol>
+     * <li>args[0] = RunParmFileName. Required. May be relative or absolute path
+     * name.
+     * <ul>
+     * <li>If relative path then mmj2Path applied as parent path if specified;
+     * otherwise Current Path used (by system).
+     * <li>If absolute then mmj2Path is ignored.
+     * </ul>
+     * <li>args[1] = displayMMJ2FailPopupWindow. Optional. May be "y" or "n"
+     * (case-insensitive), or " ". Default setting is "y". Triggers popup window
+     * displaying mmj2 error message if mmj2 startup errors or mmj2 "fatal"
+     * errors. If any CommandLineArguments are in error the default setting is
+     * used regardless of this argument.
+     * <li>args[2] = mmj2Path. Optional. May be blank or empty string. If no
+     * path specified the default path for mmj2 files is Current Path (unless
+     * otherwise indicated in the documentation -- e.g. ProofAsstProofFolder).
+     * <li>args[3] = metamathPath. Optional. May be blank or empty string. If no
+     * path specified the default path for Metamath files is Current Path
+     * (unless otherwise indicated in the documentation -- e.g.
+     * GMFFParseMetamathTypesetComment).
+     * <li>args[4] = svcPath. Optional. May be blank or empty string. If no path
+     * specified the default path for the mmj2 Service Feature is Current Path.
+     * </ol>
+     * 
+     * @param args Array of String. runParmFileName, displayMMJ2FailPopupWindow,
+     *            mmj2Path, metamathPath, svcPath, testOption.
+     * @throws IOException if an error occurred
+     * @throws IllegalArgumentException if errors found.
      */
     public CommandLineArguments(final String[] args) throws IOException,
         IllegalArgumentException
@@ -133,46 +116,42 @@ public class CommandLineArguments {
     }
 
     /**
-     *  Returns the <code>Paths</code> object.
-     *  <p>
-     *  @return The <code>Paths</code> object.
+     * Returns the {@code Paths} object.
+     *
+     * @return The {@code Paths} object.
      */
     public Paths getPaths() {
         return paths;
     }
 
     /**
-     *  Returns the <code>RunParmFile</code> object.
-     *  <p>
-     *  @return The <code>RunParmFile</code> object.
+     * Returns the {@code RunParmFile} object.
+     *
+     * @return The {@code RunParmFile} object.
      */
     public RunParmFile getRunParmFile() {
         return runParmFile;
     }
 
     /**
-     *  Returns the <code>displayMMJ2FailPopupWindow</code>
-     *  value;
-     *  <p>
-     *  @return The <code>displayMMJ2FailPopupWindow</code>
-     *  value;
+     * Returns the {@code displayMMJ2FailPopupWindow} value;
+     *
+     * @return The {@code displayMMJ2FailPopupWindow} value;
      */
     public boolean getDisplayMMJ2FailPopupWindow() {
         return displayMMJ2FailPopupWindow;
     }
 
     /**
-     *  Returns Y or N, or if no value entered, the default setting
-     *  for the <code>displayMMJ2FailPopupWindow</code> variable.
-     *  <p>
-     *  Note that blanks and empty string values have been
-     *  previously converted to <code>null</code>.
-     *  <p>
-     *  @param  displayMMJ2FailPopupWindowArgument must equal Y, N
-     *          or null.
-     *  @return Y or N.
-     *  @throws IllegalArgumentException if input not equal to
-     *          Y, N or null.
+     * Returns Y or N, or if no value entered, the default setting for the
+     * {@code displayMMJ2FailPopupWindow} variable.
+     * <p>
+     * Note that blanks and empty string values have been previously converted
+     * to {@code null}.
+     *
+     * @param displayMMJ2FailPopupWindowArgument must equal Y, N or null.
+     * @return Y or N.
+     * @throws IllegalArgumentException if input not equal to Y, N or null.
      */
     private boolean getDisplayMMJ2FailPopupWindowVar(
         final String displayMMJ2FailPopupWindowArgument)
@@ -198,15 +177,14 @@ public class CommandLineArguments {
     }
 
     /**
-     *  The java command line argument array element specified by
-     *  <code>argIndex</code> is returned after converting it to
-     *  <code>null</code> if it is blank or an empty string.
-     *  <p>
-     *  @param  args Java command line arguments array
-     *  @param  argIndex index into args indicating the arg to retrieve
-     *  @return The arg element specified by argIndex is returned
-     *          after converting it to null if it is blank or an
-     *          empty string.
+     * The java command line argument array element specified by
+     * {@code argIndex} is returned after converting it to {@code null} if it is
+     * blank or an empty string.
+     *
+     * @param args Java command line arguments array
+     * @param argIndex index into args indicating the arg to retrieve
+     * @return The arg element specified by argIndex is returned after
+     *         converting it to null if it is blank or an empty string.
      */
     private String getArg(final String[] args, final int argIndex) {
 
