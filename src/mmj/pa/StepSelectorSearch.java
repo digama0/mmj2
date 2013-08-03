@@ -43,7 +43,7 @@ public class StepSelectorSearch {
     /* assrtArray loaded and sorted during constructor initialization
      */
 //  private Assrt[]                assrtArray;
-    private final ArrayList assrtAList;
+    private final ArrayList<Assrt> assrtAList;
 
     /* these instance variables are "global" work items
        stored here for convenience.
@@ -63,7 +63,7 @@ public class StepSelectorSearch {
      */
     public StepSelectorSearch(final ProofAsstPreferences proofAsstPreferences,
         final VerifyProofs verifyProofs, final Cnst provableLogicStmtTyp,
-        final ArrayList unifySearchList)
+        final List<Assrt> unifySearchList)
     {
 
         this.proofAsstPreferences = proofAsstPreferences;
@@ -72,7 +72,7 @@ public class StepSelectorSearch {
 
         stepUnifier = proofAsstPreferences.getStepUnifier();
 
-        if (unifySearchList.size() == 0)
+        if (unifySearchList.isEmpty())
             throw new IllegalArgumentException(
                 PaConstants.ERRMSG_SELECTOR_SEARCH_ASSRT_LIST_EMPTY_1);
 
@@ -82,37 +82,24 @@ public class StepSelectorSearch {
 
         final int listSize = unifySearchList.size()
             * (100 + proofAsstPreferences.getAssrtListFreespace()) / 100;
-        assrtAList = new ArrayList(listSize);
+        assrtAList = new ArrayList<Assrt>(listSize);
 
-// kept failing w/IndexOutOfBoundsException! and message
-// "Source does not fit in dest"
-//      Collections.copy(assrtAList,
-//                       unifySearchList);
-        final Iterator i = unifySearchList.iterator();
-        while (i.hasNext())
-            assrtAList.add(i.next());
+        assrtAList.addAll(unifySearchList);
 
         Collections.sort(assrtAList, Assrt.NBR_LOG_HYP_SEQ);
     }
 
     public void mergeListOfAssrtAddsSortedBySeq(
-        final ArrayList listOfAssrtAddsSortedBySeq)
+        final List<Theorem> listOfAssrtAddsSortedBySeq)
     {
 
-        final ArrayList addList = new ArrayList(
-            listOfAssrtAddsSortedBySeq.size());
-
-//      got "source does not fit in dest" message
-//      Collections.copy(addList,
-//                       listOfAssrtAddsSortedBySeq);
-        final Iterator iterator = listOfAssrtAddsSortedBySeq.iterator();
-        while (iterator.hasNext())
-            addList.add(iterator.next());
+        final List<Theorem> addList = new ArrayList<Theorem>(
+            listOfAssrtAddsSortedBySeq);
 
         Collections.sort(addList, Assrt.NBR_LOG_HYP_SEQ);
 
-        final MergeSortedArrayLists m = new MergeSortedArrayLists(assrtAList,
-            addList, Assrt.NBR_LOG_HYP_SEQ, true); // abortIfDupsFound
+        new MergeSortedArrayLists<Assrt>(assrtAList, addList,
+            Assrt.NBR_LOG_HYP_SEQ, true); // abortIfDupsFound
     }
 
     /**
@@ -192,7 +179,7 @@ public class StepSelectorSearch {
 //          assrtLoop: while (assrtIndex < assrtArray.length) {
             assrtLoop: while (assrtIndex < assrtAList.size()) {
 //              assrt             = assrtArray[assrtIndex];
-                assrt = (Assrt)assrtAList.get(assrtIndex);
+                assrt = assrtAList.get(assrtIndex);
                 if (assrt.getSeq() < maxSeq) {
                     assrtNbrLogHyps = assrt.getLogHypArrayLength();
                     if (assrtNbrLogHyps != hypIndex) {
@@ -237,14 +224,14 @@ public class StepSelectorSearch {
     private int computeSearchStart(final int nbrHyps) {
 
 //      if (assrtArray[0].getLogHypArrayLength() >= nbrHyps) {
-        if (((Assrt)assrtAList.get(0)).getLogHypArrayLength() >= nbrHyps)
+        if (assrtAList.get(0).getLogHypArrayLength() >= nbrHyps)
             return 0;
 
 //      int high                  = assrtArray.length - 1;
         int high = assrtAList.size() - 1;
 
 //      if (nbrHyps > assrtArray[high].getLogHypArrayLength()) {
-        if (nbrHyps > ((Assrt)assrtAList.get(high)).getLogHypArrayLength())
+        if (nbrHyps > assrtAList.get(high).getLogHypArrayLength())
             return Integer.MAX_VALUE;
 
         /*
@@ -267,7 +254,7 @@ public class StepSelectorSearch {
         do {
             prev = mid;
 //          if (assrtArray[mid].getLogHypArrayLength() < nbrHyps) {
-            if (((Assrt)assrtAList.get(mid)).getLogHypArrayLength() < nbrHyps)
+            if (assrtAList.get(mid).getLogHypArrayLength() < nbrHyps)
                 low = mid;
             else
                 high = mid;
@@ -329,10 +316,10 @@ public class StepSelectorSearch {
             else
                 logHypFormula[i] = assrtLogHypArray[i].getFormula();
 
-        StringBuffer sb;
+        StringBuilder sb;
         if (assrtNbrLogHyps == 0) {
 
-            sb = new StringBuffer(conclusionFormula.getCnt() * 4 // guess
+            sb = new StringBuilder(conclusionFormula.getCnt() * 4 // guess
                 + 10); // guess
             sb.append(assrt.getLabel());
             sb.append(PaConstants.STEP_SELECTOR_FORMULA_LABEL_SEPARATOR);
@@ -342,7 +329,7 @@ public class StepSelectorSearch {
 
         else {
 
-            sb = new StringBuffer(logHypFormula[0].getCnt() * 4 + 10);
+            sb = new StringBuilder(logHypFormula[0].getCnt() * 4 + 10);
             sb.append(assrt.getLabel());
             sb.append(PaConstants.STEP_SELECTOR_FORMULA_LABEL_SEPARATOR);
             sb.append(logHypFormula[0].toString());
@@ -350,14 +337,14 @@ public class StepSelectorSearch {
 
             for (int i = 1; i < assrtNbrLogHyps; i++) {
 
-                sb = new StringBuffer(logHypFormula[i].getCnt() * 4 + 10);
+                sb = new StringBuilder(logHypFormula[i].getCnt() * 4 + 10);
                 sb.append(PaConstants.STEP_SELECTOR_SEARCH_FORMULA_INDENT);
                 sb.append(PaConstants.STEP_SELECTOR_FORMULA_LOG_HYP_SEPARATOR);
                 sb.append(logHypFormula[i].toString());
                 lineArray[cntLines++] = sb.toString();
             }
 
-            sb = new StringBuffer(conclusionFormula.getCnt() * 4 + 10);
+            sb = new StringBuilder(conclusionFormula.getCnt() * 4 + 10);
             sb.append(PaConstants.STEP_SELECTOR_SEARCH_FORMULA_INDENT);
             sb.append(PaConstants.STEP_SELECTOR_FORMULA_YIELDS_SEPARATOR);
             sb.append(conclusionFormula.toString());

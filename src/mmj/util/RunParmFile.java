@@ -34,15 +34,11 @@ import java.io.*;
  */
 public class RunParmFile {
 
-    private final String runParmFileNameArgument;
-
     private File runParmFile;
 
     private BufferedReader runParmFileReader;
 
     private String inputLine = null;
-
-    private int lineCount = 0;
 
     private boolean eofReached = false;
 
@@ -86,8 +82,6 @@ public class RunParmFile {
         throws IOException, IllegalArgumentException
     {
 
-        this.runParmFileNameArgument = runParmFileNameArgument;
-
         try {
             runParmFile = paths.buildMMJ2FilePath(runParmFileNameArgument);
         } catch (final NullPointerException e) {
@@ -120,8 +114,6 @@ public class RunParmFile {
             throw new IllegalStateException(
                 UtilConstants.ERRMSG_RUNPARM_FILE_EMPTY
                     + runParmFile.getAbsolutePath());
-
-        lineCount = 1;
 
     }
 
@@ -160,8 +152,6 @@ public class RunParmFile {
             eofReached = true;
         }
         else {
-            ++lineCount;
-
             ae = new RunParmArrayEntry(new DelimitedTextParser(inputLine,
                 delimiter, quoter));
 

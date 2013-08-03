@@ -182,8 +182,6 @@ public class TheoremLoaderBoss extends Boss {
         if (theoremLoader != null)
             return theoremLoader;
 
-        final Messages messages = batchFramework.outputBoss.getMessages();
-
         final TlPreferences tlPreferences = getTlPreferences();
 
         theoremLoader = new TheoremLoader(tlPreferences);
@@ -543,7 +541,7 @@ public class TheoremLoaderBoss extends Boss {
         final int optionNbr)
     {
 
-        final StringBuffer sb = new StringBuffer(
+        final StringBuilder sb = new StringBuilder(
             UtilConstants.THEOREM_LOADER_BOSS_FILE_BUFFER_SIZE);
 
         int c;

@@ -16,6 +16,7 @@
 package mmj.gmff;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import mmj.lang.*;
 
@@ -60,7 +61,7 @@ public abstract class GMFFExporter {
     GMFFUserTextEscapes gmffUserTextEscapes;
     GMFFExporterTypesetDefs gmffExporterTypesetDefs;
     char[][] escapeSubstitutions;
-    HashMap modelFileCacheMap;
+    Map<String, String> modelFileCacheMap;
 
     /**
      *  A factory for generating GMFFExporters according to
@@ -132,7 +133,7 @@ public abstract class GMFFExporter {
                 escapeSubstitutions[pair.num][i] = pair.replacement.charAt(i);
         }
 
-        modelFileCacheMap = new HashMap(
+        modelFileCacheMap = new HashMap<String, String>(
             GMFFConstants.EXPORTER_MODEL_CACHE_INIT_SIZE);
 
     }
@@ -170,7 +171,7 @@ public abstract class GMFFExporter {
      *  export buffer throwing an exception if the file is not
      *  found.
      *  <p>
-     *  @param exportBuffer <code>StringBuffer</code> containing
+     *  @param exportBuffer <code>StringBuilder</code> containing
      *				the contents of the export file.
      *  @param mandatoryModelFileName the File Name of the
      *               Model File within the Models Directory for
@@ -181,7 +182,7 @@ public abstract class GMFFExporter {
      *  @throws GMFFException if other errors encountered (such
      *               as I/O errors.)
      */
-    public void appendMandatoryModelFile(final StringBuffer exportBuffer,
+    public void appendMandatoryModelFile(final StringBuilder exportBuffer,
         final String mandatoryModelFileName, final String theoremLabel)
         throws GMFFMandatoryModelNotFoundException, GMFFException
     {
@@ -192,18 +193,18 @@ public abstract class GMFFExporter {
 
     /**
      *  Appends text from a Model File to the output
-     *  StringBuffer.
+     *  StringBuilder.
      *  <p>
      *  NOTE: does not escape the text because it is from
      *  a Model File and should already be escapedd (as
      *  needed.)
      *  <p>
-     *  @param exportBuffer <code>StringBuffer</code> containing
+     *  @param exportBuffer <code>StringBuilder</code> containing
      *				the contents of the export file.
      *  @param modelFileText data from the Model File to be
      *               appended to the exportBuffer.
      */
-    public void appendModelFileText(final StringBuffer exportBuffer,
+    public void appendModelFileText(final StringBuilder exportBuffer,
         final String modelFileText)
     {
 
@@ -234,16 +235,16 @@ public abstract class GMFFExporter {
      *  the absence of an error message indicates that that
      *  is not the case.
      *  <p>
-     *  @param exportBuffer <code>StringBuffer</code> containing
+     *  @param exportBuffer <code>StringBuilder</code> containing
      *				the contents of the export file.
      *  @param token the Metamath token to be typeset.
      *  @param theoremLabel provided for use in error messages.
      */
-    public void typesetAndAppendToken(final StringBuffer exportBuffer,
+    public void typesetAndAppendToken(final StringBuilder exportBuffer,
         final String token, final String theoremLabel)
     {
 
-        final String typesetString = (String)gmffExporterTypesetDefs.typesetDefMap
+        final String typesetString = gmffExporterTypesetDefs.typesetDefMap
             .get(token);
 
         if (typesetString != null) {
@@ -253,7 +254,7 @@ public abstract class GMFFExporter {
 
         escapeAndAppendProofText(exportBuffer, " " + token + " ");
 
-        final Sym sym = (Sym)gmffManager.getSymTbl().get(token);
+        final Sym sym = gmffManager.getSymTbl().get(token);
 
         if (sym == null || sym.isVar() && ((Var)sym).getIsWorkVar())
             return;
@@ -270,12 +271,12 @@ public abstract class GMFFExporter {
      *  Appends non-typeset text to the output buffer
      *  after escaping the text.
      *  <p>
-     *  @param exportBuffer <code>StringBuffer</code> containing
+     *  @param exportBuffer <code>StringBuilder</code> containing
      *				the contents of the export file.
      *  @param proofText output text from the proof worksheet to
      *              be escaped and appended to the output buffer.
      */
-    public void escapeAndAppendProofText(final StringBuffer exportBuffer,
+    public void escapeAndAppendProofText(final StringBuilder exportBuffer,
         final String proofText)
     {
         for (int i = 0; i < proofText.length(); i++)
@@ -369,7 +370,7 @@ public abstract class GMFFExporter {
         throws GMFFException, GMFFFileNotFoundException
     {
 
-        String modelFileContents = (String)modelFileCacheMap.get(modelFileName);
+        String modelFileContents = modelFileCacheMap.get(modelFileName);
 
         if (modelFileContents == null) {
 
@@ -440,7 +441,7 @@ public abstract class GMFFExporter {
      *              showing the absolute path of the output file.
      *  @throws GMFFException if the output operation fails.
      */
-    protected String outputToExportFile(final StringBuffer exportText,
+    protected String outputToExportFile(final StringBuilder exportText,
         final String appendFileName, final String theoremLabel)
         throws GMFFException
     {
@@ -498,7 +499,7 @@ public abstract class GMFFExporter {
      *  @throws GMFFException if the output operation fails.
      */
     protected String writeExportFile(final String exportFileName,
-        final StringBuffer exportBuffer, final boolean append)
+        final StringBuilder exportBuffer, final boolean append)
         throws GMFFException
     {
 

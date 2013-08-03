@@ -162,7 +162,8 @@ public class GRNode {
      *  within the current tree, and shortest rules first.
      *
      */
-    public void loadRuleCollection(final Collection ruleCollection) {
+    public void loadRuleCollection(final Collection<NotationRule> ruleCollection)
+    {
         GRNode x = leftmost();
         do {
             if (x.elementNotationRule_ != null)

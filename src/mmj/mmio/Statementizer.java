@@ -66,7 +66,7 @@ public class Statementizer {
 
     private int stmtNbr = 0;
 
-    private final StringBuffer nextToken = new StringBuffer();
+    private final StringBuilder nextToken = new StringBuilder();
 
     private final int offset = 0;
 
@@ -398,7 +398,7 @@ public class Statementizer {
                     break;
                 }
 
-                x.symList = new ArrayList(40);
+                x.symList = new ArrayList<String>(40);
 
                 switch (nextToken.charAt(1)) {
 
@@ -445,7 +445,7 @@ public class Statementizer {
                 if (nextToken.length() != MMIOConstants.MM_KEYWORD_LEN)
                     raiseParseException(MMIOConstants.ERRMSG_INV_KEYWORD
                         + x.keyword);
-                x.symList = new ArrayList(40);
+                x.symList = new ArrayList<String>(40);
                 switch (nextToken.charAt(1)) {
                     case MMIOConstants.MM_LOG_HYP_KEYWORD_CHAR:
                         getLogHypSrcStmt(x);
@@ -457,7 +457,7 @@ public class Statementizer {
                         getAxiomaticAssrtSrcStmt(x);
                         break;
                     case MMIOConstants.MM_PROVABLE_ASSRT_KEYWORD_CHAR:
-                        x.proofList = new ArrayList(100);
+                        x.proofList = new ArrayList<String>(100);
                         getProvableAssrtSrcStmt(x);
                         // x.proofList.trimToSize();
                         break;
@@ -504,7 +504,7 @@ public class Statementizer {
         commentStart: while (true)
             if (xLen == MMIOConstants.MM_KEYWORD_LEN
                 && nextToken.indexOf(MMIOConstants.MM_START_COMMENT_KEYWORD) == 0)
-                commentEnd: while (true) {
+                while (true) {
 
                     if ((xLen = getNextToken()) <= 0)
                         return xLen;
@@ -540,7 +540,7 @@ public class Statementizer {
     {
         prevStmtComment = null;
         loadSymList(x);
-        if (x.symList.size() == 0)
+        if (x.symList.isEmpty())
             raiseParseException(MMIOConstants.ERRMSG_EMPTY_CNST_STMT);
         dupCheckSymList(x);
     }
@@ -550,7 +550,7 @@ public class Statementizer {
     {
         prevStmtComment = null;
         loadSymList(x);
-        if (x.symList.size() == 0)
+        if (x.symList.isEmpty())
             raiseParseException(MMIOConstants.ERRMSG_EMPTY_VAR_STMT);
         dupCheckSymList(x);
     }
@@ -649,7 +649,7 @@ public class Statementizer {
         final int n = x.symList.size();
         String s;
         for (int i = 0; i < n - 1; i++) {
-            s = (String)x.symList.get(i);
+            s = x.symList.get(i);
             for (int j = i + 1; j < n; j++)
                 if (s.equals(x.symList.get(j)))
                     raiseParseException(MMIOConstants.ERRMSG_STMT_HAS_DUP_TOKENS
@@ -708,7 +708,7 @@ public class Statementizer {
         IOException
     {
 
-        x.proofBlockList = new ArrayList();
+        x.proofBlockList = new ArrayList<String>();
 
         String s;
 
@@ -756,7 +756,7 @@ public class Statementizer {
             continue;
         }
 
-        if (x.proofBlockList.size() == 0)
+        if (x.proofBlockList.isEmpty())
             raiseParseException(MMIOConstants.ERRMSG_COMPRESSED_PROOF_IS_EMPTY);
     }
 
@@ -772,7 +772,7 @@ public class Statementizer {
 
         prevStmtComment = null;
 
-        final StringBuffer s = new StringBuffer();
+        final StringBuilder s = new StringBuilder();
         String workToken;
         do {
             nextToken.setLength(0);

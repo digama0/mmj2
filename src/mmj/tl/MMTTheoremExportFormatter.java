@@ -15,8 +15,8 @@
 
 package mmj.tl;
 
-import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import mmj.lang.*;
 import mmj.lang.ParseTree.RPNStep;
@@ -44,7 +44,7 @@ public class MMTTheoremExportFormatter {
     private int rightCol;
     private boolean storeFormulasAsIs;
 
-    private LinkedList list;
+    private List<StringBuilder> list;
 
     private boolean needScopeLines;
 
@@ -60,13 +60,15 @@ public class MMTTheoremExportFormatter {
 
     /**
      *  Converts a Theorem in the LogicalSystem into a list of
-     *  StringBuffer lines formatted into Metamath format.
+     *  StringBuilder lines formatted into Metamath format.
      *  <p>
      *  @param theorem Theorem in the Logical System.
-     *  @return LinkedList of StringBuffer objects each containing
+     *  @return LinkedList of StringBuilder objects each containing
      *         one line of text in Metamath-format (without newlines.)
      */
-    public LinkedList buildStringBufferLineList(final Theorem theorem) {
+    public List<StringBuilder> buildStringBuilderLineList(
+        final Theorem theorem)
+    {
         init(theorem);
 
         if (needScopeLines)
@@ -95,15 +97,15 @@ public class MMTTheoremExportFormatter {
 
     /**
      *  Converts a ProofWorksheet into a list of
-     *  StringBuffer lines formatted into Metamath format.
+     *  StringBuilder lines formatted into Metamath format.
      *  <p>
      *  @param proofWorksheet ProofWorksheet object
-     *  @return LinkedList of StringBuffer objects each containing
+     *  @return LinkedList of StringBuilder objects each containing
      *         one line of text in Metamath-format (without newlines.)
      *  @throws TheoremLoaderException if the ProofWorksheet is
      *             null or is not unified.
      */
-    public LinkedList buildStringBufferLineList(
+    public List<StringBuilder> buildStringBuilderLineList(
         final ProofWorksheet proofWorksheet) throws TheoremLoaderException
     {
 
@@ -142,15 +144,13 @@ public class MMTTheoremExportFormatter {
         // we output the ProofWorksheet's description regardless
         // of whether the theorem is new.
         String description = null;
-        final Iterator iterator = proofWorksheet.getProofWorkStmtListIterator();
-        while (iterator.hasNext()) {
-            final ProofWorkStmt proofWorkStmt = (ProofWorkStmt)iterator.next();
+        for (final ProofWorkStmt proofWorkStmt : proofWorksheet
+            .getProofWorkStmtList())
             if (proofWorkStmt instanceof CommentStmt) {
                 description = proofWorkStmt.getStmtText().toString()
                     .substring(1); // erase "*" at start
                 break;
             }
-        }
         if (description != null)
             outputDescription(description);
 
@@ -198,7 +198,7 @@ public class MMTTheoremExportFormatter {
     }
 
     private void init() {
-        list = new LinkedList();
+        list = new LinkedList<StringBuilder>();
 
         needScopeLines = false;
 
@@ -208,7 +208,7 @@ public class MMTTheoremExportFormatter {
     }
 
     private void outputBeginScope() {
-        final StringBuffer sb = startNewLine(indentAmt);
+        final StringBuilder sb = startNewLine(indentAmt);
         sb.append(MMIOConstants.MM_KEYWORD_1ST_CHAR);
         sb.append(MMIOConstants.MM_BEGIN_SCOPE_KEYWORD_CHAR);
         list.add(sb);
@@ -216,7 +216,7 @@ public class MMTTheoremExportFormatter {
 
     private void outputEndScope() {
 
-        final StringBuffer sb = startNewLine(indentAmt);
+        final StringBuilder sb = startNewLine(indentAmt);
         sb.append(MMIOConstants.MM_KEYWORD_1ST_CHAR);
         sb.append(MMIOConstants.MM_END_SCOPE_KEYWORD_CHAR);
         list.add(sb);
@@ -265,16 +265,9 @@ public class MMTTheoremExportFormatter {
      */
     private void outputLogHypLines(final ProofWorksheet proofWorksheet) {
 
-        final Iterator iterator = proofWorksheet.getProofWorkStmtListIterator();
-        HypothesisStep hypothesisStep;
-        ProofWorkStmt w;
-        while (iterator.hasNext()) {
-            w = (ProofWorkStmt)iterator.next();
-            if (w.isHypothesisStep()) {
-                hypothesisStep = (HypothesisStep)w;
-                outputOneLogHypsLines(hypothesisStep);
-            }
-        }
+        for (final ProofWorkStmt w : proofWorksheet.getProofWorkStmtList())
+            if (w.isHypothesisStep())
+                outputOneLogHypsLines((HypothesisStep)w);
     }
 
     private void outputOneLogHypsLines(final HypothesisStep hypothesisStep) {
@@ -282,7 +275,7 @@ public class MMTTheoremExportFormatter {
         if (needScopeLines)
             leftOffset += indentAmt;
 
-        final StringBuffer prefix = startNewLine(leftOffset);
+        final StringBuilder prefix = startNewLine(leftOffset);
         prefix.append(hypothesisStep.getRefLabel());
         prefix.append(' ');
         prefix.append(MMIOConstants.MM_KEYWORD_1ST_CHAR);
@@ -290,8 +283,8 @@ public class MMTTheoremExportFormatter {
 
         final int continuationOffset = prefix.length() + indentAmt;
 
-        final StringBuffer stmtText = hypothesisStep.getStmtText();
-        final StringBuffer textArea = new StringBuffer(stmtText.capacity());
+        final StringBuilder stmtText = hypothesisStep.getStmtText();
+        final StringBuilder textArea = new StringBuilder(stmtText.capacity());
         textArea.append(stmtText);
 
         ProofStepStmt.reviseStepHypRefInStmtTextArea(textArea, prefix);
@@ -301,9 +294,9 @@ public class MMTTheoremExportFormatter {
 
         for (int i = 0; i < textLines.length - 1; i++)
             if (textLines[i].length() > 0)
-                list.add(new StringBuffer(textLines[i]));
+                list.add(new StringBuilder(textLines[i]));
 
-        StringBuffer sb = new StringBuffer(rightCol);
+        StringBuilder sb = new StringBuilder(rightCol);
 
         final String lastLine = textLines[textLines.length - 1];
 
@@ -339,7 +332,7 @@ public class MMTTheoremExportFormatter {
         if (needScopeLines)
             leftOffset += indentAmt;
 
-        StringBuffer sb = startNewLine(leftOffset);
+        StringBuilder sb = startNewLine(leftOffset);
 
         sb.append(logHyp.getLabel());
         sb.append(' ');
@@ -352,7 +345,7 @@ public class MMTTheoremExportFormatter {
 
         final Formula formula = logHyp.getFormula();
 
-        sb = formula.toStringBufferLineList(list, sb, continuationOffset + 1,
+        sb = formula.toStringBuilderLineList(list, sb, continuationOffset + 1,
             rightCol, MMIOConstants.MM_END_STMT_KEYWORD);
 
         list.add(sb);
@@ -365,7 +358,7 @@ public class MMTTheoremExportFormatter {
         if (needScopeLines)
             leftOffset += indentAmt;
 
-        StringBuffer sb = startNewLine(leftOffset);
+        StringBuilder sb = startNewLine(leftOffset);
 
         sb.append(MMIOConstants.MM_START_COMMENT_KEYWORD);
         sb.append(' ');
@@ -416,7 +409,7 @@ public class MMTTheoremExportFormatter {
         if (needScopeLines)
             leftOffset += indentAmt;
 
-        StringBuffer sb = startNewLine(leftOffset);
+        StringBuilder sb = startNewLine(leftOffset);
 
         sb.append(theorem.getLabel());
         sb.append(' ');
@@ -429,7 +422,7 @@ public class MMTTheoremExportFormatter {
 
         final Formula formula = theorem.getFormula();
 
-        sb = formula.toStringBufferLineList(list, sb, continuationOffset + 1,
+        sb = formula.toStringBuilderLineList(list, sb, continuationOffset + 1,
             rightCol, MMIOConstants.MM_START_PROOF_KEYWORD);
 
         list.add(sb);
@@ -440,7 +433,7 @@ public class MMTTheoremExportFormatter {
         if (needScopeLines)
             leftOffset += indentAmt;
 
-        final StringBuffer prefix = startNewLine(leftOffset);
+        final StringBuilder prefix = startNewLine(leftOffset);
         prefix.append(proofWorksheet.getTheoremLabel());
         prefix.append(' ');
         prefix.append(MMIOConstants.MM_KEYWORD_1ST_CHAR);
@@ -448,8 +441,9 @@ public class MMTTheoremExportFormatter {
 
         final int continuationOffset = prefix.length() + indentAmt;
 
-        final StringBuffer stmtText = proofWorksheet.getQedStep().getStmtText();
-        final StringBuffer textArea = new StringBuffer(stmtText.capacity());
+        final StringBuilder stmtText = proofWorksheet.getQedStep()
+            .getStmtText();
+        final StringBuilder textArea = new StringBuilder(stmtText.capacity());
         textArea.append(stmtText);
 
         ProofStepStmt.reviseStepHypRefInStmtTextArea(textArea, prefix);
@@ -459,9 +453,9 @@ public class MMTTheoremExportFormatter {
 
         for (int i = 0; i < textLines.length - 1; i++)
             if (textLines[i].length() > 0)
-                list.add(new StringBuffer(textLines[i]));
+                list.add(new StringBuilder(textLines[i]));
 
-        StringBuffer sb = new StringBuffer(rightCol);
+        StringBuilder sb = new StringBuilder(rightCol);
 
         final String lastLine = textLines[textLines.length - 1];
 
@@ -497,7 +491,7 @@ public class MMTTheoremExportFormatter {
             leftOffset += indentAmt;
         leftOffset += indentAmt;
 
-        final StringBuffer sb = startNewLine(leftOffset);
+        startNewLine(leftOffset);
 
         final Stmt[] s = theorem.getProof();
         final RPNStep[] rpn = new RPNStep[s.length];
@@ -516,7 +510,7 @@ public class MMTTheoremExportFormatter {
             leftOffset += indentAmt;
         leftOffset += indentAmt;
 
-        final StringBuffer sb = startNewLine(leftOffset);
+        startNewLine(leftOffset);
 
         outputProof(proofWorksheet.getQedStepProofRPN(), leftOffset, rightCol);
     }
@@ -525,7 +519,7 @@ public class MMTTheoremExportFormatter {
         final int right)
     {
 
-        StringBuffer sb = startNewLine(left);
+        StringBuilder sb = startNewLine(left);
 
         String stepLabel;
         int col = left;
@@ -573,7 +567,7 @@ public class MMTTheoremExportFormatter {
 
     private void outputDjVarsLines(final Theorem theorem) {
 
-        final LinkedList djStmtTextList = DjVars
+        final List<StringBuilder> djStmtTextList = DjVars
             .buildMetamathDjVarsStatementList(theorem);
 
         outputDjVarsLines(djStmtTextList);
@@ -583,27 +577,24 @@ public class MMTTheoremExportFormatter {
         final DistinctVariablesStmt[] distinctVariableStmtArray)
     {
 
-        final LinkedList djStmtTextList = DjVars
+        final List<StringBuilder> djStmtTextList = DjVars
             .buildMetamathDjVarsStatementList(distinctVariableStmtArray);
 
         outputDjVarsLines(djStmtTextList);
     }
 
-    private void outputDjVarsLines(final LinkedList djStmtTextList) {
+    private void outputDjVarsLines(final List<StringBuilder> djStmtTextList) {
 
         int leftOffset = indentAmt;
         if (needScopeLines)
             leftOffset += indentAmt;
 
-        StringBuffer sb = startNewLine(leftOffset);
+        StringBuilder sb = startNewLine(leftOffset);
         int col = leftOffset;
 
         // if a single $d statement exceeds the line length
         // let it go beyond? is it worth fooling with? no...
-        final Iterator i = djStmtTextList.iterator();
-        StringBuffer dsb;
-        while (i.hasNext()) {
-            dsb = (StringBuffer)i.next();
+        for (final StringBuilder dsb : djStmtTextList) {
             col += dsb.length();
             if (col > rightCol) {
                 list.add(sb);
@@ -621,14 +612,14 @@ public class MMTTheoremExportFormatter {
         list.add(sb);
     }
 
-    private StringBuffer startNewLine(final int n) {
+    private StringBuilder startNewLine(final int n) {
 
-        final StringBuffer sb = new StringBuffer(rightCol);
+        final StringBuilder sb = new StringBuilder(rightCol);
         indent(sb, n);
         return sb;
     }
 
-    private void indent(final StringBuffer sb, int n) {
+    private void indent(final StringBuilder sb, int n) {
         while (n-- > 0)
             sb.append(' ');
     }

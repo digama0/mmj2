@@ -11,8 +11,6 @@
 
 package mmj.verify;
 
-import java.util.Iterator;
-
 import mmj.lang.*;
 
 /**
@@ -168,15 +166,11 @@ public class NullsPermittedRule extends GrammarRule {
     public GrammarRule getDupRule(final Grammar grammar,
         final Cnst[] ruleFormatExprIn)
     {
-
-        NullsPermittedRule dupCheck;
-        final Iterator iterator = grammar.getNullsPermittedGRList().iterator();
         final Cnst ruleTyp = getGrammarRuleTyp();
-        while (iterator.hasNext()) {
-            dupCheck = (NullsPermittedRule)iterator.next();
+        for (final NullsPermittedRule dupCheck : grammar
+            .getNullsPermittedGRList())
             if (ruleTyp == dupCheck.getGrammarRuleTyp())
                 return dupCheck;
-        }
         return null;
     }
 
@@ -241,19 +235,12 @@ public class NullsPermittedRule extends GrammarRule {
      */
     @Override
     public void deriveAdditionalRules(final Grammar grammar) {
-        Iterator iterator = grammar.getTypeConversionGRList().iterator();
-        TypeConversionRule typeConversionRule;
-        while (iterator.hasNext()) {
-            typeConversionRule = (TypeConversionRule)iterator.next();
+        for (final TypeConversionRule typeConversionRule : grammar
+            .getTypeConversionGRList())
             typeConversionRule.deriveRulesUsingNullsPermitted(grammar, this);
-        }
 
-        iterator = grammar.getNotationGRSet().iterator();
-        NotationRule notationRule;
-        while (iterator.hasNext()) {
-            notationRule = (NotationRule)iterator.next();
+        for (final NotationRule notationRule : grammar.getNotationGRSet())
             notationRule.deriveRulesUsingNullsPermitted(grammar, this);
-        }
     }
 
     /**

@@ -80,7 +80,7 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
     private int checkpointMObjCount;
     private int checkpointNbrIntervals;
 
-    private final HashMap intervalTbl;
+    private final Map<Integer, BitSet> intervalTbl;
 
     /**
      *  Validates Interval Size parameter.
@@ -146,7 +146,7 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
         this.intervalSize = intervalSize;
 
         SeqAssigner.validateIntervalTblInitialSize(intervalTblInitialSize);
-        intervalTbl = new HashMap(intervalTblInitialSize);
+        intervalTbl = new HashMap<Integer, BitSet>(intervalTblInitialSize);
     }
 
     /**
@@ -312,11 +312,7 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
         boolean wasTheoremAppended;
         Theorem theorem;
 
-        TheoremStmtGroup t;
-        final Iterator iterator = mmtTheoremSet.iterator();
-        while (iterator.hasNext()) {
-            t = (TheoremStmtGroup)iterator.next();
-
+        for (final TheoremStmtGroup t : mmtTheoremSet) {
             if (!t.getIsTheoremNew())
                 continue;
 
@@ -378,7 +374,7 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
         final String updateCaption)
     {
 
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         sb.append(LangConstants.ERRMSG_SEQ_ASSIGNER_ROLLBACK_AUDIT_1);
         sb.append(seq);
         sb.append(LangConstants.ERRMSG_SEQ_ASSIGNER_ROLLBACK_AUDIT_2);
@@ -420,7 +416,7 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
 
     private BitSet getBitSet(final Integer intervalNumber) {
 
-        return (BitSet)intervalTbl.get(intervalNumber);
+        return intervalTbl.get(intervalNumber);
     }
 
     private void putBitSet(final Integer intervalNumber, final BitSet bitSet) {

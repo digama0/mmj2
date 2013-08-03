@@ -44,7 +44,7 @@ public class ParseNodeHolder {
     /**
      *  mObj contains either a Cnst, a Var or a Stmt.
      */
-    public MObj mObj;
+    public MObj<?> mObj;
 
     /**
      *  ParseNode associated with mObj, may be null.
@@ -155,7 +155,7 @@ public class ParseNodeHolder {
      *  @return String representing twin chain.
      */
     public String dumpTwinChainToString() {
-        final StringBuffer s = new StringBuffer();
+        final StringBuilder s = new StringBuilder();
         ParseNodeHolder next = this;
         do {
             s.append(next.getCnstIdOrLabel());

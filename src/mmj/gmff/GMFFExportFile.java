@@ -28,7 +28,6 @@ public class GMFFExportFile {
     private final String charsetEncoding;
     private final boolean append;
 
-    private final GMFFFolder exportFolder;
     private File exportFile;
 
     /**
@@ -58,7 +57,6 @@ public class GMFFExportFile {
                 GMFFConstants.ERRMSG_GMFF_EXPORT_FILE_CHARSET_BLANK_1
                     + exportFileName);
 
-        this.exportFolder = exportFolder;
         this.exportFileName = exportFileName.trim();
         this.exportType = exportType;
         this.charsetEncoding = charsetEncoding.trim();
@@ -67,33 +65,25 @@ public class GMFFExportFile {
         try {
             exportFile = new File(exportFolder.getFolderFile(), exportFileName);
 
-            if (exportFile.exists()) {
-                if (exportFile.isFile()) {
-                    if (exportFile.canWrite()) {
-                        // okey dokey!
-                    }
-                    else
-                        throw new GMFFException(
-                            GMFFConstants.ERRMSG_EXPORT_FILE_EXISTS_CANNOT_UPDATE_1
-                                + exportFileName
-                                + GMFFConstants.ERRMSG_EXPORT_FILE_EXISTS_CANNOT_UPDATE_2
-                                + exportType
-                                + GMFFConstants.ERRMSG_EXPORT_FILE_EXISTS_CANNOT_UPDATE_3
-                                + getAbsolutePath());
-                }
-                else
-                    throw new GMFFException(
-                        GMFFConstants.ERRMSG_EXPORT_FILE_EXISTS_NOT_A_FILE_1
-                            + exportFileName
-                            + GMFFConstants.ERRMSG_EXPORT_FILE_EXISTS_NOT_A_FILE_2
-                            + exportType
-                            + GMFFConstants.ERRMSG_EXPORT_FILE_EXISTS_NOT_A_FILE_3
-                            + getAbsolutePath());
-
-            }
-            else {
+            if (!exportFile.exists()) {
                 // OK, great, a new file.
             }
+            else if (!exportFile.isFile())
+                throw new GMFFException(
+                    GMFFConstants.ERRMSG_EXPORT_FILE_EXISTS_NOT_A_FILE_1
+                        + exportFileName
+                        + GMFFConstants.ERRMSG_EXPORT_FILE_EXISTS_NOT_A_FILE_2
+                        + exportType
+                        + GMFFConstants.ERRMSG_EXPORT_FILE_EXISTS_NOT_A_FILE_3
+                        + getAbsolutePath());
+            else if (!exportFile.canWrite())
+                throw new GMFFException(
+                    GMFFConstants.ERRMSG_EXPORT_FILE_EXISTS_CANNOT_UPDATE_1
+                        + exportFileName
+                        + GMFFConstants.ERRMSG_EXPORT_FILE_EXISTS_CANNOT_UPDATE_2
+                        + exportType
+                        + GMFFConstants.ERRMSG_EXPORT_FILE_EXISTS_CANNOT_UPDATE_3
+                        + getAbsolutePath());
         } catch (final SecurityException e) {
             throw new GMFFException(
                 GMFFConstants.ERRMSG_EXPORT_FILE_MISC_ERROR_1 + exportFileName
@@ -114,7 +104,7 @@ public class GMFFExportFile {
      *           exception or if the charsetEncoding name
      *           is not supported.
      */
-    public void writeFileContents(final StringBuffer exportBuffer)
+    public void writeFileContents(final StringBuilder exportBuffer)
         throws GMFFException
     {
 

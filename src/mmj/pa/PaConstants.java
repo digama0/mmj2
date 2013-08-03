@@ -2263,7 +2263,7 @@ public class PaConstants {
     public static final String ERRMSG_PA_GET_THEOREM_NOT_FOUND_1 = "E-PA-0125 Theorem not found -- or input label is"
         + " not a Metamath theorem. Theorem Label = ";
 
-    public static final String ERRMSG_ITERATOR_START_THEOREM_NOT_FOUND_1 = "E-PA-0126 Starting theorem for build of sorted list"
+    public static final String ERRMSG_PA_START_THEOREM_NOT_FOUND_1 = "E-PA-0126 Starting theorem for build of sorted list"
         + " not found -- or input label is not a Metamath"
         + " theorem. Theorem Label = ";
 

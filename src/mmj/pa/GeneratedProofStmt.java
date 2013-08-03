@@ -39,7 +39,7 @@
 
 package mmj.pa;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import mmj.lang.ParseTree.RPNStep;
 import mmj.lang.Stmt;
@@ -65,10 +65,10 @@ public class GeneratedProofStmt extends ProofWorkStmt {
 
         lineCnt = 1;
 
-        stmtText = new StringBuffer(rpnProof.length * 5); // 5=guess
+        stmtText = new StringBuilder(rpnProof.length * 5); // 5=guess
         final int left = w.proofAsstPreferences.getRPNProofLeftCol();
         final int right = w.proofAsstPreferences.getRPNProofRightCol();
-        final StringBuffer indentLeft = new StringBuffer(left - 1);
+        final StringBuilder indentLeft = new StringBuilder(left - 1);
         for (int i = 1; i < left; i++)
             indentLeft.append(' ');
 
@@ -121,16 +121,16 @@ public class GeneratedProofStmt extends ProofWorkStmt {
     }
 
     public GeneratedProofStmt(final ProofWorksheet w,
-        final ArrayList<Stmt> parenList, final String letters)
+        final List<Stmt> parenList, final String letters)
     {
         super(w);
 
         lineCnt = 1;
 
-        stmtText = new StringBuffer(parenList.size() * 5 + letters.length()); // 5=guess
+        stmtText = new StringBuilder(parenList.size() * 5 + letters.length()); // 5=guess
         final int left = w.proofAsstPreferences.getRPNProofLeftCol();
         final int right = w.proofAsstPreferences.getRPNProofRightCol();
-        final StringBuffer indentLeft = new StringBuffer(left - 1);
+        final StringBuilder indentLeft = new StringBuilder(left - 1);
         for (int i = 1; i < left; i++)
             indentLeft.append(' ');
 
@@ -142,7 +142,6 @@ public class GeneratedProofStmt extends ProofWorkStmt {
         col++;
         stmtText.append('(');
 
-        final String x;
         for (int i = 0; i <= parenList.size(); i++) {
             String label;
             if (i == parenList.size())

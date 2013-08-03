@@ -28,6 +28,7 @@
 package mmj.lang;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *  A simple tree structure to hold a ParseNode root.
@@ -187,7 +188,7 @@ public class ParseTree {
      *  @return new ParseTree.
      */
     public ParseTree deepCloneApplyingAssrtSubst(final Hyp[] assrtHypArray,
-        final ParseNode[] assrtSubst, final ArrayList workVarList)
+        final ParseNode[] assrtSubst, final List<Var> workVarList)
     {
         return new ParseTree(root.deepCloneApplyingAssrtSubst(assrtHypArray,
             assrtSubst, workVarList));
@@ -343,14 +344,14 @@ public class ParseTree {
 
     public RPNStep[] convertToSquishedRPN() {
         squishTree();
-        final ArrayList<RPNStep> list = new ArrayList<RPNStep>();
+        final List<RPNStep> list = new ArrayList<RPNStep>();
         if (root != null)
             convertToSquishedRPN(1, list, root);
         return list.toArray(new RPNStep[0]);
     }
 
-    private int convertToSquishedRPN(int backrefs,
-        final ArrayList<RPNStep> list, final ParseNode node)
+    private int convertToSquishedRPN(int backrefs, final List<RPNStep> list,
+        final ParseNode node)
     {
         if (node.firstAppearance > 0) {
             final RPNStep s = new RPNStep();
@@ -432,7 +433,7 @@ public class ParseTree {
         if (levelOneTwo != null)
             return levelOneTwo;
         Stmt stmt = root.getStmt();
-        final StringBuffer answer = new StringBuffer();
+        final StringBuilder answer = new StringBuilder();
         if (!stmt.isVarHyp()) {
             answer.append(stmt.getLabel());
             answer.append(' ');
@@ -492,7 +493,7 @@ public class ParseTree {
     @Override
     public String toString() {
         final Stmt[] rpn = convertToRPN();
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         for (final Stmt element : rpn) {
             sb.append(element.getLabel());
             sb.append(" ");

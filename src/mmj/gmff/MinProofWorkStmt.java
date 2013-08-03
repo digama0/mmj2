@@ -15,7 +15,7 @@
 
 package mmj.gmff;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import mmj.pa.PaConstants;
 
@@ -59,7 +59,7 @@ public abstract class MinProofWorkStmt {
     /**
      *  <code>constructStmt</code> builds a
      *  <code>MinProofWorkStmt</code> from an
-     *  ArrayList of an ArrayList of String chunks which
+     *  List of an List of String chunks which
      *  are either Metamath whitespace or Metamath tokens.
      *  <p>
      *  The first line of a statement identifies the type
@@ -78,7 +78,7 @@ public abstract class MinProofWorkStmt {
      *
      *  @param minProofWorksheet GMFF version of
      *			  <code>ProofWorksheet</code>
-     *  @param lineList ArrayList of ArrayList of String chunks
+     *  @param lineList List of List of String chunks
      *             representing the text of a <code>ProofWorksheet</code>
      *             broken into Metamath whitespace and tokens
      *             grouped by line of the <code>ProofWorksheet</code>.
@@ -92,12 +92,12 @@ public abstract class MinProofWorkStmt {
      */
     public static MinProofWorkStmt constructStmt(
         final MinProofWorksheet minProofWorksheet,
-        final ArrayList<ArrayList<String>> lineList)
+        final List<List<String>> lineList)
     {
 
         final String[][] slc = new String[lineList.size()][];
         int row = 0;
-        for (final ArrayList<String> line : lineList) {
+        for (final List<String> line : lineList) {
             final String[] lc = new String[line.size()];
             int col = 0;
             for (final String s : line)
@@ -169,13 +169,13 @@ public abstract class MinProofWorkStmt {
      *  <p>
      *  @param gmffExporter The <code>GMFFExporter</code> requesting
      *				the export data build.
-     *  @param exportBuffer The <code>StringBuffer</code> to which
+     *  @param exportBuffer The <code>StringBuilder</code> to which
      *               exported data is to be output.
      *  @throws GMFFException if errors are encountered during the
      *               export process.
      */
     public abstract void buildModelAExport(GMFFExporter gmffExporter,
-        StringBuffer exportBuffer) throws GMFFException;
+        StringBuilder exportBuffer) throws GMFFException;
 
     /**
      *  Utility function to typeset and reformat a portion of
@@ -193,7 +193,7 @@ public abstract class MinProofWorkStmt {
      *  <p>
      *  @param gmffExporter The <code>GMFFExporter</code> requesting
      *				the export data build.
-     *  @param exportBuffer The <code>StringBuffer</code> to which
+     *  @param exportBuffer The <code>StringBuilder</code> to which
      *               exported data is to be output.
      *  @param lineChunks <code>String</code> array containing
      *               Metamath tokens or whitespace.
@@ -206,7 +206,7 @@ public abstract class MinProofWorkStmt {
      *               export process.
      */
     public void typesetFormulaSymbols(final GMFFExporter gmffExporter,
-        final StringBuffer exportBuffer, final String[] lineChunks,
+        final StringBuilder exportBuffer, final String[] lineChunks,
         final int startOfFormulaSymbols)
     {
 
@@ -225,7 +225,7 @@ public abstract class MinProofWorkStmt {
             }
 
             if (chunk.length() > 1) {
-                final StringBuffer sb = new StringBuffer(chunk.length() - 1);
+                final StringBuilder sb = new StringBuilder(chunk.length() - 1);
                 for (int z = 1; z < chunk.length(); z++)
                     sb.append(" ");
                 gmffExporter.escapeAndAppendProofText(exportBuffer,
@@ -283,7 +283,7 @@ public abstract class MinProofWorkStmt {
         final int fromChunkIndex, final int toChunkIndex)
     {
 
-        final StringBuffer sb = new StringBuffer(100);
+        final StringBuilder sb = new StringBuilder(100);
         final String[] lineChunk = stmtLineChunks[lineIndex];
         String chunk;
         for (int i = fromChunkIndex; i < toChunkIndex; i++) {

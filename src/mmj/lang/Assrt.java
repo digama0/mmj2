@@ -58,7 +58,7 @@ import java.util.*;
  *  main kinds, Axiom and Theorem -- known in
  *  Metamath as "Axiomatic Assertions" and "Provable
  *  Assertions". What do Assertions have in common that
- *  Hypothotheses do not? "Mandatory" Frames.
+ *  Hypotheses do not? "Mandatory" Frames.
  *
  *  @see <a href="../../MetamathERNotes.html">
  *       Nomenclature and Entity-Relationship Notes</a>
@@ -121,16 +121,17 @@ public abstract class Assrt extends Stmt {
      *
      *  @throws LangException variety of errors :)
      */
-    public Assrt(final int seq, final ArrayList scopeDefList, final Map symTbl,
-        final Map stmtTbl, final String labelS, final String typS,
-        final ArrayList symList) throws LangException
+    public Assrt(final int seq, final List<ScopeDef> scopeDefList,
+        final Map<String, Sym> symTbl, final Map<String, Stmt> stmtTbl,
+        final String labelS, final String typS, final List<String> symList)
+        throws LangException
     {
         super(seq, symTbl, stmtTbl, labelS);
 
-        final ArrayList exprHypList = new ArrayList();
+        final List<Hyp> exprHypList = new ArrayList<Hyp>();
         formula = new LogicFormula(symTbl, typS, symList, exprHypList);
 
-        varHypArray = Assrt.loadVarHypArray(exprHypList);
+        varHypArray = new VarHyp[0];
 
         mandFrame = buildMandFrame(scopeDefList, exprHypList);
 
@@ -378,22 +379,12 @@ public abstract class Assrt extends Stmt {
      *                       Assrt.
      *
      */
-    private MandFrame buildMandFrame(final ArrayList scopeDefList,
-        final ArrayList hypList)
+    private MandFrame buildMandFrame(final List<ScopeDef> scopeDefList,
+        final List<Hyp> hypList)
     {
-
-        ListIterator scopeIterator;
-        ScopeDef scopeDef;
-
-        LogHyp logHyp;
-        VarHyp[] varHypArray;
-
-        scopeIterator = scopeDefList.listIterator();
-        while (scopeIterator.hasNext()) {
-            scopeDef = (ScopeDef)scopeIterator.next();
-
+        for (final ScopeDef scopeDef : scopeDefList)
             for (int i = 0; i < scopeDef.scopeLogHyp.size(); i++) {
-                logHyp = (LogHyp)scopeDef.scopeLogHyp.get(i);
+                final LogHyp logHyp = scopeDef.scopeLogHyp.get(i);
                 varHypArray = logHyp.getMandVarHypArray();
 
                 for (final VarHyp element : varHypArray)
@@ -401,30 +392,18 @@ public abstract class Assrt extends Stmt {
 
                 Assrt.accumHypInList(hypList, logHyp);
             }
-        }
 
-        ListIterator djVarsIterator;
-        final ArrayList djVarsList = new ArrayList();
-        DjVars djVars;
-
-        scopeIterator = scopeDefList.listIterator();
-        while (scopeIterator.hasNext()) {
-            scopeDef = (ScopeDef)scopeIterator.next();
-
-            djVarsIterator = scopeDef.scopeDjVars.listIterator();
-            while (djVarsIterator.hasNext()) {
-
-                djVars = (DjVars)djVarsIterator.next();
+        final List<DjVars> djVarsList = new ArrayList<DjVars>();
+        for (final ScopeDef scopeDef : scopeDefList)
+            for (final DjVars djVars : scopeDef.scopeDjVars)
                 if (areBothDjVarsInHypList(hypList, djVars)
                     && !djVarsList.contains(djVars))
                     djVarsList.add(djVars);
-            }
-        }
 
         final MandFrame mF = new MandFrame();
 
-        mF.hypArray = Assrt.loadHypArray(hypList);
-        mF.djVarsArray = DjVars.loadDjVarsArray(djVarsList);
+        mF.hypArray = hypList.toArray(new Hyp[hypList.size()]);
+        mF.djVarsArray = djVarsList.toArray(new DjVars[djVarsList.size()]);
 
         return mF;
     }
@@ -435,7 +414,7 @@ public abstract class Assrt extends Stmt {
      *  <p>
      *  Note: checks only the VarHyp's.
      *  <p>
-     * @param hypList  -- ArrayList containing hypotheses
+     * @param hypList  -- List containing hypotheses
      *
      * @param djVars -- DjVars object containing 2 variables to
      *                  be checked against the variables referenced
@@ -444,14 +423,14 @@ public abstract class Assrt extends Stmt {
      * @return boolean -- true if both DjVars variables are present
      *                    in hypList, otherwise false.
      */
-    private boolean areBothDjVarsInHypList(final ArrayList hypList,
+    private boolean areBothDjVarsInHypList(final List<Hyp> hypList,
         final DjVars djVars)
     {
         boolean loFound = false;
         boolean hiFound = false;
         Hyp hyp;
         for (int i = 0; i < hypList.size(); i++) {
-            hyp = (Hyp)hypList.get(i);
+            hyp = hypList.get(i);
             if (hyp.isVarHyp()) {
                 if (((VarHyp)hyp).getVar() == djVars.varLo)
                     loFound = true;
@@ -476,12 +455,13 @@ public abstract class Assrt extends Stmt {
      *  sequence order, hypList should either be empty (new)
      *  before the call, or already be in that order.
      *
-     *  @param hypList  ArrayList of Hyp's, updated here.
+     *  @param hypList  List of Hyp's, updated here.
      *
      *  @param hypNew  Candidate Hyp to be added to hypList if
      *                 not already there.
      */
-    public static void accumHypInList(final ArrayList hypList, final Hyp hypNew)
+    public static <T extends Hyp> void accumHypInList(final List<T> hypList,
+        final T hypNew)
     {
         int i = 0;
         final int iEnd = hypList.size();
@@ -490,7 +470,7 @@ public abstract class Assrt extends Stmt {
 
         while (true) {
             if (i < iEnd) {
-                existingSeq = ((Hyp)hypList.get(i)).seq;
+                existingSeq = hypList.get(i).seq;
                 if (newSeq < existingSeq)
                     // insert here, at "i"
                     break;
@@ -505,40 +485,6 @@ public abstract class Assrt extends Stmt {
         }
         hypList.add(i, hypNew);
         return;
-    }
-
-    /**
-     *  Copies hypList ArrayList to a Hyp Array.
-     *  <p>
-     *  This was codes because i couldn't get
-     *  ArrayList.toArray() to compile. Doh!
-     *
-     *  @param hypList  ArrayList of hypotheses to copy.
-     *
-     *  @return Array of Hyp's copied from hyplist.
-     */
-    public static Hyp[] loadHypArray(final ArrayList hypList) {
-        final Hyp[] hypArray = new Hyp[hypList.size()];
-        for (int i = 0; i < hypArray.length; i++)
-            hypArray[i] = (Hyp)hypList.get(i);
-        return hypArray;
-    }
-
-    /**
-     *  Copies VarHyp ArrayList to a VarHyp Array.
-     *  <p>
-     *  This was codes because i couldn't get
-     *  ArrayList.toArray() to compile. Doh!
-     *
-     *  @param  hypList  ArrayList of VarHyp to copy
-     *
-     *  @return Array of VarHyp copied from hyplist.
-     */
-    public static VarHyp[] loadVarHypArray(final ArrayList hypList) {
-        final VarHyp[] varHypArray = new VarHyp[hypList.size()];
-        for (int i = 0; i < varHypArray.length; i++)
-            varHypArray[i] = (VarHyp)hypList.get(i);
-        return varHypArray;
     }
 
     /**
@@ -601,42 +547,33 @@ public abstract class Assrt extends Stmt {
     }
 
 //not needed in StepSelectorSearch anymore, so comment out for now
-//  /**
-//   *  Sorts a list of Assrt into an array.
-//   *
-//   *  @param assrtList List of Assrt to be sorted.
-//   *  @param comparator Comparator to be used for the sort.
-//   *  @return Array of Assrt with size equal to the number
-//   *                of elements in the input list.
-//   */
-//  public static Assrt[] sortListIntoArray(
-//                              List       assrtList,
-//                              Comparator comparator) {
-//
-//      Assrt[]  assrtArray       = new Assrt[assrtList.size()];
-//      Iterator i                = assrtList.iterator();
-//      int      cnt              = 0;
-//      while (i.hasNext()) {
-//          assrtArray[cnt++]     = (Assrt)i.next();
-//      }
-//
-//      Arrays.sort(assrtArray,
-//                  comparator);
-//
-//      return assrtArray;
-//  }
-//
+    /**
+     *  Sorts a list of Assrt into an array.
+     *
+     *  @param assrtList List of Assrt to be sorted.
+     *  @param comparator Comparator to be used for the sort.
+     *  @return Array of Assrt with size equal to the number
+     *                of elements in the input list.
+     */
+    public static Assrt[] sortListIntoArray(final List<Assrt> assrtList,
+        final Comparator<Assrt> comparator)
+    {
+        final Assrt[] assrtArray = assrtList
+            .toArray(new Assrt[assrtList.size()]);
+        Arrays.sort(assrtArray, comparator);
+        return assrtArray;
+    }
 
     /**
      *  NBR_LOG_HYP_SEQ sequences by Stmt.seq
      */
-    static public final Comparator NBR_LOG_HYP_SEQ = new Comparator() {
+    static public final Comparator<Assrt> NBR_LOG_HYP_SEQ = new Comparator<Assrt>()
+    {
         @Override
-        public int compare(final Object o1, final Object o2) {
-            int n = ((Assrt)o1).logHypArray.length
-                - ((Assrt)o2).logHypArray.length;
+        public int compare(final Assrt o1, final Assrt o2) {
+            int n = o1.logHypArray.length - o2.logHypArray.length;
             if (n == 0)
-                n = ((Assrt)o1).seq - ((Assrt)o2).seq;
+                n = o1.seq - o2.seq;
             return n;
         }
     };

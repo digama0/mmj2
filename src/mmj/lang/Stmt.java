@@ -85,7 +85,7 @@ import java.util.Map;
  *  @see <a href="../../MetamathERNotes.html">
  *       Nomenclature and Entity-Relationship Notes</a>
  */
-public abstract class Stmt extends MObj implements Comparable {
+public abstract class Stmt extends MObj<Stmt> {
     /**
      *  note: label must NOT be changed after Stmt added to stmtTbl
      *        because stmtTbl is a Map (map behavior undefined)
@@ -182,7 +182,7 @@ public abstract class Stmt extends MObj implements Comparable {
      *          is a duplicate of another label in stmtTbl
      *          or an id in the symTbl.
      */
-    public Stmt(final int seq, final Map symTbl, final Map stmtTbl,
+    public Stmt(final int seq, final Map<?, ?> symTbl, final Map<?, ?> stmtTbl,
         final String labelS) throws LangException
     {
         super(seq);
@@ -317,12 +317,12 @@ public abstract class Stmt extends MObj implements Comparable {
      *  text not to exceed the given maxLength. If the
      *  number of output characters exceeds maxLength
      *  output terminates, possibly leaving a dirty
-     *  StringBuffer.
+     *  StringBuilder.
      *  <p>
      *  The depth of the sub-tree is checked against
      *  the input maxDepth parameter, and if the depth
      *  exceeds this number, output terminates,, possibly
-     *  leaving a dirty StringBuffer.
+     *  leaving a dirty StringBuilder.
      *  <p>
      *  Depth is computed as 1 for each Notation Syntax
      *  Axiom Node. VarHyp nodes and Nulls Permitted,
@@ -330,7 +330,7 @@ public abstract class Stmt extends MObj implements Comparable {
      *  Axiom nodes are assigned depth = 0 for purposes of
      *  depth checking.
      *  <p>
-     *  @param sb            StringBuffer already initialized
+     *  @param sb            StringBuilder already initialized
      *                       for appending characters.
      *
      *  @param maxDepth      maximum depth of Notation Syntax
@@ -348,10 +348,10 @@ public abstract class Stmt extends MObj implements Comparable {
      *                       into the Stmt.
      *
      *  @return length of sub-expression characters
-     *          appended to the input StringBuffer --
+     *          appended to the input StringBuilder --
      *          or -1 if maxDepth or maxLength exceeded.
      */
-    public abstract int renderParsedSubExpr(StringBuffer sb, int maxDepth,
+    public abstract int renderParsedSubExpr(StringBuilder sb, int maxDepth,
         int maxLength, ParseNode[] child);
 
     /**
@@ -550,27 +550,27 @@ public abstract class Stmt extends MObj implements Comparable {
      *
      */
     @Override
-    public int compareTo(final Object obj) {
-        return label.compareTo(((Stmt)obj).label);
+    public int compareTo(final Stmt obj) {
+        return label.compareTo(obj.label);
     }
 
     /**
      *  LABEL sequences by Stmt.label
      */
-    static public final Comparator LABEL = new Comparator() {
+    static public final Comparator<Stmt> LABEL = new Comparator<Stmt>() {
         @Override
-        public int compare(final Object o1, final Object o2) {
-            return ((Stmt)o1).label.compareTo(((Stmt)o2).label);
+        public int compare(final Stmt o1, final Stmt o2) {
+            return o1.label.compareTo(o2.label);
         }
     };
 
     /**
      *  SEQ sequences by Stmt.seq
      */
-    static public final Comparator SEQ = new Comparator() {
+    static public final Comparator<Stmt> SEQ = new Comparator<Stmt>() {
         @Override
-        public int compare(final Object o1, final Object o2) {
-            return ((Stmt)o1).seq - ((Stmt)o2).seq;
+        public int compare(final Stmt o1, final Stmt o2) {
+            return o1.seq - o2.seq;
         }
     };
 }

@@ -16,7 +16,7 @@
 package mmj.pa;
 
 import java.util.LinkedList;
-import java.util.ListIterator;
+import java.util.List;
 
 import mmj.lang.Assrt;
 
@@ -31,14 +31,12 @@ import mmj.lang.Assrt;
  */
 public class StepSelectorStore {
 
-    private final ProofAsstPreferences proofAsstPreferences;
-
     private final int maxResults;
     private int cntResults;
 
     private int totalNbrLines;
 
-    private final LinkedList storeList;
+    private final List<StepSelectorItem> storeList;
 
     /**
      *  Simple factory to hide constructor details.
@@ -62,11 +60,9 @@ public class StepSelectorStore {
      */
     public StepSelectorStore(final ProofAsstPreferences proofAsstPreferences) {
 
-        this.proofAsstPreferences = proofAsstPreferences;
-
         maxResults = proofAsstPreferences.getStepSelectorMaxResults();
 
-        storeList = new LinkedList();
+        storeList = new LinkedList<StepSelectorItem>();
         cntResults = 0;
         totalNbrLines = 0;
     }
@@ -108,17 +104,13 @@ public class StepSelectorStore {
         final Assrt[] refArray = new Assrt[totalNbrLines];
         final String[] selectionArray = new String[totalNbrLines];
 
-        StepSelectorItem item;
-        final ListIterator iterator = storeList.listIterator();
         int n = 0;
-        while (iterator.hasNext()) {
-            item = (StepSelectorItem)iterator.next();
+        for (final StepSelectorItem item : storeList)
             for (final String element : item.selection) {
                 refArray[n] = item.assrt;
                 selectionArray[n] = element;
-                ++n;
+                n++;
             }
-        }
         return new StepSelectorResults(step, refArray, selectionArray);
     }
 

@@ -37,8 +37,7 @@
 
 package mmj.lang;
 
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.*;
 
 /**
  *  LogHyp -- Logical Hypothesis -- corresponds to
@@ -78,13 +77,13 @@ public class LogHyp extends Hyp {
      *
      *  @throws LangException if duplicate, etc.
      */
-    public LogHyp(final int seq, final Map symTbl, final Map stmtTbl,
-        final ArrayList symList, final String labelS, final String typS)
-        throws LangException
+    public LogHyp(final int seq, final Map<String, Sym> symTbl,
+        final Map<String, Stmt> stmtTbl, final List<String> symList,
+        final String labelS, final String typS) throws LangException
     {
         super(seq, symTbl, stmtTbl, labelS, true); // true = "active"
 
-        final ArrayList exprHypList = new ArrayList();
+        final List<Hyp> exprHypList = new ArrayList<Hyp>();
 
         formula = new LogicFormula(symTbl, typS, symList, exprHypList);
 
@@ -216,7 +215,7 @@ public class LogHyp extends Hyp {
      *  ParseTree for a parsed sub-expression should
      *  contain only VarHyp and Syntax Axiom nodes.
      *  <p>
-     *  @param sb            StringBuffer already initialized
+     *  @param sb            StringBuilder already initialized
      *                       for appending characters.
      *
      *  @param maxDepth      maximum depth of Notation Syntax
@@ -234,11 +233,11 @@ public class LogHyp extends Hyp {
      *                       into the Stmt.
      *
      *  @return length of sub-expression characters
-     *          appended to the input StringBuffer --
+     *          appended to the input StringBuilder --
      *          or -1 if maxDepth or maxLength exceeded.
      */
     @Override
-    public int renderParsedSubExpr(final StringBuffer sb, final int maxDepth,
+    public int renderParsedSubExpr(final StringBuilder sb, final int maxDepth,
         final int maxLength, final ParseNode[] child)
     {
 

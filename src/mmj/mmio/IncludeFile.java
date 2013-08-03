@@ -15,7 +15,7 @@
 package mmj.mmio;
 
 import java.io.*;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Nitty-gritty IncludeFile work switching Tokenizers and
@@ -48,14 +48,14 @@ public class IncludeFile {
      * include file.
      * <p>
      * Note that the first
-     * include file entry in <code>fileArrayList</code>
+     * include file entry in <code>fileList</code>
      * stores the <code>Tokenizer</code> of the top level
      * MetaMath source file read; this is used to restore
      * Statementizer processing where it left off after
      * end of file on the include file.
      * <p>
      *
-     * @param fileList  ArrayList used to store information
+     * @param fileList  List used to store information
      *        about IncludeFiles. Initialize to empty list
      *        at start of processing:
      *        <code> fileList = new ArrayList();</code>.
@@ -77,14 +77,13 @@ public class IncludeFile {
      *
      * @throws    FileNotFoundException if bogus include file name.
      */
-    public static Tokenizer initIncludeFile(final ArrayList fileList,
+    public static Tokenizer initIncludeFile(final List<IncludeFile> fileList,
         final File f, final String fileName, final Statementizer statementizer)
         throws FileNotFoundException, IOException
     {
 
         if (!fileList.isEmpty()) {
-            final IncludeFile prevI = (IncludeFile)fileList
-                .get(fileList.size() - 1);
+            final IncludeFile prevI = fileList.get(fileList.size() - 1);
             prevI.restartCharsToBypass = prevI.tokenizer.getCurrentCharNbr();
             prevI.tokenizer.close();
         }
@@ -107,7 +106,7 @@ public class IncludeFile {
      *  "pops the stack", and restores the previous include file
      *  for further Statementizer processing.
      *
-     *  @param fileList  ArrayList used to store information
+     *  @param fileList  List used to store information
      *         about IncludeFiles.
      *
      *  @param statementizer  the Statementizer presently
@@ -119,7 +118,7 @@ public class IncludeFile {
      *
      *  @throws    FileNotFoundException if bogus include file name.
      */
-    public static Tokenizer termIncludeFile(final ArrayList fileList,
+    public static Tokenizer termIncludeFile(final List<IncludeFile> fileList,
         final Statementizer statementizer) throws FileNotFoundException,
         IOException
     {
@@ -130,7 +129,7 @@ public class IncludeFile {
                 MMIOConstants.ERRMSG_INCLUDE_FILE_ARRAY_EMPTY);
 
         // closes current file and tokenizer and removes from fileList
-        IncludeFile currI = (IncludeFile)fileList.get(fileList.size() - 1);
+        IncludeFile currI = fileList.get(fileList.size() - 1);
         currI.tokenizer.close();
 
         // save previous -- this will be the top level, original,
@@ -150,7 +149,7 @@ public class IncludeFile {
              *  where it left off (when the $[ xx.mm $] include
              *  statement was read.)
              */
-            currI = (IncludeFile)fileList.get(fileList.size() - 1);
+            currI = fileList.get(fileList.size() - 1);
 
             currI.tokenizer = new Tokenizer(new BufferedReader(
                 new InputStreamReader(new FileInputStream(currI.fileObject)),

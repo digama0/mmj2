@@ -93,12 +93,11 @@ public class LogicalSystem implements SystemLoader {
     private final GMFFManager gmffManager;
 
     private final SeqAssigner seqAssigner;
-    private final LinkedList theoremLoaderCommitListeners;
+    private final List<TheoremLoaderCommitListener> theoremLoaderCommitListeners;
 
-    private final ArrayList scopeDefList;
+    private final List<ScopeDef> scopeDefList;
     private ScopeDef currScopeDef;
     private int scopeLvl;
-    private int mObjCount = 0;
 
     private ProofVerifier proofVerifier;
     private SyntaxVerifier syntaxVerifier;
@@ -106,11 +105,11 @@ public class LogicalSystem implements SystemLoader {
 
     // Sym table (was sorted, asc order by Sym.id, but HashMap is
     // faster...)
-    private final Map symTbl;
+    private final Map<String, Sym> symTbl;
 
     // stmtTbl (was asc order by Stmt.label, but HashMap is
     // faster...)
-    private final Map stmtTbl;
+    private final Map<String, Stmt> stmtTbl;
 
     /**
      * Construct with full set of parameters.
@@ -163,8 +162,6 @@ public class LogicalSystem implements SystemLoader {
         final ProofVerifier proofVerifier, final SyntaxVerifier syntaxVerifier)
     {
 
-        mObjCount = 0;
-
         this.provableLogicStmtTypeParm = provableLogicStmtTypeParm;
         this.logicStmtTypeParm = logicStmtTypeParm;
 
@@ -172,7 +169,7 @@ public class LogicalSystem implements SystemLoader {
         this.bookManager = bookManager;
 
         this.seqAssigner = seqAssigner;
-        theoremLoaderCommitListeners = new LinkedList();
+        theoremLoaderCommitListeners = new LinkedList<TheoremLoaderCommitListener>();
 
         if (symTblInitialSize < LangConstants.SYM_TBL_INITIAL_SIZE_MINIMUM)
             throw new IllegalArgumentException(
@@ -184,14 +181,14 @@ public class LogicalSystem implements SystemLoader {
                 LangConstants.ERRMSG_STMT_TBL_TOO_SMALL
                     + LangConstants.STMT_TBL_INITIAL_SIZE_MINIMUM);
 
-        symTbl = new HashMap(symTblInitialSize);
-        stmtTbl = new HashMap(stmtTblInitialSize);
+        symTbl = new HashMap<String, Sym>(symTblInitialSize);
+        stmtTbl = new HashMap<String, Stmt>(stmtTblInitialSize);
 
         this.syntaxVerifier = syntaxVerifier;
         this.proofVerifier = proofVerifier;
 
         // init stack of scope levels
-        scopeDefList = new ArrayList();
+        scopeDefList = new ArrayList<ScopeDef>();
         beginScope(); // initialize global scope level
 
         gmffManager.setSymTbl(symTbl);
@@ -229,7 +226,7 @@ public class LogicalSystem implements SystemLoader {
                 LangConstants.ERRMSG_MUST_DEF_CNST_AT_GLOBAL_LVL);
 
         final Cnst c = new Cnst(seqAssigner.nextSeq(), symTbl, stmtTbl, id);
-        final Sym existingSym = (Sym)symTbl.put(id, c);
+        final Sym existingSym = symTbl.put(id, c);
 
         dupCheckSymAdd(existingSym);
 
@@ -322,7 +319,7 @@ public class LogicalSystem implements SystemLoader {
         final VarHyp vH = new VarHyp(seqAssigner.nextSeq(), symTbl, stmtTbl,
             varS, labelS, typS);
 
-        final Stmt existingStmt = (Stmt)stmtTbl.put(labelS, vH);
+        final Stmt existingStmt = stmtTbl.put(labelS, vH);
 
         dupCheckStmtAdd(existingStmt);
 
@@ -380,7 +377,7 @@ public class LogicalSystem implements SystemLoader {
         if (i == -1)
             currScopeDef.scopeDjVars.add(djVars);
         else
-            djVars = (DjVars)currScopeDef.scopeDjVars.get(i);
+            djVars = currScopeDef.scopeDjVars.get(i);
 
         return djVars;
     }
@@ -429,13 +426,13 @@ public class LogicalSystem implements SystemLoader {
      */
     @Override
     public LogHyp addLogHyp(final String labelS, final String typS,
-        final ArrayList symList) throws LangException
+        final List<String> symList) throws LangException
     {
 
         final LogHyp logHyp = new LogHyp(seqAssigner.nextSeq(), symTbl,
             stmtTbl, symList, labelS, typS);
 
-        final Stmt existingStmt = (Stmt)stmtTbl.put(labelS, logHyp);
+        final Stmt existingStmt = stmtTbl.put(labelS, logHyp);
 
         dupCheckStmtAdd(existingStmt);
 
@@ -467,13 +464,14 @@ public class LogicalSystem implements SystemLoader {
      *           etc.
      */
     public LogHyp addLogHypForTheoremLoader(final int seq, final String labelS,
-        final String typS, final ArrayList symList) throws LangException
+        final String typS, final List<String> symList)
+        throws LangException
     {
 
         final LogHyp logHyp = new LogHyp(seq, symTbl, stmtTbl, symList, labelS,
             typS);
 
-        final Stmt existingStmt = (Stmt)stmtTbl.put(labelS, logHyp);
+        final Stmt existingStmt = stmtTbl.put(labelS, logHyp);
 
         dupCheckStmtAdd(existingStmt);
 
@@ -514,13 +512,13 @@ public class LogicalSystem implements SystemLoader {
      */
     @Override
     public Axiom addAxiom(final String labelS, final String typS,
-        final ArrayList symList) throws LangException
+        final List<String> symList) throws LangException
     {
 
         final Axiom axiom = new Axiom(seqAssigner.nextSeq(), scopeDefList,
             symTbl, stmtTbl, labelS, typS, symList);
 
-        final Stmt existingStmt = (Stmt)stmtTbl.put(labelS, axiom);
+        final Stmt existingStmt = stmtTbl.put(labelS, axiom);
 
         dupCheckStmtAdd(existingStmt);
 
@@ -575,14 +573,14 @@ public class LogicalSystem implements SystemLoader {
      */
     @Override
     public Theorem addTheorem(final String labelS, final String typS,
-        final ArrayList symList, final ArrayList proofList)
+        final List<String> symList, final List<String> proofList)
         throws LangException
     {
 
         final Theorem theorem = new Theorem(seqAssigner.nextSeq(),
             scopeDefList, symTbl, stmtTbl, labelS, typS, symList, proofList);
 
-        final Stmt existingStmt = (Stmt)stmtTbl.put(labelS, theorem);
+        final Stmt existingStmt = stmtTbl.put(labelS, theorem);
 
         dupCheckStmtAdd(existingStmt);
 
@@ -613,13 +611,14 @@ public class LogicalSystem implements SystemLoader {
      *               etc.
      */
     public Theorem addTheoremForTheoremLoader(final int seq,
-        final String labelS, final String typS, final ArrayList symList,
-        final ArrayList proofList) throws LangException
+        final String labelS, final String typS,
+        final List<String> symList, final List<String> proofList)
+        throws LangException
     {
         final Theorem theorem = new Theorem(seq, scopeDefList, symTbl, stmtTbl,
             labelS, typS, symList, proofList);
 
-        final Stmt existingStmt = (Stmt)stmtTbl.put(labelS, theorem);
+        final Stmt existingStmt = stmtTbl.put(labelS, theorem);
 
         dupCheckStmtAdd(existingStmt);
 
@@ -657,15 +656,15 @@ public class LogicalSystem implements SystemLoader {
      */
     @Override
     public Theorem addTheorem(final String labelS, final String typS,
-        final ArrayList symList, final ArrayList proofList,
-        final ArrayList proofBlockList) throws LangException
+        final List<String> symList, final List<String> proofList,
+        final List<String> proofBlockList) throws LangException
     {
 
         final Theorem theorem = new Theorem(seqAssigner.nextSeq(),
             scopeDefList, symTbl, stmtTbl, labelS, typS, symList, proofList,
             proofBlockList, getProofCompression());
 
-        final Stmt existingStmt = (Stmt)stmtTbl.put(labelS, theorem);
+        final Stmt existingStmt = stmtTbl.put(labelS, theorem);
 
         dupCheckStmtAdd(existingStmt);
 
@@ -725,16 +724,10 @@ public class LogicalSystem implements SystemLoader {
             throw new LangException(
                 LangConstants.ERRMSG_CANNOT_END_GLOBAL_SCOPE);
 
-        ListIterator x;
+        for (final LogHyp lH : currScopeDef.scopeLogHyp)
+            lH.setActive(false);
 
-        x = currScopeDef.scopeLogHyp.listIterator();
-        while (x.hasNext())
-            ((LogHyp)x.next()).setActive(false);
-
-        x = currScopeDef.scopeVarHyp.listIterator();
-        VarHyp vH;
-        while (x.hasNext()) {
-            vH = (VarHyp)x.next();
+        for (final VarHyp vH : currScopeDef.scopeVarHyp) {
             vH.setActive(false);
             /**
              *  Can be only ONE active VarHyp for a Var at a time, so
@@ -744,13 +737,12 @@ public class LogicalSystem implements SystemLoader {
             vH.getVar().setActiveVarHyp(null);
         }
 
-        x = currScopeDef.scopeVar.listIterator();
-        while (x.hasNext())
-            ((Var)x.next()).setActive(false);
+        for (final Var var : currScopeDef.scopeVar)
+            var.setActive(false);
 
         scopeDefList.remove(scopeLvl);
         scopeLvl = scopeDefList.size() - 1; // global scope level = 0
-        currScopeDef = (ScopeDef)scopeDefList.get(scopeLvl);
+        currScopeDef = scopeDefList.get(scopeLvl);
     }
 
     /**
@@ -843,14 +835,14 @@ public class LogicalSystem implements SystemLoader {
     /**
      *  Get LogicalSystem scopeDefList
      *  <p>
-     *  scopeDefList is an ArrayList of ScopeDef objects where
+     *  scopeDefList is an List of ScopeDef objects where
      *  element 0 is global scope, element 1 is scope level 1, etc.
      *  At the end of LoadFile the scopeDefList should contain
      *  only 1 element -- the global ScopeDef.
      *  <p>
-     *  @return ArrayList of ScopeDef objects.
+     *  @return List of ScopeDef objects.
      */
-    public ArrayList getScopeDefList() {
+    public List<ScopeDef> getScopeDefList() {
         return scopeDefList;
     }
 
@@ -928,7 +920,7 @@ public class LogicalSystem implements SystemLoader {
      *  @return symTbl map of all <code>Cnst</code>s and
      *        <code>Var</code>s.
      */
-    public Map getSymTbl() {
+    public Map<String, Sym> getSymTbl() {
         return symTbl;
     }
 
@@ -943,7 +935,7 @@ public class LogicalSystem implements SystemLoader {
      *  @return stmtTbl map of all <code>Hyp</code>s and
      *        <code>Assrt</code>s.
      */
-    public Map getStmtTbl() {
+    public Map<String, Stmt> getStmtTbl() {
         return stmtTbl;
     }
 
@@ -1159,12 +1151,8 @@ public class LogicalSystem implements SystemLoader {
             if (seqAssigner != null)
                 seqAssigner.rollback(mmtTheoremSet, messages, auditMessages);
 
-            final Iterator i = mmtTheoremSet.iterator();
-            TheoremStmtGroup g;
-            while (i.hasNext()) {
-                g = (TheoremStmtGroup)i.next();
+            for (final TheoremStmtGroup g : mmtTheoremSet)
                 g.reverseStmtTblUpdates(stmtTbl);
-            }
             return;
         } catch (final LangException e) {
             abortMessage = new String(
@@ -1208,9 +1196,8 @@ public class LogicalSystem implements SystemLoader {
             if (bookManager != null)
                 bookManager.commit(mmtTheoremSet);
 
-            final Iterator i = theoremLoaderCommitListeners.iterator();
-            while (i.hasNext())
-                ((TheoremLoaderCommitListener)i.next()).commit(mmtTheoremSet);
+            for (final TheoremLoaderCommitListener l : theoremLoaderCommitListeners)
+                l.commit(mmtTheoremSet);
         } catch (final Exception e) {
             throw new IllegalArgumentException(
                 LangConstants.ERRMSG_THEOREM_LOADER_COMMIT_FAILED

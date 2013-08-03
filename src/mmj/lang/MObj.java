@@ -42,7 +42,8 @@ import java.util.Comparator;
  *  @see <a href="../../MetamathERNotes.html">
  *       Nomenclature and Entity-Relationship Notes</a>
  */
-public abstract class MObj implements Comparable {
+public abstract class MObj<THIS extends MObj<THIS>> implements Comparable<THIS>
+{
 
     /**
      *  Provides an ordering of Metamath objects.
@@ -198,8 +199,8 @@ public abstract class MObj implements Comparable {
      *
      */
     @Override
-    public int compareTo(final Object obj) {
-        return seq - ((MObj)obj).seq;
+    public int compareTo(final THIS obj) {
+        return seq - obj.seq;
     }
 
     /*
@@ -214,16 +215,16 @@ public abstract class MObj implements Comparable {
     @Override
     public boolean equals(final Object obj) {
         return this == obj ? true : !(obj instanceof MObj) ? false
-            : seq == ((MObj)obj).seq;
+            : seq == ((MObj<?>)obj).seq;
     }
 
     /**
      *  SEQ sequences by MObj.seq.
      */
-    static public final Comparator SEQ = new Comparator() {
+    static public final Comparator<MObj<?>> SEQ = new Comparator<MObj<?>>() {
         @Override
-        public int compare(final Object o1, final Object o2) {
-            return ((MObj)o1).seq - ((MObj)o2).seq;
+        public int compare(final MObj<?> o1, final MObj<?> o2) {
+            return o1.seq - o2.seq;
         }
     };
 
@@ -231,12 +232,12 @@ public abstract class MObj implements Comparable {
      *  SECTION_AND_MOBJ_NBR sequences by sectionNbr and
      *  sectionMObjNbr;
      */
-    static public final Comparator SECTION_AND_MOBJ_NBR = new Comparator() {
+    static public final Comparator<MObj<?>> SECTION_AND_MOBJ_NBR = new Comparator<MObj<?>>()
+    {
         @Override
-        public int compare(final Object o1, final Object o2) {
-            return ((MObj)o1).sectionNbr == ((MObj)o2).sectionNbr ? ((MObj)o1).sectionMObjNbr
-                - ((MObj)o2).sectionMObjNbr
-                : ((MObj)o1).sectionNbr - ((MObj)o2).sectionNbr;
+        public int compare(final MObj<?> o1, final MObj<?> o2) {
+            return o1.sectionNbr == o2.sectionNbr ? o1.sectionMObjNbr
+                - o2.sectionMObjNbr : o1.sectionNbr - o2.sectionNbr;
         }
     };
 

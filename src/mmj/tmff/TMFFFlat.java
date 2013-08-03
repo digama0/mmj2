@@ -76,7 +76,7 @@ public class TMFFFlat extends TMFFMethod {
     }
 
     /**
-     *  Formats a formula and outputs it to a StringBuffer
+     *  Formats a formula and outputs it to a StringBuilder
      *  using the given ParseTree root node and initial
      *  Constant of the formula.
      *  <p>

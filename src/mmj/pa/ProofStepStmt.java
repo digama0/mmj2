@@ -48,6 +48,7 @@ package mmj.pa;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.List;
 
 import mmj.lang.*;
 import mmj.mmio.MMIOError;
@@ -77,7 +78,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
 
     // null if no workVars in formula, otherwise
     // contains list of workVars in formula
-    ArrayList workVarList;
+    List<Var> workVarList;
 
     // if parse tree null, unification cannot be attempted
     // for the step or for other steps that refer
@@ -287,11 +288,11 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      *  if the revised workVarList is null turns off the
      *  formulaFldIncomplete flag.
      *  <p>
-     *  @param workVarList ArrayList of WorkVar listing the
+     *  @param workVarList List of WorkVar listing the
      *         WorkVar used in the step formula.
      */
-    public void updateWorkVarList(final ArrayList workVarList) {
-        if (workVarList != null && workVarList.size() == 0)
+    public void updateWorkVarList(final List<Var> workVarList) {
+        if (workVarList != null && workVarList.isEmpty())
             this.workVarList = null;
         else
             this.workVarList = workVarList;
@@ -351,7 +352,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
         // start of the formula. Apply updates!
 
         try {
-            final StringBuffer outStmtText = new StringBuffer(
+            final StringBuilder outStmtText = new StringBuilder(
                 stmtText.length() + 10);
 
             int outStmtTextOffset = 0;
@@ -436,7 +437,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     {
         final int currLineNbr = (int)w.proofTextTokenizer.getCurrentLineNbr();
 
-        stmtText = new StringBuffer();
+        stmtText = new StringBuilder();
 
         // input "" because we're skipping step/hyp/ref token
         // for now...and inserting them in stmtText later.
@@ -463,15 +464,15 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
                 + PaConstants.ERRMSG_BAD_TYP_CD2_4
                 + w.getProvableLogicStmtTyp().getId(), nextT.length());
 
-        final ArrayList symList = new ArrayList();
+        final List<Sym> symList = new ArrayList<Sym>();
         symList.add(w.getProvableLogicStmtTyp());
 
         nextT = loadStmtTextGetRequiredToken(nextT);
         Sym sym;
         while (true) {
-            sym = (Sym)w.comboVarMap.get(nextT);
+            sym = w.comboVarMap.get(nextT);
             if (sym == null) {
-                sym = (Sym)w.logicalSystem.getSymTbl().get(nextT);
+                sym = w.logicalSystem.getSymTbl().get(nextT);
                 if (sym == null) {
                     if ((sym = w.proofAsstPreferences.getWorkVarManager()
                         .alloc(nextT)) != null)
@@ -618,7 +619,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      *  @param newTextPrefix revised first token of text area.
      */
     public static void reviseStepHypRefInStmtTextArea(
-        final StringBuffer textArea, final StringBuffer newTextPrefix)
+        final StringBuilder textArea, final StringBuilder newTextPrefix)
     {
 
         int pos = 0;
@@ -656,7 +657,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      *  (This assumes that stepHypRef requires only one
      *  line, which, theoretically could be wrong!)
      */
-    protected int loadStmtText(final StringBuffer stepHypRef,
+    protected int loadStmtText(final StringBuilder stepHypRef,
         final Formula formula, final ParseTree parseTree)
     {
 
@@ -676,7 +677,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
 
     protected void accumWorkVarList(final WorkVar workVar) {
         if (workVarList == null) {
-            workVarList = new ArrayList(3); // arbitrary guess...
+            workVarList = new ArrayList<Var>(3); // arbitrary guess...
             workVarList.add(workVar);
         }
         else if (!workVarList.contains(workVar))
@@ -700,7 +701,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     // assumes formula already loaded (first), and possibly
     // preceded by space characters.
     protected void loadStepHypRefIntoStmtText(final int origStepHypRefLength,
-        final StringBuffer stepHypRef)
+        final StringBuilder stepHypRef)
     {
 
         int diff = stepHypRef.length() - origStepHypRefLength;
@@ -736,7 +737,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     }
 
     // assumes StmtText already contains StepHypRef
-    protected void reviseStepHypRefInStmtText(final StringBuffer newStepHypRef)
+    protected void reviseStepHypRefInStmtText(final StringBuilder newStepHypRef)
     {
         ProofStepStmt.reviseStepHypRefInStmtTextArea(stmtText, newStepHypRef);
     }

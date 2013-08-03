@@ -54,7 +54,7 @@ package mmj.pa;
 
 import java.awt.*;
 import java.io.File;
-import java.util.Iterator;
+import java.util.Set;
 import java.util.TreeSet;
 
 import mmj.lang.Assrt;
@@ -962,7 +962,7 @@ public class ProofAsstPreferences {
      */
     public String getSoftDjErrorOptionListString() {
 
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_TABLE.length; i++)
         {
@@ -992,44 +992,33 @@ public class ProofAsstPreferences {
 
         final Font[] f = g.getAllFonts();
 
-        final TreeSet t = new TreeSet();
+        final Set<String> t = new TreeSet<String>();
 
         for (final Font element : f)
             t.add(element.getFamily());
 
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
 
-        final int lineLength = PaConstants.FONT_LIST_STARTING_LINE_LENGTH;
-        final int maxNbrOfLines = PaConstants.FONT_LIST_MAX_LINES;
-
-        int loopCnt = 0;
-        int lineCnt;
-        int lineMax;
-        Iterator iterator;
-        if (t.size() > 0)
-            loopA: while (true) {
-
-                ++loopCnt;
-                lineMax = loopCnt * lineLength;
+        if (!t.isEmpty())
+            loopA: for (int loopCnt = 1;; loopCnt++) {
+                final int lineMax = loopCnt
+                    * PaConstants.FONT_LIST_STARTING_LINE_LENGTH;
                 sb.setLength(0);
-                lineCnt = 1;
-                iterator = t.iterator();
-                sb.append((String)iterator.next());
+                int lineCnt = 1;
+                String delim = "";
 
-                loopB: while (iterator.hasNext()) {
-
+                for (final String s : t) {
+                    sb.append(delim).append(s);
                     if (sb.length() > lineMax * lineCnt) {
-                        sb.append('\n');
+                        delim = "\n";
                         ++lineCnt;
-                        if (lineCnt > maxNbrOfLines)
+                        if (lineCnt > PaConstants.FONT_LIST_MAX_LINES)
                             continue loopA;
                     }
                     else
-                        sb.append(", ");
-                    sb.append((String)iterator.next());
-                    continue loopB;
+                        delim = ", ";
                 }
-                break loopA;
+                break;
             }
         else
             sb.append(" ");
@@ -1435,7 +1424,7 @@ public class ProofAsstPreferences {
      */
     public String getIncompleteStepCursorOptionListString() {
 
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE.length; i++)
         {

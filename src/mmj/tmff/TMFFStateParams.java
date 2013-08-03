@@ -36,7 +36,7 @@ public class TMFFStateParams {
     /* friendly */int leftmostColNbr;
     /* friendly */int rightmostColNbr;
     /* friendly */boolean lineWrapOn;
-    /* friendly */StringBuffer sb;
+    /* friendly */StringBuilder sb;
     /* friendly */int prevColNbr;
     /* friendly */int textColumns;
     /* friendly */int currFormatNbr; // prev char's output pos or 0
@@ -59,14 +59,14 @@ public class TMFFStateParams {
      *  inserted PRIOR to each output token. That means that
      *  if <code>inPrevColNbr</code> is set to <code>4</code>
      *  then there should be a line containing 3 characters
-     *  already loaded at the end of the input StringBuffer
+     *  already loaded at the end of the input StringBuilder
      *  <code>inSb</code>!
      *  <p>
      *  <code>
-     *      Sample call w/empty StringBuffer:
+     *      Sample call w/empty StringBuilder:
      *
      *      TMFFStateParams tmffSP =
-     *          new TMFFStateParams(new StringBuffer(80),
+     *          new TMFFStateParams(new StringBuilder(80),
      *                              0,          //inPrevColNbr,
      *                              20,         //inLeftmostColNbr,
      *                              79,         //inRightmostColNbr,
@@ -76,8 +76,8 @@ public class TMFFStateParams {
      *  </code>
      *  <p>
      *
-     *  @param inSb is the input StringBuffer. All output is
-     *         appended to this StringBuffer. It must be
+     *  @param inSb is the input StringBuilder. All output is
+     *         appended to this StringBuilder. It must be
      *         pre-initialized.
      *
      *  @param inPrevColNbr is the column number on the current
@@ -123,7 +123,7 @@ public class TMFFStateParams {
      *         level.
      *
      */
-    public TMFFStateParams(final StringBuffer inSb, final int inPrevColNbr,
+    public TMFFStateParams(final StringBuilder inSb, final int inPrevColNbr,
         final int inLeftmostColNbr, final int inRightmostColNbr,
         final int inTextColumns, final boolean inLineWrapOn,
         final int inCurrFormatNbr)
@@ -147,8 +147,8 @@ public class TMFFStateParams {
      *  for additional information.
      *  <p>
      *
-     *  @param inSb is the input StringBuffer. All output is
-     *         appended to this StringBuffer. It must be
+     *  @param inSb is the input StringBuilder. All output is
+     *         appended to this StringBuilder. It must be
      *         pre-initialized.
      *
      *  @param inPrevColNbr is the column number on the current
@@ -160,7 +160,7 @@ public class TMFFStateParams {
      *  @param tmffPreferences - current TMFFPreferences.
      *
      */
-    public TMFFStateParams(final StringBuffer inSb, final int inPrevColNbr,
+    public TMFFStateParams(final StringBuilder inSb, final int inPrevColNbr,
         final TMFFPreferences tmffPreferences)
     {
         this(inSb, inPrevColNbr, tmffPreferences.getFormulaLeftCol(),
@@ -213,7 +213,7 @@ public class TMFFStateParams {
 
     }
 
-    public void setSB(final StringBuffer sb) {
+    public void setSB(final StringBuilder sb) {
         this.sb = sb;
     }
     public void setPrevColNbr(final int prevColNbr) {

@@ -103,10 +103,6 @@ public class WorkVarBoss extends Boss {
 
         final Messages messages = batchFramework.outputBoss.getMessages();
 
-        // make sure .mm file has been loaded successfully
-        final LogicalSystem logicalSystem = batchFramework.logicalSystemBoss
-            .getLogicalSystem();
-
         final Grammar grammar = batchFramework.grammarBoss.getGrammar();
 
         if (grammar.getGrammarInitialized())

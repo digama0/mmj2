@@ -28,7 +28,6 @@ public class GMFFInputFile {
     private final String errorMessageDescriptor;
     private final int bufferSize;
 
-    private final GMFFFolder inputFolder;
     private File inputFile;
 
     /**
@@ -73,14 +72,13 @@ public class GMFFInputFile {
      *  @throws GMFFFileNotFoundException if file not found.
      *  @throws GMFFException if other error, such as IO exception.
      */
-    public static String getFileContents(final GMFFFolder inputFolder,
-        final File file, final String exportType,
-        final String errorMessageDescriptor, final int bufferSize)
-        throws GMFFException, GMFFFileNotFoundException
+    public static String getFileContents(final File file,
+        final String exportType, final String errorMessageDescriptor,
+        final int bufferSize) throws GMFFException, GMFFFileNotFoundException
     {
 
-        final GMFFInputFile f = new GMFFInputFile(inputFolder, file,
-            exportType, errorMessageDescriptor, bufferSize);
+        final GMFFInputFile f = new GMFFInputFile(file, exportType,
+            errorMessageDescriptor, bufferSize);
 
         return f.loadContentsToString();
     }
@@ -105,7 +103,6 @@ public class GMFFInputFile {
         throws GMFFException, GMFFFileNotFoundException
     {
 
-        this.inputFolder = inputFolder;
         this.inputFileName = inputFileName;
         this.exportType = exportType;
         this.errorMessageDescriptor = errorMessageDescriptor;
@@ -174,12 +171,10 @@ public class GMFFInputFile {
      *           how large the buffer should be for reading it.
      *  @throws GMFFException if error, such as IO exception.
      */
-    public GMFFInputFile(final GMFFFolder inputFolder, final File file,
-        final String exportType, final String errorMessageDescriptor,
-        final int bufferSize)
+    public GMFFInputFile(final File file, final String exportType,
+        final String errorMessageDescriptor, final int bufferSize)
     {
 
-        this.inputFolder = inputFolder;
         this.exportType = exportType;
         this.errorMessageDescriptor = errorMessageDescriptor;
         this.bufferSize = bufferSize;
@@ -194,9 +189,9 @@ public class GMFFInputFile {
      *  Returns string containing the entire file contents.
      *  <p>
      *  A <code>BufferedReader</code> is created using the
-     *  specified buffer size and a <code>StringBuffer</code>
+     *  specified buffer size and a <code>StringBuilder</code>
      *  is loaded with repeated reads until end of file
-     *  reached. Then the StringBuffer is converted to a
+     *  reached. Then the StringBuilder is converted to a
      *  String and returned to the called.
      *  <p>
      *  Obviously, this function has a problem if asked to
@@ -230,7 +225,7 @@ public class GMFFInputFile {
                     + e.getMessage());
         }
 
-        final StringBuffer outputBuffer = new StringBuffer(bufferSize);
+        final StringBuilder outputBuffer = new StringBuilder(bufferSize);
 
         final char[] cBuf = new char[bufferSize];
 

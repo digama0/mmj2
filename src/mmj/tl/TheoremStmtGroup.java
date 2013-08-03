@@ -38,14 +38,14 @@ public class TheoremStmtGroup {
 
     /* initially loaded data from input mmtTheoremFile */
     private SrcStmt beginScopeSrcStmt;
-    private final ArrayList dvSrcStmtList;
-    private final ArrayList logHypSrcStmtList;
+    private final List<SrcStmt> dvSrcStmtList;
+    private final List<SrcStmt> logHypSrcStmtList;
     private SrcStmt theoremSrcStmt;
     private SrcStmt endScopeSrcStmt;
 
     /* derived or computed items follow: */
 
-    private MObj maxExistingMObjRef;
+    private MObj<?> maxExistingMObjRef;
 
     private int insertSectionNbr; // for BookManager.
 
@@ -65,8 +65,8 @@ public class TheoremStmtGroup {
 
     private boolean mustAppend;
 
-    private final LinkedList theoremStmtGroupUsedList;
-    private final LinkedList usedByTheoremStmtGroupList;
+    private final List<TheoremStmtGroup> theoremStmtGroupUsedList;
+    private final List<TheoremStmtGroup> usedByTheoremStmtGroupList;
 
     /* derived based on updating access of LogicalSystem */
     private boolean wasTheoremUpdated;
@@ -101,9 +101,10 @@ public class TheoremStmtGroup {
 
         this.mmtTheoremFile = mmtTheoremFile;
 
-        dvSrcStmtList = new ArrayList(TlConstants.DEFAULT_DV_SRC_STMT_LIST_SIZE);
+        dvSrcStmtList = new ArrayList<SrcStmt>(
+            TlConstants.DEFAULT_DV_SRC_STMT_LIST_SIZE);
 
-        logHypSrcStmtList = new ArrayList(
+        logHypSrcStmtList = new ArrayList<SrcStmt>(
             TlConstants.DEFAULT_LOG_HYP_SRC_STMT_LIST_SIZE);
 
         final Statementizer statementizer = mmtTheoremFile
@@ -119,8 +120,8 @@ public class TheoremStmtGroup {
         wasLogHypAppended = new boolean[n];
         assignedLogHypSeq = new int[n];
 
-        theoremStmtGroupUsedList = new LinkedList();
-        usedByTheoremStmtGroupList = new LinkedList();
+        theoremStmtGroupUsedList = new LinkedList<TheoremStmtGroup>();
+        usedByTheoremStmtGroupList = new LinkedList<TheoremStmtGroup>();
 
         validateStmtGroupData(logicalSystem, messages, tlPreferences);
 
@@ -165,30 +166,24 @@ public class TheoremStmtGroup {
      *          data errors in the input MMTTheoremFile.
      */
     public void validateTheoremSrcStmtProofLabels(
-        final LogicalSystem logicalSystem, final Map theoremStmtGroupTbl)
+        final LogicalSystem logicalSystem,
+        final Map<String, TheoremStmtGroup> theoremStmtGroupTbl)
         throws TheoremLoaderException
     {
 
-        final Map stmtTbl = logicalSystem.getStmtTbl();
+        final Map<String, Stmt> stmtTbl = logicalSystem.getStmtTbl();
 
-        String stepLabel;
-        Stmt ref;
-        TheoremStmtGroup g;
-
-        final Iterator i = theoremSrcStmt.proofList.iterator();
-        while (i.hasNext()) {
-            stepLabel = (String)i.next();
-
+        for (final String stepLabel : theoremSrcStmt.proofList) {
             if (stepLabel.compareTo(PaConstants.DEFAULT_STMT_LABEL) == 0) {
 
                 isProofIncomplete = true;
                 continue;
             }
 
-            g = null;
-            ref = (Stmt)stmtTbl.get(stepLabel);
+            TheoremStmtGroup g = null;
+            final Stmt ref = stmtTbl.get(stepLabel);
             if (ref == null || ref instanceof Theorem) {
-                g = (TheoremStmtGroup)theoremStmtGroupTbl.get(stepLabel);
+                g = theoremStmtGroupTbl.get(stepLabel);
                 if (g != null) {
                     accumInList(theoremStmtGroupUsedList, g);
                     g.accumInList(g.usedByTheoremStmtGroupList, this);
@@ -242,11 +237,11 @@ public class TheoremStmtGroup {
      *  @param waitingList list of MMTTheorems which are not yet
      *             ready to update into the LogicalSystem.
      */
-    public void queueForUpdates(final LinkedList readyQueue,
-        final LinkedList waitingList)
+    public void queueForUpdates(final Queue<TheoremStmtGroup> readyQueue,
+        final List<TheoremStmtGroup> waitingList)
     {
 
-        if (theoremStmtGroupUsedList.size() == 0)
+        if (theoremStmtGroupUsedList.isEmpty())
             readyQueue.add(this);
         else
             waitingList.add(this);
@@ -269,15 +264,12 @@ public class TheoremStmtGroup {
      *  @throws TheoremLoaderException if a data error is
      *          discovered resulting from the theorem update.
      */
-    public void queueDependentsForUpdate(final LinkedList readyQueue,
-        final LinkedList waitingList) throws TheoremLoaderException
+    public void queueDependentsForUpdate(
+        final Deque<TheoremStmtGroup> readyQueue,
+        final List<TheoremStmtGroup> waitingList) throws TheoremLoaderException
     {
-
-        final Iterator i = usedByTheoremStmtGroupList.iterator();
-
-        while (i.hasNext())
-            ((TheoremStmtGroup)i.next()).reQueueAfterUsedTheoremUpdated(this,
-                readyQueue, waitingList);
+        for (final TheoremStmtGroup g : usedByTheoremStmtGroupList)
+            g.reQueueAfterUsedTheoremUpdated(this, readyQueue, waitingList);
     }
 
     /**
@@ -336,7 +328,7 @@ public class TheoremStmtGroup {
      *  of the theorem's proof and its $d restrictions are restored.
      *  @param stmtTbl the LogicalSystem object's stmtTbl.
      */
-    public void reverseStmtTblUpdates(final Map stmtTbl) {
+    public void reverseStmtTblUpdates(final Map<String, Stmt> stmtTbl) {
         if (getIsTheoremNew()) {
             for (final LogHyp element : logHypArray)
                 if (element != null)
@@ -523,31 +515,31 @@ public class TheoremStmtGroup {
     /**
      *  SEQ sequences by TheoremStmtGroup.theorem.getSeq().
      */
-    static public final Comparator SEQ = new Comparator() {
+    static public final Comparator<TheoremStmtGroup> SEQ = new Comparator<TheoremStmtGroup>()
+    {
         @Override
-        public int compare(final Object o1, final Object o2) {
-            return ((TheoremStmtGroup)o1).theorem.getSeq()
-                - ((TheoremStmtGroup)o2).theorem.getSeq();
+        public int compare(final TheoremStmtGroup o1, final TheoremStmtGroup o2)
+        {
+            return o1.theorem.getSeq() - o2.theorem.getSeq();
         }
     };
 
     /**
      *  NBR_LOG_HYP_SEQ sequences by number of LogHyps and Seq.
      */
-    static public final Comparator NBR_LOG_HYP_SEQ = new Comparator() {
+    static public final Comparator<TheoremStmtGroup> NBR_LOG_HYP_SEQ = new Comparator<TheoremStmtGroup>()
+    {
 
         @Override
-        public int compare(final Object o1, final Object o2) {
-            int n =
-
-            ((TheoremStmtGroup)o1).theorem.getLogHypArrayLength()
-                - ((TheoremStmtGroup)o2).theorem.getLogHypArrayLength();
+        public int compare(final TheoremStmtGroup o1, final TheoremStmtGroup o2)
+        {
+            int n = o1.theorem.getLogHypArrayLength()
+                - o2.theorem.getLogHypArrayLength();
 
             if (n == 0)
                 n =
 
-                ((TheoremStmtGroup)o1).theorem.getSeq()
-                    - ((TheoremStmtGroup)o2).theorem.getSeq();
+                o1.theorem.getSeq() - o2.theorem.getSeq();
 
             return n;
         }
@@ -561,8 +553,8 @@ public class TheoremStmtGroup {
 
     private void reQueueAfterUsedTheoremUpdated(
         final TheoremStmtGroup usedTheoremStmtGroup,
-        final LinkedList readyQueue, final LinkedList waitingList)
-        throws TheoremLoaderException
+        final Deque<TheoremStmtGroup> readyQueue,
+        final List<TheoremStmtGroup> waitingList) throws TheoremLoaderException
     {
 
         updateMaxExistingMObjRef(usedTheoremStmtGroup.theorem);
@@ -585,7 +577,7 @@ public class TheoremStmtGroup {
                     + mmtTheoremFile.getSourceFileName());
 
         theoremStmtGroupUsedList.remove(usedTheoremStmtGroup);
-        if (theoremStmtGroupUsedList.size() == 0) {
+        if (theoremStmtGroupUsedList.isEmpty()) {
             readyQueue.add(this);
             waitingList.remove(this);
         }
@@ -721,7 +713,7 @@ public class TheoremStmtGroup {
                         + mmtTheoremFile.getSourceFileName());
 
             if (beginScopeSrcStmt == null)
-                if (logHypSrcStmtList.size() > 0 || dvSrcStmtList.size() > 0)
+                if (!logHypSrcStmtList.isEmpty() || !dvSrcStmtList.isEmpty())
                     throw new TheoremLoaderException(
                         TlConstants.ERRMSG_BEGIN_END_SCOPE_PAIR_MISSING_3_1
                             + mmtTheoremFile.getSourceFileName());
@@ -739,12 +731,9 @@ public class TheoremStmtGroup {
     }
 
     private boolean isLabelInLogHypList(final String label) {
-        final Iterator i = logHypSrcStmtList.iterator();
-        while (i.hasNext()) {
-            final SrcStmt s = (SrcStmt)i.next();
+        for (final SrcStmt s : logHypSrcStmtList)
             if (s.label.compareTo(label) == 0)
                 return true;
-        }
         return false;
     }
 
@@ -758,36 +747,37 @@ public class TheoremStmtGroup {
         throws TheoremLoaderException
     {
 
-        final Map symTbl = logicalSystem.getSymTbl();
-        final Map stmtTbl = logicalSystem.getStmtTbl();
+        final Map<String, Sym> symTbl = logicalSystem.getSymTbl();
+        final Map<String, Stmt> stmtTbl = logicalSystem.getStmtTbl();
 
         for (int i = 0; i < dvSrcStmtList.size(); i++)
-            validateDvSrcStmt((SrcStmt)dvSrcStmtList.get(i), symTbl);
+            validateDvSrcStmt(dvSrcStmtList.get(i), symTbl);
 
         for (int i = 0; i < logHypSrcStmtList.size(); i++)
-            validateLogHypSrcStmt(tlPreferences,
-                (SrcStmt)logHypSrcStmtList.get(i), symTbl, stmtTbl, i);
+            validateLogHypSrcStmt(tlPreferences, logHypSrcStmtList.get(i),
+                symTbl, stmtTbl, i);
 
         validateTheoremSrcStmt(tlPreferences, symTbl, stmtTbl);
     }
 
-    private void validateDvSrcStmt(final SrcStmt dvSrcStmt, final Map symTbl)
-        throws TheoremLoaderException
+    private void validateDvSrcStmt(final SrcStmt dvSrcStmt,
+        final Map<String, Sym> symTbl) throws TheoremLoaderException
     {
 
         checkVarMObjRef(dvSrcStmt, symTbl);
     }
 
     private void validateLogHypSrcStmt(final TlPreferences tlPreferences,
-        final SrcStmt logHypSrcStmt, final Map symTbl, final Map stmtTbl,
-        final int logHypIndex) throws TheoremLoaderException
+        final SrcStmt logHypSrcStmt, final Map<String, Sym> symTbl,
+        final Map<String, Stmt> stmtTbl, final int logHypIndex)
+        throws TheoremLoaderException
     {
 
         checkSymMObjRef(logHypSrcStmt, symTbl);
 
         validateMMTTypeCd(tlPreferences, logHypSrcStmt);
 
-        final Stmt h = (Stmt)stmtTbl.get(logHypSrcStmt.label);
+        final Stmt h = stmtTbl.get(logHypSrcStmt.label);
 
         if (h == null) {
             // is new?
@@ -816,14 +806,15 @@ public class TheoremStmtGroup {
     }
 
     private void validateTheoremSrcStmt(final TlPreferences tlPreferences,
-        final Map symTbl, final Map stmtTbl) throws TheoremLoaderException
+        final Map<String, Sym> symTbl, final Map<String, Stmt> stmtTbl)
+        throws TheoremLoaderException
     {
 
         checkSymMObjRef(theoremSrcStmt, symTbl);
 
         validateMMTTypeCd(tlPreferences, theoremSrcStmt);
 
-        final Stmt t = (Stmt)stmtTbl.get(theoremLabel);
+        final Stmt t = stmtTbl.get(theoremLabel);
 
         if (t == null) {
             isTheoremNew = true;
@@ -892,7 +883,7 @@ public class TheoremStmtGroup {
         if (theoremLogHypArray.length == logHypArray.length)
             loopI: for (int i = 0; i < theoremLogHypArray.length; i++) {
 
-                loopJ: for (int j = 0; j < logHypArray.length; j++)
+                for (int j = 0; j < logHypArray.length; j++)
                     if (logHypArray[j] == theoremLogHypArray[i])
                         continue loopI;
                 match = false;
@@ -910,23 +901,19 @@ public class TheoremStmtGroup {
                     + mmtTheoremFile.getSourceFileName());
     }
 
-    private void checkSymMObjRef(final SrcStmt x, final Map symTbl)
+    private void checkSymMObjRef(final SrcStmt x, final Map<String, Sym> symTbl)
         throws TheoremLoaderException
     {
-        Sym sym;
-        String s;
         if (x.typ != null) {
-            sym = (Sym)symTbl.get(x.typ);
+            final Sym sym = symTbl.get(x.typ);
             if (sym == null)
                 generateSymNotFndError(x, x.typ);
             else
                 updateMaxExistingMObjRef(sym);
         }
 
-        final Iterator i = x.symList.iterator();
-        while (i.hasNext()) {
-            s = (String)i.next();
-            sym = (Sym)symTbl.get(s);
+        for (final String s : x.symList) {
+            final Sym sym = symTbl.get(s);
             if (sym == null)
                 generateSymNotFndError(x, s);
             else
@@ -934,16 +921,11 @@ public class TheoremStmtGroup {
         }
     }
 
-    private void checkVarMObjRef(final SrcStmt x, final Map symTbl)
+    private void checkVarMObjRef(final SrcStmt x, final Map<String, Sym> symTbl)
         throws TheoremLoaderException
     {
-        Sym sym;
-        String s;
-
-        final Iterator i = x.symList.iterator();
-        while (i.hasNext()) {
-            s = (String)i.next();
-            sym = (Sym)symTbl.get(s);
+        for (final String s : x.symList) {
+            final Sym sym = symTbl.get(s);
             if (sym == null)
                 generateSymNotFndError(x, s);
             else
@@ -956,7 +938,6 @@ public class TheoremStmtGroup {
                         + mmtTheoremFile.getSourceFileName());
         }
     }
-
     private void generateSymNotFndError(final SrcStmt x, final String id)
         throws TheoremLoaderException
     {
@@ -982,14 +963,13 @@ public class TheoremStmtGroup {
 
         wasTheoremUpdated = true;
 
-        final Stmt[] newProof = theorem.setProof(logicalSystem.getStmtTbl(),
-            theoremSrcStmt.proofList);
+        theorem.setProof(logicalSystem.getStmtTbl(), theoremSrcStmt.proofList);
 
         if (tlPreferences.getDjVarsNoUpdate()) {}
         else {
 
-            final LinkedList mandDjVarsUpdateList = new LinkedList();
-            final LinkedList optDjVarsUpdateList = new LinkedList();
+            final List<DjVars> mandDjVarsUpdateList = new LinkedList<DjVars>();
+            final List<DjVars> optDjVarsUpdateList = new LinkedList<DjVars>();
             buildMandAndOptDjVarsUpdateLists(logicalSystem.getSymTbl(),
                 mandDjVarsUpdateList, optDjVarsUpdateList);
 
@@ -1001,7 +981,7 @@ public class TheoremStmtGroup {
         }
 
         if (tlPreferences.getAuditMessages()) {
-            final StringBuffer sb = new StringBuffer();
+            final StringBuilder sb = new StringBuilder();
             sb.append(TlConstants.ERRMSG_AUDIT_MSG_THEOREM_UPD_1);
             sb.append(theorem.getLabel());
             sb.append(TlConstants.ERRMSG_AUDIT_MSG_THEOREM_UPD_2);
@@ -1022,8 +1002,6 @@ public class TheoremStmtGroup {
     {
 
         SrcStmt currSrcStmt;
-        final Iterator iterator;
-
         final SeqAssigner seqAssigner = logicalSystem.getSeqAssigner();
 
         logicalSystem.beginScope();
@@ -1031,7 +1009,7 @@ public class TheoremStmtGroup {
         insertSectionNbr = -1; // for BookManager.
 
         for (int i = 0; i < logHypArray.length; i++) {
-            currSrcStmt = (SrcStmt)logHypSrcStmtList.get(i);
+            currSrcStmt = logHypSrcStmtList.get(i);
 
             final LogHyp s = (LogHyp)logicalSystem.getStmtTbl().get(
                 currSrcStmt.label);
@@ -1099,10 +1077,10 @@ public class TheoremStmtGroup {
 
         loadStmtParseTree(messages, logicalSystem, theorem, theoremSrcStmt);
 
-        if (dvSrcStmtList.size() > 0) {
+        if (!dvSrcStmtList.isEmpty()) {
 
-            final LinkedList mandDjVarsUpdateList = new LinkedList();
-            final LinkedList optDjVarsUpdateList = new LinkedList();
+            final List<DjVars> mandDjVarsUpdateList = new LinkedList<DjVars>();
+            final List<DjVars> optDjVarsUpdateList = new LinkedList<DjVars>();
             buildMandAndOptDjVarsUpdateLists(logicalSystem.getSymTbl(),
                 mandDjVarsUpdateList, optDjVarsUpdateList);
 
@@ -1116,7 +1094,7 @@ public class TheoremStmtGroup {
 
     private String buildAddAuditMessage(final Stmt stmt, final boolean appended)
     {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         sb.append(TlConstants.ERRMSG_AUDIT_MSG_THEOREM_ADD_1);
         if (stmt instanceof Theorem)
             sb.append(TlConstants.ERRMSG_AUDIT_MSG_THEOREM_ADD_2a);
@@ -1153,25 +1131,16 @@ public class TheoremStmtGroup {
         return sb.toString();
     }
 
-    private void buildMandAndOptDjVarsUpdateLists(final Map symTbl,
-        final LinkedList mandDjVarsUpdateList,
-        final LinkedList optDjVarsUpdateList) throws LangException
+    private void buildMandAndOptDjVarsUpdateLists(
+        final Map<String, Sym> symTbl, final List<DjVars> mandDjVarsUpdateList,
+        final List<DjVars> optDjVarsUpdateList) throws LangException
     {
-
-        SrcStmt currSrcStmt;
-
-        final ArrayList inputDjVarsStmtList = new ArrayList();
-
-        final Iterator dv = dvSrcStmtList.iterator();
-        while (dv.hasNext()) {
-
-            currSrcStmt = (SrcStmt)dv.next();
+        final List<List<String>> inputDjVarsStmtList = new ArrayList<List<String>>();
+        for (final SrcStmt currSrcStmt : dvSrcStmtList)
             // note: DjVar Vars used in an existing theorem must
             // be defined in the mandatory or optional
             // frame of the theorem.
-
             inputDjVarsStmtList.add(currSrcStmt.symList);
-        }
 
         theorem.loadMandAndOptDjVarsUpdateLists(symTbl, inputDjVarsStmtList,
             mandDjVarsUpdateList, optDjVarsUpdateList);
@@ -1238,12 +1207,14 @@ public class TheoremStmtGroup {
     // =======================================================
     //
 
-    private void accumInList(final List list, final Object object) {
-        if (!list.contains(object))
-            list.add(object);
+    private void accumInList(final List<TheoremStmtGroup> list,
+        final TheoremStmtGroup tsg)
+    {
+        if (!list.contains(tsg))
+            list.add(tsg);
     }
 
-    private void updateMaxExistingMObjRef(final MObj mObj) {
+    private void updateMaxExistingMObjRef(final MObj<?> mObj) {
 
         if (maxExistingMObjRef == null
             || mObj.getSeq() > maxExistingMObjRef.getSeq())

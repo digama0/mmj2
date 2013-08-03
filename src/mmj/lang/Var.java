@@ -32,7 +32,7 @@
 
 package mmj.lang;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -100,11 +100,11 @@ public class Var extends Sym {
      *          already "active" -- or if the Var symbol
      *          duplicates a Stmt label.
      */
-    public static Var declareVar(final int seq, final Map symTbl,
-        final Map stmtTbl, final String id) throws LangException
+    public static Var declareVar(final int seq, final Map<String, Sym> symTbl,
+        final Map<String, Stmt> stmtTbl, final String id) throws LangException
     {
 
-        final Sym v = (Sym)symTbl.get(id);
+        final Sym v = symTbl.get(id);
         Var var;
         if (v == null) {
             if (stmtTbl.containsKey(id))
@@ -153,7 +153,7 @@ public class Var extends Sym {
      *  @throws LangException if Sym.id duplicates the id of
      *          another Sym (Cnst or Var).
      */
-    public Var(final int seq, final Map symTbl, final Map stmtTbl,
+    public Var(final int seq, final Map<?, ?> symTbl, final Map<?, ?> stmtTbl,
         final String id, final boolean active) throws LangException
     {
         super(seq, symTbl, stmtTbl, id);
@@ -332,11 +332,11 @@ public class Var extends Sym {
      *  @throws   LangException thrown if variable is not defined,
      *            is defined as a constant, or is not active.
      */
-    public static Var verifyVarDefAndActive(final Map symTbl, final String varS)
-        throws LangException
+    public static Var verifyVarDefAndActive(final Map<String, Sym> symTbl,
+        final String varS) throws LangException
     {
 
-        final Sym tblV = (Sym)symTbl.get(varS);
+        final Sym tblV = symTbl.get(varS);
         if (tblV == null)
             throw new LangException(LangConstants.ERRMSG_STMT_VAR_UNDEF + varS);
         if (!tblV.isVar())
@@ -363,11 +363,11 @@ public class Var extends Sym {
      *  @throws   LangException thrown if variable is not defined,
      *            is defined as a constant, or is not active.
      */
-    public static Var verifyVarDef(final Map symTbl, final String varS)
-        throws LangException
+    public static Var verifyVarDef(final Map<String, Sym> symTbl,
+        final String varS) throws LangException
     {
 
-        final Sym tblV = (Sym)symTbl.get(varS);
+        final Sym tblV = symTbl.get(varS);
         if (tblV == null)
             throw new LangException(LangConstants.ERRMSG_STMT_VAR_UNDEF + varS);
         if (!tblV.isVar())
@@ -386,10 +386,10 @@ public class Var extends Sym {
      *  sequence order, hypList should either be empty (new)
      *  before the call, or already be in that order.
      *
-     *  @param varList  ArrayList of Var's, updated here.
+     *  @param varList  List of Var's, updated here.
      *
      */
-    public void accumVarListBySeq(final ArrayList varList) {
+    public void accumVarListBySeq(final List<Var> varList) {
 
         int i = 0;
         final int iEnd = varList.size();
@@ -398,7 +398,7 @@ public class Var extends Sym {
 
         while (true) {
             if (i < iEnd) {
-                existingSeq = ((Var)varList.get(i)).seq;
+                existingSeq = varList.get(i).seq;
                 if (newSeq < existingSeq)
                     // insert here, at "i"
                     break;
@@ -419,13 +419,13 @@ public class Var extends Sym {
      *  Searches for this Var in an ArrayList maintained
      *  in database input sequence.
      *
-     *  @param varList ArrayList of Var's
+     *  @param varList List of Var's
      *  @return true if found, else false.
      */
-    public boolean containedInVarListBySeq(final ArrayList varList) {
+    public boolean containedInVarListBySeq(final List<Var> varList) {
         Var v;
         for (int i = 0; i < varList.size(); i++) {
-            v = (Var)varList.get(i);
+            v = varList.get(i);
             if (seq < v.seq)
                 break;
             if (v == this)

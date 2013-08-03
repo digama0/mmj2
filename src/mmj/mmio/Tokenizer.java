@@ -158,7 +158,7 @@ public class Tokenizer extends Object {
      * <p>Gets next MetaMath token from the input file and
      * stores it in <code>strBuf</code>.
      *
-     * @param strBuf the <code>StringBuffer</code> where the next
+     * @param strBuf the <code>StringBuilder</code> where the next
      *               available MetaMath token will be inserted
      * @param offset insertion point offset in strBuf for token. (If
      *               strBuf contains 3 characters then set offset to
@@ -169,7 +169,7 @@ public class Tokenizer extends Object {
      * @throws IOException if I/O error
      * @throws MMIOError if invalid character read
      */
-    public int getToken(final StringBuffer strBuf, int offset)
+    public int getToken(final StringBuilder strBuf, int offset)
         throws IOException
     {
 
@@ -207,7 +207,7 @@ public class Tokenizer extends Object {
      * Gets next chunk of whitespace from MetaMath file
      * and stores it in <code>strBuf</code>.
      *
-     * @param strBuf the <code>StringBuffer</code> where the next
+     * @param strBuf the <code>StringBuilder</code> where the next
      *               whitespace chunk will be inserted
      * @param offset insertion point offset in strBuf for whitespace
      *
@@ -217,7 +217,7 @@ public class Tokenizer extends Object {
      * @throws       IOException if I/O error
      * @throws       MMIOError if invalid character read
      */
-    public int getWhiteSpace(final StringBuffer strBuf, int offset)
+    public int getWhiteSpace(final StringBuilder strBuf, int offset)
         throws IOException
     {
 

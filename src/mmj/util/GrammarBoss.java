@@ -325,7 +325,7 @@ public class GrammarBoss extends Boss {
 //          if (exprRPN != null) {
             if (parseTree != null) {
                 final Stmt[] exprRPN = parseTree.convertToRPN();
-                final StringBuffer sb = new StringBuffer();
+                final StringBuilder sb = new StringBuilder();
                 sb.append(UtilConstants.ERRMSG_PARSE_RPN_1);
                 sb.append(stmt.getLabel());
                 sb.append(UtilConstants.ERRMSG_PARSE_RPN_2);

@@ -65,7 +65,7 @@ public class TMFFUnformatted extends TMFFMethod {
     }
 
     /**
-     *  Outputs a formula and outputs it to a StringBuffer
+     *  Outputs a formula and outputs it to a StringBuilder
      *  without doing the special TMFF formatting.
      *  <p>
      *  This method overrides the TMFFMethod renderFormula()
@@ -96,7 +96,7 @@ public class TMFFUnformatted extends TMFFMethod {
         if (formula == null)
             tmffSP.currLineNbr += 1;
         else
-            tmffSP.currLineNbr += formula.toProofWorksheetStringBuffer(
+            tmffSP.currLineNbr += formula.toProofWorksheetStringBuilder(
                 tmffSP.sb, tmffSP.prevColNbr + 1, tmffSP.rightmostColNbr);
         return tmffSP.currLineNbr;
     }

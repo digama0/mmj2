@@ -15,7 +15,6 @@
 
 package mmj.gmff;
 
-import java.util.Iterator;
 
 /**
  *  <code>ModelAExporter</code> is an extension of
@@ -85,7 +84,7 @@ public class ModelAExporter extends GMFFExporter {
                             + w.getTheoremLabel()
                             + GMFFConstants.ERRMSG_BUILD_EMPTY_OR_INVALID_WORKSHEET_ERROR_1B);
 
-                final StringBuffer exportText = buildModelAExportText(w);
+                final StringBuilder exportText = buildModelAExportText(w);
 
                 confirmationMessage = outputToExportFile(exportText,
                     appendFileName, w.getTheoremLabel());
@@ -97,20 +96,18 @@ public class ModelAExporter extends GMFFExporter {
         return confirmationMessage;
     }
 
-    private StringBuffer buildModelAExportText(final MinProofWorksheet w)
+    private StringBuilder buildModelAExportText(final MinProofWorksheet w)
         throws GMFFException
     {
 
-        final StringBuffer exportBuffer = new StringBuffer(
+        final StringBuilder exportBuffer = new StringBuilder(
             GMFFConstants.EXPORT_BUFFER_DEFAULT_SIZE);
 
         appendMandatoryModelFile(exportBuffer,
             GMFFConstants.MODEL_A_FILE0_NAME, w.getTheoremLabel());
 
-        final Iterator iterator = w.getMinProofWorkStmtList().iterator();
-        while (iterator.hasNext())
-            ((MinProofWorkStmt)iterator.next()).buildModelAExport(this,
-                exportBuffer);
+        for (final MinProofWorkStmt s : w.getMinProofWorkStmtList())
+            s.buildModelAExport(this, exportBuffer);
 
         appendMandatoryModelFile(exportBuffer,
             GMFFConstants.MODEL_A_FILE2_NAME, w.getTheoremLabel());

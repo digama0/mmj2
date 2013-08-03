@@ -278,7 +278,7 @@ public class EarleyParser implements GrammaticalParser {
         // return EarleyParserSpecialCase2();
         // }
         if (parseNodeHolderExpr.length == 1) {
-            final MObj mObj = parseNodeHolderExpr[0].mObj;
+            final MObj<?> mObj = parseNodeHolderExpr[0].mObj;
             if (!mObj.isCnst())
                 return EarleyParserSpecialCase2();
             // ok, is expression w/one symbol, a constant...
@@ -357,10 +357,11 @@ public class EarleyParser implements GrammaticalParser {
             }
         }
         else {
-            final List nullsPermittedGRList = grammar.getNullsPermittedGRList();
+            final List<NullsPermittedRule> nullsPermittedGRList = grammar
+                .getNullsPermittedGRList();
             final int i = nullsPermittedGRList.indexOf(formulaTyp);
             if (i != -1) {
-                gR = (NullsPermittedRule)nullsPermittedGRList.get(i);
+                gR = nullsPermittedGRList.get(i);
                 if (gR.getMaxSeqNbr() <= highestSeq)
                     parseTreeArray[parseCnt++] = new ParseTree(
                         gR.buildGrammaticalParseNode(emptyParamArray));
@@ -549,7 +550,7 @@ public class EarleyParser implements GrammaticalParser {
         final int maxSeq)
     {
 // /* --
-//      StringBuffer s = new StringBuffer();
+//      StringBuilder s = new StringBuilder();
 //      s.append("--- earleyPredictor:");
 //      s.append(" currPos "); s.append(currPos);
 //      s.append(" nextSym "); s.append(nextSym);
@@ -563,10 +564,6 @@ public class EarleyParser implements GrammaticalParser {
 //      System.out.println(s);
 // */
         int predictedCnt = 0;
-        LinkedList typRules;
-        NotationRule notationRule;
-        Cnst ruleExprFirstSym;
-        Iterator ruleIterator;
 
         /**
          *  Double loop to thwart loop optimizer in javac.
@@ -579,19 +576,19 @@ public class EarleyParser implements GrammaticalParser {
 
             typLoop: for (int i = qStart; i < qMax; i++) {
 
-                if ((typRules = pPredictorTyp[i].getEarleyRules()) == null)
+                final List<NotationRule> typRules = pPredictorTyp[i]
+                    .getEarleyRules();
+                if (typRules == null)
                     continue typLoop;
                 if (!pPredictorTyp[i].earleyFIRSTContainsSymbol(nextSym))
                     continue typLoop;
 
-                ruleIterator = typRules.iterator();
-
-                ruleLoop: while (ruleIterator.hasNext()) {
-                    notationRule = (NotationRule)ruleIterator.next();
+                for (final NotationRule notationRule : typRules) {
                     if (notationRule.getMaxSeqNbr() > maxSeq)
                         continue typLoop; // done with typ
 
-                    ruleExprFirstSym = notationRule.getRuleFormatExprFirst();
+                    final Cnst ruleExprFirstSym = notationRule
+                        .getRuleFormatExprFirst();
                     /**
                      *  oops? confusing here...remove following check?
                      *  just add the blasted thing!?#$? I think not...
@@ -692,7 +689,6 @@ public class EarleyParser implements GrammaticalParser {
         int outputCnt = 0;
         final EarleyItem[] scanItemSet = pItem[scanSetNbr];
         EarleyItem earleyItem;
-        final NotationRule notationRule;
         int newDotIndex;
         Cnst newAfterDot;
 
@@ -853,34 +849,22 @@ public class EarleyParser implements GrammaticalParser {
         for (int i = 0; i < rulesTypMax; i++)
             ruleTypAndFIRSTTyp[i] = new Cnst[rulesTypMax];
 
-        NotationRule notationRule;
-        Cnst typ;
-        Cnst first;
-        LinkedList ruleSet;
-        HashSet firstSet;
-        final HashSet nonTerminalHashSet;
-
-        final Iterator iterator = grammar.getNotationGRSet().iterator();
-        while (iterator.hasNext()) {
-            notationRule = (NotationRule)iterator.next();
-            typ = notationRule.getGrammarRuleTyp();
-            if ((ruleSet = typ.getEarleyRules()) == null) {
-                ruleSet = new LinkedList();
-                typ.setEarleyRules(ruleSet);
-            }
+        for (final NotationRule notationRule : grammar.getNotationGRSet()) {
+            final Cnst typ = notationRule.getGrammarRuleTyp();
+            List<NotationRule> ruleSet = typ.getEarleyRules();
+            if (ruleSet == null)
+                typ.setEarleyRules(ruleSet = new LinkedList<NotationRule>());
             ruleSet.add(notationRule);
 
-            first = notationRule.getRuleFormatExprFirst();
+            final Cnst first = notationRule.getRuleFormatExprFirst();
             if (first.getIsVarTyp())
                 addTypToRuleTypAndFIRSTTyp(typ, first);
             else
                 addTypToRuleTypAndFIRSTTyp(typ, null);
 
-            firstSet = typ.getEarleyFIRST();
-            if (firstSet == null) {
-                firstSet = new HashSet(firstCapacity);
-                typ.setEarleyFIRST(firstSet);
-            }
+            Set<Cnst> firstSet = typ.getEarleyFIRST();
+            if (firstSet == null)
+                typ.setEarleyFIRST(firstSet = new HashSet<Cnst>(firstCapacity));
             firstSet.add(first);
         }
 
@@ -896,17 +880,17 @@ public class EarleyParser implements GrammaticalParser {
                                     changed = true;
         }
 
-        HashSet hashSetI;
-        HashSet hashSetJ;
         for (int i = 0; i < rulesTypCnt; i++) {
-            hashSetI = ruleTypAndFIRSTTyp[i][0].getEarleyFIRST();
+            final Set<Cnst> hashSetI = ruleTypAndFIRSTTyp[i][0]
+                .getEarleyFIRST();
             for (int j = 1; ruleTypAndFIRSTTyp[i][j] != null; j++) {
                 /**
                  *  a grammatical Type Code may not have any Syntax
                  *  Axioms -- and no earleyRules or earleyFIRST.
                  */
-                hashSetJ = ruleTypAndFIRSTTyp[i][j].getEarleyFIRST();
-                if (hashSetJ != null && hashSetJ.size() != 0)
+                final Set<Cnst> hashSetJ = ruleTypAndFIRSTTyp[i][j]
+                    .getEarleyFIRST();
+                if (hashSetJ != null && !hashSetJ.isEmpty())
                     hashSetI.addAll(hashSetJ);
             }
         }
@@ -934,15 +918,13 @@ public class EarleyParser implements GrammaticalParser {
         if (firstTyp == null || firstTyp == typ)
             return;
 
-        int j = 1; // skip Typ which is in [i][0]
-        firstLoop: while (true) {
+        for (int j = 1;; j++) { // skip Typ which is in [i][0]
             if (ruleTypAndFIRSTTyp[i][j] == firstTyp)
                 return;
             if (ruleTypAndFIRSTTyp[i][j] == null) {
                 ruleTypAndFIRSTTyp[i][j] = firstTyp;
                 return;
             }
-            ++j;
         }
     }
 
@@ -969,8 +951,8 @@ public class EarleyParser implements GrammaticalParser {
 //      EarleyItem c;
 //      EarleyItem a;
 //      Cnst[]     e;
-//      StringBuffer eS;
-//      StringBuffer exprString = new StringBuffer();
+//      StringBuilder eS;
+//      StringBuilder exprString = new StringBuilder();
 //      for (int i = 1; i <= (expr.length - 1); i++) {
 //          exprString.append(expr[i].getCnstOrTyp());
 //          exprString.append(" ");
@@ -1475,7 +1457,7 @@ public class EarleyParser implements GrammaticalParser {
 
             int spin;
             boolean carry;
-            twinLoop: do {
+            do {
                 final ParseNodeHolder next = new ParseNodeHolder(
                     rule.buildGrammaticalParseNode(paramArray));
 

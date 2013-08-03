@@ -44,8 +44,7 @@
 package mmj.pa;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Map;
 
 import mmj.lang.*;
 import mmj.mmio.MMIOError;
@@ -127,15 +126,15 @@ public class HypothesisStep extends ProofStepStmt {
      *  Renumbers step numbers using a HashMap containing
      *  old and new step number pairs.
      *
-     *  @param renumberHashMap contains key/value pairs defining
+     *  @param renumberMap contains key/value pairs defining
      *                         newly assigned step numbers.
      */
-    public void renum(final HashMap renumberHashMap) {
+    public void renum(final Map<String, String> renumberMap) {
 
-        final String newNum = (String)renumberHashMap.get(step);
+        final String newNum = renumberMap.get(step);
         if (newNum != null) {
             step = newNum;
-            final StringBuffer sb = buildStepHypRefSB(); // hyp version
+            final StringBuilder sb = buildStepHypRefSB(); // hyp version
             reviseStepHypRefInStmtText(sb);
         }
     }
@@ -254,7 +253,7 @@ public class HypothesisStep extends ProofStepStmt {
         }
         else {
             // refLabel was input
-            ref = (Stmt)w.logicalSystem.getStmtTbl().get(refLabel);
+            ref = w.logicalSystem.getStmtTbl().get(refLabel);
             if (ref == null)
                 w.triggerLoadStructureException(
                     PaConstants.ERRMSG_REF_NOTFND2_1
@@ -300,17 +299,10 @@ public class HypothesisStep extends ProofStepStmt {
     }
 
     private boolean dupLogHypFormulas(final Formula f) {
-        final Iterator iterator = w.proofWorkStmtList.iterator();
-        ProofWorkStmt x;
-        HypothesisStep h;
-        while (iterator.hasNext()) {
-            x = (ProofWorkStmt)iterator.next();
-            if (x.isHypothesisStep()) {
-                h = (HypothesisStep)x;
-                if (h.formula.equals(f))
+        for (final ProofWorkStmt x : w.proofWorkStmtList)
+            if (x.isHypothesisStep())
+                if (((HypothesisStep)x).formula.equals(f))
                     return true;
-            }
-        }
         return false;
     }
 
@@ -340,7 +332,7 @@ public class HypothesisStep extends ProofStepStmt {
 
         checkDupHypRefLabel(lineStartCharNbr);
 
-        final Stmt stmt = (Stmt)w.logicalSystem.getStmtTbl().get(refLabel);
+        final Stmt stmt = w.logicalSystem.getStmtTbl().get(refLabel);
         if (stmt != null)
             w.triggerLoadStructureException(PaConstants.ERRMSG_HYP_REF_DUP_1
                 + w.getErrorLabelIfPossible()
@@ -384,10 +376,7 @@ public class HypothesisStep extends ProofStepStmt {
         throws ProofAsstException
     {
 
-        final Iterator iterator = w.proofWorkStmtList.iterator();
-        ProofWorkStmt x;
-        while (iterator.hasNext()) {
-            x = (ProofWorkStmt)iterator.next();
+        for (final ProofWorkStmt x : w.proofWorkStmtList)
             if (x.hasMatchingRefLabel(refLabel))
                 w.triggerLoadStructureException(
                     PaConstants.ERRMSG_DUP_HYP_REF_1
@@ -397,12 +386,11 @@ public class HypothesisStep extends ProofStepStmt {
                         + PaConstants.ERRMSG_DUP_HYP_REF_4,
                     (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                         - lineStartCharNbr);
-        }
     }
 
-    private StringBuffer buildStepHypRefSB() {
+    private StringBuilder buildStepHypRefSB() {
 
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
 
         sb.append(PaConstants.HYP_STEP_PREFIX);
         sb.append(step);

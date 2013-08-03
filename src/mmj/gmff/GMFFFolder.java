@@ -16,7 +16,8 @@
 package mmj.gmff;
 
 import java.io.File;
-import java.util.*;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  *   GMFFFolder is a helper class for GMFF reading and
@@ -153,7 +154,7 @@ public class GMFFFolder {
         final String fileType)
     {
 
-        final TreeMap treeMap = new TreeMap();
+        final Map<String, File> treeMap = new TreeMap<String, File>();
 
         for (final File element : fileArray) {
 
@@ -165,15 +166,6 @@ public class GMFFFolder {
             treeMap.put(namePrefix, element);
         }
 
-        final File[] fileArrayOut = new File[fileArray.length];
-
-        final Collection sortedFiles = treeMap.values();
-        final Iterator iterator = sortedFiles.iterator();
-        int i = 0;
-        while (iterator.hasNext())
-            fileArrayOut[i++] = (File)iterator.next();
-
-        return fileArrayOut;
-
+        return treeMap.values().toArray(new File[fileArray.length]);
     }
 }

@@ -201,10 +201,11 @@ public class BottomUpParser implements GrammaticalParser {
             }
         }
         else {
-            final List nullsPermittedGRList = grammar.getNullsPermittedGRList();
+            final List<NullsPermittedRule> nullsPermittedGRList = grammar
+                .getNullsPermittedGRList();
             final int i = nullsPermittedGRList.indexOf(formulaTyp);
             if (i != -1) {
-                gR = (NullsPermittedRule)nullsPermittedGRList.get(i);
+                gR = nullsPermittedGRList.get(i);
                 if (gR.getMaxSeqNbr() <= highestSeq)
                     parseTreeArray[parseCnt++] = new ParseTree(
                         gR.buildGrammaticalParseNode(paramArray));

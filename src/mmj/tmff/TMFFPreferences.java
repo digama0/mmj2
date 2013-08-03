@@ -39,7 +39,7 @@
 package mmj.tmff;
 
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Map;
 
 import mmj.lang.Formula;
 import mmj.lang.ParseTree;
@@ -89,7 +89,7 @@ public class TMFFPreferences {
      *  to check for duplicates and process updates (via
      *  RunParms in BatchMMJ2.)
      */
-    private HashMap tmffSchemeMap;
+    private Map<String, TMFFScheme> tmffSchemeMap;
 
     /*
      *  The (4) Formats available for use: 0, 1, 2, 3
@@ -143,7 +143,7 @@ public class TMFFPreferences {
 
         tmffFormatArray = new TMFFFormat[TMFFConstants.TMFF_MAX_FORMAT_NBR + 1];
 
-        tmffSchemeMap = new HashMap();
+        tmffSchemeMap = new HashMap<String, TMFFScheme>();
 
         /*
          *  Load default Schemes
@@ -205,7 +205,7 @@ public class TMFFPreferences {
     }
 
     /**
-     *  Formats a formula and outputs it to a StringBuffer
+     *  Formats a formula and outputs it to a StringBuilder
      *  using the given ParseTree, Formula and
      *  TMFFStateParams instance.
      *  <p>
@@ -265,7 +265,7 @@ public class TMFFPreferences {
     }
 
     /**
-     *  Formats a formula and outputs it to a StringBuffer
+     *  Formats a formula and outputs it to a StringBuilder
      *  using the given ParseTree, Formula and
      *  TMFFStateParams instance.
      *  <p>
@@ -606,7 +606,7 @@ public class TMFFPreferences {
      */
     public String getFormatListString() {
 
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
 
         for (final TMFFFormat element : tmffFormatArray) {
             sb.append(Integer.toString(element.getFormatNbr()));
@@ -813,7 +813,7 @@ public class TMFFPreferences {
     }
 
     private TMFFScheme getFromSchemeMap(final String k) {
-        return (TMFFScheme)tmffSchemeMap.get(k.toLowerCase());
+        return tmffSchemeMap.get(k.toLowerCase());
     }
 
     /**
@@ -840,10 +840,8 @@ public class TMFFPreferences {
             return false;
         }
 
-        final Iterator i = tmffSchemeMap.values().iterator();
-
-        while (i.hasNext())
-            ((TMFFScheme)i.next()).getTMFFMethod().updateMaxDepth(maxDepth);
+        for (final TMFFScheme s : tmffSchemeMap.values())
+            s.getTMFFMethod().updateMaxDepth(maxDepth);
 
         return true;
     }

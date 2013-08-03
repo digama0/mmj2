@@ -47,7 +47,7 @@
 
 package mmj.lang;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  *  Parse Node is an n-way tree node for Metamath Stmt trees.
@@ -271,7 +271,7 @@ public class ParseNode {
                 }
 
             // if we're here then we messed up!
-            final StringBuffer testSB = new StringBuffer();
+            final StringBuilder testSB = new StringBuilder();
             for (final VarHyp element : varHypArray) {
                 testSB.append(element.getLabel());
                 testSB.append(' ');
@@ -441,7 +441,7 @@ public class ParseNode {
      *  @return new ParseNode.
      */
     public ParseNode deepCloneApplyingAssrtSubst(final Hyp[] assrtHypArray,
-        final ParseNode[] assrtSubst, final ArrayList workVarList)
+        final ParseNode[] assrtSubst, final List<Var> workVarList)
     {
         if (!stmt.isVarHyp()) {
             final ParseNode out = new ParseNode(stmt);
@@ -625,12 +625,12 @@ public class ParseNode {
      *  The output sub-expression is generated into
      *  text not to exceed the given maxLength. If the
      *  number of output characters exceeds maxLength
-     *  output terminates after tidying StringBuffer.
+     *  output terminates after tidying StringBuilder.
      *  <p>
      *  The depth of the sub-tree is checked against
      *  the input maxDepth parameter, and if the depth
      *  exceeds this number, output terminates after
-     *  tidying StringBuffer.
+     *  tidying StringBuilder.
      *  <p>
      *  Depth is computed as 1 for each Notation Syntax
      *  Axiom Node. VarHyp nodes and Nulls Permitted,
@@ -638,7 +638,7 @@ public class ParseNode {
      *  Axiom nodes are assigned depth = 0 for purposes of
      *  depth checking.
      *  <p>
-     *  @param sb            StringBuffer already initialized
+     *  @param sb            StringBuilder already initialized
      *                       for appending characters.
      *
      *  @param maxDepth      maximum depth of Notation Syntax
@@ -652,10 +652,10 @@ public class ParseNode {
      *                       off depth checking.
      *
      *  @return length of sub-expression characters
-     *          appended to the input StringBuffer --
+     *          appended to the input StringBuilder --
      *          or -1 if maxDepth or maxLength exceeded.
      */
-    public int renderParsedSubExpr(final StringBuffer sb, final int maxDepth,
+    public int renderParsedSubExpr(final StringBuilder sb, final int maxDepth,
         final int maxLength)
     {
 
@@ -837,9 +837,9 @@ public class ParseNode {
      *  Updates an ArrayList to maintain a set of Work Vars
      *  used in a subtree.
      *
-     *  @param workVarList ArrayList of WorkVar objects in subtree.
+     *  @param workVarList List of WorkVar objects in subtree.
      */
-    public void accumSetOfWorkVarsUsed(final ArrayList workVarList) {
+    public void accumSetOfWorkVarsUsed(final List<Var> workVarList) {
         if (stmt.isWorkVarHyp()) {
             final Var v = ((VarHyp)stmt).getVar();
             for (int i = 0; i < workVarList.size(); i++)
@@ -856,9 +856,9 @@ public class ParseNode {
      *  Updates an ArrayList to maintain a set of Var Hyps
      *  used in a subtree.
      *
-     *  @param varHypList ArrayList of VarHyp objects in subtree.
+     *  @param varHypList List of VarHyp objects in subtree.
      */
-    public void accumVarHypUsedListBySeq(final ArrayList varHypList) {
+    public void accumVarHypUsedListBySeq(final List<Hyp> varHypList) {
         if (stmt.isVarHyp())
             ((VarHyp)stmt).accumVarHypListBySeq(varHypList);
         else
@@ -877,14 +877,14 @@ public class ParseNode {
      *  a list of optional variables that are in use
      *  in a proof.
      *  <p>
-     *  @param varHypList ArrayList of Var Hyps being sought
+     *  @param varHypList List of Var Hyps being sought
      *                 for accumulation.
-     *  @param varHypInUseList ArrayList of Var Hyps accumulated
+     *  @param varHypInUseList List of Var Hyps accumulated
      *                 which are in the formula and are
      *                 in the input varList.
      */
-    public void accumListVarHypUsedListBySeq(final ArrayList varHypList,
-        final ArrayList varHypInUseList)
+    public void accumListVarHypUsedListBySeq(final List<Hyp> varHypList,
+        final List<Hyp> varHypInUseList)
     {
 
         VarHyp vH;

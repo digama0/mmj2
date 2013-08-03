@@ -16,6 +16,7 @@
 package mmj.util;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import mmj.gmff.*;
 import mmj.pa.ProofAsst;
@@ -220,7 +221,7 @@ public class GMFFBoss extends Boss {
 
         final String exportType = runParm.values[0].trim();
 
-        final ArrayList<EscapePair> list = new ArrayList<EscapePair>(
+        final List<EscapePair> list = new ArrayList<EscapePair>(
             GMFFConstants.DEFAULT_USER_TEXT_ESCAPES.length);
 
         int num;

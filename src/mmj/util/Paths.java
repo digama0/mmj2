@@ -24,10 +24,6 @@ import java.io.IOException;
  */
 public class Paths {
 
-    private final String mmj2PathArgument;
-    private final String metamathPathArgument;
-    private final String svcPathArgument;
-
     private final File mmj2Path;
     private final File metamathPath;
     private final File svcPath;
@@ -45,10 +41,6 @@ public class Paths {
         final String metamathPathArgument, final String svcPathArgument)
         throws IllegalArgumentException, IOException
     {
-
-        this.mmj2PathArgument = mmj2PathArgument;
-        this.metamathPathArgument = metamathPathArgument;
-        this.svcPathArgument = svcPathArgument;
 
         String s;
 

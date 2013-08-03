@@ -70,7 +70,7 @@ public class HeaderStmt extends ProofWorkStmt {
         this.theoremLabel = theoremLabel;
         this.locAfterLabel = locAfterLabel;
 
-        stmtText = new StringBuffer();
+        stmtText = new StringBuilder();
 
         stmtText.append(PaConstants.PROOF_TEXT_HEADER_1);
 
@@ -146,7 +146,7 @@ public class HeaderStmt extends ProofWorkStmt {
     {
         final int currLineNbr = (int)w.proofTextTokenizer.getCurrentLineNbr();
 
-        stmtText = new StringBuffer();
+        stmtText = new StringBuilder();
 
         String nextT = loadStmtTextGetRequiredToken(firstToken);
         if (!nextT.equals(PaConstants.HEADER_MM_TOKEN))
@@ -213,7 +213,7 @@ public class HeaderStmt extends ProofWorkStmt {
             return false;
         }
 
-        final Stmt stmt = (Stmt)w.logicalSystem.getStmtTbl().get(theoremLabel);
+        final Stmt stmt = w.logicalSystem.getStmtTbl().get(theoremLabel);
         if (stmt == null) {
             if (!Statementizer.areLabelCharsValid(theoremLabel)) {
                 w.messages
@@ -273,7 +273,7 @@ public class HeaderStmt extends ProofWorkStmt {
             return true;
         }
 
-        final Stmt stmt = (Stmt)w.logicalSystem.getStmtTbl().get(locAfterLabel);
+        final Stmt stmt = w.logicalSystem.getStmtTbl().get(locAfterLabel);
         if (stmt == null) {
             w.messages.accumErrorMessage(PaConstants.ERRMSG_LOC_NOTFND_1
                 + w.getErrorLabelIfPossible() + PaConstants.ERRMSG_LOC_NOTFND_2

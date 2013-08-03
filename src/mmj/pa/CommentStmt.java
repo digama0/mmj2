@@ -77,7 +77,7 @@ public class CommentStmt extends ProofWorkStmt {
     {
         super(w);
 
-        stmtText = new StringBuffer(s.length() + 2);
+        stmtText = new StringBuilder(s.length() + 2);
 
         String linePrefix = new String(PaConstants.COMMENT_STMT_TOKEN_PREFIX
             + " ");

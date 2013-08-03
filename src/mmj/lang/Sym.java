@@ -32,7 +32,7 @@ import java.util.Map;
  *  @see <a href="../../MetamathERNotes.html">
  *       Nomenclature and Entity-Relationship Notes</a>
  */
-public abstract class Sym extends MObj implements Comparable {
+public abstract class Sym extends MObj<Sym> {
     /**
      *  "id" is the character string that uniquely identifies
      *  the Sym.
@@ -92,7 +92,7 @@ public abstract class Sym extends MObj implements Comparable {
      *  @throws LangException if Sym.id duplicates the id of
      *          another Sym (Cnst or Var) or a Stmt label.
      */
-    public Sym(final int seq, final Map symTbl, final Map stmtTbl,
+    public Sym(final int seq, final Map<?, ?> symTbl, final Map<?, ?> stmtTbl,
         final String id) throws LangException
     {
         this(seq, id);
@@ -199,17 +199,17 @@ public abstract class Sym extends MObj implements Comparable {
      *
      */
     @Override
-    public int compareTo(final Object obj) {
-        return id.compareTo(((Sym)obj).id);
+    public int compareTo(final Sym obj) {
+        return id.compareTo(obj.id);
     }
 
     /**
      *  ID sequences by Sym.id.
      */
-    static public final Comparator ID = new Comparator() {
+    static public final Comparator<Sym> ID = new Comparator<Sym>() {
         @Override
-        public int compare(final Object o1, final Object o2) {
-            return ((Sym)o1).id.compareTo(((Sym)o2).id);
+        public int compare(final Sym o1, final Sym o2) {
+            return o1.id.compareTo(o2.id);
         }
     };
 }

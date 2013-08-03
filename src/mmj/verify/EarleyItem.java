@@ -86,7 +86,7 @@ public class EarleyItem {
      */
     @Override
     public String toString() {
-        final StringBuffer s = new StringBuffer();
+        final StringBuilder s = new StringBuilder();
         s.append(GrammarConstants.ERRMSG_AT_CAPTION);
         s.append(atIndex);
         s.append(GrammarConstants.ERRMSG_DOT_CAPTION);

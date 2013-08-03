@@ -15,8 +15,7 @@
 
 package mmj.gmff;
 
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.*;
 
 import mmj.lang.Messages;
 import mmj.mmio.MMIOConstants;
@@ -79,7 +78,7 @@ public class TypesetDefCommentParser {
 
     Messages messages;
     String[] typesetDefKeyword;
-    Map[] typesetDefMap;
+    List<Map<String, String>> typesetDefMap;
 
     // global variables for current $t parse
     String comment; // the Metamath $t comment stripped of $( and $)
@@ -93,30 +92,27 @@ public class TypesetDefCommentParser {
     /**
      * The only constructor.
      *
-     * @param exporterTypesetDefsList <code>ArrayList<code> of
+     * @param exporterTypesetDefsList <code>List<code> of
      *          <code>GMFFExporterTypesetDefs</code> which are
      *          to be selected for processing and loaded with data.
      *
      * @param messages The mmj2 <code> Messages object.
      */
     public TypesetDefCommentParser(
-        final ArrayList<GMFFExporterTypesetDefs> exporterTypesetDefsList,
+        final List<GMFFExporterTypesetDefs> exporterTypesetDefsList,
         final Messages messages) throws GMFFException
     {
 
         this.messages = messages;
 
         typesetDefKeyword = new String[exporterTypesetDefsList.size()];
-        typesetDefMap = new Map[exporterTypesetDefsList.size()];
+        typesetDefMap = new ArrayList<Map<String, String>>(
+            exporterTypesetDefsList.size());
 
         int i = 0;
         for (final GMFFExporterTypesetDefs d : exporterTypesetDefsList) {
-
-            typesetDefKeyword[i] = d.typesetDefKeyword;
-
-            typesetDefMap[i] = d.typesetDefMap;
-
-            ++i;
+            typesetDefKeyword[i++] = d.typesetDefKeyword;
+            typesetDefMap.add(d.typesetDefMap);
         }
     }
 
@@ -215,7 +211,7 @@ public class TypesetDefCommentParser {
     */
     private void getCurrKeyword() throws GMFFException {
 
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         char nextChar;
 
         while (currIndex < maxIndex) {
@@ -324,7 +320,7 @@ public class TypesetDefCommentParser {
     */
     private void getConsolidatedReplacementString() throws GMFFException {
 
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         sb.append(getQuoteDelimitedString());
         bypassWhitespaceAndComments();
         while (currIndex < maxIndex
@@ -417,7 +413,7 @@ public class TypesetDefCommentParser {
     private String getStringInsideDelimiters(final char delimChar)
         throws GMFFException
     {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         char currChar;
 
         // loop through comment extracting text characters
@@ -457,12 +453,13 @@ public class TypesetDefCommentParser {
     private void storeInTypesetDefMap(final int i, final String currSym,
         final String currReplacement)
     {
-        final String oldReplacement = (String)typesetDefMap[i].get(currSym);
+        final Map<String, String> map = typesetDefMap.get(i);
+        final String oldReplacement = map.get(currSym);
 
         if (oldReplacement != null)
             triggerInfoMsgDupSymTypesetDef();
         else
-            typesetDefMap[i].put(currSym, currReplacement);
+            map.put(currSym, currReplacement);
     }
 
     /*
@@ -560,7 +557,7 @@ public class TypesetDefCommentParser {
     }
 
     private void triggerErrorInvalidKeywordChar(final char nextChar,
-        final StringBuffer sb) throws GMFFException
+        final StringBuilder sb) throws GMFFException
     {
         final String s = getParseLocInfo();
         throw new GMFFException(GMFFConstants.ERRMSG_INVALID_KEYWORD_CHAR_1
@@ -593,11 +590,6 @@ public class TypesetDefCommentParser {
         final String s = getParseLocInfo();
         throw new GMFFException(GMFFConstants.ERRMSG_NOT_A_QUOTED_STRING_1
             + nextChar + s);
-    }
-
-    private void triggerErrorMissingEndDelim() throws GMFFException {
-        final String s = getParseLocInfo();
-        throw new GMFFException(GMFFConstants.ERRMSG_MISSING_END_DELIM_1 + s);
     }
 
     private void triggerInfoMsgDupSymTypesetDef() {

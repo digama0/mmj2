@@ -31,9 +31,9 @@ public class WorkVarManager {
     private boolean areWorkVarsDeclared = false;
 
     // these are parallel array(lists), key is Type Code.
-    private final ArrayList definedTypCdList;
-    private final ArrayList definedWorkVarPrefixList;
-    private final ArrayList definedNbrWorkVarsList;
+    private final List<Cnst> definedTypCdList;
+    private final List<String> definedWorkVarPrefixList;
+    private final List<Integer> definedNbrWorkVarsList;
 
     // these are parallel arrays, key is Type Code.
     private Cnst[] declaredTypCd;
@@ -75,9 +75,9 @@ public class WorkVarManager {
     public WorkVarManager(final Grammar grammar) {
         final int len = grammar.getVarHypTypSet().size();
 
-        definedTypCdList = new ArrayList(len);
-        definedWorkVarPrefixList = new ArrayList(len);
-        definedNbrWorkVarsList = new ArrayList(len);
+        definedTypCdList = new ArrayList<Cnst>(len);
+        definedWorkVarPrefixList = new ArrayList<String>(len);
+        definedNbrWorkVarsList = new ArrayList<Integer>(len);
     }
 
     /**
@@ -185,21 +185,14 @@ public class WorkVarManager {
         prevAllocIndex = new int[len];
         allocated = new boolean[len][];
 
-        Cnst defTyp;
-        int loc;
-        int n;
-        String labelId;
         final Sym[] symArray = new Sym[2]; // for formula
-        final Iterator iterator = grammar.getVarHypTypSet().iterator();
         int i = 0;
-        while (iterator.hasNext()) {
-            defTyp = (Cnst)iterator.next();
-
+        for (final Cnst defTyp : grammar.getVarHypTypSet()) {
             // WARNING: updating the Cnst here...
             defTyp.workVarTypIndex = i;
             declaredTypCd[i] = defTyp;
 
-            loc = definedTypCdList.indexOf(defTyp);
+            final int loc = definedTypCdList.indexOf(defTyp);
             if (loc == -1) {
                 declaredWorkVarPrefix[i] = LangConstants.WORK_VAR_DEFAULT_PREFIX_PREFIX
                     + defTyp.getId().substring(0, 1).toUpperCase();
@@ -207,14 +200,13 @@ public class WorkVarManager {
                 declaredNbrWorkVars[i] = LangConstants.WORK_VAR_DEFAULT_NBR_FOR_TYP_CD;
             }
             else {
-                declaredWorkVarPrefix[i] = (String)definedWorkVarPrefixList
-                    .get(loc);
+                declaredWorkVarPrefix[i] = definedWorkVarPrefixList.get(loc);
 
-                declaredNbrWorkVars[i] = ((Integer)definedNbrWorkVarsList
-                    .get(loc)).intValue();
+                declaredNbrWorkVars[i] = definedNbrWorkVarsList.get(loc)
+                    .intValue();
             }
 
-            n = declaredNbrWorkVars[i];
+            final int n = declaredNbrWorkVars[i];
             declaredWorkVar[i] = new WorkVar[n];
             declaredWorkVarHyp[i] = new WorkVarHyp[n];
             allocated[i] = new boolean[n];
@@ -223,8 +215,8 @@ public class WorkVarManager {
             symArray[0] = defTyp;
             for (int j = 0; j < n; j++) {
 
-                labelId = // (e.g. "&W1")
-                declaredWorkVarPrefix[i] + Integer.toString(j + 1);
+                final String labelId = declaredWorkVarPrefix[i]
+                    + Integer.toString(j + 1);
 
                 declaredWorkVar[i][j] = new WorkVar(seqNbrForMObj++, labelId, j); // workVarIndex
 
@@ -257,21 +249,14 @@ public class WorkVarManager {
     public Cnst editGrammaticalTypCd(final Grammar grammar,
         final String grammaticalTypCdIn) throws VerifyException
     {
-        String s;
-        Cnst typ;
+        String s = "";
         if (grammaticalTypCdIn != null) {
             s = grammaticalTypCdIn.trim();
-            if (s.length() > 0) {
-                final Iterator i = grammar.getVarHypTypSet().iterator();
-                while (i.hasNext()) {
-                    typ = (Cnst)i.next();
+            if (s.length() > 0)
+                for (final Cnst typ : grammar.getVarHypTypSet())
                     if (typ.getId().equals(s))
                         return typ;
-                }
-            }
         }
-        else
-            s = new String("");
 
         throw new VerifyException(
             LangConstants.ERRMSG_DEFINE_WORK_VAR_TYPE_BAD_1 + s
@@ -615,8 +600,8 @@ public class WorkVarManager {
         final LogicalSystem logicalSystem) throws VerifyException
     {
 
-        final Map symTbl = logicalSystem.getSymTbl();
-        final Map stmtTbl = logicalSystem.getStmtTbl();
+        final Map<String, Sym> symTbl = logicalSystem.getSymTbl();
+        final Map<String, Stmt> stmtTbl = logicalSystem.getStmtTbl();
         Object o;
         String s;
         for (final WorkVar[] element : declaredWorkVar)

@@ -27,7 +27,7 @@
 
 package mmj.lang;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  *  Interface for loading Metamath statements into a Logic System.
@@ -110,7 +110,7 @@ public interface SystemLoader {
      * @throws   LangException if duplicate label, undefined vars,
      *           etc.
      */
-    LogHyp addLogHyp(String labelS, String typS, ArrayList symList)
+    LogHyp addLogHyp(String labelS, String typS, List<String> symList)
         throws LangException;
 
     /**
@@ -126,7 +126,7 @@ public interface SystemLoader {
      * @throws       LangException if duplicate label, undefined vars,
      *               etc.
      */
-    Axiom addAxiom(String labelS, String typS, ArrayList symList)
+    Axiom addAxiom(String labelS, String typS, List<String> symList)
         throws LangException;
 
     /**
@@ -146,8 +146,8 @@ public interface SystemLoader {
      * @throws       LangException if duplicate label, undefined vars,
      *               etc.
      */
-    Theorem addTheorem(String labelS, String typS, ArrayList symList,
-        ArrayList proofList) throws LangException;
+    Theorem addTheorem(String labelS, String typS, List<String> symList,
+        List<String> proofList) throws LangException;
 
     /**
      *  Add Theorem to Logical System.
@@ -171,8 +171,9 @@ public interface SystemLoader {
      * @throws       LangException if duplicate label, undefined vars,
      *               etc.
      */
-    Theorem addTheorem(String labelS, String typS, ArrayList symList,
-        ArrayList proofList, ArrayList proofBlockList) throws LangException;
+    Theorem addTheorem(String labelS, String typS, List<String> symList,
+        List<String> proofList, List<String> proofBlockList)
+        throws LangException;
 
     /**
      *  Begin a new (nested) scope level for the Logical System.

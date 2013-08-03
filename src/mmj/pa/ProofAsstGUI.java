@@ -133,7 +133,6 @@ public class ProofAsstGUI {
     private final ProofAsst proofAsst;
     private final ProofAsstPreferences proofAsstPreferences;
 
-    private TheoremLoader theoremLoader;
     private TlPreferences tlPreferences;
 
     private JFrame mainFrame;
@@ -244,7 +243,6 @@ public class ProofAsstGUI {
         this.proofAsst = proofAsst;
         this.proofAsstPreferences = proofAsstPreferences;
 
-        this.theoremLoader = theoremLoader;
         tlPreferences = theoremLoader.getTlPreferences();
         buildMMTFolderChooser();
 
@@ -583,10 +581,6 @@ public class ProofAsstGUI {
         return nbrTimesSavedSinceNew;
     }
 
-    private void updateScreenTitle() {
-        screenTitle = buildScreenTitle(null);
-    }
-
     private void updateScreenTitle(final File file) {
         screenTitle = buildScreenTitle(file);
     }
@@ -606,7 +600,7 @@ public class ProofAsstGUI {
         if (file == null || file.getName().length() > maxLength)
             return PaConstants.PROOF_ASST_FRAME_TITLE;
 
-        final StringBuffer s = new StringBuffer(maxLength);
+        final StringBuilder s = new StringBuilder(maxLength);
 
         s.append(PaConstants.PROOF_ASST_FRAME_TITLE);
 
@@ -618,7 +612,7 @@ public class ProofAsstGUI {
                 return file.getName();
         return s.toString();
     }
-    private int appendToScreenTitle(final StringBuffer s, final String t) {
+    private int appendToScreenTitle(final StringBuilder s, final String t) {
         if (t.length() > s.capacity())
             return -1;
         s.append(t);
@@ -1758,7 +1752,7 @@ public class ProofAsstGUI {
 
         String promptString = origPromptString;
 
-        promptLoop: while (true) {
+        while (true) {
             s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
             if (s == null)
                 return s; // cancelled input
@@ -1793,7 +1787,7 @@ public class ProofAsstGUI {
 
         String promptString = origPromptString;
 
-        promptLoop: while (true) {
+        while (true) {
             s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
             if (s == null)
                 return s; // cancelled input
@@ -1966,7 +1960,6 @@ public class ProofAsstGUI {
 
         int returnVal;
         File file;
-        final String s;
         while (true) {
             returnVal = fileChooser.showOpenDialog(getMainFrame());
             if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -2027,7 +2020,7 @@ public class ProofAsstGUI {
 
         final char[] cBuffer = new char[1024];
 
-        final StringBuffer sb = new StringBuffer(cBuffer.length);
+        final StringBuilder sb = new StringBuilder(cBuffer.length);
 
         int len = 0;
         try {
@@ -2184,7 +2177,7 @@ public class ProofAsstGUI {
 
         String promptString = origPromptString;
 
-        promptLoop: while (true) {
+        while (true) {
             s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
             if (s == null)
                 return proofAsstPreferences.getStepSelectorShowSubstitutions();
@@ -2221,7 +2214,7 @@ public class ProofAsstGUI {
 
         String promptString = origPromptString;
 
-        promptLoop: while (true) {
+        while (true) {
             s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
             if (s == null)
                 return -1; // cancelled input
@@ -2297,7 +2290,7 @@ public class ProofAsstGUI {
     }
 
     private void doSetTLMMTFolderItemAction() {
-        final MMTFolder mmtFolder = getNewMMTFolder();
+        getNewMMTFolder();
     }
 
     private MMTFolder getNewMMTFolder() {
@@ -2309,7 +2302,6 @@ public class ProofAsstGUI {
         mmtFolderChooser.setDialogTitle(title);
 
         int returnVal;
-        final String s;
         String errMsg;
         while (true) {
             returnVal = mmtFolderChooser.showDialog(getMainFrame(),
@@ -2329,7 +2321,7 @@ public class ProofAsstGUI {
     }
 
     private void doSetTLDjVarsOptionItemAction() {
-        final String newDjVarsOption = getNewTLDjVarsOption();
+        getNewTLDjVarsOption();
     }
 
     private String getNewTLDjVarsOption() {
@@ -2340,7 +2332,7 @@ public class ProofAsstGUI {
 
         String promptString = origPromptString;
 
-        promptLoop: while (true) {
+        while (true) {
             s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
             if (s == null)
                 return tlPreferences.getDjVarsOption();
@@ -2369,14 +2361,13 @@ public class ProofAsstGUI {
 
         String s = proofAsstPreferences.getProofFormatNumber() + "";
 
-        final String softDjErrorOptionListString = proofAsstPreferences
-            .getSoftDjErrorOptionListString();
+        proofAsstPreferences.getSoftDjErrorOptionListString();
 
         final String origPromptString = PaConstants.PROOF_ASST_COMPRESSION_LIST;
 
         String promptString = origPromptString;
 
-        promptLoop: while (true) {
+        while (true) {
             s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
             if (s == null)
                 return s; // cancelled input
@@ -2398,7 +2389,7 @@ public class ProofAsstGUI {
     }
 
     private void doSetTLStoreMMIndentAmtItemAction() {
-        final int newStoreMMIndentAmt = getNewTLStoreMMIndentAmt();
+        getNewTLStoreMMIndentAmt();
     }
 
     private int getNewTLStoreMMIndentAmt() {
@@ -2409,7 +2400,7 @@ public class ProofAsstGUI {
 
         String promptString = origPromptString;
 
-        promptLoop: while (true) {
+        while (true) {
             s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
             if (s == null)
                 return tlPreferences.getStoreMMIndentAmt();
@@ -2428,7 +2419,7 @@ public class ProofAsstGUI {
     }
 
     private void doSetTLStoreMMRightColItemAction() {
-        final int newStoreMMRightCol = getNewTLStoreMMRightCol();
+        getNewTLStoreMMRightCol();
     }
 
     private int getNewTLStoreMMRightCol() {
@@ -2439,7 +2430,7 @@ public class ProofAsstGUI {
 
         String promptString = origPromptString;
 
-        promptLoop: while (true) {
+        while (true) {
             s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
             if (s == null)
                 return tlPreferences.getStoreMMRightCol();
@@ -2458,7 +2449,7 @@ public class ProofAsstGUI {
     }
 
     private void doSetTLStoreFormulasAsIsItemAction() {
-        final boolean newStoreFormulasAsIs = getNewTLStoreFormulasAsIs();
+        getNewTLStoreFormulasAsIs();
     }
 
     private boolean getNewTLStoreFormulasAsIs() {
@@ -2469,7 +2460,7 @@ public class ProofAsstGUI {
 
         String promptString = origPromptString;
 
-        promptLoop: while (true) {
+        while (true) {
             s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
             if (s == null)
                 return tlPreferences.getStoreFormulasAsIs();
@@ -2488,7 +2479,7 @@ public class ProofAsstGUI {
     }
 
     private void doSetTLAuditMessagesItemAction() {
-        final boolean newAuditMessages = getNewTLAuditMessages();
+        getNewTLAuditMessages();
     }
 
     private boolean getNewTLAuditMessages() {
@@ -2499,7 +2490,7 @@ public class ProofAsstGUI {
 
         String promptString = origPromptString;
 
-        promptLoop: while (true) {
+        while (true) {
             s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
             if (s == null)
                 return tlPreferences.getAuditMessages();
@@ -3121,12 +3112,6 @@ public class ProofAsstGUI {
     private synchronized RequestMessagesGUI getRequestMessagesGUI() {
 
         return requestMessagesGUI;
-    }
-    private synchronized void disposeOfRequestMessagesGUI() {
-
-        final RequestMessagesGUI u = getRequestMessagesGUI();
-        if (u != null)
-            u.dispose();
     }
 
     /**

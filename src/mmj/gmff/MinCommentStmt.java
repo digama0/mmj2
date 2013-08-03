@@ -67,14 +67,14 @@ public class MinCommentStmt extends MinProofWorkStmt {
      *  <p>
      *  @param gmffExporter The <code>GMFFExporter</code> requesting
      *				the export data build.
-     *  @param exportBuffer The <code>StringBuffer</code> to which
+     *  @param exportBuffer The <code>StringBuilder</code> to which
      *               exported data is to be output.
      *  @throws GMFFException if errors are encountered during the
      *               export process.
      */
     @Override
     public void buildModelAExport(final GMFFExporter gmffExporter,
-        final StringBuffer exportBuffer) throws GMFFException
+        final StringBuilder exportBuffer) throws GMFFException
     {
 
         final String modelAComment0 = gmffExporter

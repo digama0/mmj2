@@ -172,11 +172,10 @@ public class ProofCompression {
      *          proof.
      */
     public Stmt[] decompress(final String theoremLabel, final int seq,
-        final Map stmtTbl, final Hyp[] mandHypArray, final Hyp[] optHypArray,
-        final List otherRefList, final List proofBlockList)
-        throws LangException
+        final Map<String, Stmt> stmtTbl, final Hyp[] mandHypArray,
+        final Hyp[] optHypArray, final List<String> otherRefList,
+        final List<String> proofBlockList) throws LangException
     {
-
         this.theoremLabel = theoremLabel; // for error msgs
 
         if (!usedYet) {
@@ -189,7 +188,7 @@ public class ProofCompression {
 
         loadOtherRefArrays(stmtTbl, otherRefList, seq);
 
-        final Iterator blockIterator = proofBlockList.iterator();
+        final Iterator<String> blockIterator = proofBlockList.iterator();
         if (blockIterator.hasNext())
             loadSteps(blockIterator);
         else
@@ -200,8 +199,8 @@ public class ProofCompression {
         return constructProofArray();
     }
 
-    private void loadOtherRefArrays(final Map stmtTbl, final List otherRefList,
-        final int seq) throws LangException
+    private void loadOtherRefArrays(final Map<String, Stmt> stmtTbl,
+        final List<String> otherRefList, final int seq) throws LangException
     {
 
         otherHypCnt = 0;
@@ -212,14 +211,10 @@ public class ProofCompression {
             otherAssrt = new Assrt[otherAssrtMax];
         }
 
-        final Iterator otherRefIterator = otherRefList.iterator();
-        String otherLabel;
-        Stmt otherStmt;
         int iterationNbr = 0;
-        while (otherRefIterator.hasNext()) {
+        for (final String otherLabel : otherRefList) {
             ++iterationNbr;
-            otherLabel = (String)otherRefIterator.next();
-            otherStmt = (Stmt)stmtTbl.get(otherLabel);
+            final Stmt otherStmt = stmtTbl.get(otherLabel);
             if (otherStmt == null)
                 throw new LangException(
                     LangConstants.ERRMSG_COMPRESS_OTHER_NOTFND_1 + theoremLabel
@@ -301,11 +296,13 @@ public class ProofCompression {
         otherHyp[otherHypCnt++] = otherVarHyp;
     }
 
-    private void loadSteps(final Iterator blockIterator) throws LangException {
+    private void loadSteps(final Iterator<String> blockIterator)
+        throws LangException
+    {
         repeatedSubproofCnt = 0;
         stepCnt = 0;
 
-        String block = (String)blockIterator.next();
+        String block = blockIterator.next();
         int blockLen = block.length();
         int blockNbr = 1;
         int charIndex = 0;
@@ -332,7 +329,7 @@ public class ProofCompression {
                     break;
                 }
                 charIndex = 0;
-                block = (String)blockIterator.next();
+                block = blockIterator.next();
                 blockLen = block.length();
                 ++blockNbr;
             }
@@ -598,12 +595,12 @@ public class ProofCompression {
         repeatedSubproof = temp;
     }
 
-    public ArrayList<Stmt> compress(final String theoremLabel, final int width,
-        final ArrayList<Hyp> mandHypArray, final ArrayList<Hyp> optHypArray,
-        final RPNStep[] rpnProof, final StringBuffer letters)
+    public List<Stmt> compress(final String theoremLabel, final int width,
+        final List<Hyp> mandHypArray, final List<Hyp> optHypArray,
+        final RPNStep[] rpnProof, final StringBuilder letters)
     {
         this.theoremLabel = theoremLabel;
-        final ArrayList<Stmt> parenStmt = new ArrayList<Stmt>();
+        final List<Stmt> parenStmt = new ArrayList<Stmt>();
         int x = 2;
         for (final RPNStep s : rpnProof)
             if (s != null && s.stmt != null && optHypArray.contains(s.stmt)
@@ -616,7 +613,7 @@ public class ProofCompression {
                 else
                     x += l;
             }
-        final HashMap<Stmt, Integer> unsortedMap = new HashMap<Stmt, Integer>();
+        final Map<Stmt, Integer> unsortedMap = new HashMap<Stmt, Integer>();
         for (final RPNStep s : rpnProof)
             if (s != null && s.backRef <= 0 && s.stmt != null
                 && !mandHypArray.contains(s.stmt)
@@ -661,7 +658,7 @@ public class ProofCompression {
                     return s2.getLabel().length() - s1.getLabel().length();
                 }
             });
-            while (list.size() > 0) {
+            while (!list.isEmpty()) {
                 boolean found = false;
                 if (x + 2 < width) // assume minimum size 2 for label
                     for (final Stmt s : list) {

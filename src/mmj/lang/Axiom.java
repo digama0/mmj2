@@ -23,7 +23,7 @@
 
 package mmj.lang;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -155,9 +155,10 @@ public class Axiom extends Assrt {
      *  @param typS         Axiom Formula Type Code String
      *  @param symList      Axiom Expression Sym String List.
      */
-    public Axiom(final int seq, final ArrayList scopeDefList, final Map symTbl,
-        final Map stmtTbl, final String labelS, final String typS,
-        final ArrayList symList) throws LangException
+    public Axiom(final int seq, final List<ScopeDef> scopeDefList,
+        final Map<String, Sym> symTbl, final Map<String, Stmt> stmtTbl,
+        final String labelS, final String typS, final List<String> symList)
+        throws LangException
     {
         super(seq, scopeDefList, symTbl, stmtTbl, labelS, typS, symList);
 
@@ -271,12 +272,12 @@ public class Axiom extends Assrt {
      *  text not to exceed the given maxLength. If the
      *  number of output characters exceeds maxLength
      *  output terminates, possibly leaving a dirty
-     *  StringBuffer.
+     *  StringBuilder.
      *  <p>
      *  The depth of the sub-tree is checked against
      *  the input maxDepth parameter, and if the depth
      *  exceeds this number, output terminates,, possibly
-     *  leaving a dirty StringBuffer.
+     *  leaving a dirty StringBuilder.
      *  <p>
      *  Depth is computed as 1 for each Notation Syntax
      *  Axiom Node. VarHyp nodes and Nulls Permitted,
@@ -284,7 +285,7 @@ public class Axiom extends Assrt {
      *  Axiom nodes are assigned depth = 0 for purposes of
      *  depth checking.
      *  <p>
-     *  @param sb            StringBuffer already initialized
+     *  @param sb            StringBuilder already initialized
      *                       for appending characters.
      *
      *  @param maxDepth      maximum depth of Notation Syntax
@@ -302,11 +303,11 @@ public class Axiom extends Assrt {
      *                       into the Stmt.
      *
      *  @return length of sub-expression characters
-     *          appended to the input StringBuffer --
+     *          appended to the input StringBuilder --
      *          or -1 if maxDepth or maxLength exceeded.
      */
     @Override
-    public int renderParsedSubExpr(final StringBuffer sb, final int maxDepth,
+    public int renderParsedSubExpr(final StringBuilder sb, final int maxDepth,
         int maxLength, final ParseNode[] child)
     {
 

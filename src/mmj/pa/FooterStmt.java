@@ -86,7 +86,7 @@ public class FooterStmt extends ProofWorkStmt {
      *  Loads FooterStmt with standard contents of a FooterStmt.
      */
     public void loadDefault() {
-        stmtText = new StringBuffer(PaConstants.PROOF_TEXT_FOOTER.length() + 2);
+        stmtText = new StringBuilder(PaConstants.PROOF_TEXT_FOOTER.length() + 2);
 
         stmtText.append(PaConstants.PROOF_TEXT_FOOTER);
         stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
@@ -121,7 +121,7 @@ public class FooterStmt extends ProofWorkStmt {
     {
         final int currLineNbr = (int)w.proofTextTokenizer.getCurrentLineNbr();
 
-        stmtText = new StringBuffer();
+        stmtText = new StringBuilder();
 
         final String nextT = loadStmtTextGetNextStmt(firstToken);
 

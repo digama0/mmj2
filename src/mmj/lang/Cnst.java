@@ -201,7 +201,7 @@ public class Cnst extends Sym {
      *  Code equal to this Cnst, sorted by
      *  GrammarRule.MAX_SEQ_NBR for mmj.verify.earleyParser.
      */
-    private LinkedList earleyRules;
+    private List<NotationRule> earleyRules;
 
     /**
      *  earleyFIRST -- a Set of <code>Cnst</code>s that can
@@ -214,7 +214,7 @@ public class Cnst extends Sym {
      *  Used by mmj.verify.earleyParser for Prediction
      *  Lookahead.
      */
-    private HashSet earleyFIRST;
+    private Set<Cnst> earleyFIRST;
 
     /**
      *  Construct using sequence number and id string.
@@ -239,8 +239,8 @@ public class Cnst extends Sym {
      *  @throws LangException if Sym.id duplicates the id of
      *          another Sym (Cnst or Var) or Stmt label.
      */
-    public Cnst(final int seq, final Map symTbl, final Map stmtTbl,
-        final String id) throws LangException
+    public Cnst(final int seq, final Map<String, Sym> symTbl,
+        final Map<String, Stmt> stmtTbl, final String id) throws LangException
     {
         super(seq, symTbl, stmtTbl, id);
         isVarTyp = false;
@@ -698,7 +698,7 @@ public class Cnst extends Sym {
      *
      *  @return earleyRules List for this Type Code or null.
      */
-    public LinkedList getEarleyRules() {
+    public List<NotationRule> getEarleyRules() {
         return earleyRules;
     }
 
@@ -711,7 +711,7 @@ public class Cnst extends Sym {
      *
      *  @param earleyRules List for this Type Code or null.
      */
-    public void setEarleyRules(final LinkedList earleyRules) {
+    public void setEarleyRules(final List<NotationRule> earleyRules) {
         this.earleyRules = earleyRules;
     }
 
@@ -730,7 +730,7 @@ public class Cnst extends Sym {
      *
      *  @return earleyFIRST (or null).
      */
-    public HashSet getEarleyFIRST() {
+    public Set<Cnst> getEarleyFIRST() {
         return earleyFIRST;
     }
 
@@ -749,7 +749,7 @@ public class Cnst extends Sym {
      *
      *  @param earleyFIRST (or null).
      */
-    public void setEarleyFIRST(final HashSet earleyFIRST) {
+    public void setEarleyFIRST(final Set<Cnst> earleyFIRST) {
         this.earleyFIRST = earleyFIRST;
     }
 

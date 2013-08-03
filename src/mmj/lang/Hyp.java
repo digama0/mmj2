@@ -65,7 +65,7 @@ public abstract class Hyp extends Stmt {
      *
      *  @throws LangException if duplicate, etc.
      */
-    public Hyp(final int seq, final Map symTbl, final Map stmtTbl,
+    public Hyp(final int seq, final Map<?, ?> symTbl, final Map<?, ?> stmtTbl,
         final String labelS, final boolean active) throws LangException
     {
         super(seq, symTbl, stmtTbl, labelS);

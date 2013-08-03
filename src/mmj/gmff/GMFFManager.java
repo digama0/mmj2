@@ -18,8 +18,7 @@ package mmj.gmff;
 import java.io.File;
 import java.util.*;
 
-import mmj.lang.Messages;
-import mmj.lang.Theorem;
+import mmj.lang.*;
 import mmj.mmio.MMIOConstants;
 import mmj.pa.ProofAsst;
 import mmj.pa.ProofAsstException;
@@ -62,37 +61,37 @@ public class GMFFManager {
 
     private final Messages messages;
 
-    private Map symTbl = null;
+    private Map<String, Sym> symTbl = null;
 
-    private final ArrayList<String> typesetDefinitionsCache;
+    private final List<String> typesetDefinitionsCache;
 
     private int nbrTypesetDefinitionsProcessedSoFar = 0;
 
     // via RunParmGMFFExportParms or wherever
-    private final ArrayList<GMFFExportParms> inputGMFFExportParmsList;
+    private final List<GMFFExportParms> inputGMFFExportParmsList;
 
-    private final ArrayList<GMFFUserTextEscapes> inputGMFFUserTextEscapesList;
+    private final List<GMFFUserTextEscapes> inputGMFFUserTextEscapesList;
 
     private GMFFUserExportChoice inputGMFFUserExportChoice;
 
     // contains defaults merged with inputGMFFExportParmsList
     // contains at most one entry for each exportType!
-    private ArrayList<GMFFExportParms> exportParmsList;
+    private List<GMFFExportParms> exportParmsList;
 
     // list of exporters constructed from final contents of
     // exportParmsList and userTextEscapesList
-    private ArrayList gmffExporterList;
+    private List<GMFFExporter> gmffExporterList;
 
     // - contains defaults merged with inputGMFFUserTextEscapesList
     // - contains at most one entry for each exportType!
     // - list built using gmffExporterListas a key -- invalid
     // if user text escapes list's export type not present in
     // exportParmsList.
-    private ArrayList<GMFFUserTextEscapes> userTextEscapesList;
+    private List<GMFFUserTextEscapes> userTextEscapesList;
 
     // loaded using cached Metamath typesetting defintion
     // comment records.
-    private final ArrayList<GMFFExporterTypesetDefs> exporterTypesetDefsList;
+    private final List<GMFFExporterTypesetDefs> exporterTypesetDefsList;
 
     // loaded with default merged with inputGMFFUserExportChoice
     private GMFFUserExportChoice gmffUserExportChoice;
@@ -272,7 +271,7 @@ public class GMFFManager {
      *  <p>
      *  @param symTbl The Symbol Table Map from <code>LogicalSystem</code>
      */
-    public void setSymTbl(final Map symTbl) {
+    public void setSymTbl(final Map<String, Sym> symTbl) {
         this.symTbl = symTbl;
     }
 
@@ -283,7 +282,7 @@ public class GMFFManager {
      *  @return The Symbol Table Map, <code>symTbl</code> from
      *   			<code>LogicalSystem</code>
      */
-    public Map getSymTbl() {
+    public Map<String, Sym> getSymTbl() {
         return symTbl;
     }
 
@@ -392,7 +391,7 @@ public class GMFFManager {
             for (int i = 0; i < fileArray.length && i < max; i++) {
 
                 final String proofWorksheetText = GMFFInputFile
-                    .getFileContents(inputFolder, fileArray[i], " ",
+                    .getFileContents(fileArray[i], " ",
                         GMFFConstants.PROOF_WORKSHEET_MESSAGE_DESCRIPTOR,
                         GMFFConstants.PROOF_WORKSHEET_BUFFER_SIZE);
 
@@ -470,32 +469,32 @@ public class GMFFManager {
             else
                 startTheorem = labelOrAsterisk;
 
-            Iterator iterator;
+            Iterable<Theorem> iterable;
             try {
-                iterator = proofAsst
-                    .getSortedSkipSeqTheoremIterator(startTheorem);
+                iterable = proofAsst
+                    .getSortedSkipSeqTheoremIterable(startTheorem);
             } catch (final ProofAsstException e) {
                 messages.accumErrorMessage(e.getMessage());
                 return;
             }
 
-            if (!iterator.hasNext()) {
+            int i = 0;
+            for (final Theorem theorem : iterable) {
+                if (i++ >= max)
+                    break;
+                gmffExportOneTheorem(theorem, appendFileName, proofAsst);
+            }
+            if (i == 0) {
                 messages
                     .accumErrorMessage(GMFFConstants.ERRMSG_NO_THEOREMS_SELECTED_ERROR_1
                         + labelOrAsterisk);
                 return;
             }
-            int i = 0;
-            do
-                gmffExportOneTheorem((Theorem)iterator.next(), appendFileName,
-                    proofAsst);
-            while (++i < max && iterator.hasNext());
         }
         else
             gmffExportOneTheorem(labelOrAsterisk, appendFileName, proofAsst);
 
     }
-
     /**
      *  Exports one <code>Theorem</code> from the
      *  <code>LogicalSystem</code>.
@@ -652,7 +651,7 @@ public class GMFFManager {
         final String appendFileName) throws GMFFException
     {
 
-        final StringBuffer confirmationMessage = new StringBuffer();
+        final StringBuilder confirmationMessage = new StringBuilder();
 
         if (!gmffInitialized)
             initialization();
@@ -728,7 +727,7 @@ public class GMFFManager {
         final GMFFExporterTypesetDefs myTypesetDefs = new GMFFExporterTypesetDefs(
             typesetDefKeyword, GMFFConstants.METAMATH_DOLLAR_T_MAP_SIZE);
 
-        final ArrayList<GMFFExporterTypesetDefs> list = new ArrayList<GMFFExporterTypesetDefs>(
+        final List<GMFFExporterTypesetDefs> list = new ArrayList<GMFFExporterTypesetDefs>(
             1);
 
         list.add(myTypesetDefs);
@@ -747,7 +746,7 @@ public class GMFFManager {
      *  showing the parameters and settings in use.
      */
     public void generateInitializationAuditReport() {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         sb.append(MMIOConstants.NEW_LINE_CHAR);
         sb.append(GMFFConstants.INITIALIZATION_AUDIT_REPORT_1);
         sb.append(MMIOConstants.NEW_LINE_CHAR);
@@ -862,11 +861,9 @@ public class GMFFManager {
      *  Validates the ExportParms after building the
      *  consolidated list.
      */
-    private ArrayList<GMFFExportParms> loadExportParmsList()
-        throws GMFFException
-    {
+    private List<GMFFExportParms> loadExportParmsList() throws GMFFException {
 
-        final ArrayList<GMFFExportParms> listOut = new ArrayList<GMFFExportParms>(
+        final List<GMFFExportParms> listOut = new ArrayList<GMFFExportParms>(
             GMFFConstants.DEFAULT_EXPORT_PARMS.length);
 
         // load defaults:
@@ -882,8 +879,8 @@ public class GMFFManager {
         return listOut;
     }
 
-    private void updateExportParmsList(
-        final ArrayList<GMFFExportParms> listOut, final GMFFExportParms t)
+    private void updateExportParmsList(final List<GMFFExportParms> listOut,
+        final GMFFExportParms t)
     {
 
         final int j = listOut.indexOf(t);
@@ -900,11 +897,11 @@ public class GMFFManager {
      *  Validates the text escapes after building the
      *  consolidated list.
      */
-    private ArrayList<GMFFUserTextEscapes> loadUserTextEscapesList()
+    private List<GMFFUserTextEscapes> loadUserTextEscapesList()
         throws GMFFException
     {
 
-        final ArrayList<GMFFUserTextEscapes> listOut = new ArrayList<GMFFUserTextEscapes>(
+        final List<GMFFUserTextEscapes> listOut = new ArrayList<GMFFUserTextEscapes>(
             GMFFConstants.DEFAULT_USER_TEXT_ESCAPES.length);
 
         // load defaults:
@@ -921,8 +918,7 @@ public class GMFFManager {
     }
 
     private void updateUserTextEscapesList(
-        final ArrayList<GMFFUserTextEscapes> listOut,
-        final GMFFUserTextEscapes t)
+        final List<GMFFUserTextEscapes> listOut, final GMFFUserTextEscapes t)
     {
 
         final int j = listOut.indexOf(t);
@@ -932,7 +928,7 @@ public class GMFFManager {
             listOut.set(j, t);
     }
 
-    private void validateExportParmsList(final ArrayList<GMFFExportParms> list)
+    private void validateExportParmsList(final List<GMFFExportParms> list)
         throws GMFFException
     {
         boolean validationErrors = false;
@@ -947,7 +943,7 @@ public class GMFFManager {
     }
 
     private void validateUserTextEscapesList(
-        final ArrayList<GMFFUserTextEscapes> list) throws GMFFException
+        final List<GMFFUserTextEscapes> list) throws GMFFException
     {
         boolean validationErrors = false;
 
@@ -960,9 +956,10 @@ public class GMFFManager {
                 GMFFConstants.ERRMSG_USER_TEXT_ESCAPES_LIST_ERROR_1);
     }
 
-    private ArrayList loadExporterList() throws GMFFException {
+    private List<GMFFExporter> loadExporterList() throws GMFFException {
 
-        final ArrayList x = new ArrayList(exportParmsList.size());
+        final List<GMFFExporter> x = new ArrayList<GMFFExporter>(
+            exportParmsList.size());
 
         GMFFUserTextEscapes t;
         for (final GMFFExportParms p : exportParmsList) {
@@ -987,7 +984,7 @@ public class GMFFManager {
         GMFFExporter exporter;
 
         exporterLoop: for (int i = 0; i < gmffExporterList.size(); i++) {
-            exporter = (GMFFExporter)gmffExporterList.get(i);
+            exporter = gmffExporterList.get(i);
 
             for (final GMFFExporterTypesetDefs t : exporterTypesetDefsList)
                 if (exporter.gmffExportParms.typesetDefKeyword
@@ -1070,17 +1067,11 @@ public class GMFFManager {
         if (gmffUserExportChoice.exportTypeOrAll
             .compareToIgnoreCase(GMFFConstants.USER_EXPORT_CHOICE_ALL) == 0)
             nbrSelected = gmffExporterList.size();
-        else {
-            final Iterator iterator = gmffExporterList.iterator();
-            while (iterator.hasNext()) {
-
-                final GMFFExporter e = (GMFFExporter)iterator.next();
-
+        else
+            for (final GMFFExporter e : gmffExporterList)
                 if (e.gmffExportParms.exportType
                     .equals(gmffUserExportChoice.exportTypeOrAll))
                     ++nbrSelected;
-            }
-        }
 
         final GMFFExporter[] selected = new GMFFExporter[nbrSelected];
 
@@ -1088,20 +1079,12 @@ public class GMFFManager {
 
             int i = 0;
 
-            final Iterator iterator = gmffExporterList.iterator();
-            while (iterator.hasNext()) {
-
-                final GMFFExporter exporter = (GMFFExporter)iterator.next();
-
+            for (final GMFFExporter exporter : gmffExporterList)
                 if (gmffUserExportChoice.exportTypeOrAll
                     .compareToIgnoreCase(GMFFConstants.USER_EXPORT_CHOICE_ALL) == 0
-
-                    ||
-
-                    gmffUserExportChoice.exportTypeOrAll
+                    || gmffUserExportChoice.exportTypeOrAll
                         .equals(exporter.gmffExportParms.exportType))
                     selected[i++] = exporter;
-            }
         }
 
         return selected;

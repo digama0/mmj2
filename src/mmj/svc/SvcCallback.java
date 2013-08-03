@@ -136,5 +136,5 @@ public interface SvcCallback {
         Grammar grammar, WorkVarManager workVarManager,
         ProofAsstPreferences proofAsstPreferences, ProofAsst proofAsst,
         TlPreferences tlPreferences, TheoremLoader theoremLoader,
-        File svcFolder, Map svcArgs);
+        File svcFolder, Map<String, String> svcArgs);
 }

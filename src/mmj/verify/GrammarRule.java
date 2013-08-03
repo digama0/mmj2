@@ -273,22 +273,24 @@ public abstract class GrammarRule {
     /**
      *  RULE_NBR sequences by GrammarRule.ruleNbr
      */
-    static public final Comparator RULE_NBR = new Comparator() {
+    static public final Comparator<GrammarRule> RULE_NBR = new Comparator<GrammarRule>()
+    {
         @Override
-        public int compare(final Object o1, final Object o2) {
-            return ((GrammarRule)o1).ruleNbr - ((GrammarRule)o2).ruleNbr;
+        public int compare(final GrammarRule o1, final GrammarRule o2) {
+            return o1.ruleNbr - o2.ruleNbr;
         }
     };
 
     /**
      *  MAX_SEQ_NBR sequences by GrammarRule.maxSeqNbr & ruleNbr
      */
-    static public final Comparator MAX_SEQ_NBR = new Comparator() {
+    static public final Comparator<GrammarRule> MAX_SEQ_NBR = new Comparator<GrammarRule>()
+    {
         @Override
-        public int compare(final Object o1, final Object o2) {
-            int c = ((GrammarRule)o1).maxSeqNbr - ((GrammarRule)o2).maxSeqNbr;
+        public int compare(final GrammarRule o1, final GrammarRule o2) {
+            int c = o1.maxSeqNbr - o2.maxSeqNbr;
             if (c == 0)
-                c = ((GrammarRule)o1).ruleNbr - ((GrammarRule)o2).ruleNbr;
+                c = o1.ruleNbr - o2.ruleNbr;
             return c;
         }
     };
@@ -578,7 +580,7 @@ public abstract class GrammarRule {
      *  @return GrammarRule's ruleFormatExpr as String.
      */
     public static String showRuleFormatExprAsString(final Cnst[] rfe) {
-        final StringBuffer s = new StringBuffer(rfe.length * 4);
+        final StringBuilder s = new StringBuilder(rfe.length * 4);
         for (final Cnst element : rfe) {
             s.append(element);
             s.append(" ");

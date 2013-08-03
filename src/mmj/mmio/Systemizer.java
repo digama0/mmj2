@@ -55,7 +55,7 @@ package mmj.mmio;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.ListIterator;
+import java.util.List;
 
 import mmj.lang.*;
 
@@ -89,8 +89,8 @@ public class Systemizer {
     private SystemLoader systemLoader;
 
     private boolean eofReached = false;
-    private ArrayList fileList = null;
-    private ArrayList filesAlreadyLoaded = null;
+    private List<IncludeFile> fileList = null;
+    private List<String> filesAlreadyLoaded = null;
 
     private SrcStmt currSrcStmt = null;
 
@@ -100,7 +100,7 @@ public class Systemizer {
 
     private boolean loadProofs = true;
 
-    private ArrayList defaultProofList = null;
+    private List<String> defaultProofList = null;
 
     /**
      * Construct <code>Systemizer</code> from a
@@ -121,7 +121,7 @@ public class Systemizer {
         this.messages = messages;
         this.systemLoader = systemLoader;
 
-        filesAlreadyLoaded = new ArrayList();
+        filesAlreadyLoaded = new ArrayList<String>();
         tokenizer = null;
         statementizer = null;
 
@@ -131,7 +131,7 @@ public class Systemizer {
 
         loadProofs = MMIOConstants.LOAD_PROOFS_DEFAULT;
 
-        defaultProofList = new ArrayList(1);
+        defaultProofList = new ArrayList<String>(1);
         defaultProofList.add(MMIOConstants.MISSING_PROOF_STEP);
 
     }
@@ -260,7 +260,7 @@ public class Systemizer {
         statementizer = new Statementizer(tokenizer);
 
         // init stack of include files
-        fileList = new ArrayList();
+        fileList = new ArrayList<IncludeFile>();
 
         eofReached = false;
         getNextStmt();
@@ -474,9 +474,8 @@ public class Systemizer {
      */
     private void loadCnst() throws LangException {
 
-        final ListIterator x = currSrcStmt.symList.listIterator();
-        while (x.hasNext())
-            systemLoader.addCnst((String)x.next());
+        for (final String x : currSrcStmt.symList)
+            systemLoader.addCnst(x);
     }
 
     /**
@@ -485,9 +484,8 @@ public class Systemizer {
      */
     private void loadVar() throws LangException {
 
-        final ListIterator x = currSrcStmt.symList.listIterator();
-        while (x.hasNext())
-            systemLoader.addVar((String)x.next());
+        for (final String x : currSrcStmt.symList)
+            systemLoader.addVar(x);
     }
 
     /**
@@ -497,7 +495,7 @@ public class Systemizer {
 
         // note: only one symbol in variable hypothesis, hence get(0);
         systemLoader.addVarHyp(currSrcStmt.label, currSrcStmt.typ,
-            (String)currSrcStmt.symList.get(0));
+            currSrcStmt.symList.get(0));
 
     }
 
@@ -579,9 +577,9 @@ public class Systemizer {
         String djVarJ;
 
         for (int i = 0; i < iEnd; i++) {
-            djVarI = (String)currSrcStmt.symList.get(i);
+            djVarI = currSrcStmt.symList.get(i);
             for (int j = i + 1; j < jEnd; j++) {
-                djVarJ = (String)currSrcStmt.symList.get(j);
+                djVarJ = currSrcStmt.symList.get(j);
                 systemLoader.addDjVars(djVarI, djVarJ);
             }
         }
@@ -662,7 +660,7 @@ public class Systemizer {
         }
     }
 
-    private File isInFilesAlreadyLoaded(final ArrayList filesAlreadyLoaded,
+    private File isInFilesAlreadyLoaded(final List<String> filesAlreadyLoaded,
         final File filePath, final String fileNameIn)
     {
 
@@ -674,7 +672,7 @@ public class Systemizer {
         final String absPath = f.getAbsolutePath();
 
         for (int i = 0; i < filesAlreadyLoaded.size(); i++)
-            if (((String)filesAlreadyLoaded.get(i)).equals(absPath))
+            if (filesAlreadyLoaded.get(i).equals(absPath))
                 return null;
         filesAlreadyLoaded.add(absPath);
 

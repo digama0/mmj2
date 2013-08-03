@@ -12,14 +12,14 @@
 package mmj.util;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 
 /**
  *   RunParmArrayEntry holds a RunParm "name" string
  *   AND an array(0->n) of RunParm "value" strings,
  *   OR it holds a "commentLine" (but not both).
  */
-public class RunParmArrayEntry implements Comparable {
+public class RunParmArrayEntry implements Comparable<RunParmArrayEntry> {
 
     /**
      *  if commentLine != null then the entire
@@ -116,7 +116,7 @@ public class RunParmArrayEntry implements Comparable {
             commentLine = null; // is not comment line
         }
 
-        final ArrayList arrayList = new ArrayList(5);
+        final List<String> arrayList = new ArrayList<String>(5);
 
         String value = null;
 
@@ -129,12 +129,7 @@ public class RunParmArrayEntry implements Comparable {
         while ((value = parser.nextField()) != null)
             arrayList.add(value);
 
-        values = new String[arrayList.size()];
-        final Iterator iterator = arrayList.iterator();
-        int i = 0;
-        while (iterator.hasNext())
-            values[i++] = (String)iterator.next();
-
+        values = arrayList.toArray(new String[arrayList.size()]);
     }
 
     /**
@@ -174,8 +169,8 @@ public class RunParmArrayEntry implements Comparable {
      *  or greater than the input parameter obj.
      */
     @Override
-    public int compareTo(final Object obj) {
-        return name.compareTo(((RunParmArrayEntry)obj).name);
+    public int compareTo(final RunParmArrayEntry obj) {
+        return name.compareTo(obj.name);
     }
 
     /**
@@ -192,7 +187,7 @@ public class RunParmArrayEntry implements Comparable {
         if (commentLine != null)
             return commentLine;
 
-        final StringBuffer sb = new StringBuffer(80);
+        final StringBuilder sb = new StringBuilder(80);
 
         if (name == null) {
             sb.append(quoter);

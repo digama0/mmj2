@@ -111,14 +111,14 @@ public class MandFrame {
         final DistinctVariablesStmt[] distinctVariablesStmtArray)
     {
 
-        final ArrayList dvArrayList = new ArrayList();
+        final List<DjVars> dvList = new ArrayList<DjVars>();
 
         final Var[][] dvGroupArray = new Var[distinctVariablesStmtArray.length][];
         for (int i = 0; i < distinctVariablesStmtArray.length; i++)
             dvGroupArray[i] = distinctVariablesStmtArray[i].getDv();
 
         try {
-            MandFrame.loadDvGroupsIntoList(dvArrayList, dvGroupArray);
+            MandFrame.loadDvGroupsIntoList(dvList, dvGroupArray);
         } catch (final LangException e) {
             // this should never happen because we're
             // checking for dups and bypassing them,
@@ -128,12 +128,12 @@ public class MandFrame {
                     + e.getMessage());
         }
 
-        return DjVars.loadDjVarsArray(dvArrayList);
+        return dvList.toArray(new DjVars[dvList.size()]);
     }
 
     /**
      *  Accumulates new Distinct Variables into an
-     *  ArrayList of DjVars pairs.
+     *  List of DjVars pairs.
      *
      *  The dvGroupArray is Var[][], array of Var arrays.
      *
@@ -151,7 +151,7 @@ public class MandFrame {
      *  @param arrayList list of DjVars objects
      *  @param dvGroupArray array of Var[] arrays.
      */
-    public static void loadDvGroupsIntoList(final ArrayList arrayList,
+    public static void loadDvGroupsIntoList(final List<DjVars> arrayList,
         final Var[][] dvGroupArray) throws LangException
     {
         DjVars djVars;
@@ -187,8 +187,8 @@ public class MandFrame {
      *  [(a,b),(a,c),(a,d),(b,c),(b,d),(b,e),(c,d),(c,f)]
      *  </code>
      *
-     *  The output ArrayList contains an ordered set of
-     *  ArrayLists of disjoint variables, sorted by the
+     *  The output List contains an ordered set of
+     *  Lists of disjoint variables, sorted by the
      *  first Var character string in the list. Here is
      *  sample output for the example above:
      *  <p>
@@ -206,15 +206,15 @@ public class MandFrame {
      *  equal to varHi.
      *  <p>
      */
-    public static ArrayList consolidateDvGroups(final DjVars[] dvArray) {
+    public static List<List<Var>> consolidateDvGroups(final DjVars[] dvArray) {
 
-        final ArrayList dvGroupList = new ArrayList(); // the output
+        final List<List<Var>> dvGroupList = new ArrayList<List<Var>>();
 
         // "done" is a parallel array for dvArray. done[i] set to
         // true when dvArray[i] has been stored in the output.
         final boolean[] done = new boolean[dvArray.length];
 
-        // "checked" is an ArrayList of Integers used to hold
+        // "checked" is an List of Integers used to hold
         // the indexes of dvArray elements that match the
         // searched-for varLo and varHi(s), signifying that they
         // are disjoint. checked is needed so that when
@@ -222,7 +222,7 @@ public class MandFrame {
         // corresponding dvArray elements can be marked "done" --
         // and if the candidate is rejected, the checked contents
         // are discarded (this saves an extra scan of dvArray).
-        final ArrayList checked = new ArrayList();
+        final List<Integer> checked = new ArrayList<Integer>();
 
         // choices are to insert a new Var just *before* the end
         // of a dvGroup's last Var or *at* the end. See below...
@@ -262,7 +262,7 @@ public class MandFrame {
                     continue;
 
                 // the minimum length of a dvGroup is 2
-                final ArrayList dvGroup = new ArrayList();
+                final List<Var> dvGroup = new ArrayList<Var>();
                 dvGroup.add(dvArray[i].varLo);
                 dvGroup.add(dvArray[i].varHi);
                 done[i] = true;
@@ -300,7 +300,7 @@ public class MandFrame {
                         // their disjoint variable restriction info
                         // is now reflected in the dvGroup's info!
                         for (int k = 0; k < checked.size(); k++)
-                            done[(Integer)checked.get(k)] = true;
+                            done[checked.get(k)] = true;
                     }
                 }
 
@@ -338,34 +338,26 @@ public class MandFrame {
      */
     public MandFrame(final ScopeDef scopeDef, final int maxSeq) {
 
-        ArrayList arrayList;
-        Iterator iterator;
-        Hyp hyp;
-        DjVars djVars;
-
         if (maxSeq < Integer.MAX_VALUE) {
-            arrayList = new ArrayList(scopeDef.scopeVarHyp.size());
-            iterator = scopeDef.scopeVarHyp.iterator();
-            while (iterator.hasNext()) {
-                hyp = (Hyp)iterator.next();
+            final List<Hyp> arrayList = new ArrayList<Hyp>(
+                scopeDef.scopeVarHyp.size());
+            for (final Hyp hyp : scopeDef.scopeVarHyp)
                 if (hyp.getSeq() < maxSeq)
                     arrayList.add(hyp);
-            }
+            hypArray = arrayList.toArray(new Hyp[arrayList.size()]);
         }
         else
-            arrayList = scopeDef.scopeVarHyp;
-        hypArray = Assrt.loadHypArray(arrayList);
+            hypArray = scopeDef.scopeVarHyp
+                .toArray(new Hyp[scopeDef.scopeVarHyp.size()]);
 
-        arrayList = new ArrayList(scopeDef.scopeDjVars.size());
-        iterator = scopeDef.scopeDjVars.iterator();
-        while (iterator.hasNext()) {
-            djVars = (DjVars)iterator.next();
+        final List<DjVars> arrayList = new ArrayList<DjVars>(
+            scopeDef.scopeDjVars.size());
+        for (final DjVars djVars : scopeDef.scopeDjVars)
             if (djVars.getVarLo().getSeq() < maxSeq
                 && djVars.getVarHi().getSeq() < maxSeq)
                 arrayList.add(djVars);
-        }
 
-        djVarsArray = DjVars.loadDjVarsArray(arrayList);
+        djVarsArray = arrayList.toArray(new DjVars[arrayList.size()]);
     }
 
     /**
@@ -381,17 +373,16 @@ public class MandFrame {
      */
     public MandFrame(final MandFrame mandFrame, final OptFrame optFrame) {
 
-        ArrayList arrayList;
-        final Hyp hyp;
+        List<Hyp> hyps;
 
-        arrayList = new ArrayList(mandFrame.hypArray.length
+        hyps = new ArrayList<Hyp>(mandFrame.hypArray.length
             + optFrame.optHypArray.length);
 
-        for (final Hyp element : mandFrame.hypArray)
-            Assrt.accumHypInList(arrayList, element);
-        for (final Hyp element : optFrame.optHypArray)
-            Assrt.accumHypInList(arrayList, element);
-        hypArray = Assrt.loadHypArray(arrayList);
+        for (final Hyp hyp : mandFrame.hypArray)
+            Assrt.accumHypInList(hyps, hyp);
+        for (final Hyp hyp : optFrame.optHypArray)
+            Assrt.accumHypInList(hyps, hyp);
+        hypArray = hyps.toArray(new Hyp[hyps.size()]);
 
         djVarsArray = new DjVars[mandFrame.djVarsArray.length
             + optFrame.optDjVarsArray.length];
@@ -399,8 +390,8 @@ public class MandFrame {
         int djCnt = 0;
         for (int i = 0; i < mandFrame.djVarsArray.length; i++)
             djVarsArray[djCnt++] = mandFrame.djVarsArray[i];
-        for (final DjVars element : optFrame.optDjVarsArray)
-            djVarsArray[djCnt++] = element;
+        for (final DjVars dj : optFrame.optDjVarsArray)
+            djVarsArray[djCnt++] = dj;
 
     }
 
@@ -420,7 +411,6 @@ public class MandFrame {
     public boolean areBothDjVarsInHypArray(final DjVars djVars) {
         boolean loFound = false;
         boolean hiFound = false;
-        final Hyp hyp;
         VarHyp varHyp;
         for (int i = 0; i < hypArray.length; i++) {
             if (!hypArray[i].isVarHyp())
@@ -450,10 +440,8 @@ public class MandFrame {
      *          are identical (e.g. [ph ph ch]).
      */
     public void addDjVarGroups(final Var[][] dvGroupArray) {
-        final ArrayList arrayList = new ArrayList(djVarsArray.length
-            + dvGroupArray.length);
-        for (final DjVars element : djVarsArray)
-            arrayList.add(element);
+        final List<DjVars> arrayList = new ArrayList<DjVars>(
+            Arrays.asList(djVarsArray));
 
         try {
             MandFrame.loadDvGroupsIntoList(arrayList, dvGroupArray);
@@ -466,7 +454,7 @@ public class MandFrame {
                     + e.getMessage());
         }
 
-        djVarsArray = DjVars.loadDjVarsArray(arrayList);
+        djVarsArray = arrayList.toArray(new DjVars[arrayList.size()]);
 
     }
 
@@ -483,10 +471,11 @@ public class MandFrame {
      *
      *  Convenience method for ProofAsst's use.
      *
-     *  @return HashMap of Vars for VarHyps in MandFrame.hypArray.
+     *  @return Map of Vars for VarHyps in MandFrame.hypArray.
      */
-    public HashMap getVarMap() {
-        final HashMap varMap = new HashMap(hypArray.length * 3 / 2 + 1);
+    public Map<String, Var> getVarMap() {
+        final Map<String, Var> varMap = new HashMap<String, Var>(
+            hypArray.length * 3 / 2 + 1);
         Var v;
         for (final Hyp element : hypArray)
             if (element.isVarHyp()) {
@@ -519,8 +508,8 @@ public class MandFrame {
      *  in ascending order.)
      */
     private static boolean areAllDisjoint(final Var dvArrayVar,
-        final ArrayList dvGroup, final DjVars[] dvArray, int searchIndex,
-        final ArrayList checked)
+        final List<Var> dvGroup, final DjVars[] dvArray, int searchIndex,
+        final List<Integer> checked)
     {
         checked.clear();
 
@@ -528,7 +517,7 @@ public class MandFrame {
         int compare;
         Loop1: for (int i = 1; i < dvGroup.size(); i++) {
 
-            search.varLo = (Var)dvGroup.get(i);
+            search.varLo = dvGroup.get(i);
             if (search.varLo.compareTo(dvArrayVar) > 0) {
                 search.varHi = search.varLo;
                 search.varLo = dvArrayVar;

@@ -219,8 +219,8 @@ public class MMTFolder {
      *  <p>
      *  @param theoremLabel  Metamath label of the theorem to
      *                       store into the MMTTheoremSet.
-     *  @param mmtTheoremLines List of StringBuffer objects with
-     *                       one line (no newline!) per StringBuffer
+     *  @param mmtTheoremLines List of StringBuilder objects with
+     *                       one line (no newline!) per StringBuilder
      *                       object, already formatted into Metamath
      *                       .mm format.
      *  @return MMTTheoremFile the output MMTTheoremFile object as
@@ -231,7 +231,7 @@ public class MMTFolder {
      *              during the attempt to create an MMTTheoremFile.
      */
     public MMTTheoremFile storeMMTTheoremFile(final String theoremLabel,
-        final List mmtTheoremLines) throws TheoremLoaderException
+        final List<StringBuilder> mmtTheoremLines) throws TheoremLoaderException
     {
 
         if (folderFile == null)

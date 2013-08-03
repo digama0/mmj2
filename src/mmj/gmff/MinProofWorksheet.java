@@ -17,6 +17,7 @@ package mmj.gmff;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 
 import mmj.lang.Messages;
 import mmj.mmio.Tokenizer;
@@ -42,10 +43,10 @@ public class MinProofWorksheet {
     private final Messages messages;
 
     /**
-     *  <code>ArrayList</code> of <code>MinProofWorkStmt</code>
+     *  <code>List</code> of <code>MinProofWorkStmt</code>
      *  type objects.
      */
-    private final ArrayList minProofWorkStmtList;
+    private final List<MinProofWorkStmt> minProofWorkStmtList;
 
     /**
      *  <code>theoremLabel</code> extracted from
@@ -89,7 +90,7 @@ public class MinProofWorksheet {
      */
     public MinProofWorksheet(final Messages messages) {
         this.messages = messages;
-        minProofWorkStmtList = new ArrayList();
+        minProofWorkStmtList = new ArrayList<MinProofWorkStmt>();
     }
 
     /**
@@ -123,8 +124,8 @@ public class MinProofWorksheet {
         final LineNumberReader lineReader = new LineNumberReader(
             new StringReader(proofText));
 
-        final ArrayList<ArrayList<String>> lineList = new ArrayList<ArrayList<String>>();
-        ArrayList<String> tokenList;
+        final List<List<String>> lineList = new ArrayList<List<String>>();
+        List<String> tokenList;
         String line;
 
         MinProofWorkStmt minProofWorkStmt = null;
@@ -171,7 +172,7 @@ public class MinProofWorksheet {
      *
      *  @return minProofWorkStmtList.
      */
-    public ArrayList getMinProofWorkStmtList() {
+    public List<MinProofWorkStmt> getMinProofWorkStmtList() {
         return minProofWorkStmtList;
     }
 
@@ -273,11 +274,11 @@ public class MinProofWorksheet {
      *              Metamath tokens, or just one empty <code>
      *              String</code> if the line is empty.
      */
-    /* friendly */ArrayList<String> tokenize(final String line) {
+    /* friendly */List<String> tokenize(final String line) {
 
-        final ArrayList<String> tokenList = new ArrayList<String>();
+        final List<String> tokenList = new ArrayList<String>();
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         int len;
 
@@ -292,10 +293,10 @@ public class MinProofWorksheet {
                 while (len >= 0) {
                     if (len > 0)
                         tokenList.add(sb.toString());
-                    sb = new StringBuffer();
+                    sb = new StringBuilder();
                     if ((len = tokenizer.getToken(sb, 0)) >= 0) {
                         tokenList.add(sb.toString());
-                        sb = new StringBuffer();
+                        sb = new StringBuilder();
                         len = tokenizer.getWhiteSpace(sb, 0);
                     }
                 }

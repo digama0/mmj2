@@ -161,7 +161,7 @@ public class MMJ2FailPopupWindow {
         if (msgCount == 0)
             return;
 
-        final StringBuffer sb = new StringBuffer(
+        final StringBuilder sb = new StringBuilder(
             messages.getErrorMessageCnt() * 160); // guessing average message
                                                   // length
 
@@ -206,7 +206,7 @@ public class MMJ2FailPopupWindow {
     }
 
     private String addLineBreaks(final String s) {
-        final StringBuffer b = new StringBuffer(s.length() * 10 / 9);
+        final StringBuilder b = new StringBuilder(s.length() * 10 / 9);
         int unbrokenTextLength = 0;
         int pos = -1;
         boolean firstNonBlankAlreadyOutput = true;

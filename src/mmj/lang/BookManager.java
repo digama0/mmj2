@@ -88,8 +88,8 @@ public class BookManager implements TheoremLoaderCommitListener {
     private final boolean enabled;
     private final String provableLogicStmtTypeParm;
 
-    private ArrayList chapterList;
-    private ArrayList sectionList;
+    private List<Chapter> chapterList;
+    private List<Section> sectionList;
 
     private Chapter currChapter;
 
@@ -125,14 +125,14 @@ public class BookManager implements TheoremLoaderCommitListener {
         this.provableLogicStmtTypeParm = provableLogicStmtTypeParm;
 
         if (enabled) {
-            chapterList = new ArrayList(
+            chapterList = new ArrayList<Chapter>(
                 LangConstants.ALLOC_NBR_BOOK_CHAPTERS_INITIAL);
-            sectionList = new ArrayList(
+            sectionList = new ArrayList<Section>(
                 LangConstants.ALLOC_NBR_BOOK_SECTIONS_INITIAL);
         }
         else {
-            chapterList = new ArrayList(1);
-            sectionList = new ArrayList(1);
+            chapterList = new ArrayList<Chapter>(1);
+            sectionList = new ArrayList<Section>(1);
         }
     }
 
@@ -154,25 +154,20 @@ public class BookManager implements TheoremLoaderCommitListener {
         if (!enabled)
             return;
 
-        final List addList = mmtTheoremSet
+        final List<TheoremStmtGroup> addList = mmtTheoremSet
             .buildSortedListOfAdds(TheoremStmtGroup.SEQ);
 
-        if (addList.size() == 0)
+        if (addList.isEmpty())
             return;
 
-        TheoremStmtGroup t;
-        int insertSectionNbr;
-
-        final Iterator iterator = addList.iterator();
-        while (iterator.hasNext()) {
-            t = (TheoremStmtGroup)iterator.next();
+        for (final TheoremStmtGroup t : addList) {
 
             /* ok, if object inserted then section is the
                section of the thing it was inserted after
                (converted for stmt type appropriate section nbr).
                otherwise, if appended add to final section.
              */
-            insertSectionNbr = t.getInsertSectionNbr();
+            final int insertSectionNbr = t.getInsertSectionNbr();
             if (insertSectionNbr > 0)
                 commitInsertTheoremStmtGroup(t, insertSectionNbr);
             else
@@ -203,7 +198,7 @@ public class BookManager implements TheoremLoaderCommitListener {
             return null;
         Chapter chapter = null;
         try {
-            chapter = (Chapter)chapterList.get(chapterNbr - 1);
+            chapter = chapterList.get(chapterNbr - 1);
         } catch (final IndexOutOfBoundsException e) {}
         return chapter;
     }
@@ -240,7 +235,7 @@ public class BookManager implements TheoremLoaderCommitListener {
             return null;
         Section section = null;
         try {
-            section = (Section)sectionList.get(sectionNbr - 1);
+            section = sectionList.get(sectionNbr - 1);
         } catch (final IndexOutOfBoundsException e) {}
         return section;
     }
@@ -443,9 +438,9 @@ public class BookManager implements TheoremLoaderCommitListener {
      *  Note: if BookManager is not enabled, the List
      *  returned will not be null, it will be empty.
      *  <p>
-     *  @return ArrayList of Chapters.
+     *  @return List of Chapters.
      */
-    public ArrayList getChapterList() {
+    public List<Chapter> getChapterList() {
         return chapterList;
     }
 
@@ -455,26 +450,28 @@ public class BookManager implements TheoremLoaderCommitListener {
      *  Note: if BookManager is not enabled, the List
      *  returned will not be null, it will be empty.
      *  <p>
-     *  @return ArrayList of Sections.
+     *  @return List of Sections.
      */
-    public ArrayList getSectionList() {
+    public List<Section> getSectionList() {
         return sectionList;
     }
 
     /**
-     *  Returns an Iterator over all of the MObjs assigned
+     *  Returns an Iterable over all of the MObjs assigned
      *  to Sections.
      *  <p>
-     *  Note: if BookManager is not enabled, the Iterator
+     *  Note: if BookManager is not enabled, the Iterable
      *  returned will not be null, it will be empty.
      *  <p>
      *  @param logicalSystem the mmj2 LogicalSystem object.
-     *  @return ArrayList of Sections.
+     *  @return List of Sections.
      */
-    public Iterator getSectionMObjIterator(final LogicalSystem logicalSystem) {
-        final MObj[][] sectionArray = getSectionMObjArray(logicalSystem);
+    public Iterable<MObj<?>> getSectionMObjIterable(
+        final LogicalSystem logicalSystem)
+    {
+        final MObj<?>[][] sectionArray = getSectionMObjArray(logicalSystem);
 
-        return new SectionMObjIterator(sectionArray);
+        return new SectionMObjIterable(sectionArray);
     }
 
     /**
@@ -488,9 +485,9 @@ public class BookManager implements TheoremLoaderCommitListener {
      *  @return two-dimensional array of MObjs by Section
      *          and MObjNbr within Section.
      */
-    public MObj[][] getSectionMObjArray(final LogicalSystem logicalSystem) {
+    public MObj<?>[][] getSectionMObjArray(final LogicalSystem logicalSystem) {
 
-        MObj[][] sectionArray;
+        MObj<?>[][] sectionArray;
 
         if (!enabled) {
             sectionArray = new MObj[0][];
@@ -499,31 +496,27 @@ public class BookManager implements TheoremLoaderCommitListener {
 
         sectionArray = new MObj[sectionList.size()][];
 
-        Iterator iterator = sectionList.iterator();
         int i = 0;
-        while (iterator.hasNext())
-            sectionArray[i++] = new MObj[((Section)iterator.next())
-                .getLastMObjNbr()];
+        for (final Section section : sectionList)
+            sectionArray[i++] = new MObj[section.getLastMObjNbr()];
 
-        iterator = logicalSystem.getSymTbl().values().iterator();
-        loadSectionArrayEntry(sectionArray, iterator);
-
-        iterator = logicalSystem.getStmtTbl().values().iterator();
-        loadSectionArrayEntry(sectionArray, iterator);
-
+        loadSectionArrayEntry(sectionArray, logicalSystem.getSymTbl().values());
+        loadSectionArrayEntry(sectionArray, logicalSystem.getStmtTbl().values());
         return sectionArray;
     }
 
     /**
-     *  Nested class which implements Iterator for a two-dimensional
+     *  Nested class which implements Iterable for a two-dimensional
      *  array of MObjs by Section and MObjNbr within Section.
      */
-    public class SectionMObjIterator implements Iterator {
+    public class SectionMObjIterable implements Iterable<MObj<?>>,
+        Iterator<MObj<?>>
+    {
         private int prevI;
         private int prevJ;
         private int nextI;
         private int nextJ;
-        private final MObj[][] mArray;
+        private final MObj<?>[][] mArray;
 
         /**
          *  Sole Constructor.
@@ -537,7 +530,7 @@ public class BookManager implements TheoremLoaderCommitListener {
          *  @param s two-dimensional array of MObjs by Section
          *         and MObjNbr within Section.
          */
-        public SectionMObjIterator(final MObj[][] s) {
+        public SectionMObjIterable(final MObj<?>[][] s) {
             mArray = s;
             prevI = 0;
             prevJ = -1;
@@ -551,7 +544,7 @@ public class BookManager implements TheoremLoaderCommitListener {
          *          MObjs to return.
          */
         @Override
-        public Object next() {
+        public MObj<?> next() {
             if (!hasNext())
                 throw new NoSuchElementException();
             prevI = nextI;
@@ -587,6 +580,11 @@ public class BookManager implements TheoremLoaderCommitListener {
         @Override
         public void remove() {
             throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Iterator<MObj<?>> iterator() {
+            return this;
         }
     }
 
@@ -646,14 +644,11 @@ public class BookManager implements TheoremLoaderCommitListener {
         return chapterNbr;
     }
 
-    private void loadSectionArrayEntry(final MObj[][] sectionArray,
-        final Iterator iterator)
+    private void loadSectionArrayEntry(final MObj<?>[][] sectionArray,
+        final Iterable<? extends MObj<?>> iterable)
     {
-        MObj mObj;
-        while (iterator.hasNext()) {
-            mObj = (MObj)iterator.next();
+        for (final MObj<?> mObj : iterable)
             sectionArray[mObj.sectionNbr - 1][mObj.sectionMObjNbr - 1] = mObj;
-        }
     }
 
     private void commitAppendTheoremStmtGroup(final TheoremStmtGroup t) {

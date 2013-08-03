@@ -715,7 +715,7 @@ public abstract class Boss {
      */
     protected Theorem getSelectorTheoremRunParmOption(
         final RunParmArrayEntry runParm, final String valueCaption,
-        final int valueFieldNbr, final Map stmtTbl)
+        final int valueFieldNbr, final Map<String, Stmt> stmtTbl)
         throws IllegalArgumentException
     {
 
@@ -1042,7 +1042,7 @@ public abstract class Boss {
                 UtilConstants.ERRMSG_RUNPARM_STMT_LABEL_BLANK_1 + valueCaption
                     + UtilConstants.ERRMSG_RUNPARM_STMT_LABEL_BLANK_2);
 
-        final Stmt stmt = (Stmt)logicalSystem.getStmtTbl().get(stmtLabel);
+        final Stmt stmt = logicalSystem.getStmtTbl().get(stmtLabel);
         if (stmt == null)
             throw new IllegalArgumentException(
                 UtilConstants.ERRMSG_RUNPARM_STMT_LABEL_NOTFND_1 + valueCaption

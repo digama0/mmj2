@@ -11,8 +11,6 @@
 
 package mmj.verify;
 
-import java.util.Iterator;
-
 import mmj.lang.*;
 
 /**
@@ -239,43 +237,20 @@ public class GrammarAmbiguity {
 
         boolean errorsFound = false;
 
-        Iterator iterI;
-        Iterator iterJ;
-
-        NotationRule rI;
-        NotationRule rJ;
-
-        ParseNodeHolder[] parseNodeHolderExpr;
-        Axiom baseSyntaxAxiom;
-        String errmsg;
-
-        Cnst[] exprI;
-        Cnst[] exprJ;
-
-        int maxPfxI;
-        int maxSfxJ;
-        int maxPfx;
-        int lenPfxI;
-        int embedPosJ;
-
-        boolean isOverlapIJ;
-        boolean isEmbedIJ;
-
-        iterI = grammar.getNotationGRSet().iterator();
-        loopI: while (iterI.hasNext()) {
-            rI = (NotationRule)iterI.next();
+        for (final NotationRule rI : grammar.getNotationGRSet()) {
             if (rI.getIsGimmeMatchNbr() == 1)
-                continue loopI;
+                continue;
 
             /**
              *  try to parse Grammar Rule -- should not be
              *  possible
              */
-            parseNodeHolderExpr = rI.getParseNodeHolderExpr();
-            baseSyntaxAxiom = rI.getBaseSyntaxAxiom();
+            final ParseNodeHolder[] parseNodeHolderExpr = rI
+                .getParseNodeHolderExpr();
+            final Axiom baseSyntaxAxiom = rI.getBaseSyntaxAxiom();
             try {
-                errmsg = grammar.grammaticalParseSyntaxExpr(baseSyntaxAxiom
-                    .getFormula().getTyp(), parseNodeHolderExpr,
+                final String errmsg = grammar.grammaticalParseSyntaxExpr(
+                    baseSyntaxAxiom.getFormula().getTyp(), parseNodeHolderExpr,
                     Integer.MAX_VALUE, baseSyntaxAxiom.getLabel());
                 if (errmsg != null)
                     grammar.accumInfoMsgInList(errmsg);
@@ -290,31 +265,29 @@ public class GrammarAmbiguity {
              *  OK, now continue checking for embeds and
              *  overlaps...
              */
-            exprI = rI.getRuleFormatExpr();
+            final Cnst[] exprI = rI.getRuleFormatExpr();
 
-            maxPfxI = exprI.length - 1;
+            final int maxPfxI = exprI.length - 1;
 
-            iterJ = grammar.getNotationGRSet().iterator();
-            loopJ: while (iterJ.hasNext()) {
-                rJ = (NotationRule)iterJ.next();
+            for (final NotationRule rJ : grammar.getNotationGRSet()) {
                 if (rJ.getIsGimmeMatchNbr() == 1)
-                    continue loopJ;
-                exprJ = rJ.getRuleFormatExpr();
-                maxSfxJ = exprJ.length - 1;
+                    continue;
+                final Cnst[] exprJ = rJ.getRuleFormatExpr();
+                final int maxSfxJ = exprJ.length - 1;
 
-                maxPfx = maxSfxJ < maxPfxI ? maxSfxJ : maxPfxI;
+                final int maxPfx = maxSfxJ < maxPfxI ? maxSfxJ : maxPfxI;
 
                 /**
                  *  OK, compare all prefixes of I with suffixes of J
                  *  (overlappling) until length of I is reached,
                  *  then compare I with contents of J (embedding)
                  */
-                isOverlapIJ = false;
-                overlapLoop: for (lenPfxI = 1; lenPfxI <= maxPfx; lenPfxI++)
+                boolean isOverlapIJ = false;
+                for (int lenPfxI = 1; lenPfxI <= maxPfx; lenPfxI++)
                     if (doesIPfxOverlapJSfx(exprI, lenPfxI, exprJ)) {
                         isOverlapIJ = true;
                         if (!doCompleteGrammarAmbiguityEdits)
-                            break overlapLoop;
+                            break;
                         recordOverlap(rI, exprI, lenPfxI, rJ, exprJ);
                     }
 
@@ -328,9 +301,9 @@ public class GrammarAmbiguity {
                  *  that there are no duplicates! So...
                  *  we don't actually have to check for I != J.
                  */
-                isEmbedIJ = false;
+                boolean isEmbedIJ = false;
                 if (exprI.length < exprJ.length)
-                    embedLoop: for (embedPosJ = exprJ.length - exprI.length; embedPosJ >= 0; embedPosJ--)
+                    embedLoop: for (int embedPosJ = exprJ.length - exprI.length; embedPosJ >= 0; embedPosJ--)
                         if (isIEmbeddedInJ(exprI, exprJ, embedPosJ)) {
                             isEmbedIJ = true;
                             if (!doCompleteGrammarAmbiguityEdits)
@@ -350,11 +323,8 @@ public class GrammarAmbiguity {
          *  Gimme's in the Notation GR list.
          */
         grammar.setNotationGRGimmeMatchCnt(0);
-        iterI = grammar.getNotationGRSet().iterator();
-        int gimmeMatchNbr;
-        while (iterI.hasNext()) {
-            rI = (NotationRule)iterI.next();
-            gimmeMatchNbr = rI.getIsGimmeMatchNbr();
+        for (final NotationRule rI : grammar.getNotationGRSet()) {
+            final int gimmeMatchNbr = rI.getIsGimmeMatchNbr();
             if (gimmeMatchNbr < 0) {
                 // definitely NOT
             }

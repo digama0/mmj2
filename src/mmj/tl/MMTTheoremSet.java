@@ -24,13 +24,13 @@ import mmj.lang.*;
  *   MMTTheoremSet represents a set of MMTTheoremStmtGroup objects
  *   to be loaded into the Logical System.
  */
-public class MMTTheoremSet {
+public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
 
     private final LogicalSystem logicalSystem;
     private final Messages messages;
     private final TlPreferences tlPreferences;
 
-    private final HashMap theoremStmtGroupTbl;
+    private final Map<String, TheoremStmtGroup> theoremStmtGroupTbl;
 
     private int nbrOfAdds;
 
@@ -129,18 +129,16 @@ public class MMTTheoremSet {
      *  @return List of added TheoremStmtGroup objects sorted using
      *          the input Comparator.
      */
-    public ArrayList buildSortedListOfAdds(final Comparator comparator) {
+    public List<TheoremStmtGroup> buildSortedListOfAdds(
+        final Comparator<? super TheoremStmtGroup> comparator)
+    {
 
-        TheoremStmtGroup t;
+        final List<TheoremStmtGroup> outList = new ArrayList<TheoremStmtGroup>(
+            nbrOfAdds);
 
-        final ArrayList outList = new ArrayList(nbrOfAdds);
-
-        final Iterator i = iterator();
-        while (i.hasNext()) {
-            t = (TheoremStmtGroup)i.next();
+        for (final TheoremStmtGroup t : this)
             if (t.getIsTheoremNew())
                 outList.add(t);
-        }
 
         Collections.sort(outList, comparator);
 
@@ -159,18 +157,14 @@ public class MMTTheoremSet {
      *  @return List of added Theorem objects sorted using
      *          the input Comparator.
      */
-    public ArrayList buildSortedAssrtListOfAdds(final Comparator comparator) {
+    public List<Theorem> buildSortedAssrtListOfAdds(
+        final Comparator<? super Theorem> comparator)
+    {
+        final List<Theorem> outList = new ArrayList<Theorem>(nbrOfAdds);
 
-        TheoremStmtGroup t;
-
-        final ArrayList outList = new ArrayList(nbrOfAdds);
-
-        final Iterator i = iterator();
-        while (i.hasNext()) {
-            t = (TheoremStmtGroup)i.next();
+        for (final TheoremStmtGroup t : this)
             if (t.getIsTheoremNew())
                 outList.add(t.getTheorem());
-        }
 
         Collections.sort(outList, comparator);
 
@@ -187,7 +181,7 @@ public class MMTTheoremSet {
      *   @return Iterator over TheoremStmtGroup objects contained
      *           in the MMTTheoremSet theoremStmtGroupTbl.
      */
-    public Iterator iterator() {
+    public Iterator<TheoremStmtGroup> iterator() {
         return theoremStmtGroupTbl.values().iterator();
     }
 
@@ -212,14 +206,11 @@ public class MMTTheoremSet {
      */
     public void updateLogicalSystem() throws TheoremLoaderException {
 
-        final LinkedList readyQueue = new LinkedList();
-        final LinkedList waitingList = new LinkedList();
+        final Deque<TheoremStmtGroup> readyQueue = new LinkedList<TheoremStmtGroup>();
+        final List<TheoremStmtGroup> waitingList = new LinkedList<TheoremStmtGroup>();
 
-        final Iterator i = iterator();
-
-        while (i.hasNext())
-            ((TheoremStmtGroup)i.next()).queueForUpdates(readyQueue,
-                waitingList);
+        for (final TheoremStmtGroup x : this)
+            x.queueForUpdates(readyQueue, waitingList);
 
         TheoremStmtGroup readyTheoremStmtGroup;
 
@@ -228,14 +219,13 @@ public class MMTTheoremSet {
         try {
             while (true) {
 
-                if (readyQueue.size() == 0)
-                    if (waitingList.size() == 0)
+                if (readyQueue.isEmpty())
+                    if (waitingList.isEmpty())
                         break;
                     else
                         generateCyclicRefException(waitingList);
 
-                readyTheoremStmtGroup = (TheoremStmtGroup)readyQueue
-                    .removeFirst();
+                readyTheoremStmtGroup = readyQueue.removeFirst();
 
                 readyTheoremStmtGroup.updateLogicalSystem(logicalSystem,
                     messages, tlPreferences);
@@ -266,24 +256,21 @@ public class MMTTheoremSet {
 
     }
 
-    private int getNbrOfAdds() {
-        return nbrOfAdds;
-    }
-
     private String buildUpdateFailureMsg(final String e) {
         return new String(TlConstants.ERRMSG_UPDATE_FAILURE_1 + e);
     }
 
-    private HashMap buildTheoremStmtGroupTbl(final int n) {
-        return new HashMap(n * 4 / 3 + 2);
+    private Map<String, TheoremStmtGroup> buildTheoremStmtGroupTbl(final int n)
+    {
+        return new HashMap<String, TheoremStmtGroup>(n * 4 / 3 + 2);
     }
 
     private void putToTheoremStmtGroupTbl(final TheoremStmtGroup t)
         throws TheoremLoaderException
     {
 
-        final TheoremStmtGroup dupTheoremStmtGroup = (TheoremStmtGroup)theoremStmtGroupTbl
-            .put(t.getTheoremLabel(), t);
+        final TheoremStmtGroup dupTheoremStmtGroup = theoremStmtGroupTbl.put(
+            t.getTheoremLabel(), t);
 
         if (dupTheoremStmtGroup != null)
             throw new TheoremLoaderException(
@@ -293,34 +280,24 @@ public class MMTTheoremSet {
     }
 
     private void preUpdateRelationalEdits() throws TheoremLoaderException {
-
-        TheoremStmtGroup t;
-
-        final Iterator i = theoremStmtGroupTbl.values().iterator();
-
-        while (i.hasNext()) {
-
-            t = (TheoremStmtGroup)i.next();
-
+        for (final TheoremStmtGroup t : this) {
             t.validateTheoremSrcStmtProofLabels(logicalSystem,
                 theoremStmtGroupTbl);
-
             t.initializeMustAppend();
 
         }
     }
 
-    private void generateCyclicRefException(final List waitingList)
-        throws TheoremLoaderException
+    private void generateCyclicRefException(
+        final List<TheoremStmtGroup> waitingList) throws TheoremLoaderException
     {
 
-        final StringBuffer sb = new StringBuffer();
-        sb.append(TlConstants.ERRMSG_CYCLIC_REF_ERROR_1);
+        final StringBuilder sb = new StringBuilder(
+            TlConstants.ERRMSG_CYCLIC_REF_ERROR_1);
 
-        final Iterator i = waitingList.iterator();
-        while (i.hasNext()) {
+        for (final TheoremStmtGroup t : waitingList) {
             sb.append(' ');
-            sb.append(((TheoremStmtGroup)i.next()).getTheoremLabel());
+            sb.append(t.getTheoremLabel());
         }
 
         throw new TheoremLoaderException(sb.toString());

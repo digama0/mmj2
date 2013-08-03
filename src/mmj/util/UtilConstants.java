@@ -112,7 +112,7 @@
  *      _ Added GMFF stuff.
  *      _ Modified for MMJ2 Paths Enhancement
  *      _ Added code for MMJ2FailPopupWindow
- *      _ Set: MAX_STATEMENT_PRINT_COUNT_DEFAULT = 9999 )was 99999)
+ *      _ Set: MAX_STATEMENT_PRINT_COUNT_DEFAULT = 9999 (was 99999)
  *
  */
 
@@ -1073,14 +1073,14 @@ public class UtilConstants {
      * <p>
      * <code>
      *  "ProofAsstProofFormat":
-     * 
+     *
      *      "Normal" -- Uncompressed RPN proof
      *      "Packed" -- RPN proof with backreferences
      *      "Compressed"
      *               -- Full compression (with all caps encoding)
-     * 
+     *
      *  Optional, default is "Compressed"
-     * 
+     *
      *  </code>
      */
     public static final String RUNPARM_PROOF_ASST_PROOF_FORMAT = "ProofAsstProofFormat";

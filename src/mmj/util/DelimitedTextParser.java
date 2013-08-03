@@ -341,8 +341,6 @@ public class DelimitedTextParser {
 
         final int testCaseCount = 12;
         int testCaseNbr = 0;
-        final int fieldNbr = 0;
-
         final String[] testCaseString = {"|a|,b,c,,e", // 01
                 "", // 02
                 " ", // 03
@@ -454,12 +452,5 @@ public class DelimitedTextParser {
         System.out.println("DelimitedTextParser:main caught Exception:"
             + e.getLocalizedMessage());
         e.printStackTrace(System.out);
-    }
-
-    private static void printThrownDiagnosticsAndAbort(final Throwable e) {
-        System.out.println("DelimitedTextParser:main caught Exception:"
-            + e.getLocalizedMessage());
-        e.printStackTrace(System.out);
-        System.exit(-1);
     }
 }

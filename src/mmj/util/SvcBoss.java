@@ -20,8 +20,7 @@
 package mmj.util;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 import mmj.lang.*;
 import mmj.pa.ProofAsst;
@@ -42,9 +41,9 @@ public class SvcBoss extends Boss {
     private SvcCallback svcCallback;
     private String svcCallbackClass;
     private File svcFolder;
-    private ArrayList svcArgKeyList;
-    private ArrayList svcArgValueList;
-    private HashMap svcArgs;
+    private List<String> svcArgKeyList;
+    private List<String> svcArgValueList;
+    private Map<String, String> svcArgs;
 
     /**
      *  Constructor with BatchFramework for access to environment.
@@ -198,8 +197,8 @@ public class SvcBoss extends Boss {
         editRunParmValuesLength(runParm, UtilConstants.RUNPARM_SVC_FOLDER, 2);
 
         if (svcArgKeyList == null) {
-            svcArgKeyList = new ArrayList();
-            svcArgValueList = new ArrayList();
+            svcArgKeyList = new ArrayList<String>();
+            svcArgValueList = new ArrayList<String>();
         }
 
         if (runParm.values[0].length() == 0
@@ -258,14 +257,14 @@ public class SvcBoss extends Boss {
             .getTlPreferences();
 
         if (svcArgKeyList == null) {
-            svcArgKeyList = new ArrayList();
-            svcArgValueList = new ArrayList();
+            svcArgKeyList = new ArrayList<String>();
+            svcArgValueList = new ArrayList<String>();
         }
         int n = svcArgKeyList.size();
         if (n < 12)
             n = 12;
         n = 4 * n / 3; // 75% load capacity
-        svcArgs = new HashMap(n);
+        svcArgs = new HashMap<String, String>(n);
         for (int i = 0; i < svcArgKeyList.size(); i++)
             svcArgs.put(svcArgKeyList.get(i), svcArgValueList.get(i));
 

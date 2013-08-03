@@ -34,20 +34,20 @@ import java.util.*;
  *  key, the source element replaces the destination element.
  *  <p>
  */
-public class MergeSortedArrayLists {
+public class MergeSortedArrayLists<T> {
 
     private int destGetIndex = 0;
     private int destPutIndex = 0;
 
-    private Object nextDest;
-    private Object nextSrc;
+    private T nextDest;
+    private T nextSrc;
 
-    private ArrayList dest;
+    private ArrayList<T> dest;
 
-    private List src;
-    private Iterator srcIterator;
+    private List<? extends T> src;
+    private Iterator<? extends T> srcIterator;
 
-    private LinkedList buf;
+    private LinkedList<T> buf;
     private int maxDestBuf;
 
     private int compareResult;
@@ -79,9 +79,9 @@ public class MergeSortedArrayLists {
      *          equals a destList object and abortIfDupsFound
      *          is true (the normal situation for Theorem Loader.)
      */
-    public MergeSortedArrayLists(final ArrayList destList, final List srcList,
-        final Comparator comparator, final boolean abortIfDupsFound)
-        throws IllegalArgumentException
+    public MergeSortedArrayLists(final ArrayList<T> destList,
+        final List<? extends T> srcList, final Comparator<T> comparator,
+        final boolean abortIfDupsFound) throws IllegalArgumentException
     {
 
 //doh
@@ -108,7 +108,7 @@ public class MergeSortedArrayLists {
         if ((nextSrc = getNextSrc()) == null)
             return;
 
-        buf = new LinkedList();
+        buf = new LinkedList<T>();
 
         dest = destList;
         maxDestBuf = dest.size();
@@ -165,7 +165,7 @@ public class MergeSortedArrayLists {
         }
     }
 
-    private void put(final Object object) {
+    private void put(final T object) {
         /*
            !!! before outputting to dest, make sure that the dest
            list element is in the buffer if it is one of the
@@ -183,15 +183,15 @@ public class MergeSortedArrayLists {
         ++destPutIndex;
     }
 
-    private Object getNextSrc() {
+    private T getNextSrc() {
         if (srcIterator.hasNext())
             return srcIterator.next();
         else
             return null;
     }
 
-    private Object getNextDest() {
-        if (buf.size() == 0) {
+    private T getNextDest() {
+        if (buf.isEmpty()) {
 //          inline: return loadNextBufElementVirtual();
             if (destGetIndex < maxDestBuf)
                 return dest.get(destGetIndex++);

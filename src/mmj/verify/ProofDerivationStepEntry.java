@@ -24,7 +24,7 @@
 
 package mmj.verify;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import mmj.lang.Formula;
 import mmj.lang.ParseTree;
@@ -115,7 +115,9 @@ public class ProofDerivationStepEntry {
      *
      *  @param pList ProofDerivationStepEntry ArrayList
      */
-    public static void computeProofLevels(final ArrayList pList) {
+    public static void computeProofLevels(
+        final List<ProofDerivationStepEntry> pList)
+    {
 
         ProofDerivationStepEntry d;
         ProofDerivationStepEntry h;
@@ -126,7 +128,7 @@ public class ProofDerivationStepEntry {
 
             for (int i = pList.size() - 1; i > 0; i--) {
 
-                d = (ProofDerivationStepEntry)pList.get(i);
+                d = pList.get(i);
 
                 for (final String element : d.hypStep) {
 
@@ -164,21 +166,23 @@ public class ProofDerivationStepEntry {
      *
      *  @param pList ProofDerivationStepEntry ArrayList
      */
-    public static void computeProofLevelsSlowly(final ArrayList pList) {
+    public static void computeProofLevelsSlowly(
+        final List<ProofDerivationStepEntry> pList)
+    {
 
         ProofDerivationStepEntry d;
         ProofDerivationStepEntry h;
 
         for (int i = 0; i < pList.size(); i++)
-            ((ProofDerivationStepEntry)pList.get(i)).proofLevel = 0;
+            pList.get(i).proofLevel = 0;
 
         for (int i = pList.size() - 1; i > 0; i--) {
-            d = (ProofDerivationStepEntry)pList.get(i);
+            d = pList.get(i);
 
             loopJ: for (int j = 0; j < d.hypStep.length; j++)
                 for (int k = i - 1; k >= 0; k--) {
 
-                    h = (ProofDerivationStepEntry)pList.get(k);
+                    h = pList.get(k);
 
                     if (d.hypStep[j].equals(h.step)) {
 

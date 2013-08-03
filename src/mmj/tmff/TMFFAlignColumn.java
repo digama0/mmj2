@@ -297,8 +297,6 @@ public class TMFFAlignColumn extends TMFFMethod {
 
         final Sym[] formulaSymArray = stmt.getFormula().getSym();
 
-        final VarHyp[] mandVarHypArray = stmt.getMandVarHypArray();
-
         if (stmt.isVarHyp()) {
             // ok, valid and no hyp resequencing
         }

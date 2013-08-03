@@ -15,7 +15,7 @@
 
 package mmj.tl;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import mmj.lang.*;
 import mmj.pa.ProofAsst;
@@ -150,8 +150,8 @@ public class TheoremLoader {
         final MMTTheoremExportFormatter mmtTheoremExportFormatter = new MMTTheoremExportFormatter(
             tlPreferences);
 
-        final LinkedList mmtTheoremLines = mmtTheoremExportFormatter
-            .buildStringBufferLineList(proofWorksheet);
+        final List<StringBuilder> mmtTheoremLines = mmtTheoremExportFormatter
+            .buildStringBuilderLineList(proofWorksheet);
 
         tlPreferences.getMMTFolder().storeMMTTheoremFile(
             proofWorksheet.getTheoremLabel(), mmtTheoremLines);
@@ -224,8 +224,8 @@ public class TheoremLoader {
         final MMTTheoremExportFormatter mmtTheoremExportFormatter = new MMTTheoremExportFormatter(
             tlPreferences);
 
-        final LinkedList mmtTheoremLines = mmtTheoremExportFormatter
-            .buildStringBufferLineList(theorem);
+        final List<StringBuilder> mmtTheoremLines = mmtTheoremExportFormatter
+            .buildStringBuilderLineList(theorem);
 
         tlPreferences.getMMTFolder().storeMMTTheoremFile(theorem.getLabel(),
             mmtTheoremLines);

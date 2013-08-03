@@ -173,7 +173,7 @@ public abstract class TMFFMethod {
     }
 
     /**
-     *  Formats a formula and outputs it to a StringBuffer
+     *  Formats a formula and outputs it to a StringBuilder
      *  using the given ParseTree root node and initial
      *  Constant of the formula.
      *  <p>
@@ -182,8 +182,8 @@ public abstract class TMFFMethod {
      *  <p>
      *  Note that if the returned number of lines = -1 the
      *  formula has not been formatted, BUT the input
-     *  StringBuffer may have been updated. To deal with
-     *  this, it is possible to restore the StringBuffer
+     *  StringBuilder may have been updated. To deal with
+     *  this, it is possible to restore the StringBuilder
      *  because output is appended to the original input.
      *  See TMFFPreverences.renderFormula() for an example.
      *  <p>

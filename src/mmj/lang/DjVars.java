@@ -65,7 +65,7 @@ import mmj.pa.DistinctVariablesStmt;
  *  @see <a href="../../MetamathERNotes.html">
  *       Nomenclature and Entity-Relationship Notes</a>
  */
-public class DjVars implements Comparable {
+public class DjVars implements Comparable<DjVars> {
 
     /**
      *  varLo and varHi refer to the pair of DjVars after
@@ -82,27 +82,6 @@ public class DjVars implements Comparable {
      *  based on Sym.id, not MObj.seq in other words).
      */
     Var varHi;
-
-    /**
-     *  Copies djVarsList List to an array of DjVars.
-     *  <p>
-     *  This was coded because i couldn't get
-     *  ArrayList.toArray() to compile. Doh!
-     *
-     *  @param  djVarsList List of DjVars to copy
-     *
-     *  @return Array of DjVars copied from hyplist.
-     */
-    public static DjVars[] loadDjVarsArray(final List djVarsList) {
-
-        final DjVars[] djVarsArray = new DjVars[djVarsList.size()];
-
-        final Iterator iterator = djVarsList.iterator();
-        int n = 0;
-        while (iterator.hasNext())
-            djVarsArray[n++] = (DjVars)iterator.next();
-        return djVarsArray;
-    }
 
     /**
      *  Helper routine for Theorem Loader to confirm that
@@ -123,7 +102,6 @@ public class DjVars implements Comparable {
 
         boolean loFound = false;
         boolean hiFound = false;
-        final Hyp hyp;
         VarHyp varHyp;
 
         Hyp[] hypArray = mandFrame.hypArray;
@@ -172,8 +150,6 @@ public class DjVars implements Comparable {
     public static boolean isDjVarsVarInExtendedFrame(final Var djVarsVar,
         final MandFrame mandFrame, final OptFrame optFrame)
     {
-
-        final Hyp hyp;
         VarHyp varHyp;
 
         Hyp[] hypArray = mandFrame.hypArray;
@@ -199,7 +175,7 @@ public class DjVars implements Comparable {
     }
 
     /**
-     *  Builds a LinkedList of StringBuffers containing the
+     *  Builds a LinkedList of StringBuilders containing the
      *  Metamath formatted text $d statements for the theorem.
      *  <p>
      *  The input DistinctVariablesStmt array objects are
@@ -208,10 +184,10 @@ public class DjVars implements Comparable {
      *  <p>
      *  @param distinctVariablesStmtArray array of Proof Worksheet
      *              DistinctVariablesStmt objects.
-     *  @return LinkedList of StringBuffers containing $d statements
+     *  @return List of StringBuilders containing $d statements
      *                        (not containing any newlines).
      */
-    public static LinkedList buildMetamathDjVarsStatementList(
+    public static List<StringBuilder> buildMetamathDjVarsStatementList(
         final DistinctVariablesStmt[] distinctVariablesStmtArray)
     {
 
@@ -221,20 +197,21 @@ public class DjVars implements Comparable {
         final DjVars[] sortedDvArray = DjVars.sortAndCombineDvArrays(dvArray,
             null);
 
-        final ArrayList dvGroups = MandFrame.consolidateDvGroups(sortedDvArray);
+        final List<List<Var>> dvGroups = MandFrame
+            .consolidateDvGroups(sortedDvArray);
 
         return DjVars.convertDvGroupsListToMetamathList(dvGroups);
     }
 
     /**
-     *  Builds a LinkedList of StringBuffers containing the
+     *  Builds a LinkedList of StringBuilders containing the
      *  Metamath format text $d statements for the theorem.
      *  <p>
      *  @param theorem the theorem for which $d statements are needed.
-     *  @return LinkedList of StringBuffers containing $d statements
+     *  @return List of StringBuilders containing $d statements
      *                        (not containing any newlines).
      */
-    public static LinkedList buildMetamathDjVarsStatementList(
+    public static List<StringBuilder> buildMetamathDjVarsStatementList(
         final Theorem theorem)
     {
 
@@ -242,46 +219,43 @@ public class DjVars implements Comparable {
             theorem.getMandFrame().djVarsArray,
             theorem.getOptFrame().optDjVarsArray);
 
-        final ArrayList comboDvGroups = MandFrame
+        final List<List<Var>> comboDvGroups = MandFrame
             .consolidateDvGroups(comboDvArray);
 
         return DjVars.convertDvGroupsListToMetamathList(comboDvGroups);
     }
 
     /**
-     *  Converts a ArrayList of ArrayLists containing distinct
-     *  variables into a LinkedList of StringBuffers containing
+     *  Converts a ArrayList of Lists containing distinct
+     *  variables into a LinkedList of StringBuilders containing
      *  Metamath format text $d statements.
      *  <p>
-     *  @param comboDvGroups ArrayList of ArrayLists containing
+     *  @param comboDvGroups List of Lists containing
      *                      distinct variables.
-     *  @return LinkedList of StringBuffers containing $d statements
+     *  @return List of StringBuilders containing $d statements
      *                      not containing any newlines.
      */
-    public static LinkedList convertDvGroupsListToMetamathList(
-        final ArrayList comboDvGroups)
+    public static List<StringBuilder> convertDvGroupsListToMetamathList(
+        final List<List<Var>> comboDvGroups)
     {
 
-        final LinkedList list = new LinkedList();
-        StringBuffer sb = new StringBuffer();
+        final List<StringBuilder> list = new LinkedList<StringBuilder>();
 
-        final Iterator i = comboDvGroups.iterator();
-        while (i.hasNext()) {
+        for (final List<Var> i : comboDvGroups) {
+            final StringBuilder sb = new StringBuilder();
 
             sb.append(MMIOConstants.MM_KEYWORD_1ST_CHAR);
             sb.append(MMIOConstants.MM_DJ_VAR_KEYWORD_CHAR);
 
-            final Iterator j = ((ArrayList)i.next()).iterator();
-            while (j.hasNext()) {
+            for (final Var j : i) {
                 sb.append(' ');
-                sb.append(((Var)j.next()).toString());
+                sb.append(j.toString());
             }
 
             sb.append(' ');
             sb.append(MMIOConstants.MM_END_STMT_KEYWORD);
 
             list.add(sb);
-            sb = new StringBuffer();
         }
         return list;
     }
@@ -299,7 +273,7 @@ public class DjVars implements Comparable {
         final DjVars[] array2)
     {
 
-        final LinkedList mergedList = new LinkedList();
+        final List<DjVars> mergedList = new LinkedList<DjVars>();
 
         if (array1 != null)
             for (final DjVars element : array1)
@@ -308,13 +282,7 @@ public class DjVars implements Comparable {
             for (final DjVars element : array2)
                 DjVars.sortAndCombineDvPair(mergedList, element);
 
-        final DjVars[] dvArray = new DjVars[mergedList.size()];
-        final Iterator i = mergedList.iterator();
-        int c = 0;
-        while (i.hasNext())
-            dvArray[c++] = (DjVars)i.next();
-
-        return dvArray;
+        return mergedList.toArray(new DjVars[mergedList.size()]);
     }
 
     /**
@@ -325,57 +293,36 @@ public class DjVars implements Comparable {
      *  @param list1 List containing List elements of DjVars objects.
      *  @return consolidated, sorted array of DjVars objects.
      */
-    public static DjVars[] sortAndCombineDvListOfLists(final List list1) {
+    public static DjVars[] sortAndCombineDvListOfLists(
+        final List<List<DjVars>> list1)
+    {
 
-        final LinkedList mergedList = new LinkedList();
+        final List<DjVars> mergedList = new LinkedList<DjVars>();
 
-        Iterator i;
-        Iterator j;
-        Object o;
-        DjVars djVars;
-        if (list1 != null) {
-            i = list1.iterator();
-            while (i.hasNext()) {
-                o = i.next();
-                if (o != null) {
-                    j = ((List)o).iterator();
-                    while (j.hasNext()) {
-                        djVars = (DjVars)j.next();
+        if (list1 != null)
+            for (final List<DjVars> i : list1)
+                if (i != null)
+                    for (final DjVars djVars : i)
                         DjVars.sortAndCombineDvPair(mergedList, djVars);
-                    }
-                }
-            }
-        }
 
-        final DjVars[] dvArray = new DjVars[mergedList.size()];
-        i = mergedList.iterator();
-        int c = 0;
-        while (i.hasNext())
-            dvArray[c++] = (DjVars)i.next();
-
-        return dvArray;
+        return mergedList.toArray(new DjVars[mergedList.size()]);
     }
 
     /**
      *  Consolidates a DjVars object into an existing LinkedList
      *  maintaining the list in compareTo order.
      */
-    private static void sortAndCombineDvPair(final LinkedList mergedList,
+    private static void sortAndCombineDvPair(final List<DjVars> mergedList,
         final DjVars dvPair)
     {
-        ListIterator iterator;
-
-        DjVars d;
-
-        int compValue;
-
-        iterator = mergedList.listIterator(0);
+        final ListIterator<DjVars> iterator = mergedList.listIterator();
 
         while (iterator.hasNext()) {
 
-            d = (DjVars)iterator.next();
+            final DjVars d = iterator.next();
 
-            if ((compValue = d.compareTo(dvPair)) < 0)
+            final int compValue = d.compareTo(dvPair);
+            if (compValue < 0)
                 continue; // keep scanning list forward
 
             if (compValue == 0)
@@ -417,8 +364,8 @@ public class DjVars implements Comparable {
      *  @throws LangException if the two Var id's are identical,
      *          or are not defined and active vars.
      */
-    public DjVars(final Map symTbl, final String loS, final String hiS)
-        throws LangException
+    public DjVars(final Map<String, Sym> symTbl, final String loS,
+        final String hiS) throws LangException
     {
 
         final Var lo = Var.verifyVarDefAndActive(symTbl, loS);
@@ -548,10 +495,10 @@ public class DjVars implements Comparable {
      *
      */
     @Override
-    public int compareTo(final Object obj) {
-        int compare = varLo.compareTo(((DjVars)obj).varLo);
+    public int compareTo(final DjVars obj) {
+        int compare = varLo.compareTo(obj.varLo);
         if (compare == 0)
-            compare = varHi.compareTo(((DjVars)obj).varHi);
+            compare = varHi.compareTo(obj.varHi);
         return compare;
 
 //      return  ((this.toString()).compareTo(

@@ -79,7 +79,7 @@ public class Section {
      *          meaning that the MObj has a zero sectionMObjNbr
      *          prior to the update.
      */
-    public boolean assignChapterSectionNbrs(final MObj mObj) {
+    public boolean assignChapterSectionNbrs(final MObj<?> mObj) {
         final int n = mObj.getSectionMObjNbr();
         if (n != 0)
             return false;

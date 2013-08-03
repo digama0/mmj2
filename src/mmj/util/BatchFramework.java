@@ -43,7 +43,7 @@ package mmj.util;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 
 import mmj.gmff.GMFFException;
 import mmj.lang.TheoremLoaderException;
@@ -121,7 +121,7 @@ public abstract class BatchFramework {
     /*friendly*/String runParmExecutableCaption;
     /*friendly*/String runParmCommentCaption;
 
-    /*friendly*/ArrayList bossList;
+    /*friendly*/List<Boss> bossList;
 
     /*friendly*/OutputBoss outputBoss;
 
@@ -165,7 +165,7 @@ public abstract class BatchFramework {
      */
     public void initializeBatchFramework() {
         batchFrameworkInitialized = true;
-        bossList = new ArrayList();
+        bossList = new ArrayList<Boss>();
 
         outputBoss = new OutputBoss(this);
         addBossToBossList(outputBoss);
@@ -337,9 +337,6 @@ public abstract class BatchFramework {
         throws IllegalArgumentException, MMIOException, FileNotFoundException,
         IOException, VerifyException, TheoremLoaderException, GMFFException
     {
-
-        boolean consumed;
-        Iterator iterator;
         ++runParmCnt;
 
         // capture this for use by MMJ2FailPopupWindow
@@ -352,17 +349,16 @@ public abstract class BatchFramework {
                 runParm);
 
             if (runParm.name
-                .compareToIgnoreCase(UtilConstants.RUNPARM_JAVA_GARBAGE_COLLECTION) == 0)
+                .equalsIgnoreCase(UtilConstants.RUNPARM_JAVA_GARBAGE_COLLECTION))
                 System.gc();
             else {
-                consumed = false;
-                iterator = bossList.iterator();
-                while (iterator.hasNext() && !consumed)
-                    consumed = ((Boss)iterator.next())
-                        .doRunParmCommand(runParm);
+                boolean consumed = false;
+                for (final Boss b : bossList)
+                    if (consumed = b.doRunParmCommand(runParm))
+                        break;
                 if (!consumed
-                    && runParm.name
-                        .compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR) != 0)
+                    && !runParm.name
+                        .equalsIgnoreCase(UtilConstants.RUNPARM_CLEAR))
                     throw new IllegalArgumentException(
                         UtilConstants.ERRMSG_RUNPARM_NAME_INVALID_1
                             + runParm.name

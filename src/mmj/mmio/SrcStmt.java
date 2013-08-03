@@ -19,7 +19,7 @@
 
 package mmj.mmio;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  *  Simple data structure holding "work" components of a
@@ -74,7 +74,7 @@ public class SrcStmt extends Object {
      *      Axiom, LogHyp & Theorem: zero or more
      *  </code>
      */
-    public ArrayList symList = null;
+    public List<String> symList = null;
 
     /**
      *  Only Theorem statements ($p) have proofList.
@@ -88,7 +88,7 @@ public class SrcStmt extends Object {
      *        portion of a compressed proof (but not
      *        the parentheses.)
      */
-    public ArrayList proofList = null;
+    public List<String> proofList = null;
 
     /**
      *  Theorem compressed proof block list.
@@ -98,7 +98,7 @@ public class SrcStmt extends Object {
      *  Metamath compressed proof symbols (see Metamath.pdf
      *  Appendix B).
      */
-    public ArrayList proofBlockList = null;
+    public List<String> proofBlockList = null;
 
     /**
      *   Comment statement --

@@ -15,8 +15,7 @@
 
 package mmj.gmff;
 
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.*;
 
 import mmj.lang.Messages;
 import mmj.util.UtilConstants;
@@ -38,19 +37,19 @@ import mmj.util.UtilConstants;
  *  because, in theory, different export types could
  *  have different escape codes.
  */
-public class GMFFUserTextEscapes implements Comparable {
+public class GMFFUserTextEscapes implements Comparable<GMFFUserTextEscapes> {
 
     public final String exportType;
-    public ArrayList<EscapePair> escapePairList;
+    public List<EscapePair> escapePairList;
 
     /**
-     *  Constructor with ArrayList of Escape Pairs.
+     *  Constructor with List of Escape Pairs.
      *  <p>
      *  @param exportType key
-     *  @param escapePairList ArrayList of <code>EscapePair</code>
+     *  @param escapePairList List of <code>EscapePair</code>
      */
     public GMFFUserTextEscapes(final String exportType,
-        final ArrayList<EscapePair> escapePairList)
+        final List<EscapePair> escapePairList)
     {
 
         this.exportType = exportType;
@@ -82,7 +81,7 @@ public class GMFFUserTextEscapes implements Comparable {
      */
     public String generateAuditReportText() {
 
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
 
         sb.append(UtilConstants.RUNPARM_GMFF_USER_TEXT_ESCAPES);
         sb.append(GMFFConstants.AUDIT_REPORT_COMMA);
@@ -105,15 +104,14 @@ public class GMFFUserTextEscapes implements Comparable {
      *  first error found. Any errors are accumulated in
      *  the Messages object.
      *  <p>
-     *  @param exportParmsList ArrayList of GMFFExportParms
+     *  @param exportParmsList List of GMFFExportParms
      *             used to validate exportType (must be
      *             used in the Export Parms.)
      *  @param messages The Messages object.
      *  @return true if valid otherwise false.
      */
     public boolean areUserTextEscapesValid(
-        final ArrayList<GMFFExportParms> exportParmsList,
-        final Messages messages)
+        final List<GMFFExportParms> exportParmsList, final Messages messages)
     {
 
         boolean valid = true;
@@ -137,15 +135,14 @@ public class GMFFUserTextEscapes implements Comparable {
      *  <li>Must not contain whitespace
      *  <li>Must be defined in the exportParmsList.
      *  <p>
-     *  @param exportParmsList ArrayList of GMFFExportParms
+     *  @param exportParmsList List of GMFFExportParms
      *             used to validate exportType (must be
      *             defined in the Export Parms.)
      *  @param messages The Messages object.
      *  @return true if valid otherwise false.
      */
     public boolean isExportTypeValid(
-        final ArrayList<GMFFExportParms> exportParmsList,
-        final Messages messages)
+        final List<GMFFExportParms> exportParmsList, final Messages messages)
     {
 
         if (GMFFExportParms.isPresentWithNoWhitespace(exportType))
@@ -237,18 +234,20 @@ public class GMFFUserTextEscapes implements Comparable {
      *
      */
     @Override
-    public int compareTo(final Object obj) {
-        return exportType.compareTo(((GMFFUserTextEscapes)obj).exportType);
+    public int compareTo(final GMFFUserTextEscapes obj) {
+        return exportType.compareTo(obj.exportType);
     }
 
     /**
      *  EXPORT_TYPE sequences by GMFFUserTextEscapes.exportType.
      */
-    static public final Comparator EXPORT_TYPE = new Comparator() {
+    static public final Comparator<GMFFUserTextEscapes> EXPORT_TYPE = new Comparator<GMFFUserTextEscapes>()
+    {
         @Override
-        public int compare(final Object o1, final Object o2) {
-            return ((GMFFUserTextEscapes)o1).exportType
-                .compareTo(((GMFFUserTextEscapes)o2).exportType);
+        public int compare(final GMFFUserTextEscapes o1,
+            final GMFFUserTextEscapes o2)
+        {
+            return o1.compareTo(o2);
         }
     };
 }

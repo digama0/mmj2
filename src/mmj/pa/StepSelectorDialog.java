@@ -29,8 +29,7 @@ public class StepSelectorDialog extends JDialog {
 
     private final StepSelectorResults stepSelectorResults;
     private final ProofAsstGUI proofAsstGUI;
-    private final JList stepSelectorDialogList;
-    private final Font proofFont;
+    private final JList<String> stepSelectorDialogList;
     private final StepSelectorDialog stepSelectorDialog;
 
     public StepSelectorDialog(final Frame proofAsstGUIFrame,
@@ -45,7 +44,6 @@ public class StepSelectorDialog extends JDialog {
 
         stepSelectorResults = results;
         proofAsstGUI = gui;
-        this.proofFont = proofFont;
         stepSelectorDialog = this;
 
         setFont(proofFont);
@@ -69,7 +67,7 @@ public class StepSelectorDialog extends JDialog {
         });
         getRootPane().setDefaultButton(setButton);
 
-        stepSelectorDialogList = new JList();
+        stepSelectorDialogList = new JList<String>();
         stepSelectorDialogList.setFont(proofFont);
         stepSelectorDialogList.setListData(stepSelectorResults.selectionArray);
         stepSelectorDialogList
@@ -144,7 +142,7 @@ public class StepSelectorDialog extends JDialog {
             return;
         final String s = stepSelectorResults.selectionArray[n];
 
-        final StringBuffer sb = new StringBuffer(s.length());
+        final StringBuilder sb = new StringBuilder(s.length());
         int col = 0;
         char c;
         for (int i = 0; i < s.length(); i++) {

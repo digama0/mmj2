@@ -59,9 +59,9 @@
  *      - Added:
  *          exportViaGMFF() for use by ProofAsstGUI
  *        and
- *          getSortedSkipSeqTheoremIterator(String startTheoremLabel)
- *          getSortedTheoremIterator(int lowestMObjSeq)
- *          exportOneTheorem(String  theoremLabel)
+ *          getSortedSkipSeqTheoremIterable(String startTheoremLabel)
+ *          getSortedTheoremIterable(int lowestMObjSeq)
+ *          exportOneTheorem(String theoremLabel)
  *          exportOneTheorem(Theorem theorem)
  *        for use by GMFFManager.exportTheorem
  *      - Modified volumeTestOutputRoutine to use theorem to
@@ -82,8 +82,7 @@ import mmj.lang.ParseTree.RPNStep;
 import mmj.mmio.MMIOError;
 import mmj.tl.*;
 import mmj.util.OutputBoss;
-import mmj.verify.Grammar;
-import mmj.verify.VerifyProofs;
+import mmj.verify.*;
 
 /**
  * The <code>ProofAsst</code>, along with the rest of the
@@ -114,13 +113,11 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     private Messages messages;
     private final TheoremLoader theoremLoader;
 
-    private final int newProofCaretCharNbr = -1;
-
     // for volume testing
     private int nbrTestTheoremsProcessed;
     private int nbrTestNotProvedPerfectly;
     private int nbrTestProvedDifferently;
-    private ArrayList sortedTheoremList;
+    private List<Theorem> sortedTheoremList;
 
     /**
      *  Constructor.
@@ -207,10 +204,10 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         if (!getInitializedOK())
             return; // the stmtTbl data has not been stored yet
 
-        final ArrayList listOfAssrtAddsSortedBySeq = mmtTheoremSet
+        final List<Theorem> listOfAssrtAddsSortedBySeq = mmtTheoremSet
             .buildSortedAssrtListOfAdds(MObj.SEQ);
 
-        if (listOfAssrtAddsSortedBySeq.size() == 0)
+        if (listOfAssrtAddsSortedBySeq.isEmpty())
             return;
 
         proofUnifier
@@ -696,12 +693,6 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     {
         this.messages = messages;
 
-        final Stmt stmt;
-        Theorem theorem;
-        String proofText;
-        String updatedProofText;
-        ProofWorksheet proofWorksheet;
-
         final boolean unifiedFormat = proofAsstPreferences
             .getExportFormatUnified();
         final boolean hypsRandomized = proofAsstPreferences
@@ -711,6 +702,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         final boolean verifierRecheck = proofAsstPreferences
             .getRecheckProofAsstUsingProofVerifier();
 
+        String proofText;
+        ProofWorksheet proofWorksheet;
+        String updatedProofText;
         if (selectorTheorem != null) {
             proofText = exportOneTheorem(null, // to memory not writer
                 selectorTheorem, unifiedFormat, hypsRandomized, deriveFormulas);
@@ -757,12 +751,10 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         else if (selectorCount != null)
             numberToProcess = selectorCount.intValue();
 
-        final Iterator iterator = getSortedTheoremIterator();
-        while (iterator.hasNext() && numberProcessed < numberToProcess
-            && !messages.maxErrorMessagesReached())
-        {
-
-            theorem = (Theorem)iterator.next();
+        for (final Theorem theorem : getSortedTheoremIterable(0)) {
+            if (numberProcessed >= numberToProcess
+                || messages.maxErrorMessagesReached())
+                return;
             ++nbrTestTheoremsProcessed;
             proofText = exportOneTheorem(null, theorem, unifiedFormat,
                 hypsRandomized, deriveFormulas);
@@ -1184,15 +1176,12 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         final boolean deriveFormulas = proofAsstPreferences
             .getExportDeriveFormulas();
 
-        final Stmt stmt;
-        Theorem theorem;
-        String proofText;
-
         this.messages = messages;
 
         if (selectorTheorem != null) {
-            proofText = exportOneTheorem(exportWriter, selectorTheorem,
-                exportFormatUnified, hypsRandomized, deriveFormulas);
+            final String proofText = exportOneTheorem(exportWriter,
+                selectorTheorem, exportFormatUnified, hypsRandomized,
+                deriveFormulas);
             if (proofText != null)
                 printProof(outputBoss, selectorTheorem.getLabel(), proofText);
             return;
@@ -1207,29 +1196,29 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         else if (selectorCount != null)
             numberToExport = selectorCount.intValue();
 
-        final Iterator iterator = getSortedTheoremIterator();
-        while (iterator.hasNext() && numberExported < numberToExport) {
-            theorem = (Theorem)iterator.next();
-            proofText = exportOneTheorem(exportWriter, theorem,
+        for (final Theorem theorem : getSortedTheoremIterable(0)) {
+            if (numberExported < numberToExport)
+                break;
+            final String proofText = exportOneTheorem(exportWriter, theorem,
                 exportFormatUnified, hypsRandomized, deriveFormulas);
             if (proofText != null)
                 printProof(outputBoss, theorem.getLabel(), proofText);
             ++numberExported;
         }
     }
-
     // Note: could do binary lookup for sequence number
     // within ArrayList which happens to be sorted.
     private Theorem getTheoremBackward(final int currProofMaxSeq,
         final boolean isRetry)
     {
-        final ArrayList searchList = proofUnifier.getUnifySearchListByMObjSeq();
+        final List<Assrt> searchList = proofUnifier
+            .getUnifySearchListByMObjSeq();
 
         Assrt assrt;
         for (int searchIndex = searchList.size() - 1; searchIndex >= 0; searchIndex--)
         {
 
-            assrt = (Assrt)searchList.get(searchIndex);
+            assrt = searchList.get(searchIndex);
 
             if (assrt.getSeq() < currProofMaxSeq && !assrt.isAxiom())
                 return (Theorem)assrt;
@@ -1247,40 +1236,17 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         if (currProofMaxSeq != Integer.MAX_VALUE) {
 
-            final ArrayList searchList = proofUnifier
+            final List<Assrt> searchList = proofUnifier
                 .getUnifySearchListByMObjSeq();
 
-            final Iterator iterator = searchList.iterator();
-
-            Assrt assrt;
-            while (iterator.hasNext()) {
-                assrt = (Assrt)iterator.next();
+            for (final Assrt assrt : searchList)
                 if (assrt.getSeq() > currProofMaxSeq && !assrt.isAxiom())
                     return (Theorem)assrt;
-            }
         }
         if (isRetry)
             return null;
 
         return getTheoremForward(Integer.MIN_VALUE, true);
-    }
-
-    private ProofAsstCursor convertCursorLineToProofWorkStmt(
-        final ProofWorksheet proofWorksheet,
-        final ProofAsstCursor inputCursorPos)
-    {
-
-        final ProofWorkStmt x = proofWorksheet
-            .computeProofWorkStmtOfLineNbr(inputCursorPos.caretLine);
-
-        ProofAsstCursor outputCursorPos;
-        if (x == null)
-            outputCursorPos = new ProofAsstCursor(-1, // charNbr
-                inputCursorPos.caretLine, 1); // row
-        else
-            outputCursorPos = new ProofAsstCursor(x);
-
-        return outputCursorPos;
     }
 
     /**
@@ -1574,7 +1540,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     {
 
         ProofWorksheet proofWorksheet = null;
-        ArrayList proofDerivationStepList;
+        List<ProofDerivationStepEntry> proofDerivationStepList;
 
         try {
             proofDerivationStepList = verifyProofs.getProofDerivationSteps(
@@ -1627,9 +1593,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             }
             else {
                 if (proofAsstPreferences.getProofFormatCompressed()) {
-                    final StringBuffer letters = new StringBuffer();
+                    final StringBuilder letters = new StringBuilder();
 
-                    final ArrayList mandHypList = new ArrayList(), optHypList = new ArrayList();
+                    final List<Hyp> mandHypList = new ArrayList<Hyp>(), optHypList = new ArrayList<Hyp>();
                     ProofUnifier.separateMandAndOptFrame(proofWorksheet,
                         proofWorksheet.getQedStep(), mandHypList, optHypList,
                         true);
@@ -1638,7 +1604,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                         .getRPNProofRightCol()
                         - proofWorksheet.proofAsstPreferences
                             .getRPNProofLeftCol() + 1;
-                    final ArrayList<Stmt> parenList = logicalSystem
+                    final List<Stmt> parenList = logicalSystem
                         .getProofCompression().compress(
                             proofWorksheet.getTheoremLabel(), width,
                             mandHypList, optHypList, rpnProof, letters);
@@ -1747,7 +1713,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         return label;
     }
 
-    public Iterator getSortedSkipSeqTheoremIterator(
+    public Iterable<Theorem> getSortedSkipSeqTheoremIterable(
         final String startTheoremLabel) throws ProofAsstException
     {
         int lowestMObjSeq = 0;
@@ -1755,28 +1721,21 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             final Theorem theorem = getTheorem(startTheoremLabel);
             if (theorem == null)
                 throw new ProofAsstException(
-                    PaConstants.ERRMSG_ITERATOR_START_THEOREM_NOT_FOUND_1
+                    PaConstants.ERRMSG_PA_START_THEOREM_NOT_FOUND_1
                         + startTheoremLabel);
             lowestMObjSeq = theorem.getSeq();
         }
 
-        return getSortedTheoremIterator(lowestMObjSeq);
+        return getSortedTheoremIterable(lowestMObjSeq);
     }
 
-    private Iterator getSortedTheoremIterator() {
-        return getSortedTheoremIterator(0);
-    }
+    private Iterable<Theorem> getSortedTheoremIterable(final int lowestMObjSeq)
+    {
 
-    private Iterator getSortedTheoremIterator(final int lowestMObjSeq) {
+        sortedTheoremList = new ArrayList<Theorem>(logicalSystem.getStmtTbl()
+            .size());
 
-        sortedTheoremList = new ArrayList(logicalSystem.getStmtTbl().size());
-
-        final Collection collection = logicalSystem.getStmtTbl().values();
-
-        final Iterator collIterator = collection.iterator();
-        Stmt stmt;
-        while (collIterator.hasNext()) {
-            stmt = (Stmt)collIterator.next();
+        for (final Stmt stmt : logicalSystem.getStmtTbl().values())
             if (stmt.getSeq() >= lowestMObjSeq && stmt.isAssrt()
                 && stmt.getFormula().getTyp() == getProvableLogicStmtTyp()
                 && !((Assrt)stmt).isAxiom() &&
@@ -1785,12 +1744,11 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 // exception because its proof is invalid
                 // for the mmj2 Proof Assistant.
                 !proofAsstPreferences.checkUnifySearchExclude((Assrt)stmt))
-                sortedTheoremList.add(stmt);
-        }
+                sortedTheoremList.add((Theorem)stmt);
 
         Collections.sort(sortedTheoremList, MObj.SEQ);
 
-        return sortedTheoremList.iterator();
+        return sortedTheoremList;
     }
 
     private Cnst getProvableLogicStmtTyp() {
@@ -1802,7 +1760,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             || proofWorksheet.newTheorem
             || !proofAsstPreferences.getDjVarsSoftErrorsGenerate()
             || proofWorksheet.proofSoftDjVarsErrorList == null
-            || proofWorksheet.proofSoftDjVarsErrorList.size() == 0)
+            || proofWorksheet.proofSoftDjVarsErrorList.isEmpty())
             return;
 
         if (proofAsstPreferences.getImportCompareDJs())
@@ -1842,7 +1800,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      *  element is Superflous...
      */
     private void importCompareDJs(final ProofWorksheet proofWorksheet) {
-        final ArrayList superfluous = new ArrayList();
+        final List<DjVars> superfluous = new ArrayList<DjVars>();
         final MandFrame mandFrame = proofWorksheet.theorem.getMandFrame();
         int compare;
         Loop1: for (int i = 0; i < mandFrame.djVarsArray.length; i++) {
@@ -1862,24 +1820,16 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             continue Loop1;
         }
 
-        if (superfluous.size() > 0) {
-            final StringBuffer sb = new StringBuffer();
-            sb.append(PaConstants.ERRMSG_SUPERFLUOUS_MANDFRAME_DJVARS_1);
-            sb.append(proofWorksheet.theorem.getLabel());
-            sb.append(PaConstants.ERRMSG_SUPERFLUOUS_MANDFRAME_DJVARS_2);
-            final Iterator i = superfluous.iterator();
-            sb.append(((DjVars)i.next()).toString());
-            while (i.hasNext()) {
-                sb.append(PaConstants.ERRMSG_SUPERFLUOUS_MANDFRAME_DJVARS_3);
-
-                sb.append(((DjVars)i.next()).toString());
-            }
-            messages.accumInfoMessage(sb.toString());
-        }
+        if (!superfluous.isEmpty())
+            messages
+                .accumInfoMessage(PaConstants.ERRMSG_SUPERFLUOUS_MANDFRAME_DJVARS_1
+                    + proofWorksheet.theorem.getLabel()
+                    + PaConstants.ERRMSG_SUPERFLUOUS_MANDFRAME_DJVARS_2
+                    + superfluous);
     }
 
     private void importUpdateDJs(final ProofWorksheet proofWorksheet) {
-        final ArrayList list = new ArrayList();
+        final List<DjVars> list = new ArrayList<DjVars>();
 
         final MandFrame mandFrame = proofWorksheet.theorem.getMandFrame();
 
@@ -1888,7 +1838,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 list.add(element);
         final DjVars[] djArray = new DjVars[list.size()];
         for (int i = 0; i < djArray.length; i++)
-            djArray[i] = (DjVars)list.get(i);
+            djArray[i] = list.get(i);
         mandFrame.djVarsArray = djArray;
     }
 }

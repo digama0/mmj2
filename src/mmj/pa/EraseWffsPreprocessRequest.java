@@ -76,7 +76,7 @@ public class EraseWffsPreprocessRequest extends PreprocessRequest {
     }
 
     private String getFirstTokenIfHasRefLabel(final String s) {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         int cntColons = 0;
         int i = 0;
         char c;

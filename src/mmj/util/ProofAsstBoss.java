@@ -70,8 +70,7 @@ package mmj.util;
 
 import java.awt.Color;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.*;
 
 import mmj.lang.*;
 import mmj.mmio.MMIOException;
@@ -1056,10 +1055,11 @@ public class ProofAsstBoss extends Boss {
         final LogicalSystem logicalSystem = batchFramework.logicalSystemBoss
             .getLogicalSystem();
 
-        final Map stmtTbl = logicalSystem.getStmtTbl();
+        final Map<String, Stmt> stmtTbl = logicalSystem.getStmtTbl();
         Stmt stmt;
 
-        final ArrayList excludedList = new ArrayList(runParm.values.length + 1);
+        final List<Stmt> excludedList = new ArrayList<Stmt>(
+            runParm.values.length + 1);
 
         Object mapValue;
         String label;

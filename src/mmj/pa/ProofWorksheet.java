@@ -200,7 +200,7 @@ public class ProofWorksheet {
     Tokenizer proofTextTokenizer;
     TMFFPreferences tmffPreferences;
     TMFFStateParams tmffSP;
-    StringBuffer tmffFormulaSB;
+    StringBuilder tmffFormulaSB;
 
     StepSelectorResults stepSelectorResults = null;
     StepRequest stepRequest = null;
@@ -222,7 +222,7 @@ public class ProofWorksheet {
     /* friendly */int maxSeq = Integer.MAX_VALUE;
 
     /* friendly */MandFrame comboFrame;
-    /* friendly */HashMap comboVarMap;
+    /* friendly */Map<String, Var> comboVarMap;
 
     public VarHyp getVarHypFromComboFrame(final Var v) {
         final Hyp[] a = comboFrame.hypArray;
@@ -232,7 +232,7 @@ public class ProofWorksheet {
         return null;
     }
 
-    /* friendly */ArrayList proofWorkStmtList;
+    /* friendly */List<ProofWorkStmt> proofWorkStmtList;
     /* friendly */HeaderStmt headerStmt;
 
     /* friendly */FooterStmt footerStmt;
@@ -253,8 +253,7 @@ public class ProofWorksheet {
 
     /* friendly */ProofAsstCursor proofInputCursor;
 
-    // this is an an ArrayList of ArrayLists
-    /* friendly */ArrayList proofSoftDjVarsErrorList;
+    /* friendly */List<List<DjVars>> proofSoftDjVarsErrorList;
 
     /**
      *  Constructor for skeletal ProofWorksheet.
@@ -285,7 +284,7 @@ public class ProofWorksheet {
         setStructuralErrors(structuralErrors);
         this.proofCursor = proofCursor;
         proofInputCursor = new ProofAsstCursor();
-        proofWorkStmtList = new ArrayList();
+        proofWorkStmtList = new ArrayList<ProofWorkStmt>();
     }
 
     /**
@@ -317,7 +316,7 @@ public class ProofWorksheet {
         proofCursor = new ProofAsstCursor();
         proofInputCursor = new ProofAsstCursor();
 
-        proofWorkStmtList = new ArrayList();
+        proofWorkStmtList = new ArrayList<ProofWorkStmt>();
 
         // initialize StepUnifier prior to parsing input
         // tokens, which may contain work variables!!!
@@ -357,7 +356,7 @@ public class ProofWorksheet {
         proofCursor = new ProofAsstCursor();
         proofInputCursor = new ProofAsstCursor();
 
-        proofWorkStmtList = new ArrayList();
+        proofWorkStmtList = new ArrayList<ProofWorkStmt>();
 
         initTMFF();
 
@@ -386,7 +385,7 @@ public class ProofWorksheet {
      *  This constructor is used by ProofAsst.exportToFile().
      *
      *  @param theorem to be used to create ProofWorksheet.
-     *  @param proofDerivationStepList ArrayList of
+     *  @param proofDerivationStepList List of
      *                   mmj.verify.ProofDerivationStepEntry
      *                   created by VerifyProofs
      *  @param proofAsstPreferences variable settings
@@ -396,7 +395,8 @@ public class ProofWorksheet {
      *                  error and informational messages.
      */
     public ProofWorksheet(final Theorem theorem,
-        final ArrayList proofDerivationStepList, final boolean deriveFormulas,
+        final List<ProofDerivationStepEntry> proofDerivationStepList,
+        final boolean deriveFormulas,
         final ProofAsstPreferences proofAsstPreferences,
         final LogicalSystem logicalSystem, final Grammar grammar,
         final Messages messages)
@@ -420,7 +420,7 @@ public class ProofWorksheet {
 
         loadComboFrameAndVarMap(); // for formula parsing
 
-        proofWorkStmtList = new ArrayList();
+        proofWorkStmtList = new ArrayList<ProofWorkStmt>();
 
         buildHeader(theorem.getLabel());
 
@@ -434,7 +434,7 @@ public class ProofWorksheet {
     private void initTMFF() {
         tmffPreferences = proofAsstPreferences.getTMFFPreferences();
 
-        tmffFormulaSB = new StringBuffer();
+        tmffFormulaSB = new StringBuilder();
 
         tmffSP = new TMFFStateParams(tmffFormulaSB, 0, // prevColNbr
             tmffPreferences);
@@ -603,27 +603,24 @@ public class ProofWorksheet {
      *  @return the HypothesisStep if found, or null.
      */
     public HypothesisStep getHypothesisStepFromList(final LogHyp h) {
-        final Iterator iterator = getProofWorkStmtListIterator();
-        while (iterator.hasNext()) {
-            final ProofWorkStmt w = (ProofWorkStmt)iterator.next();
+        for (final ProofWorkStmt w : getProofWorkStmtList())
             if (w.isHypothesisStep()) {
                 final HypothesisStep hypothesisStep = (HypothesisStep)w;
                 if (h == hypothesisStep.getRef())
                     return hypothesisStep;
             }
-        }
         return null;
     }
 
     /**
-     *  Returns an Iterator over the ProofWorksheet
+     *  Returns an Iterable over the ProofWorksheet
      *  ProofWorkStmt ArrayList.
      *  <p>
      *
-     *  @return Iterator over ProofWorkStmtList.
+     *  @return Iterable over ProofWorkStmtList.
      */
-    public Iterator getProofWorkStmtListIterator() {
-        return proofWorkStmtList.iterator();
+    public Iterable<ProofWorkStmt> getProofWorkStmtList() {
+        return proofWorkStmtList;
     }
 
     /**
@@ -652,10 +649,7 @@ public class ProofWorksheet {
      */
     public int computeProofWorkStmtLineNbr(final ProofWorkStmt x) {
         int total = 0;
-        ProofWorkStmt y;
-        final Iterator iterator = getProofWorkStmtListIterator();
-        while (iterator.hasNext()) {
-            y = (ProofWorkStmt)iterator.next();
+        for (final ProofWorkStmt y : getProofWorkStmtList()) {
             if (x == y)
                 return total + 1;
             total += y.getLineCnt();
@@ -671,10 +665,7 @@ public class ProofWorksheet {
      */
     public ProofWorkStmt computeProofWorkStmtOfLineNbr(final int n) {
         int total = 0;
-        ProofWorkStmt y;
-        final Iterator iterator = getProofWorkStmtListIterator();
-        while (iterator.hasNext()) {
-            y = (ProofWorkStmt)iterator.next();
+        for (final ProofWorkStmt y : getProofWorkStmtList()) {
             if (total + y.getLineCnt() >= n)
                 return y;
             total += y.getLineCnt();
@@ -690,13 +681,9 @@ public class ProofWorksheet {
      *          ProofWorkStmt's.
      */
     public int computeTotalLineCnt() {
-        final Iterator iterator = proofWorkStmtList.iterator();
-        ProofWorkStmt x;
         int total = 0;
-        while (iterator.hasNext()) {
-            x = (ProofWorkStmt)iterator.next();
+        for (final ProofWorkStmt x : proofWorkStmtList)
             total += x.getLineCnt();
-        }
         return total;
     }
 
@@ -823,17 +810,12 @@ public class ProofWorksheet {
                 PaConstants.FIELD_ID_REF);
     }
 
-//	public boolean hasIncompleteStmt() {
-//      ProofWorkStmt s;
-//      Iterator i                = getProofWorkStmtListIterator();
-//      while (i.hasNext()) {
-//          s                     = (ProofWorkStmt)i.next();
-//          if (s.stmtIsIncomplete()) {
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
+//    public boolean hasIncompleteStmt() {
+//        for (final ProofWorkStmt s : getProofWorkStmtList())
+//            if (s.stmtIsIncomplete())
+//                return true;
+//        return false;
+//    }
 
     /**
      *  Positions the ProofWorksheet ProofCursor at the
@@ -845,7 +827,7 @@ public class ProofWorksheet {
         ProofWorkStmt s;
         int i = proofWorkStmtList.size();
         while (--i > 0) {
-            s = (ProofWorkStmt)proofWorkStmtList.get(i);
+            s = proofWorkStmtList.get(i);
 
             if (s.stmtIsIncomplete()) {
                 proofCursor.setCursorAtProofWorkStmt(s,
@@ -862,17 +844,12 @@ public class ProofWorksheet {
      */
     public void posCursorAtFirstIncompleteStmt() {
 
-        ProofWorkStmt s;
-        final Iterator i = getProofWorkStmtListIterator();
-        while (i.hasNext()) {
-            s = (ProofWorkStmt)i.next();
-
+        for (final ProofWorkStmt s : getProofWorkStmtList())
             if (s.stmtIsIncomplete()) {
                 proofCursor.setCursorAtProofWorkStmt(s,
                     PaConstants.FIELD_ID_REF);
                 break;
             }
-        }
     }
 
     public void outputCursorInstrumentationIfEnabled() {
@@ -917,15 +894,11 @@ public class ProofWorksheet {
         final ProofStepStmt exclusiveEndpointStep)
     {
 
-        final Iterator iterator = getProofWorkStmtListIterator();
-        ProofWorkStmt o;
-        ProofStepStmt matchStep;
-        while (iterator.hasNext()) {
-            o = (ProofWorkStmt)iterator.next();
+        for (final ProofWorkStmt o : getProofWorkStmtList()) {
             if (o == exclusiveEndpointStep)
                 break;
             if (o.isProofStep()) {
-                matchStep = (ProofStepStmt)o;
+                final ProofStepStmt matchStep = (ProofStepStmt)o;
                 if (matchStep.formula.equals(searchFormula))
                     return matchStep;
             }
@@ -943,49 +916,36 @@ public class ProofWorksheet {
      */
     public void renumberProofSteps(final int renumberInterval) {
 
-        final Iterator iterator = getProofWorkStmtListIterator();
-        ProofWorkStmt o;
-
-        ProofStepStmt renumberProofStepStmt;
-        HypothesisStep renumberHypothesisStep;
-        DerivationStep renumberDerivationStep;
-
         int renumber = 100;
-        String renumberStep;
-        String oldStep;
 
-        final HashMap renumberHashMap = new HashMap(
+        final Map<String, String> renumberMap = new HashMap<String, String>(
             getProofWorkStmtListCnt() * 2);
 
-        while (iterator.hasNext()) {
-            o = (ProofWorkStmt)iterator.next();
+        for (final ProofWorkStmt o : getProofWorkStmtList()) {
             if (!o.isProofStep())
                 continue;
 
-            renumberProofStepStmt = (ProofStepStmt)o;
-            oldStep = renumberProofStepStmt.step;
+            final ProofStepStmt renumberProofStepStmt = (ProofStepStmt)o;
+            final String oldStep = renumberProofStepStmt.step;
 
             renumber += renumberInterval;
-            renumberStep = Integer.toString(renumber);
+            final String renumberStep = Integer.toString(renumber);
 
             if (!oldStep.equals(renumberStep)
                 && !oldStep.equals(PaConstants.QED_STEP_NBR))
-                renumberHashMap.put(oldStep, renumberStep);
+                renumberMap.put(oldStep, renumberStep);
 
             // no attempt at polymorphism, just quick and dirty fix
             if (o.isHypothesisStep()) {
-                renumberHypothesisStep = (HypothesisStep)o;
-                renumberHypothesisStep.renum(renumberHashMap);
+                ((HypothesisStep)o).renum(renumberMap);
                 continue;
             }
             if (o.isDerivationStep()) {
-                renumberDerivationStep = (DerivationStep)o;
-                renumberDerivationStep.renum(renumberHashMap);
+                ((DerivationStep)o).renum(renumberMap);
                 continue;
             }
         }
     }
-
     /**
      *  Reformats all or just one ProofStepStmt using TMFF.
      *
@@ -1001,11 +961,9 @@ public class ProofWorksheet {
                 && (o = proofInputCursor.proofWorkStmt) != null)
                 o.tmffReformat();
         }
-        else {
-            final Iterator i = getProofWorkStmtListIterator();
-            while (i.hasNext())
-                (o = (ProofWorkStmt)i.next()).tmffReformat();
-        }
+        else
+            for (final ProofWorkStmt w : getProofWorkStmtList())
+                (o = w).tmffReformat();
 
         if (o == getQedStep())
             doubleSpaceQedStep();
@@ -1029,7 +987,7 @@ public class ProofWorksheet {
      *  proofWorkStmtList ArrayList on behalf of
      *  ProofUnifier.
      *  <p>
-     *  If workVarList.size() > 0 then the new step
+     *  If !workVarList.isEmpty() then the new step
      *  is marked incomplete and given a Hyp = "?" -- no
      *  unification need be attempted. Otherwise, unification
      *  can be attempted using no Hyps. If this fails then
@@ -1037,7 +995,7 @@ public class ProofWorksheet {
      *  can be updated to show Hyp "?" (this is a helpful
      *  feature for the users, going the extra mile...)
      *
-     *  @param workVarList ArrayList of Work Vars in formula.
+     *  @param workVarList List of Work Vars in formula.
      *  @param formula Formula of new step.
      *  @param formulaParseTree ParseTree of new Formula
      *  @param derivStep insert point for new step.
@@ -1045,7 +1003,7 @@ public class ProofWorksheet {
      *  @return DerivationStep added to the ProofWorksheet.
      */
     public DerivationStep addDerivStepForDeriveFeature(
-        final ArrayList workVarList, final Formula formula,
+        final List<Var> workVarList, final Formula formula,
         final ParseTree formulaParseTree, final DerivationStep derivStep)
     {
 
@@ -1058,7 +1016,7 @@ public class ProofWorksheet {
         boolean generatedHypFldIncomplete = false;
         boolean generatedFormulaIsIncomplete = false;
 
-        if (workVarList.size() > 0) {
+        if (!workVarList.isEmpty()) {
             generatedHyp = new ProofStepStmt[1];
             generatedHypStep = new String[1];
             generatedHypStep[0] = PaConstants.DEFAULT_STMT_LABEL;
@@ -1174,7 +1132,7 @@ public class ProofWorksheet {
             else
                 stepSelectorChoiceRequired = true;
 
-        final ArrayList stepsWithLocalRefs = new ArrayList();
+        final List<DerivationStep> stepsWithLocalRefs = new ArrayList<DerivationStep>();
 
         if (nextToken.length() == 0)
             triggerLoadStructureException(PaConstants.ERRMSG_PROOF_EMPTY_1);
@@ -1476,7 +1434,7 @@ public class ProofWorksheet {
                 + getErrorLabelIfPossible()
                 + PaConstants.ERRMSG_SELECTOR_CHOICE_STEP_NOTFND_2);
 
-        if (stepsWithLocalRefs.size() > 0)
+        if (!stepsWithLocalRefs.isEmpty())
             makeLocalRefRevisionsToWorksheet(stepsWithLocalRefs);
 
         loadWorksheetStmtArrays();
@@ -1543,7 +1501,7 @@ public class ProofWorksheet {
      *  delete each localRef step from the ProofWorksheet.
      */
     private void makeLocalRefRevisionsToWorksheet(
-        final ArrayList stepsWithLocalRefs)
+        final List<DerivationStep> stepsWithLocalRefs)
     {
         ProofWorkStmt x;
         DerivationStep dI;
@@ -1551,7 +1509,7 @@ public class ProofWorksheet {
         boolean stepUpdated;
 
         loopI: for (int i = proofWorkStmtList.size() - 1; i > 0; i--) {
-            x = (ProofWorkStmt)proofWorkStmtList.get(i);
+            x = proofWorkStmtList.get(i);
 
             if (!x.isDerivationStep())
                 continue loopI;
@@ -1562,9 +1520,9 @@ public class ProofWorksheet {
 
             stepUpdated = false;
             for (int j = stepsWithLocalRefs.size() - 1; j >= 0; j--) {
-                dJ = (DerivationStep)stepsWithLocalRefs.get(j);
+                dJ = stepsWithLocalRefs.get(j);
 
-                loopK: for (int k = dI.hyp.length - 1; k >= 0; k--)
+                for (int k = dI.hyp.length - 1; k >= 0; k--)
                     if (dI.hyp[k] == dJ) {
                         stepUpdated = true;
                         dI.hypStep[k] = dJ.localRef.step;
@@ -1580,8 +1538,7 @@ public class ProofWorksheet {
         }
 
         for (int j = stepsWithLocalRefs.size() - 1; j >= 0; j--)
-            removeFromProofWorkStmtList((ProofWorkStmt)stepsWithLocalRefs
-                .get(j));
+            removeFromProofWorkStmtList(stepsWithLocalRefs.get(j));
     }
 
     // fix the cursor: localRef step going byebye!
@@ -1603,14 +1560,14 @@ public class ProofWorksheet {
         ProofWorkStmt s;
 
         for (int i = proofWorkStmtList.size() - 1; i > 0; i--) {
-            s = (ProofWorkStmt)proofWorkStmtList.get(i);
+            s = proofWorkStmtList.get(i);
             if (s == qedStep) {
                 int stepIndex = i;
                 while (true) {
                     if (s.isDerivationStep())
                         ((DerivationStep)s).loadDerivationStepHypLevels();
                     if (--stepIndex > 0)
-                        s = (ProofWorkStmt)proofWorkStmtList.get(stepIndex);
+                        s = proofWorkStmtList.get(stepIndex);
                     else
                         return;
                 }
@@ -1649,7 +1606,7 @@ public class ProofWorksheet {
             && messages.getInfoMessageCnt() == 0)
             return null;
 
-        final StringBuffer sb = new StringBuffer(
+        final StringBuilder sb = new StringBuilder(
             (messages.getErrorMessageCnt() + messages.getInfoMessageCnt()) * 80); // guessing
                                                                                   // average
                                                                                   // message
@@ -1688,13 +1645,10 @@ public class ProofWorksheet {
         if (hasStructuralErrors())
             return null;
 
-        final StringBuffer sb = new StringBuffer(proofWorkStmtList.size() * 80);
-        final Iterator iterator = proofWorkStmtList.iterator();
-        ProofWorkStmt x;
-        while (iterator.hasNext()) {
-            x = (ProofWorkStmt)iterator.next();
+        final StringBuilder sb = new StringBuilder(
+            proofWorkStmtList.size() * 80);
+        for (final ProofWorkStmt x : proofWorkStmtList)
             x.appendToProofText(sb);
-        }
         return sb.toString();
     }
 
@@ -1712,7 +1666,7 @@ public class ProofWorksheet {
         generatedProofStmt = x;
     }
 
-    public void addGeneratedProofStmt(final ArrayList<Stmt> parenList,
+    public void addGeneratedProofStmt(final List<Stmt> parenList,
         final String letters)
     {
         final GeneratedProofStmt x = new GeneratedProofStmt(this, parenList,
@@ -1782,13 +1736,13 @@ public class ProofWorksheet {
             replDvArray = DjVars.sortAndCombineDvArrays(comboFrame.djVarsArray,
                 diffDvArray);
 
-        ArrayList dvGroups1;
+        List<List<Var>> dvGroups1;
         if (proofAsstPreferences.getDjVarsSoftErrorsGenerateDiffs())
             dvGroups1 = MandFrame.consolidateDvGroups(diffDvArray);
         else
             dvGroups1 = MandFrame.consolidateDvGroups(replDvArray);
 
-        final ArrayList dvGroups = DistinctVariablesStmt
+        final List<List<Var>> dvGroups = DistinctVariablesStmt
             .eliminateDvGroupsAlreadyPresent(dvStmtArray, dvGroups1);
 
         final int newDvStmtCnt = dvStmtCnt + dvGroups.size();
@@ -1801,10 +1755,9 @@ public class ProofWorksheet {
             ++loadIndex;
         } // ok, now create the rest...
 
-        DistinctVariablesStmt x;
-        final Iterator iterator = dvGroups.iterator();
-        while (iterator.hasNext()) {
-            x = new DistinctVariablesStmt(this, (ArrayList)iterator.next());
+        for (final List<Var> dvGroup : dvGroups) {
+            final DistinctVariablesStmt x = new DistinctVariablesStmt(this,
+                dvGroup);
 
             // add just before footer
             proofWorkStmtList.add(proofWorkStmtList.size() - 1, x);
@@ -1822,25 +1775,16 @@ public class ProofWorksheet {
     }
 
     public ProofWorkStmt findFirstMatchingRefOrStep(final String localRef) {
-        final Iterator iterator = proofWorkStmtList.iterator();
-        ProofWorkStmt x;
-        while (iterator.hasNext()) {
-            x = (ProofWorkStmt)iterator.next();
+        for (final ProofWorkStmt x : proofWorkStmtList)
             if (x.hasMatchingRefLabel(localRef)
                 || x.hasMatchingStepNbr(localRef))
                 return x;
-        }
         return null;
     }
-
     public ProofWorkStmt findMatchingStepNbr(final String newStepNbr) {
-        final Iterator iterator = proofWorkStmtList.iterator();
-        ProofWorkStmt x;
-        while (iterator.hasNext()) {
-            x = (ProofWorkStmt)iterator.next();
+        for (final ProofWorkStmt x : proofWorkStmtList)
             if (x.hasMatchingStepNbr(newStepNbr))
                 return x;
-        }
         return null;
     }
 
@@ -1865,8 +1809,8 @@ public class ProofWorksheet {
      */
     public void loadComboFrameAndVarMap() {
         if (isNewTheorem())
-            comboFrame = new MandFrame((ScopeDef)logicalSystem
-                .getScopeDefList().get(0), getMaxSeq());
+            comboFrame = new MandFrame(logicalSystem.getScopeDefList().get(0),
+                getMaxSeq());
         else
             comboFrame = new MandFrame(theorem.getMandFrame(),
                 theorem.getOptFrame());
@@ -1962,7 +1906,6 @@ public class ProofWorksheet {
 
         final String[] dummyHypStep = {""};
 
-        final DerivationStep derivationStep;
         HypothesisStep hypothesisStep;
 
         final LogHyp[] logHypArray = t.getLogHypArray();
@@ -2014,7 +1957,8 @@ public class ProofWorksheet {
     }
 
     private void buildExportTheoremProofBody(final Theorem theorem,
-        final ArrayList proofDerivationStepList, final boolean deriveFormulas)
+        final List<ProofDerivationStepEntry> proofDerivationStepList,
+        final boolean deriveFormulas)
     {
 
         DerivationStep derivationStep = null;
@@ -2027,7 +1971,7 @@ public class ProofWorksheet {
 
         final int stepCnt = proofDerivationStepList.size();
         for (int i = 0; i < stepCnt; i++) {
-            e = (ProofDerivationStepEntry)proofDerivationStepList.get(i);
+            e = proofDerivationStepList.get(i);
 
             if (deriveFormulas
                 && e.step.compareToIgnoreCase(PaConstants.QED_STEP_NBR) != 0
@@ -2130,13 +2074,9 @@ public class ProofWorksheet {
         // load proof steps and $d's into convenient arrays
         dvStmtArray = new DistinctVariablesStmt[dvStmtCnt];
 
-        final Iterator iterator = proofWorkStmtList.iterator();
-        ProofWorkStmt x;
         int dv = 0;
-        while (iterator.hasNext()) {
-            x = (ProofWorkStmt)iterator.next();
+        for (final ProofWorkStmt x : proofWorkStmtList)
             if (x instanceof DistinctVariablesStmt)
                 dvStmtArray[dv++] = (DistinctVariablesStmt)x;
-        }
     }
 }

@@ -92,13 +92,13 @@ public class DerivationStep extends ProofStepStmt {
     int unificationStatus;
     int djVarsErrorStatus;
 
-    ArrayList softDjVarsErrorList;
+    List<DjVars> softDjVarsErrorList;
 
     boolean verifyProofError;
 
     String heldDjErrorMessage;
 
-    ArrayList alternateRefList;
+    List<Assrt> alternateRefList;
 
     // new fields for Proof Assistant "Derive" Feature:
     boolean deriveStepFormula; // for Derive
@@ -228,14 +228,14 @@ public class DerivationStep extends ProofStepStmt {
      *  @param generatedFormulaFldIncomplete
      *  @param generatedHypFldIncomplete
      *  @param generatedFlag true means "generated".
-     *  @param generatedWorkVarList ArrayList of Work Vars in formula
+     *  @param generatedWorkVarList List of Work Vars in formula
      */
     public DerivationStep(final ProofWorksheet w, final String generatedStep,
         final ProofStepStmt[] generatedHyp, final String[] generatedHypStep,
         final Formula generatedFormula, final ParseTree generatedParseTree,
         final boolean generatedFormulaFldIncomplete,
         final boolean generatedHypFldIncomplete, final boolean generatedFlag,
-        final ArrayList generatedWorkVarList)
+        final List<Var> generatedWorkVarList)
     {
 
         super(w, generatedStep, "", false); // don't set caret.
@@ -248,7 +248,7 @@ public class DerivationStep extends ProofStepStmt {
         formulaFldIncomplete = generatedFormulaFldIncomplete;
         hypFldIncomplete = generatedHypFldIncomplete;
         generatedByDeriveFeature = generatedFlag;
-        if (generatedWorkVarList.size() == 0)
+        if (generatedWorkVarList.isEmpty())
             workVarList = null;
         else
             workVarList = generatedWorkVarList;
@@ -329,12 +329,12 @@ public class DerivationStep extends ProofStepStmt {
      *  Renumbers step numbers using a HashMap containing
      *  old and new step number pairs.
      *
-     *  @param renumberHashMap contains key/value pairs defining
+     *  @param renumberMap contains key/value pairs defining
      *                         newly assigned step numbers.
      */
-    public void renum(final HashMap renumberHashMap) {
+    public void renum(final Map<String, String> renumberMap) {
 
-        String newNum = (String)renumberHashMap.get(step);
+        String newNum = renumberMap.get(step);
         boolean changes = false;
         if (newNum != null) {
             step = newNum;
@@ -342,7 +342,7 @@ public class DerivationStep extends ProofStepStmt {
         }
 
         for (int i = 0; i < hypStep.length; i++) {
-            newNum = (String)renumberHashMap.get(hypStep[i]);
+            newNum = renumberMap.get(hypStep[i]);
             if (newNum != null) {
                 hypStep[i] = newNum;
                 changes = true;
@@ -447,7 +447,7 @@ public class DerivationStep extends ProofStepStmt {
                 (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                     - lineStartCharNbr);
 
-        final int nbrQuestionMarkHypsInput = parseHypField(hypField);
+        parseHypField(hypField);
         hyp = new ProofStepStmt[hypStep.length];
 
         final int nbrValidHyps = checkForValidHypEntries(lineStartCharNbr,
@@ -571,14 +571,10 @@ public class DerivationStep extends ProofStepStmt {
         }
 
         // recompute referencing steps' L1HiLo key values;
-        final Iterator iterator = w.getProofWorkStmtListIterator();
-        ProofWorkStmt o;
-        DerivationStep d;
-        while (iterator.hasNext()) {
-            o = (ProofWorkStmt)iterator.next();
+        for (final ProofWorkStmt o : w.getProofWorkStmtList()) {
             if (o == this || !o.isDerivationStep())
                 continue;
-            d = (DerivationStep)o;
+            final DerivationStep d = (DerivationStep)o;
             if (d.hyp == null)
                 continue;
             for (final ProofStepStmt element : d.hyp)
@@ -617,12 +613,12 @@ public class DerivationStep extends ProofStepStmt {
 
     /**
      *  Creates the Step/Hyp/Ref field and loads it into
-     *  a new StringBuffer.
+     *  a new StringBuilder.
      *  <p>
-     *  @return StringBuffer containing new Step/Hyp/Ref.
+     *  @return StringBuilder containing new Step/Hyp/Ref.
      */
-    public StringBuffer buildStepHypRefSB() {
-        final StringBuffer sb = new StringBuffer();
+    public StringBuilder buildStepHypRefSB() {
+        final StringBuilder sb = new StringBuilder();
 
         sb.append(step);
         sb.append(PaConstants.FIELD_DELIMITER_COLON);
@@ -687,31 +683,29 @@ public class DerivationStep extends ProofStepStmt {
      *  Builds an error message detailing the "soft" DjVars errors
      *  and stores it in the heldDjErrorMessage field.
      *  <p>
-     *  @param softDjVarsErrorList ArrayList of DjVars reported
+     *  @param softDjVarsErrorList List of DjVars reported
      *             to be missing from the Dj Vars of the theorem
      *             which are needed by the Derivation Step.
      */
-    public void buildSoftDjErrorMessage(final ArrayList softDjVarsErrorList) {
+    public void buildSoftDjErrorMessage(final List<DjVars> softDjVarsErrorList)
+    {
 
         heldDjErrorMessage = null;
         if (softDjVarsErrorList == null || softDjVarsErrorList.isEmpty())
             return;
 
-        final StringBuffer s = new StringBuffer();
+        final StringBuilder s = new StringBuilder();
         s.append(PaConstants.ERRMSG_SUBST_TO_VARS_NOT_DJ_1);
         s.append(step);
         s.append(PaConstants.ERRMSG_SUBST_TO_VARS_NOT_DJ_2);
 
-        final Iterator i = softDjVarsErrorList.iterator();
-        DjVars offenders = (DjVars)i.next();
-        while (true) {
-            s.append(offenders.toString());
-            if (i.hasNext()) {
+        boolean first = false;
+        for (final DjVars offenders : softDjVarsErrorList) {
+            if (first)
+                first = false;
+            else
                 s.append(PaConstants.ERRMSG_SUBST_TO_VARS_NOT_DJ_3);
-                offenders = (DjVars)i.next();
-                continue;
-            }
-            break;
+            s.append(offenders.toString());
         }
 
         heldDjErrorMessage = s.toString();
@@ -773,7 +767,7 @@ public class DerivationStep extends ProofStepStmt {
             return true;
         }
 
-        ref = (Stmt)w.logicalSystem.getStmtTbl().get(refLabel);
+        ref = w.logicalSystem.getStmtTbl().get(refLabel);
         if (ref == null)
             w.triggerLoadStructureException(
                 PaConstants.ERRMSG_REF_NOTFND_1 + w.getErrorLabelIfPossible()
@@ -815,7 +809,7 @@ public class DerivationStep extends ProofStepStmt {
 
         int questionMarks = 0;
 
-        final ArrayList list = new ArrayList();
+        final List<String> list = new ArrayList<String>();
 
         if (hypField != null && !hypField.equals("")) {
 
@@ -829,15 +823,10 @@ public class DerivationStep extends ProofStepStmt {
                 list.add(s);
         }
 
-        hypStep = new String[list.size()];
-        final Iterator iterator = list.iterator();
-        int i = 0;
-        while (iterator.hasNext()) {
-            hypStep[i] = (String)iterator.next();
-            if (hypStep[i].compareTo(PaConstants.DEFAULT_STMT_LABEL) == 0)
+        for (final String step : hypStep = list
+            .toArray(new String[list.size()]))
+            if (step.compareTo(PaConstants.DEFAULT_STMT_LABEL) == 0)
                 ++questionMarks;
-            ++i;
-        }
 
         return questionMarks;
     }

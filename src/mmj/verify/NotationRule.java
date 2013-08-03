@@ -11,8 +11,6 @@
 
 package mmj.verify;
 
-import java.util.Iterator;
-
 import mmj.lang.*;
 
 /**
@@ -315,19 +313,13 @@ public class NotationRule extends GrammarRule {
      */
     @Override
     public void deriveAdditionalRules(final Grammar grammar) {
-        Iterator iterator = grammar.getNullsPermittedGRList().iterator();
-        NullsPermittedRule nullsPermittedRule;
-        while (iterator.hasNext()) {
-            nullsPermittedRule = (NullsPermittedRule)iterator.next();
+        for (final NullsPermittedRule nullsPermittedRule : grammar
+            .getNullsPermittedGRList())
             deriveRulesUsingNullsPermitted(grammar, nullsPermittedRule);
-        }
 
-        iterator = grammar.getTypeConversionGRList().iterator();
-        TypeConversionRule typeConversionRule;
-        while (iterator.hasNext()) {
-            typeConversionRule = (TypeConversionRule)iterator.next();
+        for (final TypeConversionRule typeConversionRule : grammar
+            .getTypeConversionGRList())
             deriveRulesUsingTypeConversion(grammar, typeConversionRule);
-        }
     }
 
     /**

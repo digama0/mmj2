@@ -43,7 +43,7 @@ import mmj.util.UtilConstants;
  *  <p>
  *  The GMFFExportParms are keyed by exportType.
  */
-public class GMFFExportParms implements Comparable {
+public class GMFFExportParms implements Comparable<GMFFExportParms> {
 
     public final String exportType;
     public String onoff;
@@ -523,18 +523,18 @@ public class GMFFExportParms implements Comparable {
      *
      */
     @Override
-    public int compareTo(final Object obj) {
-        return exportType.compareTo(((GMFFExportParms)obj).exportType);
+    public int compareTo(final GMFFExportParms obj) {
+        return exportType.compareTo(obj.exportType);
     }
 
     /**
      *  EXPORT_TYPE sequences by GMFFExportParms.exportType.
      */
-    static public final Comparator EXPORT_TYPE = new Comparator() {
+    static public final Comparator<GMFFExportParms> EXPORT_TYPE = new Comparator<GMFFExportParms>()
+    {
         @Override
-        public int compare(final Object o1, final Object o2) {
-            return ((GMFFExportParms)o1).exportType
-                .compareTo(((GMFFExportParms)o2).exportType);
+        public int compare(final GMFFExportParms o1, final GMFFExportParms o2) {
+            return o1.compareTo(o2);
         }
     };
 }

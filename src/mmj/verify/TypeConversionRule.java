@@ -22,8 +22,6 @@
 
 package mmj.verify;
 
-import java.util.Iterator;
-
 import mmj.lang.*;
 
 /**
@@ -420,31 +418,22 @@ public class TypeConversionRule extends GrammarRule {
      */
     @Override
     public void deriveAdditionalRules(final Grammar grammar) {
-        Iterator iterator = grammar.getNullsPermittedGRList().iterator();
-        NullsPermittedRule nullsPermittedRule;
-        while (iterator.hasNext()) {
-            nullsPermittedRule = (NullsPermittedRule)iterator.next();
+        for (final NullsPermittedRule nullsPermittedRule : grammar
+            .getNullsPermittedGRList())
             deriveRulesUsingNullsPermitted(grammar, nullsPermittedRule);
-        }
 
-        iterator = grammar.getTypeConversionGRList().iterator();
-        TypeConversionRule typeConversionRule;
-        while (iterator.hasNext()) {
-            typeConversionRule = (TypeConversionRule)iterator.next();
+        for (final TypeConversionRule typeConversionRule : grammar
+            .getTypeConversionGRList())
+        {
             typeConversionRule.deriveRulesUsingTypeConversion(grammar, this);
             // 21 September 2005 fix! go other way also!
             deriveRulesUsingTypeConversion(grammar, typeConversionRule);
 
         }
 
-        iterator = grammar.getNotationGRSet().iterator();
-        NotationRule notationRule;
-        while (iterator.hasNext()) {
-            notationRule = (NotationRule)iterator.next();
+        for (final NotationRule notationRule : grammar.getNotationGRSet())
             notationRule.deriveRulesUsingTypeConversion(grammar, this);
-        }
     }
-
     /**
      *  Generates a NullsPermittedRule *if* the input
      *  NullsPermittedRule Type Code matches the Type Code

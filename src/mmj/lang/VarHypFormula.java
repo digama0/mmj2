@@ -40,8 +40,8 @@ public class VarHypFormula extends Formula {
      *  @param typS   Type Code String.
      *  @param varS   Var id String.
      */
-    public VarHypFormula(final Map symTbl, final String typS, final String varS)
-        throws LangException
+    public VarHypFormula(final Map<String, Sym> symTbl, final String typS,
+        final String varS) throws LangException
     {
         super(symTbl, 2, // formula size
             typS);
@@ -74,7 +74,7 @@ public class VarHypFormula extends Formula {
      *  @param symTbl Symbol Table (Map).
      *  @param varS   the VarHypFormula's Var id String.
      */
-    public Var setVarHypVar(final Map symTbl, final String varS)
+    public Var setVarHypVar(final Map<String, Sym> symTbl, final String varS)
         throws LangException
     {
 

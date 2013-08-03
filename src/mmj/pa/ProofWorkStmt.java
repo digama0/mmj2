@@ -51,7 +51,7 @@ public abstract class ProofWorkStmt {
     /**
      *  Output format content of statement
      */
-    StringBuffer stmtText;
+    StringBuilder stmtText;
 
     /**
      *  Get count of number of lines used by this ProofWorkStmt.
@@ -180,7 +180,7 @@ public abstract class ProofWorkStmt {
     {
         final int currLineNbr = (int)w.proofTextTokenizer.getCurrentLineNbr();
 
-        stmtText = new StringBuffer();
+        stmtText = new StringBuilder();
 
         final String nextT = loadAllStmtTextGetNextStmt(firstToken);
 
@@ -189,12 +189,12 @@ public abstract class ProofWorkStmt {
     }
 
     /**
-     *  Appends the contents of the input StringBuffer
+     *  Appends the contents of the input StringBuilder
      *  to the ProofWorkStmt formula area.
      *
-     *  @param sb StringBuffer to append to stmtText.
+     *  @param sb StringBuilder to append to stmtText.
      */
-    public void appendToProofText(final StringBuffer sb) {
+    public void appendToProofText(final StringBuilder sb) {
         sb.append(stmtText);
     }
 
@@ -222,7 +222,7 @@ public abstract class ProofWorkStmt {
      *  <p>
      *  @return ProofWorkStmt stmtText area.
      */
-    public StringBuffer getStmtText() {
+    public StringBuilder getStmtText() {
         return stmtText;
     }
 
@@ -268,7 +268,7 @@ public abstract class ProofWorkStmt {
         final int lenW = w.proofTextTokenizer.getWhiteSpace(stmtText,
             stmtText.length());
         if (lenW >= 0) {
-            final StringBuffer outSB = new StringBuffer();
+            final StringBuilder outSB = new StringBuilder();
             final int lenT = w.proofTextTokenizer.getToken(outSB, 0);
             if (lenT > 0) {
                 outToken = outSB.toString();
@@ -307,7 +307,7 @@ public abstract class ProofWorkStmt {
         final int lenW = w.proofTextTokenizer.getWhiteSpace(stmtText,
             stmtText.length());
         if (lenW >= 0) {
-            final StringBuffer outSB = new StringBuffer();
+            final StringBuilder outSB = new StringBuilder();
             final int lenT = w.proofTextTokenizer.getToken(outSB, 0);
             if (lenT > 0)
                 return outSB.toString();
@@ -336,7 +336,7 @@ public abstract class ProofWorkStmt {
         final int lenW = w.proofTextTokenizer.getWhiteSpace(stmtText,
             stmtText.length());
         if (lenW >= 0) {
-            final StringBuffer outSB = new StringBuffer();
+            final StringBuilder outSB = new StringBuilder();
             final int lenT = w.proofTextTokenizer.getToken(outSB, 0);
             if (lenT > 0) {
                 final String outToken = outSB.toString();
@@ -369,13 +369,13 @@ public abstract class ProofWorkStmt {
         stmtText.append(prevToken);
 
         int len;
-        StringBuffer outSB;
+        StringBuilder outSB;
 
         while (true) {
             len = w.proofTextTokenizer.getWhiteSpace(stmtText,
                 stmtText.length());
             if (len >= 0) {
-                outSB = new StringBuffer();
+                outSB = new StringBuilder();
                 len = w.proofTextTokenizer.getToken(outSB, 0);
                 if (len > 0) {
                     if (w.proofTextTokenizer.getCurrentColumnNbr() == len)

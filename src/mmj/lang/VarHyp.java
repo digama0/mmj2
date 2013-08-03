@@ -32,7 +32,7 @@
 
 package mmj.lang;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -106,9 +106,9 @@ public class VarHyp extends Hyp {
      *
      *  @throws LangException if duplicate, etc.
      */
-    public VarHyp(final int seq, final Map symTbl, final Map stmtTbl,
-        final String varS, final String labelS, final String typS)
-        throws LangException
+    public VarHyp(final int seq, final Map<String, Sym> symTbl,
+        final Map<String, Stmt> stmtTbl, final String varS,
+        final String labelS, final String typS) throws LangException
     {
         super(seq, symTbl, stmtTbl, labelS, true); // true = "active"
 
@@ -270,12 +270,12 @@ public class VarHyp extends Hyp {
      *  text not to exceed the given maxLength. If the
      *  number of output characters exceeds maxLength
      *  output terminates, possibly leaving a dirty
-     *  StringBuffer.
+     *  StringBuilder.
      *  <p>
      *  The depth of the sub-tree is checked against
      *  the input maxDepth parameter, and if the depth
      *  exceeds this number, output terminates,, possibly
-     *  leaving a dirty StringBuffer.
+     *  leaving a dirty StringBuilder.
      *  <p>
      *  Depth is computed as 1 for each Notation Syntax
      *  Axiom Node. VarHyp nodes and Nulls Permitted,
@@ -283,7 +283,7 @@ public class VarHyp extends Hyp {
      *  Axiom nodes are assigned depth = 0 for purposes of
      *  depth checking.
      *  <p>
-     *  @param sb            StringBuffer already initialized
+     *  @param sb            StringBuilder already initialized
      *                       for appending characters.
      *
      *  @param maxDepth      maximum depth of Notation Syntax
@@ -301,11 +301,11 @@ public class VarHyp extends Hyp {
      *                       into the Stmt.
      *
      *  @return length of sub-expression characters
-     *          appended to the input StringBuffer --
+     *          appended to the input StringBuilder --
      *          or -1 if maxDepth or maxLength exceeded.
      */
     @Override
-    public int renderParsedSubExpr(final StringBuffer sb, final int maxDepth,
+    public int renderParsedSubExpr(final StringBuilder sb, final int maxDepth,
         final int maxLength, final ParseNode[] child)
     {
 
@@ -329,10 +329,10 @@ public class VarHyp extends Hyp {
      *  sequence order, varHypList should either be empty (new)
      *  before the call, or already be in that order.
      *
-     *  @param varHypList  ArrayList of Var Hyps, updated here.
+     *  @param varHypList  List of Var Hyps, updated here.
      *
      */
-    public void accumVarHypListBySeq(final ArrayList varHypList) {
+    public void accumVarHypListBySeq(final List<Hyp> varHypList) {
 
         int i = 0;
         final int iEnd = varHypList.size();
@@ -362,10 +362,10 @@ public class VarHyp extends Hyp {
      *  Searches for this Var Hyp in an ArrayList maintained
      *  in database input sequence.
      *
-     *  @param varHypList ArrayList of Var Hyps
+     *  @param varHypList List of Var Hyps
      *  @return true if found, else false.
      */
-    public boolean containedInVarHypListBySeq(final ArrayList varHypList) {
+    public boolean containedInVarHypListBySeq(final List<Hyp> varHypList) {
         VarHyp vH;
         for (int i = 0; i < varHypList.size(); i++) {
             vH = (VarHyp)varHypList.get(i);

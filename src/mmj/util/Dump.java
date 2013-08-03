@@ -104,11 +104,11 @@ public class Dump {
     }
 
     /**
-     *  Print a line from a StringBuffer.
+     *  Print a line from a StringBuilder.
      *
-     *  @param sb StringBuffer line to be printed.
+     *  @param sb StringBuilder line to be printed.
      */
-    public void sysOutDumpAPrintLn(final StringBuffer sb) {
+    public void sysOutDumpAPrintLn(final StringBuilder sb) {
         sysOutDumpAPrintLn(sb.toString());
     }
 
@@ -141,7 +141,7 @@ public class Dump {
         dumpLogSysCounts(1, UtilConstants.DUMP_LOGSYS_COUNTS + caption,
             logicalSystem.getSymTbl(), logicalSystem.getStmtTbl());
 
-        final TreeSet provableLogicStmtTypSet = new TreeSet(MObj.SEQ);
+        final Set<Sym> provableLogicStmtTypSet = new TreeSet<Sym>(MObj.SEQ);
         if (grammar != null && grammar.getGrammarInitialized()) {
             final Cnst[] provableLogicStmtTypArray = grammar
                 .getProvableLogicStmtTypArray();
@@ -151,7 +151,7 @@ public class Dump {
             dumpSymTbl(1, UtilConstants.DUMP_PROVABLE_TYP_SET + caption,
                 provableLogicStmtTypSet);
 
-            final TreeSet logicStmtTypSet = new TreeSet(MObj.SEQ);
+            final Set<Cnst> logicStmtTypSet = new TreeSet<Cnst>(MObj.SEQ);
             final Cnst[] logicStmtTypArray = grammar.getLogicStmtTypArray();
             for (final Cnst element : logicStmtTypArray)
                 logicStmtTypSet.add(element);
@@ -173,7 +173,7 @@ public class Dump {
 
         }
         sysOutDumpAPrintLn(" ");
-        final Collection symTblValues = logicalSystem.getSymTbl().values();
+        final Collection<Sym> symTblValues = logicalSystem.getSymTbl().values();
         dumpSymTbl(1, UtilConstants.DUMP_LOGSYS_SYM_TBL + caption, symTblValues);
 
         if (grammar != null && grammar.getGrammarInitialized()) {
@@ -222,8 +222,8 @@ public class Dump {
      *  @param maxStatementPrintCountParm max number of Stmt's
      *         to print.
      */
-    public void printStatementDetails(final String caption, final Map stmtTbl,
-        final int maxStatementPrintCountParm)
+    public void printStatementDetails(final String caption,
+        final Map<String, Stmt> stmtTbl, final int maxStatementPrintCountParm)
     {
 
         sysOutDumpAPrintLn(" ");
@@ -250,7 +250,7 @@ public class Dump {
 
         sysOutDumpAPrintLn(" ");
         dumpBookManagerChapters(1, // indentNbr
-            caption, bookManager.getChapterList().iterator());
+            caption, bookManager.getChapterList());
     }
 
     /**
@@ -270,7 +270,7 @@ public class Dump {
 
         sysOutDumpAPrintLn(" ");
         dumpBookManagerSections(1, // indentNbr
-            caption, bookManager.getSectionList().iterator());
+            caption, bookManager.getSectionList());
     }
 
     /**
@@ -297,34 +297,20 @@ public class Dump {
         dumpBookManagerSectionDetails(
             1, // indentNbr
             runParm, bookManager,
-            bookManager.getSectionMObjIterator(logicalSystem), section);
+            bookManager.getSectionMObjIterable(logicalSystem), section);
     }
 
     public String[] keyArray = new String[100];
     public int keyArrayCount = 0;
 
-    public static final String[] indentTbl = {"  ", "    ", "      ",
-            "        ", "          ", "            ", "              ",
-            "                ", "                  ", "                    ",
-            "                      ", "                        ",
-            "                          ", "                            ",
-            "                              ",
-            "                                ",
-            "                                  ",
-            "                                    ",
-            "                                      ",
-            "                                        ",
-            "                                          ",
-            "                                            ",
-            "                                              ",
-            "                                                ",
-            "                                                  ",
-            "                                                    ",
-            "                                                      ",
-            "                                                        ",
-            "                                                          ",
-            "                                                            ",
-            "                                                              "};
+    public static final String[] indentTbl = new String[31];
+    static {
+        final StringBuilder s = new StringBuilder();
+        for (int i = 0; i < 31; i++) {
+            s.append("  ");
+            indentTbl[i] = s.toString();
+        }
+    }
 
     public void dumpLogSys(final int indentNbr, final String caption,
         final LogicalSystem logSys)
@@ -333,8 +319,8 @@ public class Dump {
             + UtilConstants.DUMP_LOGICAL_SYSTEM + caption
             + UtilConstants.DUMP_START);
 
-        final Collection symTbl = logSys.getSymTbl().values();
-        final Collection stmtTbl = logSys.getStmtTbl().values();
+        final Collection<Sym> symTbl = logSys.getSymTbl().values();
+        final Collection<Stmt> stmtTbl = logSys.getStmtTbl().values();
 
         dumpLogSysCounts(indentNbr + 1, caption, symTbl, stmtTbl);
         sysOutDumpAPrintLn(indentTbl[indentNbr]);
@@ -344,7 +330,7 @@ public class Dump {
     }
 
     public void dumpLogSysCounts(final int indentNbr, final String caption,
-        final Map symTbl, final Map stmtTbl)
+        final Map<String, Sym> symTbl, final Map<String, Stmt> stmtTbl)
     {
 
         sysOutDumpAPrintLn(indentTbl[indentNbr]);
@@ -358,7 +344,7 @@ public class Dump {
     }
 
     public void dumpLogSysCounts(final int indentNbr, final String caption,
-        final Collection symTbl, final Collection stmtTbl)
+        final Collection<Sym> symTbl, final Collection<Stmt> stmtTbl)
     {
 
         sysOutDumpAPrintLn(indentTbl[indentNbr]);
@@ -372,7 +358,7 @@ public class Dump {
     }
 
     public void dumpSymTbl(final int indentNbr, final String caption,
-        final Collection symTbl)
+        final Collection<? extends Sym> symTbl)
     {
         sysOutDumpAPrintLn(indentTbl[indentNbr]);
         sysOutDumpAPrintLn(indentTbl[indentNbr] + UtilConstants.DUMP_SYM_TBL
@@ -386,28 +372,24 @@ public class Dump {
             return;
         }
 
-        final TreeSet symSet = new TreeSet(MObj.SEQ);
+        final Set<Sym> symSet = new TreeSet<Sym>(MObj.SEQ);
         symSet.addAll(symTbl);
 
-        Sym sym;
-        final Iterator iC = symSet.iterator();
-        while (iC.hasNext()) {
-            sym = (Sym)iC.next();
+        for (final Sym sym : symSet)
             if (sym.isVar())
                 dumpSymVarFull(indentNbr, (Var)sym);
             else
                 dumpSymCnstFull(indentNbr, (Cnst)sym);
-        }
     }
 
     public void dumpStmtTbl(final int indentNbr, final String caption,
-        final Collection stmtTbl)
+        final Collection<? extends Stmt> stmtTbl)
     {
         dumpStmtTbl(Integer.MAX_VALUE, indentNbr, caption, stmtTbl);
     }
 
     public void dumpStmtTbl(final int maxDumpCnt, final int indentNbr,
-        final String caption, final Collection stmtTbl)
+        final String caption, final Collection<? extends Stmt> stmtTbl)
     {
         sysOutDumpAPrintLn(indentTbl[indentNbr]);
         sysOutDumpAPrintLn(indentTbl[indentNbr] + UtilConstants.DUMP_STMT_TBL
@@ -421,14 +403,13 @@ public class Dump {
             return;
         }
 
-        final TreeSet stmtSet = new TreeSet(MObj.SEQ);
+        final Set<Stmt> stmtSet = new TreeSet<Stmt>(MObj.SEQ);
         stmtSet.addAll(stmtTbl);
 
-        Stmt stmt;
         int dumpCnt = 0;
-        final Iterator iC = stmtSet.iterator();
-        while (iC.hasNext() && dumpCnt++ < maxDumpCnt) {
-            stmt = (Stmt)iC.next();
+        for (final Stmt stmt : stmtSet) {
+            if (dumpCnt++ >= maxDumpCnt)
+                break;
             dumpOneStmt(indentNbr, stmt);
         }
     }
@@ -458,7 +439,7 @@ public class Dump {
 
     public void dumpStmtTheoremFull(int indentNbr, final Theorem theorem) {
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_THEOREM);
@@ -468,7 +449,7 @@ public class Dump {
         dumpStmtProperties(indentNbr, sb, theorem);
         dumpAssrtProperties(indentNbr, theorem);
 
-        sb = new StringBuffer();
+        sb = new StringBuilder();
         final OptFrame optFrame = theorem.getOptFrame();
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_OPT_FRAME_HYP_ARRAY);
@@ -481,7 +462,7 @@ public class Dump {
         sb.append(UtilConstants.DUMP_END_BRACKET);
         sysOutDumpAPrintLn(sb);
 
-        sb = new StringBuffer();
+        sb = new StringBuilder();
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_OPT_FRAME_DJ_VARS);
         comma = ' ';
@@ -495,7 +476,7 @@ public class Dump {
         sb.append(UtilConstants.DUMP_END_BRACKET);
         sysOutDumpAPrintLn(sb);
 
-        sb = new StringBuffer();
+        sb = new StringBuilder();
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_PROOF);
         final Stmt[] proof = theorem.getProof();
@@ -514,7 +495,7 @@ public class Dump {
 
     public void dumpStmtAxiomFull(int indentNbr, final Axiom axiom) {
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_AXIOM);
@@ -524,7 +505,7 @@ public class Dump {
         dumpStmtProperties(indentNbr, sb, axiom);
         dumpAssrtProperties(indentNbr, axiom);
 
-        sb = new StringBuffer();
+        sb = new StringBuilder();
         sb.append(indentTbl[indentNbr]);
 
         final int[] syntaxAxiomVarHypReseq = axiom.getSyntaxAxiomVarHypReseq();
@@ -550,7 +531,7 @@ public class Dump {
 
     public void dumpStmtLogHypFull(int indentNbr, final LogHyp logHyp) {
 
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
 
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_LOGHYP);
@@ -564,7 +545,7 @@ public class Dump {
 
     public void dumpStmtVarHypFull(int indentNbr, final VarHyp varHyp) {
 
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
 
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_VARHYP);
@@ -577,7 +558,7 @@ public class Dump {
     }
 
     public void dumpAssrtProperties(final int indentNbr, final Assrt assrt) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         final MandFrame mandFrame = assrt.getMandFrame();
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_MAND_FRAME_HYP_ARRAY);
@@ -591,7 +572,7 @@ public class Dump {
         sb.append(UtilConstants.DUMP_END_BRACKET);
         sysOutDumpAPrintLn(sb);
 
-        sb = new StringBuffer();
+        sb = new StringBuilder();
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_MAND_FRAME_DJ_VARS);
         comma = ' ';
@@ -607,7 +588,7 @@ public class Dump {
 
     }
 
-    public void dumpStmtProperties(final int indentNbr, StringBuffer sb,
+    public void dumpStmtProperties(final int indentNbr, StringBuilder sb,
         final Stmt stmt)
     {
 
@@ -640,7 +621,7 @@ public class Dump {
         sb.append(UtilConstants.DUMP_END_BRACKET);
         sysOutDumpAPrintLn(sb);
 
-        sb = new StringBuffer();
+        sb = new StringBuilder();
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_FORMULA);
 
@@ -664,7 +645,7 @@ public class Dump {
 
         sysOutDumpAPrintLn(sb);
 
-        sb = new StringBuffer();
+        sb = new StringBuilder();
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_EXPR_RPN);
         final Stmt[] exprRPN = stmt.getExprRPN();
@@ -678,7 +659,7 @@ public class Dump {
 
     public void dumpSymVarFull(final int indentNbr, final Var var) {
         VarHyp varHyp;
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
 
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_VAR);
@@ -697,7 +678,7 @@ public class Dump {
     }
 
     public void dumpSymCnstFull(final int indentNbr, final Cnst cnst) {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
 
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_CNST);
@@ -723,14 +704,11 @@ public class Dump {
                 + cnst.getLen1CnstNotationRule().getBaseSyntaxAxiom()
                     .getLabel());
 
-        final Collection c = cnst.getEarleyFIRST();
-        if (c != null) {
-            final Iterator f = c.iterator();
+        final Collection<Cnst> coll = cnst.getEarleyFIRST();
+        if (coll != null) {
             sb.append(UtilConstants.DUMP_EARLEY_FIRST);
-            while (f.hasNext()) {
-                sb.append(f.next());
-                sb.append(" ");
-            }
+            for (final Cnst c : coll)
+                sb.append(c).append(" ");
             sb.append(UtilConstants.DUMP_END_BRACKET);
         }
 
@@ -739,7 +717,8 @@ public class Dump {
     }
 
     public void dumpGrammarRuleCollection(final int indentNbr,
-        final String caption, final Collection grammarRuleCollection)
+        final String caption,
+        final Collection<GrammarRule> grammarRuleCollection)
     {
 
         dumpGrammarRuleCollection(Integer.MAX_VALUE, indentNbr, caption,
@@ -748,7 +727,7 @@ public class Dump {
 
     public void dumpGrammarRuleCollection(final int maxDumpCnt,
         final int indentNbr, final String caption,
-        final Collection grammarRuleCollection)
+        final Collection<? extends GrammarRule> grammarRuleCollection)
     {
 
         sysOutDumpAPrintLn(indentTbl[indentNbr]);
@@ -758,28 +737,25 @@ public class Dump {
         sysOutDumpAPrintLn(indentTbl[indentNbr]
             + UtilConstants.DUMP_RULE_COLLECTION_UNDERSCORE);
 
-        if (grammarRuleCollection == null || grammarRuleCollection.size() == 0)
+        if (grammarRuleCollection == null || grammarRuleCollection.isEmpty())
         {
             sysOutDumpAPrintLn(indentTbl[indentNbr]
                 + UtilConstants.DUMP_RULE_COLLECTION_IS_EMPTY);
             return;
         }
 
-        final TreeSet gRSet = new TreeSet(GrammarRule.RULE_NBR);
+        final Set<GrammarRule> gRSet = new TreeSet<GrammarRule>(
+            GrammarRule.RULE_NBR);
         gRSet.addAll(grammarRuleCollection);
 
-        GrammarRule grammarRule;
-        final Iterator iterator = gRSet.iterator();
-        while (iterator.hasNext()) {
-            grammarRule = (GrammarRule)iterator.next();
+        for (final GrammarRule grammarRule : gRSet)
             dumpGrammarRuleFull(indentNbr, grammarRule);
-        }
     }
 
     public void dumpGrammarRuleFull(final int indentNbr,
         final GrammarRule grammarRule)
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_GRAMMAR_RULE);
@@ -797,7 +773,7 @@ public class Dump {
         sb.append(grammarRule.getNbrHypParamsUsed());
 
         sysOutDumpAPrintLn(sb);
-        sb = new StringBuffer();
+        sb = new StringBuilder();
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_PARAM_TREE_AS_RPN);
         final Stmt[] pTTRPN = grammarRule.getParamTransformationTree()
@@ -808,7 +784,7 @@ public class Dump {
         }
 
         sysOutDumpAPrintLn(sb);
-        sb = new StringBuffer();
+        sb = new StringBuilder();
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_PARAM_VARHYP_NODE_ARRAY);
         final ParseNode[] pVHN = grammarRule.getParamVarHypNode();
@@ -841,7 +817,7 @@ public class Dump {
     public void dumpNotationRuleProperties(final int indentNbr,
         final NotationRule notationRule)
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         String s;
         int padit;
 
@@ -880,7 +856,7 @@ public class Dump {
 
         sysOutDumpAPrintLn(sb);
 
-        sb = new StringBuffer();
+        sb = new StringBuilder();
         sb.append(indentTbl[indentNbr]);
 
         sb.append(UtilConstants.DUMP_IS_GIMME_MATCH_NBR);
@@ -891,7 +867,7 @@ public class Dump {
     public void dumpTypeConversionRuleProperties(final int indentNbr,
         final TypeConversionRule typeConversionRule)
     {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
 
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_TYPE_CONVERSION_RULE);
@@ -906,7 +882,7 @@ public class Dump {
     public void dumpNullsPermittedRuleProperties(final int indentNbr,
         final NullsPermittedRule nullsPermittedRule)
     {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
 
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_NULLS_PERMITTED_RULE);
@@ -918,89 +894,63 @@ public class Dump {
     }
 
     public void dumpTheGrammar(final int indentNbr,
-        final Collection grammarTypSet, final Collection symTbl)
+        final Collection<Cnst> grammarTypSet, final Collection<Sym> symTbl)
     {
 
-        final TreeSet cnstWithRules = new TreeSet(Sym.ID);
+        final Set<Cnst> cnstWithRules = new TreeSet<Cnst>(Sym.ID);
 
-        final Iterator symIterator = symTbl.iterator();
-        Cnst cnst;
-        Sym sym;
-        while (symIterator.hasNext()) {
-            sym = (Sym)symIterator.next();
+        for (final Sym sym : symTbl) {
             if (!sym.isCnst())
                 continue;
-            cnst = (Cnst)sym;
+            final Cnst cnst = (Cnst)sym;
             if (cnst.getGRRoot() != null)
                 cnstWithRules.add(cnst);
         }
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_THE_GRAMMAR);
         sysOutDumpAPrintLn(sb);
 
-        sb = new StringBuffer();
+        sb = new StringBuilder();
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_THE_GRAMMAR_UNDERSCORE);
         sysOutDumpAPrintLn(sb);
 
-        if (grammarTypSet.size() == 0 || cnstWithRules.size() == 0)
+        if (grammarTypSet.isEmpty() || cnstWithRules.isEmpty())
             sb.append(UtilConstants.DUMP_THE_GRAMMAR_IS_EMPTY);
 
-        sb = new StringBuffer();
+        sb = new StringBuilder();
         sb.append(indentTbl[indentNbr + 1]);
-
-        Cnst[] ruleFormatExpr;
 
         final String startRuleLit = UtilConstants.DUMP_GRAMMAR_RULE_REPLACEMENT_SYMBOL;
 
         final String continueRuleLit = UtilConstants.DUMP_RULE_CONTINUATION_LIT;
 
-        String currLit;
-        int typIndentLength;
-        Iterator ruleIterator;
-        ArrayList grammarTypRulesList;
-        GrammarRule g;
-        Iterator cnstRuleIterator;
-        Collection cnstRuleCollection;
-        Cnst grammarTyp;
-        Iterator cnstIterator;
-        final Iterator typIterator = grammarTypSet.iterator();
-        while (typIterator.hasNext()) {
-            grammarTyp = (Cnst)typIterator.next();
-            grammarTypRulesList = new ArrayList();
-            cnstIterator = cnstWithRules.iterator();
-            while (cnstIterator.hasNext()) {
-                cnst = (Cnst)cnstIterator.next();
-                cnstRuleCollection = GRForest.getRuleCollection(cnst
-                    .getGRRoot());
-                cnstRuleIterator = cnstRuleCollection.iterator();
-                while (cnstRuleIterator.hasNext()) {
-                    g = (GrammarRule)cnstRuleIterator.next();
+        for (final Cnst grammarTyp : grammarTypSet) {
+            final List<GrammarRule> grammarTypRulesList = new ArrayList<GrammarRule>();
+            for (final Cnst cnst : cnstWithRules)
+                for (final NotationRule g : GRForest.getRuleCollection(cnst
+                    .getGRRoot()))
                     if (g.getGrammarRuleTyp() == grammarTyp)
                         grammarTypRulesList.add(g);
-                }
-            }
-            if (grammarTypRulesList.size() == 0)
+            if (grammarTypRulesList.isEmpty())
                 continue;
 
-            sb = new StringBuffer();
+            sb = new StringBuilder();
             sb.append(indentTbl[indentNbr + 1]);
             sb.append(grammarTyp);
-            currLit = startRuleLit;
-            typIndentLength = grammarTyp.getId().length();
-            ruleIterator = grammarTypRulesList.iterator();
-            while (ruleIterator.hasNext()) {
-                g = (GrammarRule)ruleIterator.next();
+            String currLit = startRuleLit;
+            final int typIndentLength = grammarTyp.getId().length();
+            for (final GrammarRule g : grammarTypRulesList) {
                 sb.append(currLit);
-                ruleFormatExpr = g.getForestRuleExpr();
+                final Cnst[] ruleFormatExpr = g.getForestRuleExpr();
                 for (final Cnst element : ruleFormatExpr) {
                     sb.append(element);
                     sb.append(" ");
                 }
                 sysOutDumpAPrintLn(sb);
-                sb = new StringBuffer();
+                sb = new StringBuilder();
                 sb.append(indentTbl[indentNbr + 1]);
                 for (int i = 0; i < typIndentLength; i++)
                     sb.append(" ");
@@ -1012,7 +962,7 @@ public class Dump {
 
     private void dumpBookManagerSectionDetails(final int indentNbr,
         final RunParmArrayEntry runParm, final BookManager bookManager,
-        final Iterator iterator, final Section selectedSection)
+        final Iterable<MObj<?>> iterable, final Section selectedSection)
     {
 
         sysOutDumpAPrintLn(indentTbl[indentNbr]);
@@ -1023,27 +973,19 @@ public class Dump {
 
         int prevChapterNbr = -1;
         int prevSectionNbr = -1;
-        int nbrDetailsPrinted = 0;
 
-        Chapter chapter;
-        Section section;
-        int chapterNbr;
-        int sectionNbr;
-
-        MObj mObj;
-        while (iterator.hasNext()) {
-
-            mObj = (MObj)iterator.next();
-            sectionNbr = mObj.getSectionNbr();
+        for (final MObj<?> mObj : iterable) {
+            final int sectionNbr = mObj.getSectionNbr();
             if (selectedSection != null) {
                 if (sectionNbr > selectedSection.getSectionNbr())
                     return;
                 if (sectionNbr < selectedSection.getSectionNbr())
                     continue;
             }
-            section = bookManager.getSection(sectionNbr);
-            chapter = bookManager.getChapterForSectionNbr(sectionNbr);
-            chapterNbr = chapter.getChapterNbr();
+            final Section section = bookManager.getSection(sectionNbr);
+            final Chapter chapter = bookManager
+                .getChapterForSectionNbr(sectionNbr);
+            final int chapterNbr = chapter.getChapterNbr();
 
             if (chapterNbr != prevChapterNbr) {
                 dumpOneBookManagerChapter(indentNbr, chapter);
@@ -1056,13 +998,12 @@ public class Dump {
             }
 
             dumpOneBookManagerSectionDetail(indentNbr + 2, mObj);
-            ++nbrDetailsPrinted;
         }
 
     }
 
     private void dumpBookManagerChapters(final int indentNbr,
-        final String caption, final Iterator iterator)
+        final String caption, final Collection<Chapter> coll)
     {
 
         sysOutDumpAPrintLn(indentTbl[indentNbr]);
@@ -1070,12 +1011,12 @@ public class Dump {
         sysOutDumpAPrintLn(indentTbl[indentNbr]
             + UtilConstants.DUMP_STMT_TBL_UNDERSCORE);
 
-        while (iterator.hasNext())
-            dumpOneBookManagerChapter(indentNbr, (Chapter)iterator.next());
+        for (final Chapter c : coll)
+            dumpOneBookManagerChapter(indentNbr, c);
     }
 
     private void dumpBookManagerSections(final int indentNbr,
-        final String caption, final Iterator iterator)
+        final String caption, final Collection<Section> coll)
     {
 
         sysOutDumpAPrintLn(indentTbl[indentNbr]);
@@ -1083,14 +1024,14 @@ public class Dump {
         sysOutDumpAPrintLn(indentTbl[indentNbr]
             + UtilConstants.DUMP_STMT_TBL_UNDERSCORE);
 
-        while (iterator.hasNext())
-            dumpOneBookManagerSection(indentNbr, (Section)iterator.next());
+        for (final Section s : coll)
+            dumpOneBookManagerSection(indentNbr, s);
     }
 
     private void dumpOneBookManagerChapter(final int indentNbr,
         final Chapter chapter)
     {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
 
         sb.append(indentTbl[indentNbr]);
         sb.append(chapter.toString());
@@ -1100,7 +1041,7 @@ public class Dump {
     private void dumpOneBookManagerSection(final int indentNbr,
         final Section section)
     {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
 
         sb.append(indentTbl[indentNbr]);
         sb.append(section.toString());
@@ -1108,9 +1049,9 @@ public class Dump {
     }
 
     private void dumpOneBookManagerSectionDetail(final int indentNbr,
-        final MObj mObj)
+        final MObj<?> mObj)
     {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
 
         sb.append(indentTbl[indentNbr]);
 

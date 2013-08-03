@@ -86,7 +86,7 @@ public class ProofWorksheetParser {
 
         proofTextTokenizer = new Tokenizer(proofTextReader, proofTextSource);
 
-        final StringBuffer strBuf = new StringBuffer();
+        final StringBuilder strBuf = new StringBuilder();
         final int offset = 0;
         proofTextTokenizer.getToken(strBuf, offset);
         nextToken = new String(strBuf);

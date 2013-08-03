@@ -54,7 +54,7 @@ import mmj.mmio.MMIOConstants;
  */
 public class GMFFExporterTypesetDefs {
     public String typesetDefKeyword;
-    public Map typesetDefMap;
+    public Map<String, String> typesetDefMap;
 
     /**
      *  Standard constructor.
@@ -71,7 +71,7 @@ public class GMFFExporterTypesetDefs {
     {
 
         this.typesetDefKeyword = typesetDefKeyword;
-        typesetDefMap = new HashMap(initMapSize);
+        typesetDefMap = new HashMap<String, String>(initMapSize);
     }
 
     /**
@@ -96,22 +96,20 @@ public class GMFFExporterTypesetDefs {
      *  @param messages The Messages object.
      */
     public void printTypesetDefs(final Messages messages) {
-        final StringBuffer sb = new StringBuffer(
+        final StringBuilder sb = new StringBuilder(
             GMFFConstants.METAMATH_DOLLAR_T_BUFFER_SIZE);
         sb.append(GMFFConstants.ERRMSG_TYPESET_DEFS_AUDIT_1);
         sb.append(typesetDefKeyword);
         sb.append(MMIOConstants.NEW_LINE_CHAR);
 
-        final Set set = typesetDefMap.keySet();
-        final ArrayList arrayList = new ArrayList(set.size());
+        final Set<String> set = typesetDefMap.keySet();
+        final List<String> arrayList = new ArrayList<String>(set.size());
         arrayList.addAll(set);
         Collections.sort(arrayList);
-        final Iterator iterator = arrayList.iterator();
-        while (iterator.hasNext()) {
-            final String sym = (String)iterator.next();
+        for (final String sym : arrayList) {
             sb.append(GMFFConstants.ERRMSG_TYPESET_DEFS_AUDIT_2);
             sb.append(sym);
-            final String repl = (String)typesetDefMap.get(sym);
+            final String repl = typesetDefMap.get(sym);
             sb.append(GMFFConstants.ERRMSG_TYPESET_DEFS_AUDIT_3);
             sb.append(repl);
             sb.append(MMIOConstants.NEW_LINE_CHAR);

@@ -31,7 +31,7 @@ package mmj.pa;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 
 import mmj.lang.Sym;
 import mmj.lang.Var;
@@ -63,22 +63,20 @@ public class DistinctVariablesStmt extends ProofWorkStmt {
      *  as input.
      *  <p>
      *  @param w ProofWorksheet object
-     *  @param dvGroup ArrayList of Var which are distinct.
+     *  @param dvGroup List of Var which are distinct.
      */
-    public DistinctVariablesStmt(final ProofWorksheet w, final ArrayList dvGroup)
+    public DistinctVariablesStmt(final ProofWorksheet w, final List<Var> dvGroup)
     {
         super(w);
 
-        stmtText = new StringBuffer(dvGroup.size() * 4); // guess
+        stmtText = new StringBuilder(dvGroup.size() * 4); // guess
 
         stmtText.append(PaConstants.DISTINCT_VARIABLES_STMT_TOKEN);
         stmtText.append(' ');
 
         dv = new Var[dvGroup.size()];
         int dvCnt = 0;
-        final Iterator i = dvGroup.iterator();
-        while (i.hasNext()) {
-            final Var v = (Var)i.next();
+        for (final Var v : dvGroup) {
             dv[dvCnt++] = v;
             stmtText.append(v.toString());
             stmtText.append(' ');
@@ -98,21 +96,17 @@ public class DistinctVariablesStmt extends ProofWorkStmt {
      *  ArrayList.
      *  <p>
      *  @param dvStmtArray array of DistinctVariablesStmt
-     *  @param dvGroupsIn ArrayList of ArrayList of Var
-     *  @return non-redundant dvGroups ArrayList.
+     *  @param dvGroupsIn List of List of Var
+     *  @return non-redundant dvGroups List.
      */
-    public static ArrayList eliminateDvGroupsAlreadyPresent(
-        final DistinctVariablesStmt[] dvStmtArray, final ArrayList dvGroupsIn)
+    public static List<List<Var>> eliminateDvGroupsAlreadyPresent(
+        final DistinctVariablesStmt[] dvStmtArray,
+        final List<List<Var>> dvGroupsIn)
     {
-        final ArrayList out = new ArrayList(dvStmtArray.length
+        final List<List<Var>> out = new ArrayList<List<Var>>(dvStmtArray.length
             + dvGroupsIn.size());
 
-        final Iterator x = dvGroupsIn.iterator();
-        ArrayList dvGroup;
-        loopX: while (x.hasNext()) {
-
-            dvGroup = (ArrayList)x.next();
-
+        loopX: for (final List<Var> dvGroup : dvGroupsIn) {
             loopI: for (int i = 0; i < dvStmtArray.length; i++) {
 
                 final Var[] dvI = dvStmtArray[i].dv;
@@ -124,9 +118,9 @@ public class DistinctVariablesStmt extends ProofWorkStmt {
                 Var varY;
                 loopY: for (int y = 0; y < dvGroup.size(); y++) {
 
-                    varY = (Var)dvGroup.get(y);
+                    varY = dvGroup.get(y);
 
-                    loopJ: for (int j = 0; j < dvI.length; j++)
+                    for (int j = 0; j < dvI.length; j++)
                         if (varY == dvI[j])
                             continue loopY; // found one!
                     // didn't find one!
@@ -214,11 +208,11 @@ public class DistinctVariablesStmt extends ProofWorkStmt {
     {
         final int currLineNbr = (int)w.proofTextTokenizer.getCurrentLineNbr();
 
-        stmtText = new StringBuffer();
+        stmtText = new StringBuilder();
 
         final String firstDv = loadStmtTextGetRequiredToken(firstToken);
 
-        final ArrayList dvList = new ArrayList();
+        final List<Var> dvList = new ArrayList<Var>();
 
         validateDvAndAccumInList(firstDv, dvList);
 
@@ -233,21 +227,16 @@ public class DistinctVariablesStmt extends ProofWorkStmt {
                 break;
         }
 
-        dv = new Var[dvList.size()];
-
-        final Iterator iterator = dvList.iterator();
-        int i = 0;
-        while (iterator.hasNext())
-            dv[i++] = (Var)iterator.next();
+        dv = dvList.toArray(new Var[dvList.size()]);
 
         updateLineCntUsingTokenizer(currLineNbr, nextT);
         return nextT;
     }
 
     private void validateDvAndAccumInList(final String nextT,
-        final ArrayList dvList) throws ProofAsstException
+        final List<Var> dvList) throws ProofAsstException
     {
-        final Sym sym = (Sym)w.logicalSystem.getSymTbl().get(nextT);
+        final Sym sym = w.logicalSystem.getSymTbl().get(nextT);
         if (sym == null)
             w.triggerLoadStructureException(PaConstants.ERRMSG_DV_SYM_ERR_1
                 + w.getErrorLabelIfPossible() + PaConstants.ERRMSG_DV_SYM_ERR_2

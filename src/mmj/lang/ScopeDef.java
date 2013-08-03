@@ -12,6 +12,7 @@
 package mmj.lang;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *  This is just a simple data structure
@@ -24,20 +25,20 @@ public class ScopeDef {
     /**
      *  List of "active" Var's within a scope level.
      */
-    ArrayList scopeVar = new ArrayList();
+    List<Var> scopeVar = new ArrayList<Var>();
 
     /**
      *  List of "active" VarHyp's within a scope level.
      */
-    ArrayList scopeVarHyp = new ArrayList();
+    List<VarHyp> scopeVarHyp = new ArrayList<VarHyp>();
 
     /**
      *  List of "active" LogHyp's within a scope level.
      */
-    ArrayList scopeLogHyp = new ArrayList();
+    List<LogHyp> scopeLogHyp = new ArrayList<LogHyp>();
 
     /**
      *  List of "active" DjVar's within a scope level.
      */
-    ArrayList scopeDjVars = new ArrayList();
+    List<DjVars> scopeDjVars = new ArrayList<DjVars>();
 }

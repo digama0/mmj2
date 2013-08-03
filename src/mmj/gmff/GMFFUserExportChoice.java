@@ -15,7 +15,7 @@
 
 package mmj.gmff;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import mmj.util.UtilConstants;
 
@@ -64,13 +64,13 @@ public class GMFFUserExportChoice {
     /**
      *  Validates the User Export Choice.
      *  <p>
-     *  @param exportParmsList ArrayList of GMFFExportParms
+     *  @param exportParmsList List of GMFFExportParms
      *             used to validate exportType (must be
      *             used in the Export Parms.)
      *  @throws GMFFException if User Export Choice invalid.
      */
     public void validateUserExportChoice(
-        final ArrayList<GMFFExportParms> exportParmsList) throws GMFFException
+        final List<GMFFExportParms> exportParmsList) throws GMFFException
     {
 
         if (GMFFExportParms.isPresentWithNoWhitespace(exportTypeOrAll)) {

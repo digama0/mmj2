@@ -15,7 +15,8 @@
 
 package mmj.lang;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 /**
  *  LogicFormula is a convenience class for LogHyp.
@@ -46,10 +47,10 @@ public class LogicFormula extends Formula {
      *  @param typS        Formula Type Code String.
      *  @param symList     Formula Expression as List of Sym id
      *                     Strings
-     *  @param exprHypList ArrayList of Hyps, updated in function.
+     *  @param exprHypList List of Hyps, updated in function.
      */
-    public LogicFormula(final Map symTbl, final String typS,
-        final ArrayList symList, final ArrayList exprHypList)
+    public LogicFormula(final Map<String, Sym> symTbl, final String typS,
+        final List<String> symList, final List<Hyp> exprHypList)
         throws LangException
     {
         super(symTbl, symList.size() + 1, typS);
@@ -82,7 +83,7 @@ public class LogicFormula extends Formula {
      * @param symList  expression's symbol character
      *        strings
      *
-     * @param hypList  ArrayList of Hyp's. Is updated with
+     * @param hypList  List of Hyp's. Is updated with
      *        unique variable hypotheses in the expression.
      *        Because the list is maintained in database statement
      *        sequence order, hypList should either be empty (new)
@@ -92,16 +93,12 @@ public class LogicFormula extends Formula {
      * @throws  LangException if duplicate symbol, etc.
      *          (see <code>mmj.lang.LangConstants.java</code>)
      */
-    public void verifyExprSymsDefAndActive(final Map symTbl,
-        final ArrayList symList, final ArrayList hypList) throws LangException
+    public void verifyExprSymsDefAndActive(final Map<String, Sym> symTbl,
+        final List<String> symList, final List<Hyp> hypList)
+        throws LangException
     {
-        String symS;
-        VarHyp varHyp;
-
-        final ListIterator x = symList.listIterator();
-        while (x.hasNext()) {
-            symS = (String)x.next();
-            sym[cnt] = (Sym)symTbl.get(symS);
+        for (final String symS : symList) {
+            sym[cnt] = symTbl.get(symS);
             if (sym[cnt] == null)
                 throw new LangException(LangConstants.ERRMSG_EXPR_SYM_NOT_DEF
                     + symS);
@@ -109,7 +106,8 @@ public class LogicFormula extends Formula {
                 throw new LangException(
                     LangConstants.ERRMSG_EXPR_SYM_NOT_ACTIVE + symS);
             if (sym[cnt].isVar()) {
-                if ((varHyp = ((Var)sym[cnt]).getActiveVarHyp()) == null)
+                final VarHyp varHyp = ((Var)sym[cnt]).getActiveVarHyp();
+                if (varHyp == null)
                     throw new LangException(
                         LangConstants.ERRMSG_EXPR_VAR_W_O_ACTIVE_VAR_HYP + symS);
                 // add varHyp to mandatory hypotheses in hypList

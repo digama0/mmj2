@@ -68,7 +68,7 @@ public class Messages {
      */
     protected String[] infoMessageArray;
 
-    protected Hashtable instrumentationTable;
+    protected Hashtable<String, InstrumentationTimer> instrumentationTable;
 
     /**
      *  Default constructor using
@@ -331,7 +331,7 @@ public class Messages {
     public void startInstrumentationTimer(final String timerID) {
 
         if (instrumentationTable == null)
-            instrumentationTable = new Hashtable();
+            instrumentationTable = new Hashtable<String, InstrumentationTimer>();
 
         instrumentationTable.put(timerID.trim(), new InstrumentationTimer());
     }
@@ -346,10 +346,9 @@ public class Messages {
         final String timerID = inTimerID.trim();
 
         if (instrumentationTable == null)
-            instrumentationTable = new Hashtable();
+            instrumentationTable = new Hashtable<String, InstrumentationTimer>();
 
-        final InstrumentationTimer tThen = (InstrumentationTimer)instrumentationTable
-            .get(timerID);
+        final InstrumentationTimer tThen = instrumentationTable.get(timerID);
 
         if (tThen == null)
             throw new IllegalArgumentException(

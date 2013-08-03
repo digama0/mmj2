@@ -16,7 +16,6 @@
 package mmj.tl;
 
 import java.io.*;
-import java.util.Iterator;
 import java.util.List;
 
 import mmj.lang.TheoremLoaderException;
@@ -150,17 +149,18 @@ public class MMTTheoremFile {
 
     /**
      *  Writes Theorem to the MMT Folder using an input List of
-     *  StringBuffer lines.
+     *  StringBuilder lines.
      *  <p>
      *  Note: the input lines do not contain newline characters,
      *        which are written here in platform neutral code
      *        using writeLine().
      *  <p>
-     *  @param mmtTheoremLines List of StringBuffer lines.
+     *  @param mmtTheoremLines List of StringBuilder lines.
      *  @throws TheoremLoaderException if there is an I/O error
      *         while writing the MMTTheoremFile lines.
      */
-    public void writeTheoremToMMTFolder(final List mmtTheoremLines)
+    public void writeTheoremToMMTFolder(
+        final List<StringBuilder> mmtTheoremLines)
         throws TheoremLoaderException
     {
 
@@ -171,9 +171,7 @@ public class MMTTheoremFile {
             w = new BufferedWriter(new FileWriter(theoremFile),
                 TlConstants.FILE_WRITER_BUFFER_SIZE);
 
-            final Iterator i = mmtTheoremLines.iterator();
-            while (i.hasNext()) {
-                final StringBuffer sb = (StringBuffer)i.next();
+            for (final StringBuilder sb : mmtTheoremLines) {
                 w.write(sb.toString());
                 w.newLine();
             }

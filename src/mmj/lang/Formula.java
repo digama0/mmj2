@@ -20,7 +20,7 @@
  *
  *  Sep 2, 2006:
  *  --> For TMFF project, cloned toProofWorksheetString()
- *      to make toProofWorksheetStringBuffer() so that
+ *      to make toProofWorksheetStringBuilder() so that
  *      the number of output lines can be returned, as
  *      desired by TMFF.
  *  --> Added Formula.constructTempDummyFormula() to
@@ -38,7 +38,7 @@
  *  Version 0.07: 08/01/2008
  *  --> Add srcStmtEquals()
  *  --> remove unused toProofWorksheetString() variant
- *  --> Added toStringBufferLineList() for MMTTheoremExportFormatter.
+ *  --> Added toStringBuilderLineList() for MMTTheoremExportFormatter.
  */
 
 package mmj.lang;
@@ -137,20 +137,20 @@ public class Formula {
     }
 
     /**
-     *  Construct using Sym ArrayList.
+     *  Construct using Sym List.
      *
      *  Enforces rule that first symbol must be a Cnst,
      *  just in case.
      *
-     *  @param symList ArrayList containing formula symbols
+     *  @param symList List containing formula symbols
      */
-    public Formula(final ArrayList symList) {
+    public Formula(final List<Sym> symList) {
 
         cnt = symList.size();
         sym = new Sym[cnt];
         setTyp((Cnst)symList.get(0));
         for (int i = 1; i < cnt; i++)
-            sym[i] = (Sym)symList.get(i);
+            sym[i] = symList.get(i);
     }
 
     /**
@@ -160,7 +160,7 @@ public class Formula {
      *  @param sz      Size of the formula
      *  @param typS    Formula Type code
      */
-    protected Formula(final Map symTbl, final int sz, final String typS)
+    protected Formula(final Map<?, ?> symTbl, final int sz, final String typS)
         throws LangException
     {
         sym = new Sym[sz];
@@ -228,7 +228,8 @@ public class Formula {
      *  @throws LangException if Type Code is undefined or
      *          not defined as a Cnst.
      */
-    public Sym setTyp(final Map symTbl, final String typS) throws LangException
+    public Sym setTyp(final Map<?, ?> symTbl, final String typS)
+        throws LangException
     {
 
         final Sym typC = (Sym)symTbl.get(typS);
@@ -390,13 +391,12 @@ public class Formula {
      *          a VarHyp for one of the Formula's Var's.
      */
     public VarHyp[] buildMandVarHypArray(final Hyp[] tempHypArray) {
-        final ArrayList hypList = new ArrayList();
-        VarHyp vH;
+        final List<VarHyp> hypList = new ArrayList<VarHyp>();
         // start at i = 1 to bypass the Cnst at Formula.sym[0]
         for (int i = 1; i < cnt; i++) {
             if (!sym[i].isVar())
                 continue;
-            vH = ((Var)sym[i]).getVarHyp(tempHypArray);
+            final VarHyp vH = ((Var)sym[i]).getVarHyp(tempHypArray);
             if (vH != null) {
                 Formula.accumHypInList(hypList, vH);
                 continue;
@@ -405,12 +405,7 @@ public class Formula {
                 LangConstants.ERRMSG_FORMULA_VAR_HYP_NOTFND_1 + sym[i]
                     + LangConstants.ERRMSG_FORMULA_CAPTION + toString());
         }
-        final VarHyp[] out = new VarHyp[hypList.size()];
-        final Iterator iterator = hypList.iterator();
-        int outIndex = 0;
-        while (iterator.hasNext())
-            out[outIndex++] = (VarHyp)iterator.next();
-        return out;
+        return hypList.toArray(new VarHyp[hypList.size()]);
     }
 
     /**
@@ -465,7 +460,7 @@ public class Formula {
             || sym[0].getId().compareTo(srcStmt.typ) != 0)
             return false;
         for (int i = 1; i < cnt; i++)
-            if (sym[i].getId().compareTo((String)srcStmt.symList.get(i - 1)) != 0)
+            if (sym[i].getId().compareTo(srcStmt.symList.get(i - 1)) != 0)
                 return false;
         return true;
     }
@@ -512,7 +507,7 @@ public class Formula {
      */
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer(sym.length * 3);
+        final StringBuilder sb = new StringBuilder(sym.length * 3);
         sb.append(sym[0].getId());
         for (int i = 1; i < sym.length; i++) {
             sb.append(' ');
@@ -532,7 +527,7 @@ public class Formula {
      *  @return String for the expression portion of Formula
      */
     public String exprToString() {
-        final StringBuffer sb = new StringBuffer(sym.length * 3);
+        final StringBuilder sb = new StringBuilder(sym.length * 3);
         String ws = "";
         for (int i = 1; i < sym.length; i++) {
             sb.append(ws);
@@ -554,7 +549,7 @@ public class Formula {
      *  line 1.
      *
      *  the first line of text -- to
-     *  @param  sb                  StringBuffer to append to.
+     *  @param  sb                  StringBuilder to append to.
      *
      *  @param  leftColContinuation the leftmost column in
      *                              the text area for use by
@@ -563,7 +558,7 @@ public class Formula {
      *                              use by formulas.
      *  @return nbrLines used by the output formula.
      */
-    public int toProofWorksheetStringBuffer(final StringBuffer sb,
+    public int toProofWorksheetStringBuilder(final StringBuilder sb,
         final int leftColContinuation, final int marginRight)
     {
 
@@ -594,10 +589,10 @@ public class Formula {
 
     /**
      *
-     *  Formats formula into StringBuffer lines in a List.
-     *  @param  list                list of StringBuffer lines.
+     *  Formats formula into StringBuilder lines in a List.
+     *  @param  list                list of StringBuilder lines.
      *
-     *  @param  sb                  StringBuffer to append to.
+     *  @param  sb                  StringBuilder to append to.
      *
      *  @param  leftColContinuation the leftmost column in
      *                              the text area for use by
@@ -605,10 +600,11 @@ public class Formula {
      *  @param  marginRight         the rightmost column for
      *                              use by formulas.
      *  @param  endToken            string such as "$." or "$="
-     *  @return final StringBuffer line in use.
+     *  @return final StringBuilder line in use.
      */
-    public StringBuffer toStringBufferLineList(final LinkedList list,
-        StringBuffer sb, final int leftColContinuation, final int marginRight,
+    public StringBuilder toStringBuilderLineList(
+        final List<StringBuilder> list, StringBuilder sb,
+        final int leftColContinuation, final int marginRight,
         final String endToken)
     {
 
@@ -621,7 +617,7 @@ public class Formula {
             currCol += s.length();
             if (currCol > marginRight) {
                 list.add(sb);
-                sb = new StringBuffer(marginRight);
+                sb = new StringBuilder(marginRight);
                 currCol = leftColContinuation + sym[0].getId().length();
                 for (int j = 0; j < currCol; j++)
                     sb.append(' ');
@@ -635,7 +631,7 @@ public class Formula {
         if (endToken != null) {
             if (currCol + endToken.length() > marginRight) {
                 list.add(sb);
-                sb = new StringBuffer(marginRight);
+                sb = new StringBuilder(marginRight);
             }
             sb.append(endToken);
         }
@@ -646,7 +642,7 @@ public class Formula {
      * Accumulate unique hypotheses (no duplicates), storing them
      * in an array list in order of their appearance in the database.
      *
-     * @param hypList  -- ArrayList of Hyp's. Is updated with
+     * @param hypList  -- List of Hyp's. Is updated with
      *        unique variable hypotheses in the expression.
      *        Because the list is maintained in database statement
      *        sequence order, hypList should either be empty (new)
@@ -656,7 +652,8 @@ public class Formula {
      * @param hypNew candidate Hyp to be added to hypList if
      *               not already there.
      */
-    public static void accumHypInList(final ArrayList hypList, final Hyp hypNew)
+    public static <T extends Hyp> void accumHypInList(final List<T> hypList,
+        final T hypNew)
     {
         int i = 0;
         final int iEnd = hypList.size();
@@ -665,7 +662,7 @@ public class Formula {
 
         while (true) {
             if (i < iEnd) {
-                existingSeq = ((Hyp)hypList.get(i)).seq;
+                existingSeq = hypList.get(i).seq;
                 if (newSeq < existingSeq)
                     // insert here, at "i"
                     break;
