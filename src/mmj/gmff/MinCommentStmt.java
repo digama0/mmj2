@@ -30,7 +30,7 @@ public class MinCommentStmt extends MinProofWorkStmt {
 
     /**
      * Standard MinCommentStmt constructor.
-     *
+     * 
      * @param w the {@code MinProofworksheet} object which contains the proof
      *            step.
      * @param slc Array of lines each comprised of an Array of {@code String}s
@@ -59,7 +59,7 @@ public class MinCommentStmt extends MinProofWorkStmt {
      * flexibility in creating export format models.
      * <p>
      * Additional information may be found \GMFFDoc\GMFFModels.txt.
-     *
+     * 
      * @param gmffExporter The {@code GMFFExporter} requesting the export data
      *            build.
      * @param exportBuffer The {@code StringBuilder} to which exported data is
@@ -67,6 +67,7 @@ public class MinCommentStmt extends MinProofWorkStmt {
      * @throws GMFFException if errors are encountered during the export
      *             process.
      */
+    @Override
     public void buildModelAExport(final GMFFExporter gmffExporter,
         final StringBuilder exportBuffer) throws GMFFException
     {

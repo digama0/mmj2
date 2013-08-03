@@ -125,6 +125,7 @@ public abstract class Sym extends MObj<Sym> {
      * @return Returns {@code true} if Sym is a Cnst MObj, otherwise
      *         {@code false}.
      */
+    @Override
     public abstract boolean isCnst();
 
     /**
@@ -140,6 +141,7 @@ public abstract class Sym extends MObj<Sym> {
      * 
      * @return returns Sym.id string;
      */
+    @Override
     public String toString() {
         return id;
     }
@@ -149,6 +151,7 @@ public abstract class Sym extends MObj<Sym> {
      * 
      * @return hashcode for the Sym (Sym.id.hashcode())
      */
+    @Override
     public int hashCode() {
         return id.hashCode();
     }
@@ -164,6 +167,7 @@ public abstract class Sym extends MObj<Sym> {
      * @param obj another Sym -- otherwise will return false.
      * @return returns true if equal, otherwise false.
      */
+    @Override
     public boolean equals(final Object obj) {
         return this == obj ? true : !(obj instanceof Sym) ? false : id
             .equals(((Sym)obj).id);
@@ -176,6 +180,7 @@ public abstract class Sym extends MObj<Sym> {
      * @return returns negative, zero, or a positive int if this Sym object is
      *         less than, equal to or greater than the input parameter obj.
      */
+    @Override
     public int compareTo(final Sym obj) {
         return id.compareTo(obj.id);
     }

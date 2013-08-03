@@ -33,7 +33,7 @@ public class TheoremLoader {
 
     /**
      * Main constructor for TheoremLoader.
-     *
+     * 
      * @param tlPreferences TlPreferences object.
      */
     public TheoremLoader(final TlPreferences tlPreferences) {
@@ -43,7 +43,7 @@ public class TheoremLoader {
     /**
      * Unifies mmj2 Proof Text area and stores the theorem in the Logical System
      * and MMT Folder.
-     *
+     * 
      * @param proofWorksheetText text area holding an mmj2 Proof Worksheet.
      * @param logicalSystem LogicalSystem object.
      * @param messages Messages object.
@@ -70,7 +70,7 @@ public class TheoremLoader {
 
     /**
      * Unifies mmj2 Proof Text area and stores the theorem in the MMT Folder.
-     *
+     * 
      * @param proofWorksheetText text area holding an mmj2 Proof Worksheet.
      * @param logicalSystem LogicalSystem object.
      * @param messages Messages object.
@@ -96,7 +96,7 @@ public class TheoremLoader {
 
     /**
      * Stores a unified ProofWorksheet in the Logical System and the MMT Folder.
-     *
+     * 
      * @param proofWorksheet ProofWorksheet object already successfully unified.
      * @param logicalSystem LogicalSystem object.
      * @param messages Messages object.
@@ -117,7 +117,7 @@ public class TheoremLoader {
 
     /**
      * Stores a unified ProofWorksheet in the MMT Folder.
-     *
+     * 
      * @param proofWorksheet ProofWorksheet object already successfully unified.
      * @param logicalSystem LogicalSystem object.
      * @param messages Messages object.
@@ -150,7 +150,7 @@ public class TheoremLoader {
      * Loads all MMT Theorems in the MMT Folder into the Logical System.
      * <p>
      * Note: the current MMT Folder is obtained from the TlPreferences object.
-     *
+     * 
      * @param logicalSystem LogicalSystem object.
      * @param messages Messages object.
      * @throws TheoremLoaderException if data errors encountered.
@@ -170,7 +170,7 @@ public class TheoremLoader {
      * <p>
      * Note: the input theoremLabel is used to construct the file name to be
      * read from the MMT Folder.
-     *
+     * 
      * @param theoremLabel label of the theorem to be loaded.
      * @param logicalSystem LogicalSystem object.
      * @param messages Messages object.
@@ -194,7 +194,7 @@ public class TheoremLoader {
      * <p>
      * Note: the theorem Label is used to construct the file name to be written
      * to the MMT Folder.
-     *
+     * 
      * @param theorem Theorem to be written to the MMT Folder.
      * @param logicalSystem LogicalSystem object.
      * @param messages Messages object.
@@ -217,7 +217,7 @@ public class TheoremLoader {
 
     /**
      * Unifies an mmj2 Proof Text area.
-     *
+     * 
      * @param proofWorksheetText text of a ProofWorksheet.
      * @param proofAsst ProofAsst object
      * @param filenameOrDataSourceId text for diagnostics

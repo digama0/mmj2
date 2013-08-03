@@ -27,7 +27,7 @@ public class MinDerivationStep extends MinProofStepStmt {
 
     /**
      * Standard MinDerivationStep constructor.
-     *
+     * 
      * @param w the {@code MinProofworksheet} object which contains the proof
      *            step.
      * @param slc Array of proof step lines each comprised of an Array of

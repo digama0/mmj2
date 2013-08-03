@@ -109,6 +109,7 @@ public class ProofAsstBoss extends Boss {
      * @return boolean "consumed" indicating that the input runParm should not
      *         be processed again.
      */
+    @Override
     public boolean doRunParmCommand(final RunParmArrayEntry runParm)
         throws IllegalArgumentException, MMIOException, FileNotFoundException,
         IOException, VerifyException
@@ -406,7 +407,7 @@ public class ProofAsstBoss extends Boss {
 
     /**
      * Fetch a ProofAsst object.
-     *
+     * 
      * @return ProofAsst object, ready to go, or null;.
      * @throws VerifyException if an error occurred
      */

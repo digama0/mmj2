@@ -106,6 +106,7 @@ public class TMFFTwoColumnAlignment extends TMFFMethod {
      * @param maxDepth parameter.
      * @return boolean - true only if update performed.
      */
+    @Override
     public boolean updateMaxDepth(final int maxDepth) {
 
         this.maxDepth = TMFFMethod.validateMaxDepth(maxDepth);
@@ -114,6 +115,7 @@ public class TMFFTwoColumnAlignment extends TMFFMethod {
     }
 
     // return -1 if error else 0
+    @Override
     protected int renderSubExprWithBreaks(final TMFFStateParams tmffSP,
         final ParseNode currNode, final int leftmostColNbr)
     {

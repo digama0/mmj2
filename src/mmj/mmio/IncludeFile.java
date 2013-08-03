@@ -48,7 +48,7 @@ public class IncludeFile {
      * {@code Tokenizer} of the top level MetaMath source file read; this is
      * used to restore Statementizer processing where it left off after end of
      * file on the include file.
-     *
+     * 
      * @param fileList List used to store information about IncludeFiles.
      *            Initialize to empty list at start of processing:
      *            {@code  fileList = new ArrayList();}. and that's all that is

@@ -39,7 +39,7 @@ public class StoreInMMTFolderTLRequest extends TLRequest {
 
     /**
      * Implements the request to store a ProofWorksheet in the MMT Folder.
-     *
+     * 
      * @param theoremLoader TheoremLoader object.
      * @param proofWorksheet ProofWorksheet object.
      * @param logicalSystem LogicalSystem object.
@@ -48,6 +48,7 @@ public class StoreInMMTFolderTLRequest extends TLRequest {
      * @throws TheoremLoaderException if there are any data errors encountered
      *             while performing the requested function.
      */
+    @Override
     public void doIt(final TheoremLoader theoremLoader,
         final ProofWorksheet proofWorksheet, final LogicalSystem logicalSystem,
         final Messages messages, final ProofAsst proofAsst)

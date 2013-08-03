@@ -49,7 +49,7 @@ public class MMTTheoremExportFormatter {
 
     /**
      * Basic constructor.
-     *
+     * 
      * @param tlPreferences TlPreferences object.
      */
     public MMTTheoremExportFormatter(final TlPreferences tlPreferences) {
@@ -60,7 +60,7 @@ public class MMTTheoremExportFormatter {
     /**
      * Converts a Theorem in the LogicalSystem into a list of StringBuilder
      * lines formatted into Metamath format.
-     *
+     * 
      * @param theorem Theorem in the Logical System.
      * @return LinkedList of StringBuilder objects each containing one line of
      *         text in Metamath-format (without newlines.)
@@ -96,7 +96,7 @@ public class MMTTheoremExportFormatter {
     /**
      * Converts a ProofWorksheet into a list of StringBuilder lines formatted
      * into Metamath format.
-     *
+     * 
      * @param proofWorksheet ProofWorksheet object
      * @return LinkedList of StringBuilder objects each containing one line of
      *         text in Metamath-format (without newlines.)

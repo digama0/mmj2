@@ -31,7 +31,7 @@ public class GMFFInputFile {
 
     /**
      * Returns the contents of a file as a {@code String}.
-     *
+     * 
      * @param inputFolder a GMFFFolder holding the input file
      * @param inputFileName file name of file to be read.
      * @param exportType the Export Type associated with this I/O operation --
@@ -58,7 +58,7 @@ public class GMFFInputFile {
 
     /**
      * Returns the contents of a file as a {@code String}.
-     *
+     * 
      * @param file File object for the file name to be read.
      * @param exportType the Export Type associated with this I/O operation --
      *            used for error messages.
@@ -83,7 +83,7 @@ public class GMFFInputFile {
 
     /**
      * Standard constructor.
-     *
+     * 
      * @param inputFolder a GMFFFolder holding the input file
      * @param inputFileName file name of file to be read.
      * @param exportType the Export Type associated with this I/O operation --
@@ -158,7 +158,7 @@ public class GMFFInputFile {
 
     /**
      * Standard constructor.
-     *
+     * 
      * @param file File object for the file name to be read.
      * @param exportType the Export Type associated with this I/O operation --
      *            used for error messages.
@@ -191,7 +191,7 @@ public class GMFFInputFile {
      * <p>
      * Obviously, this function has a problem if asked to read a humongous file.
      * (We should test that :-)
-     *
+     * 
      * @return String containing the entire file contents.
      * @throws GMFFFileNotFoundException if file not found
      * @throws GMFFException if other error, such as IOException or
@@ -256,7 +256,7 @@ public class GMFFInputFile {
      * Closes the Reader used for the GMFFInputFile.
      * <p>
      * Does nothing if input Reader is null.
-     *
+     * 
      * @param readerIn Reader object or null.
      */
     public void close(final Reader readerIn) {
@@ -268,7 +268,7 @@ public class GMFFInputFile {
 
     /**
      * Returns the absolute pathname of the GMFFInputFile
-     *
+     * 
      * @return Absolute pathname of the GMFFFolder or null if the underlying
      *         File is null.
      */

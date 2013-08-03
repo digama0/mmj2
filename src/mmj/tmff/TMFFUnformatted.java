@@ -68,7 +68,7 @@ public class TMFFUnformatted extends TMFFMethod {
      * This method overrides the TMFFMethod renderFormula() method! It provides
      * a fallback for cases when the TMFF algorithm fails (e.g. excessive
      * indentation for line length.)
-     *
+     * 
      * @param tmffSP TMFFStateParams initialized, ready for use.
      * @param parseTree ParseTree for the formula to be formatted. NOT USED in
      *            this override method!
@@ -76,6 +76,7 @@ public class TMFFUnformatted extends TMFFMethod {
      * @return number of lines rendered or -1 if an error was encountered and
      *         the formula could not be formatted.
      */
+    @Override
     public int renderFormula(final TMFFStateParams tmffSP,
         final ParseTree parseTree, final Formula formula)
     {
@@ -92,6 +93,7 @@ public class TMFFUnformatted extends TMFFMethod {
         return tmffSP.currLineNbr;
     }
 
+    @Override
     protected int renderSubExprWithBreaks(final TMFFStateParams tmffSP,
         final ParseNode currNode, final int leftmostColNbr)
     {
@@ -110,6 +112,7 @@ public class TMFFUnformatted extends TMFFMethod {
      * @param maxDepth parameter.
      * @return boolean - true only if update performed.
      */
+    @Override
     public boolean updateMaxDepth(final int maxDepth) {
 
         return false;

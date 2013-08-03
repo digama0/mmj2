@@ -75,7 +75,7 @@ public interface SyntaxVerifier {
 
     /**
      * Parse all Statement Formulas and update stmtTbl with results.
-     *
+     * 
      * @param messages Messages object for error/info messages.
      * @param symTbl Symbol Table (Map).
      * @param stmtTbl Statement Table (Map).

@@ -60,6 +60,7 @@ public class ModelAExporter extends GMFFExporter {
      *         failed (error messages are accumed in the {@code Messages}
      *         object.)
      */
+    @Override
     public String exportProofWorksheet(final ProofWorksheetCache p,
         final String appendFileName)
     {

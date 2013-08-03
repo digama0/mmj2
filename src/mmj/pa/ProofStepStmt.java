@@ -172,9 +172,10 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
 
     /**
      * Is this ProofWorkStmt a proof step?
-     *
+     * 
      * @return true;
      */
+    @Override
     public boolean isProofStep() {
         return true;
     }
@@ -204,12 +205,13 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
 
     /**
      * Computes column number in the proof step text of the input field id.
-     *
+     * 
      * @param fieldId value identify ProofWorkStmt field for cursor positioning,
      *            as defined in PaConstants.FIELD_ID_*.
      * @return column of input fieldId or default value of 1 if there is an
      *         error.
      */
+    @Override
     public int computeFieldIdCol(final int fieldId) {
         int outCol = 1;
         if (fieldId == PaConstants.FIELD_ID_REF)
@@ -218,6 +220,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     }
 
     /** Reformats Derivation Step using TMFF. */
+    @Override
     public void tmffReformat() {}
 
     /**
@@ -257,7 +260,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     /**
      * Updates the ProofStepStmt ParseTree, resetting maxDepth and levelOneTwo
      * data.
-     *
+     * 
      * @param parseTree the new ParseTree for the step.
      */
     public void updateFormulaParseTree(final ParseTree parseTree) {
@@ -271,7 +274,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     /**
      * Updates the workVarList for the ProofStepStmt and if the revised
      * workVarList is null turns off the formulaFldIncomplete flag.
-     *
+     * 
      * @param workVarList List of WorkVar listing the WorkVar used in the step
      *            formula.
      */
@@ -520,10 +523,11 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     /**
      * Function to determine whether the ProofWorkStmt Ref Label matches the
      * input string (always false in base class.)
-     *
+     * 
      * @param ref string to compare to ProofWorkStmt refLabel string.
      * @return true if ProofStepStmt Ref label matches the input string.
      */
+    @Override
     public boolean hasMatchingRefLabel(final String ref) {
         if (refLabel != null && refLabel.equals(ref))
             return true;
@@ -537,6 +541,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      * @param newStepNbr step number to compare
      * @return true if equal, false if not equal.
      */
+    @Override
     public boolean hasMatchingStepNbr(final String newStepNbr) {
         if (step.equals(newStepNbr))
             return true;
@@ -576,13 +581,14 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
 
     /**
      * Gets the Ref label for the step.
-     *
+     * 
      * @return Ref label for the step.
      */
     public String getRefLabel() {
         return refLabel;
     }
 
+    @Override
     public String getStmtDiagnosticInfo() {
         return this.getClass().getName() + " " + step;
     }
@@ -594,7 +600,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      * <p>
      * Objective is to avoid changing the position of the other tokens within
      * the text area -- as much as possible.
-     *
+     * 
      * @param textArea step stmtText area or similar text area.
      * @param newTextPrefix revised first token of text area.
      */

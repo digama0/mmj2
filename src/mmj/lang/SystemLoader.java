@@ -177,7 +177,7 @@ public interface SystemLoader {
      * Is BookManager enabled?
      * <p>
      * If BookManager is enabled then Chapters and Sections will be stored.
-     *
+     * 
      * @return true if BookManager is enabled, else false.
      */
     boolean isBookManagerEnabled();
@@ -186,7 +186,7 @@ public interface SystemLoader {
      * Add new Chapter.
      * <p>
      * See mmj.lang.BookManager.java for more info.
-     *
+     * 
      * @param chapterTitle Title of chapter or blank or empty String.
      */
     void addNewChapter(String chapterTitle);
@@ -195,7 +195,7 @@ public interface SystemLoader {
      * Add new Section.
      * <p>
      * See mmj.lang.BookManager.java for more info.
-     *
+     * 
      * @param sectionTitle Title of section or blank or empty String.
      */
     void addNewSection(String sectionTitle);
@@ -211,7 +211,7 @@ public interface SystemLoader {
      * Note: per agreement with Norm, the "$t" token identifying typesetting
      * definitions in a comment is the first non-whitespace token after the "$("
      * in the comment.
-     *
+     * 
      * @param comment Typesetting definition comment ("$t) from Metamath file
      *            minus the "$(" and "$)" tokens.
      */

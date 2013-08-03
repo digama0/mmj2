@@ -30,7 +30,7 @@ public class Section {
 
     /**
      * Sole constructor for Section..
-     *
+     * 
      * @param sectionChapter the Chapter to which the Section belongs.
      * @param sectionNbr is assigned by BookManager.
      * @param sectionTitle is the extracted descriptive title from the input
@@ -64,7 +64,7 @@ public class Section {
      * of the scope the Var is considered to be "inactive", so subsequent
      * re-declarations are considered to be re-activations. The bottom line is
      * that only the first declaration is assigned a sectionMObjNbr.
-     *
+     * 
      * @param mObj the MObj to be assigned to a Chapter and Section and updated
      *            with SectionMObjNbr.
      * @return true only if the operation is completed successfully, meaning
@@ -82,7 +82,7 @@ public class Section {
 
     /**
      * Returns the Chapter to which the Section is assigned.
-     *
+     * 
      * @return the Chapter to which the Section is assigned.
      */
     public Chapter getSectionChapter() {
@@ -91,7 +91,7 @@ public class Section {
 
     /**
      * Returns the sectionNbr for the Section.
-     *
+     * 
      * @return the sectionNbr for the Section.
      */
     public int getSectionNbr() {
@@ -100,7 +100,7 @@ public class Section {
 
     /**
      * Returns the sectionTitle for the Section.
-     *
+     * 
      * @return the sectionTitle for the Section.
      */
     public String getSectionTitle() {
@@ -111,7 +111,7 @@ public class Section {
      * Sets the value of the sectionTitle for the Section.
      * <p>
      * The title must be, at least, an empty String.
-     *
+     * 
      * @param sectionTitle Description or Title of the Section.
      */
     public void setSectionTitle(final String sectionTitle) {
@@ -124,7 +124,7 @@ public class Section {
      * The highest MObj number is the same as the last because additions are
      * made only at the end of a Section and new MObj numbers are generated from
      * 1 by 1 within each Section.
-     *
+     * 
      * @return final MObj number within the Section.
      */
     public int getLastMObjNbr() {
@@ -133,10 +133,11 @@ public class Section {
 
     /**
      * Test code for creating diagnostics.
-     *
+     * 
      * @return String of information about the Section formatted into a single
      *         line.
      */
+    @Override
     public String toString() {
         return new String(LangConstants.SECTION_TOSTRING_LITERAL_1
             + sectionChapter.getChapterNbr()
@@ -151,7 +152,7 @@ public class Section {
      * Returns a string caption for the Section category code.
      * <p>
      * See LangConstants.SECTION_DISPLAY_CAPTION.
-     *
+     * 
      * @return caption for the Section category code.
      */
     public String getSectionCategoryDisplayCaption() {
@@ -162,7 +163,7 @@ public class Section {
      * Returns the Section Category Code.
      * <p>
      * See LangConstants.SECTION_NBR_CATEGORIES.
-     *
+     * 
      * @return the Section Category Code.
      */
     public int getSectionCategoryCd() {
@@ -173,7 +174,7 @@ public class Section {
      * Returns the Section Category Code for a Section number.
      * <p>
      * See LangConstants.SECTION_NBR_CATEGORIES.
-     *
+     * 
      * @param s section number
      * @return the Section Category Code.
      */

@@ -103,7 +103,7 @@ public interface SvcCallback {
      * triggered, and one of the user programs threw an exception, such as
      * IllegalArgumentException, which flowed back to mmj2 and caused the
      * non-zero return-code.
-     *
+     * 
      * @param messages mmj.lang.Messages object.
      * @param outputBoss mmj.util.OutputBoss
      * @param logicalSystem mmj.lang.LogicalSystem

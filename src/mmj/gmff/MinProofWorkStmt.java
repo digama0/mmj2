@@ -40,7 +40,7 @@ public abstract class MinProofWorkStmt {
 
     /**
      * Standard MinProofWorkStmt constructor.
-     *
+     * 
      * @param w {@code MinProofWorksheet} of which this statement is a part.
      * @param slc Array of Array of String representing the lines and "chunks"
      *            making up the {@code MinProofWorkStmt}.
@@ -148,7 +148,7 @@ public abstract class MinProofWorkStmt {
      * output at this location in the export text.
      * <p>
      * Additional information may be found \GMFFDoc\GMFFModels.txt.
-     *
+     * 
      * @param gmffExporter The {@code GMFFExporter} requesting the export data
      *            build.
      * @param exportBuffer The {@code StringBuilder} to which exported data is
@@ -170,7 +170,7 @@ public abstract class MinProofWorkStmt {
      * Metamath $t comment statement data. Whitespace chunks are cleaned so that
      * they contain only spaces, and in addition, are shortened by one character
      * for readability.
-     *
+     * 
      * @param gmffExporter The {@code GMFFExporter} requesting the export data
      *            build.
      * @param exportBuffer The {@code StringBuilder} to which exported data is
@@ -219,7 +219,7 @@ public abstract class MinProofWorkStmt {
      * the only non-space whitespace character is Tab -- and on the Proof
      * Assistant GUI Tab characters equate to one space. To be really safe, all
      * whitespace chunk characters are converted to spaces.
-     *
+     * 
      * @param lineIndex index of line in {@code stmtLineChunks} to be "cleaned".
      * @return String containing all chunks in the line concatenated with
      *         whitespace chunks converted to spaces.
@@ -239,7 +239,7 @@ public abstract class MinProofWorkStmt {
      * the only non-space whitespace character is Tab -- and on the Proof
      * Assistant GUI Tab characters equate to one space. To be really safe, all
      * whitespace chunk characters are converted to spaces.
-     *
+     * 
      * @param lineIndex index of line in {@code stmtLineChunks} to be "cleaned".
      * @param fromChunkIndex index of first chunk in the line to be "cleaned".
      * @param toChunkIndex exclusive endpoint (i.e. not thru) of chunk cleanup

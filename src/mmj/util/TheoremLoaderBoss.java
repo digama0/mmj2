@@ -52,6 +52,7 @@ public class TheoremLoaderBoss extends Boss {
      * @return boolean "consumed" indicating that the input runParm should not
      *         be processed again.
      */
+    @Override
     public boolean doRunParmCommand(final RunParmArrayEntry runParm)
         throws IllegalArgumentException, MMIOException, FileNotFoundException,
         IOException, VerifyException, TheoremLoaderException
@@ -150,7 +151,7 @@ public class TheoremLoaderBoss extends Boss {
      * <p>
      * Note: must re-initialize the TMFFPreferences reference in TlPreferences
      * because TMFFBoss controls which instance of TMFFPreferences is active!!!
-     *
+     * 
      * @return TlPreferences object ready to go.
      */
     public TlPreferences getTlPreferences() {
@@ -168,7 +169,7 @@ public class TheoremLoaderBoss extends Boss {
 
     /**
      * Fetch a TheoremLoader object.
-     *
+     * 
      * @return TheoremLoader object, ready to go, or null;.
      * @throws VerifyException if an error occurred
      */

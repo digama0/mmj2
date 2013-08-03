@@ -281,7 +281,7 @@ public class Formula {
     /**
      * Builds a "custom" version of an Expression in which an array of
      * ParseNodeHolders is output for use in generating a ParseTree.
-     *
+     * 
      * @param hypArray Array of Hyp for Formula.
      * @return ParseNodeHolder array.
      * @throws IllegalArgumentException if unable to find a VarHyp for one of
@@ -383,6 +383,7 @@ public class Formula {
      * 
      * @return hashcode for the Formula
      */
+    @Override
     public int hashCode() {
         return toString().hashCode();
     }
@@ -439,6 +440,7 @@ public class Formula {
      * @param obj Formula that will be compared to this Formula.
      * @return returns true if equal, otherwise false.
      */
+    @Override
     public boolean equals(final Object obj) {
         if (this == obj)
             return true;
@@ -464,6 +466,7 @@ public class Formula {
      * 
      * @return String for the Formula
      */
+    @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(sym.length * 3);
         sb.append(sym[0].getId());

@@ -32,7 +32,7 @@ public class GMFFFolder {
      * The input {@code folderName} String may be an absolute or relative path
      * name. If it is null or an empty string, does not exist, is not a
      * directory, or is security protected, then an exception is thrown.
-     *
+     * 
      * @param filePath path name for building folder. May be null, relative or
      *            absolute.
      * @param folderName relative or absolute path name
@@ -92,7 +92,7 @@ public class GMFFFolder {
      * <p>
      * NOTE: "fileNamePrefix" refers to the file name without the dotted file
      * type (e.g. "help.txt" has file name prefix = "help".)
-     *
+     * 
      * @param fileType dot followed by file suffix (e.g. ".mmp"). Selected files
      *            must have matching file suffix.
      * @param lowestNamePrefix Selected files must have names >=
@@ -122,7 +122,7 @@ public class GMFFFolder {
 
     /**
      * Returns the File object for the GMFFFolder.
-     *
+     * 
      * @return File object for the GMFFFolder.
      */
     public File getFolderFile() {
@@ -131,7 +131,7 @@ public class GMFFFolder {
 
     /**
      * Returns the absolute pathname of the GMFFFolder.
-     *
+     * 
      * @return Absolute pathname of the GMFFFolder or null if the underlying
      *         File is null.
      */

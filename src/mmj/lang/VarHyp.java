@@ -142,6 +142,7 @@ public class VarHyp extends Hyp {
      * 
      * @param active true or false.
      */
+    @Override
     public void setActive(final boolean active) {
         this.active = active;
         if (!active)
@@ -181,6 +182,7 @@ public class VarHyp extends Hyp {
      * 
      * @return true
      */
+    @Override
     public boolean isVarHyp() {
         return true;
     }
@@ -190,6 +192,7 @@ public class VarHyp extends Hyp {
      * 
      * @return true or false
      */
+    @Override
     public boolean isWorkVarHyp() {
         return isWorkVarHypInd;
     }
@@ -210,6 +213,7 @@ public class VarHyp extends Hyp {
      * 
      * @return false.
      */
+    @Override
     public boolean isLogHyp() {
         return false;
     }
@@ -222,6 +226,7 @@ public class VarHyp extends Hyp {
      * 
      * @return Mandatory VarHyp Array for this VarHyp.
      */
+    @Override
     public VarHyp[] getMandVarHypArray() {
         final VarHyp[] vH = new VarHyp[0];
         return vH;
@@ -229,9 +234,10 @@ public class VarHyp extends Hyp {
 
     /**
      * Return the mandatory Hyp array length for this VarHyp.
-     *
+     * 
      * @return Mandatory VarHyp Array Length for this VarHyp.
      */
+    @Override
     public int getMandHypArrayLength() {
         return 0;
     }
@@ -254,7 +260,7 @@ public class VarHyp extends Hyp {
      * Depth is computed as 1 for each Notation Syntax Axiom Node. VarHyp nodes
      * and Nulls Permitted, Type Conversion and NamedTypedConstant Syntax Axiom
      * nodes are assigned depth = 0 for purposes of depth checking.
-     *
+     * 
      * @param sb StringBuilder already initialized for appending characters.
      * @param maxDepth maximum depth of Notation Syntax axioms in sub-tree to be
      *            printed. Set to Integer.MAX_VALUE to turn off depth checking.
@@ -265,6 +271,7 @@ public class VarHyp extends Hyp {
      * @return length of sub-expression characters appended to the input
      *         StringBuilder -- or -1 if maxDepth or maxLength exceeded.
      */
+    @Override
     public int renderParsedSubExpr(final StringBuilder sb, final int maxDepth,
         final int maxLength, final ParseNode[] child)
     {

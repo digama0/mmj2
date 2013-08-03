@@ -33,7 +33,7 @@ public class GMFFFileFilter implements FileFilter {
     /**
      * GMFF Constructor for GMFFFileFilter allowing specification of selection
      * criteria for files in a directory.
-     *
+     * 
      * @param fileSuffix dot followed by file type (e.g. ".mmp"). Selected files
      *            must have matching file suffix.
      * @param lowestNamePrefix Selected files must have names >=
@@ -55,7 +55,7 @@ public class GMFFFileFilter implements FileFilter {
      * <li>has matching file suffix, ignoring case (e.g. ".mmp"), and
      * <li>{@code (namePrefix.compareToIgnoreCase( lowestNamePrefix) >= 0)}
      * </ul>
-     *
+     * 
      * @param pathname entry in directory.
      * @return true if selected.
      */

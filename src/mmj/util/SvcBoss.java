@@ -79,6 +79,7 @@ public class SvcBoss extends Boss {
      * @return boolean "consumed" indicating that the input runParm should not
      *         be processed again.
      */
+    @Override
     public boolean doRunParmCommand(final RunParmArrayEntry runParm)
         throws IllegalArgumentException, VerifyException
     {

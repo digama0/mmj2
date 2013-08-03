@@ -27,7 +27,7 @@ public class MinHypothesisStep extends MinProofStepStmt {
 
     /**
      * Standard {@code MinHypothesisStep} constructor.
-     *
+     * 
      * @param w the {@code MinProofworksheet} object which contains the proof
      *            step.
      * @param slc Array of lines each comprised of an Array of {@code String}s

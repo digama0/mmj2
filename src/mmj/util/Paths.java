@@ -101,7 +101,7 @@ public class Paths {
      * <p>
      * Otherwise, if {@code mmj2Path} is null then the output {@code File} is
      * relative to the Current Path.
-     *
+     * 
      * @param pathName name of file or directory.
      * @return File object relative to mmj2Path unless input pathName is
      *         absolute or mmj2Path is null, in which case the output File is
@@ -126,7 +126,7 @@ public class Paths {
      * <p>
      * Otherwise, if {@code metamathPath} is null then the output {@code File}
      * is relative to the Current Path.
-     *
+     * 
      * @param pathName name of file or directory.
      * @return File object relative to metamathPath unless input pathName is
      *         absolute or metamathPath is null, in which case the output File
@@ -151,7 +151,7 @@ public class Paths {
      * <p>
      * Otherwise, if {@code svcPath} is null then the output {@code File} is
      * relative to the Current Path.
-     *
+     * 
      * @param pathName name of file or directory.
      * @return File object relative to svcPath unless input pathName is absolute
      *         or svcPath is null, in which case the output File is relative to
@@ -170,7 +170,7 @@ public class Paths {
 
     /**
      * Gets the mmj2Path.
-     *
+     * 
      * @return The mmj2Path File object.
      */
     public File getMMJ2Path() {
@@ -179,7 +179,7 @@ public class Paths {
 
     /**
      * Gets the metamathPath.
-     *
+     * 
      * @return The mmj2Path File object.
      */
     public File getMetamathPath() {
@@ -188,7 +188,7 @@ public class Paths {
 
     /**
      * Gets the svcPath.
-     *
+     * 
      * @return The mmj2Path File object.
      */
     public File getSvcPath() {

@@ -245,16 +245,14 @@ public class ProofAsstGUI {
             .getStartupProofWorksheetFile();
 
         if (startupProofWorksheetFile == null) {
-            if (proofAsstPreferences.getProofFolder() != null) {
+            if (proofAsstPreferences.getProofFolder() != null)
                 buildFileChooser(new File(
                     proofAsstPreferences.getProofFolder(),
                     PaConstants.SAMPLE_PROOF_LABEL
                         + proofAsstPreferences.getDefaultFileNameSuffix()));
-            }
-            else {
+            else
                 buildFileChooser(new File(PaConstants.SAMPLE_PROOF_LABEL
                     + proofAsstPreferences.getDefaultFileNameSuffix()));
-            }
             updateScreenTitle(fileChooser.getSelectedFile());
             buildGUI(PaConstants.SAMPLE_PROOF_TEXT);
         }
@@ -312,10 +310,9 @@ public class ProofAsstGUI {
         proofTextArea.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(final MouseEvent e) {
-                if (e.getClickCount() == 2) {
+                if (e.getClickCount() == 2)
                     unifyWithStepSelectorChoice(new StepRequest(
                         PaConstants.STEP_REQUEST_SELECTOR_SEARCH));
-                }
             }
         });
 
@@ -339,9 +336,8 @@ public class ProofAsstGUI {
 
     private void buildMMTFolderChooser() {
         final MMTFolder mmtFolder = tlPreferences.getMMTFolder();
-        if (mmtFolder.getFolderFile() == null) {
+        if (mmtFolder.getFolderFile() == null)
             mmtFolderChooser = new JFileChooser();
-        }
         else {
             mmtFolderChooser = new JFileChooser(mmtFolder.getFolderFile());
             mmtFolderChooser.setSelectedFile(mmtFolder.getFolderFile());
@@ -367,9 +363,8 @@ public class ProofAsstGUI {
 
         String prevParent = null;
 
-        if (prevFile != null) {
+        if (prevFile != null)
             prevParent = prevFile.getParent();
-        }
 
         final File newFile = new File(prevParent, label
             + proofAsstPreferences.getDefaultFileNameSuffix());
@@ -447,19 +442,15 @@ public class ProofAsstGUI {
 
     private void updateUndoRedoItems() {
 
-        if (undoManager.canUndo()) {
+        if (undoManager.canUndo())
             editUndoItem.setEnabled(true);
-        }
-        else {
+        else
             editUndoItem.setEnabled(false);
-        }
 
-        if (undoManager.canRedo()) {
+        if (undoManager.canRedo())
             editRedoItem.setEnabled(true);
-        }
-        else {
+        else
             editRedoItem.setEnabled(false);
-        }
     }
 
     public JFrame getMainFrame() {
@@ -511,28 +502,23 @@ public class ProofAsstGUI {
             int row = 0;
             int col = 0;
 
-            if (cursor.caretCharNbr > 0) {
+            if (cursor.caretCharNbr > 0)
                 caretPosition = cursor.caretCharNbr - 1;
-            }
             else if (cursor.caretLine > 0) {
                 row = cursor.caretLine - 1;
-                if (cursor.caretCol > 0) {
+                if (cursor.caretCol > 0)
                     col = cursor.caretCol - 1;
-                }
-                else {
+                else
                     col = 0;
-                }
                 final int offset = proofTextArea.getLineStartOffset(row);
                 caretPosition = offset + col;
             }
 
             // just to be safe instead of sorry...
-            if (caretPosition >= proofTextLength) {
+            if (caretPosition >= proofTextLength)
                 caretPosition = proofTextLength - 1;
-            }
-            if (caretPosition < 0) {
+            if (caretPosition < 0)
                 caretPosition = 0;
-            }
 
             proofTextArea.setCaretPosition(caretPosition);
 
@@ -545,31 +531,24 @@ public class ProofAsstGUI {
 
             if (cursor.scrollToLine != cursor.caretLine
                 && cursor.scrollToLine > 0 && cursor.caretLine > 0)
-            {
                 row = cursor.scrollToLine - 1;
-            }
-            else if (cursor.caretCharNbr > 0) {
+            else if (cursor.caretCharNbr > 0)
                 row = proofTextArea.getLineOfOffset(cursor.caretCharNbr - 1);
-            }
-            else if (cursor.caretLine > 0) {
+            else if (cursor.caretLine > 0)
                 row = cursor.caretLine - 1;
-            }
 
-            if (cursor.scrollToCol > 0) {
+            if (cursor.scrollToCol > 0)
                 col = cursor.scrollToCol - 1;
-            }
 
             final int vPos = vHeight * row / proofTextArea.getLineCount();
 
-            if (cursor.getDontScroll()) {
+            if (cursor.getDontScroll())
                 cursor.setDontScroll(false);
-            }
-            else {
+            else
                 v.scrollRectToVisible(new Rectangle(col, // x
                     vPos, // y
                     1, // width
                     1)); // height
-            }
         } catch (final Exception e) {
             // ignore, don't care, did our best.
         }
@@ -704,14 +683,12 @@ public class ProofAsstGUI {
     }
 
     private void buildProofFont() {
-        if (proofAsstPreferences.getFontBold()) {
+        if (proofAsstPreferences.getFontBold())
             proofFont = new Font(proofAsstPreferences.getFontFamily(),
                 Font.BOLD, proofAsstPreferences.getFontSize());
-        }
-        else {
+        else
             proofFont = new Font(proofAsstPreferences.getFontFamily(),
                 Font.PLAIN, proofAsstPreferences.getFontSize());
-        }
     }
 
     private JScrollPane buildProofTextScrollPane(final JTextArea proofTextArea)
@@ -788,9 +765,8 @@ public class ProofAsstGUI {
             popupMenuForMouse(e);
         }
         public void popupMenuForMouse(final MouseEvent e) {
-            if (e.isPopupTrigger()) {
+            if (e.isPopupTrigger())
                 popupMenu.show(e.getComponent(), e.getX(), e.getY());
-            }
         }
     }
 
@@ -1032,12 +1008,10 @@ public class ProofAsstGUI {
         });
         fontStyleBoldItem
             .setText(PaConstants.PA_GUI_EDIT_MENU_FONT_STYLE_BOLD_ITEM_TEXT);
-        if (proofAsstPreferences.getFontBold()) {
+        if (proofAsstPreferences.getFontBold())
             fontStyleBoldItem.setEnabled(false);
-        }
-        else {
+        else
             fontStyleBoldItem.setEnabled(true);
-        }
         editMenu.add(fontStyleBoldItem);
 
         fontStylePlainItem = new JMenuItem(new AbstractAction() {
@@ -1054,12 +1028,10 @@ public class ProofAsstGUI {
         });
         fontStylePlainItem
             .setText(PaConstants.PA_GUI_EDIT_MENU_FONT_STYLE_PLAIN_ITEM_TEXT);
-        if (proofAsstPreferences.getFontBold()) {
+        if (proofAsstPreferences.getFontBold())
             fontStylePlainItem.setEnabled(true);
-        }
-        else {
+        else
             fontStylePlainItem.setEnabled(false);
-        }
         editMenu.add(fontStylePlainItem);
 
         final JMenuItem largerFontItem = new JMenuItem(new AbstractAction() {
@@ -1068,9 +1040,8 @@ public class ProofAsstGUI {
                     + PaConstants.PROOF_ASST_FONT_SIZE_CHG_AMT;
 
                 // 2007-12-06 - FIX BUG
-                if (fontSize > PaConstants.PROOF_ASST_FONT_SIZE_MAX) {
+                if (fontSize > PaConstants.PROOF_ASST_FONT_SIZE_MAX)
                     fontSize = PaConstants.PROOF_ASST_FONT_SIZE_MAX;
-                }
 
                 proofAsstPreferences.setFontSize(fontSize);
 
@@ -1092,9 +1063,8 @@ public class ProofAsstGUI {
                     - PaConstants.PROOF_ASST_FONT_SIZE_CHG_AMT;
 
                 // 2007-12-06 - FIX BUG
-                if (fontSize < PaConstants.PROOF_ASST_FONT_SIZE_MIN) {
+                if (fontSize < PaConstants.PROOF_ASST_FONT_SIZE_MIN)
                     fontSize = PaConstants.PROOF_ASST_FONT_SIZE_MIN;
-                }
 
                 proofAsstPreferences.setFontSize(fontSize);
 
@@ -1565,9 +1535,8 @@ public class ProofAsstGUI {
     private Color getNewColor(final Color oldColor, final String title) {
         Color newColor = JColorChooser.showDialog(proofTextArea, title,
             oldColor);
-        if (newColor == null) {
+        if (newColor == null)
             newColor = oldColor;
-        }
         return newColor;
     }
 
@@ -1575,20 +1544,18 @@ public class ProofAsstGUI {
 
         final String newIncompleteStepCursorOption = getNewIncompleteStepCursorOption();
 
-        if (newIncompleteStepCursorOption != null) {
+        if (newIncompleteStepCursorOption != null)
             proofAsstPreferences
                 .setIncompleteStepCursor(newIncompleteStepCursorOption);
-        }
     }
 
     private void doSetSoftDjErrorItemAction() {
 
         final String newSoftDjErrorOption = getNewSoftDjErrorOption();
 
-        if (newSoftDjErrorOption != null) {
+        if (newSoftDjErrorOption != null)
             proofAsstPreferences
                 .setDjVarsSoftErrorsOption(newSoftDjErrorOption);
-        }
     }
 
     private void doSetFontFamilyItemAction() {
@@ -1651,9 +1618,8 @@ public class ProofAsstGUI {
 
         promptLoop: while (true) {
             s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
-            if (s == null) {
+            if (s == null)
                 break promptLoop; // cancelled input
-            }
             s = s.trim();
             if (s.equals("")) {
                 promptString = origPromptString;
@@ -1684,9 +1650,8 @@ public class ProofAsstGUI {
 
         promptLoop: while (true) {
             s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
-            if (s == null) {
+            if (s == null)
                 break promptLoop; // cancelled input
-            }
             s = s.trim();
             if (s.equals("")) {
                 promptString = origPromptString;
@@ -1791,9 +1756,8 @@ public class ProofAsstGUI {
 
         promptLoop: while (true) {
             s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
-            if (s == null) {
+            if (s == null)
                 break promptLoop; // cancelled input
-            }
             s = s.trim();
             if (s.equals("")) {
                 promptString = origPromptString;
@@ -1932,15 +1896,12 @@ public class ProofAsstGUI {
             returnVal = fileChooser.showOpenDialog(getMainFrame());
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 file = fileChooser.getSelectedFile();
-                if (file.exists()) {
+                if (file.exists())
                     startRequestAction(new RequestFileOpen(file));
-                }
                 else if (getYesNoAnswer(PaConstants.ERRMSG_PA_GUI_FILE_NOTFND_1
                     + file.getAbsolutePath()
                     + PaConstants.ERRMSG_PA_GUI_FILE_NOTFND_2) == JOptionPane.YES_OPTION)
-                {
                     continue;
-                }
             }
             break;
         }
@@ -1953,9 +1914,8 @@ public class ProofAsstGUI {
                 + actionCaption
                 + PaConstants.ERRMSG_PA_GUI_SAVE_BEFORE_ACTION_2);
 
-            if (answer == JOptionPane.YES_OPTION) {
+            if (answer == JOptionPane.YES_OPTION)
                 doFileSaveAction(true); // saving before exit...
-            }
         }
         return answer;
     }
@@ -1967,9 +1927,8 @@ public class ProofAsstGUI {
                 + actionCaption
                 + PaConstants.ERRMSG_PA_GUI_SAVE_BEFORE_ACTION_2);
 
-            if (answer == JOptionPane.YES_OPTION) {
+            if (answer == JOptionPane.YES_OPTION)
                 doFileSaveAction(false);
-            }
         }
         return answer;
     }
@@ -1983,9 +1942,8 @@ public class ProofAsstGUI {
         } catch (final HeadlessException e) {}
 
         // Per Norm, window close should default to cancel!
-        if (answer == JOptionPane.CLOSED_OPTION) {
+        if (answer == JOptionPane.CLOSED_OPTION)
             answer = JOptionPane.CANCEL_OPTION;
-        }
         return answer;
     }
 
@@ -1999,9 +1957,8 @@ public class ProofAsstGUI {
         int len = 0;
         try {
             final BufferedReader r = new BufferedReader(new FileReader(file));
-            while ((len = r.read(cBuffer, 0, cBuffer.length)) != -1) {
+            while ((len = r.read(cBuffer, 0, cBuffer.length)) != -1)
                 sb.append(cBuffer, 0, len);
-            }
             r.close();
             newProofText = new String(sb);
         } catch (final IOException e) {
@@ -2022,21 +1979,18 @@ public class ProofAsstGUI {
                 updateMainFrameTitleIfNecessary(exitingNow);
                 return;
             }
-            else {
+            else
                 setNbrTimesSavedSinceNew(0); // should not happen
-            }
         }
 
         final int returnVal = fileChooser.showSaveDialog(getMainFrame());
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             file = fileChooser.getSelectedFile();
-            if (file.exists()) {
+            if (file.exists())
                 saveOldProofTextFile(file);
-            }
-            else {
+            else
                 saveNewProofTextFile(file);
-            }
             updateMainFrameTitleIfNecessary(exitingNow);
         }
     }
@@ -2054,16 +2008,12 @@ public class ProofAsstGUI {
                 if (getYesNoAnswer(PaConstants.ERRMSG_PA_GUI_FILE_EXISTS_1
                     + newFile.getAbsolutePath()
                     + PaConstants.ERRMSG_PA_GUI_FILE_EXISTS_2) == JOptionPane.YES_OPTION)
-                {
                     saveOldProofTextFile(newFile);
-                }
-                else {
+                else
                     fileChooser.setSelectedFile(oldFile);
-                }
             }
-            else {
+            else
                 saveNewProofTextFile(newFile);
-            }
         }
         updateMainFrameTitleIfNecessary(false);
 
@@ -2079,9 +2029,8 @@ public class ProofAsstGUI {
         if (!exitingNow) {
             final String newScreenTitle = buildScreenTitle(fileChooser
                 .getSelectedFile());
-            if (screenTitle.compareTo(newScreenTitle) != 0) {
+            if (screenTitle.compareTo(newScreenTitle) != 0)
                 startRequestAction(new RequestUpdateMainFrameTitle());
-            }
         }
     }
 
@@ -2184,9 +2133,8 @@ public class ProofAsstGUI {
 
         final int newMaxResults = getNewMaxResults();
 
-        if (newMaxResults != -1) {
+        if (newMaxResults != -1)
             proofAsstPreferences.setStepSelectorMaxResults(newMaxResults);
-        }
     }
 
     private int getNewMaxResults() {
@@ -2228,9 +2176,8 @@ public class ProofAsstGUI {
     }
 
     private void reshowStepSelectorDialogAction() {
-        if (stepSelectorDialog != null) {
+        if (stepSelectorDialog != null)
             stepSelectorDialog.setVisible(true);
-        }
     }
 
     /*
@@ -2238,9 +2185,8 @@ public class ProofAsstGUI {
      * we may need the memory space.
      */
     private void disposeOfOldSelectorDialog() {
-        if (stepSelectorDialog != null) {
+        if (stepSelectorDialog != null)
             stepSelectorDialog.dispose();
-        }
     }
 
     // ------------------------------------------------------
@@ -2267,9 +2213,8 @@ public class ProofAsstGUI {
 
     private void doExtractTheoremToMMTFolderItemAction() {
         final Theorem theorem = getTheorem();
-        if (theorem != null) {
+        if (theorem != null)
             startRequestAction(new RequestExtractTheoremToMMTFolder(theorem));
-        }
     }
 
     private void doVerifyAllProofsItemAction() {
@@ -2284,9 +2229,8 @@ public class ProofAsstGUI {
 
         String title = "";
         File file = tlPreferences.getMMTFolder().getFolderFile();
-        if (file != null) {
+        if (file != null)
             title = file.getAbsolutePath();
-        }
         mmtFolderChooser.setDialogTitle(title);
 
         int returnVal;
@@ -2297,14 +2241,11 @@ public class ProofAsstGUI {
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 file = mmtFolderChooser.getSelectedFile();
                 errMsg = tlPreferences.setMMTFolder(file);
-                if (errMsg == null) {
+                if (errMsg == null)
                     break;
-                }
                 if (getYesNoAnswer(errMsg
                     + PaConstants.PA_GUI_SET_TL_MMT_FOLDER_OPTION_PROMPT_2) == JOptionPane.YES_OPTION)
-                {
                     continue;
-                }
             }
             break;
         }
@@ -2344,9 +2285,8 @@ public class ProofAsstGUI {
     private void doSetProofCompressionItemAction() {
         final String newProofCompression = getNewProofCompression();
 
-        if (newProofCompression != null) {
+        if (newProofCompression != null)
             proofAsstPreferences.setProofFormatOption(newProofCompression);
-        }
     }
 
     private String getNewProofCompression() {
@@ -2531,9 +2471,8 @@ public class ProofAsstGUI {
         @Override
         void receive() {
             String s = ProofWorksheet.getOutputMessageText(messages);
-            if (s == null) {
+            if (s == null)
                 s = PaConstants.ERRMSG_PA_GUI_EXTRACT_THEOREMS_TO_MMT_FOLDER_NO_MSGS;
-            }
             displayRequestMessages(s);
         }
     }
@@ -2551,9 +2490,8 @@ public class ProofAsstGUI {
         @Override
         void receive() {
             String s = ProofWorksheet.getOutputMessageText(messages);
-            if (s == null) {
+            if (s == null)
                 s = PaConstants.ERRMSG_PA_GUI_LOAD_THEOREMS_FROM_MMT_FOLDER_NO_MSGS;
-            }
             displayRequestMessages(s);
         }
     }
@@ -2571,9 +2509,8 @@ public class ProofAsstGUI {
         @Override
         void receive() {
             String s = ProofWorksheet.getOutputMessageText(messages);
-            if (s == null) {
+            if (s == null)
                 s = PaConstants.ERRMSG_PA_GUI_EXPORT_VIA_GMFF_NO_MSGS;
-            }
             displayRequestMessages(s);
         }
     }
@@ -2591,9 +2528,8 @@ public class ProofAsstGUI {
         @Override
         void receive() {
             String s = ProofWorksheet.getOutputMessageText(messages);
-            if (s == null) {
+            if (s == null)
                 s = PaConstants.ERRMSG_PA_GUI_VERIFY_ALL_PROOFS_NO_MSGS;
-            }
             displayRequestMessages(s);
         }
     }
@@ -2685,9 +2621,8 @@ public class ProofAsstGUI {
                     w.stepSelectorResults, proofAsstGUI, proofAsstPreferences,
                     proofFont);
             }
-            else {
+            else
                 displayProofWorksheet(w);
-            }
             proofTextChanged.setChanges(textChangedBeforeUnify);
         }
     }
@@ -2932,9 +2867,8 @@ public class ProofAsstGUI {
          */
         public void cancelRequestThread() {
             final Thread requestThread = getRequestThread();
-            if (requestThread != null) {
+            if (requestThread != null)
                 requestThread.interrupt();
-            }
         }
 
         /**
@@ -3045,12 +2979,10 @@ public class ProofAsstGUI {
     private void displayRequestMessages(final String s) {
 
         String messages;
-        if (s == null) {
+        if (s == null)
             messages = PaConstants.ERRMSG_NO_MESSAGES_MSG_1;
-        }
-        else {
+        else
             messages = s;
-        }
 
         proofMessageArea.setText(s);
         setCursorToStartOfMessageArea();

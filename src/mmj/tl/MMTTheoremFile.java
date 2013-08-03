@@ -31,7 +31,7 @@ public class MMTTheoremFile {
 
     /**
      * Constructor using an input File object.
-     *
+     * 
      * @param theoremFile the File from which to initialize this object
      * @throws TheoremLoaderException if the filename doesn't have filetype
      *             ".mmt".
@@ -57,7 +57,7 @@ public class MMTTheoremFile {
     /**
      * Constructor using a MMTFolder and a theoremLabel designating a MMT
      * Theorem File in the MMT Folder.
-     *
+     * 
      * @param mmtFolder the MMTFolder to look in.
      * @param theoremLabel the label of the theorem in the MMT Theorem file.
      * @param inputFile boolean set to true if the MMTTheoremFile is supposed to
@@ -110,7 +110,7 @@ public class MMTTheoremFile {
     /**
      * Builds an mmj2 Statementizer object for use in parsing an input MMT
      * Theorem File.
-     *
+     * 
      * @return mmj2 Statementizer object.
      * @throws TheoremLoaderException if the file doesn't actually exist or if
      *             there is an I/O error.
@@ -152,7 +152,7 @@ public class MMTTheoremFile {
      * <p>
      * Note: the input lines do not contain newline characters, which are
      * written here in platform neutral code using writeLine().
-     *
+     * 
      * @param mmtTheoremLines List of StringBuilder lines.
      * @throws TheoremLoaderException if there is an I/O error while writing the
      *             MMTTheoremFile lines.
@@ -189,7 +189,7 @@ public class MMTTheoremFile {
      * Closes the Writer used for the MMTTheoremFile.
      * <p>
      * Does nothing if input Writer is null.
-     *
+     * 
      * @param w Writer object or null.
      * @throws TheoremLoaderException if there is an I/O error during the close
      *             operation.
@@ -211,7 +211,7 @@ public class MMTTheoremFile {
      * Closes the Reader used for the MMTTheoremFile.
      * <p>
      * Does nothing if input Writer is null.
-     *
+     * 
      * @param readerIn Reader object or null.
      */
     public void close(final Reader readerIn) {

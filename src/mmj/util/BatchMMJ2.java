@@ -93,7 +93,7 @@ public class BatchMMJ2 extends BatchFramework {
      * RunParm SvcCallback -- but the "Clear" RunParm does not erase a
      * SvcCallback parameter passed via setSvcCallback (contrary to the behavior
      * of "Clear" elsewhere.)
-     *
+     * 
      * @param args see class description.
      * @param svcCallback your concrete instantiation of the mmj SvcCallback
      *            interface.

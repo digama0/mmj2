@@ -29,7 +29,7 @@ public class MMTFileFilter implements FileFilter {
 
     /**
      * FileFilter for MMT Folders.
-     *
+     * 
      * @param pathname entry in directory.
      * @return true if entry in directory has pathname ending in ".mmt" and is a
      *         readable file.

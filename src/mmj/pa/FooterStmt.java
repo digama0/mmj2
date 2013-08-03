@@ -54,18 +54,20 @@ public class FooterStmt extends ProofWorkStmt {
         super(w);
     }
 
+    @Override
     public boolean stmtIsIncomplete() {
         return false;
     }
 
     /**
      * Function used for cursor positioning.
-     *
+     * 
      * @param fieldId value identify ProofWorkStmt field for cursor positioning,
      *            as defined in PaConstants.FIELD_ID_*.
      * @return column of input fieldId or default value of 1 if there is an
      *         error.
      */
+    @Override
     public int computeFieldIdCol(final int fieldId) {
         return 1;
     }
@@ -73,6 +75,7 @@ public class FooterStmt extends ProofWorkStmt {
     /**
      * Reformats Derivation Step using TMFF.
      */
+    @Override
     public void tmffReformat() {}
 
     /**
@@ -106,6 +109,7 @@ public class FooterStmt extends ProofWorkStmt {
      * @param firstToken first token of the statement
      * @return first token of the next statement.
      */
+    @Override
     public String load(final String firstToken) throws IOException, MMIOError,
         ProofAsstException
     {

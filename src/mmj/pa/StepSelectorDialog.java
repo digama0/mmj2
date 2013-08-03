@@ -71,6 +71,7 @@ public class StepSelectorDialog extends JDialog {
             .setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         stepSelectorDialogList.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(final MouseEvent e) {
                 if (e.getClickCount() == 2)
                     setButton.doClick();

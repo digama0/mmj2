@@ -67,7 +67,7 @@ public class GMFFExporterTypesetDefs {
 
     /**
      * Converts to Audit Report string for testing purposes.
-     *
+     * 
      * @return String containing the relevant fields.
      */
     public String generateAuditReportText() {
@@ -81,7 +81,7 @@ public class GMFFExporterTypesetDefs {
 
     /**
      * Prints the typesetting definitions and keyword to the Messages object.
-     *
+     * 
      * @param messages The Messages object.
      */
     public void printTypesetDefs(final Messages messages) {

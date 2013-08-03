@@ -32,7 +32,7 @@ public class GMFFExportFile {
 
     /**
      * Standard constructor.
-     *
+     * 
      * @param exportFolder where output files written
      * @param exportFileName Output File Name.
      * @param charsetEncoding Charset Encoding Name (see doc).
@@ -97,7 +97,7 @@ public class GMFFExportFile {
 
     /**
      * Writes the export buffer and closes the file.
-     *
+     * 
      * @param exportBuffer text to be written out.
      * @throws GMFFException if I/O exception, security exception or if the
      *             charsetEncoding name is not supported.
@@ -148,7 +148,7 @@ public class GMFFExportFile {
      * Closes the Writer used for the Export File.
      * <p>
      * Does nothing if input Writer is null.
-     *
+     * 
      * @param w Writer object or null.
      * @throws GMFFException if there is an I/O error during the close
      *             operation.
@@ -172,7 +172,7 @@ public class GMFFExportFile {
 
     /**
      * Returns the absolute pathname of the GMFFExportFile
-     *
+     * 
      * @return Absolute pathname of the GMFFExportFile or null if the underlying
      *         File is null.
      */

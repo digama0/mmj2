@@ -85,7 +85,7 @@ public class TheoremStmtGroup {
      * <p>
      * The constructor loads the input file into the TheoremStmtGroup and
      * performs data validation of the input data.
-     *
+     * 
      * @param mmtTheoremFile MMTTheoremFile to be read.
      * @param logicalSystem LogicalSystem object.
      * @param messages Messages object.
@@ -152,7 +152,7 @@ public class TheoremStmtGroup {
      * {@code theoremStmtGroupUsedList} and {@code usedByTheoremStmtGroupList}.
      * These lists are the basis for determining the order in which theorems are
      * loaded into the Logical System.
-     *
+     * 
      * @param logicalSystem LogicalSystem object.
      * @param theoremStmtGroupTbl the MMTTheoremSet Map containing the MMT
      *            Theorems in the set.
@@ -222,7 +222,7 @@ public class TheoremStmtGroup {
      * MMTTheoremSet. Otherwise it goes into the waiting list. (When a theorem
      * is stored into the LogicalSystem it is removed from the
      * theoremStmtGroupUsedList of each theorem which refers to it.)
-     *
+     * 
      * @param readyQueue queue of MMTTheorems ready for updating into the
      *            LogicalSystem.
      * @param waitingList list of MMTTheorems which are not yet ready to update
@@ -246,7 +246,7 @@ public class TheoremStmtGroup {
      * which theorems need requeueing, the updated theorem's
      * usedByTheoremStmtGroup list is read and each theorem in that list is
      * requeued.
-     *
+     * 
      * @param readyQueue queue of MMTTheorems ready for updating into the
      *            LogicalSystem.
      * @param waitingList list of MMTTheorems which are not yet ready to update
@@ -277,7 +277,7 @@ public class TheoremStmtGroup {
      * which theorems need requeueing, the updated theorem's
      * usedByTheoremStmtGroup list is read and each theorem in that list is
      * requeued.
-     *
+     * 
      * @param logicalSystem LogicalSystem object.
      * @param messages Messages object.
      * @param tlPreferences TlPreferences object.
@@ -330,7 +330,7 @@ public class TheoremStmtGroup {
 
     /**
      * Gets the isTheoremNew flag.
-     *
+     * 
      * @return isTheoremNew flag.
      */
     public boolean getIsTheoremNew() {
@@ -339,7 +339,7 @@ public class TheoremStmtGroup {
 
     /**
      * Gets the theorem label.
-     *
+     * 
      * @return theorem label.
      */
     public String getTheoremLabel() {
@@ -348,7 +348,7 @@ public class TheoremStmtGroup {
 
     /**
      * Returns the MMTTheoremFile absolute pathname.
-     *
+     * 
      * @return MMTTheoremFile absolute pathname.
      */
     public String getSourceFileName() {
@@ -357,7 +357,7 @@ public class TheoremStmtGroup {
 
     /**
      * Gets the wasTheoremUpdated flag.
-     *
+     * 
      * @return wasTheoremUpdated flag.
      */
     public boolean getWasTheoremUpdated() {
@@ -366,7 +366,7 @@ public class TheoremStmtGroup {
 
     /**
      * Gets the wasTheoremInserted flag.
-     *
+     * 
      * @return wasTheoremInserted flag.
      */
     public boolean getWasTheoremInserted() {
@@ -375,7 +375,7 @@ public class TheoremStmtGroup {
 
     /**
      * Gets the wasTheoremAppended flag.
-     *
+     * 
      * @return wasTheoremAppended flag.
      */
     public boolean getWasTheoremAppended() {
@@ -385,7 +385,7 @@ public class TheoremStmtGroup {
     /**
      * Gets the Theorem object or null if the theorem is new and has not yet
      * been stored in the Logical System.
-     *
+     * 
      * @return Theorem object or null.
      */
     public Theorem getTheorem() {
@@ -394,7 +394,7 @@ public class TheoremStmtGroup {
 
     /**
      * Gets the wasLogHypInserted flag array.
-     *
+     * 
      * @return wasLogHypInserted flag array.
      */
     public boolean[] getWasLogHypInsertedArray() {
@@ -403,7 +403,7 @@ public class TheoremStmtGroup {
 
     /**
      * Gets the wasLogHypAppended flag array.
-     *
+     * 
      * @return wasLogHypAppended flag array.
      */
     public boolean[] getWasLogHypAppendedArray() {
@@ -413,7 +413,7 @@ public class TheoremStmtGroup {
     /**
      * Gets the LogHyp array which may contain nulls if the Theorem is new and
      * has not yet been stored in the Logical System.
-     *
+     * 
      * @return LogHyp array.
      */
     public LogHyp[] getLogHypArray() {
@@ -422,7 +422,7 @@ public class TheoremStmtGroup {
 
     /**
      * Gets the BookManager insertSectionNbr for the theorem.
-     *
+     * 
      * @return BookManager insertSectionNbr for the theorem.
      */
     public int getInsertSectionNbr() {
@@ -431,7 +431,7 @@ public class TheoremStmtGroup {
 
     /**
      * Returns the assigned sequence number array for new Logical Hypotheses.
-     *
+     * 
      * @return assigned seq numbers of new Logical Hypotheses.
      */
     public int[] getAssignedLogHypSeq() {
@@ -440,7 +440,7 @@ public class TheoremStmtGroup {
 
     /**
      * Returns the assigned sequence number for a new Theorem.
-     *
+     * 
      * @return assigned seq numbers of a new Theorem.
      */
     public int getAssignedTheoremSeq() {
@@ -452,6 +452,7 @@ public class TheoremStmtGroup {
      * 
      * @return returns TheoremStmtGroup string;
      */
+    @Override
     public String toString() {
         return theoremLabel.toString();
     }
@@ -461,6 +462,7 @@ public class TheoremStmtGroup {
      *
      * @return hashcode for the TheoremStmtGroup
      */
+    @Override
     public int hashCode() {
         return theoremLabel.hashCode();
     }
@@ -486,6 +488,7 @@ public class TheoremStmtGroup {
      *
      * @return returns true if equal, otherwise false.
      */
+    @Override
     public boolean equals(final Object obj) {
         return this == obj ? true : !(obj instanceof TheoremStmtGroup) ? false
             : theoremLabel.equals(((TheoremStmtGroup)obj).theoremLabel);

@@ -350,7 +350,7 @@ public abstract class BatchFramework {
 
     /**
      * Compares the current RunParmArrayEntry name to an input command.
-     *
+     * 
      * @param command RunParm command to compare to the current command name.
      * @return true if equal, ignoring case, otherwise false.
      */
@@ -398,7 +398,7 @@ public abstract class BatchFramework {
 
     /**
      * Returns the canonical path name of the RunParmFile.
-     *
+     * 
      * @return canonical path of RunParmFile or empty string if RunParmFile is
      *         null.
      */

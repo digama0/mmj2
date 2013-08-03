@@ -117,7 +117,7 @@ public class CommandLineArguments {
 
     /**
      * Returns the {@code Paths} object.
-     *
+     * 
      * @return The {@code Paths} object.
      */
     public Paths getPaths() {
@@ -126,7 +126,7 @@ public class CommandLineArguments {
 
     /**
      * Returns the {@code RunParmFile} object.
-     *
+     * 
      * @return The {@code RunParmFile} object.
      */
     public RunParmFile getRunParmFile() {
@@ -135,7 +135,7 @@ public class CommandLineArguments {
 
     /**
      * Returns the {@code displayMMJ2FailPopupWindow} value;
-     *
+     * 
      * @return The {@code displayMMJ2FailPopupWindow} value;
      */
     public boolean getDisplayMMJ2FailPopupWindow() {
@@ -148,7 +148,7 @@ public class CommandLineArguments {
      * <p>
      * Note that blanks and empty string values have been previously converted
      * to {@code null}.
-     *
+     * 
      * @param displayMMJ2FailPopupWindowArgument must equal Y, N or null.
      * @return Y or N.
      * @throws IllegalArgumentException if input not equal to Y, N or null.
@@ -180,7 +180,7 @@ public class CommandLineArguments {
      * The java command line argument array element specified by
      * {@code argIndex} is returned after converting it to {@code null} if it is
      * blank or an empty string.
-     *
+     * 
      * @param args Java command line arguments array
      * @param argIndex index into args indicating the arg to retrieve
      * @return The arg element specified by argIndex is returned after

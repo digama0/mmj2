@@ -33,7 +33,7 @@ public abstract class TLRequest {
     /**
      * Implements a user request for a TheoremLoader operation on a
      * ProofWorksheet.
-     *
+     * 
      * @param theoremLoader TheoremLoader object.
      * @param proofWorksheet ProofWorksheet object.
      * @param logicalSystem LogicalSystem object.

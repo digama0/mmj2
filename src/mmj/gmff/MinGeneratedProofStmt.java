@@ -34,7 +34,7 @@ public class MinGeneratedProofStmt extends MinProofWorkStmt {
 
     /**
      * Standard MinGeneratedProofStmt constructor.
-     *
+     * 
      * @param w {@code MinProofWorksheet} of which this statement is a part.
      * @param slc Array of Array of String representing the lines and "chunks"
      *            making up the {@code MinProofWorkStmt}.
@@ -61,7 +61,7 @@ public class MinGeneratedProofStmt extends MinProofWorkStmt {
      * creating export format models.
      * <p>
      * Additional information may be found \GMFFDoc\GMFFModels.txt.
-     *
+     * 
      * @param gmffExporter The {@code GMFFExporter} requesting the export data
      *            build.
      * @param exportBuffer The {@code StringBuilder} to which exported data is
@@ -69,6 +69,7 @@ public class MinGeneratedProofStmt extends MinProofWorkStmt {
      * @throws GMFFException if errors are encountered during the export
      *             process.
      */
+    @Override
     public void buildModelAExport(final GMFFExporter gmffExporter,
         final StringBuilder exportBuffer) throws GMFFException
     {

@@ -78,7 +78,7 @@ public class MMJ2FailPopupWindow {
     /**
      * Sets {@code enabled} switch to turn on/off display of the
      * {@code MMJ2FailPopupWindow}.
-     *
+     * 
      * @param enabled true to enable display of the popup window, otherwise
      *            false.
      */
@@ -108,7 +108,7 @@ public class MMJ2FailPopupWindow {
      * <p>
      * Note: if {@code MMJ2FailPopupWindow} is not {@code enabled} the Dialog is
      * not shown.
-     *
+     * 
      * @param failMessage the final mmj2 message before abnormal termination of
      *            processing.
      */

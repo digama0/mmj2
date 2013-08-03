@@ -148,6 +148,7 @@ public class NullsPermittedRule extends GrammarRule {
      * @param ruleFormatExprIn the expression to check.
      * @return GrammarRule if duplicate found, or null.
      */
+    @Override
     public GrammarRule getDupRule(final Grammar grammar,
         final Cnst[] ruleFormatExprIn)
     {
@@ -165,6 +166,7 @@ public class NullsPermittedRule extends GrammarRule {
      * @param grammar The Grammar object (Mr Big).
      * @param ruleFormatExprIn the expression to add.
      */
+    @Override
     public void addToGrammar(final Grammar grammar,
         final Cnst[] ruleFormatExprIn)
     {
@@ -207,6 +209,7 @@ public class NullsPermittedRule extends GrammarRule {
      * 
      * @param grammar The Grammar.
      */
+    @Override
     public void deriveAdditionalRules(final Grammar grammar) {
         for (final TypeConversionRule typeConversionRule : grammar
             .getTypeConversionGRList())
@@ -225,6 +228,7 @@ public class NullsPermittedRule extends GrammarRule {
      * 
      * @return ruleFormatExpr for the Nulls Permitted Rule.
      */
+    @Override
     public Cnst[] getForestRuleExpr() {
         final Cnst[] expr = new Cnst[0];
         return expr;

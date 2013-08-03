@@ -69,6 +69,7 @@ public class EarleyItem {
      *
      * @return returns true if equal, otherwise false.
      */
+    @Override
     public boolean equals(final Object obj) {
         return this == obj ? true : !(obj instanceof EarleyItem) ? false
             : rule != ((EarleyItem)obj).rule ? false
@@ -78,6 +79,7 @@ public class EarleyItem {
     /**
      * Converts EarleyItem to a string (solely for diagnostic purposes).
      */
+    @Override
     public String toString() {
         final StringBuilder s = new StringBuilder();
         s.append(GrammarConstants.ERRMSG_AT_CAPTION);

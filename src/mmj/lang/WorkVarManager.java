@@ -559,8 +559,8 @@ public class WorkVarManager {
      * the Symbol and Statement tables.
      * 
      * @param logicalSystem the LogicalSystem
-     * @throws VerifyException if a WorkVar is found with the same Id as a Var or
-     *             Stmt in the LogicalSystem for the input file.
+     * @throws VerifyException if a WorkVar is found with the same Id as a Var
+     *             or Stmt in the LogicalSystem for the input file.
      */
     private void checkWorkVarNamespaceUniqueness(
         final LogicalSystem logicalSystem) throws VerifyException

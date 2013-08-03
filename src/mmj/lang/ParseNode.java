@@ -593,7 +593,7 @@ public class ParseNode {
      * Depth is computed as 1 for each Notation Syntax Axiom Node. VarHyp nodes
      * and Nulls Permitted, Type Conversion and NamedTypedConstant Syntax Axiom
      * nodes are assigned depth = 0 for purposes of depth checking.
-     *
+     * 
      * @param sb StringBuilder already initialized for appending characters.
      * @param maxDepth maximum depth of Notation Syntax axioms in sub-tree to be
      *            printed. Set to Integer.MAX_VALUE to turn off depth checking.
@@ -706,7 +706,7 @@ public class ParseNode {
      * <p>
      * This is used in UnifyWorkManager to perform the "occurs in" check used by
      * Robinson's unification algorithm.
-     *
+     * 
      * @param searchWorkVarHyp is what we are looking for.
      * @return true iff input searchStmt found in subtree.
      */
@@ -727,7 +727,7 @@ public class ParseNode {
     /**
      * Returns true if subtree contains a WorkVar which has a non-null assigned
      * substitution update.
-     *
+     * 
      * @return true if subtree contains an updated WorkVar.
      */
     public boolean hasUpdatedWorkVar() {
@@ -809,7 +809,7 @@ public class ParseNode {
      * <p>
      * Note: in ProofUnifier this is used to accumulate a list of optional
      * variables that are in use in a proof.
-     *
+     * 
      * @param varHypList List of Var Hyps being sought for accumulation.
      * @param varHypInUseList List of Var Hyps accumulated which are in the
      *            formula and are in the input varList.

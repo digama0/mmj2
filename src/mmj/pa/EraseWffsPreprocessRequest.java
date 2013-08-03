@@ -41,10 +41,11 @@ public class EraseWffsPreprocessRequest extends PreprocessRequest {
      * is present then there must be two colons (":") in the first token and the
      * first token must not end with a ":" (otherwise the Proof Worksheet will
      * error out anyway.)
-     *
+     * 
      * @param proofTextArea Proof Worksheet text string
      * @return proofTextArea modified by editing operation
      */
+    @Override
     public String doIt(final String proofTextArea) throws ProofAsstException {
         String firstToken;
         try {

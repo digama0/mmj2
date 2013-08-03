@@ -58,7 +58,7 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
     /**
      * A GMFF utility to confirm that a given string is not null or empty, and
      * that it contains no whitespace.
-     *
+     * 
      * @param s The string to be validated.
      * @return true if valid, otherwise false.
      */
@@ -117,7 +117,7 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
 
     /**
      * Converts to Audit Report string for testing purposes.
-     *
+     * 
      * @return String containing the relevant fields.
      */
     public String generateAuditReportText() {
@@ -143,7 +143,7 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
      * <p>
      * However, if {@code onoff} set to "OFF" the following parameters are not
      * validated.
-     *
+     * 
      * @param filePath path for building directories. May be null, absolute or
      *            relative.
      * @param messages The Messages object.
@@ -479,6 +479,7 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
      * 
      * @return returns GMFFExportParms.exportType string;
      */
+    @Override
     public String toString() {
         return exportType;
     }
@@ -489,6 +490,7 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
      * @return hashcode for the GMFFExportParms
      *         (GMFFExportParms.exportType.hashcode())
      */
+    @Override
     public int hashCode() {
         return exportType.hashCode();
     }
@@ -499,10 +501,11 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
      * Equal if and only if the GMFFExportParms exportType strings are equal and
      * the obj to be compared to this object is not null and is a
      * GMFFExportParms as well.
-     *
+     * 
      * @param obj another GMFFExportParms -- otherwise will return false.
      * @return returns true if equal, otherwise false.
      */
+    @Override
     public boolean equals(final Object obj) {
         return this == obj ? true : !(obj instanceof GMFFExportParms) ? false
             : exportType.equals(((GMFFExportParms)obj).exportType);

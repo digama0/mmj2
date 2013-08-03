@@ -181,7 +181,7 @@ public class ParseTree {
     /**
      * (Deep) Clone a ParseTree while substituting a set of VarHyp substitutions
      * specified by a parallel Hyp array.
-     *
+     * 
      * @param assrtHypArray parallel array for assrtSubst
      * @param assrtSubst array of ParseNode sub-tree roots specifying hyp
      *            substitutions.
@@ -456,6 +456,7 @@ public class ParseTree {
      * 
      * @return String containing ParseTree statement labels in RPN order.
      */
+    @Override
     public String toString() {
         final Stmt[] rpn = convertToRPN();
         final StringBuilder sb = new StringBuilder();

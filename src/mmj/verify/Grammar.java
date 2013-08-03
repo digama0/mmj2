@@ -616,7 +616,7 @@ public class Grammar implements SyntaxVerifier {
                 return;
         }
 
-        final Set<Stmt> stmtTblBySeq = new TreeSet<Stmt>(Stmt.SEQ);
+        final Set<Stmt> stmtTblBySeq = new TreeSet<Stmt>(MObj.SEQ);
         stmtTblBySeq.addAll(stmtTbl.values());
 
         for (final Stmt stmt : stmtTblBySeq) {
@@ -945,7 +945,7 @@ public class Grammar implements SyntaxVerifier {
 
         grammarInitialized = false;
 
-        final Set<Axiom> allSyntaxAxiomSet = new TreeSet<Axiom>(Stmt.SEQ);
+        final Set<Axiom> allSyntaxAxiomSet = new TreeSet<Axiom>(MObj.SEQ);
 
         if (!setInitialGrammarTableValues(allSyntaxAxiomSet))
             return false;

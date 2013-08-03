@@ -31,7 +31,7 @@ public class Chapter {
 
     /**
      * Sole constructor for Chapter.
-     *
+     * 
      * @param chapterNbr is assigned by BookManager.
      * @param chapterTitle is the extracted descriptive title from the input
      *            Metamath database or the default title (must be at least an
@@ -44,7 +44,7 @@ public class Chapter {
 
     /**
      * Records the presence of a new Section with a Chapter.
-     *
+     * 
      * @param section The new Section in the Chapter.
      */
     public void storeNewSection(final Section section) {
@@ -55,7 +55,7 @@ public class Chapter {
 
     /**
      * Returns the Chapter Number.
-     *
+     * 
      * @return chapterNbr for the Chapter.
      */
     public int getChapterNbr() {
@@ -64,7 +64,7 @@ public class Chapter {
 
     /**
      * Returns the Chapter Title
-     *
+     * 
      * @return chapterTitle for the Chapter.
      */
     public String getChapterTitle() {
@@ -73,7 +73,7 @@ public class Chapter {
 
     /**
      * Returns the first Section within the Chapter.
-     *
+     * 
      * @return first Section within the Chapter.
      */
     public Section getFirstSection() {
@@ -84,7 +84,7 @@ public class Chapter {
      * Returns the last Section within the Chapter.
      * <p>
      * Note: this may be the same as the first Section.
-     *
+     * 
      * @return last Section within the Chapter.
      */
     public Section getLastSection() {
@@ -93,10 +93,11 @@ public class Chapter {
 
     /**
      * Test code for creating diagnostics.
-     *
+     * 
      * @return String of information about the Chapter formatted into a single
      *         line.
      */
+    @Override
     public String toString() {
         return new String(LangConstants.CHAPTER_TOSTRING_LITERAL_1
             + getChapterNbr() + LangConstants.CHAPTER_TOSTRING_LITERAL_2

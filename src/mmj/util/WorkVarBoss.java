@@ -45,9 +45,10 @@ public class WorkVarBoss extends Boss {
      * Executes a single command from the RunParmFile.
      * 
      * @param runParm the RunParmFile line to execute.
-     * @return boolean "consumed" indicating that the input runParm should not be
-     *         processed again.
+     * @return boolean "consumed" indicating that the input runParm should not
+     *         be processed again.
      */
+    @Override
     public boolean doRunParmCommand(final RunParmArrayEntry runParm)
         throws IllegalArgumentException, VerifyException
     {
@@ -86,7 +87,7 @@ public class WorkVarBoss extends Boss {
      * <p>
      * Requires that a LogicalSystem be loaded with a .mm file and that an
      * initialized Grammar object be available.
-     *
+     * 
      * @return WorkVarManager object, ready to go, or null.
      */
     public WorkVarManager getWorkVarManager() {

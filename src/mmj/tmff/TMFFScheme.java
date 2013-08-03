@@ -78,7 +78,7 @@ public class TMFFScheme {
 
     /**
      * Set TMFFMethod assigned to this TMFFScheme.
-     *
+     * 
      * @param tmffMethod pre-instantiated TMFFMethod.
      */
     public void setTMFFMethod(final TMFFMethod tmffMethod) {
@@ -111,7 +111,7 @@ public class TMFFScheme {
      * that is validated elsewhere.
      * <p>
      * Scheme Name "Unformatted" is RESERVED and cannot be assigned.
-     *
+     * 
      * @param schemeName non-null, non-empty String.
      */
     public void setSchemeName(final String schemeName) {

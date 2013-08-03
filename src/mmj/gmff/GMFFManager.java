@@ -102,7 +102,7 @@ public class GMFFManager {
      * Sets up GMFF data structures but does not load them. Sets
      * {@code gmffInitialized} to {@code  false} to trigger initialization when
      * the first GMFF service request is received.
-     *
+     * 
      * @param filePath path for building directories.
      * @param messages The Messages object.
      */
@@ -136,7 +136,7 @@ public class GMFFManager {
      * <p>
      * This function is called by GMFFBoss in response to a
      * {@code GMFFInitialize} RunParm.
-     *
+     * 
      * @param printTypesettingDefinitions prints data from Metamath $t Comments
      *            for which there are {@code GMFFExportParms} with matching
      *            {@code typesetDefs} (we don't load data from the $t's unless
@@ -164,7 +164,7 @@ public class GMFFManager {
      * <p>
      * This function is called by {@code GMFFBoss} in response to a
      * {@code GMFFExportParms} RunParm.
-     *
+     * 
      * @param inputGMFFExportParms data from GMFFExportParms RunParm.
      */
     public void accumInputGMFFExportParms(
@@ -184,7 +184,7 @@ public class GMFFManager {
      * <p>
      * This function is called by {@code GMFFBoss} in response to a
      * {@code GMFFUserTextEscapes} RunParm.
-     *
+     * 
      * @param inputGMFFUserTextEscapes data from GMFFUserTextEscapes RunParm.
      */
     public void accumInputGMFFUserTextEscapesList(
@@ -204,7 +204,7 @@ public class GMFFManager {
      * <p>
      * This function is called by {@code LogicalSystem} during processing of a
      * {@code LoadFile} RunParm.
-     *
+     * 
      * @param comment String Metamath $t Comment statement as stored in
      *            {@code SrcStmt} (the "$(" and "$)" delimiters are removed at
      *            this pointand the first token is "$t").
@@ -225,7 +225,7 @@ public class GMFFManager {
      * <p>
      * This function is called by {@code GMFFBoss} in response to a
      * {@code GMFFUserExportChoice} RunParm.
-     *
+     * 
      * @param choice from GMFFUserExportChoice RunParm.
      */
     public void setInputGMFFUserExportChoice(final GMFFUserExportChoice choice)
@@ -249,7 +249,7 @@ public class GMFFManager {
      * only if the symbol string is really a valid symbol (and is not a
      * {@code WorkVar}.) (GMFF not not require that Proof Worksheets be valid,
      * just that the Proof Worksheet format is loosely followed.)
-     *
+     * 
      * @param symTbl The Symbol Table Map from {@code LogicalSystem}
      */
     public void setSymTbl(final Map<String, Sym> symTbl) {
@@ -258,7 +258,7 @@ public class GMFFManager {
 
     /**
      * Gets the {@code symTbl} for use in generating GMFF exports.
-     *
+     * 
      * @return The Symbol Table Map, {@code symTbl} from {@code LogicalSystem}
      */
     public Map<String, Sym> getSymTbl() {
@@ -267,7 +267,7 @@ public class GMFFManager {
 
     /**
      * Gets the {@code messages} object.
-     *
+     * 
      * @return The Messages object used to store error and informational
      *         messages during mmj2 processing.
      */
@@ -277,7 +277,7 @@ public class GMFFManager {
 
     /**
      * Returns the {@code gmffInitialized} boolean variable.
-     *
+     * 
      * @return true if GMFF already initialized, otherwise false.
      */
     public boolean isGMFFInitialized() {
@@ -304,7 +304,7 @@ public class GMFFManager {
      * <p>
      * Refer to mmj2\doc\gmffdoc\C:\mmj2jar\GMFFDoc\GMFFRunParms.txt for more
      * info about the parameters on the {@code GMFFExportFromFolder} RunParm.
-     *
+     * 
      * @param inputDirectory The Directory to export Proof Worksheets from
      * @param theoremLabelOrAsterisk Either a theorem label or "*". If theorem
      *            label input then that is used as the starting point, otherwise
@@ -397,7 +397,7 @@ public class GMFFManager {
      * <p>
      * Refer to mmj2\doc\gmffdoc\C:\mmj2jar\GMFFDoc\GMFFRunParms.txt for more
      * info about the parameters on the {@code GMFFExportThereom} RunParm.
-     *
+     * 
      * @param theoremLabelOrAsterisk Either a theorem label or "*". If theorem
      *            label input then that is used as the starting point, otherwise
      *            processing begins at the first file in the directory.
@@ -470,7 +470,7 @@ public class GMFFManager {
      * incomplete or invalid, or if it contains no assertions, an error message
      * results (and if input argument {@code theorem} is null an
      * {@code IllegalArgumentException} will result ;-)
-     *
+     * 
      * @param theorem {@code Theorem} to be exported.
      * @param appendFileName Specifies an append-mode file name to which
      *            exported proof will be written -- within the folder specified
@@ -524,7 +524,7 @@ public class GMFFManager {
      * incomplete or invalid, or if it contains no assertions, an error message
      * results -- and if input argument {@code theoremLabel} is null or invalid
      * an exception is thrown...
-     *
+     * 
      * @param theoremLabel label of {@code Theorem} to be exported.
      * @param appendFileName Specifies an append-mode file name to which
      *            exported proof will be written -- within the folder specified
@@ -586,7 +586,7 @@ public class GMFFManager {
      * them in return.
      * <li>returns the accumulated confirmation messages to the caller.
      * </ol>
-     *
+     * 
      * @param proofText String containing text in the format of an mmj2 Proof
      *            Worksheet.
      * @param appendFileName name of a file to which export data should be
@@ -632,7 +632,7 @@ public class GMFFManager {
      * <p>
      * The code is quick and dirty because it is just used for testing.
      * Efficiency not an issue.
-     *
+     * 
      * @param typesetDefKeyword The Metamath $t keyword to select for parsing
      *            (e.g. "htmldef")
      * @param myDirectory The directory containing the Metamath .mm file to
@@ -775,7 +775,7 @@ public class GMFFManager {
      * <li>load final list of Selected (chosen) {@code Exporter}s.
      * <li>set {@code gmffInitialized = true}
      * </ol>
-     *
+     * 
      * @throws GMFFException if an error occurred
      */
     private void initialization() throws GMFFException {

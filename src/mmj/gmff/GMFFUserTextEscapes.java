@@ -42,7 +42,7 @@ public class GMFFUserTextEscapes implements Comparable<GMFFUserTextEscapes> {
 
     /**
      * Constructor with List of Escape Pairs.
-     *
+     * 
      * @param exportType key
      * @param escapePairList List of {@code EscapePair}
      */
@@ -57,7 +57,7 @@ public class GMFFUserTextEscapes implements Comparable<GMFFUserTextEscapes> {
 
     /**
      * Constructor with array of Escape Pairs.
-     *
+     * 
      * @param exportType key
      * @param escapePairs Array of {@code EscapePair}
      */
@@ -73,7 +73,7 @@ public class GMFFUserTextEscapes implements Comparable<GMFFUserTextEscapes> {
 
     /**
      * Converts to Audit Report string for testing purposes.
-     *
+     * 
      * @return String containing the relevant fields.
      */
     public String generateAuditReportText() {
@@ -99,7 +99,7 @@ public class GMFFUserTextEscapes implements Comparable<GMFFUserTextEscapes> {
      * <p>
      * For ease of use, validation does not stop at the first error found. Any
      * errors are accumulated in the Messages object.
-     *
+     * 
      * @param exportParmsList List of GMFFExportParms used to validate
      *            exportType (must be used in the Export Parms.)
      * @param messages The Messages object.
@@ -129,7 +129,7 @@ public class GMFFUserTextEscapes implements Comparable<GMFFUserTextEscapes> {
      * <li>Must not be null or an empty string
      * <li>Must not contain whitespace
      * <li>Must be defined in the exportParmsList.
-     *
+     * 
      * @param exportParmsList List of GMFFExportParms used to validate
      *            exportType (must be defined in the Export Parms.)
      * @param messages The Messages object.
@@ -156,7 +156,7 @@ public class GMFFUserTextEscapes implements Comparable<GMFFUserTextEscapes> {
      * <p>
      * Uses {@code EscapePair.validateEscapePair()} to perform the validation.
      * Validates every EscapePair even if errors are found.
-     *
+     * 
      * @param messages The Messages object.
      * @return true if valid otherwise false.
      */
@@ -180,6 +180,7 @@ public class GMFFUserTextEscapes implements Comparable<GMFFUserTextEscapes> {
      * 
      * @return returns GMFFUserTextEscapes.exportType string;
      */
+    @Override
     public String toString() {
         return exportType;
     }
@@ -190,6 +191,7 @@ public class GMFFUserTextEscapes implements Comparable<GMFFUserTextEscapes> {
      * @return hashcode for the GMFFUserTextEscapes
      *         (GMFFUserTextEscapes.exportType.hashcode())
      */
+    @Override
     public int hashCode() {
         return exportType.hashCode();
     }
@@ -200,10 +202,11 @@ public class GMFFUserTextEscapes implements Comparable<GMFFUserTextEscapes> {
      * Equal if and only if the GMFFUserTextEscapes exportType strings are equal
      * and the obj to be compared to this object is not null and is a
      * GMFFUserTextEscapes as well.
-     *
+     * 
      * @param obj another GMFFUserTextEscapes -- otherwise will return false.
      * @return returns true if equal, otherwise false.
      */
+    @Override
     public boolean equals(final Object obj) {
         return this == obj ? true
             : !(obj instanceof GMFFUserTextEscapes) ? false : exportType

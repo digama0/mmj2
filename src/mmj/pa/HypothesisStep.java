@@ -91,13 +91,16 @@ public class HypothesisStep extends ProofStepStmt {
         lineCnt = loadStmtText(stmtText, formula, parseTree);
     }
 
+    @Override
     public boolean isHypothesisStep() {
         return true;
     }
+    @Override
     public boolean isDerivationStep() {
         return false;
     }
 
+    @Override
     public boolean stmtIsIncomplete() {
         return false;
     }
@@ -108,6 +111,7 @@ public class HypothesisStep extends ProofStepStmt {
      * @param newRefLabel ref label to compare
      * @return true if equal, false if not equal.
      */
+    @Override
     public boolean hasMatchingRefLabel(final String newRefLabel) {
         if (refLabel.equals(newRefLabel))
             return true;
@@ -140,6 +144,7 @@ public class HypothesisStep extends ProofStepStmt {
      * failed to parse successfully will contain a null parse tree and be
      * formatted using Format 0 - "Unformatted".
      */
+    @Override
     public void tmffReformat() {
         stmtText = buildStepHypRefSB();
         lineCnt = loadStmtText(stmtText, formula, formulaParseTree);

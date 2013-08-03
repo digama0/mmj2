@@ -43,7 +43,7 @@ public class EscapePair {
      * Standard constructor.
      * <p>
      * No validation is done at this time. Just load the data structure.
-     *
+     * 
      * @param num the escaped character's numeric value
      * @param replacement the text which replaces the escaped character.
      */
@@ -54,7 +54,7 @@ public class EscapePair {
 
     /**
      * Validates the Num and Replacement fields individually.
-     *
+     * 
      * @param exportType the export type, for error reporting
      * @throws GMFFException if error found.
      */
@@ -69,7 +69,7 @@ public class EscapePair {
      * Validates the Num field.
      * <p>
      * Num must be > -1 and < 256.
-     *
+     * 
      * @param exportType the export type, for error reporting
      * @throws GMFFException if error found.
      */
@@ -86,7 +86,7 @@ public class EscapePair {
      * Validates the Replacement field
      * <p>
      * Replacement must not be null and not an empty String.
-     *
+     * 
      * @param exportType the export type, for error reporting
      * @throws GMFFException if error found.
      */

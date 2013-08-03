@@ -282,7 +282,7 @@ public class ProofAsstPreferences {
      * font can be used but symbol alignments may be off.
      * <p>
      * Note: The default is "Monospaced", which works just fine...
-     *
+     * 
      * @param fontFamily for ProofAsstGUI
      */
     public synchronized void setFontFamily(final String fontFamily) {
@@ -302,7 +302,7 @@ public class ProofAsstPreferences {
      * Set Font style to bold or regular.
      * <p>
      * Note: The default is "Bold", which seems excellent to me.
-     *
+     * 
      * @param fontBold yes or no parameter.
      */
     public synchronized void setFontBold(final boolean fontBold) {
@@ -349,7 +349,7 @@ public class ProofAsstPreferences {
      * If line wrap is on then Newlines (carraige returns) will not be used to
      * split formulas. Instead, space characters will be written to fill out the
      * remaining text columns on the line.
-     *
+     * 
      * @param lineWrap setting, on or off.
      */
     public void setLineWrap(final boolean lineWrap) {
@@ -373,7 +373,7 @@ public class ProofAsstPreferences {
      * <p>
      * A formula can be longer than this number, and the Frame should scroll --
      * assuming that lineWrap is off and there are no NewLines.
-     *
+     * 
      * @param textColumns number of text columns.
      */
     public void setTextColumns(final int textColumns) {
@@ -397,7 +397,7 @@ public class ProofAsstPreferences {
 
     /**
      * Set number of text rows used to display formulas.
-     *
+     * 
      * @param textRows number of text rows.
      */
     public void setTextRows(final int textRows) {
@@ -415,7 +415,7 @@ public class ProofAsstPreferences {
 
     /**
      * Set number of error message rows on the ProofAsstGUI.
-     *
+     * 
      * @param errorMessageRows number of error message rows.
      */
     public void setErrorMessageRows(final int errorMessageRows) {
@@ -424,7 +424,7 @@ public class ProofAsstPreferences {
 
     /**
      * Get number of error message rows on the ProofAsstGUI.
-     *
+     * 
      * @return number of error message rows
      */
     public int getErrorMessageRows() {
@@ -433,7 +433,7 @@ public class ProofAsstPreferences {
 
     /**
      * Set number of error message columns on the ProofAsstGUI.
-     *
+     * 
      * @param errorMessageColumns number of error message columns.
      */
     public void setErrorMessageColumns(final int errorMessageColumns) {
@@ -442,7 +442,7 @@ public class ProofAsstPreferences {
 
     /**
      * Get number of error message columns on the ProofAsstGUI.
-     *
+     * 
      * @return number of of error message columns
      */
     public int getErrorMessageColumns() {
@@ -451,7 +451,7 @@ public class ProofAsstPreferences {
 
     /**
      * Set Proof Text At Top option for ProofAsstGUI.
-     *
+     * 
      * @param textAtTop number of error message columns.
      */
     public void setTextAtTop(final boolean textAtTop) {
@@ -460,7 +460,7 @@ public class ProofAsstPreferences {
 
     /**
      * Get Proof Text At Top option for ProofAsstGUI.
-     *
+     * 
      * @return the value
      */
     public boolean getTextAtTop() {
@@ -665,7 +665,7 @@ public class ProofAsstPreferences {
     /**
      * Set on/off indicator instructing the Proof Assistant Batch Test Import to
      * compare generated Dj Vars with the originals.
-     *
+     * 
      * @param importCompareDJs yes/no.
      */
     public void setImportCompareDJs(final boolean importCompareDJs) {
@@ -675,7 +675,7 @@ public class ProofAsstPreferences {
     /**
      * Set on/off indicator instructing the Proof Assistant Batch Test Import to
      * compare generated Dj Vars with the originals.
-     *
+     * 
      * @return importCompareDJs
      */
     public boolean getImportCompareDJs() {
@@ -686,7 +686,7 @@ public class ProofAsstPreferences {
      * Set on/off indicator instructing the Proof Assistant Batch Test Import to
      * update the originals that are stored in memory (does not update the .mm
      * file though.)
-     *
+     * 
      * @param importUpdateDJs yes/no.
      */
     public void setImportUpdateDJs(final boolean importUpdateDJs) {
@@ -711,7 +711,7 @@ public class ProofAsstPreferences {
      * This feature is primarily needed for redundant theorems that are carried
      * in a Metamath database because they have a different proof (other
      * possibilities exist.)
-     *
+     * 
      * @param unifySearchExclude array
      */
     public void setUnifySearchExclude(final Assrt[] unifySearchExclude) {
@@ -725,7 +725,7 @@ public class ProofAsstPreferences {
      * This feature is primarily needed for redundant theorems that are carried
      * in a Metamath database because they have a different proof (other
      * possibilities exist.)
-     *
+     * 
      * @return unifySearchExclude array
      */
     public Assrt[] getUnifySearchExclude() {
@@ -740,7 +740,7 @@ public class ProofAsstPreferences {
      * the number were very large a hash table could be used, but the array is
      * searched only during the first pass through the LogicalSystem Statement
      * Table (see ProofUnifier.java).
-     *
+     * 
      * @param assrt the given assertion
      * @return true if assertion should be excluded
      */
@@ -922,7 +922,7 @@ public class ProofAsstPreferences {
      * handling.
      * <p>
      * This routine is used by ProofAsstPreferences.
-     *
+     * 
      * @return Soft Dj Vars Error List
      */
     public String getSoftDjErrorOptionListString() {
@@ -946,7 +946,7 @@ public class ProofAsstPreferences {
      * A simple routine to build a list of all defined Fonts Families.
      * <p>
      * This routine is used by ProofAsstPreferences.
-     *
+     * 
      * @return Font Family List String
      */
     public String getFontListString() {
@@ -996,7 +996,7 @@ public class ProofAsstPreferences {
      * A stupid routine to validate a Font Family Name.
      * <p>
      * This routine is used by ProofAsstPreferences.
-     *
+     * 
      * @param familyName font family name, which must be available in
      *            GraphicsEnvironment.getAllFonts().
      * @return Family Name adjust for cap/lower variations.
@@ -1032,7 +1032,7 @@ public class ProofAsstPreferences {
      * as an index.
      * <p>
      * This routine is used by ProofAsstPreferences.
-     *
+     * 
      * @param option number corresponding to Dj Vars Soft Error Option name
      * @return Dj Vars Soft Error Option Name String
      * @throws ProofAsstException if input option number is out of range or is
@@ -1244,7 +1244,7 @@ public class ProofAsstPreferences {
      * The entered number, minus 1, is looked up in
      * PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE using the option
      * number as an index.
-     *
+     * 
      * @param option number corresponding to Incomplete Step Cursor option name
      * @return Incomplete Step Cursor Option Name String
      * @throws ProofAsstException if input option number is out of range or is
@@ -1377,7 +1377,7 @@ public class ProofAsstPreferences {
     /**
      * A simple routine to build a list of all options for Incomplete Step
      * Cursor options.
-     *
+     * 
      * @return Incomplete Step Cursor option list string.
      */
     public String getIncompleteStepCursorOptionListString() {
@@ -1401,7 +1401,7 @@ public class ProofAsstPreferences {
      * A stupid routine to validate StepSelectorMaxResults.
      * <p>
      * This routine is used by ProofAsstGUI.
-     *
+     * 
      * @param maxResultsString integer max results for StepSelectorSearch.
      * @return maxResults number.
      * @throws IllegalArgumentException if an error occurred
@@ -1448,7 +1448,7 @@ public class ProofAsstPreferences {
      * A stupid routine to validate StepSelectorShowSubstitutions.
      * <p>
      * This routine is used by ProofAsstGUI.
-     *
+     * 
      * @param showSubstitutionsString yes or no or true or false or on or off.
      * @return boolean true or false
      * @throws IllegalArgumentException if invalid value.

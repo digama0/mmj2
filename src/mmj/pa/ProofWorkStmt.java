@@ -75,7 +75,7 @@ public abstract class ProofWorkStmt {
      * -- a virtual method that checks the statement for the state of
      * "incompleteness" of data as indicated by state variables in the specific
      * ProofWorkStmt types.
-     *
+     * 
      * @return true if ProofWorkStmt is "incomplete" in ProofWorksheet
      *         terminology.
      */
@@ -83,7 +83,7 @@ public abstract class ProofWorkStmt {
 
     /**
      * Function used for cursor positioning.
-     *
+     * 
      * @param fieldId value identify ProofWorkStmt field for cursor positioning,
      *            as defined in PaConstants.FIELD_ID_*.
      * @return column of input fieldId or default value of 1 if there is an
@@ -126,7 +126,7 @@ public abstract class ProofWorkStmt {
     /**
      * Base class function to determine whether the ProofWorkStmt step number
      * matches the input step number (always false in base class.)
-     *
+     * 
      * @param newStepNbr to compare to ProofWorkStmt step number.
      * @return false because a generic ProofWorkStmt does not have a step
      *         number.
@@ -138,7 +138,7 @@ public abstract class ProofWorkStmt {
     /**
      * Base class function to determine whether the ProofWorkStmt Ref label
      * matches the input Ref label (always false in base class.)
-     *
+     * 
      * @param newRefLabel to compare to ProofWorkStmt Ref label.
      * @return false because a generic ProofWorkStmt does not have a Ref label.
      */

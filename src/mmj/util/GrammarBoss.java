@@ -110,6 +110,7 @@ public class GrammarBoss extends Boss {
      * 
      * @param runParm the RunParmFile line to execute.
      */
+    @Override
     public boolean doRunParmCommand(final RunParmArrayEntry runParm)
         throws IllegalArgumentException, MMIOException, FileNotFoundException,
         IOException, VerifyException

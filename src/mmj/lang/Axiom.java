@@ -177,6 +177,7 @@ public class Axiom extends Assrt {
      * 
      * @return true (this is an Axiom :)
      */
+    @Override
     public boolean isAxiom() {
         return true;
     }
@@ -252,7 +253,7 @@ public class Axiom extends Assrt {
      * Depth is computed as 1 for each Notation Syntax Axiom Node. VarHyp nodes
      * and Nulls Permitted, Type Conversion and NamedTypedConstant Syntax Axiom
      * nodes are assigned depth = 0 for purposes of depth checking.
-     *
+     * 
      * @param sb StringBuilder already initialized for appending characters.
      * @param maxDepth maximum depth of Notation Syntax axioms in sub-tree to be
      *            printed. Set to Integer.MAX_VALUE to turn off depth checking.
@@ -263,6 +264,7 @@ public class Axiom extends Assrt {
      * @return length of sub-expression characters appended to the input
      *         StringBuilder -- or -1 if maxDepth or maxLength exceeded.
      */
+    @Override
     public int renderParsedSubExpr(final StringBuilder sb, final int maxDepth,
         int maxLength, final ParseNode[] child)
     {
@@ -354,7 +356,7 @@ public class Axiom extends Assrt {
      * Formula's Expression.
      * <p>
      * Used for the TMFF project, and used only with Syntax Axioms.
-     *
+     * 
      * @return length in characters of the widest constant in the Axiom's
      *         Formula's Expression.
      */

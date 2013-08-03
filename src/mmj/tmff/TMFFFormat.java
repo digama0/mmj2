@@ -58,7 +58,7 @@ public class TMFFFormat {
 
     /**
      * Constructor for TMFFFormat using user parameters.
-     *
+     * 
      * @param param String array of RunParm values.
      * @param tmffPreferences TMFFPreferences object.
      */
@@ -163,7 +163,7 @@ public class TMFFFormat {
 
     /**
      * Set Number assigned to this TMFFFormat.
-     *
+     * 
      * @param formatNbr non-null, non-empty String.
      */
     public void setFormatNbr(final int formatNbr) {

@@ -38,7 +38,7 @@ public class GMFFUserExportChoice {
 
     /**
      * The standard constructor for GMFFUserExportChoice.
-     *
+     * 
      * @param exportTypeOrAll String containing either a single Export Type or
      *            the literal "ALL".
      */
@@ -49,7 +49,7 @@ public class GMFFUserExportChoice {
 
     /**
      * Converts to Audit Report string for testing purposes.
-     *
+     * 
      * @return String containing the relevant fields.
      */
     public String generateAuditReportText() {
@@ -61,7 +61,7 @@ public class GMFFUserExportChoice {
 
     /**
      * Validates the User Export Choice.
-     *
+     * 
      * @param exportParmsList List of GMFFExportParms used to validate
      *            exportType (must be used in the Export Parms.)
      * @throws GMFFException if User Export Choice invalid.

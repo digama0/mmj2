@@ -245,7 +245,7 @@ public class MinProofWorksheet {
      * <p>
      * Likewise, between two Metamath tokens there will be a whitespace String
      * of non-zero length.
-     *
+     * 
      * @param line String containing one physical line of a Proof Worksheet.
      * @return an {@code ArrayList} of {@code String} chunks of either Metamath
      *         whitespace or Metamath tokens, or just one empty {@code  String}

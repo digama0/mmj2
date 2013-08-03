@@ -43,7 +43,7 @@ public class TMFFFlat extends TMFFMethod {
      * Constructor for TMFFFlat using user parameters.
      * <p>
      * Sets maxDepth to Integer.MAX_VALUE so that no depth breaks are triggered.
-     *
+     * 
      * @param maxDepthString maximum sub-tree depth for a sub-expression that
      *            will not trigger a line-break, not counting leaf nodes, and
      *            non-Notation Syntax Axioms such as Type Conversions. Doesn't
@@ -58,7 +58,7 @@ public class TMFFFlat extends TMFFMethod {
      * Standard constructor for TMFFFlat.
      * <p>
      * Sets maxDepth to Integer.MAX_VALUE so that no depth breaks are triggered.
-     *
+     * 
      * @param maxDepth maximum sub-tree depth for a sub-expression that will not
      *            trigger a line-break, not counting leaf nodes, and
      *            non-Notation Syntax Axioms such as Type Conversions. Doesn't
@@ -78,13 +78,14 @@ public class TMFFFlat extends TMFFMethod {
      * Sets rightmostColNbr to Integer.MAX_VALUE so that no line width breaks
      * are triggered -- and this is done regardless of the user setting for the
      * rightmost column number (overrides that setting.)
-     *
+     * 
      * @param tmffSP TMFFStateParams initialized, ready for use.
      * @param parseTree ParseTree for the formula to be formatted.
      * @param formula formula to be formatted.
      * @return number of lines rendered or -1 if an error was encountered and
      *         the formula could not be formatted.
      */
+    @Override
     public int renderFormula(final TMFFStateParams tmffSP,
         final ParseTree parseTree, final Formula formula)
     {
@@ -116,6 +117,7 @@ public class TMFFFlat extends TMFFMethod {
     }
 
     // return -1 if error else 0
+    @Override
     protected int renderSubExprWithBreaks(final TMFFStateParams tmffSP,
         final ParseNode currNode, final int leftmostColNbr)
     {
@@ -136,6 +138,7 @@ public class TMFFFlat extends TMFFMethod {
      * @param maxDepth parameter.
      * @return boolean - true only if update performed.
      */
+    @Override
     public boolean updateMaxDepth(final int maxDepth) {
 
         return false;

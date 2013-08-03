@@ -71,7 +71,7 @@ public class RunParmFile {
 
     /**
      * Construct using {@code Paths} object and runParmFileName argument.
-     *
+     * 
      * @param paths mmj2 Paths object.
      * @param runParmFileNameArgument file name of RunParm file.
      * @throws IOException if an error occurred
@@ -171,7 +171,7 @@ public class RunParmFile {
 
     /**
      * Returns the canonical path name of the RunParmFile.
-     *
+     * 
      * @return canonical path of RunParmFile or empty string if RunParmFile is
      *         null.
      */
