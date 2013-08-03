@@ -1,0 +1,279 @@
+
+DOCUMENTATION/HOW-TO FOR GMFF \models FILES
+===========================================
+
+Below are the "html fragment" files used by Model A for
+exporting proofs to the \html directory.
+
+The same file names exist in the \models\althtml
+directory but the contents of the files are slightly
+different.
+
+    mmj2jar\GMFF\models\html\AM-file0.txt
+    mmj2jar\GMFF\models\html\AM-file2.txt
+
+    mmj2jar\GMFF\models\html\AO-comment0.txt
+    mmj2jar\GMFF\models\html\AO-comment1X.txt
+    mmj2jar\GMFF\models\html\AO-comment2.txt 
+
+    mmj2jar\GMFF\models\html\AO-header0.txt
+    mmj2jar\GMFF\models\html\AO-header1X.txt
+    mmj2jar\GMFF\models\html\AO-header2.txt
+    mmj2jar\GMFF\models\html\AO-header3X.txt
+    mmj2jar\GMFF\models\html\AO-header4.txt
+    mmj2jar\GMFF\models\html\AO-header5X.txt
+    mmj2jar\GMFF\models\html\AO-header6.txt
+    mmj2jar\GMFF\models\html\AO-header7.txt
+
+    mmj2jar\GMFF\models\html\AM-step0.txt
+    mmj2jar\GMFF\models\html\AM-step1X.txt
+    mmj2jar\GMFF\models\html\AM-step2.txt
+    mmj2jar\GMFF\models\html\AM-step3X.txt
+    mmj2jar\GMFF\models\html\AM-step2.txt
+
+    mmj2jar\GMFF\models\html\AO-distinctvar0.txt
+    mmj2jar\GMFF\models\html\AO-distinctvar1X.txt
+    mmj2jar\GMFF\models\html\AO-distinctvar2.txt
+    mmj2jar\GMFF\models\html\AO-distinctvar3X.txt
+    mmj2jar\GMFF\models\html\AO-distinctvar4.txt
+
+    mmj2jar\GMFF\models\html\AO-genproof0.txt
+    mmj2jar\GMFF\models\html\AO-genproof1X.txt
+    mmj2jar\GMFF\models\html\AO-genproof2.txt
+
+    mmj2jar\GMFF\models\html\AO-footer0.txt
+
+
+NAMING CONVENTIONS/USAGE
+========================
+ 
+1. The first character of each file name identifies the
+   GMFF export Model Id (e.g. "A" stands for Model A.)
+   
+   _ A different model, similar to the Metamath Proof
+     Explorer, which has extensive hyperlinks and cross-
+     references might be called "Model B" -- but Model B
+     has not been programmed and this discussion is
+     hypothetical...
+   
+2. The second character of the model file name is eithe
+   "M" -- Mandatory -- or "O" -- optional. The GMFF code
+   knows the names of the files it needs to export a
+   proof in Model A format.
+   
+   _ If a Mandatory model file is missing (not found in
+     the \models\html\ directory, the GMFF code will
+     produce an error message and abandon export of the
+     proof.
+     
+   _ If an Optional model file is missing then the
+     corresponding section of the Proof Worksheet will
+     not be output to the export file. For example, if
+     file AO-comment0.txt is not found then no mmj2 Proof
+     Worksheet Comment statements will be exported in the
+     Model A \html directory export.
+     
+3, The third character of the model file name is "-",
+   which provides readability.
+   
+4. The 4th thru nth characters of the model file name are
+   in lower case -- again, for readability -- and
+   identify the mmj2 Proof Worksheet statement type (e.g.
+   "header") or the html file itself (e.g. "file").
+   
+5. At the end of the model file name is a number (e.g.
+   0, 1, 2, etc.), followed in some cases by an "X".
+   
+   _ The digit signifies the physical sequence of the
+     model file within the export data for the statement
+     type. For example, the mmj2 Proof Worksheet Header
+     statement requires 8 model files, number 0, 1, 2 ...
+     7.
+     
+   _ The letter "X", if present, signifies that this
+     model file is a place-holder for text or symbols
+     from the Proof Worksheet. For example, the GMFF code
+     substitutes "syl" for the contents of the AO-
+     header1X.txt file when exporting theorem syl.
+     
+     _ Note: the program knows in advance which files are
+       place-holders. Simply adding an "X" to a file name
+       will not change that! The "X" is for readability
+       and comprehensibility to users/programmers.
+     
+     _ In order to accomodate certain variations in
+       export types, if the "X" file contains nothing --
+       it is an empty file -- then the GMFF code
+       substitutes nothing into the output export stream.
+       An example of this might be, say, in a Latex
+       export file, if a hyperlink capability is not
+       available, then the second "X" file for the Header
+       would be (manually) updated to be an empty file so
+       that the program would know not to output a
+       hyperlinked "syl" into the export data. (I don't
+       know when/if this feature will be needed but it is
+       being coded in case it is needed later in hopes of
+       having to modify mmj2 again.)
+       
+     _ All substituted text, except for the typesetting
+       definitions (which are already in html/latex
+       "code") must be "escaped". The "escape" process
+       converts particular characters into acceptable
+       alternatives for the output language.
+       
+       _ For example a "<" (less than) character must be
+         escaped when using html format to the string
+         "&lt;".
+         
+       _ By design, output space characters will be
+         escaped to "&nbsp;". This is not a requirement
+         of html but rather a way to maintain formatting
+         of the exported Proof Worksheet.
+       
+
+NOTES ABOUT THE MODEL A FILES
+=============================
+
+1. Everything except for math symbols is monospaced
+   (similar to mmj2 Proof Assistant default).
+
+  - NOTE: the html typesetting definitions include an
+    "alt=" paramter. For example:
+    
+    <img src="_vdash.gif" alt="|-" align="TOP" width="10" height="19">
+    
+    If your browser support this feature, if the .gif
+    file is not found then the "alt" specification is
+    displayed. That means that the Metamath token for the
+    symbol is displayed instead of the .gif. The Model A
+    files specify that that token is displayed using the
+    browser's default font.
+    
+    _ No error message is output by mmj2 for a missing
+      .gif file.
+     
+  - If the input Metamath file does not contain a
+    typsetting definition for a particular symbol then
+    the GMFF code outputs the Metamath token characters
+    plus one space character (in case there are two
+    consecutive not founds.) These characters are
+    displayed using the browser's default font.
+    
+    _ mmj2 does output an error message for a missing $t
+      typesetting definition for a symbol.
+    
+  _ Thus, missing .gif and $t definitions will be
+    displayed identically except for an extra space
+    following a not found symbol with a missing $t
+    definition.
+    
+      _ To correct the problem of a missing .gif, the
+        user will likely need to download Norm's
+        "symbols.zip" file and copy it into the
+        mmj2\GMFF\html\ directory. (Or manually copy in
+        the missing .gif.) Then press Ctrl-1 again, no
+        need to restart mmj2.
+    
+      _ To correct the problem of a missing $t definition
+        for a symbol, the input Metamath .mm file will
+        need updating (unless mmj2's new GMFF enhancement
+        has a bug :-) After updating the .mm file, it
+        will be necessary to restart mmj2 (sorry...)
+        
+
+   
+2. Step files (same files in the althtml version directories):
+
+        mmj2jar\GMFF\models\html\AM-step0.txt
+        mmj2jar\GMFF\models\html\AM-step1X.txt
+        mmj2jar\GMFF\models\html\AM-step2.txt
+        mmj2jar\GMFF\models\html\AM-step3X.txt
+        mmj2jar\GMFF\models\html\AM-step4.txt        
+
+   _ These are used for Hypothesis and Derivation steps
+     (including the 'qed' step.) The html structure is
+     the same for hypotheses as it is for derivation
+     steps.
+     
+   - The step files represent a single line on the
+     screen. If a proof step requires multiple lines then
+     the step files are repeated. The structure of the
+     output is the same whether the line is the first
+     line of a proof step or the second.
+     
+   _ The GMFF code *knows* not to export single space
+     (blank) characters between formula symbols on a
+     line. The typeset formulas do not require blanks
+     between the typeset symbols, either the .gif or the
+     Unicode symbols.
+     
+     _ In the case where more than one space occurs
+       between symbols on a single line of a formula the
+       GMFF code will output 1 fewer "&nbsp;" characters
+       than the number of consecutive space characters.
+       (Accomplished via the character escaping process.)
+       
+       _ To put it in programming terms, a whitespace
+         token occuring between math tokens on a single
+         line will be converted to a string of spaces
+         shorter than the whitespace token by 1 and then
+         the string of spaces will be escaped.
+
+
+     
+3. Distinct Variable ("distinctvar" --same files in the
+     althtml version directories):
+
+    mmj2jar\GMFF\models\html\AO-distinctvar0.txt
+    mmj2jar\GMFF\models\html\AO-distinctvar1X.txt
+    mmj2jar\GMFF\models\html\AO-distinctvar2.txt
+    mmj2jar\GMFF\models\html\AO-distinctvar3X.txt
+    mmj2jar\GMFF\models\html\AO-distinctvar4.txt
+
+
+   _ Have the same html structure as for Step statements.
+     The reason they are given separate model files is so
+     that the user can choose to not include them in the
+     export output. These are all "Optional" model files
+     and thus can be excised from the export output
+     simply by deleting the corresponding model files
+     from the models\ directory.
+   
+
+   
+4  Generated Proof ("genproof" --same files in the
+     althtml version directories):
+
+        mmj2jar\GMFF\models\html\AO-genproof0.txt
+        mmj2jar\GMFF\models\html\AO-genproof1X.txt
+        mmj2jar\GMFF\models\html\AO-genproof2.txt
+     
+   _ Have the same html structure as for Comments
+     statements. The reason they are given separate model
+     files is so that the user can choose to not include
+     them in the export output. These are all "Optional"
+     model files and thus can be excised from the export
+     output simply by deleting the corresponding model
+     files from the models\ directory.
+
+ 
+ 
+5. Header and Footer Statements:
+
+    mmj2jar\GMFF\models\html\AO-header0.txt
+    mmj2jar\GMFF\models\html\AO-header1X.txt
+    mmj2jar\GMFF\models\html\AO-header2.txt
+    mmj2jar\GMFF\models\html\AO-header3X.txt
+    mmj2jar\GMFF\models\html\AO-header4.txt
+    mmj2jar\GMFF\models\html\AO-header5X.txt
+    mmj2jar\GMFF\models\html\AO-header6.txt
+    mmj2jar\GMFF\models\html\AO-header7.txt
+
+    mmj2jar\GMFF\models\html\AO-footer0.txt
+
+    - Header and Footer model files are designated as
+      Optional. There is no absolute need for either since
+      the file name will contain the theorem label and if
+      you simply want to see typeset formulas then you can
+      dispense with all of the Optional parts of the Proof
+      Worksheet html export!

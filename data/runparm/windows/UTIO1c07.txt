@@ -1,0 +1,11 @@
+ *=============
+ * UTIO1c07.TXT
+ *=============
+MaxStatementPrintCount,25000
+MaxErrorMessages,500
+Caption,Unit Test UTIO1c07.mm
+LoadFile,mm\UTIO1c07.mm
+LoadFile,mm\UTIO1c07.mm
+PrintSyntaxDetails
+PrintStatementDetails,* 
+

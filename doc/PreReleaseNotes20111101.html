@@ -1,0 +1,246 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="Content-Type">
+  <title>GMFFSample README</title>
+</head>
+<body>
+Hi! Welcome. This is the 20111001 mmj2 release
+"beta" test
+version
+-- all regression tests have been run and testing is officially
+"complete" (though it is a violation of Murphy's Law to even <span
+ style="font-style: italic;">say</span> that...)<br>
+<br>
+Feedback comments to Mel L. O'Cat (my <span style="font-style: italic;">nom
+d'plume</span>) at X178G243 @ YAHOO.COM<br>
+<br>
+<br>
+<span style="text-decoration: underline; font-weight: bold;">Added/Changed
+Since
+the
+previous
+test
+version:</span><br>
+<br>
+<big><span style="font-weight: bold;">1</span>.</big> The Command Line
+Argument Option report is enabled by default. Turn it off by setting
+the last command line argument to "N". The report was enhanced in
+several ways to assist in testing and to aid new users. In particular,
+the report now shows example file paths which would result from using
+the path arguments. Also, the mmj2 version and contact information are
+shown.<br>
+<br>
+2. Various small tweaks resulting from batch regression testing. <br>
+<br>
+<br>
+<span style="text-decoration: underline; font-weight: bold;">Added/Changed
+Since
+the
+previous
+"pre-beta"
+test
+version:</span><br>
+<br>
+<big><span style="font-weight: bold;">1</span>.</big> The GMFFManager
+was not loading the mmj2 Path parameter -- a fact brought to light
+during conversion of the mmj2 batch regression tests to use the new
+mmj2 Paths Enhancement.<br>
+<br>
+<span style="font-weight: bold;">2</span>. Several hardcoded mmj2
+default parameter settings were changed to
+match the RunParms in <code style="font-weight: bold;">RunParmsComplete.txt</code>
+which are now omitted in the new (concise) version of <code
+ style="font-weight: bold;">RunParms.txt</code>: <br>
+<ul>
+  <li><big><code style="font-weight: bold;">MaxStatementPrintCount,9999</code></big></li>
+  <li><big><code style="font-weight: bold;">ProofAsstRPNProofRightCol,70</code></big></li>
+  <li><big><code style="font-weight: bold;">ProofAsstDefaultFileNameSuffix,.mmp</code></big></li>
+</ul>
+<span style="text-decoration: underline; font-weight: bold;">Added/Changed
+Since
+the
+previous
+"pre-beta"
+test
+version:</span><br>
+<br>
+<big><span style="font-weight: bold;">1.</span></big> Hardcode default
+TMFF Current Format Number set to 13 instead of 0. This is necessary
+because the <code style="font-weight: bold;">RunParms.txt</code> file
+now uses the minimal set of RunParms and the previous version, now <code
+ style="font-weight: bold;">RunParmsComplete.txt</code> contained "<code
+ style="font-weight: bold;">TMFFUseFormat,13</code>".<br>
+<br>
+<big><span style="font-weight: bold;">2</span></big>. rangle.gif and
+langle.gif were copied to gmff\althtml, which is used for the Unicode
+version of html pages. This is necessary because the $t definitions in
+set.mm use these gif image files instead of Unicode due to browser
+incompatibilities.<br>
+<br>
+<span style="text-decoration: underline; font-weight: bold;">Added/Changed
+Since
+the
+previous
+"pre-beta"
+test
+version:</span><br>
+<br>
+<big><span style="font-weight: bold;">1.</span></big> New Proof
+Assistant GUI File Menu Item Ctrl Keys:<br>
+<ul>
+  <li>"Open Proof File" = Ctrl-P (also Alt-F-P keystroke sequence)</li>
+  <li>"Get Proof" = Ctrl-G (also Alt-F-G keystroke sequence).</li>
+</ul>
+<big><span style="font-weight: bold;">2.</span></big> Processing of
+ProofAsstIncompleteStepCursor settings First and Last:<br>
+<br>
+Explicit scrolling of the Proof Assistant GUI viewport <span
+ style="font-style: italic; font-weight: bold;">disabled</span> -- we
+will rely on the Java environment will scroll the viewport if necessary
+to keep the cursor visible. However, note that if Ctrl-U -- Unify --
+produces error messages, and then you scroll using just the mouse
+scroll wheel or via the viewport scroll bars and do not touch the
+keyboard or mouse click on the text area, and then you press Ctrl-U
+again, the Java environment will not scroll the viewport to make the
+cursor visible. This is not likely to cause confusion because the error
+message(s) will remain, and the step number is contained in error
+messages.<br>
+<br>
+<br>
+<span style="text-decoration: underline; font-weight: bold;">Added/Changed
+Since
+the
+previous
+"pre-beta"
+test
+version:</span><br>
+<br>
+"<small><small>Bug Fix: Incomplete Step Curror Positioning, AsIs Mode</small></small>:<span
+ style="text-decoration: underline; font-weight: bold;"><a
+ href="IncompleteStepCursorPositioning.html">
+IncompleteStepCursorPositioning.html</a><br>
+<br>
+<br>
+<br>
+PreviouslyAdded/Changed
+to the <span style="font-style: italic;">Prior</span> "pre-beta" test
+version:</span><br>
+<ul>
+  <li><a href="mmj2PathsEnhancement.html">mmj2PathsEnhancement.html</a>
+-- now coded and tested a little bit. This also includes the MMJ2 Fail
+Popup Window which displays start-up and "fail" (abort) errors.<br>
+  </li>
+  <li>mmj2.jar tweaked to use the system's path separator character
+("\" in Windows, "/" in Mac/*nix) with the new GMFF default model and
+export directories.</li>
+  <li>RunParms.txt cloned to RunParmsComplete.txt, which will now hold
+the full set of defaults and comments while RunParms.txt has the
+minimum set of RunParms you need to run mmj2. This is less confusing, I
+think.</li>
+  <li>Files and notes on using mmj2 in Mac/*Nix environments: <a
+ href="MacRunMMJ2.txt">MacRunMMJ2.txt</a>, <a href="MacRunParms.txt">MacRunParms.txt</a>
+and <a href="MacAndNixNotes.txt">MacAndNixNotes.txt</a>.</li>
+</ul>
+<br>
+<span
+ style="font-weight: bold; font-style: italic; text-decoration: underline;">This
+release
+also
+adds
+html
+pages
+using
+the
+new
+"GMFF"
+feature. </span><br>
+<ul>
+  <li>Press <big><code>Ctrl-1</code></big> (One) while using the Proof
+Assistant GUI to export the current Proof Worksheet to html files!</li>
+  <li>The idea is that being able to see your proof typeset in a web
+browser may be helpful in proof development!</li>
+  <li>While writing a proof, open a web browser to the default web page
+    <big><code>mmj2jar\gmff\html\general.html</code></big> and scroll
+down to the proof step you are working on. Then <big><code>Alt-Tab</code></big>
+(in Windows) back to mmj2. After making changes to the proof, press <big><code>Ctrl-1</code></big>
+(One), <big><code>Alt-Tab</code></big> back to the web browser, and
+click the Refresh button to see the changes!</li>
+  <li>More info and help is available in the <a
+ href="GMFFDoc/README.html"><big><code>mmj2jar\GMFFDOC</code></big></a>
+directory...in a GMFF README :-)&nbsp; Have fun reading it all :-)
+!!!!!!!</li>
+</ul>
+<span
+ style="font-style: italic; font-weight: bold; text-decoration: underline;">QUICK
+START
+HELP</span><br>
+<br>
+Obviously, you have already unzipped the test release zip file (<big><code>mmj2jarT20110913.zip</code></big>).<br>
+<br>
+So...now copy the <big><code>mmj2jar</code></big> directory to a
+certain location such as "<big><code>C:</code></big>" so that you now
+have directory, <big><code>C:\mmj2jar. </code></big>(You might want
+to rename the old <big><code>C:\mmj2jar</code></big> first in case you
+want to revert to the "production" version).<br>
+<br>
+Next, using a text editor, edit:<br>
+<ul>
+  <li><span style="font-weight: bold;">mmj2jar\mmj2.bat</span> to point
+to the location you copied mmj2jar AND the location where you have
+installed Metamath (if you are using a mac edit <code
+ style="font-weight: bold;">mmj2jar/MacRunMMJ2.txt</code> ).</li>
+  <li>Review <a href="RunParms.txt"><big><code>mmj2jar\RunParms.txt</code></big></a>
+and change the RunParm "<code><big style="font-weight: bold;">LoadFile,set.mm</big></code>"
+if
+necessary
+to
+point
+to
+your
+version
+of
+set.mm
+-- or whatever .mm file you are
+using.</li>
+</ul>
+<br>
+Then...<big style="text-decoration: underline;"><span
+ style="font-weight: bold;"> in Windows</span></big> Accessories "<big><code>Command
+Prompt</code></big>",
+Change Directory to point to <big><code>c:\mmj2jar</code></big>:<br>
+<br>
+&nbsp;&nbsp;&nbsp; <big><code>cd c:\mmj2jar</code></big><br>
+<br>
+And run mmj2 as follows:<br>
+<br>
+&nbsp;&nbsp;&nbsp; <big><code>mmj2</code></big><br>
+<br>
+<big style="text-decoration: underline;"><span
+ style="font-weight: bold;">In Mac OS-X</span></big> run
+Applications/Utilities/Terminal and change directory to your mmj2jar
+installation:<br>
+<br>
+&nbsp;&nbsp; cd /Users/userone/mmj2jar<br>
+<br>
+Then run mmj2 as follows:<br>
+<br>
+&nbsp; <code style="font-weight: bold;">source MacRunMMJ2.txt</code><br>
+<br>
+<br>
+Anyway,<br>
+<br>
+Best wishes,<br>
+Mel (x178g243 at yahoo)<br>
+<br>
+P.S. Feel free to report any bugs and to make
+suggestions...feedback.... The proposed
+release date is November 01, 2011 so there ought to be time to make
+fixes and
+small enhancements!<br>
+<br>
+<br>
+<br>
+</body>
+</html>

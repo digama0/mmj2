@@ -1,0 +1,254 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta content="text/html; charset=ISO-8859-1" http-equiv="content-type"><title>ExampleMetamathDatabase</title></head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);" alink="#000088" link="#0000ff" vlink="#ff0000"><big style="font-weight: bold;">ExampleMetamathDatabase.html</big><br>
+<br>
+see <a href="ExampleMetamathGrammar.html">ExampleMetamathGrammar.html</a><br>
+
+<hr style="width: 100%; height: 2px;"><span style="font-weight: bold;">EXAMPLE Metamath database (based on <code>set.mm</code> with minor changes)<br>
+<br>
+Note the statement categories:<br>
+1) Declarations and Variable Hypotheses<br>
+2) Syntax Axioms<br>
+3) Logical Axioms and Definitions<br>
+4) Theorems and Logical Hypotheses</span><br>
+
+<br>
+
+<code style="font-weight: bold;">$( --------------------------------------------------------------------------------------- <br>
+&nbsp;&nbsp; DECLARATIONS and VARIABLE HYPOTHESES<br>
+</code><code style="font-weight: bold;">&nbsp;&nbsp; --------------------------------------------------------------------------------------- $)<br>
+</code><code style="font-weight: bold;"></code><code style="font-family: monospace;">$( <span style="font-weight: bold;">Declarations</span>
+for Constant and Variable Symbols in the Metamath
+database&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$)<br>
+&nbsp;&nbsp;&nbsp;&nbsp; $c
+wff&nbsp;&nbsp;
+$.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$( Constant, identifies type "wff"&nbsp;&nbsp; -- well-formed
+formulas&nbsp; $)<br>
+&nbsp;&nbsp;&nbsp;&nbsp; $c set&nbsp;&nbsp; $. </code><code style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$( Constant, identifies type "set" &nbsp; -- mathematical sets
+&nbsp;&nbsp;&nbsp; $)<br>
+</code><code style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp; $c class $.</code><code style="font-family: monospace;"> </code><code style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$( Constant, identifies type "class" -- mathematical classes&nbsp; $)<br>
+</code><code style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp; $c |-&nbsp;&nbsp;&nbsp; $.</code><code style="font-family: monospace;"></code><code style="font-family: monospace;"> </code><code style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$( Constant, identifies type "|-" -- true/provable statements $)<br>
+</code><code style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;
+$c (&nbsp;&nbsp;&nbsp;&nbsp;
+$.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$( Constant, used as punctuation, aka "left
+parentheses"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $)<br>
+&nbsp;&nbsp;&nbsp;&nbsp; $c ) &nbsp; &nbsp; $.</code><code style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$( Constant, used as punctuation, aka "right
+parentheses"&nbsp;&nbsp;&nbsp;&nbsp; $)</code><code style="font-family: monospace;">&nbsp; &nbsp;  <br>
+&nbsp;&nbsp;&nbsp;&nbsp; $c -&gt;&nbsp;&nbsp;&nbsp; $.</code><code style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$( Constant, used as logical operator, aka "not" &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; $)<br>
+</code><code style="font-family: monospace;">&nbsp; &nbsp;&nbsp; $c -.&nbsp;&nbsp;&nbsp; $.</code><code style="font-family: monospace;"></code><code style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$( Constant, used as logical operator, aka "implies" &nbsp; &nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp; $)<br>
+&nbsp;&nbsp;&nbsp;&nbsp; $C &lt;-&gt;&nbsp;&nbsp;
+$.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$( Constant, used as logical operator, aka "if and only if"&nbsp;&nbsp;
+$)<br>
+</code><code style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;
+$v ph ps ch $.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; $(
+Variables: phi, psi and chi &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; $)<br>&nbsp;&nbsp;&nbsp;&nbsp;
+$v x&nbsp; y&nbsp; z&nbsp;
+$.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $( Variables:
+x, y, and
+z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$)<br>
+</code><code style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;
+$v A&nbsp; B&nbsp; C&nbsp;
+$.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $( Variables:
+A, B, and
+C&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$)<br>
+</code><br>
+
+<code style="font-family: monospace;">$( <span style="font-weight: bold;">Variable Hypotheseses</span> -- aka "Floating Hypotheses" -- assign a Type to a Variable&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $)</code><br>
+
+<code style="font-family: monospace;">wph&nbsp; $f wff&nbsp;&nbsp;
+ph&nbsp; $.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $( Variable
+ph has Type
+wff&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$)<br>
+</code><code style="font-family: monospace;">wps&nbsp; $f
+wff&nbsp;&nbsp; ps&nbsp;
+$.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $( Variable ps has
+Type
+wff&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$)<br></code><code style="font-family: monospace;">wch&nbsp; $f
+wff&nbsp;&nbsp; ch&nbsp;
+$.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $( Variable ch has
+Type
+wff&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$)<br>
+</code><code style="font-family: monospace;">vx&nbsp;&nbsp; $f
+set&nbsp;&nbsp; x&nbsp;&nbsp;
+$.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $( Variable x has
+Type set&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$)<br>
+</code><code style="font-family: monospace;">vy &nbsp; $f
+set&nbsp;&nbsp; y&nbsp;&nbsp;
+$.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $( Variable y has
+Type set&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$)<br></code><code style="font-family: monospace;">vz&nbsp;&nbsp; $f
+set&nbsp;&nbsp; z&nbsp;&nbsp;
+$.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $( Variable z has
+Type set&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$)<br></code><code style="font-family: monospace;">cA&nbsp;&nbsp; $f
+class A&nbsp;&nbsp; $.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$( Variable A has Type
+class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$)<br>
+</code><code style="font-family: monospace;">cB&nbsp;&nbsp; $f class
+B&nbsp;&nbsp; $.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $(
+Variable B has Type class
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$)<br></code><code style="font-family: monospace;">cC&nbsp;&nbsp; $f
+class C&nbsp;&nbsp; $.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$( Variable C has Type class
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$)<br>
+<br>
+</code><code style="font-weight: bold;">$( --------------------------------------------------------------------------------------- <br>
+&nbsp;&nbsp; SYNTAX AXIOMS: Expression Axioms, Named-Typed Constant Axioms,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Named Typed String Axioms, Type Conversion Axioms and <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Nulls-Permitted Axioms<br>
+</code><code style="font-weight: bold;">&nbsp;&nbsp; --------------------------------------------------------------------------------------- $)<br>
+</code><code style="font-family: monospace;">$( <span style="font-weight: bold;">Syntax Axioms</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$)<br>
+</code><code style="font-family: monospace;">wn &nbsp; $a wff&nbsp;&nbsp; -. ph
+$.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $(
+<span style="font-weight: bold;">Expression Axiom</span> "-. ph" has type wff &nbsp; &nbsp; &nbsp;&nbsp;&nbsp; &nbsp; &nbsp;&nbsp;&nbsp; $)<br>
+wi &nbsp; $a wff&nbsp;&nbsp; ( ph -&gt; ps ) $.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $( <span style="font-weight: bold;">Expression Axiom</span> "( ph -&gt; ps )" has Type wff &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; $)<br>
+wb&nbsp;&nbsp; $a wff&nbsp;&nbsp; ( ph &lt;-&gt; ps ) $.</code><code style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $( <span style="font-weight: bold;">Expression Axiom</span> "( ph &lt;-&gt; ps )" has Type wff&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; $)<br>
+weq&nbsp; $a wff&nbsp;&nbsp; x = y $.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $( <span style="font-weight: bold;">Expression Axiom</span> "x = y" has Type wff&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $)<br>
+wceq $a wff&nbsp;&nbsp; A = B $.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </code><code style="font-family: monospace;">$( <span style="font-weight: bold;">Expression Axiom</span> "A = B" has Type wff&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $)<br>
+csuc $a class suc class A $.</code><code style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </code><code style="font-family: monospace;">$( <span style="font-weight: bold;">Expression Axiom</span> "suc class A" has Type class &nbsp; &nbsp; &nbsp; $)</code><code style="font-family: monospace;"><br>
+csup $a class sup ( A , B , C ) $.&nbsp; </code><code style="font-family: monospace;">$( <span style="font-weight: bold;">Expression Axiom</span> "sup ( A , B , C )" has Type class $)<br>
+<br>
+</code><code style="font-family: monospace;"></code><code style="font-family: monospace;"></code><code style="font-family: monospace;">c0&nbsp;&nbsp; $a class (/) $. &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; $( <span style="font-weight: bold;">Named Typed Constant</span> Axiom : <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Constant "(/)" has type Class; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+"(/)" stands for the Empty Set;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label "c0" can
+be used in
+proofs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$)<br>
+cString<br>
+&nbsp;&nbsp;&nbsp;&nbsp; $a class THIS HAS FOUR CONSTANTS $. <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$( <span style="font-weight: bold;">Named Typed String</span> Axiom :<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Sequence of Constants "THIS HAS FOUR CONSTANTS"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+has type class; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Have never seen this used, but it is simply a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Syntax Axiom with no Variables, like Named Typed<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Constant Axioms and Nulls Permitted Axioms.<br>
+cv &nbsp; $a class x $. &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; $( <span style="font-weight: bold;">Type Conversion Axiom</span>: every set is a class; <br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; Literally means
+"Every set, x, is a class";<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; label "cv" can
+be used in proofs for Type Conversion $)<br>$( negative, no nulls for class! $)
+$( <span style="font-weight: bold;">Nulls-Permitted Axiom</span>: nulls permitted for Type class? $)<br>
+<br>
+</code><code style="font-weight: bold;">$( --------------------------------------------------------------------------------------- <br>
+&nbsp;&nbsp; LOGICAL AXIOMS and DEFINITIONS<br>
+</code><code style="font-weight: bold;">&nbsp;&nbsp; --------------------------------------------------------------------------------------- $)<br>
+</code><code style="font-family: monospace;"></code><code style="font-family: monospace;">$( <span style="font-weight: bold;">Logical Axioms</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$)<br>
+ax-1 $a |-&nbsp; ( ph
+-&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$( <span style="font-weight: bold;">Logical Axiom</span>, label = "ax-1", type = "|-"&nbsp;&nbsp;&nbsp; $)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( ps
+-&gt; ph ) )
+$.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</code><code style="font-family: monospace;"></code><br>
+
+
+<code style="font-family: monospace;"><br>
+ax-2 $a <font color="#00cc00">
+</font>|-&nbsp; ( ( ph -&gt; ( ps -&gt; ch ) ) -&gt;&nbsp;&nbsp; </code><code style="font-family: monospace;">$( <span style="font-weight: bold;">Logical Axiom</span>, label = "ax-2", type = "|-"&nbsp;&nbsp;&nbsp; $)</code><br>
+
+
+<code style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( ( ph -&gt; ps ) -&gt; ( ph -&gt; ch ) ) ) $.<br>
+<br>
+ax-3 $a <font color="#00cc00">
+</font>|-&nbsp; ( ( -. ph -&gt; -. ps ) -&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </code><code style="font-family: monospace;">$( <span style="font-weight: bold;">Logical Axiom</span>, label = "ax-3", type = "|-"&nbsp;&nbsp;&nbsp; $)</code><code style="font-family: monospace;"> <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+( ps -&gt;&nbsp;&nbsp;&nbsp; ph ) ) $.<br>
+<br>
+</code><code style="font-family: monospace;">${&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</code><code style="font-family: monospace;">$( <span style="font-weight: bold;">Logical Axiom</span>, label = "ax-mp", type = "|-"&nbsp;&nbsp; $)</code><br>
+
+
+<code style="font-family: monospace;">&nbsp;&nbsp;&nbsp; min&nbsp;&nbsp; $e |- ph $.<br>
+&nbsp;&nbsp;&nbsp; maj&nbsp;&nbsp; $e |- ( ph -&gt; ps ) $.<br>
+&nbsp;&nbsp;&nbsp; ax-mp $a |- ps $.<br>
+$}<br>
+<br>
+df-bi $a |- -. ( ( ( ph &lt;-&gt; ps )&nbsp; -&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $( <span style="font-weight: bold;">Definition</span>, label = "df-bi", type = "|-"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-. ( ( ph -&gt; ps )&nbsp; -&gt; -. ( ps -&gt; ph ) ) )<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&gt; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -. (
+-. ( ( ph -&gt;&nbsp; ps ) -&gt; -. ( ps -&gt; ph ) ) -&gt; <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+( ph &lt;-&gt; ps ) ) ) $.<br>
+<br>
+<br>
+<br>
+</code><code style="font-weight: bold;">$( --------------------------------------------------------------------------------------- <br>
+&nbsp;&nbsp; THEOREMS and LOGICAL HYPOTHESES<br>
+</code><code style="font-weight: bold;">&nbsp;&nbsp; --------------------------------------------------------------------------------------- $)<br>
+</code><code style="font-family: monospace;"></code><code style="font-family: monospace;"></code><code style="font-family: monospace;">$(
+Theorems &nbsp; &nbsp; &nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$)<br></code><code style="font-family: monospace;">${&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</code><code style="font-family: monospace;"></code><br>
+
+
+<code style="font-family: monospace;">&nbsp;&nbsp;&nbsp; a1i.1 $e |- ph
+$.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$( <span style="font-weight: bold;">Logical hypothesis</span>, label = "a1i.1, type = "|-"&nbsp; $)<br>
+&nbsp;&nbsp;&nbsp; a1i&nbsp;&nbsp; $p |- ( ps -&gt; ph ) $=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code style="font-family: monospace;">&nbsp; </code><code style="font-family: monospace;">$( <span style="font-weight: bold;">Theorem </span>(aka Provable Assertion)<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp;&nbsp; label = "a1i", Type = "|-" &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $)</code><br>
+
+
+<code style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+wph wps wph wi a1i.1 wph wps ax-1 ax-mp $.&nbsp;&nbsp; $( Proof in
+Reverse Polish Notation format $)<br>
+
+ $}<br>
+
+<br>
+</code>
+<hr style="width: 100%; height: 2px;"><br>
+
+
+<h3><br>
+</h3>
+
+
+
+</body></html>

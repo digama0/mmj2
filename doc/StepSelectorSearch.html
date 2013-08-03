@@ -1,0 +1,658 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>Step Selector Search</title>
+</head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
+ alink="#000088" link="#0000ff" vlink="#ff0000">
+<big><big><span style="font-weight: bold;">Proof Assistant Step
+Selector Search<br>
+<br>
+</span></big></big><big><span style="font-weight: bold;">See also:<br>
+</span></big><a href="PAUserGuide/Start.html">Proof Assistant User Guide</a><br>
+<a href="ProofAssistantGUIQuickHOWTO.html">ProofAssistantGUIQuickHOWTO.html</a><br>
+<a href="ProofAssistantGUIDetailedInfo.html">ProofAssistantGUIDetailedInfo.html</a><br>
+<a href="ProofAssistantGUIDeriveFeature.html">ProofAssistantGUIDeriveFeature.html</a><br>
+<a href="StepUnifier.html">StepUnifier.html</a><br>
+<a href="../mmj2jar/PATutorial/PageLocalRef.mmp">PageLocalRef.mmp</a><br>
+<a href="WorkVariables.html">WorkVariables.html</a><br>
+<a href="BottomUpProving-ByNormMegill.html">BottomUpProving-ByNormMegill.html</a><br>
+<hr style="width: 100%; height: 2px;">
+<h2>Contents:</h2>
+<ul>
+  <li><a href="#Step_Selector_Search_Cheat_Sheet"><big>Step Selector
+Search Cheat Sheet</big></a></li>
+  <li><a href="#What_Is_It_"><big>What Is It?</big></a></li>
+  <li><a href="#Step_Selector_Search_Detailed"><big>Step Selector
+Search Detailed Specifications</big></a></li>
+  <li><a href="#Step_Selector_Dialog"><big>Step Selector Dialog</big></a></li>
+  <li><a href="#Step_Selector_Dialog_Detailed"><big>Step Selector
+Dialog Detailed Specifications</big></a></li>
+  <li><a href="#Step_Selector_Search_Use_Scenarios"><big>Step Selector
+Search Use Scenarios</big></a></li>
+</ul>
+<br>
+<hr style="width: 100%; height: 2px;"><code style="font-weight: bold;"><br>
+</code>
+<h3><code style="font-weight: bold;"><a
+ name="Step_Selector_Search_Cheat_Sheet"></a><big><span
+ style="text-decoration: underline;">Step Selector Search Cheat Sheet</span></big></code></h3>
+<h3><code style="font-weight: bold;"></code></h3>
+<code style="font-weight: bold;">================================<br>
+<br>
+<span style="font-style: italic;"></span>&nbsp;&nbsp;&nbsp; <span
+ style="text-decoration: underline;">Double-click
+Derivation step</span> <span style="font-style: italic;">OR</span><br>
+</code><code style="font-weight: bold;">&nbsp;&nbsp;&nbsp; <span
+ style="text-decoration: underline;">Ctrl-8
+with cursor on Derivation step</span> <span style="font-style: italic;"></span></code><code
+ style="font-weight: bold;">to build<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Step
+Selector Dialog screen.<br>
+&nbsp;&nbsp;&nbsp; <span style="text-decoration: underline;">Double-click
+selected assertion</span> or hit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "Apply Selection
+To Step And Unify Proof"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; button, or
+right-mouse click selection.<br>
+&nbsp;&nbsp;&nbsp; <span style="text-decoration: underline;">Ctrl-Z
+twice to Undo</span> previous selection<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; then press
+Ctrl-9 to Reshow Step Selector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Dialog (just as
+it was before selecting.)<br>
+</code><br>
+<hr style="width: 100%; height: 2px;">
+<h3><big><big style="text-decoration: underline;"><big><span
+ style="font-weight: bold;"></span></big><span
+ style="font-weight: bold;"><a name="What_Is_It_"></a><small><small>What
+Is It?</small></small></span></big></big> </h3>
+<br>
+The Step Selector Search provides an extremely powerful search
+capability to the mmj2 Proof Assistant GUI. With it you can search the
+entire input Metamath database looking for all assertions meeting the
+criteria you specify -- namely, those which can be unified with a proof
+step and its hypotheses, and where some or all of the proof step
+conclusion
+and hypothesis formulas are either missing or incomplete due to the
+presence of Work Variables. The search treats Work Variables and
+incomplete hypothesis specifications as, in effect, <span
+ style="font-style: italic;">wildcards</span> which match assertions
+according to the pattern you specify.<br>
+<br>
+But what is it <span style="font-style: italic;">really</span>? The
+name, "Step Selector Search"...is goofy and awkward sounding! <br>
+<ul>
+  <li><big style="font-weight: bold;"><span style="font-style: italic;">Step</span></big>
+-- refers to the fact that the search pertains to a single Derivation
+proof stop, the step designated by the location of your input
+(keyboard) cursor. All step-specific mmj2 Proof Assistant GUI functions
+are available via the right (alt) mouse button. <br>
+  </li>
+  <li><big><span style="font-style: italic; font-weight: bold;">Selector</span></big>
+-- refers to the goal of proving a step in Metamath, which is to select
+an existing assertion to justify the given proof step. In this context,
+the Step Selector Search produces the Step Selector Dialog screen from
+which you can <span style="font-style: italic;">select</span> one of
+the matching unifiable assertions, at which point the label of the
+selected assertion is edited/pasted into the Ref field of the proof
+step and the proof unification process is initiated!<br>
+  </li>
+  <li><big><span style="font-weight: bold; font-style: italic;">Search</span></big>
+-- refers to a search of the input Metamath database looking for
+assertions which can validly be unified with the given proof step and
+its hypotheses (taking into account the "?" Hyp wildcard which
+indicates that zero or more additional, unspecified hypotheses are
+acceptable.) The search produces the Step Selector Results which are
+displayed on the Step Selector Dialog...</li>
+</ul>
+OK? So the name is nerdy, but it makes some kind of sense. The good
+names were already taken...<br>
+<br>
+Here is a quick demonstration for you. Fire up mmj2's Proof Assistant.
+The "demo" Proof Worksheet for theorem "syllogism" is displayed
+initially. <br>
+<br>
+<hr style="width: 100%; height: 2px;"><big><code
+ style="font-weight: bold;"><span style="color: rgb(51, 51, 153);">$(
+&lt;MM&gt; &lt;PROOF_ASST&gt;
+THEOREM=syllogism LOC_AFTER=</span><br style="color: rgb(51, 51, 153);">
+<br style="color: rgb(51, 51, 153);">
+<span style="color: rgb(51, 51, 153);">h1::&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- (
+ph -&gt; ps ) </span><br style="color: rgb(51, 51, 153);">
+<span style="color: rgb(51, 51, 153);">h2::&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- (
+ps -&gt; ch ) </span><br style="color: rgb(51, 51, 153);">
+<span style="color: rgb(51, 51, 153);">3:2:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- (
+ph -&gt; ( ps -&gt; ch ) ) </span><br style="color: rgb(51, 51, 153);">
+<span style="color: rgb(51, 51, 153);">4:3:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- ( (
+ph -&gt; ps ) -&gt; ( ph -&gt; ch ) ) </span><br
+ style="color: rgb(51, 51, 153);">
+<span style="color: rgb(51, 51, 153);">qed:1,4:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- ( ph -&gt; ch ) </span><br style="color: rgb(51, 51, 153);">
+<br style="color: rgb(51, 51, 153);">
+<span style="color: rgb(51, 51, 153);">$)</span><br>
+</code></big>
+<hr style="width: 100%; height: 2px;"><br>
+Next, double-click the 'qed' step -- or manually position the input
+cursor on the 'qed' step, either by
+left-clicking it with the mouse, or by using the cursor keys on the
+keyboard, and then press Ctrl-8.&nbsp; Here is what you see (a
+text-only
+mockup):<br>
+<br>
+<hr style="width: 100%; height: 2px;"><big
+ style="color: rgb(0, 0, 153);"><code style="font-weight: bold;">Step
+Selector Dialog<br>
+</code></big>
+<hr
+ style="width: 100%; height: 2px; font-weight: bold; color: rgb(0, 0, 153);"><big
+ style="color: rgb(0, 0, 153);"><code style="font-weight: bold;">Step
+qed Unifiable Assertions<br>
+</code></big>
+<hr
+ style="width: 100%; height: 2px; font-weight: bold; color: rgb(0, 0, 153);"><big
+ style="color: rgb(0, 0, 153);"><code style="font-weight: bold;">ax-mp
+::= |- ( ph -&gt; ps )<br>
+&nbsp;&nbsp;&nbsp;&nbsp; &amp;&amp;&nbsp; |- ( ( ph -&gt; ps ) -&gt; (
+ph -&gt; ch ) )<br>
+&nbsp;&nbsp;&nbsp;&nbsp; ==&gt; |- ( ph -&gt; ch )<br
+ style="font-family: monospace;">
+***END*** <br>
+</code></big>
+<hr style="width: 100%; height: 2px; color: rgb(0, 0, 153);"><big
+ style="color: rgb(0, 0, 153);"><code style="font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|Hide Dialog|&nbsp; |Apply Selection To Step And Unify Proof|</code></big><br>
+<hr style="width: 100%; height: 2px;"><br>
+Only one assertion matches the search criteria, <code>ax-mp</code>,
+and it <code></code>is displayed on three (selection) lines with
+the actual, context-dependent substitutions which would be made if
+"ax-mp" were edit/pasted into the Ref field of the 'qed' step and then
+Ctrl-U was pressed to perform Unification.&nbsp; <br>
+<br>
+Simply double-click on one of the ax-mp selection lines to update the
+'qed' step Ref and Unify the proof! Simple as pie!<br>
+<br>
+Try it!<br>
+<hr style="width: 100%; height: 2px;"><br>
+<h3 style="text-decoration: underline;"><big><a
+ name="Step_Selector_Search_Detailed"></a><small>Step Selector Search
+Detailed
+Specifications</small></big></h3>
+<table style="text-align: left; width: 649px; height: 949px;" border="1"
+ cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; width: 75px;"><span
+ style="font-weight: bold;">Search <br>
+Sequence</span><span style="font-weight: bold;"></span><br>
+      </td>
+      <td style="vertical-align: top;">In ascending order by assertion
+number of hypotheses and within that, by assertion database sequence. </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 75px;"><span
+ style="font-weight: bold;"></span><span style="font-weight: bold;">Number
+      <br>
+of<br style="font-weight: bold;">
+      </span> <span style="font-weight: bold;">Hypotheses</span><br>
+      </td>
+      <td style="vertical-align: top;">If the designated Derivation
+proof step Hyp field contains a "?" or a null/empty hyp number (e.g.
+"?" "1,2," or "1,,,,,,,," or "?,1") , then only assertions which
+contain <span style="font-style: italic;">at least</span> the number
+of input hypotheses are matched by the search. Thus, if the Hyp field
+equals "1,?" then only assertions with at least one logical hypothesis
+-- and perhaps more -- will be matched.<br>
+      <br>
+If the step's Hyp field contains no null/empty hyp numbers and does not
+contain a "?" then only assertions with exactly the same number of
+logical hypotheses are matched. Thus, if the Hyp field equals "", then
+assertions with zero logical hypotheses are matches; if Hyp equals "1",
+then only assertions with exactly one logical hypothesis are matched,
+etc.</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><span style="font-weight: bold;">Hypothesis</span><br
+ style="font-weight: bold;">
+      <span style="font-weight: bold;">Sorting</span><br>
+      </td>
+      <td style="vertical-align: top;">Proof step hypotheses and
+candidate assertion hypotheses are pre-sorted for input to the
+StepUnifier algorithm in order to speed up unification. Hypotheses are
+sorted into descending order by formula length. In addition, for
+assertion hypotheses, if two hypothesis formulas have the same length,
+then if a formula has variables in common with the assertion formula
+that hypothesis sorts first. <br>
+      <br>
+      <span style="text-decoration: underline;">Note: if incomplete
+hypotheses or Work Variables are involved in the unification then
+multiple, different unifications are possible. The specific unification
+shown on the Step Selector Dialog is merely indicative, and will not
+always be the same when the assertion label is edited/pasted into the
+step's Ref field and unification is performed. The regular Proof
+Worksheet Unification process first attempts unification with the
+hypotheses in the same order as given by the user, matching them to the
+unsorted logical hypotheses of the candidate assertion; only if this
+initial unification fails will the normal Unification process sort the
+hypotheses.</span><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><span style="font-weight: bold;"></span><span
+ style="font-weight: bold;">Assertion </span><br
+ style="font-weight: bold;">
+      <span style="font-weight: bold;">Exclusions</span><br>
+      </td>
+      <td style="vertical-align: top;">The same assertions are excluded
+as elsewhere in the mmj2 Proof Assistant, by RunParm:<br>
+      <br>
+      <code><span style="font-weight: bold;">ProofAsstUnifySearchExclude,biigb,xxxid<br>
+      <br>
+      </span></code>In addition...the following criteria are used:<br>
+      <ul>
+        <li>If the theorem being proved is not new -- it already exists
+in the
+input Metamath database -- then only assertions which occur earlier in
+the Metamath database (have a lower sequence number) are further
+processed by the
+search; the rest are excluded.</li>
+        <li>If the theorem is new, then the LOC_AFTER field on the
+Proof Worksheet
+comes into play. If LOC_AFTER is not blank, then it contains the label
+of a Metamath statement, and only assertion which occur earlier in the
+Metamath database than the LOC_AFTER statement (have a lower sequence
+number) are further processed by the search; the rest are excluded. </li>
+        <li>Otherwise, if LOC_AFTER is blank and the theorem is new
+then any
+assertion in the input Metamath database is further processed by the
+search.&nbsp; </li>
+      </ul>
+      <br>
+      <code><span style="font-weight: bold;"> </span></code> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><span style="font-weight: bold;">Distinct</span><br
+ style="font-weight: bold;">
+      <span style="font-weight: bold;">Variable</span><br
+ style="font-weight: bold;">
+      <span style="font-weight: bold;">Errors</span><span
+ style="font-weight: bold;"></span><br>
+      </td>
+      <td style="vertical-align: top;">The Step Selector Search does
+not consider Distinct Variable restrictions in the matching process. </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><span style="font-weight: bold;">Search
+      <br>
+Result<br>
+Maximum<br>
+      </span></td>
+      <td style="vertical-align: top;">To limit the number of unifiable
+assertions returned by the Step Selector Search, a Step Selector Max
+Results menu item is provided on the Unify menu. There is also a
+"StepSelectorMaxResults" RunParm. The default setting is 50, and the
+maximum setting is 9,999. This value may be overridden if desired, but
+caution is advised! Once this number of unifiable assertions is reached
+during the Step Selector Search process, the search is halted.<br>
+      </td>
+    </tr>
+    <tr style="font-weight: bold;">
+      <td style="vertical-align: top;">Initiation<br>
+Of <br>
+Step<br>
+Selector<br>
+Search<br>
+      </td>
+      <td style="vertical-align: top;"><span
+ style="font-weight: normal;">Double-clicking a Derivation proof step
+is the easiest and
+fastest way to initiate the Step Selector Search. It can also be
+initiated from the Unify menu, or via Ctrl-8, or via the right(alt)
+mouse click "pop-up"
+menu. <br>
+      <br>
+Before the Step Selector Search is actually initiated, the Proof
+Worksheet text area and the location of the input (keyboard) cursor are
+input to the Proof Worksheet Parser which attempts to determine which
+proof step the cursor is on, and whether or not the proof text
+satisfies the basic field-level and syntactic requirements of a Proof
+Worksheet. If the Proof Worksheet Parser encounters any errors then an
+error message is displayed on the Proof Assistant GUI and the Step
+Selector Search in not initiated.<br>
+      <br>
+Finally, just prior to initiation of the actual search algorithm, the
+Proof Unifier attempts unification of the proof steps prior to the
+selected step within the Proof Worksheet which contain either Work
+Variables or require use of the "Derive" feature. These preliminary
+unifications complete the formulas which provide the context in which
+the selected step will be considered by the Step Selector Search.
+(Also, a failed "Derive" in an earlier step may result in an error
+message and prevent initiation of the Step Selector Search.) These
+preliminary unifications are not returned to the user for display on
+the Proof Worksheet when the Step Selector Dialog is displayed -- they
+simply establish the anticipated content of the Proof Worksheet as it
+will be once an item is selected via the Step Selector Dialog. <br>
+      </span></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><span style="font-weight: bold;">Termination</span><br
+ style="font-weight: bold;">
+      <span style="font-weight: bold;">Of The</span><br
+ style="font-weight: bold;">
+      <span style="font-weight: bold;">Step</span><br
+ style="font-weight: bold;">
+      <span style="font-weight: bold;">Selector</span><br
+ style="font-weight: bold;">
+      <span style="font-weight: bold;">Search</span><br>
+      </td>
+      <td style="vertical-align: top;">The Step Selector Search is
+normally fairly speedy and completes in less than one second. However,
+if Step Selector Max Results is set to 9999 and certain complex
+conditions are encountered (involving a combinatorial explosion of
+unification possibilities for an assertion with a large number of
+logical hypotheses) -- or if there is a program bug -- the Step
+Selecteor Search might appear to "hang" or "loop", or just not complete
+in a reasonable amount of time. A program bug, for example, triggering
+a Java Runtime error such as "NullPointerException" can trigger
+termination of the search process behind the scenes and give the
+appearance of "looping", when in reality processing has stopped
+altogether (the Command Prompt window will display an ugly looking
+system dump message...) <br>
+      <br>
+Anyhooooo...to terminate the search use the "Cancel" menu on the Proof
+Assistant GUI screen. This will force termination. If all else fails,
+click on the "X" in the upper-right corner of the Proof Assistant GUI
+screen and kill the whole thing!.<br>
+      <br>
+(<span style="font-style: italic;">This information is provided solely
+for the sake of completeness -- just in case. We find no pleasure in
+needlessly alarming people with alarmist concerns about horribly
+catastrophic scenarios...If you ever do encounter a problem like this,
+simply document the error condition and forward the information to mmj2
+Laboratories HQ along with a 100 Euro note; we will cheerfully take the
+programmers out behind the barn, beat them senseless with shovels, and
+then feed
+them to the pigs.</span>)<br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br style="font-family: monospace;">
+<big><code style="font-weight: bold;"></code></big><big><span
+ style="font-family: monospace; font-weight: bold;"></span></big><br>
+<hr style="width: 100%; height: 2px;">
+<h3><big style="text-decoration: underline;"><span
+ style="font-weight: bold;"><a name="Step_Selector_Dialog"></a><small>Step
+Selector Dialog</small></span></big></h3>
+<br>
+The Step Selector Dialog displays the results from the Step Selector
+Search. Unifiable assertions returned by the search are displayed on
+the Step Selector Dialog on one line -- aka "selection item" -- per
+formula. Making a selection on the dialog involves moving the cursor to
+the desired item, and then either double-clicking the item, clicking on
+the "Apply..." button, or clicking the right(alt) mouse which displays
+a pop-up window (with its own buttons and formula display.)<br>
+<br>
+The Step Selector Dialog doesn't just display assertions. When a
+selection is made the label of the selected assertion is edit/pasted
+into the Ref field of the designated proof step and then the entire
+Proof Worksheet is unified. If the results are not what you intended,
+hit Ctrl-Z twice to Edit/Undo the results of the selection and
+unification, and then press Ctrl-9 to Reshow the Step Selector Dialog! <br>
+<br>
+This is really very simple and powerful. There are, however, fine
+points to discuss which may be useful for you to know...<br>
+<hr style="width: 100%; height: 2px;"><span
+ style="text-decoration: underline;"><span style="font-weight: bold;"><br>
+</span></span>
+<h3><small><span style="font-weight: bold;"><big><span
+ style="text-decoration: underline;"><a
+ name="Step_Selector_Dialog_Detailed"></a>Step Selector Dialog Detailed
+Specifications</span></big></span></small></h3>
+<h3><span style="font-weight: bold;"></span></h3>
+<span style="font-weight: bold;"><br>
+</span>
+<table style="text-align: left; width: 649px; height: 949px;" border="1"
+ cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; width: 75px;"><span
+ style="font-weight: bold;">Display<br>
+Sequence</span><span style="font-weight: bold;"></span><br>
+      </td>
+      <td style="vertical-align: top;">Results from the Step Selector
+Search are displayed in ascending order by assertion
+number of hypotheses and within that, by assertion database sequence. </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><span style="font-weight: bold;">Display</span><br
+ style="font-weight: bold;">
+      <span style="font-weight: bold;">Limit</span><br>
+      </td>
+      <td style="vertical-align: top;">The Step Selector Max Results
+parameter (set via Unify menu or RunParm) limits the number of
+assertions displayed on the Step Selector Dialog. Note that assertions
+are displayed one line per conclusion and hypothesis, so there will
+usually be more selection lines than assertions. <br>
+      <br>
+If fewer unifiable assertions than the Max Results parameter -- or none
+-- are returned by the Step Selector Search, the final selection item
+line is "<code style="font-weight: bold;">***END***</code>". <br>
+      <br>
+If the Max Results parameter is exceeded by the Step Selector Search
+then the final selection item line is "<code style="font-weight: bold;">***MORE***</code>",
+which indicates that you may want to rerun the search after updating
+the Step Selector Max Results parameter.<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><span style="font-weight: bold;">Show</span><br
+ style="font-weight: bold;">
+      <span style="font-weight: bold;">Substitutions</span><br>
+      </td>
+      <td style="vertical-align: top;">Unifiable assertions are
+displayed, by default, with the unification substitutions (from the
+Proof Worksheet into the assertion). If you prefer to see the assertion
+formulas without substitutions, as they exist in the input Metamath
+database you can use the "Step Selector Show Substitutions" item on the
+Unify menu, or via RunParm:<br>
+      <br>
+      <code style="font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp; StepSelectorShowSubstitutions,false<br>
+&nbsp;&nbsp;&nbsp;&nbsp; <br>
+      </code>Note: the displayed substitutions are indicative and may
+change slightly when a Step Selector Dialog item is selected and the
+proof is unified. One reason for this is that the Step Selector Search
+attempts unification using the sorted hypotheses of the proof step and
+each candidate assertion, whereas in the normal Unification process
+unification is first attempted using the proof step hypotheses in the
+order given on the Proof Worksheet, matching them against the assertion
+hypotheses in database sequence. And there may be multiple "valid"
+unifications due to the availability of Work Variables. For example,
+ax-mp is shown with unification substitutions which are (nearly) always
+different than a human would choose because the "maj" hypothesis is
+unified first. (Our bad! Sorry!!! It is not really feasible at this
+time for mmj2 to explore all possible unifications of a proof step and
+figure out which is "best" -- the code is fast and stupid.)<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 75px;"><span
+ style="font-weight: bold;"></span><span style="font-weight: bold;">Dialog<br>
+Pane<br>
+Size</span><span style="font-weight: bold;"></span><br>
+      </td>
+      <td style="vertical-align: top;">The Step Selector Dialog window
+"pane" is resizeable, but with imperfect effect. <br>
+      <br>
+The default pixel size is width = 720, height = 440. <br>
+      <br>
+You can change these settings with the following RunParms:<br>
+      <code style="font-weight: bold;">&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp; StepSelectorDialogPaneWidth,720<br>
+&nbsp;&nbsp;&nbsp; StepSelectorDialogPaneHeight,440 <br>
+&nbsp;&nbsp;&nbsp; <br>
+      </code><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><span style="font-weight: bold;">Dialog
+      <br>
+Is<br>
+Non-Modal<br>
+      </span><span style="font-weight: bold;"></span> </td>
+      <td style="vertical-align: top;">The Step Selector Dialog is
+"non-modal", meaning that when the dialog is displayed it does not
+prevent other windows from being active. And it remains present in the
+system even though it is "hidden" until you begin work on a different
+proof.. Together, these characteristics provide you the following
+capabilities:<br>
+      <br>
+      <ul>
+        <li>You can move the Step Selector Dialog pane to the side or
+bottom of your screen so that you can examine -- and even modify -- the
+Proof Worksheet. Naturally, if you delete the designated proof step and
+then select an item on the dialog an error message results!</li>
+        <li>You can "hide" the Step Selector Dialog and then Reshow it
+using Ctrl-9 or via the Unify menu or the right(alt) mouse button
+pop-up menu. This allows you to try out various selection items to see
+how they work -- with judicious use of Ctrl-Z to Edit/Undo and
+File/Save -- without having to rerun the Step Selector Search!</li>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><span style="font-weight: bold;">Step<br>
+Selector<br>
+Dialog<br>
+Popup</span><br style="font-weight: bold;">
+      <span style="font-weight: bold;">Window</span><br>
+      </td>
+      <td style="vertical-align: top;">The Step Selector Dialog pane
+width is limited and therefore some formulas are too long to be shown
+on a single line. It is possible to scroll horizontally, but another
+method is provided so that long formulas can be viewed: right(alt)
+mouse click on a selection item and a popup window is displayed showing
+the entire formula.<br>
+      <br>
+The Step Selector Dialog pop-up window has the title, "Apply Selection
+To Step And Unify", plus "Yes" and "No" buttons. If you click "Yes" the
+Step Selector Dialog and the popup window are hidden, and then the
+selected assertion's label is edit/pasted into the step's Ref field,
+and the proof is unified. If you click "No", the pop-up window
+disappears leaving the Step Selector Dialog on display as it was.<br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<hr style="width: 100%; height: 2px;">
+<h3><a name="Step_Selector_Search_Use_Scenarios"></a><span
+ style="font-weight: bold; text-decoration: underline;"><a
+ name="Step_Selector_Search_Use_Scenarios_"></a>Step Selector Search
+Use Scenarios</span><big><span style="font-weight: bold;"></span></big></h3>
+<h3><big><span style="font-weight: bold;"></span></big></h3>
+<big><span style="font-weight: bold;"><br>
+1)</span></big> <span style="font-weight: bold;">Bottom-Up Proving:
+cursor at 'qed' step:</span><br>
+<br>
+&nbsp;&nbsp; (a)<br>
+<code style="font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+h1::&nbsp;&nbsp; |- blah-blah<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; qed:?: |- blah-blah<br>
+</code><br>
+&nbsp;&nbsp; or (b)<br>
+<code style="font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+h1::&nbsp;&nbsp;&nbsp;&nbsp; |- blah-blah<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; qed:1:&nbsp;&nbsp; |-
+blah-blah<br>
+</code>&nbsp;&nbsp; <br>
+&nbsp;&nbsp; or (c1)<br>
+<code style="font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+h1::&nbsp;&nbsp;&nbsp;&nbsp; |- blah-blah<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; qed:1,?: |- blah-blah<br>
+</code><br>
+&nbsp;&nbsp; or (c2 - equivalent to (c1))<br>
+<code style="font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+h1::&nbsp;&nbsp;&nbsp;&nbsp; |- blah-blah<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; qed:1,:&nbsp; |- blah-blah<br>
+</code><br>
+&nbsp;&nbsp; The Step Selector Dialog shows assertions which:<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (a) unify with the 'qed' formula
+regardless <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; of
+the number of assertion hypotheses<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&gt;= 0
+hypotheses).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (b) unify with 'qed' formula using
+just <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; step 1 as
+hypothesis (= 1 hypothesis).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (c1 and c2) unify with qed step
+and step 1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; as
+hypothesis, and have 0 or more <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; additional
+hypotheses. <br>
+<br>
+Unification *will* invoke the standard "Derive" feature and insert the
+additional hypotheses into the Proof Worksheet as part&nbsp;&nbsp; of
+unification.<br>
+<br>
+<big><span style="font-weight: bold;">2)</span></big> <span
+ style="font-weight: bold;">Top-Down Proving</span> -- works exactly
+the same as Bottom-Up with respect to Step Selector Dialog except that
+you can do this to find out possibilities for step 3 (below):<br>
+<br>
+&nbsp;&nbsp; (d1)<br>
+<code style="font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+h1::&nbsp;&nbsp; |- blah-blah<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; h2::&nbsp;&nbsp; |- blah-blah<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3:1,2: |- &amp;W1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; qed:?: |- blah-blah<br>
+</code><br>
+&nbsp;&nbsp; (d2)<br>
+<code style="font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+h1::&nbsp;&nbsp;&nbsp; |- blah-blah<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; h2::&nbsp;&nbsp;&nbsp; |-
+blah-blah<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3:1,2,: |- &amp;W1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; qed:?:&nbsp; |- blah-blah<br>
+</code><br>
+&nbsp;&nbsp; The Step Selector Dialog shows assertions which:<br>
+&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (d1) have exactly two hypotheses
+that unify<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; with
+steps 1 and 2.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (d2) have two hypotheses that
+unify with steps <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1
+and 2 -- and have 0 or more additional<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+hypotheses. <br>
+&nbsp;<br>
+Notice that step 3's formula is a "dummy" formula consisting of just
+"&amp;W1", which equates to <span style="font-style: italic;">any </span>wff.
+If you wish you can constrain the search to any pattern you like by
+using Work Variables (which may or not already be present in the
+proof). For example, you would write step 3 like this:<br>
+<br>
+<code style="font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+3:1,2&nbsp;&nbsp;&nbsp; |- ( &amp;W1 -&gt; &amp;W2)</code><br>
+<br>
+&nbsp;&nbsp; or<br>
+&nbsp;&nbsp; <br>
+<code style="font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+3:1,2&nbsp;&nbsp;&nbsp; |- &amp;C1 e. { &amp;S1 e. &amp;C2 | &amp;W1 }</code><br>
+<br>
+...whatever (as long as it is syntacticallly valid.) <br>
+</body>
+</html>

@@ -1,0 +1,6 @@
+$( <MM> <PROOF_ASST> THEOREM=t1  LOC_AFTER=    
+
+$d v1 v2 v3 
+qed::ax-1  |- ( v1 , v2 , v3 )
+
+$) 

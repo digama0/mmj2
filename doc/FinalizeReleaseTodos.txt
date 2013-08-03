@@ -1,0 +1,170 @@
+Finalize Release ToDo's
+=======================
+
+
+Task List for Release on 1-Nov-2011
+===================================
+ 
+Release-specific todo's
+======================= 
+    x Run existing regression tests and release final test version
+    x double-check whether all RunParmsComplete.txt parms omitted
+      in RunParms.txt have their defaults set in the mmj2 code
+    x Add regression tests for GMFF 
+    x Add regression tests for Paths Enhancement
+    x Add regression tests for cursor positioning fix
+    x change program comments to Nov-1 release date instead of Oct-15
+    x Re-Run existing regression tests and compare to 'q' test version.
+      (compare 't' version to 'q')
+    x Convert existing regression tests to use the Paths Enhancement
+      (call it the 'u' version)
+    x rerun all regression tests and compare u version to t version.
+    x modify C:\mmj2\test\windows\RunUT8.bat after src code moved from
+      test to c:\mmj2\src to point to c:\mmj2\classes instead of test
+      environment.
+    x if time permits, add chapter on TheoremLoader to PATutorial.
+      and other additions 
+      (see C:\AsteveL3\mmj2\Release20111101\NormSuggestions.txt)
+    - warn norm to update http://us2.metamath.org:8888/index.html
+      ==> mmj2.zip is now XXXX BYTES. NOT 1.1MB 
+    x write mmj2\QuickStart.html 
+    x put QuickStart link to README.html right at the top.
+    x retest the new Mac .command files
+    - consider running batch tests on Mac
+    - add tests with different GMFF models
+
+Standard todo's
+===============
+  x  update help screen as needed
+
+  x  Update mmj.pa.PaConstants.java#PROOF_ASST_GUI_STARTUP_MSG,
+     GENERAL_HELP_FRAME_TITLE, and HELP_ABOUT_TEXT_1 with
+     current date/time and release information.
+     
+  x  Copy over C:\mmj2\data\result\RegressionTestResultsYYYYMMDDx.txt
+            to C:\mmj2\doc\RegressionTestResults.txt
+
+  x  update CHGLOG.TXT for release
+
+  x  verify CHGLOG.TXT against dev src file dt/timestamps.
+
+  x  verify change log entry in each changed
+     module.
+
+  x  FileCompare new/old src modules: 
+
+  x  copy over new/changed modules from test environment to mmj2 directory
+  x  copy over any new documentation from wherever to mmj2 directory
+  
+  x  Update the following for new mmj packages:
+    x   compile\windows\CompMMJ.bat
+    x   doc\windows\DocPackages.txt
+    x   compile\windows\EraseMMJObjCode.bat
+    x   compile\windows\mkjarargs.txt
+
+  x  recompile mmj2 directory source code
+     (run mmj2\compile\windows\CompMMJ.bat)
+
+  x  create javadoc and update program doc
+     until no more errors exist
+     (run mmj2\doc\windows\BuildDoc.bat)
+
+  x  recompile mmj2 directory source code
+     (run mmj2\compile\windows\CompMMJ.bat)
+
+  x  Update mmj.pa.PaConstants.java#PROOF_ASST_GUI_STARTUP_MSG,
+     GENERAL_HELP_FRAME_TITLE, and HELP_ABOUT_TEXT_1 with
+     current date/time and release information and recompile.
+
+  x  recompile mmj2 directory source code
+     (run mmj2\compile\windows\CompMMJ.bat)
+ 
+  x  update PA tutorial as needed 
+
+  x  Run c:\mmj2\test\windows\BatchMMJ2Sample001.bat with
+     the latest set.mm and new software to see if the
+     RunParm default sizes for SymTbl and StmtTbl need
+     to be increased.
+
+  x  update RunParm files for ProofAsst
+     for any new runparms:
+     x mmj2\mmj2jar\RunParms.txt
+     x mmj2\mmj2jar\RunParmsComplete.txt
+     x mmj2\mmj2jar\RunParmsPATutorial.txt
+     x mmj2\mmj2jar\RunParmsQL.txt
+     x mmj2\mmj2jar\AnnotatedRunParms.txt
+
+  x  update INSTALL.html
+
+  x  update QuickStart.html
+ 
+  x  update README.html
+
+  x  update mmj2.html 
+  
+  x  update mmj2\doc\MMJ2DirectoryStructure.txt if necessary
+ 
+  -  update Proof Assistant reference pages as needed
+  -  review other existing documentation to see whether it should
+     be updated or removed. 
+ 
+  x  run unit/volume tests using C:\mmj2\data\mm\RegressionTest1set.mm
+     compare to previous results (from prior software version.)
+  x  rerun unit/volume tests if bugs fixed just to be safe.
+
+  x  download Metamath Symbols.zip, unzip, copy to c:\metamath\symbols
+     then run c:\mmj2\mmj2jar\CopySymbols.zip in order to:
+         x copy symbols\*.gif to gmff\html
+         x copy symbols\langle.gif and rangle\gif to gmff\althtml
+   
+  -  download latest set.mm and
+     re-run tests using both old and new software.
+
+  x  Update c:\mmj2\doc\FinalizeReleaseTodos.txt
+     with current project todo's, as needed.
+
+  x  backup c:\mmj2 to c:\mmj2BKP and external media.
+
+  -  clean out mmj2 for zipping
+
+     x erase javadoc generated files, run:
+        - C:\mmj2\doc\windows\EraseMMJJavaDoc.bat
+
+     x erase class (object) code modules, run:
+        - C:\mmj2\compile\windows\EraseMMJObjCode.bat
+
+     x delete c:\mmj2\data\result\*.* except for
+       RegressionTestResults.txt
+       (but put back after zipping, for future use).
+
+     x delete C:\mmj2\mmj2jar\mmj2R20060401b.jar -> etc.
+       (but put back after zipping, for future use).
+
+  -  zip c:\mmj2
+
+  -  create MD5 checksum files for c:\mmj2 by
+     running c:\md5.bat
+
+  -  put back c:\mmj2\data\result\*.* from c:\mmj2BKP
+
+  -  put back C:\mmj2\mmj2jar\mmj2R20060401b.jar etc.
+     from c:\mmj2BKP
+
+  -  logon and rename old mmj2
+
+  -  upload new mmj2.zip, mmj2.md5
+
+  -  download new mmj2 and compare checksum
+     to upload checksum
+
+  -  send any emails, and post announcement at P.M. for FOM.
+
+  -  store dated L3 copy of mmj2.zip & mmj2.md5 for
+     "Tell Me Three Times" backup (at least 3 copies,
+     using 3 different types of hardware).
+
+=====================================
+DEFERRED ITEMS
+=====================================
+
+

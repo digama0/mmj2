@@ -1,0 +1,13 @@
+$( <MM> <PROOF_ASST> THEOREM=hbeleq  LOC_AFTER=?
+
+* If ` x ` is effectively bound in ` y e. A ` , then it is effectively
+  bound in ` y = A ` .
+
+h1::hbeleq.1       |- ( y e. A -> A. x y e. A )
+2::ax-17           
+3::ax-17           
+4:3,1:hbel         
+qed:2,4:hbeq       |- ( y = A -> A. x y = A )
+
+$)
+

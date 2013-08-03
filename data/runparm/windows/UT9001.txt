@@ -1,0 +1,11 @@
+*-----------------------------------------
+* UT9001.txt -- Book Manager Unit Test
+*-----------------------------------------
+StartInstrumentationTimer,BookManagerUnitText
+LoadFile,mm\UT9001.mm
+VerifyProof,*
+Parse,*  
+PrintBookManagerChapters
+PrintBookManagerSections
+PrintBookManagerSectionDetails,* 
+StopInstrumentationTimer,BookManagerUnitText

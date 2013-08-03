@@ -1,0 +1,990 @@
+======================================================
+Test: BatchMMJ2Sample001.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\Sample001Sysout20080801final.txt (203484 bytes)
+   with: (>)C:\mmj2\data\result\Sample001Sysout20110701a.txt (203484 bytes)
+
+The files are identical
+
+
+======================================================
+Test: BatchMMJ2Sample002.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\Sample002Syserr20080801final.txt (0 bytes)
+   with: (>)C:\mmj2\data\result\Sample002Syserr20110701a.txt (0 bytes)
+
+The files are identical
+
+
+Compare: (<)C:\mmj2\data\result\Sample002Sysout20080801final.txt (21964 bytes)
+   with: (>)C:\mmj2\data\result\Sample002Sysout20110701a.txt (21964 bytes)
+
+The files are identical
+
+
+======================================================
+Test: BatchMMJ2Sample003.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\Sample003Sysout20080801final.txt (10939 bytes)
+   with: (>)C:\mmj2\data\result\Sample003Sysout20110701a.txt (10939 bytes)
+
+7d7
+< E-PR-0004 VerifyProof: proof incomplete.  Theorem: example Step#: 1 Step Label:
+11a10
+> E-PR-0004 VerifyProof: proof incomplete.  Theorem: example Step#: 1 Step Label:
+
+==> Difference caused by change in Stmt table size. No problem.
+    Stmt table is stored in a HashSet, and the RunParm which triggered
+    these messages is "VerifyProof,*", which processes the Stmt set
+    in the physical order of the HashSet, not in order by Stmt label.
+    Note that both tests processed the theorems of the input .mm file,
+    mmj2\data\mm\EarleyParserExample.mm, out of order.
+
+======================================================
+Test: RunUnitTest.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\UT1Err20080801final.txt (11850 bytes)
+   with: (>)C:\mmj2\data\result\UT1Err20110701a.txt (11838 bytes)
+
+4,7c4,7
+< c:\mmj2\data\result>erase UTOut20080801final.txt
+< Could Not Find c:\mmj2\data\result\UTOut20080801final.txt
+<
+< c:\mmj2\data\result>c:\mmj2\test\windows\RunUT1.bat  1>UT1Out20080801final.txt
+---
+> c:\mmj2\data\result>erase UTOut20110701a.txt
+> Could Not Find c:\mmj2\data\result\UTOut20110701a.txt
+>
+> c:\mmj2\data\result>c:\mmj2\test\windows\RunUT1.bat  1>UT1Out20110701a.txt
+
+==> Differences just test file name differences. No problem.
+
+
+Compare: (<)C:\mmj2\data\result\UT1Out20080801final.txt (166359 bytes)
+   with: (>)C:\mmj2\data\result\UT1Out20110701a.txt (166281 bytes)
+
+1635a1635
+> E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: v10.21 and v10.22 Theorem: Label10 Step#: 5 Step Label: Label10.1
+1641d1642
+< E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: v10.21 and v10.22 Theorem: Label10 Step#: 5 Step Label: Label10.1
+2271d2271
+
+==> Difference caused by change in Stmt table size. No problem.
+    Stmt table is stored in a HashSet, and the RunParm which triggered
+    these messages is "VerifyProof,*", which processes the Stmt set
+    in the physical order of the HashSet, not in order by Stmt label.
+
+< E-GR-0015 No valid grammatical Parse Tree found for expression. Label =ax14b
+2399c2398
+<       ExprRPN: ax14b
+---
+>       ExprRPN: wff14
+
+==> wff14 is the correct parse RPN for ax14b
+    (see \mmj2\data\mm\UTGR1c02.mm). This is, in fact,
+    the bug that release 20110701 fixes.
+
+
+======================================================
+Test: RunUnitTest2.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\UT2Out20080801final.txt (49771 bytes)
+   with: (>)C:\mmj2\data\result\UT2Out20110701a.txt (49771 bytes)
+
+The files are identical
+
+
+======================================================
+Test: RunUnitTest3.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\UT3Err20080801final.txt (1563 bytes)
+   with: (>)C:\mmj2\data\result\UT3Err20110701a.txt (1551 bytes)
+
+4,7c4,7
+< c:\mmj2\data\result>erase UT3Out20080801final.txt
+< Could Not Find c:\mmj2\data\result\UT3Out20080801final.txt
+<
+< c:\mmj2\data\result>c:\mmj2\test\windows\RunUT3.bat  1>UT3Out20080801final.txt
+---
+> c:\mmj2\data\result>erase UT3Out20110701a.txt
+> Could Not Find c:\mmj2\data\result\UT3Out20110701a.txt
+>
+> c:\mmj2\data\result>c:\mmj2\test\windows\RunUT3.bat  1>UT3Out20110701a.txt
+
+==> Differences just test file name differences. No problem.
+
+
+Compare: (<)C:\mmj2\data\result\UT3Out20080801final.txt (9331 bytes)
+   with: (>)C:\mmj2\data\result\UT3Out20110701a.txt (9331 bytes)
+
+The files are identical
+
+
+======================================================
+Test: RunUnitTest4.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\UT4dump15020080801final.mmp (4812 bytes)
+   with: (>)C:\mmj2\data\result\UT4dump15020110701a.mmp (4812 bytes)
+
+The files are identical
+
+
+Compare: (<)C:\mmj2\data\result\UT4Out20080801final.txt (423236 bytes)
+   with: (>)C:\mmj2\data\result\UT4Out20110701a.txt (423236 bytes)
+
+The files are identical
+
+
+======================================================
+Test: RunUnitTest5.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\UT5Out20080801final.txt (759149 bytes)
+   with: (>)C:\mmj2\data\result\UT5Out20110701a.txt (759149 bytes)
+
+The files are identical
+
+
+======================================================
+Test: RunUnitTest6.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\UT6Out20080801final.txt (34276 bytes)
+   with: (>)C:\mmj2\data\result\UT6Out20110701a.txt (34276 bytes)
+
+The files are identical
+
+
+======================================================
+Test: RunUnitTest7.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\UT7Out20080801final.txt (14629 bytes)
+   with: (>)C:\mmj2\data\result\UT7Out20110701a.txt (14629 bytes)
+
+The files are identical
+
+
+======================================================
+Test: RunUnitTest8.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\UT8Out20080801final.txt (45614 bytes)
+   with: (>)C:\mmj2\data\result\UT8Out20110701a.txt (45614 bytes)
+
+226c226
+< I-LA-0302 TimerID Startup: Elapsed Millis=8892 Total Memory=87416832 (delta=22470656) Max Memory=132055040 (delta=0) FreeMemory=31177400 (delta=-32988840)
+---
+> I-LA-0302 TimerID Startup: Elapsed Millis=8502 Total Memory=94924800 (delta=29978624) Max Memory=132055040 (delta=0) FreeMemory=39163600 (delta=-25002640)
+487c487
+< I-LA-0302 TimerID Startup: Elapsed Millis=6926 Total Memory=95154176 (delta=30208000) Max Memory=132055040 (delta=0) FreeMemory=39605296 (delta=-24544688)
+---
+> I-LA-0302 TimerID Startup: Elapsed Millis=8845 Total Memory=78999552 (delta=14053376) Max Memory=132055040 (delta=0) FreeMemory=25762344 (delta=-38387640)
+
+==> Timing Differences. Meaning unknown. Probably insignificant.
+
+
+======================================================
+Test: RunUnitTest9.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\UT9Out20080801final.txt (24022 bytes)
+   with: (>)C:\mmj2\data\result\UT9Out20110701a.txt (24021 bytes)
+
+201c201
+< I-LA-0302 TimerID BookManagerUnitText: Elapsed Millis=109 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=61979024 (delta=-1897272)
+---
+> I-LA-0302 TimerID BookManagerUnitText: Elapsed Millis=78 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=61741096 (delta=-2150776)
+384c384
+< I-LA-0302 TimerID BookManagerUnitText: Elapsed Millis=62 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=61996208 (delta=-1880088)
+---
+> I-LA-0302 TimerID BookManagerUnitText: Elapsed Millis=62 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=62093064 (delta=-1798808)
+598c598
+< I-LA-0302 TimerID BookManagerUnitText: Elapsed Millis=62 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=62012536 (delta=-1863760)
+---
+> I-LA-0302 TimerID BookManagerUnitText: Elapsed Millis=63 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=61758408 (delta=-2133464)
+
+==> Timing Differences. Meaning unknown. Probably insignificant.
+
+
+======================================================
+Test: RunUnitTest10.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\UT10Err20080801final.txt (20004 bytes)
+   with: (>)C:\mmj2\data\result\UT10Err20110701a.txt (19992 bytes)
+
+4,7c4,7
+< c:\mmj2\data\result>erase UT10Out20080801final.txt
+< Could Not Find c:\mmj2\data\result\UT10Out20080801final.txt
+<
+< c:\mmj2\data\result>c:\mmj2\test\windows\RunUT10.bat  1>UT10Out20080801final.txt
+---
+> c:\mmj2\data\result>erase UT10Out20110701a.txt
+> Could Not Find c:\mmj2\data\result\UT10Out20110701a.txt
+>
+> c:\mmj2\data\result>c:\mmj2\test\windows\RunUT10.bat  1>UT10Out20110701a.txt
+
+==> Differences just test file name differences. No problem.
+
+
+Compare: (<)C:\mmj2\data\result\UT10Out20080801final.txt (199281 bytes)
+   with: (>)C:\mmj2\data\result\UT10Out20110701a.txt (199281 bytes)
+
+146c146
+< I-LA-0302 TimerID TheoremLoaderUnitTest10001: Elapsed Millis=203 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=60236648 (delta=-3639648)
+---
+> I-LA-0302 TimerID TheoremLoaderUnitTest10001: Elapsed Millis=171 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=60128832 (delta=-3763040)
+603c603
+< I-LA-0302 TimerID TheoremLoaderUnitTest10003: Elapsed Millis=218 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=58436128 (delta=-5440168)
+---
+> I-LA-0302 TimerID TheoremLoaderUnitTest10003: Elapsed Millis=188 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=58180256 (delta=-5711616)
+1221c1221
+< I-LA-0302 TimerID TheoremLoaderUnitTest10023: Elapsed Millis=234 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=58659504 (delta=-5216792)
+---
+> I-LA-0302 TimerID TheoremLoaderUnitTest10023: Elapsed Millis=218 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=58228432 (delta=-5663440)
+1914c1914
+< I-LA-0302 TimerID TheoremLoaderUnitTest10033: Elapsed Millis=218 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=58514512 (delta=-5361784)
+---
+> I-LA-0302 TimerID TheoremLoaderUnitTest10033: Elapsed Millis=203 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=58348056 (delta=-5543816)
+2983c2983
+< I-LA-0302 TimerID TheoremLoaderUnitTest10043: Elapsed Millis=234 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=58227584 (delta=-5648712)
+---
+> I-LA-0302 TimerID TheoremLoaderUnitTest10043: Elapsed Millis=219 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=57927840 (delta=-5964032)
+4132c4132
+< I-LA-0302 TimerID TheoremLoaderUnitTest19100: Elapsed Millis=8830 Total Memory=80130048 (delta=15183872) Max Memory=132055040 (delta=0) FreeMemory=26213192 (delta=-37663104)
+---
+> I-LA-0302 TimerID TheoremLoaderUnitTest19100: Elapsed Millis=7488 Total Memory=93798400 (delta=28852224) Max Memory=132055040 (delta=0) FreeMemory=37445968 (delta=-26445904)
+
+==> Timing Differences. Meaning unknown. Probably insignificant.
+
+
+
+======================================================
+Test: RunVolumeTest2.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\VT2Out20080801final.txt (1842598 bytes)
+   with: (>)C:\mmj2\data\result\VT2Out20110701a.txt (1842592 bytes)
+
+135c135
+< I-LA-0302 TimerID LoadFile: Elapsed Millis=1997 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=29554376 (delta=-33921888)
+---
+> I-LA-0302 TimerID LoadFile: Elapsed Millis=1950 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=29138952 (delta=-34352888)
+139c139
+< I-LA-0302 TimerID VerifyProof: Elapsed Millis=1077 Total Memory=73895936 (delta=8949760) Max Memory=132055040 (delta=0) FreeMemory=37395784 (delta=7841408)
+---
+> I-LA-0302 TimerID VerifyProof: Elapsed Millis=999 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=27601280 (delta=-1537672)
+143c143
+< I-LA-0302 TimerID Parse: Elapsed Millis=1294 Total Memory=78966784 (delta=5070848) Max Memory=132055040 (delta=0) FreeMemory=24249288 (delta=-13146496)
+---
+> I-LA-0302 TimerID Parse: Elapsed Millis=4056 Total Memory=75378688 (delta=10432512) Max Memory=132055040 (delta=0) FreeMemory=19005120 (delta=-8596160)
+422c422
+< I-PA-0113 Theorem pm2.65i: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem pm2.65i: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+466c466
+< I-PA-0113 Theorem dfbi1gb: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem dfbi1gb: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+553c553
+< I-PA-0113 Theorem sylibd: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem sylibd: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+1013c1013
+< I-PA-0113 Theorem ancom: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem ancom: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+1343c1343
+< I-PA-0113 Theorem jcad: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem jcad: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+2205c2205
+< I-PA-0113 Theorem 19.9t: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem 19.9t: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+3030c3030
+< I-PA-0113 Theorem ax11el: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem ax11el: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+3066c3066
+< I-PA-0113 Theorem a12lem1: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem a12lem1: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+4539c4539
+< I-PA-0113 Theorem ssrab: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem ssrab: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+6753c6753
+< I-PA-0113 Theorem brcnv: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem brcnv: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+8521c8521
+< I-PA-0113 Theorem oaass: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem oaass: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+9207c9207
+< I-PA-0113 Theorem fiint: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem fiint: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+10019c10019
+< I-PA-0113 Theorem axacndlem5: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem axacndlem5: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+11661c11661
+< I-PA-0113 Theorem lt2msq: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem lt2msq: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+13862c13862
+< I-PA-0113 Theorem fsumcmp: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem fsumcmp: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+14111c14111
+< I-PA-0113 Theorem caucvglem6: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem caucvglem6: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+14141c14141
+< I-PA-0113 Theorem ser1cmp2: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem ser1cmp2: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+14290c14290
+< I-PA-0113 Theorem cvgratlem1: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem cvgratlem1: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+14617c14617
+< I-PA-0113 Theorem efcnlem2: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem efcnlem2: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+15631c15631
+< I-PA-0113 Theorem lmle: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem lmle: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+15752c15752
+< I-PA-0113 Theorem bcthlem21: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem bcthlem21: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+16591c16591
+< I-PA-0113 Theorem ipdirilem: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem ipdirilem: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+19260c19260
+< I-PA-0113 Theorem nmlnop0ALT: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem nmlnop0ALT: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+19300c19300
+< I-PA-0113 Theorem elunop2t: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem elunop2t: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+19400c19400
+< I-PA-0113 Theorem nmcfnlb: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem nmcfnlb: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+19429c19429
+< I-PA-0113 Theorem cnlnadjlem2: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem cnlnadjlem2: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+19701c19701
+< I-PA-0113 Theorem pj3s: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem pj3s: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+20157c20157
+< I-PA-0113 Theorem cdj3: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem cdj3: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+20548c20548
+< I-PA-0113 Theorem mslb1: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem mslb1: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+20602c20602
+< I-PA-0113 Theorem dedi: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem dedi: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+20778,20781c20778,20781
+< I-LA-0302 TimerID BatchTest: Elapsed Millis=80340 Total Memory=114475008 (delta=35508224) Max Memory=132055040 (delta=0) FreeMemory=38362456 (delta=14819728)
+< **** I-UT-0014 RunParmFile line comment. Line #42 = * RunProofAsstGUI
+< **** I-UT-0015 Processing RunParmFile Command #43 = StopInstrumentationTimer,VolumeTest2
+< I-LA-0302 TimerID VolumeTest2: Elapsed Millis=85379 Total Memory=114475008 (delta=49528832) Max Memory=132055040 (delta=0) FreeMemory=38362456 (delta=-25513840)
+---
+> I-LA-0302 TimerID BatchTest: Elapsed Millis=79248 Total Memory=114958336 (delta=39579648) Max Memory=132055040 (delta=0) FreeMemory=37375600 (delta=19145736)
+> **** I-UT-0014 RunParmFile line comment. Line #42 = * RunProofAsstGUI
+> **** I-UT-0015 Processing RunParmFile Command #43 = StopInstrumentationTimer,VolumeTest2
+> I-LA-0302 TimerID VolumeTest2: Elapsed Millis=86362 Total Memory=114958336 (delta=50012160) Max Memory=132055040 (delta=0) FreeMemory=37375600 (delta=-26516272)
+
+==> Timing Differences. Meaning unknown. Probably insignificant.
+
+
+======================================================
+Test: RunVolumeTest2b.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\VT2bOut20080801final.txt (1869128 bytes)
+   with: (>)C:\mmj2\data\result\VT2bOut20110701a.txt (1847494 bytes)
+
+135c135
+< I-LA-0302 TimerID LoadFile: Elapsed Millis=1950 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=29808912 (delta=-33667352)
+---
+> I-LA-0302 TimerID LoadFile: Elapsed Millis=1919 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=29958984 (delta=-33532856)
+139c139
+< I-LA-0302 TimerID VerifyProof: Elapsed Millis=967 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=28423216 (delta=-1385696)
+---
+> I-LA-0302 TimerID VerifyProof: Elapsed Millis=967 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=28663648 (delta=-1295336)
+143c143
+< I-LA-0302 TimerID Parse: Elapsed Millis=3838 Total Memory=75202560 (delta=10256384) Max Memory=132055040 (delta=0) FreeMemory=19391336 (delta=-9031880)
+---
+> I-LA-0302 TimerID Parse: Elapsed Millis=2699 Total Memory=67305472 (delta=2359296) Max Memory=132055040 (delta=0) FreeMemory=11395520 (delta=-17268128)
+478,480c478,480
+< I-PA-0113 Theorem bi2: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+< I-PA-0119 Theorem bi3 RPN-format Metamath proof generated!
+< I-PA-0113 Theorem bi3: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem bi2: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+> I-PA-0119 Theorem bi3 RPN-format Metamath proof generated!
+> I-PA-0113 Theorem bi3: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+484c484
+< I-PA-0113 Theorem biimpr: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem biimpr: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+492c492
+< I-PA-0113 Theorem biimprcd: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem biimprcd: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+498c498
+< I-PA-0113 Theorem dfbi1gb: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem dfbi1gb: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+664c664
+< I-PA-0113 Theorem pm1.2: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem pm1.2: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+778c778
+< I-PA-0113 Theorem anc2li: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem anc2li: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+782c782
+< I-PA-0113 Theorem anor: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem anor: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+1371c1371
+< I-PA-0113 Theorem jcab: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem jcab: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+2148c2148
+< I-PA-0113 Theorem 19.15: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem 19.15: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+2455c2455
+< I-PA-0113 Theorem equequ2: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem equequ2: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+2469c2469
+< I-PA-0113 Theorem ax10: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem ax10: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+3062c3062
+< I-PA-0113 Theorem ax11el: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem ax11el: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+3259c3259
+< I-PA-0113 Theorem 2mo: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem 2mo: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+3272c3272
+< I-PA-0113 Theorem 2eu4: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem 2eu4: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+3278c3278
+< I-PA-0113 Theorem 2eu6: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem 2eu6: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+5476c5476
+< I-PA-0113 Theorem ssiun2s: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem ssiun2s: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+9126a9126
+> I-PA-0114 Theorem xpmapenlem3: Unified and Proved in Import Batch Test but the new proof is different from the proof in the Metamath file that was loaded. 1st difference: old proof stmt = cA new proof stmt = cB (empty String means proof lengths differed.)
+9345a9346
+> I-PA-0114 Theorem inf3lem2: Unified and Proved in Import Batch Test but the new proof is different from the proof in the Metamath file that was loaded. 1st difference: old proof stmt = cA new proof stmt = cB (empty String means proof lengths differed.)
+11818a11820
+> I-PA-0114 Theorem nn2get: Unified and Proved in Import Batch Test but the new proof is different from the proof in the Metamath file that was loaded. 1st difference: old proof stmt = cA new proof stmt = cB (empty String means proof lengths differed.)
+13551d13554
+< I-PA-0114 Theorem leabst: Unified and Proved in Import Batch Test but the new proof is different from the proof in the Metamath file that was loaded. 1st difference: old proof stmt = cc0 new proof stmt = cA (empty String means proof lengths differed.)
+13760c13762
+< I-PA-0113 Theorem bcpasc: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem bcpasc: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+13897c13899
+< I-PA-0113 Theorem fsumcmp: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem fsumcmp: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+13952c13954
+< I-PA-0113 Theorem binomlem2: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem binomlem2: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+14146c14148
+< I-PA-0113 Theorem caucvglem6: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem caucvglem6: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+14200c14202
+< I-PA-0113 Theorem cvgcmp3cetlem2: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem cvgcmp3cetlem2: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+14408c14410
+< I-PA-0113 Theorem dsupivthlem: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem dsupivthlem: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+14524c14526
+< I-PA-0113 Theorem efaddlem20: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem efaddlem20: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+14762c14764
+< I-PA-0113 Theorem cos2bnd: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem cos2bnd: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+15421d15423
+< I-PA-0114 Theorem metxpcl: Unified and Proved in Import Batch Test but the new proof is different from the proof in the Metamath file that was loaded. 1st difference: old proof stmt = c2nd new proof stmt = c1st (empty String means proof lengths differed.)
+15669c15670
+< I-PA-0113 Theorem lmle: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem lmle: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+15689,15690c15690
+< I-PA-0113 Theorem metcnp4: Unification Time Elapsed (tenths of sec) = 1, Status = 10 = PROOF_STMT_PROVED_W_VERIFY_PROOFS_ERROR
+< I-PA-0114 Theorem metcnp4: Unified and Proved in Import Batch Test but the new proof is different from the proof in the Metamath file that was loaded. 1st difference: old proof stmt = cC new proof stmt = cD (empty String means proof lengths differed.)
+---
+> I-PA-0113 Theorem metcnp4: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+15702d15702
+< I-PA-0114 Theorem xplm: Unified and Proved in Import Batch Test but the new proof is different from the proof in the Metamath file that was loaded. 1st difference: old proof stmt = vn new proof stmt = vp (empty String means proof lengths differed.)
+19470c19469
+< I-PA-0113 Theorem cnlnadjlem2: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem cnlnadjlem2: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+20589c20588
+< I-PA-0113 Theorem mslb1: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem mslb1: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+20816,20871c20815,20821
+< I-PA-0115 TEST TOTALS: nbrTestTheoremsProcessed = 10010, nbrTestNotProvedPerfectly = 2, nbrTestProvedDifferently = 599
+< E-PA-0322 Theorem dummylink Step qed : Found 'h' prefix (signifying hypothesis proof step) on 'qed' step number. A derivation step cannot also be a hypothesis step.  Proof Text input reader last position at  Line: 37 Column: 17
+< E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 52 Step#: 18 Step Label: metcnp4lem1
+< E-PA-0405 Theorem metcnp4 Step 52: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+< E-PA-0601 DerivationStep 52 substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: <X,y>
+< E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 53 Step#: 37 Step Label: metcnp4lem1
+< E-PA-0405 Theorem metcnp4 Step 53: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+< E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 54 Step#: 65 Step Label: metcnp4lem1
+< E-PA-0405 Theorem metcnp4 Step 54: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+< E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 55 Step#: 337 Step Label: metcnp4lem1
+< E-PA-0405 Theorem metcnp4 Step 55: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+< E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 56 Step#: 378 Step Label: metcnp4lem1
+< E-PA-0405 Theorem metcnp4 Step 56: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+< E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 57 Step#: 468 Step Label: metcnp4lem1
+< E-PA-0405 Theorem metcnp4 Step 57: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+< E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 58 Step#: 514 Step Label: metcnp4lem1
+< E-PA-0405 Theorem metcnp4 Step 58: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+< E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 59 Step#: 560 Step Label: metcnp4lem1
+< E-PA-0405 Theorem metcnp4 Step 59: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+< E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 60 Step#: 606 Step Label: metcnp4lem1
+< E-PA-0405 Theorem metcnp4 Step 60: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+< E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 62 Step#: 661 Step Label: metcnp4lem1
+< E-PA-0405 Theorem metcnp4 Step 62: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+< E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 63 Step#: 710 Step Label: metcnp4lem1
+< E-PA-0405 Theorem metcnp4 Step 63: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+< E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 64 Step#: 759 Step Label: metcnp4lem1
+< E-PA-0405 Theorem metcnp4 Step 64: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+< E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 65 Step#: 811 Step Label: metcnp4lem1
+< E-PA-0405 Theorem metcnp4 Step 65: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+< E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 66 Step#: 864 Step Label: metcnp4lem1
+< E-PA-0405 Theorem metcnp4 Step 66: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+< E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 67 Step#: 1194 Step Label: metcnp4lem1
+< E-PA-0405 Theorem metcnp4 Step 67: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+< E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 68 Step#: 1287 Step Label: metcnp4lem1
+< E-PA-0405 Theorem metcnp4 Step 68: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+< E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 96 Step#: 1418 Step Label: metcnp4lem1
+< E-PA-0405 Theorem metcnp4 Step 96: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+< E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 97 Step#: 1503 Step Label: metcnp4lem1
+< E-PA-0405 Theorem metcnp4 Step 97: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+< E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 98 Step#: 1587 Step Label: metcnp4lem1
+< E-PA-0405 Theorem metcnp4 Step 98: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+< E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 99 Step#: 1670 Step Label: metcnp4lem1
+< E-PA-0405 Theorem metcnp4 Step 99: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+< E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 100 Step#: 1752 Step Label: metcnp4lem1
+< E-PA-0405 Theorem metcnp4 Step 100: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+< E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 101 Step#: 2856 Step Label: metcnp4lem1
+< E-PA-0405 Theorem metcnp4 Step 101: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+< E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 102 Step#: 2938 Step Label: metcnp4lem1
+< E-PA-0405 Theorem metcnp4 Step 102: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+< E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step qed Step#: 3050 Step Label: metcnp4lem1
+< E-PA-0405 Theorem metcnp4 Step qed: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+< **** I-UT-0015 Processing RunParmFile Command #73 = StopInstrumentationTimer,BatchTest
+< I-LA-0302 TimerID BatchTest: Elapsed Millis=82102 Total Memory=117424128 (delta=42221568) Max Memory=132055040 (delta=0) FreeMemory=39818432 (delta=20779912)
+< **** I-UT-0014 RunParmFile line comment. Line #74 = * RunProofAsstGUI
+< **** I-UT-0015 Processing RunParmFile Command #75 = StopInstrumentationTimer,VolumeTest2b
+< I-LA-0302 TimerID VolumeTest2b: Elapsed Millis=88904 Total Memory=117424128 (delta=52477952) Max Memory=132055040 (delta=0) FreeMemory=39818432 (delta=-24057864)
+---
+> I-PA-0115 TEST TOTALS: nbrTestTheoremsProcessed = 10010, nbrTestNotProvedPerfectly = 1, nbrTestProvedDifferently = 598
+> E-PA-0322 Theorem dummylink Step qed : Found 'h' prefix (signifying hypothesis proof step) on 'qed' step number. A derivation step cannot also be a hypothesis step.  Proof Text input reader last position at  Line: 37 Column: 17
+> **** I-UT-0015 Processing RunParmFile Command #73 = StopInstrumentationTimer,BatchTest
+> I-LA-0302 TimerID BatchTest: Elapsed Millis=83039 Total Memory=117514240 (delta=21729280) Max Memory=132055040 (delta=0) FreeMemory=39772072 (delta=312680)
+> **** I-UT-0014 RunParmFile line comment. Line #74 = * RunProofAsstGUI
+> **** I-UT-0015 Processing RunParmFile Command #75 = StopInstrumentationTimer,VolumeTest2b
+> I-LA-0302 TimerID VolumeTest2b: Elapsed Millis=89981 Total Memory=117514240 (delta=52568064) Max Memory=132055040 (delta=0) FreeMemory=39772072 (delta=-24119800)
+
+==> Differences. A lot. Result from Volume Test 2b deriving
+Proof Worksheet formulas from the proof step labels and
+randomized hypothesis numbers. The mmj2 Proof Unifier
+doesn't require proof step hypotheses to be input in the
+same order in which they appear in the original theorem.
+If a hypothesis cannot be unified with the corresponding
+hypothesis of the proof step label (Ref), unification is
+attempted with the referenced label's other hypotheses.
+In some rare circumstances, typically involving hypotheses
+with variables not appearing in the conclusion formula,
+unification is attempted and succeeds, but the assigned
+variable(s) do not match the theorem's Dj Vars specifications --
+and might not be valid in the context of other proof steps.
+The Proof Unifier does not take Dj Vars into account when
+it seeks unification matches of hypotheses. In Volume Test
+2b, randomization is the factor causing errors, but only
+for a small percentage of theorems.
+
+======================================================
+Test: RunVolumeTest2c.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\VT2cOut20080801final.txt (3650024 bytes)
+   with: (>)C:\mmj2\data\result\VT2cOut20110701a.txt (3650024 bytes)
+
+135c135
+< I-LA-0302 TimerID LoadFile: Elapsed Millis=1981 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=30025240 (delta=-33451024)
+---
+> I-LA-0302 TimerID LoadFile: Elapsed Millis=1950 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=29439384 (delta=-34052456)
+139c139
+< I-LA-0302 TimerID VerifyProofBefore: Elapsed Millis=1014 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=29123304 (delta=-901936)
+---
+> I-LA-0302 TimerID VerifyProofBefore: Elapsed Millis=999 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=28303232 (delta=-1136152)
+143c143
+< I-LA-0302 TimerID Parse: Elapsed Millis=4696 Total Memory=88416256 (delta=23470080) Max Memory=132055040 (delta=0) FreeMemory=32901976 (delta=3778672)
+---
+> I-LA-0302 TimerID Parse: Elapsed Millis=4555 Total Memory=87969792 (delta=23023616) Max Memory=132055040 (delta=0) FreeMemory=32335840 (delta=4032608)
+333c333
+< I-PA-0113 Theorem pm2.86i: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem pm2.86i: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+1343c1343
+< I-PA-0113 Theorem orabs: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem orabs: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+1983c1983
+< I-PA-0113 Theorem mp3an3: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem mp3an3: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+2496c2496
+< I-PA-0113 Theorem cbvex: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem cbvex: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+2606,2612c2606,2612
+< I-PA-0113 Theorem aev: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+< I-PA-0114 Theorem aev: Unified and Proved in Import Batch Test but the new proof is different from the proof in the Metamath file that was loaded. 1st difference: old proof stmt = vy new proof stmt = cv (empty String means proof lengths differed.)
+< I-PA-0119 Theorem ax16 RPN-format Metamath proof generated!
+< I-PA-0113 Theorem ax16: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+< I-PA-0114 Theorem ax16: Unified and Proved in Import Batch Test but the new proof is different from the proof in the Metamath file that was loaded. 1st difference: old proof stmt = vy new proof stmt = cv (empty String means proof lengths differed.)
+< I-PA-0119 Theorem ax17eq RPN-format Metamath proof generated!
+< I-PA-0113 Theorem ax17eq: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem aev: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+> I-PA-0114 Theorem aev: Unified and Proved in Import Batch Test but the new proof is different from the proof in the Metamath file that was loaded. 1st difference: old proof stmt = vy new proof stmt = cv (empty String means proof lengths differed.)
+> I-PA-0119 Theorem ax16 RPN-format Metamath proof generated!
+> I-PA-0113 Theorem ax16: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+> I-PA-0114 Theorem ax16: Unified and Proved in Import Batch Test but the new proof is different from the proof in the Metamath file that was loaded. 1st difference: old proof stmt = vy new proof stmt = cv (empty String means proof lengths differed.)
+> I-PA-0119 Theorem ax17eq RPN-format Metamath proof generated!
+> I-PA-0113 Theorem ax17eq: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+2883,2886c2883,2886
+< I-PA-0113 Theorem cbvex2: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+< I-PA-0114 Theorem cbvex2: Unified and Proved in Import Batch Test but the new proof is different from the proof in the Metamath file that was loaded. 1st difference: old proof stmt = vz new proof stmt = cv (empty String means proof lengths differed.)
+< I-PA-0119 Theorem cbval2v RPN-format Metamath proof generated!
+< I-PA-0113 Theorem cbval2v: Unification Time Elapsed (tenths of sec) = 1, Status = 9 = PROOF_STMT_PROVED_BUT_DJ_VARS_ERROR
+---
+> I-PA-0113 Theorem cbvex2: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+> I-PA-0114 Theorem cbvex2: Unified and Proved in Import Batch Test but the new proof is different from the proof in the Metamath file that was loaded. 1st difference: old proof stmt = vz new proof stmt = cv (empty String means proof lengths differed.)
+> I-PA-0119 Theorem cbval2v RPN-format Metamath proof generated!
+> I-PA-0113 Theorem cbval2v: Unification Time Elapsed (tenths of sec) = 0, Status = 9 = PROOF_STMT_PROVED_BUT_DJ_VARS_ERROR
+13074c13074
+< I-PA-0113 Theorem expnbndt: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem expnbndt: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+13949c13949
+< I-PA-0113 Theorem 2climnn0: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem 2climnn0: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+14705c14705
+< I-PA-0113 Theorem cos01bndlem3: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem cos01bndlem3: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+15549c15549
+< I-PA-0113 Theorem cncfmet: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem cncfmet: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+20859c20859
+< I-LA-0302 TimerID BatchTest: Elapsed Millis=66456 Total Memory=114917376 (delta=26501120) Max Memory=132055040 (delta=0) FreeMemory=47063552 (delta=14681040)
+---
+> I-LA-0302 TimerID BatchTest: Elapsed Millis=63118 Total Memory=115322880 (delta=27353088) Max Memory=132055040 (delta=0) FreeMemory=46963176 (delta=15341704)
+20863,20865c20863,20865
+< I-LA-0302 TimerID VerifyProofAfter: Elapsed Millis=904 Total Memory=114917376 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=47579912 (delta=516360)
+< **** I-UT-0015 Processing RunParmFile Command #86 = StopInstrumentationTimer,VolumeTest2c
+< I-LA-0302 TimerID VolumeTest2c: Elapsed Millis=75722 Total Memory=114917376 (delta=49971200) Max Memory=132055040 (delta=0) FreeMemory=47579912 (delta=-16296384)
+---
+> I-LA-0302 TimerID VerifyProofAfter: Elapsed Millis=858 Total Memory=115322880 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=47459280 (delta=496104)
+> **** I-UT-0015 Processing RunParmFile Command #86 = StopInstrumentationTimer,VolumeTest2c
+> I-LA-0302 TimerID VolumeTest2c: Elapsed Millis=71542 Total Memory=115322880 (delta=50376704) Max Memory=132055040 (delta=0) FreeMemory=47459280 (delta=-16432592)
+20879c20879
+< I-LA-0302 TimerID LoadFile: Elapsed Millis=983 Total Memory=114917376 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=77993328 (delta=30813448)
+---
+> I-LA-0302 TimerID LoadFile: Elapsed Millis=983 Total Memory=115322880 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=78133000 (delta=31073752)
+20883c20883
+< I-LA-0302 TimerID VerifyProofBefore: Elapsed Millis=921 Total Memory=114917376 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=76572184 (delta=-1421144)
+---
+> I-LA-0302 TimerID VerifyProofBefore: Elapsed Millis=873 Total Memory=115322880 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=76112576 (delta=-2020424)
+20887c20887
+< I-LA-0302 TimerID Parse: Elapsed Millis=967 Total Memory=114917376 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=59089656 (delta=-17482528)
+---
+> I-LA-0302 TimerID Parse: Elapsed Millis=874 Total Memory=115322880 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=58505712 (delta=-17606864)
+23758c23758
+< I-PA-0113 Theorem ax11el: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem ax11el: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+33874c33874
+< I-PA-0113 Theorem expnbndt: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem expnbndt: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+35526c35526
+< I-PA-0113 Theorem sin01bndlem3: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem sin01bndlem3: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+40284c40284
+< I-PA-0113 Theorem lnopunilem1: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem lnopunilem1: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+40290c40290
+< I-PA-0113 Theorem elunop2t: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem elunop2t: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+41655c41655
+< I-PA-0113 Theorem cati: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem cati: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+41798c41798
+< I-LA-0302 TimerID BatchTest: Elapsed Millis=63851 Total Memory=115658752 (delta=741376) Max Memory=132055040 (delta=0) FreeMemory=48829704 (delta=-9910952)
+---
+> I-LA-0302 TimerID BatchTest: Elapsed Millis=61776 Total Memory=115953664 (delta=630784) Max Memory=132055040 (delta=0) FreeMemory=48751216 (delta=-9754496)
+41803,41805c41803,41805
+< I-LA-0302 TimerID VerifyProofAfter: Elapsed Millis=921 Total Memory=115658752 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=49535176 (delta=705472)
+< **** I-UT-0015 Processing RunParmFile Command #173 = StopInstrumentationTimer,VolumeTest2c
+< I-LA-0302 TimerID VolumeTest2c: Elapsed Millis=67658 Total Memory=115658752 (delta=741376) Max Memory=132055040 (delta=0) FreeMemory=49535176 (delta=1955264)
+---
+> I-LA-0302 TimerID VerifyProofAfter: Elapsed Millis=889 Total Memory=115953664 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=49305280 (delta=554064)
+> **** I-UT-0015 Processing RunParmFile Command #173 = StopInstrumentationTimer,VolumeTest2c
+> I-LA-0302 TimerID VolumeTest2c: Elapsed Millis=65411 Total Memory=115953664 (delta=630784) Max Memory=132055040 (delta=0) FreeMemory=49305280 (delta=1846000)
+
+==> Timing Differences. Meaning unknown. Probably insignificant.
+
+Should probably look into why both versions of the software are
+generating "Status = 9 = PROOF_STMT_PROVED_BUT_DJ_VARS_ERROR"
+messages for some theorems. The CompareDJs and UpdateDJs RunParm
+options should be creating the minimal set of DjVars based on the
+input .mm axioms, so why are ANY errors being generated? (Since
+the CompareDJs and UpdateDJs Runparm options are used only
+in volume testing, resolving the "mystery" does not have high
+priority, esp. since the new and old versions of the software
+produce the same result.)
+
+
+======================================================
+Test: RunVolumeTest2d.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\VT2dOut20080801final.txt (2733164 bytes)
+   with: (>)C:\mmj2\data\result\VT2dOut20110701a.txt (2733171 bytes)
+
+135c135
+< I-LA-0302 TimerID LoadFile: Elapsed Millis=1965 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=29624696 (delta=-33851568)
+---
+> I-LA-0302 TimerID LoadFile: Elapsed Millis=1934 Total Memory=70434816 (delta=5488640) Max Memory=132055040 (delta=0) FreeMemory=34955832 (delta=-28536008)
+139c139
+< I-LA-0302 TimerID VerifyProofBefore: Elapsed Millis=1014 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=28090680 (delta=-1534016)
+---
+> I-LA-0302 TimerID VerifyProofBefore: Elapsed Millis=983 Total Memory=70434816 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=33466192 (delta=-1489640)
+143c143
+< I-LA-0302 TimerID Parse: Elapsed Millis=5882 Total Memory=87359488 (delta=22413312) Max Memory=132055040 (delta=0) FreeMemory=31614008 (delta=3523328)
+---
+> I-LA-0302 TimerID Parse: Elapsed Millis=4290 Total Memory=87875584 (delta=17440768) Max Memory=132055040 (delta=0) FreeMemory=31864024 (delta=-1602168)
+1412c1412
+< I-PA-0113 Theorem biimpac: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem biimpac: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+1814c1814
+< I-PA-0113 Theorem 3imtr3g: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem 3imtr3g: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+2036c2036
+< I-PA-0113 Theorem imbi12d: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem imbi12d: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+2585c2585
+< I-PA-0113 Theorem 3ad2antr2: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem 3ad2antr2: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+4181c4181
+< I-PA-0113 Theorem ee4anv: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem ee4anv: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+6017c6017
+< I-PA-0113 Theorem rmo4: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem rmo4: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+13717c13717
+< I-PA-0113 Theorem fiint: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem fiint: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+20604c20604
+< I-PA-0113 Theorem faclbnd: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem faclbnd: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+21414c21414
+< I-PA-0113 Theorem cvgcmp3cetlem2: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem cvgcmp3cetlem2: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+21620c21620
+< I-PA-0113 Theorem cvgratlem1: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem cvgratlem1: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+31774c31774
+< I-LA-0302 TimerID BatchTest: Elapsed Millis=68968 Total Memory=131411968 (delta=44052480) Max Memory=132055040 (delta=0) FreeMemory=38933576 (delta=8017464)
+---
+> I-LA-0302 TimerID BatchTest: Elapsed Millis=66861 Total Memory=130154496 (delta=42278912) Max Memory=132055040 (delta=0) FreeMemory=41628176 (delta=10283680)
+31778,31780c31778,31780
+< I-LA-0302 TimerID VerifyProofAfter: Elapsed Millis=920 Total Memory=131411968 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=39370736 (delta=437160)
+< **** I-UT-0015 Processing RunParmFile Command #75 = StopInstrumentationTimer,VolumeTest2d
+< I-LA-0302 TimerID VolumeTest2d: Elapsed Millis=78795 Total Memory=131411968 (delta=66465792) Max Memory=132055040 (delta=0) FreeMemory=39370736 (delta=-24505560)
+---
+> I-LA-0302 TimerID VerifyProofAfter: Elapsed Millis=874 Total Memory=130154496 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=41914000 (delta=285824)
+> **** I-UT-0015 Processing RunParmFile Command #75 = StopInstrumentationTimer,VolumeTest2d
+> I-LA-0302 TimerID VolumeTest2d: Elapsed Millis=74989 Total Memory=130154496 (delta=65208320) Max Memory=132055040 (delta=0) FreeMemory=41914000 (delta=-21977872)
+
+==> Timing Differences. Meaning unknown. Probably insignificant.
+
+
+======================================================
+Test: RunVolumeTest2e.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\VT2eOut20080801final.txt (2732830 bytes)
+   with: (>)C:\mmj2\data\result\VT2eOut20110701a.txt (2732827 bytes)
+
+135c135
+< I-LA-0302 TimerID LoadFile: Elapsed Millis=1997 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=29636760 (delta=-33839504)
+---
+> I-LA-0302 TimerID LoadFile: Elapsed Millis=1934 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=29624088 (delta=-33867752)
+139c139
+< I-LA-0302 TimerID VerifyProofBefore: Elapsed Millis=1014 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=28085456 (delta=-1551304)
+---
+> I-LA-0302 TimerID VerifyProofBefore: Elapsed Millis=983 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=28650088 (delta=-974000)
+143c143
+< I-LA-0302 TimerID Parse: Elapsed Millis=4462 Total Memory=75173888 (delta=10227712) Max Memory=132055040 (delta=0) FreeMemory=19159728 (delta=-8925728)
+---
+> I-LA-0302 TimerID Parse: Elapsed Millis=4181 Total Memory=88072192 (delta=23126016) Max Memory=132055040 (delta=0) FreeMemory=32687272 (delta=4037184)
+1149c1149
+< I-PA-0113 Theorem ancrb: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem ancrb: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+1899c1899
+< I-PA-0113 Theorem pm3.2ni: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem pm3.2ni: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+3164c3164
+< I-PA-0113 Theorem ax467to6: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem ax467to6: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+3182c3182
+< I-PA-0113 Theorem 19.3: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem 19.3: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+3605c3605
+< I-PA-0113 Theorem cbv1: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem cbv1: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+3839c3839
+< I-PA-0113 Theorem sbequi: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem sbequi: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+3875c3875
+< I-PA-0113 Theorem sban: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem sban: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+3883c3883
+< I-PA-0113 Theorem sbbi: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem sbbi: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+3959c3959
+< I-PA-0113 Theorem sbcom: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem sbcom: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+4627c4627
+< I-PA-0113 Theorem 2eu6: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem 2eu6: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+5508c5508
+< I-PA-0113 Theorem r19.41v: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem r19.41v: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+6950c6950
+< I-PA-0113 Theorem indi: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem indi: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+7710c7710
+< I-PA-0113 Theorem unisng: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem unisng: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+17947c17947
+< I-PA-0113 Theorem lbinfm: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem lbinfm: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+18037,18040c18037,18040
+< I-PA-0113 Theorem xrsupsslem: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+< I-PA-0119 Theorem xrsupsslem RPN-format Metamath proof generated!
+< I-PA-0119 Theorem xrinfmsslem RPN-format Metamath proof generated!
+< I-PA-0113 Theorem xrinfmsslem: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem xrsupsslem: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+> I-PA-0119 Theorem xrsupsslem RPN-format Metamath proof generated!
+> I-PA-0119 Theorem xrinfmsslem RPN-format Metamath proof generated!
+> I-PA-0113 Theorem xrinfmsslem: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+20996c20996
+< I-PA-0113 Theorem binomlem2: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem binomlem2: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+21757c21757
+< I-PA-0113 Theorem dsupivthlem: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem dsupivthlem: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+28153c28153
+< I-PA-0113 Theorem spanunsn: Unification Time Elapsed (tenths of sec) = 0, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem spanunsn: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+31775,31777c31775,31777
+< I-LA-0302 TimerID BatchTest: Elapsed Millis=74428 Total Memory=129658880 (delta=34680832) Max Memory=132055040 (delta=0) FreeMemory=40585272 (delta=2071368)
+< **** I-UT-0015 Processing RunParmFile Command #73 = StopInstrumentationTimer,VolumeTest2e
+< I-LA-0302 TimerID VolumeTest2e: Elapsed Millis=81994 Total Memory=129658880 (delta=64712704) Max Memory=132055040 (delta=0) FreeMemory=40585272 (delta=-23291024)
+---
+> I-LA-0302 TimerID BatchTest: Elapsed Millis=69248 Total Memory=129581056 (delta=41508864) Max Memory=132055040 (delta=0) FreeMemory=38516304 (delta=6629856)
+> **** I-UT-0015 Processing RunParmFile Command #73 = StopInstrumentationTimer,VolumeTest2e
+> I-LA-0302 TimerID VolumeTest2e: Elapsed Millis=76502 Total Memory=129581056 (delta=64634880) Max Memory=132055040 (delta=0) FreeMemory=38516304 (delta=-25375568)
+
+==> Timing Differences. Meaning unknown. Probably insignificant.
+
+
+======================================================

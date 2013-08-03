@@ -1,0 +1,20 @@
+OutputVerbosity,99
+*LoadFile,C:\metamath\set.mm
+LoadFile,mm\setFirst100.mm
+LoadFile,mm\DollarTPreface.mm
+LoadFile,mm\DollarTFirst100.mm
+VerifyProof,*
+Parse,*
+ProofAsstUnifySearchExclude,biigb,xxxid,dummylink,id1
+GMFFExportParms,althtml,ON,althtmldef,gmfftest\althtml,.html,gmfftest\models\althtml,A,ISO-8859-1,general
+GMFFExportParms,html,ON,htmldef,gmfftest\html,.html,gmfftest\models\html,A,ISO-8859-1,general
+GMFFInitialize
+GMFFUserTextEscapes,html,32,"&nbsp;",34,"&quot;",38,"&amp;",60,"&lt;",62,"&gt;"
+GMFFUserTextEscapes,althtml,32,"&nbsp;",34,"&quot;",38,"&amp;",60,"&lt;",62,"&gt;"
+GMFFInitialize
+GMFFUserTextEscapes,althtml,999,A,255,B,256,C,-1,D,0,E,999999999,F,13
+GMFFUserTextEscapes,html,1,,2, ,3,"",4," ",5, " ,6,string,7
+GMFFUserTextEscapes,Xalthtml,32,"&nbsp;",34,"&quot;",38,"&amp;",60,"&lt;",62,"&gt;"
+RunProofAsstGUI
+ 
+

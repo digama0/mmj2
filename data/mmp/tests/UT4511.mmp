@@ -1,0 +1,10 @@
+$( <MM> <PROOF_ASST> THEOREM=rdgfnon  LOC_AFTER=?
+
+* The recursive definition generator is a function on ordinal numbers.
+
+1::rdglem1         
+2::df-rdg          
+qed:1,2:tfr1       |- rec ( F , A ) Fn On
+
+$)
+

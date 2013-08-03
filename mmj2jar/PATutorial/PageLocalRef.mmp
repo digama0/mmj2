@@ -1,0 +1,51 @@
+$( <MM> <PROOF_ASST> THEOREM=syl          LOC_AFTER=
+*                                                     PageLocalRef.mmp
+ Suppose we have input "ax-mp" in the 'qed' step while proving        
+ theorem "syl" and that we pressed Ctrl-U to unify. Here is the    
+ output of the Derive Feature:
+
+h1::syl.1          |- ( ph -> ps )
+h2::syl.2          |- ( ps -> ch )
+1002:?:            |- &W1
+2002:?:            |- ( &W1 -> ( ph -> ch ) )
+qed:1002,2002:ax-mp     |- ( ph -> ch )
+
+* Now we realize that step 1002 is really step 1, so we input 
+  a "Local Ref" in the Ref field of step 2002, like this:
+
+           1002:?:#syl.1      |- &W1
+
+        or 
+
+           1002:?:#1          |- &W1
+   
+* Ok, make that update to step 2002 above and press Ctrl-U
+  to see what happens -- then use Edit/Undo twice to return 
+  to this page just prior to the Ctrl-U.
+
+* What happened is that the program did a little "text editing"
+  to delete step 2002 and change the 'qed' step's Hyp to point
+  to step 1 instead of 2002, resulting in a proof steps that
+  look like this (except not indented):
+  
+           h1::syl.1          |- ( ph -> ps )
+           h2::syl.2          |- ( ps -> ch )
+           2002:?:            |- ( ( ph -> ps ) -> ( ph -> ch ) )
+           qed:1,2002:ax-mp     |- ( ph -> ch )
+   
+* That is what the "Local Ref" feature does. It is just a
+  "text editing" short-cut for "power users" :-)   
+
+* NOTE In the event of the Local Ref was input incorrectly, 
+       or if there is a subsequent error, say during Unification,
+       then the user has the option of either manually 
+       correcting the proof *or* using Edit/Undo to restore the 
+       Proof Worksheet to the pre-*text editing* state. And, as 
+       is the case today, if mmj2 detects an error during the 
+       Load Worksheet validation phase, the input Proof Worksheet
+       is redisplayed without any of the program's updates to the 
+       data (processing halts immediately during "Load Worksheet"
+       execution if an error is found and no changes are made.)
+
+$) 
+

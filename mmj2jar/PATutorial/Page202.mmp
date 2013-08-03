@@ -1,0 +1,50 @@
+$( <MM> <PROOF_ASST> THEOREM=aProofLabel  LOC_AFTER=
+*                                                          Page202.mmp
+ Press Ctrl-U now to "Unify" the Proof Worksheet.
+
+qed::         |- ( ph -> ( ph -> ph ) ) 
+
+*Amazing! The mmj2 Proof Assistant filled out the missing part of our
+ proof: the "Ref" (Reference) label, ax-1, that justifies the "qed"
+ step. And then, because the proof is valid, it generates the Metamath
+ RPN-format proof, ready for copying into the input .mm Metamath
+ database file!
+
+ But what just happened, really?
+
+ The program searched the Metamath database for an existing Axiom or
+ Theorem that justifies -- or "unifies" with -- the step's formula:
+     
+     "|- ( ph -> ( ph -> ph ) )"
+
+ And it found ax-1, the first Axiom in set.mm! This is one of the
+ shortest possible proofs. Just one step!
+
+ Our theorem, aProofLabel, unifies with ax-1 because it matches the
+ pattern of ax-1. It fits.
+
+ First, ax-1 has no Logical Hypotheses, and neither does aProofLabel
+ so that is a perfect match.
+
+ Next, ax-1's formula is "|- ( ph -> ( ps -> ph ) )", which can be
+ made to match "|- ( ph -> ( ph -> ph ) )" by substituting "ph" for
+ every occurrence of "ps", and "ph" for every occurrence of "ph" in
+ ax-1.
+
+ These are perfectly valid substitutions because ax-1 has no Distinct
+ Variable restrictions ($d). If ax-1 did have a "$d ph ps $."
+ restriction then "|- ( ph -> ( ph -> ph ) )" would be invalid because
+ we substituted "ph" for both "ph" and "ps".
+
+ Thus, aProofLabel's "qed" step unifies with ax-1. And we can say
+ that ax-1 justifies writing "|- ( ph -> ( ph -> ph ) )".
+
+ So, the argument is valid -- if you accept the validity of Axiom
+ ax-1.
+
+ Now, as an experiment, in the "LOC_AFTER" field in the Header enter
+ "wi", so that you see this "LOC_AFTER=wi". Then press Ctrl-U and
+ watch what happens! Then go to the next Tutorial page (Page203.mmp).
+ 
+$) 
+

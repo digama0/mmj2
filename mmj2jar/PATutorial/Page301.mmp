@@ -1,0 +1,26 @@
+$( <MM> <PROOF_ASST> THEOREM=sylClone  LOC_AFTER=a2i
+*                                                          Page301.mmp
+ Have a careful look at the "Step:Hyp:Ref" field at the start of each
+ proof step below. Notice especially how:
+     - Hypothesis Step Numbers are prefixed with 'h'
+     - Step Numbers are not in numeric order(!), but are unique
+     - Ref Labels are blank
+     - Trailing ":"s are optional, for your convenience
+     - Blanks are not permitted inside a "Step:Hyp:Ref" (making things
+       easier for the programmers)
+     - the final step "number" is "qed" (also for the convenience of
+       the programmer...)
+
+ OK, now press Ctrl-U and see what happens to the Step:Hyp:Ref fields.
+ (Use Edit/Undo -- twice -- to retry and look again.)
+
+h1000              |- ( ph -> ps )
+h200               |- ( ps -> ch )
+h30                |- ( ch -> th ) 
+3:200              |- ( ph -> ( ps -> ch ) )
+4:3                |- ( ( ph -> ps ) -> ( ph -> ch ) )
+qed:1000,4         |- ( ph -> ch )
+
+*OK, proceed to the next Tutorial page (Page302.mmp)!
+$) 
+

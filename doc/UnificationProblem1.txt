@@ -1,0 +1,44 @@
+  ${
+    $d x ph $.
+    $( Axiom to quantify a variable over a formula in which it does not occur.
+       Axiom C5 in [Megill] p. 444 (p. 11 of the preprint).  Also appears as
+       Axiom B6 (p. 75) of system S2 of [Tarski] p. 77.  If we allow ~ ax-15
+       (not otherwise used in our development), this axiom is logically
+       redundant since it is a metatheorem justified by induction on the number
+       of primitive connectives in wff ` ph ` , using ~ ax17eq and ~ ax17el
+       together ~ hbne , ~ hbal , and ~ hbim . However if we omit this axiom
+       our development would be quite inconvenient since we could work only
+       with specific instances of wffs containing no wff variables - this axiom
+       is effectively a definition of the concept of a set variable not
+       occurring in a wff (as opposed to just two set variables being
+       distinct).  $)
+    ax-17 $a |- ( ph -> A. x ph ) $.
+  $}
+  
+    ${
+      $d x y $.
+      $( ` x ` is not free in ` [ y / x ] ph ` when ` x ` and ` y ` are
+         distinct. $)
+      hbs1 $p |- ( [ y / x ] ph -> A. x [ y / x ] ph ) $=
+        vx vy weq vx wal wph vx vy wsb wph vx vy wsb vx wal wi wph vx vy wsb vx
+        vy ax-16 wph vx vy hbsb2 pm2.61i $.
+        $( [5-Aug-93] $)
+    $}
+  
+  ${
+    $d x y $.
+    $( Equivalence for substitution.  Similar to Theorem 6.1 of [Quine]
+       p. 40. $)
+    sb5 $p |- ( [ y / x ] ph <-> E. x ( x = y /\ ph ) ) $=
+      vx vy weq wph wa vx wex wph vx vy wsb wph wph vx vy wsb vx vy wph vx vy
+      hbs1 wph vx vy sbequ12 equsex bicomi $.
+      $( [18-Aug-93] $)
+
+    $( Equivalence for substitution.  Compare Theorem 6.2 of [Quine] p. 40. $)
+    sb6 $p |- ( [ y / x ] ph <-> A. x ( x = y -> ph ) ) $=
+      vx vy weq wph wi vx wal wph vx vy wsb wph wph vx vy wsb vx vy wph vx vy
+      hbs1 wph vx vy sbequ12 equsal bicomi $.
+      $( [18-Aug-93] $)
+  $}
+
+  

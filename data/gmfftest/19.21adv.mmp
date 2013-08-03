@@ -1,0 +1,13 @@
+$( <MM> <PROOF_ASST> THEOREM=19.21adv  LOC_AFTER=?
+
+* Deduction from Theorem 19.21 of [Margaris] p. 90.
+
+h1::19.21adv.1     |- ( ph -> ( ps -> ch ) )
+2::ax-17           |- ( ph -> A. x ph )
+3::ax-17           |- ( ps -> A. x ps )
+qed:2,3,1:19.21ad  |- ( ph -> ( ps -> A. x ch ) )
+
+$=  wph wps wch vx wph vx ax-17 wps vx ax-17 19.21adv.1 19.21ad $. 
+$d ph x 
+$d ps x 
+$)

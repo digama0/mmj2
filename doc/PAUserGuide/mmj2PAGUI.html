@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta content="text/html; charset=ISO-8859-1" http-equiv="content-type"><title>mmj2 Proof Assistant GUI</title></head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);" alink="#000088" link="#0000ff" vlink="#ff0000">
+<pre style="font-weight: bold;"><big><big><big><big><small><span style="text-decoration: underline;">mmj2 Proof Assistant GUI</span></small><br></big></big></big></big><br>(back to <a href="Start.html">Start.html</a>)<br></pre><big>Here is a mock-up of the Proof Assistant GUI screen:<br>
+<br>
+</big>
+<table style="width: 67%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="background-color: rgb(153, 153, 255); vertical-align: top;"><span style="color: rgb(51, 0, 51);">&nbsp;&nbsp;&nbsp;</span> <span style="font-weight: bold;">ProofAsstGUI</span>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<big><span style="font-weight: bold;">X</span></big><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="background-color: rgb(204, 204, 204); vertical-align: top;"><span style="text-decoration: underline; font-weight: bold;">F</span><span style="font-weight: bold;">ile&nbsp;&nbsp;&nbsp; <span style="text-decoration: underline;">E</span>dit&nbsp;&nbsp;&nbsp;&nbsp; <span style="text-decoration: underline;">C</span>ancel&nbsp;&nbsp;&nbsp; <span style="text-decoration: underline;">U</span>nify&nbsp;&nbsp;&nbsp; <span style="text-decoration: underline;">H</span>elp</span><br>
+      </td>
+    </tr>
+<tr>
+      <td style="vertical-align: top;"><big style="font-weight: bold;"><span style="font-family: monospace;">$( &lt;MM&gt; &lt;PROOF_ASST&gt; THEOREM=a1i&nbsp; LOC_AFTER=?</span><br style="font-family: monospace;">
+      <br style="font-family: monospace;">
+      <span style="font-family: monospace;">* Inference derived from axiom ~ ax-1 .&nbsp; See ~<br>
+&nbsp; a1d for an explanation of </span><span style="font-family: monospace;">our informal use of<br>
+&nbsp; the terms "inference" and "deduction".</span><br style="font-family: monospace;">
+      <br style="font-family: monospace;">
+      <span style="font-family: monospace;">h1::a1i.1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ph</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">2::ax-1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ph -&gt; ( ps -&gt; ph ) )</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">qed:1,2:ax-mp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ps -&gt; ph )</span><br style="font-family: monospace;">
+      <br>
+      <code>$=&nbsp; wph wps wph wi a1i.1 wph wps ax-1 ax-mp $. </code><br style="font-family: monospace;">
+      <span style="font-family: monospace;">$)</span><br style="font-family: monospace;">
+      </big><br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<big><br>
+The Proof Assistant GUI allows users to enter, update, validate, unify and browse Proof Worksheets.<br>
+<br>
+Key points to understand about this screen:<br>
+</big>
+<ul>
+  <li><big>The GUI is displayed only if the input Metamath .mm database file is loaded and parsed successfully, with no serious errors.</big></li>
+  <li><big>The data area (under the menu) consists of one large text
+area. The GUI program has no knowledge of what is in the text, and
+knows nothing about math or logic. It is basically just a text editor
+with connections to other programs, and it relays all processing
+requests to the (server) main Proof Assistant program. (Eventually a
+more sophisticated and graphically oriented GUI may be coded.)</big></li><li><big>When
+the Proof Assistant GUI sends a processing request for the proof on the
+screen, such as "Unify/Unify (check proof)" to the main (server) Proof
+Assistant program, the entire Proof Worksheet is parsed and
+re-validated before satisfying the request. The system doesn't keep
+memory about the contents of the Proof Worksheet between requests --
+that means that you could completely replace the contents of the screen
+(Cut and Paste), and select "</big><big>Unify/Unify (check proof)" to
+unify a completely different proof. It also means that a serious error
+in the Proof Worksheet will halt processing and your request to
+renumber or unify the proof will not be processed (until the error is
+corrected.)<br>
+    </big></li>
+
+  <li><big>Errors and informational messages are displayed on a pop-up
+"Request Messages" window (seen below). Hint: alt-Tab carefully back to
+the ProofAsstGUI window -- the cursor should be positioned very close
+to the first error in the Proof Worksheet.<br>
+    </big></li>
+</ul>
+<br>
+<table style="width: 67%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+  <tbody>
+    <tr>
+      <td style="background-color: rgb(153, 153, 255); vertical-align: top;"><span style="color: rgb(51, 0, 51);">&nbsp; &nbsp; &nbsp;&nbsp;</span> <span style="font-weight: bold;">Request Messages &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<big><span style="font-weight: bold;">X</span></big><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="background-color: rgb(204, 204, 204); vertical-align: top;"><span style="text-decoration: underline; font-weight: bold;"></span><span style="font-weight: bold;">&nbsp; <span style="text-decoration: underline;">E</span>dit <span style="text-decoration: underline;"></span><span style="text-decoration: underline;"></span><span style="text-decoration: underline;"></span></span><br>
+      </td>
+    </tr>
+<tr>
+      <td style="vertical-align: top;"><code style="font-family: monospace;"><big style="font-weight: bold;">E-PA-0410
+Theorem welcome Step qed: Unification failure in derivation proof
+step.ax-2. The step's formula and/or its hypotheses could not be
+reconciled with the referenced Assertion. A list of unifying assertion
+alternates (if any) will be presented in a subsequent message.<br>
+&nbsp;--------------------------------------------------------- <br>
+      <br>
+I-PA-0402 Theorem welcome Step qed: Alternate unification Ref assertions found: ax-1<br>
+&nbsp;--------------------------------------------------------- <br>
+      </big></code><br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<big><br>
+There is a lot of helpful information related to the Proof Assistant GUI here:<br>
+</big><ul><li><a href="../../mmj2jar/mmj2PATutorial.bat">mmj2jar\mmj2PATutorial.bat</a> - <big style="font-style: italic;">Interactive tutorial that uses the mmj2 Proof Assistant and a set of valid Proof Worksheets containing instructional text.</big><br>
+  </li><li><a href="../ProofAssistantGUIQuickHOWTO.html">doc\ProofAssistantGUIQuickHOWTO.html</a> - <big style="font-style: italic;">Brief overview on the use of the Proof Assistant GUI program.</big><br>
+</li><li><a href="../ProofAssistantGUIDetailedInfo.html">doc\ProofAssistantGUIDetailedInfo.html</a>
+- <big style="font-style: italic;">An in-depth reference documente reviewing of the nitty-gritty details
+of the Proof Assistant GUI screen, its fields and validation edits.
+This is not a pleasant document to read, but it may help clarify
+certain points about what is going on...</big></li></ul>
+<pre style="font-weight: bold;">(back to <a href="Start.html">Start.html</a>)</pre>
+
+
+</body></html>

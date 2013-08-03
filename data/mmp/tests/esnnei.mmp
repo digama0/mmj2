@@ -1,0 +1,141 @@
+$( <MM> <PROOF_ASST> THEOREM=esnnei   LOC_AFTER=? 
+
+* Completed steps
+1::equid   |- x = x
+2::equid   |- x = x
+3::equid   |- x = x
+4::equid   |- x = x
+5::equid   |- x = x
+6::equid   |- x = x
+7::equid   |- x = x
+8::equid   |- x = x
+9::equid   |- x = x
+10::equid  |- x = x
+11::equid  |- x = x
+12::equid  |- x = x
+13::equid  |- x = x
+14::equid  |- x = x
+15::equid  |- x = x
+16::equid  |- x = x
+17::equid  |- x = x
+18::equid  |- x = x
+19::equid  |- x = x
+20::equid  |- x = x
+21::equid  |- x = x
+22::equid  |- x = x
+23::equid  |- x = x
+24::equid  |- x = x
+25::equid  |- x = x
+26::equid  |- x = x
+27::equid  |- x = x
+28::equid  |- x = x
+29::equid  |- x = x
+30::equid  |- x = x
+
+
+* Steps to be completed later
+31:?:       |- &W1
+32:?:       |- &W1
+33:?:       |- &W1
+34:?:       |- &W1
+35:?:       |- &W1
+36:?:       |- &W1
+37:?:       |- &W1
+38:?:       |- &W1
+39:?:       |- &W1
+40:?:       |- &W1
+41:?:       |- &W1
+42:?:       |- &W1
+43:?:       |- &W1
+44:?:       |- &W1
+45:?:       |- &W1
+46:?:       |- &W1
+47:?:       |- &W1
+48:?:       |- &W1
+49:?:       |- &W1
+50:?:       |- &W1
+51:?:       |- &W1
+52:?:       |- &W1
+53:?:       |- &W1
+54:?:       |- &W1
+55:?:       |- &W1
+56:?:       |- &W1
+57:?:       |- &W1
+58:?:       |- &W1
+59:?:       |- &W1
+60:?:       |- &W1
+
+
+* Step under consideration
+200:: |- x = x
+
+
+* Completed step
+61::equid  |- x = x
+62::equid  |- x = x
+63::equid  |- x = x
+64::equid  |- x = x
+65::equid  |- x = x
+66::equid  |- x = x
+67::equid  |- x = x
+68::equid  |- x = x
+69::equid  |- x = x
+70::equid  |- x = x
+71::equid  |- x = x
+72::equid  |- x = x
+73::equid  |- x = x
+74::equid  |- x = x
+75::equid  |- x = x
+76::equid  |- x = x
+77::equid  |- x = x
+78::equid  |- x = x
+79::equid  |- x = x
+80::equid  |- x = x
+81::equid  |- x = x
+82::equid  |- x = x
+83::equid  |- x = x
+84::equid  |- x = x
+85::equid  |- x = x
+86::equid  |- x = x
+87::equid  |- x = x
+88::equid  |- x = x
+89::equid  |- x = x
+90::equid  |- x = x
+
+* Steps to be completed later
+91:?:         |- x = y
+92:?:         |- x = y
+93:?:         |- x = y
+94:?:         |- x = y
+95:?:         |- x = y
+96:?:         |- x = y
+97:?:         |- x = y
+98:?:         |- x = y
+99:?:         |- x = y
+100:?:        |- x = y
+101:?:        |- x = y
+102:?:        |- x = y
+103:?:        |- x = y
+104:?:        |- x = y
+105:?:        |- x = y
+106:?:        |- x = y
+107:?:        |- x = y
+108:?:        |- x = y
+109:?:        |- x = y
+110:?:        |- x = y
+111:?:        |- x = y
+112:?:        |- x = y
+113:?:        |- x = y
+114:?:        |- x = y
+115:?:        |- x = y
+116:?:        |- x = y
+117:?:        |- x = y
+118:?:        |- x = y
+119:?:        |- x = y
+120:?:        |- x = y
+
+
+qed:?:       |- ( ( J e. Top /\ S =/= (/) ) -> -. (/) e.
+                    ( ( nei ` J ) ` S ) )
+
+$)

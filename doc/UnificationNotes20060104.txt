@@ -1,0 +1,305 @@
+Update:
+=======
+
+This is interesting!
+
+I have worked out several heuristics that help reject
+candidate Assertions (axioms and theorems) for
+unification of a derivation proof step. These may have
+use in constructing indexes for browsing and searching
+ranges of Assertions.
+
+The source of my logicking here is set.mm, which I
+assume to be somewhat representative of the population
+of assertions in a real world logical system (kidding).
+I extracted the data elements below from set.mm, and
+loaded them into a database and ran crosstab queries
+looking for key distinguishing elements that break down
+the set of assertions into small groupings. Fun!
+ 
+The essence of the problem is to obtain "metrics" about
+the candidate assertion, such as shape, size and
+"flavor". These are the key data elements constructed
+for Assertions for matching against derivation proof
+steps:
+
+- assrtNbrLogHyps: the number of Logical Hypotheses must
+  equal the derivation step's number of Logical
+  Hypotheses (or unification is impossible).
+                  
+- assrtLevelOneTwo = statement labels of parse tree root
+  concatenated with labels of its children statements,
+  separated by spaces -- except that if any of these
+  statements are Variable Hypotheses the value is set to
+  empty string (""). If not equal to "", must equal the
+  derivation step's LevelOneTwo value (or unification is
+  impossible).
+
+- assrtLevelOne == same as LevelOneTwo, except deals
+  only with the parse tree root. This is checked only if
+  assrtLevelOneTwo = "".
+
+- assrtLogHypsL1HiLoKey = If none of the assertion's
+  Logical Hypotheses have a parse tree root Variable
+  Hypothesis (and if the number of Logical Hypotheses is
+  greater than zero), then the HiLoKey is the label of
+  the LogHyp root statement with the highest database
+  sequence number, plus ' ', followed by the label of
+  the the L1HiLoKey is LogHyp root statement with the
+  lowest database sequence number; otherwise, HiLoKey
+  is set to "", the empty string. Then, if assrtHiLoKey
+  is not equal to "", the derivation proof step's
+  LogHypsHiLoKey must be identical (or unification is
+  impossible.) This high/low trick takes into account
+  that we do not know the order of the Logical
+  Hypotheses in advance, only their number.
+
+- assrtMaxDepth: this is the depth of the Assertion's
+  Parse Tree. A derivation proof step cannot be unified
+  with an Assertion if the Assertion's parse tree is
+  deeper than the proof step's parse tree.
+
+- assrtLogHypsMaxDepth: this is the depth of the deepest
+  Logical Hypothesis. A derivation proof step cannot be
+  unified with an Assertion if the Assertion contains a
+  Logical Hypothesis that is deeper than any of the
+  proof step's Logical Hypotheses. (The depth of
+  individual LogHyps is also used when unifying them
+  with individual LogHyps from the proof steps.)
+
+I have set these up to be computed dynamically, on
+request, only if needed, with the results cached in the
+relevant objects to avoid redundant re-computation
+later. Taken together, I also believe that these
+heuristics will greatly reduce the problem of
+"combinatorial explosion" in sequencing Logical
+Hypotheses in the Proof Assistant.
+
+
+Update:
+=======
+I conducted an experiment to see how long it takes to convert
+the mmj2 Statment Table's HashMap (using .values()) to a
+Collection and then iterate through it (on set.mm from 26-
+June-2005): about 6,500,000 nanoseconds = .0065 seconds.
+
+These PC's are fast, even running Java :)
+
+The mindboggler though is how long will it take to determine
+that an Assertion *cannot* be unified with a given derivation
+proof step? Because my new GUI Proof Assistant does not
+require the user to specify the correct order of the step's
+hypotheses (or the Assertion, just the formula), worst-case
+scenarios come to mind. 
+
+For example, assume that the theorem has 10 logical
+hypotheses and that the user enters them in the wrong order.
+The program tries the user's order first and determines that
+they do not match the order on the theorem in the Metamath
+file. So then what does it do? It has to go through the
+possibilities, all 10! of them until a consistent set of
+simultaneous substitutions is found or it determines that
+unification is impossible. Ouch. And that would be the
+situation for just one Assertion, and on derivation Proof
+Step!
+
+Obviously, the theoretical worst case scenario is unlikely,
+at best. The typical scenario, would be to quickly determine
+that the first hypothesis of the proof step doesn't unify
+with any of the Assertion's hypotheses, and report Failure.
+Plus, more than 90% of set.mm Assertions have 0, 1 or 2
+hypotheses -- the very cases that cannot spiral out of
+control in a combinatorial explosion.
+
+These points come to mind: 
+
+1) Timing tests on a full run using set.mm, with measurement
+of the time required for unification of each theorem will
+be important in verifying the correctness of the
+implementation (it would not do to have the program
+disappear into "deep thought for 5 minutes when a specific
+theorem is chosen!)
+
+2) Speedy rejection and acceptance is important, but it also
+appears that saving off (caching) intermediate results
+would pay off in a situation involving combinatorial
+explosion (i.e. if we already know that proof step hyp 2
+cannot be unified with hyp 2 of the Assertion, we should
+not have to repeat the computation!)
+
+3) This challenge is soooo typical of the real world problems
+facing programmers working on math/logic problems. The
+same sort of problem happened with the grammatical parser,
+which required hours or days with the Bottom Up algorithm
+but only 5 seconds using the Earley Parser algorithm.
+
+4) Note that the challenge is real in the context of the GUI
+Proof Assistant because, since I advertise to the user
+that memorization of statement *labels* is unnecessary --
+merely enter the formulas on derivation steps and indicate
+which previous steps are hypotheses -- then, if I were to
+absolutely require that the *order of the hypotheses*
+match the order on the theorem, my advertisement would be
+hollow and misleading; the user would still need to look
+up each specific theorem to ascertain the order of the
+hypotheses, and might as well make a note of the label at
+the same time.
+
+AND, the algorithmic challenge would be exponentially
+worse if I had decided to allow the user to just write a
+list of formulas, not even requiring him to mention the
+existence of hypotheses on each step!
+
+5) The existence of certain "heuristics" (enlightened
+guessing) may provide quick answers to many problems, but
+not all. And, though there are practical workarounds, such
+as doing computations in the background while the user is
+busy typing, which may improve perceived performance, the
+real world's problem space makes generalized solutions
+hard to come by. Yes, there are world championships for
+automated theorem proving, but those programs have built-
+in intelligence about the classes of theorems -- they
+*know* about propositional logic in depth and detail, and
+even then the contests continue year after year because
+the problems are *hard*. With Metamath, assuming we remain
+agnostic about everything and have no built-in knowledge
+of grammar, logic or math, we will continually run into
+these sorts of combinatorial explosions of possibilities.
+Automated theorem proving? I hope you have a quantum
+computer array -- and plenty of time to tinker with the
+code ! Ha.
+
+6) The value of Metamath and its "simplicity engineered"
+design cannot be overstated for the researcher and student
+of philosophy (not to get too gaseous here...) Metamath
+provides a pure laboratory...
+
+When you work out the first 50 or 100 proofs of
+propositional logical by hand, using nothing but
+substition as a reasoning device, and contemplate how that
+same process works for everything upwards into the arcane
+realms of abstract set theory, quantum logic, etc., you
+must be amazed -- I think -- at how differently our brains
+work and how much we take for granted in the idea of
+"artificial intelligence".
+
+One day we'll have computers that incorporate quantum
+computing *with* living bioprocessors, like that story of
+the 25,000 mouse brain cells in a neural network that was
+trained to "fly" an F-22 flight simulator, and it will be
+possible to talk to your computer and just say, "go find
+the cheese!" Until that day, we will need to do our own
+thinking. And that is fine with me. I am a believer in the
+idea that "knowledge" resides only in minds, and does not
+exist in books. The math/logic that matters to me is that
+which I carry inside my head, in my "wetware".)
+
+           
+Notes:
+
+I am working on the final two critical
+sections of the mmj2 GUI Proof Assistant:
+
+1. Unification of proof steps and building
+   the proof trees, and
+   
+2. Building lookup tables for the unification
+   process that will expedite the hunt for
+   candidate assertions (axioms and theorems)
+   for a given derivation proof step. 
+   
+Number 2 is doable but perhaps messy because
+the lookups involve searching for parse
+trees with the same shape as the given
+proof step (but being subsumed under it,
+allowing unification). And there is the
+shape of the logical hypotheses to match
+also -- and the GUI does not require the
+user to specify the correct order of the
+logical hypotheses for a proof step, which
+means more complications for the lookup
+keys.
+
+As an alternative to actually *doing* #2
+I had the idea of just making one pass through
+the in-memory table of assertions and
+performing unification on *all* of the
+proof steps simultaneously -- in parallel.
+The loop through the assertion table
+would quit at end or when every step
+has been unified, whichever comes first.
+
+This alternative requires saving off the
+variable substitutions from each step's
+unification until the end, and then 
+going back through in proof step order
+and building the proof trees (the final
+step's proof tree is the proof tree of
+the theorem.)
+
+One "gotcha" here is that there may be
+more than one assertion that satisfies
+unification. For that I have provided the
+user an "override" capability -- if the
+user knows the step's justification label
+it can be input, and will be checked 
+first.
+
+The other "gotcha" involves performance.
+Assume, for example, that a proof has 10 steps
+and that there are 10,000 assertions in
+memory in the assertion table. Only one
+pass through the table is needed, but,
+on average, 50000 assertion "checks" would
+be needed. Most of the checks would be
+quick since an assertion can be rejected
+based on the number of logical hypotheses
+(must be equal), the sequence number (must
+be less than the theorem's), etc. (the
+unification matching process should quit
+immediately if the two parse trees differ
+at the root node, for example.)
+
+Also, to expedite normal usage, I added
+a "runparm" to the load process that
+limits the number of statements loaded
+into memory: if you are studying the
+first 500 theorems you only need to
+load those, not all 10,000).
+
+So, subject to experimentation, I think the
+trade-offs boil down to either
+
+a) an extra 5 (?10) seconds of load time to build
+the unification lookup tables -- plus an
+ungodly amount of memory and a truckload of
+quirky (but fascinating) coding; or
+
+b) an extra 3 (5?) seconds each time the
+Start Unification menu option (Ctrl-U)
+is selected. 
+
+
+Given that this version of the GUI does not
+update a Metamath file with new proofs, if
+a user creates a new theorem and proves
+it, he will need to manually update the Metamath
+file and then do a "reload" of the GUI before
+using the new theorem in another proof -- 
+loading takes about 15 seconds**, which includes
+grammatical parsing and proof verification
+of all statements. That is a drawback,
+of course. 
+
+I am leaning towards the quick coding 
+alternative -- skipping the lookup tables --
+just to get this thing going and available
+to my customer :0) (If, as I believe to be
+the case, the GUI Proof Assistant is a very
+nice tool, I might even end up with 2 customers :)
+
+** 1.8GHz Celeron, 256MB, XP
+
+
+
+

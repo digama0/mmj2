@@ -1,0 +1,10 @@
+$( <MM> <PROOF_ASST> THEOREM=ax17eqCLONE  LOC_AFTER=ax-16
+
+1::ax-12           |- ( -. A. z z = x -> ( -. A. z z = y -> ( x = y 
+                      -> A. z x = y ) ) ) 
+2::ax-16           |- ( A. z z = x -> ( x = y -> A. z x = y ) ) 
+3::ax-16           |- ( A. z z = y -> ( x = y -> A. z x = y ) ) 
+qed:1,2,3:pm2.61ii |- ( x = y -> A. z x = y ) 
+
+$)
+

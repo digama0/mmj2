@@ -1,0 +1,14 @@
+$( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
+*                                                          Page409.mmp
+
+h1::reiteration.1    |- ph
+qed:?:ax-mp          |- ph
+
+* Double-click on the 'qed' step to fire-up the Unify/Step Selector
+  Search. When the Step Selector Dialog window appears, click on one
+  of the ax-mp lines and watch what happens! Wow!!!
+
+* Now go to the next page of the Tutorial (Page410.mmp).
+ 
+$) 
+

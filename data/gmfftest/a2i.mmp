@@ -1,0 +1,10 @@
+$( <MM> <PROOF_ASST> THEOREM=a2i  LOC_AFTER=?
+
+* Inference derived from axiom ~ ax-2 .
+
+h1::a2i.1          |- ( ph -> ( ps -> ch ) )
+2::ax-2            |- (  ( ph -> ( ps -> ch ) )
+                      -> ( ( ph -> ps ) -> ( ph -> ch ) ) )
+qed:1,2:ax-mp      |- ( ( ph -> ps ) -> ( ph -> ch ) )
+
+$)

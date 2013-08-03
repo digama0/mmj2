@@ -1,0 +1,666 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>ProofAssistantGUIDeriveFeature</title>
+</head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
+ alink="#000088" link="#0000ff" vlink="#ff0000">
+<big><big><span style="font-weight: bold;">Proof Assistant GUI "Derive"
+Feature<br>
+</span></big></big><big><big><span style="font-weight: bold;"><br>
+</span></big></big><big><span style="font-weight: bold;">See also:<br>
+</span></big><a href="PAUserGuide/Start.html">Proof Assistant User Guide</a><br>
+<a href="ProofAssistantGUIQuickHOWTO.html">ProofAssistantGUIQuickHOWTO.html</a><br>
+<a href="ProofAssistantGUIDetailedInfo.html">ProofAssistantGUIDetailedInfo.html</a><br>
+<a href="StepUnifier.html">StepUnifier.html</a><br>
+<a href="WorkVariables.html">WorkVariables.html</a><br>
+<a href="../mmj2jar/PATutorial/PageLocalRef.mmp">PageLocalRef.mmp</a><br>
+<a href="StepSelectorSearch.html">StepSelectorSearch.html</a><br>
+<a href="UnifyEraseAndRederiveFormulasFeature.html">UnifyEraseAndRederiveFormulas.html</a><br>
+<a href="BottomUpProving-ByNormMegill.html">BottomUpProving-ByNormMegill.html</a><br>
+<hr style="width: 100%; height: 2px;"><big><span
+ style="font-weight: bold;">Quick Explanation</span>:</big>&nbsp; Given
+<span style="font-weight: bold;">RefX</span>, Derive solves for
+unknowns in a proof step (imagine equation <span
+ style="font-weight: bold;">RefX(<span style="font-style: italic;">hypY</span>,
+<span style="font-style: italic;">..., hypZ</span>) = <span
+ style="font-style: italic;">formulaA</span></span>).<br>
+<ul>
+  <li>Derive is an integral part of the Unification process</li>
+  <li>Derive is automatically invoked when an assertion <span
+ style="font-weight: bold;">Ref</span> label is input on a derivation
+step and fewer <span style="font-weight: bold;">Hyp</span> entries are
+provided than needed for the <span style="font-weight: bold;">Ref</span>
+(not counting "<code><span style="font-weight: bold;">?</span></code>"s),
+and/or the step's <span style="font-weight: bold;">Formula</span> is
+omitted (<span style="font-weight: bold;">Formula</span> is always
+mandatory and cannot be derived on the '<code><span
+ style="font-weight: bold;">qed</span></code>' proof step).<br>
+  </li>
+  <li>Derive attempts to generate an omitted <span
+ style="font-weight: bold;">Formula</span> and/or the step's <span
+ style="font-weight: bold;">Hyp</span>otheses.</li>
+  <li>Insufficient information may result in Work Variables (written
+as <code><span style="font-weight: bold;">&amp;W1, &amp;C1, &amp;S1</span></code><code><span
+ style="font-weight: bold;"></span></code>, for the first '<code>wff</code>',
+'<code>class</code>' and '<code>set</code>' variables, respectively) in
+the output <span style="font-weight: bold;">Formula</span> and/or <span
+ style="font-weight: bold;">Hyp</span>otheses.</li>
+  <li>Hypothesis steps are generated if the derived hypothesis formulas
+are not already present in the proof.<br>
+  </li>
+  <li>Generated hypotheses are automatically sent through the
+Unification process unless they contain Work Variables.</li>
+</ul>
+<br>
+<hr style="width: 100%; height: 2px;"><big><span
+ style="font-weight: bold;">Purpose</span>:</big> <br>
+<ul>
+  <li>To satisfy expert users of mmj2's Proof
+Assistant GUI by partially solving the problem of correctly entering
+certain
+long and complicated formulas, <span
+ style="text-decoration: underline;">the new Derive Feature
+generates missing proof step formulas using input </span><span
+ style="font-weight: bold; text-decoration: underline;">Ref</span><span
+ style="text-decoration: underline;"> labels</span>. This is the
+inverse of the normal Unification process of finding a matching
+assertion <span style="font-weight: bold;">Ref</span> label for an
+input formula and its associated hypotheses.</li>
+  <li>Also,
+to assist users in developing proofs by reasoning backwards from
+conclusion to premisses, <span style="text-decoration: underline;">proof
+step hypotheses are automatically
+generated and/or linked to previous proof steps when the user </span><span
+ style="text-decoration: underline;">supplies a </span><span
+ style="font-weight: bold; text-decoration: underline;">Ref</span><span
+ style="text-decoration: underline;"> label on a Derivation&nbsp; proof
+step and an insufficient number of </span><span
+ style="text-decoration: underline;"></span><span
+ style="text-decoration: underline;"></span><span
+ style="font-weight: bold; text-decoration: underline;">Hyp</span><span
+ style="text-decoration: underline;"> entries. Note: "<code
+ style="font-weight: bold;">?</code>"s may be used as place holders
+signifying specific missing <span style="font-weight: bold;">Hyp</span>s
+within the </span><span
+ style="font-weight: bold; text-decoration: underline;">Step:Hyp:Ref</span><span
+ style="text-decoration: underline;">.</span><span
+ style="text-decoration: underline;"></span> This powerful
+capability complements the new formula generation function and aids in
+the
+creation of proofs for theorems that are so insanely complex that even
+typing in the formulas correctly by hand
+is a superhumanly difficult task :)<br>
+  </li>
+</ul>
+<br>
+<span style="font-weight: bold;"><big>Motivations:</big> </span><br>
+<ul>
+  <li>Typing Metamath formulas by hand is somewhat error prone and
+difficult, especially for long formulas. Part of the reason for this is
+that Metamath has no built-in grammar or syntax beyond the requirements
+of the input .mm file format. This is a feature, not a bug. The
+downside is that there are no notational
+short-cuts; outer parentheses cannot be skipped and extra parentheses
+are not tolerated. Given that there may be dozens of syntax axioms used
+to build formulas and that even a single typing error generates
+an error message, the user may find it difficult to even input
+derivations, much less prove them! At some point a "Formula Builder"
+helper screen may be added to the mmj2 Proof Assistant GUI, but until
+then, the new Derive Feature will be useful. <span
+ style="text-decoration: underline;">Note: the <span
+ style="font-weight: bold;">File/New</span>
+menu option that is used to begin a new proof initializes the Proof
+Text area with the specified Theorem's hypotheses and conclusion proof
+steps, so the remaining challenge is to enter derivation steps.</span><br>
+  </li>
+  <li>The new Derive Feature provides an educational and
+perhaps useful "what if?" capability allowing the user to easily answer
+questions such as, "Given a specific formula and
+assertion <span style="font-weight: bold;">Ref</span>
+label, what hypotheses do I need to obtain/prove in order to justify
+this derivation proof step?" Or, "If a specific assertion (<span
+ style="font-weight: bold;">Ref</span>) is applied to a set of
+hypotheses (which may be incomplete), what formula is derived?" <br>
+  </li>
+</ul>
+<br>
+<big><span style="font-weight: bold;">Limitations:</span></big> <br>
+<ul>
+  <li>The mmj2 Proof Assistant GUI requires that each derivation proof
+step <span style="font-weight: bold;">Ref</span> label specify an
+assertion -- logical axiom or theorem -- in the input Metamath .mm
+file. The <span style="font-weight: bold;">Ref</span>,
+together with the associated hypotheses may be viewed as being a
+function call which generates the proof step formula. For example,
+treating the modus ponens axiom as a function with arguments '<code
+ style="font-weight: bold;">|- A</code>' and '<code
+ style="font-weight: bold;">|- ( A -&gt; B )</code>' yields "<code
+ style="font-weight: bold;">ax-mp</code>('<code
+ style="font-weight: bold;">|- A</code>', '<code
+ style="font-weight: bold;">|- ( A -&gt; B )</code>') = '<code
+ style="font-weight: bold;">|- B</code>'". In this case, the <span
+ style="font-weight: bold;">Ref</span>, <code
+ style="font-weight: bold;">ax-mp</code>,
+together with the hypothesis arguments completely specify and determine
+the contents of the resulting formula. However, the new Derive Feature
+allows the hypotheses to be incompletely specified -- missing
+hypotheses are designated with "<code style="font-weight: bold;">?</code>"
+or are simply omitted. In these cases the output formula will, of
+course, be incompletely specified as well! So,&nbsp; "<code
+ style="font-weight: bold;">ax-mp</code>('<code
+ style="font-weight: bold;">|- A</code>', '<code
+ style="font-weight: bold;">?</code>') = '<code
+ style="font-weight: bold;">|- ?</code>'".
+(A similar situation arises for generated hypotheses.) This is a
+feature, not a bug. But to properly present the unknowns in the
+generated formulas, the new Derive Feature needs to be able to present
+the un-determined variables in a helpful way. The Metamath Proof
+Assistant uses "<code style="font-weight: bold;">$1</code>", "<code
+ style="font-weight: bold;">$2</code>",
+etc. for un-determined variables, so the Proof Assistant GUI will
+follow suit, but outputs them as "<code><span style="font-weight: bold;">&amp;W1</span></code>",
+"<code><span style="font-weight: bold;">&amp;S1</span></code>", "<code
+ style="font-weight: bold;">&amp;C1</code>", etc. so that the Type Code
+of the un-determined variable/sub-expression can be inferred from the
+variable name ("<span style="font-weight: bold;"><code>&amp;W</code><span
+ style="font-style: italic;">n</span></span>" stands for "<code>wff</code>",
+"<span style="font-weight: bold;"><code>&amp;C</code><span
+ style="font-style: italic;">n</span></span>" stands for "<code>class</code>"
+and "<span style="font-weight: bold;"><code>&amp;S</code><span
+ style="font-style: italic;">n</span></span>" stands for "<code>set</code>"
+(mmj2 has a RunParm allowing the user
+to specify an alternate naming scheme for <a href="WorkVariables.html">Work
+Variables</a>.) (<span style="font-weight: bold; font-style: italic;">Note</span><span
+ style="font-style: italic;">: in some cases it may appear obvious to
+the user that a generated "<code style="font-weight: bold;">&amp;W1</code>"
+variable can be unified with a sub-formula of some previous step(s) --
+and it is natural to ask why doesn't the program just go ahead and
+figure out the obvious substitution. The answer? Because that would
+require an entirely new unification search process inside the Derive
+Feature, as well as additional intelligence that is not programmed into
+the code...</span>)<br>
+  </li>
+  <li>The
+mmj2 Proof Assistant GUI respects the order of input hypotheses for a
+derivation proof step during unification, but if the given order does
+not yield a consistent set of variable substitutions for a <span
+ style="font-weight: bold;">Ref</span> assertion, the program
+methodically tests other sequences and dynamically rearranges its input
+    <span style="font-weight: bold;">Hyp</span>'s. For example, if the
+user inputs <span style="font-weight: bold;">Hyp</span> "<code
+ style="font-weight: bold;">1,2,3</code>" referring to previous steps
+numbered <code style="font-weight: bold;">1</code>, <code
+ style="font-weight: bold;">2</code>, and <code
+ style="font-weight: bold;">3</code>, but the referenced steps do not
+unify with the <span style="font-weight: bold;">Ref</span>'s 1st, 2nd,
+and 3rd hypotheses, the program seeks an alternate arrangement, such as
+"<code style="font-weight: bold;">3,1,2</code>".
+In some cases, there may be multiple satisfactory sequences of
+hypotheses, which is one reason why the program gives the user's
+initial input order priority. For example, assume hypotheses "<code
+ style="font-weight: bold;">|- A</code>" and "<code
+ style="font-weight: bold;">|- B</code>" for assertion "<code
+ style="font-weight: bold;">|- ( A -&gt; B )</code>".
+In this example, both possible sequences of hypotheses will satisfy the
+requirements of unification! Now consider the situation where the user
+does not completely specify the hypotheses, possibly with one or more "<code
+ style="font-weight: bold;">?</code>"s in the <span
+ style="font-weight: bold;">Hyp</span>
+sub-field. With incompletely specified hypotheses, the situation is
+even more ambiguous for the program's attempt to deduce the correct
+sequence of hypotheses! There is no perfect solution to this problem,
+but the Proof Assistant GUI will continue to respect the given <span
+ style="font-weight: bold;">Hyp</span> order and seek an alternate
+sequence only if the given order fails unification. Thus, if the user
+inputs "<code style="font-weight: bold;">?,3,?</code>",
+the program will attempt unification of the 3rd proof step with the
+Ref's 2nd hypothesis before trying the alternatives. (On the plus side,
+since hypothesis generation is performed only when a <span
+ style="font-weight: bold;">Ref</span>
+label is input, it may be assumed that the user has access to or
+knowledge of the Ref assertions hypotheses and their order -- and can
+use trial and error, if necessary.)<br>
+  </li>
+  <li>In some cases after a proof has been completely developed, with
+successful unification of the 'qed' step, Work Variables will still be
+present in the formulas of some of the proof steps. These are
+"leftovers" or "placeholders", and must be converted to optional/dummy
+variables within the scope of the theorem being proved. mmj2 attempts
+to convert leftover Work Variables to actual "dummy" variables, but in
+some cases the algorithm is not smart enough to finish the job,
+generally because there are not enough optional/dummy variables
+available within the scope of the theorem being proved. To get rid of
+the leftover Work Variables it is possible to add more optional/dummy
+variables within the scope of the theorem, though this requires
+updating the input .mm file and restarting mmj2 (after saving the Proof
+Worksheet in progress!) Alternatively, the user can manually change the
+Work Variables (say, change "<code>&amp;W1</code>" to "<code>th</code>")
+-- this is not as hard as it may seem because mmj2 will apply the
+changes to every occurrence of a Work Variable, assuming unification
+was successful, and furthermore, elimination of one leftover Work
+Variable may eliminate the shortfall in available optional/dummy
+variables within the scope of the theorem.<br>
+  </li>
+  <li style="font-style: italic;">Even
+with the new Derive Feature, the mmj2 Proof Assistant GUI is far from
+being the ultimate tool for proving theorems. And, in fact, there is no
+proof that the Proof Assistant GUI is better for beginners than paper
+and pencil. The mouse/screen/keyboard interface may even hinder,
+at least initially, a student's development. <span
+ style="text-decoration: underline;">The next major step in&nbsp;
+proof-assistive technology will use handwriting recognition technology</span>,
+perhaps via a tablet PC equipped with
+a stylus and appropriate software for emulation of a
+blackboard. But even virtual reality software supporting an infinite
+virtual blackboard cannot replace the ultimate tool -- a higly
+motivated and well-educated mind. In the end, the value of this
+software or any other software must be measured by the human
+accomplishments it enables; if the software is helpful, fine,
+otherwise, do not hesitate to rubbish it and find a new way!<br>
+  </li>
+</ul>
+<br>
+<hr style="width: 100%; height: 2px;"><big><span
+ style="font-weight: bold;">Usage:</span></big>
+The Derive Feature requires no change to the format of the Proof
+Assistant GUI proof text, just minor changes in the way the user's
+input is validated and
+interpreted. The new Derive Feature is tightly integrated into the
+existing Unification process and is triggered in due course by user
+input, as follows:<big><span style="font-weight: bold;"></span></big><br>
+<ol>
+  <li><big><span style="font-weight: bold; text-decoration: underline;">Formula
+Generation</span></big>: <span style="font-weight: bold;">Formula</span>
+is now an optional entry on derivation proof steps except for the '<code
+ style="font-weight: bold;">qed</code>' (final) step (and remains
+mandatory on hypothesis steps). Either <span style="font-weight: bold;">Formula</span>
+or <span style="font-weight: bold;">Ref</span> must be entered on each
+derivation proof step. <span style="text-decoration: underline;">In
+the case where the </span><span
+ style="font-weight: bold; text-decoration: underline;">Formula</span><span
+ style="text-decoration: underline;"> is not input, a </span><span
+ style="font-weight: bold; text-decoration: underline;">Ref</span><span
+ style="text-decoration: underline;">
+label is required, and is used along with the input </span><span
+ style="font-weight: bold; text-decoration: underline;">Hyp</span><span
+ style="text-decoration: underline;">'s to generate
+a </span><span style="font-weight: bold; text-decoration: underline;">Formula</span><span
+ style="text-decoration: underline;">.</span> Variables that are not
+completely determined by the input <span style="font-weight: bold;">Ref</span>
+and <span style="font-weight: bold;">Hyp</span>(s) are shown as "<code><span
+ style="font-weight: bold;">&amp;W1</span></code>", "<code><span
+ style="font-weight: bold;">&amp;W2</span></code>", etc.&nbsp; <span
+ style="text-decoration: underline;"><span style="font-weight: bold;"></span></span></li>
+  <li><span style="text-decoration: underline;"><span
+ style="font-weight: bold;"></span></span><big><span
+ style="font-weight: bold; text-decoration: underline;">Hypothesis
+Generation</span></big>: <span style="text-decoration: underline;">omitted
+or "</span><code style="font-weight: bold; text-decoration: underline;">?</code><span
+ style="text-decoration: underline;">" </span><span
+ style="font-weight: bold; text-decoration: underline;">Hyp</span><span
+ style="text-decoration: underline;"> sub-field entries are used to
+generate hypothesis proof steps only if a </span><span
+ style="font-weight: bold; text-decoration: underline;">Ref</span>
+label is input and the total number of <span
+ style="text-decoration: underline;">non-"</span><code
+ style="font-weight: bold; text-decoration: underline;">?</code><span
+ style="text-decoration: underline;">" </span><span
+ style="font-weight: bold; text-decoration: underline;">Hyp</span><span
+ style="text-decoration: underline;"> entries is less than the number
+of hypotheses used by the </span><span
+ style="font-weight: bold; text-decoration: underline;">Ref</span><span
+ style="text-decoration: underline;">'d
+assertion -- and no other errors are found</span>. The process contains
+a
+tiny amount of built-in intelligence and works as&nbsp; follows:
+unification
+of the input <span style="font-weight: bold;">Ref</span> assertion
+with the derivation step's <span style="font-weight: bold;">Formula</span>
+and given (non-"<code style="font-weight: bold;">?</code>") <span
+ style="font-weight: bold;">Hyp</span> entries is attempted. If this
+partial unification is successful, an hypothesis <span
+ style="font-weight: bold;">Formula</span> is generated for each
+omitted <span style="font-weight: bold;">Hyp</span> or "<code
+ style="font-weight: bold;">?</code>". Then, each generated <span
+ style="font-weight: bold;">Formula</span> that is completely
+determined (contains no Work Variables<code style="font-weight: bold;"></code><code
+ style="font-weight: bold;"></code>), is compared to
+the <span style="font-weight: bold;">Formulas</span> of the previous
+proof steps. If a match is found, then the corresponding omitted or "<code
+ style="font-weight: bold;">?</code>" <span style="font-weight: bold;">Hyp</span>
+is changed to the <span style="font-weight: bold;">Step</span> number
+of the matching formula. Otherwise, if no matching <span
+ style="font-weight: bold;">Formula</span> is found, or if the
+generated <span style="font-weight: bold;">Formula</span>
+contains un-determined variables, then a new derivation proof step is
+created and inserted in the proof immediately prior to the current
+derivation step, and the corresponding <span style="font-weight: bold;">Hyp</span>,
+omitted or "<code style="font-weight: bold;">?</code>" is updated to
+reflect the inserted <span style="font-weight: bold;">Step</span>
+number.</li>
+  <li>&nbsp;Generated <span style="font-weight: bold;">Step</span>
+numbers
+are assigned sequentially by adding 1000 to the greatest <span
+ style="font-weight: bold;">Step</span> number in the proof at that
+moment. <span style="font-weight: bold;"></span> So, if the greatest <span
+ style="font-weight: bold;">Step</span>
+number in the proof&nbsp; = 5, then the generated hypothesis steps are
+numbered 1005, 2005, ..., etc. <span style="font-style: italic;">Note:
+for each generated hypothesis
+inserted in the proof, the output </span><span
+ style="font-weight: bold; font-style: italic;">Hyp</span><span
+ style="font-style: italic;"> </span><code
+ style="font-weight: bold; font-style: italic;"></code><span
+ style="font-style: italic;">and </span><span
+ style="font-weight: bold; font-style: italic;">Ref</span><span
+ style="font-style: italic;"> sub-fields are set to null and
+Unification is attempted -- then, if Unification fails, the Hyp is set
+to "<code><span style="font-weight: bold;">?</span></code>".
+Originally, the plan was to set <span style="font-weight: bold;">Hyp</span>
+to "<code style="font-weight: bold;">?</code>", which would
+automatically prevent unification of the generated step. However, given
+that in many cases the generated <span style="font-weight: bold;">Formula</span>
+will be completely determined (with no <code>Work Variables</code><code></code>
+variables) and would unify with an assertion requiring no logical
+hypotheses!</span><br>
+  </li>
+</ol>
+<br>
+<hr style="width: 100%; height: 2px;"><big><span
+ style="font-weight: bold;">Example 1</span></big>: <span
+ style="font-weight: bold;">Using Derive as a typing short-cut.</span>
+Below is the output after <span style="font-weight: bold;">File/New
+Proof</span> + "<code><span style="font-weight: bold;">syl</span></code>".
+Notice that <code style="font-weight: bold;">syl</code>'s hypothesis
+steps are pre-loaded, as is the '<code style="font-weight: bold;">qed</code>'
+derivation step. All we need to do is fill in the middle steps! <br>
+<hr style="width: 100%; height: 2px;"><big><span
+ style="font-family: monospace; font-weight: bold;"></span><span
+ style="font-family: monospace; font-weight: bold;">$( &lt;MM&gt;
+&lt;PROOF_ASST&gt; THEOREM=syl&nbsp; LOC_AFTER=?<br>
+<br>
+h1::syl.1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ph
+-&gt; ps ) <br>
+h2::syl.2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ps
+-&gt; ch ) <br>
+3::&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- ?<br>
+qed::&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- ( ph -&gt; ch ) <br>
+<br>
+$)</span><span style="font-family: monospace; font-weight: bold;"></span></big><br>
+<hr style="width: 100%; height: 2px;">We enter steps 3 and 4 as shown
+below.
+<hr style="width: 100%; height: 2px;"><big><span
+ style="font-family: monospace; font-weight: bold;"></span><span
+ style="font-family: monospace; font-weight: bold;">$( &lt;MM&gt;
+&lt;PROOF_ASST&gt; THEOREM=syl&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LOC_AFTER=<br>
+<br>
+h1::syl.1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ph -&gt; ps ) <br>
+h2::syl.2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ps -&gt; ch ) <br>
+3:2:a1i<br>
+4:3:a2i<br>
+qed:1,4 &nbsp; &nbsp; &nbsp;&nbsp; |- ( ph -&gt; ch ) <br>
+</span><br style="font-family: monospace; font-weight: bold;">
+<span style="font-family: monospace; font-weight: bold;">$)</span></big><br>
+<hr style="width: 100%; height: 2px;"> and select the <span
+ style="font-weight: bold;">Unify/Unify (check proof)</span> menu item
+or press the <code style="font-weight: bold;">Ctrl</code> and "<code
+ style="font-weight: bold;">U</code>" keys simultaneously. The
+following is output.Notice that step 3's formula is completed but that
+it contains a Work Variable,&nbsp; <code><span
+ style="font-weight: bold;">&amp;W1</span></code>.
+<br>
+<hr style="width: 100%; height: 2px;"><big><span
+ style="font-family: monospace; font-weight: bold;">$( &lt;MM&gt;
+&lt;PROOF_ASST&gt; THEOREM=syl&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LOC_AFTER=<br>
+<br>
+h1::syl.1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ph -&gt; ps ) <br>
+h2::syl.2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ps -&gt; ch ) <br>
+3:2:a1i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( &amp;W1 -&gt; (
+ps
+-&gt; ch ) ) <br>
+4:3:a2i<br>
+qed:1,4 &nbsp; &nbsp; &nbsp;&nbsp; |- ( ph -&gt; ch ) <br>
+</span><br style="font-family: monospace; font-weight: bold;">
+<span style="font-family: monospace; font-weight: bold;">$)</span></big><br>
+<hr style="width: 100%; height: 2px;">The error message screen also
+appeared, reporting&nbsp; unification
+errors in steps 4 and '<code><span style="font-weight: bold;">qed</span></code>'
+-- we ignore those errors for now...and change the "<code><span
+ style="font-weight: bold;">&amp;W1</span></code>' in step 3 to "<code><span
+ style="font-weight: bold;">ph</span></code>". Then we select the <span
+ style="font-weight: bold;">Unify/Unify (check proof)</span> menu item
+or press the <code style="font-weight: bold;">Ctrl</code> and "<code
+ style="font-weight: bold;">U</code>" keys simultaneously. The
+following screen appears:
+<hr style="width: 100%; height: 2px;"><big><span
+ style="font-family: monospace; font-weight: bold;"></span></big><big><span
+ style="font-family: monospace; font-weight: bold;">$( &lt;MM&gt;
+&lt;PROOF_ASST&gt; THEOREM=syl&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LOC_AFTER=<br>
+<br>
+h1::syl.1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ph -&gt; ps ) <br>
+h2::syl.2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ps -&gt; ch ) <br>
+3:2:a1i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ph -&gt; ( ps
+-&gt; ch ) ) <br>
+4:3:a2i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ( ph -&gt; ps )
+-&gt; ( ph -&gt; ch ) ) <br>
+qed:: &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; |- ( ph -&gt; ch ) <br>
+</span><br style="font-family: monospace; font-weight: bold;">
+<span style="font-family: monospace; font-weight: bold;">$)</span></big><br>
+<hr style="width: 100%; height: 2px;">The error message screen also
+appears, showing the following message:<br>
+<hr style="width: 100%; height: 2px;"><big><span
+ style="font-family: monospace; font-weight: bold;">E-PA-0411
+Theorem syl Step qed: Unification failure in derivation proof step. The
+step's formula and/or its hypotheses could not be reconciled with an
+Assertion (axiom or theorem) in the loaded Metamath file(s).<br>
+</span><span style="font-weight: bold;">&nbsp;---------------------------------------------------------
+</span></big><br>
+<hr style="width: 100%; height: 2px;">The problem is that we need to
+specify either a <span style="font-weight: bold;">Ref</span>, or <span
+ style="font-weight: bold;">Hyp</span>s, or both. To demonstrate
+Derive's <span style="font-weight: bold;">Hyp</span> generation
+feature, we enter "<code><span style="font-weight: bold;">?</span></code>"
+as Hyp for the '<code><span style="font-weight: bold;">qed</span></code>'
+step and <code><span style="font-weight: bold;">ax-mp</span></code> as
+the <code style="font-weight: bold;">Ref</code>, as shown below:<br>
+<hr style="width: 100%; height: 2px;"><big><span
+ style="font-family: monospace; font-weight: bold;">$( &lt;MM&gt;
+&lt;PROOF_ASST&gt; THEOREM=syl&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LOC_AFTER=<br>
+<br>
+h1::syl.1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ph -&gt; ps ) <br>
+h2::syl.2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ps -&gt; ch ) <br>
+3:2:a1i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ph -&gt; ( ps
+-&gt; ch ) ) <br>
+4:3:a2i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ( ph -&gt; ps )
+-&gt; ( ph -&gt; ch ) ) <br>
+qed:?:ax-mp&nbsp; &nbsp; |- ( ph -&gt; ch ) <br>
+</span><br style="font-family: monospace; font-weight: bold;">
+<span style="font-family: monospace; font-weight: bold;">$)</span></big><br>
+<hr style="width: 100%; height: 2px;">Then we select the <span
+ style="font-weight: bold;">Unify/Unify (check proof)</span> menu item
+or press the <code style="font-weight: bold;">Ctrl</code> and "<code
+ style="font-weight: bold;">U</code>" keys simultaneously. The
+following screen appears:<br>
+<hr style="width: 100%; height: 2px;"><big><span
+ style="font-family: monospace; font-weight: bold;">$( &lt;MM&gt;
+&lt;PROOF_ASST&gt; THEOREM=syl&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LOC_AFTER=<br>
+<br>
+h1::syl.1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ph
+-&gt; ps ) <br>
+h2::syl.2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ps
+-&gt; ch ) <br>
+<br>
+3:2:a1i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- ( ph -&gt; ( ps -&gt; ch ) ) <br>
+4:3:a2i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- ( ( ph -&gt; ps ) -&gt; ( ph -&gt; ch ) ) <br>
+1004:?:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- &amp;W1 <br>
+2004:?:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- ( &amp;W1 -&gt; ( ph -&gt; ch ) ) <br>
+qed:1004,2004:ax-mp |- ( ph -&gt; ch ) <br>
+<br>
+</span><br style="font-family: monospace; font-weight: bold;">
+<span style="font-family: monospace; font-weight: bold;">$)</span></big><br>
+<hr style="width: 100%; height: 2px;">Oh boy, still not done! Why!?!<br>
+<br>
+Answer: specifying "?" as the Hyp for ax-mp provided incomplete
+information.The missing information is represented with the Work
+Variable, <code style="font-weight: bold;">&amp;W1</code> in steps
+1004 and 2004, which were generated by the Proof
+Assistant --- which unfortunately, is not smart enough to figure out
+that it should have just taken steps 1 and 4 as the hypotheses for the
+'qed' step.&nbsp;<span
+ style="font-weight: bold; text-decoration: underline;"></span>However,
+it is now obvious how to complete the
+proof: - we delete steps <code><span style="font-weight: bold;">1004</span></code>
+and <code style="font-weight: bold;">2004</code>, and input "<code
+ style="font-weight: bold;">1,4</code>" as the <span
+ style="font-weight: bold;">Hyp</span> of the '<code
+ style="font-weight: bold;">qed</code>' step as shown below:<br>
+<hr style="width: 100%; height: 2px;"><big style="font-weight: bold;"><code>$(
+&lt;MM&gt; &lt;PROOF_ASST&gt; THEOREM=syl&nbsp; LOC_AFTER=?<br>
+<br>
+h1::syl.1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ph
+-&gt; ps ) <br>
+h2::syl.2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ps
+-&gt; ch ) <br>
+<br>
+3:2:a1i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- ( ph -&gt; ( ps -&gt; ch ) ) <br>
+4:3:a2i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- ( ( ph -&gt; ps ) -&gt; ( ph -&gt; ch ) ) <br>
+qed:1,4:ax-mp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ph -&gt; ch ) <br>
+<br>
+$)</code></big><br>
+<hr style="width: 100%; height: 2px;">Then we select the <span
+ style="font-weight: bold;">Unify/Unify (check proof)</span> menu item
+or press the <code style="font-weight: bold;">Ctrl</code> and "<code
+ style="font-weight: bold;">U</code>" keys simultaneously. The
+following screen appears:<br>
+<hr style="width: 100%; height: 2px;"><big><span
+ style="font-family: monospace; font-weight: bold;"></span><code
+ style="font-weight: bold;">$( &lt;MM&gt; &lt;PROOF_ASST&gt;
+THEOREM=syl&nbsp; LOC_AFTER=?<br>
+<br>
+h1::syl.1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ph
+-&gt; ps ) <br>
+h2::syl.2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ps
+-&gt; ch ) <br>
+<br>
+3:2:a1i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- ( ph -&gt; ( ps -&gt; ch ) ) <br>
+4:3:a2i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- ( ( ph -&gt; ps ) -&gt; ( ph -&gt; ch ) ) <br>
+qed:1,4:ax-mp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ph -&gt; ch ) <br>
+<br>
+$=&nbsp; wph wps wi wph wch wi syl.1 wph wps wch wps wch wi wph syl.2
+a1i a2i ax-mp<br>
+&nbsp;&nbsp;&nbsp; $. <br>
+$)</code></big><br>
+<hr style="width: 100%; height: 2px;">Bingo! Ka-ching! <br>
+<br>
+<hr style="width: 100%; height: 2px;"><big><span
+ style="font-weight: bold;">Example 2</span></big>: <span
+ style="font-weight: bold;">Using Derive to develop a proof by working
+backwards from the conclusion to the hypotheses.</span> <br>
+<br>
+Below is the output after <span style="font-weight: bold;">File/New
+Proof</span> + "<code><span style="font-weight: bold;">dfuz</span></code>".
+Notice that <code style="font-weight: bold;">dfuz</code>'s hypothesis
+step is pre-loaded, as is the '<code style="font-weight: bold;">qed</code>'
+derivation step. All we need to do is fill in the middle steps! <br>
+<hr style="width: 100%; height: 2px;"><big><span
+ style="font-family: monospace; font-weight: bold;"></span><span
+ style="font-family: monospace; font-weight: bold;">$( &lt;MM&gt;
+&lt;PROOF_ASST&gt; THEOREM=syl&nbsp; LOC_AFTER=?<br>
+<br>
+h1::dfuz.1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- N e. ZZ <br>
+2::&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- ?<br>
+qed::&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- {
+z e. ZZ | N &lt;_ z } = <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|^| { x | ( N e. x /\ A. y e. x ( y + 1 ) e. x ) } <br>
+<br>
+$)</span><span style="font-family: monospace; font-weight: bold;"></span></big><br>
+<hr style="width: 100%; height: 2px;">Ok, that looks simple
+enough......the user inputs no <span style="font-weight: bold;">Hyp</span>s
+and "eqri" in the "qed"
+step and deletes step 2, as shown below:
+<hr style="width: 100%; height: 2px;"><big><span
+ style="font-family: monospace; font-weight: bold;"></span><span
+ style="font-family: monospace; font-weight: bold;"></span></big><big><span
+ style="font-family: monospace; font-weight: bold;">$( &lt;MM&gt;
+&lt;PROOF_ASST&gt; THEOREM=syl&nbsp; LOC_AFTER=?<br>
+<br>
+h1::dfuz.1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- N e. ZZ <br>
+<br>
+qed::eqriv&nbsp; &nbsp; &nbsp;&nbsp; |- { z e. ZZ | N &lt;_ z
+} = <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|^| { x | ( N e. x /\ A. y e. x ( y + 1 ) e. x ) } <br>
+<br>
+$)</span><span style="font-family: monospace; font-weight: bold;"></span></big><br>
+<hr style="width: 100%; height: 2px;">He selects the <span
+ style="font-weight: bold;">Unify/Unify (check proof)</span> menu item
+or presses the <code style="font-weight: bold;">Ctrl</code> and "<code
+ style="font-weight: bold;">U</code>" keys simultaneously. The
+following screen appears:<br>
+<hr style="width: 100%; height: 2px;"><big><span
+ style="font-family: monospace; font-weight: bold;"></span><code
+ style="font-weight: bold;"></code></big><big><span
+ style="font-family: monospace; font-weight: bold;">$( &lt;MM&gt;
+&lt;PROOF_ASST&gt; THEOREM=syl&nbsp; LOC_AFTER=?<br>
+<br>
+h1::dfuz.1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- N e. ZZ <br>
+<br>
+1001:?:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- ( &amp;S1 e. { z e. ZZ | N &lt;_ z } &lt;-&gt; &amp;S1 e. |^| { x |
+( N e. <br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; x
+/\ A. y e. x ( y + 1 ) e. x ) } ) <br>
+qed:1001:eqriv&nbsp;&nbsp; |- { z e. ZZ | N &lt;_ z } = <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|^| { x | ( N e. x /\ A. y e. x ( y + 1 ) e. x ) } <br>
+<br>
+$)</span><span style="font-family: monospace; font-weight: bold;"></span></big><br>
+<hr style="width: 100%; height: 2px;">OK! A hard problem, deriving the
+'qed' step, has been turned into an easy problem, deriving step 1001 --
+which we leave as an exercise for the motivated reader. (Good luck!)<br>
+<br>
+P.S. The following RunParm line inserted just before the
+RunProofAsstGUI line will create a proof for dfuz that can be input
+into the Proof Assistant using File/Open:<br>
+<br>
+<code><span style="font-weight: bold;">ProofAsstExportToFile,dfuz,dfuz.mmp,new,un-unified,NotRandomized,NoPrint</span></code><br>
+<br>
+Options are <code><span style="font-weight: bold;">new</span><span
+ style="font-weight: bold;">/</span></code><code><span
+ style="font-weight: bold;">update</span></code> (the output proof
+file), <code><span style="font-weight: bold;">unified/un-unified</span></code>&nbsp;
+(the output proof), <code><span style="font-weight: bold;">Randomized/NotRandomized</span></code>
+( proof step <span style="font-weight: bold;">Hyp</span> order), <code><span
+ style="font-weight: bold;">Print/NoPrint</span></code> (the output
+proof).<br>
+<br>
+This RunParm gives you something to play with and may be useful in
+cloning proofs or finding shorter proofs.<br>
+<hr style="width: 100%; height: 2px;"><big><span
+ style="font-weight: bold;">See also:<br>
+</span></big><a href="PAUserGuide/Start.html">Proof Assistant User Guide</a><br>
+<a href="ProofAssistantGUIQuickHOWTO.html">ProofAssistantGUIQuickHOWTO.html</a><br>
+<a href="ProofAssistantGUIDetailedInfo.html">ProofAssistantGUIDetailedInfo.html</a><br>
+<a href="StepUnifier.html">StepUnifier.html</a><br>
+<a href="WorkVariables.html">WorkVariables.html</a><br>
+<a href="../mmj2jar/PATutorial/PageLocalRef.mmp">PageLocalRef.mmp</a><br>
+<hr style="width: 100%; height: 2px;"><big><span
+ style="font-weight: bold;"></span></big><big><span
+ style="font-weight: bold;"></span></big><br>
+</body>
+</html>

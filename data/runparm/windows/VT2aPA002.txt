@@ -1,0 +1,44 @@
+ *==================================================
+ * Volume Test 2a: Proof Assistant : RunParm File 002
+ *==================================================
+StartInstrumentationTimer,VolumeTest2a
+MaxStatementPrintCount,99999
+MaxErrorMessages,50000
+MaxInfoMessages,50000
+LoadEndpointStmtNbr,999999999
+LoadEndpointStmtLabel,ZZZ999ZZZ
+StartInstrumentationTimer,LoadFile
+LoadFile,mm\RegressionTest1set.mm
+StopInstrumentationTimer,LoadFile
+StartInstrumentationTimer,VerifyProof
+VerifyProof,*
+StopInstrumentationTimer,VerifyProof
+StartInstrumentationTimer,Parse
+Parse,* 
+StopInstrumentationTimer,Parse
+ProofAsstDjVarsSoftErrors,Report
+RecheckProofAsstUsingProofVerifier,yes
+ProofAsstFontSize,14 
+ProofAsstFormulaLeftCol,20
+ProofAsstFormulaRightCol,79 
+ProofAsstRPNProofLeftCol,5 
+ProofAsstRPNProofRightCol,79       
+ProofAsstUnifySearchExclude,biigb,xxxid
+ProofAsstProofFolder,mmp\tests
+* ----------------------------------------------------------  
+* --- the ",," below signifies no input file used so the ---
+* --- batch test simulates an input file by exporting    ---
+* --- proof steps to memory and then processing those.   ---
+* --- this provides a way to test that the proof         ---
+* --- assistant is generating correct proofs and that    ---
+* --- they match what is in the input .mm file (they     ---
+* --- don't always and this is not necessarily an        ---
+* --- error because there can be multiple valid proofs   ---
+* --- for a theorem.)                                    ---
+* ----------------------------------------------------------  
+StartInstrumentationTimer,BatchTest
+ProofAsstBatchTest,*,,un-unified,NotRandomized,NoPrint
+StopInstrumentationTimer,BatchTest
+* RunProofAsstGUI
+StopInstrumentationTimer,VolumeTest2a
+      

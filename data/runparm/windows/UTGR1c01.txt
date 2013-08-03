@@ -1,0 +1,11 @@
+ *=============
+ * UTGR1c01.TXT
+ *=============
+MaxStatementPrintCount,25000
+MaxErrorMessages,500
+Caption,Unit Test UTGR1c01.mm
+LoadFile,mm\UTGR1c01.mm
+Parse,*
+PrintSyntaxDetails
+PrintStatementDetails,* 
+

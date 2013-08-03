@@ -1,0 +1,11 @@
+ *=============
+ * UTPR1c01.TXT
+ *=============
+MaxStatementPrintCount,25000
+MaxErrorMessages,500
+Caption,Unit Test UTPR1c01.mm
+LoadFile,mm\UTPR1c01.mm
+VerifyProof,*
+PrintSyntaxDetails
+PrintStatementDetails,* 
+

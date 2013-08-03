@@ -1,0 +1,10 @@
+ *=============
+ * UTLA1c02.TXT
+ *=============
+MaxStatementPrintCount,25000
+MaxErrorMessages,500
+Caption,Unit Test UTLA1c02.mm
+LoadFile,mm\UTLA1c02.mm
+PrintSyntaxDetails
+PrintStatementDetails,* 
+

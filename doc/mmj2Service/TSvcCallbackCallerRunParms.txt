@@ -1,0 +1,27 @@
+LoadFile,mm\RegressionTest1set.mm
+VerifyProof,*
+Parse,* 
+ProofAsstUnifySearchExclude,biigb,xxxid,dummylink
+ProofAsstProofFolder,doc\mmj2Service\myproofs
+TheoremLoaderMMTFolder,doc\mmj2Service\myproofs
+*==================================================
+* Don't run Proof Asst GUI with mmj2 Service
+*==================================================
+*RunProofAsstGUI
+*==================================================
+* OK, run the mmj2Service now in "caller" mode
+*==================================================
+SvcFolder,mmj2Service
+*
+* Note: this is the only difference in RunParms.txt
+*       between caller and callee mode: in caller
+*       mode you don't use the SvcCallbackClass RunParm
+*       to tell mmj2 a class to instantiate (because
+*       you have already instantiated it and mmj2
+*       will callback the object you told it --
+*       see TSvcCallbackCaller.java).
+*SvcCallbackClass,TSvcCallbackCallee
+*
+SvcArg,key1,value1 
+SvcArg,key2,value2
+SvcCall

@@ -1,0 +1,5 @@
+$( <MM> <PROOF_ASST> THEOREM=t2  LOC_AFTER=    
+
+qed::      |- ( v1 , v1 , v3 )
+
+$) 

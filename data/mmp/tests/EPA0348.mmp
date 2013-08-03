@@ -1,0 +1,6 @@
+$( <MM> <PROOF_ASST> THEOREM=syl      LOC_AFTER=
+
+1::x      |- ( ph -> ps ) 
+
+
+$)

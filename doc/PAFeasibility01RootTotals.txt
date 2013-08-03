@@ -1,0 +1,48 @@
+set.mm as of 26-Jun-2005
+========================
+TOT Theorems     = 5995
+TOT LogHyps      = 3959
+TOT LogAxioms    =  225
+TOT SyntaxAxioms =  192
+TOT VarHyps      =  129
+
+TOT Theorem ParseTree root Stmt:
+================================
+key = wi   count = 3587
+key = wb   count =  968
+key = wceq count =  814
+key = wcel count =  206
+key = wbr  count =  152
+key = wss  count =  110
+key = wn   count =   79
+key = wex  count =   55
+key = wff  count =   40
+key = wfn  count =   22
+key = wrex count =   20 
+key = wo   count =   20
+key = wrel count =   16
+key = wf   count =   15
+key = wa   count =   11
+key = wne  count =   10
+key = wmo  count =   10
+key = wral count =   10
+key = wor  count =    8
+key = wfun count =    8
+key = wf1o count =    7
+key = wer  count =    6
+key = w3a  count =    6
+key = word count =    5
+key = wal  count =    4
+key = wtr  count =    4
+key = wsb  count =    3
+key = weu  count =    3
+key = wfr  count =    3
+key = wfo  count =    3
+key = wreu count =    3
+key = wnel count =    2
+key = wlim count =    2
+key = weq  count =    2
+key = wwe  count =    2
+key = wiso count =    2
+key = wpo  count =    1
+key = wf1  count =    1

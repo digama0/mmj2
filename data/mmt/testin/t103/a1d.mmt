@@ -1,0 +1,26 @@
+  ${
+    a1d.1 $e |- ( ph -> ps ) $.
+    $( Deduction introducing an embedded antecedent.  (The proof was revised by
+       Stefan Allan, 20-Mar-06.)
+
+       _Naming convention_:  We often call a theorem a "deduction" and suffix
+       its label with "d" whenever the hypotheses and conclusion are each
+       prefixed with the same antecedent.  This allows us to use the theorem in
+       places where (in traditional textbook formalizations) the standard
+       Deduction Theorem would be used; here ` ph ` would be replaced with a
+       conjunction ( ~ df-an ) of the hypotheses of the would-be deduction.  By
+       contrast, we tend to call the simpler version with no common antecedent
+       an "inference" and suffix its label with "i"; compare theorem ~ a1i .
+       Finally, a "theorem" would be the form with no hypotheses; in this case
+       the "theorem" form would be the original axiom ~ ax-1 .  In
+       propositional calculus we usually prove the theorem form first without a
+       suffix on its label (e.g.  ~ pm2.43 vs.  ~ pm2.43i vs.  ~ pm2.43d ), but
+       (much) later we often suffix the theorem form's label with "t" as in
+       ~ negnegt vs. ~ negneg , especially when our "weak deduction theorem"
+       ~ dedth is used to prove the theorem form from its inference form.  When
+       an inference is converted to a theorem by eliminating an "is a set"
+       hypothesis, we sometimes suffix the theorem form with "g" (for somewhat
+       overstated "generalized") as in ~ uniex vs.  ~ uniexg . $)
+    a1d $p |- ( ph -> ( ch -> ps ) ) $=
+ 		wph wps wch wps wi a1d.1 wps wch ax-1 syl $.   
+   $}

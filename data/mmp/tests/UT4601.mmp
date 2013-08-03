@@ -1,0 +1,28 @@
+$( <MM> <PROOF_ASST> THEOREM=theorem1  LOC_AFTER=?
+
+1::ax-min
+2::ax-maj
+
+101::ax-min
+102::ax-maj
+103:101,102:ax-mp  |- e
+                      ( e
+                        ( e
+                          ( &W1
+                          , e
+                            ( &W2
+                            , e ( e ( e ( &W2 , &W3 ) , e ( &W4 , &W3 ) ) , &W4 ) ) )
+                        , &W5 )
+                      , e ( &W1 , &W5 ) )
+
+qed:1,2:ax-mp      |- e
+                      ( e
+                        ( e
+                          ( x
+                          , e
+                            ( y
+                            , e ( e ( e ( y , z ) , e ( u , z ) ) , u ) ) )
+                        , v )
+                      , e ( x , v ) )
+
+$)

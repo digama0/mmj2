@@ -1,0 +1,67 @@
+Answers to Problems #1 and 2:
+=============================
+
+So...I have devised solutions to #2, as well as #1
+that -- tenatively -- solve the problems and
+satisfy the aesthetic sensibilities of the
+programmer. These changes will be applied in the order
+given below to avoid masking any new bugs and to
+facilitate testing:
+
+1. When searching for a justifying assertion (Ref) for
+a proof step, if a unifying match is found that has $d
+errors, that match will be retained but the search
+will continue, looking for a match without $d errors.
+If a clean match without $d's is found, it will take
+precedence. Then, at the end of the entire proof
+process, unless the entire proof is complete and
+correct, if alternate matches were found, an
+informational message will be produced listing the
+alternate assertions.
+
+2. Problem #2 involving operator overloading can be
+resolved in this fashion: 
+
+See "NormsPatchToSetmm.txt"
+
+
+3. In theory, even with the issue of $d errors,
+multiple justification matches for a single proof step
+are possible. In some cases, the first satisfactory
+match may not result in a correct proof, because the
+ultimate goal is to have a consistent set of variable
+substitutions that satisfies the final ('qed') proof
+step; we can think of this as justification at a
+higher level than a proof step. So, we need a way to
+present the possibilities without hobbling the program
+with exhaustive searches that may be needed rarely at
+most. 
+
+So, if a Ref label is input (present) on a Proof Step
+input to the Proof Unifier -- even if that Ref label
+was put there previously as output from Unification --
+if the Ref does not unify successfully with the
+step formula, then a message will be displayed showing
+all alternate assertions that *do* unify with the
+step (the alternates are not automatically substituted
+for the input Ref however unless the error is a $d
+error.)
+
+As a "trick", if the user can input a valid Assertion
+label on a step that s/he knows will not unify with
+the step's formula. This will generate a message with
+the list of assertions that do unify successfully, and 
+the user can select the correct one from the list. This 
+trick may be needed if there are multiple unifying assertions
+and the Proof Unifier selects the first one, which say,
+unifies with the step but is incorrect in the context
+of the entire proof.
+
+4. To further improve on solution #3, the search order
+will be by ascending Metamath sequence number. That
+means, searching from the start of the database (first
+statement input) to the end of the database. This
+allows the author of an .mm file to re-prove a theorem
+or re-formulate it for scholastic purposes and store
+it after the primary version of the theorem and
+have the primary picked up in Unification.

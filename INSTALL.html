@@ -1,0 +1,466 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>mmj2 Installation</title>
+</head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
+ vlink="#ff0000" alink="#000088" link="#0000ff">
+<small><code>//********************************************************************/<br>
+//* Copyright (C) 2005 - 2011 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*/<br>
+//* MEL O'CAT&nbsp; : x178g243 at yahoo.com &nbsp; &nbsp; &nbsp;
+&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*/<br>
+//* License terms: GNU General Public License Version
+2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*/<br>
+//*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+or
+any
+later
+version&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*/<br>
+//********************************************************************/<br>
+//*4567890123456 (71-character line to adjust editor window) 23456789*/<br>
+<br>
+</code></small>
+<h2>As Of 1-Nov-2011 Release</h2>
+<big><big><span style="color: rgb(0, 153, 0);">SEE ALSO:</span> <a
+ href="QuickStart.html">QuickStart.html</a></big></big><br>
+<h3 style="text-decoration: underline;">Preliminary Remarks:</h3>
+<span style="font-weight: bold;"><big><span style="font-style: italic;">WARNINGS:</span></big>
+</span><br>
+<ul style="font-weight: bold;">
+  <li style="text-decoration: underline;">Back up your data before
+attempting any of this stuff!</li>
+  <li>These instructions are believed to be useful but are not
+guaranteed -- and none of the software mentioned here is guaranteed
+either!</li>
+  <li style="text-decoration: underline;">Backup your data and be
+prepared for the absolute worst case scenario, a complete System
+Restore!</li>
+</ul>
+<big><span style="font-weight: bold;">1.</span></big> This document is
+customized for Windows. The batch files ("<code>.bat</code>") provided
+in mmj2 to compile the source code and javadoc include commands
+available on Windows XP (such as "<code>call</code>") that may not be
+present on older versions of Windows. mmj2 has been used on Linux
+systems without difficulty.<br>
+<br>
+<big><span style="font-weight: bold;">2.</span></big> Both source code
+and an executable Java "<code>jar</code>"
+file are included. It should not be necessary for you to recompile the
+software, but the compilation process is simple using the <code>.bat</code>
+command files provided. <br>
+&nbsp;<br>
+<big><span style="font-weight: bold;">3.</span></big> You will likely
+need at least 256MB of RAM and a modern hard drive that is fairly
+speedy in order to have a satisfactory experience. <br>
+<br>
+<big><span style="font-weight: bold;">4.</span></big> You will need
+Sun's
+Java 2 platform, release 1.5 or higher -- or an equivalent, compatible
+implementation of Java, including the Java "Swing" packages which are
+used in the mmj2 Proof Assistant GUI. <br>
+<br>
+<big><span style="font-weight: bold;">5.</span></big> If&nbsp; you do
+not plan to recompile the source code for mmj2 then you will require
+only the Java "<code>JRE</code>" (Java Runtime Environment) which is
+available here:<br>
+<br>
+<span style="font-weight: bold;">Java Runtime Environment Version 6.0
+Update 26 (as of 1-Jul-2011)</span><br>
+<a
+ href="http://www.oracle.com/technetwork/java/javase/downloads/jre-6u26-download-400751.html">http://www.oracle.com/technetwork/java/javase/downloads/jre-6u26-download-400751.html</a><br>
+<br>
+<big><span style="font-weight: bold;">6.</span></big> If you do plan to
+recompile the source code for mmj2 then download the current production
+version -- "<code>JDK 5.0</code>" -- which is <span
+ style="font-style: italic;">also</span> referred to by Sun as "<code>J2SE
+1.5.0</code>" (I know, it is confusing...) This download includes the <code>JRE</code>
+as well, (so it is not necessary to separately download the Java <code>JRE</code>
+if you download the <code>JDK</code>.)&nbsp; Available here:<br>
+<br>
+<span style="font-weight: bold;">JDK 6.0 Update 26 -- The Java SE
+Development Kit (JDK)</span><br>
+<a
+ href="http://www.oracle.com/technetwork/java/javase/downloads/jdk-6u26-download-400750.html">http://www.oracle.com/technetwork/java/javase/downloads/jdk-6u26-download-400750.html</a><br>
+<br>
+<a href="http://java.sun.com/javase/downloads/index.jsp"></a><big><span
+ style="font-weight: bold;">7.</span></big> Regardless of
+whether you plan to use the <code>JDK</code> (which includes the <code>JRE</code>)
+or
+just
+the
+<code>JRE</code>,
+it is recommended that you upgrade to the current version of the Java
+software so that any Sun Microsystems Inc. bug fixes are implemented on
+your system.<br>
+<br>
+<big><span style="font-weight: bold;">8.</span></big> Also, you will
+surely need, if you don't already have one, a good text editor
+that can handle not only large files but also the Metamath-friendly
+Unix-style line endings (Win/DOS text files are terminated with CR-LF,
+Carriage-return and Line-feed while Unix files are terminated with just
+CR.) This might work well for you, try an evaluation of:<br>
+<br>
+<a href="http://www.textpad.com/">http://www.textpad.com/</a><br>
+<br>
+<big><span style="font-weight: bold;">9.</span></big> Finally, you will
+want to download Metamath (more on this below):<br>
+<br>
+<a href="http://www.metamath.org/">http://www.metamath.org/</a><br>
+<br>
+<big><span style="font-weight: bold;">10.</span></big> Recommendation:
+One approach is to store all downloaded software packages in a separate
+<code style="font-weight: bold;">C:\downloads</code>
+directory, with a separate subdirectory for each package. This allows
+for simple periodic backup of all downloaded software, which is very
+convenient when the time comes to migrate to a new machine -- or
+following a system restore. It is also a handy way to stay organized.
+And when it comes time to reinstall with a new copy of Metamath or
+mmj2,
+which are basically just "<code>.zip</code>" files, it is convenient to
+create a "temp" sub-subdirectory within the package's subdirectory,
+unzip to "<code>..\temp</code>",
+and then copy the contents of the unzipped directories to the previous
+install location. (In the future you might need to install just the
+mmj2jar.jar file, and perhaps update your RunParms file when a new
+release or patch of mmj2 is produced.)<br>
+<br>
+<hr style="width: 100%; height: 2px;">
+<h3><big>I.</big> INSTALL Metamath</h3>
+<br>
+Go to <a href="http::%5Cwww.metamath.org">http::\www.metamath.org</a>,
+and visit the download page. Follow the instructions there. It is
+simple. <br>
+<br>
+You will want to download the following download files, at least:<br>
+<ul>
+  <li style="font-weight: bold;"><code>Metamath.pdf</code></li>
+  <li style="font-weight: bold;"><code>Metamath.zip (contains set.mm
+too)<br>
+    </code></li>
+  <li><code><span style="font-weight: bold;">eimm.zip</span></code><br>
+  </li>
+</ul>
+<br>
+FYI, <code>Metamath.zip</code> is just a directory. "Install" it by
+just unzipping it to the "C" drive, which creates directory "<code
+ style="font-weight: bold;">c:\metamath</code>". And that's it for
+that...unless you want to add "<code>c:\metamath</code>" to the Windows
+environment "<code>path</code>" (see II below).<br>
+<br>
+The <code>mmj2.zip</code> download provides certain handy .bat files,
+including these that build html pages:<br>
+<ul>
+  <li><code style="font-weight: bold;">C:\mmj2\test\windows\cr_althtml.bat</code></li>
+  <li><code style="font-weight: bold;">C:\mmj2\test\windows\cr_brief_althtml.bat</code></li>
+</ul>
+<br>
+You need to start up a Command Prompt window and then "CD" -- Change
+Directory -- to the destination directory, "c:\metamath" before running
+them:<br>
+<br>
+<code style="font-weight: bold;">&nbsp;&nbsp;&nbsp; cd c:\matamath</code><br>
+<br>
+<hr style="width: 100%; height: 2px;"><big><big><span
+ style="font-weight: bold;"><br>
+II.</span></big></big> <big><span style="font-weight: bold;">INSTALL
+Java JDK/JRE or just JRE</span></big><br>
+<br>
+<big><span style="font-weight: bold;"></span></big>You will need Sun's
+Java 2 platform, release 1.5 or higher -- or an equivalent, compatible
+implementation of Java, including the Java "Swing" packages which are
+used in the mmj2 Proof Assistant GUI. <br>
+<br>
+I recommend choosing their "Offline Installation" option, which gives
+you an "<code>.exe</code>" download file that you execute to install
+Java. The
+advantage is that you can back up the installation file in case it is
+needed again.<br>
+<br>
+If&nbsp; you do not plan to recompile the source code for mmj2 then you
+will require only the Java "<code>JRE</code>" (Java Runtime
+Environment) which is available here:<br>
+<br>
+<span style="font-weight: bold;">Java Runtime Environment Version 6.0
+Update 26 (as of 1-Jul-2011)</span><br>
+<a
+ href="http://www.oracle.com/technetwork/java/javase/downloads/jre-6u26-download-400751.html"></a><a
+ href="http://www.oracle.com/technetwork/java/javase/downloads/jre-6u26-download-400751.html">http://www.oracle.com/technetwork/java/javase/downloads/jre-6u26-download-400751.html</a><br>
+<br>
+If you do plan to recompile the source code for mmj2 then download the
+current production version -- "<code>JDK 5.0</code>" -- which is <span
+ style="font-style: italic;">also</span> referred to by Sun as "<code>J2SE
+1.5.0</code>" (I know, it is confusing...) This download includes the <code>JRE</code>
+as well, (so it is not necessary to separately download the Java <code>JRE</code>
+if you download the <code>JDK</code>.&nbsp; Available here:<br>
+<br>
+<span style="font-weight: bold;">JDK 6.0 Update 26 -- The Java SE
+Development Kit (JDK)</span><br>
+<a
+ href="http://www.oracle.com/technetwork/java/javase/downloads/jdk-6u26-download-400750.html">http://www.oracle.com/technetwork/java/javase/downloads/jdk-6u26-download-400750.html</a><br>
+<br>
+Regardless of whether you plan to use the <code>JDK</code> (which
+includes the <code>JRE</code>) or just the <code>JRE</code>,
+it is recommended that you upgrade to the current version of the Java
+software so that any bug fixes are implemented on your system.<br>
+<br>
+<big><span style="font-weight: bold;"></span></big>Follow Sun's
+installation instructions. It is actually very simple for a
+plain-vanilla install. What it boils down to is running their .exe
+install program (after first un-installing if you have a previous
+version of Java), and then updating your Windows "Path" variable:<br>
+<ul>
+  <li>Click Start, </li>
+  <li>then Settings, </li>
+  <li>then Control Panel, </li>
+  <li>then System</li>
+  <li>then Advanced</li>
+  <li>then Environment Variables</li>
+  <li>and update the Path variable by inserting&nbsp; <code
+ style="font-weight: bold;">C:\Program Files\Java\jdk1.5.0_06\bin;</code></li>
+</ul>
+<code style="font-weight: bold;"></code><span
+ style="font-style: italic; font-weight: bold;">(Change that to
+reflect the location and name of the "bin" directory of your JDK or JRE
+-- and it may be that Sun has already put it there so just double-check
+for yourself before doing anything!)</span><br
+ style="font-style: italic; font-weight: bold;">
+<br>
+You will probably want to download the Java documentation along with
+the JDK. It is just a
+zip file of their "doc" directory. Unzip it to the top level directory
+of the JDK:<br>
+<br>
+&nbsp;&nbsp;&nbsp; <code style="font-weight: bold;">C:\Program
+Files\Java\jdk1.5.0_06\</code>&nbsp; (change that name to reflect the
+version you installed)<br>
+<br>
+Unzip will create a "doc" directory at the same level as "bin".<br>
+<br>
+<hr style="width: 100%; height: 2px;"><br>
+<h3><big>III.</big> INSTALL mmj2:<br>
+</h3>
+NOTE: short-cut Windows instructions: 1) download <code
+ style="font-weight: bold;">mmj2.zip</code>; 2) unzip it to <code
+ style="font-weight: bold;">c:\mmj2</code>; 3) copy <code
+ style="font-weight: bold;">c:\mmj2\mmj2jar</code> to create <code
+ style="font-weight: bold;">c:\mmj2jar</code>. Then in a Command Prompt
+window at c: prompt, to run mmj2, enter command "<code
+ style="font-weight: bold;">cd mmj2jar</code>" followed by command "<code
+ style="font-weight: bold;">mmj2.bat</code>" (or just "<code
+ style="font-weight: bold;">mmj2</code>").<br>
+<br>
+<br>
+<big><span style="font-weight: bold;">1.</span></big> <span
+ style="text-decoration: underline; font-weight: bold;">Download mmj2</span>
+from:<br>
+<br>
+<a href="http://us2.metamath.org:8888/ocat/mmj2/">http://us2.metamath.org:8888/ocat/mmj2/<br>
+</a><br>
+This is the whole package:<br>
+&nbsp;&nbsp; <br>
+<a href="http://us2.metamath.org:8888/ocat/mmj2/mmj2.zip">http://us2.metamath.org:8888/ocat/mmj2/mmj2.zip</a><br>
+<br>
+<a href="http://planetmath.cc.vt.edu/%7Emmj2/mmj2.zip"></a>An MD5
+checksum file is available at<br>
+<br>
+<a href="http://us2.metamath.org:8888/ocat/mmj2/mmj2.md5">http://us2.metamath.org:8888/ocat/mmj2/mmj2.md5</a><br>
+<br>
+<br>
+<span style="font-weight: bold; font-style: italic;">Use the MD5
+checksum to confirm the integrity and non-hacked status of mmj2.zip --
+and of course virus-scan any downloaded files before touching them with
+any other software!</span><br
+ style="font-weight: bold; font-style: italic;">
+&nbsp; &nbsp;<br>
+&nbsp;&nbsp; <br>
+<big><span style="font-weight: bold;">2.</span></big> <span
+ style="font-weight: bold;">Unzip "mmj2.zip"</span> to the "C" drive,
+thus creating<br>
+&nbsp;&nbsp; top-level directory:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; c:\mmj2<br>
+<br>
+<span style="font-weight: bold; font-style: italic;">NOTE: If you use a
+different drive letter or directory name then several mmj2 .bat files
+and
+parameter files will need to be updated -- run a scan to see which need
+the fix...</span><br style="font-weight: bold; font-style: italic;">
+<br>
+For more info see:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+ href="doc/MMJ2DirectoryStructure.txt">C:\mmj2\doc\MMJ2DirectoryStructure.txt</a><br>
+<br>
+<big><span style="font-weight: bold;">3.</span></big> <span
+ style="font-weight: bold;">Compile the mmj2 source code.</span> <br>
+<br>
+<span style="font-weight: bold; font-style: italic;">Note: if you plan
+to use the executable mmj2 code provided in the mmj2.zip download file
+then skip Steps 3 and 4 (Steps 3 and 4 require the Java JDK
+download from Sun, whereas just <span
+ style="text-decoration: underline;">running</span> mmj2 requires only
+the Java JRE
+download.)</span><br>
+<br>
+- Venture to a <a href="doc/PAUserGuide/cmdwindow.html">Windows
+Command Prompt</a> (at
+Start/Programs/Accessories/Command Prompt -- I recommend that you
+right-mouse click the <code>Command Prompt</code> menu item and select
+"<code>Create
+Shortcut</code>" so that a Command Prompt desktop icon is conveniently
+available on the Windows desktop for future use.)<br>
+<br>
+- Enter this command to compile the mmj2 source code:<br>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span
+ style="font-weight: bold;">C:\mmj2\compile\windows\CompMMJ.bat</span></code><br>
+<br>
+- Note: this .bat file creates the <code>c:\mmj2\mmj2jar\mmj2jar.jar</code>
+file, in addition to creating the various mmj2 class files.<br>
+<br>
+<big><span style="font-weight: bold;">4.</span></big> <span
+ style="font-weight: bold;">Compile the Javadoc for mmj2.</span><br>
+<br>
+- Use the Command Prompt window to execute the following command:<br>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span
+ style="font-weight: bold;">C:\mmj2\doc\windows\BuildDoc.bat</span></code><br>
+<br>
+<br>
+<big><span style="font-weight: bold;">5.</span></big> <span
+ style="font-weight: bold;">Choose and create
+a personal, private directory for doing mmj2 and Metamath activities.</span>
+This is where you will store proofs and any customized RunParm files,
+as well as copies of the executable software for mmj2 and Metamath.<br>
+<br>
+Note: The directory <code><span style="font-weight: bold;">c:\mmj2\mmj2jar</span></code>
+contains the <code><span style="font-weight: bold;">mmj2jar.jar</span></code>
+executable file plus a <a href="mmj2jar/RunParms.txt">.txt RunParms
+file</a>
+designed to work "out of the box" with Metamath's set.mm Metamath
+database (see <a href="data/runparm/windows/AnnotatedRunParms.txt">AnnotatedRunParms.txt</a>
+for details of RunParms.). Directory <code><span
+ style="font-weight: bold;">c:\mmj2\mmj2jar</span></code> contains
+what you need to actually run mmj2 -- the rest of the <code><span
+ style="font-weight: bold;">c:\mmj2</span></code> directory
+consists of documentation, test files and other items that may be of
+greater or lesser interest to you, depending on your interests and
+intentions.<br>
+<br>
+There are two main possibilities: 5.1 Create your own directory, or,
+5.2 Do your work inside the C:\metamath directory. The Metamath <code><span
+ style="font-weight: bold;">eimm.exe</span></code> (Export/Import mmj2
+Proof Worksheets) program requires that it be located inside the
+current directory, along with its helpers <code
+ style="font-weight: bold;">eimmexp.cmd</code> and <code><span
+ style="font-weight: bold;">eimmimp.cmd</span></code>. Therefore, <span
+ style="text-decoration: underline;">if you plan to use mmj2 and
+Metamath with Metamath's </span><code
+ style="font-weight: bold; text-decoration: underline;">eimm.exe</code><span
+ style="text-decoration: underline;"> utility, it is simplest to have
+all of the software in a single directory.</span><br
+ style="text-decoration: underline;">
+<br>
+<span style="font-weight: bold;">Option 5.1 -- (Recommended) Use your
+own private directory</span>, such as <span style="font-weight: bold;">C:\mmj2jar<br>
+<br>
+</span>- Copy the contents of <span style="font-weight: bold;">C:\mmj2\mmj2jar</span>
+to create <span style="font-weight: bold;">C:\mmj2jar</span><br>
+<br>
+- Copy the following files from <span style="font-weight: bold;">C:\metamath</span>
+into <span style="font-weight: bold;">C:\mmj2jar</span><br>
+<ul>
+  <li style="font-weight: bold;"><code>metamath.exe</code></li>
+  <li style="font-weight: bold;"><code>eimm.exe</code></li>
+  <li style="font-weight: bold;"><code>eimmexp.cmd</code></li>
+  <li style="font-weight: bold;"><code>eimmimp.cmd</code></li>
+  <li style="font-weight: bold;">set.mm (and/or whatever .mm Metamath
+database(s) you plan to use)<br>
+  </li>
+</ul>
+- - You may need to update the mmj2Path and MetamathPath arguments in
+mmj2.bat (command line arguments #3 and 4 after "<code>mmj2.jar</code>"
+-- see <a href="doc/mmj2CommandLineArguments.html">mmj2CommandLineArguments</a>)
+in:<br>
+<br>
+<code style="font-weight: bold;">&nbsp;&nbsp; c:\mmj2jar\mmj2.bat</code><span
+ style="font-weight: bold;"><br>
+</span><br>
+- Note: if you choose to store <code style="font-weight: bold;">set.mm</code>
+elsewhere, remember to update the <code style="font-weight: bold;">mmj2jar\RunParms.txt</code>
+file's&nbsp; <code style="font-weight: bold;">LoadFile</code> RunParm
+to point to the correct location!<br>
+<br>
+<br>
+<span style="font-weight: bold;">Option 5.2 (Also good)&nbsp; -- </span>Do
+your
+work
+inside
+the <span style="font-weight: bold;">C:\metamath</span>
+directory<span style="font-weight: bold;"><br>
+<br>
+</span>- Copy the contents of <span style="font-weight: bold;">C:\mmj2\mmj2jar</span>
+into <span style="font-weight: bold;">C:\metamath</span>, and<br>
+<br>
+- You may need to update the mmj2Path and MetamathPath arguments in
+mmj2.bat (command line arguments #3 and 4 after "<code>mmj2.jar</code>"
+-- see <a href="doc/mmj2CommandLineArguments.html">mmj2CommandLineArguments</a>)
+in:<br>
+<br>
+<code style="font-weight: bold;">&nbsp;&nbsp; c:\mmj2jar\mmj2.bat</code><br>
+<br>
+- Note: <code style="font-weight: bold;"></code><code
+ style="font-weight: bold;">RunParms.txt</code> file's&nbsp; <code
+ style="font-weight: bold;">LoadFile</code> RunParm refers to <code
+ style="font-weight: bold;">set.mm</code>.<br>
+<br>
+<br>
+<big><span style="font-weight: bold;">6. Running It.</span></big><br>
+<br>
+In the Windows Explorer program, double-click the <code
+ style="font-weight: bold;">c:\mmj2jar\mmj2.bat</code> file.<br>
+<br>
+OR<br>
+<br>
+As a test to confirm that mmj2 has been installed correctly go to a <a
+ href="doc/PAUserGuide/cmdwindow.html">Command Window</a> and run the
+following commands to start the <a href="mmj2jar/mmj2PATutorial.bat">mmj2
+Proof
+Assistant
+Tutorial</a>: <br>
+<br>
+<table
+ style="width: 50%; text-align: left; font-family: monospace; font-weight: bold; color: rgb(255, 255, 255);"
+ border="5" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="background-color: rgb(51, 0, 51); vertical-align: top;"><span
+ style="color: rgb(255, 255, 255);">Microsoft Windows XP [Version
+blahblah]</span><br style="color: rgb(255, 255, 255);">
+      <span style="color: rgb(255, 255, 255);">(C) Copyright 1985-2001
+Microsoft Corp.</span><br style="color: rgb(255, 255, 255);">
+      <br style="color: rgb(255, 255, 255);">
+      <span style="color: rgb(255, 255, 255);">C:\&gt;cd c:\mmj2jar</span><br
+ style="color: rgb(255, 255, 255);">
+      <br style="color: rgb(255, 255, 255);">
+      <span style="color: rgb(255, 255, 255);">C:\mmj2jar&gt;mmj2PATutorial.bat</span><br
+ style="color: rgb(255, 255, 255);">
+      <br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+Refer to the <a href="doc/PAUserGuide/Start.html">Proof Assistant User
+Guide</a> and <a href="mmj2.html">mmj2.html</a> for more information <br>
+<br>
+<hr style="width: 100%; height: 2px;"><br>
+</body>
+</html>

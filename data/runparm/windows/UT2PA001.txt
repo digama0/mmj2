@@ -1,0 +1,110 @@
+ *==================================================
+ * Unit Test 2: Proof Assistant : RunParm File 001
+ *==================================================
+MaxStatementPrintCount,9999
+MaxErrorMessages,15000
+MaxInfoMessages,15000
+LoadEndpointStmtNbr,10000
+LoadEndpointStmtLabel,ZZZ999ZZZ
+LoadFile,mm\RegressionTest1set.mm
+
+VerifyProof,*
+Parse,* 
+ProofAsstDjVarsSoftErrors,Report
+RecheckProofAsstUsingProofVerifier,yes
+ProofAsstFontSize,14 
+ProofAsstFormulaLeftCol,20
+ProofAsstFormulaRightCol,79 
+ProofAsstRPNProofLeftCol,5 
+ProofAsstRPNProofRightCol,79    
+ProofAsstUnifySearchExclude,biigb,xxxid
+ProofAsstProofFolder,mmp\tests
+* -----------------------------------------------------------
+* note: these tests use set.mm, the uncompressed proof
+* version of set.mm. they should be fairly durable over time
+* given that 'syl' is unlikely to change and that set.mm
+* is fairly stable (i.e. "{" is introduced after "syl", etc.)
+* -----------------------------------------------------------
+ProofAsstExportToFile,dfbi2,dfbi2.mmp,update,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,dfbi2.mmp,un-unified,NotRandomized,Print
+ProofAsstExportToFile,ax17eq,ax17eq.mmp,update,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,ax17eq.mmp,un-unified,NotRandomized,Print
+*
+ProofAsstBatchTest,*,Test001.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0307.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0308.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0309.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0310.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0311.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0312.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0313.mmp,un-unified,NotRandomized,Print
+* ProofAsstBatchTest,*,EPA0314.mmp <-could not trigger. 
+ProofAsstBatchTest,*,EPA0315.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0316.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0317.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0318.mmp,un-unified,NotRandomized,Print
+* ProofAsstBatchTest,*,EPA0319.mmp <-could not trigger.  
+ProofAsstBatchTest,*,EPA0320.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0321.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0322.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0323.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0324.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0325.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0326.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0327.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0328.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0329.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0330.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0331.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0332.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0333.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0334.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0335.mmp,un-unified,NotRandomized,Print
+* ProofAsstBatchTest,*,EPA0336.mmp <-could not trigger.   
+ProofAsstBatchTest,*,EPA0337.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0338.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0339.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0340.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0341.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0342.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0343.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0344.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0345.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0346.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0347.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0348.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0349.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0350.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0351.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0352.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0353.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0354.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0355.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0356.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0357.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0358.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0359.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0360.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0361.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0362.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0363.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0364.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0365.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0366.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0367.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0368.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0370.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0371.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0372.mmp,un-unified,NotRandomized,Print
+* ProofAsstBatchTest,*,EPA0401.mmp <-could not trigger. 
+ProofAsstBatchTest,*,EPA0402.mmp,un-unified,NotRandomized,Print 
+ProofAsstBatchTest,*,EPA0403.mmp,un-unified,NotRandomized,Print 
+* ProofAsstBatchTest,*,EPA0404.mmp <-could not trigger. 
+ProofAsstBatchTest,*,EPA0405.mmp,un-unified,NotRandomized,Print 
+* ProofAsstBatchTest,*,EPA0406.mmp <-could not trigger. 
+* ProofAsstBatchTest,*,EPA0407.mmp <-could not trigger. 
+* ProofAsstBatchTest,*,EPA0408.mmp <-could not trigger. 
+ProofAsstBatchTest,*,EPA0409.mmp,un-unified,NotRandomized,Print 
+ProofAsstBatchTest,*,EPA0410.mmp,un-unified,NotRandomized,Print
+ProofAsstBatchTest,*,EPA0411.mmp,un-unified,NotRandomized,Print
+* RunProofAsstGUI      

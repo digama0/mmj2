@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="Content-Type">
+  <title>Incomplete Step Cursor Positioning</title>
+</head>
+<body>
+<h1><small>Bug Fix: Incomplete Step Curror Positioning, AsIs Mode</small></h1>
+<h2><br>
+</h2>
+<h2 style="text-decoration: underline;">Problem: Viewport always
+scrolling to the cursor position, which is set to line 1.</h2>
+See <a href="myproofs/CursorTest.mmp"><big><code>mmj2jar\myproofs\CursorTest.mmp</code></big></a><br>
+<br>
+<h2><small>Three complicating factors are involved. They affect the
+problem as well as the perception of the problem:</small></h2>
+<br>
+<big><big style="font-weight: bold;">1. </big></big>The Proof
+Assistant GUI regards as a step as a validly "Incomplete Step" (with
+respect to cursor positioning) only when it is a Derivation Step with<br>
+<ul>
+  <li>a "?" between the 1st and 2nd colons of the Step:Hyp:Ref field. or</li>
+  <li>the formula contains a Work Variable (e.g. "&amp;C1, "&amp;S1",
+"&amp;W1", etc.)</li>
+</ul>
+A proof step which isn't Incomplete and fails unification (including
+the attempted Unification Search lookup of Ref for the statement) is
+considered to be "in error". From the user's perspective a step is
+"incomplete" whereas mmj2 considers it to be in error. For example,
+Step 2 below is "in error" after unification, not <span
+ style="font-style: italic;">Incomplete</span>:<br>
+<br>
+<big style="font-weight: bold;"><code>&nbsp;&nbsp;&nbsp;
+2::&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- x = x</code></big><br>
+<br>
+During proof development it may be more efficient to code place-holder
+steps, (if needed), like this:<br>
+<br>
+<br>
+<big style="font-weight: bold;"><code>&nbsp;&nbsp;&nbsp;
+3:?:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- x = x<br>
+<br>
+Or,<br>
+<br>
+</code></big><big style="font-weight: bold;"><code>&nbsp;&nbsp;&nbsp;
+3:?:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- &amp;W1</code></big><br>
+<br>
+Or, simply: <br>
+<br>
+<big style="font-weight: bold;"><code>&nbsp;&nbsp;&nbsp; 3::&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- &amp;W1</code></big><br>
+<br>
+<br>
+<big><big><span style="font-weight: bold;">2.</span></big></big> The
+existing "AsIs" code in the processing of Incomplete proof steps does
+replace the current cursor with the saved input cursor, but the code
+does so even if the cursor has earler been set in the Proof Assistant
+unification process.<br>
+<big><big><span style="font-weight: bold;"><br>
+3.</span></big></big> The Java RunTimeEnvironment system (JRE) has
+default processing -- which mmj2 is using -- related to cursor
+positioning involving a JViewPort. Specifically, the JViewPort is
+automatically scrolled by the JRE in order to ensure that the Cursor is
+visible withing the View Port rectangle. If this default scrolling
+process is not triggered by the mmj2's selected cursor position, then
+the Proof Assistant can choose to either trigger the scrolling behavior
+(to match cursor position), or not. Prior to this code fix, the Proof
+Assistant always triggered the scrolling behavior during the Incomplete
+Step Cursor Positioning. <br>
+<br>
+<span style="font-style: italic;"><br>
+</span>
+<h2><span style="text-decoration: underline;">Solution:</span><span
+ style="font-style: italic; text-decoration: underline;"> (New
+Post-Unification Cursor Positioning / Scrolling Logic)</span><br>
+</h2>
+<br>
+<span style="font-family: Arial; font-weight: bold;">1. After
+Unification,
+if
+the cursor has already been positioned, (i.e. errors found) simply exit
+cursor positioning routine -- do nothing.<br>
+<br>
+</span><span style="font-family: Arial; font-weight: bold;"> 2. If a
+Metamath proof (RPN) was generated, position the cursor to the
+'qed' step and explicitly scroll the viewport to the cursor position.
+Then exit cursor positioning routine.<br>
+<br>
+3. </span><span style="font-family: Arial; font-weight: bold;">Set a
+switch ("<span style="font-style: italic;">dontScroll</span>")
+in the mmj2 Cursor object so that (just) the next time the proof text
+is displayed,
+the mmj2 cursor/scoll rendering logic does NOT explicitly trigger
+scrolling of the View
+Port (but the Jave environment may scroll the view in order to keep the
+cursor visible).<br>
+<br>
+4. </span><span style="font-family: Arial; font-weight: bold;">Position
+the
+cursor
+according to the
+"IncompleteStepCursor" Edit Menu option (set via the
+"<big><code>ProofAsstIncompleteStepCursor</code></big>" RunParm.),
+"AsIs", "Last", or "First":<br>
+</span>
+<ul>
+  <li><span style="font-family: Arial; font-weight: bold;"><big>"Last"
+or "First" =</big> position the cursor
+to the last, or first, respectively, Incomplete proof step, if one
+exists; otherwise, set it to the 'qed' step. The "Ref" field is the
+standard location within a proof step.</span></li>
+  <li><span style="font-family: Arial; font-weight: bold;"><big><big><small>"AsIs"
+=</small> </big></big>Restore the saved input Cursor object to the
+current Cursor object (i.e. cursor position will be unchanged).</span></li>
+</ul>
+NOTE: <big><code style="font-weight: bold;">AsIs</code></big> is the
+new default setting for the "<big><code style="font-weight: bold;">ProofAsstIncompleteStepCursor</code></big>"
+RunParm -- the old default setting was "<big><code
+ style="font-weight: bold;">Last</code></big>".<br>
+<br>
+</body>
+</html>

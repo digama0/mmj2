@@ -1,0 +1,128 @@
+========================
+mmj2 Directory Structure 
+========================
+
+The following directories are empty when
+mmj2.zip is loaded, and are later created by
+running javac (compiler) and javadoc
+(creates html documentation):
+c:\mmj2\classes
+c:\mmj2\doc\mmj
+c:\mmj2\doc\resources
+c:\mmj2\doc\src-html
+
+
+=============================================================
+Directories: (if dest, "c:\mmj2" is changed then
+              \windows and 
+              \runparm 
+              \mmj2jar files will/may need to be updated.)
+=============================================================
+c:\mmj2 
+    \classes  (output of compilation)
+        \mmj
+            \gmff               (package mmj.gmff)
+            \lang               (package mmj.lang)
+            \mmio               (package mmj.mmio)
+            \pa                 (package mmj.pa)
+            \svc                (package mmj.svc)
+            \tl                 (package mmj.tl)
+            \tmff               (package mmj.tmff)
+            \util               (package mmj.util)
+            \verify             (package mmj.verify)
+
+    \compile                    (compile procs -- .bat's etc.)
+        \linux                  (contains contributed script) 
+        \mmj
+            \gmff               (hand coded class list file)
+            \lang               (hand coded class list file)
+            \mmio               (hand coded class list file)
+            \pa                 (hand coded class list file)
+            \svc                (hand coded class list file)
+            \tl                 (hand coded class list file)
+            \tmff               (hand coded class list file)
+            \util               (hand coded class list file)
+            \verify             (hand coded class list file)
+        \windows                (.bat + javac options)
+ 
+    \data
+        \gmfftest               (TEST I/O data suite for GMFF batch tests)
+            \althtml            (TEST exported Unicode html + 2 .gif files)
+            \html               (TEST exported .gif html + .gif files)
+            \models             (TEST model files for GMFF)
+                \althtml        (TEST model files for althtml exports)
+                \html           (TEST model files for html exports)
+            \myproofs           (TEST suggested dir for user proof files)
+        \mm                     (.mm files)
+        \mmp                    (Proof Assistant .mmp files)
+            \proofs             (ProofAsstGUI .mmp files)
+            \tests              (Unit/Volume Test .mmp files)
+        \mmt                    (MMT Folder files)
+            \testin             (input MMT Folder files)
+                \T101           (unit test 10.1 .mmt files)
+                \T102           (unit test 10.2 .mmt files)
+                \T103           (unit test 10.3 .mmt files)
+                \T191           (unit test 10.9 .mmt files)
+            \testout            (output MMT Folder files)
+                \T191           (unit test 10.9 .mmt files)
+                \T192           (unit test 10.9 .mmt files)
+            \temp               (temp/work MMT Folder files)
+        \result                 (BatchMMJ2 output)
+        \runparm              
+            \windows            (BatchMMJ2 runparm files)
+
+    \doc                        (hand-written + javadoc output)
+        \GMFFDoc                (doc for GMFF feature)
+        \mmj                    (only output of javadoc goes here)
+            \gmff               (only output of javadoc goes here)
+            \lang               (only output of javadoc goes here)
+            \mmio               (only output of javadoc goes here)
+            \pa                 (only output of javadoc goes here)
+            \svc                (only output of javadoc goes here)
+            \tl                 (only output of javadoc goes here)
+            \tmff               (only output of javadoc goes here)
+            \util               (only output of javadoc goes here)
+            \verify             (only output of javadoc goes here)
+        \mmj2Service            (mmj2 Service feature sample code)
+            \myproofs           (sample mmj2 Service Proof Assistant Folder)
+        \PAUserGuide            (html doc for Proof Assistant)
+        \resources              (created by javadoc)
+        \src-html               (created by javadoc)
+            \mmj                (created by javadoc)
+                \gmff           (created by javadoc)
+                \lang           (created by javadoc)
+                \mmio           (created by javadoc)
+                \pa             (created by javadoc)
+                \svc            (created by javadoc)
+                \tl             (created by javadoc) 
+                \tmff           (created by javadoc)
+                \util           (created by javadoc)
+                \verify         (created by javadoc)
+        \windows                (.bat and mmj2 data etc. to run javadoc)
+
+    \junit                      (junit test code stuff)
+
+    \mmj2jar                    (mmj2jar.jar + .bat & RunParm files)
+        \gmff                   (gmff data files)
+            \althtml            (exported Unicode html + 2 .gif files)
+            \html               (exported .gif html + .gif files)
+            \models             (model files for GMFF)
+                \althtml        (model files for althtml exports)
+                \html           (model files for html exports)
+        \myproofs               (suggested dir for user proof files)
+        \patutorial             (Proof Asst Tutorial .mmp files)
+
+    \src                        (java source code)
+        \mmj
+            \gmff               (package mmj.gmff)
+            \lang               (package mmj.lang)
+            \mmio               (package mmj.mmio)
+            \pa                 (package mmj.pa)
+            \svc                (package mmj.svc)
+            \tl                 (package mmj.tl)
+            \tmff               (package mmj.tmff)
+            \util               (package mmj.util)
+            \verify             (package mmj.verify)
+ 
+    \test                       (test procs -- .bat's etc.)
+        \windows                (BatchMMJ2 test procs -- .bat's etc.)

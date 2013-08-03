@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>.mm Metamath File</title>
+</head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
+ alink="#000088" link="#0000ff" vlink="#ff0000">
+<pre style="font-weight: bold;"><big><big><big><big><small><span
+ style="text-decoration: underline;">.mm Metamath File</span></small><br></big></big></big></big><br>(back to <a
+ href="Start.html">Start.html</a>)<br></pre>
+<big>mmj2 does not update Metamath .mm database files. As a result,
+after
+completing a proof on the Proof Assistant GUI screen you either need to
+manually copy the generated RPN-format proof of your theorem into the
+.mm file (using a text editor), or use the Metamath eimm.exe program to
+"import" your Proof Worksheet (.mmp) file. For new theorems you cannot
+use eimm.exe, and to see the effect of any additions or updates to the
+input Metamath .mm database file you need to exit the mmj2 Proof
+Assistant and start it again. <br>
+<br>
+Here is an example of a Metamath .mm database file: <a
+ href="../../data/mm/Example.mm">Example.mm</a><br>
+<br>
+</big>
+<table
+ style="margin-left: auto; margin-right: auto; text-align: left; font-family: monospace; width: 524px; height: 516px;"
+ border="5" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;">$( Example.mm cloned from
+Metamath's set.mm $)<br>
+      <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $c
+(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $c
+)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$. <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $c
+-&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$. <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $c
+wff&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$. <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $c
+|-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$. <br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $v
+ph&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$. <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $v
+ps&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$. <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $v
+ch&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$. <br>
+      <br>
+&nbsp; wph&nbsp;&nbsp;&nbsp;&nbsp; $f wff
+ph&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.<br>
+&nbsp; wps&nbsp;&nbsp;&nbsp;&nbsp; $f wff
+ps&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.<br>
+&nbsp; wch&nbsp;&nbsp;&nbsp;&nbsp; $f wff
+ch&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.<br>
+      <br>
+&nbsp; wi&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $a wff ( ph -&gt; ps
+)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.<br>
+      <br>
+&nbsp; ax-1&nbsp;&nbsp;&nbsp; $a |-&nbsp; ( ph -&gt; ( ps -&gt; ph )
+)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.<br>
+      <br>
+&nbsp; ${<br>
+&nbsp;&nbsp;&nbsp; min&nbsp;&nbsp; $e |-&nbsp;
+ph&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.<br>
+&nbsp;&nbsp;&nbsp; maj&nbsp;&nbsp; $e |-&nbsp; ( ph -&gt; ps
+)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.<br>
+&nbsp;&nbsp;&nbsp; ax-mp $a |-&nbsp;
+ps&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.<br>
+&nbsp; $}<br>
+      <br>
+&nbsp; ${<br>
+&nbsp;&nbsp;&nbsp; a1i.1 $e |-&nbsp;
+ph&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.<br>
+&nbsp;&nbsp;&nbsp; a1i&nbsp;&nbsp; $p |-&nbsp; ( ps -&gt; ph )<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $= wph wps wph
+wi a1i.1 wph wps ax-1 ax-mp $.<br>
+&nbsp; $}<br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<big><br>
+<br>
+Note: mmj2 uses slightly different names than Metamath:<br>
+<br>
+</big>
+<table style="width: 75%; text-align: left; font-family: monospace;"
+ border="5" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; width: 50%;"><big
+ style="text-decoration: underline;"><span style="font-weight: bold;">Metamath</span></big><br>
+      </td>
+      <td style="vertical-align: top;"><big
+ style="text-decoration: underline;"><span style="font-weight: bold;">mmj2</span></big><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">Constant ($c)<br>
+      </td>
+      <td style="vertical-align: top;">Constant ("Cnst" or "Type Code")<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">Variable ($v)<br>
+      </td>
+      <td style="vertical-align: top;">Variable ("Var")<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 50%;">Floating Hypothesis
+($f)<br>
+      </td>
+      <td style="vertical-align: top;">Variable Hypothesis ("VarHyp")<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 50%;">Essential Hypothesis
+($e)<br>
+      </td>
+      <td style="vertical-align: top;">Logical Hypothesis ("LogHyp")<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 50%;">Axiomatic Assertion
+($a)<br>
+      </td>
+      <td style="vertical-align: top;">Syntax Axiom ("Axiom")<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 50%;">&nbsp;"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+"<br>
+      </td>
+      <td style="vertical-align: top;">Logical Axiom (also "Axiom")<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 50%;">Provable Assertion
+($p)<br>
+      </td>
+      <td style="vertical-align: top;">Theorem ("Theorem")<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">&nbsp;"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+"<br>
+      </td>
+      <td style="vertical-align: top;">Syntax Proof (rare...)<br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<big><br>
+(<span style="font-style: italic;">More information -- technically
+oriented -- about mmj2's nomenclature can be found at</span> "<a
+ href="../MetamathERNotes.html">MetamathERNotes.html</a>".)<br>
+<br>
+</big>
+<pre style="font-weight: bold;">(back to <a href="Start.html">Start.html</a>)</pre>
+<br>
+</body>
+</html>

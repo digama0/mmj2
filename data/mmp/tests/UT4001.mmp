@@ -1,0 +1,1425 @@
+$( <MM> <PROOF_ASST> THEOREM=UT4001  LOC_AFTER=?
+
+$d x y z A n u
+$d n B
+$d n C
+$d x B
+$d x C
+$d n D
+$d x v
+$d A v
+$d n v
+$d u v
+$d v z
+
+h1::UT4001.1       |- A e. V
+2::ax-17           |- ( y e. u -> A. x y e. u )
+3::hbab1           |- ( y e.
+                        { x |
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) } ->
+                        A. x
+                           y e.
+                           { x |
+                             ( x (_ A /\
+                               ( E. n e. om ( A \ x ) ~~ n \/
+                                 x = (/) ) ) } )
+4:2,3:dfss2f       |- ( u (_
+                        { x |
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) } <->
+                        A. x
+                           ( x e. u ->
+                             x e.
+                             { x |
+                               ( x (_ A /\
+                                 ( E. n e. om ( A \ x ) ~~ n \/
+                                   x = (/) ) ) } ) )
+5::abid            |- ( x e.
+                        { x |
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) } <->
+                        ( x (_ A /\
+                          ( E. n e. om ( A \ x ) ~~ n \/
+                            x = (/) ) ) )
+6:5:imbi2i         |- ( ( x e. u ->
+                          x e.
+                          { x |
+                            ( x (_ A /\
+                              ( E. n e. om ( A \ x ) ~~ n \/
+                                x = (/) ) ) } ) <->
+                        ( x e. u ->
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) ) )
+7:6:albii          |- ( A. x
+                           ( x e. u ->
+                             x e.
+                             { x |
+                               ( x (_ A /\
+                                 ( E. n e. om ( A \ x ) ~~ n \/
+                                   x = (/) ) ) } ) <->
+                        A. x
+                           ( x e. u ->
+                             ( x (_ A /\
+                               ( E. n e. om ( A \ x ) ~~ n \/
+                                 x = (/) ) ) ) )
+8::jcab            |- ( ( x e. u ->
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) ) <->
+                        ( ( x e. u -> x (_ A ) /\
+                          ( x e. u ->
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) ) )
+9::pm3.26          |- ( ( ( x e. u -> x (_ A ) /\
+                          ( x e. u ->
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) ) ->
+                        ( x e. u -> x (_ A ) )
+10:8,9:sylbi       |- ( ( x e. u ->
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) ) ->
+                        ( x e. u -> x (_ A ) )
+11:10:19.20i       |- ( A. x
+                           ( x e. u ->
+                             ( x (_ A /\
+                               ( E. n e. om ( A \ x ) ~~ n \/
+                                 x = (/) ) ) ) ->
+                        A. x ( x e. u -> x (_ A ) )
+12::unissb         |- ( U. u (_ A <-> A. x e. u x (_ A )
+13::df-ral         |- ( A. x e. u x (_ A <->
+                        A. x ( x e. u -> x (_ A ) )
+14:12,13:bitr2     |- ( A. x ( x e. u -> x (_ A ) <->
+                        U. u (_ A )
+15:11,14:sylib     |- ( A. x
+                           ( x e. u ->
+                             ( x (_ A /\
+                               ( E. n e. om ( A \ x ) ~~ n \/
+                                 x = (/) ) ) ) ->
+                        U. u (_ A )
+16:?:              |- ( ( E. n e. om ( A \ x ) ~~ n \/
+                          x = (/) ) ->
+                        E. n e. om ( A \ x ) ~~ n )
+17:16:a1i          |- ( x (_ A ->
+                        ( ( E. n e. om ( A \ x ) ~~ n \/
+                            x = (/) ) ->
+                          E. n e. om ( A \ x ) ~~ n ) )
+18:17:imp          |- ( ( x (_ A /\
+                          ( E. n e. om ( A \ x ) ~~ n \/
+                            x = (/) ) ) ->
+                        E. n e. om ( A \ x ) ~~ n )
+19:18:a1i          |- ( x e. u ->
+                        ( ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) ->
+                          E. n e. om ( A \ x ) ~~ n ) )
+20:19:a2i          |- ( ( x e. u ->
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) ) ->
+                        ( x e. u ->
+                          E. n e. om ( A \ x ) ~~ n ) )
+21::visset         |- y e. V
+22::eliin          |- ( y e. V ->
+                        ( y e. |^|_ x e. u ( A \ x ) <->
+                          A. x e. u y e. ( A \ x ) ) )
+23:21,22:ax-mp     |- ( y e. |^|_ x e. u ( A \ x ) <->
+                        A. x e. u y e. ( A \ x ) )
+24:23:a1i          |- ( x e. u ->
+                        ( y e. |^|_ x e. u ( A \ x ) <->
+                          A. x e. u y e. ( A \ x ) ) )
+25::pm2.27         |- ( x e. u ->
+                        ( ( x e. u -> y e. ( A \ x ) ) ->
+                          y e. ( A \ x ) ) )
+26:25:a4sd         |- ( x e. u ->
+                        ( A. x
+                             ( x e. u -> y e. ( A \ x ) ) ->
+                          y e. ( A \ x ) ) )
+27::df-ral         |- ( A. x e. u y e. ( A \ x ) <->
+                        A. x
+                           ( x e. u -> y e. ( A \ x ) ) )
+28:26,27:syl5ib    |- ( x e. u ->
+                        ( A. x e. u y e. ( A \ x ) ->
+                          y e. ( A \ x ) ) )
+29:24,28:sylbid    |- ( x e. u ->
+                        ( y e. |^|_ x e. u ( A \ x ) ->
+                          y e. ( A \ x ) ) )
+30:29:19.21aiv     |- ( x e. u ->
+                        A. y
+                           ( y e. |^|_ x e. u ( A \ x ) ->
+                             y e. ( A \ x ) ) )
+31::dfss2          |- ( |^|_ x e. u ( A \ x ) (_ ( A \ x ) <->
+                        A. y
+                           ( y e. |^|_ x e. u ( A \ x ) ->
+                             y e. ( A \ x ) ) )
+32:31:imbi2i       |- ( ( x e. u ->
+                          |^|_ x e. u ( A \ x ) (_ ( A \ x ) ) <->
+                        ( x e. u ->
+                          A. y
+                             ( y e. |^|_ x e. u ( A \ x ) ->
+                               y e. ( A \ x ) ) ) )
+33:30,32:mpbir     |- ( x e. u ->
+                        |^|_ x e. u ( A \ x ) (_ ( A \ x ) )
+34:33:a1i          |- ( ( x e. u ->
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) ) ->
+                        ( x e. u ->
+                          |^|_ x e. u ( A \ x ) (_ ( A \ x ) ) )
+35:20,34:jcad      |- ( ( x e. u ->
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) ) ->
+                        ( x e. u ->
+                          ( E. n e. om ( A \ x ) ~~ n /\
+                            |^|_ x e. u ( A \ x ) (_ ( A \ x ) ) ) )
+36:?:              |- ( ( x e. u ->
+                          ( E. n e. om ( A \ x ) ~~ n /\
+                            |^|_ x e. u ( A \ x ) (_ ( A \ x ) ) ) ->
+                        ( -. u = (/) ->
+                          E. n e.
+                             om
+                             |^|_ x e. u ( A \ x ) ~~ n ) )
+37:35,36:syl       |- ( ( x e. u ->
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) ) ->
+                        ( -. u = (/) ->
+                          E. n e.
+                             om
+                             |^|_ x e. u ( A \ x ) ~~ n ) )
+38::uni0b          |- ( U. u = (/) <-> u (_ { (/) } )
+39::sssn           |- ( u (_ { (/) } <->
+                        ( u = (/) \/ u = { (/) } ) )
+40:38,39:bitr      |- ( U. u = (/) <->
+                        ( u = (/) \/ u = { (/) } ) )
+41:40:biimpr       |- ( ( u = (/) \/ u = { (/) } ) ->
+                        U. u = (/) )
+42:41:orci         |- ( u = (/) -> U. u = (/) )
+43::olc            |- ( ( u = (/) -> U. u = (/) ) ->
+                        ( ( u = (/) ->
+                            E. n e.
+                               om
+                               ( A \ U. u ) ~~ n ) \/
+                          ( u = (/) -> U. u = (/) ) ) )
+44:42,43:ax-mp     |- ( ( u = (/) ->
+                          E. n e.
+                             om
+                             ( A \ U. u ) ~~ n ) \/
+                        ( u = (/) -> U. u = (/) ) )
+45::pm4.78         |- ( ( ( u = (/) ->
+                            E. n e.
+                               om
+                               ( A \ U. u ) ~~ n ) \/
+                          ( u = (/) -> U. u = (/) ) ) <->
+                        ( u = (/) ->
+                          ( E. n e.
+                               om
+                               ( A \ U. u ) ~~ n \/
+                            U. u = (/) ) ) )
+46:44,45:mpbi      |- ( u = (/) ->
+                        ( E. n e.
+                             om
+                             ( A \ U. u ) ~~ n \/
+                          U. u = (/) ) )
+47:46:a1d          |- ( u = (/) ->
+                        ( ( x e. u ->
+                            ( x (_ A /\
+                              ( E. n e. om ( A \ x ) ~~ n \/
+                                x = (/) ) ) ) ->
+                          ( E. n e.
+                               om
+                               ( A \ U. u ) ~~ n \/
+                            U. u = (/) ) ) )
+48::iindif2        |- ( -. u = (/) ->
+                        |^|_ y e. u ( A \ x ) = ( A \ U_ y e. u x ) )
+49:48:breq1d       |- ( -. u = (/) ->
+                        ( |^|_ y e. u ( A \ x ) ~~ n <->
+                          ( A \ U_ y e. u x ) ~~ n ) )
+50:49:rexbidv      |- ( -. u = (/) ->
+                        ( E. n e.
+                             om
+                             |^|_ y e. u ( A \ x ) ~~ n <->
+                          E. n e.
+                             om
+                             ( A \ U_ y e. u x ) ~~ n ) )
+51:50:orbi1d       |- ( -. u = (/) ->
+                        ( ( E. n e.
+                               om
+                               |^|_ y e. u ( A \ x ) ~~ n \/
+                            U. u = (/) ) <->
+                          ( E. n e.
+                               om
+                               ( A \ U_ y e. u x ) ~~ n \/
+                            U. u = (/) ) ) )
+52::iinss          |- ( E. y e. u ( A \ x ) (_ ( A \ x ) ->
+                        |^|_ y e. u ( A \ x ) (_ ( A \ x ) )
+53:?:              |- ( ( -. u = (/) /\
+                          ( x e. u ->
+                            ( x (_ A /\
+                              ( E. n e. om ( A \ x ) ~~ n \/
+                                x = (/) ) ) ) ) ->
+                        ( E. n e. om ( A \ x ) ~~ n /\
+                          |^|_ y e. u ( A \ x ) (_ ( A \ x ) ) )
+54::ssfi           |- ( ( E. n e. om ( A \ x ) ~~ n /\
+                          |^|_ y e. u ( A \ x ) (_ ( A \ x ) ) ->
+                        E. n e.
+                           om
+                           |^|_ y e. u ( A \ x ) ~~ n )
+55::orc            |- ( ( ( E. n e. om ( A \ x ) ~~ n /\
+                            |^|_ y e. u ( A \ x ) (_ ( A \ x ) ) ->
+                          E. n e.
+                             om
+                             |^|_ y e. u ( A \ x ) ~~ n ) ->
+                        ( ( ( E. n e. om ( A \ x ) ~~ n /\
+                              |^|_ y e. u ( A \ x ) (_ ( A \ x ) ) ->
+                            E. n e.
+                               om
+                               |^|_ y e. u ( A \ x ) ~~ n ) \/
+                          ( ( E. n e. om ( A \ x ) ~~ n /\
+                              |^|_ y e. u ( A \ x ) (_ ( A \ x ) ) ->
+                            U. u = (/) ) ) )
+56:54,55:ax-mp     |- ( ( ( E. n e. om ( A \ x ) ~~ n /\
+                            |^|_ y e. u ( A \ x ) (_ ( A \ x ) ) ->
+                          E. n e.
+                             om
+                             |^|_ y e. u ( A \ x ) ~~ n ) \/
+                        ( ( E. n e. om ( A \ x ) ~~ n /\
+                            |^|_ y e. u ( A \ x ) (_ ( A \ x ) ) ->
+                          U. u = (/) ) )
+57::pm4.78         |- ( ( ( ( E. n e. om ( A \ x ) ~~ n /\
+                              |^|_ y e. u ( A \ x ) (_ ( A \ x ) ) ->
+                            E. n e.
+                               om
+                               |^|_ y e. u ( A \ x ) ~~ n ) \/
+                          ( ( E. n e. om ( A \ x ) ~~ n /\
+                              |^|_ y e. u ( A \ x ) (_ ( A \ x ) ) ->
+                            U. u = (/) ) ) <->
+                        ( ( E. n e. om ( A \ x ) ~~ n /\
+                            |^|_ y e. u ( A \ x ) (_ ( A \ x ) ) ->
+                          ( E. n e.
+                               om
+                               |^|_ y e. u ( A \ x ) ~~ n \/
+                            U. u = (/) ) ) )
+58:56,57:mpbi      |- ( ( E. n e. om ( A \ x ) ~~ n /\
+                          |^|_ y e. u ( A \ x ) (_ ( A \ x ) ) ->
+                        ( E. n e.
+                             om
+                             |^|_ y e. u ( A \ x ) ~~ n \/
+                          U. u = (/) ) )
+59:53,58:syl       |- ( ( -. u = (/) /\
+                          ( x e. u ->
+                            ( x (_ A /\
+                              ( E. n e. om ( A \ x ) ~~ n \/
+                                x = (/) ) ) ) ) ->
+                        ( E. n e.
+                             om
+                             |^|_ y e. u ( A \ x ) ~~ n \/
+                          U. u = (/) ) )
+60:59:ex           |- ( -. u = (/) ->
+                        ( ( x e. u ->
+                            ( x (_ A /\
+                              ( E. n e. om ( A \ x ) ~~ n \/
+                                x = (/) ) ) ) ->
+                          ( E. n e.
+                               om
+                               |^|_ y e. u ( A \ x ) ~~ n \/
+                            U. u = (/) ) ) )
+61:60,51:sylibd    |- ( -. u = (/) ->
+                        ( ( x e. u ->
+                            ( x (_ A /\
+                              ( E. n e. om ( A \ x ) ~~ n \/
+                                x = (/) ) ) ) ->
+                          ( E. n e.
+                               om
+                               ( A \ U_ y e. u y ) ~~ n \/
+                            U. u = (/) ) ) )
+62::uniiun         |- U. u = U_ y e. u y
+63:62:difeq2i      |- ( A \ U. u ) = ( A \ U_ y e. u y )
+64:63:breq1i       |- ( ( A \ U. u ) ~~ n <->
+                        ( A \ U_ y e. u y ) ~~ n )
+65:64:rexbii       |- ( E. n e.
+                           om
+                           ( A \ U. u ) ~~ n <->
+                        E. n e.
+                           om
+                           ( A \ U_ y e. u y ) ~~ n )
+66:65:orbi1i       |- ( ( E. n e.
+                             om
+                             ( A \ U. u ) ~~ n \/
+                          U. u = (/) ) <->
+                        ( E. n e.
+                             om
+                             ( A \ U_ y e. u y ) ~~ n \/
+                          U. u = (/) ) )
+67:61,66:syl6ibr   |- ( -. u = (/) ->
+                        ( ( x e. u ->
+                            ( x (_ A /\
+                              ( E. n e. om ( A \ x ) ~~ n \/
+                                x = (/) ) ) ) ->
+                          ( E. n e.
+                               om
+                               ( A \ U. u ) ~~ n \/
+                            U. u = (/) ) ) )
+68:47,67:pm2.61i   |- ( ( x e. u ->
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) ) ->
+                        ( E. n e.
+                             om
+                             ( A \ U. u ) ~~ n \/
+                          U. u = (/) ) )
+69:68:a4s          |- ( A. x
+                           ( x e. u ->
+                             ( x (_ A /\
+                               ( E. n e. om ( A \ x ) ~~ n \/
+                                 x = (/) ) ) ) ->
+                        ( E. n e.
+                             om
+                             ( A \ U. u ) ~~ n \/
+                          U. u = (/) ) )
+70:15,69:jca       |- ( A. x
+                           ( x e. u ->
+                             ( x (_ A /\
+                               ( E. n e. om ( A \ x ) ~~ n \/
+                                 x = (/) ) ) ) ->
+                        ( U. u (_ A /\
+                          ( E. n e.
+                               om
+                               ( A \ U. u ) ~~ n \/
+                            U. u = (/) ) ) )
+71:7,70:sylbi      |- ( A. x
+                           ( x e. u ->
+                             x e.
+                             { x |
+                               ( x (_ A /\
+                                 ( E. n e. om ( A \ x ) ~~ n \/
+                                   x = (/) ) ) } ) ->
+                        ( U. u (_ A /\
+                          ( E. n e.
+                               om
+                               ( A \ U. u ) ~~ n \/
+                            U. u = (/) ) ) )
+72::sseq1          |- ( x = U. u ->
+                        ( x (_ A <-> U. u (_ A ) )
+73::difeq2         |- ( x = U. u ->
+                        ( A \ x ) = ( A \ U. u ) )
+74:73:breq1d       |- ( x = U. u ->
+                        ( ( A \ x ) ~~ n <->
+                          ( A \ U. u ) ~~ n ) )
+75:74:rexbidv      |- ( x = U. u ->
+                        ( E. n e. om ( A \ x ) ~~ n <->
+                          E. n e.
+                             om
+                             ( A \ U. u ) ~~ n ) )
+76::eqeq1          |- ( x = U. u ->
+                        ( x = (/) <-> U. u = (/) ) )
+77:75,76:orbi12d   |- ( x = U. u ->
+                        ( ( E. n e. om ( A \ x ) ~~ n \/
+                            x = (/) ) <->
+                          ( E. n e.
+                               om
+                               ( A \ U. u ) ~~ n \/
+                            U. u = (/) ) ) )
+78:72,77:anbi12d   |- ( x = U. u ->
+                        ( ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) <->
+                          ( U. u (_ A /\
+                            ( E. n e.
+                                 om
+                                 ( A \ U. u ) ~~ n \/
+                              U. u = (/) ) ) ) )
+79:78:bicomd       |- ( x = U. u ->
+                        ( ( U. u (_ A /\
+                            ( E. n e.
+                                 om
+                                 ( A \ U. u ) ~~ n \/
+                              U. u = (/) ) ) <->
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) ) )
+80:79:biimpd       |- ( x = U. u ->
+                        ( ( U. u (_ A /\
+                            ( E. n e.
+                                 om
+                                 ( A \ U. u ) ~~ n \/
+                              U. u = (/) ) ) ->
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) ) )
+81::anc2l          |- ( ( x = U. u ->
+                          ( ( U. u (_ A /\
+                              ( E. n e.
+                                   om
+                                   ( A \ U. u ) ~~ n \/
+                                U. u = (/) ) ) ->
+                            ( x (_ A /\
+                              ( E. n e. om ( A \ x ) ~~ n \/
+                                x = (/) ) ) ) ) ->
+                        ( x = U. u ->
+                          ( ( U. u (_ A /\
+                              ( E. n e.
+                                   om
+                                   ( A \ U. u ) ~~ n \/
+                                U. u = (/) ) ) ->
+                            ( x = U. u /\
+                              ( x (_ A /\
+                                ( E. n e. om ( A \ x ) ~~ n \/
+                                  x = (/) ) ) ) ) ) )
+82:80,81:ax-mp     |- ( x = U. u ->
+                        ( ( U. u (_ A /\
+                            ( E. n e.
+                                 om
+                                 ( A \ U. u ) ~~ n \/
+                              U. u = (/) ) ) ->
+                          ( x = U. u /\
+                            ( x (_ A /\
+                              ( E. n e. om ( A \ x ) ~~ n \/
+                                x = (/) ) ) ) ) )
+83:82:a4w          |- ( ( U. u (_ A /\
+                          ( E. n e.
+                               om
+                               ( A \ U. u ) ~~ n \/
+                            U. u = (/) ) ) ->
+                        E. x
+                           ( x = U. u /\
+                             ( x (_ A /\
+                               ( E. n e. om ( A \ x ) ~~ n \/
+                                 x = (/) ) ) ) )
+84:71,83:syl       |- ( A. x
+                           ( x e. u ->
+                             x e.
+                             { x |
+                               ( x (_ A /\
+                                 ( E. n e. om ( A \ x ) ~~ n \/
+                                   x = (/) ) ) } ) ->
+                        E. x
+                           ( x = U. u /\
+                             ( x (_ A /\
+                               ( E. n e. om ( A \ x ) ~~ n \/
+                                 x = (/) ) ) ) )
+85:4,84:sylbi      |- ( u (_
+                        { x |
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) } ->
+                        E. x
+                           ( x = U. u /\
+                             ( x (_ A /\
+                               ( E. n e. om ( A \ x ) ~~ n \/
+                                 x = (/) ) ) ) )
+86::clelab         |- ( U. u e.
+                        { x |
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) } <->
+                        E. x
+                           ( x = U. u /\
+                             ( x (_ A /\
+                               ( E. n e. om ( A \ x ) ~~ n \/
+                                 x = (/) ) ) ) )
+87:85,86:sylibr    |- ( u (_
+                        { x |
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) } ->
+                        U. u e.
+                        { x |
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) } )
+88:87:ax-gen       |- A. u
+                         ( u (_
+                           { x |
+                             ( x (_ A /\
+                               ( E. n e. om ( A \ x ) ~~ n \/
+                                 x = (/) ) ) } ->
+                           U. u e.
+                           { x |
+                             ( x (_ A /\
+                               ( E. n e. om ( A \ x ) ~~ n \/
+                                 x = (/) ) ) } )
+89::ssinss1        |- ( u (_ A -> ( u i^i z ) (_ A )
+90:89:adantr       |- ( ( u (_ A /\
+                          ( E. n e. om ( A \ u ) ~~ n \/
+                            u = (/) ) ) ->
+                        ( u i^i z ) (_ A )
+91:90:adantr       |- ( ( ( u (_ A /\
+                            ( E. n e. om ( A \ u ) ~~ n \/
+                              u = (/) ) ) /\
+                          ( z (_ A /\
+                            ( E. n e. om ( A \ z ) ~~ n \/
+                              z = (/) ) ) ) ->
+                        ( u i^i z ) (_ A )
+92::anddi          |- ( ( ( E. n e. om ( A \ u ) ~~ n \/
+                            u = (/) ) /\
+                          ( E. n e. om ( A \ z ) ~~ n \/
+                            z = (/) ) ) <->
+                        ( ( ( E. n e. om ( A \ u ) ~~ n /\
+                              E. n e. om ( A \ z ) ~~ n ) \/
+                            ( E. n e. om ( A \ u ) ~~ n /\
+                              z = (/) ) ) \/
+                          ( ( u = (/) /\
+                              E. n e. om ( A \ z ) ~~ n ) \/
+                            ( u = (/) /\ z = (/) ) ) ) )
+93::ax-17          |- ( ( E. n e. om ( A \ u ) ~~ n /\
+                          E. n e. om ( A \ z ) ~~ n ) ->
+                        A. x
+                           ( E. n e. om ( A \ u ) ~~ n /\
+                             E. n e. om ( A \ z ) ~~ n ) )
+94::breq1          |- ( x = ( A \ u ) ->
+                        ( x ~~ n <-> ( A \ u ) ~~ n ) )
+95:94:rexbidv      |- ( x = ( A \ u ) ->
+                        ( E. n e. om x ~~ n <->
+                          E. n e. om ( A \ u ) ~~ n ) )
+96:95:biimprd      |- ( x = ( A \ u ) ->
+                        ( E. n e. om ( A \ u ) ~~ n ->
+                          E. n e. om x ~~ n ) )
+97:96:com12        |- ( E. n e. om ( A \ u ) ~~ n ->
+                        ( x = ( A \ u ) -> E. n e. om x ~~ n ) )
+98::breq1          |- ( x = ( A \ z ) ->
+                        ( x ~~ n <-> ( A \ z ) ~~ n ) )
+99:98:rexbidv      |- ( x = ( A \ z ) ->
+                        ( E. n e. om x ~~ n <->
+                          E. n e. om ( A \ z ) ~~ n ) )
+100:99:biimprd     |- ( x = ( A \ z ) ->
+                        ( E. n e. om ( A \ z ) ~~ n ->
+                          E. n e. om x ~~ n ) )
+101:100:com12      |- ( E. n e. om ( A \ z ) ~~ n ->
+                        ( x = ( A \ z ) -> E. n e. om x ~~ n ) )
+102:97,101:anim12i |- ( ( E. n e. om ( A \ u ) ~~ n /\
+                          E. n e. om ( A \ z ) ~~ n ) ->
+                        ( ( x = ( A \ u ) -> E. n e. om x ~~ n ) /\
+                          ( x = ( A \ z ) -> E. n e. om x ~~ n ) ) )
+103::visset        |- x e. V
+104:103:elpr       |- ( x e. { ( A \ u ) , ( A \ z ) } <->
+                        ( x = ( A \ u ) \/ x = ( A \ z ) ) )
+105:104:imbi1i     |- ( ( x e. { ( A \ u ) , ( A \ z ) } ->
+                          E. n e. om x ~~ n ) <->
+                        ( ( x = ( A \ u ) \/ x = ( A \ z ) ) ->
+                          E. n e. om x ~~ n ) )
+106::jaob          |- ( ( ( x = ( A \ u ) \/ x = ( A \ z ) ) ->
+                          E. n e. om x ~~ n ) <->
+                        ( ( x = ( A \ u ) -> E. n e. om x ~~ n ) /\
+                          ( x = ( A \ z ) -> E. n e. om x ~~ n ) ) )
+107:105,106:bitr   |- ( ( x e. { ( A \ u ) , ( A \ z ) } ->
+                          E. n e. om x ~~ n ) <->
+                        ( ( x = ( A \ u ) -> E. n e. om x ~~ n ) /\
+                          ( x = ( A \ z ) -> E. n e. om x ~~ n ) ) )
+108:102,107:sylibr |- ( ( E. n e. om ( A \ u ) ~~ n /\
+                          E. n e. om ( A \ z ) ~~ n ) ->
+                        ( x e. { ( A \ u ) , ( A \ z ) } ->
+                          E. n e. om x ~~ n ) )
+109:93,108:19.21ai |- ( ( E. n e. om ( A \ u ) ~~ n /\
+                          E. n e. om ( A \ z ) ~~ n ) ->
+                        A. x
+                           ( x e. { ( A \ u ) , ( A \ z ) } ->
+                             E. n e. om x ~~ n ) )
+110::df-ral        |- ( A. x e. { ( A \ u ) , ( A \ z ) } E. n e. om x ~~ n
+                            <->
+                        A. x
+                           ( x e. { ( A \ u ) , ( A \ z ) } ->
+                             E. n e. om x ~~ n ) )
+111:109,110:sylibr |- ( ( E. n e. om ( A \ u ) ~~ n /\
+                          E. n e. om ( A \ z ) ~~ n ) ->
+                        A. x e. { ( A \ u ) , ( A \ z ) } E. n e. om x ~~ n )
+112::prfi          |- E. n e.
+                         om
+                         { ( A \ u ) , ( A \ z ) } ~~ n
+113::unifi         |- ( ( E. n e.
+                             om
+                             { ( A \ u ) , ( A \ z ) } ~~ n /\
+                          A. x e. { ( A \ u ) , ( A \ z ) } E. n e. om x ~~ n
+                              ) ->
+                        E. n e.
+                           om
+                           U. { ( A \ u ) , ( A \ z ) }
+                           ~~
+                           n )
+114:112,113:mpan   |- ( A. x e. { ( A \ u ) , ( A \ z ) } E. n e. om x ~~ n ->
+                        E. n e.
+                           om
+                           U. { ( A \ u ) , ( A \ z ) }
+                           ~~
+                           n )
+115:111,114:syl    |- ( ( E. n e. om ( A \ u ) ~~ n /\
+                          E. n e. om ( A \ z ) ~~ n ) ->
+                        E. n e.
+                           om
+                           U. { ( A \ u ) , ( A \ z ) }
+                           ~~
+                           n )
+116::difexg        |- ( A e. V -> ( A \ u ) e. V )
+117:1,116:ax-mp    |- ( A \ u ) e. V
+118::difexg        |- ( A e. V -> ( A \ z ) e. V )
+119:1,118:ax-mp    |- ( A \ z ) e. V
+120:117,119:unipr  |- U. { ( A \ u ) , ( A \ z ) } =
+                      ( ( A \ u ) u. ( A \ z ) )
+121::difindi       |- ( A \ ( u i^i z ) ) = ( ( A \ u ) u. ( A \ z ) )
+122:120,121:eqtr4  |- U. { ( A \ u ) , ( A \ z ) } =
+                      ( A \ ( u i^i z ) )
+123:122:breq1i     |- ( U. { ( A \ u ) , ( A \ z ) }
+                        ~~
+                        n <->
+                        ( A \ ( u i^i z ) ) ~~ n )
+124:123:rexbii     |- ( E. n e.
+                           om
+                           U. { ( A \ u ) , ( A \ z ) }
+                           ~~
+                           n <->
+                        E. n e.
+                           om
+                           ( A \ ( u i^i z ) ) ~~ n )
+125:115,124:sylib  |- ( ( E. n e. om ( A \ u ) ~~ n /\
+                          E. n e. om ( A \ z ) ~~ n ) ->
+                        E. n e.
+                           om
+                           ( A \ ( u i^i z ) ) ~~ n )
+126::orc           |- ( ( ( E. n e. om ( A \ u ) ~~ n /\
+                            E. n e. om ( A \ z ) ~~ n ) ->
+                          E. n e.
+                             om
+                             ( A \ ( u i^i z ) ) ~~ n ) ->
+                        ( ( ( E. n e. om ( A \ u ) ~~ n /\
+                              E. n e. om ( A \ z ) ~~ n ) ->
+                            E. n e.
+                               om
+                               ( A \ ( u i^i z ) ) ~~ n ) \/
+                          ( ( E. n e. om ( A \ u ) ~~ n /\
+                              E. n e. om ( A \ z ) ~~ n ) ->
+                            ( u i^i z ) = (/) ) ) )
+127:125,126:ax-mp  |- ( ( ( E. n e. om ( A \ u ) ~~ n /\
+                            E. n e. om ( A \ z ) ~~ n ) ->
+                          E. n e.
+                             om
+                             ( A \ ( u i^i z ) ) ~~ n ) \/
+                        ( ( E. n e. om ( A \ u ) ~~ n /\
+                            E. n e. om ( A \ z ) ~~ n ) ->
+                          ( u i^i z ) = (/) ) )
+128::pm4.78        |- ( ( ( ( E. n e. om ( A \ u ) ~~ n /\
+                              E. n e. om ( A \ z ) ~~ n ) ->
+                            E. n e.
+                               om
+                               ( A \ ( u i^i z ) ) ~~ n ) \/
+                          ( ( E. n e. om ( A \ u ) ~~ n /\
+                              E. n e. om ( A \ z ) ~~ n ) ->
+                            ( u i^i z ) = (/) ) ) <->
+                        ( ( E. n e. om ( A \ u ) ~~ n /\
+                            E. n e. om ( A \ z ) ~~ n ) ->
+                          ( E. n e.
+                               om
+                               ( A \ ( u i^i z ) ) ~~ n \/
+                            ( u i^i z ) = (/) ) ) )
+129:127,128:mpbi   |- ( ( E. n e. om ( A \ u ) ~~ n /\
+                          E. n e. om ( A \ z ) ~~ n ) ->
+                        ( E. n e.
+                             om
+                             ( A \ ( u i^i z ) ) ~~ n \/
+                          ( u i^i z ) = (/) ) )
+130::ineq2         |- ( z = (/) -> ( u i^i z ) = ( u i^i (/) ) )
+131::in0           |- ( u i^i (/) ) = (/)
+132:130,131:syl6eq |- ( z = (/) -> ( u i^i z ) = (/) )
+133::olc           |- ( ( z = (/) -> ( u i^i z ) = (/) ) ->
+                        ( ( z = (/) ->
+                            E. n e.
+                               om
+                               ( A \ ( u i^i z ) ) ~~ n ) \/
+                          ( z = (/) -> ( u i^i z ) = (/) ) ) )
+134:132,133:ax-mp  |- ( ( z = (/) ->
+                          E. n e.
+                             om
+                             ( A \ ( u i^i z ) ) ~~ n ) \/
+                        ( z = (/) -> ( u i^i z ) = (/) ) )
+135::pm4.78        |- ( ( ( z = (/) ->
+                            E. n e.
+                               om
+                               ( A \ ( u i^i z ) ) ~~ n ) \/
+                          ( z = (/) -> ( u i^i z ) = (/) ) ) <->
+                        ( z = (/) ->
+                          ( E. n e.
+                               om
+                               ( A \ ( u i^i z ) ) ~~ n \/
+                            ( u i^i z ) = (/) ) ) )
+136:134,135:mpbi   |- ( z = (/) ->
+                        ( E. n e.
+                             om
+                             ( A \ ( u i^i z ) ) ~~ n \/
+                          ( u i^i z ) = (/) ) )
+137:136:adantl     |- ( ( E. n e. om ( A \ u ) ~~ n /\
+                          z = (/) ) ->
+                        ( E. n e.
+                             om
+                             ( A \ ( u i^i z ) ) ~~ n \/
+                          ( u i^i z ) = (/) ) )
+138:129,137:jaoi   |- ( ( ( E. n e. om ( A \ u ) ~~ n /\
+                            E. n e. om ( A \ z ) ~~ n ) \/
+                          ( E. n e. om ( A \ u ) ~~ n /\
+                            z = (/) ) ) ->
+                        ( E. n e.
+                             om
+                             ( A \ ( u i^i z ) ) ~~ n \/
+                          ( u i^i z ) = (/) ) )
+139::ineq1         |- ( u = (/) -> ( u i^i z ) = ( (/) i^i z ) )
+140::incom         |- ( (/) i^i z ) = ( z i^i (/) )
+141::in0           |- ( z i^i (/) ) = (/)
+142:140,141:eqtr   |- ( (/) i^i z ) = (/)
+143:139,142:syl6eq |- ( u = (/) -> ( u i^i z ) = (/) )
+144::olc           |- ( ( u = (/) -> ( u i^i z ) = (/) ) ->
+                        ( ( u = (/) ->
+                            E. n e.
+                               om
+                               ( A \ ( u i^i z ) ) ~~ n ) \/
+                          ( u = (/) -> ( u i^i z ) = (/) ) ) )
+145:143,144:ax-mp  |- ( ( u = (/) ->
+                          E. n e.
+                             om
+                             ( A \ ( u i^i z ) ) ~~ n ) \/
+                        ( u = (/) -> ( u i^i z ) = (/) ) )
+146::pm4.78        |- ( ( ( u = (/) ->
+                            E. n e.
+                               om
+                               ( A \ ( u i^i z ) ) ~~ n ) \/
+                          ( u = (/) -> ( u i^i z ) = (/) ) ) <->
+                        ( u = (/) ->
+                          ( E. n e.
+                               om
+                               ( A \ ( u i^i z ) ) ~~ n \/
+                            ( u i^i z ) = (/) ) ) )
+147:145,146:mpbi   |- ( u = (/) ->
+                        ( E. n e.
+                             om
+                             ( A \ ( u i^i z ) ) ~~ n \/
+                          ( u i^i z ) = (/) ) )
+148:147:adantr     |- ( ( u = (/) /\
+                          E. n e. om ( A \ z ) ~~ n ) ->
+                        ( E. n e.
+                             om
+                             ( A \ ( u i^i z ) ) ~~ n \/
+                          ( u i^i z ) = (/) ) )
+149::ineq1         |- ( u = (/) -> ( u i^i z ) = ( (/) i^i z ) )
+150::incom         |- ( (/) i^i z ) = ( z i^i (/) )
+151::in0           |- ( z i^i (/) ) = (/)
+152:150,151:eqtr   |- ( (/) i^i z ) = (/)
+153:149,152:syl6eq |- ( u = (/) -> ( u i^i z ) = (/) )
+154::olc           |- ( ( u = (/) -> ( u i^i z ) = (/) ) ->
+                        ( ( u = (/) ->
+                            E. n e.
+                               om
+                               ( A \ ( u i^i z ) ) ~~ n ) \/
+                          ( u = (/) -> ( u i^i z ) = (/) ) ) )
+155:153,154:ax-mp  |- ( ( u = (/) ->
+                          E. n e.
+                             om
+                             ( A \ ( u i^i z ) ) ~~ n ) \/
+                        ( u = (/) -> ( u i^i z ) = (/) ) )
+156::pm4.78        |- ( ( ( u = (/) ->
+                            E. n e.
+                               om
+                               ( A \ ( u i^i z ) ) ~~ n ) \/
+                          ( u = (/) -> ( u i^i z ) = (/) ) ) <->
+                        ( u = (/) ->
+                          ( E. n e.
+                               om
+                               ( A \ ( u i^i z ) ) ~~ n \/
+                            ( u i^i z ) = (/) ) ) )
+157:155,156:mpbi   |- ( u = (/) ->
+                        ( E. n e.
+                             om
+                             ( A \ ( u i^i z ) ) ~~ n \/
+                          ( u i^i z ) = (/) ) )
+158:157:adantr     |- ( ( u = (/) /\ z = (/) ) ->
+                        ( E. n e.
+                             om
+                             ( A \ ( u i^i z ) ) ~~ n \/
+                          ( u i^i z ) = (/) ) )
+159:148,158:jaoi   |- ( ( ( u = (/) /\
+                            E. n e. om ( A \ z ) ~~ n ) \/
+                          ( u = (/) /\ z = (/) ) ) ->
+                        ( E. n e.
+                             om
+                             ( A \ ( u i^i z ) ) ~~ n \/
+                          ( u i^i z ) = (/) ) )
+160:138,159:jaoi   |- ( ( ( ( E. n e. om ( A \ u ) ~~ n /\
+                              E. n e. om ( A \ z ) ~~ n ) \/
+                            ( E. n e. om ( A \ u ) ~~ n /\
+                              z = (/) ) ) \/
+                          ( ( u = (/) /\
+                              E. n e. om ( A \ z ) ~~ n ) \/
+                            ( u = (/) /\ z = (/) ) ) ) ->
+                        ( E. n e.
+                             om
+                             ( A \ ( u i^i z ) ) ~~ n \/
+                          ( u i^i z ) = (/) ) )
+161:92,160:sylbi   |- ( ( ( E. n e. om ( A \ u ) ~~ n \/
+                            u = (/) ) /\
+                          ( E. n e. om ( A \ z ) ~~ n \/
+                            z = (/) ) ) ->
+                        ( E. n e.
+                             om
+                             ( A \ ( u i^i z ) ) ~~ n \/
+                          ( u i^i z ) = (/) ) )
+162:161:ex         |- ( ( E. n e. om ( A \ u ) ~~ n \/
+                          u = (/) ) ->
+                        ( ( E. n e. om ( A \ z ) ~~ n \/
+                            z = (/) ) ->
+                          ( E. n e.
+                               om
+                               ( A \ ( u i^i z ) ) ~~ n \/
+                            ( u i^i z ) = (/) ) ) )
+163:162:a1i        |- ( z (_ A ->
+                        ( ( E. n e. om ( A \ u ) ~~ n \/
+                            u = (/) ) ->
+                          ( ( E. n e. om ( A \ z ) ~~ n \/
+                              z = (/) ) ->
+                            ( E. n e.
+                                 om
+                                 ( A \ ( u i^i z ) ) ~~ n \/
+                              ( u i^i z ) = (/) ) ) ) )
+164:163:com12      |- ( ( E. n e. om ( A \ u ) ~~ n \/
+                          u = (/) ) ->
+                        ( z (_ A ->
+                          ( ( E. n e. om ( A \ z ) ~~ n \/
+                              z = (/) ) ->
+                            ( E. n e.
+                                 om
+                                 ( A \ ( u i^i z ) ) ~~ n \/
+                              ( u i^i z ) = (/) ) ) ) )
+165:164:a1i        |- ( u (_ A ->
+                        ( ( E. n e. om ( A \ u ) ~~ n \/
+                            u = (/) ) ->
+                          ( z (_ A ->
+                            ( ( E. n e. om ( A \ z ) ~~ n \/
+                                z = (/) ) ->
+                              ( E. n e.
+                                   om
+                                   ( A \ ( u i^i z ) ) ~~ n \/
+                                ( u i^i z ) = (/) ) ) ) ) )
+166:165:imp43      |- ( ( ( u (_ A /\
+                            ( E. n e. om ( A \ u ) ~~ n \/
+                              u = (/) ) ) /\
+                          ( z (_ A /\
+                            ( E. n e. om ( A \ z ) ~~ n \/
+                              z = (/) ) ) ) ->
+                        ( E. n e.
+                             om
+                             ( A \ ( u i^i z ) ) ~~ n \/
+                          ( u i^i z ) = (/) ) )
+167:91,166:jca     |- ( ( ( u (_ A /\
+                            ( E. n e. om ( A \ u ) ~~ n \/
+                              u = (/) ) ) /\
+                          ( z (_ A /\
+                            ( E. n e. om ( A \ z ) ~~ n \/
+                              z = (/) ) ) ) ->
+                        ( ( u i^i z ) (_ A /\
+                          ( E. n e.
+                               om
+                               ( A \ ( u i^i z ) ) ~~ n \/
+                            ( u i^i z ) = (/) ) ) )
+168::df-clab       |- ( u e.
+                        { x |
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) } <->
+                        [ u /
+                          x ]
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) )
+169::sban          |- ( [ u /
+                          x ]
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) <->
+                        ( [ u / x ] x (_ A /\
+                          [ u /
+                            x ]
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) )
+170::sbor          |- ( [ u /
+                          x ]
+                          ( E. n e. om ( A \ x ) ~~ n \/
+                            x = (/) ) <->
+                        ( [ u /
+                            x ]
+                            E. n e. om ( A \ x ) ~~ n \/
+                          [ u / x ] x = (/) ) )
+171:170:anbi2i     |- ( ( [ u / x ] x (_ A /\
+                          [ u /
+                            x ]
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) <->
+                        ( [ u / x ] x (_ A /\
+                          ( [ u /
+                              x ]
+                              E. n e. om ( A \ x ) ~~ n \/
+                            [ u / x ] x = (/) ) ) )
+172::ax-17         |- ( x (_ A -> A. u x (_ A )
+173:172:sb6y       |- ( [ u / x ] x (_ A <->
+                        A. x ( x = u -> x (_ A ) )
+174::ax-17         |- ( u (_ A -> A. x u (_ A )
+175::sseq1         |- ( x = u -> ( x (_ A <-> u (_ A ) )
+176:174,175:equsal |- ( A. x ( x = u -> x (_ A ) <->
+                        u (_ A )
+177:173,176:bitr   |- ( [ u / x ] x (_ A <-> u (_ A )
+178::ax-17         |- ( E. n e. om ( A \ x ) ~~ n ->
+                        A. u
+                           E. n e. om ( A \ x ) ~~ n )
+179:178:sb6y       |- ( [ u /
+                          x ]
+                          E. n e. om ( A \ x ) ~~ n <->
+                        A. x
+                           ( x = u ->
+                             E. n e. om ( A \ x ) ~~ n ) )
+180::ax-17         |- ( E. n e. om ( A \ u ) ~~ n ->
+                        A. x
+                           E. n e. om ( A \ u ) ~~ n )
+181::difeq2        |- ( x = u -> ( A \ x ) = ( A \ u ) )
+182:181:breq1d     |- ( x = u ->
+                        ( ( A \ x ) ~~ n <-> ( A \ u ) ~~ n ) )
+183:182:rexbidv    |- ( x = u ->
+                        ( E. n e. om ( A \ x ) ~~ n <->
+                          E. n e. om ( A \ u ) ~~ n ) )
+184:180,183:equsal |- ( A. x
+                           ( x = u ->
+                             E. n e. om ( A \ x ) ~~ n ) <->
+                        E. n e. om ( A \ u ) ~~ n )
+185:179,184:bitr   |- ( [ u /
+                          x ]
+                          E. n e. om ( A \ x ) ~~ n <->
+                        E. n e. om ( A \ u ) ~~ n )
+186::ax-17         |- ( x = (/) -> A. u x = (/) )
+187:186:sb6y       |- ( [ u / x ] x = (/) <->
+                        A. x ( x = u -> x = (/) ) )
+188::ax-17         |- ( u = (/) -> A. x u = (/) )
+189::eqeq1         |- ( x = u -> ( x = (/) <-> u = (/) ) )
+190:188,189:equsal |- ( A. x ( x = u -> x = (/) ) <->
+                        u = (/) )
+191:187,190:bitr   |- ( [ u / x ] x = (/) <-> u = (/) )
+192:185,191:orbi12i 
+                   |- ( ( [ u /
+                            x ]
+                            E. n e. om ( A \ x ) ~~ n \/
+                          [ u / x ] x = (/) ) <->
+                        ( E. n e. om ( A \ u ) ~~ n \/
+                          u = (/) ) )
+193:177,192:anbi12i 
+                   |- ( ( [ u / x ] x (_ A /\
+                          ( [ u /
+                              x ]
+                              E. n e. om ( A \ x ) ~~ n \/
+                            [ u / x ] x = (/) ) ) <->
+                        ( u (_ A /\
+                          ( E. n e. om ( A \ u ) ~~ n \/
+                            u = (/) ) ) )
+194:169,171,193:3bitr 
+                   |- ( [ u /
+                          x ]
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) <->
+                        ( u (_ A /\
+                          ( E. n e. om ( A \ u ) ~~ n \/
+                            u = (/) ) ) )
+195:168,194:bitr   |- ( u e.
+                        { x |
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) } <->
+                        ( u (_ A /\
+                          ( E. n e. om ( A \ u ) ~~ n \/
+                            u = (/) ) ) )
+196::df-clab       |- ( z e.
+                        { x |
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) } <->
+                        [ z /
+                          x ]
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) )
+197::sban          |- ( [ z /
+                          x ]
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) <->
+                        ( [ z / x ] x (_ A /\
+                          [ z /
+                            x ]
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) )
+198::sbor          |- ( [ z /
+                          x ]
+                          ( E. n e. om ( A \ x ) ~~ n \/
+                            x = (/) ) <->
+                        ( [ z /
+                            x ]
+                            E. n e. om ( A \ x ) ~~ n \/
+                          [ z / x ] x = (/) ) )
+199:198:anbi2i     |- ( ( [ z / x ] x (_ A /\
+                          [ z /
+                            x ]
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) <->
+                        ( [ z / x ] x (_ A /\
+                          ( [ z /
+                              x ]
+                              E. n e. om ( A \ x ) ~~ n \/
+                            [ z / x ] x = (/) ) ) )
+200::ax-17         |- ( x (_ A -> A. z x (_ A )
+201:200:sb6y       |- ( [ z / x ] x (_ A <->
+                        A. x ( x = z -> x (_ A ) )
+202::ax-17         |- ( z (_ A -> A. x z (_ A )
+203::sseq1         |- ( x = z -> ( x (_ A <-> z (_ A ) )
+204:202,203:equsal |- ( A. x ( x = z -> x (_ A ) <->
+                        z (_ A )
+205:201,204:bitr   |- ( [ z / x ] x (_ A <-> z (_ A )
+206::ax-17         |- ( E. n e. om ( A \ x ) ~~ n ->
+                        A. z
+                           E. n e. om ( A \ x ) ~~ n )
+207:206:sb6y       |- ( [ z /
+                          x ]
+                          E. n e. om ( A \ x ) ~~ n <->
+                        A. x
+                           ( x = z ->
+                             E. n e. om ( A \ x ) ~~ n ) )
+208::ax-17         |- ( E. n e. om ( A \ z ) ~~ n ->
+                        A. x
+                           E. n e. om ( A \ z ) ~~ n )
+209::difeq2        |- ( x = z -> ( A \ x ) = ( A \ z ) )
+210:209:breq1d     |- ( x = z ->
+                        ( ( A \ x ) ~~ n <-> ( A \ z ) ~~ n ) )
+211:210:rexbidv    |- ( x = z ->
+                        ( E. n e. om ( A \ x ) ~~ n <->
+                          E. n e. om ( A \ z ) ~~ n ) )
+212:208,211:equsal |- ( A. x
+                           ( x = z ->
+                             E. n e. om ( A \ x ) ~~ n ) <->
+                        E. n e. om ( A \ z ) ~~ n )
+213:207,212:bitr   |- ( [ z /
+                          x ]
+                          E. n e. om ( A \ x ) ~~ n <->
+                        E. n e. om ( A \ z ) ~~ n )
+214::ax-17         |- ( x = (/) -> A. z x = (/) )
+215:214:sb6y       |- ( [ z / x ] x = (/) <->
+                        A. x ( x = z -> x = (/) ) )
+216::ax-17         |- ( z = (/) -> A. x z = (/) )
+217::eqeq1         |- ( x = z -> ( x = (/) <-> z = (/) ) )
+218:216,217:equsal |- ( A. x ( x = z -> x = (/) ) <->
+                        z = (/) )
+219:215,218:bitr   |- ( [ z / x ] x = (/) <-> z = (/) )
+220:213,219:orbi12i 
+                   |- ( ( [ z /
+                            x ]
+                            E. n e. om ( A \ x ) ~~ n \/
+                          [ z / x ] x = (/) ) <->
+                        ( E. n e. om ( A \ z ) ~~ n \/
+                          z = (/) ) )
+221:205,220:anbi12i 
+                   |- ( ( [ z / x ] x (_ A /\
+                          ( [ z /
+                              x ]
+                              E. n e. om ( A \ x ) ~~ n \/
+                            [ z / x ] x = (/) ) ) <->
+                        ( z (_ A /\
+                          ( E. n e. om ( A \ z ) ~~ n \/
+                            z = (/) ) ) )
+222:197,199,221:3bitr 
+                   |- ( [ z /
+                          x ]
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) <->
+                        ( z (_ A /\
+                          ( E. n e. om ( A \ z ) ~~ n \/
+                            z = (/) ) ) )
+223:196,222:bitr   |- ( z e.
+                        { x |
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) } <->
+                        ( z (_ A /\
+                          ( E. n e. om ( A \ z ) ~~ n \/
+                            z = (/) ) ) )
+224:195,223:anbi12i 
+                   |- ( ( u e.
+                          { x |
+                            ( x (_ A /\
+                              ( E. n e. om ( A \ x ) ~~ n \/
+                                x = (/) ) ) } /\
+                          z e.
+                          { x |
+                            ( x (_ A /\
+                              ( E. n e. om ( A \ x ) ~~ n \/
+                                x = (/) ) ) } ) <->
+                        ( ( u (_ A /\
+                            ( E. n e. om ( A \ u ) ~~ n \/
+                              u = (/) ) ) /\
+                          ( z (_ A /\
+                            ( E. n e. om ( A \ z ) ~~ n \/
+                              z = (/) ) ) ) )
+225::visset        |- u e. V
+226:225:inex1      |- ( u i^i z ) e. V
+227::sseq1         |- ( x = ( u i^i z ) ->
+                        ( x (_ A <-> ( u i^i z ) (_ A ) )
+228::difeq2        |- ( x = ( u i^i z ) ->
+                        ( A \ x ) = ( A \ ( u i^i z ) ) )
+229::breq1         |- ( ( A \ x ) = ( A \ ( u i^i z ) ) ->
+                        ( ( A \ x ) ~~ n <->
+                          ( A \ ( u i^i z ) ) ~~ n ) )
+230:229:rexbidv    |- ( ( A \ x ) = ( A \ ( u i^i z ) ) ->
+                        ( E. n e. om ( A \ x ) ~~ n <->
+                          E. n e.
+                             om
+                             ( A \ ( u i^i z ) ) ~~ n ) )
+231:228,230:syl    |- ( x = ( u i^i z ) ->
+                        ( E. n e. om ( A \ x ) ~~ n <->
+                          E. n e.
+                             om
+                             ( A \ ( u i^i z ) ) ~~ n ) )
+232::eqeq1         |- ( x = ( u i^i z ) ->
+                        ( x = (/) <-> ( u i^i z ) = (/) ) )
+233:231,232:orbi12d 
+                   |- ( x = ( u i^i z ) ->
+                        ( ( E. n e. om ( A \ x ) ~~ n \/
+                            x = (/) ) <->
+                          ( E. n e.
+                               om
+                               ( A \ ( u i^i z ) ) ~~ n \/
+                            ( u i^i z ) = (/) ) ) )
+234:227,233:anbi12d 
+                   |- ( x = ( u i^i z ) ->
+                        ( ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) <->
+                          ( ( u i^i z ) (_ A /\
+                            ( E. n e.
+                                 om
+                                 ( A \ ( u i^i z ) ) ~~ n \/
+                              ( u i^i z ) = (/) ) ) ) )
+235:234:ax-gen     |- A. x
+                         ( x = ( u i^i z ) ->
+                           ( ( x (_ A /\
+                               ( E. n e. om ( A \ x ) ~~ n \/
+                                 x = (/) ) ) <->
+                             ( ( u i^i z ) (_ A /\
+                               ( E. n e.
+                                    om
+                                    ( A \ ( u i^i z ) ) ~~ n \/
+                                 ( u i^i z ) = (/) ) ) ) )
+236:226,235:pm3.2i |- ( ( u i^i z ) e. V /\
+                        A. x
+                           ( x = ( u i^i z ) ->
+                             ( ( x (_ A /\
+                                 ( E. n e. om ( A \ x ) ~~ n \/
+                                   x = (/) ) ) <->
+                               ( ( u i^i z ) (_ A /\
+                                 ( E. n e.
+                                      om
+                                      ( A \ ( u i^i z ) ) ~~ n \/
+                                   ( u i^i z ) = (/) ) ) ) ) )
+237::elabt         |- ( ( ( u i^i z ) e. V /\
+                          A. x
+                             ( x = ( u i^i z ) ->
+                               ( ( x (_ A /\
+                                   ( E. n e. om ( A \ x ) ~~ n \/
+                                     x = (/) ) ) <->
+                                 ( ( u i^i z ) (_ A /\
+                                   ( E. n e.
+                                        om
+                                        ( A \ ( u i^i z ) ) ~~ n \/
+                                     ( u i^i z ) = (/) ) ) ) ) ) ->
+                        ( ( u i^i z ) e.
+                          { x |
+                            ( x (_ A /\
+                              ( E. n e. om ( A \ x ) ~~ n \/
+                                x = (/) ) ) } <->
+                          ( ( u i^i z ) (_ A /\
+                            ( E. n e.
+                                 om
+                                 ( A \ ( u i^i z ) ) ~~ n \/
+                              ( u i^i z ) = (/) ) ) ) )
+238:236,237:ax-mp  |- ( ( u i^i z ) e.
+                        { x |
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) } <->
+                        ( ( u i^i z ) (_ A /\
+                          ( E. n e.
+                               om
+                               ( A \ ( u i^i z ) ) ~~ n \/
+                            ( u i^i z ) = (/) ) ) )
+239:224,238:imbi12i 
+                   |- ( ( ( u e.
+                            { x |
+                              ( x (_ A /\
+                                ( E. n e. om ( A \ x ) ~~ n \/
+                                  x = (/) ) ) } /\
+                            z e.
+                            { x |
+                              ( x (_ A /\
+                                ( E. n e. om ( A \ x ) ~~ n \/
+                                  x = (/) ) ) } ) ->
+                          ( u i^i z ) e.
+                          { x |
+                            ( x (_ A /\
+                              ( E. n e. om ( A \ x ) ~~ n \/
+                                x = (/) ) ) } ) <->
+                        ( ( ( u (_ A /\
+                              ( E. n e. om ( A \ u ) ~~ n \/
+                                u = (/) ) ) /\
+                            ( z (_ A /\
+                              ( E. n e. om ( A \ z ) ~~ n \/
+                                z = (/) ) ) ) ->
+                          ( ( u i^i z ) (_ A /\
+                            ( E. n e.
+                                 om
+                                 ( A \ ( u i^i z ) ) ~~ n \/
+                              ( u i^i z ) = (/) ) ) ) )
+240:167,239:mpbir  |- ( ( u e.
+                          { x |
+                            ( x (_ A /\
+                              ( E. n e. om ( A \ x ) ~~ n \/
+                                x = (/) ) ) } /\
+                          z e.
+                          { x |
+                            ( x (_ A /\
+                              ( E. n e. om ( A \ x ) ~~ n \/
+                                x = (/) ) ) } ) ->
+                        ( u i^i z ) e.
+                        { x |
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) } )
+241:240:rgen2      |- A. u e.
+                         { x |
+                           ( x (_ A /\
+                             ( E. n e. om ( A \ x ) ~~ n \/
+                               x = (/) ) ) }
+                         A. z e.
+                            { x |
+                              ( x (_ A /\
+                                ( E. n e. om ( A \ x ) ~~ n \/
+                                  x = (/) ) ) }
+                            ( u i^i z ) e.
+                            { x |
+                              ( x (_ A /\
+                                ( E. n e. om ( A \ x ) ~~ n \/
+                                  x = (/) ) ) }
+242:88,241:pm3.2i  |- ( A. u
+                           ( u (_
+                             { x |
+                               ( x (_ A /\
+                                 ( E. n e. om ( A \ x ) ~~ n \/
+                                   x = (/) ) ) } ->
+                             U. u e.
+                             { x |
+                               ( x (_ A /\
+                                 ( E. n e. om ( A \ x ) ~~ n \/
+                                   x = (/) ) ) } ) /\
+                        A. u e.
+                           { x |
+                             ( x (_ A /\
+                               ( E. n e. om ( A \ x ) ~~ n \/
+                                 x = (/) ) ) }
+                           A. z e.
+                              { x |
+                                ( x (_ A /\
+                                  ( E. n e. om ( A \ x ) ~~ n \/
+                                    x = (/) ) ) }
+                              ( u i^i z ) e.
+                              { x |
+                                ( x (_ A /\
+                                  ( E. n e. om ( A \ x ) ~~ n \/
+                                    x = (/) ) ) } )
+243::abssexg       |- ( A e. V ->
+                        { x |
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) } e.
+                        V )
+244:1,243:ax-mp    |- { x |
+                        ( x (_ A /\
+                          ( E. n e. om ( A \ x ) ~~ n \/
+                            x = (/) ) ) } e.
+                      V
+245::istopg        |- ( { x |
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) } e.
+                        V ->
+                        ( { x |
+                            ( x (_ A /\
+                              ( E. n e. om ( A \ x ) ~~ n \/
+                                x = (/) ) ) } e.
+                          Top <->
+                          ( A. u
+                               ( u (_
+                                 { x |
+                                   ( x (_ A /\
+                                     ( E. n e. om ( A \ x ) ~~ n \/
+                                       x = (/) ) ) } ->
+                                 U. u e.
+                                 { x |
+                                   ( x (_ A /\
+                                     ( E. n e. om ( A \ x ) ~~ n \/
+                                       x = (/) ) ) } ) /\
+                            A. u e.
+                               { x |
+                                 ( x (_ A /\
+                                   ( E. n e. om ( A \ x ) ~~ n \/
+                                     x = (/) ) ) }
+                               A. z e.
+                                  { x |
+                                    ( x (_ A /\
+                                      ( E. n e. om ( A \ x ) ~~ n \/
+                                        x = (/) ) ) }
+                                  ( u i^i z ) e.
+                                  { x |
+                                    ( x (_ A /\
+                                      ( E. n e. om ( A \ x ) ~~ n \/
+                                        x = (/) ) ) } ) ) )
+246:244,245:ax-mp  |- ( { x |
+                          ( x (_ A /\
+                            ( E. n e. om ( A \ x ) ~~ n \/
+                              x = (/) ) ) } e.
+                        Top <->
+                        ( A. u
+                             ( u (_
+                               { x |
+                                 ( x (_ A /\
+                                   ( E. n e. om ( A \ x ) ~~ n \/
+                                     x = (/) ) ) } ->
+                               U. u e.
+                               { x |
+                                 ( x (_ A /\
+                                   ( E. n e. om ( A \ x ) ~~ n \/
+                                     x = (/) ) ) } ) /\
+                          A. u e.
+                             { x |
+                               ( x (_ A /\
+                                 ( E. n e. om ( A \ x ) ~~ n \/
+                                   x = (/) ) ) }
+                             A. z e.
+                                { x |
+                                  ( x (_ A /\
+                                    ( E. n e. om ( A \ x ) ~~ n \/
+                                      x = (/) ) ) }
+                                ( u i^i z ) e.
+                                { x |
+                                  ( x (_ A /\
+                                    ( E. n e. om ( A \ x ) ~~ n \/
+                                      x = (/) ) ) } ) )
+qed:242,246:mpbir  |- { x |
+                        ( x (_ A /\
+                          ( E. n e. om ( A \ x ) ~~ n \/
+                            x = (/) ) ) } e.
+                      Top
+
+$)

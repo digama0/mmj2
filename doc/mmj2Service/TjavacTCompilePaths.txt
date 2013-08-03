@@ -1,0 +1,5 @@
+-classpath .;c:\mmj2\doc\mmj2Service;c:\mmj2\mmj2jar\mmj2.jar -d 
+c:\mmj2\doc\mmj2Service -sourcepath .;c:\mmj2\doc\mmj2Service
+
+
+

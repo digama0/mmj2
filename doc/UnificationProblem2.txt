@@ -1,0 +1,159 @@
+Unification/Proof Assistant Problem #2:
+(see statement/output excepts at end)
+     
+The Metamath Explorer proof page for cleqf
+   
+http://us2.metamath.org:8888/mpegif/cleqf.html
+   
+shows 'eleq1' justifying steps 6 and 7
+(as seen below in the mmj2 Proof Assistant
+text area.)
+    
+However, a detailed inspection of the RPN
+proof of cleqf shows the following sequence
+building step 6 and 7's formulas:
+    
+    vx cv vy cv cA eleq1 vx cv vy cv cB eleq1
+    
+What this means is that variables x and y are 
+being converted to class expressions using the 
+'cv' axiom before being passed in to eleq1 as
+parameters. 
+
+But that is at odds with the parse tree for
+steps 6 and 7!
+
+Unfortunately, the parse tree for steps 6
+and 7 use 'weq', set equality, instead of
+'wceq', class equality, which is used in
+the parse tree of eleq1. 
+
+Therefore, steps 6 and 7 cannot be directly 
+unified with eleq1, as written. Their set 
+parameters are being "coerced", behind the scenes
+as it were, using cv, by the metamath.exe
+Proof Assistant.
+
+This situation is similar perhaps to a program 
+compiler automatically inserting assembler 
+language to widen a primitive int to a long 
+without even mentioning the conversion to the 
+programmer (because it is safe). 
+
+Ironically, had mmj2 *not* eliminated ambiguous
+parse trees involving weq/wceq etc., the 
+alternative parses used by Metamath's
+Proof Assistant would have been available for
+unification. 
+
+The big question now involves the design of the mmj2
+Proof Assistant. Heretofore the idea has been
+that the main derivation steps, those that would
+be hand-written (by a human), would be unified with
+the |- type assertions in the loaded Metamath 
+database. But that does not appear to be possible 
+because there is no set-equivalent to eleq1 (etc.) 
+
+The "obvious" solution is to automatically 
+coerce sets to classes during unification, 
+changing weq's to wceq's -- during the search
+process. That might well be doable, at the expense
+of considerable thrashing about, but the idea
+seems more doable than it really is. Set.mm is
+indicative of real-world logical systems, but
+mmj2 is written to be agnostic about the logic
+and grammar being used. Whereas set.mm has only
+one type conversion -- from set to class -- other
+systems could have multiple hierarchies of
+conversions (we use these freely in object 
+oriented programming, for one, so there is 
+absolutely no reason to suppose that a system
+other than set.mm might contain many conversions
+and pose a major thrashing problem for the
+unification search!
+
+The problem, and its solution, is widespread
+enough in set.mm to require that Something Be
+Done About It. A rough count seems to show that
+10% of set.mm theorem proofs are affected. 
+That's a lot. And yet, it may be that the
+ideologically pure "solution" is to create
+the necessary set versions of eleq1, etc.
+so that unification can proceed without 
+assembly-level "magic" during unification.
+
+Another solution is to declare victory and
+withdraw...to document this as a "feature".
+That would still leave the mmj2 Proof 
+Assistant usable for 90% of theorems, and
+presumably new proofs could be coded 
+differently -- or could be input using the
+metamath.exe Proof Assistant.
+victory and withdraw...)
+
+-----
+   
+
+    $( <MM> <PROOF_ASST> THEOREM=cleqf  LOC_AFTER=?
+    
+    h1::cleqf.1        |- ( y e. A -> A. x y e. A ) 
+    h2::cleqf.2        |- ( y e. B -> A. x y e. B ) 
+    3::dfcleq          |- ( A = B <-> A. y ( y e. A <-> y e. B ) ) 
+    4::ax-17           |- ( ( x e. A <-> x e. B ) -> A. y ( x e. A <-> x 
+                          e. B ) ) 
+    5:1,2:hbbi         |- ( ( y e. A <-> y e. B ) -> A. x ( y e. A <-> y 
+                          e. B ) ) 
+    6::eleq1           |- ( x = y -> ( x e. A <-> y e. A ) ) 
+    7::eleq1           |- ( x = y -> ( x e. B <-> y e. B ) ) 
+    8:6,7:bibi12d      |- ( x = y -> ( ( x e. A <-> x e. B ) <-> ( y e. A
+                          <-> y e. B ) ) ) 
+    9:4,5,8:cbval      |- ( A. x ( x e. A <-> x e. B ) <-> A. y ( y e. A 
+                          <-> y e. B ) ) 
+    qed:3,9:bitr4      |- ( A = B <-> A. x ( x e. A <-> x e. B ) ) 
+    
+    $)
+         
+    Theorem cleqf Unification incomplete: 'qed' step not proven.
+     
+    Theorem cleqf Unification failure in derivation proof step 6 
+    using the input Ref label eleq1. The step's formula and/or 
+    its hypotheses could not be reconciled with the referenced 
+    Assertion. To allow the program to search for the correct 
+    Assertion, erase the Ref label, and then retry Unification.
+     
+    Theorem cleqf Unification failure in derivation proof step 7 
+    using the input Ref label eleq1. The step's formula and/or 
+    its hypotheses could not be reconciled with the referenced 
+    Assertion. To allow the program to search for the correct 
+    Assertion, erase the Ref label, and then retry Unification.
+
+-----
+
+  ${
+    $d x A $.  $d x B $.  $d x C $.  $( ` x ` is dummy. $)
+    $( Equality implies equivalence of membership. $)
+    eleq1 $p |- ( A = B -> ( A e. C <-> B e. C ) ) $=
+      cA cB wceq vx cv cA wceq vx cv cC wcel wa vx wex vx cv cB wceq vx cv cC
+      wcel wa vx wex cA cC wcel cB cC wcel cA cB wceq vx cv cA wceq vx cv cC
+      wcel wa vx cv cB wceq vx cv cC wcel wa vx cA cB wceq vx cv cA wceq vx cv
+      cB wceq vx cv cC wcel cA cB vx cv eqeq2 anbi1d biexdv vx cA cC df-clel vx
+      cB cC df-clel 3bitr4g $.
+      $( [5-Aug-93] $)
+        
+  ${
+    $d y A $.  $d y B $.  $d x y $.
+    cleqf.1 $e |- ( y e. A -> A. x y e. A ) $.
+    cleqf.2 $e |- ( y e. B -> A. x y e. B ) $.
+    $( Establish equality between classes, requiring only that ` x ` not be
+       'free' in ` A ` and ` B ` (but not necessarily absent from them). $)
+    cleqf $p |- ( A = B <-> A. x ( x e. A <-> x e. B ) ) $=
+      cA cB wceq vy cv cA wcel vy cv cB wcel wb vy wal vx cv cA wcel vx cv cB
+      wcel wb vx wal vy cA cB dfcleq vx cv cA wcel vx cv cB wcel wb vy cv cA
+      wcel vy cv cB wcel wb vx vy vx cv cA wcel vx cv cB wcel wb vy ax-17 vy cv
+      cA wcel vy cv cB wcel vx cleqf.1 cleqf.2 hbbi vx vy weq vx cv cA wcel vy
+      cv cA wcel vx cv cB wcel vy cv cB wcel vx cv vy cv cA eleq1 vx cv vy cv
+      cB eleq1 bibi12d cbval bitr4 $.
+      $( [5-Aug-93] $)
+  $}
+     
+-----

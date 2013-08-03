@@ -1,0 +1,18 @@
+$( <MM> <PROOF_ASST> THEOREM=ax17eq  LOC_AFTER=?
+
+* Theorem to add distinct quantifier to atomic formula.  (This theorem
+  demonstrates the induction basis for ~ ax-17 considered as a
+  metatheorem.  Do not use it for later proofs - use ~ ax-17 instead, to
+  avoid reference to the redundant axiom ~ ax-16 .)
+
+1::                |- (  -. A. z z = x
+                      -> (  -. A. z z = y
+                         -> ( x = y -> A. z x = y ) ) )
+2::                |- (  A. z z = x
+                      -> ( x = y -> A. z x = y ) )
+3::                |- (  A. z z = y
+                      -> ( x = y -> A. z x = y ) )
+qed:1,2,3:         |- ( x = y -> A. z x = y )
+
+$)
+

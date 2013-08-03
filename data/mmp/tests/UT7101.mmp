@@ -1,0 +1,10 @@
+$( <MM> <PROOF_ASST> THEOREM=syllogism LOC_AFTER=
+h1::syllogism.1 |- ( ph -> ps ) 
+h2::syllogism.2 |- ( ps -> ch ) 
+3:2:a1i        |- ( ph -> ( ps -> ch ) ) 
+4:3:a2i        |- ( ( ph -> ps ) -> ( ph -> ch ) ) 
+5::loolin |- ( ( ( &W6 -> &W3 ) -> ( &W3 -> &W6 ) ) -> ( &W3 -> &W6 ) )
+6::bi2.04 |- ( ( &W6 -> ( &W7 -> ( ( ( &W9 -> &W10 ) -> &W10 ) -> ( ( &W10 -> &W9 ) -> &W9 ) ) ) ) <-> ( &W7 -> ( &W6 -> ( ( ( &W9 -> &W10 ) -> &W10 ) -> ( ( &W10 -> &W9 ) -> &W9 ) ) ) ) )
+7::       |- ( ( ( &W9 -> &W50 ) -> &W50 ) -> ( ( &W50 -> &W9 ) -> &W9 ) )
+qed:1,4:ax-mp  |- ( ph -> ch )  
+$)

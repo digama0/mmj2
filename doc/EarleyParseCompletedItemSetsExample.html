@@ -1,0 +1,208 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta content="text/html; charset=ISO-8859-1" http-equiv="content-type"><title>EarleyParseCompletedItemSetsExample.html</title></head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);" alink="#000088" link="#0000ff" vlink="#ff0000">
+<h3><span style="font-weight: bold;">EarleyParseCompletedItemSetsExample</span>
+
+
+</h3>
+
+<span style="font-weight: bold;">(derived from Dick Grune and Ceriel
+J.H. Jacob's "Parsing Techniques -- A Practical Guide" -- my
+compliments to the authors! See page 149 in Edition 1 -- which is the
+139th page in the .pdf book file.)<br>
+</span><br>
+<hr style="width: 100%; height: 2px;">
+<br>
+Example: Parse "<code>xyz $a |- ( ph &lt;-&gt; x = A ) $.</code>" <br>
+<br>
+This generates the rule format expr (with empty index 0)<br>
+&nbsp;"<code>( wff&nbsp; &lt;-&gt;&nbsp; set = class )</code>"<br>
+<br>
+And the correct parse RPN is "<code>wph vx cv cA wceq wb"<br>
+<br>
+</code>
+<hr style="width: 100%; height: 2px;"><code></code><span style="font-weight: bold;">expr<br>
+<br>
+</span>
+<table style="width: 50%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>0<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 1<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 2<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 3<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 4<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 5<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 6<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 7<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code>(<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>wff<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&lt;-&gt;<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>set<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>=<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>class
+      </code></td>
+      <td style="vertical-align: top;"><code>)<br>
+      </code></td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+
+
+
+<code><span style="font-weight: bold;"></span></code><code><span style="font-weight: bold;">CompletedItemSet[6] </span><br>
+</code>
+<table style="text-align: left; width: 724px; height: 109px;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>___________rule___________<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>rule<br>
+Typ<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>at<br>
+Index<br>
+      <br>
+      </code></td>
+      <td style="vertical-align: top;"><code>dot<br>
+Index<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>after<br>
+Dot</code></td>
+      <td style="vertical-align: top;"><code>_______________comments_______________<br>
+      </code></td>
+    </tr>
+    
+    
+    <tr>
+<td style="vertical-align: top;"><code>18:wceq<br>
+"set = class"<br>
+</code></td><td style="vertical-align: top;"><code>wff<br>
+</code></td><td style="vertical-align: top;"><code>4<br>
+</code></td><td style="vertical-align: top;"><code>4<br>
+</code></td><td style="vertical-align: top;"><code><br>
+</code></td><td style="vertical-align: top;"><code><br>
+</code></td></tr>
+
+  </tbody>
+</table>
+
+
+
+
+
+
+
+<code></code><br>
+
+
+
+
+
+<span style="font-weight: bold;"></span><code><span style="font-weight: bold;">CompletedItemSet[7] </span><br>
+</code>
+<table style="text-align: left; width: 724px; height: 109px;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>___________rule___________<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>rule<br>
+Typ<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>at<br>
+Index<br>
+      <br>
+      </code></td>
+      <td style="vertical-align: top;"><code>dot<br>
+Index<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>after<br>
+Dot</code></td>
+      <td style="vertical-align: top;"><code>_______________comments_______________<br>
+      </code></td>
+    </tr><tr>
+<td style="vertical-align: top;"><code>3:wb<br>
+"( wff &lt;-&gt; wff )"<br>
+</code></td><td style="vertical-align: top;"><code>wff<br>
+</code></td><td style="vertical-align: top;"><code>1<br>
+</code></td><td style="vertical-align: top;"><code>6<br>
+</code></td><td style="vertical-align: top;"><code><br>
+</code></td><td style="vertical-align: top;"><code><br>
+</code></td></tr>
+    
+
+    
+    
+    
+
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+<code><br>
+<br>
+</code>
+<hr style="width: 100%; height: 2px;"><br>
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+</body></html>

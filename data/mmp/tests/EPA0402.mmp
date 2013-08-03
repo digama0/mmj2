@@ -1,0 +1,11 @@
+$( <MM> <PROOF_ASST> THEOREM=bi  LOC_AFTER=?
+
+1::ax-1           |- ( ( ph <-> ps ) <-> -. ( ( ph -> ps ) -> -. ( 
+                      ps -> ph ) ) ) 
+2::               |- ( ( ( ph -> ps ) /\ ( ps -> ph ) ) <-> -. ( ( 
+                      ph -> ps ) -> -. ( ps -> ph ) ) ) 
+qed:1,2:          |- ( ( ph <-> ps ) <-> ( ( ph -> ps ) /\ ( ps -> 
+                      ph ) ) ) 
+
+$)
+

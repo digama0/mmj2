@@ -1,0 +1,257 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>Command Window</title>
+</head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
+ alink="#000088" link="#0000ff" vlink="#ff0000">
+<pre style="font-weight: bold;"><big><big><big><big><small><span
+ style="text-decoration: underline;">cmd window</span></small><br></big></big></big></big><br>(back to <a
+ href="Start.html">Start.html</a>)<br></pre>
+<big>Here is how you run mmj2 and the Proof Assistant (<a
+ href="#Usage_Note_as_of_19-Oct-2006:">see footnote at end of page</a>):<br>
+#1<br>
+</big>
+<table
+ style="text-align: left; font-family: monospace; font-weight: bold; color: rgb(255, 255, 255); width: 581px; height: 132px;"
+ border="5" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="background-color: rgb(51, 0, 51); vertical-align: top;"><span
+ style="color: rgb(255, 255, 255);">Microsoft Windows XP [Version
+blahblah]</span><br style="color: rgb(255, 255, 255);">
+      <span style="color: rgb(255, 255, 255);">(C) Copyright 1985-2001
+Microsoft Corp.</span><br style="color: rgb(255, 255, 255);">
+      <br style="color: rgb(255, 255, 255);">
+      <span style="color: rgb(255, 255, 255);">C:\&gt;cd mmj2jar</span><br
+ style="color: rgb(255, 255, 255);">
+      <br style="color: rgb(255, 255, 255);">
+      <span style="color: rgb(255, 255, 255);">C:\mmj2jar&gt;java
+-Xincgc -Xms64M -Xmx128M -jar mmj2.jar RunParms.txt</span> </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<big>Or like this:<br>
+#2<br>
+</big>
+<table
+ style="width: 50%; text-align: left; font-family: monospace; font-weight: bold; color: rgb(255, 255, 255);"
+ border="5" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="background-color: rgb(51, 0, 51); vertical-align: top;"><span
+ style="color: rgb(255, 255, 255);">Microsoft Windows XP [Version
+blahblah]</span><br style="color: rgb(255, 255, 255);">
+      <span style="color: rgb(255, 255, 255);">(C) Copyright 1985-2001
+Microsoft Corp.</span><br style="color: rgb(255, 255, 255);">
+      <br style="color: rgb(255, 255, 255);">
+      <span style="color: rgb(255, 255, 255);">C:\&gt;cd mmj2jar</span><br
+ style="color: rgb(255, 255, 255);">
+      <br style="color: rgb(255, 255, 255);">
+      <span style="color: rgb(255, 255, 255);">C:\mmj2jar&gt;mmj2</span><br
+ style="color: rgb(255, 255, 255);">
+      <br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<big>And the mmj2 Proof Assistant Tutorial -- interactive -- can be run
+like this:<br>
+<br>
+</big>
+<table
+ style="width: 50%; text-align: left; font-family: monospace; font-weight: bold; color: rgb(255, 255, 255);"
+ border="5" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="background-color: rgb(51, 0, 51); vertical-align: top;"><span
+ style="color: rgb(255, 255, 255);">Microsoft Windows XP [Version
+blahblah]</span><br style="color: rgb(255, 255, 255);">
+      <span style="color: rgb(255, 255, 255);">(C) Copyright 1985-2001
+Microsoft Corp.</span><br style="color: rgb(255, 255, 255);">
+      <br style="color: rgb(255, 255, 255);">
+      <span style="color: rgb(255, 255, 255);">C:\&gt;cd mmj2jar</span><br
+ style="color: rgb(255, 255, 255);">
+      <br style="color: rgb(255, 255, 255);">
+      <span style="color: rgb(255, 255, 255);">C:mmj2jar&gt;mmj2PATutorial</span><br
+ style="color: rgb(255, 255, 255);">
+      <br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<big><br>
+Those examples assume that we have first entered a "Command Window" and
+that we have created directory called "<code>c:\mmj2jar</code>" and
+copied the contents
+of "<code>c:\mmj2\mmj2jar</code>" into our new <code>mmj2jar</code>
+directory. (Fyi: the "cd" command stands for "Change Directory"; hit
+Enter after entering a command; type "exit" and hit Enter to leave the
+Command Window.)<br>
+<br>
+"<a href="%5C..%5C..%5Cdata%5Crunparm%5Cwindows%5CAnnotatedRunParms.txt">RunParms.txt</a>"
+contains commands to start mmj2 and the Proof Assistant and should be
+located in our directory (i.e. "<code>mmj2jar</code>").<br>
+<br>
+In #2, typing the "<code>.bat</code>" portion of the "<a
+ href="../../mmj2jar/mmj2.bat"><code>mmj2.bat</code></a>" name is
+optional. Windows can figure out the missing
+"<code>.bat</code>" part of the name.<br>
+</big><br>
+<big>"Command
+Window" in Windows refers to a screen that allows the user to enter
+commands. It is shown on the Windows Desktop as an icon labelled
+"Command Prompt". To put a Command Prompt icon on your Desktop:<br>
+</big>
+<ol>
+  <li><big>Left-mouse click "Start"</big></li>
+  <li><big>Left-mouse click "Programs"</big></li>
+  <li><big>Left-mouse click "Accessories"</big></li>
+  <li><big>Right-mouse click "Command Prompt" </big></li>
+  <li><big>Left-mouse click "Create Shortcut".</big></li>
+</ol>
+<big>Whew. That was easy. Not :)<br>
+<br>
+A similar "command line" is available in other operating systems, like
+Linux. In fact, the "Command Prompt" is a descendant of the old (pc)
+DOS screen, and most of the old DOS commands still work there (even
+"help" :)<br>
+</big><big><br>
+It is important to start mmj2 from a Command Window so that any error
+messages that result can be seen. If there is a problem, the output
+error messages are essential. (The alternative is to use Windows
+Explorer and just double-click on the <code>mmj2.bat</code> file name
+-- which
+works, except that the system error messages will disappear when the
+program ends.)<br>
+<br>
+</big><big>That is pretty much all there is to it (two other command
+line arguments are passed to the main program inside mmj2.jar,
+"<a href="../../src/mmj/util/BatchMMJ2.java"><code>BatchMMJ2</code></a>",
+which are rarely used and need not be documented here.)<br>
+<br>
+When mmj2 runs it will display the RunParm commands as it processes
+them, which can be interesting and helpful to watch. If a "bug" is
+encountered some very weird and technical looking messages will be
+output. Make a copy of the text of these weird looking messages to
+assist in debugging (this should not happen but if it does, you know
+what to do: report the problem at the <a
+ href="http://planetx.cc.vt.edu/AsteroidMeta/RecentChanges">Asteroid</a>!)<br>
+<br>
+* * *<br>
+<br>
+<code style="font-weight: bold; color: rgb(51, 51, 255);"><a
+ name="Usage_Note_as_of_19-Oct-2006:"></a><big><span
+ style="text-decoration: underline;">Usage Note as of 19-Oct-2006:</span></big><br>
+<br>
+<span style="font-style: italic;">Torture testing of the mmj2 Proof
+Assistant GUI </span><span style="font-style: italic;">revealed a
+situation that triggered an "Out of Memory" </span><span
+ style="font-style: italic;">error and/or a "Out of Heap Space".</span><br
+ style="font-style: italic;">
+<br style="font-style: italic;">
+<span style="font-style: italic;">Diagnosis: we have means, motive and
+opportunity -- and </span><span style="font-style: italic;">a body --
+but no actual smoking gun and signed confession... </span><span
+ style="font-style: italic;">The code and java parameter changes
+described below </span><span style="font-style: italic;">prevent a
+recurrence of the symptoms, at least temporarily...</span><br
+ style="font-style: italic;">
+<br>
+<big><span style="text-decoration: underline;">HOWEVER...</span></big><br>
+<br>
+I strongly recommend upgrading to the Jave Runtime Environment 1.5.0_09
+due to a number of Sun bug fixes pertaining to Garbage Collection.
+(Version 1.5.0_05 was the latest version back on 4/1/2006, so you can
+just imagine the exciting bee hive of activity at Java HQ :)<br>
+<br>
+I have not yet upgraded my own software so if you upgrade now and
+report back to the Asteroid you will be performing a service to mmj2
+and your fellow users...<br>
+<br>
+ALSO...<br>
+<br>
+<big style="text-decoration: underline;">The following executive
+actions were taken:</big><br>
+<br>
+<big><span style="text-decoration: underline;">1)</span></big> The new
+TMFF coding was modified for efficiency and to avoid using a suspect
+portion of the Java Runtime Environment.<br>
+<br>
+<big><span style="text-decoration: underline;">2)</span></big> New
+arguments on the "java" command line in mmj2.bat were added. The new
+command to trigger mmj2 and the Proof Assistant looks like this (inside
+mmj2.bat):<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: rgb(0, 51, 51);">java
+-Xincgc -Xms64M -Xmx128M -jar mmj2.jar RunParms.txt</span><br>
+&nbsp;&nbsp;&nbsp; <br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp; <br>
+* The "<span style="color: rgb(0, 0, 0);">-Xincgc</span>" argument says
+"enable incremental Garbage Collection", which is off by default.
+Essentially what that means is to keep memory tidy as you go instead of
+the more typical periodic cleanliness :) Incremental Garbage Collection
+is less efficient and adds a small amount of time to the start-up
+process. But the potential payoff is that for the GUI, we won't notice
+an extra 1/10 second here and there and we benefit from avoiding having
+Java get into a stressed out condition where bad things can happen...<br>
+<br>
+* The "<span style="color: rgb(0, 0, 0);">-Xms64M</span>" argument
+means that 64 MB of memory is requested as an initial allocation.
+Apparently, loading set.mm withComments and firing up the mmj2 Proof
+Assistant GUI requires 33MB -- with the 9/14/2006 version of set.mm,
+which is growing by 5 theorems a day :) It is best to ask for and
+receive a nice, juicy contiguous chunk of memory right at the start, if
+you have enough RAM in your computer.<br>
+<br>
+* The "<span style="color: rgb(0, 0, 0);">-Xmx128M</span>" argument
+means that the Maximum memory allowed is 128 MB, which ought to be
+enough for the next few years of set.mm development. This amount of
+memory may or may not be allocated, and even if allocated may be
+swapped out. The Java default maximum is 64MB, and when that limit is
+reached and there is no free memory, processing stops. <br>
+<br>
+NOTE: another interesting Java argument is "<span
+ style="color: rgb(0, 0, 0);">-verbose:gc</span>".
+Add that *temporarily* to your mmj2.bat java command to see every
+action taken by the Java Garbage Collector. The activities are printed
+on the Command Prompt Window. (Remove the argument later as it slows
+things down...) <br>
+<br>
+<big><span style="text-decoration: underline;">3)</span></big> The
+Help/About menu item (which is new) has been modified to run a full
+Garbage Collection "sweep" just before it displays the memory
+utilization statistics. This is interesting and useful information --
+if you need it you will want it :)</code><br>
+<br>
+</big><big><code style="font-weight: bold; color: rgb(51, 51, 255);">AND...<br>
+<br>
+<big style="text-decoration: underline;">Note:</big><br>
+</code></big><br>
+<span style="font-weight: bold; color: rgb(51, 51, 255);">Memory
+utilization can be reduced using the following RunParms:</span><br>
+<ul>
+  <li><code style="font-weight: bold;">MaxErrorMessages<br>
+    </code></li>
+  <li><code style="font-weight: bold;">MaxInfoMessages<br>
+    </code></li>
+  <li><code style="font-weight: bold;">LoadComments</code></li>
+  <li><code style="font-weight: bold;">LoadProofs</code></li>
+  <li><code style="font-weight: bold;">LoadEndpointStmtNbr</code></li>
+  <li><code style="font-weight: bold;">LoadEndpointStmtLabel</code></li>
+</ul>
+<span style="color: rgb(51, 51, 255); font-weight: bold;">Refer to </span><a
+ style="font-weight: bold; color: rgb(0, 51, 51);"
+ href="../../mmj2jar/AnnotatedRunParms.txt">AnnotatedRunParms.txt</a><span
+ style="color: rgb(51, 51, 255); font-weight: bold;"> for infomation
+about using these RunParms and their option values.</span><br>
+<pre style="font-weight: bold;">(back to <a href="Start.html">Start.html</a>)</pre>
+</body>
+</html>

@@ -1,0 +1,12 @@
+*-----------------------------------------
+* UT10002.txt -- Theorem Loader Unit Test
+*-----------------------------------------
+StartInstrumentationTimer,TheoremLoaderUnitTest10002
+LoadEndpointStmtLabel,syl
+LoadFile,mm\RegressionTest1set.mm
+TheoremLoaderMMTFolder,mmt\testin\t102
+LoadTheoremsFromMMTFolder,*
+VerifyProof,*
+Parse,*
+TMFFUseFormat,0 
+StopInstrumentationTimer,TheoremLoaderUnitTest10002

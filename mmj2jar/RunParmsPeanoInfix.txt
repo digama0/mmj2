@@ -1,0 +1,15 @@
+Loadfile,peanoInfix.mm
+VerifyProof,*
+Parse,*
+DefineWorkVarType,wff,&WFF,200
+DefineWorkVarType,term,&TERM,200
+DefineWorkVarType,var,&VAR,200
+DefineWorkVarType,BINOP,&BINOP,200
+DefineWorkVarType,LOGBINOP,&LOGBINOP,200
+DefineWorkVarType,BINPRED,&BINDPRED,200
+DefineWorkVarType,QUANT,&QUANT,200
+ProofAsstIncompleteStepCursor,Last
+ProofAsstUnifySearchExclude,biigb,xxxid,dummylink
+ProofAsstProofFolder,myproofs
+TheoremLoaderMMTFolder,myproofs
+RunProofAsstGUI 

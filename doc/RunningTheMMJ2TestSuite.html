@@ -1,0 +1,955 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>RunningTheMMJ2TestSuite</title>
+</head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
+ vlink="#ff0000" alink="#000088" link="#0000ff">
+<h3>Running The mmj2 Test Suite</h3>
+<br>
+<span style="font-weight: bold; text-decoration: underline;">Factoids:</span><br>
+<ul>
+  <li>The mmj2.zip download file contains a number of tests that
+exercise the mmj2 logic and are used to validate each software release.</li>
+  <li>The tests are intended to be run as "parallel tests". That is,
+the same test is executed with new and old software versions and the
+output from the tests is compared using file comparison software.</li>
+  <li>All of the tests invoke the executable code: <code>C:\mmj2\mmj2jar\mmj2.jar</code>.
+An
+easy
+way
+to
+run
+the tests using two
+versions of the software is to backup <code>mmj2.jar</code> to say, "<code>mmj2old.jar</code>"
+and
+create
+a
+"<code>mmj2new.jar</code>" -- then, prior to running the
+tests,
+update/overlay the "<code>mmj2.jar</code>" file with the jar file from
+the desired
+software version (this is crude but effective :)<br>
+  </li>
+  <li>Some of the tests use an archived version of Metamath's <code>set.mm</code>
+file as input (mmj2\data\mm\RegressionTest1set.mm), while others use
+hand-crafted <code>.mm</code> files as
+input.</li>
+  <li>In some of the tests, the intent is to create a severe error
+condition that causes mmj2 to immediately terminate processing, and the
+termination output is saved for comparison. Therefore, it is
+recommended that the tests be run using a software package or shell
+that can capture System.err output lines (for example the "<code>TextPad</code>"
+software
+program,
+which
+also
+has
+a rudimentary file comparison utility.)</li>
+  <li>The final test output prior to release of a new mmj2 software
+version is stored in directory <code>c:\mmj2\data\result</code>. Each
+test generates
+an "Err" -- <code>System.err</code> -- output file, as well as an
+"Out" -- <code>System.out</code>
+-- output file. These are provided for informational purposes, but
+unless the version of <code>set.mm</code> that was used to generate
+the test output
+is available, it is necessary to rerun the tests using the latest
+version of set.mm using the old software. <br>
+  </li>
+  <li>The letters "<code>UT</code>" in the output file names stand for
+Unit Test.</li>
+  <li>The letters "<code>VT</code>" in the output file names stand for
+Volume Test.</li>
+</ul>
+<big><span style="font-weight: bold;">Instructions:<br>
+</span><br>
+<big></big>The following (left-hand column) .bat files are located in
+c:\mmj2\test\windows<span style="font-weight: bold;"></span></big><br>
+<table style="text-align: left; width: 695px; height: 208px;" border="5"
+ cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td
+ style="vertical-align: top; width: 25%; font-family: monospace;">RunSample001.bat<br>
+      </td>
+      <td style="vertical-align: top;">
+      <ul>
+        <li>Update <code>C:\mmj2\test\windows\RunSample001.bat</code> <code></code>which
+contains
+a
+date-stamped
+file
+name
+with the correct date and suffix ("<code>20061002a</code>"
+=
+old
+software, "<code>20061002b</code>" = new software). </li>
+        <li>Update <code>c:\mmj2\data\runparm\windows\Sample001.txt</code>
+RunParm <code>SystemOutputFile</code> file name with the correct data
+and suffix ("<code>20061002a</code>" = old software, "<code>20061002b</code>"
+=
+new
+software).
+If
+the
+file is new, specify option "<code>new</code>",
+otherwise specify "<code>update</code>". </li>
+        <li>Run <code>c:\mmj2\test\windows\Sample001.bat</code>. <span
+ style="font-style: italic;">There should be no error
+file to save -- and the Command Window output is not significant.</span><br>
+        </li>
+        <li>Repeat test using new software (ie. output to "<code>20061002b</code>"
+output
+file).
+
+
+
+        </li>
+        <li>Compare output files stored in <code>c:\mmj2\data\result</code>.
+They
+ought
+to
+match
+unless
+the software changed.</li>
+        <li><span style="font-weight: bold;">NOTE</span>: Look at "<code>LogSysCounts:&nbsp;&nbsp;
+stmtTbl.size()=</code>" in the output file, "<code>C:\mmj2\data\result\Sample001Sysout</code><span
+ style="font-style: italic;">YYYYMMDD</span><code>d.txt</code>", as
+well as "<code>symTbl.size()</code>". The default initial table sizes
+for your .mm should be approximately 1.5 times <code>stmtTbl.size()</code>
+and <code>symTbl.size()</code> (if too small there will be a wasteful
+automatic resizing of the internal HashMaps). To update the default
+initial sizes you can change the source code at
+mmj.lang.LangConstants.java : <code>SYM_TBL_INITIAL_SIZE_DEFAULT</code>
+and <code>STMT_TBL_INITIAL_SIZE_DEFAULT</code>. Alternatively, you can
+input these RunParms to override the defaults at runtime: <code>SymbolTableInitialSize</code>
+and <code>StatementTableInitialSize</code>.<br>
+        </li>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td
+ style="vertical-align: top; width: 25%; font-family: monospace;">RunSample002.bat</td>
+      <td style="vertical-align: top;">
+      <ul>
+        <li>Update <code>C:\mmj2\test\windows\RunSample002.bat</code> <code></code>which
+contains
+a
+date-stamped
+file
+name
+with the correct date and suffix ("<code>20061002a</code>"
+=
+old
+software, "<code>20061002b</code>" = new software). </li>
+        <li>Update <code>c:\mmj2\data\runparm\windows\Sample002.txt</code>
+RunParm <code>SystemOutputFile</code> *AND* <code>SystemErrorFile</code>
+file names with the correct data and suffix ("<code>20061002a</code>" =
+old software, "<code>20061002b</code>" = new software). This example
+shows how to use "<code>new</code>" and "<code>update</code>". </li>
+        <li>Run <code>c:\mmj2\test\windows\RunSample002.bat</code>. <span
+ style="font-style: italic;">The Command Window output
+is not significant (should be just a log of processing with no errors.)</span><br>
+        </li>
+        <li>Repeat test using new software (ie. output to "<code>20061002b</code>"
+output
+file).
+
+
+
+        </li>
+        <li>Compare output files stored in <code>c:\mmj2\data\result</code>.
+They
+ought
+to
+match
+unless
+the software changed.<br>
+        </li>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td
+ style="vertical-align: top; width: 25%; font-family: monospace;">RunSample003.bat</td>
+      <td style="vertical-align: top;">
+      <ul>
+        <li>Update <code>C:\mmj2\test\windows\RunSample003.bat</code> <code></code>which
+contains
+a
+date-stamped
+file
+name
+with the correct date and suffix ("<code>20061002a</code>"
+=
+old
+software, "<code>20061002b</code>" = new software). </li>
+        <li>Update <code>c:\mmj2\data\runparm\windows\Sample003.txt</code>
+RunParm <code>SystemOutputFile</code> file name with the correct data
+and suffix ("<code>20061002a</code>" = old software, "<code>20061002b</code>"
+=
+new
+software).
+If
+the
+file is new, specify option "<code>new</code>",
+otherwise specify "<code>update</code>". </li>
+        <li>Run <code>c:\mmj2\test\windows\RunSample003.bat</code>. <span
+ style="font-style: italic;">There should be no error
+file to save -- and the Command Window output is not significant.</span><br>
+        </li>
+        <li>Repeat test using new software (ie. output to "<code>20061002b</code>"
+output
+file).
+
+
+
+        </li>
+        <li>Compare output files stored in <code>c:\mmj2\data\result</code>.
+They
+ought
+to
+match
+unless
+the software changed.<br>
+        </li>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td
+ style="vertical-align: top; width: 25%; font-family: monospace;">RunUnitTest1.bat<br>
+      </td>
+      <td style="vertical-align: top;">
+      <ul>
+        <li>Update <code>C:\mmj2\test\windows\RunUnitTest1.bat</code> <code></code>which
+contains
+a
+date-stamped
+file
+name
+with the correct date and suffix ("<code>20061002a</code>"
+=
+old
+software, "<code>20061002b</code>" = new software). </li>
+        <li>Run <code>c:\mmj2\test\windows\RunUnitTest1.bat</code>. <span
+ style="text-decoration: underline;">Manually save the Command Window
+output to </span><code style="text-decoration: underline;">C:\mmj2\data\result\UT1Err20061002a.txt</code><span
+ style="text-decoration: underline;"> (using the date and suffix chosen
+for the test.)</span><br>
+        </li>
+        <li>Repeat test using new software (ie. output to "<code>20061002b</code>"
+output
+file).
+
+
+
+        </li>
+        <li>Compare output files stored in <code>c:\mmj2\data\result</code>.
+They
+ought
+to
+match
+unless
+the software changed.</li>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td
+ style="vertical-align: top; width: 25%; font-family: monospace;">RunUnitTest2.bat<br>
+      </td>
+      <td style="vertical-align: top;">
+      <ul>
+        <li>Update <code>C:\mmj2\test\windows\RunUnitTest2.bat</code> <code></code>which
+contains
+a
+date-stamped
+file
+name
+with the correct date and suffix ("<code>20061002a</code>"
+=
+old
+software, "<code>20061002b</code>" = new software). </li>
+        <li>Run <code>c:\mmj2\test\windows\RunUnitTest2.bat</code>. <span
+ style="font-style: italic;">Note: don't bother manually saving the
+Command Window output -- it is not significant for UnitTest2.</span><br>
+        </li>
+        <li>Repeat test using new software (ie. output to "<code>20061002b</code>"
+output
+file).
+
+
+
+        </li>
+        <li>Compare output files stored in <code>c:\mmj2\data\result</code>.
+They
+ought
+to
+match
+unless
+the software changed.<br>
+        </li>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td
+ style="vertical-align: top; width: 25%; font-family: monospace;">RunUnitTest3.bat<br>
+      </td>
+      <td style="vertical-align: top;">
+      <ul>
+        <li>Update <code>C:\mmj2\test\windows\RunUnitTest3.bat</code> <code></code>which
+contains
+a
+date-stamped
+file
+name
+with the correct date and suffix ("<code>20061002a</code>"
+=
+old
+software, "<code>20061002b</code>" = new software). </li>
+        <li>Run <code>c:\mmj2\test\windows\RunUnitTest3.bat</code>. <span
+ style="text-decoration: underline;">Manually save the Command Window
+output to </span><code style="text-decoration: underline;">C:\mmj2\data\result\UT3Err20061002a.txt</code><span
+ style="text-decoration: underline;"> (using the date and suffix chosen
+for the test.)</span><br>
+        </li>
+        <li>Repeat test using new software (ie. output to "<code>20061002b</code>"
+output
+file).
+
+
+
+        </li>
+        <li>Compare output files stored in <code>c:\mmj2\data\result</code>.
+They
+ought
+to
+match
+unless
+the software changed.</li>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td
+ style="vertical-align: top; width: 25%; font-family: monospace;">RunUnitTest4.bat<br>
+      </td>
+      <td style="vertical-align: top;">
+      <ul>
+        <li>Update <code>C:\mmj2\test\windows\RunUnitTest4.bat</code> <code></code>which
+contains
+a
+date-stamped
+file
+name
+with the correct date and suffix ("<code>20061002a</code>"
+=
+old
+software, "<code>20061002b</code>" = new software). </li>
+        <li>Run <code>c:\mmj2\test\windows\RunUnitTest4.bat</code>. <span
+ style="font-style: italic;">Note: don't bother manually saving the
+Command Window output -- it is not significant for UnitTest4.</span></li>
+        <li>Repeat test using new software (ie. output to "<code>20061002b</code>"
+output
+file).
+
+
+
+        </li>
+        <li>Compare output files stored in <code>c:\mmj2\data\result</code>.
+They
+ought
+to
+match
+unless
+the software changed.</li>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td
+ style="vertical-align: top; width: 25%; font-family: monospace;">RunUnitTest5.bat<br>
+      </td>
+      <td style="vertical-align: top;">
+      <ul>
+        <li>Update <code>C:\mmj2\test\windows\RunUnitTest5.bat</code> <code></code>which
+contains
+a
+date-stamped
+file
+name
+with the correct date and suffix ("<code>20061002a</code>"
+=
+old
+software, "<code>20061002b</code>" = new software). </li>
+        <li>Run <code>c:\mmj2\test\windows\RunUnitTest5.bat</code>. <span
+ style="font-style: italic;">Note: don't bother manually saving the
+Command Window output -- it is not significant for UnitTest5.</span><span
+ style="text-decoration: underline;"></span> </li>
+        <li>Repeat test using new software (ie. output to "<code>20061002b</code>"
+output
+file).
+
+
+
+        </li>
+        <li>Compare output files stored in <code>c:\mmj2\data\result</code>.
+They
+ought
+to
+match
+unless
+the software changed.</li>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>RunUnitTest6.bat</code></td>
+      <td style="vertical-align: top;">
+      <ul>
+        <li>Update <code>C:\mmj2\test\windows\RunUnitTest6.bat</code> <code></code>which
+contains
+a
+date-stamped
+file
+name
+with the correct date and suffix ("<code>20061002a</code>"
+=
+old
+software, "<code>20061002b</code>" = new software). </li>
+        <li>Run <code>c:\mmj2\test\windows\RunUnitTest6.bat</code>. <span
+ style="font-style: italic;">Note: don't bother manually saving the
+Command Window output -- it is not significant for UnitTest6.</span><span
+ style="text-decoration: underline;"></span> </li>
+        <li>Repeat test using new software (ie. output to "<code>20061002b</code>"
+output
+file).
+
+
+
+        </li>
+        <li>Compare output files stored in <code>c:\mmj2\data\result</code>.
+They
+ought
+to
+match
+unless
+the software changed.</li>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>RunUnitTest7.bat</code></td>
+      <td style="vertical-align: top;">
+      <ul>
+        <li>Update <code>C:\mmj2\test\windows\RunUnitTest7.bat</code> <code></code>which
+contains
+a
+date-stamped
+file
+name
+with the correct date and suffix ("<code>20061002a</code>"
+=
+old
+software, "<code>20061002b</code>" = new software). </li>
+        <li>Run <code>c:\mmj2\test\windows\RunUnitTest7.bat</code>. <span
+ style="font-style: italic;">Note: don't bother manually saving the
+Command Window output -- it is not significant for UnitTest7.</span><span
+ style="text-decoration: underline;"></span> </li>
+        <li>Repeat test using new software (ie. output to "<code>20061002b</code>"
+output
+file).
+
+
+
+        </li>
+        <li>Compare output files stored in <code>c:\mmj2\data\result</code>.
+They
+ought
+to
+match
+unless
+the software changed.</li>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>RunUnitTest8.bat</code></td>
+      <td style="vertical-align: top;">
+      <ul>
+        <li>Update <code>C:\mmj2\test\windows\RunUnitTest8.bat</code> <code></code>which
+contains
+a
+date-stamped
+file
+name
+with the correct date and suffix ("<code>20061002a</code>"
+=
+old
+software, "<code>20061002b</code>" = new software). </li>
+        <li>Run <code>c:\mmj2\test\windows\RunUnitTest8.bat</code>. <span
+ style="font-style: italic;">Note: don't bother manually saving the
+Command Window output -- it is not significant for UnitTest8.</span><span
+ style="text-decoration: underline;"></span> </li>
+        <li>Repeat test using new software (ie. output to "<code>20061002b</code>"
+output
+file).
+
+
+
+        </li>
+        <li>Compare output files stored in <code>c:\mmj2\data\result</code>.
+They
+ought
+to
+match
+unless
+the software changed.</li>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>RunUnitTest9.bat</code></td>
+      <td style="vertical-align: top;">
+      <ul>
+        <li>Update <code>C:\mmj2\test\windows\RunUnitTest9.bat</code> <code></code>which
+contains
+a
+date-stamped
+file
+name
+with the correct date and suffix ("<code>20061002a</code>"
+=
+old
+software, "<code>20061002b</code>" = new software). </li>
+        <li>Run <code>c:\mmj2\test\windows\RunUnitTest9.bat</code>. <span
+ style="font-style: italic;">Note: don't bother manually saving the
+Command Window output -- it is not significant for UnitTest9.</span><span
+ style="text-decoration: underline;"></span> </li>
+        <li>Repeat test using new software (ie. output to "<code>20061002b</code>"
+output
+file).
+
+
+
+        </li>
+        <li>Compare output files stored in <code>c:\mmj2\data\result</code>.
+They
+ought
+to
+match
+unless
+the software changed.</li>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td
+ style="vertical-align: top; width: 25%; font-family: monospace;">RunUnitTest10.bat<br>
+      </td>
+      <td style="vertical-align: top;">
+      <ul>
+        <li>Update <code>C:\mmj2\test\windows\RunUnitTest10.bat</code>
+          <code></code>which
+contains a date-stamped file name with the correct date and suffix ("<code>20061002a</code>"
+=
+old
+software,
+"<code>20061002b</code>" = new software). </li>
+        <li>Run <code>c:\mmj2\test\windows\RunUnitTest10.bat</code>. <span
+ style="text-decoration: underline;">Manually save the Command Window
+output to </span><code style="text-decoration: underline;">C:\mmj2\data\result\UT10Err20061002a.txt</code><span
+ style="text-decoration: underline;"> (using the date and suffix chosen
+for the test.)</span><br>
+        </li>
+        <li>Repeat test using new software (ie. output to "<code>20061002b</code>"
+output
+file).
+
+
+
+        </li>
+        <li>Compare output files stored in <code>c:\mmj2\data\result</code>.
+They
+ought
+to
+match
+unless
+the software changed.</li>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td
+ style="vertical-align: top; width: 25%; font-family: monospace;">RunUnitTest11.bat<br>
+      </td>
+      <td style="vertical-align: top;">
+      <ul>
+        <li>Update <code>C:\mmj2\test\windows\RunUnitTest11.bat</code>
+          <code></code>which
+contains a date-stamped file name with the correct date and suffix ("<code>20061002a</code>"
+=
+old
+software,
+"<code>20061002b</code>" = new software). </li>
+        <li>Run <code>c:\mmj2\test\windows\RunUnitTest11.bat</code>. <span
+ style="text-decoration: underline;">Manually save the Command Window
+output to </span><code style="text-decoration: underline;">C:\mmj2\data\result\UT11Err20061002a.txt</code><span
+ style="text-decoration: underline;"> (using the date and suffix chosen
+for the test.)</span><br>
+        </li>
+        <li>Repeat test using new software (ie. output to "<code>20061002b</code>"
+output
+file).
+
+
+
+        </li>
+        <li>Compare output files stored in <code>c:\mmj2\data\result</code>.
+They
+ought
+to
+match
+unless
+the software changed.</li>
+        <li>Compare output files stored in <code>c:\mmj2\data\gmfftest\althtml,
+
+          </code><code>c:\mmj2\data\gmfftest\html </code>and <code>c:\mmj2\data\gmfftest\myproofs</code>.
+They
+ought
+to
+match
+unless the software changed.</li>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td
+ style="vertical-align: top; width: 25%; font-family: monospace;">RunVolumeTest2a.bat<br>
+      </td>
+      <td style="vertical-align: top;">
+      <ul>
+        <li>Update <code>C:\mmj2\test\windows\RunVolumeTest2a.bat</code>
+          <code></code>which contains a date-stamped file name with the
+correct date and suffix ("<code>20061002a</code>" = old software, "<code>20061002b</code>"
+=
+new
+software).
+
+
+        </li>
+        <li>Run <code>c:\mmj2\test\windows\Run</code><code>VolumeTest2a</code><code>.bat</code>.
+
+
+
+
+
+          <span style="font-style: italic;">Note: don't bother manually
+saving the Command Window output -- it is not significant for
+VolumeTest2.</span> <span style="font-weight: bold;">WARNING: This
+test runs for at least 5 minutes AND sucks down 99% of the CPU! Be
+patient.</span><br>
+        </li>
+        <li>Repeat test using new software (ie. output to "<code>20061002b</code>"
+output
+file).
+
+
+
+        </li>
+        <li>Compare output files stored in <code>c:\mmj2\data\result</code>.
+They
+ought
+to
+match
+unless
+the software changed -- except for the
+elapsed time measurements reported because there are
+random variances in every run that are reflected in the output for
+theorems whose unification time is on the border between zero tenths of
+a second and one tenths of a second (the program truncates, and does
+not round output time durations.)</li>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td
+ style="vertical-align: top; width: 25%; font-family: monospace;">RunVolumeTest2b.bat<br>
+      </td>
+      <td style="vertical-align: top;"> <span
+ style="font-style: italic; font-weight: bold;">NOTE: Same
+as VolumeTest2 except that it exports ProofWorksheets using the new
+TMFF formatting (Format Nbr 3) *and* it uses the "Randomize" RunParm
+option (to make things even harder.) Not a problem except that a few
+minor differences may appear in parallel test results (for example:
+metcnp4lem2 may generate "soft" $d errors due to randomization of proof
+step hypothesis order and derivation of proof step formulas by the
+Proof Assistant.)</span><br style="font-style: italic;">
+      <br>
+      <ul>
+        <li>Update <code>C:\mmj2\test\windows\RunVolumeTest2b.bat</code>
+          <code></code>which contains a date-stamped file name with the
+correct date and suffix ("<code>20061002a</code>" = old software, "<code>20061002b</code>"
+=
+new
+software).
+
+
+        </li>
+        <li>Run <code>c:\mmj2\test\windows\Run</code><code>VolumeTest2</code><code>b.bat</code>.
+
+
+
+
+
+          <span style="font-style: italic;">Note: don't bother manually
+saving the Command Window output -- it is not significant for
+VolumeTest2.</span> <span style="font-weight: bold;">WARNING: This
+test runs for at least 5 minutes</span><span style="font-weight: bold;">
+AND sucks down 99% of the CPU! </span><span style="font-weight: bold;">
+Be patient.</span><br>
+        </li>
+        <li>Repeat test using new software (ie. output to "<code>20061002b</code>"
+output
+file).
+
+
+
+        </li>
+        <li>Compare output files stored in <code>c:\mmj2\data\result</code>.
+They
+ought
+to
+match
+unless
+the software changed --
+except for the elapsed time measurements reported because there are
+random variances in every run that are reflected in the output for
+theorems whose unification time is on the border between zero tenths of
+a second and one tenths of a second (the program truncates, and does
+not round output time durations.) Also, hypothesis Randomization will
+affect elapsed unification times for a certain number of theorems.<br>
+        </li>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">RunVolumeTest2c.bat</td>
+      <td style="vertical-align: top;"><span
+ style="font-style: italic; font-weight: bold;">NOTE: Same
+as VolumeTest2 except that it exports tests the CompareDJs and
+UpdateDJs options of the ProofAsstBatchTest RunParm (to find
+Superfluous Mandatory $d statements in a .mm file. </span><span
+ style="font-weight: bold;">WARNING: This test runs for at least 15
+minutes! Be patient.</span><br>
+      <span style="font-style: italic; font-weight: bold;"><br>
+      </span>
+      <ul>
+        <li>Update <code>C:\mmj2\test\windows\RunVolumeTest2c.bat</code>
+          <code></code>which contains a date-stamped file name with the
+correct date and suffix ("<code>20061002a</code>" = old software, "<code>20061002c</code>"
+=
+new
+software).
+
+
+        </li>
+        <li>Run <code>c:\mmj2\test\windows\Run</code><code>VolumeTest2c</code><code>.bat</code>.
+
+
+
+
+
+          <span style="font-style: italic;">Note: don't bother manually
+saving the Command Window output -- it is not significant for
+VolumeTest2.</span> <span style="font-weight: bold;">WARNING: This
+test runs for at least 5 minutes</span><span style="font-weight: bold;">
+AND sucks down 99% of the CPU! </span><span style="font-weight: bold;">Be
+patient.</span><br>
+        </li>
+        <li>Repeat test using new software (ie. output to "<code>20061002c</code>"
+output
+file).
+
+
+
+        </li>
+        <li>Compare output files stored in <code>c:\mmj2\data\result</code>.
+They
+ought
+to
+match
+unless
+the software changed --
+except for the elapsed time measurements reported because there are
+random variances in every run that are reflected in the output for
+theorems whose unification time is on the border between zero tenths of
+a second and one tenths of a second (the program truncates, and does
+not round output time durations.) Also, hypothesis Randomization will
+affect elapsed unification times for a certain number of theorems.</li>
+      </ul>
+      <br style="font-style: italic;">
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">RunVolumeTest2d.bat</td>
+      <td style="vertical-align: top;"><span
+ style="font-style: italic; font-weight: bold;">NOTE: Same
+as VolumeTest2 except that its BatchTest RunParm uses the </span><span
+ style="font-weight: bold;"><code>DeriveFormulas</code></span><span
+ style="font-style: italic; font-weight: bold;"> and </span><code><span
+ style="font-weight: bold;">AsciiRetest</span></code><span
+ style="font-style: italic; font-weight: bold;"> options. It also uses
+RunParms <br>
+      <br>
+      </span><code><span style="font-weight: bold;">ProofAsstDjVarsSoftErrors,GenerateReplacements
+and<br>
+RecheckProofAsstUsingProofVerifier,yes<br>
+      </span></code><span style="font-style: italic; font-weight: bold;"><br>
+      </span><span style="font-weight: bold;">WARNING: This test runs
+for at least 10
+minutes</span><span style="font-weight: bold;"></span><span
+ style="font-weight: bold;"> AND sucks down 99% of the CPU! </span><span
+ style="font-weight: bold;"></span><span style="font-weight: bold;"> Be
+patient.</span><br>
+      <span style="font-style: italic; font-weight: bold;"><br>
+      </span>
+      <ul>
+        <li>Update <code>C:\mmj2\test\windows\RunVolumeTest2d.bat</code>
+          <code></code>which contains a date-stamped file name with the
+correct date and suffix ("<code>20061002a</code>" = old software, "<code>20061002c</code>"
+=
+new
+software).
+
+
+        </li>
+        <li>Run <code>c:\mmj2\test\windows\Run</code><code>VolumeTest2d</code><code>.bat</code>.
+
+
+
+
+
+          <span style="font-style: italic;">Note: don't bother manually
+saving the Command Window output -- it is not significant for
+VolumeTest2.</span> <span style="font-weight: bold;">WARNING: This
+test runs for at least 5 minutes</span><span style="font-weight: bold;">
+AND sucks down 99% of the CPU! </span><span style="font-weight: bold;">Be
+patient.</span><br>
+        </li>
+        <li>Repeat test using new software (ie. output to "<code>20061002c</code>"
+output
+file).
+
+
+
+        </li>
+        <li>Compare output files stored in <code>c:\mmj2\data\result</code>.
+They
+ought
+to
+match
+unless
+the software changed --
+except for the elapsed time measurements reported because there are
+random variances in every run that are reflected in the output for
+theorems whose unification time is on the border between zero tenths of
+a second and one tenths of a second (the program truncates, and does
+not round output time durations.)</li>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">RunVolumeTest2e.bat</td>
+      <td style="vertical-align: top;"><span
+ style="font-style: italic; font-weight: bold;">NOTE: Same
+as VolumeTest2 except that its BatchTest RunParm uses the </span><span
+ style="font-weight: bold;"><code>DeriveFormulas,</code></span><span
+ style="font-style: italic; font-weight: bold;"> </span><code><span
+ style="font-weight: bold;">AsciiRetest</span></code><span
+ style="font-style: italic; font-weight: bold;"> and </span><code><span
+ style="font-weight: bold;">ProofAsstAutoReformat</span></code><span
+ style="font-style: italic; font-weight: bold;"> (</span><code><span
+ style="font-weight: bold;">no</span></code><span
+ style="font-style: italic; font-weight: bold;">) options. It also uses
+RunParms <br>
+      <br>
+      </span><code><span style="font-weight: bold;">ProofAsstDjVarsSoftErrors,GenerateReplacements
+and<br>
+RecheckProofAsstUsingProofVerifier,yes<br>
+      <br>
+      </span></code><span style="font-style: italic; font-weight: bold;"></span><span
+ style="font-style: italic; font-weight: bold;">(Thus, it is identical
+to VolumeTest2d except that it adds "</span><code><span
+ style="font-weight: bold;">ProofAsstAutoReformat,no</span></code><span
+ style="font-style: italic; font-weight: bold;">".)<br>
+      <br>
+      </span><span style="font-weight: bold;">WARNING: This test runs
+for at least 10
+minutes</span><span style="font-weight: bold;"></span><span
+ style="font-weight: bold;"> AND sucks down 99% of the CPU! </span><span
+ style="font-weight: bold;"></span><span style="font-weight: bold;"> Be
+patient.</span><br>
+      <span style="font-style: italic; font-weight: bold;"><br>
+      </span>
+      <ul>
+        <li>Update <code>C:\mmj2\test\windows\RunVolumeTest2e.bat</code>
+          <code></code>which contains a date-stamped file name with the
+correct date and suffix ("<code>20061002a</code>" = old software, "<code>20061002c</code>"
+=
+new
+software).
+
+
+        </li>
+        <li>Run <code>c:\mmj2\test\windows\Run</code><code>VolumeTest2e</code><code>.bat</code>.
+
+
+
+
+
+          <span style="font-style: italic;">Note: don't bother manually
+saving the Command Window output -- it is not significant for
+VolumeTest2.</span> <span style="font-weight: bold;">WARNING: This
+test runs for at least 5 minutes</span><span style="font-weight: bold;">
+AND sucks down 99% of the CPU! </span><span style="font-weight: bold;">Be
+patient.</span><br>
+        </li>
+        <li>Repeat test using new software (ie. output to "<code>20061002c</code>"
+output
+file).
+
+
+
+        </li>
+        <li>Compare output files stored in <code>c:\mmj2\data\result</code>.
+They
+ought
+to
+match
+unless
+the software changed --
+except for the elapsed time measurements reported because there are
+random variances in every run that are reflected in the output for
+theorems whose unification time is on the border between zero tenths of
+a second and one tenths of a second (the program truncates, and does
+not round output time durations.)</li>
+      </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+</body>
+</html>

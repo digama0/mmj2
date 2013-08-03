@@ -1,0 +1,40 @@
+$( <MM> <PROOF_ASST> THEOREM=sylClone  LOC_AFTER=
+*                                                          Page304.mmp
+ This is the same proof as on the previous page except that the "a2i"
+ in LOC_AFTER has been erased, the "qed" step's Ref "ax-mp" has been
+ erased and its Hyp has been changed to "200,1000". 
+
+ Press Ctrl-U now to Unify the proof.
+
+h1000              |- ( ph -> ps )
+h200               |- ( ps -> ch )
+h30                |- ( ch -> th ) 
+3:200              |- ( ph -> ( ps -> ch ) )
+4:3                |- ( ( ph -> ps ) -> ( ph -> ch ) )
+qed:200,1000       |- ( ph -> ch )
+
+*Notice that:
+     - Because the LOC_AFTER field is blank, sylClone is logically
+       located at the end of the Metamath database, and therefore
+     - the "qed" step could be unified with theorem syl, and therefore
+     - Steps 3 and 4 are not used to complete the final proof!!! And
+     - The order of Hyps in the "qed" step was reversed to match the
+       input order! The Proof Assistant resequences Hyps so you rarely
+       have to worry about the correct order. (Nice!)
+ 
+ mmj2 does not flag redundant proof steps, but it also does not
+ include them in the output Metamath RPN-format proof. What this means
+ is that you can use the mmj2 Proof Assistant as a scratch pad, or a
+ work area. In other words, you can try new steps in the middle of an
+ existing proof to experiment with new derivations!
+
+ Now, just as an experiment, change the "qed" step's Hyp back to
+ "1000,4" and erase its Ref "syl". Then press Ctrl-U. Notice that 
+ syl is not used. That is  because it does not unify with the "qed" 
+ step anymore, given Hyp field "1000,4". This proves that mmj2 follows 
+ orders and is not a mind-reader!
+
+ OK, forward to the next Tutorial page (Page401.mmp)!
+
+$) 
+

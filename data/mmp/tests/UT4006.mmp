@@ -1,0 +1,174 @@
+$( <MM> <PROOF_ASST> THEOREM=cdj1  LOC_AFTER=?
+
+* Two ways of expressing " ` A ` and ` B ` are completely disjoint
+  subspaces."  (1) => (2) in Lemma 5 of [Holland] p. 1520.
+
+h1::cdj1.1         |- A e. SH
+h2::cdj1.2         |- B e. SH
+3::gt0ne0t         
+4::rerecclt        
+5:3,4:syldan       
+6:5:adantrr        
+7::recgt0t         
+8:7:adantrr        
+9::1re             
+10:9:a1i           
+11:2:shel          
+12::ax1cn          
+13:12:negcl        
+14::hvmulclt       
+15:13,14:mpan      
+16:11,15:syl       
+17::normclt        
+18:16,17:syl       
+19:18:adantl       
+20::1re            
+21::axaddrcl       
+22:20,21:mpan      
+23:19,22:syl       
+24:23:adantr       
+25::axmulrcl       
+26::hvsubclt       
+27:1:shel          
+28:2:shel          
+29:26,27,28:syl2an 
+30::normclt        
+31:29,30:syl       
+32:25,31:sylan2    
+33:32:anassrs      
+34:33:adantr       
+35::1re            
+36::addge01tOLD    
+37:35,36:mp3an1    
+38:2:shel          
+39::ax1cn          
+40:39:negcl        
+41::hvmulclt       
+42:40,41:mpan      
+43:38,42:syl       
+44::normclt        
+45:43,44:syl       
+46:2:shel          
+47::ax1cn          
+48:47:negcl        
+49::hvmulclt       
+50:48,49:mpan      
+51:46,50:syl       
+52::normge0t       
+53:51,52:syl       
+54:37,45,53:sylanc 
+55:54:ad2antlr     
+56::ax1cn          
+57:56:negcl        
+58::shmulcltOLD    
+59:2,58:ax-mp      
+60:57,59:mpan      
+61::fveq2          
+62:61:opreq2d      
+63::opreq2         
+64:63:fveq2d       
+65:64:opreq2d      
+66:62,65:breq12d   
+67:66:rcla4v       
+68:60,67:syl       
+69:68:imp          
+70:69:adantll      
+71:70:adantrr      
+72::opreq1         
+73:72:eqcoms       
+74:73:ad2antll     
+75::hvsubvalt      
+76:1:shel          
+77:2:shel          
+78:75,76,77:syl2an 
+79:78:fveq2d       
+80:79:opreq2d      
+81:80:adantll      
+82:81:adantr       
+83:71,74,82:3brtr4d 
+                   
+84:10,24,34,55,83:letrd 
+                   
+85:84:ex           
+86:85:adantllr     
+87::1re            
+88::lediv1t        
+89:87,88:mp3anl1   
+90::axmulrcl       
+91::hvsubclt       
+92:1:shel          
+93:2:shel          
+94:91,92,93:syl2an 
+95::normclt        
+96:94,95:syl       
+97:90,96:sylan2    
+98:97:anassrs      
+99:98:adantllr     
+100::pm3.26        
+101:100:ad2antrr   
+102:99,101:jca     
+103::pm3.27        
+104:103:ad2antrr   
+105:89,102,104:sylanc 
+                   
+106:86,105:sylibd  
+107:106:imp        
+108::divcan3t      
+109::recnt         
+110:109:adantr     
+111:110:ad2antrr   
+112::hvsubclt      
+113:1:shel         
+114:2:shel         
+115:112,113,114:syl2an 
+                   
+116::normclt       
+117:115,116:syl    
+118:117:recnd      
+119:118:adantll    
+120::gt0ne0t       
+121:120:ad2antrr   
+122:108,111,119,121:syl3anc 
+                   
+123:122:adantr     
+124:107,123:breqtrd 
+                   
+125:124:exp43      
+126:125:com23      
+127:126:r19.21adv  
+128:127:r19.20dva  
+129:128:ex         
+130:129:imp32      
+131:8,130:jca      
+132:6,131:jca      
+133:132:ex         
+134::breq2         
+135::breq1         
+136:135:imbi2d     
+137:136:2ralbidv   
+138:134,137:anbi12d 
+                   
+139:138:rcla4ev    
+140:133,139:syl6   
+qed:140:r19.23aiv  |- (  E. w
+                         e. RR
+                            (  0 < w
+                            /\ A. y
+                               e. A
+                                  A. v
+                                  e. B
+                                     ( ( norm ` y ) + ( norm ` v ) )
+                                     <_
+                                     ( w x. ( norm ` ( y +v v ) ) ) )
+                      -> E. x
+                         e. RR
+                            (  0 < x
+                            /\ A. y
+                               e. A
+                                  A. z
+                                  e. B
+                                     (  ( norm ` y ) = 1
+                                     -> x <_ ( norm ` ( y -v z ) ) ) ) )
+
+$)
+

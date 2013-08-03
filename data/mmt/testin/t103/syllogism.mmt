@@ -1,0 +1,13 @@
+${
+
+  syllogism.1 $e |- ( ph -> ps ) $.
+
+  syllogism.2 $e |- ( ps -> ch ) $.
+
+  $( syllogism is clone of syl $)
+
+  syllogism   $p |- ( ph -> ch ) 
+	$=  wph wps wi wph wch wi syllogism.1 wph wps wch wps 
+	    wch wi wph syllogism.2 a1i a2i ax-mp $. 
+	    
+$}

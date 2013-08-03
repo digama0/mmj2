@@ -1,0 +1,1851 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta content="text/html; charset=ISO-8859-1" http-equiv="content-type"><title>EarleyParseFunctionAlgorithm.html</title></head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);" alink="#000088" link="#0000ff" vlink="#ff0000">
+<h3><span style="font-weight: bold;">EarleyParseFunctionAlgorithm</span>
+
+
+</h3>
+
+<span style="font-weight: bold;">(derived from Dick Grune and Ceriel
+J.H. Jacob's "Parsing Techniques -- A Practical Guide" -- my
+compliments to the authors! See page 149 in Edition 1 -- which is the
+139th page in the .pdf book file.)<br>
+<br>
+</span>See also:<br>
+<a href="EarleyParseCompletedItemSetsExample.html">EarleyParseCompletedItemSetsExample.html</a><br>
+<a href="EarleyTreeBuilder.html"><span style="text-decoration: underline;">EarleyTreeBuilder.html</span></a><br>
+
+
+<hr style="width: 100%; height: 2px;"><span style="font-weight: bold;"><br>
+<big>Assumptions:</big></span><br>
+
+
+<br><span style="font-weight: bold;">1.</span> <span style="font-weight: bold;">The input Metamath database has been validated successfully
+against the Syntax Axiom Rules and Conventions</span>. In other words, the
+syntax and grammar of the input have been determined to be valid (we
+will not proceed in this using bogus data!)<br>
+<br>
+<span style="font-style: italic;"><span style="font-weight: bold;">Note</span>:
+there will likely need to be two <span style="text-decoration: underline;">invocations</span> of the parse function, one
+for validating Syntax Axioms themselves, and another for
+validation of non-Syntax statements. Both functions need a parse process, but for
+opposite reasons! <span style="font-weight: bold;">A parse attempt is
+required for Syntax Axioms to prove that they cannot be parsed using
+the grammar derived from other Syntax Axioms, meaning that each is
+independent; non-Syntax statements are parsed to prove that they can be
+derived from the grammar!</span></span><br style="font-style: italic;">
+
+<br><span style="font-weight: bold;">
+2. The Grammar Rules and associated information have been created from
+the Syntax Axioms of the Metamath Database</span> and all information stored
+(for convenience) in Cnst and Axiom has been initialized; of local
+interest, specifically, the <code>Cnst.earleyFIRST</code> and <code>Cnst.earleyRules</code> items have been set to <code>null</code> prior to construction of <code>EarleyParser</code> (which happens at the end of <code>Grammar.initializeGrammar()</code>.<br>
+
+<br><span style="font-weight: bold;">
+
+3. Primary Input to </span><code style="font-weight: bold;">EarleyParser.parseExpr</code> consists of:<br>
+<code>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; public int parseExpr(ParseTree[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; parseTreeArrayIn,<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Cnst&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+formulaTypIn,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ParseNodeHolder[] parseNodeHolderExprIn,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp; &nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+highestSeqIn)<br>
+</code><br>
+
+<ul>
+
+<li><code style="font-weight: bold;">parseTreeArrayIn</code> -- <code>ParseTree[]</code> of length 0, 1, ... <code>parseTreeArrayIn.length</code>. The array will be
+filled with 0, 1 ... to&nbsp; n <code>ParseTree</code>s, depending on the number of
+    <code>ParseTree</code>s generated
+for the input expression and the size of the input array (zero means no
+parse tree found, one means
+unique parse tree, and two means two or more equivalent parse trees are
+possible and the first two were returned.) Any other errors will result
+in a thrown <code>Exception</code> (example might be bogus <code>VarHyp</code> array or some
+other runtime error caused by bad data or a programming booboo.) If the
+user does not care to check for ambiguity then the <code>ParseTree[]</code> may have
+length = 1, so that needless time is not wasted looking for, or
+generating trees 2 and beyond; the parser will simpy ignore all secondary <code>ParseTree</code>s and go directly for the first one it finds..<br>
+
+</li><li><code style="font-weight: bold;">formulaTypIn</code> -- <code>Cnst</code> Formula Type
+code where Type code is for "parsing" if the Expression's length = zero
+(special case involving Nulls Permitted) <span style="font-style: italic;">and</span> for determination of the
+parse Start Rule Type: If <code>formulaTypIn</code>
+= *the* Provable
+Logic Stmt Type Code (i.e. "|-"), then the Start Rule Type is *the*
+Logical Stmt Type (i.e. "wff"); otherwise, the Start Rule Type is the
+Statement's Type Code itself (i.e. "class" -- this would generally
+occur on either a Syntax Axiom or, rarely, on a Theorem representing a
+grammatical parse RPN as a "proof", in essence, deriving the
+Statement's Formula's Expression from the RPN.) Note: some puzzlement
+may be in order, but consider the case of a 1 symbol Constant
+expression, such as "c0" that is input on a Formula with Type Code =
+"class": no problem, because "c0" is a Syntax Axiom of type class.
+However, if the Formula Type Code = "|-" (as on a Theorem), then the
+parse will fail because the Start Rule Type will be "wff" and there is
+no "c0" rule for Type = "wff". <br>
+</li>
+<li><code><span style="font-weight: bold;">parseNodeHolderExprIn</span> </code>--
+a <code>Formula</code>'s Expression (symbols 2 through 'n') written as an array of <code>ParseNodeHolder</code>s. wherein variables have been replaced by their corresponding VarHyp's (Variable Hypotheses). These
+contain <code>mObj</code> and <code>parseNode</code><span style="font-family: monospace;"></span><code></code><code></code>. If <code>(mObj.isCnst())</code> then the <code>mObj</code> is a terminal symbol (i.e. "<code>(</code>"), and <code>ParseNode</code> is <code>null</code>; otherwise, <code>ParseNode</code> will contain something already parsed -- such as a <code>VarHyp</code>
+or a Named-Typed Constant Syntax Axiom (i.e. "c0"). Note: For optimization,
+especially with set.mm, immediately upon input, the parseNodeHolderExprIn will be <code></code>pre-loaded with <code>ParseNode</code>s
+for the "Gimme" Named-Typed Constant Syntax Axioms (see
+GRForest.findLen1CnstNotationRule() and
+NotationRule.getIsGimmeMatchNbr()) -- this allows us to minimize the
+size or <code>Cnst.earleyRules</code> and <code>Cnst.earleyFIRST</code>,
+which should dramatically improve performance. (the parser can
+process a parseNodeHolderExpr that is already partially parsed.)</li><li><code><span style="font-weight: bold;">highestSeqIn</span> </code>-- Maximum Sequence Number used to ensure that parse uses
+only Syntax Axioms occurring prior to the input <code>Formula</code> in the Metamath
+Datbase; default is <code>java.lang.Integer.MAX_VALUE</code>
+if this check is
+unnecessary). This variable is used during initialization before the
+earleyLoop() to build predictedItemset[0] -- only Cnst.earleyRules
+&lt;= highestSeqIn are loaded, a nice little optimization (which will
+be even better if we ensure that Cnst.earleyRules is stored in sequence
+by <code>GrammarRule.MAX_SEQ_NBR</code>, thus allowing the loader that is reading <code>Cnst.earleyRules</code> to stop reading when <code>highestSeqIn</code> is reached.)</li>
+</ul><span style="font-weight: bold;">
+
+
+3. Primary Output from&nbsp; </span><code><span style="font-weight: bold;">EarleyParser.parseExp</span>r</code> is <code>int</code> -- the number of generated <code>ParseTree</code>s.
+The input parseTreeArrayIn is treated as I/O and is loaded with the
+output parseTrees, starting at index 0; unused array entries are not
+rei-initialized, so the contents beyond the index = (output count - 1)
+is indeterminate.<br>
+<br><span style="font-weight: bold;">
+4. Auxiliary Input</span> accessed via Grammar, Cnst, etc.(grammar and grammar.maxFormulaCnt are input via the EarleyParser Constructor.)<br>
+
+<code></code>
+<ul>
+<li><code>Cnst.getLen1CnstNotationRule()</code> - Grammar Rules for the "Named Typed Constant" Rules, such as "c0".</li><li><code>Cnst.getIsGrammaticalTyp()</code> - identifies <code>Cnst</code> in expr as a "non-terminal".</li><li><code>Cnst.findFromTypConversionRule()</code> - obtain Type Conversion Rule for a grammatical Type.<br>
+  </li>
+
+  <li><code>Grammar.provableLogicStmtTypArray[0]</code> -- *the* Provable Logic Stmt Type Code, used to derive Start Rule Type Code.<br>
+</li><li><code>Grammar.logicStmtTypArray[0]</code> -- *the* Logic Stmt Type Code, used to derive Start Rule Type Code.<br>
+  </li>
+  <li><code>Grammar.getNullsPermittedGRList</code> -- Grammar Rules for Type Codes that allow nulls, used in Special Cases (see below).<br>
+  </li>
+  <li><code>Grammar.getNotationGRList()</code> -- List of all Notation
+Grammar Rules, used in EarleyParser to build cnst.earleyFIRST and
+cnst.earleyRules. Also may be useful in determining allocation sizes
+for pre-allocated data structures.</li>
+  <li><code>Grammar.maxFormulaCnt</code> -- length of longest Formula
+in LogicalSystem (as computed during Grammar Initialization). May be
+used as an aid in determining allocation sizes for pre-allocated data
+structures.</li><li><code>GrammarRule / NotationRule / TypeConversionRule / NullsPermittedRule</code> -- incorporated by reference :)</li>
+  <li><code>Axiom</code>, including <code>Axiom.getSyntaxAxiomVarHypReseq()</code> -- used indirectly via <code>GrammarRule.buildGrammaticalParseNode()</code>, which resequences input parameters as needed and builds a tree node with sub-nodes (a key component when building a <code>ParseTree</code>!)<br>
+  </li>
+
+  
+
+  </ul><br>
+<span style="font-weight: bold;">5. Auxiliary Output:</span> <br>
+<ul>
+  <li><code>grammar.accumErrorMsgInList()</code> -- parse error and informational messages returned to invoker.</li>
+</ul>
+<br>
+<hr style="width: 100%; height: 2px;"><br>
+<span style="font-weight: bold;">Special Parse Cases: (NOTE: in the
+event that we discontinue using the "combinatorial explosion" method of
+resolving Nulls Permitteds and Type Conversions, these Special Cases
+will need to be abandoned -- they will have to pass through the regular
+parse just like everyone else :) The issue involves nulls prior to or
+after any symbol and making those matches to the Grammar Rules.)</span><br>
+<ol>
+  <li><span style="font-weight: bold;">Expression length = 0</span>: Occurs on Nulls Permitted Syntax Axioms or, in theory, on a Logical
+Hypothesis, Logical Axiom or Theorem -- statements beginning with a
+valid Theorem TypeCode (i.e. "<code>|-</code>").
+In both cases, the
+parse should return a Nulls Permitted result, but the question is, for
+which Type Code? Answer: if the parsed Formula Type Code is a Provable
+Logic Statement Type code, then return a Nulls Permitted parse for one
+of the Logical
+Statement Type Codes (and if 2 results are possible then that is an
+ambiguity); otherwise, if the parsed Formula Type Code is not a Provable
+Logic Statement Type Code, then return a Nulls Permitted parse result
+for any of the
+non-Provable Logic Statement Type Codes, including the Logical Type
+Codes (ex. if
+Formula Type Code is "<code>wff</code>" then if there is a Nulls Permitted Rule for "<code>wff</code>", return that, else no parse is possible.) <span style="font-style: italic;">NOTE:
+At this time, the input is restricted to allow a maximum of ONE
+Provable Logic Statement Type Code and ONE Logic Statement Type Code.</span> <br>
+</li>
+  <li><span style="font-weight: bold;">Expression with Length = 1 and </span><code><span style="font-weight: bold;">(!parseNodeHolderExprIn[0].mObj.isCnst()) and (parseNodeHolderExprIn[0].getStmt().isVarHyp()</span>:</code><code> </code>This occurs on Type Conversion Syntax
+Axioms, on Variable Hypothesis Statements and on Logical Statements
+(see <code>ax-mp</code> in <code>set.mm</code>!)
+If the parsed Formula's Type Code is a Provable Logic Statement Type
+Code then the parse result
+should be just a Variable Hypothesis parse tree -- otherwise, the parse
+result should be a Type Conversion parse tree. (NOTE: when parsing a
+Metamath database in its entirety, we do not send variable hypotheses
+through the parser, therefore weignore that scenario in this special case. Thus, if someone purposely sends, say, " <code>xyz $f class x $</code>."
+through the parser it will be treated as a type conversion, from class
+to class, and it will generate an error message becase there can be no
+conversion from a Type Code to itself.) <br>
+  </li></ol>
+
+
+<hr style="width: 100%; height: 2px;"><br>
+
+
+<big><span style="font-weight: bold;">Processing Overview</span></big><br style="font-weight: bold;">
+<br>There are four primary steps in parsing an expression.<br>
+<ol>
+  <li>Rewrite parseNodeHolderExprIn with parse of each
+mObj.isCnst that refers to a "gimme" 1-symbol Syntax Axiom Rule (see <code>Cnst.len1CnstNotationRule not = null
+and NotationRule.isGimmeNbr == 1)</code>. At the same time, increase the
+length of the rewritten expr so that the first symbol occurs in array
+index 1; that simplifies a fair amount of code, leaving only the -1
+adjustment -- from position to index -- for accessing GrammarRule
+expression symbols.<br>
+</li><li>Check for special cases -- ParseNodeHolderExpr length = 0,
+and ParseNodeHolderExpr length = 1 consisting of just a variable
+(hypothesis). Output these
+automatically without bothering Mr. Earley...</li>
+
+  <li>Perform the Earley Parse algorithm on the rewritten expression. This
+process recognizes grammatically correct expressions and performs
+record-keeping that enables generation of parse tree(s) using the Completed ItemSets.<br>
+</li>
+  <li>Generate the Parse Tree(s), if any, using the Earley
+ItemSets/CompleteItemSets. If the final Competed Itemset does not
+contain an EarleyItem @1 for the Start Rule Type, then there are no
+parses available (we'll have to figure out how to generate multiples as
+we go through this...)<br>
+  </li>
+</ol>
+In addition, at construction time, the Cnst.earleyFIRST set and the Cnst.earleyRules list must be initialized using the Grammar.<br>
+<hr style="width: 100%; height: 2px;"><br>
+<big><span style="font-weight: bold;">Processing Overview, Step 3: Perform the Earley Parse algorithm on the Rule Format Expr.</span> </big><br>
+<br>
+<span style="font-weight: bold;">General Issues:</span><br>
+<ul>
+  <li>
+The
+algorithm has '<code>n</code>' loops, one for each input symbol in the <code>RuleFormatExpr</code>. Note: if <code>TheScanner()</code> (see below) cannot find any items to load into the <code>CompletedItemset[i]</code> or&nbsp; <code>Itemset[i]</code> then the parse loop halts -- the input cannot be parsed. </li>
+  <li>It requires <code>n + 1</code>
+    <code>ItemSet</code>s plus <code>n</code> Completed<code> ItemSet</code>s  (for simplicity we'll allocate n + 1 <code>Completed Itemsets</code> and leave index <code>0</code> empty.). <code>ItemSet[0]</code> is derived from the
+Grammar and consists of NotationRules with Type Code equal to the Start
+Rule Type, excluding those Notation Rules with Sequence Number greater
+than the input Maximum Sequence Number (the Lookahead optimization, using Cnst.earleyFIRST and expr[0] may
+further reduce the size of <code>Itemset[0]</code> -- and, in any case, we may want
+to keep separate sets of NotationRules by Type Code for initialization
+of <code>ItemSet[0]</code>.)
+  </li>
+  <li>Allocation
+and processing efficiency of the various Itemsets is a serioius
+consideration when parsing set.mm. The size of the sets is unknown, but
+we do know
+the maximum size of Itemset[0] = total number of cnst.earleyRules.
+Itemsets are actual "sets" and duplicate "key" values should not be
+allowed; the "key" uniquely identifies the Rule (ruleNbr) and
+"at-Index" number combination. Fortunately, it appears that
+modifications to the Earley algorithm will allow the Itemsets to be
+implemented using either Lists or arrays; the key is avoiding
+generation of duplicates in the first place! LinkedLists would work,
+but it may be that pre-allocated arrays will reduce the amount of
+memory thrashing, especially if the EarleyItems can be re-used. We'll
+see. <br>
+</li><li>Earley FIRST sets -- one for each Rule Type are pre-computed for use by the Predictor (see below) and for generation of <code>Itemset[0]</code>. Each FIRST set contains the grammar's allowable first rule symbols -- for example, a "<code>wff</code>" can begin with a "<code>(</code>", a "<code>-.</code>" and a class can begin with "<code>(</code>", "<code>*</code>",
+..., etc. These will be stored in <code>Cnst.earleyFIRST</code> as TreeSets and are
+used by the Predictor with Lookahead to eliminate bogus predictions.
+Lookahead also requires the first symbol in each Rule, so for
+expediency we will add <code>NotationRule.exprFirst</code> (a Cnst -- see
+    <code>NotationRule.getExprFirst()</code>).<br>
+</li><li>Earley Rules.&nbsp; The Predictor is given an input Itemset, a
+MaxSeqNumber, the *next* symbol from the expr being parsed and a
+set of rule Types to load. To reduce the total number of predicted
+items, <code>cnst.earleyRules</code> is a subset of the NotationRules for a given Type (VarHyp
+Types and LogicalStmtTypeCode Type), we eliminate Gimme Notation Rules with
+expression Length = 1. And, to speed up the Predictor, earleyRules is
+sorted in GrammarRule.MAX_SEQ_NBR order -- that allows the Predictor to
+stop reading once the highest sequence number needed for the input
+expression is reached.</li><li>This implementation does not handle "epsilon Rule" -- in our lingo, "Nulls Permitted Rules. Not directly. <code>mmj.verify.Grammar</code>
+generates a combinatorial explosion of varieties of base Syntax Axioms,
+altered by Nulls Permitted and Type Conversion Rules to eliminate this
+as a consideration for the actual parsing process. It may be that total
+processing time would be shorter if the Earley Parser were allowed to
+handle Nulls and Type Conversion on its own -- the combinatorial
+explosion will actually increase the number of Predicted Earley Items
+rather dramatically, though of course, also reducing the number of
+Completed Items. The primary purpose for the extreme machinations and
+finagling in Grammar involving the combinatorial explosions is to build
+a unambiguous Grammar -- especially for the main "customer", set.mm,
+which contains <span style="font-style: italic;">technical</span>
+Ambiguities involving overloading (see weq and wceq, among others). The
+combinatorial explosion is also helpful in detection of other
+Ambiguities since it allows us to explore all possible resulting rules,
+including those derived from indirect Type Conversions and Nulls
+Permitted operations. In theory, assuming the ambiguities were deemed
+acceptable (subject, perhaps, to post-parse processing), this
+EarleyParse implementation could be modified to handle its own Nulls
+Permitted and Type Conversion Rules. We would need to feed it the base
+Syntax Axioms Rules, as is, for generation of its cnst.earleyFIRST and
+cnst.earleyRules sets. Also, for proper processing of Nulls Permitteds,
+there needs to be a loop of Predictor/Completor that operates prior to
+the first, and after the last symbol in each expression being parsed;
+these loops operate until no more items are added by either, and serve
+to 'honor" empty productions at the start and end of the expression. It
+remains to be seen whether this will be necessary. Hopefully, use of
+Max Sequence Numbers will significantly cuts down on the excessive
+predictions -- and the pre-processing optimization of eliminating one
+symbol Gimme constant Syntax Axioms will also help. <span style="font-weight: bold; font-style: italic;">NOTE: It *is* theorized that because the Earley Itemsets will be maintained in <code>rule.ruleNbr</code> (and <code>atIndex</code>) order, the first output ParseTree *should* correspond to the ParseTree resulting from the current implementation -- thus, <code>weq</code>'s "<code>set = set</code>" will be chosen prior to <code>wceq</code>'s "<code>class = class</code>" if <code>weq</code> precedes <code>wceq</code> in the <code>set.mm</code> file.</span></li>
+
+
+
+</ul><br>
+<hr style="width: 100%; height: 2px;"><br>
+<span style="font-weight: bold;"><code>EarleyItem</code> Data Structure -- stored in <code>Itemset</code>s</span><br>
+
+<br>
+
+<code>public class EarleyItem {<br>
+&nbsp;&nbsp;&nbsp; /**<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp; rule - NotationRule reference used to avoid copying expr<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; symbols over and over again.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; EarleyItem.rule.ruleNbr is the high order sub-key<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; of an Earley Item. Together, rule.ruleNbr and<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; atIndex make a unique key, which is essential for<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; maintaining *set* Earley Itemsets.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; */<br>
+&nbsp;&nbsp;&nbsp; NotationRule rule;<br>
+<br>
+&nbsp;&nbsp;&nbsp; /**<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp; atIndex - index to next Cnst (Sym) in expr, equal to the<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Earley loop counter, "i"; 1 is first, not 0, which<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; is left empty in expr for simplicity.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; EarleyItem.atIndex is the low-order sub-key of an<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Earley Item. Together, rule.ruleNbr and atIndex make<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; a unique key, which is essential for maintaining<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Earley Itemsets.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; */<br>
+&nbsp;&nbsp;&nbsp; int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; atIndex;<br>
+<br>
+&nbsp;&nbsp;&nbsp; /**<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp; dotindex - index of the Earley "dot" (or "gap") used instead<br>
+&nbsp;&nbsp;&nbsp;&nbsp;
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; of physically moving
+the dot around in the EarleyItem. A<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; value of 1 means that the dot is *before* the first<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sym in the rule's expr, while a value equal to<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; expr.length means that the EarleyItem is completed.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; */<br>
+&nbsp;&nbsp;&nbsp; int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dotIndex;<br>
+<br>
+&nbsp;&nbsp;&nbsp; /**<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp; afterDot - if item completed equal to null, else equal to<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ruleExpr[dotIndex]. Used to avoid repetitious and<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; annoying "hunting trips" into the rule's forest.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; */<br>
+&nbsp;&nbsp;&nbsp; Cnst&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; afterDot;<br>
+<br>
+&nbsp;&nbsp;&nbsp; /*<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * Compare for equality with another EarleyItem.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * Equal if and only if Rule and atIndexSym are<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * identical.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * @return returns true if equal, otherwise false.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; */<br>
+&nbsp;&nbsp;&nbsp; public boolean equals(Object obj) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return (this == obj) ? true<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : !(obj instanceof EarleyItem) ? false<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+: rule != ((EarleyItem)obj).rule ? false<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+: atIndex != ((EarleyItem)obj).atIndex? false<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+: true;<br>
+&nbsp;&nbsp;&nbsp; }<br>
+<br>
+&nbsp;&nbsp;&nbsp; public String toString() {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; StringBuffer s = new StringBuffer();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; s.append(GrammarConstants.ERRMSG_AT_CAPTION);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; s.append(atIndex);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; s.append(GrammarConstants.ERRMSG_DOT_CAPTION);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; s.append(dotIndex);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; s.append(GrammarConstants.ERRMSG_AFTER_DOT_CAPTION);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (afterDot == null) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; s.append(" ");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; s.append(afterDot);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; s.append(" ");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; s.append(rule.ruleNbr);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; s.append(GrammarConstants.ERRMSG_COLON_CAPTION);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; s.append(rule.getBaseSyntaxAxiom().getTyp());<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; s.append(GrammarConstants.ERRMSG_COLON_CAPTION);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; s.append(rule.getBaseSyntaxAxiom().getLabel());<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; s.append(" ");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; s.append(GrammarConstants.ERRMSG_RULE_EXPR_CAPTION);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; s.append(rule.getRuleFormatExprAsString());<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return s.toString();<br>
+&nbsp;&nbsp;&nbsp; }<br>
+}<br>
+</code><code><br>
+</code>
+<hr style="width: 100%; height: 2px;"><br>
+Example: Parse "<code>xyz $a |- ( ph &lt;-&gt; x = A ) $.</code>" <br>
+<br>
+This generates the rule format expr (with empty index 0)<br>
+&nbsp;"<code>( wff&nbsp; &lt;-&gt;&nbsp; set = class )</code>"<br>
+<br>
+And the correct parse RPN is "<code>wph vx cv cA wceq wb"<br>
+<br>
+</code>
+<hr style="width: 100%; height: 2px;"><code><br>
+</code>
+<table style="width: 50%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>0<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 1<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 2<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 3<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 4<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 5<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 6<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 7<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code>(<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>wff<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&lt;-&gt;<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>set<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>=<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>class
+      </code></td>
+      <td style="vertical-align: top;"><code>)<br>
+      </code></td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<code><span style="font-weight: bold;">ItemSet[0] </span>(reduced to minimum rules for ease of exposition)<br>
+<br>
+</code>
+<table style="text-align: left; width: 327px; height: 184px;" border="5" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>___________rule___________<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>rule<br>
+Typ<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>at<br>
+Index<br>
+      <br>
+      </code></td>
+      <td style="vertical-align: top;"><code>dot<br>
+Index<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>after<br>
+Dot</code></td>
+      <td style="vertical-align: top;"><code>_______________comments_______________<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>3:wb<br>
+"( wff &lt;-&gt; wff )"<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>wff<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>1<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>1<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>(<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>Itemset[0]
+preloaded by Predictor with all rules that derive directly from the
+Start Rule Type Code (and that have Max Sequence Number &lt;= the input
+formula Max Sequence Number.) Input to Predictor(0) can be the
+precomputed Earley Itemset[0] that is based on just the grammar, not
+the input formula. The Predictor can also be enhanced with Lookahead
+using the EarleyFIRST set, which is also pre-computed using just the
+grammar -- this will reduce the size of both Itemset[0] and subsequent
+predictions. <br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>18:wceq<br>
+"set = class"<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>wff<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>1<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>1<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>set<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>NOTE:
+With Lookahead, this item will not be loaded because set.earleyFirst
+does not contain "(", the first symbol of the parsed expression.<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+    </tr>
+  </tbody>
+</table>
+<code><br>
+<br>
+</code>
+<hr style="width: 100%; height: 2px;"><br>
+<span style="font-weight: bold;">expr, Earley loop #1<br>
+</span>
+<table style="width: 50%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>0<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 1<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 2<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 3<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 4<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 5<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 6<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 7<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code>(<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>wff<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&lt;-&gt;<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>set<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>=<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>class
+      </code></td>
+      <td style="vertical-align: top;"><code>)<br>
+      </code></td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<code><span style="font-weight: bold;">ItemSet[1] </span></code><br>
+<table style="text-align: left; width: 724px; height: 71px;" border="5" cellpadding="2" cellspacing="2">
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>___________rule___________<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>rule<br>
+Typ<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>at<br>
+Index<br>
+      <br>
+      </code></td>
+      <td style="vertical-align: top;"><code>dot<br>
+Index<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>after<br>
+Dot</code></td>
+      <td style="vertical-align: top;"><code>_______________comments_______________<br>
+      </code></td>
+    </tr>
+    
+    
+    <tr>
+<td style="vertical-align: top;"><code>3:wb<br>
+"( wff &lt;-&gt; wff )"<br>
+</code></td>
+<td style="vertical-align: top;"><code>wff<br>
+</code></td>
+<td style="vertical-align: top;"><code>1<br>
+</code></td>
+<td style="vertical-align: top;"><code>2<br>
+</code></td>
+<td style="vertical-align: top;"><code>wff<br>
+</code></td>
+<td style="vertical-align: top;"><code>Scanner copied from Itemset[i -
+1] because it contained afterDot = "(". dotIndex moved forward, after
+the "(" to the next sym, which is "wff".<br>
+</code></td></tr>
+    <tr>
+<td style="vertical-align: top;"><code>3:wb<br>
+"( wff &lt;-&gt; wff )"<br>
+</code></td>
+<td style="vertical-align: top;"><code>wff<br>
+</code></td>
+<td style="vertical-align: top;"><code>2<br>
+</code></td>
+<td style="vertical-align: top;"><code>1<br>
+</code></td>
+<td style="vertical-align: top;"><code>(<br>
+</code></td>
+<td style="vertical-align: top;"><code>Predictor copied all rules for wff because of previous "Active" item in ItemSet[1], which contains Non-Terminal afterDot = wff<br>
+</code></td></tr>
+    <tr>
+<td style="vertical-align: top;"><code>18:wceq<br>
+"set = class"<br>
+</code></td>
+<td style="vertical-align: top;"><code>wff<br>
+</code></td>
+<td style="vertical-align: top;"><code>2<br>
+</code></td>
+<td style="vertical-align: top;"><code>1<br>
+</code></td>
+<td style="vertical-align: top;"><code>set<br>
+</code></td>
+<td style="vertical-align: top;"><code>Predictor: ditto. Note: there are no rules present for class or set, so Predictor stops here!<br>
+</code></td></tr>
+
+  </tbody>
+</table>
+
+<code><br>
+<br>
+</code><code><span style="font-weight: bold;">CompletedItemSet[1] </span><br>
+<br>
+</code>
+<table style="text-align: left; width: 724px; height: 109px;" border="5" cellpadding="2" cellspacing="2">
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>___________rule___________<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>rule<br>
+Typ<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>at<br>
+Index<br>
+      <br>
+      </code></td>
+      <td style="vertical-align: top;"><code>dot<br>
+Index<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>after<br>
+Dot</code></td>
+      <td style="vertical-align: top;"><code>_______________comments_______________<br>
+      </code></td>
+    </tr>
+    
+    
+    <tr>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code>empty? yep.<br>
+      </code></td>
+    </tr>
+  </tbody>
+</table>
+
+
+<code><br>
+<br>
+</code>
+<hr style="width: 100%; height: 2px;"><br>
+<span style="font-weight: bold;">expr, Earley loop #2<br>
+<br>
+</span>
+<table style="width: 50%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>0<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 1<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 2<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 3<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 4<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 5<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 6<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 7<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code>(<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>wff<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&lt;-&gt;<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>set<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>=<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>class
+      </code></td>
+      <td style="vertical-align: top;"><code>)<br>
+      </code></td>
+    </tr>
+  </tbody>
+</table>
+<br>
+
+<br>
+
+<code><span style="font-weight: bold;">ItemSet[2] </span><br>
+<br>
+</code>
+<table style="text-align: left; width: 724px; height: 71px;" border="5" cellpadding="2" cellspacing="2">
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>___________rule___________<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>rule<br>
+Typ<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>at<br>
+Index<br>
+      <br>
+      </code></td>
+      <td style="vertical-align: top;"><code>dot<br>
+Index<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>after<br>
+Dot</code></td>
+      <td style="vertical-align: top;"><code>_______________comments_______________<br>
+      </code></td>
+    </tr><tr>
+<td style="vertical-align: top;"><code>3:wb<br>
+"( wff &lt;-&gt; wff )"<br>
+</code></td><td style="vertical-align: top;"><code>wff<br>
+</code></td><td style="vertical-align: top;"><code>1<br>
+</code></td><td style="vertical-align: top;"><code>3<br>
+</code></td><td style="vertical-align: top;"><code>&lt;-&gt;<br>
+</code></td><td style="vertical-align: top;"><code>Scanner copied from
+Itemset[i - 1] because it contained afterDot = "wff". dotIndex moved
+forward, after the "wff" to the next sym, which is "&lt;-&gt;".<br>
+</code></td></tr>
+    <tr>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code>Predictor: does not add rules for terminal "&lt;-&gt;"...done.<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+    </tr>
+
+    
+    
+    
+    
+    
+
+  </tbody>
+</table>
+
+
+<code><br>
+<br>
+</code><code><span style="font-weight: bold;">CompletedItemSet[2] </span><br>
+<br>
+</code>
+<table style="text-align: left; width: 724px; height: 109px;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>___________rule___________<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>rule<br>
+Typ<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>at<br>
+Index<br>
+      <br>
+      </code></td>
+      <td style="vertical-align: top;"><code>dot<br>
+Index<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>after<br>
+Dot</code></td>
+      <td style="vertical-align: top;"><code>_______________comments_______________<br>
+      </code></td>
+    </tr>
+    
+    
+    <tr>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code>empty? yep.<br>
+      </code></td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+<code><br>
+<br>
+</code>
+<hr style="width: 100%; height: 2px;"><br>
+
+<span style="font-weight: bold;">expr, Earley loop #3<br>
+</span>
+<table style="width: 50%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>0<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 1<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 2<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 3<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 4<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 5<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 6<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 7<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code>(<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>wff<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&lt;-&gt;<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>set<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>=<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>class
+      </code></td>
+      <td style="vertical-align: top;"><code>)<br>
+      </code></td>
+    </tr>
+  </tbody>
+</table>
+
+<br>
+
+
+<code><span style="font-weight: bold;">ItemSet[3] </span><br>
+</code>
+<table style="text-align: left; width: 724px; height: 71px;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>___________rule___________<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>rule<br>
+Typ<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>at<br>
+Index<br>
+      <br>
+      </code></td>
+      <td style="vertical-align: top;"><code>dot<br>
+Index<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>after<br>
+Dot</code></td>
+      <td style="vertical-align: top;"><code>_______________comments_______________<br>
+      </code></td>
+    </tr><tr>
+<td style="vertical-align: top;"><code>3:wb<br>
+"( wff &lt;-&gt; wff )"<br>
+</code></td><td style="vertical-align: top;"><code>wff<br>
+</code></td><td style="vertical-align: top;"><code>1<br>
+</code></td><td style="vertical-align: top;"><code>4<br>
+</code></td><td style="vertical-align: top;"><code>wff<br>
+</code></td><td style="vertical-align: top;"><code>Scanner copied from
+Itemset[i - 1] because it contained afterDot = "&lt;-&gt;". dotIndex moved
+forward, after the "&lt;-&gt;" to the next sym in the rule, which is "wff".<br>
+</code></td></tr>
+    <tr>
+<td style="vertical-align: top;"><code>3:wb<br>
+"( wff &lt;-&gt; wff )"<br>
+</code></td><td style="vertical-align: top;"><code>wff<br>
+</code></td><td style="vertical-align: top;"><code>4<br>
+</code></td><td style="vertical-align: top;"><code>1<br>
+</code></td><td style="vertical-align: top;"><code>(<br>
+</code></td><td style="vertical-align: top;"><code>Predictor copied all
+rules for wff because of previous "Active" item in ItemSet[3], which
+contains Non-Terminal afterDot = wff. <br>
+</code></td></tr>
+
+    <tr>
+<td style="vertical-align: top;"><code>18:wceq<br>
+"set = class"<br>
+</code></td><td style="vertical-align: top;"><code>wff<br>
+</code></td><td style="vertical-align: top;"><code>4<br>
+</code></td><td style="vertical-align: top;"><code>1<br>
+</code></td><td style="vertical-align: top;"><code>set<br>
+</code></td><td style="vertical-align: top;"><code>Predictor: ditto. Note: there are no rules present for class or set, so Predictor stops here!<br>
+</code></td></tr>
+
+
+    
+    
+    
+    
+    
+
+  </tbody>
+</table>
+
+
+
+<code><br>
+<br>
+</code><code><span style="font-weight: bold;">CompletedItemSet[3] </span><br>
+<br>
+</code>
+<table style="text-align: left; width: 724px; height: 109px;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>___________rule___________<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>rule<br>
+Typ<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>at<br>
+Index<br>
+      <br>
+      </code></td>
+      <td style="vertical-align: top;"><code>dot<br>
+Index<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>after<br>
+Dot</code></td>
+      <td style="vertical-align: top;"><code>_______________comments_______________<br>
+      </code></td>
+    </tr>
+    
+    
+    <tr>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code>empty? yep.<br>
+      </code></td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<code><br>
+<br>
+</code>
+<hr style="width: 100%; height: 2px;"><br>
+
+
+<span style="font-weight: bold;">expr, Earley loop #4<br>
+<br>
+</span>
+<table style="width: 50%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>0<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 1<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 2<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 3<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 4<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 5<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 6<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 7<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code>(<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>wff<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&lt;-&gt;<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>set<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>=<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>class
+      </code></td>
+      <td style="vertical-align: top;"><code>)<br>
+      </code></td>
+    </tr>
+  </tbody>
+</table>
+
+
+<br>
+
+
+
+<br>
+
+
+
+<code><span style="font-weight: bold;">ItemSet[4] </span><br>
+<br>
+</code>
+<table style="text-align: left; width: 724px; height: 71px;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>___________rule___________<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>rule<br>
+Typ<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>at<br>
+Index<br>
+      <br>
+      </code></td>
+      <td style="vertical-align: top;"><code>dot<br>
+Index<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>after<br>
+Dot</code></td>
+      <td style="vertical-align: top;"><code>_______________comments_______________<br>
+      </code></td>
+    </tr>
+    <tr>
+<td style="vertical-align: top;"><code>18:wceq<br>
+"set = class"<br>
+</code></td><td style="vertical-align: top;"><code>wff<br>
+</code></td><td style="vertical-align: top;"><code>4<br>
+</code></td><td style="vertical-align: top;"><code>2<br>
+</code></td><td style="vertical-align: top;"><code>=<br>
+</code></td><td style="vertical-align: top;"><code>Scanner copied from
+Itemset[i - 1] because it contained afterDot = "set". dotIndex moved
+forward, after the "set" to the next sym in the rule, which is "=", a terminal.</code></td></tr>
+
+    <tr>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code>Predictor: does not add rules for afterDot terminal, "="...done.</code></td>
+    </tr>
+
+    
+    
+    
+    
+    
+
+  </tbody>
+</table>
+
+
+
+
+<code><br>
+<br>
+</code><code><span style="font-weight: bold;">CompletedItemSet[4] </span><br>
+<br>
+</code>
+<table style="text-align: left; width: 724px; height: 109px;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>___________rule___________<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>rule<br>
+Typ<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>at<br>
+Index<br>
+      <br>
+      </code></td>
+      <td style="vertical-align: top;"><code>dot<br>
+Index<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>after<br>
+Dot</code></td>
+      <td style="vertical-align: top;"><code>_______________comments_______________<br>
+      </code></td>
+    </tr>
+    
+    
+    <tr>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code>empty? yep.<br>
+      </code></td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+
+<code><br>
+<br>
+</code>
+<hr style="width: 100%; height: 2px;"><br>
+
+
+
+<span style="font-weight: bold;">expr, Earley loop #5<br>
+<br>
+</span>
+<table style="width: 50%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>0<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 1<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 2<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 3<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 4<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 5<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 6<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 7<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code>(<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>wff<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&lt;-&gt;<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>set<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>=<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>class
+      </code></td>
+      <td style="vertical-align: top;"><code>)<br>
+      </code></td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+<br>
+
+
+
+
+<br>
+
+
+
+
+<code><span style="font-weight: bold;">ItemSet[5] </span><br>
+<br>
+</code>
+<table style="text-align: left; width: 724px; height: 71px;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>___________rule___________<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>rule<br>
+Typ<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>at<br>
+Index<br>
+      <br>
+      </code></td>
+      <td style="vertical-align: top;"><code>dot<br>
+Index<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>after<br>
+Dot</code></td>
+      <td style="vertical-align: top;"><code>_______________comments_______________<br>
+      </code></td>
+    </tr>
+    <tr>
+<td style="vertical-align: top;"><code>18:wceq<br>
+"set = class"<br>
+</code></td><td style="vertical-align: top;"><code>wff<br>
+</code></td><td style="vertical-align: top;"><code>4<br>
+</code></td><td style="vertical-align: top;"><code>3<br>
+</code></td><td style="vertical-align: top;"><code>class<br>
+</code></td><td style="vertical-align: top;"><code>Scanner copied from
+Itemset[i - 1] because it contained afterDot = "=". dotIndex moved
+forward, after the "=" to the next sym in the rule, which is "class", a non-terminal.</code></td></tr>
+
+    <tr>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code>Predictor: does not add rules for afterDot non-terminal, "class" because there are no grammar rules for "class".</code></td>
+    </tr>
+
+    
+    
+    
+    
+    
+
+  </tbody>
+</table>
+
+
+
+
+
+<code><br>
+<br>
+</code><code><span style="font-weight: bold;">CompletedItemSet[5] </span><br>
+<br>
+</code>
+<table style="text-align: left; width: 724px; height: 109px;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>___________rule___________<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>rule<br>
+Typ<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>at<br>
+Index<br>
+      <br>
+      </code></td>
+      <td style="vertical-align: top;"><code>dot<br>
+Index<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>after<br>
+Dot</code></td>
+      <td style="vertical-align: top;"><code>_______________comments_______________<br>
+      </code></td>
+    </tr>
+    
+    
+    <tr>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code>empty? yep. still empty. sigh!!!<br>
+      </code></td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+
+
+<code><br>
+<br>
+</code>
+<hr style="width: 100%; height: 2px;"><br>
+
+
+
+
+<span style="font-weight: bold;">expr, Earley loop #6<br>
+<br>
+</span>
+<table style="width: 50%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>0<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 1<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 2<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 3<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 4<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 5<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 6<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 7<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code>(<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>wff<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&lt;-&gt;<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>set<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>=<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>class
+      </code></td>
+      <td style="vertical-align: top;"><code>)<br>
+      </code></td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+<code><span style="font-weight: bold;">ItemSet[6] </span><br>
+<br>
+</code>
+<table style="text-align: left; width: 724px; height: 71px;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>___________rule___________<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>rule<br>
+Typ<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>at<br>
+Index<br>
+      <br>
+      </code></td>
+      <td style="vertical-align: top;"><code>dot<br>
+Index<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>after<br>
+Dot</code></td>
+      <td style="vertical-align: top;"><code>_______________comments_______________<br>
+      </code></td>
+    </tr>
+    
+
+    <tr>
+<td style="vertical-align: top;"><code>3:wb<br>
+"( wff &lt;-&gt; wff )"<br>
+</code></td><td style="vertical-align: top;"><code>wff<br>
+</code></td><td style="vertical-align: top;"><code>1<br>
+</code></td><td style="vertical-align: top;"><code>5<br>
+</code></td><td style="vertical-align: top;"><code>)<br>
+</code></td><td style="vertical-align: top;"><code>Completer copied
+copied from
+Itemset[3] because it contained&nbsp; afterDot = "wff" and the
+CompletedItemSet item below has rule type "wff" atIndex 4 (it goes to
+Itemset[m - 1]. It then moved dotIndex forward and stores the item in
+Active because it is not completed, yet.<br>
+</code></td></tr>
+<tr>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code>Predictor: does not add rules for afterDot terminal, nothing for it to do.</code></td>
+    </tr>
+
+    
+    
+    
+    
+    
+
+  </tbody>
+</table>
+
+
+
+
+
+
+<code><br>
+<br>
+</code><code><span style="font-weight: bold;">CompletedItemSet[6] </span><br>
+<br>
+</code>
+<table style="text-align: left; width: 724px; height: 109px;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>___________rule___________<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>rule<br>
+Typ<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>at<br>
+Index<br>
+      <br>
+      </code></td>
+      <td style="vertical-align: top;"><code>dot<br>
+Index<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>after<br>
+Dot</code></td>
+      <td style="vertical-align: top;"><code>_______________comments_______________<br>
+      </code></td>
+    </tr>
+    
+    
+    <tr>
+<td style="vertical-align: top;"><code>18:wceq<br>
+"set = class"<br>
+</code></td><td style="vertical-align: top;"><code>wff<br>
+</code></td><td style="vertical-align: top;"><code>4<br>
+</code></td><td style="vertical-align: top;"><code>4<br>
+</code></td><td style="vertical-align: top;"><code><br>
+</code></td><td style="vertical-align: top;"><code>Scanner copied from
+Itemset[i - 1] because it contained afterDot = "class". dotIndex moved
+forward, after the "class" to the end! Therefore this is completed and should be in CompletedItemSet! Yay!<br>
+</code></td></tr>
+
+  </tbody>
+</table>
+
+
+
+
+
+
+
+<code><br>
+<br>
+</code>
+<hr style="width: 100%; height: 2px;"><br>
+<br>
+
+
+
+
+
+<span style="font-weight: bold;">expr, Earley loop #7<br>
+<br>
+</span>
+<table style="width: 50%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>0<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 1<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 2<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 3<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 4<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 5<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 6<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&nbsp; 7<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code>(<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>wff<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&lt;-&gt;<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>set<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>=<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>class
+      </code></td>
+      <td style="vertical-align: top;"><code>)<br>
+      </code></td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+
+<br>
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+<code><span style="font-weight: bold;">ItemSet[7] </span><br>
+<br>
+</code>
+<table style="text-align: left; width: 724px; height: 71px;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>___________rule___________<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>rule<br>
+Typ<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>at<br>
+Index<br>
+      <br>
+      </code></td>
+      <td style="vertical-align: top;"><code>dot<br>
+Index<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>after<br>
+Dot</code></td>
+      <td style="vertical-align: top;"><code>_______________comments_______________<br>
+      </code></td>
+    </tr>
+    
+
+    
+<tr>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code>Predictor:
+nothing to do, Active ItemSet is empty. And on top of that, I don't
+think we need to run Predictor on the final symbol.</code></td>
+    </tr>
+
+    
+    
+    
+    
+    
+
+  </tbody>
+</table>
+
+
+
+
+
+
+
+<code><br>
+<br>
+</code><code><span style="font-weight: bold;">CompletedItemSet[7] </span><br>
+<br>
+</code>
+<table style="text-align: left; width: 724px; height: 109px;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>___________rule___________<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>rule<br>
+Typ<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>at<br>
+Index<br>
+      <br>
+      </code></td>
+      <td style="vertical-align: top;"><code>dot<br>
+Index<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>after<br>
+Dot</code></td>
+      <td style="vertical-align: top;"><code>_______________comments_______________<br>
+      </code></td>
+    </tr><tr>
+<td style="vertical-align: top;"><code>3:wb<br>
+"( wff &lt;-&gt; wff )"<br>
+</code></td><td style="vertical-align: top;"><code>wff<br>
+</code></td><td style="vertical-align: top;"><code>1<br>
+</code></td><td style="vertical-align: top;"><code>6<br>
+</code></td><td style="vertical-align: top;"><code><br>
+</code></td><td style="vertical-align: top;"><code>Scanner: copied
+copied from
+Itemset[6] because it contained&nbsp; afterDot = ")".&nbsp; It then moved
+dotIndex forward and sets afterDot to null because this item is
+completed -- so it is stored in CompletedItemSet instead of Active.<br>
+AND...since the final CompletedItemSet has an atIndex = 1 for the Start
+Rule Type "wff", we have a parse!!! Yay. (It only took about 1 1/2
+hours to type this example in. Now to generate the parse tree for it...)<br>
+</code></td></tr>
+    <tr>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+
+    
+    
+    
+
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+<code><br>
+<br>
+</code>
+<hr style="width: 100%; height: 2px;"><br>
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+</body></html>

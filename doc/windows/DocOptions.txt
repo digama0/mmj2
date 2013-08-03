@@ -1,0 +1,6 @@
+-verbose
+-package 
+-use 
+-linksource 
+-charset "iso-8859-1" 
+

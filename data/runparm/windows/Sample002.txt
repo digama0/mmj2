@@ -1,0 +1,106 @@
+* Comment line -- starts with '*'
+/ Comment line -- starts with '/'
+  Comment line -- starts with ' '
+
+  previous line empty, also a comment
+
+ *==================================================
+ * CommentLine: Example #2 This sample shows the
+                various RunParmFile values and options.
+ *==================================================
+Clear
+GarbageCollection
+ *
+MaxErrorMessages,1
+MaxErrorMessages,999999999
+MaxErrorMessages,50
+ *
+MaxInfoMessages,1
+MaxInfoMessages,99999999
+MaxInfoMessages,50
+ *
+SymbolTableInitialSize,1
+SymbolTableInitialSize,99999999
+SymbolTableInitialSize,50
+ *
+StatementTableInitialSize,1
+StatementTableInitialSize,99999999
+StatementTableInitialSize,100
+ *
+ProvableLogicStmtType,<--------THISCOULDBEASYMBOLTOO-------->
+ProvableLogicStmtType,|-
+ *
+LogicStmtType,ASDL;FJKASDF;LKJASDASDFASDFASDFASDFASDFASDFASDF
+LogicStmtType,wff
+ *
+MaxStatementPrintCount,1
+MaxStatementPrintCount,9999
+ *
+Caption,<caption on output report(dump)......................>
+Caption,Example #2
+ *
+SystemErrorFile,result\Sample002Syserr20111101y.txt,new,"UTF-8"
+SystemErrorFile,result\Sample002Syserr20111101y.txt,update,""
+ *
+SystemOutputFile,result\Sample002Sysout20111101y.txt,new,"UTF-8"
+SystemOutputFile,result\Sample002Sysout20111101y.txt,update,""
+ *=====================================
+ *=== LoadFile ParsingBook7dot1Pg146.mm
+ *=====================================
+LoadFile,mm\ParsingBook7dot1Pg146.mm
+ *
+ *=====================================
+ *=== Set Grammar Parms
+ *=====================================
+GrammarAmbiguityEdits,basic
+GrammarAmbiguityEdits,complete
+ *
+StatementAmbiguityEdits,basic
+StatementAmbiguityEdits,complete
+ *
+ *========================================
+ *=== VerifyProof ParsingBook7dot1Pg146.mm
+ *========================================
+VerifyProof,*
+VerifyProof,T1
+VerifyProof,T2
+ *
+ *==============================================
+ *=== Grammatical Parse ParsingBook7dot1Pg146.mm
+ *==============================================
+Parse,*
+Parse,T1
+Parse,T2
+ *
+ *=========================================
+ *=== Verify Parse ParsingBook7dot1Pg146.mm
+ *=========================================
+VerifyParse,*
+VerifyParse,T1
+VerifyParse,T2
+ *
+ *=========================================
+ *=== Print Syntax ParsingBook7dot1Pg146.mm
+ *=========================================
+PrintSyntaxDetails
+ *
+ *=============================================
+ *=== Print Statements ParsingBook7dot1Pg146.mm
+ *=============================================
+PrintStatementDetails,*
+PrintStatementDetails,R1
+PrintStatementDetails,R2
+PrintStatementDetails,R3
+PrintStatementDetails,T1
+PrintStatementDetails,T2
+ *
+ Comment: now load & process another .mm file!!!!
+Clear
+GarbageCollection
+Caption,EarleyParserExample.mm
+LoadFile,mm\EarleyParserExample.mm
+InitializeGrammar
+Parse,*
+PrintSyntaxDetails
+PrintStatementDetails,*
+ */

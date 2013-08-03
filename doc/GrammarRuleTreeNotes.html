@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta content="text/html; charset=ISO-8859-1" http-equiv="content-type"><title>GrammarRuleTreeNotes</title></head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);" alink="#000088" link="#0000ff" vlink="#ff0000"><span style="font-weight: bold;">
+GrammarRuleTreeNotes.html<br>
+</span><br>
+
+Red-Black Tree sample java code, public domain:<br>
+
+<a href="douglea/RBTreeDocIndex.html">douglea\RBTreeDocIndex.html</a><br>
+
+<a href="douglea/RBCell.java">douglea\RBCell.java</a><br>
+
+<a href="douglea/RBTree.java">douglea\RBTree.java</a><br>
+
+<br>
+
+An
+examination of RBCell.java reveals that it can be customized and
+specialized to replace C:\astevel3\java\src\mmj\lang\SynNode.java. <br>
+
+<br>
+
+<ul>
+<li>Each Grammar Rule will be identified by a unique sequence of Cnst
+objects -- an Expression with Variables converted into their Type
+codes. For example, "-. ph" is converted to "-." followed by "wff", a
+sequence of two Cnst objects.<br>
+ </li><li>All Grammar Rules that begin with a certain Cnst will form a
+Red-Black binary tree whose root is stored in the Cnst object
+corresponding to that starting Cnst symbol. (The root node will have
+null Left and Right pointers.)<br>
+ </li><li>Each node of the Rule trees will contain Up, Down and GrammarRule
+instance variables, where Down points to the next Cnst in the
+Expression and Up points to the previous Cnst in the Expression. In the
+example above with Constant sequence "-.", "wff", the Constant object
+for "-." will have a reference (pointer) to the root of a tree whose
+key is "-.", and that root down will have a Down reference/pointer
+whose key is "wff" -- assuming that this is the initial insert.<br>
+  </li><li>If the Grammar Rule instance in a node is null that means that no
+Grammar Rule that begins with the original Constant terminates with the
+node's Constant.</li><li>Let's make this more specific with an example. Suppose we have a
+sequence "A B C D". That sequence will correspond to 4 trees, with "A"
+pointing to a sub-tree with keys derived from the 2nd Constant symbol
+in expressions that begin with "A". And likewise, "B" -- in the 2nd
+level of trees points to a subtree derived from the 3rd Constant symbol
+in expressions that begin with "A B", and so on. Finally, the "D" node
+in the 4th level tree will contain a reference/pointer to the Grammar
+Rule corresponding to the sequence of Constants, "A B C D".</li><li>Thus, the set of all Grammar Rules will be represented by a
+forest of trees, one top level tree for each unique starting Constant
+(the most popular initial Constant in Syntax Axioms is, no doubt,
+"("...which will have its own tree pointed to by the "(" Cnst object. <br>
+  </li>
+</ul>
+
+Using Red-Black trees achieves well-balanced binary trees at minimal
+insert cost. In the initial coding effort for MMJ, SynNode.java was
+used in a similar scenario except that Cnst did not point to the root
+of the Cnst's syntax sub-tree -- instead, a SynTree.java was used,
+meaning that a lookup was needed to find the node for the initial
+Constant of an expression. Not only can that initial lookup be
+eliminated, but the SynTree insert process involved a bulk add of
+sorted objects that was designed to achieve a balanced tree -- and also
+precluded dynamic adds later! So, with Red-Black binary trees we can
+avoid sorting the Grammar Rules and we can load them incrementally, if
+desired. <br>
+
+<br>
+
+Another important change will be made involving the Grammar Rule trees:
+no duplicates will be allowed! The original coding effort allowed
+duplicate nodes pointing to Stmt objects with duplicate Expressions. In
+the new scheme of things, duplicate Grammar Rules will be purposely and
+skillfully dropped -- with our new theoretical understanding of Unique
+Readability and Ambiguity, the elimination of duplicates is actually a
+key objective!<br>
+
+<br>
+
+As mentioned RBCell.java will be "stolen" from the public domain. All
+of the unnecessary functions and code will be stripped out, including
+code involved with deletions (not allowed at this time.) The RBCell
+code was developed by Doug Lea as a pre-Sun java Collections framework,
+and it is very sophisticated. In principle, the Sun Collections
+framework could be used, but instead of building hierarchies of trees
+using only RBCell type nodes, each level of Trees would be an
+explicitly separate Collection, with its own root, and so on; and a
+reference to a "payload" element would be stored in each node, meaning
+at least one extra layer of abstration/inefficiency at every level, not
+counting use of Comparators. With this "off the shelf" approach, the
+backing representation wouldn't necessarily have to be a tree -- a
+hashmap might work just as well. There are benefits to using the off
+the shelf approach, especially in an online update environment with
+concurrent processings underway. But for now, because I am stubborn and
+a jerk, I will go for the custom approach now, striving for speed (the
+idea of just putting all Expression sequences into a big Collection
+would be feasible, except for the fact that we need to be able to
+search for overlaps in initial segments of sequences and a tree
+structure is ideal for that purpose -- i.e. we could have "A E G H I",
+"A E G" and "A E" as (dubious) Rules and searching the "A" tree
+followed by a search of the "E" subtree seems simpler and faster. <br>
+
+<br>
+
+<br>
+
+
+<span style="font-weight: bold;"><br>
+</span></body></html>

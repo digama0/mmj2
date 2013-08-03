@@ -1,0 +1,388 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>WorkVariables</title>
+</head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
+ alink="#000088" link="#0000ff" vlink="#ff0000">
+<big><big><span style="font-weight: bold;">Work Variables<br>
+<br>
+</span></big></big><big><span style="font-weight: bold;"></span></big><big><span
+ style="font-weight: bold;">Purpose</span>:</big> <br>
+<ul>
+  <li>The primary purpose of Work Variables is to facilitate proof
+entry using just assertion labels (aka "Ref"s) on the Proof Assistant
+GUI screen, thus providing basic functional compatibility with the
+metamath.exe Proof Assistant. Instead of entering formulas the user can
+enter Ref's and allow the Proof Assistant to generate (derive) proof
+step formulas.</li>
+</ul>
+<big><span style="font-weight: bold;">Description</span>:</big>
+<ul>
+  <li>&nbsp;Work Variables provide syntactic placeholders for unknown
+variables and/or sub-expressions required by a proof (other uses may be
+found later.) <br>
+  </li>
+  <li>Work Variables are produced by the mmj2 Proof Assistant GUI's
+"Derive" feature when a Ref label is input for a derivation step and
+either the formula is omitted (i.e. to be derived), or one or more of
+the step's hypotheses are omitted (to be derived), or both. <br>
+  </li>
+  <li>Work Variables can also be input by the user on the Proof
+Assistant GUI screen, or in a Proof Worksheet text area or file.</li>
+  <li>Work Variables are actual "variables" within mmj2 but they differ
+in several respects, as described in the following table:</li>
+</ul>
+<br>
+<table style="width: 75%; text-align: left;" border="5" cellpadding="2"
+ cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; width: 20%;"><span
+ style="font-weight: bold; text-decoration: underline;">Characteristic</span><br>
+      </td>
+      <td style="vertical-align: top; width: 40%;"><span
+ style="font-weight: bold; text-decoration: underline;">Regular
+Variables</span><br>
+      </td>
+      <td style="vertical-align: top;"><span
+ style="font-weight: bold; text-decoration: underline;">Work Variables</span>
+      <br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 20%;"><span
+ style="font-weight: bold;">Definition and Declaration</span><br>
+      </td>
+      <td style="vertical-align: top; width: 40%;">Declared in Metamath
+.mm file via the <span style="font-family: monospace;"></span><code>$v</code>
+command, and are type-defined via <code>$f</code> command.<br>
+      </td>
+      <td style="vertical-align: top;">Defined in mmj2 RunParm file via
+      <code>DefineWorkVarType</code> RunParm command and declared via <code>DeclareWorkVars</code>
+RunParm command.<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 20%;"><span
+ style="font-weight: bold;">Scope</span><br>
+      </td>
+      <td style="vertical-align: top; width: 40%;">May be global or
+local, may be accessed by statements the follow its definition with the
+input .mm file.<br>
+      </td>
+      <td style="vertical-align: top;">Always global scope, may be
+accessed or used in any derivation proof step (except the "<code>qed</code>"
+step,
+and never, of course, in a theorem's logical hypotheses.)<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 20%;"><span
+ style="font-weight: bold;">Duration</span><br>
+      </td>
+      <td style="vertical-align: top; width: 40%;">A regular variable
+defined within a scope may be redefined within another scope, and may
+be assigned a different Type Code (this is rare in practice).<br>
+      </td>
+      <td style="vertical-align: top;">A Work Variable's Type Code and
+assigned Variable Hypothesis are fixed and cannot be changed during a
+single invocation of the Proof Assistant (multiple definition and
+declaration RunParms can be processed by mmj2, but only one set can be
+active at one time.)<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 20%;"><span
+ style="font-weight: bold;">Naming</span><br>
+      </td>
+      <td style="vertical-align: top; width: 40%;">A regular variable
+must consist only of valid math symbol characters, and must be unique
+across both the Symbol and Label namespaces (i.e. cannot be the same as
+any label or other symbol).<br>
+      </td>
+      <td style="vertical-align: top;">Like a regular variable, a Work
+Variable must consist
+only of valid math symbol characters, and must be unique across both
+the Symbol and Label namespaces. In addition a Work Variable must be
+unique across the Work Variable namespace. A
+Work Variable name consists of a prefix, such as "<code>WFF</code>" or "<code>&amp;w</code>"
+and a
+numeric suffix, such as "<code>1</code>", "<code>2</code>", ..., as
+defined on the
+DefineWorkVarType RunParm command -- thus Work Variables "<code>WFF1</code>",
+"<code>WFF2</code>", ... , or "<code>&amp;w1</code>", "<code>&amp;w2</code>",
+..., are possible.<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><span style="font-weight: bold;">Visibility</span><br>
+      </td>
+      <td style="vertical-align: top;">Regular variables are added to
+the mmj2 Symbol Table, may be used in .mm file and Proof Worksheet
+formulas and are output in the course of normal processing (such as the
+      <code>PrintSyntaxDetails</code> RunParm command, etc.)<br>
+      </td>
+      <td style="vertical-align: top;">Work Variables are not added to
+the mmj2 Symbol Table and cannot
+be input in a .mm file, being restricted to use only on Proof
+Worksheets. They are not output anywhere, except in the Proof Assistant
+and error
+messages, and are automatically eliminated from finished proofs.<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><span style="font-weight: bold;">Unification&nbsp;
+Substitution</span><br>
+      </td>
+      <td style="vertical-align: top;">In normal Metamath and mmj2
+Proof Verification and unification processing, substitution can only be
+made to a variable -- substitution cannot be made to a constant or a
+sub-expression. For example, in a formula, variable "ph" can be
+replaced by a variable or sub-expression of the same Type, such as "<code>(
+ph -&gt; ps )</code>". <br>
+      </td>
+      <td style="vertical-align: top;">A Work Variable in a derivation
+proof step can be substituted for a variable <span
+ style="font-style: italic;">or</span> a sub-expression having
+the same Type Code. Thus, a derivation step Work Variable, "<code>WFF1</code>"
+can
+be unified with and substituted for a Ref assertion's sub-expression
+having type "<code>wff</code>", such as "<code>( ph -&gt; ps )</code>".<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><span style="font-weight: bold;">Mandatory
+/</span><br style="font-weight: bold;">
+      <span style="font-weight: bold;">Optional ("dummy")</span><br
+ style="font-weight: bold;">
+      <span style="font-weight: bold;">Variables</span><br>
+      </td>
+      <td style="vertical-align: top;">In Metamath "mandatory" refers
+to variables that are used in a theorem's (or axiom's) formula or in
+one of its logical hypotheses' formulas. "Optional" variables are
+within a theorem's scope and may be used within the proof as "dummy"
+variables, that are introduced and referred to in proof steps, but are
+eliminated in the final derivation proof step's formula.<br>
+      </td>
+      <td style="vertical-align: top;">Work Variables are never in a
+theorem's Mandatory Frame -- or its Optional Frame (due to space
+requirements.) They are accessible within a proof, and are
+automatically assigned as placeholders for "dummy" variables during
+Derive processing. If not manually replaced by the user, when a proof
+is completed on the Proof Assistant GUI screen, any Work Variables
+substituting for "dummy" variables are automatically replaced by
+"optional" variables within the theorem's Optional Frame (Note: in some
+cases the automatic conversion of leftover Work Variables to optional
+variables runs out of available optional variables in scope of the
+theorem being proved -- manual update of either the Proof Worksheet or
+the input .mm file will be needed to resolve the problem, but this is
+an uncommon
+scenario...)<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><span style="font-weight: bold;">Proof
+Assistant GUI Unification Search Processing</span><br>
+      </td>
+      <td style="vertical-align: top;">Unification Search on the Proof
+Assistant GUI screen is part of the "Unify" (Ctrl-U) processing which
+searches the input .mm assertions if a Ref is not input on a derivation
+proof step -- thus, the user is relieved of the task of entering (and
+memorizing) Ref labels. Unification Search is performed only for
+"valid" and complete derivation steps.<br>
+      </td>
+      <td style="vertical-align: top;">Unification Search is not
+performed for a derivation proof step if the step's formula or one of
+its hypotheses' formulas contains a Work Variable -- but Unification
+Hint processing is available for derivation steps containing Work
+Variables. (<span style="font-style: italic;">NOTE: this somewhat
+arbitrary and technical restriction may be eased or eliminated at some
+future date.</span>)<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><span style="font-weight: bold;">Variable<br>
+Updates</span></td>
+      <td style="vertical-align: top;">Regular variables are never
+modified by the Proof Assistant, whether input by the user or generated
+by the Derive Feature.<br>
+      </td>
+      <td style="vertical-align: top;">Work Variables are updated by
+the Proof Assistant during Unification, and may be replaced by regular
+variables, Work Variables, or sub-expressions containing both regular
+and Work Variables (e.g. "<code>&amp;W1</code>" might be changed
+throughout the proof to "<code>( ph -&gt; &amp;W2 )</code>"). A
+side-effect, which is a bonus feature, is that a given Work Variable
+that occurs more than once in a set of proof steps, can be changed by
+the user by simply updating one of the Work Variable occurrences and
+pressing Ctrl-U --&nbsp; Unification resolves the "unknown" values with
+the user entered value (hence, the need for a Search/Replace menu
+option is greatly reduced!)<br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<hr style="width: 100%; height: 2px;"><br>
+<big><span style="font-weight: bold;">Work Variable RunParms:</span></big><br>
+<code><br>
+</code>
+<ul>
+  <li>- The RunParms pertaining to Work Variables are optional, and
+default settings are applied automatically if the Work Variable
+RunParms are not input in the RunParm file prior to their first use
+requirement -- which is the Proof Assistant, at this time. </li>
+  <li>- The default settings are intended to be acceptable for use with
+the set.mm database, and are subject to change.<br>
+  </li>
+</ul>
+<code>
+&nbsp;&nbsp;&nbsp; DefineWorkVarType<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : -
+Optional. May appear anywhere after the "Parse" RunParm<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+within an input RunParm file, and takes effect<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp;&nbsp; when the next DeclareWorkVars RunParm command is <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+processed. If not input prior to first use -- the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Proof Assistant -- the default settings are<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+automatically used.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Default = One default DefineWorkVarType RunParm is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+generated for each grammatical Type Code.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+specifying a prefix of "&amp;x" where "x" is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+the first character of the grammatical<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+type code, converted to lower case if<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+necessary; 200 work variables are defined<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+by default for each grammatical type code.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Value1 = Grammatical Type Code (e.g. "wff", "class",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+"set", etc.) Must be a valid grammatical <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Type Code.<br>
+</code><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Value2 = Work Variable Prefix for the grammatical <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Type Code. Must generate unique variable and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+variable hypothesis names when concatenated<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+with the Work Variable numerical suffix (1,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+2, ..., 11, ..., etc.) Note that Work<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Variable Hypothesis labels are generated<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+automatically and are the same as the Work<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Variables. A Work Variable Prefix must <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+consist solely of valid Metamath math<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+symbol characters (not "$", for example,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+or embedded blanks.)<br>
+</code><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Value3 = Number of Work Variables to be declared for the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+grammatical Type Code. Must be greater than 9<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+and less than 1000 ("stinginess" is recommendedto<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+avoid wasted processing and memory allocations...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+but, in the event that the supply of available<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Work Variables is exhausted during processing<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+a pop-up GUI error message will be displayed; the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+RunParms will need to be modified and re-input<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+in a subsequent run...)<br>
+</code><code></code><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Examples:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*234567890123456789012345678901234567890<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DefineWorkVarType,wff,&amp;W,200<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DefineWorkVarType,set,&amp;S,200<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DefineWorkVarType,class,&amp;C,200<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br>
+<br>
+</code><code><br>
+&nbsp;&nbsp;&nbsp; DeclareWorkVars<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : -
+Optional. May appear anywhere after the "Parse" RunParm<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+within an input, and takes effect immediately<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(any existing Work Variables are deleted and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+a new set is created.)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Default = A default DeclareWorkVars RunParm is executed<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+automatically when first need arises (e.g. at<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Proof Assistant start-up), if none have been <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+input since the last Clear RunParm or the start<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp;&nbsp; of the RunParm file.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Value1 = N/A</code><code><br>
+</code><code></code><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Examples<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*234567890123456789012345678901234567890<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+DeclareWorkVars<br>
+<br>
+</code>
+<hr style="width: 100%; height: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+</body>
+</html>

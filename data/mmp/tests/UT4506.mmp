@@ -1,0 +1,371 @@
+$( <MM> <PROOF_ASST> THEOREM=hilhl  LOC_AFTER=?
+
+* The Hilbert space of the Hilbert Space Explorer is a complex Hilbert
+  space.  (Contributed by Steve Rodriguez, 29-Apr-2007.)
+
+1::ishlg           |- (   <. <. +h , .h >. , normh >. e. CHil
+                      <-> (  <. <. +h , .h >. , normh >. e. CBan
+                          /\ <. <. +h , .h >. , normh >. e. CPreHil ) )
+2::isbn            |- (   <. <. +h , .h >. , normh >. e. CBan
+                      <-> (  <. <. +h , .h >. , normh >. e. NrmCVec
+                          /\    ( IndMet ` <. <. +h , .h >. , normh >. )
+                             e. CMet ) )
+3::hilncv          |- <. <. +h , .h >. , normh >. e. NrmCVec
+4::eqid            |-   {
+                        <.
+                        <. &S4
+                        ,  &S5
+                        >.
+                        ,  &S6
+                        >.
+                        |  (  ( &S4 e. H~ /\ &S5 e. H~ )
+                           /\ &S6 = ( normh ` ( &S4 -h &S5 ) ) ) }
+                      = {
+                        <.
+                        <. &S4
+                        ,  &S5
+                        >.
+                        ,  &S6
+                        >.
+                        |  (  ( &S4 e. H~ /\ &S5 e. H~ )
+                           /\ &S6 = ( normh ` ( &S4 -h &S5 ) ) ) }
+5:4:hilims         |-   ( IndMet ` <. <. +h , .h >. , normh >. )
+                      = <. H~
+                        ,  {
+                           <.
+                           <. &S4
+                           ,  &S5
+                           >.
+                           ,  &S6
+                           >.
+                           |  (  ( &S4 e. H~ /\ &S5 e. H~ )
+                              /\ &S6 = ( normh ` ( &S4 -h &S5 ) ) ) } >.
+6::eqid            |-   {
+                        <.
+                        <. &S4
+                        ,  &S5
+                        >.
+                        ,  &S6
+                        >.
+                        |  (  ( &S4 e. H~ /\ &S5 e. H~ )
+                           /\ &S6 = ( normh ` ( &S4 -h &S5 ) ) ) }
+                      = {
+                        <.
+                        <. &S4
+                        ,  &S5
+                        >.
+                        ,  &S6
+                        >.
+                        |  (  ( &S4 e. H~ /\ &S5 e. H~ )
+                           /\ &S6 = ( normh ` ( &S4 -h &S5 ) ) ) }
+7:6:hilcms         |-    <. H~
+                         ,  {
+                            <.
+                            <. &S4
+                            ,  &S5
+                            >.
+                            ,  &S6
+                            >.
+                            |  (  ( &S4 e. H~ /\ &S5 e. H~ )
+                               /\ &S6 = ( normh ` ( &S4 -h &S5 ) ) ) } >.
+                      e. CMet
+8:5,7:eqeltr       |-    ( IndMet ` <. <. +h , .h >. , normh >. )
+                      e. CMet
+9:2,3,8:mpbir2an   |- <. <. +h , .h >. , normh >. e. CBan
+10::hilabl         |- +h e. Abel
+11:10:elisseti     |- +h e. V
+12::hvmulex        |- .h e. V
+13::df-hnorm       |-   normh
+                      = {
+                        <. &S3
+                        ,  &S7
+                        >.
+                        |  (  &S3 e. H~
+                           /\ &S7 = ( sqr ` ( &S3 .ih &S3 ) ) ) }
+14::ax-hilex       |- H~ e. V
+15:14:funopabex2   |-    {
+                         <. &S3
+                         ,  &S7
+                         >.
+                         |  (  &S3 e. H~
+                            /\ &S7 = ( sqr ` ( &S3 .ih &S3 ) ) ) }
+                      e. V
+16:13,15:eqeltr    |- normh e. V
+17::hilabl         |- +h e. Abel
+18::ablgrp         |- ( +h e. Abel -> +h e. Grp )
+19:17,18:ax-mp     |- +h e. Grp
+20::ax-hfvadd      |- +h : ( H~ X. H~ ) --> H~
+21:19,20:grprn     |- H~ = ran +h
+22:21:isphg        |- (  ( +h e. V /\ .h e. V /\ normh e. V )
+                      -> (   <. <. +h , .h >. , normh >. e. CPreHil
+                         <-> (  <. <. +h , .h >. , normh >. e. NrmCVec
+                             /\ A. &S8
+                                e. H~
+                                   A. &S9
+                                   e. H~
+                                        ( ( ( normh ` ( &S8 +h &S9 ) ) ^ 2 )
+                                          +
+                                          ( ( normh
+                                            ` ( &S8 +h ( -u 1 .h &S9 ) ) )
+                                            ^
+                                            2 ) )
+                                      = ( 2
+                                          x.
+                                          ( ( ( normh ` &S8 ) ^ 2 )
+                                            +
+                                            ( ( normh ` &S9 ) ^ 2 ) ) ) ) ) )
+23:11,12,16,22:mp3an 
+                   |- (   <. <. +h , .h >. , normh >. e. CPreHil
+                      <-> (  <. <. +h , .h >. , normh >. e. NrmCVec
+                          /\ A. &S8
+                             e. H~
+                                A. &S9
+                                e. H~
+                                     ( ( ( normh ` ( &S8 +h &S9 ) ) ^ 2 )
+                                       +
+                                       ( ( normh
+                                         ` ( &S8 +h ( -u 1 .h &S9 ) ) )
+                                         ^
+                                         2 ) )
+                                   = ( 2
+                                       x.
+                                       ( ( ( normh ` &S8 ) ^ 2 )
+                                         +
+                                         ( ( normh ` &S9 ) ^ 2 ) ) ) ) )
+24::hilncv         |- <. <. +h , .h >. , normh >. e. NrmCVec
+25::normpart       |- (  ( &S8 e. H~ /\ &S9 e. H~ )
+                      ->   ( ( ( normh ` ( &S8 -h &S9 ) ) ^ 2 )
+                             +
+                             ( ( normh ` ( &S8 +h &S9 ) ) ^ 2 ) )
+                         = ( ( 2 x. ( ( normh ` &S8 ) ^ 2 ) )
+                             +
+                             ( 2 x. ( ( normh ` &S9 ) ^ 2 ) ) ) )
+26::hvsubvalt      |- (  ( &S8 e. H~ /\ &S9 e. H~ )
+                      ->   ( &S8 -h &S9 )
+                         = ( &S8 +h ( -u 1 .h &S9 ) ) )
+27:26:fveq2d       |- (  ( &S8 e. H~ /\ &S9 e. H~ )
+                      ->   ( normh ` ( &S8 -h &S9 ) )
+                         = ( normh
+                           ` ( &S8 +h ( -u 1 .h &S9 ) ) ) )
+28:27:opreq1d      |- (  ( &S8 e. H~ /\ &S9 e. H~ )
+                      ->   ( ( normh ` ( &S8 -h &S9 ) ) ^ 2 )
+                         = ( ( normh
+                             ` ( &S8 +h ( -u 1 .h &S9 ) ) )
+                             ^
+                             2 ) )
+29:28:opreq2d      |- (  ( &S8 e. H~ /\ &S9 e. H~ )
+                      ->   ( ( ( normh ` ( &S8 +h &S9 ) ) ^ 2 )
+                             +
+                             ( ( normh ` ( &S8 -h &S9 ) ) ^ 2 ) )
+                         = ( ( ( normh ` ( &S8 +h &S9 ) ) ^ 2 )
+                             +
+                             ( ( normh
+                               ` ( &S8 +h ( -u 1 .h &S9 ) ) )
+                               ^
+                               2 ) ) )
+30::axaddcom       |- (  (     ( ( normh ` ( &S8 +h &S9 ) ) ^ 2 )
+                            e. CC
+                         /\    ( ( normh ` ( &S8 -h &S9 ) ) ^ 2 )
+                            e. CC )
+                      ->   ( ( ( normh ` ( &S8 +h &S9 ) ) ^ 2 )
+                             +
+                             ( ( normh ` ( &S8 -h &S9 ) ) ^ 2 ) )
+                         = ( ( ( normh ` ( &S8 -h &S9 ) ) ^ 2 )
+                             +
+                             ( ( normh ` ( &S8 +h &S9 ) ) ^ 2 ) ) )
+31::hvaddclt       |- ( ( &S8 e. H~ /\ &S9 e. H~ ) -> ( &S8 +h &S9 ) e. H~ )
+32::normclt        |- (  ( &S8 +h &S9 ) e. H~
+                      -> ( normh ` ( &S8 +h &S9 ) ) e. RR )
+33:31,32:syl       |- (  ( &S8 e. H~ /\ &S9 e. H~ )
+                      -> ( normh ` ( &S8 +h &S9 ) ) e. RR )
+34:33:recnd        |- (  ( &S8 e. H~ /\ &S9 e. H~ )
+                      -> ( normh ` ( &S8 +h &S9 ) ) e. CC )
+35::sqclt          |- (  ( normh ` ( &S8 +h &S9 ) ) e. CC
+                      ->    ( ( normh ` ( &S8 +h &S9 ) ) ^ 2 )
+                         e. CC )
+36:34,35:syl       |- (  ( &S8 e. H~ /\ &S9 e. H~ )
+                      ->    ( ( normh ` ( &S8 +h &S9 ) ) ^ 2 )
+                         e. CC )
+37::hvsubclt       |- ( ( &S8 e. H~ /\ &S9 e. H~ ) -> ( &S8 -h &S9 ) e. H~ )
+38::normclt        |- (  ( &S8 -h &S9 ) e. H~
+                      -> ( normh ` ( &S8 -h &S9 ) ) e. RR )
+39:38:recnd        |- (  ( &S8 -h &S9 ) e. H~
+                      -> ( normh ` ( &S8 -h &S9 ) ) e. CC )
+40::sqclt          |- (  ( normh ` ( &S8 -h &S9 ) ) e. CC
+                      ->    ( ( normh ` ( &S8 -h &S9 ) ) ^ 2 )
+                         e. CC )
+41:37,39,40:3syl   |- (  ( &S8 e. H~ /\ &S9 e. H~ )
+                      ->    ( ( normh ` ( &S8 -h &S9 ) ) ^ 2 )
+                         e. CC )
+42:30,36,41:sylanc |- (  ( &S8 e. H~ /\ &S9 e. H~ )
+                      ->   ( ( ( normh ` ( &S8 +h &S9 ) ) ^ 2 )
+                             +
+                             ( ( normh ` ( &S8 -h &S9 ) ) ^ 2 ) )
+                         = ( ( ( normh ` ( &S8 -h &S9 ) ) ^ 2 )
+                             +
+                             ( ( normh ` ( &S8 +h &S9 ) ) ^ 2 ) ) )
+43:29,42:eqtr3d    |- (  ( &S8 e. H~ /\ &S9 e. H~ )
+                      ->   ( ( ( normh ` ( &S8 +h &S9 ) ) ^ 2 )
+                             +
+                             ( ( normh
+                               ` ( &S8 +h ( -u 1 .h &S9 ) ) )
+                               ^
+                               2 ) )
+                         = ( ( ( normh ` ( &S8 -h &S9 ) ) ^ 2 )
+                             +
+                             ( ( normh ` ( &S8 +h &S9 ) ) ^ 2 ) ) )
+44::2cn            |- 2 e. CC
+45::axdistr        |- (  (  2 e. CC
+                         /\ ( ( normh ` &S8 ) ^ 2 ) e. CC
+                         /\ ( ( normh ` &S9 ) ^ 2 ) e. CC )
+                      ->   ( 2
+                             x.
+                             ( ( ( normh ` &S8 ) ^ 2 )
+                               +
+                               ( ( normh ` &S9 ) ^ 2 ) ) )
+                         = ( ( 2 x. ( ( normh ` &S8 ) ^ 2 ) )
+                             +
+                             ( 2 x. ( ( normh ` &S9 ) ^ 2 ) ) ) )
+46:44,45:mp3an1    |- (  (  ( ( normh ` &S8 ) ^ 2 ) e. CC
+                         /\ ( ( normh ` &S9 ) ^ 2 ) e. CC )
+                      ->   ( 2
+                             x.
+                             ( ( ( normh ` &S8 ) ^ 2 )
+                               +
+                               ( ( normh ` &S9 ) ^ 2 ) ) )
+                         = ( ( 2 x. ( ( normh ` &S8 ) ^ 2 ) )
+                             +
+                             ( 2 x. ( ( normh ` &S9 ) ^ 2 ) ) ) )
+47::normclt        |- ( &S8 e. H~ -> ( normh ` &S8 ) e. RR )
+48:47:recnd        |- ( &S8 e. H~ -> ( normh ` &S8 ) e. CC )
+49::sqclt          |- (  ( normh ` &S8 ) e. CC
+                      -> ( ( normh ` &S8 ) ^ 2 ) e. CC )
+50:48,49:syl       |- (  &S8 e. H~
+                      -> ( ( normh ` &S8 ) ^ 2 ) e. CC )
+51::normclt        |- ( &S9 e. H~ -> ( normh ` &S9 ) e. RR )
+52:51:recnd        |- ( &S9 e. H~ -> ( normh ` &S9 ) e. CC )
+53::sqclt          |- (  ( normh ` &S9 ) e. CC
+                      -> ( ( normh ` &S9 ) ^ 2 ) e. CC )
+54:52,53:syl       |- (  &S9 e. H~
+                      -> ( ( normh ` &S9 ) ^ 2 ) e. CC )
+55:46,50,54:syl2an |- (  ( &S8 e. H~ /\ &S9 e. H~ )
+                      ->   ( 2
+                             x.
+                             ( ( ( normh ` &S8 ) ^ 2 )
+                               +
+                               ( ( normh ` &S9 ) ^ 2 ) ) )
+                         = ( ( 2 x. ( ( normh ` &S8 ) ^ 2 ) )
+                             +
+                             ( 2 x. ( ( normh ` &S9 ) ^ 2 ) ) ) )
+56:25,43,55:3eqtr4d 
+                   |- (  ( &S8 e. H~ /\ &S9 e. H~ )
+                      ->   ( ( ( normh ` ( &S8 +h &S9 ) ) ^ 2 )
+                             +
+                             ( ( normh
+                               ` ( &S8 +h ( -u 1 .h &S9 ) ) )
+                               ^
+                               2 ) )
+                         = ( 2
+                             x.
+                             ( ( ( normh ` &S8 ) ^ 2 )
+                               +
+                               ( ( normh ` &S9 ) ^ 2 ) ) ) )
+57:56:rgen2        |- A. &S8
+                      e. H~
+                         A. &S9
+                         e. H~
+                              ( ( ( normh ` ( &S8 +h &S9 ) ) ^ 2 )
+                                +
+                                ( ( normh
+                                  ` ( &S8 +h ( -u 1 .h &S9 ) ) )
+                                  ^
+                                  2 ) )
+                            = ( 2
+                                x.
+                                ( ( ( normh ` &S8 ) ^ 2 )
+                                  +
+                                  ( ( normh ` &S9 ) ^ 2 ) ) )
+58:23,24,57:mpbir2an 
+                   |- <. <. +h , .h >. , normh >. e. CPreHil
+qed:1,9,58:mpbir2an 
+                   |- <. <. +h , .h >. , normh >. e. CHil
+
+$=  cva csm cop cno cop chl wcel cva csm cop cno cop cbn wcel cva csm
+    cop cno cop cphl wcel cva csm cop cno cop ishlg cva csm cop cno 
+    cop cbn wcel cva csm cop cno cop cncv wcel cva csm cop cno cop cims 
+    cfv cms wcel cva csm cop cno cop isbn hilncv cva csm cop cno cop 
+    cims cfv chil &S4 cv chil wcel &S5 cv chil wcel wa &S6 cv &S4 cv &S5 
+    cv cmv co cno cfv wceq wa &S4 &S5 &S6 copab2 cop cms &S4 &S5 &S6 
+    &S4 cv chil wcel &S5 cv chil wcel wa &S6 cv &S4 cv &S5 cv cmv co cno
+    cfv wceq wa &S4 &S5 &S6 copab2 &S4 cv chil wcel &S5 cv chil wcel 
+    wa &S6 cv &S4 cv &S5 cv cmv co cno cfv wceq wa &S4 &S5 &S6 copab2 
+    eqid hilims &S4 &S5 &S6 &S4 cv chil wcel &S5 cv chil wcel wa &S6 cv 
+    &S4 cv &S5 cv cmv co cno cfv wceq wa &S4 &S5 &S6 copab2 &S4 cv chil 
+    wcel &S5 cv chil wcel wa &S6 cv &S4 cv &S5 cv cmv co cno cfv wceq wa 
+    &S4 &S5 &S6 copab2 eqid hilcms eqeltr mpbir2an cva csm cop cno cop 
+    cphl wcel cva csm cop cno cop cncv wcel &S8 cv &S9 cv cva co cno cfv 
+    c2 cexp co &S8 cv c1 cneg &S9 cv csm co cva co cno cfv c2 cexp co 
+    caddc co c2 &S8 cv cno cfv c2 cexp co &S9 cv cno cfv c2 cexp co caddc 
+    co cmul co wceq &S9 chil wral &S8 chil wral cva cvv wcel csm cvv 
+    wcel cno cvv wcel cva csm cop cno cop cphl wcel cva csm cop cno cop 
+    cncv wcel &S8 cv &S9 cv cva co cno cfv c2 cexp co &S8 cv c1 cneg &S9 
+    cv csm co cva co cno cfv c2 cexp co caddc co c2 &S8 cv cno cfv c2 
+    cexp co &S9 cv cno cfv c2 cexp co caddc co cmul co wceq &S9 chil wral
+    &S8 chil wral wa wb cva cabl hilabl elisseti hvmulex cno &S3 cv 
+    chil wcel &S7 cv &S3 cv &S3 cv csp co csqr cfv wceq wa &S3 &S7 copab 
+    cvv &S3 &S7 df-hnorm &S3 &S7 chil &S3 cv &S3 cv csp co csqr cfv 
+    ax-hilex funopabex2 eqeltr &S8 &S9 cvv cvv cvv csm cva cno chil cva chil 
+    cva cabl wcel cva cgr wcel hilabl cva ablgrp ax-mp ax-hfvadd grprn 
+    isphg mp3an hilncv &S8 cv &S9 cv cva co cno cfv c2 cexp co &S8 cv c1 
+    cneg &S9 cv csm co cva co cno cfv c2 cexp co caddc co c2 &S8 cv cno 
+    cfv c2 cexp co &S9 cv cno cfv c2 cexp co caddc co cmul co wceq &S8 
+    &S9 chil &S8 cv chil wcel &S9 cv chil wcel wa &S8 cv &S9 cv cmv co 
+    cno cfv c2 cexp co &S8 cv &S9 cv cva co cno cfv c2 cexp co caddc co 
+    c2 &S8 cv cno cfv c2 cexp co cmul co c2 &S9 cv cno cfv c2 cexp co 
+    cmul co caddc co &S8 cv &S9 cv cva co cno cfv c2 cexp co &S8 cv c1 
+    cneg &S9 cv csm co cva co cno cfv c2 cexp co caddc co c2 &S8 cv cno 
+    cfv c2 cexp co &S9 cv cno cfv c2 cexp co caddc co cmul co &S8 cv &S9
+    cv normpart &S8 cv chil wcel &S9 cv chil wcel wa &S8 cv &S9 cv 
+    cva co cno cfv c2 cexp co &S8 cv &S9 cv cmv co cno cfv c2 cexp co 
+    caddc co &S8 cv &S9 cv cva co cno cfv c2 cexp co &S8 cv c1 cneg &S9 cv
+    csm co cva co cno cfv c2 cexp co caddc co &S8 cv &S9 cv cmv co 
+    cno cfv c2 cexp co &S8 cv &S9 cv cva co cno cfv c2 cexp co caddc co 
+    &S8 cv chil wcel &S9 cv chil wcel wa &S8 cv &S9 cv cmv co cno cfv c2
+    cexp co &S8 cv c1 cneg &S9 cv csm co cva co cno cfv c2 cexp co 
+    &S8 cv &S9 cv cva co cno cfv c2 cexp co caddc &S8 cv chil wcel &S9 
+    cv chil wcel wa &S8 cv &S9 cv cmv co cno cfv &S8 cv c1 cneg &S9 cv 
+    csm co cva co cno cfv c2 cexp &S8 cv chil wcel &S9 cv chil wcel wa 
+    &S8 cv &S9 cv cmv co &S8 cv c1 cneg &S9 cv csm co cva co cno &S8 cv 
+    &S9 cv hvsubvalt fveq2d opreq1d opreq2d &S8 cv &S9 cv cva co cno cfv
+    c2 cexp co cc wcel &S8 cv &S9 cv cmv co cno cfv c2 cexp co cc 
+    wcel &S8 cv &S9 cv cva co cno cfv c2 cexp co &S8 cv &S9 cv cmv co cno
+    cfv c2 cexp co caddc co &S8 cv &S9 cv cmv co cno cfv c2 cexp co 
+    &S8 cv &S9 cv cva co cno cfv c2 cexp co caddc co wceq &S8 cv chil 
+    wcel &S9 cv chil wcel wa &S8 cv &S9 cv cva co cno cfv c2 cexp co &S8 
+    cv &S9 cv cmv co cno cfv c2 cexp co axaddcom &S8 cv chil wcel &S9 
+    cv chil wcel wa &S8 cv &S9 cv cva co cno cfv cc wcel &S8 cv &S9 cv 
+    cva co cno cfv c2 cexp co cc wcel &S8 cv chil wcel &S9 cv chil wcel 
+    wa &S8 cv &S9 cv cva co cno cfv &S8 cv chil wcel &S9 cv chil wcel 
+    wa &S8 cv &S9 cv cva co chil wcel &S8 cv &S9 cv cva co cno cfv cr 
+    wcel &S8 cv &S9 cv hvaddclt &S8 cv &S9 cv cva co normclt syl recnd 
+    &S8 cv &S9 cv cva co cno cfv sqclt syl &S8 cv chil wcel &S9 cv chil 
+    wcel wa &S8 cv &S9 cv cmv co chil wcel &S8 cv &S9 cv cmv co cno cfv 
+    cc wcel &S8 cv &S9 cv cmv co cno cfv c2 cexp co cc wcel &S8 cv &S9 
+    cv hvsubclt &S8 cv &S9 cv cmv co chil wcel &S8 cv &S9 cv cmv co cno
+    cfv &S8 cv &S9 cv cmv co normclt recnd &S8 cv &S9 cv cmv co cno 
+    cfv sqclt 3syl sylanc eqtr3d &S8 cv cno cfv c2 cexp co cc wcel &S9 
+    cv cno cfv c2 cexp co cc wcel c2 &S8 cv cno cfv c2 cexp co &S9 cv 
+    cno cfv c2 cexp co caddc co cmul co c2 &S8 cv cno cfv c2 cexp co 
+    cmul co c2 &S9 cv cno cfv c2 cexp co cmul co caddc co wceq &S8 cv 
+    chil wcel &S9 cv chil wcel c2 cc wcel &S8 cv cno cfv c2 cexp co cc 
+    wcel &S9 cv cno cfv c2 cexp co cc wcel c2 &S8 cv cno cfv c2 cexp co 
+    &S9 cv cno cfv c2 cexp co caddc co cmul co c2 &S8 cv cno cfv c2 cexp
+    co cmul co c2 &S9 cv cno cfv c2 cexp co cmul co caddc co wceq 2cn
+    c2 &S8 cv cno cfv c2 cexp co &S9 cv cno cfv c2 cexp co axdistr 
+    mp3an1 &S8 cv chil wcel &S8 cv cno cfv cc wcel &S8 cv cno cfv c2 cexp 
+    co cc wcel &S8 cv chil wcel &S8 cv cno cfv &S8 cv normclt recnd &S8
+    cv cno cfv sqclt syl &S9 cv chil wcel &S9 cv cno cfv cc wcel &S9 
+    cv cno cfv c2 cexp co cc wcel &S9 cv chil wcel &S9 cv cno cfv &S9 
+    cv normclt recnd &S9 cv cno cfv sqclt syl syl2an 3eqtr4d rgen2 
+    mpbir2an mpbir2an $. 
+$)

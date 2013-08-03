@@ -1,0 +1,82 @@
+*-----------------------------------------
+* Unit Test 6, RunParms File 001
+*-----------------------------------------
+
+*-----------------------------------------
+*     Setup 
+*-----------------------------------------
+*LoadEndpointStmtNbr,5000
+LoadComments,no
+LoadProofs,no
+LoadFile,mm\RegressionTest1set.mm  
+Parse,* 
+ProofAsstUnifySearchExclude,biigb,xxxid,dummylink
+ProofAsstProofFolder,mmp\tests
+ProofAsstOutputCursorInstrumentation,yes
+
+*-----------------------------------------
+*    Zeroeth Pass - Default (Last)
+*-----------------------------------------
+*ProofAsstIncompleteStepCursor,Last
+ProofAsstBatchTest,*,UT6001.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,AsciiRetest
+ProofAsstBatchTest,*,UT6002.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,AsciiRetest
+ProofAsstBatchTest,*,UT6003.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,AsciiRetest
+ProofAsstBatchTest,*,esnnei.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,AsciiRetest
+
+*-----------------------------------------
+*    First Pass - Last
+*-----------------------------------------
+ProofAsstIncompleteStepCursor,Last
+ProofAsstBatchTest,*,UT6001.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,AsciiRetest
+ProofAsstBatchTest,*,UT6002.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,AsciiRetest
+ProofAsstBatchTest,*,UT6003.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,AsciiRetest
+ProofAsstBatchTest,*,esnnei.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,AsciiRetest
+
+*-----------------------------------------
+*    Second Pass - First 
+*-----------------------------------------
+ProofAsstIncompleteStepCursor,First
+ProofAsstBatchTest,*,UT6001.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,AsciiRetest
+ProofAsstBatchTest,*,UT6002.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,AsciiRetest
+ProofAsstBatchTest,*,UT6003.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,AsciiRetest
+ProofAsstBatchTest,*,esnnei.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,AsciiRetest
+
+*-----------------------------------------
+*    Third Pass - Asis
+*-----------------------------------------
+ProofAsstIncompleteStepCursor,Asis
+ProofAsstBatchTest,*,UT6001.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,AsciiRetest
+ProofAsstBatchTest,*,UT6002.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,AsciiRetest
+ProofAsstBatchTest,*,UT6003.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,AsciiRetest
+ProofAsstBatchTest,*,esnnei.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,AsciiRetest
+
+* tidy up
+ProofAsstOutputCursorInstrumentation,no
+ProofAsstIncompleteStepCursor,Last
+
+*-----------------------------------------
+*    Next Test - First Pass: Auto-Reformat = yes (default)
+*-----------------------------------------
+*ProofAsstAutoReformat,yes
+ProofAsstBatchTest,*,UT6001.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,AsciiRetest
+ProofAsstBatchTest,*,UT6002.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,AsciiRetest
+ProofAsstBatchTest,*,UT6003.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,AsciiRetest
+ProofAsstBatchTest,*,esnnei.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,AsciiRetest
+
+*-----------------------------------------
+*    Next Test - Second Pass: Auto-Reformat = yes
+*-----------------------------------------
+ProofAsstAutoReformat,yes
+ProofAsstBatchTest,*,UT6001.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,AsciiRetest
+ProofAsstBatchTest,*,UT6002.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,AsciiRetest
+ProofAsstBatchTest,*,UT6003.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,AsciiRetest
+ProofAsstBatchTest,*,esnnei.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,AsciiRetest
+
+*-----------------------------------------
+*    Next Test - Third Pass: Auto-Reformat = no
+*-----------------------------------------
+ProofAsstAutoReformat,no
+ProofAsstBatchTest,*,UT6001.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,AsciiRetest
+ProofAsstBatchTest,*,UT6002.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,AsciiRetest
+ProofAsstBatchTest,*,UT6003.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,AsciiRetest
+ProofAsstBatchTest,*,esnnei.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,AsciiRetest

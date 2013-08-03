@@ -1,0 +1,2935 @@
+LoadFile,set.mm
+VerifyProof,*
+Parse,* 
+ProofAsstUnifySearchExclude,biigb,xxxid,dummylink
+ProofAsstProofFolder,myproofs
+TheoremLoaderMMTFolder,myproofs
+RunProofAsstGUI
+
+
+    AnnotatedRunParms.txt, revised 01-Aug-2008
+    ==========================================
+
+    CONTENTS:
+    =========
+
+    -   PREVIEW
+    -   RUNPARM FILE PURPOSE
+    -   RUNPARM FILE FORMAT -- KEY CONCEPTS
+    -   RUNPARM FILE USAGE -- KEY CONCEPTS
+    -   EXAMPLE RUNPARM FILE 1
+    -   EXAMPLE RUNPARM FILE 2
+    -   RUNPARM Commands for mmj.util.BatchMMJ.java
+    -   RUNPARM Commands for mmj.util.OutputBoss.java
+    -   RUNPARM Commands for mmj.lang.Messages.java
+    -   RUNPARM Commands for mmj.util.Dump.java
+    -   RUNPARM Commands for mmj.lang.SeqAssigner.java
+    -   RUNPARM Commands for mmj.lang.BookManager.java
+    -   RUNPARM Commands for mmj.lang.LogicalSystem.java
+    -   RUNPARM Commands for mmj.mmio.Systemizer.java
+    -   RUNPARM Commands for mmj.lang.ProofVerifier.java interface
+    -   RUNPARM Commands for mmj.verify.Grammar.java
+    -   RUNPARM Commands for mmj.lang.SyntaxVerifier.java interface
+    -   RUNPARM Commands for mmj.lang.WorkVarManager.java
+    -   RUNPARM Commands for mmj.tmff.Preferences.java
+    -   RUNPARM Commands for mmj.pa.StepSelectorDialog.java
+    -   RUNPARM Commands for mmj.pa.StepSelectorSearch.java
+    -   RUNPARM Commands for mmj.tl.TheoremLoader.java
+    -   RUNPARM Commands for mmj.svc.SvcCallback.java interface
+    -   RUNPARM Commands for mmj.pa.ProofAsst.java
+    -   RUNPARM Commands for mmj.util.GMFFBoss.java
+
+    ------------------------------------------------------------------
+
+    PREVIEW:
+    ========
+
+    This RunParm file contains documentation about RunParm files.
+    It is a perfectly valid RunParm file (see first 5 lines)
+    containing the standard executable RunParms needed to run the mmj2
+    Proof Assistant GUI using input Metamath .mm database file
+    set.mm (the default values are fine for the other RunParm
+    commands).
+
+    ------------------------------------------------------------------
+
+    RUNPARM FILE PURPOSE:
+    =====================
+
+    The RunParm file provides mmj2 (via mmj.util.BatchMMJ2.java)
+    a command *language*. It is a language, even though it has
+    no branching or looping constructs; just sequential execution.
+
+    The RunParm language makes mmj2 easy to extend and enhance,
+    and of course, RunParms provide necessary flexibility so that
+    processing can be customized for different Metamath databases
+    as well as different users.
+
+    New features and new utilities can be added without impacting
+    existing features. As an example, the mmj2 Proof Assistant GUI
+    was one of the last features programmed. Implementing it
+    within the existing framework required just adding a few
+    new preference-setting RunParm commands and the executable
+    RunParm Command "RunProofAsstGUI". Likewise, in the future a
+    different Proof Assistant could be implemented without affecting
+    existing users by simply add RunParm Command "RunProofAsstGUIv2"!
+
+    ------------------------------------------------------------------
+
+    RUNPARM FILE FORMAT -- KEY CONCEPTS:
+    ====================================
+
+    -  COMMENT LINES: contain an "*" (asterisk),  " " (blank), or
+       "/" (slash) in column 1 of a RunParm line (like this line).
+
+    -  RUNPARM COMMAND LINES (non-comment lines) consist of
+       -  1 Name field and
+
+       -  0 -> n Value fields
+
+       -  Use "," (comma) as field separators and '"' (double-quote)
+          as field quoters (Use of Comma and Double-quote can be
+          changed via command line arguments to
+          mmj.util.BatchMMJ2.java)
+
+       -  A null value field (zero length) is input thus: ",,"
+          or as a "," at the end of the RunParm line (followed by
+          a carriage return).
+
+       -  RunParm names and values are not case-sensitive.
+
+       -  Almost eery RunParm value has a default which is designed
+          to be "optimal" for use with set.mm. If you accept the
+          defaults then do not even input the RunParm command. If
+          you do input put in the RunParm command then every
+          "required" value must be input too.
+
+       -  NOTE: Use of '"' (double-quote) is only necessary if a
+          value contains a ',' (comma). Embedded spaces are
+          not a problem -- you don't need to quote values containing
+          spaces. And, you can even embed a '"' in an unquoted field
+          as long as the '"' is not the first or last character in the
+          field.
+
+       - EXAMPLES: each RunParm line below has SIX value fields!!!
+            *        1         2         3
+            *23456789012345678901234567890...
+            name1,value11,"value12",value13, " ,value15," , "
+            name2,,value22,,value24,,
+
+    ------------------------------------------------------------------
+
+    RUNPARM FILE USAGE -- KEY CONCEPTS:
+    ===================================
+
+    -  The only mandatory RunParm Command is "LoadFile", and even that
+       is not required if no processing is desired. All other RunParms
+       have defaults or invoke processing that is optional. For
+       example proof verification is done only if RunParm Command
+       "VerifyProof" is input.
+
+    -  There are two kinds of RunParm Commands: executable commands
+       and non-executable commands.
+
+    -  Non-executable RunParm commands typically specify a
+       "preference" parameter or setting, such as "ProofAsstFontSize".
+       It is simplest to input non-executable RunParm lines first
+       in a RunParm file because these setting affect subsequent
+       processing and stay in effect until superceded or "Clear"ed.
+
+    -  Executable RunParm commands are action-oriented verbs for mmj2.
+       The order of input of executable RunParm commands is important!
+       RunParms form a *language* for mmj2 and are processed in
+       sequence.
+
+    -  These are the mmj2 Executable RunParm Commands:
+
+       Clear                  : Erases and deletes all previous
+                                RunParms and processing state --
+                                a clean start for new commands!
+
+       GarbageCollection      : Runs Java "gc" to free up memory.
+
+       LoadFile               : Loads 1 Metamath .mm Database file
+                                (you can load more than one; order
+                                is important; load all needed files
+                                at once, before doing other
+                                executable commands!)
+
+       VerifyProof            : Runs mmj2 Proof Verification Engine
+                                for one Theorem (label) or all ("*").
+
+       InitializeGrammar      : Builds (or rebuilds) the Grammar
+                                object and associated state variables
+                                for the loaded Metamath .mm database
+                                file(s). (Grammar initialization
+                                happens automatically if this command
+                                is not input and a "Parse" command
+                                is input -- so "InitializeGrammar"
+                                is not commonly used.
+
+       Parse                  : Build syntax Parse Tree for one
+                                Metamath statement (label) or all
+                                ("*").
+
+       VerifyParse            : Double-check accuracy of Parse(s)
+                                for one statement (label) or all
+                                ("*") by converting Parse Trees into
+                                RPN lists and feeding them into the
+                                Proof Verification Engine (this is
+                                cool but unnecessary unless you are
+                                really paranoid!)
+
+       PrintSyntaxDetails     : Dumps to the Sysout file or
+                                PrintStream all information about
+                                the Grammar object constructed for the
+                                input Metamath .mm database file(s).
+
+       PrintStatementDetails  : Dumps to the Sysout file or
+                                Printstream -- in an ugly format --
+                                almost all information about a single
+                                Metamath statement (label) or all
+                                statements ("*").
+
+       ProofAsstExportToFile  : Exports one Theorem proof (label)
+                                or all Theorems ("*") to a file in
+                                Proof Worksheet format. Invalid or
+                                incomplete proofs are not handled.
+                                Other RunParm values available -- see
+                                details below.
+
+       ProofAsstBatchTest     : Reads and Unifies either one Theorem
+                                Proof Worksheet (label) or all ("*").
+                                Input is either memory (via an
+                                in-memory "export") or an input file.
+                                Other RunParm values available -- see
+                                details below.
+
+       GMFFInitialize         : Forces immediate initialization of the
+                                GMFF facility, with an option to 
+                                "PrintTypesettingDefinitions".
+
+       GMFFExportFromFolder   : Exports Proof Worksheeet files from a 
+                                folder, generating the designated type
+                                of export file(s) -- normally html. 
+
+       GMFFExportTheorem      : Exports one or more theorems from the 
+                                loaded Logical System, generating the 
+                                designated type of export file(s) -- normally
+                                html. 
+
+       GMFFParseMetamathTypesetComment
+                              : Parses a Metamath .mm file $t comment 
+                                statement, with an option to "PRINT".
+                                
+       StepSelectorBatchTest  : Exercises the Unify\Step Selector Search
+                                and selection logic for a single Proof
+                                Worksheet in an input file. Also prints
+                                various data items for use in regression
+                                testing.
+
+       PreprocessRequestBatchTest
+                              : Exercises the Unify/Erase And Rederive
+                                Formulas code for a single Proof
+                                Worksheet in an input file. Also prints
+                                before/after images of the Proof Worksheet.
+
+       RunProofAsstGUI        : Triggers the mmj2 Proof Assistant GUI.
+                                Requires that the input Metamath .mm
+                                database files be successfully parsed
+                                prior to this command!
+
+       StartInstrumentationTimer
+                              : Records current time and memory
+                                stats for use with
+                                StopInstrumentationTimer. Multiple
+                                Instrumentation Timers can be used,
+                                distinguished by "TimerID" strings
+                                on the input RunParms.
+
+       StopInstrumentationTimer
+                              : Records current time and memory
+                                stats and produces and informational
+                                message providing elapsed time
+                                and memory utilization for the
+                                given "TimerID".
+
+       LoadTheoremsFromMMTFolder
+                              : The Theorem Loader function runs
+                                after the "LoadFile" and updates
+                                the Logical System in memory with
+                                the contents of either one or all
+                                ".mmt" file-type theorem files in
+                                the MMT Folder.
+
+       UnifyPlusStoreInMMTFolder
+                              : Attempts unification of a Proof
+                                Worksheet text file and stores the
+                                theorem in the MMT Folder if
+                                unification is successful.
+
+       UnifyPlusStoreInLogSysAndMMTFolder
+                              : Attempts unification of a Proof
+                                Worksheet text file, stores the
+                                theorem in the MMT Folder if
+                                unification is successful, and then
+                                updates the Logical System in memory.
+
+       ExtractTheoremToMMTFolder
+                              : Exports the theorem named by the input
+                                label from the Logical System to the
+                                MMT Folder, storing the theorem
+                                as a Metamath .mm format file with
+                                file type ".mmt".
+
+       SvcCall                : Triggers a call by the mmj2 Service
+                                feature to the user application. (This
+                                is used when the mmj2 Service is being
+                                used in "caller" and "callee" mode.)
+
+    ------------------------------------------------------------------
+
+    EXAMPLE RUNPARM FILE 1
+    ======================
+
+        *        1         2         3         4
+        *234567890123456789012345678901234567890
+        OutputVerbosity,0
+        MaxStatementPrintCount,99
+        Caption,Example #1
+        MaxErrorMessages,500
+        MaxInfoMessages,500
+        LoadFile,c:\metamath\set.mm
+        VerifyProof,*
+        Parse,*
+        PrintSyntaxDetails
+        PrintStatementDetails,*
+
+    ------------------------------------------------------------------
+
+    EXAMPLE RUNPARM FILE 2
+    ======================
+
+        *        1         2         3         4
+        *234567890123456789012345678901234567890
+        *CommentLine: Example #2 - default charsets="" and
+        *             new/update parameter
+        OutputVerbosity,9999
+
+        SystemErrorFile,c:\my\mmjSyserrTest001.txt,new,""
+        SystemOutputFile,c:\my\mmjSysoutTest001.txt,new,""
+
+        MaxErrorMessages,15000
+        MaxInfoMessages,15000
+
+        SymbolTableInitialSize,1500
+        StatementTableInitialSize,45000
+
+        LoadEndpointStmtNbr,999999999
+        LoadEndpointStmtLabel,FermatsNextToLastTheorem
+        LoadComments,yes
+        LoadProofs,yes
+
+        ProvableLogicStmtType,|-
+        LogicStmtType,wff
+
+        BookManagerEnabled,yes
+
+        SeqAssignerIntervalSize,1000
+
+        GrammarAmbiguityEdits,basic
+        StatementAmbiguityEdits,basic
+
+        MaxStatementPrintCount,99999
+        Caption,Example #2
+
+        LoadFile,c:\metamath\set.mm
+        LoadFile,c:\my\MySetTheorems2.mm
+
+        *=== Optional Pre-Verification/Parse Theorem Loader stuff===
+
+        TheoremLoaderDjVarsOption,NoUpdate
+        TheoremLoaderMMTFolder,c:\my\proofs
+        TheoremLoaderAuditMessages,Yes
+        TheoremLoaderStoreFormulasAsIs,Yes
+        TheoremLoaderStoreMMIndentAmt,2
+        TheoremLoaderStoreMMRightCol,79
+        UnifyPlusStoreInMMTFolder,c:\myproofs\syl.mmp
+        UnifyPlusStoreInLogSysAndMMTFolder,c:\myproofs\syl.mmp
+        ExtractTheoremToMMTFolder,syl
+        LoadTheoremsFromMMTFolder,syl
+        LoadTheoremsFromMMTFolder,*
+
+        VerifyProof,*
+        Parse,*
+
+        VerifyParse,*
+
+        PrintSyntaxDetails
+        PrintStatementDetails,*
+
+        *===Work Variable stuff follows===
+
+        DefineWorkVarType,wff,&W,200
+        DefineWorkVarType,set,&S,200
+        DefineWorkVarType,class,&C,200
+        DeclareWorkVars
+
+        *===TMFF stuff follows===
+
+        TMFFDefineScheme,AlignVarDepth1,AlignColumn,1,Var,1,Var
+        TMFFDefineScheme,AlignVarDepth2,AlignColumn,2,Var,1,Var
+        TMFFDefineScheme,AlignVarDepth3,AlignColumn,3,Var,1,Var
+        TMFFDefineScheme,AlignVarDepth4,AlignColumn,4,Var,1,Var
+        TMFFDefineScheme,AlignVarDepth5,AlignColumn,5,Var,1,Var
+        TMFFDefineScheme,AlignVarDepth99,AlignColumn,99,Var,1,Var
+        TMFFDefineScheme,Flat,Flat
+        TMFFDefineScheme,PrefixDepth3,AlignColumn,3,Sym,2,Sym
+        TMFFDefineScheme,PostfixDepth3,AlignColumn,3,Sym,1,Sym
+        TMFFDefineScheme,TwoColumnAlignmentDepth1,TwoColumnAlignment,1
+        TMFFDefineScheme,TwoColumnAlignmentDepth2,TwoColumnAlignment,2
+        TMFFDefineScheme,TwoColumnAlignmentDepth3,TwoColumnAlignment,3
+        TMFFDefineScheme,TwoColumnAlignmentDepth4,TwoColumnAlignment,4
+        TMFFDefineScheme,TwoColumnAlignmentDepth5,TwoColumnAlignment,5
+        TMFFDefineScheme,TwoColumnAlignmentDepth99,TwoColumnAlignment,99
+
+        *Note: "Unformatted" and Format 0 are hardcoded --
+        *they cannot be redefined via RunParms.
+
+        TMFFDefineScheme,Unformatted,Unformatted
+
+        TMFFDefineFormat,1,AlignVarDepth1
+        TMFFDefineFormat,2,AlignVarDepth2
+        TMFFDefineFormat,3,AlignVarDepth3
+        TMFFDefineFormat,4,AlignVarDepth4
+        TMFFDefineFormat,5,AlignVarDepth5
+        TMFFDefineFormat,6,AlignVarDepth99
+        TMFFDefineFormat,7,Flat
+        TMFFDefineFormat,8,PrefixDepth3
+        TMFFDefineFormat,9,PostfixDepth3
+        TMFFDefineFormat,10,TwoColumnAlignmentDepth99
+        TMFFDefineFormat,11,TwoColumnAlignmentDepth1
+        TMFFDefineFormat,12,TwoColumnAlignmentDepth2
+        TMFFDefineFormat,13,TwoColumnAlignmentDepth3
+        TMFFDefineFormat,14,TwoColumnAlignmentDepth4
+        TMFFDefineFormat,15,TwoColumnAlignmentDepth5
+
+        TMFFUseFormat,13
+
+        * Default AltFormat = 7, Flat
+        TMFFAltFormat,7
+        * Default Indent amount = 0 columns per proof step level
+        TMFFUseIndent,0
+        * Default Alt Indent amount = 1 column per proof step level
+        TMFFAltIndent,1
+
+        *=== Proof Assistant Step Selector stuff follows ===
+
+        StepSelectorDialogPaneWidth,720
+        StepSelectorDialogPaneHeight,440
+        StepSelectorMaxResults,50
+        StepSelectorShowSubstitutions,true
+
+        *===Proof Assistant stuff follows===
+
+        ProofAsstFontSize,14
+        ProofAsstFontBold,yes
+        ProofAsstFontFamily,Monospaced
+        ProofAsstForegroundColorRGB,0,0,0
+        ProofAsstBackgroundColorRGB,255,255,255
+
+        ProofAsstFormulaLeftCol,20
+        ProofAsstFormulaRightCol,79
+
+        ProofAsstTextAtTop,yes
+        ProofAsstTextColumns,80
+        ProofAsstTextRows,21
+        ProofAsstErrorMessageColumns,80
+        ProofAsstErrorMessageRows,4
+
+        ProofAsstRPNProofLeftCol,6
+        ProofAsstRPNProofRightCol,79
+
+        ProofAsstIncompleteStepCursor,Last
+        ProofAsstOutputCursorInstrumentation,no
+        ProofAsstAutoReformat,yes
+
+        ProofAsstMaxUnifyAlternates,10
+        ProofAsstDummyVarPrefix,$
+        ProofAsstDefaultFileNameSuffix,.mmp
+        ProofAsstProofFolder,c:\my\proofs
+        RecheckProofAsstUsingProofVerifier,no
+        ProofAsstUndoRedoEnabled,yes
+        ProofAsstUnifySearchExclude,biigb,xxxid
+        ProofAsstExportToFile,*,c:\my\export.mmp,new,un-unified,Randomized,Print,NoDeriveFormulas
+        ProofAsstBatchTest,*,c:\my\export.mmp,un-unified,NotRandomized,NoPrint,DeriveFormulas,NoCompareDJs,NoUpdateDJs,NoAsciiRetest
+
+        StepSelectorBatchTest,c:\mmj2\UT7000.mmp,326,6
+        PreprocessRequestBatchTest,UT7001.mmp,EraseAndRederiveFormulas
+
+        ProofAsstStartupProofWorksheet,c:\mmj2\data\mmp\PATutorial\Page101.mmp
+
+        *=== Optional Pre-Proof Asst GUI Theorem Loader stuff===
+
+        TheoremLoaderDjVarsOption,NoUpdate
+        TheoremLoaderMMTFolder,c:\my\proofs
+        TheoremLoaderAuditMessages,Yes
+        TheoremLoaderStoreFormulasAsIs,Yes
+        TheoremLoaderStoreMMIndentAmt,2
+        TheoremLoaderStoreMMRightCol,79
+        UnifyPlusStoreInMMTFolder,syl.mmp
+        UnifyPlusStoreInLogSysAndMMTFolder,syl.mmp
+        ExtractTheoremToMMTFolder,syl
+        LoadTheoremsFromMMTFolder,syl
+        LoadTheoremsFromMMTFolder,*
+
+        *===Now run the Proof Asst GUI===
+
+        RunProofAsstGUI
+
+        *===Sample mmj2 Service RunParms, "callee" mode, commented out===
+
+        *SvcFolder,c:\my\java\test\mmj\svc
+        *SvcCallbackClass,TSvcCallbackCallee
+        *SvcArg,key1,value1
+        *SvcCall
+
+        *===Sample mmj2 Service RunParms, "caller" mode, commented out===
+
+        *SvcFolder,c:\my\java\test\mmj\svc
+        *SvcArg,key1,value1
+        *SvcCall
+
+        *===Now Load And Process Another .mm File===
+        clear
+        GarbageCollection
+        LoadFile,c:\metamath\ql.mm
+        VerifyProof,*
+        Parse,*
+        *RunProofAsstGUI
+
+    ------------------------------------------------------------------
+
+    // ----------------------------------------------------------
+    // RUNPARM Commands for mmj.util.BatchMMJ.java
+    // ----------------------------------------------------------
+
+    Clear  : - Optional.
+             - Default: existing state values retained.
+             - Clear loaded/derived mm data (files/grammar,etc) and
+               all RunParm values except for SystemErrorFile and
+               SystemOutputFile (you can re-enter these explicitly).
+
+
+    GarbageCollection
+           : - Optional
+             - Tells Java to free up unused memory items.
+
+    // ----------------------------------------------------------
+    // RUNPARM Commands for mmj.util.OutputBoss.java
+    // ----------------------------------------------------------
+
+    OutputVerbosity
+           : - Optional. May appear anywhere within the input
+                         RunParm file, to take effect when the
+                         next RunParm command is processed.
+             - Default = 9999 (highly verbose...)
+             - Value1 = verbosity number. Low values mean
+                        fewer info/logging message type output.
+                        Set to 0 to turn off logging of input
+                        RunParm commands (set to 9 or higher
+                        to see them.)
+             - Examples
+
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                OutputVerbosity,99999
+                OutputVerbosity,0
+
+
+    SystemErrorFile
+           : - Optional
+             - Default = output to Command Window System.err
+             - Value1 = filename, absolute or relative path name.
+             - Value2 = "new" (default) or "update".
+                        The system will NOT touch an existing file
+                        unless given "update". If "new" is specified
+                        an error is reported, halting processing ASAP
+                        if the file already exists. If the file does
+                        exist and "update" is specified, then it is
+                        overwritten (not appended); however, no error
+                        is reported for "update" if the file does not
+                        already exist.
+             - Value3 = charset.
+                        Input null ("") for system default charset.
+
+                        * info on charsets:
+                          file:///C:/Program%20Files/Java/jdk1.5.0_02/docs/api/java/nio/charset/Charset.html
+                        * Valid charset names on all Java Platforms:
+
+                               US-ASCII
+                               ISO-8859-1
+                               UTF-8
+                               UTF-16BE
+                               UTF-16LE
+                               UTF-16
+
+             - Examples
+
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                SystemErrorFile,c:\my\errtest.txt,new,"UTF-8"
+                SystemErrorFile,c:\my\errtest.txt,update,""
+
+
+    SystemOutputFile
+           : - Optional
+             - Default = output to Command Window System.out
+             - Value1 = filename, absolute or relative path name.
+             - Value2 = "new" (default) or "update".
+                        The system will NOT touch an existing file
+                        unless given "update". If "new" is specified
+                        processing halts ASAP if the file already
+                        exists. If the file does exist and "update"
+                        is specified, then it is overwritten (not
+                        appended); however, no error is reported for
+                        "update" if the file does not already exist.
+             - Value3 = charset.
+                        Input null ("") for system default charset.
+
+                        * info on charsets:
+                          file:///C:/Program%20Files/Java/jdk1.5.0_02/docs/api/java/nio/charset/Charset.html
+                        * Valid charset names on all Java Platforms:
+
+                               US-ASCII
+                               ISO-8859-1
+                               UTF-8
+                               UTF-16BE
+                               UTF-16LE
+                               UTF-16
+
+             - Examples
+
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                SystemOutputFile,c:\my\outtest.txt,new,"UTF-8"
+                SystemOutputFile,c:\my\outtest.txt,update,""
+
+
+    StartInstrumentationTimer
+           : - Optional. May appear anywhere within the input
+                         RunParm file, to take effect immediately.
+             - Default = N/A
+             - Value1 = TimerID, a string (e.g. "VerifyProofs")
+                        that identifies a particular Instrumentation
+                        Timer. The value must match the TimerID
+                        on the StopInstrumentationTimer RunParm.
+                        Input strings are automatically trimmed
+                        of left and right whitespace. A blank
+                        or zero length String is acceptable.
+                        If the input TimerID matches a previously
+                        input TimerID, the existing Timer is
+                        reset (i.e. a duplicate overwrites an
+                        existing Instrumentation Timer).
+             - Examples
+
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                StartInstrumentationTimer,Timer1
+                StartInstrumentationTimer,
+
+
+    StopInstrumentationTimer
+           : - Optional. Must follow a StartInstrumentationTimer
+                        RunParm with matching TimerID. Produced
+                        an informational message detailing
+                        elapsed wall-clock time in milliseconds
+                        and memory utilization. Multiple
+                        "stops" can be input for a single TimerID.
+             - Default = N/A
+             - Value1 = TimerID, a string (e.g. "VerifyProofs")
+                        that identifies a particular Instrumentation
+                        Timer. The value must match the TimerID
+                        on a StartInstrumentationTimer RunParm.
+                        Input strings are automatically trimmed
+                        of left and right whitespace. A blank
+                        or zero length String is acceptable.
+             - Examples
+
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                StopInstrumentationTimer,Timer1
+                StopInstrumentationTimer,
+
+
+
+    ------------------------------------------------------------------
+
+    // ----------------------------------------------------------
+    // RUNPARM Commands for mmj.lang.Messages.java
+    // ----------------------------------------------------------
+
+    MaxErrorMessages
+           : - Optional
+             - Default = 15000
+             - Value1 = Positive integer. Specifies the maximum
+               number of error messages in mmj.lang.Messages.java.
+               If this number is exceeded, no additional error
+               messages are accumulated. (Individual processes may
+               print and clear the Messages object.)
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                MaxErrorMessages,15000
+
+
+    MaxInfoMessages
+           : - Optional
+             - Default = 15000
+             - Value1 = Positive integer. Specifies the maximum
+               number of info messages in mmj.lang.Messages.java.
+               If this number is exceeded, no additional info
+               messages are accumulated. (Individual processes may
+               print and clear the Messages object.)
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                MaxInfoMessages,15000
+
+
+    ------------------------------------------------------------------
+
+    // ----------------------------------------------------------
+    // RUNPARM Commands for mmj.util.Dump.java
+    // ----------------------------------------------------------
+
+    MaxStatementPrintCount
+           : - Optional
+             - Default = 99999.
+             - Value1 = Positive Integer. Provides a governor for
+               the "PrintStatementDetails,*" RunParm command.
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                MaxStatementPrintCount,99999
+
+
+    Caption
+           : - Optional
+             - Default = " ".
+             - Value1 = Any character string. Will be printed on
+               output reports, like output from the
+               "PrintStatementDetails,*" RunParm command.
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                Caption,"set.mm Statement Dump"
+
+
+    PrintSyntaxDetails
+           : - Optional
+             - Default: syntax/grammar report not printed.
+             - Prints a report with a variety of information about
+               Syntax Axioms, the input grammar, etc.
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                PrintSyntaxDetails
+
+
+    PrintStatementDetails
+           : - Optional
+             - Default: statements not printed.
+             - Prints a report for one statement (label) or all ("*")
+               containing (almost) all information about a statement.
+               Note: if "Parse,*" has been run already then the TMFF
+               Format in use will be used to format the statement's
+               formula (otherwise the Default, Format "0" is used).
+               Note: at some point the computed data used in the
+               Proof Unifier may be printed -- interesting stuff.             - Example:
+             - Value1: "*" (all) or a statement label (print 1)
+             - Examples:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                PrintSyntaxDetails,a1i
+                PrintSyntaxDetails,*
+
+    ------------------------------------------------------------------
+
+    // ----------------------------------------------------------
+    // RUNPARM Commands for mmj.lang.SeqAssigner.java
+    // --------------------------------------------------------
+
+    SeqAssignerIntervalSize
+           : - Optional
+             - Default = 1000
+             - Specifies the numbering interval used to assign
+               sequence numbers to Metamath objects (MObj's).
+               Thus, during LoadFile processing MObj's are assigned
+               sequence numbers 1000, 2000, .... etc. if the
+               default interval size is not overridden. Note: the
+               interval size must be greater than one in order for
+               Theorem Loader to be able to insert loaded theorems
+               into the sequence numbering "gaps" left over from
+               the initial file load. The restriction on maximum
+               size is that the MObj.seq field is a 4 byte integer
+               with a maximum positive value of 2**31 - 1; thus,
+               with interval size = 1000, approximately 2 million
+               MObj.seq numbers could be assigned during the
+               initial file load.
+             - Value1 = Positive integer in the range of 1 through
+               10000 (inclusive).
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                SeqAssignerIntervalSize,1000
+
+
+
+    ------------------------------------------------------------------
+
+    // ----------------------------------------------------------
+    // RUNPARM Commands for mmj.lang.BookManager.java
+    // ----------------------------------------------------------
+
+    BookManagerEnabled
+           : - Optional
+             - Default = 'yes', enabled.
+             - Value1 = "yes" (default) or "no". "yes" means that
+               the mmj2 "Book Manager" function keeps track of
+               the Metamath objects (MObj's) loaded into the Logical
+               System and assigns each MObj a Chapter, Section
+               and MObjNbr. RunParm commands are provided to print
+               BookManager data, but the primary use of the BookManager
+               data is likely to be in conjunction with the
+               "mmj2 Service" feature.
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                BookManagerEnabled,yes
+
+
+
+    ------------------------------------------------------------------
+
+    // ----------------------------------------------------------
+    // RUNPARM Commands for mmj.lang.LogicalSystem.java
+    // ----------------------------------------------------------
+
+    SymbolTableInitialSize
+           : - Optional
+             - Default = 1500
+             - Value1 = Integer >= 10. Specifies the initial
+               size of the Symbol (hash) Table. A good size is about
+               1.5 times the number of constants and variables in
+               the input Metamath .mm database file(s).
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                SymbolTableInitialSize,600
+
+
+    StatementTableInitialSize
+           : - Optional
+             - Default = 45000
+             - Value1 = Integer >= 100. Specifies the initial
+               size of the Symbol (hash) Table. A good size is about
+               1.5 times the number of $f + $e + $a + $p statements
+               in the input Metamath .mm database file(s).
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                StatementTableInitialSize,30000
+
+
+    ProvableLogicStmtType
+           : - Optional
+             - Default = "|-"
+             - Value1 = A valid Constant defined in the input Metamath
+               .mm database file. By convention this occurs at the
+               first symbol of *logical* formulas and means "It is
+               provable that..." or "It is true that...", and then
+               the expression that follows must parse to a
+               be a LogicStmtType, which is normally "wff" (see
+               below.) In theory you can use a different symbol,
+               and it could even mean "It is provably false that ...",
+               but regardless, the ProvableLogicStmtType cannot
+               be used in an mmj2 Grammar anywhere other than the
+               first symbol of a logical formula (or an error message
+               is produced and the ProofAsstGUI will not run.)
+               Also, in theory there can be multiples of these, but
+               for simplicity mmj2 allows only 1.
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProvableLogicStmtType,|-
+
+
+    LogicStmtType
+           : - Optional
+             - Default = "wff"
+             - Value1 = A valid Constant defined in the input Metamath
+               .mm database file. By convention this occurs at the
+               first symbol of syntax axioms and means "well-formed
+               formula". mmj2 expects that statements with a
+               ProvableLogicStmtType (i.e. "|-") will parse to a
+               LogicStmtType (i.e. "wff") -- or else an error message
+               results and the ProofAsstGUI will not run. Also, in
+               theory there can be multiples of these, but for
+               simplicity mmj2 allows only 1.
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                LogicStmtType,wff
+
+
+    ------------------------------------------------------------------
+
+    // ----------------------------------------------------------
+    // RUNPARM Commands for mmj.mmio.Systemizer.java
+    // ----------------------------------------------------------
+
+    LoadFile
+           : - Optional
+             - Default: no .mm data loaded.
+             - Multiple LoadFile commands may be input, however,
+               if two .mm files are to be processed together then
+               they should be loaded one after the other without
+               intervening executable RunParms -- otherwise, the
+               an "InitializeGrammar" command will be needed, along
+               with another "Parse,*" command. If two files are
+               to be processed separately, then use "Clear" and
+               re-input applicable RunParms for the 2nd file (you
+               might as well run two separate jobs in this case!)
+             - NOTE: VERY IMPORTANT...it is possible to load just
+               part of a .mm file using the "LoadEndpointStmtNbr"
+               and "LoadEndpointStmtNbr" commands, which can shorten
+               elapsed startup time and memory utilization by a lot.
+               If multiple .mm files are loaded then note that the
+               LoadEndpointStmtNbr are not cumulative. The count
+               starts over for each file. Also, you can code
+               "LoadEndpoint..." commands *between* "LoadFile"
+               commands.
+             - Value1 = filename, absolute or relative path name.
+             - Examples:
+
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                LoadEndpointStmtNbr,100
+                LoadEndpointStmtLabel,mt2i
+                LoadFile,c:\metamath\set.mm
+                LoadEndpointStmtNbr,999
+                LoadFile,c:\metamath\myset.mm
+
+
+    LoadEndpointStmtNbr
+           : - Optional
+             - Default = No Limit.
+             - Value1 = Positive integer. Stop loading when given
+               statement sequence number is reached (exclusive
+               endpoint -- "101" means load 100 statements!)
+             - NOTE: VERY IMPORTANT...it is possible to load just
+               part of a .mm file using the "LoadEndpointStmtNbr"
+               and "LoadEndpointStmtNbr" commands, which can shorten
+               elapsed startup time and memory utilization by a lot.
+             - If multiple .mm files are loaded then note that the
+               LoadEndpointStmtNbr are NOT cumulative. The count
+               starts over for each file. Also, you can code
+               "LoadEndpointStmtNbr" commands *between* "LoadFile"
+               commands.
+             - A statement number endpoint can be input along with
+               "LoadInputStmtLabel". Whichever is satisfied first
+               terminates the load process.
+             - Example:
+
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                LoadEndpointStmtNbr,100
+
+
+    LoadEndpointStmtLabel
+           : - Optional
+             - Default = No Limit.
+             - Value1 = Non-blank, non-null label string that need
+               no exist in the input file. Means stop loading input
+               the input .mm file(s) when the given statement label
+               is read (exclusive endpoint).
+             - NOTE: VERY IMPORTANT...it is possible to load just
+               part of a .mm file using the "LoadEndpointStmtNbr"
+               and "LoadEndpointStmtNbr" commands, which can shorten
+               elapsed startup time and memory utilization by a lot.
+             - A statement number endpoint can be input along with
+               "LoadInputStmtLabel". Whichever is satisfied first
+               terminates the load process.
+             - Example:
+
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                LoadEndpointStmtLabel,mt2i
+
+
+    LoadComments
+           : - Optional
+             - Default = Load Comments!
+             - Value1 = "yes" (default) or "no". "yes" means load
+               Metamath comments into LogicalSystem as Descriptions
+               for the Math Objects ("MObj"s). The comment immediately
+               preceding the $p or $a statement is treated as the
+               description (must be the statement immediately prior to
+               the $p statement.)
+             - Only Axiom and Theorem descriptions are loaded now -- which
+               is for Proof Assistant and Theorem Loader -- but in
+               principle, the rest could be loaded in this manner,
+               except for $c and $v statements which often have the
+               description after the declaration.
+             - Example:
+
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                LoadComments,yes
+
+
+    LoadProofs
+           : - Optional
+             - Default = Yes
+             - Value1 = "yes" (default) or "no". "yes" means load
+               Metamath proofs from the input .mm file into the
+               LogicalSystem as input. Otherwise empty proofs
+               are stored (single "?" step).
+             - Use "no" to reduce memory utilization and to
+               increase startup speed. If set to "no" then RunParm
+               "VerifyProof" is ignored (a warning message is output).
+             - Example:
+
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                LoadProofs,yes
+
+    ------------------------------------------------------------------
+
+    // ----------------------------------------------------------
+    // RUNPARM Commands for mmj.lang.ProofVerifier.java interface
+    // ----------------------------------------------------------
+
+
+    VerifyProof
+           : - Optional
+             - Default: proofs not verified.
+             - Verifies one Theorem (label) or all ("*"). Prints an
+               error message if invalid or incomplete proofs are
+               found.
+             - Value1: "*" (all) or Theorem label (1).
+             - Note: if RunParm "LoadProofs,no" input then
+               VerifyProof is ignored (a warning message is output).
+             - Examples:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                VerifyProof,a1i
+                VerifyProof,*
+
+
+    VerifyParse
+           : - Optional
+             - Default: parse not double-checked.
+             - Double-checks the output of "Parse" using the Proof
+               Verification Engine. Verifies one statement (label)
+               or all ("*"). Prints an error message if a discrepancy
+               is found (which would indicate a severe program bug!)
+               Note: this command should be located after the "Parse"
+               command in the RunParm file.
+             - Value1: "*" (all) or Theorem label (1).
+             - Examples:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                VerifyParse,a1i
+                VerifyParse,*
+
+
+
+    ------------------------------------------------------------------
+
+
+    // ----------------------------------------------------------
+    // RUNPARM Commands for mmj.verify.Grammar.java
+    // ----------------------------------------------------------
+
+
+    GrammarAmbiguityEdits
+           : - Optional
+             - Default = "basic"
+             - Value1 = "basic" (default) or "complete".
+               "Complete:  runs through all sorts of tedious scenarios
+               looking for ambiguities in the grammar. These are
+               mostly stubbed out, awaiting future coding.
+               "Basic"): reports ambiguities that hit us in the face,
+               like duplicate Syntax Axioms, parseable GrammarRules,
+               etc.
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                GrammarAmbiguityEdits,basic
+
+
+    StatementAmbiguityEdits
+           : - Optional
+             - Default = "basic"
+             - Value1 = "basic" (default) or "complete".
+               Complete: Grammatical Parse attempts to find two parse
+               trees for each statement (an ambiguity), and reports
+               any errors it finds.
+               Basic: Grammatical Parse returns the first parse tree
+               found. This is a little or a lot faster, depending on
+               which parser is in use.
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                StatementAmbiguityEdits,basic
+
+    ------------------------------------------------------------------
+
+    // ----------------------------------------------------------
+    // RUNPARM Commands for mmj.lang.SyntaxVerifier.java interface
+    // ----------------------------------------------------------
+
+    Parse  : - Optional
+             - Checks the syntax of one (label) or all ("*")
+               input Metamath .mm statement(s) ($e, $a, and $p)
+               against the Grammar which is created from the input
+               Metamath .mm database file. A Syntax Tree is produced
+               for use later in vitally important processes -- such
+               as the Proof Asst GUI. Every statement must be parsed
+               successfully or else the Proof Assistant will not run!
+             - Value1: "*" (all) or Statement label (1).
+             - Examples:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                Parse,a1i
+                Parse,*
+
+
+    InitializeGrammar
+           : - Optional
+             - Builds a Grammar from the loaded .mm Metamath database
+               file. This isn't needed normally because grammar
+               initialization happens automatically as part of the
+               "Parse" command processing. It may be useful for
+               testing purposes, but not so much in everyday use.             - Examples:
+             - Example:                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                InitializeGrammar
+
+
+    ------------------------------------------------------------------
+
+    // ----------------------------------------------------------
+    // RUNPARM Commands for mmj.lang.WorkVarManager.java
+    // ----------------------------------------------------------
+
+    DefineWorkVarType
+           : - Optional. May appear anywhere after the "Parse" RunParm
+                         within an input RunParm file, and takes effect
+                         when the next DeclareWorkVars RunParm command is
+                         processed. If not input prior to first use -- the
+                         Proof Assistant -- the default settings are
+                         automatically used.
+             - Default = One default DefineWorkVarType RunParm is
+                         generated for each grammatical Type Code.
+                         specifying a prefix of "&x" where "x" is
+                         the first character of the grammatical
+                         type code, converted to lower case if
+                         necessary; 200 work variables are defined
+                         by default for each grammatical type code.
+             - Value1 = Grammatical Type Code (e.g. "wff", "class",
+                        "set", etc.) Must be a valid grammatical
+                        Type Code.
+             - Value2 = Work Variable Prefix for the grammatical
+                        Type Code. Must generate unique variable and
+                        variable hypothesis names when concatenated
+                        with the Work Variable numerical suffix (1,
+                        2, ..., 11, ..., etc.) Note that Work
+                        Variable Hypothesis labels are generated
+                        automatically and are the same as the Work
+                        Variables. A Work Variable Prefix must
+                        consist solely of valid Metamath math
+                        symbol characters (not "$", for example,
+                        or embedded blanks.)
+             - Value3 = Number of Work Variables to be declared for the
+                        grammatical Type Code. Must be greater than 9
+                        and less than 1000 ("stinginess" is recommendedto
+                        avoid wasted processing and memory allocations...
+                        but, in the event that the supply of available
+                        Work Variables is exhausted during processing
+                        a pop-up GUI error message will be displayed; the
+                        RunParms will need to be modified and re-input
+                        in a subsequent run...)
+             - Examples:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                DefineWorkVarType,wff,&W,200
+                DefineWorkVarType,set,&S,200
+                DefineWorkVarType,class,&C,200
+
+
+
+    DeclareWorkVars
+           : - Optional. May appear anywhere after the "Parse" RunParm
+                         within an input, and takes effect immediately
+                         (any existing Work Variables are deleted and
+                         a new set is created.)
+             - Default = A default DeclareWorkVars RunParm is executed
+                         automatically when first need arises (e.g. at
+                         Proof Assistant start-up), if none have been
+                         input since the last Clear RunParm or the start
+                         of the RunParm file.
+             - Value1 = N/A
+             - Examples
+
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                DeclareWorkVars
+
+    ------------------------------------------------------------------
+
+    // ----------------------------------------------------------
+    // RUNPARM Commands for mmj.tmff.Preferences.java
+    // ----------------------------------------------------------
+
+    TMFFDefineScheme
+           : - Optional
+             - Default = A variety of built-in TMFF Schemes are
+               predefined: See c:\mmj2\src\tmff\
+                TMFFConstants.java#TMFF_DEFAULT_DEFINE_SCHEME_PARAMS
+             - Defines TMFF Schemes that may be referenced
+               subsequently in TMFF Formats (TMFFDefineFormat can only
+               refer to a TMFF Scheme that is already defined.
+             - Note: a Scheme can be re-defined in a subsequent
+               RunParm. This would normally be of use only in a
+               testing -- or bug-fixing -- situation because there
+               is no limit on the number of TMFF Schemes that can
+               be defined.
+             - Value1 = Scheme Name: must be non-blank, unique, and
+               not = "Unformatted". Not case sensitive.
+             - Value 2 = Method Name =
+                   "AlignColumn" or
+                   "Flat"        or
+                   "TwoColumnAlignment"
+             - Value 3 = Positive integer -- the Syntax subtree depth
+               max before triggering a line break.
+             - Value 4, used only with Method "AlignColumn" -- called
+               the ByValue. Must equal:
+                   "Var" or
+                   "Sym" or
+                   "Cnst".
+               Indicates the type of object to be aligned.
+             - Value 5, used only with Method "AlignColumn" -- called
+               the AtNbr. Must equal: 1, 2 or 3.
+               Indicates the occurrence of the AtValue'th object
+               in a Syntax Axiom where alignment begins.
+             - Value 6, used only with Method "AlignColumn" -- called
+               the AtValue. Must equal:
+                   "Var" or
+                   "Sym" or
+                   "Cnst".
+               Indicates the type of object at which alignment begins.
+              - Examples:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                TMFFDefineScheme,AlignVarDepth99,AlignColumn,99,Var,1,Var
+                TMFFDefineScheme,Flat,Flat
+                TMFFDefineScheme,TwoColumnAlignmentDepth1,TwoColumnAlignment,1
+
+
+    TMFFDefineFormat
+           : - Optional
+             - Default = 16 built-in TMFF Formats are predefined
+               and can be overridden if desired.
+               See c:\mmj2\src\tmff\
+                TMFFConstants.java#TMFF_DEFAULT_DEFINE_FORMAT_PARAMS
+             - Defines TMFF Formats that may be referenced
+               subsequently in the TMFFUseFormat command.
+               TMFFUseFormat can only refer to a TMFF Scheme that is
+               already defined, which includes the pre-defined,
+               built-in Formats, 0 thru 15.
+             - Value1 = Format Number: 1, 2, or 3.
+             - Value2 = TMFF Scheme Name - must be already defined
+               as a built-in TMFF Scheme Name or via RunParm
+               TMFFDefineScheme.
+              - Examples:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                TMFFDefineFormat,6,AlignVarDepth99
+                TMFFDefineFormat,7,Flat
+                TMFFDefineFormat,8,PrefixDepth3
+                TMFFDefineFormat,9,PostfixDepth3
+                TMFFDefineFormat,10,TwoColumnAlignmentDepth99
+
+
+    TMFFUseFormat
+           : - Optional
+             - Default = 0 (TMFF "Unformatted" Method).
+             - Specifies which TMFF Format is in use during subsequent
+               processing.
+             - Note: multiple TMFFUseFormat commands can be input, but
+               only one format can be in effect at a single time.
+             - Note: Format '0' = Unformatted, turn TMFF off/disabled.
+             - Value1, Format Number = 0, 1, 2, 3, etc.
+             - Examples:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                TMFFUseFormat,3
+
+    TMFFAltFormat
+           : - Optional
+             - Default = 7 (TMFF "Flat" Method).
+             - Specifies the "alternate" TMFF Format which is
+               toggled to and back from the current Format and Indent
+               amount when the ProofAsstGUI Edit Menu Item,
+               "Reformat Proof: Swap Alt" is selected (Ctrl-o).
+             - Note: multiple TMFFUseFormat commands can be input, but
+               only one format can be in effect at a single time.
+             - Note: Format '0' = Unformatted, turn TMFF off/disabled.
+             - Value1, Alternate Format Number = 0, 1, 2, 3, etc.
+             - Examples:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                TMFFAltFormat,7
+
+
+    TMFFUseIndent
+           : - Optional
+             - Default = 0 (no TMFF indentation).
+             - Specifies the number of columns to indent a formula
+               for each proof level. The 'qed' step has level 0
+               and each of its hypotheses has level 1, and so on.             - Note: multiple TMFFUseFormat commands can be input, but
+               only one format can be in effect at a single time.
+             - Value1, Indent amount = 0 through 5.
+             - Examples:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                TMFFUseIndent,0
+
+
+
+    TMFFAltIndent
+           : - Optional
+             - Default = 1 (1 column indentation per proof level).
+             - Specifies the "alternate" indentation amount which is
+               toggled to and back from the current Format and Indent
+               amount when the ProofAsstGUI Edit Menu Item,
+               "Reformat Proof: Swap Alt" is selected (Ctrl-o).
+             - Specifies the number of columns to indent a formula
+               for each proof level. The 'qed' step has level 0
+               and each of its hypotheses has level 1, and so on.             - Note: multiple TMFFUseFormat commands can be input, but
+               only one format can be in effect at a single time.
+             - Value1, Indent amount = 0 through 5.
+             - Examples:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                TMFFAltIndent,0
+
+
+
+    ------------------------------------------------------------------
+
+    // ----------------------------------------------------------
+    // RUNPARM Commands for mmj.pa.StepSelectorDialog.java
+    // ----------------------------------------------------------
+
+    StepSelectorDialogPaneHeight
+
+           : - Optional. Specifies the height in pixels of the Step
+                         Selector Dialog "pane".
+
+                         This parameter is resettable via RunParm
+                         at your sole discretion.
+
+             - Default = 440
+
+             - Value1 = Integer between (inclusive) 100 and 9999.
+
+             - Examples
+
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                StepSelectorDialogPaneHeight,440
+
+
+    StepSelectorDialogPaneWidth
+
+           : - Optional. Specifies the width in pixels of the Step
+                         Selector Dialog "pane".
+
+                         This parameter is resettable via RunParm
+                         at your sole discretion.
+
+             - Default = 720
+
+             - Value1 = Integer between (inclusive) 100 and 9999.
+
+             - Examples
+
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                StepSelectorDialogPaneWidth,720
+
+
+    ------------------------------------------------------------------
+
+    // ----------------------------------------------------------
+    // RUNPARM Commands for mmj.pa.StepSelectorSearch.java
+    // ----------------------------------------------------------
+
+    StepSelectorMaxResults
+
+           : - Optional. Specifies the maximum number of results to
+                         be returned from the Step Selector Search
+                         for display on the Step Selector Dialog.
+
+                         Although the Step Selector Search process
+                         is fairly speedy, as the size of input
+                         files like set.mm grow, response times may
+                         become unacceptable if Max Results is set
+                         at a high level. Also, thousands of results
+                         may indicate a need for additional search
+                         constraints. Hence, this is a totally
+                         discretionary item.
+
+                         Another factoid is that once the Step Selector
+                         Search results are generated, altering the
+                         StepSelectorMaxResults parameter via
+                         the Unify menu on the Proof Assistant GUI does
+                         not alter the contents of the Step Selector
+                         Dialog. To do that the Step Selector Search
+                         must be rerun.
+
+             - Default = 50
+
+             - Value1 = Integer between (inclusive) 1 and 9999.
+
+             - Examples
+
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                StepSelectorMaxResults,50
+                StepSelectorMaxResults,9999
+
+
+    StepSelectorShowSubstitutions
+
+           : - Optional. Specifies -- true or false -- whether or not
+                         Step Selector Search results are displayed with
+                         the unification substitutions which would be made
+                         into the result assertions' hypotheses and
+                         conclusion formulas. If 'false' then result
+                         formulas are displayed with the originally
+                         input .mm file variables.
+
+                         Note that unification substitutions are
+                         indicative and may change when an assertion's
+                         label is updated into the Proof Worksheet's
+                         Derivation step. This effect is a result of
+                         hypothesis sorting and the way Work Variables
+                         are dynamically allocated.
+
+                         Another factoid is that once the Step Selector
+                         Search results are generated, altering the
+                         StepSelectorShowSubstitutions parameter via
+                         the Unify menu on the Proof Assistant GUI does
+                         not alter the contents of the Step Selector
+                         Dialog. To do that the Step Selector Search
+                         must be rerun.
+
+             - Default = true
+
+             - Value1 = 'true' or 'false' (or 'on', 'off', 'yes', 'no')
+
+             - Examples
+
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                StepSelectorShowSubstitutions,true
+                StepSelectorShowSubstitutions,false
+
+
+    StepSelectorBatchTest
+
+           : - Optional. Exercises the Unify\Step Selector Search
+                         and selection logic for a single Proof
+                         Worksheet in an input file. Also prints
+                         various data items for use in regression
+                         testing.
+
+                         Note: this is probably only useful to
+                         programmers.
+
+             - Value1 = Input file name containing a Proof Worksheet.
+                        File name can be absolute (with "C:\\") or
+                        relative to the folder defined by the
+                        ProofAsstProofFolder RunParm.
+
+             - Value2 = Cursor Position (in bytes) of the Derivation
+                        step within the input file for which the
+                        Step Selector Search is to be conducted.
+                        Must be an integer. Difficult to compute
+                        manually :0-)
+
+             - Value3 = Step Selector Dialog selection number. Must
+                        be an integer. Valid choices range from 0
+                        through 'n - 1' where n is the number of lines
+                        which would be displayed on the Step Selector
+                        Dialog if this test were performed using the
+                        Proof Assistant GUI.
+
+             - Examples
+
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                StepSelectorBatchTest,UT7000.mmp,326,6
+                StepSelectorBatchTest,C:\mmj2\data\mmp\tests\UT7000.mmp,326,6
+
+
+
+    ------------------------------------------------------------------
+
+    // ----------------------------------------------------------
+    // RUNPARM Commands for mmj.tl.TheoremLoader.java
+    // ----------------------------------------------------------
+
+    TheoremLoaderDjVarsOption
+           : - Optional.
+             - Default = "NoUpdate"
+             - Controls how Theorem Loader updates $d restrictions
+               for theorems which already exist in the Logical
+               System.
+               NOTE: updating $d restrictions can cause Proof
+                     Verify errors in other theorems which refer
+                     to the updated theorem.
+               NOTE: If updating is desired, then it is recommended
+                     that "ProofAsstDjVarsSoftErrors,GenerateNew"
+                     and "TheoremLoaderDjVarsOption,Replace" be used
+                     together. This causes the Proof Assistant to
+                     generate a complete set of $d statements even
+                     if there are no "soft" $d errors when a proof
+                     is unified. Then the Theorem Loader replaces
+                     the existing $d statements with the newly
+                     generated set.
+             - Value1 = There are three options for Value1:
+
+                        "NoUpdate" = Do not update the $d restrictions
+                                   for theorems which already exist
+                                   in the Logical System.
+
+                        "Replace"  = Replace the existing $d statements
+                                   with the $d statements in the
+                                   theorem being loaded.
+
+                        "Merge" = Merge the existing $d statements
+                                  with the $d statements in the
+                                  theorem being loaded. (This may
+                                  result in excessive $d
+                                  restrictions in updated theorems.)
+
+
+             - Examples
+
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                TheoremLoaderDjVarsOption,NoUpdate
+                TheoremLoaderDjVarsOption,Replace
+                TheoremLoaderDjVarsOption,Merge
+
+
+    TheoremLoaderMMTFolder
+           : - Optional
+             - Default = current directory of mmj2
+             - Designates the directory to be used by Theorem Loader.
+               Can be the same as the ProofAsstProofFolder, and
+               can be changed by the user during processing, either
+               via RunParm or via the Proof Assistant GUI. If no
+               the Theorem Loader MMT Folder is not specified prior
+               to use of Theorem Loader functions requiring use
+               of the MMT Folder will generate an error message.
+             - Value1 = absolute or relative path name. Must exist
+               and must specify a directory. Should not contain a
+               "\" at the end. OS dependent value!
+             - Examples:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                TheoremLoaderMMTFolder,myproofs
+                TheoremLoaderMMTFolder,mmtFolder
+                TheoremLoaderMMTFolder,mymmj2\mmtFolder
+                TheoremLoaderMMTFolder,c:\mymmj2\mmtFolder
+
+
+    TheoremLoaderAuditMessages
+           : - Optional
+             - Default = yes
+             - Value1 = "yes" (default) or "no". "yes" means that
+               "audit" messages about the Theorem Loader functions
+               performed are generated during processing and
+               are output to the Messages area (in the GUI the
+               audit messages are displayed with any other messages.)
+             - Example:
+
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                TheoremLoaderAuditMessages,yes
+                TheoremLoaderAuditMessages,no
+
+
+    TheoremLoaderStoreFormulasAsIs
+           : - Optional
+             - Default = yes
+             - Value1 = "yes" (default) or "no". "yes" means that
+               when a Proof Assistant Proof Worksheet is converted
+               to Metamath .mm format and written to the MMT Folder,
+               the theorem's formulas are not reformatted, but are
+               left intact just as they are formatted in the
+               Proof Worksheet.
+               NOTE: this option is relevant only to new theorems
+                     which are not already present in the Logical
+                     System -- that is because updates of existing
+                     theorems only update the proof and $d
+                     restrictions.
+             - Example:
+
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                TheoremLoaderStoreFormulasAsIs,yes
+                TheoremLoaderStoreFormulasAsIs,no
+
+
+    TheoremLoaderStoreMMIndentAmt
+           : - Optional
+             - Default = 2
+             - Value1 = integer from 0 through 9 (inclusive).
+             - The IndentAmt controls indentation of Metamath
+               ${, $d, $e, $p and $= statements when the Theorem
+               Loader writes out a theorem in Metamath .mm format
+               to the MMT Folder (2 is the number used in set.mm).
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                TheoremLoaderStoreMMIndentAmt,2
+
+
+    TheoremLoaderStoreMMRightCol
+           : - Optional
+             - Default = 79
+             - Value1 = integer from 70 through 9999 (inclusive).
+             - RightCol specifies the rightmost character position
+               on output Metamath .mm format lines written by the
+               Theorem Loader.
+               NOTE: this parameter applies primarily to existing
+                     theorems in the Logical System. New theorems
+                     (not yet in Logical System) are written out
+                     as they are formatted on the Proof Assistant
+                     GUI screen.             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                TheoremLoaderStoreMMRightCol,79
+
+
+    UnifyPlusStoreInLogSysAndMMTFolder
+           : - Optional
+             - Default = n/a
+             - Value1 = relative or absolute pathname of input file
+               containing an mmj2 ProofWorksheet. If a relative
+               pathname is provided, the Theorem Loader uses the
+               ProofAsstProofFolder, if present -- if not present
+               the "current" directory of mmj2 is searched.
+               The input ProofWorksheet is read, parsed, unified
+               and if unification is successful (valid proof) then
+               the theorem is converted to Metamath .mm format and
+               written to the MMT Folder, and then is stored in the
+               Logical System in memory.
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                UnifyPlusStoreInLogSysAndMMTFolder,syl.mmp
+                UnifyPlusStoreInLogSysAndMMTFolder,syl.txt
+                UnifyPlusStoreInLogSysAndMMTFolder,c:\myproofs\syl.mmp
+                UnifyPlusStoreInLogSysAndMMTFolder,myproofs\syl.mmp
+
+
+    UnifyPlusStoreInMMTFolder
+           : - Optional
+             - Default = n/a
+             - Value1 = relative or absolute pathname of input file
+               containing an mmj2 ProofWorksheet. If a relative
+               pathname is provided, the Theorem Loader uses the
+               ProofAsstProofFolder, if present -- if not present
+               the "current" directory of mmj2 is searched.
+               The input ProofWorksheet is read, parsed, unified
+               and if unification is successful (valid proof) then
+               the theorem is converted to Metamath .mm format and
+               written to the MMT Folder.
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                UnifyPlusStoreInMMTFolder,syl.mmp
+                UnifyPlusStoreInMMTFolder,syl.txt
+                UnifyPlusStoreInMMTFolder,c:\myproofs\syl.mmp
+                UnifyPlusStoreInMMTFolder,myproofs\syl.mmp
+
+
+    ExtractTheoremToMMTFolder
+           : - Optional
+             - Default = n/a
+             - Value1 = label of a theorem presently in the Logical
+               System in memory. The Theorem Loader writes the
+               theorem to the MMT Folder.
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ExtractTheoremToMMTFolder,syl
+
+
+    LoadTheoremsFromMMTFolder
+           : - Optional
+             - Default = n/a
+             - Value1 = either "*" (all) or a label of a theorem in
+               the MMT Folder (filename is "label.mmt"). The
+               theorem(s) are read and stored in the Logical System
+               in memory.
+               NOTE: the logical location (sequence number) of the
+                     theorem(s) are determined based on their
+                     interdependencies with each other and the
+                     existing MObj's in the Logical System which
+                     they refer to.
+               NOTE: This RunParm can be located either before or
+                     after the VerifyProof and Parse statements.
+                     If LoadTheoremsFromMMTFolder is before
+                     the parse and proof verification RunParms then
+                     the loaded theorems are not verified and
+                     parsed during the load process. If located after,
+                     then their proofs are verified and their formulas
+                     are parsed. As with existing processing, a
+                     proof verification error does not halt
+                     processing of the mmj2 job or loading of the
+                     theorems. However, a formula parse error is
+                     considered SEVERE. In the event of a parse
+                     error in one of the loaded theorem formulas,
+                     the LoadTheoremsFromMMTFolder is terminated
+                     and any updates are reversed (backed out).
+               NOTE: It is recommended that LoadTheoremsFromMMTFolder
+                     and the other Theorem Loader RunParms are
+                     located after the Parse (grammar) related
+                     RunParms. The reason is that if the load
+                     process causes any proof verification
+                     errors it will be possible to distinguish
+                     between those already present in the input
+                     Metamath .mm file and those created by the
+                     loaded proofs. Alternatively, locating the
+                     LoadTheoremsFromMMTFolder before VerifyProof
+                     is more efficient. (It is also possible to
+                     "Verify All Proofs" from within the mmj2
+                     Proof Assistant GUI.)
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                LoadTheoremsFromMMTFolder,*
+                LoadTheoremsFromMMTFolder,syl
+
+
+
+    ------------------------------------------------------------------
+
+    // ----------------------------------------------------------
+    // RUNPARM Commands for mmj.svc.SvcCallback.java interface
+    // ----------------------------------------------------------
+
+    SvcFolder
+           : - Optional
+             - Default = current directory of mmj2
+             - Provides initial directory for use with the mmj2
+               Service feature (mmj2 does nothing with it itself.)
+             - Value1 = absolute or relative path name. Must exist
+               and must specify a directory. Should not contain a
+               "\" at the end. OS dependent value!
+             - Examples:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                SvcFolder,svc
+                SvcFolder,c:\mymmj2\svc
+
+    SvcCallbackClass
+           : - Optional (use with mmj2 Service feature in "callee"
+               mode).
+             - Default = none.
+             - Provides the name of the Java class object which
+               implements the mmj.svc.SvcCallback.java interface
+               in the application which is using the mmj2 Service
+               feature. When mmj2 executes the "SvcCall" RunParm
+               (below), it calls the "go()" method in the specified
+               class.
+               NOTE: in "caller mode" the SvcCallbackClass is not
+               used because the caller invokes mmj2 with the
+               call statement:
+                    int returnCode            =
+                        batchMMJ2.
+                            generateSvcCallback(
+                                args,
+                                tSvcCallbackCaller);
+               where tSvcCallbackCaller is an instance of the
+               user application's class which implements the
+               SvcCallback interface -- this call triggers
+               BatchMMJ2, which executes the RunParms specified
+               by "args" and then calls "go()" in tSvcCallbackCaller.
+             - Value1 = Class name of a Java class which implements
+               the mmj.svc.SvcCallback.java interface.
+             - Examples:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                SvcCallbackClass,TSvcCallbackCallee
+
+    SvcArg
+           : - Optional
+             - Default = None. If no SvcArgs RunParms are provided
+               the mmj2 Service passes an empty Map in the
+               call argument list of SvcCallback.go().
+             - Provides a way to pass a Map of key/value pairs to
+               the user application which is using the mmj2 Service
+               feature (though presumably the user application has
+               its own method for obtaining runtime parameters, this
+               method is provided as a complimentary convenience.)
+               Refer to the mmj.svc.SvcCallback.java interface.
+             - Value1 = key/value pair key value. Must not be blank,
+               an empty string, or the same as any other key value.
+               Note: the key is not "trimmed" of leading and
+                     trailing blanks before insertion into the Map
+                     which is passed in the SvcCallback interface.             - Examples:
+             - Value2 = key/value pair value value. May be blank or
+               an empty string.
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                SvcArg,key1,value1
+                SvcArg,key2,value2
+                   .
+                   .
+                   .
+                SvcArg,keyN,valueN
+
+
+    SvcCall
+           : - Optional
+             - Default: none.
+             - Triggers a call to an instance of the user's
+               implementation of the SvcCallback interface.
+               If the mmj2 Service is being used in "callee" mode,
+               mmj2 invokes the user application, and this RunParm
+               triggers a call from mmj2 to an mmj2-created instance
+               of the specified SvcCallbackClass. If the mmj2
+               Service is being used in "caller" mode, the
+               user applcation first calls mmj2, and then when
+               the "SvcCall" RunParm is executed, mmj2 calls the
+               user-created instance of the SvcCallback class.
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                SvcCall
+
+
+
+    ------------------------------------------------------------------
+
+    // ----------------------------------------------------------
+    // RUNPARM Commands for mmj.pa.ProofAsst.java
+    // ----------------------------------------------------------
+
+    ProofAsstDjVarsSoftErrors
+
+           : - Optional. Controls Proof Assistant processing of
+                         $d (Disjoint Variable Restriction) "soft:
+                         errors: failure to include a $d statement
+                         in a theorem for a pair of variables that
+                         are subject to $d statement(s) in the
+                         assertions used by the theorem's proof
+                         (i.e. $d restrictions must be "inherited"
+                         so that subsequent theorems using the
+                         theorem being proved are still subject to
+                         the original restrictions.)
+
+             - Default = "GenerateReplacements"
+
+             - Value1 = There are five options for Value1:
+
+                        "Ignore" = Do not check for "soft" $d errors.
+
+                        "Report" = Create error messages detailing
+                                   the first "soft" Dj Vars error
+                                   for each proof step.
+
+                        "GenerateReplacements"
+                                 = Instead of error messages, if omissions
+                                   are detected, generate $d statements to
+                                   replace existing $d statements in the
+                                   .mm database and Proof Worksheet. In
+                                   other words, any omitted $d restrictions
+                                   are created and a complete set of $d
+                                   statements is generated.
+
+                        "GenerateDifferences"
+                                 = Instead of error messages, generate
+                                   additional $d statements to add to
+                                   existing $d statements in the
+                                   .mm database and Proof Worksheet.
+
+                        "GenerateNew"
+                                 = Identical to GenerateReplacements
+                                   except that none of the existing
+                                   $d statements are used, which
+                                   result in a replacement set of $d's
+                                   being generated even if there are
+                                   no errors -- the purpose is to enable
+                                   the user to detect *extra* $d's on
+                                   a theorem, which would not be possible
+                                   with the GenerateReplacements option.
+
+
+             - NOTE: superfluous $d restrictions are not detected by this
+                     procedure.
+
+             - Examples
+
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProofAsstDjVarsSoftErrors,Ignore
+                ProofAsstDjVarsSoftErrors,Report
+                ProofAsstDjVarsSoftErrors,GenerateNew
+                ProofAsstDjVarsSoftErrors,GenerateReplacements
+                ProofAsstDjVarsSoftErrors,GenerateDifferences
+
+
+
+    ProofAsstForegroundColorRGB
+           : - Optional
+             - Proof Asst GUI screen text character foreground color
+               in RGB color scheme (Red/Green/Blue).
+             - Default = "0,0,0" -- Black (default).
+             - Value1 = Red   color number, 0 thru 255, default 0.
+             - Value2 = Green color number, 0 thru 255, default 0.
+             - Value3 = Blue  color number, 0 thru 255, default 0.
+             - Examples:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProofAsstForegroundColorRGB,0,0,0
+                ProofAsstForegroundColorRGB,255,255,255
+
+
+    ProofAsstBackgroundColorRGB
+           : - Optional
+             - Proof Asst GUI screen text character background color
+               in RGB color scheme (Red/Green/Blue).
+             - Default = "255,255,255" -- White (default).
+             - Value1 = Red   color number, 0 thru 255, default 255.
+             - Value2 = Green color number, 0 thru 255, default 255.
+             - Value3 = Blue  color number, 0 thru 255, default 255.
+             - Examples:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProofAsstBackgroundColorRGB,0,0,0
+                ProofAsstBackgroundColorRGB,255,255,255
+
+
+    ProofAsstFontFamily
+           : - Optional
+             - Default "Monospaced"
+             - Font "Family" to use on the Proof Assistant GUI screen.
+               NOTE: formatting of formulas is designed for
+                     fixed width fonts, such as "Monospaced" or
+                     "Courier". Other Font Families may be used but
+                     horizontal alignment of Proof Worksheet symbols
+                     will look funny.
+             - Font Families defined on every Java Runtime system:
+                   Monospaced (default)
+                   Serif
+                   SansSerif
+                   Dialog
+                   DialogInput
+             - Value1 = Font Family Name. Not case sensitive.
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProofAsstFontFamily,Monospaced
+
+
+    ProofAsstFontBold
+           : - Optional
+             - Default "yes"
+             - Sets Text Style to "Bold" or not-Bold on the Proof
+               Assistant GUI screen.
+             - Value1 = "yes" (bold) or "no" (not bold).
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProofAsstFontBold,yes
+
+
+    ProofAsstFontSize
+           : - Optional
+             - Default = 14
+             - Sets Text size on Proof Assistant GUI. Unit of
+               measure is Characters per Inch, so with Font Size
+               = 12 you should get 96 characters displayed on an
+               8 inch wide window.
+             - Value1 = 8 or 9, 10, 11, 12, 14, 16, 18
+                        20, 22, 24, 26, 28, 36, 48, 72
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProofAsstFontSize,14
+
+    ProofAsstTextAtTop
+           : - Optional
+             - Default = yes
+             - If 'yes' the Proof Text area is above the
+               error message text area on the ProofAsstGUI
+               window; otherwise, the reverse is true.
+             - Value1 = yes or no or y or n or YES or ...
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProofAsstTextAtTop,yes
+
+
+    ProofAsstTextColumns
+           : - Optional
+             - Default = 80
+             - Sets the width of the proof text "Viewport" on
+               the Proof Assistant GUI window.
+             - Value1 = 40 thru 999.
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProofAsstTextColumns,80
+
+
+    ProofAsstTextRows
+           : - Optional
+             - Default = 21
+             - Sets the height of the proof text "Viewport"
+               on the Proof Assistant GUI window.
+             - Value1 = 2 thru 99.
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProofAsstTextRows,21,80
+
+
+    ProofAsstErrorMessageColumns
+           : - Optional
+             - Default = 80
+             - Sets the width of the error message text "Viewport"
+               on the Proof Assistant GUI window.
+             - Value1 = 40 thru 999.
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProofAsstErrorMessageColumns,80
+
+
+    ProofAsstErrorMessageRows
+           : - Optional
+             - Default = 80
+             - Sets the height of the error message text "Viewport"
+               on the Proof Assistant GUI window.
+             - Value1 = 2 thru 99.
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProofAsstErrorMessageRows,4
+
+
+    ProofAsstFormulaLeftCol
+           : - Optional
+             - Default = 20
+             - Column number for start of formulas output on the
+               Proof Assistant GUI.
+             - Value1: Greater Than 1 AND
+                       Less Than ProofAsstFormulaRightCol
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProofAsstFormulaLeftCol,20
+
+
+    ProofAsstFormulaRightCol
+           : - Optional
+             - Default = 79
+             - Rightmost column number of formulas output on the
+               Proof Assistant GUI.
+             - Value1: Greater Than ProofAsstFormulaLeftCol.
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProofAsstFormulaRightCol,20
+
+
+    ProofAsstRPNProofLeftCol
+           : - Optional
+             - Default = 5
+             - Leftmost column number of generated Proofs output
+               on the Proof Assistant GUI.
+             - Value1: Greater Than 3
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProofAsstRPNProofLeftCol,5
+
+
+    ProofAsstRPNProofRightCol
+           : - Optional
+             - Default = 70
+             - Rightmost column number of generated Proofs output
+               on the Proof Assistant GUI.
+             - Value1: Greater Than ProofAsstRPNProofLeftCol
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProofAsstRPNProofRightCol,70
+
+    ProofAsstAssrtListFreespace
+           : - Optional
+             - Default = 5
+             - Amount of freespace allocated in the lists of
+               assertions used by the Proof Unifier. Set to
+               zero to minimize the total amount of RAM used.
+               Set larger than zero to eliminate or reduce
+               ArrayList resizings when TheoremLoader updates
+               the lists.
+             - Value1: 0 <= integer <= 1000
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProofAsstAssrtListFreespace,5
+
+    ProofAsstIncompleteStepCursor
+           : - Optional
+             - Default = Last
+             - Specifies output cursor positioning after
+               unification if there are no errors. "Last"
+               and "First" position the cursor to the last
+               or first, respectively, incomplete proof step
+               if one exists, otherwise to the 'qed' step.
+               "Asis" puts the output cursor at the step
+               where the input cursor was located when
+               the unification request (Ctrl-U) was made.
+               The "Ref" field is the standard location
+               within the intended proof step.
+             - Value1: "Last", "First", or "AsIs"
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProofAsstIncompleteStepCursor,Last
+
+
+    ProofAsstOutputCursorInstrumentation
+           : - Optional
+             - Default = No
+             - Specifies whether or not an info message is
+               output by the Proof Assistant detailing
+               internals of the output cursor. This is
+               not intended for normal use, but is provided
+               for use in regression testing.
+             - Value1: "Yes" or "No"
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProofAsstOutputCursorInstrumentation,No
+
+
+    ProofAsstAutoReformat
+           : - Optional
+             - Default = Yes
+             - Specifies whether or not a proof step formula
+               is automatically reformatted after work variables
+               are resolved. The intent is to support a user
+               who may wish to hand-format proof step formulas
+               in a Proof Worksheet. Note that input .mm file
+               formulas and proof steps are automatically
+               formatted when a Proof Worksheet is generated,
+               there is no way to retain the .mm file's formula
+               formatting within mmj2 (at this time.)
+             - Value1: "Yes" or "No"
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProofAsstAutoReformat,No
+
+
+    ProofAsstMaxUnifyAlternates
+           : - Optional
+             - Default = 10
+             - Limits the search for alternate unifications and the
+               number of alternates presented in a message after
+               unsuccessful unification of an input Ref assertion
+               label on the Proof Assistant GUI.
+             - Value1: Positive integer
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProofAsstMaxUnifyAlternates,10
+
+
+    ProofAsstUndoRedoEnabled
+           : - Optional
+             - Default = "yes"
+             - Controls whether or not the Proof Assistant GUI
+               provides Undo/Redo support. Normally this is turned on
+               but if desired, say for performance reasons, the user
+               can disable Undo/Redo at start-up time and the option
+               doesn't even *appear* on the ProofAsstGUI Edit menu.
+             - Value1: "yes" (default) or "no"
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProofAsstUndoRedoEnabled,yes
+
+
+    ProofAsstDummyVarPrefix
+           : - Optional
+             - Default = "$"
+             - Dummy variables used by the Proof Assistant "Derive"
+               feature to display un-determined variable
+               substitutions, and are given a prefix string and a
+               number (the number starts at 1 and is incremented for
+               each dummy variable in the proof.) For example, $1,
+               $2, etc.
+             - Value1: Non-blank character string.
+             - NOTE: It might be desided that dummy variables be
+                     displayed thusly: $wff1, $class2, etc., with
+                     the variable's Type Code embedded in the
+                     dummy variable name. That change is definitely
+                     feasible: just add a new RunParm :)
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProofAsstDummyVarPrefix,$
+
+
+    ProofAsstDefaultFileNameSuffix
+           : - Optional
+             - Default = ".txt"
+             - Provides file name ending for new Proof Worksheet file
+               names on the Proof Asst GUI. If this RunParm is not
+               provided, the hardcoded default ".txt" is used.
+             - Value1 = ".txt", ".TXT", ".mmp" or ".MMP".
+             - Examples:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProofAsstDefaultFileNameSuffix,.txt
+                ProofAsstDefaultFileNameSuffix,.TXT
+                ProofAsstDefaultFileNameSuffix,.mmp
+                ProofAsstDefaultFileNameSuffix,.MMP
+
+
+    ProofAsstProofFolder
+           : - Optional
+             - Default = current directory of mmj2
+             - Provides initial directory displayed in FileChooser
+               dialog when saving a Proof Worksheet. If this RunParm
+               is not provided, the user's initial dialog choice
+               is remembered for the duration of the session.
+             - Value1 = absolute or relative path name. Must exist
+               and must specify a directory. Should not contain a
+               "\" at the end. OS dependent value!
+             - Examples:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProofAsstProofFolder,myproofs
+                ProofAsstProofFolder,c:\mymmj2\myproofs
+
+
+    ProofAsstStartupProofWorksheet
+           : - Optional
+             - Default = Use hardcoded character string Proof
+               Worksheet (for "syllogism", you may have seen it :)
+             - Value1 = Name of Proof Worksheet file to be displayed
+               at ProofAsstGUI startup. Must exist. May be relative
+               (to current directory) or absolute path name.
+               OS dependent value.
+             - Examples:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProofAsstStartupProofWorksheet,c:\mmj2\data\mmp\PATutorial\Page101.mmp
+                ProofAsstStartupProofWorksheet,Page101.mmp
+
+
+    RecheckProofAsstUsingProofVerifier
+           : - Optional
+             - Default = "no".
+             - Value1 = "yes" or "no" (default). If equal to "yes",
+               then each derivation proof step's generated Metamath
+               RPN proof is double-checked using the full Metamath
+               Proof Engine, AKA "Proof Verifier". In theory this
+               should be unnecessary since the Proof Assistant
+               valid proofs, but it may be useful if question arise,
+               or if the user has excess CPU cycles and healthy
+               skepticism.
+             - NOTE: if AsciiRetest is true during Batch Testing
+                        on the initial unify() call, the Recheck...
+                        parameter is turned off -- and then toggled
+                        back on for the AsciiRetest. Quirky but
+                        necessary.
+
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                RecheckProofAsstUsingProofVerifier,no
+
+
+    ProofAsstUnifySearchExclude
+           : - Optional
+             - Default = exclude no logical assertions from the
+               list used during Proof Assistant Unification.
+             - This RunParm instructs ProofUnifier.java to not
+               attempt to unify the specified assertion labels
+               with any proof steps -- unless the user specifically
+               enters them on a proof step.
+             - The Unification process scans the loaded Metamath
+               file assertions (LogicalSystem.stmtTbl) in ascending
+               database sequence and accepts the first match it
+               finds. Generally that works fine, but in a few cases,
+               such as "duplicate" theorems that are present simply
+               because of an alternate proof, this feature is helpful
+               (though it would possibly be easier to put "biigb"
+               after "bii" and avoid the situation in the first
+               place.)
+             - The *problem* of multiple valid unifications for a
+               proof step may affect a small number of theorems.
+               The list of alternatives can be obtained by
+               specifically entering a valid assertion label that
+               does *not* unify -- the program then provides a message
+               detailing the possible choices. The message with
+               alternatives is also produced if there is a Distinct
+               Variables error on a proof step and there is no
+               unifying assertion that doesn't have a Distinct
+               Variables error.) In set.mm "p0ex" and "snex" appear
+               as alternatives in a few proofs; "mulid1" and "mulid2"
+               are another example.
+             - NOTE: The RunParm validation for these excluded Assrt
+               labels will be very lenient and will just ignore labels
+               that are "invalid" or not in the Statment Table. The
+               reason is that the exclusion list is expected to be
+               very stable and the new RunParm "LoadEndpointStmtNbr"
+               allows loading of just a portion of a Metamath file; if
+               we required perfection in the exclusion list the
+               usability of "LoadEndPointStmtNbr" would drop
+               dramatically (see also "LoadEndpointStmtLabel").
+             - Value1, Value2, ..., ValueN = Label of a logical
+               assertion (Axiom or Theorem) in the loaded Metamath
+               .mm database file(s).
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProofAsstUnifySearchExclude,biigb,xxxid,dummylink
+
+
+    RunProofAsstGUI
+           : - Optional
+             - Default = Don't run the ProofAsstGUI.
+             - Note: the Proof Assistant requires successful parsing
+               of every input Metamath .mm database file statement.
+               That means that "Parse,*" must be input prior to
+               "RunProofAsstGUI" in the RunParm file.
+             - Note: it is strongly recommended that ProofAsstGUI
+               be initiated from within a Command Prompt window
+               instead of by double-clicking on a ".bat" file.
+               Error messages may be written to the Command Prompt
+               window, including serious errors involving the
+               Java Runtime environment. For example, the program
+               could abruptly terminate, which would generate a
+               diagnostic message to System.err, which would appear
+               on the Command Prompt window -- but if the user does
+               not have a Command Prompt window open then it would
+               just look like the program is looping or "hung", and
+               the problem would be virtually impossible to diagnose.
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                RunProofAsstGUI
+
+
+    ProofAsstExportToFile
+           : - Optional
+             - Default = Don't export any Proof Worksheets.
+             - This RunParm is provided for use in high-volume
+               testing. It exports proofs to a file in the format
+               required -- the Proof Worksheet file format, which
+               is also used by Metamath's eimm.exe utility, except
+               that in this case the export file may contain multiple
+               Proof Worksheets!
+             - To import the ProofWorksheet file and test the
+               Unification function, use RunParm "ProofAsstBatchTest"
+               specifying the file name.
+             - Note: Value3 has two variations: "un-unified" means the
+               exported derivation proof steps do not have Ref labels,
+               whereas "unified" means Ref labels are present.
+             - Note: this feature is not a full export of a Metamath
+               file as it does not export $d's or anything besides
+               theorems, their logical hypotheses and proofs.
+             - Note: invalid or incomplete proofs generate error
+               messages and skeletal Proof Worksheets.
+             - Note: a relative filename such as "export.mmp" can be
+               used, or an "absolute" name such as "c:\my\export.mmp".
+               The "ProofAsstProofFolder", if present, is used with
+               relative filename. And take care to note that if export
+               is performed *after* ProofAsstGUI,
+               the ProofAsstProofFolder may have been changed!
+             - Value1 = filename; absolute or relative pathname.
+             - Value2 = "*"    - all theorems
+                        label  - a single theorem
+                        99999  - a given number of theorems
+             - Value3 = Optional: "new" file (default), "update"
+                        existing file.
+             - Value4 = "un-unified" output proof (default) or
+                        "unified" (Ref labels output).
+             - Value5 = "Randomized" or "NotRandomized" (default).
+                        Controls the order of exported proof step
+                        logical hypotheses (a testing feature).
+             - Value6 = "Print" or "NoPrint" (default). Print requests
+                        copy of the generated Proof Worksheet to be
+                        sent to the SystemOutputFile (or System.out)
+                        in addition to the specified export file.
+             - Value7 = "DeriveFormulas" or "NoDeriveFormulas" (default)
+                        or "". If "DeriveFormulas" then the exported
+                        Proof Worksheets are written with blank formulas
+                        to trigger the Derive Formula feature in the
+                        Proof Assistant during later import. Note that
+                        the theorem's logical hypotheses and "qed" step
+                        cannot be derived -- formula is always required
+                        for these steps, so "DeriveFormulas" applies
+                        only to non-Qed derivation proof steps.
+
+              - Examples:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                * export 1 to existing file, unified, not randomized, print it!, no derive formulas
+                ProofAsstExportToFile,norm3adif,norm3adif.txt,update,unified,NotRandomized,Print,NoDeriveFormulas
+                * export all  new file, un-unified, randomized, no print, derive formulas
+                ProofAsstExportToFile,*,c:\mymmj2\all.txt,update,un-unified,NotRandomized,NoPrint,DeriveFormulas
+
+
+    ProofAsstBatchTest
+           : - Optional
+             - Default = Don't run Proof Assistant Batch Test.
+             - This RunParm is provided for use in high-volume
+               testing. It imports proofs from a file in Proof
+               Worksheet format, or from memory via an in-core
+               "export" process.
+             - Note: the Proof Worksheet file format, is also used
+               by Metamath's eimm.exe utility, except that in this
+               case the export file may contain multiple Proof
+               Worksheets!
+             - In "simulation" mode (no input file), the program
+               exports a proof "to memory", just as it would have
+               been created for the ProofAsstExportToFile RunParm
+               (which is why the unified/un-unified and Randomized/
+               NotRandomized options are provided here also.) The
+               the export-simulated proof is run through the
+               Unification process for testing purposes.
+             - RunParm option Value1 provides a selection capability,
+               and this capability works with or without an input
+               file. Specify "*" to test unification of all proofs,
+               either in the input file or those loaded into the
+               system. Specifying a number, for example 99, runs the
+               test for the first 99 theorems (database sequence if
+               input file not provided). Finally, specifying a theorem
+               label runs the test for just that one theorem.
+             - Note: a relative filename such as "export.mmp" can be
+               input or an "absolute" name such as "c:\my\export.mmp".
+               The "ProofAsstProofFolder", if present, is used with
+               a relative filename. And take care to note that if
+               export is performed *after* ProofAsstGUI, the
+               ProofAsstProofFolder may have been changed!
+
+             - Value1 = selection, either
+                        "*"    - all theorems
+                        label  - a single theorem
+                        99999  - a given number of theorems
+
+             - Value2 = Optional: a file name, either absolute or
+                        relative (to the current directory, or if
+                        provided the ProofAsstProofFolder). If no
+                        file name input, Proof Worksheets are
+                        generated from memory (the .mm file loaded.)
+
+             - Value3 = "un-unified" (default) or
+                        "unified" (Ref labels output).
+
+                        Note: this applies only when "exporting" from
+                        memory, not to proof worksheets read from
+                        the file in Value2.
+
+             - Value4 = "Randomized" or
+                        "NotRandomized" (default).
+
+                        Controls order of exported proof step logical
+                        hypotheses (a testing feature).
+
+                        Note: This applies only when "exporting" from
+                        memory, not to proof worksheets read from
+                        the file in Value2.
+
+             - Value5 = "Print" or
+                        "NoPrint" (default)
+
+                        Print requests copy of Proof Worksheet to be
+                        sent to the SystemOutputFile (or System.out)
+                        in addition to the export file.
+
+             - Value6 = "DeriveFormulas" or
+                        "NoDeriveFormulas" (default) or
+                        "".
+
+                        If "DeriveFormulas" then the exported
+                        Proof Worksheets are written with blank formulas
+                        to trigger the Derive Formula feature in the
+                        Proof Assistant during later import. Note that
+                        the theorem's logical hypotheses and "qed" step
+                        cannot be derived -- formula is always required
+                        for these steps, so "DeriveFormulas" applies
+                        only to non-Qed derivation proof steps.
+
+                        Note: This applies only when "exporting" from
+                        memory, not to proof worksheets read from
+                        the file in Value2.
+
+             - Value7 = "CompareDJs" or
+                        "NoCompareDJs" (default) or
+                        "".
+
+                        If RunParm ProofAsstDjVarsSoftErrors is set
+                        to generate $d's (new, replacements or
+                        differences) and $d's are generated, and the
+                        proof is correctly unified, with an RPN format
+                        output proof, THEN... CompareDJs instructs
+                        the BatchTest process to perform a detailed
+                        comparison of non-dummy $d's in the input
+                        .mm file with the Proof Worksheet's "comboFrame"
+                        after unification. Superfluous and missing
+                        DjVars pairs in the input .mm file will be
+                        reported, in exhaustive detail :-)
+
+                        Note! If the input theorem has no $d errors,
+                        then this test is bypassed because no $d's
+                        will be generated -- unless "GenerateNew"
+                        is specified on RunParm
+                        ProofAsstDjVarsSoftErrors.
+
+                        NOTE: "Generate..." required for CompareDJs and
+                              UpdateDJs. ALSO, specify "unified" on
+                              ProofAsstBatchTest because the 2nd
+                              "VerifyProof,*" will reprocess the original
+                              proofs, and if "un-unified" is used the proofs
+                              used during CompareDJs and UpdateDJs may be
+                              different, which may result in different
+                              $d's stored in memory when the 2nd VerifyProof
+                              is run. For example, Theorem csbabg Step 3 can
+                              unify with either sbccomg or sbccomglem, but
+                              they have different $d's!
+
+
+             - Value8 = "UpdateDJs" or
+                        "NoUpdateDJs" (default) or
+                        "".
+
+                        "UpdateDJs" instructs the BatchTest process
+                        to modify theorem Mandatory and Optional Frames
+                        after unification is complete -- but only
+                        if RunParm ProofAsstDjVarsSoftErrors is set
+                        to generate $d's (new, replacements or
+                        differences) and $d's are generated, and the
+                        proof is correctly unified, with an RPN format
+                        output proof...
+
+                        Note! If the input theorem has no $d errors,
+                        then the update is bypassed because no $d's
+                        will be generated -- unless "GenerateNew"
+                        is specified on RunParm
+                        ProofAsstDjVarsSoftErrors.
+
+                        NOTE!!! This update process modifies the
+                        content of the loaded .mm file in memory and
+                        can potentially alter the results of
+                        subsequent processing in difficult to diagnose
+                        ways. The purpose of UpdateDJs is to
+                        rederive all $d's -- except those on Axioms.
+                        Because $d's are inherited, an alteration of
+                        $d specifications on a theorem can alter the
+                        $d's on every other theorem that uses it in
+                        a proof.
+
+                        NOTE: UpdateDJs can profitably be used in
+                        conjunction with RunParm "LoadEndpointStmtLabel".
+                        To compare/update DJs for set.mm up through
+                        predicate calculus, say, use LoadEndpoint... to
+                        restrict the amount of set.mm that is loaded
+                        and processed (because subsequently in set.mm
+                        not every group of $d statements is minimized.)
+
+                        NOTE: "Generate..." required for CompareDJs and
+                              UpdateDJs. ALSO, specify "unified" on
+                              ProofAsstBatchTest because the 2nd
+                              "VerifyProof,*" will reprocess the original
+                              proofs, and if "un-unified" is used the proofs
+                              used during CompareDJs and UpdateDJs may be
+                              different, which may result in different
+                              $d's stored in memory when the 2nd VerifyProof
+                              is run. For example, Theorem csbabg Step 3 can
+                              unify with either sbccomg or sbccomglem, but
+                              they have different $d's!
+
+             - Value9 = "AsciiRetest" or
+                        "NoAsciiRetest" (default) or
+                        "".
+
+                        "AsciiRetest" instructs the BatchTest process
+                        to re-unify the output Proof Worksheet text
+                        after unification.
+
+                        The purpose of AsciiRetest is to enable
+                        use of "RecheckProofAsstUsingProofVerifier,yes"
+                        on the Proof Worksheets output from ProofUnifier
+                        which have generated $d statements -- since
+                        ProofUnifier does not update the generated
+                        $d's back into the LogicalSystem, the
+                        "Recheck" using ProofVerifier tends to create
+                        a lot of error messages.
+
+                        To make this work properly during batch
+                        testing, if AsciiRetest is true, then
+                        on the initial unify() call, the Recheck...
+                        parameter is turned off -- and then toggled
+                        back on for the AsciiRetest. Quirky but
+                        necessary.
+
+
+              - Examples:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                * test 1 from input file
+                ProofAsstBatchTest,xpmapenlem3,xpmapenlem3V1.mmp,unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,NoAsciiRetest
+                * test all the hardest possible way. slow: 5 minutes!
+                ProofAsstBatchTest,*,,un-unified,Randomized,NoPrint,DeriveFormulas,CompareDJs,NoUpdateDJs,AsciiRetest
+                * omit DeriveFormulas, CompareDJs, UpdateDJs and AsciiRetest options
+                ProofAsstBatchTest,*,,un-unified,Randomized,NoPrint,,,,
+
+
+    PreprocessRequestBatchTest
+
+           : - Optional. Exercises the Unify+Erase And Rederive Formulas
+                         logic for a single Proof Worksheet in an
+                         input file. Prints before and after images
+                         of the Proof Worksheet.
+
+             - Value1 = Input file name containing a Proof Worksheet.
+                        File name can be absolute (with "C:\\") or
+                        relative to the folder defined by the
+                        ProofAsstProofFolder RunParm.
+
+             - Value2 = Literal "EraseAndRederiveFormulas".
+                        (Right now there is only one valid preprocess
+                        request.)
+             - Examples
+
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                PreprocessRequestBatchTest,UT7000.mmp,EraseAndRederiveFormulas
+                PreprocessRequestBatchTest,C:\mmj2\data\mmp\tests\UT7000.mmp,EraseAndRederiveFormulas
+
+
+    ------------------------------------------------------------------
+
+    // ----------------------------------------------------------
+    // RUNPARM Commands for mmj.util.GMFFBoss.java
+    // ----------------------------------------------------------
+
+    GMFFExportParms,althtml,ON,althtmldef,GMFF\althtml,.html,GMFF\models\althtml,A,ISO-8859-1,general
+    GMFFExportParms,html,ON,htmldef,GMFF\html,.html,GMFF\models\html,A,ISO-8859-1,general
+
+        _ Optional. Default values are shown above. Modifications
+          to the defaults as well as additional settings for new
+          export types are made with this RunParm. Validation is
+          deferred until GMFF Initialization except for the number
+          of RunParm parameters -- i.e. use of this RunParm does not
+          trigger GMFF Initialization.
+
+        _ althtml or
+          html       = Export Type (Unicode or .gif) 
+          _ Export Type must be unique. It is the key in the export
+            parms (and text escapes) lists built using default
+            settings merged with the input RunParms GMFFExportParms
+            entries.
+          _ A second GMFFExportParms RunParm with the same Export
+            Type updates the first.
+
+        _ ON         = ON or OFF to enable/disable this export type.
+
+          - Note that by default, both html and althtml are ON.
+          _ Setting all export types OFF disables GMFF exports.
+          _ If OFF the rest of the input parameters are not validated
+            or stored.
+
+        _ althtmldef or
+          htmldef    = Typesetting Definition Keyword in .mm file 
+                      (in the $t typesetting comment) for this export.
+
+        _ GMFF\althtml or
+          GMFF\html  = Directory where exports are written. Also,
+                      GMFF\html contains .gif files for symbols.
+
+        _ .html      = export file type (.html or .htm might be 
+                      good choices :-)
+
+        _ GMFF\models\althtml or
+          GMFF\models\html
+
+                     = Directory containing html fragment files
+                      serving as models for exports.
+
+        _ A          = Model Id. Only "A" is valid now.
+
+        _ ISO-8859-1 = Charset encoding. 
+
+          _ Must match the html fragment for the specified Model Id
+            which contains the html <head> keyword...but the program
+            does not validate this! Model A specifies ISO-8859-1
+            (same as Metamath Proof Explorer).
+
+          _ Valid charset encodings on all Java platforms are:
+
+            _ US-ASCII
+            _ ISO-8859-1
+            _ UTF-8
+            _ UTF-16BE
+            _ UTF-16LE
+            _ UTF-16
+
+        - general  = OutputFileName
+                   = Name of output file minus the file type. 
+                     Optional. 
+
+                     _ If not specified the output file name is
+                       constructed from the proof theorem's label
+                       + the Export File Type. 
+
+                       _ Note! The OutputFileName applies to all
+                         exports, including those via the
+                         GMFFExportTheorem and GMFFExportFromFolder
+                         RunParms in addition to ProofAsstGUI
+                         export requests. To export to individual
+                         theorem-named files you must input a
+                         new GMFEExportTheorems RunParm!!!
+
+                     _ If specified must not contain any
+                       whitespace characters, or '/' or '\' or ':' 
+                       characters (for safety.) 
+
+                       _ All/any exported Proof Worksheets will be
+                         output to the named file suffixed with the
+                         GMFFExportParms file type -- except that 
+                         the GMFFExportTheorem and 
+                         GMFFExportFromFolder AppendFileName 
+                         parameter overrides the OutputFileName 
+                         parameter on the GMFFExportParms RunParm!
+
+
+        _ NOTE: There is nothing in the GMFF program code specific
+                to html. All html-specific information is external
+                to the code, and is specified via the GMFF RunParms,
+                the GMFF \models directory files, and the Metamath
+                $t typesetting definitions.
+
+                _ Since mmj2 allows you to input more than one 
+                  LoadFile RunParm, you could create an extra $t 
+                  comment in a second input .mm file and output 
+                  export data in whatever format you desire...
+                  the only proviso being that the GMFF code knows 
+                  the names of the \models files for Model A. So 
+                  either your extra export type must match the 
+                  pattern of \models files (with regards to the 
+                  parts which are filled in by the code vs. what 
+                  is in the fragments), or another model would 
+                  need to be added to the GMFF code.
+
+                  _ Model A is a "minimalist" version of a webpage
+                    which typesets only proof step formulas plus the
+                    theorem label, which is output as text but is 
+                    treated as a variable in the model.) 
+
+                  _ The one thing you cannot do with this design is 
+                    export to a language which is based on the formula
+                    parse trees, for example MathML. Exporting and 
+                    typesetting based on parse trees -- as opposed to 
+                    formulas comprised of sequences of symbols -- would
+                    require extra code in GMFF. 
+                
+    GMFFUserTextEscapes,html,32,"&nbsp;",34,"&quot;",38,"&amp;",60,"&lt;",62,"&gt;"
+    GMFFUserTextEscapes,althtml,32,"&nbsp;",34,"&quot;",38,"&amp;",60,"&lt;",62,"&gt;"
+        
+        _ These "escapes" convert certain output text characters
+          to an alternative character sequence that represents
+          the escaped text characters in the output language (e.g. html).
+          
+          _ Escapes are necessary because certain text characters
+          which may be used in a Proof Worksheet have special,
+          non-text significance in html. Characters such as '&',
+          '>', '<', etc. are used in the html language. 
+    
+          _ The space character is escaped into "&nbsp;" so that 
+            Proof Worksheet text spacing is maintained (otherwise
+            browsers would collapse or ignore output spaces in
+            certain situations.)
+ 
+        _ althtml or
+          html       = Export Type (Unicode or .gif). 
+
+          _ Must match the Export Type on one of the GMFFExportParms
+            RunParms or the default GMFFExportParms
+
+        _ 99       = Decimal number of Metamath ASCII character
+                     to be "escaped" in the output html file.
+                      
+          _ Must be integer between 0 and 255 (inclusive).
+          
+        _ "xxxx"   = Character string to replace escaped character.
+        
+        _ NOTE: User Text to be "escaped" is whatever text
+                in the Proof Worksheet is not "typeset" using
+                the Metamath $t typesetting definitions --
+                and any mmj2 Proof Worksheet text stored in 
+                a \models directory (e.g. Proof Worksheet Header
+                text contains both "<" and ">", which are stored
+                in the \models directory in escaped format
+                (so it does not need to be escaped again.)
+  
+
+
+
+    GMFFUserExportChoice,ALL
+
+        _ Choices are "html", "althtml" or "ALL" (Export Type or "ALL")
+        _ Must match one of the defaults or one of the export types
+          on an (already) input GMFFExportParms RunParm.
+
+
+    GMFFInitialize,PrintTypesettingDefinitions
+
+        _ Optional. Forces initialization or re-initialization
+          using whatever GMFF RunParm options, default 
+          settings and Metamath $t typesetting definitions have
+          been input.
+           
+          _ Also: prints an audit report (message) showing the
+            final set of parms in effect: selected Exporters'
+            ExportParms, UserTextEscapes and UserExportChoice
+            ... plus typeset definition symbol counts by def 
+            keyword.
+            
+            _ NOTE: The audit report is printed only if GMFF
+              Initialization is successful.
+        
+        _ "PrintTypesettingDefinitions" is an optional parameter
+          which produces a listing of the parsed typesetting
+          definitions after the audit report -- assuming GMFF
+          initialization was successful. 
+
+          _ Provided for testing and audit purposes. Perhaps
+            useful to users :-)
+
+        _ If GMFFInitialize is not used then initialization
+          takes place only if/when the first GMFF export is 
+          attempted. Reinitialization can occur if one or
+          more additional LoadFile commands have executed 
+          since initialization and new Metamath $t typsetting
+          definitions have been input. (And of course, the
+          "Clear" RunParms resets all state variables, which
+          would force reinitialization if additional LoadFile
+          commands and GMFF export processing were to occur.)
+
+        _ Initialization may result in error messages about
+          the contents of the input .mm Metamath file's $t
+          typesetting commands, as well as any other start-up
+          errors from GMFF.)
+
+
+    GMFFExportFromFolder,myproofs,syl,.mmp,999999,AppendFileName
+
+        _ myproofs = directory containing Proof Worksheet files
+        _ syl      = theorem label or "*" (all). If theorem label
+                     input then it is the starting point of the
+                     export process, which will export the Max
+                     Number of files beginning at that label.
+                     If "*" input then the export begins at the
+                     first label. Either way, files are exported
+                     in lexicographic order -- i.e. alphabetically.
+        _ .mmp     = file type of input Proof Worksheet files
+                     (normally either .mmp or .mmt)   
+        _ 999999   = Max Number of files to export. Required. 
+        - AppendFileName
+                   = Name of output (append) file minus the file type. 
+                     Optional. If specified must not contain any
+                     whitespace characters, or '/' or '\' or ':' 
+                     characters (for safety.) All exported Proof
+                     Worksheets will be appended to the named file
+                     (written at the end instead of the beginning)
+                     suffixed with the GMFFExportParms file type.
+                     Used for regression testing.
+
+      _ GMFFExportTheorem,syl,999999,AppendFileName
+
+        _ syl      = theorem label or "*" (all). If theorem label
+                     input then it is the starting point of the
+                     export process, which will export the Max
+                     Number of files beginning at that label.
+                     If "*" input then the export begins at the
+                     first label. Either way, files are exported
+                     in MObj.seq number order -- i.e. order of
+                     appearance in the currently loaded Metamath 
+                     database (including multiple LoadFile 
+                     commands plus any TheoremLoader theorems.)
+        _ 999999   = Max Number of files to export. Required. 
+        - AppendFileName
+                   = Name of output (append) file minus the file type. 
+                     Optional. If specified must not contain any
+                     whitespace characters, or '/' or '\' or ':' 
+                     characters (for safety.) All exported Proof
+                     Worksheets will be appended to the named file
+                     (written at the end instead of the beginning)
+                     suffixed with the GMFFExportParms file type.
+                     Used for regression testing.
+
+    GMFFParseMetamathTypesetComment,althtmldef,mydirectory,mytypesetdefs.mm,PRINT
+
+        _ althtmldef or
+          htmldef  
+                   = Typesetting Definition Keyword in .mm file 
+                      (in the $t typesetting comment) to be selected
+                      for parsing.
+
+        _ mydirectory 
+                   = directory containing MM file
+        
+        _ mytypesetdefs.mm
+                   = .mm file containing just a Metamath $t comment.
+                   
+        _ PRINT    = literal "PRINT" or spaces. "PRINT" signifies that
+                     the input $t typesetting comment should be 
+                     printed plus the parsed symbols and their
+                     replacement text.
+                   
+
+        _ NOTE: This command executes a standalone test of
+                src\mmj\gmff\TypesetDefCommentParser.java.
+                
+                _ Its primary purpose is to facilitate testing.
+                
+                _ A dump of the parse results is generated along with
+                  statistics. The dump is in the form of a very long
+                  "info" message.
+                  
+                _ mmj2 does allow a second LoadFile to be executed
+                  immediately after the initial LoadFile. This means
+                  that you can separate your typesetting definitions
+                  from your regular .mm file contents. 
+                
+
+    ------------------------------------------------------------------
+

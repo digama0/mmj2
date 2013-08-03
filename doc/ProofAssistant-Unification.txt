@@ -1,0 +1,588 @@
+Proof Assistant -- Unification and Metamath
+Database Lookup Strategy -- An Outline.
+
+=A Few Preliminaries=
+
+My adventures with parsing showed me that the
+"naive" approach to a subject that is complicated
+and already well researched is unlikely to yield
+satisfactory results. However, Metamath is
+logically "agnostic", and conventional approaches
+such as rewriting expressions into "normal" forms
+may be unsuitable. The objective here is to add
+to mmj2, creating facilities that can be accessed
+in server-mode, and which are not dependent upon
+the logic or grammar of the input Metamath
+database -- except to say that the grammar must
+be verified by mmj2 and that every statement is
+parseable. Then...after I fail two or three times
+I will know enough to access the literature
+intelligently :)
+
+Numero Dos: By "proof assistant" I am referring
+to a utility that fills in missing statement
+label "Ref" values, as on this proof page:
+
+http://us.metamath.org/mpegif/isset.html
+
+Or, in the format I use for in-stream .mm proofs
+written as comments:
+
+  $( ======================================================== $)
+  $( *** Deduction combining antecedents and consequents. *** $)
+  ${
+    syl34d.1 $e |- ( ph -> ( ps -> ch ) ) $.
+    syl34d.2 $e |- ( ph -> ( th -> ta ) ) $.
+    syl34d   $p |- ( ph -> ( ( ch -> th ) -> ( ps -> ta ) ) )
+          $=
+      wph wch wth wi wch wta wi wps wta wi wph wth wta wch 
+      syl34d.2 syl3d wph wps wch wta syl34d.1 syl4d syld
+          $.
+    $( <MM> <PROOF>
+       #/HYP REF      EXPRESSION
+       ===== ======== ==========================================
+       1:    syl34d.1 |- ( ph -> ( ps -> ch ) )               $.
+       2:    syl34d.2 |- ( ph -> ( th -> ta ) )               $.
+       3:2   syl3d    |- ( ph -> 
+                           ( ( ch -> th ) -> ( ch -> ta ) )   $.
+       4:1   syl4d    |- ( ph -> 
+                           ( ( ch -> ta ) -> ( ps -> ta ) )   $.
+       5:3,4 syld     |- ( ph -> 
+                           ( ( ch -> th ) -> ( ps -> ta ) ) ) $.
+       QED
+       </PROOF> </MM>
+    $)
+  $}
+
+
+The user will be required to complete a table or
+rows containing the Step, Hyp and Expression
+columns, then the Proof Assistant will complete
+the Ref column. To speed things up, we might ask
+the user to put an "H" in the Hyp column if the
+Expression is one of the theorem's hypotheses --
+or incorporate the theorem's hypotheses
+automatically as steps 1, 2, etc.
+
+While this may not seem ambitious, the difficulty
+level of an industrial strength solution is
+higher than might be imagined. Right now set.mm
+has more than 6000 theorems and axioms. A key
+challenge lies in efficient search because the
+search must be repeated for each step of every
+proof! And, a realistic solution must be capable
+of handling an even larger database of theorems,
+perhaps as many as 100,000 theorems, or more.
+(Yes, $/cpu cycle is decreasing faster than the
+size of set.mm is increasing -- right now -- but
+the objective is a system that works well
+interactively, and if the search time grows, even
+linearly with the number of theorems in the
+database, there might not be enough CPU power on
+the planet to keep the customers happy.)
+
+( OFF TOPIC NOTE concerning above Metamath link:
+(fyi, Ponder theorem "isset" above, and its
+friend "visset". visset is saying: "Every set
+variable is a set" and isset is a way of
+asserting that a given class, A is a set. The
+*syntax axiom* (!?) "cv" converts a set variable
+to a class grammatical type (every set is a
+class), so it is interesting to discover visset.
+mmj2 treats cv purely as a "Type Conversion
+Syntax Axiom", but I am annoyed with this
+perspective as it feels as if cv is more than a
+grammatical device. In due time enlightenment
+will come :)
+
+=Sketch of Unification Process=
+
+A) Each justified step in a proof table *is* a
+separate proof. Justification for a step is
+either that the step reiterates an hypothesis or
+assertion, *or* that the step Expression is
+derivable from previously given assertions
+(axioms or theorems) and/or hypotheses, using the
+rules of the Metamath Proof Verification Engine
+regarding substitutions and distinct variables.
+
+B) What is elsewhere referred to as "unification"
+is used here to mean a process for determining
+valid substitutions from a proof step Expression
+into a given assertion's variables -- and *if*
+these substitutions exist.
+
+[ Ref: "Unification is a procedure for searching
+for a consistent set of substitutions of
+elements."
+http://www.rci.rutgers.edu/~cfs/472_html/Logic_KR/resolution.html ]
+  
+In the case of an unambiguous grammar, assuming
+successful grammatical parsing of every statement
+in the .mm database, unification can be regarded
+as, first, overlaying an assertion's parse tree
+with a proof step Expression's parse tree and
+making sure that none of the assertion's syntax
+axiom nodes are visible. Then, the nodes where
+the proof step's parse tree graft onto the
+assertion's parse tree provide the substitutions,
+which must be unique (only one substitution per
+variable). The substitutions are then applied to
+the Candidate assertion, which is then compared
+to the original Expression -- they must now be
+equal.
+
+For example, unify:
+
+    ax-1 = ( ph -> ( ps -> ph ) ) 
+
+    with a proof step Expression "E":
+
+    E = ( ( ph -> ph ) -> ( ps -> ( ph -> ph ) ) )
+    
+         "ax-1"                 "E"   
+         ****                   **** 
+         *wi*                   *wi*
+         ****                   ****
+        .    .                  .   .  
+        .    .                 .     .
+     ----    ****           ****     ****
+     -ph-    *wi*           *wi*     *wi*
+     ----    ****           ****     ****
+             .  .           .  .     .   .
+             .  .           .  .     .    .
+          ----  ----     ----  ----  ----  ****
+          -ps-  -ph-     -ph-  -ph-  -ps-  *wi*        
+          ----  ----     ----  ----  ----  ****
+                                           .  . 
+                                           .  .  
+                                         ---- ---- 
+                                         -ph- -ph-
+                                         ---- ----
+
+                                   
+From the diagram it is obvious that E can be
+unified with ax-1 because each "****" box in ax-1
+is overlayed by an *identical* box from E. This
+is a necessary condition for unification because
+the grammar was stipulated to be unambiguous, and
+so, each expression has only one parse tree.
+
+And, from the diagram, we see the correct, unique
+variable substitutions to make. The "----" boxes
+in ax-1 are the graft points on the ax-1 parse
+tree: graft the corresponding subtree from E over
+each "----" box in the ax-1 parse tree -- and if
+the variable in the "----" box occurs more than
+once in ax-1, then the same substitution takes
+place for each occurrence (i.e. if E were defined
+as follows then unification would be impossible:
+
+  E' = ( ( ph -> ph ) -> ( ps -> ( ch -> th ) ) ).
+
+Note: the example above does not portray the full
+complexity of unifying expressions containing
+Type Conversion(1) and Nulls Permitted(2) Syntax
+Axioms (as opposed to just Notation Syntax
+Axioms, as we call them in mmj2). Nor does it
+cover the scenario of Logical Hypotheses(3).
+
+1. If a Type Conversion occurs *above* a "****"
+box in the assertion's parse tree, then there must
+be an identical overlaying node in the Expression's
+parse tree. This is, again, because the grammar
+is unambiguous and unique parse trees have been
+stipulated to have been obtained prior to unification.
+
+2. A "----" box containing a Nulls Permitted
+Syntax Axiom must also be overlayed by an
+identical node in the Expression's parse tree.
+This is because "null" is a constant, and cannot
+there can be no substitution for a constant
+according to the rules of the Metamath Proof
+Verification engine. (So...this consideration
+also applies to Constant Syntax Axioms such as
+"c0"!)
+
+3. Each Logical Hypothesis of the assertion must
+*also* be Unified (!) with an hypothesis from the
+proof step -- and vice-versa. If the proof step
+Hyp field specifies "1,2,4" then that means that
+the proof step can only be matched to an
+assertion with exactly 3 Logical Hypotheses --
+each of which must undergo unification with one
+of the Hyp Expressions specified by the user (we
+will allow for the case where the user does not
+provide the correct sequence of hypotheses,
+compared to the assertion's .mm file ordering in
+spite of the fact that extra work will be
+required to rearrange the proof step's Hyp's.)
+
+C) The problem of finding a Proof Step Ref using
+the step's Expression and Hyp values requires a
+search to identify "Candidates" for unification.
+There may be many assertions satisfying the parse
+tree overlay process described above! And, the
+"degenerate" case of an assertion expression such
+as "|- ph" must be considered (this obtains from
+modus ponens as well as the trivial proof that a
+hypothesis yields itself.)
+
+Once a set of Candidate assertions is available,
+secondary tests must be applied to determine
+which, if any of the Candidates satisfy the
+requirements of Unification (such as unique
+substitution for "ph" in the example above) and
+any disjoint variable restrictions used in the
+Metamath Proof Verification Engine.
+
+And, there may be more than one Candidate
+assertion that passes every test, including any
+distinct variable restrictions. In this
+situation, assuming that the Candidate is not the
+same Theorem we are trying to prove (!), perhaps
+the user should be happy that we found even one
+and will be grateful if we return the first
+Candidate we find? (Additional restrictions on
+the Candidates will be needed, for example
+specification of the position of the theorem to
+be proved in the .mm database -- meaning that no
+subsequent assertions can be used in its proof --
+i.e. no recursion!)
+
+=Searching a Metamath Database: Context=
+
+We wish to avoid sequential search of a .mm
+database for each step of a proof. Ergo, a direct
+lookup method is desired, but without having to
+rewrite each proof step's Expression into a
+"normal form"; the algorithm should be as general
+as possible, knowing nothing about propositional
+or any other form of logic or notation.
+
+The problem with direct access is that,
+essentially, building the set of "Candidate"
+assertions for Unification involves a sort of
+geometric matching -- the selected Candiates'
+parse trees must be congruent to the proof step's
+parse tree. And, unfortunately, we don't know in
+advance how much of each Candidate's tree to
+overlay. Just the root, or the root plus a
+subtree? Remember that ax-mp may be the chosen
+Candidate even for a very complex and lengthy
+Expression (the Candidate's root node may be a
+"Degenerate" Expression of the form "ph" -- a
+generic wff.)
+
+Here are some items that can be matched or used
+to winnow a .mm database into a set of Candidates
+for Unification:
+
+1. Number of Logical Hypotheses: must match proof
+step's number of Hyp's exactly. If the proof
+step's Hyp column specifies 4 hypotheses, then
+only axioms and theorems with 4 Logical
+Hypotheses need apply.
+
+2. It is stipulated that Proof Assistant is not
+used for "syntax proofs". That means that each
+proof step's Expression's Type Code is "|-" or
+the user-designated Provable Logic Statement Type
+Code (in mmj2 terminology). Thus, only axioms and
+theorems with Type Code "|-" are to be considered
+-- syntax axioms are excluded, and that means
+that our Candidates will be of type "wff", or the
+user-designated Logical Statement Type Code
+equivalent that corresponds to "|-".
+
+3. The Candidate's assertion's parse tree root
+node always exists (duh), and is either
+Degenerate (Variable Hypothesis or Nulls
+Permitted Syntax Axiom -- the latter being
+included as a technicality, for completeness), or
+Not Degenerate (Notation or Type Conversion
+Syntax Axiom):
+
+    - If Degenerate, the Type Code of the
+      Var Hyp or Nulls Axiom must match the
+      Type Code of the proof step's Expression;
+
+    - If Not Degenerate, the root node's (Syntax
+      Axiom) Label must equal the Label of the
+      root node of the proof step's Expression's
+      parse tree.  
+
+In other words, if the parse tree root node for
+the proof step's Expression = "wi", then a
+suitable Candidate for Unification must also have
+a "wi" root node, or be Degenerate and have a
+"wff" type Variable Hypothesis in the root. (A
+proof step Null root could unify with a Null or a
+"ph" root node, but not in set.mm of course.)
+
+4. Similar considerations to #3 apply for each
+Logical Hypothesis of a Candidate assertion for
+Unification with a proof step's Logical
+Hypothesis. Each Logical Hypothesis also has a
+parse tree, and the root nodes on corresponding
+Candidate assertion and proof step Logical
+Hypotheses must match.
+
+For example, consider ax-mp
+
+    ${
+      maj $e |- ( ph -> ps ) $.
+      min $e |- ph           $.
+      ax-mp $p |- ps         $.
+    $}
+
+  
+ax-mp would be a satisfactory Candidate for
+Unification with a proof step having one
+hypothesis root node = "wi", a Degenerate second
+hypothesis of type "wff", and a Degenerate
+assertion of type "wff". (Subsequent checks of
+unique variable substitutions would then be
+needed to confirm the match.)
+
+5. Sequence Number of a Candidate for
+Unification: must be less than the Sequence
+number of the Theorem being proved. (The Proof
+Assistant may provide an entry field allowing
+input of either a maximum Sequence Number, or a
+Label which would specify the last Axiom or
+Theorem that could possibly be used.)
+
+6. Other metrics might be considered, such as
+length or height of the portion of the
+Candidate's parse tree to be overlayed. These
+seem to be of dubious utility. If the portion of
+the Candidate's parse tree to be overlayed is
+longer -- written in RPN format -- than the proof
+step's Expression, excluding Variable Hypotheses,
+then the Candidate can be rejected out of hand.
+Likewise with height.
+
+7. Many assertions have parse trees that are
+completely filled out with non-Degenerate nodes
+below the root down to level 2 or 3.
+
+For example, ax-2 has a "syntax depth" of 3, with
+levels 1 and 2 "syntactically completed":
+
+    ax-2 $a |- ( ( ph -> ( ps -> ch ) ) ->
+                 ( ( ph -> ps ) -> ( ph -> ch ) ) ) $.
+                 
+                     ax-2
+                     ****
+                     *wi*
+                    .****.
+                  .        .
+                .            .
+           ****               ****
+           *wi*               *wi*
+           ****               ****
+          .   .              .    .
+         .     .            .      . 
+      ----   ****         ****      ****
+      -ph-   *wi*         *wi*      *wi* 
+      ----   ****         ****      ****
+             .  .         .  .      .   . 
+           .     .      .     .    .     .
+        ----   ----   ----  ----   ----  ----
+        -ps-   -ch-   -ph-  -ps-   -ph-  -ch-
+        ----   ----   ----  ----   ----  ----
+
+=Searching a Metamath Database: Alternatives=
+
+Variation 1:
+
+In theory, a lookup key or a hash-code could be
+constructed using the "syntactically completed"
+levels, along with -- perhaps -- the number of
+Logical Hypotheses. For ax-2 such a key string
+might look like this:
+
+    "*wi*wi wi*0"
+
+Then, to locate suitable Candidate assertions for
+an Expression, E which is syntactically complete
+to level 2, the lookup could proceed as follows:
+
+1) Search Level 2 hash table
+2) Search Level 1 hash table
+3) Search Level 0 (degenerate) hash table
+   
+This approach still does not solve the problem of
+correctly ordering the Logical Hypotheses. Since
+we will not (absolutely) require (but request)
+that the correct sequence of Logical Hypotheses
+be provided to the Proof Assistant, building a
+key using the syntactic structure of the Logical
+Hypotheses is not straight-forward -- especially
+since one of more of the hypotheses may be of the
+degenerate form "ph".
+
+Fortunately, "degenerate" form Logical Hypotheses
+are in the minority, and a multi-step lookup
+could be performed a key built with sorted top
+level nodes from the hypotheses. For example, if
+the Logical Hypotheses of an assertion have top
+level parse nodes = "wi", "wn", then a key =
+"wi*wn" could be constructed -- and in the event
+of an unsuccessful search, a secondary lookup for
+degenerate top level nodes could be performed.
+
+Variation 2:
+
+A preferred approach for the mmj2 system will
+likely take into account the fact that every
+symbol, assertion, theorem, hypothesis, etc. is
+accessed by (object) reference instead of by
+name. This means that "wi" is only referred to
+during input and output. Thus, the top level "wi"
+node of an Expression's parse tree contains a
+reference to *the* "wi" object. There is no need
+to perform a hash or tree lookup, the address is
+already at hand. To facilitate this alternative,
+a reference to a Proof Assistant lookup object
+would be added to mmj.lang.Assrt, and another
+refernence would be added to mmj.lang.Cnst to
+handle the degenerate form of assertion (i.e. for
+set.mm Cnst "wff" would contain a reference to a
+separate lookup table holding ax-mp, etc.)
+
+Considering set.mm as a typical database, though
+still on the small side ( :), there are
+approximately 41 wff type syntax axioms (class
+syntax axioms will not appear in the root node of
+a theorem or logical axiom parse tree in set.mm).
+Given equal distribution of the 6,000 theorems
+and axioms among the wff syntax constructors
+yields an average of 150 Candidates for a proof
+step expression. These are reduced somewhat by
+the degenerate assertions such as ax-mp, which
+would be searched separately.
+
+To further reduce the number of Candidates that
+would need to be painstakingly examined with in-
+depth Unification, a secondary set of tables can
+be added based on number of Logical Hypotheses. A
+guesstimate is that 75% of Theorems and Logical
+axioms have 0, 1, or 2 or 3 Logical Hypotheses.
+These secondary tables could be constructed if
+and when the primary table for a syntax
+constructor's size exceeds a certain number, such
+as 10 or 20.
+
+A tertiary level of lookup tables might be
+deployed for exceedingly common constructors such
+as "wi" that may well be in the root nodes of
+thousands of theorems -- and after splitting
+these up according to the number of Logical
+Hypotheses, several hundred might be present in a
+secondary table. Techniques mentioned in
+Variation 1 might be adapted for use here in the
+tertiary lookups. For example, a hash key could
+be built for syntactially complete level 2 parse
+trees. Or, hash keys based on the root nodes of
+the Logical Hypotheses might be created. And, a
+combination might be tried for special cases such
+as assertions with exactly 1 Logical Hypothesis
+-- in this case the sequence of hypotheses is
+moot, and a compound key could be constructed.
+
+Note: it is further envisioned that within any
+lookup table containing a list or array of
+assertions to be examined that the assertions
+will be sequenced by their order within the
+Metamath database -- i.e. their Sequence Number.
+This will enable a lookup to be terminated once
+the input Max Sequence Number for the theorem in
+the Proof Assistant is exceeded (i.e. if we are
+proving theorem 100 we do not need to examine
+101, 102 -- they are disallowed by definition in
+the Metamath Proof Verification Engine!)
+
+Examination and review of set.mm and perhaps
+ql.mm will be needed before making any final
+decisions about how to proceed with these
+lookups. At the very least, set.mm and ql.mm will
+provide instruction as to the *wrong* lookup
+strategies. Ideally, the lookup process would
+yield no more than 10 or 20 assertions for which
+Unification would be attempted.
+
+The costliness of Unification is not entirely
+clear either, but it is envisioned that rejection
+of Candidates will be performed as expediently as
+possible. Resequencing proof step hypotheses is
+likely to add expense to the Unification process,
+as well as complexity. Detective work will be
+needed to figure out which variables need to be
+Unified -- and this will require Unification of
+Logical Hypotheses! A process of elimination will
+be needed to work through the impossible
+sequences of hypotheses.
+
+
+=Other real-life proof examples to ponder=
+
+http://us2.metamath.org:8888/mpegif/sylan9.html
+
+http://us2.metamath.org:8888/mpegif/rcla42v.html
+
+Or, take for example, Theorem #5187 of set.mm, "climadd",
+which has 9 logical hypotheses and a deceptively
+short Expression but requires 193 proof steps!
+
+http://us2.metamath.org:8888/mpegif/climadd.html
+
+
+=set.mm wff-type Syntax Constructors= 
+
+  FREQ (in theorem parse tree root nodes
+        as of 6/26/2005)
+  ====
+  3587 #  2 label=wi   formula=wff   ( ph -> ps )
+   968 #  3 label=wb   formula=wff   ( ph <-> ps )
+   814 # 17 label=wceq formula=wff   A = B
+   206 # 18 label=wcel formula=wff   A e. B
+   152 # 44 label=wbr  formula=wff   A R B
+   110 # 30 label=wss  formula=wff   A (_ B
+    79 #  1 label=wn   formula=wff   -. ph
+    55 #  9 label=wex  formula=wff   E. x ph
+    40 --(degen)- wff  formula=wff   ph
+    22 # 67 label=wfn  formula=wff   A Fn B
+    20 #  4 label=wo   formula=wff   ( ph \/ ps )
+    20 # 22 label=wrex formula=wff   E. x e. A ph
+    16 # 65 label=wrel formula=wff   Rel A
+    15 # 68 label=wf   formula=wff   F : A --> B
+    11 #  5 label=wa   formula=wff   ( ph /\ ps )
+    10 # 14 label=wmo  formula=wff   E* x ph
+    10 # 19 label=wne  formula=wff   A =/= B
+    10 # 21 label=wral formula=wff   A. x e. A ph
+     8 # 66 label=wfun formula=wff   Fun A
+     8 # 49 label=wor  formula=wff   R Or A
+     7 # 71 label=wf1o formula=wff   F : A -1-1-onto-> B
+     6 #  7 label=w3a  formula=wff   ( ph /\ ps /\ ch )
+     6 # 82 label=wer  formula=wff   Er R
+     5 # 53 label=word formula=wff   Ord A
+     4 #  8 label=wal  formula=wff   A. x ph
+     4 # 43 label=wtr  formula=wff   Tr A
+     3 # 13 label=weu  formula=wff   E! x ph
+     3 # 70 label=wfo  formula=wff   F : A -onto-> B
+     3 # 51 label=wfr  formula=wff   R Fr A
+     3 # 23 label=wreu formula=wff   E! x e. A ph
+     3 # 12 label=wsb  formula=wff   [ y / x ] ph
+     2 # 10 label=weq  formula=wff   x = y
+     2 # 73 label=wiso formula=wff   H Isom R , S ( A , B )
+     2 # 55 label=wlim formula=wff   Lim A
+     2 # 20 label=wnel formula=wff   A e/ B
+     2 # 52 label=wwe  formula=wff   R We A
+     1 # 69 label=wf1  formula=wff   F : A -1-1-> B
+     1 # 48 label=wpo  formula=wff   R Po A
+     0 #  6 label=w3o  formula=wff   ( ph \/ ps \/ ch )
+     0 # 11 label=wel  formula=wff   x e. y
+     0 # 31 label=wpss formula=wff   A (. B
+     0 # 26 label=wsbc formula=wff   [ A / x ] ph

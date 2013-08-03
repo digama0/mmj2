@@ -1,0 +1,875 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta content="text/html; charset=ISO-8859-1" http-equiv="content-type"><title>Proof Verification with Example a1i</title></head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);" alink="#000088" link="#0000ff" vlink="#ff0000"><big><span style="font-weight: bold;">Proof Verification Steps <br>
+(</span></big><big><span style="font-weight: bold;"> Adapted from metamath.pdf</span></big><big><span style="font-weight: bold;"> and output of mmverify.py at www.metamath.org) </span></big><br>
+
+<ol>
+<li>
+A proof is scanned in order of its label sequence.</li><li>If the
+label refers to an active hypothesis, the expression in the hypothesis
+is pushed onto a stack called the "Proof Work Stack. In the table
+diagrams below the Proof Work Stack is represented with the most
+recently added stack item at the bottom and the oldest item at the top
+(the terminology "push onto a stack" is unfortunate in some ways
+because programmers most frequently store stack upside down and ADD to
+the bottom -- this is so that the existing stack items do not need to
+be shifted down to make room on the "top").</li><li>If the label refers
+to an assertion that has no hypotheses, the assertion is pushed onto
+the Proof Work Stack. (For example, see "con0 $a class On $." in
+set.mm, which is an assertion with no hypotheses -- essentially it
+gives the constant 'On' a type = 'class').<br>
+  </li>
+<li>If
+the label refers to an assertion with hypotheses, a (unique) substitution must
+exist that, when made to the mandatory hypotheses of the referenced
+assertion, causes them to match the most recent entries
+of the Proof Work Stack. Note: "mandatory" refers to floating hypotheses for
+variables referenced by the assertion as well as Essential hypotheses,
+if any.) Assume
+the referenced assertion has 'n' mandatory hypotheses: these 'n'
+hypotheses are matched, in order of their appearance in the database,
+with
+the 'n' most recent Proof Work Stack entries in order of their position
+in the stack. If the Type symbol of any hypothesis does not match the
+Type symbol of the stack item in the corresponding position, a proof
+verification error is reported ('Type' refers to the 1st symbol of the
+assertion.) Then, if each hypothesis has a Type matching its
+corresponding item on the Proof Work Stack, the unique substitutions
+are derived to make the mandatory hypotheses match the corresponding
+stack entries. This is very simple derivation: for each Variable
+Hypothesis of the referenced assertion, the substitution is simply the
+corresponding Proof Work Stack item! After deriving substitutions for
+all of the referenced assertion's Variable Hypotheses, apply the
+substitutions to the referenced assertion's Logical Hypotheses,
+simultaneously, and verify that each resulting expression matches the
+corresponding stack item! If not, a proof verification error is
+reported. <br>
+</li><li>As many stack entries as there are mandatory hypotheses are then popped from the Proof Work Stack.<br>
+</li><li>&nbsp;The same substitutions are made to the referenced assertion, and the result is pushed onto the Proof Work Stack.<br>
+</li><li>After the last label in the proof is processed, the stack must
+have a single entry that matches the expression in the $p statement
+containing the proof.</li><li>
+A proof may contain a ? in place of a label to indicate an unknown step
+(A proof verifier may ignore any proof containing ? but should warn the
+user that the proof is incomplete.&nbsp; )<br>
+  </li>
+
+</ol>
+
+<hr style="width: 100%; height: 2px;">
+<h4><br>
+</h4>
+<h4>Another Explanation</h4>
+Another way of explaining this is to compare the proof verification
+process to a robot assembling a product. In this case the "product" is
+the assertion that is being proved, and the robot's job is to replicate
+the assertion exactly, symbol for symbol, using the tools and
+sub-components in the inventory. The proof is, to the robot, a set of
+step by step computer instructions on how to assemble the product --
+and remember, the robot knows nothing about logic or mathematics! Each
+proof step is a construction step that pulls out of inventory either a
+sub-component (hypothesis) or an assertion (tool) -- an assertion with
+its own hypotheses might be considered a "kit", containing both
+sub-components and the specific tool needed for customization to the
+job at hand. <br>
+<br>
+Now, continuing the analogy, the Proof Work Stack is like a conveyor
+belt that the robot uses to temporarily store sub-components that have
+already been customized and assembled but are not needed until later,
+when they will be combined into larger components, and so on. For
+example, imagine that the final product (provable assertion) has three
+sub-components. As each sub-component is customized and assembled, it
+is placed on the conveyor belt, which is then shifted one position to
+make room for the next sub-component. Then, when it is time for final
+assembly, the direction of the conveyor belt is reversed and the
+sub-components are removed, one at a time, customized some more, and
+then installed in the finished product (this is why the order of items
+on the conveyor belt is critically important, just as it is for the
+Proof Work Stack -- when you need a wheel and the next item on the
+conveyor belt is a radiator, the finished product either cannot be
+built or doesn't work!)<br>
+<br>
+The key to all of this is customizing the generic sub-components in the
+inventory so that they fit into the finished product according to the
+product specifications. In Metamath Proof Verification, customization
+is achieved by substituting already assembed expressions into the new
+variables at each step of the process&nbsp; --&nbsp; and then storing
+the result on the stack/conveyor belt for later use.<br>
+<br>
+I hope that helps more than it hinders...<br>
+<hr style="width: 100%; height: 2px;"><br>
+<h3><big><big>Example: a1i</big></big></h3>
+
+<br>
+<br>
+<h4>Notes Regarding Proof Demonstration Table Below:</h4>
+<p>
+1) I used "show statement xxx / full" to see details of mandatory
+hypotheses and referenced formulas for the labels referenced in the
+proof.
+</p>
+
+<p>2) Metamath displays the stack in "RPN" order, which means Reversed,
+"Last-In, First Out" (LIFO) Order. This is done for convenience in
+programming with arrays (reversing the stack eliminates the need to
+move entries in memory when adding or removing an entry from the
+stack). Thus, in MetaMath.pdf, "topmost" should be interpreted as the
+bottom-most entry of a reversed stack...<br>
+</p>
+<ul>
+  <li>Top entry is oldest</li>
+  <li>Bottom is youngest</li>
+  <li>"Push" adds an entry at the bottom of the RPN Stack</li>
+  <li>"Pop" removes an entry from the bottom.</li>
+</ul>
+<br>
+<p>
+3) The table below demonstrates Proof Verification without any Distinct Variable Restrictions.</p>
+
+<br>
+<br>
+<p>
+4) The 3rd column, "Type" refers to "H" for Hypothesis and "A" for Assertion (may be Axiomatic or Provable Assertion)</p>
+
+<br>
+<br>
+<p>
+5)&nbsp; The 6th column, "Unique Substitution", contains the variable
+substitutions necessary to make the 5th Column, "Assertion's Mandatory
+Hypotheses", match the 4rd column, "Proof Work Stack". [In other words,
+this is the legendary process of Unification at work! A small
+example...but nonetheless, a great achievement for mankind!]</p>
+
+<br>
+<pre><code>&nbsp;<span style="font-weight: bold;"> ${</span></code></pre>
+
+<pre style="font-weight: bold;"><code>&nbsp;&nbsp;&nbsp; $( Premise for ~ a1i . $)</code></pre>
+
+<pre style="font-weight: bold;"><code>&nbsp;&nbsp;&nbsp; a1i.1 $e |- ph $.</code></pre>
+
+<pre style="font-weight: bold;"><code>&nbsp;&nbsp;&nbsp; $( Inference derived from axiom ~ ax-1 .&nbsp; See ~ a1d for an explanation of</code></pre>
+
+<pre style="font-weight: bold;"><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; our informal use of the terms "inference" and "deduction". $)</code></pre>
+
+<pre style="font-weight: bold;"><code>&nbsp;&nbsp;&nbsp; a1i $p |- ( ps -&gt; ph ) $=</code></pre>
+
+<pre style="font-weight: bold;"><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; wph wps wph wi a1i.1 wph wps ax-1 ax-mp $.</code></pre>
+
+<pre style="font-weight: bold;"><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $([5-Aug-93]$)</code></pre>
+
+<pre style="font-weight: bold;"><code>&nbsp; $}</code></pre>
+
+<pre><code></code></pre>
+
+<pre><code><br></code></pre>
+<br>
+<code><br>
+</code>
+<table style="width: 100%; text-align: left;" border="1" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><small><code><big><font size="-1"><br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">Label<br>
+      <br>
+      <br>
+      <br>
+======<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">T<br>
+y<br>
+p<br>
+e<br>
+=<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">Referenced<br>
+Expression<br>
+      <br>
+      =====================</font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">Proof Work Stack<br>
+(<span style="font-style: italic;">After</span> step<br>
+processed!)<br>
+In RPN Order<br>
+=====================<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">Assertion's<br>
+Mandatory<br>
+Hypotheses <br>
+In RPN Order<br>
+================<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">Unique<br>
+Substitution<br>
+      <br>
+      <br>
+===============<br>
+      </font></big></code></small></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">1<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;">
+      <pre><small><code><big><font size="-1">wph<br></font></big></code></small></pre>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><small><code><big><font size="-1">H</font></big></code></small></pre>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><small><code><big><font size="-1">wff ph</font></big></code></small></pre>
+      </td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">wff ph<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1"><br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1"><br>
+      </font></big></code></small></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">2<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">wps<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;">
+      <pre><small><code><big><font size="-1">H</font></big></code></small></pre>
+      </td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">wff ps</font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">wff ph<br>
+wff ps<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1"><br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1"><br>
+      </font></big></code></small></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">3<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">wph<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">H</font></big></code></small></td>
+      <td style="vertical-align: top;">
+      <pre><small><code><big><font size="-1">wff ph<br></font></big></code></small></pre>
+      </td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">wff ph<br>
+wff ps<br>
+
+wff ph<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1"><br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1"><br>
+      </font></big></code></small></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">4<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">wi<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">A<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;">
+      <pre><small><code><big><font size="-1">wff ( ph -&gt; ps )<br></font></big></code></small></pre>
+      </td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">wff ph<br>
+wff ( ps -&gt; ph )<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">wff ph<br>
+wff ps<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">'ps' for<br>
+'ph',<br>
+      <br>
+'ph' for<br>
+'ps'<br>
+      </font></big></code></small></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">5<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">a1i..1<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">H<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;">
+      <pre><small><code><big><font size="-1">|- ph</font></big></code></small></pre>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><small><code><big><font size="-1">wff ph<br>wff ( ps -&gt; ph )<br>|- ph</font></big></code></small></pre>
+      </td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1"><br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1"><br>
+      </font></big></code></small></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">6<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">wph<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">H</font></big></code></small></td>
+      <td style="vertical-align: top;">
+      <pre><small><code><big><font size="-1">wff ph<br></font></big></code></small></pre>
+      </td>
+      <td style="vertical-align: top;"><small><code><big>
+      </big></code></small>
+      <pre><small><code><big><font size="-1">wff ph<br>wff ( ps -&gt; ph )<br>|- ph<br>wff ph<br></font></big></code></small></pre>
+      <small><code><big>
+
+
+      </big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1"><br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1"><br>
+      </font></big></code></small></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">7<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">wps<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">H</font></big></code></small></td>
+      <td style="vertical-align: top;">
+      <pre><small><code><big><font size="-1">wff ps<br></font></big></code></small></pre>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><small><code><big><font size="-1">wff ph<br>wff ( ps -&gt; ph )<br>|- ph<br>wff ph<br>wff ps<br></font></big></code></small></pre>
+      </td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1"><br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1"><br>
+      </font></big></code></small></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">8<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">ax-1<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">A<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;">
+      <pre><small><code><big><font size="-1">|- ( ph -&gt; ( ps -&gt; ph ) )<br></font></big></code></small></pre>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><small><code><big><font size="-1">wff ph<br>wff ( ps -&gt; ph )<br>|- ph<br>|- ( ph -&gt; ( ps -&gt; ph ) )<br></font></big></code></small></pre>
+      </td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">wff ph<br>
+wff ps<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">'ph' for<br>
+'ph',<br>
+      <br>
+'ps' for<br>
+'ps'<br>
+      </font></big></code></small></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">9<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">ax-mp<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">A<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;">
+      <pre><small><code><big><font size="-1">|- ps<br></font></big></code></small></pre>
+      </td>
+      <td style="vertical-align: top;">
+      <pre><small><code><big><font size="-1">|- ( ps -&gt; ph )</font></big></code></small></pre>
+      </td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">wff ph<br>
+wff ps<br>
+|- ph<br>
+|- ( ph -&gt; ps )<br>
+      </font></big></code></small></td>
+      <td style="vertical-align: top;"><small><code><big><font size="-1">'ph' for<br>
+'ph',<br>
+      <br>
+'( ps -&gt; ph )' for 'ps'<br>
+      </font></big></code></small></td>
+    </tr>
+  </tbody>
+</table>
+<code><br>
+<br></code>
+<p><code>
+Voila! The contents of the Proof Work Stack after Step 9 match the $p expression! QED!!!</code></p>
+<p><code></code></p>
+<code>
+<br>
+</code>
+<hr style="width: 100%; height: 2px;"><br>
+
+<code style="color: rgb(51, 51, 255);"></code><br>
+<h3><big><big>Example: elong</big></big></h3>
+
+<br>
+<pre style="font-weight: bold;">&nbsp; ${</pre>
+<pre style="font-weight: bold;">&nbsp;&nbsp;&nbsp; $d x A $.&nbsp; $( ` x ` is dummy. $)</pre>
+<pre style="font-weight: bold;">&nbsp;&nbsp;&nbsp; $( An ordinal number is an ordinal set. $)</pre>
+<pre style="font-weight: bold;">&nbsp;&nbsp;&nbsp; elong $p |- ( A e. B -&gt; ( A e. On &lt;-&gt; Ord A ) ) $=</pre>
+<pre style="font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vx cv word cA word vx cA con0 cB vx cv cA ordeq vx df-on elab2g $.</pre>
+<pre style="font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $( [5-Jun-94] $)</pre>
+<pre style="font-weight: bold;">&nbsp; $}</pre>
+<br>
+<br>
+<table style="width: 100%; text-align: left;" border="1" cellpadding="2" cellspacing="2">
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><br>
+      </big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>Label
+      <br>
+
+      <br>
+
+      <br>
+<br>
+
+=====<br>
+
+      </code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>T<br>
+
+y<br>
+
+p<br>
+
+e<br>
+
+=<br>
+
+      </code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>Referenced<br>
+
+Expression<br>
+
+      <br>
+<br>
+
+      =========================</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>Proof Work Stack<br>
+
+(<span style="font-style: italic;">After</span> step<br>
+
+processed!)<br>
+
+In RPN Order<br>
+
+=========================<br>
+
+      </code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>Assertion's<br>
+
+Mandatory<br>
+
+Hypotheses <br>
+
+In RPN Order<br>
+
+=================<br>
+
+      </code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>Unique<br>
+
+Substitution<br>
+
+      <br>
+
+      <br>
+
+======<br>
+
+      </code></big></font></big></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>1</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big>
+      <font size="-1"><big><code>vx<br>
+      </code></big></font>
+      </big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big>
+      <font size="-1"><big><code>H</code></big></font>
+      </big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big>
+      <font size="-1"><big><code>set x</code></big></font>
+      </big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>set x<br>
+
+      </code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code><br>
+
+      </code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code><br>
+
+      </code></big></font></big></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>2<br>
+
+      </code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>cv</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big>
+      <font size="-1"><big><code>A</code></big></font>
+      </big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>class x</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>class x<br>
+
+      </code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>set x<br>
+
+      </code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>'x' for 'x'<br>
+
+      </code></big></font></big></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>3<br>
+
+      </code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>word</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>A</code><br>
+      </big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big>
+      <font size="-1"><big><code>wff Ord A<br>
+      </code></big></font>
+      </big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>wff Ord x</code></big></font></big><big><font size="-1"><big><code></code></big></font></big><br>
+</td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>class A<br>
+
+      </code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>'x' for 'A'<br>
+
+      </code></big></font></big></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>4<br>
+
+      </code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>cA</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>H<br>
+
+      </code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big>
+      <font size="-1"><big><code>class A<br>
+      </code></big></font>
+      </big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>wff Ord x<br>
+class A<br>
+</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code><br>
+
+      </code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code><br>
+
+      </code></big></font></big></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>5<br>
+
+      </code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>word</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>A<br>
+
+      </code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>wff Ord A</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>wff Ord x<br>
+wff Ord A<br>
+</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>class A<br>
+
+      </code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>'A' for 'A'<br>
+
+      </code></big></font></big></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>6<br>
+
+      </code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>vx</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>H</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big>
+      <font size="-1"><big><code>set x<br>
+      </code></big></font>
+      </big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>
+      </code><code>wff Ord x<br>
+wff Ord A<br>
+set x<br>
+      </code><br>
+      <code>
+
+
+      </code></big></font>
+      
+      </big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code><br>
+
+      </code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code><br>
+
+      </code></big></font></big></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>7<br>
+
+      </code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>cA</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>H</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>class A</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big>
+      <font size="-1"><big><code>wff Ord x<br>
+wff Ord A<br>
+set x<br>
+class A<br>
+      </code></big></font>
+      </big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code><br>
+
+      </code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code><br>
+
+      </code></big></font></big></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>8<br>
+
+      </code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>con0</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>A<br>
+
+      </code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big>
+      <font size="-1"><big><code>class On<br>
+      </code></big></font>
+      </big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>wff Ord x<br>
+wff Ord A<br>
+set x<br>
+class A<br>
+class On<br>
+</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code><br>
+
+      </code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code><br>
+
+      </code></big></font></big></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>9<br>
+
+      </code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>cB</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>H<br>
+
+      </code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>class B<br>
+      </code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>wff Ord x<br>
+wff Ord A<br>
+set x<br>
+class A<br>
+class On<br>
+class B<br>
+</code></big></font></big>
+      <big><font size="-1"><big><code></code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code><br>
+
+      </code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code><br>
+
+      </code></big></font></big></td>
+    </tr><tr>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big>10</big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>vx</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><small>H</small><br>
+      </big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><small>set x</small><br>
+      </big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>wff Ord x<br>
+wff Ord A<br>
+set x<br>
+class A<br>
+class On<br>
+class B<br>
+set x<br>
+</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><br>
+      </big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><br>
+      </big></font></big></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big>11</big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>cv</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><small>A</small><br>
+      </big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><small>class x</small><br>
+      </big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>wff Ord x<br>
+wff Ord A<br>
+set x<br>
+class A<br>
+class On<br>
+class B<br>
+class x</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><small>set x</small><br>
+      </big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><small>'x' for 'x'</small><br>
+      </big></font></big></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big>12</big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>cA</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><small>H</small><br>
+      </big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>class A</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>wff Ord x<br>
+wff Ord A<br>
+set x<br>
+class A<br>
+class On<br>
+class B<br>
+class x<br>
+class A<br>
+</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><br>
+      </big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><br>
+      </big></font></big></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big>13</big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>ordeq</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><small>A</small><br>
+      </big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><small>|- ( A = B -&gt; <br>&nbsp;&nbsp;
+( Ord A &lt;-&gt; Ord B ) )</small><br>
+      </big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>wff Ord x<br>
+wff Ord A<br>
+set x<br>
+class A<br>
+class On<br>
+class B<br>
+</code></big></font></big><big><font size="-1"><big><small>|- ( x = A -&gt; <br>&nbsp; ( Ord x &lt;-&gt; Ord A ) )</small></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><small>class A<br>
+
+class B</small><br>
+      </big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><small>'x' for 'A'<br>
+'A' for 'B'</small><br>
+      </big></font></big></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big>14</big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>vx</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><small>H</small><br>
+      </big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><small>set x</small><br>
+      </big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>wff Ord x<br>
+wff Ord A<br>
+set x<br>
+class A<br>
+class On<br>
+class B<br>
+</code></big></font></big><big><font size="-1"><big><small>|- ( x = A -&gt; <br>&nbsp; ( Ord x &lt;-&gt; Ord A ) )<br>
+set x<br>
+</small></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><br>
+      </big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><br>
+      </big></font></big></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big>15</big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>df-on</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><small>A</small><br>
+      </big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><small>|- On = { x | Ord x }</small><br>
+      </big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>wff Ord x<br>
+wff Ord A<br>
+set x<br>
+class A<br>
+class On<br>
+class B<br>
+</code></big></font></big><big><font size="-1"><big><small>|- ( x = A -&gt; <br>&nbsp; ( Ord x &lt;-&gt; Ord A ) )<br>
+</small></big></font></big><big><font size="-1"><big><small>|- On = { x | Ord x }</small></big></font></big><br>
+</td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><small>set x</small><br>
+      </big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><small>'x' for 'x'</small><br>
+      </big></font></big></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big>16</big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><code>elab2g</code></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><small>A</small><br>
+      </big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><small>|- ( A e. C -&gt; <br>
+( A e. B &lt;-&gt; ps ) )</small><br>
+      </big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><small>|- ( A e. B -&gt; <br>
+( A e. On &lt;-&gt; Ord A ) )</small></big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><small>wff ph<br>
+wff ps<br>
+set x<br>
+
+class A<br>
+
+class B<br>
+
+class C<br>
+|- ( x = A -&gt;<br>
+&nbsp;( ph &lt;-&gt; ps ) )<br>
+|- B = { x | ph }</small>
+      
+      <br>
+      <br>
+      </big></font></big></td>
+      <td style="vertical-align: top; font-family: monospace;"><big><font size="-1"><big><small>'Ord x' for<br>
+&nbsp; &nbsp; &nbsp; &nbsp; 'ph'<br>
+'Ord A' for<br>
+&nbsp; &nbsp; &nbsp; &nbsp; 'ps'<br>
+'x' for 'x'<br>
+'A' for 'A'<br>
+'On' for 'B'<br>
+'B' for 'C'<br>
+      <br>
+      <br>
+      <br>
+      </small><br>
+      <br>
+      <br>
+      <br>
+<br>
+      </big></font></big></td>
+    </tr>
+
+  </tbody>
+</table>
+<br>
+<code>
+Voila! The contents of the Proof Work Stack after Step 16 match the $p expression! QED!!!</code><br>
+
+<pre style="font-weight: bold;">&nbsp; ${</pre>
+
+<pre style="font-weight: bold;">&nbsp;&nbsp;&nbsp; $d x A $.&nbsp; $( ` x ` is dummy. $)</pre>
+
+<pre style="font-weight: bold;">&nbsp;&nbsp;&nbsp; $( An ordinal number is an ordinal set. $)</pre>
+
+<pre style="font-weight: bold;">&nbsp;&nbsp;&nbsp; elong $p |- ( A e. B -&gt; ( A e. On &lt;-&gt; Ord A ) ) $=</pre>
+
+<pre style="font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vx cv word cA word vx cA con0 cB vx cv cA ordeq vx df-on elab2g $.</pre>
+
+<pre style="font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $( [5-Jun-94] $)</pre>
+
+<pre style="font-weight: bold;">&nbsp; $}</pre>
+
+<br>
+<br>
+</body></html>

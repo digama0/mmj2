@@ -1,0 +1,51 @@
+$( <MM> <PROOF_ASST> THEOREM=jao  LOC_AFTER=?
+
+* Disjunction of antecedents.  Compare Theorem *3.44 of
+  [WhiteheadRussell] p. 113.
+
+1::con3            |- (  ( ph -> ps )
+                      -> ( -. ps -> -. ph ) )
+2::pm3.43i         |- (  ( -. ps -> -. ph )
+                      -> (  ( -. ps -> -. ch )
+                         -> (  -. ps
+                            -> ( -. ph /\ -. ch ) ) ) )
+3::con1            |- (  (  -. ps
+                         -> ( -. ph /\ -. ch ) )
+                      -> (  -. ( -. ph /\ -. ch )
+                         -> ps ) )
+4:2,3:syl6         |- (  ( -. ps -> -. ph )
+                      -> (  ( -. ps -> -. ch )
+                         -> (  -. ( -. ph /\ -. ch )
+                            -> ps ) ) )
+5::oran            |- (   ( ph \/ ch )
+                      <-> -. ( -. ph /\ -. ch ) )
+6:4,5:syl7ib       |- (  ( -. ps -> -. ph )
+                      -> (  ( -. ps -> -. ch )
+                         -> ( ( ph \/ ch ) -> ps ) ) )
+7::con3            |- (  ( ch -> ps )
+                      -> ( -. ps -> -. ch ) )
+8:6,7:syl5         |- (  ( -. ps -> -. ph )
+                      -> (  ( ch -> ps )
+                         -> ( ( ph \/ ch ) -> ps ) ) )
+qed:1,?:mt3d        |- (  ( ph -> ps )
+                      -> (  ( ch -> ps )
+                         -> ( ( ph \/ ch ) -> ps ) ) )
+
+* Bug found 2006-10-30 -- patched ProofUnifier.java
+ **** I-UT-0015 Processing RunParmFile Command #123 = RunProofAsstGUI
+ I-PA-0412 Excluded these assertions from Unification search list as requested on
+  input RunParm: biigb, dummylink
+ Exception in thread "Thread-331" java.lang.NullPointerException
+         at mmj.pa.ProofUnifier.unifyAndMergeSubst(ProofUnifier.java:2197)
+         at mmj.pa.ProofUnifier.unifyDerivationStep(ProofUnifier.java:1602)
+         at mmj.pa.ProofUnifier.parallelStepUnificationMethod(ProofUnifier.java:1
+ 084)
+         at mmj.pa.ProofUnifier.unifyAllProofDerivationSteps(ProofUnifier.java:79
+ 1)
+         at mmj.pa.ProofAsst.unifyProofWorksheet(ProofAsst.java:1408)
+         at mmj.pa.ProofAsst.unify(ProofAsst.java:645)
+         at mmj.pa.ProofAsstGUI$RequestUnify.send(ProofAsstGUI.java:1967)
+         at mmj.pa.ProofAsstGUI$RequestThreadStuff$2.run(ProofAsstGUI.java:2260)
+         at java.lang.Thread.run(Unknown Source)
+
+$)

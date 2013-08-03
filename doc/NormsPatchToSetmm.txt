@@ -1,0 +1,51 @@
+Here is how set.mm should be patched.  I tried it and it worked.
+
+Now the only problem is commenting it so it's not totally confusing to
+someone trying to learn logic independent of set theory...
+
+Norm
+
+------------------------------------------------------
+
+Step 1:  Delete "$c class $."
+
+Steps 2a through 2d:  Delete statements cv, wceq, wcel, and wsbc.
+
+Going back to top of file, continue down:
+
+Step 3: Replace "weq $a wff x = y $." with this:
+
+   $c class $.
+   ${
+     $v A $.
+     $v B $.
+     wceq.cA $f class A $.
+     wceq.cB $f class B $.
+     cv $a class x $.
+     wceq $a wff A = B $.
+   $}
+   weq $p wff x = y $= vx cv vy cv wceq $.
+
+
+Step 4:  Replace "wel $a wff x e. y $." with this:
+
+   ${
+     $v A $.
+     $v B $.
+     wcel.cA $f class A $.
+     wcel.cB $f class B $.
+     wcel $a wff A e. B $.
+   $}
+   wel $p wff x e. y $= vx cv vy cv wcel $.
+
+
+Step 5:  Replace "wsb $a wff [ y / x ] ph $." with this:
+
+   ${
+     $v A $.
+     wsbc.cA $f class A $.
+     wsbc $a wff [ A / x ] ph $.
+   $}
+   wsb $p wff [ y / x ] ph $= wph vx vy cv wsbc $.
+
+

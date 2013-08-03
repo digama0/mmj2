@@ -1,0 +1,36 @@
+$( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
+*                                                          Page401.mmp
+ In this section we will go into some of the more interesting features
+ of the Proof Assistant, and also, talk about "proofs" in mmj2 and
+ Metamath. Press Ctrl-U now to Unify the proof.
+
+h1::reiteration.1  |- ph
+qed:?:             |- ph
+
+*OK, after Ctrl-U the following "info" message appears: "I-PA-0111 
+ Theorem reiteration Unification process not started: number of 
+ derivation proof steps ready for unification = 0."
+
+ The reason for the message is that the Proof Worksheet only has one
+ Derivation Step (the "qed" step), and that step has status = 
+ "Incomplete Hyps". That means that the step's Step:Hyp:Ref field
+ has a "?" in the Hyp field and a blank Ref field. And, assuming that
+ the step has no errors, it is regarded as merely "incomplete" and 
+ unification is not attempted. However...KEY POINT TO REMEMBER:
+
+     A Derivation Step is allowed to use a step with status = 
+     "Incomplete Hyps" as one of its Hyps, and the referring step can
+     be Unified.
+
+ That is a very important fact because it allows a proof to be completed
+ from the Bottom Up. You can create an "Incomplete Hyps" step for use 
+ as an hypothesis to derive a subsequent step. Then, you can work on
+ figuring out how to derive the step with "Incomplete Hyps". 
+
+ The mmj2 Proof Assistant enables work on a proof to proceed Top Down,
+ Bottom Up, and any combination thereof. Nice...
+
+*OK, forward to the next Tutorial page (Page402.mmp)!
+
+$) 
+

@@ -1,0 +1,726 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta content="text/html; charset=ISO-8859-1" http-equiv="content-type"><title>MetamathERNotes</title></head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);" alink="#000088" link="#0000ff" vlink="#ff0000">
+<big style="font-style: italic; font-weight: bold;"><big>Nomenclature Notes: <small><small>(this primarly covers mmj.lang and does not delve into mmj.verify)</small></small></big></big><br>
+<table style="text-align: left; font-family: monospace;" border="1" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><big><span style="font-weight: bold;">MMJ Name<br>
+      </span><span style="font-weight: bold;">(Abbreviation<br>
+      </span><span style="font-weight: bold;">Usage)</span></big><br>
+      </td>
+      <td style="vertical-align: top;"><big><span style="font-weight: bold;">MetaMath.pdf Name/Standard</span><br style="font-weight: bold;">
+      <span style="font-weight: bold;">Usage</span></big>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">MObj<br>
+      </td>
+      <td style="vertical-align: top;">Math Object, parent class of Sym
+and Stmt. Created only because in a few places unrelated to the "core"
+lang processing, it is convenient to be able to hold an array or
+collection containing a mixture of Sym's and Stmt's. The database
+sequence numbe, "seq" is now stored in MObj. In theory, new objects
+that might be added later to enable persistent storage of the
+LogicalSystem object might be added as sub-classes of MObj (example,
+Scope, for one.)</td>
+    </tr>
+<tr>
+      <td style="vertical-align: top;">Sym<br>
+      </td>
+      <td style="vertical-align: top;">Math Symbol<br>
+
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">Cnst<br>
+      </td>
+      <td style="vertical-align: top;">Constant (aka $c)<br>
+(Note: "const" is a Java keyword and "con" is a device name.)<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">Var<br>
+      </td>
+      <td style="vertical-align: top;">Variable (aka $v)<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">varHypArray<br>
+      </td>
+      <td style="vertical-align: top;">Internally
+computed, provides
+the unique variable hypotheses referenced in&nbsp; an assertion's
+expression (it is a processing byproduct that is saved for later use.)
+The variable hypotheses are stored in the array in order of their
+appearance in the database -- i.e., by seq.<br>
+<br>
+Example: ax-1 expression<br>
+"( ph -&gt; ( ps -&gt; ph ) )" has 2 unique variable hypotheses, named,&nbsp; "wph" and&nbsp; "wps" in set.mm. 
+      </td>
+    </tr>
+<tr>
+      <td style="vertical-align: top;">Expr<br>
+      </td>
+      <td style="vertical-align: top;">Expression. Refers to the 2nd through "n"th Sym's in a Formula. May be of zero length itself.<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">ExprRPN<br>
+      </td>
+      <td style="vertical-align: top;">Reverse Polish Notation version
+of expression, if it exists (it is assumed in MMJ that identification
+of "syntax constructors" such as "wi" and "wn" axiomatic assertions
+will enable automatic conversion of Expr's to ExprRPN's.) These RPN
+versions are further differentiated by content: they refer only to
+labels! For example, theorem "id" would be expressed in RPN as "wph wph
+wi"; this embeds variable type information in the expression and avoids
+namespace ambiguity (Cnst/Var's are not guaranteed to be different than
+labels.)<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">Formula<br>
+      </td>
+      <td style="vertical-align: top;">The Metamath "statement"
+consisting of 1 Cnst Sym followed by 0 to m Cnst or Var Sym's. Defined
+as an array of 0 to n Sym's, the Cnst at the beginning is referred to
+as the Typ (type) of the statement. This class is outside of the
+MObj-&gt;Sym/Stmt hierarchy and is stored as an attribute of Stmt. The
+intent in separating the Formula into its own class was to facilitate
+processing of formulas and expressions that are not part of a Stmt (for
+example in proof verification -- see mmj.verify.)<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">LogicFormula<br>
+      </td>
+      <td style="vertical-align: top;">LogicFormula is an attribute of
+both LogHyp (Logical Hypothesis) and Assrt (Assertion). It is differentiated
+from VarHypFormula because, although every Metamath statement can be
+treated as a "Formula", VarHyp formulas consist of exact 1 Cnst Sym
+followed by 1 Var Sym, and thus, the handling is different in a few
+places; the other problem faced was that LogHyp is a sub-class of Hyp but
+contains a LogicFormula, and Assrt also contains a LogHyp.<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">VarHypFormula<br>
+      </td>
+      <td style="vertical-align: top;">Variable Hypothesis Formula. See LogicFormula.<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">Syn<br>
+      </td>
+      <td style="vertical-align: top;">Syntax, normally used in reference to Syntax Axioms and/or VerifySyntax.<br>
+      </td>
+    </tr>
+<tr>
+      <td style="vertical-align: top;">Vhe<br>
+      </td>
+      <td style="vertical-align: top;">Variable-Hypothesized
+Expression. This is a quirky, experimental thing derived from an
+Expression: each Var in the Sym[] array is replaced by the
+corresponding VarHyp for the Var in that specific Expression; the
+VarHyp is *then* expanded into its component Type (a Cnst) and Var. The
+Vhe and variations are used in Syntax Verification processing for
+pattern matching. There are several variations for printing, sorting
+and verifying. The quirkiest one of all is the MObjVhe[] which contains
+a mixture of Cnst's and VarHyp's (the VarHyp's are not expanded.) Also
+very quirky is the SynVhe, which stands for Syntax Axiom Vhe --&nbsp;
+in this variation the Var is
+replaced with null (the reason being that for insertion into the
+SynTree the variable name is irrelevant -- as it is in all Syntax
+Axioms, except to establish sequence of the hypothesis in
+VerifyProof. All in all, an ugly business...<br>
+      </td>
+    </tr>
+<tr>
+      <td style="vertical-align: top;">Typ<br>
+      </td>
+      <td style="vertical-align: top;">= 1st Constant in Metamath $e, $f, $a and $p statements (i.e. statement "type code"). The first entry in the Formula Sym array.<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">Opt<br>
+      </td>
+      <td style="vertical-align: top;">Optional (note that names of
+sets/lists of&nbsp; variables and/or disjoint variable hypotheses,
+unless the name is prefixed with "Opt" it refers to Mandatory
+Variables, as in Mandatory Variable Type Hypotheses.)<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">Stmt<br>
+      </td>
+      <td style="vertical-align: top;">Statement<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">DjVars<br>
+      </td>
+      <td style="vertical-align: top;">Disjoint Variable Restriction
+(aka $d, note that in Frames, unless prefixed with "Opt", refers to a
+Mandatory Variable Disjoint Variable Restriction)<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">Hyp<br>
+      </td>
+      <td style="vertical-align: top;">Hypothesis<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">VarHyp<br>
+      </td>
+      <td style="vertical-align: top;">Variable Type Hypothesis (aka
+$f, note that in Frames, unless prefixed with "Opt", refers to
+Mandatory Variable Variable Type Hypothesis)<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">LogHyp<br>
+      </td>
+      <td style="vertical-align: top;">Essential (aka $e aka "Logical") Hypothesis<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">Assrt<br>
+      </td>
+      <td style="vertical-align: top;">Assertion<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">Axiom<br>
+      </td>
+      <td style="vertical-align: top;">Axiomatic Assertion (aka $a)<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">Theorem<br>
+      </td>
+      <td style="vertical-align: top;">Provable Assertion (aka $p)<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">MandFrame<br>
+      </td>
+      <td style="vertical-align: top;">Mandatory
+Frame -- attribute of every Assrt, both Axiom and Theorem. Contains the
+"mandatory" hypotheses and disjoint variable restrictions of the
+assertion. "Mandatory" refers to variables and hypotheses used in the
+assertion's own statement and logical hypotheses' statements (see
+OptFrame).<br>
+      </td>
+    </tr><tr>
+      <td style="vertical-align: top;">OptFrame<br>
+      </td>
+      <td style="vertical-align: top;">Optional Frame -- only Theorems
+have OptFrames. Whereas Axioms have only a MandFrame, Theorems have
+both MandFrame and OptFrame. OptFrame contains variable hypotheses and
+disjoint variable restrictions needed for assertions referenced in the
+Theorem's proof. <br>
+      </td>
+    </tr>
+
+  </tbody>
+</table>
+<br>
+<br>
+<br>
+<br>
+<big style="font-weight: bold; font-style: italic;"><big>Other Notes About "ER" Table Below:</big></big><br>
+<p><big><big>1</big></big>. In the 3rd column, "Abstract/NA", "NA"
+means the item is not actually coded as a separate Java class but is
+provided in the table as a logical entity; "Y" means that the
+Class is an abstract "super" class that cannot be instantiated (turned
+into a
+real "object" by itself), but its properties and attributes are
+inherited by its sub-classes. <br>
+</p>
+<p>For example, "Assrt" is Abstract Class whose non-abstract
+sub-classes are AxiomaticAssrt and ProvableAssrt; an assertion must be
+either an axiomatic assertion or a provable assertion, but both types
+of assertion share common properties and attributes.<br>
+</p>
+<p><big><big><span style="font-weight: bold;">2</span></big></big>. The
+4th column, "Unique Key Attributes" identifies which, if any,
+components of the Class comprise a unique key, whether for sorting or
+for duplicate checking. <br>
+</p>
+<p>For lack of a better name, "Id" is used in several places as a key;
+it is the character string that was used in the MetaMath.mm file to
+define the entry. For example, the value of&nbsp; Id for the so-called
+"turnstile" symbol is "<span style="font-family: monospace;">|-</span>". <br>
+</p><br>
+<table style="font-family: monospace;" border="1" cellpadding="2" cellspacing="2">
+
+<tbody><tr>
+      <td style="vertical-align: top;"><big><span style="font-weight: bold;">MMJ Entity:Java Name (note: the *list names may not be coded as actual classes)
+</span></big></td>
+      <td style="vertical-align: top;"><big><span style="font-weight: bold;">Relationships:<br>
+      <br>
+"ISA" means Sub-Class Of<br>
+      <br>
+"HAS" means contains<br>
+      <br>
+"0-n" means Zero to "n" occurrences.<br>
+</span></big>
+      </td>
+      <td style="vertical-align: top; font-weight: bold;"><big>A<br>
+b<br>
+s<br>
+t<br>
+r<br>
+a<br>
+c<br>
+t<br>
+/<br>
+NA<br>
+</big></td>
+      <td style="vertical-align: top;"><big><span style="font-weight: bold;">Unique<br>
+Key<br>
+A<br>
+t<br>
+t<br>
+r<br>
+i<br>
+b<br>
+      <br>
+      <br>
+______________<br>
+</span></big></td>
+      <td style="vertical-align: top;"><big><span style="font-weight: bold;">Nonkey<br>
+A<br>
+t<br>
+t<br>
+r<br>
+i<br>
+b<br>
+      <br>
+      <br>
+      <br>
+_______________________<br>
+</span></big></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">MObj<br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">Y<br>
+      </td>
+      <td style="vertical-align: top;">int seq<br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+<tr><td>Sym</td><td style="vertical-align: top;">ISA MObj<br>
+      </td>
+      <td style="vertical-align: top;">Y<br>
+      </td>
+      <td style="vertical-align: top;">String id<br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+</tr>
+<tr><td>Cnst</td><td style="vertical-align: top;">ISA Sym<br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">boolean&nbsp;&nbsp; isVarTyp<br>etc. (lots of stuff, including items created by and used by mmj.verify.Grammar.java)<br>
+      </td>
+</tr>
+<tr><td>Var</td><td style="vertical-align: top;">ISA Sym<br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">boolean&nbsp;&nbsp; active<br>
+VarHyp &nbsp;&nbsp; activeVarHyp<br>
+      </td>
+</tr>
+    
+
+    
+
+    
+<tr><td>Label<br>
+</td><td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">NA<br>
+      </td>
+      <td style="vertical-align: top;">String label<br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+</tr>
+    <tr>
+      <td style="vertical-align: top;">Expr <br>
+      </td>
+      <td style="vertical-align: top;">HAS 0-M Sym<br>
+      </td>
+      <td style="vertical-align: top;">NA<br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">sym[1]-&gt;[n] of Formula<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">ExprRPN
+      </td>
+      <td style="vertical-align: top;">HAS 0-M Stmt (references)<br>
+      </td>
+      <td style="vertical-align: top;">NA<br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">Stmt[]&nbsp;&nbsp;&nbsp; exprRPN
+      </td>
+    </tr>
+<tr>
+<td style="vertical-align: top;">UnknownLabel (= "?")<br>
+</td>
+<td style="vertical-align: top;">ISA Label<br>
+</td>
+<td style="vertical-align: top;">NA<br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;">(converted to null<br>
+in proof table)<br>
+</td></tr>
+    
+<tr>
+      <td style="vertical-align: top;">Typ
+      </td>
+      <td style="vertical-align: top;">HAS 1 Cnst<br>
+      </td>
+      <td style="vertical-align: top;">NA<br>
+      </td>
+      <td style="vertical-align: top;">sym[0]<br>
+      </td>
+      <td style="vertical-align: top;">sym[0] of Formula<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">Formula<br>
+      </td>
+      <td style="vertical-align: top;">HAS 1 Typ<br>
+HAS 1 Expr<br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cnt<br>
+Sym[]&nbsp;&nbsp;&nbsp;&nbsp; sym<br>
+      </td>
+    </tr>
+<tr>
+      <td style="vertical-align: top;">VarTyp
+      </td>
+      <td style="vertical-align: top;">ISA Typ<br>
+      </td>
+      <td style="vertical-align: top;">NA<br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">ExprTyp
+      </td>
+      <td style="vertical-align: top;">ISA Typ<br>
+      </td>
+      <td style="vertical-align: top;">NA<br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    
+<tr>
+<td style="vertical-align: top;">ProofStep<br>
+
+
+
+</td>
+<td style="vertical-align: top;">HAS 0-1 Label<br>
+HAS 0-1 UnknownLabel<br>
+</td>
+<td style="vertical-align: top;">NA<br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td></tr>
+    
+    <tr>
+<td>Proof</td><td style="vertical-align: top;">HAS 1-M ProofStep<br>
+</td>
+<td style="vertical-align: top;">NA<br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;">Stmt[]<br>
+</td></tr>
+
+
+
+
+
+
+
+
+
+    
+<tr><td>DjVars</td><td style="vertical-align: top;">HAS 2 Var<br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">Var varLo<br>Var varHi
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+</tr>
+    
+    <tr>
+<td>Stmt</td><td style="vertical-align: top;">ISA MObj<br>
+HAS 1 Label<br>
+HAS 1 Formula<br>
+HAS 1 ExprRPN<br>
+      </td><td style="vertical-align: top;">Y<br>
+      </td><td style="vertical-align: top;">String label<br>
+      </td><td style="vertical-align: top;">Formula&nbsp;&nbsp; formula<br>
+Stmt[]&nbsp;&nbsp;&nbsp; exprRPN<br>
+
+      </td></tr>
+    <tr>
+<td>Hyp</td><td style="vertical-align: top;">ISA Stmt<br>
+      </td><td style="vertical-align: top;">Y<br>
+      </td><td style="vertical-align: top;"><br>
+      </td><td style="vertical-align: top;">boolean&nbsp;&nbsp; isActive<br>
+      </td></tr>
+    <tr>
+<td>VarHyp</td><td style="vertical-align: top;">ISA Hyp<br>
+HAS 1 Var<br>
+      </td><td style="vertical-align: top;"><br>
+      </td><td style="vertical-align: top;"><br>
+      </td><td style="vertical-align: top;">Var var<br>
+      </td></tr>
+    <tr>
+<td>LogHyp</td><td style="vertical-align: top;">ISA Hyp<br>
+HAS 1 Expr<br>
+HAS 1 ExprRPN
+      </td><td style="vertical-align: top;"><br>
+      </td><td style="vertical-align: top;"><br>
+      </td><td style="vertical-align: top;">Sym[]&nbsp;&nbsp; &nbsp; expr<br>
+Stmt[]&nbsp; &nbsp; exprRPN<br>
+VarHyp[]&nbsp; varHypArray<br>
+      </td></tr>
+    <tr>
+<td>Assrt</td><td style="vertical-align: top;">ISA Stmt<br>
+HAS 1 Expr<br>
+HAS 1 ExprRPN<br>
+HAS 1 MandFrame<br>
+      </td><td style="vertical-align: top;">Y<br>
+      </td><td style="vertical-align: top;"><br>
+      </td><td style="vertical-align: top;">Sym[]&nbsp; &nbsp;&nbsp; expr<br>Stmt[]&nbsp;&nbsp;&nbsp; exprRPN<br>
+VarHyp[]&nbsp; varHypArray<br>MandFrame mandFrame<br>
+      </td></tr>
+    <tr>
+<td>Axiom</td><td style="vertical-align: top;">ISA Assrt<br>
+      </td><td style="vertical-align: top;"><br>
+      </td><td style="vertical-align: top;"><br>
+      </td><td style="vertical-align: top;"><br>
+      </td></tr>
+    
+<tr>
+<td>Theorem<br>
+</td><td style="vertical-align: top;">ISA Assrt<br>
+HAS 1 Proof<br>
+HAS 1 OptFrame<br>
+      </td><td style="vertical-align: top;"><br>
+      </td><td style="vertical-align: top;"><br>
+      </td><td style="vertical-align: top;">Stmt[]&nbsp; &nbsp; proof<br>OptFrame&nbsp; optFrame<br>
+      </td></tr>
+    
+    
+    <tr>
+      <td style="vertical-align: top;">DjVarsArray
+      </td>
+      <td style="vertical-align: top;">HAS 0-M DjVars<br>
+      </td>
+      <td style="vertical-align: top;">NA<br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">DjVars[]&nbsp; djVars<br>
+      </td>
+    </tr>
+    
+    <tr>
+<td style="vertical-align: top;">OptDjVarsArray
+</td>
+<td style="vertical-align: top;">HAS 0-M DjVars<br>
+</td>
+<td style="vertical-align: top;">NA<br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;">DjVars[]&nbsp; optDjVars<br>
+</td></tr>
+
+    
+    
+
+    <tr>
+      <td style="vertical-align: top;">HypArray&nbsp;
+      </td>
+      <td style="vertical-align: top;">HAS 0-M Hyp<br>
+      </td>
+      <td style="vertical-align: top;">NA<br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">Hyp[]&nbsp;&nbsp; &nbsp; hypArray<br>
+      </td>
+    </tr>
+    
+    <tr>
+<td style="vertical-align: top;">OptHypList
+      </td><td style="vertical-align: top;">HAS 0-M Hyp<br>
+      </td><td style="vertical-align: top;">NA<br>
+      </td><td style="vertical-align: top;"><br>
+      </td><td style="vertical-align: top;">Hyp[]&nbsp;&nbsp; &nbsp; optHypArray<br>
+      </td></tr>
+    
+
+    
+
+    
+<tr><td>MandFrame</td><td style="vertical-align: top;">HAS 1 HypArray<br>HAS 1 DjVarsArray
+<br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">Hyp[]&nbsp;&nbsp; &nbsp; hypArray<br>DjVars[]&nbsp; djVarsArray<br>
+</td></tr><tr>
+<td>OptFrame</td><td style="vertical-align: top;">HAS 1 OptHypArray<br>
+HAS 1 OptDjVarsArray<br>
+<br>
+      </td><td style="vertical-align: top;"><br>
+      </td><td style="vertical-align: top;"><br>
+      </td><td style="vertical-align: top;">Hyp[]&nbsp;&nbsp;&nbsp;&nbsp; optHypArray<br>DjVars[]&nbsp; optDjVarsArray
+      </td></tr>
+<tr>
+      <td style="vertical-align: top;">===================<br>(OTHER) CONTENTS OF "LogicalSystem.java" follow:<br>
+===================<br>
+      </td>
+      <td style="vertical-align: top;">======================<br>
+      <br>
+      <br>
+<br>
+======================<br>
+      </td>
+      <td style="vertical-align: top;">===<br>
+      <br>
+      <br>
+<br>
+===<br>
+      </td>
+      <td style="vertical-align: top;">===========<br>
+      <br>
+      <br>
+<br>
+===========<br>
+      </td>
+      <td style="vertical-align: top;">========================<br>
+Notes?<br>
+      <br>
+<br>
+========================<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">ScopeDef<br>
+      </td>
+      <td style="vertical-align: top;">HAS ArrayList Var<br>
+HAS ArrayList VarHyp<br>
+HAS ArrayList LogHyp<br>
+HAS ArrayList DjVars<br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">"active" statements in current scope<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">scopeDefList<br>
+      </td>
+      <td style="vertical-align: top;">HAS ArrayList ScopeDef<br>
+      </td>
+      <td style="vertical-align: top;">NA<br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">ScopeDef definitions at a scope level (global scope = 0, followed by 1, 2, ...)<br>
+      </td>
+    </tr>
+<tr>
+      <td style="vertical-align: top;">symTbl<br>
+      </td>
+      <td style="vertical-align: top;">HAS Map<br>
+      </td>
+      <td style="vertical-align: top;">NA<br>
+      </td>
+      <td style="vertical-align: top;">String Sym.id<br>
+      </td>
+      <td style="vertical-align: top;">Map symTbl<br>
+(mandatory table: <br>
+keep unused symbols<br>
+from garbage coll.)<br>
+      </td>
+    </tr>
+    
+    
+    
+<tr>
+      <td style="vertical-align: top;">stmtTbl<br>
+      </td>
+      <td style="vertical-align: top;">HAS Map<br>
+      </td>
+      <td style="vertical-align: top;">NA<br>
+      </td>
+      <td style="vertical-align: top;">String Stmt.label<br>
+      </td>
+      <td style="vertical-align: top;">Map&nbsp;&nbsp;&nbsp;&nbsp; stmtTbl<br>
+      </td>
+    </tr>
+    
+    
+    
+    
+
+
+
+    
+    
+
+
+</tbody>
+</table>
+<pre><br><br></pre>
+</body></html>

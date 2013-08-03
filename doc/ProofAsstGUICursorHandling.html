@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>ProofAsstGUICursorHandling</title>
+</head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
+ alink="#000088" link="#0000ff" vlink="#ff0000">
+<big><big><span style="font-weight: bold;">Proof Assistant GUI: Cursor
+Handling<br>
+<br>
+</span></big></big>
+<hr style="width: 100%; height: 2px;"><big><span
+ style="font-weight: bold;"><br>
+<big style="text-decoration: underline;">Purpose:</big></span><span
+ style="font-weight: bold;"></span></big><br>
+<br>
+To position the Proof Assistant GUI input "caret" and set the
+window's vertical scroll position in the way that is most helpful for
+the
+user.<br>
+<br>
+<big><span style="font-weight: bold;"><big
+ style="text-decoration: underline;"></big></span></big>
+<hr style="width: 100%; height: 2px;"><br>
+<span style="font-weight: bold;"><big
+ style="text-decoration: underline;"><big>Background Items: </big></big><br>
+<br>
+The mmj2 Proof Assistant must control both the GUI screen window caret
+and view settings:<br>
+</span>
+<ul>
+  <li>In Java the term "cursor" refers to the mouse pointer icon. <br>
+  </li>
+  <li>The term "caret" refers to the location where keyboard input
+will be inserted into the window text. Typically, when the user clicks
+the left mouse button on the Proof Assistant GUI text area, the caret's
+position is set to the current position of the mouse cursor.</li>
+  <li>The GUI's window has "scroll bars" that are used to move the
+displayed "view" of a proof up or down. The Proof Assistant GUI program
+must ensure that the contents of the window are scrolled so that the
+caret's location is visible -- if the caret's position is set by the
+program to a particular step of a proof corresponding to, say, the
+first error message, then that that step's location must be within the
+displayed view on the screen. <br>
+  </li>
+</ul>
+<br>
+<hr style="width: 100%; height: 2px;"><big
+ style="text-decoration: underline;"><big><span
+ style="font-weight: bold;">Processing Rules:</span></big></big><br>
+<br>
+<ol>
+  <li>When initially displaying a Proof Worksheet file following
+a File/Open, File/Get Proof, File/Forward Get Proof or Backward Get
+Proof -- before any editing -- position the caret to line 1 in the
+first column of the "Theorem=" entry field,&nbsp;
+and scroll the window to ensure that line 1, column 1 is visible.</li>
+  <li>When initially displaying a new proof (File/New), position the
+caret to Ref sub-field of the 'qed' Derivation step, and scroll the
+window to ensure that column 1 of that line is guaranteed to be visible.</li>
+  <li>In general -- if possible -- the caret should be positioned to
+the first character
+of the first field in error on the screen, and the corresponding error
+message should be the first message appearing in the Messages window.
+Scroll the window so that Column 1 of the line containing the error is
+guaranteed to be visible.<br>
+  </li>
+  <li>After a Reformat operation, position the caret at the Ref field
+of the first
+line
+of the proof step statement at which the
+user had positioned the caret when invoking the operation; position to
+column 1 of proof statements not containing a Ref field (Header,
+Trailer, Comment, etc.). Scroll the
+window so that column 1 of the first line of the proof statement where
+the caret is positioned is guaranteed to be visible.</li>
+  <li>After File/Save, File/Save As, Edit/Copy, Edit/Cut, Edit/Paste or
+Help, do not adjust the caret or scroll positions.<br>
+  </li>
+  <li>After Unification, if
+there are no errors position the caret according to the
+"IncompleteStepCursor" Edit Menu option (set via the
+"ProofAsstIncompleteStepCursor" RunParm.) "AsIs" means put the output
+cursor on the proof step where the input cursor was located when
+unification was requested. "Last" and "First" mean position the cursor
+to the last, or first, respectively, incomplete proof step, if one
+exists; otherwise, set it to the 'qed' step. The "Ref" field is the
+standard location within a proof step. Scroll the window so that
+column 1 of the step containing the caret is guaranteed to be visible.</li>
+</ol>
+<br>
+<span style="font-weight: bold;"></span>
+</body>
+</html>

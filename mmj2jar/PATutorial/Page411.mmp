@@ -1,0 +1,31 @@
+$( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
+*                                                          Page411.mmp
+* This is what (should have) appeared on the Proof Assistant GUI
+  after you double-clicked the "id" line on the Step Selector Dialog, 
+  as instructed by Page410.mmp:
+
+h1::reiteration.1    |- ph
+1001:?:            |- ph
+2001::id           |- ( ph -> ph )
+qed:1001,2001:ax-mp  |- ph
+
+* As you can see, this proof is almost complete! All we need to do is
+  change the 'qed' Hyp from "1001,2001" to "1,2001" and then press
+  Ctrl-U. Try it, then press Ctrl-Z twice to Edit/Undo the
+  unification.
+
+* ...Or...there is a short-cut. Instead of manually updating the 'qed'
+  step Hyp, just update the step 1001 Ref field like this:
+
+      "1001:?:#1"
+
+  Then press Ctrl-U. That invokes the "LocalRef" feature, and says
+  that step 1001 and every reference to it should be replaced by step
+  1. There is documentation about it in the tutorial in
+  PageLocalRef.mmp.
+
+* Ok, keep going just a bit further to the next page of the Tutorial
+  (Page412.mmp) now...
+ 
+$) 
+

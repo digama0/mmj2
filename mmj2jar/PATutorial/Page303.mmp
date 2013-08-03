@@ -1,0 +1,28 @@
+$( <MM> <PROOF_ASST> THEOREM=sylClone  LOC_AFTER=a2i
+*                                                          Page303.mmp
+ Press Ctrl-U now to Unify the proof.
+
+h1000              |- ( ph -> ps )
+h200               |- ( ps -> ch )
+h30                |- ( ch -> th ) 
+3:200              |- ( ph -> ( ps -> ch ) )
+4:3                |- ( ( ph -> ps ) -> ( ph -> ch ) )
+qed:1000,4         |- ( ph -> ch )
+
+*There are two IMPORTANT things to NOTICE in the proof steps above:
+     - Hypothesis Step 30 is redundant. It serves no purpose except
+       to make the point: mmj2 and Metamath do not warn the user
+       about unused Logical Hypotheses in proofs!
+     - Hypothesis Steps NEVER have Hyp's of their own. That is, the
+       Hyp portion of the Step:Hyp:Ref field is always null.
+     - And remember, no blanks inside the Step:Hyp:Ref fields! That
+       will generate an error message.
+
+ Now, as an experiment erase the "a2i" in the Header LOC_AFTER field.
+ Then change the "qed" step's Hyp to "200,1000" and erase the "ax-mp"
+ in the Ref field. Then press Ctrl-U to see what happens...
+ 
+ OK, forward to the next Tutorial page (Page304.mmp)!
+
+$) 
+

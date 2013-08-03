@@ -1,0 +1,36 @@
+OutputVerbosity,99
+*LoadFile,C:\metamath\set.mm
+LoadFile,mm\setFirst100.mm
+VerifyProof,*
+Parse,*
+ProofAsstUnifySearchExclude,biigb,xxxid,dummylink,id1
+GMFFExportParms,althtml,ON,althtmldef,gmfftest\althtml,.html,gmfftest\models\althtml,A,ISO-8859-1,general
+GMFFExportParms,html,ON,htmldef,gmfftest\html,.html,gmfftest\models\html,A,ISO-8859-1,general
+GMFFInitialize
+GMFFExportParms,althtml,ON,althtmldef,gmfftest\althtml,.html,gmfftest\models\althtml,A,ISO-8859-1,general
+GMFFExportParms,html,ON,htmldef,gmfftest\html,.html,gmfftest\models\html,A,ISO-8859-1,general
+GMFFInitialize
+GMFFExportParms,althtml,OFF,althtmldef,gmfftest\althtml,.html,gmfftest\models\althtml,A,ISO-8859-1,general
+GMFFExportParms,html,OFF,htmldef,gmfftest\html,.html,gmfftest\models\html,A,ISO-8859-1,general
+GMFFInitialize
+GMFFExportParms,althtml,ON,althtmldef,gmfftest\althtml,.html,gmfftest\models\althtml,A,ISO-8859-1,general
+GMFFExportParms,html,OFF,htmldef,gmfftest\html,.html,gmfftest\models\html,A,ISO-8859-1,general
+GMFFInitialize
+GMFFExportParms,althtml,OFF,althtmldef,gmfftest\althtml,.html,gmfftest\models\althtml,A,ISO-8859-1,general
+GMFFExportParms,html,ON,htmldef,gmfftest\html,.html,gmfftest\models\html,A,ISO-8859-1,general
+GMFFInitialize
+GMFFExportParms,html,ON,htmldef,gmfftest\html,.html,gmfftest\models\html,A,ISO-8859-1,general
+GMFFExportParms,althtml,ON,althtmldef,gmfftest\althtml,.html,gmfftest\models\althtml,A,ISO-8859-1,general
+GMFFUserExportChoice,html
+GMFFInitialize
+GMFFUserExportChoice,althtml
+GMFFInitialize 
+*GMFFUserExportChoice,xalthtml
+GMFFExportParms,html,ONX,htm ldef,Xgmfftest\html,.h tml,Xgmfftest\models\html,XA,XISO-8859-1,Xgeneral
+GMFFExportParms,althtml,ON,,,FILETYPE.,,,,
+GMFFExportParms,MYhtml, , , , , , , , ,  
+GMFFExportParms,MYhtml2,,,,,,,,,,,,,,
+GMFFInitialize 
+RunProofAsstGUI
+ 
+

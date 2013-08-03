@@ -1,0 +1,11 @@
+$( <MM> <PROOF_ASST> THEOREM=syllogism LOC_AFTER=
+
+h1::syllogism.1 |- ( ph -> ps ) 
+h2::syllogism.2 |- ( ps -> ch ) 
+3:2:a1i        |- ( ph -> ( ps -> ch ) ) 
+4:3:a2i        |- ( ( ph -> ps ) -> ( ph -> ch ) ) 
+qed:1,4:ax-mp  |- ( ph -> ch ) 
+
+$=  wph wps wi wph wch wi syllogism.1 wph wps wch wps wch wi wph syllogism.2 
+    a1i a2i ax-mp $. 
+$)

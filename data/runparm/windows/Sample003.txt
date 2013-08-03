@@ -1,0 +1,13 @@
+SystemOutputFile,result\Sample003Sysout20111101y.txt,new,""
+ *==================================================
+ * Sample003.txt do EarleyParserExample.mm:
+ *==================================================
+MaxStatementPrintCount,99999
+LoadFile,mm\EarleyParserExample.mm
+VerifyProof,*
+Parse,*
+VerifyParse,*
+PrintSyntaxDetails
+PrintStatementDetails,*
+ */
+

@@ -1,0 +1,50 @@
+    New Folders in mmj2jar used by GMFF
+    ===================================
+
+
+      _ GMFF
+ 
+        _ Graphics Mode Formula Formatting folder
+       
+      _ GMFF\althtml
+
+        _ Output folder for GMFF export type "althtml"
+          (Unicode typesetting).
+
+
+        _ Contains local copy of .gif files from Norm's
+          Symbols.zip download. User must periodially
+          download and refresh updated symbol files 
+          (whenever Norm updates Symbols.zip.)
+
+      _ GMFF\models\althtml
+
+        _ Contains fragments of html files used to 
+          render a Proof Worksheet html page of type
+          "althtml".
+
+        _ Purpose is to eliminate hard-coding of html
+          in program and to minimize the need for coding
+          changes.
+
+        _ Model Id (e.g. "A") prefixed to each file name
+          in a model. (Initially, only Model A is used.)
+
+      _ GMFF\html
+
+        _ Output folder for GMFF export type "html"
+          (.gif typesetting).
+
+      _ GMFF\models\html 
+
+        _ Contains fragments of html files used to 
+          render a Proof Worksheet html page of type
+          "html".
+
+        _ Purpose is to eliminate hard-coding of html
+          in program and to minimize the need for coding
+          changes.
+
+        _ Model Id (e.g. "A") prefixed to each file name
+          in a model. (Initially, only Model A is used.)
+        

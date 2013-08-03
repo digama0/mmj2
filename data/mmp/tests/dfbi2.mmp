@@ -1,0 +1,13 @@
+$( <MM> <PROOF_ASST> THEOREM=dfbi2  LOC_AFTER=?
+
+* A theorem similar to the standard definition of the biconditional.
+  Definition of [Margaris] p. 49.
+
+1::                |- (   ( ph <-> ps )
+                      <-> -. ( ( ph -> ps ) -> -. ( ps -> ph ) ) )
+2::                |- (   ( ( ph -> ps ) /\ ( ps -> ph ) )
+                      <-> -. ( ( ph -> ps ) -> -. ( ps -> ph ) ) )
+qed:1,2:           |- ( ( ph <-> ps ) <-> ( ( ph -> ps ) /\ ( ps -> ph ) ) )
+
+$)
+

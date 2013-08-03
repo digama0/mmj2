@@ -1,0 +1,1 @@
+-classpath c:\mmj2\classes -d c:\mmj2\doc -sourcepath c:\mmj2\src

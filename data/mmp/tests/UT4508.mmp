@@ -1,0 +1,72 @@
+$( <MM> <PROOF_ASST> THEOREM=inf3lem1  LOC_AFTER=?
+
+* Lemma for our Axiom of Infinity => standard Axiom of Infinity.  See
+  ~ inf3 for detailed description.
+
+h1::inf3lem.1      |-   G
+                      = {
+                        <. y
+                        ,  z
+                        >.
+                        |    z
+                           = { w e. x | ( w i^i x ) (_ y } }
+h2::inf3lem.2      |- F = ( rec ( G , (/) ) |` om )
+h3::inf3lem.3      |- A e. V
+h4::inf3lem.4      |- B e. V
+5::fveq2           
+6::suceq           
+7:6:fveq2d         
+8:5,7:sseq12d      
+9::fveq2           
+10::suceq          
+11:10:fveq2d       
+12:9,11:sseq12d    
+13::fveq2          
+14::suceq          
+15:14:fveq2d       
+16:13,15:sseq12d   
+17::fveq2          
+18::suceq          
+19:18:fveq2d       
+20:17,19:sseq12d   
+21:1,2,3,3:inf3lemb 
+                   
+22::0ss            
+23:21,22:eqsstr    
+24::visset         
+25::visset         
+26:1,2,24,25:inf3lemc 
+                   
+27:26:eleq2d       
+28::visset         
+29::fvex           
+30:1,2,28,29:inf3lema 
+                   
+31:27,30:syl6bb    
+32::peano2b        
+33::visset         
+34:33:sucex        
+35::visset         
+36:1,2,34,35:inf3lemc 
+                   
+37:32,36:sylbi     
+38:37:eleq2d       
+39::visset         
+40::fvex           
+41:1,2,39,40:inf3lema 
+                   
+42:38,41:syl6bb    
+43:31,42:imbi12d   
+44::sstr2          
+45:44:com12        
+46:45:anim2d       
+47:43,46:syl5bir   
+48:47:imp          
+49:48:ssrdv        
+50:49:ex           
+qed:8,12,16,20,23,50:finds 
+                   |- (  A e. om
+                      -> ( F ` A ) (_ ( F ` suc A ) )
+
+$)
+

@@ -1,0 +1,736 @@
+$( <MM> <PROOF_ASST> THEOREM=cdj1  LOC_AFTER=?
+
+* Two ways of expressing " ` A ` and ` B ` are completely disjoint
+  subspaces."  (1) => (2) in Lemma 5 of [Holland] p. 1520.
+
+h1::cdj1.1         |- A e. SH
+h2::cdj1.2         |- B e. SH
+3::gt0ne0t         |- ( ( w e. RR /\ 0 < w ) -> w =/= 0 )
+4::rerecclt        |- ( ( w e. RR /\ w =/= 0 ) -> ( 1 / w ) e. RR )
+5:3,4:syldan       |- ( ( w e. RR /\ 0 < w ) -> ( 1 / w ) e. RR )
+6:5:adantrr        |- (  (  w e. RR
+                         /\ (  0 < w
+                            /\ A. y
+                               e. A
+                                  A. v
+                                  e. B
+                                     ( ( norm ` y ) + ( norm ` v ) )
+                                     <_
+                                     ( w x. ( norm ` ( y +v v ) ) ) ) )
+                      -> ( 1 / w ) e. RR )
+7::recgt0t         |- ( ( w e. RR /\ 0 < w ) -> 0 < ( 1 / w ) )
+8:7:adantrr        |- (  (  w e. RR
+                         /\ (  0 < w
+                            /\ A. y
+                               e. A
+                                  A. v
+                                  e. B
+                                     ( ( norm ` y ) + ( norm ` v ) )
+                                     <_
+                                     ( w x. ( norm ` ( y +v v ) ) ) ) )
+                      -> 0 < ( 1 / w ) )
+9::1re             |- 1 e. RR
+10:9:a1i           |- (  (  ( ( w e. RR /\ y e. A ) /\ z e. B )
+                         /\ (  A. v
+                               e. B
+                                  ( ( norm ` y ) + ( norm ` v ) )
+                                  <_
+                                  ( w x. ( norm ` ( y +v v ) ) )
+                            /\ ( norm ` y ) = 1 ) )
+                      -> 1 e. RR )
+11:2:shel          |- ( z e. B -> z e. H~ )
+12::ax1cn          |- 1 e. CC
+13:12:negcl        |- -u 1 e. CC
+14::hvmulclt       |- (  ( -u 1 e. CC /\ z e. H~ )
+                      -> ( -u 1 .s z ) e. H~ )
+15:13,14:mpan      |- (  z e. H~
+                      -> ( -u 1 .s z ) e. H~ )
+16:11,15:syl       |- (  z e. B
+                      -> ( -u 1 .s z ) e. H~ )
+17::normclt        |- (  ( -u 1 .s z ) e. H~
+                      ->    ( norm ` ( -u 1 .s z ) )
+                         e. RR )
+18:16,17:syl       |- (  z e. B
+                      ->    ( norm ` ( -u 1 .s z ) )
+                         e. RR )
+19:18:adantl       |- (  ( ( w e. RR /\ y e. A ) /\ z e. B )
+                      ->    ( norm ` ( -u 1 .s z ) )
+                         e. RR )
+20::1re            |- 1 e. RR
+21::axaddrcl       |- (  (  1 e. RR
+                         /\    ( norm ` ( -u 1 .s z ) )
+                            e. RR )
+                      ->    ( 1
+                              +
+                              ( norm ` ( -u 1 .s z ) ) )
+                         e. RR )
+22:20,21:mpan      |- (     ( norm ` ( -u 1 .s z ) )
+                         e. RR
+                      ->    ( 1
+                              +
+                              ( norm ` ( -u 1 .s z ) ) )
+                         e. RR )
+23:19,22:syl       |- (  ( ( w e. RR /\ y e. A ) /\ z e. B )
+                      ->    ( 1
+                              +
+                              ( norm ` ( -u 1 .s z ) ) )
+                         e. RR )
+24:23:adantr       |- (  (  ( ( w e. RR /\ y e. A ) /\ z e. B )
+                         /\ (  A. v
+                               e. B
+                                  ( ( norm ` y ) + ( norm ` v ) )
+                                  <_
+                                  ( w x. ( norm ` ( y +v v ) ) )
+                            /\ ( norm ` y ) = 1 ) )
+                      ->    ( 1
+                              +
+                              ( norm ` ( -u 1 .s z ) ) )
+                         e. RR )
+25::axmulrcl       |- (  (  w e. RR
+                         /\ ( norm ` ( y -v z ) ) e. RR )
+                      ->    ( w x. ( norm ` ( y -v z ) ) )
+                         e. RR )
+26::hvsubclt       |- ( ( y e. H~ /\ z e. H~ ) -> ( y -v z ) e. H~ )
+27:1:shel          |- ( y e. A -> y e. H~ )
+28:2:shel          |- ( z e. B -> z e. H~ )
+29:26,27,28:syl2an |- ( ( y e. A /\ z e. B ) -> ( y -v z ) e. H~ )
+30::normclt        |- (  ( y -v z ) e. H~
+                      -> ( norm ` ( y -v z ) ) e. RR )
+31:29,30:syl       |- (  ( y e. A /\ z e. B )
+                      -> ( norm ` ( y -v z ) ) e. RR )
+32:25,31:sylan2    |- (  ( w e. RR /\ ( y e. A /\ z e. B ) )
+                      ->    ( w x. ( norm ` ( y -v z ) ) )
+                         e. RR )
+33:32:anassrs      |- (  ( ( w e. RR /\ y e. A ) /\ z e. B )
+                      ->    ( w x. ( norm ` ( y -v z ) ) )
+                         e. RR )
+34:33:adantr       |- (  (  ( ( w e. RR /\ y e. A ) /\ z e. B )
+                         /\ (  A. v
+                               e. B
+                                  ( ( norm ` y ) + ( norm ` v ) )
+                                  <_
+                                  ( w x. ( norm ` ( y +v v ) ) )
+                            /\ ( norm ` y ) = 1 ) )
+                      ->    ( w x. ( norm ` ( y -v z ) ) )
+                         e. RR )
+35::1re            |- 1 e. RR
+36::addge01tOLD    |- (  (  1 e. RR
+                         /\    ( norm ` ( -u 1 .s z ) )
+                            e. RR
+                         /\ 0
+                            <_
+                            ( norm ` ( -u 1 .s z ) ) )
+                      -> 1
+                         <_
+                         ( 1
+                           +
+                           ( norm ` ( -u 1 .s z ) ) ) )
+37:35,36:mp3an1    |- (  (     ( norm ` ( -u 1 .s z ) )
+                            e. RR
+                         /\ 0
+                            <_
+                            ( norm ` ( -u 1 .s z ) ) )
+                      -> 1
+                         <_
+                         ( 1
+                           +
+                           ( norm ` ( -u 1 .s z ) ) ) )
+38:2:shel          |- ( z e. B -> z e. H~ )
+39::ax1cn          |- 1 e. CC
+40:39:negcl        |- -u 1 e. CC
+41::hvmulclt       |- (  ( -u 1 e. CC /\ z e. H~ )
+                      -> ( -u 1 .s z ) e. H~ )
+42:40,41:mpan      |- (  z e. H~
+                      -> ( -u 1 .s z ) e. H~ )
+43:38,42:syl       |- (  z e. B
+                      -> ( -u 1 .s z ) e. H~ )
+44::normclt        |- (  ( -u 1 .s z ) e. H~
+                      ->    ( norm ` ( -u 1 .s z ) )
+                         e. RR )
+45:43,44:syl       |- (  z e. B
+                      ->    ( norm ` ( -u 1 .s z ) )
+                         e. RR )
+46:2:shel          |- ( z e. B -> z e. H~ )
+47::ax1cn          |- 1 e. CC
+48:47:negcl        |- -u 1 e. CC
+49::hvmulclt       |- (  ( -u 1 e. CC /\ z e. H~ )
+                      -> ( -u 1 .s z ) e. H~ )
+50:48,49:mpan      |- (  z e. H~
+                      -> ( -u 1 .s z ) e. H~ )
+51:46,50:syl       |- (  z e. B
+                      -> ( -u 1 .s z ) e. H~ )
+52::normge0t       |- (  ( -u 1 .s z ) e. H~
+                      -> 0
+                         <_
+                         ( norm ` ( -u 1 .s z ) ) )
+53:51,52:syl       |- (  z e. B
+                      -> 0
+                         <_
+                         ( norm ` ( -u 1 .s z ) ) )
+54:37,45,53:sylanc |- (  z e. B
+                      -> 1
+                         <_
+                         ( 1
+                           +
+                           ( norm ` ( -u 1 .s z ) ) ) )
+55:54:ad2antlr     |- (  (  ( ( w e. RR /\ y e. A ) /\ z e. B )
+                         /\ (  A. v
+                               e. B
+                                  ( ( norm ` y ) + ( norm ` v ) )
+                                  <_
+                                  ( w x. ( norm ` ( y +v v ) ) )
+                            /\ ( norm ` y ) = 1 ) )
+                      -> 1
+                         <_
+                         ( 1
+                           +
+                           ( norm ` ( -u 1 .s z ) ) ) )
+56::ax1cn          |- 1 e. CC
+57:56:negcl        |- -u 1 e. CC
+58::shmulcltOLD    |- (  B e. SH
+                      -> (  ( -u 1 e. CC /\ z e. B )
+                         -> ( -u 1 .s z ) e. B ) )
+59:2,58:ax-mp      |- (  ( -u 1 e. CC /\ z e. B )
+                      -> ( -u 1 .s z ) e. B )
+60:57,59:mpan      |- (  z e. B
+                      -> ( -u 1 .s z ) e. B )
+61::fveq2          |- (  v = ( -u 1 .s z )
+                      ->   ( norm ` v )
+                         = ( norm ` ( -u 1 .s z ) ) )
+62:61:opreq2d      |- (  v = ( -u 1 .s z )
+                      ->   ( ( norm ` y ) + ( norm ` v ) )
+                         = ( ( norm ` y )
+                             +
+                             ( norm ` ( -u 1 .s z ) ) ) )
+63::opreq2         |- (  v = ( -u 1 .s z )
+                      ->   ( y +v v )
+                         = ( y +v ( -u 1 .s z ) ) )
+64:63:fveq2d       |- (  v = ( -u 1 .s z )
+                      ->   ( norm ` ( y +v v ) )
+                         = ( norm
+                           ` ( y +v ( -u 1 .s z ) ) ) )
+65:64:opreq2d      |- (  v = ( -u 1 .s z )
+                      ->   ( w x. ( norm ` ( y +v v ) ) )
+                         = ( w
+                             x.
+                             ( norm
+                             ` ( y +v ( -u 1 .s z ) ) ) ) )
+66:62,65:breq12d   |- (  v = ( -u 1 .s z )
+                      -> (   ( ( norm ` y ) + ( norm ` v ) )
+                             <_
+                             ( w x. ( norm ` ( y +v v ) ) )
+                         <-> ( ( norm ` y )
+                               +
+                               ( norm ` ( -u 1 .s z ) ) )
+                             <_
+                             ( w
+                               x.
+                               ( norm
+                               ` ( y +v ( -u 1 .s z ) ) ) ) ) )
+67:66:rcla4v       |- (  ( -u 1 .s z ) e. B
+                      -> (  A. v
+                            e. B
+                               ( ( norm ` y ) + ( norm ` v ) )
+                               <_
+                               ( w x. ( norm ` ( y +v v ) ) )
+                         -> ( ( norm ` y )
+                              +
+                              ( norm ` ( -u 1 .s z ) ) )
+                            <_
+                            ( w
+                              x.
+                              ( norm
+                              ` ( y +v ( -u 1 .s z ) ) ) ) ) )
+68:60,67:syl       |- (  z e. B
+                      -> (  A. v
+                            e. B
+                               ( ( norm ` y ) + ( norm ` v ) )
+                               <_
+                               ( w x. ( norm ` ( y +v v ) ) )
+                         -> ( ( norm ` y )
+                              +
+                              ( norm ` ( -u 1 .s z ) ) )
+                            <_
+                            ( w
+                              x.
+                              ( norm
+                              ` ( y +v ( -u 1 .s z ) ) ) ) ) )
+69:68:imp          |- (  (  z e. B
+                         /\ A. v
+                            e. B
+                               ( ( norm ` y ) + ( norm ` v ) )
+                               <_
+                               ( w x. ( norm ` ( y +v v ) ) ) )
+                      -> ( ( norm ` y )
+                           +
+                           ( norm ` ( -u 1 .s z ) ) )
+                         <_
+                         ( w
+                           x.
+                           ( norm
+                           ` ( y +v ( -u 1 .s z ) ) ) ) )
+70:69:adantll      |- (  (  ( ( w e. RR /\ y e. A ) /\ z e. B )
+                         /\ A. v
+                            e. B
+                               ( ( norm ` y ) + ( norm ` v ) )
+                               <_
+                               ( w x. ( norm ` ( y +v v ) ) ) )
+                      -> ( ( norm ` y )
+                           +
+                           ( norm ` ( -u 1 .s z ) ) )
+                         <_
+                         ( w
+                           x.
+                           ( norm
+                           ` ( y +v ( -u 1 .s z ) ) ) ) )
+71:70:adantrr      |- (  (  ( ( w e. RR /\ y e. A ) /\ z e. B )
+                         /\ (  A. v
+                               e. B
+                                  ( ( norm ` y ) + ( norm ` v ) )
+                                  <_
+                                  ( w x. ( norm ` ( y +v v ) ) )
+                            /\ ( norm ` y ) = 1 ) )
+                      -> ( ( norm ` y )
+                           +
+                           ( norm ` ( -u 1 .s z ) ) )
+                         <_
+                         ( w
+                           x.
+                           ( norm
+                           ` ( y +v ( -u 1 .s z ) ) ) ) )
+72::opreq1         |- (  1 = ( norm ` y )
+                      ->   ( 1
+                             +
+                             ( norm ` ( -u 1 .s z ) ) )
+                         = ( ( norm ` y )
+                             +
+                             ( norm ` ( -u 1 .s z ) ) ) )
+73:72:eqcoms       |- (  ( norm ` y ) = 1
+                      ->   ( 1
+                             +
+                             ( norm ` ( -u 1 .s z ) ) )
+                         = ( ( norm ` y )
+                             +
+                             ( norm ` ( -u 1 .s z ) ) ) )
+74:73:ad2antll     |- (  (  ( ( w e. RR /\ y e. A ) /\ z e. B )
+                         /\ (  A. v
+                               e. B
+                                  ( ( norm ` y ) + ( norm ` v ) )
+                                  <_
+                                  ( w x. ( norm ` ( y +v v ) ) )
+                            /\ ( norm ` y ) = 1 ) )
+                      ->   ( 1
+                             +
+                             ( norm ` ( -u 1 .s z ) ) )
+                         = ( ( norm ` y )
+                             +
+                             ( norm ` ( -u 1 .s z ) ) ) )
+75::hvsubvalt      |- (  ( y e. H~ /\ z e. H~ )
+                      ->   ( y -v z )
+                         = ( y +v ( -u 1 .s z ) ) )
+76:1:shel          |- ( y e. A -> y e. H~ )
+77:2:shel          |- ( z e. B -> z e. H~ )
+78:75,76,77:syl2an |- (  ( y e. A /\ z e. B )
+                      ->   ( y -v z )
+                         = ( y +v ( -u 1 .s z ) ) )
+79:78:fveq2d       |- (  ( y e. A /\ z e. B )
+                      ->   ( norm ` ( y -v z ) )
+                         = ( norm
+                           ` ( y +v ( -u 1 .s z ) ) ) )
+80:79:opreq2d      |- (  ( y e. A /\ z e. B )
+                      ->   ( w x. ( norm ` ( y -v z ) ) )
+                         = ( w
+                             x.
+                             ( norm
+                             ` ( y +v ( -u 1 .s z ) ) ) ) )
+81:80:adantll      |- (  ( ( w e. RR /\ y e. A ) /\ z e. B )
+                      ->   ( w x. ( norm ` ( y -v z ) ) )
+                         = ( w
+                             x.
+                             ( norm
+                             ` ( y +v ( -u 1 .s z ) ) ) ) )
+82:81:adantr       |- (  (  ( ( w e. RR /\ y e. A ) /\ z e. B )
+                         /\ (  A. v
+                               e. B
+                                  ( ( norm ` y ) + ( norm ` v ) )
+                                  <_
+                                  ( w x. ( norm ` ( y +v v ) ) )
+                            /\ ( norm ` y ) = 1 ) )
+                      ->   ( w x. ( norm ` ( y -v z ) ) )
+                         = ( w
+                             x.
+                             ( norm
+                             ` ( y +v ( -u 1 .s z ) ) ) ) )
+83:71,74,82:3brtr4d 
+                   |- (  (  ( ( w e. RR /\ y e. A ) /\ z e. B )
+                         /\ (  A. v
+                               e. B
+                                  ( ( norm ` y ) + ( norm ` v ) )
+                                  <_
+                                  ( w x. ( norm ` ( y +v v ) ) )
+                            /\ ( norm ` y ) = 1 ) )
+                      -> ( 1
+                           +
+                           ( norm ` ( -u 1 .s z ) ) )
+                         <_
+                         ( w x. ( norm ` ( y -v z ) ) ) )
+84:10,24,34,55,83:letrd 
+                   |- (  (  ( ( w e. RR /\ y e. A ) /\ z e. B )
+                         /\ (  A. v
+                               e. B
+                                  ( ( norm ` y ) + ( norm ` v ) )
+                                  <_
+                                  ( w x. ( norm ` ( y +v v ) ) )
+                            /\ ( norm ` y ) = 1 ) )
+                      -> 1
+                         <_
+                         ( w x. ( norm ` ( y -v z ) ) ) )
+85:84:ex           |- (  ( ( w e. RR /\ y e. A ) /\ z e. B )
+                      -> (  (  A. v
+                               e. B
+                                  ( ( norm ` y ) + ( norm ` v ) )
+                                  <_
+                                  ( w x. ( norm ` ( y +v v ) ) )
+                            /\ ( norm ` y ) = 1 )
+                         -> 1
+                            <_
+                            ( w x. ( norm ` ( y -v z ) ) ) ) )
+86:85:adantllr     |- (  (  ( ( w e. RR /\ 0 < w ) /\ y e. A )
+                         /\ z e. B )
+                      -> (  (  A. v
+                               e. B
+                                  ( ( norm ` y ) + ( norm ` v ) )
+                                  <_
+                                  ( w x. ( norm ` ( y +v v ) ) )
+                            /\ ( norm ` y ) = 1 )
+                         -> 1
+                            <_
+                            ( w x. ( norm ` ( y -v z ) ) ) ) )
+87::1re            |- 1 e. RR
+88::lediv1t        |- (  (  (  1 e. RR
+                            /\    ( w x. ( norm ` ( y -v z ) ) )
+                               e. RR
+                            /\ w e. RR )
+                         /\ 0 < w )
+                      -> (   1
+                             <_
+                             ( w x. ( norm ` ( y -v z ) ) )
+                         <-> ( 1 / w )
+                             <_
+                             ( ( w x. ( norm ` ( y -v z ) ) )
+                               /
+                               w ) ) )
+89:87,88:mp3anl1   |- (  (  (     ( w x. ( norm ` ( y -v z ) ) )
+                               e. RR
+                            /\ w e. RR )
+                         /\ 0 < w )
+                      -> (   1
+                             <_
+                             ( w x. ( norm ` ( y -v z ) ) )
+                         <-> ( 1 / w )
+                             <_
+                             ( ( w x. ( norm ` ( y -v z ) ) )
+                               /
+                               w ) ) )
+90::axmulrcl       |- (  (  w e. RR
+                         /\ ( norm ` ( y -v z ) ) e. RR )
+                      ->    ( w x. ( norm ` ( y -v z ) ) )
+                         e. RR )
+91::hvsubclt       |- ( ( y e. H~ /\ z e. H~ ) -> ( y -v z ) e. H~ )
+92:1:shel          |- ( y e. A -> y e. H~ )
+93:2:shel          |- ( z e. B -> z e. H~ )
+94:91,92,93:syl2an |- ( ( y e. A /\ z e. B ) -> ( y -v z ) e. H~ )
+95::normclt        |- (  ( y -v z ) e. H~
+                      -> ( norm ` ( y -v z ) ) e. RR )
+96:94,95:syl       |- (  ( y e. A /\ z e. B )
+                      -> ( norm ` ( y -v z ) ) e. RR )
+97:90,96:sylan2    |- (  ( w e. RR /\ ( y e. A /\ z e. B ) )
+                      ->    ( w x. ( norm ` ( y -v z ) ) )
+                         e. RR )
+98:97:anassrs      |- (  ( ( w e. RR /\ y e. A ) /\ z e. B )
+                      ->    ( w x. ( norm ` ( y -v z ) ) )
+                         e. RR )
+99:98:adantllr     |- (  (  ( ( w e. RR /\ 0 < w ) /\ y e. A )
+                         /\ z e. B )
+                      ->    ( w x. ( norm ` ( y -v z ) ) )
+                         e. RR )
+100::pm3.26        |- ( ( w e. RR /\ 0 < w ) -> w e. RR )
+101:100:ad2antrr   |- (  (  ( ( w e. RR /\ 0 < w ) /\ y e. A )
+                         /\ z e. B )
+                      -> w e. RR )
+102:99,101:jca     |- (  (  ( ( w e. RR /\ 0 < w ) /\ y e. A )
+                         /\ z e. B )
+                      -> (     ( w x. ( norm ` ( y -v z ) ) )
+                            e. RR
+                         /\ w e. RR ) )
+103::pm3.27        |- ( ( w e. RR /\ 0 < w ) -> 0 < w )
+104:103:ad2antrr   |- (  (  ( ( w e. RR /\ 0 < w ) /\ y e. A )
+                         /\ z e. B )
+                      -> 0 < w )
+105:89,102,104:sylanc 
+                   |- (  (  ( ( w e. RR /\ 0 < w ) /\ y e. A )
+                         /\ z e. B )
+                      -> (   1
+                             <_
+                             ( w x. ( norm ` ( y -v z ) ) )
+                         <-> ( 1 / w )
+                             <_
+                             ( ( w x. ( norm ` ( y -v z ) ) )
+                               /
+                               w ) ) )
+106:86,105:sylibd  |- (  (  ( ( w e. RR /\ 0 < w ) /\ y e. A )
+                         /\ z e. B )
+                      -> (  (  A. v
+                               e. B
+                                  ( ( norm ` y ) + ( norm ` v ) )
+                                  <_
+                                  ( w x. ( norm ` ( y +v v ) ) )
+                            /\ ( norm ` y ) = 1 )
+                         -> ( 1 / w )
+                            <_
+                            ( ( w x. ( norm ` ( y -v z ) ) )
+                              /
+                              w ) ) )
+107:106:imp        |- (  (  (  ( ( w e. RR /\ 0 < w ) /\ y e. A )
+                            /\ z e. B )
+                         /\ (  A. v
+                               e. B
+                                  ( ( norm ` y ) + ( norm ` v ) )
+                                  <_
+                                  ( w x. ( norm ` ( y +v v ) ) )
+                            /\ ( norm ` y ) = 1 ) )
+                      -> ( 1 / w )
+                         <_
+                         ( ( w x. ( norm ` ( y -v z ) ) )
+                           /
+                           w ) )
+108::divcan3t      |- (  (  w e. CC
+                         /\ ( norm ` ( y -v z ) ) e. CC
+                         /\ w =/= 0 )
+                      ->   ( ( w x. ( norm ` ( y -v z ) ) )
+                             /
+                             w )
+                         = ( norm ` ( y -v z ) ) )
+109::recnt         |- ( w e. RR -> w e. CC )
+110:109:adantr     |- ( ( w e. RR /\ 0 < w ) -> w e. CC )
+111:110:ad2antrr   |- (  (  ( ( w e. RR /\ 0 < w ) /\ y e. A )
+                         /\ z e. B )
+                      -> w e. CC )
+112::hvsubclt      |- ( ( y e. H~ /\ z e. H~ ) -> ( y -v z ) e. H~ )
+113:1:shel         |- ( y e. A -> y e. H~ )
+114:2:shel         |- ( z e. B -> z e. H~ )
+115:112,113,114:syl2an 
+                   |- ( ( y e. A /\ z e. B ) -> ( y -v z ) e. H~ )
+116::normclt       |- (  ( y -v z ) e. H~
+                      -> ( norm ` ( y -v z ) ) e. RR )
+117:115,116:syl    |- (  ( y e. A /\ z e. B )
+                      -> ( norm ` ( y -v z ) ) e. RR )
+118:117:recnd      |- (  ( y e. A /\ z e. B )
+                      -> ( norm ` ( y -v z ) ) e. CC )
+119:118:adantll    |- (  (  ( ( w e. RR /\ 0 < w ) /\ y e. A )
+                         /\ z e. B )
+                      -> ( norm ` ( y -v z ) ) e. CC )
+120::gt0ne0t       |- ( ( w e. RR /\ 0 < w ) -> w =/= 0 )
+121:120:ad2antrr   |- (  (  ( ( w e. RR /\ 0 < w ) /\ y e. A )
+                         /\ z e. B )
+                      -> w =/= 0 )
+122:108,111,119,121:syl3anc 
+                   |- (  (  ( ( w e. RR /\ 0 < w ) /\ y e. A )
+                         /\ z e. B )
+                      ->   ( ( w x. ( norm ` ( y -v z ) ) )
+                             /
+                             w )
+                         = ( norm ` ( y -v z ) ) )
+123:122:adantr     |- (  (  (  ( ( w e. RR /\ 0 < w ) /\ y e. A )
+                            /\ z e. B )
+                         /\ (  A. v
+                               e. B
+                                  ( ( norm ` y ) + ( norm ` v ) )
+                                  <_
+                                  ( w x. ( norm ` ( y +v v ) ) )
+                            /\ ( norm ` y ) = 1 ) )
+                      ->   ( ( w x. ( norm ` ( y -v z ) ) )
+                             /
+                             w )
+                         = ( norm ` ( y -v z ) ) )
+124:107,123:breqtrd 
+                   |- (  (  (  ( ( w e. RR /\ 0 < w ) /\ y e. A )
+                            /\ z e. B )
+                         /\ (  A. v
+                               e. B
+                                  ( ( norm ` y ) + ( norm ` v ) )
+                                  <_
+                                  ( w x. ( norm ` ( y +v v ) ) )
+                            /\ ( norm ` y ) = 1 ) )
+                      -> ( 1 / w ) <_ ( norm ` ( y -v z ) ) )
+125:124:exp43      |- (  ( ( w e. RR /\ 0 < w ) /\ y e. A )
+                      -> (  z e. B
+                         -> (  A. v
+                               e. B
+                                  ( ( norm ` y ) + ( norm ` v ) )
+                                  <_
+                                  ( w x. ( norm ` ( y +v v ) ) )
+                            -> (  ( norm ` y ) = 1
+                               -> ( 1 / w ) <_ ( norm ` ( y -v z ) ) ) ) ) )
+126:125:com23      |- (  ( ( w e. RR /\ 0 < w ) /\ y e. A )
+                      -> (  A. v
+                            e. B
+                               ( ( norm ` y ) + ( norm ` v ) )
+                               <_
+                               ( w x. ( norm ` ( y +v v ) ) )
+                         -> (  z e. B
+                            -> (  ( norm ` y ) = 1
+                               -> ( 1 / w ) <_ ( norm ` ( y -v z ) ) ) ) ) )
+127:126:r19.21adv  |- (  ( ( w e. RR /\ 0 < w ) /\ y e. A )
+                      -> (  A. v
+                            e. B
+                               ( ( norm ` y ) + ( norm ` v ) )
+                               <_
+                               ( w x. ( norm ` ( y +v v ) ) )
+                         -> A. z
+                            e. B
+                               (  ( norm ` y ) = 1
+                               -> ( 1 / w ) <_ ( norm ` ( y -v z ) ) ) ) )
+128:127:r19.20dva  |- (  ( w e. RR /\ 0 < w )
+                      -> (  A. y
+                            e. A
+                               A. v
+                               e. B
+                                  ( ( norm ` y ) + ( norm ` v ) )
+                                  <_
+                                  ( w x. ( norm ` ( y +v v ) ) )
+                         -> A. y
+                            e. A
+                               A. z
+                               e. B
+                                  (  ( norm ` y ) = 1
+                                  -> ( 1 / w ) <_ ( norm ` ( y -v z ) ) ) ) )
+129:128:ex         |- (  w e. RR
+                      -> (  0 < w
+                         -> (  A. y
+                               e. A
+                                  A. v
+                                  e. B
+                                     ( ( norm ` y ) + ( norm ` v ) )
+                                     <_
+                                     ( w x. ( norm ` ( y +v v ) ) )
+                            -> A. y
+                               e. A
+                                  A. z
+                                  e. B
+                                     (  ( norm ` y ) = 1
+                                     -> ( 1 / w ) <_ ( norm ` ( y -v z ) ) ) )
+                         ) )
+130:129:imp32      |- (  (  w e. RR
+                         /\ (  0 < w
+                            /\ A. y
+                               e. A
+                                  A. v
+                                  e. B
+                                     ( ( norm ` y ) + ( norm ` v ) )
+                                     <_
+                                     ( w x. ( norm ` ( y +v v ) ) ) ) )
+                      -> A. y
+                         e. A
+                            A. z
+                            e. B
+                               (  ( norm ` y ) = 1
+                               -> ( 1 / w ) <_ ( norm ` ( y -v z ) ) ) )
+131:8,130:jca      |- (  (  w e. RR
+                         /\ (  0 < w
+                            /\ A. y
+                               e. A
+                                  A. v
+                                  e. B
+                                     ( ( norm ` y ) + ( norm ` v ) )
+                                     <_
+                                     ( w x. ( norm ` ( y +v v ) ) ) ) )
+                      -> (  0 < ( 1 / w )
+                         /\ A. y
+                            e. A
+                               A. z
+                               e. B
+                                  (  ( norm ` y ) = 1
+                                  -> ( 1 / w ) <_ ( norm ` ( y -v z ) ) ) ) )
+132:6,131:jca      |- (  (  w e. RR
+                         /\ (  0 < w
+                            /\ A. y
+                               e. A
+                                  A. v
+                                  e. B
+                                     ( ( norm ` y ) + ( norm ` v ) )
+                                     <_
+                                     ( w x. ( norm ` ( y +v v ) ) ) ) )
+                      -> (  ( 1 / w ) e. RR
+                         /\ (  0 < ( 1 / w )
+                            /\ A. y
+                               e. A
+                                  A. z
+                                  e. B
+                                     (  ( norm ` y ) = 1
+                                     -> ( 1 / w ) <_ ( norm ` ( y -v z ) ) ) )
+                         ) )
+133:132:ex
+134::breq2         |- (  x = ( 1 / w )
+                      -> ( 0 < x <-> 0 < ( 1 / w ) ) )
+135::breq1         |- (  x = ( 1 / w )
+                      -> (   x <_ ( norm ` ( y -v z ) )
+                         <-> ( 1 / w ) <_ ( norm ` ( y -v z ) ) ) )
+136:135:imbi2d     |- (  x = ( 1 / w )
+                      -> (   (  ( norm ` y ) = 1
+                             -> x <_ ( norm ` ( y -v z ) ) )
+                         <-> (  ( norm ` y ) = 1
+                             -> ( 1 / w ) <_ ( norm ` ( y -v z ) ) ) ) )
+137:136:2ralbidv   |- (  x = ( 1 / w )
+                      -> (   A. y
+                             e. A
+                                A. z
+                                e. B
+                                   (  ( norm ` y ) = 1
+                                   -> x <_ ( norm ` ( y -v z ) ) )
+                         <-> A. y
+                             e. A
+                                A. z
+                                e. B
+                                   (  ( norm ` y ) = 1
+                                   -> ( 1 / w ) <_ ( norm ` ( y -v z ) ) ) ) )
+138:134,137:anbi12d 
+                   |- (  x = ( 1 / w )
+                      -> (   (  0 < x
+                             /\ A. y
+                                e. A
+                                   A. z
+                                   e. B
+                                      (  ( norm ` y ) = 1
+                                      -> x <_ ( norm ` ( y -v z ) ) ) )
+                         <-> (  0 < ( 1 / w )
+                             /\ A. y
+                                e. A
+                                   A. z
+                                   e. B
+                                      (  ( norm ` y ) = 1
+                                      -> ( 1 / w ) <_ ( norm ` ( y -v z ) ) ) )
+                         ) )
+139:138:rcla4ev
+140:133,139:syl6
+qed:140:r19.23aiv  |- (  E. w
+                         e. RR
+                            (  0 < w
+                            /\ A. y
+                               e. A
+                                  A. v
+                                  e. B
+                                     ( ( norm ` y ) + ( norm ` v ) )
+                                     <_
+                                     ( w x. ( norm ` ( y +v v ) ) ) )
+                      -> E. x
+                         e. RR
+                            (  0 < x
+                            /\ A. y
+                               e. A
+                                  A. z
+                                  e. B
+                                     (  ( norm ` y ) = 1
+                                     -> x <_ ( norm ` ( y -v z ) ) ) ) )
+
+$)

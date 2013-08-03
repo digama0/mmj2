@@ -1,0 +1,466 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta content="text/html; charset=ISO-8859-1" http-equiv="content-type"><title>Text Mode Formula Formatting</title></head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);" alink="#000088" link="#0000ff" vlink="#ff0000"><big><big><span style="font-weight: bold;">Text Mode Formula Formatting<br>
+<br>
+</span></big></big>
+<hr style="width: 100%; height: 2px;"><big><span style="font-weight: bold;"><br><big style="text-decoration: underline;">
+Purpose:</big></span><span style="font-weight: bold;"></span></big><br>
+<br>
+Enhance mmj2 by improving the rendering of Metamath formulas when using plain ASCII text. <br>
+<br>
+Although the Metamath program, <code>metamath.exe</code>, provides a mechanism to
+generate Latex and either .gif&nbsp; or Unicode HTML output files that display the
+modern math equivalents of the user-defined ASCII symbols, this
+typesetting mechanism is not available within mmj2 and its Proof
+Assistant. It will be <span style="font-style: italic;">very</span>
+helpful if the mmj2 Proof Assistant displays ASCII text Metamath
+formulas using improvements in formula layout similar to those shown
+here:
+  <a href="mdsymlem5Example.html">mdsymlem5Example.html</a><br>
+<br>
+<big><span style="font-weight: bold;"><br><big style="text-decoration: underline;">Constraints:</big></span><span style="font-weight: bold;"></span></big><br>
+
+<br>
+
+<ul>
+  <li>A rendered formula's sequence of&nbsp; Metamath Constants and Variables must
+be unchanged, and be valid for input to Metamath; therefore, the
+rendering options available for use consist of ways to employ
+whitespace and newline tokens to improve readability.</li>
+  <li>The mmj2 code, including the mmj2 Proof Assistant, uses a single
+fixed-width font. Alternative designs are feasible, including use of
+variable fonts and size/emphasis/italic/color options, as well as .gif
+images, MathML output, etc. Those alternatives are out of the scope of
+this enhancement by definition (but saved for a subsequent project!)<br>
+  </li>
+</ul>
+<br>
+<hr style="width: 100%; height: 2px;"><br>
+<span style="font-weight: bold;"><big style="text-decoration: underline;"><big>Background Items: </big></big><br>
+<br>
+</span>
+<ul>
+  <li>A <span style="font-weight: bold;">Metamath ".mm" file is coded in 7-bit ASCII text</span> according to
+a notation scheme invented by the author(s) of the file. For example,
+logical implication may be represented by the (constant) symbol string "<code>-&gt;</code>"
+. </li>
+  <li><span style="font-weight: bold;">Syntax</span> (builder) <span style="font-weight: bold;">Axioms define the syntax rules of a file</span> and allow
+complex formulas to be built up by recursive application of the rules.
+For example "<code>wi</code>" is the label (name) of a Syntax Axiom in set.mm that defines the syntax rule for logical implication: "( <code>ph -&gt; ps</code> )" is defined as a wff, given any two variables, "<code>ph</code>" and "<code>ps</code>" that are themselves wffs.</li>
+  <li>"<span style="font-weight: bold;">Formula</span>" in this document (and mmj2) refers to a complete
+Metamath formula consisting of a constant followed by an "<span style="font-weight: bold;">Expression</span>"
+consisting of zero or more constants and variables. A&nbsp;
+"<span style="font-weight: bold;">Sub-Expression</span>" is a substring within an Expression, generally used as
+a substitution for a variable within a formula. For example: "<code>|- ( ph -&gt; ( ps -&gt; ph )</code>" is a Formula, "<code>( ph -&gt; ( ps -&gt; ph )</code>" is an Expression, and "<code>( ps -&gt; ph )</code>" is a Sub-Expression (of the previous Expression).<br>
+  </li>
+  <li>"<span style="font-weight: bold;">RPN</span>" means <span style="font-weight: bold;">Reverse Polish Notation</span>. In Metamath/mmj2 a list or
+array of statement labels in RPN format can be used to construct an
+expression or to specify a proof. <span style="font-weight: bold;">A valid theorem's formula has both a
+proof RPN as well as a parse RPN</span>;
+they are equivalent ways to generate an Expression, with proofs using
+logical axioms and assertions, and parses using Syntax Axioms and
+variable hypotheses. Note that RPN's are convertible to trees, and
+vice-versa.For example, the parse tree for Expression" <code>( ph -&gt; ( ps -&gt; ph )</code>" can be converted to RPN as "<code>ph ps ph wi wi</code>" (using the set.mm file's definitions), and the proof of a theorem "<code>|- ( ph -&gt; ( ps -&gt; ph )</code>" could be written in RPN as <code>"ph ps ax-1"</code> (which is a proof tree converted to RPN format.)</li>
+  <li><span style="font-weight: bold;">The mmj2 Grammar and Proof Assistant packages validate the syntax
+of every input formula and expression</span> using the grammar specified by
+the .mm file's author (via Syntax Axioms, Variable Hypotheses, etc.)
+For this reason we can rely on the syntactic correctness of every
+formula and expression that will be typeset. In fact, we will be
+typesetting the <span style="font-style: italic;">parse trees</span> as these contain the syntactic structure of expressions and therefore provide us helpful typsetting clues.</li><li>There are <span style="font-weight: bold;">Four basic types of Syntax Axioms</span> that can be created using the Metamath .mm file format: 1) <span style="font-weight: bold;">Type Conversion</span>s -- example, formula <code>"class x"</code>, specifying that every <code>set</code> is a <code>class</code>; 2) <span style="font-weight: bold;">Named Typed Constant</span>s&nbsp; -- example formula <code>"class 1"</code>, specifying that the constant <code>"1"</code> can be substituted for any <code>class</code> variable ( i.e. "<code>1</code>" signifies a <code>class</code> object, although Metamath would theoretically allow an eccentric author to subsequently use "<code>1</code>" as punctuation); 3) <span style="font-weight: bold;">Nulls Permitted</span>
+-- example formula "<code>class</code>" specifying that a null string -- length zero
+string -- can be substituted for any <code>class</code> variable; and 4) <span style="font-weight: bold;">Notation</span> Axioms -- example formula <code>"wff ( ph -&gt; ps )"</code>, which has already been discussed.</li>
+  <li>There are <span style="font-weight: bold;">Three basic types of notation schemes</span>: 1) <span style="font-weight: bold;">Infix</span> (example expression "3 * 2 + 1"); <span style="font-weight: bold;">Prefix</span> (example expression " + * 3 2 1"; and 3) <span style="font-weight: bold;">Postfix</span>
+(example expression "3 2 * 1 +").&nbsp; Combinations of these schemes
+are possible, for example prefix and infix might be used in a single
+grammar without ambiguity. Also, notation schemes involving optional
+parentheses and operator precedence rules are commonly used in modern
+programming languages (these seem to require the use of Type Conversion
+Syntax Axioms, as described on Page 7 in Chapter 1 of <a href="http://www.cis.ksu.edu/%7Eschmidt/text/densem.html">David A. Schmidt's "Denotational Semantics"</a> ).<br>
+  </li>
+
+</ul><br>
+
+
+<span style="font-style: italic;">Note: "Pretty Printing" Metamath
+formulas is not completely dissimilar to the problem faced by computer
+programmers wishing to format complicated "if" statements. Computer
+programmers often use conventions such as indenting nested "if"s and
+aligning and grouping various symbols in order to facilitate
+comprehension by readers; instead of writing one long, continuous
+stream of program code, programmers often try to break down a statement
+into manageable chunks that exhibit the logical structure of the code.
+We can attempt the same thing with Metamath formulas, though with
+variations that take into account the differences between a Metamath
+formula and say, Java code. </span><br style="font-style: italic;">
+<br>
+<hr style="width: 100%; height: 2px;"><br>
+<big><big><span style="font-weight: bold;"><span style="text-decoration: underline;">The Problem: user difficulties in reading and comprehending Metamath formulas</span> --</span></big></big><br>
+<ol>
+  <li>User unfamiliarity with a .mm file's Syntax Axioms and symbol schemes.</li>
+  <li>Metamath formulas are linear, one-dimensional objects
+-- contrary to standard mathematical typesetting, which employs two
+dimensional shapes (i.e. powers and roots), as well as varying font
+sizes, font families and text styles. families</li>
+  <li>Absence of "dummy variables" (or named sub-expressions) to
+represent repeated sub-expressions within a formula or array of
+formulas; these dummy variables are common in texts to manage
+notational complexity, and even though the <code>metamath.exe</code> program
+employs them in <span style="font-style: italic;">its</span> Proof Assistant, once a proof is completed the
+dummy variables used during proof creation disappear. <br>
+  </li>
+  <li>A profusion of parentheses <br>
+  </li>
+  <li>Lengthy, complex sub-expressions that often mask the hierarchical syntactical structure of a formula.</li>
+  <li>Unintelligent line breaks and inter-symbol spacing (note: an
+author of a .mm file may write the "source" file however she pleases, but
+the author's line breaks and spacing are discarded during output
+generation -- this holds also for proof step formulas, which lose all
+formatting during the round trip into Metamath RPN -- Reverse Polish
+Notation -- and back.)<br>
+  </li>
+</ol>
+Difficulties 1 through 3 are beyond the scope of this enhancement.
+Although much can be said about the first 3 difficulties listed above (and the discussion <span style="font-style: italic;">is</span> interesting), we drop those items from
+further discussion in this document.<br>
+<br>
+Difficulties 4 through 6 are
+within the scope of this enhancement, and certain minor improvements in
+the user experience will result from the new code. Again, please have a
+look at: <a href="mdsymlem5Example.html">mdsymlem5Example.html</a><br>
+<br>
+<hr style="width: 100%; height: 2px;"><br>
+<big><big style="text-decoration: underline;"><span style="font-weight: bold;">The Solutions:</span></big><span style="text-decoration: underline;"> </span></big><br>
+<br><big><span style="font-weight: bold;">No Free Lunch<br>
+<br>
+</span></big>The "No Free Lunch" saying (or "TANSTAAFL") holds here too. The only
+possible way to perfectly render every possible notation scheme for
+every person reading formulas is to allow customization of formatting
+at the level of the individual syntax axiom by the user -- and provide
+other parameters and program "smarts" to handle all of the special
+cases. But perfection in this matter is not likely unattainable because the
+average user is unwilling to spend the hours needed to customize
+processing at the level of detail that will provide a perfect personal viewing
+experience. It just won't happen. So what we need in code is something
+that is just good enough without lots of tweaking and customization -- something that isn't terrible -- but that
+provides for the possibility of some customization and extension by .mm file
+authors and users.<br>
+<br>
+Here is a basic outline of the solution:<br>
+<ul>
+  <li><span style="font-style: italic;">Initially</span>, at least, formatting specifications are <span style="font-weight: bold;">not</span> customizable at the level of the individual syntax axiom. </li>
+  <li>Instead a single Text Mode Formula Formatting <span style="font-style: italic;">Method</span>&nbsp; ("<span style="font-weight: bold;">TMFF Method</span>") in use at any one time. </li>
+  <li>A TMFF Method is customized via mmj2 RunParm
+parameters/options, and together, the specifically chosen&nbsp;
+parameter/option values with the specific TMFF Method make up a "<span style="font-weight: bold;">TMFF Scheme</span>".
+(A subsequent enhancement might allow a TMFF Scheme to be specified for
+use with a list of Syntax Axioms, thus overriding the default Scheme --
+this would allow, for example, a "prefix" Scheme for certain Syntax Axioms to be used alongside a
+default "infix" style Scheme for the rest of the syntax.)</li><li>A
+"<span style="font-weight: bold;">TMFF Format</span>"
+is assigned a TMFF Scheme. Up to 10 TMFF Formats can be
+defined: Format 0, Format 1, Format 2, ...,&nbsp; Format 9. However, an unlimited number
+of TMFF Schemes can be defined, and reassigned during processing via
+RunParms. By design, "Format 0" is reserved and signifies "TMFF
+Disabled" or "Unformatted" -- rendering is performed using the old
+algorithm (the old, unformatted output is used if any errors are
+encountered by TMFF when rendering a formula.)<br>
+  </li>
+<li>Help
+with the problem of user difficulties reading nested parentheses is provided by
+a <span style="font-weight: bold;">"maxDepth" parameter at the TMFF Scheme level</span>. This specifies the
+maximum depth of a parse sub-tree, not counting leaf nodes -- Variable
+Hypotheses -- or Nulls Permitted, Type Conversion or Named Typed
+Constants. Thus, "<code>( ph -&gt; ( ps -&gt; ph ) )</code>"
+is defined as having depth = 2. If the depth of an expression's parse
+tree exceeds maxDepth then the expression is split across multiple
+lines and broken down according to the TMFF Scheme's specifications
+instead of being output on a single line. <br>
+</li></ul><br>
+<big><span style="font-weight: bold;"></span></big><hr style="width: 100%; height: 2px;"><big><span style="font-weight: bold;">Sample RunParms for TMFF processing:</span><br style="font-weight: bold;">
+</big><br>
+<span style="font-weight: bold;">1. No change to existing processing -- i.e. no special formula formatting -- using defaults:</span><br>
+<table style="width: 100%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>* blah blah - final RunParm to run the Proof Assistant GUI:<br><span style="font-weight: bold;">
+RunProofAsstGUI</span></code><br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<br><span style="font-weight: bold;">
+2. Default TMFF parameters coded explicitly to specify the default
+values -- except that by default TMFF is Off/Disabled (see RunParm
+"TMFFUseFormat"):<br>
+</span>
+<table style="text-align: left; width: 676px; height: 523px;" border="5" cellpadding="2" cellspacing="2">
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>* Define TMFF Schemes: <br>
+* Method names are hardcoded and fixed: "AlignColumn" and "Flat";<br>
+* "Unformatted" is RESERVED for internal use.<br>
+* Scheme Names are assigned by the user; must be unique and non-blank.<br>
+* <span style="font-style: italic;">RunParmName,SchemeName,MethodName,</span></code><code><span style="font-style: italic;">MaxDepth</span></code><code><span style="font-style: italic;">,</span></code><code><span style="font-style: italic;">AlignByValue,AlignAtNbr,AlignByValue</span><br style="font-style: italic;"><span style="font-weight: bold;">TMFFDefineScheme,AlignVarDepth1,AlignColumn,1,Var,1,Var<br>
+TMFFDefineScheme,AlignVarDepth2,AlignColumn,2,Var,1,Var<br>
+TMFFDefineScheme,AlignVarDepth3,AlignColumn,3,Var,1,Var<br>
+TMFFDefineScheme,AlignVarDepth4,AlignColumn,4,Var,1,Var<br>
+TMFFDefineScheme,AlignVarDepth5,AlignColumn,5,Var,1,Var<br>
+TMFFDefineScheme,AlignVarDepth99,AlignColumn,99,Var,1,Var<br>
+TMFFDefineScheme,Flat,Flat<br>
+TMFFDefineScheme,PrefixDepth3,AlignColumn,3,Sym,2,Sym<br>
+TMFFDefineScheme,PostfixDepth3,AlignColumn,3,Sym,1,Sym<br>
+TMFFDefineScheme,TwoColumnAlignmentDepth1,TwoColumnAlignment,1<br>
+TMFFDefineScheme,TwoColumnAlignmentDepth2,TwoColumnAlignment,2<br>
+TMFFDefineScheme,TwoColumnAlignmentDepth3,TwoColumnAlignment,3<br>
+TMFFDefineScheme,TwoColumnAlignmentDepth4,TwoColumnAlignment,4<br>
+TMFFDefineScheme,TwoColumnAlignmentDepth5,TwoColumnAlignment,5<br>
+TMFFDefineScheme,TwoColumnAlignmentDepth99,TwoColumnAlignment,99<br>
+</span></code><br>
+      <code>
+* Define TMFF Formats:<br>
+* "Format 0" is RESERVED for internal use - uses Method "Unformatted".<br>
+      </code><code>* <span style="font-style: italic;">RunParmName,FormatNbr,SchemeName</span></code><br>
+<code><span style="font-weight: bold;"><span style="font-family: monospace;">TMFFDefineFormat,1,AlignVarDepth1<br>
+TMFFDefineFormat,2,AlignVarDepth2<br>
+TMFFDefineFormat,3,AlignVarDepth3<br>
+TMFFDefineFormat,4,AlignVarDepth4<br>
+TMFFDefineFormat,5,AlignVarDepth5<br>
+TMFFDefineFormat,6,AlignVarDepth99<br>
+TMFFDefineFormat,7,Flat<br>
+TMFFDefineFormat,8,PrefixDepth3<br>
+TMFFDefineFormat,9,PostfixDepth3<br>
+TMFFDefineFormat,10,TwoColumnAlignmentDepth99<br>
+TMFFDefineFormat,11,TwoColumnAlignmentDepth1<br>
+TMFFDefineFormat,12,TwoColumnAlignmentDepth2<br>
+TMFFDefineFormat,13,TwoColumnAlignmentDepth3<br>
+TMFFDefineFormat,14,TwoColumnAlignmentDepth4<br>
+TMFFDefineFormat,15,TwoColumnAlignmentDepth5<br>
+      </span></span><br>
+* To turn on/enable TMFF, use Format Nbr &gt;= 1 (off/disabled = Format 0):<br>
+</code><code>* <span style="font-style: italic;">RunParmName,FormatNbr</span></code><br>
+
+      <code style="font-weight: bold;"></code><code><span style="font-weight: bold;">TMFFUseFormat,3</span><br>
+      <br>
+* Proof Assistant RunParms that affect TMFF formatting:<br></code><code><span style="font-weight: bold;">ProofAsstFormulaLeftCol,20</span><br style="font-weight: bold;"><span style="font-weight: bold;">
+ProofAsstFormulaRightCol,79</span><br style="font-weight: bold;"><span style="font-weight: bold;">
+ProofAsstTextColumns,80</span><br style="font-weight: bold;"><span style="font-weight: bold;"></span><br>
+* NOTE: formulas are now output using TMFF because TMFF is enabled!<br>
+*<br>
+* NOTE: TMFF relies upon grammatical parsing of .mm statements! Input<br>
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the "LoadFile" and "Parse" RunParms before the TMFF RunParms<br>
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for best results.<br><span style="font-weight: bold;">
+PrintSyntaxDetails,aceq1</span><br>
+      <br>
+* ... doit!<br><span style="font-weight: bold;">RunProofAsstGUI</span></code><br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<span style="font-weight: bold;"></span>
+<ul>
+  </ul><span style="font-weight: bold;"></span>
+<hr style="width: 100%; height: 2px;">
+<big><span style="font-weight: bold;">TMFF Method Processing Overview:</span></big><br>
+<br>
+The basic idea in TMFF Method processing is to use a formula's parse
+tree to determine where to insert line breaks. Take, for example, a
+formula, "<span style="font-weight: bold; font-style: italic;">X</span>" = "<code>|- ( ( ph -&gt; ( ps -&gt; ch ) ) -&gt; ( ( ph -&gt; ps ) -&gt; ( ph -&gt; ch ) ) )</code>".<br>
+<br>
+The parse tree for <span style="font-weight: bold; font-style: italic;">X</span> looks like this (in set.mm notation): <br>
+<table style="text-align: left; width: 540px; height: 310px;" border="5" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+****<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*wi*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*&nbsp;&nbsp;&nbsp;&nbsp; ****&nbsp;&nbsp;&nbsp; *
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br></code><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</code><br>
+      <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+****&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+****<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*wi*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*wi*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+****&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+****&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br></code><code></code><code>&nbsp;&nbsp;&nbsp;&nbsp;
+*&nbsp; &nbsp;&nbsp;&nbsp; *
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </code><br>
+      <code>&nbsp;&nbsp;
+**** &nbsp; &nbsp;&nbsp;&nbsp;
+****&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+****&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ****<br>&nbsp;&nbsp;
+*ph*&nbsp; &nbsp; &nbsp;&nbsp;
+*wi*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*wi*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*wi*<br>&nbsp;&nbsp;
+****&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+****&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+****&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ****&nbsp;&nbsp;&nbsp; <br></code><code></code><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*&nbsp; &nbsp; *
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+* &nbsp;&nbsp; * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </code><br>
+      <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+****&nbsp; ****&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+****&nbsp; ****&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ****&nbsp; ****<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *ps*&nbsp;
+*ch*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *ph*&nbsp;
+*ps* &nbsp; &nbsp;&nbsp; *ph*&nbsp; *ch*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ****&nbsp;
+****&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ****&nbsp;
+****&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ****&nbsp; ****<br>
+      </code><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</code><br>
+
+      <code></code><code>( ( ph -&gt; ( ps -&gt; ch ) ) -&gt; ( ( ph -&gt; ps ) -&gt; ( ph -&gt; ch ) ) )<br>
+      <br>
+      </code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<br>
+<code></code>Conceptually, the TMFF Method begins at the root node of formula <span style="font-weight: bold; font-style: italic;">X</span>'s parse tree. But a formula's parse tree does not provide the first symbol of the formula, which is always a constant (i.e. "<code>|-</code>" or "<code>wff</code>" or other user-defined constant symbol),
+so the first symbol of the formula must be input with the parse tree,
+and is output as given (updating current row/column in the output area).<br>
+<br>
+Each node of the parse tree, starting with the root node is formatted
+in turn as a sub-expression using a function we will call "<code>formatSubExpr</code>". The current node's sub-expression is checked against the input Method option/parameters, such as <code>maxDepth</code>, <code></code>
+current column number, etc. If the sub-expression's attributes exceed
+any of the given values then the sub-expression must be broken up using
+a line break and space characters. In this case, the constants and the
+variables of the sub-expression are formatted and output in turn, from
+left to right; each variable corresponds to a child node of the current
+node, and is formatted and output using a recursive call to
+formatSubExpr. <br>
+<br>
+The main difference between TMFF Methods (as initially foreseen) is the
+way that processing deals with line breaks inside sub-expressions. The
+AlignColumn method arranges the variable or constant portions of
+a sub-expression in a single column based on the input
+option/parameters. <br>
+<br>
+<br>
+
+<hr style="width: 100%; height: 2px;">
+<big><span style="font-weight: bold;">Examples:</span></big><br>
+<br>
+Here is how formula <span style="font-weight: bold; font-style: italic;">X</span> would be formatted with the Format 1 above (using Scheme "<code>AlignVarDepth3</code><code>"</code> w/ <code>maxDepth=3</code><code>)</code>:<br>
+<table style="text-align: left; width: 667px; height: 84px;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><span style="font-family: monospace;">
+&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; 1 &nbsp; &nbsp; &nbsp; &nbsp; 2
+&nbsp; &nbsp; &nbsp; &nbsp; 3 &nbsp; &nbsp; &nbsp; &nbsp; 4 &nbsp;
+&nbsp; &nbsp; &nbsp; 5 &nbsp; &nbsp; &nbsp; &nbsp; 6 &nbsp; &nbsp;
+&nbsp; &nbsp; 7 &nbsp; &nbsp; &nbsp; &nbsp; 8</span><br>
+
+      <span style="font-family: monospace;">12345678901234567890123456789012345678901234567890123456789012345678901234567890</span><br>
+      <code>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; |- ( ( ph -&gt; ( ps -&gt; ch ) ) -&gt; <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+( ( ph -&gt; ps ) -&gt; ( ph -&gt; ch ) ) )<br>
+      <br>
+</code>
+</td></tr></tbody>
+</table>
+<br>
+<br>
+Here is <span style="font-weight: bold; font-style: italic;">X</span> again but with Format 3 above (using Scheme "<code>AlignVarDepth1</code>", which uses <code>maxDepth=1</code>):<br><br>
+<table style="text-align: left; width: 667px; height: 132px;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><span style="font-family: monospace;">
+&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; 1 &nbsp; &nbsp; &nbsp; &nbsp; 2
+&nbsp; &nbsp; &nbsp; &nbsp; 3 &nbsp; &nbsp; &nbsp; &nbsp; 4 &nbsp;
+&nbsp; &nbsp; &nbsp; 5 &nbsp; &nbsp; &nbsp; &nbsp; 6 &nbsp; &nbsp;
+&nbsp; &nbsp; 7 &nbsp; &nbsp; &nbsp; &nbsp; 8</span><br>
+
+
+      <span style="font-family: monospace;">12345678901234567890123456789012345678901234567890123456789012345678901234567890</span><br>
+
+      <code>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; |- ( ( ph -&gt; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+( ps -&gt; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ch ) ) -&gt; <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+( ( ph -&gt; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ps ) -&gt; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+( ph -&gt; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ch ) ) )<br>
+      <br>
+      </code>
+</td></tr></tbody>
+</table>
+<br>
+<br>
+A few tricky points to mention about Method processing and the above examples:<br>
+<ul>
+  <li>Column-ization begins in the output line at the "At" position --
+and tokens to the left of the "At" position are output sequentially,
+without line breaks.<br>
+  </li>
+  <li>In the examples above the variables such as "ph", "ps" and "ch"
+should be understood to represent sub-expressions that might themselves
+require formatting.</li>
+  <li>In the event that the Method formatting logic runs out of room on
+a line and cannot break down a sub-expression further (for example,
+room remains for only 1 output character and the symbol to be printed
+is "ph") -- or if any other error is encountered, then the entire
+formula is output unformatted. For this reason, not to mention
+screen/page width, it is expected that "AtNbr" will never exceed 2, or
+3 at the very most. <br>
+  </li>
+  <li>Type Conversion Syntax Axioms are ignored -- bypassed. The logic
+ignores these nodes and goes down the parse tree to the Type
+Conversion's child, which may be a Variable Hypothesis node, a Named
+Typed Constant Syntax Axiom Node, or a Nulls Permitted Syntax Axiom
+node.</li>
+  <li>Named Typed Constants and Nulls Permitted Syntax Axioms are
+treated as variables -- specific instances of variables -- for the
+purposes of formatting a sub-expression. That means that they are not
+sub-formatted (broken down), and "At=Cnst" will not capture (trigger
+on) them. Thus, if you have, for example, a prefix notation such as
+"operatorVar op1 op2"&nbsp; (see peano.mm at metamath.org), alignment
+on the actual operator variables should be coded with option/parameters<code> </code><code>alignAtValue = Sym</code><code>,alignAtNbr = 2</code><code>,alignByValue = Sym"</code>, which will result in the following output: <code><br>
+    </code></li>
+</ul>
+
+
+
+
+
+
+<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; operatorVar op1<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; op2<br>
+</code><br>
+<hr style="width: 100%; height: 2px;"><br>
+<br>
+<br>
+<br>
+
+</body></html>

@@ -1,0 +1,16 @@
+OutputVerbosity,99
+LoadFile,mm\setFirst100.mm
+LoadFile,mm\DollarTPreface.mm
+LoadFile,mm\DollarTFirst100.mm
+GMFFExportParms,althtml,ON,althtmldef,gmfftest\althtml,.html,gmfftest\models\althtml,A,ISO-8859-1,general
+GMFFExportParms,html,ON,htmldef,gmfftest\html,.html,gmfftest\models\html,A,ISO-8859-1,general
+GMFFInitialize,PrintTypesettingDefinitions
+GMFFExportFromFolder,gmfftest,a1i,.mmt,1
+GMFFExportFromFolder,gmfftest,a2i,.mmp,1
+GMFFExportFromFolder,gmfftest,syllogism,.mmp,1
+GMFFExportFromFolder,gmfftest,pm2.38,.mmp,1 
+GMFFExportFromFolder,gmfftest,pm2.38,.mmp,2,UT11Out 
+GMFFExportFromFolder,gmfftest,*,.mmp,1,UT11Out
+GMFFExportTheorem,*,5,UT11Out
+ 
+

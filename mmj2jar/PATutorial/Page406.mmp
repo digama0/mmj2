@@ -1,0 +1,27 @@
+$( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
+*                                                          Page406.mmp
+ In this scenario we will give the Derive Feature one known
+ Hypothesis, step 1, plus one unknown hypothesis ("?") because we
+ found out that ax-mp uses two Logical Hypotheses and one of them is
+ very similar to our hypothesis! Press Ctrl-U and watch the "Derive
+ Feature" in action!
+
+h1::reiteration.1    |- ph
+qed:1,?:ax-mp        |- ph
+
+*    
+ Wow! I want to see that again in slo-mo? What just happened?!?!!!
+
+ First, Derive took our Hypothesis and "qed" formula, and unified them
+ with ax-mp, producing the following variable substitutions: "ph" for
+ "ph" and "ph" for "ps". Then it used those to *derive* the missing
+ Hypothesis step using ax-mp's "maj" Logical Hypothesis as a template.
+ Step 1001 resulted! Then, to be extra helpful, Derive went ahead and
+ attempted unification of the new Derivation step, 1001. Success! The
+ new step 1001 unifies with Assertion "id". Then Unification proceeded
+ normally and discovered the proof to be complete! Yay!!!
+
+ OK, forward to the next Tutorial page (Page407.mmp)!
+ 
+$) 
+

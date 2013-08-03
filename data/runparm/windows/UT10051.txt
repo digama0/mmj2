@@ -1,0 +1,14 @@
+*-----------------------------------------
+* UT10051.txt -- Theorem Loader Unit Test
+*-----------------------------------------
+StartInstrumentationTimer,TheoremLoaderUnitTest10051
+LoadEndpointStmtLabel,syl
+SeqAssignerIntervalSize,2
+LoadFile,mm\RegressionTest1set.mm
+TheoremLoaderMMTFolder,mmt\testin\t101
+VerifyProof,*
+Parse,* 
+TMFFUseFormat,0 
+ProofAsstBatchTest,syl,,un-unified,Randomized,Print
+LoadTheoremsFromMMTFolder,* 
+StopInstrumentationTimer,TheoremLoaderUnitTest10051

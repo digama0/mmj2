@@ -1,0 +1,1294 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>Theorem Loader Overview</title>
+</head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
+ alink="#000088" link="#0000ff" vlink="#ff0000">
+<big><big><span style="font-weight: bold;">Theorem Loader -- Overview<br>
+<br>
+</span></big></big>
+<hr style="width: 100%; height: 2px;"><big><span
+ style="font-weight: bold;"><br>
+<big style="text-decoration: underline;">Purpose:</big></span><span
+ style="font-weight: bold;"></span></big><br>
+<br>
+The two main problems which the <span style="font-weight: bold;">Theorem
+Loader</span> solves are 1) providing a way for external systems using
+the new "<span style="font-weight: bold;">mmj2 Service</span>" feature
+to load theorems into Metamath formatted files via mmj2; and 2)
+providing a way for
+users of the mmj2 Proof Assistant GUI to store new theorems and new
+proofs of existing theorems into the Logical System loaded in memory --
+and into the set of .mm data which is loaded by mmj2 at start-up (the
+main input .mm files, such as set.mm are, however, not updated directly
+by
+mmj2.)<br>
+<br>
+<br>
+<hr style="width: 100%; height: 2px;"><br>
+<span style="font-weight: bold;"><big
+ style="text-decoration: underline;"><big>Theorem Loader Overview
+Diagram:</big></big><br>
+<br>
+</span>The Theorem Loader Overview diagram below shows the main
+high-level
+interfaces of
+the Theorem Loader. The diagram is generally accurate in showing the
+mmj2 classes interacting with Theorem loader, but only at a high level.
+For example, <code>mmj.util.BatchFramework.java</code> actually calls
+another object
+-- an instance of&nbsp; <code>mmj.util.LogicalSystemBoss.java</code>
+-- which then
+calls the Theorem
+Loader. The rectangles on the diagram represent input/output data
+stores (files) and the arrows to/from these rectangles show the I/O
+accesses. The arrows between the objects which do not have borders,
+such as "<code>BatchMMJ2</code>" and
+"<code>BatchFramework</code>" represent high-level objects using
+function calls, where
+the arrow
+points to the object being called.<span style="font-weight: bold;"><br>
+</span>
+<br>
+<img alt="Theorem Loader Overview Diagram"
+ src="TheoremLoaderOverview.jpg"
+ style="border: 5px solid ; width: 512px; height: 367px;"><br>
+<br>
+<br>
+<br>
+<span style="font-style: italic;"></span>
+<hr style="width: 100%; height: 2px;"><span style="font-style: italic;"></span><br>
+<big><span style="font-weight: bold;"><br>
+<big style="text-decoration: underline;">What It Does (Overview):</big></span><span
+ style="font-weight: bold;"></span></big><br>
+<br>
+The Theorem Loader feature
+stops several steps short of being a full Metamath data exchange
+facility for
+external systems and users wishing to load data into or get data out of
+Metamath via
+mmj2. Here are the main functions of the new Theorem Loader feature:<br>
+<ul>
+  <li>The Theorem Loader provides a way to load <span
+ style="font-style: italic;">theorems</span> -- but not other Metamath
+objects -- into mmj2's current Logical System in memory and to write
+out those theorems in Metamath .mm format to a designated directory
+(folder).</li>
+  <li><span style="font-weight: bold;">[Restrictions]</span> <span
+ style="font-style: italic; text-decoration: underline;">New theorems
+are loaded into the Logical System global scope level, and must have
+all new logical hypotheses, they cannot share logical hypotheses with
+other theorems</span> (i.e. shared scope, as is sometimes the case in <code>set.mm</code>
+with groups of lemmas and theorems.)&nbsp; Existing theorems are also
+handled by the Theorem Loader, but only the proofs ('<code
+ style="font-style: italic; text-decoration: underline;">$=</code><span
+ style="font-style: italic; text-decoration: underline;">") and
+distinct variable restrictions ('</span><code
+ style="font-style: italic; text-decoration: underline;">$d</code><span
+ style="font-style: italic; text-decoration: underline;">') are updated</span>.
+(As with the Proof Assistant GUI, variable and variable hypothesis
+declarations are not permitted in use with the TheoremLoader).<br>
+  </li>
+  <li>Input to the Theorem Loader can be either a designated directory,
+containing one separate type "<code>.mmt</code>" (to avoid accidents
+involving "<code>.mm</code>" files :-) file for each theorem to be
+loaded. Or, a <span style="text-decoration: underline;">successfully
+unified</span> mmj2 Proof Worksheet passed via a
+program "call" statement (incomplete and invalid Proof Worksheets are
+not
+"storable" using Theorem loader, but the Metamath "eimm" command may
+provide more support for importing from/exporting to Proof Worksheets
+involving incomplete or invalid proofs..)<br>
+  </li>
+  <li>Output from the Theorem Loader consists of theorems written as "<code>.mmt</code>"
+type files in
+the Metamath <code>.mm</code> file format, as well as updates to
+mmj2's Logical System
+in memory. </li>
+  <li>An additional primary benefit of the new Theorem Loader feature
+is that
+it provides a mechanism for the mmj2 Proof Assistant GUI to dynamically
+update the mmj2 Logical System presently in memory with new and
+newly-proven theorems. Dynamically stored new theorems and new proofs
+from the mmj2
+Proof Assistant GUI are written out to a directory as individual "<code>.mmt</code>"
+files which can be read back in by the Theorem Loader, thus
+enabling a user to perform considerable amounts of work in one or
+multiple sessions before being
+forced to manually update the main .mm file (e.g. set.mm) -- without
+having to exit-and-restart mmj2! <br>
+  </li>
+</ul>
+<br>
+<span style="font-weight: bold;"><big
+ style="text-decoration: underline;"><big>Component Descriptions:</big></big><br>
+<br>
+</span><span style="font-style: italic;">Note: the names of these
+things match the overview diagram above.</span><span
+ style="font-weight: bold;"><br>
+</span>
+<h3>I. Data Stores</h3>
+<h4>A. Command Line Parms</h4>
+The Command Line Parms tell mmj2 the filename of the RunParms.txt file,
+and optionionally, the RunParm file's "charset" name, quoting character
+and delimiter character. They are documented in <a
+ href="../src/mmj/util/BatchMMJ2.java">mmj2\src\mmj\util\BatchMMJ2.java</a>
+and an example is provided in <a href="../mmj2jar/mmj2.bat">mmj2\mmj2jar\mmj2.bat</a>.
+When the mmj2 Service feature is used in "Caller mode", the calling
+program calls BatchMMJ2 passing the Command Line Parms as if they had
+been passed on the "java" command line as arguments (e.g. "String[]
+arg").<br>
+<br>
+<h4>B. .mm file(s)</h4>
+This is the primary input Metamath <code>.mm</code> format file -- or
+files --
+input to mmj2 during a single run. Most often a single <code>.mm</code>
+file such as
+<code>set.mm</code> is input to mmj2, and this is specified with the
+RunParms.txt
+command "<code>LoadFile,c:\metamath\set.mm</code>" line (see <a
+ href="../mmj2jar/RunParms.txt">mmj2\mmj2jar\RunParms.txt</a> and <a
+ href="../../metamath/set.mm">metamath\set.mm</a>). It is possible to
+use two or more LoadFile run parms sequentially to load more than one
+.mm file consecutively and as if they were strung together into one
+large file. <br>
+<br>
+<h4>C. .mmt folder</h4>
+The <code style="font-weight: bold;">.mmt folder</code>&nbsp; (or
+folders, since the directory in use can be
+changed during the course of processing) contains theorems in Metamath
+<code>.mm</code> format but written using file-type ".mmt" (to avoid
+accidents involving real Metamath files such as <code>set.mm</code>.).
+These theorems can be loaded, upon command, into the
+Logical System currently loaded into memory, and theorems from the
+Logical System and/or the mmj2 Proof Assistant can be written to the
+<code>.mmt</code><span style="font-weight: bold;"></span> folder. Thus,
+the <code>.mmt</code> folder can be used as a repository for sets
+of theorems which in development, prior to their ultimate -- manual --
+entry into the main <code>.mm</code> file. <br>
+<br>
+In normal use the theorems in the <code>.mmt</code> folder are written
+to the folder
+upon user command by mmj2's Theorem Loader, which is called either by
+Proof Assistant, or via the new RunParm "<code>ExtractTheoremToMMTFolder</code>".
+Therefore, the following processing rules pertaining to loading of
+theorems from the <code>.mmt</code> folder will be of minor concern to
+the users --
+except that periodically when the user manually updates the main input
+<code>.mm</code> file with new theorems and new proofs, the contents of
+the <code>.mmt</code>
+folder must be manually cleaned out (and archived or backed up) -- or
+if <code>.mmt</code> files are created manually:<br>
+<br>
+<span style="text-decoration: underline; font-weight: bold;">Theorem
+Loader Processing Rules for loading theorems from the <code>.mmt</code>
+folder:<br>
+<br>
+</span><span style="font-style: italic;">Note: Most of the rules below
+mirror what the mmj2 Proof Assistant GUI can do, so don't be overly
+concerned by the number and complexity of these rules! In most cases,
+the mmj2 Proof Assistant GUI user won't need to worry about the batch
+procesing rules because the GUI handles writing theorems to the .mmt
+folder.</span> <span
+ style="text-decoration: underline; font-weight: bold;"><br>
+</span>
+<ul>
+  <li>Only files in the named directory itself -- not its
+sub-directories -- are loaded from the <code>.mmt</code> folder
+(directory). Thus,
+sub-directories of the <code>.mmt</code> folder could be used as
+archives or backup
+locations for work which has already been completed.</li>
+  <li>For convenience -- especially because the Proof Assistant
+provides access to the Theorem Loader -- the user need not specify a <code>.mmt</code>
+Folder, either via RunParm or the Proof Assistant GUI prior to its
+actual use; this allows use of mmj2 without using the Theorem Loader,
+with no change to existing RunParm files or user practices. However,
+when processing requires a <code>.mmt</code> Folder and the <code>.mmt</code>
+Folder is "<code>null</code>" (not yet specified), an error message is
+output. There is no default setting for <code>.mmt</code> Folder, in
+other words (i.e. not to the "current directory" or any place else.)<br>
+  </li>
+  <li>Only files with file type "<code>.mmt</code>" are loaded. Other
+files, such as
+"<code>.mmp</code>" (mmj2 Proof Worksheets) can be stored in the <code>.mmt</code>
+folder, which means that a single
+directory (folder) could be used as the <code>.mmt</code> folder and
+the "<code>ProofAsstProofFolder</code>"
+(see <a href="../mmj2jar/RunParms.txt">mmj2\mmj2jar\RunParms.txt</a>)
+-- but this is not recommended (best to separate the two.)<br>
+  </li>
+  <li>Only files whose filename -- minus the file type -- exactly
+matches the "<code>$p</code>"
+label inside each file are loaded (e.g. "<code>syl.mmt</code>" matches
+label "<code>syl</code>").</li>
+  <li>Only files containing exactly one theorem are loaded.</li>
+  <li>Files may contain only Metamath statements "<code>${</code>", "<code>$}</code>",
+"<code>$(</code>", "<code>$)</code>", "<code>$d</code>", "<code>$e</code>",&nbsp;
+and "<code>$p</code>"<code></code>. Files containing any other
+statements are not loaded.<br>
+  </li>
+  <li>Each "$(" (Begin Comment) must be followed by a "$)" (End
+Comment), and each "${" (Begin Scope) must be
+followed by a "$}" (End Scope).</li>
+  <li>A maximum of one pair of Scope statements, "${" and "$}", is
+allowed. If "$d" or "$e"
+statements are used with the theorem a pair of Scope statements is
+mandatory.. If scope statements are used,
+Begin Scope, "${", must be the first Metamath statement in the file,
+and End Scope, "$}" must be the last Metamath statement in the file.</li>
+  <li>If "$d" and/or "$e" statements are used with the theorem, these
+statements must precede the "$p" statement -- the $p statement is, of
+course, always mandatory.<br>
+  </li>
+  <li>FYI, a Metamath comment statement should immediately precede the
+"$p" (e.g. "<code>$( this is a comment $)&nbsp; syl $p blah $=&nbsp; ?
+$.</code>"). This is the only comment which Theorem Loaded will store
+in the Logical System. Any other comments are ignored. <br>
+  </li>
+  <li>Only uncompressed proofs may be used -- compressed proofs will
+"error out" with a syntax error message.</li>
+  <li>"Syntax theorems" cannot be input via the Theorem Loader -- the
+Type Code (i.e. 1st symbol of formula) on each Logical Hypothesis ('<code>$e</code>')
+and Theorem ('<code>$p</code>') statement must equal the "provable
+logic statement type code" in use with the input .mm file. For <code>set.mm</code>
+and <code>ql.mm</code> this is "<code>|-</code>" (see RunParm "<code>ProvableLogicStmtType</code>").
+    <br>
+  </li>
+  <li>For updates to existing theorems, the Logical Hypotheses and the
+Theorem formula must exactly match what is already present in the
+Logical System. New hypotheses cannot be added. Conversely, new
+Theorems cannot share Logical Hypotheses with other Theorems (i.e. it
+is not possible to insert a new Theorem into an existing local scope).<br>
+  </li>
+</ul>
+<h4><br>
+</h4>
+<h4>D. RunParms.txt</h4>
+The RunParms.txt file contains a set of executable commands and option
+values for mmj2. These are read by BatchFramework in order to customize
+mmj2 for a particular .mm file's characteristics and to control
+processing flow in mmj2 for a single run. Most RunParms are optional
+and have default settings which are hardcoded into mmj2. Documentation
+for the mmj2 RunParm "language" may be found here: <a
+ href="../mmj2jar/AnnotatedRunParms.txt">mmj2\mmj2jar\AnnotatedRunParms.txt</a>
+and the main version of the RunParms.txt file which is part of every
+mmj2 release is here: <a href="../mmj2jar/RunParms.txt">mmj2\mmj2jar\RunParms.txt</a>.
+<br>
+<br>
+Here are the new RunParms for the Theorem Loader feature:<br>
+<br>
+<big><span style="font-weight: bold;">1</span></big>. <a
+ name="TheoremLoaderMMTFolder"></a>"<code><span
+ style="font-weight: bold;">TheoremLoaderMMTFolder</span>,</code><span
+ style="font-style: italic; font-weight: bold;"></span><span
+ style="font-weight: bold;"></span><span
+ style="font-style: italic; font-weight: bold;">DirectoryPathname</span><span
+ style="font-style: italic; font-weight: bold;"></span>"
+where:<br>
+<ul>
+  <li>"<code>TheoremLoaderMMTFolder"</code> is a constant</li>
+  <li>"<span style="font-style: italic;">DirectoryPathname</span>"
+specifies the default pathname of the .mm folder to be used by the
+Theorem Loader to write or load theorem <code>.mmt</code> files (via
+the Theorem
+Loader).</li>
+</ul>
+<br>
+<hr style="width: 100%; height: 2px;"><br>
+<big><span style="font-weight: bold;">2</span></big>. <a
+ name="TheoremLoaderDjVarsOption"></a>"<code><span
+ style="font-weight: bold;">TheoremLoaderDjVarsOption</span><span
+ style="font-family: mon;"><span style="font-weight: bold;">,</span></span></code><span
+ style="font-style: italic; font-weight: bold;">DjVarsOption</span><span
+ style="font-weight: bold;"></span><span
+ style="font-style: italic; font-weight: bold;"></span><span
+ style="font-style: italic; font-weight: bold;"></span>"
+where:<br>
+<ul>
+  <li>"<code>TheoremLoaderDjVarsOption</code>" is a constant</li>
+  <li>"<span style="font-style: italic;">DjVarsOption</span>" specifies
+how $d statements in an existing theorem's extended frame are to be
+updated by an input <code>.mmt</code> file for that theorem; may be
+either "Replace"
+(means "replace old with new"), "Merge" (means "merge old
+with new"), or "NoUpdate" (the default, means "don't touch the old
+$d's!!!") Note: A new theorem's $d statements are set to the $d
+statement in the input <code>.mmt</code> file.</li>
+</ul>
+NOTE: In Proof Assistant this option's correct setting will depend on
+what
+the user is actually doing and by the current setting of the
+"<code>ProofAsstDjVarsSoftErrors</code>" option (see <a
+ href="../mmj2jar/AnnotatedRunParms.txt">mmj2\mmj2jar\AnnotatedRunParms.txt</a>
+). The simplest choice is "<code>NoUpdate</code>" because a subsequent
+VerifyProof
+will report any missing $d statements. However, the recommended setting
+is "<code>Replace</code>" if your ProofAsstDjVarsSoftError option is "<code>GenerateNew</code>"
+(which always create a completely new set of $d statements even if
+there are no $d errors.) Here is a table showing the recommended choice
+combinations:<br>
+<br>
+<table style="width: 80%; text-align: left;" border="5" cellpadding="2"
+ cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code><span
+ style="font-weight: bold;">ProofAsstDjVarsSoftErrors</span></code><br>
+      </td>
+      <td style="vertical-align: top;"><code><span
+ style="font-weight: bold;">TheoremLoaderDjVarsOption</span></code><br>
+      </td>
+      <td style="vertical-align: top;"><span style="font-weight: bold;">Notes</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>GenerateNew</code><br>
+      </td>
+      <td style="vertical-align: top;"><code>Replace</code><br>
+      </td>
+      <td style="vertical-align: top;">recommended settings<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>GenerateReplacements</code><br>
+      </td>
+      <td style="vertical-align: top;"><code>NoUpdate</code><br>
+      </td>
+      <td style="vertical-align: top;">GenerateReplacements generates
+$d statements in the Proof Worksheet only if soft $d errors are found,
+so using "Replace" would wipe out existing $d statements when the .mm
+file is subsequently reloaded.<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>GenerateDifferences</code><br>
+      </td>
+      <td style="vertical-align: top;"><code>Merge</code><br>
+      </td>
+      <td style="vertical-align: top;">these are "ok" too<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>Report</code><br>
+      </td>
+      <td style="vertical-align: top;"><code>NoUpdate</code><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>Ignore</code><br>
+      </td>
+      <td style="vertical-align: top;"><code>NoUpdate</code><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<br>
+<hr style="width: 100%; height: 2px;"><big><span
+ style="font-weight: bold;"><br>
+3</span></big>. <a name="TheoremLoaderAuditMessages"></a>"<code><span
+ style="font-weight: bold;">TheoremLoaderAuditMessages</span><span
+ style="font-family: mon;"><span style="font-weight: bold;">,</span></span></code><span
+ style="font-style: italic; font-weight: bold;">GenerateAuditMessagesOption</span><span
+ style="font-weight: bold;"></span><span
+ style="font-style: italic; font-weight: bold;"></span><span
+ style="font-style: italic; font-weight: bold;"></span>"
+where:<code><span style="font-weight: bold;"><br>
+<br>
+</span></code>
+<ul>
+  <li>"<code>TheoremLoaderAuditMessages</code>"&nbsp; is a
+constant<span style="font-family: mon;"><span style="font-weight: bold;"></span></span></li>
+  <li><span style="font-style: italic;"><span style="font-weight: bold;">GenerateAuditMessages</span></span>:
+may be "<code>Yes</code>", "<code>No</code>" or omitted.
+Default is "<code>No</code>". If set to "<code>Yes</code>" then
+audit messages about the load process are generated (for educational
+and testing purposes.)</li>
+</ul>
+<br>
+<hr style="width: 100%; height: 2px;"><big><span
+ style="font-weight: bold;">4</span></big>. "<a
+ name="LoadTheoremsFromMMTFolder_RunParm"></a><code><span
+ style="font-weight: bold;">LoadTheoremsFromMMTFolder</span>,</code><span
+ style="font-style: italic; font-weight: bold;">LoadSpecification</span><span
+ style="font-weight: bold;"></span><span
+ style="font-style: italic; font-weight: bold;"></span><span
+ style="font-style: italic; font-weight: bold;"></span>"
+where:<br>
+<ul>
+  <li>"<code>LoadTheoremsFromMMTFolder</code>" is a constant</li>
+  <li>"<span style="font-style: italic;">LoadSpecification</span>"
+equals either "*", meaning "Load the entire contents of the <code>.mmt</code>
+Folder" or is a theorem label, meaning to load the file "<span
+ style="font-style: italic;">label</span><code>.mmt</code>" from the
+.mmt Folder.</li>
+</ul>
+NOTE: <span style="font-style: italic;">This RunParm is provided for
+low-volume use, something on the order of 100&nbsp; <code>.mmt</code>
+files.</span>
+<br>
+<br>
+Example: "<code>LoadTheoremsFromMMTFolder,*"</code><br>
+<br>
+<span style="font-weight: bold; text-decoration: underline;">Processing/Rules:</span><br>
+<ul>
+  <li>This RunParm can be located anywhere in the RunParms.txt file
+after the
+LoadFile command. It is most efficient to locate it immediately
+after the LoadFile command, prior to the "<code>VerifyProof,*</code>"
+and "<code>Parse,*</code>". For maximum ease of use however, the <code>LoadTheoremsFromMMTFolder</code>
+RunParm can be located <span
+ style="font-weight: bold; font-style: italic;">after</span> the "<code>VerifyProof,*</code>"
+and "<code>Parse,*</code>". This is because the source of any Verify
+errors will be more obvious. Newly loaded theorems are verified and
+parsed if the VerifyProof and
+Grammar objects are available, which is based on the current
+processing location in the RunParms file. It is possible for updated <code>$d</code>
+statements in existing theorems tol cause
+Verify Proof errors in subsequent theorems which have not been updated.<br>
+  </li>
+  <li>Multiple <code>LoadTheoremsFromMMTFolder</code> RunParm commands
+can be input,
+but that would be an "advanced" scenario -- and perhaps troublesome in
+practice.<br>
+  </li>
+  <li>If the RunParm options are invalid an error message is
+generated and processing terminates.</li>
+  <li>If the RunParm is valid but one or more input <code>.mmt</code>
+files contain
+serious errors, error message(s) are output but the <code>MMJ2Batch</code>
+job
+continues processing RunParm.txt commands, and any updates made to the
+LogicalSystem are rolled back (undone). <br>
+  </li>
+  <li>Informational messages are generated for successful <code>.mmt</code>
+file
+loads (Note: using RunParm "<code>OutputVerbosity,0</code>" will turn
+off informational messages in the output print stream.)</li>
+  <li>The <code>MObj.seq</code> number -- the sequential, logical
+location within the Logical System
+-- of a new theorem is computed as follows: a) if the theorem's proof
+contains a "<code>?</code>" symbol then the theorem is added at the end
+of the
+Logical System but prior to any other new theorems being loaded which
+depend upon it in their own proofs; b) if the theorem's proof does not
+contain a "<code>?</code>" symbol then the <code>MObj.seq</code> is
+computed to be in the "gap",
+if
+present, following the highest <code>MObj.seq </code>of the
+assertions and logical
+hypotheses it uses in its proof. (<code>MObj.seq</code> numbers are
+assigned from
+100 by 100, so "gap" refers to the range between two originally
+assigned <code>MObj.seq</code> numers -- for example the gap after <code>MObj.seq</code>
+3600 is
+3601 through 3699.) If the "gap" is full -- has no unused seq numbers,
+the theorem is added at the end of the Logical System but prior to any
+other new theorems being loaded which depend on it in their own proofs.</li>
+  <li>Certain proof errors such as cyclic or forward references, or
+non-existent labels referenced in proofs are considered "severe" and
+result
+in not only harshly worded, cryptic error messages but termination of
+the <code>LoadTheoremsFromMMTFolder</code> RunParm's processing -- and
+"undo" of any updates that were made during the command's processing.
+However, a proof that is merely incomplete (contains "?" label) or
+incorrect -- does not prove the conclusion -- is reported with an error
+message and processing continues (this behavior is identical to
+the&nbsp; "<code>VerifyProofs,*</code>" processing -- where proof
+errors in already loaded theorems are reported but do not terminate the
+entire <code>BatchMMJ2</code> jobstream.)</li>
+  <li>Only the "<code>$d</code>" and "<code>$=</code>" (Distinct
+Variable and Proof) data are
+updated
+using the contents of an input <code>.mmt</code> file which specifies
+a theorem
+already loaded into the Logical System. An error message is generated
+if any formulas in the existing theorem and its logical hypotheses are
+different from the input (this is a fail-safe double-check...)</li>
+</ul>
+<br>
+<span style="font-weight: bold;">Note</span>: the equivalent of the <code>LoadTheoremsFromMMTFolder</code>
+command will be added to the mmj2 Proof Assistant GUI as a menu item, <span
+ style="font-style: italic;">and</span> to the ProofAssistant.java
+public call interface (for use by the mmj2 Service feature.) For mmj2
+Proof Assistant GUI users this means that new <code>.mmt</code> format
+files can be
+created -- manually, if desired -- in the <code>.mmt</code> folder,
+and these
+theorems can be dynamically loaded into the Logical System without
+exiting the mmj2 Proof Assistant GUI. This could be a very useful
+feature when working with lemmas (note that if the Proof Worksheet
+"<code>LOC_AFTER</code>" is used with a new theorem and a lemma is
+dynamically
+loaded from the <code>.mmt</code> folder, and the lemma has a "<code>?</code>"
+in its
+proof
+(meaning that the lemma is loaded at the logical end of the Logical
+System), then the user will need to erase the <code>LOC_AFTER</code>
+label to avoid
+a "forward reference" in the proof.<br>
+<br>
+<span style="font-weight: bold;"></span>
+<hr style="width: 100%; height: 2px;"><big><span
+ style="font-weight: bold;">5</span></big>. "<code><span
+ style="font-weight: bold;"><a name="ExtractTheoremToMMTFolder_RunParm"></a>ExtractTheoremToMMTFolder</span>,</code><span
+ style="font-style: italic; font-weight: bold;"><span
+ style="font-family: monospace;"></span>TheoremLabel</span><span
+ style="font-weight: bold;"></span><span
+ style="font-style: italic; font-weight: bold;"></span><span
+ style="font-style: italic; font-weight: bold;">"</span>
+where:<br>
+<ul>
+  <li>"<code>ExtractTheoremToMMTFolder</code>" is a constant</li>
+  <li>"<span style="font-style: italic;">TheoremLabel</span>" specifies
+the label of a theorem ($p) statement already loaded into the Logical
+System.</li>
+</ul>
+The <code>ExtractTheoremToMMTFolder</code> RunParm is provided for
+testing purposes, but could be used by anyone for other reasons. <big><span
+ style="font-weight: bold;"></span></big><br>
+<big><span style="font-weight: bold;"></span></big><br>
+<hr style="width: 100%; height: 2px;"><code style="font-weight: bold;"></code><big><span
+ style="font-weight: bold;"></span></big><br>
+<big><span style="font-weight: bold;">6</span></big>. "<code><span
+ style="font-weight: bold;">UnifyAndStoreInLogSysAndMMTFolder</span></code><span
+ style="font-style: italic;"><span style="font-weight: bold;">,</span></span><span
+ style="font-weight: bold;"><span style="font-style: italic;">ProofWorksheetFileName</span><span
+ style="font-style: italic;"></span><span style="font-style: italic;"></span></span><br>
+<ul>
+  <li><span style="font-weight: bold; font-style: italic;">NOTE: This
+RunParm was added for use in system testing of mmj2 but is described
+here for the sake of completeness. </span><span
+ style="font-weight: bold; font-style: italic;"> (The Proof
+Assistant RunParm "ProofAsstExportToFile" outputs Proof Worksheets and
+this RunParm converts a Proof Worksheet to Metamath .mm file format and
+stores it in the .mmt Folder, thus allowing us to go full circle...)</span></li>
+  <li>"<code>UnifyAndStoreInLogSysAndMMTFolder</code>" is a
+constant</li>
+  <li><span style="font-style: italic;">ProofWorksheetFileName</span>
+may
+be a relative filename such as "<code>syl.mmp</code>" or an "absolute"
+name such as "<code>c:\my\myproofs\syl.txt</code>". If the "<code>ProofAsstProofFolder</code>"
+RunParm has been input, it is used with a relative filename.</li>
+  <li>The input file is parsed and unified, then if the proof unifies
+successfully, the theorem is stored in the .mmt Folder and is loaded
+into the Logical System by the Theorem Loader.</li>
+  <li>Note: this is technically a Theorem Loader RunParm but because it
+uses the Proof Assistant, this RunParm is affected by previously input
+Proof Assistant RunParms.<br>
+  </li>
+</ul>
+<code style="font-weight: bold;"><br>
+</code>
+<hr style="width: 100%; height: 2px;"><code style="font-weight: bold;"><br>
+</code><big><span style="font-weight: bold;">7</span></big>. "<code><span
+ style="font-weight: bold;">UnifyAndStoreInMMTFolder</span></code><span
+ style="font-style: italic;"><span style="font-weight: bold;">,</span></span><span
+ style="font-weight: bold;"><span style="font-style: italic;">ProofWorksheetFileName</span><span
+ style="font-style: italic;"></span><span style="font-style: italic;"></span></span><br>
+<ul>
+  <li><span style="font-weight: bold; font-style: italic;">NOTE: This
+RunParm was added for use in system testing of mmj2 but is described
+here for the sake of completeness. (The Proof Assistant RunParm
+"ProofAsstExportToFile" outputs Proof Worksheets and this RunParm
+converts a Proof Worksheet to Metamath .mm file format and stores it in
+the .mmt Folder, thus allowing us to go full circle...)<br>
+    </span></li>
+  <li>"<code>UnifyAndStoreInLogSysAndMMTFolder</code>" is a
+constant</li>
+  <li><span style="font-style: italic;">ProofWorksheetFileName</span>
+may
+be a relative filename such as "<code>syl.mmp</code>" or an "absolute"
+name such as "<code>c:\my\myproofs\syl.txt</code>". If the "<code>ProofAsstProofFolder</code>"
+RunParm has been input, it is used with a relative filename.</li>
+  <li>The
+input file is parsed and unified, then if the proof unifies
+successfully, the theorem is stored in the .mmt Folder.</li>
+  <li>Note: this is technically a Theorem Loader RunParm but because it
+uses the Proof Assistant, this RunParm is affected by previously input
+Proof Assistant RunParms.<br>
+  </li>
+</ul>
+<code style="font-weight: bold;"><br>
+</code>
+<hr style="width: 100%; height: 2px;"><code style="font-weight: bold;"></code><br>
+<h3>II. Processes</h3>
+<h4>A. mmj2 Service "Caller"</h4>
+The new mmj2 Service feature can be used in "Caller" or "Callee" mode. <br>
+<br>
+Here is how "Caller" mode works:<br>
+<ul>
+  <li>In mmj2 Service Caller mode, a user program creates an object
+satisfying the new mmj2 "<code>SvcCallback</code>" interface and then
+passes a
+reference to that object in its call to <code>BatchMMJ2.generateSvcCallback()</code>
+-- also passing the necessary BatchMMJ2 Command Line Parms which
+specify the RunParms file to be used by mmj2. </li>
+  <li>BatchMMJ2 then performs the normal processing, which involves
+calling BatchFramework, which processes the RunParms.txt file. </li>
+  <li>Inside the RunParms.txt file various "<code>Svc</code>*" RunParms
+may be
+specified, including the executable RunParm,"<code>SvcCall</code>". </li>
+  <li>When BatchFramework executes the "<code>SvcCall</code>" RunParm
+it invokes the
+"<code>go()</code>" method in the designated <code>SvcCallback</code>
+interface object.</li>
+  <li>The "<code>go()</code>" method is passed arguments providing
+access to the main
+mmj2 objects, including <code>ProofAsst</code>.</li>
+  <li>The Caller program simply needs to exit the "<code>go()</code>"
+method to
+terminate mmj2's callback, at which point the user's Caller program
+remains in control and may continue processing as it pleases.<br>
+  </li>
+</ul>
+"Callee" mode is similar except that the RunParms.txt file contains a
+RunParm naming the user's class which implements the <code>SvcCallback</code>
+interface. Then when BatchFramework encounters the "<code>SvcCall</code>"
+RunParm,
+it creates an instance of that class using a default constructor and
+calls
+the "<code>go()</code>" method in that object. <br>
+<br>
+An example of Caller and Callee mode programs is provided at the end of
+this document.<br>
+<br>
+<h4>B. BatchMMJ2</h4>
+<a href="../src/mmj/util/BatchMMJ2.java">mmj.util.BatchMMJ2.java</a> is
+the main entrypoint for mmj2. It checks to see that the Java version
+is adequately modern and passes the input Command Line Parms to
+BatchFramework.
+If the BatchFramework return code is non-zero, BatchMMJ2 executes
+System.exit() passing the non-zero return code back to the command line
+environment.<br>
+<br>
+<h4>C. BatchFramework</h4>
+<a href="../src/mmj/util/BatchFramework.java">mmj.util.BatchFramework.java</a>
+is responsible for reading the RunParms.txt file and passing the input
+RunParms to various "<code>Boss</code>" objects which actually perform
+the requested
+work. BatchFramework also catches un-handled exceptions and performs
+any cleanup or reporting prior to exiting.<br>
+<br>
+<h4>D. SvcCallback</h4>
+<code>mmj.svc.SvcCallback</code> is an interface which is used by mmj2
+to pass
+control to a user program operating either in "Caller" or "Callee"
+mode. The <code>SvcCallback.go()</code> method's arguments are passed
+by mmj2 and
+provide access to the major mmj2 objects, such as the <code>ProofAsst</code>
+and
+<code>LogicalSystem</code>. Using these objects a user program can,
+effectively,
+use mmj2 as a (single-threaded) subroutine. (Note that the mmj2 Proof
+Assistant can be used without initiating the mmj2 Proof Assistant GUI.)<br>
+<br>
+<h4>E. LogicalSystem</h4>
+<a href="../src/mmj/lang/LogicalSystem.java">mmj.lang.LogicalSystem.java</a>
+contains the input <code>.mm</code> file's symbol table (<code>symTbl</code>)
+and statement table
+(<code>stmtTbl</code>), as well as a few other necessaries :-) Other
+objects are
+needed by the mmj2 Service feature to fully utilize mmj2 as a
+subroutine, but <code>LogicalSystem</code> is the main repository of
+data from the
+input Metamath .mm file.<br>
+<br>
+<big><span style="font-weight: bold;">1)</span></big> A new object, "<code>SeqAssigner</code>"&nbsp;
+is present in LogicalSystem. It replaces the existing rudimentary
+function, <code>LogicalSystem.nextSeq()</code>,
+which simply increments the <code>MObj</code> counter and multiplies
+by <code>LangConstants.MOBJ_SEQ_NBR_INCREMENT</code>
+to determine the next <code>MObj.seq</code>. The <code>SeqAssigner</code>
+handles
+sequence number assignment for objects appended to the end of the
+<code>LogicalSystem</code> as well as inserts located in the middle of
+<code>LogicalSystem</code>. A key feature of <code>SeqAssigner</code>
+is that it has
+<code>updateInit()</code>, <code>commit()</code> and <code>rollback()</code>
+functions so that a failed
+partial mass-update by the Theorem Loader can be "undone".<br>
+<br>
+The <code>SeqAssigner</code> takes advantage of the fact that <code>MObj.seq</code>
+numbers are
+assigned from 100 by 100 using a Java "<code>int</code>" field --
+meaning that
+approximately 2 million Metamath objects can be input before
+overflowing the system's capacity. In between two objects, say, "100"
+and "200", there are 99 unused sequence numbers. What <code>SeqAssigner</code>
+does
+is keep track of the <code>MObj</code>'s which have been inserted in
+the middle of
+the <code>LogicalSystem</code> in the "gaps" -- and it keeps track of
+the highest
+sequence number assigned so far to appended <code>MObj</code>'s. <code>MObj</code>'s
+added at the
+end of LogicalSystem are not considered "inserted" but "appended", as
+they do not require the special "gap" insertion processing and nearly
+unlimited numbers of them can be added to the <code>LogicalSystem</code>.<br>
+<br>
+The <code>SeqAssigner</code>'s implementation goals are to a) use CPU
+and memory resources
+efficiently; b) provide relatively rapid service for individual
+sequence number assignments, and c) to consume resources on inserts
+proportionately to the number of inserts (meaning that if the user
+doesn't use the Theorem Loader then minimal resources are utilized.
+Here
+is how it works.<br>
+<br>
+The <code>SeqAssigner</code> maintains a <code>HashMap</code> whose
+Key is existing <code>MObj.seq</code>
+number modulo 100 (the increment interval), and whose Value is a
+reference to a <code>BitMap</code> of length 100 (one hundred bits)
+wherein a "1"
+(one) bit signifies that the associated <code>MObj.seq</code> number
+object has been
+inserted into a "gap". Thus, the <code>HashMap</code> is empty until
+at least one
+insert has been performed successfully. Insertion into a gap requires
+obtaining the Value object for the gap's Key (or creating a new Value
+object), and then scanning through the <code>BitMap</code> looking for
+the first
+available open spot (after bit number 0 which is always open since it
+represents a <code>MObj</code> that was loaded during the initial
+load.) In the
+event that the gap <code>BitMap</code> is full, <code>SeqAssigner</code>
+assigns the next
+seq number at the very end of the Logical System. Note that the calling
+function needs to ascertain this "overflow"situation because it affects
+the <code>MObj.seq</code> of every other theorem which uses the
+inserted theorem in
+a proof, and may even result in a severe "forward" reference error in
+an existing theorem's proof if the proof has been modified to use the
+new theorem being appended because of a gap "overflow" situation.<br>
+<br>
+<big><span style="font-weight: bold;">2)</span></big> Another new
+object in <code>LogicalSystem</code> is "<code>TheoremLoadListeners</code>",
+which
+is a list of
+objects which must be informed when a set of theorems is commit()'ed by
+TheoremLoader. There are several of these, besides the obvious
+candidates, <code>LogicalSystem.stmtTbl</code> and <code>LogicalSystem.seqAssigner</code>.
+During previous enhancements to mmj2 certain lists of logical
+assertions (which
+were sorted in a specific sequence) were added to mmj2 -- these are
+always
+created during initialization of <code>mmj.lang.ProofAsst</code>. They
+are <code>mmj.pa.ProofUnifier.unifySearchList</code> and
+<code>StepSelectorSearch.assrtArray</code>. In addition, the new Book
+Manager
+feature, added in this release, keeps track of <code>MObj</code>'s in
+the <code>LogicalSystem</code> and assigns them its own section and
+sequence numbers. So, the
+following changes will be made for the TheoremLoader enhancement to
+accomodate objects outside of <code>LogicalSystem</code> which keep
+track of
+theorems:<br>
+<ul>
+  <li><code>mmj.pa.ProofUnifier.unifySearchList</code> is sorted by <code>MObj.seq</code>.
+When <code>commit()</code> is communicated to <code>ProofAsst</code>
+-- which is passed an object containing a <code>MObj.seq</code> list
+of containing new theorems added to <code>LogicalSystem.stmtTbl</code>,
+the new theorems will be merged into <code>unifySearchList</code> in a
+single pass through the list. If this operation fails for any reason
+whatsoever then processing in mmj2 is terminated abruptly with a fatal <code>IllegalArgumentException</code>
+-- therefore, the <code>restore()</code> communique to the
+TheoremLoadListeners requires no processing.</li>
+  <li><code>mmj.pa.StepSelectorSearch.assrtArray</code> is sorted by <code>Assrt.NBR_LOG_HYP_SEQ</code>..
+The <code>assrtArray</code> will be changed to be an <code>ArrayList</code>
+called <code>assrtList</code> -- and <code>StepSelectorSearch</code>
+modified accordingly -- so that insertions can be made without
+recreating the array (we look forward to the day when Metamath's <code>set.mm</code>
+has 1,000,000 theorems :-) Then when <code>commit()</code> is
+communicated to <code>ProofAsst</code> -- which is passed an object
+containing a <code>MObj.seq</code> list of new theorems added to <code>LogicalSystem.stmtTbl</code>,
+the list of new theorems will be first sorted by <code>Assrt.NBR_LOG_HYP_SEQ</code>
+and then merged into <code>unifySearchList</code>
+in a single pass through the list. If this operation fails for any
+reason whatsoever then processing in mmj2 is terminated abruptly with a
+fatal <code>IllegalArgumentException</code> -- therefore, the <code>restore()</code>
+communique to the <code>TheoremLoadListeners</code> requires no
+processing.</li>
+  <li>The initial capacity of <code>mmj.pa.ProofUnifier.unifySearchList</code>
+and <code>StepSelectorSearch.assrtList</code> will be set at <code>LogicalSystem.stmtTbl.size()
+* 105%</code> so that
+TheoremLoader inserts do
+not require resizing unless rather large additions are made.</li>
+  <li><code>mmj.lang.BookManager</code> keeps track of Chapters and
+Sections, and
+maintains the following fields in <code>MObj</code>: <code>MObj.chapterNbr</code>,
+    <code>MObj.sectionNbr</code>, and <code>MObj.sectionMObjNbr</code>.
+The key idea of <code>BookManager</code>
+is that each <code>MObj</code> is assigned to a Section, and <code>MObj.sectionMObjNbr</code>
+is
+assigned from 1 by 1 within the current Section, thus allowing
+unlimited inserts <span style="font-style: italic;">at the end</span>
+of a Section. When <code>commit()</code>
+is communicated to <code>BookManager</code> -- which is passed an
+object containing a <code>MObj.seq</code> list of new theorems added
+to <code>LogicalSystem.stmtTbl</code>, the new theorems will be
+assigned <code>BookManager</code> chapter, section and <code>sectionMObj</code>
+numbers. If this
+operation fails for any
+reason whatsoever then processing in mmj2 is terminated abruptly with a
+fatal <code>IllegalArgumentException</code> -- therefore, the <code>restore()</code>
+communique to the BookManager requires no
+processing. Note that the input list of theorems
+contains for each new theorem, a "located after" reference to an
+existing <code>MObj</code> -- this is used to determine the <code>BookManager</code>
+Chapter and
+Section of the new theorem: the new theorem is assigned to the Chapter
+and Section of the "located after" <code>MObj</code> (adjusted for the
+fact that
+Section is adjusted for the type of <code>MObj</code>, so if the
+"located after" <code>MObj</code> happens to be an axiom, then the
+theorem's
+Section will be one
+greater than the "located after" <code>MObj</code>'s section. <span
+ style="font-weight: bold;">Note also -- this is important -- if the
+input theorem list contains an update to an existing theorem's proof
+and the revised proof uses a new theorem in the same <code>BookManager</code>
+Section, then the <code>MObj.sectionMObjNbr</code>'s will need to be
+resequenced
+following the initial assignment (to eliminate the severely erroneous
+forward reference.)</span> <br>
+  </li>
+</ul>
+<big style="font-weight: bold;">3)</big> Note: <code>mmj.pa.ProofAsst.getSortedTheoremIterator()</code>
+contains redundant code -- probably a leftover from the initial coding,
+and exercised only via the batch testing RunParm commands -- which
+builds its own sorted list of assertions. Since this redundant list is
+identical to <code>unifySearchList</code>, <code>getSortedTheoremIterator()</code>
+will be modified to contain just the following statement:<span
+ style="font-weight: bold;"><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;</span> "<code>return
+proofUnifier.getUnifySearchListByMObjSeq().iterator()</code><code>;</code>".<span
+ style="font-weight: bold;"><br>
+<br>
+<big>4)</big></span> Another "major" change to <code>LogicalSystem</code>
+for the
+TheoremLoader enhancement is a new <code>LogicalSystem</code> method
+(aka "function") called
+"<code>TheoremLoaderMassUpdate</code>" which is responsible for
+performing all
+inserts of new theorems, and updates of existing proofs and $d
+statements for existing theorems, as specified in its input parameter,
+"<code>theoremStmtGroupList</code>", which designates a rigorously
+pre-validated
+pre-validated list of&nbsp; <code>TheoremStmtGroup</code> objects
+sorted by
+<code>MObj.seq</code>. <br>
+<br>
+Each <code>TheoremStmtGroup</code> object contains the data
+corresponding to exactly one theorem's input <code>.mmt</code> file
+from the
+TheoremLoader <code>.mmt</code> Folder (see above).&nbsp; Not only
+will
+<code>TheoremStmtGroup</code> objects be rigorously validated prior to
+any attempt
+to update the <code>LogicalSystem</code>, but the <code>MObj.seq</code>
+numbers for
+each new
+Theorem and LogHyp are "reserved" <br>
+during validation so that the final "mass update" process can proceed
+with near certainty of completion.<br style="font-weight: bold;">
+<span style="font-weight: bold;"></span>
+<h4>F. ProofAsst</h4>
+<a href="../src/mmj/pa/ProofAsst.java">mmj.pa.ProofAsst.java</a> and
+friends handle the actual "proof assistanting" work in mmj2. It is a
+little-known fact that the mmj2 Proof Assistant GUI doesn't actually
+know anything about proofs -- it just passes user requests for work to
+ProofAsst.java and is itself only responsible for blindly moving things
+around on the screen. The <code>ProofAsst</code> "public" interface is
+available for
+use by the mmj2 Service, including functions which involve the new
+Theorem Loader.<br>
+<br>
+Here are the new features in the mmj2 Proof Assistant GUI, to be added
+into a new main menu item: Theorem Loader.<br>
+<ul>
+  <li><code style="font-weight: bold;">Theorem Loader DjVars Option</code>:
+    <span style="font-style: italic;"></span> Identical to function of <a
+ href="#TheoremLoaderDjVarsOption">TheoremLoaderDjVarsOption RunParm</a>.
+Specifies
+how $d statements in an existing theorem's extended frame are to be
+updated by an input <code>.mmt</code> file for that theorem; may be
+either "Replace"
+(means "replace old with new"), "Merge" (means "merge old
+with new"), or "NoUpdate" (the default, means "don't touch the old
+$d's!!!") Note: A new theorem's $d statements are set to the $d
+statement in the input <code>.mmt</code> file. <br>
+  </li>
+  <li><code style="font-weight: bold;">Theorem Loader MMT Folder</code>:
+Identical to function of <a href="#TheoremLoaderMMTFolder">TheoremLoaderMMTFolder
+RunParm</a>. Specifies the pathname of the directory to be used for
+storing or
+retrieving .mmt files with the Theorem Loader.</li>
+  <li><code><span style="font-weight: bold;">Theorem Loader Audit
+Messages</span></code><span style="font-weight: bold;"></span>:
+Identical to function of <a href="#TheoremLoaderAuditMessages">TheoremLoaderAuditMessages
+RunParm</a>. May be "Yes", "No" or omitted. Default is "No". If set to
+"Yes" then
+audit messages about the load process are generated (for educational
+and testing purposes.)<code><span style="font-weight: bold;"></span></code></li>
+  <li><code style="font-weight: bold;">Load Theorems From MMT Folder</code>:<code>
+    </code>identical
+to function of <a href="#LoadTheoremsFromMMTFolder_RunParm"><code>LoadTheoremsFromMMTFolder</code>
+RunParm</a>.<code><span style="font-weight: bold;"><br>
+    </span></code></li>
+  <li><code style="font-weight: bold;">Extract Theorem To MMT Folder</code><code
+ style="font-weight: bold;"></code><span style="font-weight: bold;"></span>:
+identical to function of <a href="#ExtractTheoremToMMTFolder_RunParm">ExtractTheoremToMMTFolder
+RunParm</a>.<br>
+  </li>
+  <li><code style="font-weight: bold;">Unify + Store in MMT Folder</code>:
+Unifies the Proof
+Worksheet, and if the proof unifies successfully, a <code>.mmt</code>
+file is created in the current <code>.mmt</code> Folder for the Proof
+Worksheet's theorem. Note: if the Proof Worksheet has been modified
+since the last File/Save, the user is prompted to save before
+proceeding.<code><br>
+    </code></li>
+  <li><code style="font-weight: bold;">Unify + Store in LogSys and MMT
+Folder</code>: Unifies the
+Proof Worksheet, and if the proof unifies successfully, a <code>.mmt</code>
+file is created in the current <code>.mmt</code>
+Folder for the Proof Worksheet's theorem. Then, if there are no errors,
+the newly stored .mmt file is loaded into the Logical System using the
+same processed used by <a
+ href="TheoremLoaderOverview.html#LoadTheoremsFromMMTFolder_RunParm"><code>LoadTheoremsFromMMTFolder</code>
+RunParm</a>, except that only a single <code>.mmt</code> file is
+loaded. Note: if the Proof Worksheet
+has been modified since the last File/Save, the user is prompted to
+save before proceeding. Also note that if the theorem is new and the
+LOC_AFTER field has been used in the Proof Worksheet header, the user
+will need to erase the LOC_AFTER location manually if another Unify
+function is attempted (because the theorem is no longer new and
+LOC_AFTER applies only to new theorems.)<br>
+  </li>
+  <li><code style="font-weight: bold;">Verify All Proofs</code>: This
+operates identically to the "<code>VerifyProof,*</code>"
+RunParm -- except that if the "<code>LoadProofs,no</code>" RunParm was
+used during initial file loading, something like 10,000 error messages
+will be returned (subject to the "<code>MaxErrorMessages</code>"
+RunParm limitation :-) Proof Verification using the Metamath proof
+verification algorithm is equivalent, in theory, to the mmj2
+Unification algorithm. However, if Theorem Loader has been used to
+update the $d specifications of an existing theorem, other theorems
+which refer to that theorem in their proofs may become "invalid" as a
+result of the Theorem Loader's update -- which is precisely the reason
+that this function will be useful in the mmj2 Proof Assistant GUI.</li>
+</ul>
+<span style="font-weight: bold;">Note</span>: The "<code>LOC_AFTER</code>"
+field in the Proof Worksheet Header line specifies the location of a
+new theorem being proven using the Proof Assistant GUI. However, the
+LOC_AFTER label specification applies only to the Proof Assistant GUI's
+validation of proof step Ref labels and formulas; it does not control
+the location of new theorems loaded by the Theorem Loader. When a new
+theorem is stored after unification in the Proof Assistant via <code
+ style="font-weight: bold;">Unify + Store in MMT Folder</code> or <code
+ style="font-weight: bold;">Unify + Store in LogSys and MM Folder</code>
+the LOC_AFTER specification has no effect upon where the theorem is
+stored when the Logical System is updated -- that location is
+controlled by the contents of its proof. <br>
+<br>
+<h4>G. TheoremLoader</h4>
+Theorem Loader is new, and hasn't been coded yet :-) Basically, it does
+everything that the prior sections of this document say it must be able
+to do (it will have helpers of its own...the coding implementation
+objective is to hide as much complicated new code in TheoremLoader.java
+and its helpers as possible.<br>
+<br>
+<hr style="width: 100%; height: 2px;"><code><br>
+</code><big><span style="font-weight: bold;"><big
+ style="text-decoration: underline;">Sample Program: mmj2 Service in
+"Callee" mode:</big></span><span style="font-weight: bold;"></span></big><br>
+<code><br>
+import java.io.*;<br>
+import java.util.*;<br>
+import java.io.File;<br>
+import java.util.Map;<br>
+import mmj.lang.*;<br>
+import mmj.pa.*;<br>
+import mmj.util.*;<br>
+import mmj.verify.*;<br>
+import mmj.svc.*;<br>
+<br>
+/**<br>
+&nbsp;*&nbsp; Test mmj2 SvcCallback as "callee"<br>
+&nbsp;*/<br>
+public class TSvcCallbackCallee implements SvcCallback {<br>
+&nbsp;&nbsp;&nbsp; public TSvcCallbackCallee() {<br>
+&nbsp;&nbsp;&nbsp; }<br>
+<br>
+&nbsp;&nbsp;&nbsp; public&nbsp; void
+go(Messages&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+messages,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+OutputBoss&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+outputBoss,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+LogicalSystem&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+logicalSystem,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+VerifyProofs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+verifyProofs,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Grammar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+grammar,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+WorkVarManager&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+workVarManager,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ProofAsstPreferences&nbsp;&nbsp;&nbsp; proofAsstPreferences,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ProofAsst&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+proofAsst,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+File&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+svcFolder,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Map&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+svcArgs) {<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; System.out.println(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+"Hello world, I am TSvcCallbackCallee.java");<br>
+&nbsp;&nbsp;&nbsp; }<br>
+}<br>
+&nbsp;<br>
+</code><br>
+<hr style="width: 100%; height: 2px;"><code><br>
+</code><big><span style="font-weight: bold;"><big
+ style="text-decoration: underline;">Sample Program: mmj2 Service in
+"Caller" mode:</big></span><span style="font-weight: bold;"></span></big><br>
+<code><br>
+import java.io.*;<br>
+import java.util.*;<br>
+import java.io.File;<br>
+import java.util.Map;<br>
+import mmj.lang.*;<br>
+import mmj.pa.*;<br>
+import mmj.util.*;<br>
+import mmj.verify.*;<br>
+import mmj.svc.*;<br>
+<br>
+/**<br>
+&nbsp;*&nbsp; Test mmj2 SvcCallback as "callee"<br>
+&nbsp;*/<br>
+public class TSvcCallbackCaller implements SvcCallback {<br>
+&nbsp;&nbsp;&nbsp; public TSvcCallbackCaller() {<br>
+&nbsp;&nbsp;&nbsp; }<br>
+<br>
+&nbsp;&nbsp;&nbsp; public&nbsp; void
+go(Messages&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+messages,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+OutputBoss&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+outputBoss,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+LogicalSystem&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+logicalSystem,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+VerifyProofs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+verifyProofs,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Grammar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+grammar,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+WorkVarManager&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+workVarManager,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ProofAsstPreferences&nbsp;&nbsp;&nbsp; proofAsstPreferences,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ProofAsst&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+proofAsst,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+File&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+svcFolder,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Map&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+svcArgs) {<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; System.out.println(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+"Hello world, I am TSvcCallbackCaller.java");<br>
+&nbsp;&nbsp;&nbsp; }<br>
+<br>
+&nbsp;&nbsp;&nbsp; /**<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp; Main function interfacing to Java
+environment,<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp; running the BatchMMJ2 functions.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * @param args see class description.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; */<br>
+&nbsp;&nbsp;&nbsp; public static void main(String[] args) {<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; TSvcCallbackCaller
+tSvcCallbackCaller<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; new
+TSvcCallbackCaller();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BatchMMJ2
+batchMMJ2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = new BatchMMJ2();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int
+returnCode&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+batchMMJ2.generateSvcCallback(args,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+tSvcCallbackCaller);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (returnCode != 0) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+System.exit(returnCode);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+&nbsp;&nbsp;&nbsp; }<br>
+} <br>
+</code><code>&nbsp;<br>
+</code><br>
+<hr style="width: 100%; height: 2px;"><code><br>
+</code><big><span style="font-weight: bold;"><big
+ style="text-decoration: underline;">New mmj2 Service interface
+"mmj.svc.SvcCallback.java":</big></span><span style="font-weight: bold;"></span></big><br>
+<code><br>
+//********************************************************************/<br>
+//* Copyright (C)
+2008&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*/<br>
+//* MEL O'CAT&nbsp; mmj2 (via) planetmath (dot)
+org&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*/<br>
+//* License terms: GNU General Public License Version
+2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*/<br>
+//*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+or any later
+version&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*/<br>
+//********************************************************************/<br>
+//*4567890123456 (71-character line to adjust editor window) 23456789*/<br>
+<br>
+/*<br>
+&nbsp;*&nbsp; SvcCallback.java&nbsp; 0.01 08/01/2008<br>
+&nbsp;*<br>
+&nbsp;*&nbsp; Version 0.01:<br>
+&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --&gt; new.<br>
+&nbsp;*/<br>
+<br>
+package mmj.svc;<br>
+import&nbsp; java.io.File;<br>
+import&nbsp; java.util.Map;<br>
+import&nbsp; mmj.lang.*;<br>
+import&nbsp; mmj.pa.*;<br>
+import&nbsp; mmj.util.*;<br>
+import&nbsp; mmj.verify.*;<br>
+<br>
+<br>
+/**<br>
+&nbsp;*&nbsp; Interface for using mmj2 as a service.<br>
+&nbsp;*&nbsp; &lt;p&gt;<br>
+&nbsp;*/<br>
+public interface SvcCallback {<br>
+<br>
+&nbsp;&nbsp;&nbsp; /**<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp; Method go is called by mmj2 after
+initialization<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp; and a RunParm command is encountered
+triggering<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp; a SvcCallback.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp; &lt;p&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp; Note: if a "fatal" or severe error is
+encountered<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+just trigger an IllegalArgumentException<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; to
+instantly terminate the mmj2 process.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; *&nbsp; &lt;p&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * @param
+messages&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+mmj.lang.Messages object.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * @param
+outputBoss&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+mmj.util.OutputBoss<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * @param
+logicalSystem&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+mmj.lang.LogicalSystem<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * @param
+verifyProofs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+mmj.verify.VerifyProofs<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * @param
+grammar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+mmj.verify.Grammar<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * @param
+workVarManager&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+mmj.lang.WorkVarManager<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * @param proofAsstPreferences&nbsp;
+mmj.pa.ProofAsstPreferences<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * @param
+proofAsst&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+mmj.pa.ProofAsst<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * @param
+svcFolder&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+home Folder for use by Svc<br>
+&nbsp;&nbsp;&nbsp;&nbsp;
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(specified via RunParm).<br>
+&nbsp;&nbsp;&nbsp;&nbsp; * @param
+svcArgs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Map of Svc key/value pair arguments<br>
+&nbsp;&nbsp;&nbsp;&nbsp;
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(specified via RunParm).<br>
+&nbsp;&nbsp;&nbsp;&nbsp; */<br>
+&nbsp;&nbsp;&nbsp; void
+go(Messages&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+messages,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+OutputBoss&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+outputBoss,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+LogicalSystem&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+logicalSystem,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+VerifyProofs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+verifyProofs,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Grammar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+grammar,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+WorkVarManager&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+workVarManager,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ProofAsstPreferences&nbsp;&nbsp;&nbsp; proofAsstPreferences,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ProofAsst&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+proofAsst,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+File&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+svcFolder,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Map&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+svcArgs<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; );<br>
+}<br>
+<br>
+</code>
+<hr style="width: 100%; height: 2px;"><code><br>
+</code><br>
+<br>
+<span style="font-weight: bold;"></span>
+</body>
+</html>

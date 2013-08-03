@@ -1,0 +1,635 @@
+$( <MM> <PROOF_ASST> THEOREM=hilims  LOC_AFTER=?
+
+* The metric space induced by Hilbert space.
+
+h1::hilims.1       |-   D
+                      = {
+                        <.
+                        <. x
+                        ,  y
+                        >.
+                        ,  z
+                        >.
+                        |  (  ( x e. H~ /\ y e. H~ )
+                           /\ z = ( normh ` ( x -h y ) ) ) }
+2::df-3an          |- (   (  &S1 e. H~
+                          /\ &S2 e. H~
+                          /\   &S5
+                             = ( normh
+                               ` ( &S1 +h ( -u 1 .h &S2 ) ) ) )
+                      <-> (  ( &S1 e. H~ /\ &S2 e. H~ )
+                          /\   &S5
+                             = ( normh
+                               ` ( &S1 +h ( -u 1 .h &S2 ) ) ) ) )
+3:2:oprabbii       |-   {
+                        <.
+                        <. &S1
+                        ,  &S2
+                        >.
+                        ,  &S5
+                        >.
+                        |  (  &S1 e. H~
+                           /\ &S2 e. H~
+                           /\   &S5
+                              = ( normh
+                                ` ( &S1 +h ( -u 1 .h &S2 ) ) ) ) }
+                      = {
+                        <.
+                        <. &S1
+                        ,  &S2
+                        >.
+                        ,  &S5
+                        >.
+                        |  (  ( &S1 e. H~ /\ &S2 e. H~ )
+                           /\   &S5
+                              = ( normh
+                                ` ( &S1 +h ( -u 1 .h &S2 ) ) ) ) }
+4::fvex            |-    ( normh
+                         ` ( &S1 +h ( -u 1 .h &S2 ) ) )
+                      e. V
+5::eqid            |-   {
+                        <.
+                        <. &S1
+                        ,  &S2
+                        >.
+                        ,  &S5
+                        >.
+                        |  (  ( &S1 e. H~ /\ &S2 e. H~ )
+                           /\   &S5
+                              = ( normh
+                                ` ( &S1 +h ( -u 1 .h &S2 ) ) ) ) }
+                      = {
+                        <.
+                        <. &S1
+                        ,  &S2
+                        >.
+                        ,  &S5
+                        >.
+                        |  (  ( &S1 e. H~ /\ &S2 e. H~ )
+                           /\   &S5
+                              = ( normh
+                                ` ( &S1 +h ( -u 1 .h &S2 ) ) ) ) }
+6:4,5:fnoprab2     |-    {
+                         <.
+                         <. &S1
+                         ,  &S2
+                         >.
+                         ,  &S5
+                         >.
+                         |  (  ( &S1 e. H~ /\ &S2 e. H~ )
+                            /\   &S5
+                               = ( normh
+                                 ` ( &S1 +h ( -u 1 .h &S2 ) ) ) ) }
+                      Fn ( H~ X. H~ )
+7::fvex            |- ( normh ` ( x -h y ) ) e. V
+8::eqid            |-   {
+                        <.
+                        <. x
+                        ,  y
+                        >.
+                        ,  z
+                        >.
+                        |  (  ( x e. H~ /\ y e. H~ )
+                           /\ z = ( normh ` ( x -h y ) ) ) }
+                      = {
+                        <.
+                        <. x
+                        ,  y
+                        >.
+                        ,  z
+                        >.
+                        |  (  ( x e. H~ /\ y e. H~ )
+                           /\ z = ( normh ` ( x -h y ) ) ) }
+9:7,8:fnoprab2     |-    {
+                         <.
+                         <. x
+                         ,  y
+                         >.
+                         ,  z
+                         >.
+                         |  (  ( x e. H~ /\ y e. H~ )
+                            /\ z = ( normh ` ( x -h y ) ) ) }
+                      Fn ( H~ X. H~ )
+10::eqfnoprval     |- (  (     {
+                               <.
+                               <. &S1
+                               ,  &S2
+                               >.
+                               ,  &S5
+                               >.
+                               |  (  ( &S1 e. H~ /\ &S2 e. H~ )
+                                  /\   &S5
+                                     = ( normh
+                                       ` ( &S1 +h ( -u 1 .h &S2 ) ) ) ) }
+                            Fn ( H~ X. H~ )
+                         /\    {
+                               <.
+                               <. x
+                               ,  y
+                               >.
+                               ,  z
+                               >.
+                               |  (  ( x e. H~ /\ y e. H~ )
+                                  /\ z = ( normh ` ( x -h y ) ) ) }
+                            Fn ( H~ X. H~ ) )
+                      -> (     {
+                               <.
+                               <. &S1
+                               ,  &S2
+                               >.
+                               ,  &S5
+                               >.
+                               |  (  ( &S1 e. H~ /\ &S2 e. H~ )
+                                  /\   &S5
+                                     = ( normh
+                                       ` ( &S1 +h ( -u 1 .h &S2 ) ) ) ) }
+                             = {
+                               <.
+                               <. x
+                               ,  y
+                               >.
+                               ,  z
+                               >.
+                               |  (  ( x e. H~ /\ y e. H~ )
+                                  /\ z = ( normh ` ( x -h y ) ) ) }
+                         <-> (  ( H~ X. H~ ) = ( H~ X. H~ )
+                             /\ A. &S18
+                                e. H~
+                                   A. &S19
+                                   e. H~
+                                        ( &S18
+                                          {
+                                          <.
+                                          <. &S1
+                                          ,  &S2
+                                          >.
+                                          ,  &S5
+                                          >.
+                                          |  (  ( &S1 e. H~ /\ &S2 e. H~ )
+                                             /\   &S5
+                                                = ( normh
+                                                  ` ( &S1 +h ( -u 1 .h &S2 ) )
+                                                  ) ) }
+                                          &S19 )
+                                      = ( &S18
+                                          {
+                                          <.
+                                          <. x
+                                          ,  y
+                                          >.
+                                          ,  z
+                                          >.
+                                          |  (  ( x e. H~ /\ y e. H~ )
+                                             /\ z = ( normh ` ( x -h y ) ) ) }
+                                          &S19 ) ) ) )
+11:6,9,10:mp2an    |- (     {
+                            <.
+                            <. &S1
+                            ,  &S2
+                            >.
+                            ,  &S5
+                            >.
+                            |  (  ( &S1 e. H~ /\ &S2 e. H~ )
+                               /\   &S5
+                                  = ( normh
+                                    ` ( &S1 +h ( -u 1 .h &S2 ) ) ) ) }
+                          = {
+                            <.
+                            <. x
+                            ,  y
+                            >.
+                            ,  z
+                            >.
+                            |  (  ( x e. H~ /\ y e. H~ )
+                               /\ z = ( normh ` ( x -h y ) ) ) }
+                      <-> (  ( H~ X. H~ ) = ( H~ X. H~ )
+                          /\ A. &S18
+                             e. H~
+                                A. &S19
+                                e. H~
+                                     ( &S18
+                                       {
+                                       <.
+                                       <. &S1
+                                       ,  &S2
+                                       >.
+                                       ,  &S5
+                                       >.
+                                       |  (  ( &S1 e. H~ /\ &S2 e. H~ )
+                                          /\   &S5
+                                             = ( normh
+                                               ` ( &S1 +h ( -u 1 .h &S2 ) ) ) )
+                                       }
+                                       &S19 )
+                                   = ( &S18
+                                       {
+                                       <.
+                                       <. x
+                                       ,  y
+                                       >.
+                                       ,  z
+                                       >.
+                                       |  (  ( x e. H~ /\ y e. H~ )
+                                          /\ z = ( normh ` ( x -h y ) ) ) }
+                                       &S19 ) ) )
+12::eqid           |- ( H~ X. H~ ) = ( H~ X. H~ )
+13::hvsubvalt      |- (  ( &S18 e. H~ /\ &S19 e. H~ )
+                      ->   ( &S18 -h &S19 )
+                         = ( &S18 +h ( -u 1 .h &S19 ) ) )
+14:13:eqcomd       |- (  ( &S18 e. H~ /\ &S19 e. H~ )
+                      ->   ( &S18 +h ( -u 1 .h &S19 ) )
+                         = ( &S18 -h &S19 ) )
+15:14:fveq2d       |- (  ( &S18 e. H~ /\ &S19 e. H~ )
+                      ->   ( normh
+                           ` ( &S18 +h ( -u 1 .h &S19 ) ) )
+                         = ( normh ` ( &S18 -h &S19 ) ) )
+16::fvex           |-    ( normh
+                         ` ( &S18 +h ( -u 1 .h &S19 ) ) )
+                      e. V
+17::opreq1         |- (  &S1 = &S18
+                      ->   ( &S1 +h ( -u 1 .h &S2 ) )
+                         = ( &S18 +h ( -u 1 .h &S2 ) ) )
+18:17:fveq2d       |- (  &S1 = &S18
+                      ->   ( normh
+                           ` ( &S1 +h ( -u 1 .h &S2 ) ) )
+                         = ( normh
+                           ` ( &S18 +h ( -u 1 .h &S2 ) ) ) )
+19::opreq2         |- (  &S2 = &S19
+                      -> ( -u 1 .h &S2 ) = ( -u 1 .h &S19 ) )
+20:19:opreq2d      |- (  &S2 = &S19
+                      ->   ( &S18 +h ( -u 1 .h &S2 ) )
+                         = ( &S18 +h ( -u 1 .h &S19 ) ) )
+21:20:fveq2d       |- (  &S2 = &S19
+                      ->   ( normh
+                           ` ( &S18 +h ( -u 1 .h &S2 ) ) )
+                         = ( normh
+                           ` ( &S18 +h ( -u 1 .h &S19 ) ) ) )
+22::eqid           |-   {
+                        <.
+                        <. &S1
+                        ,  &S2
+                        >.
+                        ,  &S5
+                        >.
+                        |  (  ( &S1 e. H~ /\ &S2 e. H~ )
+                           /\   &S5
+                              = ( normh
+                                ` ( &S1 +h ( -u 1 .h &S2 ) ) ) ) }
+                      = {
+                        <.
+                        <. &S1
+                        ,  &S2
+                        >.
+                        ,  &S5
+                        >.
+                        |  (  ( &S1 e. H~ /\ &S2 e. H~ )
+                           /\   &S5
+                              = ( normh
+                                ` ( &S1 +h ( -u 1 .h &S2 ) ) ) ) }
+23:16,18,21,22:oprabval2 
+                   |- (  ( &S18 e. H~ /\ &S19 e. H~ )
+                      ->   ( &S18
+                             {
+                             <.
+                             <. &S1
+                             ,  &S2
+                             >.
+                             ,  &S5
+                             >.
+                             |  (  ( &S1 e. H~ /\ &S2 e. H~ )
+                                /\   &S5
+                                   = ( normh
+                                     ` ( &S1 +h ( -u 1 .h &S2 ) ) ) ) }
+                             &S19 )
+                         = ( normh
+                           ` ( &S18 +h ( -u 1 .h &S19 ) ) ) )
+24::eqid           |-   {
+                        <.
+                        <. x
+                        ,  y
+                        >.
+                        ,  z
+                        >.
+                        |  (  ( x e. H~ /\ y e. H~ )
+                           /\ z = ( normh ` ( x -h y ) ) ) }
+                      = {
+                        <.
+                        <. x
+                        ,  y
+                        >.
+                        ,  z
+                        >.
+                        |  (  ( x e. H~ /\ y e. H~ )
+                           /\ z = ( normh ` ( x -h y ) ) ) }
+25:24:hilmsdval    |- (  ( &S18 e. H~ /\ &S19 e. H~ )
+                      ->   ( &S18
+                             {
+                             <.
+                             <. x
+                             ,  y
+                             >.
+                             ,  z
+                             >.
+                             |  (  ( x e. H~ /\ y e. H~ )
+                                /\ z = ( normh ` ( x -h y ) ) ) }
+                             &S19 )
+                         = ( normh ` ( &S18 -h &S19 ) ) )
+26:15,23,25:3eqtr4d 
+                   |- (  ( &S18 e. H~ /\ &S19 e. H~ )
+                      ->   ( &S18
+                             {
+                             <.
+                             <. &S1
+                             ,  &S2
+                             >.
+                             ,  &S5
+                             >.
+                             |  (  ( &S1 e. H~ /\ &S2 e. H~ )
+                                /\   &S5
+                                   = ( normh
+                                     ` ( &S1 +h ( -u 1 .h &S2 ) ) ) ) }
+                             &S19 )
+                         = ( &S18
+                             {
+                             <.
+                             <. x
+                             ,  y
+                             >.
+                             ,  z
+                             >.
+                             |  (  ( x e. H~ /\ y e. H~ )
+                                /\ z = ( normh ` ( x -h y ) ) ) }
+                             &S19 ) )
+27:26:rgen2        |- A. &S18
+                      e. H~
+                         A. &S19
+                         e. H~
+                              ( &S18
+                                {
+                                <.
+                                <. &S1
+                                ,  &S2
+                                >.
+                                ,  &S5
+                                >.
+                                |  (  ( &S1 e. H~ /\ &S2 e. H~ )
+                                   /\   &S5
+                                      = ( normh
+                                        ` ( &S1 +h ( -u 1 .h &S2 ) ) ) ) }
+                                &S19 )
+                            = ( &S18
+                                {
+                                <.
+                                <. x
+                                ,  y
+                                >.
+                                ,  z
+                                >.
+                                |  (  ( x e. H~ /\ y e. H~ )
+                                   /\ z = ( normh ` ( x -h y ) ) ) }
+                                &S19 )
+28:11,12,27:mpbir2an 
+                   |-   {
+                        <.
+                        <. &S1
+                        ,  &S2
+                        >.
+                        ,  &S5
+                        >.
+                        |  (  ( &S1 e. H~ /\ &S2 e. H~ )
+                           /\   &S5
+                              = ( normh
+                                ` ( &S1 +h ( -u 1 .h &S2 ) ) ) ) }
+                      = {
+                        <.
+                        <. x
+                        ,  y
+                        >.
+                        ,  z
+                        >.
+                        |  (  ( x e. H~ /\ y e. H~ )
+                           /\ z = ( normh ` ( x -h y ) ) ) }
+29:3,28:eqtr       |-   {
+                        <.
+                        <. &S1
+                        ,  &S2
+                        >.
+                        ,  &S5
+                        >.
+                        |  (  &S1 e. H~
+                           /\ &S2 e. H~
+                           /\   &S5
+                              = ( normh
+                                ` ( &S1 +h ( -u 1 .h &S2 ) ) ) ) }
+                      = {
+                        <.
+                        <. x
+                        ,  y
+                        >.
+                        ,  z
+                        >.
+                        |  (  ( x e. H~ /\ y e. H~ )
+                           /\ z = ( normh ` ( x -h y ) ) ) }
+30:29:opeq2i       |-   <. H~
+                        ,  {
+                           <.
+                           <. &S1
+                           ,  &S2
+                           >.
+                           ,  &S5
+                           >.
+                           |  (  &S1 e. H~
+                              /\ &S2 e. H~
+                              /\   &S5
+                                 = ( normh
+                                   ` ( &S1 +h ( -u 1 .h &S2 ) ) ) ) } >.
+                      = <. H~
+                        ,  {
+                           <.
+                           <. x
+                           ,  y
+                           >.
+                           ,  z
+                           >.
+                           |  (  ( x e. H~ /\ y e. H~ )
+                              /\ z = ( normh ` ( x -h y ) ) ) } >.
+31::hilncv         |- <. <. +h , .h >. , normh >. e. NrmCVec
+32::opex           |- <. +h , .h >. e. V
+33:32:op1st        |-   ( 1st ` <. <. +h , .h >. , normh >. )
+                      = <. +h , .h >.
+34:33:eqcomi       |-   <. +h , .h >.
+                      = ( 1st ` <. <. +h , .h >. , normh >. )
+35::hilabl         |- +h e. Abel
+36:35:elisseti     |- +h e. V
+37:36:op1st        |- ( 1st ` <. +h , .h >. ) = +h
+38:37:eqcomi       |- +h = ( 1st ` <. +h , .h >. )
+39::hilabl         |- +h e. Abel
+40:39:elisseti     |- +h e. V
+41::hvmulex        |- .h e. V
+42:40,41:op2nd     |- ( 2nd ` <. +h , .h >. ) = .h
+43:42:eqcomi       |- .h = ( 2nd ` <. +h , .h >. )
+44::opex           |- <. +h , .h >. e. V
+45::df-hnorm       |-   normh
+                      = {
+                        <. &S3
+                        ,  &S4
+                        >.
+                        |  (  &S3 e. H~
+                           /\ &S4 = ( sqr ` ( &S3 .ih &S3 ) ) ) }
+46::ax-hilex       |- H~ e. V
+47:46:funopabex2   |-    {
+                         <. &S3
+                         ,  &S4
+                         >.
+                         |  (  &S3 e. H~
+                            /\ &S4 = ( sqr ` ( &S3 .ih &S3 ) ) ) }
+                      e. V
+48:45,47:eqeltr    |- normh e. V
+49:44,48:op2nd     |-   ( 2nd ` <. <. +h , .h >. , normh >. )
+                      = normh
+50:49:eqcomi       |-   normh
+                      = ( 2nd ` <. <. +h , .h >. , normh >. )
+51::hilabl         |- +h e. Abel
+52::ablgrp         |- ( +h e. Abel -> +h e. Grp )
+53:51,52:ax-mp     |- +h e. Grp
+54::ax-hfvadd      |- +h : ( H~ X. H~ ) --> H~
+55:53,54:grprn     |- H~ = ran +h
+56:34,38,43,50,55:imsval 
+                   |- (  <. <. +h , .h >. , normh >. e. NrmCVec
+                      ->   ( IndMet ` <. <. +h , .h >. , normh >. )
+                         = <. H~
+                           ,  {
+                              <.
+                              <. &S1
+                              ,  &S2
+                              >.
+                              ,  &S5
+                              >.
+                              |  (  &S1 e. H~
+                                 /\ &S2 e. H~
+                                 /\   &S5
+                                    = ( normh
+                                      ` ( &S1 +h ( -u 1 .h &S2 ) ) ) ) } >. )
+57:31,56:ax-mp     |-   ( IndMet ` <. <. +h , .h >. , normh >. )
+                      = <. H~
+                        ,  {
+                           <.
+                           <. &S1
+                           ,  &S2
+                           >.
+                           ,  &S5
+                           >.
+                           |  (  &S1 e. H~
+                              /\ &S2 e. H~
+                              /\   &S5
+                                 = ( normh
+                                   ` ( &S1 +h ( -u 1 .h &S2 ) ) ) ) } >.
+58:1:opeq2i        |-   <. H~ , D >.
+                      = <. H~
+                        ,  {
+                           <.
+                           <. x
+                           ,  y
+                           >.
+                           ,  z
+                           >.
+                           |  (  ( x e. H~ /\ y e. H~ )
+                              /\ z = ( normh ` ( x -h y ) ) ) } >.
+qed:30,57,58:3eqtr4 
+                   |-   ( IndMet ` <. <. +h , .h >. , normh >. )
+                      = <. H~ , D >.
+
+$=  chil &S1 cv chil wcel &S2 cv chil wcel &S5 cv &S1 cv c1 cneg &S2 
+    cv csm co cva co cno cfv wceq w3a &S1 &S2 &S5 copab2 cop chil vx cv
+    chil wcel vy cv chil wcel wa vz cv vx cv vy cv cmv co cno cfv 
+    wceq wa vx vy vz copab2 cop cva csm cop cno cop cims cfv chil cD cop 
+    &S1 cv chil wcel &S2 cv chil wcel &S5 cv &S1 cv c1 cneg &S2 cv csm 
+    co cva co cno cfv wceq w3a &S1 &S2 &S5 copab2 vx cv chil wcel vy cv
+    chil wcel wa vz cv vx cv vy cv cmv co cno cfv wceq wa vx vy vz 
+    copab2 chil &S1 cv chil wcel &S2 cv chil wcel &S5 cv &S1 cv c1 cneg &S2
+    cv csm co cva co cno cfv wceq w3a &S1 &S2 &S5 copab2 &S1 cv chil 
+    wcel &S2 cv chil wcel wa &S5 cv &S1 cv c1 cneg &S2 cv csm co cva co 
+    cno cfv wceq wa &S1 &S2 &S5 copab2 vx cv chil wcel vy cv chil wcel 
+    wa vz cv vx cv vy cv cmv co cno cfv wceq wa vx vy vz copab2 &S1 cv 
+    chil wcel &S2 cv chil wcel &S5 cv &S1 cv c1 cneg &S2 cv csm co cva co
+    cno cfv wceq w3a &S1 cv chil wcel &S2 cv chil wcel wa &S5 cv &S1 
+    cv c1 cneg &S2 cv csm co cva co cno cfv wceq wa &S1 &S2 &S5 &S1 cv 
+    chil wcel &S2 cv chil wcel &S5 cv &S1 cv c1 cneg &S2 cv csm co cva co
+    cno cfv wceq df-3an oprabbii &S1 cv chil wcel &S2 cv chil wcel wa
+    &S5 cv &S1 cv c1 cneg &S2 cv csm co cva co cno cfv wceq wa &S1 
+    &S2 &S5 copab2 vx cv chil wcel vy cv chil wcel wa vz cv vx cv vy cv 
+    cmv co cno cfv wceq wa vx vy vz copab2 wceq chil chil cxp chil chil 
+    cxp wceq &S18 cv &S19 cv &S1 cv chil wcel &S2 cv chil wcel wa &S5 cv
+    &S1 cv c1 cneg &S2 cv csm co cva co cno cfv wceq wa &S1 &S2 &S5 
+    copab2 co &S18 cv &S19 cv vx cv chil wcel vy cv chil wcel wa vz cv vx 
+    cv vy cv cmv co cno cfv wceq wa vx vy vz copab2 co wceq &S19 chil 
+    wral &S18 chil wral &S1 cv chil wcel &S2 cv chil wcel wa &S5 cv &S1 
+    cv c1 cneg &S2 cv csm co cva co cno cfv wceq wa &S1 &S2 &S5 copab2 
+    chil chil cxp wfn vx cv chil wcel vy cv chil wcel wa vz cv vx cv vy 
+    cv cmv co cno cfv wceq wa vx vy vz copab2 chil chil cxp wfn &S1 cv 
+    chil wcel &S2 cv chil wcel wa &S5 cv &S1 cv c1 cneg &S2 cv csm co cva
+    co cno cfv wceq wa &S1 &S2 &S5 copab2 vx cv chil wcel vy cv chil 
+    wcel wa vz cv vx cv vy cv cmv co cno cfv wceq wa vx vy vz copab2 wceq
+    chil chil cxp chil chil cxp wceq &S18 cv &S19 cv &S1 cv chil wcel
+    &S2 cv chil wcel wa &S5 cv &S1 cv c1 cneg &S2 cv csm co cva co 
+    cno cfv wceq wa &S1 &S2 &S5 copab2 co &S18 cv &S19 cv vx cv chil 
+    wcel vy cv chil wcel wa vz cv vx cv vy cv cmv co cno cfv wceq wa vx 
+    vy vz copab2 co wceq &S19 chil wral &S18 chil wral wa wb &S1 &S2 
+    &S5 chil chil &S1 cv c1 cneg &S2 cv csm co cva co cno cfv &S1 cv 
+    chil wcel &S2 cv chil wcel wa &S5 cv &S1 cv c1 cneg &S2 cv csm co cva
+    co cno cfv wceq wa &S1 &S2 &S5 copab2 &S1 cv c1 cneg &S2 cv csm 
+    co cva co cno fvex &S1 cv chil wcel &S2 cv chil wcel wa &S5 cv &S1 
+    cv c1 cneg &S2 cv csm co cva co cno cfv wceq wa &S1 &S2 &S5 copab2 
+    eqid fnoprab2 vx vy vz chil chil vx cv vy cv cmv co cno cfv vx cv 
+    chil wcel vy cv chil wcel wa vz cv vx cv vy cv cmv co cno cfv wceq wa
+    vx vy vz copab2 vx cv vy cv cmv co cno fvex vx cv chil wcel vy cv
+    chil wcel wa vz cv vx cv vy cv cmv co cno cfv wceq wa vx vy vz 
+    copab2 eqid fnoprab2 &S18 &S19 chil chil chil chil &S1 cv chil wcel &S2
+    cv chil wcel wa &S5 cv &S1 cv c1 cneg &S2 cv csm co cva co cno 
+    cfv wceq wa &S1 &S2 &S5 copab2 vx cv chil wcel vy cv chil wcel wa vz
+    cv vx cv vy cv cmv co cno cfv wceq wa vx vy vz copab2 eqfnoprval 
+    mp2an chil chil cxp eqid &S18 cv &S19 cv &S1 cv chil wcel &S2 cv chil 
+    wcel wa &S5 cv &S1 cv c1 cneg &S2 cv csm co cva co cno cfv wceq wa 
+    &S1 &S2 &S5 copab2 co &S18 cv &S19 cv vx cv chil wcel vy cv chil 
+    wcel wa vz cv vx cv vy cv cmv co cno cfv wceq wa vx vy vz copab2 co 
+    wceq &S18 &S19 chil &S18 cv chil wcel &S19 cv chil wcel wa &S18 cv c1
+    cneg &S19 cv csm co cva co cno cfv &S18 cv &S19 cv cmv co cno cfv
+    &S18 cv &S19 cv &S1 cv chil wcel &S2 cv chil wcel wa &S5 cv &S1 
+    cv c1 cneg &S2 cv csm co cva co cno cfv wceq wa &S1 &S2 &S5 copab2 
+    co &S18 cv &S19 cv vx cv chil wcel vy cv chil wcel wa vz cv vx cv 
+    vy cv cmv co cno cfv wceq wa vx vy vz copab2 co &S18 cv chil wcel 
+    &S19 cv chil wcel wa &S18 cv c1 cneg &S19 cv csm co cva co &S18 cv 
+    &S19 cv cmv co cno &S18 cv chil wcel &S19 cv chil wcel wa &S18 cv 
+    &S19 cv cmv co &S18 cv c1 cneg &S19 cv csm co cva co &S18 cv &S19 cv 
+    hvsubvalt eqcomd fveq2d &S1 &S2 &S5 &S18 cv &S19 cv chil chil &S1 cv c1 
+    cneg &S2 cv csm co cva co cno cfv &S18 cv c1 cneg &S19 cv csm co cva 
+    co cno cfv &S1 cv chil wcel &S2 cv chil wcel wa &S5 cv &S1 cv c1 
+    cneg &S2 cv csm co cva co cno cfv wceq wa &S1 &S2 &S5 copab2 &S18 cv 
+    c1 cneg &S2 cv csm co cva co cno cfv &S18 cv c1 cneg &S19 cv csm co
+    cva co cno fvex &S1 cv &S18 cv wceq &S1 cv c1 cneg &S2 cv csm co 
+    cva co &S18 cv c1 cneg &S2 cv csm co cva co cno &S1 cv &S18 cv c1 
+    cneg &S2 cv csm co cva opreq1 fveq2d &S2 cv &S19 cv wceq &S18 cv c1 
+    cneg &S2 cv csm co cva co &S18 cv c1 cneg &S19 cv csm co cva co cno 
+    &S2 cv &S19 cv wceq c1 cneg &S2 cv csm co c1 cneg &S19 cv csm co 
+    &S18 cv cva &S2 cv &S19 cv c1 cneg csm opreq2 opreq2d fveq2d &S1 cv 
+    chil wcel &S2 cv chil wcel wa &S5 cv &S1 cv c1 cneg &S2 cv csm co cva
+    co cno cfv wceq wa &S1 &S2 &S5 copab2 eqid oprabval2 vx vy vz 
+    &S18 cv &S19 cv vx cv chil wcel vy cv chil wcel wa vz cv vx cv vy cv 
+    cmv co cno cfv wceq wa vx vy vz copab2 vx cv chil wcel vy cv chil 
+    wcel wa vz cv vx cv vy cv cmv co cno cfv wceq wa vx vy vz copab2 eqid
+    hilmsdval 3eqtr4d rgen2 mpbir2an eqtr opeq2i cva csm cop cno cop 
+    cncv wcel cva csm cop cno cop cims cfv chil &S1 cv chil wcel &S2 cv 
+    chil wcel &S5 cv &S1 cv c1 cneg &S2 cv csm co cva co cno cfv wceq w3a
+    &S1 &S2 &S5 copab2 cop wceq hilncv &S1 &S2 &S5 csm cva csm cop 
+    cno cop cva cno cva csm cop chil cva csm cop cno cop c1st cfv cva 
+    csm cop cva csm cop cno cva csm opex op1st eqcomi cva csm cop c1st 
+    cfv cva cva csm cva cabl hilabl elisseti op1st eqcomi cva csm cop 
+    c2nd cfv csm cva csm cva cabl hilabl elisseti hvmulex op2nd eqcomi 
+    cva csm cop cno cop c2nd cfv cno cva csm cop cno cva csm opex cno 
+    &S3 cv chil wcel &S4 cv &S3 cv &S3 cv csp co csqr cfv wceq wa &S3 
+    &S4 copab cvv &S3 &S4 df-hnorm &S3 &S4 chil &S3 cv &S3 cv csp co 
+    csqr cfv ax-hilex funopabex2 eqeltr op2nd eqcomi cva chil cva cabl 
+    wcel cva cgr wcel hilabl cva ablgrp ax-mp ax-hfvadd grprn imsval 
+    ax-mp cD vx cv chil wcel vy cv chil wcel wa vz cv vx cv vy cv cmv co 
+    cno cfv wceq wa vx vy vz copab2 chil hilims.1 opeq2i 3eqtr4 $. 
+$)

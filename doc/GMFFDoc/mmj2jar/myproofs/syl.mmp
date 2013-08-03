@@ -1,0 +1,21 @@
+$( <MM> <PROOF_ASST> THEOREM=syl  LOC_AFTER=?
+
+* An inference version of the transitive laws for implication ~ imim2 and
+  ~ imim1 , which Russell and Whitehead call "the principle of the
+  syllogism...because...the syllogism in Barbara is derived from them"
+  (quote after Theorem *2.06 of [WhiteheadRussell] p. 101).  Some authors
+  call this law a "hypothetical syllogism."
+  
+  (A bit of trivia: this is the most commonly referenced assertion in our
+  database.  In second place is ~ ax-mp , followed by ~ visset , ~ bitri ,
+  ~ imp , and ~ ex .  The Metamath program command 'show usage' shows the
+  number of references.)
+
+h1::syl.1          |- ( ph -> ps )
+h2::syl.2          |- ( ps -> ch )
+3:2:a1i            |- (  ph
+                      -> ( ps -> ch ) )
+4:3:a2i            |- (  ( ph -> ps )
+                      -> ( ph -> ch ) )
+qed:1,4:ax-mp      |- ( ph -> ch )
+$)

@@ -1,0 +1,373 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta content="text/html; charset=ISO-8859-1" http-equiv="content-type"><title>SyntaxAxiomRulesAndConventions</title></head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);" alink="#000088" link="#0000ff" vlink="#ff0000">
+<h3>SYNTAX AXIOM RULES and CONVENTIONS</h3><br>
+<span style="font-weight: bold;">(see also <a href="BasicsOfSyntaxAxiomsAndTypes.html">BasicsOfSyntaxAxiomsAndTypes.html</a>)</span><br>
+
+
+<br>
+
+<big><span style="font-weight: bold;">Q.</span></big> The Metamath
+specification book, Metamath.pdf does not say much about Syntax Axioms.
+What rules and conventions should be followed in creating a formal
+language syntax in Metamath?<br>
+
+<br>
+
+<big><span style="font-weight: bold;">A.</span></big> Metamath is by
+design, as flexible and general as possible while maintaining maximum
+simplicity.<br>
+
+<br>
+
+(Note: I think that Metamath can implement Chomsky Type 2, 3
+and 4
+grammars -- AKA "Context-Free", "Regular" and "Finite-Choice" grammars,
+respectively, but cannot implement Chomsky Type 0 and 1 -- AKA
+Phrase-Structure and Context-Sensitive grammars..) <br>
+
+<br>
+
+The user is given very wide latitude and very
+few
+restrictions in constructing a formal language with which to write
+logic
+and math statements and proofs. Metamath does not require
+that the user write only Boolean logic or any other specific logic
+theory. It does not validate the user's Logical
+Axioms to make sure that they are free from inconsistencies. Nor does
+Metamath care what notation scheme is employed, so long as the notation
+is in accordance with the basic Metamath file format, command syntax
+and relational validity edits. The user may employ infix, polish, reverse polish
+notation or a combination of these notation schemes. If the user
+creates a syntax that is ambiguous, Metamath.exe will not complain.
+Metamath simply validates the input file commands, checks proof
+validity
+according to well-defined rules, helps construct proofs via the "Proof Assistant" feature and creates output html pages,
+reports, etc. Contradictions and ambiguity are the user's problem --
+in MMJ2 we will attempt to provide some help with the question of Ambiguity.<br>
+
+<br>
+Now, in spite of the fact that the Metamath specification does not
+lay out rules regarding user-defined Syntax, per se, a close examination of the
+classic Metamath database
+<code>set.mm</code>, as well as others such as <code>peano.mm</code> reveals that Syntax Axioms
+do indeed conform to certain unwritten rules. <br>
+
+<br>
+
+<span style="font-weight: bold; text-decoration: underline;">The (Previously) Unwritten Rules for Syntax Axioms</span><br>
+
+<span style="font-style: italic;">[These appear to already </span>be<span style="font-style: italic;"> "conventions" in Metamath's </span><code>set.mm</code><span style="font-style: italic;"> file]</span><br>
+
+<br>
+<big><span style="font-weight: bold;">
+1.</span></big> No Variable should appear more than once in a single Syntax Axiom. For example:<br>
+
+<br>
+
+<code>notvalidsyntaxaxiom $a wff ( ph -&gt; ph ^ ps ) $.</code><br>
+
+<br>
+
+is incorrect. Variable names are irrelevant in Syntax Axioms, except to
+define the order of hypotheses on the Proof Work Stack -- which is the
+reason each variable should have a different name even if the Type
+codes are identical.<br>
+
+<br>
+<big><span style="font-weight: bold;">
+2.</span></big> A Syntax Axiom should not have an associated Logical Hypothesis or any Disjoint Variable Restrictions. For example:<br>
+
+<br>
+
+<code>{<br>
+&nbsp; &nbsp; loghypX $e |- ( ph &lt;-&gt; ps ^ ch # th ) $.<br>
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $d ph th ch $.<br>
+&nbsp; &nbsp; saxiomX $a wff ph ^ ch # th ) $.<br>
+}</code><span style="font-style: italic;"><br>
+</span><br>
+
+Syntax Axioms define the allowable symbol patterns for identifying a
+"thing" to be discussed. Logical constraints and disjoint variable
+restrictions should be placed on the definition axioms -- which
+themselves will rely upon Syntax Axioms to formulate the valid symbol
+patterns that identify the things being defined. <br>
+
+<br>
+
+As an example, in English adjective-verb pairs are defined by the
+grammar of English: "red ball" and "pink elephant" are gramatically
+correct and are allowed by the grammar even though logically, pink
+elephants are impossibities that do not exist. The grammar allows us to
+formulate symbol patterns that identify impossible, illogical and false
+things! And it has to, otherwise, how would we be able to even talk
+about them to communicate the fact or their impossibility or falsity?<br>
+
+<br>
+
+<span style="font-style: italic;">[</span>NOTE:<span style="font-style: italic;"> MMJ2-Specific "Rules" Regarding Unique Readability Follow</span><br>
+
+<span style="font-style: italic;"><br>
+Please assume that we have a function/subroutine available, </span><code>N = GrammaticalParse(E)</code><span style="font-style: italic;">,&nbsp; that accepts as input any Expression, </span><code style="font-style: italic;">E</code><span style="font-style: italic;">, and returns as output a number </span><code style="font-style: italic;">N</code><span style="font-style: italic;"> = 0, 1 or 2 where:</span><br>
+
+<ul style="font-style: italic;">
+<li>0 signifies Could Not
+Parse Expression;</li><li>1 signifies Unique Parse Tree Exists For Expression; and </li><li>2
+signifies More Than One Valid Parse Tree Exists For Expression.</li>
+</ul>
+
+<span style="font-style: italic;">...and...further assume that by
+"Parse" we mean use a set of Grammar Production Rules derived from the
+Syntax Axioms and attempt to convert an Expression's symbol sequence
+into a tree structure (a "Parse Tree") that has a single root node
+corresponding to a Grammar Production Rule, with nodes below
+corresponding to variables in that Rule and/or other
+nodes corresponding to other Rules, etc. and so on... We'll get to the
+topic of HowTo Derive The Grammar Production Rules From The User's
+Syntax Axioms shortly...]</span><br style="font-style: italic;">
+
+<br>
+
+<br>
+<big><span style="font-weight: bold;">
+3.</span></big> A Syntax Axiom's Type code should not be the same as the Type code
+assigned to any Theorem, Logical Hypothesis, Logical Axiom or Logical
+Definition statement (see $p, $e and $a Metamath statements.)<br>
+
+<br>
+
+This may seem redundant given that we have defined what is a Syntax
+Axiom in terms of Type codes, but Rule 3 envisions the possibility of a
+computer program that allows the user to explicitly designate the
+labels of Syntax Axioms.<br>
+
+<br>
+
+<br>
+<big><span style="font-weight: bold;">
+4.</span></big> No Variable appearing in a Syntax Axiom should have a Type code that
+is the same as the Type code assigned to any Theorem, Logical
+Hypothesis,
+Logical Axiom or Logical Definition statement (see $p, $e and $a
+Metamath statements.)<br>
+
+<br>
+
+For example, continuing with set.mm's Type codes such as "|-" meaning "provable" and "wff" meaning Well-Formed Formula,<br>
+
+and "set" meaning "set":<br>
+
+<code><br>
+&nbsp; $v formulaF formulaG formulaH<br>
+F $f |- formulaF $.<br>
+invalidsyntaxaxiomY $a wff ( ph &lt;-&gt; F ) $.<br>
+&nbsp;</code>
+<br>
+
+Note: the purpose of&nbsp; rules 4 and 5 is to facilitate and guarantee
+the conversion of Metamath Syntax Axioms into Grammars, specifically
+Context-Free Grammars (AKA "Chomsky Type 3" grammars).<br>
+
+<br>
+
+<br>
+<big><span style="font-weight: bold;">
+5.</span></big> A Type code used in <span style="font-weight: bold;">any</span>
+statement's formula -- Theorem, Logical Axiom, Syntax Axiom, Variable
+Hypothesis, Logical Hypothesis, or Definition ($a, $e, $f, or
+$p
+statements) -- should not be used as a Constant in the Expression
+portion
+of any Formula. (This rule pertains the generating the Grammar
+Production Rules for a Context Free Grammar (aka "Chomsky Type 3" --
+see "Parsing Techniques -- A Practical Guide" at <a href="http://www.cs.vu.nl/%7Edick/PTAPG.html">http://www.cs.vu.nl/~dick/PTAPG.html</a> ).<br>
+<br>
+
+For example:<br>
+
+<code><br>
+&nbsp;<br>
+invalidsyntaxaxiomZ $a wff ( ph &lt;-&gt; wff ) $.<br>
+&nbsp;</code><br>
+
+<br>
+<big><span style="font-weight: bold;">
+6.</span></big> Each Syntax Axiom should be unique and should not be a composite of
+other Syntax Axioms. In other words, it should not be possible to parse
+a Syntax Axiom using other Syntax Axioms; in mathspeak, <span style="font-style: italic;">the ranges are disjoint</span>.<br>
+
+<br>
+
+Explanation: Let <code>AE</code> be the Expression portion of a Syntax Axiom, <code>A</code>, that is intended for inclusion in the existing set, <code>R</code> of Syntax Axiom's for a Metamath file.<br>
+
+<code>&nbsp;&nbsp;&nbsp; <br>
+</code><code>&nbsp; &nbsp; Switch (GrammaticalParse(AE)) {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; case&nbsp; 0: Syntax Axiom is Valid;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; case&nbsp; 1: Syntax Axiom not unique or is composite;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; case&nbsp; 2: Syntax is ambiguous;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; default: Shoot the programmer;<br>
+&nbsp;&nbsp;&nbsp; }<br>
+</code><br>
+
+<code><br>
+</code><big><span style="font-weight: bold;">7.</span></big> The Expression portion of every syntactically valid non-Syntax Axiom Formula
+should have a unique parse tree consisting of Syntax Axiom and Variable
+Hypothesis nodes. In other words, the syntax is unambiguous (aka "Unique Readability").<br>
+
+<br>
+
+Explanation: Let <code>FE</code> be the Expression portion of a Formula, <code>F</code>, on a statement that is not a non-Syntax Axiom statement. Then<br>
+
+
+<code>&nbsp;&nbsp;&nbsp; <br>&nbsp; &nbsp; Switch (GrammaticalParse(FE)) {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; case&nbsp; 0: Expression has syntax error;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; case&nbsp; 1: Expression has valid syntax;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; case&nbsp; 2: Syntax is ambiguous;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; default: Shoot the programmer;<br>
+&nbsp;&nbsp;&nbsp; }<br>
+<br>
+</code>NOTE: Rule 7 provides a test for a single Formula, and if
+GrammaticalParse(FE) returns a 2 then we know that the user's Syntax is
+Ambiguous. And because there are many algorithms for parsing
+Context-Free Grammars, it may be assumed that developing such a parser
+for Metamath is doable. But, Rule 7 cannot be used to prove that the
+user's Syntax is Unambiguous, i.e. has Unique Readability. To prove
+Unique Readability for an arbitrary Context-Free Metamath Grammar we
+will need to analyze punctuation and notations -- in depth, with all of their
+bewildering permutations.<br>
+
+<br>
+
+<big><span style="font-weight: bold;">8.</span></big> Type Conversion Axioms may be coded into arbitrarily complex hierarchies but loops (aka
+"cycles", "synonyms") are not permitted. <br>
+
+<br>
+
+Explanation: a loop of the form "XXX is a YYY", "YYY is a ZZZ", "ZZZ is
+a XXX" is not permitted. In this example we say "every subset is a set"
+which is fine, but then create a loop by saying "every set is a
+subset", which crosses the line; if there is a need to handle synonyms,
+the symbols should be converted prior to grammatical parsing and syntax
+verification.<br>
+
+<br>
+
+<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $c set class superclass
+subset $.&nbsp; $( declare Constant
+symbols&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $v x A AA
+s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.&nbsp; $( declare Variable
+symbols&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$)<br>
+vx&nbsp;&nbsp;&nbsp;&nbsp; $f set
+x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $.&nbsp; $( Variable x has
+Type
+set&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$)<br>
+vA&nbsp;&nbsp;&nbsp;&nbsp; $f class
+A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp; &nbsp; &nbsp;&nbsp; $.&nbsp; $( Variable A has Type
+class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$)<br>
+vAA&nbsp;&nbsp;&nbsp; $f superclass
+AA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.&nbsp; $( Variable AA has Type
+superclass&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$)<br>
+vs&nbsp;&nbsp;&nbsp;&nbsp; $f subset
+s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.&nbsp; $( Variable s has Type
+subset&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$)<br>
+cs&nbsp;&nbsp;&nbsp;&nbsp; $a set
+s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.&nbsp; </code><code> $( OK, every subset is a
+set&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$)</code><br>
+
+<code>cv&nbsp;&nbsp;&nbsp;&nbsp; $a class
+x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.&nbsp; $( OK, every set is a
+class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$)<br>
+cA&nbsp;&nbsp;&nbsp;&nbsp; $a superclass
+A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.&nbsp; $( OK, every class is a
+superclass&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$)<br>
+cs2&nbsp;&nbsp;&nbsp; $a class
+s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.&nbsp; $( redundant but OK, every subset is a
+class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $)<br>
+cwrong $a subset
+x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.&nbsp; $( ERROR: 'every set is a subset' creates a loop! $)<br>
+<br>
+</code>Note: A Type Conversion Axiom's Formula has length = 2, by
+definition and consists of a Type code followed by a Variable. This
+definition relates to the interesting question of just what precisely
+constitutes a "loop". For example, is the following pair of axioms
+constitute a "loop", where 'x' is a set Variable and 'A' is a class
+Variable?<br>
+
+<code><br>
+cv &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $a class x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $.<br>
+syntaxaxiomA $a set &lt;@&lt; A &gt;@&gt; $.<br>
+</code>&nbsp;<br>
+
+The (somewhat tenative) answer is No. The axiom, "syntaxaxiomA" could
+be interpreted as saying that certain restrictions can be applied to a
+class, "A" to construct a set. It is not saying that every class is a
+set. <br>
+
+&nbsp;<br>
+
+<big><span style="font-weight: bold;">9.</span></big>&nbsp; A Syntax
+Axiom containing one of more Variables whose Type code(s) have a
+Nulls-Permitted Syntax Axiom shall be treated as 'n' separate Syntax
+Axioms for the purpose of performing the validation checks specified by
+these "Unwritten Rules", where:<br>
+<br>
+'n' = 1 plus the number of Expression variations generated by excising
+the Nulls-Permitted Variables from the Expression, both individually
+and in combination. <br>
+
+<br>
+All other "Unwritten Rules" should be read as being intended to validate all 'n' possible Syntax Axioms!<br>
+<br>
+Explanation: <br>
+<br>
+Suppose we have:<br>
+<code>vA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $f A a&nbsp;&nbsp; $.<br>
+vB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $f B b&nbsp;&nbsp; $.<br>
+nullBOk $a B&nbsp;&nbsp;&nbsp;&nbsp; $.<br>
+ABOk&nbsp;&nbsp;&nbsp; $a A b a $.<br>
+<br>
+Then, Syntax Axiom "ABOk" has these 2 variations: <br>
+ABOk &nbsp;&nbsp; $a A b a $.<br>
+ABOk.2&nbsp; $a A a&nbsp;&nbsp; $.<br>
+<br>
+And, by Rule 8, ABOk.2 constitutes a loop, which is an error!<br>
+<br>
+</code><span style="font-weight: bold; font-style: italic;">Note that
+the presence of Nulls-Permitted Syntax Axioms can implicitly generate
+other types of Syntax Axioms, such as Type Conversions, Named Typed
+Constants and Named Typed Strings! Thus, indirect loops are possible,
+as wells as other pathologies leading to ambiguities!!!</span><br style="font-weight: bold; font-style: italic;">
+<code><br>
+</code><br>
+<br>
+
+
+<br>
+
+<big><span style="font-weight: bold;">10.</span></big> Deferred ... pending Grammar Production Rule Derivations.<br>
+
+<br>
+
+<br>
+<hr style="width: 100%; height: 2px;"><br>
+<br>
+</body></html>

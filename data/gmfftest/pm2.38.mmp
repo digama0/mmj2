@@ -1,0 +1,15 @@
+$( <MM> <PROOF_ASST> THEOREM=pm2.38  LOC_AFTER=?
+
+* Theorem *2.38 of [WhiteheadRussell] p. 105.
+
+1::con3            |- (  ( ps -> ch )
+                      -> (  -. ch
+                         -> -. ps ) )
+qed:1:imim1d       |- (  ( ps -> ch ) 
+                           /\ ( ta -/\ et )
+                      -> (  (  -. ps
+                            -> ph ) XYZ abc def
+                         -> (  -. ch
+                            -> ph ) ) )
+$=  wps wch wi wch wn wps wn wph wps wch con3 imim1d $. 
+$)

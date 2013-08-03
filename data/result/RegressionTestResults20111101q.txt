@@ -1,0 +1,1266 @@
+======================================================
+Test: BatchMMJ2Sample001.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\Sample001Sysout20110701Final.txt (203484 bytes)
+   with: (>)C:\mmj2\data\result\Sample001Sysout20111101q.txt (203484 bytes)
+
+The files are identical
+  
+
+======================================================
+Test: BatchMMJ2Sample002.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\Sample002Syserr20110701Final.txt (0 bytes)
+   with: (>)C:\mmj2\data\result\Sample002Syserr20111101q.txt (0 bytes)
+
+The files are identical
+
+
+Compare: (<)C:\mmj2\data\result\Sample002Sysout20110701Final.txt (21964 bytes)
+   with: (>)C:\mmj2\data\result\Sample002Sysout20111101q.txt (21964 bytes)
+
+The files are identical
+
+
+======================================================
+Test: BatchMMJ2Sample003.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\Sample003Sysout20110701Final.txt (10939 bytes)
+   with: (>)C:\mmj2\data\result\Sample003Sysout20111101q.txt (10939 bytes)
+
+The files are identical
+
+
+======================================================
+Test: RunUnitTest.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\UT1Out20110701Final.txt (166281 bytes)
+   with: (>)C:\mmj2\data\result\UT1Out20111101q.txt (166414 bytes)
+
+1026,1029c1026,1029
+< E-IO-0029 Include File Not Found. Check $[ ??.mm $] name and directory. Source Id: c:\mmj2\data\mm\UTIO1c07.mm Line: 2 Column: 21
+< E-IO-0029 Include File Not Found. Check $[ ??.mm $] name and directory. Source Id: c:\mmj2\data\mm\UTIO1c07.mm Line: 6 Column: 17
+< E-IO-0030 Include File statement for file that was already loaded. File name = UT001c06.mm Source Id: c:\mmj2\data\mm\UTIO1c07.mm Line: 7 Column: 17
+< E-IO-0029 Include File Not Found. Check $[ ??.mm $] name and directory. Source Id: c:\mmj2\data\mm\UTIO1c07.mm Line: 8 Column: 17
+---
+> E-IO-0029 Include File Not Found = c:\mmj2\data\runparm\windows\doesnotexist.mm. Check $[ ??.mm $] name and directory. Source Id: c:\mmj2\data\mm\UTIO1c07.mm Line: 2 Column: 21
+> E-IO-0029 Include File Not Found = c:\mmj2\data\runparm\windows\UT001c06.mm. Check $[ ??.mm $] name and directory. Source Id: c:\mmj2\data\mm\UTIO1c07.mm Line: 6 Column: 17
+> E-IO-0030 Include File statement for file that was already loaded. File name = UT001c06.mm Source Id: c:\mmj2\data\mm\UTIO1c07.mm Line: 7 Column: 17
+> E-IO-0029 Include File Not Found = c:\mmj2\data\runparm\windows\UT001c07.mm. Check $[ ??.mm $] name and directory. Source Id: c:\mmj2\data\mm\UTIO1c07.mm Line: 8 Column: 17
+
+EXPLANATION: 
+    E-IO-0029 changed for Paths Enhancement. Diffs valid.
+
+* * *
+
+ 
+Compare: (<)C:\mmj2\data\result\UT1Err20110701Final.txt (11838 bytes)
+   with: (>)C:\mmj2\data\result\UT1Err20111101q.txt (11615 bytes)
+
+1,22c1,22
+< 
+< C:\mmj2\test\windows>PUSHD c:\mmj2\data\result
+< 
+< c:\mmj2\data\result>erase UTOut20110701a.txt
+< Could Not Find c:\mmj2\data\result\UTOut20110701a.txt
+< 
+< c:\mmj2\data\result>c:\mmj2\test\windows\RunUT1.bat  1>UT1Out20110701a.txt
+< A-IO-0001 Invalid input character, decimal value = 224 Source Id: c:\mmj2\data\mm\UTIO1c01.mm Line: 3 Column: 1
+< mmj.mmio.MMIOError: A-IO-0001 Invalid input character, decimal value = 224 Source Id: c:\mmj2\data\mm\UTIO1c01.mm Line: 3 Column: 1
+<     at mmj.mmio.Tokenizer.getChar(Tokenizer.java:422)
+<     at mmj.mmio.Tokenizer.getToken(Tokenizer.java:213)
+<     at mmj.mmio.Statementizer.getNextToken(Statementizer.java:615)
+<     at mmj.mmio.Statementizer.getStmt(Statementizer.java:424)
+<     at mmj.mmio.Systemizer.getNextStmt(Systemizer.java:369)
+<     at mmj.mmio.Systemizer.load(Systemizer.java:276)
+<     at mmj.mmio.Systemizer.load(Systemizer.java:329)
+<     at mmj.mmio.Systemizer.load(Systemizer.java:346)
+<     at mmj.util.LogicalSystemBoss.doLoadFile(LogicalSystemBoss.java:345)
+<     at mmj.util.LogicalSystemBoss.doRunParmCommand(LogicalSystemBoss.java:184)
+<     at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:355)
+<     at mmj.util.BatchFramework.runIt(BatchFramework.java:249)
+<     at mmj.util.BatchMMJ2.main(BatchMMJ2.java:70)
+---
+> 
+> C:\mmj2\test\windows>PUSHD c:\mmj2\data\result 
+> 
+> c:\mmj2\data\result>erase UTOut20111101q.txt   
+> Could Not Find c:\mmj2\data\result\UTOut20111101q.txt
+> 
+> c:\mmj2\data\result>c:\mmj2\test\windows\RunUT1.bat  1>UT1Out20111101q.txt 
+> A-IO-0001 Invalid input character, decimal value = 224 Source Id: c:\mmj2\data\mm\UTIO1c01.mm Line: 3 Column: 1
+> mmj.mmio.MMIOError: A-IO-0001 Invalid input character, decimal value = 224 Source Id: c:\mmj2\data\mm\UTIO1c01.mm Line: 3 Column: 1
+>   at mmj.mmio.Tokenizer.getChar(Tokenizer.java:422)
+>   at mmj.mmio.Tokenizer.getToken(Tokenizer.java:213)
+>   at mmj.mmio.Statementizer.getNextToken(Statementizer.java:624)
+>   at mmj.mmio.Statementizer.getStmt(Statementizer.java:433)
+>   at mmj.mmio.Systemizer.getNextStmt(Systemizer.java:397)
+>   at mmj.mmio.Systemizer.load(Systemizer.java:286)
+>   at mmj.mmio.Systemizer.load(Systemizer.java:348)
+>   at mmj.mmio.Systemizer.load(Systemizer.java:372)
+>   at mmj.util.LogicalSystemBoss.doLoadFile(LogicalSystemBoss.java:363)
+>   at mmj.util.LogicalSystemBoss.doRunParmCommand(LogicalSystemBoss.java:190)
+>   at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:407)
+>   at mmj.util.BatchFramework.runIt(BatchFramework.java:288)
+>   at mmj.util.BatchMMJ2.main(BatchMMJ2.java:70)
+27,32c27,32
+<     at mmj.util.LogicalSystemBoss.getLogicalSystem(LogicalSystemBoss.java:243)
+<     at mmj.util.OutputBoss.doPrintSyntaxDetails(OutputBoss.java:366)
+<     at mmj.util.OutputBoss.doRunParmCommand(OutputBoss.java:161)
+<     at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:355)
+<     at mmj.util.BatchFramework.runIt(BatchFramework.java:249)
+<     at mmj.util.BatchMMJ2.main(BatchMMJ2.java:70)
+---
+>   at mmj.util.LogicalSystemBoss.getLogicalSystem(LogicalSystemBoss.java:251)
+>   at mmj.util.OutputBoss.doPrintSyntaxDetails(OutputBoss.java:389)
+>   at mmj.util.OutputBoss.doRunParmCommand(OutputBoss.java:169)
+>   at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:407)
+>   at mmj.util.BatchFramework.runIt(BatchFramework.java:288)
+>   at mmj.util.BatchMMJ2.main(BatchMMJ2.java:70)
+39,44c39,44
+<     at mmj.util.LogicalSystemBoss.getLogicalSystem(LogicalSystemBoss.java:243)
+<     at mmj.util.OutputBoss.doPrintSyntaxDetails(OutputBoss.java:366)
+<     at mmj.util.OutputBoss.doRunParmCommand(OutputBoss.java:161)
+<     at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:355)
+<     at mmj.util.BatchFramework.runIt(BatchFramework.java:249)
+<     at mmj.util.BatchMMJ2.main(BatchMMJ2.java:70)
+---
+>   at mmj.util.LogicalSystemBoss.getLogicalSystem(LogicalSystemBoss.java:251)
+>   at mmj.util.OutputBoss.doPrintSyntaxDetails(OutputBoss.java:389)
+>   at mmj.util.OutputBoss.doRunParmCommand(OutputBoss.java:169)
+>   at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:407)
+>   at mmj.util.BatchFramework.runIt(BatchFramework.java:288)
+>   at mmj.util.BatchMMJ2.main(BatchMMJ2.java:70)
+51,56c51,56
+<     at mmj.util.LogicalSystemBoss.getLogicalSystem(LogicalSystemBoss.java:243)
+<     at mmj.util.OutputBoss.doPrintSyntaxDetails(OutputBoss.java:366)
+<     at mmj.util.OutputBoss.doRunParmCommand(OutputBoss.java:161)
+<     at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:355)
+<     at mmj.util.BatchFramework.runIt(BatchFramework.java:249)
+<     at mmj.util.BatchMMJ2.main(BatchMMJ2.java:70)
+---
+>   at mmj.util.LogicalSystemBoss.getLogicalSystem(LogicalSystemBoss.java:251)
+>   at mmj.util.OutputBoss.doPrintSyntaxDetails(OutputBoss.java:389)
+>   at mmj.util.OutputBoss.doRunParmCommand(OutputBoss.java:169)
+>   at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:407)
+>   at mmj.util.BatchFramework.runIt(BatchFramework.java:288)
+>   at mmj.util.BatchMMJ2.main(BatchMMJ2.java:70)
+63,68c63,68
+<     at mmj.util.LogicalSystemBoss.getLogicalSystem(LogicalSystemBoss.java:243)
+<     at mmj.util.OutputBoss.doPrintSyntaxDetails(OutputBoss.java:366)
+<     at mmj.util.OutputBoss.doRunParmCommand(OutputBoss.java:161)
+<     at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:355)
+<     at mmj.util.BatchFramework.runIt(BatchFramework.java:249)
+<     at mmj.util.BatchMMJ2.main(BatchMMJ2.java:70)
+---
+>   at mmj.util.LogicalSystemBoss.getLogicalSystem(LogicalSystemBoss.java:251)
+>   at mmj.util.OutputBoss.doPrintSyntaxDetails(OutputBoss.java:389)
+>   at mmj.util.OutputBoss.doRunParmCommand(OutputBoss.java:169)
+>   at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:407)
+>   at mmj.util.BatchFramework.runIt(BatchFramework.java:288)
+>   at mmj.util.BatchMMJ2.main(BatchMMJ2.java:70)
+75,80c75,80
+<     at mmj.util.LogicalSystemBoss.getLogicalSystem(LogicalSystemBoss.java:243)
+<     at mmj.util.OutputBoss.doPrintSyntaxDetails(OutputBoss.java:366)
+<     at mmj.util.OutputBoss.doRunParmCommand(OutputBoss.java:161)
+<     at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:355)
+<     at mmj.util.BatchFramework.runIt(BatchFramework.java:249)
+<     at mmj.util.BatchMMJ2.main(BatchMMJ2.java:70)
+---
+>   at mmj.util.LogicalSystemBoss.getLogicalSystem(LogicalSystemBoss.java:251)
+>   at mmj.util.OutputBoss.doPrintSyntaxDetails(OutputBoss.java:389)
+>   at mmj.util.OutputBoss.doRunParmCommand(OutputBoss.java:169)
+>   at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:407)
+>   at mmj.util.BatchFramework.runIt(BatchFramework.java:288)
+>   at mmj.util.BatchMMJ2.main(BatchMMJ2.java:70)
+85,91c85,91
+<     at mmj.mmio.Systemizer.load(Systemizer.java:310)
+<     at mmj.mmio.Systemizer.load(Systemizer.java:346)
+<     at mmj.util.LogicalSystemBoss.doLoadFile(LogicalSystemBoss.java:345)
+<     at mmj.util.LogicalSystemBoss.doRunParmCommand(LogicalSystemBoss.java:184)
+<     at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:355)
+<     at mmj.util.BatchFramework.runIt(BatchFramework.java:249)
+<     at mmj.util.BatchMMJ2.main(BatchMMJ2.java:70)
+---
+>   at mmj.mmio.Systemizer.load(Systemizer.java:328)
+>   at mmj.mmio.Systemizer.load(Systemizer.java:372)
+>   at mmj.util.LogicalSystemBoss.doLoadFile(LogicalSystemBoss.java:363)
+>   at mmj.util.LogicalSystemBoss.doRunParmCommand(LogicalSystemBoss.java:190)
+>   at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:407)
+>   at mmj.util.BatchFramework.runIt(BatchFramework.java:288)
+>   at mmj.util.BatchMMJ2.main(BatchMMJ2.java:70)
+95,101c95,101
+<     at mmj.mmio.Systemizer.load(Systemizer.java:323)
+<     at mmj.mmio.Systemizer.load(Systemizer.java:346)
+<     at mmj.util.LogicalSystemBoss.doLoadFile(LogicalSystemBoss.java:345)
+<     at mmj.util.LogicalSystemBoss.doRunParmCommand(LogicalSystemBoss.java:184)
+<     at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:355)
+<     at mmj.util.BatchFramework.runIt(BatchFramework.java:249)
+<     at mmj.util.BatchMMJ2.main(BatchMMJ2.java:70)
+---
+>   at mmj.mmio.Systemizer.load(Systemizer.java:341)
+>   at mmj.mmio.Systemizer.load(Systemizer.java:372)
+>   at mmj.util.LogicalSystemBoss.doLoadFile(LogicalSystemBoss.java:363)
+>   at mmj.util.LogicalSystemBoss.doRunParmCommand(LogicalSystemBoss.java:190)
+>   at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:407)
+>   at mmj.util.BatchFramework.runIt(BatchFramework.java:288)
+>   at mmj.util.BatchMMJ2.main(BatchMMJ2.java:70)
+106,111c106,111
+<     at mmj.util.LogicalSystemBoss.getLogicalSystem(LogicalSystemBoss.java:243)
+<     at mmj.util.OutputBoss.doPrintSyntaxDetails(OutputBoss.java:366)
+<     at mmj.util.OutputBoss.doRunParmCommand(OutputBoss.java:161)
+<     at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:355)
+<     at mmj.util.BatchFramework.runIt(BatchFramework.java:249)
+<     at mmj.util.BatchMMJ2.main(BatchMMJ2.java:70)
+---
+>   at mmj.util.LogicalSystemBoss.getLogicalSystem(LogicalSystemBoss.java:251)
+>   at mmj.util.OutputBoss.doPrintSyntaxDetails(OutputBoss.java:389)
+>   at mmj.util.OutputBoss.doRunParmCommand(OutputBoss.java:169)
+>   at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:407)
+>   at mmj.util.BatchFramework.runIt(BatchFramework.java:288)
+>   at mmj.util.BatchMMJ2.main(BatchMMJ2.java:70)
+118,123c118,123
+<     at mmj.util.LogicalSystemBoss.getLogicalSystem(LogicalSystemBoss.java:243)
+<     at mmj.util.OutputBoss.doPrintSyntaxDetails(OutputBoss.java:366)
+<     at mmj.util.OutputBoss.doRunParmCommand(OutputBoss.java:161)
+<     at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:355)
+<     at mmj.util.BatchFramework.runIt(BatchFramework.java:249)
+<     at mmj.util.BatchMMJ2.main(BatchMMJ2.java:70)
+---
+>   at mmj.util.LogicalSystemBoss.getLogicalSystem(LogicalSystemBoss.java:251)
+>   at mmj.util.OutputBoss.doPrintSyntaxDetails(OutputBoss.java:389)
+>   at mmj.util.OutputBoss.doRunParmCommand(OutputBoss.java:169)
+>   at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:407)
+>   at mmj.util.BatchFramework.runIt(BatchFramework.java:288)
+>   at mmj.util.BatchMMJ2.main(BatchMMJ2.java:70)
+ 
+
+EXPLANATION: 
+    Error line numbers changed because source code changed.
+    Diffs look valid.
+    
+* * *
+
+
+
+======================================================
+Test: RunUnitTest2.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\UT2Out20110701Final.txt (49771 bytes)
+   with: (>)C:\mmj2\data\result\UT2Out20111101q.txt (49771 bytes)
+
+The files are identical
+ 
+
+======================================================
+Test: RunUnitTest3.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\UT3Err20110701Final.txt (1551 bytes)
+   with: (>)C:\mmj2\data\result\UT3Err20111101q.txt (1533 bytes)
+
+1,7c1,7
+< 
+< C:\mmj2\test\windows>PUSHD c:\mmj2\data\result
+< 
+< c:\mmj2\data\result>erase UT3Out20110701a.txt
+< Could Not Find c:\mmj2\data\result\UT3Out20110701a.txt
+< 
+< c:\mmj2\data\result>c:\mmj2\test\windows\RunUT3.bat  1>UT3Out20110701a.txt
+---
+> 
+> C:\mmj2\test\windows>PUSHD c:\mmj2\data\result 
+> 
+> c:\mmj2\data\result>erase UT3Out20111101q.txt 
+> Could Not Find c:\mmj2\data\result\UT3Out20111101q.txt
+> 
+> c:\mmj2\data\result>c:\mmj2\test\windows\RunUT3.bat  1>UT3Out20111101q.txt 
+12,17c12,17
+<     at mmj.util.LogicalSystemBoss.getLogicalSystem(LogicalSystemBoss.java:243)
+<     at mmj.util.VerifyProofBoss.doVerifyProof(VerifyProofBoss.java:159)
+<     at mmj.util.VerifyProofBoss.doRunParmCommand(VerifyProofBoss.java:129)
+<     at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:355)
+<     at mmj.util.BatchFramework.runIt(BatchFramework.java:249)
+<     at mmj.util.BatchMMJ2.main(BatchMMJ2.java:70)
+---
+>   at mmj.util.LogicalSystemBoss.getLogicalSystem(LogicalSystemBoss.java:251)
+>   at mmj.util.VerifyProofBoss.doVerifyProof(VerifyProofBoss.java:159)
+>   at mmj.util.VerifyProofBoss.doRunParmCommand(VerifyProofBoss.java:129)
+>   at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:407)
+>   at mmj.util.BatchFramework.runIt(BatchFramework.java:288)
+>   at mmj.util.BatchMMJ2.main(BatchMMJ2.java:70)
+
+ 
+
+EXPLANATION: 
+    Error line numbers changed because source code changed.
+    Diffs look valid.
+    
+* * *
+
+Compare: (<)C:\mmj2\data\result\UT3Out20110701Final.txt (9331 bytes)
+   with: (>)C:\mmj2\data\result\UT3Out20111101q.txt (9331 bytes)
+
+The files are identical
+
+
+======================================================
+Test: RunUnitTest4.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\UT4dump15020110701Final.mmp (4812 bytes)
+   with: (>)C:\mmj2\data\result\UT4dump15020111101q.mmp (4812 bytes)
+
+The files are identical
+
+Compare: (<)C:\mmj2\data\result\UT4Out20110701Final.txt (483473 bytes)
+   with: (>)C:\mmj2\data\result\UT4Out20111101q.txt (483473 bytes)
+
+The files are identical
+
+NOTE: difference occurred in first comparison. Rerun
+of the 20110701 test resolved the problem which I
+believe was caused by a change to c:\metamath\big-unifier.mm
+(or a switch of files?)
+
+Therefore I will copy big-unifier.mm to mmj2\data\mm
+and modify unit test 4. 
+ 
+
+======================================================
+Test: RunUnitTest5.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\UT5Out20110701Final.txt (759149 bytes)
+   with: (>)C:\mmj2\data\result\UT5Out20111101q.txt (759149 bytes)
+
+The files are identical
+
+
+======================================================
+Test: RunUnitTest6.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\UT6Out20110701Final.txt (34276 bytes)
+   with: (>)C:\mmj2\data\result\UT6Out20111101q.txt (34249 bytes)
+
+162c162
+< E-PA-0801 Theorem: syl Output Cursor at Stmt: mmj.pa.DerivationStep qed fieldId: 1 caretCharNbr: -1 caretLine: -1 caretCol: -1
+---
+> E-PA-0801 Theorem: syl Output Cursor at Stmt:   fieldId: -1 caretCharNbr: -1 caretLine: -1 caretCol: -1
+
+Explanation: ok, default is "AsIs" instead of "Last" 
+but in batch-mode there is no prior cursor postion.
+
+184c184
+< E-PA-0801 Theorem: syl Output Cursor at Stmt: mmj.pa.DerivationStep 2099 fieldId: 1 caretCharNbr: -1 caretLine: -1 caretCol: -1
+---
+> E-PA-0801 Theorem: syl Output Cursor at Stmt: mmj.pa.DerivationStep qed fieldId: 1 caretCharNbr: -1 caretLine: -1 caretCol: -1
+
+Explanation: ok, after successful unification cursor now goes to 'qed'
+step instead of last incomplete step.
+
+
+207c207
+< E-PA-0801 Theorem: syl Output Cursor at Stmt: mmj.pa.DerivationStep 4099 fieldId: 1 caretCharNbr: -1 caretLine: -1 caretCol: -1
+---
+> E-PA-0801 Theorem: syl Output Cursor at Stmt:   fieldId: -1 caretCharNbr: -1 caretLine: -1 caretCol: -1
+
+Explanation: ok, default is "AsIs" instead of "Last" 
+but in batch-mode there is no prior cursor postion.
+
+
+252c252
+< E-PA-0801 Theorem: syl Output Cursor at Stmt: mmj.pa.DerivationStep 2099 fieldId: 1 caretCharNbr: -1 caretLine: -1 caretCol: -1
+---
+> E-PA-0801 Theorem: syl Output Cursor at Stmt: mmj.pa.DerivationStep qed fieldId: 1 caretCharNbr: -1 caretLine: -1 caretCol: -1
+
+Explanation: ok, after successful unification cursor now goes to 'qed'
+step instead of last incomplete step.
+
+
+320c320
+< E-PA-0801 Theorem: syl Output Cursor at Stmt: mmj.pa.DerivationStep 1099 fieldId: 1 caretCharNbr: -1 caretLine: -1 caretCol: -1
+---
+> E-PA-0801 Theorem: syl Output Cursor at Stmt: mmj.pa.DerivationStep qed fieldId: 1 caretCharNbr: -1 caretLine: -1 caretCol: -1
+
+Explanation: ok, after successful unification cursor now goes to 'qed'
+step instead of last incomplete step.
+ 
+
+388c388
+< E-PA-0801 Theorem: syl Output Cursor at Stmt:   fieldId: -1 caretCharNbr: -1 caretLine: -1 caretCol: -1
+---
+> E-PA-0801 Theorem: syl Output Cursor at Stmt: mmj.pa.DerivationStep qed fieldId: 1 caretCharNbr: -1 caretLine: -1 caretCol: -1
+
+Explanation: ok, after successful unification cursor now goes to 'qed'
+step instead of last incomplete step.
+ 
+
+======================================================
+Test: RunUnitTest7.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\UT7Out20110701Final.txt (14629 bytes)
+   with: (>)C:\mmj2\data\result\UT7Out20111101q.txt (14629 bytes)
+
+The files are identical
+
+
+======================================================
+Test: RunUnitTest8.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\UT8Out20110701Final.txt (45614 bytes)
+   with: (>)C:\mmj2\data\result\UT8Out20111101q.txt (45614 bytes)
+
+226c226
+< I-LA-0302 TimerID Startup: Elapsed Millis=8502 Total Memory=94924800 (delta=29978624) Max Memory=132055040 (delta=0) FreeMemory=39163600 (delta=-25002640)
+---
+> I-LA-0302 TimerID Startup: Elapsed Millis=8955 Total Memory=79441920 (delta=14495744) Max Memory=132055040 (delta=0) FreeMemory=23745456 (delta=-40420784)
+487c487
+< I-LA-0302 TimerID Startup: Elapsed Millis=8845 Total Memory=78999552 (delta=14053376) Max Memory=132055040 (delta=0) FreeMemory=25762344 (delta=-38387640)
+---
+> I-LA-0302 TimerID Startup: Elapsed Millis=7020 Total Memory=94765056 (delta=29818880) Max Memory=132055040 (delta=0) FreeMemory=38746720 (delta=-25403264)
+
+
+======================================================
+Test: RunUnitTest9.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\UT9Out20110701Final.txt (24021 bytes)
+   with: (>)C:\mmj2\data\result\UT9Out20111101q.txt (24021 bytes)
+
+201c201
+< I-LA-0302 TimerID BookManagerUnitText: Elapsed Millis=78 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=61741096 (delta=-2150776)
+---
+> I-LA-0302 TimerID BookManagerUnitText: Elapsed Millis=94 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=61437408 (delta=-2455992)
+384c384
+< I-LA-0302 TimerID BookManagerUnitText: Elapsed Millis=62 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=62093064 (delta=-1798808)
+---
+> I-LA-0302 TimerID BookManagerUnitText: Elapsed Millis=62 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=61803760 (delta=-2089640)
+598c598
+< I-LA-0302 TimerID BookManagerUnitText: Elapsed Millis=63 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=61758408 (delta=-2133464)
+---
+> I-LA-0302 TimerID BookManagerUnitText: Elapsed Millis=78 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=61443032 (delta=-2450368)
+
+
+======================================================
+Test: RunUnitTest10.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\UT10Err20110701Final.txt (19992 bytes)
+   with: (>)C:\mmj2\data\result\UT10Err20111101q.txt (19844 bytes)
+
+(diffs due to spaces/tabs ignored)
+
+4,7c4,7
+< c:\mmj2\data\result>erase UT10Out20110701a.txt
+< Could Not Find c:\mmj2\data\result\UT10Out20110701a.txt
+< 
+< c:\mmj2\data\result>c:\mmj2\test\windows\RunUT10.bat  1>UT10Out20110701a.txt
+---
+> c:\mmj2\data\result>erase UT10Out20111101q.txt   
+> Could Not Find c:\mmj2\data\result\UT10Out20111101q.txt
+> 
+> c:\mmj2\data\result>c:\mmj2\test\windows\RunUT10.bat  1>UT10Out20111101q.txt 
+12,15c12,15
+<     at mmj.util.TheoremLoaderBoss.editLoadTheoremsFromMMTFolder(TheoremLoaderBoss.java:489)
+<     at mmj.util.TheoremLoaderBoss.doRunParmCommand(TheoremLoaderBoss.java:105)
+<     at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:355)
+<     at mmj.util.BatchFramework.runIt(BatchFramework.java:249)
+---
+>   at mmj.util.TheoremLoaderBoss.editLoadTheoremsFromMMTFolder(TheoremLoaderBoss.java:495)
+>   at mmj.util.TheoremLoaderBoss.doRunParmCommand(TheoremLoaderBoss.java:110)
+>   at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:407)
+>   at mmj.util.BatchFramework.runIt(BatchFramework.java:288)
+23,26c23,26
+<     at mmj.util.TheoremLoaderBoss.editLoadTheoremsFromMMTFolder(TheoremLoaderBoss.java:489)
+<     at mmj.util.TheoremLoaderBoss.doRunParmCommand(TheoremLoaderBoss.java:105)
+<     at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:355)
+<     at mmj.util.BatchFramework.runIt(BatchFramework.java:249)
+---
+>   at mmj.util.TheoremLoaderBoss.editLoadTheoremsFromMMTFolder(TheoremLoaderBoss.java:495)
+>   at mmj.util.TheoremLoaderBoss.doRunParmCommand(TheoremLoaderBoss.java:110)
+>   at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:407)
+>   at mmj.util.BatchFramework.runIt(BatchFramework.java:288)
+34,37c34,37
+<     at mmj.util.TheoremLoaderBoss.editLoadTheoremsFromMMTFolder(TheoremLoaderBoss.java:489)
+<     at mmj.util.TheoremLoaderBoss.doRunParmCommand(TheoremLoaderBoss.java:105)
+<     at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:355)
+<     at mmj.util.BatchFramework.runIt(BatchFramework.java:249)
+---
+>   at mmj.util.TheoremLoaderBoss.editLoadTheoremsFromMMTFolder(TheoremLoaderBoss.java:495)
+>   at mmj.util.TheoremLoaderBoss.doRunParmCommand(TheoremLoaderBoss.java:110)
+>   at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:407)
+>   at mmj.util.BatchFramework.runIt(BatchFramework.java:288)
+45,48c45,48
+<     at mmj.util.TheoremLoaderBoss.editLoadTheoremsFromMMTFolder(TheoremLoaderBoss.java:489)
+<     at mmj.util.TheoremLoaderBoss.doRunParmCommand(TheoremLoaderBoss.java:105)
+<     at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:355)
+<     at mmj.util.BatchFramework.runIt(BatchFramework.java:249)
+---
+>   at mmj.util.TheoremLoaderBoss.editLoadTheoremsFromMMTFolder(TheoremLoaderBoss.java:495)
+>   at mmj.util.TheoremLoaderBoss.doRunParmCommand(TheoremLoaderBoss.java:110)
+>   at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:407)
+>   at mmj.util.BatchFramework.runIt(BatchFramework.java:288)
+56,59c56,59
+<     at mmj.util.TheoremLoaderBoss.editLoadTheoremsFromMMTFolder(TheoremLoaderBoss.java:489)
+<     at mmj.util.TheoremLoaderBoss.doRunParmCommand(TheoremLoaderBoss.java:105)
+<     at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:355)
+<     at mmj.util.BatchFramework.runIt(BatchFramework.java:249)
+---
+>   at mmj.util.TheoremLoaderBoss.editLoadTheoremsFromMMTFolder(TheoremLoaderBoss.java:495)
+>   at mmj.util.TheoremLoaderBoss.doRunParmCommand(TheoremLoaderBoss.java:110)
+>   at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:407)
+>   at mmj.util.BatchFramework.runIt(BatchFramework.java:288)
+67,70c67,70
+<     at mmj.util.TheoremLoaderBoss.editLoadTheoremsFromMMTFolder(TheoremLoaderBoss.java:489)
+<     at mmj.util.TheoremLoaderBoss.doRunParmCommand(TheoremLoaderBoss.java:105)
+<     at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:355)
+<     at mmj.util.BatchFramework.runIt(BatchFramework.java:249)
+---
+>   at mmj.util.TheoremLoaderBoss.editLoadTheoremsFromMMTFolder(TheoremLoaderBoss.java:495)
+>   at mmj.util.TheoremLoaderBoss.doRunParmCommand(TheoremLoaderBoss.java:110)
+>   at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:407)
+>   at mmj.util.BatchFramework.runIt(BatchFramework.java:288)
+78,81c78,81
+<     at mmj.util.TheoremLoaderBoss.editLoadTheoremsFromMMTFolder(TheoremLoaderBoss.java:489)
+<     at mmj.util.TheoremLoaderBoss.doRunParmCommand(TheoremLoaderBoss.java:105)
+<     at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:355)
+<     at mmj.util.BatchFramework.runIt(BatchFramework.java:249)
+---
+>   at mmj.util.TheoremLoaderBoss.editLoadTheoremsFromMMTFolder(TheoremLoaderBoss.java:495)
+>   at mmj.util.TheoremLoaderBoss.doRunParmCommand(TheoremLoaderBoss.java:110)
+>   at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:407)
+>   at mmj.util.BatchFramework.runIt(BatchFramework.java:288)
+89,92c89,92
+<     at mmj.util.TheoremLoaderBoss.editLoadTheoremsFromMMTFolder(TheoremLoaderBoss.java:489)
+<     at mmj.util.TheoremLoaderBoss.doRunParmCommand(TheoremLoaderBoss.java:105)
+<     at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:355)
+<     at mmj.util.BatchFramework.runIt(BatchFramework.java:249)
+---
+>   at mmj.util.TheoremLoaderBoss.editLoadTheoremsFromMMTFolder(TheoremLoaderBoss.java:495)
+>   at mmj.util.TheoremLoaderBoss.doRunParmCommand(TheoremLoaderBoss.java:110)
+>   at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:407)
+>   at mmj.util.BatchFramework.runIt(BatchFramework.java:288)
+100,103c100,103
+<     at mmj.util.TheoremLoaderBoss.editLoadTheoremsFromMMTFolder(TheoremLoaderBoss.java:489)
+<     at mmj.util.TheoremLoaderBoss.doRunParmCommand(TheoremLoaderBoss.java:105)
+<     at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:355)
+<     at mmj.util.BatchFramework.runIt(BatchFramework.java:249)
+---
+>   at mmj.util.TheoremLoaderBoss.editLoadTheoremsFromMMTFolder(TheoremLoaderBoss.java:495)
+>   at mmj.util.TheoremLoaderBoss.doRunParmCommand(TheoremLoaderBoss.java:110)
+>   at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:407)
+>   at mmj.util.BatchFramework.runIt(BatchFramework.java:288)
+109,113c109,113
+<     at mmj.util.OutputBoss.checkBookManagerReady(OutputBoss.java:733)
+<     at mmj.util.OutputBoss.doPrintBookManagerChapters(OutputBoss.java:431)
+<     at mmj.util.OutputBoss.doRunParmCommand(OutputBoss.java:196)
+<     at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:355)
+<     at mmj.util.BatchFramework.runIt(BatchFramework.java:249)
+---
+>   at mmj.util.OutputBoss.checkBookManagerReady(OutputBoss.java:758)
+>   at mmj.util.OutputBoss.doPrintBookManagerChapters(OutputBoss.java:454)
+>   at mmj.util.OutputBoss.doRunParmCommand(OutputBoss.java:204)
+>   at mmj.util.BatchFramework.executeRunParmCommand(BatchFramework.java:407)
+>   at mmj.util.BatchFramework.runIt(BatchFramework.java:288)
+
+Explanation: no problem, source code line numbers changed.
+
+
+Compare: (<)C:\mmj2\data\result\UT10Out20110701Final.txt (199281 bytes)
+   with: (>)C:\mmj2\data\result\UT10Out20111101q.txt (200257 bytes)
+
+145,146c145,147
+< **** I-UT-0015 Processing RunParmFile Command #11 = StopInstrumentationTimer,TheoremLoaderUnitTest10001
+< I-LA-0302 TimerID TheoremLoaderUnitTest10001: Elapsed Millis=171 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=60128832 (delta=-3763040)
+---
+> **** I-UT-0015 Processing RunParmFile Command #11 = TMFFUseFormat,0 
+> **** I-UT-0015 Processing RunParmFile Command #12 = StopInstrumentationTimer,TheoremLoaderUnitTest10001
+> I-LA-0302 TimerID TheoremLoaderUnitTest10001: Elapsed Millis=2512 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=55937176 (delta=-7956224)
+480,481c481,483
+< **** I-UT-0015 Processing RunParmFile Command #10 = Parse,*  
+< **** I-UT-0015 Processing RunParmFile Command #11 = ProofAsstBatchTest,a1d,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #10 = Parse,* 
+> **** I-UT-0015 Processing RunParmFile Command #11 = TMFFUseFormat,0 
+> **** I-UT-0015 Processing RunParmFile Command #12 = ProofAsstBatchTest,a1d,,un-unified,Randomized,Print
+514c516
+< **** I-UT-0015 Processing RunParmFile Command #12 = ProofAsstBatchTest,a2d,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #13 = ProofAsstBatchTest,a2d,,un-unified,Randomized,Print
+529c531
+< **** I-UT-0015 Processing RunParmFile Command #13 = ProofAsstBatchTest,com12,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #14 = ProofAsstBatchTest,com12,,un-unified,Randomized,Print
+544c546
+< **** I-UT-0015 Processing RunParmFile Command #14 = ProofAsstBatchTest,imim1,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #15 = ProofAsstBatchTest,imim1,,un-unified,Randomized,Print
+557c559
+< **** I-UT-0015 Processing RunParmFile Command #15 = ProofAsstBatchTest,imim1i,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #16 = ProofAsstBatchTest,imim1i,,un-unified,Randomized,Print
+571c573
+< **** I-UT-0015 Processing RunParmFile Command #16 = ProofAsstBatchTest,imim2,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #17 = ProofAsstBatchTest,imim2,,un-unified,Randomized,Print
+584,586c586,588
+< **** I-UT-0015 Processing RunParmFile Command #17 = ProofAsstBatchTest,syllogism3,,un-unified,Randomized,Print
+< E-PA-0108 Theorem  syllogism3: Unable to get (export) the full proof because the Proof Verification engine reported an error in the proof itself. VerifyProofs message text follows: E-PR-0006 VerifyProof: stack has more than one entry at end of proof! Theorem: syllogism3 Step#: 19 Step Label:  
+< **** I-UT-0015 Processing RunParmFile Command #18 = ProofAsstBatchTest,syllogism,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #18 = ProofAsstBatchTest,syllogism3,,un-unified,Randomized,Print
+> E-PA-0108 Theorem  syllogism3: Unable to get (export) the full proof because the Proof Verification engine reported an error in the proof itself. VerifyProofs message text follows: E-PR-0006 VerifyProof: stack has more than one entry at end of proof! Theorem: syllogism3 Step#: 19 Step Label:  
+> **** I-UT-0015 Processing RunParmFile Command #19 = ProofAsstBatchTest,syllogism,,un-unified,Randomized,Print
+602,603c604,605
+< **** I-UT-0015 Processing RunParmFile Command #19 = StopInstrumentationTimer,TheoremLoaderUnitTest10003
+< I-LA-0302 TimerID TheoremLoaderUnitTest10003: Elapsed Millis=188 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=58180256 (delta=-5711616)
+---
+> **** I-UT-0015 Processing RunParmFile Command #20 = StopInstrumentationTimer,TheoremLoaderUnitTest10003
+> I-LA-0302 TimerID TheoremLoaderUnitTest10003: Elapsed Millis=1528 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=54458688 (delta=-9434712)
+741,742c743,745
+< **** I-UT-0015 Processing RunParmFile Command #9 = Parse,*  
+< **** I-UT-0015 Processing RunParmFile Command #10 = LoadTheoremsFromMMTFolder,* 
+---
+> **** I-UT-0015 Processing RunParmFile Command #9 = Parse,*
+> **** I-UT-0015 Processing RunParmFile Command #10 = TMFFUseFormat,0 
+> **** I-UT-0015 Processing RunParmFile Command #11 = LoadTheoremsFromMMTFolder,* 
+899,900c902,904
+< **** I-UT-0015 Processing RunParmFile Command #9 = Parse,*  
+< **** I-UT-0015 Processing RunParmFile Command #10 = LoadTheoremsFromMMTFolder,*
+---
+> **** I-UT-0015 Processing RunParmFile Command #9 = Parse,*
+> **** I-UT-0015 Processing RunParmFile Command #10 = TMFFUseFormat,0 
+> **** I-UT-0015 Processing RunParmFile Command #11 = LoadTheoremsFromMMTFolder,*
+1081c1085,1086
+< **** I-UT-0015 Processing RunParmFile Command #10 = LoadTheoremsFromMMTFolder,*
+---
+> **** I-UT-0015 Processing RunParmFile Command #10 = TMFFUseFormat,0 
+> **** I-UT-0015 Processing RunParmFile Command #11 = LoadTheoremsFromMMTFolder,*
+1099c1104
+< **** I-UT-0015 Processing RunParmFile Command #11 = ProofAsstBatchTest,a1d,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #12 = ProofAsstBatchTest,a1d,,un-unified,Randomized,Print
+1132c1137
+< **** I-UT-0015 Processing RunParmFile Command #12 = ProofAsstBatchTest,a2d,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #13 = ProofAsstBatchTest,a2d,,un-unified,Randomized,Print
+1147c1152
+< **** I-UT-0015 Processing RunParmFile Command #13 = ProofAsstBatchTest,com12,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #14 = ProofAsstBatchTest,com12,,un-unified,Randomized,Print
+1162c1167
+< **** I-UT-0015 Processing RunParmFile Command #14 = ProofAsstBatchTest,imim1,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #15 = ProofAsstBatchTest,imim1,,un-unified,Randomized,Print
+1175c1180
+< **** I-UT-0015 Processing RunParmFile Command #15 = ProofAsstBatchTest,imim1i,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #16 = ProofAsstBatchTest,imim1i,,un-unified,Randomized,Print
+1189c1194
+< **** I-UT-0015 Processing RunParmFile Command #16 = ProofAsstBatchTest,imim2,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #17 = ProofAsstBatchTest,imim2,,un-unified,Randomized,Print
+1202,1204c1207,1209
+< **** I-UT-0015 Processing RunParmFile Command #17 = ProofAsstBatchTest,syllogism3,,un-unified,Randomized,Print
+< E-PA-0108 Theorem  syllogism3: Unable to get (export) the full proof because the Proof Verification engine reported an error in the proof itself. VerifyProofs message text follows: E-PR-0006 VerifyProof: stack has more than one entry at end of proof! Theorem: syllogism3 Step#: 19 Step Label:  
+< **** I-UT-0015 Processing RunParmFile Command #18 = ProofAsstBatchTest,syllogism,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #18 = ProofAsstBatchTest,syllogism3,,un-unified,Randomized,Print
+> E-PA-0108 Theorem  syllogism3: Unable to get (export) the full proof because the Proof Verification engine reported an error in the proof itself. VerifyProofs message text follows: E-PR-0006 VerifyProof: stack has more than one entry at end of proof! Theorem: syllogism3 Step#: 19 Step Label:  
+> **** I-UT-0015 Processing RunParmFile Command #19 = ProofAsstBatchTest,syllogism,,un-unified,Randomized,Print
+1220,1221c1225,1226
+< **** I-UT-0015 Processing RunParmFile Command #19 = StopInstrumentationTimer,TheoremLoaderUnitTest10023
+< I-LA-0302 TimerID TheoremLoaderUnitTest10023: Elapsed Millis=218 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=58228432 (delta=-5663440)
+---
+> **** I-UT-0015 Processing RunParmFile Command #20 = StopInstrumentationTimer,TheoremLoaderUnitTest10023
+> I-LA-0302 TimerID TheoremLoaderUnitTest10023: Elapsed Millis=2777 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=54092456 (delta=-9800944)
+1360c1365,1366
+< **** I-UT-0015 Processing RunParmFile Command #10 = ProofAsstBatchTest,syl,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #10 = TMFFUseFormat,0 
+> **** I-UT-0015 Processing RunParmFile Command #11 = ProofAsstBatchTest,syl,,un-unified,Randomized,Print
+1385c1391
+< **** I-UT-0015 Processing RunParmFile Command #11 = LoadTheoremsFromMMTFolder,* 
+---
+> **** I-UT-0015 Processing RunParmFile Command #12 = LoadTheoremsFromMMTFolder,* 
+1543c1549,1550
+< **** I-UT-0015 Processing RunParmFile Command #10 = ProofAsstBatchTest,syl,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #10 = TMFFUseFormat,0 
+> **** I-UT-0015 Processing RunParmFile Command #11 = ProofAsstBatchTest,syl,,un-unified,Randomized,Print
+1568c1575
+< **** I-UT-0015 Processing RunParmFile Command #11 = LoadTheoremsFromMMTFolder,*
+---
+> **** I-UT-0015 Processing RunParmFile Command #12 = LoadTheoremsFromMMTFolder,*
+1749c1756,1757
+< **** I-UT-0015 Processing RunParmFile Command #10 = ProofAsstBatchTest,syl,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #10 = TMFFUseFormat,0 
+> **** I-UT-0015 Processing RunParmFile Command #11 = ProofAsstBatchTest,syl,,un-unified,Randomized,Print
+1774c1782
+< **** I-UT-0015 Processing RunParmFile Command #11 = LoadTheoremsFromMMTFolder,*
+---
+> **** I-UT-0015 Processing RunParmFile Command #12 = LoadTheoremsFromMMTFolder,*
+1792c1800
+< **** I-UT-0015 Processing RunParmFile Command #12 = ProofAsstBatchTest,a1d,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #13 = ProofAsstBatchTest,a1d,,un-unified,Randomized,Print
+1825c1833
+< **** I-UT-0015 Processing RunParmFile Command #13 = ProofAsstBatchTest,a2d,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #14 = ProofAsstBatchTest,a2d,,un-unified,Randomized,Print
+1840c1848
+< **** I-UT-0015 Processing RunParmFile Command #14 = ProofAsstBatchTest,com12,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #15 = ProofAsstBatchTest,com12,,un-unified,Randomized,Print
+1855c1863
+< **** I-UT-0015 Processing RunParmFile Command #15 = ProofAsstBatchTest,imim1,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #16 = ProofAsstBatchTest,imim1,,un-unified,Randomized,Print
+1868c1876
+< **** I-UT-0015 Processing RunParmFile Command #16 = ProofAsstBatchTest,imim1i,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #17 = ProofAsstBatchTest,imim1i,,un-unified,Randomized,Print
+1882c1890
+< **** I-UT-0015 Processing RunParmFile Command #17 = ProofAsstBatchTest,imim2,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #18 = ProofAsstBatchTest,imim2,,un-unified,Randomized,Print
+1895,1897c1903,1905
+< **** I-UT-0015 Processing RunParmFile Command #18 = ProofAsstBatchTest,syllogism3,,un-unified,Randomized,Print
+< E-PA-0108 Theorem  syllogism3: Unable to get (export) the full proof because the Proof Verification engine reported an error in the proof itself. VerifyProofs message text follows: E-PR-0006 VerifyProof: stack has more than one entry at end of proof! Theorem: syllogism3 Step#: 19 Step Label:  
+< **** I-UT-0015 Processing RunParmFile Command #19 = ProofAsstBatchTest,syllogism,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #19 = ProofAsstBatchTest,syllogism3,,un-unified,Randomized,Print
+> E-PA-0108 Theorem  syllogism3: Unable to get (export) the full proof because the Proof Verification engine reported an error in the proof itself. VerifyProofs message text follows: E-PR-0006 VerifyProof: stack has more than one entry at end of proof! Theorem: syllogism3 Step#: 19 Step Label:  
+> **** I-UT-0015 Processing RunParmFile Command #20 = ProofAsstBatchTest,syllogism,,un-unified,Randomized,Print
+1913,1914c1921,1922
+< **** I-UT-0015 Processing RunParmFile Command #20 = StopInstrumentationTimer,TheoremLoaderUnitTest10033
+< I-LA-0302 TimerID TheoremLoaderUnitTest10033: Elapsed Millis=203 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=58348056 (delta=-5543816)
+---
+> **** I-UT-0015 Processing RunParmFile Command #21 = StopInstrumentationTimer,TheoremLoaderUnitTest10033
+> I-LA-0302 TimerID TheoremLoaderUnitTest10033: Elapsed Millis=2637 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=54084728 (delta=-9808672)
+2053,2054c2061,2063
+< **** I-UT-0015 Processing RunParmFile Command #10 = Parse,*  
+< **** I-UT-0015 Processing RunParmFile Command #11 = ProofAsstBatchTest,syl,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #10 = Parse,*
+> **** I-UT-0015 Processing RunParmFile Command #11 = TMFFUseFormat,0 
+> **** I-UT-0015 Processing RunParmFile Command #12 = ProofAsstBatchTest,syl,,un-unified,Randomized,Print
+2079c2088
+< **** I-UT-0015 Processing RunParmFile Command #12 = LoadTheoremsFromMMTFolder,* 
+---
+> **** I-UT-0015 Processing RunParmFile Command #13 = LoadTheoremsFromMMTFolder,* 
+2238c2247,2248
+< **** I-UT-0015 Processing RunParmFile Command #11 = ProofAsstBatchTest,syl,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #11 = TMFFUseFormat,0 
+> **** I-UT-0015 Processing RunParmFile Command #12 = ProofAsstBatchTest,syl,,un-unified,Randomized,Print
+2263c2273
+< **** I-UT-0015 Processing RunParmFile Command #12 = LoadTheoremsFromMMTFolder,*
+---
+> **** I-UT-0015 Processing RunParmFile Command #13 = LoadTheoremsFromMMTFolder,*
+2445,2446c2455,2457
+< **** I-UT-0015 Processing RunParmFile Command #11 = Parse,*  
+< **** I-UT-0015 Processing RunParmFile Command #12 = ProofAsstBatchTest,syl,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #11 = Parse,*
+> **** I-UT-0015 Processing RunParmFile Command #12 = TMFFUseFormat,0 
+> **** I-UT-0015 Processing RunParmFile Command #13 = ProofAsstBatchTest,syl,,un-unified,Randomized,Print
+2471c2482
+< **** I-UT-0015 Processing RunParmFile Command #13 = LoadTheoremsFromMMTFolder,*
+---
+> **** I-UT-0015 Processing RunParmFile Command #14 = LoadTheoremsFromMMTFolder,*
+2489c2500
+< **** I-UT-0015 Processing RunParmFile Command #14 = ProofAsstBatchTest,a1d,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #15 = ProofAsstBatchTest,a1d,,un-unified,Randomized,Print
+2522c2533
+< **** I-UT-0015 Processing RunParmFile Command #15 = ProofAsstBatchTest,a2d,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #16 = ProofAsstBatchTest,a2d,,un-unified,Randomized,Print
+2537c2548
+< **** I-UT-0015 Processing RunParmFile Command #16 = ProofAsstBatchTest,com12,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #17 = ProofAsstBatchTest,com12,,un-unified,Randomized,Print
+2551c2562
+< **** I-UT-0015 Processing RunParmFile Command #17 = ProofAsstBatchTest,imim1,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #18 = ProofAsstBatchTest,imim1,,un-unified,Randomized,Print
+2564c2575
+< **** I-UT-0015 Processing RunParmFile Command #18 = ProofAsstBatchTest,imim1i,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #19 = ProofAsstBatchTest,imim1i,,un-unified,Randomized,Print
+2578c2589
+< **** I-UT-0015 Processing RunParmFile Command #19 = ProofAsstBatchTest,imim2,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #20 = ProofAsstBatchTest,imim2,,un-unified,Randomized,Print
+2591,2593c2602,2604
+< **** I-UT-0015 Processing RunParmFile Command #20 = ProofAsstBatchTest,syllogism3,,un-unified,Randomized,Print
+< E-PA-0108 Theorem  syllogism3: Unable to get (export) the full proof because the Proof Verification engine reported an error in the proof itself. VerifyProofs message text follows: E-PR-0006 VerifyProof: stack has more than one entry at end of proof! Theorem: syllogism3 Step#: 19 Step Label:  
+< **** I-UT-0015 Processing RunParmFile Command #21 = ProofAsstBatchTest,syllogism,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #21 = ProofAsstBatchTest,syllogism3,,un-unified,Randomized,Print
+> E-PA-0108 Theorem  syllogism3: Unable to get (export) the full proof because the Proof Verification engine reported an error in the proof itself. VerifyProofs message text follows: E-PR-0006 VerifyProof: stack has more than one entry at end of proof! Theorem: syllogism3 Step#: 19 Step Label:  
+> **** I-UT-0015 Processing RunParmFile Command #22 = ProofAsstBatchTest,syllogism,,un-unified,Randomized,Print
+2609c2620
+< **** I-UT-0015 Processing RunParmFile Command #22 = PrintStatementDetails,*
+---
+> **** I-UT-0015 Processing RunParmFile Command #23 = PrintStatementDetails,*
+2887c2898
+< **** I-UT-0015 Processing RunParmFile Command #23 = PrintBookManagerChapters
+---
+> **** I-UT-0015 Processing RunParmFile Command #24 = PrintBookManagerChapters
+2894c2905
+< **** I-UT-0015 Processing RunParmFile Command #24 = PrintBookManagerSections
+---
+> **** I-UT-0015 Processing RunParmFile Command #25 = PrintBookManagerSections
+2919c2930
+< **** I-UT-0015 Processing RunParmFile Command #25 = PrintBookManagerSectionDetails,* 
+---
+> **** I-UT-0015 Processing RunParmFile Command #26 = PrintBookManagerSectionDetails,* 
+2982,2983c2993,2994
+< **** I-UT-0015 Processing RunParmFile Command #26 = StopInstrumentationTimer,TheoremLoaderUnitTest10043
+< I-LA-0302 TimerID TheoremLoaderUnitTest10043: Elapsed Millis=219 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=57927840 (delta=-5964032)
+---
+> **** I-UT-0015 Processing RunParmFile Command #27 = StopInstrumentationTimer,TheoremLoaderUnitTest10043
+> I-LA-0302 TimerID TheoremLoaderUnitTest10043: Elapsed Millis=2839 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=53729456 (delta=-10163944)
+3122,3123c3133,3135
+< **** I-UT-0015 Processing RunParmFile Command #10 = Parse,*  
+< **** I-UT-0015 Processing RunParmFile Command #11 = ProofAsstBatchTest,syl,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #10 = Parse,* 
+> **** I-UT-0015 Processing RunParmFile Command #11 = TMFFUseFormat,0 
+> **** I-UT-0015 Processing RunParmFile Command #12 = ProofAsstBatchTest,syl,,un-unified,Randomized,Print
+3148c3160
+< **** I-UT-0015 Processing RunParmFile Command #12 = LoadTheoremsFromMMTFolder,* 
+---
+> **** I-UT-0015 Processing RunParmFile Command #13 = LoadTheoremsFromMMTFolder,* 
+3306,3307c3318,3320
+< **** I-UT-0015 Processing RunParmFile Command #10 = Parse,*  
+< **** I-UT-0015 Processing RunParmFile Command #11 = ProofAsstBatchTest,syl,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #10 = Parse,* 
+> **** I-UT-0015 Processing RunParmFile Command #11 = TMFFUseFormat,0 
+> **** I-UT-0015 Processing RunParmFile Command #12 = ProofAsstBatchTest,syl,,un-unified,Randomized,Print
+3332c3345
+< **** I-UT-0015 Processing RunParmFile Command #12 = LoadTheoremsFromMMTFolder,*
+---
+> **** I-UT-0015 Processing RunParmFile Command #13 = LoadTheoremsFromMMTFolder,*
+3516c3529,3530
+< **** I-UT-0015 Processing RunParmFile Command #13 = ProofAsstBatchTest,syl,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #13 = TMFFUseFormat,0 
+> **** I-UT-0015 Processing RunParmFile Command #14 = ProofAsstBatchTest,syl,,un-unified,Randomized,Print
+3541c3555
+< **** I-UT-0015 Processing RunParmFile Command #14 = LoadTheoremsFromMMTFolder,*
+---
+> **** I-UT-0015 Processing RunParmFile Command #15 = LoadTheoremsFromMMTFolder,*
+3559c3573
+< **** I-UT-0015 Processing RunParmFile Command #15 = ProofAsstBatchTest,a1d,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #16 = ProofAsstBatchTest,a1d,,un-unified,Randomized,Print
+3592c3606
+< **** I-UT-0015 Processing RunParmFile Command #16 = ProofAsstBatchTest,a2d,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #17 = ProofAsstBatchTest,a2d,,un-unified,Randomized,Print
+3607c3621
+< **** I-UT-0015 Processing RunParmFile Command #17 = ProofAsstBatchTest,com12,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #18 = ProofAsstBatchTest,com12,,un-unified,Randomized,Print
+3621c3635
+< **** I-UT-0015 Processing RunParmFile Command #18 = ProofAsstBatchTest,imim1,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #19 = ProofAsstBatchTest,imim1,,un-unified,Randomized,Print
+3634c3648
+< **** I-UT-0015 Processing RunParmFile Command #19 = ProofAsstBatchTest,imim1i,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #20 = ProofAsstBatchTest,imim1i,,un-unified,Randomized,Print
+3648c3662
+< **** I-UT-0015 Processing RunParmFile Command #20 = ProofAsstBatchTest,imim2,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #21 = ProofAsstBatchTest,imim2,,un-unified,Randomized,Print
+3661,3663c3675,3677
+< **** I-UT-0015 Processing RunParmFile Command #21 = ProofAsstBatchTest,syllogism3,,un-unified,Randomized,Print
+< E-PA-0108 Theorem  syllogism3: Unable to get (export) the full proof because the Proof Verification engine reported an error in the proof itself. VerifyProofs message text follows: E-PR-0006 VerifyProof: stack has more than one entry at end of proof! Theorem: syllogism3 Step#: 19 Step Label:  
+< **** I-UT-0015 Processing RunParmFile Command #22 = ProofAsstBatchTest,syllogism,,un-unified,Randomized,Print
+---
+> **** I-UT-0015 Processing RunParmFile Command #22 = ProofAsstBatchTest,syllogism3,,un-unified,Randomized,Print
+> E-PA-0108 Theorem  syllogism3: Unable to get (export) the full proof because the Proof Verification engine reported an error in the proof itself. VerifyProofs message text follows: E-PR-0006 VerifyProof: stack has more than one entry at end of proof! Theorem: syllogism3 Step#: 19 Step Label:  
+> **** I-UT-0015 Processing RunParmFile Command #23 = ProofAsstBatchTest,syllogism,,un-unified,Randomized,Print
+3679c3693
+< **** I-UT-0015 Processing RunParmFile Command #23 = PrintStatementDetails,*
+---
+> **** I-UT-0015 Processing RunParmFile Command #24 = PrintStatementDetails,*
+3957c3971
+< **** I-UT-0015 Processing RunParmFile Command #24 = PrintBookManagerChapters
+---
+> **** I-UT-0015 Processing RunParmFile Command #25 = PrintBookManagerChapters
+4132c4146
+< I-LA-0302 TimerID TheoremLoaderUnitTest19100: Elapsed Millis=7488 Total Memory=93798400 (delta=28852224) Max Memory=132055040 (delta=0) FreeMemory=37445968 (delta=-26445904)
+---
+> I-LA-0302 TimerID TheoremLoaderUnitTest19100: Elapsed Millis=14913 Total Memory=93945856 (delta=28999680) Max Memory=132055040 (delta=0) FreeMemory=34142456 (delta=-29750944)
+
+Explanation: ok, no problem. diffs accounted for:
+
+1) Added RunParm "TMFFUseFormat,0" to unit test because the default
+   setting in the code for curr format nbr was changed from 0 to 13
+   and output differences in proofs resulted.
+2) elapsed time lengthened dramatically because the new MMJ2 Fail Popup Window
+   adds time (for the user to click "ok".) 
+
+======================================================
+Test: RunVolumeTest2.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\temp1.txt (1842592 bytes)
+   with: (>)C:\mmj2\data\result\temp2.txt (1842610 bytes)
+   
+Note: original compare was
+
+Compare: (<)C:\mmj2\data\result\VT2Out20110701final2.txt (1842590 bytes)
+   with: (>)C:\mmj2\data\result\VT2Out20111101q.txt (1842611 bytes)
+
+then replaced "sec) = 0" with "sec) = 1" to mask irrlevant diffs.
+
+Compare: (<)C:\mmj2\data\result\temp1.txt (1842590 bytes)
+   with: (>)C:\mmj2\data\result\temp2.txt (1842611 bytes)
+
+135c135
+< I-LA-0302 TimerID LoadFile: Elapsed Millis=1934 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=29662296 (delta=-33829544)
+---
+> I-LA-0302 TimerID LoadFile: Elapsed Millis=1888 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=29552160 (delta=-33941208)
+139c139
+< I-LA-0302 TimerID VerifyProof: Elapsed Millis=983 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=28293488 (delta=-1368808)
+---
+> I-LA-0302 TimerID VerifyProof: Elapsed Millis=1014 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=28154440 (delta=-1397720)
+143c143
+< I-LA-0302 TimerID Parse: Elapsed Millis=4680 Total Memory=87158784 (delta=22212608) Max Memory=132055040 (delta=0) FreeMemory=31297824 (delta=3004336)
+---
+> I-LA-0302 TimerID Parse: Elapsed Millis=4118 Total Memory=95858688 (delta=30912512) Max Memory=132055040 (delta=0) FreeMemory=39565664 (delta=11411224)
+166d166
+< I-PA-0113 Theorem unknownLabel: Unification Time Elapsed (tenths of sec) = 1, Status = 9999999 =  No qed step found!
+20775,20781c20774,20780
+< I-PA-0115 TEST TOTALS: nbrTestTheoremsProcessed = 10010, nbrTestNotProvedPerfectly = 1, nbrTestProvedDifferently = 590
+< E-PA-0322 Theorem dummylink Step qed : Found 'h' prefix (signifying hypothesis proof step) on 'qed' step number. A derivation step cannot also be a hypothesis step.  Proof Text input reader last position at  Line: 37 Column: 17
+< **** I-UT-0015 Processing RunParmFile Command #41 = StopInstrumentationTimer,BatchTest
+< I-LA-0302 TimerID BatchTest: Elapsed Millis=79263 Total Memory=114905088 (delta=27746304) Max Memory=132055040 (delta=0) FreeMemory=38778920 (delta=7830152)
+< **** I-UT-0014 RunParmFile line comment. Line #42 = * RunProofAsstGUI
+< **** I-UT-0015 Processing RunParmFile Command #43 = StopInstrumentationTimer,VolumeTest2
+< I-LA-0302 TimerID VolumeTest2: Elapsed Millis=87781 Total Memory=114905088 (delta=49958912) Max Memory=132055040 (delta=0) FreeMemory=38778920 (delta=-25112952)
+---
+> I-PA-0115 TEST TOTALS: nbrTestTheoremsProcessed = 10010, nbrTestNotProvedPerfectly = 0, nbrTestProvedDifferently = 590
+> E-PA-0108 Theorem  dummylink: Unable to get (export) the full proof because the Proof Verification engine reported an error in the proof itself. VerifyProofs message text follows: E-PR-0020 Theorem dummylink Proof Worksheet generation halted because theorem has invalid proof? No proof steps created for Proof Worksheet! Theorem: dummylink Step#: 1 Step Label:  
+> **** I-UT-0015 Processing RunParmFile Command #41 = StopInstrumentationTimer,BatchTest
+> I-LA-0302 TimerID BatchTest: Elapsed Millis=283046 Total Memory=117821440 (delta=21962752) Max Memory=132055040 (delta=0) FreeMemory=43070592 (delta=3645064)
+> **** I-UT-0014 RunParmFile line comment. Line #42 = * RunProofAsstGUI
+> **** I-UT-0015 Processing RunParmFile Command #43 = StopInstrumentationTimer,VolumeTest2
+> I-LA-0302 TimerID VolumeTest2: Elapsed Millis=290441 Total Memory=117821440 (delta=52875264) Max Memory=132055040 (delta=0) FreeMemory=43070592 (delta=-20822808)
+
+
+Explanation:
+1) masked diffs caused by spaces/tabs
+2) change "sec) = 0" to "sec) = 1" to mask timing diffs
+3) elapsed time caused by mmj2 Fail Popup Window.
+
+The only significant one is this line
+from the "old" file:
+
+< I-PA-0113 Theorem unknownLabel: Unification Time Elapsed (tenths of sec) = 1, Status = 9999999 =  No qed step found!
+
+I think this was caused by (perhaps) dummylink and the
+worksheet retrieval logic for proofs with no assertions -
+fix.
+
+Modified ProofAsst.volumeTestOutputRoutine to accept
+"theorem" argument so that the label can always
+be obtained for the error message.
+
+======================================================
+Test: RunVolumeTest2b.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\VT2bOut20110701Final.txt (1847494 bytes)
+   with: (>)C:\mmj2\data\result\VT2bOut20111101q.txt (1869661 bytes)
+
+Compare: (<)C:\mmj2\data\result\temp1.txt (1847494 bytes)
+   with: (>)C:\mmj2\data\result\temp2.txt (1869661 bytes)
+
+135c135
+< I-LA-0302 TimerID LoadFile: Elapsed Millis=1919 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=29958984 (delta=-33532856)
+---
+> I-LA-0302 TimerID LoadFile: Elapsed Millis=1934 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=29380512 (delta=-34112856)
+139c139
+< I-LA-0302 TimerID VerifyProof: Elapsed Millis=967 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=28663648 (delta=-1295336)
+---
+> I-LA-0302 TimerID VerifyProof: Elapsed Millis=1076 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=27835728 (delta=-1544784)
+143c143
+< I-LA-0302 TimerID Parse: Elapsed Millis=2699 Total Memory=67305472 (delta=2359296) Max Memory=132055040 (delta=0) FreeMemory=11395520 (delta=-17268128)
+---
+> I-LA-0302 TimerID Parse: Elapsed Millis=3526 Total Memory=75587584 (delta=10641408) Max Memory=132055040 (delta=0) FreeMemory=19242624 (delta=-8593104)
+198d198
+< I-PA-0113 Theorem unknownLabel: Unification Time Elapsed (tenths of sec) = 1, Status = 9999999 =  No qed step found!
+9342a9341
+> I-PA-0114 Theorem inf3lemd: Unified and Proved in Import Batch Test but the new proof is different from the proof in the Metamath file that was loaded. 1st difference: old proof stmt = cA new proof stmt = cB (empty String means proof lengths differed.)
+9346d9346
+< I-PA-0114 Theorem inf3lem2: Unified and Proved in Import Batch Test but the new proof is different from the proof in the Metamath file that was loaded. 1st difference: old proof stmt = cA new proof stmt = cB (empty String means proof lengths differed.)
+9357a9356
+> I-PA-0114 Theorem inf3lem7: Unified and Proved in Import Batch Test but the new proof is different from the proof in the Metamath file that was loaded. 1st difference: old proof stmt = cA new proof stmt = cB (empty String means proof lengths differed.)
+9707a9707
+> I-PA-0114 Theorem zorn2: Unified and Proved in Import Batch Test but the new proof is different from the proof in the Metamath file that was loaded. 1st difference: old proof stmt = vt new proof stmt = vu (empty String means proof lengths differed.)
+11820d11821
+< I-PA-0114 Theorem nn2get: Unified and Proved in Import Batch Test but the new proof is different from the proof in the Metamath file that was loaded. 1st difference: old proof stmt = cA new proof stmt = cB (empty String means proof lengths differed.)
+13554a13554
+> I-PA-0114 Theorem leabst: Unified and Proved in Import Batch Test but the new proof is different from the proof in the Metamath file that was loaded. 1st difference: old proof stmt = cc0 new proof stmt = cA (empty String means proof lengths differed.)
+13663a13664
+> I-PA-0114 Theorem cau5i: Unified and Proved in Import Batch Test but the new proof is different from the proof in the Metamath file that was loaded. 1st difference: old proof stmt = vn new proof stmt = cM (empty String means proof lengths differed.)
+13675d13677
+< I-PA-0114 Theorem cvg3: Unified and Proved in Import Batch Test but the new proof is different from the proof in the Metamath file that was loaded. 1st difference: old proof stmt = cM new proof stmt = vm (empty String means proof lengths differed.)
+15423a15424
+> I-PA-0114 Theorem metxpcl: Unified and Proved in Import Batch Test but the new proof is different from the proof in the Metamath file that was loaded. 1st difference: old proof stmt = c2nd new proof stmt = c1st (empty String means proof lengths differed.)
+15589d15591
+< I-PA-0114 Theorem tgioolem: Unified and Proved in Import Batch Test but the new proof is different from the proof in the Metamath file that was loaded. 1st difference: old proof stmt = vv new proof stmt = vs (empty String means proof lengths differed.)
+15690c15691,15692
+< I-PA-0113 Theorem metcnp4: Unification Time Elapsed (tenths of sec) = 1, Status = 8 = PROOF_STMT_PROVED
+---
+> I-PA-0113 Theorem metcnp4: Unification Time Elapsed (tenths of sec) = 1, Status = 10 = PROOF_STMT_PROVED_W_VERIFY_PROOFS_ERROR
+> I-PA-0114 Theorem metcnp4: Unified and Proved in Import Batch Test but the new proof is different from the proof in the Metamath file that was loaded. 1st difference: old proof stmt = cC new proof stmt = cD (empty String means proof lengths differed.)
+20815,20821c20817,20872
+< I-PA-0115 TEST TOTALS: nbrTestTheoremsProcessed = 10010, nbrTestNotProvedPerfectly = 1, nbrTestProvedDifferently = 598
+< E-PA-0322 Theorem dummylink Step qed : Found 'h' prefix (signifying hypothesis proof step) on 'qed' step number. A derivation step cannot also be a hypothesis step.  Proof Text input reader last position at  Line: 37 Column: 17
+< **** I-UT-0015 Processing RunParmFile Command #73 = StopInstrumentationTimer,BatchTest
+< I-LA-0302 TimerID BatchTest: Elapsed Millis=83039 Total Memory=117514240 (delta=21729280) Max Memory=132055040 (delta=0) FreeMemory=39772072 (delta=312680)
+< **** I-UT-0014 RunParmFile line comment. Line #74 = * RunProofAsstGUI      
+< **** I-UT-0015 Processing RunParmFile Command #75 = StopInstrumentationTimer,VolumeTest2b
+< I-LA-0302 TimerID VolumeTest2b: Elapsed Millis=89981 Total Memory=117514240 (delta=52568064) Max Memory=132055040 (delta=0) FreeMemory=39772072 (delta=-24119800)
+---
+> I-PA-0115 TEST TOTALS: nbrTestTheoremsProcessed = 10010, nbrTestNotProvedPerfectly = 1, nbrTestProvedDifferently = 601
+> E-PA-0108 Theorem  dummylink: Unable to get (export) the full proof because the Proof Verification engine reported an error in the proof itself. VerifyProofs message text follows: E-PR-0020 Theorem dummylink Proof Worksheet generation halted because theorem has invalid proof? No proof steps created for Proof Worksheet! Theorem: dummylink Step#: 1 Step Label:  
+> E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 52 Step#: 18 Step Label: metcnp4lem1
+> E-PA-0405 Theorem metcnp4 Step 52: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+> E-PA-0601 DerivationStep 52 substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: <X,y>
+> E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 53 Step#: 37 Step Label: metcnp4lem1
+> E-PA-0405 Theorem metcnp4 Step 53: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+> E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 54 Step#: 65 Step Label: metcnp4lem1
+> E-PA-0405 Theorem metcnp4 Step 54: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+> E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 55 Step#: 337 Step Label: metcnp4lem1
+> E-PA-0405 Theorem metcnp4 Step 55: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+> E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 56 Step#: 378 Step Label: metcnp4lem1
+> E-PA-0405 Theorem metcnp4 Step 56: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+> E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 57 Step#: 468 Step Label: metcnp4lem1
+> E-PA-0405 Theorem metcnp4 Step 57: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+> E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 58 Step#: 514 Step Label: metcnp4lem1
+> E-PA-0405 Theorem metcnp4 Step 58: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+> E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 59 Step#: 560 Step Label: metcnp4lem1
+> E-PA-0405 Theorem metcnp4 Step 59: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+> E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 60 Step#: 606 Step Label: metcnp4lem1
+> E-PA-0405 Theorem metcnp4 Step 60: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+> E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 62 Step#: 661 Step Label: metcnp4lem1
+> E-PA-0405 Theorem metcnp4 Step 62: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+> E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 63 Step#: 710 Step Label: metcnp4lem1
+> E-PA-0405 Theorem metcnp4 Step 63: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+> E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 64 Step#: 759 Step Label: metcnp4lem1
+> E-PA-0405 Theorem metcnp4 Step 64: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+> E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 65 Step#: 811 Step Label: metcnp4lem1
+> E-PA-0405 Theorem metcnp4 Step 65: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+> E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 66 Step#: 864 Step Label: metcnp4lem1
+> E-PA-0405 Theorem metcnp4 Step 66: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+> E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 67 Step#: 1194 Step Label: metcnp4lem1
+> E-PA-0405 Theorem metcnp4 Step 67: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+> E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 68 Step#: 1287 Step Label: metcnp4lem1
+> E-PA-0405 Theorem metcnp4 Step 68: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+> E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 96 Step#: 1418 Step Label: metcnp4lem1
+> E-PA-0405 Theorem metcnp4 Step 96: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+> E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 97 Step#: 1503 Step Label: metcnp4lem1
+> E-PA-0405 Theorem metcnp4 Step 97: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+> E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 98 Step#: 1587 Step Label: metcnp4lem1
+> E-PA-0405 Theorem metcnp4 Step 98: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+> E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 99 Step#: 1670 Step Label: metcnp4lem1
+> E-PA-0405 Theorem metcnp4 Step 99: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+> E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 100 Step#: 1752 Step Label: metcnp4lem1
+> E-PA-0405 Theorem metcnp4 Step 100: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+> E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 101 Step#: 2856 Step Label: metcnp4lem1
+> E-PA-0405 Theorem metcnp4 Step 101: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+> E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step 102 Step#: 2938 Step Label: metcnp4lem1
+> E-PA-0405 Theorem metcnp4 Step 102: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+> E-PR-0015 The derivation proof step failed verification in the VerifyProofs engine as follows: E-PR-0010 VerifyProof: Substitution (to) vars subject to DjVars restriction by proof step but not listed as DjVars in theorem to be proved: y and X Theorem: metcnp4.Step qed Step#: 3050 Step Label: metcnp4lem1
+> E-PA-0405 Theorem metcnp4 Step qed: Proof and unification completed for step, but a recheck of the proof using the Proof Verifier was requested, and it is reporting an error. This could reflect a program bug OR it could be that this step or an earlier step Ref is wrong and that the variable substitutions across multiple steps are inconsistent. Recheck Ref's OR...use another way to find out the truth: enter the Proof Ref's in the metamath.exe Proof Assistant and compare the RPN proof it generates with the Proof Assistant's RPN proof... Proof Verifier error message follows.
+> **** I-UT-0015 Processing RunParmFile Command #73 = StopInstrumentationTimer,BatchTest
+> I-LA-0302 TimerID BatchTest: Elapsed Millis=317117 Total Memory=115412992 (delta=39825408) Max Memory=132055040 (delta=0) FreeMemory=49491512 (delta=30947232)
+> **** I-UT-0014 RunParmFile line comment. Line #74 = * RunProofAsstGUI      
+> **** I-UT-0015 Processing RunParmFile Command #75 = StopInstrumentationTimer,VolumeTest2b
+> I-LA-0302 TimerID VolumeTest2b: Elapsed Millis=323684 Total Memory=115412992 (delta=50466816) Max Memory=132055040 (delta=0) FreeMemory=49491512 (delta=-14401888)
+
+Explanation: randomization of hyps explains the diffs (I think...)
+
+
+======================================================
+Test: RunVolumeTest2c.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\VT2cOut20110701Final.txt (3650024 bytes)
+   with: (>)C:\mmj2\data\result\VT2cOut20111101q.txt (3650058 bytes)
+
+
+Compare: (<)C:\mmj2\data\result\temp1.txt (3650024 bytes)
+   with: (>)C:\mmj2\data\result\temp2.txt (3650058 bytes)
+
+135c135
+< I-LA-0302 TimerID LoadFile: Elapsed Millis=1950 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=29439384 (delta=-34052456)
+---
+> I-LA-0302 TimerID LoadFile: Elapsed Millis=1872 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=29534920 (delta=-33958448)
+139c139
+< I-LA-0302 TimerID VerifyProofBefore: Elapsed Millis=999 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=28303232 (delta=-1136152)
+---
+> I-LA-0302 TimerID VerifyProofBefore: Elapsed Millis=1030 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=28165336 (delta=-1369584)
+143c143
+< I-LA-0302 TimerID Parse: Elapsed Millis=4555 Total Memory=87969792 (delta=23023616) Max Memory=132055040 (delta=0) FreeMemory=32335840 (delta=4032608)
+---
+> I-LA-0302 TimerID Parse: Elapsed Millis=3712 Total Memory=88256512 (delta=23310336) Max Memory=132055040 (delta=0) FreeMemory=32457896 (delta=4292560)
+207d207
+< I-PA-0113 Theorem unknownLabel: Unification Time Elapsed (tenths of sec) = 1, Status = 9999999 =  No qed step found!
+20856,20859c20855,20858
+< I-PA-0115 TEST TOTALS: nbrTestTheoremsProcessed = 10010, nbrTestNotProvedPerfectly = 705, nbrTestProvedDifferently = 233
+< E-PA-0322 Theorem dummylink Step qed : Found 'h' prefix (signifying hypothesis proof step) on 'qed' step number. A derivation step cannot also be a hypothesis step.  Proof Text input reader last position at  Line: 37 Column: 17
+< **** I-UT-0015 Processing RunParmFile Command #82 = StopInstrumentationTimer,BatchTest
+< I-LA-0302 TimerID BatchTest: Elapsed Millis=63118 Total Memory=115322880 (delta=27353088) Max Memory=132055040 (delta=0) FreeMemory=46963176 (delta=15341704)
+---
+> I-PA-0115 TEST TOTALS: nbrTestTheoremsProcessed = 10010, nbrTestNotProvedPerfectly = 704, nbrTestProvedDifferently = 233
+> E-PA-0108 Theorem  dummylink: Unable to get (export) the full proof because the Proof Verification engine reported an error in the proof itself. VerifyProofs message text follows: E-PR-0020 Theorem dummylink Proof Worksheet generation halted because theorem has invalid proof? No proof steps created for Proof Worksheet! Theorem: dummylink Step#: 1 Step Label:  
+> **** I-UT-0015 Processing RunParmFile Command #82 = StopInstrumentationTimer,BatchTest
+> I-LA-0302 TimerID BatchTest: Elapsed Millis=345837 Total Memory=115671040 (delta=27414528) Max Memory=132055040 (delta=0) FreeMemory=42459240 (delta=10490784)
+20863,20865c20862,20864
+< I-LA-0302 TimerID VerifyProofAfter: Elapsed Millis=858 Total Memory=115322880 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=47459280 (delta=496104)
+< **** I-UT-0015 Processing RunParmFile Command #86 = StopInstrumentationTimer,VolumeTest2c
+< I-LA-0302 TimerID VolumeTest2c: Elapsed Millis=71542 Total Memory=115322880 (delta=50376704) Max Memory=132055040 (delta=0) FreeMemory=47459280 (delta=-16432592)
+---
+> I-LA-0302 TimerID VerifyProofAfter: Elapsed Millis=1061 Total Memory=115671040 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=40269896 (delta=-2189344)
+> **** I-UT-0015 Processing RunParmFile Command #86 = StopInstrumentationTimer,VolumeTest2c
+> I-LA-0302 TimerID VolumeTest2c: Elapsed Millis=354058 Total Memory=115671040 (delta=50724864) Max Memory=132055040 (delta=0) FreeMemory=40269896 (delta=-23623504)
+20879c20878
+< I-LA-0302 TimerID LoadFile: Elapsed Millis=983 Total Memory=115322880 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=78133000 (delta=31073752)
+---
+> I-LA-0302 TimerID LoadFile: Elapsed Millis=983 Total Memory=115671040 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=69842432 (delta=29972568)
+20883c20882
+< I-LA-0302 TimerID VerifyProofBefore: Elapsed Millis=873 Total Memory=115322880 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=76112576 (delta=-2020424)
+---
+> I-LA-0302 TimerID VerifyProofBefore: Elapsed Millis=889 Total Memory=115671040 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=65486864 (delta=-4355568)
+20887c20886
+< I-LA-0302 TimerID Parse: Elapsed Millis=874 Total Memory=115322880 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=58505712 (delta=-17606864)
+---
+> I-LA-0302 TimerID Parse: Elapsed Millis=889 Total Memory=115671040 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=63256704 (delta=-2230160)
+20951d20950
+< I-PA-0113 Theorem unknownLabel: Unification Time Elapsed (tenths of sec) = 1, Status = 9999999 =  No qed step found!
+41795,41798c41793,41796
+< I-PA-0115 TEST TOTALS: nbrTestTheoremsProcessed = 10010, nbrTestNotProvedPerfectly = 705, nbrTestProvedDifferently = 233
+< E-PA-0322 Theorem dummylink Step qed : Found 'h' prefix (signifying hypothesis proof step) on 'qed' step number. A derivation step cannot also be a hypothesis step.  Proof Text input reader last position at  Line: 37 Column: 17
+< **** I-UT-0015 Processing RunParmFile Command #169 = StopInstrumentationTimer,BatchTest
+< I-LA-0302 TimerID BatchTest: Elapsed Millis=61776 Total Memory=115953664 (delta=630784) Max Memory=132055040 (delta=0) FreeMemory=48751216 (delta=-9754496)
+---
+> I-PA-0115 TEST TOTALS: nbrTestTheoremsProcessed = 10010, nbrTestNotProvedPerfectly = 704, nbrTestProvedDifferently = 233
+> E-PA-0108 Theorem  dummylink: Unable to get (export) the full proof because the Proof Verification engine reported an error in the proof itself. VerifyProofs message text follows: E-PR-0020 Theorem dummylink Proof Worksheet generation halted because theorem has invalid proof? No proof steps created for Proof Worksheet! Theorem: dummylink Step#: 1 Step Label:  
+> **** I-UT-0015 Processing RunParmFile Command #169 = StopInstrumentationTimer,BatchTest
+> I-LA-0302 TimerID BatchTest: Elapsed Millis=64662 Total Memory=115671040 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=24710704 (delta=-38546000)
+41803,41805c41801,41803
+< I-LA-0302 TimerID VerifyProofAfter: Elapsed Millis=889 Total Memory=115953664 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=49305280 (delta=554064)
+< **** I-UT-0015 Processing RunParmFile Command #173 = StopInstrumentationTimer,VolumeTest2c
+< I-LA-0302 TimerID VolumeTest2c: Elapsed Millis=65411 Total Memory=115953664 (delta=630784) Max Memory=132055040 (delta=0) FreeMemory=49305280 (delta=1846000)
+---
+> I-LA-0302 TimerID VerifyProofAfter: Elapsed Millis=1014 Total Memory=115671040 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=28245496 (delta=3534792)
+> **** I-UT-0015 Processing RunParmFile Command #173 = StopInstrumentationTimer,VolumeTest2c
+> I-LA-0302 TimerID VolumeTest2c: Elapsed Millis=68468 Total Memory=115671040 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=28245496 (delta=-12024400)
+
+LOOKS OK...
+
+======================================================
+Test: RunVolumeTest2d.bat
+======================================================
+
+Compare: (<)C:\mmj2\data\result\VT2dOut20110701Final.txt (2733171 bytes)
+   with: (>)C:\mmj2\data\result\VT2dOut20111101q.txt (2733184 bytes)
+
+Compare: (<)C:\mmj2\data\result\temp1.txt (2733171 bytes)
+   with: (>)C:\mmj2\data\result\temp2.txt (2733184 bytes)
+
+135c135
+< I-LA-0302 TimerID LoadFile: Elapsed Millis=1934 Total Memory=70434816 (delta=5488640) Max Memory=132055040 (delta=0) FreeMemory=34955832 (delta=-28536008)
+---
+> I-LA-0302 TimerID LoadFile: Elapsed Millis=1887 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=29386392 (delta=-34106976)
+139c139
+< I-LA-0302 TimerID VerifyProofBefore: Elapsed Millis=983 Total Memory=70434816 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=33466192 (delta=-1489640)
+---
+> I-LA-0302 TimerID VerifyProofBefore: Elapsed Millis=999 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=27835952 (delta=-1550440)
+143c143
+< I-LA-0302 TimerID Parse: Elapsed Millis=4290 Total Memory=87875584 (delta=17440768) Max Memory=132055040 (delta=0) FreeMemory=31864024 (delta=-1602168)
+---
+> I-LA-0302 TimerID Parse: Elapsed Millis=3666 Total Memory=75587584 (delta=10641408) Max Memory=132055040 (delta=0) FreeMemory=19361128 (delta=-8474824)
+196d196
+< I-PA-0113 Theorem unknownLabel: Unification Time Elapsed (tenths of sec) = 1, Status = 9999999 =  No qed step found!
+31751,31752c31750,31751
+< I-PA-0115 TEST TOTALS: nbrTestTheoremsProcessed = 10010, nbrTestNotProvedPerfectly = 121, nbrTestProvedDifferently = 1527
+< E-PA-0322 Theorem dummylink Step qed : Found 'h' prefix (signifying hypothesis proof step) on 'qed' step number. A derivation step cannot also be a hypothesis step.  Proof Text input reader last position at  Line: 37 Column: 17
+---
+> I-PA-0115 TEST TOTALS: nbrTestTheoremsProcessed = 10010, nbrTestNotProvedPerfectly = 120, nbrTestProvedDifferently = 1527
+> E-PA-0108 Theorem  dummylink: Unable to get (export) the full proof because the Proof Verification engine reported an error in the proof itself. VerifyProofs message text follows: E-PR-0020 Theorem dummylink Proof Worksheet generation halted because theorem has invalid proof? No proof steps created for Proof Worksheet! Theorem: dummylink Step#: 1 Step Label:  
+31774c31773
+< I-LA-0302 TimerID BatchTest: Elapsed Millis=66861 Total Memory=130154496 (delta=42278912) Max Memory=132055040 (delta=0) FreeMemory=41628176 (delta=10283680)
+---
+> I-LA-0302 TimerID BatchTest: Elapsed Millis=86549 Total Memory=132055040 (delta=56467456) Max Memory=132055040 (delta=0) FreeMemory=61764200 (delta=43101928)
+31778,31780c31777,31779
+< I-LA-0302 TimerID VerifyProofAfter: Elapsed Millis=874 Total Memory=130154496 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=41914000 (delta=285824)
+< **** I-UT-0015 Processing RunParmFile Command #75 = StopInstrumentationTimer,VolumeTest2d
+< I-LA-0302 TimerID VolumeTest2d: Elapsed Millis=74989 Total Memory=130154496 (delta=65208320) Max Memory=132055040 (delta=0) FreeMemory=41914000 (delta=-21977872)
+---
+> I-LA-0302 TimerID VerifyProofAfter: Elapsed Millis=1092 Total Memory=132055040 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=59026856 (delta=-2737344)
+> **** I-UT-0015 Processing RunParmFile Command #75 = StopInstrumentationTimer,VolumeTest2d
+> I-LA-0302 TimerID VolumeTest2d: Elapsed Millis=94224 Total Memory=132055040 (delta=67108864) Max Memory=132055040 (delta=0) FreeMemory=59026856 (delta=-4866544)
+
+ 
+======================================================
+Test: RunVolumeTest2e.bat
+======================================================
+
+
+Compare: (<)C:\mmj2\data\result\VT2eOut20110701Final.txt (2732827 bytes)
+   with: (>)C:\mmj2\data\result\VT2eOut20111101q.txt (2732848 bytes)
+
+Compare: (<)C:\mmj2\data\result\temp1.txt (2732827 bytes)
+   with: (>)C:\mmj2\data\result\temp2.txt (2732848 bytes)
+
+135c135
+< I-LA-0302 TimerID LoadFile: Elapsed Millis=1934 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=29624088 (delta=-33867752)
+---
+> I-LA-0302 TimerID LoadFile: Elapsed Millis=1966 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=29373384 (delta=-34119984)
+139c139
+< I-LA-0302 TimerID VerifyProofBefore: Elapsed Millis=983 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=28650088 (delta=-974000)
+---
+> I-LA-0302 TimerID VerifyProofBefore: Elapsed Millis=998 Total Memory=64946176 (delta=0) Max Memory=132055040 (delta=0) FreeMemory=27842784 (delta=-1530600)
+143c143
+< I-LA-0302 TimerID Parse: Elapsed Millis=4181 Total Memory=88072192 (delta=23126016) Max Memory=132055040 (delta=0) FreeMemory=32687272 (delta=4037184)
+---
+> I-LA-0302 TimerID Parse: Elapsed Millis=3604 Total Memory=88023040 (delta=23076864) Max Memory=132055040 (delta=0) FreeMemory=31947160 (delta=4104376)
+197d197
+< I-PA-0113 Theorem unknownLabel: Unification Time Elapsed (tenths of sec) = 1, Status = 9999999 =  No qed step found!
+31752,31753c31751,31752
+< I-PA-0115 TEST TOTALS: nbrTestTheoremsProcessed = 10010, nbrTestNotProvedPerfectly = 121, nbrTestProvedDifferently = 1527
+< E-PA-0322 Theorem dummylink Step qed : Found 'h' prefix (signifying hypothesis proof step) on 'qed' step number. A derivation step cannot also be a hypothesis step.  Proof Text input reader last position at  Line: 37 Column: 17
+---
+> I-PA-0115 TEST TOTALS: nbrTestTheoremsProcessed = 10010, nbrTestNotProvedPerfectly = 120, nbrTestProvedDifferently = 1527
+> E-PA-0108 Theorem  dummylink: Unable to get (export) the full proof because the Proof Verification engine reported an error in the proof itself. VerifyProofs message text follows: E-PR-0020 Theorem dummylink Proof Worksheet generation halted because theorem has invalid proof? No proof steps created for Proof Worksheet! Theorem: dummylink Step#: 1 Step Label:  
+31775,31777c31774,31776
+< I-LA-0302 TimerID BatchTest: Elapsed Millis=69248 Total Memory=129581056 (delta=41508864) Max Memory=132055040 (delta=0) FreeMemory=38516304 (delta=6629856)
+< **** I-UT-0015 Processing RunParmFile Command #73 = StopInstrumentationTimer,VolumeTest2e
+< I-LA-0302 TimerID VolumeTest2e: Elapsed Millis=76502 Total Memory=129581056 (delta=64634880) Max Memory=132055040 (delta=0) FreeMemory=38516304 (delta=-25375568)
+---
+> I-LA-0302 TimerID BatchTest: Elapsed Millis=132553 Total Memory=126267392 (delta=38244352) Max Memory=132055040 (delta=0) FreeMemory=48398496 (delta=17156520)
+> **** I-UT-0015 Processing RunParmFile Command #73 = StopInstrumentationTimer,VolumeTest2e
+> I-LA-0302 TimerID VolumeTest2e: Elapsed Millis=139683 Total Memory=126267392 (delta=61321216) Max Memory=132055040 (delta=0) FreeMemory=48398496 (delta=-15494904)
+

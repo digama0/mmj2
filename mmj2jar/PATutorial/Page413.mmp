@@ -1,0 +1,31 @@
+$( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
+*                                                          Page413.mmp
+
+* The Step Selector Search feature is very powerful. You will find
+  quite a bit of documentation about it at:
+      
+      mmj2\doc\StepSelectorSearch.html
+
+* You may also wish to study the Theorem Loader feature:
+
+      mmj2/doc/TheoremLoaderOverview.html
+      
+  The Theorem Loader allows you to store a proof in ".mmt" format and
+  dynamically update the mmj2 Logical System so that the theorem can
+  be used in another proof without having to restart mmj2.
+  
+  Note also: you can have two or more mmj2 sessions running
+  simultaneously! That means that you can switch over to session #2 to
+  create a lemma theorem using the Proof Assistant Theorem Loader, and
+  then switch back to session #1 and use the new lemma!
+
+* This is the end of the tutorial text. For now... but you already 
+  know enough to be very dangerous :-)
+ 
+  Visit mmj2\mmj2.html for more documentation. 
+ 
+  and... mmj2\doc\* contains much, much more!!!
+   
+ 
+$) 
+

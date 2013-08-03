@@ -1,0 +1,48 @@
+Suppose T1 is a (logical) theorem whose formula
+parses as follows:
+
+    parse(T1(x)) = f(cv(x))
+    
+where: 
+    x is of type X, and
+    cv is a mapping from X to Y, and
+    f is a syntax axiom taking type Y and
+        yielding type wff.
+    
+Now, the question is, can theorem T2,
+(which we are proving using T1) be unified 
+with T1 assuming that T2 parses as follows:
+
+    parse(T2(y)) = f(y)
+    
+where: 
+    y is of type Y
+    
+In other words, can the Unification algorithm
+righteously substitute y for cv(x) without
+knowing anything else about the "meaning" of
+cv?
+
+Previously, I would have said, "Yes, because cv is
+a 'type conversion' syntax axiom". But Norm
+has argued that the syntax of set.mm should
+not be interpreted in this way. It may be true
+that for set.mm the answer is "Yes", but in
+the general case (of some arbitrary .mm database), 
+substituting 'y' for 'cv(x)' is not justified 
+unless additional information is available to 
+the Unification algorithm -- i.e. it "knows" 
+what 'cv(x)' means.
+
+So...my new position regarding Unification is
+that the parse tree of the Assertion being 
+unified with an Axiom/Theorem must completely 
+overlay (match) all parse tree nodes of
+the Axiom/Theorem except for variable hypothesis
+nodes. And, these variable hypothesis nodes are
+the "graft" points where we substitute expressions
+for variables in Unification (we never substitute
+an expression for an expression!)
+
+
+      

@@ -1,0 +1,7 @@
+LoadFile,mm\RegressionTest1set.mm
+VerifyProof,*
+Parse,*  
+ProofAsstUnifySearchExclude,biigb,xxxid,dummylink,id1
+GMFFExportParms,althtml,ON,althtmldef,gmfftest\althtml,.html,gmfftest\models\althtml,A,ISO-8859-1,general
+GMFFExportParms,html,ON,htmldef,gmfftest\html,.html,gmfftest\models\html,A,ISO-8859-1,general
+RunProofAsstGUI

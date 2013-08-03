@@ -1,0 +1,20 @@
+*-----------------------------------------
+* UT10023.txt -- Theorem Loader Unit Test
+*-----------------------------------------
+StartInstrumentationTimer,TheoremLoaderUnitTest10023
+LoadEndpointStmtLabel,syl
+LoadFile,mm\RegressionTest1set.mm
+TheoremLoaderMMTFolder,mmt\testin\t103
+VerifyProof,*
+Parse,*  
+TMFFUseFormat,0 
+LoadTheoremsFromMMTFolder,*
+ProofAsstBatchTest,a1d,,un-unified,Randomized,Print
+ProofAsstBatchTest,a2d,,un-unified,Randomized,Print
+ProofAsstBatchTest,com12,,un-unified,Randomized,Print
+ProofAsstBatchTest,imim1,,un-unified,Randomized,Print
+ProofAsstBatchTest,imim1i,,un-unified,Randomized,Print
+ProofAsstBatchTest,imim2,,un-unified,Randomized,Print
+ProofAsstBatchTest,syllogism3,,un-unified,Randomized,Print
+ProofAsstBatchTest,syllogism,,un-unified,Randomized,Print
+StopInstrumentationTimer,TheoremLoaderUnitTest10023

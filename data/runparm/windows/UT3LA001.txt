@@ -1,0 +1,6 @@
+ *==================================================
+ * Unit Test 3: lang - Proof Compression : RunParm File 001
+ *==================================================
+MaxErrorMessages,500
+LoadFile,mm\UT3.mm
+VerifyProof,*

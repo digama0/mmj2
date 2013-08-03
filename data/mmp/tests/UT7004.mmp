@@ -1,0 +1,10 @@
+$( <MM> <PROOF_ASST> THEOREM=ax3  LOC_AFTER=?
+1::luklem2         |- (  ( -. ph -> -. ps )
+                      -> (  ( ( -. ph -> ph ) -> ph )
+                         -> ( ps -> ph ) ) )
+2::luklem4         |- (  (  ( ( -. ph -> ph ) -> ph )
+                         -> ( ps -> ph ) )
+                      -> ( ps -> ph ) )
+3::                |- ( &W9 -> &W22 )
+qed:1,2:luklem1    |- ( ( -. ph -> -. ps ) -> ( ps -> ph ) )
+$)

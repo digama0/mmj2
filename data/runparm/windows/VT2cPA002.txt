@@ -1,0 +1,175 @@
+ *==================================================
+ * Volume Test 2c: Proof Assistant : RunParm File 002
+ *==================================================
+StartInstrumentationTimer,VolumeTest2c
+MaxStatementPrintCount,99999
+MaxErrorMessages,50000
+MaxInfoMessages,50000
+LoadEndpointStmtNbr,999999999 
+LoadEndpointStmtLabel,ZZZ999ZZZ
+StartInstrumentationTimer,LoadFile
+LoadFile,mm\RegressionTest1set.mm
+StopInstrumentationTimer,LoadFile
+StartInstrumentationTimer,VerifyProofBefore
+VerifyProof,*
+StopInstrumentationTimer,VerifyProofBefore
+StartInstrumentationTimer,Parse
+Parse,* 
+StopInstrumentationTimer,Parse 
+RecheckProofAsstUsingProofVerifier,yes
+ProofAsstFontSize,14 
+ProofAsstFormulaLeftCol,20
+ProofAsstFormulaRightCol,79 
+ProofAsstRPNProofLeftCol,5 
+ProofAsstRPNProofRightCol,79       
+ProofAsstUnifySearchExclude,biigb,xxxid
+ProofAsstProofFolder,mmp\tests
+*==================================================
+* TMFF - Text Mode Formula Formatting
+*==================================================
+TMFFDefineScheme,AlignVarDepth1,AlignColumn,1,Var,1,Var
+TMFFDefineScheme,AlignVarDepth2,AlignColumn,2,Var,1,Var
+TMFFDefineScheme,AlignVarDepth3,AlignColumn,3,Var,1,Var
+TMFFDefineScheme,AlignVarDepth4,AlignColumn,4,Var,1,Var
+TMFFDefineScheme,AlignVarDepth5,AlignColumn,5,Var,1,Var
+TMFFDefineScheme,AlignVarDepth99,AlignColumn,99,Var,1,Var
+TMFFDefineScheme,Flat,Flat
+TMFFDefineScheme,PrefixDepth3,AlignColumn,3,Sym,2,Sym
+TMFFDefineScheme,PostfixDepth3,AlignColumn,3,Sym,1,Sym
+*
+* Note: "Unformatted" and Format 0 are hardcoded --
+*       they cannot be redefined via RunParms. 
+*       Here is how they *would* be coded:
+*TMFFDefineScheme,Unformatted,Unformatted
+*TMFFDefineFormat,0,Unformatted
+*
+TMFFDefineFormat,1,AlignVarDepth1
+TMFFDefineFormat,2,AlignVarDepth2
+TMFFDefineFormat,3,AlignVarDepth3
+TMFFDefineFormat,4,AlignVarDepth4
+TMFFDefineFormat,5,AlignVarDepth5
+TMFFDefineFormat,6,AlignVarDepth99
+TMFFDefineFormat,7,Flat
+TMFFDefineFormat,8,PrefixDepth3
+TMFFDefineFormat,9,PostfixDepth3
+* Default Format = 3
+TMFFUseFormat,3
+*
+* ----------------------------------------------------------  
+* --- the ",," below signifies no input file used so the ---
+* --- batch test simulates an input file by exporting    ---
+* --- proof steps to memory and then processing those.   ---
+* --- this provides a way to test that the proof         ---
+* --- assistant is generating correct proofs and that    ---
+* --- they match what is in the input .mm file (they     ---
+* --- don't always and this is not necessarily an        ---
+* --- error because there can be multiple valid proofs   ---
+* --- for a theorem.)                                    ---
+* ----------------------------------------------------------  
+* NOTE: "Generate..." required for CompareDJs and UpdateDJs.
+*       ALSO, specify "unified" on ProofAsstBatchTest
+*       because the 2nd "VerifyProof,*" will reprocess
+*       the original proofs, and if "un-unified" is used
+*       the proofs used during CompareDJs and UpdateDJs
+*       may be different, which may result in different
+*       $d's stored in memory when the 2nd VerifyProof is run.
+*       search may alter the output Ref, and thus alter
+*       For example, Theorem csbabg Step 3 can unify with 
+*       sbccomg or sbccomglem, and they have different $d's!
+ProofAsstDjVarsSoftErrors,GenerateNew
+StartInstrumentationTimer,BatchTest 
+ProofAsstBatchTest,*,,unified,NotRandomized,NoPrint,NoDeriveFormulas,CompareDJs,NoUpdateDJs
+StopInstrumentationTimer,BatchTest
+StartInstrumentationTimer,VerifyProofAfter
+VerifyProof,*
+StopInstrumentationTimer,VerifyProofAfter
+StopInstrumentationTimer,VolumeTest2c
+Clear 
+ *==================================================
+ * Volume Test 2c: Proof Assistant : RunParm File 002
+ *==================================================
+StartInstrumentationTimer,VolumeTest2c
+MaxStatementPrintCount,99999
+MaxErrorMessages,50000
+MaxInfoMessages,50000
+LoadEndpointStmtNbr,999999999
+LoadEndpointStmtLabel,ZZZ999ZZZ
+StartInstrumentationTimer,LoadFile
+LoadFile,mm\RegressionTest1set.mm
+StopInstrumentationTimer,LoadFile
+StartInstrumentationTimer,VerifyProofBefore
+VerifyProof,*
+StopInstrumentationTimer,VerifyProofBefore
+StartInstrumentationTimer,Parse
+Parse,* 
+StopInstrumentationTimer,Parse
+RecheckProofAsstUsingProofVerifier,yes
+ProofAsstFontSize,14 
+ProofAsstFormulaLeftCol,20
+ProofAsstFormulaRightCol,79 
+ProofAsstRPNProofLeftCol,5 
+ProofAsstRPNProofRightCol,79       
+ProofAsstUnifySearchExclude,biigb,xxxid
+ProofAsstProofFolder,mmp\tests
+*==================================================
+* TMFF - Text Mode Formula Formatting
+*==================================================
+TMFFDefineScheme,AlignVarDepth1,AlignColumn,1,Var,1,Var
+TMFFDefineScheme,AlignVarDepth2,AlignColumn,2,Var,1,Var
+TMFFDefineScheme,AlignVarDepth3,AlignColumn,3,Var,1,Var
+TMFFDefineScheme,AlignVarDepth4,AlignColumn,4,Var,1,Var
+TMFFDefineScheme,AlignVarDepth5,AlignColumn,5,Var,1,Var
+TMFFDefineScheme,AlignVarDepth99,AlignColumn,99,Var,1,Var
+TMFFDefineScheme,Flat,Flat
+TMFFDefineScheme,PrefixDepth3,AlignColumn,3,Sym,2,Sym
+TMFFDefineScheme,PostfixDepth3,AlignColumn,3,Sym,1,Sym
+*
+* Note: "Unformatted" and Format 0 are hardcoded --
+*       they cannot be redefined via RunParms. 
+*       Here is how they *would* be coded:
+*TMFFDefineScheme,Unformatted,Unformatted
+*TMFFDefineFormat,0,Unformatted
+*
+TMFFDefineFormat,1,AlignVarDepth1
+TMFFDefineFormat,2,AlignVarDepth2
+TMFFDefineFormat,3,AlignVarDepth3
+TMFFDefineFormat,4,AlignVarDepth4
+TMFFDefineFormat,5,AlignVarDepth5
+TMFFDefineFormat,6,AlignVarDepth99
+TMFFDefineFormat,7,Flat
+TMFFDefineFormat,8,PrefixDepth3
+TMFFDefineFormat,9,PostfixDepth3
+* Default Format = 3
+TMFFUseFormat,3
+*
+* ----------------------------------------------------------  
+* --- the ",," below signifies no input file used so the ---
+* --- batch test simulates an input file by exporting    ---
+* --- proof steps to memory and then processing those.   ---
+* --- this provides a way to test that the proof         ---
+* --- assistant is generating correct proofs and that    ---
+* --- they match what is in the input .mm file (they     ---
+* --- don't always and this is not necessarily an        ---
+* --- error because there can be multiple valid proofs   ---
+* --- for a theorem.)                                    ---
+* ----------------------------------------------------------  
+* NOTE: "Generate..." required for CompareDJs and UpdateDJs.
+*       ALSO, specify "unified" on ProofAsstBatchTest
+*       because the 2nd "VerifyProof,*" will reprocess
+*       the original proofs, and if "un-unified" is used
+*       the proofs used during CompareDJs and UpdateDJs
+*       may be different, which may result in different
+*       $d's stored in memory when the 2nd VerifyProof is run.
+*       search may alter the output Ref, and thus alter
+*       For example, Theorem csbabg Step 3 can unify with 
+*       sbccomg or sbccomglem, and they have different $d's!
+ProofAsstDjVarsSoftErrors,GenerateNew
+StartInstrumentationTimer,BatchTest 
+ProofAsstBatchTest,*,,unified,NotRandomized,NoPrint,NoDeriveFormulas,CompareDJs,UpdateDJs
+StopInstrumentationTimer,BatchTest
+StartInstrumentationTimer,VerifyProofAfter
+VerifyProof,*
+StopInstrumentationTimer,VerifyProofAfter
+StopInstrumentationTimer,VolumeTest2c
+
+ 

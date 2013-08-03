@@ -1,0 +1,32 @@
+$( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
+*                                                          Page405.mmp
+ Press Ctrl-U and watch the "Derive Feature" in action!
+
+h1::reiteration.1  |- ph
+1001:?:            |- &W1
+2001:?:            |- ( &W1 -> ph )
+qed:1001,2001:ax-mp |- ph
+
+*The Derive Feature took our formula from the "qed" step, "|- ph", and
+ unified it with Assertion ax-mp and an "unknown" Hyp. Since we gave
+ Derive no hypotheses and ax-mp uses two hypotheses, Derive generated
+ two Hypothesis steps for us that match ax-mp's hypotheses.
+
+     1001:?:            |- &W1
+     2001:?:            |- ( &W1 -> ph )
+
+ Note that we only gave Derive one variable, "ph", and ax-mp uses two
+ variables, so Derive substituted a "Work Variable", "&W1" for the
+ missing variable. We could modify "&W1" and change it to any valid
+ wff variable or expression (work variables are "meta-metavariables"
+ -- you can read about them here at mmj2\doc\WorkVariables.html).
+ 
+ Or, observe that the generated step, 1001 has a formula that looks
+ suspiciously similar to our hypothesis, step 1. So we use Edit/Undo
+ (twice) to return the screen to its pre-Unification condition. Then
+ set the "qed" step's Step:Hyp:Ref field to "qed:1,?:ax-mp", and then
+ press Ctrl-U. Try it!
+     
+ OK, forward to the next Tutorial page (Page406.mmp)!     
+$) 
+

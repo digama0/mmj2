@@ -1,0 +1,235 @@
+StartInstrumentationTimer,Startup
+*-----------------------------------------
+* Example Running ProofAsstGUI with set.mm
+*
+* Almost every RunParm in this file is the
+* same as the default values! The minimum
+* RunParm lines needed to process set.mm
+* may be seen at the beginning of file
+* AnnotatedRunParms.txt
+*-----------------------------------------
+*
+*
+*==================================================
+* Output:
+* - Set OutputVerbosity to 0 (or < 9) to turn off
+*   output (echoing) of input RunParms.
+*==================================================
+OutputVerbosity,9999
+MaxStatementPrintCount,9999
+MaxErrorMessages,15000
+MaxInfoMessages,15000
+*==================================================
+* Load:
+* - use the LoadEndpoint commands for quick start-up
+*   if you only need part of the input .mm file!!!
+*==================================================
+*LoadEndpointStmtNbr,999999999
+*LoadEndpointStmtLabel,sandbox
+LoadComments,yes
+LoadProofs,yes
+ProvableLogicStmtType,|-
+LogicStmtType,wff
+BookManagerEnabled,yes
+SeqAssignerIntervalSize,1000
+SymbolTableInitialSize,1500
+StatementTableInitialSize,45000
+LoadFile,set.mm
+*LoadFile,ql.mm
+*
+*==================================================
+* Verify
+* - don't need to VerifyParse unless a bug is
+*   suspected in the grammatical parser :)
+*==================================================
+VerifyProof,*
+*
+Parse,*
+*VerifyParse,*
+*
+*==================================================
+* TMFF - Text Mode Formula Formatting
+*==================================================
+TMFFDefineScheme,AlignVarDepth1,AlignColumn,1,Var,1,Var
+TMFFDefineScheme,AlignVarDepth2,AlignColumn,2,Var,1,Var
+TMFFDefineScheme,AlignVarDepth3,AlignColumn,3,Var,1,Var
+TMFFDefineScheme,AlignVarDepth4,AlignColumn,4,Var,1,Var
+TMFFDefineScheme,AlignVarDepth5,AlignColumn,5,Var,1,Var
+TMFFDefineScheme,AlignVarDepth99,AlignColumn,99,Var,1,Var
+TMFFDefineScheme,Flat,Flat
+TMFFDefineScheme,PrefixDepth3,AlignColumn,3,Sym,2,Sym
+TMFFDefineScheme,PostfixDepth3,AlignColumn,3,Sym,1,Sym
+TMFFDefineScheme,TwoColumnAlignmentDepth1,TwoColumnAlignment,1
+TMFFDefineScheme,TwoColumnAlignmentDepth2,TwoColumnAlignment,2
+TMFFDefineScheme,TwoColumnAlignmentDepth3,TwoColumnAlignment,3
+TMFFDefineScheme,TwoColumnAlignmentDepth4,TwoColumnAlignment,4
+TMFFDefineScheme,TwoColumnAlignmentDepth5,TwoColumnAlignment,5
+TMFFDefineScheme,TwoColumnAlignmentDepth99,TwoColumnAlignment,99
+*
+* Note: "Unformatted" and Format 0 are hardcoded --
+*       they cannot be redefined via RunParms.
+*       Here is how they *would* be coded:
+*TMFFDefineScheme,Unformatted,Unformatted
+*TMFFDefineFormat,0,Unformatted
+*
+TMFFDefineFormat,1,AlignVarDepth1
+TMFFDefineFormat,2,AlignVarDepth2
+TMFFDefineFormat,3,AlignVarDepth3
+TMFFDefineFormat,4,AlignVarDepth4
+TMFFDefineFormat,5,AlignVarDepth5
+TMFFDefineFormat,6,AlignVarDepth99
+TMFFDefineFormat,7,Flat
+TMFFDefineFormat,8,PrefixDepth3
+TMFFDefineFormat,9,PostfixDepth3
+TMFFDefineFormat,10,TwoColumnAlignmentDepth99
+TMFFDefineFormat,11,TwoColumnAlignmentDepth1
+TMFFDefineFormat,12,TwoColumnAlignmentDepth2
+TMFFDefineFormat,13,TwoColumnAlignmentDepth3
+TMFFDefineFormat,14,TwoColumnAlignmentDepth4
+TMFFDefineFormat,15,TwoColumnAlignmentDepth5
+* Default Format = 13
+TMFFUseFormat,13
+* Default AltFormat = 7, Flat
+TMFFAltFormat,7
+* Default Indent amount = 0 columns per proof step level
+TMFFUseIndent,0
+* Default Alt Indent amount = 1 column per proof step level
+TMFFAltIndent,1
+*
+*==================================================
+* WorkVar time!!! These are the defaults:
+*==================================================
+*DefineWorkVarType,wff,&W,200
+*DefineWorkVarType,set,&S,200
+*DefineWorkVarType,class,&C,200
+*DeclareWorkVars
+*==================================================
+* Proof Assistant Step Selector (new)
+*==================================================
+StepSelectorDialogPaneWidth,720
+StepSelectorDialogPaneHeight,440
+StepSelectorMaxResults,50
+StepSelectorShowSubstitutions,true
+*==================================================
+* Proof Assistant
+*==================================================
+RecheckProofAsstUsingProofVerifier,no
+ProofAsstUndoRedoEnabled,yes
+ProofAsstFontSize,14
+ProofAsstFontBold,yes
+ProofAsstFontFamily,Monospaced
+ProofAsstForegroundColorRGB,0,0,0
+ProofAsstBackgroundColorRGB,255,255,255
+ProofAsstFormulaLeftCol,20
+ProofAsstFormulaRightCol,79
+ProofAsstTextAtTop,yes
+ProofAsstTextColumns,80
+ProofAsstTextRows,21
+ProofAsstErrorMessageColumns,80
+ProofAsstErrorMessageRows,4
+ProofAsstRPNProofLeftCol,5
+ProofAsstRPNProofRightCol,70
+
+* updated 5/18/2008: search "should not be referenced in any proof"
+*ProofAsstUnifySearchExclude,biigb,xxxid,dummylink,ax10,ax10o,ax11,ax11o,axsep,axnul,zfpair,axpr,axinf2
+ProofAsstUnifySearchExclude,biigb,xxxid,dummylink
+
+ProofAsstIncompleteStepCursor,AsIs
+ProofAsstOutputCursorInstrumentation,no
+ProofAsstAutoReformat,yes
+ProofAsstMaxUnifyAlternates,10
+ProofAsstDummyVarPrefix,$
+ProofAsstDefaultFileNameSuffix,.mmp
+ProofAsstDjVarsSoftErrors,GenerateReplacements
+ProofAsstProofFolder,myproofs
+ProofAsstAssrtListFreespace,5 
+*
+*====================================================================
+* Sample commands primarily used for testing, but commented out here:
+*====================================================================
+*ProofAsstExportToFile,norm3adif,norm3adif.txt,new,unified,NotRandomized,Print,NoDeriveFormulas
+*ProofAsstExportToFile,uzwo3lem1,uzwo3lem1.txt,update,unified,NotRandomized,Print,NoDeriveFormulas
+*ProofAsstExportToFile,uzwo3lem2,uzwo3lem2.txt,update,unified,NotRandomized,Print,NoDeriveFormulas
+*ProofAsstExportToFile,xpmapenlem3,xpmapenlem3.txt,update,unified,NotRandomized,Print,NoDeriveFormulas
+*ProofAsstExportToFile,aceq1,aceq1.txt,update,unified,NotRandomized,Print,NoDeriveFormulas
+*ProofAsstBatchTest,xpmapenlem2,xpmapenlem2.txt,unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,NoAsciiRetest
+*ProofAsstBatchTest,metcnp4lem2,,un-unified,Randomized,Print
+*
+* Careful about ExportALL below! Massive and Lengthy!!!
+*ProofAsstExportToFile,*,expsetExportALL.mmp,new,un-unified,Randomized,NoPrint,NoDeriveFormulas
+*ProofAsstBatchTest,*,expsetExportALL.mmp,un-unified,NotRandomized,Print,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,NoAsciiRetest
+*
+* Careful about next one too -- requires about 5 minutes when using
+* the full set.mm file as input!!!)
+*ProofAsstBatchTest,*,,un-unified,NotRandomized,NoPrint,NoDeriveFormulas,NoCompareDJs,NoUpdateDJs,NoAsciiRetest
+*PrintSyntaxDetails
+*ProofAsstBatchTest,syl,,unified,NotRandomized,Print
+*PrintStatementDetails,aceq1
+*StepSelectorBatchTest,C:\mmj2\data\mmp\tests\UT7000.mmp,326,6
+*PreprocessRequestBatchTest,C:\mmj2\data\mmp\tests\UT7001.mmp,EraseAndRederiveFormulas
+*
+*==================================================
+* TheoremLoader -- Pre-ProofAsstGUI (recommended)
+*==================================================
+*
+TheoremLoaderDjVarsOption,NoUpdate
+TheoremLoaderMMTFolder,myproofs
+TheoremLoaderAuditMessages,Yes
+TheoremLoaderStoreFormulasAsIs,Yes
+TheoremLoaderStoreMMIndentAmt,2
+TheoremLoaderStoreMMRightCol,79
+LoadTheoremsFromMMTFolder,*
+*LoadTheoremsFromMMTFolder,syllogism2
+*UnifyPlusStoreInMMTFolder,syl.mmp
+*UnifyPlusStoreInLogSysAndMMTFolder,syl.mmp
+*ExtractTheoremToMMTFolder,syl
+*
+*==================================================
+* Print BookManager stuff
+*==================================================
+*PrintBookManagerChapters
+*PrintBookManagerSections
+*PrintBookManagerSectionDetails,*
+*PrintBookManagerSectionDetails,1
+*PrintBookManagerSectionDetails,2
+*
+*==================================================
+* Sample mmj2 Service RunParms, "callee" mode, commented out
+*==================================================
+*SvcFolder,c:\my\java\test\mmj\svc
+*SvcCallbackClass,TSvcCallbackCallee
+*SvcArg,key1,value1
+*SvcCall 
+*
+*==================================================
+* Sample mmj2 Service RunParms, "caller" mode, commented out
+*==================================================
+*SvcFolder,c:\my\java\test\mmj\svc
+*SvcArg,key1,value1
+*SvcCall
+*
+*==================================================
+* GMFF stuff
+*==================================================
+******************************************************
+* GMFF Default Parameter RunParms  
+******************************************************
+*GMFFUserExportChoice,ALL
+*GMFFExportParms,althtml,ON,althtmldef,GMFF\althtml,.html,GMFF\models\althtml,A,ISO-8859-1,general
+*GMFFExportParms,html,ON,htmldef,GMFF\html,.html,GMFF\models\html,A,ISO-8859-1,general
+*GMFFUserTextEscapes,html,32,"&nbsp;",34,"&quot;",38,"&amp;",60,"&lt;",62,"&gt;"
+*GMFFUserTextEscapes,althtml,32,"&nbsp;",34,"&quot;",38,"&amp;",60,"&lt;",62,"&gt;"
+******************************************************
+* GMFF Command RunParms 
+******************************************************
+*GMFFInitialize,PrintTypesettingDefinitions
+*GMFFExportFromFolder,myproofs,syl,.mmp,999999,AppendFileName
+*GMFFExportTheorem,syl,999999,AppendFileName
+*GMFFParseMetamathTypesetComment,althtmldef,mydirectory,mytypesetdefs.mm,PRINT
+******************************************************
+*
+*==================================================
+* OK, run the Proof Assistant now:
+*==================================================
+StopInstrumentationTimer,Startup
+RunProofAsstGUI

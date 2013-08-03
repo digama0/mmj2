@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta content="text/html; charset=ISO-8859-1" http-equiv="content-type"><title>Proof Worksheet</title></head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);" alink="#000088" link="#0000ff" vlink="#ff0000">
+<pre style="font-weight: bold;"><big><big><big><big><small><span style="text-decoration: underline;">mmj2 Proof Assistant Proof Worksheet</span></small><br></big></big></big></big><br>(back to <a href="Start.html">Start.html</a>)<br></pre><big>"Proof Worksheet" refers to the contents of the mmj2 Proof Assistant GUI screen.<br>
+<br>
+Here is what an actual Proof Worksheet looks like after "Unification" (Theorem "<code>a1i</code>" from Metamath's <code>set.mm</code>):<br>
+<br>
+</big>
+<table style="width: 67%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><big style="font-weight: bold;"><span style="font-family: monospace;">$( &lt;MM&gt; &lt;PROOF_ASST&gt; THEOREM=a1i&nbsp; LOC_AFTER=?</span><br style="font-family: monospace;">
+      <br style="font-family: monospace;">
+      <span style="font-family: monospace;">* Inference derived from axiom ~ ax-1 .&nbsp; See ~<br>
+&nbsp; a1d for an explanation of </span><span style="font-family: monospace;">our informal use of<br>
+&nbsp; the terms "inference" and "deduction".</span><br style="font-family: monospace;">
+      <br style="font-family: monospace;">
+      <span style="font-family: monospace;">h1::a1i.1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ph</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">2::ax-1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ph -&gt; ( ps -&gt; ph ) )</span><br style="font-family: monospace;">
+      <span style="font-family: monospace;">qed:1,2:ax-mp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ps -&gt; ph )</span><br style="font-family: monospace;">
+      <br>
+      <code>$=&nbsp; wph wps wph wi a1i.1 wph wps ax-1 ax-mp $. </code><br style="font-family: monospace;">
+      <span style="font-family: monospace;">$)</span><br style="font-family: monospace;">
+      </big><br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<big><br>
+The Proof Assistant GUI allows users to enter, update, validate, unify and browse Proof Worksheets.<br>
+<br>
+Proof Worksheets can be -- usually are -- stored in text files with file type "<code>.txt</code>" or "<code>.mmp</code>".<br>
+<br>
+A valid Proof Worksheet has the format of a Metamath "Comment" -- the first line of a Proof Worksheet begins with "<code>$(</code>" and the last line begins with "<code>$)</code>".
+In theory a Proof Worksheet could be copied into a Metamath .mm
+database file and cause no errors, although this would be
+counter-productive if you had thousands of Proof Worksheets in your
+Metamath file!<br>
+<br>
+Unfortunately, the mmj2 Proof Assistant does not directly update
+Metamath .mm database files at this time. So the Metamath RPN-format
+proofs created using the mmj2 Proof Assistant must be manually copied
+into the Metamath .mm database file, and for new theorems to become
+visible in mmj2, the mmj2 Proof Assistant must be restarted. <br>
+<br>
+Note: Metamath's "eimm.exe" utility exports and imports Metamath proofs
+to and from Proof Worksheet files. Refer to the documentation at <a href="www.metamath.com">www.metamath.com</a> for details.<br>
+<br>
+There is a lot of helpful information related to&nbsp; Proof Worksheets here:<br>
+</big><ul><li><a href="../../mmj2jar/mmj2PATutorial.bat">mmj2jar\mmj2PATutorial.bat</a> - <big style="font-style: italic;">Interactive tutorial that uses the mmj2 Proof Assistant and a set of valid Proof Worksheets containing instructional text.</big><br>
+  </li><li><a href="../ProofAssistantGUIQuickHOWTO.html">doc\ProofAssistantGUIQuickHOWTO.html</a> - <big style="font-style: italic;">Brief overview on the use of the Proof Assistant GUI program.</big><br>
+</li><li><a href="../ProofAssistantGUIDetailedInfo.html">doc\ProofAssistantGUIDetailedInfo.html</a>
+- <big style="font-style: italic;">An in-depth reference documente reviewing of the nitty-gritty details
+of the Proof Assistant GUI screen, its fields and validation edits.
+This is not a pleasant document to read, but it may help clarify
+certain points about what is going on...</big></li></ul>
+<pre style="font-weight: bold;">(back to <a href="Start.html">Start.html</a>)</pre>
+
+
+</body></html>

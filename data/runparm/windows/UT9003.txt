@@ -1,0 +1,11 @@
+*-----------------------------------------
+* UT9003.txt -- Book Manager Unit Test
+*-----------------------------------------
+StartInstrumentationTimer,BookManagerUnitText
+LoadFile,mm\UT9003.mm
+VerifyProof,*
+Parse,*  
+PrintBookManagerChapters
+PrintBookManagerSections
+PrintBookManagerSectionDetails,* 
+StopInstrumentationTimer,BookManagerUnitText

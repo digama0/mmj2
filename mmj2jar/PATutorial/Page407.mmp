@@ -1,0 +1,26 @@
+$( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
+*                                                          Page407.mmp
+ OK! Let's do a replay, automatically completing this proof using the
+ Derive Feature. But first, note that as an experiment, step 5555 has
+ been added; this will demonstrate deriving a formula!
+
+ Now press Ctrl-U. Then, to tidy up, use Menu Item
+ "Unify/Unify+Renumber", followed by "Edit/Reformat Proof".
+
+h1::reiteration.1  |- ph
+5555:?:syl
+qed:1,?:ax-mp      |- ph  
+
+*Done! The Derive Feature can derive formulas too (except for "qed"
+ step formulas -- that is not allowed!)
+
+ There is a tremendous amount of documentation about the Derive
+ Feature at: mmj2\doc\ProofAssistantGUIDeriveFeature.html Good luck
+ with that :-)
+
+ OK, you still there? I hope so, because some tremendously useful
+ information is available on the next page (Page408.mmp)!!! Do it.
+ Ctrl-P now!!!
+
+$) 
+

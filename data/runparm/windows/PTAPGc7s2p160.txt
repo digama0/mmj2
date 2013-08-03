@@ -1,0 +1,13 @@
+ *===================
+ * PTAPGc7s2p160.TXT
+ *===================
+MaxStatementPrintCount,25000
+MaxErrorMessages,500
+Caption,Unit Test PTAPGc7s2p160.mm
+LoadFile,mm\PTAPGc7s2p160.mm
+GrammarAmbiguityEdits,complete
+StatementAmbiguityEdits,complete
+Parse,*
+PrintSyntaxDetails
+PrintStatementDetails,* 
+

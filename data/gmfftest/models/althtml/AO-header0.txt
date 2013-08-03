@@ -1,0 +1,5 @@
+<span style="font-family: monospace;">
+$(&nbsp;&lt;MM&gt;&nbsp;&lt;PROOF&nbsp;ASST&gt;&nbsp;THEOREM=</span>
+
+<span style="font-family: monospace;">
+<a href="..\html\

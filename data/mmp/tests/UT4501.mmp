@@ -1,0 +1,48 @@
+$( <MM> <PROOF_ASST> THEOREM=aceqkm  LOC_AFTER=?
+
+* Equivalence of the Axiom of Choice (first form) of [Enderton] p. 49 and
+  Maes' AC ~ ackm .  The proof consists of lemmas ~ kmlem1 through
+  ~ kmlem16 and this final theorem.  AC is not used for the proof.
+  Note:  bypassing the first step (i.e. replacing ~ aceq5 with ~ pm4.2 )
+  establishes the AC equivalence shown by Mae's writeup.  The
+  left-hand-side AC shown here was chosen because it is shorter to
+  display.
+
+1::aceq5           
+2::df-ne           
+3:2:imbi1i         
+4:3:2ralbii        
+5:4:anbi2i         
+6:5:imbi1i         
+7:6:albii          
+8:1,7:bitr         
+9::eqid            
+10:9:kmlem13       
+11::kmlem8         
+12:11:albii        
+13:10,12:bitr      
+14::pm4.2          
+15::pm4.2          
+16::pm4.2          
+17:14,15,16:kmlem16 
+18:17:albii        
+qed:8,13,18:3bitr  |- (   A. x
+                             E. f
+                                ( f (_ x /\ f Fn dom x )
+                      <-> A. x
+                             E. y
+                                A. z
+                                   E. v
+                                      A. u
+                                         (  (  y e. x
+                                            /\ (  z e. y
+                                               -> (  ( v e. x /\ -. y = v )
+                                                  /\ z e. v ) ) )
+                                         \/ (  -. y e. x
+                                            /\ (  z e. x
+                                               -> (  ( v e. z /\ v e. y )
+                                                  /\ (  ( u e. z /\ u e. y )
+                                                     -> u = v ) ) ) ) ) )
+
+$)
+

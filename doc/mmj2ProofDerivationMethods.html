@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+  <title>AsteroidMeta: mmj2ProofDerivationMethods</title>
+  <link type="text/css" rel="stylesheet" href="/AsteroidMeta/wiki.css">
+  <meta name="robots" content="INDEX,NOFOLLOW">
+  <link rel="alternate" type="application/rss+xml" title="AsteroidMeta"
+ href="http://planetx.cc.vt.edu/AsteroidMeta?action=rss">
+  <link rel="alternate" type="application/rss+xml"
+ title="AsteroidMeta: mmj2ProofDerivationMethods"
+ href="http://planetx.cc.vt.edu/AsteroidMeta?action=rss;rcidonly=mmj2ProofDerivationMethods">
+</head>
+<body class="http://planetx.cc.vt.edu/AsteroidMeta">
+<div class="header"><span class="gotobar bar"><a class="local"
+ href="http://planetx.cc.vt.edu/AsteroidMeta/HomePage">HomePage</a> <a
+ class="local"
+ href="http://planetx.cc.vt.edu/AsteroidMeta/RecentChanges">RecentChanges</a><br>
+<br>
+<a
+ href="http://planetx.cc.vt.edu/AsteroidMeta/mmj2ProofDerivationMethods">http://planetx.cc.vt.edu/AsteroidMeta/mmj2ProofDerivationMethods</a><br>
+</span>
+<h1><a title="Click to search for references to this page"
+ href="http://planetx.cc.vt.edu/AsteroidMeta?search=mmj2ProofDerivationMethods">mmj2ProofDerivationMethods</a></h1>
+</div>
+<div class="content browse">
+<p>Regrettably, the new mmj2 Step Selector Search feature is not a
+magical cure for every proof derivation attempt.</p>
+<p>I find the proof of pm2.61 difficult, and mmj2 is not very helpful!
+In desperation I pulled out the old fashioned method of Fitch's
+Subordinated Derivations to see just how hard it would be to work out
+pm2.61 by hand. Once I abandoned pen and paper and turned to my text
+editor I was able to crank this out pretty fast (below). I think I did
+it correctly, but I don't see how to turn it into a Metamath proof!
+I've used the Fitch method before and been able to translate into
+Metamath, but this one is stumping me.</p>
+<h1>pm2.61 |- ( ( ph -&gt; ps ) -&gt; ( ( -. ph -&gt; ps ) -&gt; ps ) )</h1>
+<pre>     1  |   | ph -&gt; ps                                  * hyp int<br>     2  |   --<br>     3  |   |   | -. ph -&gt; ps                           * hyp int<br>     4  |   |   --<br>     5  |   |   |   | -. ps                             * hyp int<br>     6  |   |   |   --   <br>     7  |   |   |   |   | -. ph                         * hyp int<br>     8  |   |   |   |   --<br>     9  |   |   |   |   | -. ph -&gt; ps                   * 3 reit<br>    10  |   |   |   |   | ps                            * 7,9 mp<br>    11  |   |   |   |   | -. ps                         * 5 reit<br>    12  |   |   |   | -. -. ph                          * 7-&gt;11 neg int<br>    13  |   |   |   | ph                                * 13 neg elim<br>    14  |   |   |   | ph -&gt; ps                          * 1 reit<br>    15  |   |   |   | ps                                * 13,14 mp<br>    16  |   |   | -. -. ps                              * 5-&gt;15 neg int<br>    17  |   |   | ps                                    * 16 neg elim<br>    18  |   | ( -. ph -&gt; ps ) -&gt; ps                     * 3,17 imp int<br>    19  | ( ph -&gt; ps ) -&gt; ( ( -. ph -&gt; ps ) -&gt; ps )     * 1,18 imp int<br>             </pre>
+<p>Any ideas?</p>
+<hr>
+<p>Each hypothesis in this proof can be instantiated to form a
+stand-alone theorem, such as ( ph → ph ) for the first hypothesis,
+which means that in principle the propositional calculus version of the
+weak deduction theorem <a class="url outside"
+ href="http://us.metamath.org/mpegif/dedt.html">dedt</a> / <a
+ class="url outside" href="http://us.metamath.org/mpegif/elimh.html">elimh</a>
+can be used. See the <a class="url outside"
+ href="http://us.metamath.org/mpegif/mmdeduction.html">Deduction Theorem</a>
+page. In practice this would lead to a long proof (as the <a
+ class="url outside" href="http://us.metamath.org/mpegif/con3th.html">con3th</a>
+example shows, compared to the manually-created proof <a
+ class="url outside" href="http://us.metamath.org/mpegif/con3.html">con3</a>).</p>
+<p>Alternately, the algorithm for the standard deduction theorem, e.g.
+as described in Margaris, could be applied. That would lead to an even
+longer proof, possibly even several thousand steps in this case, since
+the proof length grows exponentially as hypotheses are popped. See the
+paragraph I wrote starting with "I worked this out" on <a class="local"
+ href="http://planetx.cc.vt.edu/AsteroidMeta/WhyAreMetamathProofsSoShort">WhyAreMetamathProofsSoShort</a>
+for an illustration of the exponential behavior.</p>
+<p>Another approach is to forget about trying to translate the
+deduction but instead write down the truth table for the tautology,
+then apply the algorithm of the completeness theorem (also described in
+Margaris). I actually did this a long time ago for the proof of theorem
+<a class="url outside"
+ href="http://us.metamath.org/mpegif/meredith.html">meredith</a>, using
+a program I wrote to implement the algorithm, after being completely
+stumped on how to even begin to approach such a nonintuitive and
+cryptic theorem. Over time I found shorter and shorter versions of
+various pieces of it, until it evolved into the proof that's there now.</p>
+<p>Also, there are proofs generated by resolution-based provers. While
+the resolution algorithm is clever and finds predicate calculus proofs
+that other automated methods cannot, they are in essence proofs by
+contradiction, which I often find to be less intuitive than direct
+proofs.</p>
+<p>Anyway, those are possible general approaches to the problem that
+are guaranteed to work (since propositional calculus is decidable). As
+for specific clever ideas for translating this particular deduction
+efficiently, I'll defer that to someone who is clever. :) – <a
+ class="local" href="http://planetx.cc.vt.edu/AsteroidMeta/norm">norm</a></p>
+<hr>
+<p>I find your approaches deeply interesting. The fact that
+Hilbert-style proofs and the "natural" approach embodied in Fitch's
+Subordinated Derivations are so profoundly different and yet
+reasonable, is fascinating to me. I wonder if there is a way to write a
+Proof Assistant based on Fitch which can interface back to the mmj2
+Proof Assistant and create a proof (and maybe if the algorithm
+encounters problems then that would signify the need to add theorems/
+inferences to set.mm.)</p>
+<dl class="quote">
+  <dt><br>
+  </dt>
+  <dd>You may want to check out Lifschitz's <a class="url outside"
+ href="http://www.cs.utexas.edu/users/vl/papers/calc.ps">On
+Calculational Proofs</a> (PS file). The idea is that with appropriate
+inference rules, Hilbert-style proofs are not necessarily inefficient
+compared natural deduction proofs. This is what set.mm essentially
+does. There is also some related discussion in <a class="local"
+ href="http://planetx.cc.vt.edu/AsteroidMeta/metamathCalculationalProofs">metamathCalculationalProofs</a>
+and <a class="local"
+ href="http://planetx.cc.vt.edu/AsteroidMeta/WhyAreMetamathProofsSoShort">WhyAreMetamathProofsSoShort</a>.
+I do think with the right inference rules a reasonable natural
+deduction "translator" could be made. By "reasonable" I mean generates
+proofs that are not in general astronomically sized. Such proofs could
+then be used as a starting point to shorten by hand.</dd>
+</dl>
+<p>Anyway…the Step Selector Search proved its worth this morning!</p>
+<p>OK, once I looked at this differently, as an inference --</p>
+<pre>    h1 |- ( ph -&gt; ps )<br>    h2 |- ( -. ph -&gt; ps )<br>    qed |- ps<br>    </pre>
+<p>And after another look at the set.mm proof of pm2.61, I added a
+dummy proof step to the Proof Worksheet:</p>
+<pre>    10:? |- ( ( ph -&gt; ps ) -&gt; ( ( -. ph -&gt; ps ) -&gt; &amp;W1 ) )<br>    </pre>
+<p>and pressed Ctrl-8 to initiate the Step Selector Search. The Step
+Selector Dialog showed me that using pm2.37 instead of the existing
+set.mm proof's pm2.36 would eliminate an extra two Derivation Steps! So
+here is the new shortened proof of pm2.61:</p>
+<pre>    $( &lt;MM&gt; &lt;PROOF_ASST&gt; THEOREM=pm2.61  LOC_AFTER=?<br>    1::pm2.37          |- ( ( ph -&gt; ps ) -&gt;<br>                            ( ( -. ph -&gt; ps ) -&gt; ( -. ps -&gt; ps ) ) )<br>    2::pm2.18          |- ( ( -. ps -&gt; ps ) -&gt; ps )<br>    qed:1,2:syl6       |- ( ( ph -&gt; ps ) -&gt;<br>                            ( ( -. ph -&gt; ps ) -&gt; ps ) )<br>    $)</pre>
+<h1>shorter proof of ja</h1>
+<p>I set the 'qed' step Hyp to "1,?", like this:</p>
+<pre>    qed:1,?        |- ( ( ph -&gt; ps ) -&gt; ch )<br>    </pre>
+<p>and pressed Ctrl-8 to initiate the Step Selector Search. It showed
+that pm2.61d1 would yield the 'qed' step with additional hypothesis:</p>
+<pre>    ( ( ph -&gt; ps ) -&gt; ( ph -&gt; ch ) ) <br>    </pre>
+<p>This hypothesis is easily derived from hypothesis 2, so I
+double-clicked pm2.61d1 on the Step Selector Dialog screen to accept
+the Ref and unify. The proof easily followed:</p>
+<pre>    $( &lt;MM&gt; &lt;PROOF_ASST&gt; THEOREM=ja  LOC_AFTER=?<br>    h1::ja.1           |- ( -. ph -&gt; ch )<br>    h2::ja.2           |- ( ps -&gt; ch )<br>    3:2:imim2i         |- ( ( ph -&gt; ps ) -&gt; ( ph -&gt; ch ) )<br>    qed:3,1:pm2.61d1    <br>                       |- ( ( ph -&gt; ps ) -&gt; ch )<br>    $=  wph wps wi wph wch wps wch wph ja.2 imim2i ja.1 pm2.61d1 $. <br>    $)<br>    </pre>
+<h1>syld shorter proof</h1>
+<p>This one is just obvious…</p>
+<p>Requires moving mpd ahead of syld.</p>
+<pre>    $( &lt;MM&gt; &lt;PROOF_ASST&gt; THEOREM=syld  LOC_AFTER=?<br>    <br>    * Syllogism deduction.  (The proof was shortened by Mel L. O'Cat,<br>      7-Aug-2004.)<br>    <br>    h1::syld.1         |- ( ph -&gt; ( ps -&gt; ch ) )<br>    h2::syld.2         |- ( ph -&gt; ( ch -&gt; th ) )<br>    3:2:imim2d         |- ( ph -&gt; ( ( ps -&gt; ch ) -&gt; ( ps -&gt; th ) ) )<br>    qed:1,3:mpd        |- ( ph -&gt; ( ps -&gt; th ) )<br>    <br>    $=  wph wps wch wi wps wth wi syld.1 wph wch wth wps syld.2 imim2d <br>        mpd $. <br>    $)<br>    </pre>
+</div>
+<div class="footer">
+<hr><span class="gotobar bar"><a class="local"
+ href="http://planetx.cc.vt.edu/AsteroidMeta/HomePage">HomePage</a> <a
+ class="local"
+ href="http://planetx.cc.vt.edu/AsteroidMeta/RecentChanges">RecentChanges</a>
+</span><span class="edit bar"><br>
+<a class="edit" accesskey="e" title="Click to edit this page"
+ href="http://planetx.cc.vt.edu/AsteroidMeta?action=edit;id=mmj2ProofDerivationMethods">Edit
+this page</a> <a class="history"
+ href="http://planetx.cc.vt.edu/AsteroidMeta?action=history;id=mmj2ProofDerivationMethods">View
+other revisions</a> <a class="admin"
+ href="http://planetx.cc.vt.edu/AsteroidMeta?action=admin;id=mmj2ProofDerivationMethods">Administration</a></span><span
+ class="time"><br>
+Last edited 2008-02-20 01:40 UTC by <a class="author"
+ title="from 66-81-75-143.bayarea.dialup.o1.com"
+ href="http://planetx.cc.vt.edu/AsteroidMeta/ocat">ocat</a> <a
+ class="diff"
+ href="http://planetx.cc.vt.edu/AsteroidMeta?action=browse;diff=1;id=mmj2ProofDerivationMethods">(diff)</a></span>
+<form method="get" action="http://planetx.cc.vt.edu/AsteroidMeta"
+ enctype="multipart/form-data">
+  <p>Search: <input name="search" size="20" accesskey="f" type="text">
+  <input name="dosearch" value="Go!" type="submit"></p>
+</form>
+</div>
+</body>
+</html>

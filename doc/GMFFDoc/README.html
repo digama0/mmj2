@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="Content-Type">
+  <title>GMFFSample README</title>
+</head>
+<body>
+The GMFFDoc folder contains a mockup of the mmj2jar folder
+containing a new sub-directory, "GMFF" (Graphics Mode Formula
+Formatting).<br>
+<br>
+Inside the GMFF folder are two sub-folders, "html" -- destination
+for
+image-based html exports from Proof Assistant -- and "althtml" -- the
+destination for Unicode-based html exports.<br>
+<br>
+Notice that <code>mmj2jar\GMFF\html</code> contains the actual <code>.gif</code>
+files copied from Norm's "Symbols" download. It will be necessary for
+the user to periodically, <span
+ style="font-style: italic; font-weight: bold;">and personally</span>,
+refresh the local copy of the Metamath <code>.gif</code> files stored
+in <code>mmj2jar\GMFF\html</code>.<br>
+<br>
+<code>GMFF\html</code> and <code>GMFF\althtml</code> each contain a
+sample "mockup" of the
+webpage which would be exported by the mmj2 Proof Assistant:<br>
+<ul>
+  <li><code><a href="mmj2jar/GMFF/html/syl.html">mmj2jar\GMFF\html\syl.html</a></code>
+- <br>
+  </li>
+  <li><code><a href="mmj2jar/GMFF/althtml/syl.html">mmj2jar\GMFF\althtml\syl.html</a></code>
+- <br>
+  </li>
+</ul>
+These Proof Worksheet versions in html are based on the output from the
+mmj2 Proof Assistant's TMFF Format number 11, 2-col alignment, level 1
+-- see <a href="mmj2jar/myproofs/syl.mmp">mmj2jar\myproofs\syl.mmp</a>
+<small><br>
+<br>
+</small>Here is how it works:<br>
+<br>
+Pressing <code>Ctrl-1</code> (One) inside the
+mmj2 Proof Assistant will export the Proof Worksheet in html format to
+the fixed locations in the <code>mmj2jar\GMFF\html</code> and <code>mmj2jar\GMFF\althtml</code>
+folders. You will choose the format, .gif or Unicode via a RunParm
+command at start-up -- you can choose html (.gif), althtml (Unicode) or
+ALL (with
+"ALL", when you press <code>Ctrl-1</code> and both versions are
+generated and exported!) In the normal use-case scenario, when working
+on a lengthy proof the user would already have a browser session
+running showing the current Proof Worksheet, probably somewhere near to
+the current proof step. After pressing <code>Ctrl-1</code> the user
+then presses <code>Alt-Tab</code> (in Windows) to switch from mmj2 to
+the browser, and then presses <code>Ctrl-R</code> to Refresh the
+display with the updated html file. <br>
+<br>
+<big style="font-weight: bold;"><big>NOTE:</big></big> The <big
+ style="font-weight: bold;"><span style="font-style: italic;">default</span></big>
+RunParm values (coded into the program so you do not need to input any
+GMFF RunParms) write output html files to:<br>
+<br>
+<a href="mmj2jar/gmff/html/general.html"><big style="font-weight: bold;"><code>mmj2jar\gmff\html\general.html</code></big></a><br>
+<br>
+and <br>
+<br>
+<a href="mmj2jar/gmff/althtml/general.html"><big><code
+ style="font-weight: bold;">mmj2jar\gmff\althtml\general.html</code></big></a><br>
+<br>
+(<span style="font-style: italic;">You can change the GMFFExportParms
+RunParms so that instead of exporting to "general.html" the output goes
+to a file name composed of the theorem label plus the specified file
+type.</span>)<br>
+<br>
+<br>
+<img style="border: 5px solid ; width: 621px; height: 687px;"
+ alt="GMFF Overview" title="GMFF Overview" src="GMFF.jpg"><br>
+<br>
+The design of the Proof Worksheet webpages is highly minimalist. The
+only hyperlink cross-reference is on the theorem label, "syl"; this
+link is used to switch back and forth between the <code>.gif</code>
+and Unicode web pages.Any Proof Worksheet which is reasonably similar
+to a real Proof Worksheet will be rendered -- the main requirement is a
+valid Proof Worksheet header from which a theorem label can be
+extracted. Formulas need not be parseable. GMFF will attempt to typeset
+all of the formula symbols in the Proof Worksheet proof steps, and
+anything which is not typeset will be rendered to html in a monospace
+font, maintaining the original line breaks and indentations as much as
+possible...<br>
+<br>
+The indentation alignments of derivation proof steps spanning more than
+one line are imperfect. This is caused by <br>
+<ol>
+  <li>variable-length images/characters; mmj2 aligns formulas using
+fixed ("monospaced") fonts.<br>
+  </li>
+  <li>many Metamath symbols employ more than one character (e.g. "<code>-&gt;</code>")
+but
+these
+are
+shown
+in
+the
+Metamath
+Proof
+Explorer
+as one character
+symbols; </li>
+  <li>Metamath formulas require at least one Space character between
+Metamath symbols, but the intervening Spaces are omitted in the
+Metamath Proof Explorer web page displays.</li>
+</ol>
+One other thing to notice: the "<code>\models</code>" subfolder inside "<code>\gmff"</code>
+The <code>\models</code>
+folder contain html-fragment files whose names are known to the
+mmj2 program and are used to generate the exported html statements.
+This will reduce the need to modify the mmj2 Java code in the future
+and will enable customization of the html statements without modifying
+mmj2. I envision our first webpage "design" to be Model A. If
+alternative versions of the webpages are needed in the future we can
+create Model B, C, etc., and still leave Model A intact (I would set up
+a RunParm to designate the desired Model.)<br>
+<br>
+See also:<br>
+<br>
+<a href="GMFFRunParms.txt">GMFF RunParms</a><br>
+<br>
+and<br>
+<br>
+<a href="GMFFFolders.txt">GMFF Folders</a><br>
+<br>
+and<br>
+<br>
+<a href="GMFFModels.txt">GMFF Models</a><br>
+<br>
+and <br>
+<br>
+<a href="SampleRunParms.txt">SampleRunParms.txt<br>
+</a><br>
+<br>
+<br>
+<br>
+<br>
+<br>
+</body>
+</html>

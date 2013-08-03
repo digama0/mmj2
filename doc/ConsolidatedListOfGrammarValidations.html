@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta content="text/html; charset=ISO-8859-1" http-equiv="content-type"><title>ConsolidatedListOfGrammarValidations</title></head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);" alink="#000088" link="#0000ff" vlink="#ff0000"><big><span style="font-weight: bold;">Consolidated List of Grammar Validations</span></big><br>
+<br>
+<br>
+<span style="font-weight: bold;">A.&nbsp;&nbsp;&nbsp; Phase I Errors that halt further grammatical processing:</span><br>
+<ol>
+  <li>Input Provable Logic Statement Type Code (i.e. "<code>|-</code>"'s) grammar parameter does not match any defined Constant.<br>
+  </li>
+  <li>Duplicate input Provable Logic Statement Type Code grammar parameters.<br>
+</li><li>Variable Hypothesis defined with Provable Logic Statement Type Code<code></code>.
+Disallowing these "Meta-Metamathematical" variables appears,
+unfortunately, to be necessary to prevent Type Conversion Rules from/to
+Provable Logic Statement Type Codes and non-Provable Logic Statement
+Type Codes, not to mention the problems associated with somehow
+defining "Syntax Axioms" for the "|-" Type Code. This really goes to
+the heart of the difference between Grammatical and Proof parse trees.
+Which is not to say the Meta-metamathematical logic cannot be done, but
+that the grammars cannot be mixed -- at least, not with this algorithm.
+If desired, a Meta-metamathematical Provable Logic Statement Type code,
+such as "||-", instead of "|-", but still, the two could not be mixed
+in the same Metamath database while also using variables for "|-" and
+treating "|-" as a Provable Logic Statement Type code. <br>
+</li><li>A maximum of one Provable Logic Statement Type Codes may be
+used (to simplify things a little...the code is in there for multiples
+but only one input parameter value is allowed, at this time.)<br>
+  </li>
+  <li>A
+maximum of one Logical Statement Type Code may be used (to simplify
+things a little...the code is in there for multiples but only one input
+parameter value is allowed, at this time.)</li>
+
+
+  <li>Input Logical Type Code (i.e. "<code>wff</code>") grammar parameter does not match any defined Constant.<br>
+</li>
+  <li>Duplicate input Logical Type Codes parameters. <br>
+</li>
+  <li>A Logical Type Code duplicates a Provable Logic Statement Type Code, either one of
+the input Provable Logic Statement Type Codes or, if none were given, then the default
+Type Code ("|-").</li><li>NOTE:
+In theory, there may be no Variable Hypotheses defined for a Logical
+Type Code. This would be the case if there were other Type Codes
+convertible into a Logical Type Code; thus, there could be "wffn" and
+"wffx" that convert to "wff". This is not automatically an error even
+though it contradicts normal Metamath practice.<br>
+  </li>
+
+  <li>Syntax Axiom Expression is a duplicate of a previous GrammarRule
+Expression. This would mean that the entire Syntax Axiom would be
+dropped from the Grammar and would have no effect, which is clearly a significant, reportable error.</li>
+  <li>Syntax
+Axiom Expression -- or other Formula's expression -- contains a Constant that is used
+elsewhere as a&nbsp; Type Code, which includes the set of Variable Type
+Codes, Syntax Axiom Type Codes, Logic Statment Type Codes and Provable
+Logic Statement Type Codes. This restriction facilitates
+creation of a Context Free Grammar from the user's Metamath database by
+guaranteeing that the left hand of each "production rule" is not a
+"terminal". See <a href="http://en.wikipedia.org/wiki/Context-free_grammar">http://en.wikipedia.org/wiki/Context-free_grammar</a> &nbsp;&nbsp;&nbsp;&nbsp;  <br>
+  </li>
+  <li>Syntax Axiom has Disjoint Variable Restriction(s). Note: Syntax
+Axioms are, by definition, those Axioms with Type Code not equal to one
+of the Provable Logic Statement Type Codes (i.e. "|-"). Thus, either the Syntax Axiom
+has an error or the user needs to change the input Grammar Formual Type
+Code parameter.<br>
+  </li>
+  <li>Syntax Axiom has in-scope Logical Hypothesis.</li>
+  <li>Syntax Axiom contains more than one occurrence of the same variable.<br>
+  </li>
+  <li><span style="font-style: italic;">NOTE:
+#12 is still under debate -- Nulls Permitted Rules can also generate
+Constant Expressions that fit this pattern, and it also appears that
+the general problem of proving unambiguousness is way more involved
+than can be handled with just a few haphazard restrictions like this...)</span> Syntax Axiom Expression which contains only Constant Symbols (a
+Constant Syntax Axiom) has more than one Constant (i.e. 2) and at least
+one of those Constants appears in another Syntax Axiom. This
+restriction is added not because of theoretical considerations but
+because of the additional complexities these constructions bring --
+which are beyond what MMJ2 desires to accomodate at this time. Gnarly
+problems can result because Named Typed Constants have a mixture of
+properties: they are Constants and they substitute for Variables. See
+Example #5 in <a href="EssentialAmbiguityExamples.html">EssentialAmbiguityExamples.html</a><br>
+  </li></ol>
+<br>
+<br>
+
+<span style="font-weight: bold;">B.&nbsp;&nbsp;&nbsp; Phase II Errors that halt further grammatical processing:</span><br>
+
+<ol>
+  <li>Type
+Conversion Rule converts Provable Logic Statement Type Code to a
+non-Provable Logic Statement Type Code. Note that previous Validation
+Error #3, and the method of distinguishing Syntax Axioms from Logical
+Statement Axioms should preclude this situation from occuring without
+detection; in other words, another error should be reported before
+validation even gets to #13. <br>
+  </li>
+<li>Type Conversion Rule creates a loop, either direct or indirect. Example of direct is "<code>error1 $a wff ph $.</code>", which converts "<code>wff</code>" to "<code>wff</code>". An example of indirect is "<code>cv $a class x $.</code>" + "<code>error2 $a set A $</code>" which converts "<code>class</code>" to "<code>set</code>", but "<code>cv</code>" already converts "<code>set</code>" to "<code>class</code>", thus setting up a loop from "<code>class</code>" to "<code>class</code>" (and "<code>set</code>" to "<code>set</code>".)</li><li>A
+Notation Rule's Expression is a duplicate of another Grammar Rule's
+expression and the Type Code of the Notation Rule's "base" Syntax Axiom
+differs from the Grammar Rule's base Syntax Axiom's Type Code.
+Duplicate Expressions with different associated Type Codes is not a
+"redundancy" that can be simply ignored, as is the case with
+"overloading" (ex. "weq" and "wceq" in set.mm.) Each unique Expression
+must have a unique Type Code. If that is not the case then that means
+that error A.7 above wasn't invoked, and therefore, a Type Conversion
+Rule(s) or Nulls Permitted Rule(s) operated on a Syntax Axiom and
+generated an expression duplicating another Syntax Axiom's rule
+Expression where those two Syntax Axioms have different Type Codes --
+but at a more basic level it means that a given symbol sequence has
+more than one interpretation, and is inherently Ambiguous.</li>
+
+  <li><br>
+  </li>
+
+</ol>
+<br>
+<br>
+<br>
+<br>
+<span style="font-weight: bold;">Y. Consolidated List of Grammatical Validation WARNINGS (Informational Messages)</span><br>
+<br>
+<ol>
+  <li>The size of the set of Syntax Axiom Type Codes is not equal
+to the size of the set of Variable Hypothesis Type Codes. This is a
+"warning" that indicates that either a) there is a Variable Hypothesis
+Type Code that has no Syntax Defintion (and can therefore be
+defined-away as unnecessary -- like "set" in set.mm), or b) there is a
+Syntax Axiom with a Type Code that has no matching Variable Hypotheses,
+perhaps indicating that the file is incomplete or that the input
+parameters providing non-default Provable Logic Statement Type Codes
+and Logical Statement Type Codes are in error. <br>
+</li>
+  <li>GrammarRule is parseable using other Grammar Rules.
+This means that it is a composite or there is some sort of ambiguity in
+the grammar (???). Although it is a clear error, it does not "stop the
+show" and is reported as an "Info Message", a Warning in other words
+(this edit is distinct from the prohibition on duplicates, which is
+sacred, cannot be violated and is treated as a real "error"). Note: we
+also treat ambiguous non-grammar statements as "informational" /
+warnings, not hard errors.<br>
+  </li>
+  <li><br>
+  </li>
+
+</ol>
+
+<br><span style="font-weight: bold;">Z. Consolidated List of Other Validations (for future reference...)</span><br>
+<br>
+<ol>
+  <li>Theorem Statement ($p aka "Provable Assertion") has Type Code that does
+not match one of the user input Provable Logic Statement Codes. <span style="font-weight: bold;">WOOPS -- THIS
+SHOULD BE ALLOWED, FOR EXAMPLE,&nbsp; wel is provable as a _theorem_
+from wcel:&nbsp;&nbsp;&nbsp; wel-theorem $p wff x e. y $= vx cv vy cv wcel $.</span><br style="font-weight: bold;">
+</li>
+  
+  <li><br>
+</li>
+</ol>
+<br>
+<br>
+</body></html>

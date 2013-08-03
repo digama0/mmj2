@@ -1,0 +1,9 @@
+-C classes mmj\gmff
+-C classes mmj\lang 
+-C classes mmj\mmio 
+-C classes mmj\pa 
+-C classes mmj\svc
+-C classes mmj\tl
+-C classes mmj\tmff
+-C classes mmj\util 
+-C classes mmj\verify

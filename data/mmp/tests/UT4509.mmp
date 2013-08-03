@@ -1,0 +1,39 @@
+$( <MM> <PROOF_ASST> THEOREM=mulcnsr  LOC_AFTER=?
+
+* Multiplication of complex numbers in terms of signed reals.
+
+1::opex            
+2::opreq1          
+3::opreq1          
+4:3:opreq2d        
+5:2,4:opreqan12d   
+6::opreq1          
+7::opreq1          
+8:6,7:opreqan12rd  
+9:5,8:opeq12d      
+10::opreq2         
+11::opreq2         
+12:11:opreq2d      
+13:10,12:opreqan12d 
+14::opreq2         
+15::opreq2         
+16:14,15:opreqan12d 
+17:13,16:opeq12d   
+18:9,17:sylan9eq   
+19::df-mul         
+20::df-c           
+21:20:eleq2i       
+22::df-c           
+23:22:eleq2i       
+24:21,23:anbi12i   
+25:24:anbi1i       
+26:25:oprabbii     
+27:19,26:eqtr      
+qed:1,18,27:oprabval3 
+                   |- (  ( ( A e. R. /\ B e. R. ) /\ ( C e. R. /\ D e. R. ) )
+                      ->   ( <. A , B >. x. <. C , D >. )
+                         = <. ( ( A .R C ) +R ( -1R .R ( B .R D ) ) )
+                           ,  ( ( B .R C ) +R ( A .R D ) ) >. )
+
+$)
+

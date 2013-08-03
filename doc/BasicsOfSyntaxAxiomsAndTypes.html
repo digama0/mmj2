@@ -1,0 +1,296 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta content="text/html; charset=ISO-8859-1" http-equiv="content-type"><title>BasicsOfSyntaxAxiomsAndTypes</title></head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);" alink="#000088" link="#0000ff" vlink="#ff0000">
+<h3><big><span style="font-weight: bold;">BASICS OF SYNTAX AXIOMS and TYPES</span></big></h3>
+<h3><big><span style="font-weight: bold;"></span></big></h3>
+<big><span style="font-weight: bold;">(see also: <a href="SyntaxAxiomRulesAndConventions.html">SyntaxAxiomRulesAndConventions.html</a>)<br>
+<br>
+Q.</span></big> What are Metamath Syntax, Axioms and Definitions?<br>
+
+<br>
+
+<big><span style="font-weight: bold;">A.</span></big> <code>C:\metamath\metamath\mmcmds.c</code> uses the following conventions to categorize Metamath "axiom" statements (<code>$a</code>):<br>
+
+<br>
+
+<code><span style="font-family: monospace;">If first symbol of $a statement equals "|-"</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; If Label of $a statement begins with "ax-"</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; the statement is a Logical Axiom</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; Else (Label does not begin with "ax-"</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;  the $a statement is a Definition Axiom<br>
+&nbsp;&nbsp;&nbsp; End-If<br>
+Else (first symbol of $a statement not equal to "|-")<br>
+&nbsp;&nbsp;&nbsp; the $a statement is a Syntax Axiom<br>
+End-If <br>
+<br style="font-family: monospace;">
+</span></code>These are conventions not enforced by Metamath and are tailored for the set.mm database. <br>
+
+<br>
+
+<br>
+
+<big><span style="font-weight: bold;">Q.</span></big> What are Syntax Axioms?<br>
+
+<br>
+
+<big><span style="font-weight: bold;">A.</span></big> Syntax Axioms are
+the user-created Metamath axiom statements that define the "things", the
+subject matter, such as <code></code>wff's, sets and classes that are referred to in
+theorems, logical axioms and definition axioms. In essence, a Syntax
+Axiom is a statement that describes how to construct a syntactically
+valid statement about a noun by combining symbols that stand for nouns,
+operators and punctuation. Thus, a Syntax Axiom describes a symbol
+sequence -- or, <span style="font-style: italic;">symbol pattern</span>
+-- that identifies a "thing" (an object) of the given type (the type is
+given in the first symbol of the Syntax Axiom statement).<br>
+
+<br>
+
+For example, in <code>set.mm</code>, the theorems, logical axioms and definition axioms are statements <span style="font-style: italic;">about</span> certain things, namely <span style="font-weight: bold;">wff</span>'s, <span style="font-weight: bold;">set</span>s, and <span style="font-weight: bold;">class</span>es.
+Set.mm defines "<code>wff</code>", "<code>set</code>", and "<code>class</code>" as Constants, and these
+constants are coded as the first symbol on Syntax Axiom statements;
+thus, assigning a Type to the symbol sequence that follows in the
+statement. Logical statements that discuss the truth or provability of certain symbol sequences are coded with Type code "<code>|-</code>". <br>
+
+<br>
+
+<big><span style="font-weight: bold;">Q.</span></big> What is the difference between Syntax Axioms, Named Typed-Constant Axioms, Type Conversion Axioms, and Nulls-Permitted Axioms? <br>
+
+<br>
+
+<big><span style="font-weight: bold;">A.</span></big> Named
+Typed Constant Axioms, Type Conversion Axioms and Nulls-Permitted are a
+subset of "Syntax Axioms", per se. However, they may be viewed as
+idioms, or commonly used constructions that are useful and distinctive
+enough to warrant special treatment in processing, especially
+grammatical parsing. See <a href="ExampleMetamathDatabase.html">ExampleMetamathDatabase.html</a>&nbsp; for examples. <br>
+
+<br>
+
+Named Typed String Axioms are perhaps not useful and have not been seen
+in "real" Metamath databases, but are named herein for the sake of
+consistency as part of the class of Syntax Axioms that have no
+Variables, consisting solely of Constants:<br>
+
+<br>
+
+<table style="text-align: left; width: 716px; height: 172px;" border="5" cellpadding="2" cellspacing="2">
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; font-weight: bold;"><big><code>Formula<br>
+Length<br>
+      </code></big></td>
+      <td style="vertical-align: top; font-weight: bold;"><big><code>Name of <br>
+Syntax Axiom<br>
+Subset<br>
+      </code></big></td>
+      <td style="vertical-align: top; font-weight: bold;"><big><code>Example<br>
+      </code></big></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>1<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>Nulls Permitted Axiom<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>nullWffOk $a wff&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp; $. <br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>2<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>Named Typed Constant Axiom<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>c0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $a class (/)&nbsp;&nbsp; $.<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>&gt; 2<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>Named Typed String Axiom<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>cEmptySet $a set&nbsp;&nbsp; { }&nbsp;&nbsp; $.<br>
+      </code></td>
+    </tr>
+  </tbody>
+</table>
+
+<br>
+
+<br>
+
+<span style="font-weight: bold;">Note</span>: It is allowed to use a
+Constant in a Syntax Axiom that is named elsewhere by a Named
+Typed-Constant Axiom. An example of this in set.mm is the Constant "/".
+Consider valid usage:<br>
+
+<code><br>
+$c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / ] [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp;&nbsp;&nbsp; $.<br>
+$v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x ph A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp;&nbsp; $.<br>
+cA&nbsp;&nbsp; $f class&nbsp; A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; $.<br>
+vx&nbsp;&nbsp; $f set&nbsp;&nbsp;&nbsp; x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; $.<br>
+wph&nbsp; $f wff&nbsp;&nbsp;&nbsp; ph&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; $.<br>
+cdiv $a class&nbsp; / &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; $.<br>
+wsbc $a wff&nbsp;&nbsp;&nbsp; [ A / x ] ph $.<br>
+wsb&nbsp; $a wff&nbsp;&nbsp;&nbsp; [ y / x ] ph $.<br>
+&nbsp;</code><br>
+
+In "wsbc" and "wsb" the Constant "/" is just punctuation, an actual
+Constant, but in "cdiv" the Constant "/" is assigned a name and a type:
+"cdiv" and "class". This means that the Constant "/" can be used
+anyplace that a class variable is expected, but nevertheless, in "wsbc"
+and "wsb" it is not a class, it is just a slash mark! That can be
+confusing, I think, and <span style="text-decoration: underline;">for
+the sake of clarity it is recommended that Constants named by Named
+Typed Constant Axioms not be used elsewhere in any other Syntax Axioms,
+at all.</span><br>
+
+&nbsp;<br>
+&nbsp;
+<br>
+<hr style="width: 100%; height: 2px;"><a href="ExampleMetamathDatabase.html">ExampleMetamathDatabase.html</a><br>
+
+<hr style="width: 100%; height: 2px;"><a href="ExampleMetamathGrammar.html"><span style="font-weight: bold;"></span>ExampleMetamathGrammar.html</a><br>
+
+<hr style="width: 100%; height: 2px;"><code style="font-family: monospace;"><br>
+</code><big><span style="font-weight: bold;">Q.</span></big> How do"Types" relate to Axioms, Theorems and Hypotheses?<br>
+
+
+<br>
+
+
+<big><span style="font-weight: bold;">A.</span></big> Metamath formulas
+are required to be at least one symbol in length. The first symbol
+of a Formula must be a Constant -- which is the Type (code) of the
+formula. The
+Type code provides a context for the remaining symbols in the formula
+and says, "These symbols make up a XXX" where "XXX" is the Type code.
+For example, in<br>
+
+<br>
+
+<code>wn $a wff -. ph $. </code><br>
+
+<br>
+
+the first symbol of the formula is "<code>wff</code>" (following the "<code>$a</code>" symbol), and identifies the statement labelled "<code>wn</code>" as being a statement about <code>wff</code>'s. In English the wn statement says "the expression 'not phi' is a <code>wff</code>".&nbsp;
+<br>
+
+<br>
+<span style="font-weight: bold;">
+Note: hereafter I refer to a statement's Formula's symbols that follow the Type code as the&nbsp;
+"Expression" and use the word "Formula" to refer to the entire symbol
+sequence including the type code.</span> Thus,&nbsp; for statement <code>wn</code><br>
+
+<ul>
+<li>"<code>wff -. ph</code>" is the formula,&nbsp; and </li><li>"<code>-. ph</code>" is the expression in the <code>wn</code> statement. </li>
+</ul>
+
+
+<br>
+
+In Metamath, the only way that new formulas can be deduced or generated from
+existing formulas is by substitution of new Expressions for existing
+Variables. For example: <br>
+
+<ul>
+<li>given formula "<code>wff -. ph</code>" </li><li>substitute "<code>( ph -&gt; ps )</code>" into the formula, replacing variable <code>ph</code> </li><li>to create the new formula "<code>wff -. ( ph -&gt; ps )</code>".
+  </li>
+</ul>
+
+The key point here is that only the Variables in an existing formula
+can be replaced with new Expressions; the Type code in an existing
+formula can never be changed, no matter what.&nbsp; As substitutions are performed by Metamath (in the Proof Engine),
+strict Type code checking is done. A substitution Expression must have
+the same Type code as the Variable it is replacing. (I.E. a <code>wff</code> variable can only be replaced by a <code>wff</code>
+expression.)<br>
+
+<br>
+
+Thus, a Theorem with Type code "|-", for example, can only be deduced
+from Logical Axioms, Definitions and Logical Hypotheses that
+have a matching "|-" Type code. No possible substitution can generate a
+Theorem's Formula from a Syntax Axiom's Formula, assuming the Type
+codes are different.<br>
+
+<br>
+
+<span style="font-style: italic;">Note: Metamath does not prohibit
+Syntax Axioms from having the same Type code used on Theorems, Logical
+Axioms, etc. But this usage is not typically seen. Suppose
+the user has defined a Logical statement type code "<code>|-</code>". If the user
+then created Variables and Syntax Axioms with Type code "<code>|-</code>", the
+resulting Logical Axioms, Theorems and Logical Hypotheses would be called
+"metalogical" (logic about logic). As a practical matter, metalogical theorems can be
+proved in Metamath but the "metalogician" would quite probably use
+different Type codes for metalogical variables Types and Theorem Types. (In
+MMJ2, a validation error is generated if the user createsVariable and Syntax
+Axiom type codes that are equal to Logical Axiom, Theorem or Logical Hypothesis
+Type codes.)</span><br>
+
+<br>
+
+<big><span style="font-weight: bold;">Q.</span></big> What Are "Derived Type Codes"?<br>
+
+<br>
+
+<big><span style="font-weight: bold;">A.</span></big> In standard Metamath practice (<code>miu.mm</code> is an anomaly), the Expression part of a Formula in
+a Theorem, Logical Hypothesis, Logical Axiom or Definition must be
+"parseable" into a composition of Syntax Axioms, and thus, will have
+a <span style="text-decoration: underline;">derived Type code</span> that matches one of the Syntax Axiom Type codes.
+Usually this derived Type code is "<code>wff</code>"&nbsp;
+(by convention, "wff" is commonly used "in the logic biz" as an
+acronym for "well-formed formula" and refers to a logical formula that may be evaluated as True or False.) For
+example, in Theorem <code>a1i </code>the <code>$p</code> statement "<code>a1i $p |- ( ps -&gt; ph ) $.</code>" has a Formula with Type code "<code>|-</code>" and Expression "<code>( ps -&gt; ph )</code>" which is parseable using Syntax Axiom wi, which has Type code "<code>wff</code>". So, essentially, the <code>a1i</code> Formula is saying in English, 'The wff, "<code>( ps -&gt; ph )</code>" is provable.'<br>
+
+<br>
+
+Metamath does not <span style="font-style: italic;">require</span> that logical formulas be parseable into
+Syntax Axioms and thus have deriveable Type codes. In fact, the sample
+Metamath database <code>miu.mm</code>
+can be coded without a complete
+set of Syntax Axioms. The problem with this idea is that Metamath
+Theorems can be proven without Syntax Axioms, but essentially then, the
+subject matter of the Theorems is not well
+defined -- it is thus, just a sequence of symbols -- and so we may be
+proving something but not be entirely sure what the statement is <span style="font-style: italic;">about</span>.<br>
+
+<br>
+<big><span style="font-weight: bold;">Q.</span></big> What Are "Syntax Proofs"?<br>
+
+
+<br>
+
+
+<big><span style="font-weight: bold;">A.</span></big> A "Syntax Proof"
+is a bit of Metamath trickery that allows formulas to be written with
+operator overloading without using operator overloading in Metamath
+proofs. They were invented by Norman Megill as a way to eliminate any
+possible grammatical ambiguities within set.mm after it was discovered
+that the Metamath.exe Proof Assistant was parsing certain occurrences
+of "<code>x = y</code>" as "<code>vx cv vy cv wceq</code>", depending upon the needs of the theorem being proved while the mmj2 Proof Assistant was parsing the same sub-expression as "<code>vx vy weq</code>". The mmj2 Proof Assistant By changing the definition of "<code>weq</code>" from Axiom to Theorem, the conflict was resolved! Here is the old definition of "<code>weq</code>"<br>
+<br>
+<code>&nbsp;&nbsp;&nbsp; weq $a wff x = y $.</code><br>
+<br>
+And the new definition:<br>
+<br>
+<code>&nbsp;&nbsp;&nbsp; weq $p wff x = y $= vx cv vy cv wceq $.</code><br>
+<br>
+Thus, "<code>weq</code>" in set.mm is now relegated to "syntactic sugar" that disppears internally -- every occurrence of "<code>x = y</code>", or "<code>A = B</code>" in Metamath proof derivation steps actually refers to <span style="font-style: italic;">class</span> equality now, there is no distinct <span style="font-style: italic;">set</span> equality operator. Analogous definitions are made for "member of" and other overloaded operator definitions.<br>
+<br>
+Note: this may seem confusing, especially if you are new to Metamath.
+The reason that this works at all is that in Metamath the syntax of a
+.mm database/file is built using the axiom declaration statement <code>$a</code>,
+which is the same statement used for logical axioms. This is part of
+the beauty and elegance of Metamath, its "simplicity engineering". In
+practice what it also means is that an expression's Syntax Tree -- the
+output of the Grammatical Parser -- can be converted to the same RPN
+format used by Metamath proofs -- and then the syntax RPN's can be
+input into the Metamath Proof Verification algorithm, which will then
+re-generate the original expression! In mmj2, in fact, the "<code>VerifyParse,*</code>" RunParm uses this property to validate the output of the Grammatical Parser! When "<code>VerifyParse,*</code>" is input, every Syntax Tree generated by the "<code>Parse,*</code>"
+RunParm command is converted to an RPN, fed into the ProofVerify
+program, the output is compared to the original expression, and any
+differences are reported (which would indicate a rather severe bug in
+mmj2! -- so it would be wasteful to run "<code>VerifyParse,*</code>" all the time, but if your computer is fast and you are a person who wears belt, suspenders <span style="font-style: italic;">and</span> velcro to keep your trousers up, then go ahead :)<br>
+<br>
+<big><span style="font-weight: bold;"></span></big></body></html>

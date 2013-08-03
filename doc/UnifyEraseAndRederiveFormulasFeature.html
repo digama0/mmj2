@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>Unify + Erase And Rederive Formulas Feature</title>
+</head>
+<body>
+<big><big><span style="font-weight: bold;">"Unify + Erase And Rederive
+Formulas" Feature<br>
+<br>
+</span></big></big><big><span style="font-weight: bold;">See also:<br>
+</span></big><a href="file:///C:/mmj2/doc/PAUserGuide/Start.html">Proof
+Assistant User Guide</a><br>
+<a href="file:///C:/mmj2/doc/ProofAssistantGUIQuickHOWTO.html">ProofAssistantGUIQuickHOWTO.html</a><br>
+<a href="file:///C:/mmj2/doc/ProofAssistantGUIDetailedInfo.html">ProofAssistantGUIDetailedInfo.html</a><br>
+<a href="file:///C:/mmj2/doc/ProofAssistantGUIDeriveFeature.html">ProofAssistantGUIDeriveFeature.html</a><br>
+<a href="file:///C:/mmj2/doc/StepUnifier.html">StepUnifier.html</a><br>
+<a href="file:///C:/mmj2/mmj2jar/PATutorial/PageLocalRef.mmp">PageLocalRef.mmp</a><br>
+<a href="file:///C:/mmj2/doc/WorkVariables.html">WorkVariables.html</a><br>
+<a href="StepSelectorSearch.html">StepSelectorSearch.html</a><br>
+<a href="BottomUpProving-ByNormMegill.html">BottomUpProving-ByNormMegill.html</a><br>
+<hr style="width: 100%; height: 2px;"><br>
+<h3 style="text-decoration: underline;">Function</h3>
+The function of the "Unify+Erase And Rederive Formulas" feature
+(available on the Proof Assistant GUI Unify menu) is fairly simple: it
+preprocesses the Proof Worksheet, before parsing and unification, to
+erase formulas on Derivation proof steps -- except the 'qed' step --
+which have a non-blank Ref field. Erasing the formulas triggers the <a
+ href="ProofAssistantGUIDeriveFeature.html">"Derive" feature</a> of the
+mmj2 Proof Assistant GUI, which re-generates the formulas using the
+theorem's hypotheses, the 'qed' step, and the contents of the
+Step:Hyp:Ref fields on the Derivation proof steps. This is a fairly
+drastic option for a user to choose, but pressing Ctrl-Z twice, to
+Edit/Undo the results of the erasure and unification will restore the
+Proof Worksheet to its previous state.<br>
+<br>
+To properly explain why someone would wish to perform this function,
+the best source is the inventor, Norm Megill. What follows is stolen
+from the Asteroid Meta wiki <code>mmj2ProofAssistantFeedback.html</code>
+webpage.<br>
+<br>
+<hr style="width: 100%; height: 2px;"><span
+ style="font-weight: bold; text-decoration: underline;"><br>
+Feedback: unification lockups</span>
+<p>(This is a general mmj2 issue, not related specifically to the beta.)</p>
+<p>Suppose we are developing a proof and have gotten to this point:</p>
+<pre style="color: rgb(0, 0, 153); font-weight: bold;"><code> $( &lt;MM&gt; &lt;PROOF_ASST&gt; THEOREM=xxx  LOC_AFTER=?<br> 1::ax-1            |- ( &amp;W1 -&gt; ( &amp;W2 -&gt; &amp;W1 ) )<br> 2::ax-2            |- (  ( &amp;W7 -&gt; ( &amp;W4 -&gt; &amp;W7 ) )<br>                       -&gt; ( ( &amp;W7 -&gt; &amp;W4 ) -&gt; ( &amp;W7 -&gt; &amp;W7 ) ) )<br> 3::ax-1            |- ( &amp;W7 -&gt; ( &amp;W4 -&gt; &amp;W7 ) )<br> 4:3,2:ax-mp        |- ( ( &amp;W7 -&gt; &amp;W4 ) -&gt; ( &amp;W7 -&gt; &amp;W7 ) )<br> 5::ax-2            |- (  ( ( &amp;W7 -&gt; &amp;W4 ) -&gt; ( &amp;W7 -&gt; &amp;W7 ) )<br>                       -&gt; (  ( ( &amp;W7 -&gt; &amp;W4 ) -&gt; &amp;W7 )<br>                          -&gt; ( ( &amp;W7 -&gt; &amp;W4 ) -&gt; &amp;W7 ) ) )<br> 6:4,5:ax-mp        |- (  ( ( &amp;W7 -&gt; &amp;W4 ) -&gt; &amp;W7 )<br>                       -&gt; ( ( &amp;W7 -&gt; &amp;W4 ) -&gt; &amp;W7 ) )<br> qed:?: |- ( ( ph -&gt; ps ) -&gt; ( ( ch -&gt; ph ) -&gt; ( ch -&gt; ps ) ) )<br> $)</code></pre>
+<p>Then
+we realize, oops, step 4 should be "4:2,3:ax-mp" and not "4:3,2:ax-mp".
+But after we make this correction, the proof is "stuck" because the
+work variables now have the wrong patterns.</p>
+<p>If we ctrl-z all the way back, which could have been a long time
+ago, we will lose all the work we did in the meantime.</p>
+<p>On the other hand, if we completely erase the proof's formulas by
+hand:</p>
+<pre style="font-weight: bold; color: rgb(0, 0, 153);"> $( &lt;MM&gt; &lt;PROOF_ASST&gt; THEOREM=xxx  LOC_AFTER=?<br> 1::ax-1<br> 2::ax-2<br> 3::ax-1<br> 4:2,3:ax-mp<br> 5::ax-2<br> 6:4,5:ax-mp<br> qed:?: |- ( ( ph -&gt; ps ) -&gt; ( ( ch -&gt; ph ) -&gt; ( ch -&gt; ps ) ) )<br> $)</pre>
+<p>then press ctrl-u, everything is magically corrected to exactly what
+I want to see:</p>
+<pre style="font-weight: bold; color: rgb(0, 0, 153);"> $( &lt;MM&gt; &lt;PROOF_ASST&gt; THEOREM=xxx  LOC_AFTER=?<br> 1::ax-1            |- ( &amp;W1 -&gt; ( &amp;W2 -&gt; &amp;W1 ) )<br> 2::ax-2            |- (  ( &amp;W3 -&gt; ( &amp;W4 -&gt; &amp;W5 ) )<br>                       -&gt; ( ( &amp;W3 -&gt; &amp;W4 ) -&gt; ( &amp;W3 -&gt; &amp;W5 ) ) )<br> 3::ax-1            |- (  (  ( &amp;W3 -&gt; ( &amp;W4 -&gt; &amp;W5 ) )<br>                          -&gt; ( ( &amp;W3 -&gt; &amp;W4 ) -&gt; ( &amp;W3 -&gt; &amp;W5 ) ) )<br>                       -&gt; (  &amp;W6<br>                          -&gt; (  ( &amp;W3 -&gt; ( &amp;W4 -&gt; &amp;W5 ) )<br>                             -&gt; ( ( &amp;W3 -&gt; &amp;W4 ) -&gt; ( &amp;W3 -&gt; &amp;W5 ) ) ) ) )<br> 4:2,3:ax-mp        |- (  &amp;W6<br>                       -&gt; (  ( &amp;W3 -&gt; ( &amp;W4 -&gt; &amp;W5 ) )<br>                          -&gt; ( ( &amp;W3 -&gt; &amp;W4 ) -&gt; ( &amp;W3 -&gt; &amp;W5 ) ) ) )<br> 5::ax-2            |- (  (  &amp;W6<br>                          -&gt; (  ( &amp;W3 -&gt; ( &amp;W4 -&gt; &amp;W5 ) )<br>                             -&gt; ( ( &amp;W3 -&gt; &amp;W4 ) -&gt; ( &amp;W3 -&gt; &amp;W5 ) ) ) )<br>                       -&gt; (  ( &amp;W6 -&gt; ( &amp;W3 -&gt; ( &amp;W4 -&gt; &amp;W5 ) ) )<br>                          -&gt; ( &amp;W6 -&gt; ( ( &amp;W3 -&gt; &amp;W4 ) -&gt; ( &amp;W3 -&gt; &amp;W5 ) ) ) ) )<br> 6:4,5:ax-mp        |- (  ( &amp;W6 -&gt; ( &amp;W3 -&gt; ( &amp;W4 -&gt; &amp;W5 ) ) )<br>                       -&gt; ( &amp;W6 -&gt; ( ( &amp;W3 -&gt; &amp;W4 ) -&gt; ( &amp;W3 -&gt; &amp;W5 ) ) ) )<br> qed:?: |- ( ( ph -&gt; ps ) -&gt; ( ( ch -&gt; ph ) -&gt; ( ch -&gt; ps ) ) )<br> $)</pre>
+<p>This
+shows that mmj2 inherently has the ability to recover from such
+mistakes. However, erasing all the proof's formulas to recover from
+such mistakes is tedious to do by hand. Annoying even. :)</p>
+<p>I would
+be happier if there were an option that simply erases the entire wff
+content. Or at least resets work variables back to their "most general"
+state. This will give me the freedom to experiment without fear that an
+accidental bad unification will lock up the proof.<br>
+</p>
+<hr style="width: 100%; height: 2px;">
+</body>
+</html>

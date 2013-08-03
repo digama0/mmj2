@@ -1,0 +1,23 @@
+LoadFile,setFirst100.mm
+VerifyProof,*
+Parse,*
+ProofAsstUnifySearchExclude,biigb,xxxid,dummylink,id1,idi,idi1,idi2
+******************************************************
+* GMFF Default Parameter RunParms  
+******************************************************
+*GMFFUserExportChoice,ALL
+*GMFFExportParms,althtml,ON,althtmldef,GMFF\althtml,.html,GMFF\althtml\models,A,ISO-8859-1,general
+*GMFFExportParms,html,ON,htmldef,GMFF\html,.html,GMFF\html\models,A,ISO-8859-1,general
+*GMFFUserTextEscapes,html,32,"&nbsp;",34,"&quot;",38,"&amp;",60,"&lt;",62,"&gt;"
+*GMFFUserTextEscapes,althtml,32,"&nbsp;",34,"&quot;",38,"&amp;",60,"&lt;",62,"&gt;"
+******************************************************
+* GMFF Command RunParms 
+******************************************************
+*GMFFInitialize,PrintTypesettingDefinitions
+*GMFFExportFromFolder,myproofs,syl,.mmp,999999,AppendFileName
+*GMFFExportTheorem,syl,999999,AppendFileName
+*GMFFParseMetamathTypesetComment,althtmldef,mydirectory,mytypesetdefs.mm,PRINT
+******************************************************
+RunProofAsstGUI
+ 
+

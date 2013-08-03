@@ -1,0 +1,268 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta content="text/html; charset=ISO-8859-1" http-equiv="content-type"><title>CreatingGrammarRulesFromSyntaxAxioms.html</title></head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);" alink="#000088" link="#0000ff" vlink="#ff0000">
+<h3>CreatingGrammarRulesFromSyntaxAxioms.html</h3>
+Note: Duplicate Grammar Rule Expressions are not stored and do not
+become part of the user's grammar (thus, one source of Ambiguity is
+eliminated.) Because Syntax Axioms are processed in order of their appearance
+in the user's Metamath database, a natural order of precedence is established (i.e. in <code>set.mm</code> <code>weq</code> occurs prior to <code>wceq</code> therefore "<code>set = set</code>" is parsed to <code>weq</code> rather than the type-converted form of <code>wceq</code>.)<br>
+
+<br>
+
+Multiple Grammar Rules may be generated from a Syntax Axiom if any of
+the Variable Type codes in the Expression are the object of&nbsp; Type
+Conversion Syntax Axioms or Nulls Permitted Syntax Axioms. By "object
+of" it is meant that the Type code of a Type Conversion or Nulls
+Permitted Syntax Axiom is equal to the Type code of the Variable in the
+Syntax Axiom being processed; directly or indirect relationships are possible, involving chains of Type Conversion
+Axioms and Nulls Permitted Syntax Axioms.)&nbsp; <br>
+<br>
+In theory (however rarely in practice), a Nulls Permitted Syntax Axiom
+can effectively "generate" Nulls Permitted and Type Conversion "rules"
+(see Examples in 2 below). Therefore, in the discussion below, we will
+refer to "Nulls Permitted Rules" and "Type Conversion Rules" instead of
+referring to Nulls Permitted Syntax Axioms and Type Conversion Syntax
+Axioms.<br>
+
+<br>
+
+By convention, all of the processing below is performed in order of database appearance. Thus:<br>
+
+<ul>
+<li>variables are converted/nulled in order of a variable's appearance in the database;</li><li>if there are multiple chains of Type Conversion Rules for a Variable's
+Type code, the chains are processed in the order that they were
+created; and</li><li>since a variable can only be "nulled out" once, regardless of how
+many Type Conversion Rules and Nulls Permitted Rules can be brought
+to bear on a single Type code, the first Nulls Permitted Rule for a Type
+code -- direct or indirect -- is used and the rest
+are ignored.</li>
+</ul>
+
+<br>
+<br style="font-weight: bold;">
+There are 4 possible cases here related to the presence or absence of
+Type Conversion and/or Nulls Permitted Rules in the user's
+Metamath database/file: 1) No Type Conversions or Nulls
+Permitted Rules present; 2) Nulls Permitted Rules present;
+3) Type Conversion Rules present; and 4) both present. <br>
+<br>
+However, to simplify the explanation that follows, we will describe a 3
+step process whereby in Step 1, a Syntax Axiom is converted into a
+GrammarRule without using any Nulls Permitted or Type Conversion Syntax
+Axioms. Then, application of Nulls Permitted Rules and Type Conversion Rules are
+described separately -- and are defined in terms of operating on
+existing GrammarRules. Thus, the GrammarRule from Step 1 is considered
+input to Step 2, and the GrammarRules from Steps 1 and 2 are considered
+input to Step 3. In each case, if the generated GrammarRule duplicates
+an already existing GrammarRule it is dropped from further
+consideration and processing. (The reason for describing the process
+this way is that addition of another Nulls Permitted Rule or Type Conversion
+Rule to an existing set of Syntax Axioms and Grammar Rules
+requires re-processing of all existing GrammarRules to <span style="font-style: italic;">possibly</span>
+generate additional GrammarRules!)<br>
+<br><span style="font-weight: bold;">
+1) No Type Conversion Rules or Nulls Permitted Rules involved.</span><br>
+<br>A
+Syntax Axiom Formula is converted to a GrammarRule formula by converting each Symbol in the Formula to a
+Constant where the first Symbol is the replacement Type and the remaining Symbols form the GrammarRule's pattern:<br>
+<code><br>
+&nbsp;&nbsp;&nbsp; For each Symbol(i) in Syntax Axiom Formula:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If Symbol(i) is a Constant, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Grammar Rule's Constant(i) = Symbol(i);<br>
+&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; Else (the Symbol must be a Variable),<br>
+&nbsp;&nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; Grammar Rule's Constant(i) = Symbol(i)'s Type Code;<br>
+</code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; End-if;<br>
+<br>
+The Expression portion of the resulting GrammarRule formula is stored
+in a Notation Tree whose root is connected to the Constant of the
+Syntax Axiom's Type code -- unless the GrammarRule Expression is a
+duplicate. Then, a GrammarRule object is attached at the end, as a leaf
+node, and is itself "hooked" up with a reference back to the original
+Syntax Axiom. There are no Type Conversions or Nulls Permitted to worry
+about, so the GrammarRule has no stored transformation rules for the
+variables of the formula (see <a href="ExampleMetamathGrammar.html">ExampleMetamathGrammar.html</a>&nbsp; ). <br>
+<br>
+If the GrammarRule Expression generated by this process is a duplicate
+then no subsequent GrammarRules are generated by the Nulls Permitted Rule
+and Type Conversion Rule processes described below. The reason is that all
+possible GrammarRules resulting from existing Nulls Permitted Rules and Type
+Conversion Rules will have already been generated -- no
+additional variations are possible from a duplicate (it's in there
+already...)<br><span style="font-style: italic;"></span><br>
+<span style="font-weight: bold;"><br>
+2) Nulls Permitted Rules present</span><br>
+<br>
+A Syntax Axiom generates 0 or 1 unique, non-duplicate GrammarRule
+Expressions as described above in #1. If the resulting GrammarRule --
+we'll call it "<code>Rx</code>" for the moment -- is unique and non-duplicative of any previously generated GrammarRule Expressions, then if <code>Rx</code> contains "<code>M</code>" Type code Constants for which Nulls are Permitted, then <code>0</code> to <code>N</code> additional unique, non-duplicate GrammarRules are generated -- we'll call these "<code>Rxn1</code>", "<code>Rxn2</code>", etc. Then:<br>
+<ul>
+  <li><code>N = (2 ** M) - 1</code>. </li>
+</ul>
+Each of <code>Rxn1</code>, <code>Rxn2</code>, etc. is generated by
+applying a Nulls Permitted Rule to one or more of the Type codes in
+the original GrammarRule Expression, and there are <code>N</code> possible variations. <br>
+<br>
+<span style="text-decoration: underline;">Example A)</span> given GrammarRule Expression "<code>set * set</code>" where "<code>set</code>" is a Type code and "<code>*</code>" is a Constant, if&nbsp; Type code "<code>set</code>" has a Nulls Permitted Rule, then <code>N = (2 ** 2) - 1 = 3</code>, meaning that application of Nulls Permitted Rule to the GrammarRule "<code>set * set</code>" will generate 3 additional GrammarRules (which may or may not be duplicates of existing GrammarRules):<br>
+<br>
+<ul>
+  <li>"<code>set * set</code>" -- original GrammarRule;</li>
+  <li>"<code>set *</code>" -- derived GrammarRule 1, with the last <code>set</code> null;<br>
+  </li>
+  <li>"<code>* set</code>" -- derived GrammarRule 2, with the first <code>set</code> null;<br>
+  </li>
+  <li>"<code>*</code>" -- derived GrammarRule 3, with both <code>set</code>s
+null (note that this Expression is a Constant! Nulls Permitted Rules
+can also generate, surprisingly, Type Conversion Rules and other
+Nulls Permitted Rules...)<br>
+  </li>
+</ul>
+<span style="text-decoration: underline;">Example B)</span> given GrammarRule Expression "<code>A B</code>" derived from a Syntax Axiom with Type code <code>A</code>, if Type <code>B</code> has Nulls Permitted, then <code>N = (2 ** 1) - 1 = 1</code>. The generated GrammarRule Expression is just "<code>A</code>" -- which is invalid because the original Syntax Axiom has Type code <code>A</code> and this constitutes a loop! <br>
+<br>
+<span style="text-decoration: underline;">Example C)</span> given GrammarRule Expression "<code>A B</code>" derived from a Syntax
+Axiom with Type code <code>A</code>, if Type <code>A</code> has Nulls Permitted, then <code>N = (2 **
+1) - 1 = 1</code>. The generated GrammarRule Expression is just "<code>B</code>" --
+and thus, the generated GrammarRule defines a Type Conversion from <code>B</code> to <code>A</code>!<br>
+<br>
+<span style="text-decoration: underline;">Example D)</span> given GrammarRule Expression "<code>B</code>" derived from a Syntax
+Axiom with Type code <code>A</code> (which is in effect, a Type Conversion...), if Type <code>B</code> has Nulls Permitted, then <code>N = (2 **
+1) - 1 = 1</code>. The generated GrammarRule Expression is null --
+and thus, the generated GrammarRule defines Nulls Permitted for Type code <code>A</code>!<br>
+<br>
+<br>
+<span style="font-weight: bold;">3) Type Conversion Rules Present</span><br>
+<br>
+Processing 3) is basically same as 2) -- we generate new GrammarRule
+Expressions from a given GrammarRule Expression based on the Type codes
+in the given Grammar Rule Expression, and we delete any newly generated
+Grammar Rules that are duplicates of already existing Grammar Rules.
+However, instead of checking to see if a given Type code has a
+corresponding Nulls Permitted Rule we check to see if it has one or
+more corresponding Type Conversion Rules that specify "convert Type
+code X to the given Type code". If so, then a Grammar Rule Expression
+is generated for each matching Type Conversion Rule, and if the given
+(input) GrammarRule Expression has multiple occurrences of Type code
+with matching Type Conversion Rules, then all possible variations
+(permutations) of GrammarRules are generated.<br>
+<br>
+Example A) given GrammarRule Expression "<code>X Y Z</code>" where "<code>X</code>", "<code>Y</code>" and "<code>Z</code>" are Type codes, and Type Conversion Rules specifying that Type Codes "<code>A1</code>" and "<code>A2</code>" are convertible to "<code>X"</code>, "<code>B1</code>" and "<code>B2</code>" to "<code>Y</code>", and "<code>C1</code>" and "<code>C2</code>" to "<code>Z</code>", then the following GrammarRule Expressions are generated (the bullet point numbers are not part of the generated rules...):<br>
+<ol>
+  <li><code>X&nbsp; Y&nbsp; C1</code></li>
+  <li><code>X&nbsp; Y&nbsp; C2</code></li>
+  <li><code>X&nbsp; B1 Z</code></li>
+  <li><code>X&nbsp; B1 C1</code></li>
+  <li><code>
+X&nbsp; B1 C2</code></li>
+  <li><code>X&nbsp; B2 Z</code></li>
+  <li><code>
+X&nbsp; B2 C1</code></li>
+  <li><code>
+X&nbsp; B2 C2</code></li>
+  <li><code>A1 Y&nbsp; Z</code><br>
+  </li>
+  <li><code>A1 Y&nbsp; C1</code></li>
+  <li><code>A1 Y&nbsp; C2</code></li>
+  <li><code>A1 B1 Z</code></li>
+  <li><code>A1 B1 C1</code></li>
+  <li><code>
+A1 B1 C2</code></li>
+  <li><code>A1 B2 Z</code></li>
+  <li><code>
+A1 B2 C1</code></li>
+  <li><code>
+A1 B2 C2</code></li>
+  <li><code>A2 Y&nbsp; Z</code><br>
+  </li>
+  <li><code>A2 Y&nbsp; C1</code></li>
+  <li><code>A2 Y&nbsp; C2</code></li>
+  <li><code>A2 B1 Z</code></li>
+  <li><code>A2 B1 C1</code></li>
+  <li><code>
+A2 B1 C2</code></li>
+  <li><code>A2 B2 Z</code></li>
+  <li><code>
+A2 B2 C1</code></li>
+  <li><code>
+A2 B2 C2</code></li>
+</ol>
+Since each original Type Code has 2 matching Type Conversions, there
+are 3 possibilities for each of the 3 parameters, yielding 3 ** 3
+possibilities, minus the original GrammarRule Expression = (3 ** 3) - 1
+= 26. <br>
+<br>
+<span style="font-style: italic;">Comment: Obviously, in a user-defined
+Grammar with many Type Conversions and Syntax Axioms, the combinatorial
+explosion could well exceed the size of available memory in the
+computer! This is a classic tradeoff between size and speed -- and
+we're not too sure how much speed this is buying us either. The time
+savings of pre-computing all possible grammatical variations would
+depend in part on the length of the formulas being parsed. Since most
+statements are not excessively long, the savings yielded by this
+pre-computation may be meager. On the other hand, it is likely that
+many languages use few Type Conversions or Nulls Permitted; for
+example, set.mm uses only one Type Conversion Rule and does not permit
+Nulls at all. (Note: there is nothing to prevent substitution of
+another grammatical parsing algorithm, the code will employ an
+GrammaticalParsing Interface and so on and so forth...) The main
+benefit of this pre-computation approach is simplicity, especially in
+the intended Bottom Up algorithm implementation (a parse expert may be
+inclined to hammer me for this crude approach...alternative code is
+welcome!)</span><br style="font-style: italic;">
+<br>
+<br>
+<big><span style="font-weight: bold;">ALGORITHM NOTES:</span></big><br>
+<br>
+The discussion above is perhaps more complicated than the necessary
+code! The "trick" is that while adding "base" Grammar Rules -- the
+original, un-modified Grammar Rules obtained from the Syntax Axioms --
+each new Grammar Rule that is added is also written to a Priority Queue
+which is ordered by the Grammar Rule's "maxSeqNbr" followed by its
+GrammarRule.ruleNbr (together these two numbers provide a "total order"
+on the set of Grammar Rules.) Then, immediately after storing the base
+Grammar Rule, the Priority Queue is read and the "derived" Grammar
+Rules, if any, are generated. <br>
+<br>
+"maxSeqNbr" is the largest mObj.seq chosen from a Grammar Rule's
+baseSyntaxAxiom and the set of GrammarRules used to modify the Syntax
+Axiom's hypotheses. For example, if the Grammar Rule's
+baseSyntaxAxiom.seq = 100 and it has a single Type Conversion Rule
+applied, which has seq = 110, then GrammarRule.maxSeqNbr = 110.
+GrammarRule.maxSeqNbr can be used in parsing to guarantee that a
+grammatical parsing of an Expression contains no "forward references"
+to statements in the database that follow the Statement whose
+Expression is being parsed. In addition, the combination of maxSeqNbr
+and GrammarRule.ruleNbr provide a total order on the set of Grammar
+Rules which is then used to sequence the Priority Queue so that the
+earliest Grammar Rules are stored in the final grammar. <br>
+<br>
+Each new Grammar Rule read back from the Priority Queue is processed
+against earlier Grammar Rules to generate new derived Grammar Rules. If
+the new rule is a Nulls Permitted Rule, then it is applied to all
+previous Type Conversion and Notation Rules. If the new rule is a Type
+Conversion Rule then it is applied to *all* previous rules, including
+Type Conversions. And if the new rule is a Notation Rule then it is
+applied to all previous Nulls Permitted and Type Conversion Rules. <br>
+<br>
+The only real complication is how to generate all possible permutations
+of Type Conversions and Nulls Permitteds. Fortunately, there is a
+trick, which also involves the Priority Queue. Instead of trying to
+generate all possible permutations at once, each derivation involving
+each hypothesis separately is performed; the resulting Grammar Rule is
+added (if not a duplicate), and written to the Priority Queue -- which
+results in *more* Grammar Rules! Let's take a simple example, a Type
+Conversion from B to C (b2c $a c b $.) <br>
+<br>
+Now suppose that there already exists a Type Conversion from C to D and
+another from D to E. When the B to C conversion comes through the
+priority queue, it is matched with the C to D conversion, thus
+generating a B to D conversion, which is then written to the Priority
+Queue. When the new B to D rule is read back, it is matched with the D
+to E conversion and a new rule, a B to E conversion is created and
+written to the Priority Queue. When the B to E conversion is read back,
+there are no more applicable conversions and the chain reaction comes
+to an end. A similar chain reaction would occur for a Notation Rule
+involving multiple hypotheses with Type Conversions and Nulls
+Permitteds. <br>
+
+
+<span style="font-weight: bold;"><big></big></span>
+</body></html>

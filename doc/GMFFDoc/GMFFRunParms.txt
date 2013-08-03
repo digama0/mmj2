@@ -1,0 +1,292 @@
+    New commands for GMFF in RunParms.txt commands (defaults shown):
+    ==================================================================
+
+      _ GMFFExportParms,althtml,ON,althtmldef,GMFF\althtml,.html,GMFF\models\althtml,A,ISO-8859-1,general
+        GMFFExportParms,html,ON,htmldef,GMFF\html,.html,GMFF\models\html,A,ISO-8859-1,general
+
+        _ Optional. Default values are shown above. Modifications
+          to the defaults as well as additional settings for new
+          export types are made with this RunParm. Validation is
+          deferred until GMFF Initialization except for the number
+          of RunParm parameters -- i.e. use of this RunParm does not
+          trigger GMFF Initialization.
+
+        _ althtml or
+          html       = Export Type (Unicode or .gif) 
+          _ Export Type must be unique. It is the key in the export
+            parms (and text escapes) lists built using default
+            settings merged with the input RunParms GMFFExportParms
+            entries.
+          _ A second GMFFExportParms RunParm with the same Export
+            Type updates the first.
+
+        _ ON         = ON or OFF to enable/disable this export type.
+        
+          - Note that by default, both html and althtml are ON.
+          _ Setting all export types OFF disables GMFF exports.
+          _ If OFF the rest of the input parameters are not validated
+            or stored.
+
+        _ althtmldef or
+          htmldef    = Typesetting Definition Keyword in .mm file 
+                      (in the $t typesetting comment) for this export.
+                      
+        _ GMFF\althtml or
+          GMFF\html  = Directory where exports are written. Also,
+                      GMFF\html contains .gif files for symbols.
+
+        _ .html      = export file type (.html or .htm might be 
+                      good choices :-)
+
+        _ GMFF\models\althtml or
+          GMFF\models\html
+
+                     = Directory containing html fragment files
+                      serving as models for exports.
+
+        _ A          = Model Id. Only "A" is valid now.
+        
+        _ ISO-8859-1 = Charset encoding. 
+        
+          _ Must match the html fragment for the specified Model Id
+            which contains the html <head> keyword...but the program
+            does not validate this! Model A specifies ISO-8859-1
+            (same as Metamath Proof Explorer).
+            
+          _ Valid charset encodings on all Java platforms are:
+
+            _ US-ASCII
+            _ ISO-8859-1
+            _ UTF-8
+            _ UTF-16BE
+            _ UTF-16LE
+            _ UTF-16
+
+        - general  = OutputFileName
+                   = Name of output file minus the file type. 
+                     Optional. 
+                     
+                     _ If not specified the output file name is
+                       constructed from the proof theorem's label
+                       + the Export File Type. 
+                       
+                       _ Note! The OutputFileName applies to all
+                         exports, including those via the
+                         GMFFExportTheorem and GMFFExportFromFolder
+                         RunParms in addition to ProofAsstGUI
+                         export requests. To export to individual
+                         theorem-named files you must input a
+                         new GMFEExportTheorems RunParm!!!
+                           
+                     _ If specified must not contain any
+                       whitespace characters, or '/' or '\' or ':' 
+                       characters (for safety.) 
+                       
+                       _ All/any exported Proof Worksheets will be
+                         output to the named file suffixed with the
+                         GMFFExportParms file type -- except that 
+                         the GMFFExportTheorem and 
+                         GMFFExportFromFolder AppendFileName 
+                         parameter overrides the OutputFileName 
+                         parameter on the GMFFExportParms RunParm!
+                      
+            
+        _ NOTE: There is nothing in the GMFF program code specific
+                to html. All html-specific information is external
+                to the code, and is specified via the GMFF RunParms,
+                the GMFF \models directory files, and the Metamath
+                $t typesetting definitions.
+                
+                _ Since mmj2 allows you to input more than one 
+                  LoadFile RunParm, you could create an extra $t 
+                  comment in a second input .mm file and output 
+                  export data in whatever format you desire...
+                  the only proviso being that the GMFF code knows 
+                  the names of the \models files for Model A. So 
+                  either your extra export type must match the 
+                  pattern of \models files (with regards to the 
+                  parts which are filled in by the code vs. what 
+                  is in the fragments), or another model would 
+                  need to be added to the GMFF code.
+                  
+                  _ Model A is a "minimalist" version of a webpage
+                    which typesets only proof step formulas plus the
+                    theorem label, which is output as text but is 
+                    treated as a variable in the model.) 
+                    
+                  _ The one thing you cannot do with this design is 
+                    export to a language which is based on the formula
+                    parse trees, for example MathML. Exporting and 
+                    typesetting based on parse trees -- as opposed to 
+                    formulas comprised of sequences of symbols -- would
+                    require extra code in GMFF. 
+                
+      _ GMFFUserTextEscapes,html,32,"&nbsp;",34,"&quot;",38,"&amp;",60,"&lt;",62,"&gt;"
+        GMFFUserTextEscapes,althtml,32,"&nbsp;",34,"&quot;",38,"&amp;",60,"&lt;",62,"&gt;"
+        
+        _ These "escapes" convert certain output text characters
+          to an alternative character sequence that represents
+          the escaped text characters in the output language (e.g. html).
+          
+          _ Escapes are necessary because certain text characters
+          which may be used in a Proof Worksheet have special,
+          non-text significance in html. Characters such as '&',
+          '>', '<', etc. are used in the html language. 
+    
+          _ The space character is escaped into "&nbsp;" so that 
+            Proof Worksheet text spacing is maintained (otherwise
+            browsers would collapse or ignore output spaces in
+            certain situations.)
+ 
+        _ althtml or
+          html       = Export Type (Unicode or .gif). 
+
+          _ Must match the Export Type on one of the GMFFExportParms
+            RunParms or the default GMFFExportParms
+
+        _ 99       = Decimal number of Metamath ASCII character
+                     to be "escaped" in the output html file.
+                      
+          _ Must be integer between 0 and 255 (inclusive).
+          
+        _ "xxxx"   = Character string to replace escaped character.
+        
+        _ NOTE: User Text to be "escaped" is whatever text
+                in the Proof Worksheet is not "typeset" using
+                the Metamath $t typesetting definitions --
+                and any mmj2 Proof Worksheet text stored in 
+                a \models directory (e.g. Proof Worksheet Header
+                text contains both "<" and ">", which are stored
+                in the \models directory in escaped format
+                (so it does not need to be escaped again.)
+  
+
+
+
+      _ GMFFUserExportChoice,ALL
+
+        _ Choices are "html", "althtml" or "ALL" (Export Type or "ALL")
+        _ Must match one of the defaults or one of the export types
+          on an (already) input GMFFExportParms RunParm.
+
+
+      _ GMFFInitialize,PrintTypesettingDefinitions
+
+        _ Optional. Forces initialization or re-initialization
+          using whatever GMFF RunParm options, default 
+          settings and Metamath $t typesetting definitions have
+          been input.
+           
+          _ Also: prints an audit report (message) showing the
+            final set of parms in effect: selected Exporters'
+            ExportParms, UserTextEscapes and UserExportChoice
+            ... plus typeset definition symbol counts by def 
+            keyword.
+            
+            _ NOTE: The audit report is printed only if GMFF
+              Initialization is successful.
+        
+        _ "PrintTypesettingDefinitions" is an optional parameter
+          which produces a listing of the parsed typesetting
+          definitions after the audit report -- assuming GMFF
+          initialization was successful. 
+
+          _ Provided for testing and audit purposes. Perhaps
+            useful to users :-)
+
+        _ If GMFFInitialize is not used then initialization
+          takes place only if/when the first GMFF export is 
+          attempted. Reinitialization can occur if one or
+          more additional LoadFile commands have executed 
+          since initialization and new Metamath $t typsetting
+          definitions have been input. (And of course, the
+          "Clear" RunParms resets all state variables, which
+          would force reinitialization if additional LoadFile
+          commands and GMFF export processing were to occur.)
+
+        _ Initialization may result in error messages about
+          the contents of the input .mm Metamath file's $t
+          typesetting commands, as well as any other start-up
+          errors from GMFF.)
+
+
+      _ GMFFExportFromFolder,myproofs,syl,.mmp,999999,AppendFileName
+
+        _ myproofs = directory containing Proof Worksheet files
+        _ syl      = theorem label or "*" (all). If theorem label
+                     input then it is the starting point of the
+                     export process, which will export the Max
+                     Number of files beginning at that label.
+                     If "*" input then the export begins at the
+                     first label. Either way, files are exported
+                     in lexicographic order -- i.e. alphabetically.
+        _ .mmp     = file type of input Proof Worksheet files
+                     (normally either .mmp or .mmt)   
+        _ 999999   = Max Number of files to export. Required. 
+        - AppendFileName
+                   = Name of output (append) file minus the file type. 
+                     Optional. If specified must not contain any
+                     whitespace characters, or '/' or '\' or ':' 
+                     characters (for safety.) All exported Proof
+                     Worksheets will be appended to the named file
+                     (written at the end instead of the beginning)
+                     suffixed with the GMFFExportParms file type.
+                     Used for regression testing.
+
+      _ GMFFExportTheorem,syl,999999,AppendFileName
+
+        _ syl      = theorem label or "*" (all). If theorem label
+                     input then it is the starting point of the
+                     export process, which will export the Max
+                     Number of files beginning at that label.
+                     If "*" input then the export begins at the
+                     first label. Either way, files are exported
+                     in MObj.seq number order -- i.e. order of
+                     appearance in the currently loaded Metamath 
+                     database (including multiple LoadFile 
+                     commands plus any TheoremLoader theorems.)
+        _ 999999   = Max Number of files to export. Required. 
+        - AppendFileName
+                   = Name of output (append) file minus the file type. 
+                     Optional. If specified must not contain any
+                     whitespace characters, or '/' or '\' or ':' 
+                     characters (for safety.) All exported Proof
+                     Worksheets will be appended to the named file
+                     (written at the end instead of the beginning)
+                     suffixed with the GMFFExportParms file type.
+                     Used for regression testing.
+
+      _ GMFFParseMetamathTypesetComment,althtmldef,mydirectory,mytypesetdefs.mm,PRINT
+
+        _ althtmldef or
+          htmldef  
+                   = Typesetting Definition Keyword in .mm file 
+                      (in the $t typesetting comment) to be selected
+                      for parsing.
+
+        _ mydirectory 
+                   = directory containing MM file
+        
+        _ mytypesetdefs.mm
+                   = .mm file containing just a Metamath $t comment.
+                   
+        _ PRINT    = literal "PRINT" or spaces. "PRINT" signifies that
+                     the input $t typesetting comment should be 
+                     printed plus the parsed symbols and their
+                     replacement text.
+                   
+
+        _ NOTE: This command executes a standalone test of
+                src\mmj\gmff\TypesetDefCommentParser.java.
+                
+                _ Its primary purpose is to facilitate testing.
+                
+                _ A dump of the parse results is generated along with
+                  statistics. The dump is in the form of a very long
+                  "info" message.
+                  
+                _ mmj2 does allow a second LoadFile to be executed
+                  immediately after the initial LoadFile. This means
+                  that you can separate your typesetting definitions
+                  from your regular .mm file contents. 
+                

@@ -1,0 +1,1077 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="content-type"
+ content="text/html; charset=ISO-8859-1">
+  <title>mmj2 Command Line Arguments</title>
+</head>
+<body>
+<h1>mmj2 Command Line Arguments<small><span style="font-style: italic;"></span><span
+ style="font-style: italic;"></span></small><br>
+</h1>
+<hr style="width: 100%; height: 2px;"><big
+ style="font-weight: bold; text-decoration: underline;"><br>
+1) New
+mmj2.jar Command Line Arguments</big><br
+ style="text-decoration: underline;">
+<br>
+Optional path name arguments were added to the <code
+ style="font-weight: bold;">mmj2.jar</code> command line for the
+mmj2,&nbsp; Metamath, and mmj2 Service "home" directories. Here are the
+mmj2.jar command line arguments (in order):<br>
+<ol>
+  <li>RunParm file name. This is relative to the mmj2Path directory.
+Mandatory.<br>
+  </li>
+  <li>Y/N to display the new MMJ2 Fail Popup Window when startup errors
+and/or "fail" (abnormal termination) errors are encountered. On by
+default.<br>
+  </li>
+  <li>The mmj2Path argument is used to specify mmj2 files and
+directories. Optional. Use "" as a placeholder if omitted -- which
+means use the Java Current Path as the mmj2Path.<br>
+  </li>
+  <li>The MetamathPath argument is used to specify Metamath files -- in
+conjunction with RunParm "<code style="font-weight: bold;">LoadFile,set.mm</code>"
+and
+Metamath
+Include
+files
+referenced
+by
+the
+input
+.mm
+file.
+Optional. Use "" as a placeholder if omitted -- which
+means use the Java Current Path as the MetamathPath.</li>
+  <li>The SvcPath argument is used to specify the SvcFolder passed as
+an argument in the mmj2 Service Feature (rarely used). Use "" as a
+placeholder if omitted -- which means use the Java Current Path as the
+SvcPath.</li>
+</ol>
+<br>
+Thus, the mmj2.jar command line arguments have this format:<br>
+<br>
+&nbsp;&nbsp;&nbsp; <code style="font-weight: bold;">java -Xincgc
+-Xms128M -Xmx256M -jar mmj2.jar&nbsp; </code><span
+ style="font-style: italic;">RunParmFileName&nbsp;
+mmj2FailPopopWindow&nbsp;
+mmj2Path&nbsp;
+MetamathPath&nbsp; SvcPath&nbsp; ArgumentOptionsReport</span><br
+ style="font-style: italic;">
+<br>
+<br>
+The actual Windows command line from <code style="font-weight: bold;">mmj2.bat</code>
+is:<br>
+<br>
+&nbsp;&nbsp;&nbsp; <code style="font-weight: bold;">java -Xincgc
+-Xms128M -Xmx256M -jar mmj2.jar&nbsp; RunParms.txt&nbsp; Y&nbsp;
+"" c:\metamath</code>&nbsp;<code style="font-weight: bold;">
+""</code><br>
+<br>
+<span style="font-style: italic;">Note: by using mmj2Path = </span><code>""</code><span
+ style="font-style: italic;"> the Java Current Path is used for the
+mmj2 data path -- and in this case the Current Path is the location of <code>mmj2.bat</code>,
+which
+is
+in the <code>mmj2jar</code> directory. So by using mmj2Path =
+<code>""</code> we're making <code>mmj2.bat</code> portable so that no
+changes are required if the mmj2jar directory is moved. In fact,
+assuming that your <code>set.mm</code> file is installed at <code>c:\metamath\set.mm</code>
+after you unzip the <code>mmj2.zip</code> download file you can simply
+double-click <code>c:\mmj2\mmj2jar\mmj2.bat</code> to run mmj2.</span><br
+ style="font-style: italic;">
+<br>
+<br>
+In Mac OSX the Applications/Utilities/Terminal <code
+ style="font-weight: bold;">source</code> file command line looks like
+this (modify it to match your system and installations -- similar in
+other Unix/Linux based systems):<br>
+<br>
+&nbsp;&nbsp;&nbsp; <code style="font-weight: bold;">java -Xincgc
+-Xms128M -Xmx256M -jar mmj2.jar&nbsp; RunParms.txt&nbsp; Y&nbsp;
+/Users/Userone/mmj2&nbsp; /Users/userone/metamath</code><code
+ style="font-weight: bold;">&nbsp;
+""</code><br>
+<br>
+<br>
+For Mac OSX users an Applications/Utilities/Terminal <code
+ style="font-weight: bold;">source</code> file named <code
+ style="font-weight: bold;">MacRunMMJ2.txt</code> is provided. Modify
+it to suit your system and installations (and locate it anywhere you
+please), then enter the <code style="font-weight: bold;">Terminal</code>
+command<br>
+<br>
+&nbsp;&nbsp;&nbsp; <code style="font-weight: bold;">source
+MacRunMMJ2.txt</code><br>
+<br>
+<br>
+<big style="font-weight: bold; text-decoration: underline;">2) RunParm
+File Changes<br>
+<br>
+</big>The standard <code style="font-weight: bold;">RunParms.txt</code>
+file was changed to be "platform agnostic" as well as friendlier and
+simpler for new users, as follows:<br>
+<ul>
+  <li>All path names in <code style="font-weight: bold;">RunParms.txt</code>
+are relative (i.e. "<code style="font-weight: bold;">set.mm</code>"
+instead of "<code style="font-weight: bold;">c:\metamath\set.mm</code>").</li>
+  <li><code style="font-weight: bold;">RunParms.txt</code> contains the
+minimum number of RunParms to run the Proof Assistant GUI.</li>
+  <li>The "complete" version of <code style="font-weight: bold;">RunParms.txt</code>
+is now named <code style="font-weight: bold;">RunParmsComplete.txt</code>
+(same functionality but with all defaults specified, plus documentation
+comments -- intended to help users easily figure out where to add
+customizing
+RunParms).</li>
+</ul>
+<br>
+<big style="font-weight: bold; text-decoration: underline;">3)
+New "mmj2 Fail Popup Window</big>"<br>
+<br>
+Command Line Argument #2 above is the "<code style="font-weight: bold;">displayMMJ2FailPopupWindow</code>"
+argument.&nbsp;
+How
+it
+works:<br>
+<ul>
+  <li>mmj2 startup errors and mmj2 "fatal" errors (abnormal
+terminations) will trigger a "popup" window showing the current RunParm
+or command and the associated error message(s).</li>
+  <li>errors in the mmj2 command line arguments <span
+ style="font-style: italic; font-weight: bold;">do</span> trigger the
+popup window even if "<code style="font-weight: bold;">n</code>" is
+specified.<br>
+  </li>
+  <li>if "<code style="font-weight: bold;">n</code>" is specified, or
+if this command line argument is omitted or
+blank, the popup window is never triggered (i.e. no change to current
+processing).</li>
+  <li>proof verification errors are excluded and <span
+ style="font-weight: bold; font-style: italic;">do not</span> trigger
+the popup window.</li>
+  <li>"fatal" system errors such as <code style="font-weight: bold;">OutOfMemory</code>
+and <code style="font-weight: bold;">UnableToShutdownRunawayThreadAndOMGWhyDidWeAcquireSun?</code>
+exceptions <span style="font-weight: bold;"><span
+ style="font-style: italic;">do not</span></span> trigger the popup
+window.</li>
+</ul>
+<br>
+<br>
+<big style="font-weight: bold; text-decoration: underline;">4)
+New Command Line "Argument Option" Report</big><br>
+<br>
+Below is a sample of what you see running mmj2.bat from within the
+Windows Command Prompt utility. <br>
+<br>
+Notice that the Argument Options Report shows the current version of
+mmj2.jar, including the date/timestamp -- which should match the
+date/timestamp of the mmj2.jar file itself. <br>
+<br>
+Also, notice that the Command Line Arguments are shown twice: first as
+the are originally received by the program, and then again as they are
+interpreted -- are for each path argument, in parthenseses, an example
+file shows the full data path in effect. <br>
+<br>
+<code><span style="font-weight: bold; color: rgb(0, 0, 153);">c:\mmj2jar&gt;mmj2<br>
+<br>
+c:\mmj2jar&gt;java -Xincgc -Xms128M -Xmx256M -jar mmj2.jar RunParms.txt
+Y "" c:\metamath ""</span><br
+ style="font-weight: bold; color: rgb(0, 0, 153);">
+<br style="font-weight: bold; color: rgb(0, 0, 153);">
+<span style="font-weight: bold; color: rgb(0, 0, 153);">CommandLineArguments.displayArgumentOptionReport():<br>
+<br>
+Hi! I am mmj2 Release 20111101 as of 15-Oct-2011 03:34.<br>
+Send mmj2 support? Paypal to siskiyousis at gmail.com<br>
+Need mmj2 help? Email x178g243 at yahoo.com.<br>
+<br>
+&nbsp; Command Line Arguments:<br>
+&nbsp;&nbsp;&nbsp; Arg #1 = RunParms.txt<br>
+&nbsp;&nbsp;&nbsp; Arg #2 = Y<br>
+&nbsp;&nbsp;&nbsp; Arg #3 =<br>
+&nbsp;&nbsp;&nbsp; Arg #4 = c:\metamath<br>
+&nbsp;&nbsp;&nbsp; Arg #5 =<br>
+<br>
+&nbsp; [3] mmj2Path&nbsp;&nbsp;&nbsp;&nbsp; = null (e.g.
+C:\mmj2jar\YourFile.xyz)<br>
+&nbsp; [4] metamathPath = c:\metamath (e.g. C:\metamath\YourFile.xyz)<br>
+&nbsp; [5] svcPath&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = null (e.g.
+C:\mmj2jar\YourFile.xyz)<br>
+&nbsp; [1] runParmFile&nbsp; = c:\mmj2jar\RunParms.txt<br>
+&nbsp; [2] displayMMJ2FailPopupWindow<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+= true<br>
+<br>
+***END CommandLineArguments.displayArgumentOptionReport()***</span><span
+ style="font-weight: bold; color: rgb(0, 0, 153);"></span><br
+ style="font-weight: bold; color: rgb(0, 0, 153);">
+<br style="font-weight: bold; color: rgb(0, 0, 153);">
+<span style="font-weight: bold; color: rgb(0, 0, 153);">**** I-UT-0015
+Processing RunParmFile Command #1 = LoadFile,set.mm</span><br
+ style="font-weight: bold; color: rgb(0, 0, 153);">
+<span style="font-weight: bold; color: rgb(0, 0, 153);">**** I-UT-0015
+Processing RunParmFile Command #2 = VerifyProof,*</span><br
+ style="font-weight: bold; color: rgb(0, 0, 153);">
+<span style="font-weight: bold; color: rgb(0, 0, 153);">**** I-UT-0015
+Processing RunParmFile Command #3 = Parse,*</span><br
+ style="font-weight: bold; color: rgb(0, 0, 153);">
+<span style="font-weight: bold; color: rgb(0, 0, 153);">**** I-UT-0015
+Processing RunParmFile Command #4 =
+ProofAsstUnifySearchExclude,biigb,xxxid,dummylink</span><br
+ style="font-weight: bold; color: rgb(0, 0, 153);">
+<span style="font-weight: bold; color: rgb(0, 0, 153);">**** I-UT-0015
+Processing RunParmFile Command #5 = ProofAsstProofFolder,myproofs</span><br
+ style="font-weight: bold; color: rgb(0, 0, 153);">
+<span style="font-weight: bold; color: rgb(0, 0, 153);">**** I-UT-0015
+Processing RunParmFile Command #6 = TheoremLoaderMMTFolder,myproofs</span><br
+ style="font-weight: bold; color: rgb(0, 0, 153);">
+<span style="font-weight: bold; color: rgb(0, 0, 153);">**** I-UT-0015
+Processing RunParmFile Command #7 = RunProofAsstGUI</span><br
+ style="font-weight: bold; color: rgb(51, 51, 255);">
+<br>
+</code>etc.<br>
+etc.<br>
+<br>
+<br>
+<big style="font-weight: bold; text-decoration: underline;">5)
+Old Command Line Arguments Eliminated</big>:<br>
+<br>
+&nbsp; These new mmj2.jar command line arguments replace existing
+arguments which (apparently) are never used and will likely never be
+used by anyone, ever... (not even in the mmj2 batch/regression test kit
+):<br>
+<ul>
+  <li>RunParm File Charset Name</li>
+  <li>RunParm File DelimitedTextParser Delimiter Character</li>
+  <li>RunParm File DelimitedTextParser Quoter Character.</li>
+</ul>
+<br>
+<br>
+<hr style="width: 100%; height: 2px;"><big style="font-style: italic;"><big><span
+ style="font-weight: bold;">BELOW is documentation written about the
+new Paths arguments prior to writing code. You may find it useful or
+interesting, but probably not. Feel free to stop reading and ignore the
+rest of this document.</span></big></big><br style="font-style: italic;">
+<hr style="width: 100%; height: 2px; font-style: italic;">
+<h2>The Problem</h2>
+mmj2 allows files to be specified using either "absolute" or "relative"
+paths. See <a
+ href="http://download.oracle.com/javase/1,5.0/docs/api/java/io/File.html">http://download.oracle.com/javase/1,5.0/docs/api/java/io/File.html</a>
+for an excellection discussion of absolute vs. relative path names.<br>
+<br>
+Unfortunately, (with a few exceptions such as the <code
+ style="font-weight: bold;">ProofAsstProofFolder</code> RunParm
+specification), the general parent of relative path names cannot be
+specified inside
+mmj2 -- and default to the <span style="font-style: italic;">Current
+Path</span> (the directory from
+which mmj2 is being run or the path set by the "<code>pushd</code>"
+command used
+when running mmj2.) <br>
+<br>
+As a result:<br>
+<ul>
+  <li>Absolute path names specific to Windows are used throughout the <code
+ style="font-weight: bold;">mmj2.zip</code> software package files,
+including
+the batch/regression test kit which makes regression testing on other
+platforms such as Max OSX inconvenient.</li>
+  <li>The distinction between where mmj2 is installed/run and where the
+user stores data and customizations is not supported directly by mmj2,
+and this may inconvenience users when new releases of mmj2 are
+installed.</li>
+  <li>RunParms.txt is not "platform agnostic", meaning that users of
+non-Windows systems are always required to customize <code
+ style="font-weight: bold;">RunParms.txt</code> simply to change
+absolute path names.</li>
+  <li>The entire absolute/relative path issue is somewhat ambiguous and
+murky for users, to the point where at least one user actually
+installed software on his Mac in order to be able to run mmj2 in a
+Windows environment! (What a waste of time and money.)</li>
+</ul>
+<br>
+<hr style="width: 100%; height: 2px;">
+<h2>The Solution</h2>
+Optional path name arguments will be added to the mmj2.jar command line
+(in mmj2.bat) to specify the mmj2 and the Metamath "home" directories:<br>
+<ul>
+  <li>These will be used throughout mmj2 in every coding instance
+involving a file: the Metamath path name applies only to the <code
+ style="font-weight: bold;">LoadFile</code> RunParm, the mmj2 Service
+path name applies and the mmj2 path name applies to everything else.<br>
+  </li>
+  <li>They may themselves be either absolute paths or relative, but <span
+ style="text-decoration: underline;">the intention is that they will
+most commonly be absolute specifications</span>.</li>
+  <li>They must be optional and transparent, meaning that existing <code
+ style="font-weight: bold;">mmj2.bat</code> and <code
+ style="font-weight: bold;">RunParm.txt</code> files must generate
+unchanged results.<br>
+  </li>
+  <li>Additional path arguments at a lower level were considered and
+rejected as potentially raising more problems than they solve (e.g. a
+Proof Assistant Path, or a GMFF Path, or even a path for every single
+different file used anywhere in mmj2).</li>
+  <li>Also considered: the idea of also adding RunParm commands to
+allow the paths to be changed during processing -- idea shelved for
+now: potentially useful for testing but not absolutely necessary and
+worse, adding complications (such as when is the parent path "bound" to
+a file's path -- at first use or when the RunParm is processed?)</li>
+  <li>Note: the SvcPath argument was added at the last minute for the
+sake of completeness. I am not aware of anyone using the mmj2 Service
+Feature which allows mmj2 facilities to be accessed by an external
+program. However, if we're going to even have an mmj2 Service Feature
+then it has to be supported, and it is reasonable to suppose that an
+external program will not locate its data inside the mmj2 directories.
+No, it would have its own direct<br>
+  </li>
+</ul>
+Here is how a path name argument will be used. Let's use LoadFile as an
+example:<br>
+<ul>
+  <li>If the LoadFile file parameter is an absolute path name (i.e.
+"c:\metamath\set.mm") then the Metamath Path Name is ignored;</li>
+  <li>Otherwise, if the Metamath Path Name argument is omitted or is
+blank or is an empty string, the LoadFile File will be constructed
+relative to the Current Path (as is done presently);</li>
+  <li>Otherwise, the LoadFile File will be constructed relative to the
+Metamath Path Name (which may itself be relative to the current path!)</li>
+</ul>
+<code><big><big><span style="font-weight: bold;">Example: </span></big></big></code><br>
+<table style="text-align: left; width: 70%;" border="5" cellpadding="2"
+ cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; font-weight: bold;"><code>ARGUMENTS
+AND
+PARAMETERS___________________________________________________<br>
+      </code></td>
+      <td style="vertical-align: top; font-weight: bold;"><code>FILE TO
+BE LOADED_________________________________<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-weight: bold;"><code>"LoadFile,c:\metamath\set.mm"</code></td>
+      <td style="vertical-align: top; font-weight: bold;"><code>"c:\metamath\set.mm"</code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-weight: bold;"><code>"LoadFile,set.mm",
+Metamath
+Path
+Name
+omitted,
+Current
+Path
+is
+"c:\mmj2jar"</code></td>
+      <td style="vertical-align: top; font-weight: bold;"><code>"c:\mmj2jar\set.mm"</code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-weight: bold;"><code>"LoadFile,set.mm",
+Metamath
+Path
+"metamath",
+Current
+Path
+is
+"c:\mmj2jar"<br>
+      </code></td>
+      <td style="vertical-align: top; font-weight: bold;"><code>"c:\mmj2jar\metamath\set.mm"</code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-weight: bold;"><code>"LoadFile,set.mm",
+Metamath
+Path
+"c:\metamath",
+Current
+Path
+is
+"c:\mmj2jar"
+
+
+
+
+      </code></td>
+      <td style="vertical-align: top; font-weight: bold;"><code>"c:\metamath\set.mm"</code></td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<br>
+<hr style="width: 100%; height: 2px;"><br>
+<h2>Current System Data Accesses<br>
+</h2>
+<br>
+<table style="text-align: left; width: 1572px; height: 4604px;"
+ border="5" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; text-decoration: underline;"><code><span
+ style="color: rgb(51, 51, 255); font-weight: bold;">COMMONLY USED
+RUNPARMS and COMMAND ARGUMENTS</span><br>
+      </code> </td>
+      <td style="vertical-align: top;"><code><span
+ style="color: rgb(51, 51, 255); text-decoration: underline; font-weight: bold;">WHERE_FILE_CONSTRUCTED/HOW_PATH_USED</span>__________________________________________________________________________<br>
+      </code> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>java
+-Xincgc -Xms128M -Xmx256M -jar mmj2.jar RunParms.txt </code></td>
+      <td style="vertical-align: top;"><code>src\mmj\util\BatchFramework#runIt()
+calls<br>
+src\mmj\util\RunParmFile#RunParmFile()
+--&gt; relative to current path<br>
+      <br>
+and <br>
+      <br>
+java -jar mmj2.jar --&gt; current path searched first<br>
+      </code> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>LoadFile,c:\metamath\set.mm</code></td>
+      <td style="vertical-align: top;"><code>src\mmj\util\LogicalSystemBoss#doLoadFile()
+calls<br>
+src\mmj\mmio\Systemizer#load() <br>
+--&gt; relative to current path<br>
+      </code> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>ProofAsstProofFolder,c:\my\proofs
+
+
+
+
+
+
+
+
+
+
+
+      </code></td>
+      <td style="vertical-align: top;"><code>src\mmj\util\ProofAsstBoss#editProofAsstProofFolder()
+calls<br>
+src\mmj\util\Boss#editExistingFolderRunParm() calls<br>
+src\mmj\util\Boss#buildFileObjectForExistingFolder() <br>
+--&gt; relative to
+current path<br>
+      </code> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>TheoremLoaderMMTFolder,c:\my\proofs
+
+
+
+
+
+
+
+
+
+
+
+      </code></td>
+      <td style="vertical-align: top;"><code>src\mmj\util\TheoremLoaderBoss#editTheoremLoaderMMTFolder()
+calls<br>
+src\mmj\tl\TlPreferences#setMMTFolder() calls<br>
+src\mmj\tl\MMTFolder#MMTFolder() <br>
+--&gt; relative to current path</code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>LoadTheoremsFromMMTFolder,*<br>
+      </code> </td>
+      <td style="vertical-align: top;"><code>src\mmj\util\TheoremLoaderBoss#editLoadTheoremsFromMMTFolder()
+calls<br>
+src\mmj\tl\TheoremLoader#loadTheoremsFromMMTFolder() calls<br>
+src\mmj\tl\MMTFolder#constructMMTTheoremSet() calls<br>
+java.io.File.listFiles() <br>
+--&gt; relative to MMTFolder<br>
+      </code> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>GMFFExportParms,althtml,ON,althtmldef,GMFF\althtml,.html,<br>
+GMFF\models\althtml,A,ISO-8859-1,general </code></td>
+      <td style="vertical-align: top;"><code>src\mmj\util\GMFFBoss#doRunParmGMFFExportParms()
+calls<br>
+src\mmj\gmff\GMFFExportParms#GMFFExportParms() <br>
+      <br>
+and then caches the
+GMFFExportParms by call to<br>
+      <br>
+src\mmj\gmff\GMFFManager#accumInputGMFFExportParms()<br>
+      <br>
+then, later...<br>
+src\mmj\gmff\GMFFManager#initialization() calls<br>
+src\mmj\gmff\GMFFManager#loadExportParmsList() calls<br>
+src\mmj\gmff\GMFFManager.#validateExportParmsList() calls<br>
+src\mmj\gmff\GMFFExportParms#areExportParmsValid()<br>
+      <br>
+then<br>
+src\mmj\gmff\GMFFExportParms#areExportParmsValid() calls<br>
+src\mmj\gmff\GMFFExportParms#validateExportDirectory() calls<br>
+src\mmj\gmff\GMFFFolder#GMFFFolder() --&gt; relative to current path<br>
+      <br>
+and<br>
+src\mmj\gmff\GMFFExportParms#areExportParmsValid() calls<br>
+src\mmj\gmff\GMFFExportParms#validateModelsDirectory() calls<br>
+src\mmj\gmff\GMFFFolder#GMFFFolder() --&gt; relative to current path<br>
+      <br>
+and<br>
+src\mmj\gmff\GMFFExportParms#areExportParmsValid() calls<br>
+src\mmj\gmff\GMFFExportParms#validateOutputFileName() <br>
+--&gt; output
+file name is (enforced) local file name in Export Directory.<br>
+      <br>
+      </code> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code><span
+ style="color: rgb(51, 51, 255); font-weight: bold; text-decoration: underline;">ProofAsstGUI
+FILE
+ACCESSES<br>
+      </span></code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>File / Save Proof File<br>
+and saveIfAskedBeforeExit()<br>
+      </code> </td>
+      <td style="vertical-align: top;"><code>src\mmj\pa\ProofAsstGUI#doFileSaveAction()
+calls<br>
+javax.swing.JFileChooser#.getSelectedFile() <br>
+--&gt; initially relative to ProofAsstProofFolder but user can change<br>
+      <br>
+and <br>
+src\mmj\pa\ProofAsstGUI#doFileSaveAction() calls<br>
+saveOldProofTextFile() <br>
+--&gt; output path and name selected/approved by user (no change
+required)<br>
+      <br>
+and <br>
+src\mmj\pa\ProofAsstGUI#doFileSaveAction() calls<br>
+saveNewProofTextFile() <br>
+--&gt; output path and name selected/approved by user (no change
+required)<br>
+      </code> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>File / Open Proof File<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>src\mmj\pa\ProofAsstGUI#doFileOpenAction()
+calls<br>
+javax.swing.JFileChooser#.getSelectedFile() <br>
+--&gt; initially relative to ProofAsstProofFolder but user can change<br>
+      <br>
+and <br>
+src\mmj\pa\ProofAsstGUI#doFileOpenAction() calls<br>
+src\mmj\pa\ProofAsstGUI#startRequestAction(new RequestFileOpen()) calls<br>
+src\mmj\pa\ProofAsstGUI#RequestFileOpen#send() calls<br>
+src\mmj\pa\ProofAsstGUI#readProofTextFromFile() <br>
+--&gt; no change required, file chosen/approved by user<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>File / Save As<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>(basically the same as
+File / Save Proof File with respect to file accesses. --&gt; no change
+required)<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>File / Export Via GMFF<br>
+GMFF / Export Via GMFF<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>src\mmj\pa\ProofAsstGUI#doFileExportViaGMFFAction()
+calls<br>
+src\mmj\pa\ProofAsstGUI#startRequestAction(new RequestExportViaGMFF())
+calls<br>
+src\mmj\pa\ProofAsstGUI#RequestExportViaGMFF#send() calls<br>
+src\mmj\pa\ProofAsst#exportViaGMFF() calls<br>
+src\mmj\gmff\GMFFManager#exportProofWorksheet() calls<br>
+src\mmj\gmff\ModelAExporter#exportProofWorksheet() calls<br>
+src\mmj\gmff\GMFFExporter#outputToExportFile() calls<br>
+src\mmj\gmff\GMFFExporter#writeExportFile() calls<br>
+src\mmj\gmff\GMFFExportFile#GMFFExportFile() <br>
+--&gt; relative to gmffExportParms.exportFolder (no change required)<br>
+      <br>
+also<br>
+      <br>
+src\mmj\gmff\GMFFExporter#readModelFile() calls<br>
+src\mmj\gmff\GMFFInputFile#GMFFInputFile() <br>
+--&gt; relative to gmffExportParms.modelsFolder (no change required)<br>
+      <br>
+also <br>
+src\mmj\gmff\GMFFManager#exportProofWorksheet() calls<br>
+src\mmj\gmff\GMFFManager#initialization() calls<br>
+src\mmj\gmff\GMFFManager#loadExportParmsList() calls<br>
+src\mmj\gmff\GMFFManager.#validateExportParmsList() calls<br>
+src\mmj\gmff\GMFFExportParms#areExportParmsValid()<br>
+      <br>
+and<br>
+src\mmj\gmff\GMFFExportParms#areExportParmsValid() calls<br>
+src\mmj\gmff\GMFFExportParms#validateExportDirectory() calls<br>
+src\mmj\gmff\GMFFFolder#GMFFFolder() --&gt; relative to current path<br>
+      <br>
+and<br>
+src\mmj\gmff\GMFFExportParms#areExportParmsValid() calls<br>
+src\mmj\gmff\GMFFExportParms#validateModelsDirectory() calls<br>
+src\mmj\gmff\GMFFFolder#GMFFFolder() --&gt; relative to current path<br>
+      <br>
+and<br>
+src\mmj\gmff\GMFFExportParms#areExportParmsValid() calls<br>
+src\mmj\gmff\GMFFExportParms#validateOutputFileName() <br>
+--&gt; output
+file name is (enforced) local file name in Export Directory.<br>
+      </code> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>TL / Unify + Store In
+LogSys and MMT Folder<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>src\mmj\pa\ProofAsstGUI#startUnificationAction(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; false, null, null, new
+StoreInLogSysAndMMTFolderTLRequest()) calls<br>
+src\mmj\tl\TheoremLoader#storeInLogSysAndMMTFolder() calls<br>
+src\mmj\tl\TheoremLoader#storeInMMTFolder() calls<br>
+src\mmj\tl\MMTFolder#storeMMTTheoremFile() calls<br>
+src\mmj\tl\MMTTheoremFile#MMTTheoremFile() <br>
+--&gt; relative to MMTFolder (no change required)<br>
+      <br>
+and<br>
+src\mmj\tl\TheoremLoader#storeInLogSysAndMMTFolder() calls<br>
+src\mmj\tl\TheoremLoader#loadTheoremsFromMMTFolder() calls<br>
+src\mmj\tl\MMTFolder#constructMMTTheoremSet() calls <br>
+java.io.File#listFiles() <br>
+--&gt; relative to MMTFolder (no change required)<br>
+      <br>
+and <br>
+src\mmj\tl\MMTFolder#constructMMTTheoremSet() calls <br>
+src\mmj\tl\MMTTheoremSet#MMTTheoremSet() <br>
+--&gt; relative to MMTFolder (no change required)</code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>TL / Unify + Store In MMT
+Folder</code></td>
+      <td style="vertical-align: top;"><code>(basically the same as TL
+/ Unify + Store In LogSys <br>
+and MMT Folder with respect to file accesses)<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>TL / Load Theorems From
+MMT Folder<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>src\mmj\pa\ProofAsstGUI#doLoadTheoremsFromMMTFolderItemAction()
+calls<br>
+src\mmj\pa\ProofAsstGUI#startRequestAction(new
+RequestLoadTheoremsFromMMTFolder()) calls<br>
+src\mmj\pa\ProofAsst#loadTheoremsFromMMTFolder() calls<br>
+src\mmj\tl\TheoremLoader#loadTheoremsFromMMTFolder() calls<br>
+src\mmj\tl\MMTFolder#constructMMTTheoremSet() calls<br>
+java.io.File.listFiles() --&gt; relative to MMTFolder<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>TL / Extract Theorem To
+MMT Folder<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>src\mmj\pa\ProofAsstGUI#doExtractTheoremToMMTFolderItemAction()
+calls<br>
+src\mmj\pa\ProofAsstGUI#startRequestAction(new
+RequestExtractTheoremToMMTFolder) calls<br>
+src\mmj\pa\ProofAsst#extractTheoremToMMTFolder() calls<br>
+src\mmj\tl\TheoremLoader#extractTheoremToMMTFolder() calls<br>
+src\mmj\tl\MMTFolder#storeMMTTheoremFile() calls<br>
+java\src\mmj\tl\MMTTheoremFile#MMTTheoremFile() <br>
+--&gt; relative to MMTFolder (no change required)<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>TL / Set Theorem Loader
+MMT Folder<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>src\mmj\pa\ProofAsstGUI#doSetTLMMTFolderItemAction()
+calls<br>
+src\mmj\pa\ProofAsstGUI#getNewMMTFolder() calls<br>
+javax.swing.JFileChooser#getSelectedFile() <br>
+--&gt; chosen/approved by user (no change needed)<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>ProofAsstGUI constructor
+(start-up)<br>
+      </code> </td>
+      <td style="vertical-align: top;"><code>src\mmj\pa\ProofAsstGUI#ProofAsstGUI()
+calls<br>
+src\mmj\pa\ProofAsstGUI#buildFileChooser() <br>
+--&gt; relative to ProofAsstProofFolder (no change required)<br>
+      </code> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+      <td style="vertical-align: top;"><code><br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code><span
+ style="color: rgb(51, 51, 255); font-weight: bold; text-decoration: underline;">USED
+IN
+BATCH/REGRESSION
+TESTING</span><br>
+      </code> </td>
+      <td style="vertical-align: top;"><code><br>
+      </code> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>UnifyPlusStoreInMMTFolder,c:\myproofs\syl.mmp
+
+
+
+
+
+
+
+
+
+
+
+      </code></td>
+      <td style="vertical-align: top;"><code>src\mmj\util\TheoremLoaderBoss#editUnifyPlusStoreInMMTFolder()
+calls<br>
+src\mmj\util\ProofAsstBoss#editProofAsstImportFileRunParm() calls<br>
+src\mmj\util\Boss#doConstructBufferedFileReader() <br>
+--&gt; relative to ProofAsstProofFolder (no change needed!)<br>
+      <br>
+then ...<br>
+      <br>
+src\mmj\tl\TheoremLoader#unifyPlusStoreInMMTFolder() calls<br>
+src\mmj\tl\TheoremLoader#storeInMMTFolder() calls<br>
+src\mmj\tl\MMTFolder#storeMMTTheoremFile() calls<br>
+src\mmj\tl\MMTTheoremFile#MMTTheoremFile() <br>
+--&gt; relative to MMTFolder (no change needed)<br>
+      </code> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>UnifyPlusStoreInLogSysAndMMTFolder,c:\myproofs\syl.mmp
+
+
+
+
+
+
+
+
+
+
+
+      </code></td>
+      <td style="vertical-align: top;"><code>src\mmj\util\TheoremLoaderBoss#editUnifyPlusStoreInLogSysAndMMTFolder()
+calls<br>
+src\mmj\util\ProofAsstBoss#editProofAsstImportFileRunParm() calls<br>
+src\mmj\util\Boss#doConstructBufferedFileReader() <br>
+--&gt; relative to ProofAsstProofFolder (no change needed!)<br>
+      <br>
+then...<br>
+      <br>
+src\mmj\util\TheoremLoaderBoss#editUnifyPlusStoreInLogSysAndMMTFolder()
+calls<br>
+src\mmj\tl\TheoremLoader#unifyPlusStoreInLogSysAndMMTFolder() calls<br>
+src\mmj\tl\TheoremLoader#storeInLogSysAndMMTFolder() calls<br>
+src\mmj\tl\TheoremLoader#storeInMMTFolder() calls<br>
+src\mmj\tl\MMTFolder#storeMMTTheoremFile() calls<br>
+src\mmj\tl\MMTTheoremFile#MMTTheoremFile() <br>
+--&gt; relative to MMTFolder (no change needed)<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>ExtractTheoremToMMTFolder,syl<br>
+      </code> </td>
+      <td style="vertical-align: top;"><code>src\mmj\util\TheoremLoaderBoss#editExtractTheoremToMMTFolder()
+calls<br>
+src\mmj\tl\TheoremLoader#extractTheoremToMMTFolder() calls<br>
+src\mmj\tl\MMTFolder#storeMMTTheoremFile() calls<br>
+java\src\mmj\tl\MMTTheoremFile#MMTTheoremFile() <br>
+--&gt; relative to MMTFolder (no change required)<br>
+      </code> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>ProofAsstExportToFile,*,c:\my\export.mmp,new,un-unified,Randomized,Print,NoDeriveFormulas
+
+
+
+
+
+
+
+
+
+
+
+      </code></td>
+      <td style="vertical-align: top;"><code>src\mmj\util\ProofAsstBoss#doProofAsstExportToFile()
+calls<br>
+src\mmj\util\ProofAsstBoss#editProofAsstExportFileRunParm() calls<br>
+src\mmj\util\Boss#doConstructBufferedFileWriter() <br>
+--&gt; relative to ProofAsstProofFolder (no change required)<br>
+      </code> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>ProofAsstBatchTest,*,c:\my\export.mmp,un-unified,NotRandomized,<br>
+NoPrint,DeriveFormulas,NoCompareDJs,NoUpdateDJs,NoAsciiRetest </code></td>
+      <td style="vertical-align: top;"><code>src\mmj\util\ProofAsstBoss#doProofAsstBatchTest()
+calls<br>
+src\mmj\util\ProofAsstBoss#editProofAsstImportFileRunParm() calls<br>
+src\mmj\util\Boss#doConstructBufferedFileReader() <br>
+--&gt; relative to ProofAsstProofFolder (no change required)</code> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>StepSelectorBatchTest,c:\mmj2\UT7000.mmp,326,6
+
+
+
+
+
+
+
+
+
+
+
+      </code></td>
+      <td style="vertical-align: top;"><code>src\mmj\util\ProofAsstBoss#doStepSelectorBatchTest()
+calls<br>
+src\mmj\util\ProofAsstBoss#editProofAsstImportFileRunParm() calls<br>
+src\mmj\util\Boss#doConstructBufferedFileReader() <br>
+--&gt; relative to ProofAsstProofFolder (no change required)<br>
+      </code> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>PreprocessRequestBatchTest,C:\mmj2\data\mmp\tests\UT7001.mmp,EraseAndRederiveFormulas<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>src\mmj\util\ProofAsstBoss#doPreprocessRequestBatchTest()
+calls<br>
+src\mmj\util\ProofAsstBoss#editProofAsstImportFileRunParm() calls<br>
+src\mmj\util\Boss#doConstructBufferedFileReader() <br>
+--&gt; relative to ProofAsstProofFolder (no change required)<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>GMFFExportFromFolder,myproofs,syl,.mmp,999999,AppendFileName
+
+
+
+
+
+
+
+
+
+
+
+      <br>
+      </code> </td>
+      <td style="vertical-align: top;"><code>src\mmj\util\GMFFBoss#doGMFFExportFromFolder()
+calls<br>
+src\mmj\gmff\GMFFManager#exportFromFolder() calls<br>
+src\mmj\gmff\GMFFFolder#GMFFFolder() <br>
+--&gt; relative to current path<br>
+      <br>
+and <br>
+      <br>
+src\mmj\gmff\GMFFManager#exportFromFolder() calls<br>
+src\mmj\gmff\GMFFManager#exportProofWorksheet() calls<br>
+src\mmj\gmff\ModelAExporter#exportProofWorksheet() calls<br>
+src\mmj\gmff\GMFFExporter#outputToExportFile() calls<br>
+src\mmj\gmff\GMFFExporter#writeExportFile() calls<br>
+src\mmj\gmff\GMFFExportFile#GMFFExportFile() <br>
+--&gt; relative to gmffExportParms.exportFolder (no change required)<br>
+      <br>
+(note: append file...always just a local file name, not a path name)<br>
+      </code> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>GMFFExportTheorem,syl,999999,AppendFileName</code></td>
+      <td style="vertical-align: top;"><code>src\mmj\util\GMFFBoss#doGMFFExportTheorem()
+calls<br>
+src\mmj\gmff\GMFFManager#exportTheorem() calls<br>
+src\mmj\gmff\GMFFManager#gmffExportOneTheorem() calls<br>
+src\mmj\gmff\GMFFManager#exportProofWorksheet() calls<br>
+src\mmj\gmff\ModelAExporter#exportProofWorksheet() calls<br>
+src\mmj\gmff\GMFFExporter#outputToExportFile() calls<br>
+src\mmj\gmff\GMFFExporter#writeExportFile() calls<br>
+src\mmj\gmff\GMFFExportFile#GMFFExportFile() <br>
+--&gt; relative to gmffExportParms.exportFolder (no change required)<br>
+      <br>
+(note: append file...always just a local file name, not a path name)<br>
+      </code> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>GMFFParseMetamathTypesetComment,althtmldef,mydirectory,<br>
+mytypesetdefs.mm,PRINT<br>
+      </code> </td>
+      <td style="vertical-align: top;"><code>src\mmj\util\GMFFBoss#doGMFFParseMetamathTypesetComment()
+calls<br>
+src\mmj\gmff\GMFFManager#parseMetamathTypesetComment() calls<br>
+src\mmj\gmff\GMFFFolder#GMFFFolder() <br>
+--&gt; relative to current path (note: should be modified to use
+mmj2Path)<br>
+      <br>
+and <br>
+      <br>
+src\mmj\gmff\GMFFManager#parseMetamathTypesetComment() calls<br>
+src\mmj\gmff\GMFFInputFile#getFileContents() <br>
+--&gt; mytypesetdefs.mm is
+relative to mydirectory (expected to be a <br>
+local file name in that
+directory)<br>
+      </code> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code><br>
+      </code> </td>
+      <td style="vertical-align: top;"><code><br>
+      </code> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code><span
+ style="color: rgb(51, 51, 255); font-weight: bold; text-decoration: underline;">INFREQUENTLY
+USED</span><br>
+      </code> </td>
+      <td style="vertical-align: top;"><code><br>
+      </code> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>SystemErrorFile,c:\my\mmjSyserrTest001.txt,new,""
+
+
+
+
+
+
+
+
+
+
+
+      </code></td>
+      <td style="vertical-align: top;"><code>src\mmj\util\OutputBoss#editSysErrFile()
+calls<br>
+src\mmj\util\Boss#editPrintWriterRunParm() calls<br>
+src\mmj\util\Boss#doConstructPrintWriter() <br>
+--&gt; relative to current
+path</code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>SystemOutputFile,c:\my\mmjSysoutTest001.txt,new,""
+
+
+
+
+
+
+
+
+
+
+
+      <br>
+      </code> </td>
+      <td style="vertical-align: top;"><code>src\mmj\util\OutputBoss#editSysOutFile()
+calls<br>
+src\mmj\util\Boss#editPrintWriterRunParm() calls<br>
+src\mmj\util\Boss#doConstructPrintWriter() <br>
+--&gt; relative to current
+path<br>
+      </code> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>ProofAsstStartupProofWorksheet,c:\mmj2\data\mmp\PATutorial\Page101.mmp
+
+
+
+
+
+
+
+
+
+
+
+      </code></td>
+      <td style="vertical-align: top;"><code>src\mmj\util\ProofAsstBoss#editProofAsstStartupProofWorksheet()
+calls<br>
+src\mmj\util\Boss#editExistingFileRunParm() calls<br>
+java\src\mmj\util\Boss#buildFileObjectForExistingFile() <br>
+--&gt;
+relative to current path<br>
+      </code> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>SvcFolder,c:\my\java\test\mmj\svc
+
+
+
+
+
+
+
+
+
+
+
+      </code></td>
+      <td style="vertical-align: top;"><code>src\mmj\util\SvcBoss#editSvcFolder()
+calls<br>
+src\mmj\util\Boss#editExistingFolderRunParm() calls<br>
+src\mmj\util\Boss#buildFileObjectForExistingFolder() <br>
+--&gt; relative to
+current path<br>
+      </code> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>Metamath Include File<br>
+      </code> </td>
+      <td style="vertical-align: top;"><code>src\mmj\util\LogicalSystemBoss#doLoadFile()
+calls<br>
+isInFilesAlreadyLoaded() <br>
+--&gt; relative to current path<br>
+(and<br>
+src\mmj\mmio\Systemizer#initIncludeFile() calls<br>
+src\mmj\mmio\IncludeFile#initIncludeFile() <br>
+to actually construct the Reader using a File)<br>
+      </code> </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code><br>
+      </code> </td>
+      <td style="vertical-align: top;"><code><br>
+      </code> </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+</body>
+</html>

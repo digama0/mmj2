@@ -1,0 +1,12 @@
+OutputVerbosity,99
+LoadFile,mm\RegressionTest1set.mm
+VerifyProof,*
+Parse,*
+ProofAsstUnifySearchExclude,biigb,xxxid,dummylink,id1
+GMFFExportParms,althtml,ON,althtmldef,gmfftest\althtml,.html,gmfftest\models\althtml,A,ISO-8859-1
+GMFFExportParms,html,ON,htmldef,gmfftest\html,.html,gmfftest\models\html,A,ISO-8859-1
+GMFFInitialize,PrintTypesettingDefinitions
+GMFFExportFromFolder,gmfftest,19.21adv,.mmp,1
+GMFFExportFromFolder,gmfftest,19.21adv,.mmp,1,UT11Out
+GMFFExportTheorem,19.21adv,1,UT11Out 
+RunProofAsstGUI

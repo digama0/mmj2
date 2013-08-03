@@ -1,0 +1,1064 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta content="text/html; charset=ISO-8859-1" http-equiv="content-type"><title>EssentialAmbiguityExamples</title></head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);" alink="#000088" link="#0000ff" vlink="#ff0000"><big><span style="font-weight: bold;">Essential (inherent) Ambiguity Examples<br>
+<br>
+</span>"essential ambiguity" = no grammar rule a) is a duplicate of any
+other, or b) is a composite function -- cannot itself be parsed using
+grammar rules; and, any "overloads" have been resolved by creating
+separate grammar rules for all permutation of variable type conversions
+and eliminating any resulting duplicate rules.<span style="font-weight: bold;"><br>
+</span></big>
+
+<br>
+<code><br>
+</code>
+<hr style="width: 100%; height: 2px;"><code><span style="font-weight: bold; text-decoration: underline;">1.&nbsp; "Self-ambiguous":</span> <br>
+is it <span style="font-style: italic;">wi(wi(p, q), r))</span> or <span style="font-style: italic;">wi(p, wi(q, r))</span>?<br>
+<br>
+</code>
+<table style="width: 75%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+  <tbody>
+    <tr>
+      
+      
+      <td style="vertical-align: top;"><code>Metamath Source<br></code></td>
+    </tr>
+    <tr>
+      
+      
+      <td style="vertical-align: top;"><code>&nbsp;&nbsp; $c -&gt; wff &nbsp; &nbsp; &nbsp; $.<br>
+&nbsp;&nbsp; $v p q r &nbsp; &nbsp; &nbsp;&nbsp; $.<br>
+wp $f wff p&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $.<br>
+</code><code>wq $f wff q&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $.<br>
+      </code><code>wr $f wff r&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $.<br>
+wi $a wff p -&gt; q&nbsp;&nbsp; $.</code><code><br>
+      </code></td>
+    </tr>
+  </tbody>
+</table>
+
+<code><br>
+ </code>
+<table style="width: 75%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>Rule<br>
+Label<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>Rule<br>
+Type<br>
+Code<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>=========================================================<br>
+      <br>
+Grammar Rule Expressions<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>wi<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>wff<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>wff -&gt; wff<br>
+      </code></td>
+    </tr>
+  </tbody>
+</table>
+
+<code><br>
+</code>
+<table style="width: 75%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>Sample<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>p -&gt; q -&gt; r<br>
+      </code></td><td style="vertical-align: top;"><code>Sample Parse RPNs:<br>
+1. wp wq wr wi wi<br>
+2. wp wq wi wr wi<br>
+      </code></td>
+
+    </tr>
+    
+    
+  </tbody>
+</table>
+
+<br>
+
+<code>
+<br>
+</code>
+<hr style="width: 100%; height: 2px;"><code style="font-weight: bold; text-decoration: underline;"></code><code><span style="font-weight: bold; text-decoration: underline;">2.&nbsp; Overloaded Operator Associativity Ambiguity:</span> <br>
+is it <span style="font-style: italic;">plus3(plus2(i, j), k)</span> or <span style="font-style: italic;">plus2(plus3(i, j, k), r)</span>?<br>
+<br>
+</code>
+<table style="width: 75%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+  <tbody>
+    <tr>
+      
+      
+      <td style="vertical-align: top;"><code>Metamath Source<br></code></td>
+    </tr>
+    <tr>
+      
+      
+      <td style="vertical-align: top;"><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $c + nbr&nbsp; &nbsp; &nbsp; &nbsp; $.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $v i j k r &nbsp; &nbsp;&nbsp; $.<br>
+ni&nbsp;&nbsp;&nbsp; $f nbr i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $.<br>
+</code><code>nj&nbsp;&nbsp;&nbsp; $f nbr j&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $.<br>
+      </code><code>nk&nbsp;&nbsp;&nbsp; $f nbr k&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; $.<br>
+nr&nbsp;&nbsp;&nbsp; $f nbr r&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $.<br>
+plus2 $a nbr + i j&nbsp; &nbsp; $.<br>
+</code><code>
+plus3 $a nbr + i j k&nbsp; $.</code><br>
+<code>
+      </code></td>
+    </tr>
+  </tbody>
+</table>
+
+<code><br>
+ </code>
+<table style="width: 75%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>Rule<br>
+Label<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>Rule<br>
+Type<br>
+Code<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>=========================================================<br>
+      <br>
+Grammar Rule Expressions<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>plus2<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>nbr<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>+ nbr nbr <br>
+      </code></td>
+    </tr><tr>
+      <td style="vertical-align: top;"><code>plus3<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>nbr<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>+ nbr nbr nbr<br>
+      </code></td>
+    </tr>
+
+  </tbody>
+</table>
+
+
+<code><br>
+</code>
+<table style="width: 75%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>Sample
+      </code></td>
+      <td style="vertical-align: top;"><code>+ + i j k r
+      </code></td><td style="vertical-align: top;"><code>Sample Parse RPNs:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+1. ni nj plus2 ni nj plus3<br>
+2. ni nj nk plus3 ni plus2<br>
+      </code></td>
+
+    </tr>
+    
+    
+  </tbody>
+</table>
+
+
+<br>
+
+
+<code>
+<br>
+</code>
+<hr style="width: 100%; height: 2px;"><code></code><code></code><code><span style="font-weight: bold; text-decoration: underline;">3.&nbsp; Mixed Prefix, Postfix Ambiguity -- AKA "Overlap"</span><br>
+is it <span style="font-style: italic;">and(p, or(q, r))</span> or <span style="font-style: italic;">or(and(p, q), r)</span>?<br>
+<br>
+</code>
+<table style="width: 75%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+  <tbody>
+    <tr>
+      
+      
+      <td style="vertical-align: top;"><code>Metamath Source<br></code></td>
+    </tr>
+    <tr>
+      
+      
+      <td style="vertical-align: top;"><code>&nbsp;&nbsp;&nbsp; $c &amp; | wff&nbsp; &nbsp; &nbsp; $.<br>
+&nbsp;&nbsp;&nbsp; $v p q r &nbsp; &nbsp; &nbsp;&nbsp; $.<br>
+wp&nbsp; $f wff p&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $.<br>
+</code><code>wq&nbsp; $f wff q&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $.<br>
+      </code><code>wr&nbsp; $f wff r&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $.<br>
+and $a wff &amp; p q &nbsp;&nbsp; $.<br>
+or&nbsp; $a wff p q | &nbsp;&nbsp; $.<br>
+</code><code>
+      </code></td>
+    </tr>
+  </tbody>
+</table>
+
+<code><br>
+ </code>
+<table style="width: 75%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>Rule<br>
+Label<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>Rule<br>
+Type<br>
+Code<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>=========================================================<br>
+      <br>
+Grammar Rule Expressions<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>and<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>wff<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>&amp; wff wff <br>
+      </code></td>
+    </tr><tr>
+      <td style="vertical-align: top;"><code>or<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>wff<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>wff wff |<br>
+      </code></td>
+    </tr>
+
+  </tbody>
+</table>
+
+
+
+<code><br>
+</code>
+<table style="width: 75%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>Sample
+      </code></td>
+      <td style="vertical-align: top;"><code>&amp; p q r |
+      </code></td><td style="vertical-align: top;"><code>Sample Parse RPNs:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br></code><code>1. wp wq wr or and</code><br>
+      <code>2. wp wq and wr or<br>
+      </code></td>
+
+    </tr>
+    
+    
+  </tbody>
+</table>
+
+
+
+<br>
+
+
+
+<code>
+<br>
+<br>
+</code><code></code><code><br></code>
+<hr style="width: 100%; height: 2px;"><code style="font-weight: bold; text-decoration: underline;">
+</code><code style="font-weight: bold; text-decoration: underline;"></code><code><span style="font-weight: bold; text-decoration: underline;">4.&nbsp; Infix Overlap Ambiguity:</span><br>
+is it </code><code><span style="font-style: italic;">or(and(p, q), r)</span> or </code><code><span style="font-style: italic;">and(p, or(q, r))</span> or ?<br>
+<br>
+</code>
+<table style="width: 75%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+  <tbody>
+    <tr>
+      
+      
+      <td style="vertical-align: top;"><code>Metamath Source<br></code></td>
+    </tr>
+    <tr>
+      
+      
+      <td style="vertical-align: top;"><code>&nbsp;&nbsp;&nbsp; $c &amp; | wff&nbsp; &nbsp; &nbsp; $.<br>
+&nbsp;&nbsp;&nbsp; $v p q r &nbsp; &nbsp; &nbsp;&nbsp; $.<br>
+wp&nbsp; $f wff p&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $.<br>
+</code><code>wq&nbsp; $f wff q&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $.<br>
+      </code><code>wr&nbsp; $f wff r&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $.<br>
+and $a wff p &amp; q &nbsp;&nbsp; $.<br>
+or&nbsp; $a wff p | q &nbsp;&nbsp; $.<br>
+</code><code>
+      </code></td>
+    </tr>
+  </tbody>
+</table>
+
+<code><br>
+ </code>
+<table style="width: 75%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>Rule<br>
+Label<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>Rule<br>
+Type<br>
+Code<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>=========================================================<br>
+      <br>
+Grammar Rule Expressions<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>and<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>wff<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>wff &amp; wff <br>
+      </code></td>
+    </tr><tr>
+      <td style="vertical-align: top;"><code>or<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>wff<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>wff | wff <br>
+      </code></td>
+    </tr>
+
+  </tbody>
+</table>
+
+
+
+
+<code><br>
+</code>
+<table style="width: 75%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>Sample
+      </code></td>
+      <td style="vertical-align: top;"><code>p &amp; q | r
+      </code></td><td style="vertical-align: top;"><code>Sample Parse RPNs:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br></code><code>1. wp wq wr or and</code><br>
+      <code>2. wp wq and wr or<br>
+      </code></td>
+
+    </tr>
+    
+    
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+
+
+<code>
+<br>
+</code>
+<hr style="width: 100%; height: 2px;"><code style="font-weight: bold; text-decoration: underline;"></code><code style="font-weight: bold; text-decoration: underline;"></code><code><span style="font-weight: bold; text-decoration: underline;">5.&nbsp; Adjacent Term Ambiguity:</span><br>
+is it </code><code><span style="font-style: italic;">part1(c1, "# !", "@ *") or part2(c1, "#", "! @", "*")</span></code><code><span style="font-style: italic;"></span>?<br>
+<br>
+(</code><span style="font-style: italic;">NOTE: This example leads me
+to think that Named Typed Constants should be restricted to Formula
+length = 2. -- i.e. no more than one Constant per Constant
+Expression.&nbsp; Otherwise the GrammaticalParse(E) function becomes
+much more complicated?</span><code>)<br>
+<br>
+</code>
+<table style="width: 75%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+
+  <tbody>
+    <tr>
+      
+      
+      <td style="vertical-align: top;"><code>Metamath Source<br></code></td>
+    </tr>
+    <tr>
+      
+      
+      <td style="vertical-align: top;"><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $c ( := ) # ! @ * part component subpart gadget&nbsp; $.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$v p1 c1 s1 s2 g1 g2 g3 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; $.<br>p1h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$f part&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+p1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.<br>
+c1h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $f component c1 &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp;&nbsp; $.<br>
+s1h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $f subpart&nbsp;&nbsp;
+s1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.<br>
+s2h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $f subpart&nbsp;&nbsp;
+s2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.<br>
+g1h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $f gadget&nbsp;&nbsp;&nbsp;
+g1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.<br>
+g2h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $f gadget&nbsp;&nbsp;&nbsp;
+g2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.<br>
+g3h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $f gadget&nbsp;&nbsp;&nbsp;
+g3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.<br>
+part1&nbsp;&nbsp;&nbsp; $a part ( c1 := s1 s2
+)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.<br>
+</code><code>part2&nbsp;&nbsp;&nbsp; $a part ( c1 := g1 g2 g3
+)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $.<br>
+subpart1 $a widget #
+!&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $.<br>
+subpart2 $a widget @
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $.<br>
+gadget1&nbsp; $a
+#&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.<br>
+gadget2&nbsp; $a !
+@&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br>
+gadget3&nbsp; $a *<br>
+      </code></td></tr></tbody>
+</table>
+
+<code><br>
+ </code>
+<table style="width: 75%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>Rule<br>
+Label<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>Rule<br>
+Type<br>
+Code<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>======================================================<br>
+      <br>
+Grammar Rule Expressions<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>part1<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>part<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>( component := subpart subpart )</code></td>
+    </tr><tr>
+      <td style="vertical-align: top;"><code>part2<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>part<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>( component := gadget gadget gadget )</code></td>
+    </tr><tr>
+      <td style="vertical-align: top;"><code>subpart1<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>subpart<br>
+      </code></td>
+      <td style="vertical-align: top;"><code># !<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>subpart2<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>subpart<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>@ *<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>gadget1<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>gadget<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>#<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>gadget2<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>gadget<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>! @<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>gadget3<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>gadget<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>*<br>
+      </code></td>
+    </tr>
+
+
+  </tbody>
+</table>
+
+
+
+
+
+<code><br>
+</code>
+<table style="width: 75%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>Sample
+      </code></td>
+      <td style="vertical-align: top;"><code>( c1 := # ! @ * )
+      </code></td><td style="vertical-align: top;"><code>Sample Parse RPNs:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br></code><code>1. c1h subpart1 subpart2 part1</code><br>
+      <code>2. c1h gadget1 gadget2 gadget3 part2<br>
+      </code></td>
+
+    </tr>
+    
+    
+  </tbody>
+</table>
+
+
+
+
+
+<code></code><code><br>
+</code><br>
+
+<hr style="width: 100%; height: 2px;"><br>
+
+<code><span style="font-weight: bold; text-decoration: underline;">6.&nbsp; Infix Overlap Ambiguity #2:</span><br>
+is it </code><code><span style="font-style: italic;">or(and(p, q), r)</span> or </code><code><span style="font-style: italic;">and(p, or(q, r))</span> or ?<br>
+<br>
+</code>
+<table style="width: 75%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+
+  <tbody>
+    <tr>
+      
+      
+      <td style="vertical-align: top;"><code>Metamath Source<br></code></td>
+    </tr>
+    <tr>
+      
+      
+      <td style="vertical-align: top;"><code>&nbsp;&nbsp;&nbsp; $c &amp; | wff . &nbsp; &nbsp; &nbsp; $.<br>
+&nbsp;&nbsp;&nbsp; $v p q r &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $.<br>
+wp&nbsp; $f wff p&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $.<br>
+</code><code>wq&nbsp; $f wff q&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $.<br>
+      </code><code>wr&nbsp; $f wff r&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $.<br>
+and $a wff . p &amp; q &nbsp; &nbsp; $.<br>
+or&nbsp; $a wff p | q . &nbsp; &nbsp; $.<br>
+</code><code>
+      </code></td>
+    </tr>
+  </tbody>
+</table>
+
+
+<code><br>
+ </code>
+<table style="width: 75%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>Rule<br>
+Label<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>Rule<br>
+Type<br>
+Code<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>=========================================================<br>
+      <br>
+Grammar Rule Expressions<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>and<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>wff<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>. wff &amp; wff <br>
+      </code></td>
+    </tr><tr>
+      <td style="vertical-align: top;"><code>or<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>wff<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>wff | wff .<br>
+      </code></td>
+    </tr>
+
+  </tbody>
+</table>
+
+
+
+
+
+<code><br>
+</code>
+<table style="width: 75%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>Sample
+      </code></td>
+      <td style="vertical-align: top;"><code>. p &amp; q | r .</code></td><td style="vertical-align: top;"><code>Sample Parse RPNs:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br></code><code>1. wp wq wr or and</code><br>
+      <code>2. wp wq and wr or<br>
+      </code></td>
+
+    </tr>
+    
+    
+  </tbody>
+</table>
+
+
+
+
+
+<br>
+
+
+
+
+
+<code>
+</code><code><br>
+</code>
+<hr style="width: 100%; height: 2px;"><code><span style="font-weight: bold; text-decoration: underline;">7.&nbsp; Adjacent Term Ambiguity #2:</span><br>
+is it </code><code><span style="font-style: italic;">part1(c1, #, !, @, *) or part2(c1, gadget1(!), gadget(*))</span></code><code><span style="font-style: italic;"></span>?<br>
+<br>
+(</code><span style="font-style: italic;">Note: this is an example
+involving use of a Constant as a Named Typed Constant and as a plain
+old Constant. A similar usage is seen in </span><code style="font-style: italic;">set.mm</code><span style="font-style: italic;">'s </span><code style="font-style: italic;">cdiv</code><span style="font-style: italic;">, </span><code style="font-style: italic;">wsb,</code><span style="font-style: italic;"> </span><code style="font-style: italic;">and</code><span style="font-style: italic;"> </span><code style="font-style: italic;">wsbc</code><span style="font-style: italic;"> where "</span><code style="font-style: italic;">/</code><span style="font-style: italic;">" serves as a dual-use Constant -- once as a Class and once as punctuation.. In the example below, Syntax Axioms <code>gadget1</code> and <code>gadget2</code> imply that a gadget can be formed with 2 adjacent <code>subpart</code>s, and if that "implied grammar rule" were added to the GrammarRuleTree forest then <code>part1</code> would be immediately seens as being a composite function and hence, ambiguous.</span><span style="font-family: monospace;">)</span><code><br>
+</code><code><br>
+</code>
+<table style="width: 75%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+
+
+  <tbody>
+    <tr>
+      
+      
+      <td style="vertical-align: top;"><code>Metamath Source<br></code></td>
+    </tr>
+    <tr>
+      
+      
+      <td style="vertical-align: top;"><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $c ( := ) # ! @ * part component subpart gadget&nbsp; $.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$v p1 c1 s1 s2 g1 g2 g3 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; $.<br>p1h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$f part&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+p1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.<br>
+c1h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $f component c1 &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp;&nbsp; $.<br>
+s1h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $f subpart&nbsp;&nbsp;
+s1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.<br>
+s2h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $f subpart&nbsp;&nbsp;
+s2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.<br>
+</code><code>s3h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $f subpart&nbsp;&nbsp;
+s3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.<br>
+      </code><code>s4h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $f
+subpart&nbsp;&nbsp;
+s4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.</code><br>
+      <code>g1h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $f
+gadget&nbsp;&nbsp;&nbsp;
+g1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.<br>
+g2h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $f gadget&nbsp;&nbsp;&nbsp;
+g2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.<br>part1&nbsp;&nbsp;&nbsp; $a part ( c1 := s1 s2
+s3 s4 )&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.<br>
+      </code><code>part2&nbsp;&nbsp;&nbsp; $a part ( c1 := g1 g3
+) &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $.<br>
+subpart1 $a widget # &nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $.<br>
+subpart2 $a widget !&nbsp; &nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $.<br>
+</code><code>subpart3 $a widget @&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $.<br>
+subpart4 $a widget *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $.<br></code><code>gadget1&nbsp;
+$a
+#
+s1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.<br>
+gadget2&nbsp; $a @ s1
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$.<br>
+      </code></td></tr></tbody>
+</table>
+
+
+<code><br>
+ </code>
+<table style="width: 75%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>Rule<br>
+Label<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>Rule<br>
+Type<br>
+Code<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>======================================================<br>
+      <br>
+Grammar Rule Expressions<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>part1<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>part<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>( component := subpart subpart subpart subpart )</code></td>
+    </tr><tr>
+      <td style="vertical-align: top;"><code>part2<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>part<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>( component := gadget gadget )</code></td>
+    </tr><tr>
+      <td style="vertical-align: top;"><code>subpart1<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>subpart<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>#<br>
+      </code></td>
+    </tr>
+    <tr>
+<td style="vertical-align: top;"><code>subpart2<br>
+      </code></td><td style="vertical-align: top;"><code>subpart<br>
+      </code></td><td style="vertical-align: top;"><code>!<br>
+      </code></td></tr>
+<tr>
+      <td style="vertical-align: top;"><code>subpart3<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>subpart<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>@<br>
+      </code></td>
+    </tr>
+    <tr>
+<td style="vertical-align: top;"><code>subpart4<br>
+      </code></td><td style="vertical-align: top;"><code>subpart<br>
+      </code></td><td style="vertical-align: top;"><code>*<br>
+      </code></td></tr>
+<tr>
+      <td style="vertical-align: top;"><code>gadget1<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>gadget<br>
+      </code></td>
+      <td style="vertical-align: top;"><code># subpart<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>gadget2<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>gadget<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>@ subpart<br>
+      </code></td>
+    </tr>
+    
+
+
+  </tbody>
+</table>
+
+
+
+
+
+
+<code><br>
+</code>
+<table style="text-align: left; width: 675px; height: 100px;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>Sample
+      </code></td>
+      <td style="vertical-align: top;"><code>( c1 := # ! @ * )
+      </code></td><td style="vertical-align: top;"><code>Sample Parse RPNs:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br></code><code>1. c1h subpart1 subpart2 subpart3 subpart4 part1</code><br>
+      <code>2. c1h subpart2 gadget1&nbsp; subpart4 gadget2&nbsp; part2<br>
+      </code></td>
+
+    </tr>
+    
+    
+  </tbody>
+</table>
+
+
+
+
+
+
+<code></code><code><br>
+</code><br>
+
+
+<hr style="width: 100%; height: 2px;"><code><span style="font-weight: bold; text-decoration: underline;"></span></code><br>
+<code><span style="font-weight: bold; text-decoration: underline;">8.&nbsp; Dual-use Delimiter/Operator Constant with Expression Embedding Ambiguities (2 samples)</span><br>Sample1: is it <span style="font-style: italic;">f(g(a)) or g(f(a))</span>?<span style="font-style: italic;"> </span>Sample2: is it<span style="font-style: italic;"> f(h(a))</span> or <span style="font-style: italic;">h(f(a))</span> or <span style="font-style: italic;">g(g(a))</span>?<span style="font-style: italic;">  <br>
+<br>
+</span>The extra ")"s are used as postfix operators, which introduces
+an ambiguity with the other function of ")" as a delimiter/endpoint. If
+we had "g $a A ( a ) * $." instead of "g $a A ( a ) ) $." then <span style="font-style: italic;">f(g(a))</span> would not equal <span style="font-style: italic;">g(f(a))</span>.<span style="font-style: italic;"><br>
+</span><span style="font-style: italic;"></span><br>
+<br>
+</code>
+<table style="width: 75%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+  <tbody>
+    <tr>
+      
+      
+      <td style="vertical-align: top;"><code>Metamath Source<br></code></td>
+    </tr>
+    <tr>
+      
+      
+      <td style="vertical-align: top;"><code>&nbsp;&nbsp;&nbsp; $c ( ) A&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; $.<br>
+&nbsp;&nbsp;&nbsp; $v a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; $.<br>wa&nbsp; $f A a &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $.<br>
+</code><code></code><code>f &nbsp; $a A ( a ) &nbsp; &nbsp;&nbsp; $.<br>
+g &nbsp; $a A ( a ) ) &nbsp;&nbsp; $.<br>
+</code><code>
+h &nbsp; $a A ( a ) ) )&nbsp; $.</code><br>
+<code>
+      </code></td>
+    </tr>
+  </tbody>
+</table>
+
+
+<code><br>
+ </code>
+<table style="width: 75%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>Rule<br>
+Label<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>Rule<br>
+Type<br>
+Code<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>=========================================================<br>
+      <br>
+Grammar Rule Expressions<br>
+      </code></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>f<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>A<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>( A ) <br>
+      </code></td>
+    </tr><tr>
+      <td style="vertical-align: top;"><code>g<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>A<br>
+      </code></td>
+      <td style="vertical-align: top;"><code>( A ) )<br>
+      </code></td>
+    </tr><tr>
+<td style="vertical-align: top;"><code>h<br>
+      </code></td><td style="vertical-align: top;"><code>A<br>
+      </code></td><td style="vertical-align: top;"><code>( A ) ) )<br>
+      </code></td></tr>
+
+
+  </tbody>
+</table>
+
+
+
+
+<code><br>
+</code>
+<table style="width: 75%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>Sample1
+      </code></td>
+      <td style="vertical-align: top;"><code>( ( a ) ) )
+      </code></td><td style="vertical-align: top;"><code>Sample Parse RPNs:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br></code><code>1. wa f g</code><br>
+      <code>2. wa g f<br>
+      </code></td>
+
+    </tr>
+    
+    
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+
+
+<code><br>
+</code>
+<table style="width: 75%; text-align: left;" border="5" cellpadding="2" cellspacing="2">
+
+
+
+
+
+
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><code>Sample2
+      </code></td>
+      <td style="vertical-align: top;"><code>( ( a ) ) ) )
+      </code></td><td style="vertical-align: top;"><code>Sample Parse RPNs:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br></code><code>1. wa f h</code><br>
+      <code>2. wa h f<br>
+3. wa g g<br>
+      </code></td>
+
+    </tr>
+    
+    
+  </tbody>
+</table>
+
+
+
+
+<br>
+<br>
+<hr style="width: 100%; height: 2px;"><br>
+<br>
+<br>
+<br>
+</body></html>

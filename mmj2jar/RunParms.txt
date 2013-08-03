@@ -1,0 +1,7 @@
+LoadFile,set.mm
+VerifyProof,*
+Parse,* 
+ProofAsstUnifySearchExclude,biigb,xxxid,dummylink
+ProofAsstProofFolder,myproofs
+TheoremLoaderMMTFolder,myproofs
+RunProofAsstGUI

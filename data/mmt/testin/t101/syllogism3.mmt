@@ -1,0 +1,13 @@
+${
+
+  syllogism3.1 $e |- ( ph -> ps ) $.
+
+  syllogism3.2 $e |- ( ps -> ch ) $.
+
+  $( syllogism3 is clone of syl with proof errors $)
+
+  syllogism3   $p |- ( ph -> ch ) 
+	$=  wph wph wps wi wph wch wi syllogism3.1 wph wps wch wps 
+	    wch wi wph syllogism3.2 a1i a2i ax-mp $. 
+	    
+$}

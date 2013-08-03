@@ -1,0 +1,273 @@
+$( <MM> <PROOF_ASST> THEOREM=UT4002  LOC_AFTER=? 
+
+h1::UT4002.1      |- D =
+                      { <. <. x ,
+                              y >. ,
+                              z >. |
+                              ( ( x e. CC /\ y e. CC ) /\
+                                z = ( abs ` ( x - y ) ) ) }
+2::moeq            |- E* z
+                         z = ( abs ` ( x - y ) )
+3:2:moani          |- E* z
+                         ( ( x e. CC /\ y e. CC ) /\
+                           z = ( abs ` ( x - y ) ) )
+4:3:funoprab       |- Fun { <. <. x ,
+                                  y >. ,
+                                  z >. |
+                                  ( ( x e. CC /\ y e. CC ) /\
+                                    z = ( abs ` ( x - y ) ) ) }
+5::fvex            |- ( abs ` ( x - y ) ) e. V
+6::visset          |- y e. V
+7:6:opelxp         |- ( <. x , y >. e. ( CC X. CC ) <->
+                        ( x e. CC /\ y e. CC ) )
+8:7:bicomi         |- ( ( x e. CC /\ y e. CC ) <->
+                        <. x , y >. e. ( CC X. CC ) )
+9:8:anbi1i         |- ( ( ( x e. CC /\ y e. CC ) /\
+                          z = ( abs ` ( x - y ) ) ) <->
+                        ( <. x , y >. e. ( CC X. CC ) /\
+                          z = ( abs ` ( x - y ) ) ) )
+10:9:oprabbii      |- { <. <. x ,
+                              y >. ,
+                              z >. |
+                              ( ( x e. CC /\ y e. CC ) /\
+                                z = ( abs ` ( x - y ) ) ) } =
+                      { <. <. x ,
+                              y >. ,
+                              z >. |
+                              ( <. x , y >. e. ( CC X. CC ) /\
+                                z = ( abs ` ( x - y ) ) ) }
+11:5,10:dmopab2    |- dom { <. <. x ,
+                                  y >. ,
+                                  z >. |
+                                  ( ( x e. CC /\ y e. CC ) /\
+                                    z = ( abs ` ( x - y ) ) ) } =
+                      ( CC X. CC )
+12:4,11:pm3.2i     |- ( Fun { <. <. x ,
+                                    y >. ,
+                                    z >. |
+                                    ( ( x e. CC /\ y e. CC ) /\
+                                      z = ( abs ` ( x - y ) ) ) } /\
+                        dom { <. <. x ,
+                                    y >. ,
+                                    z >. |
+                                    ( ( x e. CC /\ y e. CC ) /\
+                                      z = ( abs ` ( x - y ) ) ) } =
+                        ( CC X. CC ) )
+13::df-fn          |- ( { <. <. x ,
+                                y >. ,
+                                z >. |
+                                ( ( x e. CC /\ y e. CC ) /\
+                                  z = ( abs ` ( x - y ) ) ) } Fn
+                        ( CC X. CC ) <->
+                        ( Fun { <. <. x ,
+                                      y >. ,
+                                      z >. |
+                                      ( ( x e. CC /\ y e. CC ) /\
+                                        z = ( abs ` ( x - y ) ) ) } /\
+                          dom { <. <. x ,
+                                      y >. ,
+                                      z >. |
+                                      ( ( x e. CC /\ y e. CC ) /\
+                                        z = ( abs ` ( x - y ) ) ) } =
+                          ( CC X. CC ) ) )
+14:12,13:mpbir     |- { <. <. x ,
+                              y >. ,
+                              z >. |
+                              ( ( x e. CC /\ y e. CC ) /\
+                                z = ( abs ` ( x - y ) ) ) } Fn
+                      ( CC X. CC )
+15::fneq1          |- ( D =
+                        { <. <. x ,
+                                y >. ,
+                                z >. |
+                                ( ( x e. CC /\ y e. CC ) /\
+                                  z = ( abs ` ( x - y ) ) ) } ->
+                        ( D Fn ( CC X. CC ) <->
+                          { <. <. x ,
+                                  y >. ,
+                                  z >. |
+                                  ( ( x e. CC /\ y e. CC ) /\
+                                    z = ( abs ` ( x - y ) ) ) } Fn
+                          ( CC X. CC ) ) )
+16:1,15:ax-mp      |- ( D Fn ( CC X. CC ) <->
+                        { <. <. x ,
+                                y >. ,
+                                z >. |
+                                ( ( x e. CC /\ y e. CC ) /\
+                                  z = ( abs ` ( x - y ) ) ) } Fn
+                        ( CC X. CC ) )
+17:14,16:mpbir     |- D Fn ( CC X. CC )
+18::rneq           |- ( D =
+                        { <. <. x ,
+                                y >. ,
+                                z >. |
+                                ( ( x e. CC /\ y e. CC ) /\
+                                  z = ( abs ` ( x - y ) ) ) } ->
+                        ran D =
+                        ran { <. <. x ,
+                                    y >. ,
+                                    z >. |
+                                    ( ( x e. CC /\ y e. CC ) /\
+                                      z = ( abs ` ( x - y ) ) ) } )
+19:1,18:ax-mp      |- ran D =
+                      ran { <. <. x ,
+                                  y >. ,
+                                  z >. |
+                                  ( ( x e. CC /\ y e. CC ) /\
+                                    z = ( abs ` ( x - y ) ) ) }
+20::rnoprab        |- ran { <. <. x ,
+                                  y >. ,
+                                  z >. |
+                                  ( ( x e. CC /\ y e. CC ) /\
+                                    z = ( abs ` ( x - y ) ) ) } =
+                      { z |
+                        E. x
+                           E. y
+                              ( ( x e. CC /\ y e. CC ) /\
+                                z = ( abs ` ( x - y ) ) ) }
+21::ax-17          |- ( z e. RR -> A. x z e. RR )
+22::ax-17          |- ( z e. RR -> A. y z e. RR )
+23::pm3.27         |- ( ( ( x e. CC /\ y e. CC ) /\
+                          z = ( abs ` ( x - y ) ) ) ->
+                        z = ( abs ` ( x - y ) ) )
+24::subclt         |- ( ( x e. CC /\ y e. CC ) -> ( x - y ) e. CC )
+25:24:adantr       |- ( ( ( x e. CC /\ y e. CC ) /\
+                          z = ( abs ` ( x - y ) ) ) ->
+                        ( x - y ) e. CC )
+26::absclt         |- ( ( x - y ) e. CC ->
+                        ( abs ` ( x - y ) ) e. RR )
+27:25,26:syl       |- ( ( ( x e. CC /\ y e. CC ) /\
+                          z = ( abs ` ( x - y ) ) ) ->
+                        ( abs ` ( x - y ) ) e. RR )
+28:23,27:eqeltrd   |- ( ( ( x e. CC /\ y e. CC ) /\
+                          z = ( abs ` ( x - y ) ) ) ->
+                        z e. RR )
+29:22,28:19.23ai   |- ( E. y
+                           ( ( x e. CC /\ y e. CC ) /\
+                             z = ( abs ` ( x - y ) ) ) ->
+                        z e. RR )
+30:21,29:19.23ai   |- ( E. x
+                           E. y
+                              ( ( x e. CC /\ y e. CC ) /\
+                                z = ( abs ` ( x - y ) ) ) ->
+                        z e. RR )
+31:30:ax-gen       |- A. z
+                         ( E. x
+                              E. y
+                                 ( ( x e. CC /\ y e. CC ) /\
+                                   z = ( abs ` ( x - y ) ) ) ->
+                           z e. RR )
+32::abss           |- ( { z |
+                          E. x
+                             E. y
+                                ( ( x e. CC /\ y e. CC ) /\
+                                  z = ( abs ` ( x - y ) ) ) } (_
+                        RR <->
+                        A. z
+                           ( E. x
+                                E. y
+                                   ( ( x e. CC /\ y e. CC ) /\
+                                     z = ( abs ` ( x - y ) ) ) ->
+                             z e. RR ) )
+33:31,32:mpbir     |- { z |
+                        E. x
+                           E. y
+                              ( ( x e. CC /\ y e. CC ) /\
+                                z = ( abs ` ( x - y ) ) ) } (_
+                      RR
+34:20,33:eqsstr    |- ran { <. <. x ,
+                                  y >. ,
+                                  z >. |
+                                  ( ( x e. CC /\ y e. CC ) /\
+                                    z = ( abs ` ( x - y ) ) ) } (_
+                      RR
+35:19,34:eqsstr    |- ran D (_ RR
+36:17,35:pm3.2i    |- ( D Fn ( CC X. CC ) /\ ran D (_ RR )
+37::df-f           |- ( D : ( CC X. CC ) --> RR <->
+                        ( D Fn ( CC X. CC ) /\ ran D (_ RR ) )
+38:36,37:mpbir     |- D : ( CC X. CC ) --> RR
+39:?:              |- ( ( x e. CC /\ y e. CC ) ->
+                        ( ( x D y ) = 0 -> x = y ) )
+40::df-3an         |- ( ( x e. CC /\
+                          y e. CC /\
+                          ( abs ` ( x - y ) ) e. RR ) <->
+                        ( ( x e. CC /\ y e. CC ) /\
+                          ( abs ` ( x - y ) ) e. RR ) )
+41:1:oprabval4g    |- ( ( x e. CC /\
+                          y e. CC /\
+                          ( abs ` ( x - y ) ) e. RR ) ->
+                        ( x D y ) = ( abs ` ( x - y ) ) )
+42:40,41:sylbir    |- ( ( ( x e. CC /\ y e. CC ) /\
+                          ( abs ` ( x - y ) ) e. RR ) ->
+                        ( x D y ) = ( abs ` ( x - y ) ) )
+43:42:ex           |- ( ( x e. CC /\ y e. CC ) ->
+                        ( ( abs ` ( x - y ) ) e. RR ->
+                          ( x D y ) = ( abs ` ( x - y ) ) ) )
+44:?:              |- ( ( ( abs ` ( x - y ) ) e. RR ->
+                          ( x D y ) = ( abs ` ( x - y ) ) ) ->
+                        ( ( ( x e. CC /\ y e. CC ) /\ x = y ) ->
+                          ( x D y ) = 0 ) )
+45:43,44:syl       |- ( ( x e. CC /\ y e. CC ) ->
+                        ( ( ( x e. CC /\ y e. CC ) /\ x = y ) ->
+                          ( x D y ) = 0 ) )
+46:45:exp3a        |- ( ( x e. CC /\ y e. CC ) ->
+                        ( ( x e. CC /\ y e. CC ) ->
+                          ( x = y -> ( x D y ) = 0 ) ) )
+47:46:pm2.43i      |- ( ( x e. CC /\ y e. CC ) ->
+                        ( x = y -> ( x D y ) = 0 ) )
+48:39,47:impbid    |- ( ( x e. CC /\ y e. CC ) ->
+                        ( ( x D y ) = 0 <-> x = y ) )
+49:?:              |- ( ( x e. CC /\ y e. CC ) ->
+                        A. z e.
+                           CC
+                           ( x D y ) <_ ( ( z D x ) + ( z D y ) ) )
+50:48,49:jca       |- ( ( x e. CC /\ y e. CC ) ->
+                        ( ( ( x D y ) = 0 <-> x = y ) /\
+                          A. z e.
+                             CC
+                             ( x D y ) <_ ( ( z D x ) + ( z D y ) ) ) )
+51:50:rgen2        |- A. x e.
+                         CC
+                         A. y e.
+                            CC
+                            ( ( ( x D y ) = 0 <-> x = y ) /\
+                              A. z e.
+                                 CC
+                                 ( x D y ) <_ ( ( z D x ) + ( z D y ) ) )
+52:38,51:pm3.2i    |- ( D : ( CC X. CC ) --> RR /\
+                        A. x e.
+                           CC
+                           A. y e.
+                              CC
+                              ( ( ( x D y ) = 0 <-> x = y ) /\
+                                A. z e.
+                                   CC
+                                   ( x D y ) <_ ( ( z D x ) + ( z D y ) ) ) )
+53:?:              |- D e. V
+54::ismsg          |- ( D e. V ->
+                        ( <. CC , D >. e. Met <->
+                          ( D : ( CC X. CC ) --> RR /\
+                            A. x e.
+                               CC
+                               A. y e.
+                                  CC
+                                  ( ( ( x D y ) = 0 <-> x = y ) /\
+                                    A. z e.
+                                       CC
+                                       ( x D y ) <_ ( ( z D x ) + ( z D y ) )
+                                        ) ) ) )
+55:53,54:ax-mp     |- ( <. CC , D >. e. Met <->
+                        ( D : ( CC X. CC ) --> RR /\
+                          A. x e.
+                             CC
+                             A. y e.
+                                CC
+                                ( ( ( x D y ) = 0 <-> x = y ) /\
+                                  A. z e.
+                                     CC
+                                     ( x D y ) <_ ( ( z D x ) + ( z D y ) ) )
+                              ) )
+qed:52,55:mpbir    |- <. CC , D >. e. Met
+
+$)
+

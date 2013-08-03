@@ -1,0 +1,45 @@
+SystemOutputFile,result\Sample001Sysout20111101y.txt,new,""
+ *==================================================
+ * Sample001.txt do set.mm:
+ *
+ * WARNING: This job takes 15? seconds on a
+ *          1.8GHz Celeron with 256MB and default
+ *          system settings with nothing much
+ *          else running.
+ *
+ * 1) Put sysout RunParmFile line first so that
+ *    every subsequent command is logged into the
+ *    designated file -- or delete the sysout
+ *    line to receive the output back to the
+ *    screen or wherever System.out is directed.
+ *    The "SystemOutputFile" runparm values give
+ *    the filename, update/new file usage parm, and
+ *    character set name for the output file
+ *    (see mmj.util.UtilConstants for more info on
+ *    character set name values.)
+ *
+ * 2) Only print first 50 set.mm statements in detail.
+ *    A complete dump of set.mm's statement details
+ *    is about 10MB -- which is not a problem, but
+ *    may not be what you want...set.mm has more than
+ *    10,000 statements.
+ *
+ * 3) Verify proofs, parse all statements, and
+ *     for fun, "verify parse" which means feed the
+ *     statement syntax RPNs into the VerifyProofs
+ *     routine! (A theorem's Proof and its grammatical
+ *     parse are both RPN's that construct the formula.)
+ *
+ * 4) Print set.mm's syntax information and the
+ *    details for statement "supeu".
+ *
+ *==================================================
+MaxStatementPrintCount,50
+LoadFile,mm\RegressionTest1set.mm
+VerifyProof,*
+Parse,*
+VerifyParse,*
+PrintSyntaxDetails
+PrintStatementDetails,*
+PrintStatementDetails,supeu
+ */

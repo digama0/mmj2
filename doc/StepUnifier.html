@@ -1,0 +1,996 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>Step Unifier</title>
+</head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
+ alink="#000088" link="#0000ff" vlink="#ff0000">
+<big><big><span style="font-weight: bold;">Step Unifier<br>
+<br>
+<small>Synopsis:</small></span></big></big> This is a very detailed
+description of the proposed mmj2 proof step unification algorithm for
+proof steps involving <a href="WorkVariables.html">work variables</a>.
+The algorithm is an adaptation of
+Robinson's unification algorithm, customized for retrofitting into
+mmj2. The proposed algorithm requires "occurs in" checking only when
+substitution values are assigned to work variables. Storage areas for
+source and target variables are mentioned but the implementation is not
+described here; the mechanism may be assumed to provide direct access
+lookups to source and work variables and their assigned substitution
+values.<br>
+<br>
+<hr style="width: 100%; height: 2px;">
+<hr style="width: 100%; height: 2px;">
+<hr style="width: 100%; height: 2px;"><big><big><span
+ style="font-weight: bold;"><br>
+<span style="text-decoration: underline;">Contents:</span></span></big></big><br>
+<br>
+<big><span style="font-weight: bold;"><a href="#I._Introduction:"><span
+ style="text-decoration: underline;">I.
+Introduction:</span></a>
+<br>
+</span></big><span style="font-weight: bold;"><a href="#Example_I.">Example
+I:</a><br>
+</span><small><a href="#Example_II."><big><span
+ style="font-weight: bold;">Example II:</span></big></a><br>
+<a href="#II._Parse_Trees_Proof_Trees_and"><big
+ style="text-decoration: underline;"><span style="font-weight: bold;"><big>II.
+Parse Trees, Proof Trees and Assertion Representations:</big></span></big></a><br>
+</small>
+<span style="font-weight: bold;"><big><a
+ href="#III._One_Way_vs._Two_Way">III.
+"One Way" vs. "Two Way" Unification:</a><br>
+</big></span><span style="font-weight: bold;"><a
+ href="#Unification_Example_1:">Unification Example 1:</a><br>
+</span><small><a href="#Unification_Example_2:"><big><span
+ style="font-weight: bold;">Unification Example 2:</span></big></a><br>
+<a href="#IV._Algorithm_for_mmj2_Proof_Step"><big
+ style="text-decoration: underline;"><span style="font-weight: bold;"><big>IV.
+Algorithm for "mmj2 Proof Step Unification with Work
+Variables":</big></span></big></a></small>
+<br>
+<a href="#A._Assumptions_and_Context:"><span style="font-weight: bold;"><span
+ style="text-decoration: underline;">A. Assumptions and Context:</span></span></a><br>
+<span style="font-weight: bold; text-decoration: underline;"><a
+ href="#B._Substitution_Types:_Target_Formula">B.
+Substitution Types: Target Formula Updates and Source Formula Updates:</a><br>
+</span><a href="#C._Partial_Unification_Results"><span
+ style="font-weight: bold; text-decoration: underline;">C. Partial
+Unification Results, Heuristics and "Raw" Substitutions:</span></a><br>
+<a href="#D._Sub-Unifications:"><span
+ style="font-weight: bold; text-decoration: underline;">D.
+"Sub-Unifications":</span></a><br>
+<a href="#E._Occurs_In_Checking:"><span
+ style="font-weight: bold; text-decoration: underline;">E. "Occurs In"
+Checking:</span></a><br>
+<a href="#F._Putting_It_All_Together:"><span
+ style="font-weight: bold; text-decoration: underline;">F. Putting It
+All Together:</span></a><br>
+<big><big><span style="font-weight: bold;"><br>
+</span></big></big>
+<hr style="width: 100%; height: 2px;"><big><big><span
+ style="font-weight: bold;"></span></big></big>
+<hr style="width: 100%; height: 2px;"><big><big><span
+ style="font-weight: bold;"></span></big></big><big><big><span
+ style="font-weight: bold;"></span></big></big>
+<hr style="width: 100%; height: 2px;"><big><big><span
+ style="font-weight: bold;"></span></big></big><big><big><span
+ style="font-weight: bold;"></span></big></big><big><span
+ style="font-weight: bold;"></span><big><span style="font-weight: bold;"><span
+ style="text-decoration: underline;"><a name="I._Introduction:"></a>I.
+Introduction:</span>
+</span></big></big><br>
+<br>
+The 01-Aug-2007 release of the mmj2 software
+focuses on adding "<a href="WorkVariables.html">Work Variables</a>" to
+the mmj2 Proof Assistant. Accomplishing this requires significant
+changes to proof unification processing in the Proof&nbsp; Assistant,
+now performed in <code>ProofUnifier.java</code>. Unfortunately, this
+section of the code is complex and specialized; it was designed
+originally to do what is essentially the inverse of this project's main
+feature.
+ProofUnifier.java's original primary function was to derive
+proof step Ref labels (of assertions) using input formulas and
+hypothesis step numbers.
+Later it was modified to derive formulas and hypotheses using proof
+step Refs, but the functionality is incomplete: in cases where the
+substituted-for
+variables in the Ref&nbsp; assertion are under-specified (i.e. not
+every
+variable has a substitution), the code now outputs "dummy variables"
+which are not treated as "real" variables by mmj2. In fact, when mmj2's
+proof assistant reads in a dummy variable that it itself had previously
+output, it generates an "invalid token" or undefined symbol message!
+This is obviously not what should happen, and in fact, <code>metamath.exe</code>
+does
+not treat its users so rudely. <br>
+<br>
+It would be <span style="font-style: italic;">possible</span> to
+modify <code>ProofUnifier.java</code> to accomodate Work Variables and
+still perform all existing mmj2 Proof Assistant functions. Instead, a
+separate module, <code>StepUnifier.java</code>,
+will be created to perform unification of a single derivation proof
+step when either a) Work Variables are involved in the step's formula
+or hypotheses, or b) the Derive Formula or Derive Hypotheses features
+are to be invoked for the step. <br>
+<br>
+Here are two examples to illustrate "proof unification" to make this
+discussion concrete.<br>
+<br>
+<big><span style="font-weight: bold;"><a name="Example_I."></a>Example
+I.</span></big> When the
+Work Variables enhancements are completed in
+the next release, mmj2 will be able to reconstruct every proof using
+only the logical assertion labels in Metamath proofs -- plus the
+theorem conclusion and hypothesis formulas. That is one of
+the criteria for success of the project, which will be verified using
+this mmj2 RunParm command: <br>
+<br>
+<code style="font-weight: bold;">ProofAsstBatchTest,*,,Unified,NotRandomized,NoPrint,DeriveFormulas,NoCompareDJs,NoUpdateDJs</code><br>
+<br>
+What that command will do is export each input .mm file theorem to a
+Proof Worksheet stored in memory, and then process it using the mmj2
+Proof Assistant to complete the proof and generate a Metamath RPN
+format proof.
+Here is how a Proof Worksheet exported with the "<code>DeriveFormulas</code>"
+and "<code>Unified</code>" RunParms options would look prior to
+unification with the Proof Assistant (see also, RunParm "<code>ProofAsstExportToFile</code>"):<br>
+<br>
+<hr style="width: 100%; height: 2px;"><code style="font-weight: bold;">$(
+&lt;MM&gt; &lt;PROOF_ASST&gt; THEOREM=syl&nbsp; LOC_AFTER=?<br>
+<br>
+h1::syl.1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ph
+-&gt; ps )<br>
+h2::syl.2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ps
+-&gt; ch )<br>
+3:2:a1i<br>
+4:3:a2i<br>
+qed:1,4:ax-mp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ph -&gt; ch )<br>
+<br>
+$)<br>
+</code>
+<hr style="width: 100%; height: 2px;"><br>
+And here is the result after unification:<br>
+<br>
+<code style="font-weight: bold;"></code>
+<hr style="width: 100%; height: 2px;"><code style="font-weight: bold;">$(
+&lt;MM&gt; &lt;PROOF_ASST&gt; THEOREM=syl&nbsp; LOC_AFTER=?<br>
+<br>
+h1::syl.1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ph
+-&gt; ps )<br>
+h2::syl.2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ps
+-&gt; ch )<br>
+3:2:a1i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span style="color: rgb(0, 153, 0);">|- ( ph -&gt; ( ps -&gt; ch ) )</span><br>
+4:3:a2i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span style="color: rgb(0, 153, 0);">|- ( ( ph -&gt; ps ) -&gt; ( ph
+-&gt; ch ) )</span><br>
+qed:1,4:ax-mp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |- ( ph -&gt; ch )<br>
+<br>
+<span style="color: rgb(0, 0, 0);">$=&nbsp; wph wps wi wph wch wi syl.1
+wph wps wch wps wch wi wph syl.2
+a1i </span><br style="color: rgb(0, 0, 0);">
+<span style="color: rgb(0, 0, 0);">&nbsp;&nbsp;&nbsp; a2i ax-mp $. </span><br>
+$)<br>
+</code>
+<hr style="width: 100%; height: 2px;"><br>
+Remarkably, the new release of mmj2 will show that, in theory Metamath
+proofs could be abbreviated by eliminating syntax labels -- saving
+space but requiring more computation. Theorem <code>syl</code>'s proof
+could be stored as follows and then expanded using mmj2's new proof
+unification logic:<br>
+<br>
+<code style="font-weight: bold;">$=&nbsp; syl.1 syl.2 a1i a2i ax-mp $. <br>
+<br>
+</code>Instead of like this (uncompressed Metamath RPN-format proof:<br>
+<br>
+<code style="font-weight: bold;">$=&nbsp; wph wps wi wph wch wi syl.1
+wph wps wch wps wch wi wph syl.2 a1i a2i ax-mp $. </code><br>
+<br>
+<br>
+<code style="font-weight: bold;"></code><big><span
+ style="font-weight: bold;"><a name="Example_II."></a>Example II.</span></big>
+Here is another example showing how the user will be able to
+input just Ref labels and create a proof step by step in reverse order:
+<br>
+<br>
+<span style="color: rgb(0, 153, 0); font-weight: bold;">1) Alt-F + New
+(File/New) and enter "syl":<br>
+</span>
+<hr style="width: 100%; height: 2px;"><span
+ style="color: rgb(0, 153, 0); font-weight: bold;"></span><code
+ style="font-weight: bold;">$( &lt;MM&gt; &lt;PROOF_ASST&gt;
+THEOREM=syl&nbsp; LOC_AFTER=?</code><br style="font-weight: bold;">
+<code><span style="font-weight: bold;">h1::syl.1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- ( ph -&gt; ps )</span><br style="font-weight: bold;">
+<span style="font-weight: bold;">h2::syl.2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- ( ps -&gt; ch )</span><br style="font-weight: bold;">
+<span style="font-weight: bold;">3:?:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- ? </span><br style="font-weight: bold;">
+<span style="font-weight: bold;">qed:?:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- ( ph -&gt; ch )</span><br style="font-weight: bold;">
+<span style="font-weight: bold;">$)</span><br>
+</code>
+<hr style="width: 100%; height: 2px;"><span
+ style="color: rgb(0, 153, 0); font-weight: bold;">2) Delete step 3,
+enter qed step Ref label, "ax-mp", and press Ctrl-U (Unify):</span><br>
+<span style="color: rgb(0, 153, 0); font-weight: bold;"></span><code></code>
+<hr style="width: 100%; height: 2px;"><code style="font-weight: bold;">$(
+&lt;MM&gt; &lt;PROOF_ASST&gt; THEOREM=syl&nbsp; LOC_AFTER=?</code><br
+ style="font-weight: bold;">
+<code><span style="font-weight: bold;">h1::syl.1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- ( ph -&gt; ps )</span><br style="font-weight: bold;">
+<span style="font-weight: bold;">h2::syl.2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- ( ps -&gt; ch )<br>
+1002:?:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- &amp;w1<br>
+2002:?:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- ( &amp;w1 -&gt; ( ph -&gt; ch ) )<br>
+qed:1002,2002:<span style="color: rgb(0, 153, 0);">ax-mp</span> |- ( ph
+-&gt; ch )<br>
+</span><span style="font-weight: bold;"></span><span
+ style="font-weight: bold;"></span><span style="font-weight: bold;">$)</span><br>
+</code>
+<hr style="width: 100%; height: 2px;"><span
+ style="color: rgb(0, 153, 0); font-weight: bold;">3) enter step 2002
+Ref label, "a2i", and press Ctrl-U (Unify):<br>
+<span style="font-style: italic;">(Notice that step 1002's </span><code>&amp;w1</code><span
+ style="font-style: italic;"> Work Variable is automatically assigned "</span><code>(
+ph -&gt; ps )</code><span style="font-style: italic;">", and then
+determined to be equal to step <code>h1</code> and automatically
+removed because it has an incomplete hyp ("</span><code>?</code><span
+ style="font-style: italic;">") -- and that step qed's reference to
+1002 is automatically changed to 1!)</span></span><br
+ style="font-style: italic;">
+<span
+ style="color: rgb(0, 153, 0); font-weight: bold; font-style: italic;"></span><code
+ style="font-style: italic;"></code>
+<hr style="width: 100%; height: 2px; font-style: italic;"><code
+ style="font-weight: bold;">$( &lt;MM&gt; &lt;PROOF_ASST&gt;
+THEOREM=syl&nbsp; LOC_AFTER=?</code><br style="font-weight: bold;">
+<code><span style="font-weight: bold;">h1::syl.1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- ( ph -&gt; ps )</span><br style="font-weight: bold;">
+<span style="font-weight: bold;">h2::syl.2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- ( ps -&gt; ch )<br>
+3002:?:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- ( ph -&gt; ( ps -&gt; ch ) )<br>
+2002:3002:<span style="color: rgb(0, 153, 0);">a2i</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- ( ( ph -&gt; ps ) -&gt; ( ph -&gt; ch ) )<br>
+qed:1,2002:<span style="color: rgb(0, 153, 0);">ax-mp</span>&nbsp;&nbsp;&nbsp;
+|- ( ph -&gt; ch )<br>
+</span><span style="font-weight: bold;"></span><span
+ style="font-weight: bold;"></span><span style="font-weight: bold;">$)</span><br>
+</code>
+<hr style="width: 100%; height: 2px;"><span
+ style="color: rgb(0, 153, 0); font-weight: bold;">4) enter step 3002
+Ref label, "a1i", and press Ctrl-U (Unify) -- and voila!:<br>
+<span style="font-style: italic;"></span></span><code
+ style="font-weight: bold;"></code>
+<hr style="width: 100%; height: 2px;"><code style="font-weight: bold;">$(
+&lt;MM&gt; &lt;PROOF_ASST&gt; THEOREM=syl&nbsp; LOC_AFTER=?</code><br
+ style="font-weight: bold;">
+<code><span style="font-weight: bold;">h1::syl.1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- ( ph -&gt; ps )</span><br style="font-weight: bold;">
+<span style="font-weight: bold;">h2::syl.2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- ( ps -&gt; ch )<br>
+3002:2:<span style="color: rgb(0, 153, 0);">a1i</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- ( ph -&gt; ( ps -&gt; ch ) )<br>
+2002:3002:<span style="color: rgb(0, 153, 0);">a2i</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|- ( ( ph -&gt; ps ) -&gt; ( ph -&gt; ch ) )<br>
+qed:1,2002:<span style="color: rgb(0, 153, 0);">ax-mp</span>&nbsp;&nbsp;&nbsp;
+|- ( ph -&gt; ch )<br>
+</span><span style="font-weight: bold;"></span><span
+ style="font-weight: bold;"></span><span style="font-weight: bold;"></span></code><code
+ style="font-weight: bold; color: rgb(0, 0, 0);">
+$=&nbsp; wph wps wi wph wch wi syl.1 wph wps wch wps wch wi wph syl.2
+a1i <br>
+&nbsp;&nbsp;&nbsp; a2i ax-mp $. <br>
+</code><code><span style="font-weight: bold;">$)<br>
+<br>
+</span></code>
+<hr style="width: 100%; height: 2px;">
+<hr style="width: 100%; height: 2px;">
+<hr style="width: 100%; height: 2px;"><big
+ style="text-decoration: underline;"><span style="font-weight: bold;"><br>
+<big><a name="II._Parse_Trees_Proof_Trees_and"></a>II. Parse Trees,
+Proof Trees and Assertion Representations:</big></span></big><br>
+<br>
+mmj2's Proof Assistant and unification algorithms rely upon the
+existence of&nbsp; an "unambiguous grammar" for the input Metamath .mm
+file. What is meant by an "unambiguous grammar" is that for each valid
+formula there exists exactly one (syntactic) parse tree. With unique
+parse trees it is possible to convert a formula to a parse tree and
+back again to the original formula, without loss of information. <br>
+<br>
+For example, here is the parse tree for the formula "A" equal to <span
+ style="font-family: monospace;">"</span><code>( ( x -&gt; y ) -&gt; (
+x -&gt; z ) )"</code> where "<code>-&gt;</code>" is shown using
+set.mm's statement label ("<code>wi</code>") for
+implication ("<code>-&gt;</code>"):<br>
+<pre>                wi<br>              .   .<br>           wi      wi<br>          .  .     . .<br>         x    y   x   z<br></pre>
+Note that a "proof tree" has the same logical structure as a parse
+tree. The children of a Proof Tree root node correspond to the
+Mandatory Hypotheses of the final proof step's referenced assertion,
+not just the
+mandatory <span style="font-style: italic;">variable</span> hypotheses
+-- this means that if "ax-mp" is the root node of a proof tree then it
+will have 4 children, corresponding in order to its mandatory
+hypotheses, "<code>ph</code>, "<code>ps</code>", "<code>min</code>" and
+"<code>maj</code>".&nbsp; Furthermore, each sub-tree in a valid proof
+tree is also a valid proof tree (it is a recursive
+structure); the syntax sub-trees in a proof tree are actually -- also
+-- parse (sub)trees, and
+correspond to the substitutions that will be made into the referenced
+assertion's mandatory variables.<br>
+<br>
+Because set.mm's grammar is unambiguous, we know that valid
+simultaneous substitutions to variables in A will result in new
+formulas that are also syntactically valid. A's parse tree makes it
+clear why that is
+true. For example, if&nbsp; every "x" sub-tree in A's parse tree is
+substituted with the sub-tree for "( z -&gt; y )", a new valid parse
+tree results, representing the formula <br>
+<br>
+&nbsp;&nbsp;&nbsp; A' = <span style="font-family: monospace;">"</span><code>(
+( ( z -&gt; y ) -&gt; y ) -&gt; ( ( z -&gt; y ) -&gt; z ) )":</code>
+<pre>                wi<br>              .   .<br>           wi      wi<br>          .  .     . .<br>        wi    y   wi  z<br>      .  .       .  .<br>     z    y     z    y<br><br><br></pre>
+It is possible to represent formula A using functional notation
+borrowed from mathematics:<br>
+<br>
+<code>A("x","y","z") = ( ( x -&gt; y ) -&gt; ( x -&gt; z ) )</code><br>
+<br>
+Then, the substitution of "( z -&gt; y )" for x can be represented like
+this: <br>
+<br>
+<code>A("( z -&gt; y )","y","z") = ( ( ( z -&gt; y ) -&gt; y ) -&gt; (
+( z -&gt; y ) -&gt; z ) )</code><br>
+<br>
+The new Work Variables enhancement takes into account omitted
+functional parameters of A, as follows:<br>
+<br>
+<code>A(,,) = ( ( &amp;w1 -&gt; &amp;w2 ) -&gt; ( &amp;w1 -&gt; &amp;w3
+) )</code><br>
+<br>
+where "<code>&amp;w1</code>", "<code>&amp;w2</code>" and "<code>&amp;w3</code>"
+are Work Variables standing in for the "mandatory variables" of A
+(Metamath uses "mandatory variables" to refer to variables used in an
+assertion or its logical hypotheses, thus distinguishing them from
+"optional" or "dummy" variables that may be referenced in a proof of
+that assertion.)<br>
+<br>
+This same functional notation can be used to refer to a set of formulas
+comprised of an assertion and its logical hypotheses. For example, the
+Modus Ponens Axiom, "ax-mp" in set.mm consists of two logical
+hypotheses and an assertion:<br>
+<br>
+<code>&nbsp; ${<br>
+&nbsp;&nbsp;&nbsp; min $e |- ph $.<br>
+&nbsp;&nbsp;&nbsp; maj $e |- ( ph -&gt; ps ) $.<br>
+&nbsp;&nbsp;&nbsp; ax-mp $a |- ps $.<br>
+&nbsp; $}<br>
+</code><br>
+Using functional notation we could write <code>ax-mp(ch,th)</code> =
+the set of three formulas: <br>
+<br>
+<code>&nbsp;&nbsp;&nbsp; "ch"<br>
+&nbsp;&nbsp;&nbsp; "( ch -&gt; th )"<br>
+&nbsp;&nbsp;&nbsp; "th" <br>
+</code><br>
+And, with omitted variables in the <code>ax-mp</code> function call, <code>ax-mp(,)</code>
+= <br>
+<br>
+<code>&nbsp;&nbsp;&nbsp; {"&amp;w1",<br>
+&nbsp;&nbsp;&nbsp;&nbsp; "( &amp;w1 -&gt; &amp;w2 )",<br>
+&nbsp;&nbsp;&nbsp;&nbsp; "&amp;w2"}<br>
+</code><br>
+<span style="font-weight: bold;">Finally...<br>
+</span><br>
+The idea of mmj2's original proof step "unification" was to reverse the
+functional notation
+used above and pass formulas as function arguments to generate the
+variable substitutions! <br>
+<br>
+So, for example instead of writing<br>
+<br>
+<code>A("( z -&gt; y )","y","z") = ( ( ( z -&gt; y ) -&gt; y ) -&gt; (
+( z -&gt; y ) -&gt; z ) )</code><br>
+<br>
+we write:<br>
+<br>
+<code>A("</code><code>( ( ( z -&gt; y ) -&gt; y ) -&gt; ( ( z -&gt; y )
+-&gt; z ) )</code><code>") = ("( z -&gt; y )","y","z")</code><br>
+<br>
+The right hand side of the equation contains the variables that must be
+substituted into A to generate the formula passed as an argument! <br>
+<br>
+In the case of an assertion which has logical hypotheses, such as
+ax-mp, there must be multiple formulas passed as function arguments.
+For example, the final proof step of theorem syl in set.mm could be
+represented like this:<br>
+<br>
+<code>ax-mp("( ph -&gt; ps )", "( ( ph -&gt; ps ) -&gt; ( ph -&gt; ch )
+)", "( ph -&gt; ch )") = <br>
+&nbsp;&nbsp;&nbsp;&nbsp; ("( ph -&gt; ps )", "( ph -&gt; ch )")<br>
+</code><br>
+In point of fact, the problem of unification, and searching for an
+assertion to justify a proof step is like solving a set of equations to
+eliminate unknowns. Let variable <big><span
+ style="font-weight: bold; font-style: italic;">R</span></big> stand
+for a Ref label, <big><span
+ style="font-weight: bold; font-style: italic;">F</span></big> for a
+set of hypothesis formulas plus a proof step formula, and <big><span
+ style="font-weight: bold; font-style: italic;">S</span></big> stand
+for a set of variable substitutions into R's mandatory variables, then
+we can write for a given proof step:<br>
+<br>
+<big><span style="font-weight: bold; font-style: italic;">R</span></big>(<big><span
+ style="font-weight: bold; font-style: italic;">S</span></big>) = <big><span
+ style="font-weight: bold; font-style: italic;">F</span></big><br>
+<br>
+where, given one or more unknowns we can attempt to solve for the
+others. In the case where incomplete information is provided, and <big><span
+ style="font-weight: bold; font-style: italic;">R</span></big>'s
+variable substitutions are "under-specified", we will employ Work
+Variables as placeholders. <br>
+<hr style="width: 100%; height: 2px;">
+<hr style="width: 100%; height: 2px;"><big
+ style="text-decoration: underline;"><span style="font-weight: bold;"></span></big>
+<hr style="width: 100%; height: 2px;"><big
+ style="text-decoration: underline;"><span style="font-weight: bold;"><br>
+<big><a name="III._One_Way_vs._Two_Way"></a>III. "One Way" vs. "Two
+Way" Unification: </big></span></big><br>
+<code></code><br>
+In mmj2's Proof Assistant "unification" not involving formulas
+containing work variable may be termed "one-way
+unification". It is simply a mechanism for a) determining that the
+proof step is an
+instance of the logical assertion (and thus is true/valid), and b)
+computing the substitutions that must be made to the referenced logical
+assertion and its logical hypotheses (if any), which, when applied,
+will transform the referenced assertion and make it identical to the
+proof step and its logical hypotheses.<br>
+<br>
+In the case where work variables are involved, a (so called) "two-way
+unification" process is required which not only computes substitutions
+for a referenced logical assertion, but which may generate
+substitutions to the work variables in a proof step formula and/or its
+hypotheses. In a finished proof step the unknowns in <big><span
+ style="font-weight: bold; font-style: italic;">R</span></big>(<big><span
+ style="font-weight: bold; font-style: italic;">S</span></big>) = <big><span
+ style="font-weight: bold; font-style: italic;">F</span></big> are
+completely specified and all work variables are replaced in the proof
+by non-work variables.&nbsp; In incomplete proof steps still containing
+unknowns in <big><span style="font-weight: bold; font-style: italic;">R</span></big>(<big><span
+ style="font-weight: bold; font-style: italic;">S</span></big>) = <big><span
+ style="font-weight: bold; font-style: italic;">F</span></big> the
+result of unification may be to modify the original work variables --
+so, for example, "<code>&amp;w1</code>" might be updated and
+redisplayed
+by the program after unification as "<code>( &amp;w2 -&gt; &amp;w3 )</code>".<br>
+<br>
+The term "unification" is somewhat overused and imprecise, like the
+term "parse". Most often discussion of "unification" concerns
+computation of a "MGU", the Most General Unifier for a set of formulas.
+Given, say, two formulas, the MGU computation produces a set of
+substitutions that when applied to the two input formulas makes each of
+them equal to a third formula. That is not what mmj2 is doing, but the
+basic functions of the algorithm are the same and mmj2 is adapting the
+basics of MGU unification.<br>
+<br>
+Here is an excellent introductory explanation of Unification by Michael
+Beeson: <a
+ href="http://michaelbeeson.com/research/otter-lambda/index.php?include=Unification">http://michaelbeeson.com/research/otter-lambda/index.php?include=Unification</a><br>
+<br>
+Note these basic differences between what Mr. Beeson
+is discussing and what mmj2 is doing in its unification processing:<br>
+<ul>
+  <li>mmj2 must clearly differentiate between variables in the formulas
+being unified; "<code>ph</code>" in a Ref's assertion has the same name
+but is different than "<code>ph</code>" in a proof step of a theorem
+being proved. If we were to use Robinson's algorithm exactly as
+discussed in Mr. Beeson's paper, our substitution variables would
+become hopelessly muddled. Variable renaming could be used, as
+discussed by Megill in "A Finitely Axiomatized Formalization of<br>
+Predicate Calculus with Equality" regarding Peterson's algorithm.
+Instead, mmj2's StepUnifier will use another method to keep the
+substitution variables separate, which is to distinguish between and
+store separately substitutions to the "<span style="font-weight: bold;">target</span>"
+formula (Ref justifying
+assertion on proof step) and the "<span style="font-weight: bold;">source</span>"
+formula (proof step formula).<br>
+  </li>
+  <li>mmj2 is required to unify a set of formulas simultaneously and
+the mmj2 Proof Assistant's user interface does not require that the
+user accurately map proof step hypothesis numbers to the order of the
+hypotheses of a referenced assertion. The user might specify that steps
+"1,2" are hypothesis proof steps for assertion (Ref) XYZ, but in
+reality, step 1 corresponds to XYZ's second hypothesis and step 2
+corresponds to XYZ's first hypothesis. mmj2 first attempts unification
+using the hypothesis mapping in the order given by the user, but in the
+event of an
+error will determine the correct hypothesis order -- if unification is
+possible. (In fact, multiple unification mappings are theoretically
+possible, though this is unusual and involves cases where hypothesis
+variables are not present in the assertion conclusion formula -- mmj2
+takes the first unification mapping it finds and does not include $d
+checking during unification.) This is the central issue confronting
+mmj2's unification
+process because in the worst case scenario, up to <span
+ style="font-style: italic;">N factorial</span> possibilities would
+need to be tested, where <span style="font-style: italic;">N</span> is
+the number of hypotheses. Fortunately, heuristic methods are available
+to reduce this problem, but to take advantage of them, mmj2 must
+structure its unification algorithm in certain ways...(this is the
+"real" world -- one theorem in set.mm has 19 hypotheses and the worst
+case scenario is 19! = 121,645,100,408,832,000 possibilities!)<br>
+  </li>
+  <li>Internally mmj2's unification deals with variable hypotheses and
+assertions, not variables, constants and operators. Parse tree and
+proof tree nodes contain only hypothesis and assertion labels.
+Technically, substitutions are made to variable hypothesis nodes, not
+to variables. <br>
+  </li>
+  <li>mmj2 variables are "typed", and a sub-expression can be validly
+substituted for a variable only if they have the same Type. For
+example, if a "set" sub-expression substitution is attempted into a
+"class" variable, the unification algorithm in mmj2 will report
+"Failure" (Metamath provides for the possibility of type conversion
+syntax axioms, thus allowing for set variables to be converted into
+class variables in set.mm, so this restriction is technical in nature
+and should rarely be of concern to the user.)<br>
+  </li>
+</ul>
+<hr style="width: 100%; height: 2px;">
+<p><big><span style="font-weight: bold;"><a
+ name="Unification_Example_1:"></a>Unification Example 1: "S" is
+a proof step formula, we'll call it the "<span
+ style="text-decoration: underline;">source formula</span>", and its
+variables are the "<span style="text-decoration: underline;">source
+variables</span>". "T" is the formula of an
+assertion, an axiom or theorem used to justify S; we'll call it the
+"<span style="text-decoration: underline;">target formula</span>" and
+its variables the "<span style="text-decoration: underline;">target
+variables</span>" (we are
+primarily interested in making substitutions <span
+ style="font-style: italic;">to</span> T in order to justify S...)<br>
+</span></big></p>
+<p><big><span style="font-weight: bold;"></span></big></p>
+<pre>               <br>               Let T  = "( ( x -&gt; y ) -&gt; ( x -&gt; z ) )" and<br>                   S  = "( WFF1 -&gt; WFF2 )".<br>     <br>               S unifies with T to yield:<br>     <br>                   S" = "( ( WFF3 -&gt; WFF4 ) -&gt; (WFF3 -&gt; WFF5 ) )"<br>     <br>          <br>    Then T's syntax tree:   T's assrtSubst<br>         ===============    |-------|---y---|---z---|                                                           <br>                            |   x   |   y   |   z   |                                                           <br>               -&gt;           |-------|-------|-------|                 <br>              .   .         | WFF3  | WFF4  | WFF5  |                   <br>           -&gt;      -&gt;       ------------------------                      <br>          .  .     . .                                                        <br>         x    y   x   z                                                         <br>                                                                               <br>                                                                               <br>       S"'s syntax tree:    S"'s Work Variable Subst:<br>       =================    |---------|---------|------|------|------|      <br>                            | WFF1    | WFF2    | WFF3 | WFF4 | WFF5 |      <br>              -&gt;            |---------|---------|------|------|------|      <br>            .    .          |   -&gt;    |    -&gt;   |  x   |   y  |  z   |         <br>          WFF1  WFF2        | x    y  | x     z |      |      |      |               <br>                            -----------------------------------------     <br>     <br>       Updated S" syntax tree:<br>       =======================<br>             <br>              -&gt;<br>            .    .                                                                             <br>          -&gt;      -&gt;                                                                  <br>        .   .      .   .<br>     WFF3  WFF4  WFF3 WFF5<br>             <br>             <br></pre>
+<hr style="width: 100%; height: 2px;">
+<p><big><span style="font-weight: bold;"><a
+ name="Unification_Example_2:"></a>Unification </span></big><big><span
+ style="font-weight: bold;">Example 2:</span></big></p>
+<pre><br>               Let T  = "( ( x -&gt; y ) -&gt; ( x -&gt; z ) )" and<br>                   S  = "( ( F -&gt; G ) -&gt; WFF1 ) )".<br>     <br>               S unifies with T to yield:<br>     <br>                   S" = "( ( F -&gt; G ) -&gt; ( F -&gt; WFF2 ) )"<br>     <br>          <br>    Then T's syntax tree:   T's assrtSubst<br>         ===============    |-------|---y---|---z---|                                                           <br>                            |   x   |   y   |   z   |                                                           <br>               -&gt;           |-------|-------|-------|                 <br>              .   .         |   F   |   G   | WFF2  |                   <br>           -&gt;      -&gt;       ------------------------                      <br>          .  .     . .                                                        <br>         x    y   x   z                                                         <br>                                                                               <br>                                                                               <br>       S"'s syntax tree:    S"'s Work Variable Subst:<br>       =================    |---------|---------|                           <br>                            | WFF1    | WFF2    |                           <br>              -&gt;            |---------|---------|                           <br>           -&gt;    .          |   -&gt;    |   z     |                              <br>         .  .   WFF1        | x    z  |         |                                    <br>        F    G              ---------------------                         <br>     <br>       Updated S" syntax tree:<br>       =======================<br>             <br>               -&gt;<br>            .     .                                                                             <br>          -&gt;       -&gt;                                                                  <br>        .   .    .   .<br>       F     G   F   WFF2</pre>
+<hr style="width: 100%; height: 2px;">
+<hr style="width: 100%; height: 2px;">
+<hr style="width: 100%; height: 2px;"><code></code><big
+ style="text-decoration: underline;"><span style="font-weight: bold;"><br>
+<big><a name="IV._Algorithm_for_mmj2_Proof_Step"></a>IV. Algorithm for
+"mmj2 Proof Step Unification with Work
+Variables":</big></span></big><br>
+<code></code><br>
+<span style="font-weight: bold;"><span
+ style="text-decoration: underline;"><a
+ name="A._Assumptions_and_Context:"></a>A. Assumptions and Context:</span><br>
+<br>
+</span><span style="font-weight: bold;">1.</span> In mmj2's <code>ProofUnifier.java</code>
+code numerous heuristics are used to "fast fail" a candidate assertion
+"T" as being unifiable with proof step "S". For example, if T's parse
+tree's height is greater than S's, then S cannot be unified with T.
+That heuristic is invalid if S contains work variables because each
+work variable, <code>&amp;w1</code>, etc., represents an unknown
+sub-expression, which, if validly substituted with a given
+sub-expression might result in S's parse tree height becoming greater
+than or equal to T's. <br>
+<br>
+Removing these heuristics, or customizing them to accomodate work
+variables would probably reduce the efficiency of the unification
+search process in <code>ProofUnifier.java</code> -- and speed is
+important because the unification search process scans the entire input
+Metamath .mm file looking for unifiable assertions for proof steps that
+contain a blank Ref label. Therefore, <code>StepUnifier.java</code>'s
+use will be restricted to cases where the proof step's Ref label is
+provided (except for "Hint" acquisition processing.). Thus, the speed
+of the unification algorithm in <code>StepUnifier.java</code>
+is less critical than in <code>ProofUnifier.java</code> -- it only
+needs to be performed once for each proof step when the user presses
+Ctrl-U, not 10,000 times!<br>
+<br>
+<span style="font-weight: bold;">2.</span> The basic "unit of work" for
+unifications involving work variables is a single proof step. This has
+several ramifications: <br>
+<br>
+a) If unification fails, the proof step -- and related parts of the
+Proof Worksheet -- are left untouched. <br>
+<br>
+b) Prior to unification of a proof step involving work variables, it
+shall be the case that every work variable used in the proof steps has
+a null value (because it will be programmed that way.) By that, it is
+meant that if during processing a work
+variable is rewritten with an assigned value, then every instance of
+that work variable in <span style="font-style: italic;">every</span>
+proof step is then rewritten to reflect the
+new value -- and thus, the work variable is either resolved with a
+non-work variable assignment, or it is renamed to be a different work
+variable, or it is decomposed into a sub-expression involving other
+variables (i.e. "<code>&amp;w1</code>" is decomposed and replaced
+everywhere by "<code>( ph -&gt; &amp;w2 )</code>"). What b) really
+means is that when proof step unification begins, the value is each
+work variable
+is really "unknown" -- not yet determined. Also, in the future, if a
+mechanism is developed allowing the user to assign a sub-expression to
+a work variable then b) assumes that that assignment is complete and is
+reflected in the formulas and parse trees in the Proof Worksheet before
+unification begins.<br>
+<br>
+c) A given work variable may occur in more than one proof step (work
+variables can be manually entered by the users, and can be generated by
+the Derive Hypothesis and Derive Formula features.) Because of this
+fact, unification of proof step M may result in modification of proof
+step N -- in fact, a work variable used in step N may be resolved and
+assigned with a non-work variable as the result of step M's
+unification.<br>
+<hr style="width: 100%; height: 2px;"><br>
+<span style="font-weight: bold; text-decoration: underline;"><a
+ name="B._Substitution_Types:_Target_Formula"></a>B.
+Substitution Types: Target Formula Updates and Source Formula Updates:</span><br>
+<span style="font-weight: bold;"></span><br>
+<span style="font-weight: bold;">1.</span> <span
+ style="font-style: italic;">Target Formula Updates</span> are
+substitutions resulting from a target formula's VarHyp parse tree node
+being matched to any source formula parse tree node having the same
+Type Code<br>
+<ul>
+  <li>If two corresponding target/source nodes have different Type
+Codes then the unification process will report "Failure" -- therefore,
+hereafter it should be assumed that the Type Codes match whenever
+substitutions are made. </li>
+  <li>Target formula updates are substitutions <span
+ style="font-style: italic;">to</span> the (target) variables used by
+the Ref assertion on a proof step and if unification is successful, are
+stored in the assrtSubst array, which is subsequently used as the basis
+for constructing the proof tree. <br>
+  </li>
+  <li>The variables being substituted <span style="font-style: italic;">into</span>
+the target variables are the (source) variables from the theorem being
+proved plus, perhaps, work variables. <br>
+  </li>
+</ul>
+<span style="font-weight: bold;">Examples:</span><br>
+<pre><span style="font-weight: bold;">1a) Source Variable into Target Variable Substitutions:</span><br><br>   T (target)           S (source)         Target Formula Updates<br>   ===============      ===============    ======================<br>         -&gt;                    -&gt;<br>       .   .                 .    .       <br>     x      y  &lt;========   F       &amp;W1     [x:F][y:&amp;W1]</pre>
+<br>
+<pre><span style="font-weight: bold;">1b) Source Sub-expression into Target Variable Substitutions:</span><br><br>   T (target)           S (source)         Target Formula Updates<br>   ===============      ===============    ======================<br>         x   &lt;============    -&gt;           [x:F-&gt;&amp;W1]<br>                           &nbsp;.     .<br>                          F       &amp;W1      </pre>
+<br>
+<span style="font-weight: bold;">2.</span> Source Formula Updates are
+substitutions resulting from a target formula non-VarHyp (assertion)
+parse tree
+node being matched to a Work VarHyp parse node in the source formula. <br>
+<ul>
+  <li>Source formula updates are substitutions to work variables used
+in the proof step formula, plus, perhaps, additional work variables
+generated by the program generated during unification.<br>
+  </li>
+  <li>The <span style="font-style: italic;">only</span> variables in
+the sub-expressions being substituted into the source formula work
+variables are source variables and/or work variables; target variables
+are never substituted into source formulas (otherwise chaos would
+result!) This is accomplished by code replacing each target
+variable that occurs in a source formula update with its substitution
+value -- if one exists, otherwise a new work variable is allocated and
+the target variable is (in effect,) "renamed".</li>
+  <li>The "occurs in" check of Robinson's unification algorithm needs
+to be done only when a substitution is assigned to a work variable
+(e.g. assume <code>[&amp;W1:ph-&gt;&amp;W2]</code>, then an "occurs
+in"
+check is needed when <span style="font-style: italic;">any</span>
+substitution is assigned to work variable <code>&amp;W2</code>
+-- and <code>[&amp;W2: ps -&gt; &amp;W1]</code> would result in
+unification "Failure" -- or, assume <code>[&amp;W1:]</code>, then an
+"occurs in"
+check is needed when substitution <code>[&amp;W1:ph-&gt;&amp;WH2]</code>
+is assigned to <code>&amp;W1</code>.)<br>
+  </li>
+</ul>
+<span style="font-weight: bold;">Example: </span>(notice that target
+variables are shown in lower
+case and source variables are upper case, but in real life a variable
+named "ph" could occur in both the source and target formulas and yet
+they would be different variables!)<br>
+<br>
+<pre><span style="font-weight: bold;">2a) Target Sub-expression into Source Work Variable Substitutions:</span><br><br>   T (target)          S (source)          Source Formula Updates<br>   =============       ===============     ======================<br>       -&gt;   =============&gt;   &amp;W1           [&amp;W1:x-&gt;y] (raw/partial substitutions...<br>     .   .                                 [x:&amp;W2]    (and renames/source updates!)<br>   x      y                                [y:&amp;W3]<br>                                           [&amp;W1:&amp;W2-&gt;&amp;W3] <br>                                           [&amp;W2:]<br>                                           [&amp;W3:]<br><br><br></pre>
+<code></code>
+<hr style="width: 100%; height: 2px;"><span
+ style="font-family: monospace;"><br>
+</span>
+<p><span style="font-weight: bold; text-decoration: underline;"><a
+ name="C._Partial_Unification_Results"></a>C. Partial
+Unification Results, Heuristics and "Raw" Substitutions:</span></p>
+<pre></pre>
+Unification of a proof step and its hypotheses with a Ref assertion and
+its hypotheses may require N! formula unifications involving the proof
+step's hypotheses, where N is the number of hypotheses in the Ref'd
+assertion -- that is the worst case scenario. In the best case,
+the user's input is correct and only one pass through the proof step's
+hypotheses is necessary. If the initial attempt fails however, then to
+reduce the number of hypothesis unification attempts (pairing each
+proof step hypothesis with a candidate Ref assertion hypothesis) mmj2
+uses heuristics to guide the trial-and-error search process. <br>
+<br>
+The primary proof step unification heuristic is to unify the proof
+step's formula first, which establishes the majority of source/target
+variable substitution mappings. <br>
+<br>
+Secondly, after the proof step formula is successfully unified, and a
+unification error is encountered with the user's hypothesis input, mmj2
+pre-sorts the proof step and Ref assertion hypotheses as follows: 1)
+longest formulas are unified first; and 2) if two formulas have the
+same length, then if one has variables in common with the conclusion
+formula, unify it first. This heuristic is based on the
+observation that longer formulas are most likely to contain variables
+in common with the proof step/assertion formula; unifying the longest
+formulas first reduces the number of incorrect source/target variable
+substitution mapping attempts. For example, it is very common for an
+assertion
+to contain multiple hypotheses of this nature: "<code>A e. V</code>", "<code>B
+e. V</code>", etc. These hypotheses should be unified last, once the
+correct target-to-source variable mappings of <code>A</code> and <code>B</code>
+are determined.
+<br>
+<br>
+Unfortunately, some trial and error hypothesis unification attempts are
+still required. To minimize the number of computations needed, mmj2
+uses "Partial Unification Results" when unifying proof step hypotheses.
+What this means is generating and saving the set of "raw" substitutions
+resulting from unifying a target hypothesis formula parse tree with a
+source hypothesis formula parse tree without regard for the consistency
+of these substitutions. <br>
+<br>
+<span style="font-weight: bold;">Example of "Raw" Substitutions (prior
+to accumulation/merge and possible renaming of target variables):</span><br>
+<pre>    T (target)          S (source)          Raw Substitutions (unmerged)<br>    =============       ===============     ======================<br>         -&gt;                     -&gt;          [y:F][x:G][&amp;W1:z-&gt;y]<br>       .    .                .     &amp;W1<br>     -&gt;      -&gt;            -&gt;       <br>   .   .    .   .        .   .<br>  y     x   z   y       F     G <br><br></pre>
+<p style="font-weight: bold;"><br>
+Example: where there are no "raw" substitutions for a pair of parse
+trees. If the trees are incongruous, then no unification is possible
+(in this example corresponding nodes of "<code
+ style="font-weight: bold;">&lt;-&gt;</code>" and "<code>-&gt;</code>"
+do not match and cause unification failure):<br>
+</p>
+<pre>    T (target)          S (source)          Raw Substitutions (unmerged)<br>    =============       ===============     ======================<br>         &lt;-&gt;                    -&gt;          Error! Unification Impossible!<br>       .    .                .     &amp;W1<br>     -&gt;      -&gt;            &lt;-&gt;       <br>   .   .    .   .        .   .<br>  y     x   z   y       F     G <br></pre>
+<pre></pre>
+mmj2's unification of hypotheses, thus, involves a two-step process: 1)
+generate and save the "raw" substitutions generated by mapping the
+source parse tree onto the target parse tree; and 2) accumulate and
+merge the "raw" substitutions into the existing set of substitutions
+derived from the proof step formula and any previously unified
+hypotheses. <br>
+<br>
+There are three possible results to record for each possible hypothesis
+unification: 1) unification not yet attempted; 2) unification
+impossible -- parse trees incongruent; 3) unification possible,
+non-empty set of "raw" substitutions exists.<br>
+<br>
+These results are stored in an N by N "Partial Unification Results"
+matrix, where N is the number of hypotheses. mmj2's trial and error
+process attempts to successfully unify all N hypotheses and uses the
+Partial Unification Results matrix to systematically work through all
+of the possibilities (while doing the least amount of work.)<br>
+<br>
+<span style="font-weight: bold; text-decoration: underline;">Example of
+Partial Unification Results Matrixs and Two Step Hypothesis Unification
+Process</span>: assume there are 3 hypotheses, that the rows of the
+matrix correspond to the Ref'd assertion's hypotheses and that the
+columns
+correspond to the proof step hypotheses; and that inside each cell is
+either "null" (not attempted), "E" (unification impossible), or R, the
+List of raw substitutions generated from mapping the pair of hypothesis
+parse trees.&nbsp; In the matrix below, mmj2 has determined that the
+correct proof step hypothesis order is "1,3,2".<code><br>
+<br>
+</code><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Proof Step Hyps, sorted<br>
+</code><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+3&nbsp;&nbsp;&nbsp;&nbsp; 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2 <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+===================<br>
+&nbsp;Ref&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2 |&nbsp; R&nbsp; |&nbsp;
+&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp; |
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br>
+</code><code>&nbsp;Hyps,&nbsp; &nbsp; &nbsp; ===================
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br>
+</code><code>&nbsp;sorted &nbsp; 3 |&nbsp;&nbsp; &nbsp; |&nbsp; E&nbsp;
+|&nbsp; R&nbsp; | &nbsp; &nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+</code><code>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+===================
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br>
+</code><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1
+|&nbsp;&nbsp; &nbsp; |&nbsp; R&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp; |<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ===================
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br>
+<br>
+</code><span style="font-style: italic;">Note: the tricky part about
+carrying out this trial-and-error process is that if the accumulate and
+merge step fails for an hypothesis, a "backout" of the partially merged
+results is needed. The details of the backout process are not presented
+in this document as they are primarily technical in nature (see </span><code>mmj/src/pa/StepUnifier.java</code><span
+ style="font-style: italic;">).</span><br>
+<br>
+<hr style="width: 100%; height: 2px;">
+<span style="font-family: monospace;"><br>
+</span>
+<p><span style="font-weight: bold; text-decoration: underline;"><a
+ name="D._Sub-Unifications:"></a>D. "Sub-Unifications":</span></p>
+Multiple assignments of substitution values to either a single target
+formula variable or to a single source formula work variable must be <span
+ style="font-style: italic;">consistent</span>. In the case where no
+work variables are present, two substitutions to the same variable must
+be equal in order for consistency to be maintained. But <span
+ style="font-style: italic;">equality</span> is not
+a requirement for consistency when work variables are part of the
+substitutions -- because, after all, a work variable represents an
+"unknown" sub-expression. <br>
+<br>
+Consistency checking of multiple substitutions to a single variable
+boils down to "Sub-Unification" of the two substitutions.<br>
+<br>
+<p><span style="font-weight: bold;">Example: Given these two raw
+substitutions, </span><code style="font-weight: bold;">[x:F-&gt;(G-&gt;&amp;W1)]</code><span
+ style="font-weight: bold;"> and </span><code
+ style="font-weight: bold;">[x:&amp;W2-&gt;(G-&gt;&amp;W3)]</code><span
+ style="font-weight: bold;">, are they "consistent"?</span></p>
+<ul>
+  <li> Performing this accumulation/merge opertion into target variable
+'x' requires "Sub-Unification" of the two substituting values being
+assigned to x -- if sub-unification is successful then the two
+substitutions are <span style="font-style: italic;">consistent</span>.</li>
+  <li> Note: the first substitution assumes the role of "Target" and
+subsequent assignments to the same variable are given </li>
+  <li>the role of "Source". This is because we never update an existing
+substitution but merely add new substitutions.</li>
+  <li>For efficiency, the "occurs in" check process can be combined
+with sub-unification to accomplish both in a single pass. In this
+example though, no "occurs in" check is needed because to variable
+being assigned a substitution value is "x",&nbsp; which is a source
+formula variable, and source formula variables never occur in the
+assigned substitution values.</li>
+</ul>
+<pre>     Initial                                   Updated<br>     Storage                                   Storage After<br>&nbsp;&nbsp;&nbsp;&nbsp; Accum'd             Raw Substitution      Accum/Merge of<br>     Substitutions       for Accum/Merge       Raw Substitution<br>&nbsp;&nbsp;&nbsp;&nbsp; ======              =================     ===============<br>     [x:F-&gt;(G-&gt;&amp;W1)]     <code>[x:&amp;W2-&gt;(G-&gt;&amp;W3)]     </code>[x:F-&gt;(G-&gt;&amp;W1)]<br>    &nbsp;[&amp;W1:]                                    [&amp;W1:&amp;W3]<br>                                               [&amp;W2:F]<br>                                               [&amp;W3:] <br>        Target                  Source <br>        ===============         =================<br>  &nbsp;          -&gt;                      -&gt;<br>          .     .                 .     .<br>        F         -&gt;            &amp;W2       -&gt;<br>                .    .                  .    .<br>              G       &amp;W1             G       &amp;W3<br><br><br><br></pre>
+<span style="font-weight: bold; text-decoration: underline;"><a
+ name="E._Occurs_In_Checking:"></a>E. "Occurs In" Checking: </span>"Occurs
+In" checking is needed only for assignments to Work Variables. There
+are two basic situations: 1) assignment of a Work Variable (the
+sub-tree depth = 1) to another Work Variable; and 2) other assignments
+of sub-expressions to a Work Variable. <br>
+<br>
+In the first case, say <code>[&amp;W1 := &amp;W2]</code> , the
+assignment simply represents a Renaming of &amp;W1 to &amp;W2. Multiple
+assignments in a chain of Renames do not create an invalid "occurs in"
+situation even if a given Work Variable appears more than once in the
+chain -- just so long as the program handles the Renames correctly and
+does not actually create in storage a loop of assignment. So,&nbsp; {<code>[&amp;W1
+:= &amp;W2], </code><code>[&amp;W2 := &amp;W3], </code><code>[&amp;W3
+:= &amp;W1]</code>} is just saying that &amp;W1, &amp;W2 and &amp;W3
+are the same thing, and as long as not subsequent substitution
+assignments contradict that, there is no problem.<br>
+<br>
+In the second case, "occurs in" checking reveals the error situation in
+which a sub-tree of depth &gt; 1 containing &amp;W1 is assigned to
+&amp;W1. This is always an error because two trees of different depth
+cannot be equal.<br>
+<br>
+<br>
+<hr style="width: 100%; height: 2px;"><br>
+<p><span style="font-weight: bold; text-decoration: underline;"><a
+ name="F._Putting_It_All_Together:"></a>F. Putting It All Together:</span></p>
+Here is a high level narrative exposition describing proof step
+unification with work variables.<br>
+<br>
+1. Initialize, as needed, the storage areas for substitution values
+assigned to source variables and target (work) variables.<br>
+<br>
+2. Unify the proof step formula with the Ref'd assertion formula (its
+conclusion). <br>
+<ul>
+  <li>Accumulate initial substitutions of target variables directly
+into the target variable storage areas, but defer accumlation/merging
+of source (work) variable substitutions and any 2nd, 3rd, etc.
+substitutions into a single target variable. Build a list of these
+deferred raw substitutions. If&nbsp; "DeriveFormula" was requested
+simply generate an empty list of deferred raw substitutions and proceed.<br>
+  </li>
+  <li>For each target variable (members of the Ref'd assertion
+mandatory variables) which has not been assigned an initial
+substitution value,&nbsp; allocate and assign a new work variable. This
+results in each target variable having at least one assigned
+substitution value.</li>
+  <li>Finally, accumulate/merge each deferred raw substitution,
+performing any necessary "occurs in" checking and "sub-unifications".
+For each source (work) variable substitution, before performing
+accumulation/merging, make a clone of the assigned substitution value
+replacing references to source variables with their assigned
+substitution values.<br>
+  </li>
+  <li>If any errors encountered so far, return unification "Failure".</li>
+</ul>
+3. Unify the proof step hypotheses with the Ref'd assertion's
+hypotheses in the order given using the "<a
+ href="#HypothesisUnification:">HypothesisUnification</a>" process
+described below. If any errors are encountered, proceed to step 4,
+otherwise, proceed to step 9.<br>
+<br>
+4. Sort the proof step hypotheses and Ref'd assertion's hypotheses as
+described above and create the Partial Unification Results Matrix
+described above (along with the necessary storage for Backout of
+partial results, not described in this paper.)<br>
+<br>
+5. (Brief synopsis...) Use the "<a href="#HypothesisUnification:">HypothesisUnification</a>"
+process described below to unify the first pair of hypotheses according
+to the sorted results from step 4. This pair corresponds to element
+[0,0] of the Partial Unification Results Matrix. If&nbsp; unification
+is "Impossible" (the parse trees are incongruous), try pair [0,1], then
+[0,2], etc. until a set of raw substitutions is obtained for the pair
+of hypotheses. If the end of row 0 is reached, report unification
+"Failure". Once a set of raw substitutions is obtained for row 0, store
+them in the matrix and attempt accumulation/merge into the
+source/target storage areas. If accumulation/merge fails, backout the
+updates to the source/target storage areas and try the next column in
+row 0. Once successful accumulation/merge is complete for row 0,
+proceed to the next row and perform similar processing. Note that
+successful accumulation/merge may be achieved all the way to row N, and
+then fail, requiring backout and re-processing of earlier rows. When
+successful accumulation/merge is achieved for row N (the final
+hypothesis), proceed to step 9.<br>
+<br>
+9. Unification is successful! Hooray... Now, allocate and load the "<code>assrtSubst</code>"
+array, which is a parallel array to the Ref'd assertions Mandatory
+Hypothesis array in mmj2 -- see <code>mmj.lang.MandFrame.hypArray</code>
+-- containing one substitution parse tree for each mandatory variable.
+To do this, proceed through the source variable storage area and for
+each source variable generate a clone of the assigned substitution
+value (a parse node sub-tree root node, technically), resolving any
+references to work variables as follows: if a work variable has been
+not been assigned a value, insert a work VarHyp node in the cloned
+sub-tree, otherwise, generate a clone of the work variables assigned
+substitution value, recursively resolving any references to work
+variables that <span style="font-style: italic;">it</span> may
+contain.) Return the completed assrtSubst array. Note: the remaining
+functional requirements such as actually doing DeriveFormula or
+DeriveHypotheses, or updating formulas in the Proof Worksheet with
+updates to their work variables, etc., is tedious to describe and not
+essential to this document (most of these functions are already present
+in mmj2 but will require some modifications.)<br>
+<br>
+<a name="HypothesisUnification:"></a>HypothesisUnification:<br>
+<ul>
+  <li>Perform partial unification of the given pair of hypotheses (one
+from the proof step and one from the Ref'd assertion), thus generating
+a list of raw substitutions. If the proof step hypothesis is
+null/missing simply generate an empty list of raw substitutions -- the
+unification is vacuously successful. If unification is impossible
+because the pair of parse trees is incongruous, return "Failure".<br>
+  </li>
+  <li>Accumulate/merge each raw substitution
+performing any necessary "occurs in" checking and "sub-unifications".
+For each target (work) variable substitution, before performing
+accumulation/merging, make a clone of the assigned substitution value
+replacing references to source variables with their assigned
+substitution values. If any errors are encountered during
+accumulation/merging (such as an "occurs-in" or sub-unification error),
+return "Failure".</li>
+  <li>Return "Success".</li>
+</ul>
+<hr style="width: 100%; height: 2px;"><br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<pre><br><br><br><br></pre>
+</body>
+</html>
