@@ -597,7 +597,7 @@ public class Grammar implements SyntaxVerifier {
 
     /**
      * Parse all Statement Formulas and update stmtTbl with results.
-     *
+     * 
      * @param messages Messages object for error/info messages.
      * @param symTblParam Symbol Table (Map).
      * @param stmtTblParam Statement Table (Map).
@@ -760,10 +760,7 @@ public class Grammar implements SyntaxVerifier {
         final ParseTree[] parseTreeArray = new ParseTree[parseTreeMax];
         int parseTreeCnt;
         try {
-// /* --
-//          System.out.println("$$$$$$$$$$$$$ "
-//                             + defaultStmtLabel);
-// */
+//            System.out.println("$$$$$$$$$$$$$ " + defaultStmtLabel);
             parseTreeCnt = grammaticalParser.parseExpr(parseTreeArray,
                 formula.getTyp(), formula.getParseNodeHolderExpr(varHypArray),
                 highestSeq);

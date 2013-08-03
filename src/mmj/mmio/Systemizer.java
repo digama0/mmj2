@@ -190,7 +190,7 @@ public class Systemizer {
      * <p>
      * If loadComments is true then Metamath comments (at least, for Theorems)
      * will be loaded.
-     *
+     * 
      * @param loadComments true/false load Metamath Comments.
      */
     public void setLoadComments(final boolean loadComments) {
@@ -202,7 +202,7 @@ public class Systemizer {
      * <p>
      * If loadProofs is true then Metamath proofs are loaded into LogicalSystem,
      * otherwise just a "?" proof is stored with each Theorem.
-     *
+     * 
      * @param loadProofs true/false load Metamath Proofs in Theorem objects.
      */
     public void setLoadProofs(final boolean loadProofs) {
@@ -571,7 +571,7 @@ public class Systemizer {
      * Note: per agreement with Norm, the "$t" token identifying typesetting
      * definitions in a comment is the first non-whitespace token after the "$("
      * in the comment.
-     *
+     * 
      * @param comment the comment string
      */
     private void loadComment(final String comment) {

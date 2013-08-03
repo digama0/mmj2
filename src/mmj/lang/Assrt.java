@@ -126,7 +126,9 @@ public abstract class Assrt extends Stmt {
         final List<Hyp> exprHypList = new ArrayList<Hyp>();
         formula = new LogicFormula(symTbl, typS, symList, exprHypList);
 
-        varHypArray = new VarHyp[0];
+        if (labelS.equals("dummylink"))
+            hashCode();
+        varHypArray = exprHypList.toArray(new VarHyp[exprHypList.size()]);
 
         mandFrame = buildMandFrame(scopeDefList, exprHypList);
 
@@ -142,13 +144,14 @@ public abstract class Assrt extends Stmt {
      * 
      * @return varHypArray which contains only mandatory VarHyp's.
      */
+    @Override
     public VarHyp[] getMandVarHypArray() {
         return varHypArray;
     }
 
     /**
      * Return the logHypArray.
-     *
+     * 
      * @return logHypArray for the Assrt.
      */
     public LogHyp[] getLogHypArray() {
@@ -157,7 +160,7 @@ public abstract class Assrt extends Stmt {
 
     /**
      * Return the logHypArray length
-     *
+     * 
      * @return Assrt's logHypArray length.
      */
     public int getLogHypArrayLength() {
@@ -166,7 +169,7 @@ public abstract class Assrt extends Stmt {
 
     /**
      * Set the logHypArray.
-     *
+     * 
      * @param logHypArray for the Assrt.
      */
     public void setLogHypArray(final LogHyp[] logHypArray) {
@@ -178,6 +181,7 @@ public abstract class Assrt extends Stmt {
      * 
      * @return hypArray length from the Assrt's MandFrame.
      */
+    @Override
     public int getMandHypArrayLength() {
         return mandFrame.hypArray.length;
     }
@@ -226,6 +230,7 @@ public abstract class Assrt extends Stmt {
      * 
      * @return true (assertions are always "active")
      */
+    @Override
     public boolean isActive() {
         // assertions are always active at global scope.
         return true;
@@ -238,6 +243,7 @@ public abstract class Assrt extends Stmt {
      * 
      * @return true (an Assrt is an Assrt :)
      */
+    @Override
     public boolean isAssrt() {
         return true;
     }
@@ -258,6 +264,7 @@ public abstract class Assrt extends Stmt {
      * 
      * @return false (an Assrt is not an Hyp :)
      */
+    @Override
     public boolean isHyp() {
         return false;
     }
@@ -269,6 +276,7 @@ public abstract class Assrt extends Stmt {
      * 
      * @return false (an Assrt is not a Hyp, ergo it is not a VarHyp :)
      */
+    @Override
     public boolean isVarHyp() {
         return false;
     }
@@ -280,6 +288,7 @@ public abstract class Assrt extends Stmt {
      * 
      * @return false (an Assrt is not a Hyp, ergo it is not a WorkVarHyp :)
      */
+    @Override
     public boolean isWorkVarHyp() {
         return false;
     }
@@ -291,6 +300,7 @@ public abstract class Assrt extends Stmt {
      * 
      * @return false (an Assrt is not a Hyp, ergo it is not a LogHyp :)
      */
+    @Override
     public boolean isLogHyp() {
         return false;
     }
@@ -352,9 +362,8 @@ public abstract class Assrt extends Stmt {
         for (final ScopeDef scopeDef : scopeDefList)
             for (int i = 0; i < scopeDef.scopeLogHyp.size(); i++) {
                 final LogHyp logHyp = scopeDef.scopeLogHyp.get(i);
-                varHypArray = logHyp.getMandVarHypArray();
 
-                for (final VarHyp element : varHypArray)
+                for (final VarHyp element : logHyp.getMandVarHypArray())
                     Assrt.accumHypInList(hypList, element);
 
                 Assrt.accumHypInList(hypList, logHyp);
@@ -380,7 +389,7 @@ public abstract class Assrt extends Stmt {
      * referenced in a list of hypotheses.
      * <p>
      * Note: checks only the VarHyp's.
-     *
+     * 
      * @param hypList -- List containing hypotheses
      * @param djVars -- DjVars object containing 2 variables to be checked
      *            against the variables referenced in hypList.
@@ -632,7 +641,7 @@ public abstract class Assrt extends Stmt {
 
     /**
      * Return the sortedLogHypArray.
-     *
+     * 
      * @return sortedLogHypArray for the Assrt.
      */
     public LogHyp[] getSortedLogHypArray() {

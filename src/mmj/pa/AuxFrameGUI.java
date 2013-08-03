@@ -43,25 +43,15 @@ import javax.swing.text.DefaultEditorKit;
 public class AuxFrameGUI {
 
     protected ProofAsstPreferences proofAsstPreferences;
-
     protected JFrame frame;
-
     protected JTextArea frameTextArea;
-
     protected JScrollPane frameScrollPane;
-
     protected String frameTitle = PaConstants.AUX_FRAME_TITLE_DEFAULT;
-
     protected String frameText = PaConstants.AUX_FRAME_TEXT_DEFAULT;
-
     protected int frameRows = PaConstants.AUX_FRAME_NBR_ROWS_DEFAULT;
-
     protected int frameColumns = PaConstants.AUX_FRAME_NBR_COLUMNS_DEFAULT;
-
     protected String frameFontFamily = PaConstants.AUX_FRAME_FONT_FAMILY;
-
     protected Font frameFont;
-
     protected boolean wordWrap = false;
 
     /**
@@ -94,7 +84,7 @@ public class AuxFrameGUI {
      * @param wordWrap true or false.
      */
     public void setWrapStyleWord(final boolean wordWrap) {
-        this.wordWrap = true;
+        this.wordWrap = wordWrap;
     }
 
     /**
@@ -144,17 +134,11 @@ public class AuxFrameGUI {
      * is automatically invoked during the initial display sequence of events..
      */
     public void setCursorToStartOfMessageArea() {
-
         try {
-
             frameTextArea.setCaretPosition(0);
-
             final JViewport v = frameScrollPane.getViewport();
-
-            v.scrollRectToVisible(new Rectangle(0, // x
-                0, // y
-                1, // width
-                1)); // height
+            v.scrollRectToVisible(new Rectangle(/*x=*/0, /*y=*/0,
+            /*width=*/1, /*height=*/1));
         } catch (final Exception e) {
             // ignore, don't care, did our best.
         }

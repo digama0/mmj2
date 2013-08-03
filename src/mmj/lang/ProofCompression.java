@@ -142,7 +142,7 @@ public class ProofCompression {
 
     /**
      * Decompress a single proof.
-     *
+     * 
      * @param theoremLabel Theorem's label, used in error messages that may be
      *            generated during processing.
      * @param seq the sequence number of the theorem

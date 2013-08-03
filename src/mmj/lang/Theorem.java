@@ -96,7 +96,11 @@ public class Theorem extends Assrt {
 
         optFrame = buildOptFrame(scopeDefList);
 
-        proof = editProofListDefAndActive(stmtTbl, proofList);
+        try {
+            proof = editProofListDefAndActive(stmtTbl, proofList);
+        } catch (final LangException e) {
+            proof = new Stmt[1];
+        }
 
     }
 
@@ -130,9 +134,13 @@ public class Theorem extends Assrt {
 
         optFrame = buildOptFrame(scopeDefList);
 
-        proof = proofCompression
-            .decompress(labelS, seq, stmtTbl, mandFrame.hypArray,
-                optFrame.optHypArray, proofList, proofBlockList);
+        try {
+            proof = proofCompression.decompress(labelS, seq, stmtTbl,
+                mandFrame.hypArray, optFrame.optHypArray, proofList,
+                proofBlockList);
+        } catch (final LangException e) {
+            proof = new Stmt[1];
+        }
 
     }
 
@@ -143,6 +151,7 @@ public class Theorem extends Assrt {
      * 
      * @return true (a Theorem is not an Axiom :)
      */
+    @Override
     public boolean isAxiom() {
         return false;
     }
@@ -176,7 +185,7 @@ public class Theorem extends Assrt {
 
     /**
      * Get the Theorem's OptFrame.
-     *
+     * 
      * @return OptFrame for Theorem.
      */
     public OptFrame getOptFrame() {
@@ -325,7 +334,7 @@ public class Theorem extends Assrt {
     /**
      * Throws an IllegalArgumentException because a ParseTree for a parsed
      * sub-expression should contain only VarHyp and Syntax Axiom nodes.
-     *
+     * 
      * @param sb StringBuilder already initialized for appending characters.
      * @param maxDepth maximum depth of Notation Syntax axioms in sub-tree to be
      *            printed. Set to Integer.MAX_VALUE to turn off depth checking.
@@ -336,6 +345,7 @@ public class Theorem extends Assrt {
      * @return length of sub-expression characters appended to the input
      *         StringBuilder -- or -1 if maxDepth or maxLength exceeded.
      */
+    @Override
     public int renderParsedSubExpr(final StringBuilder sb, final int maxDepth,
         final int maxLength, final ParseNode[] child)
     {
@@ -349,7 +359,7 @@ public class Theorem extends Assrt {
 
     /**
      * Applies updates made to proof related data.
-     *
+     * 
      * @param newProof previous proof.
      * @param newDjVarsArray previous Mandatory DjVars
      * @param newOptDjVarsArray previous Optional DjVars
@@ -369,7 +379,7 @@ public class Theorem extends Assrt {
      * <p>
      * Will throw LangException if both variables not contained in Mandatory or
      * Optional Frame hyp arrays!
-     *
+     * 
      * @param symTbl Symbol Table from Logical System.
      * @param inputDjVarsStmtList List of lists where the inner list is symList
      *            from SrcStmt.
@@ -407,7 +417,7 @@ public class Theorem extends Assrt {
 
     /**
      * Replace existing Mandatory and Optional DjVars.
-     *
+     * 
      * @param mandDjVarsUpdateList List of DjVars object to be stored.
      * @param optDjVarsUpdateList List of DjVars object to be stored.
      */
@@ -427,7 +437,7 @@ public class Theorem extends Assrt {
     /**
      * Merge existing Mandatory and Optional DjVars into the existing Mandatory
      * and Optional Frame data.
-     *
+     * 
      * @param mandDjVarsUpdateList List of DjVars object to be stored.
      * @param optDjVarsUpdateList List of DjVars object to be stored.
      */

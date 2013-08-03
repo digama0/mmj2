@@ -96,7 +96,7 @@ public class BookManager implements TheoremLoaderCommitListener {
 
     /**
      * Sole constructor for BookManager.
-     *
+     * 
      * @param enabled Book Manager enabled? If not enabled then zero Chapter and
      *            Section numbers are assigned and no data is retained.
      * @param provableLogicStmtTypeParm String identifying theorems, logic
@@ -130,7 +130,7 @@ public class BookManager implements TheoremLoaderCommitListener {
      * TheoremLoader update. A failure of BookManager to complete the updates is
      * deemed irreversible and severe, warranting a message to the user to
      * manually restart mmj2.
-     *
+     * 
      * @param mmtTheoremSet the set of MMTTheoremFile object added or updated by
      *            TheoremLoader.
      */
@@ -162,7 +162,7 @@ public class BookManager implements TheoremLoaderCommitListener {
     /**
      * Returns BookManager enabled flag, which indicates whether or not the
      * BookManager is in use within the currently system.
-     *
+     * 
      * @return BookManager enabled flag.
      */
     public boolean isEnabled() {
@@ -171,7 +171,7 @@ public class BookManager implements TheoremLoaderCommitListener {
 
     /**
      * Returns the Chapter corresponding to a given Chapter Nbr.
-     *
+     * 
      * @param chapterNbr Chapter number.
      * @return Chapter or null if no such chapter exists.
      */
@@ -187,7 +187,7 @@ public class BookManager implements TheoremLoaderCommitListener {
 
     /**
      * Returns the Chapter corresponding to a given Section Nbr.
-     *
+     * 
      * @param sectionNbr Section number.
      * @return Chapter or null if no such section exists.
      */
@@ -205,7 +205,7 @@ public class BookManager implements TheoremLoaderCommitListener {
      * Returns the Section corresponding to a given Section Nbr.
      * <p>
      * Note: no processing occurs if BookManager is not enabled.
-     *
+     * 
      * @param sectionNbr Section number.
      * @return Chapter or null if no such section exists or BookManager is not
      *         enabled.
@@ -224,7 +224,7 @@ public class BookManager implements TheoremLoaderCommitListener {
      * Adds a new Chapter to the BookManager's collection.
      * <p>
      * Note: no processing occurs if BookManager is not enabled.
-     *
+     * 
      * @param chapterTitle Chapter Title or descriptive String.
      */
     public void addNewChapter(final String chapterTitle) {
@@ -245,7 +245,7 @@ public class BookManager implements TheoremLoaderCommitListener {
      * database section.
      * <p>
      * Note: no processing occurs if BookManager is not enabled.
-     *
+     * 
      * @param sectionTitle or descriptive String.
      */
     public void addNewSection(final String sectionTitle) {
@@ -269,7 +269,7 @@ public class BookManager implements TheoremLoaderCommitListener {
      * update
      * <p>
      * Note: no processing occurs if BookManager is not enabled.
-     *
+     * 
      * @param axiom newly created Axiom.
      */
     public void assignChapterSectionNbrs(final Axiom axiom) {
@@ -301,7 +301,7 @@ public class BookManager implements TheoremLoaderCommitListener {
      * update
      * <p>
      * Note: no processing occurs if BookManager is not enabled.
-     *
+     * 
      * @param theorem newly created Theorem.
      */
     public void assignChapterSectionNbrs(final Theorem theorem) {
@@ -325,7 +325,7 @@ public class BookManager implements TheoremLoaderCommitListener {
      * update
      * <p>
      * Note: no processing occurs if BookManager is not enabled.
-     *
+     * 
      * @param logHyp newly created LogHyp.
      */
     public void assignChapterSectionNbrs(final LogHyp logHyp) {
@@ -349,7 +349,7 @@ public class BookManager implements TheoremLoaderCommitListener {
      * update
      * <p>
      * Note: no processing occurs if BookManager is not enabled.
-     *
+     * 
      * @param varHyp newly created VarHyp
      */
     public void assignChapterSectionNbrs(final VarHyp varHyp) {
@@ -373,7 +373,7 @@ public class BookManager implements TheoremLoaderCommitListener {
      * update
      * <p>
      * Note: no processing occurs if BookManager is not enabled.
-     *
+     * 
      * @param sym newly created Sym.
      */
     public void assignChapterSectionNbrs(final Sym sym) {
@@ -389,7 +389,7 @@ public class BookManager implements TheoremLoaderCommitListener {
     /**
      * Returns the count of all MObj objects assigned to Sections within the
      * BookManager.
-     *
+     * 
      * @return total number of MObjs added so far.
      */
     public int getTotalNbrMObjs() {
@@ -401,7 +401,7 @@ public class BookManager implements TheoremLoaderCommitListener {
      * <p>
      * Note: if BookManager is not enabled, the List returned will not be null,
      * it will be empty.
-     *
+     * 
      * @return List of Chapters.
      */
     public List<Chapter> getChapterList() {
@@ -413,7 +413,7 @@ public class BookManager implements TheoremLoaderCommitListener {
      * <p>
      * Note: if BookManager is not enabled, the List returned will not be null,
      * it will be empty.
-     *
+     * 
      * @return List of Sections.
      */
     public List<Section> getSectionList() {
@@ -425,7 +425,7 @@ public class BookManager implements TheoremLoaderCommitListener {
      * <p>
      * Note: if BookManager is not enabled, the Iterable returned will not be
      * null, it will be empty.
-     *
+     * 
      * @param logicalSystem the mmj2 LogicalSystem object.
      * @return List of Sections.
      */
@@ -433,8 +433,11 @@ public class BookManager implements TheoremLoaderCommitListener {
         final LogicalSystem logicalSystem)
     {
         final MObj<?>[][] sectionArray = getSectionMObjArray(logicalSystem);
-
-        return new SectionMObjIterable(sectionArray);
+        return new Iterable<MObj<?>>() {
+            public Iterator<MObj<?>> iterator() {
+                return new SectionMObjIterator(sectionArray);
+            }
+        };
     }
 
     /**
@@ -443,7 +446,7 @@ public class BookManager implements TheoremLoaderCommitListener {
      * <p>
      * Note: if BookManager is not enabled, the array is empty and is allocated
      * as {@code new MObj[0][]}.
-     *
+     * 
      * @param logicalSystem the mmj2 LogicalSystem object.
      * @return two-dimensional array of MObjs by Section and MObjNbr within
      *         Section.
@@ -472,9 +475,7 @@ public class BookManager implements TheoremLoaderCommitListener {
      * Nested class which implements Iterable for a two-dimensional array of
      * MObjs by Section and MObjNbr within Section.
      */
-    public class SectionMObjIterable implements Iterable<MObj<?>>,
-        Iterator<MObj<?>>
-    {
+    public class SectionMObjIterator implements Iterator<MObj<?>> {
         private int prevI;
         private int prevJ;
         private int nextI;
@@ -487,11 +488,11 @@ public class BookManager implements TheoremLoaderCommitListener {
          * Note: the input array must not contain any null (empty) array
          * entries. It is assumed to be completely full (though the idea of
          * arrays with padding was considered, it was rejected ... for now.)
-         *
+         * 
          * @param s two-dimensional array of MObjs by Section and MObjNbr within
          *            Section.
          */
-        public SectionMObjIterable(final MObj<?>[][] s) {
+        public SectionMObjIterator(final MObj<?>[][] s) {
             mArray = s;
             prevI = 0;
             prevJ = -1;
@@ -499,7 +500,7 @@ public class BookManager implements TheoremLoaderCommitListener {
 
         /**
          * Returns the next MObj within the two-dimensional array.
-         *
+         * 
          * @return the next MObj within the two-dimensional array.
          * @throws NoSuchElementException if there are no more MObjs to return.
          */
@@ -514,7 +515,7 @@ public class BookManager implements TheoremLoaderCommitListener {
         /**
          * Returns true if there is another MObj to return within the
          * two-dimensional array.
-         *
+         * 
          * @return true if there is a next() MObj within the two-dimensional
          *         array.
          */
@@ -532,15 +533,11 @@ public class BookManager implements TheoremLoaderCommitListener {
 
         /**
          * Not supported.
-         *
+         * 
          * @throws UnsupportedOperationException if called.
          */
         public void remove() {
             throw new UnsupportedOperationException();
-        }
-
-        public Iterator<MObj<?>> iterator() {
-            return this;
         }
     }
 
