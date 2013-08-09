@@ -333,8 +333,8 @@ public class HypothesisStep extends ProofStepStmt {
     {
         ref = null;
         if (refLabel == null)
-            refLabel = new String(w.getTheoremLabel() + "."
-                + Integer.toString(w.hypStepCnt + 1));
+            refLabel = w.getTheoremLabel() + "."
+                + Integer.toString(w.hypStepCnt + 1);
 
         checkDupHypRefLabel(lineStartCharNbr);
 

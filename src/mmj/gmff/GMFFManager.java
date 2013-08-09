@@ -344,7 +344,7 @@ public class GMFFManager {
 
             String lowestNamePrefix;
             if (labelOrAsterisk.equals(GMFFConstants.OPTION_VALUE_ALL))
-                lowestNamePrefix = new String("");
+                lowestNamePrefix = "";
             else
                 lowestNamePrefix = labelOrAsterisk;
 

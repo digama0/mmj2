@@ -15,15 +15,21 @@
 
 package mmj.pa;
 
+import mmj.lang.Assrt;
+
 /**
  * StepRequest contains the StepSelector search results and is passed to the
  * ProofAsstGUI for use in generating the StepSelectorDialog.
  */
 public class StepRequest {
 
-    /* friendly */int request;
-    /* friendly */String step;
-    /* friendly */Object param1;
+    public int request;
+    public String step;
+    public Object param1;
+
+    public boolean extendedSearchChoiceMade = false;
+    public int extendedSearchHypNbr = -1;
+    public Assrt extendedSearchHypRefAssrt = null;
 
     /**
      * Constructor for StepRequest
@@ -34,7 +40,6 @@ public class StepRequest {
      */
     public StepRequest(final int request, final String step, final Object param1)
     {
-
         this.request = request;
         this.step = step;
         this.param1 = param1;
@@ -45,7 +50,6 @@ public class StepRequest {
      * @param request code
      */
     public StepRequest(final int request) {
-
         this(request, null, null);
     }
 

@@ -214,6 +214,10 @@ public class StepSelectorSearch {
         return store.createStepSelectorResults(derivStep.step, storeOverflow);
     }
 
+    public List<Assrt> getSortedAssrtSearchList() {
+        return assrtAList;
+    }
+
     /**
      * Boolean search of assrtArray using partial key to find starting position
      * for scan of Assertions.

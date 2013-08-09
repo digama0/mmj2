@@ -281,7 +281,7 @@ public class DelimitedTextParser {
             }
         }
         else if (next == max && max > 0 && line.charAt(max - 1) == delimiter) {
-            fieldOut = new String("");
+            fieldOut = "";
             ++next;
         }
         else if (reachedEOL)

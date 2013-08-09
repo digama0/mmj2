@@ -59,6 +59,7 @@ import java.util.TreeSet;
 
 import mmj.lang.Assrt;
 import mmj.lang.WorkVarManager;
+import mmj.search.SearchMgr;
 import mmj.tmff.TMFFPreferences;
 
 /**
@@ -139,6 +140,8 @@ public class ProofAsstPreferences {
     private boolean incompleteStepCursorLast;
     private boolean incompleteStepCursorAsIs;
 
+    private SearchMgr searchMgr;
+
     /**
      * Default constructor.
      */
@@ -214,6 +217,8 @@ public class ProofAsstPreferences {
         // and redone with the correct WorkVar settings.
         workVarManager = null;
         stepUnifier = null;
+
+        setSearchMgr(null);
     }
 
     /**
@@ -1009,7 +1014,7 @@ public class ProofAsstPreferences {
 
         String n;
         if (familyName == null)
-            n = new String(" ");
+            n = " ";
         else
             n = familyName.trim();
 
@@ -1552,5 +1557,15 @@ public class ProofAsstPreferences {
      */
     public int getAssrtListFreespace() {
         return assrtListFreespace;
+    }
+
+    public SearchMgr getSearchMgr() {
+        if (searchMgr == null)
+            setSearchMgr(new SearchMgr(this));
+        return searchMgr;
+    }
+
+    public void setSearchMgr(final SearchMgr searchmgr) {
+        searchMgr = searchmgr;
     }
 }

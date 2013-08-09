@@ -154,9 +154,9 @@ public class TypesetDefCommentParser {
     }
 
     private void initCurrDefVars() {
-        currKeyword = new String("");
-        currSym = new String("");
-        currReplacement = new String("");
+        currKeyword = "";
+        currSym = "";
+        currReplacement = "";
     }
 
     /*
@@ -600,9 +600,9 @@ public class TypesetDefCommentParser {
         if (errLine < 2)
             errLine = countLines(MMIOConstants.CARRIAGE_RETURN_CHAR);
 
-        return new String(GMFFConstants.ERRMSG_LOC_INFO_1 + errLine
+        return GMFFConstants.ERRMSG_LOC_INFO_1 + errLine
             + GMFFConstants.ERRMSG_LOC_INFO_2 + currKeyword
-            + GMFFConstants.ERRMSG_LOC_INFO_3 + currSym);
+            + GMFFConstants.ERRMSG_LOC_INFO_3 + currSym;
     }
 
     private int countLines(final char nextLineChar) {

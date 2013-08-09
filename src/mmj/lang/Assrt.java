@@ -126,8 +126,6 @@ public abstract class Assrt extends Stmt {
         final List<Hyp> exprHypList = new ArrayList<Hyp>();
         formula = new LogicFormula(symTbl, typS, symList, exprHypList);
 
-        if (labelS.equals("dummylink"))
-            hashCode();
         varHypArray = exprHypList.toArray(new VarHyp[exprHypList.size()]);
 
         mandFrame = buildMandFrame(scopeDefList, exprHypList);
@@ -508,7 +506,7 @@ public abstract class Assrt extends Stmt {
                         high = hStmt.getLabel();
                     }
                 }
-                setLogHypsL1HiLoKey(new String(high + " " + low));
+                setLogHypsL1HiLoKey(high + " " + low);
             }
             else
                 setLogHypsL1HiLoKey("");

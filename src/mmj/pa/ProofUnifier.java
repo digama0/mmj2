@@ -199,13 +199,13 @@ public class ProofUnifier {
     private int[] derivAssrtXRef;
     private int[] impossibleCnt;
 
-    // ***********************************************************
-    // ***********************************************************
-    // **************** ******************
-    // ALL NEW CODE FOR unifyStepWithWorkVars() FOLLOWS!!!!!!!!!!!
-    // **************** ******************
-    // ***********************************************************
-    // ***********************************************************
+    /* ***********************************************************
+     * ***********************************************************
+     * ****************                         ******************
+     * ALL NEW CODE FOR unifyStepWithWorkVars() FOLLOWS!!!!!!!!!!!
+     * ****************                         ******************
+     * ***********************************************************
+     * ***********************************************************/
     private final StepUnifier stepUnifier;
 
     /**
@@ -289,6 +289,10 @@ public class ProofUnifier {
         return tablesInitialized;
     }
 
+    public List<Assrt> getSortedAssrtSearchList() {
+        return stepSelectorSearch.getSortedAssrtSearchList();
+    }
+
     /**
      * Merges a list of added Assrt objects sorted by MObj seq into the
      * unifySearchList and passes the list on to the StepSelectorSearch for its
@@ -347,12 +351,18 @@ public class ProofUnifier {
 
         this.messages = messages;
 
+        if (proofWorksheet.stepRequest != null
+            && (proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_GENERAL_SEARCH || proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SEARCH_OPTIONS
+                && proofWorksheet.stepRequest.param1 == null))
+            return;
+
         // ...also loads dsa1 array for input to
         // parallelStepUnificationMethod
         unifyStepsHavingRefLabels();
 
         if (proofWorksheet.stepRequest != null
-            && proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH)
+            && (proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH
+                || proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH || proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SEARCH_OPTIONS))
             return; // our work here is complete :-)
 
         if (dsa1Count > 0)
@@ -383,7 +393,6 @@ public class ProofUnifier {
         else
             reportAlternateUnifications();
     }
-
     /*
      * a final fixup to ensure that we do not attempt
      * work var -> dummy var conversion unless everything
@@ -458,11 +467,13 @@ public class ProofUnifier {
         // 1) Make pass for steps with Ref labels involving work vars
         if (proofWorksheet.hasWorkVarsOrDerives
             || proofWorksheet.stepRequest != null
-            && proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH)
+            && (proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH
+                || proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH || proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SEARCH_OPTIONS))
             unifyStepsInvolvingWorkVars();
 
         if (proofWorksheet.stepRequest != null
-            && proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH)
+            && (proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH
+                || proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH || proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SEARCH_OPTIONS))
             return; // our work here is complete :-)
 
         // 2) Make pass for steps with Ref labels that don't
@@ -1732,7 +1743,7 @@ public class ProofUnifier {
         final LogHyp[] logHypArray = assrt.getLogHypArray();
         LogHyp holdLogHyp;
         ParseTree logHypParseTree;
-        List<Var> workVarList;
+        List<WorkVar> workVarList;
         ParseTree generatedFormulaParseTree;
         Formula generatedFormula;
 
@@ -1745,7 +1756,7 @@ public class ProofUnifier {
 
             holdLogHyp = logHypArray[i];
             logHypParseTree = holdLogHyp.getExprParseTree();
-            workVarList = new ArrayList<Var>(3); // 3=guess
+            workVarList = new ArrayList<WorkVar>(3); // 3=guess
 
             generatedFormulaParseTree = logHypParseTree
                 .deepCloneApplyingAssrtSubst(assrtHypArray, assrtSubst,
@@ -1787,8 +1798,8 @@ public class ProofUnifier {
         final ParseTree origParseTree = assrt.getExprParseTree();
 
         // keeps count of dummies in new formula
-        final List<Var> workVarList = new ArrayList<Var>(3); // 3 is a
-                                                             // guess.
+        final List<WorkVar> workVarList = new ArrayList<WorkVar>(3); // 3 is a
+        // guess.
 
         final ParseTree generatedFormulaParseTree = origParseTree
             .deepCloneApplyingAssrtSubst(assrtHypArray, assrtSubst, workVarList);
@@ -1825,7 +1836,8 @@ public class ProofUnifier {
 
         ProofWorkStmt selectorSearchStmt = null;
         if (proofWorksheet.stepRequest != null
-            && proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH)
+            && (proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH
+                || proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH || proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SEARCH_OPTIONS))
             selectorSearchStmt = (DerivationStep)proofWorksheet.stepRequest.param1;
 
         stepLoop: while (true) {
@@ -1842,22 +1854,19 @@ public class ProofUnifier {
             derivStep = (DerivationStep)proofWorkStmtObject;
 
             if (selectorSearchStmt == derivStep) {
-
-                proofWorksheet.stepSelectorResults = stepSelectorSearch
-                    .loadStepSelectorResults(derivStep);
+                if (proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH)
+                    proofWorksheet.stepSelectorResults = stepSelectorSearch
+                        .loadStepSelectorResults(derivStep);
+                else if (proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH)
+                    proofWorksheet.searchOutput = proofAsstPreferences
+                        .getSearchMgr().execStepSearch(derivStep);
                 return; // our work here is complete ;-)
             }
 
-            if (derivStep.ref == null)
-                continue stepLoop;
-
-            if (derivStep.deriveStepFormula || derivStep.deriveStepHyps
-                || derivStep.hasWorkVarsInStepOrItsHyps())
-            {
-                // ok...
-            }
-            else
-                continue stepLoop;
+            if (derivStep.ref == null || !derivStep.deriveStepFormula
+                && !derivStep.deriveStepHyps
+                && !derivStep.hasWorkVarsInStepOrItsHyps())
+                continue;
 
             assrt = (Assrt)derivStep.ref;
             assrtNbrLogHyps = assrt.getLogHypArrayLength();
@@ -1885,10 +1894,8 @@ public class ProofUnifier {
                 }
 
             if (!unifyStepWithWorkVars()) {
-
                 markRefUnificationFailure(assrt);
-
-                continue stepLoop;
+                continue;
             }
 
             wIndexInsertedCnt = derivStep.nbrHypsGenerated; // oy
@@ -2009,7 +2016,8 @@ public class ProofUnifier {
     private void doUpdateDerivationStepWorkVars(final DerivationStep d) {
 
         // ok, see if workVarList Work Vars actually updated
-        List<Var> newWorkVarList = new ArrayList<Var>(d.workVarList.size());
+        List<WorkVar> newWorkVarList = new ArrayList<WorkVar>(
+            d.workVarList.size());
 
         final List<WorkVar> updatedWorkVarList = new ArrayList<WorkVar>(
             d.workVarList.size());
@@ -2025,7 +2033,7 @@ public class ProofUnifier {
         // step.)
         for (int i = 0; i < d.workVarList.size(); i++) {
 
-            workVar = (WorkVar)d.workVarList.get(i);
+            workVar = d.workVarList.get(i);
             if (workVarManager.isAllocated(workVar))
                 newWorkVarList.add(workVar);
             else
@@ -2064,7 +2072,7 @@ public class ProofUnifier {
     }
 
     private void doUpdateDerivationStepFormulaStuff(final DerivationStep d,
-        final List<Var> newWorkVarList)
+        final List<WorkVar> newWorkVarList)
     {
 
         final ParseTree newFormulaParseTree = d.formulaParseTree
@@ -2493,7 +2501,7 @@ public class ProofUnifier {
         return true;
     }
 
-    private void mergeVarList1IntoList2(final List<Var> list1,
+    private <T extends Var> void mergeVarList1IntoList2(final List<T> list1,
         final List<Var> list2)
     {
         Var v;

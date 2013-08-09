@@ -47,7 +47,7 @@
 
 package mmj.lang;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * Parse Node is an n-way tree node for Metamath Stmt trees.
@@ -263,6 +263,56 @@ public class ParseNode {
         return substArray;
     }
 
+    public int unifyWithSubtree(final ParseNode parsenode,
+        final ParseNode[] aparsenode, final ParseNode[] aparsenode1,
+        final VarHypSubst[] avarhypsubst)
+    {
+        int i = 0;
+        aparsenode[0] = this;
+        aparsenode[1] = parsenode;
+        int j = 2;
+        label0: do {
+            if (j <= 0)
+                break;
+            final ParseNode parsenode2 = aparsenode[--j];
+            final ParseNode parsenode1 = aparsenode[--j];
+            if (parsenode1.stmt != parsenode2.stmt) {
+                if (!parsenode1.stmt.isVarHyp()
+                    || parsenode1.stmt.getTyp() != parsenode2.stmt.getTyp())
+                    return -1;
+            }
+            else if (!parsenode1.stmt.isVarHyp()) {
+                int k = parsenode1.child.length - 1;
+                while (k >= 0) {
+                    aparsenode[j++] = parsenode1.child[k];
+                    aparsenode[j++] = parsenode2.child[k];
+                    k--;
+                }
+                continue;
+            }
+            int l = 0;
+            do {
+                if (l >= i)
+                    break;
+                if (avarhypsubst[l].targetVarHyp == parsenode1.stmt) {
+                    if (!avarhypsubst[l].sourceNode.isDeepDup(parsenode2,
+                        aparsenode1))
+                        return -1;
+                    continue label0;
+                }
+                l++;
+            } while (true);
+            avarhypsubst[i].targetVarHyp = (VarHyp)parsenode1.stmt;
+            avarhypsubst[i].sourceNode = parsenode2;
+            i++;
+        } while (true);
+        return i;
+    }
+
+    public SubTreeIterator subTreeIterator(final boolean flag) {
+        return new SubTreeIterator(this, flag);
+    }
+
     /**
      * Determine if sub-tree is a duplicate of this sub-tree. This is the
      * non-recursive version of isDeepDup(), which can be used equivalently
@@ -405,7 +455,7 @@ public class ParseNode {
      * @return new ParseNode.
      */
     public ParseNode deepCloneApplyingAssrtSubst(final Hyp[] assrtHypArray,
-        final ParseNode[] assrtSubst, final List<Var> workVarList)
+        final ParseNode[] assrtSubst, final List<WorkVar> workVarList)
     {
         if (!stmt.isVarHyp()) {
             final ParseNode out = new ParseNode(stmt);
@@ -774,9 +824,9 @@ public class ParseNode {
      * 
      * @param workVarList List of WorkVar objects in subtree.
      */
-    public void accumSetOfWorkVarsUsed(final List<Var> workVarList) {
+    public void accumSetOfWorkVarsUsed(final List<WorkVar> workVarList) {
         if (stmt.isWorkVarHyp()) {
-            final Var v = ((VarHyp)stmt).getVar();
+            final WorkVar v = (WorkVar)((VarHyp)stmt).getVar();
             for (int i = 0; i < workVarList.size(); i++)
                 if (workVarList.get(i) == v)
                     return;
@@ -850,4 +900,36 @@ public class ParseNode {
         return out;
     }
 
+    public class SubTreeIterator implements Iterator<ParseNode> {
+
+        public boolean hasNext() {
+            return !nodeStack.empty();
+        }
+
+        public ParseNode next() {
+            final ParseNode parsenode = nodeStack.pop();
+            for (int i = parsenode.child.length - 1; i >= 0; i--)
+                pushIfNotExcluded(parsenode.child[i]);
+
+            return parsenode;
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+
+        private void pushIfNotExcluded(final ParseNode parsenode) {
+            if (!excludeVarHyps || !parsenode.stmt.isVarHyp())
+                nodeStack.push(parsenode);
+        }
+
+        Stack<ParseNode> nodeStack;
+        boolean excludeVarHyps;
+
+        public SubTreeIterator(final ParseNode parsenode1, final boolean flag) {
+            excludeVarHyps = flag;
+            nodeStack = new Stack<ParseNode>();
+            pushIfNotExcluded(parsenode1);
+        }
+    }
 }

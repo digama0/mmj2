@@ -548,7 +548,7 @@ public abstract class GrammarRule {
             s.append(element);
             s.append(" ");
         }
-        return new String(s);
+        return s.toString();
     }
 
     /**

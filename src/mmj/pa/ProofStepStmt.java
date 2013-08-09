@@ -8,7 +8,7 @@
 
 /*
  * ProofStepStmt.java  0.07 08/01/2008
- * {@code 
+ * {@code
  * Version 0.04: 06/01/2007
  *     - Un-nested inner class
  *
@@ -44,8 +44,7 @@ package mmj.pa;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import mmj.lang.*;
 import mmj.mmio.MMIOError;
@@ -70,7 +69,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      */
     int formulaStartCharNbr;
 
-    String step;
+    public String step;
 
     Stmt ref;
 
@@ -84,13 +83,13 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      * null if no workVars in formula, otherwise contains list of workVars in
      * formula
      */
-    List<Var> workVarList;
+    List<WorkVar> workVarList;
 
     /**
      * if parse tree null, unification cannot be attempted for the step or for
      * other steps that refer to this step as an hypothesis.
      */
-    ParseTree formulaParseTree;
+    public ParseTree formulaParseTree;
 
     /** new fields for Proof Assistant "Derive" Feature */
     boolean generatedByDeriveFeature; // for Derive
@@ -168,6 +167,10 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
             w.proofCursor.setCursorAtProofWorkStmt(this,
                 PaConstants.FIELD_ID_REF);
 
+    }
+
+    public String getStep() {
+        return step;
     }
 
     /**
@@ -271,6 +274,13 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
         formulaParseTree = parseTree;
     }
 
+    public void accumSetOfWorkVarsUsed(final Set<WorkVar> set) {
+        if (workVarList == null)
+            return;
+        for (final WorkVar var : workVarList)
+            set.add(var);
+    }
+
     /**
      * Updates the workVarList for the ProofStepStmt and if the revised
      * workVarList is null turns off the formulaFldIncomplete flag.
@@ -278,7 +288,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      * @param workVarList List of WorkVar listing the WorkVar used in the step
      *            formula.
      */
-    public void updateWorkVarList(final List<Var> workVarList) {
+    public void updateWorkVarList(final List<WorkVar> workVarList) {
         if (workVarList != null && workVarList.isEmpty())
             this.workVarList = null;
         else
@@ -320,7 +330,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
         Formula formula;
         int wvCnt = 0;
         for (int i = 0; i < workVarList.size(); i++) {
-            workVar = (WorkVar)workVarList.get(i);
+            workVar = workVarList.get(i);
             substNode = ((WorkVarHyp)workVar.getActiveVarHyp()).paSubst;
             if (substNode == null)
                 continue;
@@ -668,7 +678,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
 
     protected void accumWorkVarList(final WorkVar workVar) {
         if (workVarList == null) {
-            workVarList = new ArrayList<Var>(3); // arbitrary guess...
+            workVarList = new ArrayList<WorkVar>(3); // arbitrary guess...
             workVarList.add(workVar);
         }
         else if (!workVarList.contains(workVar))

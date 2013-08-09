@@ -1,0 +1,122 @@
+// Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
+// Jad home page: http://www.kpdus.com/jad.html
+// Decompiler options: packimports(3)
+// Source File Name:   QuotedSearchTerm.java
+
+package mmj.search;
+
+import java.util.regex.Pattern;
+
+// Referenced classes of package mmj.search:
+//            SearchMgr, ParsedSearchTerm
+
+public class QuotedSearchTerm {
+
+    public QuotedSearchTerm() {
+        quoteString = "";
+        startQuoteIndex = 0;
+        endQuoteIndex = 0;
+        text = "";
+        errorMessage = null;
+        orIsSet = false;
+        pattern = null;
+        parsedSearchTerm = null;
+    }
+
+    public QuotedSearchTerm(final String s, final int i) {
+        quoteString = s;
+        startQuoteIndex = i;
+        endQuoteIndex = -1;
+        text = null;
+        errorMessage = null;
+        orIsSet = false;
+        pattern = null;
+        parsedSearchTerm = null;
+    }
+
+    public QuotedSearchTerm first(final String s, final String s1,
+        final String s2, final String s3)
+    {
+        final QuotedSearchTerm quotedSearchTerm = new QuotedSearchTerm();
+        final QuotedSearchTerm quotedSearchTerm1 = quotedSearchTerm.next(s, s1,
+            s2, s3);
+        if (quotedSearchTerm.orIsSet)
+            quotedSearchTerm.errorMessage = SearchMgr
+                .reformatMessage(SearchConstants.ERROR_OR_BEFORE_FIRST_SEARCH_TERM_1);
+        if (quotedSearchTerm.errorMessage != null)
+            return quotedSearchTerm;
+        else
+            return quotedSearchTerm1;
+    }
+
+    public QuotedSearchTerm next(final String s, final String s1,
+        final String s2, final String s3)
+    {
+        QuotedSearchTerm quotedSearchTerm;
+        int i;
+        label0: {
+            quotedSearchTerm = null;
+            i = endQuoteIndex + quoteString.length() - 1;
+            do {
+                do
+                    if (++i >= s.length())
+                        break label0;
+                while (s.charAt(i) == ' ');
+                if (!s.startsWith(s3, i))
+                    break label0;
+                if (orIsSet)
+                    break;
+                orIsSet = true;
+                i += s3.length() - 1;
+            } while (true);
+            errorMessage = SearchMgr
+                .reformatMessage(SearchConstants.ERROR_TWO_ORS_1);
+        }
+        if (i < s.length())
+            if (s.startsWith(s1, i)) {
+                quotedSearchTerm = new QuotedSearchTerm(s1, i);
+                quotedSearchTerm.load(s);
+            }
+            else if (s.startsWith(s2, i)) {
+                quotedSearchTerm = new QuotedSearchTerm(s2, i);
+                quotedSearchTerm.load(s);
+            }
+            else {
+                quotedSearchTerm = new QuotedSearchTerm(quoteString, i);
+                quotedSearchTerm.errorMessage = SearchMgr
+                    .reformatMessage(SearchConstants.ERROR_MISSING_STARTING_QUOTE_1);
+            }
+        return quotedSearchTerm;
+    }
+
+    public QuotedSearchTerm load(final String s) {
+        for (endQuoteIndex = startQuoteIndex + quoteString.length(); endQuoteIndex < s
+            .length() && !s.startsWith(quoteString, endQuoteIndex); endQuoteIndex++);
+        if (endQuoteIndex >= s.length()) {
+            errorMessage = SearchMgr
+                .reformatMessage(SearchConstants.ERROR_MISSING_END_QUOTE_1);
+            endQuoteIndex = 0;
+        }
+        else {
+            text = s.substring(startQuoteIndex + quoteString.length(),
+                endQuoteIndex);
+            if (text.length() == 0)
+                errorMessage = SearchMgr
+                    .reformatMessage(SearchConstants.ERROR_EMPTY_SEARCH_TERM_1);
+        }
+        return this;
+    }
+
+    public void convertSearchTermTextToLowerCase() {
+        text = text.toLowerCase();
+    }
+
+    public String quoteString;
+    public int startQuoteIndex;
+    public int endQuoteIndex;
+    public String text;
+    public String errorMessage;
+    public boolean orIsSet;
+    Pattern pattern;
+    public ParsedSearchTerm parsedSearchTerm;
+}

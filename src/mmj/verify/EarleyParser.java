@@ -907,8 +907,8 @@ public class EarleyParser implements GrammaticalParser {
 
 //  private void dumpItemSets() {
 //
-//      EarleyItem cSet[];
-//      EarleyItem aSet[];
+//      EarleyItem[] cSet;
+//      EarleyItem[] aSet;
 //      EarleyItem c;
 //      EarleyItem a;
 //      Cnst[]     e;

@@ -53,12 +53,14 @@ public class AuxFrameGUI {
     protected String frameFontFamily = PaConstants.AUX_FRAME_FONT_FAMILY;
     protected Font frameFont;
     protected boolean wordWrap = false;
+    protected int frameFontSize;
 
     /**
      * Default constructor.
      */
     public AuxFrameGUI() {
         proofAsstPreferences = new ProofAsstPreferences();
+        init();
     }
 
     /**
@@ -68,6 +70,40 @@ public class AuxFrameGUI {
      */
     public AuxFrameGUI(final ProofAsstPreferences proofAsstPreferences) {
         this.proofAsstPreferences = proofAsstPreferences;
+        init();
+    }
+
+    private void init() {
+        frameFontSize = proofAsstPreferences.getFontSize();
+        frameFont = new Font(frameFontFamily, 1, frameFontSize);
+    }
+
+    public void setFrameFont(final Font font) {
+        frameFont = font;
+    }
+
+    public void setFrameFontSize(final int i) {
+        frameFontSize = i;
+    }
+
+    public void increaseFontSize() {
+        frameFontSize += 2;
+        if (frameFontSize > 72)
+            frameFontSize = 72;
+        final Font font = frameFont.deriveFont(frameFontSize);
+        frameFont = font;
+        frameTextArea.setFont(frameFont);
+        frame.pack();
+    }
+
+    public void decreaseFontSize() {
+        frameFontSize -= 2;
+        if (frameFontSize < 8)
+            frameFontSize = 8;
+        final Font font = frameFont.deriveFont(frameFontSize);
+        frameFont = font;
+        frameTextArea.setFont(frameFont);
+        frame.pack();
     }
 
     /**
@@ -160,9 +196,6 @@ public class AuxFrameGUI {
      */
     public JFrame buildFrame() {
 
-        final Font frameFont = new Font(frameFontFamily, Font.BOLD,
-            proofAsstPreferences.getFontSize());
-
         frame = new JFrame(frameTitle);
 
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -217,6 +250,24 @@ public class AuxFrameGUI {
             ActionEvent.CTRL_MASK));
         editMenu.add(pasteItem);
 
+        final JMenuItem largerFontItem = new JMenuItem(new AbstractAction() {
+            public void actionPerformed(final ActionEvent e) {
+                increaseFontSize();
+            }
+        });
+        largerFontItem.setText("Larger Font Size");
+        largerFontItem.setAccelerator(KeyStroke.getKeyStroke(
+            KeyEvent.VK_EQUALS, ActionEvent.CTRL_MASK));
+        editMenu.add(largerFontItem);
+        final JMenuItem smallerFontItem = new JMenuItem(new AbstractAction() {
+            public void actionPerformed(final ActionEvent e) {
+                decreaseFontSize();
+            }
+        });
+        smallerFontItem.setText("Smaller Font Size");
+        smallerFontItem.setAccelerator(KeyStroke.getKeyStroke(
+            KeyEvent.VK_MINUS, ActionEvent.CTRL_MASK));
+        editMenu.add(smallerFontItem);
         return editMenu;
 
     }

@@ -610,11 +610,11 @@ public abstract class Boss {
     {
 
         if (runParm.values.length < valueFieldNbr)
-            return new String("");
+            return "";
 
         final String fileCharsetParm = runParm.values[valueFieldNbr - 1].trim();
         if (fileCharsetParm.length() == 0)
-            return new String("");
+            return "";
 
         boolean isSupported;
         try {

@@ -18,6 +18,7 @@ package mmj.lang;
 import java.util.*;
 
 import mmj.mmio.Statementizer;
+import mmj.pa.ProofWorksheet;
 import mmj.pa.StepUnifier;
 import mmj.verify.Grammar;
 
@@ -267,7 +268,7 @@ public class WorkVarManager {
                     return s;
         }
         else
-            s = new String("");
+            s = "";
 
         throw new VerifyException(
             LangConstants.ERRMSG_DEFINE_WORK_VAR_PREFIX_BAD_1 + s
@@ -462,6 +463,15 @@ public class WorkVarManager {
         }
         prevAllocIndex[i] = j;
         return declaredWorkVar[i][j];
+    }
+
+    public void deallocAndReallocAll(final ProofWorksheet w) {
+        if (w != null) {
+            final Set<WorkVar> workVars = w.buildProofWorksheetWorkVarSet();
+            deallocAll();
+            for (final WorkVar v : workVars)
+                alloc(v);
+        }
     }
 
     /**

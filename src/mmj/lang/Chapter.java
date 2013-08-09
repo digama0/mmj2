@@ -29,6 +29,9 @@ public class Chapter {
     private Section firstSection;
     private Section lastSection;
 
+    private int minMObjSeq = 0;
+    private int maxMObjSeq = 0;
+
     /**
      * Sole constructor for Chapter.
      * 
@@ -91,6 +94,22 @@ public class Chapter {
         return lastSection;
     }
 
+    public int getMinMObjSeq() {
+        return minMObjSeq;
+    }
+
+    public int getMaxMObjSeq() {
+        return maxMObjSeq;
+    }
+
+    public void setMinMObjSeq(final int minMObjSeq) {
+        this.minMObjSeq = minMObjSeq;
+    }
+
+    public void setMaxMObjSeq(final int maxMObjSeq) {
+        this.maxMObjSeq = maxMObjSeq;
+    }
+
     /**
      * Test code for creating diagnostics.
      * 
@@ -99,12 +118,12 @@ public class Chapter {
      */
     @Override
     public String toString() {
-        return new String(LangConstants.CHAPTER_TOSTRING_LITERAL_1
+        return LangConstants.CHAPTER_TOSTRING_LITERAL_1
             + getChapterNbr() + LangConstants.CHAPTER_TOSTRING_LITERAL_2
             + getChapterTitle() + LangConstants.CHAPTER_TOSTRING_LITERAL_3
             + LangConstants.CHAPTER_TOSTRING_LITERAL_4
             + getFirstSection().getSectionNbr()
             + LangConstants.CHAPTER_TOSTRING_LITERAL_5
-            + getLastSection().getSectionNbr());
+            + getLastSection().getSectionNbr();
     }
 }

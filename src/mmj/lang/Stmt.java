@@ -142,6 +142,8 @@ public abstract class Stmt extends MObj<Stmt> {
      */
     protected String logHypsL1HiLoKey = null;
 
+    protected int nbrProofRefs;
+
     /**
      * Construct using sequence number and id string.
      * 
@@ -446,6 +448,18 @@ public abstract class Stmt extends MObj<Stmt> {
         resetLogHypsL1HiLoKey();
     }
 
+    public int getNbrProofRefs() {
+        return nbrProofRefs;
+    }
+
+    public void initNbrProofRefs() {
+        nbrProofRefs = 0;
+    }
+
+    public int incrementNbrProofRefs() {
+        return ++nbrProofRefs;
+    }
+
     /**
      * Converts to String.
      * <p>
@@ -497,9 +511,20 @@ public abstract class Stmt extends MObj<Stmt> {
     /**
      * LABEL sequences by Stmt.label
      */
-    static public final Comparator<Stmt> LABEL = new Comparator<Stmt>() {
+    public static final Comparator<Stmt> LABEL = new Comparator<Stmt>() {
         public int compare(final Stmt o1, final Stmt o2) {
             return o1.label.compareTo(o2.label);
         }
+    };
+
+    public static final Comparator<Stmt> DESC_NBR_PROOF_REFS = new Comparator<Stmt>()
+    {
+        public int compare(final Stmt o1, final Stmt o2) {
+            final int i = o2.nbrProofRefs - o1.nbrProofRefs;
+            if (i != 0)
+                return i;
+            return LABEL.compare(o1, o2);
+        }
+
     };
 }

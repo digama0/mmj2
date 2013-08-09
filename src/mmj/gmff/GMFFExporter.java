@@ -427,8 +427,8 @@ public abstract class GMFFExporter {
             append = true;
         }
 
-        final String exportFileName = new String(exportFileNamePrefix
-            + gmffExportParms.exportFileType);
+        final String exportFileName = exportFileNamePrefix
+            + gmffExportParms.exportFileType;
 
         final String exportFileAbsolutePathname = writeExportFile(
             exportFileName, exportText, append);

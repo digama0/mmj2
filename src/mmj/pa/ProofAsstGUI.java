@@ -271,6 +271,46 @@ public class ProofAsstGUI {
             null); // no TL Request
     }
 
+    public boolean startRequestNewGeneralSearch(final String s) {
+        return startRequestAction(new RequestNewGeneralSearch(s));
+    }
+
+    public boolean startRequestSearchAndShowResults() {
+        return startRequestAction(new RequestSearchAndShowResults());
+    }
+
+    public boolean startRequestRefineAndShowResults() {
+        return startRequestAction(new RequestRefineAndShowResults());
+    }
+
+    public boolean startRequestReshowSearchOptions() {
+        return startRequestAction(new RequestReshowSearchOptions());
+    }
+
+    public boolean startRequestReshowSearchResults() {
+        return startRequestAction(new RequestReshowSearchResults());
+    }
+
+    public boolean startRequestReshowProofAsstGUI() {
+        return startRequestAction(new RequestReshowProofAsstGUI());
+    }
+
+    public boolean startRequestSearchOptionsPlusButton() {
+        return startRequestAction(new RequestSearchOptionsPlusButton());
+    }
+
+    public boolean startRequestSearchOptionsMinusButton() {
+        return startRequestAction(new RequestSearchOptionsMinusButton());
+    }
+
+    public boolean startRequestSearchResultsPlusButton() {
+        return startRequestAction(new RequestSearchResultsPlusButton());
+    }
+
+    public boolean startRequestSearchResultsMinusButton() {
+        return startRequestAction(new RequestSearchResultsMinusButton());
+    }
+
     private void buildGUI(final String newProofText) {
 
         displayRequestMessagesGUI(PaConstants.PROOF_ASST_GUI_STARTUP_MSG);
@@ -751,6 +791,27 @@ public class ProofAsstGUI {
         });
         i.setText(PaConstants.PA_GUI_UNIFY_MENU_RESHOW_STEP_SELECTOR_DIALOG_ITEM_TEXT);
         m.add(i);
+        i = new JMenuItem(new AbstractAction() {
+            public void actionPerformed(final ActionEvent e) {
+                doSearchOptionsItemAction();
+            }
+        });
+        i.setText(PaConstants.SEARCH_OPTIONS_ITEM_TEXT);
+        m.add(i);
+        i = new JMenuItem(new AbstractAction() {
+            public void actionPerformed(final ActionEvent e) {
+                doStepSearchItemAction();
+            }
+        });
+        i.setText(PaConstants.STEP_SEARCH_ITEM_TEXT);
+        m.add(i);
+        i = new JMenuItem(new AbstractAction() {
+            public void actionPerformed(final ActionEvent actionevent) {
+                doGeneralSearchItemAction();
+            }
+        });
+        i.setText(PaConstants.GENERAL_SEARCH_ITEM_TEXT);
+        m.add(i);
 
         return m;
     }
@@ -776,6 +837,7 @@ public class ProofAsstGUI {
         m.add(buildEditMenu());
         m.add(buildCancelMenu());
         m.add(buildUnifyMenu());
+        m.add(buildSearchMenu());
         m.add(buildTLMenu());
         m.add(buildGMFFMenu());
         m.add(buildHelpMenu());
@@ -998,10 +1060,9 @@ public class ProofAsstGUI {
             public void actionPerformed(final ActionEvent e) {
                 if (!proofAsstPreferences.getFontBold()) {
                     proofAsstPreferences.setFontBold(true);
-                    proofFont = proofFont.deriveFont(Font.BOLD);
-                    proofTextArea.setFont(proofFont);
                     fontStyleBoldItem.setEnabled(false);
                     fontStylePlainItem.setEnabled(true);
+                    updateFrameFont(proofFont.deriveFont(Font.BOLD));
                 }
 
             }
@@ -1018,10 +1079,9 @@ public class ProofAsstGUI {
             public void actionPerformed(final ActionEvent e) {
                 if (proofAsstPreferences.getFontBold()) {
                     proofAsstPreferences.setFontBold(false);
-                    proofFont = proofFont.deriveFont(Font.PLAIN);
-                    proofTextArea.setFont(proofFont);
                     fontStylePlainItem.setEnabled(false);
                     fontStyleBoldItem.setEnabled(true);
+                    updateFrameFont(proofFont.deriveFont(Font.PLAIN));
                 }
 
             }
@@ -1044,11 +1104,7 @@ public class ProofAsstGUI {
                     fontSize = PaConstants.PROOF_ASST_FONT_SIZE_MAX;
 
                 proofAsstPreferences.setFontSize(fontSize);
-
-                final Font f = proofFont.deriveFont((float)fontSize); // bad
-                                                                      // Sun!
-                proofFont = f;
-                proofTextArea.setFont(proofFont);
+                updateFrameFont(proofFont.deriveFont((float)fontSize));
 
             }
         });
@@ -1067,12 +1123,7 @@ public class ProofAsstGUI {
                     fontSize = PaConstants.PROOF_ASST_FONT_SIZE_MIN;
 
                 proofAsstPreferences.setFontSize(fontSize);
-
-                final Font f = proofFont.deriveFont((float)fontSize); // bad
-                                                                      // Sun!
-                proofFont = f;
-                proofTextArea.setFont(proofFont);
-
+                updateFrameFont(proofFont.deriveFont((float)fontSize));
             }
         });
         smallerFontItem
@@ -1144,6 +1195,13 @@ public class ProofAsstGUI {
         editMenu.add(reformatSwapAltItem);
 
         return editMenu;
+    }
+
+    private void updateFrameFont(final Font font) {
+        proofFont = font;
+        proofTextArea.setFont(font);
+        proofMessageArea.setFont(font);
+        mainFrame.pack();
     }
 
     private JMenu buildCancelMenu() {
@@ -1265,6 +1323,40 @@ public class ProofAsstGUI {
         unifyMenu.add(setShowSubstitutionsItem);
 
         return unifyMenu;
+    }
+
+    private JMenu buildSearchMenu() {
+        final JMenu searchMenu = new JMenu(PaConstants.PA_GUI_SEARCH_MENU_TITLE);
+        searchMenu.setMnemonic(KeyEvent.VK_S);
+        final JMenuItem searchOptionsItem = new JMenuItem(new AbstractAction() {
+            public void actionPerformed(final ActionEvent e) {
+                doSearchOptionsItemAction();
+            }
+        });
+        searchOptionsItem.setText(PaConstants.SEARCH_OPTIONS_ITEM_TEXT);
+        searchMenu.add(searchOptionsItem);
+        final JMenuItem stepSearchItem = new JMenuItem(new AbstractAction() {
+            public void actionPerformed(final ActionEvent e) {
+                doStepSearchItemAction();
+            }
+        });
+        stepSearchItem.setText(PaConstants.STEP_SEARCH_ITEM_TEXT);
+        searchMenu.add(stepSearchItem);
+        final JMenuItem generalSearchItem = new JMenuItem(new AbstractAction() {
+            public void actionPerformed(final ActionEvent actionevent) {
+                doGeneralSearchItemAction();
+            }
+        });
+        generalSearchItem.setText(PaConstants.GENERAL_SEARCH_ITEM_TEXT);
+        searchMenu.add(generalSearchItem);
+        final JMenuItem reshowSearchItem = new JMenuItem(new AbstractAction() {
+            public void actionPerformed(final ActionEvent e) {
+                doReshowSearchResultsItemAction();
+            }
+        });
+        reshowSearchItem.setText(PaConstants.RESHOW_SEARCH_RESULTS_ITEM_TEXT);
+        searchMenu.add(reshowSearchItem);
+        return searchMenu;
     }
 
     private JMenu buildTLMenu() {
@@ -1437,7 +1529,7 @@ public class ProofAsstGUI {
             public void actionPerformed(final ActionEvent e) {
                 final Runtime r = Runtime.getRuntime();
                 r.gc(); // run garbage collector
-                final String about = new String(PaConstants.HELP_ABOUT_TEXT_1
+                final String about = PaConstants.HELP_ABOUT_TEXT_1
 
                 + PaConstants.HELP_ABOUT_TEXT_2 + r.maxMemory()
                     + PaConstants.PROOF_WORKSHEET_NEW_LINE
@@ -1446,7 +1538,7 @@ public class ProofAsstGUI {
                     + PaConstants.PROOF_WORKSHEET_NEW_LINE
 
                     + PaConstants.HELP_ABOUT_TEXT_4 + r.totalMemory()
-                    + PaConstants.PROOF_WORKSHEET_NEW_LINE);
+                    + PaConstants.PROOF_WORKSHEET_NEW_LINE;
                 try {
                     JOptionPane.showMessageDialog(getMainFrame(), about,
                         PaConstants.HELP_ABOUT_TITLE,
@@ -1862,7 +1954,7 @@ public class ProofAsstGUI {
     }
 
     private Theorem getTheorem() {
-        String s = new String("");
+        String s = "";
 
         String promptString = PaConstants.PA_GUI_GET_THEOREM_LABEL_PROMPT;
 
@@ -1880,9 +1972,8 @@ public class ProofAsstGUI {
             theorem = proofAsst.getTheorem(s);
             if (theorem != null)
                 return theorem;
-            promptString = new String(
-                PaConstants.PA_GUI_GET_THEOREM_LABEL_PROMPT_2_1 + s
-                    + PaConstants.PA_GUI_GET_THEOREM_LABEL_PROMPT_2_2);
+            promptString = PaConstants.PA_GUI_GET_THEOREM_LABEL_PROMPT_2_1 + s
+                + PaConstants.PA_GUI_GET_THEOREM_LABEL_PROMPT_2_2;
         }
     }
 
@@ -1960,7 +2051,7 @@ public class ProofAsstGUI {
             while ((len = r.read(cBuffer, 0, cBuffer.length)) != -1)
                 sb.append(cBuffer, 0, len);
             r.close();
-            newProofText = new String(sb);
+            newProofText = sb.toString();
         } catch (final IOException e) {
             newProofText = PaConstants.ERRMSG_PA_GUI_READ_PROOF_IO_ERR_1
                 + e.getMessage();
@@ -2187,6 +2278,29 @@ public class ProofAsstGUI {
     private void disposeOfOldSelectorDialog() {
         if (stepSelectorDialog != null)
             stepSelectorDialog.dispose();
+    }
+
+    private void doSearchOptionsItemAction() {
+        unifyWithSearchChoice(new StepRequest(
+            PaConstants.STEP_REQUEST_SEARCH_OPTIONS));
+    }
+
+    private void doStepSearchItemAction() {
+        unifyWithSearchChoice(new StepRequest(
+            PaConstants.STEP_REQUEST_STEP_SEARCH));
+    }
+
+    private void doGeneralSearchItemAction() {
+        unifyWithSearchChoice(new StepRequest(
+            PaConstants.STEP_REQUEST_GENERAL_SEARCH));
+    }
+
+    private void doReshowSearchResultsItemAction() {
+        startRequestAction(new RequestReshowSearchResults());
+    }
+
+    public void unifyWithSearchChoice(final StepRequest stepRequest) {
+        startUnificationAction(false, null, stepRequest, null);
     }
 
     // ------------------------------------------------------
@@ -2599,7 +2713,6 @@ public class ProofAsstGUI {
             final boolean renumReq, final PreprocessRequest preprocessRequest,
             final StepRequest stepRequest, final TLRequest tlRequest)
         {
-            super();
             this.textChangedBeforeUnify = textChangedBeforeUnify;
             this.renumReq = renumReq;
             this.preprocessRequest = preprocessRequest;
@@ -2615,14 +2728,31 @@ public class ProofAsstGUI {
         }
         @Override
         void receive() {
-            if (w.stepSelectorResults != null) {
+            if (stepRequest != null
+                && (stepRequest.request == PaConstants.STEP_REQUEST_GENERAL_SEARCH || stepRequest.request == PaConstants.STEP_REQUEST_SEARCH_OPTIONS))
+                proofAsstPreferences.getSearchMgr().execShowSearchOptions(w);
+            else if (stepRequest != null
+                && stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH
+                && w.searchOutput != null)
+            {
+                final String s = ProofWorksheet
+                    .getOutputMessageTextAbbrev(proofAsst.getMessages());
+                if (s != null)
+                    displayRequestMessages(s);
+                proofAsstPreferences.getSearchMgr().execShowSearchResults();
+            }
+            else if (w.stepSelectorResults != null) {
                 disposeOfOldSelectorDialog();
                 stepSelectorDialog = new StepSelectorDialog(mainFrame,
                     w.stepSelectorResults, proofAsstGUI, proofAsstPreferences,
                     proofFont);
             }
-            else
+            else {
                 displayProofWorksheet(w);
+                if (stepRequest != null
+                    && stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_CHOICE)
+                    getMainFrame().setVisible(true);
+            }
             proofTextChanged.setChanges(textChangedBeforeUnify);
         }
     }
@@ -2908,6 +3038,140 @@ public class ProofAsstGUI {
         }
     }
 
+    class RequestSearchResultsMinusButton extends Request {
+
+        @Override
+        void send() {}
+
+        @Override
+        void receive() {
+            proofAsstPreferences.getSearchMgr()
+                .execSearchResultsDecreaseFontSize();
+        }
+    }
+
+    class RequestSearchResultsPlusButton extends Request {
+
+        @Override
+        void send() {}
+
+        @Override
+        void receive() {
+            proofAsstPreferences.getSearchMgr()
+                .execSearchResultsIncreaseFontSize();
+        }
+    }
+
+    class RequestSearchOptionsMinusButton extends Request {
+
+        @Override
+        void send() {}
+
+        @Override
+        void receive() {
+            proofAsstPreferences.getSearchMgr()
+                .execSearchOptionsDecreaseFontSize();
+        }
+    }
+
+    class RequestSearchOptionsPlusButton extends Request {
+
+        @Override
+        void send() {}
+
+        @Override
+        void receive() {
+            proofAsstPreferences.getSearchMgr()
+                .execSearchOptionsIncreaseFontSize();
+        }
+    }
+
+    class RequestReshowProofAsstGUI extends Request {
+
+        @Override
+        void send() {}
+
+        @Override
+        void receive() {
+            proofAsstPreferences.getSearchMgr().execReshowProofAsstGUI();
+        }
+    }
+
+    class RequestReshowSearchResults extends Request {
+
+        @Override
+        void send() {}
+
+        @Override
+        void receive() {
+            proofAsstPreferences.getSearchMgr().execReshowSearchResults();
+        }
+    }
+
+    class RequestReshowSearchOptions extends Request {
+
+        @Override
+        void send() {}
+
+        @Override
+        void receive() {
+            proofAsstPreferences.getSearchMgr().execReshowSearchOptions();
+        }
+    }
+
+    class RequestRefineAndShowResults extends Request {
+
+        @Override
+        void send() {
+            proofAsstPreferences.getSearchMgr().execRefineSearch();
+        }
+
+        @Override
+        void receive() {
+            final String s = ProofWorksheet
+                .getOutputMessageTextAbbrev(proofAsst.getMessages());
+            if (s != null)
+                displayRequestMessages(s);
+            proofAsstPreferences.getSearchMgr().execShowSearchResults();
+        }
+    }
+
+    class RequestSearchAndShowResults extends Request {
+
+        @Override
+        void send() {
+            proofAsstPreferences.getSearchMgr().execSearch();
+        }
+
+        @Override
+        void receive() {
+            final String s = ProofWorksheet
+                .getOutputMessageTextAbbrev(proofAsst.getMessages());
+            if (s != null)
+                displayRequestMessages(s);
+            proofAsstPreferences.getSearchMgr().execShowSearchResults();
+        }
+    }
+
+    class RequestNewGeneralSearch extends Request {
+
+        @Override
+        void send() {}
+
+        @Override
+        void receive() {
+            proofAsstPreferences.getSearchMgr()
+                .execSearchOptionsNewGeneralSearch(
+                    proofAsst.getStmt(newStmtLabel));
+        }
+
+        String newStmtLabel;
+
+        RequestNewGeneralSearch(final String s) {
+            newStmtLabel = s;
+        }
+    }
+
     private synchronized RequestThreadStuff getRequestThreadStuff() {
         return requestThreadStuff;
     }
@@ -2917,7 +3181,7 @@ public class ProofAsstGUI {
         requestThreadStuff = x;
     }
 
-    private synchronized void startRequestAction(final Request r) {
+    private synchronized boolean startRequestAction(final Request r) {
         if (getRequestThreadStuff() == null) {
 
             setRequestThreadStuff(new RequestThreadStuff(r));
@@ -2929,15 +3193,19 @@ public class ProofAsstGUI {
                 Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             proofTextArea.setCursor(Cursor
                 .getPredefinedCursor(Cursor.WAIT_CURSOR));
+            return true;
         }
+        return false;
     }
 
-    private synchronized void cancelRequestAction() {
+    public synchronized boolean cancelRequestAction() {
         RequestThreadStuff k;
         if ((k = getRequestThreadStuff()) != null) {
             k.cancelRequestThread();
             tidyUpRequestStuff();
+            return true;
         }
+        return false;
     }
 
     private void tidyUpRequestStuff() {

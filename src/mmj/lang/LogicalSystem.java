@@ -1036,18 +1036,18 @@ public class LogicalSystem implements SystemLoader {
                 g.reverseStmtTblUpdates(stmtTbl);
             return;
         } catch (final LangException e) {
-            abortMessage = new String(
+            abortMessage = 
                 LangConstants.ERRMSG_THEOREM_LOADER_ROLLBACK_FAILED_1 + " (1) "
                     + errorMessage
                     + LangConstants.ERRMSG_THEOREM_LOADER_ROLLBACK_FAILED_2
 
-                    + e.getMessage());
+                    + e.getMessage();
         } catch (final IllegalArgumentException e) {
-            abortMessage = new String(
+            abortMessage = 
                 LangConstants.ERRMSG_THEOREM_LOADER_ROLLBACK_FAILED_1 + " (2) "
                     + errorMessage
                     + LangConstants.ERRMSG_THEOREM_LOADER_ROLLBACK_FAILED_2
-                    + e.getMessage());
+                    + e.getMessage();
         }
         throw new IllegalArgumentException(abortMessage);
     }

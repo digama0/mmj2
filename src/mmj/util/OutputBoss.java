@@ -570,7 +570,7 @@ public class OutputBoss extends Boss {
         editRunParmValuesLength(runParm, UtilConstants.RUNPARM_CAPTION, 1);
         captionParm = runParm.values[0].trim();
         if (captionParm.length() == 0)
-            captionParm = new String(" ");
+            captionParm = " ";
     }
 
     /**
@@ -580,7 +580,7 @@ public class OutputBoss extends Boss {
      */
     protected String getCaption() {
         if (captionParm == null)
-            return new String(" ");
+            return " ";
         else
             return captionParm;
     }

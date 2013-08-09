@@ -247,7 +247,7 @@ public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
     }
 
     private String buildUpdateFailureMsg(final String e) {
-        return new String(TlConstants.ERRMSG_UPDATE_FAILURE_1 + e);
+        return TlConstants.ERRMSG_UPDATE_FAILURE_1 + e;
     }
 
     private Map<String, TheoremStmtGroup> buildTheoremStmtGroupTbl(final int n)

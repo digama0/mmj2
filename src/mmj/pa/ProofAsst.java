@@ -99,6 +99,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     private boolean initializedOK;
 
     // global variables stored here for convenience
+    private ProofAsstGUI proofAsstGUI;
     private final ProofAsstPreferences proofAsstPreferences;
     private final ProofUnifier proofUnifier;
     private final LogicalSystem logicalSystem;
@@ -154,19 +155,35 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         if (!getInitializedOK())
             initializeLookupTables(m);
 
-        final ProofAsstGUI proofAsstGUI = new ProofAsstGUI(this,
-            proofAsstPreferences, theoremLoader);
+        proofAsstGUI = new ProofAsstGUI(this, proofAsstPreferences,
+            theoremLoader);
 
         proofAsstGUI.showMainFrame();
     }
 
     /**
-     * Return initializedOK flag.
-     * 
      * @return initializedOK flag.
      */
     public boolean getInitializedOK() {
         return initializedOK;
+    }
+
+    public LogicalSystem getLogicalSystem() {
+        return logicalSystem;
+    }
+
+    public Messages getMessages() {
+        return messages;
+    }
+
+    public ProofAsstGUI getProofAsstGUI() {
+        return proofAsstGUI;
+    }
+
+    public List<Assrt> sortAssrtListForSearch(final List<Assrt> list) {
+        final List<Assrt> sorted = new ArrayList<Assrt>(list);
+        Collections.sort(sorted, Assrt.NBR_LOG_HYP_SEQ);
+        return sorted;
     }
 
     /**
@@ -178,10 +195,16 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      */
     public boolean initializeLookupTables(final Messages messages) {
         this.messages = messages;
-
         initializedOK = proofUnifier.initializeLookupTables(messages);
-
+        proofAsstPreferences.getSearchMgr().initOtherEnvAreas(this,
+            logicalSystem, grammar, verifyProofs, messages);
+        logicalSystem.getBookManager().getDirectSectionDependencies(
+            logicalSystem);
         return initializedOK;
+    }
+
+    public List<Assrt> getSortedAssrtSearchList() {
+        return proofUnifier.getSortedAssrtSearchList();
     }
 
     /**
@@ -375,6 +398,10 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             t = (Theorem)o;
 
         return t;
+    }
+
+    public Stmt getStmt(final String s) {
+        return logicalSystem.getStmtTbl().get(s.trim());
     }
 
     /**
@@ -1508,7 +1535,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         if (proofWorksheet.getNbrDerivStepsReadyForUnify() > 0
             || proofWorksheet.stepRequest != null
-            && proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH)
+            && (proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH
+                || proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH
+                || proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SEARCH_OPTIONS || proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_GENERAL_SEARCH))
         {
 
             try {

@@ -1,0 +1,425 @@
+// Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
+// Jad home page: http://www.kpdus.com/jad.html
+// Decompiler options: packimports(3)
+// Source File Name:   SearchEngine.java
+
+package mmj.search;
+
+import java.util.BitSet;
+import java.util.List;
+import java.util.concurrent.*;
+
+import mmj.lang.*;
+import mmj.pa.*;
+import mmj.verify.VerifyProofs;
+
+// Referenced classes of package mmj.search:
+//            SearchOutput, SearchOutputStore, SearchMgr, SearchArgs,
+//            CompiledSearchArgs, SearchDataLines
+
+public class SearchEngine {
+
+    public SearchEngine(final SearchMgr searchMgr, final ProofAsst proofAsst,
+        final ProofAsstPreferences proofAsstPreferences,
+        final BookManager bookManager, final VerifyProofs verifyProofs,
+        final Cnst cnst)
+    {
+        compiledSearchArgs = null;
+        searchOutput = null;
+        store = null;
+        derivStep = null;
+        derivStepHypArray = null;
+        assrt = null;
+        assrtNbrLogHyps = 0;
+        assrtHypArray = null;
+        assrtLogHypArray = null;
+        assrtRoot = null;
+        assrtSubst = null;
+        stepSearchMode = false;
+        substitutions = false;
+        this.searchMgr = searchMgr;
+        this.proofAsst = proofAsst;
+        this.proofAsstPreferences = proofAsstPreferences;
+        this.bookManager = bookManager;
+        this.verifyProofs = verifyProofs;
+        provableLogicStmtTyp = cnst;
+        searchOutput = searchMgr.getSearchOutput();
+        searchArgs = searchMgr.getSearchArgs();
+        stepSearchMode = searchArgs.stepSearchMode;
+        setAssrtAList(searchArgs.sortedAssrtSearchList);
+        stepUnifier = proofAsstPreferences.getStepUnifier();
+    }
+
+    public SearchOutput execSearch() {
+        searchOutput = searchMgr.getSearchOutput();
+        searchArgs = searchMgr.getSearchArgs();
+        stepSearchMode = searchArgs.stepSearchMode;
+        setAssrtAList(searchArgs.sortedAssrtSearchList);
+        store = null;
+        proofAsstPreferences.getWorkVarManager().deallocAndReallocAll(
+            searchArgs.proofWorksheet);
+        compiledSearchArgs = searchArgs.compile(searchMgr, bookManager,
+            searchOutput, proofAsst, proofAsstPreferences, verifyProofs,
+            provableLogicStmtTyp);
+        if (searchOutput.searchReturnCode == 0) {
+            final FutureTask<SearchOutput> futuretask = new FutureTask<SearchOutput>(
+                new Callable<SearchOutput>() {
+                    public SearchOutput call() throws Exception {
+                        return searchTask();
+                    }
+                });
+            Executors.newSingleThreadExecutor().execute(futuretask);
+            try {
+                searchOutput = futuretask.get(compiledSearchArgs.searchMaxTime,
+                    TimeUnit.SECONDS);
+            } catch (final InterruptedException interruptedexception) {
+                searchOutput.storeError(3, 30,
+                    SearchConstants.ERRMSG_SEARCH_TASK_INTERRUPTED_1
+                        + interruptedexception.getMessage());
+            } catch (final ExecutionException executionexception) {
+                searchOutput.storeError(4, 30,
+                    SearchConstants.ERRMSG_SEARCH_TASK_EXECUTION_1
+                        + executionexception.getCause() + " "
+                        + executionexception.getMessage());
+                throw new IllegalArgumentException(
+                    "Rethrowing ExecutionException", executionexception);
+            } catch (final TimeoutException timeoutexception) {
+                searchOutput.storeError(2, 30,
+                    SearchConstants.ERRMSG_SEARCH_TASK_TIMEOUT_1
+                        + timeoutexception.getMessage());
+            }
+        }
+        searchOutput.finalize(compiledSearchArgs, bookManager,
+            proofAsst.getMessages());
+        return searchOutput;
+    }
+
+    public SearchOutput searchTask() {
+        substitutions = compiledSearchArgs.searchSubstitutions;
+        store = new SearchOutputStore(compiledSearchArgs.searchMaxResults,
+            compiledSearchArgs.searchOutputSortNbr);
+        try {
+            loadSearchOutput();
+            if (searchOutput.searchReturnCode == 0
+                && compiledSearchArgs.searchResultsChecked > 0)
+            {
+                checkForInterrupt();
+                doExtendedSearch();
+            }
+        } catch (final InterruptedException interruptedexception) {
+            searchOutput.storeError(3, 30,
+                SearchConstants.ERRMSG_SEARCH_TASK_INTERRUPTED_1
+                    + interruptedexception.getMessage());
+        }
+        return searchOutput;
+    }
+
+    public List<Assrt> getAssrtAList() {
+        return assrtAList;
+    }
+
+    public void setAssrtAList(final List<Assrt> arraylist) {
+        if (arraylist.size() == 0)
+            throw new IllegalArgumentException(
+                SearchConstants.ERRMSG_SEARCH_ASSRT_LIST_EMPTY_1);
+        else {
+            searchOutput.statsInputAssrtListSize = arraylist.size();
+            assrtAList = arraylist;
+            return;
+        }
+    }
+
+    private void loadSearchOutput() throws InterruptedException {
+        ProofStepStmt[] aproofStepStmt = null;
+        boolean flag = false;
+        final int i = compiledSearchArgs.searchMinSeq;
+        final int j = compiledSearchArgs.searchMaxSeq;
+        final int k = compiledSearchArgs.nbrDerivStepHyps;
+        final int l = compiledSearchArgs.searchMinHyps;
+        final int i1 = compiledSearchArgs.searchMaxHyps;
+        final int j1 = compiledSearchArgs.searchMinProofRefs;
+        String s;
+        if (stepSearchMode) {
+            derivStep = searchArgs.stepSearchStmt;
+            aproofStepStmt = derivStep.getSortedHypArray();
+            s = derivStep.step;
+        }
+        else {
+            derivStep = null;
+            aproofStepStmt = null;
+            derivStepHypArray = null;
+            s = "";
+        }
+        int k1 = computeSearchStart(l);
+        int l1 = l;
+        label0: do {
+            if (l1 <= i1) {
+                if (stepSearchMode) {
+                    derivStepHypArray = new ProofStepStmt[l1];
+                    for (int j2 = 0; j2 < k; j2++)
+                        derivStepHypArray[j2] = aproofStepStmt[j2];
+
+                }
+                do {
+                    if (k1 >= assrtAList.size())
+                        break;
+                    checkForInterrupt();
+                    if (searchOutput.searchReturnCode != 0)
+                        break;
+                    assrt = assrtAList.get(k1);
+                    searchOutput.statsNbrInputAssrtGets++;
+                    final int i2 = assrt.getSeq();
+                    if (i2 >= j) {
+                        searchOutput.statsNbrRejectGEMaxSeq++;
+                        k1 = computeSearchStart(++l1);
+                        continue label0;
+                    }
+                    if (i2 <= i) {
+                        searchOutput.statsNbrRejectLEMinSeq++;
+                        k1++;
+                        continue;
+                    }
+                    assrtNbrLogHyps = assrt.getLogHypArrayLength();
+                    if (assrtNbrLogHyps != l1) {
+                        searchOutput.statsNbrRejectGTHypIndex++;
+                        l1++;
+                        continue label0;
+                    }
+                    if (assrt.getNbrProofRefs() < j1) {
+                        searchOutput.statsNbrRejectLTMinProofRefs++;
+                        k1++;
+                        continue;
+                    }
+                    assrtLogHypArray = assrt.getLogHypArray();
+                    assrtHypArray = assrt.getMandFrame().hypArray;
+                    if (evaluateOtherExclusionCriteria()) {
+                        if (stepSearchMode && !isAssrtUnifiable()) {
+                            searchOutput.statsNbrRejectFailUnify++;
+                            k1++;
+                            continue;
+                        }
+                        if (evaluateSearchDataLines()) {
+                            if (searchOutput.searchReturnCode != 0)
+                                break;
+                            searchOutput.statsNbrSelected++;
+                            if (addAssrtToStore(computeScore())) {
+                                flag = true;
+                                break;
+                            }
+                        }
+                        else
+                            searchOutput.statsNbrRejectFailSearchData++;
+                    }
+                    else
+                        searchOutput.statsNbrRejectOtherExclCriteria++;
+                    k1++;
+                } while (true);
+            }
+            store.loadSearchOutput(searchOutput, s, flag);
+            return;
+        } while (true);
+    }
+
+    private void doExtendedSearch() throws InterruptedException {
+        checkForInterrupt();
+    }
+
+    private boolean evaluateOtherExclusionCriteria() {
+        final String s = assrt.getLabel();
+        final int i = compiledSearchArgs.searchExclLabelsPattern.length;
+        for (int j = 0; j < i; j++)
+            if (compiledSearchArgs.searchExclLabelsPattern[j].matcher(s)
+                .matches())
+            {
+                searchOutput.statsNbrRejectExclLabels++;
+                return false;
+            }
+
+        final BitSet bitset = compiledSearchArgs.searchCombinedDependencies;
+        if (bitset != null)
+            if (compiledSearchArgs.searchUseChapHierarchy) {
+                if (!bitset.get(assrt.getChapterNbr()))
+                    return false;
+            }
+            else if (compiledSearchArgs.searchUseSecHierarchy
+                && !bitset.get(BookManager.getOrigSectionNbr(assrt
+                    .getSectionNbr())))
+                return false;
+        return true;
+    }
+
+    private boolean evaluateSearchDataLines() {
+        if (compiledSearchArgs.searchDataLines != null)
+            return compiledSearchArgs.searchDataLines.evaluate(assrt,
+                compiledSearchArgs);
+        else
+            return true;
+    }
+
+    private int computeSearchStart(final int i) {
+        if (assrtAList.get(0).getLogHypArrayLength() >= i)
+            return 0;
+        int j = assrtAList.size() - 1;
+        if (i > assrtAList.get(j).getLogHypArrayLength())
+            return 0x7fffffff;
+        int k = 0;
+        int l = k + (j - k) / 2;
+        int i1;
+        do {
+            i1 = l;
+            if (assrtAList.get(l).getLogHypArrayLength() < i)
+                k = l;
+            else
+                j = l;
+            l = k + (j - k) / 2;
+        } while (l != i1);
+        return ++l;
+    }
+
+    private boolean isAssrtUnifiable() {
+        try {
+            if (unifyStepFormulaWithWorkVars()) {
+                if (assrtNbrLogHyps == 0) {
+                    assrtSubst = stepUnifier.finalizeAndLoadAssrtSubst();
+                    return true;
+                }
+                if ((assrtSubst = stepUnifier.unifyAndMergeHypsSorted(
+                    assrt.getSortedLogHypArray(), derivStepHypArray)) != null)
+                    return true;
+            }
+        } catch (final VerifyException verifyException) {
+            throw new IllegalArgumentException(
+                " A work var problem: alloc more via RunParms? "
+                    + verifyException.getMessage());
+        }
+        return false;
+    }
+
+    private boolean unifyStepFormulaWithWorkVars() throws VerifyException {
+        assrtRoot = assrt.getExprParseTree().getRoot();
+        ParseNode parseNode = null;
+        if (derivStep.formulaParseTree != null)
+            parseNode = derivStep.formulaParseTree.getRoot();
+        return stepUnifier.unifyAndMergeStepFormula(false, assrtRoot,
+            parseNode, assrtHypArray, assrtLogHypArray);
+    }
+
+    private int computeScore() {
+        if (stepSearchMode && !compiledSearchArgs.derivStepHypWildcards) {
+            searchOutput.statsNbrCompletedSearchResults++;
+            return 100;
+        }
+        else
+            return 50;
+    }
+
+    private boolean addAssrtToStore(final int i) {
+        String s;
+        if (i == 100)
+            s = SearchConstants.COMPLETED_ITEM_OUTPUT_LITERAL;
+        else
+            s = "";
+        String s1 = "";
+        int j;
+        if (compiledSearchArgs.searchComments) {
+            s1 = assrt.getDescription();
+            j = 2 + assrtNbrLogHyps;
+        }
+        else
+            j = 1 + assrtNbrLogHyps;
+        final String[] as = new String[j];
+        int k = 0;
+        final Formula[] aformula = new Formula[assrtNbrLogHyps];
+        Formula formula;
+        if (stepSearchMode && substitutions) {
+            formula = buildSearchSelectionSubstFormula(assrt.getExprParseTree());
+            for (int l = 0; l < assrtNbrLogHyps; l++)
+                aformula[l] = buildSearchSelectionSubstFormula(assrtLogHypArray[l]
+                    .getExprParseTree());
+
+        }
+        else {
+            formula = assrt.getFormula();
+            for (int i1 = 0; i1 < assrtNbrLogHyps; i1++)
+                aformula[i1] = assrtLogHypArray[i1].getFormula();
+
+        }
+        if (assrtNbrLogHyps == 0) {
+            if (s1.length() > 0) {
+                as[k++] = s1.length() + 10 + s + assrt.getLabel() + " " + s1;
+                as[k++] = formula.getCnt() * 4 + 10
+                    + SearchConstants.SEARCH_OUTPUT_SEARCH_FORMULA_INDENT
+                    + SearchConstants.SEARCH_OUTPUT_FORMULA_LABEL_SEPARATOR
+                    + formula.toString();
+            }
+            else
+                as[k++] = formula.getCnt() * 4 + 10 + s + assrt.getLabel()
+                    + SearchConstants.SEARCH_OUTPUT_FORMULA_LABEL_SEPARATOR
+                    + formula.toString();
+        }
+        else {
+            String s3;
+            if (s1.length() > 0) {
+                as[k++] = s1.length() + 10 + s + assrt.getLabel() + " " + s1;
+                s3 = aformula[0].getCnt() * 4 + 10
+                    + SearchConstants.SEARCH_OUTPUT_SEARCH_FORMULA_INDENT;
+            }
+            else
+                s3 = aformula[0].getCnt() * 4 + 10 + s + assrt.getLabel();
+            as[k++] = s3
+                + SearchConstants.SEARCH_OUTPUT_FORMULA_LABEL_SEPARATOR
+                + aformula[0].toString();
+            for (int j1 = 1; j1 < assrtNbrLogHyps; j1++)
+                as[k++] = aformula[j1].getCnt() * 4 + 10
+                    + SearchConstants.SEARCH_OUTPUT_SEARCH_FORMULA_INDENT
+                    + SearchConstants.SEARCH_OUTPUT_FORMULA_LOG_HYP_SEPARATOR
+                    + aformula[j1].toString();
+
+            as[k++] = formula.getCnt() * 4 + 10
+                + SearchConstants.SEARCH_OUTPUT_SEARCH_FORMULA_INDENT
+                + SearchConstants.SEARCH_OUTPUT_FORMULA_YIELDS_SEPARATOR
+                + formula.toString();
+        }
+        return store.add(assrt, as, i);
+    }
+    private Formula buildSearchSelectionSubstFormula(final ParseTree parseTree)
+    {
+        final ParseTree parseTree1 = parseTree.deepCloneApplyingAssrtSubst(
+            assrtHypArray, assrtSubst);
+        final Formula formula = verifyProofs.convertRPNToFormula(
+            parseTree1.convertToRPN(), SearchConstants.DOT_STEP_CAPTION
+                + derivStep.step);
+        formula.setTyp(provableLogicStmtTyp);
+        return formula;
+    }
+
+    private void checkForInterrupt() throws InterruptedException {
+        if (Thread.interrupted())
+            throw new InterruptedException();
+        else
+            return;
+    }
+
+    private final SearchMgr searchMgr;
+    private SearchArgs searchArgs;
+    private CompiledSearchArgs compiledSearchArgs;
+    private SearchOutput searchOutput;
+    private SearchOutputStore store;
+    private final ProofAsst proofAsst;
+    private final ProofAsstPreferences proofAsstPreferences;
+    private final BookManager bookManager;
+    private final VerifyProofs verifyProofs;
+    private final Cnst provableLogicStmtTyp;
+    private final StepUnifier stepUnifier;
+    private List<Assrt> assrtAList;
+    private DerivationStep derivStep;
+    private ProofStepStmt[] derivStepHypArray;
+    private Assrt assrt;
+    private int assrtNbrLogHyps;
+    private Hyp[] assrtHypArray;
+    private LogHyp[] assrtLogHypArray;
+    private ParseNode assrtRoot;
+    private ParseNode[] assrtSubst;
+    private boolean stepSearchMode;
+    private boolean substitutions;
+}

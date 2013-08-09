@@ -703,17 +703,17 @@ public class Grammar implements SyntaxVerifier {
         if (parseTreeCnt == 1) {
             if (parseTreeArray[0].getRoot().getStmt().getLabel() == syntaxAxiomLabel)
                 return null;
-            return new String(GrammarConstants.ERRMSG_GRAMMAR_RULE_PARSEABLE_1
+            return GrammarConstants.ERRMSG_GRAMMAR_RULE_PARSEABLE_1
                 + syntaxAxiomLabel
                 + GrammarConstants.ERRMSG_GRAMMAR_RULE_PARSEABLE_2
-                + parseTreeArray[0].toString());
+                + parseTreeArray[0].toString();
         }
-        return new String(GrammarConstants.ERRMSG_GRAMMAR_RULE_2_PARSEABLE_1
+        return GrammarConstants.ERRMSG_GRAMMAR_RULE_2_PARSEABLE_1
             + syntaxAxiomLabel
             + GrammarConstants.ERRMSG_GRAMMAR_RULE_2_PARSEABLE_2
             + parseTreeArray[0].toString()
             + GrammarConstants.ERRMSG_GRAMMAR_RULE_2_PARSEABLE_3
-            + parseTreeArray[1].toString());
+            + parseTreeArray[1].toString();
     }
 
     /**

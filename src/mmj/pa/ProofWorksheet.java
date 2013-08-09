@@ -115,6 +115,7 @@ import mmj.lang.*;
 import mmj.lang.ParseTree.RPNStep;
 import mmj.mmio.MMIOError;
 import mmj.mmio.Tokenizer;
+import mmj.search.SearchOutput;
 import mmj.tmff.TMFFPreferences;
 import mmj.tmff.TMFFStateParams;
 import mmj.util.DelimitedTextParser;
@@ -191,6 +192,8 @@ public class ProofWorksheet {
 
     StepSelectorResults stepSelectorResults = null;
     StepRequest stepRequest = null;
+
+    SearchOutput searchOutput = null;
 
     /* friendly */boolean structuralErrors;
     /* friendly */int nbrDerivStepsReadyForUnify = 0;
@@ -565,6 +568,14 @@ public class ProofWorksheet {
         return null;
     }
 
+    public Set<WorkVar> buildProofWorksheetWorkVarSet() {
+        final Set<WorkVar> workVars = new HashSet<WorkVar>();
+        for (final ProofWorkStmt proofWorkStmt : getProofWorkStmtList())
+            if (proofWorkStmt.isProofStep())
+                ((ProofStepStmt)proofWorkStmt).accumSetOfWorkVarsUsed(workVars);
+        return workVars;
+    }
+
     /**
      * Returns an Iterable over the ProofWorksheet ProofWorkStmt ArrayList.
      * 
@@ -818,6 +829,14 @@ public class ProofWorksheet {
             return null;
     }
 
+    public String getLocAfterLabel() {
+        return headerStmt != null ? headerStmt.locAfterLabel : null;
+    }
+
+    public StepRequest getStepRequest() {
+        return stepRequest;
+    }
+
     /**
      * Searches up to an exclusive endpoint in the proofWorkStmtList for a step
      * whose formula matches the input formula.
@@ -934,7 +953,7 @@ public class ProofWorksheet {
      * @return DerivationStep added to the ProofWorksheet.
      */
     public DerivationStep addDerivStepForDeriveFeature(
-        final List<Var> workVarList, final Formula formula,
+        final List<WorkVar> workVarList, final Formula formula,
         final ParseTree formulaParseTree, final DerivationStep derivStep)
     {
 
@@ -1038,7 +1057,7 @@ public class ProofWorksheet {
         boolean stepSelectorChoiceRequired = false;
         stepRequest = stepRequestIn;
         if (stepRequest != null
-            && stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_CHOICE)
+            && (stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_CHOICE || stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH_CHOICE))
             if (stepRequest.param1 == null)
                 stepRequest = null;
             else
@@ -1312,7 +1331,9 @@ public class ProofWorksheet {
                     proofTextTokenizer))
                     if (localRefField != null
                         && stepRequest != null
-                        && stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH)
+                        && (stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH
+                            || stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH
+                            || stepRequest.request == PaConstants.STEP_REQUEST_GENERAL_SEARCH || stepRequest.request == PaConstants.STEP_REQUEST_SEARCH_OPTIONS))
                         triggerLoadStructureException(PaConstants.ERRMSG_LOCAL_REF_HAS_SELECTOR_SEARCH_1
                             + getErrorLabelIfPossible()
                             + PaConstants.ERRMSG_LOCAL_REF_HAS_SELECTOR_SEARCH_2
@@ -1329,7 +1350,7 @@ public class ProofWorksheet {
          */
 
         if (stepRequest != null
-            && stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH)
+            && (stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH || stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH))
         {
             if (!proofInputCursor.cursorIsSet
                 || proofInputCursor.proofWorkStmt == null
@@ -1339,6 +1360,27 @@ public class ProofWorksheet {
                     + PaConstants.ERRMSG_SELECTOR_SEARCH_STEP_NOTFND_2);
             stepRequest.step = ((DerivationStep)proofInputCursor.proofWorkStmt).step;
             stepRequest.param1 = proofInputCursor.proofWorkStmt;
+        }
+
+        if (stepRequest != null
+            && stepRequest.request == PaConstants.STEP_REQUEST_SEARCH_OPTIONS)
+            if (proofInputCursor.cursorIsSet
+                && proofInputCursor.proofWorkStmt != null
+                && proofInputCursor.proofWorkStmt.isDerivationStep())
+            {
+                stepRequest.step = ((DerivationStep)proofInputCursor.proofWorkStmt).step;
+                stepRequest.param1 = proofInputCursor.proofWorkStmt;
+            }
+            else {
+                stepRequest.step = null;
+                stepRequest.param1 = null;
+            }
+
+        if (stepRequest != null
+            && stepRequest.request == PaConstants.STEP_REQUEST_GENERAL_SEARCH)
+        {
+            stepRequest.step = null;
+            stepRequest.param1 = null;
         }
 
         if (stepSelectorChoiceRequired)
@@ -1536,6 +1578,29 @@ public class ProofWorksheet {
             sb.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
         }
         messages.clearMessages();
+        return sb.toString();
+    }
+
+    public static String getOutputMessageTextAbbrev(final Messages m) {
+        if (m.getErrorMessageCnt() == 0 && m.getInfoMessageCnt() == 0)
+            return null;
+        final StringBuilder sb = new StringBuilder(
+            (m.getErrorMessageCnt() + m.getInfoMessageCnt()) * 80);
+        String[] errors = m.getErrorMessageArray();
+        int i = m.getErrorMessageCnt();
+        for (int j = 0; j < i; j++) {
+            sb.append(errors[j]);
+            sb.append('\n');
+        }
+
+        errors = m.getInfoMessageArray();
+        i = m.getInfoMessageCnt();
+        for (int k = 0; k < i; k++) {
+            sb.append(errors[k]);
+            sb.append('\n');
+        }
+
+        m.clearMessages();
         return sb.toString();
     }
 

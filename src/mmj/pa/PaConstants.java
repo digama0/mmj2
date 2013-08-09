@@ -281,6 +281,8 @@ public class PaConstants {
      */
     public static final int UNIFIER_MAX_LOG_HYPS = 100;
 
+    public static final int UNIFIER_MAX_VAR_HYPS = 500;
+
     /**
      * DOT_STEP_CAPTION = ".Step"
      * <p>
@@ -762,7 +764,7 @@ public class PaConstants {
     /**
      * PROOF_ASST_GUI_STARTUP_MSG
      */
-    public static final String PROOF_ASST_GUI_STARTUP_MSG = "Hi! I am mmj2 Release 20111101 as of 15-Oct-2011 03:34.\n"
+    public static final String PROOF_ASST_GUI_STARTUP_MSG = "Hi! I am mmj2 Release R20121225 as of 20-Sep-2012 20:54.\n"
         + "Send mmj2 support? Paypal to siskiyousis at gmail.com\n"
         + "Need mmj2 help? Email x178g243 at yahoo.com.";
 
@@ -1081,6 +1083,16 @@ public class PaConstants {
      * Prompt for SetStepSelectorShowSubstitutions Menu Item Action dialog.
      */
     public static final String PA_GUI_SET_SHOW_SUBST_OPTION_PROMPT = "Enter Step Select Show Substitutions option (true or false)";
+
+    public static final String PA_GUI_SEARCH_MENU_TITLE = "Search";
+
+    public static final String SEARCH_OPTIONS_ITEM_TEXT = "Search Options";
+
+    public static final String GENERAL_SEARCH_ITEM_TEXT = "General Search";
+
+    public static final String STEP_SEARCH_ITEM_TEXT = "Step Search";
+
+    public static final String RESHOW_SEARCH_RESULTS_ITEM_TEXT = "Reshow Search Results";
 
     // ========== new TheoremLoader stuff ===========
 
@@ -1812,18 +1824,17 @@ public class PaConstants {
     /**
      * Proof Worksheet Header Line, Part 1.
      */
-    public static final String PROOF_TEXT_HEADER_1 = new String(
-        "$( <MM> <PROOF_ASST> THEOREM=");
+    public static final String PROOF_TEXT_HEADER_1 = "$( <MM> <PROOF_ASST> THEOREM=";
 
     /**
      * Proof Worksheet Header Line, Part 2.
      */
-    public static final String PROOF_TEXT_HEADER_2 = new String("  LOC_AFTER=");
+    public static final String PROOF_TEXT_HEADER_2 = "  LOC_AFTER=";
 
     /**
      * Proof Worksheet Statement Label Default (prompt).
      */
-    public static final String DEFAULT_STMT_LABEL = new String("?");
+    public static final String DEFAULT_STMT_LABEL = "?";
 
     /**
      * Proof Worksheet Comment Statment IO Error.
@@ -1843,7 +1854,7 @@ public class PaConstants {
     /**
      * Proof Worksheet Footer Line
      */
-    public static final String PROOF_TEXT_FOOTER = new String("$)");
+    public static final String PROOF_TEXT_FOOTER = "$)";
 
     /**
      * Header ProofWorkStmt token.
@@ -2004,6 +2015,14 @@ public class PaConstants {
      * STEP_REQUEST_SELECTOR_CHOICE = 82.
      */
     public static final int STEP_REQUEST_SELECTOR_CHOICE = 82;
+
+    public static final int STEP_REQUEST_STEP_SEARCH = 91;
+
+    public static final int STEP_REQUEST_GENERAL_SEARCH = 92;
+
+    public static final int STEP_REQUEST_SEARCH_OPTIONS = 93;
+
+    public static final int STEP_REQUEST_STEP_SEARCH_CHOICE = 94;
 
     // ----------------------------------------------------------
     // Constants for StepSelectorDialog.java

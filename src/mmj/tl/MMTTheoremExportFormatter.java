@@ -376,7 +376,7 @@ public class MMTTheoremExportFormatter {
             token = tokenArray[i];
             if (token.equals(MMIOConstants.MM_LABEL_IN_COMMENT_ESCAPE_STRING))
                 if (i < tokenArray.length - 1)
-                    token = new String(tokenArray[i] + " " + tokenArray[++i]);
+                    token = tokenArray[i] + " " + tokenArray[++i];
 
             col += token.length();
             if (col > rightCol) {

@@ -94,6 +94,13 @@ public class BookManager implements TheoremLoaderCommitListener {
     private String nextChapterTitle = MMIOConstants.DEFAULT_TITLE;
     private String nextSectionTitle = MMIOConstants.DEFAULT_TITLE;
 
+    private String[] chapterValues = null;
+    private final String[][] sectionValues = null;
+    private BitSet[] sectionDependencies = null;
+    private BitSet[] chapterDependencies = null;
+    private BitSet[] directSectionDependencies = null;
+    private BitSet[] directChapterDependencies = null;
+
     /**
      * Sole constructor for BookManager.
      * 
@@ -106,7 +113,6 @@ public class BookManager implements TheoremLoaderCommitListener {
     public BookManager(final boolean enabled,
         final String provableLogicStmtTypeParm)
     {
-
         this.enabled = enabled;
 
         this.provableLogicStmtTypeParm = provableLogicStmtTypeParm;
@@ -121,6 +127,14 @@ public class BookManager implements TheoremLoaderCommitListener {
             chapterList = new ArrayList<Chapter>(1);
             sectionList = new ArrayList<Section>(1);
         }
+    }
+
+    public static int getOrigSectionNbr(final int i) {
+        return (i - 1) / LangConstants.SECTION_NBR_CATEGORIES + 1;
+    }
+
+    public static int convertOrigSectionNbr(final int i) {
+        return (i - 1) * LangConstants.SECTION_NBR_CATEGORIES + 1;
     }
 
     /**
@@ -408,6 +422,227 @@ public class BookManager implements TheoremLoaderCommitListener {
         return chapterList;
     }
 
+    public Chapter lookupChapterByTitle(final String s) {
+        for (final Object element : chapterList) {
+            final Chapter chapter = (Chapter)element;
+            if (s.equals(chapter.getChapterTitle()))
+                return chapter;
+        }
+
+        return null;
+    }
+
+    public Section lookupSectionByChapterAndTitle(final Chapter chapter,
+        final String s, final int i)
+    {
+        if (chapter == null)
+            return null;
+        Section section = chapter.getFirstSection();
+        int j = section.getSectionNbr();
+        final int k = chapter.getLastSection().getSectionNbr();
+        do {
+            if (s.equals(section.getSectionTitle())
+                && section.getSectionCategoryCd() == i)
+                return section;
+            if (++j > k)
+                return null;
+            section = getSection(j);
+        } while (true);
+    }
+
+    public String[] getChapterValuesForSearch() {
+        if (chapterValues != null)
+            return chapterValues;
+        chapterValues = new String[chapterList.size() + 1];
+        int i = 0;
+        chapterValues[i++] = "";
+        for (final Object element : chapterList)
+            chapterValues[i++] = ((Chapter)element).getChapterTitle();
+
+        return chapterValues;
+    }
+
+    // TODO auto-generated from class files
+    public String[][] getSectionValuesForSearch() {
+        String[][] as;
+        if (sectionValues != null)
+            return sectionValues;
+        as = new String[chapterList.size() + 1][];
+        int i = 0;
+        final int j = 0;
+        as[i] = new String[1];
+        as[i][j] = "";
+        for (final Chapter chapter : chapterList) {
+            i++;
+            Section section = chapter.getFirstSection();
+            int l = section.getSectionNbr();
+            final int i1 = chapter.getLastSection().getSectionNbr();
+            final int j1 = (i1 - l) / LangConstants.SECTION_NBR_CATEGORIES + 1;
+            as[i] = new String[j1 + 1];
+            int k = 0;
+            as[i][k] = "";
+            do {
+                as[i][++k] = section.getSectionTitle();
+                if ((l += LangConstants.SECTION_NBR_CATEGORIES) > i1)
+                    break;
+                section = getSection(l);
+            } while (true);
+        }
+        return as;
+    }
+
+    public void invalidateChapterSectionDependencies() {
+        chapterDependencies = null;
+        sectionDependencies = null;
+        directChapterDependencies = null;
+        directSectionDependencies = null;
+    }
+
+    public void recomputeAssrtNbrProofRefs(final LogicalSystem logicalSystem) {
+        if (enabled && directSectionDependencies == null) {
+            for (final Stmt s : logicalSystem.getStmtTbl().values())
+                s.initNbrProofRefs();
+            getDirectSectionDependencies(logicalSystem);
+        }
+    }
+
+    public BitSet[] getChapterDependencies(final LogicalSystem logicalSystem) {
+        if (!enabled)
+            return null;
+        if (chapterDependencies == null)
+            chapterDependencies = buildChapterDependencies(getSectionDependencies(logicalSystem));
+        return chapterDependencies;
+    }
+
+    public BitSet[] getDirectChapterDependencies(
+        final LogicalSystem logicalsystem)
+    {
+        if (!enabled)
+            return null;
+        if (directChapterDependencies == null)
+            directChapterDependencies = buildChapterDependencies(getDirectSectionDependencies(logicalsystem));
+        return directChapterDependencies;
+    }
+
+    public BitSet[] buildChapterDependencies(final BitSet[] bs) {
+        final BitSet[] bs2 = new BitSet[chapterList.size() + 1];
+        for (int i = 0; i < bs2.length; i++)
+            bs2[i] = new BitSet(i);
+
+        for (int j1 = 1; j1 < bs2.length; j1++) {
+            final Chapter chapter = getChapter(j1);
+            final int j = getOrigSectionNbr(chapter.getFirstSection()
+                .getSectionNbr());
+            final int k = getOrigSectionNbr(chapter.getLastSection()
+                .getSectionNbr());
+            for (int k1 = j1; k1 < bs2.length; k1++) {
+                final Chapter chapter1 = getChapter(k1);
+                final int l = getOrigSectionNbr(chapter1.getFirstSection()
+                    .getSectionNbr());
+                final int i1 = getOrigSectionNbr(chapter1.getLastSection()
+                    .getSectionNbr());
+                boolean flag = false;
+                for (int l1 = l; l1 <= i1; l1++)
+                    if (bs[l1].nextSetBit(j) <= k) {
+                        flag = true;
+                        break;
+                    }
+                if (flag)
+                    bs2[k1].set(j1);
+            }
+
+        }
+
+        return bs2;
+    }
+
+    public int getChapterMinMObjSeq(final Chapter chapter) {
+        return chapter.getMinMObjSeq();
+    }
+
+    public int getChapterMaxMObjSeq(final Chapter chapter) {
+        return chapter.getMaxMObjSeq();
+    }
+
+    public int getSectionMinMObjSeq(final Section section) {
+        int min = 0;
+        int j = convertOrigSectionNbr(getOrigSectionNbr(section.getSectionNbr()));
+        for (int l = 0; l < LangConstants.SECTION_NBR_CATEGORIES; l++) {
+            final int len = getSection(j++).getMinMObjSeq();
+            if (len != 0 && len < min)
+                min = len;
+        }
+
+        return min;
+    }
+
+    public int getSectionMaxMObjSeq(final Section section) {
+        int max = 0;
+        int j = convertOrigSectionNbr(getOrigSectionNbr(section.getSectionNbr()));
+        for (int l = 0; l < LangConstants.SECTION_NBR_CATEGORIES; l++) {
+            final int len = getSection(j++).getMaxMObjSeq();
+            if (len != 0 && len > max)
+                max = len;
+        }
+
+        return max;
+    }
+
+    public BitSet[] getSectionDependencies(final LogicalSystem logicalsystem) {
+        if (!enabled)
+            return null;
+        if (sectionDependencies != null)
+            return sectionDependencies;
+        final BitSet[] abitset = getDirectSectionDependencies(logicalsystem);
+        sectionDependencies = new BitSet[abitset.length];
+        sectionDependencies[0] = new BitSet(0);
+        for (int i = 1; i < sectionDependencies.length; i++) {
+            sectionDependencies[i] = (BitSet)abitset[i].clone();
+            for (int j = abitset[i].nextSetBit(0); j >= 0; j = abitset[i]
+                .nextSetBit(j + 1))
+                sectionDependencies[i].or(sectionDependencies[j]);
+
+        }
+
+        return sectionDependencies;
+    }
+
+    public BitSet[] getDirectSectionDependencies(
+        final LogicalSystem logicalsystem)
+    {
+        if (!enabled)
+            return null;
+        if (directSectionDependencies != null)
+            return directSectionDependencies;
+        directSectionDependencies = new BitSet[sectionList.size()
+            / LangConstants.SECTION_NBR_CATEGORIES + 1];
+        for (int i = 0; i < directSectionDependencies.length; i++) {
+            directSectionDependencies[i] = new BitSet(i);
+            directSectionDependencies[i].set(i);
+        }
+
+        for (final Stmt stmt : logicalsystem.getStmtTbl().values()) {
+            final BitSet directDeps = directSectionDependencies[stmt
+                .getOrigSectionNbr()];
+            if (stmt.isAssrt() && !((Assrt)stmt).isAxiom()) {
+                final Stmt[] proof = ((Theorem)stmt).getProof();
+                int j = 0;
+                while (j < proof.length) {
+                    if (proof[j] != null) {
+                        final Stmt proofStep = proof[j];
+                        proofStep.incrementNbrProofRefs();
+                        if (proofStep.getTyp().getId()
+                            .equals(provableLogicStmtTypeParm)
+                            && proofStep.isAssrt())
+                            directDeps.set(proofStep.getOrigSectionNbr());
+                    }
+                    j++;
+                }
+            }
+        }
+        return directSectionDependencies;
+    }
+
     /**
      * Returns the List of Sections in the BookManager.
      * <p>
@@ -621,11 +856,9 @@ public class BookManager implements TheoremLoaderCommitListener {
         // be added using Theorem Loader! The input section
         // number could be any category, so we reverse out
         // the input category code and add back in "logic".
-        final int x = insertSectionNbr - Section.getSectionCategoryCd( // old
-                                                                       // category
-                                                                       // cd
-            insertSectionNbr) + LangConstants.SECTION_LOGIC_CD; // new category
-                                                                // cd
+        final int x = insertSectionNbr - Section.getSectionCategoryCd(
+        /* old category cd */insertSectionNbr)
+            + LangConstants.SECTION_LOGIC_CD; /* new category cd */
 
         final Section insertSection = getSection(x);
         if (insertSection == null)

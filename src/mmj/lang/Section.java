@@ -27,6 +27,8 @@ public class Section {
     private final int sectionNbr;
     private String sectionTitle;
     private int lastMObjNbr;
+    private int minMObjSeq;
+    private int maxMObjSeq;
 
     /**
      * Sole constructor for Section..
@@ -77,7 +79,34 @@ public class Section {
         mObj.setSectionMObjNbr(++lastMObjNbr);
         mObj.setChapterNbr(sectionChapter.getChapterNbr());
         mObj.setSectionNbr(sectionNbr);
+        final int j = mObj.getSeq();
+        if (minMObjSeq == 0 || j < minMObjSeq)
+            setMinMObjSeq(j);
+        if (maxMObjSeq == 0 || j > maxMObjSeq)
+            setMaxMObjSeq(j);
+        final int min = sectionChapter.getMinMObjSeq();
+        if (min == 0 || j < min)
+            sectionChapter.setMinMObjSeq(j);
+        final int max = sectionChapter.getMaxMObjSeq();
+        if (max == 0 || j > max)
+            sectionChapter.setMaxMObjSeq(j);
         return true;
+    }
+
+    public int getMinMObjSeq() {
+        return minMObjSeq;
+    }
+
+    public int getMaxMObjSeq() {
+        return maxMObjSeq;
+    }
+
+    public void setMinMObjSeq(final int minMObjSeq) {
+        this.minMObjSeq = minMObjSeq;
+    }
+
+    public void setMaxMObjSeq(final int maxMObjSeq) {
+        this.maxMObjSeq = maxMObjSeq;
     }
 
     /**
@@ -139,13 +168,13 @@ public class Section {
      */
     @Override
     public String toString() {
-        return new String(LangConstants.SECTION_TOSTRING_LITERAL_1
+        return LangConstants.SECTION_TOSTRING_LITERAL_1
             + sectionChapter.getChapterNbr()
             + LangConstants.SECTION_TOSTRING_LITERAL_2 + getSectionNbr()
             + getSectionCategoryDisplayCaption()
             + LangConstants.SECTION_TOSTRING_LITERAL_3 + getSectionTitle()
             + LangConstants.SECTION_TOSTRING_LITERAL_4
-            + LangConstants.SECTION_TOSTRING_LITERAL_5 + getLastMObjNbr());
+            + LangConstants.SECTION_TOSTRING_LITERAL_5 + getLastMObjNbr();
     }
 
     /**

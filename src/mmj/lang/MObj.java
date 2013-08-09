@@ -234,6 +234,30 @@ public abstract class MObj<THIS extends MObj<THIS>> implements Comparable<THIS>
         return description;
     }
 
+    /**
+     * @return a version of the description where all whitespace is collapsed to
+     *         a single space
+     */
+    public String getDescriptionForSearch() {
+        final StringBuilder str = new StringBuilder(description.length());
+        boolean space = false;
+        for (int i = 0; i < description.length(); i++) {
+            final char c = description.charAt(i);
+            if (Character.isWhitespace(c)) {
+                if (!space) {
+                    str.append(' ');
+                    space = true;
+                }
+            }
+            else {
+                str.append(c);
+                space = false;
+            }
+        }
+
+        return str.toString();
+    }
+
     /*
      * Sets description text derived from Metamath comments.
      * <p>
@@ -262,6 +286,10 @@ public abstract class MObj<THIS extends MObj<THIS>> implements Comparable<THIS>
      */
     public void setChapterNbr(final int chapterNbr) {
         this.chapterNbr = chapterNbr;
+    }
+
+    public int getOrigSectionNbr() {
+        return (sectionNbr - 1) / LangConstants.SECTION_NBR_CATEGORIES + 1;
     }
 
     /**

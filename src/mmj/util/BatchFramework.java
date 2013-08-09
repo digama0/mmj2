@@ -403,7 +403,7 @@ public abstract class BatchFramework {
      *         null.
      */
     public String getRunParmFileAbsolutePath() {
-        String s = new String("");
+        String s = "";
         if (runParmFile != null)
             s = runParmFile.getAbsolutePath();
         return s;

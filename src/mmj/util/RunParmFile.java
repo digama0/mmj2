@@ -176,7 +176,7 @@ public class RunParmFile {
      *         null.
      */
     public String getAbsolutePath() {
-        String s = new String("");
+        String s = "";
         if (runParmFile != null)
             s = runParmFile.getAbsolutePath();
         return s;

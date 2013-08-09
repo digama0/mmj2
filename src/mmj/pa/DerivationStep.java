@@ -79,7 +79,7 @@ import mmj.util.DelimitedTextParser;
  */
 public class DerivationStep extends ProofStepStmt {
 
-    ProofStepStmt[] hyp;
+    public ProofStepStmt[] hyp;
     private ProofStepStmt[] sortedHypArray;
 
     String[] hypStep;
@@ -230,7 +230,7 @@ public class DerivationStep extends ProofStepStmt {
         final Formula generatedFormula, final ParseTree generatedParseTree,
         final boolean generatedFormulaFldIncomplete,
         final boolean generatedHypFldIncomplete, final boolean generatedFlag,
-        final List<Var> generatedWorkVarList)
+        final List<WorkVar> generatedWorkVarList)
     {
 
         super(w, generatedStep, "", false); // don't set caret.
@@ -990,7 +990,7 @@ public class DerivationStep extends ProofStepStmt {
                     high = hStmt.getLabel();
                 }
             }
-            hiLoKey = new String(high + " " + low);
+            hiLoKey = high + " " + low;
         }
         return hiLoKey;
     }

@@ -151,7 +151,7 @@ public class ParseNodeHolder {
             s.append(" ");
             next = next.fwd;
         } while (next != null && next != this);
-        return new String(s);
+        return s.toString();
     }
 
     /**

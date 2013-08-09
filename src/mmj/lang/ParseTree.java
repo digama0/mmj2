@@ -172,7 +172,7 @@ public class ParseTree {
      * @return new ParseTree.
      */
     public ParseTree deepCloneApplyingAssrtSubst(final Hyp[] assrtHypArray,
-        final ParseNode[] assrtSubst, final List<Var> workVarList)
+        final ParseNode[] assrtSubst, final List<WorkVar> workVarList)
     {
         return new ParseTree(root.deepCloneApplyingAssrtSubst(assrtHypArray,
             assrtSubst, workVarList));
@@ -464,6 +464,6 @@ public class ParseTree {
             sb.append(element.getLabel());
             sb.append(" ");
         }
-        return new String(sb);
+        return sb.toString();
     }
 }

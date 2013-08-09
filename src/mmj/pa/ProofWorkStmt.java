@@ -198,6 +198,10 @@ public abstract class ProofWorkStmt {
         return lineCnt;
     }
 
+    public ProofWorksheet getProofWorksheet() {
+        return w;
+    }
+
     /**
      * Returns diagnostic data for this ProofWorkStmt, which in this case is the
      * Class name.
@@ -309,7 +313,7 @@ public abstract class ProofWorkStmt {
             if (lenT > 0)
                 return outSB.toString();
         }
-        return new String(""); // eof!
+        return ""; // eof!
     }
 
     /**
@@ -349,7 +353,7 @@ public abstract class ProofWorkStmt {
 
             }
         }
-        return new String(""); // eof!
+        return ""; // eof!
     }
 
     /**
