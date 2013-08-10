@@ -960,8 +960,8 @@ public class ProofWorksheet {
         final ParseTree formulaParseTree, final DerivationStep derivStep)
     {
 
-        final String generatedStep = Integer
-            .toString(generateNewDerivedStepNbr());
+        final String generatedStep = PaConstants.DERIVE_STEP_PREFIX
+            + Integer.toString(generateNewDerivedStepNbr());
 
         ProofStepStmt[] generatedHyp;
         String[] generatedHypStep;
@@ -1780,22 +1780,11 @@ public class ProofWorksheet {
                     + PaConstants.ERRMSG_QED_HYP_STEP_3);
             return outputStep;
         }
-        /*
-                try {
-                    final Integer stepInteger = Integer.valueOf(stepField);
-                    if (stepInteger <= 0)
-                        triggerLoadStructureException(PaConstants.ERRMSG_STEP_LE_0_1
-                            + getErrorLabelIfPossible()
-                            + PaConstants.ERRMSG_STEP_LE_0_2 + stepField
-                            + PaConstants.ERRMSG_STEP_LE_0_3);
-                    updateNextGreatestStepNbr(stepInteger); // derive feature
-                    outputStep = stepInteger.toString();
-                } catch (final NumberFormatException e) {
-                    triggerLoadStructureException(PaConstants.ERRMSG_STEP_NOT_INT_1
-                        + getErrorLabelIfPossible() + PaConstants.ERRMSG_STEP_NOT_INT_2
-                        + stepField + PaConstants.ERRMSG_STEP_NOT_INT_3);
-                }
-        */
+
+        if (stepField.matches(PaConstants.DERIVE_STEP_PREFIX + "\\d+"))
+            // derive feature
+            updateNextGreatestStepNbr(Integer.parseInt(stepField.substring(1)));
+
         if (findMatchingStepNbr(outputStep) != null)
             triggerLoadStructureException(PaConstants.ERRMSG_STEP_NBR_DUP_1
                 + getErrorLabelIfPossible() + PaConstants.ERRMSG_STEP_NBR_DUP_2
