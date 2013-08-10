@@ -1,14 +1,21 @@
-// Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
-// Jad home page: http://www.kpdus.com/jad.html
-// Decompiler options: packimports(3)
-// Source File Name:   SearchOptionsConstants.java
+//********************************************************************/
+//* Copyright (C) 2005-2011                                          */
+//* MEL O'CAT  X178G243 (at) yahoo (dot) com                         */
+//* License terms: GNU General Public License Version 2              */
+//*                or any later version                              */
+//********************************************************************/
+//*4567890123456 (71-character line to adjust editor window) 23456789*/
+
+/*
+ * SearchOptionsConstants.java  0.01 20/09/2012
+ *
+ * Version 0.01:
+ * Aug-09-2013: new from decompilation.
+ */
 
 package mmj.search;
 
 import java.awt.Color;
-
-// Referenced classes of package mmj.search:
-//            SearchOptionsFieldAttr, SearchOptionsButtonAttr, SearchArgs, SearchArgsField
 
 public class SearchOptionsConstants {
 
@@ -74,7 +81,10 @@ public class SearchOptionsConstants {
     public static final int IN_WHAT_EQ_ID = 7;
     public static final String[] IN_WHAT_VALUES = {"$aep", "$ae", "$ap", "$ep",
             "$a", "$e", "$p", "$="};
-    public static final int[] IN_WHAT_TYPE = {0, 0, 0, 0, 0, 1, 0, 2};
+    public static final int[] IN_WHAT_TYPE = {IN_WHAT_TYPE_STATEMENT,
+            IN_WHAT_TYPE_STATEMENT, IN_WHAT_TYPE_STATEMENT,
+            IN_WHAT_TYPE_STATEMENT, IN_WHAT_TYPE_STATEMENT, IN_WHAT_TYPE_HYP,
+            IN_WHAT_TYPE_STATEMENT, IN_WHAT_TYPE_SUB_STATEMENT};
     public static final String PART_VALUE_FORMULAS = "Formulas";
     public static final String PART_VALUE_COMMENTS = "Comments";
     public static final String PART_VALUE_LABELS = "Labels";
@@ -87,7 +97,8 @@ public class SearchOptionsConstants {
     public static final int PART_LABELS_RPN_ID = 3;
     public static final String[] PART_VALUES = {"Formulas", "Comments",
             "Labels", "LabelsRPN"};
-    public static final int[] PART_TYPE = {0, 1, 1, 1};
+    public static final int[] PART_TYPE = {PART_TYPE_FORMULA,
+            PART_TYPE_NOT_FORMULA, PART_TYPE_NOT_FORMULA, PART_TYPE_NOT_FORMULA};
     public static final String[] PART_VALUES_STATEMENT = {"Formulas",
             "Comments", "Labels"};
     public static final String[] PART_VALUES_HYP = {"Formulas", "Labels"};
@@ -107,8 +118,12 @@ public class SearchOptionsConstants {
     public static final String FORMAT_VALUE_PARSE_STMT = "ParseStmt";
     public static final String[] FORMAT_VALUES = {"Metamath", "RegExpr",
             "CharStr", "ParseExpr", "ParseStmt"};
-    public static final int[] FORMAT_ID = {0, 1, 2, 3, 4};
-    public static final int[] FORMAT_TYPE = {2, 2, 2, 1, 0};
+    public static final int[] FORMAT_ID = {FORMAT_METAMATH_ID,
+            FORMAT_REG_EXPR_ID, FORMAT_CHAR_STR_ID, FORMAT_PARSE_EXPR_ID,
+            FORMAT_PARSE_STMT_ID};
+    public static final int[] FORMAT_TYPE = {FORMAT_TYPE_NOT_TREE,
+            FORMAT_TYPE_NOT_TREE, FORMAT_TYPE_NOT_TREE, FORMAT_TYPE_SUB_TREE,
+            FORMAT_TYPE_TREE};
     public static final String[] FORMAT_VALUES_TREE = {"Metamath", "RegExpr",
             "CharStr", "ParseExpr", "ParseStmt"};
     public static final String[] FORMAT_VALUES_NOT_TREE = {"Metamath",
@@ -136,7 +151,10 @@ public class SearchOptionsConstants {
     public static final int OPER_VALUE_LT_GT_ID = 8;
     public static final String[] OPER_VALUES = {"", "NOT", "<=", "<", "=",
             "==", ">=", ">", "<>"};
-    public static final int[] OPER_TYPE = {2, 2, 1, 1, 1, 1, 1, 1, 1};
+    public static final int[] OPER_TYPE = {OPER_TYPE_NOT_TREE,
+            OPER_TYPE_NOT_TREE, OPER_TYPE_SUB_TREE, OPER_TYPE_SUB_TREE,
+            OPER_TYPE_SUB_TREE, OPER_TYPE_SUB_TREE, OPER_TYPE_SUB_TREE,
+            OPER_TYPE_SUB_TREE, OPER_TYPE_SUB_TREE};
     public static final String[] OPER_VALUES_NOT_TREE = {"", "NOT"};
     public static final String[] OPER_VALUES_TREE = {"<=", "<", "=", "==",
             ">=", ">", "<>"};
@@ -238,17 +256,6 @@ public class SearchOptionsConstants {
             "#7: Score(D)/Nbr Hyps/MObjSeq(D)",
             "#8: Score(D)/Nbr Hyps/MObjSeq", "#9: Score(D)/MObjSeq(D)",
             "#10: Score(D)/Label"};
-    public static final int OUTPUT_SORT_0_ID = 0;
-    public static final int OUTPUT_SORT_1_ID = 1;
-    public static final int OUTPUT_SORT_2_ID = 2;
-    public static final int OUTPUT_SORT_3_ID = 3;
-    public static final int OUTPUT_SORT_4_ID = 4;
-    public static final int OUTPUT_SORT_5_ID = 5;
-    public static final int OUTPUT_SORT_6_ID = 6;
-    public static final int OUTPUT_SORT_7_ID = 7;
-    public static final int OUTPUT_SORT_8_ID = 8;
-    public static final int OUTPUT_SORT_9_ID = 9;
-    public static final int OUTPUT_SORT_10_ID = 10;
     public static String[] STATS_VALUES = {"#0: No Stats Output",
             "#1: Print Summary Stats",
             "#2: Print Prior Levels Plus Detailed Stats",

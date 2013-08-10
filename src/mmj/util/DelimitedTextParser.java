@@ -11,6 +11,9 @@
 
 package mmj.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Class {@code DelimitedTextParser} parses a line of delimited text input as a
  * String.
@@ -290,6 +293,30 @@ public class DelimitedTextParser {
         else
             reachedEOL = true;
         return fieldOut;
+    }
+
+    /**
+     * Returns a list of all fields, consuming the entire input String.
+     * 
+     * @return A {@code List<String>} of fields parsed from the input String.
+     * @throws IllegalArgumentException thrown if the string to be parsed is not
+     *             correctly formatted (for example, unmatched quote characters)
+     *             or if parseAll invoked again after reaching the end of the
+     *             line.
+     * @throws IllegalStateException if an error occurred
+     */
+    public List<String> parseAll() throws IllegalArgumentException,
+        IllegalStateException
+    {
+        final List<String> list = new ArrayList<String>();
+        while (true) {
+            final String field = nextField();
+            if (field == null)
+                break;
+            else
+                list.add(field);
+        }
+        return list;
     }
 
     /**

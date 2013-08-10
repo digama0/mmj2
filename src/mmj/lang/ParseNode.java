@@ -249,16 +249,14 @@ public class ParseNode {
                 }
 
             // if we're here then we messed up!
-            final StringBuilder testSB = new StringBuilder();
+            String msg = "", delim = "";
             for (final VarHyp element : varHypArray) {
-                testSB.append(element.getLabel());
-                testSB.append(' ');
+                msg += delim + element.getLabel();
+                delim = " ";
             }
-            throw new IllegalArgumentException(
-                LangConstants.ERRMSG_UNIFY_SUBST_HYP_NOTFND_1
-                    + myNode.stmt.getLabel()
-                    + LangConstants.ERRMSG_UNIFY_SUBST_HYP_NOTFND_2
-                    + testSB.toString());
+            throw new IllegalArgumentException(LangException.format(
+                LangConstants.ERRMSG_UNIFY_SUBST_HYP_NOTFND,
+                myNode.stmt.getLabel(), msg));
         }
         return substArray;
     }
@@ -472,8 +470,8 @@ public class ParseNode {
                 return assrtSubst[i];
             }
 
-        throw new IllegalArgumentException(
-            LangConstants.ERRMSG_ASSRT_SUBST_HYP_NOTFND_1 + stmt.getLabel());
+        throw new IllegalArgumentException(LangException.format(
+            LangConstants.ERRMSG_ASSRT_SUBST_HYP_NOTFND, stmt.getLabel()));
     }
 
     /**
@@ -501,8 +499,8 @@ public class ParseNode {
             if (assrtHypArray[i] == stmt)
                 return assrtSubst[i];
 
-        throw new IllegalArgumentException(
-            LangConstants.ERRMSG_ASSRT_SUBST_HYP_NOTFND_1 + stmt.getLabel());
+        throw new IllegalArgumentException(LangException.format(
+            LangConstants.ERRMSG_ASSRT_SUBST_HYP_NOTFND, stmt.getLabel()));
     }
 
     /**
@@ -573,8 +571,8 @@ public class ParseNode {
 
         dest = convertToRPN(outRPN, dest);
         if (dest != -1)
-            throw new IllegalStateException(
-                LangConstants.ERRMSG_SUBTREE_CONV_TO_RPN_FAILURE + dest * -1);
+            throw new IllegalStateException(LangException.format(
+                LangConstants.ERRMSG_SUBTREE_CONV_TO_RPN_FAILURE, -dest));
         return outRPN;
     }
 
@@ -608,8 +606,8 @@ public class ParseNode {
      */
     public int loadParseNodeFromRPN(final Stmt[] rpn, int stmtPosInRPN) {
         if ((stmt = rpn[stmtPosInRPN]) == null)
-            throw new IllegalArgumentException(
-                LangConstants.ERRMSG_PARSED_RPN_INCOMPLETE + stmtPosInRPN);
+            throw new IllegalArgumentException(LangException.format(
+                LangConstants.ERRMSG_PARSED_RPN_INCOMPLETE, stmtPosInRPN));
 
         final int nbrChildNodes = stmt.getMandHypArrayLength();
 
@@ -685,7 +683,7 @@ public class ParseNode {
             final ParseNode vHNode = ((VarHyp)stmt).paSubst;
             if (vHNode == null)
                 throw new IllegalArgumentException(
-                    LangConstants.ERRMSG_NULL_TARGET_VAR_HYP_PA_SUBST_1);
+                    LangConstants.ERRMSG_NULL_TARGET_VAR_HYP_PA_SUBST);
             out.stmt = vHNode.stmt;
             out.child = vHNode.child;
         }

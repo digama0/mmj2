@@ -1,7 +1,17 @@
-// Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
-// Jad home page: http://www.kpdus.com/jad.html
-// Decompiler options: packimports(3)
-// Source File Name:   SearchArgsComboBox.java
+//********************************************************************/
+//* Copyright (C) 2005-2011                                          */
+//* MEL O'CAT  X178G243 (at) yahoo (dot) com                         */
+//* License terms: GNU General Public License Version 2              */
+//*                or any later version                              */
+//********************************************************************/
+//*4567890123456 (71-character line to adjust editor window) 23456789*/
+
+/*
+ * SearchArgsComboBox.java  0.01 20/09/2012
+ *
+ * Version 0.01:
+ * Aug-09-2013: new from decompilation.
+ */
 
 package mmj.search;
 
@@ -11,19 +21,17 @@ import mmj.pa.ProofAsst;
 import mmj.pa.ProofAsstPreferences;
 import mmj.verify.VerifyProofs;
 
-// Referenced classes of package mmj.search:
-//            SearchArgsField, SearchOptionsConstants, SearchOptionsFieldAttr, CompiledSearchArgs,
-//            SearchMgr, SearchOutput
-
 public abstract class SearchArgsComboBox extends SearchArgsField {
 
-    public SearchArgsComboBox(final int i, final String s) {
-        super(i);
-        textValue = s;
+    private String textValue;
+
+    public SearchArgsComboBox(final int id, final String value) {
+        super(id);
+        textValue = value;
     }
 
-    public SearchArgsComboBox(final int i) {
-        this(i, SearchOptionsConstants.FIELD_ATTR[i].defaultText);
+    public SearchArgsComboBox(final int id) {
+        this(id, SearchOptionsConstants.FIELD_ATTR[id].defaultText);
     }
 
     @Override
@@ -32,8 +40,8 @@ public abstract class SearchArgsComboBox extends SearchArgsField {
     }
 
     @Override
-    public void set(final String s) {
-        textValue = s;
+    public void set(final String value) {
+        textValue = value;
     }
 
     @Override
@@ -44,24 +52,22 @@ public abstract class SearchArgsComboBox extends SearchArgsField {
         final VerifyProofs verifyProofs, final Cnst cnst)
     {}
 
-    public int findChoice(final String[] as) {
+    public int findChoice(final String[] choices) {
         final String s = get().trim();
-        for (int i = 0; i < as.length; i++)
-            if (as[i].equals(s))
+        for (int i = 0; i < choices.length; i++)
+            if (choices[i].equals(s))
                 return i;
 
         return -1;
     }
 
     public int getAndErrorIfBadChoice(final SearchOutput searchOutput,
-        final String[] as)
+        final String[] choices)
     {
-        final int i = findChoice(as);
+        final int i = findChoice(choices);
         if (i == -1)
             storeArgError(searchOutput, get(),
                 SearchConstants.ERRMSG_CHOICE_ERROR, "");
         return i;
     }
-
-    private String textValue;
 }

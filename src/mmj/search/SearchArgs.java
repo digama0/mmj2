@@ -1,7 +1,17 @@
-// Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
-// Jad home page: http://www.kpdus.com/jad.html
-// Decompiler options: packimports(3)
-// Source File Name:   SearchArgs.java
+//********************************************************************/
+//* Copyright (C) 2005-2011                                          */
+//* MEL O'CAT  X178G243 (at) yahoo (dot) com                         */
+//* License terms: GNU General Public License Version 2              */
+//*                or any later version                              */
+//********************************************************************/
+//*4567890123456 (71-character line to adjust editor window) 23456789*/
+
+/*
+ * SearchArgs.java  0.01 20/09/2012
+ *
+ * Version 0.01:
+ * Aug-09-2013: new from decompilation.
+ */
 
 package mmj.search;
 
@@ -10,17 +20,6 @@ import java.util.List;
 import mmj.lang.*;
 import mmj.pa.*;
 import mmj.verify.VerifyProofs;
-
-// Referenced classes of package mmj.search:
-//            OrSeparator, SingleQuote, DoubleQuote, InWhat,
-//            Part, Format, Oper, ForWhat,
-//            Bool, ExclLabels, MinProofRefs, ResultsChecked,
-//            MaxTime, MinHyps, MaxExtResults, Substitutions,
-//            MaxHyps, MaxIncompHyps, Comments, MaxResults,
-//            PrevStepsChecked, AutoSelect, ReuseDerivSteps, Stats,
-//            ChapSecHierarchy, FromChap, FromSec, ThruChap,
-//            ThruSec, OutputSort, SearchArgsField, CompiledSearchArgs,
-//            SearchOptionsConstants, SearchOptionsFieldAttr, SearchMgr, SearchOutput
 
 public class SearchArgs {
     List<Assrt> sortedAssrtSearchList = null;
@@ -106,7 +105,7 @@ public class SearchArgs {
         stepSearchMode = false;
         stepSearchStmt = null;
         searchReferenceStmt = null;
-        searchMaxSeq = 0x7fffffff;
+        searchMaxSeq = Integer.MAX_VALUE;
         theoremLabel = null;
         locAfterLabel = null;
         generalSearchStmtLabel = null;

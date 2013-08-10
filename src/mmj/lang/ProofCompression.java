@@ -179,8 +179,7 @@ public class ProofCompression {
             loadSteps(blockIterator);
         else
             throw new LangException(
-                LangConstants.ERRMSG_COMPRESS_NO_PROOF_BLOCKS_1 + theoremLabel
-                    + LangConstants.ERRMSG_COMPRESS_NO_PROOF_BLOCKS_2);
+                LangConstants.ERRMSG_COMPRESS_NO_PROOF_BLOCKS, theoremLabel);
 
         return constructProofArray();
     }
@@ -203,11 +202,8 @@ public class ProofCompression {
             final Stmt otherStmt = stmtTbl.get(otherLabel);
             if (otherStmt == null)
                 throw new LangException(
-                    LangConstants.ERRMSG_COMPRESS_OTHER_NOTFND_1 + theoremLabel
-                        + LangConstants.ERRMSG_COMPRESS_OTHER_NOTFND_2
-                        + iterationNbr
-                        + LangConstants.ERRMSG_COMPRESS_OTHER_NOTFND_3
-                        + otherLabel);
+                    LangConstants.ERRMSG_COMPRESS_OTHER_NOTFND, theoremLabel,
+                    iterationNbr, otherLabel);
             if (otherStmt.getSeq() >= seq)
                 throw new LangException(
                     LangConstants.ERRMSG_FORWARD_PROOF_STEP_LABEL + otherLabel);
@@ -219,11 +215,8 @@ public class ProofCompression {
 
             if (!otherStmt.isVarHyp())
                 throw new LangException(
-                    LangConstants.ERRMSG_COMPRESS_OTHER_BOGUS_1 + theoremLabel
-                        + LangConstants.ERRMSG_COMPRESS_OTHER_BOGUS_2
-                        + iterationNbr
-                        + LangConstants.ERRMSG_COMPRESS_OTHER_BOGUS_3
-                        + otherLabel);
+                    LangConstants.ERRMSG_COMPRESS_OTHER_BOGUS, theoremLabel,
+                    iterationNbr, otherLabel);
 
             /**
              * this is a little "tricky" -- "active" applies only to global
@@ -231,7 +224,7 @@ public class ProofCompression {
              */
             if (!otherStmt.isActive() && !isProofStepInExtendedFrame(otherStmt))
                 throw new LangException(
-                    LangConstants.ERRMSG_PROOF_STEP_HYP_INACTIVE + otherLabel);
+                    LangConstants.ERRMSG_PROOF_STEP_HYP_INACTIVE, otherLabel);
 
             loadOtherHyp((VarHyp)otherStmt, iterationNbr);
             continue;
@@ -267,11 +260,8 @@ public class ProofCompression {
 
         if (otherAssrtCnt > 0)
             throw new LangException(
-                LangConstants.ERRMSG_COMPRESS_OTHER_VARHYP_POS_1 + theoremLabel
-                    + LangConstants.ERRMSG_COMPRESS_OTHER_VARHYP_POS_2
-                    + iterationNbr
-                    + LangConstants.ERRMSG_COMPRESS_OTHER_VARHYP_POS_3
-                    + otherVarHyp.getLabel());
+                LangConstants.ERRMSG_COMPRESS_OTHER_VARHYP_POS, theoremLabel,
+                iterationNbr, otherVarHyp.getLabel());
 
         if (otherHypCnt >= otherHypMax)
             reallocAndCopyOtherHypArray();
@@ -306,9 +296,8 @@ public class ProofCompression {
                 if (!blockIterator.hasNext()) {
                     if (decompressNbr > 0)
                         throw new LangException(
-                            LangConstants.ERRMSG_COMPRESS_PREMATURE_END_1
-                                + theoremLabel
-                                + LangConstants.ERRMSG_COMPRESS_PREMATURE_END_2);
+                            LangConstants.ERRMSG_COMPRESS_PREMATURE_END,
+                            theoremLabel);
                     break;
                 }
                 charIndex = 0;
@@ -320,31 +309,22 @@ public class ProofCompression {
             nextChar = block.charAt(charIndex++);
             if (nextChar >= LangConstants.COMPRESS_VALID_CHARS.length)
                 throw new LangException(
-                    LangConstants.ERRMSG_COMPRESS_NOT_ASCII_1 + theoremLabel
-                        + LangConstants.ERRMSG_COMPRESS_NOT_ASCII_2 + blockNbr
-                        + LangConstants.ERRMSG_COMPRESS_NOT_ASCII_3 + charIndex
-                        + LangConstants.ERRMSG_COMPRESS_NOT_ASCII_4 + nextChar);
+                    LangConstants.ERRMSG_COMPRESS_NOT_ASCII, theoremLabel,
+                    blockNbr, charIndex, nextChar);
 
             // translate 'A' to 0, 'B' to 1, etc. (1 is added to
             // 'A' thru 'Z' later -- curiously but effectively :)
             nextCharCode = LangConstants.COMPRESS_VALID_CHARS[nextChar];
 
             if (nextCharCode == LangConstants.COMPRESS_ERROR_CHAR_VALUE)
-                throw new LangException(
-                    LangConstants.ERRMSG_COMPRESS_BAD_CHAR_1 + theoremLabel
-                        + LangConstants.ERRMSG_COMPRESS_BAD_CHAR_2 + blockNbr
-                        + LangConstants.ERRMSG_COMPRESS_BAD_CHAR_3 + charIndex
-                        + LangConstants.ERRMSG_COMPRESS_BAD_CHAR_4 + nextChar);
+                throw new LangException(LangConstants.ERRMSG_COMPRESS_BAD_CHAR,
+                    theoremLabel, blockNbr, charIndex, nextChar);
 
             if (nextCharCode == LangConstants.COMPRESS_UNKNOWN_CHAR_VALUE) {
                 if (decompressNbr > 0)
                     throw new LangException(
-                        LangConstants.ERRMSG_COMPRESS_BAD_UNK_1 + theoremLabel
-                            + LangConstants.ERRMSG_COMPRESS_BAD_UNK_2
-                            + blockNbr
-                            + LangConstants.ERRMSG_COMPRESS_BAD_UNK_3
-                            + charIndex
-                            + LangConstants.ERRMSG_COMPRESS_BAD_UNK_4);
+                        LangConstants.ERRMSG_COMPRESS_BAD_UNK, theoremLabel,
+                        blockNbr, charIndex);
 
                 if (stepCnt >= stepMax)
                     reallocAndCopyStepArray();
@@ -365,20 +345,12 @@ public class ProofCompression {
 
                 if (decompressNbr > 0)
                     throw new LangException(
-                        LangConstants.ERRMSG_COMPRESS_BAD_RPT_1 + theoremLabel
-                            + LangConstants.ERRMSG_COMPRESS_BAD_RPT_2
-                            + blockNbr
-                            + LangConstants.ERRMSG_COMPRESS_BAD_RPT_3
-                            + charIndex
-                            + LangConstants.ERRMSG_COMPRESS_BAD_RPT_4);
+                        LangConstants.ERRMSG_COMPRESS_BAD_RPT, theoremLabel,
+                        blockNbr, charIndex);
                 if (prevDecompressNbr == 0)
                     throw new LangException(
-                        LangConstants.ERRMSG_COMPRESS_BAD_RPT2_1 + theoremLabel
-                            + LangConstants.ERRMSG_COMPRESS_BAD_RPT2_2
-                            + blockNbr
-                            + LangConstants.ERRMSG_COMPRESS_BAD_RPT2_3
-                            + charIndex
-                            + LangConstants.ERRMSG_COMPRESS_BAD_RPT2_4);
+                        LangConstants.ERRMSG_COMPRESS_BAD_RPT2, theoremLabel,
+                        blockNbr, charIndex);
                 if (repeatedSubproofCnt >= repeatedSubproofMax)
                     reallocAndCopyRepeatedSubproofArray();
                 repeatedSubproof[repeatedSubproofCnt] = stepCnt - 1;
@@ -476,13 +448,8 @@ public class ProofCompression {
 
                     if (currPos < 0 || currPos > stepCnt)
                         throw new LangException(
-                            LangConstants.ERRMSG_COMPRESS_CORRUPT_1
-                                + theoremLabel
-                                + LangConstants.ERRMSG_COMPRESS_CORRUPT_2
-                                + blockNbr
-                                + LangConstants.ERRMSG_COMPRESS_CORRUPT_3
-                                + charIndex
-                                + LangConstants.ERRMSG_COMPRESS_CORRUPT_4);
+                            LangConstants.ERRMSG_COMPRESS_CORRUPT,
+                            theoremLabel, blockNbr, charIndex);
 
                     subproofLength[stepCnt] += subproofLength[currPos];
                     prevPos = currPos;
@@ -497,11 +464,8 @@ public class ProofCompression {
             workNbr -= otherAssrtCnt;
 
             if (workNbr >= repeatedSubproofCnt)
-                throw new LangException(
-                    LangConstants.ERRMSG_COMPRESS_BAD_RPT3_1 + theoremLabel
-                        + LangConstants.ERRMSG_COMPRESS_BAD_RPT3_2 + blockNbr
-                        + LangConstants.ERRMSG_COMPRESS_BAD_RPT3_3 + charIndex
-                        + LangConstants.ERRMSG_COMPRESS_BAD_RPT3_4);
+                throw new LangException(LangConstants.ERRMSG_COMPRESS_BAD_RPT3,
+                    theoremLabel, blockNbr, charIndex);
 
             final int endRepeat = repeatedSubproof[workNbr];
             int startRepeat = endRepeat + 1 - subproofLength[endRepeat];

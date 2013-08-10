@@ -86,12 +86,10 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
 
         if (n < LangConstants.SEQ_ASSIGNER_MIN_INTERVAL_SIZE
             || n > LangConstants.SEQ_ASSIGNER_MAX_INTERVAL_SIZE)
-            throw new IllegalArgumentException(
-                LangConstants.ERRMSG_INTERVAL_SIZE_RANGE_ERR_1 + n
-                    + LangConstants.ERRMSG_INTERVAL_SIZE_RANGE_ERR_2
-                    + LangConstants.SEQ_ASSIGNER_MIN_INTERVAL_SIZE
-                    + LangConstants.ERRMSG_INTERVAL_SIZE_RANGE_ERR_3
-                    + LangConstants.SEQ_ASSIGNER_MAX_INTERVAL_SIZE);
+            throw new IllegalArgumentException(LangException.format(
+                LangConstants.ERRMSG_INTERVAL_SIZE_RANGE_ERR, n,
+                LangConstants.SEQ_ASSIGNER_MIN_INTERVAL_SIZE,
+                LangConstants.SEQ_ASSIGNER_MAX_INTERVAL_SIZE));
     }
 
     /**
@@ -106,14 +104,11 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
 
         if (n < LangConstants.SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_MIN
             || n > LangConstants.SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_MAX)
-            throw new IllegalArgumentException(
-                LangConstants.ERRMSG_INTERVAL_TBL_SIZE_RANGE_ERR_1 + n
-                    + LangConstants.ERRMSG_INTERVAL_TBL_SIZE_RANGE_ERR_2
-                    + LangConstants.SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_MIN
-                    + LangConstants.ERRMSG_INTERVAL_TBL_SIZE_RANGE_ERR_3
-                    + LangConstants.SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_MAX);
+            throw new IllegalArgumentException(LangException.format(
+                LangConstants.ERRMSG_INTERVAL_TBL_SIZE_RANGE_ERR, n,
+                LangConstants.SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_MIN,
+                LangConstants.SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_MAX));
     }
-
     /**
      * Construct with default set of parameters.
      */
@@ -157,10 +152,8 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
         if (seq + intervalSize < Integer.MAX_VALUE)
             return (int)seq;
 
-        throw new IllegalArgumentException(
-            LangConstants.ERRMSG_SEQ_ASSIGNER_OUT_OF_NUMBERS_1 + seq
-                + LangConstants.ERRMSG_SEQ_ASSIGNER_OUT_OF_NUMBERS_2
-                + mObjCount);
+        throw new IllegalArgumentException(LangException.format(
+            LangConstants.ERRMSG_SEQ_ASSIGNER_OUT_OF_NUMBERS, seq, mObjCount));
     }
 
     /**
@@ -239,7 +232,7 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
     public void turnOnCheckpointing() {
         if (checkpointInitialized)
             throw new IllegalArgumentException(
-                LangConstants.ERRMSG_SEQ_ASSIGNER_CHECKPOINT_STATE_1);
+                LangConstants.ERRMSG_SEQ_ASSIGNER_CHECKPOINT_STATE);
         checkpointMObjCount = mObjCount;
         checkpointNbrIntervals = nbrIntervals;
         checkpointInitialized = true;
@@ -254,7 +247,7 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
 
         if (!checkpointInitialized)
             throw new IllegalArgumentException(
-                LangConstants.ERRMSG_SEQ_ASSIGNER_COMMIT_STATE_1);
+                LangConstants.ERRMSG_SEQ_ASSIGNER_COMMIT_STATE);
 
         turnOffCheckpointing();
     }
@@ -284,7 +277,7 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
 
         if (!checkpointInitialized)
             throw new IllegalArgumentException(
-                LangConstants.ERRMSG_SEQ_ASSIGNER_ROLLBACK_STATE_1);
+                LangConstants.ERRMSG_SEQ_ASSIGNER_ROLLBACK_STATE);
 
         boolean[] wasLogHypInsertedArray;
         boolean[] wasLogHypAppendedArray;
@@ -356,25 +349,9 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
         final int seq, final String stmtCaption, final Stmt stmt,
         final String updateCaption)
     {
-
-        final StringBuilder sb = new StringBuilder();
-        sb.append(LangConstants.ERRMSG_SEQ_ASSIGNER_ROLLBACK_AUDIT_1);
-        sb.append(seq);
-        sb.append(LangConstants.ERRMSG_SEQ_ASSIGNER_ROLLBACK_AUDIT_2);
-        sb.append(stmtCaption);
-        if (stmt == null) {
-            sb.append("n/a");
-            sb.append(LangConstants.ERRMSG_SEQ_ASSIGNER_ROLLBACK_AUDIT_3);
-            sb.append(updateCaption);
-            sb.append(LangConstants.ERRMSG_SEQ_ASSIGNER_ROLLBACK_AUDIT_4);
-        }
-        else {
-            sb.append(stmt.getLabel());
-            sb.append(LangConstants.ERRMSG_SEQ_ASSIGNER_ROLLBACK_AUDIT_3);
-            sb.append(updateCaption);
-            sb.append(LangConstants.ERRMSG_SEQ_ASSIGNER_ROLLBACK_AUDIT_4);
-        }
-        messages.accumInfoMessage(sb.toString());
+        messages.accumInfoMessage(
+            LangConstants.ERRMSG_SEQ_ASSIGNER_ROLLBACK_AUDIT, seq, stmtCaption,
+            stmt == null ? "n/a" : stmt.getLabel(), updateCaption);
     }
 
     private void turnOffCheckpointing() {

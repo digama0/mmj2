@@ -106,7 +106,7 @@ public class VarHyp extends Hyp {
 
         if (getVar().getActiveVarHyp() != null)
             throw new LangException(
-                LangConstants.ERRMSG_MULT_ACTIVE_HYP_FOR_VAR + labelS);
+                LangConstants.ERRMSG_MULT_ACTIVE_HYP_FOR_VAR, labelS);
 
     }
 

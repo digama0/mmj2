@@ -1,7 +1,17 @@
-// Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
-// Jad home page: http://www.kpdus.com/jad.html
-// Decompiler options: packimports(3)
-// Source File Name:   SearchOutput.java
+//********************************************************************/
+//* Copyright (C) 2005-2011                                          */
+//* MEL O'CAT  X178G243 (at) yahoo (dot) com                         */
+//* License terms: GNU General Public License Version 2              */
+//*                or any later version                              */
+//********************************************************************/
+//*4567890123456 (71-character line to adjust editor window) 23456789*/
+
+/*
+ * SearchOutput.java  0.01 20/09/2012
+ *
+ * Version 0.01:
+ * Aug-09-2013: new from decompilation.
+ */
 
 package mmj.search;
 
@@ -10,41 +20,36 @@ import java.util.regex.Pattern;
 
 import mmj.lang.*;
 
-// Referenced classes of package mmj.search:
-//            SearchError, QuotedSearchTerm, CompiledSearchArgs, SearchOptionsConstants,
-//            SearchDataLines, SearchDataLine
-
 public class SearchOutput {
 
-    public SearchOutput(final String s) {
-        startTimeMillis = 0L;
-        endTimeMillis = 0L;
-        elapsedMillis = 0L;
-        statsInputAssrtListSize = 0;
-        statsNbrInputAssrtGets = 0;
-        statsNbrSelected = 0;
-        statsNbrCompletedSearchResults = 0;
-        statsNbrRejectGEMaxSeq = 0;
-        statsNbrRejectGTHypIndex = 0;
-        statsNbrRejectLTMinProofRefs = 0;
-        statsNbrRejectLEMinSeq = 0;
-        statsNbrRejectOtherExclCriteria = 0;
-        statsNbrRejectExclLabels = 0;
-        statsNbrRejectFailUnify = 0;
-        statsNbrRejectFailSearchData = 0;
+    String searchTitle;
+    int searchReturnCode = 0;
+    List<SearchError> searchErrorList = new ArrayList<SearchError>();
+    String step = "";
+    List<Assrt> sortedAssrtResultsList = new ArrayList<Assrt>(
+        Arrays.asList((Assrt)null));
+    int[] sortedAssrtScoreArray = new int[]{0};
+    int[] refIndexArray = new int[]{0};
+    String[] selectionArray = new String[]{SearchResultsConstants.SELECTION_NO_SEARCH_RUN_YET_LITERAL};
+    long startTimeMillis = 0;
+    long endTimeMillis = 0;
+    long elapsedMillis = 0;
+    int statsInputAssrtListSize = 0;
+    int statsNbrInputAssrtGets = 0;
+    int statsNbrSelected = 0;
+    int statsNbrCompletedSearchResults = 0;
+    int statsNbrRejectGEMaxSeq = 0;
+    int statsNbrRejectGTHypIndex = 0;
+    int statsNbrRejectLTMinProofRefs = 0;
+    int statsNbrRejectLEMinSeq = 0;
+    int statsNbrRejectOtherExclCriteria = 0;
+    int statsNbrRejectExclLabels = 0;
+    int statsNbrRejectFailUnify = 0;
+    int statsNbrRejectFailSearchData = 0;
+
+    public SearchOutput(final String searchTitle) {
         startTimeMillis = System.currentTimeMillis();
-        searchTitle = s;
-        searchReturnCode = 0;
-        searchErrorList = new ArrayList<SearchError>();
-        step = "";
-        sortedAssrtResultsList = new ArrayList<Assrt>(1);
-        sortedAssrtResultsList.add(null);
-        sortedAssrtScoreArray = new int[1];
-        sortedAssrtScoreArray[0] = 0;
-        refIndexArray = new int[1];
-        refIndexArray[0] = 0;
-        selectionArray = new String[1];
-        selectionArray[0] = SearchResultsConstants.SELECTION_NO_SEARCH_RUN_YET_LITERAL;
+        this.searchTitle = searchTitle;
     }
 
     public void finalize(final CompiledSearchArgs csa,
@@ -59,360 +64,299 @@ public class SearchOutput {
     public void dumpStats(final CompiledSearchArgs args,
         final BookManager bookManager, final Messages messages)
     {
-        final int i = args.searchStats;
-        if (i <= 0)
+        if (args.searchStats <= 0)
             return;
         messages.accumInfoMessage("SearchOutput.dumpStats(): " + searchTitle);
-        if (i >= 5) {
+        if (args.searchStats >= 5) {
             dumpChapSecHierarchy(args, bookManager, messages);
             return;
         }
-        if (i >= 4) {
+        if (args.searchStats >= 4) {
             dumpSearchResults(args, bookManager, messages);
             return;
         }
-        if (i >= 3) {
+        if (args.searchStats >= 3) {
             dumpSearchArgs(args, bookManager, messages);
             return;
         }
-        if (i >= 2) {
+        if (args.searchStats >= 2) {
             dumpDetailedStats(args, bookManager, messages);
             return;
         }
-        if (i >= 1) {
+        if (args.searchStats >= 1) {
             dumpSummaryStats(args, bookManager, messages);
             return;
         }
-        else
-            return;
+        return;
     }
 
     public void dumpSummaryStats(final CompiledSearchArgs csa,
-        final BookManager bookManager, final Messages messages)
+        final BookManager bookManager, final Messages m)
     {
-        messages.accumInfoMessage("SearchOutput.dumpSummaryStats():");
-        messages.accumInfoMessage("    elapsedMillis                   = "
+        m.accumInfoMessage("SearchOutput.dumpSummaryStats():");
+        m.accumInfoMessage("    elapsedMillis                   = "
             + elapsedMillis);
-        messages.accumInfoMessage("    statsInputAssrtListSize         = "
+        m.accumInfoMessage("    statsInputAssrtListSize         = "
             + statsInputAssrtListSize);
-        messages.accumInfoMessage("    statsNbrInputAssrtGets          = "
+        m.accumInfoMessage("    statsNbrInputAssrtGets          = "
             + statsNbrInputAssrtGets);
-        messages.accumInfoMessage("    statsNbrSelected                = "
+        m.accumInfoMessage("    statsNbrSelected                = "
             + statsNbrSelected);
-        messages.accumInfoMessage("    statsNbrCompletedSearchResults  = "
+        m.accumInfoMessage("    statsNbrCompletedSearchResults  = "
             + statsNbrCompletedSearchResults);
-        messages.accumInfoMessage("    searchReturnCode                = "
+        m.accumInfoMessage("    searchReturnCode                = "
             + searchReturnCode);
-        messages.accumInfoMessage("    searchErrorList.size()          = "
+        m.accumInfoMessage("    searchErrorList.size()          = "
             + searchErrorList.size());
-        if (searchErrorList.size() > 0) {
-            messages.accumErrorMessage("    ***searchErrorList Contents***");
-            for (int i = 0; i < searchErrorList.size(); i++) {
-                final SearchError searchError = searchErrorList.get(i);
-                messages.accumErrorMessage("        fieldId = "
-                    + searchError.searchArgFieldId + " message = "
-                    + searchError.message);
-            }
+        if (!searchErrorList.isEmpty()) {
+            m.accumErrorMessage("    ***searchErrorList Contents***");
+            for (final SearchError error : searchErrorList)
+                m.accumErrorMessage("        fieldId = "
+                    + error.searchArgFieldId + " message = " + error.message);
 
-            messages
-                .accumErrorMessage("    ***END searchErrorList Contents***\n");
+            m.accumErrorMessage("    ***END searchErrorList Contents***\n");
         }
-        messages
-            .accumInfoMessage("***END SearchOutput.dumpSummaryStats():***\n");
+        m.accumInfoMessage("***END SearchOutput.dumpSummaryStats():***\n");
     }
 
     public void dumpDetailedStats(final CompiledSearchArgs csa,
-        final BookManager bookManager, final Messages messages)
+        final BookManager bookManager, final Messages m)
     {
-        dumpSummaryStats(csa, bookManager, messages);
-        messages.accumInfoMessage("SearchOutput.dumpDetailedStats():");
-        messages.accumInfoMessage("    statsNbrRejectGEMaxSeq          = "
+        dumpSummaryStats(csa, bookManager, m);
+        m.accumInfoMessage("SearchOutput.dumpDetailedStats():");
+        m.accumInfoMessage("    statsNbrRejectGEMaxSeq          = "
             + statsNbrRejectGEMaxSeq);
-        messages.accumInfoMessage("    statsNbrRejectGTHypIndex        = "
+        m.accumInfoMessage("    statsNbrRejectGTHypIndex        = "
             + statsNbrRejectGTHypIndex);
-        messages.accumInfoMessage("    statsNbrRejectLTMinProofRefs    = "
+        m.accumInfoMessage("    statsNbrRejectLTMinProofRefs    = "
             + statsNbrRejectLTMinProofRefs);
-        messages.accumInfoMessage("    statsNbrRejectLEMinSeq          = "
+        m.accumInfoMessage("    statsNbrRejectLEMinSeq          = "
             + statsNbrRejectLEMinSeq);
-        messages.accumInfoMessage("    statsNbrRejectOtherExclCriteria = "
+        m.accumInfoMessage("    statsNbrRejectOtherExclCriteria = "
             + statsNbrRejectOtherExclCriteria);
-        messages.accumInfoMessage("    statsNbrRejectExclLabels        = "
+        m.accumInfoMessage("    statsNbrRejectExclLabels        = "
             + statsNbrRejectExclLabels);
-        messages.accumInfoMessage("    statsNbrRejectFailUnify         = "
+        m.accumInfoMessage("    statsNbrRejectFailUnify         = "
             + statsNbrRejectFailUnify);
-        messages.accumInfoMessage("    statsNbrRejectFailSearchData    = "
+        m.accumInfoMessage("    statsNbrRejectFailSearchData    = "
             + statsNbrRejectFailSearchData);
-        messages
-            .accumInfoMessage("***END SearchOutput.dumpDetailedStats():***\n");
+        m.accumInfoMessage("***END SearchOutput.dumpDetailedStats():***\n");
     }
 
     public void dumpSearchArgs(final CompiledSearchArgs args,
-        final BookManager bookManager, final Messages messages)
+        final BookManager bookManager, final Messages m)
     {
-        dumpDetailedStats(args, bookManager, messages);
-        messages.accumInfoMessage("SearchOutput.dumpSearchArgs():");
-        messages.accumInfoMessage("     searchStepSearchMode         = "
+        dumpDetailedStats(args, bookManager, m);
+        m.accumInfoMessage("SearchOutput.dumpSearchArgs():");
+        m.accumInfoMessage("     searchStepSearchMode         = "
             + args.searchStepSearchMode);
-        messages.accumInfoMessage("     nbrDerivStepHyps             = "
+        m.accumInfoMessage("     nbrDerivStepHyps             = "
             + args.nbrDerivStepHyps);
-        messages.accumInfoMessage("     derivStepHypWildcards        = "
+        m.accumInfoMessage("     derivStepHypWildcards        = "
             + args.derivStepHypWildcards);
-        messages.accumInfoMessage("     searchMinHyps                = "
+        m.accumInfoMessage("     searchMinHyps                = "
             + args.searchMinHyps);
-        messages.accumInfoMessage("     searchMaxHyps                = "
+        m.accumInfoMessage("     searchMaxHyps                = "
             + args.searchMaxHyps);
-        messages.accumInfoMessage("     searchMinProofRefs           = "
+        m.accumInfoMessage("     searchMinProofRefs           = "
             + args.searchMinProofRefs);
-        messages.accumInfoMessage("     searchMinSeq                 = "
+        m.accumInfoMessage("     searchMinSeq                 = "
             + args.searchMinSeq);
-        messages.accumInfoMessage("     searchMaxSeq                 = "
+        m.accumInfoMessage("     searchMaxSeq                 = "
             + args.searchMaxSeq);
-        final StringBuffer sb = new StringBuffer();
         String s = "";
-        for (final Pattern element : args.searchExclLabelsPattern) {
-            sb.append(s);
-            sb.append(element.pattern());
-            s = ",";
+        String delim = "";
+        for (final Pattern p : args.searchExclLabelsPattern) {
+            s += delim + p.pattern();
+            delim = ",";
         }
 
-        messages
-            .accumInfoMessage("     searchExclLabels             = "
-                + args.searchExclLabels + " (regex format: " + sb.toString()
-                + " )");
+        m.accumInfoMessage("     searchExclLabels             = "
+            + args.searchExclLabels + " (regex format: " + s + " )");
         final Stmt stmt = args.searchReferenceStmt;
         if (stmt != null) {
-            final int j = args.searchReferenceStmt.getChapterNbr();
-            final int i1 = args.searchReferenceStmt.getSectionNbr();
-            final Chapter chapter = bookManager.getChapter(j);
-            final Section section = bookManager.getSection(i1);
-            messages.accumInfoMessage("     searchReferenceStmt          = "
+            final int chapterNbr = args.searchReferenceStmt.getChapterNbr();
+            final int sectionNbr = args.searchReferenceStmt.getSectionNbr();
+            final Chapter chapter = bookManager.getChapter(chapterNbr);
+            final Section section = bookManager.getSection(sectionNbr);
+            m.accumInfoMessage("     searchReferenceStmt          = "
                 + args.searchReferenceStmt.getLabel() + "  MObjSeq="
                 + args.searchReferenceStmt.getSeq());
-            messages.accumInfoMessage("         .chapterNbr              = "
-                + j);
-            messages.accumInfoMessage("             ..chapterTitle       = "
+            m.accumInfoMessage("         .chapterNbr              = "
+                + chapterNbr);
+            m.accumInfoMessage("             ..chapterTitle       = "
                 + chapter.getChapterTitle());
-            messages.accumInfoMessage("             ..minMObjSeq         = "
+            m.accumInfoMessage("             ..minMObjSeq         = "
                 + chapter.getMinMObjSeq());
-            messages.accumInfoMessage("             ..maxMObjSeq         = "
+            m.accumInfoMessage("             ..maxMObjSeq         = "
                 + chapter.getMaxMObjSeq());
-            messages.accumInfoMessage("         .sectionNbr              = "
-                + i1);
-            messages.accumInfoMessage("             ..sectionTitle       = "
+            m.accumInfoMessage("         .sectionNbr              = "
+                + sectionNbr);
+            m.accumInfoMessage("             ..sectionTitle       = "
                 + section.getSectionTitle());
-            messages.accumInfoMessage("             ..minMObjSeq         = "
+            m.accumInfoMessage("             ..minMObjSeq         = "
                 + section.getMinMObjSeq());
-            messages.accumInfoMessage("             ..maxMObjSeq         = "
+            m.accumInfoMessage("             ..maxMObjSeq         = "
                 + section.getMaxMObjSeq());
         }
         else
-            messages.accumInfoMessage("     searchReferenceStmt          =  ");
-        messages
-            .accumInfoMessage("     searchChapSecHierarchyChoice = "
-                + args.searchChapSecHierarchyChoice
-                + " : "
-                +
+            m.accumInfoMessage("     searchReferenceStmt          =  ");
+        m.accumInfoMessage("     searchChapSecHierarchyChoice = "
+            + args.searchChapSecHierarchyChoice
+            + " : "
+            +
 
-                SearchOptionsConstants.CHAP_SEC_HIERARCHY_VALUES[args.searchChapSecHierarchyChoice]);
-        Chapter chapter1 = args.searchFromChap;
-        if (chapter1 != null) {
-            final int k = chapter1.getChapterNbr();
-            messages.accumInfoMessage("     searchFrom.chapterNbr        = "
-                + k);
-            messages.accumInfoMessage("         .chapterTitle            = "
-                + chapter1.getChapterTitle());
-            messages.accumInfoMessage("         .minMObjSeq              = "
-                + chapter1.getMinMObjSeq());
-            messages.accumInfoMessage("         .maxMObjSeq              = "
-                + chapter1.getMaxMObjSeq());
+            SearchOptionsConstants.CHAP_SEC_HIERARCHY_VALUES[args.searchChapSecHierarchyChoice]);
+        Chapter chapter = args.searchFromChap;
+        if (chapter != null) {
+            final int chapterNbr = chapter.getChapterNbr();
+            m.accumInfoMessage("     searchFrom.chapterNbr        = "
+                + chapterNbr);
+            m.accumInfoMessage("         .chapterTitle            = "
+                + chapter.getChapterTitle());
+            m.accumInfoMessage("         .minMObjSeq              = "
+                + chapter.getMinMObjSeq());
+            m.accumInfoMessage("         .maxMObjSeq              = "
+                + chapter.getMaxMObjSeq());
         }
         else
-            messages.accumInfoMessage("     searchFrom.chapterNbr        =  ");
-        Section section1 = args.searchFromSec;
-        if (section1 != null) {
-            final int j1 = section1.getSectionNbr();
-            messages.accumInfoMessage("    searchFrom.sectionNbr         = "
-                + j1);
-            messages.accumInfoMessage("         .sectionTitle            = "
-                + section1.getSectionTitle());
-            messages.accumInfoMessage("         .minMObjSeq              = "
-                + section1.getMinMObjSeq());
-            messages.accumInfoMessage("         .maxMObjSeq              = "
-                + section1.getMaxMObjSeq());
+            m.accumInfoMessage("     searchFrom.chapterNbr        =  ");
+        Section section = args.searchFromSec;
+        if (section != null) {
+            final int sectionNbr = section.getSectionNbr();
+            m.accumInfoMessage("    searchFrom.sectionNbr         = "
+                + sectionNbr);
+            m.accumInfoMessage("         .sectionTitle            = "
+                + section.getSectionTitle());
+            m.accumInfoMessage("         .minMObjSeq              = "
+                + section.getMinMObjSeq());
+            m.accumInfoMessage("         .maxMObjSeq              = "
+                + section.getMaxMObjSeq());
         }
         else
-            messages.accumInfoMessage("     searchFrom.sectionNbr        =  ");
-        chapter1 = args.searchThruChap;
-        if (chapter1 != null) {
-            final int l = chapter1.getChapterNbr();
-            messages.accumInfoMessage("     searchThru.chapterNbr        = "
-                + l);
-            messages.accumInfoMessage("         .chapterTitle            = "
-                + chapter1.getChapterTitle());
-            messages.accumInfoMessage("         .minMObjSeq              = "
-                + chapter1.getMinMObjSeq());
-            messages.accumInfoMessage("         .maxMObjSeq              = "
-                + chapter1.getMaxMObjSeq());
+            m.accumInfoMessage("     searchFrom.sectionNbr        =  ");
+        chapter = args.searchThruChap;
+        if (chapter != null) {
+            final int chapterNbr = chapter.getChapterNbr();
+            m.accumInfoMessage("     searchThru.chapterNbr        = "
+                + chapterNbr);
+            m.accumInfoMessage("         .chapterTitle            = "
+                + chapter.getChapterTitle());
+            m.accumInfoMessage("         .minMObjSeq              = "
+                + chapter.getMinMObjSeq());
+            m.accumInfoMessage("         .maxMObjSeq              = "
+                + chapter.getMaxMObjSeq());
         }
         else
-            messages.accumInfoMessage("     searchFrom.chapterNbr        =  ");
-        section1 = args.searchThruSec;
-        if (section1 != null) {
-            final int k1 = section1.getSectionNbr();
-            messages.accumInfoMessage("    searchThru.sectionNbr         = "
-                + k1);
-            messages.accumInfoMessage("         .sectionTitle            = "
-                + section1.getSectionTitle());
-            messages.accumInfoMessage("         .minMObjSeq              = "
-                + section1.getMinMObjSeq());
-            messages.accumInfoMessage("         .maxMObjSeq              = "
-                + section1.getMaxMObjSeq());
+            m.accumInfoMessage("     searchFrom.chapterNbr        =  ");
+        section = args.searchThruSec;
+        if (section != null) {
+            final int sectionNbr = section.getSectionNbr();
+            m.accumInfoMessage("    searchThru.sectionNbr         = "
+                + sectionNbr);
+            m.accumInfoMessage("         .sectionTitle            = "
+                + section.getSectionTitle());
+            m.accumInfoMessage("         .minMObjSeq              = "
+                + section.getMinMObjSeq());
+            m.accumInfoMessage("         .maxMObjSeq              = "
+                + section.getMaxMObjSeq());
         }
         else
-            messages.accumInfoMessage("     searchThru.sectionNbr        =  ");
-        messages.accumInfoMessage("     searchMaxResults             = "
+            m.accumInfoMessage("     searchThru.sectionNbr        =  ");
+        m.accumInfoMessage("     searchMaxResults             = "
             + args.searchMaxResults);
-        messages.accumInfoMessage("     searchOutputSortNbr          = "
+        m.accumInfoMessage("     searchOutputSortNbr          = "
             + args.searchOutputSortNbr);
-        messages.accumInfoMessage("         .OUTPUT_SORT_VALUES      = " +
+        m.accumInfoMessage("         .OUTPUT_SORT_VALUES      = " +
 
         SearchOptionsConstants.OUTPUT_SORT_VALUES[args.searchOutputSortNbr]);
-        messages.accumInfoMessage("     searchMaxTime (seconds)      = "
+        m.accumInfoMessage("     searchMaxTime (seconds)      = "
             + args.searchMaxTime);
-        messages.accumInfoMessage("     searchSubstitutions          = "
+        m.accumInfoMessage("     searchSubstitutions          = "
             + args.searchSubstitutions);
-        messages.accumInfoMessage("     searchComments               = "
+        m.accumInfoMessage("     searchComments               = "
             + args.searchComments);
-        messages.accumInfoMessage("     searchStats                  = "
+        m.accumInfoMessage("     searchStats                  = "
             + args.searchStats);
-        for (int l1 = 0; l1 < 4; l1++) {
-            if (args.searchForWhat[l1].equals(""))
+        for (int i = 0; i < 4; i++) {
+            if (args.searchForWhat[i].isEmpty())
                 continue;
-            final String msg = "     searchDataLine #"
-                + (l1 + 1)
+            m.accumInfoMessage("     searchDataLine #"
+                + (i + 1)
                 + "            = ["
-                + SearchOptionsConstants.IN_WHAT_VALUES[args.searchInWhatChoice[l1]]
+                + SearchOptionsConstants.IN_WHAT_VALUES[args.searchInWhatChoice[i]]
                 + ":"
-                + SearchOptionsConstants.PART_VALUES[args.searchPartChoice[l1]]
+                + SearchOptionsConstants.PART_VALUES[args.searchPartChoice[i]]
                 + ":"
-                + SearchOptionsConstants.FORMAT_VALUES[args.searchFormatChoice[l1]]
+                + SearchOptionsConstants.FORMAT_VALUES[args.searchFormatChoice[i]]
                 + ":"
-                + SearchOptionsConstants.OPER_VALUES[args.searchOperChoice[l1]]
-                + ":" + args.searchForWhat[l1] + ":"
-                + SearchOptionsConstants.BOOL_VALUES[args.searchBoolChoice[l1]]
-                + "]";
-            messages.accumInfoMessage(msg);
-            String str = "     ....SearchTerms:";
-            final List<QuotedSearchTerm> arraylist = args.searchDataLines.line[l1].quotedSearchTermList;
-            for (int i2 = 0; i2 < arraylist.size(); i2++) {
-                final QuotedSearchTerm quotedSearchTerm = arraylist.get(i2);
-                if (quotedSearchTerm.pattern != null) {
-                    str += " \"";
-                    str += quotedSearchTerm.pattern.pattern();
-                    str += "\"";
-                }
-                else {
-                    str += " ";
-                    str += quotedSearchTerm.quoteString;
-                    str += quotedSearchTerm.text;
-                    str += quotedSearchTerm.quoteString;
-                }
-            }
+                + SearchOptionsConstants.OPER_VALUES[args.searchOperChoice[i]]
+                + ":" + args.searchForWhat[i] + ":"
+                + SearchOptionsConstants.BOOL_VALUES[args.searchBoolChoice[i]]
+                + "]");
+            String msg = "     ....SearchTerms:";
+            for (final QuotedSearchTerm term : args.searchDataLines.line[i].quotedSearchTermList)
+                if (term.pattern != null)
+                    msg += " \"" + term.pattern.pattern() + "\"";
+                else
+                    msg += " " + term.quoteString + term.text
+                        + term.quoteString;
 
-            messages.accumInfoMessage(str);
+            m.accumInfoMessage(msg);
         }
 
-        messages.accumInfoMessage("***END SearchOutput.dumpSearchArgs():***\n");
+        m.accumInfoMessage("***END SearchOutput.dumpSearchArgs():***\n");
     }
     public void dumpSearchResults(final CompiledSearchArgs csa,
-        final BookManager bookManager, final Messages messages)
+        final BookManager bookManager, final Messages m)
     {
-        dumpSearchArgs(csa, bookManager, messages);
-        messages.accumInfoMessage("SearchOutput.dumpSearchResults():");
+        dumpSearchArgs(csa, bookManager, m);
+        m.accumInfoMessage("SearchOutput.dumpSearchResults():");
         for (final String element : selectionArray)
-            messages.accumInfoMessage(element);
+            m.accumInfoMessage(element);
 
-        messages
-            .accumInfoMessage("***END SearchOutput.dumpSearchResults():***\n");
+        m.accumInfoMessage("***END SearchOutput.dumpSearchResults():***\n");
     }
 
     public void dumpChapSecHierarchy(final CompiledSearchArgs csa,
-        final BookManager bookManager, final Messages messages)
+        final BookManager bookManager, final Messages m)
     {
-        dumpSearchResults(csa, bookManager, messages);
-        messages.accumInfoMessage("SearchOutput.dumpChapSecHierarchy():");
-        messages
-            .accumInfoMessage("     searchChapSecHierarchyChoice = "
-                + csa.searchChapSecHierarchyChoice
-                + " : "
-                +
-
-                SearchOptionsConstants.CHAP_SEC_HIERARCHY_VALUES[csa.searchChapSecHierarchyChoice]);
-        final BitSet bitset = csa.searchCombinedDependencies;
-        if (bitset != null)
-            for (int j = bitset.nextSetBit(0); j >= 0; j = bitset
-                .nextSetBit(j + 1))
-            {
-                String s;
-                int i;
-                String s1;
-                if (csa.searchUseChapHierarchy) {
-                    s = "Chap ";
-                    i = j;
-                    final Chapter chapter = bookManager.getChapter(i);
-                    s1 = chapter.getChapterTitle();
-                }
+        dumpSearchResults(csa, bookManager, m);
+        m.accumInfoMessage("SearchOutput.dumpChapSecHierarchy():");
+        m.accumInfoMessage("     searchChapSecHierarchyChoice = "
+            + csa.searchChapSecHierarchyChoice
+            + " : "
+            + SearchOptionsConstants.CHAP_SEC_HIERARCHY_VALUES[csa.searchChapSecHierarchyChoice]);
+        final BitSet dependencies = csa.searchCombinedDependencies;
+        if (dependencies != null)
+            for (int i = dependencies.nextSetBit(0); i >= 0; i = dependencies
+                .nextSetBit(i + 1))
+                if (csa.searchUseChapHierarchy)
+                    m.accumInfoMessage("          Chap " + i + " : "
+                        + bookManager.getChapter(i).getChapterTitle());
                 else {
-                    s = "Sec  ";
-                    i = BookManager.convertOrigSectionNbr(j);
-                    final Section section = bookManager.getSection(i);
-                    s1 = section.getSectionTitle();
+                    final int secNbr = BookManager.convertOrigSectionNbr(i);
+                    m.accumInfoMessage("          Sec " + secNbr + " : "
+                        + bookManager.getSection(secNbr).getSectionTitle());
                 }
-                messages.accumInfoMessage("          " + s + i + " : " + s1);
-            }
-        messages
-            .accumInfoMessage("***END SearchOutput.dumpChapSecHierarchy():***\n");
+        m.accumInfoMessage("***END SearchOutput.dumpChapSecHierarchy():***\n");
     }
 
     public SearchError getFirstError() {
-        if (searchErrorList.size() > 0)
-            return searchErrorList.get(0);
-        else
-            return null;
+        return searchErrorList.isEmpty() ? null : searchErrorList.get(0);
     }
 
-    public void storeError(final SearchError searchError) {
-        searchErrorList.add(searchError);
-        searchReturnCode = searchError.returnCode;
+    public void storeError(final SearchError error) {
+        searchErrorList.add(error);
+        searchReturnCode = error.returnCode;
     }
 
-    public void storeError(final int i, final int j, final String s) {
-        final SearchError searchError = new SearchError(i, j, s);
-        searchErrorList.add(searchError);
-        searchReturnCode = searchError.returnCode;
+    public void storeError(final int returnCode, final int searchArgFieldId,
+        final String message)
+    {
+        final SearchError error = new SearchError(returnCode, searchArgFieldId,
+            message);
+        searchErrorList.add(error);
+        searchReturnCode = error.returnCode;
     }
-
-    String searchTitle;
-    int searchReturnCode;
-    List<SearchError> searchErrorList;
-    String step;
-    List<Assrt> sortedAssrtResultsList;
-    int[] sortedAssrtScoreArray;
-    int[] refIndexArray;
-    String[] selectionArray;
-    long startTimeMillis;
-    long endTimeMillis;
-    long elapsedMillis;
-    int statsInputAssrtListSize;
-    int statsNbrInputAssrtGets;
-    int statsNbrSelected;
-    int statsNbrCompletedSearchResults;
-    int statsNbrRejectGEMaxSeq;
-    int statsNbrRejectGTHypIndex;
-    int statsNbrRejectLTMinProofRefs;
-    int statsNbrRejectLEMinSeq;
-    int statsNbrRejectOtherExclCriteria;
-    int statsNbrRejectExclLabels;
-    int statsNbrRejectFailUnify;
-    int statsNbrRejectFailSearchData;
 }

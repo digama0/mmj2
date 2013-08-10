@@ -170,12 +170,20 @@ public class PaConstants {
     // ----------------------------------------------------------
 
     /**
-     * PROOF_STEP_RENUMBER_INTERVAL = 1
+     * PROOF_STEP_RENUMBER_START = 10
+     * <p>
+     * Renumber starting point: 1, 2, 3, ... vs 3, 4, 5, ... This is hardcoded,
+     * but a RunParm could be added.
+     */
+    public static final int PROOF_STEP_RENUMBER_START = 10;
+
+    /**
+     * PROOF_STEP_RENUMBER_INTERVAL = 10
      * <p>
      * Renumber by interval: 1, 2, ...n or 10, 20, ... etc. This is hardcoded,
      * but a RunParm could be added.
      */
-    public static final int PROOF_STEP_RENUMBER_INTERVAL = 1;
+    public static final int PROOF_STEP_RENUMBER_INTERVAL = 10;
 
     /**
      * PROOF_ASST_INCOMPLETE_STEP_CURSOR_LAST = "Last".
@@ -2139,10 +2147,10 @@ public class PaConstants {
         + " Abandoning importFromFile() process! "
         + " Serious error message (technical) follows: ";
 
-    public static final String ERRMSG_PA_EXPORT_PV_ERROR_1 = "E-PA-0108";
-    public static final String ERRMSG_PA_EXPORT_PV_ERROR_2 = ": Unable to get (export) the full proof because the Proof"
+    public static final String ERRMSG_PA_EXPORT_PV_ERROR = "E-PA-0108 Theorem %s:"
+        + " Unable to get (export) the full proof because the Proof"
         + " Verification engine reported an error in the proof"
-        + " itself. VerifyProofs message text follows: ";
+        + " itself. VerifyProofs message text follows: %s";
 
     public static final String ERRMSG_PA_EXPORT_STRUCT_ERROR_1 = "A-PA-0109";
     public static final String ERRMSG_PA_EXPORT_STRUCT_ERROR_2 = " exportOneTheorem() is abandoning the attempt to export"

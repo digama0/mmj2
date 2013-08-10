@@ -867,12 +867,15 @@ public class ProofWorksheet {
      * Renumbers each ProofWorkStmt according to an input renumberInterval and
      * alters each Hyp reference to conform to the new step numbers.
      * 
+     * @param renumberStart is the number to start at. Commonly equal to 1.
      * @param renumberInterval is the number to add to each new step number.
      *            Commonly equal to 1.
      */
-    public void renumberProofSteps(final int renumberInterval) {
+    public void renumberProofSteps(final int renumberStart,
+        final int renumberInterval)
+    {
 
-        int renumber = 100;
+        int renumber = renumberStart;
 
         final Map<String, String> renumberMap = new HashMap<String, String>(
             getProofWorkStmtListCnt() * 2);
@@ -884,8 +887,8 @@ public class ProofWorksheet {
             final ProofStepStmt renumberProofStepStmt = (ProofStepStmt)o;
             final String oldStep = renumberProofStepStmt.step;
 
-            renumber += renumberInterval;
             final String renumberStep = Integer.toString(renumber);
+            renumber += renumberInterval;
 
             if (!oldStep.equals(renumberStep)
                 && !oldStep.equals(PaConstants.QED_STEP_NBR))
@@ -1071,17 +1074,6 @@ public class ProofWorksheet {
             triggerLoadStructureException(PaConstants.ERRMSG_HDR_TOKEN_ERR_1
                 + nextToken);
 
-        final DelimitedTextParser stepHypRefParser = new DelimitedTextParser();
-        stepHypRefParser.setParseDelimiter(PaConstants.FIELD_DELIMITER_COLON);
-        stepHypRefParser.setQuoterEnabled(false);
-
-        String prefixField = null;
-        String stepField = null;
-        String hypField = null;
-        String refField = null;
-        String localRefField = null;
-        String extraField = null;
-
         stmtLoop: while (true) {
             if (nextToken.length() == 0) {
                 // eof
@@ -1153,7 +1145,7 @@ public class ProofWorksheet {
 
             final int origStepHypRefLength = nextToken.length();
 
-            prefixField = nextToken.substring(0, 1).toLowerCase();
+            String prefixField = nextToken.substring(0, 1).toLowerCase();
 
             if (prefixField.equals(PaConstants.COMMENT_STMT_TOKEN_PREFIX)) {
                 final CommentStmt x = new CommentStmt(this);
@@ -1167,47 +1159,38 @@ public class ProofWorksheet {
 
             // now work on ProofSteps, starting with step/hyp/ref
             // fields.
-            if (prefixField.equals(PaConstants.HYP_STEP_PREFIX))
-                stepHypRefParser.setParseString(nextToken.substring(1));
-            else {
+            if (!prefixField.equals(PaConstants.HYP_STEP_PREFIX))
                 prefixField = null;
-                stepHypRefParser.setParseString(nextToken);
-            }
+            final DelimitedTextParser stepHypRefParser = new DelimitedTextParser(
+                prefixField == null ? nextToken : nextToken.substring(1));
 
-            extraField = null;
-            refField = null;
-            localRefField = null;
-            stepField = stepHypRefParser.nextField();
-            if (stepField != null) {
-                hypField = stepHypRefParser.nextField();
-                if (hypField != null) {
-                    if (hypField.length() == 0)
-                        hypField = null;
-                    refField = stepHypRefParser.nextField();
-                    if (refField != null) {
-                        if (refField.length() == 0)
-                            refField = null;
-                        else if (refField.charAt(0) == PaConstants.LOCAL_REF_ESCAPE_CHAR)
-                        {
-                            if (refField.length() > 1)
-                                localRefField = refField.substring(1);
-                            else
-                                localRefField = "";
-                            refField = null;
-                        }
-                        extraField = stepHypRefParser.nextField();
-                    }
-                }
-                stepField = validateStepField(prefixField, // throws exception
-                    stepField);
-            }
-            else
+            stepHypRefParser
+                .setParseDelimiter(PaConstants.FIELD_DELIMITER_COLON);
+            stepHypRefParser.setQuoterEnabled(false);
+            final List<String> fields = stepHypRefParser.parseAll();
+
+            if (fields.isEmpty())
                 triggerLoadStructureException(PaConstants.ERRMSG_SHR_BAD_1
                     + getErrorLabelIfPossible() + PaConstants.ERRMSG_SHR_BAD_2
                     + (int)proofTextTokenizer.getCurrentLineNbr()
                     + PaConstants.ERRMSG_SHR_BAD_3 + nextToken);
-
-            if (extraField != null)
+            final String stepField = validateStepField(prefixField,
+                fields.get(0));
+            final String hypField = fields.size() > 1
+                && !fields.get(1).isEmpty() ? fields.get(1) : null;
+            String refField = null;
+            String localRefField = null;
+            if (fields.size() > 2 && !fields.get(2).isEmpty()) {
+                refField = fields.get(2);
+                if (refField.charAt(0) == PaConstants.LOCAL_REF_ESCAPE_CHAR) {
+                    if (refField.length() > 1)
+                        localRefField = refField.substring(1);
+                    else
+                        localRefField = "";
+                    refField = null;
+                }
+            }
+            if (fields.size() > 3)
                 triggerLoadStructureException(PaConstants.ERRMSG_SHR_BAD2_1
                     + getErrorLabelIfPossible() + PaConstants.ERRMSG_SHR_BAD2_2
                     + stepField + PaConstants.ERRMSG_SHR_BAD2_3
@@ -1419,7 +1402,6 @@ public class ProofWorksheet {
         return nextToken;
 
     }
-
     private boolean setInputCursorStmtIfHere(final ProofWorkStmt proofWorkStmt,
         final int inputCursorPos, final String nextToken,
         final Tokenizer proofTextTokenizer)
@@ -1789,7 +1771,7 @@ public class ProofWorksheet {
                 + getErrorLabelIfPossible()
                 + PaConstants.ERRMSG_STEP_NBR_MISSING_2);
 
-        String outputStep = stepField.toLowerCase();
+        final String outputStep = stepField.toLowerCase();
         if (outputStep.equals(PaConstants.QED_STEP_NBR)) {
             if (prefixField != null)
                 triggerLoadStructureException(PaConstants.ERRMSG_QED_HYP_STEP_1
@@ -1798,24 +1780,23 @@ public class ProofWorksheet {
                     + PaConstants.ERRMSG_QED_HYP_STEP_3);
             return outputStep;
         }
-
-        try {
-            final Integer stepInteger = Integer.valueOf(stepField);
-            if (stepInteger <= 0)
-                triggerLoadStructureException(PaConstants.ERRMSG_STEP_LE_0_1
-                    + getErrorLabelIfPossible()
-                    + PaConstants.ERRMSG_STEP_LE_0_2 + stepField
-                    + PaConstants.ERRMSG_STEP_LE_0_3);
-            updateNextGreatestStepNbr(stepInteger); // derive feature
-            outputStep = stepInteger.toString();
-        } catch (final NumberFormatException e) {
-            triggerLoadStructureException(PaConstants.ERRMSG_STEP_NOT_INT_1
-                + getErrorLabelIfPossible() + PaConstants.ERRMSG_STEP_NOT_INT_2
-                + stepField + PaConstants.ERRMSG_STEP_NOT_INT_3);
-        }
-
-        final ProofWorkStmt x = findMatchingStepNbr(outputStep);
-        if (x != null)
+        /*
+                try {
+                    final Integer stepInteger = Integer.valueOf(stepField);
+                    if (stepInteger <= 0)
+                        triggerLoadStructureException(PaConstants.ERRMSG_STEP_LE_0_1
+                            + getErrorLabelIfPossible()
+                            + PaConstants.ERRMSG_STEP_LE_0_2 + stepField
+                            + PaConstants.ERRMSG_STEP_LE_0_3);
+                    updateNextGreatestStepNbr(stepInteger); // derive feature
+                    outputStep = stepInteger.toString();
+                } catch (final NumberFormatException e) {
+                    triggerLoadStructureException(PaConstants.ERRMSG_STEP_NOT_INT_1
+                        + getErrorLabelIfPossible() + PaConstants.ERRMSG_STEP_NOT_INT_2
+                        + stepField + PaConstants.ERRMSG_STEP_NOT_INT_3);
+                }
+        */
+        if (findMatchingStepNbr(outputStep) != null)
             triggerLoadStructureException(PaConstants.ERRMSG_STEP_NBR_DUP_1
                 + getErrorLabelIfPossible() + PaConstants.ERRMSG_STEP_NBR_DUP_2
                 + outputStep + PaConstants.ERRMSG_STEP_NBR_DUP_3);

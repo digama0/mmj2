@@ -168,13 +168,10 @@ public class Section {
      */
     @Override
     public String toString() {
-        return LangConstants.SECTION_TOSTRING_LITERAL_1
-            + sectionChapter.getChapterNbr()
-            + LangConstants.SECTION_TOSTRING_LITERAL_2 + getSectionNbr()
-            + getSectionCategoryDisplayCaption()
-            + LangConstants.SECTION_TOSTRING_LITERAL_3 + getSectionTitle()
-            + LangConstants.SECTION_TOSTRING_LITERAL_4
-            + LangConstants.SECTION_TOSTRING_LITERAL_5 + getLastMObjNbr();
+        return LangException.format(LangConstants.SECTION_TOSTRING_LITERAL,
+            sectionChapter.getChapterNbr(), getSectionNbr(),
+            getSectionCategoryDisplayCaption(), getSectionTitle(),
+            getLastMObjNbr());
     }
 
     /**

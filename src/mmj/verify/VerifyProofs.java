@@ -65,6 +65,7 @@ package mmj.verify;
 import java.util.*;
 
 import mmj.lang.*;
+import mmj.pa.PaConstants;
 
 /**
  * VerifyProofs implements the proof verification process described in
@@ -476,40 +477,41 @@ public class VerifyProofs implements ProofVerifier {
         throws VerifyException
     {
 
-        List<ProofDerivationStepEntry> derivStepList = null;
-
         final LogHyp[] theoremLogHypArray = theorem.getLogHypArray();
-        final ProofDerivationStepEntry[] theoremHypStepArray = new ProofDerivationStepEntry[theoremLogHypArray.length];
-        for (int i = 0; i < theoremLogHypArray.length; i++) {
+        final List<ProofDerivationStepEntry> derivStepList = new ArrayList<ProofDerivationStepEntry>(
+            theoremLogHypArray.length);
+
+        int renumberStep = PaConstants.PROOF_STEP_RENUMBER_START;
+        for (final LogHyp element : theoremLogHypArray) {
             final ProofDerivationStepEntry e = new ProofDerivationStepEntry();
             e.isHyp = true;
-            e.step = Integer.toString(i + 1);
+            e.step = Integer.toString(renumberStep);
+            renumberStep += PaConstants.PROOF_STEP_RENUMBER_INTERVAL;
             e.hypStep = new String[0];
-            e.refLabel = theoremLogHypArray[i].getLabel();
-            e.formula = theoremLogHypArray[i].getFormula();
-            e.formulaParseTree = theoremLogHypArray[i].getExprParseTree();
+            e.refLabel = element.getLabel();
+            e.formula = element.getFormula();
+            e.formulaParseTree = element.getExprParseTree();
 
-            theoremHypStepArray[i] = e;
+            derivStepList.add(e);
         }
 
-        boolean needToRetry = true;
         reInitArrays(0);
-        while (needToRetry)
+        while (true) {
             try {
                 loadTheoremGlobalVerifyVars(theorem);
-                derivStepList = new ArrayList<ProofDerivationStepEntry>();
                 loadProofDerivStepList(theorem, derivStepList,
-                    theoremHypStepArray, exportFormatUnified, hypsRandomized,
-                    provableLogicStmtTyp);
-                needToRetry = false;
+                    exportFormatUnified, hypsRandomized, provableLogicStmtTyp);
+                break;
             } catch (final IllegalArgumentException e) {}
+            derivStepList.subList(theoremLogHypArray.length,
+                derivStepList.size()).clear();
+        }
 
         ProofDerivationStepEntry.computeProofLevels(derivStepList);
 
         return derivStepList;
 
     }
-
     /**
      * Loads an array list of ProofDerivationStepEntry objects for the
      * non-syntax assertion and the logical hypothesis steps of the proof.
@@ -521,8 +523,7 @@ public class VerifyProofs implements ProofVerifier {
      * 
      * @param theorem the theorem whose proof will be exported
      * @param derivStepList the list to load with ProofDerivationStepEntry
-     *            objects
-     * @param theoremHypStepArray the hypStepArray for the Theorem
+     *            objects, already loaded with the proof's hyp steps
      * @param exportFormatUnified set to true if proof step label is output on
      *            each step (else, it is only output on Logical Hypothesis
      *            steps.)
@@ -534,18 +535,16 @@ public class VerifyProofs implements ProofVerifier {
      */
     private void loadProofDerivStepList(final Theorem theorem,
         final List<ProofDerivationStepEntry> derivStepList,
-        final ProofDerivationStepEntry[] theoremHypStepArray,
         final boolean exportFormatUnified, final boolean hypsRandomized,
         final Cnst provableLogicStmtTyp) throws VerifyException
     {
 
-        for (final ProofDerivationStepEntry element : theoremHypStepArray)
-            derivStepList.add(element);
-
+        final int numHyps = derivStepList.size();
+        int stepName = PaConstants.PROOF_STEP_RENUMBER_START + numHyps
+            * PaConstants.PROOF_STEP_RENUMBER_INTERVAL;
         final Stack<ProofDerivationStepEntry> undischargedStack = new Stack<ProofDerivationStepEntry>();
 
-        nextStep: for (stepNbr = 0; stepNbr < proof.length; stepNbr++) {
-
+        for (stepNbr = 0; stepNbr < proof.length; stepNbr++) {
             if (proof[stepNbr] == null)
                 raiseVerifyException(Integer.toString(stepNbr + 1), " ",
                     ProofConstants.ERRMSG_PROOF_STEP_INCOMPLETE);
@@ -556,48 +555,40 @@ public class VerifyProofs implements ProofVerifier {
                 pStack[pStackCnt++] = stepFormula;
                 if (proof[stepNbr].isLogHyp()) {
                     int i = 0;
-                    while (i < theoremHypStepArray.length) {
-                        if (stepLabel.equals(theoremHypStepArray[i].refLabel)) {
-                            undischargedStack.push(theoremHypStepArray[i]);
+                    for (; i < numHyps; i++)
+                        if (stepLabel.equals(derivStepList.get(i).refLabel)) {
+                            undischargedStack.push(derivStepList.get(i));
                             break;
                         }
-                        ++i;
-                    }
-                    if (i >= theoremHypStepArray.length)
-                        raiseVerifyException(
-                            Integer.toString(stepNbr + 1),
+                    if (i >= numHyps)
+                        raiseVerifyException(Integer.toString(stepNbr + 1),
                             stepLabel,
-                            ProofConstants.ERRMSG_BOGUS_PROOF_LOGHYP_STMT_1
-                                + proofStmtLabel
-                                + ProofConstants.ERRMSG_BOGUS_PROOF_LOGHYP_STMT_2
-                                + stepLabel
-                                + ProofConstants.ERRMSG_BOGUS_PROOF_LOGHYP_STMT_3);
+                            ProofConstants.ERRMSG_BOGUS_PROOF_LOGHYP_STMT,
+                            proofStmtLabel, stepLabel);
                 }
-                continue nextStep;
+                continue;
             }
 
             stepAssrt = (Assrt)proof[stepNbr];
             stepFrame = stepAssrt.getMandFrame();
             if (stepFrame.hypArray.length == 0) { // constant
                 pStack[pStackCnt++] = stepFormula;
-                if (stepFormula.getTyp() != provableLogicStmtTyp
-                    || stepAssrt.isAxiom()
-                    && ((Axiom)stepAssrt).getIsSyntaxAxiom())
+                if (stepFormula.getTyp() == provableLogicStmtTyp
+                    && !(stepAssrt.isAxiom() && ((Axiom)stepAssrt)
+                        .getIsSyntaxAxiom()))
                 {
-                    // ok, bypass syntax axioms and syntax theorems
-                }
-                else {
                     final ProofDerivationStepEntry e = new ProofDerivationStepEntry();
                     e.isHyp = false;
-                    e.step = Integer.toString(derivStepList.size() + 1);
+                    e.step = Integer.toString(stepName);
                     e.hypStep = new String[0];
                     if (exportFormatUnified)
                         e.refLabel = stepLabel;
                     e.formula = stepFormula;
                     derivStepList.add(e);
                     undischargedStack.push(e);
+                    stepName += PaConstants.PROOF_STEP_RENUMBER_INTERVAL;
                 }
-                continue nextStep;
+                continue;
             }
 
             findUniqueSubstMapping();
@@ -610,24 +601,21 @@ public class VerifyProofs implements ProofVerifier {
             stepSubstFormula = applySubstMapping(stepFormula);
             pStack[pStackCnt++] = stepSubstFormula;
 
-            if (stepFormula.getTyp() != provableLogicStmtTyp
-                || stepAssrt.isAxiom() && ((Axiom)stepAssrt).getIsSyntaxAxiom())
+            if (stepFormula.getTyp() == provableLogicStmtTyp
+                && !(stepAssrt.isAxiom() && ((Axiom)stepAssrt)
+                    .getIsSyntaxAxiom()))
             {
-                // ok, bypass syntax axioms and syntax theorems
-            }
-            else {
                 final ProofDerivationStepEntry e = new ProofDerivationStepEntry();
                 e.isHyp = false;
-                e.step = Integer.toString(derivStepList.size() + 1);
+                e.step = Integer.toString(stepName);
                 final int logHypCnt = stepAssrt.getLogHypArrayLength();
                 e.hypStep = new String[logHypCnt];
                 int i = logHypCnt;
                 if (i > undischargedStack.size())
                     raiseVerifyException(Integer.toString(stepNbr + 1),
                         stepLabel,
-                        ProofConstants.ERRMSG_LOGHYP_STACK_DEFICIENT_1
-                            + proofStmtLabel
-                            + ProofConstants.ERRMSG_LOGHYP_STACK_DEFICIENT_1);
+                        ProofConstants.ERRMSG_LOGHYP_STACK_DEFICIENT,
+                        proofStmtLabel);
                 while (--i >= 0) {
                     final ProofDerivationStepEntry h = undischargedStack.pop();
                     e.hypStep[i] = h.step;
@@ -639,6 +627,7 @@ public class VerifyProofs implements ProofVerifier {
                 e.formula = stepSubstFormula;
                 derivStepList.add(e);
                 undischargedStack.push(e);
+                stepName += PaConstants.PROOF_STEP_RENUMBER_INTERVAL;
             }
         }
 
@@ -657,13 +646,9 @@ public class VerifyProofs implements ProofVerifier {
                 ProofConstants.ERRMSG_FINAL_STACK_ENTRY_UNEQUAL2
                     + pStack[0].toString());
 
-//      PATCH: Release 11/01/2011 bugfix
-//      if (derivStepList.isEmpty()) {
-        if (derivStepList.size() <= theoremHypStepArray.length)
-            // END-PATCH
+        if (derivStepList.size() <= numHyps)
             raiseVerifyException(Integer.toString(stepNbr), " ",
-                ProofConstants.ERRMSG_NO_DERIV_STEPS_CREATED_1 + proofStmtLabel
-                    + ProofConstants.ERRMSG_NO_DERIV_STEPS_CREATED_2);
+                ProofConstants.ERRMSG_NO_DERIV_STEPS_CREATED, proofStmtLabel);
         else {
             final int qedIndex = derivStepList.size() - 1;
             final ProofDerivationStepEntry qedStep = derivStepList
@@ -672,7 +657,6 @@ public class VerifyProofs implements ProofVerifier {
             qedStep.formulaParseTree = theorem.getExprParseTree();
         }
     }
-
     private void doRandomizeHypSteps(final String[] hypStep) {
         if (hypStep.length < 2)
             return;
@@ -1122,12 +1106,13 @@ public class VerifyProofs implements ProofVerifier {
     }
 
     public void raiseVerifyException(final String stepNbrIndexString,
-        final String stepLabel, final String errmsg) throws VerifyException
+        final String stepLabel, final String errmsg, final Object... args)
+        throws VerifyException
     {
-        throw new VerifyException(errmsg + ProofConstants.ERRMSG_THEOREM_LABEL
-            + proofStmtLabel + ProofConstants.ERRMSG_THEOREM_STEP_NBR
-            + stepNbrIndexString + ProofConstants.ERRMSG_THEOREM_STEP_LABEL
-            + stepLabel);
+        throw new VerifyException(LangException.format(errmsg, args)
+            + ProofConstants.ERRMSG_THEOREM_LABEL + proofStmtLabel
+            + ProofConstants.ERRMSG_THEOREM_STEP_NBR + stepNbrIndexString
+            + ProofConstants.ERRMSG_THEOREM_STEP_LABEL + stepLabel);
     }
 
     // *

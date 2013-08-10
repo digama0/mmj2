@@ -244,12 +244,11 @@ public class Theorem extends Assrt {
                 stepTbl = stmtTbl.get(stepS);
                 if (stepTbl == null)
                     throw new LangException(
-                        LangConstants.ERRMSG_PROOF_STEP_LABEL_NOTFND + stepS);
+                        LangConstants.ERRMSG_PROOF_STEP_LABEL_NOTFND, stepS);
                 if (stepTbl.seq >= theoremSeq)
                     throw new LangException(
-                        LangConstants.ERRMSG_FORWARD_PROOF_STEP_LABEL + stepS
-                            + LangConstants.ERRMSG_FORWARD_PROOF_STEP_LABEL_2
-                            + getLabel());
+                        LangConstants.ERRMSG_FORWARD_PROOF_STEP_LABEL, stepS,
+                        getLabel());
                 if (stepTbl.isHyp())
                     /**
                      * this is a little "tricky" -- "active" applies only to
@@ -260,8 +259,7 @@ public class Theorem extends Assrt {
                     else if (isProofStepInExtendedFrame(stepTbl)) {}
                     else
                         throw new LangException(
-                            LangConstants.ERRMSG_PROOF_STEP_HYP_INACTIVE
-                                + stepS);
+                            LangConstants.ERRMSG_PROOF_STEP_HYP_INACTIVE, stepS);
                 proofArray[i] = stepTbl;
             }
         }
@@ -350,9 +348,8 @@ public class Theorem extends Assrt {
         final int maxLength, final ParseNode[] child)
     {
 
-        throw new IllegalArgumentException(
-            LangConstants.ERRMSG_BAD_PARSE_STMT_1 + getLabel()
-                + LangConstants.ERRMSG_BAD_PARSE_STMT_2);
+        throw new IllegalArgumentException(LangException.format(
+            LangConstants.ERRMSG_BAD_PARSE_STMT, getLabel()));
 
         // return -1;
     }
@@ -409,8 +406,8 @@ public class Theorem extends Assrt {
                         optDjVarsUpdateList.add(djVars);
                     else
                         throw new LangException(
-                            LangConstants.ERRMSG_DJ_VARS_VARS_NOT_DEF_IN_EXT_FRAME
-                                + djVars.toString());
+                            LangConstants.ERRMSG_DJ_VARS_VARS_NOT_DEF_IN_EXT_FRAME,
+                            djVars);
                 }
         }
     }

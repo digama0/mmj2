@@ -219,9 +219,8 @@ public class LogHyp extends Hyp {
         final int maxLength, final ParseNode[] child)
     {
 
-        throw new IllegalArgumentException(
-            LangConstants.ERRMSG_BAD_PARSE_STMT_1 + getLabel()
-                + LangConstants.ERRMSG_BAD_PARSE_STMT_2);
+        throw new IllegalArgumentException(LangException.format(
+            LangConstants.ERRMSG_BAD_PARSE_STMT, getLabel()));
 
         // return -1;
     }

@@ -1,21 +1,28 @@
-// Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
-// Jad home page: http://www.kpdus.com/jad.html
-// Decompiler options: packimports(3)
-// Source File Name:   VarHypSubst.java
+//********************************************************************/
+//* Copyright (C) 2005-2011                                          */
+//* MEL O'CAT  X178G243 (at) yahoo (dot) com                         */
+//* License terms: GNU General Public License Version 2              */
+//*                or any later version                              */
+//********************************************************************/
+//*4567890123456 (71-character line to adjust editor window) 23456789*/
+
+/*
+ * VarHypSubst.java  0.01 20/09/2012
+ *
+ * Version 0.01:
+ * Aug-09-2013: new from decompilation.
+ */
 
 package mmj.lang;
 
-// Referenced classes of package mmj.lang:
-//            VarHyp, ParseNode
-
 public class VarHypSubst {
-    public static VarHypSubst END_OF_LIST = new VarHypSubst(null, null);
+    public static final VarHypSubst END_OF_LIST = new VarHypSubst(null, null);
 
     public VarHyp targetVarHyp;
     public ParseNode sourceNode;
 
-    public VarHypSubst(final VarHyp varhyp, final ParseNode parsenode) {
-        targetVarHyp = varhyp;
-        sourceNode = parsenode;
+    public VarHypSubst(final VarHyp target, final ParseNode source) {
+        targetVarHyp = target;
+        sourceNode = source;
     }
 }

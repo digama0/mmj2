@@ -1,7 +1,17 @@
-// Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
-// Jad home page: http://www.kpdus.com/jad.html
-// Decompiler options: packimports(3)
-// Source File Name:   SearchSelectionItem.java
+//********************************************************************/
+//* Copyright (C) 2005-2011                                          */
+//* MEL O'CAT  X178G243 (at) yahoo (dot) com                         */
+//* License terms: GNU General Public License Version 2              */
+//*                or any later version                              */
+//********************************************************************/
+//*4567890123456 (71-character line to adjust editor window) 23456789*/
+
+/*
+ * {{file}}.java  0.01 20/09/2012
+ *
+ * Version 0.01:
+ * Aug-09-2013: new from decompilation.
+ */
 
 package mmj.search;
 
@@ -10,231 +20,218 @@ import java.util.Comparator;
 import mmj.lang.Assrt;
 
 public class SearchSelectionItem {
-
-    public SearchSelectionItem(final Assrt assrt1, final String[] as,
-        final int i)
-    {
-        score = 0;
-        parseTreeDepth = 0;
-        formulaLength = 0;
-        popularity = 0;
-        nbrHyps = 0;
-        mObjSeq = 0;
-        label = "";
-        assrt = assrt1;
-        selection = as;
-        score = i;
-        if (i != -1) {
-            parseTreeDepth = assrt1.getExprParseTree().getMaxDepth();
-            formulaLength = assrt1.getFormula().getCnt();
-            popularity = assrt1.getNbrProofRefs();
-            nbrHyps = assrt1.getLogHypArrayLength();
-            mObjSeq = assrt1.getSeq();
-            label = assrt1.getLabel();
-        }
-    }
-
     Assrt assrt;
     String[] selection;
     int score;
-    int parseTreeDepth;
-    int formulaLength;
-    int popularity;
-    int nbrHyps;
-    int mObjSeq;
-    String label;
-    public static final Comparator<SearchSelectionItem> OUTPUT_SORT_1 = new Comparator<SearchSelectionItem>()
+    int parseTreeDepth = 0;
+    int formulaLength = 0;
+    int popularity = 0;
+    int nbrHyps = 0;
+    int mObjSeq = 0;
+    String label = "";
+
+    public SearchSelectionItem(final Assrt assrt, final String[] selection,
+        final int score)
     {
-        public int compare(final SearchSelectionItem o1,
-            final SearchSelectionItem o2)
-        {
-            int i = o2.score - o1.score;
-            if (i != 0)
-                return i;
-            i = o2.parseTreeDepth - o1.parseTreeDepth;
-            if (i != 0)
-                return i;
-            i = o2.formulaLength - o1.formulaLength;
-            if (i != 0)
-                return i;
-            i = o2.popularity - o1.popularity;
-            if (i != 0)
-                return i;
-            i = o1.nbrHyps - o2.nbrHyps;
-            if (i != 0)
-                return i;
-            else
-                return o2.mObjSeq - o1.mObjSeq;
+        this.assrt = assrt;
+        this.selection = selection;
+        this.score = score;
+        if (score != -1) {
+            parseTreeDepth = assrt.getExprParseTree().getMaxDepth();
+            formulaLength = assrt.getFormula().getCnt();
+            popularity = assrt.getNbrProofRefs();
+            nbrHyps = assrt.getLogHypArrayLength();
+            mObjSeq = assrt.getSeq();
+            label = assrt.getLabel();
         }
+    }
 
-    };
-    public static final Comparator<SearchSelectionItem> OUTPUT_SORT_2 = new Comparator<SearchSelectionItem>()
-    {
-        public int compare(final SearchSelectionItem o1,
-            final SearchSelectionItem o2)
-        {
-            int i = o2.score - o1.score;
-            if (i != 0)
-                return i;
-            i = o2.popularity - o1.popularity;
-            if (i != 0)
-                return i;
-            i = o2.parseTreeDepth - o1.parseTreeDepth;
-            if (i != 0)
-                return i;
-            i = o2.formulaLength - o1.formulaLength;
-            if (i != 0)
-                return i;
-            i = o1.nbrHyps - o2.nbrHyps;
-            if (i != 0)
-                return i;
-            else
-                return o2.mObjSeq - o1.mObjSeq;
-        }
+    @SuppressWarnings("unchecked")
+    public static final Comparator<SearchSelectionItem>[] OUTPUT_SORTS = new Comparator[]{
+            null, // no sort 0
+            // Sort #1: Score(D)/Complexity(D)/Popularity(D)/Nbr Hyps/MObjSeq(D)
+            new Comparator<SearchSelectionItem>() {
+                public int compare(final SearchSelectionItem o1,
+                    final SearchSelectionItem o2)
+                {
+                    int i = o2.score - o1.score;
+                    if (i != 0)
+                        return i;
+                    i = o2.parseTreeDepth - o1.parseTreeDepth;
+                    if (i != 0)
+                        return i;
+                    i = o2.formulaLength - o1.formulaLength;
+                    if (i != 0)
+                        return i;
+                    i = o2.popularity - o1.popularity;
+                    if (i != 0)
+                        return i;
+                    i = o1.nbrHyps - o2.nbrHyps;
+                    if (i != 0)
+                        return i;
+                    else
+                        return o2.mObjSeq - o1.mObjSeq;
+                }
+            },
+            // Sort #2: Score(D)/Popularity(D)/Complexity(D)/Nbr Hyps/MObjSeq(D)
+            new Comparator<SearchSelectionItem>() {
+                public int compare(final SearchSelectionItem o1,
+                    final SearchSelectionItem o2)
+                {
+                    int i = o2.score - o1.score;
+                    if (i != 0)
+                        return i;
+                    i = o2.popularity - o1.popularity;
+                    if (i != 0)
+                        return i;
+                    i = o2.parseTreeDepth - o1.parseTreeDepth;
+                    if (i != 0)
+                        return i;
+                    i = o2.formulaLength - o1.formulaLength;
+                    if (i != 0)
+                        return i;
+                    i = o1.nbrHyps - o2.nbrHyps;
+                    if (i != 0)
+                        return i;
+                    else
+                        return o2.mObjSeq - o1.mObjSeq;
+                }
+            },
+            // Sort #3: Score(D)/Nbr Hyps/Complexity(D)/Popularity(D)/MObjSeq(D)
+            new Comparator<SearchSelectionItem>() {
+                public int compare(final SearchSelectionItem o1,
+                    final SearchSelectionItem o2)
+                {
+                    int i = o2.score - o1.score;
+                    if (i != 0)
+                        return i;
+                    i = o1.nbrHyps - o2.nbrHyps;
+                    if (i != 0)
+                        return i;
+                    i = o2.parseTreeDepth - o1.parseTreeDepth;
+                    if (i != 0)
+                        return i;
+                    i = o2.formulaLength - o1.formulaLength;
+                    if (i != 0)
+                        return i;
+                    i = o2.popularity - o1.popularity;
+                    if (i != 0)
+                        return i;
+                    else
+                        return o2.mObjSeq - o1.mObjSeq;
+                }
 
-    };
-    public static final Comparator<SearchSelectionItem> OUTPUT_SORT_3 = new Comparator<SearchSelectionItem>()
-    {
-        public int compare(final SearchSelectionItem o1,
-            final SearchSelectionItem o2)
-        {
-            int i = o2.score - o1.score;
-            if (i != 0)
-                return i;
-            i = o1.nbrHyps - o2.nbrHyps;
-            if (i != 0)
-                return i;
-            i = o2.parseTreeDepth - o1.parseTreeDepth;
-            if (i != 0)
-                return i;
-            i = o2.formulaLength - o1.formulaLength;
-            if (i != 0)
-                return i;
-            i = o2.popularity - o1.popularity;
-            if (i != 0)
-                return i;
-            else
-                return o2.mObjSeq - o1.mObjSeq;
-        }
+            },
+            // Sort #4: Score(D)/Nbr Hyps/Popularity(D)/Complexity(D)/MObjSeq(D)
+            new Comparator<SearchSelectionItem>() {
+                public int compare(final SearchSelectionItem o1,
+                    final SearchSelectionItem o2)
+                {
+                    int i = o2.score - o1.score;
+                    if (i != 0)
+                        return i;
+                    i = o1.nbrHyps - o2.nbrHyps;
+                    if (i != 0)
+                        return i;
+                    i = o2.popularity - o1.popularity;
+                    if (i != 0)
+                        return i;
+                    i = o2.parseTreeDepth - o1.parseTreeDepth;
+                    if (i != 0)
+                        return i;
+                    i = o2.formulaLength - o1.formulaLength;
+                    if (i != 0)
+                        return i;
+                    else
+                        return o2.mObjSeq - o1.mObjSeq;
+                }
+            },
+            // Sort #5: Score(D)/Complexity(D)/MObjSeq(D)
+            new Comparator<SearchSelectionItem>() {
+                public int compare(final SearchSelectionItem o1,
+                    final SearchSelectionItem o2)
+                {
+                    int i = o2.score - o1.score;
+                    if (i != 0)
+                        return i;
+                    i = o2.parseTreeDepth - o1.parseTreeDepth;
+                    if (i != 0)
+                        return i;
+                    i = o2.formulaLength - o1.formulaLength;
+                    if (i != 0)
+                        return i;
+                    else
+                        return o2.mObjSeq - o1.mObjSeq;
+                }
+            },
+            // Sort #6: Score(D)/Popularity(D)/MObjSeq(D)
+            new Comparator<SearchSelectionItem>() {
+                public int compare(final SearchSelectionItem o1,
+                    final SearchSelectionItem o2)
+                {
+                    int i = o2.score - o1.score;
+                    if (i != 0)
+                        return i;
+                    i = o2.popularity - o1.popularity;
+                    if (i != 0)
+                        return i;
+                    else
+                        return o2.mObjSeq - o1.mObjSeq;
+                }
 
-    };
-    public static final Comparator<SearchSelectionItem> OUTPUT_SORT_4 = new Comparator<SearchSelectionItem>()
-    {
-        public int compare(final SearchSelectionItem o1,
-            final SearchSelectionItem o2)
-        {
-            int i = o2.score - o1.score;
-            if (i != 0)
-                return i;
-            i = o1.nbrHyps - o2.nbrHyps;
-            if (i != 0)
-                return i;
-            i = o2.popularity - o1.popularity;
-            if (i != 0)
-                return i;
-            i = o2.parseTreeDepth - o1.parseTreeDepth;
-            if (i != 0)
-                return i;
-            i = o2.formulaLength - o1.formulaLength;
-            if (i != 0)
-                return i;
-            else
-                return o2.mObjSeq - o1.mObjSeq;
-        }
-
-    };
-    public static final Comparator<SearchSelectionItem> OUTPUT_SORT_5 = new Comparator<SearchSelectionItem>()
-    {
-        public int compare(final SearchSelectionItem o1,
-            final SearchSelectionItem o2)
-        {
-            int i = o2.score - o1.score;
-            if (i != 0)
-                return i;
-            i = o2.parseTreeDepth - o1.parseTreeDepth;
-            if (i != 0)
-                return i;
-            i = o2.formulaLength - o1.formulaLength;
-            if (i != 0)
-                return i;
-            else
-                return o2.mObjSeq - o1.mObjSeq;
-        }
-
-    };
-    public static final Comparator<SearchSelectionItem> OUTPUT_SORT_6 = new Comparator<SearchSelectionItem>()
-    {
-        public int compare(final SearchSelectionItem o1,
-            final SearchSelectionItem o2)
-        {
-            int i = o2.score - o1.score;
-            if (i != 0)
-                return i;
-            i = o2.popularity - o1.popularity;
-            if (i != 0)
-                return i;
-            else
-                return o2.mObjSeq - o1.mObjSeq;
-        }
-
-    };
-    public static final Comparator<SearchSelectionItem> OUTPUT_SORT_7 = new Comparator<SearchSelectionItem>()
-    {
-        public int compare(final SearchSelectionItem o1,
-            final SearchSelectionItem o2)
-        {
-            int i = o2.score - o1.score;
-            if (i != 0)
-                return i;
-            i = o1.nbrHyps - o2.nbrHyps;
-            if (i != 0)
-                return i;
-            else
-                return o2.mObjSeq - o1.mObjSeq;
-        }
-
-    };
-    public static final Comparator<SearchSelectionItem> OUTPUT_SORT_8 = new Comparator<SearchSelectionItem>()
-    {
-        public int compare(final SearchSelectionItem o1,
-            final SearchSelectionItem o2)
-        {
-            int i = o2.score - o1.score;
-            if (i != 0)
-                return i;
-            i = o1.nbrHyps - o2.nbrHyps;
-            if (i != 0)
-                return i;
-            else
-                return o1.mObjSeq - o2.mObjSeq;
-        }
-
-    };
-    public static final Comparator<SearchSelectionItem> OUTPUT_SORT_9 = new Comparator<SearchSelectionItem>()
-    {
-        public int compare(final SearchSelectionItem o1,
-            final SearchSelectionItem o2)
-        {
-            final int i = o2.score - o1.score;
-            if (i != 0)
-                return i;
-            else
-                return o2.mObjSeq - o1.mObjSeq;
-        }
-
-    };
-    public static final Comparator<SearchSelectionItem> OUTPUT_SORT_10 = new Comparator<SearchSelectionItem>()
-    {
-        public int compare(final SearchSelectionItem o1,
-            final SearchSelectionItem o2)
-        {
-            final int i = o2.score - o1.score;
-            if (i != 0)
-                return i;
-            else
-                return o1.label.compareTo(o2.label);
-        }
-
-    };
-
+            },
+            // Sort #7: Score(D)/Nbr Hyps/MObjSeq(D)
+            new Comparator<SearchSelectionItem>() {
+                public int compare(final SearchSelectionItem o1,
+                    final SearchSelectionItem o2)
+                {
+                    int i = o2.score - o1.score;
+                    if (i != 0)
+                        return i;
+                    i = o1.nbrHyps - o2.nbrHyps;
+                    if (i != 0)
+                        return i;
+                    else
+                        return o2.mObjSeq - o1.mObjSeq;
+                }
+            },
+            // Sort #8: Score(D)/Nbr Hyps/MObjSeq
+            new Comparator<SearchSelectionItem>() {
+                public int compare(final SearchSelectionItem o1,
+                    final SearchSelectionItem o2)
+                {
+                    int i = o2.score - o1.score;
+                    if (i != 0)
+                        return i;
+                    i = o1.nbrHyps - o2.nbrHyps;
+                    if (i != 0)
+                        return i;
+                    else
+                        return o1.mObjSeq - o2.mObjSeq;
+                }
+            },
+            // Sort #9: Score(D)/MObjSeq(D)
+            new Comparator<SearchSelectionItem>() {
+                public int compare(final SearchSelectionItem o1,
+                    final SearchSelectionItem o2)
+                {
+                    final int i = o2.score - o1.score;
+                    if (i != 0)
+                        return i;
+                    else
+                        return o2.mObjSeq - o1.mObjSeq;
+                }
+            },
+            // Sort #10: Score(D)/Label
+            new Comparator<SearchSelectionItem>() {
+                public int compare(final SearchSelectionItem o1,
+                    final SearchSelectionItem o2)
+                {
+                    final int i = o2.score - o1.score;
+                    if (i != 0)
+                        return i;
+                    else
+                        return o1.label.compareTo(o2.label);
+                }
+            }};
 }

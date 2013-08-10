@@ -154,14 +154,14 @@ public class LogicalSystem implements SystemLoader {
         theoremLoaderCommitListeners = new LinkedList<TheoremLoaderCommitListener>();
 
         if (symTblInitialSize < LangConstants.SYM_TBL_INITIAL_SIZE_MINIMUM)
-            throw new IllegalArgumentException(
-                LangConstants.ERRMSG_SYM_TBL_TOO_SMALL
-                    + LangConstants.SYM_TBL_INITIAL_SIZE_MINIMUM);
+            throw new IllegalArgumentException(LangException.format(
+                LangConstants.ERRMSG_SYM_TBL_TOO_SMALL,
+                LangConstants.SYM_TBL_INITIAL_SIZE_MINIMUM));
 
         if (stmtTblInitialSize < LangConstants.STMT_TBL_INITIAL_SIZE_MINIMUM)
-            throw new IllegalArgumentException(
-                LangConstants.ERRMSG_STMT_TBL_TOO_SMALL
-                    + LangConstants.STMT_TBL_INITIAL_SIZE_MINIMUM);
+            throw new IllegalArgumentException(LangException.format(
+                LangConstants.ERRMSG_STMT_TBL_TOO_SMALL,
+                LangConstants.STMT_TBL_INITIAL_SIZE_MINIMUM));
 
         symTbl = new HashMap<String, Sym>(symTblInitialSize);
         stmtTbl = new HashMap<String, Stmt>(stmtTblInitialSize);
@@ -1036,18 +1036,13 @@ public class LogicalSystem implements SystemLoader {
                 g.reverseStmtTblUpdates(stmtTbl);
             return;
         } catch (final LangException e) {
-            abortMessage = 
-                LangConstants.ERRMSG_THEOREM_LOADER_ROLLBACK_FAILED_1 + " (1) "
-                    + errorMessage
-                    + LangConstants.ERRMSG_THEOREM_LOADER_ROLLBACK_FAILED_2
-
-                    + e.getMessage();
+            abortMessage = LangException.format(
+                LangConstants.ERRMSG_THEOREM_LOADER_ROLLBACK_FAILED, " (1) ",
+                errorMessage, e.getMessage());
         } catch (final IllegalArgumentException e) {
-            abortMessage = 
-                LangConstants.ERRMSG_THEOREM_LOADER_ROLLBACK_FAILED_1 + " (2) "
-                    + errorMessage
-                    + LangConstants.ERRMSG_THEOREM_LOADER_ROLLBACK_FAILED_2
-                    + e.getMessage();
+            abortMessage = LangException.format(
+                LangConstants.ERRMSG_THEOREM_LOADER_ROLLBACK_FAILED, " (2) ",
+                errorMessage, e.getMessage());
         }
         throw new IllegalArgumentException(abortMessage);
     }
@@ -1079,25 +1074,25 @@ public class LogicalSystem implements SystemLoader {
             for (final TheoremLoaderCommitListener l : theoremLoaderCommitListeners)
                 l.commit(mmtTheoremSet);
         } catch (final Exception e) {
-            throw new IllegalArgumentException(
-                LangConstants.ERRMSG_THEOREM_LOADER_COMMIT_FAILED
-                    + e.getMessage());
+            throw new IllegalArgumentException(LangException.format(
+                LangConstants.ERRMSG_THEOREM_LOADER_COMMIT_FAILED,
+                e.getMessage()));
         }
     }
 
     private void dupCheckSymAdd(final Sym existingSym) {
 
         if (existingSym != null)
-            throw new IllegalArgumentException(
-                LangConstants.ERRMSG_DUP_SYM_MAP_PUT_ATTEMPT
-                    + existingSym.getId());
+            throw new IllegalArgumentException(LangException.format(
+                LangConstants.ERRMSG_DUP_SYM_MAP_PUT_ATTEMPT,
+                existingSym.getId()));
     }
 
     private void dupCheckStmtAdd(final Stmt existingStmt) {
 
         if (existingStmt != null)
             throw new IllegalArgumentException(
-                LangConstants.ERRMSG_DUP_STMT_MAP_PUT_ATTEMPT
-                    + existingStmt.getLabel());
+                LangException.format(LangConstants.ERRMSG_DUP_STMT_MAP_PUT_ATTEMPT
+                    + existingStmt.getLabel()));
     }
 }

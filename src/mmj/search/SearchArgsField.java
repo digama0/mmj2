@@ -1,7 +1,17 @@
-// Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
-// Jad home page: http://www.kpdus.com/jad.html
-// Decompiler options: packimports(3)
-// Source File Name:   SearchArgsField.java
+//********************************************************************/
+//* Copyright (C) 2005-2011                                          */
+//* MEL O'CAT  X178G243 (at) yahoo (dot) com                         */
+//* License terms: GNU General Public License Version 2              */
+//*                or any later version                              */
+//********************************************************************/
+//*4567890123456 (71-character line to adjust editor window) 23456789*/
+
+/*
+ * SearchArgsField.java  0.01 20/09/2012
+ *
+ * Version 0.01:
+ * Aug-09-2013: new from decompilation.
+ */
 
 package mmj.search;
 
@@ -11,14 +21,12 @@ import mmj.pa.ProofAsst;
 import mmj.pa.ProofAsstPreferences;
 import mmj.verify.VerifyProofs;
 
-// Referenced classes of package mmj.search:
-//            SearchOptionsConstants, SearchOptionsFieldAttr, SearchOutput, CompiledSearchArgs,
-//            SearchMgr
-
 public abstract class SearchArgsField {
 
-    public SearchArgsField(final int i) {
-        fieldId = i;
+    protected final int fieldId;
+
+    public SearchArgsField(final int id) {
+        fieldId = id;
     }
 
     public int getFieldId() {
@@ -27,13 +35,12 @@ public abstract class SearchArgsField {
 
     public abstract String get();
 
-    public abstract void set(String s);
+    public abstract void set(String value);
 
-    public abstract void compile(CompiledSearchArgs csa,
-        SearchMgr searchMgr, BookManager bookManager,
-        SearchOutput searchOutput, ProofAsst proofAsst,
-        ProofAsstPreferences proofAsstPreferences, VerifyProofs verifyProofs,
-        Cnst cnst);
+    public abstract void compile(CompiledSearchArgs csa, SearchMgr searchMgr,
+        BookManager bookManager, SearchOutput searchOutput,
+        ProofAsst proofAsst, ProofAsstPreferences proofAsstPreferences,
+        VerifyProofs verifyProofs, Cnst cnst);
 
     public void unsupportedFeatureError(final SearchOutput searchOutput) {
         storeArgError(searchOutput, get().trim(),
@@ -53,6 +60,4 @@ public abstract class SearchArgsField {
             + SearchConstants.ERRMSG_ARG_ERROR_2 + s
             + SearchConstants.ERRMSG_ARG_ERROR_3 + s1 + s2);
     }
-
-    protected final int fieldId;
 }

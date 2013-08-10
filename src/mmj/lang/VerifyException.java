@@ -28,8 +28,9 @@ public class VerifyException extends LangException {
      * Contructor, {@code VerifyException} with error message.
      * 
      * @param errorMessage error message.
+     * @param args formatting arguments.
      */
-    public VerifyException(final String errorMessage) {
-        super(errorMessage);
+    public VerifyException(final String errorMessage, final Object... args) {
+        super(errorMessage, args);
     }
 }

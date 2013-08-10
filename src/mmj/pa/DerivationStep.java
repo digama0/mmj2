@@ -799,7 +799,7 @@ public class DerivationStep extends ProofStepStmt {
 
             String s;
             while ((s = hypParser.nextField()) != null)
-                list.add(s);
+                list.add(s.toLowerCase());
         }
 
         for (final String step : hypStep = list

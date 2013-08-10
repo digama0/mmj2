@@ -178,7 +178,7 @@ public class WorkVarManager {
 
             final int loc = definedTypCdList.indexOf(defTyp);
             if (loc == -1) {
-                declaredWorkVarPrefix[i] = LangConstants.WORK_VAR_DEFAULT_PREFIX_PREFIX
+                declaredWorkVarPrefix[i] = LangConstants.WORK_VAR_DEFAULT_PREFIX
                     + defTyp.getId().substring(0, 1).toUpperCase();
 
                 declaredNbrWorkVars[i] = LangConstants.WORK_VAR_DEFAULT_NBR_FOR_TYP_CD;
@@ -241,8 +241,7 @@ public class WorkVarManager {
         }
 
         throw new VerifyException(
-            LangConstants.ERRMSG_DEFINE_WORK_VAR_TYPE_BAD_1 + s
-                + LangConstants.ERRMSG_DEFINE_WORK_VAR_TYPE_BAD_2);
+            LangConstants.ERRMSG_DEFINE_WORK_VAR_TYPE_BAD, s);
 
     }
 
@@ -271,8 +270,7 @@ public class WorkVarManager {
             s = "";
 
         throw new VerifyException(
-            LangConstants.ERRMSG_DEFINE_WORK_VAR_PREFIX_BAD_1 + s
-                + LangConstants.ERRMSG_DEFINE_WORK_VAR_PREFIX_BAD_2);
+            LangConstants.ERRMSG_DEFINE_WORK_VAR_PREFIX_BAD, s);
     }
 
     /**
@@ -293,11 +291,9 @@ public class WorkVarManager {
         if (nbrWorkVarsIn < LangConstants.NBR_WORK_VARS_FOR_TYPE_MIN
             || nbrWorkVarsIn > LangConstants.NBR_WORK_VARS_FOR_TYPE_MAX)
             throw new VerifyException(
-                LangConstants.ERRMSG_DEFINE_WORK_VAR_NBR_BAD_1 + nbrWorkVarsIn
-                    + LangConstants.ERRMSG_DEFINE_WORK_VAR_NBR_BAD_2
-                    + LangConstants.NBR_WORK_VARS_FOR_TYPE_MIN
-                    + LangConstants.ERRMSG_DEFINE_WORK_VAR_NBR_BAD_3
-                    + LangConstants.NBR_WORK_VARS_FOR_TYPE_MAX);
+                LangConstants.ERRMSG_DEFINE_WORK_VAR_NBR_BAD, nbrWorkVarsIn,
+                LangConstants.NBR_WORK_VARS_FOR_TYPE_MIN,
+                LangConstants.NBR_WORK_VARS_FOR_TYPE_MAX);
 
         return Integer.valueOf(nbrWorkVarsIn);
     }
@@ -370,7 +366,7 @@ public class WorkVarManager {
 
         if (workVarIn == null || workVarIn.length() == 0)
             throw new IllegalArgumentException(
-                LangConstants.ERRMSG_BOGUS_WORK_VAR_IN_ALLOC_1);
+                LangConstants.ERRMSG_BOGUS_WORK_VAR_IN_ALLOC);
 
         String suffix;
         int suffixNbr;
@@ -449,10 +445,8 @@ public class WorkVarManager {
                 return alloc(i, j);
 
         throw new VerifyException(
-            LangConstants.ERRMSG_TOO_FEW_WORK_VAR_FOR_TYP_1 + typ.getId()
-                + LangConstants.ERRMSG_TOO_FEW_WORK_VAR_FOR_TYP_2
-                + declaredNbrWorkVars[i]
-                + LangConstants.ERRMSG_TOO_FEW_WORK_VAR_FOR_TYP_3);
+            LangConstants.ERRMSG_TOO_FEW_WORK_VAR_FOR_TYP, typ.getId(),
+            declaredNbrWorkVars[i]);
     }
 
     private WorkVar alloc(final int i, final int j) {
@@ -555,12 +549,9 @@ public class WorkVarManager {
                 if (!declaredWorkVarPrefix[i].equals(declaredWorkVarPrefix[j]))
                     continue;
                 throw new VerifyException(
-                    LangConstants.ERRMSG_DEFINE_WORK_VAR_PFX_DUP_1
-                        + declaredWorkVarPrefix[i]
-                        + LangConstants.ERRMSG_DEFINE_WORK_VAR_PFX_DUP_2
-                        + declaredTypCd[i].getId()
-                        + LangConstants.ERRMSG_DEFINE_WORK_VAR_PFX_DUP_3
-                        + declaredTypCd[j].getId());
+                    LangConstants.ERRMSG_DEFINE_WORK_VAR_PFX_DUP,
+                    declaredWorkVarPrefix[i], declaredTypCd[i].getId(),
+                    declaredTypCd[j].getId());
             }
     }
 
@@ -590,7 +581,7 @@ public class WorkVarManager {
                         continue;
                 }
                 throw new VerifyException(
-                    LangConstants.ERRMSG_DEFINE_WORK_VAR_DUP_1 + s);
+                    LangConstants.ERRMSG_DEFINE_WORK_VAR_DUP, s);
             }
     }
 }

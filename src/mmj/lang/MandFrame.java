@@ -149,8 +149,10 @@ public class MandFrame {
                                 // checking for dups and bypassing them,
                                 // so blow up on this occurrence!
                                 throw new IllegalArgumentException(
-                                    LangConstants.ERRMSG_DUP_DJ_VARS_AFTER_CONSOLIDATION_ERR_1
-                                        + e.getMessage());
+                                    LangException
+                                        .format(
+                                            LangConstants.ERRMSG_DUP_DJ_VARS_AFTER_CONSOLIDATION_ERR,
+                                            e.getMessage()));
                             }
             }
         }
@@ -182,7 +184,7 @@ public class MandFrame {
      * ]</code>.
      * <p>
      * Note that within a DjVars object. varLo and varHi are loaded by Var.Id.
-     * Thus, for disjoint vars "a" and "b", varHo = a, and varHi = b. Also,
+     * Thus, for disjoint vars "a" and "b", varLo = a, and varHi = b. Also,
      * varLo is never equal to varHi.
      * 
      * @param dvArray the input list of DjVars

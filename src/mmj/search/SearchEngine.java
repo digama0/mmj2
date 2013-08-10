@@ -1,7 +1,17 @@
-// Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
-// Jad home page: http://www.kpdus.com/jad.html
-// Decompiler options: packimports(3)
-// Source File Name:   SearchEngine.java
+//********************************************************************/
+//* Copyright (C) 2005-2011                                          */
+//* MEL O'CAT  X178G243 (at) yahoo (dot) com                         */
+//* License terms: GNU General Public License Version 2              */
+//*                or any later version                              */
+//********************************************************************/
+//*4567890123456 (71-character line to adjust editor window) 23456789*/
+
+/*
+ * SearchEngine.java  0.01 20/09/2012
+ *
+ * Version 0.01:
+ * Aug-09-2013: new from decompilation.
+ */
 
 package mmj.search;
 
@@ -13,30 +23,36 @@ import mmj.lang.*;
 import mmj.pa.*;
 import mmj.verify.VerifyProofs;
 
-// Referenced classes of package mmj.search:
-//            SearchOutput, SearchOutputStore, SearchMgr, SearchArgs,
-//            CompiledSearchArgs, SearchDataLines
-
 public class SearchEngine {
+
+    private final SearchMgr searchMgr;
+    private SearchArgs searchArgs;
+    private CompiledSearchArgs compiledSearchArgs = null;
+    private SearchOutput searchOutput = null;
+    private SearchOutputStore store = null;
+    private final ProofAsst proofAsst;
+    private final ProofAsstPreferences proofAsstPreferences;
+    private final BookManager bookManager;
+    private final VerifyProofs verifyProofs;
+    private final Cnst provableLogicStmtTyp;
+    private final StepUnifier stepUnifier;
+    private List<Assrt> assrtAList;
+    private DerivationStep derivStep = null;
+    private ProofStepStmt[] derivStepHypArray = null;
+    private Assrt assrt = null;
+    private int assrtNbrLogHyps = 0;
+    private Hyp[] assrtHypArray = null;
+    private LogHyp[] assrtLogHypArray = null;
+    private ParseNode assrtRoot = null;
+    private ParseNode[] assrtSubst = null;
+    private boolean stepSearchMode = false;
+    private boolean substitutions = false;
 
     public SearchEngine(final SearchMgr searchMgr, final ProofAsst proofAsst,
         final ProofAsstPreferences proofAsstPreferences,
         final BookManager bookManager, final VerifyProofs verifyProofs,
         final Cnst cnst)
     {
-        compiledSearchArgs = null;
-        searchOutput = null;
-        store = null;
-        derivStep = null;
-        derivStepHypArray = null;
-        assrt = null;
-        assrtNbrLogHyps = 0;
-        assrtHypArray = null;
-        assrtLogHypArray = null;
-        assrtRoot = null;
-        assrtSubst = null;
-        stepSearchMode = false;
-        substitutions = false;
         this.searchMgr = searchMgr;
         this.proofAsst = proofAsst;
         this.proofAsstPreferences = proofAsstPreferences;
@@ -62,15 +78,15 @@ public class SearchEngine {
             searchOutput, proofAsst, proofAsstPreferences, verifyProofs,
             provableLogicStmtTyp);
         if (searchOutput.searchReturnCode == 0) {
-            final FutureTask<SearchOutput> futuretask = new FutureTask<SearchOutput>(
+            final FutureTask<SearchOutput> search = new FutureTask<SearchOutput>(
                 new Callable<SearchOutput>() {
                     public SearchOutput call() throws Exception {
                         return searchTask();
                     }
                 });
-            Executors.newSingleThreadExecutor().execute(futuretask);
+            Executors.newSingleThreadExecutor().execute(search);
             try {
-                searchOutput = futuretask.get(compiledSearchArgs.searchMaxTime,
+                searchOutput = search.get(compiledSearchArgs.searchMaxTime,
                     TimeUnit.SECONDS);
             } catch (final InterruptedException interruptedexception) {
                 searchOutput.storeError(3, 30,
@@ -131,36 +147,36 @@ public class SearchEngine {
 
     private void loadSearchOutput() throws InterruptedException {
         ProofStepStmt[] aproofStepStmt = null;
-        boolean flag = false;
-        final int i = compiledSearchArgs.searchMinSeq;
-        final int j = compiledSearchArgs.searchMaxSeq;
-        final int k = compiledSearchArgs.nbrDerivStepHyps;
-        final int l = compiledSearchArgs.searchMinHyps;
-        final int i1 = compiledSearchArgs.searchMaxHyps;
-        final int j1 = compiledSearchArgs.searchMinProofRefs;
-        String s;
+        boolean full = false;
+        final int minSeq = compiledSearchArgs.searchMinSeq;
+        final int maxSeq = compiledSearchArgs.searchMaxSeq;
+        final int nbrDerivStepHyps = compiledSearchArgs.nbrDerivStepHyps;
+        final int minHyps = compiledSearchArgs.searchMinHyps;
+        final int maxHyps = compiledSearchArgs.searchMaxHyps;
+        final int minProofRefs = compiledSearchArgs.searchMinProofRefs;
+        String step;
         if (stepSearchMode) {
             derivStep = searchArgs.stepSearchStmt;
             aproofStepStmt = derivStep.getSortedHypArray();
-            s = derivStep.step;
+            step = derivStep.step;
         }
         else {
             derivStep = null;
             aproofStepStmt = null;
             derivStepHypArray = null;
-            s = "";
+            step = "";
         }
-        int k1 = computeSearchStart(l);
-        int l1 = l;
-        label0: do {
-            if (l1 <= i1) {
+        int k1 = computeSearchStart(minHyps);
+        int l1 = minHyps;
+        label0: while (true) {
+            if (l1 <= maxHyps) {
                 if (stepSearchMode) {
                     derivStepHypArray = new ProofStepStmt[l1];
-                    for (int j2 = 0; j2 < k; j2++)
+                    for (int j2 = 0; j2 < nbrDerivStepHyps; j2++)
                         derivStepHypArray[j2] = aproofStepStmt[j2];
 
                 }
-                do {
+                while (true) {
                     if (k1 >= assrtAList.size())
                         break;
                     checkForInterrupt();
@@ -169,12 +185,12 @@ public class SearchEngine {
                     assrt = assrtAList.get(k1);
                     searchOutput.statsNbrInputAssrtGets++;
                     final int i2 = assrt.getSeq();
-                    if (i2 >= j) {
+                    if (i2 >= maxSeq) {
                         searchOutput.statsNbrRejectGEMaxSeq++;
                         k1 = computeSearchStart(++l1);
                         continue label0;
                     }
-                    if (i2 <= i) {
+                    if (i2 <= minSeq) {
                         searchOutput.statsNbrRejectLEMinSeq++;
                         k1++;
                         continue;
@@ -185,7 +201,7 @@ public class SearchEngine {
                         l1++;
                         continue label0;
                     }
-                    if (assrt.getNbrProofRefs() < j1) {
+                    if (assrt.getNbrProofRefs() < minProofRefs) {
                         searchOutput.statsNbrRejectLTMinProofRefs++;
                         k1++;
                         continue;
@@ -203,7 +219,7 @@ public class SearchEngine {
                                 break;
                             searchOutput.statsNbrSelected++;
                             if (addAssrtToStore(computeScore())) {
-                                flag = true;
+                                full = true;
                                 break;
                             }
                         }
@@ -213,11 +229,11 @@ public class SearchEngine {
                     else
                         searchOutput.statsNbrRejectOtherExclCriteria++;
                     k1++;
-                } while (true);
+                }
             }
-            store.loadSearchOutput(searchOutput, s, flag);
+            store.loadSearchOutput(searchOutput, step, full);
             return;
-        } while (true);
+        }
     }
 
     private void doExtendedSearch() throws InterruptedException {
@@ -256,18 +272,18 @@ public class SearchEngine {
             return true;
     }
 
-    private int computeSearchStart(final int i) {
-        if (assrtAList.get(0).getLogHypArrayLength() >= i)
+    private int computeSearchStart(final int minHyps) {
+        if (assrtAList.get(0).getLogHypArrayLength() >= minHyps)
             return 0;
         int j = assrtAList.size() - 1;
-        if (i > assrtAList.get(j).getLogHypArrayLength())
-            return 0x7fffffff;
+        if (minHyps > assrtAList.get(j).getLogHypArrayLength())
+            return Integer.MAX_VALUE;
         int k = 0;
         int l = k + (j - k) / 2;
         int i1;
         do {
             i1 = l;
-            if (assrtAList.get(l).getLogHypArrayLength() < i)
+            if (assrtAList.get(l).getLogHypArrayLength() < minHyps)
                 k = l;
             else
                 j = l;
@@ -399,27 +415,4 @@ public class SearchEngine {
         else
             return;
     }
-
-    private final SearchMgr searchMgr;
-    private SearchArgs searchArgs;
-    private CompiledSearchArgs compiledSearchArgs;
-    private SearchOutput searchOutput;
-    private SearchOutputStore store;
-    private final ProofAsst proofAsst;
-    private final ProofAsstPreferences proofAsstPreferences;
-    private final BookManager bookManager;
-    private final VerifyProofs verifyProofs;
-    private final Cnst provableLogicStmtTyp;
-    private final StepUnifier stepUnifier;
-    private List<Assrt> assrtAList;
-    private DerivationStep derivStep;
-    private ProofStepStmt[] derivStepHypArray;
-    private Assrt assrt;
-    private int assrtNbrLogHyps;
-    private Hyp[] assrtHypArray;
-    private LogHyp[] assrtLogHypArray;
-    private ParseNode assrtRoot;
-    private ParseNode[] assrtSubst;
-    private boolean stepSearchMode;
-    private boolean substitutions;
 }

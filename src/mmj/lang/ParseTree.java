@@ -277,11 +277,10 @@ public class ParseTree {
 
         dest = root.convertToRPN(outRPN, dest);
         if (dest != -1)
-            throw new IllegalStateException(
-                LangConstants.ERRMSG_TREE_CONV_TO_RPN_FAILURE + dest * -1);
+            throw new IllegalStateException(LangException.format(
+                LangConstants.ERRMSG_TREE_CONV_TO_RPN_FAILURE, -dest));
         return outRPN;
     }
-
     /**
      * Compresses ("squishes") the tree to re-use repeated subtrees.
      */

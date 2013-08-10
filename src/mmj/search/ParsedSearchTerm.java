@@ -1,7 +1,17 @@
-// Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
-// Jad home page: http://www.kpdus.com/jad.html
-// Decompiler options: packimports(3)
-// Source File Name:   ParsedSearchTerm.java
+//********************************************************************/
+//* Copyright (C) 2005-2011                                          */
+//* MEL O'CAT  X178G243 (at) yahoo (dot) com                         */
+//* License terms: GNU General Public License Version 2              */
+//*                or any later version                              */
+//********************************************************************/
+//*4567890123456 (71-character line to adjust editor window) 23456789*/
+
+/*
+ * ParsedSearchTerm.java  0.01 20/09/2012
+ *
+ * Version 0.01:
+ * Aug-09-2013: new from decompilation.
+ */
 
 package mmj.search;
 
@@ -11,9 +21,6 @@ import java.util.*;
 
 import mmj.lang.*;
 import mmj.mmio.Tokenizer;
-
-// Referenced classes of package mmj.search:
-//            SearchMgr
 
 public class ParsedSearchTerm {
 
@@ -77,8 +84,7 @@ public class ParsedSearchTerm {
         if (errorMessage == null) {
             loadParseTree(searchMgr);
             if (parseTree == null)
-                errorMessage = 
-                    "Error(?) in parse of search term expression.";
+                errorMessage = "Error(?) in parse of search term expression.";
         }
     }
 
@@ -91,76 +97,67 @@ public class ParsedSearchTerm {
         final LogicalSystem logicalSystem = searchMgr.getLogicalSystem();
         searchMgr.getWorkVarManager();
         final MandFrame mandFrame = searchMgr.getComboFrame();
-        final Map<String, Var> hashmap = mandFrame.getVarMap();
+        final Map<String, Var> varMap = mandFrame.getVarMap();
         Tokenizer tokenizer;
         try {
             tokenizer = new Tokenizer(new StringReader(ufoText), "");
-        } catch (final IOException ioexception) {
-            errorMessage = 
-                "Unable to parse expression. Detailed error = "
-                    + ioexception.getMessage();
+        } catch (final IOException e) {
+            errorMessage = "Unable to parse expression. Detailed error = "
+                + e.getMessage();
             return;
         }
-        final List<VarHyp> arraylist = new ArrayList<VarHyp>();
-        final List<Sym> arraylist1 = new ArrayList<Sym>();
-        arraylist1.add(searchMgr.getProvableLogicStmtTyp());
-        do {
+        final List<VarHyp> varHyps = new ArrayList<VarHyp>();
+        final List<Sym> symList = new ArrayList<Sym>();
+        symList.add(searchMgr.getProvableLogicStmtTyp());
+        while (true) {
             final StringBuilder sb = new StringBuilder();
-            int i;
+            int len;
             try {
-                i = tokenizer.getToken(sb, 0);
+                len = tokenizer.getToken(sb, 0);
             } catch (final IOException e) {
-                errorMessage = 
-                    "Unable to parse expression. Detailed error = "
-                        + e.getMessage();
+                errorMessage = "Unable to parse expression. Detailed error = "
+                    + e.getMessage();
                 return;
             }
-            if (i <= 0)
+            if (len <= 0)
                 break;
-            final String s = sb.toString();
-            Sym sym = hashmap.get(s);
+            final String token = sb.toString();
+            Sym sym = varMap.get(token);
             if (sym == null) {
-                sym = logicalSystem.getSymTbl().get(s);
+                sym = logicalSystem.getSymTbl().get(token);
                 if (sym == null) {
-                    errorMessage = 
-                        "Invalid symbol in expression. Input token = " + s
-                            + " not found in Logical System Symbol Table."
-                            + " Note: Work variables not allowed in "
-                            + " search terms.";
+                    errorMessage = "Invalid symbol in expression. Input token = "
+                        + token
+                        + " not found in Logical System Symbol Table."
+                        + " Note: Work variables not allowed in search terms.";
                     return;
                 }
                 if (sym.getSeq() >= maxSeq) {
-                    errorMessage = 
-                        "Invalid symbol in expression. Input token = " + s
-                            + " has sequence number >= Search maxSeq";
+                    errorMessage = "Invalid symbol in expression. Input token = "
+                        + token + " has sequence number >= Search maxSeq";
                     return;
                 }
             }
             if (sym.isVar()) {
                 final Var var = (Var)sym;
                 if (var.getIsWorkVar()) {
-                    errorMessage = 
-                        "Work variables not allowed in search terms.";
+                    errorMessage = "Work variables not allowed in search terms.";
                     return;
                 }
                 if (var.isActive() && var.getActiveVarHyp() != null)
-                    Assrt.accumHypInList(arraylist, var.getActiveVarHyp());
+                    Assrt.accumHypInList(varHyps, var.getActiveVarHyp());
                 else {
-                    errorMessage = 
-                        "Invalid symbol in expression. Input token = " + s
-                            + " has does not have an active Var and VarHyp"
-                            + " at the search's scope level.";
+                    errorMessage = "Invalid symbol in expression. Input token = "
+                        + token
+                        + " has does not have an active Var and VarHyp"
+                        + " at the search's scope level.";
                     return;
                 }
             }
-            arraylist1.add(sym);
-        } while (true);
-        formula = new Formula(arraylist1);
-        varHypArray = new VarHyp[arraylist.size()];
-        final Iterator<VarHyp> iterator = arraylist.iterator();
-        int j = 0;
-        while (iterator.hasNext())
-            varHypArray[j++] = iterator.next();
+            symList.add(sym);
+        }
+        formula = new Formula(symList);
+        varHypArray = varHyps.toArray(new VarHyp[varHyps.size()]);
     }
 
     public String ufoText;

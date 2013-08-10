@@ -270,9 +270,8 @@ public class Axiom extends Assrt {
     {
 
         if (!getIsSyntaxAxiom())
-            throw new IllegalArgumentException(
-                LangConstants.ERRMSG_BAD_PARSE_STMT_1 + getLabel()
-                    + LangConstants.ERRMSG_BAD_PARSE_STMT_2);
+            throw new IllegalArgumentException(LangException.format(
+                LangConstants.ERRMSG_BAD_PARSE_STMT, getLabel()));
 
         /*
          * For TypeConversion Syntax Axiom, make recursive

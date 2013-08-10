@@ -88,11 +88,11 @@ public abstract class Sym extends MObj<Sym> {
     {
         this(seq, id);
         if (symTbl.containsKey(id))
-            throw new LangException(LangConstants.ERRMSG_DUP_VAR_OR_CNST_SYM
-                + id);
+            throw new LangException(LangConstants.ERRMSG_DUP_VAR_OR_CNST_SYM,
+                id);
         if (stmtTbl.containsKey(id))
             throw new LangException(
-                LangConstants.ERRMSG_SYM_ID_DUP_OF_STMT_LABEL_1 + id);
+                LangConstants.ERRMSG_SYM_ID_DUP_OF_STMT_LABEL, id);
     }
 
     /**

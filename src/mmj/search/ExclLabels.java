@@ -1,7 +1,17 @@
-// Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
-// Jad home page: http://www.kpdus.com/jad.html
-// Decompiler options: packimports(3)
-// Source File Name:   ExclLabels.java
+//********************************************************************/
+//* Copyright (C) 2005-2011                                          */
+//* MEL O'CAT  X178G243 (at) yahoo (dot) com                         */
+//* License terms: GNU General Public License Version 2              */
+//*                or any later version                              */
+//********************************************************************/
+//*4567890123456 (71-character line to adjust editor window) 23456789*/
+
+/*
+ * ExclLabels.java  0.01 20/09/2012
+ *
+ * Version 0.01:
+ * Aug-09-2013: new from decompilation.
+ */
 
 package mmj.search;
 
@@ -14,9 +24,6 @@ import mmj.lang.Cnst;
 import mmj.pa.ProofAsst;
 import mmj.pa.ProofAsstPreferences;
 import mmj.verify.VerifyProofs;
-
-// Referenced classes of package mmj.search:
-//            SearchArgsTextField, CompiledSearchArgs, SearchMgr, SearchOutput
 
 public class ExclLabels extends SearchArgsTextField {
 
@@ -31,60 +38,55 @@ public class ExclLabels extends SearchArgsTextField {
         final ProofAsstPreferences proofAsstPreferences,
         final VerifyProofs verifyProofs, final Cnst cnst)
     {
-        final String s = get().trim();
-        csa.searchExclLabels = s;
-        final Pattern pattern = Pattern.compile(",");
-        final Pattern pattern1 = Pattern.compile(Pattern.quote("$$"));
-        final Pattern pattern2 = Pattern.compile(Pattern.quote("$*"));
-        final Pattern pattern3 = Pattern.compile(Pattern.quote("*"));
-        final Pattern pattern4 = Pattern.compile(Pattern.quote("$?"));
-        final Pattern pattern5 = Pattern.compile(Pattern.quote("?"));
-        final Pattern pattern6 = Pattern.compile(Pattern.quote("."));
-        final Pattern pattern7 = Pattern.compile("\\s");
-        final String[] as = pattern.split(s);
-        final List<Pattern> arraylist = new ArrayList<Pattern>(as.length);
-        label0: for (int i = 0; i < as.length; i++) {
-            final String s1 = as[i].trim();
-            if (s1.length() == 0)
+        final String text = get().trim();
+        csa.searchExclLabels = text;
+        final Pattern comma = Pattern.compile(",");
+        final Pattern dollar = Pattern.compile(Pattern.quote("$$"));
+        final Pattern asterisk = Pattern.compile(Pattern.quote("$*"));
+        final Pattern asteriskShort = Pattern.compile(Pattern.quote("*"));
+        final Pattern question = Pattern.compile(Pattern.quote("$?"));
+        final Pattern questionShort = Pattern.compile(Pattern.quote("?"));
+        final Pattern dot = Pattern.compile(Pattern.quote("."));
+        final Pattern whitespace = Pattern.compile("\\s");
+        final String[] labels = comma.split(text);
+        final List<Pattern> patterns = new ArrayList<Pattern>(labels.length);
+        iLoop: for (int i = 0; i < labels.length; i++) {
+            final String label = labels[i].trim();
+            if (label.length() == 0)
                 continue;
-            final String[] as1 = pattern7.split(s1);
-            for (int k = 0; k < as1.length; k++) {
-                final String s2 = as1[k].trim();
-                if (s2.length() == 0)
+            final String[] words = whitespace.split(label);
+            for (int k = 0; k < words.length; k++) {
+                String word = words[k].trim();
+                if (word.length() == 0)
                     continue;
-                final Matcher matcher = pattern1.matcher(s2);
-                if (matcher.find()) {
-                    storeArgError(searchOutput, s2,
+                final Matcher m = dollar.matcher(word);
+                if (m.find()) {
+                    storeArgError(searchOutput, word,
                         SearchConstants.ERRMSG_EXCL_LABELS_SPECIFIER_BAD_ERROR,
                         "");
-                    break label0;
+                    break iLoop;
                 }
-                String s3 = pattern2.matcher(s2).replaceAll("*");
-                s3 = pattern4.matcher(s3).replaceAll("?");
-                s3 = pattern6.matcher(s3).replaceAll("\\.");
-                s3 = pattern3.matcher(s3).replaceAll(".*");
-                s3 = pattern5.matcher(s3).replaceAll(".?");
-                Pattern pattern8;
+                word = asterisk.matcher(word).replaceAll("*");
+                word = question.matcher(word).replaceAll("?");
+                word = dot.matcher(word).replaceAll("\\.");
+                word = asteriskShort.matcher(word).replaceAll(".*");
+                word = questionShort.matcher(word).replaceAll(".?");
                 try {
-                    pattern8 = Pattern.compile(s3);
-                } catch (final PatternSyntaxException patternsyntaxexception) {
+                    patterns.add(Pattern.compile(word));
+                } catch (final PatternSyntaxException e) {
                     storeArgError(
                         searchOutput,
-                        s3,
+                        word,
                         SearchConstants.ERRMSG_EXCL_LABELS_SPECIFIER_BAD_ERROR2,
                         SearchConstants.ERRMSG_EXCL_LABELS_SPECIFIER_BAD_ERROR2_2
-                            + patternsyntaxexception.getMessage());
-                    break label0;
+                            + e.getMessage());
+                    break iLoop;
                 }
-                arraylist.add(pattern8);
             }
 
         }
 
-        final Pattern[] apattern = new Pattern[arraylist.size()];
-        for (int j = 0; j < apattern.length; j++)
-            apattern[j] = arraylist.get(j);
-
-        csa.searchExclLabelsPattern = apattern;
+        csa.searchExclLabelsPattern = patterns.toArray(new Pattern[patterns
+            .size()]);
     }
 }

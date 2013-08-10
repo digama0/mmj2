@@ -93,21 +93,21 @@ public class Var extends Sym {
         if (v == null) {
             if (stmtTbl.containsKey(id))
                 throw new LangException(
-                    LangConstants.ERRMSG_SYM_ID_DUP_OF_STMT_LABEL_1 + id);
+                    LangConstants.ERRMSG_SYM_ID_DUP_OF_STMT_LABEL, id);
             var = new Var(seq, id, true); // true = "active"
             symTbl.put(id, var);
         }
         else {
             if (!v.isVar())
                 throw new LangException(
-                    LangConstants.ERRMSG_VAR_IS_DUP_OF_CNST_SYM + id);
+                    LangConstants.ERRMSG_VAR_IS_DUP_OF_CNST_SYM, id);
             var = (Var)v;
             if (var.isActive())
                 throw new LangException(
-                    LangConstants.ERRMSG_VAR_IS_ALREADY_ACTIVE + id);
+                    LangConstants.ERRMSG_VAR_IS_ALREADY_ACTIVE, id);
             if (stmtTbl.containsKey(id))
                 throw new LangException(
-                    LangConstants.ERRMSG_SYM_ID_DUP_OF_STMT_LABEL_1 + id);
+                    LangConstants.ERRMSG_SYM_ID_DUP_OF_STMT_LABEL, id);
             var.setActive(true);
         }
         return var;
@@ -310,13 +310,13 @@ public class Var extends Sym {
 
         final Sym tblV = symTbl.get(varS);
         if (tblV == null)
-            throw new LangException(LangConstants.ERRMSG_STMT_VAR_UNDEF + varS);
+            throw new LangException(LangConstants.ERRMSG_STMT_VAR_UNDEF, varS);
         if (!tblV.isVar())
             throw new LangException(
-                LangConstants.ERRMSG_STMT_VAR_NOT_DEF_AS_VAR + varS);
+                LangConstants.ERRMSG_STMT_VAR_NOT_DEF_AS_VAR, varS);
         if (!tblV.isActive())
-            throw new LangException(LangConstants.ERRMSG_STMT_VAR_NOT_ACTIVE
-                + varS);
+            throw new LangException(LangConstants.ERRMSG_STMT_VAR_NOT_ACTIVE,
+                varS);
         return (Var)tblV;
     }
 
@@ -338,10 +338,10 @@ public class Var extends Sym {
 
         final Sym tblV = symTbl.get(varS);
         if (tblV == null)
-            throw new LangException(LangConstants.ERRMSG_STMT_VAR_UNDEF + varS);
+            throw new LangException(LangConstants.ERRMSG_STMT_VAR_UNDEF, varS);
         if (!tblV.isVar())
             throw new LangException(
-                LangConstants.ERRMSG_STMT_VAR_NOT_DEF_AS_VAR + varS);
+                LangConstants.ERRMSG_STMT_VAR_NOT_DEF_AS_VAR, varS);
 
         return (Var)tblV;
     }

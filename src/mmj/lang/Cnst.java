@@ -554,10 +554,9 @@ public class Cnst extends Sym {
             ruleIndex = convFromTypGRArray.length;
             final Cnst typ = r.getBaseSyntaxAxiom().getTyp();
             if (findFromTypConversionRule(r.getConvTyp()) != null)
-                throw new IllegalStateException(
-                    LangConstants.ERRMSG_TYP_CONV_DUP_1
-                        + r.getBaseSyntaxAxiom().getLabel()
-                        + LangConstants.ERRMSG_TYP_CONV_DUP_2 + typ);
+                throw new IllegalStateException(LangException.format(
+                    LangConstants.ERRMSG_TYP_CONV_DUP, r
+                        .getBaseSyntaxAxiom().getLabel(), typ));
         }
 
         final TypeConversionRule[] x = new TypeConversionRule[ruleIndex + 1];

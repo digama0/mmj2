@@ -130,11 +130,15 @@ public class Messages {
      * Stores the new message if there is room in the array.
      * 
      * @param errorMessage error message.
+     * @param args formatting arguments.
      * @return true if message stored, false if no room left.
      */
-    public boolean accumErrorMessage(final String errorMessage) {
+    public boolean accumErrorMessage(final String errorMessage,
+        final Object... args)
+    {
         if (errorMessageCnt < errorMessageArray.length) {
-            errorMessageArray[errorMessageCnt++] = errorMessage;
+            errorMessageArray[errorMessageCnt++] = LangException.format(errorMessage,
+                args);
             return true;
         }
         return false;
@@ -146,11 +150,15 @@ public class Messages {
      * Stores the new message if there is room in the array.
      * 
      * @param infoMessage info message.
+     * @param args formatting arguments.
      * @return true if message stored, false if no room left.
      */
-    public boolean accumInfoMessage(final String infoMessage) {
+    public boolean accumInfoMessage(final String infoMessage,
+        final Object... args)
+    {
         if (infoMessageCnt < infoMessageArray.length) {
-            infoMessageArray[infoMessageCnt++] = infoMessage;
+            infoMessageArray[infoMessageCnt++] = LangException.format(infoMessage,
+                args);
             return true;
         }
         return false;
@@ -341,27 +349,14 @@ public class Messages {
         final InstrumentationTimer tThen = instrumentationTable.get(timerID);
 
         if (tThen == null)
-            throw new IllegalArgumentException(
-                LangConstants.ERRMSG_TIMER_ID_NOTFND_1 + timerID
-                    + LangConstants.ERRMSG_TIMER_ID_NOTFND_2);
+            throw new IllegalArgumentException(LangException.format(
+                LangConstants.ERRMSG_TIMER_ID_NOTFND, timerID));
 
-        accumInfoMessage(LangConstants.ERRMSG_TIMER_ID_1 + timerID
-
-        + LangConstants.ERRMSG_TIMER_ID_2
-            + (tNow.millisTime - tThen.millisTime)
-
-            + LangConstants.ERRMSG_TIMER_ID_3 + tNow.totalMemory
-            + LangConstants.ERRMSG_TIMER_ID_4
-            + (tNow.totalMemory - tThen.totalMemory)
-
-            + LangConstants.ERRMSG_TIMER_ID_5 + tNow.maxMemory
-            + LangConstants.ERRMSG_TIMER_ID_6
-            + (tNow.maxMemory - tThen.maxMemory)
-
-            + LangConstants.ERRMSG_TIMER_ID_7 + tNow.freeMemory
-            + LangConstants.ERRMSG_TIMER_ID_8
-            + (tNow.freeMemory - tThen.freeMemory)
-            + LangConstants.ERRMSG_TIMER_ID_9);
+        accumInfoMessage(LangConstants.ERRMSG_TIMER_ID, timerID,
+            tNow.millisTime - tThen.millisTime, tNow.totalMemory,
+            tNow.totalMemory - tThen.totalMemory, tNow.maxMemory,
+            tNow.maxMemory - tThen.maxMemory, tNow.freeMemory, tNow.freeMemory
+                - tThen.freeMemory);
     }
 
     public class InstrumentationTimer {

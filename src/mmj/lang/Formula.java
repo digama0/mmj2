@@ -223,10 +223,10 @@ public class Formula {
 
         final Sym typC = (Sym)symTbl.get(typS);
         if (typC == null)
-            throw new LangException(LangConstants.ERRMSG_STMT_TYP_UNDEF + typS);
+            throw new LangException(LangConstants.ERRMSG_STMT_TYP_UNDEF, typS);
         if (!typC.isCnst())
             throw new LangException(
-                LangConstants.ERRMSG_STMT_TYP_NOT_DEF_AS_CNST + typS);
+                LangConstants.ERRMSG_STMT_TYP_NOT_DEF_AS_CNST, typS);
         sym[0] = typC;
         return typC;
     }
@@ -264,10 +264,9 @@ public class Formula {
                     if (((Var)sym[i]).getIsWorkVar())
                         vH = ((Var)sym[i]).getActiveVarHyp();
                     if (vH == null)
-                        throw new IllegalArgumentException(
-                            LangConstants.ERRMSG_FORMULA_VAR_HYP_NOTFND_1
-                                + sym[i] + LangConstants.ERRMSG_FORMULA_CAPTION
-                                + toString());
+                        throw new IllegalArgumentException(LangException.format(
+                            LangConstants.ERRMSG_FORMULA_VAR_HYP_NOTFND,
+                            sym[i], this));
                 }
                 parseNodeHolderExpr[dest] = new ParseNodeHolder(vH);
             }
@@ -300,10 +299,9 @@ public class Formula {
                     if (((Var)sym[i]).getIsWorkVar())
                         vH = ((Var)sym[i]).getActiveVarHyp();
                     if (vH == null)
-                        throw new IllegalArgumentException(
-                            LangConstants.ERRMSG_FORMULA_VAR_HYP_NOTFND_1
-                                + sym[i] + LangConstants.ERRMSG_FORMULA_CAPTION
-                                + toString());
+                        throw new IllegalArgumentException(LangException.format(
+                            LangConstants.ERRMSG_FORMULA_VAR_HYP_NOTFND,
+                            sym[i], this));
                 }
                 parseNodeHolderExpr[dest] = new ParseNodeHolder(vH);
             }
@@ -336,9 +334,9 @@ public class Formula {
             if (sym[i].isVar()) {
                 vH = ((Var)sym[i]).getVarHyp(varHypArray);
                 if (vH == null)
-                    throw new IllegalArgumentException(
-                        LangConstants.ERRMSG_FORMULA_VAR_HYP_NOTFND_1 + sym[i]
-                            + LangConstants.ERRMSG_FORMULA_CAPTION + toString());
+                    throw new IllegalArgumentException(LangException.format(
+                        LangConstants.ERRMSG_FORMULA_VAR_HYP_NOTFND, sym[i],
+                        this));
                 ruleFormatExpr[dest] = vH.getTyp();
             }
             else
@@ -371,9 +369,8 @@ public class Formula {
                 Formula.accumHypInList(hypList, vH);
                 continue;
             }
-            throw new IllegalArgumentException(
-                LangConstants.ERRMSG_FORMULA_VAR_HYP_NOTFND_1 + sym[i]
-                    + LangConstants.ERRMSG_FORMULA_CAPTION + toString());
+            throw new IllegalArgumentException(LangException.format(
+                LangConstants.ERRMSG_FORMULA_VAR_HYP_NOTFND, sym[i], this));
         }
         return hypList.toArray(new VarHyp[hypList.size()]);
     }

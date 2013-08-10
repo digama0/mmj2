@@ -164,11 +164,10 @@ public abstract class Stmt extends MObj<Stmt> {
             throw new IllegalArgumentException(
                 LangConstants.ERRMSG_STMT_LABEL_STRING_EMPTY);
         if (stmtTbl.containsKey(labelS))
-            throw new LangException(LangConstants.ERRMSG_DUP_STMT_LABEL
-                + labelS);
+            throw new LangException(LangConstants.ERRMSG_DUP_STMT_LABEL, labelS);
         if (symTbl.containsKey(labelS))
             throw new LangException(
-                LangConstants.ERRMSG_STMT_LABEL_DUP_OF_SYM_ID_1 + labelS);
+                LangConstants.ERRMSG_STMT_LABEL_DUP_OF_SYM_ID, labelS);
 
         label = labelS;
     }

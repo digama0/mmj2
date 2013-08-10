@@ -461,23 +461,19 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         final ProofAsstCursor cursor = ProofAsstCursor.makeProofStartCursor();
 
-        final Theorem theorem = getTheoremForward(currProofMaxSeq, false); // not
-                                                                           // a
-                                                                           // retry
-                                                                           // :)
-
+        // not a retry :)
+        final Theorem theorem = getTheoremForward(currProofMaxSeq, false);
         if (theorem == null) {
             messages
                 .accumErrorMessage(PaConstants.ERRMSG_PA_FORWARD_SEARCH_NOTFND_1
                     + PaConstants.ERRMSG_FWD_BACK_DIAGNOSTICS_1);
-            w = new ProofWorksheet(proofAsstPreferences, messages, // oh yeah,
-                                                                   // we got 'em
-                true, // structuralErrors
+            w = new ProofWorksheet(proofAsstPreferences,
+            /* oh yeah, we got 'em */messages, /* structuralErrors=*/true,
                 cursor);
         }
         else {
             w = getExportedProofWorksheet(theorem, exportFormatUnified,
-                hypsRandomized, false); // deriveFormulas
+                hypsRandomized, /* deriveFormulas=*/false);
 
             if (w == null)
                 w = new ProofWorksheet(theorem.getLabel(),
@@ -595,8 +591,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         if (errorFound[0] == false) {
 
             if (renumReq)
-                proofWorksheet
-                    .renumberProofSteps(PaConstants.PROOF_STEP_RENUMBER_INTERVAL);
+                proofWorksheet.renumberProofSteps(
+                    PaConstants.PROOF_STEP_RENUMBER_START,
+                    PaConstants.PROOF_STEP_RENUMBER_INTERVAL);
 
             unifyProofWorksheet(proofWorksheet);
         }
@@ -1523,9 +1520,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 proofDerivationStepList, deriveFormulas, proofAsstPreferences,
                 logicalSystem, grammar, messages);
         } catch (final VerifyException e) {
-            messages.accumErrorMessage(PaConstants.ERRMSG_PA_EXPORT_PV_ERROR_1
-                + PaConstants.ERRMSG_THEOREM_CAPTION + " " + theorem.getLabel()
-                + PaConstants.ERRMSG_PA_EXPORT_PV_ERROR_2 + e.getMessage());
+            messages.accumErrorMessage(PaConstants.ERRMSG_PA_EXPORT_PV_ERROR,
+                theorem.getLabel(), e.getMessage());
         }
 
         return proofWorksheet;

@@ -197,14 +197,12 @@ public class ProofConstants {
     public static final String ERRMSG_RPN_TO_FORMULA_CONV_FAILURE = "A-PR-0016 Programmer Error! Ooops. convertRPNToFormula()"
         + " failed with this message: ";
 
-    public static final String ERRMSG_BOGUS_PROOF_LOGHYP_STMT_1 = "E-PR-0017 Failure to generate proof derivation step:"
-        + " Theorem ";
-    public static final String ERRMSG_BOGUS_PROOF_LOGHYP_STMT_2 = " LogHyp ";
-    public static final String ERRMSG_BOGUS_PROOF_LOGHYP_STMT_3 = " specified in proof that is not found in the"
+    public static final String ERRMSG_BOGUS_PROOF_LOGHYP_STMT = "E-PR-0017 Failure to generate proof derivation step:"
+        + " Theorem %s LogHyp %s specified in proof that is not found in the"
         + " theorem's LogHyp array.";
 
-    public static final String ERRMSG_LOGHYP_STACK_DEFICIENT_1 = "E-PR-0018 Theorem ";
-    public static final String ERRMSG_LOGHYP_STACK_DEFICIENT_2 = " has invalid proof? Proof Worksheet generation halted"
+    public static final String ERRMSG_LOGHYP_STACK_DEFICIENT = "E-PR-0018 Theorem %s"
+        + " has invalid proof? Proof Worksheet generation halted"
         + " because the undischargedStack does not have enough"
         + " entries to satisfy the step's logical hypotheses.";
 
@@ -212,8 +210,8 @@ public class ProofConstants {
         + " VerifyProof found the assertion to be proved not"
         + " = final stack entry: ";
 
-    public static final String ERRMSG_NO_DERIV_STEPS_CREATED_1 = "E-PR-0020 Theorem ";
-    public static final String ERRMSG_NO_DERIV_STEPS_CREATED_2 = " Proof Worksheet generation halted because theorem"
+    public static final String ERRMSG_NO_DERIV_STEPS_CREATED = "E-PR-0020"
+        + " Theorem %s Proof Worksheet generation halted because theorem"
         + " has invalid proof? No proof steps created"
         + " for Proof Worksheet!";
 

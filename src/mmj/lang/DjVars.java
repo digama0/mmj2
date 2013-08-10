@@ -348,7 +348,7 @@ public class DjVars implements Comparable<DjVars> {
         final Var hi = Var.verifyVarDefAndActive(symTbl, hiS);
         final int compare = loS.compareTo(hiS);
         if (compare == 0)
-            throw new LangException(LangConstants.ERRMSG_DJ_VARS_ARE_DUPS + loS);
+            throw new LangException(LangConstants.ERRMSG_DJ_VARS_ARE_DUPS, loS);
         if (compare > 0) {
             varLo = hi;
             varHi = lo;
@@ -382,8 +382,8 @@ public class DjVars implements Comparable<DjVars> {
     public void set(final Var lo, final Var hi) throws LangException {
         final int compare = lo.compareTo(hi);
         if (compare == 0)
-            throw new LangException(LangConstants.ERRMSG_DJ_VARS_ARE_DUPS
-                + lo.getId());
+            throw new LangException(LangConstants.ERRMSG_DJ_VARS_ARE_DUPS,
+                lo.getId());
         if (compare > 0) {
             varLo = hi;
             varHi = lo;

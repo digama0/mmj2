@@ -118,12 +118,8 @@ public class Chapter {
      */
     @Override
     public String toString() {
-        return LangConstants.CHAPTER_TOSTRING_LITERAL_1
-            + getChapterNbr() + LangConstants.CHAPTER_TOSTRING_LITERAL_2
-            + getChapterTitle() + LangConstants.CHAPTER_TOSTRING_LITERAL_3
-            + LangConstants.CHAPTER_TOSTRING_LITERAL_4
-            + getFirstSection().getSectionNbr()
-            + LangConstants.CHAPTER_TOSTRING_LITERAL_5
-            + getLastSection().getSectionNbr();
+        return LangException.format(LangConstants.CHAPTER_TOSTRING_LITERAL,
+            getChapterNbr(), getChapterTitle(), getFirstSection()
+                .getSectionNbr(), getLastSection().getSectionNbr());
     }
 }

@@ -1,7 +1,17 @@
-// Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
-// Jad home page: http://www.kpdus.com/jad.html
-// Decompiler options: packimports(3)
-// Source File Name:   SearchArgsCheckBox.java
+//********************************************************************/
+//* Copyright (C) 2005-2011                                          */
+//* MEL O'CAT  X178G243 (at) yahoo (dot) com                         */
+//* License terms: GNU General Public License Version 2              */
+//*                or any later version                              */
+//********************************************************************/
+//*4567890123456 (71-character line to adjust editor window) 23456789*/
+
+/*
+ * SearchArgsCheckBox.java  0.01 20/09/2012
+ *
+ * Version 0.01:
+ * Aug-09-2013: new from decompilation.
+ */
 
 package mmj.search;
 
@@ -11,19 +21,17 @@ import mmj.pa.ProofAsst;
 import mmj.pa.ProofAsstPreferences;
 import mmj.verify.VerifyProofs;
 
-// Referenced classes of package mmj.search:
-//            SearchArgsField, SearchOptionsConstants, SearchOptionsFieldAttr, CompiledSearchArgs,
-//            SearchMgr, SearchOutput
-
 public abstract class SearchArgsCheckBox extends SearchArgsField {
 
-    public SearchArgsCheckBox(final int i, final String s) {
-        super(i);
-        set(s);
+    private boolean boolValue;
+
+    public SearchArgsCheckBox(final int id, final String value) {
+        super(id);
+        set(value);
     }
 
-    public SearchArgsCheckBox(final int i) {
-        this(i, SearchOptionsConstants.FIELD_ATTR[i].defaultText);
+    public SearchArgsCheckBox(final int id) {
+        this(id, SearchOptionsConstants.FIELD_ATTR[id].defaultText);
     }
 
     @Override
@@ -32,8 +40,8 @@ public abstract class SearchArgsCheckBox extends SearchArgsField {
     }
 
     @Override
-    public void set(final String s) {
-        boolValue = Boolean.parseBoolean(s);
+    public void set(final String value) {
+        boolValue = Boolean.parseBoolean(value);
     }
 
     public boolean getBool() {
@@ -47,6 +55,4 @@ public abstract class SearchArgsCheckBox extends SearchArgsField {
         final ProofAsstPreferences proofAsstPreferences,
         final VerifyProofs verifyProofs, final Cnst cnst)
     {}
-
-    private boolean boolValue;
 }

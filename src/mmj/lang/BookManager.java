@@ -862,11 +862,9 @@ public class BookManager implements TheoremLoaderCommitListener {
 
         final Section insertSection = getSection(x);
         if (insertSection == null)
-            throw new IllegalArgumentException(
-                LangConstants.ERRMSG_BM_UPDATE_W_MMT_SECTION_NOTFND_1 + x
-                    + LangConstants.ERRMSG_BM_UPDATE_W_MMT_SECTION_NOTFND_2
-                    + t.getTheoremLabel()
-                    + LangConstants.ERRMSG_BM_UPDATE_W_MMT_SECTION_NOTFND_3);
+            throw new IllegalArgumentException(LangException.format(
+                LangConstants.ERRMSG_BM_UPDATE_W_MMT_SECTION_NOTFND, x,
+                t.getTheoremLabel()));
 
         final LogHyp[] logHypArray = t.getLogHypArray();
         for (final LogHyp element : logHypArray)

@@ -86,16 +86,16 @@ public class LogicFormula extends Formula {
         for (final String symS : symList) {
             sym[cnt] = symTbl.get(symS);
             if (sym[cnt] == null)
-                throw new LangException(LangConstants.ERRMSG_EXPR_SYM_NOT_DEF
-                    + symS);
+                throw new LangException(LangConstants.ERRMSG_EXPR_SYM_NOT_DEF,
+                    symS);
             if (!sym[cnt].isActive())
                 throw new LangException(
-                    LangConstants.ERRMSG_EXPR_SYM_NOT_ACTIVE + symS);
+                    LangConstants.ERRMSG_EXPR_SYM_NOT_ACTIVE, symS);
             if (sym[cnt].isVar()) {
                 final VarHyp varHyp = ((Var)sym[cnt]).getActiveVarHyp();
                 if (varHyp == null)
                     throw new LangException(
-                        LangConstants.ERRMSG_EXPR_VAR_W_O_ACTIVE_VAR_HYP + symS);
+                        LangConstants.ERRMSG_EXPR_VAR_W_O_ACTIVE_VAR_HYP, symS);
                 // add varHyp to mandatory hypotheses in hypList
                 Formula.accumHypInList(hypList, varHyp);
             }
