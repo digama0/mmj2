@@ -49,24 +49,30 @@ public class SearchMgr {
         return sb.toString();
     }
 
+    private ProofAsst proofAsst = null;
+    private final ProofAsstPreferences proofAsstPreferences;
+    private LogicalSystem logicalSystem = null;
+    private Grammar grammar = null;
+    private BookManager bookManager = null;
+    private Cnst provableLogicStmtTyp = null;
+    private SearchOptionsHelp searchOptionsHelp = null;
+    private SearchOptionsFrame searchOptionsFrame = null;
+    private int searchOptionsFontSize;
+    private final boolean searchOptionsFontBold;
+    private Font searchOptionsFont;
+    private SearchResultsHelp searchResultsHelp = null;
+    private SearchResultsFrame searchResultsFrame = null;
+    private int searchResultsFontSize;
+    private final boolean searchResultsFontBold;
+    private Font searchResultsFont;
+    private Dimension searchSelectionPreferredSize = null;
+    private final SearchArgs searchArgs = new SearchArgs();
+    private SearchOutput searchOutput = new SearchOutput("");
+    private SearchEngine searchEngine = null;
+    private final SearchUnifier searchUnifier = new SearchUnifier();
+
     public SearchMgr(final ProofAsstPreferences proofAsstPreferences) {
-        proofAsst = null;
-        this.proofAsstPreferences = null;
-        logicalSystem = null;
-        grammar = null;
-        bookManager = null;
-        provableLogicStmtTyp = null;
-        searchOptionsHelp = null;
-        searchOptionsFrame = null;
-        searchResultsHelp = null;
-        searchResultsFrame = null;
-        searchSelectionPreferredSize = null;
-        searchEngine = null;
-        searchUnifier = null;
         this.proofAsstPreferences = proofAsstPreferences;
-        searchArgs = new SearchArgs();
-        searchOutput = new SearchOutput("");
-        searchUnifier = new SearchUnifier();
         SearchOptionsConstants.CHECK_SEARCH_OPTIONS_FIELD_ATTR_IDS();
         SearchOptionsConstants.CHECK_SEARCH_ARGS_FIELD_IDS(searchArgs);
         SearchOptionsConstants.CHECK_SEARCH_OPTIONS_BUTTON_ATTR_IDS();
@@ -185,8 +191,7 @@ public class SearchMgr {
         }
         Assrt assrt = null;
         if (i != -1)
-            assrt = searchOutput.sortedAssrtResultsList
-                .get(searchOutput.refIndexArray[i]);
+            assrt = searchOutput.sortedAssrtResultsList.get(i);
         getProofAsst().getProofAsstGUI().unifyWithStepSelectorChoice(
             new StepRequest(82, searchArgs.stepSearchStmt.getStep(), assrt));
     }
@@ -487,13 +492,13 @@ public class SearchMgr {
         return j;
     }
 
-    private Font buildInitialSearchFont(final boolean flag, final int i) {
-        Font font;
-        if (flag)
-            font = new Font(SearchConstants.SEARCH_FONT_FAMILY, 1, i);
+    private Font buildInitialSearchFont(final boolean bold, final int size) {
+        if (bold)
+            return new Font(proofAsstPreferences.getFontFamily(), Font.BOLD,
+                size);
         else
-            font = new Font(SearchConstants.SEARCH_FONT_FAMILY, 0, i);
-        return font;
+            return new Font(proofAsstPreferences.getFontFamily(), Font.PLAIN,
+                size);
     }
 
     private String getSearchOptionsNewStmtLabel() {
@@ -513,26 +518,4 @@ public class SearchMgr {
                 + SearchConstants.SEARCH_OPTIONS_NEW_STMT_LABEL_PROMPT_2_2;
         } while (true);
     }
-
-    private ProofAsst proofAsst;
-    private ProofAsstPreferences proofAsstPreferences;
-    private LogicalSystem logicalSystem;
-    private Grammar grammar;
-    private BookManager bookManager;
-    private Cnst provableLogicStmtTyp;
-    private SearchOptionsHelp searchOptionsHelp;
-    private SearchOptionsFrame searchOptionsFrame;
-    private int searchOptionsFontSize;
-    private final boolean searchOptionsFontBold;
-    private Font searchOptionsFont;
-    private SearchResultsHelp searchResultsHelp;
-    private SearchResultsFrame searchResultsFrame;
-    private int searchResultsFontSize;
-    private final boolean searchResultsFontBold;
-    private Font searchResultsFont;
-    private Dimension searchSelectionPreferredSize;
-    private final SearchArgs searchArgs;
-    private SearchOutput searchOutput;
-    private SearchEngine searchEngine;
-    private SearchUnifier searchUnifier;
 }

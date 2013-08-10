@@ -31,11 +31,9 @@ import mmj.lang.Assrt;
 public class StepSelectorStore {
 
     private final int maxResults;
-    private int cntResults;
+    private int cntResults = 0;
 
-    private int totalNbrLines;
-
-    private final List<StepSelectorItem> storeList;
+    private final List<StepSelectorItem> storeList = new LinkedList<StepSelectorItem>();
 
     /**
      * Simple factory to hide constructor details.
@@ -47,9 +45,7 @@ public class StepSelectorStore {
     public static StepSelectorStore createStepSelectorStore(
         final ProofAsstPreferences proofAsstPreferences)
     {
-
         return new StepSelectorStore(proofAsstPreferences);
-
     }
 
     /**
@@ -59,12 +55,7 @@ public class StepSelectorStore {
      *            and friends.
      */
     public StepSelectorStore(final ProofAsstPreferences proofAsstPreferences) {
-
         maxResults = proofAsstPreferences.getStepSelectorMaxResults();
-
-        storeList = new LinkedList<StepSelectorItem>();
-        cntResults = 0;
-        totalNbrLines = 0;
     }
 
     /**
@@ -94,16 +85,22 @@ public class StepSelectorStore {
             endLiteral[0] = PaConstants.STEP_SELECTOR_LIST_END_LITERAL;
         add(null, endLiteral);
 
-        final Assrt[] refArray = new Assrt[totalNbrLines];
-        final String[] selectionArray = new String[totalNbrLines];
+        final Assrt[] refArray = new Assrt[storeList.size()];
+        final String[] selectionArray = new String[storeList.size()];
 
         int n = 0;
-        for (final StepSelectorItem item : storeList)
+        for (final StepSelectorItem item : storeList) {
+            refArray[n] = item.assrt;
+            final StringBuilder sb = new StringBuilder("<html>");
+            String delim = "";
             for (final String element : item.selection) {
-                refArray[n] = item.assrt;
-                selectionArray[n] = element;
-                n++;
+                sb.append(delim).append(
+                    element.replace("&", "&amp;").replace("<", "&lt;")
+                        .replace(">", "&gt;"));
+                delim = "<br/>";
             }
+            selectionArray[n++] = sb.append("</html>").toString();
+        }
         return new StepSelectorResults(step, refArray, selectionArray);
     }
 
@@ -117,12 +114,8 @@ public class StepSelectorStore {
      * @return true if store is now full, otherwise false.
      */
     public boolean add(final Assrt assrt, final String[] selection) {
-
         storeList.add(new StepSelectorItem(assrt, selection));
-
-        ++cntResults;
-        totalNbrLines += selection.length;
-
+        cntResults++;
         return isFull();
     }
 

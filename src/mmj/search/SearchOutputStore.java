@@ -23,7 +23,6 @@ public class SearchOutputStore {
 
     private final int maxResults;
     private int cntResults = 0;
-    private int totalNbrLines = 0;
     private final int outputSortNbr;
     private final List<SearchSelectionItem> storeList = new LinkedList<SearchSelectionItem>();
 
@@ -47,19 +46,20 @@ public class SearchOutputStore {
         searchOutput.sortedAssrtResultsList = new ArrayList<Assrt>(
             storeList.size());
         searchOutput.sortedAssrtScoreArray = new int[storeList.size()];
-        searchOutput.refIndexArray = new int[totalNbrLines];
-        searchOutput.selectionArray = new String[totalNbrLines];
-        int lineNbr = 0;
+        searchOutput.selectionArray = new String[storeList.size()];
         int j = 0;
         for (final SearchSelectionItem item : storeList) {
             searchOutput.sortedAssrtResultsList.add(item.assrt);
             searchOutput.sortedAssrtScoreArray[j] = item.score;
+            final StringBuilder sb = new StringBuilder("<html>");
+            String delim = "";
             for (final String element : item.selection) {
-                searchOutput.refIndexArray[lineNbr] = j;
-                searchOutput.selectionArray[lineNbr] = element;
-                lineNbr++;
+                sb.append(delim).append(
+                    element.replace("&", "&amp;").replace("<", "&lt;")
+                        .replace(">", "&gt;"));
+                delim = "<br/>";
             }
-            j++;
+            searchOutput.selectionArray[j++] = sb.append("</html>").toString();
         }
 
         searchOutput.step = step;
@@ -69,7 +69,6 @@ public class SearchOutputStore {
     {
         storeList.add(new SearchSelectionItem(assrt, selection, score));
         cntResults++;
-        totalNbrLines += selection.length;
         return isFull();
     }
 

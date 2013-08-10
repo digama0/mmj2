@@ -19,8 +19,7 @@ import java.awt.HeadlessException;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JList;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 public class SearchSelectionJList extends JList<String> {
 
@@ -28,13 +27,14 @@ public class SearchSelectionJList extends JList<String> {
         this.searchMgr = searchMgr;
         setFont(searchMgr.getSearchResultsFont());
         setListData(searchMgr.getSearchOutput().selectionArray);
-        setSelectionMode(0);
+        setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(final MouseEvent mouseevent) {
-                if (mouseevent.getClickCount() == 2)
+            public void mouseClicked(final MouseEvent e) {
+                if (e.getClickCount() == 2)
                     doubleClicked();
-                if (mouseevent.getButton() == 2 || mouseevent.getButton() == 3)
+                if (e.getButton() == MouseEvent.BUTTON2
+                    || e.getButton() == MouseEvent.BUTTON3)
                     popupSelectionItem();
             }
         });

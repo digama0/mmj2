@@ -312,7 +312,6 @@ public class ProofAsstGUI {
     }
 
     private void buildGUI(final String newProofText) {
-
         displayRequestMessagesGUI(PaConstants.PROOF_ASST_GUI_STARTUP_MSG);
 
         JFrame.setDefaultLookAndFeelDecorated(true);
@@ -330,6 +329,7 @@ public class ProofAsstGUI {
         if (proofAsstPreferences.getTextAtTop()) {
             buildGUIProofTextStuff(newProofText);
             buildGUIMessageTextStuff();
+            myPane.setResizeWeight(1);
         }
         else {
             buildGUIMessageTextStuff();
@@ -3255,10 +3255,11 @@ public class ProofAsstGUI {
         setCursorToStartOfMessageArea();
 
         displayRequestMessagesGUI(messages);
-
     }
 
     private void displayRequestMessagesGUI(final String messages) {
+        if (!PaConstants.REQUEST_MESSAGES_GUI_ENABLED)
+            return;
 
         RequestMessagesGUI u = getRequestMessagesGUI();
         if (u == null) {

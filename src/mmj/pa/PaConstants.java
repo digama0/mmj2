@@ -755,6 +755,8 @@ public class PaConstants {
     // Constants for UnificationErrorsGUI.java
     // ----------------------------------------------------------
 
+    public static final boolean REQUEST_MESSAGES_GUI_ENABLED = false;
+
     /**
      * REQUEST_MESSAGES_GUI_TITLE_DEFAULT
      */

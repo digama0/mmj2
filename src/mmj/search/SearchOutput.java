@@ -29,7 +29,6 @@ public class SearchOutput {
     List<Assrt> sortedAssrtResultsList = new ArrayList<Assrt>(
         Arrays.asList((Assrt)null));
     int[] sortedAssrtScoreArray = new int[]{0};
-    int[] refIndexArray = new int[]{0};
     String[] selectionArray = new String[]{SearchResultsConstants.SELECTION_NO_SEARCH_RUN_YET_LITERAL};
     long startTimeMillis = 0;
     long endTimeMillis = 0;

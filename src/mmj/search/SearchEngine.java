@@ -329,9 +329,9 @@ public class SearchEngine {
             return 50;
     }
 
-    private boolean addAssrtToStore(final int i) {
+    private boolean addAssrtToStore(final int score) {
         String s;
-        if (i == 100)
+        if (score == 100)
             s = SearchConstants.COMPLETED_ITEM_OUTPUT_LITERAL;
         else
             s = "";
@@ -343,7 +343,7 @@ public class SearchEngine {
         }
         else
             j = 1 + assrtNbrLogHyps;
-        final String[] as = new String[j];
+        final String[] selection = new String[j];
         int k = 0;
         final Formula[] aformula = new Formula[assrtNbrLogHyps];
         Formula formula;
@@ -362,41 +362,37 @@ public class SearchEngine {
         }
         if (assrtNbrLogHyps == 0) {
             if (s1.length() > 0) {
-                as[k++] = s1.length() + 10 + s + assrt.getLabel() + " " + s1;
-                as[k++] = formula.getCnt() * 4 + 10
-                    + SearchConstants.SEARCH_OUTPUT_SEARCH_FORMULA_INDENT
+                selection[k++] = s + assrt.getLabel() + " " + s1;
+                selection[k++] = SearchConstants.SEARCH_OUTPUT_SEARCH_FORMULA_INDENT
                     + SearchConstants.SEARCH_OUTPUT_FORMULA_LABEL_SEPARATOR
                     + formula.toString();
             }
             else
-                as[k++] = formula.getCnt() * 4 + 10 + s + assrt.getLabel()
+                selection[k++] = s + assrt.getLabel()
                     + SearchConstants.SEARCH_OUTPUT_FORMULA_LABEL_SEPARATOR
                     + formula.toString();
         }
         else {
             String s3;
             if (s1.length() > 0) {
-                as[k++] = s1.length() + 10 + s + assrt.getLabel() + " " + s1;
-                s3 = aformula[0].getCnt() * 4 + 10
-                    + SearchConstants.SEARCH_OUTPUT_SEARCH_FORMULA_INDENT;
+                selection[k++] = s + assrt.getLabel() + " " + s1;
+                s3 = SearchConstants.SEARCH_OUTPUT_SEARCH_FORMULA_INDENT;
             }
             else
-                s3 = aformula[0].getCnt() * 4 + 10 + s + assrt.getLabel();
-            as[k++] = s3
+                s3 = s + assrt.getLabel();
+            selection[k++] = s3
                 + SearchConstants.SEARCH_OUTPUT_FORMULA_LABEL_SEPARATOR
                 + aformula[0].toString();
             for (int j1 = 1; j1 < assrtNbrLogHyps; j1++)
-                as[k++] = aformula[j1].getCnt() * 4 + 10
-                    + SearchConstants.SEARCH_OUTPUT_SEARCH_FORMULA_INDENT
+                selection[k++] = SearchConstants.SEARCH_OUTPUT_SEARCH_FORMULA_INDENT
                     + SearchConstants.SEARCH_OUTPUT_FORMULA_LOG_HYP_SEPARATOR
                     + aformula[j1].toString();
 
-            as[k++] = formula.getCnt() * 4 + 10
-                + SearchConstants.SEARCH_OUTPUT_SEARCH_FORMULA_INDENT
+            selection[k++] = SearchConstants.SEARCH_OUTPUT_SEARCH_FORMULA_INDENT
                 + SearchConstants.SEARCH_OUTPUT_FORMULA_YIELDS_SEPARATOR
                 + formula.toString();
         }
-        return store.add(assrt, as, i);
+        return store.add(assrt, selection, score);
     }
     private Formula buildSearchSelectionSubstFormula(final ParseTree parseTree)
     {
