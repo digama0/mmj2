@@ -2405,9 +2405,8 @@ public class ProofAsstGUI {
 
     private String getNewProofCompression() {
 
-        String s = proofAsstPreferences.getProofFormatNumber() + "";
-
-        proofAsstPreferences.getSoftDjErrorOptionListString();
+        String s = Integer
+            .toString(proofAsstPreferences.getProofFormatNumber());
 
         final String origPromptString = PaConstants.PROOF_ASST_COMPRESSION_LIST;
 

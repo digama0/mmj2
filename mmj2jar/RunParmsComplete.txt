@@ -141,6 +141,7 @@ ProofAsstMaxUnifyAlternates,10
 ProofAsstDummyVarPrefix,$
 ProofAsstDefaultFileNameSuffix,.mmp
 ProofAsstDjVarsSoftErrors,GenerateReplacements
+ProofAsstProofFormat,Compressed
 ProofAsstProofFolder,myproofs
 ProofAsstAssrtListFreespace,5 
 *

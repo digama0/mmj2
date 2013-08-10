@@ -113,6 +113,9 @@
  *     - Modified for MMJ2 Paths Enhancement
  *     - Added code for MMJ2FailPopupWindow
  *     - Set: MAX_STATEMENT_PRINT_COUNT_DEFAULT = 9999 (was 99999)
+ *     
+ * Version 0.12 - Aug-01-2013:
+ *     - Add "ProofAsstProofFormat"                 RunParm
  */
 
 package mmj.util;
@@ -753,41 +756,41 @@ public class UtilConstants {
 
     /**
      * LoadFile.
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "LoadFile": value1 = qual/unqual filename (varies by OS!)
-     * }
+     * </pre>
      */
     public static final String RUNPARM_LOAD_FILE = "LoadFile";
 
     /**
      * LoadEndpointStmtNbr.
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "LoadEndpointStmtNbr": value1 = stop after loading given
      *                                 number of statements from
      *                                 input Metamath file(s).
      *                                 Must be greater than zero.
-     * }
+     * </pre>
      */
     public static final String RUNPARM_LOAD_ENDPOINT_STMT_NBR = "LoadEndpointStmtNbr";
 
     /**
      * LoadEndpointStmtLabel.
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "LoadEndpointStmtLabel": value1 = stop after loading given
      *                                 statement label from
      *                                 input Metamath file(s).
      *                                 Must not be blank.
-     * }
+     * </pre>
      */
     public static final String RUNPARM_LOAD_ENDPOINT_STMT_LABEL = "LoadEndpointStmtLabel";
 
     /**
      * LoadComments
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "LoadComments": value1 = yes/no (default = yes)
      *                          load Metamath comments
      *                          into LogicalSystem as Descriptions for
@@ -802,14 +805,14 @@ public class UtilConstants {
      *                          loaded, except for $c and $v statements
      *                          which often have the description
      *                          after the declaration.
-     * }
+     * </pre>
      */
     public static final String RUNPARM_LOAD_COMMENTS = "LoadComments";
 
     /**
      * LoadProofs
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "LoadProofs": value1 = yes/no (default = yes)
      *                          load Metamath proofs from input .mm
      *                          file.
@@ -821,7 +824,7 @@ public class UtilConstants {
      *                          If set to "no" then RunParm
      *                          "VerifyProof" will be ignored -- a
      *                          warning message is produced though.
-     * }
+     * </pre>
      */
     public static final String RUNPARM_LOAD_PROOFS = "LoadProofs";
 
@@ -831,19 +834,19 @@ public class UtilConstants {
 
     /**
      * MaxErrorMessages.
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "MaxErrorMessages": 1 -> 999999999...
-     * }
+     * </pre>
      */
     public static final String RUNPARM_MAX_ERROR_MESSAGES = "MaxErrorMessages";
 
     /**
      * MaxInfoMessages.
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "MaxInfoMessages": 1 -> 999999999...
-     * }
+     * </pre>
      */
     public static final String RUNPARM_MAX_INFO_MESSAGES = "MaxInfoMessages"; // 1
                                                                               // ->
@@ -855,10 +858,10 @@ public class UtilConstants {
 
     /**
      * SymbolTableInitialSize.
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "SymbolTableInitialSize": default = 1500, min = 10
-     * }
+     * </pre>
      */
     public static final String RUNPARM_SYM_TBL_INITIAL_SIZE = "SymbolTableInitialSize"; // default
                                                                                         // =
@@ -869,10 +872,10 @@ public class UtilConstants {
 
     /**
      * StatementTableInitialSize.
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "StatementTableInitialSize": default = 30000, min = 100
-     * }
+     * </pre>
      */
     public static final String RUNPARM_STMT_TBL_INITIAL_SIZE = "StatementTableInitialSize"; // default
                                                                                             // =
@@ -887,11 +890,11 @@ public class UtilConstants {
 
     /**
      * SeqAssignerIntervalSize.
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "SeqAssignerIntervalSize": default = 100, min = 1,
      * max = 10000.
-     * }
+     * </pre>
      */
     public static final String RUNPARM_SEQ_ASSIGNER_INTERVAL_SIZE = "SeqAssignerIntervalSize"; // default=1000,
                                                                                                // min=1,
@@ -899,11 +902,11 @@ public class UtilConstants {
 
     /**
      * SeqAssignerIntervalTblInitialSize.
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "SeqAssignerIntervalTblInitialSize": default = 100, min = 10,
      * max = 10000.
-     * }
+     * </pre>
      */
     public static final String RUNPARM_SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE = "SeqAssignerIntervalTblInitialSize"; // default=100,
                                                                                                                      // min=10,
@@ -915,10 +918,10 @@ public class UtilConstants {
 
     /**
      * GrammarAmbiguityEdits.
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "GrammarAmbiguityEdits": "basic" (default) or "complete"
-     * }
+     * </pre>
      */
     public static final String RUNPARM_GRAMMAR_AMBIGUITY_EDITS = "GrammarAmbiguityEdits"; // "basic"
                                                                                           // (default)
@@ -927,10 +930,10 @@ public class UtilConstants {
 
     /**
      * StatementAmbiguityEdits.
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "StatementAmbiguityEdits": "basic" (default) or "complete"
-     * }
+     * </pre>
      */
     public static final String RUNPARM_STATEMENT_AMBIGUITY_EDITS = "StatementAmbiguityEdits"; // "basic"
                                                                                               // (default)
@@ -943,10 +946,10 @@ public class UtilConstants {
 
     /**
      * MaxStatementPrintCount.
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "MaxStatementPrintCount": 1 -> 9999999999....
-     * }
+     * </pre>
      */
     public static final String RUNPARM_MAX_STATEMENT_PRINT_COUNT = "MaxStatementPrintCount"; // 1
                                                                                              // ->
@@ -954,10 +957,10 @@ public class UtilConstants {
 
     /**
      * Caption.
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "Caption": freeform caption for report output.
-     * }
+     * </pre>
      */
     public static final String RUNPARM_CAPTION = "Caption"; // freeform caption
                                                             // for report
@@ -965,20 +968,20 @@ public class UtilConstants {
 
     /**
      * PrintSyntaxDetails.
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "PrintSyntaxDetails": no options
-     * }
+     * </pre>
      */
     public static final String RUNPARM_PRINT_SYNTAX_DETAILS = "PrintSyntaxDetails"; // no
                                                                                     // options
 
     /**
      * PrintStatementDetails.
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "PrintStatementDetails": "*" or Stmt.label
-     * }
+     * </pre>
      */
     public static final String RUNPARM_PRINT_STATEMENT_DETAILS = "PrintStatementDetails"; // "*"
                                                                                           // or
@@ -986,28 +989,28 @@ public class UtilConstants {
 
     /**
      * PrintBookManagerChapters
-     * <p>
-     * {@code 
-     * "PrintBookManagerChapters"
-     * }
+     * 
+     * <pre>
+     * &quot;PrintBookManagerChapters&quot;
+     * </pre>
      */
     public static final String RUNPARM_PRINT_BOOK_MANAGER_CHAPTERS = "PrintBookManagerChapters";
 
     /**
      * PrintBookManagerSections
-     * <p>
-     * {@code 
-     * "PrintBookManagerSections"
-     * }
+     * 
+     * <pre>
+     * &quot;PrintBookManagerSections&quot;
+     * </pre>
      */
     public static final String RUNPARM_PRINT_BOOK_MANAGER_SECTIONS = "PrintBookManagerSections";
 
     /**
      * PrintBookManagerSectionDetails.
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "PrintBookManagerSectionDetails": "*" or Section Number
-     * }
+     * </pre>
      */
     public static final String RUNPARM_PRINT_BOOK_MANAGER_SECTION_DETAILS = "PrintBookManagerSectionDetails"; // "*"
                                                                                                               // or
@@ -1020,20 +1023,20 @@ public class UtilConstants {
 
     /**
      * VerifyProof.
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "VerifyProof": "*" or Stmt.label
-     * }
+     * </pre>
      */
     public static final String RUNPARM_VERIFY_PROOF = "VerifyProof"; // "*" or
                                                                      // Stmt.label
 
     /**
      * VerifyParse.
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "VerifyParse": "*" or Stmt.label
-     * }
+     * </pre>
      */
     public static final String RUNPARM_VERIFY_PARSE = "VerifyParse"; // "*" or
                                                                      // Stmt.label
@@ -1044,19 +1047,19 @@ public class UtilConstants {
 
     /**
      * Parse.
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "Parse": "*" or Stmt.label
-     * }
+     * </pre>
      */
     public static final String RUNPARM_PARSE = "Parse"; // "*" or Stmt.label
 
     /**
      * InitializeGrammar.
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "InitializeGrammar": no option values
-     * }
+     * </pre>
      */
     public static final String RUNPARM_INITIALIZE_GRAMMAR = "InitializeGrammar"; // no
                                                                                  // option
@@ -1068,8 +1071,8 @@ public class UtilConstants {
 
     /**
      * ProofAsstDjVarsSoftErrors
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "ProofAsstDjVarsSoftErrors":
      * 
      *     "Ignore" -- Don't check for missing $d statements
@@ -1085,15 +1088,15 @@ public class UtilConstants {
      * Optional, default is "GenerateReplacements"
      * 
      * NOTE: Superfluous $d statements are not detected!
-     *
-     * }
+     * </pre>
      */
     public static final String RUNPARM_PROOF_ASST_DJ_VARS_SOFT_ERRORS = "ProofAsstDjVarsSoftErrors";
 
     /**
      * ProofAsstProofFormat
      * <p>
-     * {@code 
+     * 
+     * <pre>
      * "ProofAsstProofFormat":
      * 
      *     "Normal" -- Uncompressed RPN proof
@@ -1102,45 +1105,43 @@ public class UtilConstants {
      *              -- Full compression (with all caps encoding)
      * 
      * Optional, default is "Compressed"
-     *
-     * }
+     * </pre>
      */
     public static final String RUNPARM_PROOF_ASST_PROOF_FORMAT = "ProofAsstProofFormat";
 
     /**
      * ProofAsstForegroundColorRGB
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "ProofAsstForegroundColorRGB":
      *                        "0,0,0" -- black (default)
      *                        thru
      *                        "255,255,255" -- white
      * 
      * Optional, default is "0.0,0" (black)
-     *
-     * }
+     * </pre>
      */
     public static final String RUNPARM_PROOF_ASST_FOREGROUND_COLOR_RGB = "ProofAsstForegroundColorRGB";
 
     /**
      * ProofAsstBackgroundColorRGB
      * <p>
-     * {@code 
+     * 
+     * <pre>
      * "ProofAsstBackgroundColorRGB":
      *                        "255,255,255" -- white (default)
      *                        thru
      *                        "0,0,0" -- black
      * 
      * Optional, default is "255,255,255" (white)
-     *
-     * }
+     * </pre>
      */
     public static final String RUNPARM_PROOF_ASST_BACKGROUND_COLOR_RGB = "ProofAsstBackgroundColorRGB"; //
 
     /**
      * ProofAsstFontFamily
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "ProofAsstFontFamily": "Monospaced", (the default),
      *                        "Serif",
      *                        "SansSerif",
@@ -1161,8 +1162,7 @@ public class UtilConstants {
      *         when proportional fonts are used!!!
      * 
      * Optional, default is "Monospaced"
-     *
-     * }
+     * </pre>
      */
     public static final String RUNPARM_PROOF_ASST_FONT_FAMILY = "ProofAsstFontFamily"; // "Monospaced",
                                                                                        // "Courier New",
@@ -1170,27 +1170,25 @@ public class UtilConstants {
 
     /**
      * ProofAsstFontBold
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "ProofAsstFontBold": Yes or No
      * 
      * Optional, default is Yes (bold).
-     *
-     * }
+     * </pre>
      */
     public static final String RUNPARM_PROOF_ASST_FONT_BOLD = "ProofAsstFontBold"; // yes,
                                                                                    // no
 
     /**
      * ProofAsstFontSize
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "ProofAsstFontSize": 8 or 9, 10, 11, 12, 14, 16, 18
      *                      20, 22, 24, 26, 28, 36, 48, 72
      * 
      * Optional, default is 14 (see mmj.pa.PaConstants.java)
-     *
-     * }
+     * </pre>
      */
     public static final String RUNPARM_PROOF_ASST_FONT_SIZE = "ProofAsstFontSize"; // 8,
                                                                                    // 9,
@@ -1198,8 +1196,8 @@ public class UtilConstants {
 
     /**
      * ProofAsstLineWrap
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "ProofAsstLineWrap":
      *     equal to 'on'
      *     or       'off'
@@ -1209,15 +1207,14 @@ public class UtilConstants {
      * text exceeds ProofAsstTextColumns.
      * 
      * Optional, default is 'off' (see mmj.pa.PaConstants.java)
-     *
-     * }
+     * </pre>
      */
     public static final String RUNPARM_PROOF_ASST_LINE_WRAP = "ProofAsstLineWrap";
 
     /**
      * ProofAsstTextColumns
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "ProofAsstTextColumns":
      *     greater than 39 and
      *     less than 1000
@@ -1231,15 +1228,14 @@ public class UtilConstants {
      * formulas for legibility reasons.)
      * 
      * Optional, default is 80 (see mmj.pa.PaConstants.java)
-     *
-     * }
+     * </pre>
      */
     public static final String RUNPARM_PROOF_ASST_TEXT_COLUMNS = "ProofAsstTextColumns";
 
     /**
      * ProofAsstTextRows
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "ProofAsstTextRows":
      *     greater than 1 and
      *     less than 100
@@ -1248,15 +1244,14 @@ public class UtilConstants {
      * the ProofAsstGUI proof text area window.
      * 
      * Optional, default is 21 (see mmj.pa.PaConstants.java)
-     *
-     * }
+     * </pre>
      */
     public static final String RUNPARM_PROOF_ASST_TEXT_ROWS = "ProofAsstTextRows";
 
     /**
      * ProofAsstTextAtTop
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "ProofAsstTextAtTop":
      *     'yes' or 'no' or 'y' or 'n' or 'Y' or 'N'
      * 
@@ -1265,15 +1260,14 @@ public class UtilConstants {
      * positions are reversed (error messages at top).
      * 
      * Optional, default is 'yes' (see mmj.pa.PaConstants.java)
-     *
-     * }
+     * </pre>
      */
     public static final String RUNPARM_PROOF_ASST_TEXT_AT_TOP = "ProofAsstTextAtTop";
 
     /**
      * ProofAsstIncompleteStepCursor
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "ProofAsstIncompleteStepCursor":
      *     'First', 'Last', or 'AsIs' (not case sensitive).
      * 
@@ -1286,15 +1280,14 @@ public class UtilConstants {
      * a proof step.
      * 
      * Optional, default is 'Last' (see mmj.pa.PaConstants.java)
-     *
-     * }
+     * </pre>
      */
     public static final String RUNPARM_PROOF_ASST_INCOMPLETE_STEP_CURSOR = "ProofAsstIncompleteStepCursor";
 
     /**
      * ProofAsstErrorMessageRows
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "ProofAsstErrorMessageRows":
      *     greater than 1 and
      *     less than 100
@@ -1303,15 +1296,14 @@ public class UtilConstants {
      * the ProofAsstGUI error message text area window.
      * 
      * Optional, default is 4 (see mmj.pa.PaConstants.java)
-     *
-     * }
+     * </pre>
      */
     public static final String RUNPARM_PROOF_ASST_ERROR_MESSAGE_ROWS = "ProofAsstErrorMessageRows";
 
     /**
      * ProofAsstErrorMessageColumns
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "ProofAsstErrorMessageColumns":
      *     greater than 39 and
      *     less than 1000
@@ -1320,15 +1312,14 @@ public class UtilConstants {
      * the ProofAsstGUI error message text area window.
      * 
      * Optional, default is 80 (see mmj.pa.PaConstants.java)
-     *
-     * }
+     * </pre>
      */
     public static final String RUNPARM_PROOF_ASST_ERROR_MESSAGE_COLUMNS = "ProofAsstErrorMessageColumns";
 
     /**
      * ProofAsstFormulaLeftCol
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "ProofAsstFormulaLeftCol":
      *     greater than 1 and
      *     less than ProofAsstFormulaRightCol
@@ -1336,15 +1327,14 @@ public class UtilConstants {
      * Controls program formatting, not user-input formulas.
      * 
      * Optional, default is 20 (see mmj.pa.PaConstants.java)
-     *
-     * }
+     * </pre>
      */
     public static final String RUNPARM_PROOF_ASST_FORMULA_LEFT_COL = "ProofAsstFormulaLeftCol";
 
     /**
      * ProofAsstFormulaRightCol
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "ProofAsstFormulaRightCol":
      *     greater than ProofAsstFormulaLeftCol and
      *     less than 9999
@@ -1352,15 +1342,14 @@ public class UtilConstants {
      * Controls program formatting, not user-input formulas.
      * 
      * Optional, default is 79 (see mmj.pa.PaConstants.java)
-     *
-     * }
+     * </pre>
      */
     public static final String RUNPARM_PROOF_ASST_FORMULA_RIGHT_COL = "ProofAsstFormulaRightCol";
 
     /**
      * ProofAsstRPNProofLeftCol
-     * <p>
-     * {@code 
+     * 
+     * <pre>
      * "ProofAsstRPNProofLeftCol":
      *     greater than 3 and
      *     less than ProofAsstRPNProofRightCol
@@ -1368,24 +1357,22 @@ public class UtilConstants {
      * Controls program formatting of generated proof statements
      * 
      * Optional, default is 6 (see mmj.pa.PaConstants.java)
-     *
-     * }
+     * </pre>
      */
     public static final String RUNPARM_PROOF_ASST_RPN_PROOF_LEFT_COL = "ProofAsstRPNProofLeftCol";
 
     /**
      * ProofAsstRPNProofRightCol
-     * <p>
-     * <code>
+     * 
+     * <pre>
      * "ProofAsstRPNProofRightCol":
      *     greater than ProofAsstRPNProofLeftCol and
      *     less than 9999
-     * <p>
-     * Controls program formatting of generated proof statements
-     * <p>
-     * Optional, default is 79 (see mmj.pa.PaConstants.java)
      * 
-     * </code>
+     * Controls program formatting of generated proof statements
+     * 
+     * Optional, default is 79 (see mmj.pa.PaConstants.java)
+     * </pre>
      */
     public static final String RUNPARM_PROOF_ASST_RPN_PROOF_RIGHT_COL = "ProofAsstRPNProofRightCol";
 
