@@ -1,0 +1,864 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+  <title>Persistent Storage Of GUI Preferences</title>
+</head><body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);" vlink="#ff0000" alink="#000088" link="#0000ff">
+<h2><big><big><span style="font-weight: bold;">Persistent Storage Of GUI Preferences<br>
+</span></big></big></h2>
+
+<big><big><span style="font-weight: bold;">
+</span></big></big><span style="font-style: italic; font-weight: bold; font-family: Arial Black;"></span>
+<hr style="width: 100%; height: 2px;"><span style="font-style: italic; font-weight: bold; font-family: Arial Black;"><br>
+This feature enables mmj2 to remember your preferences, the choices you made to alter the appearance
+or functionality of the GUI part of mmj2, namely the Proof Assistant
+and related windows. <br>
+<br>
+</span><small><span style="font-weight: bold; font-family: Arial Black;">NOTE:
+window positions and sizes will be preserved across mmj2 sessions, but
+not window visibility -- at mmj2 start-up only the Proof Assistant GUI
+window will be displayed, and the other windows will be displayed when
+requested.<br>
+</span></small><span style="font-style: italic; font-weight: bold; font-family: Arial Black;"><br>
+Previously users were required to input RunParm file commands to permanently alter the default preferences.<br>
+<br>
+To implement this new feature a new RunParm command, "</span><span style="font-weight: bold; font-family: Arial Black; color: rgb(0, 102, 0);">GUIPreferencesFile</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">" is used to turn on Persistent Storage of GUI Preferences and to specify the file to be used:<br>
+<br>
+</span>
+<div style="margin-left: 40px;"><big style="color: rgb(51, 51, 255);"><big><span style="font-weight: bold;"><span style="font-family: monospace;">LoadFile,set.mm</span></span></big></big><br style="font-family: monospace;">
+<big style="color: rgb(51, 51, 255);"><big><span style="font-weight: bold;"><span style="font-family: monospace;">VerifyProof,*</span></span></big></big><br style="font-family: monospace;">
+<big style="color: rgb(51, 51, 255);"><big><span style="font-weight: bold;"><span style="font-family: monospace;">Parse,* </span></span></big></big><br style="font-family: monospace;">
+<big style="color: rgb(51, 51, 255);"><big><span style="font-weight: bold;"><span style="font-family: monospace;">ProofAsstUnifySearchExclude,biigb,xxxid,dummylink</span></span></big></big><br style="font-family: monospace;">
+<big style="color: rgb(51, 51, 255);"><big><span style="font-weight: bold;"><span style="font-family: monospace;">ProofAsstProofFolder,myproofs</span></span></big></big><br style="font-family: monospace;">
+<big style="color: rgb(51, 51, 255);"><big><span style="font-weight: bold;"><span style="font-family: monospace;">TheoremLoaderMMTFolder,myproofs<br>
+* &lt;--RunParm commands here and defaults are overridden by GUIPreferencesFile<br>
+</span></span></big></big>
+<big style="color: rgb(51, 51, 255);"><big><span style="font-weight: bold;"><span style="font-family: monospace;"><span style="color: rgb(0, 102, 0);">GUIPreferencesFile,GUIPreferences.txt<br style="font-family: monospace;">
+</span></span></span><code style="font-weight: bold;">* &lt;--RunParm commands here are permanent (override)Preferences</code></big></big><br>
+<big style="color: rgb(51, 51, 255);"><big><span style="font-weight: bold;"><span style="font-family: monospace;">RunProofAsstGUI</span></span></big></big><br style="font-family: monospace;">
+<big style="color: rgb(51, 51, 255);"><big><span style="font-weight: bold;"></span></big></big></div>
+<span style="font-style: italic; font-weight: bold; font-family: Arial Black;"><br>
+<br>
+About the GUIPreferencesFile:<br>
+</span>
+<ul>
+  <li><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">The GUIPreferences file is stored by default in the mmj2Path directory (see <a href="mmj2CommandLineArguments.html">mmj2/doc/mmj2CommandLineArguments.html</a>) but a path can be specified on the GUIPreferencesFile RunParm (e.g. in Windows: "</span><big><big><span style="font-style: italic; font-weight: bold;"></span><span style="font-weight: bold; font-family: monospace;">GUIPreferencesFile,c:\mydata\myGUIPreferences.txt</span></big></big><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">"). </span></li>
+  <li><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">The
+GUIPreferencesFile is formatted as a comma-delimited text file, like
+the RunParms.txt file, but with a necessary modification:&nbsp; by definition the last field of each line is
+delimited only by the end-of-line characters. This invention is
+necessary because the Search Options window fields may contain any valid
+ASCII character and this approach is simpler than defining escape character sequences.&nbsp; </span></li>
+
+  <li><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">To
+restore all of the mmj2 preference settings to the default values,
+simply delete your GUIPreferences file entirely or just its contents; mmj2 will recreate the file
+automatically at the end of your next mmj2 Proof Assistant session -- </span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">minus your old preferences.</span></li>
+  <li><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">The
+GUIPreferences file is updated by mmj2 upon exit from the mmj2 Proof
+Assistant -- except for unexpected program failures, which abruptly and
+abnormally terminate processing. <br>
+    </span></li>
+  <li><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">The
+GUIPreferences file is updated by mmj2 only with preferences that are
+different from the hardcoded mmj2 default settings, and only if changes
+were made during processing.<br>
+    </span></li>
+  <li><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">If
+mmj2
+encounters an error in a GUIPreferences file command during startup, a
+pop-up error message is displayed, and then mmj2 restores the
+preference setting to the default value; upon exit the
+GUIPreferences file is "fixed" (i.e. you lose the saved
+preference...but don't worry, this should not happen unless you "text
+edit"
+your file and goof ...so make a backup if you're doing that...)</span></li>
+  <li><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">The
+contents of the GUIPreferences file are simply RunParm-style commands which
+override both the default preferences hardcoded into mmj2 and any
+RunParm.txt file commands previously processed. </span></li>
+  <li><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">New commands </span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">will be added to
+the system </span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">for
+the mmj2 Search Options preferences and history, but these may only be used inside
+the GUIPreferencesFile (because a different program processes them -- and because they are defined differently.) </span></li>
+</ul>
+<span style="font-style: italic; font-weight: bold; font-family: Arial Black;">NOTE
+TO READER: You can probably just quit reading now. The rest of
+the information is available if needed, and that will probably never
+happen...unless things go badly... :-)<br>
+<br>
+</span>
+<hr style="width: 100%; height: 2px;"><span style="font-style: italic; font-weight: bold; font-family: Arial Black;"><br>
+<br>
+<big><span style="color: rgb(51, 51, 255);">EXISTING PROOF ASSISTANT GUI PREFERENCES</span></big><br>
+</span>
+<table style="text-align: left; width: 100%;" border="5" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">MENU OPTION / MECHANISM<br>
+      </td>
+      <td style="vertical-align: top; font-family: Arial Black;">RUNPARM / GUI PREFERENCES FILE COMMANDS W/DEFAULT<br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">File/Save As<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace; font-weight: bold;"><big>ProofAsstProofFolder,myproofs<br>
+      </big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">Edit/Set Incomplete Step Cursor<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace; font-weight: bold;"><big>ProofAsstIncompleteStepCursor,AsIs<br>
+      </big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">Edit/Set Soft Dj Vars Error Handling<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace; font-weight: bold;"><big>ProofAsstDjVarsSoftErrors,GenerateReplacements<br>
+      </big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">Edit/Set Font Family<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace; font-weight: bold;"><big>ProofAsstFontFamily,Monospaced<br>
+      </big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">Edit/Font Style Plain/Bold<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace; font-weight: bold;"><big>ProofAsstFontBold,yes<br>
+      </big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">Edit/Set (Larger/Smaller) Font Size<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace; font-weight: bold;"><big>ProofAsstFontSize,14<br>
+      </big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><big style="font-weight: bold;"><code>ProofAsstFormulaRightCol,79<br>
+ProofAsstTextColumns,80</code></big><br><span style="font-weight: bold;">
+(</span><big style="font-weight: bold;"><code>ProofAsstFormulaRightCol</code></big><span style="font-weight: bold;"> is being "deprecated"</span><br>
+      <small><span style="font-family: Arial Black; font-style: italic;"></span><span style="font-family: Arial Black; font-style: italic;">--&gt; it will be accepted but the input value will be ignored.</span><br style="font-family: Arial Black; font-style: italic;">
+<span style="font-family: Arial Black; font-style: italic;">Instead the value will be computed as </span></small><big style="font-weight: bold;"><code><br>
+ProofAsstTextColumns</code></big><small><span style="font-family: Arial Black; font-style: italic;"> minus 1.) </span></small><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top; font-weight: bold;"><big><code>ProofAsstTextRows,25</code></big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><big style="font-weight: bold;"><code>ProofAsstErrorMessageColumns,80</code></big><br>(<small><span style="font-family: Arial Black; font-style: italic;">This RunParm is being "deprecated" </span><br style="font-family: Arial Black; font-style: italic;">
+<span style="font-family: Arial Black; font-style: italic;">--&gt; it will be accepted but the input value will be ignored.</span><br style="font-family: Arial Black; font-style: italic;">
+<span style="font-family: Arial Black; font-style: italic;">The number of error message columns on the screen</span><br style="font-family: Arial Black; font-style: italic;">
+      </small><span style="font-family: Arial Black; font-style: italic;"><small>will be the same as</small> </span><big style="font-weight: bold;"><code>ProofAsstTextColumns</code></big>.)<br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><big style="font-weight: bold;"><code>ProofAsstErrorMessageRows,4</code></big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+<tr>
+      <td style="vertical-align: top; font-family: Arial Black;">Edit/Set Foreground Color<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace; font-weight: bold;"><big>ProofAsstForegroundColorRGB,0,0,0<br>
+      </big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">Edit/Set Background Color<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace; font-weight: bold;"><big>ProofAsstBackgroundColorRGB,255,255,255<br>
+      </big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">Edit/Set Format Number<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace; font-weight: bold;"><big>TMFFUseFormat,13<br>
+      </big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">Edit/Set Indent Amount<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace; font-weight: bold;"><big>TMFFUseIndent,0<br>
+      </big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">Unify/Set Step Selector Max Results<br>
+      <span style="font-style: italic;">(This menu item will be removed from</span><br style="font-style: italic;">
+      <span style="font-style: italic;">the Proof Assistant GUI window because it</span><br style="font-style: italic;">
+      <span style="font-style: italic;">is available on the Search Options window).</span><br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace; font-weight: bold;"><big>StepSelectorMaxResults,50<br>
+      </big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">Unify/Set Step Selector Show Substitutions<br>
+      <span style="font-style: italic;">(This menu item will be removed from</span><br style="font-style: italic;">
+
+      <span style="font-style: italic;">the Proof Assistant GUI window because it</span><br style="font-style: italic;">
+
+      <span style="font-style: italic;">is available on the Search Options window).</span><br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace; font-weight: bold;"><big>StepSelectorShowSubstitutions,true<br>
+      </big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">TL/Set Theorem Loader MMT Folder<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace; font-weight: bold;"><big>TheoremLoaderMMTFolder,myproofs<br>
+      </big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">TL/Set Theorem Loader Dj Vars Option<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace; font-weight: bold;"><big>TheoremLoaderDjVarsOption,NoUpdate<br>
+      </big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">TL/Set Theorem Loader Audit Messages<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace; font-weight: bold;"><big>TheoremLoaderAuditMessages,Yes<br>
+      </big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">TL/Set Theorem Loader Store MM Indent Amount<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace; font-weight: bold;"><big>TheoremLoaderStoreMMIndentAmt,2<br>
+      </big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">TL/Set Theorem Loader Store MM Right Column<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace; font-weight: bold;"><big>TheoremLoaderStoreMMRightCol,79<br>
+      </big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">TL/Set Theorem Loader Store MM Formulas AsIs<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace; font-weight: bold;"><big>TheoremLoaderStoreFormulasAsIs,Yes<br>
+      </big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<br>
+<hr style="width: 100%; height: 2px;"><br>
+<br>
+<big style="font-family: Arial Black;"><span style="color: rgb(51, 51, 255); font-style: italic;">(NEW) WINDOW SIZE/APPEARANCE PREFERENCES</span></big><br>
+<table style="text-align: left; width: 100%;" border="5" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">MENU OPTION/MECHANISM<br>
+      </td>
+      <td style="vertical-align: top; font-family: Arial Black;">GUI PREFERENCES FILE COMMAND<br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">Error Message Pane Window Control<br>
+      </td>
+      <td style="vertical-align: top; font-weight: bold;"><big><code>ErrorMessagePaneHeight,9999<br>
+      </code>
+      </big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">Proof Asst GUI Window Control, Location<br>
+</td>
+      <td style="vertical-align: top; font-weight: bold;"><big><code>ProofAsstWindowLocationXY,9999,9999<br>
+      </code>
+      </big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">Proof Asst GUI Window Control, Width<a href="#_NOTE:_RunParm_ProofAsstTextColumns">*</a><br>
+</td>
+      <td style="vertical-align: top; font-weight: bold;"><big><code>ProofAsstFormulaRightCol,79<br>
+ProofAsstTextColumns,80<br>
+</code></big>(<big style="font-weight: bold;"><code>ProofAsstFormulaRightCol</code></big> is being "deprecated"<br>
+
+      <small><span style="font-family: Arial Black; font-style: italic;"></span><span style="font-family: Arial Black; font-style: italic;">--&gt; it will be accepted but the input value will be ignored.</span><br style="font-family: Arial Black; font-style: italic;">
+<span style="font-family: Arial Black; font-style: italic;">Instead the value will be computed as </span></small><big style="font-weight: bold;"><code><br>
+ProofAsstTextColumns</code></big><small><span style="font-family: Arial Black; font-style: italic;"> minus 1. </span></small>)<br>
+</td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">Proof Asst GUI Window Control, Proof Pane Height<a href="#_NOTE:_RunParm_ProofAsstTextColumns">*</a></td><td style="vertical-align: top; font-weight: bold;"><big><code>ProofAsstTextRows,25<br>
+      </code>
+      </big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><big style="font-weight: bold;"><code>ProofAsstErrorMessageColumns,80</code></big><br>(<small><span style="font-family: Arial Black; font-style: italic;">This RunParm is being "deprecated" </span><br style="font-family: Arial Black; font-style: italic;">
+      <span style="font-family: Arial Black; font-style: italic;">--&gt; it will be accepted but the input value will be ignored.</span><br style="font-family: Arial Black; font-style: italic;">
+      <span style="font-family: Arial Black; font-style: italic;">The number of error message columns on the screen</span><br style="font-family: Arial Black; font-style: italic;">
+      </small><span style="font-family: Arial Black; font-style: italic;"><small>will be the same as</small> </span><big style="font-weight: bold;"><code>ProofAsstTextColumns</code></big>.)<br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">Proof Asst GUI Window Control, Error Message Pane Height<a href="#_NOTE:_RunParm_ProofAsstTextColumns">*</a></td>
+      <td style="vertical-align: top;"><big><code style="font-weight: bold;">ProofAsstErrorMessageRows,4</code></big><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+
+    
+    
+    
+    
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">Search Options Window Control</td>
+      <td style="vertical-align: top; font-weight: bold;"><big><code>SearchOptionsWindowLocationXY,9999,9999<br>
+      </code>
+      </big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">Search Options Window Control</td>
+      <td style="vertical-align: top; font-weight: bold;"><big><code>SearchOptionsWindowWidth,9999</code></big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">Search Options Window Control</td>
+      <td style="vertical-align: top; font-weight: bold;"><big><code>SearchOptionsWindowHeight,9999</code></big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">Step Selector Dialog Window Control</td>
+      <td style="vertical-align: top; font-weight: bold;"><big><code>StepSelectorDialogPaneLocationXY,9999,9999<br>
+      </code>
+      </big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">Step Selector Dialog Window Control</td>
+      <td style="vertical-align: top; font-weight: bold;"><big><code>StepSelectorDialogPaneWidth,720 (existing RunParm)<br>
+      </code>
+      </big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">Step Selector Dialog Window Control</td>
+      <td style="vertical-align: top; font-weight: bold;"><big><code>StepSelectorDialogPaneHeight,440 (existing RunParm)<br>
+      </code>
+      </big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    
+  </tbody>
+</table>
+<br>
+<span style="font-family: Arial Black;"><a name="_NOTE:_RunParm_ProofAsstTextColumns"></a>* NOTE: RunParm </span><big><big style="font-weight: bold;"><code>ProofAsstFormulaRightCol</code></big></big><span style="font-family: Arial Black;">
+sets the right margin for TMFF (Text Mode Formula Formatting) in the
+Proof Assistant Window, and in the existing code, changes to the size
+of the Proof
+Asst GUI window</span> <span style="font-family: Arial Black;">do not
+affect the TMFF-rendered width of proof formulas. However, as part of
+Release 20121225 this behavior will change. When the user changes the
+width of the Proof Assistant GUI window, or chooses a different font,
+font size, or bold vs. plain, the number of characters that fit
+inside the borders of the window's "viewport" are affected, plus or
+minus, and these changes will automatically update the (internally) stored
+setting for </span><big><big><code style="font-weight: bold;">ProofAsstTextColumns.</code></big></big><span style="font-family: Arial Black;">
+The updated setting will become visible during the next TMFF proof
+formatting operation, and it will be stored as part of the persistent
+GUI preferences data.</span> <span style="font-family: Arial Black;">Similarly,
+changes affectingthe height of the Proof Assistant window or the error
+message area will automatically update the settings for </span><big><code style="font-weight: bold;">ProofAsstTextRows</code></big><span style="font-family: Arial Black;"> and </span><big><code style="font-weight: bold;">ProofAsstErrorMessageRows</code></big><span style="font-family: Arial Black;">.</span><br>
+<br>
+<hr style="width: 100%; height: 2px;"><br>
+
+<big style="font-family: Arial Black;"><span style="color: rgb(51, 51, 255); font-style: italic;">(NEW) SEARCH OPTIONS WINDOW PrevSearchData HISTORY</span></big><br>
+<table style="text-align: left; width: 100%;" border="5" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">iTH PREV SEARCH OPTIONS FIELD <br>
+      </td>
+      <td style="vertical-align: top; font-family: Arial Black;">GUI PREFERENCES FILE COMMAND</td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">PrevSearch i, OR<br>
+      </td>
+      <td style="vertical-align: top; font-weight: bold;"><code><big>PrevSearch,OR,i,XXXX<br>
+
+      </big></code></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">PrevSearch i, QUOTE<br>
+      </td>
+      <td style="vertical-align: top; font-weight: bold;"><code><big>PrevSearch,QUOTE,i,XXXX</big></code></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">PrevSearch i, Line j, Search-In-What <br>
+      </td>
+      <td style="vertical-align: top; font-weight: bold;"><code><big>PrevSearch,Search-In-What,i,j,XXXXXXXXXXXXXXXX</big></code></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">PrevSearch i, Line j, Format </td>
+      <td style="vertical-align: top; font-weight: bold;"><code><big>PrevSearch,Format,i,j,XXXXXXXXXXXXXXXX</big></code></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">PrevSearch i, Line j, Oper </td>
+      <td style="vertical-align: top; font-weight: bold;"><code><big>PrevSearch,Oper,i,j,XXX</big></code></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">PrevSearch i, Line j, Search-For-What </td>
+      <td style="vertical-align: top; font-weight: bold;"><code><big>PrevSearch,Search-For-What,i,j,XXXXXXXXXXXXXXXXXXXXXXXXXXXXX</big></code></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">PrevSearch i, Line j, Or </td>
+      <td style="vertical-align: top; font-weight: bold;"><code><big>PrevSearch,Search-For-What,i,j,yes/no</big></code></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">PrevSearch i, From_Chap </td>
+      <td style="vertical-align: top; font-weight: bold;"><code><big>PrevSearch,From_Chap,i,XXXXXXXXXXXXXXXXXXXXXX</big></code></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">PrevSearch i, From_Sec </td>
+      <td style="vertical-align: top; font-weight: bold;"><code><big>PrevSearch,From_Sec,i,XXXXXXXXXXXXXXXXXXXXXX</big></code></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">PrevSearch i, Thru_Chap<br>
+ </td>
+      <td style="vertical-align: top; font-weight: bold;"><code><big>PrevSearch,Thru_Chap,i,XXXXXXXXXXXXXXXXXXXXXX</big></code></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">PrevSearch i, Thru_Sec </td>
+      <td style="vertical-align: top; font-weight: bold;"><code><big>PrevSearch,Thru_Sec,i,XXXXXXXXXXXXXXXXXXXXXX</big></code></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">PrevSearch i, Labels<br>
+      </td>
+      <td style="vertical-align: top; font-weight: bold;"><code><big>PrevSearch,Labels,i,XXXXXXXXXXXXXXXXXXXXXX</big></code></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">PrevSearch i, Min_Times_Used_In_Proofs<br>
+      </td>
+      <td style="vertical-align: top; font-weight: bold;"><code><big>PrevSearch,Min_Times_Used_In_Proofs,i,99999<br>
+
+      </big></code></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">PrevSearch i, Min_Hyps<br>
+      </td>
+      <td style="vertical-align: top; font-weight: bold;"><code><big>PrevSearch,Min_Hyps,i,99999<br>
+
+      </big></code></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">PrevSearch i, Max_Hyps</td>
+      <td style="vertical-align: top; font-weight: bold;"><code><big>PrevSearch,Max_Hyps,i,99999</big></code></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">PrevSearch i, Max_Search_Results</td>
+      <td style="vertical-align: top; font-weight: bold;"><code><big>PrevSearch,Max_Search_Results,i,99999</big></code></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">PrevSearch i, Must_Be_Unifiable_With_Step</td>
+      <td style="vertical-align: top; font-weight: bold;"><code><big>PrevSearch,Must_Be_Unifiable_With_Step,i,yes/no</big></code></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">PrevSearch i,Use_Chapter_Sec_Hierarchy<br>
+      </td>
+      <td style="vertical-align: top; font-weight: bold;"><code><big>PrevSearch,Use_Chapter_Sec_Hierarchy,i,yes/no</big></code></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">PrevSearch,i,Search-Proximity_Scoring<br>
+      </td>
+      <td style="vertical-align: top; font-weight: bold;"><code><big>PrevSearch,Search-Proximity_Scoring,i,yes/no</big></code></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">PrevSearch,i,Min_Completed_Search_Results</td>
+      <td style="vertical-align: top; font-weight: bold;"><code><big>PrevSearch,Min_Completed_Search_Results,i,99999</big></code></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">PrevSearch,i,Check_First_N_Search_Results</td>
+      <td style="vertical-align: top; font-weight: bold;"><code><big>PrevSearch,Check_First_N_Search_Results,i,99999</big></code></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">PrevSearch,i,Max_Incomplete_Hyps</td>
+      <td style="vertical-align: top; font-weight: bold;"><code><big>PrevSearch,Max_Incomplete_Hyps,i,99999</big></code></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">PrevSearch,i,Max_Prev_Steps_Checked</td>
+      <td style="vertical-align: top; font-weight: bold;"><code><big>PrevSearch,Max_Prev_Steps_Checked,i,99999</big></code></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">PrevSearch,i,Reuse_Derivation_Steps</td>
+      <td style="vertical-align: top; font-weight: bold;"><code><big>PrevSearch,Reuse_Derivation_Steps,i,yes/no</big></code></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">PrevSearch,i,Max_Elapsed_Seconds</td>
+      <td style="vertical-align: top; font-weight: bold;"><code><big>PrevSearch,Max_Elapsed_Seconds,i,99999</big></code></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">PrevSearch,i,Show_Unification_Subst</td>
+      <td style="vertical-align: top; font-weight: bold;"><code><big>PrevSearch,Show_Unification_Subst,i,yes/no</big></code></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">PrevSearch,i,Auto_Select</td>
+      <td style="vertical-align: top; font-weight: bold;"><code><big>PrevSearch,Auto_Select,i,yes/no</big></code></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">PrevSearch,i,Output_Sort_Seq</td>
+      <td style="vertical-align: top; font-weight: bold;"><code><big>PrevSearch,Output_Sort_Seq,i,XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</big></code></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<br>
+<hr style="width: 100%; height: 2px;"><br>
+
+
+<big style="font-family: Arial Black;"><span style="color: rgb(51, 51, 255); font-style: italic;">(NEW) SEARCH OPTIONS WINDOW Search-For-What HISTORY</span></big><br>
+<table style="text-align: left; width: 100%;" border="5" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">iTH SEARCH-FOR-WHAT/HISTORY ITEM <br>
+      </td>
+      <td style="vertical-align: top; font-family: Arial Black;">GUI PREFERENCES FILE COMMAND</td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">Hist,Search-For-What,CharString,i</td>
+      <td style="vertical-align: top; font-weight: bold;"><big><code>Hist,Search-For-What,CharString,i,XXXXXXXXXXXXXXXXXXXXXXXXXXXXX</code></big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">Hist,Search-For-What,ParseExpr,i</td>
+      <td style="vertical-align: top; font-weight: bold;"><big><code>Hist,Search-For-What,ParseExpr,i,XXXXXXXXXXXXXXXXXXXXXXXXXXXXX</code></big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">Hist,Search-For-What,ParseStmt,i</td>
+      <td style="vertical-align: top; font-weight: bold;"><big><code>Hist,Search-For-What,ParseStmt,i,XXXXXXXXXXXXXXXXXXXXXXXXXXXXX</code></big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black;">Hist,Search-For-What,RegExpr,i</td>
+      <td style="vertical-align: top; font-weight: bold;"><big><code>Hist,Search-For-What,RegExpr,i,XXXXXXXXXXXXXXXXXXXXXXXXXXXXX</code></big></td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<br>
+<br>
+</body></html>
