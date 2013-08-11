@@ -152,8 +152,8 @@ public class Formula {
      * @param typS Formula Type code
      * @throws LangException if an error occurred
      */
-    protected Formula(final Map<?, ?> symTbl, final int sz, final String typS)
-        throws LangException
+    protected Formula(final Map<String, Sym> symTbl, final int sz,
+        final String typS) throws LangException
     {
         sym = new Sym[sz];
         cnt = 1;
@@ -217,18 +217,17 @@ public class Formula {
      * @return Type Code symbol.
      * @throws LangException if Type Code is undefined or not defined as a Cnst.
      */
-    public Sym setTyp(final Map<?, ?> symTbl, final String typS)
+    public Sym setTyp(final Map<String, Sym> symTbl, final String typS)
         throws LangException
     {
 
-        final Sym typC = (Sym)symTbl.get(typS);
+        final Sym typC = symTbl.get(typS);
         if (typC == null)
             throw new LangException(LangConstants.ERRMSG_STMT_TYP_UNDEF, typS);
-        if (!typC.isCnst())
+        if (!(typC instanceof Cnst))
             throw new LangException(
                 LangConstants.ERRMSG_STMT_TYP_NOT_DEF_AS_CNST, typS);
-        sym[0] = typC;
-        return typC;
+        return sym[0] = typC;
     }
 
     /**
@@ -258,15 +257,16 @@ public class Formula {
 
         // start at i = 1 to bypass the Cnst at Formula.sym[0]
         for (int i = 1; i < cnt; i++) {
-            if (sym[i].isVar()) {
+            if (sym[i] instanceof Var) {
                 vH = ((Var)sym[i]).getVarHyp(varHypArray);
                 if (vH == null) {
-                    if (((Var)sym[i]).getIsWorkVar())
+                    if (sym[i] instanceof WorkVar)
                         vH = ((Var)sym[i]).getActiveVarHyp();
                     if (vH == null)
-                        throw new IllegalArgumentException(LangException.format(
-                            LangConstants.ERRMSG_FORMULA_VAR_HYP_NOTFND,
-                            sym[i], this));
+                        throw new IllegalArgumentException(
+                            LangException.format(
+                                LangConstants.ERRMSG_FORMULA_VAR_HYP_NOTFND,
+                                sym[i], this));
                 }
                 parseNodeHolderExpr[dest] = new ParseNodeHolder(vH);
             }
@@ -293,15 +293,16 @@ public class Formula {
 
         // start at i = 1 to bypass the Cnst at Formula.sym[0]
         for (int i = 1; i < cnt; i++) {
-            if (sym[i].isVar()) {
+            if (sym[i] instanceof Var) {
                 vH = ((Var)sym[i]).getVarHyp(hypArray);
                 if (vH == null) {
-                    if (((Var)sym[i]).getIsWorkVar())
+                    if (sym[i] instanceof WorkVar)
                         vH = ((Var)sym[i]).getActiveVarHyp();
                     if (vH == null)
-                        throw new IllegalArgumentException(LangException.format(
-                            LangConstants.ERRMSG_FORMULA_VAR_HYP_NOTFND,
-                            sym[i], this));
+                        throw new IllegalArgumentException(
+                            LangException.format(
+                                LangConstants.ERRMSG_FORMULA_VAR_HYP_NOTFND,
+                                sym[i], this));
                 }
                 parseNodeHolderExpr[dest] = new ParseNodeHolder(vH);
             }
@@ -331,7 +332,7 @@ public class Formula {
 
         // start at i = 1 to bypass the Cnst at Formula.sym[0]
         for (int i = 1; i < cnt; i++) {
-            if (sym[i].isVar()) {
+            if (sym[i] instanceof Var) {
                 vH = ((Var)sym[i]).getVarHyp(varHypArray);
                 if (vH == null)
                     throw new IllegalArgumentException(LangException.format(
@@ -362,7 +363,7 @@ public class Formula {
         final List<VarHyp> hypList = new ArrayList<VarHyp>();
         // start at i = 1 to bypass the Cnst at Formula.sym[0]
         for (int i = 1; i < cnt; i++) {
-            if (!sym[i].isVar())
+            if (!(sym[i] instanceof Var))
                 continue;
             final VarHyp vH = ((Var)sym[i]).getVarHyp(tempHypArray);
             if (vH != null) {
@@ -399,10 +400,7 @@ public class Formula {
     public boolean exprEquals(final Object obj) {
         if (this == obj)
             return true;
-        if (!(obj instanceof Formula))
-            return false;
-
-        if (cnt != ((Formula)obj).cnt)
+        if (!(obj instanceof Formula && cnt == ((Formula)obj).cnt))
             return false;
         for (int i = 1; i < cnt; i++)
             if (sym[i] != ((Formula)obj).sym[i])
@@ -441,10 +439,7 @@ public class Formula {
     public boolean equals(final Object obj) {
         if (this == obj)
             return true;
-        if (!(obj instanceof Formula))
-            return false;
-
-        if (cnt != ((Formula)obj).cnt)
+        if (!(obj instanceof Formula && cnt == ((Formula)obj).cnt))
             return false;
         for (int i = 0; i < cnt; i++)
             if (sym[i] != ((Formula)obj).sym[i])
@@ -634,7 +629,7 @@ public class Formula {
         int max = -1;
         int len;
         for (int i = 1; i < cnt; i++)
-            if (sym[i].isCnst()) {
+            if (sym[i] instanceof Cnst) {
                 len = sym[i].getId().length();
                 if (len > max)
                     max = len;

@@ -638,7 +638,7 @@ public class Grammar implements SyntaxVerifier {
             // The "get" routines cache results...so...
             exprParseTree.getMaxDepth();
             exprParseTree.getLevelOneTwo();
-            if (stmt.isAssrt()) {
+            if (stmt instanceof Assrt) {
                 final Assrt assrt = (Assrt)stmt;
                 assrt.getLogHypsMaxDepth();
                 assrt.getLogHypsL1HiLoKey();
@@ -1023,7 +1023,7 @@ public class Grammar implements SyntaxVerifier {
         notationGRGimmeMatchCnt = 0;
 
         for (final Sym sym : symTbl.values())
-            if (sym.isCnst()) {
+            if (sym instanceof Cnst) {
                 final Cnst cnst = (Cnst)sym;
                 cnst.setIsVarTyp(false);
                 cnst.setIsProvableLogicStmtTyp(false);
@@ -1042,7 +1042,13 @@ public class Grammar implements SyntaxVerifier {
 
         for (int i = 0; i < provableLogicStmtTypCodes.length; i++) {
             final Sym sym = symTbl.get(provableLogicStmtTypCodes[i]);
-            if (sym == null || !sym.isCnst()) {
+            if (sym instanceof Cnst) {
+                final Cnst cnst = (Cnst)sym;
+                provableLogicStmtTypArray[i] = cnst;
+                cnst.setIsProvableLogicStmtTyp(true);
+                cnst.setIsGrammaticalTyp(true);
+            }
+            else {
                 accumErrorMsgInList(GrammarConstants.ERRMSG_PROVABLE_TYP_NOT_A_CNST_1
                     + i
                     + GrammarConstants.ERRMSG_PROVABLE_TYP_NOT_A_CNST_2
@@ -1050,29 +1056,23 @@ public class Grammar implements SyntaxVerifier {
                     + GrammarConstants.ERRMSG_PROVABLE_TYP_NOT_A_CNST_3);
                 errorsFound = true;
             }
-            else {
-                final Cnst cnst = (Cnst)sym;
-                provableLogicStmtTypArray[i] = cnst;
-                cnst.setIsProvableLogicStmtTyp(true);
-                cnst.setIsGrammaticalTyp(true);
-            }
         }
 
         for (int i = 0; i < logicStmtTypCodes.length; i++) {
             final Sym sym = symTbl.get(logicStmtTypCodes[i]);
-            if (sym == null || !sym.isCnst()) {
+            if (sym instanceof Cnst) {
+                final Cnst cnst = (Cnst)sym;
+                logicStmtTypArray[i] = cnst;
+                cnst.setIsLogicStmtTyp(true);
+                cnst.setIsGrammaticalTyp(true);
+            }
+            else {
                 accumErrorMsgInList(GrammarConstants.ERRMSG_LOGIC_TYP_NOT_A_CNST_1
                     + i
                     + GrammarConstants.ERRMSG_LOGIC_TYP_NOT_A_CNST_2
                     + logicStmtTypCodes[i]
                     + GrammarConstants.ERRMSG_LOGIC_TYP_NOT_A_CNST_3);
                 errorsFound = true;
-            }
-            else {
-                final Cnst cnst = (Cnst)sym;
-                logicStmtTypArray[i] = cnst;
-                cnst.setIsLogicStmtTyp(true);
-                cnst.setIsGrammaticalTyp(true);
             }
         }
 
@@ -1087,12 +1087,7 @@ public class Grammar implements SyntaxVerifier {
                 maxFormulaCnt = formulaLength;
 
             final Cnst cnst = stmt.getTyp();
-            if (stmt instanceof Theorem) {
-//              stmt.setExprRPN(null);
-                stmt.setExprParseTree(null);
-                continue;
-            }
-            if (stmt instanceof LogHyp) {
+            if (stmt instanceof Theorem || stmt instanceof LogHyp) {
 //              stmt.setExprRPN(null);
                 stmt.setExprParseTree(null);
                 continue;
@@ -1192,16 +1187,16 @@ public class Grammar implements SyntaxVerifier {
             nullsPermittedTypSet.add((Cnst)sym[0]);
         else {
             // start at 1 to bypass Formula.Typ
-            loopExpr: for (int src = 1; src < sym.length; src++) {
-                if (sym[src].isCnst()) {
+            for (int src = 1; src < sym.length; src++) {
+                if (sym[src] instanceof Cnst) {
                     cnst = (Cnst)sym[src];
                     cnst.incNbrOccInSyntaxAxioms();
                     if (varHypArray.length == 0)
                         cnst.incNbrOccInCnstSyntaxAxioms();
-                    continue loopExpr;
+                    continue;
                 }
                 var = (Var)sym[src];
-                loopVarHyp: for (int i = 0; i < varHypArray.length; i++)
+                for (int i = 0; i < varHypArray.length; i++)
                     if (varHypArray[i].getVar() == var) {
                         if (dest >= reseqVarHyp.length) {
                             accumErrorMsgInList(GrammarConstants.ERRMSG_SYNTAX_VARHYP_MISMATCH_1
@@ -1224,7 +1219,7 @@ public class Grammar implements SyntaxVerifier {
                                 isResequenced = true;
                             reseqVarHyp[dest++] = i;
                         }
-                        break loopVarHyp;
+                        break;
                     }
             }
             if (dest != reseqVarHyp.length) {
@@ -1255,9 +1250,9 @@ public class Grammar implements SyntaxVerifier {
 
         final Sym[] sym = axiom.getFormula().getSym();
         Cnst cnst;
-        loopExpr: for (int i = 1; i < sym.length; i++) {
-            if (!sym[i].isCnst())
-                continue loopExpr;
+        for (int i = 1; i < sym.length; i++) {
+            if (!(sym[i] instanceof Cnst))
+                continue;
             cnst = (Cnst)sym[i];
             if (cnst.getNbrOccInSyntaxAxioms() == 1)
                 axiom.setSyntaxAxiomHasUniqueCnst(true);

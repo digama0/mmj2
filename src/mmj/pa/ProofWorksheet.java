@@ -217,7 +217,7 @@ public class ProofWorksheet {
     public VarHyp getVarHypFromComboFrame(final Var v) {
         final Hyp[] a = comboFrame.hypArray;
         for (final Hyp element : a)
-            if (element.isVarHyp() && ((VarHyp)element).getVar() == v)
+            if (element instanceof VarHyp && ((VarHyp)element).getVar() == v)
                 return (VarHyp)element;
         return null;
     }
@@ -560,18 +560,16 @@ public class ProofWorksheet {
      */
     public HypothesisStep getHypothesisStepFromList(final LogHyp h) {
         for (final ProofWorkStmt w : getProofWorkStmtList())
-            if (w.isHypothesisStep()) {
-                final HypothesisStep hypothesisStep = (HypothesisStep)w;
-                if (h == hypothesisStep.getRef())
-                    return hypothesisStep;
-            }
+            if (w instanceof HypothesisStep
+                && h == ((HypothesisStep)w).getRef())
+                return (HypothesisStep)w;
         return null;
     }
 
     public Set<WorkVar> buildProofWorksheetWorkVarSet() {
         final Set<WorkVar> workVars = new HashSet<WorkVar>();
         for (final ProofWorkStmt proofWorkStmt : getProofWorkStmtList())
-            if (proofWorkStmt.isProofStep())
+            if (proofWorkStmt instanceof ProofStepStmt)
                 ((ProofStepStmt)proofWorkStmt).accumSetOfWorkVarsUsed(workVars);
         return workVars;
     }
@@ -854,7 +852,7 @@ public class ProofWorksheet {
         for (final ProofWorkStmt o : getProofWorkStmtList()) {
             if (o == exclusiveEndpointStep)
                 break;
-            if (o.isProofStep()) {
+            if (o instanceof ProofStepStmt) {
                 final ProofStepStmt matchStep = (ProofStepStmt)o;
                 if (matchStep.formula.equals(searchFormula))
                     return matchStep;
@@ -881,7 +879,7 @@ public class ProofWorksheet {
             getProofWorkStmtListCnt() * 2);
 
         for (final ProofWorkStmt o : getProofWorkStmtList()) {
-            if (!o.isProofStep())
+            if (!(o instanceof ProofStepStmt))
                 continue;
 
             final ProofStepStmt renumberProofStepStmt = (ProofStepStmt)o;
@@ -894,15 +892,8 @@ public class ProofWorksheet {
                 && !oldStep.equals(PaConstants.QED_STEP_NBR))
                 renumberMap.put(oldStep, renumberStep);
 
-            // no attempt at polymorphism, just quick and dirty fix
-            if (o.isHypothesisStep()) {
-                ((HypothesisStep)o).renum(renumberMap);
-                continue;
-            }
-            if (o.isDerivationStep()) {
-                ((DerivationStep)o).renum(renumberMap);
-                continue;
-            }
+            renumberProofStepStmt.renum(renumberMap);
+            continue;
         }
     }
     /**
@@ -1074,7 +1065,7 @@ public class ProofWorksheet {
             triggerLoadStructureException(PaConstants.ERRMSG_HDR_TOKEN_ERR_1
                 + nextToken);
 
-        stmtLoop: while (true) {
+        while (true) {
             if (nextToken.length() == 0) {
                 // eof
                 if (qedStep == null)
@@ -1106,7 +1097,7 @@ public class ProofWorksheet {
 
                 setInputCursorStmtIfHere(headerStmt, inputCursorPos, nextToken,
                     proofTextTokenizer);
-                continue stmtLoop;
+                continue;
             }
 
             if (nextToken.equals(PaConstants.FOOTER_STMT_TOKEN)) {
@@ -1129,7 +1120,7 @@ public class ProofWorksheet {
 
                 setInputCursorPosIfHere(inputCursorPos, nextToken,
                     proofTextTokenizer);
-                continue stmtLoop;
+                continue;
             }
 
             if (nextToken.equals(PaConstants.DISTINCT_VARIABLES_STMT_TOKEN)) {
@@ -1140,7 +1131,7 @@ public class ProofWorksheet {
 
                 setInputCursorStmtIfHere(x, inputCursorPos, nextToken,
                     proofTextTokenizer);
-                continue stmtLoop;
+                continue;
             }
 
             final int origStepHypRefLength = nextToken.length();
@@ -1154,7 +1145,7 @@ public class ProofWorksheet {
 
                 setInputCursorStmtIfHere(x, inputCursorPos, nextToken,
                     proofTextTokenizer);
-                continue stmtLoop;
+                continue;
             }
 
             // now work on ProofSteps, starting with step/hyp/ref
@@ -1236,7 +1227,7 @@ public class ProofWorksheet {
 
                 setInputCursorStmtIfHere(x, inputCursorPos, nextToken,
                     proofTextTokenizer);
-                continue stmtLoop;
+                continue;
             }
 
             if (stepField.equals(PaConstants.QED_STEP_NBR)) {
@@ -1336,8 +1327,7 @@ public class ProofWorksheet {
             && (stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH || stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH))
         {
             if (!proofInputCursor.cursorIsSet
-                || proofInputCursor.proofWorkStmt == null
-                || !proofInputCursor.proofWorkStmt.isDerivationStep())
+                || !(proofInputCursor.proofWorkStmt instanceof DerivationStep))
                 triggerLoadStructureException(PaConstants.ERRMSG_SELECTOR_SEARCH_STEP_NOTFND_1
                     + getErrorLabelIfPossible()
                     + PaConstants.ERRMSG_SELECTOR_SEARCH_STEP_NOTFND_2);
@@ -1348,8 +1338,7 @@ public class ProofWorksheet {
         if (stepRequest != null
             && stepRequest.request == PaConstants.STEP_REQUEST_SEARCH_OPTIONS)
             if (proofInputCursor.cursorIsSet
-                && proofInputCursor.proofWorkStmt != null
-                && proofInputCursor.proofWorkStmt.isDerivationStep())
+                && proofInputCursor.proofWorkStmt instanceof DerivationStep)
             {
                 stepRequest.step = ((DerivationStep)proofInputCursor.proofWorkStmt).step;
                 stepRequest.param1 = proofInputCursor.proofWorkStmt;
@@ -1438,24 +1427,23 @@ public class ProofWorksheet {
     private void makeLocalRefRevisionsToWorksheet(
         final List<DerivationStep> stepsWithLocalRefs)
     {
-        ProofWorkStmt x;
-        DerivationStep dI;
-        DerivationStep dJ;
-        boolean stepUpdated;
+        for (final ListIterator<ProofWorkStmt> i = proofWorkStmtList
+            .listIterator(proofWorkStmtList.size()); i.hasPrevious();)
+        {
+            final ProofWorkStmt x = i.previous();
 
-        loopI: for (int i = proofWorkStmtList.size() - 1; i > 0; i--) {
-            x = proofWorkStmtList.get(i);
-
-            if (!x.isDerivationStep())
-                continue loopI;
-            dI = (DerivationStep)x;
+            if (!(x instanceof DerivationStep))
+                continue;
+            final DerivationStep dI = (DerivationStep)x;
 
             if (dI.hyp.length == 0 || dI.localRef != null)
-                continue loopI;
+                continue;
 
-            stepUpdated = false;
-            for (int j = stepsWithLocalRefs.size() - 1; j >= 0; j--) {
-                dJ = stepsWithLocalRefs.get(j);
+            boolean stepUpdated = false;
+            for (final ListIterator<DerivationStep> j = stepsWithLocalRefs
+                .listIterator(stepsWithLocalRefs.size()); j.hasPrevious();)
+            {
+                final DerivationStep dJ = j.previous();
 
                 for (int k = dI.hyp.length - 1; k >= 0; k--)
                     if (dI.hyp[k] == dJ) {
@@ -1465,15 +1453,15 @@ public class ProofWorksheet {
                     }
             }
             if (stepUpdated) {
-
                 dI.reloadStepHypRefInStmtText();
                 dI.reloadLogHypKeysAndMaxDepth();
                 dI.resetSortedHypArray();
             }
         }
 
-        for (int j = stepsWithLocalRefs.size() - 1; j >= 0; j--)
-            removeFromProofWorkStmtList(stepsWithLocalRefs.get(j));
+        for (final ListIterator<DerivationStep> j = stepsWithLocalRefs
+            .listIterator(stepsWithLocalRefs.size()); j.hasPrevious();)
+            removeFromProofWorkStmtList(j.previous());
     }
 
     // fix the cursor: localRef step going byebye!
@@ -1496,7 +1484,7 @@ public class ProofWorksheet {
             if (s == qedStep) {
                 int stepIndex = i;
                 while (true) {
-                    if (s.isDerivationStep())
+                    if (s instanceof DerivationStep)
                         ((DerivationStep)s).loadDerivationStepHypLevels();
                     if (--stepIndex > 0)
                         s = proofWorkStmtList.get(stepIndex);

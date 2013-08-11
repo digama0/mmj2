@@ -490,8 +490,8 @@ public class TheoremStmtGroup {
      */
     @Override
     public boolean equals(final Object obj) {
-        return this == obj ? true : !(obj instanceof TheoremStmtGroup) ? false
-            : theoremLabel.equals(((TheoremStmtGroup)obj).theoremLabel);
+        return this == obj || obj instanceof TheoremStmtGroup
+            && theoremLabel.equals(((TheoremStmtGroup)obj).theoremLabel);
     }
 
     /**
@@ -764,10 +764,7 @@ public class TheoremStmtGroup {
 
         final Stmt h = stmtTbl.get(logHypSrcStmt.label);
 
-        if (h == null) {
-            // is new?
-        }
-        else {
+        if (h != null) {
             if (!(h instanceof LogHyp))
                 throw new TheoremLoaderException(
                     TlConstants.ERRMSG_LOG_HYP_STMT_MISMATCH_1
@@ -867,12 +864,11 @@ public class TheoremStmtGroup {
 
         if (theoremLogHypArray.length == logHypArray.length)
             loopI: for (int i = 0; i < theoremLogHypArray.length; i++) {
-
                 for (int j = 0; j < logHypArray.length; j++)
                     if (logHypArray[j] == theoremLogHypArray[i])
                         continue loopI;
                 match = false;
-                break loopI;
+                break;
             }
         else
             match = false;
@@ -915,7 +911,7 @@ public class TheoremStmtGroup {
                 generateSymNotFndError(x, s);
             else
                 updateMaxExistingMObjRef(sym);
-            if (!sym.isVar())
+            if (!(sym instanceof Var))
                 throw new TheoremLoaderException(
                     TlConstants.ERRMSG_DJ_VAR_SYM_NOT_A_VAR_1 + s
                         + TlConstants.ERRMSG_DJ_VAR_SYM_NOT_A_VAR_2 + x.seq

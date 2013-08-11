@@ -96,10 +96,10 @@ public class ProofCompression {
      * <p>
      * If {@code step[i] == null}, subproofLength[i] = 1.
      * <p>
-     * When {@code step[i].isHyp()}, subproofLength[i] = 1.
+     * When {@code step[i] instanceof Hyp}, subproofLength[i] = 1.
      * <p>
-     * When {@code step[i].isAssrt()}, subproofLength[i] = 1 plus the sum of
-     * subproofLength for n prior subproofLength entries, where
+     * When {@code step[i] instanceof Assrt}, subproofLength[i] = 1 plus the sum
+     * of subproofLength for n prior subproofLength entries, where
      * 
      * <pre>
      * n = ((Assrt)step[i]).getMandFrame().hypArray.length
@@ -208,12 +208,12 @@ public class ProofCompression {
                 throw new LangException(
                     LangConstants.ERRMSG_FORWARD_PROOF_STEP_LABEL + otherLabel);
 
-            if (otherStmt.isAssrt()) {
+            if (otherStmt instanceof Assrt) {
                 otherAssrt[otherAssrtCnt++] = (Assrt)otherStmt;
                 continue;
             }
 
-            if (!otherStmt.isVarHyp())
+            if (!(otherStmt instanceof VarHyp))
                 throw new LangException(
                     LangConstants.ERRMSG_COMPRESS_OTHER_BOGUS, theoremLabel,
                     iterationNbr, otherLabel);

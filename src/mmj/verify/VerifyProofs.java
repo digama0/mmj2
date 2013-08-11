@@ -102,7 +102,7 @@ import mmj.pa.PaConstants;
  *     1. init proof work stack, etc.
  *     2. loop through theorem proof array, for each proof[] step:
  *        - if null, exception ==> proof incomplete
- *        - if stmt.isHyp(), ==> push stmt.formula onto stack
+ *        - if stmt is a Hyp, ==> push stmt.formula onto stack
  *        - else if stmt.mandFrame.hypArray.length = zero
  *              ==> push stmt.formula onto stack
  *                  (see ccau, for ex.)
@@ -551,9 +551,9 @@ public class VerifyProofs implements ProofVerifier {
 
             stepFormula = proof[stepNbr].getFormula();
             stepLabel = proof[stepNbr].getLabel();
-            if (proof[stepNbr].isHyp()) {
+            if (proof[stepNbr] instanceof Hyp) {
                 pStack[pStackCnt++] = stepFormula;
-                if (proof[stepNbr].isLogHyp()) {
+                if (proof[stepNbr] instanceof LogHyp) {
                     int i = 0;
                     for (; i < numHyps; i++)
                         if (stepLabel.equals(derivStepList.get(i).refLabel)) {
@@ -574,7 +574,7 @@ public class VerifyProofs implements ProofVerifier {
             if (stepFrame.hypArray.length == 0) { // constant
                 pStack[pStackCnt++] = stepFormula;
                 if (stepFormula.getTyp() == provableLogicStmtTyp
-                    && !(stepAssrt.isAxiom() && ((Axiom)stepAssrt)
+                    && !(stepAssrt instanceof Axiom && ((Axiom)stepAssrt)
                         .getIsSyntaxAxiom()))
                 {
                     final ProofDerivationStepEntry e = new ProofDerivationStepEntry();
@@ -602,7 +602,7 @@ public class VerifyProofs implements ProofVerifier {
             pStack[pStackCnt++] = stepSubstFormula;
 
             if (stepFormula.getTyp() == provableLogicStmtTyp
-                && !(stepAssrt.isAxiom() && ((Axiom)stepAssrt)
+                && !(stepAssrt instanceof Axiom && ((Axiom)stepAssrt)
                     .getIsSyntaxAxiom()))
             {
                 final ProofDerivationStepEntry e = new ProofDerivationStepEntry();
@@ -699,14 +699,14 @@ public class VerifyProofs implements ProofVerifier {
 
         substCnt = 0;
         for (int i = 0; i < hypArray.length; i++) {
-            if (!hypArray[i].isVarHyp())
+            if (!(hypArray[i] instanceof VarHyp))
                 continue;
 
             wExprCnt = 0;
             nodeStack.push(derivStepAssrtSubst[i]);
             while (!nodeStack.isEmpty()) {
                 node = nodeStack.pop();
-                if (node.getStmt().isVarHyp())
+                if (node.getStmt() instanceof VarHyp)
                     wExpr[wExprCnt++] = ((VarHyp)node.getStmt()).getVar();
                 else {
                     child = node.getChild();
@@ -760,7 +760,7 @@ public class VerifyProofs implements ProofVerifier {
      * <li>loop through theorem proof array, for each proof[] step:
      * <ul>
      * <li>if null, exception ==> proof incomplete
-     * <li>if stmt.isHyp(), ==> push stmt.formula onto stack
+     * <li>if stmt is a Hyp, ==> push stmt.formula onto stack
      * <li>else if stmt.mandFrame.hypArray.length = zero<br>
      * ==> push stmt.formula onto stack (see ccau, for ex.)
      * <li>else (assertion w/hyp):
@@ -789,24 +789,22 @@ public class VerifyProofs implements ProofVerifier {
      * @throws VerifyException if an error occurred
      */
     private void verifyProof() throws VerifyException {
-
-        nextStep: for (stepNbr = 0; stepNbr < proof.length; stepNbr++) {
-
+        for (stepNbr = 0; stepNbr < proof.length; stepNbr++) {
             if (proof[stepNbr] == null)
                 raiseVerifyException(Integer.toString(stepNbr + 1), " ",
                     ProofConstants.ERRMSG_PROOF_STEP_INCOMPLETE);
 
             stepFormula = proof[stepNbr].getFormula();
-            if (proof[stepNbr].isHyp()) {
+            if (proof[stepNbr] instanceof Hyp) {
                 pStack[pStackCnt++] = stepFormula;
-                continue nextStep;
+                continue;
             }
 
             stepAssrt = (Assrt)proof[stepNbr];
             stepFrame = stepAssrt.getMandFrame();
             if (stepFrame.hypArray.length == 0) {
                 pStack[pStackCnt++] = stepFormula;
-                continue nextStep;
+                continue;
             }
 
             stepLabel = stepAssrt.getLabel();
@@ -890,7 +888,7 @@ public class VerifyProofs implements ProofVerifier {
         // creating the subst array entries for them (subst
         // is parallel by index to hypArray and pStack, with
         // unused entries left null...initially.)
-        nextHyp: for (int i = 0, pStackIndex = stackMatchBegin; i < substCnt; i++, pStackIndex++)
+        for (int i = 0, pStackIndex = stackMatchBegin; i < substCnt; i++, pStackIndex++)
         {
             final Hyp hyp = stepFrame.hypArray[i];
             if (hyp.getTyp() != pStack[pStackIndex].getTyp())
@@ -900,9 +898,9 @@ public class VerifyProofs implements ProofVerifier {
                     ProofConstants.ERRMSG_HYP_TYP_MISMATCH_STACK_TYP
                         + hyp.getTyp() + ProofConstants.ERRMSG_STACK_ITEM_TYP
                         + pStack[pStackIndex].getTyp());
-            if (!hyp.isVarHyp()) {
+            if (!(hyp instanceof VarHyp)) {
                 subst[i] = null;
-                continue nextHyp;
+                continue;
             }
 
             if (subst[i] == null)
@@ -920,11 +918,11 @@ public class VerifyProofs implements ProofVerifier {
         // then compared to the corresponding entries on pStack
         // to make sure the substitutions "work"...and that the
         // proofstep is therefore "legal".
-        nextLogHyp: for (int i = 0, pStackIndex = stackMatchBegin; i < substCnt; i++, pStackIndex++)
+        for (int i = 0, pStackIndex = stackMatchBegin; i < substCnt; i++, pStackIndex++)
         {
             final Hyp hyp = stepFrame.hypArray[i];
-            if (hyp.isVarHyp())
-                continue nextLogHyp;
+            if (hyp instanceof VarHyp)
+                continue;
             final Formula workFormula = applySubstMapping(hyp.getFormula());
             if (!workFormula.equals(pStack[pStackIndex]))
                 raiseVerifyException(Integer.toString(stepNbr + 1), stepLabel,
@@ -960,10 +958,10 @@ public class VerifyProofs implements ProofVerifier {
 
         nextFSym: for (int i = 1; i < fCnt; i++) {
             fSym = fSymArray[i];
-            nextSubst: for (int j = 0; j < substCnt; j++) {
+            for (int j = 0; j < substCnt; j++) {
                 if ((substMapEntry = subst[j]) == null)
                     // this wasn't a VarHyp subst entry
-                    continue nextSubst;
+                    continue;
                 if (fSym == substMapEntry.substFrom) {
                     for (final Sym element : substMapEntry.substTo)
                         wExpr[wExprCnt++] = element;
@@ -1060,51 +1058,46 @@ public class VerifyProofs implements ProofVerifier {
     private void checkSubstToVars(final int x, final int y)
         throws VerifyException
     {
-        Sym symI;
-        Sym symJ;
-        for (int i = 0; i < subst[x].substTo.length; i++) {
-            symI = subst[x].substTo[i];
-            if (symI.isVar())
-                nextSymJ: for (int j = 0; j < subst[y].substTo.length; j++) {
-                    symJ = subst[y].substTo[j];
-                    if (!symJ.isVar())
-                        continue nextSymJ;
-                    if (symI == symJ)
-                        raiseVerifyException(stepNbrOutputString, stepLabel,
-                            ProofConstants.ERRMSG_SUBST_TO_VARS_MATCH + symI
-                                + ProofConstants.ERRMSG_EQUALS_LITERAL + symJ);
+        for (final Sym symI : subst[x].substTo) {
+            if (!(symI instanceof Var))
+                continue;
+            for (final Sym symJ : subst[y].substTo) {
+                if (!(symJ instanceof Var))
+                    continue;
+                if (symI == symJ)
+                    raiseVerifyException(stepNbrOutputString, stepLabel,
+                        ProofConstants.ERRMSG_SUBST_TO_VARS_MATCH + symI
+                            + ProofConstants.ERRMSG_EQUALS_LITERAL + symJ);
 
+                // this is for the benefit of ProofAsst...
+                if (proofDjVarsSoftErrorsIgnore)
+                    continue;
+
+                if (!MandFrame.isVarPairInDjArray(proofStmtFrame, (Var)symI,
+                    (Var)symJ)
+                    && !OptFrame.isVarPairInDjArray(proofStmtOptFrame,
+                        (Var)symI, (Var)symJ) &&
+                    // don't report "soft" Dj WorkVar errors
+                    !(symI instanceof WorkVar || symJ instanceof WorkVar))
+                {
                     // this is for the benefit of ProofAsst...
-                    if (proofDjVarsSoftErrorsIgnore)
-                        continue nextSymJ;
-
-                    if (!MandFrame.isVarPairInDjArray(proofStmtFrame,
-                        (Var)symI, (Var)symJ)
-                        && !OptFrame.isVarPairInDjArray(proofStmtOptFrame,
-                            (Var)symI, (Var)symJ)
-                        && // don't report "soft" Dj WorkVar errors
-                        !((Var)symI).getIsWorkVar()
-                        && !((Var)symJ).getIsWorkVar())
-                    {
-                        // this is for the benefit of ProofAsst...
-                        if (proofSoftDjVarsErrorList != null) {
-                            try {
-                                proofSoftDjVarsErrorList.add(new DjVars(
-                                    (Var)symI, (Var)symJ));
-                            } catch (final LangException e) {
-                                throw new IllegalArgumentException(e);
-                            }
-                            continue nextSymJ;
+                    if (proofSoftDjVarsErrorList != null) {
+                        try {
+                            proofSoftDjVarsErrorList.add(new DjVars((Var)symI,
+                                (Var)symJ));
+                        } catch (final LangException e) {
+                            throw new IllegalArgumentException(e);
                         }
-
-                        raiseVerifyException(stepNbrOutputString, stepLabel,
-                            ProofConstants.ERRMSG_SUBST_TO_VARS_NOT_DJ + symI
-                                + ProofConstants.ERRMSG_AND_LITERAL + symJ);
+                        continue;
                     }
+
+                    raiseVerifyException(stepNbrOutputString, stepLabel,
+                        ProofConstants.ERRMSG_SUBST_TO_VARS_NOT_DJ + symI
+                            + ProofConstants.ERRMSG_AND_LITERAL + symJ);
                 }
+            }
         }
     }
-
     public void raiseVerifyException(final String stepNbrIndexString,
         final String stepLabel, final String errmsg, final Object... args)
         throws VerifyException
@@ -1266,23 +1259,23 @@ public class VerifyProofs implements ProofVerifier {
 
     private Formula generateFormulaFromRPN() throws VerifyException {
 
-        nextStep: for (stepNbr = 0; stepNbr < proof.length; stepNbr++) {
+        for (stepNbr = 0; stepNbr < proof.length; stepNbr++) {
 
             if (proof[stepNbr] == null)
                 raiseVerifyException(Integer.toString(stepNbr + 1), " ",
                     ProofConstants.ERRMSG_PROOF_STEP_INCOMPLETE);
 
             stepFormula = proof[stepNbr].getFormula();
-            if (proof[stepNbr].isHyp()) {
+            if (proof[stepNbr] instanceof Hyp) {
                 pStack[pStackCnt++] = stepFormula;
-                continue nextStep;
+                continue;
             }
 
             stepAssrt = (Assrt)proof[stepNbr];
             stepFrame = stepAssrt.getMandFrame();
             if (stepFrame.hypArray.length == 0) {
                 pStack[pStackCnt++] = stepFormula;
-                continue nextStep;
+                continue;
             }
 
             stepLabel = stepAssrt.getLabel();

@@ -120,23 +120,6 @@ public abstract class Sym extends MObj<Sym> {
     public abstract boolean isActive();
 
     /**
-     * Is Sym a Cnst MObj?
-     * 
-     * @return Returns {@code true} if Sym is a Cnst MObj, otherwise
-     *         {@code false}.
-     */
-    @Override
-    public abstract boolean isCnst();
-
-    /**
-     * Is Sym a Var MObj?
-     * 
-     * @return Returns {@code true} if Sym is a Var MObj, otherwise
-     *         {@code false}.
-     */
-    public abstract boolean isVar();
-
-    /**
      * converts to String
      * 
      * @return returns Sym.id string;
@@ -169,8 +152,7 @@ public abstract class Sym extends MObj<Sym> {
      */
     @Override
     public boolean equals(final Object obj) {
-        return this == obj ? true : !(obj instanceof Sym) ? false : id
-            .equals(((Sym)obj).id);
+        return this == obj || obj instanceof Sym && id.equals(((Sym)obj).id);
     }
 
     /**

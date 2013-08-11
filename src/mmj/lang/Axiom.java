@@ -171,18 +171,6 @@ public class Axiom extends Assrt {
     }
 
     /**
-     * Is the Assrt an Axiom?
-     * <p>
-     * Someone asked the question, so it is answered...
-     * 
-     * @return true (this is an Axiom :)
-     */
-    @Override
-    public boolean isAxiom() {
-        return true;
-    }
-
-    /**
      * Answer, Is Axiom a Syntax Axiom?
      * <p>
      * An Axiom is a "Syntax Axiom" if its Type Code is not equal to a
@@ -298,7 +286,7 @@ public class Axiom extends Assrt {
         int substNbrHyps;
         int totSLen = 0;
         for (int i = 1; i < formula.sym.length; i++) {
-            if (formula.sym[i].isCnst()) {
+            if (formula.sym[i] instanceof Cnst) {
                 s = formula.sym[i].getId();
                 sLen = s.length() + 1;
 

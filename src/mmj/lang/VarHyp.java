@@ -82,8 +82,6 @@ public class VarHyp extends Hyp {
      */
     public ParseNode paSubst;
 
-    private boolean isWorkVarHypInd;
-
     /**
      * Construct VarHyp using sequence number plus label, Type Code and Var
      * Strings.
@@ -173,49 +171,6 @@ public class VarHyp extends Hyp {
      */
     public void setVar(final Var var) {
         ((VarHypFormula)formula).setVarHypVar(var);
-    }
-
-    /**
-     * Is the VarHyp a VarHyp.
-     * <p>
-     * Hmmm...
-     * 
-     * @return true
-     */
-    @Override
-    public boolean isVarHyp() {
-        return true;
-    }
-
-    /**
-     * Is the VarHyp a WorkVarHyp.
-     * 
-     * @return true or false
-     */
-    @Override
-    public boolean isWorkVarHyp() {
-        return isWorkVarHypInd;
-    }
-
-    /**
-     * Set the isWorkVarHyp indicator.
-     * 
-     * @param isWorkVarHypInd set to true is WorkVarHyp
-     */
-    protected void setIsWorkVarHypInd(final boolean isWorkVarHypInd) {
-        this.isWorkVarHypInd = isWorkVarHypInd;
-    }
-
-    /**
-     * Is the VarHyp a LogHyp.
-     * <p>
-     * Hmmm...I don't think so.
-     * 
-     * @return false.
-     */
-    @Override
-    public boolean isLogHyp() {
-        return false;
     }
 
     /**

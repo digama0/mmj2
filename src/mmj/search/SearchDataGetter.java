@@ -33,10 +33,6 @@ public class SearchDataGetter {
         logHypFormulaVarHyp = null;
     }
 
-    public boolean assrtIsAxiom() {
-        return assrt.isAxiom();
-    }
-
     public boolean assrtHasLogHyps() {
         final LogHyp[] alogHyp = assrt.getLogHypArray();
         return alogHyp.length > 0;
@@ -105,8 +101,7 @@ public class SearchDataGetter {
 
     private String getAssrtFormulaString() {
         if (assrtFormulaString == null)
-            assrtFormulaString = assrt.getFormula()
-                .toString() +" ";
+            assrtFormulaString = assrt.getFormula().toString() + " ";
         return assrtFormulaString;
     }
 

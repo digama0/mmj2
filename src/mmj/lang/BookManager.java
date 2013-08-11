@@ -624,7 +624,7 @@ public class BookManager implements TheoremLoaderCommitListener {
         for (final Stmt stmt : logicalsystem.getStmtTbl().values()) {
             final BitSet directDeps = directSectionDependencies[stmt
                 .getOrigSectionNbr()];
-            if (stmt.isAssrt() && !((Assrt)stmt).isAxiom()) {
+            if (stmt instanceof Theorem) {
                 final Stmt[] proof = ((Theorem)stmt).getProof();
                 int j = 0;
                 while (j < proof.length) {
@@ -633,7 +633,7 @@ public class BookManager implements TheoremLoaderCommitListener {
                         proofStep.incrementNbrProofRefs();
                         if (proofStep.getTyp().getId()
                             .equals(provableLogicStmtTypeParm)
-                            && proofStep.isAssrt())
+                            && proofStep instanceof Assrt)
                             directDeps.set(proofStep.getOrigSectionNbr());
                     }
                     j++;

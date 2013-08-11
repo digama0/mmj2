@@ -137,8 +137,8 @@ public class Messages {
         final Object... args)
     {
         if (errorMessageCnt < errorMessageArray.length) {
-            errorMessageArray[errorMessageCnt++] = LangException.format(errorMessage,
-                args);
+            errorMessageArray[errorMessageCnt++] = LangException.format(
+                errorMessage, args);
             return true;
         }
         return false;
@@ -157,8 +157,8 @@ public class Messages {
         final Object... args)
     {
         if (infoMessageCnt < infoMessageArray.length) {
-            infoMessageArray[infoMessageCnt++] = LangException.format(infoMessage,
-                args);
+            infoMessageArray[infoMessageCnt++] = LangException.format(
+                infoMessage, args);
             return true;
         }
         return false;

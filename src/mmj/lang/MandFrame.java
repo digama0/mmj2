@@ -385,7 +385,7 @@ public class MandFrame {
         boolean hiFound = false;
         VarHyp varHyp;
         for (int i = 0; i < hypArray.length; i++) {
-            if (!hypArray[i].isVarHyp())
+            if (!(hypArray[i] instanceof VarHyp))
                 continue;
 
             varHyp = (VarHyp)hypArray[i];
@@ -431,10 +431,9 @@ public class MandFrame {
     public Map<String, Var> getVarMap() {
         final Map<String, Var> varMap = new HashMap<String, Var>(
             hypArray.length * 3 / 2 + 1);
-        Var v;
-        for (final Hyp element : hypArray)
-            if (element.isVarHyp()) {
-                v = ((VarHyp)element).getVar();
+        for (final Hyp hyp : hypArray)
+            if (hyp instanceof VarHyp) {
+                final Var v = ((VarHyp)hyp).getVar();
                 varMap.put(v.getId(), v);
             }
         return varMap;

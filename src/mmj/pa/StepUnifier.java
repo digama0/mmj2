@@ -215,7 +215,7 @@ public class StepUnifier {
 
     private void loadAssrtSubst(final ParseNode[] assrtSubst) {
         for (int i = 0; i < assrtHypArray.length; i++)
-            if (assrtHypArray[i].isVarHyp()) {
+            if (assrtHypArray[i] instanceof VarHyp) {
                 assrtSubst[i] = ((VarHyp)assrtHypArray[i]).paSubst;
                 if (assrtSubst[i].hasUpdatedWorkVar())
                     assrtSubst[i] = assrtSubst[i]
@@ -290,7 +290,7 @@ public class StepUnifier {
 
         // initializeTargetVarHypPASubst
         for (int i = 0; i < assrtHypArray.length; i++)
-            if (assrtHypArray[i].isVarHyp())
+            if (assrtHypArray[i] instanceof VarHyp)
                 ((VarHyp)assrtHypArray[i]).paSubst = null;
 
         // allocateNewProofStepStuff
@@ -543,7 +543,7 @@ public class StepUnifier {
         WorkVarHyp workVarHyp;
         for (int i = 0; i < assrtHypArray.length; i++) {
 
-            if (!assrtHypArray[i].isVarHyp())
+            if (!(assrtHypArray[i] instanceof VarHyp))
                 continue;
 
             sourceVarHyp = (VarHyp)assrtHypArray[i];
@@ -571,7 +571,7 @@ public class StepUnifier {
         if (targetNode.stmt.getTyp() != sourceNode.stmt.getTyp())
             return false;
 
-        if (targetNode.stmt.isVarHyp()) {
+        if (targetNode.stmt instanceof VarHyp) {
             final VarHyp targetVarHyp = (VarHyp)targetNode.stmt;
             final UnifySubst targetSubst = new UnifySubst(targetVarHyp, // fromHyp
                 sourceNode, // toNode
@@ -593,7 +593,7 @@ public class StepUnifier {
             return true;
         }
 
-        if (sourceNode.stmt.isWorkVarHyp()) {
+        if (sourceNode.stmt instanceof WorkVarHyp) {
             addToCurrLevelDeferred(new UnifySubst((VarHyp)sourceNode.stmt,
                 targetNode, false));
             return true;
@@ -606,13 +606,11 @@ public class StepUnifier {
 
         ParseNode toParseNode = curr.toNode;
 
-        if (curr.fromHyp.isWorkVarHyp()) {
-
+        if (curr.fromHyp instanceof WorkVarHyp) {
             if (!curr.generatedDuringAccum)
                 toParseNode = curr.toNode.cloneTargetToSourceVars();
 
             if (curr.fromHyp.paSubst == null) {
-
                 final int returnCode = toParseNode
                     .checkWorkVarHasOccursIn((WorkVarHyp)curr.fromHyp);
 
@@ -637,16 +635,13 @@ public class StepUnifier {
     private boolean mergeSubst2(final VarHyp currFromHyp,
         final ParseNode currToNode, final boolean currGeneratedDuringAccum)
     {
-
         ParseNode toParseNode = currToNode;
 
-        if (currFromHyp.isWorkVarHyp()) {
-
+        if (currFromHyp instanceof WorkVarHyp) {
             if (!currGeneratedDuringAccum)
                 toParseNode = currToNode.cloneTargetToSourceVars();
 
             if (currFromHyp.paSubst == null) {
-
                 final int returnCode = toParseNode
                     .checkWorkVarHasOccursIn((WorkVarHyp)currFromHyp);
 
@@ -685,7 +680,7 @@ public class StepUnifier {
     private boolean subunify(final ParseNode n1, final ParseNode n2) {
 
         if (n1.stmt == n2.stmt) {
-            if (!n1.stmt.isVarHyp())
+            if (!(n1.stmt instanceof VarHyp))
                 for (int i = 0; i < n1.child.length; i++)
                     if (!subunify(n1.child[i], n2.child[i]))
                         return false;
@@ -695,14 +690,13 @@ public class StepUnifier {
         if (n1.stmt.getTyp() != n2.stmt.getTyp())
             return false;
 
-        if (n1.stmt.isWorkVarHyp())
+        if (n1.stmt instanceof WorkVarHyp)
             return mergeSubst2((VarHyp)n1.stmt, n2, true); // generatedDuringAccum
-        if (n2.stmt.isWorkVarHyp())
+        if (n2.stmt instanceof WorkVarHyp)
             return mergeSubst2((VarHyp)n2.stmt, n1, true); // generatedDuringAccum
 
         return false;
     }
-
     // ===================================================
     // ***************************************************
     // *** MISCELLANEOUS HOUSEKEEPING
@@ -758,13 +752,13 @@ public class StepUnifier {
             // is mentioned in array "applied", erase .paSubst.
             appliedSubst.fromHyp.paSubst = null;
 
-            if (appliedSubst.fromHyp.isWorkVarHyp()
+            if (appliedSubst.fromHyp instanceof WorkVarHyp
                 && appliedSubst.toNode == null)
                 // appliedSubst.toNode == null means that
                 // allocation was requested during unification;
                 // the WorkVarHyp was not part of the original
                 // formula, so it can be deallocated.
-                workVarManager.dealloc(appliedSubst.fromHyp);
+                workVarManager.dealloc((WorkVarHyp)appliedSubst.fromHyp);
 
             applied[appliedCnt] = null;
         }

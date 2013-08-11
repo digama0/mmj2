@@ -236,7 +236,7 @@ public abstract class GMFFExporter {
 
         final Sym sym = gmffManager.getSymTbl().get(token);
 
-        if (sym == null || sym.isVar() && ((Var)sym).getIsWorkVar())
+        if (sym == null || sym instanceof WorkVar)
             return;
 
         gmffManager.getMessages().accumInfoMessage(

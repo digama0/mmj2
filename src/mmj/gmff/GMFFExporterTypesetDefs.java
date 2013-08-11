@@ -71,11 +71,10 @@ public class GMFFExporterTypesetDefs {
      * @return String containing the relevant fields.
      */
     public String generateAuditReportText() {
-        final String s = 
-            GMFFConstants.INITIALIZATION_AUDIT_REPORT_6_TD_2
-                + typesetDefKeyword
-                + GMFFConstants.INITIALIZATION_AUDIT_REPORT_6_TD_3
-                + typesetDefMap.size();
+        final String s = GMFFConstants.INITIALIZATION_AUDIT_REPORT_6_TD_2
+            + typesetDefKeyword
+            + GMFFConstants.INITIALIZATION_AUDIT_REPORT_6_TD_3
+            + typesetDefMap.size();
         return s;
     }
 

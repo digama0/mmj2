@@ -83,7 +83,7 @@ public class TMFFAlignColumn extends TMFFMethod {
      *         TMFFConstants.ALIGN_VAR.
      */
     public static int getAlignTypeValue(final Sym sym) {
-        if (sym.isCnst())
+        if (sym instanceof Cnst)
             return TMFFConstants.ALIGN_CNST;
         else
             return TMFFConstants.ALIGN_VAR;
@@ -264,10 +264,7 @@ public class TMFFAlignColumn extends TMFFMethod {
 
         final Sym[] formulaSymArray = stmt.getFormula().getSym();
 
-        if (stmt.isVarHyp()) {
-            // ok, valid and no hyp resequencing
-        }
-        else if (stmt.isAssrt() && ((Assrt)stmt).isAxiom()) {
+        if (stmt instanceof Axiom) {
             axiom = (Axiom)stmt;
             if (axiom.getIsSyntaxAxiom())
                 reseq = axiom.getSyntaxAxiomVarHypReseq();

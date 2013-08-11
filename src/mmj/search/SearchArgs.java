@@ -159,7 +159,7 @@ public class SearchArgs {
     }
 
     void loadComboFrame(final Stmt stmt, final LogicalSystem logicalSystem) {
-        if (stmt != null && stmt.isAssrt())
+        if (stmt instanceof Assrt)
             comboFrame = ((Assrt)stmt).getMandFrame();
         else
             loadDefaultComboFrame(logicalSystem);

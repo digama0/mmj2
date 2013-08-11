@@ -1160,7 +1160,7 @@ public class ProofAsstBoss extends Boss {
             mapValue = stmtTbl.get(label);
             if (mapValue != null) {
                 stmt = (Stmt)mapValue;
-                if (stmt.isAssrt()
+                if (stmt instanceof Assrt
                     && stmt.getFormula().getTyp() == provableLogicStmtTyp)
                     excludedList.add(stmt);
 

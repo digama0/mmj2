@@ -200,10 +200,9 @@ public class TheoremLoaderBoss extends Boss {
         if (getTlPreferences().setDjVarsOption(runParm.values[0].trim()))
             return; // ok, valid!
 
-        final String errorMessage = 
-            TlConstants.ERRMSG_INVALID_DJ_VARS_OPTION_1
-                + runParm.values[0].trim()
-                + TlConstants.ERRMSG_INVALID_DJ_VARS_OPTION_2;
+        final String errorMessage = TlConstants.ERRMSG_INVALID_DJ_VARS_OPTION_1
+            + runParm.values[0].trim()
+            + TlConstants.ERRMSG_INVALID_DJ_VARS_OPTION_2;
 
         throw new IllegalArgumentException(
             UtilConstants.ERRMSG_THEOREM_LOADER_RUN_PARM_ERROR_1
@@ -226,10 +225,9 @@ public class TheoremLoaderBoss extends Boss {
         if (getTlPreferences().setAuditMessages(runParm.values[0].trim()))
             return; // ok, valid!
 
-        final String errorMessage = 
-            TlConstants.ERRMSG_INVALID_AUDIT_MESSAGES_1
-                + runParm.values[0].trim()
-                + TlConstants.ERRMSG_INVALID_AUDIT_MESSAGES_2;
+        final String errorMessage = TlConstants.ERRMSG_INVALID_AUDIT_MESSAGES_1
+            + runParm.values[0].trim()
+            + TlConstants.ERRMSG_INVALID_AUDIT_MESSAGES_2;
 
         throw new IllegalArgumentException(
             UtilConstants.ERRMSG_THEOREM_LOADER_RUN_PARM_ERROR_1
@@ -274,10 +272,9 @@ public class TheoremLoaderBoss extends Boss {
         if (getTlPreferences().setStoreFormulasAsIs(runParm.values[0].trim()))
             return; // ok, valid!
 
-        final String errorMessage = 
-            TlConstants.ERRMSG_INVALID_STORE_FORMULAS_ASIS_1
-                + runParm.values[0].trim()
-                + TlConstants.ERRMSG_INVALID_STORE_FORMULAS_ASIS_2;
+        final String errorMessage = TlConstants.ERRMSG_INVALID_STORE_FORMULAS_ASIS_1
+            + runParm.values[0].trim()
+            + TlConstants.ERRMSG_INVALID_STORE_FORMULAS_ASIS_2;
 
         throw new IllegalArgumentException(
             UtilConstants.ERRMSG_THEOREM_LOADER_RUN_PARM_ERROR_1
@@ -301,10 +298,9 @@ public class TheoremLoaderBoss extends Boss {
         if (getTlPreferences().setStoreMMIndentAmt(runParm.values[0].trim()))
             return; // ok, valid!
 
-        final String errorMessage = 
-            TlConstants.ERRMSG_INVALID_STORE_MM_INDENT_AMT_1
-                + runParm.values[0].trim()
-                + TlConstants.ERRMSG_INVALID_STORE_MM_INDENT_AMT_2;
+        final String errorMessage = TlConstants.ERRMSG_INVALID_STORE_MM_INDENT_AMT_1
+            + runParm.values[0].trim()
+            + TlConstants.ERRMSG_INVALID_STORE_MM_INDENT_AMT_2;
 
         throw new IllegalArgumentException(
             UtilConstants.ERRMSG_THEOREM_LOADER_RUN_PARM_ERROR_1
@@ -328,10 +324,9 @@ public class TheoremLoaderBoss extends Boss {
         if (getTlPreferences().setStoreMMRightCol(runParm.values[0].trim()))
             return; // ok, valid!
 
-        final String errorMessage = 
-            TlConstants.ERRMSG_INVALID_STORE_MM_RIGHT_COL_1
-                + runParm.values[0].trim()
-                + TlConstants.ERRMSG_INVALID_STORE_MM_RIGHT_COL_2;
+        final String errorMessage = TlConstants.ERRMSG_INVALID_STORE_MM_RIGHT_COL_1
+            + runParm.values[0].trim()
+            + TlConstants.ERRMSG_INVALID_STORE_MM_RIGHT_COL_2;
 
         throw new IllegalArgumentException(
             UtilConstants.ERRMSG_THEOREM_LOADER_RUN_PARM_ERROR_1

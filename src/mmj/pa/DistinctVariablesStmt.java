@@ -109,7 +109,7 @@ public class DistinctVariablesStmt extends ProofWorkStmt {
 
                 if (dvGroup.size() > dvI.length)
                     // match impossible
-                    continue loopI;
+                    continue;
 
                 Var varY;
                 loopY: for (int y = 0; y < dvGroup.size(); y++) {
@@ -237,7 +237,7 @@ public class DistinctVariablesStmt extends ProofWorkStmt {
                 + PaConstants.ERRMSG_DV_SYM_MAXSEQ_2 + nextT
                 + PaConstants.ERRMSG_DV_SYM_MAXSEQ_3);
 
-        if (!sym.isVar())
+        if (!(sym instanceof Var))
             w.triggerLoadStructureException(PaConstants.ERRMSG_DV_SYM_CNST_1
                 + w.getErrorLabelIfPossible()
                 + PaConstants.ERRMSG_DV_SYM_CNST_2 + nextT

@@ -392,12 +392,10 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      */
     public Theorem getTheorem(final String theoremLabel) {
 
-        Theorem t = null;
-        final Object o = logicalSystem.getStmtTbl().get(theoremLabel.trim());
-        if (o != null && o instanceof Theorem)
-            t = (Theorem)o;
-
-        return t;
+        final Stmt stmt = logicalSystem.getStmtTbl().get(theoremLabel.trim());
+        if (stmt != null && stmt instanceof Theorem)
+            return (Theorem)stmt;
+        return null;
     }
 
     public Stmt getStmt(final String s) {
@@ -1195,7 +1193,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             .size()); li.hasPrevious();)
         {
             final Assrt assrt = li.previous();
-            if (assrt.getSeq() < currProofMaxSeq && !assrt.isAxiom())
+            if (assrt.getSeq() < currProofMaxSeq && assrt instanceof Theorem)
                 return (Theorem)assrt;
         }
         if (isRetry)
@@ -1215,7 +1213,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 .getUnifySearchListByMObjSeq();
 
             for (final Assrt assrt : searchList)
-                if (assrt.getSeq() > currProofMaxSeq && !assrt.isAxiom())
+                if (assrt.getSeq() > currProofMaxSeq
+                    && assrt instanceof Theorem)
                     return (Theorem)assrt;
         }
         if (isRetry)
@@ -1706,9 +1705,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             .size());
 
         for (final Stmt stmt : logicalSystem.getStmtTbl().values())
-            if (stmt.getSeq() >= lowestMObjSeq && stmt.isAssrt()
-                && stmt.getFormula().getTyp() == getProvableLogicStmtTyp()
-                && !((Assrt)stmt).isAxiom() &&
+            if (stmt.getSeq() >= lowestMObjSeq && stmt instanceof Theorem
+                && stmt.getFormula().getTyp() == getProvableLogicStmtTyp() &&
                 // don't process these during batch testing.
                 // for one thing, "dummylink" generates an
                 // exception because its proof is invalid
@@ -1769,21 +1767,21 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         final List<DjVars> superfluous = new ArrayList<DjVars>();
         final MandFrame mandFrame = proofWorksheet.theorem.getMandFrame();
         int compare;
-        Loop1: for (int i = 0; i < mandFrame.djVarsArray.length; i++) {
-            Loop2: for (int j = 0; j < proofWorksheet.comboFrame.djVarsArray.length; j++)
+        loopI: for (int i = 0; i < mandFrame.djVarsArray.length; i++) {
+            for (int j = 0; j < proofWorksheet.comboFrame.djVarsArray.length; j++)
             {
                 compare = mandFrame.djVarsArray[i]
                     .compareTo(proofWorksheet.comboFrame.djVarsArray[j]);
                 if (compare > 0)
-                    continue Loop2;
+                    continue;
                 if (compare == 0)
-                    continue Loop1;
+                    continue loopI;
                 superfluous.add(mandFrame.djVarsArray[i]);
-                continue Loop1; // not found
+                continue loopI; // not found
             }
 
             superfluous.add(mandFrame.djVarsArray[i]);
-            continue Loop1;
+            continue;
         }
 
         if (!superfluous.isEmpty())

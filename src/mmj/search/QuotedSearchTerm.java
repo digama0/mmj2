@@ -59,26 +59,23 @@ public class QuotedSearchTerm {
     public QuotedSearchTerm next(final String s, final String s1,
         final String s2, final String s3)
     {
-        QuotedSearchTerm quotedSearchTerm;
+        QuotedSearchTerm quotedSearchTerm = null;
         int i;
-        label0: {
-            quotedSearchTerm = null;
-            i = endQuoteIndex + quoteString.length() - 1;
-            do {
-                do
-                    if (++i >= s.length())
-                        break label0;
-                while (s.charAt(i) == ' ');
-                if (!s.startsWith(s3, i))
-                    break label0;
-                if (orIsSet)
-                    break;
-                orIsSet = true;
-                i += s3.length() - 1;
-            } while (true);
-            errorMessage = SearchMgr
-                .reformatMessage(SearchConstants.ERROR_TWO_ORS_1);
+        for (i = endQuoteIndex + quoteString.length() - 1; i < s.length(); i++)
+        {
+            if (s.charAt(i) == ' ')
+                continue;
+            if (!s.startsWith(s3, i))
+                break;
+            if (orIsSet) {
+                errorMessage = SearchMgr
+                    .reformatMessage(SearchConstants.ERROR_TWO_ORS_1);
+                break;
+            }
+            orIsSet = true;
+            i += s3.length() - 1;
         }
+
         if (i < s.length())
             if (s.startsWith(s1, i)) {
                 quotedSearchTerm = new QuotedSearchTerm(s1, i);
@@ -95,7 +92,6 @@ public class QuotedSearchTerm {
             }
         return quotedSearchTerm;
     }
-
     public QuotedSearchTerm load(final String s) {
         for (endQuoteIndex = startQuoteIndex + quoteString.length(); endQuoteIndex < s
             .length() && !s.startsWith(quoteString, endQuoteIndex); endQuoteIndex++);

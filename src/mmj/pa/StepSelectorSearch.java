@@ -172,7 +172,6 @@ public class StepSelectorSearch {
          */
         int hypIndex = nbrDerivStepHyps;
         hypLoop: while (hypIndex <= maxHyps) {
-
             /* Copy sorted array to new array whose size matches
                the size of the assertion hyp arrays -- note that
                "null" hyps are at the end due to the sort, so
@@ -182,9 +181,7 @@ public class StepSelectorSearch {
             for (int i = 0; i < nbrDerivStepHyps; i++)
                 derivStepHypArray[i] = derivStepSortedHypArray[i];
 
-//          assrtLoop: while (assrtIndex < assrtArray.length) {
-            assrtLoop: while (assrtIndex < assrtAList.size()) {
-//              assrt             = assrtArray[assrtIndex];
+            while (assrtIndex < assrtAList.size()) {
                 assrt = assrtAList.get(assrtIndex);
                 if (assrt.getSeq() < maxSeq) {
                     assrtNbrLogHyps = assrt.getLogHypArrayLength();
@@ -206,9 +203,8 @@ public class StepSelectorSearch {
                     continue hypLoop;
                 }
                 ++assrtIndex;
-                continue assrtLoop;
             }
-            break hypLoop;
+            break;
         }
 
         return store.createStepSelectorResults(derivStep.step, storeOverflow);

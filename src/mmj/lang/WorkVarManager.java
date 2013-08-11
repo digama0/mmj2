@@ -371,24 +371,23 @@ public class WorkVarManager {
         String suffix;
         int suffixNbr;
 
-        loop: for (int i = 0; i < declaredWorkVarPrefix.length; i++) {
-
+        for (int i = 0; i < declaredWorkVarPrefix.length; i++) {
             if (!workVarIn.startsWith(declaredWorkVarPrefix[i]))
-                continue loop;
+                continue;
 
             suffix = workVarIn.substring(declaredWorkVarPrefix[i].length());
 
             if (suffix.length() == 0 || suffix.charAt(0) == '-')
-                continue loop;
+                continue;
 
             try {
                 suffixNbr = Integer.parseInt(suffix);
             } catch (final NumberFormatException e) {
-                continue loop;
+                continue;
             }
 
             if (suffixNbr < 1 || suffixNbr > declaredWorkVar[i].length)
-                continue loop;
+                continue;
 
             return alloc(i, --suffixNbr);
         }
@@ -485,12 +484,12 @@ public class WorkVarManager {
     /**
      * Deallocates a WorkVar given a WorkVarHyp
      * 
-     * @param varHyp workVarHyp to be deallocated.
+     * @param workVarHyp workVarHyp to be deallocated.
      */
-    public void dealloc(final VarHyp varHyp) {
+    public void dealloc(final WorkVarHyp workVarHyp) {
 
-        dealloc(varHyp.getTyp().workVarTypIndex,
-            ((WorkVar)varHyp.getVar()).workVarIndex);
+        dealloc(workVarHyp.getTyp().workVarTypIndex,
+            workVarHyp.getWorkVar().workVarIndex);
     }
 
     /**

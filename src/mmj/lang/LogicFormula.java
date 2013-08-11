@@ -91,7 +91,7 @@ public class LogicFormula extends Formula {
             if (!sym[cnt].isActive())
                 throw new LangException(
                     LangConstants.ERRMSG_EXPR_SYM_NOT_ACTIVE, symS);
-            if (sym[cnt].isVar()) {
+            if (sym[cnt] instanceof Var) {
                 final VarHyp varHyp = ((Var)sym[cnt]).getActiveVarHyp();
                 if (varHyp == null)
                     throw new LangException(

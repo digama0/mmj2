@@ -92,7 +92,7 @@ public class DjVars implements Comparable<DjVars> {
 
         Hyp[] hypArray = mandFrame.hypArray;
         for (int i = 0; i < hypArray.length; i++) {
-            if (!hypArray[i].isVarHyp())
+            if (!(hypArray[i] instanceof VarHyp))
                 continue;
 
             varHyp = (VarHyp)hypArray[i];
@@ -106,7 +106,7 @@ public class DjVars implements Comparable<DjVars> {
 
         hypArray = optFrame.optHypArray;
         for (int i = 0; i < hypArray.length; i++) {
-            if (!hypArray[i].isVarHyp())
+            if (!(hypArray[i] instanceof VarHyp))
                 continue;
 
             varHyp = (VarHyp)hypArray[i];
@@ -138,7 +138,7 @@ public class DjVars implements Comparable<DjVars> {
 
         Hyp[] hypArray = mandFrame.hypArray;
         for (int i = 0; i < hypArray.length; i++) {
-            if (!hypArray[i].isVarHyp())
+            if (!(hypArray[i] instanceof VarHyp))
                 continue;
 
             varHyp = (VarHyp)hypArray[i];
@@ -148,7 +148,7 @@ public class DjVars implements Comparable<DjVars> {
 
         hypArray = optFrame.optHypArray;
         for (int i = 0; i < hypArray.length; i++) {
-            if (!hypArray[i].isVarHyp())
+            if (!(hypArray[i] instanceof VarHyp))
                 continue;
 
             varHyp = (VarHyp)hypArray[i];
@@ -463,8 +463,8 @@ public class DjVars implements Comparable<DjVars> {
      */
     @Override
     public boolean equals(final Object obj) {
-        return this == obj ? true : !(obj instanceof DjVars) ? false
-            : varLo == ((DjVars)obj).varLo && varHi == ((DjVars)obj).varHi;
+        return this == obj || obj instanceof DjVars
+            && varLo == ((DjVars)obj).varLo && varHi == ((DjVars)obj).varHi;
     }
 
     /**

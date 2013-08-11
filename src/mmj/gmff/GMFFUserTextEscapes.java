@@ -208,9 +208,8 @@ public class GMFFUserTextEscapes implements Comparable<GMFFUserTextEscapes> {
      */
     @Override
     public boolean equals(final Object obj) {
-        return this == obj ? true
-            : !(obj instanceof GMFFUserTextEscapes) ? false : exportType
-                .equals(((GMFFUserTextEscapes)obj).exportType);
+        return this == obj || obj instanceof GMFFUserTextEscapes
+            && exportType.equals(((GMFFUserTextEscapes)obj).exportType);
     }
 
     /**

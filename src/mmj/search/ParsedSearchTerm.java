@@ -138,12 +138,12 @@ public class ParsedSearchTerm {
                     return;
                 }
             }
-            if (sym.isVar()) {
+            if (sym instanceof WorkVar) {
+                errorMessage = "Work variables not allowed in search terms.";
+                return;
+            }
+            if (sym instanceof Var) {
                 final Var var = (Var)sym;
-                if (var.getIsWorkVar()) {
-                    errorMessage = "Work variables not allowed in search terms.";
-                    return;
-                }
                 if (var.isActive() && var.getActiveVarHyp() != null)
                     Assrt.accumHypInList(varHyps, var.getActiveVarHyp());
                 else {

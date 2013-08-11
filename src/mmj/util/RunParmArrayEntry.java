@@ -150,8 +150,8 @@ public class RunParmArrayEntry implements Comparable<RunParmArrayEntry> {
      */
     @Override
     public boolean equals(final Object obj) {
-        return this == obj ? true : !(obj instanceof RunParmArrayEntry) ? false
-            : name.equals(((RunParmArrayEntry)obj).name);
+        return this == obj || obj instanceof RunParmArrayEntry
+            && name.equals(((RunParmArrayEntry)obj).name);
     }
 
     /**

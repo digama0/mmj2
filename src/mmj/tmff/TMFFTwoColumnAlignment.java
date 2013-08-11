@@ -127,11 +127,11 @@ public class TMFFTwoColumnAlignment extends TMFFMethod {
         int[] reseq = null;
         final int leftColPos = tmffSP.prevColNbr + 2;
         int rightColPos = leftColPos; // default
-        if (stmt.isVarHyp())
+        if (stmt instanceof VarHyp)
             // ok, valid and no hyp resequencing
             // but VarHyp's have no child nodes...
             return -1;
-        else if (stmt.isAssrt() && ((Assrt)stmt).isAxiom()) {
+        else if (stmt instanceof Axiom) {
             axiom = (Axiom)stmt;
             if (axiom.getIsSyntaxAxiom()) {
                 reseq = axiom.getSyntaxAxiomVarHypReseq();
@@ -157,7 +157,7 @@ public class TMFFTwoColumnAlignment extends TMFFMethod {
         while (true) {
             if (++symI >= formulaSymArray.length)
                 return 0;
-            if (formulaSymArray[symI].isCnst()) {
+            if (formulaSymArray[symI] instanceof Cnst) {
                 token = formulaSymArray[symI].getId();
                 if (symI == formulaSymArray.length - 1) {
                     pos = tmffSP.prevColNbr + 2;

@@ -210,55 +210,6 @@ public abstract class Stmt extends MObj<Stmt> {
     public abstract boolean isActive();
 
     /**
-     * Is Stmt an Assrt?
-     * <p>
-     * This question arises in a few places, so we answer it...
-     * <p>
-     * There are two choices: Stmt is either an Hyp or an Assrt.
-     * 
-     * @return is Stmt an Assrt -- true or false :)
-     */
-    public abstract boolean isAssrt();
-
-    /**
-     * Is Stmt a Hyp?
-     * <p>
-     * This question arises in a few places, so we answer it...
-     * <p>
-     * There are two choices: Stmt is either an Hyp or an Assrt.
-     * 
-     * @return is Stmt a Hyp -- true or false :)
-     */
-    public abstract boolean isHyp();
-
-    /**
-     * Is Stmt a VarHyp?
-     * <p>
-     * Another question Enquiring Minds needed to know :)
-     * 
-     * @return is Stmt a VarHyp -- true or false :)
-     */
-    public abstract boolean isVarHyp();
-
-    /**
-     * Is Stmt a WorkVarHyp?
-     * <p>
-     * Another question Enquiring Minds needed to know :)
-     * 
-     * @return is Stmt a WorkVarHyp -- true or false :)
-     */
-    public abstract boolean isWorkVarHyp();
-
-    /**
-     * Is Stmt a LogHyp?
-     * <p>
-     * Another question Enquiring Minds needed to know :)
-     * 
-     * @return is Stmt a LogHyp -- true or false :)
-     */
-    public abstract boolean isLogHyp();
-
-    /**
      * Return mandatory VarHyp Array
      * 
      * @return mandatory VarHyp Array
@@ -304,20 +255,6 @@ public abstract class Stmt extends MObj<Stmt> {
      */
     public abstract int renderParsedSubExpr(StringBuilder sb, int maxDepth,
         int maxLength, ParseNode[] child);
-
-    /**
-     * Is the Stmt a Cnst?
-     * <p>
-     * This question is asked in the context of mmj.lang.ParseNodeHolder.java,
-     * which stores an MObj -- and an array of ParseNodeHolder's can substitute
-     * for a Formula during parsing. Quirky, eh?
-     * 
-     * @return Is the Stmt a Cnst, true or false (hint...)
-     */
-    @Override
-    public boolean isCnst() {
-        return false;
-    }
 
     /**
      * Return Stmt label.
@@ -491,8 +428,8 @@ public abstract class Stmt extends MObj<Stmt> {
      */
     @Override
     public boolean equals(final Object obj) {
-        return this == obj ? true : !(obj instanceof Stmt) ? false : label
-            .equals(((Stmt)obj).label);
+        return this == obj || obj instanceof Stmt
+            && label.equals(((Stmt)obj).label);
     }
 
     /**

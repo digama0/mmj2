@@ -264,7 +264,7 @@ public class MMTTheoremExportFormatter {
     private void outputLogHypLines(final ProofWorksheet proofWorksheet) {
 
         for (final ProofWorkStmt w : proofWorksheet.getProofWorkStmtList())
-            if (w.isHypothesisStep())
+            if (w instanceof HypothesisStep)
                 outputOneLogHypsLines((HypothesisStep)w);
     }
 

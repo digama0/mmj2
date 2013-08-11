@@ -165,42 +165,6 @@ public class LogHyp extends Hyp {
     }
 
     /**
-     * Is the LogHyp a VarHyp.
-     * <p>
-     * Hmmm...I don't think so.
-     * 
-     * @return false.
-     */
-    @Override
-    public boolean isVarHyp() {
-        return false;
-    }
-
-    /**
-     * Is the LogHyp a WorkVarHyp.
-     * <p>
-     * Hmmm...I don't think so.
-     * 
-     * @return false.
-     */
-    @Override
-    public boolean isWorkVarHyp() {
-        return false;
-    }
-
-    /**
-     * Is the LogHyp a LogHyp.
-     * <p>
-     * Hmmm...
-     * 
-     * @return true
-     */
-    @Override
-    public boolean isLogHyp() {
-        return true;
-    }
-
-    /**
      * Throws an IllegalArgumentException because a ParseTree for a parsed
      * sub-expression should contain only VarHyp and Syntax Axiom nodes.
      * 

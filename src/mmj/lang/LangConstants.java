@@ -687,6 +687,10 @@ public class LangConstants {
         + " For more information, see:"
         + " ..\\mmj2\\mmj2jar\\AnnotatedRunParms.txt.";
 
+    public static final String ERRMSG_VAR_IN_WORK_VAR_HYP = "A-LA-0407"
+        + " Attempting to store a Var in a WorkVarHyp."
+        + " This indicates a programming error (bug)!";
+
     // =======================================================
 
     /**

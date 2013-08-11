@@ -1092,7 +1092,8 @@ public class LogicalSystem implements SystemLoader {
 
         if (existingStmt != null)
             throw new IllegalArgumentException(
-                LangException.format(LangConstants.ERRMSG_DUP_STMT_MAP_PUT_ATTEMPT
-                    + existingStmt.getLabel()));
+                LangException
+                    .format(LangConstants.ERRMSG_DUP_STMT_MAP_PUT_ATTEMPT
+                        + existingStmt.getLabel()));
     }
 }

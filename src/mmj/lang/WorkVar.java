@@ -31,8 +31,6 @@ public class WorkVar extends Var {
      */
     public WorkVar(final int seq, final String id, final int workVarIndex) {
         super(seq, id, true); // true = "active"
-
-        setIsWorkVar(true);
         this.workVarIndex = workVarIndex;
     }
 }

@@ -34,8 +34,7 @@ public interface SearchOptionsScrnMapField {
 
     public abstract void uploadFromScrnMap(SearchArgs args);
 
-    public abstract void downloadToScrnMap(SearchArgs args,
-        SearchMgr searchMgr);
+    public abstract void downloadToScrnMap(SearchArgs args, SearchMgr searchMgr);
 
     public abstract void setDefaultToCurrentValue();
 

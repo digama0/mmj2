@@ -125,7 +125,7 @@ public class BottomUpParser implements GrammaticalParser {
             return BottomUpParserSpecialCase1();
 
         if (parseNodeHolderExpr.length == 1
-            && !parseNodeHolderExpr[0].mObj.isCnst())
+            && !(parseNodeHolderExpr[0].mObj instanceof Cnst))
             return BottomUpParserSpecialCase2();
 
         boolean needToRetry = true;
@@ -248,7 +248,7 @@ public class BottomUpParser implements GrammaticalParser {
 
         Cnst cnst;
         for (int i = 0; i < parseNodeHolderExpr.length; i++)
-            if (parseNodeHolderExpr[i].mObj.isCnst()) {
+            if (parseNodeHolderExpr[i].mObj instanceof Cnst) {
                 cnst = (Cnst)parseNodeHolderExpr[i].mObj;
                 if (cnst.getIsGrammaticalTyp())
                     throw new VerifyException(
@@ -270,7 +270,7 @@ public class BottomUpParser implements GrammaticalParser {
         if (parseTreeArray.length > 1)
             governorLimit *= GrammarConstants.BOTTOM_UP_GOVERNOR_LIMIT_MAX;
 
-        stackLoop: do {
+        do {
             if (++governor > governorLimit)
                 throw new VerifyException(
                     GrammarConstants.ERRMSG_BU_GOVERNOR_LIMIT_EXCEEDED_1
@@ -285,7 +285,7 @@ public class BottomUpParser implements GrammaticalParser {
                     if (!pTree.isDup(parseCnt, parseTreeArray)) {
                         parseTreeArray[parseCnt++] = pTree;
                         if (parseCnt >= parseTreeArray.length)
-                            break stackLoop;
+                            break;
                     }
                 }
                 else {
@@ -334,12 +334,12 @@ public class BottomUpParser implements GrammaticalParser {
                 .elementDownLevelRoot();
         }
 
-        outerLoop: do {
-            innerLoop: do {
+        do {
+            do {
                 if (curr >= pStackRFECnt[pStackIndex] || currLevelRoot == null)
-                    break innerLoop;
+                    break;
                 if ((foundLevelNode = currLevelRoot.find(rfe[curr])) == null)
-                    break innerLoop;
+                    break;
                 foundNotationRule = foundLevelNode.elementNotationRule();
                 if (foundNotationRule != null
                     && foundNotationRule.getIsGimmeMatchNbr() != 1
@@ -358,7 +358,7 @@ public class BottomUpParser implements GrammaticalParser {
             } while (true);
 
             if (++left >= pStackRFECnt[pStackIndex])
-                break outerLoop;
+                break;
             curr = left;
             currLevelRoot = rfe[curr].getGRRoot();
         } while (true);
@@ -367,7 +367,6 @@ public class BottomUpParser implements GrammaticalParser {
     }
 
     private boolean findGimmeMatch() {
-
         int left;
         int curr;
         GRNode currLevelRoot;
@@ -386,12 +385,10 @@ public class BottomUpParser implements GrammaticalParser {
                 .elementDownLevelRoot();
         }
 
-        outerLoop: do {
-            innerLoop: do {
-                if (curr >= pStackRFECnt[pStackIndex] || currLevelRoot == null)
-                    break innerLoop;
-                if ((foundLevelNode = currLevelRoot.find(rfe[curr])) == null)
-                    break innerLoop;
+        while (true) {
+            while (curr < pStackRFECnt[pStackIndex] && currLevelRoot != null
+                && (foundLevelNode = currLevelRoot.find(rfe[curr])) != null)
+            {
                 foundNotationRule = foundLevelNode.elementNotationRule();
                 if (foundNotationRule != null
                     && foundNotationRule.getIsGimmeMatchNbr() == 1
@@ -407,15 +404,13 @@ public class BottomUpParser implements GrammaticalParser {
                 }
                 ++curr;
                 currLevelRoot = foundLevelNode.elementDownLevelRoot();
-            } while (true);
+            }
 
             if (++left >= pStackRFECnt[pStackIndex])
-                break outerLoop;
+                return false;
             curr = left;
             currLevelRoot = rfe[curr].getGRRoot();
-        } while (true);
-
-        return false;
+        }
     }
 
     private void applyNextNotationRuleMatch() {
@@ -468,7 +463,7 @@ public class BottomUpParser implements GrammaticalParser {
             // holders int paramArray
             j = 0;
             for (int i = from; i <= thru; i++)
-                if (!rewrittenExpr[i].mObj.isCnst())
+                if (!(rewrittenExpr[i].mObj instanceof Cnst))
                     paramArray[j++] = rewrittenExpr[i];
 
             // store new ParseNodeHolder for the Notation Rule Match

@@ -64,7 +64,6 @@ import java.util.Map;
 public class Var extends Sym {
     private boolean active;
     private VarHyp activeVarHyp;
-    private boolean isWorkVar;
 
     /**
      * Adds a new "active" Var to LogicalSystem.
@@ -98,7 +97,7 @@ public class Var extends Sym {
             symTbl.put(id, var);
         }
         else {
-            if (!v.isVar())
+            if (!(v instanceof Var))
                 throw new LangException(
                     LangConstants.ERRMSG_VAR_IS_DUP_OF_CNST_SYM, id);
             var = (Var)v;
@@ -148,32 +147,6 @@ public class Var extends Sym {
     }
 
     /**
-     * Is Sym a Cnst MObj?
-     * <p>
-     * Always false for a Var :) Doh.
-     * 
-     * @return Returns {@code true} if Sym is a Cnst MObj, otherwise
-     *         {@code false}.
-     */
-    @Override
-    public boolean isCnst() {
-        return false;
-    }
-
-    /**
-     * Is Sym a Var MObj?
-     * <p>
-     * Always true for a Var :) Doh.
-     * 
-     * @return Returns {@code true} if Sym is a Var MObj, otherwise
-     *         {@code false}.
-     */
-    @Override
-    public boolean isVar() {
-        return true;
-    }
-
-    /**
      * Marks a Var as "active" or "inactive".
      * 
      * @param active set Sym {@code true} or {@code false}.
@@ -198,24 +171,6 @@ public class Var extends Sym {
     @Override
     public boolean isActive() {
         return active;
-    }
-
-    /**
-     * Marks a Var as "isWorkVar" or not.
-     * 
-     * @param isWorkVar set isWorkVar {@code true} or {@code false}.
-     */
-    public void setIsWorkVar(final boolean isWorkVar) {
-        this.isWorkVar = isWorkVar;
-    }
-
-    /**
-     * Is Var a WorkVar?
-     * 
-     * @return isWorkVar
-     */
-    public boolean getIsWorkVar() {
-        return isWorkVar;
     }
 
     /**
@@ -283,7 +238,7 @@ public class Var extends Sym {
 
         VarHyp vH = null;
         for (final Hyp element : hypArray)
-            if (element.isVarHyp())
+            if (element instanceof VarHyp)
                 if (this == ((VarHyp)element).getVar()) {
                     vH = (VarHyp)element;
                     break;
@@ -311,7 +266,7 @@ public class Var extends Sym {
         final Sym tblV = symTbl.get(varS);
         if (tblV == null)
             throw new LangException(LangConstants.ERRMSG_STMT_VAR_UNDEF, varS);
-        if (!tblV.isVar())
+        if (!(tblV instanceof Var))
             throw new LangException(
                 LangConstants.ERRMSG_STMT_VAR_NOT_DEF_AS_VAR, varS);
         if (!tblV.isActive())
@@ -339,7 +294,7 @@ public class Var extends Sym {
         final Sym tblV = symTbl.get(varS);
         if (tblV == null)
             throw new LangException(LangConstants.ERRMSG_STMT_VAR_UNDEF, varS);
-        if (!tblV.isVar())
+        if (!(tblV instanceof Var))
             throw new LangException(
                 LangConstants.ERRMSG_STMT_VAR_NOT_DEF_AS_VAR, varS);
 

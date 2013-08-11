@@ -129,13 +129,13 @@ public class DerivationStep extends ProofStepStmt {
         int outIndex;
         int iFormulaLength;
 
-        iLoop: for (int i = 0; i < dArray.length; i++) {
+        for (int i = 0; i < dArray.length; i++) {
             outEnd = i;
             holdStep1 = dArray[i];
 
             if (holdStep1 == null) {
                 outArray[outEnd] = holdStep1;
-                continue iLoop;
+                continue;
             }
 
             iFormulaLength = holdStep1.formula.getCnt();
@@ -254,26 +254,6 @@ public class DerivationStep extends ProofStepStmt {
     }
 
     /**
-     * Returns false, a DerivationStep is never a HypothesisStep.
-     * 
-     * @return false, a DerivationStep is never a HypothesisStep.
-     */
-    @Override
-    public boolean isHypothesisStep() {
-        return false;
-    }
-
-    /**
-     * Returns true, a DerivationStep is a DerivationStep.
-     * 
-     * @return true, a DerivationStep is a DerivationStep.
-     */
-    @Override
-    public boolean isDerivationStep() {
-        return true;
-    }
-
-    /**
      * Set proofLevel numbers of hypotheses of DerivationStep. Sets proofLevel
      * numbers to 1 plus DerivationStep's proofLevel -- but only if the Hyp's
      * proofLevel is zero (because a step can be used as a Hyp in more than one
@@ -317,13 +297,7 @@ public class DerivationStep extends ProofStepStmt {
         return false;
     }
 
-    /**
-     * Renumbers step numbers using a HashMap containing old and new step number
-     * pairs.
-     * 
-     * @param renumberMap contains key/value pairs defining newly assigned step
-     *            numbers.
-     */
+    @Override
     public void renum(final Map<String, String> renumberMap) {
 
         String newNum = renumberMap.get(step);
@@ -557,7 +531,7 @@ public class DerivationStep extends ProofStepStmt {
 
         // recompute referencing steps' L1HiLo key values;
         for (final ProofWorkStmt o : w.getProofWorkStmtList()) {
-            if (o == this || !o.isDerivationStep())
+            if (o == this || !(o instanceof DerivationStep))
                 continue;
             final DerivationStep d = (DerivationStep)o;
             if (d.hyp == null)
@@ -609,14 +583,14 @@ public class DerivationStep extends ProofStepStmt {
 
         if (hypStep.length > 0) {
             int i = 0;
-            hLoop: while (true) {
+            while (true) {
                 if (hypStep[i] == null)
                     sb.append(PaConstants.DEFAULT_STMT_LABEL);
                 else
                     sb.append(hypStep[i]);
                 if (++i < hypStep.length) {
                     sb.append(PaConstants.FIELD_DELIMITER_COMMA);
-                    continue hLoop;
+                    continue;
                 }
                 break;
             }
@@ -763,7 +737,7 @@ public class DerivationStep extends ProofStepStmt {
                     + PaConstants.ERRMSG_REF_MAXSEQ_4,
                 (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                     - formulaStartCharNbr);
-        if (!ref.isAssrt())
+        if (!(ref instanceof Assrt))
             w.triggerLoadStructureException(PaConstants.ERRMSG_REF_NOT_ASSRT_1
                 + w.getErrorLabelIfPossible()
                 + PaConstants.ERRMSG_REF_NOT_ASSRT_2 + step
@@ -978,7 +952,7 @@ public class DerivationStep extends ProofStepStmt {
                     return hiLoKey;
 
                 hStmt = element.formulaParseTree.getRoot().getStmt();
-                if (hStmt.isVarHyp())
+                if (hStmt instanceof VarHyp)
                     return hiLoKey;
                 n = hStmt.getSeq();
                 if (n < lowNbr) {

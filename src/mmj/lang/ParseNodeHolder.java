@@ -121,7 +121,7 @@ public class ParseNodeHolder {
      * @return cnst Cnst or Type Code.
      */
     public Cnst getCnstOrTyp() {
-        if (mObj.isCnst())
+        if (mObj instanceof Cnst)
             return (Cnst)mObj;
         return parseNode.getStmt().getTyp();
     }
@@ -133,7 +133,7 @@ public class ParseNodeHolder {
      *         parseNodeHolder.stmt.
      */
     public String getCnstIdOrLabel() {
-        if (mObj.isCnst())
+        if (mObj instanceof Cnst)
             return ((Cnst)mObj).getId();
         return parseNode.getStmt().getLabel();
     }

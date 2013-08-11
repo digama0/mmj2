@@ -174,25 +174,6 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     }
 
     /**
-     * Is this ProofWorkStmt a proof step?
-     * 
-     * @return true;
-     */
-    @Override
-    public boolean isProofStep() {
-        return true;
-    }
-
-//this is not needed but left code in place just in case
-//  /**
-//   * Initializes the proofLevel number to zero.
-//   */
-//  public void initProofLevel() {
-//      proofLevel                = 0;
-//  }
-//
-
-    /**
      * Loads the proofLevel number with the input proofLevel but only if the
      * existing proofLevel is zero.
      * <p>
@@ -383,26 +364,26 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
             // ok, now we have the 2nd token in hand! proceed..
             String token;
             int end;
-            loopToken: while (true) {
+            while (true) {
                 end = outStmtTextOffset + len;
                 token = outStmtText.substring(outStmtTextOffset, end);
-                loopWV: for (int i = 0; i < wvCnt; i++) {
+                for (int i = 0; i < wvCnt; i++) {
                     if (!token.equals(wvArray[i]))
-                        continue loopWV;
+                        continue;
                     outStmtText.replace(outStmtTextOffset, end,
                         wvSubstStringArray[i]);
                     end = outStmtTextOffset + wvSubstStringArray[i].length();
-                    break loopWV;
+                    break;
                 }
                 outStmtTextOffset = end;
 
                 len = tokenizer.getWhiteSpace(outStmtText, outStmtTextOffset);
                 if (len < 0)
-                    break loopToken;
+                    break;
                 outStmtTextOffset += len;
                 len = tokenizer.getToken(outStmtText, outStmtTextOffset);
                 if (len < 0)
-                    break loopToken;
+                    break;
             }
 
             stmtText = outStmtText;
@@ -497,7 +478,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
                                 + PaConstants.ERRMSG_SYM_NOTFND_4,
                             nextT.length());
                 }
-                else if (!sym.isCnst())
+                else if (!(sym instanceof Cnst))
                     w.triggerLoadStructureException(
                         PaConstants.ERRMSG_VAR_SCOPE_1
                             + w.getErrorLabelIfPossible()
@@ -742,5 +723,14 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     {
         ProofStepStmt.reviseStepHypRefInStmtTextArea(stmtText, newStepHypRef);
     }
+
+    /**
+     * Renumbers step numbers using a HashMap containing old and new step number
+     * pairs.
+     * 
+     * @param renumberMap contains key/value pairs defining newly assigned step
+     *            numbers.
+     */
+    public abstract void renum(Map<String, String> renumberMap);
 
 }

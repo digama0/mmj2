@@ -249,12 +249,12 @@ public class EarleyParser implements GrammaticalParser {
 
         // patch: 06/17/2011
         // if (parseNodeHolderExpr.length == 1 &&
-        // !(parseNodeHolderExpr[0].mObj.isCnst())) {
+        // !(parseNodeHolderExpr[0].mObj instanceof Cnst)) {
         // return EarleyParserSpecialCase2();
         // }
         if (parseNodeHolderExpr.length == 1) {
             final MObj<?> mObj = parseNodeHolderExpr[0].mObj;
-            if (!mObj.isCnst())
+            if (!(mObj instanceof Cnst))
                 return EarleyParserSpecialCase2();
             // ok, is expression w/one symbol, a constant...
             // see if we can consider it parsed and get out of here...
@@ -416,7 +416,7 @@ public class EarleyParser implements GrammaticalParser {
         int src = 0;
         for (int dest = 1; dest < expr.length; src++, dest++) {
 
-            if (parseNodeHolderExpr[src].mObj.isCnst()) {
+            if (parseNodeHolderExpr[src].mObj instanceof Cnst) {
                 cnst = (Cnst)parseNodeHolderExpr[src].mObj;
                 if (cnst.getIsGrammaticalTyp())
                     throw new VerifyException(
@@ -544,9 +544,9 @@ public class EarleyParser implements GrammaticalParser {
                 final List<NotationRule> typRules = pPredictorTyp[i]
                     .getEarleyRules();
                 if (typRules == null)
-                    continue typLoop;
+                    continue;
                 if (!pPredictorTyp[i].earleyFIRSTContainsSymbol(nextSym))
-                    continue typLoop;
+                    continue;
 
                 for (final NotationRule notationRule : typRules) {
                     if (notationRule.getMaxSeqNbr() > maxSeq)
@@ -650,23 +650,20 @@ public class EarleyParser implements GrammaticalParser {
 // */
         int outputCnt = 0;
         final EarleyItem[] scanItemSet = pItem[scanSetNbr];
-        EarleyItem earleyItem;
-        int newDotIndex;
-        Cnst newAfterDot;
 
-        scanLoop: for (int i = 0; i < pItemSetCnt[scanSetNbr]; i++) {
-            earleyItem = scanItemSet[i];
+        for (int i = 0; i < pItemSetCnt[scanSetNbr]; i++) {
+            final EarleyItem earleyItem = scanItemSet[i];
             if (earleyItem.afterDot != scanSymbol)
-                continue scanLoop;
-            newDotIndex = earleyItem.dotIndex + 1;
-            newAfterDot = earleyItem.rule
+                continue;
+            final int newDotIndex = earleyItem.dotIndex + 1;
+            final Cnst newAfterDot = earleyItem.rule
                 .getRuleFormatExprIthSymbol(newDotIndex);
             if (newAfterDot == null)
                 addItemToCompletedItemSet(outputSetNbr, earleyItem);
             else
                 addActiveItemToItemSet(outputSetNbr, earleyItem, newDotIndex,
                     newAfterDot);
-            ++outputCnt;
+            outputCnt++;
         }
 
         return outputCnt;
@@ -860,13 +857,13 @@ public class EarleyParser implements GrammaticalParser {
     private void addTypToRuleTypAndFIRSTTyp(final Cnst typ, final Cnst firstTyp)
     {
         int i = 0;
-        typLoop: while (true)
+        while (true)
             if (i < rulesTypCnt) {
                 if (typ == ruleTypAndFIRSTTyp[i][0])
                     break;
                 else {
-                    ++i;
-                    continue typLoop;
+                    i++;
+                    continue;
                 }
             }
             else {
@@ -1109,7 +1106,7 @@ public class EarleyParser implements GrammaticalParser {
             earleyItem = completedSet[i];
             if (earleyItem.atIndex != exprFrom
                 || earleyItem.rule.getGrammarRuleTyp() != searchTyp)
-                continue itemLoop;
+                continue;
             twinTreesCnt = 0;
             twinTreesNeeded = parseTreeArray.length - parseCnt - 1;
             earleyRuleMap = new EarleyRuleMap(i, exprFrom, exprThru);
@@ -1431,12 +1428,12 @@ public class EarleyParser implements GrammaticalParser {
                  * done.
                  */
                 spin = hypMap.length - 1;
-                spinLoop: do {
+                do {
                     if (paramArray[spin].fwd != hypMap[spin].firstParseNodeHolder)
                     {
                         paramArray[spin] = paramArray[spin].fwd;
                         carry = false;
-                        break spinLoop;
+                        break;
                     }
                     paramArray[spin] = hypMap[spin].firstParseNodeHolder;
                     carry = true;
@@ -1570,7 +1567,7 @@ public class EarleyParser implements GrammaticalParser {
 
             int mapIndex = startMapIndex;
             final int lastMapIndex = hypMap.length - 1;
-            mapLoop: while (true) {
+            while (true) {
 
 // */
 //          System.out.println(
@@ -1583,8 +1580,8 @@ public class EarleyParser implements GrammaticalParser {
                 {
                     if (mapIndex == 0)
                         return true;
-                    --mapIndex;
-                    continue mapLoop;
+                    mapIndex--;
+                    continue;
                 }
                 if (mapIndex >= lastMapIndex)
                     return false;
@@ -1592,8 +1589,7 @@ public class EarleyParser implements GrammaticalParser {
                     hypMap[z].itemIndex = -1;
                     hypMap[z].ruleMapParseNodeHolder = null;
                 }
-                ++mapIndex;
-                continue mapLoop;
+                mapIndex++;
             }
         }
 
@@ -1636,32 +1632,25 @@ public class EarleyParser implements GrammaticalParser {
 
             if (hypMapEntry.itemIndex < 0)
                 hypMapEntry.itemIndex = pCompletedItemSetCnt[hypMapEntry.exprThru];
-            itemLoop: while (true) {
-
-// */
+            while (--hypMapEntry.itemIndex >= 0) {
 //              System.out.println(
 //                  "--- loadOneHypMapEntry():itemLoop:"
 //                  + " hypMapEntry.itemIndex "
 //                  +   hypMapEntry.itemIndex
 //                  );
-// */
-
-                if (--hypMapEntry.itemIndex < 0)
-                    break itemLoop;
-
                 earleyItem = completedSet[hypMapEntry.itemIndex];
 
                 if (earleyItem.rule.getGrammarRuleTyp() != hypMapEntry.typ)
-                    continue itemLoop;
+                    continue;
 
                 if (mapIndex == 0)
                     if (hypMapEntry.exprFrom == earleyItem.atIndex)
                         return true; // successful mapping
                     else
-                        continue itemLoop; // does not fit the facts!
+                        continue; // does not fit the facts!
 
                 if (earleyItem.atIndex < exprFromR)
-                    continue itemLoop; // does not fit the facts;
+                    continue; // does not fit the facts;
 
                 /**
                  * map shorter subsequence of expr to earleyItem rule taking us
@@ -1672,13 +1661,13 @@ public class EarleyParser implements GrammaticalParser {
                 prevMapEntry.exprThru = hypMapEntry.exprFrom
                     - (hypMapEntry.hypPos - prevMapEntry.hypPos);
                 if (prevMapEntry.exprThru < exprFromR)
-                    continue itemLoop; // does not fit the facts
+                    continue; // does not fit the facts
 
                 if (!verifyRightTweeners(prevMapEntry.exprThru, // exprPos
                     prevMapEntry.hypPos, // ruleFormatExprPos
                     hypMapEntry.hypPos, // ruleCompareStop
                     ruleFormatExpr))
-                    continue itemLoop; // does not fit the facts
+                    continue; // does not fit the facts
 
                 /**
                  * Reset the itemIndex of the previous hypMapEntry to -1 which
@@ -1708,7 +1697,7 @@ public class EarleyParser implements GrammaticalParser {
              * case for a VarHyp or other pre-parsed Stmt already loaded into
              * expr.
              */
-            if (expr[hypMapEntry.exprThru].mObj.isCnst()
+            if (expr[hypMapEntry.exprThru].mObj instanceof Cnst
                 || expr[hypMapEntry.exprThru].parseNode.getStmt().getTyp() != hypMapEntry.typ)
                 return false;
 

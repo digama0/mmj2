@@ -92,15 +92,6 @@ public class HypothesisStep extends ProofStepStmt {
     }
 
     @Override
-    public boolean isHypothesisStep() {
-        return true;
-    }
-    @Override
-    public boolean isDerivationStep() {
-        return false;
-    }
-
-    @Override
     public boolean stmtIsIncomplete() {
         return false;
     }
@@ -119,13 +110,7 @@ public class HypothesisStep extends ProofStepStmt {
             return false;
     }
 
-    /**
-     * Renumbers step numbers using a HashMap containing old and new step number
-     * pairs.
-     * 
-     * @param renumberMap contains key/value pairs defining newly assigned step
-     *            numbers.
-     */
+    @Override
     public void renum(final Map<String, String> renumberMap) {
 
         final String newNum = renumberMap.get(step);
@@ -263,7 +248,7 @@ public class HypothesisStep extends ProofStepStmt {
                         + PaConstants.ERRMSG_REF_NOTFND2_4,
                     (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                         - lineStartCharNbr);
-            if (!ref.isLogHyp())
+            if (!(ref instanceof LogHyp))
                 w.triggerLoadStructureException(
                     PaConstants.ERRMSG_REF_NOT_LOGHYP_1
                         + w.getErrorLabelIfPossible()
@@ -300,7 +285,7 @@ public class HypothesisStep extends ProofStepStmt {
 
     private boolean dupLogHypFormulas(final Formula f) {
         for (final ProofWorkStmt x : w.proofWorkStmtList)
-            if (x.isHypothesisStep())
+            if (x instanceof HypothesisStep)
                 if (((HypothesisStep)x).formula.equals(f))
                     return true;
         return false;

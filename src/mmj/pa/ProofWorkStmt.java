@@ -97,33 +97,6 @@ public abstract class ProofWorkStmt {
     public abstract void tmffReformat();
 
     /**
-     * Is this a proof step?
-     * 
-     * @return false by default, unless overridden.
-     */
-    public boolean isProofStep() {
-        return false;
-    }
-
-    /**
-     * Is this a hypothesis step?
-     * 
-     * @return false by default, unless overridden.
-     */
-    public boolean isHypothesisStep() {
-        return false;
-    }
-
-    /**
-     * Is this a proof derivation step?
-     * 
-     * @return false by default, unless overridden.
-     */
-    public boolean isDerivationStep() {
-        return false;
-    }
-
-    /**
      * Base class function to determine whether the ProofWorkStmt step number
      * matches the input step number (always false in base class.)
      * 

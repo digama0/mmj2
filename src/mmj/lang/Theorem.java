@@ -145,18 +145,6 @@ public class Theorem extends Assrt {
     }
 
     /**
-     * Is the Assrt an Axiom?
-     * <p>
-     * Someone asked the question, so it is answered...
-     * 
-     * @return true (a Theorem is not an Axiom :)
-     */
-    @Override
-    public boolean isAxiom() {
-        return false;
-    }
-
-    /**
      * Return Theorem's proof.
      * 
      * @return Theorem's proof.
@@ -249,15 +237,15 @@ public class Theorem extends Assrt {
                     throw new LangException(
                         LangConstants.ERRMSG_FORWARD_PROOF_STEP_LABEL, stepS,
                         getLabel());
-                if (stepTbl.isHyp())
+                if (stepTbl instanceof Hyp)
                     /**
                      * this is a little "tricky" -- "active" applies only to
                      * global hypotheses or when the source file is being
                      * loaded.
                      */
-                    if (stepTbl.isActive()) {}
-                    else if (isProofStepInExtendedFrame(stepTbl)) {}
-                    else
+                    if (!stepTbl.isActive()
+                        && !isProofStepInExtendedFrame(stepTbl))
+
                         throw new LangException(
                             LangConstants.ERRMSG_PROOF_STEP_HYP_INACTIVE, stepS);
                 proofArray[i] = stepTbl;
@@ -265,7 +253,6 @@ public class Theorem extends Assrt {
         }
         return proofArray;
     }
-
     /**
      * Checks to see whether or not a proof step is contained in the Theorem's
      * Extended Frame.

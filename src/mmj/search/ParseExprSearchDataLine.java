@@ -16,6 +16,7 @@
 package mmj.search;
 
 import mmj.lang.ParseTree;
+import mmj.lang.VarHyp;
 
 public class ParseExprSearchDataLine extends SearchDataLine {
 
@@ -60,8 +61,8 @@ public class ParseExprSearchDataLine extends SearchDataLine {
     public boolean evaluateSearchTerm(final QuotedSearchTerm quotedSearchTerm,
         final CompiledSearchArgs csa)
     {
-        final boolean excludeVarHyps = !quotedSearchTerm.parsedSearchTerm.parseTree
-            .getRoot().stmt.isVarHyp();
+        final boolean excludeVarHyps = !(quotedSearchTerm.parsedSearchTerm.parseTree
+            .getRoot().stmt instanceof VarHyp);
         final int numHyps = quotedSearchTerm.parsedSearchTerm.varHypArray.length;
         for (final ParseTree element : assrtDataTreeArray)
             if (searchUnifier.unifyExpr(numHyps, excludeVarHyps,

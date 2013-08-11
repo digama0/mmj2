@@ -71,9 +71,9 @@ public class EarleyItem {
      */
     @Override
     public boolean equals(final Object obj) {
-        return this == obj ? true : !(obj instanceof EarleyItem) ? false
-            : rule != ((EarleyItem)obj).rule ? false
-                : atIndex != ((EarleyItem)obj).atIndex ? false : true;
+        return this == obj || obj instanceof EarleyItem
+            && rule == ((EarleyItem)obj).rule
+            && atIndex == ((EarleyItem)obj).atIndex;
     }
 
     /**

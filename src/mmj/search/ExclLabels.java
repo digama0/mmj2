@@ -50,7 +50,7 @@ public class ExclLabels extends SearchArgsTextField {
         final Pattern whitespace = Pattern.compile("\\s");
         final String[] labels = comma.split(text);
         final List<Pattern> patterns = new ArrayList<Pattern>(labels.length);
-        iLoop: for (int i = 0; i < labels.length; i++) {
+        loopI: for (int i = 0; i < labels.length; i++) {
             final String label = labels[i].trim();
             if (label.length() == 0)
                 continue;
@@ -64,7 +64,7 @@ public class ExclLabels extends SearchArgsTextField {
                     storeArgError(searchOutput, word,
                         SearchConstants.ERRMSG_EXCL_LABELS_SPECIFIER_BAD_ERROR,
                         "");
-                    break iLoop;
+                    break loopI;
                 }
                 word = asterisk.matcher(word).replaceAll("*");
                 word = question.matcher(word).replaceAll("?");
@@ -80,7 +80,7 @@ public class ExclLabels extends SearchArgsTextField {
                         SearchConstants.ERRMSG_EXCL_LABELS_SPECIFIER_BAD_ERROR2,
                         SearchConstants.ERRMSG_EXCL_LABELS_SPECIFIER_BAD_ERROR2_2
                             + e.getMessage());
-                    break iLoop;
+                    break loopI;
                 }
             }
 

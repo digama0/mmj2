@@ -62,6 +62,12 @@
     * A new RunParm 'ProofAsstMaximized' now allows ProofAsstGUI to start in
       fullscreen mode.
 
+    * Added support for compound edits for undo handling. This way, undo and
+      redo apply to entire blocks of text, rather than individual characters as
+      before. Furthermore (and most importantly), the full-buffer replacements
+      performed by Unify now count as a single edit, so you only have to Ctrl-Z
+      once to undo/redo unification.
+
 ================================================================================
 1-Nov-2011:
 

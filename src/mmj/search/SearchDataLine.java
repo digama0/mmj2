@@ -20,8 +20,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import mmj.lang.ParseTree;
-import mmj.lang.VarHyp;
+import mmj.lang.*;
 
 public abstract class SearchDataLine {
 
@@ -119,7 +118,7 @@ public abstract class SearchDataLine {
     }
 
     protected boolean searchDataLineWantsThisAssrt() {
-        if (searchDataGetter.assrtIsAxiom()) {
+        if (searchDataGetter.assrt instanceof Axiom) {
             if (wantsAxioms)
                 return true;
         }

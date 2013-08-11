@@ -256,11 +256,11 @@ public class GrammarAmbiguity {
                  */
                 boolean isEmbedIJ = false;
                 if (exprI.length < exprJ.length)
-                    embedLoop: for (int embedPosJ = exprJ.length - exprI.length; embedPosJ >= 0; embedPosJ--)
+                    for (int embedPosJ = exprJ.length - exprI.length; embedPosJ >= 0; embedPosJ--)
                         if (isIEmbeddedInJ(exprI, exprJ, embedPosJ)) {
                             isEmbedIJ = true;
                             if (!doCompleteGrammarAmbiguityEdits)
-                                break embedLoop;
+                                break;
                             recordEmbed(rI, exprI, rJ, exprJ, embedPosJ);
                         }
 

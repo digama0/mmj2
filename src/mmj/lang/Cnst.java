@@ -222,28 +222,6 @@ public class Cnst extends Sym {
     }
 
     /**
-     * Is Sym a Cnst MObj?
-     * 
-     * @return Returns {@code true} if Sym is a Cnst MObj, otherwise
-     *         {@code false}.
-     */
-    @Override
-    public boolean isCnst() {
-        return true;
-    }
-
-    /**
-     * Is Sym a Var MObj?
-     * 
-     * @return Returns {@code true} if Sym is a Var MObj, otherwise
-     *         {@code false}.
-     */
-    @Override
-    public boolean isVar() {
-        return false;
-    }
-
-    /**
      * Is Sym active?
      * <p>
      * {@code Cnst}s are always active as they cannot be defined inside a scope
@@ -555,8 +533,8 @@ public class Cnst extends Sym {
             final Cnst typ = r.getBaseSyntaxAxiom().getTyp();
             if (findFromTypConversionRule(r.getConvTyp()) != null)
                 throw new IllegalStateException(LangException.format(
-                    LangConstants.ERRMSG_TYP_CONV_DUP, r
-                        .getBaseSyntaxAxiom().getLabel(), typ));
+                    LangConstants.ERRMSG_TYP_CONV_DUP, r.getBaseSyntaxAxiom()
+                        .getLabel(), typ));
         }
 
         final TypeConversionRule[] x = new TypeConversionRule[ruleIndex + 1];

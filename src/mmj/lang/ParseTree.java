@@ -401,33 +401,31 @@ public class ParseTree {
         if (levelOneTwo != null)
             return levelOneTwo;
         Stmt stmt = root.getStmt();
-        final StringBuilder answer = new StringBuilder();
-        if (!stmt.isVarHyp()) {
-            answer.append(stmt.getLabel());
-            answer.append(' ');
+        if (stmt instanceof VarHyp)
+            setLevelOneTwo("");
+        else {
             final ParseNode[] child = root.getChild();
             if (child.length > 0) {
                 int i = 0;
+                String answer = stmt.getLabel() + " ";
                 while (true) {
                     stmt = child[i].getStmt();
-                    if (stmt.isVarHyp()) {
+                    if (stmt instanceof VarHyp) {
                         setLevelOneTwo("");
                         return levelOneTwo;
                     }
-                    answer.append(stmt.getLabel());
+                    answer += stmt.getLabel();
                     if (++i < child.length) {
-                        answer.append(' ');
+                        answer += " ";
                         continue;
                     }
                     break;
                 }
-                setLevelOneTwo(answer.toString());
+                setLevelOneTwo(answer);
             }
             else
                 setLevelOneTwo("");
         }
-        else
-            setLevelOneTwo("");
         return levelOneTwo;
     }
 

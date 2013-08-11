@@ -235,75 +235,6 @@ public abstract class Assrt extends Stmt {
     }
 
     /**
-     * Is the Stmt an Assrt?
-     * <p>
-     * Someone asked the question, so it is answered...
-     * 
-     * @return true (an Assrt is an Assrt :)
-     */
-    @Override
-    public boolean isAssrt() {
-        return true;
-    }
-
-    /**
-     * Is the Assrt an Axiom?
-     * <p>
-     * Someone asked the question, so it is answered...
-     * 
-     * @return true (an Assrt is an Assrt :)
-     */
-    public abstract boolean isAxiom();
-
-    /**
-     * Is the Stmt an Hyp?
-     * <p>
-     * Someone asked the question, so it is answered...
-     * 
-     * @return false (an Assrt is not an Hyp :)
-     */
-    @Override
-    public boolean isHyp() {
-        return false;
-    }
-
-    /**
-     * Is the Stmt a VarHyp?
-     * <p>
-     * Someone asked the question, so it is answered...
-     * 
-     * @return false (an Assrt is not a Hyp, ergo it is not a VarHyp :)
-     */
-    @Override
-    public boolean isVarHyp() {
-        return false;
-    }
-
-    /**
-     * Is the Stmt a WorkVarHyp?
-     * <p>
-     * Someone asked the question, so it is answered...
-     * 
-     * @return false (an Assrt is not a Hyp, ergo it is not a WorkVarHyp :)
-     */
-    @Override
-    public boolean isWorkVarHyp() {
-        return false;
-    }
-
-    /**
-     * Is the Stmt a LogHyp?
-     * <p>
-     * Someone asked the question, so it is answered...
-     * 
-     * @return false (an Assrt is not a Hyp, ergo it is not a LogHyp :)
-     */
-    @Override
-    public boolean isLogHyp() {
-        return false;
-    }
-
-    /**
      * Loads the logHypArray using mandFrame.
      * <p>
      * This is pretty redundant, but is an add-on for ProofAsst and is designed
@@ -316,13 +247,13 @@ public abstract class Assrt extends Stmt {
 
         int logHypCount = 0;
         for (final Hyp element : hyp)
-            if (element.isLogHyp())
+            if (element instanceof LogHyp)
                 ++logHypCount;
         logHypArray = new LogHyp[logHypCount];
 
         logHypCount = 0;
         for (final Hyp element : hyp)
-            if (element.isLogHyp())
+            if (element instanceof LogHyp)
                 logHypArray[logHypCount++] = (LogHyp)element;
 
         loadSortedLogHypArray();
@@ -402,7 +333,7 @@ public abstract class Assrt extends Stmt {
         Hyp hyp;
         for (int i = 0; i < hypList.size(); i++) {
             hyp = hypList.get(i);
-            if (hyp.isVarHyp()) {
+            if (hyp instanceof VarHyp) {
                 if (((VarHyp)hyp).getVar() == djVars.varLo)
                     loFound = true;
                 if (((VarHyp)hyp).getVar() == djVars.varHi)
@@ -492,7 +423,7 @@ public abstract class Assrt extends Stmt {
                 int highNbr = Integer.MIN_VALUE;
                 for (final LogHyp element : logHypArray) {
                     hStmt = element.getExprParseTree().getRoot().getStmt();
-                    if (hStmt.isVarHyp()) {
+                    if (hStmt instanceof VarHyp) {
                         setLogHypsL1HiLoKey("");
                         return logHypsL1HiLoKey;
                     }
@@ -581,15 +512,15 @@ public abstract class Assrt extends Stmt {
                     - iFormulaLength;
                 if (diff > 0) {
                     ++outIndex;
-                    continue outLoop; // look for shorter formula
+                    continue; // look for shorter formula
                 }
                 if (diff < 0 || hypVarsInCommonWithAssrt(holdLogHyp1))
-                    break outLoop; // insert here at outIndex
-                equalLoop: while (true) {
+                    break; // insert here at outIndex
+                while (true) {
                     ++outIndex; // find formula with diff length
                     if (outIndex < outEnd)
                         if (outArray[outIndex].getFormula().getCnt() == iFormulaLength)
-                            continue equalLoop;
+                            continue;
                     break outLoop; // insert here at outIndex
                 }
             }

@@ -175,7 +175,8 @@ public class SearchUnifier {
             if (!s.equals(parseTree1.getLevelOneTwo()))
                 return false;
             final Stmt stmt = parseTree.getRoot().getStmt();
-            if (stmt != parseTree1.getRoot().getStmt() && !stmt.isVarHyp())
+            if (stmt != parseTree1.getRoot().getStmt()
+                && !(stmt instanceof VarHyp))
                 return false;
         }
         return parseTree.getMaxDepth() <= parseTree1.getMaxDepth()
@@ -311,7 +312,7 @@ public class SearchUnifier {
         final List<VarHyp> arraylist = new ArrayList<VarHyp>(
             varHypSubstArrayCnt + 1);
         for (int j = 0; j < varHypSubstArrayCnt; j++) {
-            if (!varHypSubstArray[j].sourceNode.stmt.isVarHyp())
+            if (!(varHypSubstArray[j].sourceNode.stmt instanceof VarHyp))
                 return false;
             Assrt.accumHypInList(arraylist,
                 (VarHyp)varHypSubstArray[j].sourceNode.stmt);

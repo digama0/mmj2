@@ -34,7 +34,7 @@ public class ChapSecHierarchy extends SearchArgsComboBox {
         final ProofAsstPreferences proofAsstPreferences,
         final VerifyProofs verifyProofs, final Cnst cnst)
     {
-        csa.searchChapSecHierarchyChoice = getAndErrorIfBadChoice(
-            searchOutput, SearchOptionsConstants.CHAP_SEC_HIERARCHY_VALUES);
+        csa.searchChapSecHierarchyChoice = getAndErrorIfBadChoice(searchOutput,
+            SearchOptionsConstants.CHAP_SEC_HIERARCHY_VALUES);
     }
 }

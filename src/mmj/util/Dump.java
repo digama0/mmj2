@@ -368,7 +368,7 @@ public class Dump {
         symSet.addAll(symTbl);
 
         for (final Sym sym : symSet)
-            if (sym.isVar())
+            if (sym instanceof Var)
                 dumpSymVarFull(indentNbr, (Var)sym);
             else
                 dumpSymCnstFull(indentNbr, (Cnst)sym);
@@ -592,14 +592,11 @@ public class Dump {
         if (stmt.isActive())
             sb.append(UtilConstants.DUMP_IS_ACTIVE);
 
-        if (stmt.isAssrt())
+        if (stmt instanceof Assrt)
             sb.append(UtilConstants.DUMP_IS_ASSRT);
 
-        if (stmt.isHyp())
+        if (stmt instanceof Hyp)
             sb.append(UtilConstants.DUMP_IS_HYP);
-
-        if (stmt.isCnst())
-            sb.append(UtilConstants.DUMP_IS_CNST);
 
         sb.append(UtilConstants.DUMP_MAND_VARHYP_ARRAY);
         final VarHyp[] varHypArray = stmt.getMandVarHypArray();
@@ -891,7 +888,7 @@ public class Dump {
         final Set<Cnst> cnstWithRules = new TreeSet<Cnst>(Sym.ID);
 
         for (final Sym sym : symTbl) {
-            if (!sym.isCnst())
+            if (!(sym instanceof Cnst))
                 continue;
             final Cnst cnst = (Cnst)sym;
             if (cnst.getGRRoot() != null)

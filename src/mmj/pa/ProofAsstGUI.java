@@ -98,9 +98,11 @@ import java.awt.event.*;
 import java.io.*;
 
 import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultEditorKit;
-import javax.swing.undo.*;
+import javax.swing.undo.CannotRedoException;
+import javax.swing.undo.CannotUndoException;
 
 import mmj.lang.Messages;
 import mmj.lang.Theorem;
@@ -149,8 +151,7 @@ public class ProofAsstGUI {
     private ProofTextChanged proofTextChanged;
     private int nbrTimesSavedSinceNew;
 
-    private UndoManager undoManager;
-    private ProofAsstGUIUndoableEditListener proofAsstGUIUndoableEditListener;
+    private CompoundUndoManager undoManager;
     private JMenuItem editUndoItem;
     private JMenuItem editRedoItem;
 
@@ -472,28 +473,9 @@ public class ProofAsstGUI {
         }
     }
 
-    private class ProofAsstGUIUndoableEditListener implements
-        UndoableEditListener
-    {
-        public void undoableEditHappened(
-            final UndoableEditEvent undoableEditEvent)
-        {
-            undoManager.addEdit(undoableEditEvent.getEdit());
-            updateUndoRedoItems();
-        }
-    }
-
     private void updateUndoRedoItems() {
-
-        if (undoManager.canUndo())
-            editUndoItem.setEnabled(true);
-        else
-            editUndoItem.setEnabled(false);
-
-        if (undoManager.canRedo())
-            editRedoItem.setEnabled(true);
-        else
-            editRedoItem.setEnabled(false);
+        editUndoItem.setEnabled(undoManager.canUndo());
+        editRedoItem.setEnabled(undoManager.canRedo());
     }
 
     public JFrame getMainFrame() {
@@ -503,6 +485,7 @@ public class ProofAsstGUI {
         return proofTextArea.getText();
     }
     private void setProofTextAreaText(final String s) {
+        undoManager.updateCursorPosition();
         proofTextArea.setText(s);
     }
 
@@ -711,14 +694,12 @@ public class ProofAsstGUI {
         proofTextChanged = new ProofTextChanged(false);
         textArea.getDocument().addDocumentListener(proofTextChanged);
 
-        if (proofAsstPreferences.getUndoRedoEnabled()) {
-            undoManager = new UndoManager();
-
-            proofAsstGUIUndoableEditListener = new ProofAsstGUIUndoableEditListener();
-
-            textArea.getDocument().addUndoableEditListener(
-                proofAsstGUIUndoableEditListener);
-        }
+        if (proofAsstPreferences.getUndoRedoEnabled())
+            undoManager = new CompoundUndoManager(textArea, new Runnable() {
+                public void run() {
+                    updateUndoRedoItems();
+                }
+            });
 
         setNbrTimesSavedSinceNew(0);
 
@@ -1711,10 +1692,10 @@ public class ProofAsstGUI {
 
         String promptString = origPromptString;
 
-        promptLoop: while (true) {
+        while (true) {
             s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
             if (s == null)
-                break promptLoop; // cancelled input
+                break; // cancelled input
             s = s.trim();
             if (s.equals("")) {
                 promptString = origPromptString;
@@ -1723,7 +1704,7 @@ public class ProofAsstGUI {
             try {
                 newFormatNbr = proofAsstPreferences.getTMFFPreferences()
                     .validateFormatNbrString(s);
-                break promptLoop;
+                break;
             } catch (final TMFFException e) {
                 promptString = origPromptString
                     + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
@@ -1743,10 +1724,10 @@ public class ProofAsstGUI {
 
         String promptString = origPromptString;
 
-        promptLoop: while (true) {
+        while (true) {
             s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
             if (s == null)
-                break promptLoop; // cancelled input
+                break; // cancelled input
             s = s.trim();
             if (s.equals("")) {
                 promptString = origPromptString;
@@ -1755,7 +1736,7 @@ public class ProofAsstGUI {
             try {
                 newIndent = proofAsstPreferences.getTMFFPreferences()
                     .validateIndentString(s);
-                break promptLoop;
+                break;
             } catch (final TMFFException e) {
                 promptString = origPromptString
                     + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING
@@ -1849,10 +1830,10 @@ public class ProofAsstGUI {
 
         String promptString = origPromptString;
 
-        promptLoop: while (true) {
+        while (true) {
             s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
             if (s == null)
-                break promptLoop; // cancelled input
+                break; // cancelled input
             s = s.trim();
             if (s.equals("")) {
                 promptString = origPromptString;
@@ -1860,7 +1841,7 @@ public class ProofAsstGUI {
             }
             try {
                 s = proofAsstPreferences.validateFontFamily(s);
-                break promptLoop;
+                break;
             } catch (final ProofAsstException e) {
                 promptString = origPromptString
                     + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING

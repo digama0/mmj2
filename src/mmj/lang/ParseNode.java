@@ -220,20 +220,18 @@ public class ParseNode {
             myNode = unifyNodeStack[--stackCnt];
 
             if (myNode.stmt != subtreeNode.stmt) {
-                if (!myNode.stmt.isVarHyp()
+                if (!(myNode.stmt instanceof VarHyp)
                     || myNode.stmt.getTyp() != subtreeNode.stmt.getTyp())
                     // mismatch and/or myNode not VarHyp
                     return null;
             }
-            else if (myNode.stmt.isVarHyp()) {
-                // ok, a vacuous, subst VarHyp x for Varhyp x!
-            }
-            else { // ok, matching syntax nodes
+            // ok, matching syntax nodes
+            else if (!(myNode.stmt instanceof VarHyp)) {
                 for (int i = myNode.child.length - 1; i >= 0; i--) {
                     unifyNodeStack[stackCnt++] = myNode.child[i];
                     unifyNodeStack[stackCnt++] = subtreeNode.child[i];
                 }
-                continue stackLoop;
+                continue;
             }
 
             // ok, accum the subst while checking for (erroneous)
@@ -262,51 +260,38 @@ public class ParseNode {
     }
 
     public int unifyWithSubtree(final ParseNode parsenode,
-        final ParseNode[] aparsenode, final ParseNode[] aparsenode1,
-        final VarHypSubst[] avarhypsubst)
+        final ParseNode[] nodeStack, final ParseNode[] otherStack,
+        final VarHypSubst[] subtree)
     {
-        int i = 0;
-        aparsenode[0] = this;
-        aparsenode[1] = parsenode;
-        int j = 2;
-        label0: do {
-            if (j <= 0)
-                break;
-            final ParseNode parsenode2 = aparsenode[--j];
-            final ParseNode parsenode1 = aparsenode[--j];
-            if (parsenode1.stmt != parsenode2.stmt) {
-                if (!parsenode1.stmt.isVarHyp()
-                    || parsenode1.stmt.getTyp() != parsenode2.stmt.getTyp())
+        nodeStack[0] = this;
+        nodeStack[1] = parsenode;
+        int count = 0;
+        stackLoop: for (int stack = 2; stack > 0; count++) {
+            final ParseNode thatNode = nodeStack[--stack];
+            final ParseNode myNode = nodeStack[--stack];
+            if (myNode.stmt != thatNode.stmt) {
+                if (!(myNode.stmt instanceof VarHyp)
+                    || myNode.stmt.getTyp() != thatNode.stmt.getTyp())
                     return -1;
             }
-            else if (!parsenode1.stmt.isVarHyp()) {
-                int k = parsenode1.child.length - 1;
-                while (k >= 0) {
-                    aparsenode[j++] = parsenode1.child[k];
-                    aparsenode[j++] = parsenode2.child[k];
-                    k--;
+            else if (!(myNode.stmt instanceof VarHyp)) {
+                for (int i = myNode.child.length - 1; i >= 0; i--) {
+                    nodeStack[stack++] = myNode.child[i];
+                    nodeStack[stack++] = thatNode.child[i];
                 }
                 continue;
             }
-            int l = 0;
-            do {
-                if (l >= i)
-                    break;
-                if (avarhypsubst[l].targetVarHyp == parsenode1.stmt) {
-                    if (!avarhypsubst[l].sourceNode.isDeepDup(parsenode2,
-                        aparsenode1))
+            for (int i = 0; i < count; i++)
+                if (subtree[i].targetVarHyp == myNode.stmt) {
+                    if (!subtree[i].sourceNode.isDeepDup(thatNode, otherStack))
                         return -1;
-                    continue label0;
+                    continue stackLoop;
                 }
-                l++;
-            } while (true);
-            avarhypsubst[i].targetVarHyp = (VarHyp)parsenode1.stmt;
-            avarhypsubst[i].sourceNode = parsenode2;
-            i++;
-        } while (true);
-        return i;
+            subtree[count].targetVarHyp = (VarHyp)myNode.stmt;
+            subtree[count].sourceNode = thatNode;
+        }
+        return count;
     }
-
     public SubTreeIterator subTreeIterator(final boolean excludeVarHyps) {
         return new SubTreeIterator(this, excludeVarHyps);
     }
@@ -328,12 +313,10 @@ public class ParseNode {
         ParseNode thatNode = that;
 
         int stackCnt = 0;
-        int i;
         while (thatNode != null && myNode.stmt == thatNode.stmt
             && myNode.child.length == thatNode.child.length)
         {
-
-            i = myNode.child.length - 1;
+            int i = myNode.child.length - 1;
             if (i < 0) {
                 if (stackCnt <= 0)
                     return true;
@@ -455,7 +438,7 @@ public class ParseNode {
     public ParseNode deepCloneApplyingAssrtSubst(final Hyp[] assrtHypArray,
         final ParseNode[] assrtSubst, final List<WorkVar> workVarList)
     {
-        if (!stmt.isVarHyp()) {
+        if (!(stmt instanceof VarHyp)) {
             final ParseNode out = new ParseNode(stmt);
             out.child = new ParseNode[child.length];
             for (int i = 0; i < child.length; i++)
@@ -486,7 +469,7 @@ public class ParseNode {
     public ParseNode deepCloneApplyingAssrtSubst(final Hyp[] assrtHypArray,
         final ParseNode[] assrtSubst)
     {
-        if (!stmt.isVarHyp()) {
+        if (!(stmt instanceof VarHyp)) {
             final ParseNode out = new ParseNode(stmt);
             out.child = new ParseNode[child.length];
             for (int i = 0; i < child.length; i++)
@@ -513,7 +496,7 @@ public class ParseNode {
      *         a VarHyp.
      */
     public ParseNode findFirstVarHypNode() {
-        if (stmt.isVarHyp())
+        if (stmt instanceof VarHyp)
             return this;
         ParseNode out;
         for (final ParseNode element : child) {
@@ -530,7 +513,7 @@ public class ParseNode {
      * @return maximum depth of parse sub-tree
      */
     public int calcMaxDepth() {
-        if (stmt.isWorkVarHyp())
+        if (stmt instanceof WorkVarHyp)
             return 0;
         int childMaxDepth = 0;
         int childDepth;
@@ -679,7 +662,7 @@ public class ParseNode {
 
         final ParseNode out = new ParseNode();
 
-        if (stmt.isVarHyp()) {
+        if (stmt instanceof VarHyp) {
             final ParseNode vHNode = ((VarHyp)stmt).paSubst;
             if (vHNode == null)
                 throw new IllegalArgumentException(
@@ -703,7 +686,7 @@ public class ParseNode {
      * <p>
      * Note that this function is only called if the searchWorkVarHyp.paSubst ==
      * null (which means we are considering assigning a substitution). to it.
-     * AND note that it is called only if the currentNode.stmt.isWorkVarHyp().
+     * AND note that it is called only if the currentNode.stmt is a WorkVarHyp.
      * <p>
      * The reason for this hokeyness is that set.mm contains loops of renames,
      * such as &W1 := & W3 := &W1, etc. Not to mention &W1 := &W2 := &W3 := &W1.
@@ -716,7 +699,7 @@ public class ParseNode {
      */
     public int checkWorkVarHasOccursIn(final WorkVarHyp searchWorkVarHyp) {
 
-        if (stmt.isWorkVarHyp()) {
+        if (stmt instanceof WorkVarHyp) {
 
             final Stmt targetStmt = checkWorkVarHasOccursInValidRename(searchWorkVarHyp);
 
@@ -739,7 +722,7 @@ public class ParseNode {
         final WorkVarHyp searchWorkVarHyp)
     {
         if (stmt == searchWorkVarHyp // valid rename
-            || !stmt.isWorkVarHyp())
+            || !(stmt instanceof WorkVarHyp))
             return stmt;
 
         if (((VarHyp)stmt).paSubst == null)
@@ -761,11 +744,9 @@ public class ParseNode {
     private boolean hasOccursIn(final WorkVarHyp searchWorkVarHyp) {
         if (searchWorkVarHyp == stmt)
             return true;
-        if (stmt.isWorkVarHyp()) {
-            if (((VarHyp)stmt).paSubst != null)
-                return ((VarHyp)stmt).paSubst.hasOccursIn(searchWorkVarHyp);
-            return false;
-        }
+        if (stmt instanceof WorkVarHyp)
+            return ((VarHyp)stmt).paSubst != null
+                && ((VarHyp)stmt).paSubst.hasOccursIn(searchWorkVarHyp);
         for (final ParseNode element : child)
             if (element.hasOccursIn(searchWorkVarHyp))
                 return true;
@@ -779,15 +760,11 @@ public class ParseNode {
      * @return true if subtree contains an updated WorkVar.
      */
     public boolean hasUpdatedWorkVar() {
-        if (stmt.isVarHyp()) {
-            if (stmt.isWorkVarHyp())
-                if (((VarHyp)stmt).paSubst != null)
-                    return true;
-        }
-        else
-            for (final ParseNode element : child)
-                if (element.hasUpdatedWorkVar())
-                    return true;
+        if (stmt instanceof WorkVarHyp && ((VarHyp)stmt).paSubst != null)
+            return true;
+        for (final ParseNode element : child)
+            if (element.hasUpdatedWorkVar())
+                return true;
         return false;
     }
 
@@ -798,23 +775,14 @@ public class ParseNode {
      * @return cloned subtree containing no Work Vars which have updates.
      */
     public ParseNode cloneResolvingUpdatedWorkVars() {
-
-        if (stmt.isVarHyp()) {
-
-            if (((VarHyp)stmt).isWorkVarHyp())
-                if (((VarHyp)stmt).paSubst != null)
-                    return ((VarHyp)stmt).paSubst
-                        .cloneResolvingUpdatedWorkVars();
-            return new ParseNode((VarHyp)stmt);
-        }
-        else {
-
-            final ParseNode out = new ParseNode(stmt);
-            out.child = new ParseNode[child.length];
-            for (int i = 0; i < child.length; i++)
-                out.child[i] = child[i].cloneResolvingUpdatedWorkVars();
-            return out;
-        }
+        if (stmt instanceof WorkVarHyp)
+            return ((VarHyp)stmt).paSubst == null ? new ParseNode((VarHyp)stmt)
+                : ((VarHyp)stmt).paSubst.cloneResolvingUpdatedWorkVars();
+        final ParseNode out = new ParseNode(stmt);
+        out.child = new ParseNode[child.length];
+        for (int i = 0; i < child.length; i++)
+            out.child[i] = child[i].cloneResolvingUpdatedWorkVars();
+        return out;
     }
 
     /**
@@ -823,8 +791,8 @@ public class ParseNode {
      * @param workVarList List of WorkVar objects in subtree.
      */
     public void accumSetOfWorkVarsUsed(final List<WorkVar> workVarList) {
-        if (stmt.isWorkVarHyp()) {
-            final WorkVar v = (WorkVar)((VarHyp)stmt).getVar();
+        if (stmt instanceof WorkVarHyp) {
+            final WorkVar v = ((WorkVarHyp)stmt).getWorkVar();
             for (int i = 0; i < workVarList.size(); i++)
                 if (workVarList.get(i) == v)
                     return;
@@ -841,7 +809,7 @@ public class ParseNode {
      * @param varHypList List of VarHyp objects in subtree.
      */
     public void accumVarHypUsedListBySeq(final List<Hyp> varHypList) {
-        if (stmt.isVarHyp())
+        if (stmt instanceof VarHyp)
             ((VarHyp)stmt).accumVarHypListBySeq(varHypList);
         else
             for (final ParseNode element : child)
@@ -867,7 +835,7 @@ public class ParseNode {
     {
 
         VarHyp vH;
-        if (stmt.isVarHyp()) {
+        if (stmt instanceof VarHyp) {
             vH = (VarHyp)stmt;
             if (vH.containedInVarHypListBySeq(varHypList))
                 vH.accumVarHypListBySeq(varHypInUseList);
@@ -888,7 +856,7 @@ public class ParseNode {
      */
     public ParseNode deepCloneApplyingWorkVarUpdates() {
 
-        if (stmt.isWorkVarHyp() && ((VarHyp)stmt).paSubst != null)
+        if (stmt instanceof WorkVarHyp && ((VarHyp)stmt).paSubst != null)
             return ((VarHyp)stmt).paSubst;
 
         final ParseNode out = new ParseNode(stmt);
@@ -917,7 +885,7 @@ public class ParseNode {
         }
 
         private void pushIfNotExcluded(final ParseNode parsenode) {
-            if (!excludeVarHyps || !parsenode.stmt.isVarHyp())
+            if (!(excludeVarHyps && parsenode.stmt instanceof VarHyp))
                 nodeStack.push(parsenode);
         }
 

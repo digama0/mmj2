@@ -1000,12 +1000,10 @@ public abstract class Boss {
             logicalSystem);
         if (stmt instanceof Theorem)
             return (Theorem)stmt;
-        else
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_RUNPARM_STMT_NOT_THEOREM_1 + valueCaption
-                    + UtilConstants.ERRMSG_RUNPARM_STMT_NOT_THEOREM_2
-                    + stmtLabel
-                    + UtilConstants.ERRMSG_RUNPARM_STMT_NOT_THEOREM_3);
+        throw new IllegalArgumentException(
+            UtilConstants.ERRMSG_RUNPARM_STMT_NOT_THEOREM_1 + valueCaption
+                + UtilConstants.ERRMSG_RUNPARM_STMT_NOT_THEOREM_2 + stmtLabel
+                + UtilConstants.ERRMSG_RUNPARM_STMT_NOT_THEOREM_3);
     }
 
     /**

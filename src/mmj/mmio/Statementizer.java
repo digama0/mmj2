@@ -479,7 +479,6 @@ public class Statementizer {
             if (xLen == MMIOConstants.MM_KEYWORD_LEN
                 && nextToken.indexOf(MMIOConstants.MM_START_COMMENT_KEYWORD) == 0)
                 while (true) {
-
                     if ((xLen = getNextToken()) <= 0)
                         return xLen;
                     if (xLen == MMIOConstants.MM_KEYWORD_LEN

@@ -33,9 +33,19 @@ public class WorkVarHyp extends VarHyp {
     public WorkVarHyp(final int workVarHypSeq, final String workVarHypLabel,
         final Formula workVarHypFormula, final int workVarIndex)
     {
-
         super(workVarHypSeq, workVarHypLabel, workVarHypFormula);
         this.workVarIndex = workVarIndex;
-        setIsWorkVarHypInd(true);
+    }
+
+    public WorkVar getWorkVar() {
+        return (WorkVar)getVar();
+    }
+
+    @Override
+    public void setVar(final Var var) {
+        if (!(var instanceof WorkVar))
+            throw new IllegalArgumentException(
+                LangConstants.ERRMSG_VAR_IN_WORK_VAR_HYP);
+        super.setVar(var);
     }
 }

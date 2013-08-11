@@ -256,7 +256,7 @@ public class ProofUnifier {
             logicalSystem.getStmtTbl().size());
 
         for (final Stmt stmt : logicalSystem.getStmtTbl().values())
-            if (stmt.isAssrt()
+            if (stmt instanceof Assrt
                 && stmt.getFormula().getTyp() == provableLogicStmtTyp
                 && !proofAsstPreferences.checkUnifySearchExclude((Assrt)stmt))
                 unifySearchListUnsorted.add((Assrt)stmt);
@@ -404,7 +404,7 @@ public class ProofUnifier {
             .getProofWorkStmtList())
         {
 
-            if (proofWorkStmtObject.isDerivationStep())
+            if (proofWorkStmtObject instanceof DerivationStep)
                 derivStep = (DerivationStep)proofWorkStmtObject;
             else
                 continue;
@@ -415,7 +415,7 @@ public class ProofUnifier {
 
             for (int i = 0; i < derivStep.hyp.length; i++) {
 
-                if (!derivStep.hyp[i].isDerivationStep())
+                if (!(derivStep.hyp[i] instanceof DerivationStep))
                     continue;
                 final DerivationStep dH = (DerivationStep)derivStep.hyp[i];
 
@@ -484,21 +484,21 @@ public class ProofUnifier {
         stepLoop: for (final ProofWorkStmt proofWorkStmtObject : proofWorksheet
             .getProofWorkStmtList())
         {
-            if (!proofWorkStmtObject.isDerivationStep())
-                continue stepLoop;
+            if (!(proofWorkStmtObject instanceof DerivationStep))
+                continue;
 
             derivStep = (DerivationStep)proofWorkStmtObject;
 
             if (derivStep.hypFldIncomplete)
-                continue stepLoop;
+                continue;
 
             if (derivStep.ref == null && derivStep.hasWorkVarsInStepOrItsHyps())
-                continue stepLoop;
+                continue;
 
             if (derivStep.unificationStatus != PaConstants.UNIFICATION_STATUS_NOT_UNIFIED)
                 // already unified/failed in
                 // unifyStepsInvolvingWorkVars()
-                continue stepLoop;
+                continue;
 
             // this is b.s. but in theory a hyp step could have
             // failed in deriveFormula...
@@ -518,7 +518,7 @@ public class ProofUnifier {
             // build array of steps for parallel unification loop
             if (derivStep.ref == null) {
                 dsa1[dsa1Count++] = derivStep;
-                continue stepLoop;
+                continue;
             }
 
             assrt = (Assrt)derivStep.ref;
@@ -535,13 +535,13 @@ public class ProofUnifier {
             if (!unifyStepWithoutWorkVars()) {
 
                 markRefUnificationFailure(assrt);
-                continue stepLoop;
+                continue;
             }
 
             if (derivStep.djVarsErrorStatus != PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS)
                 // unified but build alternates list!!!
                 dsa1[dsa1Count++] = derivStep;
-            continue stepLoop;
+            continue;
         }
 
     }
@@ -551,19 +551,19 @@ public class ProofUnifier {
         final int maxSeq = proofWorksheet.getMaxSeq();
         int nbrCompleted = 0;
 
-        assrtLoop: for (final Assrt a : unifySearchList) {
+        for (final Assrt a : unifySearchList) {
             if (a.getSeq() >= maxSeq)
                 // halt the scan -- the list is sorted!!!
-                break assrtLoop;
+                break;
 
             assrt = a;
             assrtNbrLogHyps = assrt.getLogHypArrayLength();
 
             int i = -1;
             final int max = dsa1Count; // fool optimizer
-            loopDSA1: while (true) {
+            while (true) {
                 if (++i >= max)
-                    break loopDSA1;
+                    break;
                 derivStep = dsa1[i];
 
                 if (derivStep.hyp.length == assrtNbrLogHyps)
@@ -574,7 +574,7 @@ public class ProofUnifier {
                             dsa1[i] = null;
                             ++nbrCompleted;
                         }
-                continue loopDSA1;
+                continue;
             }
 
             // this could be optimized a little :-)
@@ -583,12 +583,12 @@ public class ProofUnifier {
                     if (dsa1[j] == null) {
                         int m = j;
                         int n = j;
-                        loopN: while (true) {
+                        while (true) {
                             if (++n >= dsa1Count)
                                 break loopJ;
                             if (dsa1[n] == null)
-                                continue loopN;
-                            break loopN;
+                                continue;
+                            break;
                         }
                         while (n < dsa1Count)
                             dsa1[m++] = dsa1[n++];
@@ -598,8 +598,8 @@ public class ProofUnifier {
             }
 
             if (dsa1Count > 0)
-                continue assrtLoop;
-            break assrtLoop;
+                continue;
+            break;
         }
     }
 
@@ -613,7 +613,7 @@ public class ProofUnifier {
             .getProofWorkStmtList())
         {
 
-            if (proofWorkStmtObject.isDerivationStep())
+            if (proofWorkStmtObject instanceof DerivationStep)
                 derivStep = (DerivationStep)proofWorkStmtObject;
             else
                 continue;
@@ -668,7 +668,7 @@ public class ProofUnifier {
 
         for (final ProofWorkStmt proofWorkStmtObject : proofWorksheet
             .getProofWorkStmtList())
-            if (proofWorkStmtObject.isDerivationStep()) {
+            if (proofWorkStmtObject instanceof DerivationStep) {
 
                 derivStep = (DerivationStep)proofWorkStmtObject;
 
@@ -729,7 +729,7 @@ public class ProofUnifier {
 
             // Must be a HypothesisStep (otherwise status
             // would have been changed)
-            if (holdHypProofStepStmt.isHypothesisStep()) {
+            if (holdHypProofStepStmt instanceof HypothesisStep) {
 
                 if (proofWorksheet.isNewTheorem()
                     && holdHypProofStepStmt.ref == null)
@@ -1127,7 +1127,7 @@ public class ProofUnifier {
                     .getStmt();
 
                 if (assrtParseRootStmt != derivStep.formulaParseTree.getRoot()
-                    .getStmt() && !assrtParseRootStmt.isVarHyp())
+                    .getStmt() && !(assrtParseRootStmt instanceof VarHyp))
                     return false; // unification impossible!
             }
         }
@@ -1301,14 +1301,11 @@ public class ProofUnifier {
         int substIndex = 0;
 
         substLoop: while (substIndex < assrtLogHypVarHypArray.length) {
-
-            hypLoop: while (hypIndex < assrtHypArray.length) {
-
+            while (hypIndex < assrtHypArray.length) {
                 if (assrtHypArray[hypIndex] != assrtLogHypVarHypArray[substIndex])
                 {
-
                     ++hypIndex;
-                    continue hypLoop;
+                    continue;
                 }
 
                 // a null unification
@@ -1386,10 +1383,10 @@ public class ProofUnifier {
         int substIndex = 0;
 
         substLoop: while (substIndex < assrtFormulaSubst.length) {
-            hypLoop: while (hypIndex < assrtHypArray.length) {
+            while (hypIndex < assrtHypArray.length) {
                 if (assrtVarHypArray[substIndex] != assrtHypArray[hypIndex]) {
                     ++hypIndex;
-                    continue hypLoop;
+                    continue;
                 }
                 outSubst[hypIndex++] = assrtFormulaSubst[substIndex++];
                 continue substLoop;
@@ -1506,7 +1503,7 @@ public class ProofUnifier {
         if (derivStep.workVarList != null)
             derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS;
         for (int i = 0; i < derivStep.hyp.length; i++) {
-            if (!derivStep.hyp[i].isDerivationStep())
+            if (!(derivStep.hyp[i] instanceof DerivationStep))
                 continue;
             final DerivationStep dH = (DerivationStep)derivStep.hyp[i];
 
@@ -1848,8 +1845,8 @@ public class ProofUnifier {
             wIndexInsertedCnt = 0;
 
             proofWorkStmtObject = proofWorksheet.proofWorkStmtList.get(wIndex);
-            if (!proofWorkStmtObject.isDerivationStep())
-                continue stepLoop;
+            if (!(proofWorkStmtObject instanceof DerivationStep))
+                continue;
 
             derivStep = (DerivationStep)proofWorkStmtObject;
 
@@ -1987,7 +1984,7 @@ public class ProofUnifier {
         for (final ProofWorkStmt proofWorkStmtObject : proofWorksheet
             .getProofWorkStmtList())
         {
-            if (!proofWorkStmtObject.isDerivationStep())
+            if (!(proofWorkStmtObject instanceof DerivationStep))
                 continue;
 
             final DerivationStep d = (DerivationStep)proofWorkStmtObject;
@@ -2122,7 +2119,7 @@ public class ProofUnifier {
                 d.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS;
             else
                 for (int i = 0; i < d.hyp.length; i++) {
-                    if (!d.hyp[i].isDerivationStep())
+                    if (!(d.hyp[i] instanceof DerivationStep))
                         continue;
                     if (d.hyp[i].workVarList != null
                         || ((DerivationStep)d.hyp[i]).unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
@@ -2149,7 +2146,7 @@ public class ProofUnifier {
 
                 proofWorkStmt = proofWorksheet.proofWorkStmtList.get(stepIndex);
 
-                if (proofWorkStmt.isHypothesisStep()) {
+                if (proofWorkStmt instanceof HypothesisStep) {
                     ((ProofStepStmt)proofWorkStmt).formulaParseTree.getRoot()
                         .accumVarHypUsedListBySeq(mandHypList);
                     if (++hypsFound >= proofWorksheet.hypStepCnt)
@@ -2168,7 +2165,7 @@ public class ProofUnifier {
         final Hyp[] frameHypArray = proofWorksheet.comboFrame.hypArray;
 
         for (final Hyp element : frameHypArray)
-            if (element.isVarHyp()) {
+            if (element instanceof VarHyp) {
                 final VarHyp vH = (VarHyp)element;
                 if (!vH.containedInVarHypListBySeq(mandHypList))
                     vH.accumVarHypListBySeq(optHypList);
@@ -2338,7 +2335,7 @@ public class ProofUnifier {
         boolean redoDjVarsEdits = false;
         DerivationStep dH;
         for (final ProofStepStmt element : d.hyp)
-            if (element.isDerivationStep()) {
+            if (element instanceof DerivationStep) {
                 dH = (DerivationStep)element;
                 if (dH.workVarList != null)
                     redoDjVarsEdits = true;
@@ -2371,7 +2368,7 @@ public class ProofUnifier {
     {
 
         for (int i = 0; i < d.hyp.length; i++) {
-            if (!d.hyp[i].isDerivationStep())
+            if (!(d.hyp[i] instanceof DerivationStep))
                 continue;
             recursiveLoadWvAndOptsUsedLists((DerivationStep)d.hyp[i],
                 optionalVarHypList, optionalVarHypsInUseList,
@@ -2390,7 +2387,7 @@ public class ProofUnifier {
         if (d.workVarList != null)
             mergeVarList1IntoList2(d.workVarList, stepAndHypWorkVarList);
         for (int i = 0; i < d.hyp.length; i++) {
-            if (!d.hyp[i].isDerivationStep())
+            if (!(d.hyp[i] instanceof DerivationStep))
                 continue;
             if (((DerivationStep)d.hyp[i]).workVarList != null)
                 mergeVarList1IntoList2(((DerivationStep)d.hyp[i]).workVarList,
@@ -2465,12 +2462,12 @@ public class ProofUnifier {
 
             candidateI = inVarListOfLists.get(i);
 
-            loopJ: for (int j = i + 1; j < jMax; j++) {
+            for (int j = i + 1; j < jMax; j++) {
 
                 candidateJ = inVarListOfLists.get(j);
 
                 if (isVarList1DisjointWithList2(candidateI, candidateJ))
-                    continue loopJ;
+                    continue;
 
                 mergeVarList1IntoList2(candidateI, candidateJ);
                 continue loopI;

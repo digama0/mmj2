@@ -88,36 +88,6 @@ public abstract class Hyp extends Stmt {
     }
 
     /**
-     * Is the Hyp a VarHyp?
-     * <p>
-     * Enquiring minds want to know!
-     * 
-     * @return true or false.
-     */
-    @Override
-    public abstract boolean isVarHyp();
-
-    /**
-     * Is the Hyp a WorkVarHyp?
-     * <p>
-     * Enquiring minds want to know!
-     * 
-     * @return true or false.
-     */
-    @Override
-    public abstract boolean isWorkVarHyp();
-
-    /**
-     * Is the Hyp a LogHyp?
-     * <p>
-     * Enquiring minds want to know!
-     * 
-     * @return true or false.
-     */
-    @Override
-    public abstract boolean isLogHyp();
-
-    /**
      * Set Hyp.active, true or false.
      * 
      * @param active true or false.
@@ -134,29 +104,5 @@ public abstract class Hyp extends Stmt {
     @Override
     public boolean isActive() {
         return active;
-    }
-
-    /**
-     * Is the Hyp an Assrt?
-     * <p>
-     * Nope. By definition.
-     * 
-     * @return false (a Hyp cannot be an Assrt.)
-     */
-    @Override
-    public boolean isAssrt() {
-        return false;
-    }
-
-    /**
-     * Is the Hyp a Hyp?
-     * <p>
-     * I know the answer to that one.
-     * 
-     * @return true -- by definition :)
-     */
-    @Override
-    public boolean isHyp() {
-        return true;
     }
 }

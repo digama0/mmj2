@@ -28,14 +28,11 @@ public class SearchDataLines {
             if (csa.searchForWhat[i].equals(""))
                 line[i] = null;
             else
-                line[i] = SearchDataLine.createSearchDataLine(
-                    csa, i, getter);
+                line[i] = SearchDataLine.createSearchDataLine(csa, i, getter);
 
     }
 
-    public boolean evaluate(final Assrt assrt,
-        final CompiledSearchArgs csa)
-    {
+    public boolean evaluate(final Assrt assrt, final CompiledSearchArgs csa) {
         getter.initForNextSearch(assrt);
         boolean flag = false;
         for (int j = 0; j < line.length; j++) {

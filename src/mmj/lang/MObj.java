@@ -118,16 +118,6 @@ public abstract class MObj<THIS extends MObj<THIS>> implements Comparable<THIS>
     }
 
     /**
-     * This gnasty thing helps out in {@code ParseNodeHolder}, which ultimately
-     * relates to the problem of re-defined {@code Var} and the desire to "fix"
-     * a formula by exchanging local Var references with global VarHyp
-     * references to simplify parsing.
-     * 
-     * @return isCnst (Is this MObj a Cnst?).
-     */
-    public abstract boolean isCnst();
-
-    /**
      * Note: an extensive set of tests showed that direct access to .seq is an
      * infintesimal bit faster than getSeq() :) So public access to MObj.seq was
      * revoked!
@@ -197,8 +187,7 @@ public abstract class MObj<THIS extends MObj<THIS>> implements Comparable<THIS>
      */
     @Override
     public boolean equals(final Object obj) {
-        return this == obj ? true : !(obj instanceof MObj) ? false
-            : seq == ((MObj<?>)obj).seq;
+        return this == obj || obj instanceof MObj && seq == ((MObj<?>)obj).seq;
     }
 
     /**

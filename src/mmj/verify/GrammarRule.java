@@ -359,7 +359,7 @@ public abstract class GrammarRule {
             grammarRule = NullsPermittedRule
                 .buildBaseRule(grammar, syntaxAxiom);
         else if (parseNodeHolderExpr.length == 1
-            && !parseNodeHolderExpr[0].mObj.isCnst())
+            && !(parseNodeHolderExpr[0].mObj instanceof Cnst))
             grammarRule = TypeConversionRule.buildBaseRule(grammar,
                 syntaxAxiom, parseNodeHolderExpr);
         else
@@ -401,8 +401,8 @@ public abstract class GrammarRule {
      */
     @Override
     public boolean equals(final Object obj) {
-        return this == obj ? true : !(obj instanceof GrammarRule) ? false
-            : ruleNbr == ((GrammarRule)obj).ruleNbr;
+        return this == obj || obj instanceof GrammarRule
+            && ruleNbr == ((GrammarRule)obj).ruleNbr;
     }
 
     /**
@@ -635,7 +635,7 @@ public abstract class GrammarRule {
         paramNbr = 0;
         // start at 1 because first Sym in Formula is Type Code.
         for (int i = 1; i < baseSym.length; i++)
-            if (baseSym[i].isCnst())
+            if (baseSym[i] instanceof Cnst)
                 parseNodeHolderExpr[dest++] = new ParseNodeHolder(
                     (Cnst)baseSym[i]);
             else {
@@ -690,7 +690,7 @@ public abstract class GrammarRule {
         paramNbr = 0;
         // start at 1 because first Sym in Formula is Type Code.
         for (int i = 1; i < baseSym.length; i++)
-            if (baseSym[i].isCnst())
+            if (baseSym[i] instanceof Cnst)
                 rfe[dest++] = (Cnst)baseSym[i];
             else {
                 if (substVarHyp[paramNbr] != null)
@@ -776,7 +776,7 @@ public abstract class GrammarRule {
     protected int findMatchingVarHypTyp(int nextSearch, final Cnst searchTyp) {
         for (; nextSearch < paramVarHypNode.length; nextSearch++)
             if (paramVarHypNode[nextSearch] != null) {
-                if (!paramVarHypNode[nextSearch].getStmt().isVarHyp())
+                if (!(paramVarHypNode[nextSearch].getStmt() instanceof VarHyp))
                     throw new IllegalStateException(
                         GrammarConstants.ERRMSG_BOGUS_PARAM_VARHYP_NODE_1
                             + nextSearch

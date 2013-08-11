@@ -167,73 +167,66 @@ public class SearchEngine {
             step = "";
         }
         int k1 = computeSearchStart(minHyps);
-        int l1 = minHyps;
-        label0: while (true) {
-            if (l1 <= maxHyps) {
-                if (stepSearchMode) {
-                    derivStepHypArray = new ProofStepStmt[l1];
-                    for (int j2 = 0; j2 < nbrDerivStepHyps; j2++)
-                        derivStepHypArray[j2] = aproofStepStmt[j2];
+        hypLoop: for (int hyp = minHyps; hyp <= maxHyps; hyp++) {
+            if (stepSearchMode) {
+                derivStepHypArray = new ProofStepStmt[hyp];
+                for (int j2 = 0; j2 < nbrDerivStepHyps; j2++)
+                    derivStepHypArray[j2] = aproofStepStmt[j2];
 
+            }
+            for (; k1 < assrtAList.size(); k1++) {
+                checkForInterrupt();
+                if (searchOutput.searchReturnCode != 0)
+                    break;
+                assrt = assrtAList.get(k1);
+                searchOutput.statsNbrInputAssrtGets++;
+                final int i2 = assrt.getSeq();
+                if (i2 >= maxSeq) {
+                    searchOutput.statsNbrRejectGEMaxSeq++;
+                    k1 = computeSearchStart(hyp + 1);
+                    continue hypLoop;
                 }
-                while (true) {
-                    if (k1 >= assrtAList.size())
-                        break;
-                    checkForInterrupt();
-                    if (searchOutput.searchReturnCode != 0)
-                        break;
-                    assrt = assrtAList.get(k1);
-                    searchOutput.statsNbrInputAssrtGets++;
-                    final int i2 = assrt.getSeq();
-                    if (i2 >= maxSeq) {
-                        searchOutput.statsNbrRejectGEMaxSeq++;
-                        k1 = computeSearchStart(++l1);
-                        continue label0;
-                    }
-                    if (i2 <= minSeq) {
-                        searchOutput.statsNbrRejectLEMinSeq++;
+                if (i2 <= minSeq) {
+                    searchOutput.statsNbrRejectLEMinSeq++;
+                    k1++;
+                    continue;
+                }
+                assrtNbrLogHyps = assrt.getLogHypArrayLength();
+                if (assrtNbrLogHyps != hyp) {
+                    searchOutput.statsNbrRejectGTHypIndex++;
+                    continue hypLoop;
+                }
+                if (assrt.getNbrProofRefs() < minProofRefs) {
+                    searchOutput.statsNbrRejectLTMinProofRefs++;
+                    k1++;
+                    continue;
+                }
+                assrtLogHypArray = assrt.getLogHypArray();
+                assrtHypArray = assrt.getMandFrame().hypArray;
+                if (evaluateOtherExclusionCriteria()) {
+                    if (stepSearchMode && !isAssrtUnifiable()) {
+                        searchOutput.statsNbrRejectFailUnify++;
                         k1++;
                         continue;
                     }
-                    assrtNbrLogHyps = assrt.getLogHypArrayLength();
-                    if (assrtNbrLogHyps != l1) {
-                        searchOutput.statsNbrRejectGTHypIndex++;
-                        l1++;
-                        continue label0;
-                    }
-                    if (assrt.getNbrProofRefs() < minProofRefs) {
-                        searchOutput.statsNbrRejectLTMinProofRefs++;
-                        k1++;
-                        continue;
-                    }
-                    assrtLogHypArray = assrt.getLogHypArray();
-                    assrtHypArray = assrt.getMandFrame().hypArray;
-                    if (evaluateOtherExclusionCriteria()) {
-                        if (stepSearchMode && !isAssrtUnifiable()) {
-                            searchOutput.statsNbrRejectFailUnify++;
-                            k1++;
-                            continue;
+                    if (evaluateSearchDataLines()) {
+                        if (searchOutput.searchReturnCode != 0)
+                            break;
+                        searchOutput.statsNbrSelected++;
+                        if (addAssrtToStore(computeScore())) {
+                            full = true;
+                            break;
                         }
-                        if (evaluateSearchDataLines()) {
-                            if (searchOutput.searchReturnCode != 0)
-                                break;
-                            searchOutput.statsNbrSelected++;
-                            if (addAssrtToStore(computeScore())) {
-                                full = true;
-                                break;
-                            }
-                        }
-                        else
-                            searchOutput.statsNbrRejectFailSearchData++;
                     }
                     else
-                        searchOutput.statsNbrRejectOtherExclCriteria++;
-                    k1++;
+                        searchOutput.statsNbrRejectFailSearchData++;
                 }
+                else
+                    searchOutput.statsNbrRejectOtherExclCriteria++;
             }
-            store.loadSearchOutput(searchOutput, step, full);
-            return;
         }
+        store.loadSearchOutput(searchOutput, step, full);
+        return;
     }
 
     private void doExtendedSearch() throws InterruptedException {
