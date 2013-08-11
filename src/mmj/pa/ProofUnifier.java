@@ -867,10 +867,8 @@ public class ProofUnifier {
          * penalty for non-Proof Assistant users).
          */
 
-        if (!checkAssrtLevelMatch())
-            return false;
-
-        if (!checkHypLevelMatch())
+        if (derivStep.formula == null || !checkAssrtLevelMatch()
+            || !checkHypLevelMatch())
             return false;
 
         if (!derivStep.deriveStepFormula)

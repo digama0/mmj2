@@ -400,15 +400,6 @@ public class DerivationStep extends ProofStepStmt {
         if (getValidDerivationRefField(lineStartCharNbr) && ref != null)
             nbrExpectedHyps = ((Assrt)ref).getLogHypArrayLength();
 
-        if (formula == null && ref == null)
-            w.triggerLoadStructureException(
-                PaConstants.ERRMSG_FORMULA_OR_REF_REQ_1
-                    + w.getErrorLabelIfPossible()
-                    + PaConstants.ERRMSG_FORMULA_OR_REF_REQ_2 + step
-                    + PaConstants.ERRMSG_FORMULA_OR_REF_REQ_3,
-                (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
-                    - lineStartCharNbr);
-
         parseHypField(hypField);
         hyp = new ProofStepStmt[hypStep.length];
 
@@ -444,7 +435,6 @@ public class DerivationStep extends ProofStepStmt {
 
         return nextT;
     }
-
     /**
      * Loads DerivationStep with step, hyp and a localRef to a previous proof
      * step.

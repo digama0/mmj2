@@ -8,7 +8,7 @@
 
 
 ================================================================================
-10-Aug-2013:
+11-Aug-2013:
 
     CHANGES:
 
@@ -73,6 +73,18 @@
       during processing, the cursor loses its anchor and ends up at the top of
       the file. (Very annoying!) Now, the cursor is never positioned at LocalRef
       steps and instead goes to the first non-LocalRef step after the cursor.
+
+    * Malformed steps with only one colon are now interpreted as step:ref
+      instead of step:hyp (which is less useful). Of course step:hyp: is still
+      interpreted correctly.
+
+    * Steps with no ref and no formula are no longer fatal unification errors.
+      Instead, they simply fail to unify, and give errors just like steps with
+      formulas, which is to say that step:: alone on a line gives error
+
+          E-PA-0411: Unification failure in derivation proof step.
+
+      and step:?: on a line gives no error at all.
 
 ================================================================================
 1-Nov-2011:

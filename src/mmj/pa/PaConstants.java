@@ -2673,10 +2673,10 @@ public class PaConstants {
         + " leave the Ref field blank to allow Unify to find the"
         + " applicable statement label.";
 
-    public static final String ERRMSG_FORMULA_OR_REF_REQ_1 = "E-PA-0372 Theorem ";
-    public static final String ERRMSG_FORMULA_OR_REF_REQ_2 = " Step ";
-    public static final String ERRMSG_FORMULA_OR_REF_REQ_3 = ": Formula or Ref required on derivation"
-        + " steps (Formula is always required on the 'qed' step).";
+//    public static final String ERRMSG_FORMULA_OR_REF_REQ_1 = "E-PA-0372 Theorem ";
+//    public static final String ERRMSG_FORMULA_OR_REF_REQ_2 = " Step ";
+//    public static final String ERRMSG_FORMULA_OR_REF_REQ_3 = ": Formula or Ref required on derivation"
+//        + " steps (Formula is always required on the 'qed' step).";
 
     public static final String ERRMSG_STMT_LABEL_DUP_OF_SYM_ID_1_1 = "E-PA-0373 Theorem ";
     public static final String ERRMSG_STMT_LABEL_DUP_OF_SYM_ID_1_2 = ": theorem label duplicates a symbol id. This"
