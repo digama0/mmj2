@@ -1,10 +1,10 @@
-//********************************************************************/
-//* Copyright (C) 2005-2011                                          */
-//* MEL O'CAT  X178G243 (at) yahoo (dot) com                         */
-//* License terms: GNU General Public License Version 2              */
-//*                or any later version                              */
-//********************************************************************/
-//*4567890123456 (71-character line to adjust editor window) 23456789*/
+//*****************************************************************************/
+//* Copyright (C) 2005-2013                                                   */
+//* MEL O'CAT  X178G243 (at) yahoo (dot) com                                  */
+//* License terms: GNU General Public License Version 2                       */
+//*                or any later version                                       */
+//*****************************************************************************/
+//*456789012345678 (80-character line to adjust editor window) 456789012345678*/
 
 /*
  * SearchResultsConstants.java  0.01 20/09/2012
@@ -59,13 +59,15 @@ public class SearchResultsConstants {
     public static final String TOOL_TIP_PLUS = "Increase Font Size For Search Results.";
     public static final String TOOL_TIP_MINUS = "Decrease Font Size For Search Results.";
     public static final SearchResultsButtonAttr BUTTON_ATTR[] = {
-            new SearchResultsButtonAttr(0, "Apply", TOOL_TIP_APPLY),
-            new SearchResultsButtonAttr(1, "Cancel", TOOL_TIP_CANCEL),
-            new SearchResultsButtonAttr(2, "PA", TOOL_TIP_PA),
-            new SearchResultsButtonAttr(3, "SO", TOOL_TIP_SO),
-            new SearchResultsButtonAttr(4, "Help", TOOL_TIP_HELP),
-            new SearchResultsButtonAttr(5, "+", TOOL_TIP_PLUS),
-            new SearchResultsButtonAttr(6, "-", TOOL_TIP_MINUS)};
+            new SearchResultsButtonAttr(APPLY_BUTTON_ID, "Apply",
+                TOOL_TIP_APPLY),
+            new SearchResultsButtonAttr(CANCEL_BUTTON_ID, "Cancel",
+                TOOL_TIP_CANCEL),
+            new SearchResultsButtonAttr(PA_BUTTON_ID, "PA", TOOL_TIP_PA),
+            new SearchResultsButtonAttr(SO_BUTTON_ID, "SO", TOOL_TIP_SO),
+            new SearchResultsButtonAttr(HELP_BUTTON_ID, "Help", TOOL_TIP_HELP),
+            new SearchResultsButtonAttr(PLUS_BUTTON_ID, "+", TOOL_TIP_PLUS),
+            new SearchResultsButtonAttr(MINUS_BUTTON_ID, "-", TOOL_TIP_MINUS)};
     public static final String GUI_EDIT_MENU_CUT_ITEM_TEXT = "Cut";
     public static final String GUI_EDIT_MENU_COPY_ITEM_TEXT = "Copy";
     public static final String GUI_EDIT_MENU_PASTE_ITEM_TEXT = "Paste";
