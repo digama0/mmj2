@@ -19,12 +19,12 @@ import java.util.regex.Pattern;
 
 public class MetamathSearchDataLine extends SearchDataLine {
 
-    public MetamathSearchDataLine(final CompiledSearchArgs csa,
-        final int i, final SearchDataGetter searchDataGetter)
+    public MetamathSearchDataLine(final CompiledSearchArgs csa, final int i,
+        final SearchDataGetter searchDataGetter)
     {
         super(csa, i, searchDataGetter);
         if (csa.searchOutput.searchReturnCode == 0
-            && searchPartChoice == 1)
+            && searchPartChoice == SearchOptionsConstants.PART_COMMENTS_ID)
             convertSearchTermTextToLowerCase();
         if (csa.searchOutput.searchReturnCode == 0)
             convertMetamathSearchTermTextToRegex();
@@ -41,7 +41,7 @@ public class MetamathSearchDataLine extends SearchDataLine {
     public boolean evaluateSearchTerm(final QuotedSearchTerm quotedSearchTerm,
         final CompiledSearchArgs csa)
     {
-        if (searchPartChoice == 2) {
+        if (searchPartChoice == SearchOptionsConstants.PART_LABELS_ID) {
             for (final String element : assrtDataStringArray)
                 if (quotedSearchTerm.pattern.matcher(element).matches())
                     return true;
@@ -80,7 +80,7 @@ public class MetamathSearchDataLine extends SearchDataLine {
                     }
                 }
                 if ((c == '*' || c == '?')
-                    && (searchPartChoice == 2 || searchPartChoice == 3))
+                    && (searchPartChoice == SearchOptionsConstants.PART_LABELS_ID || searchPartChoice == SearchOptionsConstants.PART_LABELS_RPN_ID))
                 {
                     if (stringbuffer1.length() > 0) {
                         stringbuffer.append(Pattern.quote(stringbuffer1

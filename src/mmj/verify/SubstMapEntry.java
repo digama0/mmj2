@@ -25,14 +25,16 @@ import mmj.lang.Sym;
  * <p>
  * Example: SubstMapEntry[] subst -->
  * <p>
- * <code>
- *     Sym substFrom: variable from proof step mandatory<br>
- *                    hypotheses<br><br>
- *     Sym[] substTo: expression/variable to substitute<br>
- *                    FOR each occurrence of substFrom<br>
- *                    in the proof step's mandatory<br>
- *                    hypotheses and assertion.<br>
- * </code>
+ * 
+ * <pre>
+ *     Sym substFrom: variable from proof step mandatory
+ *                    hypotheses
+ * 
+ *     Sym[] substTo: expression/variable to substitute
+ *                    FOR each occurrence of substFrom
+ *                    in the proof step's mandatory
+ *                    hypotheses and assertion.
+ * </pre>
  */
 public class SubstMapEntry {
 

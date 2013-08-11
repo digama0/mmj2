@@ -164,25 +164,25 @@ public class CompiledSearchArgs {
                 searchMinSeq = j;
         }
         switch (searchChapSecHierarchyChoice) {
-            case 1: // '\001'
+            case SearchOptionsConstants.CHAP_SEC_HIERARCHY_CHAP_DIRECT_ID:
                 searchUseChapHierarchy = true;
                 searchChapSecDependenciesArray = bookManager
                     .getDirectChapterDependencies(logicalSystem);
                 break;
 
-            case 2: // '\002'
+            case SearchOptionsConstants.CHAP_SEC_HIERARCHY_CHAP_INDIR_ID:
                 searchUseChapHierarchy = true;
                 searchChapSecDependenciesArray = bookManager
                     .getChapterDependencies(logicalSystem);
                 break;
 
-            case 3: // '\003'
+            case SearchOptionsConstants.CHAP_SEC_HIERARCHY_SEC_DIRECT_ID:
                 searchUseSecHierarchy = true;
                 searchChapSecDependenciesArray = bookManager
                     .getDirectSectionDependencies(logicalSystem);
                 break;
 
-            case 4: // '\004'
+            case SearchOptionsConstants.CHAP_SEC_HIERARCHY_SEC_INDIR_ID:
                 searchUseSecHierarchy = true;
                 searchChapSecDependenciesArray = bookManager
                     .getSectionDependencies(logicalSystem);

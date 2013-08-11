@@ -77,31 +77,31 @@ public class SearchResultsFrame extends JFrame implements
 
     public void searchResultsButtonPressed(final int i) {
         switch (i) {
-            case 0: // '\0'
+            case SearchResultsConstants.APPLY_BUTTON_ID:
                 searchMgr.searchResultsApplyButtonPressed();
                 break;
 
-            case 1: // '\001'
+            case SearchResultsConstants.CANCEL_BUTTON_ID:
                 searchMgr.searchResultsCancelButtonPressed();
                 break;
 
-            case 2: // '\002'
+            case SearchResultsConstants.PA_BUTTON_ID:
                 searchMgr.searchResultsPAButtonPressed();
                 break;
 
-            case 3: // '\003'
+            case SearchResultsConstants.SO_BUTTON_ID:
                 searchMgr.searchResultsSOButtonPressed();
                 break;
 
-            case 4: // '\004'
+            case SearchResultsConstants.HELP_BUTTON_ID:
                 searchMgr.showSearchResultsHelp();
                 break;
 
-            case 5: // '\005'
+            case SearchResultsConstants.PLUS_BUTTON_ID:
                 searchMgr.searchResultsPlusButtonPressed();
                 break;
 
-            case 6: // '\006'
+            case SearchResultsConstants.MINUS_BUTTON_ID:
                 searchMgr.searchResultsMinusButtonPressed();
                 break;
 

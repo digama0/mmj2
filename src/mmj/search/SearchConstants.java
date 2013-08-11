@@ -17,8 +17,6 @@ package mmj.search;
 
 public class SearchConstants {
 
-    public SearchConstants() {}
-
     public static final int SEARCH_RETURN_CODE_0 = 0;
     public static final int SEARCH_RETURN_CODE_ARG_ERROR = 1;
     public static final int SEARCH_RETURN_CODE_TIMEOUT_ERROR = 2;

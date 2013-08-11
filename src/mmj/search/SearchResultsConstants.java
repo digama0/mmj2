@@ -17,24 +17,6 @@ package mmj.search;
 
 public class SearchResultsConstants {
 
-    public SearchResultsConstants() {}
-
-    public static void CHECK_SEARCH_RESULTS_FIELD_ATTR_IDS() {
-        for (int i = 0; i < FIELD_ATTR.length; i++)
-            if (FIELD_ATTR[i].fieldId != i)
-                throw new IllegalArgumentException(
-                    ERRMSG_FIELD_ATTR_TABLE_LOAD_ERROR + i);
-
-    }
-
-    public static void CHECK_SEARCH_RESULTS_BUTTON_ATTR_IDS() {
-        for (int i = 0; i < BUTTON_ATTR.length; i++)
-            if (BUTTON_ATTR[i].buttonId != i)
-                throw new IllegalArgumentException(
-                    ERRMSG_BUTTON_ATTR_TABLE_LOAD_ERROR + i);
-
-    }
-
     public static final int SEARCH_SELECTION_FIELD_ID = 0;
     public static String STRING_TRUE = "true";
     public static String STRING_FALSE = "false";
@@ -42,7 +24,7 @@ public class SearchResultsConstants {
     public static boolean BOOLEAN_FALSE = false;
     public static final String TOOL_TIP_SEARCH_SELECTION = "Select assertion to Apply to derivation step.";
     public static final SearchResultsFieldAttr FIELD_ATTR[] = {new SearchResultsFieldAttr(
-        0, "", TOOL_TIP_SEARCH_SELECTION, 80, "")};
+        SEARCH_SELECTION_FIELD_ID, "", TOOL_TIP_SEARCH_SELECTION, 80, "")};
     public static final int APPLY_BUTTON_ID = 0;
     public static final int CANCEL_BUTTON_ID = 1;
     public static final int PA_BUTTON_ID = 2;

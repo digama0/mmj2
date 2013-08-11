@@ -33,11 +33,6 @@ import mmj.pa.ProofWorksheet;
 public class StoreInMMTFolderTLRequest extends TLRequest {
 
     /**
-     * Constructor for StoreInMMTFolderTLRequest
-     */
-    public StoreInMMTFolderTLRequest() {}
-
-    /**
      * Implements the request to store a ProofWorksheet in the MMT Folder.
      * 
      * @param theoremLoader TheoremLoader object.

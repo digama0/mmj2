@@ -17,8 +17,8 @@ package mmj.search;
 
 public class RegExprSearchDataLine extends SearchDataLine {
 
-    public RegExprSearchDataLine(final CompiledSearchArgs csa,
-        final int i, final SearchDataGetter searchDataGetter)
+    public RegExprSearchDataLine(final CompiledSearchArgs csa, final int i,
+        final SearchDataGetter searchDataGetter)
     {
         super(csa, i, searchDataGetter);
         if (csa.searchOutput.searchReturnCode == 0)
@@ -34,7 +34,7 @@ public class RegExprSearchDataLine extends SearchDataLine {
     public boolean evaluateSearchTerm(final QuotedSearchTerm quotedSearchTerm,
         final CompiledSearchArgs csa)
     {
-        if (searchPartChoice == 2) {
+        if (searchPartChoice == SearchOptionsConstants.PART_LABELS_ID) {
             for (final String element : assrtDataStringArray)
                 if (quotedSearchTerm.pattern.matcher(element).matches())
                     return true;

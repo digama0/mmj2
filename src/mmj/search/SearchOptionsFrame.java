@@ -21,6 +21,7 @@ import java.awt.EventQueue;
 import javax.swing.*;
 
 import mmj.lang.BookManager;
+import mmj.lang.LangException;
 import mmj.pa.ProofAsstPreferences;
 
 public class SearchOptionsFrame extends JFrame implements
@@ -87,64 +88,64 @@ public class SearchOptionsFrame extends JFrame implements
 
     public void searchOptionsButtonPressed(final int i) {
         switch (i) {
-            case 0: // '\0'
+            case SearchOptionsConstants.SEARCH_BUTTON_ID:
                 processLocalRequestGUI(new UpdateForWhatHistory(
                     searchOptionsScrnMap));
                 searchMgr.searchOptionsSearchButtonPressed();
                 break;
 
-            case 1: // '\001'
+            case SearchOptionsConstants.CANCEL_BUTTON_ID:
                 searchMgr.searchOptionsCancelButtonPressed();
                 break;
 
-            case 2: // '\002'
+            case SearchOptionsConstants.NEW_BUTTON_ID:
                 searchMgr.searchOptionsNewButtonPressed();
                 break;
 
-            case 3: // '\003'
+            case SearchOptionsConstants.REFINE_BUTTON_ID:
                 processLocalRequestGUI(new UpdateForWhatHistory(
                     searchOptionsScrnMap));
                 searchMgr.searchOptionsRefineButtonPressed();
                 break;
 
-            case 4: // '\004'
+            case SearchOptionsConstants.SET_DEF_BUTTON_ID:
                 processLocalRequestGUI(new SetDefaultsToCurrentValues(
                     searchOptionsScrnMap));
                 break;
 
-            case 5: // '\005'
+            case SearchOptionsConstants.PA_BUTTON_ID:
                 searchMgr.searchOptionsPAButtonPressed();
                 break;
 
-            case 6: // '\006'
+            case SearchOptionsConstants.SR_BUTTON_ID:
                 searchMgr.searchOptionsSRButtonPressed();
                 break;
 
-            case 7: // '\007'
+            case SearchOptionsConstants.HELP_BUTTON_ID:
                 searchMgr.showSearchOptionsHelp();
                 break;
 
-            case 8: // '\b'
+            case SearchOptionsConstants.PLUS_BUTTON_ID:
                 searchMgr.searchOptionsPlusButtonPressed();
                 break;
 
-            case 9: // '\t'
+            case SearchOptionsConstants.MINUS_BUTTON_ID:
                 searchMgr.searchOptionsMinusButtonPressed();
                 break;
 
-            case 10: // '\n'
+            case SearchOptionsConstants.RESET_DATA_BUTTON_ID:
                 processLocalRequestGUI(new ResetSearchDataDefaults(
                     searchOptionsScrnMap));
                 break;
 
-            case 11: // '\013'
+            case SearchOptionsConstants.RESET_CONTROLS_BUTTON_ID:
                 processLocalRequestGUI(new ResetSearchControlDefaults(
                     searchOptionsScrnMap));
                 break;
 
             default:
-                throw new IllegalArgumentException(
-                    SearchOptionsConstants.ERRMSG_UNRECOGNIZED_BUTTON_ID_1 + i);
+                throw new IllegalArgumentException(LangException.format(
+                    SearchOptionsConstants.ERRMSG_UNRECOGNIZED_BUTTON_ID, i));
         }
     }
 

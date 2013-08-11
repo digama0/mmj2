@@ -128,11 +128,6 @@ public abstract class BatchFramework {
     /*friendly*/GMFFBoss gmffBoss;
 
     /**
-     * Default Constructor.
-     */
-    public BatchFramework() {}
-
-    /**
      * Initialize BatchFramework with Boss list and any captions that may have
      * been overridden.
      * <p>

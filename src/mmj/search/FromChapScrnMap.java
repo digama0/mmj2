@@ -18,6 +18,8 @@ package mmj.search;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import mmj.lang.LangException;
+
 public class FromChapScrnMap extends SearchOptionsJComboBox implements
     ActionListener
 {
@@ -59,8 +61,8 @@ public class FromChapScrnMap extends SearchOptionsJComboBox implements
             if (s.equals(chapValues[i]))
                 return i;
 
-        throw new IllegalArgumentException(
-            SearchOptionsConstants.ERRMSG_FROM_CHAP_SEL_INVALID_1 + s);
+        throw new IllegalArgumentException(LangException.format(
+            SearchOptionsConstants.ERRMSG_FROM_CHAP_SEL_INVALID, s));
     }
 
     private void chapUpdate(final String s, final int i) {

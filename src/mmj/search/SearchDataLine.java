@@ -32,25 +32,24 @@ public abstract class SearchDataLine {
         if (csa.searchForWhat[i].equals(""))
             return null;
         switch (csa.searchFormatChoice[i]) {
-            case 0: // '\0'
+            case SearchOptionsConstants.FORMAT_METAMATH_ID:
                 return new MetamathSearchDataLine(csa, i, searchDataGetter);
 
-            case 1: // '\001'
+            case SearchOptionsConstants.FORMAT_REG_EXPR_ID:
                 return new RegExprSearchDataLine(csa, i, searchDataGetter);
 
-            case 2: // '\002'
+            case SearchOptionsConstants.FORMAT_CHAR_STR_ID:
                 return new CharStrSearchDataLine(csa, i, searchDataGetter);
 
-            case 3: // '\003'
+            case SearchOptionsConstants.FORMAT_PARSE_EXPR_ID:
                 return new ParseExprSearchDataLine(csa, i, searchDataGetter);
 
-            case 4: // '\004'
+            case SearchOptionsConstants.FORMAT_PARSE_STMT_ID:
                 return new ParseStmtSearchDataLine(csa, i, searchDataGetter);
         }
         throw new IllegalArgumentException(
-
-        SearchConstants.ERROR_SEARCH_DATA_LINE_FORMAT_1
-            + csa.searchFormatChoice[i]);
+            SearchConstants.ERROR_SEARCH_DATA_LINE_FORMAT_1
+                + csa.searchFormatChoice[i]);
     }
 
     public SearchDataLine(final CompiledSearchArgs csa, final int i,
@@ -68,48 +67,31 @@ public abstract class SearchDataLine {
         wantsTheorems = false;
         wantsLogHyps = false;
         switch (searchInWhatChoice) {
-            case 0: // '\0'
+            case SearchOptionsConstants.IN_WHAT_AEP_ID:
                 wantsAxioms = true;
+            case SearchOptionsConstants.IN_WHAT_EP_ID:
                 wantsLogHyps = true;
+            case SearchOptionsConstants.IN_WHAT_P_ID:
+            case SearchOptionsConstants.IN_WHAT_EQ_ID:
                 wantsTheorems = true;
                 break;
 
-            case 1: // '\001'
+            case SearchOptionsConstants.IN_WHAT_AE_ID:
                 wantsAxioms = true;
-                wantsLogHyps = true;
-                break;
-
-            case 2: // '\002'
-                wantsAxioms = true;
-                wantsTheorems = true;
-                break;
-
-            case 3: // '\003'
-                wantsLogHyps = true;
-                wantsTheorems = true;
-                break;
-
-            case 4: // '\004'
-                wantsAxioms = true;
-                break;
-
-            case 5: // '\005'
+            case SearchOptionsConstants.IN_WHAT_E_ID:
                 wantsLogHyps = true;
                 break;
 
-            case 6: // '\006'
+            case SearchOptionsConstants.IN_WHAT_AP_ID:
                 wantsTheorems = true;
-                break;
-
-            case 7: // '\007'
-                wantsTheorems = true;
+            case SearchOptionsConstants.IN_WHAT_A_ID:
+                wantsAxioms = true;
                 break;
 
             default:
                 throw new IllegalArgumentException(
-
-                SearchConstants.ERROR_SEARCH_DATA_LINE_IN_WHAT_1
-                    + searchInWhatChoice);
+                    SearchConstants.ERROR_SEARCH_DATA_LINE_IN_WHAT_1
+                        + searchInWhatChoice);
         }
         initForNextSearch();
         quotedSearchTermList = new ArrayList<QuotedSearchTerm>();
@@ -172,25 +154,25 @@ public abstract class SearchDataLine {
 
     protected void loadAssrtDataStringArray() {
         switch (searchPartChoice) {
-            case 0: // '\0'
+            case SearchOptionsConstants.PART_FORMULAS_ID:
                 assrtDataStringArray = searchDataGetter
                     .getFormulasAssrtDataStringArray(wantsAxioms, wantsLogHyps,
                         wantsTheorems);
                 break;
 
-            case 1: // '\001'
+            case SearchOptionsConstants.PART_COMMENTS_ID:
                 assrtDataStringArray = searchDataGetter
                     .getCommentsAssrtDataStringArray(wantsAxioms, wantsLogHyps,
                         wantsTheorems);
                 break;
 
-            case 2: // '\002'
+            case SearchOptionsConstants.PART_LABELS_ID:
                 assrtDataStringArray = searchDataGetter
                     .getLabelsAssrtDataStringArray(wantsAxioms, wantsLogHyps,
                         wantsTheorems);
                 break;
 
-            case 3: // '\003'
+            case SearchOptionsConstants.PART_LABELS_RPN_ID:
                 assrtDataStringArray = searchDataGetter
                     .getLabelsRPNAssrtDataStringArray(wantsAxioms,
                         wantsLogHyps, wantsTheorems);
@@ -198,15 +180,14 @@ public abstract class SearchDataLine {
 
             default:
                 throw new IllegalArgumentException(
-
-                SearchConstants.ERROR_SEARCH_DATA_LINE_PART_1
-                    + searchPartChoice);
+                    SearchConstants.ERROR_SEARCH_DATA_LINE_PART_1
+                        + searchPartChoice);
         }
     }
 
     protected void loadAssrtDataTreeArray() {
         switch (searchPartChoice) {
-            case 0: // '\0'
+            case SearchOptionsConstants.PART_FORMULAS_ID:
                 assrtDataTreeArray = searchDataGetter
                     .getFormulasAssrtDataTreeArray(wantsAxioms, wantsLogHyps,
                         wantsTheorems);
@@ -217,9 +198,8 @@ public abstract class SearchDataLine {
 
             default:
                 throw new IllegalArgumentException(
-
-                SearchConstants.ERROR_SEARCH_DATA_LINE_PART2_1
-                    + searchPartChoice);
+                    SearchConstants.ERROR_SEARCH_DATA_LINE_PART2_1
+                        + searchPartChoice);
         }
     }
 

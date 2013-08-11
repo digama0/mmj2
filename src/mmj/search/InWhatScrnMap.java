@@ -18,6 +18,8 @@ package mmj.search;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import mmj.lang.LangException;
+
 public class InWhatScrnMap extends SearchOptionsJComboBox implements
     ActionListener
 {
@@ -53,8 +55,8 @@ public class InWhatScrnMap extends SearchOptionsJComboBox implements
             if (s.equals(SearchOptionsConstants.IN_WHAT_VALUES[i]))
                 return SearchOptionsConstants.IN_WHAT_TYPE[i];
 
-        throw new IllegalArgumentException(
-            SearchOptionsConstants.ERRMSG_IN_WHAT_SEL_INVALID_1 + s);
+        throw new IllegalArgumentException(LangException.format(
+            SearchOptionsConstants.ERRMSG_IN_WHAT_SEL_INVALID, s));
     }
 
     private void inWhatTypeUpdate(final int i) {

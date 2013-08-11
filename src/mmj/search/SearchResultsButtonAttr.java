@@ -17,11 +17,12 @@ package mmj.search;
 
 public class SearchResultsButtonAttr {
 
-    public SearchResultsButtonAttr(final int i, final String s, final String s1)
+    public SearchResultsButtonAttr(final int id, final String label,
+        final String tooltip)
     {
-        buttonId = i;
-        label = s;
-        toolTip = s1;
+        buttonId = id;
+        this.label = label;
+        toolTip = tooltip;
     }
 
     public final int buttonId;

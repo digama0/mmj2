@@ -307,8 +307,8 @@ public class ParseNode {
         return i;
     }
 
-    public SubTreeIterator subTreeIterator(final boolean flag) {
-        return new SubTreeIterator(this, flag);
+    public SubTreeIterator subTreeIterator(final boolean excludeVarHyps) {
+        return new SubTreeIterator(this, excludeVarHyps);
     }
 
     /**
@@ -924,8 +924,10 @@ public class ParseNode {
         Stack<ParseNode> nodeStack;
         boolean excludeVarHyps;
 
-        public SubTreeIterator(final ParseNode parsenode1, final boolean flag) {
-            excludeVarHyps = flag;
+        public SubTreeIterator(final ParseNode parsenode1,
+            final boolean excludeVarHyps)
+        {
+            this.excludeVarHyps = excludeVarHyps;
             nodeStack = new Stack<ParseNode>();
             pushIfNotExcluded(parsenode1);
         }

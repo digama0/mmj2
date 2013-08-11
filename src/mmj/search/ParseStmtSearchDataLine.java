@@ -19,8 +19,8 @@ import mmj.lang.ParseTree;
 
 public class ParseStmtSearchDataLine extends SearchDataLine {
 
-    public ParseStmtSearchDataLine(final CompiledSearchArgs csa,
-        final int i, final SearchDataGetter searchDataGetter)
+    public ParseStmtSearchDataLine(final CompiledSearchArgs csa, final int i,
+        final SearchDataGetter searchDataGetter)
     {
         super(csa, i, searchDataGetter);
         searchUnifier = null;
@@ -39,8 +39,7 @@ public class ParseStmtSearchDataLine extends SearchDataLine {
             final QuotedSearchTerm quotedSearchTerm = quotedSearchTermList
                 .get(i);
             quotedSearchTerm.parsedSearchTerm = ParsedSearchTerm
-                .parseStmtUFOText(quotedSearchTerm.text,
-                    csa.searchMaxSeq,
+                .parseStmtUFOText(quotedSearchTerm.text, csa.searchMaxSeq,
                     csa.searchMgr);
             if (quotedSearchTerm.parsedSearchTerm.errorMessage != null) {
                 quotedSearchTerm.errorMessage = SearchMgr
@@ -61,9 +60,9 @@ public class ParseStmtSearchDataLine extends SearchDataLine {
     public boolean evaluateSearchTerm(final QuotedSearchTerm quotedSearchTerm,
         final CompiledSearchArgs csa)
     {
-        final int i = quotedSearchTerm.parsedSearchTerm.varHypArray.length;
+        final int numHyps = quotedSearchTerm.parsedSearchTerm.varHypArray.length;
         for (final ParseTree element : assrtDataTreeArray)
-            if (searchUnifier.unifyStmt(i, searchOperChoice, element,
+            if (searchUnifier.unifyStmt(numHyps, searchOperChoice, element,
                 quotedSearchTerm.parsedSearchTerm.parseTree))
                 return true;
 

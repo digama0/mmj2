@@ -26,11 +26,6 @@ import mmj.pa.ProofWorksheet;
 public abstract class TLRequest {
 
     /**
-     * Constructor for TLRequest
-     */
-    public TLRequest() {}
-
-    /**
      * Implements a user request for a TheoremLoader operation on a
      * ProofWorksheet.
      * 

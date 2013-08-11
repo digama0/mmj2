@@ -34,11 +34,6 @@ import mmj.pa.ProofWorksheet;
 public class StoreInLogSysAndMMTFolderTLRequest extends TLRequest {
 
     /**
-     * Constructor for StoreInLogSysAndMMTFolderTLRequest
-     */
-    public StoreInLogSysAndMMTFolderTLRequest() {}
-
-    /**
      * Implements the request to store a ProofWorksheet in the MMT Folder and
      * the LogicalSystem.
      * 

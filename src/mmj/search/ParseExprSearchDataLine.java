@@ -19,8 +19,8 @@ import mmj.lang.ParseTree;
 
 public class ParseExprSearchDataLine extends SearchDataLine {
 
-    public ParseExprSearchDataLine(final CompiledSearchArgs csa,
-        final int i, final SearchDataGetter searchDataGetter)
+    public ParseExprSearchDataLine(final CompiledSearchArgs csa, final int i,
+        final SearchDataGetter searchDataGetter)
     {
         super(csa, i, searchDataGetter);
         searchUnifier = null;
@@ -39,8 +39,7 @@ public class ParseExprSearchDataLine extends SearchDataLine {
             final QuotedSearchTerm quotedSearchTerm = quotedSearchTermList
                 .get(i);
             quotedSearchTerm.parsedSearchTerm = ParsedSearchTerm
-                .parseExprUFOText(quotedSearchTerm.text,
-                    csa.searchMaxSeq,
+                .parseExprUFOText(quotedSearchTerm.text, csa.searchMaxSeq,
                     csa.searchMgr);
             if (quotedSearchTerm.parsedSearchTerm.errorMessage != null) {
                 quotedSearchTerm.errorMessage = SearchMgr
@@ -61,13 +60,12 @@ public class ParseExprSearchDataLine extends SearchDataLine {
     public boolean evaluateSearchTerm(final QuotedSearchTerm quotedSearchTerm,
         final CompiledSearchArgs csa)
     {
-        boolean flag = true;
-        if (quotedSearchTerm.parsedSearchTerm.parseTree.getRoot().stmt
-            .isVarHyp())
-            flag = false;
-        final int i = quotedSearchTerm.parsedSearchTerm.varHypArray.length;
+        final boolean excludeVarHyps = !quotedSearchTerm.parsedSearchTerm.parseTree
+            .getRoot().stmt.isVarHyp();
+        final int numHyps = quotedSearchTerm.parsedSearchTerm.varHypArray.length;
         for (final ParseTree element : assrtDataTreeArray)
-            if (searchUnifier.unifyExpr(i, flag, searchOperChoice, element,
+            if (searchUnifier.unifyExpr(numHyps, excludeVarHyps,
+                searchOperChoice, element,
                 quotedSearchTerm.parsedSearchTerm.parseTree))
                 return true;
 

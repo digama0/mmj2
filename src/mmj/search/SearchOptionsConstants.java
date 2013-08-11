@@ -19,16 +19,12 @@ import java.awt.Color;
 
 public class SearchOptionsConstants {
 
-    public SearchOptionsConstants() {}
-
     public static void CHECK_SEARCH_OPTIONS_FIELD_ATTR_IDS() {
         for (int i = 0; i < FIELD_ATTR.length; i++)
             if (FIELD_ATTR[i].fieldId != i)
                 throw new IllegalArgumentException(
-
-                "A-SO-0101 SearchOptionsConstants.FIELD_ATTR[i].fieldId not equal to "
-                    + i);
-
+                    "A-SO-0101 SearchOptionsConstants.FIELD_ATTR[i].fieldId not equal to "
+                        + i);
     }
 
     public static void CHECK_SEARCH_ARGS_FIELD_IDS(final SearchArgs args) {
@@ -37,17 +33,14 @@ public class SearchOptionsConstants {
                 throw new IllegalArgumentException(
                     "A-SO-0102 SearchArgs.arg[i].getFieldId() not equal to "
                         + i);
-
     }
 
     public static void CHECK_SEARCH_OPTIONS_BUTTON_ATTR_IDS() {
         for (int i = 0; i < BUTTON_ATTR.length; i++)
             if (BUTTON_ATTR[i].buttonId != i)
                 throw new IllegalArgumentException(
-
-                "A-SO-0103 SearchOptionsConstants.BUTTON_ATTR[i].buttonId not equal to "
-                    + i);
-
+                    "A-SO-0103 SearchOptionsConstants.BUTTON_ATTR[i].buttonId"
+                        + " not equal to " + i);
     }
 
     public static final String SEARCH_CONTROLS_LABEL_TEXT = "SEARCH_CONTROLS ";
@@ -268,134 +261,211 @@ public class SearchOptionsConstants {
     public static final int STATS_3_ID_SEARCH_ARGS = 3;
     public static final int STATS_4_ID_SEARCH_RESULTS = 4;
     public static final int STATS_5_ID_CHAP_SEC_HIERARCHY = 5;
-    public static final String TOOL_TIP_AUTO_SELECT = "AutoSelect: Automatically updates proof step using the first Completed Search Result in the Search Results List.";
-    public static final String TOOL_TIP_BOOL = "Bool: Logical operator (AND, OR, XOR, NAND) connecting Search Data lines (evaluation order = top to bottom.)";
-    public static final String TOOL_TIP_CHAP_SEC_HIERARCHY = "ChapSecHierarchy: restricts search domain to hierarchies of related Chapters or Sections of the FromChap/FromSec and the Theorem or Stmt/LOC_AFTER being searched.";
-    public static final String TOOL_TIP_COMMENTS = "Comments: causes assertion comments to be displayed in the Step Selector Dialog even if comments are not being searched.";
-    public static final String TOOL_TIP_DOUBLE_QUOTE = "DoubleQuote: Character string used to quote-enclose search arguments";
-    public static final String TOOL_TIP_EXCL_LABELS = "ExclLabels: Comma-delimited, Metamath search expression(s) to specify assertion labels to exclude from the Search Results (e.g. '*OLD,ee*')";
-    public static final String TOOL_TIP_FOR_WHAT = "ForWhat: search terms, optionally quote-enclosed. ANDed together by default unless OR specified. Pulldown list has 9 prior search values for the given Format. See Help.";
-    public static final String TOOL_TIP_FORMAT = "Format: object format used in search matching process.";
-    public static final String TOOL_TIP_FROM_CHAP = "FromChap: Optional. Specifies a lower bound Chapter of the search domain on the input assertion list.";
-    public static final String TOOL_TIP_FROM_SEC = "FromSec: Optional. Specifies a lower bound Section of the search domain on the input assertion list.";
-    public static final String TOOL_TIP_IN_WHAT = "InWhat: the Metamath statements to be searched for each input Assertion.";
-    public static final String TOOL_TIP_MAX_EXT_RESULTS = "MaxExtResults: number of Completed Search Results to find. You may be lucky to get one! Zero = disable Ext. Search.";
-    public static final String TOOL_TIP_MAX_HYPS = "MaxHyps: Maximum number of logical hypotheses in assertions included in the search domain.";
-    public static final String TOOL_TIP_MAX_INCOMP_HYPS = "MaxIncompHyps: Specifies the maximum number of incomplete hypotheses in Search Result items input to the Extended Search.";
-    public static final String TOOL_TIP_MAX_RESULTS = "MaxResults: Limits the size of the Search Results List.";
-    public static final String TOOL_TIP_MAX_TIME = "MaxTime: Maximum elapsed time (seconds) of the search.";
-    public static final String TOOL_TIP_MIN_HYPS = "MinHyps: Minimum number of logical hypotheses in assertions included in the search domain.";
-    public static final String TOOL_TIP_MIN_PROOF_REFS = "MinProofRefs: Minimum number of times assertion referenced in other proofs in order to be included in the search domain.";
-    public static final String TOOL_TIP_OPER = "Oper: Lets you specify relational operators for the Format types ParseExpr and ParseStmt, and boolean operators (blank or 'NOT' ) for all other Format types. See Help.";
-    public static final String TOOL_TIP_OR = "Or: Character string used to specify logical OR between two ForWhat search terms. AND is the default operator for consecutive search terms if OR not specified.";
-    public static final String TOOL_TIP_OUTPUT_SORT = "OutputSort: Sort order of the Search Results List. (D) signifies descending order, otherwise ascending is used.";
-    public static final String TOOL_TIP_PART = "Part: the part of the Metamath statements to be searched.";
-    public static final String TOOL_TIP_PREV_STEPS_CHECKED = "PrevStepsChecked: Specifies the maximum number of previous proof steps to be checked in the Extended Search not including steps bypassed if ReuseDerivSteps: = False.";
-    public static final String TOOL_TIP_REUSE_DERIV_STEPS = "ReuseDerivSteps: Previous proof steps already referenced in the proof (as Hyps) will not be reused in the current step by the Extended Search -- unless first Comment token = <SO:REUSE>. See Help.";
-    public static final String TOOL_TIP_RESULTS_CHECKED = "ResultsChecked: number of (sorted) Search Results input to the Extended Search. Zero = disable Ext. Search.";
-    public static final String TOOL_TIP_SINGLE_QUOTE = "SingleQuote: Character string used to quote-enclose search arguments";
-    public static final String TOOL_TIP_STATS = "Stats: Causes statistics about each search to be produced and output to the Request Message window.";
-    public static final String TOOL_TIP_SUBSTITUTIONS = "Substitutions: Causes unifiable assertions to be displayed in the Step Selector Search Dialog with unification substitutions from the Proof Worksheet (instead of as-is.)";
-    public static final String TOOL_TIP_THRU_CHAP = "ThruChap: Optional. Specifies an upper bound Chapter of the search domain on the input assertion list.";
-    public static final String TOOL_TIP_THRU_SEC = "ThruSec: Optional. Specifies a upper bound Section of the search domain on the input assertion list.";
+    public static final String TOOL_TIP_AUTO_SELECT = "AutoSelect:"
+        + " Automatically updates proof step using the first Completed Search"
+        + " Result in the Search Results List.";
+    public static final String TOOL_TIP_BOOL = "Bool:"
+        + " Logical operator (AND, OR, XOR, NAND) connecting Search Data lines"
+        + " (evaluation order = top to bottom.)";
+    public static final String TOOL_TIP_CHAP_SEC_HIERARCHY = "ChapSecHierarchy:"
+        + " restricts search domain to hierarchies of related Chapters or"
+        + " Sections of the FromChap/FromSec and the Theorem or Stmt/LOC_AFTER"
+        + " being searched.";
+    public static final String TOOL_TIP_COMMENTS = "Comments:"
+        + " causes assertion comments to be displayed in the Step Selector"
+        + " Dialog even if comments are not being searched.";
+    public static final String TOOL_TIP_DOUBLE_QUOTE = "DoubleQuote:"
+        + " Character string used to quote-enclose search arguments";
+    public static final String TOOL_TIP_EXCL_LABELS = "ExclLabels:"
+        + " Comma-delimited, Metamath search expression(s) to specify assertion"
+        + " labels to exclude from the Search Results (e.g. '*OLD,ee*')";
+    public static final String TOOL_TIP_FOR_WHAT = "ForWhat:"
+        + " search terms, optionally quote-enclosed. ANDed together by default"
+        + " unless OR specified. Pulldown list has 9 prior search values for"
+        + " the given Format. See Help.";
+    public static final String TOOL_TIP_FORMAT = "Format:"
+        + " object format used in search matching process.";
+    public static final String TOOL_TIP_FROM_CHAP = "FromChap:"
+        + " Optional. Specifies a lower bound Chapter of the search domain on"
+        + " the input assertion list.";
+    public static final String TOOL_TIP_FROM_SEC = "FromSec:"
+        + " Optional. Specifies a lower bound Section of the search domain on"
+        + " the input assertion list.";
+    public static final String TOOL_TIP_IN_WHAT = "InWhat:"
+        + " the Metamath statements to be searched for each input Assertion.";
+    public static final String TOOL_TIP_MAX_EXT_RESULTS = "MaxExtResults:"
+        + " number of Completed Search Results to find. You may be lucky to get"
+        + " one! Zero = disable Ext. Search.";
+    public static final String TOOL_TIP_MAX_HYPS = "MaxHyps:"
+        + " Maximum number of logical hypotheses in assertions included in the"
+        + " search domain.";
+    public static final String TOOL_TIP_MAX_INCOMP_HYPS = "MaxIncompHyps:"
+        + " Specifies the maximum number of incomplete hypotheses in Search"
+        + " Result items input to the Extended Search.";
+    public static final String TOOL_TIP_MAX_RESULTS = "MaxResults:"
+        + " Limits the size of the Search Results List.";
+    public static final String TOOL_TIP_MAX_TIME = "MaxTime:"
+        + " Maximum elapsed time (seconds) of the search.";
+    public static final String TOOL_TIP_MIN_HYPS = "MinHyps:"
+        + " Minimum number of logical hypotheses in assertions included in the"
+        + " search domain.";
+    public static final String TOOL_TIP_MIN_PROOF_REFS = "MinProofRefs:"
+        + " Minimum number of times assertion referenced in other proofs in"
+        + " order to be included in the search domain.";
+    public static final String TOOL_TIP_OPER = "Oper:"
+        + " Lets you specify relational operators for the Format types"
+        + " ParseExpr and ParseStmt, and boolean operators (blank or 'NOT' )"
+        + " for all other Format types. See Help.";
+    public static final String TOOL_TIP_OR = "Or:"
+        + " Character string used to specify logical OR between two ForWhat"
+        + " search terms. AND is the default operator for consecutive search"
+        + " terms if OR not specified.";
+    public static final String TOOL_TIP_OUTPUT_SORT = "OutputSort:"
+        + " Sort order of the Search Results List. (D) signifies descending"
+        + " order, otherwise ascending is used.";
+    public static final String TOOL_TIP_PART = "Part:"
+        + " the part of the Metamath statements to be searched.";
+    public static final String TOOL_TIP_PREV_STEPS_CHECKED = "PrevStepsChecked:"
+        + " Specifies the maximum number of previous proof steps to be checked"
+        + " in the Extended Search not including steps bypassed if"
+        + " ReuseDerivSteps: = False.";
+    public static final String TOOL_TIP_REUSE_DERIV_STEPS = "ReuseDerivSteps:"
+        + " Previous proof steps already referenced in the proof (as Hyps) will"
+        + " not be reused in the current step by the Extended Search -- unless"
+        + " first Comment token = <SO:REUSE>. See Help.";
+    public static final String TOOL_TIP_RESULTS_CHECKED = "ResultsChecked:"
+        + " number of (sorted) Search Results input to the Extended Search."
+        + " Zero = disable Ext. Search.";
+    public static final String TOOL_TIP_SINGLE_QUOTE = "SingleQuote:"
+        + " Character string used to quote-enclose search arguments";
+    public static final String TOOL_TIP_STATS = "Stats:"
+        + " Causes statistics about each search to be produced and output to"
+        + " the Request Message window.";
+    public static final String TOOL_TIP_SUBSTITUTIONS = "Substitutions:"
+        + " Causes unifiable assertions to be displayed in the Step Selector"
+        + " Search Dialog with unification substitutions from the Proof"
+        + " Worksheet (instead of as-is.)";
+    public static final String TOOL_TIP_THRU_CHAP = "ThruChap:"
+        + " Optional. Specifies an upper bound Chapter of the search domain on"
+        + " the input assertion list.";
+    public static final String TOOL_TIP_THRU_SEC = "ThruSec:"
+        + " Optional. Specifies a upper bound Section of the search domain on"
+        + " the input assertion list.";
     public static final SearchOptionsFieldAttr[] FIELD_ATTR = new SearchOptionsFieldAttr[]{
-            new SearchOptionsFieldAttr(0, " Or:", TOOL_TIP_OR, 4, "OR", false,
-                -1, null),
-            new SearchOptionsFieldAttr(1, " SingleQuote:",
+            new SearchOptionsFieldAttr(OR_SEPARATOR_FIELD_ID, " Or:",
+                TOOL_TIP_OR, 4, "OR", false, -1, null),
+            new SearchOptionsFieldAttr(SINGLE_QUOTE_FIELD_ID, " SingleQuote:",
                 TOOL_TIP_SINGLE_QUOTE, 2, "'", false, -1, null),
-            new SearchOptionsFieldAttr(2, " DoubleQuote:",
+            new SearchOptionsFieldAttr(DOUBLE_QUOTE_FIELD_ID, " DoubleQuote:",
                 TOOL_TIP_DOUBLE_QUOTE, 2, "\"", false, -1, null),
-            new SearchOptionsFieldAttr(3, "InWhat:", TOOL_TIP_IN_WHAT, -1,
-                IN_WHAT_VALUES[2], false, 0, IN_WHAT_VALUES),
-            new SearchOptionsFieldAttr(4, "Part:", TOOL_TIP_PART, -1,
-                PART_VALUES[0], false, 0, PART_VALUES),
-            new SearchOptionsFieldAttr(5, "Format:", TOOL_TIP_FORMAT, -1,
-                FORMAT_VALUES[0], false, 0, FORMAT_VALUES),
-            new SearchOptionsFieldAttr(6, "Oper:", TOOL_TIP_OPER, -1,
-                OPER_VALUES_NOT_TREE[0], false, 0, OPER_VALUES_NOT_TREE),
-            new SearchOptionsFieldAttr(7, "ForWhat:", TOOL_TIP_FOR_WHAT, -1,
-                FOR_WHAT_VALUES[0], false, 0, FOR_WHAT_VALUES),
-            new SearchOptionsFieldAttr(8, "Bool:", TOOL_TIP_BOOL, -1,
-                BOOL_VALUES[0], false, 0, BOOL_VALUES),
-            new SearchOptionsFieldAttr(9, "InWhat:", TOOL_TIP_IN_WHAT, -1,
-                IN_WHAT_VALUES[2], false, 1, IN_WHAT_VALUES),
-            new SearchOptionsFieldAttr(10, "Part:", TOOL_TIP_PART, -1,
-                PART_VALUES[0], false, 1, PART_VALUES),
-            new SearchOptionsFieldAttr(11, "Format:", TOOL_TIP_FORMAT, -1,
-                FORMAT_VALUES[1], false, 1, FORMAT_VALUES),
-            new SearchOptionsFieldAttr(12, "Oper:", TOOL_TIP_OPER, -1,
-                OPER_VALUES_NOT_TREE[0], false, 1, OPER_VALUES_NOT_TREE),
-            new SearchOptionsFieldAttr(13, "ForWhat:", TOOL_TIP_FOR_WHAT, -1,
-                FOR_WHAT_VALUES[0], false, 1, FOR_WHAT_VALUES),
-            new SearchOptionsFieldAttr(14, "Bool:", TOOL_TIP_BOOL, -1,
-                BOOL_VALUES[0], false, 1, BOOL_VALUES),
-            new SearchOptionsFieldAttr(15, "InWhat:", TOOL_TIP_IN_WHAT, -1,
-                IN_WHAT_VALUES[2], false, 2, IN_WHAT_VALUES),
-            new SearchOptionsFieldAttr(16, "Part:", TOOL_TIP_PART, -1,
-                PART_VALUES[0], false, 2, PART_VALUES),
-            new SearchOptionsFieldAttr(17, "Format:", TOOL_TIP_FORMAT, -1,
-                FORMAT_VALUES[2], false, 2, FORMAT_VALUES),
-            new SearchOptionsFieldAttr(18, "Oper:", TOOL_TIP_OPER, -1,
-                OPER_VALUES_TREE[0], false, 2, OPER_VALUES_TREE),
-            new SearchOptionsFieldAttr(19, "ForWhat:", TOOL_TIP_FOR_WHAT, -1,
-                FOR_WHAT_VALUES[0], false, 2, FOR_WHAT_VALUES),
-            new SearchOptionsFieldAttr(20, "Bool:", TOOL_TIP_BOOL, -1,
-                BOOL_VALUES[0], false, 2, BOOL_VALUES),
-            new SearchOptionsFieldAttr(21, "InWhat:", TOOL_TIP_IN_WHAT, -1,
-                IN_WHAT_VALUES[2], false, 3, IN_WHAT_VALUES),
-            new SearchOptionsFieldAttr(22, "Part:", TOOL_TIP_PART, -1,
-                PART_VALUES[0], false, 3, PART_VALUES),
-            new SearchOptionsFieldAttr(23, "Format:", TOOL_TIP_FORMAT, -1,
-                "ParseStmt", false, 3, FORMAT_VALUES),
-            new SearchOptionsFieldAttr(24, TOOL_TIP_OPER, "Oper:", -1, "<=",
-                false, 3, OPER_VALUES_TREE),
-            new SearchOptionsFieldAttr(25, "ForWhat:", TOOL_TIP_FOR_WHAT, -1,
-                FOR_WHAT_VALUES[0], false, 3, FOR_WHAT_VALUES),
-            new SearchOptionsFieldAttr(26, "Bool:", TOOL_TIP_BOOL, -1,
-                BOOL_VALUES[0], false, 3, BOOL_VALUES),
-            new SearchOptionsFieldAttr(27, "  ExclLabels:",
+            new SearchOptionsFieldAttr(IN_WHAT_0_FIELD_ID, "InWhat:",
+                TOOL_TIP_IN_WHAT, -1, IN_WHAT_VALUES[2], false, 0,
+                IN_WHAT_VALUES),
+            new SearchOptionsFieldAttr(PART_0_FIELD_ID, "Part:", TOOL_TIP_PART,
+                -1, PART_VALUES[0], false, 0, PART_VALUES),
+            new SearchOptionsFieldAttr(FORMAT_0_FIELD_ID, "Format:",
+                TOOL_TIP_FORMAT, -1, FORMAT_VALUES[0], false, 0, FORMAT_VALUES),
+            new SearchOptionsFieldAttr(OPER_0_FIELD_ID, "Oper:", TOOL_TIP_OPER,
+                -1, OPER_VALUES_NOT_TREE[0], false, 0, OPER_VALUES_NOT_TREE),
+            new SearchOptionsFieldAttr(FOR_WHAT_0_FIELD_ID, "ForWhat:",
+                TOOL_TIP_FOR_WHAT, -1, FOR_WHAT_VALUES[0], false, 0,
+                FOR_WHAT_VALUES),
+            new SearchOptionsFieldAttr(BOOL_0_FIELD_ID, "Bool:", TOOL_TIP_BOOL,
+                -1, BOOL_VALUES[0], false, 0, BOOL_VALUES),
+            new SearchOptionsFieldAttr(IN_WHAT_1_FIELD_ID, "InWhat:",
+                TOOL_TIP_IN_WHAT, -1, IN_WHAT_VALUES[2], false, 1,
+                IN_WHAT_VALUES),
+            new SearchOptionsFieldAttr(PART_1_FIELD_ID, "Part:", TOOL_TIP_PART,
+                -1, PART_VALUES[0], false, 1, PART_VALUES),
+            new SearchOptionsFieldAttr(FORMAT_1_FIELD_ID, "Format:",
+                TOOL_TIP_FORMAT, -1, FORMAT_VALUES[1], false, 1, FORMAT_VALUES),
+            new SearchOptionsFieldAttr(OPER_1_FIELD_ID, "Oper:", TOOL_TIP_OPER,
+                -1, OPER_VALUES_NOT_TREE[0], false, 1, OPER_VALUES_NOT_TREE),
+            new SearchOptionsFieldAttr(FOR_WHAT_1_FIELD_ID, "ForWhat:",
+                TOOL_TIP_FOR_WHAT, -1, FOR_WHAT_VALUES[0], false, 1,
+                FOR_WHAT_VALUES),
+            new SearchOptionsFieldAttr(BOOL_1_FIELD_ID, "Bool:", TOOL_TIP_BOOL,
+                -1, BOOL_VALUES[0], false, 1, BOOL_VALUES),
+            new SearchOptionsFieldAttr(IN_WHAT_2_FIELD_ID, "InWhat:",
+                TOOL_TIP_IN_WHAT, -1, IN_WHAT_VALUES[2], false, 2,
+                IN_WHAT_VALUES),
+            new SearchOptionsFieldAttr(PART_2_FIELD_ID, "Part:", TOOL_TIP_PART,
+                -1, PART_VALUES[0], false, 2, PART_VALUES),
+            new SearchOptionsFieldAttr(FORMAT_2_FIELD_ID, "Format:",
+                TOOL_TIP_FORMAT, -1, FORMAT_VALUES[2], false, 2, FORMAT_VALUES),
+            new SearchOptionsFieldAttr(OPER_2_FIELD_ID, "Oper:", TOOL_TIP_OPER,
+                -1, OPER_VALUES_TREE[0], false, 2, OPER_VALUES_TREE),
+            new SearchOptionsFieldAttr(FOR_WHAT_2_FIELD_ID, "ForWhat:",
+                TOOL_TIP_FOR_WHAT, -1, FOR_WHAT_VALUES[0], false, 2,
+                FOR_WHAT_VALUES),
+            new SearchOptionsFieldAttr(BOOL_2_FIELD_ID, "Bool:", TOOL_TIP_BOOL,
+                -1, BOOL_VALUES[0], false, 2, BOOL_VALUES),
+            new SearchOptionsFieldAttr(IN_WHAT_3_FIELD_ID, "InWhat:",
+                TOOL_TIP_IN_WHAT, -1, IN_WHAT_VALUES[2], false, 3,
+                IN_WHAT_VALUES),
+            new SearchOptionsFieldAttr(PART_3_FIELD_ID, "Part:", TOOL_TIP_PART,
+                -1, PART_VALUES[0], false, 3, PART_VALUES),
+            new SearchOptionsFieldAttr(FORMAT_3_FIELD_ID, "Format:",
+                TOOL_TIP_FORMAT, -1, "ParseStmt", false, 3, FORMAT_VALUES),
+            new SearchOptionsFieldAttr(OPER_3_FIELD_ID, TOOL_TIP_OPER, "Oper:",
+                -1, "<=", false, 3, OPER_VALUES_TREE),
+            new SearchOptionsFieldAttr(FOR_WHAT_3_FIELD_ID, "ForWhat:",
+                TOOL_TIP_FOR_WHAT, -1, FOR_WHAT_VALUES[0], false, 3,
+                FOR_WHAT_VALUES),
+            new SearchOptionsFieldAttr(BOOL_3_FIELD_ID, "Bool:", TOOL_TIP_BOOL,
+                -1, BOOL_VALUES[0], false, 3, BOOL_VALUES),
+            new SearchOptionsFieldAttr(EXCL_LABELS_FIELD_ID, "  ExclLabels:",
                 TOOL_TIP_EXCL_LABELS, 15, "", true, -1, null),
-            new SearchOptionsFieldAttr(28, "MinProofRefs:    ",
-                TOOL_TIP_MIN_PROOF_REFS, 6, "0", true, -1, null),
-            new SearchOptionsFieldAttr(29, " ResultsChecked:  ",
-                TOOL_TIP_RESULTS_CHECKED, 6, "0", true, -1, null),
-            new SearchOptionsFieldAttr(30, " MaxTime:      ",
+            new SearchOptionsFieldAttr(MIN_PROOF_REFS_FIELD_ID,
+                "MinProofRefs:    ", TOOL_TIP_MIN_PROOF_REFS, 6, "0", true, -1,
+                null),
+            new SearchOptionsFieldAttr(RESULTS_CHECKED_FIELD_ID,
+                " ResultsChecked:  ", TOOL_TIP_RESULTS_CHECKED, 6, "0", true,
+                -1, null),
+            new SearchOptionsFieldAttr(MAX_TIME_FIELD_ID, " MaxTime:      ",
                 TOOL_TIP_MAX_TIME, 6, "1", true, -1, null),
-            new SearchOptionsFieldAttr(31, "MinHyps:         ",
+            new SearchOptionsFieldAttr(MIN_HYPS_FIELD_ID, "MinHyps:         ",
                 TOOL_TIP_MIN_HYPS, 6, "0", true, -1, null),
-            new SearchOptionsFieldAttr(32, " MaxExtResults:   ",
-                TOOL_TIP_MAX_EXT_RESULTS, 6, "0", true, -1, null),
-            new SearchOptionsFieldAttr(33, " Substitutions:",
-                TOOL_TIP_SUBSTITUTIONS, -1, "true", true, -1, null),
-            new SearchOptionsFieldAttr(34, "MaxHyps:         ",
+            new SearchOptionsFieldAttr(MAX_EXT_RESULTS_FIELD_ID,
+                " MaxExtResults:   ", TOOL_TIP_MAX_EXT_RESULTS, 6, "0", true,
+                -1, null),
+            new SearchOptionsFieldAttr(SUBSTITUTIONS_FIELD_ID,
+                " Substitutions:", TOOL_TIP_SUBSTITUTIONS, -1, "true", true,
+                -1, null),
+            new SearchOptionsFieldAttr(MAX_HYPS_FIELD_ID, "MaxHyps:         ",
                 TOOL_TIP_MAX_HYPS, 6, "99", true, -1, null),
-            new SearchOptionsFieldAttr(35, " MaxIncompHyps:   ",
-                TOOL_TIP_MAX_INCOMP_HYPS, 6, "0", true, -1, null),
-            new SearchOptionsFieldAttr(36, " Comments:     ",
+            new SearchOptionsFieldAttr(MAX_INCOMP_HYPS_FIELD_ID,
+                " MaxIncompHyps:   ", TOOL_TIP_MAX_INCOMP_HYPS, 6, "0", true,
+                -1, null),
+            new SearchOptionsFieldAttr(COMMENTS_FIELD_ID, " Comments:     ",
                 TOOL_TIP_COMMENTS, -1, "true", true, -1, null),
-            new SearchOptionsFieldAttr(37, "MaxResults:      ",
-                TOOL_TIP_MAX_RESULTS, 6, "999999", true, -1, null),
-            new SearchOptionsFieldAttr(38, " PrevStepsChecked:",
-                TOOL_TIP_PREV_STEPS_CHECKED, 6, "0", true, -1, null),
-            new SearchOptionsFieldAttr(39, " AutoSelect:   ",
+            new SearchOptionsFieldAttr(MAX_RESULTS_FIELD_ID,
+                "MaxResults:      ", TOOL_TIP_MAX_RESULTS, 6, "999999", true,
+                -1, null),
+            new SearchOptionsFieldAttr(PREV_STEPS_CHECKED_FIELD_ID,
+                " PrevStepsChecked:", TOOL_TIP_PREV_STEPS_CHECKED, 6, "0",
+                true, -1, null),
+            new SearchOptionsFieldAttr(AUTO_SELECT_FIELD_ID, " AutoSelect:   ",
                 TOOL_TIP_AUTO_SELECT, 6, "false", true, -1, null),
-            new SearchOptionsFieldAttr(40, "ChapSecHierarchy:",
-                TOOL_TIP_CHAP_SEC_HIERARCHY, -1, "", true, -1,
-                CHAP_SEC_HIERARCHY_VALUES),
-            new SearchOptionsFieldAttr(41, " ReuseDerivSteps: ",
-                TOOL_TIP_REUSE_DERIV_STEPS, -1, "false", true, -1, null),
-            new SearchOptionsFieldAttr(42, " Stats:        ", TOOL_TIP_STATS,
-                6, "5", true, -1, null),
-            new SearchOptionsFieldAttr(43, "FromChap:  ", TOOL_TIP_FROM_CHAP,
-                -1, "", true, -1, null),
-            new SearchOptionsFieldAttr(44, "FromSec:   ", TOOL_TIP_FROM_SEC,
-                -1, "", true, -1, null),
-            new SearchOptionsFieldAttr(45, "ThruChap:  ", TOOL_TIP_THRU_CHAP,
-                -1, "", true, -1, null),
-            new SearchOptionsFieldAttr(46, "ThruSec:   ", TOOL_TIP_THRU_SEC,
-                -1, "", true, -1, null),
-            new SearchOptionsFieldAttr(47, "OutputSort:", TOOL_TIP_OUTPUT_SORT,
-                -1, OUTPUT_SORT_VALUES[0], true, -1, OUTPUT_SORT_VALUES)};
+            new SearchOptionsFieldAttr(CHAP_SEC_HIERARCHY_FIELD_ID,
+                "ChapSecHierarchy:", TOOL_TIP_CHAP_SEC_HIERARCHY, -1, "", true,
+                -1, CHAP_SEC_HIERARCHY_VALUES),
+            new SearchOptionsFieldAttr(REUSE_DERIV_STEPS_FIELD_ID,
+                " ReuseDerivSteps: ", TOOL_TIP_REUSE_DERIV_STEPS, -1, "false",
+                true, -1, null),
+            new SearchOptionsFieldAttr(STATS_FIELD_ID, " Stats:        ",
+                TOOL_TIP_STATS, 6, "5", true, -1, null),
+            new SearchOptionsFieldAttr(FROM_CHAP_FIELD_ID, "FromChap:  ",
+                TOOL_TIP_FROM_CHAP, -1, "", true, -1, null),
+            new SearchOptionsFieldAttr(FROM_SEC_FIELD_ID, "FromSec:   ",
+                TOOL_TIP_FROM_SEC, -1, "", true, -1, null),
+            new SearchOptionsFieldAttr(THRU_CHAP_FIELD_ID, "ThruChap:  ",
+                TOOL_TIP_THRU_CHAP, -1, "", true, -1, null),
+            new SearchOptionsFieldAttr(THRU_SEC_FIELD_ID, "ThruSec:   ",
+                TOOL_TIP_THRU_SEC, -1, "", true, -1, null),
+            new SearchOptionsFieldAttr(OUTPUT_SORT_FIELD_ID, "OutputSort:",
+                TOOL_TIP_OUTPUT_SORT, -1, OUTPUT_SORT_VALUES[0], true, -1,
+                OUTPUT_SORT_VALUES)};
     public static final int SEARCH_BUTTON_ID = 0;
     public static final int CANCEL_BUTTON_ID = 1;
     public static final int NEW_BUTTON_ID = 2;
@@ -412,57 +482,67 @@ public class SearchOptionsConstants {
     public static final String TOOL_TIP_SEARCH = "Run the search!";
     public static final String TOOL_TIP_CANCEL = "Cancel the search.";
     public static final String TOOL_TIP_NEW = "Begin a new search.";
-    public static final String TOOL_TIP_REFINE = "Refine the prior search using its Search Results as input.";
-    public static final String TOOL_TIP_SET_DEF = "Set defaults to current Search Data/Control values (except ForWhat:)";
-    public static final String TOOL_TIP_PA = "Jump to the Proof Assistant window (without searching.)";
-    public static final String TOOL_TIP_SR = "Jump to the Search Results window (without searching.)";
+    public static final String TOOL_TIP_REFINE = "Refine the prior search using"
+        + " its Search Results as input.";
+    public static final String TOOL_TIP_SET_DEF = "Set defaults to current"
+        + " Search Data/Control values (except ForWhat:)";
+    public static final String TOOL_TIP_PA = "Jump to the Proof Assistant window"
+        + " (without searching.)";
+    public static final String TOOL_TIP_SR = "Jump to the Search Results window"
+        + " (without searching.)";
     public static final String TOOL_TIP_HELP = "Display Help for Search Options.";
     public static final String TOOL_TIP_PLUS = "Increase Font Size For Search Options.";
     public static final String TOOL_TIP_MINUS = "Decrease Font Size For Search Options.";
-    public static final String TOOL_TIP_RESET_DATA = "Reset the Search Data fields to the default settings.";
+    public static final String TOOL_TIP_RESET_DATA = "Reset the Search Data"
+        + " fields to the default settings.";
     public static final String TOOL_TIP_RESET_CONTROLS = "Reset the Search Control"
         + " fields to the default settings.";
     public static final SearchOptionsButtonAttr BUTTON_ATTR[] = {
-            new SearchOptionsButtonAttr(0, "Search", TOOL_TIP_SEARCH),
-            new SearchOptionsButtonAttr(1, "Cancel", TOOL_TIP_CANCEL),
-            new SearchOptionsButtonAttr(2, "New:", TOOL_TIP_NEW),
-            new SearchOptionsButtonAttr(3, "Refine", TOOL_TIP_REFINE),
-            new SearchOptionsButtonAttr(4, "SetDef", TOOL_TIP_SET_DEF),
-            new SearchOptionsButtonAttr(5, "PA", TOOL_TIP_PA),
-            new SearchOptionsButtonAttr(6, "SR", TOOL_TIP_SR),
-            new SearchOptionsButtonAttr(7, "Help", TOOL_TIP_HELP),
-            new SearchOptionsButtonAttr(8, "+", TOOL_TIP_PLUS),
-            new SearchOptionsButtonAttr(9, "-", TOOL_TIP_MINUS),
-            new SearchOptionsButtonAttr(10, "ResetData", TOOL_TIP_RESET_DATA),
-            new SearchOptionsButtonAttr(11, "ResetControls",
-                TOOL_TIP_RESET_CONTROLS)};
+            new SearchOptionsButtonAttr(SEARCH_BUTTON_ID, "Search",
+                TOOL_TIP_SEARCH),
+            new SearchOptionsButtonAttr(CANCEL_BUTTON_ID, "Cancel",
+                TOOL_TIP_CANCEL),
+            new SearchOptionsButtonAttr(NEW_BUTTON_ID, "New:", TOOL_TIP_NEW),
+            new SearchOptionsButtonAttr(REFINE_BUTTON_ID, "Refine",
+                TOOL_TIP_REFINE),
+            new SearchOptionsButtonAttr(SET_DEF_BUTTON_ID, "SetDef",
+                TOOL_TIP_SET_DEF),
+            new SearchOptionsButtonAttr(PA_BUTTON_ID, "PA", TOOL_TIP_PA),
+            new SearchOptionsButtonAttr(SR_BUTTON_ID, "SR", TOOL_TIP_SR),
+            new SearchOptionsButtonAttr(HELP_BUTTON_ID, "Help", TOOL_TIP_HELP),
+            new SearchOptionsButtonAttr(PLUS_BUTTON_ID, "+", TOOL_TIP_PLUS),
+            new SearchOptionsButtonAttr(MINUS_BUTTON_ID, "-", TOOL_TIP_MINUS),
+            new SearchOptionsButtonAttr(RESET_DATA_BUTTON_ID, "ResetData",
+                TOOL_TIP_RESET_DATA),
+            new SearchOptionsButtonAttr(RESET_CONTROLS_BUTTON_ID,
+                "ResetControls", TOOL_TIP_RESET_CONTROLS)};
     public static final String GUI_EDIT_MENU_CUT_ITEM_TEXT = "Cut";
     public static final String GUI_EDIT_MENU_COPY_ITEM_TEXT = "Copy";
     public static final String GUI_EDIT_MENU_PASTE_ITEM_TEXT = "Paste";
     public static final String SEARCH_OPTIONS_ERROR_TITLE = "Search Options Error";
-    public static final String ERRMSG_FIELD_ATTR_TABLE_LOAD_ERROR = "A-SO-0101 SearchOptionsConstants.FIELD_ATTR[i].fieldId not equal to ";
-    public static final String ERRMSG_SEARCH_ARGS_TABLE_LOAD_ERROR = "A-SO-0102 SearchArgs.arg[i].getFieldId() not equal to ";
-    public static final String ERRMSG_BUTTON_ATTR_TABLE_LOAD_ERROR = "A-SO-0103 SearchOptionsConstants.BUTTON_ATTR[i].buttonId not equal to ";
-    // public static final String ERRMSG_ARG_CHECK_BOX_TEXT_INVALID_1 =
-    // "A-SO-0201 Severe program bug found: SearchArgsCheckBox text value not equal to 'true' or 'false'. Value = .";
-    public static final String ERRMSG_ARG_CHECK_BOX_TEXT_INVALID_2 = " fieldId = ";
-    public static final String ERRMSG_ARG_CHECK_BOX_TEXT_INVALID_3 = " field label = ";
-    // public static final String ERRMSG_SO_CHECK_BOX_TEXT_INVALID_1 =
-    // "A-SO-0301 Severe program bug found: SearchOptionsJCheckBox text value not equal to 'true' or 'false'. Value = .";
-    // public static final String ERRMSG_SO_CHECK_BOX_TEXT_INVALID_2 =
-    // " fieldId = ";
-    // public static final String ERRMSG_SO_CHECK_BOX_TEXT_INVALID_3 =
-    // " field label = ";
-    public static final String ERRMSG_ARG_INTEGER_TEXT_INVALID_1 = "A-SO-0501 Severe program bug found: SearchArgsInt text value not numeric. Value = .";
-    public static final String ERRMSG_ARG_INTEGER_TEXT_INVALID_2 = " fieldId = ";
-    public static final String ERRMSG_ARG_INTEGER_TEXT_INVALID_3 = " field label = ";
-    public static final String ERRMSG_IN_WHAT_SEL_INVALID_1 = "A-SO-0601 Severe program bug found: InWhatScrnMap selected item invalid. Item value = ";
-    public static final String ERRMSG_PART_SEL_INVALID_1 = "A-SO-0701 Severe program bug found: PartScrnMap selected item invalid. Item value = ";
-    public static final String ERRMSG_FORMAT_SEL_INVALID_1 = "A-SO-0801 Severe program bug found: FormatScrnMap selected item invalid. Item value = ";
-    public static final String ERRMSG_OPER_SEL_INVALID_1 = "A-SO-0901 Severe program bug found: OperScrnMap selected item invalid. Item value = ";
-    public static final String ERRMSG_FROM_CHAP_SEL_INVALID_1 = "A-SO-1001 Severe program bug found: FromChapScrnMap selected item invalid. Item value = ";
-    public static final String ERRMSG_THRU_CHAP_SEL_INVALID_1 = "A-SO-1101 Severe program bug found: ThruChapScrnMap selected item invalid. Item value = ";
-    public static final String ERRMSG_UNRECOGNIZED_BUTTON_ID_1 = "A-SO-1202 Unrecognized Button pressed. buttonId = ";
+    public static final String ERRMSG_FIELD_ATTR_TABLE_LOAD_ERROR = "A-SO-0101"
+        + " SearchOptionsConstants.FIELD_ATTR[i].fieldId not equal to ";
+    public static final String ERRMSG_SEARCH_ARGS_TABLE_LOAD_ERROR = "A-SO-0102"
+        + " SearchArgs.arg[i].getFieldId() not equal to ";
+    public static final String ERRMSG_BUTTON_ATTR_TABLE_LOAD_ERROR = "A-SO-0103"
+        + " SearchOptionsConstants.BUTTON_ATTR[i].buttonId not equal to ";
+    public static final String ERRMSG_ARG_INTEGER_TEXT_INVALID = "A-SO-0501"
+        + " Severe program bug found: SearchArgsInt text value not numeric."
+        + " Value = %s. fieldId = %d field label = %s";
+    public static final String ERRMSG_IN_WHAT_SEL_INVALID = "A-SO-0601"
+        + " Severe program bug found: InWhatScrnMap selected item invalid. Item value = %s";
+    public static final String ERRMSG_PART_SEL_INVALID = "A-SO-0701"
+        + " Severe program bug found: PartScrnMap selected item invalid. Item value = %s";
+    public static final String ERRMSG_FORMAT_SEL_INVALID = "A-SO-0801"
+        + " Severe program bug found: FormatScrnMap selected item invalid. Item value = %s";
+    public static final String ERRMSG_OPER_SEL_INVALID = "A-SO-0901"
+        + " Severe program bug found: OperScrnMap selected item invalid. Item value = %s";
+    public static final String ERRMSG_FROM_CHAP_SEL_INVALID = "A-SO-1001"
+        + " Severe program bug found: FromChapScrnMap selected item invalid. Item value = %s";
+    public static final String ERRMSG_THRU_CHAP_SEL_INVALID = "A-SO-1101"
+        + " Severe program bug found: ThruChapScrnMap selected item invalid. Item value = %s";
+    public static final String ERRMSG_UNRECOGNIZED_BUTTON_ID = "A-SO-1202"
+        + " Unrecognized Button pressed. buttonId = %d";
     public static final String STEP_SEARCH_TITLE_LITERAL_1 = "Step Search: Options - ";
     public static final String GENERAL_SEARCH_TITLE_LITERAL_1 = "General Search: Options - ";
     public static final String STEP_SEARCH_TITLE_STEP_LITERAL = "Step ";
