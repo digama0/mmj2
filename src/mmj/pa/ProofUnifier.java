@@ -387,10 +387,7 @@ public class ProofUnifier {
 
         final boolean hasHardDjVarsErrors = buildProofsAndErrorUnUnifiedSteps();
 
-        if (d.proofTree != null && !hasHardDjVarsErrors) {
-            // Well, Allrighty then!
-        }
-        else
+        if (d.proofTree == null || hasHardDjVarsErrors)
             reportAlternateUnifications();
     }
     /*
@@ -623,8 +620,7 @@ public class ProofUnifier {
 
             if (derivStep.unificationStatus == PaConstants.UNIFICATION_STATUS_NOT_UNIFIED)
             {
-                if (derivStep.hypFldIncomplete) {}
-                else
+                if (!derivStep.hypFldIncomplete)
                     markUnificationFailure();
             }
             else if (derivStep.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED

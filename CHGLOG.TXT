@@ -68,6 +68,12 @@
       performed by Unify now count as a single edit, so you only have to Ctrl-Z
       once to undo/redo unification.
 
+    * Fixed a bug wherein the cursor is positioned at steps with LocalRefs (say
+      because the user just typed the LocalRef), but since the step is deleted
+      during processing, the cursor loses its anchor and ends up at the top of
+      the file. (Very annoying!) Now, the cursor is never positioned at LocalRef
+      steps and instead goes to the first non-LocalRef step after the cursor.
+
 ================================================================================
 1-Nov-2011:
 

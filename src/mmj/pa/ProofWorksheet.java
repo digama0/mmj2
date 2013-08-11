@@ -1167,13 +1167,22 @@ public class ProofWorksheet {
                     + PaConstants.ERRMSG_SHR_BAD_3 + nextToken);
             final String stepField = validateStepField(prefixField,
                 fields.get(0));
-            final String hypField = fields.size() > 1
+            final String hypField = fields.size() > 2
                 && !fields.get(1).isEmpty() ? fields.get(1) : null;
             String refField = null;
             String localRefField = null;
-            if (fields.size() > 2 && !fields.get(2).isEmpty()) {
-                refField = fields.get(2);
-                if (refField.charAt(0) == PaConstants.LOCAL_REF_ESCAPE_CHAR) {
+            if (fields.size() > 3)
+                triggerLoadStructureException(PaConstants.ERRMSG_SHR_BAD2_1
+                    + getErrorLabelIfPossible() + PaConstants.ERRMSG_SHR_BAD2_2
+                    + stepField + PaConstants.ERRMSG_SHR_BAD2_3
+                    + (int)proofTextTokenizer.getCurrentLineNbr()
+                    + PaConstants.ERRMSG_SHR_BAD2_4 + nextToken);
+            if (fields.size() > 1) {
+                refField = fields.get(fields.size() - 1);
+                if (refField.isEmpty())
+                    refField = null;
+                else if (refField.charAt(0) == PaConstants.LOCAL_REF_ESCAPE_CHAR)
+                {
                     if (refField.length() > 1)
                         localRefField = refField.substring(1);
                     else
@@ -1181,12 +1190,6 @@ public class ProofWorksheet {
                     refField = null;
                 }
             }
-            if (fields.size() > 3)
-                triggerLoadStructureException(PaConstants.ERRMSG_SHR_BAD2_1
-                    + getErrorLabelIfPossible() + PaConstants.ERRMSG_SHR_BAD2_2
-                    + stepField + PaConstants.ERRMSG_SHR_BAD2_3
-                    + (int)proofTextTokenizer.getCurrentLineNbr()
-                    + PaConstants.ERRMSG_SHR_BAD2_4 + nextToken);
 
             final int lineStartCharNbr = (int)proofTextTokenizer
                 .getCurrentCharNbr();
@@ -1398,13 +1401,12 @@ public class ProofWorksheet {
         if (inputCursorPos == -1
             || proofInputCursor.cursorIsSet
             || inputCursorPos > proofTextTokenizer.getCurrentCharNbr()
-                - nextToken.length())
+                - nextToken.length() || proofWorkStmt instanceof ProofStepStmt
+            && ((ProofStepStmt)proofWorkStmt).localRef != null)
             return false;
-        else {
-            proofInputCursor.setCursorAtProofWorkStmt(proofWorkStmt,
-                PaConstants.FIELD_ID_REF);
-            return true;
-        }
+        proofInputCursor.setCursorAtProofWorkStmt(proofWorkStmt,
+            PaConstants.FIELD_ID_REF);
+        return true;
     }
 
     private void setInputCursorPosIfHere(final int inputCursorPos,
@@ -1414,9 +1416,8 @@ public class ProofWorksheet {
             || proofInputCursor.cursorIsSet
             || inputCursorPos > proofTextTokenizer.getCurrentCharNbr()
                 - nextToken.length())
-        {}
-        else
-            proofInputCursor.setCursorAtCaret(inputCursorPos, -1, -1);
+            return;
+        proofInputCursor.setCursorAtCaret(inputCursorPos, -1, -1);
     }
 
     /*
