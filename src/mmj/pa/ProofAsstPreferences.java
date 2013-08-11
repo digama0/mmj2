@@ -81,6 +81,7 @@ public class ProofAsstPreferences {
 
     private int errorMessageRows;
     private int errorMessageColumns;
+    private boolean maximized;
     private boolean textAtTop;
 
     private TMFFPreferences tmffPreferences;
@@ -157,6 +158,7 @@ public class ProofAsstPreferences {
 
         errorMessageRows = PaConstants.PROOF_ASST_ERROR_MESSAGE_ROWS_DEFAULT;
         errorMessageColumns = PaConstants.PROOF_ASST_ERROR_MESSAGE_COLUMNS_DEFAULT;
+        maximized = PaConstants.PROOF_ASST_MAXIMIZED_DEFAULT;
         textAtTop = PaConstants.PROOF_ASST_TEXT_AT_TOP_DEFAULT;
 
         tmffPreferences = new TMFFPreferences();
@@ -455,9 +457,27 @@ public class ProofAsstPreferences {
     }
 
     /**
+     * Set Proof Maximized option for ProofAsstGUI.
+     * 
+     * @param maximized true to maximize the view on startup
+     */
+    public void setMaximized(final boolean maximized) {
+        this.maximized = maximized;
+    }
+
+    /**
+     * Get Proof Maximized option for ProofAsstGUI.
+     * 
+     * @return the value
+     */
+    public boolean getMaximized() {
+        return maximized;
+    }
+
+    /**
      * Set Proof Text At Top option for ProofAsstGUI.
      * 
-     * @param textAtTop number of error message columns.
+     * @param textAtTop true to put the main view at the top and messages below.
      */
     public void setTextAtTop(final boolean textAtTop) {
         this.textAtTop = textAtTop;

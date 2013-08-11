@@ -7,7 +7,7 @@
 //*456789012345678 (80-character line to adjust editor window) 456789012345678*/
 
 /*
- * UtilConstants.java  0.11 11/01/2011
+ * UtilConstants.java  0.13 08/11/2011
  *
  * Nov-26-2005:
  *     -->fix comment(s).RunParmFile lines at 1. Doh.
@@ -113,9 +113,13 @@
  *     - Modified for MMJ2 Paths Enhancement
  *     - Added code for MMJ2FailPopupWindow
  *     - Set: MAX_STATEMENT_PRINT_COUNT_DEFAULT = 9999 (was 99999)
- *     
+ *
  * Version 0.12 - Aug-01-2013:
  *     - Add "ProofAsstProofFormat"                 RunParm
+ *
+ * Version 0.13 - Aug-11-2013:
+ *     - Add "ProofAsstLookAndFeel"                 RunParm
+ *     - Add "ProofAsstMaximized"                   RunParm
  */
 
 package mmj.util;
@@ -1070,6 +1074,18 @@ public class UtilConstants {
     // ----------------------------------------------------------
 
     /**
+     * ProofAsstLookAndFeel
+     * <p>
+     * {@code "ProofAsstLookAndFeel"}: choose between any installed looks on
+     * your Java installation. Default is {@code Metal}, and available options
+     * on my computer are {@code Metal}, {@code Nimbus}, {@code CDE/Motif},
+     * {@code Windows}, and {@code Windows Classic}, although the specific
+     * options depend on your installation. Input an invalid option here to get
+     * a list of available options in the error message.
+     */
+    public static final String RUNPARM_PROOF_ASST_LOOK_AND_FEEL = "ProofAsstLookAndFeel";
+
+    /**
      * ProofAsstDjVarsSoftErrors
      * 
      * <pre>
@@ -1247,6 +1263,20 @@ public class UtilConstants {
      * </pre>
      */
     public static final String RUNPARM_PROOF_ASST_TEXT_ROWS = "ProofAsstTextRows";
+
+    /**
+     * ProofAsstMaximized
+     * 
+     * <pre>
+     * "ProofAsstMaximized":
+     *     'yes' or 'no' or 'y' or 'n' or 'Y' or 'N'
+     * 
+     * If 'yes', maximizes the ProofAsstGUI main window on startup.
+     * 
+     * Optional, default is 'no' (see mmj.pa.PaConstants.java)
+     * </pre>
+     */
+    public static final String RUNPARM_PROOF_ASST_MAXIMIZED = "ProofAsstMaximized";
 
     /**
      * ProofAsstTextAtTop

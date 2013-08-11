@@ -90,7 +90,7 @@ public class AuxFrameGUI {
         frameFontSize += 2;
         if (frameFontSize > 72)
             frameFontSize = 72;
-        final Font font = frameFont.deriveFont(frameFontSize);
+        final Font font = frameFont.deriveFont((float)frameFontSize);
         frameFont = font;
         frameTextArea.setFont(frameFont);
         frame.pack();
@@ -100,7 +100,7 @@ public class AuxFrameGUI {
         frameFontSize -= 2;
         if (frameFontSize < 8)
             frameFontSize = 8;
-        final Font font = frameFont.deriveFont(frameFontSize);
+        final Font font = frameFont.deriveFont((float)frameFontSize);
         frameFont = font;
         frameTextArea.setFont(frameFont);
         frame.pack();

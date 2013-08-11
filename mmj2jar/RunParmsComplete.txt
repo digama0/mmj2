@@ -114,6 +114,7 @@ StepSelectorShowSubstitutions,true
 * Proof Assistant
 *==================================================
 RecheckProofAsstUsingProofVerifier,no
+ProofAsstLookAndFeel,Metal
 ProofAsstUndoRedoEnabled,yes
 ProofAsstFontSize,14
 ProofAsstFontBold,yes
@@ -122,6 +123,7 @@ ProofAsstForegroundColorRGB,0,0,0
 ProofAsstBackgroundColorRGB,255,255,255
 ProofAsstFormulaLeftCol,20
 ProofAsstFormulaRightCol,79
+ProofAsstMaximized,no
 ProofAsstTextAtTop,yes
 ProofAsstTextColumns,80
 ProofAsstTextRows,21

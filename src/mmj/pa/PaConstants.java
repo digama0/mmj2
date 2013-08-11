@@ -503,6 +503,11 @@ public class PaConstants {
     public static final int PROOF_ASST_ERROR_MESSAGE_COLUMNS_DEFAULT = 80;
 
     /**
+     * PROOF_ASST_MAXIMIZED_DEFAULT = no
+     */
+    public static final boolean PROOF_ASST_MAXIMIZED_DEFAULT = false;
+
+    /**
      * PROOF_ASST_TEXT_AT_TOP_DEFAULT = yes
      */
     public static final boolean PROOF_ASST_TEXT_AT_TOP_DEFAULT = true;
@@ -2902,6 +2907,12 @@ public class PaConstants {
     public static final String ERRMSG_INVALID_PROOF_FORMAT_1 = "E-PA-0508 Invalid option input = ";
     public static final String ERRMSG_INVALID_PROOF_FORMAT_2 = " for ProofAsstProofFormat RunParm. Choices are:"
         + " 'Normal', 'Packed', and 'Compressed'.";
+
+    public static final String ERRMSG_SET_LOOK_AND_FEEL = "E-PA-0509"
+        + " Unable to set Look and Feel option '%s'. Available options are %s.";
+
+    public static final String ERRMSG_LOOK_AND_FEEL_MISSING = "E-PA-0510"
+        + " Look and Feel option '%s' does not exist. Available options are %s.";
 
     // ----------------------------------------------------------
     // Messages from DerivationStep.java

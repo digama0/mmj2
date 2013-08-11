@@ -306,14 +306,16 @@ public class SearchMgr {
 
     int increaseSearchOptionsFontSize() {
         searchOptionsFontSize = computeLargerNewFontSize(searchOptionsFontSize);
-        final Font font = searchOptionsFont.deriveFont(searchOptionsFontSize);
+        final Font font = searchOptionsFont
+            .deriveFont((float)searchOptionsFontSize);
         searchOptionsFont = font;
         return searchOptionsFontSize;
     }
 
     int decreaseSearchOptionsFontSize() {
         searchOptionsFontSize = computeSmallerNewFontSize(searchOptionsFontSize);
-        final Font font = searchOptionsFont.deriveFont(searchOptionsFontSize);
+        final Font font = searchOptionsFont
+            .deriveFont((float)searchOptionsFontSize);
         searchOptionsFont = font;
         return searchOptionsFontSize;
     }
@@ -382,14 +384,16 @@ public class SearchMgr {
 
     int increaseSearchResultsFontSize() {
         searchResultsFontSize = computeLargerNewFontSize(searchResultsFontSize);
-        final Font font = searchResultsFont.deriveFont(searchResultsFontSize);
+        final Font font = searchResultsFont
+            .deriveFont((float)searchResultsFontSize);
         searchResultsFont = font;
         return searchResultsFontSize;
     }
 
     int decreaseSearchResultsFontSize() {
         searchResultsFontSize = computeSmallerNewFontSize(searchResultsFontSize);
-        final Font font = searchResultsFont.deriveFont(searchResultsFontSize);
+        final Font font = searchResultsFont
+            .deriveFont((float)searchResultsFontSize);
         searchResultsFont = font;
         return searchResultsFontSize;
     }

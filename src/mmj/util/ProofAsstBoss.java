@@ -7,7 +7,7 @@
 //*456789012345678 (80-character line to adjust editor window) 456789012345678*/
 
 /*
- * ProofAsstBoss.java  0.10 11/01/2011
+ * ProofAsstBoss.java  0.12 11/01/2011
  *
  * Version 0.02:
  *     - New RunParms to support Proof Assistant "Derive" feature:
@@ -61,7 +61,12 @@
  *     -->Modified for mmj2 Paths Enhancement
  *        --> added mmj2Path arg to editProofAsstProofFolder() call
  *     -->Added code for MMJ2FailPopupWindow
-
+ *
+ * Version 0.11 - Aug-01-2013:
+ *     - Add "ProofAsstProofFormat"                 RunParm
+ *
+ * Version 0.12 - Aug-11-2013:
+ *     - Add "ProofAsstLookAndFeel"                 RunParm
  */
 
 package mmj.util;
@@ -69,6 +74,9 @@ package mmj.util;
 import java.awt.Color;
 import java.io.*;
 import java.util.*;
+
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 
 import mmj.lang.*;
 import mmj.mmio.MMIOException;
@@ -127,6 +135,13 @@ public class ProofAsstBoss extends Boss {
             proofAsst = null;
             proofAsstPreferences = null;
             return false; // not "consumed"
+        }
+
+        if (runParm.name
+            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_LOOK_AND_FEEL) == 0)
+        {
+            editProofAsstLookAndFeel(runParm);
+            return true;
         }
 
         if (runParm.name
@@ -210,6 +225,13 @@ public class ProofAsstBoss extends Boss {
             .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_ERROR_MESSAGE_COLUMNS) == 0)
         {
             editProofAsstErrorMessageColumns(runParm);
+            return true;
+        }
+
+        if (runParm.name
+            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_MAXIMIZED) == 0)
+        {
+            editProofAsstMaximized(runParm);
             return true;
         }
 
@@ -463,6 +485,38 @@ public class ProofAsstBoss extends Boss {
         return proofAsst;
     }
 
+    /**
+     * edit ProofAsstLookAndFeel RunParm.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurred
+     */
+    protected void editProofAsstLookAndFeel(final RunParmArrayEntry runParm)
+        throws IllegalArgumentException
+    {
+
+        editRunParmValuesLength(runParm,
+            UtilConstants.RUNPARM_PROOF_ASST_LOOK_AND_FEEL, 1);
+
+        final LookAndFeelInfo[] lafs = UIManager.getInstalledLookAndFeels();
+        final String[] names = new String[lafs.length];
+        for (int i = 0; i < lafs.length; i++)
+            names[i] = lafs[i].getName();
+        try {
+            for (final LookAndFeelInfo info : lafs)
+                if (runParm.values[0].trim().equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    return;
+                }
+        } catch (final Exception e) {
+            throw new IllegalArgumentException(LangException.format(
+                PaConstants.ERRMSG_SET_LOOK_AND_FEEL, runParm.values[0],
+                Arrays.toString(names)));
+        }
+        throw new IllegalArgumentException(LangException.format(
+            PaConstants.ERRMSG_LOOK_AND_FEEL_MISSING, runParm.values[0],
+            Arrays.toString(names)));
+    }
     /**
      * edit ProofAsstDjVarsSoftErrors RunParm.
      * 
@@ -728,6 +782,21 @@ public class ProofAsstBoss extends Boss {
                     + UtilConstants.ERRMSG_RUNPARM_PA_ERR_MSG_COL_RANGE_ERR_2
                     + PaConstants.PROOF_ASST_ERROR_MESSAGE_COLUMNS_MAX);
         getProofAsstPreferences().setErrorMessageColumns(textColumns);
+    }
+
+    /**
+     * Validate ProofAsstMaximized RunParm.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurred
+     */
+    protected void editProofAsstMaximized(final RunParmArrayEntry runParm)
+        throws IllegalArgumentException
+    {
+
+        final boolean enabled = editYesNoRunParm(runParm,
+            UtilConstants.RUNPARM_PROOF_ASST_MAXIMIZED, 1);
+        getProofAsstPreferences().setMaximized(enabled);
     }
 
     /**

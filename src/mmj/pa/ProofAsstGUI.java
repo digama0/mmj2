@@ -7,7 +7,7 @@
 //*456789012345678 (80-character line to adjust editor window) 456789012345678*/
 
 /*
- * ProofAsstGUI.java  0.10 11/01/2011
+ * ProofAsstGUI.java  0.11 08/11/2013
  *
  * Version 0.02:
  * ==> Add renumber feature
@@ -86,6 +86,9 @@
  * ==> Added Ctrl keys for File menu items:
  *     - fileOpenItem     = Ctrl-P
  *     - fileGetProofItem = Ctrl-G
+ *
+ * Version 0.11 - Aug-11-2013:
+ * ==> Add Maximization on startup.
  */
 
 package mmj.pa;
@@ -3317,13 +3320,17 @@ public class ProofAsstGUI {
 
     private static class FrameShower implements Runnable {
         JFrame f;
+        private final boolean max;
 
-        public FrameShower(final JFrame frame) {
+        public FrameShower(final JFrame frame, final boolean maximize) {
             f = frame;
+            max = maximize;
         }
         public void run() {
             f.pack();
             f.setVisible(true);
+            if (max)
+                f.setExtendedState(f.getExtendedState() | Frame.MAXIMIZED_BOTH);
         }
     }
 
@@ -3331,11 +3338,11 @@ public class ProofAsstGUI {
      * Show the GUI's main frame (screen).
      */
     public void showMainFrame() {
-        showFrame(getMainFrame());
+        showFrame(getMainFrame(), proofAsstPreferences.getMaximized());
     }
 
-    private void showFrame(final JFrame jFrame) {
-        final Runnable runner = new FrameShower(jFrame);
+    private void showFrame(final JFrame jFrame, final boolean maximize) {
+        final Runnable runner = new FrameShower(jFrame, maximize);
 
         EventQueue.invokeLater(runner);
     }
