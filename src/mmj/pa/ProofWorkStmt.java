@@ -245,19 +245,18 @@ public abstract class ProofWorkStmt {
                 outToken = outSB.toString();
                 if (w.proofTextTokenizer.getCurrentColumnNbr() == lenT)
                     // oops, token begins in col 1, new stmt!
-                    w.triggerLoadStructureException(PaConstants.ERRMSG_STMT_NOT_DONE_1
-                        + w.getErrorLabelIfPossible()
-                        + PaConstants.ERRMSG_STMT_NOT_DONE_2 + outToken);
+                    w.triggerLoadStructureException(
+                        PaConstants.ERRMSG_STMT_NOT_DONE,
+                        w.getErrorLabelIfPossible(), outToken);
             }
             else
-                w.triggerLoadStructureException(PaConstants.ERRMSG_PREMATURE_END_1
-                    + w.getErrorLabelIfPossible()
-                    + PaConstants.ERRMSG_PREMATURE_END_2);
+                w.triggerLoadStructureException(
+                    PaConstants.ERRMSG_PREMATURE_END,
+                    w.getErrorLabelIfPossible());
         }
         else
-            w.triggerLoadStructureException(PaConstants.ERRMSG_PREMATURE_END2_1
-                + w.getErrorLabelIfPossible()
-                + PaConstants.ERRMSG_PREMATURE_END2_2);
+            w.triggerLoadStructureException(PaConstants.ERRMSG_PREMATURE_END2,
+                w.getErrorLabelIfPossible());
         return outToken;
     }
 
@@ -320,9 +319,8 @@ public abstract class ProofWorkStmt {
                     // token starting in col 1, new Stmt!
                     return outToken;
                 // oops, token does not begin in col 1.
-                w.triggerLoadStructureException(PaConstants.ERRMSG_EXTRA_TOKEN_1
-                    + w.getErrorLabelIfPossible()
-                    + PaConstants.ERRMSG_EXTRA_TOKEN_2 + outToken);
+                w.triggerLoadStructureException(PaConstants.ERRMSG_EXTRA_TOKEN,
+                    w.getErrorLabelIfPossible(), outToken);
 
             }
         }

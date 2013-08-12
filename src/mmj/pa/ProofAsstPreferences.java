@@ -57,10 +57,10 @@ import java.io.File;
 import java.util.Set;
 import java.util.TreeSet;
 
-import mmj.lang.Assrt;
-import mmj.lang.WorkVarManager;
+import mmj.lang.*;
 import mmj.search.SearchMgr;
 import mmj.tmff.TMFFPreferences;
+import mmj.util.UtilConstants;
 
 /**
  * Holds user settings/preferences used by the Proof Assistant.
@@ -1045,7 +1045,7 @@ public class ProofAsstPreferences {
             if (element.getFamily().compareToIgnoreCase(n) == 0)
                 return element.getFamily();
         throw new ProofAsstException(
-            PaConstants.ERRMSG_INVALID_FONT_FAMILY_NAME_1 + familyName);
+            PaConstants.ERRMSG_INVALID_FONT_FAMILY_NAME, familyName);
     }
 
     /**
@@ -1078,7 +1078,7 @@ public class ProofAsstPreferences {
         if (n < 1
             || n > PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_TABLE.length)
             throw new ProofAsstException(
-                PaConstants.ERRMSG_INVALID_SOFT_DJ_ERROR_OPTION_NBR + option);
+                PaConstants.ERRMSG_INVALID_SOFT_DJ_ERROR_OPTION_NBR, option);
 
         return PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_TABLE[n - 1];
     }
@@ -1290,8 +1290,8 @@ public class ProofAsstPreferences {
         if (n < 1
             || n > PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE.length)
             throw new ProofAsstException(
-                PaConstants.ERRMSG_INVALID_INCOMPLETE_STEP_CURSOR_OPTION_NBR
-                    + option);
+                PaConstants.ERRMSG_INVALID_INCOMPLETE_STEP_CURSOR_OPTION_NBR,
+                option);
 
         return PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE[n - 1];
     }
@@ -1443,10 +1443,10 @@ public class ProofAsstPreferences {
 
         if (n < 1 || n > PaConstants.STEP_SELECTOR_MAX_RESULTS_MAXIMUM)
             throw new IllegalArgumentException(
-                PaConstants.ERRMSG_INVALID_STEP_SELECTOR_MAX_RESULTS_NBR_1
-                    + maxResultsString
-                    + PaConstants.ERRMSG_INVALID_STEP_SELECTOR_MAX_RESULTS_NBR_2
-                    + PaConstants.STEP_SELECTOR_MAX_RESULTS_MAXIMUM);
+                LangException.format(
+                    PaConstants.ERRMSG_INVALID_STEP_SELECTOR_MAX_RESULTS_NBR,
+                    maxResultsString,
+                    PaConstants.STEP_SELECTOR_MAX_RESULTS_MAXIMUM));
 
         return n;
     }
@@ -1496,9 +1496,9 @@ public class ProofAsstPreferences {
         else
             s = " ";
 
-        throw new IllegalArgumentException(
-            PaConstants.ERRMSG_INVALID_STEP_SELECTOR_SHOW_SUBSTITUTIONS_1 + s
-                + PaConstants.ERRMSG_INVALID_STEP_SELECTOR_SHOW_SUBSTITUTIONS_2);
+        throw new IllegalArgumentException(LangException.format(
+            PaConstants.ERRMSG_INVALID_BOOLEAN,
+            UtilConstants.RUNPARM_STEP_SELECTOR_SHOW_SUBSTITUTIONS, s));
     }
 
     /**

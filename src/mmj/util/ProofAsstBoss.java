@@ -533,12 +533,10 @@ public class ProofAsstBoss extends Boss {
             runParm.values[0].trim()))
             return; // ok, valid!
 
-        throw new IllegalArgumentException(
-            PaConstants.ERRMSG_INVALID_SOFT_DJ_VARS_ERROR_OPTION_1
-                + runParm.values[0]
-                + PaConstants.ERRMSG_INVALID_SOFT_DJ_VARS_ERROR_OPTION_2);
+        throw new IllegalArgumentException(LangException.format(
+            PaConstants.ERRMSG_INVALID_SOFT_DJ_VARS_ERROR_OPTION,
+            runParm.values[0]));
     }
-
     /**
      * edit ProofAsstProofFormat RunParm.
      * 
@@ -555,9 +553,8 @@ public class ProofAsstBoss extends Boss {
             runParm.values[0].trim()))
             return; // ok, valid!
 
-        throw new IllegalArgumentException(
-            PaConstants.ERRMSG_INVALID_PROOF_FORMAT_1 + runParm.values[0]
-                + PaConstants.ERRMSG_INVALID_PROOF_FORMAT_2);
+        throw new IllegalArgumentException(LangException.format(
+            PaConstants.ERRMSG_INVALID_PROOF_FORMAT, runParm.values[0]));
     }
 
     /**
@@ -576,10 +573,9 @@ public class ProofAsstBoss extends Boss {
             runParm.values[0].trim()))
             return; // ok, valid!
 
-        throw new IllegalArgumentException(
-            PaConstants.ERRMSG_INVALID_INCOMPLETE_STEP_CURSOR_1
-                + runParm.values[0]
-                + PaConstants.ERRMSG_INVALID_INCOMPLETE_STEP_CURSOR_2);
+        throw new IllegalArgumentException(LangException.format(
+            PaConstants.ERRMSG_INVALID_INCOMPLETE_STEP_CURSOR,
+            runParm.values[0]));
     }
 
     /**

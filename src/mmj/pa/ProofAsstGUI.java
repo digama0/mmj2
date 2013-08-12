@@ -104,8 +104,7 @@ import javax.swing.text.DefaultEditorKit;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 
-import mmj.lang.Messages;
-import mmj.lang.Theorem;
+import mmj.lang.*;
 import mmj.tl.*;
 import mmj.tmff.TMFFConstants;
 import mmj.tmff.TMFFException;
@@ -1956,8 +1955,8 @@ public class ProofAsstGUI {
             theorem = proofAsst.getTheorem(s);
             if (theorem != null)
                 return theorem;
-            promptString = PaConstants.PA_GUI_GET_THEOREM_LABEL_PROMPT_2_1 + s
-                + PaConstants.PA_GUI_GET_THEOREM_LABEL_PROMPT_2_2;
+            promptString = LangException.format(
+                PaConstants.PA_GUI_GET_THEOREM_LABEL_PROMPT_2, s);
         }
     }
 
@@ -1973,9 +1972,8 @@ public class ProofAsstGUI {
                 file = fileChooser.getSelectedFile();
                 if (file.exists())
                     startRequestAction(new RequestFileOpen(file));
-                else if (getYesNoAnswer(PaConstants.ERRMSG_PA_GUI_FILE_NOTFND_1
-                    + file.getAbsolutePath()
-                    + PaConstants.ERRMSG_PA_GUI_FILE_NOTFND_2) == JOptionPane.YES_OPTION)
+                else if (getYesNoAnswer(PaConstants.ERRMSG_PA_GUI_FILE_NOTFND,
+                    file.getAbsolutePath()) == JOptionPane.YES_OPTION)
                     continue;
             }
             break;
@@ -1985,22 +1983,19 @@ public class ProofAsstGUI {
     private int saveIfAskedBeforeExit(final String actionCaption) {
         int answer = JOptionPane.NO_OPTION;
         if (proofTextChanged.getChanges()) {
-            answer = getYesNoCancelAnswer(PaConstants.ERRMSG_PA_GUI_SAVE_BEFORE_ACTION_1
-                + actionCaption
-                + PaConstants.ERRMSG_PA_GUI_SAVE_BEFORE_ACTION_2);
+            answer = getYesNoCancelAnswer(
+                PaConstants.ERRMSG_PA_GUI_SAVE_BEFORE_ACTION, actionCaption);
 
             if (answer == JOptionPane.YES_OPTION)
                 doFileSaveAction(true); // saving before exit...
         }
         return answer;
     }
-
     private int saveIfAskedBeforeAction(final String actionCaption) {
         int answer = JOptionPane.NO_OPTION;
         if (proofTextChanged.getChanges()) {
-            answer = getYesNoCancelAnswer(PaConstants.ERRMSG_PA_GUI_SAVE_BEFORE_ACTION_1
-                + actionCaption
-                + PaConstants.ERRMSG_PA_GUI_SAVE_BEFORE_ACTION_2);
+            answer = getYesNoCancelAnswer(
+                PaConstants.ERRMSG_PA_GUI_SAVE_BEFORE_ACTION, actionCaption);
 
             if (answer == JOptionPane.YES_OPTION)
                 doFileSaveAction(false);
@@ -2008,11 +2003,14 @@ public class ProofAsstGUI {
         return answer;
     }
 
-    private int getYesNoCancelAnswer(final String messageAboutIt) {
+    private int getYesNoCancelAnswer(final String messageAboutIt,
+        final Object... args)
+    {
         int answer = JOptionPane.YES_OPTION; // default
         try {
             answer = JOptionPane.showConfirmDialog(getMainFrame(),
-                messageAboutIt, PaConstants.PA_GUI_YES_NO_CANCEL_TITLE,
+                LangException.format(messageAboutIt, args),
+                PaConstants.PA_GUI_YES_NO_CANCEL_TITLE,
                 JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
         } catch (final HeadlessException e) {}
 
@@ -2037,8 +2035,8 @@ public class ProofAsstGUI {
             r.close();
             newProofText = sb.toString();
         } catch (final IOException e) {
-            newProofText = PaConstants.ERRMSG_PA_GUI_READ_PROOF_IO_ERR_1
-                + e.getMessage();
+            newProofText = LangException.format(
+                PaConstants.ERRMSG_PA_GUI_READ_PROOF_IO_ERR, e.getMessage());
         }
 
         return newProofText;
@@ -2080,9 +2078,8 @@ public class ProofAsstGUI {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             newFile = fileChooser.getSelectedFile();
             if (newFile.exists()) {
-                if (getYesNoAnswer(PaConstants.ERRMSG_PA_GUI_FILE_EXISTS_1
-                    + newFile.getAbsolutePath()
-                    + PaConstants.ERRMSG_PA_GUI_FILE_EXISTS_2) == JOptionPane.YES_OPTION)
+                if (getYesNoAnswer(PaConstants.ERRMSG_PA_GUI_FILE_EXISTS,
+                    newFile.getAbsolutePath()) == JOptionPane.YES_OPTION)
                     saveOldProofTextFile(newFile);
                 else
                     fileChooser.setSelectedFile(oldFile);
@@ -2109,12 +2106,15 @@ public class ProofAsstGUI {
         }
     }
 
-    private int getYesNoAnswer(final String messageAboutIt) {
+    private int getYesNoAnswer(final String messageAboutIt,
+        final Object... args)
+    {
         int answer = JOptionPane.YES_OPTION; // default
         try {
             answer = JOptionPane.showConfirmDialog(getMainFrame(),
-                messageAboutIt, PaConstants.PA_GUI_YES_NO_TITLE,
-                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                LangException.format(messageAboutIt, args),
+                PaConstants.PA_GUI_YES_NO_TITLE, JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE);
         } catch (final HeadlessException e) {}
         return answer;
     }
@@ -2126,10 +2126,10 @@ public class ProofAsstGUI {
             w.write(s, 0, s.length());
             w.close();
         } catch (final Throwable e) {
-            final String s = PaConstants.ERRMSG_PA_GUI_SAVE_IO_ERROR_1
-                + e.getMessage();
-
-            JOptionPane.showMessageDialog(getMainFrame(), s,
+            JOptionPane.showMessageDialog(
+                getMainFrame(),
+                LangException.format(PaConstants.ERRMSG_PA_GUI_SAVE_IO_ERROR,
+                    e.getMessage()),
                 PaConstants.PA_GUI_SAVE_NEW_PROOF_TEXT_TITLE,
                 JOptionPane.ERROR_MESSAGE);
         }
@@ -2146,9 +2146,10 @@ public class ProofAsstGUI {
             w.write(s, 0, s.length());
             w.close();
         } catch (final Throwable e) {
-            final String s = PaConstants.ERRMSG_PA_GUI_SAVE_IO_ERROR2_1
-                + e.getMessage();
-            JOptionPane.showMessageDialog(getMainFrame(), s,
+            JOptionPane.showMessageDialog(
+                getMainFrame(),
+                LangException.format(PaConstants.ERRMSG_PA_GUI_SAVE_IO_ERROR,
+                    e.getMessage()),
                 PaConstants.PA_GUI_SAVE_OLD_PROOF_TEXT_TITLE,
                 JOptionPane.ERROR_MESSAGE);
         }
@@ -2335,7 +2336,7 @@ public class ProofAsstGUI {
         String errMsg;
         while (true) {
             returnVal = mmtFolderChooser.showDialog(getMainFrame(),
-                PaConstants.PA_GUI_SET_TL_MMT_FOLDER_OPTION_PROMPT_1);
+                PaConstants.PA_GUI_SET_TL_MMT_FOLDER_OPTION_PROMPT);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 file = mmtFolderChooser.getSelectedFile();
                 errMsg = tlPreferences.setMMTFolder(file);

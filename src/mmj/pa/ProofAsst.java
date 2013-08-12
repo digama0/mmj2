@@ -363,9 +363,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                                                                            // :)
 
         if (theorem == null) {
-            messages
-                .accumErrorMessage(PaConstants.ERRMSG_PA_FORWARD_SEARCH_NOTFND_1
-                    + PaConstants.ERRMSG_FWD_BACK_DIAGNOSTICS_1);
+            messages.accumErrorMessage(
+                PaConstants.ERRMSG_PA_FWD_BACK_SEARCH_NOTFND, "forward");
 
             w = new ProofWorksheet(proofAsstPreferences, messages, // oh yeah,
                                                                    // we got 'em
@@ -462,9 +461,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         // not a retry :)
         final Theorem theorem = getTheoremForward(currProofMaxSeq, false);
         if (theorem == null) {
-            messages
-                .accumErrorMessage(PaConstants.ERRMSG_PA_FORWARD_SEARCH_NOTFND_1
-                    + PaConstants.ERRMSG_FWD_BACK_DIAGNOSTICS_1);
+            messages.accumErrorMessage(
+                PaConstants.ERRMSG_PA_FWD_BACK_SEARCH_NOTFND, "forward");
             w = new ProofWorksheet(proofAsstPreferences,
             /* oh yeah, we got 'em */messages, /* structuralErrors=*/true,
                 cursor);
@@ -518,9 +516,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                                                                             // :)
 
         if (theorem == null) {
-            messages
-                .accumErrorMessage(PaConstants.ERRMSG_PA_BACKWARD_SEARCH_NOTFND_1
-                    + PaConstants.ERRMSG_FWD_BACK_DIAGNOSTICS_1);
+            messages.accumErrorMessage(
+                PaConstants.ERRMSG_PA_FWD_BACK_SEARCH_NOTFND, "backward");
             w = new ProofWorksheet(proofAsstPreferences, messages, // oh yeah,
                                                                    // we got 'em
                 true, // structuralErrors
@@ -832,11 +829,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 theoremLabel = proofWorksheet.getTheoremLabel();
 
                 if (proofWorksheet.hasStructuralErrors()) {
-                    messages
-                        .accumErrorMessage(PaConstants.ERRMSG_PA_IMPORT_STRUCT_ERROR_1
-                            + PaConstants.ERRMSG_THEOREM_CAPTION
-                            + getErrorLabelIfPossible(proofWorksheet)
-                            + PaConstants.ERRMSG_PA_IMPORT_STRUCT_ERROR_2);
+                    messages.accumErrorMessage(
+                        PaConstants.ERRMSG_PA_IMPORT_STRUCT_ERROR,
+                        getErrorLabelIfPossible(proofWorksheet));
                     break;
                 }
 
@@ -916,27 +911,20 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         }
 
         catch (final ProofAsstException e) {
-            messages.accumErrorMessage(PaConstants.ERRMSG_PA_IMPORT_ERROR_1
-                + PaConstants.ERRMSG_THEOREM_CAPTION
-                + getErrorLabelIfPossible(proofWorksheet)
-                + PaConstants.ERRMSG_PA_IMPORT_ERROR_2 + e.getMessage());
+            messages.accumErrorMessage(PaConstants.ERRMSG_PA_IMPORT_ERROR,
+                getErrorLabelIfPossible(proofWorksheet), e.getMessage());
             proofWorksheet = updateWorksheetWithException(proofWorksheet,
                 e.lineNbr, e.columnNbr, e.charNbr);
         } catch (final MMIOError e) {
-            messages.accumErrorMessage(PaConstants.ERRMSG_PA_IMPORT_IO_ERROR_1
-                + PaConstants.ERRMSG_THEOREM_CAPTION
-                + getErrorLabelIfPossible(proofWorksheet)
-                + PaConstants.ERRMSG_PA_IMPORT_IO_ERROR_2 + e.getMessage());
+            messages.accumErrorMessage(PaConstants.ERRMSG_PA_IMPORT_IO_ERROR,
+                getErrorLabelIfPossible(proofWorksheet), e.getMessage());
             proofWorksheet = updateWorksheetWithException(proofWorksheet,
                 e.lineNbr, e.columnNbr, e.charNbr);
         } catch (final Exception e) {
             e.printStackTrace();
-            messages
-                .accumErrorMessage(PaConstants.ERRMSG_PA_IMPORT_SEVERE_ERROR_1
-                    + PaConstants.ERRMSG_THEOREM_CAPTION
-                    + getErrorLabelIfPossible(proofWorksheet)
-                    + PaConstants.ERRMSG_PA_IMPORT_SEVERE_ERROR_2
-                    + e.getMessage());
+            messages.accumErrorMessage(
+                PaConstants.ERRMSG_PA_IMPORT_SEVERE_ERROR,
+                getErrorLabelIfPossible(proofWorksheet), e.getMessage());
             proofWorksheet = updateWorksheetWithException(proofWorksheet, -1,
                 -1, -1);
         } finally {
@@ -1017,20 +1005,16 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 unifyProofWorksheet(proofWorksheet);
             }
             if (proofWorksheet.hasStructuralErrors()) {
-                messages
-                    .accumErrorMessage(PaConstants.ERRMSG_PA_IMPORT_STRUCT_ERROR_1
-                        + PaConstants.ERRMSG_THEOREM_CAPTION
-                        + getErrorLabelIfPossible(proofWorksheet)
-                        + PaConstants.ERRMSG_PA_IMPORT_STRUCT_ERROR_2);
+                messages.accumErrorMessage(
+                    PaConstants.ERRMSG_PA_IMPORT_STRUCT_ERROR,
+                    getErrorLabelIfPossible(proofWorksheet));
                 closeProofWorksheetParser(proofWorksheetParser);
                 return;
             }
             if (proofWorksheet.stepSelectorResults == null) {
-                messages
-                    .accumErrorMessage(PaConstants.ERRMSG_STEP_SELECTOR_BATCH_TEST_NO_RESULTS_1
-                        + PaConstants.ERRMSG_THEOREM_CAPTION
-                        + getErrorLabelIfPossible(proofWorksheet)
-                        + PaConstants.ERRMSG_STEP_SELECTOR_BATCH_TEST_NO_RESULTS_2);
+                messages.accumErrorMessage(
+                    PaConstants.ERRMSG_STEP_SELECTOR_BATCH_TEST_NO_RESULTS,
+                    getErrorLabelIfPossible(proofWorksheet));
                 closeProofWorksheetParser(proofWorksheetParser);
                 return;
             }
@@ -1042,14 +1026,10 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             if (selectionNumber < 0
                 || selectionNumber >= results.selectionArray.length)
             {
-                messages
-                    .accumErrorMessage(PaConstants.ERRMSG_STEP_SELECTOR_BATCH_TEST_INV_CHOICE_1
-                        + PaConstants.ERRMSG_THEOREM_CAPTION
-                        + getErrorLabelIfPossible(proofWorksheet)
-                        + PaConstants.ERRMSG_STEP_SELECTOR_BATCH_TEST_INV_CHOICE_2
-                        + selectionNumber
-                        + PaConstants.ERRMSG_STEP_SELECTOR_BATCH_TEST_INV_CHOICE_3
-                        + (results.selectionArray.length - 1));
+                messages.accumErrorMessage(
+                    PaConstants.ERRMSG_STEP_SELECTOR_BATCH_TEST_INV_CHOICE,
+                    getErrorLabelIfPossible(proofWorksheet), selectionNumber,
+                    results.selectionArray.length - 1);
                 closeProofWorksheetParser(proofWorksheetParser);
                 return;
             }
@@ -1057,18 +1037,10 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             final String step = results.step;
             final Assrt assrt = results.refArray[selectionNumber];
             final String selection = results.selectionArray[selectionNumber];
-            messages
-                .accumInfoMessage(PaConstants.ERRMSG_STEP_SELECTOR_BATCH_TEST_CHOICE_1
-                    + PaConstants.ERRMSG_THEOREM_CAPTION
-                    + getErrorLabelIfPossible(proofWorksheet)
-                    + PaConstants.ERRMSG_STEP_SELECTOR_BATCH_TEST_CHOICE_2
-                    + step
-                    + PaConstants.ERRMSG_STEP_SELECTOR_BATCH_TEST_CHOICE_3
-                    + selectionNumber
-                    + PaConstants.ERRMSG_STEP_SELECTOR_BATCH_TEST_CHOICE_4
-                    + assrt.getLabel()
-                    + PaConstants.ERRMSG_STEP_SELECTOR_BATCH_TEST_CHOICE_5
-                    + selection);
+            messages.accumInfoMessage(
+                PaConstants.ERRMSG_STEP_SELECTOR_BATCH_TEST_CHOICE,
+                getErrorLabelIfPossible(proofWorksheet), step, selectionNumber,
+                assrt.getLabel(), selection);
 
             final StepRequest stepRequestChoice = new StepRequest(
                 PaConstants.STEP_REQUEST_SELECTOR_CHOICE, results.step,
@@ -1086,27 +1058,20 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         }
 
         catch (final ProofAsstException e) {
-            messages.accumErrorMessage(PaConstants.ERRMSG_PA_IMPORT_ERROR_1
-                + PaConstants.ERRMSG_THEOREM_CAPTION
-                + getErrorLabelIfPossible(proofWorksheet)
-                + PaConstants.ERRMSG_PA_IMPORT_ERROR_2 + e.getMessage());
+            messages.accumErrorMessage(PaConstants.ERRMSG_PA_IMPORT_ERROR,
+                getErrorLabelIfPossible(proofWorksheet), e.getMessage());
             proofWorksheet = updateWorksheetWithException(proofWorksheet,
                 e.lineNbr, e.columnNbr, e.charNbr);
         } catch (final MMIOError e) {
-            messages.accumErrorMessage(PaConstants.ERRMSG_PA_IMPORT_IO_ERROR_1
-                + PaConstants.ERRMSG_THEOREM_CAPTION
-                + getErrorLabelIfPossible(proofWorksheet)
-                + PaConstants.ERRMSG_PA_IMPORT_IO_ERROR_2 + e.getMessage());
+            messages.accumErrorMessage(PaConstants.ERRMSG_PA_IMPORT_IO_ERROR,
+                getErrorLabelIfPossible(proofWorksheet), e.getMessage());
             proofWorksheet = updateWorksheetWithException(proofWorksheet,
                 e.lineNbr, e.columnNbr, e.charNbr);
         } catch (final Exception e) {
             e.printStackTrace();
-            messages
-                .accumErrorMessage(PaConstants.ERRMSG_PA_IMPORT_SEVERE_ERROR_1
-                    + PaConstants.ERRMSG_THEOREM_CAPTION
-                    + getErrorLabelIfPossible(proofWorksheet)
-                    + PaConstants.ERRMSG_PA_IMPORT_SEVERE_ERROR_2
-                    + e.getMessage());
+            messages.accumErrorMessage(
+                PaConstants.ERRMSG_PA_IMPORT_SEVERE_ERROR,
+                getErrorLabelIfPossible(proofWorksheet), e.getMessage());
             proofWorksheet = updateWorksheetWithException(proofWorksheet, -1,
                 -1, -1);
         } finally {
@@ -1265,20 +1230,15 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             proofWorksheet = updateWorksheetWithException(proofWorksheet,
                 e.lineNbr, e.columnNbr, e.charNbr);
         } catch (final MMIOError e) {
-            messages.accumErrorMessage(PaConstants.ERRMSG_PA_UNIFY_IO_ERROR_1
-                + PaConstants.ERRMSG_THEOREM_CAPTION
-                + getErrorLabelIfPossible(proofWorksheet)
-                + PaConstants.ERRMSG_PA_UNIFY_IO_ERROR_2 + e.getMessage());
+            messages.accumErrorMessage(PaConstants.ERRMSG_PA_UNIFY_IO_ERROR,
+                getErrorLabelIfPossible(proofWorksheet), e.getMessage());
             proofWorksheet = updateWorksheetWithException(proofWorksheet,
                 e.lineNbr, e.columnNbr, e.charNbr);
         } catch (final IOException e) {
             e.printStackTrace();
-            messages
-                .accumErrorMessage(PaConstants.ERRMSG_PA_UNIFY_SEVERE_ERROR_1
-                    + PaConstants.ERRMSG_THEOREM_CAPTION
-                    + getErrorLabelIfPossible(proofWorksheet)
-                    + PaConstants.ERRMSG_PA_UNIFY_SEVERE_ERROR_2
-                    + e.getMessage());
+            messages.accumErrorMessage(
+                PaConstants.ERRMSG_PA_UNIFY_SEVERE_ERROR,
+                getErrorLabelIfPossible(proofWorksheet), e.getMessage());
             proofWorksheet = updateWorksheetWithException(proofWorksheet, -1,
                 -1, -1);
         } finally {
@@ -1295,10 +1255,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     }
 
     private void printVolumeTestStats() {
-        messages.accumInfoMessage(PaConstants.ERRMSG_PA_TESTMSG_03_1
-            + nbrTestTheoremsProcessed + PaConstants.ERRMSG_PA_TESTMSG_03_2
-            + nbrTestNotProvedPerfectly + PaConstants.ERRMSG_PA_TESTMSG_03_3
-            + nbrTestProvedDifferently);
+        messages.accumInfoMessage(PaConstants.ERRMSG_PA_TESTMSG_03,
+            nbrTestTheoremsProcessed, nbrTestNotProvedPerfectly,
+            nbrTestProvedDifferently);
     }
 
     private void volumeTestOutputRoutine(final long startNanoTime,
@@ -1310,15 +1269,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         if (q == null) {
             ++nbrTestNotProvedPerfectly;
-            messages.accumInfoMessage(PaConstants.ERRMSG_PA_TESTMSG_01_1
-
-                + theorem.getLabel()
-//              + getErrorLabelIfPossible(proofWorksheet)
-
-                + PaConstants.ERRMSG_PA_TESTMSG_01_2
-                + (startNanoTime + 50000000) / endNanoTime
-                + PaConstants.ERRMSG_PA_TESTMSG_01_3 + 9999999
-                + PaConstants.ERRMSG_PA_TESTMSG_01_4 + " No qed step found!");
+            messages.accumInfoMessage(PaConstants.ERRMSG_PA_TESTMSG_01,
+                theorem.getLabel(), (startNanoTime + 50000000) / endNanoTime,
+                9999999, "No qed step found!");
             return;
         }
 
@@ -1342,14 +1295,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             ++nbrTestNotProvedPerfectly;
         }
 
-        messages.accumInfoMessage(PaConstants.ERRMSG_PA_TESTMSG_01_1
-
-            + theorem.getLabel()
-//          + getErrorLabelIfPossible(proofWorksheet)
-
-            + PaConstants.ERRMSG_PA_TESTMSG_01_2 + (startNanoTime + 50000000)
-            / endNanoTime + PaConstants.ERRMSG_PA_TESTMSG_01_3 + s
-            + PaConstants.ERRMSG_PA_TESTMSG_01_4 + PaConstants.STATUS_DESC[s]);
+        messages.accumInfoMessage(PaConstants.ERRMSG_PA_TESTMSG_01,
+            theorem.getLabel(), (startNanoTime + 50000000) / endNanoTime, s,
+            PaConstants.STATUS_DESC[s]);
 
         if (q != null) {
             Stmt[] newProof;
@@ -1396,14 +1344,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
             if (differenceFound) {
                 ++nbrTestProvedDifferently;
-                messages.accumInfoMessage(PaConstants.ERRMSG_PA_TESTMSG_02_1
-
-                    + theorem.getLabel()
-//          		+ getErrorLabelIfPossible(proofWorksheet)
-
-                    + PaConstants.ERRMSG_PA_TESTMSG_02_2 + oldStmtDiff
-                    + PaConstants.ERRMSG_PA_TESTMSG_02_3 + newStmtDiff
-                    + PaConstants.ERRMSG_PA_TESTMSG_02_4);
+                messages.accumInfoMessage(PaConstants.ERRMSG_PA_TESTMSG_02,
+                    theorem.getLabel(), oldStmtDiff, newStmtDiff);
             }
 
         }
@@ -1419,11 +1361,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             return;
 
         try {
-            outputBoss.sysOutPrint(PaConstants.PROOF_WORKSHEET_NEW_LINE
-                + PaConstants.ERRMSG_STEP_SELECTOR_RESULTS_PRINT_1
-                + PaConstants.ERRMSG_THEOREM_CAPTION + theoremLabel
-                + PaConstants.ERRMSG_STEP_SELECTOR_RESULTS_PRINT_2
-                + results.step + PaConstants.PROOF_WORKSHEET_NEW_LINE);
+            outputBoss.sysOutPrint(LangException.format(
+                PaConstants.ERRMSG_STEP_SELECTOR_RESULTS_PRINT, theoremLabel,
+                results.step));
             String label;
             for (int i = 0; i < results.refArray.length; i++) {
                 if (results.refArray[i] == null)
@@ -1436,14 +1376,12 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             }
         } catch (final IOException e) {
             e.printStackTrace();
-            throw new IllegalArgumentException(
-                PaConstants.ERRMSG_PA_PRINT_IO_ERROR_1
-                    + PaConstants.ERRMSG_THEOREM_CAPTION + theoremLabel
-                    + PaConstants.ERRMSG_PA_PRINT_IO_ERROR_2 + e.getMessage());
+            throw new IllegalArgumentException(LangException.format(
+                PaConstants.ERRMSG_PA_PRINT_IO_ERROR, theoremLabel,
+                e.getMessage()));
         }
 
     }
-
     private void closeProofWorksheetParser(
         final ProofWorksheetParser proofWorksheetParser)
     {
@@ -1455,8 +1393,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         final Theorem theorem = getTheorem(theoremLabel);
         if (theorem == null)
-            throw new IllegalArgumentException(
-                PaConstants.ERRMSG_PA_GET_THEOREM_NOT_FOUND_1 + theoremLabel);
+            throw new IllegalArgumentException(LangException.format(
+                PaConstants.ERRMSG_PA_GET_THEOREM_NOT_FOUND, theoremLabel));
         return exportOneTheorem(theorem);
     }
 
@@ -1482,22 +1420,18 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         final String proofText = proofWorksheet.getOutputProofText();
 
         if (proofText == null)
-            throw new IllegalArgumentException(
-                PaConstants.ERRMSG_PA_EXPORT_STRUCT_ERROR_1
-                    + PaConstants.ERRMSG_THEOREM_CAPTION
-                    + getErrorLabelIfPossible(proofWorksheet)
-                    + PaConstants.ERRMSG_PA_EXPORT_STRUCT_ERROR_2);
+            throw new IllegalArgumentException(LangException.format(
+                PaConstants.ERRMSG_PA_EXPORT_STRUCT_ERROR,
+                getErrorLabelIfPossible(proofWorksheet)));
 
         if (exportWriter != null)
             try {
                 exportWriter.write(proofText);
                 exportWriter.write('\n');
             } catch (final IOException e) {
-                throw new IllegalArgumentException(
-                    PaConstants.ERRMSG_PA_EXPORT_IO_ERROR_1
-                        + PaConstants.ERRMSG_THEOREM_CAPTION
-                        + getErrorLabelIfPossible(proofWorksheet)
-                        + PaConstants.ERRMSG_PA_EXPORT_IO_ERROR_2);
+                throw new IllegalArgumentException(LangException.format(
+                    PaConstants.ERRMSG_PA_EXPORT_IO_ERROR,
+                    getErrorLabelIfPossible(proofWorksheet), e.getMessage()));
             }
         return proofText;
     }
@@ -1587,18 +1521,14 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                     && proofWorksheet.proofSoftDjVarsErrorList != null
                     && !proofWorksheet.proofSoftDjVarsErrorList.isEmpty())
                     proofWorksheet.generateAndAddDjVarsStmts();
-                messages
-                    .accumInfoMessage(PaConstants.ERRMSG_PA_RPN_PROOF_GENERATED_1
-                        + PaConstants.ERRMSG_THEOREM_CAPTION
-                        + getErrorLabelIfPossible(proofWorksheet)
-                        + PaConstants.ERRMSG_PA_RPN_PROOF_GENERATED_2);
+                messages.accumInfoMessage(
+                    PaConstants.ERRMSG_PA_RPN_PROOF_GENERATED,
+                    getErrorLabelIfPossible(proofWorksheet));
             }
         }
         else
-            messages.accumInfoMessage(PaConstants.ERRMSG_PA_NOTHING_TO_UNIFY_1
-                + PaConstants.ERRMSG_THEOREM_CAPTION
-                + getErrorLabelIfPossible(proofWorksheet)
-                + PaConstants.ERRMSG_PA_NOTHING_TO_UNIFY_2);
+            messages.accumInfoMessage(PaConstants.ERRMSG_PA_NOTHING_TO_UNIFY,
+                getErrorLabelIfPossible(proofWorksheet));
         incompleteStepCursorPositioning(proofWorksheet);
     }
 
@@ -1667,10 +1597,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             outputBoss.sysOutPrint(PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING);
         } catch (final IOException e) {
             e.printStackTrace();
-            throw new IllegalArgumentException(
-                PaConstants.ERRMSG_PA_PRINT_IO_ERROR_1
-                    + PaConstants.ERRMSG_THEOREM_CAPTION + theoremLabel
-                    + PaConstants.ERRMSG_PA_PRINT_IO_ERROR_2 + e.getMessage());
+            throw new IllegalArgumentException(LangException.format(
+                PaConstants.ERRMSG_PA_PRINT_IO_ERROR, theoremLabel,
+                e.getMessage()));
         }
     }
 
@@ -1690,8 +1619,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             final Theorem theorem = getTheorem(startTheoremLabel);
             if (theorem == null)
                 throw new ProofAsstException(
-                    PaConstants.ERRMSG_PA_START_THEOREM_NOT_FOUND_1
-                        + startTheoremLabel);
+                    PaConstants.ERRMSG_PA_START_THEOREM_NOT_FOUND,
+                    startTheoremLabel);
             lowestMObjSeq = theorem.getSeq();
         }
 
@@ -1785,11 +1714,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         }
 
         if (!superfluous.isEmpty())
-            messages
-                .accumInfoMessage(PaConstants.ERRMSG_SUPERFLUOUS_MANDFRAME_DJVARS_1
-                    + proofWorksheet.theorem.getLabel()
-                    + PaConstants.ERRMSG_SUPERFLUOUS_MANDFRAME_DJVARS_2
-                    + superfluous);
+            messages.accumInfoMessage(
+                PaConstants.ERRMSG_SUPERFLUOUS_MANDFRAME_DJVARS,
+                proofWorksheet.theorem.getLabel(), superfluous);
     }
 
     private void importUpdateDJs(final ProofWorksheet proofWorksheet) {

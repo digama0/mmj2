@@ -227,36 +227,28 @@ public class DistinctVariablesStmt extends ProofWorkStmt {
     {
         final Sym sym = w.logicalSystem.getSymTbl().get(nextT);
         if (sym == null)
-            w.triggerLoadStructureException(PaConstants.ERRMSG_DV_SYM_ERR_1
-                + w.getErrorLabelIfPossible() + PaConstants.ERRMSG_DV_SYM_ERR_2
-                + nextT + PaConstants.ERRMSG_DV_SYM_ERR_3);
+            w.triggerLoadStructureException(PaConstants.ERRMSG_DV_SYM_ERR,
+                w.getErrorLabelIfPossible(), nextT);
 
         if (sym.getSeq() >= w.getMaxSeq())
-            w.triggerLoadStructureException(PaConstants.ERRMSG_DV_SYM_MAXSEQ_1
-                + w.getErrorLabelIfPossible()
-                + PaConstants.ERRMSG_DV_SYM_MAXSEQ_2 + nextT
-                + PaConstants.ERRMSG_DV_SYM_MAXSEQ_3);
+            w.triggerLoadStructureException(PaConstants.ERRMSG_DV_SYM_MAXSEQ,
+                w.getErrorLabelIfPossible(), nextT);
 
         if (!(sym instanceof Var))
-            w.triggerLoadStructureException(PaConstants.ERRMSG_DV_SYM_CNST_1
-                + w.getErrorLabelIfPossible()
-                + PaConstants.ERRMSG_DV_SYM_CNST_2 + nextT
-                + PaConstants.ERRMSG_DV_SYM_CNST_3);
+            w.triggerLoadStructureException(PaConstants.ERRMSG_DV_SYM_CNST,
+                w.getErrorLabelIfPossible(), nextT);
         final Var v = (Var)sym;
 
         if (w.getVarHypFromComboFrame(v) == null)
-            w.triggerLoadStructureException(PaConstants.ERRMSG_DV_VAR_SCOPE_ERR_1
-                + w.getErrorLabelIfPossible()
-                + PaConstants.ERRMSG_DV_VAR_SCOPE_ERR_2
-                + nextT
-                + PaConstants.ERRMSG_DV_VAR_SCOPE_ERR_3);
+            w.triggerLoadStructureException(
+                PaConstants.ERRMSG_DV_VAR_SCOPE_ERR,
+                w.getErrorLabelIfPossible(), nextT);
 
         final int found = dvList.indexOf(v);
         if (found == -1)
             dvList.add(v);
         else
-            w.triggerLoadStructureException(PaConstants.ERRMSG_DV_VAR_DUP_1
-                + w.getErrorLabelIfPossible() + PaConstants.ERRMSG_DV_VAR_DUP_2
-                + nextT + PaConstants.ERRMSG_DV_VAR_DUP_3);
+            w.triggerLoadStructureException(PaConstants.ERRMSG_DV_VAR_DUP,
+                w.getErrorLabelIfPossible(), nextT);
     }
 }

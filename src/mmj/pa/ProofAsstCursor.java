@@ -30,6 +30,8 @@
 
 package mmj.pa;
 
+import mmj.lang.LangException;
+
 /**
  * Simple data structure to hold caret/scroll params for the Proof Asst GUI.
  */
@@ -151,13 +153,9 @@ public class ProofAsstCursor {
             stmtDiagnosticInfo = " ";
         else
             stmtDiagnosticInfo = proofWorkStmt.getStmtDiagnosticInfo();
-        return PaConstants.ERRMSG_PA_CURSOR_INSTRUMENTATION_1 + theoremLabel
-            + PaConstants.ERRMSG_PA_CURSOR_INSTRUMENTATION_2
-            + stmtDiagnosticInfo
-            + PaConstants.ERRMSG_PA_CURSOR_INSTRUMENTATION_3 + fieldId
-            + PaConstants.ERRMSG_PA_CURSOR_INSTRUMENTATION_4 + caretCharNbr
-            + PaConstants.ERRMSG_PA_CURSOR_INSTRUMENTATION_5 + caretLine
-            + PaConstants.ERRMSG_PA_CURSOR_INSTRUMENTATION_6 + caretCol;
+        return LangException.format(
+            PaConstants.ERRMSG_PA_CURSOR_INSTRUMENTATION, theoremLabel,
+            stmtDiagnosticInfo, fieldId, caretCharNbr, caretLine, caretCol);
     }
 
     public void setDontScroll(final boolean dontScroll) {

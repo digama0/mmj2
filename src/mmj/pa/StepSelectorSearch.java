@@ -81,7 +81,7 @@ public class StepSelectorSearch {
 
         if (unifySearchList.isEmpty())
             throw new IllegalArgumentException(
-                PaConstants.ERRMSG_SELECTOR_SEARCH_ASSRT_LIST_EMPTY_1);
+                PaConstants.ERRMSG_SELECTOR_SEARCH_ASSRT_LIST_EMPTY);
 
 //        assrtArray = Assrt.sortListIntoArray(unifySearchList,
 //            Assrt.NBR_LOG_HYP_SEQ);
@@ -144,8 +144,8 @@ public class StepSelectorSearch {
              */
             if (element.formulaParseTree == null)
                 throw new VerifyException(
-                    PaConstants.ERRMSG_SELECTOR_SEARCH_NULL_PARSE_TREE_1
-                        + PaConstants.DOT_STEP_CAPTION + derivStep.step);
+                    PaConstants.ERRMSG_SELECTOR_SEARCH_NULL_PARSE_TREE,
+                    derivStep.step);
             ++nbrDerivStepHyps;
         }
 

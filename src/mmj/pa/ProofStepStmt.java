@@ -438,12 +438,9 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
         formulaStartCharNbr = (int)w.proofTextTokenizer.getCurrentCharNbr();
 
         if (!nextT.equals(w.getProvableLogicStmtTyp().getId()))
-            w.triggerLoadStructureException(PaConstants.ERRMSG_BAD_TYP_CD2_1
-                + w.getErrorLabelIfPossible()
-                + PaConstants.ERRMSG_BAD_TYP_CD2_2 + step
-                + PaConstants.ERRMSG_BAD_TYP_CD2_3 + nextT
-                + PaConstants.ERRMSG_BAD_TYP_CD2_4
-                + w.getProvableLogicStmtTyp().getId(), nextT.length());
+            w.triggerLoadStructureException(nextT.length(),
+                PaConstants.ERRMSG_BAD_TYP_CD2, w.getErrorLabelIfPossible(),
+                step, nextT, w.getProvableLogicStmtTyp().getId());
 
         final List<Sym> symList = new ArrayList<Sym>();
         symList.add(w.getProvableLogicStmtTyp());
@@ -459,39 +456,26 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
                         .alloc(nextT)) != null)
                     {
                         if (!workVarsOk)
-                            w.triggerLoadStructureException(
-                                PaConstants.ERRMSG_WV_LOC_ERR_1
-                                    + w.getErrorLabelIfPossible()
-                                    + PaConstants.ERRMSG_WV_LOC_ERR_2 + step
-                                    + PaConstants.ERRMSG_WV_LOC_ERR_3 + nextT
-                                    + PaConstants.ERRMSG_WV_LOC_ERR_4,
-                                nextT.length());
+                            w.triggerLoadStructureException(nextT.length(),
+                                PaConstants.ERRMSG_WV_LOC_ERR,
+                                w.getErrorLabelIfPossible(), step, nextT);
                         w.hasWorkVarsOrDerives = true;
                         accumWorkVarList((WorkVar)sym);
                     }
                     else
-                        w.triggerLoadStructureException(
-                            PaConstants.ERRMSG_SYM_NOTFND_1
-                                + w.getErrorLabelIfPossible()
-                                + PaConstants.ERRMSG_SYM_NOTFND_2 + step
-                                + PaConstants.ERRMSG_SYM_NOTFND_3 + nextT
-                                + PaConstants.ERRMSG_SYM_NOTFND_4,
-                            nextT.length());
+                        w.triggerLoadStructureException(nextT.length(),
+                            PaConstants.ERRMSG_SYM_NOTFND,
+                            w.getErrorLabelIfPossible(), step, nextT);
                 }
                 else if (!(sym instanceof Cnst))
-                    w.triggerLoadStructureException(
-                        PaConstants.ERRMSG_VAR_SCOPE_1
-                            + w.getErrorLabelIfPossible()
-                            + PaConstants.ERRMSG_VAR_SCOPE_2 + step
-                            + PaConstants.ERRMSG_VAR_SCOPE_3 + nextT,
-                        nextT.length());
+                    w.triggerLoadStructureException(nextT.length(),
+                        PaConstants.ERRMSG_VAR_SCOPE,
+                        w.getErrorLabelIfPossible(), step, nextT);
             }
             if (sym.getSeq() >= w.getMaxSeq())
-                w.triggerLoadStructureException(PaConstants.ERRMSG_SYM_MAXSEQ_1
-                    + w.getErrorLabelIfPossible()
-                    + PaConstants.ERRMSG_SYM_MAXSEQ_2 + step
-                    + PaConstants.ERRMSG_SYM_MAXSEQ_3 + nextT
-                    + PaConstants.ERRMSG_SYM_MAXSEQ_4, nextT.length());
+                w.triggerLoadStructureException(nextT.length(),
+                    PaConstants.ERRMSG_SYM_MAXSEQ, w.getErrorLabelIfPossible(),
+                    step, nextT);
 
             symList.add(sym);
 
@@ -673,11 +657,9 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
             w.getMaxSeq());
         if (formulaParseTree == null)
             w.triggerLoadStructureException(
-                PaConstants.ERRMSG_PARSE_ERR_1 + w.getErrorLabelIfPossible()
-                    + PaConstants.ERRMSG_PARSE_ERR_2 + step
-                    + PaConstants.ERRMSG_PARSE_ERR_3,
                 (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
-                    - formulaStartCharNbr);
+                    - formulaStartCharNbr, PaConstants.ERRMSG_PARSE_ERR,
+                w.getErrorLabelIfPossible(), step);
     }
 
     // assumes formula already loaded (first), and possibly

@@ -151,45 +151,40 @@ public class HeaderStmt extends ProofWorkStmt {
 
         String nextT = loadStmtTextGetRequiredToken(firstToken);
         if (!nextT.equals(PaConstants.HEADER_MM_TOKEN))
-            w.triggerLoadStructureException(PaConstants.ERRMSG_BAD_HDR_TOKEN_1
-                + w.getErrorLabelIfPossible()
-                + PaConstants.ERRMSG_BAD_HDR_TOKEN_2 + nextT, nextT.length());
+            w.triggerLoadStructureException(nextT.length(),
+                PaConstants.ERRMSG_BAD_HDR_TOKEN, w.getErrorLabelIfPossible(),
+                nextT);
 
         nextT = loadStmtTextGetRequiredToken(nextT);
         if (!nextT.equals(PaConstants.HEADER_PROOF_ASST_TOKEN))
-            w.triggerLoadStructureException(PaConstants.ERRMSG_BAD_HDR_TOKEN2_1
-                + w.getErrorLabelIfPossible()
-                + PaConstants.ERRMSG_BAD_HDR_TOKEN2_2 + nextT, nextT.length());
+            w.triggerLoadStructureException(nextT.length(),
+                PaConstants.ERRMSG_BAD_HDR_TOKEN2, w.getErrorLabelIfPossible(),
+                nextT);
 
         nextT = loadStmtTextGetRequiredToken(nextT);
         if (!nextT.startsWith(PaConstants.HEADER_THEOREM_EQUAL_PREFIX))
-            w.triggerLoadStructureException(PaConstants.ERRMSG_BAD_HDR_TOKEN3_1
-                + w.getErrorLabelIfPossible()
-                + PaConstants.ERRMSG_BAD_HDR_TOKEN3_2 + nextT, nextT.length());
+            w.triggerLoadStructureException(nextT.length(),
+                PaConstants.ERRMSG_BAD_HDR_TOKEN3, w.getErrorLabelIfPossible(),
+                nextT);
         theoremLabel = nextT.substring(PaConstants.HEADER_THEOREM_EQUAL_PREFIX
             .length());
         if (!validateTheoremLabel())
-            w.triggerLoadStructureException(PaConstants.ERRMSG_BAD_THRM_VAL_1
-                + w.getErrorLabelIfPossible()
-                + PaConstants.ERRMSG_BAD_THRM_VAL_2 + theoremLabel
-                + PaConstants.ERRMSG_BAD_THRM_VAL_3, theoremLabel.length());
+            w.triggerLoadStructureException(theoremLabel.length(),
+                PaConstants.ERRMSG_BAD_THRM_VAL, w.getErrorLabelIfPossible(),
+                theoremLabel);
 
         nextT = loadStmtTextGetRequiredToken(nextT);
         if (!nextT.startsWith(PaConstants.HEADER_LOC_AFTER_EQUAL_PREFIX))
-            w.triggerLoadStructureException(PaConstants.ERRMSG_BAD_LOC_TOKEN_1
-                + w.getErrorLabelIfPossible()
-                + PaConstants.ERRMSG_BAD_LOC_TOKEN_2 + nextT);
+            w.triggerLoadStructureException(PaConstants.ERRMSG_BAD_LOC_TOKEN,
+                w.getErrorLabelIfPossible(), nextT);
         locAfterLabel = nextT
             .substring(PaConstants.HEADER_LOC_AFTER_EQUAL_PREFIX.length());
         if (w.theorem == null && !locAfterLabel.equals("")
             && !locAfterLabel.equals(PaConstants.DEFAULT_STMT_LABEL))
             if (!validateLocAfterLabel())
-                w.triggerLoadStructureException(
-                    PaConstants.ERRMSG_BAD_LOC_VAL_1
-                        + w.getErrorLabelIfPossible()
-                        + PaConstants.ERRMSG_BAD_LOC_VAL_2 + locAfterLabel
-                        + PaConstants.ERRMSG_BAD_LOC_VAL_3,
-                    locAfterLabel.length());
+                w.triggerLoadStructureException(locAfterLabel.length(),
+                    PaConstants.ERRMSG_BAD_LOC_VAL,
+                    w.getErrorLabelIfPossible(), locAfterLabel);
 
         w.loadComboFrameAndVarMap();
 
@@ -217,23 +212,20 @@ public class HeaderStmt extends ProofWorkStmt {
         final Stmt stmt = w.logicalSystem.getStmtTbl().get(theoremLabel);
         if (stmt == null) {
             if (!Statementizer.areLabelCharsValid(theoremLabel)) {
-                w.messages
-                    .accumErrorMessage(PaConstants.ERRMSG_BAD_LABEL_CHAR_1
-                        + theoremLabel + PaConstants.ERRMSG_BAD_LABEL_CHAR_2);
+                w.messages.accumErrorMessage(PaConstants.ERRMSG_BAD_LABEL_CHAR,
+                    theoremLabel);
                 headerInvalid = true;
                 return false;
             }
             if (Statementizer.isLabelOnProhibitedList(theoremLabel)) {
-                w.messages.accumErrorMessage(PaConstants.ERRMSG_PROHIB_LABEL_1
-                    + theoremLabel + PaConstants.ERRMSG_PROHIB_LABEL_2);
+                w.messages.accumErrorMessage(PaConstants.ERRMSG_PROHIB_LABEL,
+                    theoremLabel);
                 headerInvalid = true;
                 return false;
             }
             if (w.logicalSystem.getSymTbl().containsKey(theoremLabel)) {
-                w.messages
-                    .accumErrorMessage(PaConstants.ERRMSG_STMT_LABEL_DUP_OF_SYM_ID_1_1
-                        + theoremLabel
-                        + PaConstants.ERRMSG_STMT_LABEL_DUP_OF_SYM_ID_1_2);
+                w.messages.accumErrorMessage(
+                    PaConstants.ERRMSG_STMT_LABEL_DUP_OF_SYM_ID, theoremLabel);
                 headerInvalid = true;
                 return false;
             }
@@ -242,10 +234,8 @@ public class HeaderStmt extends ProofWorkStmt {
 
         if (stmt instanceof Theorem)
             if (stmt.getTyp() != w.getProvableLogicStmtTyp()) {
-                w.messages.accumErrorMessage(PaConstants.ERRMSG_BAD_TYP_CD_1
-                    + theoremLabel + PaConstants.ERRMSG_BAD_TYP_CD_2
-                    + stmt.getTyp() + PaConstants.ERRMSG_BAD_TYP_CD_3
-                    + w.getProvableLogicStmtTyp());
+                w.messages.accumErrorMessage(PaConstants.ERRMSG_BAD_TYP_CD,
+                    theoremLabel, stmt.getTyp(), w.getProvableLogicStmtTyp());
                 headerInvalid = true;
                 return false;
             }
@@ -256,8 +246,8 @@ public class HeaderStmt extends ProofWorkStmt {
                 return true;
             }
 
-        w.messages.accumErrorMessage(PaConstants.ERRMSG_NOT_A_THRM_1
-            + theoremLabel + PaConstants.ERRMSG_NOT_A_THRM_2);
+        w.messages.accumErrorMessage(PaConstants.ERRMSG_NOT_A_THRM,
+            theoremLabel);
         headerInvalid = true;
         return false;
     }
@@ -276,9 +266,8 @@ public class HeaderStmt extends ProofWorkStmt {
 
         final Stmt stmt = w.logicalSystem.getStmtTbl().get(locAfterLabel);
         if (stmt == null) {
-            w.messages.accumErrorMessage(PaConstants.ERRMSG_LOC_NOTFND_1
-                + w.getErrorLabelIfPossible() + PaConstants.ERRMSG_LOC_NOTFND_2
-                + locAfterLabel + PaConstants.ERRMSG_LOC_NOTFND_3);
+            w.messages.accumErrorMessage(PaConstants.ERRMSG_LOC_NOTFND,
+                w.getErrorLabelIfPossible(), locAfterLabel);
             headerInvalid = true;
             return false;
         }

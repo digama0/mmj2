@@ -168,12 +168,10 @@ public class HypothesisStep extends ProofStepStmt {
                                                              // !workVarsOk
 
         if (formula == null)
-            w.triggerLoadStructureException(PaConstants.ERRMSG_FORMULA_REQ_1
-                + w.getErrorLabelIfPossible()
-                + PaConstants.ERRMSG_FORMULA_REQ_2 + step
-                + PaConstants.ERRMSG_FORMULA_REQ_3,
+            w.triggerLoadStructureException(
                 (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
-                    - lineStartCharNbr);
+                    - lineStartCharNbr, PaConstants.ERRMSG_FORMULA_REQ,
+                w.getErrorLabelIfPossible(), step);
 
         if (w.isNewTheorem()) {
             getValidNewTheoremLogHypRef(lineStartCharNbr);
@@ -218,67 +216,47 @@ public class HypothesisStep extends ProofStepStmt {
                 if (formula.equals(element.getFormula())) {
                     if (dupLogHypFormulas(formula))
                         w.triggerLoadStructureException(
-                            PaConstants.ERRMSG_DUP_LOG_HYPS_1
-                                + w.getErrorLabelIfPossible()
-                                + PaConstants.ERRMSG_DUP_LOG_HYPS_2 + step
-                                + PaConstants.ERRMSG_DUP_LOG_HYPS_3,
                             (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
-                                - lineStartCharNbr);
+                                - lineStartCharNbr,
+                            PaConstants.ERRMSG_DUP_LOG_HYPS,
+                            w.getErrorLabelIfPossible(), step);
                     ref = element;
                     refLabel = ref.getLabel();
                 }
             if (ref == null)
                 w.triggerLoadStructureException(
-                    PaConstants.ERRMSG_HYP_FORMULA_ERR_1
-                        + w.getErrorLabelIfPossible()
-                        + PaConstants.ERRMSG_HYP_FORMULA_ERR_2 + step
-                        + PaConstants.ERRMSG_HYP_FORMULA_ERR_3,
                     (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
-                        - lineStartCharNbr);
+                        - lineStartCharNbr, PaConstants.ERRMSG_HYP_FORMULA_ERR,
+                    w.getErrorLabelIfPossible(), step);
         }
         else {
             // refLabel was input
             ref = w.logicalSystem.getStmtTbl().get(refLabel);
             if (ref == null)
                 w.triggerLoadStructureException(
-                    PaConstants.ERRMSG_REF_NOTFND2_1
-                        + w.getErrorLabelIfPossible()
-                        + PaConstants.ERRMSG_REF_NOTFND2_2 + step
-                        + PaConstants.ERRMSG_REF_NOTFND2_3 + refLabel
-                        + PaConstants.ERRMSG_REF_NOTFND2_4,
                     (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
-                        - lineStartCharNbr);
+                        - lineStartCharNbr, PaConstants.ERRMSG_REF_NOTFND2,
+                    w.getErrorLabelIfPossible(), step, refLabel);
             if (!(ref instanceof LogHyp))
                 w.triggerLoadStructureException(
-                    PaConstants.ERRMSG_REF_NOT_LOGHYP_1
-                        + w.getErrorLabelIfPossible()
-                        + PaConstants.ERRMSG_REF_NOT_LOGHYP_2 + step
-                        + PaConstants.ERRMSG_REF_NOT_LOGHYP_3 + refLabel
-                        + PaConstants.ERRMSG_REF_NOT_LOGHYP_4,
                     (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
-                        - lineStartCharNbr);
+                        - lineStartCharNbr, PaConstants.ERRMSG_REF_NOT_LOGHYP,
+                    w.getErrorLabelIfPossible(), step, refLabel);
             int i;
             for (i = 0; i < logHypArray.length; i++)
                 if (ref == logHypArray[i])
                     break;
             if (i >= logHypArray.length)
                 w.triggerLoadStructureException(
-                    PaConstants.ERRMSG_LOGHYP_MISMATCH_1
-                        + w.getErrorLabelIfPossible()
-                        + PaConstants.ERRMSG_LOGHYP_MISMATCH_2 + step
-                        + PaConstants.ERRMSG_LOGHYP_MISMATCH_3 + refLabel
-                        + PaConstants.ERRMSG_LOGHYP_MISMATCH_4,
                     (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
-                        - lineStartCharNbr);
+                        - lineStartCharNbr, PaConstants.ERRMSG_LOGHYP_MISMATCH,
+                    w.getErrorLabelIfPossible(), step, refLabel);
             if (!formula.equals(ref.getFormula()))
                 w.triggerLoadStructureException(
-                    PaConstants.ERRMSG_HYP_FORMULA_ERR2_1
-                        + w.getErrorLabelIfPossible()
-                        + PaConstants.ERRMSG_HYP_FORMULA_ERR2_2 + step
-                        + PaConstants.ERRMSG_HYP_FORMULA_ERR2_3 + refLabel
-                        + PaConstants.ERRMSG_HYP_FORMULA_ERR2_4,
                     (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
-                        - lineStartCharNbr);
+                        - lineStartCharNbr,
+                    PaConstants.ERRMSG_HYP_FORMULA_ERR2,
+                    w.getErrorLabelIfPossible(), step, refLabel);
         }
         checkDupHypRefLabel(lineStartCharNbr);
     }
@@ -325,41 +303,27 @@ public class HypothesisStep extends ProofStepStmt {
 
         final Stmt stmt = w.logicalSystem.getStmtTbl().get(refLabel);
         if (stmt != null)
-            w.triggerLoadStructureException(PaConstants.ERRMSG_HYP_REF_DUP_1
-                + w.getErrorLabelIfPossible()
-                + PaConstants.ERRMSG_HYP_REF_DUP_2 + step
-                + PaConstants.ERRMSG_HYP_REF_DUP_3 + refLabel
-                + PaConstants.ERRMSG_HYP_REF_DUP_4,
+            w.triggerLoadStructureException(
                 (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
-                    - lineStartCharNbr);
+                    - lineStartCharNbr, PaConstants.ERRMSG_HYP_REF_DUP,
+                w.getErrorLabelIfPossible(), step, refLabel);
         if (!Statementizer.areLabelCharsValid(refLabel))
             w.triggerLoadStructureException(
-                PaConstants.ERRMSG_REF_CHAR_PROHIB_1
-                    + w.getErrorLabelIfPossible()
-                    + PaConstants.ERRMSG_REF_CHAR_PROHIB_2 + step
-                    + PaConstants.ERRMSG_REF_CHAR_PROHIB_3 + refLabel
-                    + PaConstants.ERRMSG_REF_CHAR_PROHIB_4,
                 (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
-                    - lineStartCharNbr);
+                    - lineStartCharNbr, PaConstants.ERRMSG_REF_CHAR_PROHIB,
+                w.getErrorLabelIfPossible(), step, refLabel);
         if (Statementizer.isLabelOnProhibitedList(refLabel))
-            w.triggerLoadStructureException(PaConstants.ERRMSG_PROHIB_LABEL2_1
-                + w.getErrorLabelIfPossible()
-                + PaConstants.ERRMSG_PROHIB_LABEL2_2 + step
-                + PaConstants.ERRMSG_PROHIB_LABEL2_3 + refLabel
-                + PaConstants.ERRMSG_PROHIB_LABEL2_4,
+            w.triggerLoadStructureException(
                 (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
-                    - lineStartCharNbr);
+                    - lineStartCharNbr, PaConstants.ERRMSG_PROHIB_LABEL2,
+                w.getErrorLabelIfPossible(), step, refLabel);
 
         if (w.logicalSystem.getSymTbl().containsKey(refLabel))
             w.triggerLoadStructureException(
-                PaConstants.ERRMSG_STMT_LABEL_DUP_OF_SYM_ID_2_1
-                    + w.getErrorLabelIfPossible()
-                    + PaConstants.ERRMSG_STMT_LABEL_DUP_OF_SYM_ID_2_2 + step
-                    + PaConstants.ERRMSG_STMT_LABEL_DUP_OF_SYM_ID_2_3
-                    + refLabel
-                    + PaConstants.ERRMSG_STMT_LABEL_DUP_OF_SYM_ID_2_4,
                 (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
-                    - lineStartCharNbr);
+                    - lineStartCharNbr,
+                PaConstants.ERRMSG_STMT_LABEL_DUP_OF_SYM_ID2,
+                w.getErrorLabelIfPossible(), step, refLabel);
 
     }
 
@@ -370,13 +334,9 @@ public class HypothesisStep extends ProofStepStmt {
         for (final ProofWorkStmt x : w.proofWorkStmtList)
             if (x.hasMatchingRefLabel(refLabel))
                 w.triggerLoadStructureException(
-                    PaConstants.ERRMSG_DUP_HYP_REF_1
-                        + w.getErrorLabelIfPossible()
-                        + PaConstants.ERRMSG_DUP_HYP_REF_2 + step
-                        + PaConstants.ERRMSG_DUP_HYP_REF_3 + refLabel
-                        + PaConstants.ERRMSG_DUP_HYP_REF_4,
                     (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
-                        - lineStartCharNbr);
+                        - lineStartCharNbr, PaConstants.ERRMSG_DUP_HYP_REF,
+                    w.getErrorLabelIfPossible(), step, refLabel);
     }
 
     private StringBuilder buildStepHypRefSB() {

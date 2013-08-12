@@ -716,7 +716,7 @@ public class StepUnifier {
         if (appliedCnt >= applied.length) {
             if (appliedCnt >= PaConstants.STEP_UNIFIER_APPLIED_ARRAY_LEN_MAX)
                 throw new IllegalArgumentException(
-                    PaConstants.ERRMSG_ADD_TO_APPLIED_ARRAY_OFLOW_1);
+                    PaConstants.ERRMSG_ADD_TO_APPLIED_ARRAY_OFLOW);
             final int n = applied.length
                 + PaConstants.STEP_UNIFIER_APPLIED_ARRAY_LEN_INIT;
             final UnifySubst[] x = new UnifySubst[n];
@@ -728,7 +728,6 @@ public class StepUnifier {
         applied[appliedCnt++] = unifySubst;
         ++levelAppliedCnt[++levelIndex];
     }
-
     private void backoutCurrLevelApplieds() {
         backoutOneLevelApplieds(currLevel);
     }

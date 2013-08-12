@@ -67,8 +67,8 @@ public class EraseWffsPreprocessRequest extends PreprocessRequest {
             }
             return w.toString();
         } catch (final IOException e) {
-            throw new ProofAsstException(PaConstants.ERRMSG_ERASE_WFFS_ERROR_1
-                + e.getMessage());
+            throw new ProofAsstException(PaConstants.ERRMSG_ERASE_WFFS_ERROR,
+                e.getMessage());
         }
     }
 

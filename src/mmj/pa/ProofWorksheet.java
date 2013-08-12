@@ -986,7 +986,7 @@ public class ProofWorksheet {
             }
 
         throw new IllegalArgumentException(
-            PaConstants.ERRMSG_DERIVE_FEATURE_STEP_NOTFND_1);
+            PaConstants.ERRMSG_DERIVE_FEATURE_STEP_NOTFND);
     }
 
     /**
@@ -1060,37 +1060,35 @@ public class ProofWorksheet {
         final List<DerivationStep> stepsWithLocalRefs = new ArrayList<DerivationStep>();
 
         if (nextToken.length() == 0)
-            triggerLoadStructureException(PaConstants.ERRMSG_PROOF_EMPTY_1);
+            triggerLoadStructureException(PaConstants.ERRMSG_PROOF_EMPTY);
         if (!nextToken.equals(PaConstants.HEADER_STMT_TOKEN))
-            triggerLoadStructureException(PaConstants.ERRMSG_HDR_TOKEN_ERR_1
-                + nextToken);
+            triggerLoadStructureException(PaConstants.ERRMSG_HDR_TOKEN_ERR,
+                nextToken);
 
         while (true) {
             if (nextToken.length() == 0) {
                 // eof
                 if (qedStep == null)
-                    triggerLoadStructureException(PaConstants.ERRMSG_QED_MISSING_1
-                        + getErrorLabelIfPossible()
-                        + PaConstants.ERRMSG_QED_MISSING_2);
+                    triggerLoadStructureException(
+                        PaConstants.ERRMSG_QED_MISSING,
+                        getErrorLabelIfPossible());
                 if (footerStmt == null)
-                    triggerLoadStructureException(PaConstants.ERRMSG_FOOTER_MISSING_1
-                        + getErrorLabelIfPossible()
-                        + PaConstants.ERRMSG_FOOTER_MISSING_2);
+                    triggerLoadStructureException(
+                        PaConstants.ERRMSG_FOOTER_MISSING,
+                        getErrorLabelIfPossible());
                 break;
             }
 
             if (nextToken.length() != proofTextTokenizer.getCurrentColumnNbr())
-                triggerLoadStructureException(PaConstants.ERRMSG_COL1_ERROR_1
-                    + getErrorLabelIfPossible()
-                    + PaConstants.ERRMSG_COL1_ERROR_2
-                    + (int)proofTextTokenizer.getCurrentLineNbr()
-                    + PaConstants.ERRMSG_COL1_ERROR_3 + nextToken);
+                triggerLoadStructureException(PaConstants.ERRMSG_COL1_ERROR,
+                    getErrorLabelIfPossible(),
+                    proofTextTokenizer.getCurrentLineNbr(), nextToken);
 
             if (nextToken.equals(PaConstants.HEADER_STMT_TOKEN)) {
                 if (headerStmt != null)
-                    triggerLoadStructureException(PaConstants.ERRMSG_MULT_HDR_ERROR_1
-                        + getErrorLabelIfPossible()
-                        + PaConstants.ERRMSG_MULT_HDR_ERROR_2);
+                    triggerLoadStructureException(
+                        PaConstants.ERRMSG_MULT_HDR_ERROR,
+                        getErrorLabelIfPossible());
                 headerStmt = new HeaderStmt(this);
                 nextToken = headerStmt.load(nextToken);
                 proofWorkStmtList.add(headerStmt);
@@ -1102,9 +1100,9 @@ public class ProofWorksheet {
 
             if (nextToken.equals(PaConstants.FOOTER_STMT_TOKEN)) {
                 if (qedStep == null)
-                    triggerLoadStructureException(PaConstants.ERRMSG_QED_MISSING2_1
-                        + getErrorLabelIfPossible()
-                        + PaConstants.ERRMSG_QED_MISSING2_2);
+                    triggerLoadStructureException(
+                        PaConstants.ERRMSG_QED_MISSING2,
+                        getErrorLabelIfPossible());
                 final FooterStmt footerStmt = new FooterStmt(this);
                 nextToken = footerStmt.load(nextToken);
                 proofWorkStmtList.add(footerStmt);
@@ -1161,10 +1159,9 @@ public class ProofWorksheet {
             final List<String> fields = stepHypRefParser.parseAll();
 
             if (fields.isEmpty())
-                triggerLoadStructureException(PaConstants.ERRMSG_SHR_BAD_1
-                    + getErrorLabelIfPossible() + PaConstants.ERRMSG_SHR_BAD_2
-                    + (int)proofTextTokenizer.getCurrentLineNbr()
-                    + PaConstants.ERRMSG_SHR_BAD_3 + nextToken);
+                triggerLoadStructureException(PaConstants.ERRMSG_SHR_BAD,
+                    getErrorLabelIfPossible(),
+                    proofTextTokenizer.getCurrentLineNbr(), nextToken);
             final String stepField = validateStepField(prefixField,
                 fields.get(0));
             final String hypField = fields.size() > 2
@@ -1172,11 +1169,9 @@ public class ProofWorksheet {
             String refField = null;
             String localRefField = null;
             if (fields.size() > 3)
-                triggerLoadStructureException(PaConstants.ERRMSG_SHR_BAD2_1
-                    + getErrorLabelIfPossible() + PaConstants.ERRMSG_SHR_BAD2_2
-                    + stepField + PaConstants.ERRMSG_SHR_BAD2_3
-                    + (int)proofTextTokenizer.getCurrentLineNbr()
-                    + PaConstants.ERRMSG_SHR_BAD2_4 + nextToken);
+                triggerLoadStructureException(PaConstants.ERRMSG_SHR_BAD2,
+                    getErrorLabelIfPossible(), stepField,
+                    proofTextTokenizer.getCurrentLineNbr(), nextToken);
             if (fields.size() > 1) {
                 refField = fields.get(fields.size() - 1);
                 if (refField.isEmpty())
@@ -1196,32 +1191,24 @@ public class ProofWorksheet {
 
             if (prefixField != null) {
                 if (hypField != null)
-                    triggerLoadStructureException(PaConstants.ERRMSG_HYP_HAS_HYP_1
-                        + getErrorLabelIfPossible()
-                        + PaConstants.ERRMSG_HYP_HAS_HYP_2
-                        + stepField
-                        + PaConstants.ERRMSG_HYP_HAS_HYP_3);
+                    triggerLoadStructureException(
+                        PaConstants.ERRMSG_HYP_HAS_HYP,
+                        getErrorLabelIfPossible(), stepField);
 
                 if (localRefField != null)
-                    triggerLoadStructureException(PaConstants.ERRMSG_HYP_HAS_LOCAL_REF_1
-                        + getErrorLabelIfPossible()
-                        + PaConstants.ERRMSG_HYP_HAS_LOCAL_REF_2
-                        + stepField
-                        + PaConstants.ERRMSG_HYP_HAS_LOCAL_REF_3);
+                    triggerLoadStructureException(
+                        PaConstants.ERRMSG_HYP_HAS_LOCAL_REF,
+                        getErrorLabelIfPossible(), stepField);
 
                 if (qedStep != null)
-                    triggerLoadStructureException(PaConstants.ERRMSG_QED_NOT_END_1
-                        + getErrorLabelIfPossible()
-                        + PaConstants.ERRMSG_QED_NOT_END_2
-                        + stepField
-                        + PaConstants.ERRMSG_QED_NOT_END_3);
+                    triggerLoadStructureException(
+                        PaConstants.ERRMSG_QED_NOT_END,
+                        getErrorLabelIfPossible(), stepField);
                 if (stepSelectorChoiceRequired
                     && stepField.equals(stepRequest.step))
-                    triggerLoadStructureException(PaConstants.ERRMSG_HYP_HAS_SELECTOR_CHOICE_1
-                        + getErrorLabelIfPossible()
-                        + PaConstants.ERRMSG_HYP_HAS_SELECTOR_CHOICE_2
-                        + stepField
-                        + PaConstants.ERRMSG_HYP_HAS_SELECTOR_CHOICE_3);
+                    triggerLoadStructureException(
+                        PaConstants.ERRMSG_HYP_HAS_SELECTOR_CHOICE,
+                        getErrorLabelIfPossible(), stepField);
                 final HypothesisStep x = new HypothesisStep(this);
                 nextToken = x.loadHypothesisStep(origStepHypRefLength,
                     lineStartCharNbr, stepField, refField);
@@ -1235,18 +1222,14 @@ public class ProofWorksheet {
 
             if (stepField.equals(PaConstants.QED_STEP_NBR)) {
                 if (qedStep != null)
-                    triggerLoadStructureException(PaConstants.ERRMSG_MULT_QED_ERROR_1
-                        + getErrorLabelIfPossible()
-                        + PaConstants.ERRMSG_MULT_QED_ERROR_2
-                        + stepField
-                        + PaConstants.ERRMSG_MULT_QED_ERROR_3);
+                    triggerLoadStructureException(
+                        PaConstants.ERRMSG_MULT_QED_ERROR,
+                        getErrorLabelIfPossible(), stepField);
 
                 if (localRefField != null)
-                    triggerLoadStructureException(PaConstants.ERRMSG_QED_HAS_LOCAL_REF_1
-                        + getErrorLabelIfPossible()
-                        + PaConstants.ERRMSG_QED_HAS_LOCAL_REF_2
-                        + stepField
-                        + PaConstants.ERRMSG_QED_HAS_LOCAL_REF_3);
+                    triggerLoadStructureException(
+                        PaConstants.ERRMSG_QED_HAS_LOCAL_REF,
+                        getErrorLabelIfPossible(), stepField);
 
                 if (stepSelectorChoiceRequired
                     && stepField.equals(stepRequest.step))
@@ -1266,11 +1249,9 @@ public class ProofWorksheet {
             }
             else {
                 if (qedStep != null)
-                    triggerLoadStructureException(PaConstants.ERRMSG_QED_NOT_END2_1
-                        + getErrorLabelIfPossible()
-                        + PaConstants.ERRMSG_QED_NOT_END2_2
-                        + stepField
-                        + PaConstants.ERRMSG_QED_NOT_END2_3);
+                    triggerLoadStructureException(
+                        PaConstants.ERRMSG_QED_NOT_END2,
+                        getErrorLabelIfPossible(), stepField);
 
                 final DerivationStep x = new DerivationStep(this);
 
@@ -1278,11 +1259,9 @@ public class ProofWorksheet {
 
                     if (stepSelectorChoiceRequired
                         && stepField.equals(stepRequest.step))
-                        triggerLoadStructureException(PaConstants.ERRMSG_LOCAL_REF_HAS_SELECTOR_CHOICE_1
-                            + getErrorLabelIfPossible()
-                            + PaConstants.ERRMSG_LOCAL_REF_HAS_SELECTOR_CHOICE_2
-                            + stepField
-                            + PaConstants.ERRMSG_LOCAL_REF_HAS_SELECTOR_CHOICE_3);
+                        triggerLoadStructureException(
+                            PaConstants.ERRMSG_LOCAL_REF_HAS_SELECTOR_CHOICE,
+                            getErrorLabelIfPossible(), stepField);
 
                     nextToken = x.loadLocalRefDerivationStep(
                         origStepHypRefLength, lineStartCharNbr, stepField,
@@ -1311,11 +1290,9 @@ public class ProofWorksheet {
                         && (stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH
                             || stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH
                             || stepRequest.request == PaConstants.STEP_REQUEST_GENERAL_SEARCH || stepRequest.request == PaConstants.STEP_REQUEST_SEARCH_OPTIONS))
-                        triggerLoadStructureException(PaConstants.ERRMSG_LOCAL_REF_HAS_SELECTOR_SEARCH_1
-                            + getErrorLabelIfPossible()
-                            + PaConstants.ERRMSG_LOCAL_REF_HAS_SELECTOR_SEARCH_2
-                            + stepField
-                            + PaConstants.ERRMSG_LOCAL_REF_HAS_SELECTOR_SEARCH_3);
+                        triggerLoadStructureException(
+                            PaConstants.ERRMSG_LOCAL_REF_HAS_SELECTOR_SEARCH,
+                            getErrorLabelIfPossible(), stepField);
             }
         }
         // end of stmtLoop! oy.
@@ -1331,9 +1308,9 @@ public class ProofWorksheet {
         {
             if (!proofInputCursor.cursorIsSet
                 || !(proofInputCursor.proofWorkStmt instanceof DerivationStep))
-                triggerLoadStructureException(PaConstants.ERRMSG_SELECTOR_SEARCH_STEP_NOTFND_1
-                    + getErrorLabelIfPossible()
-                    + PaConstants.ERRMSG_SELECTOR_SEARCH_STEP_NOTFND_2);
+                triggerLoadStructureException(
+                    PaConstants.ERRMSG_SELECTOR_SEARCH_STEP_NOTFND,
+                    getErrorLabelIfPossible());
             stepRequest.step = ((DerivationStep)proofInputCursor.proofWorkStmt).step;
             stepRequest.param1 = proofInputCursor.proofWorkStmt;
         }
@@ -1359,9 +1336,9 @@ public class ProofWorksheet {
         }
 
         if (stepSelectorChoiceRequired)
-            triggerLoadStructureException(PaConstants.ERRMSG_SELECTOR_CHOICE_STEP_NOTFND_1
-                + getErrorLabelIfPossible()
-                + PaConstants.ERRMSG_SELECTOR_CHOICE_STEP_NOTFND_2);
+            triggerLoadStructureException(
+                PaConstants.ERRMSG_SELECTOR_CHOICE_STEP_NOTFND,
+                getErrorLabelIfPossible());
 
         if (!stepsWithLocalRefs.isEmpty())
             makeLocalRefRevisionsToWorksheet(stepsWithLocalRefs);
@@ -1376,15 +1353,13 @@ public class ProofWorksheet {
          * it as a structural defect if the count is wrong!!!
          */
         if (!isNewTheorem() && theorem.getLogHypArrayLength() != hypStepCnt)
-            throw new ProofAsstException(1, // line
+            throw new ProofAsstException(
+                1, // line
                 PaConstants.PROOF_TEXT_HEADER_1.length() + 1, // col
                 -1, // char
-                PaConstants.ERRMSG_THRM_NBR_HYPS_ERROR_1
-                    + getErrorLabelIfPossible()
-                    + PaConstants.ERRMSG_THRM_NBR_HYPS_ERROR_2 + hypStepCnt
-                    + PaConstants.ERRMSG_THRM_NBR_HYPS_ERROR_3
-                    + theorem.getLogHypArrayLength()
-                    + PaConstants.ERRMSG_THRM_NBR_HYPS_ERROR_4);
+                PaConstants.ERRMSG_THRM_NBR_HYPS_ERROR,
+                getErrorLabelIfPossible(), hypStepCnt,
+                theorem.getLogHypArrayLength());
 
         /**
          * Compute level numbers for the proof steps.
@@ -1756,17 +1731,14 @@ public class ProofWorksheet {
     {
         if (stepField.equals("")
             || stepField.equals(PaConstants.DEFAULT_STMT_LABEL))
-            triggerLoadStructureException(PaConstants.ERRMSG_STEP_NBR_MISSING_1
-                + getErrorLabelIfPossible()
-                + PaConstants.ERRMSG_STEP_NBR_MISSING_2);
+            triggerLoadStructureException(PaConstants.ERRMSG_STEP_NBR_MISSING,
+                getErrorLabelIfPossible());
 
         final String outputStep = stepField.toLowerCase();
         if (outputStep.equals(PaConstants.QED_STEP_NBR)) {
             if (prefixField != null)
-                triggerLoadStructureException(PaConstants.ERRMSG_QED_HYP_STEP_1
-                    + getErrorLabelIfPossible()
-                    + PaConstants.ERRMSG_QED_HYP_STEP_2 + outputStep
-                    + PaConstants.ERRMSG_QED_HYP_STEP_3);
+                triggerLoadStructureException(PaConstants.ERRMSG_QED_HYP_STEP,
+                    getErrorLabelIfPossible(), outputStep);
             return outputStep;
         }
 
@@ -1775,30 +1747,30 @@ public class ProofWorksheet {
             updateNextGreatestStepNbr(Integer.parseInt(stepField.substring(1)));
 
         if (findMatchingStepNbr(outputStep) != null)
-            triggerLoadStructureException(PaConstants.ERRMSG_STEP_NBR_DUP_1
-                + getErrorLabelIfPossible() + PaConstants.ERRMSG_STEP_NBR_DUP_2
-                + outputStep + PaConstants.ERRMSG_STEP_NBR_DUP_3);
+            triggerLoadStructureException(PaConstants.ERRMSG_STEP_NBR_DUP,
+                getErrorLabelIfPossible(), outputStep);
         return outputStep;
     }
 
-    public void triggerLoadStructureException(final String errorMessage)
-        throws ProofAsstException
+    public void triggerLoadStructureException(final String errorMessage,
+        final Object... args) throws ProofAsstException
     {
         setStructuralErrors(true);
         throw new ProofAsstException(proofTextTokenizer.getCurrentLineNbr(),
             proofTextTokenizer.getCurrentColumnNbr(),
             proofTextTokenizer.getCurrentCharNbr(), errorMessage
-                + PaConstants.ERRMSG_READER_POSITION_LITERAL);
+                + PaConstants.ERRMSG_READER_POSITION_LITERAL, args);
     }
 
-    public void triggerLoadStructureException(final String errorMessage,
-        final int errorFldChars) throws ProofAsstException
+    public void triggerLoadStructureException(final int errorFldChars,
+        final String errorMessage, final Object... args)
+        throws ProofAsstException
     {
         setStructuralErrors(true);
         throw new ProofAsstException(proofTextTokenizer.getCurrentLineNbr(),
             proofTextTokenizer.getCurrentColumnNbr(),
             proofTextTokenizer.getCurrentCharNbr() - errorFldChars + 1,
-            errorMessage + PaConstants.ERRMSG_READER_POSITION_LITERAL);
+            errorMessage + PaConstants.ERRMSG_READER_POSITION_LITERAL, args);
     }
 
     private void buildHeader(final String newTheoremLabel) {
