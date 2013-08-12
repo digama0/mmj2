@@ -245,7 +245,6 @@ public class Theorem extends Assrt {
                      */
                     if (!stepTbl.isActive()
                         && !isProofStepInExtendedFrame(stepTbl))
-
                         throw new LangException(
                             LangConstants.ERRMSG_PROOF_STEP_HYP_INACTIVE, stepS);
                 proofArray[i] = stepTbl;

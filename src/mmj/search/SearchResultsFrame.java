@@ -17,6 +17,7 @@ package mmj.search;
 
 import java.awt.Component;
 import java.awt.EventQueue;
+import java.awt.event.*;
 
 import javax.swing.*;
 
@@ -113,7 +114,15 @@ public class SearchResultsFrame extends JFrame implements
 
     private void buildFrame() {
         setTitle(buildTitle());
-        setDefaultCloseOperation(2);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        getRootPane().registerKeyboardAction(new ActionListener() {
+            public void actionPerformed(final ActionEvent e) {
+                setVisible(false);
+                dispose();
+            }
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+            JComponent.WHEN_IN_FOCUSED_WINDOW);
+
         searchResultsScrnMap = new SearchResultsScrnMap(
             searchMgr.getSearchResultsFont(), this,
             searchMgr.getStepSearchMode(), searchMgr.getSearchOutput(),

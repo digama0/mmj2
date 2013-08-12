@@ -86,6 +86,11 @@
 
       and step:?: on a line gives no error at all.
 
+    * All the supplementary dialogs like Step Selector Search, Search Options,
+      and the Search Results window now close on ESC (they used to close on
+      ALT-F4, but it is easy to make a mistake and close something you don't
+      want to close using that key combo). 
+
 ================================================================================
 1-Nov-2011:
 

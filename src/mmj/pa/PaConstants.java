@@ -2340,7 +2340,7 @@ public class PaConstants {
         + " How curious... The File/New menu option provides the easiest way to"
         + " build a skeletal proof that avoids this error condition. Please"
         + " check your input against the Metamath file that was input for this"
-        + " theorem.";
+        + " theorem.\nThe actual formula is: %s\n";
 
     public static final String ERRMSG_REF_NOTFND = "E-PA-0348 Theorem %s"
         + " Step %s: Invalid Ref = %s on derivation proof step. Does not"
@@ -2402,11 +2402,12 @@ public class PaConstants {
         + " Theorem, as specified in the Metamath file that was loaded.";
 
     public static final String ERRMSG_HYP_FORMULA_ERR2 = "E-PA-0360 Theorem %s"
-        + " Step : Formula does not match the formula of Logical Hypothesis"
+        + " Step %s: Formula does not match the formula of Logical Hypothesis"
         + " %s, as specified in the Metamath file that was loaded. The"
         + " File/New menu option provides the easiest way to build a skeletal"
         + " proof that avoids this error condition. Please check your input"
-        + " against the Metamath file data that was input for this theorem.";
+        + " against the Metamath file data that was input for this theorem."
+        + "\nThe actual formula is: %s\n";
 
     public static final String ERRMSG_HYP_REF_DUP = "E-PA-0361 Theorem %s"
         + " Step %s: Ref label = %s duplicates the label of another statement"

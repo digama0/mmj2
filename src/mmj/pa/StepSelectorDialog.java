@@ -36,10 +36,16 @@ public class StepSelectorDialog extends JDialog {
         final ProofAsstPreferences proofAsstPreferences, final Font proofFont)
     {
 
-        super(proofAsstGUIFrame, PaConstants.STEP_SELECTOR_DIALOG_TITLE, false); // false
-                                                                                 // =
-                                                                                 // not
-                                                                                 // modal
+        super(proofAsstGUIFrame, PaConstants.STEP_SELECTOR_DIALOG_TITLE, false/*= not modal*/);
+
+        final ActionListener hideListener = new ActionListener() {
+            public void actionPerformed(final ActionEvent e) {
+                setVisible(false);
+            }
+        };
+        getRootPane().registerKeyboardAction(hideListener,
+            KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+            JComponent.WHEN_IN_FOCUSED_WINDOW);
 
         stepSelectorResults = results;
         proofAsstGUI = gui;
@@ -49,11 +55,7 @@ public class StepSelectorDialog extends JDialog {
 
         final JButton cancelButton = new JButton(
             PaConstants.STEP_SELECTOR_DIALOG_HIDE_BUTTON_CAPTION);
-        cancelButton.addActionListener(new ActionListener() {
-            public void actionPerformed(final ActionEvent e) {
-                setVisible(false);
-            }
-        });
+        cancelButton.addActionListener(hideListener);
 
         final JButton setButton = new JButton(
             PaConstants.STEP_SELECTOR_DIALOG_SET_BUTTON_CAPTION);

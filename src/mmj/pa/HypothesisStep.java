@@ -256,7 +256,8 @@ public class HypothesisStep extends ProofStepStmt {
                     (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                         - lineStartCharNbr,
                     PaConstants.ERRMSG_HYP_FORMULA_ERR2,
-                    w.getErrorLabelIfPossible(), step, refLabel);
+                    w.getErrorLabelIfPossible(), step, refLabel,
+                    ref.getFormula());
         }
         checkDupHypRefLabel(lineStartCharNbr);
     }

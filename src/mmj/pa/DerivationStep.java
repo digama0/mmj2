@@ -388,7 +388,7 @@ public class DerivationStep extends ProofStepStmt {
             w.triggerLoadStructureException(
                 (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                     - formulaStartCharNbr, PaConstants.ERRMSG_FORMULA_NOMATCH,
-                w.getErrorLabelIfPossible(), step);
+                w.getErrorLabelIfPossible(), step, w.theorem.getFormula());
 
         int nbrExpectedHyps = -1;
         if (getValidDerivationRefField(lineStartCharNbr) && ref != null)

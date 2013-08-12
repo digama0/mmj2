@@ -101,6 +101,7 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.JTextComponent;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 
@@ -348,7 +349,7 @@ public class ProofAsstGUI {
 
         proofTextScrollPane = buildProofTextScrollPane(proofTextArea);
 
-        proofTextArea.addMouseListener(new PopupMenuListener());
+        proofTextArea.addMouseListener(new PopupMenuListener(proofTextArea));
 
         proofTextArea.addMouseListener(new MouseAdapter() {
             @Override
@@ -368,7 +369,8 @@ public class ProofAsstGUI {
 
         proofMessageScrollPane = buildProofMessageScrollPane(proofMessageArea);
 
-        proofMessageArea.addMouseListener(new PopupMenuListener());
+        proofMessageArea.addMouseListener(new PopupMenuListener(
+            proofMessageArea));
 
         myPane.add(proofMessageScrollPane);
     }
@@ -664,7 +666,6 @@ public class ProofAsstGUI {
         textArea.setEditable(true);
         return textArea;
     }
-
     private JScrollPane buildProofMessageScrollPane(
         final JTextArea proofMessageArea)
     {
@@ -800,6 +801,12 @@ public class ProofAsstGUI {
     }
 
     private class PopupMenuListener extends MouseAdapter {
+        JTextComponent source;
+
+        public PopupMenuListener(final JTextComponent source) {
+            this.source = source;
+        }
+
         @Override
         public void mousePressed(final MouseEvent e) {
             popupMenuForMouse(e);
@@ -809,8 +816,10 @@ public class ProofAsstGUI {
             popupMenuForMouse(e);
         }
         public void popupMenuForMouse(final MouseEvent e) {
-            if (e.isPopupTrigger())
+            if (e.isPopupTrigger()) {
+                source.setCaretPosition(source.viewToModel(e.getPoint()));
                 popupMenu.show(e.getComponent(), e.getX(), e.getY());
+            }
         }
     }
 
