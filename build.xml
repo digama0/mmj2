@@ -23,14 +23,6 @@
         <delete dir="doc/javadoc"/>
     </target>
     <target depends="clean" name="cleanall"/>
-    <target depends="build-subprojects,build-project,build-doc" name="build">
-        <jar jarfile="mmj2jar/mmj2.jar" basedir="classes" includes="**/*.class">
-            <manifest>
-                <attribute name="Main-Class" value="mmj.util.BatchMMJ2" />
-            </manifest>
-        </jar>
-    </target>
-    <target name="build-subprojects"/>
     <target depends="init" name="build-project">
         <echo message="${ant.project.name}: ${ant.file}"/>
         <javac debug="true" debuglevel="${debuglevel}" destdir="classes" includeantruntime="false" source="${source}" target="${target}">
@@ -38,9 +30,17 @@
             <classpath refid="mmj2.classpath"/>
         </javac>
     </target>
-    <target name="build-doc">
+    <target depends="build-project" name="build-jar">
+        <jar jarfile="mmj2jar/mmj2.jar" basedir="classes" includes="**/*.class">
+            <manifest>
+                <attribute name="Main-Class" value="mmj.util.BatchMMJ2" />
+            </manifest>
+        </jar>
+    </target>
+    <target depends="build-project" name="build-doc">
         <javadoc sourcepath="src" destdir="doc/javadoc" additionalparam="-notimestamp"/>
     </target>
+    <target depends="build-jar,build-doc" name="build" />
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
     <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
         <copy todir="${ant.library.dir}">

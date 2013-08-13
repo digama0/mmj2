@@ -1158,32 +1158,50 @@ public class ProofWorksheet {
             stepHypRefParser.setQuoterEnabled(false);
             final List<String> fields = stepHypRefParser.parseAll();
 
-            if (fields.isEmpty())
-                triggerLoadStructureException(PaConstants.ERRMSG_SHR_BAD,
-                    getErrorLabelIfPossible(),
-                    proofTextTokenizer.getCurrentLineNbr(), nextToken);
-            final String stepField = validateStepField(prefixField,
-                fields.get(0));
-            final String hypField = fields.size() > 2
-                && !fields.get(1).isEmpty() ? fields.get(1) : null;
+            String stepField = validateStepField(prefixField, fields.get(0));
+            String hypField = null;
             String refField = null;
             String localRefField = null;
-            if (fields.size() > 3)
-                triggerLoadStructureException(PaConstants.ERRMSG_SHR_BAD2,
-                    getErrorLabelIfPossible(), stepField,
-                    proofTextTokenizer.getCurrentLineNbr(), nextToken);
-            if (fields.size() > 1) {
-                refField = fields.get(fields.size() - 1);
-                if (refField.isEmpty())
-                    refField = null;
-                else if (refField.charAt(0) == PaConstants.LOCAL_REF_ESCAPE_CHAR)
-                {
-                    if (refField.length() > 1)
-                        localRefField = refField.substring(1);
-                    else
-                        localRefField = "";
-                    refField = null;
-                }
+
+            switch (fields.size()) {
+                case 3:
+                    hypField = fields.get(1).isEmpty() ? null : fields.get(1);
+                    refField = fields.get(2).isEmpty() ? null : fields.get(2);
+                case 1:
+                    stepField = validateStepField(prefixField, fields.get(0));
+                    break;
+
+                case 2:
+                    stepField = validateStepField(prefixField, fields.get(0));
+                    hypField = fields.get(1);
+                    if (hypField.length() > 0
+                        && hypField.charAt(0) == PaConstants.LOCAL_REF_ESCAPE_CHAR
+                        || logicalSystem.getStmtTbl().containsKey(hypField))
+                    {
+                        // Smells like the ref field. probably typed step:ref
+                        // instead of step::ref
+                        refField = hypField;
+                        hypField = null;
+                    }
+                    else if (hypField.isEmpty())
+                        hypField = null;
+                    break;
+
+                case 0:
+                    triggerLoadStructureException(PaConstants.ERRMSG_SHR_BAD,
+                        getErrorLabelIfPossible(),
+                        proofTextTokenizer.getCurrentLineNbr(), nextToken);
+
+                default:
+                    triggerLoadStructureException(PaConstants.ERRMSG_SHR_BAD2,
+                        getErrorLabelIfPossible(), stepField,
+                        proofTextTokenizer.getCurrentLineNbr(), nextToken);
+            }
+            if (refField != null
+                && refField.charAt(0) == PaConstants.LOCAL_REF_ESCAPE_CHAR)
+            {
+                localRefField = refField.substring(1);
+                refField = null;
             }
 
             final int lineStartCharNbr = (int)proofTextTokenizer

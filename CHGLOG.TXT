@@ -75,8 +75,9 @@
       steps and instead goes to the first non-LocalRef step after the cursor.
 
     * Malformed steps with only one colon are now interpreted as step:ref
-      instead of step:hyp (which is less useful). Of course step:hyp: is still
-      interpreted correctly.
+      instead of step:hyp if the second field starts with # (i.e. a LocalRef) or
+      it is a theorem or hypothesis in the database (no unification checks are
+      done; it is just a heuristic).
 
     * Steps with no ref and no formula are no longer fatal unification errors.
       Instead, they simply fail to unify, and give errors just like steps with
