@@ -85,7 +85,7 @@ public abstract class Assrt extends Stmt {
      * <p>
      * logHypArray is an array of length zero if the Assrt has no LogHyp's.
      * <p>
-     * logHypArray is redundant with the data in MandFrame, but ProofAsst needs
+     * logHypArray is redundant with the data in ScopeFrame, but ProofAsst needs
      * quick access to the LogHyp's as well as the actual number of LogHyp's.
      * <p>
      */
@@ -102,7 +102,7 @@ public abstract class Assrt extends Stmt {
     /**
      * The assertion's Mandatory Frame.
      */
-    protected MandFrame mandFrame;
+    protected ScopeFrame mandFrame;
 
     /**
      * Construct using a boatload of parameters.
@@ -198,7 +198,7 @@ public abstract class Assrt extends Stmt {
      * 
      * @return Assrt's MandFrame.
      */
-    public MandFrame getMandFrame() {
+    public ScopeFrame getMandFrame() {
         return mandFrame;
     }
 
@@ -207,7 +207,7 @@ public abstract class Assrt extends Stmt {
      * 
      * @param mandFrame Assrt's MandFrame.
      */
-    public void setMandFrame(final MandFrame mandFrame) {
+    public void setMandFrame(final ScopeFrame mandFrame) {
         this.mandFrame = mandFrame;
     }
 
@@ -283,9 +283,9 @@ public abstract class Assrt extends Stmt {
      * @param scopeDefList Scope List as of this Stmt's definition.
      * @param hypList Already partly filled in with variable hypotheses from the
      *            assertion's expression.
-     * @return MandFrame Metamath ("mandatory") Frame for the Assrt.
+     * @return ScopeFrame Metamath ("mandatory") Frame for the Assrt.
      */
-    private MandFrame buildMandFrame(final List<ScopeDef> scopeDefList,
+    private ScopeFrame buildMandFrame(final List<ScopeDef> scopeDefList,
         final List<Hyp> hypList)
     {
         for (final ScopeDef scopeDef : scopeDefList)
@@ -305,7 +305,7 @@ public abstract class Assrt extends Stmt {
                     && !djVarsList.contains(djVars))
                     djVarsList.add(djVars);
 
-        final MandFrame mF = new MandFrame();
+        final ScopeFrame mF = new ScopeFrame();
 
         mF.hypArray = hypList.toArray(new Hyp[hypList.size()]);
         mF.djVarsArray = djVarsList.toArray(new DjVars[djVarsList.size()]);

@@ -445,9 +445,7 @@ public abstract class Stmt extends MObj {
     {
         public int compare(final Stmt o1, final Stmt o2) {
             final int i = o2.nbrProofRefs - o1.nbrProofRefs;
-            if (i != 0)
-                return i;
-            return LABEL.compare(o1, o2);
+            return i != 0 ? i : LABEL.compare(o1, o2);
         }
 
     };

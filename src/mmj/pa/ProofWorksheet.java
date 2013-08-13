@@ -211,7 +211,7 @@ public class ProofWorksheet {
 
     /* friendly */int maxSeq = Integer.MAX_VALUE;
 
-    /* friendly */MandFrame comboFrame;
+    /* friendly */ScopeFrame comboFrame;
     /* friendly */Map<String, Var> comboVarMap;
 
     public VarHyp getVarHypFromComboFrame(final Var v) {
@@ -538,7 +538,7 @@ public class ProofWorksheet {
      * 
      * @return MandFrame combined with OptFrame values for the theorem.
      */
-    public MandFrame getComboFrame() {
+    public ScopeFrame getComboFrame() {
         return comboFrame;
     }
 
@@ -1666,9 +1666,9 @@ public class ProofWorksheet {
 
         List<List<Var>> dvGroups1;
         if (proofAsstPreferences.getDjVarsSoftErrorsGenerateDiffs())
-            dvGroups1 = MandFrame.consolidateDvGroups(diffDvArray);
+            dvGroups1 = ScopeFrame.consolidateDvGroups(diffDvArray);
         else
-            dvGroups1 = MandFrame.consolidateDvGroups(replDvArray);
+            dvGroups1 = ScopeFrame.consolidateDvGroups(replDvArray);
 
         final List<List<Var>> dvGroups = DistinctVariablesStmt
             .eliminateDvGroupsAlreadyPresent(dvStmtArray, dvGroups1);
@@ -1729,10 +1729,10 @@ public class ProofWorksheet {
      */
     public void loadComboFrameAndVarMap() {
         if (isNewTheorem())
-            comboFrame = new MandFrame(logicalSystem.getScopeDefList().get(0),
+            comboFrame = new ScopeFrame(logicalSystem.getScopeDefList().get(0),
                 getMaxSeq());
         else
-            comboFrame = new MandFrame(theorem.getMandFrame(),
+            comboFrame = new ScopeFrame(theorem.getMandFrame(),
                 theorem.getOptFrame());
         comboVarMap = comboFrame.getVarMap();
     }

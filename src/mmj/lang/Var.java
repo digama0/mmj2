@@ -231,7 +231,7 @@ public class Var extends Sym {
      * A tedious little routine to help our friend Formula.
      * 
      * @see mmj.lang.Formula
-     * @param hypArray array of Hyp such as one would find in a MandFrame.
+     * @param hypArray array of Hyp such as one would find in a ScopeFrame.
      * @return returns matching VarHyp or null if not found.
      */
     public VarHyp getVarHyp(final Hyp[] hypArray) {

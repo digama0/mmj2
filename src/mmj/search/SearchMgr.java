@@ -406,7 +406,7 @@ public class SearchMgr {
         return grammar;
     }
 
-    MandFrame getComboFrame() {
+    ScopeFrame getComboFrame() {
         return searchArgs.comboFrame;
     }
 

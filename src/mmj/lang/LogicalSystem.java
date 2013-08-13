@@ -436,7 +436,7 @@ public class LogicalSystem implements SystemLoader {
      * <li>active VarHyp must exist for each Var.
      * </ul>
      * <p>
-     * 2) Build the MetaMath "Frame" for the Axiom (see MandFrame)
+     * 2) Build the MetaMath "Frame" for the Axiom (see ScopeFrame)
      * <p>
      * 3) construct the Axiom object
      * <p>

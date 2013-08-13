@@ -69,7 +69,7 @@ import java.util.*;
  */
 public class Theorem extends Assrt {
     private Stmt[] proof;
-    private final OptFrame optFrame;
+    private final ScopeFrame optFrame;
 
     /**
      * Construct Theorem using the entire enchilada from mmj.mmio.SrcStmt.java,
@@ -136,7 +136,7 @@ public class Theorem extends Assrt {
 
         try {
             proof = proofCompression.decompress(labelS, seq, stmtTbl,
-                mandFrame.hypArray, optFrame.optHypArray, proofList,
+                mandFrame.hypArray, optFrame.hypArray, proofList,
                 proofBlockList);
         } catch (final LangException e) {
             proof = new Stmt[1];
@@ -176,7 +176,7 @@ public class Theorem extends Assrt {
      * 
      * @return OptFrame for Theorem.
      */
-    public OptFrame getOptFrame() {
+    public ScopeFrame getOptFrame() {
         return optFrame;
     }
 
@@ -267,7 +267,7 @@ public class Theorem extends Assrt {
         for (final Hyp element : mandFrame.hypArray)
             if (proofStep == element)
                 return true;
-        for (final Hyp element : optFrame.optHypArray)
+        for (final Hyp element : optFrame.hypArray)
             if (proofStep == element)
                 return true;
         return false;
@@ -288,8 +288,8 @@ public class Theorem extends Assrt {
      * @return OptFrame -- Optional variable hypotheses and disjoint variable
      *         restrictions.
      */
-    private OptFrame buildOptFrame(final List<ScopeDef> scopeDefList) {
-        final OptFrame oF = new OptFrame();
+    private ScopeFrame buildOptFrame(final List<ScopeDef> scopeDefList) {
+        final ScopeFrame oF = new ScopeFrame();
         final List<Hyp> optHypList = new ArrayList<Hyp>();
 
         for (final ScopeDef scopeDef : scopeDefList)
@@ -299,17 +299,17 @@ public class Theorem extends Assrt {
 
         // could not get this to compile.?!
         // oF.optHypArray = optHypList.toArray(oF.optHypArray);
-        oF.optHypArray = optHypList.toArray(new Hyp[optHypList.size()]);
+        oF.hypArray = optHypList.toArray(new Hyp[optHypList.size()]);
 
         final List<DjVars> optDjVarsList = new ArrayList<DjVars>();
         for (final ScopeDef scopeDef : scopeDefList)
             for (final DjVars djVars : scopeDef.scopeDjVars)
                 if (!optDjVarsList.contains(djVars)
-                    && !MandFrame.isVarPairInDjArray(mandFrame,
+                    && !ScopeFrame.isVarPairInDjArray(mandFrame,
                         djVars.getVarLo(), djVars.getVarHi()))
                     optDjVarsList.add(djVars);
 
-        oF.optDjVarsArray = optDjVarsList.toArray(new DjVars[optDjVarsList
+        oF.djVarsArray = optDjVarsList.toArray(new DjVars[optDjVarsList
             .size()]);
 
         return oF;
@@ -353,7 +353,7 @@ public class Theorem extends Assrt {
 
         proof = newProof;
         mandFrame.djVarsArray = newDjVarsArray;
-        optFrame.optDjVarsArray = newOptDjVarsArray;
+        optFrame.djVarsArray = newOptDjVarsArray;
     }
 
     /**
@@ -412,7 +412,7 @@ public class Theorem extends Assrt {
             .sortAndCombineDvArrays(null, mandDjVarsUpdateList
                 .toArray(new DjVars[mandDjVarsUpdateList.size()]));
 
-        optFrame.optDjVarsArray = DjVars
+        optFrame.djVarsArray = DjVars
             .sortAndCombineDvArrays(null, optDjVarsUpdateList
                 .toArray(new DjVars[optDjVarsUpdateList.size()]));
     }
@@ -432,8 +432,8 @@ public class Theorem extends Assrt {
             mandFrame.djVarsArray, mandDjVarsUpdateList
                 .toArray(new DjVars[mandDjVarsUpdateList.size()]));
 
-        optFrame.optDjVarsArray = DjVars
-            .sortAndCombineDvArrays(optFrame.optDjVarsArray,
+        optFrame.djVarsArray = DjVars
+            .sortAndCombineDvArrays(optFrame.djVarsArray,
                 optDjVarsUpdateList.toArray(new DjVars[optDjVarsUpdateList
                     .size()]));
     }

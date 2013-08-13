@@ -158,21 +158,21 @@ public class VerifyProofs implements ProofVerifier {
     private boolean isExprRPNVerify;
     private String proofStmtLabel;
     private Formula proofStmtFormula;
-    private MandFrame proofStmtFrame;
-    private OptFrame proofStmtOptFrame;
+    private ScopeFrame proofStmtFrame;
+    private ScopeFrame proofStmtOptFrame;
     private Stmt[] proof;
 
     private boolean proofDjVarsSoftErrorsIgnore;
 
     private List<DjVars> proofSoftDjVarsErrorList;
 
-    private MandFrame dummyMandFrame = new MandFrame();
-    private OptFrame dummyOptFrame = new OptFrame();
+    private ScopeFrame dummyMandFrame = new ScopeFrame();
+    private ScopeFrame dummyOptFrame = new ScopeFrame();
 
     private Assrt stepAssrt;
     private String stepLabel;
     private Formula stepFormula;
-    private MandFrame stepFrame;
+    private ScopeFrame stepFrame;
     private Formula stepSubstFormula;
     private int stepNbr;
     private String stepNbrOutputString;
@@ -191,12 +191,12 @@ public class VerifyProofs implements ProofVerifier {
          * Load dummy MandFrame and OptFrame objects for use in validating an
          * exprRPN using the VerifyProofs engine.
          */
-        dummyMandFrame = new MandFrame();
+        dummyMandFrame = new ScopeFrame();
         dummyMandFrame.hypArray = null; // <-load this for use...
         dummyMandFrame.djVarsArray = new DjVars[0];
-        dummyOptFrame = new OptFrame();
-        dummyOptFrame.optHypArray = new Hyp[0];
-        dummyOptFrame.optDjVarsArray = new DjVars[0];
+        dummyOptFrame = new ScopeFrame();
+        dummyOptFrame.hypArray = new Hyp[0];
+        dummyOptFrame.djVarsArray = new DjVars[0];
 
     }
 
@@ -338,7 +338,7 @@ public class VerifyProofs implements ProofVerifier {
     public String verifyDerivStepProof(
         final String derivStepStmtLabel, // theorem
         final Formula derivStepFormula, final ParseTree derivStepProofTree,
-        final MandFrame derivStepComboFrame)
+        final ScopeFrame derivStepComboFrame)
     {
 
         isExprRPNVerify = false;
@@ -406,7 +406,7 @@ public class VerifyProofs implements ProofVerifier {
         final String derivStepNbr,
         final String derivStepStmtLabel, // theorem
         final Assrt derivStepRef, final ParseNode[] derivStepAssrtSubst,
-        final MandFrame derivStepComboFrame,
+        final ScopeFrame derivStepComboFrame,
         final boolean djVarsSoftErrorsIgnore,
         final boolean djVarsSoftErrorsGenerateNew,
         final List<DjVars> softDjVarsErrorList)
@@ -851,7 +851,7 @@ public class VerifyProofs implements ProofVerifier {
      * ok, some input, work and output areas in global (class) work areas...
      * 
      * <pre>
-     * input: -  MandFrame stepFrame  -->  (frame for theorem referenced
+     * input: -  ScopeFrame stepFrame  -->  (frame for theorem referenced
      *              Hyp[]  hypArray;        in proof step, contains
      *                                      mandatory hypothesis array.)
      * 
@@ -978,9 +978,9 @@ public class VerifyProofs implements ProofVerifier {
      * ok, some input, work and output areas in global (class) work areas...
      * 
      * <pre>
-     * input: -  MandFrame proofStmtFrame (frame for theorem to be proved)
+     * input: -  ScopeFrame proofStmtFrame (frame for theorem to be proved)
      * 
-     *        -  MandFrame stepFrame    (frame for theorem referenced
+     *        -  ScopeFrame stepFrame    (frame for theorem referenced
      *                                   in proof step)
      * 
      *        -  SubstMapEntry[] subst --> contains array of:
@@ -1009,7 +1009,7 @@ public class VerifyProofs implements ProofVerifier {
             if (subst[fromX] != null)
                 for (int fromY = fromX + 1; fromY < yMax; fromY++)
                     if (subst[fromY] != null)
-                        if (MandFrame.isVarPairInDjArray(stepFrame,
+                        if (ScopeFrame.isVarPairInDjArray(stepFrame,
                             (Var)subst[fromX].substFrom,
                             (Var)subst[fromY].substFrom))
                             checkSubstToVars(fromX, fromY);
@@ -1033,7 +1033,7 @@ public class VerifyProofs implements ProofVerifier {
      * ok, some input, work and output areas in global (class) work areas...
      * 
      * <pre>
-     * input: -  MandFrame proofStmtFrame (frame for theorem to be proved)
+     * input: -  ScopeFrame proofStmtFrame (frame for theorem to be proved)
      *           Opt       proofStmtOptFrame (frame for theorem to be
      *                     proved)
      * 
@@ -1073,9 +1073,9 @@ public class VerifyProofs implements ProofVerifier {
                 if (proofDjVarsSoftErrorsIgnore)
                     continue;
 
-                if (!MandFrame.isVarPairInDjArray(proofStmtFrame, (Var)symI,
+                if (!ScopeFrame.isVarPairInDjArray(proofStmtFrame, (Var)symI,
                     (Var)symJ)
-                    && !OptFrame.isVarPairInDjArray(proofStmtOptFrame,
+                    && !ScopeFrame.isVarPairInDjArray(proofStmtOptFrame,
                         (Var)symI, (Var)symJ) &&
                     // don't report "soft" Dj WorkVar errors
                     !(symI instanceof WorkVar || symJ instanceof WorkVar))

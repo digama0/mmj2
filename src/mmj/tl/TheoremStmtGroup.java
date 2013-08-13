@@ -834,7 +834,7 @@ public class TheoremStmtGroup {
 
             oldProof = theorem.getProof();
             oldDjVarsArray = theorem.getMandFrame().djVarsArray;
-            oldOptDjVarsArray = theorem.getOptFrame().optDjVarsArray;
+            oldOptDjVarsArray = theorem.getOptFrame().djVarsArray;
         }
     }
 

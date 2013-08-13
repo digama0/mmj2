@@ -1157,7 +1157,7 @@ public class Grammar implements SyntaxVerifier {
 
         axiom.setExprParseTree(buildDefaultExprParseTree(axiom, varHypArray));
 
-        final MandFrame mandFrame = axiom.getMandFrame();
+        final ScopeFrame mandFrame = axiom.getMandFrame();
         if (mandFrame.djVarsArray.length != 0) {
             accumErrorMsgInList(GrammarConstants.ERRMSG_DJ_VARS_ON_SYNTAX_1
                 + axiom.getLabel()

@@ -73,7 +73,7 @@ public class MMTTheoremExportFormatter {
             outputBeginScope();
 
         if (theorem.getMandFrame().djVarsArray.length > 0
-            || theorem.getOptFrame().optDjVarsArray.length > 0)
+            || theorem.getOptFrame().djVarsArray.length > 0)
             outputDjVarsLines(theorem);
 
         if (theorem.getLogHypArrayLength() > 0)
@@ -174,7 +174,7 @@ public class MMTTheoremExportFormatter {
 
         if (theorem.getLogHypArrayLength() > 0
             || theorem.getMandFrame().djVarsArray.length > 0
-            || theorem.getOptFrame().optDjVarsArray.length > 0)
+            || theorem.getOptFrame().djVarsArray.length > 0)
             needScopeLines = true;
     }
 

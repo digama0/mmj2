@@ -50,7 +50,7 @@ import mmj.pa.DistinctVariablesStmt;
  * person writing the Metamath .mm file, but there is some work storing the
  * results. During loading of LogicalSystem, DjVars are maintained in
  * mmj.lang.ScopeDef.java -- actually, a list of ScopeDef's. And DjVars are
- * stored in mmj.lang.MandFrame.java and mmj.lang.OptFrame.java as part of a
+ * stored in mmj.lang.ScopeFrame.java and mmj.lang.OptFrame.java as part of a
  * successful system load operation.
  * 
  * @see <a href="../../MetamathERNotes.html"> Nomenclature and
@@ -83,7 +83,7 @@ public class DjVars implements Comparable<DjVars> {
      *         Frame, otherwise false.
      */
     public static boolean areBothDjVarsInExtendedFrame(final DjVars djVars,
-        final MandFrame mandFrame, final OptFrame optFrame)
+        final ScopeFrame mandFrame, final ScopeFrame optFrame)
     {
 
         boolean loFound = false;
@@ -104,7 +104,7 @@ public class DjVars implements Comparable<DjVars> {
                 return true;
         }
 
-        hypArray = optFrame.optHypArray;
+        hypArray = optFrame.hypArray;
         for (int i = 0; i < hypArray.length; i++) {
             if (!(hypArray[i] instanceof VarHyp))
                 continue;
@@ -132,7 +132,7 @@ public class DjVars implements Comparable<DjVars> {
      *         Frame, otherwise false.
      */
     public static boolean isDjVarsVarInExtendedFrame(final Var djVarsVar,
-        final MandFrame mandFrame, final OptFrame optFrame)
+        final ScopeFrame mandFrame, final ScopeFrame optFrame)
     {
         VarHyp varHyp;
 
@@ -146,7 +146,7 @@ public class DjVars implements Comparable<DjVars> {
                 return true;
         }
 
-        hypArray = optFrame.optHypArray;
+        hypArray = optFrame.hypArray;
         for (int i = 0; i < hypArray.length; i++) {
             if (!(hypArray[i] instanceof VarHyp))
                 continue;
@@ -175,13 +175,13 @@ public class DjVars implements Comparable<DjVars> {
         final DistinctVariablesStmt[] distinctVariablesStmtArray)
     {
 
-        final DjVars[] dvArray = MandFrame
+        final DjVars[] dvArray = ScopeFrame
             .buildConsolidatedDvArray(distinctVariablesStmtArray);
 
         final DjVars[] sortedDvArray = DjVars.sortAndCombineDvArrays(dvArray,
             null);
 
-        final List<List<Var>> dvGroups = MandFrame
+        final List<List<Var>> dvGroups = ScopeFrame
             .consolidateDvGroups(sortedDvArray);
 
         return DjVars.convertDvGroupsListToMetamathList(dvGroups);
@@ -201,9 +201,9 @@ public class DjVars implements Comparable<DjVars> {
 
         final DjVars[] comboDvArray = DjVars.sortAndCombineDvArrays(
             theorem.getMandFrame().djVarsArray,
-            theorem.getOptFrame().optDjVarsArray);
+            theorem.getOptFrame().djVarsArray);
 
-        final List<List<Var>> comboDvGroups = MandFrame
+        final List<List<Var>> comboDvGroups = ScopeFrame
             .consolidateDvGroups(comboDvArray);
 
         return DjVars.convertDvGroupsListToMetamathList(comboDvGroups);
@@ -380,7 +380,7 @@ public class DjVars implements Comparable<DjVars> {
      * @throws LangException if the two Var id's are identical.
      */
     public void set(final Var lo, final Var hi) throws LangException {
-        final int compare = Sym.ID.compare(lo, hi);
+        final int compare = DV_ORDER.compare(lo, hi);
         if (compare == 0)
             throw new LangException(LangConstants.ERRMSG_DJ_VARS_ARE_DUPS,
                 lo.getId());
@@ -475,12 +475,14 @@ public class DjVars implements Comparable<DjVars> {
      *         less than, equal to or greater than the input parameter obj.
      */
     public int compareTo(final DjVars obj) {
-        int compare = Sym.ID.compare(varLo, obj.varLo);
+        int compare = DV_ORDER.compare(varLo, obj.varLo);
         if (compare == 0)
-            compare = Sym.ID.compare(varHi, obj.varHi);
+            compare = DV_ORDER.compare(varHi, obj.varHi);
         return compare;
 
 //      return  ((this.toString()).compareTo(
 //               ((DjVars)obj).toString()));
     }
+
+    public static Comparator<? super Var> DV_ORDER = MObj.SEQ;
 }

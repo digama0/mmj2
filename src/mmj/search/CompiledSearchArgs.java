@@ -320,7 +320,7 @@ public class CompiledSearchArgs {
     Chapter searchThruChap;
     Section searchThruSec;
     int searchOutputSortNbr;
-    MandFrame searchComboFrame;
+    ScopeFrame searchComboFrame;
     Stmt searchReferenceStmt;
     Chapter searchReferenceStmtChapter;
     Section searchReferenceStmtSection;

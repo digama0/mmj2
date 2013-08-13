@@ -770,7 +770,7 @@ public class LangConstants {
     // =======================================================
 
     /**
-     * Messages for MandFrame.java
+     * Messages for ScopeFrame.java
      */
 
     public static final String ERRMSG_DUP_DJ_VARS_AFTER_CONSOLIDATION_ERR = "A-LA-0901"

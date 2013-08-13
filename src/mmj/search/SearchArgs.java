@@ -32,7 +32,7 @@ public class SearchArgs {
     String theoremLabel;
     String locAfterLabel;
     String generalSearchStmtLabel;
-    MandFrame comboFrame;
+    ScopeFrame comboFrame;
     OrSeparator orSeparator = new OrSeparator();
     SingleQuote singleQuote = new SingleQuote();
     DoubleQuote doubleQuote = new DoubleQuote();
@@ -166,7 +166,7 @@ public class SearchArgs {
     }
 
     void loadDefaultComboFrame(final LogicalSystem logicalSystem) {
-        comboFrame = new MandFrame(logicalSystem.getScopeDefList().get(0),
+        comboFrame = new ScopeFrame(logicalSystem.getScopeDefList().get(0),
             searchMaxSeq);
     }
 }

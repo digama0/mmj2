@@ -1,27 +1,12 @@
 //********************************************************************/
-//* Copyright (C) 2005, 2006, 2007, 2008                             */
-//* MEL O'CAT  mmj2 (via) planetmath (dot) org                       */
+//* Copyright (C) 2005  MEL O'CAT  mmj2 (via) planetmath (dot) org   */
 //* License terms: GNU General Public License Version 2              */
 //*                or any later version                              */
 //********************************************************************/
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- * MandFrame.java  0.06 08/01/2008
- *
- * 31-Dec-2005
- * -->added convenience routines for ProofAsst.
- *
- * Version 0.04 -- 07-Sep-2006
- * -->removed unnecessary LangException declarations
- *    on constructors (doh?)
- * --> move Assrt.loadDjVarsArray to DjVars class.
- *
- * Version 0.05 -- 01-Jun-2007
- * --> Added consolidateDvGroups(), etc.
- *
- * Version 0.06 -- 01-Aug-2008
- * --> Added buildConsolidatedDvArray()
+ * OptFrame.java  0.02 08/23/2005
  */
 
 package mmj.lang;
@@ -31,19 +16,17 @@ import java.util.*;
 import mmj.pa.DistinctVariablesStmt;
 
 /**
- * Mandatory "Frame" of an Assrt (assertion).
+ * A combined class representing {@code mandFrame}, the Mandatory "Frame" of an
+ * Assrt (assertion), as well as {@code optFrame}, the Optional "Frame" of a
+ * Theorem (OptFrame not present in other Assrt's).
  * <p>
- * Add MandFrame to OptFrame and you have a Metamath "Extended Frame".
+ * Add {@code mandFrame} to {@code optFrame} and you have a Metamath
+ * "Extended Frame".
  * 
  * @see <a href="../../MetamathERNotes.html"> Nomenclature and
  *      Entity-Relationship Notes</a>
  */
-public class MandFrame {
-
-    /**
-     * Default Constructor.
-     */
-    public MandFrame() {}
+public class ScopeFrame {
 
     /**
      * These are the "mandatories" that are referenced in an assertion, in order
@@ -53,18 +36,29 @@ public class MandFrame {
      * variables referenced in the assertion's Formula, but the logical
      * hypotheses in scope of the Theorem plus the variable hypotheses for
      * variables referenced by *those* logical hypotheses.
+     * <p>
+     * For an {@code optFrame}, these include all Hyps in scope not present in
+     * the mandatory {@code hypArray}.
      */
     public Hyp[] hypArray;
 
     /**
      * These are the disjoint variable (pair)restrictions, if any, that apply to
      * the Assrt and any of its proof steps.
+     * <p>
+     * For an {@code optFrame}, these include all DjVars (pairs) in scope not
+     * present in the mandatory {@code djVarsArray}.
      */
     public DjVars[] djVarsArray;
 
     /**
-     * Checks to see if a certain pair of variables is mentioned in a
-     * MandFrame's DjVars array.
+     * Default Constructor.
+     */
+    public ScopeFrame() {}
+
+    /**
+     * Checks to see if a certain pair of variables is mentioned in a OptFrame's
+     * DjVars array.
      * <p>
      * Note: vLo and vHi are automatically switched if vLo is not low.
      * <p>
@@ -73,16 +67,16 @@ public class MandFrame {
      * But if the vars were stored randomly or arbitrarily, then twice as many
      * comparisons would be needed here.
      * 
-     * @param frame Mandatory Frame to inspect.
+     * @param frame Scope Frame to inspect.
      * @param vLo the "low" variable in the pair.
      * @param vHi the "high" variable in the pair.
-     * @return true if param var pair in MandFrame DjVars array.
+     * @return true if param var pair in OptFrame DjVars array.
      */
-    public static boolean isVarPairInDjArray(final MandFrame frame, Var vLo,
+    public static boolean isVarPairInDjArray(final ScopeFrame frame, Var vLo,
         Var vHi)
     {
         Var vSwap;
-        if (Sym.ID.compare(vLo, vHi) > 0) {
+        if (DjVars.DV_ORDER.compare(vLo, vHi) > 0) {
             vSwap = vHi;
             vHi = vLo;
             vLo = vSwap;
@@ -110,7 +104,7 @@ public class MandFrame {
         for (int i = 0; i < distinctVariablesStmtArray.length; i++)
             dvGroupArray[i] = distinctVariablesStmtArray[i].getDv();
 
-        MandFrame.loadDvGroupsIntoList(dvList, dvGroupArray);
+        loadDvGroupsIntoList(dvList, dvGroupArray);
 
         return dvList.toArray(new DjVars[dvList.size()]);
     }
@@ -263,8 +257,8 @@ public class MandFrame {
                         insertInDvGroupBeforeEnd = false;
                         continue;
                     }
-                    if (MandFrame.areAllDisjoint(dvArray[j].varHi, dvGroup,
-                        dvArray, currVarLoLast, checked))
+                    if (areAllDisjoint(dvArray[j].varHi, dvGroup, dvArray,
+                        currVarLoLast, checked))
                     {
 
                         // success! consolidated another one!
@@ -313,7 +307,7 @@ public class MandFrame {
      * @param scopeDef ScopeDef, intended to be global scope.
      * @param maxSeq MObj.seq must be < maxSeq
      */
-    public MandFrame(final ScopeDef scopeDef, final int maxSeq) {
+    public ScopeFrame(final ScopeDef scopeDef, final int maxSeq) {
 
         if (maxSeq < Integer.MAX_VALUE) {
             final List<Hyp> arrayList = new ArrayList<Hyp>(
@@ -345,26 +339,26 @@ public class MandFrame {
      * @param mandFrame a Theorem's MandFrame
      * @param optFrame a Theorem's OptFrame
      */
-    public MandFrame(final MandFrame mandFrame, final OptFrame optFrame) {
+    public ScopeFrame(final ScopeFrame mandFrame, final ScopeFrame optFrame) {
 
         List<Hyp> hyps;
 
         hyps = new ArrayList<Hyp>(mandFrame.hypArray.length
-            + optFrame.optHypArray.length);
+            + optFrame.hypArray.length);
 
         for (final Hyp hyp : mandFrame.hypArray)
             Assrt.accumHypInList(hyps, hyp);
-        for (final Hyp hyp : optFrame.optHypArray)
+        for (final Hyp hyp : optFrame.hypArray)
             Assrt.accumHypInList(hyps, hyp);
         hypArray = hyps.toArray(new Hyp[hyps.size()]);
 
         djVarsArray = new DjVars[mandFrame.djVarsArray.length
-            + optFrame.optDjVarsArray.length];
+            + optFrame.djVarsArray.length];
 
         int djCnt = 0;
         for (int i = 0; i < mandFrame.djVarsArray.length; i++)
             djVarsArray[djCnt++] = mandFrame.djVarsArray[i];
-        for (final DjVars dj : optFrame.optDjVarsArray)
+        for (final DjVars dj : optFrame.djVarsArray)
             djVarsArray[djCnt++] = dj;
 
     }
@@ -412,7 +406,7 @@ public class MandFrame {
         final List<DjVars> arrayList = new ArrayList<DjVars>(
             Arrays.asList(djVarsArray));
 
-        MandFrame.loadDvGroupsIntoList(arrayList, dvGroupArray);
+        loadDvGroupsIntoList(arrayList, dvGroupArray);
 
         djVarsArray = arrayList.toArray(new DjVars[arrayList.size()]);
 
@@ -426,7 +420,7 @@ public class MandFrame {
      * should *already* be in the MandFrame hypArray, by definition (of
      * MandFrame). Convenience method for ProofAsst's use.
      * 
-     * @return Map of Vars for VarHyps in MandFrame.hypArray.
+     * @return Map of Vars for VarHyps in ScopeFrame.hypArray.
      */
     public Map<String, Var> getVarMap() {
         final Map<String, Var> varMap = new HashMap<String, Var>(

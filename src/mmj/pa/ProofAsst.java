@@ -1694,7 +1694,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      */
     private void importCompareDJs(final ProofWorksheet proofWorksheet) {
         final List<DjVars> superfluous = new ArrayList<DjVars>();
-        final MandFrame mandFrame = proofWorksheet.theorem.getMandFrame();
+        final ScopeFrame mandFrame = proofWorksheet.theorem.getMandFrame();
         int compare;
         loopI: for (int i = 0; i < mandFrame.djVarsArray.length; i++) {
             for (int j = 0; j < proofWorksheet.comboFrame.djVarsArray.length; j++)
@@ -1722,7 +1722,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     private void importUpdateDJs(final ProofWorksheet proofWorksheet) {
         final List<DjVars> list = new ArrayList<DjVars>();
 
-        final MandFrame mandFrame = proofWorksheet.theorem.getMandFrame();
+        final ScopeFrame mandFrame = proofWorksheet.theorem.getMandFrame();
 
         for (final DjVars element : proofWorksheet.comboFrame.djVarsArray)
             if (mandFrame.areBothDjVarsInHypArray(element))

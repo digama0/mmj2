@@ -63,7 +63,7 @@ import java.util.*;
  * <p>
  * Proof step Stmt references are not restricted to Syntax Axiom and Variable
  * Hypotheses, and can contain references to Logical Hypotheses, Logical Axioms
- * and other Theorems. Logical Axioms and Theorems have Frames (see MandFrame
+ * and other Theorems. Logical Axioms and Theorems have Frames (see ScopeFrame
  * and OptFrame) whose hypArrays contain Variable Hypotheses AND Logical
  * Hypotheses, therefore there may be more children nodes under an Assertion's
  * ParseNode than there are under a Syntax Axiom's ParseNode. Both proof parse

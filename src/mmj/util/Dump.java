@@ -442,11 +442,11 @@ public class Dump {
         dumpAssrtProperties(indentNbr, theorem);
 
         sb = new StringBuilder();
-        final OptFrame optFrame = theorem.getOptFrame();
+        final ScopeFrame optFrame = theorem.getOptFrame();
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_OPT_FRAME_HYP_ARRAY);
         char comma = ' ';
-        for (final Hyp element : optFrame.optHypArray) {
+        for (final Hyp element : optFrame.hypArray) {
             sb.append(comma);
             comma = UtilConstants.DUMP_COMMA;
             sb.append(element.getLabel());
@@ -458,7 +458,7 @@ public class Dump {
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_OPT_FRAME_DJ_VARS);
         comma = ' ';
-        for (final DjVars element : optFrame.optDjVarsArray) {
+        for (final DjVars element : optFrame.djVarsArray) {
             sb.append(comma);
             comma = UtilConstants.DUMP_COMMA;
             sb.append(element.getVarLo());
@@ -551,7 +551,7 @@ public class Dump {
 
     public void dumpAssrtProperties(final int indentNbr, final Assrt assrt) {
         StringBuilder sb = new StringBuilder();
-        final MandFrame mandFrame = assrt.getMandFrame();
+        final ScopeFrame mandFrame = assrt.getMandFrame();
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_MAND_FRAME_HYP_ARRAY);
         char comma = ' ';

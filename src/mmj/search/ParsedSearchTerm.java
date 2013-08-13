@@ -96,7 +96,7 @@ public class ParsedSearchTerm {
     private void loadSymbols(final SearchMgr searchMgr) {
         final LogicalSystem logicalSystem = searchMgr.getLogicalSystem();
         searchMgr.getWorkVarManager();
-        final MandFrame mandFrame = searchMgr.getComboFrame();
+        final ScopeFrame mandFrame = searchMgr.getComboFrame();
         final Map<String, Var> varMap = mandFrame.getVarMap();
         Tokenizer tokenizer;
         try {
