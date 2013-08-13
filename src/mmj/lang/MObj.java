@@ -37,13 +37,10 @@ import java.util.Comparator;
  * LogicalSystem can be output, we will need to store Begin and End Scope
  * statements, and perhaps Include Files and Comments.
  * 
- * @param <THIS> this type (i.e. the subclass type for subclasses). This is
- *            provided for a proper {@code #compareTo(MObj)} implementation.
  * @see <a href="../../MetamathERNotes.html"> Nomenclature and
  *      Entity-Relationship Notes</a>
  */
-public abstract class MObj<THIS extends MObj<THIS>> implements Comparable<THIS>
-{
+public abstract class MObj {
 
     /**
      * Provides an ordering of Metamath objects.
@@ -167,17 +164,6 @@ public abstract class MObj<THIS extends MObj<THIS>> implements Comparable<THIS>
     }
 
     /**
-     * Compares MObj object based on the seq.
-     * 
-     * @param obj MObj object to compare to this MObj
-     * @return returns negative, zero, or a positive int if this MObj object is
-     *         less than, equal to or greater than the input parameter obj.
-     */
-    public int compareTo(final THIS obj) {
-        return seq - obj.seq;
-    }
-
-    /**
      * Compare for equality with another MObj.
      * <p>
      * Equal if and only if the MObj sequence numbers are equal. and the obj to
@@ -187,14 +173,14 @@ public abstract class MObj<THIS extends MObj<THIS>> implements Comparable<THIS>
      */
     @Override
     public boolean equals(final Object obj) {
-        return this == obj || obj instanceof MObj && seq == ((MObj<?>)obj).seq;
+        return this == obj || obj instanceof MObj && seq == ((MObj)obj).seq;
     }
 
     /**
      * SEQ sequences by MObj.seq.
      */
-    static public final Comparator<MObj<?>> SEQ = new Comparator<MObj<?>>() {
-        public int compare(final MObj<?> o1, final MObj<?> o2) {
+    public static final Comparator<MObj> SEQ = new Comparator<MObj>() {
+        public int compare(final MObj o1, final MObj o2) {
             return o1.seq - o2.seq;
         }
     };
@@ -202,9 +188,9 @@ public abstract class MObj<THIS extends MObj<THIS>> implements Comparable<THIS>
     /**
      * SECTION_AND_MOBJ_NBR sequences by sectionNbr and sectionMObjNbr;
      */
-    static public final Comparator<MObj<?>> SECTION_AND_MOBJ_NBR = new Comparator<MObj<?>>()
+    public static final Comparator<MObj> SECTION_AND_MOBJ_NBR = new Comparator<MObj>()
     {
-        public int compare(final MObj<?> o1, final MObj<?> o2) {
+        public int compare(final MObj o1, final MObj o2) {
             return o1.sectionNbr == o2.sectionNbr ? o1.sectionMObjNbr
                 - o2.sectionMObjNbr : o1.sectionNbr - o2.sectionNbr;
         }

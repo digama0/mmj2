@@ -245,7 +245,7 @@ public abstract class GrammarRule {
     /**
      * RULE_NBR sequences by GrammarRule.ruleNbr
      */
-    static public final Comparator<GrammarRule> RULE_NBR = new Comparator<GrammarRule>()
+    public static final Comparator<GrammarRule> RULE_NBR = new Comparator<GrammarRule>()
     {
         public int compare(final GrammarRule o1, final GrammarRule o2) {
             return o1.ruleNbr - o2.ruleNbr;
@@ -255,7 +255,7 @@ public abstract class GrammarRule {
     /**
      * MAX_SEQ_NBR sequences by GrammarRule.maxSeqNbr & ruleNbr
      */
-    static public final Comparator<GrammarRule> MAX_SEQ_NBR = new Comparator<GrammarRule>()
+    public static final Comparator<GrammarRule> MAX_SEQ_NBR = new Comparator<GrammarRule>()
     {
         public int compare(final GrammarRule o1, final GrammarRule o2) {
             int c = o1.maxSeqNbr - o2.maxSeqNbr;

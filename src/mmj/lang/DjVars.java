@@ -380,7 +380,7 @@ public class DjVars implements Comparable<DjVars> {
      * @throws LangException if the two Var id's are identical.
      */
     public void set(final Var lo, final Var hi) throws LangException {
-        final int compare = lo.compareTo(hi);
+        final int compare = Sym.ID.compare(lo, hi);
         if (compare == 0)
             throw new LangException(LangConstants.ERRMSG_DJ_VARS_ARE_DUPS,
                 lo.getId());
@@ -475,9 +475,9 @@ public class DjVars implements Comparable<DjVars> {
      *         less than, equal to or greater than the input parameter obj.
      */
     public int compareTo(final DjVars obj) {
-        int compare = varLo.compareTo(obj.varLo);
+        int compare = Sym.ID.compare(varLo, obj.varLo);
         if (compare == 0)
-            compare = varHi.compareTo(obj.varHi);
+            compare = Sym.ID.compare(varHi, obj.varHi);
         return compare;
 
 //      return  ((this.toString()).compareTo(

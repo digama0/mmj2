@@ -526,7 +526,7 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
     /**
      * EXPORT_TYPE sequences by GMFFExportParms.exportType.
      */
-    static public final Comparator<GMFFExportParms> EXPORT_TYPE = new Comparator<GMFFExportParms>()
+    public static final Comparator<GMFFExportParms> EXPORT_TYPE = new Comparator<GMFFExportParms>()
     {
         public int compare(final GMFFExportParms o1, final GMFFExportParms o2) {
             return o1.compareTo(o2);

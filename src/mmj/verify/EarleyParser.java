@@ -253,7 +253,7 @@ public class EarleyParser implements GrammaticalParser {
         // return EarleyParserSpecialCase2();
         // }
         if (parseNodeHolderExpr.length == 1) {
-            final MObj<?> mObj = parseNodeHolderExpr[0].mObj;
+            final MObj mObj = parseNodeHolderExpr[0].mObj;
             if (!(mObj instanceof Cnst))
                 return EarleyParserSpecialCase2();
             // ok, is expression w/one symbol, a constant...

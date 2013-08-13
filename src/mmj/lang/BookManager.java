@@ -664,12 +664,12 @@ public class BookManager implements TheoremLoaderCommitListener {
      * @param logicalSystem the mmj2 LogicalSystem object.
      * @return List of Sections.
      */
-    public Iterable<MObj<?>> getSectionMObjIterable(
+    public Iterable<MObj> getSectionMObjIterable(
         final LogicalSystem logicalSystem)
     {
-        final MObj<?>[][] sectionArray = getSectionMObjArray(logicalSystem);
-        return new Iterable<MObj<?>>() {
-            public Iterator<MObj<?>> iterator() {
+        final MObj[][] sectionArray = getSectionMObjArray(logicalSystem);
+        return new Iterable<MObj>() {
+            public Iterator<MObj> iterator() {
                 return new SectionMObjIterator(sectionArray);
             }
         };
@@ -686,9 +686,9 @@ public class BookManager implements TheoremLoaderCommitListener {
      * @return two-dimensional array of MObjs by Section and MObjNbr within
      *         Section.
      */
-    public MObj<?>[][] getSectionMObjArray(final LogicalSystem logicalSystem) {
+    public MObj[][] getSectionMObjArray(final LogicalSystem logicalSystem) {
 
-        MObj<?>[][] sectionArray;
+        MObj[][] sectionArray;
 
         if (!enabled) {
             sectionArray = new MObj[0][];
@@ -710,12 +710,12 @@ public class BookManager implements TheoremLoaderCommitListener {
      * Nested class which implements Iterable for a two-dimensional array of
      * MObjs by Section and MObjNbr within Section.
      */
-    public class SectionMObjIterator implements Iterator<MObj<?>> {
+    public class SectionMObjIterator implements Iterator<MObj> {
         private int prevI;
         private int prevJ;
         private int nextI;
         private int nextJ;
-        private final MObj<?>[][] mArray;
+        private final MObj[][] mArray;
 
         /**
          * Sole Constructor.
@@ -727,7 +727,7 @@ public class BookManager implements TheoremLoaderCommitListener {
          * @param s two-dimensional array of MObjs by Section and MObjNbr within
          *            Section.
          */
-        public SectionMObjIterator(final MObj<?>[][] s) {
+        public SectionMObjIterator(final MObj[][] s) {
             mArray = s;
             prevI = 0;
             prevJ = -1;
@@ -739,7 +739,7 @@ public class BookManager implements TheoremLoaderCommitListener {
          * @return the next MObj within the two-dimensional array.
          * @throws NoSuchElementException if there are no more MObjs to return.
          */
-        public MObj<?> next() {
+        public MObj next() {
             if (!hasNext())
                 throw new NoSuchElementException();
             prevI = nextI;
@@ -832,10 +832,10 @@ public class BookManager implements TheoremLoaderCommitListener {
         return chapterNbr;
     }
 
-    private void loadSectionArrayEntry(final MObj<?>[][] sectionArray,
-        final Iterable<? extends MObj<?>> iterable)
+    private void loadSectionArrayEntry(final MObj[][] sectionArray,
+        final Iterable<? extends MObj> iterable)
     {
-        for (final MObj<?> mObj : iterable)
+        for (final MObj mObj : iterable)
             sectionArray[mObj.sectionNbr - 1][mObj.sectionMObjNbr - 1] = mObj;
     }
 

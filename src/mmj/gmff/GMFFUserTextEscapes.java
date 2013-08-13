@@ -228,7 +228,7 @@ public class GMFFUserTextEscapes implements Comparable<GMFFUserTextEscapes> {
     /**
      * EXPORT_TYPE sequences by GMFFUserTextEscapes.exportType.
      */
-    static public final Comparator<GMFFUserTextEscapes> EXPORT_TYPE = new Comparator<GMFFUserTextEscapes>()
+    public static final Comparator<GMFFUserTextEscapes> EXPORT_TYPE = new Comparator<GMFFUserTextEscapes>()
     {
         public int compare(final GMFFUserTextEscapes o1,
             final GMFFUserTextEscapes o2)

@@ -28,6 +28,7 @@ package mmj.verify;
 import java.util.*;
 
 import mmj.lang.Cnst;
+import mmj.lang.Sym;
 
 /**
  * GRForest is a collection of static functions that operate on GRNode Trees.
@@ -222,7 +223,7 @@ public class GRForest {
         GRNode t = oldRoot; // insert oper can change the root!
         int diff;
         while (true) {
-            if ((diff = t.elementCnst().compareTo(elementCnst)) == 0)
+            if ((diff = Sym.ID.compare(t.elementCnst(), elementCnst)) == 0)
                 throw new IllegalArgumentException(
                     "adding new node but already exists in tree!");
             if (diff < 0) {

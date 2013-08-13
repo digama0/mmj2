@@ -37,7 +37,7 @@ public class ParseNodeHolder {
     /**
      * mObj contains either a Cnst, a Var or a Stmt.
      */
-    public MObj<?> mObj;
+    public MObj mObj;
 
     /**
      * ParseNode associated with mObj, may be null.

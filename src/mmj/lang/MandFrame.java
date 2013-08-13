@@ -82,7 +82,7 @@ public class MandFrame {
         Var vHi)
     {
         Var vSwap;
-        if (vLo.compareTo(vHi) > 0) {
+        if (Sym.ID.compare(vLo, vHi) > 0) {
             vSwap = vHi;
             vHi = vLo;
             vLo = vSwap;

@@ -950,7 +950,7 @@ public class Dump {
 
     private void dumpBookManagerSectionDetails(final int indentNbr,
         final RunParmArrayEntry runParm, final BookManager bookManager,
-        final Iterable<MObj<?>> iterable, final Section selectedSection)
+        final Iterable<MObj> iterable, final Section selectedSection)
     {
 
         sysOutDumpAPrintLn(indentTbl[indentNbr]);
@@ -962,7 +962,7 @@ public class Dump {
         int prevChapterNbr = -1;
         int prevSectionNbr = -1;
 
-        for (final MObj<?> mObj : iterable) {
+        for (final MObj mObj : iterable) {
             final int sectionNbr = mObj.getSectionNbr();
             if (selectedSection != null) {
                 if (sectionNbr > selectedSection.getSectionNbr())
@@ -1037,7 +1037,7 @@ public class Dump {
     }
 
     private void dumpOneBookManagerSectionDetail(final int indentNbr,
-        final MObj<?> mObj)
+        final MObj mObj)
     {
         final StringBuilder sb = new StringBuilder();
 

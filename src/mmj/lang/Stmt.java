@@ -80,7 +80,7 @@ import java.util.Map;
  * @see <a href="../../MetamathERNotes.html"> Nomenclature and
  *      Entity-Relationship Notes</a>
  */
-public abstract class Stmt extends MObj<Stmt> {
+public abstract class Stmt extends MObj {
     /**
      * note: label must NOT be changed after Stmt added to stmtTbl because
      * stmtTbl is a Map (map behavior undefined)
@@ -430,18 +430,6 @@ public abstract class Stmt extends MObj<Stmt> {
     public boolean equals(final Object obj) {
         return this == obj || obj instanceof Stmt
             && label.equals(((Stmt)obj).label);
-    }
-
-    /**
-     * Compares Stmt object based on the primary key, label
-     * 
-     * @param obj Stmt object to compare to this Stmt
-     * @return returns negative, zero, or a positive int if this Stmt object is
-     *         less than, equal to or greater than the input parameter obj.
-     */
-    @Override
-    public int compareTo(final Stmt obj) {
-        return label.compareTo(obj.label);
     }
 
     /**

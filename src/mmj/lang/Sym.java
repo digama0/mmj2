@@ -30,7 +30,7 @@ import java.util.Map;
  * @see <a href="../../MetamathERNotes.html"> Nomenclature and
  *      Entity-Relationship Notes</a>
  */
-public abstract class Sym extends MObj<Sym> {
+public abstract class Sym extends MObj {
     /**
      * "id" is the character string that uniquely identifies the Sym.
      * <p>
@@ -156,21 +156,9 @@ public abstract class Sym extends MObj<Sym> {
     }
 
     /**
-     * Compares Sym object based on the primary key, id.
-     * 
-     * @param obj Sym object to compare to this Sym
-     * @return returns negative, zero, or a positive int if this Sym object is
-     *         less than, equal to or greater than the input parameter obj.
-     */
-    @Override
-    public int compareTo(final Sym obj) {
-        return id.compareTo(obj.id);
-    }
-
-    /**
      * ID sequences by Sym.id.
      */
-    static public final Comparator<Sym> ID = new Comparator<Sym>() {
+    public static final Comparator<Sym> ID = new Comparator<Sym>() {
         public int compare(final Sym o1, final Sym o2) {
             return o1.id.compareTo(o2.id);
         }

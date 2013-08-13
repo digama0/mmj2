@@ -30,6 +30,7 @@ package mmj.verify;
 import java.util.Collection;
 
 import mmj.lang.Cnst;
+import mmj.lang.Sym;
 
 /**
  * see RBCell(dot)java by Doug Lea, public domain; clone that puppy, and added
@@ -345,7 +346,7 @@ public class GRNode {
         GRNode t = this;
         int diff;
         for (;;) {
-            if ((diff = t.elementCnst_.compareTo(elementCnst)) == 0)
+            if ((diff = Sym.ID.compare(t.elementCnst_, elementCnst)) == 0)
                 return t;
             else if (diff < 0)
                 t = t.left_;

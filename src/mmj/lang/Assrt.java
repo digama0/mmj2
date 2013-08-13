@@ -465,7 +465,7 @@ public abstract class Assrt extends Stmt {
     /**
      * NBR_LOG_HYP_SEQ sequences by Stmt.seq
      */
-    static public final Comparator<Assrt> NBR_LOG_HYP_SEQ = new Comparator<Assrt>()
+    public static final Comparator<Assrt> NBR_LOG_HYP_SEQ = new Comparator<Assrt>()
     {
         public int compare(final Assrt o1, final Assrt o2) {
             int n = o1.logHypArray.length - o2.logHypArray.length;

@@ -45,7 +45,7 @@ public class TheoremStmtGroup {
 
     /* derived or computed items follow: */
 
-    private MObj<?> maxExistingMObjRef;
+    private MObj maxExistingMObjRef;
 
     private int insertSectionNbr; // for BookManager.
 
@@ -497,7 +497,7 @@ public class TheoremStmtGroup {
     /**
      * SEQ sequences by TheoremStmtGroup.theorem.getSeq().
      */
-    static public final Comparator<TheoremStmtGroup> SEQ = new Comparator<TheoremStmtGroup>()
+    public static final Comparator<TheoremStmtGroup> SEQ = new Comparator<TheoremStmtGroup>()
     {
         public int compare(final TheoremStmtGroup o1, final TheoremStmtGroup o2)
         {
@@ -508,7 +508,7 @@ public class TheoremStmtGroup {
     /**
      * NBR_LOG_HYP_SEQ sequences by number of LogHyps and Seq.
      */
-    static public final Comparator<TheoremStmtGroup> NBR_LOG_HYP_SEQ = new Comparator<TheoremStmtGroup>()
+    public static final Comparator<TheoremStmtGroup> NBR_LOG_HYP_SEQ = new Comparator<TheoremStmtGroup>()
     {
 
         public int compare(final TheoremStmtGroup o1, final TheoremStmtGroup o2)
@@ -1201,7 +1201,7 @@ public class TheoremStmtGroup {
             list.add(tsg);
     }
 
-    private void updateMaxExistingMObjRef(final MObj<?> mObj) {
+    private void updateMaxExistingMObjRef(final MObj mObj) {
 
         if (maxExistingMObjRef == null
             || mObj.getSeq() > maxExistingMObjRef.getSeq())
