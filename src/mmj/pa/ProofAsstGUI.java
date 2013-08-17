@@ -270,6 +270,7 @@ public class ProofAsstGUI {
     public void unifyWithStepSelectorChoice(final StepRequest stepRequest) {
 
         startUnificationAction(false, // no renum
+            false, // convert work vars
             null, // no preprocess request
             stepRequest, // s/b SELECTOR_CHOICE
             null); // no TL Request
@@ -1234,6 +1235,7 @@ public class ProofAsstGUI {
             new AbstractAction() {
                 public void actionPerformed(final ActionEvent e) {
                     startUnificationAction(false, // no renum
+                        false, // convert work vars
                         null, // no preprocess request
                         null, // no Step Request
                         null); // no TL Request
@@ -1251,6 +1253,7 @@ public class ProofAsstGUI {
             new AbstractAction() {
                 public void actionPerformed(final ActionEvent e) {
                     startUnificationAction(true, // yes, renum
+                        false, // convert work vars
                         null, // no preprocess request
                         null, // no Step Request
                         null); // no TL Request
@@ -1265,15 +1268,48 @@ public class ProofAsstGUI {
             new AbstractAction() {
                 public void actionPerformed(final ActionEvent e) {
                     startUnificationAction(true, // yes, renum
-                        new EraseWffsPreprocessRequest(), null, // no Step
-                                                                // Request
+                        false, // convert work vars
+                        new EraseWffsPreprocessRequest(), //
+                        null, // no Step Request
                         null); // no TL Request
                 }
             });
         startUnifyWRederiveItem
             .setText(PaConstants.PA_GUI_UNIFY_MENU_REDERIVE_ITEM_TEXT);
-        startUnifyWRederiveItem.setMnemonic(KeyEvent.VK_D);
+        startUnifyWRederiveItem.setMnemonic(KeyEvent.VK_E);
         unifyMenu.add(startUnifyWRederiveItem);
+
+        final JMenuItem startUnifyWNoConvertItem = new JMenuItem(
+            new AbstractAction() {
+                public void actionPerformed(final ActionEvent e) {
+                    startUnificationAction(true, // yes, renum
+                        true, // don't convert work vars
+                        null, // no preprocess request
+                        null, // no Step Request
+                        null); // no TL Request
+                }
+            });
+        startUnifyWNoConvertItem
+            .setText(PaConstants.PA_GUI_UNIFY_MENU_NO_WV_ITEM_TEXT);
+        startUnifyWNoConvertItem.setMnemonic(KeyEvent.VK_W);
+        startUnifyWNoConvertItem.setAccelerator(KeyStroke.getKeyStroke(
+            KeyEvent.VK_U, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
+        unifyMenu.add(startUnifyWNoConvertItem);
+
+        final JMenuItem startUnifyEraseNoConvertItem = new JMenuItem(
+            new AbstractAction() {
+                public void actionPerformed(final ActionEvent e) {
+                    startUnificationAction(true, // yes, renum
+                        true, // don't convert work vars
+                        new EraseWffsPreprocessRequest(), //
+                        null, // no Step Request
+                        null); // no TL Request
+                }
+            });
+        startUnifyEraseNoConvertItem
+            .setText(PaConstants.PA_GUI_UNIFY_MENU_ERASE_NO_WV_ITEM_TEXT);
+        startUnifyEraseNoConvertItem.setMnemonic(KeyEvent.VK_Y);
+        unifyMenu.add(startUnifyEraseNoConvertItem);
 
         final JMenuItem startUnifyWStepSelectorSearchItem = new JMenuItem(
             new AbstractAction() {
@@ -2275,12 +2311,12 @@ public class ProofAsstGUI {
     }
 
     private void startUnificationAction(final boolean renumReq,
-        final PreprocessRequest preprocessRequest,
+        final boolean noConvertWV, final PreprocessRequest preprocessRequest,
         final StepRequest stepRequest, final TLRequest tlRequest)
     {
         final RequestUnify request = new RequestUnify(
-            proofTextChanged.getChanges(), renumReq, preprocessRequest,
-            stepRequest, tlRequest);
+            proofTextChanged.getChanges(), renumReq, noConvertWV,
+            preprocessRequest, stepRequest, tlRequest);
         startRequestAction(request);
     }
 
@@ -2318,7 +2354,7 @@ public class ProofAsstGUI {
     }
 
     public void unifyWithSearchChoice(final StepRequest stepRequest) {
-        startUnificationAction(false, null, stepRequest, null);
+        startUnificationAction(false, false, null, stepRequest, null);
     }
 
     // ------------------------------------------------------
@@ -2327,6 +2363,7 @@ public class ProofAsstGUI {
 
     private void doUnifyPlusStoreInLogSysAndMMTFolderItemAction() {
         startUnificationAction(false, // no renum
+            false, // convert work vars
             null, // no preprocess request
             null, // no step selector request
             new StoreInLogSysAndMMTFolderTLRequest());
@@ -2334,6 +2371,7 @@ public class ProofAsstGUI {
 
     private void doUnifyPlusStoreInMMTFolderItemAction() {
         startUnificationAction(false, // no renum
+            false, // convert work vars
             null, // no preprocess request
             null, // no step selector request
             new StoreInMMTFolderTLRequest());
@@ -2720,25 +2758,28 @@ public class ProofAsstGUI {
     }
 
     class RequestUnify extends Request {
-        boolean renumReq;
-        PreprocessRequest preprocessRequest;
-        StepRequest stepRequest;
-        TLRequest tlRequest;
-        boolean textChangedBeforeUnify;
+        private final boolean renumReq;
+        private final PreprocessRequest preprocessRequest;
+        private final StepRequest stepRequest;
+        private final TLRequest tlRequest;
+        private final boolean textChangedBeforeUnify;
+        private final boolean noConvertWV;
 
         RequestUnify(final boolean textChangedBeforeUnify,
-            final boolean renumReq, final PreprocessRequest preprocessRequest,
+            final boolean renumReq, final boolean noConvertWV,
+            final PreprocessRequest preprocessRequest,
             final StepRequest stepRequest, final TLRequest tlRequest)
         {
             this.textChangedBeforeUnify = textChangedBeforeUnify;
             this.renumReq = renumReq;
+            this.noConvertWV = noConvertWV;
             this.preprocessRequest = preprocessRequest;
             this.stepRequest = stepRequest;
             this.tlRequest = tlRequest;
         }
         @Override
         void send() {
-            w = proofAsst.unify(renumReq, getProofTextAreaText(),
+            w = proofAsst.unify(renumReq, noConvertWV, getProofTextAreaText(),
                 preprocessRequest, stepRequest, tlRequest,
                 proofTextArea.getCaretPosition() + 1);
 

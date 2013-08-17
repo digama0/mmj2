@@ -250,18 +250,20 @@ public class VarHyp extends Hyp {
      * varHypList should either be empty (new) before the call, or already be in
      * that order.
      * 
-     * @param varHypList List of Var Hyps, updated here.
+     * @param optionalVarHypList List of Var Hyps, updated here.
      */
-    public void accumVarHypListBySeq(final List<Hyp> varHypList) {
+    public void accumVarHypListBySeq(
+        final List<? super VarHyp> optionalVarHypList)
+    {
 
         int i = 0;
-        final int iEnd = varHypList.size();
+        final int iEnd = optionalVarHypList.size();
         final int newSeq = seq;
         int existingSeq;
 
         while (true) {
             if (i < iEnd) {
-                existingSeq = ((VarHyp)varHypList.get(i)).seq;
+                existingSeq = ((MObj)optionalVarHypList.get(i)).seq;
                 if (newSeq < existingSeq)
                     // insert here, at "i"
                     break;
@@ -274,7 +276,10 @@ public class VarHyp extends Hyp {
                 break;
             i++;
         }
-        varHypList.add(i, this);
+        // Note that this wildcard type should actually be
+        // <? extends MObj super VarHyp>, but java doesn't allow that
+        // for some reason
+        optionalVarHypList.add(i, this);
         return;
     }
 
@@ -282,14 +287,14 @@ public class VarHyp extends Hyp {
      * Searches for this Var Hyp in an ArrayList maintained in database input
      * sequence.
      * 
-     * @param varHypList List of Var Hyps
+     * @param mandHypList List of Var Hyps
      * @return true if found, else false.
      */
-    public boolean containedInVarHypListBySeq(final List<Hyp> varHypList) {
-        VarHyp vH;
-        for (int i = 0; i < varHypList.size(); i++) {
-            vH = (VarHyp)varHypList.get(i);
-            if (seq < vH.seq)
+    public boolean containedInVarHypListBySeq(
+        final List<? super VarHyp> mandHypList)
+    {
+        for (final Object vH : mandHypList) {
+            if (seq < ((MObj)vH).seq)
                 break;
             if (vH == this)
                 return true;

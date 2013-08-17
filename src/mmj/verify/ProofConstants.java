@@ -164,13 +164,15 @@ public class ProofConstants {
 
     public static final String ERRMSG_STACK_ITEM_TYP = " Stack item type = ";
 
-    public static final String ERRMSG_SUBST_TO_VARS_MATCH = "E-PR-0009 VerifyProof: DjVars restriction violated!"
-        + " Substitution (to) variables match: ";
+    public static final String ERRMSG_SUBST_TO_VARS_MATCH = "E-PR-0009"
+        + " VerifyProof: DjVars restriction violated! The step lists"
+        + " <%s %s> as a DjVars restriction, but the substitutions share"
+        + " variable %s. ";
 
     public static final String ERRMSG_SUBST_TO_VARS_NOT_DJ = "E-PR-0010"
-        + " VerifyProof: Substitution (to) vars subject"
-        + " to DjVars restriction by proof step but"
-        + " not listed as DjVars in theorem to be proved: ";
+        + " VerifyProof: The step lists <%s %s> as a DjVars restriction,"
+        + " but the induced restriction <%s %s> after substitution is"
+        + " not listed in the theorem. ";
 
     public static final String ERRMSG_STEP_LOG_HYP_SUBST_UNEQUAL = "E-PR-0011"
         + " Verify Proof: invalid substitution, stack"

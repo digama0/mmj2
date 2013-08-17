@@ -1099,8 +1099,8 @@ public class VerifyProofs implements ProofVerifier {
                     continue;
                 if (symI == symJ)
                     raiseVerifyException(stepNbrOutputString, stepLabel,
-                        ProofConstants.ERRMSG_SUBST_TO_VARS_MATCH + symI
-                            + ProofConstants.ERRMSG_EQUALS_LITERAL + symJ);
+                        ProofConstants.ERRMSG_SUBST_TO_VARS_MATCH,
+                        subst[x].substFrom, subst[y].substFrom, symI);
 
                 // this is for the benefit of ProofAsst...
                 if (proofDjVarsSoftErrorsIgnore)
@@ -1125,8 +1125,8 @@ public class VerifyProofs implements ProofVerifier {
                     }
 
                     raiseVerifyException(stepNbrOutputString, stepLabel,
-                        ProofConstants.ERRMSG_SUBST_TO_VARS_NOT_DJ + symI
-                            + ProofConstants.ERRMSG_AND_LITERAL + symJ);
+                        ProofConstants.ERRMSG_SUBST_TO_VARS_NOT_DJ,
+                        subst[x].substFrom, subst[y].substFrom, symI, symJ);
                 }
             }
         }
@@ -1281,13 +1281,26 @@ public class VerifyProofs implements ProofVerifier {
     }
 
     private Formula generateFormulaFromRPN() throws VerifyException {
+        final List<Formula> backrefs = new ArrayList<Formula>();
         for (stepNbr = 0; stepNbr < proof.length; stepNbr++) {
-            if (proof[stepNbr] == null)
+            if (proof[stepNbr] == null || proof[stepNbr].backRef <= 0
+                && proof[stepNbr].stmt == null)
                 raiseVerifyException(Integer.toString(stepNbr + 1), " ",
                     ProofConstants.ERRMSG_PROOF_STEP_INCOMPLETE);
 
+            if (proof[stepNbr].stmt == null) {
+                final int index = proof[stepNbr].backRef - 1;
+                if (index >= backrefs.size())
+                    raiseVerifyException(Integer.toString(stepNbr + 1), " ",
+                        ProofConstants.ERRMSG_PROOF_STEP_RANGE);
+                pStack.push(backrefs.get(index));
+                continue;
+            }
+
             stepFormula = proof[stepNbr].stmt.getFormula();
             if (proof[stepNbr].stmt instanceof Hyp) {
+                if (proof[stepNbr].backRef < 0)
+                    backrefs.add(stepFormula);
                 pStack.push(stepFormula);
                 continue;
             }
@@ -1295,6 +1308,8 @@ public class VerifyProofs implements ProofVerifier {
             stepAssrt = (Assrt)proof[stepNbr].stmt;
             stepFrame = stepAssrt.getMandFrame();
             if (stepFrame.hypArray.length == 0) {
+                if (proof[stepNbr].backRef < 0)
+                    backrefs.add(stepFormula);
                 pStack.push(stepFormula);
                 continue;
             }
@@ -1304,6 +1319,8 @@ public class VerifyProofs implements ProofVerifier {
             findUniqueSubstMapping();
 
             stepSubstFormula = applySubstMapping(stepFormula);
+            if (proof[stepNbr].backRef < 0)
+                backrefs.add(stepSubstFormula);
             pStack.push(stepSubstFormula);
 
         }

@@ -288,7 +288,7 @@ public class ProofCompression {
     }
 
     public List<Stmt> compress(final String theoremLabel, final int width,
-        final List<Hyp> mandHypArray, final List<Hyp> optHypArray,
+        final List<Hyp> mandHypArray, final List<VarHyp> optHypArray,
         final RPNStep[] rpnProof, final StringBuilder letters)
     {
         this.theoremLabel = theoremLabel;

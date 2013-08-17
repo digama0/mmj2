@@ -230,6 +230,7 @@ public class TheoremLoader {
     {
 
         final ProofWorksheet proofWorksheet = proofAsst.unify(false, // renumReq
+            false, // convert work vars
             proofWorksheetText, null, // preprocessRequest
             null, // stepRequest
             null, // no TL request

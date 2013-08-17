@@ -553,6 +553,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * @param proofText proof text from ProofAsstGUI screen, or any String
      *            conforming to the formatting rules of ProofAsst.
      * @param renumReq renumbering of proof steps requested
+     * @param noConvertWV true if we should not replace work vars with dummy
+     *            vars in derivation steps
      * @param preprocessRequest if not null specifies an editing operation to be
      *            applied to the proof text before other processing.
      * @param inputCursorPos caret offset plus one of input or -1 if caret pos
@@ -562,7 +564,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * @param tlRequest may be null or a TLRequest.
      * @return ProofWorksheet unified.
      */
-    public ProofWorksheet unify(final boolean renumReq, final String proofText,
+    public ProofWorksheet unify(final boolean renumReq,
+        final boolean noConvertWV, final String proofText,
         final PreprocessRequest preprocessRequest,
         final StepRequest stepRequest, final TLRequest tlRequest,
         final int inputCursorPos)
@@ -590,7 +593,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                     PaConstants.PROOF_STEP_RENUMBER_START,
                     PaConstants.PROOF_STEP_RENUMBER_INTERVAL);
 
-            unifyProofWorksheet(proofWorksheet);
+            unifyProofWorksheet(proofWorksheet, noConvertWV);
         }
 
         if (tlRequest != null && proofWorksheet.getGeneratedProofStmt() != null)
@@ -687,6 +690,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                     proofAsstPreferences
                         .setRecheckProofAsstUsingProofVerifier(false);
                 proofWorksheet = unify(false, // no renum
+                    true, // don't convert work vars
                     proofText, null, // no preprocess
                     null, // no step request
                     null, // no TL request
@@ -699,6 +703,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 // retest
                 if (updatedProofText != null && asciiRetest)
                     unify(false, // no renum
+                        true, // don't convert work vars
                         updatedProofText, null, // no preprocess request
                         null, // no step request
                         null, // no TL request
@@ -739,6 +744,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 // for Volume Testing
                 final long startNanoTime = System.nanoTime();
                 proofWorksheet = unify(false, // no renum
+                    true, // don't convert work vars
                     proofText, null, // no preprocess
                     null, // no step request
                     null, // no TL request
@@ -756,6 +762,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 // retest
                 if (updatedProofText != null && asciiRetest)
                     unify(false, // no renum
+                        true, // don't convert work vars
                         updatedProofText, null, // no preprocess request
                         null, // no step request
                         null, // no TL request
@@ -845,7 +852,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                             proofAsstPreferences
                                 .setRecheckProofAsstUsingProofVerifier(false);
 
-                        unifyProofWorksheet(proofWorksheet);
+                        unifyProofWorksheet(proofWorksheet, false);
 
                         if (asciiRetest)
                             proofAsstPreferences
@@ -856,6 +863,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                         // retest
                         if (updatedProofText != null && asciiRetest)
                             unify(false, // no renum
+                                false, // convert work vars
                                 updatedProofText, null, // no preprocess request
                                 null, // no step request
                                 null, // no TL request
@@ -882,7 +890,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                     proofAsstPreferences
                         .setRecheckProofAsstUsingProofVerifier(false);
 
-                unifyProofWorksheet(proofWorksheet);
+                unifyProofWorksheet(proofWorksheet, false);
 
                 if (asciiRetest)
                     proofAsstPreferences
@@ -893,6 +901,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 // retest
                 if (updatedProofText != null && asciiRetest)
                     unify(false, // no renum
+                        false, // convert work vars
                         updatedProofText, null, // no preprocess request
                         null, // no step request
                         null, // no TL request
@@ -955,6 +964,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             printProof(outputBoss, " ", proofText);
 
         final ProofWorksheet proofWorksheet = unify(false, // no renum
+            false, // convert work vars
             proofText, preprocessRequest, null, // no step request
             null, // no TL request
             -1); // inputCursorPos
@@ -1002,7 +1012,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
             if (!proofWorksheet.hasStructuralErrors()) {
                 origProofText = proofWorksheet.getOutputProofText();
-                unifyProofWorksheet(proofWorksheet);
+                unifyProofWorksheet(proofWorksheet, false);
             }
             if (proofWorksheet.hasStructuralErrors()) {
                 messages.accumErrorMessage(
@@ -1047,6 +1057,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 results.refArray[selectionNumber]);
 
             proofWorksheet = unify(false, // no renumReq,
+                false, // convert work vars
                 origProofText, null, // no preprocessRequest,
                 stepRequestChoice, null, // no TL request
                 cursorPos + 1);
@@ -1461,7 +1472,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         return proofWorksheet;
     }
 
-    private void unifyProofWorksheet(final ProofWorksheet proofWorksheet) {
+    private void unifyProofWorksheet(final ProofWorksheet proofWorksheet,
+        final boolean noConvertWV)
+    {
 
         if (proofWorksheet.getNbrDerivStepsReadyForUnify() > 0
             || proofWorksheet.stepRequest != null
@@ -1472,7 +1485,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
             try {
                 proofUnifier.unifyAllProofDerivationSteps(proofWorksheet,
-                    messages);
+                    messages, noConvertWV);
             } catch (final VerifyException e) {
                 // this is a particularly severe situation
                 // caused by a shortage of allocatable
@@ -1499,7 +1512,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 if (proofAsstPreferences.getProofFormatCompressed()) {
                     final StringBuilder letters = new StringBuilder();
 
-                    final List<Hyp> mandHypList = new ArrayList<Hyp>(), optHypList = new ArrayList<Hyp>();
+                    final List<Hyp> mandHypList = new ArrayList<Hyp>();
+                    final List<VarHyp> optHypList = new ArrayList<VarHyp>();
                     ProofUnifier.separateMandAndOptFrame(proofWorksheet,
                         proofWorksheet.getQedStep(), mandHypList, optHypList,
                         true);
@@ -1532,7 +1546,6 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 getErrorLabelIfPossible(proofWorksheet));
         incompleteStepCursorPositioning(proofWorksheet);
     }
-
     private void incompleteStepCursorPositioning(
         final ProofWorksheet proofWorksheet)
     {

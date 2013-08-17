@@ -850,7 +850,8 @@ public class ParseNode {
      * 
      * @param varHypList List of VarHyp objects in subtree.
      */
-    public void accumVarHypUsedListBySeq(final List<Hyp> varHypList) {
+    public void accumVarHypUsedListBySeq(final List<? super VarHyp> varHypList)
+    {
         if (stmt instanceof VarHyp)
             ((VarHyp)stmt).accumVarHypListBySeq(varHypList);
         else
@@ -868,24 +869,25 @@ public class ParseNode {
      * Note: in ProofUnifier this is used to accumulate a list of optional
      * variables that are in use in a proof.
      * 
-     * @param varHypList List of Var Hyps being sought for accumulation.
-     * @param varHypInUseList List of Var Hyps accumulated which are in the
-     *            formula and are in the input varList.
+     * @param optionalVarHypList List of Var Hyps being sought for accumulation.
+     * @param optionalVarHypsInUseList List of Var Hyps accumulated which are in
+     *            the formula and are in the input varList.
      */
-    public void accumListVarHypUsedListBySeq(final List<Hyp> varHypList,
-        final List<Hyp> varHypInUseList)
+    public void accumListVarHypUsedListBySeq(
+        final List<VarHyp> optionalVarHypList,
+        final List<VarHyp> optionalVarHypsInUseList)
     {
 
         VarHyp vH;
         if (stmt instanceof VarHyp) {
             vH = (VarHyp)stmt;
-            if (vH.containedInVarHypListBySeq(varHypList))
-                vH.accumVarHypListBySeq(varHypInUseList);
+            if (vH.containedInVarHypListBySeq(optionalVarHypList))
+                vH.accumVarHypListBySeq(optionalVarHypsInUseList);
         }
         else
             for (final ParseNode element : child)
-                element.accumListVarHypUsedListBySeq(varHypList,
-                    varHypInUseList);
+                element.accumListVarHypUsedListBySeq(optionalVarHypList,
+                    optionalVarHypsInUseList);
     }
 
     /**

@@ -714,5 +714,4 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      *            numbers.
      */
     public abstract void renum(Map<String, String> renumberMap);
-
 }

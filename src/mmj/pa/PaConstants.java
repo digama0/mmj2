@@ -1060,7 +1060,7 @@ public class PaConstants {
     public static final String PA_GUI_UNIFY_MENU_START_ITEM_TEXT = "Unify (check proof)";
 
     /**
-     * ProofAsstGUI Unify Menu Start Unification With Renum Item Text
+     * ProofAsstGUI Unify Menu Start Unification with Renum Item Text
      */
     public static final String PA_GUI_UNIFY_MENU_START_UR_ITEM_TEXT = "Unify+Renumber";
 
@@ -1068,6 +1068,18 @@ public class PaConstants {
      * ProofAsstGUI Unify Menu Unify with Rederive Formulas Item Text
      */
     public static final String PA_GUI_UNIFY_MENU_REDERIVE_ITEM_TEXT = "Unify+Erase and Rederive Formulas";
+
+    /**
+     * ProofAsstGUI Unify Menu Start Unification without Converting Work Vars
+     * Item Text
+     */
+    public static final String PA_GUI_UNIFY_MENU_NO_WV_ITEM_TEXT = "Unify+Don't Convert WorkVars";
+
+    /**
+     * ProofAsstGUI Unify Menu Start Unification with Rederive Formulas without
+     * Converting Work Vars Item Text
+     */
+    public static final String PA_GUI_UNIFY_MENU_ERASE_NO_WV_ITEM_TEXT = "Unify+Erase+Don't Convert";
 
     /**
      * ProofAsstGUI Unify Menu Step Selector Search Item Text
@@ -2567,14 +2579,14 @@ public class PaConstants {
         + " Theorem %s Step %s: assrtFormulaSubst array element not found in"
         + " MandFrame Hyp Array!";
 
-    public static final String ERRMSG_DV_VERIFY_ERR = "E-PA-0409 Theorem %s"
+    public static final String ERRMSG_DV_VERIFY_ERR = "%s\nE-PA-0409 Theorem %s"
         + " Step %s: Unification completed for derivation proof step. However,"
         + " the Distinct Variable restrictions specified by the step's Ref"
         + " assertion %s require one or more additional Distinct Variable"
         + " restrictions to be specified on the theorem being proved. You can"
         + " enter $d statements (leave off the '$.') in Proof Assistant to add"
         + " new restrictions temporarily, or modify the input Metamath file."
-        + " Specific error details follow:\n%s";
+        + " Specific error details above.";
 
     public static final String ERRMSG_REF_UNIFY_ERR = "E-PA-0410 Theorem %s"
         + " Step %s: Unification failure in derivation proof step %s."
@@ -2626,6 +2638,13 @@ public class PaConstants {
         + "hypStepCnt came to be different than the number of Hyp steps in the"
         + " Proof Worksheet... I am in ConvertWorkVarsToDummyVars() now..."
         + " Row, row, row your boat... Dave? What are you doing, Dave?";
+
+    public static final String ERRMSG_NO_CONVERT_WV = "I-PA-0418 Theorem %s:"
+        + " Proof unification was successful, but work variables remain among"
+        + " the derivation steps and we were requested to not replace these"
+        + " with dummy variables. Choose \"Unify\" instead of \"Unify+Don't"
+        + " convert WorkVars\" to automatically assign dummy variables to the"
+        + " remaining WorkVars.";
 
     // ----------------------------------------------------------
     // Messages from ProofAsstPreferences.java

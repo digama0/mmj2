@@ -917,4 +917,15 @@ public class DerivationStep extends ProofStepStmt {
         }
         return hypMaxDepth;
     }
+
+    @Override
+    public String toString() {
+        String s = step + ":";
+        String delim = "";
+        for (final String h : hypStep) {
+            s += delim + h;
+            delim = ",";
+        }
+        return s + ":" + refLabel + " " + formula;
+    }
 }

@@ -25,6 +25,15 @@
         2::tru          |- T.               qed:1,1:pm3.2i |- ( T. /\ T. )
         qed:1,2:pm3.2i |- ( T. /\ T. )
 
+    * New menu items "Unify+Don't Convert WorkVars" and "Unify+Erase+Don't
+      Convert" have been added to the Unify menu. When activated, they perform
+      the regular unification process, but if the process completes successfully
+      except that work variables (i.e. &C1, &S2, etc.) are in use in the
+      derivation steps, it will abort the unification process and move the
+      cursor to the first step containing a work variable, so that you can name
+      it properly. (The default option "Unify" will instead replace these
+      variables with dummy variables that have been taken from the pool of
+      unused variables defined in the .mm file.) 
 
 ================================================================================
 13-Aug-2013:

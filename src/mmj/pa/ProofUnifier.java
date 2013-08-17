@@ -326,11 +326,13 @@ public class ProofUnifier {
      * @param proofWorksheet proof in progress
      * @param messages the mmj.lang.Messages object used to store error and
      *            informational messages.
-     * @throws VerifyException if an error occurs
+     * @param noConvertWV true if we should not replace work vars with dummy
+     *            vars in derivation steps
+     * @throws VerifyException if unification was unsucessful
      */
     public void unifyAllProofDerivationSteps(
-        final ProofWorksheet proofWorksheet, final Messages messages)
-        throws VerifyException
+        final ProofWorksheet proofWorksheet, final Messages messages,
+        final boolean noConvertWV) throws VerifyException
     {
 
         if (!getTablesInitialized())
@@ -361,31 +363,54 @@ public class ProofUnifier {
             // still some left to unify!
             parallelStepUnificationMethod();
 
-        final DerivationStep d = proofWorksheet.getQedStep();
+        final DerivationStep qed = proofWorksheet.getQedStep();
 
-        if (d.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED
-            || d.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
+        if (qed.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED
+            || qed.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
             // do fixup before convertWorkVarsToDummyVars()
             chainWorkVarAndIncompleteHypStatuses();
 
-        if (d.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
-            try {
-                convertWorkVarsToDummyVars(d);
-            } catch (final VerifyException e) {
-                messages.accumErrorMessage(e.getMessage());
-                proofWorksheet.getProofCursor().setCursorAtProofWorkStmt(d,
-                    PaConstants.FIELD_ID_REF);
+        if (qed.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
+            if (noConvertWV) {
+                final DerivationStep d = getFirstWorkVarStep(qed);
+                if (d != null) {
+                    messages.accumInfoMessage(PaConstants.ERRMSG_NO_CONVERT_WV,
+                        getErrorLabelIfPossible(proofWorksheet));
+                    proofWorksheet.getProofCursor().setCursorAtProofWorkStmt(d,
+                        PaConstants.FIELD_ID_REF);
+                    return;
+                }
             }
+            else
+                try {
+                    convertWorkVarsToDummyVars(qed);
+                } catch (final VerifyException e) {
+                    messages.accumErrorMessage(e.getMessage());
+                    proofWorksheet.getProofCursor().setCursorAtProofWorkStmt(
+                        qed, PaConstants.FIELD_ID_REF);
+                }
 
         final boolean hasHardDjVarsErrors = buildProofsAndErrorUnUnifiedSteps();
 
-        if (d.proofTree == null || hasHardDjVarsErrors)
+        if (qed.proofTree == null || hasHardDjVarsErrors)
             reportAlternateUnifications();
     }
-    /*
-     * a final fixup to ensure that we do not attempt
-     * work var -> dummy var conversion unless everything
-     * is kosher (and no incomplete unifications among the hyps).
+    private DerivationStep getFirstWorkVarStep(final DerivationStep step) {
+        for (final ProofStepStmt e : step.hyp)
+            if (e instanceof DerivationStep) {
+                final DerivationStep d = getFirstWorkVarStep((DerivationStep)e);
+                if (d != null)
+                    return d;
+            }
+        for (final Sym s : step.formula.getSym())
+            if (s instanceof WorkVar)
+                return step;
+        return null;
+    }
+    /**
+     * a final fixup to ensure that we do not attempt work var -> dummy var
+     * conversion unless everything is kosher (and no incomplete unifications
+     * among the hyps).
      */
     private void chainWorkVarAndIncompleteHypStatuses() {
 
@@ -704,18 +729,15 @@ public class ProofUnifier {
      * proof tree.
      */
     private void attemptProofOfDerivStep() {
-
         ProofStepStmt holdHypProofStepStmt;
         ParseNode holdHypNode;
         int substIndex = -1;
         for (int i = 0; i < derivStep.hyp.length; i++) {
-
             holdHypProofStepStmt = derivStep.hyp[i];
 
             // Must be a HypothesisStep (otherwise status
             // would have been changed)
             if (holdHypProofStepStmt instanceof HypothesisStep) {
-
                 if (proofWorksheet.isNewTheorem()
                     && holdHypProofStepStmt.ref == null)
                     buildNewTheoremLogHyp(i,
@@ -774,11 +796,13 @@ public class ProofUnifier {
             }
     }
 
-    /*
-     * Build a temporary LogHyp so that the proof tree
-     * conforms to the norm -- and when it is time to
-     * do other things like verify proof or generate the
+    /**
+     * Build a temporary LogHyp so that the proof tree conforms to the norm --
+     * and when it is time to do other things like verify proof or generate the
      * RPN, we can use existing code!
+     * 
+     * @param hypIndexNbr the index of the hypothesis
+     * @param hypothesisStep the step for which to build the LogHyp
      */
     private void buildNewTheoremLogHyp(final int hypIndexNbr,
         final HypothesisStep hypothesisStep)
@@ -1639,9 +1663,9 @@ public class ProofUnifier {
         if (errmsg == null)
             return null;
 
-        return LangException.format(PaConstants.ERRMSG_DV_VERIFY_ERR,
+        return LangException.format(PaConstants.ERRMSG_DV_VERIFY_ERR, errmsg,
             getErrorLabelIfPossible(proofWorksheet), d.step,
-            checkUnificationRef.getLabel(), errmsg);
+            checkUnificationRef.getLabel());
     }
 
     private void markRefUnificationFailure(final Assrt assrt) {
@@ -2085,10 +2109,11 @@ public class ProofUnifier {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static void separateMandAndOptFrame(
         final ProofWorksheet proofWorksheet, final DerivationStep qedStep,
-        final List<Hyp> mandHypList, final List<Hyp> optHypList,
-        final boolean addLogHyps)
+        final List<? super VarHyp> mandHypList,
+        final List<VarHyp> optionalVarHypList, final boolean addLogHyps)
     {
         qedStep.formulaParseTree.getRoot()
             .accumVarHypUsedListBySeq(mandHypList);
@@ -2125,10 +2150,10 @@ public class ProofUnifier {
             if (element instanceof VarHyp) {
                 final VarHyp vH = (VarHyp)element;
                 if (!vH.containedInVarHypListBySeq(mandHypList))
-                    vH.accumVarHypListBySeq(optHypList);
+                    vH.accumVarHypListBySeq(optionalVarHypList);
             }
             else if (addLogHyps)
-                mandHypList.add(element);
+                ((List<? super Hyp>)mandHypList).add(element);
     }
 
     /**
@@ -2156,10 +2181,6 @@ public class ProofUnifier {
     private void convertWorkVarsToDummyVars(final DerivationStep qedStep)
         throws VerifyException
     {
-
-        VarHyp vH;
-        Cnst typ;
-
         // 1) construct mandatoryVarHypList and optionalVarHypList
         // (new theorems not in the database require these to
         // be computed, so we do the computations for both old
@@ -2168,7 +2189,7 @@ public class ProofUnifier {
         final List<Hyp> mandatoryVarHypList = new ArrayList<Hyp>(
             proofWorksheet.comboFrame.hypArray.length);
 
-        final List<Hyp> optionalVarHypList = new ArrayList<Hyp>(
+        final List<VarHyp> optionalVarHypList = new ArrayList<VarHyp>(
             proofWorksheet.comboFrame.hypArray.length);
 
         separateMandAndOptFrame(proofWorksheet, qedStep, mandatoryVarHypList,
@@ -2177,10 +2198,8 @@ public class ProofUnifier {
         // 2) initialize list of disjointWorkVarList's and
         // optionalVarHypsInUseList
 
-        final List<List<Var>> disjointWorkVarList // list of lists
-        = new ArrayList<List<Var>>();
-        final List<Hyp> optionalVarHypsInUseList // list of Var Hyps
-        = new ArrayList<Hyp>();
+        final List<List<Var>> disjointWorkVarList = new ArrayList<List<Var>>();
+        final List<VarHyp> optionalVarHypsInUseList = new ArrayList<VarHyp>();
 
         // 3) make recursive pass through the qed derivation
         // subtree loading the disjointWorkVarHypList and
@@ -2195,36 +2214,19 @@ public class ProofUnifier {
         // 4) construct unusedOptionalVarHypTypList and
         // unusedOptionalVarHypsByTypList using
         // optionalVarHypList and optionalVarHypsInUseList
-        final List<Cnst> unusedOptionalVarHypTypList // list of Cnst
-        = new ArrayList<Cnst>();
-        final List<List<Hyp>> unusedOptionalVarHypsByTypList // list
-                                                             // of
-                                                             // lists
-        = new ArrayList<List<Hyp>>();
-        for (int i = 0; i < optionalVarHypList.size(); i++) {
-
-            vH = (VarHyp)optionalVarHypList.get(i);
-
+        final List<Cnst> unusedOptionalVarHypTypList = new ArrayList<Cnst>();
+        final List<List<Hyp>> unusedOptionalVarHypsByTypList = new ArrayList<List<Hyp>>();
+        for (final VarHyp vH : optionalVarHypList) {
             if (vH.containedInVarHypListBySeq(optionalVarHypsInUseList))
                 continue;
 
             // ok, optional varHyp "vH" is unused
 
-            typ = vH.getTyp();
-
-            int typIndex = -1;
-            for (int j = 0; j < unusedOptionalVarHypTypList.size(); j++)
-                if (typ == unusedOptionalVarHypTypList.get(j)) {
-                    typIndex = j;
-                    break;
-                }
-
+            final Cnst typ = vH.getTyp();
+            int typIndex = unusedOptionalVarHypTypList.indexOf(typ);
             if (typIndex == -1) {
-
                 unusedOptionalVarHypTypList.add(typ);
-
                 typIndex = unusedOptionalVarHypTypList.size() - 1;
-
                 unusedOptionalVarHypsByTypList.add(new ArrayList<Hyp>());
             }
 
@@ -2243,18 +2245,13 @@ public class ProofUnifier {
         // --> if not enough unusedOptionalVarHyp entries,
         // kick out an error message and quit.
         //
-        for (int i = 0; i < disjointWorkVarHypList.size(); i++) {
-            final List<?> workVarHypList = disjointWorkVarHypList.get(i);
-
-            for (int j = 0; j < unusedOptionalVarHypTypList.size(); j++) {
-                typ = unusedOptionalVarHypTypList.get(j);
-
-                final List<?> typUnusedOptionalVarHyps = unusedOptionalVarHypsByTypList
-                    .get(j);
-
+        for (final List<VarHyp> workVarHypList : disjointWorkVarHypList) {
+            final Iterator<List<Hyp>> iterator = unusedOptionalVarHypsByTypList
+                .iterator();
+            for (final Cnst typ : unusedOptionalVarHypTypList) {
+                final List<Hyp> typUnusedOptionalVarHyps = iterator.next();
                 int next = 0;
-                for (int k = 0; k < workVarHypList.size(); k++) {
-                    vH = (VarHyp)workVarHypList.get(k);
+                for (final VarHyp vH : workVarHypList) {
                     if (vH.getTyp() != typ)
                         continue;
                     if (next >= typUnusedOptionalVarHyps.size())
@@ -2264,9 +2261,7 @@ public class ProofUnifier {
                             typUnusedOptionalVarHyps.size());
 
                     vH.paSubst = // this is a really key step :-)
-                    new ParseNode((VarHyp)typUnusedOptionalVarHyps.get(next));
-
-                    next++;
+                    new ParseNode((VarHyp)typUnusedOptionalVarHyps.get(next++));
                 }
             }
         }
@@ -2315,8 +2310,8 @@ public class ProofUnifier {
     // hypotheses can contain work variables or
     // optional/dummy variables.
     private void recursiveLoadWvAndOptsUsedLists(final DerivationStep d,
-        final List<Hyp> optionalVarHypList,
-        final List<Hyp> optionalVarHypsInUseList,
+        final List<VarHyp> optionalVarHypList,
+        final List<VarHyp> optionalVarHypsInUseList,
         final List<List<Var>> disjointWorkVarList)
     {
 
@@ -2353,30 +2348,18 @@ public class ProofUnifier {
         // if stepAndHypWorkVarList disjoint with all other lists
         // in disjointWorkVarList, add it; otherwise,
         // union it with the first list having a var in common:
-        List<Var> x;
-        Var v;
         boolean isDisjoint = true;
-        loopI: for (int i = 0; i < disjointWorkVarList.size(); i++) {
-
-            x = disjointWorkVarList.get(i);
-
-            for (int j = 0; j < stepAndHypWorkVarList.size(); j++) {
-
-                v = stepAndHypWorkVarList.get(j);
-
+        loopI: for (final List<Var> x : disjointWorkVarList)
+            for (final Var v : stepAndHypWorkVarList)
                 if (v.containedInVarListBySeq(x)) {
-
                     isDisjoint = false;
 
                     mergeVarList1IntoList2(stepAndHypWorkVarList, x);
                     break loopI;
                 }
-            }
-        }
         if (isDisjoint)
             disjointWorkVarList.add(stepAndHypWorkVarList);
     }
-
     // 3.5) NOTE!!! The disjointWorkVarList is just
     // a preliminary list. Assume we have steps
     // 63->65 in proof of ax11eq (we do):
