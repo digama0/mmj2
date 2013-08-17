@@ -360,6 +360,10 @@ public class ProofAsstGUI {
             }
         });
 
+        /* workaround - otherwise ctrl-H will act like backspace */
+        proofTextArea.getInputMap().put(
+            KeyStroke.getKeyStroke(KeyEvent.VK_H, ActionEvent.CTRL_MASK), "");
+
         myPane.add(proofTextScrollPane);
 
     }
@@ -591,7 +595,7 @@ public class ProofAsstGUI {
         nbrTimesSavedSinceNew = n;
     }
     private void incNbrTimesSavedSinceNew() {
-        ++nbrTimesSavedSinceNew;
+        nbrTimesSavedSinceNew++;
     }
     private int getNbrTimesSavedSinceNew() {
         return nbrTimesSavedSinceNew;
@@ -664,6 +668,10 @@ public class ProofAsstGUI {
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
         textArea.setEditable(true);
+
+        /* workaround - otherwise ctrl-H will act like backspace */
+        proofTextArea.getInputMap().put(
+            KeyStroke.getKeyStroke(KeyEvent.VK_H, ActionEvent.CTRL_MASK), "");
         return textArea;
     }
     private JScrollPane buildProofMessageScrollPane(
@@ -1320,32 +1328,48 @@ public class ProofAsstGUI {
     private JMenu buildSearchMenu() {
         final JMenu searchMenu = new JMenu(PaConstants.PA_GUI_SEARCH_MENU_TITLE);
         searchMenu.setMnemonic(KeyEvent.VK_S);
+
         final JMenuItem searchOptionsItem = new JMenuItem(new AbstractAction() {
             public void actionPerformed(final ActionEvent e) {
                 doSearchOptionsItemAction();
             }
         });
+        searchOptionsItem.setMnemonic(KeyEvent.VK_O);
+        searchOptionsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2,
+            ActionEvent.CTRL_MASK));
         searchOptionsItem.setText(PaConstants.SEARCH_OPTIONS_ITEM_TEXT);
         searchMenu.add(searchOptionsItem);
+
         final JMenuItem stepSearchItem = new JMenuItem(new AbstractAction() {
             public void actionPerformed(final ActionEvent e) {
                 doStepSearchItemAction();
             }
         });
+        stepSearchItem.setMnemonic(KeyEvent.VK_S);
+        stepSearchItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
+            ActionEvent.CTRL_MASK));
         stepSearchItem.setText(PaConstants.STEP_SEARCH_ITEM_TEXT);
         searchMenu.add(stepSearchItem);
+
         final JMenuItem generalSearchItem = new JMenuItem(new AbstractAction() {
             public void actionPerformed(final ActionEvent actionevent) {
                 doGeneralSearchItemAction();
             }
         });
+        generalSearchItem.setMnemonic(KeyEvent.VK_G);
+        generalSearchItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H,
+            ActionEvent.CTRL_MASK));
         generalSearchItem.setText(PaConstants.GENERAL_SEARCH_ITEM_TEXT);
         searchMenu.add(generalSearchItem);
+
         final JMenuItem reshowSearchItem = new JMenuItem(new AbstractAction() {
             public void actionPerformed(final ActionEvent e) {
                 doReshowSearchResultsItemAction();
             }
         });
+        reshowSearchItem.setMnemonic(KeyEvent.VK_R);
+        reshowSearchItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3,
+            ActionEvent.CTRL_MASK));
         reshowSearchItem.setText(PaConstants.RESHOW_SEARCH_RESULTS_ITEM_TEXT);
         searchMenu.add(reshowSearchItem);
         return searchMenu;

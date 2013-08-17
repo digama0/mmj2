@@ -313,7 +313,7 @@ public abstract class BatchFramework {
         throws IOException, IllegalArgumentException, VerifyException,
         TheoremLoaderException, MMIOException, GMFFException
     {
-        ++runParmCnt;
+        runParmCnt++;
 
         // capture this for use by MMJ2FailPopupWindow
         currentRunParmCommand = runParm.name;

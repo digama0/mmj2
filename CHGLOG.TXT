@@ -8,7 +8,26 @@
 
 
 ================================================================================
-11-Aug-2013:
+17-Aug-2013:
+
+    CHANGES:
+
+    * New proofs loaded via 'New-Next Proof' and related functions now have a
+      step layout that mirrors the compressed format instead of the uncompressed
+      RPN. This means that if a given step is referred to twice in a proof, the
+      step will only be assigned one step number, rather than making copies of
+      the statement for each use. (Depending on the proof, this can mean a
+      drastic decrease in the length of proofs as seen in the main text area of
+      ProofAsstGUI. The length of compressed and uncompressed proofs themselves
+      remains unaffected.) For example:
+      Before:                             After:
+        1::tru          |- T.               1::tru          |- T.
+        2::tru          |- T.               qed:1,1:pm3.2i |- ( T. /\ T. )
+        qed:1,2:pm3.2i |- ( T. /\ T. )
+
+
+================================================================================
+13-Aug-2013:
 
     CHANGES:
 

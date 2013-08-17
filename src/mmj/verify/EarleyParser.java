@@ -493,7 +493,7 @@ public class EarleyParser implements GrammaticalParser {
             earleyCnt = earleyScanner(p, eP);
             earleyCnt += earleyCompletor(p);
             earleyCnt += earleyPredictor(p, ePPlus1, highestSeq);
-            ++p;
+            p++;
             if (p > pLast || earleyCnt == 0)
                 break;
             eP = ePPlus1;
@@ -571,7 +571,7 @@ public class EarleyParser implements GrammaticalParser {
                         addPredictionToItemSet(currPos, // itemset nbr
                             notationRule, // rule
                             ruleExprFirstSym); // dotAfter
-                        ++predictedCnt;
+                        predictedCnt++;
                     }
                 }
             }
@@ -693,7 +693,7 @@ public class EarleyParser implements GrammaticalParser {
         /**
          * OK dummy, *now* increment the counter :)
          */
-        ++pCompletedItemSetCnt[scanSetNbr];
+        pCompletedItemSetCnt[scanSetNbr]++;
 
         EarleyItem completedItem = pCompletedSet[pCompletedItemSetIndex];
 
@@ -868,7 +868,7 @@ public class EarleyParser implements GrammaticalParser {
             }
             else {
                 ruleTypAndFIRSTTyp[i][0] = typ;
-                ++rulesTypCnt;
+                rulesTypCnt++;
                 break;
             }
 
@@ -898,7 +898,7 @@ public class EarleyParser implements GrammaticalParser {
                 ruleTypAndFIRSTTyp[typIndex][j] = firstTyp;
                 return true;
             }
-            ++j;
+            j++;
         }
     }
 
@@ -1335,7 +1335,7 @@ public class EarleyParser implements GrammaticalParser {
                 if (!loadMatchingHypsForRule(hypMap, 0, // startMapIndex!
                     exprFrom, exprThru, ruleFormatExpr))
                     break;
-                ++twinTreesCnt;
+                twinTreesCnt++;
             } while (true);
         }
 

@@ -94,30 +94,30 @@ public class GeneratedProofStmt extends ProofWorkStmt {
             }
             else if (ps > rpnProof.length) {
                 stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
-                ++lineCnt;
+                lineCnt++;
                 break;
             }
             else
                 x = PaConstants.END_PROOF_STMT_TOKEN;
-            ++ps;
+            ps++;
             col += x.length();
             if (col == right) {
                 stmtText.append(x);
                 stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
-                ++lineCnt;
+                lineCnt++;
                 stmtText.append(indentLeft);
                 col = left;
             }
             else {
                 if (col > right) {
                     stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
-                    ++lineCnt;
+                    lineCnt++;
                     stmtText.append(indentLeft);
                     col = left;
                 }
                 stmtText.append(x);
                 stmtText.append(' ');
-                ++col;
+                col++;
             }
         }
     }
@@ -156,7 +156,7 @@ public class GeneratedProofStmt extends ProofWorkStmt {
             }
             else {
                 stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
-                ++lineCnt;
+                lineCnt++;
                 stmtText.append(indentLeft);
                 col = left;
             }
@@ -169,7 +169,7 @@ public class GeneratedProofStmt extends ProofWorkStmt {
         }
         else {
             stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
-            ++lineCnt;
+            lineCnt++;
             stmtText.append(indentLeft);
             col = left;
         }
@@ -183,7 +183,7 @@ public class GeneratedProofStmt extends ProofWorkStmt {
             }
             stmtText.append(letters.substring(lIndex, lIndex += avail));
             stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
-            ++lineCnt;
+            lineCnt++;
             stmtText.append(indentLeft);
             col = left;
         }
@@ -191,7 +191,7 @@ public class GeneratedProofStmt extends ProofWorkStmt {
             stmtText.append(' ');
         else {
             stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
-            ++lineCnt;
+            lineCnt++;
             stmtText.append(indentLeft);
         }
         stmtText.append(PaConstants.END_PROOF_STMT_TOKEN);

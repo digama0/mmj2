@@ -53,6 +53,7 @@ package mmj.lang;
 import java.util.*;
 
 import mmj.gmff.GMFFManager;
+import mmj.mmio.BlockList;
 import mmj.tl.*;
 
 /**
@@ -574,7 +575,7 @@ public class LogicalSystem implements SystemLoader {
      */
     public Theorem addTheorem(final String labelS, final String typS,
         final List<String> symList, final List<String> proofList,
-        final List<String> proofBlockList) throws LangException
+        final BlockList proofBlockList) throws LangException
     {
 
         final Theorem theorem = new Theorem(seqAssigner.nextSeq(),

@@ -152,7 +152,7 @@ public class StepSelectorDialog extends JDialog {
             }
             else {
                 sb.append(c);
-                ++col;
+                col++;
             }
         }
 

@@ -248,7 +248,7 @@ public abstract class Assrt extends Stmt {
         int logHypCount = 0;
         for (final Hyp element : hyp)
             if (element instanceof LogHyp)
-                ++logHypCount;
+                logHypCount++;
         logHypArray = new LogHyp[logHypCount];
 
         logHypCount = 0;
@@ -334,9 +334,9 @@ public abstract class Assrt extends Stmt {
         for (int i = 0; i < hypList.size(); i++) {
             hyp = hypList.get(i);
             if (hyp instanceof VarHyp) {
-                if (((VarHyp)hyp).getVar() == djVars.varLo)
+                if (((VarHyp)hyp).getVar() == djVars.getVarLo())
                     loFound = true;
-                if (((VarHyp)hyp).getVar() == djVars.varHi)
+                if (((VarHyp)hyp).getVar() == djVars.getVarHi())
                     hiFound = true;
                 if (loFound && hiFound)
                     return true;
@@ -381,7 +381,7 @@ public abstract class Assrt extends Stmt {
             else
                 // insert at end, which happens to be here at "i"
                 break;
-            ++i;
+            i++;
         }
         hypList.add(i, hypNew);
         return;
@@ -511,13 +511,13 @@ public abstract class Assrt extends Stmt {
                 diff = outArray[outIndex].getFormula().getCnt()
                     - iFormulaLength;
                 if (diff > 0) {
-                    ++outIndex;
+                    outIndex++;
                     continue; // look for shorter formula
                 }
                 if (diff < 0 || hypVarsInCommonWithAssrt(holdLogHyp1))
                     break; // insert here at outIndex
                 while (true) {
-                    ++outIndex; // find formula with diff length
+                    outIndex++; // find formula with diff length
                     if (outIndex < outEnd)
                         if (outArray[outIndex].getFormula().getCnt() == iFormulaLength)
                             continue;

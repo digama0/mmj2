@@ -424,7 +424,7 @@ public class Cnst extends Sym {
      * Increment nbrOccInCnstSyntaxAxioms by 1.
      */
     public void incNbrOccInCnstSyntaxAxioms() {
-        ++nbrOccInCnstSyntaxAxioms;
+        nbrOccInCnstSyntaxAxioms++;
     }
 
     /**
@@ -470,7 +470,7 @@ public class Cnst extends Sym {
      * Increment nbrOccInCnstSyntaxAxioms by 1.
      */
     public void incNbrOccInSyntaxAxioms() {
-        ++nbrOccInSyntaxAxioms;
+        nbrOccInSyntaxAxioms++;
     }
 
     /**

@@ -167,7 +167,7 @@ public class Tokenizer extends Object {
              */
             do {
                 strBuf.insert(offset++, (char)getChar());
-                ++len;
+                len++;
             } while ((x = peekNextChar()) != -1
                 && (MMIOConstants.VALID_CHAR_ARRAY[x] & MMIOConstants.PRINTABLE) != 0);
 
@@ -196,7 +196,7 @@ public class Tokenizer extends Object {
             && (MMIOConstants.VALID_CHAR_ARRAY[x] & MMIOConstants.WHITE_SPACE) != 0)
         {
             strBuf.insert(offset++, (char)getChar());
-            ++len;
+            len++;
         }
         if (len == 0 && x == -1)
             return -1;
@@ -320,15 +320,15 @@ public class Tokenizer extends Object {
         if (nextChar != -1)
             nextChar &= 0x00ff;
 
-        ++columnNbr;
-        ++charNbr;
+        columnNbr++;
+        charNbr++;
 
         if (prevChar == '\n') {
-            ++lineNbr;
+            lineNbr++;
             columnNbr = 1;
         }
         else if (prevChar == '\r' && currChar != '\n') {
-            ++lineNbr;
+            lineNbr++;
             columnNbr = 1;
         }
 

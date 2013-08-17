@@ -272,7 +272,7 @@ public class VarHyp extends Hyp {
             else
                 // insert at end, which happens to be here at "i"
                 break;
-            ++i;
+            i++;
         }
         varHypList.add(i, this);
         return;

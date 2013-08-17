@@ -558,7 +558,7 @@ public class ProofUnifier {
                         {
                             // stick fork in it, this one is done!
                             dsa1[i] = null;
-                            ++nbrCompleted;
+                            nbrCompleted++;
                         }
                 continue;
             }
@@ -1141,7 +1141,7 @@ public class ProofUnifier {
 
         int governorLimit = assrtLogHypArray.length;
         while (governorLimit-- > 0) {
-            ++nextAssrtHypIndex;
+            nextAssrtHypIndex++;
             if (nextAssrtHypIndex >= assrtLogHypArray.length)
                 return false;
             if (assrtHypUsed[nextAssrtHypIndex])
@@ -1161,7 +1161,7 @@ public class ProofUnifier {
                         .getMaxDepth() > maxDepth)
                 {
                     currLevelSubstAnswer[nextAssrtHypIndex] = substAnswerImpossible;
-                    ++impossibleCnt[currLevel];
+                    impossibleCnt[currLevel]++;
                     continue;
                 }
             }
@@ -1175,7 +1175,7 @@ public class ProofUnifier {
                 }
                 if (currLevelSubstAnswer[nextAssrtHypIndex] == null) {
                     currLevelSubstAnswer[nextAssrtHypIndex] = substAnswerImpossible;
-                    ++impossibleCnt[currLevel];
+                    impossibleCnt[currLevel]++;
                 }
                 continue;
             }
@@ -1281,7 +1281,7 @@ public class ProofUnifier {
             while (hypIndex < assrtHypArray.length) {
                 if (assrtHypArray[hypIndex] != assrtLogHypVarHypArray[substIndex])
                 {
-                    ++hypIndex;
+                    hypIndex++;
                     continue;
                 }
 
@@ -1289,8 +1289,8 @@ public class ProofUnifier {
                 if (assrtLogHypSubst[substIndex] == null
                     && derivStep.deriveStepHyps)
                 {
-                    ++hypIndex;
-                    ++substIndex;
+                    hypIndex++;
+                    substIndex++;
                     continue substLoop;
                 }
 
@@ -1298,16 +1298,16 @@ public class ProofUnifier {
 
                     assrtSubst[hypIndex] = assrtLogHypSubst[substIndex];
                     levelCleanup[cleanupIndex][levelCleanupCnt[cleanupIndex]++] = hypIndex;
-                    ++hypIndex;
-                    ++substIndex;
+                    hypIndex++;
+                    substIndex++;
                     continue substLoop;
                 }
 
                 if (assrtSubst[hypIndex].isDeepDup(
                     assrtLogHypSubst[substIndex], compareNodeStack))
                 {
-                    ++hypIndex;
-                    ++substIndex;
+                    hypIndex++;
+                    substIndex++;
                     continue substLoop;
                 }
                 cleanupOneAssrtSubstLevel(cleanupIndex);
@@ -1359,7 +1359,7 @@ public class ProofUnifier {
         substLoop: while (substIndex < assrtFormulaSubst.length) {
             while (hypIndex < assrtHypArray.length) {
                 if (assrtVarHypArray[substIndex] != assrtHypArray[hypIndex]) {
-                    ++hypIndex;
+                    hypIndex++;
                     continue;
                 }
                 outSubst[hypIndex++] = assrtFormulaSubst[substIndex++];
@@ -1746,7 +1746,7 @@ public class ProofUnifier {
             derivStep.hypStep[i] = generatedDerivStep.step;
             derivStep.hyp[i].loadProofLevel(derivStep.proofLevel + 1);
 
-            ++derivStep.nbrHypsGenerated;
+            derivStep.nbrHypsGenerated++;
         }
     }
 
@@ -2266,7 +2266,7 @@ public class ProofUnifier {
                     vH.paSubst = // this is a really key step :-)
                     new ParseNode((VarHyp)typUnusedOptionalVarHyps.get(next));
 
-                    ++next;
+                    next++;
                 }
             }
         }

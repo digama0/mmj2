@@ -93,7 +93,7 @@ public class HeaderStmt extends ProofWorkStmt {
         stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
 
         stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
-        ++lineCnt;
+        lineCnt++;
     }
 
     @Override

@@ -211,7 +211,7 @@ public abstract class ProofWorkStmt {
         final int currLineNbr = (int)w.proofTextTokenizer.getCurrentLineNbr();
         lineCnt += currLineNbr - prevLineNbr;
         if (nextT.length() > 0)
-            --lineCnt; // reduce because we're at the
+            lineCnt--; // reduce because we're at the
 
         return currLineNbr;
     }

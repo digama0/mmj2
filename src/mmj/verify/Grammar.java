@@ -394,7 +394,7 @@ public class Grammar implements SyntaxVerifier {
      * Increment (add 1) to Count to NotationRules deemed to be "gimme matches".
      */
     public void incNotationGRGimmeMatchCnt() {
-        ++notationGRGimmeMatchCnt;
+        notationGRGimmeMatchCnt++;
     }
 
     /**

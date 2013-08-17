@@ -588,32 +588,32 @@ public class LangConstants {
         + " reached prior to end of compressed step number";
 
     public static final String ERRMSG_COMPRESS_NOT_ASCII = "E-LA-0106 Theorem %s:"
-        + " Compressed proof block %d, character position %d contains a character code > 255 = %c";
+        + " Compressed proof character position %d contains a character code > 255 = %c";
 
     public static final String ERRMSG_COMPRESS_BAD_CHAR = "E-LA-0107 Theorem %s:"
-        + " Compressed proof block %d, character position %d contains an invalid character '%c'. Compressed proof"
+        + " Compressed proof character position %d contains an invalid character '%c'. Compressed proof"
         + " block may contain only 'A', 'B'...'Z' and '?'.";
 
     public static final String ERRMSG_COMPRESS_BAD_UNK = "E-LA-0108 Theorem %s:"
-        + " Compressed proof block %d, character position %d contains a '?' inside a compressed proof number"
+        + " Compressed proof character position %d contains a '?' inside a compressed proof number"
         + " (for example: 'U?' or 'U?U').";
 
     public static final String ERRMSG_COMPRESS_BAD_RPT = "E-LA-0109 Theorem %s:"
-        + " Compressed proof block %d, character position %d contains a 'Z' (Repeated Subproof symbol)"
+        + " Compressed proof character position %d contains a 'Z' (Repeated Subproof symbol)"
         + " inside a compressed proof number"
         + " (for example: 'UZ' or 'UZU').";
 
     public static final String ERRMSG_COMPRESS_BAD_RPT2 = "E-LA-0110 Theorem %s:"
-        + " Compressed proof block %d, character position %d contains a 'Z' (Repeated Subproof symbol)"
+        + " Compressed proof character position %d contains a 'Z' (Repeated Subproof symbol)"
         + " at an invalid location, such as after another 'Z'"
         + " or following a '?'";
 
     public static final String ERRMSG_COMPRESS_BAD_RPT3 = "E-LA-0111 Theorem %s:"
-        + " Compressed proof block %d, character position %d is invalid: compressed number that points beyond"
+        + " Compressed proof character position %d is invalid: compressed number that points beyond"
         + " the end of the Repeated Subproof array.";
 
     public static final String ERRMSG_COMPRESS_CORRUPT = "E-LA-0112 Theorem %s:"
-        + " Compressed proof block %d, character position %d is invalid: It appears that the compressed proof is"
+        + " Compressed proof character position %d is invalid: It appears that the compressed proof is"
         + " corrupted -- subproof length points outside the"
         + " range of proof steps! The problem may be the result"
         + " of a handcoded compressed proof, or a bug in the"

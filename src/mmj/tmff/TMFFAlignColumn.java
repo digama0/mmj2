@@ -291,7 +291,7 @@ public class TMFFAlignColumn extends TMFFMethod {
                     || alignAtValue == TMFFConstants.ALIGN_SYM)
                 {
 
-                    ++alignTypeCnt;
+                    alignTypeCnt++;
 
                     if (alignTypeCnt >= alignAtNbr) {
                         align = true;
@@ -329,7 +329,7 @@ public class TMFFAlignColumn extends TMFFMethod {
             if (currNode.getChild().length == 0)
                 return -1;
 
-            ++varI;
+            varI++;
             if (reseq == null)
                 subNode = currNode.getChild()[varI];
             else

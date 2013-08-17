@@ -173,7 +173,7 @@ public class TMFFTwoColumnAlignment extends TMFFMethod {
                 continue;
             }
 
-            ++varI;
+            varI++;
 
             if (reseq == null)
                 subNode = currNode.getChild()[varI];

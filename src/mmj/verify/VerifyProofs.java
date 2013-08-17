@@ -65,6 +65,7 @@ package mmj.verify;
 import java.util.*;
 
 import mmj.lang.*;
+import mmj.lang.ParseTree.RPNStep;
 import mmj.pa.PaConstants;
 
 /**
@@ -139,10 +140,9 @@ public class VerifyProofs implements ProofVerifier {
     // a bazillion call paramaters.
     // *******************************************
 
-    private int pStackCnt;
     private int pStackMax;
     private int pStackHighwater;
-    private Formula[] pStack;
+    private Deque<Formula> pStack;
 
     // "work" expression/formula
     private int wExprCnt;
@@ -160,7 +160,7 @@ public class VerifyProofs implements ProofVerifier {
     private Formula proofStmtFormula;
     private ScopeFrame proofStmtFrame;
     private ScopeFrame proofStmtOptFrame;
-    private Stmt[] proof;
+    private RPNStep[] proof;
 
     private boolean proofDjVarsSoftErrorsIgnore;
 
@@ -243,7 +243,7 @@ public class VerifyProofs implements ProofVerifier {
                     verifyProof();
                     needToRetry = false;
                 } catch (final ArrayIndexOutOfBoundsException e) {
-                    ++retryCnt;
+                    retryCnt++;
                     reInitArrays(retryCnt);
                 } catch (final VerifyException e) {
                     needToRetry = false;
@@ -305,7 +305,7 @@ public class VerifyProofs implements ProofVerifier {
                     verifyProof();
                     needToRetry = false;
                 } catch (final ArrayIndexOutOfBoundsException e) {
-                    ++retryCnt;
+                    retryCnt++;
                     reInitArrays(retryCnt);
                 } catch (final VerifyException e) {
                     needToRetry = false;
@@ -362,7 +362,7 @@ public class VerifyProofs implements ProofVerifier {
                     verifyProof();
                     needToRetry = false;
                 } catch (final ArrayIndexOutOfBoundsException e) {
-                    ++retryCnt;
+                    retryCnt++;
                     reInitArrays(retryCnt);
                 } catch (final VerifyException e) {
                     needToRetry = false;
@@ -441,7 +441,7 @@ public class VerifyProofs implements ProofVerifier {
                     }
                     needToRetry = false;
                 } catch (final ArrayIndexOutOfBoundsException e) {
-                    ++retryCnt;
+                    retryCnt++;
                     proofStmtFrame = derivStepComboFrame; // reset
                     reInitArrays(retryCnt);
                 } catch (final VerifyException e) {
@@ -542,18 +542,38 @@ public class VerifyProofs implements ProofVerifier {
         final int numHyps = derivStepList.size();
         int stepName = PaConstants.PROOF_STEP_RENUMBER_START + numHyps
             * PaConstants.PROOF_STEP_RENUMBER_INTERVAL;
-        final Stack<ProofDerivationStepEntry> undischargedStack = new Stack<ProofDerivationStepEntry>();
+        final Deque<ProofDerivationStepEntry> undischargedStack = new ArrayDeque<ProofDerivationStepEntry>();
+
+        // parallel arrays
+        final List<Formula> backrefs = new ArrayList<Formula>();
+        final List<ProofDerivationStepEntry> backrefSteps = new ArrayList<ProofDerivationStepEntry>();
 
         for (stepNbr = 0; stepNbr < proof.length; stepNbr++) {
-            if (proof[stepNbr] == null)
+            if (proof[stepNbr] == null || proof[stepNbr].backRef <= 0
+                && proof[stepNbr].stmt == null)
                 raiseVerifyException(Integer.toString(stepNbr + 1), " ",
                     ProofConstants.ERRMSG_PROOF_STEP_INCOMPLETE);
 
-            stepFormula = proof[stepNbr].getFormula();
-            stepLabel = proof[stepNbr].getLabel();
-            if (proof[stepNbr] instanceof Hyp) {
-                pStack[pStackCnt++] = stepFormula;
-                if (proof[stepNbr] instanceof LogHyp) {
+            if (proof[stepNbr].stmt == null) {
+                final int index = proof[stepNbr].backRef - 1;
+                if (index >= backrefs.size())
+                    raiseVerifyException(Integer.toString(stepNbr + 1), " ",
+                        ProofConstants.ERRMSG_PROOF_STEP_RANGE);
+                pStack.push(backrefs.get(index));
+                final ProofDerivationStepEntry e = backrefSteps.get(index);
+                if (e != null)
+                    undischargedStack.push(e);
+                continue;
+            }
+            stepFormula = proof[stepNbr].stmt.getFormula();
+            stepLabel = proof[stepNbr].stmt.getLabel();
+            if (proof[stepNbr].stmt instanceof Hyp) {
+                if (proof[stepNbr].backRef < 0) {
+                    backrefs.add(stepFormula);
+                    backrefSteps.add(null);
+                }
+                pStack.push(stepFormula);
+                if (proof[stepNbr].stmt instanceof LogHyp) {
                     int i = 0;
                     for (; i < numHyps; i++)
                         if (stepLabel.equals(derivStepList.get(i).refLabel)) {
@@ -569,10 +589,14 @@ public class VerifyProofs implements ProofVerifier {
                 continue;
             }
 
-            stepAssrt = (Assrt)proof[stepNbr];
+            stepAssrt = (Assrt)proof[stepNbr].stmt;
             stepFrame = stepAssrt.getMandFrame();
             if (stepFrame.hypArray.length == 0) { // constant
-                pStack[pStackCnt++] = stepFormula;
+                if (proof[stepNbr].backRef < 0) {
+                    backrefs.add(stepFormula);
+                    backrefSteps.add(null);
+                }
+                pStack.push(stepFormula);
                 if (stepFormula.getTyp() == provableLogicStmtTyp
                     && !(stepAssrt instanceof Axiom && ((Axiom)stepAssrt)
                         .getIsSyntaxAxiom()))
@@ -586,6 +610,8 @@ public class VerifyProofs implements ProofVerifier {
                     e.formula = stepFormula;
                     derivStepList.add(e);
                     undischargedStack.push(e);
+                    if (proof[stepNbr].backRef < 0)
+                        backrefSteps.set(backrefs.size() - 1, e);
                     stepName += PaConstants.PROOF_STEP_RENUMBER_INTERVAL;
                 }
                 continue;
@@ -593,13 +619,12 @@ public class VerifyProofs implements ProofVerifier {
 
             findUniqueSubstMapping();
 
-            pStackCnt -= stepFrame.hypArray.length;
-            if (pStackCnt < 0)
-                raiseVerifyException(Integer.toString(stepNbr + 1), stepLabel,
-                    ProofConstants.ERRMSG_PROOF_STACK_UNDERFLOW);
-
             stepSubstFormula = applySubstMapping(stepFormula);
-            pStack[pStackCnt++] = stepSubstFormula;
+            if (proof[stepNbr].backRef < 0) {
+                backrefs.add(stepSubstFormula);
+                backrefSteps.add(null);
+            }
+            pStack.push(stepSubstFormula);
 
             if (stepFormula.getTyp() == provableLogicStmtTyp
                 && !(stepAssrt instanceof Axiom && ((Axiom)stepAssrt)
@@ -610,13 +635,12 @@ public class VerifyProofs implements ProofVerifier {
                 e.step = Integer.toString(stepName);
                 final int logHypCnt = stepAssrt.getLogHypArrayLength();
                 e.hypStep = new String[logHypCnt];
-                int i = logHypCnt;
-                if (i > undischargedStack.size())
+                if (logHypCnt > undischargedStack.size())
                     raiseVerifyException(Integer.toString(stepNbr + 1),
                         stepLabel,
                         ProofConstants.ERRMSG_LOGHYP_STACK_DEFICIENT,
                         proofStmtLabel);
-                while (--i >= 0) {
+                for (int i = logHypCnt - 1; i >= 0; i--) {
                     final ProofDerivationStepEntry h = undischargedStack.pop();
                     e.hypStep[i] = h.step;
                 }
@@ -627,11 +651,13 @@ public class VerifyProofs implements ProofVerifier {
                 e.formula = stepSubstFormula;
                 derivStepList.add(e);
                 undischargedStack.push(e);
+                if (proof[stepNbr].backRef < 0)
+                    backrefSteps.set(backrefs.size() - 1, e);
                 stepName += PaConstants.PROOF_STEP_RENUMBER_INTERVAL;
             }
         }
 
-        if (pStackCnt != 1)
+        if (pStack.size() != 1)
             if (proof.length == 0)
                 raiseVerifyException(Integer.toString(stepNbr), " ",
                     ProofConstants.ERRMSG_PROOF_HAS_ZERO_STEPS);
@@ -639,12 +665,10 @@ public class VerifyProofs implements ProofVerifier {
                 raiseVerifyException(Integer.toString(stepNbr), " ",
                     ProofConstants.ERRMSG_PROOF_STACK_GT_1_AT_END);
 
-        if (!proofStmtFormula.equals(pStack[0]))
-            raiseVerifyException(
-                Integer.toString(stepNbr + 1),
-                " ",
+        if (!proofStmtFormula.equals(pStack.peek()))
+            raiseVerifyException(Integer.toString(stepNbr + 1), " ",
                 ProofConstants.ERRMSG_FINAL_STACK_ENTRY_UNEQUAL2
-                    + pStack[0].toString());
+                    + pStack.peek().toString());
 
         if (derivStepList.size() <= numHyps)
             raiseVerifyException(Integer.toString(stepNbr), " ",
@@ -726,7 +750,7 @@ public class VerifyProofs implements ProofVerifier {
             for (int w = 0; w < wExprCnt; w++)
                 s[w] = wExpr[w];
             subst[substCnt].substTo = s;
-            ++substCnt;
+            substCnt++;
         }
     }
 
@@ -789,21 +813,35 @@ public class VerifyProofs implements ProofVerifier {
      * @throws VerifyException if an error occurred
      */
     private void verifyProof() throws VerifyException {
+        final List<Formula> backrefs = new ArrayList<Formula>();
         for (stepNbr = 0; stepNbr < proof.length; stepNbr++) {
-            if (proof[stepNbr] == null)
+            if (proof[stepNbr] == null || proof[stepNbr].backRef <= 0
+                && proof[stepNbr].stmt == null)
                 raiseVerifyException(Integer.toString(stepNbr + 1), " ",
                     ProofConstants.ERRMSG_PROOF_STEP_INCOMPLETE);
 
-            stepFormula = proof[stepNbr].getFormula();
-            if (proof[stepNbr] instanceof Hyp) {
-                pStack[pStackCnt++] = stepFormula;
+            if (proof[stepNbr].stmt == null) {
+                final int index = proof[stepNbr].backRef - 1;
+                if (index >= backrefs.size())
+                    raiseVerifyException(Integer.toString(stepNbr + 1), " ",
+                        ProofConstants.ERRMSG_PROOF_STEP_RANGE);
+                pStack.push(backrefs.get(index));
+                continue;
+            }
+            stepFormula = proof[stepNbr].stmt.getFormula();
+            if (proof[stepNbr].stmt instanceof Hyp) {
+                if (proof[stepNbr].backRef < 0)
+                    backrefs.add(stepFormula);
+                pStack.push(stepFormula);
                 continue;
             }
 
-            stepAssrt = (Assrt)proof[stepNbr];
+            stepAssrt = (Assrt)proof[stepNbr].stmt;
             stepFrame = stepAssrt.getMandFrame();
             if (stepFrame.hypArray.length == 0) {
-                pStack[pStackCnt++] = stepFormula;
+                if (proof[stepNbr].backRef < 0)
+                    backrefs.add(stepFormula);
+                pStack.push(stepFormula);
                 continue;
             }
 
@@ -819,17 +857,14 @@ public class VerifyProofs implements ProofVerifier {
                 checkDjVars();
             }
 
-            pStackCnt -= stepFrame.hypArray.length;
-            if (pStackCnt < 0)
-                raiseVerifyException(Integer.toString(stepNbr + 1), stepLabel,
-                    ProofConstants.ERRMSG_PROOF_STACK_UNDERFLOW);
-
             stepSubstFormula = applySubstMapping(stepFormula);
-            pStack[pStackCnt++] = stepSubstFormula;
+            if (proof[stepNbr].backRef < 0)
+                backrefs.add(stepSubstFormula);
+            pStack.push(stepSubstFormula);
 
         }
 
-        if (pStackCnt != 1)
+        if (pStack.size() != 1)
             if (proof.length == 0)
                 raiseVerifyException(Integer.toString(stepNbr), " ",
                     ProofConstants.ERRMSG_PROOF_HAS_ZERO_STEPS);
@@ -837,16 +872,13 @@ public class VerifyProofs implements ProofVerifier {
                 raiseVerifyException(Integer.toString(stepNbr), " ",
                     ProofConstants.ERRMSG_PROOF_STACK_GT_1_AT_END);
 
-        if (!proofStmtFormula.equals(pStack[0]))
-            if (isExprRPNVerify && proofStmtFormula.exprEquals(pStack[0])) {}
+        if (!proofStmtFormula.equals(pStack.peek()))
+            if (isExprRPNVerify && proofStmtFormula.exprEquals(pStack.peek())) {}
             else
-                raiseVerifyException(
-                    Integer.toString(stepNbr + 1),
-                    " ",
+                raiseVerifyException(Integer.toString(stepNbr + 1), " ",
                     ProofConstants.ERRMSG_FINAL_STACK_ENTRY_UNEQUAL
-                        + pStack[0].toString());
+                        + pStack.peek().toString());
     }
-
     /**
      * ok, some input, work and output areas in global (class) work areas...
      * 
@@ -878,26 +910,29 @@ public class VerifyProofs implements ProofVerifier {
      */
     private void findUniqueSubstMapping() throws VerifyException {
         substCnt = stepFrame.hypArray.length;
-        final int stackMatchBegin = pStackCnt - substCnt;
-
-        if (stackMatchBegin < 0)
+        if (pStack.size() < stepFrame.hypArray.length)
             raiseVerifyException(Integer.toString(stepNbr + 1), stepLabel,
                 ProofConstants.ERRMSG_STACK_SIZE_MISMATCH_FOR_STEP_HYPS);
+//            raiseVerifyException(Integer.toString(stepNbr + 1), stepLabel,
+//                ProofConstants.ERRMSG_PROOF_STACK_UNDERFLOW);
+
+        final Formula[] stackTop = new Formula[stepFrame.hypArray.length];
+        for (int i = stepFrame.hypArray.length - 1; i >= 0; i--)
+            stackTop[i] = pStack.pop();
 
         // 1) scan stepFrame.hypArray, pulling out VarHyp's and
         // creating the subst array entries for them (subst
         // is parallel by index to hypArray and pStack, with
         // unused entries left null...initially.)
-        for (int i = 0, pStackIndex = stackMatchBegin; i < substCnt; i++, pStackIndex++)
-        {
+        for (int i = 0; i < substCnt; i++) {
             final Hyp hyp = stepFrame.hypArray[i];
-            if (hyp.getTyp() != pStack[pStackIndex].getTyp())
+            if (hyp.getTyp() != stackTop[i].getTyp())
                 raiseVerifyException(
                     Integer.toString(stepNbr + 1),
                     stepLabel,
                     ProofConstants.ERRMSG_HYP_TYP_MISMATCH_STACK_TYP
                         + hyp.getTyp() + ProofConstants.ERRMSG_STACK_ITEM_TYP
-                        + pStack[pStackIndex].getTyp());
+                        + stackTop[i].getTyp());
             if (!(hyp instanceof VarHyp)) {
                 subst[i] = null;
                 continue;
@@ -905,10 +940,10 @@ public class VerifyProofs implements ProofVerifier {
 
             if (subst[i] == null)
                 subst[i] = new SubstMapEntry(((VarHyp)hyp).getVar(),
-                    pStack[pStackIndex].getExpr());
+                    stackTop[i].getExpr());
             else {
                 subst[i].substFrom = ((VarHyp)hyp).getVar();
-                subst[i].substTo = pStack[pStackIndex].getExpr();
+                subst[i].substTo = stackTop[i].getExpr();
             }
 
         }
@@ -918,17 +953,15 @@ public class VerifyProofs implements ProofVerifier {
         // then compared to the corresponding entries on pStack
         // to make sure the substitutions "work"...and that the
         // proofstep is therefore "legal".
-        for (int i = 0, pStackIndex = stackMatchBegin; i < substCnt; i++, pStackIndex++)
-        {
+        for (int i = 0; i < substCnt; i++) {
             final Hyp hyp = stepFrame.hypArray[i];
             if (hyp instanceof VarHyp)
                 continue;
             final Formula workFormula = applySubstMapping(hyp.getFormula());
-            if (!workFormula.equals(pStack[pStackIndex]))
+            if (!workFormula.equals(stackTop[i]))
                 raiseVerifyException(Integer.toString(stepNbr + 1), stepLabel,
-                    ProofConstants.ERRMSG_STEP_LOG_HYP_SUBST_UNEQUAL
-                        + ProofConstants.ERRMSG_STACK + pStack[pStackIndex]
-                        + ProofConstants.ERRMSG_SUBST_HYP + workFormula);
+                    ProofConstants.ERRMSG_STEP_LOG_HYP_SUBST_UNEQUAL,
+                    stackTop[i], workFormula);
 
         }
     }
@@ -949,17 +982,17 @@ public class VerifyProofs implements ProofVerifier {
      * @return a new Formula
      */
     private Formula applySubstMapping(final Formula f) {
-        SubstMapEntry substMapEntry;
-        Sym fSym;
+
         final int fCnt = f.getCnt();
         final Sym[] fSymArray = f.getSym();
         wExpr[0] = fSymArray[0];
         wExprCnt = 1;
 
         nextFSym: for (int i = 1; i < fCnt; i++) {
-            fSym = fSymArray[i];
+            final Sym fSym = fSymArray[i];
             for (int j = 0; j < substCnt; j++) {
-                if ((substMapEntry = subst[j]) == null)
+                final SubstMapEntry substMapEntry = subst[j];
+                if (substMapEntry == null)
                     // this wasn't a VarHyp subst entry
                     continue;
                 if (fSym == substMapEntry.substFrom) {
@@ -1129,32 +1162,23 @@ public class VerifyProofs implements ProofVerifier {
         }
         retryCnt = retry;
 
-        if (pStackCnt > pStackHighwater)
-            pStackHighwater = pStackCnt;
+        if (pStack.size() > pStackHighwater)
+            pStackHighwater = pStack.size();
         if (wExprCnt > wExprHighwater)
             wExprHighwater = wExprCnt;
         if (substCnt > wExprHighwater)
             substHighwater = substCnt;
 
         if (retry == 0) {
-            pStackCnt = 0;
+            pStack.clear();
             wExprCnt = 0;
             substCnt = 0;
             return;
         }
 
-        if (pStackMax < ProofConstants.PROOF_PSTACK_HARD_FAILURE_LEN) {
-            if (pStackMax < pStackCnt + 10) {
-                pStackMax *= 2;
-                if (pStackMax > ProofConstants.PROOF_PSTACK_HARD_FAILURE_LEN)
-                    pStackMax = ProofConstants.PROOF_PSTACK_HARD_FAILURE_LEN;
-                pStack = new Formula[pStackMax];
-            }
-            pStackCnt = 0;
-        }
-        else
+        if (pStackHighwater >= ProofConstants.PROOF_PSTACK_HARD_FAILURE_LEN)
             throw new VerifyException(
-                ProofConstants.ERRMSG_PSTACK_ARRAY_OVERFLOW + pStackMax
+                ProofConstants.ERRMSG_PSTACK_ARRAY_OVERFLOW + pStackHighwater
                     + ProofConstants.ERRMSG_THEOREM_LABEL + proofStmtLabel);
 
         if (wExprMax < ProofConstants.PROOF_WEXPR_HARD_FAILURE_LEN) {
@@ -1195,10 +1219,9 @@ public class VerifyProofs implements ProofVerifier {
     private void initArrays() {
         retryCnt = 0;
 
-        pStackCnt = 0;
         pStackMax = ProofConstants.PROOF_PSTACK_INIT_LEN;
         pStackHighwater = 0;
-        pStack = new Formula[pStackMax];
+        pStack = new ArrayDeque<Formula>(pStackMax);
 
         wExprCnt = 0;
         wExprMax = ProofConstants.PROOF_WEXPR_INIT_LEN;
@@ -1220,7 +1243,7 @@ public class VerifyProofs implements ProofVerifier {
      * @param stepLabelForMessages used for abend message :)
      * @return Formula generated from RPN
      */
-    public Formula convertRPNToFormula(final Stmt[] formulaRPN,
+    public Formula convertRPNToFormula(final RPNStep[] formulaRPN,
         final String stepLabelForMessages)
     {
 
@@ -1239,7 +1262,7 @@ public class VerifyProofs implements ProofVerifier {
                     out = generateFormulaFromRPN();
                     needToRetry = false;
                 } catch (final ArrayIndexOutOfBoundsException e) {
-                    ++retryCnt;
+                    retryCnt++;
                     reInitArrays(retryCnt);
                 } catch (final VerifyException e) {
                     needToRetry = false;
@@ -1258,23 +1281,21 @@ public class VerifyProofs implements ProofVerifier {
     }
 
     private Formula generateFormulaFromRPN() throws VerifyException {
-
         for (stepNbr = 0; stepNbr < proof.length; stepNbr++) {
-
             if (proof[stepNbr] == null)
                 raiseVerifyException(Integer.toString(stepNbr + 1), " ",
                     ProofConstants.ERRMSG_PROOF_STEP_INCOMPLETE);
 
-            stepFormula = proof[stepNbr].getFormula();
-            if (proof[stepNbr] instanceof Hyp) {
-                pStack[pStackCnt++] = stepFormula;
+            stepFormula = proof[stepNbr].stmt.getFormula();
+            if (proof[stepNbr].stmt instanceof Hyp) {
+                pStack.push(stepFormula);
                 continue;
             }
 
-            stepAssrt = (Assrt)proof[stepNbr];
+            stepAssrt = (Assrt)proof[stepNbr].stmt;
             stepFrame = stepAssrt.getMandFrame();
             if (stepFrame.hypArray.length == 0) {
-                pStack[pStackCnt++] = stepFormula;
+                pStack.push(stepFormula);
                 continue;
             }
 
@@ -1282,17 +1303,12 @@ public class VerifyProofs implements ProofVerifier {
 
             findUniqueSubstMapping();
 
-            pStackCnt -= stepFrame.hypArray.length;
-            if (pStackCnt < 0)
-                raiseVerifyException(Integer.toString(stepNbr + 1), stepLabel,
-                    ProofConstants.ERRMSG_PROOF_STACK_UNDERFLOW);
-
             stepSubstFormula = applySubstMapping(stepFormula);
-            pStack[pStackCnt++] = stepSubstFormula;
+            pStack.push(stepSubstFormula);
 
         }
 
-        if (pStackCnt != 1)
+        if (pStack.size() != 1)
             if (proof.length == 0)
                 raiseVerifyException(Integer.toString(stepNbr), " ",
                     ProofConstants.ERRMSG_PROOF_HAS_ZERO_STEPS);
@@ -1300,7 +1316,7 @@ public class VerifyProofs implements ProofVerifier {
                 raiseVerifyException(Integer.toString(stepNbr), " ",
                     ProofConstants.ERRMSG_PROOF_STACK_GT_1_AT_END);
 
-        return new Formula(pStack[0].getCnt(), pStack[0].getSym());
+        return new Formula(pStack.peek().getCnt(), pStack.peek().getSym());
     }
 
 }

@@ -230,7 +230,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
                     outCol = i + 1; // +1 to *next* column!
                     break;
                 }
-                ++nbrColons;
+                nbrColons++;
                 continue;
             }
             if (c == ' ' || c == '\t' || c == '\n')
@@ -319,7 +319,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
             formula = verifyProofs.convertRPNToFormula(
                 substNode.convertToRPN(), "");
             wvSubstStringArray[wvCnt] = formula.exprToString();
-            ++wvCnt;
+            wvCnt++;
         }
 
         if (wvCnt == 0)
@@ -590,12 +590,12 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
             c = textArea.charAt(pos);
             if (c == ' ' || c == '\t' || c == '\n')
                 break;
-            ++pos;
+            pos++;
         }
         while (pos < textArea.length()) {
             c = textArea.charAt(pos);
             if (c == ' ' || c == '\t')
-                ++pos;
+                pos++;
             else
                 break;
         }
@@ -671,7 +671,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
         int diff = stepHypRef.length() - origStepHypRefLength;
         while (diff < 0) {
             stepHypRef.append(' ');
-            ++diff;
+            diff++;
         }
         if (diff == 0) {
             stmtText.insert(0, stepHypRef);
@@ -683,7 +683,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
         while (nbrSpaces < stmtText.length()) {
             c = stmtText.charAt(nbrSpaces);
             if (c == ' ' || c == '\t')
-                ++nbrSpaces;
+                nbrSpaces++;
             else
                 break;
         }

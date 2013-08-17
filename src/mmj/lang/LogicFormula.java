@@ -99,7 +99,7 @@ public class LogicFormula extends Formula {
                 // add varHyp to mandatory hypotheses in hypList
                 Formula.accumHypInList(hypList, varHyp);
             }
-            ++cnt;
+            cnt++;
         }
     }
 

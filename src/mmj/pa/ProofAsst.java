@@ -729,7 +729,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             if (numberProcessed >= numberToProcess
                 || messages.maxErrorMessagesReached())
                 return;
-            ++nbrTestTheoremsProcessed;
+            nbrTestTheoremsProcessed++;
             proofText = exportOneTheorem(null, theorem, unifiedFormat,
                 hypsRandomized, deriveFormulas);
             if (proofText != null) {
@@ -768,7 +768,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                     checkAndCompareUpdateDJs(proofWorksheet);
                 }
             }
-            ++numberProcessed;
+            numberProcessed++;
         }
         printVolumeTestStats();
     }
@@ -904,7 +904,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                         updatedProofText);
                     checkAndCompareUpdateDJs(proofWorksheet);
                 }
-                ++numberProcessed;
+                numberProcessed++;
                 if (!proofWorksheetParser.hasNext())
                     break;
             }
@@ -1143,7 +1143,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 exportFormatUnified, hypsRandomized, deriveFormulas);
             if (proofText != null)
                 printProof(outputBoss, theorem.getLabel(), proofText);
-            ++numberExported;
+            numberExported++;
         }
     }
     // Note: could do binary lookup for sequence number
@@ -1268,7 +1268,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         final DerivationStep q = proofWorksheet.getQedStep();
 
         if (q == null) {
-            ++nbrTestNotProvedPerfectly;
+            nbrTestNotProvedPerfectly++;
             messages.accumInfoMessage(PaConstants.ERRMSG_PA_TESTMSG_01,
                 theorem.getLabel(), (startNanoTime + 50000000) / endNanoTime,
                 9999999, "No qed step found!");
@@ -1287,12 +1287,12 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 s = 8; // proved perfectly
             else {
                 s = 10; // verify proof err
-                ++nbrTestNotProvedPerfectly;
+                nbrTestNotProvedPerfectly++;
             }
         }
         else {
             s = 9; // dj vars error
-            ++nbrTestNotProvedPerfectly;
+            nbrTestNotProvedPerfectly++;
         }
 
         messages.accumInfoMessage(PaConstants.ERRMSG_PA_TESTMSG_01,
@@ -1300,12 +1300,13 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             PaConstants.STATUS_DESC[s]);
 
         if (q != null) {
-            Stmt[] newProof;
+            RPNStep[] newProof;
             if (q.proofTree == null)
-                newProof = new Stmt[0];
+                newProof = new RPNStep[0];
             else
-                newProof = q.proofTree.convertToRPN();
-            final Stmt[] oldProof = proofWorksheet.getTheorem().getProof();
+                newProof = q.proofTree.convertToRPNExpanded();
+            final RPNStep[] oldProof = new ParseTree(proofWorksheet
+                .getTheorem().getProof()).convertToRPNExpanded();
 
             boolean differenceFound = false;
             String oldStmtDiff = "";
@@ -1317,24 +1318,24 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 }
                 else {
                     differenceFound = true;
-                    newStmtDiff = newProof[0].getLabel();
+                    newStmtDiff = newProof[0].stmt.getLabel();
                 }
             }
             else {
                 int i = 0;
                 while (true) {
                     if (i < oldProof.length && i < newProof.length) {
-                        if (newProof[i] == oldProof[i]) {
-                            ++i;
+                        if (newProof[i].stmt == oldProof[i].stmt) {
+                            i++;
                             continue;
                         }
-                        oldStmtDiff = oldProof[i].getLabel();
-                        newStmtDiff = newProof[i].getLabel();
+                        oldStmtDiff = oldProof[i].stmt.getLabel();
+                        newStmtDiff = newProof[i].stmt.getLabel();
                     }
                     else if (i < oldProof.length)
-                        oldStmtDiff = oldProof[i].getLabel();
+                        oldStmtDiff = oldProof[i].stmt.getLabel();
                     else if (i < newProof.length)
-                        newStmtDiff = newProof[i].getLabel();
+                        newStmtDiff = newProof[i].stmt.getLabel();
                     else
                         break; // no differences
                     differenceFound = true;
@@ -1343,7 +1344,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             }
 
             if (differenceFound) {
-                ++nbrTestProvedDifferently;
+                nbrTestProvedDifferently++;
                 messages.accumInfoMessage(PaConstants.ERRMSG_PA_TESTMSG_02,
                     theorem.getLabel(), oldStmtDiff, newStmtDiff);
             }

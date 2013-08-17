@@ -16,6 +16,7 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import mmj.lang.ParseTree.RPNStep;
+import mmj.mmio.BlockList;
 
 /**
  * ProofCompression provides Compression and Decompression Services for Metamath
@@ -33,102 +34,34 @@ public class ProofCompression {
 
     private String theoremLabel; // for error msgs
 
-    /*
+    /**
      * mandHyp contains the Theorem's MandFrame.hypArray
      */
     private Hyp[] mandHyp;
 
-    /*
+    /**
      * optHyp contains the Theorem's OptFrame.optHypArray
      */
     private Hyp[] optHyp;
 
-    /*
-     * otherHyp contains the VarHyp entries inside
-     * the parenthesized portion of a compressed
-     * proof (they occur before the Assrt entries in
-     * the parentheses.) There may be zero
-     * otherHyp entries.
+    /**
+     * otherHyp contains the VarHyp entries inside the parenthesized portion of
+     * a compressed proof (they occur before the Assrt entries in the
+     * parentheses.) There may be zero otherHyp entries.
      */
-    private int otherHypCnt;
-    private int otherHypMax;
-    private VarHyp[] otherHyp;
-
-    /*
-     * otherAssrt contains the Assrt entries inside
-     * the parenthesized portion of a compressed
-     * proof (they occur after the VarHyp entries in
-     * the parentheses.) There may be zero
-     * otherAssrt entries.
-     */
-    private int otherAssrtCnt;
-    private int otherAssrtMax;
-    private Assrt[] otherAssrt;
+    private List<VarHyp> otherHyp;
 
     /**
-     * repeatedSubproof is an array of indexes pointing to a step[i], which is
-     * the last step in a subproof that is repeated later in the proof. The
-     * start index of the subproof is computed as:
-     * 
-     * <pre>
-     * startIndex = i - subproofLength[i] + 1.
-     * </pre>
+     * otherAssrt contains the Assrt entries inside the parenthesized portion of
+     * a compressed proof (they occur after the VarHyp entries in the
+     * parentheses.) There may be zero otherAssrt entries.
      */
-    private int[] repeatedSubproof;
-    private int repeatedSubproofCnt;
-    private int repeatedSubproofMax;
+    private List<Assrt> otherAssrt;
 
     /**
-     * step and subproofLength are parallel arrays, where subproofLength[i]
-     * contains the length of the subproof at step[i].
-     * <p>
-     * step[i] may be null, which is the case when the input proof step = "?".
-     * <p>
-     * There must always be at least one proof step, even if it is just a "?".
+     * step contains the output list of RPN steps from the compressed proof
      */
-    private Stmt[] step;
-    private int stepCnt;
-    private int stepMax;
-
-    /**
-     * subproofLength and step are parallel arrays, where subproofLength[i]
-     * contains the length of the subproof at step[i].
-     * <p>
-     * If {@code step[i] == null}, subproofLength[i] = 1.
-     * <p>
-     * When {@code step[i] instanceof Hyp}, subproofLength[i] = 1.
-     * <p>
-     * When {@code step[i] instanceof Assrt}, subproofLength[i] = 1 plus the sum
-     * of subproofLength for n prior subproofLength entries, where
-     * 
-     * <pre>
-     * n = ((Assrt)step[i]).getMandFrame().hypArray.length
-     * </pre>
-     * 
-     * [that is the source data, but is actually computed using other code...].
-     * <p>
-     * The prior subproofLength entry indexes, "P", are determined working
-     * backwards:
-     * 
-     * <pre>
-     *         P(n)     = i - 1
-     *                  = subproofLength for nth
-     *                    mand hyp of step[i]
-     * 
-     *         P(n - 1) = P(n) - subproofLength[P(n)]
-     *                  =  subproofLength for (n - 1)th
-     *                     mand hyp of step[i]
-     * 
-     *         P(n - 2) = P(n - 1) - subproofLength[P(n - 1)]
-     *                  =  subproofLength for (n - 2)th
-     *                     mand hyp of step[i]
-     * 
-     *         ...etc.
-     * </pre>
-     * 
-     * There must always be at least one proof step, even if it is just a "?".
-     */
-    private int[] subproofLength; // is parallel array!
+    private List<RPNStep> step;
 
     // *******************************************
 
@@ -154,13 +87,14 @@ public class ProofCompression {
      *            in the parenthesized portion of a compressed proof.
      * @param proofBlockList List of String containing the compressed portion of
      *            the proof.
-     * @return Stmt array containing decompressed Metamath RPN proof.
+     * @return RPNStep array containing decompressed (but still "packed")
+     *         Metamath RPN proof.
      * @throws LangException if an error occurred
      */
-    public Stmt[] decompress(final String theoremLabel, final int seq,
+    public RPNStep[] decompress(final String theoremLabel, final int seq,
         final Map<String, Stmt> stmtTbl, final Hyp[] mandHypArray,
         final Hyp[] optHypArray, final List<String> otherRefList,
-        final List<String> proofBlockList) throws LangException
+        final BlockList proofBlockList) throws LangException
     {
         this.theoremLabel = theoremLabel; // for error msgs
 
@@ -174,12 +108,7 @@ public class ProofCompression {
 
         loadOtherRefArrays(stmtTbl, otherRefList, seq);
 
-        final Iterator<String> blockIterator = proofBlockList.iterator();
-        if (blockIterator.hasNext())
-            loadSteps(blockIterator);
-        else
-            throw new LangException(
-                LangConstants.ERRMSG_COMPRESS_NO_PROOF_BLOCKS, theoremLabel);
+        loadSteps(proofBlockList);
 
         return constructProofArray();
     }
@@ -188,17 +117,12 @@ public class ProofCompression {
         final List<String> otherRefList, final int seq) throws LangException
     {
 
-        otherHypCnt = 0;
-        otherAssrtCnt = 0;
-
-        if (otherRefList.size() > otherAssrtMax) {
-            otherAssrtMax = otherRefList.size() * 2;
-            otherAssrt = new Assrt[otherAssrtMax];
-        }
+        otherHyp.clear();
+        otherAssrt.clear();
 
         int iterationNbr = 0;
         for (final String otherLabel : otherRefList) {
-            ++iterationNbr;
+            iterationNbr++;
             final Stmt otherStmt = stmtTbl.get(otherLabel);
             if (otherStmt == null)
                 throw new LangException(
@@ -209,7 +133,7 @@ public class ProofCompression {
                     LangConstants.ERRMSG_FORWARD_PROOF_STEP_LABEL + otherLabel);
 
             if (otherStmt instanceof Assrt) {
-                otherAssrt[otherAssrtCnt++] = (Assrt)otherStmt;
+                otherAssrt.add((Assrt)otherStmt);
                 continue;
             }
 
@@ -258,128 +182,26 @@ public class ProofCompression {
         throws LangException
     {
 
-        if (otherAssrtCnt > 0)
+        if (otherAssrt.size() > 0)
             throw new LangException(
                 LangConstants.ERRMSG_COMPRESS_OTHER_VARHYP_POS, theoremLabel,
                 iterationNbr, otherVarHyp.getLabel());
 
-        if (otherHypCnt >= otherHypMax)
-            reallocAndCopyOtherHypArray();
-
-        otherHyp[otherHypCnt++] = otherVarHyp;
+        otherHyp.add(otherVarHyp);
     }
 
-    private void loadSteps(final Iterator<String> blockIterator)
-        throws LangException
-    {
-        repeatedSubproofCnt = 0;
-        stepCnt = 0;
+    private void loadSteps(final BlockList blockList) throws LangException {
+        step.clear();
 
-        String block = blockIterator.next();
-        int blockLen = block.length();
-        int blockNbr = 1;
-        int charIndex = 0;
-
-        int decompressNbr = 0;
-        int prevDecompressNbr = 0;
-        int workNbr;
-
-        char nextChar;
-        byte nextCharCode;
-
-        int nbrOfPos; // these are for computing subproofLength
-        int prevPos;
-        int currPos;
-
+        int backrefs = 0;
         while (true) {
-            if (charIndex >= blockLen) {
-                if (!blockIterator.hasNext()) {
-                    if (decompressNbr > 0)
-                        throw new LangException(
-                            LangConstants.ERRMSG_COMPRESS_PREMATURE_END,
-                            theoremLabel);
-                    break;
-                }
-                charIndex = 0;
-                block = blockIterator.next();
-                blockLen = block.length();
-                ++blockNbr;
-            }
-
-            nextChar = block.charAt(charIndex++);
-            if (nextChar >= LangConstants.COMPRESS_VALID_CHARS.length)
-                throw new LangException(
-                    LangConstants.ERRMSG_COMPRESS_NOT_ASCII, theoremLabel,
-                    blockNbr, charIndex, nextChar);
-
-            // translate 'A' to 0, 'B' to 1, etc. (1 is added to
-            // 'A' thru 'Z' later -- curiously but effectively :)
-            nextCharCode = LangConstants.COMPRESS_VALID_CHARS[nextChar];
-
-            if (nextCharCode == LangConstants.COMPRESS_ERROR_CHAR_VALUE)
-                throw new LangException(LangConstants.ERRMSG_COMPRESS_BAD_CHAR,
-                    theoremLabel, blockNbr, charIndex, nextChar);
-
-            if (nextCharCode == LangConstants.COMPRESS_UNKNOWN_CHAR_VALUE) {
-                if (decompressNbr > 0)
-                    throw new LangException(
-                        LangConstants.ERRMSG_COMPRESS_BAD_UNK, theoremLabel,
-                        blockNbr, charIndex);
-
-                if (stepCnt >= stepMax)
-                    reallocAndCopyStepArray();
-                step[stepCnt] = null;
-                subproofLength[stepCnt] = 1;
-                ++stepCnt;
-                prevDecompressNbr = 0;
-                decompressNbr = 0;
-                continue;
-            }
-
-            if (nextCharCode == LangConstants.COMPRESS_REPEAT_CHAR_VALUE) {
-
-//              System.out.println("nextCharCode == repeat char value"
-//              + " Theorem=" + theoremLabel
-//              + " nextCharCode=" + nextCharCode
-//              + " decompressNbr=" + decompressNbr);
-
-                if (decompressNbr > 0)
-                    throw new LangException(
-                        LangConstants.ERRMSG_COMPRESS_BAD_RPT, theoremLabel,
-                        blockNbr, charIndex);
-                if (prevDecompressNbr == 0)
-                    throw new LangException(
-                        LangConstants.ERRMSG_COMPRESS_BAD_RPT2, theoremLabel,
-                        blockNbr, charIndex);
-                if (repeatedSubproofCnt >= repeatedSubproofMax)
-                    reallocAndCopyRepeatedSubproofArray();
-                repeatedSubproof[repeatedSubproofCnt] = stepCnt - 1;
-                ++repeatedSubproofCnt;
-                prevDecompressNbr = 0;
-                decompressNbr = 0;
-                continue;
-            }
-
-            if (nextCharCode >= LangConstants.COMPRESS_LOW_BASE) {
-
-                decompressNbr = decompressNbr
-                    * LangConstants.COMPRESS_HIGH_BASE + nextCharCode;
-
-//              System.out.println("nextCharCode >= low base"
-//              + " Theorem=" + theoremLabel
-//              + " nextCharCode=" + nextCharCode
-//              + " decompressNbr=" + decompressNbr);
-
-                continue;
-            }
-
-            // else...
-            decompressNbr += nextCharCode + 1; // 'A' = 1 etc
+            int decompressNbr = blockList.getNext(theoremLabel);
 
             /*
-             * Whew! finally...we have decompressed a number!
-             * But what does the number signify?
+             * We have decompressed a number! But what does the number signify?
              *
+             * -1                                 = EOF
+             * 0                                  = unknown '?' step
              * 1 thru mandHyp.length              = mandHyp
              * mandHyp.length + 1 thru otherHypCnt = otherHyp
              * otherHypCnt + 1 thru otherAssrtCnt = otherAssrt
@@ -389,157 +211,80 @@ public class ProofCompression {
              *
              * The above mentioned arrays (mandHyp, otherHyp, etc.)
              * begin indexing at 0, so we need to subtract 1
-             * from "decompressNbr" to index into the arrays,
-             * but "decompressNbr = 0" has special significance --
-             * it means "no previous decompression in progress",
-             * so we'll use "workNbr" to mess around with.
+             * from "decompressNbr" to index into the arrays.
              */
 
-            workNbr = decompressNbr - 1;
+            if (decompressNbr < 0)
+                break; // run out of chars
+            else if (decompressNbr == 0) { // unknown (?) step
+                final RPNStep s = new RPNStep(null);
+                if (blockList.marked)
+                    s.backRef = -++backrefs;
+                step.add(s);
+                continue;
+            }
+
+            decompressNbr--;
 
             // ok, do we have a mandHyp array entry?
             // if so, just put it in the proof step array!
-            if (workNbr < mandHyp.length) {
-                if (stepCnt >= stepMax)
-                    reallocAndCopyStepArray();
-                step[stepCnt] = mandHyp[workNbr];
-                subproofLength[stepCnt] = 1;
-                ++stepCnt;
-                prevDecompressNbr = decompressNbr;
-                decompressNbr = 0;
+            if (decompressNbr < mandHyp.length) {
+                final RPNStep s = new RPNStep(mandHyp[decompressNbr]);
+                if (blockList.marked)
+                    s.backRef = -++backrefs;
+                step.add(s);
                 continue;
             }
 
             // ok, adjust workNbr down into otherHyp range
-            workNbr -= mandHyp.length;
+            decompressNbr -= mandHyp.length;
 
             // ok, do we have a otherHyp array entry?
             // if so, just put it in the proof step array!
-            if (workNbr < otherHypCnt) {
-                if (stepCnt >= stepMax)
-                    reallocAndCopyStepArray();
-                step[stepCnt] = otherHyp[workNbr];
-                subproofLength[stepCnt] = 1;
-                ++stepCnt;
-                prevDecompressNbr = decompressNbr;
-                decompressNbr = 0;
+            if (decompressNbr < otherHyp.size()) {
+                final RPNStep s = new RPNStep(otherHyp.get(decompressNbr));
+                if (blockList.marked)
+                    s.backRef = -++backrefs;
+                step.add(s);
                 continue;
             }
 
             // ok, adjust workNbr down into otherAssrt range
-            workNbr -= otherHypCnt;
+            decompressNbr -= otherHyp.size();
 
             // ok, do we have a otherAssrt array entry?
             // if so, put it in the proof step array, but
             // this time we need to compute subproofLength!
             // an Assrt has Hyps in its subproof tree/stack.
-            if (workNbr < otherAssrtCnt) {
-
-                if (stepCnt >= stepMax)
-                    reallocAndCopyStepArray();
-                step[stepCnt] = otherAssrt[workNbr];
-                subproofLength[stepCnt] = 1; // init to 1, then add hyp lens
-
-                nbrOfPos = otherAssrt[workNbr].getMandHypArrayLength();
-                prevPos = stepCnt;
-
-                while (nbrOfPos-- > 0) {
-                    currPos = prevPos - subproofLength[prevPos];
-
-                    if (currPos < 0 || currPos > stepCnt)
-                        throw new LangException(
-                            LangConstants.ERRMSG_COMPRESS_CORRUPT,
-                            theoremLabel, blockNbr, charIndex);
-
-                    subproofLength[stepCnt] += subproofLength[currPos];
-                    prevPos = currPos;
-                }
-
-                ++stepCnt;
-                prevDecompressNbr = decompressNbr;
-                decompressNbr = 0;
+            if (decompressNbr < otherAssrt.size()) {
+                final RPNStep s = new RPNStep(otherAssrt.get(decompressNbr));
+                if (blockList.marked)
+                    s.backRef = -++backrefs;
+                step.add(s);
                 continue;
             }
 
-            workNbr -= otherAssrtCnt;
+            decompressNbr -= otherAssrt.size();
 
-            if (workNbr >= repeatedSubproofCnt)
+            if (decompressNbr >= backrefs)
                 throw new LangException(LangConstants.ERRMSG_COMPRESS_BAD_RPT3,
-                    theoremLabel, blockNbr, charIndex);
+                    theoremLabel, blockList.getIndex());
 
-            final int endRepeat = repeatedSubproof[workNbr];
-            int startRepeat = endRepeat + 1 - subproofLength[endRepeat];
-
-            if (stepCnt + subproofLength[endRepeat] >= stepMax)
-                reallocAndCopyStepArray();
-
-            while (startRepeat <= endRepeat) {
-                step[stepCnt] = step[startRepeat];
-                subproofLength[stepCnt] = subproofLength[startRepeat];
-                ++startRepeat;
-                ++stepCnt;
-            }
-
-            prevDecompressNbr = 0;
-            decompressNbr = 0;
-            continue;
+            final RPNStep s = new RPNStep(null);
+            s.backRef = decompressNbr + 1;
+            step.add(s);
         }
     }
-
-    private Stmt[] constructProofArray() {
-        final Stmt[] proofArray = new Stmt[stepCnt];
-        for (int i = 0; i < stepCnt; i++)
-            proofArray[i] = step[i];
-        return proofArray;
+    private RPNStep[] constructProofArray() {
+        return step.toArray(new RPNStep[step.size()]);
     }
 
     private void initArrays() {
-
-        otherHypCnt = 0;
-        otherHypMax = LangConstants.COMPRESS_OTHER_HYP_INIT_LEN;
-        otherHyp = new VarHyp[otherHypMax];
-
-        otherAssrtCnt = 0;
-        otherAssrtMax = LangConstants.COMPRESS_OTHER_ASSRT_INIT_LEN;
-        otherAssrt = new Assrt[otherAssrtMax];
-
-        repeatedSubproofCnt = 0;
-        repeatedSubproofMax = LangConstants.COMPRESS_REPEATED_SUBPROOF_INIT_LEN;
-        repeatedSubproof = new int[repeatedSubproofMax];
-
-        stepCnt = 0;
-        stepMax = LangConstants.COMPRESS_STEP_INIT_LEN;
-        step = new Stmt[stepMax];
-
-        subproofLength = new int[stepMax]; // parallel array
-    }
-
-    private void reallocAndCopyOtherHypArray() {
-        otherHypMax *= 2;
-        final VarHyp[] temp = new VarHyp[otherHypMax];
-        for (int i = 0; i < otherHypCnt; i++)
-            temp[i] = otherHyp[i];
-        otherHyp = temp;
-    }
-
-    private void reallocAndCopyStepArray() {
-        stepMax *= 2;
-        final Stmt[] tempStep = new Stmt[stepMax];
-        final int[] tempSubproofLength = new int[stepMax];
-        for (int i = 0; i < stepCnt; i++) {
-            tempStep[i] = step[i];
-            tempSubproofLength[i] = subproofLength[i];
-        }
-        step = tempStep;
-        subproofLength = tempSubproofLength;
-    }
-
-    private void reallocAndCopyRepeatedSubproofArray() {
-        repeatedSubproofMax *= 2;
-        final int[] temp = new int[repeatedSubproofMax];
-        for (int i = 0; i < repeatedSubproofCnt; i++)
-            temp[i] = repeatedSubproof[i];
-        repeatedSubproof = temp;
+        otherHyp = new ArrayList<VarHyp>(
+            LangConstants.COMPRESS_OTHER_HYP_INIT_LEN);
+        otherAssrt = new ArrayList<Assrt>(
+            LangConstants.COMPRESS_OTHER_ASSRT_INIT_LEN);
+        step = new ArrayList<RPNStep>(LangConstants.COMPRESS_STEP_INIT_LEN);
     }
 
     public List<Stmt> compress(final String theoremLabel, final int width,
@@ -572,7 +317,7 @@ public class ProofCompression {
                 else
                     unsortedMap.put(s.stmt, i + 1);
             }
-        final PriorityQueue<Entry<Stmt, Integer>> sortedByBackrefs = new PriorityQueue<Map.Entry<Stmt, Integer>>(
+        final PriorityQueue<Entry<Stmt, Integer>> sortedByBackrefs = new PriorityQueue<Entry<Stmt, Integer>>(
             unsortedMap.size(), new Comparator<Entry<Stmt, Integer>>() {
                 public int compare(final Entry<Stmt, Integer> e1,
                     final Entry<Stmt, Integer> e2)

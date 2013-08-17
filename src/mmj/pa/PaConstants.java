@@ -170,20 +170,20 @@ public class PaConstants {
     // ----------------------------------------------------------
 
     /**
-     * PROOF_STEP_RENUMBER_START = 10
+     * PROOF_STEP_RENUMBER_START = 50
      * <p>
      * Renumber starting point: 1, 2, 3, ... vs 3, 4, 5, ... This is hardcoded,
      * but a RunParm could be added.
      */
-    public static final int PROOF_STEP_RENUMBER_START = 10;
+    public static final int PROOF_STEP_RENUMBER_START = 50;
 
     /**
-     * PROOF_STEP_RENUMBER_INTERVAL = 10
+     * PROOF_STEP_RENUMBER_INTERVAL = 1
      * <p>
      * Renumber by interval: 1, 2, ...n or 10, 20, ... etc. This is hardcoded,
      * but a RunParm could be added.
      */
-    public static final int PROOF_STEP_RENUMBER_INTERVAL = 10;
+    public static final int PROOF_STEP_RENUMBER_INTERVAL = 1;
 
     /**
      * PROOF_ASST_INCOMPLETE_STEP_CURSOR_LAST = "Last".

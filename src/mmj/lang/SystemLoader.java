@@ -29,6 +29,8 @@ package mmj.lang;
 
 import java.util.List;
 
+import mmj.mmio.BlockList;
+
 /**
  * Interface for loading Metamath statements into a Logic System.
  * <p>
@@ -142,8 +144,7 @@ public interface SystemLoader {
      * @throws LangException if duplicate label, undefined vars, etc.
      */
     Theorem addTheorem(String labelS, String typS, List<String> symList,
-        List<String> proofList, List<String> proofBlockList)
-        throws LangException;
+        List<String> proofList, BlockList proofBlockList) throws LangException;
 
     /**
      * Begin a new (nested) scope level for the Logical System.

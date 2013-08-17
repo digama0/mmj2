@@ -981,7 +981,7 @@ public class GMFFManager {
 
             parser.doIt(typesetDefComment);
 
-            ++nbrTypesetDefinitionsProcessedSoFar;
+            nbrTypesetDefinitionsProcessedSoFar++;
         }
     }
 
@@ -1019,7 +1019,7 @@ public class GMFFManager {
             for (final GMFFExporter e : gmffExporterList)
                 if (e.gmffExportParms.exportType
                     .equals(gmffUserExportChoice.exportTypeOrAll))
-                    ++nbrSelected;
+                    nbrSelected++;
 
         final GMFFExporter[] selected = new GMFFExporter[nbrSelected];
 

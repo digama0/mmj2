@@ -290,11 +290,11 @@ public class BottomUpParser implements GrammaticalParser {
                 }
                 else {
                     applyNextNotationRuleMatch();
-                    ++pStackIndex;
+                    pStackIndex++;
                 }
             }
             else
-                --pStackIndex;
+                pStackIndex--;
         } while (pStackIndex >= 0);
 
     }
@@ -353,7 +353,7 @@ public class BottomUpParser implements GrammaticalParser {
 
                     return true;
                 }
-                ++curr;
+                curr++;
                 currLevelRoot = foundLevelNode.elementDownLevelRoot();
             } while (true);
 
@@ -402,7 +402,7 @@ public class BottomUpParser implements GrammaticalParser {
                     pStackIsGimme[pStackIndex] = true;
                     return true;
                 }
-                ++curr;
+                curr++;
                 currLevelRoot = foundLevelNode.elementDownLevelRoot();
             }
 

@@ -331,7 +331,7 @@ public class Var extends Sym {
             else
                 // insert at end, which happens to be here at "i"
                 break;
-            ++i;
+            i++;
         }
         varList.add(i, this);
         return;

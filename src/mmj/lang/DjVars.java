@@ -63,14 +63,14 @@ public class DjVars implements Comparable<DjVars> {
      * input, as necessary, so that for example, "a" is varLo and "b" is varHi
      * (sorting based on Sym.id, not MObj.seq in other words.)
      */
-    Var varLo;
+    private Var varLo;
 
     /**
      * varLo and varHi refer to the pair of DjVars after being switched from
      * input, as necessary, so that for example, "a" is varLo and "b" is varHi
      * (sorting based on Sym.id, not MObj.seq in other words).
      */
-    Var varHi;
+    private Var varHi;
 
     /**
      * Helper routine for Theorem Loader to confirm that both DjVars variables
@@ -321,11 +321,6 @@ public class DjVars implements Comparable<DjVars> {
     }
 
     /**
-     * Default constructor.
-     */
-    public DjVars() {}
-
-    /**
      * Construct using two Var id Strings. The input variables are validated and
      * switched if necessary into varLo and varHi based on Var.id. Note: it is
      * required that the Var's specified be "active", but not that there be
@@ -343,20 +338,9 @@ public class DjVars implements Comparable<DjVars> {
     public DjVars(final Map<String, Sym> symTbl, final String loS,
         final String hiS) throws LangException
     {
-
         final Var lo = Var.verifyVarDefAndActive(symTbl, loS);
         final Var hi = Var.verifyVarDefAndActive(symTbl, hiS);
-        final int compare = loS.compareTo(hiS);
-        if (compare == 0)
-            throw new LangException(LangConstants.ERRMSG_DJ_VARS_ARE_DUPS, loS);
-        if (compare > 0) {
-            varLo = hi;
-            varHi = lo;
-        }
-        else {
-            varLo = lo;
-            varHi = hi;
-        }
+        set(lo, hi);
     }
 
     /**
@@ -404,30 +388,12 @@ public class DjVars implements Comparable<DjVars> {
     }
 
     /**
-     * Set the "low" Dj Var, varLo.
-     * 
-     * @param varLo the "low" Var based on Var.id.
-     */
-    public void setVarLo(final Var varLo) {
-        this.varLo = varLo;
-    }
-
-    /**
      * Return the "high" Dj Var, varHi.
      * 
      * @return varHi the "high" Var based on Var.id.
      */
     public Var getVarHi() {
         return varHi;
-    }
-
-    /**
-     * Set the "high" Dj Var, varHi.
-     * 
-     * @param varHi the "high" Var based on Var.id.
-     */
-    public void setVarHi(final Var varHi) {
-        this.varHi = varHi;
     }
 
     /**

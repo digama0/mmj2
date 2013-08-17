@@ -40,6 +40,7 @@ import java.io.PrintWriter;
 import java.util.*;
 
 import mmj.lang.*;
+import mmj.lang.ParseTree.RPNStep;
 import mmj.tmff.TMFFPreferences;
 import mmj.tmff.TMFFStateParams;
 import mmj.verify.*;
@@ -436,7 +437,7 @@ public class Dump {
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_THEOREM);
 
-        ++indentNbr;
+        indentNbr++;
 
         dumpStmtProperties(indentNbr, sb, theorem);
         dumpAssrtProperties(indentNbr, theorem);
@@ -471,12 +472,12 @@ public class Dump {
         sb = new StringBuilder();
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_PROOF);
-        final Stmt[] proof = theorem.getProof();
-        for (final Stmt element : proof)
+        final RPNStep[] proof = theorem.getProof();
+        for (final RPNStep element : proof)
             if (element == null)
                 sb.append(UtilConstants.DUMP_PROOF_MISSING_STEP);
             else {
-                sb.append(element.getLabel());
+                sb.append(element);
                 sb.append(" ");
             }
         sysOutDumpAPrintLn(sb);
@@ -492,7 +493,7 @@ public class Dump {
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_AXIOM);
 
-        ++indentNbr;
+        indentNbr++;
 
         dumpStmtProperties(indentNbr, sb, axiom);
         dumpAssrtProperties(indentNbr, axiom);
@@ -528,7 +529,7 @@ public class Dump {
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_LOGHYP);
 
-        ++indentNbr;
+        indentNbr++;
 
         dumpStmtProperties(indentNbr, sb, logHyp);
         sysOutDumpAPrintLn(" ");
@@ -542,7 +543,7 @@ public class Dump {
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_VARHYP);
 
-        ++indentNbr;
+        indentNbr++;
 
         dumpStmtProperties(indentNbr, sb, varHyp);
         sysOutDumpAPrintLn(" ");
@@ -637,10 +638,10 @@ public class Dump {
         sb = new StringBuilder();
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_EXPR_RPN);
-        final Stmt[] exprRPN = stmt.getExprRPN();
+        final RPNStep[] exprRPN = stmt.getExprRPN();
         if (exprRPN != null)
-            for (final Stmt element : exprRPN) {
-                sb.append(element.getLabel());
+            for (final RPNStep element : exprRPN) {
+                sb.append(element);
                 sb.append(" ");
             }
         sysOutDumpAPrintLn(sb);
@@ -764,10 +765,10 @@ public class Dump {
         sb = new StringBuilder();
         sb.append(indentTbl[indentNbr]);
         sb.append(UtilConstants.DUMP_PARAM_TREE_AS_RPN);
-        final Stmt[] pTTRPN = grammarRule.getParamTransformationTree()
+        final RPNStep[] pTTRPN = grammarRule.getParamTransformationTree()
             .convertToRPN();
-        for (final Stmt element : pTTRPN) {
-            sb.append(element.getLabel());
+        for (final RPNStep element : pTTRPN) {
+            sb.append(element);
             sb.append(" ");
         }
 

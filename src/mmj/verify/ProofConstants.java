@@ -167,22 +167,22 @@ public class ProofConstants {
     public static final String ERRMSG_SUBST_TO_VARS_MATCH = "E-PR-0009 VerifyProof: DjVars restriction violated!"
         + " Substitution (to) variables match: ";
 
-    public static final String ERRMSG_SUBST_TO_VARS_NOT_DJ = "E-PR-0010 VerifyProof: Substitution (to) vars subject"
+    public static final String ERRMSG_SUBST_TO_VARS_NOT_DJ = "E-PR-0010"
+        + " VerifyProof: Substitution (to) vars subject"
         + " to DjVars restriction by proof step but"
         + " not listed as DjVars in theorem to be proved: ";
 
-    public static final String ERRMSG_STACK = " STACK = ";
+    public static final String ERRMSG_STEP_LOG_HYP_SUBST_UNEQUAL = "E-PR-0011"
+        + " Verify Proof: invalid substitution, stack"
+        + " and subst-hypothesis not equal!  STACK = %s SUBST-HYP = %s";
 
-    public static final String ERRMSG_SUBST_HYP = " SUBST-HYP = ";
-
-    public static final String ERRMSG_STEP_LOG_HYP_SUBST_UNEQUAL = "E-PR-0011 Verify Proof: invalid substitution, stack"
-        + " and subst-hypothesis not equal! ";
-
-    public static final String ERRMSG_RPN_VERIFY_AS_PROOF_FAILURE = "E-PR-0012 The Statement's exprRPN (from"
+    public static final String ERRMSG_RPN_VERIFY_AS_PROOF_FAILURE = "E-PR-0012"
+        + " The Statement's exprRPN (from"
         + " grammatical parsing) failed verification"
         + " in the VerifyProofs engine as follows: ";
 
-    public static final String ERRMSG_PROOF_STACK_UNDERFLOW = "E-PR-0013 VerifyProof: stack 'underflow'! Bug?";
+    public static final String ERRMSG_PROOF_STACK_UNDERFLOW = "E-PR-0013"
+        + " VerifyProof: stack 'underflow'! Bug?";
 
     public static final String ERRMSG_EQUALS_LITERAL = " = ";
 
@@ -217,5 +217,10 @@ public class ProofConstants {
 
     public static final String ERRMSG_STACK_SIZE_MISMATCH_FOR_STEP_HYPS = "E-PR-0021 VerifyProof: proof stack does not contain"
         + " enough items to satisfy the current step's hypotheses";
+
+    public static final String ERRMSG_PROOF_STEP_RANGE = "E-PR-0022"
+        + " VerifyProof: Proof backreference points outside the range of"
+        + " valid references. This is probably an error in the compressed"
+        + " proof.";
 
 }

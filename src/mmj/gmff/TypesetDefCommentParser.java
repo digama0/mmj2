@@ -220,7 +220,7 @@ public class TypesetDefCommentParser {
                 triggerErrorInvalidKeywordChar(nextChar, sb);
 
             sb.append(nextChar);
-            ++currIndex;
+            currIndex++;
         }
 
         if (sb.length() == 0)
@@ -312,7 +312,7 @@ public class TypesetDefCommentParser {
         while (currIndex < maxIndex
             && comment.charAt(currIndex) == MMIOConstants.TYPESETTING_PLUS_CHAR)
         {
-            ++currIndex;
+            currIndex++;
             bypassWhitespaceAndComments();
             if (currIndex >= maxIndex)
                 triggerErrorPrematureEndOfDef();
@@ -331,7 +331,7 @@ public class TypesetDefCommentParser {
         {}
         else
             triggerErrorMissingSemicolon();
-        ++currIndex;
+        currIndex++;
 
         bypassWhitespaceAndComments();
     }
@@ -355,7 +355,7 @@ public class TypesetDefCommentParser {
             nextChar = comment.charAt(currIndex);
 
             if (nextChar == MMIOConstants.TYPESETTING_SEMICOLON_CHAR) {
-                ++currIndex;
+                currIndex++;
                 bypassWhitespaceAndComments();
                 return;
             }
@@ -366,7 +366,7 @@ public class TypesetDefCommentParser {
             else
                 // nextChar is something...not whitespace or comment
                 // or quote...just bypass it.
-                ++currIndex;
+                currIndex++;
             bypassWhitespaceAndComments();
         }
         triggerErrorMissingSemicolon();
@@ -514,7 +514,7 @@ public class TypesetDefCommentParser {
     private void bypassWhitespace() {
         while (currIndex < maxIndex) {
             if (Character.isWhitespace(comment.charAt(currIndex))) {
-                ++currIndex;
+                currIndex++;
                 continue;
             }
             break;
@@ -615,7 +615,7 @@ public class TypesetDefCommentParser {
             if (i == -1 || i >= defErrorIndex)
                 break;
 
-            ++lineNbr;
+            lineNbr++;
             nextLineIndex = i + 1;
         }
 

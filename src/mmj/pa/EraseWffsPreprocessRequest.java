@@ -82,7 +82,7 @@ public class EraseWffsPreprocessRequest extends PreprocessRequest {
                 break;
             c = s.charAt(i++);
             if (c == PaConstants.FIELD_DELIMITER_COLON)
-                ++cntColons;
+                cntColons++;
             else if (Character.isWhitespace(c))
                 break;
             sb.append(c);

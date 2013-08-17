@@ -26,7 +26,7 @@ public class SearchJTextFieldPopupMenu extends JPopupMenu {
         item.setText(SearchOptionsConstants.GUI_EDIT_MENU_CUT_ITEM_TEXT);
         add(item);
         item = new JMenuItem(new DefaultEditorKit.CopyAction());
-        item.setText(SearchOptionsConstants.GUI_EDIT_MENU_CUT_ITEM_TEXT);
+        item.setText(SearchOptionsConstants.GUI_EDIT_MENU_COPY_ITEM_TEXT);
         add(item);
         item = new JMenuItem(new DefaultEditorKit.PasteAction());
         item.setText(SearchOptionsConstants.GUI_EDIT_MENU_PASTE_ITEM_TEXT);

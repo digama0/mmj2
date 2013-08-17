@@ -455,7 +455,7 @@ public class ProofWorksheet {
     }
 
     public void incNbrDerivStepsReadyForUnify() {
-        ++nbrDerivStepsReadyForUnify;
+        nbrDerivStepsReadyForUnify++;
     }
 
     /**
@@ -674,29 +674,20 @@ public class ProofWorksheet {
      * @return the RPN proof of the final DerivationStep in the ProofWorksheet.
      */
     public RPNStep[] getQedStepProofRPN() {
-        RPNStep[] rpn = null;
-        if (qedStep != null) {
-            final ParseTree p = qedStep.getProofTree();
-            if (p != null) {
-                final Stmt[] s = p.convertToRPN();
-                rpn = new RPNStep[s.length];
-                for (int i = 0; i < s.length; i++)
-                    if (s[i] != null) {
-                        rpn[i] = new RPNStep();
-                        rpn[i].stmt = s[i];
-                    }
-            }
-        }
-        return rpn;
-    }
-    public RPNStep[] getQedStepSquishedRPN() {
-        RPNStep[] rpn = null;
         if (qedStep != null) {
             final ParseTree p = qedStep.getProofTree();
             if (p != null)
-                rpn = p.convertToSquishedRPN();
+                return p.convertToRPNExpanded();
         }
-        return rpn;
+        return null;
+    }
+    public RPNStep[] getQedStepSquishedRPN() {
+        if (qedStep != null) {
+            final ParseTree p = qedStep.getProofTree();
+            if (p != null)
+                return p.squishTree().convertToRPN();
+        }
+        return null;
     }
 
     private int updateNextGreatestStepNbr(final int stepNbr) {
@@ -1125,7 +1116,7 @@ public class ProofWorksheet {
                 final DistinctVariablesStmt x = new DistinctVariablesStmt(this);
                 nextToken = x.load(nextToken);
                 proofWorkStmtList.add(x);
-                ++dvStmtCnt;
+                dvStmtCnt++;
 
                 setInputCursorStmtIfHere(x, inputCursorPos, nextToken,
                     proofTextTokenizer);
@@ -1231,7 +1222,7 @@ public class ProofWorksheet {
                 nextToken = x.loadHypothesisStep(origStepHypRefLength,
                     lineStartCharNbr, stepField, refField);
                 proofWorkStmtList.add(x);
-                ++hypStepCnt;
+                hypStepCnt++;
 
                 setInputCursorStmtIfHere(x, inputCursorPos, nextToken,
                     proofTextTokenizer);
@@ -1680,7 +1671,7 @@ public class ProofWorksheet {
         int loadIndex = 0;
         while (loadIndex < dvStmtArray.length) {
             newDvStmtArray[loadIndex] = dvStmtArray[loadIndex];
-            ++loadIndex;
+            loadIndex++;
         } // ok, now create the rest...
 
         for (final List<Var> dvGroup : dvGroups) {
@@ -1896,7 +1887,7 @@ public class ProofWorksheet {
                     e.formula, comboFrame.hypArray, getMaxSeq());
 
             if (e.isHyp) {
-                ++hypStepCnt;
+                hypStepCnt++;
                 hypothesisStep = new HypothesisStep(this, e.step, e.refLabel,
                     e.formula, e.formulaParseTree, false, e.proofLevel);
                 proofWorkStmtList.add(hypothesisStep);

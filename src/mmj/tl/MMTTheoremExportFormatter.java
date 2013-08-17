@@ -301,7 +301,7 @@ public class MMTTheoremExportFormatter {
         int finalNonWhitespace = lastLine.length() - 1;
         while (finalNonWhitespace >= 0)
             if (Character.isWhitespace(lastLine.charAt(finalNonWhitespace)))
-                --finalNonWhitespace;
+                finalNonWhitespace--;
             else
                 break;
         if (finalNonWhitespace < 0)
@@ -387,7 +387,7 @@ public class MMTTheoremExportFormatter {
             sb.append(token);
             if (col < rightCol) {
                 sb.append(' ');
-                ++col;
+                col++;
             }
         }
 
@@ -460,7 +460,7 @@ public class MMTTheoremExportFormatter {
         int finalNonWhitespace = lastLine.length() - 1;
         while (finalNonWhitespace >= 0)
             if (Character.isWhitespace(lastLine.charAt(finalNonWhitespace)))
-                --finalNonWhitespace;
+                finalNonWhitespace--;
             else
                 break;
         if (finalNonWhitespace < 0)
@@ -491,13 +491,11 @@ public class MMTTheoremExportFormatter {
 
         startNewLine(leftOffset);
 
-        final Stmt[] s = theorem.getProof();
+        final RPNStep[] s = theorem.getProof();
         final RPNStep[] rpn = new RPNStep[s.length];
         for (int i = 0; i < s.length; i++)
-            if (s[i] != null) {
-                rpn[i] = new RPNStep();
-                rpn[i].stmt = s[i];
-            }
+            if (s[i] != null)
+                rpn[i] = s[i];
         outputProof(rpn, leftOffset, rightCol);
     }
 
@@ -522,15 +520,14 @@ public class MMTTheoremExportFormatter {
         String stepLabel;
         int col = left;
         for (final RPNStep element : proof) {
-
-            if (element == null)
-                stepLabel = MMIOConstants.MISSING_PROOF_STEP;
-            else if (element.backRef == 0)
-                stepLabel = element.stmt.getLabel();
-            else if (element.backRef < 0)
-                stepLabel = -element.backRef + ":" + element.stmt.getLabel();
-            else
-                stepLabel = element.backRef + "";
+            if (element.backRef > 0)
+                stepLabel = Integer.toString(element.backRef);
+            else {
+                stepLabel = element.stmt == null ? MMIOConstants.MISSING_PROOF_STEP
+                    : element.stmt.getLabel();
+                if (element.backRef < 0)
+                    stepLabel = -element.backRef + ":" + stepLabel;
+            }
 
             col += stepLabel.length();
             if (col > right) {
@@ -543,7 +540,7 @@ public class MMTTheoremExportFormatter {
 
             if (col < right) {
                 sb.append(' ');
-                ++col;
+                col++;
             }
             else {
                 list.add(sb);
@@ -562,7 +559,6 @@ public class MMTTheoremExportFormatter {
 
         list.add(sb);
     }
-
     private void outputDjVarsLines(final Theorem theorem) {
 
         final List<StringBuilder> djStmtTextList = DjVars
@@ -603,7 +599,7 @@ public class MMTTheoremExportFormatter {
 
             if (col < rightCol) {
                 sb.append(' ');
-                ++col;
+                col++;
             }
         }
 

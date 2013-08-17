@@ -82,7 +82,7 @@ public class ScopeFrame {
             vLo = vSwap;
         }
         for (final DjVars element : frame.djVarsArray)
-            if (element.varLo == vLo && element.varHi == vHi)
+            if (element.getVarLo() == vLo && element.getVarHi() == vHi)
                 return true;
         return false;
     }
@@ -217,17 +217,17 @@ public class ScopeFrame {
         // pass through the dvArray "chunks", one at a time.
         while (currVarLoFirst < dvArray.length) {
 
-            currVarLo = dvArray[currVarLoFirst].varLo;
+            currVarLo = dvArray[currVarLoFirst].getVarLo();
 
             // here we find the index of the last dvArray element
             // in the "chunk" with a matching varLo
             currVarLoLast = currVarLoFirst + 1;
             while (true)
                 if (currVarLoLast < dvArray.length
-                    && dvArray[currVarLoLast].varLo == currVarLo)
-                    ++currVarLoLast;
+                    && dvArray[currVarLoLast].getVarLo() == currVarLo)
+                    currVarLoLast++;
                 else {
-                    --currVarLoLast;
+                    currVarLoLast--;
                     break;
                 }
 
@@ -241,8 +241,8 @@ public class ScopeFrame {
 
                 // the minimum length of a dvGroup is 2
                 final List<Var> dvGroup = new ArrayList<Var>();
-                dvGroup.add(dvArray[i].varLo);
-                dvGroup.add(dvArray[i].varHi);
+                dvGroup.add(dvArray[i].getVarLo());
+                dvGroup.add(dvArray[i].getVarHi());
                 done[i] = true;
 
                 // Now, for each dvArray element in
@@ -257,7 +257,7 @@ public class ScopeFrame {
                         insertInDvGroupBeforeEnd = false;
                         continue;
                     }
-                    if (areAllDisjoint(dvArray[j].varHi, dvGroup, dvArray,
+                    if (areAllDisjoint(dvArray[j].getVarHi(), dvGroup, dvArray,
                         currVarLoLast, checked))
                     {
 
@@ -268,10 +268,10 @@ public class ScopeFrame {
                             dvGroup.add( // shift last Var right
                                 dvGroup.get(insertIndex));
                             dvGroup.set( // add new prior to last
-                                insertIndex, dvArray[j].varHi);
+                                insertIndex, dvArray[j].getVarHi());
                         }
                         else
-                            dvGroup.add(dvArray[j].varHi);
+                            dvGroup.add(dvArray[j].getVarHi());
 
                         // use "checked" to mark as "done" every
                         // dvArray element that participated --
@@ -383,9 +383,9 @@ public class ScopeFrame {
                 continue;
 
             varHyp = (VarHyp)hypArray[i];
-            if (varHyp.getVar() == djVars.varLo)
+            if (varHyp.getVar() == djVars.getVarLo())
                 loFound = true;
-            if (varHyp.getVar() == djVars.varHi)
+            if (varHyp.getVar() == djVars.getVarHi())
                 hiFound = true;
             if (loFound && hiFound)
                 return true;
@@ -464,12 +464,15 @@ public class ScopeFrame {
     {
         checked.clear();
 
-        final DjVars search = new DjVars();
+        DjVars search = null;
         int compare;
         // why start at 1 not 0?
         Loop1: for (int i = 1; i < dvGroup.size(); i++) {
             try {
-                search.set(dvGroup.get(i), dvArrayVar);
+                if (search == null)
+                    search = new DjVars(dvGroup.get(i), dvArrayVar);
+                else
+                    search.set(dvGroup.get(i), dvArrayVar);
             } catch (final LangException e) {
                 // Shouldn't happen
             }

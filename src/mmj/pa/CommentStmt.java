@@ -90,7 +90,7 @@ public class CommentStmt extends ProofWorkStmt {
                 stmtText.append(linePrefix);
                 stmtText.append(line.trim());
                 stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
-                ++lineCnt;
+                lineCnt++;
                 linePrefix = secondLinePrefix;
             }
         } catch (final IOException e) {
@@ -100,12 +100,12 @@ public class CommentStmt extends ProofWorkStmt {
 
         if (lineCnt == 1) {
             stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
-            ++lineCnt;
+            lineCnt++;
         }
         if (doubleSpace)
             stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
         else
-            --lineCnt;
+            lineCnt--;
     }
 
     @Override

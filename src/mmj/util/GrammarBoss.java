@@ -37,6 +37,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import mmj.lang.*;
+import mmj.lang.ParseTree.RPNStep;
 import mmj.mmio.MMIOException;
 import mmj.verify.Grammar;
 import mmj.verify.GrammarConstants;
@@ -318,13 +319,13 @@ public class GrammarBoss extends Boss {
                 logicalSystem.getSymTbl(), logicalSystem.getStmtTbl(), stmt);
 //          if (exprRPN != null) {
             if (parseTree != null) {
-                final Stmt[] exprRPN = parseTree.convertToRPN();
+                final RPNStep[] exprRPN = parseTree.convertToRPN();
                 final StringBuilder sb = new StringBuilder();
                 sb.append(UtilConstants.ERRMSG_PARSE_RPN_1);
                 sb.append(stmt.getLabel());
                 sb.append(UtilConstants.ERRMSG_PARSE_RPN_2);
-                for (final Stmt element : exprRPN) {
-                    sb.append(element.getLabel());
+                for (final RPNStep element : exprRPN) {
+                    sb.append(element);
                     sb.append(" ");
                 }
                 messages.accumInfoMessage(sb.toString());

@@ -32,6 +32,9 @@ package mmj.lang;
 
 import java.util.*;
 
+import mmj.lang.ParseTree.RPNStep;
+import mmj.mmio.BlockList;
+
 /**
  * Theorem corresponds to a Metamath "$p" statement, AKA, a
  * "provable assertion".
@@ -68,7 +71,7 @@ import java.util.*;
  *      Entity-Relationship Notes</a>
  */
 public class Theorem extends Assrt {
-    private Stmt[] proof;
+    private RPNStep[] proof;
     private final ScopeFrame optFrame;
 
     /**
@@ -99,7 +102,7 @@ public class Theorem extends Assrt {
         try {
             proof = editProofListDefAndActive(stmtTbl, proofList);
         } catch (final LangException e) {
-            proof = new Stmt[1];
+            proof = new RPNStep[1];
         }
 
     }
@@ -127,7 +130,7 @@ public class Theorem extends Assrt {
     public Theorem(final int seq, final List<ScopeDef> scopeDefList,
         final Map<String, Sym> symTbl, final Map<String, Stmt> stmtTbl,
         final String labelS, final String typS, final List<String> symList,
-        final List<String> proofList, final List<String> proofBlockList,
+        final List<String> proofList, final BlockList proofBlockList,
         final ProofCompression proofCompression) throws LangException
     {
         super(seq, scopeDefList, symTbl, stmtTbl, labelS, typS, symList);
@@ -139,7 +142,7 @@ public class Theorem extends Assrt {
                 mandFrame.hypArray, optFrame.hypArray, proofList,
                 proofBlockList);
         } catch (final LangException e) {
-            proof = new Stmt[1];
+            proof = new RPNStep[]{new RPNStep(null)};
         }
 
     }
@@ -149,7 +152,7 @@ public class Theorem extends Assrt {
      * 
      * @return Theorem's proof.
      */
-    public Stmt[] getProof() {
+    public RPNStep[] getProof() {
         return proof;
     }
 
@@ -164,7 +167,7 @@ public class Theorem extends Assrt {
      * @see mmj.lang.Theorem#editProofListDefAndActive(Map stmtTbl, List
      *      proofList)
      */
-    public Stmt[] setProof(final Map<String, Stmt> stmtTbl,
+    public RPNStep[] setProof(final Map<String, Stmt> stmtTbl,
         final List<String> proofList) throws LangException
     {
         proof = editProofListDefAndActive(stmtTbl, proofList);
@@ -206,11 +209,11 @@ public class Theorem extends Assrt {
      * @param stmtTbl Map of statements already loaded.
      * @param proofList Theorem's proof steps, the labels (Strings) of existing
      *            Stmt's (or "?" for missing step(s)).
-     * @return Stmt[] an array of proof steps; contains null entries for input
-     *         proof steps specifying "?" (unknown/missing).
+     * @return RPNStep[] an array of proof steps; contains null entries for
+     *         input proof steps specifying "?" (unknown/missing).
      * @throws LangException (see {@code mmj.lang.LangConstants.java})
      */
-    public Stmt[] editProofListDefAndActive(final Map<String, Stmt> stmtTbl,
+    public RPNStep[] editProofListDefAndActive(final Map<String, Stmt> stmtTbl,
         final List<String> proofList) throws LangException
     {
 
@@ -222,7 +225,7 @@ public class Theorem extends Assrt {
         if (stepCount < 1)
             throw new LangException(LangConstants.ERRMSG_PROOF_HAS_NO_STEPS);
 
-        final Stmt[] proofArray = new Stmt[stepCount];
+        final RPNStep[] proofArray = new RPNStep[stepCount];
 
         for (int i = 0; i < stepCount; i++) {
             stepS = proofList.get(i);
@@ -247,7 +250,7 @@ public class Theorem extends Assrt {
                         && !isProofStepInExtendedFrame(stepTbl))
                         throw new LangException(
                             LangConstants.ERRMSG_PROOF_STEP_HYP_INACTIVE, stepS);
-                proofArray[i] = stepTbl;
+                proofArray[i] = new RPNStep(stepTbl);
             }
         }
         return proofArray;
@@ -309,8 +312,8 @@ public class Theorem extends Assrt {
                         djVars.getVarLo(), djVars.getVarHi()))
                     optDjVarsList.add(djVars);
 
-        oF.djVarsArray = optDjVarsList.toArray(new DjVars[optDjVarsList
-            .size()]);
+        oF.djVarsArray = optDjVarsList
+            .toArray(new DjVars[optDjVarsList.size()]);
 
         return oF;
     }
@@ -347,7 +350,7 @@ public class Theorem extends Assrt {
      * @param newDjVarsArray previous Mandatory DjVars
      * @param newOptDjVarsArray previous Optional DjVars
      */
-    public void proofUpdates(final Stmt[] newProof,
+    public void proofUpdates(final RPNStep[] newProof,
         final DjVars[] newDjVarsArray, final DjVars[] newOptDjVarsArray)
     {
 
@@ -433,9 +436,8 @@ public class Theorem extends Assrt {
                 .toArray(new DjVars[mandDjVarsUpdateList.size()]));
 
         optFrame.djVarsArray = DjVars
-            .sortAndCombineDvArrays(optFrame.djVarsArray,
-                optDjVarsUpdateList.toArray(new DjVars[optDjVarsUpdateList
-                    .size()]));
+            .sortAndCombineDvArrays(optFrame.djVarsArray, optDjVarsUpdateList
+                .toArray(new DjVars[optDjVarsUpdateList.size()]));
     }
 
     private boolean isHypInMandHypArray(final Hyp hyp) {

@@ -1031,6 +1031,14 @@ $( This section makes our first use of the third axiom of propositonal
       $( [19-Aug-1993] $)
   $}
 
+  ${
+    test.1 $e |- ph $.
+    $( Test. $)
+    test $p |- ph $=
+      ( ax-mp ax-1 id wi ) AAAABAECZAAAFGAADCC $.
+      $( [19-Aug-1993] $)
+  $}
+
 $( $t
 
 /******* Symbol definitions *******/

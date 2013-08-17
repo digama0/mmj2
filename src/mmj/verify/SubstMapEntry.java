@@ -63,4 +63,14 @@ public class SubstMapEntry {
         this.substFrom = substFrom;
         this.substTo = substTo;
     }
+
+    @Override
+    public String toString() {
+        String s = substFrom + " :>";
+        if (substTo == null)
+            return s + " null";
+        for (final Sym sym : substTo)
+            s += " " + sym;
+        return s;
+    }
 }

@@ -642,7 +642,7 @@ public abstract class GrammarRule {
                 if (substVarHyp[paramNbr] != null)
                     parseNodeHolderExpr[dest++] = new ParseNodeHolder(
                         substVarHyp[paramNbr]);
-                ++paramNbr;
+                paramNbr++;
             }
         return parseNodeHolderExpr;
     }
@@ -695,7 +695,7 @@ public abstract class GrammarRule {
             else {
                 if (substVarHyp[paramNbr] != null)
                     rfe[dest++] = substVarHyp[paramNbr].getTyp();
-                ++paramNbr;
+                paramNbr++;
             }
         return rfe;
     }
