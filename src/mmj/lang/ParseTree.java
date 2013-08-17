@@ -351,6 +351,8 @@ public class ParseTree {
      * <p>
      * If root is null, count = zero.
      * 
+     * @param expanded true to count repeated subtrees multiple times, false to
+     *            count them as size 1 stubs in subsequent occurrences
      * @return number of parse nodes in ParseTree.
      */
     public int countParseNodes(final boolean expanded) {

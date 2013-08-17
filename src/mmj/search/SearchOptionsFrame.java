@@ -179,7 +179,6 @@ public class SearchOptionsFrame extends JFrame implements
         frameBox = Box.createVerticalBox();
         frameBox.add(searchOptionsScrnMap.getSearchOptionsBox());
         getContentPane().add(frameBox);
-        setAutoRequestFocus(true);
     }
 
     private String buildTitle() {
@@ -216,6 +215,7 @@ public class SearchOptionsFrame extends JFrame implements
         pack();
         setVisible(true);
         setShown(true);
+        toFront();
     }
 
     private void showSearchOptionsErrorsDisplay() {
@@ -235,6 +235,7 @@ public class SearchOptionsFrame extends JFrame implements
         pack();
         setVisible(true);
         setShown(true);
+        toFront();
         if (searchError != null)
             JOptionPane.showMessageDialog(this, searchError.message,
                 SearchOptionsConstants.POPUP_ERROR_MESSAGE_TITLE, 0);
@@ -347,6 +348,7 @@ public class SearchOptionsFrame extends JFrame implements
         @Override
         void doIt() {
             setVisible(true);
+            toFront();
         }
     }
 

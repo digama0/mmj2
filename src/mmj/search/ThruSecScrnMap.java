@@ -24,8 +24,7 @@ public class ThruSecScrnMap extends SearchOptionsJComboBox implements
     ActionListener
 {
 
-    public ThruSecScrnMap(
-        final DefaultComboBoxModel<String> defaultcomboboxmodel,
+    public ThruSecScrnMap(final DefaultComboBoxModel defaultcomboboxmodel,
         final String[][] as)
     {
         super(46, defaultcomboboxmodel);

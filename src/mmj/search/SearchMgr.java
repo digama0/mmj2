@@ -33,9 +33,7 @@ public class SearchMgr {
         int i = 0;
         for (int j = 0; j < s.length(); j++) {
             final char c = s.charAt(j);
-            if (i >= 80 && Character.isWhitespace(c)
-                || Character.compare(c, '\n') == 0
-                || Character.compare(c, '\r') == 0)
+            if (i >= 80 && Character.isWhitespace(c) || c == '\n' || c == '\r')
             {
                 sb.append('\n');
                 i = 0;

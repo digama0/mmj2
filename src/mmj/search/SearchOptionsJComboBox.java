@@ -20,33 +20,31 @@ import java.util.Vector;
 
 import javax.swing.*;
 
-public abstract class SearchOptionsJComboBox extends JComboBox<String>
-    implements SearchOptionsScrnMapField
+public abstract class SearchOptionsJComboBox extends JComboBox implements
+    SearchOptionsScrnMapField
 {
 
-    public static DefaultComboBoxModel<String> buildUpdateableComboBoxModel(
-        final int i)
+    public static DefaultComboBoxModel buildUpdateableComboBoxModel(final int i)
     {
         final Vector<String> vector = new Vector<String>();
         final String[] as = SearchOptionsConstants.FIELD_ATTR[i].comboBoxItems;
         for (final String element : as)
             vector.add(element);
 
-        return new DefaultComboBoxModel<String>(vector);
+        return new DefaultComboBoxModel(vector);
     }
 
-    public static DefaultComboBoxModel<String> buildUpdateableComboBoxModel(
+    public static DefaultComboBoxModel buildUpdateableComboBoxModel(
         final String[] as)
     {
         final Vector<String> vector = new Vector<String>();
         for (final String element : as)
             vector.add(element);
 
-        return new DefaultComboBoxModel<String>(vector);
+        return new DefaultComboBoxModel(vector);
     }
 
-    public SearchOptionsJComboBox(final int i,
-        final ComboBoxModel<String> comboboxmodel)
+    public SearchOptionsJComboBox(final int i, final ComboBoxModel comboboxmodel)
     {
         super(comboboxmodel);
         defaultValue = null;

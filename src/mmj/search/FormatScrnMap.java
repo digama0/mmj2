@@ -27,7 +27,7 @@ public class FormatScrnMap extends SearchOptionsJComboBox implements
 {
 
     public FormatScrnMap(final int i,
-        final DefaultComboBoxModel<String> defaultComboBoxModel,
+        final DefaultComboBoxModel defaultComboBoxModel,
         final OperScrnMap operScrnMap)
     {
         super(SearchOptionsConstants.FORMAT_FIELD_ID[i], defaultComboBoxModel);

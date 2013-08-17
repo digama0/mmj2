@@ -24,8 +24,7 @@ public class FromSecScrnMap extends SearchOptionsJComboBox implements
     ActionListener
 {
 
-    public FromSecScrnMap(
-        final DefaultComboBoxModel<String> defaultcomboboxmodel,
+    public FromSecScrnMap(final DefaultComboBoxModel defaultcomboboxmodel,
         final String[][] as)
     {
         super(44, defaultcomboboxmodel);

@@ -130,7 +130,6 @@ public class SearchResultsFrame extends JFrame implements
         frameBox = Box.createVerticalBox();
         frameBox.add(searchResultsScrnMap.getSearchResultsBox());
         getContentPane().add(frameBox);
-        setAutoRequestFocus(true);
     }
 
     private String buildTitle() {
@@ -173,6 +172,7 @@ public class SearchResultsFrame extends JFrame implements
         pack();
         setVisible(true);
         setShown(true);
+        toFront();
     }
 
     private void setFontSizeDisplay() {
@@ -231,6 +231,7 @@ public class SearchResultsFrame extends JFrame implements
         @Override
         void doIt() {
             setVisible(true);
+            toFront();
         }
     }
 

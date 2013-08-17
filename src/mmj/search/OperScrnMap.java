@@ -27,7 +27,7 @@ public class OperScrnMap extends SearchOptionsJComboBox implements
 {
 
     public OperScrnMap(final int i,
-        final DefaultComboBoxModel<String> defaultcomboboxmodel)
+        final DefaultComboBoxModel defaultcomboboxmodel)
     {
         super(SearchOptionsConstants.OPER_FIELD_ID[i], defaultcomboboxmodel);
         operType = -1;

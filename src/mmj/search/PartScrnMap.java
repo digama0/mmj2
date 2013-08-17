@@ -27,7 +27,7 @@ public class PartScrnMap extends SearchOptionsJComboBox implements
 {
 
     public PartScrnMap(final int i,
-        final DefaultComboBoxModel<String> defaultComboBoxModel,
+        final DefaultComboBoxModel defaultComboBoxModel,
         final FormatScrnMap formatScrnMap)
     {
         super(SearchOptionsConstants.PART_FIELD_ID[i], defaultComboBoxModel);
