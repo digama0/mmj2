@@ -338,7 +338,7 @@ public class ParseTree {
         @Override
         public String toString() {
             if (backRef < 0)
-                return stmt + ":" + -backRef;
+                return -backRef + ":" + stmt;
             else if (backRef == 0)
                 return stmt == null ? "?" : stmt.toString();
             else

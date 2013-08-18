@@ -539,20 +539,17 @@ public class ParseNode {
      * @return the number of nodes
      */
     public int countParseNodes(final boolean expanded) {
-        resetAppearances(size == 0);
-        if (size == 0)
-            getCounts();
+        resetAppearances();
+        getCounts();
         return expanded ? sizeExpanded : size;
     }
 
-    private void resetAppearances(final boolean firstRun) {
+    private void resetAppearances() {
         if (child != null)
             for (final ParseNode n : child)
-                n.resetAppearances(firstRun);
-        if (firstRun)
-            firstAppearance = 0;
-        else if (firstAppearance > 0)
-            firstAppearance = -2;
+                n.resetAppearances();
+        firstAppearance = 0;
+        size = 0;
     }
 
     private void getCounts() {
