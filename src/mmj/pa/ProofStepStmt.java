@@ -636,7 +636,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
         final int nbrLines = w.tmffPreferences.renderFormula(w.tmffSP,
             parseTree, formula, proofLevel);
 
-        stepHypRef.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
+        stepHypRef.append("\n");
 
         return nbrLines;
     }

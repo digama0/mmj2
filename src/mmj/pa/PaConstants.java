@@ -1351,7 +1351,8 @@ public class PaConstants {
     /**
      * Proof Assistant GUI Help About Part 1
      */
-    public static final String HELP_ABOUT_TEXT_1 = "Copyright (C) 2005 thru 2011 MEL O'CAT via X178G243 (at) yahoo (dot) com \n"
+    public static final String HELP_ABOUT_TEXT = ""
+        + "Copyright (C) 2005 thru 2011 MEL O'CAT via X178G243 (at) yahoo (dot) com \n"
         + "License terms: GNU General Public License Version 2 or any later version.\n"
         + "                                                                         \n"
         + "Note: The following copyright is included because ProofAsstGUI.java      \n"
@@ -1369,22 +1370,8 @@ public class PaConstants {
         + "  documentation and/or other materials provided with the distribution.   \n"
         + "(See SunJavaTutorialLicense.html in the mmj2 distribution for the        \n"
         + "for the disclaimer.)                                                     \n\n"
-        + "Garbage Collection Run (just now) Memory Totals follow:\n";
-
-    /**
-     * Proof Assistant GUI Help About Part 2 (Max Memory)
-     */
-    public static final String HELP_ABOUT_TEXT_2 = " Max Memory   = ";
-
-    /**
-     * Proof Assistant GUI Help About Part 3 (Free Memory)
-     */
-    public static final String HELP_ABOUT_TEXT_3 = " Free Memory  = ";
-
-    /**
-     * Proof Assistant GUI Help About Part 4 (Total Memory)
-     */
-    public static final String HELP_ABOUT_TEXT_4 = " Total Memory = ";
+        + "Garbage Collection Run (just now) Memory Totals follow:\n"
+        + " Max Memory   = %s\n Free Memory  = %s\n Total Memory = %s\n";
 
     // ----------------------------------------------------------
     // Constants for HelpGeneralInfoGUI.java
@@ -1694,13 +1681,6 @@ public class PaConstants {
     // 4 = unified but work vars: signifies that work vars are present in the
     // step formula or the step hypotheses.
     // 5 = unified: good to go for proof building attempt.
-    public static final String[] UNIFICATION_STATUS_DESC = {
-            "UNIFICATION_STATUS_NOT_UNIFIED",
-            "UNIFICATION_STATUS_UNIFICATION_ERROR",
-            "UNIFICATION_STATUS_ATTEMPT_CANCELLED",
-            "UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS",
-            "UNIFICATION_STATUS_UNIFIED_W_WORK_VARS",
-            "UNIFICATION_STATUS_UNIFIED"};
     public static final int UNIFICATION_STATUS_NOT_UNIFIED = 0;
     public static final int UNIFICATION_STATUS_UNIFICATION_ERROR = 1;
     public static final int UNIFICATION_STATUS_ATTEMPT_CANCELLED = 2;
@@ -1714,11 +1694,6 @@ public class PaConstants {
     // Ref.
     // 2 = Hard Dj Vars Errors; formula violates
     // $d restriction(s) of unifying Ref.
-    public static final String[] DJ_VARS_ERROR_STATUS_DESC = {
-            "DJ_VARS_ERROR_STATUS_NO_ERRORS",
-            "DJ_VARS_ERROR_STATUS_SOFT_ERRORS_ERROR",
-            "DJ_VARS_ERROR_STATUS_HARD_ERRORS_ERROR"};
-
     public static final int DJ_VARS_ERROR_STATUS_NO_ERRORS = 0;
     public static final int DJ_VARS_ERROR_STATUS_SOFT_ERRORS = 1;
     public static final int DJ_VARS_ERROR_STATUS_HARD_ERRORS = 2;
@@ -1756,16 +1731,6 @@ public class PaConstants {
      * Proof Worksheet Comment Statment IO Error.
      */
     public static final String PROOF_WORKSHEET_COMMENT_STMT_IO_ERROR = "IO error reading comment!";
-
-    /**
-     * Proof Worksheet Statement New Line Char
-     */
-    public static final char PROOF_WORKSHEET_NEW_LINE = '\n';
-
-    /**
-     * Proof Worksheet Statement New Line String
-     */
-    public static final String PROOF_WORKSHEET_NEW_LINE_STRING = "\n";
 
     /**
      * Proof Worksheet Footer Line

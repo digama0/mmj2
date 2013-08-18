@@ -181,17 +181,14 @@ public class SearchMgr {
     }
 
     public void execApplySearchSelection(final int i) {
-        if (popupMessageSearchResultsTestMode())
-            return;
-        if (!getStepSearchMode() || searchArgs.stepSearchStmt == null) {
+        if (!popupMessageSearchResultsTestMode()
+            && (!getStepSearchMode() || searchArgs.stepSearchStmt == null))
             execShowSearchResultsPopupMessage(SearchConstants.ERRMSG_CANT_APPLY_OLD_SEARCH_RESULTS);
-            return;
-        }
-        Assrt assrt = null;
-        if (i != -1)
-            assrt = searchOutput.sortedAssrtResultsList.get(i);
+        final Assrt assrt = i == -1 ? null
+            : searchOutput.sortedAssrtResultsList.get(i);
         getProofAsst().getProofAsstGUI().unifyWithStepSelectorChoice(
-            new StepRequest(82, searchArgs.stepSearchStmt.getStep(), assrt));
+            new StepRequest(PaConstants.STEP_REQUEST_SELECTOR_CHOICE,
+                searchArgs.stepSearchStmt.getStep(), assrt));
     }
 
     public void execReshowProofAsstGUI() {
@@ -223,86 +220,69 @@ public class SearchMgr {
         getSearchResultsFrame().decreaseFontSize();
     }
 
-    boolean popupMessageSearchOptionsTestMode() {
+    public boolean popupMessageSearchOptionsTestMode() {
         if (getProofAsst() == null) {
             execShowSearchOptionsPopupMessage(SearchConstants.ERRMSG_FUNCTION_INOPERABLE_IN_TEST_MODE);
             return true;
         }
-        else
-            return false;
+        return false;
     }
 
-    void searchOptionsSearchButtonPressed() {
-        if (popupMessageSearchOptionsTestMode())
-            return;
-        if (!getProofAsst().getProofAsstGUI()
-            .startRequestSearchAndShowResults())
+    public void searchOptionsSearchButtonPressed() {
+        if (!popupMessageSearchOptionsTestMode()
+            && !getProofAsst().getProofAsstGUI().searchAndShowResults())
             execShowSearchOptionsPopupMessage(SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
     }
 
-    void searchOptionsCancelButtonPressed() {
-        if (popupMessageSearchOptionsTestMode())
-            return;
-        else {
+    public void searchOptionsCancelButtonPressed() {
+        if (!popupMessageSearchOptionsTestMode())
             execShowSearchOptionsPopupMessage(execCancelRequestAction());
-            return;
-        }
     }
 
-    void searchOptionsNewButtonPressed() {
+    public void searchOptionsNewButtonPressed() {
         if (popupMessageSearchOptionsTestMode())
             return;
         final String s = getSearchOptionsNewStmtLabel();
-        if (s != null
-            && !getProofAsst().getProofAsstGUI()
-                .startRequestNewGeneralSearch(s))
+        if (s != null && !getProofAsst().getProofAsstGUI().newGeneralSearch(s))
             execShowSearchOptionsPopupMessage(SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
     }
 
-    void searchOptionsRefineButtonPressed() {
-        if (popupMessageSearchOptionsTestMode())
-            return;
-        if (!getProofAsst().getProofAsstGUI()
-            .startRequestRefineAndShowResults())
+    public void searchOptionsRefineButtonPressed() {
+        if (!popupMessageSearchOptionsTestMode()
+            && !getProofAsst().getProofAsstGUI().refineAndShowResults())
             execShowSearchOptionsPopupMessage(SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
     }
 
-    void searchOptionsPAButtonPressed() {
-        if (popupMessageSearchOptionsTestMode())
-            return;
-        if (!getProofAsst().getProofAsstGUI().startRequestReshowProofAsstGUI())
+    public void searchOptionsPAButtonPressed() {
+        if (!popupMessageSearchOptionsTestMode()
+            && !getProofAsst().getProofAsstGUI().reshowProofAsstGUI())
             execShowSearchOptionsPopupMessage(SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
     }
 
-    void searchOptionsSRButtonPressed() {
-        if (popupMessageSearchOptionsTestMode())
-            return;
-        if (!getProofAsst().getProofAsstGUI().startRequestReshowSearchResults())
+    public void searchOptionsSRButtonPressed() {
+        if (!popupMessageSearchOptionsTestMode()
+            && !getProofAsst().getProofAsstGUI().reshowSearchResults())
             execShowSearchOptionsPopupMessage(SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
     }
 
-    void showSearchOptionsHelp() {
+    public void showSearchOptionsHelp() {
         searchOptionsHelp = new SearchOptionsHelp(proofAsstPreferences);
         searchOptionsHelp.showFrame(searchOptionsHelp.buildFrame());
     }
 
-    void searchOptionsPlusButtonPressed() {
-        if (popupMessageSearchOptionsTestMode())
-            return;
-        if (!getProofAsst().getProofAsstGUI()
-            .startRequestSearchOptionsPlusButton())
+    public void searchOptionsPlusButtonPressed() {
+        if (!popupMessageSearchOptionsTestMode()
+            && !getProofAsst().getProofAsstGUI().searchOptionsPlusButton())
             execShowSearchOptionsPopupMessage(SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
     }
 
-    void searchOptionsMinusButtonPressed() {
-        if (popupMessageSearchOptionsTestMode())
-            return;
-        if (!getProofAsst().getProofAsstGUI()
-            .startRequestSearchOptionsMinusButton())
+    public void searchOptionsMinusButtonPressed() {
+        if (!popupMessageSearchOptionsTestMode()
+            && !getProofAsst().getProofAsstGUI().searchOptionsMinusButton())
             execShowSearchOptionsPopupMessage(SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
     }
 
-    int increaseSearchOptionsFontSize() {
+    public int increaseSearchOptionsFontSize() {
         searchOptionsFontSize = computeLargerNewFontSize(searchOptionsFontSize);
         final Font font = searchOptionsFont
             .deriveFont((float)searchOptionsFontSize);
@@ -310,7 +290,7 @@ public class SearchMgr {
         return searchOptionsFontSize;
     }
 
-    int decreaseSearchOptionsFontSize() {
+    public int decreaseSearchOptionsFontSize() {
         searchOptionsFontSize = computeSmallerNewFontSize(searchOptionsFontSize);
         final Font font = searchOptionsFont
             .deriveFont((float)searchOptionsFontSize);
@@ -318,69 +298,54 @@ public class SearchMgr {
         return searchOptionsFontSize;
     }
 
-    boolean popupMessageSearchResultsTestMode() {
+    public boolean popupMessageSearchResultsTestMode() {
         if (getProofAsst() == null) {
             execShowSearchResultsPopupMessage(SearchConstants.ERRMSG_FUNCTION_INOPERABLE_IN_TEST_MODE);
             return true;
         }
-        else
-            return false;
+        return false;
     }
 
-    void searchResultsApplyButtonPressed() {
-        if (popupMessageSearchResultsTestMode())
-            return;
-        else {
+    public void searchResultsApplyButtonPressed() {
+        if (!popupMessageSearchResultsTestMode())
             execApplySearchSelection(getSearchResultsFrame().getSelectedIndex());
-            return;
-        }
     }
 
-    void searchResultsCancelButtonPressed() {
-        if (popupMessageSearchResultsTestMode())
-            return;
-        else {
+    public void searchResultsCancelButtonPressed() {
+        if (!popupMessageSearchResultsTestMode())
             execShowSearchResultsPopupMessage(execCancelRequestAction());
-            return;
-        }
     }
 
-    void searchResultsPAButtonPressed() {
-        if (popupMessageSearchResultsTestMode())
-            return;
-        if (!getProofAsst().getProofAsstGUI().startRequestReshowProofAsstGUI())
+    public void searchResultsPAButtonPressed() {
+        if (!popupMessageSearchResultsTestMode()
+            && !getProofAsst().getProofAsstGUI().reshowProofAsstGUI())
             execShowSearchResultsPopupMessage(SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
     }
 
-    void searchResultsSOButtonPressed() {
-        if (popupMessageSearchResultsTestMode())
-            return;
-        if (!getProofAsst().getProofAsstGUI().startRequestReshowSearchOptions())
+    public void searchResultsSOButtonPressed() {
+        if (!popupMessageSearchResultsTestMode()
+            && !getProofAsst().getProofAsstGUI().reshowSearchOptions())
             execShowSearchResultsPopupMessage(SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
     }
 
-    void showSearchResultsHelp() {
+    public void showSearchResultsHelp() {
         searchResultsHelp = new SearchResultsHelp(proofAsstPreferences);
         searchResultsHelp.showFrame(searchResultsHelp.buildFrame());
     }
 
-    void searchResultsPlusButtonPressed() {
-        if (popupMessageSearchResultsTestMode())
-            return;
-        if (!getProofAsst().getProofAsstGUI()
-            .startRequestSearchResultsPlusButton())
+    public void searchResultsPlusButtonPressed() {
+        if (!popupMessageSearchResultsTestMode()
+            && !getProofAsst().getProofAsstGUI().searchResultsPlusButton())
             execShowSearchResultsPopupMessage(SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
     }
 
-    void searchResultsMinusButtonPressed() {
-        if (popupMessageSearchResultsTestMode())
-            return;
-        if (!getProofAsst().getProofAsstGUI()
-            .startRequestSearchResultsMinusButton())
+    public void searchResultsMinusButtonPressed() {
+        if (!popupMessageSearchResultsTestMode()
+            && !getProofAsst().getProofAsstGUI().searchResultsMinusButton())
             execShowSearchResultsPopupMessage(SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
     }
 
-    int increaseSearchResultsFontSize() {
+    public int increaseSearchResultsFontSize() {
         searchResultsFontSize = computeLargerNewFontSize(searchResultsFontSize);
         final Font font = searchResultsFont
             .deriveFont((float)searchResultsFontSize);
@@ -388,7 +353,7 @@ public class SearchMgr {
         return searchResultsFontSize;
     }
 
-    int decreaseSearchResultsFontSize() {
+    public int decreaseSearchResultsFontSize() {
         searchResultsFontSize = computeSmallerNewFontSize(searchResultsFontSize);
         final Font font = searchResultsFont
             .deriveFont((float)searchResultsFontSize);
@@ -396,67 +361,67 @@ public class SearchMgr {
         return searchResultsFontSize;
     }
 
-    Dimension getSearchSelectionPreferredSize() {
+    public Dimension getSearchSelectionPreferredSize() {
         return searchSelectionPreferredSize;
     }
 
-    Grammar getGrammar() {
+    public Grammar getGrammar() {
         return grammar;
     }
 
-    ScopeFrame getComboFrame() {
+    public ScopeFrame getComboFrame() {
         return searchArgs.comboFrame;
     }
 
-    Cnst getProvableLogicStmtTyp() {
+    public Cnst getProvableLogicStmtTyp() {
         return provableLogicStmtTyp;
     }
 
-    LogicalSystem getLogicalSystem() {
+    public LogicalSystem getLogicalSystem() {
         return logicalSystem;
     }
 
-    boolean getStepSearchMode() {
+    public boolean getStepSearchMode() {
         return getSearchArgs().stepSearchMode;
     }
 
-    ProofAsst getProofAsst() {
+    public ProofAsst getProofAsst() {
         return proofAsst;
     }
 
-    ProofAsstPreferences getProofAsstPreferences() {
+    public ProofAsstPreferences getProofAsstPreferences() {
         return proofAsstPreferences;
     }
 
-    StepUnifier getStepUnifier() {
+    public StepUnifier getStepUnifier() {
         return getProofAsstPreferences().getStepUnifier();
     }
 
-    SearchUnifier getSearchUnifier() {
+    public SearchUnifier getSearchUnifier() {
         return searchUnifier;
     }
 
-    WorkVarManager getWorkVarManager() {
+    public WorkVarManager getWorkVarManager() {
         return proofAsstPreferences.getWorkVarManager();
     }
 
-    SearchArgs getSearchArgs() {
+    public SearchArgs getSearchArgs() {
         return searchArgs;
     }
 
-    SearchOutput getSearchOutput() {
+    public SearchOutput getSearchOutput() {
         return searchOutput;
     }
 
-    BookManager getBookManager() {
+    public BookManager getBookManager() {
         return bookManager;
     }
 
-    Font getSearchOptionsFont() {
+    public Font getSearchOptionsFont() {
         return searchOptionsFont;
     }
 
-    int getSearchOptionsFontSize() {
+    public int getSearchOptionsFontSize() {
         return searchOptionsFontSize;
     }
 
@@ -466,11 +431,11 @@ public class SearchMgr {
         return searchOptionsFrame;
     }
 
-    Font getSearchResultsFont() {
+    public Font getSearchResultsFont() {
         return searchResultsFont;
     }
 
-    int getSearchResultsFontSize() {
+    public int getSearchResultsFontSize() {
         return searchResultsFontSize;
     }
 
@@ -495,29 +460,23 @@ public class SearchMgr {
     }
 
     private Font buildInitialSearchFont(final boolean bold, final int size) {
-        if (bold)
-            return new Font(proofAsstPreferences.getFontFamily(), Font.BOLD,
-                size);
-        else
-            return new Font(proofAsstPreferences.getFontFamily(), Font.PLAIN,
-                size);
+        return new Font(proofAsstPreferences.getFontFamily(), bold ? Font.BOLD
+            : Font.PLAIN, size);
     }
 
     private String getSearchOptionsNewStmtLabel() {
-        String s = "";
-        String s1 = SearchConstants.SEARCH_OPTIONS_NEW_STMT_LABEL_PROMPT;
-        do {
-            s = JOptionPane.showInputDialog(searchOptionsFrame, s1, s);
-            if (s == null)
+        String label = "";
+        String prompt = SearchConstants.SEARCH_OPTIONS_NEW_STMT_LABEL_PROMPT;
+        while (true) {
+            label = JOptionPane.showInputDialog(searchOptionsFrame, prompt,
+                label);
+            if (label == null)
                 return null;
-            s = s.trim();
-            if (s.equals(""))
-                return s;
-            final Stmt stmt = proofAsst.getStmt(s);
-            if (stmt != null)
-                return s;
-            s1 = SearchConstants.SEARCH_OPTIONS_NEW_STMT_LABEL_PROMPT_2_1 + s
-                + SearchConstants.SEARCH_OPTIONS_NEW_STMT_LABEL_PROMPT_2_2;
-        } while (true);
+            label = label.trim();
+            if (label.isEmpty() || proofAsst.getStmt(label) != null)
+                return label;
+            prompt = LangException.format(
+                SearchConstants.SEARCH_OPTIONS_NEW_STMT_LABEL_PROMPT_2, label);
+        }
     }
 }

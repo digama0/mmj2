@@ -1384,7 +1384,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                     label = results.refArray[i].getLabel();
                 outputBoss.sysOutPrint(" " + i + " " + label + " "
                     + results.selectionArray[i]
-                    + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING);
+                    + "\n");
             }
         } catch (final IOException e) {
             e.printStackTrace();
@@ -1608,7 +1608,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         try {
             outputBoss.sysOutPrint(proofText);
-            outputBoss.sysOutPrint(PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING);
+            outputBoss.sysOutPrint("\n");
         } catch (final IOException e) {
             e.printStackTrace();
             throw new IllegalArgumentException(LangException.format(

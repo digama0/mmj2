@@ -90,9 +90,9 @@ public class HeaderStmt extends ProofWorkStmt {
                 setStmtCursorToCurrLineColumn();
 
         stmtText.append(locAfterLabel);
-        stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
+        stmtText.append("\n");
 
-        stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
+        stmtText.append("\n");
         lineCnt++;
     }
 

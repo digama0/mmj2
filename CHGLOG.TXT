@@ -33,7 +33,9 @@
       cursor to the first step containing a work variable, so that you can name
       it properly. (The default option "Unify" will instead replace these
       variables with dummy variables that have been taken from the pool of
-      unused variables defined in the .mm file.) 
+      unused variables defined in the .mm file.)
+
+    * The "Reformat" options no longer require you to save the file.
 
 ================================================================================
 13-Aug-2013:

@@ -915,7 +915,7 @@ public class ProofWorksheet {
     public void doubleSpaceQedStep() {
         final DerivationStep d = getQedStep();
         if (d != null) {
-            d.stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
+            d.stmtText.append("\n");
             d.lineCnt++;
         }
 
@@ -1520,17 +1520,17 @@ public class ProofWorksheet {
         int msgCount = messages.getErrorMessageCnt();
         for (int i = 0; i < msgCount; i++) {
             sb.append(msgArray[i]);
-            sb.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
+            sb.append("\n");
             sb.append(PaConstants.ERROR_TEXT_SPACER_LINE);
-            sb.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
+            sb.append("\n");
         }
         msgArray = messages.getInfoMessageArray();
         msgCount = messages.getInfoMessageCnt();
         for (int i = 0; i < msgCount; i++) {
             sb.append(msgArray[i]);
-            sb.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
+            sb.append("\n");
             sb.append(PaConstants.ERROR_TEXT_SPACER_LINE);
-            sb.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
+            sb.append("\n");
         }
         messages.clearMessages();
         return sb.toString();
