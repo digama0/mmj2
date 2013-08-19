@@ -845,7 +845,8 @@ public class ProofWorksheet {
                 break;
             if (o instanceof ProofStepStmt) {
                 final ProofStepStmt matchStep = (ProofStepStmt)o;
-                if (matchStep.formula.equals(searchFormula))
+                if (matchStep.formula != null
+                    && matchStep.formula.equals(searchFormula))
                     return matchStep;
             }
         }
