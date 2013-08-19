@@ -7,130 +7,113 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  TMFFUnformatted.java  0.02 06/01/2007
+ * TMFFUnformatted.java  0.02 06/01/2007
  *
- *  Version 0.01 Sep-02-2006:
- *               - new. "Unformatted" overrides basic TMFFMethod
- *                 renderFormula method to provide the old,
- *                 unformatted output used previously in mmj2.
+ * Version 0.01 Sep-02-2006:
+ *              - new. "Unformatted" overrides basic TMFFMethod
+ *                renderFormula method to provide the old,
+ *                unformatted output used previously in mmj2.
  *
- *  Version 0.02 Jun-01-2007:
- *               - tweak to allow renderFormula to output a
- *                 null formula (weird...but...)
+ * Version 0.02 Jun-01-2007:
+ *              - tweak to allow renderFormula to output a
+ *                null formula (weird...but...)
  */
 
 package mmj.tmff;
-import mmj.lang.Formula;
-import mmj.lang.ParseNode;
-import mmj.lang.ParseTree;
+
+import mmj.lang.*;
 
 /**
- *  TMFFUnformatted overrides basic the TMFFMethod
- *  renderFormula method to provide the old,
- *  unformatted output used previously in mmj2.
- *  <p>
+ * TMFFUnformatted overrides basic the TMFFMethod renderFormula method to
+ * provide the old, unformatted output used previously in mmj2.
+ * <p>
  */
 public class TMFFUnformatted extends TMFFMethod {
 
     /**
-     *  Default constructor.
+     * Default constructor.
      */
     public TMFFUnformatted() {
         super();
     }
 
     /**
-     *  Constructor for TMFFFlat using user parameters.
-     *
-     *  Sets maxDepth to Integer.MAX_VALUE so that no depth
-     *  breaks are triggered.
-     *
-     *  @param maxDepthString not used, provided for commonality with
-     *                  other TMFFMethods.
+     * Constructor for TMFFFlat using user parameters.
+     * <p>
+     * Sets maxDepth to Integer.MAX_VALUE so that no depth breaks are triggered.
+     * 
+     * @param maxDepthString not used, provided for commonality with other
+     *            TMFFMethods.
      */
-    public TMFFUnformatted(String maxDepthString) {
+    public TMFFUnformatted(final String maxDepthString) {
         super(Integer.MAX_VALUE);
     }
 
     /**
-     *  Standard constructor for TMFFUnformatted.
-     *
-     *  Sets maxDepth to Integer.MAX_VALUE so that no depth
-     *  breaks are triggered.
-     *
-     *  @param maxDepth not used, provided for commonality with
-     *                  other TMFFMethods.
+     * Standard constructor for TMFFUnformatted.
+     * <p>
+     * Sets maxDepth to Integer.MAX_VALUE so that no depth breaks are triggered.
+     * 
+     * @param maxDepth not used, provided for commonality with other
+     *            TMFFMethods.
      */
-    public TMFFUnformatted(int    maxDepth) {
+    public TMFFUnformatted(final int maxDepth) {
         super(Integer.MAX_VALUE);
     }
 
-
     /**
-     *  Outputs a formula and outputs it to a StringBuffer
-     *  without doing the special TMFF formatting.
-     *  <p>
-     *  This method overrides the TMFFMethod renderFormula()
-     *  method! It provides a fallback for cases when the
-     *  TMFF algorithm fails (e.g. excessive indentation
-     *  for line length.)
-     *  <p>
-     *  @param tmffSP TMFFStateParams initialized, ready for use.
-     *
-     *  @param parseTree ParseTree for the formula to be formatted.
-     *                  NOT USED in this override method!
-     *
-     *  @param formula formula to be formatted.
-     *
-     *  @return number of lines rendered or -1 if an error
-     *                  was encountered and the formula could
-     *                  not be formatted.
+     * Outputs a formula and outputs it to a StringBuilder without doing the
+     * special TMFF formatting.
+     * <p>
+     * This method overrides the TMFFMethod renderFormula() method! It provides
+     * a fallback for cases when the TMFF algorithm fails (e.g. excessive
+     * indentation for line length.)
+     * 
+     * @param tmffSP TMFFStateParams initialized, ready for use.
+     * @param parseTree ParseTree for the formula to be formatted. NOT USED in
+     *            this override method!
+     * @param formula formula to be formatted.
+     * @return number of lines rendered or -1 if an error was encountered and
+     *         the formula could not be formatted.
      */
-    public int renderFormula(TMFFStateParams tmffSP,
-                             ParseTree       parseTree,
-                             Formula         formula) {
+    @Override
+    public int renderFormula(final TMFFStateParams tmffSP,
+        final ParseTree parseTree, final Formula formula)
+    {
 
-        tmffSP.currLineNbr        = 0;
+        tmffSP.currLineNbr = 0;
 
         tmffSP.padSBToGivenPosition(tmffSP.leftmostColNbr - 1);
 
-        if (formula == null) {
-            tmffSP.currLineNbr   += 1;
-        }
-        else {
-            tmffSP.currLineNbr   +=
-                formula.toProofWorksheetStringBuffer(
-                                            tmffSP.sb,
-                                            tmffSP.prevColNbr + 1,
-                                            tmffSP.rightmostColNbr);
-        }
+        if (formula == null)
+            tmffSP.currLineNbr += 1;
+        else
+            tmffSP.currLineNbr += formula.toProofWorksheetStringBuilder(
+                tmffSP.sb, tmffSP.prevColNbr + 1, tmffSP.rightmostColNbr);
         return tmffSP.currLineNbr;
     }
 
-    protected int renderSubExprWithBreaks(
-                                TMFFStateParams tmffSP,
-                                ParseNode       currNode,
-                                int             leftmostColNbr) {
+    @Override
+    protected int renderSubExprWithBreaks(final TMFFStateParams tmffSP,
+        final ParseNode currNode, final int leftmostColNbr)
+    {
         throw new IllegalArgumentException(
             TMFFConstants.ERRMSG_UNFORMATTED_BAD_CALL_UNF_1);
     }
 
     /**
-     *  Updates maxDepth for a TMFFMethod if the Method
-     *  allows updates.
-     *  <p>
-     *  As of the initial release, only TMFFAlignColumn
-     *  uses maxDepth. The methods TMFFFlat and
-     *  TMFFUnformatted have maxDepth = Integer.MAX_VALUE
-     *  which results in no maxDepth line breaks from
-     *  happening -- therefore, they do not allow updates
-     *  after initial construction of the method.
-     *
-     *  @param maxDepth parameter.
-     *
-     *  @return boolean - true only if update performed.
+     * Updates maxDepth for a TMFFMethod if the Method allows updates.
+     * <p>
+     * As of the initial release, only TMFFAlignColumn uses maxDepth. The
+     * methods TMFFFlat and TMFFUnformatted have maxDepth = Integer.MAX_VALUE
+     * which results in no maxDepth line breaks from happening -- therefore,
+     * they do not allow updates after initial construction of the method.
+     * 
+     * @param maxDepth parameter.
+     * @return boolean - true only if update performed.
      */
-    public boolean updateMaxDepth(int maxDepth) {
+    @Override
+    public boolean updateMaxDepth(final int maxDepth) {
 
         return false;
     }

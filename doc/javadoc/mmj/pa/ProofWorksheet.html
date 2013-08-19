@@ -1,0 +1,1531 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- NewPage -->
+<html lang="en">
+<head>
+<title>ProofWorksheet</title>
+<link rel="stylesheet" type="text/css" href="../../stylesheet.css" title="Style">
+</head>
+<body>
+<script type="text/javascript"><!--
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="ProofWorksheet";
+    }
+//-->
+</script>
+<noscript>
+<div>JavaScript is disabled on your browser.</div>
+</noscript>
+<!-- ========= START OF TOP NAVBAR ======= -->
+<div class="topNav"><a name="navbar_top">
+<!--   -->
+</a><a href="#skip-navbar_top" title="Skip navigation links"></a><a name="navbar_top_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../index-all.html">Index</a></li>
+<li><a href="../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../mmj/pa/ProofUnifier.html" title="class in mmj.pa"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../mmj/pa/ProofWorksheetParser.html" title="class in mmj.pa"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../index.html?mmj/pa/ProofWorksheet.html" target="_top">Frames</a></li>
+<li><a href="ProofWorksheet.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_top">
+<li><a href="../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_top");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_top">
+<!--   -->
+</a></div>
+<!-- ========= END OF TOP NAVBAR ========= -->
+<!-- ======== START OF CLASS DATA ======== -->
+<div class="header">
+<div class="subTitle">mmj.pa</div>
+<h2 title="Class ProofWorksheet" class="title">Class ProofWorksheet</h2>
+</div>
+<div class="contentContainer">
+<ul class="inheritance">
+<li>java.lang.Object</li>
+<li>
+<ul class="inheritance">
+<li>mmj.pa.ProofWorksheet</li>
+</ul>
+</li>
+</ul>
+<div class="description">
+<ul class="blockList">
+<li class="blockList">
+<hr>
+<br>
+<pre>public class <span class="strong">ProofWorksheet</span>
+extends java.lang.Object</pre>
+<div class="block">ProofWorksheet is generated from a text area (String) using ProofWorksheet
+ methods.
+ <p>
+ There are several inner classes, and due to the interrelated nature of the
+ statements of a proof all of these classes are put together in ProofWorksheet
+ (inner classes can access the outer class methods and elements.)
+ <p>
+ A large quantity of information and useful stuff is contained in
+ mmj.pa.PaConstants.java.
+ <p>
+ =====================================================
+ <p>
+ <b>"Derive" Feature Notes (Version 0.02)
+ <p>
+ =====================================================
+ <p>
+ The are a few changes in ProofWorksheet to support the Proof Assistant
+ "Derive" feature. The major changes involve the Hyp and Formula fields in
+ DerivationStep:
+ <p>
+ 1. Formula: on DerivationSteps except for the "qed" step, Formula is now
+ optional, but if Formula is not entered then Ref is required. Simple: Formula
+ and/or Ref required on non-"qed" derivation steps.
+ <p>
+ If Formula is not entered, then the first token after the Step:Hyp:Ref
+ field's token must be the start of a new statement in column 1 of a new line.
+ <p>
+ The new "deriveStepFormula" flag is set to true if Formula not input on a
+ non-"qed" derivation step.
+ <p>
+ 2, Hyp: "?" Hyp entries in the Hyp sub-field of Step:Hyp:Ref have a new
+ meaning if Ref is input; there are new validation edits in this case. NOTE:
+ this applies even to the "qed" step, but of course not the HypothesisSteps,
+ for which a Hyp entry is meaningless and forbidden.
+ <p>
+ If one or more Hyp entries is "?" and Ref is input, then the ProofUnifier
+ will invoke the "Derive" feature. The new "DeriveStepHyps" flag is set to
+ true and the number of non-"?" Hyp entries must be < the number of Logical
+ Hyps for the Ref assertion. If fewer Hyp entries are input than needed by the
+ Ref, and one of the Hyp entries is "?", then extra "?" entries are suffixed
+ to the Hyp sub-field. For example, if the user inputs Hyp = "?,2" and the Ref
+ requires 3 Logical Hypotheses then the Hyp is automatically expanded to
+ "?,2,?". Excessive "?" Hyps are also "forgiven", meaning that if the user
+ inputs "?,2,?" and the Ref requires only 2 Logical Hypotheses, then the Hyp
+ is shortened to "?,2" (the excess "?" Hyps are removed from the right.)
+ <p>
+ The new int field, "nbrMissingHyps" is set to the number of "?" Hyp entries
+ -- after adjustment for the number of Logical Hypotheses needed by the Ref.
+ <p>
+ The new ProofStepStmt field, <code>generatedByDeriveFeature</code> designates a
+ step as being automatically generated by the "Derive" feature. When set to
+ true a proof step can be subjected to extra/custom processing, for example,
+ after the unification search process.
+ <p>
+ =====================================================</div>
+</li>
+</ul>
+</div>
+<div class="summary">
+<ul class="blockList">
+<li class="blockList">
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor_summary">
+<!--   -->
+</a>
+<h3>Constructor Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
+<caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colOne" scope="col">Constructor and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#ProofWorksheet(mmj.pa.ProofAsstPreferences, mmj.lang.Messages, boolean, mmj.pa.ProofAsstCursor)">ProofWorksheet</a></strong>(<a href="../../mmj/pa/ProofAsstPreferences.html" title="class in mmj.pa">ProofAsstPreferences</a>&nbsp;proofAsstPreferences,
+              <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages,
+              boolean&nbsp;structuralErrors,
+              <a href="../../mmj/pa/ProofAsstCursor.html" title="class in mmj.pa">ProofAsstCursor</a>&nbsp;proofCursor)</code>
+<div class="block">Constructor for skeletal ProofWorksheet.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#ProofWorksheet(java.lang.String, mmj.pa.ProofAsstPreferences, mmj.lang.LogicalSystem, mmj.verify.Grammar, mmj.lang.Messages)">ProofWorksheet</a></strong>(java.lang.String&nbsp;newTheoremLabel,
+              <a href="../../mmj/pa/ProofAsstPreferences.html" title="class in mmj.pa">ProofAsstPreferences</a>&nbsp;proofAsstPreferences,
+              <a href="../../mmj/lang/LogicalSystem.html" title="class in mmj.lang">LogicalSystem</a>&nbsp;logicalSystem,
+              <a href="../../mmj/verify/Grammar.html" title="class in mmj.verify">Grammar</a>&nbsp;grammar,
+              <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)</code>
+<div class="block">Constructor creating a ProofWorksheet initialized for a new proof for a
+ specific theorem label This constructor is used by
+ ProofAsst.startNewProof().</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#ProofWorksheet(mmj.lang.Theorem, java.util.List, boolean, mmj.pa.ProofAsstPreferences, mmj.lang.LogicalSystem, mmj.verify.Grammar, mmj.lang.Messages)">ProofWorksheet</a></strong>(<a href="../../mmj/lang/Theorem.html" title="class in mmj.lang">Theorem</a>&nbsp;theorem,
+              java.util.List&lt;<a href="../../mmj/verify/ProofDerivationStepEntry.html" title="class in mmj.verify">ProofDerivationStepEntry</a>&gt;&nbsp;proofDerivationStepList,
+              boolean&nbsp;deriveFormulas,
+              <a href="../../mmj/pa/ProofAsstPreferences.html" title="class in mmj.pa">ProofAsstPreferences</a>&nbsp;proofAsstPreferences,
+              <a href="../../mmj/lang/LogicalSystem.html" title="class in mmj.lang">LogicalSystem</a>&nbsp;logicalSystem,
+              <a href="../../mmj/verify/Grammar.html" title="class in mmj.verify">Grammar</a>&nbsp;grammar,
+              <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)</code>
+<div class="block">Constructor used for exporting a Proof Worksheet containing a completed
+ proof.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#ProofWorksheet(mmj.mmio.Tokenizer, mmj.pa.ProofAsstPreferences, mmj.lang.LogicalSystem, mmj.verify.Grammar, mmj.lang.Messages)">ProofWorksheet</a></strong>(<a href="../../mmj/mmio/Tokenizer.html" title="class in mmj.mmio">Tokenizer</a>&nbsp;proofTextTokenizer,
+              <a href="../../mmj/pa/ProofAsstPreferences.html" title="class in mmj.pa">ProofAsstPreferences</a>&nbsp;proofAsstPreferences,
+              <a href="../../mmj/lang/LogicalSystem.html" title="class in mmj.lang">LogicalSystem</a>&nbsp;logicalSystem,
+              <a href="../../mmj/verify/Grammar.html" title="class in mmj.verify">Grammar</a>&nbsp;grammar,
+              <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)</code>
+<div class="block">Constructor creating empty ProofWorksheet to be loaded using a Tokenizer.</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- ========== METHOD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_summary">
+<!--   -->
+</a>
+<h3>Method Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
+<caption><span>Methods</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../mmj/pa/DerivationStep.html" title="class in mmj.pa">DerivationStep</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#addDerivStepForDeriveFeature(java.util.List, mmj.lang.Formula, mmj.lang.ParseTree, mmj.pa.DerivationStep)">addDerivStepForDeriveFeature</a></strong>(java.util.List&lt;<a href="../../mmj/lang/WorkVar.html" title="class in mmj.lang">WorkVar</a>&gt;&nbsp;workVarList,
+                            <a href="../../mmj/lang/Formula.html" title="class in mmj.lang">Formula</a>&nbsp;formula,
+                            <a href="../../mmj/lang/ParseTree.html" title="class in mmj.lang">ParseTree</a>&nbsp;formulaParseTree,
+                            <a href="../../mmj/pa/DerivationStep.html" title="class in mmj.pa">DerivationStep</a>&nbsp;derivStep)</code>
+<div class="block">Generates a DerivationStep and adds it to the proofWorkStmtList ArrayList
+ on behalf of ProofUnifier.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#addGeneratedProofStmt(java.util.List, java.lang.String)">addGeneratedProofStmt</a></strong>(java.util.List&lt;<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>&gt;&nbsp;parenList,
+                     java.lang.String&nbsp;letters)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#addGeneratedProofStmt(mmj.lang.ParseTree.RPNStep[])">addGeneratedProofStmt</a></strong>(<a href="../../mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a>[]&nbsp;rpnProof)</code>
+<div class="block">Insert a GeneratedProofStmt into the ProofWorksheet</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>java.util.Set&lt;<a href="../../mmj/lang/WorkVar.html" title="class in mmj.lang">WorkVar</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#buildProofWorksheetWorkVarSet()">buildProofWorksheetWorkVarSet</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#computeProofWorkStmtLineNbr(mmj.pa.ProofWorkStmt)">computeProofWorkStmtLineNbr</a></strong>(<a href="../../mmj/pa/ProofWorkStmt.html" title="class in mmj.pa">ProofWorkStmt</a>&nbsp;x)</code>
+<div class="block">Computes the line number of a ProofWorkStmt on the screen text area.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../mmj/pa/ProofWorkStmt.html" title="class in mmj.pa">ProofWorkStmt</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#computeProofWorkStmtOfLineNbr(int)">computeProofWorkStmtOfLineNbr</a></strong>(int&nbsp;n)</code>
+<div class="block">Determines which ProofWorkStmt is located at a given line number of the
+ screen text area.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#computeTotalLineCnt()">computeTotalLineCnt</a></strong>()</code>
+<div class="block">Computes the total number of text area lines required to display all
+ ProofWorkStmt objects in the ProofWorksheet.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#doubleSpaceQedStep()">doubleSpaceQedStep</a></strong>()</code>
+<div class="block">Add extra newline to end of qed step so that the footer step has a blank
+ line before it.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../mmj/pa/ProofWorkStmt.html" title="class in mmj.pa">ProofWorkStmt</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#findFirstMatchingRefOrStep(java.lang.String)">findFirstMatchingRefOrStep</a></strong>(java.lang.String&nbsp;localRef)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../mmj/pa/ProofStepStmt.html" title="class in mmj.pa">ProofStepStmt</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#findMatchingStepFormula(mmj.lang.Formula, mmj.pa.ProofStepStmt)">findMatchingStepFormula</a></strong>(<a href="../../mmj/lang/Formula.html" title="class in mmj.lang">Formula</a>&nbsp;searchFormula,
+                       <a href="../../mmj/pa/ProofStepStmt.html" title="class in mmj.pa">ProofStepStmt</a>&nbsp;exclusiveEndpointStep)</code>
+<div class="block">Searches up to an exclusive endpoint in the proofWorkStmtList for a step
+ whose formula matches the input formula.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../mmj/pa/ProofWorkStmt.html" title="class in mmj.pa">ProofWorkStmt</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#findMatchingStepNbr(java.lang.String)">findMatchingStepNbr</a></strong>(java.lang.String&nbsp;newStepNbr)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#generateAndAddDjVarsStmts()">generateAndAddDjVarsStmts</a></strong>()</code>
+<div class="block">Generate DistinctVariablesStmt set for soft DjVars errors.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#generateNewDerivedStepNbr()">generateNewDerivedStepNbr</a></strong>()</code>
+<div class="block">Generates the next value of greatestStepNbr for use in the ProofUnifier
+ Derive feature and returns the new value.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../mmj/lang/ScopeFrame.html" title="class in mmj.lang">ScopeFrame</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#getComboFrame()">getComboFrame</a></strong>()</code>
+<div class="block">Returns the proof theorem's "comboFrame".</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../mmj/pa/DistinctVariablesStmt.html" title="class in mmj.pa">DistinctVariablesStmt</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#getDvStmtArray()">getDvStmtArray</a></strong>()</code>
+<div class="block">Returns the DistinctVariablesStmt array from the ProofWorksheet.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#getErrorLabelIfPossible()">getErrorLabelIfPossible</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../mmj/pa/FooterStmt.html" title="class in mmj.pa">FooterStmt</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#getFooterStmt()">getFooterStmt</a></strong>()</code>
+<div class="block">Returns the ProofWorksheet FooterStmt object.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../mmj/pa/GeneratedProofStmt.html" title="class in mmj.pa">GeneratedProofStmt</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#getGeneratedProofStmt()">getGeneratedProofStmt</a></strong>()</code>
+<div class="block">Returns the GeneratedProofStmt from the ProofWorksheet</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../mmj/pa/HypothesisStep.html" title="class in mmj.pa">HypothesisStep</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#getHypothesisStepFromList(mmj.lang.LogHyp)">getHypothesisStepFromList</a></strong>(<a href="../../mmj/lang/LogHyp.html" title="class in mmj.lang">LogHyp</a>&nbsp;h)</code>
+<div class="block">Returns a given HypothesisStep from the ProofWorkStmtList.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#getHypStepCnt()">getHypStepCnt</a></strong>()</code>
+<div class="block">Gets the hypStepCnt counter of the number of HypothesisStep statements in
+ the ProofWorksheet.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#getLocAfterLabel()">getLocAfterLabel</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#getMaxSeq()">getMaxSeq</a></strong>()</code>
+<div class="block">Returns the ProofWorksheet theorem maxSeq value.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#getNbrDerivStepsReadyForUnify()">getNbrDerivStepsReadyForUnify</a></strong>()</code>
+<div class="block">Gets the number of proof derivation steps that are ready for Unification.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#getOutputMessageText()">getOutputMessageText</a></strong>()</code>
+<div class="block">Obtain output message text from ProofWorksheet.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#getOutputMessageText(mmj.lang.Messages)">getOutputMessageText</a></strong>(<a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)</code>
+<div class="block">Obtain output message text from ProofWorksheet.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#getOutputMessageTextAbbrev(mmj.lang.Messages)">getOutputMessageTextAbbrev</a></strong>(<a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;m)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#getOutputProofText()">getOutputProofText</a></strong>()</code>
+<div class="block">Obtain output proof text from ProofWorksheet.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../mmj/pa/ProofAsstCursor.html" title="class in mmj.pa">ProofAsstCursor</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#getProofCursor()">getProofCursor</a></strong>()</code>
+<div class="block">Get the ProofWorksheet ProofCursor object.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.lang.Iterable&lt;<a href="../../mmj/pa/ProofWorkStmt.html" title="class in mmj.pa">ProofWorkStmt</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#getProofWorkStmtList()">getProofWorkStmtList</a></strong>()</code>
+<div class="block">Returns an Iterable over the ProofWorksheet ProofWorkStmt ArrayList.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#getProofWorkStmtListCnt()">getProofWorkStmtListCnt</a></strong>()</code>
+<div class="block">Returns the count of items in the ProofWorksheet ProofWorkStmt ArrayList.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#getProvableLogicStmtTyp()">getProvableLogicStmtTyp</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../mmj/pa/DerivationStep.html" title="class in mmj.pa">DerivationStep</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#getQedStep()">getQedStep</a></strong>()</code>
+<div class="block">Returns the QED step of the proof, which is the final derivation step.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#getQedStepProofRPN()">getQedStepProofRPN</a></strong>()</code>
+<div class="block">Returns the proof RPN of the QED step of the proof.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#getQedStepSquishedRPN()">getQedStepSquishedRPN</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../mmj/pa/StepRequest.html" title="class in mmj.pa">StepRequest</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#getStepRequest()">getStepRequest</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../mmj/lang/Theorem.html" title="class in mmj.lang">Theorem</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#getTheorem()">getTheorem</a></strong>()</code>
+<div class="block">Returns the ProofWorksheet's Theorem reference.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#getTheoremLabel()">getTheoremLabel</a></strong>()</code>
+<div class="block">Returns the theorem label, if present.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#getVarHypFromComboFrame(mmj.lang.Var)">getVarHypFromComboFrame</a></strong>(<a href="../../mmj/lang/Var.html" title="class in mmj.lang">Var</a>&nbsp;v)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#hasStructuralErrors()">hasStructuralErrors</a></strong>()</code>
+<div class="block">Gets structuralErrors switch for ProofWorksheet.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#incNbrDerivStepsReadyForUnify()">incNbrDerivStepsReadyForUnify</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#isNewTheorem()">isNewTheorem</a></strong>()</code>
+<div class="block">Returns the isNewTheorem boolean value indicating whether the theorem is
+ new or is already in the Metamath file that was loaded.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#loadComboFrameAndVarMap()">loadComboFrameAndVarMap</a></strong>()</code>
+<div class="block">Load the combo frame and var array object for use throughout the
+ ProofWorksheet.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#loadWorksheet(java.lang.String, int, mmj.pa.StepRequest)">loadWorksheet</a></strong>(java.lang.String&nbsp;nextToken,
+             int&nbsp;inputCursorPos,
+             <a href="../../mmj/pa/StepRequest.html" title="class in mmj.pa">StepRequest</a>&nbsp;stepRequestIn)</code>
+<div class="block">Load the ProofWorksheet starting with the input token.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#loadWorksheetProofLevelNumbers()">loadWorksheetProofLevelNumbers</a></strong>()</code>
+<div class="block">Initial load of proof worksheet step level numbers.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#outputCursorInstrumentationIfEnabled()">outputCursorInstrumentationIfEnabled</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#posCursorAtFirstIncompleteOrQedStmt()">posCursorAtFirstIncompleteOrQedStmt</a></strong>()</code>
+<div class="block">If cursor not already set, positions the ProofWorksheet ProofCursor at
+ the first ProofWorkStmt with status = incomplete and sets the cursor at
+ the start of the Ref sub-field.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#posCursorAtFirstIncompleteStmt()">posCursorAtFirstIncompleteStmt</a></strong>()</code>
+<div class="block">Positions the ProofWorksheet ProofCursor at the first ProofWorkStmt with
+ status = incomplete and sets the cursor at the start of the Ref
+ sub-field.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#posCursorAtLastIncompleteOrQedStmt()">posCursorAtLastIncompleteOrQedStmt</a></strong>()</code>
+<div class="block">If cursor not already set, positions the ProofWorksheet ProofCursor at
+ the last ProofWorkStmt with status = incomplete and sets the cursor at
+ the start of the Ref sub-field.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#posCursorAtLastIncompleteStmt()">posCursorAtLastIncompleteStmt</a></strong>()</code>
+<div class="block">Positions the ProofWorksheet ProofCursor at the last ProofWorkStmt with
+ status = incomplete and sets the cursor at the start of the Ref
+ sub-field.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#posCursorAtQedStmt()">posCursorAtQedStmt</a></strong>()</code>
+<div class="block">Positions the cursor at the 'qed' step if the cursor is not already set.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#renumberProofSteps(int, int)">renumberProofSteps</a></strong>(int&nbsp;renumberStart,
+                  int&nbsp;renumberInterval)</code>
+<div class="block">Renumbers each ProofWorkStmt according to an input renumberInterval and
+ alters each Hyp reference to conform to the new step numbers.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#setMaxSeq(int)">setMaxSeq</a></strong>(int&nbsp;maxSeq)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#setNewTheorem(boolean)">setNewTheorem</a></strong>(boolean&nbsp;newTheorem)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#setProofCursor(mmj.pa.ProofAsstCursor)">setProofCursor</a></strong>(<a href="../../mmj/pa/ProofAsstCursor.html" title="class in mmj.pa">ProofAsstCursor</a>&nbsp;proofCursor)</code>
+<div class="block">Set the ProofWorksheet ProofCursor object.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#setStructuralErrors(boolean)">setStructuralErrors</a></strong>(boolean&nbsp;structuralErrors)</code>
+<div class="block">Sets structuralErrors switch for ProofWorksheet.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#tmffReformat(boolean)">tmffReformat</a></strong>(boolean&nbsp;inputCursorStep)</code>
+<div class="block">Reformats all or just one ProofStepStmt using TMFF.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#triggerLoadStructureException(int, java.lang.String, java.lang.Object...)">triggerLoadStructureException</a></strong>(int&nbsp;errorFldChars,
+                             java.lang.String&nbsp;errorMessage,
+                             java.lang.Object...&nbsp;args)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofWorksheet.html#triggerLoadStructureException(java.lang.String, java.lang.Object...)">triggerLoadStructureException</a></strong>(java.lang.String&nbsp;errorMessage,
+                             java.lang.Object...&nbsp;args)</code>&nbsp;</td>
+</tr>
+</table>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
+<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="details">
+<ul class="blockList">
+<li class="blockList">
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor_detail">
+<!--   -->
+</a>
+<h3>Constructor Detail</h3>
+<a name="ProofWorksheet(mmj.pa.ProofAsstPreferences, mmj.lang.Messages, boolean, mmj.pa.ProofAsstCursor)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ProofWorksheet</h4>
+<pre>public&nbsp;ProofWorksheet(<a href="../../mmj/pa/ProofAsstPreferences.html" title="class in mmj.pa">ProofAsstPreferences</a>&nbsp;proofAsstPreferences,
+              <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages,
+              boolean&nbsp;structuralErrors,
+              <a href="../../mmj/pa/ProofAsstCursor.html" title="class in mmj.pa">ProofAsstCursor</a>&nbsp;proofCursor)</pre>
+<div class="block">Constructor for skeletal ProofWorksheet. This constructor is used in
+ ProofAsst.updateWorksheetWithException(). to create a worksheet that has
+ "structuralErrors". When the GUI displays a worksheet with structural
+ errors it does not update its proofTextArea, and thus, the original user
+ input is left untouched.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>proofAsstPreferences</code> - variable settings</dd><dd><code>messages</code> - the mmj.lang.Messages object used to store error and
+            informational messages.</dd><dd><code>structuralErrors</code> - indicates whether or not the ProofWorksheet has
+            severe/fatal validation errors.</dd><dd><code>proofCursor</code> - ProofAsstCursor set to position of error.</dd></dl>
+</li>
+</ul>
+<a name="ProofWorksheet(mmj.mmio.Tokenizer, mmj.pa.ProofAsstPreferences, mmj.lang.LogicalSystem, mmj.verify.Grammar, mmj.lang.Messages)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ProofWorksheet</h4>
+<pre>public&nbsp;ProofWorksheet(<a href="../../mmj/mmio/Tokenizer.html" title="class in mmj.mmio">Tokenizer</a>&nbsp;proofTextTokenizer,
+              <a href="../../mmj/pa/ProofAsstPreferences.html" title="class in mmj.pa">ProofAsstPreferences</a>&nbsp;proofAsstPreferences,
+              <a href="../../mmj/lang/LogicalSystem.html" title="class in mmj.lang">LogicalSystem</a>&nbsp;logicalSystem,
+              <a href="../../mmj/verify/Grammar.html" title="class in mmj.verify">Grammar</a>&nbsp;grammar,
+              <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)</pre>
+<div class="block">Constructor creating empty ProofWorksheet to be loaded using a Tokenizer.
+ This constructor is used by ProofWorksheetParser.next().</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>proofTextTokenizer</code> - the mmj.mmio.Tokenizer input stream parser.</dd><dd><code>proofAsstPreferences</code> - variable settings</dd><dd><code>logicalSystem</code> - the loaded Metamath data</dd><dd><code>grammar</code> - the mmj.verify.Grammar object</dd><dd><code>messages</code> - the mmj.lang.Messages object used to store error and
+            informational messages.</dd></dl>
+</li>
+</ul>
+<a name="ProofWorksheet(java.lang.String, mmj.pa.ProofAsstPreferences, mmj.lang.LogicalSystem, mmj.verify.Grammar, mmj.lang.Messages)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ProofWorksheet</h4>
+<pre>public&nbsp;ProofWorksheet(java.lang.String&nbsp;newTheoremLabel,
+              <a href="../../mmj/pa/ProofAsstPreferences.html" title="class in mmj.pa">ProofAsstPreferences</a>&nbsp;proofAsstPreferences,
+              <a href="../../mmj/lang/LogicalSystem.html" title="class in mmj.lang">LogicalSystem</a>&nbsp;logicalSystem,
+              <a href="../../mmj/verify/Grammar.html" title="class in mmj.verify">Grammar</a>&nbsp;grammar,
+              <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)</pre>
+<div class="block">Constructor creating a ProofWorksheet initialized for a new proof for a
+ specific theorem label This constructor is used by
+ ProofAsst.startNewProof(). Note: the ProofWorksheet created here is not a
+ fully populated object -- it is destined for a one-way trip to the output
+ screen via the GUI.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>newTheoremLabel</code> - Theorem label String.</dd><dd><code>proofAsstPreferences</code> - variable settings</dd><dd><code>logicalSystem</code> - the loaded Metamath data</dd><dd><code>grammar</code> - the mmj.verify.Grammar object</dd><dd><code>messages</code> - the mmj.lang.Messages object used to store error and
+            informational messages.</dd></dl>
+</li>
+</ul>
+<a name="ProofWorksheet(mmj.lang.Theorem, java.util.List, boolean, mmj.pa.ProofAsstPreferences, mmj.lang.LogicalSystem, mmj.verify.Grammar, mmj.lang.Messages)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>ProofWorksheet</h4>
+<pre>public&nbsp;ProofWorksheet(<a href="../../mmj/lang/Theorem.html" title="class in mmj.lang">Theorem</a>&nbsp;theorem,
+              java.util.List&lt;<a href="../../mmj/verify/ProofDerivationStepEntry.html" title="class in mmj.verify">ProofDerivationStepEntry</a>&gt;&nbsp;proofDerivationStepList,
+              boolean&nbsp;deriveFormulas,
+              <a href="../../mmj/pa/ProofAsstPreferences.html" title="class in mmj.pa">ProofAsstPreferences</a>&nbsp;proofAsstPreferences,
+              <a href="../../mmj/lang/LogicalSystem.html" title="class in mmj.lang">LogicalSystem</a>&nbsp;logicalSystem,
+              <a href="../../mmj/verify/Grammar.html" title="class in mmj.verify">Grammar</a>&nbsp;grammar,
+              <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)</pre>
+<div class="block">Constructor used for exporting a Proof Worksheet containing a completed
+ proof. Note: the worksheet created by this constructor is "skeletal" in
+ the sense that it is destined for output only. This constructor is used
+ by ProofAsst.exportToFile().</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>theorem</code> - to be used to create ProofWorksheet.</dd><dd><code>proofDerivationStepList</code> - List of
+            mmj.verify.ProofDerivationStepEntry created by VerifyProofs</dd><dd><code>deriveFormulas</code> - if true, derive formulas during creation</dd><dd><code>proofAsstPreferences</code> - variable settings</dd><dd><code>logicalSystem</code> - the loaded Metamath data</dd><dd><code>grammar</code> - the mmj.verify.Grammar object</dd><dd><code>messages</code> - the mmj.lang.Messages object used to store error and
+            informational messages.</dd></dl>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ============ METHOD DETAIL ========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_detail">
+<!--   -->
+</a>
+<h3>Method Detail</h3>
+<a name="getVarHypFromComboFrame(mmj.lang.Var)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getVarHypFromComboFrame</h4>
+<pre>public&nbsp;<a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a>&nbsp;getVarHypFromComboFrame(<a href="../../mmj/lang/Var.html" title="class in mmj.lang">Var</a>&nbsp;v)</pre>
+</li>
+</ul>
+<a name="hasStructuralErrors()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>hasStructuralErrors</h4>
+<pre>public&nbsp;boolean&nbsp;hasStructuralErrors()</pre>
+<div class="block">Gets structuralErrors switch for ProofWorksheet. A "structural error"
+ means that the Proof Worksheet contains one or more validation errors
+ that prevent Unification. An example would be any individual field error
+ or a parse error, theorem label not found, etc. When ProofWorksheet is
+ done validating a proof it must be *clean* for ProofUnifier (or else bad
+ things would happen.)</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>boolean structuralErrors</dd></dl>
+</li>
+</ul>
+<a name="setStructuralErrors(boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setStructuralErrors</h4>
+<pre>public&nbsp;void&nbsp;setStructuralErrors(boolean&nbsp;structuralErrors)</pre>
+<div class="block">Sets structuralErrors switch for ProofWorksheet.
+ <p>
+ See hasStructuralErrors() for more info.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>structuralErrors</code> - boolean, true or false.</dd></dl>
+</li>
+</ul>
+<a name="getNbrDerivStepsReadyForUnify()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getNbrDerivStepsReadyForUnify</h4>
+<pre>public&nbsp;int&nbsp;getNbrDerivStepsReadyForUnify()</pre>
+<div class="block">Gets the number of proof derivation steps that are ready for Unification.
+ <p>
+ Note: a derivation step with a "?" in its Hyp field is not ready for
+ unification, but interestingly, a subsequent step that refers to that
+ step as one of its Hyps, can be unified (it just can't be "proved".)</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>number of derivation steps in the proof that are ready for
+         Unification.</dd></dl>
+</li>
+</ul>
+<a name="incNbrDerivStepsReadyForUnify()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>incNbrDerivStepsReadyForUnify</h4>
+<pre>public&nbsp;void&nbsp;incNbrDerivStepsReadyForUnify()</pre>
+</li>
+</ul>
+<a name="isNewTheorem()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isNewTheorem</h4>
+<pre>public&nbsp;boolean&nbsp;isNewTheorem()</pre>
+<div class="block">Returns the isNewTheorem boolean value indicating whether the theorem is
+ new or is already in the Metamath file that was loaded.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>boolean isNewTheorem, which if true means that the theorem being
+         proved is not already in the Metamath database that was loaded.</dd></dl>
+</li>
+</ul>
+<a name="setNewTheorem(boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setNewTheorem</h4>
+<pre>public&nbsp;void&nbsp;setNewTheorem(boolean&nbsp;newTheorem)</pre>
+</li>
+</ul>
+<a name="getTheorem()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getTheorem</h4>
+<pre>public&nbsp;<a href="../../mmj/lang/Theorem.html" title="class in mmj.lang">Theorem</a>&nbsp;getTheorem()</pre>
+<div class="block">Returns the ProofWorksheet's Theorem reference.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>Theorem may be null if new theorem or errors in ProofWorksheet!</dd></dl>
+</li>
+</ul>
+<a name="getMaxSeq()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMaxSeq</h4>
+<pre>public&nbsp;int&nbsp;getMaxSeq()</pre>
+<div class="block">Returns the ProofWorksheet theorem maxSeq value.
+ <p>
+ For an existing theorem (in the loaded database), maxSeq is just the
+ MObj.seq number of the theorem itself. For a new theorem the LocAfter
+ statement label defines the maxSeq (maxSeq = locAfter.seq + 1)
+ <p>
+ The maxSeq value sets a boundary for parsing, proofs, formulas, etc. A
+ Metamath statement cannot legitimately use or refer to another Metamath
+ statement with a sequence number >= its own (no recursive references.)</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>maxSeq number in use for the current proof.</dd></dl>
+</li>
+</ul>
+<a name="setMaxSeq(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setMaxSeq</h4>
+<pre>public&nbsp;void&nbsp;setMaxSeq(int&nbsp;maxSeq)</pre>
+</li>
+</ul>
+<a name="getComboFrame()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getComboFrame</h4>
+<pre>public&nbsp;<a href="../../mmj/lang/ScopeFrame.html" title="class in mmj.lang">ScopeFrame</a>&nbsp;getComboFrame()</pre>
+<div class="block">Returns the proof theorem's "comboFrame".
+ <p>
+ "comboFrame" and comboVarMap combine the optional and mandatory frame
+ entries for the theorem, including any $d statements added as part of the
+ proof.
+ <p>
+ For an existing theorem this just means merging the Assrt.mandFrame,
+ Theorem.optFrame and any proof $d's, and then deriving the comboVarMap
+ from the set of VarHyp's in the comboFrame.
+ <p>
+ For a new theorem this means constructing comboFrame using
+ (ScopeDef)(LogicalSystem.getScopeDefList()).get(0) to obtain the sets of
+ globally active Var's, VarHyp's and DjVars (new Theorems in ProofAsst can
+ only use global scope Var's and VarHyp's) and adding in any $d's from the
+ proof.
+ <p>
+ The REASON why the optional and mandatory frames can be combined in this
+ way is a little bit subtle: they only need to be separate if the new
+ theorem is going to be referred to in later theorems' proofs, and
+ ProofAsst does not provide that capability at this time.
+ <p>
+ The REASON why we want to combine the optional and mandatory frames is to
+ simplify handling of derivation steps within the proof. Variables used in
+ the intermediate steps would normally be part of the optional frame, if
+ not used in the theorem's formula or its LogHyp formulas. That would
+ create more work, especially at grammatical parse time, when we need to
+ match each Var to its active VarHyp. Soooo...instead of building a
+ mandatory frame for each intermediate step we just build a combo frame
+ for use in every step (and note that DjVars apply to every step
+ regardless of the location of the $d ProofWorkStmt within the Proof Text
+ area.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>MandFrame combined with OptFrame values for the theorem.</dd></dl>
+</li>
+</ul>
+<a name="getHypStepCnt()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getHypStepCnt</h4>
+<pre>public&nbsp;int&nbsp;getHypStepCnt()</pre>
+<div class="block">Gets the hypStepCnt counter of the number of HypothesisStep statements in
+ the ProofWorksheet.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the hypStepCnt.</dd></dl>
+</li>
+</ul>
+<a name="getHypothesisStepFromList(mmj.lang.LogHyp)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getHypothesisStepFromList</h4>
+<pre>public&nbsp;<a href="../../mmj/pa/HypothesisStep.html" title="class in mmj.pa">HypothesisStep</a>&nbsp;getHypothesisStepFromList(<a href="../../mmj/lang/LogHyp.html" title="class in mmj.lang">LogHyp</a>&nbsp;h)</pre>
+<div class="block">Returns a given HypothesisStep from the ProofWorkStmtList.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>h</code> - the LogHyp sought in the ProofWorkStmtList.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the HypothesisStep if found, or null.</dd></dl>
+</li>
+</ul>
+<a name="buildProofWorksheetWorkVarSet()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>buildProofWorksheetWorkVarSet</h4>
+<pre>public&nbsp;java.util.Set&lt;<a href="../../mmj/lang/WorkVar.html" title="class in mmj.lang">WorkVar</a>&gt;&nbsp;buildProofWorksheetWorkVarSet()</pre>
+</li>
+</ul>
+<a name="getProofWorkStmtList()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getProofWorkStmtList</h4>
+<pre>public&nbsp;java.lang.Iterable&lt;<a href="../../mmj/pa/ProofWorkStmt.html" title="class in mmj.pa">ProofWorkStmt</a>&gt;&nbsp;getProofWorkStmtList()</pre>
+<div class="block">Returns an Iterable over the ProofWorksheet ProofWorkStmt ArrayList.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>Iterable over ProofWorkStmtList.</dd></dl>
+</li>
+</ul>
+<a name="getProofWorkStmtListCnt()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getProofWorkStmtListCnt</h4>
+<pre>public&nbsp;int&nbsp;getProofWorkStmtListCnt()</pre>
+<div class="block">Returns the count of items in the ProofWorksheet ProofWorkStmt ArrayList.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>count of items in ProofWorkStmtList.</dd></dl>
+</li>
+</ul>
+<a name="computeProofWorkStmtLineNbr(mmj.pa.ProofWorkStmt)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>computeProofWorkStmtLineNbr</h4>
+<pre>public&nbsp;int&nbsp;computeProofWorkStmtLineNbr(<a href="../../mmj/pa/ProofWorkStmt.html" title="class in mmj.pa">ProofWorkStmt</a>&nbsp;x)</pre>
+<div class="block">Computes the line number of a ProofWorkStmt on the screen text area.
+ <p>
+ This algorithm requires that we know in advance how many lines are
+ occupied by each ProofWorkStmt. The computation is then simple: just
+ total the previous lineCnt's and add 1. (But if lineCnt is wrong, then we
+ are doomed -- note that TMFF went to a lot of trouble to obtain lineCnt,
+ and lineCnt is computed during parsing of an input ProofWorksheet!)</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>x</code> - the owner ProofWorkStmt</dd>
+<dt><span class="strong">Returns:</span></dt><dd>line number in ProofWorksheet text area.</dd></dl>
+</li>
+</ul>
+<a name="computeProofWorkStmtOfLineNbr(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>computeProofWorkStmtOfLineNbr</h4>
+<pre>public&nbsp;<a href="../../mmj/pa/ProofWorkStmt.html" title="class in mmj.pa">ProofWorkStmt</a>&nbsp;computeProofWorkStmtOfLineNbr(int&nbsp;n)</pre>
+<div class="block">Determines which ProofWorkStmt is located at a given line number of the
+ screen text area.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>n</code> - the line number</dd>
+<dt><span class="strong">Returns:</span></dt><dd>ProofWorkStmt at the input line number, or null.</dd></dl>
+</li>
+</ul>
+<a name="computeTotalLineCnt()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>computeTotalLineCnt</h4>
+<pre>public&nbsp;int&nbsp;computeTotalLineCnt()</pre>
+<div class="block">Computes the total number of text area lines required to display all
+ ProofWorkStmt objects in the ProofWorksheet.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>total number of lines required for ProofWorkStmt's.</dd></dl>
+</li>
+</ul>
+<a name="getFooterStmt()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFooterStmt</h4>
+<pre>public&nbsp;<a href="../../mmj/pa/FooterStmt.html" title="class in mmj.pa">FooterStmt</a>&nbsp;getFooterStmt()</pre>
+<div class="block">Returns the ProofWorksheet FooterStmt object.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>FooterStmt of ProofWorksheet.</dd></dl>
+</li>
+</ul>
+<a name="getQedStep()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getQedStep</h4>
+<pre>public&nbsp;<a href="../../mmj/pa/DerivationStep.html" title="class in mmj.pa">DerivationStep</a>&nbsp;getQedStep()</pre>
+<div class="block">Returns the QED step of the proof, which is the final derivation step.
+ <p>
+ Note: the nomenclature here "qed step" is something made up for
+ ProofAssistant to make things easier to explain.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the final DerivationStep in the ProofWorksheet.</dd></dl>
+</li>
+</ul>
+<a name="getQedStepProofRPN()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getQedStepProofRPN</h4>
+<pre>public&nbsp;<a href="../../mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a>[]&nbsp;getQedStepProofRPN()</pre>
+<div class="block">Returns the proof RPN of the QED step of the proof.
+ <p>
+ Note that each DerivationStep will have its own proof -- if the proof is
+ valid -- but the QED step's proof is the proof of the theorem itself!</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the RPN proof of the final DerivationStep in the ProofWorksheet.</dd></dl>
+</li>
+</ul>
+<a name="getQedStepSquishedRPN()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getQedStepSquishedRPN</h4>
+<pre>public&nbsp;<a href="../../mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a>[]&nbsp;getQedStepSquishedRPN()</pre>
+</li>
+</ul>
+<a name="getProofCursor()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getProofCursor</h4>
+<pre>public&nbsp;<a href="../../mmj/pa/ProofAsstCursor.html" title="class in mmj.pa">ProofAsstCursor</a>&nbsp;getProofCursor()</pre>
+<div class="block">Get the ProofWorksheet ProofCursor object.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>ProofCursor object for ProofWorksheet.</dd></dl>
+</li>
+</ul>
+<a name="setProofCursor(mmj.pa.ProofAsstCursor)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setProofCursor</h4>
+<pre>public&nbsp;void&nbsp;setProofCursor(<a href="../../mmj/pa/ProofAsstCursor.html" title="class in mmj.pa">ProofAsstCursor</a>&nbsp;proofCursor)</pre>
+<div class="block">Set the ProofWorksheet ProofCursor object.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>proofCursor</code> - object for ProofWorksheet.</dd></dl>
+</li>
+</ul>
+<a name="posCursorAtLastIncompleteOrQedStmt()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>posCursorAtLastIncompleteOrQedStmt</h4>
+<pre>public&nbsp;void&nbsp;posCursorAtLastIncompleteOrQedStmt()</pre>
+<div class="block">If cursor not already set, positions the ProofWorksheet ProofCursor at
+ the last ProofWorkStmt with status = incomplete and sets the cursor at
+ the start of the Ref sub-field. If cursor still not set (no incomplete
+ steps), positions the cursor at the 'qed' step.</div>
+</li>
+</ul>
+<a name="posCursorAtFirstIncompleteOrQedStmt()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>posCursorAtFirstIncompleteOrQedStmt</h4>
+<pre>public&nbsp;void&nbsp;posCursorAtFirstIncompleteOrQedStmt()</pre>
+<div class="block">If cursor not already set, positions the ProofWorksheet ProofCursor at
+ the first ProofWorkStmt with status = incomplete and sets the cursor at
+ the start of the Ref sub-field. If cursor still not set (no incomplete
+ steps), positions the cursor at the 'qed' step.</div>
+</li>
+</ul>
+<a name="posCursorAtQedStmt()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>posCursorAtQedStmt</h4>
+<pre>public&nbsp;void&nbsp;posCursorAtQedStmt()</pre>
+<div class="block">Positions the cursor at the 'qed' step if the cursor is not already set.</div>
+</li>
+</ul>
+<a name="posCursorAtLastIncompleteStmt()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>posCursorAtLastIncompleteStmt</h4>
+<pre>public&nbsp;void&nbsp;posCursorAtLastIncompleteStmt()</pre>
+<div class="block">Positions the ProofWorksheet ProofCursor at the last ProofWorkStmt with
+ status = incomplete and sets the cursor at the start of the Ref
+ sub-field.</div>
+</li>
+</ul>
+<a name="posCursorAtFirstIncompleteStmt()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>posCursorAtFirstIncompleteStmt</h4>
+<pre>public&nbsp;void&nbsp;posCursorAtFirstIncompleteStmt()</pre>
+<div class="block">Positions the ProofWorksheet ProofCursor at the first ProofWorkStmt with
+ status = incomplete and sets the cursor at the start of the Ref
+ sub-field.</div>
+</li>
+</ul>
+<a name="outputCursorInstrumentationIfEnabled()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>outputCursorInstrumentationIfEnabled</h4>
+<pre>public&nbsp;void&nbsp;outputCursorInstrumentationIfEnabled()</pre>
+</li>
+</ul>
+<a name="getErrorLabelIfPossible()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getErrorLabelIfPossible</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getErrorLabelIfPossible()</pre>
+</li>
+</ul>
+<a name="getTheoremLabel()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getTheoremLabel</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getTheoremLabel()</pre>
+<div class="block">Returns the theorem label, if present.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>String containing theorem label, may be null;</dd></dl>
+</li>
+</ul>
+<a name="getLocAfterLabel()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLocAfterLabel</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getLocAfterLabel()</pre>
+</li>
+</ul>
+<a name="getStepRequest()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getStepRequest</h4>
+<pre>public&nbsp;<a href="../../mmj/pa/StepRequest.html" title="class in mmj.pa">StepRequest</a>&nbsp;getStepRequest()</pre>
+</li>
+</ul>
+<a name="findMatchingStepFormula(mmj.lang.Formula, mmj.pa.ProofStepStmt)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>findMatchingStepFormula</h4>
+<pre>public&nbsp;<a href="../../mmj/pa/ProofStepStmt.html" title="class in mmj.pa">ProofStepStmt</a>&nbsp;findMatchingStepFormula(<a href="../../mmj/lang/Formula.html" title="class in mmj.lang">Formula</a>&nbsp;searchFormula,
+                                    <a href="../../mmj/pa/ProofStepStmt.html" title="class in mmj.pa">ProofStepStmt</a>&nbsp;exclusiveEndpointStep)</pre>
+<div class="block">Searches up to an exclusive endpoint in the proofWorkStmtList for a step
+ whose formula matches the input formula.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>searchFormula</code> - Formula we're looking for</dd><dd><code>exclusiveEndpointStep</code> - Exclusive endpoint of the search (return
+            null as soon as this step is reached, even if its formula
+            matches.)</dd>
+<dt><span class="strong">Returns:</span></dt><dd>ProofStepStmt matching the formula or null if Not Found.</dd></dl>
+</li>
+</ul>
+<a name="renumberProofSteps(int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>renumberProofSteps</h4>
+<pre>public&nbsp;void&nbsp;renumberProofSteps(int&nbsp;renumberStart,
+                      int&nbsp;renumberInterval)</pre>
+<div class="block">Renumbers each ProofWorkStmt according to an input renumberInterval and
+ alters each Hyp reference to conform to the new step numbers.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>renumberStart</code> - is the number to start at. Commonly equal to 1.</dd><dd><code>renumberInterval</code> - is the number to add to each new step number.
+            Commonly equal to 1.</dd></dl>
+</li>
+</ul>
+<a name="tmffReformat(boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>tmffReformat</h4>
+<pre>public&nbsp;void&nbsp;tmffReformat(boolean&nbsp;inputCursorStep)</pre>
+<div class="block">Reformats all or just one ProofStepStmt using TMFF.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>inputCursorStep</code> - set to true to reformat just the proof step
+            underneath the cursor.</dd></dl>
+</li>
+</ul>
+<a name="doubleSpaceQedStep()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>doubleSpaceQedStep</h4>
+<pre>public&nbsp;void&nbsp;doubleSpaceQedStep()</pre>
+<div class="block">Add extra newline to end of qed step so that the footer step has a blank
+ line before it.</div>
+</li>
+</ul>
+<a name="addDerivStepForDeriveFeature(java.util.List, mmj.lang.Formula, mmj.lang.ParseTree, mmj.pa.DerivationStep)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addDerivStepForDeriveFeature</h4>
+<pre>public&nbsp;<a href="../../mmj/pa/DerivationStep.html" title="class in mmj.pa">DerivationStep</a>&nbsp;addDerivStepForDeriveFeature(java.util.List&lt;<a href="../../mmj/lang/WorkVar.html" title="class in mmj.lang">WorkVar</a>&gt;&nbsp;workVarList,
+                                          <a href="../../mmj/lang/Formula.html" title="class in mmj.lang">Formula</a>&nbsp;formula,
+                                          <a href="../../mmj/lang/ParseTree.html" title="class in mmj.lang">ParseTree</a>&nbsp;formulaParseTree,
+                                          <a href="../../mmj/pa/DerivationStep.html" title="class in mmj.pa">DerivationStep</a>&nbsp;derivStep)</pre>
+<div class="block">Generates a DerivationStep and adds it to the proofWorkStmtList ArrayList
+ on behalf of ProofUnifier.
+ <p>
+ If !workVarList.isEmpty() then the new step is marked incomplete and
+ given a Hyp = "?" -- no unification need be attempted. Otherwise,
+ unification can be attempted using no Hyps. If this fails then because
+ the step is marked "generated", the step can be updated to show Hyp "?"
+ (this is a helpful feature for the users, going the extra mile...)</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>workVarList</code> - List of Work Vars in formula.</dd><dd><code>formula</code> - Formula of new step.</dd><dd><code>formulaParseTree</code> - ParseTree of new Formula</dd><dd><code>derivStep</code> - insert point for new step.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>DerivationStep added to the ProofWorksheet.</dd></dl>
+</li>
+</ul>
+<a name="generateNewDerivedStepNbr()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>generateNewDerivedStepNbr</h4>
+<pre>public&nbsp;int&nbsp;generateNewDerivedStepNbr()</pre>
+<div class="block">Generates the next value of greatestStepNbr for use in the ProofUnifier
+ Derive feature and returns the new value.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>value of new greatestStepNbr.</dd></dl>
+</li>
+</ul>
+<a name="loadWorksheet(java.lang.String, int, mmj.pa.StepRequest)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>loadWorksheet</h4>
+<pre>public&nbsp;java.lang.String&nbsp;loadWorksheet(java.lang.String&nbsp;nextToken,
+                             int&nbsp;inputCursorPos,
+                             <a href="../../mmj/pa/StepRequest.html" title="class in mmj.pa">StepRequest</a>&nbsp;stepRequestIn)
+                               throws java.io.IOException,
+                                      <a href="../../mmj/mmio/MMIOError.html" title="class in mmj.mmio">MMIOError</a>,
+                                      <a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></pre>
+<div class="block">Load the ProofWorksheet starting with the input token.
+ <p>
+ <ul>
+ <li>- The first token of each statement must start in column 1. this
+ means that ((nextToken.length - proofTextTokenizer.getCurrentColumnNbr())
+ == 0) must be true -->else throw ProofAsstException!
+ <li>- First statement must be a Header, so Load Header using input
+ nextToken If error, throw ProofAsstException.
+ <li>- Loads proof text statements until footer reached or end of file,
+ discarding any generated proof statements along the way: - reject a 2nd
+ Header, if found;
+ <li>- After loading each statement makes sure that worksheet: - begins
+ with a header statement; - contains a "qed" proof step; - ends with a
+ footer statement; If missing footer, qed step or header step, throw
+ ProofAsstException to terminate the parse
+ <li>- If no errors so far, performs remaining "relational" edits on
+ worksheet statements.
+ <li>- During processing here and in any subroutines, a thrown
+ ProofAsstException indicates that the parse is terminated completely.
+ </ul>
+ <p>
+ Otherwise, return the nextToken value which should be the first token of
+ the next ProofWorksheet or null if EOF. (Each routine that loads a
+ statement will return the next token after the end of the statement's
+ input text.)</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>nextToken</code> - the first token to be loaded.</dd><dd><code>inputCursorPos</code> - offset plus one of Caret in Proof TextArea or -1 if
+            not available.</dd><dd><code>stepRequestIn</code> - may be null, or StepSelector Search or Choice
+            request and will be loaded into the ProofWorksheet.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>String token starting the next ProofWorksheet or null.</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - if an error occurred</dd>
+<dd><code><a href="../../mmj/mmio/MMIOError.html" title="class in mmj.mmio">MMIOError</a></code> - if an error occurred</dd>
+<dd><code><a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></code> - if an error occurred</dd></dl>
+</li>
+</ul>
+<a name="loadWorksheetProofLevelNumbers()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>loadWorksheetProofLevelNumbers</h4>
+<pre>public&nbsp;void&nbsp;loadWorksheetProofLevelNumbers()</pre>
+<div class="block">Initial load of proof worksheet step level numbers. Note: this assumes
+ that each ProofStepStmt.proofLevel is pre-initialized to zero.</div>
+</li>
+</ul>
+<a name="getOutputMessageText()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getOutputMessageText</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getOutputMessageText()</pre>
+<div class="block">Obtain output message text from ProofWorksheet.
+ <p>
+ Note: this is a key function used by ProofAsstGUI.
+ <p>
+ Note: with word wrap 'on', newlines are ignored in JTextArea, so we
+ insert spacer lines.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>Proof Error Message Text area as String.</dd></dl>
+</li>
+</ul>
+<a name="getOutputMessageText(mmj.lang.Messages)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getOutputMessageText</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;getOutputMessageText(<a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)</pre>
+<div class="block">Obtain output message text from ProofWorksheet.
+ <p>
+ Note: this is a key function used by ProofAsstGUI.
+ <p>
+ Note: with word wrap 'on', newlines are ignored in JTextArea, so we
+ insert spacer lines.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>messages</code> - Messages object.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>Proof Error Message Text area as String.</dd></dl>
+</li>
+</ul>
+<a name="getOutputMessageTextAbbrev(mmj.lang.Messages)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getOutputMessageTextAbbrev</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;getOutputMessageTextAbbrev(<a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;m)</pre>
+</li>
+</ul>
+<a name="getOutputProofText()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getOutputProofText</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getOutputProofText()</pre>
+<div class="block">Obtain output proof text from ProofWorksheet.
+ <p>
+ Note: this is a key function used by ProofAsstGUI.
+ <p>
+ Note: with word wrap 'on', newlines are ignored in JTextArea, so we
+ insert spacer lines.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>Proof Text area as String.</dd></dl>
+</li>
+</ul>
+<a name="addGeneratedProofStmt(mmj.lang.ParseTree.RPNStep[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addGeneratedProofStmt</h4>
+<pre>public&nbsp;void&nbsp;addGeneratedProofStmt(<a href="../../mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a>[]&nbsp;rpnProof)</pre>
+<div class="block">Insert a GeneratedProofStmt into the ProofWorksheet
+ <p>
+ Note: this is used by ProofAsst after successful unification.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>rpnProof</code> - Proof Stmt array.</dd></dl>
+</li>
+</ul>
+<a name="addGeneratedProofStmt(java.util.List, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addGeneratedProofStmt</h4>
+<pre>public&nbsp;void&nbsp;addGeneratedProofStmt(java.util.List&lt;<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>&gt;&nbsp;parenList,
+                         java.lang.String&nbsp;letters)</pre>
+</li>
+</ul>
+<a name="getGeneratedProofStmt()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getGeneratedProofStmt</h4>
+<pre>public&nbsp;<a href="../../mmj/pa/GeneratedProofStmt.html" title="class in mmj.pa">GeneratedProofStmt</a>&nbsp;getGeneratedProofStmt()</pre>
+<div class="block">Returns the GeneratedProofStmt from the ProofWorksheet
+ <p>
+ Note: returns null if unification unsuccessful or not yet performed.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>generatedProofStmt or null if not unified successfully.</dd></dl>
+</li>
+</ul>
+<a name="getDvStmtArray()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDvStmtArray</h4>
+<pre>public&nbsp;<a href="../../mmj/pa/DistinctVariablesStmt.html" title="class in mmj.pa">DistinctVariablesStmt</a>[]&nbsp;getDvStmtArray()</pre>
+<div class="block">Returns the DistinctVariablesStmt array from the ProofWorksheet.
+ <p>
+ Note: may return null.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>DistinctVariablesStmt array or null if there are none.</dd></dl>
+</li>
+</ul>
+<a name="generateAndAddDjVarsStmts()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>generateAndAddDjVarsStmts</h4>
+<pre>public&nbsp;void&nbsp;generateAndAddDjVarsStmts()</pre>
+<div class="block">Generate DistinctVariablesStmt set for soft DjVars errors.
+ <p>
+ Input is ProofWorksheet.proofSoftDjVarsErrorList and
+ ProofAsstPreferences, which determines whether a full replacement set of
+ DistinctVariableStmt's must be created, or only the differences to what
+ is already on the theorem in the .mm database.
+ <p>
+ Note that the ProofWorksheet's dvStmtArray, dvStmtCnt and comboFrame are
+ updated -- even though at this time there is no known use of these data
+ items after this point in the processing (which is just prior to
+ displaying the fully-unified proof on the GUI screen). However, there may
+ be a use for the updated data items in testing, and in any case it is
+ best no to leave loose ends dangling.
+ <p></div>
+</li>
+</ul>
+<a name="getProvableLogicStmtTyp()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getProvableLogicStmtTyp</h4>
+<pre>public&nbsp;<a href="../../mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a>&nbsp;getProvableLogicStmtTyp()</pre>
+</li>
+</ul>
+<a name="findFirstMatchingRefOrStep(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>findFirstMatchingRefOrStep</h4>
+<pre>public&nbsp;<a href="../../mmj/pa/ProofWorkStmt.html" title="class in mmj.pa">ProofWorkStmt</a>&nbsp;findFirstMatchingRefOrStep(java.lang.String&nbsp;localRef)</pre>
+</li>
+</ul>
+<a name="findMatchingStepNbr(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>findMatchingStepNbr</h4>
+<pre>public&nbsp;<a href="../../mmj/pa/ProofWorkStmt.html" title="class in mmj.pa">ProofWorkStmt</a>&nbsp;findMatchingStepNbr(java.lang.String&nbsp;newStepNbr)</pre>
+</li>
+</ul>
+<a name="loadComboFrameAndVarMap()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>loadComboFrameAndVarMap</h4>
+<pre>public&nbsp;void&nbsp;loadComboFrameAndVarMap()</pre>
+<div class="block">Load the combo frame and var array object for use throughout the
+ ProofWorksheet. For new theorems uses global ScopeDef from logical
+ system, pruned by eliminating MObj's with seq >= maxSeq. For existing
+ theorems, merges MandFrame and OptFrame. comboVarMap always built using
+ MandFrame for simplicity and reliability even though it would,
+ theoretically be possible to derive it for new theorems using the
+ ScopeDef (curiously, MandFrame/OptFrame do not directly store Var's --
+ probably because each VarHyp *has* an associated Var and it would be
+ redundant.)</div>
+</li>
+</ul>
+<a name="triggerLoadStructureException(java.lang.String, java.lang.Object...)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>triggerLoadStructureException</h4>
+<pre>public&nbsp;void&nbsp;triggerLoadStructureException(java.lang.String&nbsp;errorMessage,
+                                 java.lang.Object...&nbsp;args)
+                                   throws <a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></code></dd></dl>
+</li>
+</ul>
+<a name="triggerLoadStructureException(int, java.lang.String, java.lang.Object...)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>triggerLoadStructureException</h4>
+<pre>public&nbsp;void&nbsp;triggerLoadStructureException(int&nbsp;errorFldChars,
+                                 java.lang.String&nbsp;errorMessage,
+                                 java.lang.Object...&nbsp;args)
+                                   throws <a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></code></dd></dl>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<!-- ========= END OF CLASS DATA ========= -->
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<div class="bottomNav"><a name="navbar_bottom">
+<!--   -->
+</a><a href="#skip-navbar_bottom" title="Skip navigation links"></a><a name="navbar_bottom_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../index-all.html">Index</a></li>
+<li><a href="../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../mmj/pa/ProofUnifier.html" title="class in mmj.pa"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../mmj/pa/ProofWorksheetParser.html" title="class in mmj.pa"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../index.html?mmj/pa/ProofWorksheet.html" target="_top">Frames</a></li>
+<li><a href="ProofWorksheet.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_bottom">
+<li><a href="../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_bottom");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_bottom">
+<!--   -->
+</a></div>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+</body>
+</html>

@@ -1,0 +1,1732 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- NewPage -->
+<html lang="en">
+<head>
+<title>MMIOConstants</title>
+<link rel="stylesheet" type="text/css" href="../../stylesheet.css" title="Style">
+</head>
+<body>
+<script type="text/javascript"><!--
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="MMIOConstants";
+    }
+//-->
+</script>
+<noscript>
+<div>JavaScript is disabled on your browser.</div>
+</noscript>
+<!-- ========= START OF TOP NAVBAR ======= -->
+<div class="topNav"><a name="navbar_top">
+<!--   -->
+</a><a href="#skip-navbar_top" title="Skip navigation links"></a><a name="navbar_top_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../index-all.html">Index</a></li>
+<li><a href="../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../mmj/mmio/IncludeFile.html" title="class in mmj.mmio"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../mmj/mmio/MMIOError.html" title="class in mmj.mmio"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../index.html?mmj/mmio/MMIOConstants.html" target="_top">Frames</a></li>
+<li><a href="MMIOConstants.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_top">
+<li><a href="../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_top");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#methods_inherited_from_class_java.lang.Object">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li>Method</li>
+</ul>
+</div>
+<a name="skip-navbar_top">
+<!--   -->
+</a></div>
+<!-- ========= END OF TOP NAVBAR ========= -->
+<!-- ======== START OF CLASS DATA ======== -->
+<div class="header">
+<div class="subTitle">mmj.mmio</div>
+<h2 title="Class MMIOConstants" class="title">Class MMIOConstants</h2>
+</div>
+<div class="contentContainer">
+<ul class="inheritance">
+<li>java.lang.Object</li>
+<li>
+<ul class="inheritance">
+<li>mmj.mmio.MMIOConstants</li>
+</ul>
+</li>
+</ul>
+<div class="description">
+<ul class="blockList">
+<li class="blockList">
+<hr>
+<br>
+<pre>public class <span class="strong">MMIOConstants</span>
+extends java.lang.Object</pre>
+<div class="block">Constants used to parse MetaMath source statements.
+ <p>
+ Contains gnasty 7-bit ASCII code-set dependencies! Gasp... I can't even begin
+ to explain the ugliness of this bit-manipulating, symbol-tweaking horror
+ show. Old school all the way :) Needs to be fixed to move into the 21st
+ Century with Unicode -- that will be where we have 3D holo-IO infinite
+ virtual blackboards and virtual reality gloves and voice recognition units
+ that handle math symbols...in Phase IV of the project :)
+ <p>
+ From Metamath.pdf, 4.1:
+ <p>
+ The only characters that are allowed to appear in a Metamath source file are
+ the 94 printable characters on standard ascii keyboards, which are digits,
+ upper and lower case letters, and the following 32 special characters (plus
+ the following non-printable (white space) characters: space, tab, carriage
+ return, line feed, and form feed.:
+ <ul>
+ <li> <code>` ~ ! @ # $ % ^ &amp; * ( ) - _ = + </code>
+ <li> <code>[ ] { } ; : ' " , . < > / ? \ | </code>
+ <p>
+ There are two primary types of constants: parameters that are "hardcoded"
+ which affect/control processing, and error/info messages.
+ <p>
+ Each mmj message begins with a code, such as this:
+ <p>
+ <code>E-LA-0007</code>
+ <p>
+ where the format of the code is <code>X-YY-9999</code><br>
+ <p>
+ <b><code>X</code></b> : error level
+ <ul>
+ <li><code>E</code> = Error
+ <li><code>I</code> = Information
+ <li><code>A</code> = Abort (processing terminates, usually a bug).
+ </ul>
+ <p>
+ <b><code>YY</code></b> : source code
+ <ul>
+ <li><code>GM</code> = mmj.gmff package (see <a href="../../mmj/gmff/GMFFConstants.html" title="class in mmj.gmff"><code>GMFFConstants</code></a>)
+ <li><code>GR</code> = mmj.verify.Grammar and related code (see
+ <a href="../../mmj/verify/GrammarConstants.html" title="class in mmj.verify"><code>GrammarConstants</code></a>)
+ <li><code>IO</code> = mmj.mmio package (see <a href="../../mmj/mmio/MMIOConstants.html" title="class in mmj.mmio"><code>MMIOConstants</code></a>)
+ <li><code>LA</code> = mmj.lang package (see <a href="../../mmj/gmff/GMFFConstants.html" title="class in mmj.gmff"><code>GMFFConstants</code></a>)
+ <li><code>PA</code> = mmj.pa package (proof assistant) (see <a href="../../mmj/pa/PaConstants.html" title="class in mmj.pa"><code>PaConstants</code></a>)
+ <li><code>PR</code> = mmj.verify.VerifyProof and related code (see
+ <a href="../../mmj/verify/ProofConstants.html" title="class in mmj.verify"><code>ProofConstants</code></a>)
+ <li><code>TL</code> = mmj.tl package (Theorem Loader).
+ <li><code>TM</code> = mmj.tmff.AlignColumn and related code
+ <li><code>UT</code> = mmj.util package. (see <a href="../../mmj/util/UtilConstants.html" title="class in mmj.util"><code>UtilConstants</code></a>)
+ </ul>
+ <p>
+ <b><code>9999</code></b> : sequential number within the source code, 0001 through
+ 9999.</div>
+</li>
+</ul>
+</div>
+<div class="summary">
+<ul class="blockList">
+<li class="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static char</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#CARRIAGE_RETURN_CHAR">CARRIAGE_RETURN_CHAR</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#CHAPTER_ID_STRING">CHAPTER_ID_STRING</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#DEFAULT_TITLE">DEFAULT_TITLE</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#EOF_ERRMSG">EOF_ERRMSG</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_COMPRESSED_PROOF_IS_EMPTY">ERRMSG_COMPRESSED_PROOF_IS_EMPTY</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_EMPTY_CNST_STMT">ERRMSG_EMPTY_CNST_STMT</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_EMPTY_VAR_STMT">ERRMSG_EMPTY_VAR_STMT</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_EOF_AFTER_LABEL">ERRMSG_EOF_AFTER_LABEL</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_INCL_FILE_DUP">ERRMSG_INCL_FILE_DUP</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_INCL_FILE_NOTFND_1">ERRMSG_INCL_FILE_NOTFND_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_INCL_FILE_NOTFND_2">ERRMSG_INCL_FILE_NOTFND_2</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_INCLUDE_FILE_ARRAY_EMPTY">ERRMSG_INCLUDE_FILE_ARRAY_EMPTY</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_INCLUDE_FILE_LIST_ERR">ERRMSG_INCLUDE_FILE_LIST_ERR</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_INPUT_FILE_EMPTY">ERRMSG_INPUT_FILE_EMPTY</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_INV_CHAR_IN_LABEL">ERRMSG_INV_CHAR_IN_LABEL</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_INV_CHAR_IN_MATH_SYM">ERRMSG_INV_CHAR_IN_MATH_SYM</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_INV_CHAR_IN_PROOF_STEP">ERRMSG_INV_CHAR_IN_PROOF_STEP</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_INV_COMMENT_CHAR_STR">ERRMSG_INV_COMMENT_CHAR_STR</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_INV_INCLUDE_FILE_NAME">ERRMSG_INV_INCLUDE_FILE_NAME</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_INV_INPUT_CHAR">ERRMSG_INV_INPUT_CHAR</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_INV_KEYWORD">ERRMSG_INV_KEYWORD</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_LESS_THAN_2_DJVARS">ERRMSG_LESS_THAN_2_DJVARS</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_LOAD_LIMIT_STMT_LABEL_REACHED">ERRMSG_LOAD_LIMIT_STMT_LABEL_REACHED</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_LOAD_LIMIT_STMT_NBR_REACHED">ERRMSG_LOAD_LIMIT_STMT_NBR_REACHED</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_LOAD_REQ_FILE_DUP">ERRMSG_LOAD_REQ_FILE_DUP</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_LOAD_REQ_FILE_NOTFND">ERRMSG_LOAD_REQ_FILE_NOTFND</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_MISLABELLED_KEYWORD">ERRMSG_MISLABELLED_KEYWORD</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_MISSING_KEYWORD_AFTER_LABEL">ERRMSG_MISSING_KEYWORD_AFTER_LABEL</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_MISSING_LABEL">ERRMSG_MISSING_LABEL</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_MISSING_START_COMMENT">ERRMSG_MISSING_START_COMMENT</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_PREMATURE_INCLUDE_STMT_EOF">ERRMSG_PREMATURE_INCLUDE_STMT_EOF</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_PROHIBITED_LABEL">ERRMSG_PROHIBITED_LABEL</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_PROOF_IS_EMPTY">ERRMSG_PROOF_IS_EMPTY</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_PROOF_MISSING">ERRMSG_PROOF_MISSING</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_SET_STMT_NBR_LT_0">ERRMSG_SET_STMT_NBR_LT_0</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_SET_TOKENIZER_NULL">ERRMSG_SET_TOKENIZER_NULL</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_SKIP_AHEAD_FAILED">ERRMSG_SKIP_AHEAD_FAILED</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_STMT_HAS_DUP_TOKENS">ERRMSG_STMT_HAS_DUP_TOKENS</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_STMT_MISSING_TYPE">ERRMSG_STMT_MISSING_TYPE</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_STMT_PREMATURE_EOF">ERRMSG_STMT_PREMATURE_EOF</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_TXT_COLUMN">ERRMSG_TXT_COLUMN</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_TXT_KEYWORD">ERRMSG_TXT_KEYWORD</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_TXT_LABEL">ERRMSG_TXT_LABEL</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_TXT_LINE">ERRMSG_TXT_LINE</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_TXT_SOURCE_ID">ERRMSG_TXT_SOURCE_ID</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#ERRMSG_VAR_HYP_NE_2_TOKENS">ERRMSG_VAR_HYP_NE_2_TOKENS</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static byte</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#FILE_NAME">FILE_NAME</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static byte</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#LABEL">LABEL</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static byte[]</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#LABEL_CHARS">LABEL_CHARS</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static boolean</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#LOAD_COMMENTS_DEFAULT">LOAD_COMMENTS_DEFAULT</a></strong></code>
+<div class="block">Load Comments Default equal true.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static boolean</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#LOAD_PROOFS_DEFAULT">LOAD_PROOFS_DEFAULT</a></strong></code>
+<div class="block">Load Proofs Default equal true.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static byte</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MATH_SYMBOL">MATH_SYMBOL</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MISSING_PROOF_STEP">MISSING_PROOF_STEP</a></strong></code>
+<div class="block">Missing Proof Step label.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static char</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MM_AXIOMATIC_ASSRT_KEYWORD_CHAR">MM_AXIOMATIC_ASSRT_KEYWORD_CHAR</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static char</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MM_BEGIN_COMMENT_KEYWORD_CHAR">MM_BEGIN_COMMENT_KEYWORD_CHAR</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static char</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MM_BEGIN_COMPRESSED_PROOF_LIST_CHAR">MM_BEGIN_COMPRESSED_PROOF_LIST_CHAR</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static char</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MM_BEGIN_FILE_KEYWORD_CHAR">MM_BEGIN_FILE_KEYWORD_CHAR</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static char</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MM_BEGIN_SCOPE_KEYWORD_CHAR">MM_BEGIN_SCOPE_KEYWORD_CHAR</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static char</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MM_CNST_KEYWORD_CHAR">MM_CNST_KEYWORD_CHAR</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static char</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MM_DJ_VAR_KEYWORD_CHAR">MM_DJ_VAR_KEYWORD_CHAR</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MM_END_COMMENT_KEYWORD">MM_END_COMMENT_KEYWORD</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static char</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MM_END_COMMENT_KEYWORD_CHAR">MM_END_COMMENT_KEYWORD_CHAR</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static char</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MM_END_COMPRESSED_PROOF_LIST_CHAR">MM_END_COMPRESSED_PROOF_LIST_CHAR</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MM_END_FILE_KEYWORD">MM_END_FILE_KEYWORD</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static char</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MM_END_FILE_KEYWORD_CHAR">MM_END_FILE_KEYWORD_CHAR</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static char</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MM_END_SCOPE_KEYWORD_CHAR">MM_END_SCOPE_KEYWORD_CHAR</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MM_END_STMT_KEYWORD">MM_END_STMT_KEYWORD</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static char</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MM_END_STMT_KEYWORD_CHAR">MM_END_STMT_KEYWORD_CHAR</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MM_JAVA_REGEX_NEWLINE">MM_JAVA_REGEX_NEWLINE</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MM_JAVA_REGEX_WHITESPACE">MM_JAVA_REGEX_WHITESPACE</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static char</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MM_KEYWORD_1ST_CHAR">MM_KEYWORD_1ST_CHAR</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MM_KEYWORD_LEN">MM_KEYWORD_LEN</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MM_LABEL_IN_COMMENT_ESCAPE_STRING">MM_LABEL_IN_COMMENT_ESCAPE_STRING</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static char</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MM_LOG_HYP_KEYWORD_CHAR">MM_LOG_HYP_KEYWORD_CHAR</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static char</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MM_PROVABLE_ASSRT_KEYWORD_CHAR">MM_PROVABLE_ASSRT_KEYWORD_CHAR</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MM_START_COMMENT_KEYWORD">MM_START_COMMENT_KEYWORD</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MM_START_PROOF_KEYWORD">MM_START_PROOF_KEYWORD</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static char</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MM_VAR_HYP_KEYWORD_CHAR">MM_VAR_HYP_KEYWORD_CHAR</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static char</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MM_VAR_KEYWORD_CHAR">MM_VAR_KEYWORD_CHAR</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static char</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#NEW_LINE_CHAR">NEW_LINE_CHAR</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static byte[]</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#OTHER_MATH_SYMBOL_CHARS">OTHER_MATH_SYMBOL_CHARS</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static byte[]</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#OTHER_PRINTABLE_CHARS">OTHER_PRINTABLE_CHARS</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static byte[]</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#OTHER_PROOF_STEP_CHARS">OTHER_PROOF_STEP_CHARS</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static byte</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#PRINTABLE">PRINTABLE</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String[]</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#PROHIBITED_LABELS">PROHIBITED_LABELS</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static byte</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#PROOF_STEP">PROOF_STEP</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#READER_BUFFER_SIZE">READER_BUFFER_SIZE</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#SECTION_ID_STRING">SECTION_ID_STRING</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#TYPESETTING_AS_LITERAL">TYPESETTING_AS_LITERAL</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static char</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#TYPESETTING_ASTERISK_CHAR">TYPESETTING_ASTERISK_CHAR</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#TYPESETTING_C_COMMENT_END">TYPESETTING_C_COMMENT_END</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#TYPESETTING_C_COMMENT_START">TYPESETTING_C_COMMENT_START</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#TYPESETTING_COMMENT_ID_STRING">TYPESETTING_COMMENT_ID_STRING</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static char</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#TYPESETTING_DOUBLE_QUOTE_CHAR">TYPESETTING_DOUBLE_QUOTE_CHAR</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static char</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#TYPESETTING_PLUS_CHAR">TYPESETTING_PLUS_CHAR</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static char</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#TYPESETTING_SEMICOLON_CHAR">TYPESETTING_SEMICOLON_CHAR</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static char</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#TYPESETTING_SINGLE_QUOTE_CHAR">TYPESETTING_SINGLE_QUOTE_CHAR</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static char</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#TYPESETTING_SLASH_CHAR">TYPESETTING_SLASH_CHAR</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static byte[]</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#VALID_CHAR_ARRAY">VALID_CHAR_ARRAY</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static byte</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#WHITE_SPACE">WHITE_SPACE</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static byte[]</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#WHITE_SPACE_CHARS">WHITE_SPACE_CHARS</a></strong></code>&nbsp;</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor_summary">
+<!--   -->
+</a>
+<h3>Constructor Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
+<caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colOne" scope="col">Constructor and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../mmj/mmio/MMIOConstants.html#MMIOConstants()">MMIOConstants</a></strong>()</code>&nbsp;</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- ========== METHOD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_summary">
+<!--   -->
+</a>
+<h3>Method Summary</h3>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
+<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="details">
+<ul class="blockList">
+<li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a name="READER_BUFFER_SIZE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>READER_BUFFER_SIZE</h4>
+<pre>public static final&nbsp;int READER_BUFFER_SIZE</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.READER_BUFFER_SIZE">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="PRINTABLE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>PRINTABLE</h4>
+<pre>public static final&nbsp;byte PRINTABLE</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.PRINTABLE">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="WHITE_SPACE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>WHITE_SPACE</h4>
+<pre>public static final&nbsp;byte WHITE_SPACE</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.WHITE_SPACE">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="LABEL">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>LABEL</h4>
+<pre>public static final&nbsp;byte LABEL</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.LABEL">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="MATH_SYMBOL">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MATH_SYMBOL</h4>
+<pre>public static final&nbsp;byte MATH_SYMBOL</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.MATH_SYMBOL">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="FILE_NAME">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>FILE_NAME</h4>
+<pre>public static final&nbsp;byte FILE_NAME</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.FILE_NAME">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="PROOF_STEP">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>PROOF_STEP</h4>
+<pre>public static final&nbsp;byte PROOF_STEP</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.PROOF_STEP">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="VALID_CHAR_ARRAY">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>VALID_CHAR_ARRAY</h4>
+<pre>public static final&nbsp;byte[] VALID_CHAR_ARRAY</pre>
+</li>
+</ul>
+<a name="LABEL_CHARS">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>LABEL_CHARS</h4>
+<pre>public static final&nbsp;byte[] LABEL_CHARS</pre>
+</li>
+</ul>
+<a name="OTHER_MATH_SYMBOL_CHARS">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>OTHER_MATH_SYMBOL_CHARS</h4>
+<pre>public static final&nbsp;byte[] OTHER_MATH_SYMBOL_CHARS</pre>
+</li>
+</ul>
+<a name="OTHER_PROOF_STEP_CHARS">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>OTHER_PROOF_STEP_CHARS</h4>
+<pre>public static final&nbsp;byte[] OTHER_PROOF_STEP_CHARS</pre>
+</li>
+</ul>
+<a name="OTHER_PRINTABLE_CHARS">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>OTHER_PRINTABLE_CHARS</h4>
+<pre>public static final&nbsp;byte[] OTHER_PRINTABLE_CHARS</pre>
+</li>
+</ul>
+<a name="WHITE_SPACE_CHARS">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>WHITE_SPACE_CHARS</h4>
+<pre>public static final&nbsp;byte[] WHITE_SPACE_CHARS</pre>
+</li>
+</ul>
+<a name="PROHIBITED_LABELS">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>PROHIBITED_LABELS</h4>
+<pre>public static final&nbsp;java.lang.String[] PROHIBITED_LABELS</pre>
+</li>
+</ul>
+<a name="MM_KEYWORD_LEN">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MM_KEYWORD_LEN</h4>
+<pre>public static final&nbsp;int MM_KEYWORD_LEN</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.MM_KEYWORD_LEN">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="MM_KEYWORD_1ST_CHAR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MM_KEYWORD_1ST_CHAR</h4>
+<pre>public static final&nbsp;char MM_KEYWORD_1ST_CHAR</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.MM_KEYWORD_1ST_CHAR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="MM_CNST_KEYWORD_CHAR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MM_CNST_KEYWORD_CHAR</h4>
+<pre>public static final&nbsp;char MM_CNST_KEYWORD_CHAR</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.MM_CNST_KEYWORD_CHAR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="MM_VAR_KEYWORD_CHAR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MM_VAR_KEYWORD_CHAR</h4>
+<pre>public static final&nbsp;char MM_VAR_KEYWORD_CHAR</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.MM_VAR_KEYWORD_CHAR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="MM_DJ_VAR_KEYWORD_CHAR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MM_DJ_VAR_KEYWORD_CHAR</h4>
+<pre>public static final&nbsp;char MM_DJ_VAR_KEYWORD_CHAR</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.MM_DJ_VAR_KEYWORD_CHAR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="MM_VAR_HYP_KEYWORD_CHAR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MM_VAR_HYP_KEYWORD_CHAR</h4>
+<pre>public static final&nbsp;char MM_VAR_HYP_KEYWORD_CHAR</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.MM_VAR_HYP_KEYWORD_CHAR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="MM_LOG_HYP_KEYWORD_CHAR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MM_LOG_HYP_KEYWORD_CHAR</h4>
+<pre>public static final&nbsp;char MM_LOG_HYP_KEYWORD_CHAR</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.MM_LOG_HYP_KEYWORD_CHAR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="MM_AXIOMATIC_ASSRT_KEYWORD_CHAR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MM_AXIOMATIC_ASSRT_KEYWORD_CHAR</h4>
+<pre>public static final&nbsp;char MM_AXIOMATIC_ASSRT_KEYWORD_CHAR</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.MM_AXIOMATIC_ASSRT_KEYWORD_CHAR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="MM_PROVABLE_ASSRT_KEYWORD_CHAR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MM_PROVABLE_ASSRT_KEYWORD_CHAR</h4>
+<pre>public static final&nbsp;char MM_PROVABLE_ASSRT_KEYWORD_CHAR</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.MM_PROVABLE_ASSRT_KEYWORD_CHAR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="MM_BEGIN_SCOPE_KEYWORD_CHAR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MM_BEGIN_SCOPE_KEYWORD_CHAR</h4>
+<pre>public static final&nbsp;char MM_BEGIN_SCOPE_KEYWORD_CHAR</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.MM_BEGIN_SCOPE_KEYWORD_CHAR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="MM_END_SCOPE_KEYWORD_CHAR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MM_END_SCOPE_KEYWORD_CHAR</h4>
+<pre>public static final&nbsp;char MM_END_SCOPE_KEYWORD_CHAR</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.MM_END_SCOPE_KEYWORD_CHAR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="MM_BEGIN_COMMENT_KEYWORD_CHAR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MM_BEGIN_COMMENT_KEYWORD_CHAR</h4>
+<pre>public static final&nbsp;char MM_BEGIN_COMMENT_KEYWORD_CHAR</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.MM_BEGIN_COMMENT_KEYWORD_CHAR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="MM_END_COMMENT_KEYWORD_CHAR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MM_END_COMMENT_KEYWORD_CHAR</h4>
+<pre>public static final&nbsp;char MM_END_COMMENT_KEYWORD_CHAR</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.MM_END_COMMENT_KEYWORD_CHAR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="MM_BEGIN_COMPRESSED_PROOF_LIST_CHAR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MM_BEGIN_COMPRESSED_PROOF_LIST_CHAR</h4>
+<pre>public static final&nbsp;char MM_BEGIN_COMPRESSED_PROOF_LIST_CHAR</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.MM_BEGIN_COMPRESSED_PROOF_LIST_CHAR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="MM_END_COMPRESSED_PROOF_LIST_CHAR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MM_END_COMPRESSED_PROOF_LIST_CHAR</h4>
+<pre>public static final&nbsp;char MM_END_COMPRESSED_PROOF_LIST_CHAR</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.MM_END_COMPRESSED_PROOF_LIST_CHAR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="MM_END_STMT_KEYWORD_CHAR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MM_END_STMT_KEYWORD_CHAR</h4>
+<pre>public static final&nbsp;char MM_END_STMT_KEYWORD_CHAR</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.MM_END_STMT_KEYWORD_CHAR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="MM_BEGIN_FILE_KEYWORD_CHAR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MM_BEGIN_FILE_KEYWORD_CHAR</h4>
+<pre>public static final&nbsp;char MM_BEGIN_FILE_KEYWORD_CHAR</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.MM_BEGIN_FILE_KEYWORD_CHAR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="MM_END_FILE_KEYWORD_CHAR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MM_END_FILE_KEYWORD_CHAR</h4>
+<pre>public static final&nbsp;char MM_END_FILE_KEYWORD_CHAR</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.MM_END_FILE_KEYWORD_CHAR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="MM_END_STMT_KEYWORD">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MM_END_STMT_KEYWORD</h4>
+<pre>public static final&nbsp;java.lang.String MM_END_STMT_KEYWORD</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.MM_END_STMT_KEYWORD">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="MM_START_PROOF_KEYWORD">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MM_START_PROOF_KEYWORD</h4>
+<pre>public static final&nbsp;java.lang.String MM_START_PROOF_KEYWORD</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.MM_START_PROOF_KEYWORD">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="MM_END_COMMENT_KEYWORD">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MM_END_COMMENT_KEYWORD</h4>
+<pre>public static final&nbsp;java.lang.String MM_END_COMMENT_KEYWORD</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.MM_END_COMMENT_KEYWORD">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="MM_START_COMMENT_KEYWORD">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MM_START_COMMENT_KEYWORD</h4>
+<pre>public static final&nbsp;java.lang.String MM_START_COMMENT_KEYWORD</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.MM_START_COMMENT_KEYWORD">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="MM_END_FILE_KEYWORD">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MM_END_FILE_KEYWORD</h4>
+<pre>public static final&nbsp;java.lang.String MM_END_FILE_KEYWORD</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.MM_END_FILE_KEYWORD">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="MM_LABEL_IN_COMMENT_ESCAPE_STRING">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MM_LABEL_IN_COMMENT_ESCAPE_STRING</h4>
+<pre>public static final&nbsp;java.lang.String MM_LABEL_IN_COMMENT_ESCAPE_STRING</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.MM_LABEL_IN_COMMENT_ESCAPE_STRING">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="MM_JAVA_REGEX_WHITESPACE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MM_JAVA_REGEX_WHITESPACE</h4>
+<pre>public static final&nbsp;java.lang.String MM_JAVA_REGEX_WHITESPACE</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.MM_JAVA_REGEX_WHITESPACE">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="MM_JAVA_REGEX_NEWLINE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MM_JAVA_REGEX_NEWLINE</h4>
+<pre>public static final&nbsp;java.lang.String MM_JAVA_REGEX_NEWLINE</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.MM_JAVA_REGEX_NEWLINE">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="CHAPTER_ID_STRING">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CHAPTER_ID_STRING</h4>
+<pre>public static final&nbsp;java.lang.String CHAPTER_ID_STRING</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.CHAPTER_ID_STRING">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="SECTION_ID_STRING">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>SECTION_ID_STRING</h4>
+<pre>public static final&nbsp;java.lang.String SECTION_ID_STRING</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.SECTION_ID_STRING">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="TYPESETTING_COMMENT_ID_STRING">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>TYPESETTING_COMMENT_ID_STRING</h4>
+<pre>public static final&nbsp;java.lang.String TYPESETTING_COMMENT_ID_STRING</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.TYPESETTING_COMMENT_ID_STRING">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="TYPESETTING_C_COMMENT_START">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>TYPESETTING_C_COMMENT_START</h4>
+<pre>public static final&nbsp;java.lang.String TYPESETTING_C_COMMENT_START</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.TYPESETTING_C_COMMENT_START">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="TYPESETTING_C_COMMENT_END">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>TYPESETTING_C_COMMENT_END</h4>
+<pre>public static final&nbsp;java.lang.String TYPESETTING_C_COMMENT_END</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.TYPESETTING_C_COMMENT_END">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="TYPESETTING_AS_LITERAL">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>TYPESETTING_AS_LITERAL</h4>
+<pre>public static final&nbsp;java.lang.String TYPESETTING_AS_LITERAL</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.TYPESETTING_AS_LITERAL">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="TYPESETTING_SINGLE_QUOTE_CHAR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>TYPESETTING_SINGLE_QUOTE_CHAR</h4>
+<pre>public static final&nbsp;char TYPESETTING_SINGLE_QUOTE_CHAR</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.TYPESETTING_SINGLE_QUOTE_CHAR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="TYPESETTING_DOUBLE_QUOTE_CHAR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>TYPESETTING_DOUBLE_QUOTE_CHAR</h4>
+<pre>public static final&nbsp;char TYPESETTING_DOUBLE_QUOTE_CHAR</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.TYPESETTING_DOUBLE_QUOTE_CHAR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="TYPESETTING_PLUS_CHAR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>TYPESETTING_PLUS_CHAR</h4>
+<pre>public static final&nbsp;char TYPESETTING_PLUS_CHAR</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.TYPESETTING_PLUS_CHAR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="TYPESETTING_SLASH_CHAR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>TYPESETTING_SLASH_CHAR</h4>
+<pre>public static final&nbsp;char TYPESETTING_SLASH_CHAR</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.TYPESETTING_SLASH_CHAR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="TYPESETTING_ASTERISK_CHAR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>TYPESETTING_ASTERISK_CHAR</h4>
+<pre>public static final&nbsp;char TYPESETTING_ASTERISK_CHAR</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.TYPESETTING_ASTERISK_CHAR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="TYPESETTING_SEMICOLON_CHAR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>TYPESETTING_SEMICOLON_CHAR</h4>
+<pre>public static final&nbsp;char TYPESETTING_SEMICOLON_CHAR</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.TYPESETTING_SEMICOLON_CHAR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="DEFAULT_TITLE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>DEFAULT_TITLE</h4>
+<pre>public static final&nbsp;java.lang.String DEFAULT_TITLE</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.DEFAULT_TITLE">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="NEW_LINE_CHAR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>NEW_LINE_CHAR</h4>
+<pre>public static final&nbsp;char NEW_LINE_CHAR</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.NEW_LINE_CHAR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="CARRIAGE_RETURN_CHAR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CARRIAGE_RETURN_CHAR</h4>
+<pre>public static final&nbsp;char CARRIAGE_RETURN_CHAR</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.CARRIAGE_RETURN_CHAR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="LOAD_COMMENTS_DEFAULT">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>LOAD_COMMENTS_DEFAULT</h4>
+<pre>public static final&nbsp;boolean LOAD_COMMENTS_DEFAULT</pre>
+<div class="block">Load Comments Default equal true.
+ <p>
+ If set to true then Metamath comments, at least on theorems, will be
+ loaded into LogicalSystem.
+ <p>
+ If a Metamath comment statement immediately precedes a $p (Theorem)
+ statement then the comment is stored on the mmj.lang.MObj in the
+ "description" field. Later, perhaps, descriptions will be obtained for
+ all MObj's, but for now we just need them for Proof Assistant.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.LOAD_COMMENTS_DEFAULT">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="MISSING_PROOF_STEP">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MISSING_PROOF_STEP</h4>
+<pre>public static final&nbsp;java.lang.String MISSING_PROOF_STEP</pre>
+<div class="block">Missing Proof Step label.
+ <p>
+ Equal "?". Every proof must have at least one step according to
+ Metamath.pdf.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.MISSING_PROOF_STEP">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="LOAD_PROOFS_DEFAULT">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>LOAD_PROOFS_DEFAULT</h4>
+<pre>public static final&nbsp;boolean LOAD_PROOFS_DEFAULT</pre>
+<div class="block">Load Proofs Default equal true.
+ <p>
+ If set to true then Metamath proofs will be loaded as input. Otherwise, a
+ single step = "?" will be passed to the SystemLoader when adding a
+ Theorem.
+ <p></div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.LOAD_PROOFS_DEFAULT">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_TXT_SOURCE_ID">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_TXT_SOURCE_ID</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_TXT_SOURCE_ID</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_TXT_SOURCE_ID">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_TXT_LINE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_TXT_LINE</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_TXT_LINE</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_TXT_LINE">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_TXT_COLUMN">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_TXT_COLUMN</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_TXT_COLUMN</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_TXT_COLUMN">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_INV_INPUT_CHAR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_INV_INPUT_CHAR</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_INV_INPUT_CHAR</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_INV_INPUT_CHAR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_SKIP_AHEAD_FAILED">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_SKIP_AHEAD_FAILED</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_SKIP_AHEAD_FAILED</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_SKIP_AHEAD_FAILED">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_TXT_LABEL">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_TXT_LABEL</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_TXT_LABEL</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_TXT_LABEL">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_TXT_KEYWORD">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_TXT_KEYWORD</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_TXT_KEYWORD</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_TXT_KEYWORD">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_INV_KEYWORD">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_INV_KEYWORD</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_INV_KEYWORD</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_INV_KEYWORD">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_EMPTY_CNST_STMT">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_EMPTY_CNST_STMT</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_EMPTY_CNST_STMT</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_EMPTY_CNST_STMT">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_INV_CHAR_IN_MATH_SYM">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_INV_CHAR_IN_MATH_SYM</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_INV_CHAR_IN_MATH_SYM</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_INV_CHAR_IN_MATH_SYM">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_EMPTY_VAR_STMT">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_EMPTY_VAR_STMT</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_EMPTY_VAR_STMT</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_EMPTY_VAR_STMT">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_LESS_THAN_2_DJVARS">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_LESS_THAN_2_DJVARS</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_LESS_THAN_2_DJVARS</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_LESS_THAN_2_DJVARS">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_MISSING_LABEL">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_MISSING_LABEL</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_MISSING_LABEL</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_MISSING_LABEL">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_MISSING_START_COMMENT">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_MISSING_START_COMMENT</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_MISSING_START_COMMENT</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_MISSING_START_COMMENT">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_INV_CHAR_IN_LABEL">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_INV_CHAR_IN_LABEL</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_INV_CHAR_IN_LABEL</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_INV_CHAR_IN_LABEL">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_PROHIBITED_LABEL">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_PROHIBITED_LABEL</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_PROHIBITED_LABEL</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_PROHIBITED_LABEL">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_EOF_AFTER_LABEL">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_EOF_AFTER_LABEL</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_EOF_AFTER_LABEL</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_EOF_AFTER_LABEL">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_MISSING_KEYWORD_AFTER_LABEL">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_MISSING_KEYWORD_AFTER_LABEL</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_MISSING_KEYWORD_AFTER_LABEL</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_MISSING_KEYWORD_AFTER_LABEL">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_MISLABELLED_KEYWORD">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_MISLABELLED_KEYWORD</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_MISLABELLED_KEYWORD</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_MISLABELLED_KEYWORD">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_INV_COMMENT_CHAR_STR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_INV_COMMENT_CHAR_STR</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_INV_COMMENT_CHAR_STR</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_INV_COMMENT_CHAR_STR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_INV_INCLUDE_FILE_NAME">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_INV_INCLUDE_FILE_NAME</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_INV_INCLUDE_FILE_NAME</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_INV_INCLUDE_FILE_NAME">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_PREMATURE_INCLUDE_STMT_EOF">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_PREMATURE_INCLUDE_STMT_EOF</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_PREMATURE_INCLUDE_STMT_EOF</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_PREMATURE_INCLUDE_STMT_EOF">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_STMT_HAS_DUP_TOKENS">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_STMT_HAS_DUP_TOKENS</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_STMT_HAS_DUP_TOKENS</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_STMT_HAS_DUP_TOKENS">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_STMT_PREMATURE_EOF">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_STMT_PREMATURE_EOF</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_STMT_PREMATURE_EOF</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_STMT_PREMATURE_EOF">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_STMT_MISSING_TYPE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_STMT_MISSING_TYPE</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_STMT_MISSING_TYPE</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_STMT_MISSING_TYPE">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_VAR_HYP_NE_2_TOKENS">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_VAR_HYP_NE_2_TOKENS</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_VAR_HYP_NE_2_TOKENS</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_VAR_HYP_NE_2_TOKENS">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_PROOF_MISSING">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_PROOF_MISSING</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_PROOF_MISSING</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_PROOF_MISSING">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_INV_CHAR_IN_PROOF_STEP">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_INV_CHAR_IN_PROOF_STEP</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_INV_CHAR_IN_PROOF_STEP</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_INV_CHAR_IN_PROOF_STEP">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_PROOF_IS_EMPTY">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_PROOF_IS_EMPTY</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_PROOF_IS_EMPTY</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_PROOF_IS_EMPTY">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_SET_STMT_NBR_LT_0">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_SET_STMT_NBR_LT_0</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_SET_STMT_NBR_LT_0</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_SET_STMT_NBR_LT_0">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_SET_TOKENIZER_NULL">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_SET_TOKENIZER_NULL</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_SET_TOKENIZER_NULL</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_SET_TOKENIZER_NULL">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_COMPRESSED_PROOF_IS_EMPTY">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_COMPRESSED_PROOF_IS_EMPTY</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_COMPRESSED_PROOF_IS_EMPTY</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_COMPRESSED_PROOF_IS_EMPTY">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_INPUT_FILE_EMPTY">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_INPUT_FILE_EMPTY</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_INPUT_FILE_EMPTY</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_INPUT_FILE_EMPTY">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_INCL_FILE_NOTFND_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_INCL_FILE_NOTFND_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_INCL_FILE_NOTFND_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_INCL_FILE_NOTFND_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_INCL_FILE_NOTFND_2">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_INCL_FILE_NOTFND_2</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_INCL_FILE_NOTFND_2</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_INCL_FILE_NOTFND_2">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_INCL_FILE_DUP">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_INCL_FILE_DUP</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_INCL_FILE_DUP</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_INCL_FILE_DUP">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_LOAD_REQ_FILE_DUP">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_LOAD_REQ_FILE_DUP</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_LOAD_REQ_FILE_DUP</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_LOAD_REQ_FILE_DUP">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_LOAD_REQ_FILE_NOTFND">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_LOAD_REQ_FILE_NOTFND</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_LOAD_REQ_FILE_NOTFND</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_LOAD_REQ_FILE_NOTFND">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="EOF_ERRMSG">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>EOF_ERRMSG</h4>
+<pre>public static final&nbsp;java.lang.String EOF_ERRMSG</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.EOF_ERRMSG">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_INCLUDE_FILE_LIST_ERR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_INCLUDE_FILE_LIST_ERR</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_INCLUDE_FILE_LIST_ERR</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_INCLUDE_FILE_LIST_ERR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_LOAD_LIMIT_STMT_NBR_REACHED">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_LOAD_LIMIT_STMT_NBR_REACHED</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_LOAD_LIMIT_STMT_NBR_REACHED</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_LOAD_LIMIT_STMT_NBR_REACHED">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_LOAD_LIMIT_STMT_LABEL_REACHED">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_LOAD_LIMIT_STMT_LABEL_REACHED</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_LOAD_LIMIT_STMT_LABEL_REACHED</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_LOAD_LIMIT_STMT_LABEL_REACHED">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_INCLUDE_FILE_ARRAY_EMPTY">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>ERRMSG_INCLUDE_FILE_ARRAY_EMPTY</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_INCLUDE_FILE_ARRAY_EMPTY</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.mmio.MMIOConstants.ERRMSG_INCLUDE_FILE_ARRAY_EMPTY">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor_detail">
+<!--   -->
+</a>
+<h3>Constructor Detail</h3>
+<a name="MMIOConstants()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>MMIOConstants</h4>
+<pre>public&nbsp;MMIOConstants()</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<!-- ========= END OF CLASS DATA ========= -->
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<div class="bottomNav"><a name="navbar_bottom">
+<!--   -->
+</a><a href="#skip-navbar_bottom" title="Skip navigation links"></a><a name="navbar_bottom_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../index-all.html">Index</a></li>
+<li><a href="../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../mmj/mmio/IncludeFile.html" title="class in mmj.mmio"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../mmj/mmio/MMIOError.html" title="class in mmj.mmio"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../index.html?mmj/mmio/MMIOConstants.html" target="_top">Frames</a></li>
+<li><a href="MMIOConstants.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_bottom">
+<li><a href="../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_bottom");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#methods_inherited_from_class_java.lang.Object">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li>Method</li>
+</ul>
+</div>
+<a name="skip-navbar_bottom">
+<!--   -->
+</a></div>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+</body>
+</html>

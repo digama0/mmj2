@@ -6,87 +6,79 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  MergeSortedArrayLists.java  0.01 08/01/2008
+ * MergeSortedArrayLists.java  0.01 08/01/2008
  */
 
 package mmj.util;
+
 import java.util.*;
-import mmj.lang.Assrt;
 
 /**
- *  Class <code>MergeSortedArrayLists</code> merges elements
- *  of a sorted source into a sorted destination ArrayList.
- *  <p>
- *  Does in-place merge of source List into the
- *  destination ArrayList using the input comparator
- *  to maintain the sort sequence of the destination
- *  ArrayList.
- *  <p>
- *  A buffer of destination ArrayList elements is used
- *  as the "in place" merge proceeds. The idea is to
- *  reduce the number of destination array element shifts
- *  by making a single pass through the the destination array.
- *  <p>
- *  Assumes that input lists are correctly sorted. Makes
- *  no assumptions about uniqueness of input keys.
- *  <p>
- *  If the source and destination lists contain the same
- *  key, the source element replaces the destination element.
- *  <p>
+ * Class {@code MergeSortedArrayLists} merges elements of a sorted source into a
+ * sorted destination ArrayList.
+ * <p>
+ * Does in-place merge of source List into the destination ArrayList using the
+ * input comparator to maintain the sort sequence of the destination ArrayList.
+ * <p>
+ * A buffer of destination ArrayList elements is used as the "in place" merge
+ * proceeds. The idea is to reduce the number of destination array element
+ * shifts by making a single pass through the the destination array.
+ * <p>
+ * Assumes that input lists are correctly sorted. Makes no assumptions about
+ * uniqueness of input keys.
+ * <p>
+ * If the source and destination lists contain the same key, the source element
+ * replaces the destination element.
+ * <p>
+ * 
+ * @param <T> the actual type of the destination array
  */
-public class MergeSortedArrayLists {
+public class MergeSortedArrayLists<T> {
 
-    private int         destGetIndex
-                                  = 0;
-    private int         destPutIndex
-                                  = 0;
+    private int destGetIndex = 0;
+    private int destPutIndex = 0;
 
-    private Object      nextDest;
-    private Object      nextSrc;
+    private T nextDest;
+    private T nextSrc;
 
-    private ArrayList   dest;
+    private ArrayList<T> dest;
 
-    private List        src;
-    private Iterator    srcIterator;
+    private List<? extends T> src;
+    private Iterator<? extends T> srcIterator;
 
-    private LinkedList  buf;
-    private int         maxDestBuf;
+    private LinkedList<T> buf;
+    private int maxDestBuf;
 
-    private int         compareResult;
-
+    private int compareResult;
 
     /**
-     *  Does in-place merge of source List into the
-     *  destination ArrayList using the input comparator
-     *  to maintain the sort sequence of the destination
-     *  ArrayList.
-     *  <p>
-     *  A buffer of destination ArrayList elements is used
-     *  as the "in place" merge proceeds. The idea is to
-     *  reduce the number of destination array element shifts
-     *  by making a single pass through the the destination array.
-     *  <p>
-     *  Assumes that input lists are correctly sorted. Makes
-     *  no assumptions about uniqueness of input keys.
-     *  <p>
-     *  If the source and destination lists contain the same
-     *  key, the source element replaces the destination element.
-     *  <p>
-     *  @param destList ArrayList sorted in comparator order.
-     *  @param srcList List sorted in comparator order.
-     *  @param comparator Comparator for comparing list object.
-     *  @param abortIfDupsFound triggers IllegalObjectException
-     *         if srcList object equals a destList object
-     *
-     *  @throws IllegalArgumentException if a srcList object
-     *          equals a destList object and abortIfDupsFound
-     *          is true (the normal situation for Theorem Loader.)
+     * Does in-place merge of source List into the destination ArrayList using
+     * the input comparator to maintain the sort sequence of the destination
+     * ArrayList.
+     * <p>
+     * A buffer of destination ArrayList elements is used as the "in place"
+     * merge proceeds. The idea is to reduce the number of destination array
+     * element shifts by making a single pass through the the destination array.
+     * <p>
+     * Assumes that input lists are correctly sorted. Makes no assumptions about
+     * uniqueness of input keys.
+     * <p>
+     * If the source and destination lists contain the same key, the source
+     * element replaces the destination element.
+     * 
+     * @param destList ArrayList sorted in comparator order.
+     * @param srcList List sorted in comparator order.
+     * @param comparator Comparator for comparing list object.
+     * @param abortIfDupsFound triggers IllegalObjectException if srcList object
+     *            equals a destList object
+     * @throws IllegalArgumentException if a srcList object equals a destList
+     *             object and abortIfDupsFound is true (the normal situation for
+     *             Theorem Loader.)
      */
-    public MergeSortedArrayLists(ArrayList  destList,
-                                 List       srcList,
-                                 Comparator comparator,
-                                 boolean    abortIfDupsFound)
-                                    throws IllegalArgumentException {
+    public MergeSortedArrayLists(final ArrayList<T> destList,
+        final List<? extends T> srcList, final Comparator<T> comparator,
+        final boolean abortIfDupsFound) throws IllegalArgumentException
+    {
 
 //doh
 //      Iterator iterator = destList.iterator();
@@ -107,53 +99,47 @@ public class MergeSortedArrayLists {
 //      }
 //
 
-        src                       = srcList;
-        srcIterator               = src.iterator();
-        if ((nextSrc              = getNextSrc()) == null) {
+        src = srcList;
+        srcIterator = src.iterator();
+        if ((nextSrc = getNextSrc()) == null)
             return;
-        }
 
-        buf                       = new LinkedList();
+        buf = new LinkedList<T>();
 
-        dest                      = destList;
-        maxDestBuf                = dest.size();
+        dest = destList;
+        maxDestBuf = dest.size();
 
-        dest.ensureCapacity(dest.size() +
-                            src.size());
+        dest.ensureCapacity(dest.size() + src.size());
 
-        if ((nextDest             = getNextDest()) == null) {
+        if ((nextDest = getNextDest()) == null) {
             finishUsingSrc();
             return;
         }
 
         while (true) {
-            compareResult         = comparator.compare(nextSrc,
-                                                       nextDest);
-            if (compareResult > 0) { //nextDest < nextSrc
+            compareResult = comparator.compare(nextSrc, nextDest);
+            if (compareResult > 0) { // nextDest < nextSrc
                 put(nextDest);
-                if ((nextDest     = getNextDest()) == null) {
+                if ((nextDest = getNextDest()) == null) {
                     finishUsingSrc();
                     break;
                 }
             }
-            else {  //nextSrc <= nextDest
+            else { // nextSrc <= nextDest
                 if (compareResult == 0) {
-                    if (abortIfDupsFound) {
+                    if (abortIfDupsFound)
                         throw new IllegalArgumentException(
-                            UtilConstants.
-                                ERRMSG_MERGE_SORTED_LISTS_DUP_ERROR_1
-                            + nextSrc.toString()
-                            + UtilConstants.
-                                ERRMSG_MERGE_SORTED_LISTS_DUP_ERROR_2);
-                    }
+                            UtilConstants.ERRMSG_MERGE_SORTED_LISTS_DUP_ERROR_1
+                                + nextSrc.toString()
+                                + UtilConstants.ERRMSG_MERGE_SORTED_LISTS_DUP_ERROR_2);
                     if ((nextDest = getNextDest()) == null) {
                         finishUsingSrc();
                         break;
                     }
                 }
-                //nextSrc < nextDest
+                // nextSrc < nextDest
                 put(nextSrc);
-                if ((nextSrc      = getNextSrc()) == null) {
+                if ((nextSrc = getNextSrc()) == null) {
                     finishUsingDest();
                     break;
                 }
@@ -164,54 +150,47 @@ public class MergeSortedArrayLists {
     private void finishUsingSrc() {
         while (nextSrc != null) {
             put(nextSrc);
-            nextSrc               = getNextSrc();
+            nextSrc = getNextSrc();
         }
     }
 
     private void finishUsingDest() {
         while (nextDest != null) {
             put(nextDest);
-            nextDest              = getNextDest();
+            nextDest = getNextDest();
         }
     }
 
-    private void put(Object object) {
+    private void put(final T object) {
         /*
            !!! before outputting to dest, make sure that the dest
            list element is in the buffer if it is one of the
            original dest elements.
          */
         if (destPutIndex < dest.size()) {
-            if (destGetIndex <= destPutIndex) {
-//              inline: loadNextBufElement();
-                if (destGetIndex < maxDestBuf) {
+            if (destGetIndex <= destPutIndex)
+                // inline: loadNextBufElement();
+                if (destGetIndex < maxDestBuf)
                     buf.addLast(dest.get(destGetIndex++));
-                }
-            }
-            dest.set(destPutIndex,
-                     object);
+            dest.set(destPutIndex, object);
         }
-        else {
+        else
             dest.add(object);
-        }
         ++destPutIndex;
     }
 
-    private Object getNextSrc() {
-        if (srcIterator.hasNext()) {
+    private T getNextSrc() {
+        if (srcIterator.hasNext())
             return srcIterator.next();
-        }
-        else {
+        else
             return null;
-        }
     }
 
-    private Object getNextDest() {
-        if (buf.size() == 0) {
+    private T getNextDest() {
+        if (buf.isEmpty()) {
 //          inline: return loadNextBufElementVirtual();
-            if (destGetIndex < maxDestBuf) {
+            if (destGetIndex < maxDestBuf)
                 return dest.get(destGetIndex++);
-            }
             return null;
         }
         return buf.removeFirst();

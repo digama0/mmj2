@@ -13,109 +13,107 @@
 // ===                                                 ===
 // =======================================================
 
-/**
- *  GeneratedProofStmt.java  0.07 08/01/2008
- *  <code>
- *  Version 0.04:
- *      - Un-nested inner class
- *      - replace ProofWorkStmt.status
+/*
+ * GeneratedProofStmt.java  0.07 08/01/2008
+ * 
+ * Version 0.04:
+ *     - Un-nested inner class
+ *     - replace ProofWorkStmt.status
  *
- *  Nov-01-2007 Version 0.05
- *  - add abstract method computeFieldIdCol(int fieldId)
- *    for use in ProofAsstGUI (just in time) cursor
- *    positioning logic.
+ * Nov-01-2007 Version 0.05
+ * - add abstract method computeFieldIdCol(int fieldId)
+ *   for use in ProofAsstGUI (just in time) cursor
+ *   positioning logic.
  *
- *  Feb-01-2008 Version 0.06
- *  - add tmffReformat().
+ * Feb-01-2008 Version 0.06
+ * - add tmffReformat().
  *
- *  Aug-01-2008 Version 0.07
- *  - remove stmtHasError() method.
- *
- *  </code>
- *  GeneratedProofStatement is added automatically after
- *  successful unification.
- *  <p>
+ * Aug-01-2008 Version 0.07
+ * - remove stmtHasError() method.
  */
 
 package mmj.pa;
 
-import  mmj.lang.*;
+import java.util.List;
 
+import mmj.lang.ParseTree.RPNStep;
+import mmj.lang.Stmt;
+
+/**
+ * GeneratedProofStatement is added automatically after successful unification.
+ * <p>
+ */
 public class GeneratedProofStmt extends ProofWorkStmt {
-  //boolean           dummyField?
+    // boolean dummyField?
 
     /**
-     *  Default Constructor.
+     * Default Constructor.
+     * 
+     * @param w the owner ProofWorksheet
      */
-    public GeneratedProofStmt(ProofWorksheet w) {
+    public GeneratedProofStmt(final ProofWorksheet w) {
         super(w);
     }
 
     /**
-     *  Standard Constructor for GeneratedProofStmt.
-     *
-     *  @param rpnProof Proof Stmt Array in RPN format
+     * Standard Constructor for GeneratedProofStmt.
+     * 
+     * @param w the owner ProofWorksheet
+     * @param rpnProof Proof Stmt Array in RPN format
      */
-    public GeneratedProofStmt(ProofWorksheet w,
-                              Stmt[] rpnProof) {
+    public GeneratedProofStmt(final ProofWorksheet w, final RPNStep[] rpnProof)
+    {
         super(w);
 
-        lineCnt               = 1;
+        lineCnt = 1;
 
-        stmtText              =
-            new StringBuffer(rpnProof.length * 5); //5=guess
-        int left              =
-            w.proofAsstPreferences.getRPNProofLeftCol();
-        int right             =
-            w.proofAsstPreferences.getRPNProofRightCol();
-        StringBuffer indentLeft
-                              = new StringBuffer(left - 1);
-        for (int i = 1; i < left; i++) {
+        stmtText = new StringBuilder(rpnProof.length * 5); // 5=guess
+        final int left = w.proofAsstPreferences.getRPNProofLeftCol();
+        final int right = w.proofAsstPreferences.getRPNProofRightCol();
+        final StringBuilder indentLeft = new StringBuilder(left - 1);
+        for (int i = 1; i < left; i++)
             indentLeft.append(' ');
-        }
 
         stmtText.append(PaConstants.GENERATED_PROOF_STMT_TOKEN);
         stmtText.append(' ');
-        int col               = 4;
-        for ( ; col < left; col++) {
+        int col = 4;
+        for (; col < left; col++)
             stmtText.append(' ');
-        }
 
         String x;
-        int ps                = 0;
+        int ps = 0;
         while (true) {
             if (ps < rpnProof.length) {
-                x             = rpnProof[ps].getLabel();
+                if (rpnProof[ps].backRef == 0)
+                    x = rpnProof[ps].stmt.getLabel();
+                else if (rpnProof[ps].backRef < 0)
+                    x = -rpnProof[ps].backRef + ":"
+                        + rpnProof[ps].stmt.getLabel();
+                else
+                    x = rpnProof[ps].backRef + "";
             }
-            else {
-                if (ps > rpnProof.length) {
-                    stmtText.append(
-                        PaConstants.PROOF_WORKSHEET_NEW_LINE);
-                    ++lineCnt;
-                    break;
-                }
-                else {
-                    x         =
-                        PaConstants.END_PROOF_STMT_TOKEN;
-                }
+            else if (ps > rpnProof.length) {
+                stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
+                ++lineCnt;
+                break;
             }
+            else
+                x = PaConstants.END_PROOF_STMT_TOKEN;
             ++ps;
-            col              += x.length();
+            col += x.length();
             if (col == right) {
                 stmtText.append(x);
-                stmtText.append(
-                    PaConstants.PROOF_WORKSHEET_NEW_LINE);
+                stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
                 ++lineCnt;
                 stmtText.append(indentLeft);
-                col           = left;
+                col = left;
             }
             else {
                 if (col > right) {
-                    stmtText.append(
-                        PaConstants.PROOF_WORKSHEET_NEW_LINE);
+                    stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
                     ++lineCnt;
                     stmtText.append(indentLeft);
-                    col       = left;
+                    col = left;
                 }
                 stmtText.append(x);
                 stmtText.append(' ');
@@ -124,30 +122,104 @@ public class GeneratedProofStmt extends ProofWorkStmt {
         }
     }
 
+    public GeneratedProofStmt(final ProofWorksheet w,
+        final List<Stmt> parenList, final String letters)
+    {
+        super(w);
+
+        lineCnt = 1;
+
+        stmtText = new StringBuilder(parenList.size() * 5 + letters.length()); // 5=guess
+        final int left = w.proofAsstPreferences.getRPNProofLeftCol();
+        final int right = w.proofAsstPreferences.getRPNProofRightCol();
+        final StringBuilder indentLeft = new StringBuilder(left - 1);
+        for (int i = 1; i < left; i++)
+            indentLeft.append(' ');
+
+        stmtText.append(PaConstants.GENERATED_PROOF_STMT_TOKEN);
+        stmtText.append(' ');
+        int col = 4;
+        for (; col < left; col++)
+            stmtText.append(' ');
+        col++;
+        stmtText.append('(');
+
+        for (int i = 0; i <= parenList.size(); i++) {
+            String label;
+            if (i == parenList.size())
+                label = ")";
+            else
+                label = parenList.get(i).getLabel();
+            if (col + label.length() < right) {
+                stmtText.append(' ');
+                col++;
+            }
+            else {
+                stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
+                ++lineCnt;
+                stmtText.append(indentLeft);
+                col = left;
+            }
+            stmtText.append(label);
+            col += label.length();
+        }
+        if (col + 1 < right) {
+            stmtText.append(' ');
+            col++;
+        }
+        else {
+            stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
+            ++lineCnt;
+            stmtText.append(indentLeft);
+            col = left;
+        }
+        int lIndex = 0;
+        while (true) {
+            final int avail = right - col;
+            if (lIndex + avail >= letters.length()) {
+                stmtText.append(letters.substring(lIndex));
+                col += letters.length() - lIndex;
+                break;
+            }
+            stmtText.append(letters.substring(lIndex, lIndex += avail));
+            stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
+            ++lineCnt;
+            stmtText.append(indentLeft);
+            col = left;
+        }
+        if (col + 2 < right)
+            stmtText.append(' ');
+        else {
+            stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
+            ++lineCnt;
+            stmtText.append(indentLeft);
+        }
+        stmtText.append(PaConstants.END_PROOF_STMT_TOKEN);
+        stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
+    }
+
+    @Override
     public boolean stmtIsIncomplete() {
         return false;
     }
 
     /**
-     *  Function used for cursor positioning.
-     *  <p>
-     *
-     *  @param fieldId value identify ProofWorkStmt field
-     *         for cursor positioning, as defined in
-     *         PaConstants.FIELD_ID_*.
-     *
-     *  @return column of input fieldId or default value
-     *         of 1 if there is an error.
+     * Function used for cursor positioning.
+     * 
+     * @param fieldId value identify ProofWorkStmt field for cursor positioning,
+     *            as defined in PaConstants.FIELD_ID_*.
+     * @return column of input fieldId or default value of 1 if there is an
+     *         error.
      */
-    public int computeFieldIdCol(int fieldId) {
+    @Override
+    public int computeFieldIdCol(final int fieldId) {
         return 1;
     }
 
     /**
-     *  Reformats Derivation Step using TMFF.
+     * Reformats Derivation Step using TMFF.
      */
-    public void tmffReformat() {
-    }
+    @Override
+    public void tmffReformat() {}
 
 }
-

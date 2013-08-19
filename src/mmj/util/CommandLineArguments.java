@@ -6,309 +6,230 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  CommandLineArguments.java.java  0.01 11/01/2011
+ * CommandLineArguments.java.java  0.01 11/01/2011
  *
- *  Nov-01-2011 - Version 0.01
- *          --> new
+ * Nov-01-2011 - Version 0.01
+ *         --> new
  */
 
 package mmj.util;
 
-import java.io.*;
+import java.io.IOException;
+
 import mmj.pa.PaConstants;
 
 /**
- *  CommandLineArguments loads the arguments on the java
- *  command line into the <code>RunParmFile</code> and
- *  <code>Paths</code> objects.
- *  <p>
- *  This class is not general purpose. It is specific
- *  to mmj2's needs and is intended to localize
- *  everything related to the Command Line Arguments
- *  for easy use by <code>BatchFramework</code>.
- *  <p>
- *  Coincidentally (ha), the "String[] args" parameter
- *  for the constructor is the same as the BatchMMJ2
- *  command line parms.
+ * CommandLineArguments loads the arguments on the java command line into the
+ * {@code RunParmFile} and {@code Paths} objects.
+ * <p>
+ * This class is not general purpose. It is specific to mmj2's needs and is
+ * intended to localize everything related to the Command Line Arguments for
+ * easy use by {@code BatchFramework}.
+ * <p>
+ * Coincidentally (ha), the "String[] args" parameter for the constructor is the
+ * same as the BatchMMJ2 command line parms.
  */
 public class CommandLineArguments {
 
-	private String runParmFileNameArgument
-	                            = null;
-	private	String displayMMJ2FailPopupWindowArgument
-	                            = null;
-	private	String mmj2PathArgument
-	                            = null;
-	private	String metamathPathArgument
-	                            = null;
-	private	String svcPathArgument
-	                            = null;
-	private Paths		paths;
+    private String runParmFileNameArgument = null;
+    private String displayMMJ2FailPopupWindowArgument = null;
+    private String mmj2PathArgument = null;
+    private String metamathPathArgument = null;
+    private String svcPathArgument = null;
+    private final Paths paths;
 
-	private RunParmFile	runParmFile;
+    private final RunParmFile runParmFile;
 
-	private boolean 	displayMMJ2FailPopupWindow
-		                        =
-				UtilConstants.DISPLAY_MMJ2_FAIL_POPUP_WINDOW_DEFAULT;
+    private boolean displayMMJ2FailPopupWindow = UtilConstants.DISPLAY_MMJ2_FAIL_POPUP_WINDOW_DEFAULT;
 
     /**
-     *  Construct using "String[] args" parameters then load
-     *  <code>Paths</code>, <code>RunParmFile</code>,
-     *  displayMMJ2FailPopupWindow and testOption.
-     *  <p>
-     *  <b>args:</b>
-     *  <ol>
-     *  <li>args[0] = RunParmFileName. Required.
-     *                May be relative or absolute path name.
-     *                <ul>
-     *                <li>If relative path then mmj2Path
-     *                applied as parent path if specified; otherwise
-     *                Current Path used (by system).
-     *                <li>If absolute then mmj2Path is ignored.
-     *                </ul>
-     *
-     *  <li>args[1] = displayMMJ2FailPopupWindow. Optional.
-     *                May be "y" or "n" (case-insensitive), or " ".
-     *                Default setting is "y". Triggers popup
-     *                window displaying mmj2 error message if
-     *                mmj2 startup errors or mmj2 "fatal" errors.
-     *                If any CommandLineArguments are in error the
-     *                default setting is used regardless of this
-     *                argument.
-     *
-     *  <li>args[2] = mmj2Path. Optional. May be blank or empty string.
-     *                If no path specified the default path for mmj2
-     *                files is Current Path (unless otherwise indicated
-     *                in the documentation -- e.g. ProofAsstProofFolder).
-     *
-     *  <li>args[3] = metamathPath. Optional. May be blank or empty string.
-     *                If no path specified the default path for Metamath
-     *                files is Current Path (unless otherwise indicated
-     *                in the documentation -- e.g.
-     *                GMFFParseMetamathTypesetComment).
-     *
-     *  <li>args[4] = svcPath. Optional. May be blank or empty string.
-     *                If no path specified the default path for the mmj2
-     *                Service Feature is Current Path.
-     *
-     *  </ol>
-     *
-     *  @param args Array of String. runParmFileName,
-     *                displayMMJ2FailPopupWindow, mmj2Path,
-     *                metamathPath, svcPath, testOption.
-     *
-     *  @throws IllegalArgumentException if errors found.
+     * Construct using "String[] args" parameters then load {@code Paths},
+     * {@code RunParmFile}, displayMMJ2FailPopupWindow and testOption.
+     * <p>
+     * <b>args:</b>
+     * <ol>
+     * <li>args[0] = RunParmFileName. Required. May be relative or absolute path
+     * name.
+     * <ul>
+     * <li>If relative path then mmj2Path applied as parent path if specified;
+     * otherwise Current Path used (by system).
+     * <li>If absolute then mmj2Path is ignored.
+     * </ul>
+     * <li>args[1] = displayMMJ2FailPopupWindow. Optional. May be "y" or "n"
+     * (case-insensitive), or " ". Default setting is "y". Triggers popup window
+     * displaying mmj2 error message if mmj2 startup errors or mmj2 "fatal"
+     * errors. If any CommandLineArguments are in error the default setting is
+     * used regardless of this argument.
+     * <li>args[2] = mmj2Path. Optional. May be blank or empty string. If no
+     * path specified the default path for mmj2 files is Current Path (unless
+     * otherwise indicated in the documentation -- e.g. ProofAsstProofFolder).
+     * <li>args[3] = metamathPath. Optional. May be blank or empty string. If no
+     * path specified the default path for Metamath files is Current Path
+     * (unless otherwise indicated in the documentation -- e.g.
+     * GMFFParseMetamathTypesetComment).
+     * <li>args[4] = svcPath. Optional. May be blank or empty string. If no path
+     * specified the default path for the mmj2 Service Feature is Current Path.
+     * </ol>
+     * 
+     * @param args Array of String. runParmFileName, displayMMJ2FailPopupWindow,
+     *            mmj2Path, metamathPath, svcPath, testOption.
+     * @throws IOException if an error occurred
+     * @throws IllegalArgumentException if errors found.
      */
-    public CommandLineArguments(String[] args)
-                throws  IOException,
-                        IllegalArgumentException {
+    public CommandLineArguments(final String[] args) throws IOException,
+        IllegalArgumentException
+    {
 
-        if (args.length >
-        	UtilConstants.RUNPARM_FILE_NAME_ARGUMENT_INDEX) {
+        if (args.length > UtilConstants.RUNPARM_FILE_NAME_ARGUMENT_INDEX)
+            runParmFileNameArgument = getArg(args,
+                UtilConstants.RUNPARM_FILE_NAME_ARGUMENT_INDEX);
 
-		    runParmFileNameArgument
-			                    =
-				getArg(args,
-					   UtilConstants.RUNPARM_FILE_NAME_ARGUMENT_INDEX);
-		}
+        if (args.length > UtilConstants.DISPLAY_MMJ2_FAIL_POPUP_WINDOW_ARGUMENT_INDEX)
+            displayMMJ2FailPopupWindowArgument = getArg(args,
+                UtilConstants.DISPLAY_MMJ2_FAIL_POPUP_WINDOW_ARGUMENT_INDEX);
 
-		if (args.length >
-			UtilConstants.DISPLAY_MMJ2_FAIL_POPUP_WINDOW_ARGUMENT_INDEX) {
+        if (args.length > UtilConstants.MMJ2_PATH_ARGUMENT_INDEX)
+            mmj2PathArgument = getArg(args,
+                UtilConstants.MMJ2_PATH_ARGUMENT_INDEX);
 
-		    displayMMJ2FailPopupWindowArgument
-			                    =
-				getArg(args,
-					   UtilConstants.
-					   	DISPLAY_MMJ2_FAIL_POPUP_WINDOW_ARGUMENT_INDEX);
-		}
+        if (args.length > UtilConstants.METAMATH_PATH_ARGUMENT_INDEX)
+            metamathPathArgument = getArg(args,
+                UtilConstants.METAMATH_PATH_ARGUMENT_INDEX);
 
-	    if (args.length >
-	        UtilConstants.MMJ2_PATH_ARGUMENT_INDEX) {
+        if (args.length > UtilConstants.SVC_PATH_ARGUMENT_INDEX)
+            svcPathArgument = getArg(args,
+                UtilConstants.SVC_PATH_ARGUMENT_INDEX);
 
-		      mmj2PathArgument  =
-		      	getArg(args,
-		      		   UtilConstants.MMJ2_PATH_ARGUMENT_INDEX);
-		}
+        displayArgumentOptionReportPart1(args);
 
-	    if (args.length >
-	        UtilConstants.METAMATH_PATH_ARGUMENT_INDEX) {
+        paths = new Paths(mmj2PathArgument, metamathPathArgument,
+            svcPathArgument);
 
-		      metamathPathArgument  =
-		      	getArg(args,
-		      		   UtilConstants.METAMATH_PATH_ARGUMENT_INDEX);
-		}
+        displayArgumentOptionReportPart3(args);
 
-	    if (args.length >
-	        UtilConstants.SVC_PATH_ARGUMENT_INDEX) {
+        displayMMJ2FailPopupWindow = getDisplayMMJ2FailPopupWindowVar(displayMMJ2FailPopupWindowArgument);
 
-		      svcPathArgument  =
-		      	getArg(args,
-		      		   UtilConstants.SVC_PATH_ARGUMENT_INDEX);
-		}
+        displayArgumentOptionReportPart4(args);
 
-		displayArgumentOptionReportPart1(args);
+        runParmFile = new RunParmFile(paths, runParmFileNameArgument);
 
-		paths                   =
-			new Paths(mmj2PathArgument,
-					  metamathPathArgument,
-					  svcPathArgument);
+    }
 
-		displayArgumentOptionReportPart3(args);
+    /**
+     * Returns the {@code Paths} object.
+     * 
+     * @return The {@code Paths} object.
+     */
+    public Paths getPaths() {
+        return paths;
+    }
 
-		displayMMJ2FailPopupWindow
-		                        =
-			getDisplayMMJ2FailPopupWindowVar(
-				displayMMJ2FailPopupWindowArgument);
+    /**
+     * Returns the {@code RunParmFile} object.
+     * 
+     * @return The {@code RunParmFile} object.
+     */
+    public RunParmFile getRunParmFile() {
+        return runParmFile;
+    }
 
-		displayArgumentOptionReportPart4(args);
+    /**
+     * Returns the {@code displayMMJ2FailPopupWindow} value;
+     * 
+     * @return The {@code displayMMJ2FailPopupWindow} value;
+     */
+    public boolean getDisplayMMJ2FailPopupWindow() {
+        return displayMMJ2FailPopupWindow;
+    }
 
-		runParmFile             =
-		    new RunParmFile(paths,
-		                    runParmFileNameArgument);
+    /**
+     * Returns Y or N, or if no value entered, the default setting for the
+     * {@code displayMMJ2FailPopupWindow} variable.
+     * <p>
+     * Note that blanks and empty string values have been previously converted
+     * to {@code null}.
+     * 
+     * @param displayMMJ2FailPopupWindowArgument must equal Y, N or null.
+     * @return Y or N.
+     * @throws IllegalArgumentException if input not equal to Y, N or null.
+     */
+    private boolean getDisplayMMJ2FailPopupWindowVar(
+        final String displayMMJ2FailPopupWindowArgument)
+    {
 
-	}
+        boolean var = UtilConstants.DISPLAY_MMJ2_FAIL_POPUP_WINDOW_DEFAULT;
 
-	/**
-	 *  Returns the <code>Paths</code> object.
-	 *  <p>
-	 *  @return The <code>Paths</code> object.
-	 */
-	public Paths getPaths() {
-		return paths;
-	}
+        if (displayMMJ2FailPopupWindowArgument != null)
+            if (displayMMJ2FailPopupWindowArgument
+                .compareToIgnoreCase(UtilConstants.YES_ARGUMENT) == 0)
+                var = true;
+            else if (displayMMJ2FailPopupWindowArgument
+                .compareToIgnoreCase(UtilConstants.NO_ARGUMENT) == 0)
+                var = false;
+            else
+                throw new IllegalArgumentException(
+                    UtilConstants.ERRMSG_FAIL_POPUP_WINDOW_ARGUMENT_1
+                        + UtilConstants.DISPLAY_MMJ2_FAIL_POPUP_WINDOW_ARGUMENT_LITERAL
+                        + UtilConstants.ERRMSG_FAIL_POPUP_WINDOW_ARGUMENT_2
+                        + displayMMJ2FailPopupWindowArgument
+                        + UtilConstants.ERRMSG_COMMAND_LINE_ARGUMENTS_FORMAT);
+        return var;
+    }
 
-	/**
-	 *  Returns the <code>RunParmFile</code> object.
-	 *  <p>
-	 *  @return The <code>RunParmFile</code> object.
-	 */
-	public RunParmFile getRunParmFile() {
-		return runParmFile;
-	}
+    /**
+     * The java command line argument array element specified by
+     * {@code argIndex} is returned after converting it to {@code null} if it is
+     * blank or an empty string.
+     * 
+     * @param args Java command line arguments array
+     * @param argIndex index into args indicating the arg to retrieve
+     * @return The arg element specified by argIndex is returned after
+     *         converting it to null if it is blank or an empty string.
+     */
+    private String getArg(final String[] args, final int argIndex) {
 
-	/**
-	 *  Returns the <code>displayMMJ2FailPopupWindow</code>
-	 *  value;
-	 *  <p>
-	 *  @return The <code>displayMMJ2FailPopupWindow</code>
-	 *  value;
-	 */
-	public boolean getDisplayMMJ2FailPopupWindow() {
-		return displayMMJ2FailPopupWindow;
-	}
+        String s = args[argIndex];
 
-	/**
-	 *  Returns Y or N, or if no value entered, the default setting
-	 *  for the <code>displayMMJ2FailPopupWindow</code> variable.
-	 *  <p>
-	 *  Note that blanks and empty string values have been
-	 *  previously converted to <code>null</code>.
-	 *  <p>
-	 *  @param  displayMMJ2FailPopupWindowArgument must equal Y, N
-	 *          or null.
-	 *  @return Y or N.
-	 *  @throws IllegalArgumentException if input not equal to
-	 *          Y, N or null.
-	 */
-	private boolean getDisplayMMJ2FailPopupWindowVar(
-						String displayMMJ2FailPopupWindowArgument) {
+        if (s == null)
+            return null;
 
-		boolean var             =
-			UtilConstants.DISPLAY_MMJ2_FAIL_POPUP_WINDOW_DEFAULT;
+        s = s.trim();
 
-		if (displayMMJ2FailPopupWindowArgument != null) {
+        if (s.length() == 0)
+            return null;
 
-			if (displayMMJ2FailPopupWindowArgument.compareToIgnoreCase(
-				UtilConstants.YES_ARGUMENT) == 0) {
-				var             = true;
-			}
-			else {
+        return s;
+    }
 
-				if (displayMMJ2FailPopupWindowArgument.compareToIgnoreCase(
-					UtilConstants.NO_ARGUMENT) == 0) {
-					var             = false;
-				}
-				else {
-					throw new IllegalArgumentException(
-						UtilConstants.ERRMSG_FAIL_POPUP_WINDOW_ARGUMENT_1
-						+ UtilConstants.
-						    DISPLAY_MMJ2_FAIL_POPUP_WINDOW_ARGUMENT_LITERAL
-						+ UtilConstants.ERRMSG_FAIL_POPUP_WINDOW_ARGUMENT_2
-						+ displayMMJ2FailPopupWindowArgument
-						+ UtilConstants.ERRMSG_COMMAND_LINE_ARGUMENTS_FORMAT);
-				}
-			}
-		}
-		return var;
-	}
+    private void displayArgumentOptionReportPart1(final String[] args)
+        throws IOException
+    {
 
-	/**
-	 *  The java command line argument array element specified by
-	 *  <code>argIndex</code> is returned after converting it to
-	 *  <code>null</code> if it is blank or an empty string.
-	 *  <p>
-	 *  @param  args Java command line arguments array
-	 *  @param  argIndex index into args indicating the arg to retrieve
-	 *  @return The arg element specified by argIndex is returned
-	 *          after converting it to null if it is blank or an
-	 *          empty string.
-	 */
-    private String getArg(String[] args,
-                   int      argIndex) {
+        System.out.println(UtilConstants.ARGUMENTS_OPTION_REPORT_LINE_1);
 
-		String s                = args[argIndex];
+        System.out.println(PaConstants.PROOF_ASST_GUI_STARTUP_MSG);
+        System.out.println("");
 
-		if (s == null) {
-			return null;
-		}
+        System.out.println(UtilConstants.ARGUMENTS_OPTION_REPORT_LINE_2);
+        for (int i = 0; i < args.length; i++)
+            System.out.println(UtilConstants.ARGUMENTS_OPTION_REPORT_LINE_3A
+                + (i + 1) + UtilConstants.ARGUMENTS_OPTION_REPORT_LINE_3B
+                + args[i]);
+    }
 
-		s                       = s.trim();
+    private void displayArgumentOptionReportPart3(final String[] args)
+        throws IOException
+    {
 
-		if (s.length() == 0) {
-			return null;
-		}
+        RunParmFile.displayArgumentOptionReport(paths, runParmFileNameArgument);
 
-		return s;
-	}
+        System.out.print(UtilConstants.ARGUMENTS_OPTION_REPORT_LINE_4);
+    }
 
-	private void displayArgumentOptionReportPart1(String[] args)
-                throws  IOException {
+    private void displayArgumentOptionReportPart4(final String[] args) {
 
-		System.out.println(
-			UtilConstants.ARGUMENTS_OPTION_REPORT_LINE_1);
+        System.out.print(displayMMJ2FailPopupWindow + "\n");
 
-		System.out.println(PaConstants.PROOF_ASST_GUI_STARTUP_MSG);
-		System.out.println("");
-
-		System.out.println(
-			UtilConstants.ARGUMENTS_OPTION_REPORT_LINE_2);
-		for (int i = 0; i < args.length; i++) {
-			System.out.println(
-				UtilConstants.ARGUMENTS_OPTION_REPORT_LINE_3A
-				+ (i + 1)
-				+ UtilConstants.ARGUMENTS_OPTION_REPORT_LINE_3B
-				+ args[i]);
-		}
-	}
-
-	private void displayArgumentOptionReportPart3(String[] args)
-                throws  IOException {
-
-		RunParmFile.displayArgumentOptionReport(
-			paths,
-		    runParmFileNameArgument);
-
-		System.out.print(
-			UtilConstants.ARGUMENTS_OPTION_REPORT_LINE_4);
-	}
-
-	private void displayArgumentOptionReportPart4(String[] args) {
-
-		System.out.print(
-		    displayMMJ2FailPopupWindow
-		    + "\n");
-
-		System.out.println(
-			UtilConstants.ARGUMENTS_OPTION_REPORT_LINE_5);
-	}
+        System.out.println(UtilConstants.ARGUMENTS_OPTION_REPORT_LINE_5);
+    }
 }

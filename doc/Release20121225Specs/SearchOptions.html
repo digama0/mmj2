@@ -1,0 +1,1618 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+  <title>Search Options</title>
+</head><body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);" vlink="#ff0000" alink="#000088" link="#0000ff">
+<h2><big><big><span style="font-weight: bold;">Search Options<br>
+</span></big></big></h2>
+
+<big><big><span style="font-weight: bold;">
+</span></big></big><span style="font-style: italic; font-weight: bold; font-family: Arial Black;"></span>
+<hr style="width: 100%; height: 2px;">
+<h1>Contents</h1>
+
+
+<h3 style="font-style: italic; color: rgb(51, 51, 255);"><a href="SearchOptions.html#SEARCH_OPTIONS_WINDOW"><big>SEARCH OPTIONS WINDOW</big></a></h3>
+
+<h3 style="font-style: italic;"><small><a href="#SCREEN_FLOW"><big><big><span style="color: rgb(51, 51, 255);">SCREEN FLOW</span></big></big></a></small></h3>
+<div style="margin-left: 40px;"><a href="#Screen_Flow_Diagram"><big>Search Screen Flow Diagram</big></a><br>
+<br>
+</div>
+
+<h3 style="font-style: italic;"><a href="#LOGICAL_DATA_FLOW"><big><span style="color: rgb(51, 51, 255);"><span style="text-decoration: underline;">LOGICAL DATA FLOW</span></span></big></a></h3>
+
+
+<div style="margin-left: 40px;"><span style="text-decoration: underline; color: rgb(51, 51, 255);"><big><a href="#Search_Logical_Data_Flow_Diagram">Search Logical Data Flow Diagram</a></big></span><br>
+<br>
+
+</div><h3 style="color: rgb(51, 51, 255);"><small><a href="#SEARCH_DATA"><big><big>SEARCH DATA</big></big></a></small></h3>
+<div style="margin-left: 40px;"><a href="#reset_search_data_defaults"><big><span style="text-decoration: underline; color: rgb(51, 51, 255);">reset</span></big></a><span style="font-family: Arial Black; font-style: italic;"></span><br>
+</div>
+
+
+<span style="font-family: Arial Black; font-style: italic;">
+</span><span style="font-family: Arial Black; font-style: italic;"></span><br>
+<span style="text-decoration: underline; font-weight: bold; color: rgb(51, 51, 255);"><a href="#SEARCH_DATA_OPTIONS_fields"><big>SEARCH DATA OPTIONS fields</big></a><big>:</big><br>
+<br>
+</span>
+<div style="margin-left: 40px;"><a href="SearchOptions.html#OR"><big><span style="text-decoration: underline; color: rgb(51, 51, 255);">OR</span></big></a><span style="font-family: Arial Black; font-style: italic;"></span><br>
+<span style="font-family: Arial Black; font-style: italic;">
+</span><br>
+<span style="font-family: Arial Black; font-style: italic;">
+</span><a href="SearchOptions.html#QUOTE"><big style="text-decoration: underline; color: rgb(51, 51, 255);">QUOTE</big></a><br>
+<span style="font-family: Arial Black; font-style: italic;"></span><br>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<br>
+
+
+
+<div style="text-align: left;"><a href="#SEARCH_CRITERIA_fields:"><span style="text-decoration: underline; font-weight: bold; color: rgb(51, 51, 255);"><big>SEARCH CRITERIA fields:</big></span></a><br>
+</div>
+<span style="text-decoration: underline; font-weight: bold; color: rgb(51, 51, 255);"></span><br>
+<div style="margin-left: 40px;"><a href="#OR"><big><span style="text-decoration: underline; color: rgb(51, 51, 255);"></span></big></a><a href="#Search-In-What"><big style="text-decoration: underline; color: rgb(51, 51, 255);">Search-In-What</big></a><br>
+<big style="text-decoration: underline; color: rgb(51, 51, 255);">
+</big><br>
+<big style="text-decoration: underline; color: rgb(51, 51, 255);">
+</big><a href="#Format"><big style="text-decoration: underline; color: rgb(51, 51, 255);">Format</big><span style="font-family: Arial Black; font-style: italic; font-weight: bold;"></span></a><br>
+<br>
+<a href="#Oper"><big style="text-decoration: underline; color: rgb(51, 51, 255);">Oper</big></a><br>
+<br>
+<a href="#Search-For-What"><big style="text-decoration: underline; color: rgb(51, 51, 255);">Search-For-What</big></a><br>
+<br>
+<a href="#Or"><big style="text-decoration: underline; color: rgb(51, 51, 255);">Or</big></a><br>
+<br>
+
+</div><span style="font-family: Arial Black; font-style: italic;">
+
+</span>
+<div style="margin-left: 40px;"><span style="font-weight: bold; font-style: italic;"><a href="#Table:_Valid_Combinations_of_Oper"><span style="font-family: Arial Black; text-decoration: underline;">Table: Valid Combinations of </span><span style="color: rgb(51, 51, 255); font-family: Arial Black; text-decoration: underline;">Oper</span><span style="font-family: Arial Black; text-decoration: underline;">, </span><span style="color: rgb(51, 51, 255); font-family: Arial Black; text-decoration: underline;">Search-In-What</span><span style="font-family: Arial Black; text-decoration: underline;"> and </span><span style="color: rgb(51, 51, 255); font-family: Arial Black; text-decoration: underline;">Format</span></a><span style="font-family: Arial Black;"><a href="#Table:_Valid_Combinations_of_Oper"><span style="text-decoration: underline;">:</span></a></span></span><br>
+<big style="font-style: italic;"><span style="font-weight: bold;"><span style="font-family: Arial Black;"></span></span></big></div>
+<big style="font-style: italic;"><span style="font-weight: bold;"><span style="font-family: Arial Black;">
+<br>
+</span></span></big>
+<div style="margin-left: 40px;"><a href="#FORMAT_Types:_"><span style="text-decoration: underline; color: rgb(51, 51, 255);"><big>FORMAT Types:</big></span></a><br>
+<span style="text-decoration: underline; font-weight: bold; color: rgb(51, 51, 255);"></span></div>
+<span style="text-decoration: underline; font-weight: bold; color: rgb(51, 51, 255);"><big>
+
+</big></span>
+<div style="margin-left: 40px;">
+<ul>
+  <li><a href="#ParseExpr_and_ParseStmt"><big style="text-decoration: underline; color: rgb(51, 51, 255);">ParseExpr and ParseStmt</big></a></li>
+  <li style="font-style: italic; color: rgb(51, 51, 255);"><a href="#Table:_ParseExpr_and_ParseStmt_Oper"><span style="font-weight: bold;"><span style="font-family: Arial Black;"><span style="text-decoration: underline;">Table: ParseExpr and ParseStmt </span></span><span style="font-family: Arial Black; text-decoration: underline;">Oper Values:</span></span></a></li>
+
+  <li><a href="#CharString"><big style="text-decoration: underline; color: rgb(51, 51, 255);">CharString</big></a></li>
+  <li><a href="#RegExpr"><big style="text-decoration: underline; color: rgb(51, 51, 255);">RegExpr</big></a></li>
+</ul><br>
+</div>
+<a href="#SEARCH_DOMAIN_fields:"><span style="text-decoration: underline; font-weight: bold; color: rgb(51, 51, 255);"><big>SEARCH DOMAIN fields:</big></span></a><br>
+<br>
+<div style="margin-left: 40px;"><big><span style="color: rgb(51, 51, 255); text-decoration: underline;"></span></big><a href="#From_ChapSec_and_Thru_ChapSec"><big style="text-decoration: underline; color: rgb(51, 51, 255);">From Chap/Sec and Thru Chap/Sec</big></a><span style="font-family: Arial Black; font-style: italic;"></span><br>
+<span style="font-family: Arial Black; font-style: italic;">
+</span><br><a href="#About_Metamath_Chapters_and_Sections"><big style="text-decoration: underline; color: rgb(51, 51, 255);">About Metamath Chapters and Sections</big></a><br>
+</div>
+
+
+
+<big><big>
+<br>
+</big></big>
+<h3 style="color: rgb(51, 51, 255);"><small><a href="#SEARCH_PREFERENCES"><big><big>SEARCH PREFERENCES</big></big></a></small></h3>
+
+<div style="margin-left: 40px;"><a href="#reset_search_preferences_defaults"><big><span style="text-decoration: underline; color: rgb(51, 51, 255);">reset</span></big><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">
+</span></a><span style="font-family: Arial Black; font-style: italic;"></span><br>
+<span style="font-family: Arial Black; font-style: italic;"></span></div>
+<span style="font-family: Arial Black; font-style: italic;">
+</span><span style="text-decoration: underline; font-weight: bold; color: rgb(51, 51, 255);"><big><br>
+</big></span><span style="text-decoration: underline; color: rgb(51, 51, 255); font-weight: bold;"><big><a href="#EXCLUSION_PREFERENCES">EXCLUSION PREFERENCES</a><br>
+<br>
+</big></span>
+<div style="margin-left: 40px;"><big><span style="text-decoration: underline; color: rgb(51, 51, 255);"><a href="#Labels">Labels</a></span></big><br>
+<big><span style="text-decoration: underline; color: rgb(51, 51, 255);">
+</span></big><br>
+<big><span style="text-decoration: underline; color: rgb(51, 51, 255);">
+</span></big><a href="#Min_Times_Used_In_Proofs_"><big style="color: rgb(51, 51, 255); text-decoration: underline;">Min Times Used In Proofs</big></a><br>
+<br>
+<big style="text-decoration: underline; color: rgb(51, 51, 255);"><a href="#Min_Hyps_and_MaxHyps">Min Hyps and Max Hyps</a></big><br>
+<big style="text-decoration: underline; color: rgb(51, 51, 255);">
+</big><br>
+<big style="text-decoration: underline; color: rgb(51, 51, 255);"><a href="SearchOptions.html#Max_Search_Results">Max Search Results</a></big><br>
+
+<br>
+<big style="text-decoration: underline; color: rgb(51, 51, 255);">
+</big><big style="color: rgb(51, 51, 255);"><span style="text-decoration: underline;"><a href="#Must_Be_Unifiable_With_Step">Must Be Unifiable With Step</a></span></big><br>
+<br>
+<big><span style="color: rgb(51, 51, 255); text-decoration: underline;"><a href="SearchOptions.html#Use_Related_ChapterSection_Hierarchy">Use Related Chapter/Section Hierarchy</a></span></big><big><span style="color: rgb(51, 51, 255); text-decoration: underline;"></span></big><br>
+
+<span style="font-family: Arial Black; font-style: italic;">
+</span>
+<ul>
+  <li><a href="SearchOptions.html#Related_ChapterSection_Hierarchy_Diagram"><big style="color: rgb(51, 51, 255);"><span style="text-decoration: underline;">Related Chapter/Section Hierarchy Diagram</span></big></a></li>
+  <li><a href="SearchOptions.html#About_Metamath_Chapters_and_Sections"><big style="text-decoration: underline; color: rgb(51, 51, 255);">About Metamath Chapters and Sections</big></a></li>
+</ul>
+
+
+
+
+
+<a href="SearchOptions.html#Search-Proximity_Scoring"><big style="text-decoration: underline; color: rgb(51, 51, 255);">Search-Proximity Scoring</big></a><br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+
+<span style="text-decoration: underline; font-weight: bold; color: rgb(51, 51, 255);"></span><span style="text-decoration: underline; font-weight: bold; color: rgb(51, 51, 255);"><big></big></span><br>
+</div><big style="color: rgb(51, 51, 255);"><span style="text-decoration: underline;">
+</span></big><span style="text-decoration: underline; font-weight: bold; color: rgb(51, 51, 255);"><big><a href="#EXTENDED_SEARCH_PREFERENCES">EXTENDED SEARCH PREFERENCES</a><br>
+<br>
+</big></span>
+<div style="margin-left: 40px;"><a href="#Min_Completed_Search_Results"><big style="text-decoration: underline; color: rgb(51, 51, 255);">Min Completed Search Results</big></a><br>
+<br>
+<big style="text-decoration: underline; color: rgb(51, 51, 255);">
+<a href="#Check_First_N_Search_Results">Check First N Search Results</a></big><br>
+<span style="text-decoration: underline; font-weight: bold; color: rgb(51, 51, 255);"></span><br>
+<span style="text-decoration: underline; font-weight: bold; color: rgb(51, 51, 255);"></span><a href="#Max_Incomplete_Hyps"><big style="color: rgb(51, 51, 255);">
+<span style="text-decoration: underline;">Max Incomplete Hyps</span></big></a><br>
+<span style="text-decoration: underline; font-weight: bold; color: rgb(51, 51, 255);"><big>
+</big></span><br>
+<span style="text-decoration: underline; font-weight: bold; color: rgb(51, 51, 255);"></span><big style="text-decoration: underline; color: rgb(51, 51, 255);"><a href="#Max_Prev_Steps_Checked">Max Prev Steps Checked</a></big><br>
+<br>
+<big style="text-decoration: underline; color: rgb(51, 51, 255);"><a href="#Reuse_Derivation_Steps">Reuse Derivation Steps</a></big><br>
+</div>
+
+
+
+<big style="text-decoration: underline; color: rgb(51, 51, 255);"><br>
+</big><span style="text-decoration: underline; font-weight: bold; color: rgb(51, 51, 255);"><big><a href="#OUTPUT_PREFERENCES">OUTPUT PREFERENCES</a><br>
+<br>
+</big></span>
+<div style="margin-left: 40px;">
+<div style="text-align: left;"><big style="text-decoration: underline; color: rgb(51, 51, 255);"><a href="#Max_Elapsed_Seconds">Max Elapsed Seconds</a></big><br>
+
+<br>
+
+<big style="text-decoration: underline; color: rgb(51, 51, 255);"><a href="#Show_Unification_Substitutions">Show Unification Substitutions</a></big><br>
+
+<br>
+
+<big style="text-decoration: underline; color: rgb(51, 51, 255);"><a href="#Auto_Select">Auto-Select (Update Proof Step) </a></big><br>
+</div>
+<br>
+</div>
+<div style="margin-left: 40px;"><a href="SearchOptions.html#Output_Sort_Sequence"><big style="text-decoration: underline; color: rgb(51, 51, 255);">Output Sort Sequence</big></a><br>
+<ul>
+  <li><small><a href="SearchOptions.html#SORT_KEY_FIELDS_TABLE"><span style="font-family: Arial Black; font-style: italic; text-decoration: underline; color: rgb(51, 51, 255);">SORT KEY FIELDS TABLE</span></a></small></li>
+  <li><small><a href="SearchOptions.html#SORT_SEQUENCE_TABLE"><span style="font-family: Arial Black; font-style: italic; text-decoration: underline; color: rgb(51, 51, 255);">SORT SEQUENCE TABLE</span></a></small></li>
+</ul>
+</div>
+
+
+<big style="text-decoration: underline; color: rgb(51, 51, 255);">
+<br>
+</big><br>
+
+
+<hr style="width: 100%; height: 2px;">
+<h3 style="font-style: italic; color: rgb(51, 51, 255);"><big><big><a name="SEARCH_OPTIONS_WINDOW"></a><small>SEARCH OPTIONS WINDOW</small></big></big><br>
+</h3>
+<span style="font-style: italic;"><span style="font-weight: bold;"><br>
+</span></span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">Here is a mock-up of the Search Options screen. Note the <span style="color: rgb(51, 51, 255);">SEARCH DATA</span> and <span style="color: rgb(51, 51, 255);">SEARCH PREFERENCES</span></span>&nbsp; <span style="font-style: italic; font-weight: bold; font-family: Arial Black;">sections.
+Search Data must be entered befor each search -- or restored via the
+saved data on the PrevSearchData menu, whereas the SEARCH PREFERENCES
+are retained from one search to the next.</span><br>
+
+<ul>
+<li><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">Pulldown menus are indicated with "</span><big><span style="font-family: monospace; font-weight: bold;">|+|</span></big><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">" .</span></li><li><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">"</span><big><span style="font-family: monospace; font-weight: bold;">.........</span></big><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">" indicates pulldown text.</span></li><li><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">Single "</span><big><span style="font-family: monospace; font-weight: bold;">X</span></big><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">" indicates Toggle On/Off. </span></li><li><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">"</span><big><span style="font-family: monospace; font-weight: bold;">XXXXXXX</span></big><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">" indicates text entry/display. </span></li><li><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">"</span><big><span style="font-family: monospace; font-weight: bold;">99999</span></big><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">" indicates numeric entry. </span></li><li><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">Buttons are (crudely) indicated in the mockup at the bottom of the screen like this:&nbsp; "<code><big>//New Search\\</big>"</code>.<span style="text-decoration: underline;"></span></span></li>
+</ul><br>
+&nbsp;
+<small><span style="font-family: Arial Black; text-decoration: underline; font-style: italic;"></span></small>
+
+<big><span style="font-family: monospace; font-weight: bold;">mmj2 Search Options THEOREM XXXXXXXXXXXX LOC_AFTER XXXXXXXXXXXX STEP XXXXXX<br>
+&nbsp;File&nbsp; Cancel&nbsp; Edit&nbsp; Other&nbsp; PrevSearchData&nbsp; Queries&nbsp; Tools&nbsp; Help </span><br style="font-family: monospace; font-weight: bold;">
+<span style="font-family: monospace; font-weight: bold;">&nbsp;<span style="color: rgb(51, 51, 255);">____<a href="SearchOptions.html#SEARCH_DATA"><span style="font-style: italic;">SEARCH_DATA</span></a>____________</span> //<a href="#reset_search_data_defaults">reset</a>\\&nbsp;&nbsp;&nbsp; Text-Separators: <a href="#OR">OR</a>: OR&nbsp;&nbsp; <a href="#QUOTE">QUOTE</a>: "</span><br style="font-family: monospace; font-weight: bold;">&nbsp;
+<span style="font-family: monospace; font-weight: bold;"><a href="#Search-In-What">Search-In-What</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="#Format">Format</a>&nbsp; &nbsp; &nbsp;&nbsp;&nbsp; <a href="#Oper">Oper</a>&nbsp;&nbsp;
+<a href="#Search-For-What">Search-For-What</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#Or">Or</a><br>
+&nbsp;|...............|+| |.........|+| |..|+| |XXXXXXXXXXXXXXXXXXXXXXXXXXXX|+| X<br>
+&nbsp;|...............|+| |.........|+| |..|+| |XXXXXXXXXXXXXXXXXXXXXXXXXXXX|+| X<br>
+&nbsp;|...............|+| |.........|+| |..|+| |XXXXXXXXXXXXXXXXXXXXXXXXXXXX|+| X<br>
+&nbsp;|...............|+| |.........|+| |..|+| |XXXXXXXXXXXXXXXXXXXXXXXXXXXX|+| X<br></span></big><big><span style="font-family: monospace; font-weight: bold;">&nbsp; <a href="#From_ChapSec_and_Thru_ChapSec">From Chap</a> |.....................|+| <a href="#From_ChapSec_and_Thru_ChapSec">Sec</a> |..............................|+|</span><br style="font-family: monospace; font-weight: bold;">
+<span style="font-family: monospace; font-weight: bold;">&nbsp; <a href="#From_ChapSec_and_Thru_ChapSec">Thru Chap</a> |.....................|+| <a href="#From_ChapSec_and_Thru_ChapSec">Sec</a> |..............................|+| </span><br style="font-family: monospace; font-weight: bold;">
+<span style="font-family: monospace; font-weight: bold;">&nbsp;<span style="color: rgb(51, 51, 255);">____<a href="SearchOptions.html#SEARCH_PREFERENCES"><span style="font-style: italic;">SEARCH PREFERENCES</span></a>_____ </span></span></big><big><span style="font-family: monospace; font-weight: bold;">//<a href="#reset_search_preferences_defaults">reset\\</a></span></big><big><span style="font-family: monospace; font-weight: bold;"><span style="color: rgb(51, 51, 255);"></span></span><br style="font-family: monospace; font-weight: bold;">
+<span style="font-family: monospace; font-weight: bold;">&nbsp;<a href="#EXCLUSION_PREFERENCES">Exclusion</a>: <a href="#Labels">Labels</a>: XXXXXXXXXXXXXXXXX <a href="#EXTENDED_SEARCH_PREFERENCES">Extended Search</a>: </span><br style="font-family: monospace; font-weight: bold;">
+<span style="font-family: monospace; font-weight: bold;">&nbsp;&nbsp; 99999 <a href="#Min_Times_Used_In_Proofs_">Min Times Used In Proofs</a>&nbsp;&nbsp;&nbsp;&nbsp; 99999 <a href="#Min_Completed_Search_Results">Min Completed Search Results</a></span><br style="font-family: monospace; font-weight: bold;">
+<span style="font-family: monospace; font-weight: bold;">&nbsp;&nbsp;
+99999 <a href="#Min_Hyps_and_MaxHyps">Min
+Hyps</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+99999 <a href="#Check_First_N_Search_Results">Check First N Search Results</a></span><br style="font-family: monospace; font-weight: bold;">
+<span style="font-family: monospace; font-weight: bold;">&nbsp;&nbsp;
+99999 <a href="#Min_Hyps_and_MaxHyps">Max
+Hyps</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+99999 <a href="#Max_Incomplete_Hyps">Max Incomplete Hyps</a> </span><br style="font-family: monospace; font-weight: bold;">
+<span style="font-family: monospace; font-weight: bold;">&nbsp;&nbsp; </span></big><big><span style="font-family: monospace; font-weight: bold;">99999 <a href="#Max_Search_Results">Max Search
+Results</a> &nbsp; &nbsp; &nbsp; &nbsp; </span></big><big><span style="font-family: monospace; font-weight: bold;"></span></big><big><span style="font-family: monospace; font-weight: bold;">&nbsp; 99999 <a href="#Max_Prev_Steps_Checked">Max Prev Steps Checked</a></span><br style="font-family: monospace; font-weight: bold;">
+<span style="font-family: monospace; font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></big><big><span style="font-family: monospace; font-weight: bold;"></span></big><big><span style="font-family: monospace; font-weight: bold;">X <a href="#Must_Be_Unifiable_With_Step">Must Be Unifiable With Step</a></span></big><big><span style="font-family: monospace; font-weight: bold;"> &nbsp;&nbsp;&nbsp;&nbsp; X <a href="#Reuse_Derivation_Steps">Reuse
+Derivation Steps</a><br>
+</span></big><big><span style="font-family: monospace; font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X <a href="SearchOptions.html#Use_Related_ChapterSection_Hierarchy">Use Chapter/Sec. Hierarchy</a></span></big>&nbsp;&nbsp; &nbsp; &nbsp;&nbsp; <big><span style="font-family: monospace; font-weight: bold;"><a href="SearchOptions.html#OUTPUT_PREFERENCES">Output</a>:&nbsp;</span></big>&nbsp; <br>
+<big><span style="font-family: monospace; font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X <a href="SearchOptions.html#Search-Proximity_Scoring">Search-Proximity Scoring</a>&nbsp;&nbsp;&nbsp;&nbsp; </span></big><big><span style="font-family: monospace; font-weight: bold;"></span></big><big><span style="font-family: monospace; font-weight: bold;">99999 <a href="SearchOptions.html#Max_Elapsed_Seconds">Max Elapsed
+Seconds</a></span></big><big><span style="font-family: monospace; font-weight: bold;"><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></big><big><span style="font-family: monospace; font-weight: bold;">X <a href="SearchOptions.html#Show_Unification_Substitutions">Show Unification Subst.</a><br>
+</span><small><small style="font-family: monospace;"><font size="-1"><small><small></small></small></font></small></small></big><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp; </span><big><span style="font-family: monospace; font-weight: bold;">X <a href="SearchOptions.html#Auto_Select">Auto-Select (Update Proof Step)</a></span></big><br>
+<big><span style="font-family: monospace; font-weight: bold;">&nbsp;</span></big><big><span style="font-family: monospace; font-weight: bold;">&nbsp; <a href="#Output_Sort_Sequence">Output Sort Seq</a>: |.....................................................|+|</span><br style="font-family: monospace; font-weight: bold;">
+<span style="font-family: monospace; font-weight: bold;"></span></big><big><span style="font-family: monospace; font-weight: bold;">//new&nbsp;&nbsp; \\ //refine\\ //halt&nbsp; \\ //goto proof\\ //goto step\\</span><span style="font-family: monospace; font-weight: bold;"><br>
+\\search// \\search// \\search// \\assistant // \\selector // </span><br style="font-family: monospace; font-weight: bold;">
+</big><br>
+
+<br>
+<br>
+
+<span style="font-style: italic; font-weight: bold; font-family: Arial Black;">
+</span>
+<hr style="width: 100%; height: 2px;">
+<h3 style="font-style: italic;"><big><span style="color: rgb(51, 51, 255);"><a name="SCREEN_FLOW"></a><span style="text-decoration: underline;">SCREEN FLOW</span></span><span style="font-weight: bold; font-family: Arial Black;"></span></big></h3>
+<h3><span style="font-style: italic; font-weight: bold; font-family: Arial Black;"></span></h3>
+<span style="font-style: italic; font-weight: bold; font-family: Arial Black;"><br>
+Here is how the three screens interact:</span><br>
+<br>
+<span style="text-decoration: underline; font-weight: bold; color: rgb(51, 51, 255);"></span><big><a name="Screen_Flow_Diagram"></a><a href="SearchOptions.html#Search_Logical_Data_Flow_Diagram">Search Screen Flow Diagram</a><br>
+<br>
+</big>
+<img style="border: 5px solid ; width: 624px; height: 314px;" alt="SSS_Screen_Flow.jpg" title="SSS_Screen_Flow.jpg" src="SSS_Screen_Flow.jpg"><span style="font-weight: bold;"><br>
+<br>
+</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">Addition of the Search Options window is the primary enhancement we're making to the Step Selector Search. <br>
+<br>
+</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">Key points:<br>
+</span>
+<ul>
+<li><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">Double-click
+(or
+menu
+item) a proof step on the Proof Assistant and the next window
+you see is the Step Selector Search showing the results of searching
+using the current Search Preferences and no Search Data criteria.
+(Another menu option, Reuse Step Selector&nbsp; Search performs a
+search reusing existing Search Data criteria.) From
+the Step Selector Search window you can go either to the Search Options
+window to refine your search, or
+back to the Proof Assistant to apply a selected assertion from the
+search
+results -- or to start over. <br>
+</span></li><li><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">Or,
+Ctrl-S (or menu item) a proof step on the Proof Assistant to pull up the
+Search Options window, where Search Data may be added to improve and
+refine the search results.</span></li>
+  <li><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">All three windows can remain open but only one can be active.</span></li>
+  <li><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">Window position, size and other state variables are maintained across session thanks to the </span> <a style="font-family: Arial Black; font-style: italic;" href="PersistentStorageOfGUIPreferences.html">Persistent Storage Of GUI Preferences</a><span style="font-family: Arial Black; font-style: italic;"> enhancement.</span><br>
+  </li>
+</ul>
+<br>
+<hr style="width: 100%; height: 2px;"><br>
+<h3 style="font-style: italic;"><big><big><span style="color: rgb(51, 51, 255);"><a name="LOGICAL_DATA_FLOW"></a><span style="text-decoration: underline;">LOGICAL DATA FLOW</span></span></big></big></h3>
+<span style="font-style: italic; font-weight: bold; font-family: Arial Black;">Here
+is how the Search Options with the Proof Worksheet and the Sorted
+Assertion List used by the Proof Assistant to produce Step Selector
+Search results. &nbsp; </span><br>
+
+<br>
+
+<span style="text-decoration: underline; font-weight: bold; color: rgb(51, 51, 255);"><big><a name="Search_Logical_Data_Flow_Diagram"></a></big></span><span style="text-decoration: underline; color: rgb(51, 51, 255);"><big>Search Logical Data Flow Diagram</big></span><br>
+
+<span style="font-style: italic; font-weight: bold; font-family: Arial Black;"><br>
+<img style="border: 5px solid ; width: 676px; height: 1220px;" alt="SSS_Logical_Data_Flow_1.jpg" title="SSS_Logical_Data_Flow_1.jpg" src="SSS_Logical_Data_Flow_1.jpg"><br>
+<br>
+1. SELECT DOMAIN ASSRT: The <a href="#SEARCH_DOMAIN_fields:">Search Domain parameters</a>
+are combined with
+the Proof Worksheet's theorem's location to build a list of Candidate
+Assertions using a Sorted Assertion List as input. The Sorted Assertion
+List (shown twice on the diagram) is also used in the Extended Search
+process and is sorted by Number of Hyps (not including VarHyps),
+ascending, and mObjSeq (sequence within the system, which is equivalent
+to order of appearance within the loaded .mm file -- which can be
+supplemented by the Theorem Loader feature that adds theorems after the
+initial load).<br>
+<br>2. FILTER EXCLUDED ASSRT: The <a href="#EXCLUSION_PREFERENCES">Exclusion Preferences</a> are applied to
+the
+list of Candidate Assertions to generate an Assertion Search List.
+</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;"><a href="#Must_Be_Unifiable_With_Step">Must Be Unifiable With Step</a> is one of the (default) Exclusion
+Preferences. </span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;"></span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">"Completed Search Results"&nbsp; items have unifiable a</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">ssertions whose hypotheses are fully satisfied by the Hyp
+field of the
+designated proof step (i.e. no missing Hyps) , and for these Search Result items the following occurs:</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;"><br>
+</span>
+<ul>
+  <li><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">a) updated with the data necessary to update the Proof
+Worksheet, if requested;&nbsp; and </span></li>
+  <li><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">b) updated with high scores
+so that they appear first in the Sorted Search Results.</span></li>
+</ul>
+
+
+<span style="font-style: italic; font-weight: bold; font-family: Arial Black;">
+3. APPLY SEARCH CRITERIA: The <a href="#SEARCH_DATA">Search Criteria</a> are applied to the
+Assertion Search List to produce a Selected Assertion List of size not to exceed the </span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;"> <a href="SearchOptions.html#Max_Search_Results">Max Search Results</a> option.</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">&nbsp; <br>
+<br>
+Also, if </span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;"></span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;"> <a href="SearchOptions.html#Max_Search_Results">Max Search Results</a>
+has not been exceeded when the Assertion Search List search is complete
+the remaining search results may be generated using the </span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;"><a href="#Search-Proximity_Scoring">Search-Proximity Scoring</a> option. If "On" it will add a non-zero score to
+Assertions not meeting the Search Criteria but which are in the same
+<a href="#About_Metamath_Chapters_and_Sections">Section</a> as (i.e. are near to) a selected Assertion; these Assertions
+will
+appear in the Search Results <span style="text-decoration: underline;">after</span> Assertions that meet the
+Search Criteria. <br>
+<br>
+</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">4. FINALIZE SEARCH RESULTS: The </span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">Selected Assertion List</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">
+is sorted according to the <a href="#Output_Sort_Sequence">Output Sort Sequence</a> option to generate the </span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">Search</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;"> Results List. </span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;"><br>
+<br>
+</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">
+5. EXTENDED SEARCH: If <a href="#EXTENDED_SEARCH_PREFERENCES">Extended Search</a> is "On" and fewer than <a href="#Min_Completed_Search_Results">Min Completed Search Results</a> have been found, </span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">the <a href="#EXTENDED_SEARCH_PREFERENCES">Extended Search Preferences</a> are used
+to scan the Search Results List looking for assertions that are:<br>
+</span>
+<br>
+<div style="margin-left: 40px;"><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">Unifiable
+but which have more hypotheses than were provided by the Hyp field of the
+designated proof step; and</span><br>
+<span style="font-style: italic; font-weight: bold; font-family: Arial Black;">Whose missing hypotheses can be satisfied
+by either </span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;"></span><br>
+<ul>
+  <li><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">a) previous proof steps in the Proof Worksheet, or </span></li>
+  <li><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">b)
+existing assertions which require zero hypotheses (AKA, are
+"theorems" in the strictest Metamath terminology.) </span></li>
+</ul>
+</div>
+<ul>
+  
+  
+  
+  
+</ul>
+<span style="font-style: italic; font-weight: bold; font-family: Arial Black;">Once found these
+assertions are:<br>
+</span>
+<ul>
+  <li><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">a) updated with the data necessary to update the Proof
+Worksheet if requested; and</span></li>
+  <li><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">b) updated with high scores
+so that they appear first in the Sorted Search Results; and </span></li>
+  <li><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">c) resorted in the Sorted Results list.</span></li>
+</ul>
+<span style="font-style: italic; font-weight: bold; font-family: Arial Black;">
+
+</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;"></span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">6. AUTO-SELECT: If <a href="#Auto_Select">Auto-Select</a> is "On" , the first Completed Search Result in the Search Results List is
+passed to the Proof Assistant to update the designated proof step in
+the Proof Worksheet, and if necessary, to generate hypothesis proof steps.</span><br>
+
+
+<span style="font-style: italic; font-weight: bold; font-family: Arial Black;">
+</span><br>
+<span style="font-style: italic; font-weight: bold; font-family: Arial Black;">
+</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">7. STEP SELECTOR SEARCH DIALOG: Displays the Sorted Results list.
+The user can can select a unifiable
+assertion from the Search Results List to update the Proof Worksheet, or
+return to the Search Options window to perform a new search or refine the current search.<br>
+<br>
+</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">8. SEARCH OPTIONS:&nbsp; The "Refine Search" button performs
+another search using new search criteria using the output Search Result List from the last search as
+input. Or, a New Search can be
+initiated, either for the designated proof step or as a unrelated
+(global )search. The user can also jump back to the Proof Assistant
+or back to the Step Selector Search dialog to re-view the most recent search
+results (Note: all windows can be open at the same time though only one can
+be active at once.)<br>
+</span><br>
+<span style="font-style: italic; font-weight: bold; font-family: Arial Black;">9. PROOF ASSISTANT: A selected Search Result assertion can be used to update the
+designated proof step on the Proof Worksheet -- and if necessary, to
+generate missing hypothesis steps. Or, if no assertion was selected the
+Proof Worksheet is simply unified and re-displayed. New, reused and refined searches can then be initiated.<br>
+</span><br>
+<br>
+<hr style="width: 100%; height: 2px;">
+<h3 style="color: rgb(51, 51, 255);"><big><a name="SEARCH_DATA"></a>SEARCH DATA</big></h3><span style="font-family: Arial Black; font-style: italic; font-weight: bold;"></span><br>
+
+<big><span style="font-family: monospace; font-weight: bold;">&nbsp;<span style="color: rgb(0, 0, 0);">____<a href="#SEARCH_DATA"><span style="font-style: italic;">SEARCH_DATA</span></a>____________</span> </span></big><big><span style="font-family: monospace; font-weight: bold;">||<a href="#reset_search_data_defaults">reset</a>||&nbsp;&nbsp;&nbsp; </span></big><big><span style="font-family: monospace; font-weight: bold;">Text-Separators: <span style="color: rgb(51, 51, 255);"><a href="SearchOptions.html#OR">OR</a>:</span> OR&nbsp;&nbsp; <span style="color: rgb(51, 51, 255);"><a href="SearchOptions.html#QUOTE">QUOTE</a>:</span> "</span><br style="font-family: monospace; font-weight: bold;">&nbsp;
+<span style="font-family: monospace; font-weight: bold;"><a href="SearchOptions.html#Search-In-What"><span style="color: rgb(51, 51, 255);">Search-In-What</span></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="SearchOptions.html#Format"><span style="color: rgb(51, 51, 255);">Format</span></a>&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="SearchOptions.html#Oper"><span style="color: rgb(51, 51, 255);">Oper</span></a>&nbsp;&nbsp; <a href="SearchOptions.html#Search-For-What"><span style="color: rgb(51, 51, 255);">Search-For-What</span></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="SearchOptions.html#Or"><span style="color: rgb(51, 51, 255);">Or</span></a><br>
+&nbsp;|...............|+| |.........|+| |..|+| |XXXXXXXXXXXXXXXXXXXXXXXXXXXX|+| X<br>
+&nbsp;|...............|+| |.........|+| |..|+| |XXXXXXXXXXXXXXXXXXXXXXXXXXXX|+| X<br>
+&nbsp;|...............|+| |.........|+| |..|+| |XXXXXXXXXXXXXXXXXXXXXXXXXXXX|+| X<br>
+&nbsp;|...............|+| |.........|+| |..|+| |XXXXXXXXXXXXXXXXXXXXXXXXXXXX|+| X<br>
+&nbsp;|...............|+| |.........|+| |..|+| |XXXXXXXXXXXXXXXXXXXXXXXXXXXX|+| X</span></big><br>
+
+<big><span style="font-family: monospace; font-weight: bold;"></span></big><br>
+<big><span style="text-decoration: underline; color: rgb(51, 51, 255);"><br>
+<a name="reset_search_data_defaults"></a>reset</span></big><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">The reset button resets the Search Data to the default settings.</span><span style="font-family: Arial Black; font-style: italic;"><br></span><br>
+<hr style="width: 100%; height: 2px;"><br>
+<span style="font-family: Arial Black; font-style: italic; font-weight: bold;">The Search Data has three parts: </span><a href="#SEARCH_DATA_OPTIONS_fields"><span style="font-family: Arial Black; font-style: italic; font-weight: bold; color: rgb(51, 51, 255);">Search Data Options fields</span></a><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">,&nbsp; </span><a href="SearchOptions.html#SEARCH_OBJECTS_fields:"><span style="font-family: Arial Black; font-style: italic; font-weight: bold;"></span></a><span style="font-family: Arial Black; font-style: italic; font-weight: bold;"><a href="#SEARCH_CRITERIA_fields:">Search Criteria fields</a> and the <a href="SearchOptions.html#SEARCH_DOMAIN_fields:">Search Domain fields</a>. </span><br>
+<br><a name="SEARCH_DATA_OPTIONS_fields"></a>
+<span style="text-decoration: underline; font-weight: bold; color: rgb(51, 51, 255);">SEARCH DATA OPTIONS fields:</span><br>
+<span style="text-decoration: underline;"><span style="font-family: Arial Black; font-style: italic;"></span></span><span style="font-family: Arial Black; font-style: italic;"><br>
+</span><big><span style="text-decoration: underline; color: rgb(51, 51, 255);"><a name="OR"></a>OR</span></big><span style="font-family: Arial Black; font-style: italic;"> <br>
+</span>
+<ul>
+<li><span style="font-family: Arial Black; font-style: italic;">OR is a text entry field that enables you to specify how you will specify a logical "OR"&nbsp;
+operator in the <a href="#Search-For-What">Search-For-What</a> field when multiple search terms are used in a Search-For-What field. </span></li><li><span style="font-family: Arial Black; font-style: italic;">By default, multiple search terms are
+"AND"ed together.</span></li><li><span style="font-family: Arial Black; font-style: italic;">Evaluation
+within a Search-For-What field is left-to-right, with evaluation
+stopping as soon as truth or falsity is determined -- e.g.&nbsp; evaluation of
+the terms to the right of an OR is not performed if evaluation of the
+terms to the left of the OR yields True.</span></li>
+</ul>
+
+<span style="font-family: Arial Black; font-style: italic;">
+
+</span><big style="text-decoration: underline; color: rgb(51, 51, 255);"><a name="QUOTE"></a>QUOTE</big><span style="font-family: Arial Black; font-style: italic;">
+<br>
+</span>
+<ul>
+<li><span style="font-family: Arial Black; font-style: italic;">QUOTE is a text entry field that lets you specify the character(s) you will
+use as quotation marks to delimit search terms in the <a href="#Search-For-What">Search-For-What
+    </a>field.</span></li><li><span style="font-family: Arial Black; font-style: italic;">The default is the double-quote character, ' " ' . </span></li><li><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">Enclosing
+QUOTE characters are required if a search term contains embedded blanks</span><span style="font-family: Arial Black; font-style: italic;">.</span></li><li><span style="font-family: Arial Black; font-style: italic;">Enclosing
+QUOTE characters are required for Format types <a href="#RegExpr">RegExpr</a> and <a href="#CharString">CharString</a>
+if you wish to the search term to be applied to a character string
+version of the <a href="#Search-In-What">Search-In-What</a> content instead of searching each
+non-whitespace token individually; this consideration does not apply to
+Format types <a href="#ParseExpr_and_ParseStmt">ParseExpr</a> and <a href="#ParseExpr_and_ParseStmt">ParseStmt</a> since they are searching formula
+parse sub-trees and parse trees, respectively. </span></li>
+</ul>
+
+<br>
+<hr style="width: 100%; height: 2px;"><br><a name="SEARCH_CRITERIA_fields:"></a>
+
+<span style="text-decoration: underline; font-weight: bold; color: rgb(51, 51, 255);">SEARCH CRITERIA fields:</span><br>
+
+<span style="text-decoration: underline;"><span style="font-family: Arial Black; font-style: italic;"><br>
+</span></span><span style="text-decoration: underline;"><span style="font-family: Arial Black; font-style: italic;">Search Criteria Line Data: </span></span><span style="text-decoration: underline; font-family: Arial Black; font-style: italic; font-weight: bold;"><a href="#Search-In-What"><span style="color: rgb(51, 51, 255);">Search-In-What</span></a>, <a href="#Format"><span style="color: rgb(51, 51, 255);">Format</span></a>, <a href="#Oper"><span style="color: rgb(51, 51, 255);">Oper</span></a>, <span style="color: rgb(51, 51, 255);"><a href="#Search-For-What">Search-For-What</a> and <a href="#Or">Or</a></span><a href="#Or"><span style="color: rgb(51, 51, 255);"></span></a>:</span><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">
+Up to four lines of search criteria data may be entered. By default the
+search criteria lines are "AND"ed together, but you can toggle-on the <a href="#Or"><span style="color: rgb(51, 51, 255);">Or</span></a>
+field on a line to indicate that the next line is to be "OR"ed with it. <br>
+<br>
+Evaluation of the array of search criteria lines and the individual search terms in a <a href="#Search-For-What"><span style="color: rgb(51, 51, 255);">Search-For-What</span></a> field proceeds from top-to-bottom, then left-to-right. </span><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">To simplify input, the pulldown lists are linked in a hierarchy: when a <a href="#Search-In-What"><span style="color: rgb(51, 51, 255);">Search-In-What</span></a> list item is selected the contents of the <span style="color: rgb(51, 51, 255);"><a href="#Format">Format</a> </span>and <a href="#Oper"><span style="color: rgb(51, 51, 255);">Oper</span></a> pulldown lists are updated to reflect only the valid choices. IMPORTANT NOTE: The </span><span style="font-family: Arial Black; font-weight: bold;"><span style="text-decoration: underline;">PrevSearchData</span></span><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">
+menu lets you select any of the nine sets of Search Criteria line used
+in previous searches -- or a reset of the search criteria lines to the
+default state (empty). </span><br>
+<big style="font-style: italic;"><span style="font-weight: bold;">
+<span style="font-family: Arial Black;"></span></span></big><span style="font-family: Arial Black; font-style: italic; font-weight: bold;"><br>
+</span><big style="text-decoration: underline; color: rgb(51, 51, 255);"><a name="Search-In-What"></a>Search-In-What</big><span style="font-family: Arial Black; font-style: italic; font-weight: bold;"> lets you choose what part of the Metamath
+assertion statements to search, such as "Formulas($a$e$p)". See: </span><a href="#Table:_Valid_Combinations_of_Oper"><big style="font-style: italic;"><span style="font-weight: bold;"><span style="font-family: Arial Black;"><span style="text-decoration: underline;">Table: Valid Combinations of </span></span><span style="color: rgb(51, 51, 255); font-family: Arial Black; text-decoration: underline;">Oper</span><span style="font-family: Arial Black; text-decoration: underline;">, </span><span style="color: rgb(51, 51, 255); font-family: Arial Black; text-decoration: underline;">Search-In-What</span><span style="font-family: Arial Black; text-decoration: underline;"> and </span><span style="color: rgb(51, 51, 255); font-family: Arial Black; text-decoration: underline;">Format</span><span style="font-family: Arial Black; text-decoration: underline;"></span></span></big></a><span style="font-family: Arial Black; font-style: italic;">.</span><br>
+<br>
+<span style="font-family: Arial Black; font-style: italic; font-weight: bold;"><span style="color: rgb(51, 51, 255);"></span></span><big style="text-decoration: underline; color: rgb(51, 51, 255);"><a name="Format"></a>Format</big><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">specifies
+the structural view of the data applied in the search
+comparisons. For example, each formula is stored in mmj2 as a parse
+tree and as a list of non-whitespace tokens; for search purposes a
+character string can be constructed from a list of non-whitespace
+tokens with a single blank character between each token.)<br>
+</span>
+<ul>
+  <li><span style="font-family: Arial Black; font-style: italic; font-weight: bold;"><a href="#ParseExpr_and_ParseStmt">ParseExpr
+and ParseStmt</a> employ parse trees and are applied to formula parse
+sub-trees and parse-trees, respectively. Enclosing <a href="#QUOTE">QUOTE</a> characters are
+required if more than one search term is entered in the Search-For-What
+field because most formulas and expressions contain space characters. </span></li>
+  
+  <li><span style="font-family: Arial Black; font-style: italic; font-weight: bold;"><a href="#CharString">CharString</a>
+uses
+a case-insensitive character string comparison -- if enclosed in <a href="#QUOTE">QUOTE</a>
+characters the Metamath object's character string taken as a
+whole is searched for a match, otherwise it is applied to the character string of each Metamath
+token in the object;</span></li><li><span style="font-family: Arial Black; font-style: italic; font-weight: bold;"><a href="#RegExpr">RegExpr</a> </span><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">uses the <a href="http://docs.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html">Java-defined version of Regular Expressions</a> </span><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">(see also <a href="http://docs.oracle.com/javase/tutorial/essential/regex/index.html">http://docs.oracle.com/javase/tutorial/essential/regex/index.html</a> )</span><span style="font-family: Arial Black; font-style: italic; font-weight: bold;"> -- </span><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">if&nbsp; the RegExpr is enclosed in <a href="#QUOTE">QUOTE</a>
+characters the Metamath object's character string taken as a
+whole is searched for a match, </span><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">otherwise it is applied to the character string of each Metamath
+token in the object.</span></li>
+  <li><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">See: </span><a href="SearchOptions.html#Table:_Valid_Combinations_of_Oper"><big style="font-style: italic;"><span style="font-weight: bold;"><span style="font-family: Arial Black;"><span style="text-decoration: underline;">Table: Valid Combinations of </span></span><span style="color: rgb(51, 51, 255); font-family: Arial Black; text-decoration: underline;">Oper</span><span style="font-family: Arial Black; text-decoration: underline;">, </span><span style="color: rgb(51, 51, 255); font-family: Arial Black; text-decoration: underline;">Search-In-What</span><span style="font-family: Arial Black; text-decoration: underline;"> and </span><span style="color: rgb(51, 51, 255); font-family: Arial Black; text-decoration: underline;">Format</span><span style="font-family: Arial Black; text-decoration: underline;"></span></span></big></a><span style="font-family: Arial Black; font-style: italic;">.</span><br>
+
+  </li>
+</ul>
+
+<br>
+<big style="text-decoration: underline; color: rgb(51, 51, 255);"><a name="Oper"></a>Oper</big><span style="font-family: Arial Black; font-style: italic; font-weight: bold;"> lets you specify relational operators for the <a href="#Format"><span style="color: rgb(51, 51, 255);">Format</span></a> types <a href="#ParseExpr_and_ParseStmt">ParseExpr and ParseStmt</a>, and boolean operators (blank or "not" ) for all other <span style="color: rgb(51, 51, 255);">Format</span> types.&nbsp; </span><span style="font-family: Arial Black; font-style: italic; font-weight: bold;"><br>
+</span>
+<ul>
+  <li><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">See: </span><a href="SearchOptions.html#Table:_Valid_Combinations_of_Oper"><big style="font-style: italic;"><span style="font-weight: bold;"><span style="font-family: Arial Black;"><span style="text-decoration: underline;">Table: Valid Combinations of </span></span><span style="color: rgb(51, 51, 255); font-family: Arial Black; text-decoration: underline;">Oper</span><span style="font-family: Arial Black; text-decoration: underline;">, </span><span style="color: rgb(51, 51, 255); font-family: Arial Black; text-decoration: underline;">Search-In-What</span><span style="font-family: Arial Black; text-decoration: underline;"> and </span><span style="color: rgb(51, 51, 255); font-family: Arial Black; text-decoration: underline;">Format</span><span style="font-family: Arial Black; text-decoration: underline;"></span></span></big></a><span style="font-family: Arial Black; font-style: italic;">.</span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;">See: </span><big style="font-style: italic;"><span style="font-weight: bold;"><a href="#Table:_ParseExpr_and_ParseStmt_Oper"><span style="font-family: Arial Black;"><span style="text-decoration: underline;">Table: <span style="color: rgb(51, 51, 255);">ParseExpr and ParseStmt</span> </span></span></a><a href="SearchOptions.html#Oper"><span style="color: rgb(51, 51, 255); font-family: Arial Black; text-decoration: underline;"></span></a><a href="#Table:_ParseExpr_and_ParseStmt_Oper">Oper</a><span style="color: rgb(0, 0, 0);"><a href="#Table:_ParseExpr_and_ParseStmt_Oper"> Values</a>.</span></span></big></li>
+</ul>
+
+
+<span style="font-family: Arial Black; font-style: italic; font-weight: bold;"><br>
+</span>
+<hr style="width: 100%; height: 2px;"><span style="font-family: Arial Black; font-style: italic; font-weight: bold;"><span style="color: rgb(51, 51, 255);"></span><span style="color: rgb(51, 51, 255);"></span></span><br>
+<span style="font-family: Arial Black; font-style: italic; font-weight: bold;"></span><big style="font-style: italic;"><span style="font-weight: bold;"><span style="font-family: Arial Black;"><a name="Table:_Valid_Combinations_of_Oper"></a><span style="text-decoration: underline;">Table: Valid Combinations of </span></span><a href="#Oper"><span style="color: rgb(51, 51, 255); font-family: Arial Black; text-decoration: underline;">Oper</span></a><span style="font-family: Arial Black; text-decoration: underline;">, </span><a href="#Search-In-What"><span style="color: rgb(51, 51, 255); font-family: Arial Black; text-decoration: underline;">Search-In-What</span></a><span style="font-family: Arial Black; text-decoration: underline;"> and </span><a href="#Format"><span style="color: rgb(51, 51, 255); font-family: Arial Black; text-decoration: underline;">Format</span></a><span style="font-family: Arial Black; text-decoration: underline;">:</span></span></big><table style="text-align: left; width: 75%;" border="5" cellpadding="2" cellspacing="2"><tbody><tr><td style="vertical-align: top;"><a href="#Search-In-What"><span style="color: rgb(51, 51, 255);">Search-In-What</span></a>(Rows)/<br>
+      <a href="#Format"><span style="color: rgb(51, 51, 255);">Format</span></a>(Columns)<br>
+      <a href="#Oper"><span style="color: rgb(51, 51, 255);">Oper</span></a>(Cells)<br>
+</td><td style="vertical-align: top;"><a href="#ParseExpr_and_ParseStmt">ParseExpr</a><br>
+</td><td style="vertical-align: top;"><a href="#ParseExpr_and_ParseStmt">ParseStmt</a><br>
+</td><td style="vertical-align: top;"><a href="#CharString">CharString</a><br>
+      </td>
+
+      <td style="vertical-align: top;"><a href="#RegExpr">RegExpr</a><br>
+      </td>
+
+</tr><tr><td style="vertical-align: top;">Formulas($a$e$p) -- Axiom,<br>
+Logical Hypothesis and Provable<br>
+Assertion Formulas<br>
+</td><td style="vertical-align: top; background-color: rgb(51, 255, 255);">&lt;<br>
+&gt;<br>
+&lt;&gt;<br>
+==<br>
+</td><td style="vertical-align: top; background-color: rgb(51, 255, 255);">&lt;<br>
+&gt;<br>
+&lt;&gt;<br>
+==<br>
+</td><td style="vertical-align: top; background-color: rgb(102, 255, 153);">blank<br>
+not<br>
+      </td>
+
+      <td style="vertical-align: top; background-color: rgb(102, 255, 153);">blank<br>
+
+not</td>
+
+</tr><tr><td style="vertical-align: top;">Formulas($a$p) -- Axiom and<br>
+Provable Assertion Formulas
+</td><td style="vertical-align: top; background-color: rgb(51, 255, 255);">&lt;<br>
+&gt;<br>
+&lt;&gt;<br>
+==<br>
+</td><td style="vertical-align: top; background-color: rgb(51, 255, 255);">&lt;<br>
+&gt;<br>
+&lt;&gt;<br>
+==<br>
+</td><td style="vertical-align: top; background-color: rgb(102, 255, 153);">blank<br>
+not<br>
+      </td>
+
+      <td style="vertical-align: top; background-color: rgb(102, 255, 153);">blank<br>
+
+not</td>
+
+</tr><tr><td style="vertical-align: top;">Formulas($e) -- Logical Hypothesis<br>
+Formulas
+</td><td style="vertical-align: top; background-color: rgb(51, 255, 255);">&lt;<br>
+&gt;<br>
+&lt;&gt;<br>
+==<br>
+</td><td style="vertical-align: top; background-color: rgb(51, 255, 255);">&lt;<br>
+&gt;<br>
+&lt;&gt;<br>
+==<br>
+</td><td style="vertical-align: top; background-color: rgb(102, 255, 153);">blank<br>
+not<br>
+      </td>
+
+      <td style="vertical-align: top; background-color: rgb(102, 255, 153);">blank<br>
+
+not</td>
+
+</tr><tr><td style="vertical-align: top;">Comments($( $)) -- Comments preceding<br>
+Axiom and Provable Assertion statements.<br>
+</td><td style="vertical-align: top; background-color: rgb(153, 153, 153);">n/a<br>
+</td><td style="vertical-align: top; background-color: rgb(153, 153, 153);">n/a<br>
+</td><td style="vertical-align: top; background-color: rgb(102, 255, 153);">blank<br>
+not<br>
+      </td>
+
+      <td style="vertical-align: top; background-color: rgb(102, 255, 153);">blank<br>
+
+not</td>
+
+</tr><tr><td style="vertical-align: top;">Labels($a$e$p) -- Axiom,<br>
+
+Logical Hypothesis and Provable<br>
+
+Assertion Labels
+</td><td style="vertical-align: top; background-color: rgb(153, 153, 153);">n/a<br>
+</td><td style="vertical-align: top; background-color: rgb(153, 153, 153);">n/a<br>
+</td><td style="vertical-align: top; background-color: rgb(102, 255, 153);">blank<br>
+not<br>
+      </td>
+
+      <td style="vertical-align: top; background-color: rgb(102, 255, 153);">blank<br>
+
+not</td>
+
+</tr><tr>
+<td style="vertical-align: top;">Labels($a$p) -- Axiom and Provable<br>
+
+Assertion Labels
+</td><td style="vertical-align: top; background-color: rgb(153, 153, 153);">n/a<br>
+</td><td style="vertical-align: top; background-color: rgb(153, 153, 153);">n/a<br>
+</td><td style="vertical-align: top; background-color: rgb(102, 255, 153);">blank<br>
+not<br>
+      </td>
+
+      <td style="vertical-align: top; background-color: rgb(102, 255, 153);">blank<br>
+
+not</td>
+
+    </tr>
+    <tr>
+<td style="vertical-align: top;">Labels($e) -- Logical Hypothesis<br>
+Labels Labels
+</td><td style="vertical-align: top; background-color: rgb(153, 153, 153);">n/a<br>
+</td><td style="vertical-align: top; background-color: rgb(153, 153, 153);">n/a<br>
+</td><td style="vertical-align: top; background-color: rgb(102, 255, 153);">blank<br>
+not<br>
+      </td>
+
+      <td style="vertical-align: top; background-color: rgb(102, 255, 153);">blank<br>
+
+not</td>
+
+    </tr>
+<tr><td style="vertical-align: top;">Labels(RPN $=) -- Lists of Labels in RPN<br>
+order comprising a Metamath proof; <br>
+</td><td style="vertical-align: top; background-color: rgb(153, 153, 153);">n/a<br>
+</td><td style="vertical-align: top; background-color: rgb(153, 153, 153);">n/a<br>
+</td><td style="vertical-align: top; background-color: rgb(102, 255, 153);">blank<br>
+not<br>
+      </td>
+
+      <td style="vertical-align: top; background-color: rgb(102, 255, 153);">blank<br>
+
+not</td>
+
+
+    </tr>
+  </tbody>
+</table>
+<br>
+<hr style="width: 100%; height: 2px;"><br>
+<br>
+<big style="text-decoration: underline; color: rgb(51, 51, 255);"><a name="Search-For-What"></a>Search-For-What</big><span style="font-family: Arial Black; font-style: italic; font-weight: bold;"> is used to enter one or more search terms in a given <a href="#Format">Format</a>. <br>
+</span>
+<ul>
+  <li><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">Multiple
+search terms are evaluated individually and the results are "AND"ed
+together unless you use the text separator <a href="#OR">OR</a> characters between search terms. </span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;">Evaluation
+within the Search-For-What field is left-to-right, with evaluation
+stopping as soon as truth or falsity is determined -- e.g. evaluation of
+the terms to the right of an OR is not performed if evaluation of the
+terms to the left of the OR yields True.</span></li>
+  <li><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">Spaces are used to first parse the Search-For-What contents into individual search terms and OR separators. Therefore...<br>
+</span></li>
+
+  <li><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">Enclosing
+    <a href="#QUOTE">QUOTE</a> characters are required if a search term contains embedded blanks. </span><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">For example, with <a href="#Search-In-What">Search-In-What</a> = Comment and Format = CharString, then "in a set" without enclosing QUOTE characters is
+interpreted as three separate search terms, and the search process will be applied to each Comment token for each search term. </span></li><li><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">For Format types <a href="#RegExpr">RegExpr</a> and <a href="#CharString">CharString</a>, </span><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">Enclosing
+QUOTE
+characters are required if you wish the content to be processed
+all-at-once as a single character string. Comments, Formulas and
+RPN-format Proof Label lists are stored in mmj2 as lists of
+non-whitespace tokens which can be processed individually,
+one-at-a-time, for each search term -- or, if you have enclosed your
+search term with QUOTE characters, the token list is internally converted into a
+character string consisting of the tokens with a single blank character
+in between each token. (The problem of whole vs. by-parts search is
+solved for formula parse trees by using two different Format types:
+ParseStmt and ParseExpr, the former using a whole parse tree search and
+the latter using a search of all parse sub-trees.) <br>
+</span></li>
+  <li><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">Example: with
+Search-In-What = Formula and Format = RegExpr, ' "equ*" OR "num*" ' consists of two regular expression search terms,
+and the search process will be applied to each formula's character
+string as-a-whole for each search term. <br>
+    </span></li>
+
+  <li><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">Search
+terms are validated according to Format prior to conducting the search.
+Errors, such as an invalid RegExpr, or a parse error
+in a ParseExpr or ParseStmt produce an error message. </span></li>
+
+  <li><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">A pull-down list provides the nine most recent</span><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">ly searched values of Search-For-What </span><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">for the Format in use on the line.<br>
+    </span></li>
+
+</ul>
+<span style="font-family: Arial Black; font-style: italic; font-weight: bold;"><br>
+</span><big style="text-decoration: underline; color: rgb(51, 51, 255);"><a name="Or"></a>Or </big><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">Toggle-on <span style="color: rgb(51, 51, 255);"></span>to indicate that the next line is to be "OR"ed with the
+line. <br>
+</span>
+<ul>
+  <li><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">The default logical operator for the array of search criteria lines is AND.</span></li>
+  <li><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">Evaluation
+of the array of search criteria lines is top-to-bottom with evaluation
+stopping as as soon as truth or falsity can be determined.</span></li>
+</ul>&nbsp;
+<br>
+<a name="FORMAT_Types:_"></a>
+<span style="font-weight: bold; text-decoration: underline; font-family: Arial Black; font-style: italic;"></span><a href="SearchOptions.html#SEARCH_OBJECTS_fields:"><span style="text-decoration: underline; color: rgb(51, 51, 255);"></span>
+</a><big style="font-weight: bold;"><a href="SearchOptions.html#SEARCH_OBJECTS_fields:">FORMAT Types:</a></big><br>
+
+<br>
+<br>&nbsp;<big style="text-decoration: underline; color: rgb(51, 51, 255);"><a name="ParseExpr_and_ParseStmt"></a>ParseExpr and ParseStmt</big><br>
+<br>
+<span style="font-family: Arial Black; font-style: italic;">These formats refer to the parse trees stored by mmj2 for each formula. When </span><span style="color: rgb(51, 51, 255); font-family: Arial Black; font-style: italic;">ParseExpr</span><span style="font-family: Arial Black; font-style: italic;">
+is specified a formula's parse tree is (unification) searched looking
+for a matching sub-tree (including the tree as a whole); these may be of any
+Metamath syntax Type (e.g. in set.mm, excluding the MathBoxes, the valid
+syntax Types are </span><code style="font-weight: bold; font-family: Arial Black; font-style: italic;">wff</code><span style="font-family: Arial Black; font-style: italic;">, </span><code style="font-weight: bold; font-family: Arial Black; font-style: italic;">set</code><span style="font-family: Arial Black; font-style: italic;"> and </span><code style="font-weight: bold; font-family: Arial Black; font-style: italic;">class</code><span style="font-family: Arial Black; font-style: italic;">.) </span><span style="color: rgb(51, 51, 255); font-family: Arial Black; font-style: italic;">ParseStmt</span><span style="font-family: Arial Black; font-style: italic;">
+refers to an entire formula parse tree, and of course, when searching set.mm it must always be a
+"wff" (or whatever Provable Logic Statment Type is used by the .mm
+file.)&nbsp; </span><br style="font-family: Arial Black; font-style: italic;">
+<br style="font-family: Arial Black; font-style: italic;"><span style="font-family: Arial Black; font-style: italic;">
+</span><span style="font-family: Arial Black; font-style: italic;">Operators &lt;=, &lt;, &gt;=, &gt;, =, ==</span><span style="font-family: Arial Black; font-style: italic;">, &lt;&gt;, and NA </span><span style="font-family: Arial Black; font-style: italic;"> may only be applied to the </span><span style="color: rgb(51, 51, 255); font-family: Arial Black; font-style: italic;">ParseExpr</span><span style="font-family: Arial Black; font-style: italic;"> and </span><span style="color: rgb(51, 51, 255); font-family: Arial Black; font-style: italic;">ParseStmt</span><span style="font-family: Arial Black; font-style: italic;">Formats.
+They refer to the relationships between formulas as defined by the
+unification operation applied to an
+assertion's formulas' parse trees/sub-trees and the parse tree
+generated for the Search-For-What field (((This may seem to be a trifle
+complicated but the actuality is simpler than the explanation...)))</span><br style="font-family: Arial Black; font-style: italic;">
+<br>
+<big style="font-style: italic;"><span style="font-weight: bold;"><span style="font-family: Arial Black;"><span style="text-decoration: underline;"><a name="Table:_ParseExpr_and_ParseStmt_Oper"></a>Table: <a href="#ParseExpr_and_ParseStmt"><span style="color: rgb(51, 51, 255);">ParseExpr and ParseStmt</span></a> </span></span><a href="SearchOptions.html#Oper"><span style="color: rgb(51, 51, 255); font-family: Arial Black; text-decoration: underline;">Oper<span style="color: rgb(0, 0, 0);"> Values:</span></span></a></span></big><br>
+<table style="text-align: left; width: 100%;" border="5" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; font-family: Comic Sans MS; font-weight: bold;"><big>Oper<br>
+
+      </big></td>
+      <td style="vertical-align: top; font-family: Comic Sans MS; font-weight: bold;"><big>Meaning (X refers to Assertion Formula)<br>
+
+      </big></td>
+      <td style="vertical-align: top; font-family: Comic Sans MS; font-weight: bold;"><big>X<br>
+
+      </big></td>
+      <td style="vertical-align: top; font-family: Comic Sans MS; font-weight: bold;"><big><a href="#Oper">Oper</a><br>
+
+      </big></td>
+      <td style="vertical-align: top; font-family: Comic Sans MS; font-weight: bold;"><big><a href="#Search-For-What">Search-For-What</a><br>
+
+      </big></td>
+    </tr>
+    <tr>
+<td style="vertical-align: top; font-weight: bold; font-family: monospace;">&lt;=<br>
+      </td><td style="vertical-align: top; font-weight: bold; font-family: Comic Sans MS;">Search-For-What is <big style="font-weight: normal;"><span style="font-family: monospace;">InstanceOf</span></big> X<br>
+      </td><td style="vertical-align: top; font-family: monospace;">( ph -&gt; ps )<br>
+ph<br>
+( ph -&gt; ps )<br>
+&amp;W1<br>
+
+
+      </td><td style="vertical-align: top; font-family: monospace;">&lt;=<br>
+&lt;=<br>
+&lt;=<br>
+&lt;=<br>
+      </td><td style="vertical-align: top; font-family: monospace;">( ps -&gt; ch )<br>
+( ps -&gt; ch )<br>
+&amp;W1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+( ps -&gt; ch )<br>
+</td></tr>
+<tr>
+      <td style="vertical-align: top; font-weight: bold; font-family: monospace;">&lt;<br>
+      </td>
+      <td style="vertical-align: top; font-weight: bold; font-family: Comic Sans MS;">Search-For-What is <big style="font-weight: normal;"><span style="font-family: monospace;">StrictInstanceOf</span></big> X<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace;">ph<br>
+
+      </td>
+      <td style="vertical-align: top; font-family: monospace;">&lt;<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace;">( ps -&gt; ch )<br>
+
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: monospace;">&gt;=<br>
+      </td>
+      <td style="vertical-align: top;"><span style="font-weight: bold; font-family: Comic Sans MS;">X</span> <big style="font-weight: bold;">is</big> <big><span style="font-family: monospace;">InstanceOf</span></big> <span style="font-family: Comic Sans MS; font-weight: bold;">Search-For-What</span></td>
+      <td style="vertical-align: top; font-family: monospace;">( ph -&gt; ps ) <br>
+( ph -&gt; ps ) <br>
+( ph -&gt; ps )<br>
+&amp;W1<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace;">&gt;=<br>
+&gt;=<br>
+&gt;=<br>
+&gt;= <br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace;">( ps -&gt; ch )<br>
+ph&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+&amp;W1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+( ps -&gt; ch )<br>
+      <br>
+      </td>
+    </tr>
+<tr>
+      <td style="vertical-align: top; font-weight: bold; font-family: monospace;">&gt;<br>
+      </td>
+      <td style="vertical-align: top; font-weight: bold; font-family: Comic Sans MS;">X is <big style="font-weight: normal;"><span style="font-family: monospace;">StrictInstanceOf</span></big> Search-For-What<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace;">( ph -&gt; ps )<br>
+
+      </td>
+      <td style="vertical-align: top; font-family: monospace;">&gt;<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace;">ch<br>
+
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-weight: bold; font-family: monospace;">=<br>
+      </td>
+      <td style="vertical-align: top; font-weight: bold; font-family: Comic Sans MS;">X and Search-For-What are <big><span style="font-weight: normal; font-family: monospace;">InstanceOf</span></big> each other (i.e. equal, except&nbsp; for variable names)<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace;">( ph -&gt; ps )<br>
+
+      </td>
+      <td style="vertical-align: top; font-family: monospace;">&lt;&gt;<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace;">( ch -&gt; th )<br>
+
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-weight: bold; font-family: monospace;">==<br>
+      </td>
+      <td style="vertical-align: top; font-weight: bold; font-family: Comic Sans MS;">X is <big><span style="font-weight: normal; font-family: monospace;">IdenticalTo</span></big> Search-For-What<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace;">( ph -&gt; ps )<br>
+
+      </td>
+      <td style="vertical-align: top; font-family: monospace;">==<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace;">( ph -&gt; ps )<br>
+
+      </td>
+    </tr><tr>
+      <td style="vertical-align: top;">&lt;&gt;<br>
+      </td>
+      <td style="vertical-align: top;"><span style="font-weight: bold; font-family: Comic Sans MS;">Search-For-What is</span> <big><span style="font-family: monospace;">strictInstanceOf</span></big> <span style="font-weight: bold; font-family: Comic Sans MS;">X</span> or <span style="font-weight: bold; font-family: Comic Sans MS;">X is</span> <big><span style="font-family: monospace;">StrictInstanceOf</span></big> <span style="font-weight: bold; font-family: Comic Sans MS;">Search-For-What</span></td>
+      <td style="vertical-align: top; font-family: monospace;">ph <br>
+( ps -&gt; ch )<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace;">&lt;&gt;<br>
+&lt;&gt;<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace;">( ps -&gt; ch )<br>
+ph<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">NA<br>
+      </td>
+      <td style="vertical-align: top;"><span style="font-weight: bold; font-family: Comic Sans MS;">Search-For-What is</span> <big style="font-weight: normal;"><span style="font-family: monospace;">N/A</span></big> <span style="font-weight: bold; font-family: Comic Sans MS;">X</span></td>
+      <td style="vertical-align: top; font-family: monospace;">( ph -&gt; ps )<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace;">NA<br>
+      </td>
+      <td style="vertical-align: top; font-family: monospace;">( ph &lt;-&gt; ps )<br>
+      </td>
+    </tr>
+
+  </tbody>
+</table>
+<br>
+<hr style="width: 100%; height: 2px;"><br>
+<span style="font-family: Arial Black; font-style: italic;"></span><big style="text-decoration: underline; color: rgb(51, 51, 255);"><a name="CharString"></a>CharString</big><span style="font-family: Arial Black; font-style: italic;"><br>
+</span>
+<ul>
+<li><span style="font-family: Arial Black; font-style: italic;">The
+CharString Format employs a case-insensitive search for each search
+term within the character string view of the <a href="#Search-In-What">Search-In-What</a> content. </span><br>
+<span style="font-family: Arial Black; font-style: italic; font-weight: bold;"></span></li>
+  <li><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">Enclosing
+    <a href="#QUOTE">QUOTE</a> characters are required if a search term contains embedded blanks</span><span style="font-family: Arial Black; font-style: italic;">.</span></li>
+<li><span style="font-family: Arial Black; font-style: italic;">Enclosing
+QUOTE
+characters are also required if you want one search of the
+Search-In-What content taken as a single character string. Otherwise
+the search is performed against each non-whitespace token in the
+content. For example: you search for "ph" within the formula character
+string "( ph -&gt; ( ps -&gt; ph ) )" or you can search for ph within
+the individual tokens: "(", "ph", "(", "ps", "-&gt;", ")", ")".&nbsp;</span></li>
+  <li><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">Metamath
+tokens are stored internally by mmj2 as lists of non-whitespace tokens
+and whitespace tokens. Since the content of the non-whitespace tokens
+may contain spaces, tabs, new-line characters and carriage-return
+characters, when creating a character string for searching, mmj2
+internally creates a
+character string consisting of the non-whitespace tokens with a single
+blank character
+in between each token. This is done for Formulas, Comments and RPN
+Proof Label lists, all of which can be searched using the CharString
+Format. <br>
+    </span></li>
+</ul>
+<span style="font-family: Arial Black; font-style: italic;"></span><br>
+
+<hr style="width: 100%; height: 2px;"><big style="text-decoration: underline; color: rgb(51, 51, 255);"></big><br><big style="text-decoration: underline; color: rgb(51, 51, 255);"><a name="RegExpr"></a>RegExpr</big><br>
+<br>
+<ul>
+<li><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">RegExpr </span><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">is very similar to the <a href="#CharString">CharString</a> Format except that it uses the <a href="http://docs.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html">Java-defined version of Regular Expressions</a> </span><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">(see also <a href="http://docs.oracle.com/javase/tutorial/essential/regex/index.html">http://docs.oracle.com/javase/tutorial/essential/regex/index.html</a> )</span><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">
+instead of a case-insensitive character match -- the <a href="#Search-In-What">Search-In-What</a>
+content is still viewed as character strings, so the same
+considerations about enclosing QUOTE characters applies:</span></li>
+  <li><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">I</span><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">f&nbsp; the RegExpr is enclosed in <a href="#QUOTE">QUOTE</a>
+characters the Metamath object's character string taken as a
+whole is searched for a match, </span><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">otherwise it is applied to the character string of each Metamath
+token in the object. </span><span style="font-family: Arial Black; font-style: italic;">For
+example: you search for "p*" within the formula character string "( ph
+-&gt; ( ps -&gt; ph ) )" or you can search for p* within the individual
+tokens: "(", "ph", "(", "ps", "-&gt;", ")", ")".&nbsp;</span></li>
+  <li><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">Metamath
+tokens are stored internally by mmj2 as lists of non-whitespace tokens
+and whitespace tokens. Since the content of the non-whitespace tokens
+may contain spaces, tabs, new-line characters and carriage-return
+characters, when creating a character string for searching, mmj2
+internally creates a
+character string consisting of the non-whitespace tokens with a single
+blank character
+in between each token. This is done for Formulas, Comments and RPN
+Proof Label lists, all of which can be searched using the RegExpr
+Format. <br>
+</span></li>
+</ul><br>
+
+
+
+
+<hr style="width: 100%; height: 2px;"><br>
+<span style="text-decoration: underline; font-weight: bold; color: rgb(51, 51, 255);"><a name="SEARCH_DOMAIN_fields:"></a>SEARCH DOMAIN fields:</span><br>
+<br>
+<big><span style="font-family: monospace; font-weight: bold;"></span><span style="font-family: monospace; font-weight: bold;">&nbsp; <a href="#From_ChapSec_and_Thru_ChapSec">From Chap</a> |.....................|+| <a href="#From_ChapSec_and_Thru_ChapSec">Sec</a> |..............................|+|</span><br style="font-family: monospace; font-weight: bold;">
+<span style="font-family: monospace; font-weight: bold;">&nbsp; <a href="#From_ChapSec_and_Thru_ChapSec">Thru Chap</a> |.....................|+| <a href="#From_ChapSec_and_Thru_ChapSec">Sec</a> |..............................|+| </span><br style="font-family: monospace; font-weight: bold;">
+<span style="font-family: monospace; font-weight: bold;"></span></big><br style="font-family: Arial Black; font-style: italic;"><a name="From_ChapSec_and_Thru_ChapSec"></a>
+<big style="text-decoration: underline; color: rgb(51, 51, 255);">From Chap/Sec and Thru Chap/Sec</big><span style="font-family: Arial Black; font-style: italic;">
+These pulldown lists are used to specify the start and end of the range
+of related <a href="#About_Metamath_Chapters_and_Sections">Chapters and/or Sections</a> used to restrict the search domain.
+The default setting is from the first Chapter/Section of the loaded
+Metamath file thru the Chapter/Section&nbsp; of the Theorem being
+proved on the Proof Assistant -- though never to include the Theorem
+itself, or subsequent assertions; or if the Theorem is new and
+LOC_AFTER was used then up thru the LOC_AFTER statement but none of the
+subsequent assertions. The user may alter the From and Thru
+Chapter/Sections, but Thru must not be past the Theorem being proved.
+If a new From/Thru range is input then the search domain includes the
+From/Thru Chapters and/or Sections plus the Chapter or Section of
+the Theorem being proved -- this last detail allows for Mathbox users
+to add their theorems to the search domain along with a From/Thru
+range. Finally...From/Thru Sections may be left blank, in which case
+the granularity of the range is the Chapter level; otherwise
+granularity is set to the Section level. </span><br>
+<br>
+<hr style="width: 100%; height: 2px;"><br>
+<big style="text-decoration: underline; color: rgb(51, 51, 255);"><a name="About_Metamath_Chapters_and_Sections"></a><span style="font-weight: bold;">About Metamath Chapters and Sections:</span></big><br>
+<br>
+Metamath Chapters are denoted by special Comment lines like this:<br>
+<br>
+$(<br>
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Propositional
+calculus<br>
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#<br>
+$)<br>
+<br>
+<span style="font-family: Arial Black; font-style: italic;">Metamath Sections are denoted by special Comment lines like this:</span><br>
+<br>
+$(<br>
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Recursively define primitive wffs for propositional calculus<br>
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=<br>
+$)<br>
+
+
+<br>
+<span style="font-family: Arial Black; font-style: italic;">mmj2 captures the Chapter/Sections by default, unless the following RunParm command is input:</span><br>
+<br>
+<code>BookManagerEnabled,no</code><br>
+<br>
+<span style="font-family: Arial Black; font-style: italic;">mmj2
+defines a Section relationship as the use by one Section of another
+Section's math objects -- symbols and statements. Specifically, a proof
+reference to an assertion (logic or syntax) defined in another Section
+is considered "use" of that Section. In addition, a statement's formula's use of
+symbols defined in another Section is considered "use" of that Section. <br>
+<br>
+mmj2 Chapter relationships are computed from the Section relationships
+via set union operations: A Chapter is related to the set of Chapters
+of the Sections to which it is related.</span><br>
+<br>
+<span style="font-family: Arial Black; font-style: italic;">You can see the mmj2 Chapter/Section data by inserting the following RunParm commands into your <code style="font-weight: bold;">RunParms.txt</code> file:</span><br>
+<br>
+<code>PrintBookManagerChapters<br>
+*PrintBookManagerSections<br>
+*PrintBookManagerSectionDetails,*<br>
+</code><br>
+<span style="font-family: Arial Black; font-style: italic;">Note that
+mmj2 breaks down each Metamath Section into four sections: Symbols,
+VarHyps, Syntax and Logic. For Search Option usage we will treat all
+four "sub-sections" as a unit. To convert the mmj2 Section numbers into
+indexes we do an integer divide by 4 and discard the remainder.</span><br style="font-family: Arial Black; font-style: italic;">
+<br style="font-family: Arial Black; font-style: italic;">
+<span style="font-family: Arial Black; font-style: italic;">Here are Chapter/Section lists from mmj2 after some text-editing to remove extraneous data:</span><br>
+<a href="Chapters.txt">Chapters.txt</a><br>
+<a href="Sections.txt">Sections.txt </a><br>
+<br>
+<hr style="width: 100%; height: 2px;">
+<h3 style="color: rgb(51, 51, 255);"><big><a name="SEARCH_PREFERENCES"></a>SEARCH PREFERENCES</big></h3><br>
+
+<big><span style="font-family: monospace; font-weight: bold;"></span></big><big><span style="font-family: monospace; font-weight: bold;"> <span style="color: rgb(51, 51, 255);">____<a href="SearchOptions.html#SEARCH_PREFERENCES"><span style="font-style: italic;">SEARCH PREFERENCES</span></a>_____ </span></span></big><big><span style="font-family: monospace; font-weight: bold;"><span style="color: rgb(51, 51, 255);">//</span><a href="SearchOptions.html#reset_search_preferences_defaults">reset\\</a></span></big><big><span style="font-family: monospace; font-weight: bold;"><span style="color: rgb(51, 51, 255);"></span></span><br style="font-family: monospace; font-weight: bold;">
+<span style="font-family: monospace; font-weight: bold;">&nbsp;<a href="SearchOptions.html#EXCLUSION_PREFERENCES">Exclusion</a>: <a href="SearchOptions.html#Labels">Labels</a>: XXXXXXXXXXXXXXXXX <a href="SearchOptions.html#EXTENDED_SEARCH_PREFERENCES">Extended Search</a>: </span><br style="font-family: monospace; font-weight: bold;">
+<span style="font-family: monospace; font-weight: bold;">&nbsp;&nbsp; 99999 <a href="SearchOptions.html#Min_Times_Used_In_Proofs_">Min Times Used In Proofs</a>&nbsp;&nbsp;&nbsp;&nbsp; 99999 <a href="SearchOptions.html#Min_Completed_Search_Results">Min Completed Search Results</a></span><br style="font-family: monospace; font-weight: bold;">
+<span style="font-family: monospace; font-weight: bold;">&nbsp;&nbsp;
+99999 <a href="SearchOptions.html#Min_Hyps_and_MaxHyps">Min
+Hyps</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+99999 <a href="SearchOptions.html#Check_First_N_Search_Results">Check First N Search Results</a></span><br style="font-family: monospace; font-weight: bold;">
+<span style="font-family: monospace; font-weight: bold;">&nbsp;&nbsp;
+99999 <a href="SearchOptions.html#Min_Hyps_and_MaxHyps">Max
+Hyps</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+99999 <a href="SearchOptions.html#Max_Incomplete_Hyps">Max Incomplete Hyps</a> </span><br style="font-family: monospace; font-weight: bold;">
+<span style="font-family: monospace; font-weight: bold;">&nbsp;&nbsp; </span></big><big><span style="font-family: monospace; font-weight: bold;">99999 <a href="SearchOptions.html#Max_Search_Results">Max Search
+Results</a> &nbsp; &nbsp; &nbsp; &nbsp; </span></big><big><span style="font-family: monospace; font-weight: bold;"></span></big><big><span style="font-family: monospace; font-weight: bold;">&nbsp; 99999 <a href="SearchOptions.html#Max_Prev_Steps_Checked">Max Prev Steps Checked</a></span><br style="font-family: monospace; font-weight: bold;">
+<span style="font-family: monospace; font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></big><big><span style="font-family: monospace; font-weight: bold;"></span></big><big><span style="font-family: monospace; font-weight: bold;">X <a href="SearchOptions.html#Must_Be_Unifiable_With_Step">Must Be Unifiable With Step</a></span></big><big><span style="font-family: monospace; font-weight: bold;"> &nbsp;&nbsp;&nbsp;&nbsp; X <a href="SearchOptions.html#Reuse_Derivation_Steps">Reuse
+Derivation Steps</a><br>
+</span></big><big><span style="font-family: monospace; font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X <a href="SearchOptions.html#Use_Related_ChapterSection_Hierarchy">Use Chapter/Sec. Hierarchy</a></span></big>&nbsp;&nbsp; &nbsp; &nbsp;&nbsp; <big><span style="font-family: monospace; font-weight: bold;"><a href="SearchOptions.html#OUTPUT_PREFERENCES">Output</a>:&nbsp;</span></big> <br>
+
+<big><span style="font-family: monospace; font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X <a href="SearchOptions.html#Search-Proximity_Scoring">Search-Proximity Scoring</a>&nbsp;&nbsp;&nbsp;&nbsp; </span></big><big><span style="font-family: monospace; font-weight: bold;"></span></big><big><span style="font-family: monospace; font-weight: bold;">99999 <a href="SearchOptions.html#Max_Elapsed_Seconds">Max Elapsed
+Seconds</a></span></big><big><span style="font-family: monospace; font-weight: bold;"><br></span></big><big><span style="font-family: monospace; font-weight: bold;">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></big><big><span style="font-family: monospace; font-weight: bold;">X <a href="SearchOptions.html#Show_Unification_Substitutions">Show Unification Subst.</a><br>
+</span></big><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp; </span><big><span style="font-family: monospace; font-weight: bold;">X <a href="SearchOptions.html#Auto_Select">Auto-Select (Update Proof Step)</a></span></big><br>
+
+<big><span style="font-family: monospace; font-weight: bold;"></span></big><big><span style="font-family: monospace; font-weight: bold;">&nbsp;</span></big><big><span style="font-family: monospace; font-weight: bold;">&nbsp; <a href="SearchOptions.html#Output_Sort_Sequence">Output Sort Seq</a>: |.....................................................|+|</span><br style="font-family: monospace; font-weight: bold;">
+<span style="font-family: monospace; font-weight: bold;"></span></big><big><span style="font-family: monospace; font-weight: bold;"></span></big><br>
+<br>
+
+
+<big><span style="text-decoration: underline; color: rgb(51, 51, 255);"><a name="reset_search_preferences_defaults"></a>reset</span></big><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">
+The reset button resets the <a href="#SEARCH_PREFERENCES">Search Preferences</a> to the default settings.</span><span style="font-family: Arial Black; font-style: italic;"><br>
+<br>
+</span>
+<hr style="width: 100%; height: 2px;"><span style="font-family: Arial Black; font-style: italic;"><br>
+</span><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">The Search Preferences area has three sections: <a href="#Exclusion_Preferences">Exclusion Preferences</a>, <a href="#Extended_Search_Preferences">Extended Search Preferences</a> and <a href="#Output_Preferences">Output Preferences</a>.</span><br>
+
+<br>
+<big><br>
+</big>
+<span style="text-decoration: underline; color: rgb(51, 51, 255); font-weight: bold;"><big><a name="EXCLUSION_PREFERENCES"></a>EXCLUSION PREFERENCES</big></span> <span style="font-family: Arial Black; font-style: italic;">-
+These are search criteria which remain in force until changed by the
+user. The name, "Exclusion" is somewhat of a misnomer since only </span><a href="#Labels"><big><span style="text-decoration: underline; color: rgb(51, 51, 255);">Labels</span></big></a><span style="font-family: Arial Black; font-style: italic;"> and </span><a href="#Max_Search_Results"><big style="text-decoration: underline; color: rgb(51, 51, 255);">Max Search Results</big></a><span style="font-family: Arial Black; font-style: italic;"> cause exclusion of an assertion from the Search Results if satisfied; the rest cause exclusion if </span><span style="font-family: Arial Black; text-decoration: underline;">not</span><span style="font-family: Arial Black; font-style: italic;"> satisfied; the most important characteristic to remember is that unlike the <a href="#SEARCH_DATA">Search Data</a> criteria, the Exclusion Preferences remain in force from one search to the next until changed or reset.</span><br>
+<br>
+<big><span style="text-decoration: underline; color: rgb(51, 51, 255);"><a name="Labels"></a>Labels</span></big><br>
+<ul>
+  <li><span style="font-family: Arial Black; font-style: italic;">Labels
+is a text entry field that uses regular expressions to specify the
+labels of assertions that should be excluded from the Search Results.</span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;">Multiple regular expressions are input using spaces as delimiters (e.g.&nbsp; </span><big><span style="font-family: Arial Black;"><code>3* *OLD ee*</code></span></big><span style="font-family: Arial Black; font-style: italic;"> ).</span><span style="font-family: Arial Black;"></span></li>
+  <li><span style="font-family: Arial Black;"><span style="font-style: italic;"></span></span><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">Uses the <a href="http://docs.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html">Java-defined version of Regular Expressions</a> </span><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">(see also <a href="http://docs.oracle.com/javase/tutorial/essential/regex/index.html">http://docs.oracle.com/javase/tutorial/essential/regex/index.html</a> )</span><span style="font-family: Arial Black; font-style: italic; font-weight: bold;"></span>.</li>
+  <li><span style="font-family: Arial Black; font-style: italic;">Note:
+this functionality of Labels is almost identical to specifying a <a href="#SEARCH_DATA">Search
+Data</a> line with <a href="#Search-For-What">Search-In-What</a> = Labels and <a href="#Format">Format </a>= <a href="#RegExpr">RegExpr</a>. The reason
+for providing the Labels field here is that <a href="#SEARCH_PREFERENCES">Search Preferences</a> area do
+not need to be re-entered for each new search, unlike Search Data.</span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;">Default = blank.<br>
+</span></li>
+
+</ul>
+<span style="font-family: Arial Black; font-style: italic; font-weight: bold;">
+</span><big style="color: rgb(51, 51, 255); text-decoration: underline;"><a name="Min_Times_Used_In_Proofs_"></a>Min Times Used In Proofs</big><br>
+<ul>
+  <li><span style="font-family: Arial Black; font-style: italic;">Excludes any assertion which is referenced by fewer than </span><a href="#Min_Times_Used_In_Proofs_"><big style="color: rgb(51, 51, 255); text-decoration: underline;">Min Times Used In Proofs</big></a><span style="font-family: Arial Black; font-style: italic;"> times.</span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;">However, assertions in the designated theorem's own <a href="#About_Metamath_Chapters_and_Sections">Section</a> are not excluded for this reason.</span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;">Must be 0 thru 99999.</span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;">Default = 0. <br>
+</span></li>
+
+</ul>
+
+<big style="text-decoration: underline; color: rgb(51, 51, 255);"><a name="Min_Hyps_and_MaxHyps"></a>Min Hyps and MaxHyps</big><br>
+<ul>
+  <li><span style="font-family: Arial Black; font-style: italic;">Excludes any assertion with fewer than or greater than </span><a href="SearchOptions.html#Min_Hyps_and_MaxHyps"><big style="text-decoration: underline; color: rgb(51, 51, 255);">Min Hyps and Max Hyps</big></a><span style="font-family: Arial Black; font-style: italic;"></span><big style="text-decoration: underline; color: rgb(51, 51, 255);"></big><span style="font-family: Arial Black; font-style: italic;"> logical</span><span style="font-family: Arial Black; font-style: italic;"> hypotheses, respectively.<br>
+    </span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;">Must be 0 thru 99999</span><span style="font-family: Arial Black; font-style: italic;">.</span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;">Default = 0 and 99999, respectively.<br>
+</span></li>
+
+  <li><span style="font-family: Arial Black; font-style: italic;">Note:
+the input Sorted Assrt List is sorted by Number Of Hyps and mObjSeq
+number. Skip-sequential processing is used in the search to
+access the list very efficiently. Also, please note that the <a href="#EXTENDED_SEARCH_PREFERENCES">Extended Search</a> process first looks
+for assertions with 1-missing Hyp, then 2-missing Hyps, etc. So,&nbsp; it is
+possible to reduce the search elapsed time significantly by specifying </span><a href="#Min_Hyps_and_MaxHyps"><big style="text-decoration: underline; color: rgb(51, 51, 255);">Min Hyps and Max Hyps</big></a><span style="font-family: Arial Black; font-style: italic;">, especially if you are using Extended Search.</span><span style="font-family: Arial Black; font-style: italic;"> If your searches are taking too long
+or are timing out (re: </span><big style="color: rgb(51, 51, 255);"><a href="#Max_Elapsed_Seconds">Max Elapsed Seconds</a></big><span style="font-family: Arial Black; font-style: italic;">) -- you can efficiently break up a
+search into ranges of Hyps: e.g. 0 thru 2, 3 thru 3, 4 thru 4, etc. Something
+like 95% of assertions in set.mm use 2 or fewer Hyps...AND...the
+assertions with larger numbers of Hyps are the ones most likely to
+cause the dreaded Combinatorial Explosion of Possibilities resulting in a
+timeout. </span></li>
+</ul><a name="Max_Search_Results"></a><big style="text-decoration: underline; color: rgb(51, 51, 255);">Max Search Results</big><br>
+<ul>
+<li><span style="font-family: Arial Black; font-style: italic;">Limits the size of the Search Results List.</span><span style="font-family: Arial Black; font-style: italic;"></span> <br>
+</li><li><span style="font-family: Arial Black; font-style: italic;">Must be 0 thru 99999.</span></li><li><span style="font-family: Arial Black; font-style: italic;">Default = 99999.</span></li>
+</ul>
+
+
+<br>
+
+<big style="color: rgb(51, 51, 255);"><span style="text-decoration: underline;">
+<a name="Must_Be_Unifiable_With_Step"></a>Must Be Unifiable With Step </span></big><br>
+<ul>
+<li><span style="font-family: Arial Black; font-style: italic;">Checkbox field; default = On (checked).</span><span style="font-family: Arial Black; font-style: italic;"></span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;">If On, then an assertion which is not unifiable with the designated proof step is excluded from the Search Results.&nbsp;</span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;">Does not apply and is ignored if a non-step specific or global (non-theorem) search is requested. <br>
+    </span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;">Note:&nbsp;
+this is one of the most powerful criteria in the Search Options toolbox
+because in a deep sense, unifiability signifies similarity: in order
+for an assertion to be unifiable with a proof step and its Hyp fields,
+the proof step must be an instance of the assertion and its Hyps. <br>
+    </span></li>
+</ul>
+<br style="color: rgb(51, 51, 255); font-weight: bold;">
+
+<big><span style="color: rgb(51, 51, 255); text-decoration: underline;"><a name="Use_Related_ChapterSection_Hierarchy"></a>Use Related Chapter/Section Hierarchy</span> </big><span style="font-family: Arial Black; font-style: italic;">Toggle On
+to specify that the search domain is to be restricted to a hierarchy of
+related <a href="SearchOptions.html#About_Metamath_Chapters_and_Sections">Chapters and/or Sections</a> of the input Metamath file -- </span><span style="font-family: Arial Black; font-style: italic;">plus the Chapter or Section of
+the Theorem being proved -- this last detail allows for Mathbox users
+to add their theorems to the search domain along with a From/Thru
+range.</span><br style="font-family: Arial Black; font-style: italic;">
+
+<br>
+<br>
+
+<big style="color: rgb(51, 51, 255);"><span style="font-weight: bold; text-decoration: underline;"><a name="Related_ChapterSection_Hierarchy_Diagram"></a>Related Chapter/Section Hierarchy Diagram</span></big><br style="font-family: Arial Black; font-style: italic;">
+
+<img style="border: 5px solid ; width: 560px; height: 569px;" alt="SSS_Rel_Chap_Sec_1.jpg" title="SSS_Rel_Chap_Sec_1.jpg" src="SSS_Rel_Chap_Sec_1.jpg"><br>
+
+<br>
+<br>
+<big style="text-decoration: underline; color: rgb(51, 51, 255);"><span style="font-family: Arial Black;"><span style="font-style: italic;"><span style="font-weight: bold;"></span></span></span></big><big style="text-decoration: underline; color: rgb(51, 51, 255);"><a name="Search-Proximity_Scoring"></a> Search-Proximity Scoring</big><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">Toggle-on <span style="color: rgb(51, 51, 255);"></span>to indicate that:<br>
+</span>
+<ul>
+<li><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">If an assertion is not excluded (according to the Exclusion Preferences) AND<br>
+    </span></li><li><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">It is not selected by the <a href="SearchOptions.html#SEARCH_CRITERIA_fields:">Search Criteria</a> (and Search Criteria were used), AND</span></li><li><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">The assertion is in the same <a href="SearchOptions.html#About_Metamath_Chapters_and_Sections">Section</a> as an assertion that was selected (and not excluded), THEN</span></li><li><span style="font-family: Arial Black; font-style: italic; font-weight: bold;">Assign the assertion a non-zero search score such that it <span style="text-decoration: underline;">will</span> appear in the search results but after all assertions that were selected.</span></li>
+</ul>
+<br>
+
+
+
+<span style="font-family: Arial Black; font-style: italic; font-weight: bold;"></span>
+
+<hr style="width: 100%; height: 2px;"><span style="font-family: Arial Black; font-style: italic; font-weight: bold;"></span><span style="text-decoration: underline; font-weight: bold; color: rgb(51, 51, 255);"></span><span style="text-decoration: underline; color: rgb(51, 51, 255);"><big><a name="EXTENDED_SEARCH_PREFERENCES"></a>EXTENDED SEARCH PREFERENCES</big></span> <span style="font-family: Arial Black; font-style: italic;"><br>
+</span>
+<ul>
+  <li><span style="font-family: Arial Black; font-style: italic;">"Extended
+Search" is a potentially computationally expensive process
+that looks for missing hypotheses -- those not specified by the user
+in the Hyp field of the designated proof step -- among the previous
+proof steps and zero-hypothesis theorems of the system (the latter is
+performed for assertions in the Search Results that require exactly one
+hypothesis.)</span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;">In
+some
+rare cases, when the user specifies sufficient
+hypotheses in the Hyp field of the designated proof step, Completed
+Search Results will be found during the initial search. Only when the
+user used a "?" in the Hyp field (e.g. "?", "1,?", "1,2,?",
+etc.) does Extended Search even come into play. </span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;">The main
+challenge for Extended Search is "Combinatorial Explosion of
+Possibilities". This will typically occur with long proofs where the
+designated proof step is at the end, and/or for assertions with more
+than two missing hypotheses.. Hence the Output Preference </span><small style="font-style: italic;"><a style="font-family: Arial Black;" href="#Max_Elapsed_Seconds"><big style="text-decoration: underline; color: rgb(51, 51, 255);">Max Elapsed
+Seconds</big></a></small><span style="font-family: Arial Black; font-style: italic;">.</span></li>
+  
+  <li><span style="font-family: Arial Black; font-style: italic;">To
+improve the odds of finding one or more Completed Search Results prior to </span><small style="font-style: italic;"><a style="font-family: Arial Black;" href="SearchOptions.html#Max_Elapsed_Seconds"><big style="text-decoration: underline; color: rgb(51, 51, 255);">Max Elapsed
+Seconds</big></a></small><span style="font-family: Arial Black; font-style: italic;"></span><a href="SearchOptions.html#Max_Elapsed_Seconds"><big style="text-decoration: underline; color: rgb(51, 51, 255);"></big></a><span style="font-family: Arial Black; font-style: italic;"></span><span style="font-family: Arial Black; font-style: italic;">, the Extended Search scans the Search Results multiple times. First
+the one-missing hypothesis Search Results assertions are examined, then two-missing hypothesis
+assertions, and so on. Additionally, for the one-missing hypothesis assertions, if
+no previous proof step was found to be satisfactory a special search is made looking for existing
+zero-hypothesis assertions that unify with the missing assertion
+hypothesis (given simultaneous variable substitutions obtained from the
+step's unification with the Search Result item's assertion.) <br>
+    </span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;">NOTE:
+it is conceivable that a user might want the option to have the Search
+Results checked in sequence without regard for the number of missing
+hypotheses. That option could be added to the Extended Search
+Preferences without undue difficulty -- though the problem of
+Combinatorial Explosion of Possibilities may reduce the appeal of this
+option. <br>
+    </span></li>
+
+  <li><span style="font-family: Arial Black; font-style: italic;">Extended Search is N/A for global searches or non-step specific searches. <br>
+    </span></li>
+</ul>
+
+<br><a name="Min_Completed_Search_Results"></a>
+<big style="text-decoration: underline; color: rgb(51, 51, 255);">Min Completed Search Results</big><br>
+<ul>
+  <li><span style="font-family: Arial Black; font-style: italic;">Sets the minimum number of Completed Search Results.</span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;">An Extended
+Search only takes place if additional Completed Search Results are
+needed to equal the Min Completed Search Results number following the initial search.</span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;">Must be 0 thru 99999</span><span style="font-family: Arial Black; font-style: italic;">.</span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;">Default = 0 = Extended Search is OFF<br>
+</span></li>
+</ul>
+<span style="font-family: Arial Black; font-style: italic;"></span>
+<br><big style="text-decoration: underline; color: rgb(51, 51, 255);"><a name="Check_First_N_Search_Results"></a>
+Check First N Search Results</big><span style="font-family: Arial Black; font-style: italic;"><br>
+</span>
+<ul>
+<li><span style="font-family: Arial Black; font-style: italic;">Specifies the endpoint in the Search Results to be checked in the Extended Search.</span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;"></span><span style="font-family: Arial Black; font-style: italic;">Must be 0 thru 99999</span><span style="font-family: Arial Black; font-style: italic;">.</span></li>
+<li><span style="font-family: Arial Black; font-style: italic;">Default = 99999</span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;">Note:
+the result to set this value (much) lower would be to shorten the
+elapsed time -- Extended Search is computationally expensive,
+especially for long proofs using assertions with &gt; 2 hypotheses. <br>
+</span></li>
+</ul>
+
+
+<br><big style="color: rgb(51, 51, 255);">
+<span style="text-decoration: underline;"><a name="Max_Incomplete_Hyps"></a>Max Incomplete Hyps</span></big><br>
+<ul>
+<li><span style="font-family: Arial Black; font-style: italic;">Specifies the maximum number of the incomplete hypotheses in Search Result items to be checked in the Extended Search.</span></li><li><span style="font-family: Arial Black; font-style: italic;"></span><span style="font-family: Arial Black; font-style: italic;">Must be 0 thru 99999</span><span style="font-family: Arial Black; font-style: italic;">.</span></li><li><span style="font-family: Arial Black; font-style: italic;">Default = 99999</span></li>
+</ul>
+
+<br>
+<big style="text-decoration: underline; color: rgb(51, 51, 255);"><a name="Max_Prev_Steps_Checked"></a>Max Prev Steps Checked</big><br>
+<ul>
+<li><span style="font-family: Arial Black; font-style: italic;">Specifies the maximum number of the previous proof steps to be checked in the Extended Search.</span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;">This number does not include previous steps that are bypassed because <a href="#Reuse_Derivation_Steps">Reuse Derivation Steps</a> is Off.</span><span style="font-family: Arial Black; font-style: italic;"></span></li>
+<li><span style="font-family: Arial Black; font-style: italic;"></span><span style="font-family: Arial Black; font-style: italic;">Must be 0 thru 99999</span><span style="font-family: Arial Black; font-style: italic;">.</span></li><li><span style="font-family: Arial Black; font-style: italic;">Default = 99999</span></li>
+</ul>
+<big style="text-decoration: underline; color: rgb(51, 51, 255);">
+<a name="Reuse_Derivation_Steps"></a>Reuse Derivation Steps</big><br>
+<ul>
+<li><span style="font-family: Arial Black; font-style: italic;">Checkbox field; default = On (checked).</span><span style="font-family: Arial Black; font-style: italic;"></span></li><li><span style="font-family: Arial Black; font-style: italic;">If
+Off, previous proof derivation steps (this excludes the theorem's
+hypotheses) which have already been referenced in a prior derivation
+step will not be checked in the Extended Search. <br>
+</span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;">The
+idea of this is to dramatically reduce the number hypothesis
+combinations tested during unification of the Search Result item's
+assertion. For long proofs the problem of Combinatorial Explosion of
+Possibilities may be dramatically reduced if Reuse Derivation Steps =
+Off. <br>
+    </span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;">Because
+some proofs do require reuse of derivations, the user can input a
+special mmj2 Proof Worksheet Comment statement&nbsp; immediately prior
+to the designated proof step that specifies "</span><span style="font-family: Arial Black; font-weight: bold;"><big><code>&lt;SO:REUSE&gt;</code></big></span><span style="font-family: Arial Black; font-style: italic;">"&nbsp; as the first non-blank token after the "<big><code style="font-weight: bold;">*</code></big>" in column 1. This
+special comment designates the following derivation step as a candidate
+for reuse even though Reuse Derivation Steps = Off. <br>
+</span></li>
+</ul><br>
+<hr style="width: 100%; height: 2px;"><br>
+
+
+<span style="text-decoration: underline; color: rgb(51, 51, 255);"><big><a name="OUTPUT_PREFERENCES"></a>OUTPUT PREFERENCES</big></span><br>
+<br><big style="text-decoration: underline; color: rgb(51, 51, 255);"><a name="Output_Sort_Sequence"></a>Output Sort Sequence</big> <br>
+<ul>
+  <li><span style="font-family: Arial Black; font-style: italic;">The
+Output Sort Sequence uses a pulldown list that allows the user to
+select the sort sequence of the output Search Results List.</span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;">The sort key field choices are listed in major to minor order.&nbsp; </span><span style="font-family: Arial Black; font-style: italic;">(Minor sort keys only come into play if all of the more major sort keys are equal when two items are being compared.)</span><span style="font-family: Arial Black; font-style: italic;"><br>
+    </span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;">If
+not otherwise mentioned, field sort sequence is Ascending order.
+Descending order is indicated with&nbsp; "(D)" suffixing the field name.</span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;">Note:
+Unless <a href="#Must_Be_Unifiable_With_Step">Must Be Unifiable With Step</a> is Off, every Search Result List
+item assertion will be unifiable with the designated proof step (proof
+step formula/hyps are an instance of the assertion). So, we already
+know that the proof step is very similar to each of assertions! The
+purpose of the sort sequence is to put the Search Result items the user
+is most likely to want at the beginning of the Search Results List.</span></li>
+</ul><br>
+
+<span style="font-family: Arial Black; font-style: italic; text-decoration: underline; color: rgb(51, 51, 255);"><a name="SORT_KEY_FIELDS_TABLE"></a>SORT KEY FIELDS TABLE</span><br>
+<table style="text-align: left; width: 100%;" border="5" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big>MObjSeq</big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);">Metamath
+Object Sequence Number: corresponds to position within the input
+Metamath file. A higher number indicates a more advanced assertion
+which may be more desirable in a proof step.<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big>Nbr Hyps</big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);">Number
+of Logical Hypotheses in assertion. Fewer hypotheses tends to result in
+shorter proofs. Approximately 95% of set.mm assertions have two or
+fewer hypotheses.<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-style: italic; font-family: Arial Black; color: rgb(0, 102, 0); font-weight: bold;"><big>Complexity</big><br>
+      </td>
+      <td style="vertical-align: top; font-style: italic; font-family: Arial Black; color: rgb(0, 102, 0); font-weight: bold;">Combination
+of two Sort Key fields: ParseDepth and Formula Length. Combined here to
+simplify usage and documentation. "Complexity(D)" means ParseDepth(D)
+followed by FormulaLength(D).<br>
+      </td>
+    </tr>
+<tr>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big>ParseDepth</big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);">=
+Assertion's conclusion's formula's parse tree depth. Corresponds
+roughly to formula complexity and hence, specificity. Because in
+standard practice the designated proof step has already been unified
+with each assertion in the Search Results List, a greater Parse Depth
+corresponds to a higher degree of similarity -- and hence, increased
+likelihood of usefulness in the designated proof step. <br>
+      <br>
+      <big><big><code style="font-weight: bold;">See mmj.lang.Stmt.getExprParseTree().getMaxDepth().</code></big></big><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-weight: bold; font-style: italic; color: rgb(0, 102, 0); font-family: Arial Black;"><big>FormulaLength</big><br>
+      </td>
+      <td style="vertical-align: top; font-weight: bold; font-style: italic; color: rgb(0, 102, 0); font-family: Arial Black;">= Assertion's conclusion's formula length (in tokens, not characters). Corresponds roughly to formula complexity.<br>
+      </td>
+    </tr>
+<tr>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big>Popularity</big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);">= Number of times assertion used in proofs of other assertions. <br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big>Score</big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);">This is a ranking number based on the search results and search preferences/criteria:<br>
+      <ul style="font-family: monospace; font-weight: bold;"><li><big>000 = Assertion not selected (initial Score value)</big></li>
+        <li><big>030 = Assertion <a href="#EXCLUSION_PREFERENCES">excluded</a></big></li>
+        <li><big>030 = Assertion not excluded, but also not <a href="#SEARCH_DATA">selected</a></big></li>
+
+        <li><big>040 = Assertion selected by virtue of <a href="#Search-Proximity_Scoring">Search-Proximity Scoring</a></big></li>
+        <li><big>050 = Assertion satisfies search criteria, if any, but is not a Completed Search Result.</big></li>
+
+        <li><big>100 = Assertion is a Completed Search Result: it unifies with the designated proof step and there are no missing hypotheses.</big></li>
+      </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<span style="font-family: Arial Black; font-style: italic; text-decoration: underline; color: rgb(51, 51, 255);"><a name="SORT_SEQUENCE_TABLE"></a>SORT SEQUENCE TABLE</span><br>
+<table style="text-align: left; width: 100%;" border="5" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic;">SORT<br>
+ID<br>
+      </td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic;">Default<br>
+Sort?<br>
+      </td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic;">1<br>
+      </td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic;">2<br>
+      </td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic;">3<br>
+      </td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic;">4<br>
+      </td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic;">5<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic;">1<br>
+      </td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic;">Yes<br>
+      </td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big>Score</big><big>(D)</big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big> Complexity</big><big>(D)</big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big>Popularity</big><big>(D)</big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big>Nbr Hyps</big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);">MObjSeq<big>(D)</big></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic;">2</td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic;"><br>
+      </td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big>Score</big><big>(D)</big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big>Popularity</big><big>(D)</big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big> Complexity</big><big>(D)</big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big>Nbr Hyps</big><big></big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);">MObjSeq<big>(D)</big></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic;">3</td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic;"><br>
+      </td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big>Score</big><big>(D)</big><big></big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big>Nbr Hyps</big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big>Complexity(D)</big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big>Popularity</big><big>(D)</big><big></big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);">MObjSeq<big>(D)</big></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic;">4</td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic;"><br>
+      </td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big>Score</big><big>(D)</big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big>Nbr Hyps</big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big>Popularity</big><big>(D)</big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big>Complexity(D)</big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);">MObjSeq<big>(D)</big></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic;">5<br>
+      </td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic;"><br>
+      </td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big>Score</big><big>(D)</big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big>Complexity</big><big>(D)</big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);">MObjSeq<big>(D)</big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><br>
+      </td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic;">6<br>
+      </td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic;"><br>
+      </td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big>Score(D)</big><br>
+      </td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big>Popularity</big><big>(D)</big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);">MObjSeq<big>(D)</big><big></big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><br>
+      <big></big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic;">7</td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic;"><br>
+      </td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big>Score(D)</big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big>Nbr Hyps</big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big>MObjSeq(D)</big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><br>
+      </td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic;">8</td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic;"><br>
+      </td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><big>Score</big><big>(D)</big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);">MObjSeq<big>(D)</big></td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><br>
+      </td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><br>
+      </td>
+      <td style="vertical-align: top; font-family: Arial Black; font-style: italic; color: rgb(0, 102, 0);"><br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<span style="font-family: Arial Black; font-style: italic;"><br>
+</span>
+<br>
+<br>
+<a name="Max_Elapsed_Seconds"></a><big style="text-decoration: underline; color: rgb(51, 51, 255);">Max Elapsed Seconds</big><br>
+<ul>
+<li><span style="font-family: Arial Black; font-style: italic;">Specifies the maximum number the search is allowed to run. <br>
+</span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;">A helpful "timeout" message provides the progress of the search at the time it was terminated.<br>
+</span></li>
+<li><span style="font-family: Arial Black; font-style: italic;"></span><span style="font-family: Arial Black; font-style: italic;">Must be 0 thru 99999</span><span style="font-family: Arial Black; font-style: italic;">.</span></li><li><span style="font-family: Arial Black; font-style: italic;">Default = 2</span>.<br>
+</li>
+</ul>
+
+<a name="Show_Unification_Substitutions"></a><big style="text-decoration: underline; color: rgb(51, 51, 255);">Show Unification Substitutions</big><br>
+<ul>
+  <li><span style="font-family: Arial Black; font-style: italic;">Checkbox field, check = On. <br>
+    </span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;">On = default = Unifiable assertions are
+displayed in the Step Selector Search Dialog with the unification substitutions (from the
+Proof Worksheet into the assertion). <br>
+    </span></li>
+  <li><span style="font-family: Arial Black; font-style: italic;">Off = Assertion
+formulas shown without substitutions as they exist in the input Metamath
+database.</span></li>
+</ul>
+
+<a name="Auto_Select"></a><big style="text-decoration: underline; color: rgb(51, 51, 255);">Auto-Select (Update Proof Step) </big><br>
+<ul>
+<li><span style="font-family: Arial Black; font-style: italic;">Checkbox field, check = On. <br>
+  </span></li><li><span style="font-family: Arial Black; font-style: italic;">Off = default </span></li>
+  <li><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">If <a href="SearchOptions.html#Auto_Select">Auto-Select</a> is "On" , the first Completed Search Result in the Search Results List is
+passed to the Proof Assistant to update the designated proof step in
+the Proof Worksheet, and if necessary, to generate hypothesis proof steps...followed by Unification of the Proof Worksheet.<br>
+    </span></li>
+  <li><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">"Completed Search Result"&nbsp; items have unifiable a</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">ssertions whose hypotheses are fully satisfied by the Hyp
+field of the
+designated proof step -- i.e. no missing Hyps. For example, the assertion is </span><span style="font-weight: bold; font-family: Arial Black;">ax-mp</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;"> and it is unifiable with theorem </span><span style="font-weight: bold; font-family: Arial Black;">XYZ</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;"> step </span><span style="font-weight: bold; font-family: Arial Black;">3</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;"> for which either the user specified Hyp field&nbsp; "</span><span style="font-weight: bold; font-family: Arial Black;">1,2</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">" (or "</span><span style="font-weight: bold; font-family: Arial Black;">2,1</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">", or "</span><span style="font-weight: bold; font-family: Arial Black;">1,2,?</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">", etc.) -- OR... the Extended Search feature discovered Steps </span><span style="font-weight: bold; font-family: Arial Black;">1</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;"> and/or </span><span style="font-weight: bold; font-family: Arial Black;">2</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;"> as suitable hypotheses for </span><span style="font-weight: bold; font-family: Arial Black;">ax-mp</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">, in which case the user could have specified the Hyp field as simply "</span><span style="font-weight: bold; font-family: Arial Black;">?</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">" (or "</span><span style="font-weight: bold; font-family: Arial Black;">1,?</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">", or "</span><span style="font-weight: bold; font-family: Arial Black;">2,?</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">", or "</span><span style="font-weight: bold; font-family: Arial Black;">?,1</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">", or "</span><span style="font-weight: bold; font-family: Arial Black;">?,2</span><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">"). <br>
+    </span></li>
+  <li><span style="font-style: italic; font-weight: bold; font-family: Arial Black;">The
+Step Selector Search Dialog will be updated with the new Search Results
+list even though Auto-Select is activated and the Proof Worksheet is
+automatically updated. Assuming that the user has a large screen
+capable of displaying the Proof Assistant GUI and the Step Selector
+Search Dialog simultaneously, both windows will be updated and visible
+as a result of the successful search + Auto-Select activation.
+Following successful update of the Proof Worksheet, the Proof Assistant
+GUI window will be the "top" window and will have the active cursor.</span></li>
+
+</ul>
+
+<br>
+
+<br>
+<hr style="width: 100%; height: 2px;">
+<br>
+<br>
+<br>
+</body></html>

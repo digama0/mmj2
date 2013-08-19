@@ -7,21 +7,20 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  HelpGeneralInfoGUI.java  0.01 02/01/2006
+ * HelpGeneralInfoGUI.java  0.01 02/01/2006
  */
 
 package mmj.pa;
 
 /**
- *  Displays general information about the Proof Assistant GUI.
- *
- *  The information displayed is hardcoded into
- *  mmj.pa.PaConstants.java.
+ * Displays general information about the Proof Assistant GUI.
+ * <p>
+ * The information displayed is hardcoded into mmj.pa.PaConstants.java.
  */
 public class HelpGeneralInfoGUI extends AuxFrameGUI {
 
     /**
-     *  Default constructor.
+     * Default constructor.
      */
     public HelpGeneralInfoGUI() {
         super();
@@ -29,13 +28,11 @@ public class HelpGeneralInfoGUI extends AuxFrameGUI {
     }
 
     /**
-     *  Constructor using ProofAsstPreferences settings.
-     *
-     *
-     *  @param proofAsstPreferences variable settings
+     * Constructor using ProofAsstPreferences settings.
+     * 
+     * @param proofAsstPreferences variable settings
      */
-    public HelpGeneralInfoGUI(
-                ProofAsstPreferences proofAsstPreferences) {
+    public HelpGeneralInfoGUI(final ProofAsstPreferences proofAsstPreferences) {
         super(proofAsstPreferences);
         setFrameValues();
     }
@@ -45,8 +42,8 @@ public class HelpGeneralInfoGUI extends AuxFrameGUI {
         setFrameTitle(PaConstants.GENERAL_HELP_FRAME_TITLE);
     }
 
-    public static void main(String[] args) {
-        HelpGeneralInfoGUI h      = new HelpGeneralInfoGUI();
+    public static void main(final String[] args) {
+        final HelpGeneralInfoGUI h = new HelpGeneralInfoGUI();
         h.showFrame(h.buildFrame());
     }
 }

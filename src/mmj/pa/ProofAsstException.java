@@ -12,14 +12,16 @@
 
 package mmj.pa;
 
+import mmj.lang.LangException;
+
 /**
- *  Custom exception for ProofAsst.
+ * Custom exception for ProofAsst.
  */
 public class ProofAsstException extends Exception {
 
-    public long lineNbr           = -1;
-    public long columnNbr         = -1;
-    public long charNbr           = -1;
+    public long lineNbr = -1;
+    public long columnNbr = -1;
+    public long charNbr = -1;
 
     /**
      * Default Constructor.
@@ -30,50 +32,50 @@ public class ProofAsstException extends Exception {
 
     /**
      * Contructor with error message.
-     *
-     * @param   errorMessage  error message.
+     * 
+     * @param errorMessage error message.
+     * @param args formatting arguments.
      */
-    public ProofAsstException(String errorMessage) {
-        super(errorMessage);
+    public ProofAsstException(final String errorMessage, final Object... args) {
+        super(LangException.format(errorMessage, args));
     }
 
     /**
-     *  Contructor, <code>ProofAsstException</code> with
-     *  line number, column number and error message.
-     *  <p>
-     *  Appends input stream line and column number to
-     *  input message.
-     *
-     *  @param   lineNbr       line number assigned to the error
-     *  @param   columnNbr     column number assigned to the error
-     *  @param   charNbr       character number of the error
-     *  @param   errorMessage  error message.
+     * Contructor, {@code ProofAsstException} with line number, column number
+     * and error message.
+     * <p>
+     * Appends input stream line and column number to input message.
+     * 
+     * @param lineNbr line number assigned to the error
+     * @param columnNbr column number assigned to the error
+     * @param charNbr character number of the error
+     * @param errorMessage error message.
+     * @param args formatting arguments.
      */
-    public ProofAsstException(long    lineNbr,
-                              long    columnNbr,
-                              long    charNbr,
-                              String  errorMessage) {
-        super(errorMessage
-              + PaConstants.ERRMSG_TXT_LINE
-              + lineNbr
-              + PaConstants.ERRMSG_TXT_COLUMN
-              + columnNbr);
-        this.lineNbr              = lineNbr;
-        this.columnNbr            = columnNbr;
-        this.charNbr              = charNbr;
+    public ProofAsstException(final long lineNbr, final long columnNbr,
+        final long charNbr, final String errorMessage, final Object... args)
+    {
+        super(LangException.format(errorMessage, args)
+            + PaConstants.ERRMSG_TXT_LINE + lineNbr
+            + PaConstants.ERRMSG_TXT_COLUMN + columnNbr);
+        this.lineNbr = lineNbr;
+        this.columnNbr = columnNbr;
+        this.charNbr = charNbr;
     }
 
     /**
-     * Contructor, <code>ProofAsstException</code> with
-     * character number (offset + 1) and error message.
-     *
-     * @param   charNbr       character number of the error
-     * @param   errorMessage  error message.
+     * Contructor, {@code ProofAsstException} with character number (offset + 1)
+     * and error message.
+     * 
+     * @param charNbr character number of the error
+     * @param errorMessage error message.
+     * @param args formatting arguments.
      */
-    public ProofAsstException(long    charNbr,
-                              String  errorMessage) {
-        super(errorMessage);
-        this.charNbr              = charNbr;
+    public ProofAsstException(final long charNbr, final String errorMessage,
+        final Object... args)
+    {
+        super(LangException.format(errorMessage, args));
+        this.charNbr = charNbr;
     }
 
 }

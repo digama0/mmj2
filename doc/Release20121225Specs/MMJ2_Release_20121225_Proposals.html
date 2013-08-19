@@ -1,0 +1,173 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+
+
+
+
+
+
+
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+  <title>mmj2 Release 20121225 Proposals</title>
+</head><body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);" vlink="#ff0000" alink="#000088" link="#0000ff">
+<big><big><span style="font-weight: bold;">mmj2 Release 20121225 Proposals<br>
+<br>
+</span></big></big><big><span style="font-weight: bold;"></span></big>Several
+changes to mmj2 ranging from small to large are under consideration as
+part of a December 25, 2012 (tenative) software release:<br>
+<br>
+<h3>1. Enhancements to the <a href="file:///C:/mmj2/doc/StepSelectorSearch.html">Step Selector Search</a> feature to accomplish the following goals:</h3>
+
+<ul></ul>
+<ol>
+  </ol>
+<ul>
+  <li>Improve the quality of the Step Selector Search results.
+Objectively speaking, this means that assertion the user wants will
+appear higher up in the search results than in the current system...statistically speaking. <br>
+  </li>
+  <li>Provide a general search facility for Metamath assertions
+which is useful to both mmj2 users and metamath.exe users. Even the
+most hardcore metamath.exe users will want to keep a parallel mmj2
+session running just to perform mmj2 searches.<br>
+  </li>
+  <li>Provide a Search Options dialog for entry of all search-related preferences and parameters. Specifically, these will enable
+mmj2 Proof Assistant
+users to tailor the search criteria for a designated proof step; to
+perform general ("global") searches not tied to a specific theorem/proof step; and
+to refine a search using its result set as the input search domain for the
+next search. <br>
+  </li>
+  <li>Provide an "Extended Search" feature that will seek to supply
+missing hypotheses for unifiable assertions in the search results list using previous steps in the
+Proof Worksheet and/or assertions in the database requiring zero
+hypotheses. <br>
+  </li>
+  <li>Provide
+an "Auto-Select" option to the Step Selector Search that automatically
+selects the first search result item that fulfills the
+user's search criteria and which <span style="font-style: italic; font-weight: bold;"></span>logically
+completes the designated proof step; it then automatically updates the
+Proof Worksheet and
+continues the Unification process. <br>
+</li>
+  <li>Modify the Step Selector Search dialog to visually indicate or
+highlight search result items that fulfill the
+user's search criteria and <span style="font-style: italic; font-weight: bold;"></span>logically
+complete the designated
+proof step. Regrettably, the current dialog output format does not distinguish these search results from the rest. In addition, the
+output display sort sequence should, unless the user specifies otherwise,
+position these search result items at the beginning of the list!<br>
+  </li>
+</ul>
+<ol>
+
+  
+  
+  
+  
+  
+</ol>
+
+<ul>
+
+  
+  
+</ul>
+
+For more information, see: <a href="SearchOptions.html">Search Options</a> and #4 below, Changes to the Step Selector Search dialog window.<br>
+<br>
+<br>
+<h3>2. Provide persistent storage of mmj2 GUI preferences.</h3>
+<br>
+In the current system, the user's GUI preferences such as font size,
+color, window size and placement, etc., can only be changed permanently
+by updating or entering mmj2 RunParm commands. Changes made using the
+Proof Assistant menu items revert to their starting values when the
+Proof Assistant is exited. Since <span style="font-style: italic;">all</span> of us...all intelligent beings in the Metaverse...<span style="font-style: italic;"></span>find
+mmj2 RunParms.txt file usage to be awkward, tedious
+and deplorable, this enhancement is long overdue. To remedy this
+situation a new GUIPreferences.txt file will be created and the Proof
+Assistant GUI and associated windows will be modified to record state
+changes in it (the the About window, the Help window and the Request
+Messages window -- which duplicates the contents of the error message
+pane on the Proof Assistant -- will not be upgraded to record their
+state parameters because the cost/benefit ratio is very unfavorable.)<br>
+<br>
+For details, see: <a href="PersistentStorageOfGUIPreferences.html">Persistent Storage Of GUI Preferences</a>.<br>
+<br>
+<br>
+<h3>3. Changes to the Proof Assistant GUI (main) window</h3>
+<ol>
+
+  
+  
+  <li>Do not attempt cursor positioning for distinct variable errors.</li>
+  <li>Revise the documentation in <a href="IncompleteStepCursorPositioning.html"><code>mmj2/doc/IncompleteStepCursorPositioning.html</code></a> to indicate that option "<code style="font-weight: bold;">AsIs</code>" means the cursor will remain on the same proof step -- not that the row/column position of the cursor will be unchanged. <br>
+  </li>
+  <li>Modify RunParm "<code style="font-weight: bold;">ProofAsstUnifySearchExclude</code>" to use the "<code style="font-weight: bold;">*</code>"
+statement label wildcard symbol (meaning that 0 or more of any
+characters in this position is a match), which Metamath.exe uses in the
+    <code style="font-weight: bold;">MINIMIZE_WITH</code> command: "<code style="font-weight: bold;">MINIMIZE_WITH * /BRIEF /EXCLUDE 3*,*OLD,ee*</code>".</li>
+  <li>Remove Unify menu options <code style="font-weight: bold;">Set Step Selector Max Results</code> and <code style="font-weight: bold;">Set Step Selector Show Substitutions</code> -- these options will be entered on the new Search Options window.</li>
+  <li>Retain the Unify menu and right-mouse menu item Step Selector Search but add <code style="font-weight: bold;">Reuse Step Selector Search</code> and <code style="font-weight: bold;">Search Options</code>
+to these menus. The original choice, Step Selector Search, will
+initiate a new search using no search data criteria and the current
+search preferences on the Search Options window;
+Reuse Step Selector Search will initiate a search using the existing
+search data criteria and search preferences; and the Search Options
+choice will display the Search Options window. The first two choices
+initiate proof-step specific searches while the last choice can be
+proof-step specific or "global" depending on whether the cursor was
+positioned on a derivation proof step when the choice was made. <br>
+  </li>
+  <li>Dragging (adjusting) the right border on the Proof Assistant GUI window will automatically update the <big style="font-weight: bold;"><code>ProofAsstFormulaRightCol</code></big> which sets the (TMFF) proof formatting right margin. The adjusted setting will be retained for future use via the <a href="PersistentStorageOfGUIPreferences.html">Persistent Storage Of GUI Preferences</a> enhancement. In
+the existing code changing the size of the Proof Assistant window has
+no affect on proof formatting, but with this fix every factor related
+to the size of proof text (font, font size, bold/plain), and the size
+of the window will be stored in "persistent storage" so that once the
+user gets the Proof Assistant screen adjusted to perfection the
+settings are retained permanently.  <br>
+  </li>
+</ol><br>
+
+<h3>4. Changes to the Step Selector Search Dialog window</h3>
+
+<ol>
+<li>The "Hide Dialog" button will be replaced with two new buttons: "Goto Proof Asst." and "Goto Search Options".
+This change provides accessibility to the other two key Proof Assistant
+windows in the situation where the user has positioned the windows so
+that they overlap, partly or completely. The "Goto xxxx" action simply
+puts the destination window on top -- it does not hide or minimize the
+original (source) window. In the situation where the user has a small
+screen, like a tablet, this behavior is important. In a different
+situation where the user has a large screen capable of displaying all
+of the windows simultaneously, the user can simply "mouse" or "alt-tab"
+to the desired window (to give it the input focus.)</li>
+  <li>The characters "<big><code style="font-weight: bold;">(!!!)</code></big>" will be displayed prefixing the label of each search result item that satisfies the
+user search criteria and <span style="font-style: italic; font-weight: bold;"></span>logically
+completes
+the designated
+proof step. These search results will appear at the beginning of the
+list (unless an alternative output sort sequence is requested on the
+Search Options window -- though at this time every possible sort
+sequence has <big><code style="font-weight: bold;">Score</code></big> as the major sort key, so these search results will appear first in every case, assuming any exist.) <br>
+  </li>
+  <li>The characters "<big><code style="font-weight: bold;">(---)</code></big>" will be displayed prefixing the label of each search result item that fails to satisfy the
+user search criteria and is present in the search results only because Search Proximity Scoring was requested. These search results will appear at the end of the list (unless
+an alternative output sort sequence is requested on the Search Options
+window -- though at this time every possible sort sequence has <big><code style="font-weight: bold;">Score</code></big> as the major sort key, so these search results will appear last in every case, assuming any exist.) </li>
+  <li>The descriptive Metamath Comment for each search result item's assertion will be displayed if the search criteria included a search of Metamath Comments. The Comment data will be displayed as a 3rd line of text following the conclusion line of the search result. <br>
+  </li>
+</ol>
+<br>
+<br>
+<br>
+
+<br>
+<br>
+<br>
+<hr style="width: 100%; height: 2px;"><br>
+</body></html>

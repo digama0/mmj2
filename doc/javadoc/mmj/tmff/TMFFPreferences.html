@@ -1,0 +1,994 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- NewPage -->
+<html lang="en">
+<head>
+<title>TMFFPreferences</title>
+<link rel="stylesheet" type="text/css" href="../../stylesheet.css" title="Style">
+</head>
+<body>
+<script type="text/javascript"><!--
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="TMFFPreferences";
+    }
+//-->
+</script>
+<noscript>
+<div>JavaScript is disabled on your browser.</div>
+</noscript>
+<!-- ========= START OF TOP NAVBAR ======= -->
+<div class="topNav"><a name="navbar_top">
+<!--   -->
+</a><a href="#skip-navbar_top" title="Skip navigation links"></a><a name="navbar_top_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../index-all.html">Index</a></li>
+<li><a href="../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../mmj/tmff/TMFFMethod.html" title="class in mmj.tmff"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../mmj/tmff/TMFFScheme.html" title="class in mmj.tmff"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../index.html?mmj/tmff/TMFFPreferences.html" target="_top">Frames</a></li>
+<li><a href="TMFFPreferences.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_top">
+<li><a href="../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_top");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_top">
+<!--   -->
+</a></div>
+<!-- ========= END OF TOP NAVBAR ========= -->
+<!-- ======== START OF CLASS DATA ======== -->
+<div class="header">
+<div class="subTitle">mmj.tmff</div>
+<h2 title="Class TMFFPreferences" class="title">Class TMFFPreferences</h2>
+</div>
+<div class="contentContainer">
+<ul class="inheritance">
+<li>java.lang.Object</li>
+<li>
+<ul class="inheritance">
+<li>mmj.tmff.TMFFPreferences</li>
+</ul>
+</li>
+</ul>
+<div class="description">
+<ul class="blockList">
+<li class="blockList">
+<hr>
+<br>
+<pre>public class <span class="strong">TMFFPreferences</span>
+extends java.lang.Object</pre>
+<div class="block">Holds user settings/preferences used by the Text Mode Formula Formatting
+ (TMFF) code and provides helper routines to invoke formula rendering methods.
+ <p>
+ NOTE: this holds a couple of elements that were originally part of Proof
+ Assistant's preferences, but now an instance of TMFFPreferences is stored
+ inside of ProofAsstPreferences.</div>
+</li>
+</ul>
+</div>
+<div class="summary">
+<ul class="blockList">
+<li class="blockList">
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor_summary">
+<!--   -->
+</a>
+<h3>Constructor Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
+<caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colOne" scope="col">Constructor and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#TMFFPreferences()">TMFFPreferences</a></strong>()</code>
+<div class="block">Default constructor for TMFFPreferences.</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- ========== METHOD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_summary">
+<!--   -->
+</a>
+<h3>Method Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
+<caption><span>Methods</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#addDefinedScheme(mmj.tmff.TMFFScheme)">addDefinedScheme</a></strong>(<a href="../../mmj/tmff/TMFFScheme.html" title="class in mmj.tmff">TMFFScheme</a>&nbsp;s)</code>
+<div class="block">Add newly defined Scheme to Preferences data.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#getAltFormatNbr()">getAltFormatNbr</a></strong>()</code>
+<div class="block">Get alternate Format Number.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#getAltIndent()">getAltIndent</a></strong>()</code>
+<div class="block">Get Alt Indent Amount.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../mmj/tmff/TMFFFormat.html" title="class in mmj.tmff">TMFFFormat</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#getCurrFormat()">getCurrFormat</a></strong>()</code>
+<div class="block">Returns the TMFFFormat presently in use.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#getCurrFormatNbr()">getCurrFormatNbr</a></strong>()</code>
+<div class="block">Get current Format Number.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../mmj/tmff/TMFFScheme.html" title="class in mmj.tmff">TMFFScheme</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#getDefinedScheme(java.lang.String)">getDefinedScheme</a></strong>(java.lang.String&nbsp;definedSchemeName)</code>
+<div class="block">Get already defined Scheme from Preferences data.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#getFormatListString()">getFormatListString</a></strong>()</code>
+<div class="block">A simple routine to build a list of all defined Formats.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#getFormulaLeftCol()">getFormulaLeftCol</a></strong>()</code>
+<div class="block">Get formula left column used in formatting proof text areas.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#getFormulaRightCol()">getFormulaRightCol</a></strong>()</code>
+<div class="block">Get formula right column used in formatting proof text areas.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#getLineWrap()">getLineWrap</a></strong>()</code>
+<div class="block">Get the current lineWrap setting.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#getTextColumns()">getTextColumns</a></strong>()</code>
+<div class="block">Get number of text columns used to display formulas.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#getTextRows()">getTextRows</a></strong>()</code>
+<div class="block">Get number of text rows used to display formulas.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../mmj/tmff/TMFFFormat.html" title="class in mmj.tmff">TMFFFormat</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#getTMFFUnformattedFormat()">getTMFFUnformattedFormat</a></strong>()</code>
+<div class="block">Returns the default Format.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../mmj/tmff/TMFFScheme.html" title="class in mmj.tmff">TMFFScheme</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#getTMFFUnformattedScheme()">getTMFFUnformattedScheme</a></strong>()</code>
+<div class="block">Returns the default Scheme</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#getUseIndent()">getUseIndent</a></strong>()</code>
+<div class="block">Get Use Indent Amount.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#isTMFFEnabled()">isTMFFEnabled</a></strong>()</code>
+<div class="block">Informs the caller whether or not TMFF is enabled.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#loadPreferenceDefaults()">loadPreferenceDefaults</a></strong>()</code>
+<div class="block">Loads the hardcoded default TMFFPreferences values.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#renderFormula(mmj.tmff.TMFFStateParams, mmj.lang.ParseTree, mmj.lang.Formula)">renderFormula</a></strong>(<a href="../../mmj/tmff/TMFFStateParams.html" title="class in mmj.tmff">TMFFStateParams</a>&nbsp;tmffSP,
+             <a href="../../mmj/lang/ParseTree.html" title="class in mmj.lang">ParseTree</a>&nbsp;parseTree,
+             <a href="../../mmj/lang/Formula.html" title="class in mmj.lang">Formula</a>&nbsp;formula)</code>
+<div class="block">Formats a formula and outputs it to a StringBuilder using the given
+ ParseTree, Formula and TMFFStateParams instance.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#renderFormula(mmj.tmff.TMFFStateParams, mmj.lang.ParseTree, mmj.lang.Formula, int)">renderFormula</a></strong>(<a href="../../mmj/tmff/TMFFStateParams.html" title="class in mmj.tmff">TMFFStateParams</a>&nbsp;tmffSP,
+             <a href="../../mmj/lang/ParseTree.html" title="class in mmj.lang">ParseTree</a>&nbsp;parseTree,
+             <a href="../../mmj/lang/Formula.html" title="class in mmj.lang">Formula</a>&nbsp;formula,
+             int&nbsp;proofLevel)</code>
+<div class="block">Formats a formula and outputs it to a StringBuilder using the given
+ ParseTree, Formula and TMFFStateParams instance.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#setAltFormatNbr(int)">setAltFormatNbr</a></strong>(int&nbsp;altFormatNbr)</code>
+<div class="block">Set alternate Format number.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#setAltFormatNbr(java.lang.String[])">setAltFormatNbr</a></strong>(java.lang.String[]&nbsp;param)</code>
+<div class="block">Set Alternate Format number using user parameters.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#setAltIndent(int)">setAltIndent</a></strong>(int&nbsp;altIndent)</code>
+<div class="block">Set Alt Indent amount.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#setAltIndent(java.lang.String[])">setAltIndent</a></strong>(java.lang.String[]&nbsp;param)</code>
+<div class="block">Set Alt Indent amount using user parameters.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#setCurrFormatNbr(int)">setCurrFormatNbr</a></strong>(int&nbsp;currFormatNbr)</code>
+<div class="block">Set current Format number.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#setCurrFormatNbr(java.lang.String[])">setCurrFormatNbr</a></strong>(java.lang.String[]&nbsp;param)</code>
+<div class="block">Set current Format number using user parameters.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#setFormulaLeftCol(int)">setFormulaLeftCol</a></strong>(int&nbsp;formulaLeftCol)</code>
+<div class="block">Set formula left column used in formatting proof text areas.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#setFormulaRightCol(int)">setFormulaRightCol</a></strong>(int&nbsp;formulaRightCol)</code>
+<div class="block">Set formula right column used in formatting proof text areas.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#setLineWrap(boolean)">setLineWrap</a></strong>(boolean&nbsp;lineWrap)</code>
+<div class="block">Set line wrap on or off.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#setTextColumns(int)">setTextColumns</a></strong>(int&nbsp;textColumns)</code>
+<div class="block">Set number of text columns used to display formulas.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#setTextRows(int)">setTextRows</a></strong>(int&nbsp;textRows)</code>
+<div class="block">Set number of text rows used to display formulas.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#setUseIndent(int)">setUseIndent</a></strong>(int&nbsp;useIndent)</code>
+<div class="block">Set Use Indent number.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#setUseIndent(java.lang.String[])">setUseIndent</a></strong>(java.lang.String[]&nbsp;param)</code>
+<div class="block">Set Use Indent amount using user parameters.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#toggleAltFormatAndIndentParms()">toggleAltFormatAndIndentParms</a></strong>()</code>
+<div class="block">Toggles the alternate and current format and indent parameters when the
+ ProofAsstGUI Reformat Proof Swap Alt menu item is selected.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#updateDefinedFormat(mmj.tmff.TMFFFormat)">updateDefinedFormat</a></strong>(<a href="../../mmj/tmff/TMFFFormat.html" title="class in mmj.tmff">TMFFFormat</a>&nbsp;newFormat)</code>
+<div class="block">Update existing Format definition.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#updateDefinedScheme(mmj.tmff.TMFFScheme)">updateDefinedScheme</a></strong>(<a href="../../mmj/tmff/TMFFScheme.html" title="class in mmj.tmff">TMFFScheme</a>&nbsp;newScheme)</code>
+<div class="block">Update existing Scheme definition.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#updateMaxDepthAcrossMethods(int)">updateMaxDepthAcrossMethods</a></strong>(int&nbsp;maxDepth)</code>
+<div class="block">Updates maxDepth for all TMFFMethods that allow updates.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#validateFormatNbrString(java.lang.String)">validateFormatNbrString</a></strong>(java.lang.String&nbsp;s)</code>
+<div class="block">A slightly redundant routine to validate an input format number.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFPreferences.html#validateIndentString(java.lang.String)">validateIndentString</a></strong>(java.lang.String&nbsp;s)</code>
+<div class="block">A slightly redundant routine to validate an input indent amount.</div>
+</td>
+</tr>
+</table>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
+<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="details">
+<ul class="blockList">
+<li class="blockList">
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor_detail">
+<!--   -->
+</a>
+<h3>Constructor Detail</h3>
+<a name="TMFFPreferences()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>TMFFPreferences</h4>
+<pre>public&nbsp;TMFFPreferences()</pre>
+<div class="block">Default constructor for TMFFPreferences.</div>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ============ METHOD DETAIL ========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_detail">
+<!--   -->
+</a>
+<h3>Method Detail</h3>
+<a name="loadPreferenceDefaults()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>loadPreferenceDefaults</h4>
+<pre>public&nbsp;void&nbsp;loadPreferenceDefaults()</pre>
+<div class="block">Loads the hardcoded default TMFFPreferences values.
+ <p>
+ This method is provided as a public service so that, in theory, the user
+ can experiment or alter maxDepth in various Formats using
+ <code>updateMaxDepthAcrossMethods()</code> and then reload the original Format
+ values -- which will also wipe out any RunParm Preferences input for the
+ run.</div>
+</li>
+</ul>
+<a name="isTMFFEnabled()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isTMFFEnabled</h4>
+<pre>public&nbsp;boolean&nbsp;isTMFFEnabled()</pre>
+<div class="block">Informs the caller whether or not TMFF is enabled.
+ <p>
+ In practice "enabled" means using Format 1, 2 or 3 -- and "disabled"
+ means using Format 0.
+ <p>
+ Although TMFF's renderFormula can be invoked even if TMFF is disabled, in
+ ProofWorksheet considerable work is needed to parse formulas from
+ Derivation Proof Steps for exported proofs. Therefore, if TMFF is
+ disabled the grammatical parsing process can be skipped.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>true if TMFF is enabled, else false.</dd></dl>
+</li>
+</ul>
+<a name="renderFormula(mmj.tmff.TMFFStateParams, mmj.lang.ParseTree, mmj.lang.Formula, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>renderFormula</h4>
+<pre>public&nbsp;int&nbsp;renderFormula(<a href="../../mmj/tmff/TMFFStateParams.html" title="class in mmj.tmff">TMFFStateParams</a>&nbsp;tmffSP,
+                <a href="../../mmj/lang/ParseTree.html" title="class in mmj.lang">ParseTree</a>&nbsp;parseTree,
+                <a href="../../mmj/lang/Formula.html" title="class in mmj.lang">Formula</a>&nbsp;formula,
+                int&nbsp;proofLevel)</pre>
+<div class="block">Formats a formula and outputs it to a StringBuilder using the given
+ ParseTree, Formula and TMFFStateParams instance.
+ <p>
+ This is intended to be the main way of invoking TMFF formatting.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>tmffSP</code> - TMFFStateParams initialized, ready for use.</dd><dd><code>parseTree</code> - of the Formula to be rendered. If left null, the formula
+            will be output in unformatted mode.</dd><dd><code>formula</code> - to be formatted and output to sb.</dd><dd><code>proofLevel</code> - level number of formula in proof.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>number of lines rendered or -1 if an error was encountered and
+         the formula could not be formatted.</dd></dl>
+</li>
+</ul>
+<a name="renderFormula(mmj.tmff.TMFFStateParams, mmj.lang.ParseTree, mmj.lang.Formula)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>renderFormula</h4>
+<pre>public&nbsp;int&nbsp;renderFormula(<a href="../../mmj/tmff/TMFFStateParams.html" title="class in mmj.tmff">TMFFStateParams</a>&nbsp;tmffSP,
+                <a href="../../mmj/lang/ParseTree.html" title="class in mmj.lang">ParseTree</a>&nbsp;parseTree,
+                <a href="../../mmj/lang/Formula.html" title="class in mmj.lang">Formula</a>&nbsp;formula)</pre>
+<div class="block">Formats a formula and outputs it to a StringBuilder using the given
+ ParseTree, Formula and TMFFStateParams instance.
+ <p>
+ This is the *old* method for which proof level is not used. It is used
+ when the caller wishes to set Formula Left Column independently in
+ tmffSP.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>tmffSP</code> - TMFFStateParams initialized, ready for use.</dd><dd><code>parseTree</code> - of the Formula to be rendered. If left null, the formula
+            will be output in unformatted mode.</dd><dd><code>formula</code> - to be formatted and output to sb.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>number of lines rendered or -1 if an error was encountered and
+         the formula could not be formatted.</dd></dl>
+</li>
+</ul>
+<a name="getCurrFormat()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getCurrFormat</h4>
+<pre>public&nbsp;<a href="../../mmj/tmff/TMFFFormat.html" title="class in mmj.tmff">TMFFFormat</a>&nbsp;getCurrFormat()</pre>
+<div class="block">Returns the TMFFFormat presently in use.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>TMFFFormat in use now, which may be the default format
+         "Unformatted".</dd></dl>
+</li>
+</ul>
+<a name="getTMFFUnformattedFormat()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getTMFFUnformattedFormat</h4>
+<pre>public&nbsp;<a href="../../mmj/tmff/TMFFFormat.html" title="class in mmj.tmff">TMFFFormat</a>&nbsp;getTMFFUnformattedFormat()</pre>
+<div class="block">Returns the default Format.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>default TMFFFormat.</dd></dl>
+</li>
+</ul>
+<a name="getTMFFUnformattedScheme()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getTMFFUnformattedScheme</h4>
+<pre>public&nbsp;<a href="../../mmj/tmff/TMFFScheme.html" title="class in mmj.tmff">TMFFScheme</a>&nbsp;getTMFFUnformattedScheme()</pre>
+<div class="block">Returns the default Scheme</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>default TMFFFormat.</dd></dl>
+</li>
+</ul>
+<a name="setFormulaLeftCol(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setFormulaLeftCol</h4>
+<pre>public&nbsp;void&nbsp;setFormulaLeftCol(int&nbsp;formulaLeftCol)</pre>
+<div class="block">Set formula left column used in formatting proof text areas.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>formulaLeftCol</code> - formula LeftCol used for formatting formula text
+            areas</dd></dl>
+</li>
+</ul>
+<a name="getFormulaLeftCol()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFormulaLeftCol</h4>
+<pre>public&nbsp;int&nbsp;getFormulaLeftCol()</pre>
+<div class="block">Get formula left column used in formatting proof text areas.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>formulaLeftCol formula LeftCol used for formatting formula text
+         areas</dd></dl>
+</li>
+</ul>
+<a name="setFormulaRightCol(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setFormulaRightCol</h4>
+<pre>public&nbsp;void&nbsp;setFormulaRightCol(int&nbsp;formulaRightCol)</pre>
+<div class="block">Set formula right column used in formatting proof text areas.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>formulaRightCol</code> - formula RightCol used for formatting formula text
+            areas</dd></dl>
+</li>
+</ul>
+<a name="getFormulaRightCol()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFormulaRightCol</h4>
+<pre>public&nbsp;int&nbsp;getFormulaRightCol()</pre>
+<div class="block">Get formula right column used in formatting proof text areas.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>formulaRightCol formula RightCol used for formatting formula text
+         areas</dd></dl>
+</li>
+</ul>
+<a name="setTextColumns(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setTextColumns</h4>
+<pre>public&nbsp;void&nbsp;setTextColumns(int&nbsp;textColumns)</pre>
+<div class="block">Set number of text columns used to display formulas.
+ <p>
+ This number is used to line wrapping and basically corresponds to the
+ window used to display formulas.
+ <p>
+ A formula can be longer than this number, and the Frame should scroll --
+ assuming that lineWrap is off and there are no NewLines.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>textColumns</code> - number of text columns.</dd></dl>
+</li>
+</ul>
+<a name="getTextColumns()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getTextColumns</h4>
+<pre>public&nbsp;int&nbsp;getTextColumns()</pre>
+<div class="block">Get number of text columns used to display formulas.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>textColumns number of text columns used to display formulas.</dd></dl>
+</li>
+</ul>
+<a name="setTextRows(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setTextRows</h4>
+<pre>public&nbsp;void&nbsp;setTextRows(int&nbsp;textRows)</pre>
+<div class="block">Set number of text rows used to display formulas.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>textRows</code> - number of text rows.</dd></dl>
+</li>
+</ul>
+<a name="getTextRows()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getTextRows</h4>
+<pre>public&nbsp;int&nbsp;getTextRows()</pre>
+<div class="block">Get number of text rows used to display formulas.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>textRows number of text rows used to display formulas.</dd></dl>
+</li>
+</ul>
+<a name="setLineWrap(boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setLineWrap</h4>
+<pre>public&nbsp;void&nbsp;setLineWrap(boolean&nbsp;lineWrap)</pre>
+<div class="block">Set line wrap on or off.
+ <p>
+ If line wrap is on then Newlines (carraige returns) will not be used to
+ split formulas. Instead, space characters will be written to fill out the
+ remaining text columns on the line.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>lineWrap</code> - setting, on or off.</dd></dl>
+</li>
+</ul>
+<a name="getLineWrap()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLineWrap</h4>
+<pre>public&nbsp;boolean&nbsp;getLineWrap()</pre>
+<div class="block">Get the current lineWrap setting.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>lineWrap setting.</dd></dl>
+</li>
+</ul>
+<a name="setCurrFormatNbr(java.lang.String[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setCurrFormatNbr</h4>
+<pre>public&nbsp;void&nbsp;setCurrFormatNbr(java.lang.String[]&nbsp;param)</pre>
+<div class="block">Set current Format number using user parameters.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>param</code> - String array containing current Format number in array
+            element 0.</dd></dl>
+</li>
+</ul>
+<a name="setAltFormatNbr(java.lang.String[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setAltFormatNbr</h4>
+<pre>public&nbsp;void&nbsp;setAltFormatNbr(java.lang.String[]&nbsp;param)</pre>
+<div class="block">Set Alternate Format number using user parameters.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>param</code> - String array containing alternate Format number in array
+            element 0.</dd></dl>
+</li>
+</ul>
+<a name="setUseIndent(java.lang.String[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setUseIndent</h4>
+<pre>public&nbsp;void&nbsp;setUseIndent(java.lang.String[]&nbsp;param)</pre>
+<div class="block">Set Use Indent amount using user parameters.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>param</code> - String array containing alternate Indent amount in array
+            element 0.</dd></dl>
+</li>
+</ul>
+<a name="setAltIndent(java.lang.String[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setAltIndent</h4>
+<pre>public&nbsp;void&nbsp;setAltIndent(java.lang.String[]&nbsp;param)</pre>
+<div class="block">Set Alt Indent amount using user parameters.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>param</code> - String array containing alternate Indent amount in array
+            element 0.</dd></dl>
+</li>
+</ul>
+<a name="validateIndentString(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>validateIndentString</h4>
+<pre>public&nbsp;int&nbsp;validateIndentString(java.lang.String&nbsp;s)
+                         throws <a href="../../mmj/tmff/TMFFException.html" title="class in mmj.tmff">TMFFException</a></pre>
+<div class="block">A slightly redundant routine to validate an input indent amount.
+ <p>
+ This routine is used by ProofAsstGUI.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>s</code> - Indent amountString.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>Indent amount if input is valid.</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="../../mmj/tmff/TMFFException.html" title="class in mmj.tmff">TMFFException</a></code> - if input is invalid.</dd></dl>
+</li>
+</ul>
+<a name="validateFormatNbrString(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>validateFormatNbrString</h4>
+<pre>public&nbsp;int&nbsp;validateFormatNbrString(java.lang.String&nbsp;s)
+                            throws <a href="../../mmj/tmff/TMFFException.html" title="class in mmj.tmff">TMFFException</a></pre>
+<div class="block">A slightly redundant routine to validate an input format number.
+ <p>
+ This routine is used by ProofAsstGUI.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>s</code> - Format Number String.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>Format Number if input is valid.</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="../../mmj/tmff/TMFFException.html" title="class in mmj.tmff">TMFFException</a></code> - if input is invalid.</dd></dl>
+</li>
+</ul>
+<a name="getFormatListString()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFormatListString</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getFormatListString()</pre>
+<div class="block">A simple routine to build a list of all defined Formats.
+ <p>
+ The display is returned as a String consisting of lines terminated with
+ newline characters, where each line consists of Format Number + " - " +
+ Scheme Name.
+ <p>
+ This routine is used by ProofAsstGUI.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>Format List String</dd></dl>
+</li>
+</ul>
+<a name="setCurrFormatNbr(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setCurrFormatNbr</h4>
+<pre>public&nbsp;void&nbsp;setCurrFormatNbr(int&nbsp;currFormatNbr)</pre>
+<div class="block">Set current Format number.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>currFormatNbr</code> - 0 thru max number.</dd></dl>
+</li>
+</ul>
+<a name="getCurrFormatNbr()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getCurrFormatNbr</h4>
+<pre>public&nbsp;int&nbsp;getCurrFormatNbr()</pre>
+<div class="block">Get current Format Number.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>TMFF format number in use.</dd></dl>
+</li>
+</ul>
+<a name="toggleAltFormatAndIndentParms()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>toggleAltFormatAndIndentParms</h4>
+<pre>public&nbsp;void&nbsp;toggleAltFormatAndIndentParms()</pre>
+<div class="block">Toggles the alternate and current format and indent parameters when the
+ ProofAsstGUI Reformat Proof Swap Alt menu item is selected.
+ <P>
+ What that will accomplish is that the "prev" items are set only when you
+ go *int* alt mode and are restored when you come out of alt mode. So if
+ the user is in alt mode and then changes the format nbr or indent amount
+ -- reformatting -- and then selects "...Swap Alt", the original format
+ nbr and indent amount *before* going into alt mode are restored...which
+ is a good thing since it lets the user play around and then return to a
+ good setting, while leaving the alt format and indent settings unchanged
+ (they are only changed by RunParm.)</div>
+</li>
+</ul>
+<a name="setAltFormatNbr(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setAltFormatNbr</h4>
+<pre>public&nbsp;void&nbsp;setAltFormatNbr(int&nbsp;altFormatNbr)</pre>
+<div class="block">Set alternate Format number.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>altFormatNbr</code> - 0 thru max number.</dd></dl>
+</li>
+</ul>
+<a name="getAltFormatNbr()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getAltFormatNbr</h4>
+<pre>public&nbsp;int&nbsp;getAltFormatNbr()</pre>
+<div class="block">Get alternate Format Number.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>TMFF alt format number in use.</dd></dl>
+</li>
+</ul>
+<a name="setUseIndent(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setUseIndent</h4>
+<pre>public&nbsp;void&nbsp;setUseIndent(int&nbsp;useIndent)</pre>
+<div class="block">Set Use Indent number.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>useIndent</code> - 0 thru max number.</dd></dl>
+</li>
+</ul>
+<a name="getUseIndent()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getUseIndent</h4>
+<pre>public&nbsp;int&nbsp;getUseIndent()</pre>
+<div class="block">Get Use Indent Amount.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>TMFF Use Indent amount in use.</dd></dl>
+</li>
+</ul>
+<a name="setAltIndent(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setAltIndent</h4>
+<pre>public&nbsp;void&nbsp;setAltIndent(int&nbsp;altIndent)</pre>
+<div class="block">Set Alt Indent amount.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>altIndent</code> - 0 thru max number.</dd></dl>
+</li>
+</ul>
+<a name="getAltIndent()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getAltIndent</h4>
+<pre>public&nbsp;int&nbsp;getAltIndent()</pre>
+<div class="block">Get Alt Indent Amount.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>TMFF alternate indent amount number in use.</dd></dl>
+</li>
+</ul>
+<a name="addDefinedScheme(mmj.tmff.TMFFScheme)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addDefinedScheme</h4>
+<pre>public&nbsp;boolean&nbsp;addDefinedScheme(<a href="../../mmj/tmff/TMFFScheme.html" title="class in mmj.tmff">TMFFScheme</a>&nbsp;s)</pre>
+<div class="block">Add newly defined Scheme to Preferences data.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>s</code> - TMFFScheme to be added to the TMFFPreferences data.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>TMFF format number in use.</dd></dl>
+</li>
+</ul>
+<a name="updateDefinedFormat(mmj.tmff.TMFFFormat)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>updateDefinedFormat</h4>
+<pre>public&nbsp;void&nbsp;updateDefinedFormat(<a href="../../mmj/tmff/TMFFFormat.html" title="class in mmj.tmff">TMFFFormat</a>&nbsp;newFormat)</pre>
+<div class="block">Update existing Format definition.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>newFormat</code> - to store into the Preferences data.</dd></dl>
+</li>
+</ul>
+<a name="updateDefinedScheme(mmj.tmff.TMFFScheme)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>updateDefinedScheme</h4>
+<pre>public&nbsp;void&nbsp;updateDefinedScheme(<a href="../../mmj/tmff/TMFFScheme.html" title="class in mmj.tmff">TMFFScheme</a>&nbsp;newScheme)</pre>
+<div class="block">Update existing Scheme definition.
+ <p>
+ Updates each Format that uses the existing Scheme Name to point to the
+ new object. (It has to do a replace because the object type could
+ theoretically be different -- for example, "TMFFFlat" instead of
+ "TMFFAlignColumn".)</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>newScheme</code> - to update into the Preferences data.</dd></dl>
+</li>
+</ul>
+<a name="getDefinedScheme(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDefinedScheme</h4>
+<pre>public&nbsp;<a href="../../mmj/tmff/TMFFScheme.html" title="class in mmj.tmff">TMFFScheme</a>&nbsp;getDefinedScheme(java.lang.String&nbsp;definedSchemeName)</pre>
+<div class="block">Get already defined Scheme from Preferences data.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>definedSchemeName</code> - to be looked up.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>TMFF format number in use.</dd></dl>
+</li>
+</ul>
+<a name="updateMaxDepthAcrossMethods(int)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>updateMaxDepthAcrossMethods</h4>
+<pre>public&nbsp;boolean&nbsp;updateMaxDepthAcrossMethods(int&nbsp;maxDepth)</pre>
+<div class="block">Updates maxDepth for all TMFFMethods that allow updates.
+ <p>
+ As of the initial release, only TMFFAlignColumn uses maxDepth. The
+ methods TMFFFlat and TMFFUnformatted have maxDepth = Integer.MAX_VALUE
+ which results in no maxDepth line breaks from happening -- therefore,
+ they do not allow updates after initial construction of the method.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>maxDepth</code> - parameter.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>boolean - returns false if maxDepth invalid (i.e. not a positive
+         integer).</dd></dl>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<!-- ========= END OF CLASS DATA ========= -->
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<div class="bottomNav"><a name="navbar_bottom">
+<!--   -->
+</a><a href="#skip-navbar_bottom" title="Skip navigation links"></a><a name="navbar_bottom_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../index-all.html">Index</a></li>
+<li><a href="../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../mmj/tmff/TMFFMethod.html" title="class in mmj.tmff"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../mmj/tmff/TMFFScheme.html" title="class in mmj.tmff"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../index.html?mmj/tmff/TMFFPreferences.html" target="_top">Frames</a></li>
+<li><a href="TMFFPreferences.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_bottom">
+<li><a href="../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_bottom");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_bottom">
+<!--   -->
+</a></div>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+</body>
+</html>

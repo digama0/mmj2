@@ -1,199 +1,169 @@
-//********************************************************************/
-//* Copyright (C) 2005-2011                                          */
-//* MEL O'CAT  X178G243 (at) yahoo (dot) com                         */
-//* License terms: GNU General Public License Version 2              */
-//*                or any later version                              */
-//********************************************************************/
-//*4567890123456 (71-character line to adjust editor window) 23456789*/
+//*****************************************************************************/
+//* Copyright (C) 2005-2013                                                   */
+//* MEL O'CAT  X178G243 (at) yahoo (dot) com                                  */
+//* License terms: GNU General Public License Version 2                       */
+//*                or any later version                                       */
+//*****************************************************************************/
+//*456789012345678 (80-character line to adjust editor window) 456789012345678*/
 
 /*
- *  ProofAsstCursor.java  0.05 11/01/2011
+ * ProofAsstCursor.java  0.05 11/01/2011
  *
- *  Sep-15-2006 -- Version 0.01:
- *     ---> New. Simple data structure to hold caret/scroll params.
+ * Sep-15-2006 -- Version 0.01:
+ *    ---> New. Simple data structure to hold caret/scroll params.
  *
- *  Version 0.02 -- 06/01/2007
- *     ---> Un-nesting of Proof Worksheet inner classes.
+ * Version 0.02 -- 06/01/2007
+ *    ---> Un-nesting of Proof Worksheet inner classes.
  *
- *  Nov-01-2007 -- Version 0.03
- *     ---> Add fieldId to cursor (see PaConstant.FIELD_ID_*).
+ * Nov-01-2007 -- Version 0.03
+ *    ---> Add fieldId to cursor (see PaConstant.FIELD_ID_*).
  *
- *  Feb-01-2008 -- Version 0.04
- *     ---> Add outputCursorInstrumentation() for use in
- *          regression testing.
+ * Feb-01-2008 -- Version 0.04
+ *    ---> Add outputCursorInstrumentation() for use in
+ *         regression testing.
  *
- *  Version 0.05 - Nov-01-2011:  comment update.
- *  ==> Add dontScroll for use with incompleteStepCursorAsIs
- *      ProofAsstCursor positioning.
+ * Version 0.05 - Nov-01-2011:  comment update.
+ * ==> Add dontScroll for use with incompleteStepCursorAsIs
+ *     ProofAsstCursor positioning.
 
  */
 
 package mmj.pa;
 
+import mmj.lang.LangException;
+
 /**
- *  Simple data structure to hold caret/scroll params for
- *  the Proof Asst GUI.
+ * Simple data structure to hold caret/scroll params for the Proof Asst GUI.
  */
 public class ProofAsstCursor {
 
-    /* friendly */ boolean  cursorIsSet;
+    /* friendly */boolean cursorIsSet;
 
-    /* friendly */ ProofWorkStmt
-                            proofWorkStmt;
-    /* friendly */ int      fieldId;
+    /* friendly */ProofWorkStmt proofWorkStmt;
+    /* friendly */int fieldId;
 
-    /* friendly */ int      caretCharNbr;
-    /* friendly */ int      caretLine;
-    /* friendly */ int      caretCol;
-    /* friendly */ int      scrollToLine;
-    /* friendly */ int      scrollToCol;
+    /* friendly */int caretCharNbr;
+    /* friendly */int caretLine;
+    /* friendly */int caretCol;
+    /* friendly */int scrollToLine;
+    /* friendly */int scrollToCol;
 
-    private        boolean  dontScroll;
-
+    private boolean dontScroll;
 
     public static ProofAsstCursor makeProofStartCursor() {
-        ProofAsstCursor cursor    = new ProofAsstCursor();
+        final ProofAsstCursor cursor = new ProofAsstCursor();
 
         // Note: could not get swing to scroll to line 1
-        //       if caret was set to line 2 and the window
-        //       was scrolled to page 2 of a proof before
-        //       displaying the new proof; the first line
-        //       displayed was line 2!#$% So...switched
-        //       to scroll line = caret line...doh.
-        cursor.setCursor(
-            -1,                                      //caret char
-             1,                                      //caret line
-             (PaConstants.
-                PROOF_TEXT_HEADER_1.length() + 1),   //caret col
-             1,                                      //scroll to line
-             (PaConstants.
-                PROOF_TEXT_HEADER_1.length() + 1));  //scroll to col
+        // if caret was set to line 2 and the window
+        // was scrolled to page 2 of a proof before
+        // displaying the new proof; the first line
+        // displayed was line 2!#$% So...switched
+        // to scroll line = caret line...doh.
+        cursor.setCursor(-1, // caret char
+            1, // caret line
+            PaConstants.PROOF_TEXT_HEADER_1.length() + 1, // caret col
+            1, // scroll to line
+            PaConstants.PROOF_TEXT_HEADER_1.length() + 1); // scroll to col
         return cursor;
     }
 
     /**
-     *  Default constructor.
+     * Default constructor.
      */
     public ProofAsstCursor() {
-        cursorIsSet               = false;
-        proofWorkStmt             = null;
-        fieldId                   = PaConstants.FIELD_ID_NONE;
-        caretCharNbr              = -1;
-        caretLine                 = -1;
-        caretCol                  = -1;
-        scrollToLine              = -1;
-        scrollToCol               = -1;
+        cursorIsSet = false;
+        proofWorkStmt = null;
+        fieldId = PaConstants.FIELD_ID_NONE;
+        caretCharNbr = -1;
+        caretLine = -1;
+        caretCol = -1;
+        scrollToLine = -1;
+        scrollToCol = -1;
     }
 
-    public ProofAsstCursor(int caretCharNbr,
-                           int caretLine,
-                           int caretCol) {
+    public ProofAsstCursor(final int caretCharNbr, final int caretLine,
+        final int caretCol)
+    {
 
         super();
-        this.caretCharNbr         = caretCharNbr;
-        this.caretLine            = caretLine;
-        this.caretCol             = caretCol;
+        this.caretCharNbr = caretCharNbr;
+        this.caretLine = caretLine;
+        this.caretCol = caretCol;
 
-        if (caretCharNbr >= 0 ||
-            caretLine    >= 0 ||
-            caretCol     >= 0) {
-            cursorIsSet           = true;
-        }
+        if (caretCharNbr >= 0 || caretLine >= 0 || caretCol >= 0)
+            cursorIsSet = true;
     }
 
-    public ProofAsstCursor(
-                    ProofWorkStmt proofWorkStmt) {
+    public ProofAsstCursor(final ProofWorkStmt proofWorkStmt) {
         super();
 
-        setCursorAtProofWorkStmt(proofWorkStmt,
-                                 PaConstants.FIELD_ID_NONE);
+        setCursorAtProofWorkStmt(proofWorkStmt, PaConstants.FIELD_ID_NONE);
     }
 
-    public ProofAsstCursor(
-                    ProofWorkStmt proofWorkStmt,
-                    int           fieldId) {
+    public ProofAsstCursor(final ProofWorkStmt proofWorkStmt, final int fieldId)
+    {
         super();
 
-        setCursorAtProofWorkStmt(proofWorkStmt,
-                                 fieldId);
+        setCursorAtProofWorkStmt(proofWorkStmt, fieldId);
     }
 
-
-    public void setCursorAtProofWorkStmt(
-                    ProofWorkStmt proofWorkStmt) {
-        setCursorAtProofWorkStmt(proofWorkStmt,
-                                 PaConstants.FIELD_ID_NONE);
+    public void setCursorAtProofWorkStmt(final ProofWorkStmt proofWorkStmt) {
+        setCursorAtProofWorkStmt(proofWorkStmt, PaConstants.FIELD_ID_NONE);
     }
 
-    public void setCursorAtProofWorkStmt(
-                    ProofWorkStmt proofWorkStmt,
-                    int           fieldId) {
+    public void setCursorAtProofWorkStmt(final ProofWorkStmt proofWorkStmt,
+        final int fieldId)
+    {
         if (!cursorIsSet) {
-            this.proofWorkStmt    = proofWorkStmt;
-            this.fieldId          = fieldId;
-            cursorIsSet           = true;
+            this.proofWorkStmt = proofWorkStmt;
+            this.fieldId = fieldId;
+            cursorIsSet = true;
         }
     }
 
-    public void setCursorAtCaret(int caretCharNbr,
-                                 int caretLine,
-                                 int caretCol) {
+    public void setCursorAtCaret(final int caretCharNbr, final int caretLine,
+        final int caretCol)
+    {
 
         if (!cursorIsSet) {
-            this.caretCharNbr         = caretCharNbr;
-            this.caretLine            = caretLine;
-            this.caretCol             = caretCol;
-            cursorIsSet               = true;
+            this.caretCharNbr = caretCharNbr;
+            this.caretLine = caretLine;
+            this.caretCol = caretCol;
+            cursorIsSet = true;
         }
     }
 
-
-
-    public void setCursor(int caretCharNbr,
-                          int caretLine,
-                          int caretCol,
-                          int scrollToLine,
-                          int scrollToCol) {
+    public void setCursor(final int caretCharNbr, final int caretLine,
+        final int caretCol, final int scrollToLine, final int scrollToCol)
+    {
 
         if (!cursorIsSet) {
-            this.caretCharNbr         = caretCharNbr;
-            this.caretLine            = caretLine;
-            this.caretCol             = caretCol;
-            this.scrollToLine         = scrollToLine;
-            this.scrollToCol          = scrollToCol;
-            cursorIsSet               = true;
+            this.caretCharNbr = caretCharNbr;
+            this.caretLine = caretLine;
+            this.caretCol = caretCol;
+            this.scrollToLine = scrollToLine;
+            this.scrollToCol = scrollToCol;
+            cursorIsSet = true;
         }
     }
 
-    public String outputCursorInstrumentation(String theoremLabel) {
+    public String outputCursorInstrumentation(final String theoremLabel) {
         String stmtDiagnosticInfo;
-        if (proofWorkStmt == null) {
-            stmtDiagnosticInfo    = " ";
-        }
-        else {
-            stmtDiagnosticInfo    =
-                proofWorkStmt.getStmtDiagnosticInfo();
-        }
-        return  PaConstants.ERRMSG_PA_CURSOR_INSTRUMENTATION_1
-              +     theoremLabel
-              + PaConstants.ERRMSG_PA_CURSOR_INSTRUMENTATION_2
-              +     stmtDiagnosticInfo
-              + PaConstants.ERRMSG_PA_CURSOR_INSTRUMENTATION_3
-              +     fieldId
-              + PaConstants.ERRMSG_PA_CURSOR_INSTRUMENTATION_4
-              +     caretCharNbr
-              + PaConstants.ERRMSG_PA_CURSOR_INSTRUMENTATION_5
-              +     caretLine
-              + PaConstants.ERRMSG_PA_CURSOR_INSTRUMENTATION_6
-              +     caretCol;
+        if (proofWorkStmt == null)
+            stmtDiagnosticInfo = " ";
+        else
+            stmtDiagnosticInfo = proofWorkStmt.getStmtDiagnosticInfo();
+        return LangException.format(
+            PaConstants.ERRMSG_PA_CURSOR_INSTRUMENTATION, theoremLabel,
+            stmtDiagnosticInfo, fieldId, caretCharNbr, caretLine, caretCol);
     }
 
-    public void setDontScroll(boolean dontScroll) {
-		this.dontScroll         = dontScroll;
-	}
+    public void setDontScroll(final boolean dontScroll) {
+        this.dontScroll = dontScroll;
+    }
 
     public boolean getDontScroll() {
-		return dontScroll;
-	}
+        return dontScroll;
+    }
 
 }

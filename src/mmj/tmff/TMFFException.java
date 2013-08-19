@@ -8,30 +8,29 @@
 /*
  * TMFFException.java  0.01 11/01/2006
  *
- *  Aug-28-2006: - new Exception for TMFF internal processing.
+ * Aug-28-2006: - new Exception for TMFF internal processing.
  */
 
 package mmj.tmff;
 
 /**
- *  Used internally in the TMFF classes of mmj.lang.
+ * Used internally in the TMFF classes of mmj.lang.
  */
 public class TMFFException extends Exception {
 
     /**
-     * Default Constructor, <code>TMFFException</code>.
+     * Default Constructor, {@code TMFFException}.
      */
     public TMFFException() {
         super();
     }
 
     /**
-     *  Contructor, <code>TMFFException</code> with
-     *  error message.
-     *
-     *  @param   errorMessage  error message.
+     * Contructor, {@code TMFFException} with error message.
+     * 
+     * @param errorMessage error message.
      */
-    public TMFFException(String errorMessage) {
+    public TMFFException(final String errorMessage) {
         super(errorMessage);
     }
 }

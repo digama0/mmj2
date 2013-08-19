@@ -1,0 +1,1049 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- NewPage -->
+<html lang="en">
+<head>
+<title>ParseNode</title>
+<link rel="stylesheet" type="text/css" href="../../stylesheet.css" title="Style">
+</head>
+<body>
+<script type="text/javascript"><!--
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="ParseNode";
+    }
+//-->
+</script>
+<noscript>
+<div>JavaScript is disabled on your browser.</div>
+</noscript>
+<!-- ========= START OF TOP NAVBAR ======= -->
+<div class="topNav"><a name="navbar_top">
+<!--   -->
+</a><a href="#skip-navbar_top" title="Skip navigation links"></a><a name="navbar_top_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../index-all.html">Index</a></li>
+<li><a href="../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../mmj/lang/MObj.html" title="class in mmj.lang"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../mmj/lang/ParseNode.SubTreeIterator.html" title="class in mmj.lang"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../index.html?mmj/lang/ParseNode.html" target="_top">Frames</a></li>
+<li><a href="ParseNode.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_top">
+<li><a href="../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_top");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li><a href="#nested_class_summary">Nested</a>&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_top">
+<!--   -->
+</a></div>
+<!-- ========= END OF TOP NAVBAR ========= -->
+<!-- ======== START OF CLASS DATA ======== -->
+<div class="header">
+<div class="subTitle">mmj.lang</div>
+<h2 title="Class ParseNode" class="title">Class ParseNode</h2>
+</div>
+<div class="contentContainer">
+<ul class="inheritance">
+<li>java.lang.Object</li>
+<li>
+<ul class="inheritance">
+<li>mmj.lang.ParseNode</li>
+</ul>
+</li>
+</ul>
+<div class="description">
+<ul class="blockList">
+<li class="blockList">
+<hr>
+<br>
+<pre>public class <span class="strong">ParseNode</span>
+extends java.lang.Object</pre>
+<div class="block">Parse Node is an n-way tree node for Metamath Stmt trees.
+ <p>
+ ParseNode is dual use, and provides the tree node structure for
+ grammatical/syntax parses -- these parse trees can be readily converted to
+ Reverse Polish Notation (see Stmt.exprRPN) -- and for proof trees, which are
+ normally stored in Metamath .mm files in RPN format but can easily be
+ converted to ParseTrees.
+ <p>
+ The difference between proof and grammatical parse trees is content and
+ purpose, there is no structural difference.
+ <p>
+ Proof step Stmt references are not restricted to Syntax Axiom and Variable
+ Hypotheses, and can contain references to Logical Hypotheses, Logical Axioms
+ and other Theorems. Logical Axioms and Theorems have Frames (see ScopeFrame
+ and OptFrame) whose hypArrays contain Variable Hypotheses AND Logical
+ Hypotheses, therefore there may be more children nodes under an Assertion's
+ ParseNode than there are under a Syntax Axiom's ParseNode. Both proof parse
+ trees and grammatical parse trees are required to reproduce/generate the
+ original Statement's Formula's Expression (the 2nd through nth Symbols of the
+ Formula), but a Proof is, in addition required to produce the entire Formula,
+ which includes the Type Code and the Expression.
+ <p>
+ Thus, the difference between a proof and a grammatical parse is that a proof
+ derives a theorem's Formula from Axioms with the same Type Code as the
+ statement being proved; a grammatical parse is not under this obligation (it
+ must generate some Type Code however!)
+ <p>
+ Also:
+ <ul>
+ <li>Grammatical parse trees contain Stmt references to either Syntax Axioms
+ or Variable Hypotheses. The children of a Syntax Axiom (which is an Assrt)
+ are either VarHyp's or Syntax Axioms. The number of children of a Syntax
+ Axiom node is equal to the size of the Syntax Axiom's Assrt.varHypArray --
+ which for Syntax Axioms is the same as the Syntax Axiom's
+ Assrt.MandFrame.hypArray varHyp, because a Syntax Axiom has no Logical
+ Hypotheses.</li>
+ <li>Proof Trees contain Stmt references to Assertions (Assrt, which includes
+ Axiom and Theorem), and Hypotheses (Hyp, which includes VarHyp and LogHyp.)
+ The children of an Assertion Proof Tree Node correspond to the
+ Assrt.MandFrame.hypArray, one to one in database sequence. The children of a
+ Hypothesis Proof Tree node depend on whether the Hypothesis is a Logical
+ Hypothesis (LogHyp) or a Variable Hypothesis (VarHyp); if a LogHyp, then the
+ children correspond to the LogHyp.varHypArray, while if a VarHyp there is
+ only one child (even a VarHyp node represents an Expression for substitution
+ in the proof and may have children of its own -- for example, a VarHyp
+ sub-node of a ProofTree may actually contain a Stmt reference to "wi" where
+ the "wi" statement has its own VarHyp's.)</li></div>
+</li>
+</ul>
+</div>
+<div class="summary">
+<ul class="blockList">
+<li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="nested_class_summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Nested Class Summary table, listing nested classes, and an explanation">
+<caption><span>Nested Classes</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Class and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.SubTreeIterator.html" title="class in mmj.lang">ParseNode.SubTreeIterator</a></strong></code>&nbsp;</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#child">child</a></strong></code>
+<div class="block">Child node array of length 0 to n.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#firstAppearance">firstAppearance</a></strong></code>
+<div class="block">This temporary variable is 0 if the node has one parent, -1 if the node
+ has multiple parents, and a positive integer when the RPN index of the
+ first parent is known.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#stmt">stmt</a></strong></code>
+<div class="block">Stmt object reference, either a Hyp or an Assrt.</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor_summary">
+<!--   -->
+</a>
+<h3>Constructor Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
+<caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colOne" scope="col">Constructor and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../mmj/lang/ParseNode.html#ParseNode()">ParseNode</a></strong>()</code>
+<div class="block">Default constructor.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../mmj/lang/ParseNode.html#ParseNode(mmj.lang.Stmt)">ParseNode</a></strong>(<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>&nbsp;stmt)</code>
+<div class="block">Construct with a Stmt.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../mmj/lang/ParseNode.html#ParseNode(mmj.lang.VarHyp)">ParseNode</a></strong>(<a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a>&nbsp;varHyp)</code>
+<div class="block">Construct using a VarHyp.</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- ========== METHOD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_summary">
+<!--   -->
+</a>
+<h3>Method Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
+<caption><span>Methods</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#accumListVarHypUsedListBySeq(java.util.List, java.util.List)">accumListVarHypUsedListBySeq</a></strong>(java.util.List&lt;<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>&gt;&nbsp;varHypList,
+                            java.util.List&lt;<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>&gt;&nbsp;varHypInUseList)</code>
+<div class="block">Accumulate Var Hyps used in the subtree which are also in an input list
+ of Var Hyps.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#accumSetOfWorkVarsUsed(java.util.List)">accumSetOfWorkVarsUsed</a></strong>(java.util.List&lt;<a href="../../mmj/lang/WorkVar.html" title="class in mmj.lang">WorkVar</a>&gt;&nbsp;workVarList)</code>
+<div class="block">Updates an ArrayList to maintain a set of Work Vars used in a subtree.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#accumVarHypUsedListBySeq(java.util.List)">accumVarHypUsedListBySeq</a></strong>(java.util.List&lt;<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>&gt;&nbsp;varHypList)</code>
+<div class="block">Updates an ArrayList to maintain a set of Var Hyps used in a subtree.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#calcMaxDepth()">calcMaxDepth</a></strong>()</code>
+<div class="block">Calculates the maximum depth of a parse sub-tree.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#checkWorkVarHasOccursIn(mmj.lang.WorkVarHyp)">checkWorkVarHasOccursIn</a></strong>(<a href="../../mmj/lang/WorkVarHyp.html" title="class in mmj.lang">WorkVarHyp</a>&nbsp;searchWorkVarHyp)</code>
+<div class="block">Check to see if or how the input searchWorkVarHyp occurs within the
+ current ParseNode stmt and its subtree and any substitutions made to
+ VarHyps via paSubst.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#cloneResolvingUpdatedWorkVars()">cloneResolvingUpdatedWorkVars</a></strong>()</code>
+<div class="block">Clone subtree replacing any updated Work Vars with clones of their
+ updating subtrees.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#cloneTargetToSourceVars()">cloneTargetToSourceVars</a></strong>()</code>
+<div class="block">Deep clone of a ParseNode sub-tree converting Target Variables to Source
+ Variables.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#convertToRPN()">convertToRPN</a></strong>()</code>
+<div class="block">Converts a sub-tree expression to Reverse Polish Notation.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#convertToRPN(mmj.lang.Stmt[], int)">convertToRPN</a></strong>(<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>[]&nbsp;outRPN,
+            int&nbsp;dest)</code>
+<div class="block">Converts a sub-tree to Reverse Polish Notation.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#countParseNodes()">countParseNodes</a></strong>()</code>
+<div class="block">Counts nodes in a ParseNode sub-tree.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#deepClone()">deepClone</a></strong>()</code>
+<div class="block">Deep clone of a ParseNode sub-tree.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#deepCloneApplyingAssrtSubst(mmj.lang.Hyp[], mmj.lang.ParseNode[])">deepCloneApplyingAssrtSubst</a></strong>(<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>[]&nbsp;assrtHypArray,
+                           <a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[]&nbsp;assrtSubst)</code>
+<div class="block">(Deep) Clone a ParseNode while substituting a set of VarHyp substitutions
+ specified by a parallel Hyp array.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#deepCloneApplyingAssrtSubst(mmj.lang.Hyp[], mmj.lang.ParseNode[], java.util.List)">deepCloneApplyingAssrtSubst</a></strong>(<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>[]&nbsp;assrtHypArray,
+                           <a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[]&nbsp;assrtSubst,
+                           java.util.List&lt;<a href="../../mmj/lang/WorkVar.html" title="class in mmj.lang">WorkVar</a>&gt;&nbsp;workVarList)</code>
+<div class="block">(Deep) Clone a ParseNode while substituting a set of VarHyp substitutions
+ specified by a parallel Hyp array and keeping track of the Work Vars
+ output.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#deepCloneApplyingWorkVarUpdates()">deepCloneApplyingWorkVarUpdates</a></strong>()</code>
+<div class="block">(Deep) Clone a ParseNode while applying updates to WorkVars.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#deepCloneWithGrammarHypSubs(mmj.lang.ParseNode[], mmj.lang.ParseNodeHolder[])">deepCloneWithGrammarHypSubs</a></strong>(<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[]&nbsp;matchNode,
+                           <a href="../../mmj/lang/ParseNodeHolder.html" title="class in mmj.lang">ParseNodeHolder</a>[]&nbsp;expandedReseqParam)</code>
+<div class="block">Clones a ParseNode while substituting for any child nodes that match the
+ corresponding matchNode array node.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#deepCloneWNodeSub(mmj.lang.ParseNode, mmj.lang.ParseNode)">deepCloneWNodeSub</a></strong>(<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>&nbsp;matchNode,
+                 <a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>&nbsp;substNode)</code>
+<div class="block">Clones a sub-tree and splices in a substitution node when a given
+ "matchNode" is found.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#findFirstVarHypNode()">findFirstVarHypNode</a></strong>()</code>
+<div class="block">Finds *first* VarHyp node in a sub-tree.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#getChild()">getChild</a></strong>()</code>
+<div class="block">Return ParseNode's Child ParseNode array.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#getStmt()">getStmt</a></strong>()</code>
+<div class="block">Return ParseNode's Stmt.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#hasUpdatedWorkVar()">hasUpdatedWorkVar</a></strong>()</code>
+<div class="block">Returns true if subtree contains a WorkVar which has a non-null assigned
+ substitution update.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#isDeepDup(mmj.lang.ParseNode)">isDeepDup</a></strong>(<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>&nbsp;that)</code>
+<div class="block">Determine if sub-tree is a duplicate of this sub-tree.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#isDeepDup(mmj.lang.ParseNode, mmj.lang.ParseNode[])">isDeepDup</a></strong>(<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>&nbsp;that,
+         <a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[]&nbsp;compareNodeStack)</code>
+<div class="block">Determine if sub-tree is a duplicate of this sub-tree.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#loadParseNodeFromRPN(mmj.lang.Stmt[], int)">loadParseNodeFromRPN</a></strong>(<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>[]&nbsp;rpn,
+                    int&nbsp;stmtPosInRPN)</code>
+<div class="block">Builds a ParseNode sub-tree from a Stmt array in RPN format.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#renderParsedSubExpr(java.lang.StringBuilder, int, int)">renderParsedSubExpr</a></strong>(java.lang.StringBuilder&nbsp;sb,
+                   int&nbsp;maxDepth,
+                   int&nbsp;maxLength)</code>
+<div class="block">Converts a parse sub-tree into a sub-expression which is output into a
+ String Buffer.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#setChild(mmj.lang.ParseNode[])">setChild</a></strong>(<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[]&nbsp;child)</code>
+<div class="block">Return ParseNode's Child ParseNode array.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#setStmt(mmj.lang.Stmt)">setStmt</a></strong>(<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>&nbsp;stmt)</code>
+<div class="block">Set ParseNode's Stmt.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../mmj/lang/ParseNode.SubTreeIterator.html" title="class in mmj.lang">ParseNode.SubTreeIterator</a></code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#subTreeIterator(boolean)">subTreeIterator</a></strong>(boolean&nbsp;excludeVarHyps)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#unifyWithSubtree(mmj.lang.ParseNode, mmj.lang.ParseNode[], mmj.lang.ParseNode[], mmj.lang.VarHypSubst[])">unifyWithSubtree</a></strong>(<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>&nbsp;parsenode,
+                <a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[]&nbsp;nodeStack,
+                <a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[]&nbsp;otherStack,
+                <a href="../../mmj/lang/VarHypSubst.html" title="class in mmj.lang">VarHypSubst</a>[]&nbsp;subtree)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#unifyWithSubtree(mmj.lang.ParseNode, mmj.lang.VarHyp[], mmj.lang.ParseNode[], mmj.lang.ParseNode[])">unifyWithSubtree</a></strong>(<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>&nbsp;subtreeRoot,
+                <a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a>[]&nbsp;varHypArray,
+                <a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[]&nbsp;unifyNodeStack,
+                <a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[]&nbsp;compareNodeStack)</code>
+<div class="block">Unify an input parse subtree (expression) with this subtree and return an
+ array of substitions if successful, or null.</div>
+</td>
+</tr>
+</table>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
+<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="details">
+<ul class="blockList">
+<li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a name="stmt">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>stmt</h4>
+<pre>public&nbsp;<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a> stmt</pre>
+<div class="block">Stmt object reference, either a Hyp or an Assrt.</div>
+</li>
+</ul>
+<a name="child">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>child</h4>
+<pre>public&nbsp;<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[] child</pre>
+<div class="block">Child node array of length 0 to n.</div>
+</li>
+</ul>
+<a name="firstAppearance">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>firstAppearance</h4>
+<pre>public&nbsp;int firstAppearance</pre>
+<div class="block">This temporary variable is 0 if the node has one parent, -1 if the node
+ has multiple parents, and a positive integer when the RPN index of the
+ first parent is known.</div>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor_detail">
+<!--   -->
+</a>
+<h3>Constructor Detail</h3>
+<a name="ParseNode()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ParseNode</h4>
+<pre>public&nbsp;ParseNode()</pre>
+<div class="block">Default constructor.</div>
+</li>
+</ul>
+<a name="ParseNode(mmj.lang.Stmt)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ParseNode</h4>
+<pre>public&nbsp;ParseNode(<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>&nbsp;stmt)</pre>
+<div class="block">Construct with a Stmt.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stmt</code> - a proof step.</dd></dl>
+</li>
+</ul>
+<a name="ParseNode(mmj.lang.VarHyp)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>ParseNode</h4>
+<pre>public&nbsp;ParseNode(<a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a>&nbsp;varHyp)</pre>
+<div class="block">Construct using a VarHyp.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>varHyp</code> - a proof or parse step.</dd></dl>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ============ METHOD DETAIL ========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_detail">
+<!--   -->
+</a>
+<h3>Method Detail</h3>
+<a name="getStmt()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getStmt</h4>
+<pre>public&nbsp;<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>&nbsp;getStmt()</pre>
+<div class="block">Return ParseNode's Stmt.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>stmt (could be null depending on the context).</dd></dl>
+</li>
+</ul>
+<a name="setStmt(mmj.lang.Stmt)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setStmt</h4>
+<pre>public&nbsp;void&nbsp;setStmt(<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>&nbsp;stmt)</pre>
+<div class="block">Set ParseNode's Stmt.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>stmt</code> - a proof or parse step.</dd></dl>
+</li>
+</ul>
+<a name="getChild()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getChild</h4>
+<pre>public&nbsp;<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[]&nbsp;getChild()</pre>
+<div class="block">Return ParseNode's Child ParseNode array.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>child ParseNode array.</dd></dl>
+</li>
+</ul>
+<a name="setChild(mmj.lang.ParseNode[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setChild</h4>
+<pre>public&nbsp;void&nbsp;setChild(<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[]&nbsp;child)</pre>
+<div class="block">Return ParseNode's Child ParseNode array.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>child</code> - ParseNode array.</dd></dl>
+</li>
+</ul>
+<a name="unifyWithSubtree(mmj.lang.ParseNode, mmj.lang.VarHyp[], mmj.lang.ParseNode[], mmj.lang.ParseNode[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>unifyWithSubtree</h4>
+<pre>public&nbsp;<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[]&nbsp;unifyWithSubtree(<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>&nbsp;subtreeRoot,
+                           <a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a>[]&nbsp;varHypArray,
+                           <a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[]&nbsp;unifyNodeStack,
+                           <a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[]&nbsp;compareNodeStack)</pre>
+<div class="block">Unify an input parse subtree (expression) with this subtree and return an
+ array of substitions if successful, or null. Using fixed size work stacks
+ here, set to 1000 in Proof Assistant. Hard to imagine exceeding the size
+ so we'll accept the possibility of array out-of-bounds exception and just
+ recompile if needed (for now... see
+ mmj.pa.PaConstants.UNIFIER_NODE_STACK_SIZE ).</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>subtreeRoot</code> - root of parse subtree to unify with this</dd><dd><code>varHypArray</code> - the VarHyp's in this subtree</dd><dd><code>unifyNodeStack</code> - fixed size work stack</dd><dd><code>compareNodeStack</code> - fixed size work stack</dd>
+<dt><span class="strong">Returns:</span></dt><dd>array of subtrees that represent substitutions for the
+         corresponding VarHyps in the input varHypArray (may contain
+         nulls).</dd></dl>
+</li>
+</ul>
+<a name="unifyWithSubtree(mmj.lang.ParseNode, mmj.lang.ParseNode[], mmj.lang.ParseNode[], mmj.lang.VarHypSubst[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>unifyWithSubtree</h4>
+<pre>public&nbsp;int&nbsp;unifyWithSubtree(<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>&nbsp;parsenode,
+                   <a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[]&nbsp;nodeStack,
+                   <a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[]&nbsp;otherStack,
+                   <a href="../../mmj/lang/VarHypSubst.html" title="class in mmj.lang">VarHypSubst</a>[]&nbsp;subtree)</pre>
+</li>
+</ul>
+<a name="subTreeIterator(boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>subTreeIterator</h4>
+<pre>public&nbsp;<a href="../../mmj/lang/ParseNode.SubTreeIterator.html" title="class in mmj.lang">ParseNode.SubTreeIterator</a>&nbsp;subTreeIterator(boolean&nbsp;excludeVarHyps)</pre>
+</li>
+</ul>
+<a name="isDeepDup(mmj.lang.ParseNode, mmj.lang.ParseNode[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isDeepDup</h4>
+<pre>public&nbsp;boolean&nbsp;isDeepDup(<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>&nbsp;that,
+                <a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[]&nbsp;compareNodeStack)</pre>
+<div class="block">Determine if sub-tree is a duplicate of this sub-tree. This is the
+ non-recursive version of isDeepDup(), which can be used equivalently
+ instead.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>that</code> - ParseNode to compare to this ParseNode.</dd><dd><code>compareNodeStack</code> - fixed length work stack for ParseNodes.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>true if the sub-trees have identical contents.</dd></dl>
+</li>
+</ul>
+<a name="isDeepDup(mmj.lang.ParseNode)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isDeepDup</h4>
+<pre>public&nbsp;boolean&nbsp;isDeepDup(<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>&nbsp;that)</pre>
+<div class="block">Determine if sub-tree is a duplicate of this sub-tree.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>that</code> - ParseNode to compare to this ParseNode.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>true if the sub-trees have identical contents.</dd></dl>
+</li>
+</ul>
+<a name="deepCloneWithGrammarHypSubs(mmj.lang.ParseNode[], mmj.lang.ParseNodeHolder[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>deepCloneWithGrammarHypSubs</h4>
+<pre>public&nbsp;<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>&nbsp;deepCloneWithGrammarHypSubs(<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[]&nbsp;matchNode,
+                                    <a href="../../mmj/lang/ParseNodeHolder.html" title="class in mmj.lang">ParseNodeHolder</a>[]&nbsp;expandedReseqParam)</pre>
+<div class="block">Clones a ParseNode while substituting for any child nodes that match the
+ corresponding matchNode array node. see
+ GrammarRule.buildGrammaticalParseNode for an example. (this is kind of
+ ugly to look at!)</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>matchNode</code> - ParseNode array of matching ParseNodes.</dd><dd><code>expandedReseqParam</code> - ParseNodeHolder array of nodes to splice in to
+            the original tree where a matchNode is found.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>deep clone of original node with substituted child nodes.</dd></dl>
+</li>
+</ul>
+<a name="deepCloneWNodeSub(mmj.lang.ParseNode, mmj.lang.ParseNode)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>deepCloneWNodeSub</h4>
+<pre>public&nbsp;<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>&nbsp;deepCloneWNodeSub(<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>&nbsp;matchNode,
+                          <a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>&nbsp;substNode)</pre>
+<div class="block">Clones a sub-tree and splices in a substitution node when a given
+ "matchNode" is found.
+ <p>
+ Basically, this is used to splice an expression's sub-tree into a VarHyp
+ sub-tree. Note that the original tree is on top, so we're layering
+ another formula on top, with substituted expressions replacing the
+ formula's hypotheses.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>matchNode</code> - ParseNode to look for and replace.</dd><dd><code>substNode</code> - ParseNode to replace matchNode.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>output ParseNode, unchanged or substituted.</dd></dl>
+</li>
+</ul>
+<a name="deepClone()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>deepClone</h4>
+<pre>public&nbsp;<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>&nbsp;deepClone()</pre>
+<div class="block">Deep clone of a ParseNode sub-tree.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>ParseNode sub-tree matching the original's content.</dd></dl>
+</li>
+</ul>
+<a name="deepCloneApplyingAssrtSubst(mmj.lang.Hyp[], mmj.lang.ParseNode[], java.util.List)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>deepCloneApplyingAssrtSubst</h4>
+<pre>public&nbsp;<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>&nbsp;deepCloneApplyingAssrtSubst(<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>[]&nbsp;assrtHypArray,
+                                    <a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[]&nbsp;assrtSubst,
+                                    java.util.List&lt;<a href="../../mmj/lang/WorkVar.html" title="class in mmj.lang">WorkVar</a>&gt;&nbsp;workVarList)</pre>
+<div class="block">(Deep) Clone a ParseNode while substituting a set of VarHyp substitutions
+ specified by a parallel Hyp array and keeping track of the Work Vars
+ output.
+ <p>
+ This function is a helper for mmj.pa.ProofUnifier and its friend
+ mmj.pa.ProofWorksheet.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>assrtHypArray</code> - parallel array for assrtSubst</dd><dd><code>assrtSubst</code> - array of ParseNode sub-tree roots specifying hyp
+            substitutions.</dd><dd><code>workVarList</code> - arrayList of WorkVar updated to contain set of Work
+            Vars used in the subtree. substituted into the output.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>new ParseNode.</dd></dl>
+</li>
+</ul>
+<a name="deepCloneApplyingAssrtSubst(mmj.lang.Hyp[], mmj.lang.ParseNode[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>deepCloneApplyingAssrtSubst</h4>
+<pre>public&nbsp;<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>&nbsp;deepCloneApplyingAssrtSubst(<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>[]&nbsp;assrtHypArray,
+                                    <a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[]&nbsp;assrtSubst)</pre>
+<div class="block">(Deep) Clone a ParseNode while substituting a set of VarHyp substitutions
+ specified by a parallel Hyp array.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>assrtHypArray</code> - parallel array for assrtSubst</dd><dd><code>assrtSubst</code> - array of ParseNode sub-tree roots specifying hyp
+            substitutions.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>new ParseNode.</dd></dl>
+</li>
+</ul>
+<a name="findFirstVarHypNode()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>findFirstVarHypNode</h4>
+<pre>public&nbsp;<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>&nbsp;findFirstVarHypNode()</pre>
+<div class="block">Finds *first* VarHyp node in a sub-tree.
+ <p>
+ This is useful mainly for GrammarRule parse trees which have at most one
+ VarHyp per ParseTree.root.child[i].</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>first ParseNode among sub-trees of a ParseNode's children that is
+         a VarHyp.</dd></dl>
+</li>
+</ul>
+<a name="calcMaxDepth()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>calcMaxDepth</h4>
+<pre>public&nbsp;int&nbsp;calcMaxDepth()</pre>
+<div class="block">Calculates the maximum depth of a parse sub-tree.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>maximum depth of parse sub-tree</dd></dl>
+</li>
+</ul>
+<a name="countParseNodes()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>countParseNodes</h4>
+<pre>public&nbsp;int&nbsp;countParseNodes()</pre>
+<div class="block">Counts nodes in a ParseNode sub-tree.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the number of nodes</dd></dl>
+</li>
+</ul>
+<a name="convertToRPN()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>convertToRPN</h4>
+<pre>public&nbsp;<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>[]&nbsp;convertToRPN()</pre>
+<div class="block">Converts a sub-tree expression to Reverse Polish Notation.
+ <p>
+ Intended for creating the RPN for an expression rather than an entire
+ formula (with ParseTree).</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>RPN Stmt array.</dd></dl>
+</li>
+</ul>
+<a name="convertToRPN(mmj.lang.Stmt[], int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>convertToRPN</h4>
+<pre>public&nbsp;int&nbsp;convertToRPN(<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>[]&nbsp;outRPN,
+               int&nbsp;dest)</pre>
+<div class="block">Converts a sub-tree to Reverse Polish Notation.
+ <p>
+ Works in reverse order.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>outRPN</code> - Stmt Array where RPN will be stored.</dd><dd><code>dest</code> - location in output array to write the next Stmt reference.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>dest of *next* output Stmt array item.</dd></dl>
+</li>
+</ul>
+<a name="loadParseNodeFromRPN(mmj.lang.Stmt[], int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>loadParseNodeFromRPN</h4>
+<pre>public&nbsp;int&nbsp;loadParseNodeFromRPN(<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>[]&nbsp;rpn,
+                       int&nbsp;stmtPosInRPN)</pre>
+<div class="block">Builds a ParseNode sub-tree from a Stmt array in RPN format.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>rpn</code> - Stmt array in RPN format.</dd><dd><code>stmtPosInRPN</code> - location of next Stmt in array</dd>
+<dt><span class="strong">Returns:</span></dt><dd>location of next Stmt in array</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.IllegalArgumentException</code> - if ParseTree cannot be built from the
+             RPN (null statment or RPN incomplete.)</dd></dl>
+</li>
+</ul>
+<a name="renderParsedSubExpr(java.lang.StringBuilder, int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>renderParsedSubExpr</h4>
+<pre>public&nbsp;int&nbsp;renderParsedSubExpr(java.lang.StringBuilder&nbsp;sb,
+                      int&nbsp;maxDepth,
+                      int&nbsp;maxLength)</pre>
+<div class="block">Converts a parse sub-tree into a sub-expression which is output into a
+ String Buffer.
+ <p>
+ Note: this will not work for a proof node! The ParseNode's stmt must be a
+ VarHyp or a Syntax Axiom.
+ <p>
+ The output sub-expression is generated into text not to exceed the given
+ maxLength. If the number of output characters exceeds maxLength output
+ terminates after tidying StringBuilder.
+ <p>
+ The depth of the sub-tree is checked against the input maxDepth
+ parameter, and if the depth exceeds this number, output terminates after
+ tidying StringBuilder.
+ <p>
+ Depth is computed as 1 for each Notation Syntax Axiom Node. VarHyp nodes
+ and Nulls Permitted, Type Conversion and NamedTypedConstant Syntax Axiom
+ nodes are assigned depth = 0 for purposes of depth checking.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>sb</code> - StringBuilder already initialized for appending characters.</dd><dd><code>maxDepth</code> - maximum depth of Notation Syntax axioms in sub-tree to be
+            printed. Set to Integer.MAX_VALUE to turn off depth checking.</dd><dd><code>maxLength</code> - maximum length of output sub-expression. Set to
+            Integer.MAX_VALUE to turn off depth checking.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>length of sub-expression characters appended to the input
+         StringBuilder -- or -1 if maxDepth or maxLength exceeded.</dd></dl>
+</li>
+</ul>
+<a name="cloneTargetToSourceVars()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>cloneTargetToSourceVars</h4>
+<pre>public&nbsp;<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>&nbsp;cloneTargetToSourceVars()</pre>
+<div class="block">Deep clone of a ParseNode sub-tree converting Target Variables to Source
+ Variables.
+ <p>
+ Note: this is used by UnifyWorkManager and only for "raw" substitutions
+ which means that any variables in the tree being cloned are, by
+ definition, target variables; we do not expect any of them to be work
+ variables, and furthermore, we expect all of them to have assigned
+ values.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>ParseNode sub-tree converted to use WorkVarHyps.</dd></dl>
+</li>
+</ul>
+<a name="checkWorkVarHasOccursIn(mmj.lang.WorkVarHyp)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>checkWorkVarHasOccursIn</h4>
+<pre>public&nbsp;int&nbsp;checkWorkVarHasOccursIn(<a href="../../mmj/lang/WorkVarHyp.html" title="class in mmj.lang">WorkVarHyp</a>&nbsp;searchWorkVarHyp)</pre>
+<div class="block">Check to see if or how the input searchWorkVarHyp occurs within the
+ current ParseNode stmt and its subtree and any substitutions made to
+ VarHyps via paSubst.
+ <p>
+ Note that this function is only called if the searchWorkVarHyp.paSubst ==
+ null (which means we are considering assigning a substitution). to it.
+ AND note that it is called only if the currentNode.stmt is a WorkVarHyp.
+ <p>
+ The reason for this hokeyness is that set.mm contains loops of renames,
+ such as &W1 := & W3 := &W1, etc. Not to mention &W1 := &W2 := &W3 := &W1.
+ THESE are "ok" as long as the subtree depth remains 1 (e.g. not &W1 := (
+ &W2 -> &W1 ).</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>searchWorkVarHyp</code> - the object of the search.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>occurs Type: 0 = no occurrences, 1 = occurs in error (invalid
+         loop) -1 = valid rename</dd></dl>
+</li>
+</ul>
+<a name="hasUpdatedWorkVar()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>hasUpdatedWorkVar</h4>
+<pre>public&nbsp;boolean&nbsp;hasUpdatedWorkVar()</pre>
+<div class="block">Returns true if subtree contains a WorkVar which has a non-null assigned
+ substitution update.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>true if subtree contains an updated WorkVar.</dd></dl>
+</li>
+</ul>
+<a name="cloneResolvingUpdatedWorkVars()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>cloneResolvingUpdatedWorkVars</h4>
+<pre>public&nbsp;<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>&nbsp;cloneResolvingUpdatedWorkVars()</pre>
+<div class="block">Clone subtree replacing any updated Work Vars with clones of their
+ updating subtrees.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>cloned subtree containing no Work Vars which have updates.</dd></dl>
+</li>
+</ul>
+<a name="accumSetOfWorkVarsUsed(java.util.List)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>accumSetOfWorkVarsUsed</h4>
+<pre>public&nbsp;void&nbsp;accumSetOfWorkVarsUsed(java.util.List&lt;<a href="../../mmj/lang/WorkVar.html" title="class in mmj.lang">WorkVar</a>&gt;&nbsp;workVarList)</pre>
+<div class="block">Updates an ArrayList to maintain a set of Work Vars used in a subtree.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>workVarList</code> - List of WorkVar objects in subtree.</dd></dl>
+</li>
+</ul>
+<a name="accumVarHypUsedListBySeq(java.util.List)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>accumVarHypUsedListBySeq</h4>
+<pre>public&nbsp;void&nbsp;accumVarHypUsedListBySeq(java.util.List&lt;<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>&gt;&nbsp;varHypList)</pre>
+<div class="block">Updates an ArrayList to maintain a set of Var Hyps used in a subtree.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>varHypList</code> - List of VarHyp objects in subtree.</dd></dl>
+</li>
+</ul>
+<a name="accumListVarHypUsedListBySeq(java.util.List, java.util.List)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>accumListVarHypUsedListBySeq</h4>
+<pre>public&nbsp;void&nbsp;accumListVarHypUsedListBySeq(java.util.List&lt;<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>&gt;&nbsp;varHypList,
+                                java.util.List&lt;<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>&gt;&nbsp;varHypInUseList)</pre>
+<div class="block">Accumulate Var Hyps used in the subtree which are also in an input list
+ of Var Hyps.
+ <p>
+ Lists are maintained without duplicates and are in ascending database
+ sequence.
+ <p>
+ Note: in ProofUnifier this is used to accumulate a list of optional
+ variables that are in use in a proof.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>varHypList</code> - List of Var Hyps being sought for accumulation.</dd><dd><code>varHypInUseList</code> - List of Var Hyps accumulated which are in the
+            formula and are in the input varList.</dd></dl>
+</li>
+</ul>
+<a name="deepCloneApplyingWorkVarUpdates()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>deepCloneApplyingWorkVarUpdates</h4>
+<pre>public&nbsp;<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>&nbsp;deepCloneApplyingWorkVarUpdates()</pre>
+<div class="block">(Deep) Clone a ParseNode while applying updates to WorkVars.
+ <p>
+ This function is a helper for mmj.pa.ProofUnifier and its friend
+ mmj.pa.ProofWorksheet.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>new ParseNode subtree.</dd></dl>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<!-- ========= END OF CLASS DATA ========= -->
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<div class="bottomNav"><a name="navbar_bottom">
+<!--   -->
+</a><a href="#skip-navbar_bottom" title="Skip navigation links"></a><a name="navbar_bottom_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../index-all.html">Index</a></li>
+<li><a href="../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../mmj/lang/MObj.html" title="class in mmj.lang"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../mmj/lang/ParseNode.SubTreeIterator.html" title="class in mmj.lang"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../index.html?mmj/lang/ParseNode.html" target="_top">Frames</a></li>
+<li><a href="ParseNode.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_bottom">
+<li><a href="../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_bottom");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li><a href="#nested_class_summary">Nested</a>&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_bottom">
+<!--   -->
+</a></div>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+</body>
+</html>

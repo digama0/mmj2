@@ -12,25 +12,25 @@
 package mmj.lang;
 
 /**
- *  Thrown by package mmj.verify methods when a verification
- *  error is detected in LogicalSystem.
+ * Thrown by package mmj.verify methods when a verification error is detected in
+ * LogicalSystem.
  */
 public class VerifyException extends LangException {
 
     /**
-     * Default Constructor, <code>VerifyException</code>.
+     * Default Constructor, {@code VerifyException}.
      */
     public VerifyException() {
         super();
     }
 
     /**
-     *  Contructor, <code>VerifyException</code> with
-     *  error message.
-     *
-     *  @param   errorMessage  error message.
+     * Contructor, {@code VerifyException} with error message.
+     * 
+     * @param errorMessage error message.
+     * @param args formatting arguments.
      */
-    public VerifyException(String errorMessage) {
-        super(errorMessage);
+    public VerifyException(final String errorMessage, final Object... args) {
+        super(errorMessage, args);
     }
 }

@@ -1,0 +1,1310 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- NewPage -->
+<html lang="en">
+<head>
+<title>TMFFConstants</title>
+<link rel="stylesheet" type="text/css" href="../../stylesheet.css" title="Style">
+</head>
+<body>
+<script type="text/javascript"><!--
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="TMFFConstants";
+    }
+//-->
+</script>
+<noscript>
+<div>JavaScript is disabled on your browser.</div>
+</noscript>
+<!-- ========= START OF TOP NAVBAR ======= -->
+<div class="topNav"><a name="navbar_top">
+<!--   -->
+</a><a href="#skip-navbar_top" title="Skip navigation links"></a><a name="navbar_top_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../index-all.html">Index</a></li>
+<li><a href="../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../mmj/tmff/TMFFAlignColumn.html" title="class in mmj.tmff"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../mmj/tmff/TMFFException.html" title="class in mmj.tmff"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../index.html?mmj/tmff/TMFFConstants.html" target="_top">Frames</a></li>
+<li><a href="TMFFConstants.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_top">
+<li><a href="../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_top");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#methods_inherited_from_class_java.lang.Object">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li>Method</li>
+</ul>
+</div>
+<a name="skip-navbar_top">
+<!--   -->
+</a></div>
+<!-- ========= END OF TOP NAVBAR ========= -->
+<!-- ======== START OF CLASS DATA ======== -->
+<div class="header">
+<div class="subTitle">mmj.tmff</div>
+<h2 title="Class TMFFConstants" class="title">Class TMFFConstants</h2>
+</div>
+<div class="contentContainer">
+<ul class="inheritance">
+<li>java.lang.Object</li>
+<li>
+<ul class="inheritance">
+<li>mmj.tmff.TMFFConstants</li>
+</ul>
+</li>
+</ul>
+<div class="description">
+<ul class="blockList">
+<li class="blockList">
+<hr>
+<br>
+<pre>public class <span class="strong">TMFFConstants</span>
+extends java.lang.Object</pre>
+<div class="block">Constants used in mmj.tmff package.
+ <p>
+ There are two primary types of constants: parameters that are "hardcoded"
+ which affect/control processing, and error/info messages.
+ <p>
+ Each mmj message begins with a code, such as this:
+ <p>
+ <code>E-LA-0007</code>
+ <p>
+ where the format of the code is <code>X-YY-9999</code><br>
+ <p>
+ <b><code>X</code></b> : error level
+ <ul>
+ <li><code>E</code> = Error
+ <li><code>I</code> = Information
+ <li><code>A</code> = Abort (processing terminates, usually a bug).
+ </ul>
+ <p>
+ <b><code>YY</code></b> : source code
+ <ul>
+ <li><code>GM</code> = mmj.gmff package (see <a href="../../mmj/gmff/GMFFConstants.html" title="class in mmj.gmff"><code>GMFFConstants</code></a>)
+ <li><code>GR</code> = mmj.verify.Grammar and related code (see
+ <a href="../../mmj/verify/GrammarConstants.html" title="class in mmj.verify"><code>GrammarConstants</code></a>)
+ <li><code>IO</code> = mmj.mmio package (see <a href="../../mmj/mmio/MMIOConstants.html" title="class in mmj.mmio"><code>MMIOConstants</code></a>)
+ <li><code>LA</code> = mmj.lang package (see <a href="../../mmj/gmff/GMFFConstants.html" title="class in mmj.gmff"><code>GMFFConstants</code></a>)
+ <li><code>PA</code> = mmj.pa package (proof assistant) (see <a href="../../mmj/pa/PaConstants.html" title="class in mmj.pa"><code>PaConstants</code></a>)
+ <li><code>PR</code> = mmj.verify.VerifyProof and related code (see
+ <a href="../../mmj/verify/ProofConstants.html" title="class in mmj.verify"><code>ProofConstants</code></a>)
+ <li><code>TL</code> = mmj.tl package (Theorem Loader).
+ <li><code>TM</code> = mmj.tmff.AlignColumn and related code
+ <li><code>UT</code> = mmj.util package. (see <a href="../../mmj/util/UtilConstants.html" title="class in mmj.util"><code>UtilConstants</code></a>)
+ </ul>
+ <p>
+ <b><code>9999</code></b> : sequential number within the source code, 0001 through
+ 9999.</div>
+</li>
+</ul>
+</div>
+<div class="summary">
+<ul class="blockList">
+<li class="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ALIGN_CNST">ALIGN_CNST</a></strong></code>
+<div class="block">Arbitrary code number signifying formatting alignment by Cnst within
+ Syntax Axiom.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ALIGN_SYM">ALIGN_SYM</a></strong></code>
+<div class="block">Arbitrary code number signifying formatting alignment by Sym within
+ Syntax Axiom.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String[]</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ALIGN_TYPE">ALIGN_TYPE</a></strong></code>
+<div class="block">List of alignment type names as input by users.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ALIGN_VAR">ALIGN_VAR</a></strong></code>
+<div class="block">Arbitrary code number signifying formatting alignment by Var within
+ Syntax Axiom.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_ALT_FORMAT_NBR_MISSING2_1">ERRMSG_ALT_FORMAT_NBR_MISSING2_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_ALT_INDENT_MISSING2_1">ERRMSG_ALT_INDENT_MISSING2_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_BAD_ALT_FORMAT_NBR_1">ERRMSG_BAD_ALT_FORMAT_NBR_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_BAD_ALT_FORMAT_NBR_2">ERRMSG_BAD_ALT_FORMAT_NBR_2</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_BAD_ALT_INDENT_1">ERRMSG_BAD_ALT_INDENT_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_BAD_ALT_INDENT_2">ERRMSG_BAD_ALT_INDENT_2</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_BAD_AT_NBR_1">ERRMSG_BAD_AT_NBR_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_BAD_AT_NBR_2">ERRMSG_BAD_AT_NBR_2</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_BAD_AT_VALUE_1">ERRMSG_BAD_AT_VALUE_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_BAD_AT_VALUE_2">ERRMSG_BAD_AT_VALUE_2</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_BAD_BY_VALUE_1">ERRMSG_BAD_BY_VALUE_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_BAD_BY_VALUE_2">ERRMSG_BAD_BY_VALUE_2</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_BAD_MAX_DEPTH_1">ERRMSG_BAD_MAX_DEPTH_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_BAD_NEW_FORMAT_NBR_1">ERRMSG_BAD_NEW_FORMAT_NBR_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_BAD_NEW_FORMAT_NBR_2">ERRMSG_BAD_NEW_FORMAT_NBR_2</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_BAD_PREF_FORMAT_NBR_1">ERRMSG_BAD_PREF_FORMAT_NBR_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_BAD_PREF_FORMAT_NBR_2">ERRMSG_BAD_PREF_FORMAT_NBR_2</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_BAD_SUB_EXPR_NODE_1">ERRMSG_BAD_SUB_EXPR_NODE_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_BAD_UPD_FORMAT_NBR_1">ERRMSG_BAD_UPD_FORMAT_NBR_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_BAD_UPD_FORMAT_NBR_2">ERRMSG_BAD_UPD_FORMAT_NBR_2</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_BAD_USE_INDENT_1">ERRMSG_BAD_USE_INDENT_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_BAD_USE_INDENT_2">ERRMSG_BAD_USE_INDENT_2</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_BAD_USER_METHOD_NAME_1">ERRMSG_BAD_USER_METHOD_NAME_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_CANNOT_UPD_FORMAT_0_1">ERRMSG_CANNOT_UPD_FORMAT_0_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_CANNOT_UPD_FORMAT_0_2">ERRMSG_CANNOT_UPD_FORMAT_0_2</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_ERR_FORMAT_NBR_INPUT_1">ERRMSG_ERR_FORMAT_NBR_INPUT_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_ERR_INDENT_INPUT_1">ERRMSG_ERR_INDENT_INPUT_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_FORMAT_NBR_MISSING_1">ERRMSG_FORMAT_NBR_MISSING_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_FORMAT_NBR_MISSING2_1">ERRMSG_FORMAT_NBR_MISSING2_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_FORMAT_SCHEME_MISSING_1">ERRMSG_FORMAT_SCHEME_MISSING_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_FORMAT_SCHEME_NAME_NOTFND_1">ERRMSG_FORMAT_SCHEME_NAME_NOTFND_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_FORMAT_SCHEME_NAME_NOTFND2_1">ERRMSG_FORMAT_SCHEME_NAME_NOTFND2_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_MISSING_AT_VALUE_1">ERRMSG_MISSING_AT_VALUE_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_MISSING_BY_VALUE_1">ERRMSG_MISSING_BY_VALUE_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_MISSING_USER_METHOD_NAME_1">ERRMSG_MISSING_USER_METHOD_NAME_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_NO_ROOM_SUB_EXPR_1">ERRMSG_NO_ROOM_SUB_EXPR_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_RENDER_FORMULA_ERROR_1">ERRMSG_RENDER_FORMULA_ERROR_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_SCHEME_CANNOT_BE_UPDATED_1">ERRMSG_SCHEME_CANNOT_BE_UPDATED_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_SCHEME_CANNOT_BE_UPDATED_2">ERRMSG_SCHEME_CANNOT_BE_UPDATED_2</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_SCHEME_METHOD_MISSING_1">ERRMSG_SCHEME_METHOD_MISSING_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_SCHEME_NAME_MISSING_1">ERRMSG_SCHEME_NAME_MISSING_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_SCHEME_NAME_REQUIRED_1">ERRMSG_SCHEME_NAME_REQUIRED_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_SCHEME_NM_CANT_BE_ASSIGNED_1">ERRMSG_SCHEME_NM_CANT_BE_ASSIGNED_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_SCHEME_NM_CANT_BE_ASSIGNED_2">ERRMSG_SCHEME_NM_CANT_BE_ASSIGNED_2</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_UNFORMATTED_BAD_CALL_FLAT_1">ERRMSG_UNFORMATTED_BAD_CALL_FLAT_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_UNFORMATTED_BAD_CALL_UNF_1">ERRMSG_UNFORMATTED_BAD_CALL_UNF_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_UPDATE_SCHEME_NOTFND_BUG_1">ERRMSG_UPDATE_SCHEME_NOTFND_BUG_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#ERRMSG_USE_INDENT_MISSING2_1">ERRMSG_USE_INDENT_MISSING2_1</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#MAX_ALIGN_AT_NBR">MAX_ALIGN_AT_NBR</a></strong></code>
+<div class="block">Maximum valid (useful) AtNbr for TMFFAlignColumn.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#MIN_ALIGN_AT_NBR">MIN_ALIGN_AT_NBR</a></strong></code>
+<div class="block">Minimum valid (useful) AtNbr for TMFFAlignColumn.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#TMFF_ALT_FORMAT_NBR_DEFAULT">TMFF_ALT_FORMAT_NBR_DEFAULT</a></strong></code>
+<div class="block">Default setting for Alternate Format Number.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#TMFF_ALT_INDENT_DEFAULT">TMFF_ALT_INDENT_DEFAULT</a></strong></code>
+<div class="block">Default setting for TMFF Alt Indent amount</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#TMFF_CURR_FORMAT_NBR_DEFAULT">TMFF_CURR_FORMAT_NBR_DEFAULT</a></strong></code>
+<div class="block">Default setting for Current Format Number.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String[][]</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#TMFF_DEFAULT_DEFINE_FORMAT_PARAMS">TMFF_DEFAULT_DEFINE_FORMAT_PARAMS</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String[][]</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#TMFF_DEFAULT_DEFINE_SCHEME_PARAMS">TMFF_DEFAULT_DEFINE_SCHEME_PARAMS</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#TMFF_MAX_FORMAT_NBR">TMFF_MAX_FORMAT_NBR</a></strong></code>
+<div class="block">The highest permissible Format Number.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#TMFF_MAX_INDENT">TMFF_MAX_INDENT</a></strong></code>
+<div class="block">The highest permissible Indent amount.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#TMFF_METHOD_USER_NAME_ALIGN_COLUMN">TMFF_METHOD_USER_NAME_ALIGN_COLUMN</a></strong></code>
+<div class="block">Hardcoded user name of TMFFMethod TMFFAlignColumn.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#TMFF_METHOD_USER_NAME_FLAT">TMFF_METHOD_USER_NAME_FLAT</a></strong></code>
+<div class="block">Hardcoded user name of TMFFMethod TMFFFlat.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#TMFF_METHOD_USER_NAME_TWO_COLUMN_ALIGNMENT">TMFF_METHOD_USER_NAME_TWO_COLUMN_ALIGNMENT</a></strong></code>
+<div class="block">Hardcoded user name of TMFFMethod TMFFTwoColumnAlignment.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#TMFF_METHOD_USER_NAME_UNFORMATTED">TMFF_METHOD_USER_NAME_UNFORMATTED</a></strong></code>
+<div class="block">Hardcoded user name of TMFFMethod TMFFUnformatted.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#TMFF_UNFORMATTED_FORMAT_NBR_0">TMFF_UNFORMATTED_FORMAT_NBR_0</a></strong></code>
+<div class="block">Format 'Unformatted' is assigned Format Number 0.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#TMFF_UNFORMATTED_SCHEME_NAME">TMFF_UNFORMATTED_SCHEME_NAME</a></strong></code>
+<div class="block">Hardcoded TMFFScheme name for Unformatted output.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#TMFF_USE_INDENT_DEFAULT">TMFF_USE_INDENT_DEFAULT</a></strong></code>
+<div class="block">Default setting for TMFF Use Indent amount</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor_summary">
+<!--   -->
+</a>
+<h3>Constructor Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
+<caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colOne" scope="col">Constructor and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../mmj/tmff/TMFFConstants.html#TMFFConstants()">TMFFConstants</a></strong>()</code>&nbsp;</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- ========== METHOD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_summary">
+<!--   -->
+</a>
+<h3>Method Summary</h3>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
+<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="details">
+<ul class="blockList">
+<li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a name="ALIGN_SYM">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ALIGN_SYM</h4>
+<pre>public static final&nbsp;int ALIGN_SYM</pre>
+<div class="block">Arbitrary code number signifying formatting alignment by Sym within
+ Syntax Axiom.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ALIGN_SYM">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ALIGN_CNST">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ALIGN_CNST</h4>
+<pre>public static final&nbsp;int ALIGN_CNST</pre>
+<div class="block">Arbitrary code number signifying formatting alignment by Cnst within
+ Syntax Axiom.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ALIGN_CNST">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ALIGN_VAR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ALIGN_VAR</h4>
+<pre>public static final&nbsp;int ALIGN_VAR</pre>
+<div class="block">Arbitrary code number signifying formatting alignment by Var within
+ Syntax Axiom.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ALIGN_VAR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ALIGN_TYPE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ALIGN_TYPE</h4>
+<pre>public static final&nbsp;java.lang.String[] ALIGN_TYPE</pre>
+<div class="block">List of alignment type names as input by users.
+ <p>
+ The sequence of elements of this table must match the numeric values for
+ ALIGN_SYM, etc. The array index + 1 must equal the ALIGN_SYM, etc.
+ number!!!</div>
+</li>
+</ul>
+<a name="MIN_ALIGN_AT_NBR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MIN_ALIGN_AT_NBR</h4>
+<pre>public static final&nbsp;int MIN_ALIGN_AT_NBR</pre>
+<div class="block">Minimum valid (useful) AtNbr for TMFFAlignColumn.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.MIN_ALIGN_AT_NBR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="MAX_ALIGN_AT_NBR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MAX_ALIGN_AT_NBR</h4>
+<pre>public static final&nbsp;int MAX_ALIGN_AT_NBR</pre>
+<div class="block">Maximum valid (useful) AtNbr for TMFFAlignColumn.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.MAX_ALIGN_AT_NBR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="TMFF_UNFORMATTED_SCHEME_NAME">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>TMFF_UNFORMATTED_SCHEME_NAME</h4>
+<pre>public static final&nbsp;java.lang.String TMFF_UNFORMATTED_SCHEME_NAME</pre>
+<div class="block">Hardcoded TMFFScheme name for Unformatted output. This name is RESERVED
+ and cannot be input or modified by the user.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.TMFF_UNFORMATTED_SCHEME_NAME">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="TMFF_UNFORMATTED_FORMAT_NBR_0">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>TMFF_UNFORMATTED_FORMAT_NBR_0</h4>
+<pre>public static final&nbsp;int TMFF_UNFORMATTED_FORMAT_NBR_0</pre>
+<div class="block">Format 'Unformatted' is assigned Format Number 0. Do not change this
+ without careful review and some deep thought -- some other coding changes
+ would be needed!</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.TMFF_UNFORMATTED_FORMAT_NBR_0">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="TMFF_MAX_FORMAT_NBR">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>TMFF_MAX_FORMAT_NBR</h4>
+<pre>public static final&nbsp;int TMFF_MAX_FORMAT_NBR</pre>
+<div class="block">The highest permissible Format Number. It is arbitrarily set to a low
+ number, because at some point in the future we might "enhance" the system
+ and be required to hold an array of TMFFFormat objects inside each
+ mmj.lang.Axiom, or even every mmj.lang.MObj (though that latter is not
+ foreseen.)</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.TMFF_MAX_FORMAT_NBR">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="TMFF_MAX_INDENT">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>TMFF_MAX_INDENT</h4>
+<pre>public static final&nbsp;int TMFF_MAX_INDENT</pre>
+<div class="block">The highest permissible Indent amount.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.TMFF_MAX_INDENT">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="TMFF_DEFAULT_DEFINE_SCHEME_PARAMS">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>TMFF_DEFAULT_DEFINE_SCHEME_PARAMS</h4>
+<pre>public static final&nbsp;java.lang.String[][] TMFF_DEFAULT_DEFINE_SCHEME_PARAMS</pre>
+</li>
+</ul>
+<a name="TMFF_DEFAULT_DEFINE_FORMAT_PARAMS">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>TMFF_DEFAULT_DEFINE_FORMAT_PARAMS</h4>
+<pre>public static final&nbsp;java.lang.String[][] TMFF_DEFAULT_DEFINE_FORMAT_PARAMS</pre>
+</li>
+</ul>
+<a name="TMFF_METHOD_USER_NAME_UNFORMATTED">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>TMFF_METHOD_USER_NAME_UNFORMATTED</h4>
+<pre>public static final&nbsp;java.lang.String TMFF_METHOD_USER_NAME_UNFORMATTED</pre>
+<div class="block">Hardcoded user name of TMFFMethod TMFFUnformatted.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.TMFF_METHOD_USER_NAME_UNFORMATTED">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="TMFF_METHOD_USER_NAME_ALIGN_COLUMN">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>TMFF_METHOD_USER_NAME_ALIGN_COLUMN</h4>
+<pre>public static final&nbsp;java.lang.String TMFF_METHOD_USER_NAME_ALIGN_COLUMN</pre>
+<div class="block">Hardcoded user name of TMFFMethod TMFFAlignColumn.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.TMFF_METHOD_USER_NAME_ALIGN_COLUMN">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="TMFF_METHOD_USER_NAME_TWO_COLUMN_ALIGNMENT">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>TMFF_METHOD_USER_NAME_TWO_COLUMN_ALIGNMENT</h4>
+<pre>public static final&nbsp;java.lang.String TMFF_METHOD_USER_NAME_TWO_COLUMN_ALIGNMENT</pre>
+<div class="block">Hardcoded user name of TMFFMethod TMFFTwoColumnAlignment.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.TMFF_METHOD_USER_NAME_TWO_COLUMN_ALIGNMENT">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="TMFF_METHOD_USER_NAME_FLAT">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>TMFF_METHOD_USER_NAME_FLAT</h4>
+<pre>public static final&nbsp;java.lang.String TMFF_METHOD_USER_NAME_FLAT</pre>
+<div class="block">Hardcoded user name of TMFFMethod TMFFFlat.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.TMFF_METHOD_USER_NAME_FLAT">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="TMFF_CURR_FORMAT_NBR_DEFAULT">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>TMFF_CURR_FORMAT_NBR_DEFAULT</h4>
+<pre>public static final&nbsp;int TMFF_CURR_FORMAT_NBR_DEFAULT</pre>
+<div class="block">Default setting for Current Format Number.
+ <p>
+ "13" = TwoColumnAlignmentDepth2.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.TMFF_CURR_FORMAT_NBR_DEFAULT">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="TMFF_ALT_FORMAT_NBR_DEFAULT">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>TMFF_ALT_FORMAT_NBR_DEFAULT</h4>
+<pre>public static final&nbsp;int TMFF_ALT_FORMAT_NBR_DEFAULT</pre>
+<div class="block">Default setting for Alternate Format Number.
+ <p>
+ "7" = Flat.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.TMFF_ALT_FORMAT_NBR_DEFAULT">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="TMFF_USE_INDENT_DEFAULT">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>TMFF_USE_INDENT_DEFAULT</h4>
+<pre>public static final&nbsp;int TMFF_USE_INDENT_DEFAULT</pre>
+<div class="block">Default setting for TMFF Use Indent amount
+ <p>
+ "0" = No indentation</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.TMFF_USE_INDENT_DEFAULT">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="TMFF_ALT_INDENT_DEFAULT">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>TMFF_ALT_INDENT_DEFAULT</h4>
+<pre>public static final&nbsp;int TMFF_ALT_INDENT_DEFAULT</pre>
+<div class="block">Default setting for TMFF Alt Indent amount
+ <p>
+ "1" = 1 column indentation per proof level below the root.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.TMFF_ALT_INDENT_DEFAULT">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_BAD_BY_VALUE_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_BAD_BY_VALUE_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_BAD_BY_VALUE_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_BAD_BY_VALUE_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_BAD_BY_VALUE_2">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_BAD_BY_VALUE_2</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_BAD_BY_VALUE_2</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_BAD_BY_VALUE_2">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_MISSING_BY_VALUE_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_MISSING_BY_VALUE_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_MISSING_BY_VALUE_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_MISSING_BY_VALUE_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_BAD_AT_NBR_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_BAD_AT_NBR_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_BAD_AT_NBR_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_BAD_AT_NBR_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_BAD_AT_NBR_2">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_BAD_AT_NBR_2</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_BAD_AT_NBR_2</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_BAD_AT_NBR_2">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_BAD_AT_VALUE_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_BAD_AT_VALUE_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_BAD_AT_VALUE_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_BAD_AT_VALUE_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_BAD_AT_VALUE_2">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_BAD_AT_VALUE_2</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_BAD_AT_VALUE_2</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_BAD_AT_VALUE_2">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_MISSING_AT_VALUE_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_MISSING_AT_VALUE_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_MISSING_AT_VALUE_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_MISSING_AT_VALUE_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_BAD_SUB_EXPR_NODE_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_BAD_SUB_EXPR_NODE_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_BAD_SUB_EXPR_NODE_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_BAD_SUB_EXPR_NODE_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_NO_ROOM_SUB_EXPR_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_NO_ROOM_SUB_EXPR_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_NO_ROOM_SUB_EXPR_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_NO_ROOM_SUB_EXPR_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_FORMAT_SCHEME_MISSING_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_FORMAT_SCHEME_MISSING_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_FORMAT_SCHEME_MISSING_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_FORMAT_SCHEME_MISSING_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_CANNOT_UPD_FORMAT_0_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_CANNOT_UPD_FORMAT_0_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_CANNOT_UPD_FORMAT_0_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_CANNOT_UPD_FORMAT_0_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_CANNOT_UPD_FORMAT_0_2">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_CANNOT_UPD_FORMAT_0_2</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_CANNOT_UPD_FORMAT_0_2</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_CANNOT_UPD_FORMAT_0_2">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_BAD_UPD_FORMAT_NBR_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_BAD_UPD_FORMAT_NBR_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_BAD_UPD_FORMAT_NBR_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_BAD_UPD_FORMAT_NBR_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_BAD_UPD_FORMAT_NBR_2">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_BAD_UPD_FORMAT_NBR_2</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_BAD_UPD_FORMAT_NBR_2</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_BAD_UPD_FORMAT_NBR_2">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_BAD_NEW_FORMAT_NBR_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_BAD_NEW_FORMAT_NBR_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_BAD_NEW_FORMAT_NBR_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_BAD_NEW_FORMAT_NBR_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_BAD_NEW_FORMAT_NBR_2">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_BAD_NEW_FORMAT_NBR_2</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_BAD_NEW_FORMAT_NBR_2</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_BAD_NEW_FORMAT_NBR_2">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_FORMAT_SCHEME_NAME_NOTFND2_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_FORMAT_SCHEME_NAME_NOTFND2_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_FORMAT_SCHEME_NAME_NOTFND2_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_FORMAT_SCHEME_NAME_NOTFND2_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_FORMAT_NBR_MISSING_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_FORMAT_NBR_MISSING_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_FORMAT_NBR_MISSING_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_FORMAT_NBR_MISSING_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_SCHEME_NAME_MISSING_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_SCHEME_NAME_MISSING_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_SCHEME_NAME_MISSING_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_SCHEME_NAME_MISSING_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_BAD_MAX_DEPTH_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_BAD_MAX_DEPTH_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_BAD_MAX_DEPTH_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_BAD_MAX_DEPTH_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_BAD_USER_METHOD_NAME_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_BAD_USER_METHOD_NAME_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_BAD_USER_METHOD_NAME_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_BAD_USER_METHOD_NAME_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_MISSING_USER_METHOD_NAME_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_MISSING_USER_METHOD_NAME_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_MISSING_USER_METHOD_NAME_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_MISSING_USER_METHOD_NAME_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_RENDER_FORMULA_ERROR_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_RENDER_FORMULA_ERROR_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_RENDER_FORMULA_ERROR_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_RENDER_FORMULA_ERROR_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_BAD_PREF_FORMAT_NBR_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_BAD_PREF_FORMAT_NBR_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_BAD_PREF_FORMAT_NBR_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_BAD_PREF_FORMAT_NBR_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_BAD_PREF_FORMAT_NBR_2">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_BAD_PREF_FORMAT_NBR_2</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_BAD_PREF_FORMAT_NBR_2</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_BAD_PREF_FORMAT_NBR_2">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_ERR_FORMAT_NBR_INPUT_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_ERR_FORMAT_NBR_INPUT_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_ERR_FORMAT_NBR_INPUT_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_ERR_FORMAT_NBR_INPUT_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_FORMAT_SCHEME_NAME_NOTFND_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_FORMAT_SCHEME_NAME_NOTFND_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_FORMAT_SCHEME_NAME_NOTFND_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_FORMAT_SCHEME_NAME_NOTFND_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_FORMAT_NBR_MISSING2_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_FORMAT_NBR_MISSING2_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_FORMAT_NBR_MISSING2_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_FORMAT_NBR_MISSING2_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_UPDATE_SCHEME_NOTFND_BUG_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_UPDATE_SCHEME_NOTFND_BUG_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_UPDATE_SCHEME_NOTFND_BUG_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_UPDATE_SCHEME_NOTFND_BUG_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_ALT_FORMAT_NBR_MISSING2_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_ALT_FORMAT_NBR_MISSING2_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_ALT_FORMAT_NBR_MISSING2_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_ALT_FORMAT_NBR_MISSING2_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_BAD_ALT_FORMAT_NBR_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_BAD_ALT_FORMAT_NBR_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_BAD_ALT_FORMAT_NBR_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_BAD_ALT_FORMAT_NBR_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_BAD_ALT_FORMAT_NBR_2">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_BAD_ALT_FORMAT_NBR_2</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_BAD_ALT_FORMAT_NBR_2</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_BAD_ALT_FORMAT_NBR_2">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_USE_INDENT_MISSING2_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_USE_INDENT_MISSING2_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_USE_INDENT_MISSING2_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_USE_INDENT_MISSING2_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_BAD_USE_INDENT_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_BAD_USE_INDENT_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_BAD_USE_INDENT_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_BAD_USE_INDENT_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_BAD_USE_INDENT_2">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_BAD_USE_INDENT_2</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_BAD_USE_INDENT_2</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_BAD_USE_INDENT_2">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_ALT_INDENT_MISSING2_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_ALT_INDENT_MISSING2_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_ALT_INDENT_MISSING2_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_ALT_INDENT_MISSING2_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_BAD_ALT_INDENT_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_BAD_ALT_INDENT_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_BAD_ALT_INDENT_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_BAD_ALT_INDENT_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_BAD_ALT_INDENT_2">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_BAD_ALT_INDENT_2</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_BAD_ALT_INDENT_2</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_BAD_ALT_INDENT_2">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_ERR_INDENT_INPUT_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_ERR_INDENT_INPUT_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_ERR_INDENT_INPUT_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_ERR_INDENT_INPUT_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_SCHEME_METHOD_MISSING_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_SCHEME_METHOD_MISSING_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_SCHEME_METHOD_MISSING_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_SCHEME_METHOD_MISSING_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_SCHEME_CANNOT_BE_UPDATED_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_SCHEME_CANNOT_BE_UPDATED_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_SCHEME_CANNOT_BE_UPDATED_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_SCHEME_CANNOT_BE_UPDATED_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_SCHEME_CANNOT_BE_UPDATED_2">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_SCHEME_CANNOT_BE_UPDATED_2</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_SCHEME_CANNOT_BE_UPDATED_2</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_SCHEME_CANNOT_BE_UPDATED_2">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_SCHEME_NAME_REQUIRED_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_SCHEME_NAME_REQUIRED_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_SCHEME_NAME_REQUIRED_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_SCHEME_NAME_REQUIRED_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_SCHEME_NM_CANT_BE_ASSIGNED_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_SCHEME_NM_CANT_BE_ASSIGNED_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_SCHEME_NM_CANT_BE_ASSIGNED_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_SCHEME_NM_CANT_BE_ASSIGNED_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_SCHEME_NM_CANT_BE_ASSIGNED_2">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_SCHEME_NM_CANT_BE_ASSIGNED_2</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_SCHEME_NM_CANT_BE_ASSIGNED_2</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_SCHEME_NM_CANT_BE_ASSIGNED_2">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_UNFORMATTED_BAD_CALL_UNF_1">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ERRMSG_UNFORMATTED_BAD_CALL_UNF_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_UNFORMATTED_BAD_CALL_UNF_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_UNFORMATTED_BAD_CALL_UNF_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ERRMSG_UNFORMATTED_BAD_CALL_FLAT_1">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>ERRMSG_UNFORMATTED_BAD_CALL_FLAT_1</h4>
+<pre>public static final&nbsp;java.lang.String ERRMSG_UNFORMATTED_BAD_CALL_FLAT_1</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../constant-values.html#mmj.tmff.TMFFConstants.ERRMSG_UNFORMATTED_BAD_CALL_FLAT_1">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor_detail">
+<!--   -->
+</a>
+<h3>Constructor Detail</h3>
+<a name="TMFFConstants()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>TMFFConstants</h4>
+<pre>public&nbsp;TMFFConstants()</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<!-- ========= END OF CLASS DATA ========= -->
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<div class="bottomNav"><a name="navbar_bottom">
+<!--   -->
+</a><a href="#skip-navbar_bottom" title="Skip navigation links"></a><a name="navbar_bottom_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../index-all.html">Index</a></li>
+<li><a href="../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../mmj/tmff/TMFFAlignColumn.html" title="class in mmj.tmff"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../mmj/tmff/TMFFException.html" title="class in mmj.tmff"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../index.html?mmj/tmff/TMFFConstants.html" target="_top">Frames</a></li>
+<li><a href="TMFFConstants.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_bottom">
+<li><a href="../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_bottom");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#methods_inherited_from_class_java.lang.Object">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li>Method</li>
+</ul>
+</div>
+<a name="skip-navbar_bottom">
+<!--   -->
+</a></div>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+</body>
+</html>

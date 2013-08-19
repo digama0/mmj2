@@ -6,57 +6,53 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  UnifySubst.java  0.01 08/01/2007
+ * UnifySubst.java  0.01 08/01/2007
  *
- *  Version 0.01 08/01/2007
- *               - new.
+ * Version 0.01 08/01/2007
+ *              - new.
  */
 
 package mmj.pa;
-import mmj.lang.*;
+
+import mmj.lang.ParseNode;
+import mmj.lang.VarHyp;
 
 /**
- *  UnifySubst is a data structure for use in proof
- *  unification.
- *  <p>
+ * UnifySubst is a data structure for use in proof unification.
+ * <p>
  */
 public class UnifySubst {
 
-    /* friendly */ VarHyp     fromHyp;
+    /* friendly */VarHyp fromHyp;
 
-    /* friendly */ ParseNode  toNode;
+    /* friendly */ParseNode toNode;
 
-    /* friendly */ UnifySubst next;
+    /* friendly */UnifySubst next;
 
-    /* friendly */ boolean    generatedDuringAccum;
+    /* friendly */boolean generatedDuringAccum;
 
-    public static UnifySubst  IMPOSSIBLE
-                                  = new UnifySubst();
-    public static UnifySubst  EMPTY_LIST
-                                  = new UnifySubst();
+    public static UnifySubst IMPOSSIBLE = new UnifySubst();
+    public static UnifySubst EMPTY_LIST = new UnifySubst();
 
-    public UnifySubst() {
+    public UnifySubst() {}
+
+    public UnifySubst(final VarHyp fromHyp, final ParseNode toNode) {
+        this.fromHyp = fromHyp;
+        this.toNode = toNode;
     }
 
-    public UnifySubst(VarHyp    fromHyp,
-                      ParseNode toNode) {
-        this.fromHyp              = fromHyp;
-        this.toNode               = toNode;
-    }
-
-    public UnifySubst(VarHyp    fromHyp,
-                      ParseNode toNode,
-                      boolean   generatedDuringAccum) {
-        this.fromHyp              = fromHyp;
-        this.toNode               = toNode;
+    public UnifySubst(final VarHyp fromHyp, final ParseNode toNode,
+        final boolean generatedDuringAccum)
+    {
+        this.fromHyp = fromHyp;
+        this.toNode = toNode;
         this.generatedDuringAccum = generatedDuringAccum;
     }
 
-    public UnifySubst insert(UnifySubst last) {
-        next                      = null;
-        if (last != null) {
-            last.next             = this;
-        }
+    public UnifySubst insert(final UnifySubst last) {
+        next = null;
+        if (last != null)
+            last.next = this;
         return this;
     }
 }

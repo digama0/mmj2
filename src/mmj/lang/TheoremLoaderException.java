@@ -12,25 +12,23 @@
 package mmj.lang;
 
 /**
- *  Thrown by package mmj.tl methods when a theorem load
- *  error is detected.
+ * Thrown by package mmj.tl methods when a theorem load error is detected.
  */
 public class TheoremLoaderException extends LangException {
 
     /**
-     * Default Constructor, <code>TheoremLoaderException</code>.
+     * Default Constructor, {@code TheoremLoaderException}.
      */
     public TheoremLoaderException() {
         super();
     }
 
     /**
-     *  Contructor, <code>TheoremLoaderException</code> with
-     *  error message.
-     *
-     *  @param   errorMessage  error message.
+     * Contructor, {@code TheoremLoaderException} with error message.
+     * 
+     * @param errorMessage error message.
      */
-    public TheoremLoaderException(String errorMessage) {
+    public TheoremLoaderException(final String errorMessage) {
         super(errorMessage);
     }
 }

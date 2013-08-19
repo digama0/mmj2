@@ -7,38 +7,34 @@
 //*4567890123456 (71-character line to adjust editor window) 23456789*/
 
 /*
- *  StepSelectorItem.java  0.01 03/01/2008
+ * StepSelectorItem.java  0.01 03/01/2008
  *
- *  Version 0.01:
- *  ==> New.
+ * Version 0.01:
+ * ==> New.
  */
 
 package mmj.pa;
 
-import  mmj.lang.Assrt;
+import mmj.lang.Assrt;
 
 /**
- *  StepSelectorItem contains a single result obtained from
- *  the StepSelector search.
+ * StepSelectorItem contains a single result obtained from the StepSelector
+ * search.
  */
 public class StepSelectorItem {
 
-    /* friendly */ Assrt    assrt;
-    /* friendly */ String[] selection;
+    /* friendly */Assrt assrt;
+    /* friendly */String[] selection;
 
     /**
-     *  Constructor for StepSelectorItem
-     *
-     *  @param assrt Assrt matched by the StepSelector search
-     *               and may be null.
-     *  @param selection formula or message String to be displayed
-     *                    by StepSelectorDialog for a single
-     *                    assertion.
+     * Constructor for StepSelectorItem
+     * 
+     * @param assrt Assrt matched by the StepSelector search and may be null.
+     * @param selection formula or message String to be displayed by
+     *            StepSelectorDialog for a single assertion.
      */
-    public StepSelectorItem(Assrt    assrt,
-                            String[] selection) {
-        this.assrt                = assrt;
-        this.selection            = selection;
+    public StepSelectorItem(final Assrt assrt, final String[] selection) {
+        this.assrt = assrt;
+        this.selection = selection;
     }
 }
-
