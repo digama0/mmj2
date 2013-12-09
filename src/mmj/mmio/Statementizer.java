@@ -770,6 +770,8 @@ public class Statementizer {
                 raiseParseException(MMIOConstants.ERRMSG_INV_COMMENT_CHAR_STR
                     + workToken);
             }
+            else
+                raiseParseException(MMIOConstants.ERRMSG_PREMATURE_COMMENT_EOF);
         } while (true);
     }
 

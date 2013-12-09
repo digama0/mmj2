@@ -1025,11 +1025,11 @@ public class Grammar implements SyntaxVerifier {
         for (final Sym sym : symTbl.values())
             if (sym instanceof Cnst) {
                 final Cnst cnst = (Cnst)sym;
-                cnst.setIsVarTyp(false);
-                cnst.setIsProvableLogicStmtTyp(false);
-                cnst.setIsLogicStmtTyp(false);
-                cnst.setIsSyntaxAxiomTyp(false);
-                cnst.setIsGrammaticalTyp(false);
+                cnst.setVarTyp(false);
+                cnst.setProvableLogicStmtTyp(false);
+                cnst.setLogicStmtTyp(false);
+                cnst.setSyntaxAxiomTyp(false);
+                cnst.setGrammaticalTyp(false);
                 cnst.setNbrOccInCnstSyntaxAxioms(0);
                 cnst.setNbrOccInSyntaxAxioms(0);
                 cnst.setGRRoot(null);
@@ -1045,8 +1045,8 @@ public class Grammar implements SyntaxVerifier {
             if (sym instanceof Cnst) {
                 final Cnst cnst = (Cnst)sym;
                 provableLogicStmtTypArray[i] = cnst;
-                cnst.setIsProvableLogicStmtTyp(true);
-                cnst.setIsGrammaticalTyp(true);
+                cnst.setProvableLogicStmtTyp(true);
+                cnst.setGrammaticalTyp(true);
             }
             else {
                 accumErrorMsgInList(GrammarConstants.ERRMSG_PROVABLE_TYP_NOT_A_CNST_1
@@ -1063,8 +1063,8 @@ public class Grammar implements SyntaxVerifier {
             if (sym instanceof Cnst) {
                 final Cnst cnst = (Cnst)sym;
                 logicStmtTypArray[i] = cnst;
-                cnst.setIsLogicStmtTyp(true);
-                cnst.setIsGrammaticalTyp(true);
+                cnst.setLogicStmtTyp(true);
+                cnst.setGrammaticalTyp(true);
             }
             else {
                 accumErrorMsgInList(GrammarConstants.ERRMSG_LOGIC_TYP_NOT_A_CNST_1
@@ -1094,15 +1094,15 @@ public class Grammar implements SyntaxVerifier {
             }
             if (stmt instanceof VarHyp) {
                 varHypTypSet.add(cnst);
-                cnst.setIsVarTyp(true);
-                cnst.setIsGrammaticalTyp(true);
+                cnst.setVarTyp(true);
+                cnst.setGrammaticalTyp(true);
 
 //              Stmt[] varHypRPN = new Stmt[1]; //default RPN
 //              varHypRPN[0]     = stmt;        //looks circular, eh?
 //              stmt.setExprRPN(varHypRPN);
                 stmt.setExprParseTree(new ParseTree(new ParseNode((VarHyp)stmt)));
 
-                if (cnst.getIsProvableLogicStmtTyp()) {
+                if (cnst.isProvableLogicStmtTyp()) {
                     accumErrorMsgInList(GrammarConstants.ERRMSG_VARHYP_TYP_PROVABLE_1
                         + stmt.getLabel()
                         + GrammarConstants.ERRMSG_VARHYP_TYP_PROVABLE_2);
@@ -1113,11 +1113,11 @@ public class Grammar implements SyntaxVerifier {
             if (stmt instanceof Axiom) {
                 final Axiom axiom = (Axiom)stmt;
                 axiom.setSyntaxAxiomHasUniqueCnst(false);
-                if (!cnst.getIsProvableLogicStmtTyp()) {
+                if (!cnst.isProvableLogicStmtTyp()) {
                     allSyntaxAxiomSet.add(axiom);
                     syntaxAxiomTypSet.add(cnst);
-                    cnst.setIsSyntaxAxiomTyp(true);
-                    cnst.setIsGrammaticalTyp(true);
+                    cnst.setSyntaxAxiomTyp(true);
+                    cnst.setGrammaticalTyp(true);
                     if (!initSyntaxAxiomPart1(axiom))
                         errorsFound = true;
                 }
@@ -1281,7 +1281,7 @@ public class Grammar implements SyntaxVerifier {
             // + " scope of this programming effort.");
             // errorsFound = true;
             // }
-            if (cnst.getIsGrammaticalTyp()) {
+            if (cnst.isGrammaticalTyp()) {
                 accumErrorMsgInList(GrammarConstants.ERRMSG_SYNTAX_USES_TYP_AS_CNST_1
                     + axiom.getLabel()
                     + GrammarConstants.ERRMSG_SYNTAX_USES_TYP_AS_CNST_2

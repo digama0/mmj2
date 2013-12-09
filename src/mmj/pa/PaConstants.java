@@ -2325,7 +2325,7 @@ public class PaConstants {
         + " can leave Ref blank to allow Unify to figure it out for you.";
 
     public static final String ERRMSG_REF_MAXSEQ = "E-PA-0349 Theorem %s Step %s:"
-        + " Invalid Ref = %sS on derivation proof step. Ref statement sequence"
+        + " Invalid Ref = %s on derivation proof step. Ref statement sequence"
         + " number >= sequence number of Theorem or LOC_AFTER statement."
         + " You can leave Ref blank to allow Unify to figure it out for you.";
 
@@ -2510,7 +2510,7 @@ public class PaConstants {
         + " system!";
 
     public static final String ERRMSG_ALT_UNIFY_REFS = "I-PA-0402 Theorem %s"
-        + " Step %s: Alternate unification Ref assertions found: %sS";
+        + " Step %s: Alternate unification Ref assertions found: %s";
 
     public static final String ERRMSG_INCOMPLETE_HYPS = "I-PA-0403 Theorem %s"
         + " Step %s: Proof incomplete for derivation proof step."

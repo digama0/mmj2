@@ -523,7 +523,7 @@ public abstract class GrammarRule {
         ruleHypPos = new int[nbrHypParamsUsed];
         int j = 0;
         for (int i = 0; i < ruleFormatExpr.length; i++)
-            if (ruleFormatExpr[i].getIsVarTyp())
+            if (ruleFormatExpr[i].isVarTyp())
                 ruleHypPos[j++] = i;
     }
 

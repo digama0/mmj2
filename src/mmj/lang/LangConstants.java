@@ -71,6 +71,9 @@
  *
  * Version 0.10 - Nov-01-2011:  comment update.
  *     --> Add stmt label to ERRMSG_BAD_PARSE_STMT_1
+ *
+ * Version 0.11 - Sep-02-2013
+ *     --> Add CNST_SET_TYPE
  */
 
 package mmj.lang;
@@ -374,6 +377,14 @@ public class LangConstants {
 
     public final static String[] SECTION_DISPLAY_CAPTION = {" N/A    ",
             " Symbols ", " VarHyps ", " Syntax  ", " Logic   "};
+
+    // ====================================================
+
+    /**
+     * for Cnst.java
+     */
+
+    public static final String CNST_SET_TYPE = "set";
 
     // ====================================================
 
@@ -778,5 +789,4 @@ public class LangConstants {
         + " variables found even though they were previously"
         + " consolidated to eliminate duplicates!"
         + " Original error message follows: %s";
-
 }

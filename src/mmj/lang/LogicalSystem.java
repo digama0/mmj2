@@ -290,7 +290,7 @@ public class LogicalSystem implements SystemLoader {
 
         vH.getVar().setActiveVarHyp(vH);
 
-        vH.getTyp().setIsVarTyp(true);
+        vH.getTyp().setVarTyp(true);
 
         currScopeDef.scopeVarHyp.add(vH);
 

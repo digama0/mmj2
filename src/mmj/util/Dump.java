@@ -675,16 +675,16 @@ public class Dump {
 
         sb.append(cnst.getId());
 
-        if (cnst.getIsVarTyp())
+        if (cnst.isVarTyp())
             sb.append(UtilConstants.DUMP_IS_VAR_TYP);
 
-        if (cnst.getIsGrammaticalTyp())
+        if (cnst.isGrammaticalTyp())
             sb.append(UtilConstants.DUMP_IS_GRAMMATICAL_TYP);
-        if (cnst.getIsProvableLogicStmtTyp())
+        if (cnst.isProvableLogicStmtTyp())
             sb.append(UtilConstants.DUMP_IS_PROVABLE_TYP);
-        if (cnst.getIsLogicStmtTyp())
+        if (cnst.isLogicStmtTyp())
             sb.append(UtilConstants.DUMP_IS_LOGIC_TYP);
-        if (cnst.getIsSyntaxAxiomTyp())
+        if (cnst.isSyntaxAxiomTyp())
             sb.append(UtilConstants.DUMP_IS_SYNTAX_AXIOM_TYP);
 
         if (cnst.getLen1CnstNotationRule() != null)

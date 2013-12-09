@@ -377,6 +377,9 @@ public class MMIOConstants {
 
     public static final String ERRMSG_SET_TOKENIZER_NULL = "A-IO-0027 setTokenizer() input is null.";
 
+    public static final String ERRMSG_PREMATURE_COMMENT_EOF = "E-IO-0028 Comment \"$( ... $)\" incomplete,"
+        + " premature end of file!";
+
     public static final String ERRMSG_COMPRESSED_PROOF_IS_EMPTY = "E-IO-0201 Compressed proof must have at least one"
         + " block of compressed data!";
 
