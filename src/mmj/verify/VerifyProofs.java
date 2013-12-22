@@ -209,7 +209,9 @@ public class VerifyProofs implements ProofVerifier {
     public void verifyAllProofs(final Messages messages,
         final Map<String, Stmt> stmtTbl)
     {
-        for (final Stmt stmt : stmtTbl.values()) {
+        final List<Stmt> list = new ArrayList<Stmt>(stmtTbl.values());
+        Collections.sort(list, MObj.SEQ);
+        for (final Stmt stmt : list) {
             if (messages.maxErrorMessagesReached())
                 break;
             if (stmt instanceof Theorem) {

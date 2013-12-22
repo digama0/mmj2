@@ -86,6 +86,7 @@ public class Theorem extends Assrt {
      * @param typS Theorem Formula Type Code String
      * @param symList Theorem Expression Sym String List
      * @param proofList Theorem Proof Stmt String List.
+     * @param messages for error reporting
      * @throws LangException if an error occurred
      * @see mmj.lang.Theorem#editProofListDefAndActive(Map stmtTbl, List
      *      proofList)
@@ -93,7 +94,8 @@ public class Theorem extends Assrt {
     public Theorem(final int seq, final List<ScopeDef> scopeDefList,
         final Map<String, Sym> symTbl, final Map<String, Stmt> stmtTbl,
         final String labelS, final String typS, final List<String> symList,
-        final List<String> proofList) throws LangException
+        final List<String> proofList, final Messages messages)
+        throws LangException
     {
         super(seq, scopeDefList, symTbl, stmtTbl, labelS, typS, symList);
 
@@ -123,6 +125,7 @@ public class Theorem extends Assrt {
      *            proof symbols.
      * @param proofCompression instance of ProofCompression.java used to
      *            decompress proof.
+     * @param messages for error reporting
      * @throws LangException if there was a decompression error
      * @see mmj.lang.Theorem#editProofListDefAndActive(Map stmtTbl, List
      *      proofList)
@@ -131,7 +134,8 @@ public class Theorem extends Assrt {
         final Map<String, Sym> symTbl, final Map<String, Stmt> stmtTbl,
         final String labelS, final String typS, final List<String> symList,
         final List<String> proofList, final BlockList proofBlockList,
-        final ProofCompression proofCompression) throws LangException
+        final ProofCompression proofCompression, final Messages messages)
+        throws LangException
     {
         super(seq, scopeDefList, symTbl, stmtTbl, labelS, typS, symList);
 
@@ -140,9 +144,10 @@ public class Theorem extends Assrt {
         try {
             proof = proofCompression.decompress(labelS, seq, stmtTbl,
                 mandFrame.hypArray, optFrame.hypArray, proofList,
-                proofBlockList);
+                proofBlockList, messages);
         } catch (final LangException e) {
             proof = new RPNStep[]{new RPNStep(null)};
+            messages.accumInfoMessage(e.getMessage());
         }
 
     }

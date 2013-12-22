@@ -120,11 +120,12 @@ public interface SystemLoader {
      *            more symbols).
      * @param proofList list containing proof step symbol strings (1 or more
      *            symbols -- which may be "?" if a step is unknown).
+     * @param messages for error reporting
      * @return Theorem newly constructed Theorem added to LogicalSystem.
      * @throws LangException if duplicate label, undefined vars, etc.
      */
     Theorem addTheorem(String labelS, String typS, List<String> symList,
-        List<String> proofList) throws LangException;
+        List<String> proofList, Messages messages) throws LangException;
 
     /**
      * Add Theorem to Logical System.
@@ -140,11 +141,13 @@ public interface SystemLoader {
      *            parentheses)
      * @param proofBlockList list containing one or more blocks of compressed
      *            proof symbols.
+     * @param messages for error reporting
      * @return Theorem newly constructed Theorem added to LogicalSystem.
      * @throws LangException if duplicate label, undefined vars, etc.
      */
     Theorem addTheorem(String labelS, String typS, List<String> symList,
-        List<String> proofList, BlockList proofBlockList) throws LangException;
+        List<String> proofList, BlockList proofBlockList, Messages messages)
+        throws LangException;
 
     /**
      * Begin a new (nested) scope level for the Logical System.

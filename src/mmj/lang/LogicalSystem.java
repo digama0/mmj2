@@ -501,16 +501,18 @@ public class LogicalSystem implements SystemLoader {
      *            more symbols).
      * @param proofList list containing proof step symbol strings (1 or more
      *            symbols -- which may be "?" if a step is unknown).
+     * @param messages for error reporting
      * @return Theorem newly constructed Theorem added to LogicalSystem.
      * @throws LangException if duplicate label, undefined vars, etc.
      */
     public Theorem addTheorem(final String labelS, final String typS,
-        final List<String> symList, final List<String> proofList)
-        throws LangException
+        final List<String> symList, final List<String> proofList,
+        final Messages messages) throws LangException
     {
 
         final Theorem theorem = new Theorem(seqAssigner.nextSeq(),
-            scopeDefList, symTbl, stmtTbl, labelS, typS, symList, proofList);
+            scopeDefList, symTbl, stmtTbl, labelS, typS, symList, proofList,
+            messages);
 
         final Stmt existingStmt = stmtTbl.put(labelS, theorem);
 
@@ -542,7 +544,7 @@ public class LogicalSystem implements SystemLoader {
         final List<String> proofList) throws LangException
     {
         final Theorem theorem = new Theorem(seq, scopeDefList, symTbl, stmtTbl,
-            labelS, typS, symList, proofList);
+            labelS, typS, symList, proofList, null);
 
         final Stmt existingStmt = stmtTbl.put(labelS, theorem);
 
@@ -570,17 +572,19 @@ public class LogicalSystem implements SystemLoader {
      *            parentheses)
      * @param proofBlockList list containing one or more blocks of compressed
      *            proof symbols.
+     * @param messages for error reporting
      * @return Theorem newly constructed Theorem added to LogicalSystem.
      * @throws LangException if duplicate label, undefined vars, etc.
      */
     public Theorem addTheorem(final String labelS, final String typS,
         final List<String> symList, final List<String> proofList,
-        final BlockList proofBlockList) throws LangException
+        final BlockList proofBlockList, final Messages messages)
+        throws LangException
     {
 
         final Theorem theorem = new Theorem(seqAssigner.nextSeq(),
             scopeDefList, symTbl, stmtTbl, labelS, typS, symList, proofList,
-            proofBlockList, getProofCompression());
+            proofBlockList, getProofCompression(), messages);
 
         final Stmt existingStmt = stmtTbl.put(labelS, theorem);
 

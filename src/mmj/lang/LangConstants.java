@@ -632,6 +632,11 @@ public class LangConstants {
         + " earlier time. At any rate, this proof is bogus"
         + " and cannot be processed further!";
 
+    public static final String ERRMSG_COMPRESS_OTHER_MAND = "E-LA-0113 Theorem %s:"
+        + " compressed proof contains required hypothesis within the parentheses."
+        + " Label position within the compressed proof's parentheses = %d."
+        + " Statement label = %s";
+
     // =======================================================
 
     /**

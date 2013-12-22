@@ -63,6 +63,9 @@ public class ProofCompression {
      */
     private List<RPNStep> step;
 
+    /** Messages object for error reporting */
+    private Messages messages;
+
     // *******************************************
 
     /**
@@ -87,6 +90,7 @@ public class ProofCompression {
      *            in the parenthesized portion of a compressed proof.
      * @param proofBlockList List of String containing the compressed portion of
      *            the proof.
+     * @param messages for error reporting
      * @return RPNStep array containing decompressed (but still "packed")
      *         Metamath RPN proof.
      * @throws LangException if an error occurred
@@ -94,7 +98,8 @@ public class ProofCompression {
     public RPNStep[] decompress(final String theoremLabel, final int seq,
         final Map<String, Stmt> stmtTbl, final Hyp[] mandHypArray,
         final Hyp[] optHypArray, final List<String> otherRefList,
-        final BlockList proofBlockList) throws LangException
+        final BlockList proofBlockList, final Messages messages)
+        throws LangException
     {
         this.theoremLabel = theoremLabel; // for error msgs
 
@@ -105,6 +110,7 @@ public class ProofCompression {
 
         mandHyp = mandHypArray;
         optHyp = optHypArray;
+        this.messages = messages;
 
         loadOtherRefArrays(stmtTbl, otherRefList, seq);
 
@@ -142,6 +148,11 @@ public class ProofCompression {
                     LangConstants.ERRMSG_COMPRESS_OTHER_BOGUS, theoremLabel,
                     iterationNbr, otherLabel);
 
+            if (isProofStepInFrame(otherStmt, mandHyp))
+                messages.accumInfoMessage(
+                    LangConstants.ERRMSG_COMPRESS_OTHER_MAND, theoremLabel,
+                    iterationNbr, otherLabel);
+
             /**
              * this is a little "tricky" -- "active" applies only to global
              * hypotheses or when the source file is being loaded.
@@ -153,6 +164,21 @@ public class ProofCompression {
             loadOtherHyp((VarHyp)otherStmt, iterationNbr);
             continue;
         }
+    }
+
+    /**
+     * Checks to see whether or not a proof step is contained in the given
+     * Frame.
+     * 
+     * @param proofStep a Statement reference.
+     * @param frame the frame to check
+     * @return true if proof step == a Hyp in the frame
+     */
+    public boolean isProofStepInFrame(final Stmt proofStep, final Hyp[] frame) {
+        for (final Hyp element : frame)
+            if (proofStep == element)
+                return true;
+        return false;
     }
 
     /**
@@ -169,13 +195,8 @@ public class ProofCompression {
      *         of the Theorem.
      */
     public boolean isProofStepInExtendedFrame(final Stmt proofStep) {
-        for (final Hyp element : mandHyp)
-            if (proofStep == element)
-                return true;
-        for (final Hyp element : optHyp)
-            if (proofStep == element)
-                return true;
-        return false;
+        return isProofStepInFrame(proofStep, mandHyp)
+            || isProofStepInFrame(proofStep, optHyp);
     }
 
     private void loadOtherHyp(final VarHyp otherVarHyp, final int iterationNbr)
@@ -183,7 +204,7 @@ public class ProofCompression {
     {
 
         if (otherAssrt.size() > 0)
-            throw new LangException(
+            messages.accumInfoMessage(
                 LangConstants.ERRMSG_COMPRESS_OTHER_VARHYP_POS, theoremLabel,
                 iterationNbr, otherVarHyp.getLabel());
 
