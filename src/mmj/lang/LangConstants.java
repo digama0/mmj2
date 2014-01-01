@@ -300,9 +300,7 @@ public class LangConstants {
         COMPRESS_VALID_CHARS[COMPRESS_REPEAT_CHAR] = COMPRESS_REPEAT_CHAR_VALUE;
     }
 
-    public static final int COMPRESS_OTHER_HYP_INIT_LEN = 50;
-
-    public static final int COMPRESS_OTHER_ASSRT_INIT_LEN = 500;
+    public static final int COMPRESS_OTHER_STMT_INIT_LEN = 500;
 
     public static final int COMPRESS_REPEATED_SUBPROOF_INIT_LEN = 500;
 

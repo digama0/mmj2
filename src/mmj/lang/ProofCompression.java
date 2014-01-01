@@ -45,18 +45,10 @@ public class ProofCompression {
     private Hyp[] optHyp;
 
     /**
-     * otherHyp contains the VarHyp entries inside the parenthesized portion of
-     * a compressed proof (they occur before the Assrt entries in the
-     * parentheses.) There may be zero otherHyp entries.
+     * otherStmt contains the VarHyp and Assrt entries inside the parenthesized
+     * portion of a compressed proof. There may be zero otherStmt entries.
      */
-    private List<VarHyp> otherHyp;
-
-    /**
-     * otherAssrt contains the Assrt entries inside the parenthesized portion of
-     * a compressed proof (they occur after the VarHyp entries in the
-     * parentheses.) There may be zero otherAssrt entries.
-     */
-    private List<Assrt> otherAssrt;
+    private List<Stmt> otherStmt;
 
     /**
      * step contains the output list of RPN steps from the compressed proof
@@ -123,32 +115,21 @@ public class ProofCompression {
         final List<String> otherRefList, final int seq) throws LangException
     {
 
-        otherHyp.clear();
-        otherAssrt.clear();
+        otherStmt.clear();
 
         int iterationNbr = 0;
         for (final String otherLabel : otherRefList) {
             iterationNbr++;
-            final Stmt otherStmt = stmtTbl.get(otherLabel);
-            if (otherStmt == null)
+            final Stmt other = stmtTbl.get(otherLabel);
+            if (other == null)
                 throw new LangException(
                     LangConstants.ERRMSG_COMPRESS_OTHER_NOTFND, theoremLabel,
                     iterationNbr, otherLabel);
-            if (otherStmt.getSeq() >= seq)
+            if (other.getSeq() >= seq)
                 throw new LangException(
                     LangConstants.ERRMSG_FORWARD_PROOF_STEP_LABEL + otherLabel);
 
-            if (otherStmt instanceof Assrt) {
-                otherAssrt.add((Assrt)otherStmt);
-                continue;
-            }
-
-            if (!(otherStmt instanceof VarHyp))
-                throw new LangException(
-                    LangConstants.ERRMSG_COMPRESS_OTHER_BOGUS, theoremLabel,
-                    iterationNbr, otherLabel);
-
-            if (isProofStepInFrame(otherStmt, mandHyp))
+            if (isProofStepInFrame(other, mandHyp))
                 messages.accumInfoMessage(
                     LangConstants.ERRMSG_COMPRESS_OTHER_MAND, theoremLabel,
                     iterationNbr, otherLabel);
@@ -157,12 +138,11 @@ public class ProofCompression {
              * this is a little "tricky" -- "active" applies only to global
              * hypotheses or when the source file is being loaded.
              */
-            if (!otherStmt.isActive() && !isProofStepInExtendedFrame(otherStmt))
+            if (!other.isActive() && !isProofStepInExtendedFrame(other))
                 throw new LangException(
                     LangConstants.ERRMSG_PROOF_STEP_HYP_INACTIVE, otherLabel);
 
-            loadOtherHyp((VarHyp)otherStmt, iterationNbr);
-            continue;
+            otherStmt.add(other);
         }
     }
 
@@ -199,18 +179,6 @@ public class ProofCompression {
             || isProofStepInFrame(proofStep, optHyp);
     }
 
-    private void loadOtherHyp(final VarHyp otherVarHyp, final int iterationNbr)
-        throws LangException
-    {
-
-        if (otherAssrt.size() > 0)
-            messages.accumInfoMessage(
-                LangConstants.ERRMSG_COMPRESS_OTHER_VARHYP_POS, theoremLabel,
-                iterationNbr, otherVarHyp.getLabel());
-
-        otherHyp.add(otherVarHyp);
-    }
-
     private void loadSteps(final BlockList blockList) throws LangException {
         step.clear();
 
@@ -224,9 +192,8 @@ public class ProofCompression {
              * -1                                 = EOF
              * 0                                  = unknown '?' step
              * 1 thru mandHyp.length              = mandHyp
-             * mandHyp.length + 1 thru otherHypCnt = otherHyp
-             * otherHypCnt + 1 thru otherAssrtCnt = otherAssrt
-             * otherAssrtCnt + 1 thru repeatedSubproofCnt
+             * mandHyp.length + 1 thru otherStmtCnt = otherStmt
+             * otherStmtCnt + 1 thru repeatedSubproofCnt
              *                                    = repeatedSubproof
              * otherSubproofCnt + 1 and beyond    = error! bogus!@#
              *
@@ -260,32 +227,19 @@ public class ProofCompression {
             // ok, adjust workNbr down into otherHyp range
             decompressNbr -= mandHyp.length;
 
-            // ok, do we have a otherHyp array entry?
-            // if so, just put it in the proof step array!
-            if (decompressNbr < otherHyp.size()) {
-                final RPNStep s = new RPNStep(otherHyp.get(decompressNbr));
-                if (blockList.marked)
-                    s.backRef = -++backrefs;
-                step.add(s);
-                continue;
-            }
-
-            // ok, adjust workNbr down into otherAssrt range
-            decompressNbr -= otherHyp.size();
-
-            // ok, do we have a otherAssrt array entry?
+            // ok, do we have a otherStmt array entry?
             // if so, put it in the proof step array, but
             // this time we need to compute subproofLength!
             // an Assrt has Hyps in its subproof tree/stack.
-            if (decompressNbr < otherAssrt.size()) {
-                final RPNStep s = new RPNStep(otherAssrt.get(decompressNbr));
+            if (decompressNbr < otherStmt.size()) {
+                final RPNStep s = new RPNStep(otherStmt.get(decompressNbr));
                 if (blockList.marked)
                     s.backRef = -++backrefs;
                 step.add(s);
                 continue;
             }
 
-            decompressNbr -= otherAssrt.size();
+            decompressNbr -= otherStmt.size();
 
             if (decompressNbr >= backrefs)
                 throw new LangException(LangConstants.ERRMSG_COMPRESS_BAD_RPT3,
@@ -301,10 +255,8 @@ public class ProofCompression {
     }
 
     private void initArrays() {
-        otherHyp = new ArrayList<VarHyp>(
-            LangConstants.COMPRESS_OTHER_HYP_INIT_LEN);
-        otherAssrt = new ArrayList<Assrt>(
-            LangConstants.COMPRESS_OTHER_ASSRT_INIT_LEN);
+        otherStmt = new ArrayList<Stmt>(
+            LangConstants.COMPRESS_OTHER_STMT_INIT_LEN);
         step = new ArrayList<RPNStep>(LangConstants.COMPRESS_STEP_INIT_LEN);
     }
 
