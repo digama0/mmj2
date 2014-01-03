@@ -317,7 +317,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
                 continue;
             wvArray[wvCnt] = workVar.getId();
             formula = verifyProofs.convertRPNToFormula(
-                substNode.convertToRPN(), "");
+                substNode.convertToRPN(true), "");
             wvSubstStringArray[wvCnt] = formula.exprToString();
             wvCnt++;
         }

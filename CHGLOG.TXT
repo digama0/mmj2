@@ -8,6 +8,20 @@
 
 
 ================================================================================
+2-Jan-2014:
+
+    CHANGES:
+
+    * The compression format has been updated to match the new compression
+      default of the metamath.exe program.
+
+    * Parse tree compression is now more efficient, which means that loading
+      completed proof worksheets and unifying a completed proof is faster.
+
+    * Bug fix for 17-Aug change, where steps with no variables or hypotheses
+      (such as the example below) would not be collapsed into a single step.
+
+================================================================================
 17-Aug-2013:
 
     CHANGES:

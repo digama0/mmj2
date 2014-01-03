@@ -685,7 +685,7 @@ public class ProofWorksheet {
         if (qedStep != null) {
             final ParseTree p = qedStep.getProofTree();
             if (p != null)
-                return p.squishTree().convertToRPN();
+                return p.squishTree().convertToRPN(false);
         }
         return null;
     }

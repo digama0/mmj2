@@ -238,7 +238,8 @@ public class ParseTree {
             else {
                 int len = 0;
                 Stmt stmt = null;
-                if (s != null && (stmt = s.stmt) != null)
+                if (s != null && (stmt = s.stmt) != null
+                    && stmt instanceof Assrt)
                     len = stmt.getMandHypArrayLength();
                 if (stack.size() < len)
                     throw new IllegalArgumentException(
@@ -297,13 +298,17 @@ public class ParseTree {
      */
     public ParseTree squishTree() {
         if (root != null)
-            root.squishTree(root);
+            root.squishTree(new ArrayList<ParseNode>());
         return this;
     }
 
     public RPNStep[] convertToRPN() {
+        return convertToRPN(true);
+    }
+
+    public RPNStep[] convertToRPN(final boolean pressLeaf) {
         if (root != null)
-            return root.convertToRPN();
+            return root.convertToRPN(pressLeaf);
         return new RPNStep[0];
     }
 
@@ -325,7 +330,8 @@ public class ParseTree {
      * For backreference steps, {@code backRef > 0} and {@code stmt} is
      * {@code null}. In this case, {@code backRef} is the index of the marked
      * step that is being referenced. (One other special case is {@code ?}
-     * steps: in this case {@code stmt} is {@code null} and {@code backRef = 0}.
+     * steps: in this case {@code stmt} is {@code null} and {@code backRef = 0}
+     * .)
      */
     public static class RPNStep {
         public Stmt stmt;

@@ -572,24 +572,26 @@ public class ParseNode {
             }
     }
 
-    public boolean squishTree(final ParseNode root) {
-        if (child == null || child.length == 0)
-            return false;
-        for (final ParseNode element : child)
-            if (element.squishTree(root))
-                root.findDup(element, this);
-        size = sizeExpanded = 0;
-        return true;
-    }
-
-    private void findDup(final ParseNode cmp, final ParseNode cmpParent) {
+    public boolean squishTree(final List<ParseNode> encountered) {
+        boolean modified = false;
         for (int i = 0; i < child.length; i++) {
-            final ParseNode n = child[i];
-            if (this != cmpParent && cmp.isDeepDup(n))
-                child[i] = cmp;
-            else
-                n.findDup(cmp, cmpParent);
+            modified |= child[i].squishTree(encountered);
+            boolean found = false;
+            for (final ParseNode n : encountered)
+                if (child[i].isDeepDup(n)) {
+                    found = true;
+                    if (child[i] != n) {
+                        child[i] = n;
+                        modified = true;
+                    }
+                    break;
+                }
+            if (!found)
+                encountered.add(child[i]);
         }
+        if (modified)
+            size = sizeExpanded = 0;
+        return modified;
     }
 
     /**
@@ -598,13 +600,15 @@ public class ParseNode {
      * Intended for creating the RPN for an expression rather than an entire
      * formula (with ParseTree).
      * 
+     * @param pressLeaf {@code true} if nodes with no children should be
+     *            backreferenced
      * @return RPN Stmt array.
      */
-    public RPNStep[] convertToRPN() {
+    public RPNStep[] convertToRPN(final boolean pressLeaf) {
         final RPNStep[] outRPN = new RPNStep[countParseNodes(false)];
 
         final int[] dat = new int[2];
-        convertToRPN(outRPN, dat);
+        convertToRPN(pressLeaf, outRPN, dat);
         if (dat[0] != outRPN.length)
             throw new IllegalStateException(LangException.format(
                 LangConstants.ERRMSG_SUBTREE_CONV_TO_RPN_FAILURE, outRPN.length
@@ -612,7 +616,9 @@ public class ParseNode {
         return outRPN;
     }
 
-    public void convertToRPN(final RPNStep[] list, final int[] dat) {
+    public void convertToRPN(final boolean pressLeaf, final RPNStep[] list,
+        final int[] dat)
+    {
         if (firstAppearance > 0) {
             final RPNStep s = new RPNStep(null);
             s.backRef = firstAppearance;
@@ -621,9 +627,10 @@ public class ParseNode {
         else {
             if (child != null)
                 for (final ParseNode n : child)
-                    n.convertToRPN(list, dat);
+                    n.convertToRPN(pressLeaf, list, dat);
             final RPNStep s = new RPNStep(stmt);
-            if (firstAppearance == -2 && child != null && child.length > 0)
+            if (firstAppearance == -2
+                && (pressLeaf || child != null && child.length > 0))
                 s.backRef = -(firstAppearance = ++dat[1]);
             list[dat[0]++] = s;
         }

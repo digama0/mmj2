@@ -1743,11 +1743,9 @@ public class ProofUnifier {
                 .deepCloneApplyingAssrtSubst(assrtHypArray, assrtSubst,
                     workVarList);
 
+            // abend diagnostic, leave blank for now.
             generatedFormula = verifyProofs.convertRPNToFormula(
-                generatedFormulaParseTree.convertToRPN(), " "); // abend
-                                                                // diagnostic,
-                                                                // leave blank
-                                                                // for now.
+                generatedFormulaParseTree.convertToRPN(), " ");
 
             // oops, almost forgot this.
             generatedFormula.setTyp(provableLogicStmtTyp);

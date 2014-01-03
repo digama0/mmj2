@@ -13,7 +13,6 @@
 package mmj.lang;
 
 import java.util.*;
-import java.util.Map.Entry;
 
 import mmj.lang.ParseTree.RPNStep;
 import mmj.mmio.BlockList;
@@ -266,85 +265,60 @@ public class ProofCompression {
     {
         this.theoremLabel = theoremLabel;
         final List<Stmt> parenStmt = new ArrayList<Stmt>();
-        int x = 2;
-        for (final RPNStep s : rpnProof)
-            if (s != null && s.stmt != null && optHypArray.contains(s.stmt)
-                && !parenStmt.contains(s.stmt))
-            {
-                parenStmt.add(s.stmt);
-                final int l = s.stmt.getLabel().length() + 1;
-                if (x + l > width)
-                    x = l;
-                else
-                    x += l;
-            }
-        final Map<Stmt, Integer> unsortedMap = new HashMap<Stmt, Integer>();
+        int linePos = 2;
+        final List<Stmt> proofOrdered = new ArrayList<Stmt>();
+        final List<Integer> proofOrdBackrefs = new ArrayList<Integer>();
         for (final RPNStep s : rpnProof)
             if (s != null && s.backRef <= 0 && s.stmt != null
                 && !mandHypArray.contains(s.stmt)
                 && !parenStmt.contains(s.stmt))
             {
-                final Integer i = unsortedMap.get(s.stmt);
-                if (i == null)
-                    unsortedMap.put(s.stmt, 0);
-                else
-                    unsortedMap.put(s.stmt, i + 1);
+                final int i = proofOrdered.indexOf(s.stmt);
+                if (i >= 0)
+                    proofOrdBackrefs.set(i, proofOrdBackrefs.get(i) + 1);
+                else {
+                    proofOrdered.add(s.stmt);
+                    proofOrdBackrefs.add(1);
+                }
             }
-        final PriorityQueue<Entry<Stmt, Integer>> sortedByBackrefs = new PriorityQueue<Entry<Stmt, Integer>>(
-            unsortedMap.size(), new Comparator<Entry<Stmt, Integer>>() {
-                public int compare(final Entry<Stmt, Integer> e1,
-                    final Entry<Stmt, Integer> e2)
-                {
-                    return e2.getValue() - e1.getValue();
+        int hyps = 0;
+        for (int i = 0; i < proofOrdered.size(); i++)
+            if (proofOrdered.get(i) instanceof Hyp) {
+                proofOrdered.add(hyps, proofOrdered.remove(i));
+                proofOrdBackrefs.add(hyps++, proofOrdBackrefs.remove(i));
+            }
+        final int[] values = new int[proofOrdered.size()];
+        for (int i = 0; i < values.length; i++)
+            values[i] = proofOrdered.get(i).getLabel().length() + 1;
+        final PriorityQueue<Integer> sortedByBackrefs = new PriorityQueue<Integer>(
+            proofOrdered.size(), new Comparator<Integer>() {
+                public int compare(final Integer a, final Integer b) {
+                    final int i = proofOrdBackrefs.get(b)
+                        - proofOrdBackrefs.get(a);
+                    return i == 0 ? a - b : i;
                 }
             });
-        sortedByBackrefs.addAll(unsortedMap.entrySet());
+        for (int i = 0; i < proofOrdered.size(); i++)
+            sortedByBackrefs.add(i);
         int i = mandHypArray.size() + parenStmt.size();
         int cutoff = LangConstants.COMPRESS_LOW_BASE;
-        while (cutoff <= i)
+        while (cutoff <= i) {
+            i -= cutoff;
             cutoff *= LangConstants.COMPRESS_HIGH_BASE;
-        int d = 0;
-        final List<List<Stmt>> sortedByLength = new ArrayList<List<Stmt>>();
-        sortedByLength.add(new LinkedList<Stmt>());
-        Entry<Stmt, Integer> e;
-        while ((e = sortedByBackrefs.poll()) != null) {
+        }
+        Integer pos;
+        final List<Integer> lengthBlock = new LinkedList<Integer>();
+        while ((pos = sortedByBackrefs.poll()) != null) {
             if (i++ == cutoff) {
+                i = 1;
                 cutoff *= LangConstants.COMPRESS_HIGH_BASE;
-                d++;
-                sortedByLength.add(new LinkedList<Stmt>());
+                linePos = processBlock(parenStmt, proofOrdered, values,
+                    lengthBlock, width, linePos);
             }
-            sortedByLength.get(d).add(e.getKey());
+            lengthBlock.add(pos);
         }
-        for (final List<Stmt> list : sortedByLength) {
-            Collections.sort(list, new Comparator<Stmt>() {
-                public int compare(final Stmt s1, final Stmt s2) {
-                    return s2.getLabel().length() - s1.getLabel().length();
-                }
-            });
-            while (!list.isEmpty()) {
-                boolean found = false;
-                if (x + 2 < width) // assume minimum size 2 for label
-                    for (final Stmt s : list) {
-                        final int l = s.getLabel().length() + 1;
-                        if (x + l <= width) {
-                            found = true;
-                            x += l;
-                            list.remove(s);
-                            parenStmt.add(s);
-                            break;
-                        }
-                    }
-                if (!found) {
-                    final Stmt s = list.remove(0);
-                    final int l = s.getLabel().length() + 1;
-                    if (x + l >= width)
-                        x = l;
-                    else
-                        x += l;
-                    parenStmt.add(s);
-                }
-            }
-        }
+        processBlock(parenStmt, proofOrdered, values, lengthBlock, width,
+            linePos);
         for (final RPNStep s : rpnProof) {
             if (s == null) {
                 letters.append((char)LangConstants.COMPRESS_UNKNOWN_CHAR);
@@ -379,5 +353,47 @@ public class ProofCompression {
             letters.append(code);
         }
         return parenStmt;
+    }
+
+    private int processBlock(final List<Stmt> parenStmt,
+        final List<Stmt> proofOrdered, final int[] values,
+        final List<Integer> list, final int width, int linePos)
+    {
+        Collections.sort(list); // restart with proof order
+        while (!list.isEmpty()) {
+            boolean noSpace = true;
+            for (final Integer p : knapsackFit(list, values, width - linePos)) {
+                noSpace = false;
+                final Stmt s = proofOrdered.get(p);
+                final int l = s.getLabel().length() + 1;
+                linePos += l;
+                list.remove(p);
+                parenStmt.add(s);
+            }
+            if (noSpace || linePos >= width - 1)
+                linePos = 0;
+        }
+        return linePos;
+    }
+
+    private Deque<Integer> knapsackFit(final List<Integer> items,
+        final int[] values, final int size)
+    {
+        final int[][] worth = new int[items.size() + 1][size + 1];
+        for (int i = 0; i < items.size(); i++) {
+            final int value = values[items.get(i)];
+            for (int s = 0; s <= size; s++)
+                worth[i + 1][s] = s >= value ? Math.max(worth[i][s], value
+                    + worth[i][s - value]) : worth[i][s];
+        }
+        final Deque<Integer> included = new ArrayDeque<Integer>();
+        int s = size;
+        for (int i = items.size() - 1; i >= 0; i--)
+            if (worth[i + 1][s] != worth[i][s]) {
+                included.push(items.get(i));
+                if ((s -= values[items.get(i)]) == 0)
+                    break;
+            }
+        return included;
     }
 }

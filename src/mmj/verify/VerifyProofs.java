@@ -540,7 +540,7 @@ public class VerifyProofs implements ProofVerifier {
         final boolean exportFormatUnified, final boolean hypsRandomized,
         final Cnst provableLogicStmtTyp) throws VerifyException
     {
-
+        proof = new ParseTree(proof).squishTree().convertToRPN();
         final int numHyps = derivStepList.size();
         int stepName = PaConstants.PROOF_STEP_RENUMBER_START + numHyps
             * PaConstants.PROOF_STEP_RENUMBER_INTERVAL;
