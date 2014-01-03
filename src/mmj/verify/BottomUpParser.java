@@ -174,7 +174,7 @@ public class BottomUpParser implements GrammaticalParser {
         final ParseNodeHolder[] paramArray = new ParseNodeHolder[0];
         NullsPermittedRule gR;
 
-        if (formulaTyp.getIsProvableLogicStmtTyp()) {
+        if (formulaTyp.isProvableLogicStmtTyp()) {
             final Cnst[] logicStmtTypArray = grammar.getLogicStmtTypArray();
             for (final Cnst element : logicStmtTypArray) {
                 gR = element.getNullsPermittedGR();
@@ -219,7 +219,7 @@ public class BottomUpParser implements GrammaticalParser {
 
         TypeConversionRule gR;
 
-        if (formulaTyp.getIsProvableLogicStmtTyp())
+        if (formulaTyp.isProvableLogicStmtTyp())
             parseTreeArray[parseCnt++] = new ParseTree(
                 parseNodeHolderExpr[0].parseNode);
         else {
@@ -250,7 +250,7 @@ public class BottomUpParser implements GrammaticalParser {
         for (int i = 0; i < parseNodeHolderExpr.length; i++)
             if (parseNodeHolderExpr[i].mObj instanceof Cnst) {
                 cnst = (Cnst)parseNodeHolderExpr[i].mObj;
-                if (cnst.getIsGrammaticalTyp())
+                if (cnst.isGrammaticalTyp())
                     throw new VerifyException(
                         GrammarConstants.ERRMSG_EXPR_USES_TYP_AS_CNST_1
                             + cnst.toString()
@@ -290,11 +290,11 @@ public class BottomUpParser implements GrammaticalParser {
                 }
                 else {
                     applyNextNotationRuleMatch();
-                    ++pStackIndex;
+                    pStackIndex++;
                 }
             }
             else
-                --pStackIndex;
+                pStackIndex--;
         } while (pStackIndex >= 0);
 
     }
@@ -353,7 +353,7 @@ public class BottomUpParser implements GrammaticalParser {
 
                     return true;
                 }
-                ++curr;
+                curr++;
                 currLevelRoot = foundLevelNode.elementDownLevelRoot();
             } while (true);
 
@@ -402,7 +402,7 @@ public class BottomUpParser implements GrammaticalParser {
                     pStackIsGimme[pStackIndex] = true;
                     return true;
                 }
-                ++curr;
+                curr++;
                 currLevelRoot = foundLevelNode.elementDownLevelRoot();
             }
 

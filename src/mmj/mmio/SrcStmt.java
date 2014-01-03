@@ -28,7 +28,7 @@ import java.util.List;
  * @see <a href="../../MetamathERNotes.html"> Nomenclature and
  *      Entity-Relationship Notes</a>
  */
-public class SrcStmt extends Object {
+public class SrcStmt {
 
     /**
      * Every SrcStmt has a sequence number, even a comment.
@@ -90,7 +90,7 @@ public class SrcStmt extends Object {
      * more Strings containing Metamath compressed proof symbols (see
      * Metamath.pdf Appendix B).
      */
-    public List<String> proofBlockList = null;
+    public BlockList proofBlockList = null;
 
     /**
      * Comment statement --

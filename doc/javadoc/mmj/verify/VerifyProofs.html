@@ -197,7 +197,7 @@ implements <a href="../../mmj/lang/ProofVerifier.html" title="interface in mmj.l
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../mmj/lang/Formula.html" title="class in mmj.lang">Formula</a></code></td>
-<td class="colLast"><code><strong><a href="../../mmj/verify/VerifyProofs.html#convertRPNToFormula(mmj.lang.Stmt[], java.lang.String)">convertRPNToFormula</a></strong>(<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>[]&nbsp;formulaRPN,
+<td class="colLast"><code><strong><a href="../../mmj/verify/VerifyProofs.html#convertRPNToFormula(mmj.lang.ParseTree.RPNStep[], java.lang.String)">convertRPNToFormula</a></strong>(<a href="../../mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a>[]&nbsp;formulaRPN,
                    java.lang.String&nbsp;stepLabelForMessages)</code>
 <div class="block">Generate Formula from RPN.</div>
 </td>
@@ -505,13 +505,13 @@ implements <a href="../../mmj/lang/ProofVerifier.html" title="interface in mmj.l
 <pre>public&nbsp;int&nbsp;getSubstHighwater()</pre>
 </li>
 </ul>
-<a name="convertRPNToFormula(mmj.lang.Stmt[], java.lang.String)">
+<a name="convertRPNToFormula(mmj.lang.ParseTree.RPNStep[], java.lang.String)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>convertRPNToFormula</h4>
-<pre>public&nbsp;<a href="../../mmj/lang/Formula.html" title="class in mmj.lang">Formula</a>&nbsp;convertRPNToFormula(<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>[]&nbsp;formulaRPN,
+<pre>public&nbsp;<a href="../../mmj/lang/Formula.html" title="class in mmj.lang">Formula</a>&nbsp;convertRPNToFormula(<a href="../../mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a>[]&nbsp;formulaRPN,
                           java.lang.String&nbsp;stepLabelForMessages)</pre>
 <div class="block">Generate Formula from RPN.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>formulaRPN</code> - to be converted to a Formula</dd><dd><code>stepLabelForMessages</code> - used for abend message :)</dd>

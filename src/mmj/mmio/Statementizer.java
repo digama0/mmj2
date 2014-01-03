@@ -140,7 +140,7 @@ public class Statementizer {
             if ((MMIOConstants.VALID_CHAR_ARRAY[x] & MMIOConstants.WHITE_SPACE) != 0)
             {
 
-                ++i;
+                i++;
                 continue;
             }
             break;
@@ -166,7 +166,7 @@ public class Statementizer {
 
             if ((MMIOConstants.VALID_CHAR_ARRAY[x] & MMIOConstants.WHITE_SPACE) != 0)
                 break;
-            ++i;
+            i++;
             continue;
         }
         return i;
@@ -681,7 +681,7 @@ public class Statementizer {
         IOException
     {
 
-        x.proofBlockList = new ArrayList<String>();
+        x.proofBlockList = new BlockList();
 
         String s;
 
@@ -726,7 +726,7 @@ public class Statementizer {
             if (s.equals(MMIOConstants.MM_END_STMT_KEYWORD))
                 break;
 
-            x.proofBlockList.add(s);
+            x.proofBlockList.addBlock(s);
             continue;
         }
 
@@ -770,6 +770,8 @@ public class Statementizer {
                 raiseParseException(MMIOConstants.ERRMSG_INV_COMMENT_CHAR_STR
                     + workToken);
             }
+            else
+                raiseParseException(MMIOConstants.ERRMSG_PREMATURE_COMMENT_EOF);
         } while (true);
     }
 

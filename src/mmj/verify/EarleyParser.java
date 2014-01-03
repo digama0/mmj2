@@ -315,7 +315,7 @@ public class EarleyParser implements GrammaticalParser {
 
         NullsPermittedRule gR;
 
-        if (formulaTyp.getIsProvableLogicStmtTyp()) {
+        if (formulaTyp.isProvableLogicStmtTyp()) {
             final Cnst[] logicStmtTypArray = grammar.getLogicStmtTypArray();
             for (final Cnst element : logicStmtTypArray) {
                 gR = element.getNullsPermittedGR();
@@ -359,7 +359,7 @@ public class EarleyParser implements GrammaticalParser {
 
         TypeConversionRule gR;
 
-        if (formulaTyp.getIsProvableLogicStmtTyp())
+        if (formulaTyp.isProvableLogicStmtTyp())
             parseTreeArray[parseCnt++] = new ParseTree(
                 parseNodeHolderExpr[0].parseNode);
         else {
@@ -390,7 +390,7 @@ public class EarleyParser implements GrammaticalParser {
         throws VerifyException
     {
 
-        if (cnst.getIsGrammaticalTyp())
+        if (cnst.isGrammaticalTyp())
             throw new VerifyException(
                 GrammarConstants.ERRMSG_EXPR_USES_TYP_AS_CNST_1
                     + cnst.toString()
@@ -418,7 +418,7 @@ public class EarleyParser implements GrammaticalParser {
 
             if (parseNodeHolderExpr[src].mObj instanceof Cnst) {
                 cnst = (Cnst)parseNodeHolderExpr[src].mObj;
-                if (cnst.getIsGrammaticalTyp())
+                if (cnst.isGrammaticalTyp())
                     throw new VerifyException(
                         GrammarConstants.ERRMSG_EXPR_USES_TYP_AS_CNST_1
                             + cnst.toString()
@@ -457,7 +457,7 @@ public class EarleyParser implements GrammaticalParser {
          * Derive Start Rule Type code(s).
          */
         startRuleTyp = null;
-        if (formulaTyp.getIsProvableLogicStmtTyp()) {
+        if (formulaTyp.isProvableLogicStmtTyp()) {
             if (grammar.getLogicStmtTypArray().length > 0) {
                 startRuleTyp = grammar.getLogicStmtTypArray()[0];
                 addToPredictorTypSet(startRuleTyp);
@@ -493,7 +493,7 @@ public class EarleyParser implements GrammaticalParser {
             earleyCnt = earleyScanner(p, eP);
             earleyCnt += earleyCompletor(p);
             earleyCnt += earleyPredictor(p, ePPlus1, highestSeq);
-            ++p;
+            p++;
             if (p > pLast || earleyCnt == 0)
                 break;
             eP = ePPlus1;
@@ -571,7 +571,7 @@ public class EarleyParser implements GrammaticalParser {
                         addPredictionToItemSet(currPos, // itemset nbr
                             notationRule, // rule
                             ruleExprFirstSym); // dotAfter
-                        ++predictedCnt;
+                        predictedCnt++;
                     }
                 }
             }
@@ -693,7 +693,7 @@ public class EarleyParser implements GrammaticalParser {
         /**
          * OK dummy, *now* increment the counter :)
          */
-        ++pCompletedItemSetCnt[scanSetNbr];
+        pCompletedItemSetCnt[scanSetNbr]++;
 
         EarleyItem completedItem = pCompletedSet[pCompletedItemSetIndex];
 
@@ -730,7 +730,7 @@ public class EarleyParser implements GrammaticalParser {
         activeItem.atIndex = oldItem.atIndex;
         activeItem.dotIndex = newDotIndex;
         activeItem.afterDot = newAfterDot;
-        if (newAfterDot.getIsVarTyp())
+        if (newAfterDot.isVarTyp())
             addToPredictorTypSet(newAfterDot);
     }
 
@@ -758,7 +758,7 @@ public class EarleyParser implements GrammaticalParser {
         earleyItem.atIndex = currPos + 1;
         earleyItem.dotIndex = 1;
         earleyItem.afterDot = ruleExprFirstSym;
-        if (ruleExprFirstSym != null && ruleExprFirstSym.getIsVarTyp())
+        if (ruleExprFirstSym != null && ruleExprFirstSym.isVarTyp())
             addToPredictorTypSet(ruleExprFirstSym);
     }
 
@@ -815,7 +815,7 @@ public class EarleyParser implements GrammaticalParser {
             ruleSet.add(notationRule);
 
             final Cnst first = notationRule.getRuleFormatExprFirst();
-            if (first.getIsVarTyp())
+            if (first.isVarTyp())
                 addTypToRuleTypAndFIRSTTyp(typ, first);
             else
                 addTypToRuleTypAndFIRSTTyp(typ, null);
@@ -868,7 +868,7 @@ public class EarleyParser implements GrammaticalParser {
             }
             else {
                 ruleTypAndFIRSTTyp[i][0] = typ;
-                ++rulesTypCnt;
+                rulesTypCnt++;
                 break;
             }
 
@@ -898,7 +898,7 @@ public class EarleyParser implements GrammaticalParser {
                 ruleTypAndFIRSTTyp[typIndex][j] = firstTyp;
                 return true;
             }
-            ++j;
+            j++;
         }
     }
 
@@ -1335,7 +1335,7 @@ public class EarleyParser implements GrammaticalParser {
                 if (!loadMatchingHypsForRule(hypMap, 0, // startMapIndex!
                     exprFrom, exprThru, ruleFormatExpr))
                     break;
-                ++twinTreesCnt;
+                twinTreesCnt++;
             } while (true);
         }
 

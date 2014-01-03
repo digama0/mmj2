@@ -226,14 +226,15 @@ extends java.lang.Object</pre>
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../mmj/pa/ProofUnifier.html#separateMandAndOptFrame(mmj.pa.ProofWorksheet, mmj.pa.DerivationStep, java.util.List, java.util.List, boolean)">separateMandAndOptFrame</a></strong>(<a href="../../mmj/pa/ProofWorksheet.html" title="class in mmj.pa">ProofWorksheet</a>&nbsp;proofWorksheet,
                        <a href="../../mmj/pa/DerivationStep.html" title="class in mmj.pa">DerivationStep</a>&nbsp;qedStep,
-                       java.util.List&lt;<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>&gt;&nbsp;mandHypList,
-                       java.util.List&lt;<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>&gt;&nbsp;optHypList,
+                       java.util.List&lt;? super <a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a>&gt;&nbsp;mandHypList,
+                       java.util.List&lt;<a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a>&gt;&nbsp;optionalVarHypList,
                        boolean&nbsp;addLogHyps)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../mmj/pa/ProofUnifier.html#unifyAllProofDerivationSteps(mmj.pa.ProofWorksheet, mmj.lang.Messages)">unifyAllProofDerivationSteps</a></strong>(<a href="../../mmj/pa/ProofWorksheet.html" title="class in mmj.pa">ProofWorksheet</a>&nbsp;proofWorksheet,
-                            <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)</code>
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofUnifier.html#unifyAllProofDerivationSteps(mmj.pa.ProofWorksheet, mmj.lang.Messages, boolean)">unifyAllProofDerivationSteps</a></strong>(<a href="../../mmj/pa/ProofWorksheet.html" title="class in mmj.pa">ProofWorksheet</a>&nbsp;proofWorksheet,
+                            <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages,
+                            boolean&nbsp;noConvertWV)</code>
 <div class="block">Unifies the proof steps in a Proof Worksheet.</div>
 </td>
 </tr>
@@ -348,14 +349,15 @@ extends java.lang.Object</pre>
             LogicalSystem.</dd></dl>
 </li>
 </ul>
-<a name="unifyAllProofDerivationSteps(mmj.pa.ProofWorksheet, mmj.lang.Messages)">
+<a name="unifyAllProofDerivationSteps(mmj.pa.ProofWorksheet, mmj.lang.Messages, boolean)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>unifyAllProofDerivationSteps</h4>
 <pre>public&nbsp;void&nbsp;unifyAllProofDerivationSteps(<a href="../../mmj/pa/ProofWorksheet.html" title="class in mmj.pa">ProofWorksheet</a>&nbsp;proofWorksheet,
-                                <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)
+                                <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages,
+                                boolean&nbsp;noConvertWV)
                                   throws <a href="../../mmj/lang/VerifyException.html" title="class in mmj.lang">VerifyException</a></pre>
 <div class="block">Unifies the proof steps in a Proof Worksheet.
  <p>
@@ -373,9 +375,10 @@ extends java.lang.Object</pre>
  ProofAsstGUI's response time. (The average unification time is much less,
  like 1/10 second.)</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>proofWorksheet</code> - proof in progress</dd><dd><code>messages</code> - the mmj.lang.Messages object used to store error and
-            informational messages.</dd>
+            informational messages.</dd><dd><code>noConvertWV</code> - true if we should not replace work vars with dummy
+            vars in derivation steps</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/VerifyException.html" title="class in mmj.lang">VerifyException</a></code> - if an error occurs</dd></dl>
+<dd><code><a href="../../mmj/lang/VerifyException.html" title="class in mmj.lang">VerifyException</a></code> - if unification was unsucessful</dd></dl>
 </li>
 </ul>
 <a name="separateMandAndOptFrame(mmj.pa.ProofWorksheet, mmj.pa.DerivationStep, java.util.List, java.util.List, boolean)">
@@ -386,8 +389,8 @@ extends java.lang.Object</pre>
 <h4>separateMandAndOptFrame</h4>
 <pre>public static&nbsp;void&nbsp;separateMandAndOptFrame(<a href="../../mmj/pa/ProofWorksheet.html" title="class in mmj.pa">ProofWorksheet</a>&nbsp;proofWorksheet,
                            <a href="../../mmj/pa/DerivationStep.html" title="class in mmj.pa">DerivationStep</a>&nbsp;qedStep,
-                           java.util.List&lt;<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>&gt;&nbsp;mandHypList,
-                           java.util.List&lt;<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>&gt;&nbsp;optHypList,
+                           java.util.List&lt;? super <a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a>&gt;&nbsp;mandHypList,
+                           java.util.List&lt;<a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a>&gt;&nbsp;optionalVarHypList,
                            boolean&nbsp;addLogHyps)</pre>
 </li>
 </ul>

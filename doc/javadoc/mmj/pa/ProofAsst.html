@@ -334,7 +334,8 @@ implements <a href="../../mmj/tl/TheoremLoaderCommitListener.html" title="interf
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../mmj/pa/ProofWorksheet.html" title="class in mmj.pa">ProofWorksheet</a></code></td>
-<td class="colLast"><code><strong><a href="../../mmj/pa/ProofAsst.html#unify(boolean, java.lang.String, mmj.pa.PreprocessRequest, mmj.pa.StepRequest, mmj.tl.TLRequest, int)">unify</a></strong>(boolean&nbsp;renumReq,
+<td class="colLast"><code><strong><a href="../../mmj/pa/ProofAsst.html#unify(boolean, boolean, java.lang.String, mmj.pa.PreprocessRequest, mmj.pa.StepRequest, mmj.tl.TLRequest, int)">unify</a></strong>(boolean&nbsp;renumReq,
+     boolean&nbsp;noConvertWV,
      java.lang.String&nbsp;proofText,
      <a href="../../mmj/pa/PreprocessRequest.html" title="class in mmj.pa">PreprocessRequest</a>&nbsp;preprocessRequest,
      <a href="../../mmj/pa/StepRequest.html" title="class in mmj.pa">StepRequest</a>&nbsp;stepRequest,
@@ -693,13 +694,14 @@ implements <a href="../../mmj/tl/TheoremLoaderCommitListener.html" title="interf
 <dt><span class="strong">Returns:</span></dt><dd>ProofWorksheet initialized.</dd></dl>
 </li>
 </ul>
-<a name="unify(boolean, java.lang.String, mmj.pa.PreprocessRequest, mmj.pa.StepRequest, mmj.tl.TLRequest, int)">
+<a name="unify(boolean, boolean, java.lang.String, mmj.pa.PreprocessRequest, mmj.pa.StepRequest, mmj.tl.TLRequest, int)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>unify</h4>
 <pre>public&nbsp;<a href="../../mmj/pa/ProofWorksheet.html" title="class in mmj.pa">ProofWorksheet</a>&nbsp;unify(boolean&nbsp;renumReq,
+                   boolean&nbsp;noConvertWV,
                    java.lang.String&nbsp;proofText,
                    <a href="../../mmj/pa/PreprocessRequest.html" title="class in mmj.pa">PreprocessRequest</a>&nbsp;preprocessRequest,
                    <a href="../../mmj/pa/StepRequest.html" title="class in mmj.pa">StepRequest</a>&nbsp;stepRequest,
@@ -715,7 +717,8 @@ implements <a href="../../mmj/tl/TheoremLoaderCommitListener.html" title="interf
  testing purposes, but still available to a user via the BatchMMJ2
  facility.)</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>proofText</code> - proof text from ProofAsstGUI screen, or any String
-            conforming to the formatting rules of ProofAsst.</dd><dd><code>renumReq</code> - renumbering of proof steps requested</dd><dd><code>preprocessRequest</code> - if not null specifies an editing operation to be
+            conforming to the formatting rules of ProofAsst.</dd><dd><code>renumReq</code> - renumbering of proof steps requested</dd><dd><code>noConvertWV</code> - true if we should not replace work vars with dummy
+            vars in derivation steps</dd><dd><code>preprocessRequest</code> - if not null specifies an editing operation to be
             applied to the proof text before other processing.</dd><dd><code>inputCursorPos</code> - caret offset plus one of input or -1 if caret pos
             unavailable to caller.</dd><dd><code>stepRequest</code> - may be null, or StepSelector Search or Choice request
             and will be loaded into the ProofWorksheet.</dd><dd><code>tlRequest</code> - may be null or a TLRequest.</dd>

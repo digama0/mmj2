@@ -245,14 +245,14 @@ extends <a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a></pre
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../mmj/lang/VarHyp.html#accumVarHypListBySeq(java.util.List)">accumVarHypListBySeq</a></strong>(java.util.List&lt;<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>&gt;&nbsp;varHypList)</code>
+<td class="colLast"><code><strong><a href="../../mmj/lang/VarHyp.html#accumVarHypListBySeq(java.util.List)">accumVarHypListBySeq</a></strong>(java.util.List&lt;? super <a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a>&gt;&nbsp;optionalVarHypList)</code>
 <div class="block">Accumulate VarHyp(no duplicates), storing it in an array list in order of
  appearance in the database.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../mmj/lang/VarHyp.html#containedInVarHypListBySeq(java.util.List)">containedInVarHypListBySeq</a></strong>(java.util.List&lt;<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>&gt;&nbsp;varHypList)</code>
+<td class="colLast"><code><strong><a href="../../mmj/lang/VarHyp.html#containedInVarHypListBySeq(java.util.List)">containedInVarHypListBySeq</a></strong>(java.util.List&lt;? super <a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a>&gt;&nbsp;mandHypList)</code>
 <div class="block">Searches for this Var Hyp in an ArrayList maintained in database input
  sequence.</div>
 </td>
@@ -310,7 +310,7 @@ extends <a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a></pre
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;mmj.lang.<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a></h3>
-<code><a href="../../mmj/lang/Stmt.html#equals(java.lang.Object)">equals</a>, <a href="../../mmj/lang/Stmt.html#getExprParseTree()">getExprParseTree</a>, <a href="../../mmj/lang/Stmt.html#getExprRPN()">getExprRPN</a>, <a href="../../mmj/lang/Stmt.html#getFormula()">getFormula</a>, <a href="../../mmj/lang/Stmt.html#getLabel()">getLabel</a>, <a href="../../mmj/lang/Stmt.html#getNbrProofRefs()">getNbrProofRefs</a>, <a href="../../mmj/lang/Stmt.html#getTyp()">getTyp</a>, <a href="../../mmj/lang/Stmt.html#hashCode()">hashCode</a>, <a href="../../mmj/lang/Stmt.html#incrementNbrProofRefs()">incrementNbrProofRefs</a>, <a href="../../mmj/lang/Stmt.html#initNbrProofRefs()">initNbrProofRefs</a>, <a href="../../mmj/lang/Stmt.html#resetLogHypsL1HiLoKey()">resetLogHypsL1HiLoKey</a>, <a href="../../mmj/lang/Stmt.html#resetLogHypsMaxDepth()">resetLogHypsMaxDepth</a>, <a href="../../mmj/lang/Stmt.html#setExprParseTree(mmj.lang.ParseTree)">setExprParseTree</a>, <a href="../../mmj/lang/Stmt.html#setExprRPN(mmj.lang.Stmt[])">setExprRPN</a>, <a href="../../mmj/lang/Stmt.html#setLogHypsL1HiLoKey(java.lang.String)">setLogHypsL1HiLoKey</a>, <a href="../../mmj/lang/Stmt.html#setLogHypsMaxDepth(int)">setLogHypsMaxDepth</a>, <a href="../../mmj/lang/Stmt.html#setTyp(mmj.lang.Cnst)">setTyp</a>, <a href="../../mmj/lang/Stmt.html#toString()">toString</a></code></li>
+<code><a href="../../mmj/lang/Stmt.html#equals(java.lang.Object)">equals</a>, <a href="../../mmj/lang/Stmt.html#getExprParseTree()">getExprParseTree</a>, <a href="../../mmj/lang/Stmt.html#getExprRPN()">getExprRPN</a>, <a href="../../mmj/lang/Stmt.html#getFormula()">getFormula</a>, <a href="../../mmj/lang/Stmt.html#getLabel()">getLabel</a>, <a href="../../mmj/lang/Stmt.html#getNbrProofRefs()">getNbrProofRefs</a>, <a href="../../mmj/lang/Stmt.html#getTyp()">getTyp</a>, <a href="../../mmj/lang/Stmt.html#hashCode()">hashCode</a>, <a href="../../mmj/lang/Stmt.html#incrementNbrProofRefs()">incrementNbrProofRefs</a>, <a href="../../mmj/lang/Stmt.html#initNbrProofRefs()">initNbrProofRefs</a>, <a href="../../mmj/lang/Stmt.html#resetLogHypsL1HiLoKey()">resetLogHypsL1HiLoKey</a>, <a href="../../mmj/lang/Stmt.html#resetLogHypsMaxDepth()">resetLogHypsMaxDepth</a>, <a href="../../mmj/lang/Stmt.html#setExprParseTree(mmj.lang.ParseTree)">setExprParseTree</a>, <a href="../../mmj/lang/Stmt.html#setExprRPN(mmj.lang.ParseTree.RPNStep[])">setExprRPN</a>, <a href="../../mmj/lang/Stmt.html#setLogHypsL1HiLoKey(java.lang.String)">setLogHypsL1HiLoKey</a>, <a href="../../mmj/lang/Stmt.html#setLogHypsMaxDepth(int)">setLogHypsMaxDepth</a>, <a href="../../mmj/lang/Stmt.html#setTyp(mmj.lang.Cnst)">setTyp</a>, <a href="../../mmj/lang/Stmt.html#toString()">toString</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_mmj.lang.MObj">
@@ -527,14 +527,14 @@ extends <a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a></pre
 <ul class="blockList">
 <li class="blockList">
 <h4>accumVarHypListBySeq</h4>
-<pre>public&nbsp;void&nbsp;accumVarHypListBySeq(java.util.List&lt;<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>&gt;&nbsp;varHypList)</pre>
+<pre>public&nbsp;void&nbsp;accumVarHypListBySeq(java.util.List&lt;? super <a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a>&gt;&nbsp;optionalVarHypList)</pre>
 <div class="block">Accumulate VarHyp(no duplicates), storing it in an array list in order of
  appearance in the database.
  <p>
  Because varHypList is maintained in database statement sequence order,
  varHypList should either be empty (new) before the call, or already be in
  that order.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>varHypList</code> - List of Var Hyps, updated here.</dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>optionalVarHypList</code> - List of Var Hyps, updated here.</dd></dl>
 </li>
 </ul>
 <a name="containedInVarHypListBySeq(java.util.List)">
@@ -543,10 +543,10 @@ extends <a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a></pre
 <ul class="blockListLast">
 <li class="blockList">
 <h4>containedInVarHypListBySeq</h4>
-<pre>public&nbsp;boolean&nbsp;containedInVarHypListBySeq(java.util.List&lt;<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>&gt;&nbsp;varHypList)</pre>
+<pre>public&nbsp;boolean&nbsp;containedInVarHypListBySeq(java.util.List&lt;? super <a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a>&gt;&nbsp;mandHypList)</pre>
 <div class="block">Searches for this Var Hyp in an ArrayList maintained in database input
  sequence.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>varHypList</code> - List of Var Hyps</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>mandHypList</code> - List of Var Hyps</dd>
 <dt><span class="strong">Returns:</span></dt><dd>true if found, else false.</dd></dl>
 </li>
 </ul>

@@ -135,13 +135,9 @@ public class Formula {
      * 
      * @param symList List containing formula symbols
      */
-    public Formula(final List<Sym> symList) {
-
-        cnt = symList.size();
-        sym = new Sym[cnt];
-        setTyp((Cnst)symList.get(0));
-        for (int i = 1; i < cnt; i++)
-            sym[i] = symList.get(i);
+    public Formula(final Collection<Sym> symList) {
+        sym = symList.toArray(new Sym[cnt = symList.size()]);
+        assert sym[0] instanceof Cnst;
     }
 
     /**
@@ -272,7 +268,7 @@ public class Formula {
             }
             else
                 parseNodeHolderExpr[dest] = new ParseNodeHolder((Cnst)sym[i]);
-            ++dest;
+            dest++;
         }
         return parseNodeHolderExpr;
     }
@@ -308,7 +304,7 @@ public class Formula {
             }
             else
                 parseNodeHolderExpr[dest] = new ParseNodeHolder((Cnst)sym[i]);
-            ++dest;
+            dest++;
         }
         return parseNodeHolderExpr;
     }
@@ -342,7 +338,7 @@ public class Formula {
             }
             else
                 ruleFormatExpr[dest] = (Cnst)sym[i];
-            ++dest;
+            dest++;
         }
         return ruleFormatExpr;
     }
@@ -517,7 +513,7 @@ public class Formula {
             currCol += s.length();
             if (currCol > marginRight) {
                 sb.append('\n');
-                ++nbrLines;
+                nbrLines++;
                 currCol = leftColContinuation + sym[0].getId().length();
                 for (int j = 0; j < currCol; j++)
                     sb.append(' ');
@@ -525,7 +521,7 @@ public class Formula {
             sb.append(s);
             if (currCol < marginRight) {
                 sb.append(' ');
-                ++currCol;
+                currCol++;
             }
         }
         return nbrLines;
@@ -565,7 +561,7 @@ public class Formula {
             sb.append(s);
             if (currCol < marginRight) {
                 sb.append(' ');
-                ++currCol;
+                currCol++;
             }
         }
         if (endToken != null) {
@@ -611,7 +607,7 @@ public class Formula {
             else
                 // insert at end, which happens to be here at "i"
                 break;
-            ++i;
+            i++;
         }
         hypList.add(i, hypNew);
         return;

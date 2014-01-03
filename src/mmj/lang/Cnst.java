@@ -258,8 +258,16 @@ public class Cnst extends Sym {
      * 
      * @return isVarTyp, true or false.
      */
-    public boolean getIsVarTyp() {
+    public boolean isVarTyp() {
         return isVarTyp;
+    }
+
+    /**
+     * @return true if this is the "set" type, assuming there is a "set" type in
+     *         the database, false otherwise.
+     */
+    public boolean isSetTyp() {
+        return getId().equals(LangConstants.CNST_SET_TYPE);
     }
 
     /**
@@ -270,7 +278,7 @@ public class Cnst extends Sym {
      * 
      * @param isVarTyp true or false
      */
-    public void setIsVarTyp(final boolean isVarTyp) {
+    public void setVarTyp(final boolean isVarTyp) {
         this.isVarTyp = isVarTyp;
     }
 
@@ -283,7 +291,7 @@ public class Cnst extends Sym {
      * 
      * @return isProvableLogicStmtTyp
      */
-    public boolean getIsProvableLogicStmtTyp() {
+    public boolean isProvableLogicStmtTyp() {
         return isProvableLogicStmtTyp;
     }
 
@@ -296,8 +304,7 @@ public class Cnst extends Sym {
      * 
      * @param isProvableLogicStmtTyp the new value
      */
-    public void setIsProvableLogicStmtTyp(final boolean isProvableLogicStmtTyp)
-    {
+    public void setProvableLogicStmtTyp(final boolean isProvableLogicStmtTyp) {
         this.isProvableLogicStmtTyp = isProvableLogicStmtTyp;
     }
 
@@ -309,7 +316,7 @@ public class Cnst extends Sym {
      * 
      * @return isLogicStmtTyp
      */
-    public boolean getIsLogicStmtTyp() {
+    public boolean isLogicStmtTyp() {
         return isLogicStmtTyp;
     }
 
@@ -321,7 +328,7 @@ public class Cnst extends Sym {
      * 
      * @param isLogicStmtTyp the new value
      */
-    public void setIsLogicStmtTyp(final boolean isLogicStmtTyp) {
+    public void setLogicStmtTyp(final boolean isLogicStmtTyp) {
         this.isLogicStmtTyp = isLogicStmtTyp;
     }
 
@@ -333,7 +340,7 @@ public class Cnst extends Sym {
      * 
      * @return isSyntaxAxiomTyp
      */
-    public boolean getIsSyntaxAxiomTyp() {
+    public boolean isSyntaxAxiomTyp() {
         return isSyntaxAxiomTyp;
     }
 
@@ -345,7 +352,7 @@ public class Cnst extends Sym {
      * 
      * @param isSyntaxAxiomTyp the new value
      */
-    public void setIsSyntaxAxiomTyp(final boolean isSyntaxAxiomTyp) {
+    public void setSyntaxAxiomTyp(final boolean isSyntaxAxiomTyp) {
         this.isSyntaxAxiomTyp = isSyntaxAxiomTyp;
     }
 
@@ -358,7 +365,7 @@ public class Cnst extends Sym {
      * 
      * @return isGrammaticalTyp.
      */
-    public boolean getIsGrammaticalTyp() {
+    public boolean isGrammaticalTyp() {
         return isGrammaticalTyp;
     }
 
@@ -371,7 +378,7 @@ public class Cnst extends Sym {
      * 
      * @param isGrammaticalTyp the new value
      */
-    public void setIsGrammaticalTyp(final boolean isGrammaticalTyp) {
+    public void setGrammaticalTyp(final boolean isGrammaticalTyp) {
         this.isGrammaticalTyp = isGrammaticalTyp;
     }
 
@@ -424,7 +431,7 @@ public class Cnst extends Sym {
      * Increment nbrOccInCnstSyntaxAxioms by 1.
      */
     public void incNbrOccInCnstSyntaxAxioms() {
-        ++nbrOccInCnstSyntaxAxioms;
+        nbrOccInCnstSyntaxAxioms++;
     }
 
     /**
@@ -470,7 +477,7 @@ public class Cnst extends Sym {
      * Increment nbrOccInCnstSyntaxAxioms by 1.
      */
     public void incNbrOccInSyntaxAxioms() {
-        ++nbrOccInSyntaxAxioms;
+        nbrOccInSyntaxAxioms++;
     }
 
     /**

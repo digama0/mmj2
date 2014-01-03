@@ -176,7 +176,7 @@ public class MergeSortedArrayLists<T> {
         }
         else
             dest.add(object);
-        ++destPutIndex;
+        destPutIndex++;
     }
 
     private T getNextSrc() {

@@ -218,7 +218,7 @@ public class MMJ2FailPopupWindow {
                 }
             }
             b.append(c);
-            ++unbrokenTextLength;
+            unbrokenTextLength++;
             firstNonBlankAlreadyOutput = true;
         }
         return b.toString();

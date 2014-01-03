@@ -72,7 +72,7 @@ public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
             putToTheoremStmtGroupTbl(t);
 
             if (t.getIsTheoremNew())
-                ++nbrOfAdds;
+                nbrOfAdds++;
         }
 
         preUpdateRelationalEdits();

@@ -352,4 +352,9 @@ public class HypothesisStep extends ProofStepStmt {
             sb.append(refLabel);
         return sb;
     }
+
+    @Override
+    public String toString() {
+        return "h" + step + "::" + refLabel + " " + formula;
+    }
 }

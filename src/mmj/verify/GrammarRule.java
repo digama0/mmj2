@@ -523,7 +523,7 @@ public abstract class GrammarRule {
         ruleHypPos = new int[nbrHypParamsUsed];
         int j = 0;
         for (int i = 0; i < ruleFormatExpr.length; i++)
-            if (ruleFormatExpr[i].getIsVarTyp())
+            if (ruleFormatExpr[i].isVarTyp())
                 ruleHypPos[j++] = i;
     }
 
@@ -642,7 +642,7 @@ public abstract class GrammarRule {
                 if (substVarHyp[paramNbr] != null)
                     parseNodeHolderExpr[dest++] = new ParseNodeHolder(
                         substVarHyp[paramNbr]);
-                ++paramNbr;
+                paramNbr++;
             }
         return parseNodeHolderExpr;
     }
@@ -695,7 +695,7 @@ public abstract class GrammarRule {
             else {
                 if (substVarHyp[paramNbr] != null)
                     rfe[dest++] = substVarHyp[paramNbr].getTyp();
-                ++paramNbr;
+                paramNbr++;
             }
         return rfe;
     }

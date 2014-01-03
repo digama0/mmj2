@@ -98,7 +98,7 @@ RunProofAsstGUI
 
        -  RunParm names and values are not case-sensitive.
 
-       -  Almost eery RunParm value has a default which is designed
+       -  Almost every RunParm value has a default which is designed
           to be "optimal" for use with set.mm. If you accept the
           defaults then do not even input the RunParm command. If
           you do input put in the RunParm command then every
@@ -1897,6 +1897,22 @@ RunProofAsstGUI
 
 
 
+    ProofAsstLookAndFeel
+           : - Optional
+             - Default "Metal"
+             - Sets the Java Swing Look and Feel (LAF) of the Proof
+               Assistant. The available options are OS-specific, but
+               may include Metal, Nimbus, Aqua, Windows, Windows Classic,
+               and CDE/Motif. An error message is generated with the
+               list of available LAFs if the input is invalid.
+             - Value1 = "Metal", "CDE/Motif", etc...
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProofAsstLookAndFeel,Metal
+                ProofAsstLookAndFeel,Nimbus
+
+
     ProofAsstForegroundColorRGB
            : - Optional
              - Proof Asst GUI screen text character foreground color
@@ -1974,6 +1990,19 @@ RunProofAsstGUI
                 *        1         2         3         4
                 *234567890123456789012345678901234567890
                 ProofAsstFontSize,14
+
+
+    ProofAsstMaximized
+           : - Optional
+             - Default = no
+             - If 'yes' the Proof Assistant is maximized
+               on startup.
+             - Value1 = yes or no or y or n or YES or ...
+             - Example:
+                *        1         2         3         4
+                *234567890123456789012345678901234567890
+                ProofAsstMaximized,yes
+
 
     ProofAsstTextAtTop
            : - Optional

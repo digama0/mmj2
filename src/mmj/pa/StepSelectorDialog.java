@@ -28,7 +28,7 @@ public class StepSelectorDialog extends JDialog {
 
     private final StepSelectorResults stepSelectorResults;
     private final ProofAsstGUI proofAsstGUI;
-    private final JList<String> stepSelectorDialogList;
+    private final JList stepSelectorDialogList;
     private final StepSelectorDialog stepSelectorDialog;
 
     public StepSelectorDialog(final Frame proofAsstGUIFrame,
@@ -66,7 +66,7 @@ public class StepSelectorDialog extends JDialog {
         });
         getRootPane().setDefaultButton(setButton);
 
-        stepSelectorDialogList = new JList<String>();
+        stepSelectorDialogList = new JList();
         stepSelectorDialogList.setFont(proofFont);
         stepSelectorDialogList.setListData(stepSelectorResults.selectionArray);
         stepSelectorDialogList
@@ -152,7 +152,7 @@ public class StepSelectorDialog extends JDialog {
             }
             else {
                 sb.append(c);
-                ++col;
+                col++;
             }
         }
 

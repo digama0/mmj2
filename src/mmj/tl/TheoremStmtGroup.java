@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.*;
 
 import mmj.lang.*;
+import mmj.lang.ParseTree.RPNStep;
 import mmj.mmio.*;
 import mmj.pa.PaConstants;
 
@@ -55,7 +56,7 @@ public class TheoremStmtGroup {
     private Theorem theorem;
 
     /* store previous values for backout */
-    private Stmt[] oldProof;
+    private RPNStep[] oldProof;
     private DjVars[] oldDjVarsArray;
     private DjVars[] oldOptDjVarsArray;
 

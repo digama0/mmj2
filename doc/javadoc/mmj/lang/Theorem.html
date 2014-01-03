@@ -189,20 +189,7 @@ extends <a href="../../mmj/lang/Assrt.html" title="class in mmj.lang">Assrt</a><
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../mmj/lang/Theorem.html#Theorem(int, java.util.List, java.util.Map, java.util.Map, java.lang.String, java.lang.String, java.util.List, java.util.List)">Theorem</a></strong>(int&nbsp;seq,
-       java.util.List&lt;<a href="../../mmj/lang/ScopeDef.html" title="class in mmj.lang">ScopeDef</a>&gt;&nbsp;scopeDefList,
-       java.util.Map&lt;java.lang.String,<a href="../../mmj/lang/Sym.html" title="class in mmj.lang">Sym</a>&gt;&nbsp;symTbl,
-       java.util.Map&lt;java.lang.String,<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>&gt;&nbsp;stmtTbl,
-       java.lang.String&nbsp;labelS,
-       java.lang.String&nbsp;typS,
-       java.util.List&lt;java.lang.String&gt;&nbsp;symList,
-       java.util.List&lt;java.lang.String&gt;&nbsp;proofList)</code>
-<div class="block">Construct Theorem using the entire enchilada from mmj.mmio.SrcStmt.java,
- plus a few condiments.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../mmj/lang/Theorem.html#Theorem(int, java.util.List, java.util.Map, java.util.Map, java.lang.String, java.lang.String, java.util.List, java.util.List, java.util.List, mmj.lang.ProofCompression)">Theorem</a></strong>(int&nbsp;seq,
+<td class="colOne"><code><strong><a href="../../mmj/lang/Theorem.html#Theorem(int, java.util.List, java.util.Map, java.util.Map, java.lang.String, java.lang.String, java.util.List, java.util.List, mmj.mmio.BlockList, mmj.lang.ProofCompression, mmj.lang.Messages)">Theorem</a></strong>(int&nbsp;seq,
        java.util.List&lt;<a href="../../mmj/lang/ScopeDef.html" title="class in mmj.lang">ScopeDef</a>&gt;&nbsp;scopeDefList,
        java.util.Map&lt;java.lang.String,<a href="../../mmj/lang/Sym.html" title="class in mmj.lang">Sym</a>&gt;&nbsp;symTbl,
        java.util.Map&lt;java.lang.String,<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>&gt;&nbsp;stmtTbl,
@@ -210,10 +197,25 @@ extends <a href="../../mmj/lang/Assrt.html" title="class in mmj.lang">Assrt</a><
        java.lang.String&nbsp;typS,
        java.util.List&lt;java.lang.String&gt;&nbsp;symList,
        java.util.List&lt;java.lang.String&gt;&nbsp;proofList,
-       java.util.List&lt;java.lang.String&gt;&nbsp;proofBlockList,
-       <a href="../../mmj/lang/ProofCompression.html" title="class in mmj.lang">ProofCompression</a>&nbsp;proofCompression)</code>
+       <a href="../../mmj/mmio/BlockList.html" title="class in mmj.mmio">BlockList</a>&nbsp;proofBlockList,
+       <a href="../../mmj/lang/ProofCompression.html" title="class in mmj.lang">ProofCompression</a>&nbsp;proofCompression,
+       <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)</code>
 <div class="block">Construct Theorem using the entire enchilada from mmj.mmio.SrcStmt.java
  including compressed proof blocks.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../mmj/lang/Theorem.html#Theorem(int, java.util.List, java.util.Map, java.util.Map, java.lang.String, java.lang.String, java.util.List, java.util.List, mmj.lang.Messages)">Theorem</a></strong>(int&nbsp;seq,
+       java.util.List&lt;<a href="../../mmj/lang/ScopeDef.html" title="class in mmj.lang">ScopeDef</a>&gt;&nbsp;scopeDefList,
+       java.util.Map&lt;java.lang.String,<a href="../../mmj/lang/Sym.html" title="class in mmj.lang">Sym</a>&gt;&nbsp;symTbl,
+       java.util.Map&lt;java.lang.String,<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>&gt;&nbsp;stmtTbl,
+       java.lang.String&nbsp;labelS,
+       java.lang.String&nbsp;typS,
+       java.util.List&lt;java.lang.String&gt;&nbsp;symList,
+       java.util.List&lt;java.lang.String&gt;&nbsp;proofList,
+       <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)</code>
+<div class="block">Construct Theorem using the entire enchilada from mmj.mmio.SrcStmt.java,
+ plus a few condiments.</div>
 </td>
 </tr>
 </table>
@@ -232,7 +234,7 @@ extends <a href="../../mmj/lang/Assrt.html" title="class in mmj.lang">Assrt</a><
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>[]</code></td>
+<td class="colFirst"><code><a href="../../mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a>[]</code></td>
 <td class="colLast"><code><strong><a href="../../mmj/lang/Theorem.html#editProofListDefAndActive(java.util.Map, java.util.List)">editProofListDefAndActive</a></strong>(java.util.Map&lt;java.lang.String,<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>&gt;&nbsp;stmtTbl,
                          java.util.List&lt;java.lang.String&gt;&nbsp;proofList)</code>
 <div class="block">Validates each proof step for a proof being loaded into mmj.</div>
@@ -245,7 +247,7 @@ extends <a href="../../mmj/lang/Assrt.html" title="class in mmj.lang">Assrt</a><
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>[]</code></td>
+<td class="colFirst"><code><a href="../../mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a>[]</code></td>
 <td class="colLast"><code><strong><a href="../../mmj/lang/Theorem.html#getProof()">getProof</a></strong>()</code>
 <div class="block">Return Theorem's proof.</div>
 </td>
@@ -277,7 +279,7 @@ extends <a href="../../mmj/lang/Assrt.html" title="class in mmj.lang">Assrt</a><
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../mmj/lang/Theorem.html#proofUpdates(mmj.lang.Stmt[], mmj.lang.DjVars[], mmj.lang.DjVars[])">proofUpdates</a></strong>(<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>[]&nbsp;newProof,
+<td class="colLast"><code><strong><a href="../../mmj/lang/Theorem.html#proofUpdates(mmj.lang.ParseTree.RPNStep[], mmj.lang.DjVars[], mmj.lang.DjVars[])">proofUpdates</a></strong>(<a href="../../mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a>[]&nbsp;newProof,
             <a href="../../mmj/lang/DjVars.html" title="class in mmj.lang">DjVars</a>[]&nbsp;newDjVarsArray,
             <a href="../../mmj/lang/DjVars.html" title="class in mmj.lang">DjVars</a>[]&nbsp;newOptDjVarsArray)</code>
 <div class="block">Applies updates made to proof related data.</div>
@@ -301,7 +303,7 @@ extends <a href="../../mmj/lang/Assrt.html" title="class in mmj.lang">Assrt</a><
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>[]</code></td>
+<td class="colFirst"><code><a href="../../mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a>[]</code></td>
 <td class="colLast"><code><strong><a href="../../mmj/lang/Theorem.html#setProof(java.util.Map, java.util.List)">setProof</a></strong>(java.util.Map&lt;java.lang.String,<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>&gt;&nbsp;stmtTbl,
         java.util.List&lt;java.lang.String&gt;&nbsp;proofList)</code>
 <div class="block">Set Theorem's proof.</div>
@@ -320,7 +322,7 @@ extends <a href="../../mmj/lang/Assrt.html" title="class in mmj.lang">Assrt</a><
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;mmj.lang.<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a></h3>
-<code><a href="../../mmj/lang/Stmt.html#equals(java.lang.Object)">equals</a>, <a href="../../mmj/lang/Stmt.html#getExprParseTree()">getExprParseTree</a>, <a href="../../mmj/lang/Stmt.html#getExprRPN()">getExprRPN</a>, <a href="../../mmj/lang/Stmt.html#getFormula()">getFormula</a>, <a href="../../mmj/lang/Stmt.html#getLabel()">getLabel</a>, <a href="../../mmj/lang/Stmt.html#getNbrProofRefs()">getNbrProofRefs</a>, <a href="../../mmj/lang/Stmt.html#getTyp()">getTyp</a>, <a href="../../mmj/lang/Stmt.html#hashCode()">hashCode</a>, <a href="../../mmj/lang/Stmt.html#incrementNbrProofRefs()">incrementNbrProofRefs</a>, <a href="../../mmj/lang/Stmt.html#initNbrProofRefs()">initNbrProofRefs</a>, <a href="../../mmj/lang/Stmt.html#resetLogHypsL1HiLoKey()">resetLogHypsL1HiLoKey</a>, <a href="../../mmj/lang/Stmt.html#resetLogHypsMaxDepth()">resetLogHypsMaxDepth</a>, <a href="../../mmj/lang/Stmt.html#setExprParseTree(mmj.lang.ParseTree)">setExprParseTree</a>, <a href="../../mmj/lang/Stmt.html#setExprRPN(mmj.lang.Stmt[])">setExprRPN</a>, <a href="../../mmj/lang/Stmt.html#setLogHypsL1HiLoKey(java.lang.String)">setLogHypsL1HiLoKey</a>, <a href="../../mmj/lang/Stmt.html#setLogHypsMaxDepth(int)">setLogHypsMaxDepth</a>, <a href="../../mmj/lang/Stmt.html#setTyp(mmj.lang.Cnst)">setTyp</a>, <a href="../../mmj/lang/Stmt.html#toString()">toString</a></code></li>
+<code><a href="../../mmj/lang/Stmt.html#equals(java.lang.Object)">equals</a>, <a href="../../mmj/lang/Stmt.html#getExprParseTree()">getExprParseTree</a>, <a href="../../mmj/lang/Stmt.html#getExprRPN()">getExprRPN</a>, <a href="../../mmj/lang/Stmt.html#getFormula()">getFormula</a>, <a href="../../mmj/lang/Stmt.html#getLabel()">getLabel</a>, <a href="../../mmj/lang/Stmt.html#getNbrProofRefs()">getNbrProofRefs</a>, <a href="../../mmj/lang/Stmt.html#getTyp()">getTyp</a>, <a href="../../mmj/lang/Stmt.html#hashCode()">hashCode</a>, <a href="../../mmj/lang/Stmt.html#incrementNbrProofRefs()">incrementNbrProofRefs</a>, <a href="../../mmj/lang/Stmt.html#initNbrProofRefs()">initNbrProofRefs</a>, <a href="../../mmj/lang/Stmt.html#resetLogHypsL1HiLoKey()">resetLogHypsL1HiLoKey</a>, <a href="../../mmj/lang/Stmt.html#resetLogHypsMaxDepth()">resetLogHypsMaxDepth</a>, <a href="../../mmj/lang/Stmt.html#setExprParseTree(mmj.lang.ParseTree)">setExprParseTree</a>, <a href="../../mmj/lang/Stmt.html#setExprRPN(mmj.lang.ParseTree.RPNStep[])">setExprRPN</a>, <a href="../../mmj/lang/Stmt.html#setLogHypsL1HiLoKey(java.lang.String)">setLogHypsL1HiLoKey</a>, <a href="../../mmj/lang/Stmt.html#setLogHypsMaxDepth(int)">setLogHypsMaxDepth</a>, <a href="../../mmj/lang/Stmt.html#setTyp(mmj.lang.Cnst)">setTyp</a>, <a href="../../mmj/lang/Stmt.html#toString()">toString</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_mmj.lang.MObj">
@@ -350,7 +352,7 @@ extends <a href="../../mmj/lang/Assrt.html" title="class in mmj.lang">Assrt</a><
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="Theorem(int, java.util.List, java.util.Map, java.util.Map, java.lang.String, java.lang.String, java.util.List, java.util.List)">
+<a name="Theorem(int, java.util.List, java.util.Map, java.util.Map, java.lang.String, java.lang.String, java.util.List, java.util.List, mmj.lang.Messages)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -363,17 +365,18 @@ extends <a href="../../mmj/lang/Assrt.html" title="class in mmj.lang">Assrt</a><
        java.lang.String&nbsp;labelS,
        java.lang.String&nbsp;typS,
        java.util.List&lt;java.lang.String&gt;&nbsp;symList,
-       java.util.List&lt;java.lang.String&gt;&nbsp;proofList)
+       java.util.List&lt;java.lang.String&gt;&nbsp;proofList,
+       <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)
         throws <a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></pre>
 <div class="block">Construct Theorem using the entire enchilada from mmj.mmio.SrcStmt.java,
  plus a few condiments.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>seq</code> - MObj.seq sequence number</dd><dd><code>scopeDefList</code> - Scope info in effect at the time</dd><dd><code>symTbl</code> - Symbol Table (Map)</dd><dd><code>stmtTbl</code> - Statement Table (Map)</dd><dd><code>labelS</code> - Theorem label String</dd><dd><code>typS</code> - Theorem Formula Type Code String</dd><dd><code>symList</code> - Theorem Expression Sym String List</dd><dd><code>proofList</code> - Theorem Proof Stmt String List.</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>seq</code> - MObj.seq sequence number</dd><dd><code>scopeDefList</code> - Scope info in effect at the time</dd><dd><code>symTbl</code> - Symbol Table (Map)</dd><dd><code>stmtTbl</code> - Statement Table (Map)</dd><dd><code>labelS</code> - Theorem label String</dd><dd><code>typS</code> - Theorem Formula Type Code String</dd><dd><code>symList</code> - Theorem Expression Sym String List</dd><dd><code>proofList</code> - Theorem Proof Stmt String List.</dd><dd><code>messages</code> - for error reporting</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code><a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></code> - if an error occurred</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../mmj/lang/Theorem.html#editProofListDefAndActive(java.util.Map, java.util.List)"><code>editProofListDefAndActive(Map stmtTbl, List
       proofList)</code></a></dd></dl>
 </li>
 </ul>
-<a name="Theorem(int, java.util.List, java.util.Map, java.util.Map, java.lang.String, java.lang.String, java.util.List, java.util.List, java.util.List, mmj.lang.ProofCompression)">
+<a name="Theorem(int, java.util.List, java.util.Map, java.util.Map, java.lang.String, java.lang.String, java.util.List, java.util.List, mmj.mmio.BlockList, mmj.lang.ProofCompression, mmj.lang.Messages)">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -387,14 +390,15 @@ extends <a href="../../mmj/lang/Assrt.html" title="class in mmj.lang">Assrt</a><
        java.lang.String&nbsp;typS,
        java.util.List&lt;java.lang.String&gt;&nbsp;symList,
        java.util.List&lt;java.lang.String&gt;&nbsp;proofList,
-       java.util.List&lt;java.lang.String&gt;&nbsp;proofBlockList,
-       <a href="../../mmj/lang/ProofCompression.html" title="class in mmj.lang">ProofCompression</a>&nbsp;proofCompression)
+       <a href="../../mmj/mmio/BlockList.html" title="class in mmj.mmio">BlockList</a>&nbsp;proofBlockList,
+       <a href="../../mmj/lang/ProofCompression.html" title="class in mmj.lang">ProofCompression</a>&nbsp;proofCompression,
+       <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)
         throws <a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></pre>
 <div class="block">Construct Theorem using the entire enchilada from mmj.mmio.SrcStmt.java
  including compressed proof blocks.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>seq</code> - MObj.seq sequence number</dd><dd><code>scopeDefList</code> - Scope info in effect at the time</dd><dd><code>symTbl</code> - Symbol Table (Map)</dd><dd><code>stmtTbl</code> - Statement Table (Map)</dd><dd><code>labelS</code> - Theorem label String</dd><dd><code>typS</code> - Theorem Formula Type Code String</dd><dd><code>symList</code> - Theorem Expression Sym String List</dd><dd><code>proofList</code> - Theorem Proof Stmt String List.</dd><dd><code>proofBlockList</code> - list containing one or more blocks of compressed
             proof symbols.</dd><dd><code>proofCompression</code> - instance of ProofCompression.java used to
-            decompress proof.</dd>
+            decompress proof.</dd><dd><code>messages</code> - for error reporting</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code><a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></code> - if there was a decompression error</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../mmj/lang/Theorem.html#editProofListDefAndActive(java.util.Map, java.util.List)"><code>editProofListDefAndActive(Map stmtTbl, List
       proofList)</code></a></dd></dl>
@@ -414,7 +418,7 @@ extends <a href="../../mmj/lang/Assrt.html" title="class in mmj.lang">Assrt</a><
 <ul class="blockList">
 <li class="blockList">
 <h4>getProof</h4>
-<pre>public&nbsp;<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>[]&nbsp;getProof()</pre>
+<pre>public&nbsp;<a href="../../mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a>[]&nbsp;getProof()</pre>
 <div class="block">Return Theorem's proof.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd>Theorem's proof.</dd></dl>
 </li>
@@ -425,9 +429,9 @@ extends <a href="../../mmj/lang/Assrt.html" title="class in mmj.lang">Assrt</a><
 <ul class="blockList">
 <li class="blockList">
 <h4>setProof</h4>
-<pre>public&nbsp;<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>[]&nbsp;setProof(java.util.Map&lt;java.lang.String,<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>&gt;&nbsp;stmtTbl,
-              java.util.List&lt;java.lang.String&gt;&nbsp;proofList)
-                throws <a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></pre>
+<pre>public&nbsp;<a href="../../mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a>[]&nbsp;setProof(java.util.Map&lt;java.lang.String,<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>&gt;&nbsp;stmtTbl,
+                           java.util.List&lt;java.lang.String&gt;&nbsp;proofList)
+                             throws <a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></pre>
 <div class="block">Set Theorem's proof. Updates the Theorem's proof, but only if the proof
  is valid enough to keep -- not saying it is a "valid proof" though :)</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>stmtTbl</code> - Statement Table (Map)</dd><dd><code>proofList</code> - Theorem Proof Stmt String List.</dd>
@@ -454,9 +458,9 @@ extends <a href="../../mmj/lang/Assrt.html" title="class in mmj.lang">Assrt</a><
 <ul class="blockList">
 <li class="blockList">
 <h4>editProofListDefAndActive</h4>
-<pre>public&nbsp;<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>[]&nbsp;editProofListDefAndActive(java.util.Map&lt;java.lang.String,<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>&gt;&nbsp;stmtTbl,
-                               java.util.List&lt;java.lang.String&gt;&nbsp;proofList)
-                                 throws <a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></pre>
+<pre>public&nbsp;<a href="../../mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a>[]&nbsp;editProofListDefAndActive(java.util.Map&lt;java.lang.String,<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>&gt;&nbsp;stmtTbl,
+                                            java.util.List&lt;java.lang.String&gt;&nbsp;proofList)
+                                              throws <a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></pre>
 <div class="block">Validates each proof step for a proof being loaded into mmj.
  <p>
  <ol>
@@ -480,8 +484,8 @@ extends <a href="../../mmj/lang/Assrt.html" title="class in mmj.lang">Assrt</a><
  </ol></div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>stmtTbl</code> - Map of statements already loaded.</dd><dd><code>proofList</code> - Theorem's proof steps, the labels (Strings) of existing
             Stmt's (or "?" for missing step(s)).</dd>
-<dt><span class="strong">Returns:</span></dt><dd>Stmt[] an array of proof steps; contains null entries for input
-         proof steps specifying "?" (unknown/missing).</dd>
+<dt><span class="strong">Returns:</span></dt><dd>RPNStep[] an array of proof steps; contains null entries for
+         input proof steps specifying "?" (unknown/missing).</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code><a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></code> - (see <code>mmj.lang.LangConstants.java</code>)</dd></dl>
 </li>
@@ -526,13 +530,13 @@ extends <a href="../../mmj/lang/Assrt.html" title="class in mmj.lang">Assrt</a><
          StringBuilder -- or -1 if maxDepth or maxLength exceeded.</dd></dl>
 </li>
 </ul>
-<a name="proofUpdates(mmj.lang.Stmt[], mmj.lang.DjVars[], mmj.lang.DjVars[])">
+<a name="proofUpdates(mmj.lang.ParseTree.RPNStep[], mmj.lang.DjVars[], mmj.lang.DjVars[])">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>proofUpdates</h4>
-<pre>public&nbsp;void&nbsp;proofUpdates(<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>[]&nbsp;newProof,
+<pre>public&nbsp;void&nbsp;proofUpdates(<a href="../../mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a>[]&nbsp;newProof,
                 <a href="../../mmj/lang/DjVars.html" title="class in mmj.lang">DjVars</a>[]&nbsp;newDjVarsArray,
                 <a href="../../mmj/lang/DjVars.html" title="class in mmj.lang">DjVars</a>[]&nbsp;newOptDjVarsArray)</pre>
 <div class="block">Applies updates made to proof related data.</div>

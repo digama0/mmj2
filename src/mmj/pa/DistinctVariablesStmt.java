@@ -79,7 +79,7 @@ public class DistinctVariablesStmt extends ProofWorkStmt {
             stmtText.append(' ');
         }
 
-        stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
+        stmtText.append("\n");
     }
 
     /**

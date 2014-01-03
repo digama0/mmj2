@@ -132,7 +132,7 @@ public class MinProofWorksheet {
                     if (structuralErrors)
                         return;
                     lineList.add(tokenList);
-                    ++lineCnt;
+                    lineCnt++;
                 } while ((line = lineReader.readLine()) != null
                     && (line.length() == 0 || line.charAt(0) == ' '));
 

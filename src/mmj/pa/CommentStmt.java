@@ -87,25 +87,23 @@ public class CommentStmt extends ProofWorkStmt {
 
             String line;
             while ((line = r.readLine()) != null) {
-                stmtText.append(linePrefix);
-                stmtText.append(line.trim());
-                stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
-                ++lineCnt;
+                stmtText.append(linePrefix).append(line.trim()).append("\n");
+                lineCnt++;
                 linePrefix = secondLinePrefix;
             }
         } catch (final IOException e) {
             stmtText.append(PaConstants.PROOF_WORKSHEET_COMMENT_STMT_IO_ERROR);
-            stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
+            stmtText.append("\n");
         }
 
         if (lineCnt == 1) {
-            stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
-            ++lineCnt;
+            stmtText.append("\n");
+            lineCnt++;
         }
         if (doubleSpace)
-            stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
+            stmtText.append("\n");
         else
-            --lineCnt;
+            lineCnt--;
     }
 
     @Override

@@ -17,6 +17,7 @@ package mmj.lang;
 
 import java.util.*;
 
+import mmj.lang.ParseTree.RPNStep;
 import mmj.mmio.MMIOConstants;
 import mmj.tl.*;
 
@@ -294,10 +295,10 @@ public class BookManager implements TheoremLoaderCommitListener {
             if (axiom.getTyp().getId().equals(provableLogicStmtTypeParm)) {
 
                 if (currLogicSection.assignChapterSectionNbrs(axiom))
-                    ++totalNbrMObjs;
+                    totalNbrMObjs++;
             }
             else if (currSyntaxSection.assignChapterSectionNbrs(axiom))
-                ++totalNbrMObjs;
+                totalNbrMObjs++;
         }
     }
 
@@ -324,7 +325,7 @@ public class BookManager implements TheoremLoaderCommitListener {
             prepareChapterSectionForMObj();
 
             if (currLogicSection.assignChapterSectionNbrs(theorem))
-                ++totalNbrMObjs;
+                totalNbrMObjs++;
         }
     }
 
@@ -348,7 +349,7 @@ public class BookManager implements TheoremLoaderCommitListener {
             prepareChapterSectionForMObj();
 
             if (currLogicSection.assignChapterSectionNbrs(logHyp))
-                ++totalNbrMObjs;
+                totalNbrMObjs++;
         }
     }
 
@@ -372,7 +373,7 @@ public class BookManager implements TheoremLoaderCommitListener {
             prepareChapterSectionForMObj();
 
             if (currVarHypSection.assignChapterSectionNbrs(varHyp))
-                ++totalNbrMObjs;
+                totalNbrMObjs++;
         }
     }
 
@@ -396,7 +397,7 @@ public class BookManager implements TheoremLoaderCommitListener {
             prepareChapterSectionForMObj();
 
             if (currSymSection.assignChapterSectionNbrs(sym))
-                ++totalNbrMObjs;
+                totalNbrMObjs++;
         }
     }
 
@@ -625,11 +626,11 @@ public class BookManager implements TheoremLoaderCommitListener {
             final BitSet directDeps = directSectionDependencies[stmt
                 .getOrigSectionNbr()];
             if (stmt instanceof Theorem) {
-                final Stmt[] proof = ((Theorem)stmt).getProof();
+                final RPNStep[] proof = ((Theorem)stmt).getProof();
                 int j = 0;
                 while (j < proof.length) {
-                    if (proof[j] != null) {
-                        final Stmt proofStep = proof[j];
+                    if (proof[j] != null && proof[j].stmt != null) {
+                        final Stmt proofStep = proof[j].stmt;
                         proofStep.incrementNbrProofRefs();
                         if (proofStep.getTyp().getId()
                             .equals(provableLogicStmtTypeParm)
@@ -760,7 +761,7 @@ public class BookManager implements TheoremLoaderCommitListener {
             while (nextI < mArray.length) {
                 if (nextJ < mArray[nextI].length)
                     return true;
-                ++nextI;
+                nextI++;
                 nextJ = 0;
             }
             return false;
@@ -869,8 +870,8 @@ public class BookManager implements TheoremLoaderCommitListener {
         final LogHyp[] logHypArray = t.getLogHypArray();
         for (final LogHyp element : logHypArray)
             if (insertSection.assignChapterSectionNbrs(element))
-                ++totalNbrMObjs;
+                totalNbrMObjs++;
         if (insertSection.assignChapterSectionNbrs(t.getTheorem()))
-            ++totalNbrMObjs;
+            totalNbrMObjs++;
     }
 }

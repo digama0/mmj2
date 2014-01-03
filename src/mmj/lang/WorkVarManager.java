@@ -210,7 +210,7 @@ public class WorkVarManager {
                     labelId, new VarHypFormula(2, symArray), j);
             }
 
-            ++i;
+            i++;
         }
 
         checkForDuplicateWorkVarPrefixes();

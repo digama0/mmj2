@@ -170,20 +170,20 @@ public class PaConstants {
     // ----------------------------------------------------------
 
     /**
-     * PROOF_STEP_RENUMBER_START = 10
+     * PROOF_STEP_RENUMBER_START = 50
      * <p>
      * Renumber starting point: 1, 2, 3, ... vs 3, 4, 5, ... This is hardcoded,
      * but a RunParm could be added.
      */
-    public static final int PROOF_STEP_RENUMBER_START = 10;
+    public static final int PROOF_STEP_RENUMBER_START = 50;
 
     /**
-     * PROOF_STEP_RENUMBER_INTERVAL = 10
+     * PROOF_STEP_RENUMBER_INTERVAL = 1
      * <p>
      * Renumber by interval: 1, 2, ...n or 10, 20, ... etc. This is hardcoded,
      * but a RunParm could be added.
      */
-    public static final int PROOF_STEP_RENUMBER_INTERVAL = 10;
+    public static final int PROOF_STEP_RENUMBER_INTERVAL = 1;
 
     /**
      * PROOF_ASST_INCOMPLETE_STEP_CURSOR_LAST = "Last".
@@ -1060,7 +1060,7 @@ public class PaConstants {
     public static final String PA_GUI_UNIFY_MENU_START_ITEM_TEXT = "Unify (check proof)";
 
     /**
-     * ProofAsstGUI Unify Menu Start Unification With Renum Item Text
+     * ProofAsstGUI Unify Menu Start Unification with Renum Item Text
      */
     public static final String PA_GUI_UNIFY_MENU_START_UR_ITEM_TEXT = "Unify+Renumber";
 
@@ -1068,6 +1068,18 @@ public class PaConstants {
      * ProofAsstGUI Unify Menu Unify with Rederive Formulas Item Text
      */
     public static final String PA_GUI_UNIFY_MENU_REDERIVE_ITEM_TEXT = "Unify+Erase and Rederive Formulas";
+
+    /**
+     * ProofAsstGUI Unify Menu Start Unification without Converting Work Vars
+     * Item Text
+     */
+    public static final String PA_GUI_UNIFY_MENU_NO_WV_ITEM_TEXT = "Unify+Don't Convert WorkVars";
+
+    /**
+     * ProofAsstGUI Unify Menu Start Unification with Rederive Formulas without
+     * Converting Work Vars Item Text
+     */
+    public static final String PA_GUI_UNIFY_MENU_ERASE_NO_WV_ITEM_TEXT = "Unify+Erase+Don't Convert";
 
     /**
      * ProofAsstGUI Unify Menu Step Selector Search Item Text
@@ -1339,7 +1351,8 @@ public class PaConstants {
     /**
      * Proof Assistant GUI Help About Part 1
      */
-    public static final String HELP_ABOUT_TEXT_1 = "Copyright (C) 2005 thru 2011 MEL O'CAT via X178G243 (at) yahoo (dot) com \n"
+    public static final String HELP_ABOUT_TEXT = ""
+        + "Copyright (C) 2005 thru 2011 MEL O'CAT via X178G243 (at) yahoo (dot) com \n"
         + "License terms: GNU General Public License Version 2 or any later version.\n"
         + "                                                                         \n"
         + "Note: The following copyright is included because ProofAsstGUI.java      \n"
@@ -1357,22 +1370,8 @@ public class PaConstants {
         + "  documentation and/or other materials provided with the distribution.   \n"
         + "(See SunJavaTutorialLicense.html in the mmj2 distribution for the        \n"
         + "for the disclaimer.)                                                     \n\n"
-        + "Garbage Collection Run (just now) Memory Totals follow:\n";
-
-    /**
-     * Proof Assistant GUI Help About Part 2 (Max Memory)
-     */
-    public static final String HELP_ABOUT_TEXT_2 = " Max Memory   = ";
-
-    /**
-     * Proof Assistant GUI Help About Part 3 (Free Memory)
-     */
-    public static final String HELP_ABOUT_TEXT_3 = " Free Memory  = ";
-
-    /**
-     * Proof Assistant GUI Help About Part 4 (Total Memory)
-     */
-    public static final String HELP_ABOUT_TEXT_4 = " Total Memory = ";
+        + "Garbage Collection Run (just now) Memory Totals follow:\n"
+        + " Max Memory   = %s\n Free Memory  = %s\n Total Memory = %s\n";
 
     // ----------------------------------------------------------
     // Constants for HelpGeneralInfoGUI.java
@@ -1682,13 +1681,6 @@ public class PaConstants {
     // 4 = unified but work vars: signifies that work vars are present in the
     // step formula or the step hypotheses.
     // 5 = unified: good to go for proof building attempt.
-    public static final String[] UNIFICATION_STATUS_DESC = {
-            "UNIFICATION_STATUS_NOT_UNIFIED",
-            "UNIFICATION_STATUS_UNIFICATION_ERROR",
-            "UNIFICATION_STATUS_ATTEMPT_CANCELLED",
-            "UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS",
-            "UNIFICATION_STATUS_UNIFIED_W_WORK_VARS",
-            "UNIFICATION_STATUS_UNIFIED"};
     public static final int UNIFICATION_STATUS_NOT_UNIFIED = 0;
     public static final int UNIFICATION_STATUS_UNIFICATION_ERROR = 1;
     public static final int UNIFICATION_STATUS_ATTEMPT_CANCELLED = 2;
@@ -1702,11 +1694,6 @@ public class PaConstants {
     // Ref.
     // 2 = Hard Dj Vars Errors; formula violates
     // $d restriction(s) of unifying Ref.
-    public static final String[] DJ_VARS_ERROR_STATUS_DESC = {
-            "DJ_VARS_ERROR_STATUS_NO_ERRORS",
-            "DJ_VARS_ERROR_STATUS_SOFT_ERRORS_ERROR",
-            "DJ_VARS_ERROR_STATUS_HARD_ERRORS_ERROR"};
-
     public static final int DJ_VARS_ERROR_STATUS_NO_ERRORS = 0;
     public static final int DJ_VARS_ERROR_STATUS_SOFT_ERRORS = 1;
     public static final int DJ_VARS_ERROR_STATUS_HARD_ERRORS = 2;
@@ -1744,16 +1731,6 @@ public class PaConstants {
      * Proof Worksheet Comment Statment IO Error.
      */
     public static final String PROOF_WORKSHEET_COMMENT_STMT_IO_ERROR = "IO error reading comment!";
-
-    /**
-     * Proof Worksheet Statement New Line Char
-     */
-    public static final char PROOF_WORKSHEET_NEW_LINE = '\n';
-
-    /**
-     * Proof Worksheet Statement New Line String
-     */
-    public static final String PROOF_WORKSHEET_NEW_LINE_STRING = "\n";
 
     /**
      * Proof Worksheet Footer Line
@@ -2348,7 +2325,7 @@ public class PaConstants {
         + " can leave Ref blank to allow Unify to figure it out for you.";
 
     public static final String ERRMSG_REF_MAXSEQ = "E-PA-0349 Theorem %s Step %s:"
-        + " Invalid Ref = %sS on derivation proof step. Ref statement sequence"
+        + " Invalid Ref = %s on derivation proof step. Ref statement sequence"
         + " number >= sequence number of Theorem or LOC_AFTER statement."
         + " You can leave Ref blank to allow Unify to figure it out for you.";
 
@@ -2533,7 +2510,7 @@ public class PaConstants {
         + " system!";
 
     public static final String ERRMSG_ALT_UNIFY_REFS = "I-PA-0402 Theorem %s"
-        + " Step %s: Alternate unification Ref assertions found: %sS";
+        + " Step %s: Alternate unification Ref assertions found: %s";
 
     public static final String ERRMSG_INCOMPLETE_HYPS = "I-PA-0403 Theorem %s"
         + " Step %s: Proof incomplete for derivation proof step."
@@ -2567,14 +2544,14 @@ public class PaConstants {
         + " Theorem %s Step %s: assrtFormulaSubst array element not found in"
         + " MandFrame Hyp Array!";
 
-    public static final String ERRMSG_DV_VERIFY_ERR = "E-PA-0409 Theorem %s"
+    public static final String ERRMSG_DV_VERIFY_ERR = "%s\nE-PA-0409 Theorem %s"
         + " Step %s: Unification completed for derivation proof step. However,"
         + " the Distinct Variable restrictions specified by the step's Ref"
         + " assertion %s require one or more additional Distinct Variable"
         + " restrictions to be specified on the theorem being proved. You can"
         + " enter $d statements (leave off the '$.') in Proof Assistant to add"
         + " new restrictions temporarily, or modify the input Metamath file."
-        + " Specific error details follow:\n%s";
+        + " Specific error details above.";
 
     public static final String ERRMSG_REF_UNIFY_ERR = "E-PA-0410 Theorem %s"
         + " Step %s: Unification failure in derivation proof step %s."
@@ -2626,6 +2603,13 @@ public class PaConstants {
         + "hypStepCnt came to be different than the number of Hyp steps in the"
         + " Proof Worksheet... I am in ConvertWorkVarsToDummyVars() now..."
         + " Row, row, row your boat... Dave? What are you doing, Dave?";
+
+    public static final String ERRMSG_NO_CONVERT_WV = "I-PA-0418 Theorem %s:"
+        + " Proof unification was successful, but work variables remain among"
+        + " the derivation steps and we were requested to not replace these"
+        + " with dummy variables. Choose \"Unify\" instead of \"Unify+Don't"
+        + " convert WorkVars\" to automatically assign dummy variables to the"
+        + " remaining WorkVars.";
 
     // ----------------------------------------------------------
     // Messages from ProofAsstPreferences.java

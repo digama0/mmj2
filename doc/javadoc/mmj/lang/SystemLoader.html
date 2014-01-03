@@ -158,20 +158,22 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../mmj/lang/Theorem.html" title="class in mmj.lang">Theorem</a></code></td>
-<td class="colLast"><code><strong><a href="../../mmj/lang/SystemLoader.html#addTheorem(java.lang.String, java.lang.String, java.util.List, java.util.List)">addTheorem</a></strong>(java.lang.String&nbsp;labelS,
+<td class="colLast"><code><strong><a href="../../mmj/lang/SystemLoader.html#addTheorem(java.lang.String, java.lang.String, java.util.List, java.util.List, mmj.mmio.BlockList, mmj.lang.Messages)">addTheorem</a></strong>(java.lang.String&nbsp;labelS,
           java.lang.String&nbsp;typS,
           java.util.List&lt;java.lang.String&gt;&nbsp;symList,
-          java.util.List&lt;java.lang.String&gt;&nbsp;proofList)</code>
+          java.util.List&lt;java.lang.String&gt;&nbsp;proofList,
+          <a href="../../mmj/mmio/BlockList.html" title="class in mmj.mmio">BlockList</a>&nbsp;proofBlockList,
+          <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)</code>
 <div class="block">Add Theorem to Logical System.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../mmj/lang/Theorem.html" title="class in mmj.lang">Theorem</a></code></td>
-<td class="colLast"><code><strong><a href="../../mmj/lang/SystemLoader.html#addTheorem(java.lang.String, java.lang.String, java.util.List, java.util.List, java.util.List)">addTheorem</a></strong>(java.lang.String&nbsp;labelS,
+<td class="colLast"><code><strong><a href="../../mmj/lang/SystemLoader.html#addTheorem(java.lang.String, java.lang.String, java.util.List, java.util.List, mmj.lang.Messages)">addTheorem</a></strong>(java.lang.String&nbsp;labelS,
           java.lang.String&nbsp;typS,
           java.util.List&lt;java.lang.String&gt;&nbsp;symList,
           java.util.List&lt;java.lang.String&gt;&nbsp;proofList,
-          java.util.List&lt;java.lang.String&gt;&nbsp;proofBlockList)</code>
+          <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)</code>
 <div class="block">Add Theorem to Logical System.</div>
 </td>
 </tr>
@@ -338,27 +340,7 @@
 <dd><code><a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></code> - if duplicate label, undefined vars, etc.</dd></dl>
 </li>
 </ul>
-<a name="addTheorem(java.lang.String, java.lang.String, java.util.List, java.util.List)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>addTheorem</h4>
-<pre><a href="../../mmj/lang/Theorem.html" title="class in mmj.lang">Theorem</a>&nbsp;addTheorem(java.lang.String&nbsp;labelS,
-                 java.lang.String&nbsp;typS,
-                 java.util.List&lt;java.lang.String&gt;&nbsp;symList,
-                 java.util.List&lt;java.lang.String&gt;&nbsp;proofList)
-                   throws <a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></pre>
-<div class="block">Add Theorem to Logical System.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>labelS</code> - axiom label string</dd><dd><code>typS</code> - axiom type code (symbol) string</dd><dd><code>symList</code> - list containing axiom expression symbol strings (zero or
-            more symbols).</dd><dd><code>proofList</code> - list containing proof step symbol strings (1 or more
-            symbols -- which may be "?" if a step is unknown).</dd>
-<dt><span class="strong">Returns:</span></dt><dd>Theorem newly constructed Theorem added to LogicalSystem.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></code> - if duplicate label, undefined vars, etc.</dd></dl>
-</li>
-</ul>
-<a name="addTheorem(java.lang.String, java.lang.String, java.util.List, java.util.List, java.util.List)">
+<a name="addTheorem(java.lang.String, java.lang.String, java.util.List, java.util.List, mmj.lang.Messages)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -368,7 +350,29 @@
                  java.lang.String&nbsp;typS,
                  java.util.List&lt;java.lang.String&gt;&nbsp;symList,
                  java.util.List&lt;java.lang.String&gt;&nbsp;proofList,
-                 java.util.List&lt;java.lang.String&gt;&nbsp;proofBlockList)
+                 <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)
+                   throws <a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></pre>
+<div class="block">Add Theorem to Logical System.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>labelS</code> - axiom label string</dd><dd><code>typS</code> - axiom type code (symbol) string</dd><dd><code>symList</code> - list containing axiom expression symbol strings (zero or
+            more symbols).</dd><dd><code>proofList</code> - list containing proof step symbol strings (1 or more
+            symbols -- which may be "?" if a step is unknown).</dd><dd><code>messages</code> - for error reporting</dd>
+<dt><span class="strong">Returns:</span></dt><dd>Theorem newly constructed Theorem added to LogicalSystem.</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></code> - if duplicate label, undefined vars, etc.</dd></dl>
+</li>
+</ul>
+<a name="addTheorem(java.lang.String, java.lang.String, java.util.List, java.util.List, mmj.mmio.BlockList, mmj.lang.Messages)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addTheorem</h4>
+<pre><a href="../../mmj/lang/Theorem.html" title="class in mmj.lang">Theorem</a>&nbsp;addTheorem(java.lang.String&nbsp;labelS,
+                 java.lang.String&nbsp;typS,
+                 java.util.List&lt;java.lang.String&gt;&nbsp;symList,
+                 java.util.List&lt;java.lang.String&gt;&nbsp;proofList,
+                 <a href="../../mmj/mmio/BlockList.html" title="class in mmj.mmio">BlockList</a>&nbsp;proofBlockList,
+                 <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)
                    throws <a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></pre>
 <div class="block">Add Theorem to Logical System.
  <p>
@@ -377,7 +381,7 @@
             more symbols).</dd><dd><code>proofList</code> - list containing the contents of the parenthesized
             portion of a compressed proof (does not include the
             parentheses)</dd><dd><code>proofBlockList</code> - list containing one or more blocks of compressed
-            proof symbols.</dd>
+            proof symbols.</dd><dd><code>messages</code> - for error reporting</dd>
 <dt><span class="strong">Returns:</span></dt><dd>Theorem newly constructed Theorem added to LogicalSystem.</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code><a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></code> - if duplicate label, undefined vars, etc.</dd></dl>

@@ -85,7 +85,7 @@ public class FooterStmt extends ProofWorkStmt {
         stmtText = new StringBuilder(PaConstants.PROOF_TEXT_FOOTER.length() + 2);
 
         stmtText.append(PaConstants.PROOF_TEXT_FOOTER);
-        stmtText.append(PaConstants.PROOF_WORKSHEET_NEW_LINE);
+        stmtText.append("\n");
 
         w.doubleSpaceQedStep();
     }

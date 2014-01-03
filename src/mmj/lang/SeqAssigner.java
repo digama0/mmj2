@@ -146,7 +146,7 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
      */
     public int nextSeq() {
 
-        ++mObjCount;
+        mObjCount++;
 
         final long seq = ++nbrIntervals * intervalSize;
         if (seq + intervalSize < Integer.MAX_VALUE)

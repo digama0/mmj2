@@ -553,6 +553,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * @param proofText proof text from ProofAsstGUI screen, or any String
      *            conforming to the formatting rules of ProofAsst.
      * @param renumReq renumbering of proof steps requested
+     * @param noConvertWV true if we should not replace work vars with dummy
+     *            vars in derivation steps
      * @param preprocessRequest if not null specifies an editing operation to be
      *            applied to the proof text before other processing.
      * @param inputCursorPos caret offset plus one of input or -1 if caret pos
@@ -562,7 +564,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * @param tlRequest may be null or a TLRequest.
      * @return ProofWorksheet unified.
      */
-    public ProofWorksheet unify(final boolean renumReq, final String proofText,
+    public ProofWorksheet unify(final boolean renumReq,
+        final boolean noConvertWV, final String proofText,
         final PreprocessRequest preprocessRequest,
         final StepRequest stepRequest, final TLRequest tlRequest,
         final int inputCursorPos)
@@ -590,7 +593,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                     PaConstants.PROOF_STEP_RENUMBER_START,
                     PaConstants.PROOF_STEP_RENUMBER_INTERVAL);
 
-            unifyProofWorksheet(proofWorksheet);
+            unifyProofWorksheet(proofWorksheet, noConvertWV);
         }
 
         if (tlRequest != null && proofWorksheet.getGeneratedProofStmt() != null)
@@ -687,6 +690,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                     proofAsstPreferences
                         .setRecheckProofAsstUsingProofVerifier(false);
                 proofWorksheet = unify(false, // no renum
+                    true, // don't convert work vars
                     proofText, null, // no preprocess
                     null, // no step request
                     null, // no TL request
@@ -699,6 +703,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 // retest
                 if (updatedProofText != null && asciiRetest)
                     unify(false, // no renum
+                        true, // don't convert work vars
                         updatedProofText, null, // no preprocess request
                         null, // no step request
                         null, // no TL request
@@ -729,7 +734,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             if (numberProcessed >= numberToProcess
                 || messages.maxErrorMessagesReached())
                 return;
-            ++nbrTestTheoremsProcessed;
+            nbrTestTheoremsProcessed++;
             proofText = exportOneTheorem(null, theorem, unifiedFormat,
                 hypsRandomized, deriveFormulas);
             if (proofText != null) {
@@ -739,6 +744,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 // for Volume Testing
                 final long startNanoTime = System.nanoTime();
                 proofWorksheet = unify(false, // no renum
+                    true, // don't convert work vars
                     proofText, null, // no preprocess
                     null, // no step request
                     null, // no TL request
@@ -756,6 +762,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 // retest
                 if (updatedProofText != null && asciiRetest)
                     unify(false, // no renum
+                        true, // don't convert work vars
                         updatedProofText, null, // no preprocess request
                         null, // no step request
                         null, // no TL request
@@ -768,7 +775,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                     checkAndCompareUpdateDJs(proofWorksheet);
                 }
             }
-            ++numberProcessed;
+            numberProcessed++;
         }
         printVolumeTestStats();
     }
@@ -845,7 +852,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                             proofAsstPreferences
                                 .setRecheckProofAsstUsingProofVerifier(false);
 
-                        unifyProofWorksheet(proofWorksheet);
+                        unifyProofWorksheet(proofWorksheet, false);
 
                         if (asciiRetest)
                             proofAsstPreferences
@@ -856,6 +863,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                         // retest
                         if (updatedProofText != null && asciiRetest)
                             unify(false, // no renum
+                                false, // convert work vars
                                 updatedProofText, null, // no preprocess request
                                 null, // no step request
                                 null, // no TL request
@@ -882,7 +890,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                     proofAsstPreferences
                         .setRecheckProofAsstUsingProofVerifier(false);
 
-                unifyProofWorksheet(proofWorksheet);
+                unifyProofWorksheet(proofWorksheet, false);
 
                 if (asciiRetest)
                     proofAsstPreferences
@@ -893,6 +901,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 // retest
                 if (updatedProofText != null && asciiRetest)
                     unify(false, // no renum
+                        false, // convert work vars
                         updatedProofText, null, // no preprocess request
                         null, // no step request
                         null, // no TL request
@@ -904,7 +913,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                         updatedProofText);
                     checkAndCompareUpdateDJs(proofWorksheet);
                 }
-                ++numberProcessed;
+                numberProcessed++;
                 if (!proofWorksheetParser.hasNext())
                     break;
             }
@@ -955,6 +964,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             printProof(outputBoss, " ", proofText);
 
         final ProofWorksheet proofWorksheet = unify(false, // no renum
+            false, // convert work vars
             proofText, preprocessRequest, null, // no step request
             null, // no TL request
             -1); // inputCursorPos
@@ -1002,7 +1012,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
             if (!proofWorksheet.hasStructuralErrors()) {
                 origProofText = proofWorksheet.getOutputProofText();
-                unifyProofWorksheet(proofWorksheet);
+                unifyProofWorksheet(proofWorksheet, false);
             }
             if (proofWorksheet.hasStructuralErrors()) {
                 messages.accumErrorMessage(
@@ -1047,6 +1057,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 results.refArray[selectionNumber]);
 
             proofWorksheet = unify(false, // no renumReq,
+                false, // convert work vars
                 origProofText, null, // no preprocessRequest,
                 stepRequestChoice, null, // no TL request
                 cursorPos + 1);
@@ -1143,7 +1154,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 exportFormatUnified, hypsRandomized, deriveFormulas);
             if (proofText != null)
                 printProof(outputBoss, theorem.getLabel(), proofText);
-            ++numberExported;
+            numberExported++;
         }
     }
     // Note: could do binary lookup for sequence number
@@ -1268,7 +1279,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         final DerivationStep q = proofWorksheet.getQedStep();
 
         if (q == null) {
-            ++nbrTestNotProvedPerfectly;
+            nbrTestNotProvedPerfectly++;
             messages.accumInfoMessage(PaConstants.ERRMSG_PA_TESTMSG_01,
                 theorem.getLabel(), (startNanoTime + 50000000) / endNanoTime,
                 9999999, "No qed step found!");
@@ -1287,12 +1298,12 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 s = 8; // proved perfectly
             else {
                 s = 10; // verify proof err
-                ++nbrTestNotProvedPerfectly;
+                nbrTestNotProvedPerfectly++;
             }
         }
         else {
             s = 9; // dj vars error
-            ++nbrTestNotProvedPerfectly;
+            nbrTestNotProvedPerfectly++;
         }
 
         messages.accumInfoMessage(PaConstants.ERRMSG_PA_TESTMSG_01,
@@ -1300,12 +1311,13 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             PaConstants.STATUS_DESC[s]);
 
         if (q != null) {
-            Stmt[] newProof;
+            RPNStep[] newProof;
             if (q.proofTree == null)
-                newProof = new Stmt[0];
+                newProof = new RPNStep[0];
             else
-                newProof = q.proofTree.convertToRPN();
-            final Stmt[] oldProof = proofWorksheet.getTheorem().getProof();
+                newProof = q.proofTree.convertToRPNExpanded();
+            final RPNStep[] oldProof = new ParseTree(proofWorksheet
+                .getTheorem().getProof()).convertToRPNExpanded();
 
             boolean differenceFound = false;
             String oldStmtDiff = "";
@@ -1317,24 +1329,24 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 }
                 else {
                     differenceFound = true;
-                    newStmtDiff = newProof[0].getLabel();
+                    newStmtDiff = newProof[0].stmt.getLabel();
                 }
             }
             else {
                 int i = 0;
                 while (true) {
                     if (i < oldProof.length && i < newProof.length) {
-                        if (newProof[i] == oldProof[i]) {
-                            ++i;
+                        if (newProof[i].stmt == oldProof[i].stmt) {
+                            i++;
                             continue;
                         }
-                        oldStmtDiff = oldProof[i].getLabel();
-                        newStmtDiff = newProof[i].getLabel();
+                        oldStmtDiff = oldProof[i].stmt.getLabel();
+                        newStmtDiff = newProof[i].stmt.getLabel();
                     }
                     else if (i < oldProof.length)
-                        oldStmtDiff = oldProof[i].getLabel();
+                        oldStmtDiff = oldProof[i].stmt.getLabel();
                     else if (i < newProof.length)
-                        newStmtDiff = newProof[i].getLabel();
+                        newStmtDiff = newProof[i].stmt.getLabel();
                     else
                         break; // no differences
                     differenceFound = true;
@@ -1343,7 +1355,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             }
 
             if (differenceFound) {
-                ++nbrTestProvedDifferently;
+                nbrTestProvedDifferently++;
                 messages.accumInfoMessage(PaConstants.ERRMSG_PA_TESTMSG_02,
                     theorem.getLabel(), oldStmtDiff, newStmtDiff);
             }
@@ -1372,7 +1384,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                     label = results.refArray[i].getLabel();
                 outputBoss.sysOutPrint(" " + i + " " + label + " "
                     + results.selectionArray[i]
-                    + PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING);
+                    + "\n");
             }
         } catch (final IOException e) {
             e.printStackTrace();
@@ -1460,7 +1472,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         return proofWorksheet;
     }
 
-    private void unifyProofWorksheet(final ProofWorksheet proofWorksheet) {
+    private void unifyProofWorksheet(final ProofWorksheet proofWorksheet,
+        final boolean noConvertWV)
+    {
 
         if (proofWorksheet.getNbrDerivStepsReadyForUnify() > 0
             || proofWorksheet.stepRequest != null
@@ -1471,7 +1485,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
             try {
                 proofUnifier.unifyAllProofDerivationSteps(proofWorksheet,
-                    messages);
+                    messages, noConvertWV);
             } catch (final VerifyException e) {
                 // this is a particularly severe situation
                 // caused by a shortage of allocatable
@@ -1498,7 +1512,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 if (proofAsstPreferences.getProofFormatCompressed()) {
                     final StringBuilder letters = new StringBuilder();
 
-                    final List<Hyp> mandHypList = new ArrayList<Hyp>(), optHypList = new ArrayList<Hyp>();
+                    final List<Hyp> mandHypList = new ArrayList<Hyp>();
+                    final List<VarHyp> optHypList = new ArrayList<VarHyp>();
                     ProofUnifier.separateMandAndOptFrame(proofWorksheet,
                         proofWorksheet.getQedStep(), mandHypList, optHypList,
                         true);
@@ -1531,7 +1546,6 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 getErrorLabelIfPossible(proofWorksheet));
         incompleteStepCursorPositioning(proofWorksheet);
     }
-
     private void incompleteStepCursorPositioning(
         final ProofWorksheet proofWorksheet)
     {
@@ -1594,7 +1608,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         try {
             outputBoss.sysOutPrint(proofText);
-            outputBoss.sysOutPrint(PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING);
+            outputBoss.sysOutPrint("\n");
         } catch (final IOException e) {
             e.printStackTrace();
             throw new IllegalArgumentException(LangException.format(

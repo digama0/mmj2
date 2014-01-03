@@ -2,13 +2,13 @@
 <!-- NewPage -->
 <html lang="en">
 <head>
-<title>ParseTree.RPNStep</title>
+<title>BlockList</title>
 <link rel="stylesheet" type="text/css" href="../../stylesheet.css" title="Style">
 </head>
 <body>
 <script type="text/javascript"><!--
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="ParseTree.RPNStep";
+        parent.document.title="BlockList";
     }
 //-->
 </script>
@@ -33,12 +33,12 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../mmj/lang/ParseTree.html" title="class in mmj.lang"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../mmj/lang/ProofCompression.html" title="class in mmj.lang"><span class="strong">Next Class</span></a></li>
+<li>Prev Class</li>
+<li><a href="../../mmj/mmio/IncludeFile.html" title="class in mmj.mmio"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
-<li><a href="../../index.html?mmj/lang/ParseTree.RPNStep.html" target="_top">Frames</a></li>
-<li><a href="ParseTree.RPNStep.html" target="_top">No Frames</a></li>
+<li><a href="../../index.html?mmj/mmio/BlockList.html" target="_top">Frames</a></li>
+<li><a href="BlockList.html" target="_top">No Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_top">
 <li><a href="../../allclasses-noframe.html">All Classes</a></li>
@@ -76,48 +76,25 @@
 <!-- ========= END OF TOP NAVBAR ========= -->
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
-<div class="subTitle">mmj.lang</div>
-<h2 title="Class ParseTree.RPNStep" class="title">Class ParseTree.RPNStep</h2>
+<div class="subTitle">mmj.mmio</div>
+<h2 title="Class BlockList" class="title">Class BlockList</h2>
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li>mmj.lang.ParseTree.RPNStep</li>
+<li>mmj.mmio.BlockList</li>
 </ul>
 </li>
 </ul>
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
-<dl>
-<dt>Enclosing class:</dt>
-<dd><a href="../../mmj/lang/ParseTree.html" title="class in mmj.lang">ParseTree</a></dd>
-</dl>
 <hr>
 <br>
-<pre>public static class <span class="strong">ParseTree.RPNStep</span>
+<pre>public class <span class="strong">BlockList</span>
 extends java.lang.Object</pre>
-<div class="block">Stores backreference information in "packed" and "compressed" formats.
- <p>
- In packed format, proof steps come in three different flavors: unmarked
- (for example <code>syl</code>) and marked (for example <code>syl:5</code>), as well
- as backreference steps (just written as numbers i.e. <code>5</code>). In
- compressed format the same rules apply, except it is harder to read.
- Marked steps get a <code>Z</code> after the number, and backreferences are
- numbers larger than the statement list. In our format, which most closely
- resembles the packed format, unmarked steps have a valid <code>stmt</code> and
- <code>backRef = 0</code>. Marked steps have a valid <code>stmt</code> and
- <code>backRef &lt; 0</code>: the value of <code>-backRef</code> is the 1-based index
- of this marked step in a list of all marked steps (this is <i>not</i> the
- RPN index).
- <p>
- For backreference steps, <code>backRef &gt; 0</code> and <code>stmt</code> is
- <code>null</code>. In this case, <code>backRef</code> is the index of the marked
- step that is being referenced. (One other special case is <code>?</code>
- steps: in this case <code>stmt</code> is <code>null</code> and <code>backRef = 0</code>
- .)</div>
 </li>
 </ul>
 </div>
@@ -137,12 +114,8 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../mmj/lang/ParseTree.RPNStep.html#backRef">backRef</a></strong></code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code><a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a></code></td>
-<td class="colLast"><code><strong><a href="../../mmj/lang/ParseTree.RPNStep.html#stmt">stmt</a></strong></code>&nbsp;</td>
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/BlockList.html#marked">marked</a></strong></code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -159,7 +132,7 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../mmj/lang/ParseTree.RPNStep.html#ParseTree.RPNStep(mmj.lang.Stmt)">ParseTree.RPNStep</a></strong>(<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>&nbsp;stmt)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../mmj/mmio/BlockList.html#BlockList()">BlockList</a></strong>()</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -177,8 +150,24 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/BlockList.html#addBlock(java.lang.String)">addBlock</a></strong>(java.lang.String&nbsp;block)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/BlockList.html#getIndex()">getIndex</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/BlockList.html#getNext(java.lang.String)">getNext</a></strong>(java.lang.String&nbsp;theoremLabel)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/BlockList.html#isEmpty()">isEmpty</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../mmj/lang/ParseTree.RPNStep.html#toString()">toString</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../mmj/mmio/BlockList.html#toString()">toString</a></strong>()</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -202,22 +191,13 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="stmt">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>stmt</h4>
-<pre>public&nbsp;<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a> stmt</pre>
-</li>
-</ul>
-<a name="backRef">
+<a name="marked">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>backRef</h4>
-<pre>public&nbsp;int backRef</pre>
+<h4>marked</h4>
+<pre>public&nbsp;boolean marked</pre>
 </li>
 </ul>
 </li>
@@ -228,13 +208,13 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="ParseTree.RPNStep(mmj.lang.Stmt)">
+<a name="BlockList()">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>ParseTree.RPNStep</h4>
-<pre>public&nbsp;ParseTree.RPNStep(<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>&nbsp;stmt)</pre>
+<h4>BlockList</h4>
+<pre>public&nbsp;BlockList()</pre>
 </li>
 </ul>
 </li>
@@ -245,6 +225,45 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="getIndex()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getIndex</h4>
+<pre>public&nbsp;int&nbsp;getIndex()</pre>
+</li>
+</ul>
+<a name="addBlock(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addBlock</h4>
+<pre>public&nbsp;void&nbsp;addBlock(java.lang.String&nbsp;block)</pre>
+</li>
+</ul>
+<a name="getNext(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getNext</h4>
+<pre>public&nbsp;int&nbsp;getNext(java.lang.String&nbsp;theoremLabel)
+            throws <a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></code></dd></dl>
+</li>
+</ul>
+<a name="isEmpty()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isEmpty</h4>
+<pre>public&nbsp;boolean&nbsp;isEmpty()</pre>
+</li>
+</ul>
 <a name="toString()">
 <!--   -->
 </a>
@@ -283,12 +302,12 @@ extends java.lang.Object</pre>
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../mmj/lang/ParseTree.html" title="class in mmj.lang"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../mmj/lang/ProofCompression.html" title="class in mmj.lang"><span class="strong">Next Class</span></a></li>
+<li>Prev Class</li>
+<li><a href="../../mmj/mmio/IncludeFile.html" title="class in mmj.mmio"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
-<li><a href="../../index.html?mmj/lang/ParseTree.RPNStep.html" target="_top">Frames</a></li>
-<li><a href="ParseTree.RPNStep.html" target="_top">No Frames</a></li>
+<li><a href="../../index.html?mmj/mmio/BlockList.html" target="_top">Frames</a></li>
+<li><a href="BlockList.html" target="_top">No Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_bottom">
 <li><a href="../../allclasses-noframe.html">All Classes</a></li>

@@ -99,7 +99,7 @@ public class MinProofStepStmt extends MinProofWorkStmt {
                 chunk = lineChunks[j];
                 if (chunk.length() > 0 && !isChunkWhitespace(chunk)) {
 
-                    ++nbrNonWhitespaceTokensFound;
+                    nbrNonWhitespaceTokensFound++;
                     if (i == 0 && nbrNonWhitespaceTokensFound < 2)
                         continue;
                     startOfFormulaSymbols = j;

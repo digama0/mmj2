@@ -139,19 +139,20 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><strong><a href="../../mmj/lang/ProofCompression.html#compress(java.lang.String, int, java.util.List, java.util.List, mmj.lang.ParseTree.RPNStep[], java.lang.StringBuilder)">compress</a></strong>(java.lang.String&nbsp;theoremLabel,
         int&nbsp;width,
         java.util.List&lt;<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>&gt;&nbsp;mandHypArray,
-        java.util.List&lt;<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>&gt;&nbsp;optHypArray,
+        java.util.List&lt;<a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a>&gt;&nbsp;optHypArray,
         <a href="../../mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a>[]&nbsp;rpnProof,
         java.lang.StringBuilder&nbsp;letters)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>[]</code></td>
-<td class="colLast"><code><strong><a href="../../mmj/lang/ProofCompression.html#decompress(java.lang.String, int, java.util.Map, mmj.lang.Hyp[], mmj.lang.Hyp[], java.util.List, java.util.List)">decompress</a></strong>(java.lang.String&nbsp;theoremLabel,
+<td class="colFirst"><code><a href="../../mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ProofCompression.html#decompress(java.lang.String, int, java.util.Map, mmj.lang.Hyp[], mmj.lang.Hyp[], java.util.List, mmj.mmio.BlockList, mmj.lang.Messages)">decompress</a></strong>(java.lang.String&nbsp;theoremLabel,
           int&nbsp;seq,
           java.util.Map&lt;java.lang.String,<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>&gt;&nbsp;stmtTbl,
           <a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>[]&nbsp;mandHypArray,
           <a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>[]&nbsp;optHypArray,
           java.util.List&lt;java.lang.String&gt;&nbsp;otherRefList,
-          java.util.List&lt;java.lang.String&gt;&nbsp;proofBlockList)</code>
+          <a href="../../mmj/mmio/BlockList.html" title="class in mmj.mmio">BlockList</a>&nbsp;proofBlockList,
+          <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)</code>
 <div class="block">Decompress a single proof.</div>
 </td>
 </tr>
@@ -160,6 +161,14 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><strong><a href="../../mmj/lang/ProofCompression.html#isProofStepInExtendedFrame(mmj.lang.Stmt)">isProofStepInExtendedFrame</a></strong>(<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>&nbsp;proofStep)</code>
 <div class="block">Checks to see whether or not a proof step is contained in the Theorem's
  Extended Frame.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ProofCompression.html#isProofStepInFrame(mmj.lang.Stmt, mmj.lang.Hyp[])">isProofStepInFrame</a></strong>(<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>&nbsp;proofStep,
+                  <a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>[]&nbsp;frame)</code>
+<div class="block">Checks to see whether or not a proof step is contained in the given
+ Frame.</div>
 </td>
 </tr>
 </table>
@@ -202,29 +211,45 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="decompress(java.lang.String, int, java.util.Map, mmj.lang.Hyp[], mmj.lang.Hyp[], java.util.List, java.util.List)">
+<a name="decompress(java.lang.String, int, java.util.Map, mmj.lang.Hyp[], mmj.lang.Hyp[], java.util.List, mmj.mmio.BlockList, mmj.lang.Messages)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>decompress</h4>
-<pre>public&nbsp;<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>[]&nbsp;decompress(java.lang.String&nbsp;theoremLabel,
-                int&nbsp;seq,
-                java.util.Map&lt;java.lang.String,<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>&gt;&nbsp;stmtTbl,
-                <a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>[]&nbsp;mandHypArray,
-                <a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>[]&nbsp;optHypArray,
-                java.util.List&lt;java.lang.String&gt;&nbsp;otherRefList,
-                java.util.List&lt;java.lang.String&gt;&nbsp;proofBlockList)
-                  throws <a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></pre>
+<pre>public&nbsp;<a href="../../mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a>[]&nbsp;decompress(java.lang.String&nbsp;theoremLabel,
+                             int&nbsp;seq,
+                             java.util.Map&lt;java.lang.String,<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>&gt;&nbsp;stmtTbl,
+                             <a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>[]&nbsp;mandHypArray,
+                             <a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>[]&nbsp;optHypArray,
+                             java.util.List&lt;java.lang.String&gt;&nbsp;otherRefList,
+                             <a href="../../mmj/mmio/BlockList.html" title="class in mmj.mmio">BlockList</a>&nbsp;proofBlockList,
+                             <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)
+                               throws <a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></pre>
 <div class="block">Decompress a single proof.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>theoremLabel</code> - Theorem's label, used in error messages that may be
             generated during processing.</dd><dd><code>seq</code> - the sequence number of the theorem</dd><dd><code>stmtTbl</code> - Stmt lookup map for translating labels into Stmt object
             references.</dd><dd><code>mandHypArray</code> - The theorem's MandFrame.hypArray.</dd><dd><code>optHypArray</code> - The theorem's OptFrame.optHypArray.</dd><dd><code>otherRefList</code> - List of String containing labels of Stmt's provided
             in the parenthesized portion of a compressed proof.</dd><dd><code>proofBlockList</code> - List of String containing the compressed portion of
-            the proof.</dd>
-<dt><span class="strong">Returns:</span></dt><dd>Stmt array containing decompressed Metamath RPN proof.</dd>
+            the proof.</dd><dd><code>messages</code> - for error reporting</dd>
+<dt><span class="strong">Returns:</span></dt><dd>RPNStep array containing decompressed (but still "packed")
+         Metamath RPN proof.</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code><a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></code> - if an error occurred</dd></dl>
+</li>
+</ul>
+<a name="isProofStepInFrame(mmj.lang.Stmt, mmj.lang.Hyp[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isProofStepInFrame</h4>
+<pre>public&nbsp;boolean&nbsp;isProofStepInFrame(<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>&nbsp;proofStep,
+                         <a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>[]&nbsp;frame)</pre>
+<div class="block">Checks to see whether or not a proof step is contained in the given
+ Frame.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>proofStep</code> - a Statement reference.</dd><dd><code>frame</code> - the frame to check</dd>
+<dt><span class="strong">Returns:</span></dt><dd>true if proof step == a Hyp in the frame</dd></dl>
 </li>
 </ul>
 <a name="isProofStepInExtendedFrame(mmj.lang.Stmt)">
@@ -255,7 +280,7 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;java.util.List&lt;<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>&gt;&nbsp;compress(java.lang.String&nbsp;theoremLabel,
                             int&nbsp;width,
                             java.util.List&lt;<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>&gt;&nbsp;mandHypArray,
-                            java.util.List&lt;<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>&gt;&nbsp;optHypArray,
+                            java.util.List&lt;<a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a>&gt;&nbsp;optHypArray,
                             <a href="../../mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a>[]&nbsp;rpnProof,
                             java.lang.StringBuilder&nbsp;letters)</pre>
 </li>

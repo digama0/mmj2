@@ -300,7 +300,7 @@ public class Axiom extends Assrt {
                 continue;
             }
 
-            ++varCnt;
+            varCnt++;
             if (syntaxAxiomVarHypReseq == null)
                 subNode = child[varCnt];
             else

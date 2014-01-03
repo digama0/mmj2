@@ -245,8 +245,8 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#accumListVarHypUsedListBySeq(java.util.List, java.util.List)">accumListVarHypUsedListBySeq</a></strong>(java.util.List&lt;<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>&gt;&nbsp;varHypList,
-                            java.util.List&lt;<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>&gt;&nbsp;varHypInUseList)</code>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#accumListVarHypUsedListBySeq(java.util.List, java.util.List)">accumListVarHypUsedListBySeq</a></strong>(java.util.List&lt;<a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a>&gt;&nbsp;optionalVarHypList,
+                            java.util.List&lt;<a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a>&gt;&nbsp;optionalVarHypsInUseList)</code>
 <div class="block">Accumulate Var Hyps used in the subtree which are also in an input list
  of Var Hyps.</div>
 </td>
@@ -259,7 +259,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#accumVarHypUsedListBySeq(java.util.List)">accumVarHypUsedListBySeq</a></strong>(java.util.List&lt;<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>&gt;&nbsp;varHypList)</code>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#accumVarHypUsedListBySeq(java.util.List)">accumVarHypUsedListBySeq</a></strong>(java.util.List&lt;? super <a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a>&gt;&nbsp;varHypList)</code>
 <div class="block">Updates an ArrayList to maintain a set of Var Hyps used in a subtree.</div>
 </td>
 </tr>
@@ -292,31 +292,38 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>[]</code></td>
-<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#convertToRPN()">convertToRPN</a></strong>()</code>
+<td class="colFirst"><code><a href="../../mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#convertToRPN(boolean)">convertToRPN</a></strong>(boolean&nbsp;pressLeaf)</code>
 <div class="block">Converts a sub-tree expression to Reverse Polish Notation.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#convertToRPN(mmj.lang.Stmt[], int)">convertToRPN</a></strong>(<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>[]&nbsp;outRPN,
-            int&nbsp;dest)</code>
-<div class="block">Converts a sub-tree to Reverse Polish Notation.</div>
-</td>
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#convertToRPN(boolean, mmj.lang.ParseTree.RPNStep[], int[])">convertToRPN</a></strong>(boolean&nbsp;pressLeaf,
+            <a href="../../mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a>[]&nbsp;list,
+            int[]&nbsp;dat)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#countParseNodes()">countParseNodes</a></strong>()</code>
-<div class="block">Counts nodes in a ParseNode sub-tree.</div>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#convertToRPNExpanded(mmj.lang.ParseTree.RPNStep[], int)">convertToRPNExpanded</a></strong>(<a href="../../mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a>[]&nbsp;outRPN,
+                    int&nbsp;dest)</code>
+<div class="block">Converts a sub-tree to Reverse Polish Notation.</div>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#countParseNodes(boolean)">countParseNodes</a></strong>(boolean&nbsp;expanded)</code>
+<div class="block">Counts nodes in a ParseNode sub-tree, and initializes the
+ <a href="../../mmj/lang/ParseNode.html#firstAppearance"><code>firstAppearance</code></a> field.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></code></td>
 <td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#deepClone()">deepClone</a></strong>()</code>
 <div class="block">Deep clone of a ParseNode sub-tree.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></code></td>
 <td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#deepCloneApplyingAssrtSubst(mmj.lang.Hyp[], mmj.lang.ParseNode[])">deepCloneApplyingAssrtSubst</a></strong>(<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>[]&nbsp;assrtHypArray,
                            <a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[]&nbsp;assrtSubst)</code>
@@ -324,7 +331,7 @@ extends java.lang.Object</pre>
  specified by a parallel Hyp array.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></code></td>
 <td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#deepCloneApplyingAssrtSubst(mmj.lang.Hyp[], mmj.lang.ParseNode[], java.util.List)">deepCloneApplyingAssrtSubst</a></strong>(<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>[]&nbsp;assrtHypArray,
                            <a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[]&nbsp;assrtSubst,
@@ -334,13 +341,13 @@ extends java.lang.Object</pre>
  output.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></code></td>
 <td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#deepCloneApplyingWorkVarUpdates()">deepCloneApplyingWorkVarUpdates</a></strong>()</code>
 <div class="block">(Deep) Clone a ParseNode while applying updates to WorkVars.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></code></td>
 <td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#deepCloneWithGrammarHypSubs(mmj.lang.ParseNode[], mmj.lang.ParseNodeHolder[])">deepCloneWithGrammarHypSubs</a></strong>(<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[]&nbsp;matchNode,
                            <a href="../../mmj/lang/ParseNodeHolder.html" title="class in mmj.lang">ParseNodeHolder</a>[]&nbsp;expandedReseqParam)</code>
@@ -348,7 +355,7 @@ extends java.lang.Object</pre>
  corresponding matchNode array node.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></code></td>
 <td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#deepCloneWNodeSub(mmj.lang.ParseNode, mmj.lang.ParseNode)">deepCloneWNodeSub</a></strong>(<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>&nbsp;matchNode,
                  <a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>&nbsp;substNode)</code>
@@ -356,49 +363,42 @@ extends java.lang.Object</pre>
  "matchNode" is found.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></code></td>
 <td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#findFirstVarHypNode()">findFirstVarHypNode</a></strong>()</code>
 <div class="block">Finds *first* VarHyp node in a sub-tree.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[]</code></td>
 <td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#getChild()">getChild</a></strong>()</code>
 <div class="block">Return ParseNode's Child ParseNode array.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a></code></td>
 <td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#getStmt()">getStmt</a></strong>()</code>
 <div class="block">Return ParseNode's Stmt.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#hasUpdatedWorkVar()">hasUpdatedWorkVar</a></strong>()</code>
 <div class="block">Returns true if subtree contains a WorkVar which has a non-null assigned
  substitution update.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#isDeepDup(mmj.lang.ParseNode)">isDeepDup</a></strong>(<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>&nbsp;that)</code>
 <div class="block">Determine if sub-tree is a duplicate of this sub-tree.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#isDeepDup(mmj.lang.ParseNode, mmj.lang.ParseNode[])">isDeepDup</a></strong>(<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>&nbsp;that,
          <a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[]&nbsp;compareNodeStack)</code>
 <div class="block">Determine if sub-tree is a duplicate of this sub-tree.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#loadParseNodeFromRPN(mmj.lang.Stmt[], int)">loadParseNodeFromRPN</a></strong>(<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>[]&nbsp;rpn,
-                    int&nbsp;stmtPosInRPN)</code>
-<div class="block">Builds a ParseNode sub-tree from a Stmt array in RPN format.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -423,8 +423,16 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#squishTree(java.util.List)">squishTree</a></strong>(java.util.List&lt;<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>&gt;&nbsp;encountered)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../mmj/lang/ParseNode.SubTreeIterator.html" title="class in mmj.lang">ParseNode.SubTreeIterator</a></code></td>
 <td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#subTreeIterator(boolean)">subTreeIterator</a></strong>(boolean&nbsp;excludeVarHyps)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../mmj/lang/ParseNode.html#toString()">toString</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
@@ -449,7 +457,7 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -768,60 +776,67 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd>maximum depth of parse sub-tree</dd></dl>
 </li>
 </ul>
-<a name="countParseNodes()">
+<a name="countParseNodes(boolean)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>countParseNodes</h4>
-<pre>public&nbsp;int&nbsp;countParseNodes()</pre>
-<div class="block">Counts nodes in a ParseNode sub-tree.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd>the number of nodes</dd></dl>
+<pre>public&nbsp;int&nbsp;countParseNodes(boolean&nbsp;expanded)</pre>
+<div class="block">Counts nodes in a ParseNode sub-tree, and initializes the
+ <a href="../../mmj/lang/ParseNode.html#firstAppearance"><code>firstAppearance</code></a> field.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>expanded</code> - <code>true</code> if repeated subtrees are to be counted as
+            fully expanded, <code>false</code> to count them as stubs of size 1</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the number of nodes</dd></dl>
 </li>
 </ul>
-<a name="convertToRPN()">
+<a name="squishTree(java.util.List)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>squishTree</h4>
+<pre>public&nbsp;boolean&nbsp;squishTree(java.util.List&lt;<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>&gt;&nbsp;encountered)</pre>
+</li>
+</ul>
+<a name="convertToRPN(boolean)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>convertToRPN</h4>
-<pre>public&nbsp;<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>[]&nbsp;convertToRPN()</pre>
+<pre>public&nbsp;<a href="../../mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a>[]&nbsp;convertToRPN(boolean&nbsp;pressLeaf)</pre>
 <div class="block">Converts a sub-tree expression to Reverse Polish Notation.
  <p>
  Intended for creating the RPN for an expression rather than an entire
  formula (with ParseTree).</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd>RPN Stmt array.</dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>pressLeaf</code> - <code>true</code> if nodes with no children should be
+            backreferenced</dd>
+<dt><span class="strong">Returns:</span></dt><dd>RPN Stmt array.</dd></dl>
 </li>
 </ul>
-<a name="convertToRPN(mmj.lang.Stmt[], int)">
+<a name="convertToRPN(boolean, mmj.lang.ParseTree.RPNStep[], int[])">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>convertToRPN</h4>
-<pre>public&nbsp;int&nbsp;convertToRPN(<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>[]&nbsp;outRPN,
-               int&nbsp;dest)</pre>
-<div class="block">Converts a sub-tree to Reverse Polish Notation.
- <p>
- Works in reverse order.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>outRPN</code> - Stmt Array where RPN will be stored.</dd><dd><code>dest</code> - location in output array to write the next Stmt reference.</dd>
-<dt><span class="strong">Returns:</span></dt><dd>dest of *next* output Stmt array item.</dd></dl>
+<pre>public&nbsp;void&nbsp;convertToRPN(boolean&nbsp;pressLeaf,
+                <a href="../../mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a>[]&nbsp;list,
+                int[]&nbsp;dat)</pre>
 </li>
 </ul>
-<a name="loadParseNodeFromRPN(mmj.lang.Stmt[], int)">
+<a name="convertToRPNExpanded(mmj.lang.ParseTree.RPNStep[], int)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>loadParseNodeFromRPN</h4>
-<pre>public&nbsp;int&nbsp;loadParseNodeFromRPN(<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>[]&nbsp;rpn,
-                       int&nbsp;stmtPosInRPN)</pre>
-<div class="block">Builds a ParseNode sub-tree from a Stmt array in RPN format.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>rpn</code> - Stmt array in RPN format.</dd><dd><code>stmtPosInRPN</code> - location of next Stmt in array</dd>
-<dt><span class="strong">Returns:</span></dt><dd>location of next Stmt in array</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.lang.IllegalArgumentException</code> - if ParseTree cannot be built from the
-             RPN (null statment or RPN incomplete.)</dd></dl>
+<h4>convertToRPNExpanded</h4>
+<pre>public&nbsp;int&nbsp;convertToRPNExpanded(<a href="../../mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a>[]&nbsp;outRPN,
+                       int&nbsp;dest)</pre>
+<div class="block">Converts a sub-tree to Reverse Polish Notation.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>outRPN</code> - Stmt Array where RPN will be stored.</dd><dd><code>dest</code> - location in output array to write the next Stmt reference.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>dest of *next* output Stmt array item.</dd></dl>
 </li>
 </ul>
 <a name="renderParsedSubExpr(java.lang.StringBuilder, int, int)">
@@ -940,7 +955,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>accumVarHypUsedListBySeq</h4>
-<pre>public&nbsp;void&nbsp;accumVarHypUsedListBySeq(java.util.List&lt;<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>&gt;&nbsp;varHypList)</pre>
+<pre>public&nbsp;void&nbsp;accumVarHypUsedListBySeq(java.util.List&lt;? super <a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a>&gt;&nbsp;varHypList)</pre>
 <div class="block">Updates an ArrayList to maintain a set of Var Hyps used in a subtree.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>varHypList</code> - List of VarHyp objects in subtree.</dd></dl>
 </li>
@@ -951,8 +966,8 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>accumListVarHypUsedListBySeq</h4>
-<pre>public&nbsp;void&nbsp;accumListVarHypUsedListBySeq(java.util.List&lt;<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>&gt;&nbsp;varHypList,
-                                java.util.List&lt;<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>&gt;&nbsp;varHypInUseList)</pre>
+<pre>public&nbsp;void&nbsp;accumListVarHypUsedListBySeq(java.util.List&lt;<a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a>&gt;&nbsp;optionalVarHypList,
+                                java.util.List&lt;<a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a>&gt;&nbsp;optionalVarHypsInUseList)</pre>
 <div class="block">Accumulate Var Hyps used in the subtree which are also in an input list
  of Var Hyps.
  <p>
@@ -961,14 +976,14 @@ extends java.lang.Object</pre>
  <p>
  Note: in ProofUnifier this is used to accumulate a list of optional
  variables that are in use in a proof.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>varHypList</code> - List of Var Hyps being sought for accumulation.</dd><dd><code>varHypInUseList</code> - List of Var Hyps accumulated which are in the
-            formula and are in the input varList.</dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>optionalVarHypList</code> - List of Var Hyps being sought for accumulation.</dd><dd><code>optionalVarHypsInUseList</code> - List of Var Hyps accumulated which are in
+            the formula and are in the input varList.</dd></dl>
 </li>
 </ul>
 <a name="deepCloneApplyingWorkVarUpdates()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>deepCloneApplyingWorkVarUpdates</h4>
 <pre>public&nbsp;<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>&nbsp;deepCloneApplyingWorkVarUpdates()</pre>
@@ -977,6 +992,19 @@ extends java.lang.Object</pre>
  This function is a helper for mmj.pa.ProofUnifier and its friend
  mmj.pa.ProofWorksheet.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd>new ParseNode subtree.</dd></dl>
+</li>
+</ul>
+<a name="toString()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>toString</h4>
+<pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code>toString</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+</dl>
 </li>
 </ul>
 </li>

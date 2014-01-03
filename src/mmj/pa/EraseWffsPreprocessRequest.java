@@ -82,7 +82,7 @@ public class EraseWffsPreprocessRequest extends PreprocessRequest {
                 break;
             c = s.charAt(i++);
             if (c == PaConstants.FIELD_DELIMITER_COLON)
-                ++cntColons;
+                cntColons++;
             else if (Character.isWhitespace(c))
                 break;
             sb.append(c);
@@ -98,7 +98,7 @@ public class EraseWffsPreprocessRequest extends PreprocessRequest {
 
         while (true) {
             w.write(iString);
-            w.write(PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING);
+            w.write("\n");
             iString = r.readLine();
             if (iString == null)
                 break;
@@ -112,7 +112,7 @@ public class EraseWffsPreprocessRequest extends PreprocessRequest {
     private void eraseWff(final String firstToken) throws IOException {
 
         w.write(firstToken);
-        w.write(PaConstants.PROOF_WORKSHEET_NEW_LINE_STRING);
+        w.write("\n");
 
         while (true) {
             iString = r.readLine();

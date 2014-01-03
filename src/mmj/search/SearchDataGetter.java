@@ -16,6 +16,7 @@
 package mmj.search;
 
 import mmj.lang.*;
+import mmj.lang.ParseTree.RPNStep;
 
 public class SearchDataGetter {
 
@@ -189,19 +190,16 @@ public class SearchDataGetter {
 
     private String getLabelRPNString() {
         if (labelRPNString == null) {
-            final Stmt[] astmt = ((Theorem)assrt).getProof();
-            final StringBuffer stringbuffer = new StringBuffer(5 * astmt.length);
+            final RPNStep[] astmt = ((Theorem)assrt).getProof();
+            final StringBuffer sb = new StringBuffer(5 * astmt.length);
             String s = "";
-            for (final Stmt element : astmt) {
-                stringbuffer.append(s);
-                if (element == null)
-                    stringbuffer.append("");
-                else
-                    stringbuffer.append(element.getLabel());
+            for (final RPNStep element : astmt) {
+                sb.append(s);
+                sb.append(element);
                 s = " ";
             }
 
-            labelRPNString = stringbuffer.toString();
+            labelRPNString = sb.toString();
         }
         return labelRPNString;
     }

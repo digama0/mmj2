@@ -27,8 +27,7 @@
 
 package mmj.lang;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * A simple tree structure to hold a ParseNode root.
@@ -227,26 +226,38 @@ public class ParseTree {
      * reference. --> if rpn[i] == null, throw IllegalArgumentException
      * 
      * @param rpn Stmt array, may be parse or proof RPN.
-     * @return ParseTree if rpn is valid.
-     * @throws IllegalArgumentException if RPN is invalid (no plan at this
-     *             moment to try to squeeze structure out of an incomplete or
-     *             invalid RPN/Proof):
+     * @throws IllegalArgumentException if ParseTree cannot be built from the
+     *             RPN (null statment or RPN incomplete.)
      */
-    public static ParseTree convertRPNtoParseTree(final Stmt[] rpn) {
+    public ParseTree(final RPNStep[] rpn) {
+        final Deque<ParseNode> stack = new ArrayDeque<ParseNode>();
+        final List<ParseNode> backrefs = new ArrayList<ParseNode>();
+        for (final RPNStep s : rpn)
+            if (s != null && s.stmt == null && s.backRef > 0)
+                stack.push(backrefs.get(s.backRef - 1));
+            else {
+                int len = 0;
+                Stmt stmt = null;
+                if (s != null && (stmt = s.stmt) != null
+                    && stmt instanceof Assrt)
+                    len = stmt.getMandHypArrayLength();
+                if (stack.size() < len)
+                    throw new IllegalArgumentException(
+                        LangConstants.ERRMSG_RPN_INVALID_NOT_ENOUGH_STMTS);
+                final ParseNode node = new ParseNode(stmt);
+                node.child = new ParseNode[len];
+                for (int i = len - 1; i >= 0; i--)
+                    node.child[i] = stack.pop();
+                stack.push(node);
+                if (s != null && s.backRef < 0)
+                    backrefs.add(node);
+            }
 
-        int stmtPosInRPN = rpn.length - 1;
-
-        final ParseTree outParseTree = new ParseTree(new ParseNode());
-
-        stmtPosInRPN = outParseTree.root
-            .loadParseNodeFromRPN(rpn, stmtPosInRPN);
-        if (stmtPosInRPN != 0)
+        if (stack.size() != 1)
             throw new IllegalArgumentException(
                 LangConstants.ERRMSG_RPN_CONV_TO_TREE_FAILURE);
-
-        return outParseTree;
+        root = stack.pop();
     }
-
     /**
      * Convert ParseTree to RPN Stmt array.
      * <p>
@@ -268,85 +279,77 @@ public class ParseTree {
      * 
      * @return RPN Stmt array.
      */
-    public Stmt[] convertToRPN() {
-        final Stmt[] outRPN = new Stmt[countParseNodes()];
+    public RPNStep[] convertToRPNExpanded() {
+        final RPNStep[] outRPN = new RPNStep[countParseNodes(true)];
         if (root == null)
             return outRPN;
 
-        int dest = outRPN.length - 1;
-
-        dest = root.convertToRPN(outRPN, dest);
-        if (dest != -1)
+        final int dest = root.convertToRPNExpanded(outRPN, 0);
+        if (dest != outRPN.length)
             throw new IllegalStateException(LangException.format(
-                LangConstants.ERRMSG_TREE_CONV_TO_RPN_FAILURE, -dest));
+                LangConstants.ERRMSG_TREE_CONV_TO_RPN_FAILURE, outRPN.length
+                    - dest));
         return outRPN;
     }
     /**
      * Compresses ("squishes") the tree to re-use repeated subtrees.
+     * 
+     * @return this object
      */
-    public void squishTree() {
+    public ParseTree squishTree() {
         if (root != null)
-            squishTree(root);
+            root.squishTree(new ArrayList<ParseNode>());
+        return this;
     }
 
-    private boolean squishTree(final ParseNode node) {
-        node.firstAppearance = 0;
-        if (node.child == null || node.child.length == 0)
-            return false;
-        for (final ParseNode element : node.child)
-            if (squishTree(element))
-                findDup(element, node, root);
-        return true;
+    public RPNStep[] convertToRPN() {
+        return convertToRPN(true);
     }
 
-    private void findDup(final ParseNode cmp, final ParseNode cmpParent,
-        final ParseNode node)
-    {
-        for (int i = 0; i < node.child.length; i++) {
-            final ParseNode n = node.child[i];
-            if (node != cmpParent && cmp.isDeepDup(n)) {
-                node.child[i] = cmp;
-                cmp.firstAppearance = -1;
-            }
-            else
-                findDup(cmp, cmpParent, n);
-        }
-    }
-
-    public RPNStep[] convertToSquishedRPN() {
-        squishTree();
-        final List<RPNStep> list = new ArrayList<RPNStep>();
+    public RPNStep[] convertToRPN(final boolean pressLeaf) {
         if (root != null)
-            convertToSquishedRPN(1, list, root);
-        return list.toArray(new RPNStep[0]);
+            return root.convertToRPN(pressLeaf);
+        return new RPNStep[0];
     }
 
-    private int convertToSquishedRPN(int backrefs, final List<RPNStep> list,
-        final ParseNode node)
-    {
-        if (node.firstAppearance > 0) {
-            final RPNStep s = new RPNStep();
-            s.backRef = node.firstAppearance;
-            list.add(s);
-        }
-        else {
-            if (node.child != null)
-                for (final ParseNode n : node.child)
-                    backrefs = convertToSquishedRPN(backrefs, list, n);
-            final RPNStep s = new RPNStep();
-            s.stmt = node.stmt;
-            if (node.firstAppearance < 0) {
-                node.firstAppearance = backrefs++;
-                s.backRef = -node.firstAppearance;
-            }
-            list.add(s);
-        }
-        return backrefs;
-    }
-
+    /**
+     * Stores backreference information in "packed" and "compressed" formats.
+     * <p>
+     * In packed format, proof steps come in three different flavors: unmarked
+     * (for example {@code syl}) and marked (for example {@code syl:5}), as well
+     * as backreference steps (just written as numbers i.e. {@code 5}). In
+     * compressed format the same rules apply, except it is harder to read.
+     * Marked steps get a {@code Z} after the number, and backreferences are
+     * numbers larger than the statement list. In our format, which most closely
+     * resembles the packed format, unmarked steps have a valid {@code stmt} and
+     * {@code backRef = 0}. Marked steps have a valid {@code stmt} and
+     * {@code backRef < 0}: the value of {@code -backRef} is the 1-based index
+     * of this marked step in a list of all marked steps (this is <i>not</i> the
+     * RPN index).
+     * <p>
+     * For backreference steps, {@code backRef > 0} and {@code stmt} is
+     * {@code null}. In this case, {@code backRef} is the index of the marked
+     * step that is being referenced. (One other special case is {@code ?}
+     * steps: in this case {@code stmt} is {@code null} and {@code backRef = 0}
+     * .)
+     */
     public static class RPNStep {
         public Stmt stmt;
         public int backRef;
+
+        public RPNStep(final Stmt stmt) {
+            this.stmt = stmt;
+        }
+
+        @Override
+        public String toString() {
+            if (backRef < 0)
+                return -backRef + ":" + stmt;
+            else if (backRef == 0)
+                return stmt == null ? "?" : stmt.toString();
+            else
+                return Integer.toString(backRef);
+        }
     }
 
     /**
@@ -354,13 +357,15 @@ public class ParseTree {
      * <p>
      * If root is null, count = zero.
      * 
+     * @param expanded true to count repeated subtrees multiple times, false to
+     *            count them as size 1 stubs in subsequent occurrences
      * @return number of parse nodes in ParseTree.
      */
-    public int countParseNodes() {
+    public int countParseNodes(final boolean expanded) {
 
         if (root == null)
             return 0;
-        return root.countParseNodes();
+        return root.countParseNodes(expanded);
     }
 
     /**
@@ -455,10 +460,10 @@ public class ParseTree {
      */
     @Override
     public String toString() {
-        final Stmt[] rpn = convertToRPN();
+        final RPNStep[] rpn = convertToRPN();
         final StringBuilder sb = new StringBuilder();
-        for (final Stmt element : rpn) {
-            sb.append(element.getLabel());
+        for (final RPNStep element : rpn) {
+            sb.append(element);
             sb.append(" ");
         }
         return sb.toString();

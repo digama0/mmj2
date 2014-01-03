@@ -98,7 +98,7 @@
 <dd>
 <div class="block">Caches parameters from one RunParm for later validation and use.</div>
 </dd>
-<dt><span class="strong"><a href="./mmj/lang/ParseNode.html#accumListVarHypUsedListBySeq(java.util.List, java.util.List)">accumListVarHypUsedListBySeq(List&lt;Hyp&gt;, List&lt;Hyp&gt;)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></dt>
+<dt><span class="strong"><a href="./mmj/lang/ParseNode.html#accumListVarHypUsedListBySeq(java.util.List, java.util.List)">accumListVarHypUsedListBySeq(List&lt;VarHyp&gt;, List&lt;VarHyp&gt;)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></dt>
 <dd>
 <div class="block">Accumulate Var Hyps used in the subtree which are also in an input list
  of Var Hyps.</div>
@@ -118,12 +118,12 @@
 <div class="block">Adds a TheoremLoaderCommitListener to the TheoremLoaderCommitListener
  list if the instance is not already in the list.</div>
 </dd>
-<dt><span class="strong"><a href="./mmj/lang/VarHyp.html#accumVarHypListBySeq(java.util.List)">accumVarHypListBySeq(List&lt;Hyp&gt;)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a></dt>
+<dt><span class="strong"><a href="./mmj/lang/VarHyp.html#accumVarHypListBySeq(java.util.List)">accumVarHypListBySeq(List&lt;? super VarHyp&gt;)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a></dt>
 <dd>
 <div class="block">Accumulate VarHyp(no duplicates), storing it in an array list in order of
  appearance in the database.</div>
 </dd>
-<dt><span class="strong"><a href="./mmj/lang/ParseNode.html#accumVarHypUsedListBySeq(java.util.List)">accumVarHypUsedListBySeq(List&lt;Hyp&gt;)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></dt>
+<dt><span class="strong"><a href="./mmj/lang/ParseNode.html#accumVarHypUsedListBySeq(java.util.List)">accumVarHypUsedListBySeq(List&lt;? super VarHyp&gt;)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></dt>
 <dd>
 <div class="block">Updates an ArrayList to maintain a set of Var Hyps used in a subtree.</div>
 </dd>
@@ -183,6 +183,8 @@
 <dd>
 <div class="block">Add Axiom to Logical System.</div>
 </dd>
+<dt><span class="strong"><a href="./mmj/mmio/BlockList.html#addBlock(java.lang.String)">addBlock(String)</a></span> - Method in class mmj.mmio.<a href="./mmj/mmio/BlockList.html" title="class in mmj.mmio">BlockList</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/util/BatchFramework.html#addBossToBossList(mmj.util.Boss)">addBossToBossList(Boss)</a></span> - Method in class mmj.util.<a href="./mmj/util/BatchFramework.html" title="class in mmj.util">BatchFramework</a></dt>
 <dd>
 <div class="block">Add a processing Boss to the Boss List.</div>
@@ -272,19 +274,19 @@
  splice them into the forest, returning the last node to the caller.
  </div>
 </dd>
-<dt><span class="strong"><a href="./mmj/lang/LogicalSystem.html#addTheorem(java.lang.String, java.lang.String, java.util.List, java.util.List)">addTheorem(String, String, List&lt;String&gt;, List&lt;String&gt;)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/LogicalSystem.html" title="class in mmj.lang">LogicalSystem</a></dt>
+<dt><span class="strong"><a href="./mmj/lang/LogicalSystem.html#addTheorem(java.lang.String, java.lang.String, java.util.List, java.util.List, mmj.lang.Messages)">addTheorem(String, String, List&lt;String&gt;, List&lt;String&gt;, Messages)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/LogicalSystem.html" title="class in mmj.lang">LogicalSystem</a></dt>
 <dd>
 <div class="block">Add Theorem to Logical System.</div>
 </dd>
-<dt><span class="strong"><a href="./mmj/lang/LogicalSystem.html#addTheorem(java.lang.String, java.lang.String, java.util.List, java.util.List, java.util.List)">addTheorem(String, String, List&lt;String&gt;, List&lt;String&gt;, List&lt;String&gt;)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/LogicalSystem.html" title="class in mmj.lang">LogicalSystem</a></dt>
+<dt><span class="strong"><a href="./mmj/lang/LogicalSystem.html#addTheorem(java.lang.String, java.lang.String, java.util.List, java.util.List, mmj.mmio.BlockList, mmj.lang.Messages)">addTheorem(String, String, List&lt;String&gt;, List&lt;String&gt;, BlockList, Messages)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/LogicalSystem.html" title="class in mmj.lang">LogicalSystem</a></dt>
 <dd>
 <div class="block">Add Theorem to Logical System.</div>
 </dd>
-<dt><span class="strong"><a href="./mmj/lang/SystemLoader.html#addTheorem(java.lang.String, java.lang.String, java.util.List, java.util.List)">addTheorem(String, String, List&lt;String&gt;, List&lt;String&gt;)</a></span> - Method in interface mmj.lang.<a href="./mmj/lang/SystemLoader.html" title="interface in mmj.lang">SystemLoader</a></dt>
+<dt><span class="strong"><a href="./mmj/lang/SystemLoader.html#addTheorem(java.lang.String, java.lang.String, java.util.List, java.util.List, mmj.lang.Messages)">addTheorem(String, String, List&lt;String&gt;, List&lt;String&gt;, Messages)</a></span> - Method in interface mmj.lang.<a href="./mmj/lang/SystemLoader.html" title="interface in mmj.lang">SystemLoader</a></dt>
 <dd>
 <div class="block">Add Theorem to Logical System.</div>
 </dd>
-<dt><span class="strong"><a href="./mmj/lang/SystemLoader.html#addTheorem(java.lang.String, java.lang.String, java.util.List, java.util.List, java.util.List)">addTheorem(String, String, List&lt;String&gt;, List&lt;String&gt;, List&lt;String&gt;)</a></span> - Method in interface mmj.lang.<a href="./mmj/lang/SystemLoader.html" title="interface in mmj.lang">SystemLoader</a></dt>
+<dt><span class="strong"><a href="./mmj/lang/SystemLoader.html#addTheorem(java.lang.String, java.lang.String, java.util.List, java.util.List, mmj.mmio.BlockList, mmj.lang.Messages)">addTheorem(String, String, List&lt;String&gt;, List&lt;String&gt;, BlockList, Messages)</a></span> - Method in interface mmj.lang.<a href="./mmj/lang/SystemLoader.html" title="interface in mmj.lang">SystemLoader</a></dt>
 <dd>
 <div class="block">Add Theorem to Logical System.</div>
 </dd>
@@ -615,6 +617,10 @@
 <dd>
 <div class="block">Begin a new (nested) scope level for the Logical System.</div>
 </dd>
+<dt><a href="./mmj/mmio/BlockList.html" title="class in mmj.mmio"><span class="strong">BlockList</span></a> - Class in <a href="./mmj/mmio/package-summary.html">mmj.mmio</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/mmio/BlockList.html#BlockList()">BlockList()</a></span> - Constructor for class mmj.mmio.<a href="./mmj/mmio/BlockList.html" title="class in mmj.mmio">BlockList</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/lang/LangConstants.html#BOOK_MANAGER_ENABLED_DEFAULT">BOOK_MANAGER_ENABLED_DEFAULT</a></span> - Static variable in class mmj.lang.<a href="./mmj/lang/LangConstants.html" title="class in mmj.lang">LangConstants</a></dt>
 <dd>
 <div class="block">The BookManager is enabled by default even though it is possibly of
@@ -1137,6 +1143,10 @@
 <dd>
 <div class="block">Construct using sequence number and id string.</div>
 </dd>
+<dt><span class="strong"><a href="./mmj/lang/LangConstants.html#CNST_SET_TYPE">CNST_SET_TYPE</a></span> - Static variable in class mmj.lang.<a href="./mmj/lang/LangConstants.html" title="class in mmj.lang">LangConstants</a></dt>
+<dd>
+<div class="block">for Cnst.java</div>
+</dd>
 <dt><span class="strong"><a href="./mmj/verify/GRNode.html#color_">color_</a></span> - Variable in class mmj.verify.<a href="./mmj/verify/GRNode.html" title="class in mmj.verify">GRNode</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/pa/PaConstants.html#COLOR_CHOOSE_TITLE_2">COLOR_CHOOSE_TITLE_2</a></span> - Static variable in class mmj.pa.<a href="./mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
@@ -1331,7 +1341,7 @@
 </dd>
 <dt><span class="strong"><a href="./mmj/pa/CompoundUndoManager.html#CompoundUndoManager(javax.swing.text.JTextComponent, java.lang.Runnable)">CompoundUndoManager(JTextComponent, Runnable)</a></span> - Constructor for class mmj.pa.<a href="./mmj/pa/CompoundUndoManager.html" title="class in mmj.pa">CompoundUndoManager</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/lang/ProofCompression.html#compress(java.lang.String, int, java.util.List, java.util.List, mmj.lang.ParseTree.RPNStep[], java.lang.StringBuilder)">compress(String, int, List&lt;Hyp&gt;, List&lt;Hyp&gt;, ParseTree.RPNStep[], StringBuilder)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ProofCompression.html" title="class in mmj.lang">ProofCompression</a></dt>
+<dt><span class="strong"><a href="./mmj/lang/ProofCompression.html#compress(java.lang.String, int, java.util.List, java.util.List, mmj.lang.ParseTree.RPNStep[], java.lang.StringBuilder)">compress(String, int, List&lt;Hyp&gt;, List&lt;VarHyp&gt;, ParseTree.RPNStep[], StringBuilder)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ProofCompression.html" title="class in mmj.lang">ProofCompression</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/lang/LangConstants.html#COMPRESS_ERROR_CHAR_VALUE">COMPRESS_ERROR_CHAR_VALUE</a></span> - Static variable in class mmj.lang.<a href="./mmj/lang/LangConstants.html" title="class in mmj.lang">LangConstants</a></dt>
 <dd>&nbsp;</dd>
@@ -1345,9 +1355,7 @@
 </dd>
 <dt><span class="strong"><a href="./mmj/lang/LangConstants.html#COMPRESS_LOW_DIGIT_CHARS">COMPRESS_LOW_DIGIT_CHARS</a></span> - Static variable in class mmj.lang.<a href="./mmj/lang/LangConstants.html" title="class in mmj.lang">LangConstants</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/lang/LangConstants.html#COMPRESS_OTHER_ASSRT_INIT_LEN">COMPRESS_OTHER_ASSRT_INIT_LEN</a></span> - Static variable in class mmj.lang.<a href="./mmj/lang/LangConstants.html" title="class in mmj.lang">LangConstants</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/lang/LangConstants.html#COMPRESS_OTHER_HYP_INIT_LEN">COMPRESS_OTHER_HYP_INIT_LEN</a></span> - Static variable in class mmj.lang.<a href="./mmj/lang/LangConstants.html" title="class in mmj.lang">LangConstants</a></dt>
+<dt><span class="strong"><a href="./mmj/lang/LangConstants.html#COMPRESS_OTHER_STMT_INIT_LEN">COMPRESS_OTHER_STMT_INIT_LEN</a></span> - Static variable in class mmj.lang.<a href="./mmj/lang/LangConstants.html" title="class in mmj.lang">LangConstants</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/lang/LangConstants.html#COMPRESS_REPEAT_CHAR">COMPRESS_REPEAT_CHAR</a></span> - Static variable in class mmj.lang.<a href="./mmj/lang/LangConstants.html" title="class in mmj.lang">LangConstants</a></dt>
 <dd>&nbsp;</dd>
@@ -1463,7 +1471,7 @@
 <dd>
 <div class="block">Construct a temporary dummy Formula for transient use.</div>
 </dd>
-<dt><span class="strong"><a href="./mmj/lang/VarHyp.html#containedInVarHypListBySeq(java.util.List)">containedInVarHypListBySeq(List&lt;Hyp&gt;)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a></dt>
+<dt><span class="strong"><a href="./mmj/lang/VarHyp.html#containedInVarHypListBySeq(java.util.List)">containedInVarHypListBySeq(List&lt;? super VarHyp&gt;)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a></dt>
 <dd>
 <div class="block">Searches for this Var Hyp in an ArrayList maintained in database input
  sequence.</div>
@@ -1483,32 +1491,32 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/lang/BookManager.html#convertOrigSectionNbr(int)">convertOrigSectionNbr(int)</a></span> - Static method in class mmj.lang.<a href="./mmj/lang/BookManager.html" title="class in mmj.lang">BookManager</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/verify/VerifyProofs.html#convertRPNToFormula(mmj.lang.Stmt[], java.lang.String)">convertRPNToFormula(Stmt[], String)</a></span> - Method in class mmj.verify.<a href="./mmj/verify/VerifyProofs.html" title="class in mmj.verify">VerifyProofs</a></dt>
+<dt><span class="strong"><a href="./mmj/verify/VerifyProofs.html#convertRPNToFormula(mmj.lang.ParseTree.RPNStep[], java.lang.String)">convertRPNToFormula(ParseTree.RPNStep[], String)</a></span> - Method in class mmj.verify.<a href="./mmj/verify/VerifyProofs.html" title="class in mmj.verify">VerifyProofs</a></dt>
 <dd>
 <div class="block">Generate Formula from RPN.</div>
-</dd>
-<dt><span class="strong"><a href="./mmj/lang/ParseTree.html#convertRPNtoParseTree(mmj.lang.Stmt[])">convertRPNtoParseTree(Stmt[])</a></span> - Static method in class mmj.lang.<a href="./mmj/lang/ParseTree.html" title="class in mmj.lang">ParseTree</a></dt>
-<dd>
-<div class="block">Build a ParseTree from an RPN Stmt array.</div>
 </dd>
 <dt><span class="strong"><a href="./mmj/search/QuotedSearchTerm.html#convertSearchTermTextToLowerCase()">convertSearchTermTextToLowerCase()</a></span> - Method in class mmj.search.<a href="./mmj/search/QuotedSearchTerm.html" title="class in mmj.search">QuotedSearchTerm</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/SearchDataLine.html#convertSearchTermTextToLowerCase()">convertSearchTermTextToLowerCase()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchDataLine.html" title="class in mmj.search">SearchDataLine</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/lang/ParseNode.html#convertToRPN()">convertToRPN()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></dt>
+<dt><span class="strong"><a href="./mmj/lang/ParseNode.html#convertToRPN(boolean)">convertToRPN(boolean)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></dt>
 <dd>
 <div class="block">Converts a sub-tree expression to Reverse Polish Notation.</div>
 </dd>
-<dt><span class="strong"><a href="./mmj/lang/ParseNode.html#convertToRPN(mmj.lang.Stmt[], int)">convertToRPN(Stmt[], int)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></dt>
+<dt><span class="strong"><a href="./mmj/lang/ParseNode.html#convertToRPN(boolean, mmj.lang.ParseTree.RPNStep[], int[])">convertToRPN(boolean, ParseTree.RPNStep[], int[])</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/lang/ParseTree.html#convertToRPN()">convertToRPN()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ParseTree.html" title="class in mmj.lang">ParseTree</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/lang/ParseTree.html#convertToRPN(boolean)">convertToRPN(boolean)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ParseTree.html" title="class in mmj.lang">ParseTree</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/lang/ParseNode.html#convertToRPNExpanded(mmj.lang.ParseTree.RPNStep[], int)">convertToRPNExpanded(ParseTree.RPNStep[], int)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></dt>
 <dd>
 <div class="block">Converts a sub-tree to Reverse Polish Notation.</div>
 </dd>
-<dt><span class="strong"><a href="./mmj/lang/ParseTree.html#convertToRPN()">convertToRPN()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ParseTree.html" title="class in mmj.lang">ParseTree</a></dt>
+<dt><span class="strong"><a href="./mmj/lang/ParseTree.html#convertToRPNExpanded()">convertToRPNExpanded()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ParseTree.html" title="class in mmj.lang">ParseTree</a></dt>
 <dd>
 <div class="block">Convert ParseTree to RPN Stmt array.</div>
 </dd>
-<dt><span class="strong"><a href="./mmj/lang/ParseTree.html#convertToSquishedRPN()">convertToSquishedRPN()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ParseTree.html" title="class in mmj.lang">ParseTree</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/lang/Cnst.html#convFromTypGRArrayAdd(mmj.verify.TypeConversionRule)">convFromTypGRArrayAdd(TypeConversionRule)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a></dt>
 <dd>
 <div class="block">Add a TypeConversionRule to the constant's convFromTypGRArray.</div>
@@ -1524,11 +1532,12 @@
 <dd>
 <div class="block">Count number of lines in input file.</div>
 </dd>
-<dt><span class="strong"><a href="./mmj/lang/ParseNode.html#countParseNodes()">countParseNodes()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></dt>
+<dt><span class="strong"><a href="./mmj/lang/ParseNode.html#countParseNodes(boolean)">countParseNodes(boolean)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></dt>
 <dd>
-<div class="block">Counts nodes in a ParseNode sub-tree.</div>
+<div class="block">Counts nodes in a ParseNode sub-tree, and initializes the
+ <a href="./mmj/lang/ParseNode.html#firstAppearance"><code>ParseNode.firstAppearance</code></a> field.</div>
 </dd>
-<dt><span class="strong"><a href="./mmj/lang/ParseTree.html#countParseNodes()">countParseNodes()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ParseTree.html" title="class in mmj.lang">ParseTree</a></dt>
+<dt><span class="strong"><a href="./mmj/lang/ParseTree.html#countParseNodes(boolean)">countParseNodes(boolean)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ParseTree.html" title="class in mmj.lang">ParseTree</a></dt>
 <dd>
 <div class="block">Count parse nodes in a ParseTree.</div>
 </dd>
@@ -1588,11 +1597,17 @@
 <dd>
 <div class="block">Declare the Work Variables that have been defined.</div>
 </dd>
-<dt><span class="strong"><a href="./mmj/lang/ProofCompression.html#decompress(java.lang.String, int, java.util.Map, mmj.lang.Hyp[], mmj.lang.Hyp[], java.util.List, java.util.List)">decompress(String, int, Map&lt;String, Stmt&gt;, Hyp[], Hyp[], List&lt;String&gt;, List&lt;String&gt;)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ProofCompression.html" title="class in mmj.lang">ProofCompression</a></dt>
+<dt><span class="strong"><a href="./mmj/lang/ProofCompression.html#decompress(java.lang.String, int, java.util.Map, mmj.lang.Hyp[], mmj.lang.Hyp[], java.util.List, mmj.mmio.BlockList, mmj.lang.Messages)">decompress(String, int, Map&lt;String, Stmt&gt;, Hyp[], Hyp[], List&lt;String&gt;, BlockList, Messages)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ProofCompression.html" title="class in mmj.lang">ProofCompression</a></dt>
 <dd>
 <div class="block">Decompress a single proof.</div>
 </dd>
 <dt><span class="strong"><a href="./mmj/pa/AuxFrameGUI.html#decreaseFontSize()">decreaseFontSize()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/AuxFrameGUI.html" title="class in mmj.pa">AuxFrameGUI</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchResultsFrame.html#decreaseFontSize()">decreaseFontSize()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchResultsFrame.html" title="class in mmj.search">SearchResultsFrame</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#decreaseSearchOptionsFontSize()">decreaseSearchOptionsFontSize()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#decreaseSearchResultsFontSize()">decreaseSearchResultsFontSize()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/lang/ParseNode.html#deepClone()">deepClone()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></dt>
 <dd>
@@ -1893,8 +1908,6 @@
 <dd>
 <div class="block">Constructor with a group of distinct variables as input.</div>
 </dd>
-<dt><span class="strong"><a href="./mmj/pa/PaConstants.html#DJ_VARS_ERROR_STATUS_DESC">DJ_VARS_ERROR_STATUS_DESC</a></span> - Static variable in class mmj.pa.<a href="./mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/pa/PaConstants.html#DJ_VARS_ERROR_STATUS_HARD_ERRORS">DJ_VARS_ERROR_STATUS_HARD_ERRORS</a></span> - Static variable in class mmj.pa.<a href="./mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/pa/PaConstants.html#DJ_VARS_ERROR_STATUS_NO_ERRORS">DJ_VARS_ERROR_STATUS_NO_ERRORS</a></span> - Static variable in class mmj.pa.<a href="./mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
@@ -1905,10 +1918,6 @@
 <dd>
 <div class="block">DjVars is a simple structure that holds a pair of variables specified in a
  Metamath $d statement, the "Disjoint Variable Restriction" statement.</div>
-</dd>
-<dt><span class="strong"><a href="./mmj/lang/DjVars.html#DjVars()">DjVars()</a></span> - Constructor for class mmj.lang.<a href="./mmj/lang/DjVars.html" title="class in mmj.lang">DjVars</a></dt>
-<dd>
-<div class="block">Default constructor.</div>
 </dd>
 <dt><span class="strong"><a href="./mmj/lang/DjVars.html#DjVars(java.util.Map, java.lang.String, java.lang.String)">DjVars(Map&lt;String, Sym&gt;, String, String)</a></span> - Constructor for class mmj.lang.<a href="./mmj/lang/DjVars.html" title="class in mmj.lang">DjVars</a></dt>
 <dd>
@@ -2392,7 +2401,11 @@
 <dt><span class="strong"><a href="./mmj/util/Dump.html#dumpTypeConversionRuleProperties(int, mmj.verify.TypeConversionRule)">dumpTypeConversionRuleProperties(int, TypeConversionRule)</a></span> - Method in class mmj.util.<a href="./mmj/util/Dump.html" title="class in mmj.util">Dump</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/lang/DjVars.html#DV_ORDER">DV_ORDER</a></span> - Static variable in class mmj.lang.<a href="./mmj/lang/DjVars.html" title="class in mmj.lang">DjVars</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">This is the ordering that will be used to determine which variable in a
+ DjVars is "hi" and which is "lo", and is visible to the user as the
+ ordering of variables in missing $d statmements generated by the program.</div>
+</dd>
 </dl>
 <a name="_E_">
 <!--   -->
@@ -3245,6 +3258,8 @@
 <dt><span class="strong"><a href="./mmj/lang/LangConstants.html#ERRMSG_COMPRESS_NOT_ASCII">ERRMSG_COMPRESS_NOT_ASCII</a></span> - Static variable in class mmj.lang.<a href="./mmj/lang/LangConstants.html" title="class in mmj.lang">LangConstants</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/lang/LangConstants.html#ERRMSG_COMPRESS_OTHER_BOGUS">ERRMSG_COMPRESS_OTHER_BOGUS</a></span> - Static variable in class mmj.lang.<a href="./mmj/lang/LangConstants.html" title="class in mmj.lang">LangConstants</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/lang/LangConstants.html#ERRMSG_COMPRESS_OTHER_MAND">ERRMSG_COMPRESS_OTHER_MAND</a></span> - Static variable in class mmj.lang.<a href="./mmj/lang/LangConstants.html" title="class in mmj.lang">LangConstants</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/lang/LangConstants.html#ERRMSG_COMPRESS_OTHER_NOTFND">ERRMSG_COMPRESS_OTHER_NOTFND</a></span> - Static variable in class mmj.lang.<a href="./mmj/lang/LangConstants.html" title="class in mmj.lang">LangConstants</a></dt>
 <dd>
@@ -4200,6 +4215,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/tl/TlConstants.html#ERRMSG_NEW_THEOREM_OLD_LOG_HYP_3">ERRMSG_NEW_THEOREM_OLD_LOG_HYP_3</a></span> - Static variable in class mmj.tl.<a href="./mmj/tl/TlConstants.html" title="class in mmj.tl">TlConstants</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/pa/PaConstants.html#ERRMSG_NO_CONVERT_WV">ERRMSG_NO_CONVERT_WV</a></span> - Static variable in class mmj.pa.<a href="./mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/verify/ProofConstants.html#ERRMSG_NO_DERIV_STEPS_CREATED">ERRMSG_NO_DERIV_STEPS_CREATED</a></span> - Static variable in class mmj.verify.<a href="./mmj/verify/ProofConstants.html" title="class in mmj.verify">ProofConstants</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/gmff/GMFFConstants.html#ERRMSG_NO_EXPORT_TYPES_SELECTED_ERROR_1">ERRMSG_NO_EXPORT_TYPES_SELECTED_ERROR_1</a></span> - Static variable in class mmj.gmff.<a href="./mmj/gmff/GMFFConstants.html" title="class in mmj.gmff">GMFFConstants</a></dt>
@@ -4372,6 +4389,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/util/UtilConstants.html#ERRMSG_PATH_SECURITY_ERROR_2">ERRMSG_PATH_SECURITY_ERROR_2</a></span> - Static variable in class mmj.util.<a href="./mmj/util/UtilConstants.html" title="class in mmj.util">UtilConstants</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/mmio/MMIOConstants.html#ERRMSG_PREMATURE_COMMENT_EOF">ERRMSG_PREMATURE_COMMENT_EOF</a></span> - Static variable in class mmj.mmio.<a href="./mmj/mmio/MMIOConstants.html" title="class in mmj.mmio">MMIOConstants</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/pa/PaConstants.html#ERRMSG_PREMATURE_END">ERRMSG_PREMATURE_END</a></span> - Static variable in class mmj.pa.<a href="./mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/pa/PaConstants.html#ERRMSG_PREMATURE_END2">ERRMSG_PREMATURE_END2</a></span> - Static variable in class mmj.pa.<a href="./mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
@@ -4425,6 +4444,8 @@
 <dt><span class="strong"><a href="./mmj/verify/ProofConstants.html#ERRMSG_PROOF_STEP_INCOMPLETE">ERRMSG_PROOF_STEP_INCOMPLETE</a></span> - Static variable in class mmj.verify.<a href="./mmj/verify/ProofConstants.html" title="class in mmj.verify">ProofConstants</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/lang/LangConstants.html#ERRMSG_PROOF_STEP_LABEL_NOTFND">ERRMSG_PROOF_STEP_LABEL_NOTFND</a></span> - Static variable in class mmj.lang.<a href="./mmj/lang/LangConstants.html" title="class in mmj.lang">LangConstants</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/verify/ProofConstants.html#ERRMSG_PROOF_STEP_RANGE">ERRMSG_PROOF_STEP_RANGE</a></span> - Static variable in class mmj.verify.<a href="./mmj/verify/ProofConstants.html" title="class in mmj.verify">ProofConstants</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/verify/GrammarConstants.html#ERRMSG_PROVABLE_DUP_OF_LOGICAL_1">ERRMSG_PROVABLE_DUP_OF_LOGICAL_1</a></span> - Static variable in class mmj.verify.<a href="./mmj/verify/GrammarConstants.html" title="class in mmj.verify">GrammarConstants</a></dt>
 <dd>&nbsp;</dd>
@@ -4724,8 +4745,6 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/tl/TlConstants.html#ERRMSG_SRC_STMT_SYM_NOTFND_3">ERRMSG_SRC_STMT_SYM_NOTFND_3</a></span> - Static variable in class mmj.tl.<a href="./mmj/tl/TlConstants.html" title="class in mmj.tl">TlConstants</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/verify/ProofConstants.html#ERRMSG_STACK">ERRMSG_STACK</a></span> - Static variable in class mmj.verify.<a href="./mmj/verify/ProofConstants.html" title="class in mmj.verify">ProofConstants</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/verify/ProofConstants.html#ERRMSG_STACK_ITEM_TYP">ERRMSG_STACK_ITEM_TYP</a></span> - Static variable in class mmj.verify.<a href="./mmj/verify/ProofConstants.html" title="class in mmj.verify">ProofConstants</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/verify/ProofConstants.html#ERRMSG_STACK_SIZE_MISMATCH_FOR_STEP_HYPS">ERRMSG_STACK_SIZE_MISMATCH_FOR_STEP_HYPS</a></span> - Static variable in class mmj.verify.<a href="./mmj/verify/ProofConstants.html" title="class in mmj.verify">ProofConstants</a></dt>
@@ -4785,8 +4804,6 @@
 <dt><span class="strong"><a href="./mmj/tl/TlConstants.html#ERRMSG_STORE_IN_MMT_FOLDER_NO_MSGS">ERRMSG_STORE_IN_MMT_FOLDER_NO_MSGS</a></span> - Static variable in class mmj.tl.<a href="./mmj/tl/TlConstants.html" title="class in mmj.tl">TlConstants</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/verify/ProofConstants.html#ERRMSG_SUBST_ARRAY_OVERFLOW">ERRMSG_SUBST_ARRAY_OVERFLOW</a></span> - Static variable in class mmj.verify.<a href="./mmj/verify/ProofConstants.html" title="class in mmj.verify">ProofConstants</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/verify/ProofConstants.html#ERRMSG_SUBST_HYP">ERRMSG_SUBST_HYP</a></span> - Static variable in class mmj.verify.<a href="./mmj/verify/ProofConstants.html" title="class in mmj.verify">ProofConstants</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/verify/ProofConstants.html#ERRMSG_SUBST_TO_VARS_MATCH">ERRMSG_SUBST_TO_VARS_MATCH</a></span> - Static variable in class mmj.verify.<a href="./mmj/verify/ProofConstants.html" title="class in mmj.verify">ProofConstants</a></dt>
 <dd>&nbsp;</dd>
@@ -5543,7 +5560,7 @@
 <dd>&nbsp;</dd>
 <dt><a href="./mmj/search/FormatScrnMap.html" title="class in mmj.search"><span class="strong">FormatScrnMap</span></a> - Class in <a href="./mmj/search/package-summary.html">mmj.search</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/search/FormatScrnMap.html#FormatScrnMap(int, javax.swing.DefaultComboBoxModel, mmj.search.OperScrnMap)">FormatScrnMap(int, DefaultComboBoxModel&lt;String&gt;, OperScrnMap)</a></span> - Constructor for class mmj.search.<a href="./mmj/search/FormatScrnMap.html" title="class in mmj.search">FormatScrnMap</a></dt>
+<dt><span class="strong"><a href="./mmj/search/FormatScrnMap.html#FormatScrnMap(int, javax.swing.DefaultComboBoxModel, mmj.search.OperScrnMap)">FormatScrnMap(int, DefaultComboBoxModel, OperScrnMap)</a></span> - Constructor for class mmj.search.<a href="./mmj/search/FormatScrnMap.html" title="class in mmj.search">FormatScrnMap</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/OperScrnMap.html#formatTypeUpdated(int)">formatTypeUpdated(int)</a></span> - Method in class mmj.search.<a href="./mmj/search/OperScrnMap.html" title="class in mmj.search">OperScrnMap</a></dt>
 <dd>&nbsp;</dd>
@@ -5555,7 +5572,7 @@
 <dd>
 <div class="block">Construct using cnt and Sym array.</div>
 </dd>
-<dt><span class="strong"><a href="./mmj/lang/Formula.html#Formula(java.util.List)">Formula(List&lt;Sym&gt;)</a></span> - Constructor for class mmj.lang.<a href="./mmj/lang/Formula.html" title="class in mmj.lang">Formula</a></dt>
+<dt><span class="strong"><a href="./mmj/lang/Formula.html#Formula(java.util.Collection)">Formula(Collection&lt;Sym&gt;)</a></span> - Constructor for class mmj.lang.<a href="./mmj/lang/Formula.html" title="class in mmj.lang">Formula</a></dt>
 <dd>
 <div class="block">Construct using Sym List.</div>
 </dd>
@@ -5585,7 +5602,7 @@
 <dd>&nbsp;</dd>
 <dt><a href="./mmj/search/ForWhatScrnMap.html" title="class in mmj.search"><span class="strong">ForWhatScrnMap</span></a> - Class in <a href="./mmj/search/package-summary.html">mmj.search</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/search/ForWhatScrnMap.html#ForWhatScrnMap(int, java.lang.String[], javax.swing.DefaultComboBoxModel)">ForWhatScrnMap(int, String[], DefaultComboBoxModel&lt;String&gt;)</a></span> - Constructor for class mmj.search.<a href="./mmj/search/ForWhatScrnMap.html" title="class in mmj.search">ForWhatScrnMap</a></dt>
+<dt><span class="strong"><a href="./mmj/search/ForWhatScrnMap.html#ForWhatScrnMap(int, java.lang.String[], javax.swing.DefaultComboBoxModel)">ForWhatScrnMap(int, String[], DefaultComboBoxModel)</a></span> - Constructor for class mmj.search.<a href="./mmj/search/ForWhatScrnMap.html" title="class in mmj.search">ForWhatScrnMap</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/pa/AuxFrameGUI.html#frame">frame</a></span> - Variable in class mmj.pa.<a href="./mmj/pa/AuxFrameGUI.html" title="class in mmj.pa">AuxFrameGUI</a></dt>
 <dd>&nbsp;</dd>
@@ -5629,7 +5646,7 @@
 <dd>&nbsp;</dd>
 <dt><a href="./mmj/search/FromSecScrnMap.html" title="class in mmj.search"><span class="strong">FromSecScrnMap</span></a> - Class in <a href="./mmj/search/package-summary.html">mmj.search</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/search/FromSecScrnMap.html#FromSecScrnMap(javax.swing.DefaultComboBoxModel, java.lang.String[][])">FromSecScrnMap(DefaultComboBoxModel&lt;String&gt;, String[][])</a></span> - Constructor for class mmj.search.<a href="./mmj/search/FromSecScrnMap.html" title="class in mmj.search">FromSecScrnMap</a></dt>
+<dt><span class="strong"><a href="./mmj/search/FromSecScrnMap.html#FromSecScrnMap(javax.swing.DefaultComboBoxModel, java.lang.String[][])">FromSecScrnMap(DefaultComboBoxModel, String[][])</a></span> - Constructor for class mmj.search.<a href="./mmj/search/FromSecScrnMap.html" title="class in mmj.search">FromSecScrnMap</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/verify/GrammarAmbiguity.html#fullAmbiguityEdits()">fullAmbiguityEdits()</a></span> - Method in class mmj.verify.<a href="./mmj/verify/GrammarAmbiguity.html" title="class in mmj.verify">GrammarAmbiguity</a></dt>
 <dd>
@@ -5845,6 +5862,8 @@
 <dd>
 <div class="block">Returns the Book Manager.</div>
 </dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#getBookManager()">getBookManager()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/SearchArgsCheckBox.html#getBool()">getBool()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchArgsCheckBox.html" title="class in mmj.search">SearchArgsCheckBox</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/util/OutputBoss.html#getCaption()">getCaption()</a></span> - Method in class mmj.util.<a href="./mmj/util/OutputBoss.html" title="class in mmj.util">OutputBoss</a></dt>
@@ -5913,6 +5932,8 @@
 <dd>
 <div class="block">Returns the proof theorem's "comboFrame".</div>
 </dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#getComboFrame()">getComboFrame()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/SearchDataGetter.html#getCommentsAssrtDataStringArray(boolean, boolean, boolean)">getCommentsAssrtDataStringArray(boolean, boolean, boolean)</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchDataGetter.html" title="class in mmj.search">SearchDataGetter</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/lang/Cnst.html#getConvFromTypGRArray()">getConvFromTypGRArray()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a></dt>
@@ -6242,6 +6263,8 @@
 <div class="block">Fetch a gmffManagerobject, building it if necessary from previously input
  RunParms.</div>
 </dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#getGrammar()">getGrammar()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/util/GrammarBoss.html#getGrammar()">getGrammar()</a></span> - Method in class mmj.util.<a href="./mmj/util/GrammarBoss.html" title="class in mmj.util">GrammarBoss</a></dt>
 <dd>
 <div class="block">Fetch a Grammar object, building it if necessary from previously input
@@ -6320,6 +6343,8 @@
 <dd>
 <div class="block">Get current incompleteStepCursor option number.</div>
 </dd>
+<dt><span class="strong"><a href="./mmj/mmio/BlockList.html#getIndex()">getIndex()</a></span> - Method in class mmj.mmio.<a href="./mmj/mmio/BlockList.html" title="class in mmj.mmio">BlockList</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/lang/Messages.html#getInfoMessageArray()">getInfoMessageArray()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Messages.html" title="class in mmj.lang">Messages</a></dt>
 <dd>
 <div class="block">Return info message array.</div>
@@ -6342,25 +6367,9 @@
 <dd>
 <div class="block">Return isGimmeMatchNbr for the NotationRule.</div>
 </dd>
-<dt><span class="strong"><a href="./mmj/lang/Cnst.html#getIsGrammaticalTyp()">getIsGrammaticalTyp()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a></dt>
-<dd>
-<div class="block">get isGrammaticalTyp.</div>
-</dd>
-<dt><span class="strong"><a href="./mmj/lang/Cnst.html#getIsLogicStmtTyp()">getIsLogicStmtTyp()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a></dt>
-<dd>
-<div class="block">get isLogicStmtTyp.</div>
-</dd>
-<dt><span class="strong"><a href="./mmj/lang/Cnst.html#getIsProvableLogicStmtTyp()">getIsProvableLogicStmtTyp()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a></dt>
-<dd>
-<div class="block">get isProvableLogicStmtTyp.</div>
-</dd>
 <dt><span class="strong"><a href="./mmj/lang/Axiom.html#getIsSyntaxAxiom()">getIsSyntaxAxiom()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Axiom.html" title="class in mmj.lang">Axiom</a></dt>
 <dd>
 <div class="block">Answer, Is Axiom a Syntax Axiom?</div>
-</dd>
-<dt><span class="strong"><a href="./mmj/lang/Cnst.html#getIsSyntaxAxiomTyp()">getIsSyntaxAxiomTyp()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a></dt>
-<dd>
-<div class="block">get isSyntaxAxiomTyp.</div>
 </dd>
 <dt><span class="strong"><a href="./mmj/lang/MObj.html#getIsTempObject()">getIsTempObject()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/MObj.html" title="class in mmj.lang">MObj</a></dt>
 <dd>
@@ -6369,10 +6378,6 @@
 <dt><span class="strong"><a href="./mmj/tl/TheoremStmtGroup.html#getIsTheoremNew()">getIsTheoremNew()</a></span> - Method in class mmj.tl.<a href="./mmj/tl/TheoremStmtGroup.html" title="class in mmj.tl">TheoremStmtGroup</a></dt>
 <dd>
 <div class="block">Gets the isTheoremNew flag.</div>
-</dd>
-<dt><span class="strong"><a href="./mmj/lang/Cnst.html#getIsVarTyp()">getIsVarTyp()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a></dt>
-<dd>
-<div class="block">get isVarTyp.</div>
 </dd>
 <dt><span class="strong"><a href="./mmj/lang/Stmt.html#getLabel()">getLabel()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a></dt>
 <dd>
@@ -6456,6 +6461,8 @@
  of logHypArray, and caches the value for later use.</div>
 </dd>
 <dt><span class="strong"><a href="./mmj/pa/ProofAsst.html#getLogicalSystem()">getLogicalSystem()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsst.html" title="class in mmj.pa">ProofAsst</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#getLogicalSystem()">getLogicalSystem()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/util/LogicalSystemBoss.html#getLogicalSystem()">getLogicalSystem()</a></span> - Method in class mmj.util.<a href="./mmj/util/LogicalSystemBoss.html" title="class in mmj.util">LogicalSystemBoss</a></dt>
 <dd>
@@ -6599,6 +6606,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/SearchSelectionScrnMap.html#getNewPreferredSize()">getNewPreferredSize()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchSelectionScrnMap.html" title="class in mmj.search">SearchSelectionScrnMap</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/mmio/BlockList.html#getNext(java.lang.String)">getNext(String)</a></span> - Method in class mmj.mmio.<a href="./mmj/mmio/BlockList.html" title="class in mmj.mmio">BlockList</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/pa/ProofAsst.html#getNextProof(int, boolean, boolean)">getNextProof(int, boolean, boolean)</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsst.html" title="class in mmj.pa">ProofAsst</a></dt>
 <dd>
 <div class="block">Builds ProofWorksheet for the next theorem after a given MObj sequence
@@ -6704,11 +6713,15 @@
 <dd>
 <div class="block">Return Theorem's proof.</div>
 </dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#getProofAsst()">getProofAsst()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/util/ProofAsstBoss.html#getProofAsst()">getProofAsst()</a></span> - Method in class mmj.util.<a href="./mmj/util/ProofAsstBoss.html" title="class in mmj.util">ProofAsstBoss</a></dt>
 <dd>
 <div class="block">Fetch a ProofAsst object.</div>
 </dd>
 <dt><span class="strong"><a href="./mmj/pa/ProofAsst.html#getProofAsstGUI()">getProofAsstGUI()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsst.html" title="class in mmj.pa">ProofAsst</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#getProofAsstPreferences()">getProofAsstPreferences()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/util/ProofAsstBoss.html#getProofAsstPreferences()">getProofAsstPreferences()</a></span> - Method in class mmj.util.<a href="./mmj/util/ProofAsstBoss.html" title="class in mmj.util">ProofAsstBoss</a></dt>
 <dd>
@@ -6757,6 +6770,8 @@
 <div class="block">Returns the count of items in the ProofWorksheet ProofWorkStmt ArrayList.</div>
 </dd>
 <dt><span class="strong"><a href="./mmj/pa/ProofWorksheet.html#getProvableLogicStmtTyp()">getProvableLogicStmtTyp()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofWorksheet.html" title="class in mmj.pa">ProofWorksheet</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#getProvableLogicStmtTyp()">getProvableLogicStmtTyp()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/verify/Grammar.html#getProvableLogicStmtTypArray()">getProvableLogicStmtTypArray()</a></span> - Method in class mmj.verify.<a href="./mmj/verify/Grammar.html" title="class in mmj.verify">Grammar</a></dt>
 <dd>
@@ -6860,13 +6875,29 @@
 <dd>
 <div class="block">Get current scope level.</div>
 </dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#getSearchArgs()">getSearchArgs()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/pa/ProofAsstPreferences.html#getSearchMgr()">getSearchMgr()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsstPreferences.html" title="class in mmj.pa">ProofAsstPreferences</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/SearchOptionsScrnMap.html#getSearchOptionsBox()">getSearchOptionsBox()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchOptionsScrnMap.html" title="class in mmj.search">SearchOptionsScrnMap</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#getSearchOptionsFont()">getSearchOptionsFont()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#getSearchOptionsFontSize()">getSearchOptionsFontSize()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#getSearchOutput()">getSearchOutput()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/SearchResultsScrnMap.html#getSearchResultsBox()">getSearchResultsBox()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchResultsScrnMap.html" title="class in mmj.search">SearchResultsScrnMap</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#getSearchResultsFont()">getSearchResultsFont()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#getSearchResultsFontSize()">getSearchResultsFontSize()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#getSearchSelectionPreferredSize()">getSearchSelectionPreferredSize()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/SearchResultsScrnMap.html#getSearchSelectionScrnMap()">getSearchSelectionScrnMap()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchResultsScrnMap.html" title="class in mmj.search">SearchResultsScrnMap</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#getSearchUnifier()">getSearchUnifier()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/lang/BookManager.html#getSection(int)">getSection(int)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/BookManager.html" title="class in mmj.lang">BookManager</a></dt>
 <dd>
@@ -6924,6 +6955,8 @@
 <div class="block">Returns the sectionTitle for the Section.</div>
 </dd>
 <dt><span class="strong"><a href="./mmj/lang/BookManager.html#getSectionValuesForSearch()">getSectionValuesForSearch()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/BookManager.html" title="class in mmj.lang">BookManager</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchResultsFrame.html#getSelectedIndex()">getSelectedIndex()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchResultsFrame.html" title="class in mmj.search">SearchResultsFrame</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/SearchResultsScrnMap.html#getSelectedIndex()">getSelectedIndex()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchResultsScrnMap.html" title="class in mmj.search">SearchResultsScrnMap</a></dt>
 <dd>&nbsp;</dd>
@@ -6996,6 +7029,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/pa/ProofWorksheet.html#getStepRequest()">getStepRequest()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofWorksheet.html" title="class in mmj.pa">ProofWorksheet</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#getStepSearchMode()">getStepSearchMode()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/pa/ProofAsstPreferences.html#getStepSelectorDialogPaneHeight()">getStepSelectorDialogPaneHeight()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsstPreferences.html" title="class in mmj.pa">ProofAsstPreferences</a></dt>
 <dd>
 <div class="block">Gets StepSelectorDialogPaneHeight RunParm option.</div>
@@ -7016,6 +7051,8 @@
 <dd>
 <div class="block">Get StepUnifier.</div>
 </dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#getStepUnifier()">getStepUnifier()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/pa/ProofAsstPreferences.html#getStepUnifierInstance()">getStepUnifierInstance()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsstPreferences.html" title="class in mmj.pa">ProofAsstPreferences</a></dt>
 <dd>
 <div class="block">Get StepUnifier Instance.</div>
@@ -7321,6 +7358,8 @@
 <dd>
 <div class="block">Get WorkVarManager.</div>
 </dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#getWorkVarManager()">getWorkVarManager()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/util/WorkVarBoss.html#getWorkVarManager()">getWorkVarManager()</a></span> - Method in class mmj.util.<a href="./mmj/util/WorkVarBoss.html" title="class in mmj.util">WorkVarBoss</a></dt>
 <dd>
 <div class="block">Fetch a WorkVarManager object.</div>
@@ -7748,21 +7787,9 @@
 <dd>
 <div class="block">Constructor used for new proof.</div>
 </dd>
-<dt><span class="strong"><a href="./mmj/pa/PaConstants.html#HELP_ABOUT_TEXT_1">HELP_ABOUT_TEXT_1</a></span> - Static variable in class mmj.pa.<a href="./mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
+<dt><span class="strong"><a href="./mmj/pa/PaConstants.html#HELP_ABOUT_TEXT">HELP_ABOUT_TEXT</a></span> - Static variable in class mmj.pa.<a href="./mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
 <dd>
 <div class="block">Proof Assistant GUI Help About Part 1</div>
-</dd>
-<dt><span class="strong"><a href="./mmj/pa/PaConstants.html#HELP_ABOUT_TEXT_2">HELP_ABOUT_TEXT_2</a></span> - Static variable in class mmj.pa.<a href="./mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
-<dd>
-<div class="block">Proof Assistant GUI Help About Part 2 (Max Memory)</div>
-</dd>
-<dt><span class="strong"><a href="./mmj/pa/PaConstants.html#HELP_ABOUT_TEXT_3">HELP_ABOUT_TEXT_3</a></span> - Static variable in class mmj.pa.<a href="./mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
-<dd>
-<div class="block">Proof Assistant GUI Help About Part 3 (Free Memory)</div>
-</dd>
-<dt><span class="strong"><a href="./mmj/pa/PaConstants.html#HELP_ABOUT_TEXT_4">HELP_ABOUT_TEXT_4</a></span> - Static variable in class mmj.pa.<a href="./mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
-<dd>
-<div class="block">Proof Assistant GUI Help About Part 4 (Total Memory)</div>
 </dd>
 <dt><span class="strong"><a href="./mmj/pa/PaConstants.html#HELP_ABOUT_TITLE">HELP_ABOUT_TITLE</a></span> - Static variable in class mmj.pa.<a href="./mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
 <dd>
@@ -7923,6 +7950,12 @@
 <div class="block">Increment (add 1) to Count to NotationRules deemed to be "gimme matches".</div>
 </dd>
 <dt><span class="strong"><a href="./mmj/pa/AuxFrameGUI.html#increaseFontSize()">increaseFontSize()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/AuxFrameGUI.html" title="class in mmj.pa">AuxFrameGUI</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchResultsFrame.html#increaseFontSize()">increaseFontSize()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchResultsFrame.html" title="class in mmj.search">SearchResultsFrame</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#increaseSearchOptionsFontSize()">increaseSearchOptionsFontSize()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#increaseSearchResultsFontSize()">increaseSearchResultsFontSize()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/lang/Stmt.html#incrementNbrProofRefs()">incrementNbrProofRefs()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a></dt>
 <dd>&nbsp;</dd>
@@ -8108,6 +8141,8 @@
 <dd>
 <div class="block">Check another ParseTree for duplication.</div>
 </dd>
+<dt><span class="strong"><a href="./mmj/mmio/BlockList.html#isEmpty()">isEmpty()</a></span> - Method in class mmj.mmio.<a href="./mmj/mmio/BlockList.html" title="class in mmj.mmio">BlockList</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/lang/BookManager.html#isEnabled()">isEnabled()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/BookManager.html" title="class in mmj.lang">BookManager</a></dt>
 <dd>
 <div class="block">Returns BookManager enabled flag, which indicates whether or not the
@@ -8139,6 +8174,10 @@
 <dd>
 <div class="block">Returns the <code>gmffInitialized</code> boolean variable.</div>
 </dd>
+<dt><span class="strong"><a href="./mmj/lang/Cnst.html#isGrammaticalTyp()">isGrammaticalTyp()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a></dt>
+<dd>
+<div class="block">get isGrammaticalTyp.</div>
+</dd>
 <dt><span class="strong"><a href="./mmj/verify/ProofDerivationStepEntry.html#isHyp">isHyp</a></span> - Variable in class mmj.verify.<a href="./mmj/verify/ProofDerivationStepEntry.html" title="class in mmj.verify">ProofDerivationStepEntry</a></dt>
 <dd>
 <div class="block">isHyp indicates if this step is one of the Theorem's logical hypothesis
@@ -8147,6 +8186,10 @@
 <dt><span class="strong"><a href="./mmj/mmio/Statementizer.html#isLabelOnProhibitedList(java.lang.String)">isLabelOnProhibitedList(String)</a></span> - Static method in class mmj.mmio.<a href="./mmj/mmio/Statementizer.html" title="class in mmj.mmio">Statementizer</a></dt>
 <dd>
 <div class="block">Checks to see if a String is in the list of prohibited Metamath labels.</div>
+</dd>
+<dt><span class="strong"><a href="./mmj/lang/Cnst.html#isLogicStmtTyp()">isLogicStmtTyp()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a></dt>
+<dd>
+<div class="block">get isLogicStmtTyp.</div>
 </dd>
 <dt><span class="strong"><a href="./mmj/verify/TypeConversionRule.html#isLoop(mmj.lang.Cnst, mmj.lang.Cnst)">isLoop(Cnst, Cnst)</a></span> - Static method in class mmj.verify.<a href="./mmj/verify/TypeConversionRule.html" title="class in mmj.verify">TypeConversionRule</a></dt>
 <dd>
@@ -8178,10 +8221,25 @@
 <div class="block">Checks to see whether or not a proof step is contained in the Theorem's
  Extended Frame.</div>
 </dd>
+<dt><span class="strong"><a href="./mmj/lang/ProofCompression.html#isProofStepInFrame(mmj.lang.Stmt, mmj.lang.Hyp[])">isProofStepInFrame(Stmt, Hyp[])</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ProofCompression.html" title="class in mmj.lang">ProofCompression</a></dt>
+<dd>
+<div class="block">Checks to see whether or not a proof step is contained in the given
+ Frame.</div>
+</dd>
+<dt><span class="strong"><a href="./mmj/lang/Cnst.html#isProvableLogicStmtTyp()">isProvableLogicStmtTyp()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a></dt>
+<dd>
+<div class="block">get isProvableLogicStmtTyp.</div>
+</dd>
 <dt><span class="strong"><a href="./mmj/verify/GRNode.html#isRoot()">isRoot()</a></span> - Method in class mmj.verify.<a href="./mmj/verify/GRNode.html" title="class in mmj.verify">GRNode</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/SearchOptionsFieldAttr.html#isSearchControl">isSearchControl</a></span> - Variable in class mmj.search.<a href="./mmj/search/SearchOptionsFieldAttr.html" title="class in mmj.search">SearchOptionsFieldAttr</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/lang/Cnst.html#isSetTyp()">isSetTyp()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/lang/Cnst.html#isSyntaxAxiomTyp()">isSyntaxAxiomTyp()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a></dt>
+<dd>
+<div class="block">get isSyntaxAxiomTyp.</div>
+</dd>
 <dt><span class="strong"><a href="./mmj/lang/MObj.html#isTempObject">isTempObject</a></span> - Variable in class mmj.lang.<a href="./mmj/lang/MObj.html" title="class in mmj.lang">MObj</a></dt>
 <dd>
 <div class="block">isTempObject flag denotes a dummy or temporary object that is not stored
@@ -8206,6 +8264,10 @@
 <dd>
 <div class="block">Checks to see if a certain pair of variables is mentioned in a OptFrame's
  DjVars array.</div>
+</dd>
+<dt><span class="strong"><a href="./mmj/lang/Cnst.html#isVarTyp()">isVarTyp()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a></dt>
+<dd>
+<div class="block">get isVarTyp.</div>
 </dd>
 <dt><span class="strong"><a href="./mmj/tl/MMTTheoremSet.html#iterator()">iterator()</a></span> - Method in class mmj.tl.<a href="./mmj/tl/MMTTheoremSet.html" title="class in mmj.tl">MMTTheoremSet</a></dt>
 <dd>
@@ -8439,10 +8501,6 @@
  <code>proofText</code> if not already cached, and returns the
  <code>MinProofWorksheet</code> to the called.</div>
 </dd>
-<dt><span class="strong"><a href="./mmj/lang/ParseNode.html#loadParseNodeFromRPN(mmj.lang.Stmt[], int)">loadParseNodeFromRPN(Stmt[], int)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></dt>
-<dd>
-<div class="block">Builds a ParseNode sub-tree from a Stmt array in RPN format.</div>
-</dd>
 <dt><span class="strong"><a href="./mmj/tmff/TMFFPreferences.html#loadPreferenceDefaults()">loadPreferenceDefaults()</a></span> - Method in class mmj.tmff.<a href="./mmj/tmff/TMFFPreferences.html" title="class in mmj.tmff">TMFFPreferences</a></dt>
 <dd>
 <div class="block">Loads the hardcoded default TMFFPreferences values.</div>
@@ -8632,6 +8690,8 @@
 <dd>
 <div class="block">The assertion's Mandatory Frame.</div>
 </dd>
+<dt><span class="strong"><a href="./mmj/mmio/BlockList.html#marked">marked</a></span> - Variable in class mmj.mmio.<a href="./mmj/mmio/BlockList.html" title="class in mmj.mmio">BlockList</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/mmio/MMIOConstants.html#MATH_SYMBOL">MATH_SYMBOL</a></span> - Static variable in class mmj.mmio.<a href="./mmj/mmio/MMIOConstants.html" title="class in mmj.mmio">MMIOConstants</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/tmff/TMFFConstants.html#MAX_ALIGN_AT_NBR">MAX_ALIGN_AT_NBR</a></span> - Static variable in class mmj.tmff.<a href="./mmj/tmff/TMFFConstants.html" title="class in mmj.tmff">TMFFConstants</a></dt>
@@ -9141,6 +9201,8 @@
 <dd>
 <div class="block">mObj contains either a Cnst, a Var or a Stmt.</div>
 </dd>
+<dt><span class="strong"><a href="./mmj/search/SearchResultsFrame.html#mockupSearchResults()">mockupSearchResults()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchResultsFrame.html" title="class in mmj.search">SearchResultsFrame</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/gmff/GMFFConstants.html#MODEL_A">MODEL_A</a></span> - Static variable in class mmj.gmff.<a href="./mmj/gmff/GMFFConstants.html" title="class in mmj.gmff">GMFFConstants</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/gmff/GMFFConstants.html#MODEL_A_COMMENT0_NAME">MODEL_A_COMMENT0_NAME</a></span> - Static variable in class mmj.gmff.<a href="./mmj/gmff/GMFFConstants.html" title="class in mmj.gmff">GMFFConstants</a></dt>
@@ -9264,6 +9326,8 @@
 <dt><span class="strong"><a href="./mmj/mmio/MMIOConstants.html#NEW_LINE_CHAR">NEW_LINE_CHAR</a></span> - Static variable in class mmj.mmio.<a href="./mmj/mmio/MMIOConstants.html" title="class in mmj.mmio">MMIOConstants</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/util/UtilConstants.html#NEW_LINE_CHAR">NEW_LINE_CHAR</a></span> - Static variable in class mmj.util.<a href="./mmj/util/UtilConstants.html" title="class in mmj.util">UtilConstants</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/pa/ProofAsstGUI.html#newGeneralSearch(java.lang.String)">newGeneralSearch(String)</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsstGUI.html" title="class in mmj.pa">ProofAsstGUI</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/tmff/TMFFStateParams.html#newlineSB()">newlineSB()</a></span> - Method in class mmj.tmff.<a href="./mmj/tmff/TMFFStateParams.html" title="class in mmj.tmff">TMFFStateParams</a></dt>
 <dd>&nbsp;</dd>
@@ -9439,7 +9503,7 @@
 <dd>&nbsp;</dd>
 <dt><a href="./mmj/search/OperScrnMap.html" title="class in mmj.search"><span class="strong">OperScrnMap</span></a> - Class in <a href="./mmj/search/package-summary.html">mmj.search</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/search/OperScrnMap.html#OperScrnMap(int, javax.swing.DefaultComboBoxModel)">OperScrnMap(int, DefaultComboBoxModel&lt;String&gt;)</a></span> - Constructor for class mmj.search.<a href="./mmj/search/OperScrnMap.html" title="class in mmj.search">OperScrnMap</a></dt>
+<dt><span class="strong"><a href="./mmj/search/OperScrnMap.html#OperScrnMap(int, javax.swing.DefaultComboBoxModel)">OperScrnMap(int, DefaultComboBoxModel)</a></span> - Constructor for class mmj.search.<a href="./mmj/search/OperScrnMap.html" title="class in mmj.search">OperScrnMap</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/util/UtilConstants.html#OPTION_FILE_OUT_USAGE_DEFAULT">OPTION_FILE_OUT_USAGE_DEFAULT</a></span> - Static variable in class mmj.util.<a href="./mmj/util/UtilConstants.html" title="class in mmj.util">UtilConstants</a></dt>
 <dd>
@@ -9860,6 +9924,16 @@
 <dd>
 <div class="block">ProofAsstGUI TL Menu Verify All Proofs Item Text</div>
 </dd>
+<dt><span class="strong"><a href="./mmj/pa/PaConstants.html#PA_GUI_UNIFY_MENU_ERASE_NO_WV_ITEM_TEXT">PA_GUI_UNIFY_MENU_ERASE_NO_WV_ITEM_TEXT</a></span> - Static variable in class mmj.pa.<a href="./mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
+<dd>
+<div class="block">ProofAsstGUI Unify Menu Start Unification with Rederive Formulas without
+ Converting Work Vars Item Text</div>
+</dd>
+<dt><span class="strong"><a href="./mmj/pa/PaConstants.html#PA_GUI_UNIFY_MENU_NO_WV_ITEM_TEXT">PA_GUI_UNIFY_MENU_NO_WV_ITEM_TEXT</a></span> - Static variable in class mmj.pa.<a href="./mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
+<dd>
+<div class="block">ProofAsstGUI Unify Menu Start Unification without Converting Work Vars
+ Item Text</div>
+</dd>
 <dt><span class="strong"><a href="./mmj/pa/PaConstants.html#PA_GUI_UNIFY_MENU_REDERIVE_ITEM_TEXT">PA_GUI_UNIFY_MENU_REDERIVE_ITEM_TEXT</a></span> - Static variable in class mmj.pa.<a href="./mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
 <dd>
 <div class="block">ProofAsstGUI Unify Menu Unify with Rederive Formulas Item Text</div>
@@ -9882,7 +9956,7 @@
 </dd>
 <dt><span class="strong"><a href="./mmj/pa/PaConstants.html#PA_GUI_UNIFY_MENU_START_UR_ITEM_TEXT">PA_GUI_UNIFY_MENU_START_UR_ITEM_TEXT</a></span> - Static variable in class mmj.pa.<a href="./mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
 <dd>
-<div class="block">ProofAsstGUI Unify Menu Start Unification With Renum Item Text</div>
+<div class="block">ProofAsstGUI Unify Menu Start Unification with Renum Item Text</div>
 </dd>
 <dt><span class="strong"><a href="./mmj/pa/PaConstants.html#PA_GUI_UNIFY_MENU_STEP_SELECTOR_SEARCH_ITEM_TEXT">PA_GUI_UNIFY_MENU_STEP_SELECTOR_SEARCH_ITEM_TEXT</a></span> - Static variable in class mmj.pa.<a href="./mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
 <dd>
@@ -10069,11 +10143,17 @@
 <dd>
 <div class="block">Constructor - creates ParseTree using a ParseNode root.</div>
 </dd>
+<dt><span class="strong"><a href="./mmj/lang/ParseTree.html#ParseTree(mmj.lang.ParseTree.RPNStep[])">ParseTree(ParseTree.RPNStep[])</a></span> - Constructor for class mmj.lang.<a href="./mmj/lang/ParseTree.html" title="class in mmj.lang">ParseTree</a></dt>
+<dd>
+<div class="block">Build a ParseTree from an RPN Stmt array.</div>
+</dd>
 <dt><span class="strong"><a href="./mmj/search/ParsedSearchTerm.html#parseTree">parseTree</a></span> - Variable in class mmj.search.<a href="./mmj/search/ParsedSearchTerm.html" title="class in mmj.search">ParsedSearchTerm</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="./mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang"><span class="strong">ParseTree.RPNStep</span></a> - Class in <a href="./mmj/lang/package-summary.html">mmj.lang</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/lang/ParseTree.RPNStep.html#ParseTree.RPNStep()">ParseTree.RPNStep()</a></span> - Constructor for class mmj.lang.<a href="./mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a></dt>
+<dd>
+<div class="block">Stores backreference information in "packed" and "compressed" formats.</div>
+</dd>
+<dt><span class="strong"><a href="./mmj/lang/ParseTree.RPNStep.html#ParseTree.RPNStep(mmj.lang.Stmt)">ParseTree.RPNStep(Stmt)</a></span> - Constructor for class mmj.lang.<a href="./mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="./mmj/search/Part.html" title="class in mmj.search"><span class="strong">Part</span></a> - Class in <a href="./mmj/search/package-summary.html">mmj.search</a></dt>
 <dd>&nbsp;</dd>
@@ -10121,7 +10201,7 @@
 <dd>&nbsp;</dd>
 <dt><a href="./mmj/search/PartScrnMap.html" title="class in mmj.search"><span class="strong">PartScrnMap</span></a> - Class in <a href="./mmj/search/package-summary.html">mmj.search</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/search/PartScrnMap.html#PartScrnMap(int, javax.swing.DefaultComboBoxModel, mmj.search.FormatScrnMap)">PartScrnMap(int, DefaultComboBoxModel&lt;String&gt;, FormatScrnMap)</a></span> - Constructor for class mmj.search.<a href="./mmj/search/PartScrnMap.html" title="class in mmj.search">PartScrnMap</a></dt>
+<dt><span class="strong"><a href="./mmj/search/PartScrnMap.html#PartScrnMap(int, javax.swing.DefaultComboBoxModel, mmj.search.FormatScrnMap)">PartScrnMap(int, DefaultComboBoxModel, FormatScrnMap)</a></span> - Constructor for class mmj.search.<a href="./mmj/search/PartScrnMap.html" title="class in mmj.search">PartScrnMap</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/FormatScrnMap.html#partTypeUpdated(int)">partTypeUpdated(int)</a></span> - Method in class mmj.search.<a href="./mmj/search/FormatScrnMap.html" title="class in mmj.search">FormatScrnMap</a></dt>
 <dd>&nbsp;</dd>
@@ -10157,6 +10237,10 @@
 <dt><span class="strong"><a href="./mmj/search/SearchJTextFieldPopupMenuListener.html#popupMenuForMouse(java.awt.event.MouseEvent)">popupMenuForMouse(MouseEvent)</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchJTextFieldPopupMenuListener.html" title="class in mmj.search">SearchJTextFieldPopupMenuListener</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/SearchResultsPopupMenuListener.html#popupMenuForMouse(java.awt.event.MouseEvent)">popupMenuForMouse(MouseEvent)</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchResultsPopupMenuListener.html" title="class in mmj.search">SearchResultsPopupMenuListener</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#popupMessageSearchOptionsTestMode()">popupMessageSearchOptionsTestMode()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#popupMessageSearchResultsTestMode()">popupMessageSearchResultsTestMode()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/pa/ProofWorksheet.html#posCursorAtFirstIncompleteOrQedStmt()">posCursorAtFirstIncompleteOrQedStmt()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofWorksheet.html" title="class in mmj.pa">ProofWorksheet</a></dt>
 <dd>
@@ -10556,11 +10640,11 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/pa/PaConstants.html#PROOF_STEP_RENUMBER_INTERVAL">PROOF_STEP_RENUMBER_INTERVAL</a></span> - Static variable in class mmj.pa.<a href="./mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
 <dd>
-<div class="block">PROOF_STEP_RENUMBER_INTERVAL = 10</div>
+<div class="block">PROOF_STEP_RENUMBER_INTERVAL = 1</div>
 </dd>
 <dt><span class="strong"><a href="./mmj/pa/PaConstants.html#PROOF_STEP_RENUMBER_START">PROOF_STEP_RENUMBER_START</a></span> - Static variable in class mmj.pa.<a href="./mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
 <dd>
-<div class="block">PROOF_STEP_RENUMBER_START = 10</div>
+<div class="block">PROOF_STEP_RENUMBER_START = 50</div>
 </dd>
 <dt><span class="strong"><a href="./mmj/verify/ProofConstants.html#PROOF_SUBST_HARD_FAILURE_LEN">PROOF_SUBST_HARD_FAILURE_LEN</a></span> - Static variable in class mmj.verify.<a href="./mmj/verify/ProofConstants.html" title="class in mmj.verify">ProofConstants</a></dt>
 <dd>
@@ -10615,14 +10699,6 @@
 </dd>
 <dt><span class="strong"><a href="./mmj/gmff/GMFFConstants.html#PROOF_WORKSHEET_MESSAGE_DESCRIPTOR">PROOF_WORKSHEET_MESSAGE_DESCRIPTOR</a></span> - Static variable in class mmj.gmff.<a href="./mmj/gmff/GMFFConstants.html" title="class in mmj.gmff">GMFFConstants</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/pa/PaConstants.html#PROOF_WORKSHEET_NEW_LINE">PROOF_WORKSHEET_NEW_LINE</a></span> - Static variable in class mmj.pa.<a href="./mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
-<dd>
-<div class="block">Proof Worksheet Statement New Line Char</div>
-</dd>
-<dt><span class="strong"><a href="./mmj/pa/PaConstants.html#PROOF_WORKSHEET_NEW_LINE_STRING">PROOF_WORKSHEET_NEW_LINE_STRING</a></span> - Static variable in class mmj.pa.<a href="./mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
-<dd>
-<div class="block">Proof Worksheet Statement New Line String</div>
-</dd>
 <dt><a href="./mmj/pa/ProofAsst.html" title="class in mmj.pa"><span class="strong">ProofAsst</span></a> - Class in <a href="./mmj/pa/package-summary.html">mmj.pa</a></dt>
 <dd>
 <div class="block">The <code>ProofAsst</code>, along with the rest of the <code>mmj.pa</code> package
@@ -10767,7 +10843,7 @@
 <dd>
 <div class="block">Standard constructor for set up.</div>
 </dd>
-<dt><span class="strong"><a href="./mmj/lang/Theorem.html#proofUpdates(mmj.lang.Stmt[], mmj.lang.DjVars[], mmj.lang.DjVars[])">proofUpdates(Stmt[], DjVars[], DjVars[])</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Theorem.html" title="class in mmj.lang">Theorem</a></dt>
+<dt><span class="strong"><a href="./mmj/lang/Theorem.html#proofUpdates(mmj.lang.ParseTree.RPNStep[], mmj.lang.DjVars[], mmj.lang.DjVars[])">proofUpdates(ParseTree.RPNStep[], DjVars[], DjVars[])</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Theorem.html" title="class in mmj.lang">Theorem</a></dt>
 <dd>
 <div class="block">Applies updates made to proof related data.</div>
 </dd>
@@ -10912,6 +10988,8 @@
  correctly as each edit is redone.</div>
 </dd>
 <dt><span class="strong"><a href="./mmj/search/SearchOptionsConstants.html#REFINE_BUTTON_ID">REFINE_BUTTON_ID</a></span> - Static variable in class mmj.search.<a href="./mmj/search/SearchOptionsConstants.html" title="class in mmj.search">SearchOptionsConstants</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/pa/ProofAsstGUI.html#refineAndShowResults()">refineAndShowResults()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsstGUI.html" title="class in mmj.pa">ProofAsstGUI</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/verify/ProofDerivationStepEntry.html#refLabel">refLabel</a></span> - Variable in class mmj.verify.<a href="./mmj/verify/ProofDerivationStepEntry.html" title="class in mmj.verify">ProofDerivationStepEntry</a></dt>
 <dd>
@@ -11134,6 +11212,14 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/pa/PaConstants.html#RESHOW_SEARCH_RESULTS_ITEM_TEXT">RESHOW_SEARCH_RESULTS_ITEM_TEXT</a></span> - Static variable in class mmj.pa.<a href="./mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/pa/ProofAsstGUI.html#reshowProofAsstGUI()">reshowProofAsstGUI()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsstGUI.html" title="class in mmj.pa">ProofAsstGUI</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/pa/ProofAsstGUI.html#reshowSearchOptions()">reshowSearchOptions()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsstGUI.html" title="class in mmj.pa">ProofAsstGUI</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/pa/ProofAsstGUI.html#reshowSearchResults()">reshowSearchResults()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsstGUI.html" title="class in mmj.pa">ProofAsstGUI</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchResultsFrame.html#reshowSearchResults()">reshowSearchResults()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchResultsFrame.html" title="class in mmj.search">SearchResultsFrame</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/lang/WorkVarManager.html#resolveWorkVarUpdates()">resolveWorkVarUpdates()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/WorkVarManager.html" title="class in mmj.lang">WorkVarManager</a></dt>
 <dd>
 <div class="block">Deallocates Work Vars that have updates and eliminates chains of WorkVar
@@ -11213,8 +11299,6 @@
 <div class="block">Run code to display the frame on the event queue thread.</div>
 </dd>
 <dt><span class="strong"><a href="./mmj/search/SearchOptionsFrame.UpdateGUI.html#run()">run()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchOptionsFrame.UpdateGUI.html" title="class in mmj.search">SearchOptionsFrame.UpdateGUI</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/search/SearchResultsFrame.UpdateGUI.html#run()">run()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchResultsFrame.UpdateGUI.html" title="class in mmj.search">SearchResultsFrame.UpdateGUI</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/util/UtilConstants.html#RUN_PARM_FILE_REPORT_LINE_1">RUN_PARM_FILE_REPORT_LINE_1</a></span> - Static variable in class mmj.util.<a href="./mmj/util/UtilConstants.html" title="class in mmj.util">UtilConstants</a></dt>
 <dd>&nbsp;</dd>
@@ -11863,9 +11947,7 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/SearchConstants.html#SEARCH_OPTIONS_NEW_STMT_LABEL_PROMPT">SEARCH_OPTIONS_NEW_STMT_LABEL_PROMPT</a></span> - Static variable in class mmj.search.<a href="./mmj/search/SearchConstants.html" title="class in mmj.search">SearchConstants</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/search/SearchConstants.html#SEARCH_OPTIONS_NEW_STMT_LABEL_PROMPT_2_1">SEARCH_OPTIONS_NEW_STMT_LABEL_PROMPT_2_1</a></span> - Static variable in class mmj.search.<a href="./mmj/search/SearchConstants.html" title="class in mmj.search">SearchConstants</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/search/SearchConstants.html#SEARCH_OPTIONS_NEW_STMT_LABEL_PROMPT_2_2">SEARCH_OPTIONS_NEW_STMT_LABEL_PROMPT_2_2</a></span> - Static variable in class mmj.search.<a href="./mmj/search/SearchConstants.html" title="class in mmj.search">SearchConstants</a></dt>
+<dt><span class="strong"><a href="./mmj/search/SearchConstants.html#SEARCH_OPTIONS_NEW_STMT_LABEL_PROMPT_2">SEARCH_OPTIONS_NEW_STMT_LABEL_PROMPT_2</a></span> - Static variable in class mmj.search.<a href="./mmj/search/SearchConstants.html" title="class in mmj.search">SearchConstants</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/SearchConstants.html#SEARCH_OUTPUT_FORMULA_LABEL_SEPARATOR">SEARCH_OUTPUT_FORMULA_LABEL_SEPARATOR</a></span> - Static variable in class mmj.search.<a href="./mmj/search/SearchConstants.html" title="class in mmj.search">SearchConstants</a></dt>
 <dd>&nbsp;</dd>
@@ -11906,6 +11988,8 @@
 <dt><span class="strong"><a href="./mmj/search/SearchConstants.html#SEARCH_SCORE_TRAILER_ITEM">SEARCH_SCORE_TRAILER_ITEM</a></span> - Static variable in class mmj.search.<a href="./mmj/search/SearchConstants.html" title="class in mmj.search">SearchConstants</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/SearchResultsConstants.html#SEARCH_SELECTION_FIELD_ID">SEARCH_SELECTION_FIELD_ID</a></span> - Static variable in class mmj.search.<a href="./mmj/search/SearchResultsConstants.html" title="class in mmj.search">SearchResultsConstants</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/pa/ProofAsstGUI.html#searchAndShowResults()">searchAndShowResults()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsstGUI.html" title="class in mmj.pa">ProofAsstGUI</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="./mmj/search/SearchArgs.html" title="class in mmj.search"><span class="strong">SearchArgs</span></a> - Class in <a href="./mmj/search/package-summary.html">mmj.search</a></dt>
 <dd>&nbsp;</dd>
@@ -11997,6 +12081,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/SearchOptionsFrame.html#searchOptionsButtonPressed(int)">searchOptionsButtonPressed(int)</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchOptionsFrame.html" title="class in mmj.search">SearchOptionsFrame</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#searchOptionsCancelButtonPressed()">searchOptionsCancelButtonPressed()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="./mmj/search/SearchOptionsConstants.html" title="class in mmj.search"><span class="strong">SearchOptionsConstants</span></a> - Class in <a href="./mmj/search/package-summary.html">mmj.search</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/SearchOptionsConstants.html#SearchOptionsConstants()">SearchOptionsConstants()</a></span> - Constructor for class mmj.search.<a href="./mmj/search/SearchOptionsConstants.html" title="class in mmj.search">SearchOptionsConstants</a></dt>
@@ -12035,7 +12121,7 @@
 <dd>&nbsp;</dd>
 <dt><a href="./mmj/search/SearchOptionsJComboBox.html" title="class in mmj.search"><span class="strong">SearchOptionsJComboBox</span></a> - Class in <a href="./mmj/search/package-summary.html">mmj.search</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/search/SearchOptionsJComboBox.html#SearchOptionsJComboBox(int, javax.swing.ComboBoxModel)">SearchOptionsJComboBox(int, ComboBoxModel&lt;String&gt;)</a></span> - Constructor for class mmj.search.<a href="./mmj/search/SearchOptionsJComboBox.html" title="class in mmj.search">SearchOptionsJComboBox</a></dt>
+<dt><span class="strong"><a href="./mmj/search/SearchOptionsJComboBox.html#SearchOptionsJComboBox(int, javax.swing.ComboBoxModel)">SearchOptionsJComboBox(int, ComboBoxModel)</a></span> - Constructor for class mmj.search.<a href="./mmj/search/SearchOptionsJComboBox.html" title="class in mmj.search">SearchOptionsJComboBox</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/SearchOptionsJComboBox.html#SearchOptionsJComboBox(int, java.lang.String[], java.lang.String)">SearchOptionsJComboBox(int, String[], String)</a></span> - Constructor for class mmj.search.<a href="./mmj/search/SearchOptionsJComboBox.html" title="class in mmj.search">SearchOptionsJComboBox</a></dt>
 <dd>&nbsp;</dd>
@@ -12055,17 +12141,35 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/SearchOptionsJTextField.html#SearchOptionsJTextField(int)">SearchOptionsJTextField(int)</a></span> - Constructor for class mmj.search.<a href="./mmj/search/SearchOptionsJTextField.html" title="class in mmj.search">SearchOptionsJTextField</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/pa/ProofAsstGUI.html#searchOptionsMinusButton()">searchOptionsMinusButton()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsstGUI.html" title="class in mmj.pa">ProofAsstGUI</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#searchOptionsMinusButtonPressed()">searchOptionsMinusButtonPressed()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#searchOptionsNewButtonPressed()">searchOptionsNewButtonPressed()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#searchOptionsPAButtonPressed()">searchOptionsPAButtonPressed()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/pa/ProofAsstGUI.html#searchOptionsPlusButton()">searchOptionsPlusButton()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsstGUI.html" title="class in mmj.pa">ProofAsstGUI</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#searchOptionsPlusButtonPressed()">searchOptionsPlusButtonPressed()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="./mmj/search/SearchOptionsPosIntField.html" title="class in mmj.search"><span class="strong">SearchOptionsPosIntField</span></a> - Class in <a href="./mmj/search/package-summary.html">mmj.search</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/SearchOptionsPosIntField.html#SearchOptionsPosIntField(int, java.lang.String, int)">SearchOptionsPosIntField(int, String, int)</a></span> - Constructor for class mmj.search.<a href="./mmj/search/SearchOptionsPosIntField.html" title="class in mmj.search">SearchOptionsPosIntField</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/SearchOptionsPosIntField.html#SearchOptionsPosIntField(int)">SearchOptionsPosIntField(int)</a></span> - Constructor for class mmj.search.<a href="./mmj/search/SearchOptionsPosIntField.html" title="class in mmj.search">SearchOptionsPosIntField</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#searchOptionsRefineButtonPressed()">searchOptionsRefineButtonPressed()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="./mmj/search/SearchOptionsScrnMap.html" title="class in mmj.search"><span class="strong">SearchOptionsScrnMap</span></a> - Class in <a href="./mmj/search/package-summary.html">mmj.search</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/SearchOptionsScrnMap.html#SearchOptionsScrnMap(java.awt.Font, mmj.search.SearchOptionsButtonHandler, java.lang.String[], java.lang.String[][], java.lang.String[][], boolean, mmj.search.SearchMgr, mmj.search.SearchArgs)">SearchOptionsScrnMap(Font, SearchOptionsButtonHandler, String[], String[][], String[][], boolean, SearchMgr, SearchArgs)</a></span> - Constructor for class mmj.search.<a href="./mmj/search/SearchOptionsScrnMap.html" title="class in mmj.search">SearchOptionsScrnMap</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="./mmj/search/SearchOptionsScrnMapField.html" title="interface in mmj.search"><span class="strong">SearchOptionsScrnMapField</span></a> - Interface in <a href="./mmj/search/package-summary.html">mmj.search</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#searchOptionsSearchButtonPressed()">searchOptionsSearchButtonPressed()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#searchOptionsSRButtonPressed()">searchOptionsSRButtonPressed()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="./mmj/search/SearchOutput.html" title="class in mmj.search"><span class="strong">SearchOutput</span></a> - Class in <a href="./mmj/search/package-summary.html">mmj.search</a></dt>
 <dd>&nbsp;</dd>
@@ -12076,6 +12180,8 @@
 <dt><span class="strong"><a href="./mmj/search/SearchOutputStore.html#SearchOutputStore(int, int)">SearchOutputStore(int, int)</a></span> - Constructor for class mmj.search.<a href="./mmj/search/SearchOutputStore.html" title="class in mmj.search">SearchOutputStore</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/ForWhatScrnMap.html#searchRequested()">searchRequested()</a></span> - Method in class mmj.search.<a href="./mmj/search/ForWhatScrnMap.html" title="class in mmj.search">ForWhatScrnMap</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#searchResultsApplyButtonPressed()">searchResultsApplyButtonPressed()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="./mmj/search/SearchResultsButtonAttr.html" title="class in mmj.search"><span class="strong">SearchResultsButtonAttr</span></a> - Class in <a href="./mmj/search/package-summary.html">mmj.search</a></dt>
 <dd>&nbsp;</dd>
@@ -12088,6 +12194,8 @@
 <dt><span class="strong"><a href="./mmj/search/SearchResultsButtonHandler.html#searchResultsButtonPressed(int)">searchResultsButtonPressed(int)</a></span> - Method in interface mmj.search.<a href="./mmj/search/SearchResultsButtonHandler.html" title="interface in mmj.search">SearchResultsButtonHandler</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/SearchResultsFrame.html#searchResultsButtonPressed(int)">searchResultsButtonPressed(int)</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchResultsFrame.html" title="class in mmj.search">SearchResultsFrame</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#searchResultsCancelButtonPressed()">searchResultsCancelButtonPressed()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="./mmj/search/SearchResultsConstants.html" title="class in mmj.search"><span class="strong">SearchResultsConstants</span></a> - Class in <a href="./mmj/search/package-summary.html">mmj.search</a></dt>
 <dd>&nbsp;</dd>
@@ -12107,10 +12215,6 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/SearchResultsFrame.html#SearchResultsFrame(mmj.search.SearchMgr)">SearchResultsFrame(SearchMgr)</a></span> - Constructor for class mmj.search.<a href="./mmj/search/SearchResultsFrame.html" title="class in mmj.search">SearchResultsFrame</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="./mmj/search/SearchResultsFrame.UpdateGUI.html" title="class in mmj.search"><span class="strong">SearchResultsFrame.UpdateGUI</span></a> - Class in <a href="./mmj/search/package-summary.html">mmj.search</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/search/SearchResultsFrame.UpdateGUI.html#SearchResultsFrame.UpdateGUI(mmj.search.SearchResultsFrame.RequestGUI)">SearchResultsFrame.UpdateGUI(SearchResultsFrame.RequestGUI)</a></span> - Constructor for class mmj.search.<a href="./mmj/search/SearchResultsFrame.UpdateGUI.html" title="class in mmj.search">SearchResultsFrame.UpdateGUI</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="./mmj/search/SearchResultsHelp.html" title="class in mmj.search"><span class="strong">SearchResultsHelp</span></a> - Class in <a href="./mmj/search/package-summary.html">mmj.search</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/SearchResultsHelp.html#SearchResultsHelp(mmj.pa.ProofAsstPreferences)">SearchResultsHelp(ProofAsstPreferences)</a></span> - Constructor for class mmj.search.<a href="./mmj/search/SearchResultsHelp.html" title="class in mmj.search">SearchResultsHelp</a></dt>
@@ -12118,6 +12222,16 @@
 <dt><a href="./mmj/search/SearchResultsJButton.html" title="class in mmj.search"><span class="strong">SearchResultsJButton</span></a> - Class in <a href="./mmj/search/package-summary.html">mmj.search</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/SearchResultsJButton.html#SearchResultsJButton(int, mmj.search.SearchResultsButtonHandler)">SearchResultsJButton(int, SearchResultsButtonHandler)</a></span> - Constructor for class mmj.search.<a href="./mmj/search/SearchResultsJButton.html" title="class in mmj.search">SearchResultsJButton</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/pa/ProofAsstGUI.html#searchResultsMinusButton()">searchResultsMinusButton()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsstGUI.html" title="class in mmj.pa">ProofAsstGUI</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#searchResultsMinusButtonPressed()">searchResultsMinusButtonPressed()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#searchResultsPAButtonPressed()">searchResultsPAButtonPressed()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/pa/ProofAsstGUI.html#searchResultsPlusButton()">searchResultsPlusButton()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsstGUI.html" title="class in mmj.pa">ProofAsstGUI</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#searchResultsPlusButtonPressed()">searchResultsPlusButtonPressed()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="./mmj/search/SearchResultsPopupMenuListener.html" title="class in mmj.search"><span class="strong">SearchResultsPopupMenuListener</span></a> - Class in <a href="./mmj/search/package-summary.html">mmj.search</a></dt>
 <dd>&nbsp;</dd>
@@ -12128,6 +12242,8 @@
 <dt><span class="strong"><a href="./mmj/search/SearchResultsScrnMap.html#SearchResultsScrnMap(java.awt.Font, mmj.search.SearchResultsButtonHandler, boolean, mmj.search.SearchOutput, mmj.search.SearchMgr)">SearchResultsScrnMap(Font, SearchResultsButtonHandler, boolean, SearchOutput, SearchMgr)</a></span> - Constructor for class mmj.search.<a href="./mmj/search/SearchResultsScrnMap.html" title="class in mmj.search">SearchResultsScrnMap</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="./mmj/search/SearchResultsScrnMapField.html" title="interface in mmj.search"><span class="strong">SearchResultsScrnMapField</span></a> - Interface in <a href="./mmj/search/package-summary.html">mmj.search</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#searchResultsSOButtonPressed()">searchResultsSOButtonPressed()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="./mmj/search/SearchSelectionItem.html" title="class in mmj.search"><span class="strong">SearchSelectionItem</span></a> - Class in <a href="./mmj/search/package-summary.html">mmj.search</a></dt>
 <dd>&nbsp;</dd>
@@ -12188,7 +12304,7 @@
 </dd>
 <dt><span class="strong"><a href="./mmj/search/SearchResultsConstants.html#SELECTION_NO_SEARCH_RUN_YET_LITERAL">SELECTION_NO_SEARCH_RUN_YET_LITERAL</a></span> - Static variable in class mmj.search.<a href="./mmj/search/SearchResultsConstants.html" title="class in mmj.search">SearchResultsConstants</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/pa/ProofUnifier.html#separateMandAndOptFrame(mmj.pa.ProofWorksheet, mmj.pa.DerivationStep, java.util.List, java.util.List, boolean)">separateMandAndOptFrame(ProofWorksheet, DerivationStep, List&lt;Hyp&gt;, List&lt;Hyp&gt;, boolean)</a></span> - Static method in class mmj.pa.<a href="./mmj/pa/ProofUnifier.html" title="class in mmj.pa">ProofUnifier</a></dt>
+<dt><span class="strong"><a href="./mmj/pa/ProofUnifier.html#separateMandAndOptFrame(mmj.pa.ProofWorksheet, mmj.pa.DerivationStep, java.util.List, java.util.List, boolean)">separateMandAndOptFrame(ProofWorksheet, DerivationStep, List&lt;? super VarHyp&gt;, List&lt;VarHyp&gt;, boolean)</a></span> - Static method in class mmj.pa.<a href="./mmj/pa/ProofUnifier.html" title="class in mmj.pa">ProofUnifier</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/lang/MObj.html#seq">seq</a></span> - Variable in class mmj.lang.<a href="./mmj/lang/MObj.html" title="class in mmj.lang">MObj</a></dt>
 <dd>
@@ -12466,7 +12582,7 @@
 <dd>
 <div class="block">Set exprParseTree, the statement's parse tree.</div>
 </dd>
-<dt><span class="strong"><a href="./mmj/lang/Stmt.html#setExprRPN(mmj.lang.Stmt[])">setExprRPN(Stmt[])</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a></dt>
+<dt><span class="strong"><a href="./mmj/lang/Stmt.html#setExprRPN(mmj.lang.ParseTree.RPNStep[])">setExprRPN(ParseTree.RPNStep[])</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a></dt>
 <dd>
 <div class="block">Set exprRPN, the statement's parse RPN.</div>
 </dd>
@@ -12530,6 +12646,10 @@
 <dd>
 <div class="block">Set grammarInitialized flag to false.</div>
 </dd>
+<dt><span class="strong"><a href="./mmj/lang/Cnst.html#setGrammaticalTyp(boolean)">setGrammaticalTyp(boolean)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a></dt>
+<dd>
+<div class="block">set isGrammaticalTyp, true or false.</div>
+</dd>
 <dt><span class="strong"><a href="./mmj/lang/Cnst.html#setGRRoot(mmj.verify.GRNode)">setGRRoot(GRNode)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a></dt>
 <dd>
 <div class="block">set gRRoot to null or the grammar rule forest root for this Cnst.</div>
@@ -12566,33 +12686,13 @@
 <dd>
 <div class="block">Set isGimmeMatchNbr for the NotationRule.</div>
 </dd>
-<dt><span class="strong"><a href="./mmj/lang/Cnst.html#setIsGrammaticalTyp(boolean)">setIsGrammaticalTyp(boolean)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a></dt>
-<dd>
-<div class="block">set isGrammaticalTyp, true or false.</div>
-</dd>
-<dt><span class="strong"><a href="./mmj/lang/Cnst.html#setIsLogicStmtTyp(boolean)">setIsLogicStmtTyp(boolean)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a></dt>
-<dd>
-<div class="block">set isLogicStmtTyp, true or false.</div>
-</dd>
-<dt><span class="strong"><a href="./mmj/lang/Cnst.html#setIsProvableLogicStmtTyp(boolean)">setIsProvableLogicStmtTyp(boolean)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a></dt>
-<dd>
-<div class="block">set isProvableLogicStmtTyp, true or false.</div>
-</dd>
 <dt><span class="strong"><a href="./mmj/lang/Axiom.html#setIsSyntaxAxiom(boolean)">setIsSyntaxAxiom(boolean)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Axiom.html" title="class in mmj.lang">Axiom</a></dt>
 <dd>
 <div class="block">Set isSyntaxAxiom, true or false.</div>
 </dd>
-<dt><span class="strong"><a href="./mmj/lang/Cnst.html#setIsSyntaxAxiomTyp(boolean)">setIsSyntaxAxiomTyp(boolean)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a></dt>
-<dd>
-<div class="block">set isSyntaxAxiomTyp, true or false.</div>
-</dd>
 <dt><span class="strong"><a href="./mmj/lang/MObj.html#setIsTempObject(boolean)">setIsTempObject(boolean)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/MObj.html" title="class in mmj.lang">MObj</a></dt>
 <dd>
 <div class="block">Sets tempObject boolean value.</div>
-</dd>
-<dt><span class="strong"><a href="./mmj/lang/Cnst.html#setIsVarTyp(boolean)">setIsVarTyp(boolean)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a></dt>
-<dd>
-<div class="block">set isVarTyp, true or false.</div>
 </dd>
 <dt><span class="strong"><a href="./mmj/tmff/TMFFStateParams.html#setLeftmostColNbr(int, int, int)">setLeftmostColNbr(int, int, int)</a></span> - Method in class mmj.tmff.<a href="./mmj/tmff/TMFFStateParams.html" title="class in mmj.tmff">TMFFStateParams</a></dt>
 <dd>
@@ -12645,6 +12745,10 @@
 <dt><span class="strong"><a href="./mmj/lang/Stmt.html#setLogHypsMaxDepth(int)">setLogHypsMaxDepth(int)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a></dt>
 <dd>
 <div class="block">Set the computed max depth value for the LogHyps in an Assrt.</div>
+</dd>
+<dt><span class="strong"><a href="./mmj/lang/Cnst.html#setLogicStmtTyp(boolean)">setLogicStmtTyp(boolean)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a></dt>
+<dd>
+<div class="block">set isLogicStmtTyp, true or false.</div>
 </dd>
 <dt><span class="strong"><a href="./mmj/lang/Assrt.html#setMandFrame(mmj.lang.ScopeFrame)">setMandFrame(ScopeFrame)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Assrt.html" title="class in mmj.lang">Assrt</a></dt>
 <dd>
@@ -12755,6 +12859,10 @@
 <dt><span class="strong"><a href="./mmj/lang/LogicalSystem.html#setProofVerifier(mmj.lang.ProofVerifier)">setProofVerifier(ProofVerifier)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/LogicalSystem.html" title="class in mmj.lang">LogicalSystem</a></dt>
 <dd>
 <div class="block">Sets the current ProofVerifier.</div>
+</dd>
+<dt><span class="strong"><a href="./mmj/lang/Cnst.html#setProvableLogicStmtTyp(boolean)">setProvableLogicStmtTyp(boolean)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a></dt>
+<dd>
+<div class="block">set isProvableLogicStmtTyp, true or false.</div>
 </dd>
 <dt><span class="strong"><a href="./mmj/tl/TlPreferences.html#setProvableLogicStmtTypeParm(java.lang.String)">setProvableLogicStmtTypeParm(String)</a></span> - Method in class mmj.tl.<a href="./mmj/tl/TlPreferences.html" title="class in mmj.tl">TlPreferences</a></dt>
 <dd>
@@ -12939,6 +13047,10 @@
 <dd>
 <div class="block">Set syntaxAxiomHasUniqueCnst, true or false.</div>
 </dd>
+<dt><span class="strong"><a href="./mmj/lang/Cnst.html#setSyntaxAxiomTyp(boolean)">setSyntaxAxiomTyp(boolean)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a></dt>
+<dd>
+<div class="block">set isSyntaxAxiomTyp, true or false.</div>
+</dd>
 <dt><span class="strong"><a href="./mmj/lang/Axiom.html#setSyntaxAxiomVarHypReseq(int[])">setSyntaxAxiomVarHypReseq(int[])</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Axiom.html" title="class in mmj.lang">Axiom</a></dt>
 <dd>
 <div class="block">Set Axiom's syntaxAxiomVarHypReseq (may be null).</div>
@@ -13037,10 +13149,6 @@
 </dd>
 <dt><span class="strong"><a href="./mmj/lang/WorkVarHyp.html#setVar(mmj.lang.Var)">setVar(Var)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/WorkVarHyp.html" title="class in mmj.lang">WorkVarHyp</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/lang/DjVars.html#setVarHi(mmj.lang.Var)">setVarHi(Var)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/DjVars.html" title="class in mmj.lang">DjVars</a></dt>
-<dd>
-<div class="block">Set the "high" Dj Var, varHi.</div>
-</dd>
 <dt><span class="strong"><a href="./mmj/lang/VarHypFormula.html#setVarHypVar(mmj.lang.Var)">setVarHypVar(Var)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/VarHypFormula.html" title="class in mmj.lang">VarHypFormula</a></dt>
 <dd>
 <div class="block">Set the VarHypFormula's Var (sym[1]).</div>
@@ -13049,9 +13157,9 @@
 <dd>
 <div class="block">Set the VarHypFormula's Var (sym[1]).</div>
 </dd>
-<dt><span class="strong"><a href="./mmj/lang/DjVars.html#setVarLo(mmj.lang.Var)">setVarLo(Var)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/DjVars.html" title="class in mmj.lang">DjVars</a></dt>
+<dt><span class="strong"><a href="./mmj/lang/Cnst.html#setVarTyp(boolean)">setVarTyp(boolean)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a></dt>
 <dd>
-<div class="block">Set the "low" Dj Var, varLo.</div>
+<div class="block">set isVarTyp, true or false.</div>
 </dd>
 <dt><span class="strong"><a href="./mmj/pa/ProofAsstPreferences.html#setWorkVarManager(mmj.lang.WorkVarManager)">setWorkVarManager(WorkVarManager)</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsstPreferences.html" title="class in mmj.pa">ProofAsstPreferences</a></dt>
 <dd>
@@ -13069,10 +13177,18 @@
 <dd>
 <div class="block">Show the GUI's main frame (screen).</div>
 </dd>
+<dt><span class="strong"><a href="./mmj/search/SearchResultsFrame.html#showPopupErrorMessage(java.lang.String)">showPopupErrorMessage(String)</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchResultsFrame.html" title="class in mmj.search">SearchResultsFrame</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/verify/GrammarRule.html#showRuleFormatExprAsString(mmj.lang.Cnst[])">showRuleFormatExprAsString(Cnst[])</a></span> - Static method in class mmj.verify.<a href="./mmj/verify/GrammarRule.html" title="class in mmj.verify">GrammarRule</a></dt>
 <dd>
 <div class="block">Return a GrammarRule's ruleFormatExpr as String of Stmt labels.</div>
 </dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#showSearchOptionsHelp()">showSearchOptionsHelp()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchResultsFrame.html#showSearchResults()">showSearchResults()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchResultsFrame.html" title="class in mmj.search">SearchResultsFrame</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/search/SearchMgr.html#showSearchResultsHelp()">showSearchResultsHelp()</a></span> - Method in class mmj.search.<a href="./mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/SearchOptionsConstants.html#SINGLE_QUOTE_FIELD_ID">SINGLE_QUOTE_FIELD_ID</a></span> - Static variable in class mmj.search.<a href="./mmj/search/SearchOptionsConstants.html" title="class in mmj.search">SearchOptionsConstants</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="./mmj/search/SingleQuote.html" title="class in mmj.search"><span class="strong">SingleQuote</span></a> - Class in <a href="./mmj/search/package-summary.html">mmj.search</a></dt>
@@ -13114,6 +13230,8 @@
 <div class="block">Sorts a list of Assrt into an array.</div>
 </dd>
 <dt><span class="strong"><a href="./mmj/lang/VarHypSubst.html#sourceNode">sourceNode</a></span> - Variable in class mmj.lang.<a href="./mmj/lang/VarHypSubst.html" title="class in mmj.lang">VarHypSubst</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/lang/ParseNode.html#squishTree(java.util.List)">squishTree(List&lt;ParseNode&gt;)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/lang/ParseTree.html#squishTree()">squishTree()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ParseTree.html" title="class in mmj.lang">ParseTree</a></dt>
 <dd>
@@ -13161,25 +13279,7 @@
 </dd>
 <dt><span class="strong"><a href="./mmj/search/QuotedSearchTerm.html#startQuoteIndex">startQuoteIndex</a></span> - Variable in class mmj.search.<a href="./mmj/search/QuotedSearchTerm.html" title="class in mmj.search">QuotedSearchTerm</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/pa/ProofAsstGUI.html#startRequestNewGeneralSearch(java.lang.String)">startRequestNewGeneralSearch(String)</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsstGUI.html" title="class in mmj.pa">ProofAsstGUI</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/pa/ProofAsstGUI.html#startRequestRefineAndShowResults()">startRequestRefineAndShowResults()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsstGUI.html" title="class in mmj.pa">ProofAsstGUI</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/pa/ProofAsstGUI.html#startRequestReshowProofAsstGUI()">startRequestReshowProofAsstGUI()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsstGUI.html" title="class in mmj.pa">ProofAsstGUI</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/pa/ProofAsstGUI.html#startRequestReshowSearchOptions()">startRequestReshowSearchOptions()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsstGUI.html" title="class in mmj.pa">ProofAsstGUI</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/pa/ProofAsstGUI.html#startRequestReshowSearchResults()">startRequestReshowSearchResults()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsstGUI.html" title="class in mmj.pa">ProofAsstGUI</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/pa/ProofAsstGUI.html#startRequestSearchAndShowResults()">startRequestSearchAndShowResults()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsstGUI.html" title="class in mmj.pa">ProofAsstGUI</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/pa/ProofAsstGUI.html#startRequestSearchOptionsMinusButton()">startRequestSearchOptionsMinusButton()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsstGUI.html" title="class in mmj.pa">ProofAsstGUI</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/pa/ProofAsstGUI.html#startRequestSearchOptionsPlusButton()">startRequestSearchOptionsPlusButton()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsstGUI.html" title="class in mmj.pa">ProofAsstGUI</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/pa/ProofAsstGUI.html#startRequestSearchResultsMinusButton()">startRequestSearchResultsMinusButton()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsstGUI.html" title="class in mmj.pa">ProofAsstGUI</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/pa/ProofAsstGUI.html#startRequestSearchResultsPlusButton()">startRequestSearchResultsPlusButton()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsstGUI.html" title="class in mmj.pa">ProofAsstGUI</a></dt>
+<dt><span class="strong"><a href="./mmj/pa/ProofAsstGUI.html#startRequestAction(mmj.pa.ProofAsstGUI.Request)">startRequestAction(ProofAsstGUI.Request)</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsstGUI.html" title="class in mmj.pa">ProofAsstGUI</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/pa/ProofAsstGUI.RequestThreadStuff.html#startRequestThread()">startRequestThread()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsstGUI.RequestThreadStuff.html" title="class in mmj.pa">ProofAsstGUI.RequestThreadStuff</a></dt>
 <dd>
@@ -13725,12 +13825,12 @@
 <div class="block">Theorem corresponds to a Metamath "$p" statement, AKA, a
  "provable assertion".</div>
 </dd>
-<dt><span class="strong"><a href="./mmj/lang/Theorem.html#Theorem(int, java.util.List, java.util.Map, java.util.Map, java.lang.String, java.lang.String, java.util.List, java.util.List)">Theorem(int, List&lt;ScopeDef&gt;, Map&lt;String, Sym&gt;, Map&lt;String, Stmt&gt;, String, String, List&lt;String&gt;, List&lt;String&gt;)</a></span> - Constructor for class mmj.lang.<a href="./mmj/lang/Theorem.html" title="class in mmj.lang">Theorem</a></dt>
+<dt><span class="strong"><a href="./mmj/lang/Theorem.html#Theorem(int, java.util.List, java.util.Map, java.util.Map, java.lang.String, java.lang.String, java.util.List, java.util.List, mmj.lang.Messages)">Theorem(int, List&lt;ScopeDef&gt;, Map&lt;String, Sym&gt;, Map&lt;String, Stmt&gt;, String, String, List&lt;String&gt;, List&lt;String&gt;, Messages)</a></span> - Constructor for class mmj.lang.<a href="./mmj/lang/Theorem.html" title="class in mmj.lang">Theorem</a></dt>
 <dd>
 <div class="block">Construct Theorem using the entire enchilada from mmj.mmio.SrcStmt.java,
  plus a few condiments.</div>
 </dd>
-<dt><span class="strong"><a href="./mmj/lang/Theorem.html#Theorem(int, java.util.List, java.util.Map, java.util.Map, java.lang.String, java.lang.String, java.util.List, java.util.List, java.util.List, mmj.lang.ProofCompression)">Theorem(int, List&lt;ScopeDef&gt;, Map&lt;String, Sym&gt;, Map&lt;String, Stmt&gt;, String, String, List&lt;String&gt;, List&lt;String&gt;, List&lt;String&gt;, ProofCompression)</a></span> - Constructor for class mmj.lang.<a href="./mmj/lang/Theorem.html" title="class in mmj.lang">Theorem</a></dt>
+<dt><span class="strong"><a href="./mmj/lang/Theorem.html#Theorem(int, java.util.List, java.util.Map, java.util.Map, java.lang.String, java.lang.String, java.util.List, java.util.List, mmj.mmio.BlockList, mmj.lang.ProofCompression, mmj.lang.Messages)">Theorem(int, List&lt;ScopeDef&gt;, Map&lt;String, Sym&gt;, Map&lt;String, Stmt&gt;, String, String, List&lt;String&gt;, List&lt;String&gt;, BlockList, ProofCompression, Messages)</a></span> - Constructor for class mmj.lang.<a href="./mmj/lang/Theorem.html" title="class in mmj.lang">Theorem</a></dt>
 <dd>
 <div class="block">Construct Theorem using the entire enchilada from mmj.mmio.SrcStmt.java
  including compressed proof blocks.</div>
@@ -13857,7 +13957,7 @@
 <dd>&nbsp;</dd>
 <dt><a href="./mmj/search/ThruSecScrnMap.html" title="class in mmj.search"><span class="strong">ThruSecScrnMap</span></a> - Class in <a href="./mmj/search/package-summary.html">mmj.search</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/search/ThruSecScrnMap.html#ThruSecScrnMap(javax.swing.DefaultComboBoxModel, java.lang.String[][])">ThruSecScrnMap(DefaultComboBoxModel&lt;String&gt;, String[][])</a></span> - Constructor for class mmj.search.<a href="./mmj/search/ThruSecScrnMap.html" title="class in mmj.search">ThruSecScrnMap</a></dt>
+<dt><span class="strong"><a href="./mmj/search/ThruSecScrnMap.html#ThruSecScrnMap(javax.swing.DefaultComboBoxModel, java.lang.String[][])">ThruSecScrnMap(DefaultComboBoxModel, String[][])</a></span> - Constructor for class mmj.search.<a href="./mmj/search/ThruSecScrnMap.html" title="class in mmj.search">ThruSecScrnMap</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/search/SearchOptionsConstants.html#TITLE_LOC_AFTER_LITERAL">TITLE_LOC_AFTER_LITERAL</a></span> - Static variable in class mmj.search.<a href="./mmj/search/SearchOptionsConstants.html" title="class in mmj.search">SearchOptionsConstants</a></dt>
 <dd>&nbsp;</dd>
@@ -14315,6 +14415,10 @@
 <dd>
 <div class="block">Converts to MObj to String.</div>
 </dd>
+<dt><span class="strong"><a href="./mmj/lang/ParseNode.html#toString()">toString()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/lang/ParseTree.RPNStep.html#toString()">toString()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/lang/ParseTree.html#toString()">toString()</a></span> - Method in class mmj.lang.<a href="./mmj/lang/ParseTree.html" title="class in mmj.lang">ParseTree</a></dt>
 <dd>
 <div class="block">Converts a ParseTree to a String consisting of Stmt labels in RPN order.</div>
@@ -14331,6 +14435,12 @@
 <dd>
 <div class="block">converts to String</div>
 </dd>
+<dt><span class="strong"><a href="./mmj/mmio/BlockList.html#toString()">toString()</a></span> - Method in class mmj.mmio.<a href="./mmj/mmio/BlockList.html" title="class in mmj.mmio">BlockList</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/pa/DerivationStep.html#toString()">toString()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/DerivationStep.html" title="class in mmj.pa">DerivationStep</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/pa/HypothesisStep.html#toString()">toString()</a></span> - Method in class mmj.pa.<a href="./mmj/pa/HypothesisStep.html" title="class in mmj.pa">HypothesisStep</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/tl/TheoremStmtGroup.html#toString()">toString()</a></span> - Method in class mmj.tl.<a href="./mmj/tl/TheoremStmtGroup.html" title="class in mmj.tl">TheoremStmtGroup</a></dt>
 <dd>
 <div class="block">Converts TheoremStmtGroup to String.</div>
@@ -14343,6 +14453,10 @@
 <dd>
 <div class="block">Converts EarleyItem to a string (solely for diagnostic purposes).</div>
 </dd>
+<dt><span class="strong"><a href="./mmj/verify/ProofDerivationStepEntry.html#toString()">toString()</a></span> - Method in class mmj.verify.<a href="./mmj/verify/ProofDerivationStepEntry.html" title="class in mmj.verify">ProofDerivationStepEntry</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./mmj/verify/SubstMapEntry.html#toString()">toString()</a></span> - Method in class mmj.verify.<a href="./mmj/verify/SubstMapEntry.html" title="class in mmj.verify">SubstMapEntry</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/lang/Formula.html#toStringBuilderLineList(java.util.List, java.lang.StringBuilder, int, int, java.lang.String)">toStringBuilderLineList(List&lt;StringBuilder&gt;, StringBuilder, int, int, String)</a></span> - Method in class mmj.lang.<a href="./mmj/lang/Formula.html" title="class in mmj.lang">Formula</a></dt>
 <dd>
 <div class="block">Formats formula into StringBuilder lines in a List.</div>
@@ -14477,8 +14591,6 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/pa/PaConstants.html#UNIFICATION_STATUS_ATTEMPT_CANCELLED">UNIFICATION_STATUS_ATTEMPT_CANCELLED</a></span> - Static variable in class mmj.pa.<a href="./mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./mmj/pa/PaConstants.html#UNIFICATION_STATUS_DESC">UNIFICATION_STATUS_DESC</a></span> - Static variable in class mmj.pa.<a href="./mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/pa/PaConstants.html#UNIFICATION_STATUS_NOT_UNIFIED">UNIFICATION_STATUS_NOT_UNIFIED</a></span> - Static variable in class mmj.pa.<a href="./mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./mmj/pa/PaConstants.html#UNIFICATION_STATUS_UNIFICATION_ERROR">UNIFICATION_STATUS_UNIFICATION_ERROR</a></span> - Static variable in class mmj.pa.<a href="./mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
@@ -14499,11 +14611,11 @@
 <dd>
 <div class="block">UNIFIER_NODE_STACK_SIZE = 1000</div>
 </dd>
-<dt><span class="strong"><a href="./mmj/pa/ProofAsst.html#unify(boolean, java.lang.String, mmj.pa.PreprocessRequest, mmj.pa.StepRequest, mmj.tl.TLRequest, int)">unify(boolean, String, PreprocessRequest, StepRequest, TLRequest, int)</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsst.html" title="class in mmj.pa">ProofAsst</a></dt>
+<dt><span class="strong"><a href="./mmj/pa/ProofAsst.html#unify(boolean, boolean, java.lang.String, mmj.pa.PreprocessRequest, mmj.pa.StepRequest, mmj.tl.TLRequest, int)">unify(boolean, boolean, String, PreprocessRequest, StepRequest, TLRequest, int)</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofAsst.html" title="class in mmj.pa">ProofAsst</a></dt>
 <dd>
 <div class="block">Attempts Unification for a proof contained in a String proof text area.</div>
 </dd>
-<dt><span class="strong"><a href="./mmj/pa/ProofUnifier.html#unifyAllProofDerivationSteps(mmj.pa.ProofWorksheet, mmj.lang.Messages)">unifyAllProofDerivationSteps(ProofWorksheet, Messages)</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofUnifier.html" title="class in mmj.pa">ProofUnifier</a></dt>
+<dt><span class="strong"><a href="./mmj/pa/ProofUnifier.html#unifyAllProofDerivationSteps(mmj.pa.ProofWorksheet, mmj.lang.Messages, boolean)">unifyAllProofDerivationSteps(ProofWorksheet, Messages, boolean)</a></span> - Method in class mmj.pa.<a href="./mmj/pa/ProofUnifier.html" title="class in mmj.pa">ProofUnifier</a></dt>
 <dd>
 <div class="block">Unifies the proof steps in a Proof Worksheet.</div>
 </dd>

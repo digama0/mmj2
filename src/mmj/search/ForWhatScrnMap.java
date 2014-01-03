@@ -21,7 +21,7 @@ import javax.swing.plaf.basic.BasicComboBoxEditor;
 public class ForWhatScrnMap extends SearchOptionsJComboBox {
 
     public ForWhatScrnMap(final int i, final String[] as,
-        final DefaultComboBoxModel<String> defaultcomboboxmodel)
+        final DefaultComboBoxModel defaultcomboboxmodel)
     {
         super(SearchOptionsConstants.FOR_WHAT_FIELD_ID[i], defaultcomboboxmodel);
         setEditable(true);
@@ -49,7 +49,7 @@ public class ForWhatScrnMap extends SearchOptionsJComboBox {
         do {
             if (j >= i)
                 break;
-            if (s.equals(getItemAt(j).trim())) {
+            if (s.equals(((String)getItemAt(j)).trim())) {
                 removeItemAt(j);
                 break;
             }
@@ -70,7 +70,7 @@ public class ForWhatScrnMap extends SearchOptionsJComboBox {
         final int i = getItemCount();
         final String[] as = new String[i];
         for (int j = 0; j < i; j++)
-            as[j] = getItemAt(j).trim();
+            as[j] = ((String)getItemAt(j)).trim();
 
         return as;
     }

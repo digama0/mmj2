@@ -49,6 +49,8 @@ package mmj.lang;
 
 import java.util.*;
 
+import mmj.lang.ParseTree.RPNStep;
+
 /**
  * Parse Node is an n-way tree node for Metamath Stmt trees.
  * <p>
@@ -115,6 +117,11 @@ public class ParseNode {
      * Cached size of node subtree.
      */
     private int size;
+
+    /**
+     * Cached expanded size of node subtree.
+     */
+    private int sizeExpanded;
 
     /**
      * This temporary variable is 0 if the node has one parent, -1 if the node
@@ -327,7 +334,7 @@ public class ParseNode {
                 while (i > 0) {
                     compareNodeStack[stackCnt++] = myNode.child[i];
                     compareNodeStack[stackCnt++] = thatNode.child[i];
-                    --i;
+                    i--;
                 }
                 thatNode = thatNode.child[0];
                 myNode = myNode.child[0];
@@ -524,18 +531,67 @@ public class ParseNode {
     }
 
     /**
-     * Counts nodes in a ParseNode sub-tree.
+     * Counts nodes in a ParseNode sub-tree, and initializes the
+     * {@link #firstAppearance} field.
      * 
+     * @param expanded {@code true} if repeated subtrees are to be counted as
+     *            fully expanded, {@code false} to count them as stubs of size 1
      * @return the number of nodes
      */
-    public int countParseNodes() {
-        if (size != 0)
-            return size;
-        int n = 1;
+    public int countParseNodes(final boolean expanded) {
+        resetAppearances();
+        getCounts();
+        return expanded ? sizeExpanded : size;
+    }
+
+    private void resetAppearances() {
         if (child != null)
-            for (final ParseNode element : child)
-                n += element.countParseNodes();
-        return size = n;
+            for (final ParseNode n : child)
+                n.resetAppearances();
+        firstAppearance = 0;
+        size = 0;
+    }
+
+    private void getCounts() {
+        if (size != 0)
+            return;
+        size = 1;
+        sizeExpanded = 1;
+        if (child != null)
+            for (final ParseNode element : child) {
+                element.getCounts();
+                sizeExpanded += element.sizeExpanded;
+                if (element.firstAppearance >= 0) {
+                    element.firstAppearance = -1;
+                    size += element.size;
+                }
+                else {
+                    element.firstAppearance = -2;
+                    size++;
+                }
+            }
+    }
+
+    public boolean squishTree(final List<ParseNode> encountered) {
+        boolean modified = false;
+        for (int i = 0; i < child.length; i++) {
+            modified |= child[i].squishTree(encountered);
+            boolean found = false;
+            for (final ParseNode n : encountered)
+                if (child[i].isDeepDup(n)) {
+                    found = true;
+                    if (child[i] != n) {
+                        child[i] = n;
+                        modified = true;
+                    }
+                    break;
+                }
+            if (!found)
+                encountered.add(child[i]);
+        }
+        if (modified)
+            size = sizeExpanded = 0;
+        return modified;
     }
 
     /**
@@ -544,66 +600,56 @@ public class ParseNode {
      * Intended for creating the RPN for an expression rather than an entire
      * formula (with ParseTree).
      * 
+     * @param pressLeaf {@code true} if nodes with no children should be
+     *            backreferenced
      * @return RPN Stmt array.
      */
-    public Stmt[] convertToRPN() {
+    public RPNStep[] convertToRPN(final boolean pressLeaf) {
+        final RPNStep[] outRPN = new RPNStep[countParseNodes(false)];
 
-        final Stmt[] outRPN = new Stmt[countParseNodes()];
-
-        int dest = outRPN.length - 1;
-
-        dest = convertToRPN(outRPN, dest);
-        if (dest != -1)
+        final int[] dat = new int[2];
+        convertToRPN(pressLeaf, outRPN, dat);
+        if (dat[0] != outRPN.length)
             throw new IllegalStateException(LangException.format(
-                LangConstants.ERRMSG_SUBTREE_CONV_TO_RPN_FAILURE, -dest));
+                LangConstants.ERRMSG_SUBTREE_CONV_TO_RPN_FAILURE, outRPN.length
+                    - dat[0]));
         return outRPN;
+    }
+
+    public void convertToRPN(final boolean pressLeaf, final RPNStep[] list,
+        final int[] dat)
+    {
+        if (firstAppearance > 0) {
+            final RPNStep s = new RPNStep(null);
+            s.backRef = firstAppearance;
+            list[dat[0]++] = s;
+        }
+        else {
+            if (child != null)
+                for (final ParseNode n : child)
+                    n.convertToRPN(pressLeaf, list, dat);
+            final RPNStep s = new RPNStep(stmt);
+            if (firstAppearance == -2
+                && (pressLeaf || child != null && child.length > 0))
+                s.backRef = -(firstAppearance = ++dat[1]);
+            list[dat[0]++] = s;
+        }
     }
 
     /**
      * Converts a sub-tree to Reverse Polish Notation.
-     * <p>
-     * Works in reverse order.
      * 
      * @param outRPN Stmt Array where RPN will be stored.
      * @param dest location in output array to write the next Stmt reference.
      * @return dest of *next* output Stmt array item.
      */
-    public int convertToRPN(final Stmt[] outRPN, int dest) {
-        outRPN[dest--] = stmt;
-
+    public int convertToRPNExpanded(final RPNStep[] outRPN, int dest) {
         if (child != null)
-            for (int i = child.length - 1; i >= 0; i--)
-                dest = child[i].convertToRPN(outRPN, dest);
+            for (final ParseNode n : child)
+                dest = n.convertToRPNExpanded(outRPN, dest);
 
+        outRPN[dest++] = new RPNStep(stmt);
         return dest;
-    }
-
-    /**
-     * Builds a ParseNode sub-tree from a Stmt array in RPN format.
-     * 
-     * @param rpn Stmt array in RPN format.
-     * @param stmtPosInRPN location of next Stmt in array
-     * @return location of next Stmt in array
-     * @throws IllegalArgumentException if ParseTree cannot be built from the
-     *             RPN (null statment or RPN incomplete.)
-     */
-    public int loadParseNodeFromRPN(final Stmt[] rpn, int stmtPosInRPN) {
-        if ((stmt = rpn[stmtPosInRPN]) == null)
-            throw new IllegalArgumentException(LangException.format(
-                LangConstants.ERRMSG_PARSED_RPN_INCOMPLETE, stmtPosInRPN));
-
-        final int nbrChildNodes = stmt.getMandHypArrayLength();
-
-        child = new ParseNode[nbrChildNodes];
-
-        for (int i = nbrChildNodes - 1; i >= 0; i--) {
-            if (--stmtPosInRPN < 0)
-                throw new IllegalArgumentException(
-                    LangConstants.ERRMSG_RPN_INVALID_NOT_ENOUGH_STMTS);
-            child[i] = new ParseNode();
-            stmtPosInRPN = child[i].loadParseNodeFromRPN(rpn, stmtPosInRPN);
-        }
-        return stmtPosInRPN;
     }
 
     /**
@@ -808,7 +854,8 @@ public class ParseNode {
      * 
      * @param varHypList List of VarHyp objects in subtree.
      */
-    public void accumVarHypUsedListBySeq(final List<Hyp> varHypList) {
+    public void accumVarHypUsedListBySeq(final List<? super VarHyp> varHypList)
+    {
         if (stmt instanceof VarHyp)
             ((VarHyp)stmt).accumVarHypListBySeq(varHypList);
         else
@@ -826,24 +873,25 @@ public class ParseNode {
      * Note: in ProofUnifier this is used to accumulate a list of optional
      * variables that are in use in a proof.
      * 
-     * @param varHypList List of Var Hyps being sought for accumulation.
-     * @param varHypInUseList List of Var Hyps accumulated which are in the
-     *            formula and are in the input varList.
+     * @param optionalVarHypList List of Var Hyps being sought for accumulation.
+     * @param optionalVarHypsInUseList List of Var Hyps accumulated which are in
+     *            the formula and are in the input varList.
      */
-    public void accumListVarHypUsedListBySeq(final List<Hyp> varHypList,
-        final List<Hyp> varHypInUseList)
+    public void accumListVarHypUsedListBySeq(
+        final List<VarHyp> optionalVarHypList,
+        final List<VarHyp> optionalVarHypsInUseList)
     {
 
         VarHyp vH;
         if (stmt instanceof VarHyp) {
             vH = (VarHyp)stmt;
-            if (vH.containedInVarHypListBySeq(varHypList))
-                vH.accumVarHypListBySeq(varHypInUseList);
+            if (vH.containedInVarHypListBySeq(optionalVarHypList))
+                vH.accumVarHypListBySeq(optionalVarHypsInUseList);
         }
         else
             for (final ParseNode element : child)
-                element.accumListVarHypUsedListBySeq(varHypList,
-                    varHypInUseList);
+                element.accumListVarHypUsedListBySeq(optionalVarHypList,
+                    optionalVarHypsInUseList);
     }
 
     /**
@@ -899,5 +947,11 @@ public class ParseNode {
             nodeStack = new Stack<ParseNode>();
             pushIfNotExcluded(parsenode1);
         }
+    }
+
+    @Override
+    public String toString() {
+        return child == null || child.length == 0 ? stmt.toString() : Arrays
+            .toString(child) + "; " + stmt;
     }
 }

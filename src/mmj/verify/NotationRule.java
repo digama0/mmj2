@@ -403,7 +403,7 @@ public class NotationRule extends GrammarRule {
                 return;
             nR = new NotationRule(grammar, this, matchIndex, typeConversionRule);
             grammar.derivedRuleQueueAdd(nR);
-            ++matchIndex;
+            matchIndex++;
         }
     }
 

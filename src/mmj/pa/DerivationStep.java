@@ -145,7 +145,7 @@ public class DerivationStep extends ProofStepStmt {
                 if (outArray[outIndex] == null)
                     break;
                 if (outArray[outIndex].formula.getCnt() - iFormulaLength >= 0) {
-                    ++outIndex;
+                    outIndex++;
                     continue;
                 }
                 break;
@@ -732,7 +732,7 @@ public class DerivationStep extends ProofStepStmt {
         for (final String step : hypStep = list
             .toArray(new String[list.size()]))
             if (step.compareTo(PaConstants.DEFAULT_STMT_LABEL) == 0)
-                ++questionMarks;
+                questionMarks++;
 
         return questionMarks;
     }
@@ -763,7 +763,7 @@ public class DerivationStep extends ProofStepStmt {
 
             hyp[i] = (ProofStepStmt)x;
 
-            ++nbrValidHyps;
+            nbrValidHyps++;
         }
 
         if (nbrExpectedHyps != -1 && nbrValidHyps > nbrExpectedHyps)
@@ -916,5 +916,16 @@ public class DerivationStep extends ProofStepStmt {
                 hypMaxDepth = hypDepth;
         }
         return hypMaxDepth;
+    }
+
+    @Override
+    public String toString() {
+        String s = step + ":";
+        String delim = "";
+        for (final String h : hypStep) {
+            s += delim + h;
+            delim = ",";
+        }
+        return s + ":" + refLabel + " " + formula;
     }
 }

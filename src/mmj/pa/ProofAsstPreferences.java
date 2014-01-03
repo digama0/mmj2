@@ -1000,7 +1000,7 @@ public class ProofAsstPreferences {
                     sb.append(delim).append(s);
                     if (sb.length() > lineMax * lineCnt) {
                         delim = "\n";
-                        ++lineCnt;
+                        lineCnt++;
                         if (lineCnt > PaConstants.FONT_LIST_MAX_LINES)
                             continue loopA;
                     }

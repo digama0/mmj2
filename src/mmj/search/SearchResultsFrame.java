@@ -37,43 +37,34 @@ public class SearchResultsFrame extends JFrame implements
         buildFrame();
     }
 
-    void increaseFontSize() {
+    public void increaseFontSize() {
         searchMgr.increaseSearchResultsFontSize();
         setFontSizeDisplay();
     }
 
-    void decreaseFontSize() {
+    public void decreaseFontSize() {
         searchMgr.decreaseSearchResultsFontSize();
         setFontSizeDisplay();
     }
 
-    int getSelectedIndex() {
+    public int getSelectedIndex() {
         return searchResultsScrnMap.getSelectedIndex();
     }
 
-    void showPopupErrorMessage(final String s) {
-        processLocalRequestGUI(new ShowPopupErrorMessage(this, s));
+    public void showPopupErrorMessage(final String s) {
+        EventQueue.invokeLater(new ShowPopupErrorMessage(this, s));
     }
 
-    void reshowSearchResults() {
+    public void reshowSearchResults() {
         if (getShown())
-            processLocalRequestGUI(new ReshowSearchResults());
+            EventQueue.invokeLater(new ReshowSearchResults());
         else
             showSearchResults();
     }
 
-    void showSearchResults() {
-        showSearchResultsDisplay();
-    }
-
-    void mockupSearchResults() {
-        processLocalRequestGUI(new ShowSearchResults(searchMgr,
+    public void mockupSearchResults() {
+        EventQueue.invokeLater(new ShowSearchResults(searchMgr,
             searchResultsScrnMap));
-    }
-
-    void processLocalRequestGUI(final RequestGUI requestgui) {
-        final UpdateGUI updategui = new UpdateGUI(requestgui);
-        EventQueue.invokeLater(updategui);
     }
 
     public void searchResultsButtonPressed(final int i) {
@@ -130,7 +121,6 @@ public class SearchResultsFrame extends JFrame implements
         frameBox = Box.createVerticalBox();
         frameBox.add(searchResultsScrnMap.getSearchResultsBox());
         getContentPane().add(frameBox);
-        setAutoRequestFocus(true);
     }
 
     private String buildTitle() {
@@ -163,7 +153,7 @@ public class SearchResultsFrame extends JFrame implements
             return SearchOptionsConstants.DEFAULT_TITLE;
     }
 
-    private void showSearchResultsDisplay() {
+    public void showSearchResults() {
         setTitle(buildTitle());
         searchResultsScrnMap.downloadToScrnMap(searchMgr);
         searchResultsScrnMap.setStepSearchFieldsEnabled(searchMgr
@@ -173,6 +163,7 @@ public class SearchResultsFrame extends JFrame implements
         pack();
         setVisible(true);
         setShown(true);
+        toFront();
     }
 
     private void setFontSizeDisplay() {
@@ -193,23 +184,7 @@ public class SearchResultsFrame extends JFrame implements
         new ProofAsstPreferences().getSearchMgr().execMockupSearchResults();
     }
 
-    abstract class RequestGUI {
-        abstract void doIt();
-    }
-
-    protected static class UpdateGUI implements Runnable {
-        RequestGUI requestGUI;
-
-        public UpdateGUI(final RequestGUI requestgui) {
-            requestGUI = requestgui;
-        }
-
-        public void run() {
-            requestGUI.doIt();
-        }
-    }
-
-    class ShowSearchResults extends RequestGUI {
+    class ShowSearchResults implements Runnable {
 
         SearchMgr searchMgr;
         SearchResultsScrnMap searchResultsScrnMap;
@@ -221,20 +196,19 @@ public class SearchResultsFrame extends JFrame implements
             this.searchResultsScrnMap = searchResultsScrnMap;
         }
 
-        @Override
-        void doIt() {
-            showSearchResultsDisplay();
+        public void run() {
+            showSearchResults();
         }
     }
 
-    class ReshowSearchResults extends RequestGUI {
-        @Override
-        void doIt() {
+    class ReshowSearchResults implements Runnable {
+        public void run() {
             setVisible(true);
+            toFront();
         }
     }
 
-    class ShowPopupErrorMessage extends RequestGUI {
+    class ShowPopupErrorMessage implements Runnable {
         Component parentComponent;
         String errorMessage;
 
@@ -243,8 +217,7 @@ public class SearchResultsFrame extends JFrame implements
             errorMessage = s;
         }
 
-        @Override
-        void doIt() {
+        public void run() {
             JOptionPane.showMessageDialog(parentComponent, errorMessage,
                 SearchOptionsConstants.POPUP_ERROR_MESSAGE_TITLE, 0);
         }

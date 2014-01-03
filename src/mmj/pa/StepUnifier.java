@@ -455,7 +455,7 @@ public class StepUnifier {
 
         int governorLimit = assrtLogHypArray.length;
         while (governorLimit-- > 0) {
-            ++nextAssrtHypIndex;
+            nextAssrtHypIndex++;
             if (nextAssrtHypIndex >= assrtLogHypArray.length)
                 return false;
             if (assrtHypUsed[nextAssrtHypIndex])
@@ -471,7 +471,7 @@ public class StepUnifier {
                     return true;
                 }
                 if (currLevelSubstAnswer[nextAssrtHypIndex] == UnifySubst.IMPOSSIBLE)
-                    ++impossibleCnt[currLevel];
+                    impossibleCnt[currLevel]++;
                 continue;
             }
 
@@ -726,7 +726,7 @@ public class StepUnifier {
         }
 
         applied[appliedCnt++] = unifySubst;
-        ++levelAppliedCnt[++levelIndex];
+        levelAppliedCnt[++levelIndex]++;
     }
     private void backoutCurrLevelApplieds() {
         backoutOneLevelApplieds(currLevel);

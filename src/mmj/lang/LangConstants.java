@@ -71,6 +71,9 @@
  *
  * Version 0.10 - Nov-01-2011:  comment update.
  *     --> Add stmt label to ERRMSG_BAD_PARSE_STMT_1
+ *
+ * Version 0.11 - Sep-02-2013
+ *     --> Add CNST_SET_TYPE
  */
 
 package mmj.lang;
@@ -297,9 +300,7 @@ public class LangConstants {
         COMPRESS_VALID_CHARS[COMPRESS_REPEAT_CHAR] = COMPRESS_REPEAT_CHAR_VALUE;
     }
 
-    public static final int COMPRESS_OTHER_HYP_INIT_LEN = 50;
-
-    public static final int COMPRESS_OTHER_ASSRT_INIT_LEN = 500;
+    public static final int COMPRESS_OTHER_STMT_INIT_LEN = 500;
 
     public static final int COMPRESS_REPEATED_SUBPROOF_INIT_LEN = 500;
 
@@ -374,6 +375,14 @@ public class LangConstants {
 
     public final static String[] SECTION_DISPLAY_CAPTION = {" N/A    ",
             " Symbols ", " VarHyps ", " Syntax  ", " Logic   "};
+
+    // ====================================================
+
+    /**
+     * for Cnst.java
+     */
+
+    public static final String CNST_SET_TYPE = "set";
 
     // ====================================================
 
@@ -588,38 +597,43 @@ public class LangConstants {
         + " reached prior to end of compressed step number";
 
     public static final String ERRMSG_COMPRESS_NOT_ASCII = "E-LA-0106 Theorem %s:"
-        + " Compressed proof block %d, character position %d contains a character code > 255 = %c";
+        + " Compressed proof character position %d contains a character code > 255 = %c";
 
     public static final String ERRMSG_COMPRESS_BAD_CHAR = "E-LA-0107 Theorem %s:"
-        + " Compressed proof block %d, character position %d contains an invalid character '%c'. Compressed proof"
+        + " Compressed proof character position %d contains an invalid character '%c'. Compressed proof"
         + " block may contain only 'A', 'B'...'Z' and '?'.";
 
     public static final String ERRMSG_COMPRESS_BAD_UNK = "E-LA-0108 Theorem %s:"
-        + " Compressed proof block %d, character position %d contains a '?' inside a compressed proof number"
+        + " Compressed proof character position %d contains a '?' inside a compressed proof number"
         + " (for example: 'U?' or 'U?U').";
 
     public static final String ERRMSG_COMPRESS_BAD_RPT = "E-LA-0109 Theorem %s:"
-        + " Compressed proof block %d, character position %d contains a 'Z' (Repeated Subproof symbol)"
+        + " Compressed proof character position %d contains a 'Z' (Repeated Subproof symbol)"
         + " inside a compressed proof number"
         + " (for example: 'UZ' or 'UZU').";
 
     public static final String ERRMSG_COMPRESS_BAD_RPT2 = "E-LA-0110 Theorem %s:"
-        + " Compressed proof block %d, character position %d contains a 'Z' (Repeated Subproof symbol)"
+        + " Compressed proof character position %d contains a 'Z' (Repeated Subproof symbol)"
         + " at an invalid location, such as after another 'Z'"
         + " or following a '?'";
 
     public static final String ERRMSG_COMPRESS_BAD_RPT3 = "E-LA-0111 Theorem %s:"
-        + " Compressed proof block %d, character position %d is invalid: compressed number that points beyond"
+        + " Compressed proof character position %d is invalid: compressed number that points beyond"
         + " the end of the Repeated Subproof array.";
 
     public static final String ERRMSG_COMPRESS_CORRUPT = "E-LA-0112 Theorem %s:"
-        + " Compressed proof block %d, character position %d is invalid: It appears that the compressed proof is"
+        + " Compressed proof character position %d is invalid: It appears that the compressed proof is"
         + " corrupted -- subproof length points outside the"
         + " range of proof steps! The problem may be the result"
         + " of a handcoded compressed proof, or a bug in the"
         + " proof compression logic that occurred at some"
         + " earlier time. At any rate, this proof is bogus"
         + " and cannot be processed further!";
+
+    public static final String ERRMSG_COMPRESS_OTHER_MAND = "E-LA-0113 Theorem %s:"
+        + " compressed proof contains required hypothesis within the parentheses."
+        + " Label position within the compressed proof's parentheses = %d."
+        + " Statement label = %s";
 
     // =======================================================
 
@@ -778,5 +792,4 @@ public class LangConstants {
         + " variables found even though they were previously"
         + " consolidated to eliminate duplicates!"
         + " Original error message follows: %s";
-
 }

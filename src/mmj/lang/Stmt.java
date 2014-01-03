@@ -44,6 +44,8 @@ package mmj.lang;
 import java.util.Comparator;
 import java.util.Map;
 
+import mmj.lang.ParseTree.RPNStep;
+
 /**
  * Stmt is the parent class of all Metamath {@code Hyp}s (hypotheses) and
  * {@code Assrt}s.
@@ -306,7 +308,7 @@ public abstract class Stmt extends MObj {
      * 
      * @return exprRPN.
      */
-    public Stmt[] getExprRPN() {
+    public RPNStep[] getExprRPN() {
         // return exprRPN; 12/14/2005 ProofAsst fix
         if (exprParseTree == null)
             return null;
@@ -318,12 +320,12 @@ public abstract class Stmt extends MObj {
      * 
      * @param exprRPN array of Stmt!
      */
-    public void setExprRPN(final Stmt[] exprRPN) {
+    public void setExprRPN(final RPNStep[] exprRPN) {
 //      this.exprRPN = exprRPN; 12/14/2006 fix for ProofAsst
         if (exprRPN == null)
             setExprParseTree(null);
         else
-            setExprParseTree(ParseTree.convertRPNtoParseTree(exprRPN));
+            setExprParseTree(new ParseTree(exprRPN));
     }
 
     /**

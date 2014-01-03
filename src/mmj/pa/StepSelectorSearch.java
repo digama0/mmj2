@@ -146,7 +146,7 @@ public class StepSelectorSearch {
                 throw new VerifyException(
                     PaConstants.ERRMSG_SELECTOR_SEARCH_NULL_PARSE_TREE,
                     derivStep.step);
-            ++nbrDerivStepHyps;
+            nbrDerivStepHyps++;
         }
 
         /* Now sort to avoid worst case search time
@@ -186,7 +186,7 @@ public class StepSelectorSearch {
                 if (assrt.getSeq() < maxSeq) {
                     assrtNbrLogHyps = assrt.getLogHypArrayLength();
                     if (assrtNbrLogHyps != hypIndex) {
-                        ++hypIndex;
+                        hypIndex++;
                         continue hypLoop;
                     }
                     if (isAssrtUnifiable())
@@ -198,11 +198,11 @@ public class StepSelectorSearch {
                 else if (hypIndex < // 95% of Assrts
                 PaConstants.STEP_SELECTOR_SEARCH_HYP_LOOKUP_MAX)
                 {
-                    ++hypIndex; // so skip forward
+                    hypIndex++; // so skip forward
                     assrtIndex = computeSearchStart(hypIndex);
                     continue hypLoop;
                 }
-                ++assrtIndex;
+                assrtIndex++;
             }
             break;
         }

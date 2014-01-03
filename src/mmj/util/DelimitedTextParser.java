@@ -264,7 +264,7 @@ public class DelimitedTextParser {
                     next = right + 1;
                     if (next < max)
                         if (line.charAt(next) == delimiter)
-                            ++next;
+                            next++;
                         else
                             throw new IllegalStateException(
                                 UtilConstants.ERRMSG_MISSING_DELIM);
@@ -285,7 +285,7 @@ public class DelimitedTextParser {
         }
         else if (next == max && max > 0 && line.charAt(max - 1) == delimiter) {
             fieldOut = "";
-            ++next;
+            next++;
         }
         else if (reachedEOL)
             throw new IllegalArgumentException(
@@ -405,7 +405,7 @@ public class DelimitedTextParser {
             String s;
             int i = 0;
             while (i < 99 && (s = d.nextField()) != null) {
-                ++i;
+                i++;
                 if (s.length() == 0)
                     System.out
                         .println("nextField " + i + " is an empty string");
@@ -445,7 +445,7 @@ public class DelimitedTextParser {
                 if (fieldOut == null)
                     System.out.println("End of line reached.");
                 else {
-                    ++fieldNbr;
+                    fieldNbr++;
                     if (fieldOut.length() == 0)
                         System.out.println("Field " + fieldNbr
                             + " is empty string.");

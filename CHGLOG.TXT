@@ -8,7 +8,51 @@
 
 
 ================================================================================
-11-Aug-2013:
+2-Jan-2014:
+
+    CHANGES:
+
+    * The compression format has been updated to match the new compression
+      default of the metamath.exe program.
+
+    * Parse tree compression is now more efficient, which means that loading
+      completed proof worksheets and unifying a completed proof is faster.
+
+    * Bug fix for 17-Aug change, where steps with no variables or hypotheses
+      (such as the example below) would not be collapsed into a single step.
+
+================================================================================
+17-Aug-2013:
+
+    CHANGES:
+
+    * New proofs loaded via 'New-Next Proof' and related functions now have a
+      step layout that mirrors the compressed format instead of the uncompressed
+      RPN. This means that if a given step is referred to twice in a proof, the
+      step will only be assigned one step number, rather than making copies of
+      the statement for each use. (Depending on the proof, this can mean a
+      drastic decrease in the length of proofs as seen in the main text area of
+      ProofAsstGUI. The length of compressed and uncompressed proofs themselves
+      remains unaffected.) For example:
+      Before:                             After:
+        1::tru          |- T.               1::tru          |- T.
+        2::tru          |- T.               qed:1,1:pm3.2i |- ( T. /\ T. )
+        qed:1,2:pm3.2i |- ( T. /\ T. )
+
+    * New menu items "Unify+Don't Convert WorkVars" and "Unify+Erase+Don't
+      Convert" have been added to the Unify menu. When activated, they perform
+      the regular unification process, but if the process completes successfully
+      except that work variables (i.e. &C1, &S2, etc.) are in use in the
+      derivation steps, it will abort the unification process and move the
+      cursor to the first step containing a work variable, so that you can name
+      it properly. (The default option "Unify" will instead replace these
+      variables with dummy variables that have been taken from the pool of
+      unused variables defined in the .mm file.)
+
+    * The "Reformat" options no longer require you to save the file.
+
+================================================================================
+13-Aug-2013:
 
     CHANGES:
 

@@ -96,6 +96,17 @@ public class ProofDerivationStepEntry {
      */
     public int proofLevel;
 
+    @Override
+    public String toString() {
+        String s = (isHyp ? "h" : "") + step + ":";
+        String delim = "";
+        for (final String hyp : hypStep) {
+            s += delim + hyp;
+            delim = ",";
+        }
+        return s + ":" + refLabel + " " + formula;
+    }
+
     /**
      * Compute proof level numbers for a proof stored in a
      * ProofDerivationStepEntry ArrayList.

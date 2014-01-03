@@ -245,7 +245,7 @@ public class TMFFStateParams {
             final int padLength = textColumns - prevColNbr;
             padSB(' ', padLength);
         }
-        ++currLineNbr;
+        currLineNbr++;
         prevColNbr = 0;
     }
 
