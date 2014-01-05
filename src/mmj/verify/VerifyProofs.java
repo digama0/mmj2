@@ -550,7 +550,7 @@ public class VerifyProofs implements ProofVerifier {
         final List<Formula> backrefs = new ArrayList<Formula>();
         final List<ProofDerivationStepEntry> backrefSteps = new ArrayList<ProofDerivationStepEntry>();
 
-        for (stepNbr = 0; stepNbr < proof.length; stepNbr++) {
+        sLoop: for (stepNbr = 0; stepNbr < proof.length; stepNbr++) {
             if (proof[stepNbr] == null || proof[stepNbr].backRef <= 0
                 && proof[stepNbr].stmt == null)
                 raiseVerifyException(Integer.toString(stepNbr + 1), " ",
@@ -576,17 +576,16 @@ public class VerifyProofs implements ProofVerifier {
                 }
                 pStack.push(stepFormula);
                 if (proof[stepNbr].stmt instanceof LogHyp) {
-                    int i = 0;
-                    for (; i < numHyps; i++)
-                        if (stepLabel.equals(derivStepList.get(i).refLabel)) {
-                            undischargedStack.push(derivStepList.get(i));
-                            break;
+                    for (final ProofDerivationStepEntry e : derivStepList)
+                        if (stepLabel.equals(e.refLabel)) {
+                            undischargedStack.push(e);
+                            backrefSteps.set(backrefs.size() - 1, e);
+                            continue sLoop;
                         }
-                    if (i >= numHyps)
-                        raiseVerifyException(Integer.toString(stepNbr + 1),
-                            stepLabel,
-                            ProofConstants.ERRMSG_BOGUS_PROOF_LOGHYP_STMT,
-                            proofStmtLabel, stepLabel);
+                    raiseVerifyException(Integer.toString(stepNbr + 1),
+                        stepLabel,
+                        ProofConstants.ERRMSG_BOGUS_PROOF_LOGHYP_STMT,
+                        proofStmtLabel, stepLabel);
                 }
                 continue;
             }
