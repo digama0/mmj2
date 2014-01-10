@@ -498,15 +498,13 @@ public class VerifyProofs implements ProofVerifier {
         }
 
         reInitArrays(0);
-        while (true) {
-            try {
-                loadTheoremGlobalVerifyVars(theorem);
-                loadProofDerivStepList(theorem, derivStepList,
-                    exportFormatUnified, hypsRandomized, provableLogicStmtTyp);
-                break;
-            } catch (final IllegalArgumentException e) {}
-            derivStepList.subList(theoremLogHypArray.length,
-                derivStepList.size()).clear();
+        try {
+            loadTheoremGlobalVerifyVars(theorem);
+            proof = new ParseTree(proof).squishTree().convertToRPN();
+            loadProofDerivStepList(theorem, derivStepList, exportFormatUnified,
+                hypsRandomized, provableLogicStmtTyp);
+        } catch (final IllegalArgumentException e) {
+            throw new VerifyException(e.getMessage());
         }
 
         ProofDerivationStepEntry.computeProofLevels(derivStepList);
@@ -540,7 +538,6 @@ public class VerifyProofs implements ProofVerifier {
         final boolean exportFormatUnified, final boolean hypsRandomized,
         final Cnst provableLogicStmtTyp) throws VerifyException
     {
-        proof = new ParseTree(proof).squishTree().convertToRPN();
         final int numHyps = derivStepList.size();
         int stepName = PaConstants.PROOF_STEP_RENUMBER_START + numHyps
             * PaConstants.PROOF_STEP_RENUMBER_INTERVAL;
@@ -579,7 +576,8 @@ public class VerifyProofs implements ProofVerifier {
                     for (final ProofDerivationStepEntry e : derivStepList)
                         if (stepLabel.equals(e.refLabel)) {
                             undischargedStack.push(e);
-                            backrefSteps.set(backrefs.size() - 1, e);
+                            if (proof[stepNbr].backRef < 0)
+                                backrefSteps.set(backrefs.size() - 1, e);
                             continue sLoop;
                         }
                     raiseVerifyException(Integer.toString(stepNbr + 1),
