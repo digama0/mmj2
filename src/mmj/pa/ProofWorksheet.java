@@ -826,6 +826,15 @@ public class ProofWorksheet {
         return stepRequest;
     }
 
+    public int getRPNProofLeftCol() {
+        final int column = proofAsstPreferences.getRPNProofLeftCol();
+        if (column != 0)
+            return column;
+        if (theorem != null && theorem.getColumn() >= 0)
+            return theorem.getColumn() + 2;
+        return PaConstants.PROOF_ASST_RPN_PROOF_LEFT_COL_DEFAULT;
+    }
+
     /**
      * Searches up to an exclusive endpoint in the proofWorkStmtList for a step
      * whose formula matches the input formula.

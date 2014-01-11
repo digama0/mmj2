@@ -73,6 +73,7 @@ import mmj.mmio.BlockList;
 public class Theorem extends Assrt {
     private RPNStep[] proof;
     private final ScopeFrame optFrame;
+    private final int column;
 
     /**
      * Construct Theorem using the entire enchilada from mmj.mmio.SrcStmt.java,
@@ -83,6 +84,7 @@ public class Theorem extends Assrt {
      * @param symTbl Symbol Table (Map)
      * @param stmtTbl Statement Table (Map)
      * @param labelS Theorem label String
+     * @param column Starting column
      * @param typS Theorem Formula Type Code String
      * @param symList Theorem Expression Sym String List
      * @param proofList Theorem Proof Stmt String List.
@@ -93,13 +95,14 @@ public class Theorem extends Assrt {
      */
     public Theorem(final int seq, final List<ScopeDef> scopeDefList,
         final Map<String, Sym> symTbl, final Map<String, Stmt> stmtTbl,
-        final String labelS, final String typS, final List<String> symList,
-        final List<String> proofList, final Messages messages)
-        throws LangException
+        final String labelS, final int column, final String typS,
+        final List<String> symList, final List<String> proofList,
+        final Messages messages) throws LangException
     {
         super(seq, scopeDefList, symTbl, stmtTbl, labelS, typS, symList);
 
         optFrame = buildOptFrame(scopeDefList);
+        this.column = column;
 
         try {
             proof = editProofListDefAndActive(stmtTbl, proofList);
@@ -118,6 +121,7 @@ public class Theorem extends Assrt {
      * @param symTbl Symbol Table (Map)
      * @param stmtTbl Statement Table (Map)
      * @param labelS Theorem label String
+     * @param column Starting column
      * @param typS Theorem Formula Type Code String
      * @param symList Theorem Expression Sym String List
      * @param proofList Theorem Proof Stmt String List.
@@ -132,14 +136,16 @@ public class Theorem extends Assrt {
      */
     public Theorem(final int seq, final List<ScopeDef> scopeDefList,
         final Map<String, Sym> symTbl, final Map<String, Stmt> stmtTbl,
-        final String labelS, final String typS, final List<String> symList,
-        final List<String> proofList, final BlockList proofBlockList,
+        final String labelS, final int column, final String typS,
+        final List<String> symList, final List<String> proofList,
+        final BlockList proofBlockList,
         final ProofCompression proofCompression, final Messages messages)
         throws LangException
     {
         super(seq, scopeDefList, symTbl, stmtTbl, labelS, typS, symList);
 
         optFrame = buildOptFrame(scopeDefList);
+        this.column = column;
 
         try {
             proof = proofCompression.decompress(labelS, seq, stmtTbl,
@@ -186,6 +192,15 @@ public class Theorem extends Assrt {
      */
     public ScopeFrame getOptFrame() {
         return optFrame;
+    }
+
+    /**
+     * Get the starting column for the theorem.
+     * 
+     * @return the column in the input file that starts the label of the theorem
+     */
+    public int getColumn() {
+        return column;
     }
 
     /**

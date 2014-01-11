@@ -523,6 +523,11 @@ public class PaConstants {
     public static final int PROOF_ASST_FORMULA_RIGHT_COL_DEFAULT = 79;
 
     /**
+     * PROOF_ASST_RPN_PROOF_LEFT_COL_AUTO
+     */
+    public static final int PROOF_ASST_RPN_PROOF_LEFT_COL_AUTO = 0;
+
+    /**
      * PROOF_ASST_RPN_PROOF_LEFT_COL_DEFAULT
      */
     public static final int PROOF_ASST_RPN_PROOF_LEFT_COL_DEFAULT = 5;

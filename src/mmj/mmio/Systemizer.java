@@ -518,18 +518,19 @@ public class Systemizer {
         if (loadProofs) {
             if (currSrcStmt.proofBlockList == null)
                 theorem = systemLoader.addTheorem(currSrcStmt.label,
-                    currSrcStmt.typ, currSrcStmt.symList,
+                    currSrcStmt.column, currSrcStmt.typ, currSrcStmt.symList,
                     currSrcStmt.proofList, messages);
             else
                 theorem = systemLoader
-                    .addTheorem(currSrcStmt.label, currSrcStmt.typ,
-                        currSrcStmt.symList, currSrcStmt.proofList,
-                        currSrcStmt.proofBlockList, messages);
+                    .addTheorem(currSrcStmt.label, currSrcStmt.column,
+                        currSrcStmt.typ, currSrcStmt.symList,
+                        currSrcStmt.proofList, currSrcStmt.proofBlockList,
+                        messages);
         }
         else
             theorem = systemLoader.addTheorem(currSrcStmt.label,
-                currSrcStmt.typ, currSrcStmt.symList, defaultProofList,
-                messages);
+                currSrcStmt.column, currSrcStmt.typ, currSrcStmt.symList,
+                defaultProofList, messages);
 
         if (loadComments && currSrcStmt.comment != null)
             theorem.setDescription(currSrcStmt.comment);

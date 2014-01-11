@@ -68,7 +68,7 @@ public class GeneratedProofStmt extends ProofWorkStmt {
         lineCnt = 1;
 
         stmtText = new StringBuilder(rpnProof.length * 5); // 5=guess
-        final int left = w.proofAsstPreferences.getRPNProofLeftCol();
+        final int left = w.getRPNProofLeftCol();
         final int right = w.proofAsstPreferences.getRPNProofRightCol();
         final StringBuilder indentLeft = new StringBuilder(left - 1);
         for (int i = 1; i < left; i++)
@@ -130,7 +130,7 @@ public class GeneratedProofStmt extends ProofWorkStmt {
         lineCnt = 1;
 
         stmtText = new StringBuilder(parenList.size() * 5 + letters.length()); // 5=guess
-        final int left = w.proofAsstPreferences.getRPNProofLeftCol();
+        final int left = w.getRPNProofLeftCol();
         final int right = w.proofAsstPreferences.getRPNProofRightCol();
         final StringBuilder indentLeft = new StringBuilder(left - 1);
         for (int i = 1; i < left; i++)

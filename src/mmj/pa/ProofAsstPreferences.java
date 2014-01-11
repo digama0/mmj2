@@ -163,7 +163,7 @@ public class ProofAsstPreferences {
 
         tmffPreferences = new TMFFPreferences();
 
-        rpnProofLeftCol = PaConstants.PROOF_ASST_RPN_PROOF_LEFT_COL_DEFAULT;
+        rpnProofLeftCol = PaConstants.PROOF_ASST_RPN_PROOF_LEFT_COL_AUTO;
         rpnProofRightCol = PaConstants.PROOF_ASST_RPN_PROOF_RIGHT_COL_DEFAULT;
 
         recheckProofAsstUsingProofVerifier = PaConstants.RECHECK_PROOF_ASST_USING_PROOF_VERIFIER_DEFAULT;

@@ -3174,6 +3174,7 @@ public class UtilConstants {
     // see mmj.pa.PaConstants.java for min/max values
     public static final String ERRMSG_RUNPARM_PA_RLC_RANGE_ERR_1 = "A-UT-0040 ProofAsstRPNProofLeftCol RunParm must be between ";
     public static final String ERRMSG_RUNPARM_PA_RLC_RANGE_ERR_2 = " (inclusive) and ";
+    public static final String ERRMSG_RUNPARM_PA_RLC_RANGE_ERR_3 = ", or must be equal to 0 (Automatic)";
 
     // see mmj.pa.PaConstants.java for min/max values
     public static final String ERRMSG_RUNPARM_PA_RRC_RANGE_ERR_1 = "A-UT-0041 ProofAsstRPNProofRightCol RunParm must be between ";

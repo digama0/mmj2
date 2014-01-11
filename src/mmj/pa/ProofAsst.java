@@ -1383,8 +1383,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 else
                     label = results.refArray[i].getLabel();
                 outputBoss.sysOutPrint(" " + i + " " + label + " "
-                    + results.selectionArray[i]
-                    + "\n");
+                    + results.selectionArray[i] + "\n");
             }
         } catch (final IOException e) {
             e.printStackTrace();
@@ -1520,8 +1519,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
                     final int width = proofWorksheet.proofAsstPreferences
                         .getRPNProofRightCol()
-                        - proofWorksheet.proofAsstPreferences
-                            .getRPNProofLeftCol() + 1;
+                        - proofWorksheet.getRPNProofLeftCol() + 1;
                     final List<Stmt> parenList = logicalSystem
                         .getProofCompression().compress(
                             proofWorksheet.getTheoremLabel(), width,

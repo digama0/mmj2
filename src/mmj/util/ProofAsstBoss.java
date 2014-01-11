@@ -864,9 +864,10 @@ public class ProofAsstBoss extends Boss {
         throws IllegalArgumentException
     {
 
-        final int rpnProofLeftCol = editRunParmValueReqPosInt(runParm,
+        final int rpnProofLeftCol = editRunParmValueReqNonNegativeInt(runParm,
             UtilConstants.RUNPARM_PROOF_ASST_RPN_PROOF_LEFT_COL, 1);
-        if (rpnProofLeftCol < PaConstants.PROOF_ASST_RPN_PROOF_LEFT_COL_MIN
+        if (rpnProofLeftCol != 0
+            && rpnProofLeftCol < PaConstants.PROOF_ASST_RPN_PROOF_LEFT_COL_MIN
             || rpnProofLeftCol > getProofAsstPreferences()
                 .getRPNProofRightCol() - 1)
             throw new IllegalArgumentException(
@@ -889,11 +890,13 @@ public class ProofAsstBoss extends Boss {
 
         final int rpnProofRightCol = editRunParmValueReqPosInt(runParm,
             UtilConstants.RUNPARM_PROOF_ASST_RPN_PROOF_RIGHT_COL, 1);
-        if (rpnProofRightCol < getProofAsstPreferences().getRPNProofLeftCol() + 1
+        int left = getProofAsstPreferences().getRPNProofLeftCol();
+        if (left < PaConstants.PROOF_ASST_RPN_PROOF_LEFT_COL_MIN)
+            left = PaConstants.PROOF_ASST_RPN_PROOF_LEFT_COL_MIN;
+        if (rpnProofRightCol < left + 1
             || rpnProofRightCol > PaConstants.PROOF_ASST_RPN_PROOF_RIGHT_COL_MAX)
             throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_RUNPARM_PA_RLC_RANGE_ERR_1
-                    + (getProofAsstPreferences().getRPNProofLeftCol() + 1)
+                UtilConstants.ERRMSG_RUNPARM_PA_RLC_RANGE_ERR_1 + (left + 1)
                     + UtilConstants.ERRMSG_RUNPARM_PA_RLC_RANGE_ERR_2
                     + PaConstants.PROOF_ASST_RPN_PROOF_RIGHT_COL_MAX);
         getProofAsstPreferences().setRPNProofRightCol(rpnProofRightCol);

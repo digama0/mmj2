@@ -410,6 +410,8 @@ public class Statementizer {
             else { // 1st token of statement MUST be a label
                 x = new SrcStmt(++stmtNbr, nextToken.toString());
                 x.label = validateNextTokenLabel();
+                x.column = (int)tokenizer.getCurrentColumnNbr()
+                    - x.label.length() + 1;
                 if (getNextNonCommentTokenLen() <= 0)
                     raiseParseException(MMIOConstants.ERRMSG_EOF_AFTER_LABEL
                         + x.label);
