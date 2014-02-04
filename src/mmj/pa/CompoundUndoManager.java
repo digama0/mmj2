@@ -17,6 +17,7 @@ package mmj.pa;
 
 import javax.swing.SwingUtilities;
 import javax.swing.event.*;
+import javax.swing.event.DocumentEvent.EventType;
 import javax.swing.text.AbstractDocument.DefaultDocumentEvent;
 import javax.swing.text.JTextComponent;
 import javax.swing.undo.*;
@@ -99,6 +100,8 @@ public class CompoundUndoManager extends UndoManager implements
      */
     @Override
     public void undoableEditHappened(final UndoableEditEvent e) {
+        if (((DefaultDocumentEvent)e.getEdit()).getType() == EventType.CHANGE)
+            return;
         if (compoundEdit == null)
             // start a new compound edit
             compoundEdit = startCompoundEdit(e.getEdit());

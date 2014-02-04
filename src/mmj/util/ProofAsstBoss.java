@@ -166,6 +166,20 @@ public class ProofAsstBoss extends Boss {
         }
 
         if (runParm.name
+            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_HIGHLIGHTING_ENABLED) == 0)
+        {
+            editProofAsstHighlightingEnabled(runParm);
+            return true;
+        }
+
+        if (runParm.name
+            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_HIGHLIGHTING_STYLE) == 0)
+        {
+            editProofAsstHighlightingStyle(runParm);
+            return true;
+        }
+
+        if (runParm.name
             .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_FOREGROUND_COLOR_RGB) == 0)
         {
             editProofAsstForegroundColorRGB(runParm);
@@ -578,6 +592,60 @@ public class ProofAsstBoss extends Boss {
             runParm.values[0]));
     }
 
+    /**
+     * Validate ProofAsstHighlightingEnabled RunParm.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurred
+     */
+    protected void editProofAsstHighlightingEnabled(
+        final RunParmArrayEntry runParm) throws IllegalArgumentException
+    {
+
+        final boolean highlightingEnabled = editYesNoRunParm(runParm,
+            UtilConstants.RUNPARM_PROOF_ASST_HIGHLIGHTING_ENABLED, 1);
+
+        getProofAsstPreferences().setHighlightingEnabled(highlightingEnabled);
+    }
+
+    /**
+     * Validate ProofAsstHighlightingEnabled RunParm.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurred
+     */
+    protected void editProofAsstHighlightingStyle(
+        final RunParmArrayEntry runParm) throws IllegalArgumentException
+    {
+        final String name = UtilConstants.RUNPARM_PROOF_ASST_HIGHLIGHTING_STYLE;
+        editRunParmValuesLength(runParm, name, 4);
+        Color color = null;
+        Boolean bold = null, italic = null;
+        if (!runParm.values[1]
+            .equalsIgnoreCase(UtilConstants.RUNPARM_OPTION_INHERIT))
+        {
+            if (!runParm.values[1].matches("[0-9A-Fa-f]{6}"))
+                throw new IllegalArgumentException(
+                    UtilConstants.ERRMSG_RUNPARM_RGB_FORMAT_1 + name
+                        + UtilConstants.ERRMSG_RUNPARM_RGB_FORMAT_2
+                        + runParm.values[1]);
+            color = new Color(Integer.parseInt(runParm.values[1], 16));
+        }
+        if (!runParm.values[2]
+            .equalsIgnoreCase(UtilConstants.RUNPARM_OPTION_INHERIT))
+            bold = editYesNoRunParm(runParm, name, 3);
+        if (!runParm.values[3]
+            .equalsIgnoreCase(UtilConstants.RUNPARM_OPTION_INHERIT))
+            italic = editYesNoRunParm(runParm, name, 4);
+
+        try {
+            getProofAsstPreferences().setHighlightingStyle(runParm.values[0],
+                color, bold, italic);
+        } catch (final IllegalArgumentException e) {
+            throw new IllegalArgumentException(
+                UtilConstants.ERRMSG_RUNPARM_PA_STYLE_UNKNOWN + e.getMessage());
+        }
+    }
     /**
      * Validate ProofAsstForegroundColorRGB RunParm.
      * 

@@ -8,6 +8,18 @@
 
 
 ================================================================================
+4-Feb-2014:
+
+    CHANGES:
+
+    * This update introduces the exiting new feature of syntax highlighting for
+      mmp files. The tokenizer and token types are hardcoded, but you can
+      customize the coloring and styling of the types using the new
+      'ProofAsstHighlightingStyle' RunParm. You can also disable syntax
+      highlighting altogether using 'ProofAsstHighlightingEnabled,no' if it is
+      too much of a performance hit.
+
+================================================================================
 2-Jan-2014:
 
     CHANGES:

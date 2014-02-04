@@ -1126,6 +1126,40 @@ public class UtilConstants {
     public static final String RUNPARM_PROOF_ASST_PROOF_FORMAT = "ProofAsstProofFormat";
 
     /**
+     * ProofAsstHighlightingEnabled
+     * 
+     * <pre>
+     * "ProofAsstHighlightingEnabled": Yes or No
+     * 
+     * Optional, default is Yes (enabled).
+     * </pre>
+     */
+    public static final String RUNPARM_PROOF_ASST_HIGHLIGHTING_ENABLED = "ProofAsstHighlightingEnabled";
+
+    /**
+     * ProofAsstHighlightingStyle
+     * 
+     * <pre>
+     * "ProofAsstHighlightingStyle": type, color RGB, bold yes/no, italic yes/no
+     * </pre>
+     * 
+     * The color RGB should be given as 6 hex digits (i.e. '00FFC0'), and any of
+     * the three fields can be set to 'Inherit' to use the global
+     * color/bold/italic settings. Style types and defaults are:
+     * 
+     * <pre>
+     * default: Inherit,Inherit,Inherit
+     * comment: 808080,No,Yes
+     * stephypref: 8A2908,Inherit,Inherit
+     * class: CC33CC,Inherit,Inherit
+     * set: FF0000,Inherit,Inherit
+     * wff: 0000FF,Inherit,Inherit
+     * workvar: 008800,Inherit,Inherit
+     * </pre>
+     */
+    public static final String RUNPARM_PROOF_ASST_HIGHLIGHTING_STYLE = "ProofAsstHighlightingStyle";
+
+    /**
      * ProofAsstForegroundColorRGB
      * 
      * <pre>
@@ -1134,7 +1168,7 @@ public class UtilConstants {
      *                        thru
      *                        "255,255,255" -- white
      * 
-     * Optional, default is "0.0,0" (black)
+     * Optional, default is "0,0,0" (black)
      * </pre>
      */
     public static final String RUNPARM_PROOF_ASST_FOREGROUND_COLOR_RGB = "ProofAsstForegroundColorRGB";
@@ -2853,6 +2887,11 @@ public class UtilConstants {
     public static final String RUNPARM_OPTION_NO_ASCII_RETEST = "NoAsciiRetest";
 
     /**
+     * Option "inherit"
+     */
+    public static final String RUNPARM_OPTION_INHERIT = "inherit";
+
+    /**
      * Maximum RGB Color Value = 255
      */
     public static final int RUNPARM_OPTION_MAX_RGB_COLOR = 255;
@@ -3080,6 +3119,9 @@ public class UtilConstants {
     public static final String ERRMSG_RUNPARM_NBR_LT_ZERO_2 = " value must be a simple integer number"
         + " greater than or equal to 0. Found input value = ";
 
+    public static final String ERRMSG_RUNPARM_RGB_FORMAT_1 = "A-UT-0114 RunParm name ";
+    public static final String ERRMSG_RUNPARM_RGB_FORMAT_2 = " must have 6 hexadecimal digits format. Input = ";
+
     // ----------------------------------------------------------
     // Messages from GrammarBoss.java
     // ----------------------------------------------------------
@@ -3279,6 +3321,8 @@ public class UtilConstants {
     // see mmj.pa.PaConstants.java for max value
     public static final String ERRMSG_RUNPARM_PROOF_ASST_FREESPACE_ERR_1 = "A-UT-0059 ProofAsstAssrtListFreespace RunParm must be"
         + " greater than or equal to zero and no greater than ";
+
+    public static final String ERRMSG_RUNPARM_PA_STYLE_UNKNOWN = "A-UT-0060 ProofAsstErrorMessageColumns RunParm must be one of ";
 
     // ----------------------------------------------------------
     // Messages from TMFFBoss.java

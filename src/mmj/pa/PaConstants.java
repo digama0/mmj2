@@ -111,6 +111,10 @@
 package mmj.pa;
 
 import java.awt.Color;
+import java.util.Map;
+
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 
 import mmj.gmff.GMFFConstants;
 import mmj.mmio.MMIOConstants;
@@ -156,6 +160,12 @@ import mmj.verify.ProofConstants;
  * 9999.
  */
 public class PaConstants {
+
+    /** Version number string. */
+    public static final String VERSION = "2.3";
+
+    /** Date for latest version. */
+    public static final String VERSION_DATE = "4-Feb-2014";
 
     public static final String SYNONYM_TRUE_1 = "true";
     public static final String SYNONYM_TRUE_2 = "on";
@@ -493,6 +503,95 @@ public class PaConstants {
     public static final boolean PROOF_ASST_FONT_BOLD_DEFAULT = true;
 
     /**
+     * PROOF_ASST_STYLE_COMMENT = 'comment'
+     */
+    public static final String PROOF_ASST_STYLE_COMMENT = "comment";
+
+    /**
+     * PROOF_ASST_STYLE_SHR = 'stephypref'
+     */
+    public static final String PROOF_ASST_STYLE_SHR = "stephypref";
+
+    /**
+     * PROOF_ASST_STYLE_COMMENT = 'class'
+     */
+    public static final String PROOF_ASST_STYLE_CLASS = "class";
+
+    /**
+     * PROOF_ASST_STYLE_SET = 'set'
+     */
+    public static final String PROOF_ASST_STYLE_SET = "set";
+
+    /**
+     * PROOF_ASST_STYLE_WFF = 'wff'
+     */
+    public static final String PROOF_ASST_STYLE_WFF = "wff";
+
+    /**
+     * PROOF_ASST_STYLE_WORKVAR = 'workvar'
+     */
+    public static final String PROOF_ASST_STYLE_WORKVAR = "workvar";
+
+    /**
+     * PROOF_ASST_STYLE_DEFAULT = 'default'
+     */
+    public static final String PROOF_ASST_STYLE_DEFAULT = "default";
+
+    /**
+     * Sets default syntax highlighting styles.
+     * 
+     * @param map the style map
+     */
+    public static void doStyleDefaults(final Map<String, SimpleAttributeSet> map)
+    {
+        SimpleAttributeSet style = new SimpleAttributeSet();
+        map.put(PROOF_ASST_STYLE_DEFAULT, style);
+        style = new SimpleAttributeSet();
+        map.put(PROOF_ASST_STYLE_COMMENT, style);
+        setStyle(style, Color.GRAY, false, true);
+        style = new SimpleAttributeSet();
+        map.put(PROOF_ASST_STYLE_SHR, style);
+        setStyle(style, new Color(0x8A2908), null, null);
+        style = new SimpleAttributeSet();
+        map.put(PROOF_ASST_STYLE_CLASS, style);
+        setStyle(style, new Color(0xCC33CC), null, null);
+        style = new SimpleAttributeSet();
+        map.put(PROOF_ASST_STYLE_SET, style);
+        setStyle(style, Color.RED, null, null);
+        style = new SimpleAttributeSet();
+        map.put(PROOF_ASST_STYLE_WFF, style);
+        setStyle(style, Color.BLUE, null, null);
+        style = new SimpleAttributeSet();
+        map.put(PROOF_ASST_STYLE_WORKVAR, style);
+        setStyle(style, new Color(0x008800), null, null);
+    }
+
+    /**
+     * Set style parameters.
+     * 
+     * @param style The style attribute set
+     * @param color the foreground color
+     * @param bold true for bold, false for plain, null for inherit
+     * @param italic true for italic, false for plain, null for inherit
+     */
+    public static void setStyle(final SimpleAttributeSet style,
+        final Color color, final Boolean bold, final Boolean italic)
+    {
+        if (color == null)
+            style.removeAttribute(StyleConstants.Foreground);
+        else
+            StyleConstants.setForeground(style, color);
+        if (bold == null)
+            style.removeAttribute(StyleConstants.Bold);
+        else
+            StyleConstants.setBold(style, bold);
+        if (italic == null)
+            style.removeAttribute(StyleConstants.Italic);
+        else
+            StyleConstants.setItalic(style, italic);
+    }
+
+    /**
      * PROOF_ASST_ERROR_MESSAGE_ROWS_DEFAULT = 4
      */
     public static final int PROOF_ASST_ERROR_MESSAGE_ROWS_DEFAULT = 4;
@@ -719,6 +818,19 @@ public class PaConstants {
     public static final boolean UNDO_REDO_ENABLED_DEFAULT = true;
 
     /**
+     * Default value for HighlightingEnabled RunParm.
+     * <p>
+     * Controls whether or not the Proof Assistant GUI provides Syntax
+     * highlighting support.
+     * <p>
+     * Normally this is turned on, but if desired, say for performance reasons,
+     * the user can disable syntax highlighting at start-up time via RunParm.
+     * <p>
+     * HIGHLIGHTING_ENABLED_DEFAULT = true
+     */
+    public static final boolean HIGHLIGHTING_ENABLED_DEFAULT = true;
+
+    /**
      * Default Foreground Color.
      * <p>
      * DEFAULT_FOREGROUND_COLOR = Color.BLACK
@@ -784,9 +896,11 @@ public class PaConstants {
     /**
      * PROOF_ASST_GUI_STARTUP_MSG
      */
-    public static final String PROOF_ASST_GUI_STARTUP_MSG = "Hi! I am mmj2 Release R20121225 as of 20-Sep-2012 20:54.\n"
-        + "Send mmj2 support? Paypal to siskiyousis at gmail.com\n"
-        + "Need mmj2 help? Email x178g243 at yahoo.com.";
+    public static final String PROOF_ASST_GUI_STARTUP_MSG = "Hi! I am mmj2 v"
+        + VERSION + " as of " + VERSION_DATE + ".\n"
+        + "Visit https://github.com/digama0/mmj2/ or\n"
+        + "http://code.google.com/p/metamath-mmj2/\n"
+        + "for support or bug reports.";
 
     /**
      * PROOF_TEXT_FONT_FAMILY = Monospaced
@@ -814,7 +928,7 @@ public class PaConstants {
      * SAMPLE_PROOF_TEXT
      */
     public static final String SAMPLE_PROOF_TEXT = "$( <MM> <PROOF_ASST> THEOREM="
-        + PaConstants.SAMPLE_PROOF_LABEL
+        + SAMPLE_PROOF_LABEL
         + " LOC_AFTER=\n"
         + "\n"
         + "h1::           |- ( ph -> ps ) \n"
@@ -862,7 +976,7 @@ public class PaConstants {
     /**
      * ProofAsstGUI Default file name suffix
      */
-    public static final String PA_GUI_DEFAULT_FILE_NAME_SUFFIX = PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP2; // .txt
+    public static final String PA_GUI_DEFAULT_FILE_NAME_SUFFIX = PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP2; // .txt
 
     /**
      * ProofAsstGUI Save before window closes question
@@ -1356,25 +1470,27 @@ public class PaConstants {
     /**
      * Proof Assistant GUI Help About Part 1
      */
-    public static final String HELP_ABOUT_TEXT = ""
+    public static final String HELP_ABOUT_TEXT = "mmj2 Version "
+        + VERSION
+        + " as of "
+        + VERSION_DATE
+        + ".\n\n"
         + "Copyright (C) 2005 thru 2011 MEL O'CAT via X178G243 (at) yahoo (dot) com \n"
-        + "License terms: GNU General Public License Version 2 or any later version.\n"
-        + "                                                                         \n"
-        + "Note: The following copyright is included because ProofAsstGUI.java      \n"
-        + "has several snippets of code that are very similar, if not identical     \n"
-        + "to snippets of code in the Java Tutorial.                                \n"
-        + "                                                                         \n"
-        + "Copyright� 1995-2004 Sun Microsystems, Inc. All Rights Reserved.         \n"
-        + "Redistribution and use in source and binary forms, with or without       \n"
-        + "modification, are permitted provided that the following conditions are   \n"
-        + "met:                                                                     \n"
-        + "* Redistribution of source code must retain the above copyright          \n"
-        + "  notice, this list of conditions and the following disclaimer.          \n"
-        + "* Redistribution in binary form must reproduce the above copyright       \n"
-        + "  notice, this list of conditions and the following disclaimer in the    \n"
-        + "  documentation and/or other materials provided with the distribution.   \n"
-        + "(See SunJavaTutorialLicense.html in the mmj2 distribution for the        \n"
-        + "for the disclaimer.)                                                     \n\n"
+        + "License terms: GNU General Public License Version 2 or any later version.\n\n"
+        + "Note: The following copyright is included because ProofAsstGUI.java\n"
+        + "has several snippets of code that are very similar, if not identical\n"
+        + "to snippets of code in the Java Tutorial.\n\n"
+        + "Copyright� 1995-2004 Sun Microsystems, Inc. All Rights Reserved.\n"
+        + "Redistribution and use in source and binary forms, with or without\n"
+        + "modification, are permitted provided that the following conditions are\n"
+        + "met\n"
+        + "* Redistribution of source code must retain the above copyright\n"
+        + "  notice, this list of conditions and the following disclaimer.\n"
+        + "* Redistribution in binary form must reproduce the above copyright\n"
+        + "  notice, this list of conditions and the following disclaimer in the\n"
+        + "  documentation and/or other materials provided with the distribution.\n"
+        + "(See SunJavaTutorialLicense.html in the mmj2 distribution for the\n"
+        + "for the disclaimer.)\n\n"
         + "Garbage Collection Run (just now) Memory Totals follow:\n"
         + " Max Memory   = %s\n Free Memory  = %s\n Total Memory = %s\n";
 
@@ -1386,7 +1502,7 @@ public class PaConstants {
      * Proof Assistant GUI General Help Information Frame title
      */
     public static final String GENERAL_HELP_FRAME_TITLE = "Proof Assistant Help: General Information,"
-        + " Release 20111101 as of 15-Oct-2011";
+        + " Version " + VERSION + " as of " + VERSION_DATE;
     /**
      * Proof Assistant GUI General Help Information text
      */
@@ -1396,7 +1512,6 @@ public class PaConstants {
         + "Metamath.exe Proof Assistant. Specifically:\n\n"
         + "* mmj2 does not update Metamath .mm databases.\n\n"
         + "* mmj2 cannot import incomplete or invalid proofs from a Metamath database. \n\n"
-        + "* mmj2 does not provide a text Search facility\n\n"
         + "Also, please do not be disappointed. In spite of the point-and-click user-\n"
         + "friendliness, the fact that the mmj2 Proof Assistant uses a GUI interface\n"
         + "does not eliminate the requirement that the user learn logic and math. Nor\n"

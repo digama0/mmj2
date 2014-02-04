@@ -54,8 +54,11 @@ package mmj.pa;
 
 import java.awt.*;
 import java.io.File;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.List;
+
+import javax.swing.text.AttributeSet;
+import javax.swing.text.SimpleAttributeSet;
 
 import mmj.lang.*;
 import mmj.search.SearchMgr;
@@ -117,6 +120,10 @@ public class ProofAsstPreferences {
     private boolean autoReformat;
 
     private boolean undoRedoEnabled;
+
+    private boolean highlightingEnabled;
+
+    private Map<String, SimpleAttributeSet> highlighting;
 
     private Color foregroundColor;
 
@@ -196,6 +203,13 @@ public class ProofAsstPreferences {
 
         undoRedoEnabled = PaConstants.UNDO_REDO_ENABLED_DEFAULT;
 
+        if (highlightingEnabled = PaConstants.HIGHLIGHTING_ENABLED_DEFAULT) {
+            highlighting = new HashMap<String, SimpleAttributeSet>();
+            PaConstants.doStyleDefaults(highlighting);
+        }
+        else
+            highlighting = null;
+
         foregroundColor = PaConstants.DEFAULT_FOREGROUND_COLOR;
 
         backgroundColor = PaConstants.DEFAULT_BACKGROUND_COLOR;
@@ -222,7 +236,6 @@ public class ProofAsstPreferences {
 
         setSearchMgr(null);
     }
-
     /**
      * Set proof folder used for storing proof text areas in ProofAsstGUI.
      * 
@@ -839,6 +852,57 @@ public class ProofAsstPreferences {
     }
 
     /**
+     * Sets syntax highlighting for Proof Asst GUI.
+     * 
+     * @param highlightingEnabled true or false
+     */
+    public void setHighlightingEnabled(final boolean highlightingEnabled) {
+        this.highlightingEnabled = highlightingEnabled;
+    }
+
+    /**
+     * Gets syntax highlighting for Proof Asst GUI.
+     * 
+     * @return highlightingEnabled true or false
+     */
+    public boolean getHighlightingEnabled() {
+        return highlightingEnabled;
+    }
+
+    /**
+     * Sets syntax highlighting for Proof Asst GUI.
+     * 
+     * @param key The name of one of the styles of the syntax highlighting
+     * @param color the foreground color
+     * @param bold true for bold, false for plain, null for inherit
+     * @param italic true for italic, false for plain, null for inherit
+     * @throws IllegalArgumentException if the
+     */
+    public void setHighlightingStyle(final String key, final Color color,
+        final Boolean bold, final Boolean italic)
+        throws IllegalArgumentException
+    {
+        final SimpleAttributeSet style = highlighting.get(key);
+        if (style == null) {
+            final List<String> list = new ArrayList<String>(
+                highlighting.keySet());
+            Collections.sort(list);
+            throw new IllegalArgumentException(list.toString());
+        }
+        PaConstants.setStyle(style, color, bold, italic);
+    }
+
+    /**
+     * Gets syntax highlighting for Proof Asst GUI.
+     * 
+     * @param key the token type
+     * @return the style settings for the given token type
+     */
+    public AttributeSet getHighlightingStyle(final String key) {
+        return highlighting.get(key);
+    }
+
+    /**
      * Sets foreground color for Proof Asst GUI.
      * 
      * @param foregroundColor Color object
@@ -850,7 +914,7 @@ public class ProofAsstPreferences {
     /**
      * Gets foreground color for Proof Asst GUI.
      * 
-     * @return foregroundColor true or false.
+     * @return foregroundColor Color object
      */
     public Color getForegroundColor() {
         return foregroundColor;
@@ -868,7 +932,7 @@ public class ProofAsstPreferences {
     /**
      * Gets background color for Proof Asst GUI.
      * 
-     * @return backgroundColor true or false.
+     * @return backgroundColor Color object
      */
     public Color getBackgroundColor() {
         return backgroundColor;

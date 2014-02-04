@@ -98,6 +98,7 @@ import java.awt.event.*;
 import java.io.*;
 
 import javax.swing.*;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultEditorKit;
@@ -138,7 +139,7 @@ public class ProofAsstGUI {
 
     private JFrame mainFrame;
 
-    private JTextArea proofTextArea;
+    private JTextPane proofTextArea;
 
     private JScrollPane proofTextScrollPane;
 
@@ -213,6 +214,15 @@ public class ProofAsstGUI {
      * directly from command line.
      */
     public ProofAsstGUI() {
+        try {
+            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (Exception e) {
+        }
         proofAsst = null;
         proofAsstPreferences = new ProofAsstPreferences();
         proofAsstGUI = this;
@@ -480,8 +490,10 @@ public class ProofAsstGUI {
     }
 
     private void updateUndoRedoItems() {
-        editUndoItem.setEnabled(undoManager.canUndo());
-        editRedoItem.setEnabled(undoManager.canRedo());
+        if (undoManager.canUndo() != editUndoItem.isEnabled())
+            editUndoItem.setEnabled(undoManager.canUndo());
+        if (undoManager.canRedo() != editRedoItem.isEnabled())
+            editRedoItem.setEnabled(undoManager.canRedo());
     }
 
     public JFrame getMainFrame() {
@@ -542,7 +554,8 @@ public class ProofAsstGUI {
                     col = cursor.caretCol - 1;
                 else
                     col = 0;
-                final int offset = proofTextArea.getLineStartOffset(row);
+                final int offset = ((HighlightedDocument)proofTextArea
+                    .getDocument()).getLineStartOffset(row);
                 caretPosition = offset + col;
             }
 
@@ -565,14 +578,18 @@ public class ProofAsstGUI {
                 && cursor.scrollToLine > 0 && cursor.caretLine > 0)
                 row = cursor.scrollToLine - 1;
             else if (cursor.caretCharNbr > 0)
-                row = proofTextArea.getLineOfOffset(cursor.caretCharNbr - 1);
+                row = ((HighlightedDocument)proofTextArea.getDocument())
+                    .getLineOfOffset(cursor.caretCharNbr - 1);
             else if (cursor.caretLine > 0)
                 row = cursor.caretLine - 1;
 
             if (cursor.scrollToCol > 0)
                 col = cursor.scrollToCol - 1;
 
-            final int vPos = vHeight * row / proofTextArea.getLineCount();
+            final int vPos = vHeight
+                * row
+                / ((HighlightedDocument)proofTextArea.getDocument())
+                    .getLineCount();
 
             if (cursor.getDontScroll())
                 cursor.setDontScroll(false);
@@ -668,27 +685,27 @@ public class ProofAsstGUI {
         return scrollPane;
     }
 
-    private JTextArea buildProofTextArea(final String text) {
+    private JTextPane buildProofTextArea(final String text) {
 
-        final JTextArea textArea = new JTextArea(text,
-            proofAsstPreferences.getTextRows(),
-            proofAsstPreferences.getTextColumns());
+        final JTextPane textPane = HighlightedDocument
+            .createTextPane(proofAsstPreferences);
+        textPane.setText(text);
 
         buildProofFont();
 
-        textArea.setFont(proofFont);
-        textArea.setLineWrap(proofAsstPreferences.getLineWrap());
-        textArea.setCursor(null); // use arrow instead of thingamabob
-        textArea.setTabSize(PaConstants.PROOF_TEXT_TAB_LENGTH); // disable it
-                                                                // using 1.
-        textArea.setForeground(proofAsstPreferences.getForegroundColor());
-        textArea.setBackground(proofAsstPreferences.getBackgroundColor());
+        textPane.setFont(proofFont);
+        // textArea.setLineWrap(proofAsstPreferences.getLineWrap());
+        textPane.setCursor(null); // use arrow instead of thingamabob
+        // textArea.setTabSize(PaConstants.PROOF_TEXT_TAB_LENGTH); // disable it
+        // using 1.
+        // textArea.setForeground(proofAsstPreferences.getForegroundColor());
+        // textArea.setBackground(proofAsstPreferences.getBackgroundColor());
 
         proofTextChanged = new ProofTextChanged(false);
-        textArea.getDocument().addDocumentListener(proofTextChanged);
+        textPane.getDocument().addDocumentListener(proofTextChanged);
 
         if (proofAsstPreferences.getUndoRedoEnabled())
-            undoManager = new CompoundUndoManager(textArea, new Runnable() {
+            undoManager = new CompoundUndoManager(textPane, new Runnable() {
                 public void run() {
                     updateUndoRedoItems();
                 }
@@ -696,9 +713,8 @@ public class ProofAsstGUI {
 
         savedSinceNew = false;
 
-        return textArea;
+        return textPane;
     }
-
     private void buildProofFont() {
         if (proofAsstPreferences.getFontBold())
             proofFont = new Font(proofAsstPreferences.getFontFamily(),
@@ -708,7 +724,7 @@ public class ProofAsstGUI {
                 Font.PLAIN, proofAsstPreferences.getFontSize());
     }
 
-    private JScrollPane buildProofTextScrollPane(final JTextArea proofTextArea)
+    private JScrollPane buildProofTextScrollPane(final JTextPane proofTextArea)
     {
 
         final JScrollPane scrollPane = new JScrollPane(proofTextArea);

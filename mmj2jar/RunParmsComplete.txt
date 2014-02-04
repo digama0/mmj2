@@ -121,6 +121,14 @@ ProofAsstFontBold,yes
 ProofAsstFontFamily,Monospaced
 ProofAsstForegroundColorRGB,0,0,0
 ProofAsstBackgroundColorRGB,255,255,255
+ProofAsstHighlightingEnabled,yes
+ProofAsstHighlightingStyle,default,inherit,inherit,inherit
+ProofAsstHighlightingStyle,comment,808080,no,yes
+ProofAsstHighlightingStyle,stephypref,8A2908,inherit,inherit
+ProofAsstHighlightingStyle,class,CC33CC,inherit,inherit
+ProofAsstHighlightingStyle,set,FF0000,inherit,inherit
+ProofAsstHighlightingStyle,wff,0000FF,inherit,inherit
+ProofAsstHighlightingStyle,workvar,008800,inherit,inherit
 ProofAsstFormulaLeftCol,20
 ProofAsstFormulaRightCol,79
 ProofAsstMaximized,no
