@@ -56,7 +56,7 @@ class ColorThread extends Thread {
     /**
      * Vector that stores the communication between the two threads.
      */
-    private volatile LinkedList<RecolorEvent> events = new LinkedList<RecolorEvent>();
+    private volatile Deque<RecolorEvent> events = new ArrayDeque<RecolorEvent>();
 
     /**
      * The amount of change that has occurred before the place in the document

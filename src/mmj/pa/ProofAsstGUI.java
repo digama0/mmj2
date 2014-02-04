@@ -99,8 +99,6 @@ import java.io.*;
 
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.JTextComponent;
 import javax.swing.undo.CannotRedoException;
@@ -140,6 +138,7 @@ public class ProofAsstGUI {
     private JFrame mainFrame;
 
     private JTextPane proofTextArea;
+    private HighlightedDocument proofDocument;
 
     private JScrollPane proofTextScrollPane;
 
@@ -149,7 +148,6 @@ public class ProofAsstGUI {
 
     private String proofTheoremLabel = "";
 
-    private ProofTextChanged proofTextChanged;
     private boolean savedSinceNew;
 
     private CompoundUndoManager undoManager;
@@ -215,14 +213,13 @@ public class ProofAsstGUI {
      */
     public ProofAsstGUI() {
         try {
-            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+            for (final LookAndFeelInfo info : UIManager
+                .getInstalledLookAndFeels())
                 if ("Nimbus".equals(info.getName())) {
                     UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
-            }
-        } catch (Exception e) {
-        }
+        } catch (final Exception e) {}
         proofAsst = null;
         proofAsstPreferences = new ProofAsstPreferences();
         proofAsstGUI = this;
@@ -459,29 +456,6 @@ public class ProofAsstGUI {
 
     }
 
-    private class ProofTextChanged implements DocumentListener {
-        boolean changes;
-
-        public ProofTextChanged(final boolean changes) {
-            this.changes = changes;
-        }
-        public synchronized boolean getChanges() {
-            return changes;
-        }
-        public synchronized void setChanges(final boolean changes) {
-            this.changes = changes;
-        }
-        public void changedUpdate(final DocumentEvent e) {
-            setChanges(true);
-        }
-        public void insertUpdate(final DocumentEvent e) {
-            setChanges(true);
-        }
-        public void removeUpdate(final DocumentEvent e) {
-            setChanges(true);
-        }
-    }
-
     private void clearUndoRedoCaches() {
         if (proofAsstPreferences.getUndoRedoEnabled()) {
             undoManager.discardAllEdits();
@@ -502,9 +476,9 @@ public class ProofAsstGUI {
     private String getProofTextAreaText() {
         return proofTextArea.getText();
     }
-    private void setProofTextAreaText(final String s) {
+    private void setProofTextAreaText(final String s, final boolean reset) {
         undoManager.updateCursorPosition();
-        proofTextArea.setText(s);
+        proofDocument.setTextProgrammatic(s, false, reset);
     }
 
     private void setProofTextAreaCursorPos(final ProofWorksheet w,
@@ -687,9 +661,9 @@ public class ProofAsstGUI {
 
     private JTextPane buildProofTextArea(final String text) {
 
-        final JTextPane textPane = HighlightedDocument
-            .createTextPane(proofAsstPreferences);
-        textPane.setText(text);
+        proofDocument = new HighlightedDocument(proofAsstPreferences);
+        final JTextPane textPane = proofDocument.getTextPane();
+        proofDocument.setTextProgrammatic(text, false, true);
 
         buildProofFont();
 
@@ -701,11 +675,9 @@ public class ProofAsstGUI {
         // textArea.setForeground(proofAsstPreferences.getForegroundColor());
         // textArea.setBackground(proofAsstPreferences.getBackgroundColor());
 
-        proofTextChanged = new ProofTextChanged(false);
-        textPane.getDocument().addDocumentListener(proofTextChanged);
-
         if (proofAsstPreferences.getUndoRedoEnabled())
-            undoManager = new CompoundUndoManager(textPane, new Runnable() {
+            undoManager = new CompoundUndoManager(proofDocument, new Runnable()
+            {
                 public void run() {
                     updateUndoRedoItems();
                 }
@@ -1716,13 +1688,7 @@ public class ProofAsstGUI {
             proofAsstPreferences.getTMFFPreferences()
                 .toggleAltFormatAndIndentParms();
 
-        // note: pass boolean "changes" to reformat task
-        // so that reformat alone does not count
-        // as changes -- after the reformat we'll
-        // set that proofTextChanged status back
-        // to the way it was here!
-        startRequestAction(new RequestTMFFReformat(inputCursorStep,
-            proofTextChanged.getChanges()));
+        startRequestAction(new RequestTMFFReformat(inputCursorStep));
     }
 
     private int getNewFormatNbr(final int oldFormatNbr) {
@@ -1900,12 +1866,11 @@ public class ProofAsstGUI {
         if (saveIfAskedBeforeAction(PaConstants.PA_GUI_ACTION_BEFORE_SAVE_CLOSE) == JOptionPane.CANCEL_OPTION)
             return;
 
-        setProofTextAreaText("");
+        setProofTextAreaText("", true);
 
         startRequestAction(new RequestUpdateMainFrameTitle(null));
 
         clearUndoRedoCaches();
-        proofTextChanged.setChanges(false);
         savedSinceNew = false;
         disposeOfOldSelectorDialog();
     }
@@ -2017,7 +1982,7 @@ public class ProofAsstGUI {
 
     private int saveIfAskedBeforeExit(final String actionCaption) {
         int answer = JOptionPane.NO_OPTION;
-        if (proofTextChanged.getChanges()) {
+        if (proofDocument.isChanged()) {
             answer = getYesNoCancelAnswer(
                 PaConstants.ERRMSG_PA_GUI_SAVE_BEFORE_ACTION, actionCaption);
 
@@ -2028,7 +1993,7 @@ public class ProofAsstGUI {
     }
     private int saveIfAskedBeforeAction(final String actionCaption) {
         int answer = JOptionPane.NO_OPTION;
-        if (proofTextChanged.getChanges()) {
+        if (proofDocument.isChanged()) {
             answer = getYesNoCancelAnswer(
                 PaConstants.ERRMSG_PA_GUI_SAVE_BEFORE_ACTION, actionCaption);
 
@@ -2169,7 +2134,7 @@ public class ProofAsstGUI {
                 JOptionPane.ERROR_MESSAGE);
         }
 
-        proofTextChanged.setChanges(false);
+        proofDocument.clearChanged();
         clearUndoRedoCaches();
         savedSinceNew = true;
     }
@@ -2189,7 +2154,7 @@ public class ProofAsstGUI {
                 JOptionPane.ERROR_MESSAGE);
         }
 
-        proofTextChanged.setChanges(false);
+        proofDocument.clearChanged();
         clearUndoRedoCaches();
         savedSinceNew = true;
 
@@ -2276,8 +2241,7 @@ public class ProofAsstGUI {
         final boolean noConvertWV, final PreprocessRequest preprocessRequest,
         final StepRequest stepRequest, final TLRequest tlRequest)
     {
-        final RequestUnify request = new RequestUnify(
-            proofTextChanged.getChanges(), renumReq, noConvertWV,
+        final RequestUnify request = new RequestUnify(renumReq, noConvertWV,
             preprocessRequest, stepRequest, tlRequest);
         startRequestAction(request);
     }
@@ -2684,15 +2648,12 @@ public class ProofAsstGUI {
         private final PreprocessRequest preprocessRequest;
         private final StepRequest stepRequest;
         private final TLRequest tlRequest;
-        private final boolean textChangedBeforeUnify;
         private final boolean noConvertWV;
 
-        RequestUnify(final boolean textChangedBeforeUnify,
-            final boolean renumReq, final boolean noConvertWV,
+        RequestUnify(final boolean renumReq, final boolean noConvertWV,
             final PreprocessRequest preprocessRequest,
             final StepRequest stepRequest, final TLRequest tlRequest)
         {
-            this.textChangedBeforeUnify = textChangedBeforeUnify;
             this.renumReq = renumReq;
             this.noConvertWV = noConvertWV;
             this.preprocessRequest = preprocessRequest;
@@ -2728,12 +2689,11 @@ public class ProofAsstGUI {
                     proofFont);
             }
             else {
-                displayProofWorksheet(w);
+                displayProofWorksheet(w, false);
                 if (stepRequest != null
                     && stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_CHOICE)
                     getMainFrame().setVisible(true);
             }
-            proofTextChanged.setChanges(textChangedBeforeUnify);
         }
     }
 
@@ -2750,10 +2710,9 @@ public class ProofAsstGUI {
         @Override
         void receive() {
             proofTheoremLabel = ""; // tricky - force title update
-            displayProofWorksheet(w);
+            displayProofWorksheet(w, true);
 
             clearUndoRedoCaches();
-            proofTextChanged.setChanges(false);
             savedSinceNew = false;
             disposeOfOldSelectorDialog();
         }
@@ -2772,10 +2731,9 @@ public class ProofAsstGUI {
         @Override
         void receive() {
             proofTheoremLabel = ""; // tricky - force title update
-            displayProofWorksheet(w);
+            displayProofWorksheet(w, true);
 
             clearUndoRedoCaches();
-            proofTextChanged.setChanges(false);
             savedSinceNew = false;
             disposeOfOldSelectorDialog();
         }
@@ -2794,7 +2752,7 @@ public class ProofAsstGUI {
         }
         @Override
         void receive() {
-            setProofTextAreaText(s);
+            setProofTextAreaText(s, true);
 
             proofTheoremLabel = null; // tricky - avoid title update
             updateScreenTitle(fileChooser.getSelectedFile());
@@ -2805,7 +2763,6 @@ public class ProofAsstGUI {
             setProofTextAreaCursorPos(ProofAsstCursor.makeProofStartCursor(),
                 s.length());
 
-            proofTextChanged.setChanges(false);
             savedSinceNew = true;
             disposeOfOldSelectorDialog();
         }
@@ -2831,9 +2788,8 @@ public class ProofAsstGUI {
         @Override
         void receive() {
             proofTheoremLabel = ""; // tricky - force title update
-            displayProofWorksheet(w);
+            displayProofWorksheet(w, true);
             clearUndoRedoCaches();
-            proofTextChanged.setChanges(false);
             savedSinceNew = false;
             disposeOfOldSelectorDialog();
         }
@@ -2859,9 +2815,8 @@ public class ProofAsstGUI {
         @Override
         void receive() {
             proofTheoremLabel = ""; // tricky - force title update
-            displayProofWorksheet(w);
+            displayProofWorksheet(w, true);
             clearUndoRedoCaches();
-            proofTextChanged.setChanges(false);
             savedSinceNew = false;
             disposeOfOldSelectorDialog();
         }
@@ -2888,9 +2843,8 @@ public class ProofAsstGUI {
         @Override
         void receive() {
             proofTheoremLabel = ""; // tricky - force title update
-            displayProofWorksheet(w);
+            displayProofWorksheet(w, true);
             clearUndoRedoCaches();
-            proofTextChanged.setChanges(false);
             savedSinceNew = false;
             disposeOfOldSelectorDialog();
         }
@@ -2898,13 +2852,9 @@ public class ProofAsstGUI {
 
     class RequestTMFFReformat extends Request {
         boolean inputCursorStep;
-        boolean textChangedBeforeReformat;
 
-        RequestTMFFReformat(final boolean inputCursorStep,
-            final boolean textChangedBeforeReformat)
-        {
+        RequestTMFFReformat(final boolean inputCursorStep) {
             this.inputCursorStep = inputCursorStep;
-            this.textChangedBeforeReformat = textChangedBeforeReformat;
         }
         @Override
         void send() {
@@ -2914,8 +2864,7 @@ public class ProofAsstGUI {
 
         @Override
         void receive() {
-            displayProofWorksheet(w);
-            proofTextChanged.setChanges(textChangedBeforeReformat);
+            displayProofWorksheet(w, false);
         }
     }
 
@@ -3184,7 +3133,9 @@ public class ProofAsstGUI {
         proofTextArea.setCursor(null);
     }
 
-    private void displayProofWorksheet(final ProofWorksheet w) {
+    private void displayProofWorksheet(final ProofWorksheet w,
+        final boolean reset)
+    {
 
         // keep this number for browsing forward and back!
         setCurrProofMaxSeq(w.getMaxSeq());
@@ -3192,7 +3143,7 @@ public class ProofAsstGUI {
         String s = w.getOutputProofText();
         int proofTextLength = Integer.MAX_VALUE;
         if (s != null) { // no structural errors...
-            setProofTextAreaText(s);
+            setProofTextAreaText(s, reset);
             proofTextLength = s.length();
         }
 

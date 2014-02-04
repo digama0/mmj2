@@ -10,24 +10,13 @@ public class HighlightedDocument extends DefaultStyledDocument {
     DocumentReader reader;
     private final ColorThread colorer;
     private final WorksheetTokenizer tokenizer;
+    private boolean programmatic;
+    private boolean changed;
+    private int lastCaret;
+    private final JTextPane textPane;
 
-    public static JTextPane createTextPane(final ProofAsstPreferences prefs) {
-        final HighlightedDocument doc = new HighlightedDocument(prefs);
-
-        final UIDefaults defs = UIManager.getDefaults();
-        final Color bg = prefs.getBackgroundColor();
-        defs.put("TextPane[Enabled].backgroundPainter", bg);
-        defs.put("TextPane.background", bg);
-        defs.put("TextPane.inactiveBackground", bg);
-        final JTextPane parent = new JTextPane(doc);
-        parent.putClientProperty("Nimbus.Overrides", defs);
-
-        parent.setForeground(prefs.getForegroundColor());
-        parent.setCaretColor(prefs.getForegroundColor());
-        return parent;
-    }
-
-    private HighlightedDocument(final ProofAsstPreferences prefs) {
+    public HighlightedDocument(final ProofAsstPreferences prefs) {
+        programmatic = changed = false;
         if (prefs.getHighlightingEnabled()) {
             colorer = new ColorThread(this, prefs);
             reader = new DocumentReader();
@@ -38,6 +27,17 @@ public class HighlightedDocument extends DefaultStyledDocument {
             reader = null;
             tokenizer = null;
         }
+
+        final UIDefaults defs = UIManager.getDefaults();
+        final Color bg = prefs.getBackgroundColor();
+        defs.put("TextPane[Enabled].backgroundPainter", bg);
+        defs.put("TextPane.background", bg);
+        defs.put("TextPane.inactiveBackground", bg);
+        textPane = new JTextPane(this);
+        textPane.putClientProperty("Nimbus.Overrides", defs);
+
+        textPane.setForeground(prefs.getForegroundColor());
+        textPane.setCaretColor(prefs.getForegroundColor());
     }
 
     /**
@@ -65,6 +65,8 @@ public class HighlightedDocument extends DefaultStyledDocument {
     public void insertString(final int offs, final String str,
         final AttributeSet a) throws BadLocationException
     {
+        changed |= !programmatic;
+        lastCaret = textPane.getCaretPosition();
         synchronized (this) {
             super.insertString(offs, str, a);
             color(offs, str.length());
@@ -72,17 +74,92 @@ public class HighlightedDocument extends DefaultStyledDocument {
                 reader.update(offs, str.length());
         }
     }
-
     @Override
     public void remove(final int offs, final int len)
         throws BadLocationException
     {
+        changed |= !programmatic;
+        lastCaret = textPane.getCaretPosition();
         synchronized (this) {
             super.remove(offs, len);
             color(offs, -len);
             if (reader != null)
                 reader.update(offs, -len);
         }
+    }
+
+    public DocumentReader getDocumentReader() {
+        return reader;
+    }
+
+    public WorksheetTokenizer getTokenizer() {
+        return tokenizer;
+    }
+
+    public JTextPane getTextPane() {
+        return textPane;
+    }
+
+    public int getLastCaretPosition() {
+        return lastCaret;
+    }
+
+    public boolean isProgrammatic() {
+        return programmatic;
+    }
+
+    public boolean isChanged() {
+        return changed;
+    }
+
+    public void clearChanged() {
+        changed = false;
+    }
+
+    public void setTextProgrammatic(final String text, final boolean smart,
+        final boolean reset)
+    {
+        programmatic = true;
+        try {
+            if (getLength() != 0)
+                remove(0, getLength());
+            if (!text.isEmpty())
+                insertString(0, text, new SimpleAttributeSet());
+        } catch (final BadLocationException e) {}
+        programmatic = false;
+        if (reset)
+            clearChanged();
+    }
+
+    public int getLineStartOffset(final int row) {
+        try {
+            final String text = getText(0, getLength());
+            int pos = 0;
+            for (int i = 0; i < row; i++)
+                pos = text.indexOf('\n', pos) + 1;
+            return pos;
+        } catch (final BadLocationException e) {
+            return 0;
+        }
+    }
+
+    public int getLineOfOffset(final int i) {
+        try {
+            final String text = getText(0, i);
+            int pos = 0, line = 0;
+            while (true) {
+                pos = text.indexOf('\n', pos) + 1;
+                if (pos == 0)
+                    return line;
+                line++;
+            }
+        } catch (final BadLocationException e) {
+            return 0;
+        }
+    }
+
+    public int getLineCount() {
+        return getLineOfOffset(getLength()) + 1;
     }
 
     public class DocumentReader extends Reader implements Readable {
@@ -253,44 +330,5 @@ public class HighlightedDocument extends DefaultStyledDocument {
         public int getPosition() {
             return position;
         }
-    }
-
-    public DocumentReader getDocumentReader() {
-        return reader;
-    }
-
-    public WorksheetTokenizer getTokenizer() {
-        return tokenizer;
-    }
-
-    public int getLineStartOffset(final int row) {
-        try {
-            final String text = getText(0, getLength());
-            int pos = 0;
-            for (int i = 0; i < row; i++)
-                pos = text.indexOf('\n', pos) + 1;
-            return pos;
-        } catch (final BadLocationException e) {
-            return 0;
-        }
-    }
-
-    public int getLineOfOffset(final int i) {
-        try {
-            final String text = getText(0, i);
-            int pos = 0, line = 0;
-            while (true) {
-                pos = text.indexOf('\n', pos) + 1;
-                if (pos == 0)
-                    return line;
-                line++;
-            }
-        } catch (final BadLocationException e) {
-            return 0;
-        }
-    }
-
-    public int getLineCount() {
-        return getLineOfOffset(getLength()) + 1;
     }
 }

@@ -19,7 +19,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.*;
 import javax.swing.event.DocumentEvent.EventType;
 import javax.swing.text.AbstractDocument.DefaultDocumentEvent;
-import javax.swing.text.JTextComponent;
 import javax.swing.undo.*;
 
 /**
@@ -32,7 +31,7 @@ public class CompoundUndoManager extends UndoManager implements
     UndoableEditListener, DocumentListener
 {
     private EditEvent compoundEdit;
-    private final JTextComponent textComponent;
+    private final HighlightedDocument document;
     private final Runnable callback;
 
     // These fields are used to help determine whether the edit is an
@@ -41,6 +40,7 @@ public class CompoundUndoManager extends UndoManager implements
 
     private int lastCaret;
     private int lastLength;
+    private boolean lastProgrammatic;
 
     /**
      * The goal caret represents the position of the caret immediately before
@@ -51,35 +51,35 @@ public class CompoundUndoManager extends UndoManager implements
      */
     int goalCaret = 0;
 
-    public CompoundUndoManager(final JTextComponent textComponent,
+    public CompoundUndoManager(final HighlightedDocument doc,
         final Runnable updateCallback)
     {
-        this.textComponent = textComponent;
+        document = doc;
         callback = updateCallback;
-        textComponent.getDocument().addUndoableEditListener(this);
+        doc.addUndoableEditListener(this);
         updateCursorPosition();
     }
 
     /**
-     * Add a DocumentLister before the undo is done so we can position the Caret
-     * correctly as each edit is undone.
+     * Add a DocumentListener before the undo is done so we can position the
+     * Caret correctly as each edit is undone.
      */
     @Override
     public void undo() {
-        textComponent.getDocument().addDocumentListener(this);
+        document.addDocumentListener(this);
         super.undo();
-        textComponent.getDocument().removeDocumentListener(this);
+        document.removeDocumentListener(this);
     }
 
     /**
-     * Add a DocumentLister before the redo is done so we can position the Caret
-     * correctly as each edit is redone.
+     * Add a DocumentListener before the redo is done so we can position the
+     * Caret correctly as each edit is redone.
      */
     @Override
     public void redo() {
-        textComponent.getDocument().addDocumentListener(this);
+        document.addDocumentListener(this);
         super.redo();
-        textComponent.getDocument().removeDocumentListener(this);
+        document.removeDocumentListener(this);
     }
 
     @Override
@@ -90,8 +90,8 @@ public class CompoundUndoManager extends UndoManager implements
 
     public void updateCursorPosition() {
         // Track Caret and Document information of this compound edit
-        lastCaret = textComponent.getCaretPosition();
-        lastLength = textComponent.getDocument().getLength();
+        lastCaret = document.getTextPane().getCaretPosition();
+        lastLength = document.getLength();
     }
 
     /**
@@ -100,50 +100,35 @@ public class CompoundUndoManager extends UndoManager implements
      */
     @Override
     public void undoableEditHappened(final UndoableEditEvent e) {
-        if (((DefaultDocumentEvent)e.getEdit()).getType() == EventType.CHANGE)
+        final boolean prog = document.isProgrammatic();
+        final DefaultDocumentEvent edit = (DefaultDocumentEvent)e.getEdit();
+        if (edit.getType() == EventType.CHANGE)
             return;
         if (compoundEdit == null)
             // start a new compound edit
-            compoundEdit = startCompoundEdit(e.getEdit());
-        else if (isIncremental((DefaultDocumentEvent)e.getEdit()))
+            compoundEdit = startCompoundEdit(edit);
+        else if (lastProgrammatic && prog || !lastProgrammatic && !prog
+            && isIncremental(edit))
             // append to existing edit
-            compoundEdit.addEdit(e.getEdit(), textComponent.getCaretPosition());
+            compoundEdit.addEdit(edit, document.getTextPane()
+                .getCaretPosition());
         else {
             // close this compound edit and start a new one
             compoundEdit.end();
-            compoundEdit = startCompoundEdit(e.getEdit());
+            compoundEdit = startCompoundEdit(edit);
         }
-        if (isClosed((DefaultDocumentEvent)e.getEdit())) {
-            // This edit is self-closing, so preempt any future incremental
-            // edits
-            compoundEdit.end();
-            compoundEdit = null;
-        }
+        lastProgrammatic = prog;
         updateCursorPosition();
     }
 
     private boolean isIncremental(final DefaultDocumentEvent event) {
-        final int newCaret = textComponent.getCaretPosition();
-        final int newLength = textComponent.getDocument().getLength();
-
-        if (lastCaret == 0 && lastLength == 0)
-            // When we unify or do some other programmatic update to the
-            // worksheet via JTextComponent.setText(), the effect is to create
-            // *two* edit events here. One clears the screen, and the other adds
-            // the new text. We want to mark the second of these as incremental,
-            // so it appears as one compound edit, and also close it below in
-            // isClosed() so that subsequent edits will not append to the
-            // program change.
-            return true;
+        final int newCaret = document.getTextPane().getCaretPosition();
+        final int newLength = document.getLength();
 
         // single-character inserts and removes are incremental
         final int caretChange = newCaret - lastCaret;
         return caretChange == newLength - lastLength
             && Math.abs(caretChange) == 1;
-    }
-
-    private boolean isClosed(final DefaultDocumentEvent event) {
-        return lastCaret == 0 && lastLength == 0;
     }
 
     /**
@@ -153,11 +138,11 @@ public class CompoundUndoManager extends UndoManager implements
      * @param anEdit the edit to start this group with
      * @return the new CompoundEdit object
      */
-    private EditEvent startCompoundEdit(final UndoableEdit anEdit) {
+    private EditEvent startCompoundEdit(final DefaultDocumentEvent anEdit) {
         // The compound edit is used to store incremental edits
 
-        compoundEdit = new EditEvent(lastCaret);
-        compoundEdit.addEdit(anEdit, textComponent.getCaretPosition());
+        compoundEdit = new EditEvent(document.getLastCaretPosition());
+        compoundEdit.addEdit(anEdit, document.getTextPane().getCaretPosition());
 
         // The compound edit is added to the UndoManager. All incremental
         // edits stored in the compound edit will be undone/redone at once
@@ -174,9 +159,8 @@ public class CompoundUndoManager extends UndoManager implements
     public void insertUpdate(final DocumentEvent e) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                goalCaret = Math.min(goalCaret, textComponent.getDocument()
-                    .getLength());
-                textComponent.setCaretPosition(goalCaret);
+                goalCaret = Math.min(goalCaret, document.getLength());
+                document.getTextPane().setCaretPosition(goalCaret);
             }
         });
     }
@@ -188,7 +172,7 @@ public class CompoundUndoManager extends UndoManager implements
     public void changedUpdate(final DocumentEvent e) {}
 
     class EditEvent extends CompoundEdit {
-        private final int beforeCaret;
+        private int beforeCaret;
         private int afterCaret;
 
         public EditEvent(final int before) {
@@ -225,6 +209,11 @@ public class CompoundUndoManager extends UndoManager implements
         public void redo() throws CannotRedoException {
             goalCaret = afterCaret;
             super.redo();
+        }
+
+        public void setCaret(final int before, final int after) {
+            beforeCaret = before;
+            afterCaret = after;
         }
     }
 }
