@@ -1238,6 +1238,15 @@ public class UtilConstants {
                                                                                    // no
 
     /**
+     * ProofAsstLineSpacing
+     * 
+     * <pre>
+     * "ProofAsstLineSpacing": float value, default 0
+     * </pre>
+     */
+    public static final String RUNPARM_PROOF_ASST_LINE_SPACING = "ProofAsstLineSpacing";
+
+    /**
      * ProofAsstFontSize
      * 
      * <pre>

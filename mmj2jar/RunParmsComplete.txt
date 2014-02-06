@@ -119,6 +119,7 @@ ProofAsstUndoRedoEnabled,yes
 ProofAsstFontSize,14
 ProofAsstFontBold,no
 ProofAsstFontFamily,Monospaced
+ProofAsstLineSpacing,0
 ProofAsstForegroundColorRGB,0,0,0
 ProofAsstBackgroundColorRGB,255,255,255
 ProofAsstHighlightingEnabled,yes

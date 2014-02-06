@@ -40,6 +40,9 @@ public class HighlightedDocument extends DefaultStyledDocument {
 
         textPane.setForeground(prefs.getForegroundColor());
         textPane.setCaretColor(prefs.getForegroundColor());
+        final SimpleAttributeSet style = new SimpleAttributeSet();
+        StyleConstants.setLineSpacing(style, prefs.getLineSpacing());
+        setParagraphAttributes(0, getLength(), style, false);
     }
 
     /**
@@ -126,7 +129,8 @@ public class HighlightedDocument extends DefaultStyledDocument {
             if (getLength() != 0)
                 remove(0, getLength());
             if (!text.isEmpty())
-                insertString(0, text, new SimpleAttributeSet());
+                insertString(0, text.replace("\r\n", "\n"),
+                    new SimpleAttributeSet());
         } catch (final BadLocationException e) {}
         colorer.block();
         programmatic = false;

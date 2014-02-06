@@ -82,6 +82,8 @@ public class ProofAsstPreferences {
 
     private boolean fontBold;
 
+    private float lineSpacing;
+
     private int errorMessageRows;
     private int errorMessageColumns;
     private boolean maximized;
@@ -162,6 +164,7 @@ public class ProofAsstPreferences {
         fontSize = PaConstants.PROOF_ASST_FONT_SIZE_DEFAULT;
         fontBold = PaConstants.PROOF_ASST_FONT_BOLD_DEFAULT;
         fontFamily = PaConstants.PROOF_ASST_FONT_FAMILY_DEFAULT;
+        lineSpacing = PaConstants.PROOF_ASST_LINE_SPACING_DEFAULT;
 
         errorMessageRows = PaConstants.PROOF_ASST_ERROR_MESSAGE_ROWS_DEFAULT;
         errorMessageColumns = PaConstants.PROOF_ASST_ERROR_MESSAGE_COLUMNS_DEFAULT;
@@ -361,6 +364,24 @@ public class ProofAsstPreferences {
      */
     public synchronized int getFontSize() {
         return fontSize;
+    }
+
+    /**
+     * Set line spacing used in ProofAsstGUI.
+     * 
+     * @param lineSpacing line spacing for ProofAsstGUI
+     */
+    public synchronized void setLineSpacing(final float lineSpacing) {
+        this.lineSpacing = lineSpacing;
+    }
+
+    /**
+     * Get font size used in ProofAsstGUI.
+     * 
+     * @return fontSize font size for ProofAsstGUI.
+     */
+    public synchronized float getLineSpacing() {
+        return lineSpacing;
     }
 
     /**

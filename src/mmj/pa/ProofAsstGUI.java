@@ -438,10 +438,6 @@ public class ProofAsstGUI {
         proofTextPane.setFont(proofFont);
         // textArea.setLineWrap(proofAsstPreferences.getLineWrap());
         proofTextPane.setCursor(null); // use arrow instead of thingamabob
-        // textArea.setTabSize(PaConstants.PROOF_TEXT_TAB_LENGTH); // disable it
-        // using 1.
-        // textArea.setForeground(proofAsstPreferences.getForegroundColor());
-        // textArea.setBackground(proofAsstPreferences.getBackgroundColor());
 
         if (proofAsstPreferences.getUndoRedoEnabled())
             undoManager = new CompoundUndoManager(proofDocument, new Runnable()
@@ -479,13 +475,18 @@ public class ProofAsstGUI {
             PaConstants.PROOF_ASST_GUI_STARTUP_MSG,
             proofAsstPreferences.getErrorMessageRows(),
             proofAsstPreferences.getErrorMessageColumns());
-        final Font frameFont = new Font(PaConstants.AUX_FRAME_FONT_FAMILY,
-            Font.BOLD, proofAsstPreferences.getFontSize());
+        final Font frameFont = new Font(proofAsstPreferences.getFontFamily(),
+            proofAsstPreferences.getFontBold() ? Font.BOLD : Font.PLAIN,
+            proofAsstPreferences.getFontSize());
 
         proofMessageArea.setFont(frameFont);
         proofMessageArea.setLineWrap(true);
         proofMessageArea.setWrapStyleWord(true);
         proofMessageArea.setEditable(true);
+        proofMessageArea.setForeground(proofAsstPreferences
+            .getForegroundColor());
+        proofMessageArea.setBackground(proofAsstPreferences
+            .getBackgroundColor());
 
         proofMessageScrollPane = new JScrollPane(proofMessageArea);
         proofMessageScrollPane

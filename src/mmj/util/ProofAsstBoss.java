@@ -215,6 +215,13 @@ public class ProofAsstBoss extends Boss {
         }
 
         if (runParm.name
+            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_LINE_SPACING) == 0)
+        {
+            editProofAsstLineSpacing(runParm);
+            return true;
+        }
+
+        if (runParm.name
             .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_TEXT_COLUMNS) == 0)
         {
             editProofAsstTextColumns(runParm);
@@ -742,24 +749,28 @@ public class ProofAsstBoss extends Boss {
         getProofAsstPreferences().setFontBold(boldFont);
     }
 
-//  /**
-//   * Validate ProofAsstLineWrap
-//   *
-//   * @param runParm run parm parsed into RunParmArrayEntry object
-//   */
-//  protected void editProofAsstLineWrap(
-//                      RunParmArrayEntry runParm)
-//                          throws IllegalArgumentException {
-//
-//      boolean lineWrap          =
-//          editOnOffRunParm(
-//              runParm,
-//              UtilConstants.
-//                  RUNPARM_PROOF_ASST_LINE_WRAP,
-//              1);
-//      getProofAsstPreferences().setLineWrap(lineWrap);
-//  }
+    /**
+     * Validate ProofAsstLineSpacing RunParm.
+     * 
+     * @param runParm run parm parsed into RunParmArrayEntry object
+     * @throws IllegalArgumentException if an error occurred
+     */
+    protected void editProofAsstLineSpacing(final RunParmArrayEntry runParm)
+        throws IllegalArgumentException
+    {
+        final String valueCaption = UtilConstants.RUNPARM_PROOF_ASST_LINE_SPACING;
+        editRunParmValuesLength(runParm, valueCaption, 1);
 
+        try {
+            getProofAsstPreferences().setLineSpacing(
+                Float.parseFloat(runParm.values[0].trim()));
+        } catch (final NumberFormatException e) {
+            throw new IllegalArgumentException(
+                UtilConstants.ERRMSG_RUNPARM_NBR_FORMAT_ERROR_1 + valueCaption
+                    + UtilConstants.ERRMSG_RUNPARM_NBR_FORMAT_ERROR_2
+                    + e.getMessage());
+        }
+    }
     /**
      * Validate ProofAsstTextColumns
      * 

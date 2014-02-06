@@ -503,6 +503,11 @@ public class PaConstants {
     public static final boolean PROOF_ASST_FONT_BOLD_DEFAULT = false;
 
     /**
+     * PROOF_ASST_LINE_SPACING_DEFAULT = 0
+     */
+    public static final float PROOF_ASST_LINE_SPACING_DEFAULT = 0;
+
+    /**
      * PROOF_ASST_STYLE_COMMENT = 'comment'
      */
     public static final String PROOF_ASST_STYLE_COMMENT = "comment";
