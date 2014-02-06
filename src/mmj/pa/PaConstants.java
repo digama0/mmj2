@@ -500,7 +500,7 @@ public class PaConstants {
     /**
      * PROOF_ASST_FONT_BOLD_DEFAULT = yes
      */
-    public static final boolean PROOF_ASST_FONT_BOLD_DEFAULT = true;
+    public static final boolean PROOF_ASST_FONT_BOLD_DEFAULT = false;
 
     /**
      * PROOF_ASST_STYLE_COMMENT = 'comment'
@@ -508,9 +508,44 @@ public class PaConstants {
     public static final String PROOF_ASST_STYLE_COMMENT = "comment";
 
     /**
-     * PROOF_ASST_STYLE_SHR = 'stephypref'
+     * PROOF_ASST_STYLE_ERROR = 'error'
      */
-    public static final String PROOF_ASST_STYLE_SHR = "stephypref";
+    public static final String PROOF_ASST_STYLE_ERROR = "error";
+
+    /**
+     * PROOF_ASST_STYLE_KEYWORD = 'keyword'
+     */
+    public static final String PROOF_ASST_STYLE_KEYWORD = "keyword";
+
+    /**
+     * PROOF_ASST_STYLE_PROOF = 'proof'
+     */
+    public static final String PROOF_ASST_STYLE_PROOF = "proof";
+
+    /**
+     * PROOF_ASST_STYLE_STEP = 'step'
+     */
+    public static final String PROOF_ASST_STYLE_STEP = "step";
+
+    /**
+     * PROOF_ASST_STYLE_REF = 'hyp'
+     */
+    public static final String PROOF_ASST_STYLE_HYP = "hyp";
+
+    /**
+     * PROOF_ASST_STYLE_REF = 'ref'
+     */
+    public static final String PROOF_ASST_STYLE_REF = "ref";
+
+    /**
+     * PROOF_ASST_STYLE_LOCREF = 'localref'
+     */
+    public static final String PROOF_ASST_STYLE_LOCREF = "localref";
+
+    /**
+     * PROOF_ASST_STYLE_SPECIAL_STEP = 'specialstep'
+     */
+    public static final String PROOF_ASST_STYLE_SPECIAL_STEP = "specialstep";
 
     /**
      * PROOF_ASST_STYLE_COMMENT = 'class'
@@ -546,21 +581,55 @@ public class PaConstants {
     {
         SimpleAttributeSet style = new SimpleAttributeSet();
         map.put(PROOF_ASST_STYLE_DEFAULT, style);
+
         style = new SimpleAttributeSet();
         map.put(PROOF_ASST_STYLE_COMMENT, style);
         setStyle(style, Color.GRAY, false, true);
+
         style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_SHR, style);
+        map.put(PROOF_ASST_STYLE_KEYWORD, style);
+        setStyle(style, Color.GRAY, true, null);
+
+        style = new SimpleAttributeSet();
+        map.put(PROOF_ASST_STYLE_ERROR, style);
+        setStyle(style, Color.RED, true, null);
+
+        style = new SimpleAttributeSet();
+        map.put(PROOF_ASST_STYLE_PROOF, style);
+        setStyle(style, Color.GRAY, false, null);
+
+        style = new SimpleAttributeSet();
+        map.put(PROOF_ASST_STYLE_STEP, style);
+        setStyle(style, new Color(0x8A2908), true, null);
+
+        style = new SimpleAttributeSet();
+        map.put(PROOF_ASST_STYLE_HYP, style);
         setStyle(style, new Color(0x8A2908), null, null);
+
+        style = new SimpleAttributeSet();
+        map.put(PROOF_ASST_STYLE_REF, style);
+        setStyle(style, new Color(0x0044DD), true, null);
+
+        style = new SimpleAttributeSet();
+        map.put(PROOF_ASST_STYLE_LOCREF, style);
+        setStyle(style, new Color(0x008800), null, null);
+
+        style = new SimpleAttributeSet();
+        map.put(PROOF_ASST_STYLE_SPECIAL_STEP, style);
+        setStyle(style, new Color(0xB58900), true, null);
+
         style = new SimpleAttributeSet();
         map.put(PROOF_ASST_STYLE_CLASS, style);
         setStyle(style, new Color(0xCC33CC), null, null);
+
         style = new SimpleAttributeSet();
         map.put(PROOF_ASST_STYLE_SET, style);
         setStyle(style, Color.RED, null, null);
+
         style = new SimpleAttributeSet();
         map.put(PROOF_ASST_STYLE_WFF, style);
         setStyle(style, Color.BLUE, null, null);
+
         style = new SimpleAttributeSet();
         map.put(PROOF_ASST_STYLE_WORKVAR, style);
         setStyle(style, new Color(0x008800), null, null);
@@ -2816,4 +2885,10 @@ public class PaConstants {
         + "Unable to process Proof text area during preprocessing edit"
         + " operation. Specific error message follows: %s";
 
+    // ----------------------------------------------------------
+    // Messages from ColorThread.java
+    // ----------------------------------------------------------
+
+    public static final String ERRMSG_TOKENIZER_FAIL = "E-PA-1101"
+        + " Programmer error in WorksheetTokenizer syntax highlighter.";
 }

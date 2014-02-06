@@ -899,9 +899,10 @@ public class ProofAsstPreferences {
      * @return the style settings for the given token type
      */
     public AttributeSet getHighlightingStyle(final String key) {
-        return highlighting.get(key);
+        final AttributeSet style = highlighting.get(key);
+        return style != null ? style : highlighting
+            .get(PaConstants.PROOF_ASST_STYLE_ERROR);
     }
-
     /**
      * Sets foreground color for Proof Asst GUI.
      * 

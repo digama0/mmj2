@@ -429,7 +429,7 @@ public class ProofAsstGUI {
     }
 
     private void buildGUIProofTextStuff(final String newProofText) {
-        proofDocument = new HighlightedDocument(proofAsstPreferences);
+        proofDocument = new HighlightedDocument(proofAsst, proofAsstPreferences);
         proofTextPane = proofDocument.getTextPane();
         proofDocument.setTextProgrammatic(newProofText, false, true);
 
@@ -2209,7 +2209,6 @@ public class ProofAsstGUI {
                 w = proofAsst.unify(renumReq, noConvertWV,
                     getProofTextAreaText(), preprocessRequest, stepRequest,
                     tlRequest, proofTextPane.getCaretPosition() + 1);
-
             }
 
             @Override

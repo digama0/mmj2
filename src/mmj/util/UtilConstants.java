@@ -1148,13 +1148,20 @@ public class UtilConstants {
      * color/bold/italic settings. Style types and defaults are:
      * 
      * <pre>
-     * default: Inherit,Inherit,Inherit
-     * comment: 808080,No,Yes
-     * stephypref: 8A2908,Inherit,Inherit
-     * class: CC33CC,Inherit,Inherit
-     * set: FF0000,Inherit,Inherit
-     * wff: 0000FF,Inherit,Inherit
-     * workvar: 008800,Inherit,Inherit
+     * default: inherit,inherit,inherit
+     * comment: 808080,no,yes
+     * keyword: 808080,yes,inherit
+     * error: FF0000,yes,inherit
+     * proof: 808080,no,inherit
+     * step: 8A2908,yes,inherit
+     * hyp: 8A2908,inherit,inherit
+     * ref: 0044DD,yes,inherit
+     * localref: 008800,inherit,inherit
+     * specialstep: B58900,yes,inherit
+     * class: CC33CC,inherit,inherit
+     * set: FF0000,inherit,inherit
+     * wff: 0000FF,inherit,inherit
+     * workvar: 008800,inherit,inherit
      * </pre>
      */
     public static final String RUNPARM_PROOF_ASST_HIGHLIGHTING_STYLE = "ProofAsstHighlightingStyle";

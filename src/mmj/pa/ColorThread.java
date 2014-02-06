@@ -58,6 +58,8 @@ class ColorThread extends Thread {
      */
     private volatile Deque<RecolorEvent> events = new ArrayDeque<RecolorEvent>();
 
+    private final Object docLock = new Object();
+
     /**
      * The amount of change that has occurred before the place in the document
      * that we are currently highlighting (lastPosition).
@@ -129,6 +131,15 @@ class ColorThread extends Thread {
         }
     }
 
+    public void block() {
+        synchronized (this) {
+            while (!events.isEmpty())
+                try {
+                    wait();
+                } catch (final InterruptedException e) {}
+        }
+    }
+
     /**
      * The colorer runs forever and may sleep for long periods of time. It
      * should be interrupted every time there is something for it to do.
@@ -141,10 +152,14 @@ class ColorThread extends Thread {
                 synchronized (events) {
                     // get the next event to process - stalling until the
                     // event becomes available
-                    while (events.isEmpty() && document.get() != null)
+                    while (events.isEmpty() && document.get() != null) {
                         // stop waiting after a second in case document
                         // has been cleared.
+                        synchronized (this) {
+                            notifyAll();
+                        }
                         events.wait(1000);
+                    }
                     re = events.removeFirst();
                 }
                 processEvent(re.position, re.adjustment);
@@ -213,7 +228,7 @@ class ColorThread extends Thread {
             Token t;
             boolean done = false;
             dpEnd = dpStart;
-            synchronized (doc) {
+            synchronized (docLock) {
                 // After the lexer has been set up, scroll the
                 // reader so that it
                 // is in the correct spot as well.
@@ -248,8 +263,13 @@ class ColorThread extends Thread {
                 // stored in tokenStyles.
                 final int end = t.begin + t.length;
                 if (end <= doc.getLength()) {
-                    doc.setCharacterAttributes(t.begin + change, t.length,
-                        preferences.getHighlightingStyle(t.type), true);
+                    if (t.length <= 0 || t.type == null || t.begin < 0)
+                        new IllegalStateException(
+                            PaConstants.ERRMSG_TOKENIZER_FAIL)
+                            .printStackTrace();
+                    else
+                        doc.setCharacterAttributes(t.begin + change, t.length,
+                            preferences.getHighlightingStyle(t.type), true);
                     // record the position of the last bit of
                     // text that we colored
                     dpEnd = new DocPosition(t.begin);
@@ -296,7 +316,7 @@ class ColorThread extends Thread {
                     // initial states from this time.
                     newPositions.add(dpEnd);
                 }
-                synchronized (doc) {
+                synchronized (docLock) {
                     t = syntaxLexer.getNextToken();
                 }
             }
@@ -326,7 +346,7 @@ class ColorThread extends Thread {
             iniPositions.addAll(newPositions);
             newPositions.clear();
         } catch (final IOException x) {}
-        synchronized (doc) {
+        synchronized (docLock) {
             lastPosition = -1;
             change = 0;
         }

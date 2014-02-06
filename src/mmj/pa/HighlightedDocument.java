@@ -15,12 +15,14 @@ public class HighlightedDocument extends DefaultStyledDocument {
     private int lastCaret;
     private final JTextPane textPane;
 
-    public HighlightedDocument(final ProofAsstPreferences prefs) {
+    public HighlightedDocument(final ProofAsst proofAsst,
+        final ProofAsstPreferences prefs)
+    {
         programmatic = changed = false;
         if (prefs.getHighlightingEnabled()) {
             colorer = new ColorThread(this, prefs);
             reader = new DocumentReader();
-            tokenizer = new WorksheetTokenizer(reader);
+            tokenizer = new WorksheetTokenizer(proofAsst, reader);
         }
         else {
             colorer = null;
@@ -126,6 +128,7 @@ public class HighlightedDocument extends DefaultStyledDocument {
             if (!text.isEmpty())
                 insertString(0, text, new SimpleAttributeSet());
         } catch (final BadLocationException e) {}
+        colorer.block();
         programmatic = false;
         if (reset)
             clearChanged();
