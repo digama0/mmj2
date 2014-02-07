@@ -99,8 +99,7 @@ import java.io.*;
 
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.text.DefaultEditorKit;
-import javax.swing.text.JTextComponent;
+import javax.swing.text.*;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 
@@ -585,16 +584,18 @@ public class ProofAsstGUI {
         return mainFrame;
     }
     private String getProofTextAreaText() {
-        return proofTextPane.getText();
+        try {
+            return proofDocument.getText(0, proofDocument.getLength());
+        } catch (final BadLocationException e) {
+            return proofTextPane.getText();
+        }
     }
     private void setProofTextAreaText(final String s, final boolean reset) {
         undoManager.updateCursorPosition();
         proofDocument.setTextProgrammatic(s, false, reset);
     }
 
-    private void setProofTextAreaCursorPos(final ProofWorksheet w,
-        final int proofTextLength)
-    {
+    private void setProofTextAreaCursorPos(final ProofWorksheet w) {
 
         final ProofAsstCursor cursor = w.getProofCursor();
 
@@ -615,77 +616,35 @@ public class ProofAsstGUI {
 
             cursor.proofWorkStmt = null;
             cursor.caretCharNbr = -1; // just in case
-            cursor.scrollToLine = -1; // just in case
-            cursor.scrollToCol = -1; // just in case
         }
 
-        setProofTextAreaCursorPos(cursor, proofTextLength);
+        setProofTextAreaCursorPos(cursor);
     }
 
-    private void setProofTextAreaCursorPos(final ProofAsstCursor cursor,
-        final int proofTextLength)
-    {
-        try {
+    private void setProofTextAreaCursorPos(final ProofAsstCursor cursor) {
+        final int proofTextLength = proofDocument.getLength();
+        int caretPosition = 0;
+        int row = 0;
+        int col = 0;
 
-            int caretPosition = 0;
-            int row = 0;
-            int col = 0;
-
-            if (cursor.caretCharNbr > 0)
-                caretPosition = cursor.caretCharNbr - 1;
-            else if (cursor.caretLine > 0) {
-                row = cursor.caretLine - 1;
-                if (cursor.caretCol > 0)
-                    col = cursor.caretCol - 1;
-                else
-                    col = 0;
-                final int offset = ((HighlightedDocument)proofTextPane
-                    .getDocument()).getLineStartOffset(row);
-                caretPosition = offset + col;
-            }
-
-            // just to be safe instead of sorry...
-            if (caretPosition >= proofTextLength)
-                caretPosition = proofTextLength - 1;
-            if (caretPosition < 0)
-                caretPosition = 0;
-
-            proofTextPane.setCaretPosition(caretPosition);
-
-            final JViewport v = proofTextScrollPane.getViewport();
-
-            final int vHeight = v.getView().getHeight();
-
-            row = 0;
-            col = 0;
-
-            if (cursor.scrollToLine != cursor.caretLine
-                && cursor.scrollToLine > 0 && cursor.caretLine > 0)
-                row = cursor.scrollToLine - 1;
-            else if (cursor.caretCharNbr > 0)
-                row = ((HighlightedDocument)proofTextPane.getDocument())
-                    .getLineOfOffset(cursor.caretCharNbr - 1);
-            else if (cursor.caretLine > 0)
-                row = cursor.caretLine - 1;
-
-            if (cursor.scrollToCol > 0)
-                col = cursor.scrollToCol - 1;
-
-            final int vPos = vHeight
-                * row
-                / ((HighlightedDocument)proofTextPane.getDocument())
-                    .getLineCount();
-
-            if (cursor.getDontScroll())
-                cursor.setDontScroll(false);
-            else
-                v.scrollRectToVisible(new Rectangle(col, // x
-                    vPos, // y
-                    1, // width
-                    1)); // height
-        } catch (final Exception e) {
-            // ignore, don't care, did our best.
+        if (cursor.caretCharNbr > 0)
+            caretPosition = cursor.caretCharNbr - 1;
+        else if (cursor.caretLine > 0) {
+            row = cursor.caretLine - 1;
+            col = cursor.caretCol > 0 ? cursor.caretCol - 1 : 0;
+            caretPosition = proofDocument.getLineStartOffset(row) + col;
         }
+
+        // just to be safe instead of sorry...
+        if (caretPosition > proofTextLength)
+            caretPosition = proofTextLength;
+
+        proofTextPane.setCaretPosition(caretPosition);
+        final Point p = proofTextPane.getCaret().getMagicCaretPosition();
+
+        proofTextScrollPane.getViewport().scrollRectToVisible(
+            new Rectangle(p.x, p.y, 1, proofTextPane.getFontMetrics(proofFont)
+                .getHeight()));
     }
 
     private void updateScreenTitle(final File file) {
@@ -918,8 +877,8 @@ public class ProofAsstGUI {
 
                 clearUndoRedoCaches();
 
-                setProofTextAreaCursorPos(
-                    ProofAsstCursor.makeProofStartCursor(), s.length());
+                setProofTextAreaCursorPos(ProofAsstCursor
+                    .makeProofStartCursor());
 
                 savedSinceNew = true;
                 disposeOfOldSelectorDialog();
@@ -1018,12 +977,12 @@ public class ProofAsstGUI {
                         if (getYesNoAnswer(
                             PaConstants.ERRMSG_PA_GUI_FILE_EXISTS,
                             newFile.getAbsolutePath()) == JOptionPane.YES_OPTION)
-                            saveOldProofTextFile(newFile);
+                            saveProofTextFile(newFile);
                         else
                             fileChooser.setSelectedFile(oldFile);
                     }
                     else
-                        saveNewProofTextFile(newFile);
+                        saveProofTextFile(newFile);
                 }
                 updateMainFrameTitleIfNecessary(false);
 
@@ -2048,7 +2007,7 @@ public class ProofAsstGUI {
         if (savedSinceNew) {
             file = fileChooser.getSelectedFile();
             if (file.exists()) {
-                saveOldProofTextFile(file);
+                saveProofTextFile(file);
                 updateMainFrameTitleIfNecessary(exitingNow);
                 return;
             }
@@ -2061,9 +2020,9 @@ public class ProofAsstGUI {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             file = fileChooser.getSelectedFile();
             if (file.exists())
-                saveOldProofTextFile(file);
+                saveProofTextFile(file);
             else
-                saveNewProofTextFile(file);
+                saveProofTextFile(file);
             updateMainFrameTitleIfNecessary(exitingNow);
         }
     }
@@ -2100,45 +2059,23 @@ public class ProofAsstGUI {
         return answer;
     }
 
-    private void saveNewProofTextFile(final File file) {
+    private void saveProofTextFile(final File file) {
         try {
             final BufferedWriter w = new BufferedWriter(new FileWriter(file));
-            final String s = getProofTextAreaText();
+            final String s = proofTextPane.getText();
             w.write(s, 0, s.length());
             w.close();
         } catch (final Throwable e) {
             JOptionPane.showMessageDialog(
                 getMainFrame(),
                 LangException.format(PaConstants.ERRMSG_PA_GUI_SAVE_IO_ERROR,
-                    e.getMessage()),
-                PaConstants.PA_GUI_SAVE_NEW_PROOF_TEXT_TITLE,
+                    e.getMessage()), PaConstants.PA_GUI_SAVE_PROOF_TEXT_TITLE,
                 JOptionPane.ERROR_MESSAGE);
         }
 
         proofDocument.clearChanged();
         clearUndoRedoCaches();
         savedSinceNew = true;
-    }
-
-    private void saveOldProofTextFile(final File file) {
-        try {
-            final BufferedWriter w = new BufferedWriter(new FileWriter(file));
-            final String s = getProofTextAreaText();
-            w.write(s, 0, s.length());
-            w.close();
-        } catch (final Throwable e) {
-            JOptionPane.showMessageDialog(
-                getMainFrame(),
-                LangException.format(PaConstants.ERRMSG_PA_GUI_SAVE_IO_ERROR,
-                    e.getMessage()),
-                PaConstants.PA_GUI_SAVE_OLD_PROOF_TEXT_TITLE,
-                JOptionPane.ERROR_MESSAGE);
-        }
-
-        proofDocument.clearChanged();
-        clearUndoRedoCaches();
-        savedSinceNew = true;
-
     }
 
     // ------------------------------------------------------
@@ -2206,7 +2143,7 @@ public class ProofAsstGUI {
             ProofWorksheet w;
 
             @Override
-            void send() {
+            void send() throws InterruptedException {
                 w = proofAsst.unify(renumReq, noConvertWV,
                     getProofTextAreaText(), preprocessRequest, stepRequest,
                     tlRequest, proofTextPane.getCaretPosition() + 1);
@@ -2457,7 +2394,7 @@ public class ProofAsstGUI {
         public void actionPerformed(final ActionEvent e) {
             startRequestAction(this);
         }
-        void send() {}
+        void send() throws InterruptedException {}
         abstract void receive();
     }
 
@@ -2518,16 +2455,17 @@ public class ProofAsstGUI {
         public void run() {
             try {
                 request.send();
-                EventQueue.invokeLater(new Runnable() {
-                    public void run() {
-                        try {
-                            request.receive();
-                        } finally {
-                            tidyUpRequestStuff();
+                if (!Thread.interrupted())
+                    EventQueue.invokeLater(new Runnable() {
+                        public void run() {
+                            try {
+                                request.receive();
+                            } finally {
+                                tidyUpRequestStuff();
+                            }
                         }
-                    }
-                });
-            } finally {
+                    });
+            } catch (final InterruptedException e) {} finally {
                 requestThread = null;
             }
         }
@@ -2579,11 +2517,8 @@ public class ProofAsstGUI {
         setCurrProofMaxSeq(w.getMaxSeq());
 
         String s = w.getOutputProofText();
-        int proofTextLength = Integer.MAX_VALUE;
-        if (s != null) { // no structural errors...
+        if (s != null) // no structural errors...
             setProofTextAreaText(s, reset);
-            proofTextLength = s.length();
-        }
 
         s = w.getTheoremLabel();
         if (s != null && proofTheoremLabel != null)
@@ -2595,7 +2530,7 @@ public class ProofAsstGUI {
                 savedSinceNew = false;
             }
 
-        setProofTextAreaCursorPos(w, proofTextLength);
+        setProofTextAreaCursorPos(w);
         displayRequestMessages(w.getOutputMessageText());
     }
 
@@ -2660,10 +2595,7 @@ public class ProofAsstGUI {
         return requestMessagesGUI;
     }
 
-    /**
-     * ============================== GUI Frame Infrastructure stuff
-     * ==============================
-     */
+    // ==================== GUI Frame Infrastructure stuff ====================
 
     private static class FrameShower implements Runnable {
         JFrame f;

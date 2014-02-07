@@ -12,11 +12,10 @@ public class WorksheetTokenizer {
     private static final int HEADER = 0, COMMENT = 1, STEP = 2, DJVARS = 3,
         PROOF = 4, FOOTER = 5;
 
-    private int offset;
+    private int offset, index, lineType;
     private long lastLine;
     private Tokenizer tokenizer;
     private StringBuilder token;
-    private int lineType, lineIndex;
     private final Deque<Token> tokenQueue;
     private final LogicalSystem logSys;
 
@@ -49,7 +48,7 @@ public class WorksheetTokenizer {
             t.initialState = true;
             if (s.equals("$(")) {
                 lineType = HEADER;
-                lineIndex = 0;
+                index = 0;
                 t.type = PaConstants.PROOF_ASST_STYLE_KEYWORD;
             }
             else if (s.equals("$d")) {
@@ -107,7 +106,7 @@ public class WorksheetTokenizer {
     }
 
     private void parseHeader(final String s, final Token t) {
-        switch (lineIndex++) {
+        switch (index++) {
             case 0:
                 t.type = s.equals("<MM>") ? PaConstants.PROOF_ASST_STYLE_KEYWORD
                     : PaConstants.PROOF_ASST_STYLE_ERROR;
@@ -174,10 +173,13 @@ public class WorksheetTokenizer {
         }
         else
             t.type = PaConstants.PROOF_ASST_STYLE_STEP;
-        int index = t.begin + t.length;
-        if (fields.length == 2)
-            parseRef(fields[1], isHyp, index);
-        else if (fields.length > 2) {
+        index = t.begin + t.length;
+        if (fields.length > 1) {
+            if (fields.length == 2) {
+                if (parseRef(fields[1], isHyp))
+                    return;
+                tokenQueue.removeLast();
+            }
             for (String hyp : fields[1].split(",", -1)) {
                 Token t2 = new Token();
                 t2.begin = index++;
@@ -200,18 +202,20 @@ public class WorksheetTokenizer {
                 if (isHyp)
                     break;
             }
-            index = parseRef(fields[2], isHyp, index);
-            if (fields.length > 3) {
-                final Token t2 = new Token();
-                t2.begin = index;
-                t2.length = fields[3].length() + 1;
-                t2.type = PaConstants.PROOF_ASST_STYLE_ERROR;
-                tokenQueue.add(t2);
+            if (fields.length > 2) {
+                parseRef(fields[2], isHyp);
+                if (fields.length > 3) {
+                    final Token t2 = new Token();
+                    t2.begin = index;
+                    t2.length = fields[3].length() + 1;
+                    t2.type = PaConstants.PROOF_ASST_STYLE_ERROR;
+                    tokenQueue.add(t2);
+                }
             }
         }
     }
 
-    private int parseRef(final String field, final boolean isHyp, int index) {
+    private boolean parseRef(final String field, final boolean isHyp) {
         Token t2 = new Token();
         t2.begin = index++;
         t2.length = 1;
@@ -231,8 +235,9 @@ public class WorksheetTokenizer {
                     || logSys.getStmtTbl().get(field) instanceof Assrt ? PaConstants.PROOF_ASST_STYLE_REF
                     : PaConstants.PROOF_ASST_STYLE_ERROR;
             tokenQueue.add(t2);
+            return t2.type != PaConstants.PROOF_ASST_STYLE_ERROR;
         }
-        return index;
+        return true;
     }
 
     /**

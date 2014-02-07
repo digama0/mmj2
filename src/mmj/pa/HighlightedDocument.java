@@ -139,34 +139,15 @@ public class HighlightedDocument extends DefaultStyledDocument {
     }
 
     public int getLineStartOffset(final int row) {
-        try {
-            final String text = getText(0, getLength());
-            int pos = 0;
-            for (int i = 0; i < row; i++)
-                pos = text.indexOf('\n', pos) + 1;
-            return pos;
-        } catch (final BadLocationException e) {
-            return 0;
-        }
+        return getDefaultRootElement().getElement(row).getStartOffset();
     }
 
     public int getLineOfOffset(final int i) {
-        try {
-            final String text = getText(0, i);
-            int pos = 0, line = 0;
-            while (true) {
-                pos = text.indexOf('\n', pos) + 1;
-                if (pos == 0)
-                    return line;
-                line++;
-            }
-        } catch (final BadLocationException e) {
-            return 0;
-        }
+        return getDefaultRootElement().getElementIndex(i);
     }
 
     public int getLineCount() {
-        return getLineOfOffset(getLength()) + 1;
+        return getDefaultRootElement().getElementCount();
     }
 
     public class DocumentReader extends Reader implements Readable {

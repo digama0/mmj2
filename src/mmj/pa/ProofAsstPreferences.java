@@ -148,7 +148,6 @@ public class ProofAsstPreferences {
     private String incompleteStepCursor;
     private boolean incompleteStepCursorFirst;
     private boolean incompleteStepCursorLast;
-    private boolean incompleteStepCursorAsIs;
 
     private SearchMgr searchMgr;
 
@@ -1389,46 +1388,15 @@ public class ProofAsstPreferences {
      * @return true if valid otherwise false.
      */
     public boolean setIncompleteStepCursor(final String s) {
-        if (s == null)
-            return false; // error
+        final boolean first = PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_FIRST
+            .equalsIgnoreCase(s), last = PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_LAST
+            .equalsIgnoreCase(s), asis = PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_ASIS
+            .equalsIgnoreCase(s);
 
-        // Note: do not modify any settings unless
-        // the input is valid -- therefore,
-        // no default settings are made here
-        // ...
-        // [ ]
-        //
-
-        if (s
-            .compareToIgnoreCase(PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_FIRST) == 0)
-        {
-
+        if (first || last || asis) {
             incompleteStepCursor = s;
-            incompleteStepCursorFirst = true;
-            incompleteStepCursorLast = false;
-            incompleteStepCursorAsIs = false;
-            return true; // no error
-        }
-
-        if (s
-            .compareToIgnoreCase(PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_LAST) == 0)
-        {
-
-            incompleteStepCursor = s;
-            incompleteStepCursorFirst = false;
-            incompleteStepCursorLast = true;
-            incompleteStepCursorAsIs = false;
-            return true; // no error
-        }
-
-        if (s
-            .compareToIgnoreCase(PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_ASIS) == 0)
-        {
-
-            incompleteStepCursor = s;
-            incompleteStepCursorFirst = false;
-            incompleteStepCursorLast = false;
-            incompleteStepCursorAsIs = true;
+            incompleteStepCursorFirst = first;
+            incompleteStepCursorLast = last;
             return true; // no error
         }
 
@@ -1460,15 +1428,6 @@ public class ProofAsstPreferences {
      */
     public boolean getIncompleteStepCursorLast() {
         return incompleteStepCursorLast;
-    }
-
-    /**
-     * Get incompleteStepCursorAsIs parameter.
-     * 
-     * @return incompleteStepCursorAsIs parameter.
-     */
-    public boolean getIncompleteStepCursorAsIs() {
-        return incompleteStepCursorAsIs;
     }
 
     /**

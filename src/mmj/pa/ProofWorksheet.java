@@ -623,7 +623,7 @@ public class ProofWorksheet {
      */
     public ProofWorkStmt computeProofWorkStmtOfLineNbr(final int n) {
         int total = 0;
-        for (final ProofWorkStmt y : getProofWorkStmtList()) {
+        for (final ProofWorkStmt y : proofWorkStmtList) {
             if (total + y.getLineCnt() >= n)
                 return y;
             total += y.getLineCnt();
@@ -715,34 +715,6 @@ public class ProofWorksheet {
     }
 
     /**
-     * If cursor not already set, positions the ProofWorksheet ProofCursor at
-     * the last ProofWorkStmt with status = incomplete and sets the cursor at
-     * the start of the Ref sub-field. If cursor still not set (no incomplete
-     * steps), positions the cursor at the 'qed' step.
-     */
-    public void posCursorAtLastIncompleteOrQedStmt() {
-        if (!proofCursor.cursorIsSet) {
-            posCursorAtLastIncompleteStmt();
-            if (!proofCursor.cursorIsSet)
-                posCursorAtQedStmt();
-        }
-    }
-
-    /**
-     * If cursor not already set, positions the ProofWorksheet ProofCursor at
-     * the first ProofWorkStmt with status = incomplete and sets the cursor at
-     * the start of the Ref sub-field. If cursor still not set (no incomplete
-     * steps), positions the cursor at the 'qed' step.
-     */
-    public void posCursorAtFirstIncompleteOrQedStmt() {
-        if (!proofCursor.cursorIsSet) {
-            posCursorAtFirstIncompleteStmt();
-            if (!proofCursor.cursorIsSet)
-                posCursorAtQedStmt();
-        }
-    }
-
-    /**
      * Positions the cursor at the 'qed' step if the cursor is not already set.
      */
     public void posCursorAtQedStmt() {
@@ -750,13 +722,6 @@ public class ProofWorksheet {
             proofCursor.setCursorAtProofWorkStmt(qedStep,
                 PaConstants.FIELD_ID_REF);
     }
-
-//    public boolean hasIncompleteStmt() {
-//        for (final ProofWorkStmt s : getProofWorkStmtList())
-//            if (s.stmtIsIncomplete())
-//                return true;
-//        return false;
-//    }
 
     /**
      * Positions the ProofWorksheet ProofCursor at the last ProofWorkStmt with
@@ -791,6 +756,21 @@ public class ProofWorksheet {
                     PaConstants.FIELD_ID_REF);
                 break;
             }
+    }
+
+    public void incompleteStepCursorPositioning() {
+        if (getQedStepProofRPN() != null) {
+            posCursorAtQedStmt();
+            return;
+        }
+
+        if (!proofCursor.cursorIsSet)
+            if (proofAsstPreferences.getIncompleteStepCursorLast())
+                posCursorAtLastIncompleteStmt();
+            else if (proofAsstPreferences.getIncompleteStepCursorFirst())
+                posCursorAtFirstIncompleteStmt();
+            else
+                proofCursor = proofInputCursor;
     }
 
     public void outputCursorInstrumentationIfEnabled() {

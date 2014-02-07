@@ -45,10 +45,6 @@ public class ProofAsstCursor {
     /* friendly */int caretCharNbr;
     /* friendly */int caretLine;
     /* friendly */int caretCol;
-    /* friendly */int scrollToLine;
-    /* friendly */int scrollToCol;
-
-    private boolean dontScroll;
 
     public static ProofAsstCursor makeProofStartCursor() {
         final ProofAsstCursor cursor = new ProofAsstCursor();
@@ -61,9 +57,7 @@ public class ProofAsstCursor {
         // to scroll line = caret line...doh.
         cursor.setCursor(-1, // caret char
             1, // caret line
-            PaConstants.PROOF_TEXT_HEADER_1.length() + 1, // caret col
-            1, // scroll to line
-            PaConstants.PROOF_TEXT_HEADER_1.length() + 1); // scroll to col
+            PaConstants.PROOF_TEXT_HEADER_1.length() + 1); // caret col
         return cursor;
     }
 
@@ -77,8 +71,6 @@ public class ProofAsstCursor {
         caretCharNbr = -1;
         caretLine = -1;
         caretCol = -1;
-        scrollToLine = -1;
-        scrollToCol = -1;
     }
 
     public ProofAsstCursor(final int caretCharNbr, final int caretLine,
@@ -134,15 +126,13 @@ public class ProofAsstCursor {
     }
 
     public void setCursor(final int caretCharNbr, final int caretLine,
-        final int caretCol, final int scrollToLine, final int scrollToCol)
+        final int caretCol)
     {
 
         if (!cursorIsSet) {
             this.caretCharNbr = caretCharNbr;
             this.caretLine = caretLine;
             this.caretCol = caretCol;
-            this.scrollToLine = scrollToLine;
-            this.scrollToCol = scrollToCol;
             cursorIsSet = true;
         }
     }
@@ -157,13 +147,4 @@ public class ProofAsstCursor {
             PaConstants.ERRMSG_PA_CURSOR_INSTRUMENTATION, theoremLabel,
             stmtDiagnosticInfo, fieldId, caretCharNbr, caretLine, caretCol);
     }
-
-    public void setDontScroll(final boolean dontScroll) {
-        this.dontScroll = dontScroll;
-    }
-
-    public boolean getDontScroll() {
-        return dontScroll;
-    }
-
 }

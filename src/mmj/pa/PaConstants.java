@@ -1492,14 +1492,9 @@ public class PaConstants {
     public static final String PA_GUI_YES_NO_TITLE = "getYesNoAnswer()";
 
     /**
-     * ProofAsstGUI Save New Proof Text File Dialog Title
+     * ProofAsstGUI Save Proof Text File Dialog Title
      */
-    public static final String PA_GUI_SAVE_NEW_PROOF_TEXT_TITLE = "SaveNewProofTextFile()";
-
-    /**
-     * ProofAsstGUI Save Old Proof Text File Dialog Title
-     */
-    public static final String PA_GUI_SAVE_OLD_PROOF_TEXT_TITLE = "SaveOldProofTextFile()";
+    public static final String PA_GUI_SAVE_PROOF_TEXT_TITLE = "SaveProofTextFile()";
 
     /**
      * Default Theorem Label For Error Messages

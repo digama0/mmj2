@@ -1542,41 +1542,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         else
             messages.accumInfoMessage(PaConstants.ERRMSG_PA_NOTHING_TO_UNIFY,
                 getErrorLabelIfPossible(proofWorksheet));
-        incompleteStepCursorPositioning(proofWorksheet);
-    }
-    private void incompleteStepCursorPositioning(
-        final ProofWorksheet proofWorksheet)
-    {
-
-        if (proofWorksheet.getQedStepProofRPN() != null) {
-            proofWorksheet.proofCursor.setDontScroll(false);
-            proofWorksheet.posCursorAtQedStmt();
-            return;
-        }
-
-        proofWorksheet.proofCursor.setDontScroll(true);
-
-        if (!proofWorksheet.proofCursor.cursorIsSet) {
-
-            if (proofAsstPreferences.getIncompleteStepCursorLast()) {
-                proofWorksheet.posCursorAtLastIncompleteOrQedStmt();
-                return;
-            }
-
-            if (proofAsstPreferences.getIncompleteStepCursorFirst()) {
-                proofWorksheet.posCursorAtFirstIncompleteOrQedStmt();
-                return;
-            }
-
-            // if (proofWorksheet.hasIncompleteStmt()) {
-            proofWorksheet.proofInputCursor.setDontScroll(true);
-            // }
-            // else {
-            // proofWorksheet.proofInputCursor.setDontScroll(false);
-            // }
-
-            proofWorksheet.setProofCursor(proofWorksheet.proofInputCursor);
-        }
+        proofWorksheet.incompleteStepCursorPositioning();
     }
 
     private ProofWorksheet updateWorksheetWithException(final ProofWorksheet w,
