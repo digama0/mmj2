@@ -178,7 +178,7 @@ public class WorksheetTokenizer {
             if (fields.length == 2) {
                 if (parseRef(fields[1], isHyp))
                     return;
-                tokenQueue.removeLast();
+                index -= tokenQueue.removeLast().length;
             }
             for (String hyp : fields[1].split(",", -1)) {
                 Token t2 = new Token();

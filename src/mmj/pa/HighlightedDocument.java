@@ -1,9 +1,11 @@
 package mmj.pa;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.io.Reader;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
 import javax.swing.text.*;
 
 public class HighlightedDocument extends DefaultStyledDocument {
@@ -35,7 +37,16 @@ public class HighlightedDocument extends DefaultStyledDocument {
         defs.put("TextPane[Enabled].backgroundPainter", bg);
         defs.put("TextPane.background", bg);
         defs.put("TextPane.inactiveBackground", bg);
-        textPane = new JTextPane(this);
+        if (prefs.getLineWrap())
+            textPane = new JTextPane(this);
+        else
+            textPane = new JTextPane(this) {
+                @Override
+                public boolean getScrollableTracksViewportWidth() {
+                    return getUI().getPreferredSize(this).width <= getParent()
+                        .getSize().width;
+                }
+            };
         textPane.putClientProperty("Nimbus.Overrides", defs);
 
         textPane.setForeground(prefs.getForegroundColor());
@@ -74,11 +85,11 @@ public class HighlightedDocument extends DefaultStyledDocument {
         lastCaret = textPane.getCaretPosition();
         synchronized (this) {
             super.insertString(offs, str, a);
-            color(offs, str.length());
             if (reader != null)
                 reader.update(offs, str.length());
         }
     }
+
     @Override
     public void remove(final int offs, final int len)
         throws BadLocationException
@@ -86,11 +97,33 @@ public class HighlightedDocument extends DefaultStyledDocument {
         changed |= !programmatic;
         lastCaret = textPane.getCaretPosition();
         synchronized (this) {
-            super.remove(offs, len);
-            color(offs, -len);
-            if (reader != null)
-                reader.update(offs, -len);
+            if (len > 0) {
+                super.remove(offs, len);
+                if (reader != null)
+                    reader.update(offs, -len);
+            }
         }
+    }
+
+    @Override
+    public void getText(final int offset, int length, final Segment txt)
+        throws BadLocationException
+    {
+        if (length < 0)
+            length = 0;
+        super.getText(offset, length, txt);
+    }
+
+    @Override
+    protected void fireInsertUpdate(final DocumentEvent e) {
+        super.fireInsertUpdate(e);
+        color(e.getOffset(), e.getLength());
+    }
+
+    @Override
+    protected void fireRemoveUpdate(final DocumentEvent e) {
+        super.fireRemoveUpdate(e);
+        color(e.getOffset(), -e.getLength());
     }
 
     public DocumentReader getDocumentReader() {
@@ -121,23 +154,45 @@ public class HighlightedDocument extends DefaultStyledDocument {
         changed = false;
     }
 
-    public void setTextProgrammatic(final String text, final boolean smart,
-        final boolean reset)
+    public void setTextProgrammatic(final String text, final Point blockUntil,
+        final boolean smart, final boolean reset)
     {
         programmatic = true;
         try {
-            if (getLength() != 0)
-                remove(0, getLength());
-            if (!text.isEmpty())
-                insertString(0, text.replace("\r\n", "\n"),
-                    new SimpleAttributeSet());
+            final String replacement = text.replace("\r\n", "\n");
+            final int length = getLength();
+            if (smart) {
+                final String current = getText(0, length);
+                int begin = 0;
+                while (begin < length
+                    && current.charAt(begin) == replacement.charAt(begin))
+                    begin++;
+                int end = length, end2 = replacement.length();
+                while (end > begin && end2 > begin
+                    && current.charAt(end - 1) == replacement.charAt(end2 - 1))
+                {
+                    end--;
+                    end2--;
+                }
+                if (end != begin)
+                    remove(begin, end - begin);
+                if (end2 != begin)
+                    insertString(begin, replacement.substring(begin, end2),
+                        new SimpleAttributeSet());
+            }
+            else {
+                if (length != 0)
+                    remove(0, length);
+                if (!replacement.isEmpty())
+                    insertString(0, replacement, new SimpleAttributeSet());
+            }
         } catch (final BadLocationException e) {}
-        colorer.block();
+        colorer.block(blockUntil == null ? Integer.MAX_VALUE : textPane
+            .viewToModel(blockUntil));
         programmatic = false;
         if (reset)
             clearChanged();
     }
-
     public int getLineStartOffset(final int row) {
         return getDefaultRootElement().getElement(row).getStartOffset();
     }

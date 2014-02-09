@@ -71,6 +71,8 @@ class ColorThread extends Thread {
      */
     private volatile int lastPosition = -1;
 
+    private volatile int blockCutoff = -2;
+
     /**
      * Creates the coloring thread for the given document.
      * 
@@ -131,12 +133,14 @@ class ColorThread extends Thread {
         }
     }
 
-    public void block() {
+    public void block(final int blockUntil) {
         synchronized (this) {
-            while (!events.isEmpty())
+            blockCutoff = blockUntil;
+            while (!events.isEmpty() && lastPosition < blockUntil)
                 try {
                     wait();
                 } catch (final InterruptedException e) {}
+            blockCutoff = -2;
         }
     }
 
@@ -213,10 +217,8 @@ class ColorThread extends Thread {
 
         // adjust the positions of everything after the
         // insertion/removal.
-        workingSet = iniPositions.tailSet(startRequest);
-        workingIt = workingSet.iterator();
-        while (workingIt.hasNext())
-            workingIt.next().adjustPosition(adjustment);
+        for (final DocPosition pos : iniPositions.tailSet(startRequest))
+            pos.adjustPosition(adjustment);
 
         // now go through and highlight as much as needed
         workingSet = iniPositions.tailSet(dpStart);
@@ -229,30 +231,21 @@ class ColorThread extends Thread {
             boolean done = false;
             dpEnd = dpStart;
             synchronized (docLock) {
-                // After the lexer has been set up, scroll the
-                // reader so that it
+                // After the lexer has been set up, scroll the reader so that it
                 // is in the correct spot as well.
                 reader.seek(dpStart.getPosition());
-                // we are playing some games with the lexer for
-                // efficiency.
-                // we could just create a new lexer each time here,
-                // but instead,
-                // we will just reset it so that it thinks it is
-                // starting at the
-                // beginning of the document but reporting a funny
-                // start position.
-                // Reseting the lexer causes the close() method on
-                // the reader
-                // to be called but because the close() method has
-                // no effect on the
-                // DocumentReader, we can do this.
+                // we are playing some games with the lexer for efficiency.
+                // we could just create a new lexer each time here, but instead,
+                // we will just reset it so that it thinks it is starting at the
+                // beginning of the document but reporting a funny start
+                // position. Reseting the lexer causes the close() method on the
+                // reader to be called but because the close() method has no
+                // effect on the DocumentReader, we can do this.
                 syntaxLexer.reset(reader, dpStart.getPosition());
-                // we will highlight tokens until we reach a good
-                // stopping place.
-                // the first obvious stopping place is the end of
-                // the document.
-                // the lexer will return null at the end of the
-                // document and wee
+                // we will highlight tokens until we reach a good stopping
+                // place.
+                // the first obvious stopping place is the end of the document.
+                // the lexer will return null at the end of the document and we
                 // need to stop there.
                 t = syntaxLexer.getNextToken();
             }
@@ -268,12 +261,22 @@ class ColorThread extends Thread {
                             PaConstants.ERRMSG_TOKENIZER_FAIL)
                             .printStackTrace();
                     else
-                        doc.setCharacterAttributes(t.begin + change, t.length,
-                            preferences.getHighlightingStyle(t.type), true);
+                        try {
+                            doc.setCharacterAttributes(t.begin + change,
+                                t.length,
+                                preferences.getHighlightingStyle(t.type), true);
+                        } catch (final RuntimeException e) {
+                            System.err.println("Ignoring exception:");
+                            e.printStackTrace();
+                        }
                     // record the position of the last bit of
                     // text that we colored
                     dpEnd = new DocPosition(t.begin);
                 }
+                if (lastPosition < blockCutoff && end + change >= blockCutoff)
+                    synchronized (this) {
+                        notifyAll();
+                    }
                 lastPosition = end + change;
                 // The other more complicated reason for doing no
                 // more highlighting

@@ -430,11 +430,12 @@ public class ProofAsstGUI {
     private void buildGUIProofTextStuff(final String newProofText) {
         proofDocument = new HighlightedDocument(proofAsst, proofAsstPreferences);
         proofTextPane = proofDocument.getTextPane();
-        proofDocument.setTextProgrammatic(newProofText, false, true);
+        proofDocument.setTextProgrammatic(newProofText, null, false, true);
 
         buildProofFont();
 
         proofTextPane.setFont(proofFont);
+
         // textArea.setLineWrap(proofAsstPreferences.getLineWrap());
         proofTextPane.setCursor(null); // use arrow instead of thingamabob
 
@@ -592,7 +593,9 @@ public class ProofAsstGUI {
     }
     private void setProofTextAreaText(final String s, final boolean reset) {
         undoManager.updateCursorPosition();
-        proofDocument.setTextProgrammatic(s, false, reset);
+        final Rectangle r = proofTextScrollPane.getViewport().getViewRect();
+        proofDocument.setTextProgrammatic(s, new Point(r.x + r.width, r.y
+            + r.height), true, reset);
     }
 
     private void setProofTextAreaCursorPos(final ProofWorksheet w) {
@@ -640,11 +643,12 @@ public class ProofAsstGUI {
             caretPosition = proofTextLength;
 
         proofTextPane.setCaretPosition(caretPosition);
-        final Point p = proofTextPane.getCaret().getMagicCaretPosition();
-
-        proofTextScrollPane.getViewport().scrollRectToVisible(
-            new Rectangle(p.x, p.y, 1, proofTextPane.getFontMetrics(proofFont)
-                .getHeight()));
+        try {
+            final Rectangle r = proofTextPane.getUI().modelToView(
+                proofTextPane, caretPosition);
+            r.translate(proofTextPane.getX(), proofTextPane.getY());
+            proofTextScrollPane.getViewport().scrollRectToVisible(r);
+        } catch (final BadLocationException e) {}
     }
 
     private void updateScreenTitle(final File file) {
