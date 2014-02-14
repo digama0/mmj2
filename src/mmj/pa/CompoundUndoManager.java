@@ -17,7 +17,6 @@ package mmj.pa;
 
 import javax.swing.SwingUtilities;
 import javax.swing.event.*;
-import javax.swing.event.DocumentEvent.EventType;
 import javax.swing.text.AbstractDocument.DefaultDocumentEvent;
 import javax.swing.undo.*;
 
@@ -102,8 +101,6 @@ public class CompoundUndoManager extends UndoManager implements
     public void undoableEditHappened(final UndoableEditEvent e) {
         final boolean prog = document.isProgrammatic();
         final DefaultDocumentEvent edit = (DefaultDocumentEvent)e.getEdit();
-        if (edit.getType() == EventType.CHANGE)
-            return;
         if (compoundEdit == null)
             // start a new compound edit
             compoundEdit = startCompoundEdit(edit);

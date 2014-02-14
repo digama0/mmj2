@@ -111,10 +111,8 @@
 package mmj.pa;
 
 import java.awt.Color;
-import java.util.Map;
 
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
+import javax.swing.text.*;
 
 import mmj.gmff.GMFFConstants;
 import mmj.mmio.MMIOConstants;
@@ -575,69 +573,41 @@ public class PaConstants {
     /**
      * PROOF_ASST_STYLE_DEFAULT = 'default'
      */
-    public static final String PROOF_ASST_STYLE_DEFAULT = "default";
+    public static final String PROOF_ASST_STYLE_DEFAULT = StyleContext.DEFAULT_STYLE;
 
     /**
      * Sets default syntax highlighting styles.
      * 
-     * @param map the style map
+     * @return the style map
      */
-    public static void doStyleDefaults(final Map<String, SimpleAttributeSet> map)
-    {
-        SimpleAttributeSet style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_DEFAULT, style);
+    public static StyleContext createStyleContext() {
+        final StyleContext s = new StyleContext();
+        final Style def = s.getStyle(PROOF_ASST_STYLE_DEFAULT);
 
-        style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_COMMENT, style);
-        setStyle(style, Color.GRAY, false, true);
-
-        style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_KEYWORD, style);
-        setStyle(style, Color.GRAY, true, null);
-
-        style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_ERROR, style);
-        setStyle(style, Color.RED, true, null);
-
-        style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_PROOF, style);
-        setStyle(style, Color.GRAY, false, null);
-
-        style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_STEP, style);
-        setStyle(style, new Color(0x8A2908), true, null);
-
-        style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_HYP, style);
-        setStyle(style, new Color(0x8A2908), null, null);
-
-        style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_REF, style);
-        setStyle(style, new Color(0x0044DD), true, null);
-
-        style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_LOCREF, style);
-        setStyle(style, new Color(0x008800), null, null);
-
-        style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_SPECIAL_STEP, style);
-        setStyle(style, new Color(0xB58900), true, null);
-
-        style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_CLASS, style);
-        setStyle(style, new Color(0xCC33CC), null, null);
-
-        style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_SET, style);
-        setStyle(style, Color.RED, null, null);
-
-        style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_WFF, style);
-        setStyle(style, Color.BLUE, null, null);
-
-        style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_WORKVAR, style);
-        setStyle(style, new Color(0x008800), null, null);
+        setStyle(s.addStyle(PROOF_ASST_STYLE_COMMENT, def), Color.GRAY, false,
+            true);
+        setStyle(s.addStyle(PROOF_ASST_STYLE_KEYWORD, def), Color.GRAY, true,
+            null);
+        setStyle(s.addStyle(PROOF_ASST_STYLE_ERROR, def), Color.RED, true, null);
+        setStyle(s.addStyle(PROOF_ASST_STYLE_PROOF, def), Color.GRAY, false,
+            null);
+        setStyle(s.addStyle(PROOF_ASST_STYLE_STEP, def), new Color(0x8A2908),
+            true, null);
+        setStyle(s.addStyle(PROOF_ASST_STYLE_HYP, def), new Color(0x8A2908),
+            null, null);
+        setStyle(s.addStyle(PROOF_ASST_STYLE_REF, def), new Color(0x0044DD),
+            true, null);
+        setStyle(s.addStyle(PROOF_ASST_STYLE_LOCREF, def), new Color(0x008800),
+            null, null);
+        setStyle(s.addStyle(PROOF_ASST_STYLE_SPECIAL_STEP, def), new Color(
+            0xB58900), true, null);
+        setStyle(s.addStyle(PROOF_ASST_STYLE_CLASS, def), new Color(0xCC33CC),
+            null, null);
+        setStyle(s.addStyle(PROOF_ASST_STYLE_SET, def), Color.RED, null, null);
+        setStyle(s.addStyle(PROOF_ASST_STYLE_WFF, def), Color.BLUE, null, null);
+        setStyle(s.addStyle(PROOF_ASST_STYLE_WORKVAR, def),
+            new Color(0x008800), null, null);
+        return s;
     }
 
     /**
@@ -648,8 +618,8 @@ public class PaConstants {
      * @param bold true for bold, false for plain, null for inherit
      * @param italic true for italic, false for plain, null for inherit
      */
-    public static void setStyle(final SimpleAttributeSet style,
-        final Color color, final Boolean bold, final Boolean italic)
+    public static void setStyle(final Style style, final Color color,
+        final Boolean bold, final Boolean italic)
     {
         if (color == null)
             style.removeAttribute(StyleConstants.Foreground);

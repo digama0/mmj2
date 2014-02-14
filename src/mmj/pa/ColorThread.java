@@ -3,6 +3,11 @@ package mmj.pa;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.*;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingDeque;
+
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Position;
 
 import mmj.pa.HighlightedDocument.DocumentReader;
 import mmj.pa.WorksheetTokenizer.Token;
@@ -33,8 +38,6 @@ class ColorThread extends Thread {
      */
     private final WeakReference<HighlightedDocument> document;
 
-    private final ProofAsstPreferences preferences;
-
     /**
      * Keep a list of places in the file that it is safe to restart the
      * highlighting. This happens whenever the lexer reports that it has
@@ -56,7 +59,7 @@ class ColorThread extends Thread {
     /**
      * Vector that stores the communication between the two threads.
      */
-    private volatile Deque<RecolorEvent> events = new ArrayDeque<RecolorEvent>();
+    private final BlockingDeque<RecolorEvent> events = new LinkedBlockingDeque<RecolorEvent>();
 
     private final Object docLock = new Object();
 
@@ -77,14 +80,10 @@ class ColorThread extends Thread {
      * Creates the coloring thread for the given document.
      * 
      * @param doc The document to be colored.
-     * @param prefs the preferences class
      */
-    public ColorThread(final HighlightedDocument doc,
-        final ProofAsstPreferences prefs)
-    {
+    public ColorThread(final HighlightedDocument doc) {
         super("ColorThread");
         document = new WeakReference<HighlightedDocument>(doc);
-        preferences = prefs;
         start();
     }
 
@@ -105,8 +104,8 @@ class ColorThread extends Thread {
                 change -= lastPosition - position;
             else
                 change += adjustment;
-        synchronized (events) {
-            if (!events.isEmpty()) {
+        if (!events.isEmpty())
+            synchronized (events) {
                 // check whether to coalesce with current last element
                 final RecolorEvent curLast = events.getLast();
                 if (adjustment < 0 && curLast.adjustment < 0) {
@@ -128,11 +127,8 @@ class ColorThread extends Thread {
                         return;
                     }
             }
-            events.add(new RecolorEvent(position, adjustment));
-            events.notifyAll();
-        }
+        events.add(new RecolorEvent(position, adjustment));
     }
-
     public void block(final int blockUntil) {
         synchronized (this) {
             blockCutoff = blockUntil;
@@ -152,22 +148,12 @@ class ColorThread extends Thread {
     public void run() {
         while (document.get() != null)
             try {
+
                 final RecolorEvent re;
                 synchronized (events) {
-                    // get the next event to process - stalling until the
-                    // event becomes available
-                    while (events.isEmpty() && document.get() != null) {
-                        // stop waiting after a second in case document
-                        // has been cleared.
-                        synchronized (this) {
-                            notifyAll();
-                        }
-                        events.wait(1000);
-                    }
-                    re = events.removeFirst();
+                    re = events.take();
                 }
                 processEvent(re.position, re.adjustment);
-                Thread.sleep(100);
             } catch (final InterruptedException e) {}
     }
 
@@ -181,51 +167,38 @@ class ColorThread extends Thread {
         final DocumentReader reader = doc.getDocumentReader();
         final WorksheetTokenizer syntaxLexer = doc.getTokenizer();
 
-        SortedSet<DocPosition> workingSet;
-        Iterator<DocPosition> workingIt;
-        final DocPosition startRequest = new DocPosition(position);
-        final DocPosition endRequest = new DocPosition(position
-            + Math.abs(adjustment));
+        DocPosition startRequest, endRequest;
+        try {
+            startRequest = new DocPosition(doc, position);
+            endRequest = new DocPosition(doc, position + Math.abs(adjustment));
+        } catch (final BadLocationException e) {
+            e.printStackTrace();
+            return;
+        }
         DocPosition dp;
-        DocPosition dpStart = null;
         DocPosition dpEnd = null;
 
         // find the starting position. We must start at least one
         // token before the current position
-        try {
-            // all the good positions before
-            workingSet = iniPositions.headSet(startRequest);
-            // the last of the stuff before
-            dpStart = workingSet.last();
-        } catch (final NoSuchElementException x) {
-            // if there were no good positions before the requested
-            // start,
-            // we can always start at the very beginning.
-            dpStart = new DocPosition(0);
-        }
-
-        // if stuff was removed, take any removed positions off the
-        // list.
-        if (adjustment < 0) {
-            workingSet = iniPositions.subSet(startRequest, endRequest);
-            workingIt = workingSet.iterator();
-            while (workingIt.hasNext()) {
-                workingIt.next();
-                workingIt.remove();
+        DocPosition dpStart = iniPositions.lower(new DocPosition(position));
+        if (dpStart == null)
+            try {
+                dpStart = new DocPosition(doc, 0);
+            } catch (final BadLocationException e1) {
+                // Shouldn't happen
             }
-        }
+
+        // if stuff was removed, take any removed positions off the list.
+        if (adjustment <= 0)
+            iniPositions.subSet(startRequest, endRequest).clear();
 
         // adjust the positions of everything after the
         // insertion/removal.
         for (final DocPosition pos : iniPositions.tailSet(startRequest))
-            pos.adjustPosition(adjustment);
+            pos.getOffset();
 
         // now go through and highlight as much as needed
-        workingSet = iniPositions.tailSet(dpStart);
-        workingIt = workingSet.iterator();
-        dp = null;
-        if (workingIt.hasNext())
-            dp = workingIt.next();
+        dp = iniPositions.ceiling(dpStart);
         try {
             Token t;
             boolean done = false;
@@ -241,7 +214,7 @@ class ColorThread extends Thread {
                 // position. Reseting the lexer causes the close() method on the
                 // reader to be called but because the close() method has no
                 // effect on the DocumentReader, we can do this.
-                syntaxLexer.reset(reader, dpStart.getPosition());
+                syntaxLexer.reset(reader, dpStart.getOffset());
                 // we will highlight tokens until we reach a good stopping
                 // place.
                 // the first obvious stopping place is the end of the document.
@@ -250,34 +223,14 @@ class ColorThread extends Thread {
                 t = syntaxLexer.getNextToken();
             }
             newPositions.add(dpStart);
+            final ArrayList<Token> line = new ArrayList<Token>();
             while (!done && t != null) {
-                // this is the actual command that colors the stuff.
-                // Color stuff with the description of the styles
-                // stored in tokenStyles.
-                final int end = t.begin + t.length;
-                if (end <= doc.getLength()) {
-                    if (t.length <= 0 || t.type == null || t.begin < 0)
-                        new IllegalStateException(
-                            PaConstants.ERRMSG_TOKENIZER_FAIL)
-                            .printStackTrace();
-                    else
-                        try {
-                            doc.setCharacterAttributes(t.begin + change,
-                                t.length,
-                                preferences.getHighlightingStyle(t.type), true);
-                        } catch (final RuntimeException e) {
-                            System.err.println("Ignoring exception:");
-                            e.printStackTrace();
-                        }
-                    // record the position of the last bit of
-                    // text that we colored
-                    dpEnd = new DocPosition(t.begin);
-                }
-                if (lastPosition < blockCutoff && end + change >= blockCutoff)
-                    synchronized (this) {
-                        notifyAll();
-                    }
-                lastPosition = end + change;
+                try {
+                    dpEnd = new DocPosition(doc, t.begin);
+                } catch (final BadLocationException e) {}
+                if (t.length <= 0 || t.type == null || t.begin < 0)
+                    new IllegalStateException(PaConstants.ERRMSG_TOKENIZER_FAIL)
+                        .printStackTrace();
                 // The other more complicated reason for doing no
                 // more highlighting
                 // is that all the colors are the same from here on
@@ -295,54 +248,46 @@ class ColorThread extends Thread {
                     // look at all the positions from last time that
                     // are less than or
                     // equal to the current position
-                    while (dp != null && dp.getPosition() <= t.begin)
-                        if (dp.getPosition() == t.begin
-                            && dp.getPosition() >= endRequest.getPosition())
+                    while (dp != null && dp.getOffset() <= t.begin)
+                        if (dp.getOffset() == t.begin
+                            && dp.compareTo(endRequest) >= 0)
                         {
                             // we have found a state that is the
                             // same
                             done = true;
                             dp = null;
                         }
-                        else if (workingIt.hasNext())
-                            // didn't find it, try again.
-                            dp = workingIt.next();
                         else
-                            // didn't find it, and there is no more
-                            // info from last
-                            // time. This means that we will just
-                            // continue
-                            // until the end of the document.
-                            dp = null;
+                            // didn't find it, try again.
+                            dp = iniPositions.higher(dp);
                     // so that we can do this check next time,
                     // record all the
                     // initial states from this time.
-                    newPositions.add(dpEnd);
+                    if (dpEnd != null)
+                        newPositions.add(dpEnd);
+                    writeTokens(doc, line, t.begin);
+                    synchronized (this) {
+                        notifyAll();
+                    }
                 }
+                line.add(t);
                 synchronized (docLock) {
                     t = syntaxLexer.getNextToken();
                 }
             }
+            if (t == null)
+                writeTokens(doc, line, doc.getLength());
 
             // remove all the old initial positions from the place
             // where
             // we started doing the highlighting right up through
             // the last
             // bit of text we touched.
-            workingIt = iniPositions.subSet(dpStart, dpEnd).iterator();
-            while (workingIt.hasNext()) {
-                workingIt.next();
-                workingIt.remove();
-            }
+            iniPositions.subSet(dpStart, dpEnd).clear();
 
             // Remove all the positions that are after the end of
             // the file.:
-            workingIt = iniPositions.tailSet(new DocPosition(doc.getLength()))
-                .iterator();
-            while (workingIt.hasNext()) {
-                workingIt.next();
-                workingIt.remove();
-            }
+            iniPositions.tailSet(new DocPosition(doc.getLength())).clear();
 
             // and put the new initial positions that we have found
             // on the list.
@@ -355,45 +300,66 @@ class ColorThread extends Thread {
         }
     }
 
+    private void writeTokens(final HighlightedDocument doc,
+        final ArrayList<Token> tokens, final int lineEnd)
+    {
+        doc.writeTokens(tokens, change, lineEnd);
+        if (lastPosition < blockCutoff && lineEnd >= blockCutoff)
+            synchronized (this) {
+                notifyAll();
+            }
+        lastPosition = lineEnd;
+    }
+
     /**
      * A wrapper for a position in a document appropriate for storing in a
      * collection.
      */
-    private class DocPosition implements Comparable<DocPosition> {
-        /**
-         * The actual position
-         */
-        private int position;
+    private static class DocPosition implements Comparable<DocPosition> {
+        /** The position of a "lightweight" {@code DocPosition} */
+        private int offset;
+        /** The position of a "heavyweight" {@code DocPosition} */
+        private final Position position;
 
         /**
          * Get the position represented by this DocPosition
          * 
          * @return the position
          */
-        int getPosition() {
+        int getOffset() {
+            return position == null ? offset : (offset = position.getOffset());
+        }
+
+        /**
+         * Get the position represented by this DocPosition
+         * 
+         * @return the position
+         */
+        Position getPosition() {
             return position;
         }
 
         /**
          * Construct a DocPosition from the given offset into the document.
          * 
-         * @param position The position this DocObject will represent
+         * @param offs The position this DocPosition will represent
          */
-        public DocPosition(final int position) {
-            this.position = position;
+        public DocPosition(final int offs) {
+            offset = offs;
+            position = null;
         }
 
         /**
-         * Adjust this position. This is useful in cases that an amount of text
-         * is inserted or removed before this position.
+         * Construct a DocPosition from the given Position object.
          * 
-         * @param adjustment amount (either positive or negative) to adjust this
-         *            position.
-         * @return the DocPosition, adjusted properly.
+         * @param doc The document from which to base the position
+         * @param offs The position this DocPosition will represent
+         * @throws BadLocationException for an incorrect offset
          */
-        public DocPosition adjustPosition(final int adjustment) {
-            position += adjustment;
-            return this;
+        public DocPosition(final HighlightedDocument doc, final int offs)
+            throws BadLocationException
+        {
+            position = doc.createPosition(offset = offs);
         }
 
         /**
@@ -403,9 +369,9 @@ class ColorThread extends Thread {
          */
         @Override
         public boolean equals(final Object obj) {
-            return obj instanceof DocPosition
-                && position == ((DocPosition)obj).position;
+            return compareTo((DocPosition)obj) == 0;
         }
+
         /**
          * A string representation useful for debugging.
          * 
@@ -413,11 +379,11 @@ class ColorThread extends Thread {
          */
         @Override
         public String toString() {
-            return "" + position;
+            return "" + getOffset();
         }
 
         public int compareTo(final DocPosition other) {
-            return position - other.position;
+            return offset - other.offset;
         }
     }
 }

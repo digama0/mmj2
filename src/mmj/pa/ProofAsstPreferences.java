@@ -55,10 +55,9 @@ package mmj.pa;
 import java.awt.*;
 import java.io.File;
 import java.util.*;
-import java.util.List;
 
-import javax.swing.text.AttributeSet;
-import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.Style;
+import javax.swing.text.StyleContext;
 
 import mmj.lang.*;
 import mmj.search.SearchMgr;
@@ -125,7 +124,7 @@ public class ProofAsstPreferences {
 
     private boolean highlightingEnabled;
 
-    private Map<String, SimpleAttributeSet> highlighting;
+    private StyleContext highlighting;
 
     private Color foregroundColor;
 
@@ -205,10 +204,8 @@ public class ProofAsstPreferences {
 
         undoRedoEnabled = PaConstants.UNDO_REDO_ENABLED_DEFAULT;
 
-        if (highlightingEnabled = PaConstants.HIGHLIGHTING_ENABLED_DEFAULT) {
-            highlighting = new HashMap<String, SimpleAttributeSet>();
-            PaConstants.doStyleDefaults(highlighting);
-        }
+        if (highlightingEnabled = PaConstants.HIGHLIGHTING_ENABLED_DEFAULT)
+            highlighting = PaConstants.createStyleContext();
         else
             highlighting = null;
 
@@ -902,26 +899,20 @@ public class ProofAsstPreferences {
         final Boolean bold, final Boolean italic)
         throws IllegalArgumentException
     {
-        final SimpleAttributeSet style = highlighting.get(key);
-        if (style == null) {
-            final List<String> list = new ArrayList<String>(
-                highlighting.keySet());
-            Collections.sort(list);
-            throw new IllegalArgumentException(list.toString());
-        }
+        final Style style = highlighting.getStyle(key);
+        if (style == null)
+            throw new IllegalArgumentException(Collections.list(
+                highlighting.getStyleNames()).toString());
         PaConstants.setStyle(style, color, bold, italic);
     }
 
     /**
      * Gets syntax highlighting for Proof Asst GUI.
      * 
-     * @param key the token type
-     * @return the style settings for the given token type
+     * @return the style settings
      */
-    public AttributeSet getHighlightingStyle(final String key) {
-        final AttributeSet style = highlighting.get(key);
-        return style != null ? style : highlighting
-            .get(PaConstants.PROOF_ASST_STYLE_ERROR);
+    public StyleContext getStyleContext() {
+        return highlighting;
     }
     /**
      * Sets foreground color for Proof Asst GUI.

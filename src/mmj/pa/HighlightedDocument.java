@@ -3,10 +3,14 @@ package mmj.pa;
 import java.awt.Color;
 import java.awt.Point;
 import java.io.Reader;
+import java.util.*;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
+import javax.swing.event.*;
+import javax.swing.event.DocumentEvent.EventType;
 import javax.swing.text.*;
+
+import mmj.pa.WorksheetTokenizer.Token;
 
 public class HighlightedDocument extends DefaultStyledDocument {
     DocumentReader reader;
@@ -20,9 +24,12 @@ public class HighlightedDocument extends DefaultStyledDocument {
     public HighlightedDocument(final ProofAsst proofAsst,
         final ProofAsstPreferences prefs)
     {
+        super(new GapContent(DefaultStyledDocument.BUFFER_SIZE_DEFAULT), prefs
+            .getStyleContext());
+
         programmatic = changed = false;
         if (prefs.getHighlightingEnabled()) {
-            colorer = new ColorThread(this, prefs);
+            colorer = new ColorThread(this);
             reader = new DocumentReader();
             tokenizer = new WorksheetTokenizer(proofAsst, reader);
         }
@@ -51,11 +58,13 @@ public class HighlightedDocument extends DefaultStyledDocument {
 
         textPane.setForeground(prefs.getForegroundColor());
         textPane.setCaretColor(prefs.getForegroundColor());
+        writeLock();
         final SimpleAttributeSet style = new SimpleAttributeSet();
         StyleConstants.setLineSpacing(style, prefs.getLineSpacing());
-        setParagraphAttributes(0, getLength(), style, false);
+        ((MutableAttributeSet)getDefaultRootElement().getAttributes())
+            .addAttributes(style);
+        writeUnlock();
     }
-
     /**
      * Color or recolor the entire document
      */
@@ -76,18 +85,51 @@ public class HighlightedDocument extends DefaultStyledDocument {
             colorer.color(position, adjustment);
     }
 
-    /** Intercept inserts and removes to color them. */
     @Override
-    public void insertString(final int offs, final String str,
-        final AttributeSet a) throws BadLocationException
+    protected void insertUpdate(final DefaultDocumentEvent chng,
+        final AttributeSet attr)
     {
         changed |= !programmatic;
         lastCaret = textPane.getCaretPosition();
-        synchronized (this) {
-            super.insertString(offs, str, a);
-            if (reader != null)
-                reader.update(offs, str.length());
-        }
+        /*
+                final int offset = chng.getOffset();
+                final int length = chng.getLength();
+                if (attr == null)
+                    attr = SimpleAttributeSet.EMPTY;
+
+                try {
+                    final Segment s = new Segment();
+                    getText(offset, length, s);
+
+                    for (char c = s.first(); c != Segment.DONE; c = s.next())
+                        if (c == '\n') {
+                            final int pos = s.getIndex() + offset + 1;
+                            final BranchElement g = (BranchElement)getGroupElement(pos);
+                            final int pIndex = g.getElementIndex(pos);
+                            final BranchElement p = (BranchElement)g.getElement(pIndex);
+                            final int lIndex = p.getElementIndex(pos);
+                            final Element l = p.getElement(lIndex);
+
+                            Element[] buf = new Element[p.getChildCount() - lIndex];
+                            buf[0] = new LeafElement(p, l.getAttributes(), pos,
+                                l.getEndOffset());
+                            for (int i = 1; i < buf.length; i++)
+                                buf[i] = p.getElement(lIndex + i);
+                            final BranchElement pRight = new BranchElement(g,
+                                p.getAttributes());
+                            pRight.replace(0, 0, buf);
+
+                            buf = new Element[]{new LeafElement(p, l.getAttributes(),
+                                l.getStartOffset(), pos)};
+                            replace(chng, p, lIndex, p.getChildCount() - lIndex, buf);
+
+                            buf = new Element[]{pRight};
+                            replace(chng, g, pIndex + 1, 0, buf);
+
+                            root.dump(System.err, 0);
+                        }
+                } catch (final BadLocationException e) {}*/
+        super.insertUpdate(chng, attr);
     }
 
     @Override
@@ -96,26 +138,13 @@ public class HighlightedDocument extends DefaultStyledDocument {
     {
         changed |= !programmatic;
         lastCaret = textPane.getCaretPosition();
-        synchronized (this) {
-            if (len > 0) {
-                super.remove(offs, len);
-                if (reader != null)
-                    reader.update(offs, -len);
-            }
-        }
-    }
-
-    @Override
-    public void getText(final int offset, int length, final Segment txt)
-        throws BadLocationException
-    {
-        if (length < 0)
-            length = 0;
-        super.getText(offset, length, txt);
+        if (len > 0)
+            super.remove(offs, len);
     }
 
     @Override
     protected void fireInsertUpdate(final DocumentEvent e) {
+        // ((AbstractElement)getDefaultRootElement()).dump(System.out, 0);
         super.fireInsertUpdate(e);
         color(e.getOffset(), e.getLength());
     }
@@ -126,6 +155,122 @@ public class HighlightedDocument extends DefaultStyledDocument {
         color(e.getOffset(), -e.getLength());
     }
 
+    public void writeTokens(final List<Token> tokens, final int change,
+        final int lineEnd)
+    {
+        if (tokens.isEmpty())
+            return;
+        final AbstractElement root = (AbstractElement)getDefaultRootElement();
+        int index = tokens.get(0).begin + change;
+        final int lastIndex = (lineEnd == root.getEndOffset() ? 1 : 0)
+            + root.getElementIndex(lineEnd);
+        try {
+            writeLock();
+            for (int pIndex = root.getElementIndex(index); pIndex < lastIndex; pIndex++)
+            {
+                final BranchElement p = (BranchElement)root.getElement(pIndex);
+                final List<Element> content = new ArrayList<Element>();
+                final Iterator<Token> it = tokens.iterator();
+                while (it.hasNext()) {
+                    final Token t = it.next();
+                    it.remove();
+                    if (t.type.equals(PaConstants.PROOF_ASST_STYLE_DEFAULT))
+                        continue;
+                    if (p.getEndOffset() <= t.begin + change)
+                        break;
+                    if (index < t.begin + change)
+                        content.add(new LeafElement(p, null, index,
+                            index = t.begin + change));
+                    content.add(new LeafElement(p, getStyle(t.type), index,
+                        index += t.length));
+                }
+                content.add(new LeafElement(p, null, index, index = p
+                    .getEndOffset()));
+                final Element[] removed = new Element[p.getElementCount()];
+                for (int i = 0; i < removed.length; i++)
+                    removed[i] = p.getElement(i);
+                final DefaultDocumentEvent changes = new DefaultDocumentEvent(
+                    p.getStartOffset(), index, EventType.CHANGE)
+                {
+                    @Override
+                    public boolean isSignificant() {
+                        return false;
+                    }
+                };
+
+                final Element[] added = content.toArray(new Element[content
+                    .size()]);
+                p.replace(0, removed.length, added);
+                changes.addEdit(new ElementEdit(p, 0, removed, added));
+                changes.end();
+                fireChangedUpdate(changes);
+                fireUndoableEditUpdate(new UndoableEditEvent(this, changes));
+            }
+        } finally {
+            writeUnlock();
+        }
+
+        // root.dump(System.out, 0);
+
+        /*
+        try {
+            writeLock();
+            for (final Iterator<Token> i = tokens.iterator(); i.hasNext();) {
+                final Token t = i.next();
+                i.remove();
+                // this is the actual command that colors the stuff.
+                // Color stuff with the description of the styles
+                // stored in tokenStyles.
+                final int end = t.begin + t.length;
+                if (end <= getLength()) {
+                    // record the position of the last bit of
+                    // text that we colored
+                    final int offset = t.begin + change;
+
+                    final DefaultDocumentEvent changes = new DefaultDocumentEvent(
+                        offset, t.length, EventType.CHANGE)
+                    {
+                        @Override
+                        public boolean isSignificant() {
+                            return false;
+                        }
+                    };
+                    // split elements that need it
+                    buffer.change(offset, t.length, changes);
+
+                    final AttributeSet s = getStyle(t.type);
+
+                    // PENDING(prinz) - this isn't a very efficient way to
+                    // iterate
+                    int lastEnd;
+                    for (int pos = offset; pos < offset + t.length; pos = lastEnd)
+                    {
+                        final Element run = getCharacterElement(pos);
+                        lastEnd = run.getEndOffset();
+                        if (pos == lastEnd)
+                            // offset + length beyond length of document,
+                            // bail.
+                            break;
+                        final MutableAttributeSet attr = (MutableAttributeSet)run
+                            .getAttributes();
+                        changes
+                            .addEdit(new AttributeUndoableEdit(run, s, true));
+                        attr.removeAttributes(attr);
+                        if (t.type != PaConstants.PROOF_ASST_STYLE_DEFAULT)
+                            attr.addAttributes(s);
+                    }
+                    changes.end();
+                    fireChangedUpdate(changes);
+                    fireUndoableEditUpdate(new UndoableEditEvent(this, changes));
+
+                    // ((AbstractElement)getDefaultRootElement()).dump(
+                    // System.err, 0);
+                }
+            }
+        } finally {
+            writeUnlock();
+        }*/
+    }
     public DocumentReader getDocumentReader() {
         return reader;
     }
@@ -187,8 +332,9 @@ public class HighlightedDocument extends DefaultStyledDocument {
                     insertString(0, replacement, new SimpleAttributeSet());
             }
         } catch (final BadLocationException e) {}
-        colorer.block(blockUntil == null ? Integer.MAX_VALUE : textPane
-            .viewToModel(blockUntil));
+        if (colorer != null)
+            colorer.block(blockUntil == null ? Integer.MAX_VALUE : textPane
+                .viewToModel(blockUntil));
         programmatic = false;
         if (reset)
             clearChanged();
@@ -197,37 +343,23 @@ public class HighlightedDocument extends DefaultStyledDocument {
         return getDefaultRootElement().getElement(row).getStartOffset();
     }
 
-    public int getLineOfOffset(final int i) {
-        return getDefaultRootElement().getElementIndex(i);
-    }
-
-    public int getLineCount() {
-        return getDefaultRootElement().getElementCount();
-    }
-
     public class DocumentReader extends Reader implements Readable {
-        /**
-         * Updates the reader to reflect a change in the underlying model.
-         * 
-         * @param pos the location of the insert/delete
-         * @param adjustment the number of characters added/deleted
-         */
-        public void update(final int pos, final int adjustment) {
-            if (pos < position)
-                if (position < pos - adjustment)
-                    position = pos;
-                else
-                    position += adjustment;
-        }
-
         /**
          * Current position in the document. Incremented whenever a character is
          * read.
          */
-        private int position = 0;
+
+        private Position position;
+        {
+            try {
+                position = createPosition(0);
+            } catch (final BadLocationException e) {}
+        }
+
+        private final Segment s = new Segment();
 
         /** Saved position used in the mark and reset methods. */
-        private int mark = -1;
+        private Position mark = null;
 
         /**
          * Has no effect. This reader can be used even after it has been closed.
@@ -263,18 +395,9 @@ public class HighlightedDocument extends DefaultStyledDocument {
          */
         @Override
         public int read() {
-            if (position < getLength())
-                try {
-                    final char c = getText(position, 1).charAt(0);
-                    position++;
-                    return c;
-                } catch (final BadLocationException x) {
-                    return -1;
-                }
-            else
-                return -1;
+            final char[] buf = new char[1];
+            return read(buf) == -1 ? -1 : buf[0];
         }
-
         /**
          * Read and fill the buffer. This method will always fill the buffer
          * unless the end of the document is reached.
@@ -299,27 +422,21 @@ public class HighlightedDocument extends DefaultStyledDocument {
          *         available in the document.
          */
         @Override
-        public int read(final char[] cbuf, final int off, final int len) {
-            if (position < getLength()) {
-                int length = len;
-                if (position + length >= getLength())
-                    length = getLength() - position;
-                if (off + length >= cbuf.length)
-                    length = cbuf.length - off;
-                try {
-                    final String s = getText(position, length);
-                    position += length;
-                    for (int i = 0; i < length; i++)
-                        cbuf[off + i] = s.charAt(i);
-                    return length;
-                } catch (final BadLocationException x) {
-                    return -1;
-                }
-            }
-            else
+        public int read(final char[] cbuf, final int off, int len) {
+            final int pos = getPosition();
+            if (pos + len >= getLength())
+                len = getLength() - pos;
+            if (len == 0)
                 return -1;
+            try {
+                getContent().getChars(pos, len, s);
+                seek(pos + len);
+            } catch (final BadLocationException e) {
+                // Shouldn't happen
+            }
+            System.arraycopy(s.array, s.offset, cbuf, off, len);
+            return len;
         }
-
         /**
          * @return true
          */
@@ -334,11 +451,15 @@ public class HighlightedDocument extends DefaultStyledDocument {
          */
         @Override
         public void reset() {
-            if (mark == -1)
-                position = 0;
+            if (mark == null)
+                try {
+                    seek(0);
+                } catch (final BadLocationException e) {
+                    // Shouldn't happen
+                }
             else
                 position = mark;
-            mark = -1;
+            mark = null;
         }
 
         /**
@@ -350,28 +471,39 @@ public class HighlightedDocument extends DefaultStyledDocument {
          */
         @Override
         public long skip(final long n) {
-            if (position + n <= getLength()) {
-                position += n;
-                return n;
+            final int pos = getPosition();
+            int end = (int)(pos + n);
+            if (end > getLength())
+                end = getLength();
+            try {
+                seek(end);
+            } catch (final BadLocationException e) {
+                // Shouldn't happen
             }
-            else {
-                final long oldPos = position;
-                position = getLength();
-                return getLength() - oldPos;
-            }
+            return end - pos;
         }
 
         /**
          * Seek to the given position in the document.
          * 
          * @param n the offset to which to seek.
+         * @throws BadLocationException for an invalid offset
          */
-        public void seek(final long n) {
-            position = n <= getLength() ? (int)n : getLength();
+        public void seek(final int n) throws BadLocationException {
+            position = getContent().createPosition(n);
+        }
+
+        /**
+         * Seek to the given position in the document.
+         * 
+         * @param p the position to which to seek.
+         */
+        public void seek(final Position p) {
+            position = p;
         }
 
         public int getPosition() {
-            return position;
+            return position.getOffset();
         }
     }
 }
