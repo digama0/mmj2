@@ -102,11 +102,11 @@ public class CompoundUndoManager extends UndoManager implements
     public void undoableEditHappened(final UndoableEditEvent e) {
         final boolean prog = document.isProgrammatic();
         final DefaultDocumentEvent edit = (DefaultDocumentEvent)e.getEdit();
-        if (edit.getType() == EventType.CHANGE)
-            return;
         if (compoundEdit == null)
             // start a new compound edit
             compoundEdit = startCompoundEdit(edit);
+        else if (edit.getType() == EventType.CHANGE)
+            compoundEdit.addEdit(edit);
         else if (lastProgrammatic && prog || !lastProgrammatic && !prog
             && isIncremental(edit))
             // append to existing edit
