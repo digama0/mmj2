@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="build" name="mmj2">
     <property environment="env"/>
-    <property name="ECLIPSE_HOME" value="../../../Program Files/eclipse4"/>
+    <property name="ECLIPSE_HOME" value="C:/Program Files/eclipse4"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.6"/>
     <property name="source" value="1.6"/>
