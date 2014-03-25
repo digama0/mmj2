@@ -439,13 +439,19 @@ public class ProofAsstGUI {
         // textArea.setLineWrap(proofAsstPreferences.getLineWrap());
         proofTextPane.setCursor(null); // use arrow instead of thingamabob
 
-        if (proofAsstPreferences.getUndoRedoEnabled())
-            undoManager = new CompoundUndoManager(proofDocument, new Runnable()
-            {
+        if (proofAsstPreferences.getUndoRedoEnabled()) {
+            final Runnable r = new Runnable() {
                 public void run() {
                     updateUndoRedoItems();
                 }
+            };
+            undoManager = new CompoundUndoManager(proofDocument, new Runnable()
+            {
+                public void run() {
+                    SwingUtilities.invokeLater(r);
+                }
             });
+        }
 
         savedSinceNew = false;
 

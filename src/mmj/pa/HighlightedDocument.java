@@ -187,8 +187,9 @@ public class HighlightedDocument extends DefaultStyledDocument {
                     insertString(0, replacement, new SimpleAttributeSet());
             }
         } catch (final BadLocationException e) {}
-        colorer.block(blockUntil == null ? Integer.MAX_VALUE : textPane
-            .viewToModel(blockUntil));
+        if (colorer != null)
+            colorer.block(blockUntil == null ? Integer.MAX_VALUE : textPane
+                .viewToModel(blockUntil));
         programmatic = false;
         if (reset)
             clearChanged();
