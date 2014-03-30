@@ -1266,6 +1266,19 @@ public class ProofUnifier {
         }
     }
 
+    /**
+     * This function attempts to substitute assert logical hypothesis
+     * (assrtLogHypArray[assrtLogHypIndex]) with derivation step logical
+     * hypothesis (derivStepHypArray[stepLogHypIndex]).
+     * 
+     * The function uses assrtSubst through mergeLogHypSubst() function.
+     * 
+     * @param assrtLogHypSubstArray the temporary-use array to hold results of
+     *            substitutions.
+     * @param assrtLogHypIndex the index in assrtLogHypArray
+     * @param stepLogHypIndex the index in derivStepHypArray
+     * @return true if unification was successful
+     */
     private boolean unifyAndMergeSubst(
         final ParseNode[][] assrtLogHypSubstArray, final int assrtLogHypIndex,
         final int stepLogHypIndex)
@@ -1290,6 +1303,14 @@ public class ProofUnifier {
                 assrtLogHypSubstArray[assrtLogHypIndex]);
     }
 
+    /**
+     * @param cleanupIndex wtf!
+     * @param assrtLogHypVarHypArray the array of variable hypothesis
+     * @param assrtLogHypSubst the array of substitutions corresponding
+     * to assrtLogHypVarHypArray
+     * 
+     * @return true the unification has no conflicts with previous unifications
+     */
     private boolean mergeLogHypSubst(final int cleanupIndex,
         final VarHyp[] assrtLogHypVarHypArray,
         final ParseNode[] assrtLogHypSubst)
