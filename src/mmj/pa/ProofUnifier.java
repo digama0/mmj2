@@ -191,8 +191,20 @@ public class ProofUnifier {
     private ParseNode[][][] substAnswer;
     private final ParseNode[] substAnswerImpossible = new ParseNode[0];
 
+    /**
+     * The map from hypothesis substitution "level" into the number of variable
+     * which become substituted at that level. The level is the number of
+     * successfully substituted hypothesis. This map is used to erase fail
+     * substitutions from assrtSubst map.
+     */
     private final int[] levelCleanupCnt = new int[PaConstants.UNIFIER_MAX_LOG_HYPS];
 
+    /**
+     * The map from hypothesis substitution "level" into the array of variables
+     * (indexes in assrtSubst array) which become substituted at that level. The
+     * level is the number of successfully substituted hypothesis. This map is
+     * used to erase fail substitutions from assrtSubst map.
+     */
     private final int[][] levelCleanup = new int[PaConstants.UNIFIER_MAX_LOG_HYPS][];
 
     private boolean[] assrtHypUsed;
@@ -1269,9 +1281,8 @@ public class ProofUnifier {
     /**
      * This function attempts to substitute assert logical hypothesis
      * (assrtLogHypArray[assrtLogHypIndex]) with derivation step logical
-     * hypothesis (derivStepHypArray[stepLogHypIndex]).
-     * 
-     * The function uses assrtSubst through mergeLogHypSubst() function.
+     * hypothesis (derivStepHypArray[stepLogHypIndex]). The function uses
+     * assrtSubst through mergeLogHypSubst() function.
      * 
      * @param assrtLogHypSubstArray the temporary-use array to hold results of
      *            substitutions.
@@ -1304,11 +1315,11 @@ public class ProofUnifier {
     }
 
     /**
-     * @param cleanupIndex wtf!
+     * @param cleanupIndex the current level hypotethis substitution. In simple
+     *            cases it could be the current hypotethis index.
      * @param assrtLogHypVarHypArray the array of variable hypothesis
-     * @param assrtLogHypSubst the array of substitutions corresponding
-     * to assrtLogHypVarHypArray
-     * 
+     * @param assrtLogHypSubst the array of substitutions corresponding to
+     *            assrtLogHypVarHypArray
      * @return true the unification has no conflicts with previous unifications
      */
     private boolean mergeLogHypSubst(final int cleanupIndex,
