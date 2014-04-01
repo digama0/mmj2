@@ -188,8 +188,7 @@ public class ProofUnifier {
     private DerivationStep[] dsa1;
 
     private ProofStepStmt[] derivStepHypArray;
-    private ParseNode[][][] substAnswer;
-    private final ParseNode[] substAnswerImpossible = new ParseNode[0];
+    private final static ParseNode[] substAnswerImpossible = new ParseNode[0];
 
     /**
      * The map from hypothesis substitution "level" into the number of variable
@@ -206,10 +205,6 @@ public class ProofUnifier {
      * used to erase fail substitutions from assrtSubst map.
      */
     private final int[][] levelCleanup = new int[PaConstants.UNIFIER_MAX_LOG_HYPS][];
-
-    private boolean[] assrtHypUsed;
-    private int[] derivAssrtXRef;
-    private int[] impossibleCnt;
 
     /* ***********************************************************
      * ***********************************************************
@@ -992,6 +987,121 @@ public class ProofUnifier {
             return false;
         }
 
+        // The last (general) case is here:
+        return unifyHypsWithoutWorkVarsGeneralCase(assrtLogHypSubstArray);
+    }
+
+    private boolean checkAssrtLevelMatch() {
+
+        if (derivStep.workVarList != null)
+            return true;
+
+        assrtParseTree = assrt.getExprParseTree();
+
+        if (!derivStep.deriveStepFormula) {
+            final String assrtLevelOneTwo = assrtParseTree.getLevelOneTwo();
+            if (assrtLevelOneTwo.length() > 0) {
+                if (!assrtLevelOneTwo.equals(derivStep.formulaParseTree
+                    .getLevelOneTwo()))
+                    return false; // unification impossible!
+            }
+            else { // this checks LevelOne
+                final Stmt assrtParseRootStmt = assrtParseTree.getRoot()
+                    .getStmt();
+
+                if (assrtParseRootStmt != derivStep.formulaParseTree.getRoot()
+                    .getStmt() && !(assrtParseRootStmt instanceof VarHyp))
+                    return false; // unification impossible!
+            }
+        }
+        return true;
+    }
+
+    private boolean checkHypLevelMatch() {
+
+        if (!derivStep.deriveStepHyps) {
+            final String assrtLogHypsL1HiLoKey = assrt.getLogHypsL1HiLoKey();
+            // note: derivStep L1HiLo may be "" if its hyps are derived!
+            // this step's L1HiLo is not recomputed after
+            // its log hyps' formulas are derived in
+            // ProofUnifier -- that will slow things down
+            // some (unless recomputation is triggered by
+            // "Derive" formula.)
+            if (assrtLogHypsL1HiLoKey.length() > 0
+                && derivStep.logHypsL1HiLoKey.length() > 0 // see note
+                && !assrtLogHypsL1HiLoKey.equals(derivStep.logHypsL1HiLoKey))
+                return false;
+        }
+        return true;
+    }
+
+    /**
+     * This class contains data used in unifyHypsWithoutWorkVarsGeneralCase()
+     * algorithm
+     */
+    private static class UnificationDataForGeneralCase {
+        /*
+         * substAnswer array contains the
+         * results of parseNode.unifyWithSubtree()
+         * stored at these coordinates
+         *
+         *     row   = derivStepHypArray[i]  (1st dimension)
+         *     col   = assrtLogHypArray[j]   (2nd dimension)
+         *     unify = unifyWithSubtree in k (3rd dimension)
+         *
+         * We use the following conventions:
+         *
+         *     substAnswer[i][j] == null means that
+         *         unifyWithSubtree() has not been attempted
+         *         for the ith derivStepHypArray element
+         *         with the jth assrtLogHypArray element.
+         *
+         *     substAnswer[i][j] == substAnswerImpossible
+         *         (a ParseNode[] array with length = 0) means
+         *         that unifyWithSubtree() was attempted and
+         *         failure was reported -- no unification.
+         *         (Note that the individual pair can be
+         *         successfully unified but when those results
+         *         are accum'd into the composite, assrtSubst,
+         *         a substitution "inconsistency" is detected.)
+         *
+         *     substAnswer[i][j] == something else --> means
+         *         success!
+         */
+        final ParseNode[][][] substAnswer;
+
+        // complexity to keep track of substAnswer :)
+        final int[] impossibleCnt;
+
+        final int[] derivAssrtXRef;
+        final boolean[] assrtHypUsed;
+
+        public UnificationDataForGeneralCase(final int length) {
+            substAnswer = new ParseNode[length][][];
+            for (int i = 0; i < length; i++)
+                substAnswer[i] = new ParseNode[length][];
+
+            impossibleCnt = new int[length];
+
+            assrtHypUsed = new boolean[length];
+
+            derivAssrtXRef = new int[length];
+            for (int i = 0; i < length; i++)
+                derivAssrtXRef[i] = -1;
+
+        }
+    }
+
+    /**
+     * General case of hypotethis unification
+     * 
+     * @param assrtLogHypSubstArray a temporary-use array with some unification
+     *            results
+     * @return true if unification was successful
+     */
+    public boolean unifyHypsWithoutWorkVarsGeneralCase(
+        final ParseNode[][] assrtLogHypSubstArray)
+    {
         /*
          * FIVE (whew, ugly!)
          *
@@ -1078,32 +1188,27 @@ public class ProofUnifier {
          *     substAnswer[i][j] == something else --> means
          *         success!
          */
-        substAnswer = new ParseNode[assrtLogHypArray.length][][];
-        for (int i = 0; i < assrtLogHypArray.length; i++)
-            substAnswer[i] = new ParseNode[assrtLogHypArray.length][];
+
+        final UnificationDataForGeneralCase data = new UnificationDataForGeneralCase(
+            assrtLogHypArray.length);
+        final ParseNode[][][] substAnswer = data.substAnswer;
+
+        final int[] impossibleCnt = data.impossibleCnt;
+        final int[] derivAssrtXRef = data.derivAssrtXRef;
 
         /*
          * SEVEN: go baby.
          */
 
         // not sure if worth it...but...
-        salvagePreliminaryAnswers(assrtLogHypSubstArray);
+        salvagePreliminaryAnswers(substAnswer, assrtLogHypSubstArray);
 
         // Now, for last time, re-init assrtSubt!
         assrtSubst = initLoadAssrtSubst();
 
-        // ok! add complexity to keep track of substAnswer :)
-        impossibleCnt = new int[assrtLogHypArray.length];
-
-        assrtHypUsed = new boolean[assrtLogHypArray.length];
-
-        derivAssrtXRef = new int[assrtLogHypArray.length];
-        for (int i = 0; i < derivAssrtXRef.length; i++)
-            derivAssrtXRef[i] = -1;
-
         int currLevel = 0;
         while (true) {
-            if (!findNextUnifiedAssrtHyp(currLevel)) {
+            if (!findNextUnifiedAssrtHyp(data, currLevel)) {
                 if (impossibleCnt[currLevel] >= assrtLogHypArray.length)
                     return false;
                 if (--currLevel < 0)
@@ -1121,51 +1226,13 @@ public class ProofUnifier {
         }
     }
 
-    private boolean checkAssrtLevelMatch() {
-
-        if (derivStep.workVarList != null)
-            return true;
-
-        assrtParseTree = assrt.getExprParseTree();
-
-        if (!derivStep.deriveStepFormula) {
-            final String assrtLevelOneTwo = assrtParseTree.getLevelOneTwo();
-            if (assrtLevelOneTwo.length() > 0) {
-                if (!assrtLevelOneTwo.equals(derivStep.formulaParseTree
-                    .getLevelOneTwo()))
-                    return false; // unification impossible!
-            }
-            else { // this checks LevelOne
-                final Stmt assrtParseRootStmt = assrtParseTree.getRoot()
-                    .getStmt();
-
-                if (assrtParseRootStmt != derivStep.formulaParseTree.getRoot()
-                    .getStmt() && !(assrtParseRootStmt instanceof VarHyp))
-                    return false; // unification impossible!
-            }
-        }
-        return true;
-    }
-
-    private boolean checkHypLevelMatch() {
-
-        if (!derivStep.deriveStepHyps) {
-            final String assrtLogHypsL1HiLoKey = assrt.getLogHypsL1HiLoKey();
-            // note: derivStep L1HiLo may be "" if its hyps are derived!
-            // this step's L1HiLo is not recomputed after
-            // its log hyps' formulas are derived in
-            // ProofUnifier -- that will slow things down
-            // some (unless recomputation is triggered by
-            // "Derive" formula.)
-            if (assrtLogHypsL1HiLoKey.length() > 0
-                && derivStep.logHypsL1HiLoKey.length() > 0 // see note
-                && !assrtLogHypsL1HiLoKey.equals(derivStep.logHypsL1HiLoKey))
-                return false;
-        }
-        return true;
-    }
-
-    private boolean findNextUnifiedAssrtHyp(final int currLevel) {
+    private boolean findNextUnifiedAssrtHyp(
+        final UnificationDataForGeneralCase data, final int currLevel)
+    {
+        final ParseNode[][][] substAnswer = data.substAnswer;
+        final int[] impossibleCnt = data.impossibleCnt;
+        final boolean[] assrtHypUsed = data.assrtHypUsed;
+        final int[] derivAssrtXRef = data.derivAssrtXRef;
 
         final ParseNode[][] currLevelSubstAnswer = substAnswer[currLevel];
 
@@ -1243,9 +1310,10 @@ public class ProofUnifier {
      * hypotheses, but that would happen automatically because of the empty
      * values in substAnswer.
      * 
+     * @param substAnswer the new container for answers
      * @param assrtLogHypSubstArray the user's old hyp sequence
      */
-    private void salvagePreliminaryAnswers(
+    private void salvagePreliminaryAnswers(final ParseNode[][][] substAnswer,
         final ParseNode[][] assrtLogHypSubstArray)
     {
 
@@ -1943,7 +2011,7 @@ public class ProofUnifier {
             derivStepHypArray)) != null)
         {
 
-            derivAssrtXRef = stepUnifier.getDerivAssrtXRef();
+            final int[] derivAssrtXRef = stepUnifier.getDerivAssrtXRef();
 
             markStepUnified(true, // usedUnifyWithWorkVars,
                 false, // no "swap",
