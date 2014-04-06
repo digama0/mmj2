@@ -17,7 +17,10 @@ package mmj.tl;
 
 import java.util.List;
 
-import mmj.lang.*;
+import mmj.lang.LogicalSystem;
+import mmj.lang.Messages;
+import mmj.lang.Theorem;
+import mmj.lang.TheoremLoaderException;
 import mmj.pa.ProofAsst;
 import mmj.pa.ProofWorksheet;
 
@@ -234,7 +237,8 @@ public class TheoremLoader {
             proofWorksheetText, null, // preprocessRequest
             null, // stepRequest
             null, // no TL request
-            -1); // inputCursorPos
+            -1, // inputCursorPos
+            true); // printOkMessages
 
         if (proofWorksheet.getGeneratedProofStmt() == null)
             throw new TheoremLoaderException(

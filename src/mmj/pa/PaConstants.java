@@ -242,6 +242,13 @@ public class PaConstants {
      */
     public static final String PA_GUI_SET_INCOMPLETE_STEP_CURSOR_OPTION_PROMPT = "Enter Incomplete Step Cursor Option Number";
 
+    /**
+     * While testing by ProofAsstBatchTest option the proof assistant will show
+     * detailed messages for every theorem only if their whole number will be
+     * less then this threshold.
+     */
+    public static final int PA_TESTMSG_THEOREM_NUMBER_THRESHOLD = 20;
+
     // ----------------------------------------------------------
     // Constants for ProofAsstCursor.java
     // ----------------------------------------------------------
@@ -2100,6 +2107,9 @@ public class PaConstants {
     public static final String ERRMSG_PA_START_THEOREM_NOT_FOUND = "E-PA-0126"
         + " Starting theorem %s for build of sorted list not found -- or input"
         + " label is not a Metamath theorem.";
+
+    public static final String ERRMSG_PA_TESTMSG_PROGRESS = "\rI-PA-0127 Unification"
+        + " test progress: theorem %8d/%d, %s      ";
 
     // ----------------------------------------------------------
     // Messages from ProofAsstGUI.java
