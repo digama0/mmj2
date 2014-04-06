@@ -694,6 +694,31 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     {
         this.messages = messages;
 
+        if (selectorTheorem != null)
+            importFromMemoryAndUnifyOneTheorem(selectorTheorem, outputBoss,
+                asciiRetest);
+        else
+            importFromMemoryAndUnifyManyTheorems(selectorAll, selectorCount,
+                outputBoss, asciiRetest);
+    }
+
+    /**
+     * Imports one theorem proof from memory and unifies.
+     * <p>
+     * This is a simulation routine for testing purposes.
+     * 
+     * @param selectorTheorem process selected theorem.
+     * @param outputBoss mmj.util.OutputBoss object, if not null means, please
+     *            print the proof test.
+     * @param asciiRetest instructs program to re-unify the output Proof
+     *            Worksheet text after unification.
+     */
+    public void importFromMemoryAndUnifyOneTheorem(
+        final Theorem selectorTheorem, final OutputBoss outputBoss,
+        final boolean asciiRetest)
+    {
+        assert selectorTheorem != null;
+
         final boolean unifiedFormat = proofAsstPreferences
             .getExportFormatUnified();
         final boolean hypsRandomized = proofAsstPreferences
@@ -703,47 +728,68 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         final boolean verifierRecheck = proofAsstPreferences
             .getRecheckProofAsstUsingProofVerifier();
 
-        String proofText;
-        ProofWorksheet proofWorksheet;
-        String updatedProofText;
-        if (selectorTheorem != null) {
-            proofText = exportOneTheorem(null, // to memory not writer
-                selectorTheorem, unifiedFormat, hypsRandomized, deriveFormulas);
-            if (proofText != null) {
-                if (asciiRetest)
-                    proofAsstPreferences
-                        .setRecheckProofAsstUsingProofVerifier(false);
-                proofWorksheet = unify(false, // no renum
+        final String proofText = exportOneTheorem(null, // to memory not writer
+            selectorTheorem, unifiedFormat, hypsRandomized, deriveFormulas);
+        if (proofText != null) {
+            if (asciiRetest)
+                proofAsstPreferences
+                    .setRecheckProofAsstUsingProofVerifier(false);
+            final ProofWorksheet proofWorksheet = unify(false, // no renum
+                true, // don't convert work vars
+                proofText, null, // no preprocess
+                null, // no step request
+                null, // no TL request
+                -1, // inputCursorPos
+                true); // printOkMessages
+            if (asciiRetest)
+                proofAsstPreferences
+                    .setRecheckProofAsstUsingProofVerifier(verifierRecheck);
+            final String updatedProofText = proofWorksheet.getOutputProofText();
+
+            // retest
+            if (updatedProofText != null && asciiRetest)
+                unify(false, // no renum
                     true, // don't convert work vars
-                    proofText, null, // no preprocess
+                    updatedProofText, null, // no preprocess request
                     null, // no step request
                     null, // no TL request
                     -1, // inputCursorPos
                     true); // printOkMessages
-                if (asciiRetest)
-                    proofAsstPreferences
-                        .setRecheckProofAsstUsingProofVerifier(verifierRecheck);
-                updatedProofText = proofWorksheet.getOutputProofText();
 
-                // retest
-                if (updatedProofText != null && asciiRetest)
-                    unify(false, // no renum
-                        true, // don't convert work vars
-                        updatedProofText, null, // no preprocess request
-                        null, // no step request
-                        null, // no TL request
-                        -1, // inputCursorPos
-                        true); // printOkMessages
-
-                if (updatedProofText != null) {
-                    printProof(outputBoss,
-                        getErrorLabelIfPossible(proofWorksheet),
-                        updatedProofText);
-                    checkAndCompareUpdateDJs(proofWorksheet);
-                }
+            if (updatedProofText != null) {
+                printProof(outputBoss, getErrorLabelIfPossible(proofWorksheet),
+                    updatedProofText);
+                checkAndCompareUpdateDJs(proofWorksheet);
             }
-            return;
         }
+    }
+
+    /**
+     * Import Theorem proofs from memory and unifies.
+     * <p>
+     * This is a simulation routine for testing purposes.
+     * 
+     * @param selectorAll true if process all theorems, false or null, ignore
+     *            param.
+     * @param selectorCount use if not null to restrict the number of theorems
+     *            present.
+     * @param outputBoss mmj.util.OutputBoss object, if not null means, please
+     *            print the proof test.
+     * @param asciiRetest instructs program to re-unify the output Proof
+     *            Worksheet text after unification.
+     */
+    public void importFromMemoryAndUnifyManyTheorems(final Boolean selectorAll,
+        final Integer selectorCount, final OutputBoss outputBoss,
+        final boolean asciiRetest)
+    {
+        final boolean unifiedFormat = proofAsstPreferences
+            .getExportFormatUnified();
+        final boolean hypsRandomized = proofAsstPreferences
+            .getExportHypsRandomized();
+        final boolean deriveFormulas = proofAsstPreferences
+            .getExportDeriveFormulas();
+        final boolean verifierRecheck = proofAsstPreferences
+            .getRecheckProofAsstUsingProofVerifier();
 
         initVolumeTestStats();
 
@@ -773,15 +819,15 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             System.err.print(dbgCountMsg);
 
             nbrTestTheoremsProcessed++;
-            proofText = exportOneTheorem(null, theorem, unifiedFormat,
-                hypsRandomized, deriveFormulas);
+            final String proofText = exportOneTheorem(null, theorem,
+                unifiedFormat, hypsRandomized, deriveFormulas);
             if (proofText != null) {
                 if (asciiRetest)
                     proofAsstPreferences
                         .setRecheckProofAsstUsingProofVerifier(false);
                 // for Volume Testing
                 final long startNanoTime = System.nanoTime();
-                proofWorksheet = unify(false, // no renum
+                final ProofWorksheet proofWorksheet = unify(false, // no renum
                     true, // don't convert work vars
                     proofText, null, // no preprocess
                     null, // no step request
@@ -796,7 +842,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
                 volumeTestOutputRoutine(startNanoTime, endNanoTime,
                     proofWorksheet, theorem, printOkTheorems);
-                updatedProofText = proofWorksheet.getOutputProofText();
+                final String updatedProofText = proofWorksheet
+                    .getOutputProofText();
 
                 // retest
                 if (updatedProofText != null && asciiRetest)
@@ -820,6 +867,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         System.err.println(); // for debug reasons
         printVolumeTestStats();
     }
+
     /**
      * Import Theorem proofs from a given Reader.
      * 
