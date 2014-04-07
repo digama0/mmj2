@@ -2056,7 +2056,7 @@ public class PaConstants {
         + " I/O error encountered! Message text follows: %s";
 
     public static final String ERRMSG_PA_TESTMSG_01 = "I-PA-0113 Theorem %s:"
-        + " Unification Time Elapsed (tenths of sec) = %d, Status = %d: %s";
+        + " Unification Time Elapsed = %s, Status = %d: %s";
 
     public static final String ERRMSG_PA_TESTMSG_02 = "I-PA-0114 Theorem %s:"
         + " Unified and Proved in Import Batch Test but the new"

@@ -104,6 +104,7 @@ import mmj.tl.TLRequest;
 import mmj.tl.TheoremLoader;
 import mmj.tl.TheoremLoaderCommitListener;
 import mmj.util.OutputBoss;
+import mmj.util.StopWatch;
 import mmj.verify.Grammar;
 import mmj.verify.ProofDerivationStepEntry;
 import mmj.verify.VerifyProofs;
@@ -826,7 +827,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                     proofAsstPreferences
                         .setRecheckProofAsstUsingProofVerifier(false);
                 // for Volume Testing
-                final long startNanoTime = System.nanoTime();
+
+                final StopWatch stopWatch = new StopWatch(true);
                 final ProofWorksheet proofWorksheet = unify(false, // no renum
                     true, // don't convert work vars
                     proofText, null, // no preprocess
@@ -834,14 +836,14 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                     null, // no TL request
                     -1, // inputCursorPos
                     printOkTheorems); // printOkMessages
-                final long endNanoTime = System.nanoTime();
+                stopWatch.stop();
 
                 if (asciiRetest)
                     proofAsstPreferences
                         .setRecheckProofAsstUsingProofVerifier(verifierRecheck);
 
-                volumeTestOutputRoutine(startNanoTime, endNanoTime,
-                    proofWorksheet, theorem, printOkTheorems);
+                volumeTestOutputRoutine(stopWatch, proofWorksheet, theorem,
+                    printOkTheorems);
                 final String updatedProofText = proofWorksheet
                     .getOutputProofText();
 
@@ -1362,9 +1364,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             nbrTestProvedDifferently);
     }
 
-    private void volumeTestOutputRoutine(final long startNanoTime,
-        final long endNanoTime, final ProofWorksheet proofWorksheet,
-        final Theorem theorem, final boolean printOkTheorems)
+    private void volumeTestOutputRoutine(final StopWatch stopWatch,
+        final ProofWorksheet proofWorksheet, final Theorem theorem,
+        final boolean printOkTheorems)
     {
 
         final DerivationStep q = proofWorksheet.getQedStep();
@@ -1372,8 +1374,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         if (q == null) {
             nbrTestNotProvedPerfectly++;
             messages.accumInfoMessage(PaConstants.ERRMSG_PA_TESTMSG_01,
-                theorem.getLabel(), (startNanoTime + 50000000) / endNanoTime,
-                9999999, "No qed step found!");
+                theorem.getLabel(), stopWatch.getElapsedTimeInStr(), 9999999,
+                "No qed step found!");
             return;
         }
 
@@ -1400,8 +1402,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         if (printOkTheorems || s != PROVED_PERFECTLY)
             messages.accumInfoMessage(PaConstants.ERRMSG_PA_TESTMSG_01,
-                theorem.getLabel(), (startNanoTime + 50000000) / endNanoTime,
-                s, PaConstants.STATUS_DESC[s]);
+                theorem.getLabel(), stopWatch.getElapsedTimeInStr(), s,
+                PaConstants.STATUS_DESC[s]);
 
         if (q != null) {
             RPNStep[] newProof;
