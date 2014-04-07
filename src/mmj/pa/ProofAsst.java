@@ -77,7 +77,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -133,10 +135,41 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     private Messages messages;
     private final TheoremLoader theoremLoader;
 
-    // for volume testing
-    private int nbrTestTheoremsProcessed;
-    private int nbrTestNotProvedPerfectly;
-    private int nbrTestProvedDifferently;
+    // -----------------------------------------------------------------
+    // -------------------------LOCAL CLASSES---------------------------
+    // -----------------------------------------------------------------
+
+    /** Information about theorem unification. */
+    private static class TheoremTestResult {
+        public final StopWatch stopWatch;
+        public final ProofWorksheet proofWorksheet;
+        public final Theorem theorem;
+
+        public TheoremTestResult(final StopWatch stopWatch,
+            final ProofWorksheet proofWorksheet, final Theorem theorem)
+        {
+            this.stopWatch = stopWatch;
+            this.proofWorksheet = proofWorksheet;
+            this.theorem = theorem;
+        }
+
+        // define it for debug reasons
+        @Override
+        public String toString() {
+            return theorem.toString() + ":" + stopWatch.getElapsedTimeInStr();
+        }
+    }
+
+    /** Statistic information about theorem unification tests. */
+    private static class VolumeTestStats {
+        public int nbrTestTheoremsProcessed = 0;
+        public int nbrTestNotProvedPerfectly = 0;
+        public int nbrTestProvedDifferently = 0;
+    }
+
+    // -----------------------------------------------------------------
+    // ----------------------------METHODS------------------------------
+    // -----------------------------------------------------------------
 
     /**
      * Constructor.
@@ -792,7 +825,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         final boolean verifierRecheck = proofAsstPreferences
             .getRecheckProofAsstUsingProofVerifier();
 
-        initVolumeTestStats();
+        final VolumeTestStats stats = new VolumeTestStats();
 
         final List<Theorem> theoremList = getSortedTheoremList(0);
 
@@ -805,8 +838,12 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         else if (selectorCount != null)
             numberToProcess = selectorCount.intValue();
 
-        final boolean printOkTheorems = numberToProcess < PaConstants.PA_TESTMSG_THEOREM_NUMBER_THRESHOLD;
+        final boolean smallTest = numberToProcess < PaConstants.PA_TESTMSG_THEOREM_NUMBER_THRESHOLD;
 
+        final TheoremTestResult[] timeTop = smallTest ? null
+            : new TheoremTestResult[PaConstants.PA_TESTMSG_THEOREM_TIME_TOP_NUMBER];
+
+        final StopWatch wholeTestSuiteTime = new StopWatch(true);
         for (final Theorem theorem : theoremList) {
             if (numberProcessed >= numberToProcess
                 || messages.maxErrorMessagesReached())
@@ -819,7 +856,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 numberToProcess, theorem.getLabel());
             System.err.print(dbgCountMsg);
 
-            nbrTestTheoremsProcessed++;
+            stats.nbrTestTheoremsProcessed++;
             final String proofText = exportOneTheorem(null, theorem,
                 unifiedFormat, hypsRandomized, deriveFormulas);
             if (proofText != null) {
@@ -828,22 +865,27 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                         .setRecheckProofAsstUsingProofVerifier(false);
                 // for Volume Testing
 
-                final StopWatch stopWatch = new StopWatch(true);
+                final StopWatch testStopWatch = new StopWatch(true);
                 final ProofWorksheet proofWorksheet = unify(false, // no renum
                     true, // don't convert work vars
                     proofText, null, // no preprocess
                     null, // no step request
                     null, // no TL request
                     -1, // inputCursorPos
-                    printOkTheorems); // printOkMessages
-                stopWatch.stop();
+                    smallTest); // printOkMessages
+                testStopWatch.stop();
 
                 if (asciiRetest)
                     proofAsstPreferences
                         .setRecheckProofAsstUsingProofVerifier(verifierRecheck);
 
-                volumeTestOutputRoutine(stopWatch, proofWorksheet, theorem,
-                    printOkTheorems);
+                final TheoremTestResult result = new TheoremTestResult(
+                    testStopWatch, proofWorksheet, theorem);
+
+                if (timeTop != null)
+                    addResultToVolumeTestTimeTop(timeTop, result);
+
+                volumeTestOutputRoutine(result, stats, smallTest);
                 final String updatedProofText = proofWorksheet
                     .getOutputProofText();
 
@@ -855,7 +897,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                         null, // no step request
                         null, // no TL request
                         -1, // inputCursorPos
-                        printOkTheorems); // printOkMessages
+                        smallTest); // printOkMessages
 
                 if (updatedProofText != null) {
                     printProof(outputBoss,
@@ -867,7 +909,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             numberProcessed++;
         }
         System.err.println(); // for debug reasons
-        printVolumeTestStats();
+        wholeTestSuiteTime.stop();
+
+        printVolumeTestStats(stats, wholeTestSuiteTime, timeTop);
     }
 
     /**
@@ -1352,29 +1396,86 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         return proofWorksheet;
     }
 
-    private void initVolumeTestStats() {
-        nbrTestTheoremsProcessed = 0;
-        nbrTestNotProvedPerfectly = 0;
-        nbrTestProvedDifferently = 0;
+    /**
+     * This function compares {@code candidate} time information with the
+     * content of {@code timeTop} array and updates {@code timeTop} if it is
+     * needed.
+     * 
+     * @param timeTop The array with already collected information about longest
+     *            theorem unifications.
+     * @param candidate The information about some theorem test.
+     */
+    private void addResultToVolumeTestTimeTop(
+        final TheoremTestResult[] timeTop, final TheoremTestResult candidate)
+    {
+        if (timeTop == null)
+            return;
+        // simple comparator: could compare null objects also!
+        final Comparator<TheoremTestResult> comp = new Comparator<TheoremTestResult>()
+        {
+            public int compare(final TheoremTestResult left,
+                final TheoremTestResult right)
+            {
+                if (left == right)
+                    return 0;
+
+                if (left == null)
+                    return 1;
+
+                if (right == null)
+                    return -1;
+
+                return -StopWatch.compare(left.stopWatch, right.stopWatch);
+            }
+        };
+
+        // find insert position
+        int pos = Arrays.binarySearch(timeTop, candidate, comp);
+        if (pos < 0)
+            pos = -(pos + 1);
+
+        if (pos < timeTop.length) {
+            // we need to add this candidate to timeTop array
+
+            // shift array
+            System.arraycopy(timeTop, pos, timeTop, pos + 1, timeTop.length
+                - pos - 1);
+
+            // add alement
+            timeTop[pos] = candidate;
+        }
     }
 
-    private void printVolumeTestStats() {
-        messages.accumInfoMessage(PaConstants.ERRMSG_PA_TESTMSG_03,
-            nbrTestTheoremsProcessed, nbrTestNotProvedPerfectly,
-            nbrTestProvedDifferently);
+    private void printVolumeTestStats(final VolumeTestStats stats,
+        final StopWatch wholeTestTime, final TheoremTestResult[] timeTop)
+    {
+        messages
+            .accumInfoMessage(PaConstants.ERRMSG_PA_TESTMSG_03,
+                stats.nbrTestTheoremsProcessed,
+                stats.nbrTestNotProvedPerfectly,
+                stats.nbrTestProvedDifferently,
+                wholeTestTime.getElapsedTimeInStr());
+
+        if (timeTop != null) {
+            messages.accumInfoMessage(PaConstants.ERRMSG_PA_TIME_TOP_HEADER);
+
+            for (final TheoremTestResult result : timeTop)
+                volumeTestOutputRoutine(result, null, true);
+        }
     }
 
-    private void volumeTestOutputRoutine(final StopWatch stopWatch,
-        final ProofWorksheet proofWorksheet, final Theorem theorem,
-        final boolean printOkTheorems)
+    private void volumeTestOutputRoutine(final TheoremTestResult result,
+        final VolumeTestStats stats, final boolean printOkTheorems)
     {
 
-        final DerivationStep q = proofWorksheet.getQedStep();
+        final DerivationStep q = result.proofWorksheet.getQedStep();
 
         if (q == null) {
-            nbrTestNotProvedPerfectly++;
+            if (stats != null)
+                stats.nbrTestNotProvedPerfectly++;
             messages.accumInfoMessage(PaConstants.ERRMSG_PA_TESTMSG_01,
-                theorem.getLabel(), stopWatch.getElapsedTimeInStr(), 9999999,
+                result.theorem.getLabel(),
+                result.stopWatch.getElapsedTimeInStr(), 9999999,
                 "No qed step found!");
             return;
         }
@@ -1392,17 +1493,20 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 s = PROVED_PERFECTLY; // proved perfectly
             else {
                 s = 10; // verify proof err
-                nbrTestNotProvedPerfectly++;
+                if (stats != null)
+                    stats.nbrTestNotProvedPerfectly++;
             }
         }
         else {
             s = 9; // dj vars error
-            nbrTestNotProvedPerfectly++;
+            if (stats != null)
+                stats.nbrTestNotProvedPerfectly++;
         }
 
         if (printOkTheorems || s != PROVED_PERFECTLY)
             messages.accumInfoMessage(PaConstants.ERRMSG_PA_TESTMSG_01,
-                theorem.getLabel(), stopWatch.getElapsedTimeInStr(), s,
+                result.theorem.getLabel(),
+                result.stopWatch.getElapsedTimeInStr(), s,
                 PaConstants.STATUS_DESC[s]);
 
         if (q != null) {
@@ -1411,7 +1515,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 newProof = new RPNStep[0];
             else
                 newProof = q.proofTree.convertToRPNExpanded();
-            final RPNStep[] oldProof = new ParseTree(proofWorksheet
+            final RPNStep[] oldProof = new ParseTree(result.proofWorksheet
                 .getTheorem().getProof()).convertToRPNExpanded();
 
             boolean differenceFound = false;
@@ -1450,9 +1554,10 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             }
 
             if (differenceFound && printOkTheorems) {
-                nbrTestProvedDifferently++;
+                if (stats != null)
+                    stats.nbrTestProvedDifferently++;
                 messages.accumInfoMessage(PaConstants.ERRMSG_PA_TESTMSG_02,
-                    theorem.getLabel(), oldStmtDiff, newStmtDiff);
+                    result.theorem.getLabel(), oldStmtDiff, newStmtDiff);
             }
 
         }

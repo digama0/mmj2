@@ -48,4 +48,14 @@ public class StopWatch {
         final Double time = (double)getElapsedMilliseconds() / 1000;
         return time.toString() + "s";
     }
+
+    @Override
+    public String toString() {
+        return "(" + startTime + ":" + stopTime + ")=" + getElapsedTimeInStr();
+    }
+
+    public static int compare(final StopWatch x, final StopWatch y) {
+        return Long.compare(x.getElapsedMilliseconds(),
+            y.getElapsedMilliseconds());
+    }
 }

@@ -249,6 +249,11 @@ public class PaConstants {
      */
     public static final int PA_TESTMSG_THEOREM_NUMBER_THRESHOLD = 20;
 
+    /**
+     * The number of the theorems which will be shown in the end of
+     * ProofAsstBatchTest testing.
+     */
+    public static final int PA_TESTMSG_THEOREM_TIME_TOP_NUMBER = 10;
     // ----------------------------------------------------------
     // Constants for ProofAsstCursor.java
     // ----------------------------------------------------------
@@ -2065,8 +2070,8 @@ public class PaConstants {
         + " new proof stmt = %s (empty String means proof lengths differed.)";
 
     public static final String ERRMSG_PA_TESTMSG_03 = "I-PA-0115 TEST TOTALS:"
-        + " nbrTestTheoremsProcessed = %d, nbrTestNotProvedPerfectly = %d,"
-        + " nbrTestProvedDifferently = %d";
+        + " Theorems processed = %d, Test NOT proved perfectly = %d,"
+        + " Test proved differently = %d, Whole test time = %s";
 
     public static final String ERRMSG_PA_FWD_BACK_SEARCH_NOTFND = "E-PA-0116"
         + " No (existing) theorems found in the %s direction. Forward/Backward"
@@ -2110,6 +2115,9 @@ public class PaConstants {
 
     public static final String ERRMSG_PA_TESTMSG_PROGRESS = "\rI-PA-0127 Unification"
         + " test progress: theorem %8d/%d, %s      ";
+
+    public static final String ERRMSG_PA_TIME_TOP_HEADER = "I-PA-0128"
+        + " There is the list of most time consuming theorem unifications: ";
 
     // ----------------------------------------------------------
     // Messages from ProofAsstGUI.java
