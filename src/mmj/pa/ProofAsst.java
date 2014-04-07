@@ -110,6 +110,7 @@ import mmj.util.StopWatch;
 import mmj.verify.Grammar;
 import mmj.verify.ProofDerivationStepEntry;
 import mmj.verify.VerifyProofs;
+import mmj.verify.VerifyProofs.HypsOrder;
 
 /**
  * The {@code ProofAsst}, along with the rest of the {@code mmj.pa} package
@@ -465,15 +466,15 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * 
      * @param oldTheorem theorem to get
      * @param exportFormatUnified true means include step Ref labels
-     * @param hypsRandomized true means step Hyps randomized on ProofWorksheet.
+     * @param hypsOrder the order of step Hyps
      * @return ProofWorksheet initialized.
      */
     public ProofWorksheet getExistingProof(final Theorem oldTheorem,
-        final boolean exportFormatUnified, final boolean hypsRandomized)
+        final boolean exportFormatUnified, final HypsOrder hypsOrder)
     {
 
         ProofWorksheet w = getExportedProofWorksheet(oldTheorem,
-            exportFormatUnified, hypsRandomized, false); // deriveFormulas
+            exportFormatUnified, hypsOrder, false); // deriveFormulas
 
         final ProofAsstCursor cursor = ProofAsstCursor.makeProofStartCursor();
 
@@ -504,11 +505,11 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * @param currProofMaxSeq sequence number of ProofWorksheet from
      *            ProofAsstGUI currProofMaxSeq field.
      * @param exportFormatUnified true means include step Ref labels
-     * @param hypsRandomized true means step Hyps randomized on ProofWorksheet.
+     * @param hypsOrder the order of step Hyps
      * @return ProofWorksheet initialized.
      */
     public ProofWorksheet getNextProof(final int currProofMaxSeq,
-        final boolean exportFormatUnified, final boolean hypsRandomized)
+        final boolean exportFormatUnified, final HypsOrder hypsOrder)
     {
 
         ProofWorksheet w;
@@ -526,7 +527,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         }
         else {
             w = getExportedProofWorksheet(theorem, exportFormatUnified,
-                hypsRandomized, /* deriveFormulas=*/false);
+                hypsOrder, /* deriveFormulas=*/false);
 
             if (w == null)
                 w = new ProofWorksheet(theorem.getLabel(),
@@ -556,11 +557,11 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * @param currProofMaxSeq sequence number of ProofWorksheet from
      *            ProofAsstGUI currProofMaxSeq field.
      * @param exportFormatUnified true means include step Ref labels
-     * @param hypsRandomized true means step Hyps randomized on ProofWorksheet.
+     * @param hypsOrder the order of step Hyps
      * @return ProofWorksheet initialized.
      */
     public ProofWorksheet getPreviousProof(final int currProofMaxSeq,
-        final boolean exportFormatUnified, final boolean hypsRandomized)
+        final boolean exportFormatUnified, final HypsOrder hypsOrder)
     {
 
         ProofWorksheet w;
@@ -582,7 +583,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         }
         else {
             w = getExportedProofWorksheet(theorem, exportFormatUnified,
-                hypsRandomized, false); // deriveFormulas
+                hypsOrder, false); // deriveFormulas
 
             if (w == null)
                 w = new ProofWorksheet(theorem.getLabel(),
@@ -755,15 +756,14 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         final boolean unifiedFormat = proofAsstPreferences
             .getExportFormatUnified();
-        final boolean hypsRandomized = proofAsstPreferences
-            .getExportHypsRandomized();
+        final HypsOrder hypsOrder = proofAsstPreferences.getExportHypsOrder();
         final boolean deriveFormulas = proofAsstPreferences
             .getExportDeriveFormulas();
         final boolean verifierRecheck = proofAsstPreferences
             .getRecheckProofAsstUsingProofVerifier();
 
         final String proofText = exportOneTheorem(null, // to memory not writer
-            selectorTheorem, unifiedFormat, hypsRandomized, deriveFormulas);
+            selectorTheorem, unifiedFormat, hypsOrder, deriveFormulas);
         if (proofText != null) {
             if (asciiRetest)
                 proofAsstPreferences
@@ -818,8 +818,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     {
         final boolean unifiedFormat = proofAsstPreferences
             .getExportFormatUnified();
-        final boolean hypsRandomized = proofAsstPreferences
-            .getExportHypsRandomized();
+        final HypsOrder hypsOrder = proofAsstPreferences.getExportHypsOrder();
         final boolean deriveFormulas = proofAsstPreferences
             .getExportDeriveFormulas();
         final boolean verifierRecheck = proofAsstPreferences
@@ -858,7 +857,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
             stats.nbrTestTheoremsProcessed++;
             final String proofText = exportOneTheorem(null, theorem,
-                unifiedFormat, hypsRandomized, deriveFormulas);
+                unifiedFormat, hypsOrder, deriveFormulas);
             if (proofText != null) {
                 if (asciiRetest)
                     proofAsstPreferences
@@ -1258,8 +1257,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         final boolean exportFormatUnified = proofAsstPreferences
             .getExportFormatUnified();
 
-        final boolean hypsRandomized = proofAsstPreferences
-            .getExportHypsRandomized();
+        final HypsOrder hypsOrder = proofAsstPreferences.getExportHypsOrder();
 
         final boolean deriveFormulas = proofAsstPreferences
             .getExportDeriveFormulas();
@@ -1268,8 +1266,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         if (selectorTheorem != null) {
             final String proofText = exportOneTheorem(exportWriter,
-                selectorTheorem, exportFormatUnified, hypsRandomized,
-                deriveFormulas);
+                selectorTheorem, exportFormatUnified, hypsOrder, deriveFormulas);
             if (proofText != null)
                 printProof(outputBoss, selectorTheorem.getLabel(), proofText);
             return;
@@ -1288,7 +1285,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             if (numberExported < numberToExport)
                 break;
             final String proofText = exportOneTheorem(exportWriter, theorem,
-                exportFormatUnified, hypsRandomized, deriveFormulas);
+                exportFormatUnified, hypsOrder, deriveFormulas);
             if (proofText != null)
                 printProof(outputBoss, theorem.getLabel(), proofText);
             numberExported++;
@@ -1612,18 +1609,18 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     public String exportOneTheorem(final Theorem theorem) {
         return exportOneTheorem(null, // no export writer
             theorem, true, // exportFormatUnified
-            false, // hypsRandomized
+            HypsOrder.CorrectOrder, // hypsRandomized
             false); // deriveFormulas
     }
 
     private String exportOneTheorem(
         final Writer exportWriter, // already open
         final Theorem theorem, final boolean exportFormatUnified,
-        final boolean hypsRandomized, final boolean deriveFormulas)
+        final HypsOrder hypsOrder, final boolean deriveFormulas)
     {
 
         final ProofWorksheet proofWorksheet = getExportedProofWorksheet(
-            theorem, exportFormatUnified, hypsRandomized, deriveFormulas);
+            theorem, exportFormatUnified, hypsOrder, deriveFormulas);
 
         if (proofWorksheet == null)
             return null;
@@ -1648,7 +1645,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     }
 
     private ProofWorksheet getExportedProofWorksheet(final Theorem theorem,
-        final boolean exportFormatUnified, final boolean hypsRandomized,
+        final boolean exportFormatUnified, final HypsOrder hypsOrder,
         final boolean deriveFormulas)
     {
 
@@ -1657,7 +1654,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         try {
             proofDerivationStepList = verifyProofs.getProofDerivationSteps(
-                theorem, exportFormatUnified, hypsRandomized,
+                theorem, exportFormatUnified, hypsOrder,
                 getProvableLogicStmtTyp());
 
             proofWorksheet = new ProofWorksheet(theorem,

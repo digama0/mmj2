@@ -52,15 +52,20 @@
 
 package mmj.pa;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.util.Set;
 import java.util.TreeSet;
 
-import mmj.lang.*;
+import mmj.lang.Assrt;
+import mmj.lang.LangException;
+import mmj.lang.WorkVarManager;
 import mmj.search.SearchMgr;
 import mmj.tmff.TMFFPreferences;
 import mmj.util.UtilConstants;
+import mmj.verify.VerifyProofs.HypsOrder;
 
 /**
  * Holds user settings/preferences used by the Proof Assistant.
@@ -97,7 +102,7 @@ public class ProofAsstPreferences {
 
     // randomizes LogHyps on output proof steps as a test of
     // proof assistant!
-    private boolean exportHypsRandomized;
+    private HypsOrder exportHypsOrder;
 
     private boolean exportDeriveFormulas;
 
@@ -170,7 +175,7 @@ public class ProofAsstPreferences {
 
         exportFormatUnified = PaConstants.PROOF_ASST_EXPORT_FORMAT_UNIFIED_DEFAULT;
 
-        exportHypsRandomized = PaConstants.PROOF_ASST_EXPORT_HYPS_RANDOMIZED_DEFAULT;
+        exportHypsOrder = PaConstants.PROOF_ASST_EXPORT_HYPS_ORDER_DEFAULT;
 
         exportDeriveFormulas = PaConstants.PROOF_ASST_EXPORT_DERIVE_FORMULAS_DEFAULT;
 
@@ -625,24 +630,23 @@ public class ProofAsstPreferences {
     }
 
     /**
-     * Set on/off indicator instructing the Proof Assistant Export to
-     * "Randomize" or "NotRandomize" the output proof step logical hypotheses (a
-     * testing feature for Proof Assistant.)
+     * Set the order in which the Proof Assistant Export should output proof
+     * step logical hypotheses (a testing feature for Proof Assistant.)
      * <p>
      * Note: this applies to exported proofs written via ProofAsst.exportToFile,
      * which is triggered via BatchMMJ2 "RunParm ProofAsstExportToFile" as well
      * as the "ProofAsstBatchTest" (the latter when no input file is specified
      * and an "export to memory" is implicitly requested.)
      * 
-     * @param exportHypsRandomized yes/no.
+     * @param exportHypsOrder the order.
      */
-    public void setExportHypsRandomized(final boolean exportHypsRandomized) {
-        this.exportHypsRandomized = exportHypsRandomized;
+    public void setExportHypsOrder(final HypsOrder exportHypsOrder) {
+        this.exportHypsOrder = exportHypsOrder;
     }
 
     /**
-     * Get on/off indicator instructing the Proof Assistant Export to export
-     * "Randomized" or "NotRandomized" logical hypotheses on proof steps.
+     * Get the order in which the Proof Assistant Export should output proof
+     * step logical hypotheses (a testing feature for Proof Assistant.)
      * <p>
      * Note: this applies to exported proofs written via ProofAsst.exportToFile,
      * which is triggered via BatchMMJ2 "RunParm ProofAsstExportToFile" as well
@@ -651,8 +655,8 @@ public class ProofAsstPreferences {
      * 
      * @return ExportHypsRandomized
      */
-    public boolean getExportHypsRandomized() {
-        return exportHypsRandomized;
+    public HypsOrder getExportHypsOrder() {
+        return exportHypsOrder;
     }
 
     /**

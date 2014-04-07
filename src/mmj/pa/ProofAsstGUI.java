@@ -149,6 +149,7 @@ import mmj.tl.TlConstants;
 import mmj.tl.TlPreferences;
 import mmj.tmff.TMFFConstants;
 import mmj.tmff.TMFFException;
+import mmj.verify.VerifyProofs.HypsOrder;
 
 /**
  * The {@code ProofAsstGUI} class is the main user interface for the mmj2 Proof
@@ -1960,7 +1961,8 @@ public class ProofAsstGUI {
         if (oldTheorem == null)
             return;
 
-        startRequestAction(new RequestGetProof(oldTheorem, true, false));
+        startRequestAction(new RequestGetProof(oldTheorem, true,
+            HypsOrder.CorrectOrder));
 
     }
 
@@ -1969,8 +1971,7 @@ public class ProofAsstGUI {
             return;
 
         startRequestAction(new RequestFwdProof(getCurrProofMaxSeq(), true, // proof
-                                                                           // unified
-            false)); // hyps Randomized
+            HypsOrder.CorrectOrder));
     }
 
     private void doFileGetBwdProofAction() {
@@ -2838,19 +2839,19 @@ public class ProofAsstGUI {
     class RequestGetProof extends Request {
         Theorem oldTheorem;
         boolean proofUnified;
-        boolean hypsRandomized;
+        HypsOrder hypsOrder;
 
         RequestGetProof(final Theorem oldTheorem, final boolean proofUnified,
-            final boolean hypsRandomized)
+            final HypsOrder hypsOrder)
         {
             this.oldTheorem = oldTheorem;
             this.proofUnified = proofUnified;
-            this.hypsRandomized = hypsRandomized;
+            this.hypsOrder = hypsOrder;
         }
         @Override
         void send() {
             w = proofAsst.getExistingProof(oldTheorem, proofUnified,
-                hypsRandomized);
+                hypsOrder);
         }
         @Override
         void receive() {
@@ -2866,19 +2867,19 @@ public class ProofAsstGUI {
     class RequestFwdProof extends Request {
         int currProofMaxSeq;
         boolean proofUnified;
-        boolean hypsRandomized;
+        HypsOrder hypsOrder;
 
         RequestFwdProof(final int currProofMaxSeq, final boolean proofUnified,
-            final boolean hypsRandomized)
+            final HypsOrder hypsOrder)
         {
             this.currProofMaxSeq = currProofMaxSeq;
             this.proofUnified = proofUnified;
-            this.hypsRandomized = hypsRandomized;
+            this.hypsOrder = hypsOrder;
         }
         @Override
         void send() {
             w = proofAsst.getNextProof(currProofMaxSeq, proofUnified,
-                hypsRandomized);
+                hypsOrder);
         }
         @Override
         void receive() {
@@ -2907,7 +2908,7 @@ public class ProofAsstGUI {
         void send() {
             w = proofAsst.getPreviousProof(getCurrProofMaxSeq(),//
                 true, // proof unified
-                false); // hyps Randomized
+                HypsOrder.CorrectOrder);
         }
         @Override
         void receive() {

@@ -72,18 +72,40 @@
 package mmj.util;
 
 import java.awt.Color;
-import java.io.*;
-import java.util.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
-import mmj.lang.*;
+import mmj.lang.Assrt;
+import mmj.lang.Cnst;
+import mmj.lang.LangException;
+import mmj.lang.LogicalSystem;
+import mmj.lang.Messages;
+import mmj.lang.Stmt;
+import mmj.lang.Theorem;
+import mmj.lang.VerifyException;
+import mmj.lang.WorkVarManager;
 import mmj.mmio.MMIOException;
-import mmj.pa.*;
+import mmj.pa.EraseWffsPreprocessRequest;
+import mmj.pa.PaConstants;
+import mmj.pa.PreprocessRequest;
+import mmj.pa.ProofAsst;
+import mmj.pa.ProofAsstPreferences;
 import mmj.tl.TheoremLoader;
 import mmj.verify.Grammar;
 import mmj.verify.VerifyProofs;
+import mmj.verify.VerifyProofs.HypsOrder;
 
 /**
  * Responsible for building and triggering ProofAsst.
@@ -1270,9 +1292,9 @@ public class ProofAsstBoss extends Boss {
             runParm, UtilConstants.RUNPARM_PROOF_ASST_BATCH_TEST, 3);
         getProofAsstPreferences().setExportFormatUnified(exportFormatUnified);
 
-        final boolean exportHypsRandomized = editProofAsstExportHypsRandomizedParm(
+        final HypsOrder exportHypsOrder = editProofAsstExportHypsOrderParm(
             runParm, UtilConstants.RUNPARM_PROOF_ASST_BATCH_TEST, 4);
-        getProofAsstPreferences().setExportHypsRandomized(exportHypsRandomized);
+        getProofAsstPreferences().setExportHypsOrder(exportHypsOrder);
 
         OutputBoss outputBoss = null;
         if (editProofAsstPrintParm(runParm,
@@ -1484,9 +1506,9 @@ public class ProofAsstBoss extends Boss {
             runParm, valueCaption, 4);
         getProofAsstPreferences().setExportFormatUnified(exportFormatUnified);
 
-        final boolean exportHypsRandomized = editProofAsstExportHypsRandomizedParm(
+        final HypsOrder exportHypsOrder = editProofAsstExportHypsOrderParm(
             runParm, valueCaption, 5);
-        getProofAsstPreferences().setExportHypsRandomized(exportHypsRandomized);
+        getProofAsstPreferences().setExportHypsOrder(exportHypsOrder);
 
         final boolean exportDeriveFormulas = editProofAsstExportDeriveFormulasParm(
             runParm, valueCaption, 7);
@@ -1540,36 +1562,63 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
-     * Validate Proof Assistant Export Hyps Randomized Parm ("Randomized" or
-     * "NotRandomized").
+     * Validate Proof Assistant Export Hyps Order Parm ("Correct", "Randomized",
+     * "Reverse" or "HalhReverse").
      * 
      * @param runParm RunParmFile line.
      * @param valueCaption name of RunParm, for error message output.
      * @param valueFieldNbr number of field in RunParm line.
-     * @return boolean Randomized or NotRandomized proof format parm
+     * @return the order
      * @throws IllegalArgumentException if an error occurred
      */
-    protected boolean editProofAsstExportHypsRandomizedParm(
+    protected HypsOrder editProofAsstExportHypsOrderParm(
         final RunParmArrayEntry runParm, final String valueCaption,
         final int valueFieldNbr) throws IllegalArgumentException
     {
 
         if (runParm.values.length < valueFieldNbr)
-            return PaConstants.PROOF_ASST_EXPORT_HYPS_RANDOMIZED_DEFAULT;
+            return PaConstants.PROOF_ASST_EXPORT_HYPS_ORDER_DEFAULT;
 
         final String exportHypsRandomizedParm = runParm.values[valueFieldNbr - 1]
             .trim();
         if (exportHypsRandomizedParm.length() == 0)
-            return PaConstants.PROOF_ASST_EXPORT_HYPS_RANDOMIZED_DEFAULT;
+            return PaConstants.PROOF_ASST_EXPORT_HYPS_ORDER_DEFAULT;
 
         if (exportHypsRandomizedParm
             .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_RANDOMIZED) == 0)
-            return true;
+            return HypsOrder.RandomizedOrder;
 
+        // deprecated old version
         if (exportHypsRandomizedParm
             .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_NOT_RANDOMIZED) == 0)
-            return false;
+            return HypsOrder.CorrectOrder;
 
+        // new version
+        if (exportHypsRandomizedParm
+            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_CORRECT) == 0)
+            return HypsOrder.CorrectOrder;
+
+        if (exportHypsRandomizedParm
+            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_REVERSE) == 0)
+            return HypsOrder.ReverseOrder;
+
+        if (exportHypsRandomizedParm
+            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_HALF_REVERSE) == 0)
+            return HypsOrder.HalfReverseOrder;
+
+        final String exceptionMsg = LangException.format(
+            UtilConstants.ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG, // format
+            valueCaption, // 1
+            valueFieldNbr, // 2
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_CORRECT, // 3
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_NOT_RANDOMIZED, // 4
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_RANDOMIZED, // 5
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_REVERSE, // 6
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_HALF_REVERSE, // 7
+            exportHypsRandomizedParm); // 8
+
+        throw new IllegalArgumentException(exceptionMsg);
+        /*
         throw new IllegalArgumentException(
             UtilConstants.ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG_1
                 + valueCaption
@@ -1582,6 +1631,7 @@ public class ProofAsstBoss extends Boss {
                 + UtilConstants.ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG_5
                 + exportHypsRandomizedParm
                 + UtilConstants.ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG_6);
+                */
     }
 
     /**

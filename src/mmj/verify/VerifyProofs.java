@@ -62,10 +62,37 @@
 
 package mmj.verify;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Stack;
 
-import mmj.lang.*;
+import mmj.lang.Assrt;
+import mmj.lang.Axiom;
+import mmj.lang.Cnst;
+import mmj.lang.DjVars;
+import mmj.lang.Formula;
+import mmj.lang.Hyp;
+import mmj.lang.LangException;
+import mmj.lang.LogHyp;
+import mmj.lang.MObj;
+import mmj.lang.Messages;
+import mmj.lang.ParseNode;
+import mmj.lang.ParseTree;
 import mmj.lang.ParseTree.RPNStep;
+import mmj.lang.ProofVerifier;
+import mmj.lang.ScopeFrame;
+import mmj.lang.Stmt;
+import mmj.lang.Sym;
+import mmj.lang.Theorem;
+import mmj.lang.Var;
+import mmj.lang.VarHyp;
+import mmj.lang.VerifyException;
+import mmj.lang.WorkVar;
 import mmj.pa.PaConstants;
 
 /**
@@ -466,8 +493,8 @@ public class VerifyProofs implements ProofVerifier {
      * @param exportFormatUnified set to true if proof step label is output on
      *            each step (else, it is only output on Logical Hypothesis
      *            steps.)
-     * @param hypsRandomized set to true if proof step hyps should be rearranged
-     *            in random order (a testing feature.)
+     * @param hypsOrder the order in which step hyps should be arranged (a
+     *            testing feature.)
      * @param provableLogicStmtTyp type code of proof derivation steps to
      *            return.
      * @return List of ProofDerivationStepEntry objects.
@@ -475,7 +502,7 @@ public class VerifyProofs implements ProofVerifier {
      */
     public List<ProofDerivationStepEntry> getProofDerivationSteps(
         final Theorem theorem, final boolean exportFormatUnified,
-        final boolean hypsRandomized, final Cnst provableLogicStmtTyp)
+        final HypsOrder hypsOrder, final Cnst provableLogicStmtTyp)
         throws VerifyException
     {
 
@@ -502,7 +529,7 @@ public class VerifyProofs implements ProofVerifier {
             loadTheoremGlobalVerifyVars(theorem);
             proof = new ParseTree(proof).squishTree().convertToRPN();
             loadProofDerivStepList(theorem, derivStepList, exportFormatUnified,
-                hypsRandomized, provableLogicStmtTyp);
+                hypsOrder, provableLogicStmtTyp);
         } catch (final IllegalArgumentException e) {
             throw new VerifyException(e.getMessage());
         }
@@ -512,6 +539,21 @@ public class VerifyProofs implements ProofVerifier {
         return derivStepList;
 
     }
+
+    public static enum HypsOrder {
+        /** Canonical correct metamath hypotheses order */
+        CorrectOrder,
+
+        /** Randomized metamath hypotheses order */
+        RandomizedOrder,
+
+        /** Reverse hypotheses order */
+        ReverseOrder,
+
+        /** First half - in correct order, second part - in reverse order */
+        HalfReverseOrder
+    }
+
     /**
      * Loads an array list of ProofDerivationStepEntry objects for the
      * non-syntax assertion and the logical hypothesis steps of the proof.
@@ -527,15 +569,15 @@ public class VerifyProofs implements ProofVerifier {
      * @param exportFormatUnified set to true if proof step label is output on
      *            each step (else, it is only output on Logical Hypothesis
      *            steps.)
-     * @param hypsRandomized set to true if proof step hyps should be rearranged
-     *            in random order (a testing feature.)
+     * @param hypsOrder the order in which hyps should be emitted (a testing
+     *            feature.)
      * @param provableLogicStmtTyp type code of proof derivation steps to
      *            return.
      * @throws VerifyException if an error occurred
      */
     private void loadProofDerivStepList(final Theorem theorem,
         final List<ProofDerivationStepEntry> derivStepList,
-        final boolean exportFormatUnified, final boolean hypsRandomized,
+        final boolean exportFormatUnified, final HypsOrder hypsOrder,
         final Cnst provableLogicStmtTyp) throws VerifyException
     {
         final int numHyps = derivStepList.size();
@@ -643,8 +685,22 @@ public class VerifyProofs implements ProofVerifier {
                     final ProofDerivationStepEntry h = undischargedStack.pop();
                     e.hypStep[i] = h.step;
                 }
-                if (hypsRandomized)
-                    doRandomizeHypSteps(e.hypStep);
+
+                switch (hypsOrder) {
+                    case CorrectOrder:
+                        // do nothing here!
+                        break;
+                    case RandomizedOrder:
+                        doRandomizeHypSteps(e.hypStep);
+                        break;
+                    case ReverseOrder:
+                        doReverseHypSteps(e.hypStep);
+                        break;
+                    case HalfReverseOrder:
+                        doHalfReverseHypSteps(e.hypStep);
+                        break;
+                }
+
                 if (exportFormatUnified)
                     e.refLabel = stepLabel;
                 e.formula = stepSubstFormula;
@@ -680,21 +736,48 @@ public class VerifyProofs implements ProofVerifier {
             qedStep.formulaParseTree = theorem.getExprParseTree();
         }
     }
+
     private void doRandomizeHypSteps(final String[] hypStep) {
         if (hypStep.length < 2)
             return;
 
-        String s;
-
-        int swap;
-
         final Random random = new Random(System.nanoTime());
 
         for (int i = 0; i < hypStep.length; i++) {
-            swap = random.nextInt(hypStep.length);
-            s = hypStep[swap];
+            final int swap = random.nextInt(hypStep.length);
+            final String s = hypStep[swap];
             hypStep[swap] = hypStep[i];
             hypStep[i] = s;
+        }
+    }
+
+    private void doReverseHypSteps(final String[] hypStep) {
+        if (hypStep.length < 2)
+            return;
+
+        final int half = hypStep.length / 2;
+
+        for (int i = 0; i < half; i++) {
+            final int swap = hypStep.length - i - 1;
+            final String s = hypStep[swap];
+            hypStep[swap] = hypStep[i];
+            hypStep[i] = s;
+        }
+    }
+
+    private void doHalfReverseHypSteps(final String[] hypStep) {
+        if (hypStep.length < 3)
+            return;
+
+        final int revStart = hypStep.length / 2;
+        final int half = (hypStep.length - revStart) / 2;
+
+        for (int i = 0; i < half; i++) {
+            final int idx = i + revStart;
+            final int swap = hypStep.length - i - 1;
+            final String s = hypStep[swap];
+            hypStep[swap] = hypStep[idx];
+            hypStep[idx] = s;
         }
     }
 

@@ -1635,8 +1635,9 @@ public class UtilConstants {
      *                value4 = un-unified (default) or
      *                                   unified.
      * 
-     *                value5 = Randomized or NotRandomized
-     *                         (default).
+     *                value5 = "Correct" (deprecated "NotRandomized",
+     *                         default), "Randomized", "Reverse" or
+     *                         "HalhReverse".
      *                         Controls order of exported proof
      *                         step logical hypotheses (a testing
      *                         feature).
@@ -1715,8 +1716,9 @@ public class UtilConstants {
      *                value3 = un-unified (default) or
      *                         unified proof format.
      * 
-     *                value4 = Randomized or NotRandomized
-     *                         (default).
+     *                value4 = "Correct" (deprecated "NotRandomized",
+     *                         default), "Randomized", "Reverse" or
+     *                         "HalhReverse".
      *                         Controls order of exported proof
      *                         step logical hypotheses (a testing
      *                         feature).
@@ -2767,10 +2769,38 @@ public class UtilConstants {
      * Option Value 5 "NotRandomized" for ProofAsstExportToFile RunParm and
      * Option Value 4 for ProofAsstBatchTest.
      * <p>
-     * Means that logical hypotheses should be not be randomized on exported
-     * proof steps, but left in the original order.
+     * The usage of this option will be deprecated soon!
+     * <p>
+     * Means that logical hypotheses should be left in the original order.
      */
     public static final String RUNPARM_OPTION_PROOF_ASST_NOT_RANDOMIZED = "notrandomized";
+
+    /**
+     * Option Value 5 "Correct" for ProofAsstExportToFile RunParm and Option
+     * Value 4 for ProofAsstBatchTest.
+     * <p>
+     * This option has the same meaning as notrandomized above
+     * <p>
+     * Means that logical hypotheses should be left in the original order.
+     */
+    public static final String RUNPARM_OPTION_PROOF_ASST_CORRECT = "correct";
+
+    /**
+     * Option Value 5 "Reverse" for ProofAsstExportToFile RunParm and Option
+     * Value 4 for ProofAsstBatchTest.
+     * <p>
+     * Means that logical hypotheses should be emitted in reverse order.
+     */
+    public static final String RUNPARM_OPTION_PROOF_ASST_REVERSE = "reverse";
+
+    /**
+     * Option Value 5 "HalfReverse" for ProofAsstExportToFile RunParm and Option
+     * Value 4 for ProofAsstBatchTest.
+     * <p>
+     * Means that the first half of logical hypotheses should be emitted in
+     * order order, but the second part should be emitted in reverse order
+     */
+    public static final String RUNPARM_OPTION_PROOF_ASST_HALF_REVERSE = "halfreverse";
 
     /**
      * Option Value 6 "Print" for ProofAsstExportToFile RunParm and Option Value
@@ -3202,12 +3232,9 @@ public class UtilConstants {
     public static final String ERRMSG_EXPORT_UNIFIED_PARM_UNRECOG_5 = "'. Value input was '";
     public static final String ERRMSG_EXPORT_UNIFIED_PARM_UNRECOG_6 = "'";
 
-    public static final String ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG_1 = "A-UT-0046 RunParm name ";
-    public static final String ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG_2 = " value field number ";
-    public static final String ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG_3 = " must equal '";
-    public static final String ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG_4 = "' or '";
-    public static final String ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG_5 = "'. Value input was '";
-    public static final String ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG_6 = "'";
+    public static final String ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG = "A-UT-0046 RunParm name "
+        + " %s value field number %d must equal '%s' (same as deprecated '%s'), '%s', '%s' or '%s'."
+        + " Value input was '%s'.";
 
     public static final String ERRMSG_EXPORT_PRINT_PARM_UNRECOG_1 = "A-UT-0047 RunParm name ";
     public static final String ERRMSG_EXPORT_PRINT_PARM_UNRECOG_2 = " value field number ";

@@ -117,6 +117,7 @@ import mmj.mmio.MMIOConstants;
 import mmj.util.UtilConstants;
 import mmj.verify.GrammarConstants;
 import mmj.verify.ProofConstants;
+import mmj.verify.VerifyProofs.HypsOrder;
 
 /**
  * (Most) Constants used in mmj.pa classes
@@ -588,7 +589,7 @@ public class PaConstants {
      * Means that Ref (statement labels) should NOT be included on exported
      * derivation proof steps. This is the default.
      */
-    public static final boolean PROOF_ASST_EXPORT_HYPS_RANDOMIZED_DEFAULT = false;
+    public static final HypsOrder PROOF_ASST_EXPORT_HYPS_ORDER_DEFAULT = HypsOrder.CorrectOrder;
 
     /**
      * Default Option Value 6 "NoPrint" for ProofAsstExportToFile RunParm and
