@@ -881,8 +881,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 final TheoremTestResult result = new TheoremTestResult(
                     testStopWatch, proofWorksheet, theorem);
 
-                if (timeTop != null)
-                    addResultToVolumeTestTimeTop(timeTop, result);
+                addResultToVolumeTestTimeTop(timeTop, result);
 
                 volumeTestOutputRoutine(result, stats, smallTest);
                 final String updatedProofText = proofWorksheet
@@ -1407,6 +1406,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     {
         if (timeTop == null)
             return;
+
         // simple comparator: could compare null objects also!
         final Comparator<TheoremTestResult> comp = new Comparator<TheoremTestResult>()
         {

@@ -83,6 +83,14 @@ public enum HypsOrder {
         @Override
         public void reorder(final String[] hypStep) {
             // You can implement some experiment here!
+
+            // Now it is round shift of hypotheses
+            if (hypStep.length < 2)
+                return;
+
+            final String first = hypStep[0];
+            System.arraycopy(hypStep, 1, hypStep, 0, hypStep.length - 1);
+            hypStep[hypStep.length - 1] = first;
         }
     };
 
