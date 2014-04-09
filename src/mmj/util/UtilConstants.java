@@ -1636,8 +1636,8 @@ public class UtilConstants {
      *                                   unified.
      * 
      *                value5 = "Correct" (deprecated "NotRandomized",
-     *                         default), "Randomized", "Reverse" or
-     *                         "HalhReverse".
+     *                         default), "Randomized", "Reverse" and
+     *                         others (see {@code mmj.verify.HypsOrder}).
      *                         Controls order of exported proof
      *                         step logical hypotheses (a testing
      *                         feature).
@@ -1717,8 +1717,8 @@ public class UtilConstants {
      *                         unified proof format.
      * 
      *                value4 = "Correct" (deprecated "NotRandomized",
-     *                         default), "Randomized", "Reverse" or
-     *                         "HalhReverse".
+     *                         default), "Randomized", "Reverse" and
+     *                         others (see {@code mmj.verify.HypsOrder}).
      *                         Controls order of exported proof
      *                         step logical hypotheses (a testing
      *                         feature).
@@ -2798,9 +2798,19 @@ public class UtilConstants {
      * Value 4 for ProofAsstBatchTest.
      * <p>
      * Means that the first half of logical hypotheses should be emitted in
-     * order order, but the second part should be emitted in reverse order
+     * canonical order, but the second part should be emitted in reverse order.
      */
     public static final String RUNPARM_OPTION_PROOF_ASST_HALF_REVERSE = "halfreverse";
+
+    /**
+     * Option Value 5 "SomeOrder" for ProofAsstExportToFile RunParm and Option
+     * Value 4 for ProofAsstBatchTest.
+     * <p>
+     * Means that the logical hypotheses should be emitted in some order,
+     * depending on current debug goals. The order is not fixed and this option
+     * should be used for preformance experements.
+     */
+    public static final String RUNPARM_OPTION_PROOF_ASST_SOME_ORDER = "someorder";
 
     /**
      * Option Value 6 "Print" for ProofAsstExportToFile RunParm and Option Value
@@ -3233,7 +3243,7 @@ public class UtilConstants {
     public static final String ERRMSG_EXPORT_UNIFIED_PARM_UNRECOG_6 = "'";
 
     public static final String ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG = "A-UT-0046 RunParm name "
-        + " %s value field number %d must equal '%s' (same as deprecated '%s'), '%s', '%s' or '%s'."
+        + " %s value field number %d must equal '%s' (same as deprecated '%s'), '%s', '%s', '%s' or '%s'."
         + " Value input was '%s'.";
 
     public static final String ERRMSG_EXPORT_PRINT_PARM_UNRECOG_1 = "A-UT-0047 RunParm name ";

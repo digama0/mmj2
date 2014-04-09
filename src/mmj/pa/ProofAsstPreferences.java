@@ -65,7 +65,7 @@ import mmj.lang.WorkVarManager;
 import mmj.search.SearchMgr;
 import mmj.tmff.TMFFPreferences;
 import mmj.util.UtilConstants;
-import mmj.verify.VerifyProofs.HypsOrder;
+import mmj.verify.HypsOrder;
 
 /**
  * Holds user settings/preferences used by the Proof Assistant.

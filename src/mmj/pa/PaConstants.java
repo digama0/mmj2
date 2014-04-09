@@ -116,8 +116,8 @@ import mmj.gmff.GMFFConstants;
 import mmj.mmio.MMIOConstants;
 import mmj.util.UtilConstants;
 import mmj.verify.GrammarConstants;
+import mmj.verify.HypsOrder;
 import mmj.verify.ProofConstants;
-import mmj.verify.VerifyProofs.HypsOrder;
 
 /**
  * (Most) Constants used in mmj.pa classes

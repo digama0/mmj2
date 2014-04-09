@@ -68,7 +68,6 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Stack;
 
 import mmj.lang.Assrt;
@@ -157,7 +156,6 @@ import mmj.pa.PaConstants;
  *      Entity-Relationship Notes</a>
  */
 public class VerifyProofs implements ProofVerifier {
-
     private int retryCnt = -1;
 
     // *******************************************
@@ -540,20 +538,6 @@ public class VerifyProofs implements ProofVerifier {
 
     }
 
-    public static enum HypsOrder {
-        /** Canonical correct metamath hypotheses order */
-        CorrectOrder,
-
-        /** Randomized metamath hypotheses order */
-        RandomizedOrder,
-
-        /** Reverse hypotheses order */
-        ReverseOrder,
-
-        /** First half - in correct order, second part - in reverse order */
-        HalfReverseOrder
-    }
-
     /**
      * Loads an array list of ProofDerivationStepEntry objects for the
      * non-syntax assertion and the logical hypothesis steps of the proof.
@@ -686,20 +670,7 @@ public class VerifyProofs implements ProofVerifier {
                     e.hypStep[i] = h.step;
                 }
 
-                switch (hypsOrder) {
-                    case CorrectOrder:
-                        // do nothing here!
-                        break;
-                    case RandomizedOrder:
-                        doRandomizeHypSteps(e.hypStep);
-                        break;
-                    case ReverseOrder:
-                        doReverseHypSteps(e.hypStep);
-                        break;
-                    case HalfReverseOrder:
-                        doHalfReverseHypSteps(e.hypStep);
-                        break;
-                }
+                hypsOrder.reorder(e.hypStep);
 
                 if (exportFormatUnified)
                     e.refLabel = stepLabel;
@@ -734,50 +705,6 @@ public class VerifyProofs implements ProofVerifier {
                 .get(qedIndex);
             qedStep.step = ProofConstants.QED_STEP_NBR;
             qedStep.formulaParseTree = theorem.getExprParseTree();
-        }
-    }
-
-    private void doRandomizeHypSteps(final String[] hypStep) {
-        if (hypStep.length < 2)
-            return;
-
-        final Random random = new Random(System.nanoTime());
-
-        for (int i = 0; i < hypStep.length; i++) {
-            final int swap = random.nextInt(hypStep.length);
-            final String s = hypStep[swap];
-            hypStep[swap] = hypStep[i];
-            hypStep[i] = s;
-        }
-    }
-
-    private void doReverseHypSteps(final String[] hypStep) {
-        if (hypStep.length < 2)
-            return;
-
-        final int half = hypStep.length / 2;
-
-        for (int i = 0; i < half; i++) {
-            final int swap = hypStep.length - i - 1;
-            final String s = hypStep[swap];
-            hypStep[swap] = hypStep[i];
-            hypStep[i] = s;
-        }
-    }
-
-    private void doHalfReverseHypSteps(final String[] hypStep) {
-        if (hypStep.length < 3)
-            return;
-
-        final int revStart = hypStep.length / 2;
-        final int half = (hypStep.length - revStart) / 2;
-
-        for (int i = 0; i < half; i++) {
-            final int idx = i + revStart;
-            final int swap = hypStep.length - i - 1;
-            final String s = hypStep[swap];
-            hypStep[swap] = hypStep[idx];
-            hypStep[idx] = s;
         }
     }
 

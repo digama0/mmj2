@@ -108,9 +108,9 @@ import mmj.tl.TheoremLoaderCommitListener;
 import mmj.util.OutputBoss;
 import mmj.util.StopWatch;
 import mmj.verify.Grammar;
+import mmj.verify.HypsOrder;
 import mmj.verify.ProofDerivationStepEntry;
 import mmj.verify.VerifyProofs;
-import mmj.verify.VerifyProofs.HypsOrder;
 
 /**
  * The {@code ProofAsst}, along with the rest of the {@code mmj.pa} package

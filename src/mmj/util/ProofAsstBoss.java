@@ -104,8 +104,8 @@ import mmj.pa.ProofAsst;
 import mmj.pa.ProofAsstPreferences;
 import mmj.tl.TheoremLoader;
 import mmj.verify.Grammar;
+import mmj.verify.HypsOrder;
 import mmj.verify.VerifyProofs;
-import mmj.verify.VerifyProofs.HypsOrder;
 
 /**
  * Responsible for building and triggering ProofAsst.
@@ -1563,7 +1563,7 @@ public class ProofAsstBoss extends Boss {
 
     /**
      * Validate Proof Assistant Export Hyps Order Parm ("Correct", "Randomized",
-     * "Reverse" or "HalhReverse").
+     * "Reverse" ,and others (see {@code mmj.verify.HypsOrder}).
      * 
      * @param runParm RunParmFile line.
      * @param valueCaption name of RunParm, for error message output.
@@ -1606,6 +1606,10 @@ public class ProofAsstBoss extends Boss {
             .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_HALF_REVERSE) == 0)
             return HypsOrder.HalfReverseOrder;
 
+        if (exportHypsRandomizedParm
+            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_SOME_ORDER) == 0)
+            return HypsOrder.SomeOrder;
+
         final String exceptionMsg = LangException.format(
             UtilConstants.ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG, // format
             valueCaption, // 1
@@ -1615,23 +1619,10 @@ public class ProofAsstBoss extends Boss {
             UtilConstants.RUNPARM_OPTION_PROOF_ASST_RANDOMIZED, // 5
             UtilConstants.RUNPARM_OPTION_PROOF_ASST_REVERSE, // 6
             UtilConstants.RUNPARM_OPTION_PROOF_ASST_HALF_REVERSE, // 7
-            exportHypsRandomizedParm); // 8
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_SOME_ORDER, // 8
+            exportHypsRandomizedParm); // 9
 
         throw new IllegalArgumentException(exceptionMsg);
-        /*
-        throw new IllegalArgumentException(
-            UtilConstants.ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG_1
-                + valueCaption
-                + UtilConstants.ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG_2
-                + valueFieldNbr
-                + UtilConstants.ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG_3
-                + UtilConstants.RUNPARM_OPTION_PROOF_ASST_RANDOMIZED
-                + UtilConstants.ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG_4
-                + UtilConstants.RUNPARM_OPTION_PROOF_ASST_NOT_RANDOMIZED
-                + UtilConstants.ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG_5
-                + exportHypsRandomizedParm
-                + UtilConstants.ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG_6);
-                */
     }
 
     /**

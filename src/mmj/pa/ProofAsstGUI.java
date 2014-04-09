@@ -149,7 +149,7 @@ import mmj.tl.TlConstants;
 import mmj.tl.TlPreferences;
 import mmj.tmff.TMFFConstants;
 import mmj.tmff.TMFFException;
-import mmj.verify.VerifyProofs.HypsOrder;
+import mmj.verify.HypsOrder;
 
 /**
  * The {@code ProofAsstGUI} class is the main user interface for the mmj2 Proof
