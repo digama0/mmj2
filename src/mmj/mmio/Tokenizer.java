@@ -332,8 +332,7 @@ public class Tokenizer extends Object {
             columnNbr = 1;
         }
 
-        if (currChar >= 0 && MMIOConstants.VALID_CHAR_ARRAY[currChar] > 0) {}
-        else
+        if (currChar < 0 || MMIOConstants.VALID_CHAR_ARRAY[currChar] <= 0)
             throw new MMIOError(sourceId, lineNbr, columnNbr, charNbr,
                 MMIOConstants.ERRMSG_INV_INPUT_CHAR + currChar);
 

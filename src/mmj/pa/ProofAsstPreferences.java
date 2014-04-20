@@ -56,8 +56,11 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.List;
+
+import javax.swing.text.AttributeSet;
+import javax.swing.text.SimpleAttributeSet;
 
 import mmj.lang.Assrt;
 import mmj.lang.LangException;
@@ -83,6 +86,8 @@ public class ProofAsstPreferences {
     private String fontFamily;
 
     private boolean fontBold;
+
+    private float lineSpacing;
 
     private int errorMessageRows;
     private int errorMessageColumns;
@@ -123,6 +128,10 @@ public class ProofAsstPreferences {
 
     private boolean undoRedoEnabled;
 
+    private boolean highlightingEnabled;
+
+    private Map<String, SimpleAttributeSet> highlighting;
+
     private Color foregroundColor;
 
     private Color backgroundColor;
@@ -144,7 +153,6 @@ public class ProofAsstPreferences {
     private String incompleteStepCursor;
     private boolean incompleteStepCursorFirst;
     private boolean incompleteStepCursorLast;
-    private boolean incompleteStepCursorAsIs;
 
     private SearchMgr searchMgr;
 
@@ -160,6 +168,7 @@ public class ProofAsstPreferences {
         fontSize = PaConstants.PROOF_ASST_FONT_SIZE_DEFAULT;
         fontBold = PaConstants.PROOF_ASST_FONT_BOLD_DEFAULT;
         fontFamily = PaConstants.PROOF_ASST_FONT_FAMILY_DEFAULT;
+        lineSpacing = PaConstants.PROOF_ASST_LINE_SPACING_DEFAULT;
 
         errorMessageRows = PaConstants.PROOF_ASST_ERROR_MESSAGE_ROWS_DEFAULT;
         errorMessageColumns = PaConstants.PROOF_ASST_ERROR_MESSAGE_COLUMNS_DEFAULT;
@@ -201,6 +210,13 @@ public class ProofAsstPreferences {
 
         undoRedoEnabled = PaConstants.UNDO_REDO_ENABLED_DEFAULT;
 
+        if (highlightingEnabled = PaConstants.HIGHLIGHTING_ENABLED_DEFAULT) {
+            highlighting = new HashMap<String, SimpleAttributeSet>();
+            PaConstants.doStyleDefaults(highlighting);
+        }
+        else
+            highlighting = null;
+
         foregroundColor = PaConstants.DEFAULT_FOREGROUND_COLOR;
 
         backgroundColor = PaConstants.DEFAULT_BACKGROUND_COLOR;
@@ -227,7 +243,6 @@ public class ProofAsstPreferences {
 
         setSearchMgr(null);
     }
-
     /**
      * Set proof folder used for storing proof text areas in ProofAsstGUI.
      * 
@@ -353,6 +368,24 @@ public class ProofAsstPreferences {
      */
     public synchronized int getFontSize() {
         return fontSize;
+    }
+
+    /**
+     * Set line spacing used in ProofAsstGUI.
+     * 
+     * @param lineSpacing line spacing for ProofAsstGUI
+     */
+    public synchronized void setLineSpacing(final float lineSpacing) {
+        this.lineSpacing = lineSpacing;
+    }
+
+    /**
+     * Get font size used in ProofAsstGUI.
+     * 
+     * @return fontSize font size for ProofAsstGUI.
+     */
+    public synchronized float getLineSpacing() {
+        return lineSpacing;
     }
 
     /**
@@ -843,6 +876,58 @@ public class ProofAsstPreferences {
     }
 
     /**
+     * Sets syntax highlighting for Proof Asst GUI.
+     * 
+     * @param highlightingEnabled true or false
+     */
+    public void setHighlightingEnabled(final boolean highlightingEnabled) {
+        this.highlightingEnabled = highlightingEnabled;
+    }
+
+    /**
+     * Gets syntax highlighting for Proof Asst GUI.
+     * 
+     * @return highlightingEnabled true or false
+     */
+    public boolean getHighlightingEnabled() {
+        return highlightingEnabled;
+    }
+
+    /**
+     * Sets syntax highlighting for Proof Asst GUI.
+     * 
+     * @param key The name of one of the styles of the syntax highlighting
+     * @param color the foreground color
+     * @param bold true for bold, false for plain, null for inherit
+     * @param italic true for italic, false for plain, null for inherit
+     * @throws IllegalArgumentException if the
+     */
+    public void setHighlightingStyle(final String key, final Color color,
+        final Boolean bold, final Boolean italic)
+        throws IllegalArgumentException
+    {
+        final SimpleAttributeSet style = highlighting.get(key);
+        if (style == null) {
+            final List<String> list = new ArrayList<String>(
+                highlighting.keySet());
+            Collections.sort(list);
+            throw new IllegalArgumentException(list.toString());
+        }
+        PaConstants.setStyle(style, color, bold, italic);
+    }
+
+    /**
+     * Gets syntax highlighting for Proof Asst GUI.
+     * 
+     * @param key the token type
+     * @return the style settings for the given token type
+     */
+    public AttributeSet getHighlightingStyle(final String key) {
+        final AttributeSet style = highlighting.get(key);
+        return style != null ? style : highlighting
+            .get(PaConstants.PROOF_ASST_STYLE_ERROR);
+    }
+    /**
      * Sets foreground color for Proof Asst GUI.
      * 
      * @param foregroundColor Color object
@@ -854,7 +939,7 @@ public class ProofAsstPreferences {
     /**
      * Gets foreground color for Proof Asst GUI.
      * 
-     * @return foregroundColor true or false.
+     * @return foregroundColor Color object
      */
     public Color getForegroundColor() {
         return foregroundColor;
@@ -872,7 +957,7 @@ public class ProofAsstPreferences {
     /**
      * Gets background color for Proof Asst GUI.
      * 
-     * @return backgroundColor true or false.
+     * @return backgroundColor Color object
      */
     public Color getBackgroundColor() {
         return backgroundColor;
@@ -1307,46 +1392,15 @@ public class ProofAsstPreferences {
      * @return true if valid otherwise false.
      */
     public boolean setIncompleteStepCursor(final String s) {
-        if (s == null)
-            return false; // error
+        final boolean first = PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_FIRST
+            .equalsIgnoreCase(s), last = PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_LAST
+            .equalsIgnoreCase(s), asis = PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_ASIS
+            .equalsIgnoreCase(s);
 
-        // Note: do not modify any settings unless
-        // the input is valid -- therefore,
-        // no default settings are made here
-        // ...
-        // [ ]
-        //
-
-        if (s
-            .compareToIgnoreCase(PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_FIRST) == 0)
-        {
-
+        if (first || last || asis) {
             incompleteStepCursor = s;
-            incompleteStepCursorFirst = true;
-            incompleteStepCursorLast = false;
-            incompleteStepCursorAsIs = false;
-            return true; // no error
-        }
-
-        if (s
-            .compareToIgnoreCase(PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_LAST) == 0)
-        {
-
-            incompleteStepCursor = s;
-            incompleteStepCursorFirst = false;
-            incompleteStepCursorLast = true;
-            incompleteStepCursorAsIs = false;
-            return true; // no error
-        }
-
-        if (s
-            .compareToIgnoreCase(PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_ASIS) == 0)
-        {
-
-            incompleteStepCursor = s;
-            incompleteStepCursorFirst = false;
-            incompleteStepCursorLast = false;
-            incompleteStepCursorAsIs = true;
+            incompleteStepCursorFirst = first;
+            incompleteStepCursorLast = last;
             return true; // no error
         }
 
@@ -1378,15 +1432,6 @@ public class ProofAsstPreferences {
      */
     public boolean getIncompleteStepCursorLast() {
         return incompleteStepCursorLast;
-    }
-
-    /**
-     * Get incompleteStepCursorAsIs parameter.
-     * 
-     * @return incompleteStepCursorAsIs parameter.
-     */
-    public boolean getIncompleteStepCursorAsIs() {
-        return incompleteStepCursorAsIs;
     }
 
     /**
