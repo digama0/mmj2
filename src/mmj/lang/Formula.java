@@ -43,7 +43,14 @@
 
 package mmj.lang;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import mmj.mmio.SrcStmt;
 
@@ -83,7 +90,17 @@ public class Formula {
     /**
      * Formula is just an array of Sym with a Count.
      */
-    Sym[] sym;
+    final Sym[] sym;
+
+    /**
+     * The sorted list of all constants in this formula.
+     */
+    private Cnst[] constList = null;
+
+    /**
+     * The comparator for the sorted list of all constants in this formula.
+     */
+    private Comparator<Cnst> constComp = null;
 
     /**
      * Construct a temporary dummy Formula for transient use. This is useful in
@@ -156,6 +173,83 @@ public class Formula {
         setTyp(symTbl, typS);
     }
 
+    /**
+     * This function should be used to collect frequency statistic for some
+     * metamath library and create an array of constant symbols.
+     * 
+     * @param frequency the map from constant to its frequency in the metamath
+     *            library
+     */
+    public void collectConstFrequenceAndInitConstList(
+        final Map<Cnst, Integer> frequency)
+    {
+        assert constList == null;
+        final Set<Cnst> set = new HashSet<Cnst>();
+        for (final Sym s : getSym())
+            if (s instanceof Cnst) {
+                final Cnst c = (Cnst)s;
+                if (!set.contains(c)) {
+                    set.add(c);
+                    if (frequency != null) {
+                        final Integer numObj = frequency.get(c);
+                        int num = numObj != null ? numObj : 0;
+                        num++;
+                        frequency.put(c, num);
+                    }
+                }
+            }
+        constList = set.toArray(new Cnst[set.size()]);
+    }
+
+    /**
+     * When the frequency information has been collected this function should be
+     * used in order to sort the constant symbols array
+     * 
+     * @param comp the comparator
+     */
+    public void sortConstList(final Comparator<Cnst> comp) {
+        assert constComp == null;
+        constComp = comp;
+        Arrays.sort(constList, comp);
+    }
+
+    /**
+     * This function is needed to exclude quickly the incompatible with this
+     * formulas.
+     * 
+     * @param other the other formula which should be checked for constant set
+     *            inclusion
+     * @return true if all constants from this formula are in the other formula
+     */
+    public boolean preunificationCheck(final Formula other) {
+        if (constList == null)
+            return true;
+        assert constComp != null;
+
+        if (other.constList == null) {
+            other.collectConstFrequenceAndInitConstList(null);
+            other.sortConstList(constComp);
+        }
+
+        if (other.constList.length < constList.length)
+            return false;
+
+        int i = 0, k = 0;
+
+        mainLoop: while (i < constList.length) {
+            while (k < other.constList.length) {
+                if (constList[i] == other.constList[k]) {
+                    i++;
+                    k++;
+                    continue mainLoop;
+                }
+                k++;
+            }
+            return false;
+        }
+
+        return true;
+    }
     /**
      * Return Formula Type Code.
      * 

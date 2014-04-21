@@ -80,15 +80,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import mmj.gmff.GMFFException;
 import mmj.lang.Assrt;
 import mmj.lang.Cnst;
 import mmj.lang.DjVars;
+import mmj.lang.Formula;
 import mmj.lang.Hyp;
 import mmj.lang.LangException;
+import mmj.lang.LogHyp;
 import mmj.lang.LogicalSystem;
 import mmj.lang.MObj;
 import mmj.lang.Messages;
@@ -912,6 +916,49 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         printVolumeTestStats(stats, wholeTestSuiteTime, timeTop);
     }
 
+    /**
+     * Perform the optimizations for theorem search during "parallel"
+     * unification
+     */
+    public void optimizeTheoremSearch() {
+        final List<Theorem> theoremList = getSortedTheoremList(0);
+
+        final Map<Cnst, Integer> frequency = new HashMap<Cnst, Integer>();
+
+        final List<Formula> formulaList = new ArrayList<Formula>();
+
+        for (final Theorem theorem : theoremList) {
+            formulaList.add(theorem.getFormula());
+            for (final LogHyp logHyp : theorem.getLogHypArray())
+                formulaList.add(logHyp.getFormula());
+        }
+
+        for (final Formula formula : formulaList)
+            formula.collectConstFrequenceAndInitConstList(frequency);
+
+        final Comparator<Cnst> comp = new Comparator<Cnst>() {
+            public int compare(final Cnst o1, final Cnst o2) {
+                final Integer i1 = frequency.get(o1);
+                final Integer i2 = frequency.get(o2);
+
+                if (i1 == i2)
+                    return o1.getSeq() - o2.getSeq();
+
+                if (i1 == null)
+                    return 1;
+                if (i2 == null)
+                    return -1;
+
+                if (i1.intValue() != i2.intValue())
+                    return i1 - i2;
+                else
+                    return o1.getSeq() - o2.getSeq();
+            }
+        };
+
+        for (final Formula formula : formulaList)
+            formula.sortConstList(comp);
+    }
     /**
      * Import Theorem proofs from a given Reader.
      * 

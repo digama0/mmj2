@@ -440,6 +440,13 @@ public class ProofAsstBoss extends Boss {
         }
 
         if (runParm.name
+            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_OPTIMIZE_THEOREM_SEARCH) == 0)
+        {
+            optimizeTheoremSearch(runParm);
+            return true;
+        }
+
+        if (runParm.name
             .compareToIgnoreCase(UtilConstants.RUNPARM_STEP_SELECTOR_BATCH_TEST) == 0)
         {
             doStepSelectorBatchTest(runParm);
@@ -1430,6 +1437,22 @@ public class ProofAsstBoss extends Boss {
         }
 
         batchFramework.outputBoss.printAndClearMessages();
+    }
+
+    /**
+     * Perform the optimizations for theorem search during "parallel"
+     * unification
+     * 
+     * @param runParm RunParmFile line.
+     * @throws VerifyException if an error occurred
+     */
+    public void optimizeTheoremSearch(final RunParmArrayEntry runParm)
+        throws VerifyException
+    {
+        final ProofAsst proofAsst = getProofAsst();
+        if (proofAsst == null)
+            return;
+        proofAsst.optimizeTheoremSearch();
     }
 
     /**

@@ -1837,6 +1837,13 @@ public class UtilConstants {
                                                                                      // optional
                                                                                      // file
                                                                                      // name.
+
+    /**
+     * Perform the optimizations for theorem search during "parallel"
+     * unification
+     */
+    public static final String RUNPARM_PROOF_ASST_OPTIMIZE_THEOREM_SEARCH = "ProofAsstOptimizeTheoremSearch";
+
     /**
      * StepSelectorBatchTest
      * <p>
