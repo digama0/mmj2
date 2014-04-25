@@ -854,8 +854,8 @@ public class ProofWorksheet {
                 break;
             if (o instanceof ProofStepStmt) {
                 final ProofStepStmt matchStep = (ProofStepStmt)o;
-                if (matchStep.formula != null
-                    && matchStep.formula.equals(searchFormula))
+                if (matchStep.getFormula() != null
+                    && matchStep.getFormula().equals(searchFormula))
                     return matchStep;
             }
         }
@@ -884,7 +884,7 @@ public class ProofWorksheet {
                 continue;
 
             final ProofStepStmt renumberProofStepStmt = (ProofStepStmt)o;
-            final String oldStep = renumberProofStepStmt.step;
+            final String oldStep = renumberProofStepStmt.getStep();
 
             final String renumberStep = Integer.toString(renumber);
             renumber += renumberInterval;
@@ -1335,7 +1335,7 @@ public class ProofWorksheet {
                 triggerLoadStructureException(
                     PaConstants.ERRMSG_SELECTOR_SEARCH_STEP_NOTFND,
                     getErrorLabelIfPossible());
-            stepRequest.step = ((DerivationStep)proofInputCursor.proofWorkStmt).step;
+            stepRequest.step = ((DerivationStep)proofInputCursor.proofWorkStmt).getStep();
             stepRequest.param1 = proofInputCursor.proofWorkStmt;
         }
 
@@ -1344,7 +1344,7 @@ public class ProofWorksheet {
             if (proofInputCursor.cursorIsSet
                 && proofInputCursor.proofWorkStmt instanceof DerivationStep)
             {
-                stepRequest.step = ((DerivationStep)proofInputCursor.proofWorkStmt).step;
+                stepRequest.step = ((DerivationStep)proofInputCursor.proofWorkStmt).getStep();
                 stepRequest.param1 = proofInputCursor.proofWorkStmt;
             }
             else {
@@ -1401,7 +1401,7 @@ public class ProofWorksheet {
             || proofInputCursor.cursorIsSet
             || inputCursorPos > proofTextTokenizer.getCurrentCharNbr()
                 - nextToken.length() || proofWorkStmt instanceof ProofStepStmt
-            && ((ProofStepStmt)proofWorkStmt).localRef != null)
+            && ((ProofStepStmt)proofWorkStmt).getLocalRef() != null)
             return false;
         proofInputCursor.setCursorAtProofWorkStmt(proofWorkStmt,
             PaConstants.FIELD_ID_REF);
@@ -1436,7 +1436,7 @@ public class ProofWorksheet {
                 continue;
             final DerivationStep dI = (DerivationStep)x;
 
-            if (dI.getHypNumber() == 0 || dI.localRef != null)
+            if (dI.getHypNumber() == 0 || dI.getLocalRef() != null)
                 continue;
 
             boolean stepUpdated = false;
@@ -1448,8 +1448,8 @@ public class ProofWorksheet {
                 for (int k = dI.getHypNumber() - 1; k >= 0; k--)
                     if (dI.getHyp(k) == dJ) {
                         stepUpdated = true;
-                        dI.setHypStep(k, dJ.localRef.step);
-                        dI.setHyp(k, dJ.localRef);
+                        dI.setHypStep(k, dJ.getLocalRef().getStep());
+                        dI.setHyp(k, dJ.getLocalRef());
                     }
             }
             if (stepUpdated) {

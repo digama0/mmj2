@@ -44,9 +44,19 @@ package mmj.pa;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import mmj.lang.*;
+import mmj.lang.Cnst;
+import mmj.lang.Formula;
+import mmj.lang.ParseNode;
+import mmj.lang.ParseTree;
+import mmj.lang.Stmt;
+import mmj.lang.Sym;
+import mmj.lang.WorkVar;
+import mmj.lang.WorkVarHyp;
 import mmj.mmio.MMIOError;
 import mmj.mmio.Tokenizer;
 import mmj.verify.VerifyProofs;
@@ -58,26 +68,18 @@ import mmj.verify.VerifyProofs;
 public abstract class ProofStepStmt extends ProofWorkStmt {
 
     /**
-     * this is obtained from the input proof text line on input, and for
-     * generated statements, is obtained from ProofAsstPreferences.
-     */
-    int formulaStartColNbr; // to be honored!
-
-    /**
      * obtained on input, used for carat positioning on errors during input
      * validation.
      */
-    int formulaStartCharNbr;
+    protected int formulaStartCharNbr;
 
-    public String step;
+    private String step;
 
-    Stmt ref;
+    private Stmt ref;
 
-    String refLabel;
+    private String refLabel;
 
-    ProofStepStmt localRef;
-
-    Formula formula;
+    private Formula formula;
 
     /**
      * null if no workVars in formula, otherwise contains list of workVars in
@@ -91,23 +93,6 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      */
     public ParseTree formulaParseTree;
 
-    /** new fields for Proof Assistant "Derive" Feature */
-    boolean generatedByDeriveFeature; // for Derive
-
-    /**
-     * new fields in replacement of ProofWorkStmt.status these will only ever be
-     * set to true on DerivationStep's.
-     * <ul>
-     * <li>set to true if "?" is entered in the Hyp field of a step and a Ref is
-     * not entered, signifying that the step is not ready for unification
-     * (because the user doesn't know the Hyps that correlate with the formula
-     * and we cannot perform a search with this incomplete information.)
-     * <li>NOTE: this is not set to true in the case where deriveStepHyps ==
-     * true; "hypFldIncomplete" is a special situation in which unification
-     * cannot be attempted; it is not an "error" by the user, just a delayed
-     * entry...
-     */
-    boolean hypFldIncomplete;
     /**
      * Set to true if the formula contains dummy/work variables and a Ref is not
      * entered, signifying that the step is not ready for unification (the
@@ -153,15 +138,17 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      * @param w The owning ProofWorksheet
      * @param step step number of the ProofStepStmt
      * @param refLabel Ref label of the ProofStepStmt
+     * @param formula the proof step formula
      * @param setCaret true means position caret of TextArea to this statement.
      */
     public ProofStepStmt(final ProofWorksheet w, final String step,
-        final String refLabel, final boolean setCaret)
+        final String refLabel, final Formula formula, final boolean setCaret)
     {
 
         super(w);
         this.step = step;
         this.refLabel = refLabel;
+        this.formula = formula;
 
         if (setCaret)
             w.proofCursor.setCursorAtProofWorkStmt(this,
@@ -171,6 +158,10 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
 
     public String getStep() {
         return step;
+    }
+
+    public void setStep(final String step) {
+        this.step = step;
     }
 
     /**
@@ -431,8 +422,6 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
         // formula field to see if it was input.
         if (nextT.length() == 0 || nextT.length() == colNbr)
             return nextT;
-
-        formulaStartColNbr = colNbr;
 
         // save char nbr for later use positioning caret
         formulaStartCharNbr = (int)w.proofTextTokenizer.getCurrentCharNbr();
@@ -714,4 +703,16 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      *            numbers.
      */
     public abstract void renum(Map<String, String> renumberMap);
+
+    public ProofStepStmt getLocalRef() {
+        return null;
+    }
+
+    public Formula getFormula() {
+        return formula;
+    }
+
+    public void setFormula(final Formula formula) {
+        this.formula = formula;
+    }
 }

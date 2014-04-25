@@ -108,8 +108,30 @@ public class DerivationStep extends ProofStepStmt {
 
     private ParseTree proofTree;
 
+    private ProofStepStmt localRef;
+
+    /** new fields for Proof Assistant "Derive" Feature */
+    private boolean generatedByDeriveFeature; // for Derive
+
+    /**
+     * new fields in replacement of ProofWorkStmt.status these will only ever be
+     * set to true on DerivationStep's.
+     * <ul>
+     * <li>set to true if "?" is entered in the Hyp field of a step and a Ref is
+     * not entered, signifying that the step is not ready for unification
+     * (because the user doesn't know the Hyps that correlate with the formula
+     * and we cannot perform a search with this incomplete information.)
+     * <li>NOTE: this is not set to true in the case where deriveStepHyps ==
+     * true; "hypFldIncomplete" is a special situation in which unification
+     * cannot be attempted; it is not an "error" by the user, just a delayed
+     * entry...
+     */
+    private boolean hypFldIncomplete;
+
+    // ---------------------------------------------------------------
     // This fields have only external usage
     // So they could be left as public
+    // ---------------------------------------------------------------
 
     int unificationStatus;
     int djVarsErrorStatus;
@@ -151,13 +173,14 @@ public class DerivationStep extends ProofStepStmt {
                 continue;
             }
 
-            iFormulaLength = holdStep1.formula.getCnt();
+            iFormulaLength = holdStep1.getFormula().getCnt();
 
             outIndex = 0;
             while (outIndex < outEnd) {
                 if (outArray[outIndex] == null)
                     break;
-                if (outArray[outIndex].formula.getCnt() - iFormulaLength >= 0) {
+                if (outArray[outIndex].getFormula().getCnt() - iFormulaLength >= 0)
+                {
                     outIndex++;
                     continue;
                 }
@@ -208,14 +231,13 @@ public class DerivationStep extends ProofStepStmt {
         final ParseTree parseTree, final boolean setCaret, final int proofLevel)
     {
 
-        super(w, step, refLabel, setCaret);
+        super(w, step, refLabel, formula, setCaret);
 
         this.proofLevel = proofLevel;
 
         this.hypStep = hypStep;
         hyp = new ProofStepStmt[0];
 
-        this.formula = formula;
         updateFormulaParseTree(parseTree);
 
         stmtText = buildStepHypRefSB();
@@ -234,7 +256,7 @@ public class DerivationStep extends ProofStepStmt {
      * @param generatedFormulaFldIncomplete see
      *            {@link ProofStepStmt#formulaFldIncomplete}
      * @param generatedHypFldIncomplete see
-     *            {@link ProofStepStmt#hypFldIncomplete}
+     *            {@link DerivationStep#hypFldIncomplete}
      * @param generatedFlag true means "generated".
      * @param generatedWorkVarList List of Work Vars in formula
      */
@@ -246,11 +268,11 @@ public class DerivationStep extends ProofStepStmt {
         final List<WorkVar> generatedWorkVarList)
     {
 
-        super(w, generatedStep, "", false); // don't set caret.
+        super(w, generatedStep, "", generatedFormula, false); // don't set
+                                                              // caret.
 
         hyp = generatedHyp;
         hypStep = generatedHypStep;
-        formula = generatedFormula;
         updateFormulaParseTree(generatedParseTree);
 
         formulaFldIncomplete = generatedFormulaFldIncomplete;
@@ -313,10 +335,10 @@ public class DerivationStep extends ProofStepStmt {
     @Override
     public void renum(final Map<String, String> renumberMap) {
 
-        String newNum = renumberMap.get(step);
+        String newNum = renumberMap.get(getStep());
         boolean changes = false;
         if (newNum != null) {
-            step = newNum;
+            setStep(newNum);
             changes = true;
         }
 
@@ -342,7 +364,7 @@ public class DerivationStep extends ProofStepStmt {
     @Override
     public void tmffReformat() {
         stmtText = buildStepHypRefSB();
-        lineCnt = loadStmtText(stmtText, formula, formulaParseTree);
+        lineCnt = loadStmtText(stmtText, getFormula(), formulaParseTree);
     }
 
     /**
@@ -372,40 +394,40 @@ public class DerivationStep extends ProofStepStmt {
     {
 
         // update ProofStepStmt fields
-        step = stepField;
-        refLabel = refField;
+        setStep(stepField);
+        setRefLabel(refField);
 
-        final boolean isQedStep = step.equals(PaConstants.QED_STEP_NBR);
+        final boolean isQedStep = getStep().equals(PaConstants.QED_STEP_NBR);
 
         // !isQedStep means workVarsOk
         final String nextT = loadStmtTextWithFormula(!isQedStep);
 
-        if (formula == null)
+        if (getFormula() == null)
             if (isQedStep)
                 w.triggerLoadStructureException(
                     (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                         - lineStartCharNbr, PaConstants.ERRMSG_FORMULA_REQ,
-                    w.getErrorLabelIfPossible(), step);
+                    w.getErrorLabelIfPossible(), getStep());
             else {
                 deriveStepFormula = true;
                 w.hasWorkVarsOrDerives = true;
             }
 
         if (w.isNewTheorem() || !isQedStep) {
-            if (formula != null)
+            if (getFormula() != null)
                 getNewFormulaStepParseTree();
         }
-        else if (formula.equals(w.theorem.getFormula()))
+        else if (getFormula().equals(w.theorem.getFormula()))
             formulaParseTree = w.theorem.getExprParseTree();
         else
             w.triggerLoadStructureException(
                 (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                     - formulaStartCharNbr, PaConstants.ERRMSG_FORMULA_NOMATCH,
-                w.getErrorLabelIfPossible(), step, w.theorem.getFormula());
+                w.getErrorLabelIfPossible(), getStep(), w.theorem.getFormula());
 
         int nbrExpectedHyps = -1;
-        if (getValidDerivationRefField(lineStartCharNbr) && ref != null)
-            nbrExpectedHyps = ((Assrt)ref).getLogHypArrayLength();
+        if (getValidDerivationRefField(lineStartCharNbr) && getRef() != null)
+            nbrExpectedHyps = ((Assrt)getRef()).getLogHypArrayLength();
 
         parseHypField(hypField);
         hyp = new ProofStepStmt[hypStep.length];
@@ -413,7 +435,7 @@ public class DerivationStep extends ProofStepStmt {
         final int nbrValidHyps = checkForValidHypEntries(lineStartCharNbr,
             nbrExpectedHyps);
 
-        if (ref != null) {
+        if (getRef() != null) {
             if (nbrValidHyps < nbrExpectedHyps) {
                 deriveStepHyps = true;
                 w.hasWorkVarsOrDerives = true;
@@ -473,7 +495,7 @@ public class DerivationStep extends ProofStepStmt {
     {
 
         // already validated
-        step = stepField;
+        setStep(stepField);
 
         // localRefField already has "#" stripped off and we know
         // that the remainder has length >= 0.
@@ -483,10 +505,10 @@ public class DerivationStep extends ProofStepStmt {
         else
             localRef = null;
 
-        if (localRef == null || localRef.localRef != null)
+        if (localRef == null || localRef.getLocalRef() != null)
             w.triggerLoadStructureException(localRefField.length(),
                 PaConstants.ERRMSG_BAD_LOCAL_REF, w.getErrorLabelIfPossible(),
-                step);
+                getStep());
 
         // note: load formula to get it out of the way
         // and we know that this is NOT a qed step,
@@ -512,7 +534,7 @@ public class DerivationStep extends ProofStepStmt {
         final ParseTree genFormulaParseTree, final boolean stmtTextAlreadyLoaded)
     {
 
-        formula = genFormula;
+        setFormula(genFormula);
 
         updateFormulaParseTree(genFormulaParseTree);
 
@@ -521,7 +543,7 @@ public class DerivationStep extends ProofStepStmt {
         if (stmtTextAlreadyLoaded) {}
         else {
             stmtText = buildStepHypRefSB();
-            lineCnt = loadStmtText(stmtText, formula, formulaParseTree);
+            lineCnt = loadStmtText(stmtText, getFormula(), formulaParseTree);
         }
 
         // recompute referencing steps' L1HiLo key values;
@@ -573,7 +595,7 @@ public class DerivationStep extends ProofStepStmt {
     public StringBuilder buildStepHypRefSB() {
         final StringBuilder sb = new StringBuilder();
 
-        sb.append(step);
+        sb.append(getStep());
         sb.append(PaConstants.FIELD_DELIMITER_COLON);
 
         if (hypStep.length > 0) {
@@ -591,8 +613,8 @@ public class DerivationStep extends ProofStepStmt {
             }
         }
         sb.append(PaConstants.FIELD_DELIMITER_COLON);
-        if (refLabel != null)
-            sb.append(refLabel);
+        if (getRefLabel() != null)
+            sb.append(getRefLabel());
         return sb;
     }
 
@@ -666,7 +688,8 @@ public class DerivationStep extends ProofStepStmt {
     {
         heldDjErrorMessage = softDjVarsErrorList == null
             || softDjVarsErrorList.isEmpty() ? null : LangException.format(
-            PaConstants.ERRMSG_SUBST_TO_VARS_NOT_DJ, step, softDjVarsErrorList);
+            PaConstants.ERRMSG_SUBST_TO_VARS_NOT_DJ, getStep(),
+            softDjVarsErrorList);
     }
 
     /**
@@ -726,36 +749,36 @@ public class DerivationStep extends ProofStepStmt {
         // not a syntax axiom and
         // nbr log hyps matches hyp field count
 
-        if (refLabel == null)
+        if (getRefLabel() == null)
             return true; // ok, unify normally outputs.
-        if (refLabel.equals(PaConstants.DEFAULT_STMT_LABEL)) {
-            refLabel = null;
+        if (getRefLabel().equals(PaConstants.DEFAULT_STMT_LABEL)) {
+            setRefLabel(null);
             return true;
         }
 
-        ref = w.logicalSystem.getStmtTbl().get(refLabel);
-        if (ref == null)
+        setRef(w.logicalSystem.getStmtTbl().get(getRefLabel()));
+        if (getRef() == null)
             w.triggerLoadStructureException(
                 (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                     - formulaStartCharNbr, PaConstants.ERRMSG_REF_NOTFND,
-                w.getErrorLabelIfPossible(), step, refLabel);
-        if (ref.getSeq() >= w.getMaxSeq())
+                w.getErrorLabelIfPossible(), getStep(), getRefLabel());
+        if (getRef().getSeq() >= w.getMaxSeq())
             w.triggerLoadStructureException(
                 (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                     - formulaStartCharNbr, PaConstants.ERRMSG_REF_MAXSEQ,
-                w.getErrorLabelIfPossible(), step, refLabel);
-        if (!(ref instanceof Assrt))
+                w.getErrorLabelIfPossible(), getStep(), getRefLabel());
+        if (!(getRef() instanceof Assrt))
             w.triggerLoadStructureException(
                 (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                     - formulaStartCharNbr, PaConstants.ERRMSG_REF_NOT_ASSRT,
-                w.getErrorLabelIfPossible(), step, refLabel);
+                w.getErrorLabelIfPossible(), getStep(), getRefLabel());
 
-        if (ref.getFormula().getTyp() != w.getProvableLogicStmtTyp())
+        if (getRef().getFormula().getTyp() != w.getProvableLogicStmtTyp())
             w.triggerLoadStructureException(
                 (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                     - formulaStartCharNbr, PaConstants.ERRMSG_REF_BAD_TYP, w
-                    .getErrorLabelIfPossible(), step, refLabel, ref
-                    .getFormula().getTyp());
+                    .getErrorLabelIfPossible(), getStep(), getRefLabel(),
+                getRef().getFormula().getTyp());
         return true;
     }
 
@@ -797,18 +820,18 @@ public class DerivationStep extends ProofStepStmt {
                 || hypStep[i].equals(PaConstants.DEFAULT_STMT_LABEL))
                 continue;
 
-            if (hypStep[i].equals(step))
+            if (hypStep[i].equals(getStep()))
                 w.triggerLoadStructureException(
                     (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                         - lineStartCharNbr, PaConstants.ERRMSG_BAD_HYP_STEP,
-                    w.getErrorLabelIfPossible(), step, hypStep[i]);
+                    w.getErrorLabelIfPossible(), getStep(), hypStep[i]);
 
             final ProofWorkStmt x = w.findMatchingStepNbr(hypStep[i]);
             if (x == null)
                 w.triggerLoadStructureException(
                     (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                         - lineStartCharNbr, PaConstants.ERRMSG_HYP_STEP_NOTFND,
-                    w.getErrorLabelIfPossible(), step, hypStep[i]);
+                    w.getErrorLabelIfPossible(), getStep(), hypStep[i]);
 
             hyp[i] = (ProofStepStmt)x;
 
@@ -820,8 +843,8 @@ public class DerivationStep extends ProofStepStmt {
                 (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                     - formulaStartCharNbr,
                 PaConstants.ERRMSG_REF_NBR_HYPS_LT_INPUT,
-                w.getErrorLabelIfPossible(), step, hypStep.length,
-                nbrExpectedHyps, refLabel);
+                w.getErrorLabelIfPossible(), getStep(), hypStep.length,
+                nbrExpectedHyps, getRefLabel());
 
         return nbrValidHyps;
     }
@@ -914,8 +937,8 @@ public class DerivationStep extends ProofStepStmt {
             w.triggerLoadStructureException(
                 (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                     - formulaStartCharNbr, PaConstants.ERRMSG_REF_NBR_HYPS,
-                w.getErrorLabelIfPossible(), step, hypStep.length,
-                nbrExpectedHyps, refLabel);
+                w.getErrorLabelIfPossible(), getStep(), hypStep.length,
+                nbrExpectedHyps, getRefLabel());
     }
 
     private String computeLogHypsL1HiLoKey() {
@@ -969,13 +992,13 @@ public class DerivationStep extends ProofStepStmt {
 
     @Override
     public String toString() {
-        String s = step + ":";
+        String s = getStep() + ":";
         String delim = "";
         for (final String h : hypStep) {
             s += delim + h;
             delim = ",";
         }
-        return s + ":" + refLabel + " " + formula;
+        return s + ":" + getRefLabel() + " " + getFormula();
     }
 
     void setHypStep(final int i, final String s) {
@@ -1008,5 +1031,22 @@ public class DerivationStep extends ProofStepStmt {
 
     public boolean hasDeriveStepHyps() {
         return deriveStepHyps;
+    }
+
+    @Override
+    public ProofStepStmt getLocalRef() {
+        return localRef;
+    }
+
+    public boolean isGeneratedByDeriveFeature() {
+        return generatedByDeriveFeature;
+    }
+
+    public boolean isHypFldIncomplete() {
+        return hypFldIncomplete;
+    }
+
+    public void setHypFldIncomplete(boolean hypFldIncomplete) {
+        this.hypFldIncomplete = hypFldIncomplete;
     }
 }

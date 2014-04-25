@@ -433,7 +433,7 @@ public class ProofUnifier {
                 if (d != null)
                     return d;
             }
-        for (final Sym s : step.formula.getSym())
+        for (final Sym s : step.getFormula().getSym())
             if (s instanceof WorkVar)
                 return step;
         return null;
@@ -472,7 +472,7 @@ public class ProofUnifier {
                 if (dH.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS)
                     derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS;
 
-                if (dH.hypFldIncomplete
+                if (dH.isHypFldIncomplete()
                     || dH.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS
                     || dH.unificationStatus != PaConstants.UNIFICATION_STATUS_UNIFIED
                     && dH.unificationStatus != PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
@@ -534,10 +534,10 @@ public class ProofUnifier {
 
             derivStep = (DerivationStep)proofWorkStmtObject;
 
-            if (derivStep.hypFldIncomplete)
+            if (derivStep.isHypFldIncomplete())
                 continue;
 
-            if (derivStep.ref == null && derivStep.hasWorkVarsInStepOrItsHyps())
+            if (derivStep.getRef() == null && derivStep.hasWorkVarsInStepOrItsHyps())
                 continue;
 
             if (derivStep.unificationStatus != PaConstants.UNIFICATION_STATUS_NOT_UNIFIED)
@@ -561,18 +561,18 @@ public class ProofUnifier {
                 }
 
             // build array of steps for parallel unification loop
-            if (derivStep.ref == null) {
+            if (derivStep.getRef() == null) {
                 dsa1[dsa1Count++] = derivStep;
                 continue;
             }
 
-            assrt = (Assrt)derivStep.ref;
+            assrt = (Assrt)derivStep.getRef();
             assrtNbrLogHyps = assrt.getLogHypArrayLength();
 
             if (derivStep.getHypNumber() != assrtNbrLogHyps)
                 throw new IllegalArgumentException(LangException.format(
                     PaConstants.ERRMSG_STEP_REF_HYP_NBR_ERR,
-                    getErrorLabelIfPossible(proofWorksheet), derivStep.step));
+                    getErrorLabelIfPossible(proofWorksheet), derivStep.getStep()));
 
             if (!unifyStepWithoutWorkVars()) {
 
@@ -665,7 +665,7 @@ public class ProofUnifier {
 
             if (derivStep.unificationStatus == PaConstants.UNIFICATION_STATUS_NOT_UNIFIED)
             {
-                if (!derivStep.hypFldIncomplete)
+                if (!derivStep.isHypFldIncomplete())
                     markUnificationFailure();
             }
             else if (derivStep.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED
@@ -735,7 +735,7 @@ public class ProofUnifier {
 
         return "\n"
             + LangException.format(PaConstants.ERRMSG_ALT_UNIFY_REFS,
-                getErrorLabelIfPossible(proofWorksheet), derivStep.step,
+                getErrorLabelIfPossible(proofWorksheet), derivStep.getStep(),
                 derivStep.alternateRefList);
     }
 
@@ -772,10 +772,10 @@ public class ProofUnifier {
             // would have been changed)
             if (holdHypProofStepStmt instanceof HypothesisStep) {
                 if (proofWorksheet.isNewTheorem()
-                    && holdHypProofStepStmt.ref == null)
+                    && holdHypProofStepStmt.getRef() == null)
                     buildNewTheoremLogHyp(i,
                         (HypothesisStep)holdHypProofStepStmt);
-                holdHypNode = new ParseNode(holdHypProofStepStmt.ref);
+                holdHypNode = new ParseNode(holdHypProofStepStmt.getRef());
                 holdHypNode.setChild(new ParseNode[0]);
             }
             else {
@@ -804,10 +804,10 @@ public class ProofUnifier {
             if (substIndex >= derivStep.getAssrtSubstNumber())
                 throw new IllegalArgumentException(LangException.format(
                     PaConstants.ERRMSG_ASSRT_SUBST_SLOT,
-                    getErrorLabelIfPossible(proofWorksheet), derivStep.step, i));
+                    getErrorLabelIfPossible(proofWorksheet), derivStep.getStep(), i));
         }
 
-        final ParseNode proofRoot = new ParseNode(derivStep.ref);
+        final ParseNode proofRoot = new ParseNode(derivStep.getRef());
 
         // Note that the proof tree root has a "child" array
         // that is merely a parallel array of the ref's
@@ -820,7 +820,7 @@ public class ProofUnifier {
             if (!checkDerivStepProofUsingVerify()) {
                 messages.accumErrorMessage(
                     PaConstants.ERRMSG_VERIFY_RECHECK_ERR,
-                    getErrorLabelIfPossible(proofWorksheet), derivStep.step);
+                    getErrorLabelIfPossible(proofWorksheet), derivStep.getStep());
 
                 derivStep.verifyProofError = true;
                 proofWorksheet.getProofCursor().setCursorAtProofWorkStmt(
@@ -841,17 +841,17 @@ public class ProofUnifier {
         final HypothesisStep hypothesisStep)
     {
 
-        hypothesisStep.ref = LogHyp.BuildTempLogHypObject(
+        hypothesisStep.setRef(LogHyp.BuildTempLogHypObject(
             proofWorksheet.getMaxSeq() + hypIndexNbr + 1,
-            hypothesisStep.refLabel, hypothesisStep.formula,
+            hypothesisStep.getRefLabel(), hypothesisStep.getFormula(),
             proofWorksheet.getComboFrame().hypArray,
-            hypothesisStep.formulaParseTree);
+            hypothesisStep.formulaParseTree));
     }
 
     private boolean checkDerivStepProofUsingVerify() {
         final String errmsg = verifyProofs.verifyDerivStepProof(
             proofWorksheet.getTheoremLabel() + PaConstants.DOT_STEP_CAPTION
-                + derivStep.step, derivStep.formula, derivStep.getProofTree(),
+                + derivStep.getStep(), derivStep.getFormula(), derivStep.getProofTree(),
             proofWorksheet.getComboFrame());
 
         if (errmsg != null) {
@@ -907,7 +907,7 @@ public class ProofUnifier {
          * penalty for non-Proof Assistant users).
          */
 
-        if (derivStep.formula == null || !checkAssrtLevelMatch()
+        if (derivStep.getFormula() == null || !checkAssrtLevelMatch()
             || !checkHypLevelMatch())
             return false;
 
@@ -938,7 +938,7 @@ public class ProofUnifier {
         if (derivStep.hasDeriveStepFormula())
             assrtFormulaSubst = new ParseNode[assrtVarHypArray.length];
         else {
-            if (!assrt.getFormula().preunificationCheck(derivStep.formula))
+            if (!assrt.getFormula().preunificationCheck(derivStep.getFormula()))
                 return false;
 
             assrtFormulaSubst = assrtParseTree.getRoot().unifyWithSubtree(
@@ -1402,7 +1402,7 @@ public class ProofUnifier {
         else {
             if (!assrtLogHypArray[assrtLogHypIndex]
                 .getFormula()
-                .preunificationCheck(derivStepHypArray[stepLogHypIndex].formula))
+                .preunificationCheck(derivStepHypArray[stepLogHypIndex].getFormula()))
                 return false;
 
             assrtLogHypSubstArray[assrtLogHypIndex] = assrtLogHypArray[assrtLogHypIndex]
@@ -1477,7 +1477,7 @@ public class ProofUnifier {
             }
             throw new IllegalArgumentException(LangException.format(
                 PaConstants.ERRMSG_MERGE_LOGHYP_SUBST_ERR,
-                getErrorLabelIfPossible(proofWorksheet), derivStep.step));
+                getErrorLabelIfPossible(proofWorksheet), derivStep.getStep()));
         }
 
         return true;
@@ -1528,7 +1528,7 @@ public class ProofUnifier {
             }
             throw new IllegalArgumentException(LangException.format(
                 PaConstants.ERRMSG_INIT_FORMULA_SUBST_ERR,
-                getErrorLabelIfPossible(proofWorksheet), derivStep.step));
+                getErrorLabelIfPossible(proofWorksheet), derivStep.getStep()));
         }
 
         return outSubst;
@@ -1554,7 +1554,7 @@ public class ProofUnifier {
             // ref was entered and now we're seeing the
             // original ref again on the pass through the
             // assertions, so bypass it to save time...
-            if (assrt == derivStep.ref)
+            if (assrt == derivStep.getRef())
                 return;
 
             djMsg = checkDerivStepUnifyAgainstDjVars(derivStep, assrt,
@@ -1579,7 +1579,7 @@ public class ProofUnifier {
                             derivStep
                                 .buildSoftDjErrorMessage(holdSoftDjVarsErrorList);
                     }
-                    addToAlternatesList((Assrt)derivStep.ref);
+                    addToAlternatesList((Assrt)derivStep.getRef());
                     rearrangeHyps(swapHyps, rearrangeDerivAssrtXRef);
                     saveOtherDerivStepResults();
                 }
@@ -1596,7 +1596,7 @@ public class ProofUnifier {
                     derivStep.djVarsErrorStatus = PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS;
 
                     derivStep.setHeldDjErrorMessage(null);
-                    addToAlternatesList((Assrt)derivStep.ref);
+                    addToAlternatesList((Assrt)derivStep.getRef());
                     rearrangeHyps(swapHyps, rearrangeDerivAssrtXRef);
                     saveOtherDerivStepResults();
                 }
@@ -1643,10 +1643,10 @@ public class ProofUnifier {
                 || dH.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
                 derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS;
 
-            if (dH.hypFldIncomplete) {
+            if (dH.isHypFldIncomplete()) {
                 messages.accumInfoMessage(PaConstants.ERRMSG_INCOMPLETE_HYPS,
-                    getErrorLabelIfPossible(proofWorksheet), derivStep.step,
-                    derivStep.refLabel);
+                    getErrorLabelIfPossible(proofWorksheet), derivStep.getStep(),
+                    derivStep.getRefLabel());
 
                 derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS;
                 break;
@@ -1763,12 +1763,12 @@ public class ProofUnifier {
                         && derivStep.hasDeriveStepHyps())
                         newHypStep[j] = PaConstants.DEFAULT_STMT_LABEL;
                     else
-                        newHypStep[j] = newDerivStepHypArray[j].step;
+                        newHypStep[j] = newDerivStepHypArray[j].getStep();
                     continue xrefLoop;
                 }
             throw new IllegalArgumentException(LangException.format(
                 PaConstants.ERRMSG_REARRANGE_HYPS_ERR,
-                getErrorLabelIfPossible(proofWorksheet), derivStep.step));
+                getErrorLabelIfPossible(proofWorksheet), derivStep.getStep()));
         }
         derivStep.setHypList(newDerivStepHypArray);
         derivStep.setHypStepList(newHypStep);
@@ -1789,9 +1789,9 @@ public class ProofUnifier {
             return null; // success, no error message
 
         final String errmsg = verifyProofs.verifyDerivStepDjVars(
-            d.step, // step number output string,
+            d.getStep(), // step number output string,
             proofWorksheet.getTheoremLabel() + PaConstants.DOT_STEP_CAPTION
-                + derivStep.step, checkUnificationRef,
+                + derivStep.getStep(), checkUnificationRef,
             checkUnificationAssrtSubst, proofWorksheet.getComboFrame(),
             proofAsstPreferences.getDjVarsSoftErrorsIgnore(),
             proofAsstPreferences.getDjVarsSoftErrorsGenerateNew(),
@@ -1801,7 +1801,7 @@ public class ProofUnifier {
             return null;
 
         return LangException.format(PaConstants.ERRMSG_DV_VERIFY_ERR, errmsg,
-            getErrorLabelIfPossible(proofWorksheet), d.step,
+            getErrorLabelIfPossible(proofWorksheet), d.getStep(),
             checkUnificationRef.getLabel());
     }
 
@@ -1810,8 +1810,8 @@ public class ProofUnifier {
         derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFICATION_ERROR;
 
         messages.accumErrorMessage(PaConstants.ERRMSG_REF_UNIFY_ERR,
-            getErrorLabelIfPossible(proofWorksheet), derivStep.step,
-            derivStep.refLabel);
+            getErrorLabelIfPossible(proofWorksheet), derivStep.getStep(),
+            derivStep.getRefLabel());
 
         proofWorksheet.getProofCursor().setCursorAtProofWorkStmt(derivStep,
             PaConstants.FIELD_ID_REF);
@@ -1819,7 +1819,7 @@ public class ProofUnifier {
 
     private void markUnificationFailure() {
 
-        if (derivStep.generatedByDeriveFeature && derivStep.getHypNumber() == 0)
+        if (derivStep.isGeneratedByDeriveFeature() && derivStep.getHypNumber() == 0)
         {
 
             // An attempt was made -- to get lucky --
@@ -1827,7 +1827,7 @@ public class ProofUnifier {
             // but since it failed, there is no error,
             // just an incompleteness for the user to
             // deal with.
-            derivStep.hypFldIncomplete = true;
+            derivStep.setHypFldIncomplete(true);
             derivStep.setHypList(new ProofStepStmt[1]);
             derivStep.setHypStepList(new String[1]);
             derivStep.setHypStep(0, PaConstants.DEFAULT_STMT_LABEL);
@@ -1838,7 +1838,7 @@ public class ProofUnifier {
             derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFICATION_ERROR;
 
             messages.accumErrorMessage(PaConstants.ERRMSG_STEP_UNIFY_ERR,
-                getErrorLabelIfPossible(proofWorksheet), derivStep.step);
+                getErrorLabelIfPossible(proofWorksheet), derivStep.getStep());
 
             proofWorksheet.getProofCursor().setCursorAtProofWorkStmt(derivStep,
                 PaConstants.FIELD_ID_REF);
@@ -1893,7 +1893,7 @@ public class ProofUnifier {
 
             if (foundMatchingFormulaStep != null) {
                 derivStep.setHyp(i, foundMatchingFormulaStep);
-                derivStep.setHypStep(i, foundMatchingFormulaStep.step);
+                derivStep.setHypStep(i, foundMatchingFormulaStep.getStep());
                 derivStep.getHyp(i).loadProofLevel(derivStep.proofLevel + 1);
                 continue;
             }
@@ -1903,7 +1903,7 @@ public class ProofUnifier {
                 derivStep);
 
             derivStep.setHyp(i, generatedDerivStep);
-            derivStep.setHypStep(i, generatedDerivStep.step);
+            derivStep.setHypStep(i, generatedDerivStep.getStep());
             derivStep.getHyp(i).loadProofLevel(derivStep.proofLevel + 1);
 
             derivStep.nbrHypsGenerated++;
@@ -1922,7 +1922,7 @@ public class ProofUnifier {
 
         final Formula generatedFormula = verifyProofs.convertRPNToFormula(
             generatedFormulaParseTree.convertToRPN(),
-            PaConstants.DOT_STEP_CAPTION + derivStep.step);
+            PaConstants.DOT_STEP_CAPTION + derivStep.getStep());
 
         // oops, almost forgot this.
         generatedFormula.setTyp(provableLogicStmtTyp);
@@ -1979,18 +1979,18 @@ public class ProofUnifier {
                 return; // our work here is complete ;-)
             }
 
-            if (derivStep.ref == null || !derivStep.hasDeriveStepFormula()
+            if (derivStep.getRef() == null || !derivStep.hasDeriveStepFormula()
                 && !derivStep.hasDeriveStepHyps()
                 && !derivStep.hasWorkVarsInStepOrItsHyps())
                 continue;
 
-            assrt = (Assrt)derivStep.ref;
+            assrt = (Assrt)derivStep.getRef();
             assrtNbrLogHyps = assrt.getLogHypArrayLength();
 
             if (derivStep.getHypNumber() != assrtNbrLogHyps)
                 throw new IllegalArgumentException(LangException.format(
                     PaConstants.ERRMSG_STEP_REF_HYP_NBR_ERR,
-                    getErrorLabelIfPossible(proofWorksheet), derivStep.step));
+                    getErrorLabelIfPossible(proofWorksheet), derivStep.getStep()));
 
             for (int i = 0; i < derivStep.getHypNumber(); i++)
                 // this is BS -- but a hyp[i]'s deriveStepFormula
@@ -2117,7 +2117,7 @@ public class ProofUnifier {
                 && d.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED)
             {
                 // must redo DjVars edits!!!
-                doInitialStepDjEdits(d, (Assrt)d.ref, d.getAssrtSubstList());
+                doInitialStepDjEdits(d, (Assrt)d.getRef(), d.getAssrtSubstList());
                 saveOtherDjVarsEditResults(d);
             }
         }
@@ -2433,7 +2433,7 @@ public class ProofUnifier {
             d.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED;
 
         if (redoDjVarsEdits) {
-            doInitialStepDjEdits(d, (Assrt)d.ref, d.getAssrtSubstList());
+            doInitialStepDjEdits(d, (Assrt)d.getRef(), d.getAssrtSubstList());
             saveOtherDjVarsEditResults(d);
         }
     }
@@ -2456,7 +2456,7 @@ public class ProofUnifier {
         }
 
         // accumulate optional formula var hyps into "in use" list
-        if (d.step.compareToIgnoreCase(PaConstants.QED_STEP_NBR) != 0)
+        if (d.getStep().compareToIgnoreCase(PaConstants.QED_STEP_NBR) != 0)
             d.formulaParseTree.getRoot().accumListVarHypUsedListBySeq(
                 optionalVarHypList, optionalVarHypsInUseList);
 

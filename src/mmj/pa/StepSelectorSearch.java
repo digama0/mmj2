@@ -155,7 +155,7 @@ public class StepSelectorSearch {
             if (element.formulaParseTree == null)
                 throw new VerifyException(
                     PaConstants.ERRMSG_SELECTOR_SEARCH_NULL_PARSE_TREE,
-                    derivStep.step);
+                    derivStep.getStep());
             nbrDerivStepHyps++;
         }
 
@@ -217,7 +217,7 @@ public class StepSelectorSearch {
             break;
         }
 
-        return store.createStepSelectorResults(derivStep.step, storeOverflow);
+        return store.createStepSelectorResults(derivStep.getStep(), storeOverflow);
     }
 
     public List<Assrt> getSortedAssrtSearchList() {
@@ -376,7 +376,7 @@ public class StepSelectorSearch {
 
         final Formula outFormula = verifyProofs.convertRPNToFormula(
             outParseTree.convertToRPN(), PaConstants.DOT_STEP_CAPTION
-                + derivStep.step);
+                + derivStep.getStep());
 
         outFormula.setTyp(provableLogicStmtTyp);
 

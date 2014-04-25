@@ -158,7 +158,7 @@ public class SearchEngine {
         if (stepSearchMode) {
             derivStep = searchArgs.stepSearchStmt;
             aproofStepStmt = derivStep.getSortedHypArray();
-            step = derivStep.step;
+            step = derivStep.getStep();
         }
         else {
             derivStep = null;
@@ -393,7 +393,7 @@ public class SearchEngine {
             assrtHypArray, assrtSubst);
         final Formula formula = verifyProofs.convertRPNToFormula(
             parseTree1.convertToRPN(), SearchConstants.DOT_STEP_CAPTION
-                + derivStep.step);
+                + derivStep.getStep());
         formula.setTyp(provableLogicStmtTyp);
         return formula;
     }

@@ -260,7 +260,7 @@ public class CompiledSearchArgs {
                 throw new IllegalArgumentException(
                     SearchConstants.ERRMSG_SEARCH_NULL_PARSE_TREE_1
                         + SearchConstants.DOT_STEP_CAPTION
-                        + derivationStep.step);
+                        + derivationStep.getStep());
             nbrDerivStepHyps++;
         }
 
