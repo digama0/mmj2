@@ -109,10 +109,30 @@
 package mmj.pa;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
 
-import mmj.lang.*;
+import mmj.lang.Assrt;
+import mmj.lang.Cnst;
+import mmj.lang.DjVars;
+import mmj.lang.Formula;
+import mmj.lang.Hyp;
+import mmj.lang.LogHyp;
+import mmj.lang.LogicalSystem;
+import mmj.lang.Messages;
+import mmj.lang.ParseTree;
 import mmj.lang.ParseTree.RPNStep;
+import mmj.lang.ScopeFrame;
+import mmj.lang.Stmt;
+import mmj.lang.Theorem;
+import mmj.lang.Var;
+import mmj.lang.VarHyp;
+import mmj.lang.WorkVar;
 import mmj.mmio.MMIOError;
 import mmj.mmio.Tokenizer;
 import mmj.search.SearchOutput;
@@ -1065,6 +1085,9 @@ public class ProofWorksheet {
                     getErrorLabelIfPossible(),
                     proofTextTokenizer.getCurrentLineNbr(), nextToken);
 
+            // auxiliary and simple statement processing: header, footer,
+            // generated proof, distinct variables and e.g.
+
             if (nextToken.equals(PaConstants.HEADER_STMT_TOKEN)) {
                 if (headerStmt != null)
                     triggerLoadStructureException(
@@ -1115,7 +1138,7 @@ public class ProofWorksheet {
 
             final int origStepHypRefLength = nextToken.length();
 
-            String prefixField = nextToken.substring(0, 1).toLowerCase();
+            final String prefixField = nextToken.substring(0, 1).toLowerCase();
 
             if (prefixField.equals(PaConstants.COMMENT_STMT_TOKEN_PREFIX)) {
                 final CommentStmt x = new CommentStmt(this);
@@ -1129,17 +1152,19 @@ public class ProofWorksheet {
 
             // now work on ProofSteps, starting with step/hyp/ref
             // fields.
-            if (!prefixField.equals(PaConstants.HYP_STEP_PREFIX))
-                prefixField = null;
+
+            final boolean isHypStep = prefixField
+                .equals(PaConstants.HYP_STEP_PREFIX);
+
             final DelimitedTextParser stepHypRefParser = new DelimitedTextParser(
-                prefixField == null ? nextToken : nextToken.substring(1));
+                isHypStep ? nextToken.substring(1) : nextToken);
 
             stepHypRefParser
                 .setParseDelimiter(PaConstants.FIELD_DELIMITER_COLON);
             stepHypRefParser.setQuoterEnabled(false);
             final List<String> fields = stepHypRefParser.parseAll();
 
-            String stepField = validateStepField(prefixField, fields.get(0));
+            String stepField = validateStepField(isHypStep, fields.get(0));
             String hypField = null;
             String refField = null;
             String localRefField = null;
@@ -1149,11 +1174,11 @@ public class ProofWorksheet {
                     hypField = fields.get(1).isEmpty() ? null : fields.get(1);
                     refField = fields.get(2).isEmpty() ? null : fields.get(2);
                 case 1:
-                    stepField = validateStepField(prefixField, fields.get(0));
+                    stepField = validateStepField(isHypStep, fields.get(0));
                     break;
 
                 case 2:
-                    stepField = validateStepField(prefixField, fields.get(0));
+                    stepField = validateStepField(isHypStep, fields.get(0));
                     hypField = fields.get(1);
                     if (hypField.length() > 0
                         && hypField.charAt(0) == PaConstants.LOCAL_REF_ESCAPE_CHAR
@@ -1188,7 +1213,7 @@ public class ProofWorksheet {
             final int lineStartCharNbr = (int)proofTextTokenizer
                 .getCurrentCharNbr();
 
-            if (prefixField != null) {
+            if (isHypStep) {
                 if (hypField != null)
                     triggerLoadStructureException(
                         PaConstants.ERRMSG_HYP_HAS_HYP,
@@ -1725,7 +1750,7 @@ public class ProofWorksheet {
         comboFrame.addDjVarGroups(dvGroupArray);
     }
 
-    private String validateStepField(final String prefixField,
+    private String validateStepField(final boolean isHypStep,
         final String stepField) throws ProofAsstException
     {
         if (stepField.equals("")
@@ -1735,7 +1760,7 @@ public class ProofWorksheet {
 
         final String outputStep = stepField.toLowerCase();
         if (outputStep.equals(PaConstants.QED_STEP_NBR)) {
-            if (prefixField != null)
+            if (isHypStep)
                 triggerLoadStructureException(PaConstants.ERRMSG_QED_HYP_STEP,
                     getErrorLabelIfPossible(), outputStep);
             return outputStep;
