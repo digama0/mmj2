@@ -442,7 +442,7 @@ public class ProofAsstBoss extends Boss {
         if (runParm.name
             .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_OPTIMIZE_THEOREM_SEARCH) == 0)
         {
-            optimizeTheoremSearch(runParm);
+            doProofAsstTheoremSearchOptimization(runParm);
             return true;
         }
 
@@ -1446,7 +1446,7 @@ public class ProofAsstBoss extends Boss {
      * @param runParm RunParmFile line.
      * @throws VerifyException if an error occurred
      */
-    public void optimizeTheoremSearch(final RunParmArrayEntry runParm)
+    public void doProofAsstTheoremSearchOptimization(final RunParmArrayEntry runParm)
         throws VerifyException
     {
         final ProofAsst proofAsst = getProofAsst();
