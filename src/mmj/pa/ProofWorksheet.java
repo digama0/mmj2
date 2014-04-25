@@ -1436,7 +1436,7 @@ public class ProofWorksheet {
                 continue;
             final DerivationStep dI = (DerivationStep)x;
 
-            if (dI.hyp.length == 0 || dI.localRef != null)
+            if (dI.getHypNumber() == 0 || dI.localRef != null)
                 continue;
 
             boolean stepUpdated = false;
@@ -1445,11 +1445,11 @@ public class ProofWorksheet {
             {
                 final DerivationStep dJ = j.previous();
 
-                for (int k = dI.hyp.length - 1; k >= 0; k--)
-                    if (dI.hyp[k] == dJ) {
+                for (int k = dI.getHypNumber() - 1; k >= 0; k--)
+                    if (dI.getHyp(k) == dJ) {
                         stepUpdated = true;
-                        dI.hypStep[k] = dJ.localRef.step;
-                        dI.hyp[k] = dJ.localRef;
+                        dI.setHypStep(k, dJ.localRef.step);
+                        dI.setHyp(k, dJ.localRef);
                     }
             }
             if (stepUpdated) {

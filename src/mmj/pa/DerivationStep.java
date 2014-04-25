@@ -68,9 +68,19 @@
 package mmj.pa;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-import mmj.lang.*;
+import mmj.lang.Assrt;
+import mmj.lang.DjVars;
+import mmj.lang.Formula;
+import mmj.lang.LangException;
+import mmj.lang.ParseNode;
+import mmj.lang.ParseTree;
+import mmj.lang.Stmt;
+import mmj.lang.VarHyp;
+import mmj.lang.WorkVar;
 import mmj.mmio.MMIOError;
 import mmj.util.DelimitedTextParser;
 
@@ -79,13 +89,27 @@ import mmj.util.DelimitedTextParser;
  */
 public class DerivationStep extends ProofStepStmt {
 
-    public ProofStepStmt[] hyp;
+    private ProofStepStmt[] hyp;
     private ProofStepStmt[] sortedHypArray;
 
-    String[] hypStep;
+    private String[] hypStep;
 
-    String logHypsL1HiLoKey;
-    int logHypsMaxDepth;
+    private String logHypsL1HiLoKey;
+    private int logHypsMaxDepth;
+
+    private String heldDjErrorMessage;
+
+    // new fields for Proof Assistant "Derive" Feature:
+    private boolean deriveStepFormula; // for Derive
+    private boolean deriveStepHyps; // for Derive
+
+    /** assrtSubst is created by ProofUnifier.java when step is unified (yay!) */
+    private ParseNode[] assrtSubst;
+
+    private ParseTree proofTree;
+
+    // This fields have only external usage
+    // So they could be left as public
 
     int unificationStatus;
     int djVarsErrorStatus;
@@ -94,20 +118,9 @@ public class DerivationStep extends ProofStepStmt {
 
     boolean verifyProofError;
 
-    String heldDjErrorMessage;
-
     List<Assrt> alternateRefList;
 
-    // new fields for Proof Assistant "Derive" Feature:
-    boolean deriveStepFormula; // for Derive
-    boolean deriveStepHyps; // for Derive
-    int nbrMissingHyps; // for Derive
     int nbrHypsGenerated;
-
-    /** assrtSubst is created by ProofUnifier.java when step is unified (yay!) */
-    ParseNode[] assrtSubst;
-
-    ParseTree proofTree;
 
     /**
      * Sorts DerivationStep hyp array in descending order of hypothesis step
@@ -404,7 +417,6 @@ public class DerivationStep extends ProofStepStmt {
             if (nbrValidHyps < nbrExpectedHyps) {
                 deriveStepHyps = true;
                 w.hasWorkVarsOrDerives = true;
-                nbrMissingHyps = nbrExpectedHyps - nbrValidHyps;
                 resizeHypField(nbrExpectedHyps);
             }
             else if (nbrValidHyps == nbrExpectedHyps)
@@ -589,12 +601,28 @@ public class DerivationStep extends ProofStepStmt {
      * 
      * @param assrtSubst ParseNode array.
      */
-    public void setAssrtSubst(final ParseNode[] assrtSubst) {
+    public void setAssrtSubstList(final ParseNode[] assrtSubst) {
         this.assrtSubst = assrtSubst;
     }
 
+    public ParseNode[] getAssrtSubstList() {
+        return assrtSubst;
+    }
+
+    public int getAssrtSubstNumber() {
+        return assrtSubst.length;
+    }
+
+    public ParseNode getAssrtSubst(final int i) {
+        return assrtSubst[i];
+    }
+
+    public void setAssrtSubst(final int i, final ParseNode node) {
+        assrtSubst[i] = node;
+    }
+
     /**
-     * Get the proofTree.
+     * Get the proofTree. Could return null.
      * 
      * @return proofTree.
      */
@@ -602,6 +630,14 @@ public class DerivationStep extends ProofStepStmt {
         return proofTree;
     }
 
+    /**
+     * Set the proofTree.
+     * 
+     * @param proofTree new proof tree.
+     */
+    public void setProofTree(final ParseTree proofTree) {
+        this.proofTree = proofTree;
+    }
     /**
      * Swap two hyp references in a DerivationStep. This method is provided as a
      * convenience for ProofUnifier.java.
@@ -658,14 +694,26 @@ public class DerivationStep extends ProofStepStmt {
         this.sortedHypArray = sortedHypArray;
     }
 
-    /**
-     * Gets the DerivationStep hyp array.
-     * 
-     * @return array of ProofStepStmt representing the DerivationStep's
-     *         hypotheses.
-     */
-    public ProofStepStmt[] getHyp() {
+    // hyp access methods:
+
+    public ProofStepStmt[] getHypList() {
         return hyp;
+    }
+
+    public void setHypList(final ProofStepStmt[] hypArray) {
+        hyp = hypArray;
+    }
+
+    public ProofStepStmt getHyp(final int i) {
+        return hyp[i];
+    }
+
+    public void setHyp(final int i, final ProofStepStmt stmt) {
+        hyp[i] = stmt;
+    }
+
+    public int getHypNumber() {
+        return hyp.length;
     }
 
     private boolean getValidDerivationRefField(final int lineStartCharNbr)
@@ -729,8 +777,9 @@ public class DerivationStep extends ProofStepStmt {
                 list.add(s.toLowerCase());
         }
 
-        for (final String step : hypStep = list
-            .toArray(new String[list.size()]))
+        setHypStepList(list.toArray(new String[list.size()]));
+
+        for (final String step : hypStep)
             if (step.compareTo(PaConstants.DEFAULT_STMT_LABEL) == 0)
                 questionMarks++;
 
@@ -822,7 +871,7 @@ public class DerivationStep extends ProofStepStmt {
         }
 
         hyp = outHyp;
-        hypStep = outHypStep;
+        setHypStepList(outHypStep);
     }
 
     private void smooshLeft(final int lastOutputIndex,
@@ -927,5 +976,37 @@ public class DerivationStep extends ProofStepStmt {
             delim = ",";
         }
         return s + ":" + refLabel + " " + formula;
+    }
+
+    void setHypStep(final int i, final String s) {
+        hypStep[i] = s;
+    }
+
+    void setHypStepList(final String[] hypStep) {
+        this.hypStep = hypStep;
+    }
+
+    public String getLogHypsL1HiLoKey() {
+        return logHypsL1HiLoKey;
+    }
+
+    public int getLogHypsMaxDepth() {
+        return logHypsMaxDepth;
+    }
+
+    public String getHeldDjErrorMessage() {
+        return heldDjErrorMessage;
+    }
+
+    public void setHeldDjErrorMessage(final String heldDjErrorMessage) {
+        this.heldDjErrorMessage = heldDjErrorMessage;
+    }
+
+    public boolean hasDeriveStepFormula() {
+        return deriveStepFormula;
+    }
+
+    public boolean hasDeriveStepHyps() {
+        return deriveStepHyps;
     }
 }

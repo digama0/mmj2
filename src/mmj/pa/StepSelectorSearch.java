@@ -23,9 +23,19 @@
 
 package mmj.pa;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-import mmj.lang.*;
+import mmj.lang.Assrt;
+import mmj.lang.Cnst;
+import mmj.lang.Formula;
+import mmj.lang.Hyp;
+import mmj.lang.LogHyp;
+import mmj.lang.ParseNode;
+import mmj.lang.ParseTree;
+import mmj.lang.Theorem;
+import mmj.lang.VerifyException;
 import mmj.util.MergeSortedArrayLists;
 import mmj.verify.VerifyProofs;
 
@@ -136,7 +146,7 @@ public class StepSelectorSearch {
         /* count and double-check input
          */
         int nbrDerivStepHyps = 0;
-        for (final ProofStepStmt element : derivStep.hyp) {
+        for (final ProofStepStmt element : derivStep.getHypList()) {
             if (element == null)
                 continue;
             /* This is bogus -- but a hyp[i]'s deriveStepFormula
@@ -161,7 +171,7 @@ public class StepSelectorSearch {
         /* See if log hyp "wildcards" to be searched.
          */
         int maxHyps;
-        if (nbrDerivStepHyps == derivStep.hyp.length)
+        if (nbrDerivStepHyps == derivStep.getHypNumber())
             maxHyps = nbrDerivStepHyps;
         else
             maxHyps = Integer.MAX_VALUE;

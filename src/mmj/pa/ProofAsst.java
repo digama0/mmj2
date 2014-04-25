@@ -1529,7 +1529,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         // ProofWorkStmt.status values.
         final int PROVED_PERFECTLY = 8;
         int s;
-        if (q.proofTree == null)
+        if (q.getProofTree() == null)
             s = 4; // arbitrary
         else if (q.djVarsErrorStatus == PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS)
         {
@@ -1555,10 +1555,10 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         if (q != null) {
             RPNStep[] newProof;
-            if (q.proofTree == null)
+            if (q.getProofTree() == null)
                 newProof = new RPNStep[0];
             else
-                newProof = q.proofTree.convertToRPNExpanded();
+                newProof = q.getProofTree().convertToRPNExpanded();
             final RPNStep[] oldProof = new ParseTree(result.proofWorksheet
                 .getTheorem().getProof()).convertToRPNExpanded();
 

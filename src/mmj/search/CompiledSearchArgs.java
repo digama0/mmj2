@@ -19,8 +19,18 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import mmj.lang.*;
-import mmj.pa.*;
+import mmj.lang.Assrt;
+import mmj.lang.BookManager;
+import mmj.lang.Chapter;
+import mmj.lang.Cnst;
+import mmj.lang.LogicalSystem;
+import mmj.lang.ScopeFrame;
+import mmj.lang.Section;
+import mmj.lang.Stmt;
+import mmj.pa.DerivationStep;
+import mmj.pa.ProofAsst;
+import mmj.pa.ProofAsstPreferences;
+import mmj.pa.ProofStepStmt;
 import mmj.verify.VerifyProofs;
 
 public class CompiledSearchArgs {
@@ -243,7 +253,7 @@ public class CompiledSearchArgs {
     private void compileStepSearchArgs() {
         final DerivationStep derivationStep = searchArgs.stepSearchStmt;
         nbrDerivStepHyps = 0;
-        for (final ProofStepStmt element : derivationStep.hyp) {
+        for (final ProofStepStmt element : derivationStep.getHypList()) {
             if (element == null)
                 continue;
             if (element.formulaParseTree == null)
@@ -254,7 +264,7 @@ public class CompiledSearchArgs {
             nbrDerivStepHyps++;
         }
 
-        if (nbrDerivStepHyps == derivationStep.hyp.length)
+        if (nbrDerivStepHyps == derivationStep.getHypNumber())
             derivStepHypWildcards = false;
         else
             derivStepHypWildcards = true;
