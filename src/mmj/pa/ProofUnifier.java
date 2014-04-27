@@ -601,6 +601,8 @@ public class ProofUnifier {
      */
     private void generateNumbersForAutoSteps(final ProofWorksheet proofWorksheet)
     {
+        if (!proofAsstPreferences.isAutocompleteEnabled())
+            return;
         // Find the maximum index
         int generatedNumber = PaConstants.AUTOCOMPLETE_START_STEP_NUMBER;
         for (int i = 0; i < dsa1Count; i++) {
