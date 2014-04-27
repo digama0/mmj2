@@ -1126,6 +1126,17 @@ public class UtilConstants {
     public static final String RUNPARM_PROOF_ASST_PROOF_FORMAT = "ProofAsstProofFormat";
 
     /**
+     * ProofAsstAutocompleteEnabled
+     * 
+     * <pre>
+     * "ProofAsstAutocompleteEnabled": Yes or No
+     * 
+     * Optional, default is No (disabled).
+     * </pre>
+     */
+    public static final String RUNPARM_PROOF_ASST_AUTOCOMPLETE_ENABLED = "ProofAsstAutocompleteEnabled";
+
+    /**
      * ProofAsstHighlightingEnabled
      * 
      * <pre>
@@ -1840,7 +1851,7 @@ public class UtilConstants {
 
     /**
      * Perform the optimizations for theorem search during "parallel"
-     * unification
+     * unification.
      */
     public static final String RUNPARM_PROOF_ASST_OPTIMIZE_THEOREM_SEARCH = "ProofAsstOptimizeTheoremSearch";
 

@@ -1150,6 +1150,12 @@ public class ProofWorksheet {
                 continue;
             }
 
+            final boolean isAutoStep;
+            if (proofAsstPreferences.isAutocompleteEnabled())
+                isAutoStep = prefixField.equals(PaConstants.AUTO_STEP_PREFIX);
+            else
+                isAutoStep = false;
+
             // now work on ProofSteps, starting with step/hyp/ref
             // fields.
 
@@ -1159,55 +1165,75 @@ public class ProofWorksheet {
             final DelimitedTextParser stepHypRefParser = new DelimitedTextParser(
                 isHypStep ? nextToken.substring(1) : nextToken);
 
-            stepHypRefParser
-                .setParseDelimiter(PaConstants.FIELD_DELIMITER_COLON);
-            stepHypRefParser.setQuoterEnabled(false);
-            final List<String> fields = stepHypRefParser.parseAll();
-
-            String stepField = validateStepField(isHypStep, fields.get(0));
             String hypField = null;
             String refField = null;
             String localRefField = null;
 
-            switch (fields.size()) {
-                case 3:
-                    hypField = fields.get(1).isEmpty() ? null : fields.get(1);
-                    refField = fields.get(2).isEmpty() ? null : fields.get(2);
-                case 1:
-                    stepField = validateStepField(isHypStep, fields.get(0));
-                    break;
+            String stepField = null;
 
-                case 2:
-                    stepField = validateStepField(isHypStep, fields.get(0));
-                    hypField = fields.get(1);
-                    if (hypField.length() > 0
-                        && hypField.charAt(0) == PaConstants.LOCAL_REF_ESCAPE_CHAR
-                        || logicalSystem.getStmtTbl().containsKey(hypField))
-                    {
-                        // Smells like the ref field. probably typed step:ref
-                        // instead of step::ref
-                        refField = hypField;
-                        hypField = null;
-                    }
-                    else if (hypField.isEmpty())
-                        hypField = null;
-                    break;
+            if (!isAutoStep) {
+                stepHypRefParser
+                    .setParseDelimiter(PaConstants.FIELD_DELIMITER_COLON);
+                stepHypRefParser.setQuoterEnabled(false);
+                final List<String> fields = stepHypRefParser.parseAll();
 
-                case 0:
-                    triggerLoadStructureException(PaConstants.ERRMSG_SHR_BAD,
-                        getErrorLabelIfPossible(),
-                        proofTextTokenizer.getCurrentLineNbr(), nextToken);
+                stepField = validateStepField(isHypStep, fields.get(0));
 
-                default:
-                    triggerLoadStructureException(PaConstants.ERRMSG_SHR_BAD2,
-                        getErrorLabelIfPossible(), stepField,
-                        proofTextTokenizer.getCurrentLineNbr(), nextToken);
+                switch (fields.size()) {
+                    case 3:
+                        hypField = fields.get(1).isEmpty() ? null : fields
+                            .get(1);
+                        refField = fields.get(2).isEmpty() ? null : fields
+                            .get(2);
+                    case 1:
+                        stepField = validateStepField(isHypStep, fields.get(0));
+                        break;
+
+                    case 2:
+                        stepField = validateStepField(isHypStep, fields.get(0));
+                        hypField = fields.get(1);
+                        if (hypField.length() > 0
+                            && hypField.charAt(0) == PaConstants.LOCAL_REF_ESCAPE_CHAR
+                            || logicalSystem.getStmtTbl().containsKey(hypField))
+                        {
+                            // Smells like the ref field. probably typed
+                            // step:ref
+                            // instead of step::ref
+                            refField = hypField;
+                            hypField = null;
+                        }
+                        else if (hypField.isEmpty())
+                            hypField = null;
+                        break;
+
+                    case 0:
+                        triggerLoadStructureException(
+                            PaConstants.ERRMSG_SHR_BAD,
+                            getErrorLabelIfPossible(),
+                            proofTextTokenizer.getCurrentLineNbr(), nextToken);
+
+                    default:
+                        triggerLoadStructureException(
+                            PaConstants.ERRMSG_SHR_BAD2,
+                            getErrorLabelIfPossible(), stepField,
+                            proofTextTokenizer.getCurrentLineNbr(), nextToken);
+                }
+                if (refField != null
+                    && refField.charAt(0) == PaConstants.LOCAL_REF_ESCAPE_CHAR)
+                {
+                    localRefField = refField.substring(1);
+                    refField = null;
+                }
             }
-            if (refField != null
-                && refField.charAt(0) == PaConstants.LOCAL_REF_ESCAPE_CHAR)
-            {
-                localRefField = refField.substring(1);
-                refField = null;
+            else {
+                if (!nextToken.equals(PaConstants.AUTO_STEP_PREFIX)) {
+                    final ProofWorkStmt stmt = findMatchingStepNbr(nextToken);
+                    if (stmt != null)
+                        triggerLoadStructureException(
+                            PaConstants.ERRMSG_STEP_NBR_DUP,
+                            getErrorLabelIfPossible(), nextToken);
+                }
+                stepField = nextToken;
             }
 
             final int lineStartCharNbr = (int)proofTextTokenizer
@@ -1279,6 +1305,9 @@ public class ProofWorksheet {
 
                 final DerivationStep x = new DerivationStep(this);
 
+                if (isAutoStep)
+                    x.setAutoStep(true);
+
                 if (localRefField != null) {
 
                     if (stepSelectorChoiceRequired
@@ -1305,6 +1334,7 @@ public class ProofWorksheet {
                     nextToken = x.loadDerivationStep(origStepHypRefLength,
                         lineStartCharNbr, stepField, hypField, refField);
                 }
+
                 proofWorkStmtList.add(x);
 
                 if (setInputCursorStmtIfHere(x, inputCursorPos, nextToken,
@@ -1335,7 +1365,8 @@ public class ProofWorksheet {
                 triggerLoadStructureException(
                     PaConstants.ERRMSG_SELECTOR_SEARCH_STEP_NOTFND,
                     getErrorLabelIfPossible());
-            stepRequest.step = ((DerivationStep)proofInputCursor.proofWorkStmt).getStep();
+            stepRequest.step = ((DerivationStep)proofInputCursor.proofWorkStmt)
+                .getStep();
             stepRequest.param1 = proofInputCursor.proofWorkStmt;
         }
 
@@ -1344,7 +1375,8 @@ public class ProofWorksheet {
             if (proofInputCursor.cursorIsSet
                 && proofInputCursor.proofWorkStmt instanceof DerivationStep)
             {
-                stepRequest.step = ((DerivationStep)proofInputCursor.proofWorkStmt).getStep();
+                stepRequest.step = ((DerivationStep)proofInputCursor.proofWorkStmt)
+                    .getStep();
                 stepRequest.param1 = proofInputCursor.proofWorkStmt;
             }
             else {

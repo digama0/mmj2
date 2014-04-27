@@ -145,6 +145,11 @@ public class DerivationStep extends ProofStepStmt {
     int nbrHypsGenerated;
 
     /**
+     * Auto derivation step is a derivation step with some form of autocomplete.
+     */
+    private boolean autoStep = false;
+
+    /**
      * Sorts DerivationStep hyp array in descending order of hypothesis step
      * formula length.
      * 
@@ -596,6 +601,8 @@ public class DerivationStep extends ProofStepStmt {
         final StringBuilder sb = new StringBuilder();
 
         sb.append(getStep());
+        if (autoStep)
+            return sb;
         sb.append(PaConstants.FIELD_DELIMITER_COLON);
 
         if (hypStep.length > 0) {
@@ -992,6 +999,9 @@ public class DerivationStep extends ProofStepStmt {
 
     @Override
     public String toString() {
+        if (autoStep)
+            return getStep() + " " + getFormula();
+
         String s = getStep() + ":";
         String delim = "";
         for (final String h : hypStep) {
@@ -1046,7 +1056,15 @@ public class DerivationStep extends ProofStepStmt {
         return hypFldIncomplete;
     }
 
-    public void setHypFldIncomplete(boolean hypFldIncomplete) {
+    public void setHypFldIncomplete(final boolean hypFldIncomplete) {
         this.hypFldIncomplete = hypFldIncomplete;
+    }
+
+    public boolean isAutoStep() {
+        return autoStep;
+    }
+
+    public void setAutoStep(final boolean autoStep) {
+        this.autoStep = autoStep;
     }
 }

@@ -447,6 +447,13 @@ public class ProofAsstBoss extends Boss {
         }
 
         if (runParm.name
+            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_AUTOCOMPLETE_ENABLED) == 0)
+        {
+            doProofAsstAutocompleteEnabled(runParm);
+            return true;
+        }
+
+        if (runParm.name
             .compareToIgnoreCase(UtilConstants.RUNPARM_STEP_SELECTOR_BATCH_TEST) == 0)
         {
             doStepSelectorBatchTest(runParm);
@@ -1446,13 +1453,28 @@ public class ProofAsstBoss extends Boss {
      * @param runParm RunParmFile line.
      * @throws VerifyException if an error occurred
      */
-    public void doProofAsstTheoremSearchOptimization(final RunParmArrayEntry runParm)
-        throws VerifyException
+    public void doProofAsstTheoremSearchOptimization(
+        final RunParmArrayEntry runParm) throws VerifyException
     {
         final ProofAsst proofAsst = getProofAsst();
         if (proofAsst == null)
             return;
         proofAsst.optimizeTheoremSearch();
+    }
+
+    /**
+     * If this option is set then the proof assistant will support autocomplete
+     * derivation steps
+     * 
+     * @param runParm RunParmFile line.
+     * @throws VerifyException if an error occurred
+     */
+    public void doProofAsstAutocompleteEnabled(final RunParmArrayEntry runParm)
+        throws VerifyException
+    {
+        final boolean autocomplete = editYesNoRunParm(runParm,
+            UtilConstants.RUNPARM_PROOF_ASST_AUTOCOMPLETE_ENABLED, 1);
+        getProofAsstPreferences().setAutocompleteEnabled(autocomplete);
     }
 
     /**

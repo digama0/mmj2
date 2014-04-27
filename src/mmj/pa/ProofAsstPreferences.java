@@ -56,8 +56,13 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
@@ -156,6 +161,8 @@ public class ProofAsstPreferences {
 
     private SearchMgr searchMgr;
 
+    private boolean autocompleteEnabled;
+
     /**
      * Default constructor.
      */
@@ -220,6 +227,8 @@ public class ProofAsstPreferences {
         foregroundColor = PaConstants.DEFAULT_FOREGROUND_COLOR;
 
         backgroundColor = PaConstants.DEFAULT_BACKGROUND_COLOR;
+
+        autocompleteEnabled = PaConstants.AUTOCOMPLETE_ENABLED_DEFAULT;
 
         setDjVarsSoftErrorsOption(PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_DEFAULT);
 
@@ -1636,5 +1645,13 @@ public class ProofAsstPreferences {
 
     public void setSearchMgr(final SearchMgr searchmgr) {
         searchMgr = searchmgr;
+    }
+
+    public boolean isAutocompleteEnabled() {
+        return autocompleteEnabled;
+    }
+
+    public void setAutocompleteEnabled(final boolean autocompleteTurnedOn) {
+        this.autocompleteEnabled = autocompleteTurnedOn;
     }
 }
