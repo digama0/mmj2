@@ -35,7 +35,7 @@ public class BatchCommand {
     }
 
     /**
-     * getter of name string
+     * Getter of name string
      * 
      * @return name string
      */
@@ -44,7 +44,7 @@ public class BatchCommand {
     }
 
     /**
-     * getter of documentation string
+     * Getter of documentation string
      * 
      * @return string with documentation
      */
