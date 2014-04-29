@@ -10,8 +10,8 @@ package mmj.util;
  */
 public class BatchCommand {
 
-    public final String name;
-    public String documentation;
+    private final String name;
+    private final String documentation;
 
     /**
      * Constructor of BatchCommand. Sets documentation to null.
@@ -32,6 +32,24 @@ public class BatchCommand {
     BatchCommand(final String name_, final String documentation_) {
         name = name_;
         documentation = documentation_;
+    }
+
+    /**
+     * getter of name string
+     * 
+     * @return name string
+     */
+    final String name() {
+        return name;
+    }
+
+    /**
+     * getter of documentation string
+     * 
+     * @return string with documentation
+     */
+    final String documentation() {
+        return documentation;
     }
 
 }
