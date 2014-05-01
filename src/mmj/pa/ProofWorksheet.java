@@ -1270,7 +1270,9 @@ public class ProofWorksheet {
                 continue;
             }
 
-            if (stepField.equals(PaConstants.QED_STEP_NBR)) {
+            if (stepField.equals(PaConstants.QED_STEP_NBR) || isAutoStep
+                && stepField.equals(PaConstants.AUTO_QED_STEP_NBR))
+            {
                 if (qedStep != null)
                     triggerLoadStructureException(
                         PaConstants.ERRMSG_MULT_QED_ERROR,
@@ -1290,6 +1292,10 @@ public class ProofWorksheet {
                 }
 
                 qedStep = new DerivationStep(this);
+
+                if (isAutoStep)
+                    qedStep.setAutoStep(true);
+
                 nextToken = qedStep.loadDerivationStep(origStepHypRefLength,
                     lineStartCharNbr, stepField, hypField, refField);
                 proofWorkStmtList.add(qedStep);

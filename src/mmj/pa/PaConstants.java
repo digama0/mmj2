@@ -2038,6 +2038,12 @@ public class PaConstants {
     public static final String AUTO_STEP_PREFIX = "!";
 
     /**
+     * QED ProofStep ProofWorkStmt token prefix
+     */
+    public static final String AUTO_QED_STEP_NBR = AUTO_STEP_PREFIX
+        + QED_STEP_NBR;
+
+    /**
      * Comment ProofWorkStmt token prefix
      */
     public static final String COMMENT_STMT_TOKEN_PREFIX = "*";

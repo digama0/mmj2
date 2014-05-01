@@ -609,7 +609,8 @@ public class ProofUnifier {
             final DerivationStep d = dsa1[i];
             if (d.isAutoStep())
                 if (d.getStep().startsWith(PaConstants.AUTO_STEP_PREFIX)
-                    && !d.getStep().equals(PaConstants.AUTO_STEP_PREFIX))
+                    && !d.getStep().equals(PaConstants.AUTO_STEP_PREFIX)
+                    && !d.getStep().equals(PaConstants.AUTO_QED_STEP_NBR))
                 {
                     final String s = d.getStep().substring(
                         PaConstants.AUTO_STEP_PREFIX.length());
@@ -653,7 +654,8 @@ public class ProofUnifier {
                     break;
                 derivStep = dsa1[i];
 
-                if (derivStep.getHypNumber() == assrtNbrLogHyps)
+                if (derivStep.getHypNumber() == assrtNbrLogHyps
+                    || derivStep.isAutoStep())
                     if (unifyStepWithoutWorkVars())
                         if (derivStep.djVarsErrorStatus == PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS)
                         {
@@ -998,12 +1000,19 @@ public class ProofUnifier {
         assrtHypArray = assrt.getMandFrame().hypArray;
         assrtSubst = initLoadAssrtSubst();
 
-        if (derivStep.getHypNumber() == 0) {
+        assrtLogHypArray = assrt.getLogHypArray();
+        derivStepHypArray = derivStep.getHypList();
+
+        if (assrtLogHypArray.length == 0) {
             markStepUnified(false, // usedUnifyWithWorkVars,
                 false, // no "swap",
                 null); // no rearrange
             return true; // Special Case 0
         }
+
+        // In case of autocomplete step we should perform specified unification
+        if (derivStep.isAutoStep())
+            return autocompleteUnifyWithoutWorkVars();
 
         /*
          * THREE, we attempt to unify the assertion's
@@ -1016,8 +1025,6 @@ public class ProofUnifier {
          * not have to go through this misery a second
          * time!
          */
-        assrtLogHypArray = assrt.getLogHypArray();
-        derivStepHypArray = derivStep.getHypList();
 
         /*
          * A temporary-use array to hold results
@@ -1377,6 +1384,74 @@ public class ProofUnifier {
         return false;
     }
 
+    private boolean recursiveAutocomplete(
+        final ParseNode[][] assrtLogHypSubstArray,
+        final ProofStepStmt[] hypDerivArray, final int i)
+    {
+        if (i >= assrtLogHypArray.length) {
+            final String msg = checkDerivStepUnifyAgainstDjVars(derivStep,
+                assrt, assrtSubst);
+            if (msg == null)
+                return true;
+            else
+                return false; // TODO: use msg
+        }
+
+        for (final ProofWorkStmt proofWorkStmtObject : proofWorksheet
+            .getProofWorkStmtList())
+        {
+
+            if (proofWorkStmtObject == derivStep)
+                break;
+
+            if (!(proofWorkStmtObject instanceof ProofStepStmt))
+                continue;
+
+            final ProofStepStmt candidate = (ProofStepStmt)proofWorkStmtObject;
+
+            boolean ok = unifyAndMergeSubst(assrtLogHypSubstArray, i,
+                candidate, i);
+            if (ok) {
+                hypDerivArray[i] = candidate;
+                ok = recursiveAutocomplete(assrtLogHypSubstArray,
+                    hypDerivArray, i + 1);
+                if (ok)
+                    return true;
+                else {
+                    hypDerivArray[i] = null;
+                    cleanupOneAssrtSubstLevel(i);
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean autocompleteUnifyWithoutWorkVars() throws VerifyException {
+        assrtLogHypArray = assrt.getSortedLogHypArray();
+        derivStepHypArray = null;
+
+        final ParseNode[][] assrtLogHypSubstArray = new ParseNode[assrtLogHypArray.length][];
+        final ProofStepStmt[] hypDerivArray = new ProofStepStmt[assrtLogHypArray.length];
+        final boolean ok = recursiveAutocomplete(assrtLogHypSubstArray,
+            hypDerivArray, 0);
+        if (ok) {
+            final String[] hypStep = new String[hypDerivArray.length];
+            for (int i = 0; i < hypStep.length; i++)
+                hypStep[i] = hypDerivArray[i].getStep();
+
+            derivStep.setHypList(hypDerivArray);
+            derivStep.setHypStepList(hypStep);
+
+            derivStepHypArray = derivStep.getHypList();
+
+            markStepUnified(false, false, null);
+
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Attempt to recover the initial unification results from
      * asrtLogHypSubstArray -- which had the user's hyp sequence -- and put the
@@ -1441,34 +1516,56 @@ public class ProofUnifier {
         final int stepLogHypIndex)
     {
 
+        final ProofStepStmt derivHyp = derivStepHypArray[stepLogHypIndex];
+
+        return unifyAndMergeSubst(assrtLogHypSubstArray, assrtLogHypIndex,
+            derivHyp, stepLogHypIndex);
+    }
+
+    /**
+     * This function attempts to substitute assert logical hypothesis
+     * (assrtLogHypArray[assrtLogHypIndex]) with derivation step logical
+     * hypothesis (derivStepHypArray[stepLogHypIndex]). The function uses
+     * assrtSubst through mergeLogHypSubst() function.
+     * 
+     * @param assrtLogHypSubstArray the temporary-use array to hold results of
+     *            substitutions.
+     * @param assrtLogHypIndex the index in assrtLogHypArray
+     * @param derivHyp the derivation hypothesis
+     * @param cleanupIndex the current level hypothesis substitution. In simple
+     *            cases it could be the current hypothesis index.
+     * @return true if unification was successful
+     */
+    private boolean unifyAndMergeSubst(
+        final ParseNode[][] assrtLogHypSubstArray, final int assrtLogHypIndex,
+        final ProofStepStmt derivHyp, final int cleanupIndex)
+    {
+
         final VarHyp[] assrtLogHypVarHypArray = assrtLogHypArray[assrtLogHypIndex]
             .getMandVarHypArray();
 
-        if (derivStepHypArray[stepLogHypIndex] == null)
+        if (derivHyp == null)
             assrtLogHypSubstArray[assrtLogHypIndex] = new ParseNode[assrtLogHypVarHypArray.length];
         else {
             if (!assrtLogHypArray[assrtLogHypIndex].getFormula()
-                .preunificationCheck(
-                    derivStepHypArray[stepLogHypIndex].getFormula()))
+                .preunificationCheck(derivHyp.getFormula()))
                 return false;
 
             assrtLogHypSubstArray[assrtLogHypIndex] = assrtLogHypArray[assrtLogHypIndex]
                 .getExprParseTree()
                 .getRoot()
-                .unifyWithSubtree(
-                    derivStepHypArray[stepLogHypIndex].formulaParseTree
-                        .getRoot(),
+                .unifyWithSubtree(derivHyp.formulaParseTree.getRoot(),
                     assrtLogHypVarHypArray, unifyNodeStack, compareNodeStack);
         }
 
         return assrtLogHypSubstArray[assrtLogHypIndex] != null
-            && mergeLogHypSubst(stepLogHypIndex, assrtLogHypVarHypArray,
+            && mergeLogHypSubst(cleanupIndex, assrtLogHypVarHypArray,
                 assrtLogHypSubstArray[assrtLogHypIndex]);
     }
 
     /**
-     * @param cleanupIndex the current level hypotethis substitution. In simple
-     *            cases it could be the current hypotethis index.
+     * @param cleanupIndex the current level hypothesis substitution. In simple
+     *            cases it could be the current hypothesis index.
      * @param assrtLogHypVarHypArray the array of variable hypothesis
      * @param assrtLogHypSubst the array of substitutions corresponding to
      *            assrtLogHypVarHypArray
@@ -1777,6 +1874,10 @@ public class ProofUnifier {
      */
     private void convertAutoToNormalDerivStep(final DerivationStep d) {
         d.setAutoStep(false);
+        if (d.getStep().equals(PaConstants.AUTO_QED_STEP_NBR)) {
+            d.setStep(PaConstants.QED_STEP_NBR);
+            return;
+        }
         final StringBuilder label = new StringBuilder(d.getStep());
         label.setCharAt(0, PaConstants.AUTOCOMPLETED_STEP_PREFIX);
 
@@ -1793,7 +1894,6 @@ public class ProofUnifier {
             renumberProofStepStmt.renum(renumberMap);
         }
     }
-
     /**
      * Changes the order of a derivation step's Hyp entries to match the order
      * on the Ref assertion.
