@@ -139,7 +139,8 @@ public class MMJ2FailPopupWindow {
         if (!enabled
             || !startupMode
             || batchFramework
-                .isCurrentRunParmCommand(UtilConstants.RUNPARM_VERIFY_PROOF))
+                .isCurrentRunParmCommand(UtilConstants.RUNPARM_VERIFY_PROOF
+                    .name()))
             return;
 
         final Messages messages = batchFramework.outputBoss.getMessages();

@@ -26,8 +26,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import mmj.gmff.GMFFManager;
-import mmj.lang.*;
-import mmj.mmio.*;
+import mmj.lang.BookManager;
+import mmj.lang.LangConstants;
+import mmj.lang.LogicalSystem;
+import mmj.lang.Messages;
+import mmj.lang.SeqAssigner;
+import mmj.lang.VerifyException;
+import mmj.mmio.MMIOConstants;
+import mmj.mmio.MMIOException;
+import mmj.mmio.Systemizer;
 import mmj.verify.GrammarConstants;
 
 /**
@@ -101,83 +108,94 @@ public class LogicalSystemBoss extends Boss {
         IOException, VerifyException
     {
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR) == 0)
+        if (runParm.name
+            .compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR.name()) == 0)
         {
             initStateVariables();
             return false; // not "consumed"
         }
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_SYM_TBL_INITIAL_SIZE) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_SYM_TBL_INITIAL_SIZE
+                .name()) == 0)
         {
             editSymTblInitialSize(runParm);
             return true; // "consumed"
         }
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_STMT_TBL_INITIAL_SIZE) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_STMT_TBL_INITIAL_SIZE
+                .name()) == 0)
         {
             editStmtTblInitialSize(runParm);
             return true; // "consumed"
         }
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_ENDPOINT_STMT_LABEL) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_ENDPOINT_STMT_LABEL
+                .name()) == 0)
         {
             editLoadEndpointStmtLabel(runParm);
             return true; // "consumed"
         }
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_ENDPOINT_STMT_NBR) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_ENDPOINT_STMT_NBR
+                .name()) == 0)
         {
             editLoadEndpointStmtNbr(runParm);
             return true; // "consumed"
         }
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_COMMENTS) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_COMMENTS.name()) == 0)
         {
             editLoadComments(runParm);
             return true; // "consumed"
         }
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_PROOFS) == 0)
+        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_PROOFS
+            .name()) == 0)
         {
             editLoadProofs(runParm);
             return true; // "consumed"
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROVABLE_LOGIC_STMT_TYPE) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_PROVABLE_LOGIC_STMT_TYPE
+                .name()) == 0)
         {
             editProvableLogicStmtType(runParm);
             return true; // "consumed"
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_LOGIC_STMT_TYPE) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_LOGIC_STMT_TYPE.name()) == 0)
         {
             editLogicStmtType(runParm);
             return true; // "consumed"
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_BOOK_MANAGER_ENABLED) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_BOOK_MANAGER_ENABLED
+                .name()) == 0)
         {
             editBookManagerEnabled(runParm);
             return true; // "consumed"
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_SEQ_ASSIGNER_INTERVAL_SIZE) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_SEQ_ASSIGNER_INTERVAL_SIZE
+                .name()) == 0)
         {
             editSeqAssignerIntervalSize(runParm);
             return true; // "consumed"
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE
+                .name()) == 0)
         {
             editSeqAssignerIntervalTblInitialSize(runParm);
             return true; // "consumed"
         }
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_FILE) == 0)
+        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_FILE
+            .name()) == 0)
         {
             doLoadFile(runParm);
             return true; // "consumed"
@@ -260,7 +278,8 @@ public class LogicalSystemBoss extends Boss {
 
         logicalSystemLoaded = false;
 
-        editRunParmValuesLength(runParm, UtilConstants.RUNPARM_LOAD_FILE, 1);
+        editRunParmValuesLength(runParm,
+            UtilConstants.RUNPARM_LOAD_FILE.name(), 1);
 
         final Messages messages = batchFramework.outputBoss.getMessages();
 
@@ -339,7 +358,7 @@ public class LogicalSystemBoss extends Boss {
         throws IllegalArgumentException
     {
         symTblInitialSizeParm = editRunParmValueReqPosInt(runParm,
-            UtilConstants.RUNPARM_SYM_TBL_INITIAL_SIZE, 1);
+            UtilConstants.RUNPARM_SYM_TBL_INITIAL_SIZE.name(), 1);
     }
 
     /**
@@ -354,7 +373,7 @@ public class LogicalSystemBoss extends Boss {
         throws IllegalArgumentException
     {
         loadEndpointStmtNbrParm = editRunParmValueReqPosInt(runParm,
-            UtilConstants.RUNPARM_LOAD_ENDPOINT_STMT_NBR, 1);
+            UtilConstants.RUNPARM_LOAD_ENDPOINT_STMT_NBR.name(), 1);
     }
 
     /**
@@ -369,7 +388,7 @@ public class LogicalSystemBoss extends Boss {
         throws IllegalArgumentException
     {
         editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_LOAD_ENDPOINT_STMT_LABEL, 1);
+            UtilConstants.RUNPARM_LOAD_ENDPOINT_STMT_LABEL.name(), 1);
         loadEndpointStmtLabelParm = runParm.values[0].trim();
         if (loadEndpointStmtLabelParm.equals(""))
             throw new IllegalArgumentException(
@@ -389,7 +408,7 @@ public class LogicalSystemBoss extends Boss {
     {
 
         loadComments = editYesNoRunParm(runParm,
-            UtilConstants.RUNPARM_LOAD_COMMENTS, 1);
+            UtilConstants.RUNPARM_LOAD_COMMENTS.name(), 1);
     }
 
     /**
@@ -405,7 +424,7 @@ public class LogicalSystemBoss extends Boss {
     {
 
         loadProofs = editYesNoRunParm(runParm,
-            UtilConstants.RUNPARM_LOAD_PROOFS, 1);
+            UtilConstants.RUNPARM_LOAD_PROOFS.name(), 1);
     }
 
     /**
@@ -418,7 +437,7 @@ public class LogicalSystemBoss extends Boss {
         throws IllegalArgumentException
     {
         symTblInitialSizeParm = editRunParmValueReqPosInt(runParm,
-            UtilConstants.RUNPARM_STMT_TBL_INITIAL_SIZE, 1);
+            UtilConstants.RUNPARM_STMT_TBL_INITIAL_SIZE.name(), 1);
     }
 
     /**
@@ -431,7 +450,7 @@ public class LogicalSystemBoss extends Boss {
         throws IllegalArgumentException
     {
         editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_PROVABLE_LOGIC_STMT_TYPE, 1);
+            UtilConstants.RUNPARM_PROVABLE_LOGIC_STMT_TYPE.name(), 1);
 
         provableLogicStmtTypeParm = runParm.values[0].trim();
 
@@ -451,8 +470,8 @@ public class LogicalSystemBoss extends Boss {
     protected void editLogicStmtType(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
     {
-        editRunParmValuesLength(runParm, UtilConstants.RUNPARM_LOGIC_STMT_TYPE,
-            1);
+        editRunParmValuesLength(runParm,
+            UtilConstants.RUNPARM_LOGIC_STMT_TYPE.name(), 1);
         logicStmtTypeParm = runParm.values[0].trim();
 
         if (logicStmtTypeParm.length() < 1
@@ -474,7 +493,7 @@ public class LogicalSystemBoss extends Boss {
     {
 
         bookManagerEnabledParm = editYesNoRunParm(runParm,
-            UtilConstants.RUNPARM_BOOK_MANAGER_ENABLED, 1);
+            UtilConstants.RUNPARM_BOOK_MANAGER_ENABLED.name(), 1);
 
         if (bookManager != null)
             throw new IllegalArgumentException(
@@ -494,7 +513,7 @@ public class LogicalSystemBoss extends Boss {
         throws IllegalArgumentException
     {
         seqAssignerIntervalSizeParm = editRunParmValueReqPosInt(runParm,
-            UtilConstants.RUNPARM_SEQ_ASSIGNER_INTERVAL_SIZE, 1);
+            UtilConstants.RUNPARM_SEQ_ASSIGNER_INTERVAL_SIZE.name(), 1);
         SeqAssigner.validateIntervalSize(seqAssignerIntervalSizeParm);
     }
 
@@ -511,7 +530,8 @@ public class LogicalSystemBoss extends Boss {
     {
         seqAssignerIntervalTblInitialSizeParm = editRunParmValueReqPosInt(
             runParm,
-            UtilConstants.RUNPARM_SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE, 1);
+            UtilConstants.RUNPARM_SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE.name(),
+            1);
         SeqAssigner
             .validateIntervalTblInitialSize(seqAssignerIntervalTblInitialSizeParm);
     }

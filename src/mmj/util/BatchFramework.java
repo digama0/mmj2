@@ -325,7 +325,8 @@ public abstract class BatchFramework {
                 runParm);
 
             if (runParm.name
-                .equalsIgnoreCase(UtilConstants.RUNPARM_JAVA_GARBAGE_COLLECTION))
+                .equalsIgnoreCase(UtilConstants.RUNPARM_JAVA_GARBAGE_COLLECTION
+                    .name()))
                 System.gc();
             else {
                 boolean consumed = false;
@@ -334,7 +335,7 @@ public abstract class BatchFramework {
                         break;
                 if (!consumed
                     && !runParm.name
-                        .equalsIgnoreCase(UtilConstants.RUNPARM_CLEAR))
+                        .equalsIgnoreCase(UtilConstants.RUNPARM_CLEAR.name()))
                     throw new IllegalArgumentException(
                         UtilConstants.ERRMSG_RUNPARM_NAME_INVALID_1
                             + runParm.name

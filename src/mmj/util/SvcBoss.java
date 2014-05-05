@@ -20,9 +20,15 @@
 package mmj.util;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import mmj.lang.*;
+import mmj.lang.LogicalSystem;
+import mmj.lang.Messages;
+import mmj.lang.VerifyException;
+import mmj.lang.WorkVarManager;
 import mmj.pa.ProofAsst;
 import mmj.pa.ProofAsstPreferences;
 import mmj.svc.SvcCallback;
@@ -84,7 +90,8 @@ public class SvcBoss extends Boss {
         throws IllegalArgumentException, VerifyException
     {
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR) == 0)
+        if (runParm.name
+            .compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR.name()) == 0)
         {
 
             // erase input parameters but NOT SvcCallback
@@ -101,26 +108,30 @@ public class SvcBoss extends Boss {
             return false; // not "consumed"
         }
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_SVC_FOLDER) == 0)
+        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_SVC_FOLDER
+            .name()) == 0)
         {
             editSvcFolder(runParm);
             return true;
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_SVC_CALLBACK_CLASS) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_SVC_CALLBACK_CLASS
+                .name()) == 0)
         {
             editSvcCallbackClass(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_SVC_ARG) == 0)
+        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_SVC_ARG
+            .name()) == 0)
         {
             editSvcArg(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_SVC_CALL) == 0)
+        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_SVC_CALL
+            .name()) == 0)
         {
             editSvcCall(runParm);
             return true;
@@ -139,11 +150,12 @@ public class SvcBoss extends Boss {
         throws VerifyException
     {
 
-        editRunParmValuesLength(runParm, UtilConstants.RUNPARM_SVC_FOLDER, 1);
+        editRunParmValuesLength(runParm,
+            UtilConstants.RUNPARM_SVC_FOLDER.name(), 1);
 
         svcFolder = editExistingFolderRunParm(
             batchFramework.paths.getSvcPath(), runParm,
-            UtilConstants.RUNPARM_SVC_FOLDER, 1); // field nbr of folder
+            UtilConstants.RUNPARM_SVC_FOLDER.name(), 1); // field nbr of folder
     }
 
     /**
@@ -154,7 +166,7 @@ public class SvcBoss extends Boss {
     protected void editSvcCallbackClass(final RunParmArrayEntry runParm) {
 
         editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_SVC_CALLBACK_CLASS, 1);
+            UtilConstants.RUNPARM_SVC_CALLBACK_CLASS.name(), 1);
 
         svcCallbackClass = runParm.values[0].trim();
         Object o;
@@ -189,7 +201,8 @@ public class SvcBoss extends Boss {
         throws VerifyException
     {
 
-        editRunParmValuesLength(runParm, UtilConstants.RUNPARM_SVC_FOLDER, 2);
+        editRunParmValuesLength(runParm,
+            UtilConstants.RUNPARM_SVC_FOLDER.name(), 2);
 
         if (svcArgKeyList == null) {
             svcArgKeyList = new ArrayList<String>();
