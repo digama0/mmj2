@@ -596,7 +596,7 @@ public class UtilConstants {
     // Commands for mmj.util.LogicalSystemBoss.java
     // ----------------------------------------------------------
 
-    public static final BatchCommand RUNPARM_PROVABLE_LOGIC_STMT_TYPE = new BatchCommand(
+     public static final BatchCommand RUNPARM_PROVABLE_LOGIC_STMT_TYPE = new BatchCommand(
         "ProvableLogicStmtType", "* ProvableLogicStmtType." + "* <p>"
             + "* {@code " + "* \"ProvableLogicStmtType\": default is \"|-\""
             + "* }" + "*/");
