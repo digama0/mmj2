@@ -39,7 +39,7 @@ public class BatchCommand {
      * 
      * @return name string
      */
-    final String name() {
+    public final String name() {
         return name;
     }
 
@@ -48,7 +48,7 @@ public class BatchCommand {
      * 
      * @return string with documentation
      */
-    final String documentation() {
+    public final String documentation() {
         return documentation;
     }
 
