@@ -52,4 +52,8 @@ public class BatchCommand {
         return documentation;
     }
 
+    @Override
+    public String toString() {
+        return name();
+    }
 }
