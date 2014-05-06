@@ -93,20 +93,73 @@
 
 package mmj.pa;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.HeadlessException;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.JColorChooser;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextPane;
+import javax.swing.JViewport;
+import javax.swing.KeyStroke;
+import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.text.*;
+import javax.swing.WindowConstants;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.JTextComponent;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 
-import mmj.lang.*;
-import mmj.tl.*;
+import mmj.lang.LangException;
+import mmj.lang.Messages;
+import mmj.lang.Theorem;
+import mmj.tl.MMTFolder;
+import mmj.tl.StoreInLogSysAndMMTFolderTLRequest;
+import mmj.tl.StoreInMMTFolderTLRequest;
+import mmj.tl.TLRequest;
+import mmj.tl.TheoremLoader;
+import mmj.tl.TlConstants;
+import mmj.tl.TlPreferences;
 import mmj.tmff.TMFFConstants;
 import mmj.tmff.TMFFException;
+import mmj.util.BatchCommand;
+import mmj.util.UtilConstants;
 import mmj.verify.HypsOrder;
 
 /**
@@ -1719,9 +1772,57 @@ public class ProofAsstGUI {
         });
         helpMenu.add(i);
 
+        i = new JMenuItem(
+            PaConstants.PA_GUI_HELP_MENU_BATCH_COMMAND_DOCUMENTATION_TEXT);
+        i.addActionListener(new ActionListener() {
+            public void actionPerformed(final ActionEvent e) {
+
+                final JTextArea jTextArea = new JTextArea(null, 20, 60);
+                jTextArea.setEditable(false);
+
+                final JScrollPane jTextAreaScroll = new JScrollPane(jTextArea,
+                    JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                    JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+                final JList<BatchCommand> jList = new JList<BatchCommand>(
+                    UtilConstants.RUNPARM_LIST);
+                jList.setLayoutOrientation(JList.VERTICAL);
+                jList.setSelectedIndex(0);
+                jList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+                final MouseListener mouseListener = new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(final MouseEvent e) {
+                        jTextArea.setText(jList.getSelectedValue()
+                            .documentation());
+                    }
+                };
+                jList.addMouseListener(mouseListener);
+
+                final JScrollPane jListScroll = new JScrollPane(jList,
+                    JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                    JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                jListScroll.setPreferredSize(new Dimension(250, 400));
+
+                final JPanel jPanel = new JPanel();
+                jPanel.add(jListScroll);
+                jPanel.add(jTextAreaScroll);
+
+                final JFrame jFrame = new JFrame(
+                    PaConstants.PA_GUI_HELP_BATCH_COMMAND_DOCUMENTATION_TITLE);
+                jFrame.setResizable(false);
+                jFrame.setAlwaysOnTop(true);
+
+                jFrame.add(jPanel);
+                jFrame.pack();
+                jFrame.setVisible(true);
+                System.out.print("reached this thing");
+            }
+        });
+        helpMenu.add(i);
+
         return helpMenu;
     }
-
     // =============== Edit menu stuff ===============
 
     private Color getNewColor(final Color oldColor, final String title) {
