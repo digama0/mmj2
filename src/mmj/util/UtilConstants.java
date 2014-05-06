@@ -616,77 +616,77 @@ public class UtilConstants {
 
     public static final BatchCommand RUNPARM_CLEAR = new BatchCommand("Clear",
         "* Clear." + "* <p>" + "* " + "* <pre>"
-            + "* \"Clear\":  clear loaded/derived mm data (files/grammar,etc)"
-            + "*          as well as all RunParm values except for"
-            + "*          SystemErrorFile and SystemOutputFile." + "* </pre>"
-            + "*/");
+            + "* \"Clear\":  clear loaded/derived mm data (files/grammar,etc)\n"
+            + "*          as well as all RunParm values except for\n"
+            + "*          SystemErrorFile and SystemOutputFile." + "* </pre>\n"
+            + "*/\n");
 
     public static final BatchCommand RUNPARM_JAVA_GARBAGE_COLLECTION = new BatchCommand(
-        "GarbageCollection", "* GarbageCollection." + "* <p>" + "* {@code "
-            + "* \"GarbageCollection\": frees up unused memory items." + "* }"
-            + "*/");
+        "GarbageCollection", "* GarbageCollection." + "* <p>" + "* {@code \n"
+            + "* \"GarbageCollection\": frees up unused memory items." + "* }\n"
+            + "*/\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.util.OutputBoss.java
     // ----------------------------------------------------------
 
     public static final BatchCommand RUNPARM_SYSERR_FILE = new BatchCommand(
-        "SystemErrorFile",
-        "* SystemErrorFile."
-            + "* <p>"
-            + "* "
-            + "* <pre>"
-            + "* \"SystemErrorFile\": value1 = filename,"
-            + "* "
-            + "*                    value2 = new (default) or update."
-            + "*                      The system will NOT touch an existing"
-            + "*                      file unless given \"update\","
-            + "*                      AND if \"new\" is specified an error is"
-            + "*                      reported, halting processing ASAP if"
-            + "*                      the file already exists. If the file"
-            + "*                      does exist and Update is specified,"
-            + "*                      then it is overwritten (not appended),"
-            + "*                      but no error is reported for Update"
-            + "*                      if the file does not exist."
-            + "* "
-            + "*                    value3 = charset. Note: the program"
-            + "*                      will not stop you from appending"
-            + "*                      a different charset to an existing"
-            + "*                      file, thus hopelessly mixing up your"
-            + "*                      data, so have fun but be careful!"
-            + "* "
-            + "* info on charsets"
-            + "* file:///C:/Program%20Files/Java/jdk1.5.0_02/docs/api/java/nio/charset/Charset.html"
-            + "* " + "* Valid charset names on all Java Platforms:"
-            + "*     US-ASCII" + "*     ISO-8859-1" + "*     UTF-8"
-            + "*     UTF-16BE" + "*     UTF-16LE" + "*     UTF-16" + "* </pre>"
-            + "*/");
+        "SystemErrorFile\n",
+        "* SystemErrorFile.\n"
+            + "* <p>\n"
+            + "* \n"
+            + "* <pre>\n"
+            + "* \"SystemErrorFile\": value1 = filename,\n"
+            + "* \n"
+            + "*                    value2 = new (default) or update.\n"
+            + "*                      The system will NOT touch an existing\n"
+            + "*                      file unless given \"update\",\n"
+            + "*                      AND if \"new\" is specified an error is\n"
+            + "*                      reported, halting processing ASAP if\n"
+            + "*                      the file already exists. If the file\n"
+            + "*                      does exist and Update is specified,\n"
+            + "*                      then it is overwritten (not appended),\n"
+            + "*                      but no error is reported for Update\n"
+            + "*                      if the file does not exist.\n"
+            + "* \n"
+            + "*                    value3 = charset. Note: the program\n"
+            + "*                      will not stop you from appending\n"
+            + "*                      a different charset to an existing\n"
+            + "*                      file, thus hopelessly mixing up your\n"
+            + "*                      data, so have fun but be careful!\n"
+            + "* \n"
+            + "* info on charsets\n"
+            + "* file:///C:/Program%20Files/Java/jdk1.5.0_02/docs/api/java/nio/charset/Charset.html\n"
+            + "* " + "* Valid charset names on all Java Platforms:\n"
+            + "*     US-ASCII" + "*     ISO-8859-1" + "*     UTF-8\n"
+            + "*     UTF-16BE" + "*     UTF-16LE" + "*     UTF-16" + "* </pre>\n"
+            + "*/\n");
 
     public static final BatchCommand RUNPARM_SYSOUT_FILE = new BatchCommand(
-        "SystemOutputFile", "* SystemOutputFile." + "* <p>" + "* " + "* <pre>"
-            + "* \"SystemOutputFile\": value1 = filename," + "* "
-            + "*                     value2 = new (default), or"
-            + "*                        update" + "* "
-            + "*                     value3 = charset"
-            + "*                        see RUNPARM_SYSERR_FILE comments"
-            + "*                        for info on the above value parms!"
-            + "* </pre>" + "*/");
+        "SystemOutputFile", "* SystemOutputFile." + "* <p>" + "* " + "* <pre>\n"
+            + "* \"SystemOutputFile\": value1 = filename," + "* \n"
+            + "*                     value2 = new (default), or\n"
+            + "*                        update" + "* \n"
+            + "*                     value3 = charset\n"
+            + "*                        see RUNPARM_SYSERR_FILE comments\n"
+            + "*                        for info on the above value parms!\n"
+            + "* </pre>" + "*/\n");
 
     public static final BatchCommand RUNPARM_OUTPUT_VERBOSITY = new BatchCommand(
-        "OutputVerbosity", "* OutputVerbosity" + "* <p>" + "* " + "* <pre>"
-            + "* \"OutputVerbosity\": value1 = integer," + "* "
-            + "*  Verbosity = 9999 is the default"
-            + "*            =    0 means only print error messages and"
-            + "*                 specifically requested output" + "* </pre>"
-            + "*/");
+        "OutputVerbosity", "* OutputVerbosity" + "* <p>" + "* " + "* <pre>\n"
+            + "* \"OutputVerbosity\": value1 = integer," + "* \n"
+            + "*  Verbosity = 9999 is the default\n"
+            + "*            =    0 means only print error messages and\n"
+            + "*                 specifically requested output" + "* </pre>\n"
+            + "*/\n");
 
     public static final BatchCommand RUNPARM_START_INSTRUMENTATION_TIMER = new BatchCommand(
-        "StartInstrumentationTimer", "* StartInstrumentationTimer" + "* <p>"
-            + "* " + "* <pre>"
-            + "* \"StartInstrumentationTimer\": value1 = ID String," + "* "
-            + "*  ID String = Identifier in output message produced"
-            + "*              by StopInstrumentationTimer RunParm --"
-            + "*              must match that ID String." + "* </pre>" + "*/");
+        "StartInstrumentationTimer", "* StartInstrumentationTimer" + "* <p>\n"
+            + "* " + "* <pre>\n"
+            + "* \"StartInstrumentationTimer\": value1 = ID String," + "* \n"
+            + "*  ID String = Identifier in output message produced\n"
+            + "*              by StopInstrumentationTimer RunParm --\n"
+            + "*              must match that ID String." + "* </pre>" + "*/\n");
 
     public static final BatchCommand RUNPARM_STOP_INSTRUMENTATION_TIMER = new BatchCommand(
         "StopInstrumentationTimer", "* StopInstrumentationTimer" + "* <p>"
