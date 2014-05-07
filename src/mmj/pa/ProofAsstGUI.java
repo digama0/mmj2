@@ -1796,6 +1796,10 @@ public class ProofAsstGUI {
                         jTextArea.setText(jList.getSelectedValue()
                             .documentation());
                     }
+                    @Override
+                    public void mouseReleased(final MouseEvent e) {
+                        mouseClicked(e);
+                    }
                 };
                 jList.addMouseListener(mouseListener);
 
