@@ -1816,7 +1816,6 @@ public class ProofAsstGUI {
                 jFrame.add(jPanel);
                 jFrame.pack();
                 jFrame.setVisible(true);
-                System.out.print("reached this thing");
             }
         });
         helpMenu.add(i);
