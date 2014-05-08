@@ -1741,42 +1741,17 @@ public class ProofAsstGUI {
         return item;
     }
 
-    private JMenu buildHelpMenu() {
-
-        final JMenu helpMenu = new JMenu(PaConstants.PA_GUI_HELP_MENU_TITLE);
-        helpMenu.setMnemonic(KeyEvent.VK_H);
-
-        JMenuItem i = new JMenuItem(
-            PaConstants.PA_GUI_HELP_MENU_GENERAL_ITEM_TEXT);
-        i.addActionListener(new ActionListener() {
-            public void actionPerformed(final ActionEvent e) {
-                final HelpGeneralInfoGUI h = new HelpGeneralInfoGUI(
-                    proofAsstPreferences);
-                h.showFrame(h.buildFrame());
-            }
-        });
-        helpMenu.add(i);
-
-        i = new JMenuItem(PaConstants.PA_GUI_HELP_ABOUT_ITEM_TEXT);
-        i.addActionListener(new ActionListener() {
-            public void actionPerformed(final ActionEvent e) {
-                final Runtime r = Runtime.getRuntime();
-                r.gc(); // run garbage collector
-                final String about = LangException.format(
-                    PaConstants.HELP_ABOUT_TEXT, r.maxMemory(), r.freeMemory(),
-                    r.totalMemory());
-                try {
-                    JOptionPane.showMessageDialog(getMainFrame(), about,
-                        PaConstants.HELP_ABOUT_TITLE,
-                        JOptionPane.INFORMATION_MESSAGE);
-                } catch (final HeadlessException f) {}
-            }
-        });
-        helpMenu.add(i);
-
-        i = new JMenuItem(
+    /**
+     * This function builds Batch Documentation item of HelpMenu. Batch
+     * documentation item opens a BatchDocumentation viewer, that shows
+     * documentation of commands.
+     * 
+     * @return JMenuItem - BatchDocumentation item.
+     */
+    private JMenuItem buildBatchCommandDocumentationHelpMenuItem() {
+        final JMenuItem result = new JMenuItem(
             PaConstants.PA_GUI_HELP_MENU_BATCH_COMMAND_DOCUMENTATION_TEXT);
-        i.addActionListener(new ActionListener() {
+        result.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
 
                 final JTextArea jTextArea = new JTextArea(null, 20, 60);
@@ -1836,7 +1811,42 @@ public class ProofAsstGUI {
                 jFrame.setVisible(true);
             }
         });
+        return result;
+    }
+    private JMenu buildHelpMenu() {
+
+        final JMenu helpMenu = new JMenu(PaConstants.PA_GUI_HELP_MENU_TITLE);
+        helpMenu.setMnemonic(KeyEvent.VK_H);
+
+        JMenuItem i = new JMenuItem(
+            PaConstants.PA_GUI_HELP_MENU_GENERAL_ITEM_TEXT);
+        i.addActionListener(new ActionListener() {
+            public void actionPerformed(final ActionEvent e) {
+                final HelpGeneralInfoGUI h = new HelpGeneralInfoGUI(
+                    proofAsstPreferences);
+                h.showFrame(h.buildFrame());
+            }
+        });
         helpMenu.add(i);
+
+        i = new JMenuItem(PaConstants.PA_GUI_HELP_ABOUT_ITEM_TEXT);
+        i.addActionListener(new ActionListener() {
+            public void actionPerformed(final ActionEvent e) {
+                final Runtime r = Runtime.getRuntime();
+                r.gc(); // run garbage collector
+                final String about = LangException.format(
+                    PaConstants.HELP_ABOUT_TEXT, r.maxMemory(), r.freeMemory(),
+                    r.totalMemory());
+                try {
+                    JOptionPane.showMessageDialog(getMainFrame(), about,
+                        PaConstants.HELP_ABOUT_TITLE,
+                        JOptionPane.INFORMATION_MESSAGE);
+                } catch (final HeadlessException f) {}
+            }
+        });
+        helpMenu.add(i);
+
+        helpMenu.add(buildBatchCommandDocumentationHelpMenuItem());
 
         return helpMenu;
     }
