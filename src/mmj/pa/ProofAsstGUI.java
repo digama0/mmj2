@@ -1754,19 +1754,20 @@ public class ProofAsstGUI {
         result.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
 
-                final JTextArea jTextArea = new JTextArea(null, 20, 60);
+                final JTextArea documentationText = new JTextArea(null, 20, 60);
 
-                jTextArea.setEditable(false);
+                documentationText.setEditable(false);
 
-                final JScrollPane jTextAreaScroll = new JScrollPane(jTextArea,
-                    JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                final JScrollPane documentationTextScroll = new JScrollPane(
+                    documentationText, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                     JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-                final JList<BatchCommand> jList = new JList<BatchCommand>(
+                final JList<BatchCommand> commandList = new JList<BatchCommand>(
                     UtilConstants.RUNPARM_LIST);
-                jList.setLayoutOrientation(JList.VERTICAL);
-                jList.setSelectedIndex(0);
-                jList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                commandList.setLayoutOrientation(JList.VERTICAL);
+                commandList.setSelectedIndex(0);
+                commandList
+                    .setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
                 final MouseListener mouseListener = new MouseAdapter() {
                     @Override
@@ -1778,45 +1779,45 @@ public class ProofAsstGUI {
                         changeText();
                     }
                     public void changeText() {
-                        jTextArea.setText(jList.getSelectedValue()
-                            .documentation());
+                        documentationText.setText(commandList
+                            .getSelectedValue().documentation());
                     }
                 };
                 final KeyListener keyListener = new KeyAdapter() {
                     @Override
                     public void keyPressed(final KeyEvent k) {
-                        jTextArea.setText(jList.getSelectedValue()
-                            .documentation());
+                        documentationText.setText(commandList
+                            .getSelectedValue().documentation());
                     }
                     @Override
                     public void keyReleased(final KeyEvent k) {
                         changeText();
                     }
                     public void changeText() {
-                        jTextArea.setText(jList.getSelectedValue()
-                            .documentation());
+                        documentationText.setText(commandList
+                            .getSelectedValue().documentation());
                     }
                 };
-                jList.addMouseListener(mouseListener);
-                jList.addKeyListener(keyListener);
+                commandList.addMouseListener(mouseListener);
+                commandList.addKeyListener(keyListener);
 
-                final JScrollPane jListScroll = new JScrollPane(jList,
-                    JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                final JScrollPane CommandListScroll = new JScrollPane(
+                    commandList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                     JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-                jListScroll.setPreferredSize(new Dimension(250, 400));
+                CommandListScroll.setPreferredSize(new Dimension(250, 400));
 
-                final JPanel jPanel = new JPanel();
-                jPanel.add(jListScroll);
-                jPanel.add(jTextAreaScroll);
+                final JPanel mainElements = new JPanel();
+                mainElements.add(CommandListScroll);
+                mainElements.add(documentationTextScroll);
 
-                final JFrame jFrame = new JFrame(
+                final JFrame batchDocumentationViewer = new JFrame(
                     PaConstants.PA_GUI_HELP_BATCH_COMMAND_DOCUMENTATION_TITLE);
-                jFrame.setResizable(false);
-                jFrame.setAlwaysOnTop(true);
+                batchDocumentationViewer.setResizable(false);
+                batchDocumentationViewer.setAlwaysOnTop(true);
 
-                jFrame.add(jPanel);
-                jFrame.pack();
-                jFrame.setVisible(true);
+                batchDocumentationViewer.add(mainElements);
+                batchDocumentationViewer.pack();
+                batchDocumentationViewer.setVisible(true);
             }
         });
         return result;
