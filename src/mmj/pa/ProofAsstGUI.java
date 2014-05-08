@@ -104,7 +104,9 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -1801,7 +1803,19 @@ public class ProofAsstGUI {
                         mouseClicked(e);
                     }
                 };
+                final KeyListener keyListener = new KeyAdapter() {
+                    @Override
+                    public void keyPressed(final KeyEvent k) {
+                        jTextArea.setText(jList.getSelectedValue()
+                            .documentation());
+                    }
+                    @Override
+                    public void keyReleased(final KeyEvent k) {
+                        keyPressed(k);
+                    }
+                };
                 jList.addMouseListener(mouseListener);
+                jList.addKeyListener(keyListener);
 
                 final JScrollPane jListScroll = new JScrollPane(jList,
                     JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
