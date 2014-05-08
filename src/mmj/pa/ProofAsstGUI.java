@@ -1755,6 +1755,7 @@ public class ProofAsstGUI {
             public void actionPerformed(final ActionEvent e) {
 
                 final JTextArea jTextArea = new JTextArea(null, 20, 60);
+
                 jTextArea.setEditable(false);
 
                 final JScrollPane jTextAreaScroll = new JScrollPane(jTextArea,
@@ -1770,12 +1771,15 @@ public class ProofAsstGUI {
                 final MouseListener mouseListener = new MouseAdapter() {
                     @Override
                     public void mouseClicked(final MouseEvent e) {
-                        jTextArea.setText(jList.getSelectedValue()
-                            .documentation());
+                        changeText();
                     }
                     @Override
                     public void mouseReleased(final MouseEvent e) {
-                        mouseClicked(e);
+                        changeText();
+                    }
+                    public void changeText() {
+                        jTextArea.setText(jList.getSelectedValue()
+                            .documentation());
                     }
                 };
                 final KeyListener keyListener = new KeyAdapter() {
@@ -1786,7 +1790,11 @@ public class ProofAsstGUI {
                     }
                     @Override
                     public void keyReleased(final KeyEvent k) {
-                        keyPressed(k);
+                        changeText();
+                    }
+                    public void changeText() {
+                        jTextArea.setText(jList.getSelectedValue()
+                            .documentation());
                     }
                 };
                 jList.addMouseListener(mouseListener);
