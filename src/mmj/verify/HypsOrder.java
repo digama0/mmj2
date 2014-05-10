@@ -78,6 +78,18 @@ public enum HypsOrder {
         }
     },
 
+    /**
+     * This is not the order, actually. The generated derivation step will not
+     * have the hypotheses list - it should be autocompleted!
+     */
+    Autocomplete {
+        @Override
+        public void reorder(final String[] hypStep) {
+            // This function should not be called!
+            throw new UnsupportedOperationException();
+        }
+    },
+
     /** Unspecified order which should be used for performance experiments. */
     SomeOrder {
         @Override

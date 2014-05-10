@@ -1003,16 +1003,16 @@ public class ProofUnifier {
         assrtLogHypArray = assrt.getLogHypArray();
         derivStepHypArray = derivStep.getHypList();
 
+        // In case of autocomplete step we should perform specified unification
+        if (derivStep.isAutoStep())
+            return autocompleteUnifyWithoutWorkVars();
+
         if (assrtLogHypArray.length == 0) {
             markStepUnified(false, // usedUnifyWithWorkVars,
                 false, // no "swap",
                 null); // no rearrange
             return true; // Special Case 0
         }
-
-        // In case of autocomplete step we should perform specified unification
-        if (derivStep.isAutoStep())
-            return autocompleteUnifyWithoutWorkVars();
 
         /*
          * THREE, we attempt to unify the assertion's
@@ -1391,7 +1391,10 @@ public class ProofUnifier {
         if (i >= assrtLogHypArray.length) {
             final String msg = checkDerivStepUnifyAgainstDjVars(derivStep,
                 assrt, assrtSubst);
-            if (msg == null)
+
+            // TODO: if holdSoftDjVarsErrorList is not empty then we could
+            // generate suggestion!
+            if (msg == null && holdSoftDjVarsErrorList.isEmpty())
                 return true;
             else
                 return false; // TODO: use msg

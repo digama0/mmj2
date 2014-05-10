@@ -2871,6 +2871,15 @@ public class UtilConstants {
     public static final String RUNPARM_OPTION_PROOF_ASST_HALF_REVERSE = "halfreverse";
 
     /**
+     * Option Value 5 "Autocomplete" for ProofAsstExportToFile RunParm and
+     * Option Value 4 for ProofAsstBatchTest.
+     * <p>
+     * Means that logical hypotheses list should be empty and autocompleted by
+     * autocomplete feature.
+     */
+    public static final String RUNPARM_OPTION_PROOF_ASST_AUTOCOMPLETE = "autocomplete";
+
+    /**
      * Option Value 5 "SomeOrder" for ProofAsstExportToFile RunParm and Option
      * Value 4 for ProofAsstBatchTest.
      * <p>
@@ -3319,7 +3328,7 @@ public class UtilConstants {
     public static final String ERRMSG_EXPORT_UNIFIED_PARM_UNRECOG_6 = "'";
 
     public static final String ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG = "A-UT-0046 RunParm name "
-        + " %s value field number %d must equal '%s' (same as deprecated '%s'), '%s', '%s', '%s' or '%s'."
+        + " %s value field number %d must equal '%s' (same as deprecated '%s'), '%s', '%s', '%s', '%s' or '%s'."
         + " Value input was '%s'.";
 
     public static final String ERRMSG_EXPORT_PRINT_PARM_UNRECOG_1 = "A-UT-0047 RunParm name ";

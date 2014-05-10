@@ -659,18 +659,28 @@ public class VerifyProofs implements ProofVerifier {
                 e.isHyp = false;
                 e.step = Integer.toString(stepName);
                 final int logHypCnt = stepAssrt.getLogHypArrayLength();
-                e.hypStep = new String[logHypCnt];
-                if (logHypCnt > undischargedStack.size())
-                    raiseVerifyException(Integer.toString(stepNbr + 1),
-                        stepLabel,
-                        ProofConstants.ERRMSG_LOGHYP_STACK_DEFICIENT,
-                        proofStmtLabel);
-                for (int i = logHypCnt - 1; i >= 0; i--) {
-                    final ProofDerivationStepEntry h = undischargedStack.pop();
-                    e.hypStep[i] = h.step;
-                }
 
-                hypsOrder.reorder(e.hypStep);
+                if (hypsOrder == HypsOrder.Autocomplete) {
+                    // special case: we not need hypotheses!
+                    e.hypStep = new String[0];
+                    e.isAutoStep = true;
+                    e.step = PaConstants.AUTO_STEP_PREFIX + e.step;
+                }
+                else {
+                    e.hypStep = new String[logHypCnt];
+                    if (logHypCnt > undischargedStack.size())
+                        raiseVerifyException(Integer.toString(stepNbr + 1),
+                            stepLabel,
+                            ProofConstants.ERRMSG_LOGHYP_STACK_DEFICIENT,
+                            proofStmtLabel);
+                    for (int i = logHypCnt - 1; i >= 0; i--) {
+                        final ProofDerivationStepEntry h = undischargedStack
+                            .pop();
+                        e.hypStep[i] = h.step;
+                    }
+
+                    hypsOrder.reorder(e.hypStep);
+                }
 
                 if (exportFormatUnified)
                     e.refLabel = stepLabel;
@@ -704,6 +714,8 @@ public class VerifyProofs implements ProofVerifier {
             final ProofDerivationStepEntry qedStep = derivStepList
                 .get(qedIndex);
             qedStep.step = ProofConstants.QED_STEP_NBR;
+            if (hypsOrder == HypsOrder.Autocomplete)
+                qedStep.step = PaConstants.AUTO_QED_STEP_NBR;
             qedStep.formulaParseTree = theorem.getExprParseTree();
         }
     }

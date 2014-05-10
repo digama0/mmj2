@@ -1727,8 +1727,8 @@ public class ProofAsstBoss extends Boss {
             return HypsOrder.ReverseOrder;
 
         if (exportHypsRandomizedParm
-            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_HALF_REVERSE) == 0)
-            return HypsOrder.HalfReverseOrder;
+            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_AUTOCOMPLETE) == 0)
+            return HypsOrder.Autocomplete;
 
         if (exportHypsRandomizedParm
             .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_SOME_ORDER) == 0)
@@ -1743,8 +1743,9 @@ public class ProofAsstBoss extends Boss {
             UtilConstants.RUNPARM_OPTION_PROOF_ASST_RANDOMIZED, // 5
             UtilConstants.RUNPARM_OPTION_PROOF_ASST_REVERSE, // 6
             UtilConstants.RUNPARM_OPTION_PROOF_ASST_HALF_REVERSE, // 7
-            UtilConstants.RUNPARM_OPTION_PROOF_ASST_SOME_ORDER, // 8
-            exportHypsRandomizedParm); // 9
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_AUTOCOMPLETE, // 8
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_SOME_ORDER, // 9
+            exportHypsRandomizedParm); // 10
 
         throw new IllegalArgumentException(exceptionMsg);
     }

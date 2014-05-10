@@ -230,13 +230,17 @@ public class DerivationStep extends ProofStepStmt {
      * @param parseTree formula ParseTree (can be null)
      * @param setCaret true means position caret of TextArea to this statement.
      * @param proofLevel level of step in proof.
+     * @param autoStep true if this step is auto step
      */
     public DerivationStep(final ProofWorksheet w, final String step,
         final String[] hypStep, final String refLabel, final Formula formula,
-        final ParseTree parseTree, final boolean setCaret, final int proofLevel)
+        final ParseTree parseTree, final boolean setCaret,
+        final int proofLevel, final boolean autoStep)
     {
 
         super(w, step, refLabel, formula, setCaret);
+
+        this.autoStep = autoStep;
 
         this.proofLevel = proofLevel;
 
@@ -247,6 +251,32 @@ public class DerivationStep extends ProofStepStmt {
 
         stmtText = buildStepHypRefSB();
         lineCnt = loadStmtText(stmtText, formula, parseTree);
+    }
+
+    /**
+     * Constructor for incomplete DerivationStep destined only for output to the
+     * GUI.
+     * <p>
+     * Creates "incomplete" DerivationStep which is destined only for output to
+     * the GUI, hence, the object references, etc. are not loaded. After display
+     * to the GUI this worksheet disappears -- recreated via "load" each time
+     * the user selects "StartUnification".
+     * 
+     * @param w the owner ProofWorksheet
+     * @param step step number of the proof step
+     * @param hypStep array of hyp step numbers for the proof step
+     * @param refLabel Ref label of the proof step
+     * @param formula the proof step formula
+     * @param parseTree formula ParseTree (can be null)
+     * @param setCaret true means position caret of TextArea to this statement.
+     * @param proofLevel level of step in proof.
+     */
+    public DerivationStep(final ProofWorksheet w, final String step,
+        final String[] hypStep, final String refLabel, final Formula formula,
+        final ParseTree parseTree, final boolean setCaret, final int proofLevel)
+    {
+        this(w, step, hypStep, refLabel, formula, parseTree, setCaret,
+            proofLevel, false);
     }
 
     /**

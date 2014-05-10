@@ -1930,7 +1930,8 @@ public class ProofWorksheet {
                     e.refLabel, null, // formula,
                     null, // formulaParseTree,
                     false, // no caret
-                    e.proofLevel);
+                    e.proofLevel, e.isAutoStep);
+
                 proofWorkStmtList.add(derivationStep);
                 continue;
             }
@@ -1949,7 +1950,7 @@ public class ProofWorksheet {
                 derivationStep = new DerivationStep(this, e.step, e.hypStep,
                     e.refLabel, e.formula, e.formulaParseTree, false, // no
                                                                       // caret
-                    e.proofLevel);
+                    e.proofLevel, e.isAutoStep);
                 proofWorkStmtList.add(derivationStep);
             }
         }
