@@ -620,6 +620,8 @@ public class DerivationStep extends ProofStepStmt {
     public StringBuilder buildStepHypRefSB() {
         final StringBuilder sb = new StringBuilder();
 
+        if (isAutoStep())
+            sb.append(PaConstants.AUTO_STEP_PREFIX);
         sb.append(getStep());
         sb.append(PaConstants.FIELD_DELIMITER_COLON);
 
