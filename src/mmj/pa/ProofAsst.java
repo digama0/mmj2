@@ -772,6 +772,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             if (asciiRetest)
                 proofAsstPreferences
                     .setRecheckProofAsstUsingProofVerifier(false);
+
+            final StopWatch testStopWatch = new StopWatch(true);
             final ProofWorksheet proofWorksheet = unify(false, // no renum
                 true, // don't convert work vars
                 proofText, null, // no preprocess
@@ -779,9 +781,17 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 null, // no TL request
                 -1, // inputCursorPos
                 true); // printOkMessages
+            testStopWatch.stop();
+
             if (asciiRetest)
                 proofAsstPreferences
                     .setRecheckProofAsstUsingProofVerifier(verifierRecheck);
+
+            final TheoremTestResult result = new TheoremTestResult(
+                testStopWatch, proofWorksheet, selectorTheorem);
+
+            volumeTestOutputRoutine(result, null, true);
+
             final String updatedProofText = proofWorksheet.getOutputProofText();
 
             // retest
@@ -850,7 +860,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         for (final Theorem theorem : theoremList) {
             if (numberProcessed >= numberToProcess
                 || messages.maxErrorMessagesReached())
-                return;
+                break;
             // This whole function is needed for debug and regression tests.
             // The biggest test is set.mm which consumes a lot of time.
             // So, I think, it will be good to watch the progress dynamically.
