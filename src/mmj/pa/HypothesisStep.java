@@ -35,10 +35,7 @@ package mmj.pa;
 import java.io.IOException;
 import java.util.Map;
 
-import mmj.lang.Formula;
-import mmj.lang.LogHyp;
-import mmj.lang.ParseTree;
-import mmj.lang.Stmt;
+import mmj.lang.*;
 import mmj.mmio.MMIOError;
 import mmj.mmio.Statementizer;
 
@@ -118,9 +115,19 @@ public class HypothesisStep extends ProofStepStmt {
         final String newNum = renumberMap.get(getStep());
         if (newNum != null) {
             setStep(newNum);
-            final StringBuilder sb = buildStepHypRefSB(); // hyp version
-            reviseStepHypRefInStmtText(sb);
+            reloadStepHypRefInStmtText();
         }
+    }
+
+    /**
+     * Updates the Step/Hyp/Ref field in the statement text area of the proof
+     * step.
+     * <p>
+     * This is needed because Unify can alter Hyp and Ref.
+     */
+    @Override
+    public void reloadStepHypRefInStmtText() {
+        reviseStepHypRefInStmtText(buildStepHypRefSB());
     }
 
     /**

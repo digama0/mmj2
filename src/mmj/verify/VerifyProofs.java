@@ -62,36 +62,10 @@
 
 package mmj.verify;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
-import mmj.lang.Assrt;
-import mmj.lang.Axiom;
-import mmj.lang.Cnst;
-import mmj.lang.DjVars;
-import mmj.lang.Formula;
-import mmj.lang.Hyp;
-import mmj.lang.LangException;
-import mmj.lang.LogHyp;
-import mmj.lang.MObj;
-import mmj.lang.Messages;
-import mmj.lang.ParseNode;
-import mmj.lang.ParseTree;
+import mmj.lang.*;
 import mmj.lang.ParseTree.RPNStep;
-import mmj.lang.ProofVerifier;
-import mmj.lang.ScopeFrame;
-import mmj.lang.Stmt;
-import mmj.lang.Sym;
-import mmj.lang.Theorem;
-import mmj.lang.Var;
-import mmj.lang.VarHyp;
-import mmj.lang.VerifyException;
-import mmj.lang.WorkVar;
 import mmj.pa.PaConstants;
 
 /**
@@ -664,7 +638,6 @@ public class VerifyProofs implements ProofVerifier {
                     // special case: we not need hypotheses!
                     e.hypStep = new String[0];
                     e.isAutoStep = true;
-                    e.step = PaConstants.AUTO_STEP_PREFIX + e.step;
                 }
                 else {
                     e.hypStep = new String[logHypCnt];
@@ -714,8 +687,6 @@ public class VerifyProofs implements ProofVerifier {
             final ProofDerivationStepEntry qedStep = derivStepList
                 .get(qedIndex);
             qedStep.step = ProofConstants.QED_STEP_NBR;
-            if (hypsOrder == HypsOrder.Autocomplete)
-                qedStep.step = PaConstants.AUTO_QED_STEP_NBR;
             qedStep.formulaParseTree = theorem.getExprParseTree();
         }
     }

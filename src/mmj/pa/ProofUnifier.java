@@ -64,34 +64,9 @@
 
 package mmj.pa;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import mmj.lang.Assrt;
-import mmj.lang.Cnst;
-import mmj.lang.DjVars;
-import mmj.lang.Formula;
-import mmj.lang.Hyp;
-import mmj.lang.LangException;
-import mmj.lang.LogHyp;
-import mmj.lang.LogicalSystem;
-import mmj.lang.MObj;
-import mmj.lang.Messages;
-import mmj.lang.ParseNode;
-import mmj.lang.ParseTree;
-import mmj.lang.Stmt;
-import mmj.lang.Sym;
-import mmj.lang.Theorem;
-import mmj.lang.Var;
-import mmj.lang.VarHyp;
-import mmj.lang.VerifyException;
-import mmj.lang.WorkVar;
-import mmj.lang.WorkVarHyp;
-import mmj.lang.WorkVarManager;
+import mmj.lang.*;
 import mmj.verify.Grammar;
 import mmj.verify.VerifyProofs;
 
@@ -391,11 +366,9 @@ public class ProofUnifier {
                 || proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH || proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SEARCH_OPTIONS))
             return; // our work here is complete :-)
 
-        if (dsa1Count > 0) {
+        if (dsa1Count > 0)
             // still some left to unify!
-            generateNumbersForAutoSteps(proofWorksheet);
             parallelStepUnificationMethod();
-        }
 
         final DerivationStep qed = proofWorksheet.getQedStep();
 
@@ -591,47 +564,6 @@ public class ProofUnifier {
             continue;
         }
 
-    }
-
-    /**
-     * Generates numbers for autocomplete steps so that they could be used from
-     * other steps
-     * 
-     * @param proofWorksheet the proof worksheet
-     */
-    private void generateNumbersForAutoSteps(final ProofWorksheet proofWorksheet)
-    {
-        if (!proofAsstPreferences.isAutocompleteEnabled())
-            return;
-        // Find the maximum index
-        int generatedNumber = PaConstants.AUTOCOMPLETE_START_STEP_NUMBER;
-        for (int i = 0; i < dsa1Count; i++) {
-            final DerivationStep d = dsa1[i];
-            if (d.isAutoStep())
-                if (d.getStep().startsWith(PaConstants.AUTO_STEP_PREFIX)
-                    && !d.getStep().equals(PaConstants.AUTO_STEP_PREFIX)
-                    && !d.getStep().equals(PaConstants.AUTO_QED_STEP_NBR))
-                {
-                    final String s = d.getStep().substring(
-                        PaConstants.AUTO_STEP_PREFIX.length());
-                    try {
-                        final int x = Integer.parseInt(s);
-                        if (x > generatedNumber)
-                            generatedNumber = x;
-                    } catch (final NumberFormatException e) {
-                        // do nothing, just leave the step as it was!
-                    }
-                }
-        }
-
-        for (int i = 0; i < dsa1Count; i++) {
-            final DerivationStep d = dsa1[i];
-            if (d.isAutoStep())
-                if (d.getStep().equals(PaConstants.AUTO_STEP_PREFIX)) {
-                    d.setStep("!" + ++generatedNumber);
-                    d.reloadStepHypRefInStmtText();
-                }
-        }
     }
 
     private void parallelStepUnificationMethod() throws VerifyException {
@@ -1412,6 +1344,9 @@ public class ProofUnifier {
 
             final ProofStepStmt candidate = (ProofStepStmt)proofWorkStmtObject;
 
+            if (candidate.formulaParseTree == null)
+                continue;
+
             boolean ok = unifyAndMergeSubst(assrtLogHypSubstArray, i,
                 candidate, i);
             if (ok) {
@@ -1850,8 +1785,7 @@ public class ProofUnifier {
         final Assrt assrt, final ParseNode[] assrtSubst)
     {
         // if we resolved autocomplete step then contert it to ordinary step!
-        if (d.isAutoStep())
-            convertAutoToNormalDerivStep(d);
+        d.setAutoStep(false);
 
         d.setAssrtSubstList(assrtSubst);
         d.setRef(assrt);
@@ -1869,34 +1803,6 @@ public class ProofUnifier {
                 holdSoftDjVarsErrorList);
     }
 
-    /**
-     * This function converts an autocomplete derivation step into ordinary
-     * derivation step
-     * 
-     * @param d derivation step
-     */
-    private void convertAutoToNormalDerivStep(final DerivationStep d) {
-        d.setAutoStep(false);
-        if (d.getStep().equals(PaConstants.AUTO_QED_STEP_NBR)) {
-            d.setStep(PaConstants.QED_STEP_NBR);
-            return;
-        }
-        final StringBuilder label = new StringBuilder(d.getStep());
-        label.setCharAt(0, PaConstants.AUTOCOMPLETED_STEP_PREFIX);
-
-        final Map<String, String> renumberMap = Collections.singletonMap(
-            d.getStep(), label.toString());
-
-        for (final ProofWorkStmt o : d.getProofWorksheet()
-            .getProofWorkStmtList())
-        {
-            if (!(o instanceof ProofStepStmt))
-                continue;
-
-            final ProofStepStmt renumberProofStepStmt = (ProofStepStmt)o;
-            renumberProofStepStmt.renum(renumberMap);
-        }
-    }
     /**
      * Changes the order of a derivation step's Hyp entries to match the order
      * on the Ref assertion.

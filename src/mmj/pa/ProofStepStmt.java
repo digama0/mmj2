@@ -44,19 +44,9 @@ package mmj.pa;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import mmj.lang.Cnst;
-import mmj.lang.Formula;
-import mmj.lang.ParseNode;
-import mmj.lang.ParseTree;
-import mmj.lang.Stmt;
-import mmj.lang.Sym;
-import mmj.lang.WorkVar;
-import mmj.lang.WorkVarHyp;
+import mmj.lang.*;
 import mmj.mmio.MMIOError;
 import mmj.mmio.Tokenizer;
 import mmj.verify.VerifyProofs;
@@ -493,10 +483,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      */
     @Override
     public boolean hasMatchingRefLabel(final String ref) {
-        if (refLabel != null && refLabel.equals(ref))
-            return true;
-        else
-            return false;
+        return refLabel != null && refLabel.equals(ref);
     }
 
     /**
@@ -507,10 +494,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      */
     @Override
     public boolean hasMatchingStepNbr(final String newStepNbr) {
-        if (step.equals(newStepNbr))
-            return true;
-        else
-            return false;
+        return step.equals(newStepNbr);
     }
 
     /**
@@ -688,6 +672,14 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
         else
             stmtText.replace(0, nbrSpaces - 1, stepHypRef.toString());
     }
+
+    /**
+     * Updates the Step/Hyp/Ref field in the statement text area of the proof
+     * step.
+     * <p>
+     * This is needed because Unify can alter Hyp and Ref.
+     */
+    public abstract void reloadStepHypRefInStmtText();
 
     // assumes StmtText already contains StepHypRef
     protected void reviseStepHypRefInStmtText(final StringBuilder newStepHypRef)

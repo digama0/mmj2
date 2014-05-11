@@ -46,24 +46,24 @@ public class WorksheetTokenizer {
         }
         if (lineBeginning) {
             t.initialState = true;
-            if (s.equals("$(")) {
+            if (s.equals(PaConstants.HEADER_STMT_TOKEN)) {
                 lineType = HEADER;
                 index = 0;
                 t.type = PaConstants.PROOF_ASST_STYLE_KEYWORD;
             }
-            else if (s.equals("$d")) {
+            else if (s.equals(PaConstants.DISTINCT_VARIABLES_STMT_TOKEN)) {
                 lineType = DJVARS;
                 t.type = PaConstants.PROOF_ASST_STYLE_KEYWORD;
             }
-            else if (s.equals("$=")) {
+            else if (s.equals(PaConstants.GENERATED_PROOF_STMT_TOKEN)) {
                 lineType = PROOF;
                 t.type = PaConstants.PROOF_ASST_STYLE_KEYWORD;
             }
-            else if (s.equals("$)")) {
+            else if (s.equals(PaConstants.FOOTER_STMT_TOKEN)) {
                 lineType = FOOTER;
                 t.type = PaConstants.PROOF_ASST_STYLE_KEYWORD;
             }
-            else if (s.startsWith("*")) {
+            else if (s.startsWith(PaConstants.COMMENT_STMT_TOKEN_PREFIX)) {
                 lineType = COMMENT;
                 t.type = PaConstants.PROOF_ASST_STYLE_COMMENT;
             }
@@ -77,7 +77,7 @@ public class WorksheetTokenizer {
         else if (lineType == HEADER)
             parseHeader(s, t);
         else if (lineType == PROOF)
-            t.type = s.equals("$.") ? PaConstants.PROOF_ASST_STYLE_KEYWORD
+            t.type = s.equals(PaConstants.END_PROOF_STMT_TOKEN) ? PaConstants.PROOF_ASST_STYLE_KEYWORD
                 : PaConstants.PROOF_ASST_STYLE_PROOF;
         else if (lineType == DJVARS)
             parseSym(s, t);
@@ -108,15 +108,15 @@ public class WorksheetTokenizer {
     private void parseHeader(final String s, final Token t) {
         switch (index++) {
             case 0:
-                t.type = s.equals("<MM>") ? PaConstants.PROOF_ASST_STYLE_KEYWORD
+                t.type = s.equals(PaConstants.HEADER_MM_TOKEN) ? PaConstants.PROOF_ASST_STYLE_KEYWORD
                     : PaConstants.PROOF_ASST_STYLE_ERROR;
                 break;
             case 1:
-                t.type = s.equals("<PROOF_ASST>") ? PaConstants.PROOF_ASST_STYLE_KEYWORD
+                t.type = s.equals(PaConstants.HEADER_PROOF_ASST_TOKEN) ? PaConstants.PROOF_ASST_STYLE_KEYWORD
                     : PaConstants.PROOF_ASST_STYLE_ERROR;
                 break;
             case 2:
-                String pref = "THEOREM=";
+                String pref = PaConstants.HEADER_THEOREM_EQUAL_PREFIX;
                 if (s.startsWith(pref) && s.length() > pref.length()) {
                     t.type = PaConstants.PROOF_ASST_STYLE_KEYWORD;
                     final Token t2 = new Token();
@@ -129,7 +129,7 @@ public class WorksheetTokenizer {
                     t.type = PaConstants.PROOF_ASST_STYLE_ERROR;
                 break;
             case 3:
-                pref = "LOC_AFTER=";
+                pref = PaConstants.HEADER_LOC_AFTER_EQUAL_PREFIX;
                 if (s.startsWith(pref)) {
                     t.type = PaConstants.PROOF_ASST_STYLE_KEYWORD;
                     t.length = pref.length();
@@ -138,7 +138,7 @@ public class WorksheetTokenizer {
                         final Token t2 = new Token();
                         t2.begin = t.begin + t.length;
                         t2.length = s2.length();
-                        if (s2.equals("?"))
+                        if (s2.equals(PaConstants.DEFAULT_STMT_LABEL))
                             t2.type = PaConstants.PROOF_ASST_STYLE_SPECIAL_STEP;
                         else if (logSys == null
                             || logSys.getStmtTbl().get(s2) != null)
@@ -156,32 +156,43 @@ public class WorksheetTokenizer {
         }
     }
     private void parseStepHypRef(final String s, final Token t) {
-        final String[] fields = s.split(":", 4);
-        if (fields[0].isEmpty()) {
-            t.type = PaConstants.PROOF_ASST_STYLE_ERROR;
-            return;
-        }
+        final String[] fields = s.split("" + PaConstants.FIELD_DELIMITER_COLON,
+            4);
         t.length = fields[0].length();
         boolean isHyp = false;
-        if (fields[0].contains(","))
-            t.type = PaConstants.PROOF_ASST_STYLE_ERROR;
-        else if (fields[0].equalsIgnoreCase("qed"))
+        Token t2 = t;
+        if (fields[0].startsWith(PaConstants.AUTO_STEP_PREFIX)) {
+            t2 = new Token();
+            t2.begin = t.begin + 1;
+            t2.length = t.length - 1;
+            t.length = 1;
             t.type = PaConstants.PROOF_ASST_STYLE_SPECIAL_STEP;
-        else if (fields[0].startsWith("h")) {
-            t.type = PaConstants.PROOF_ASST_STYLE_SPECIAL_STEP;
+            fields[0] = fields[0].substring(1);
+            tokenQueue.add(t2);
+        }
+        if (fields[0].equals(PaConstants.DEFAULT_STMT_LABEL)
+            || fields[0].contains("" + PaConstants.FIELD_DELIMITER_COMMA)
+            || fields[0].contains(PaConstants.AUTO_STEP_PREFIX))
+            t2.type = PaConstants.PROOF_ASST_STYLE_ERROR;
+        else if (fields[0].equalsIgnoreCase(PaConstants.QED_STEP_NBR))
+            t2.type = PaConstants.PROOF_ASST_STYLE_SPECIAL_STEP;
+        else if (fields[0].startsWith(PaConstants.HYP_STEP_PREFIX)) {
+            t2.type = PaConstants.PROOF_ASST_STYLE_SPECIAL_STEP;
             isHyp = true;
         }
         else
-            t.type = PaConstants.PROOF_ASST_STYLE_STEP;
-        index = t.begin + t.length;
+            t2.type = PaConstants.PROOF_ASST_STYLE_STEP;
+        index = t2.begin + t2.length;
         if (fields.length > 1) {
             if (fields.length == 2) {
                 if (parseRef(fields[1], isHyp))
                     return;
                 index -= tokenQueue.removeLast().length;
             }
-            for (String hyp : fields[1].split(",", -1)) {
-                Token t2 = new Token();
+            for (String hyp : fields[1].split(""
+                + PaConstants.FIELD_DELIMITER_COMMA, -1))
+            {
+                t2 = new Token();
                 t2.begin = index++;
                 t2.length = 1;
                 t2.type = PaConstants.PROOF_ASST_STYLE_DEFAULT;
@@ -194,7 +205,7 @@ public class WorksheetTokenizer {
                     t2.type = PaConstants.PROOF_ASST_STYLE_ERROR;
                 }
                 else
-                    t2.type = hyp.equals("?") ? PaConstants.PROOF_ASST_STYLE_SPECIAL_STEP
+                    t2.type = hyp.equals(PaConstants.DEFAULT_STMT_LABEL) ? PaConstants.PROOF_ASST_STYLE_SPECIAL_STEP
                         : PaConstants.PROOF_ASST_STYLE_HYP;
                 index += t2.length = hyp.length();
                 if (t2.length > 0)
@@ -205,7 +216,7 @@ public class WorksheetTokenizer {
             if (fields.length > 2) {
                 parseRef(fields[2], isHyp);
                 if (fields.length > 3) {
-                    final Token t2 = new Token();
+                    t2 = new Token();
                     t2.begin = index;
                     t2.length = fields[3].length() + 1;
                     t2.type = PaConstants.PROOF_ASST_STYLE_ERROR;
@@ -226,7 +237,7 @@ public class WorksheetTokenizer {
             t2 = new Token();
             t2.begin = index;
             index += t2.length = field.length();
-            if (field.startsWith("#"))
+            if (field.charAt(0) == PaConstants.LOCAL_REF_ESCAPE_CHAR)
                 t2.type = PaConstants.PROOF_ASST_STYLE_LOCREF;
             else if (isHyp)
                 t2.type = PaConstants.PROOF_ASST_STYLE_REF;

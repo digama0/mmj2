@@ -109,30 +109,10 @@
 package mmj.pa;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import mmj.lang.Assrt;
-import mmj.lang.Cnst;
-import mmj.lang.DjVars;
-import mmj.lang.Formula;
-import mmj.lang.Hyp;
-import mmj.lang.LogHyp;
-import mmj.lang.LogicalSystem;
-import mmj.lang.Messages;
-import mmj.lang.ParseTree;
+import mmj.lang.*;
 import mmj.lang.ParseTree.RPNStep;
-import mmj.lang.ScopeFrame;
-import mmj.lang.Stmt;
-import mmj.lang.Theorem;
-import mmj.lang.Var;
-import mmj.lang.VarHyp;
-import mmj.lang.WorkVar;
 import mmj.mmio.MMIOError;
 import mmj.mmio.Tokenizer;
 import mmj.search.SearchOutput;
@@ -1150,20 +1130,18 @@ public class ProofWorksheet {
                 continue;
             }
 
-            final boolean isAutoStep;
-            if (proofAsstPreferences.isAutocompleteEnabled())
-                isAutoStep = prefixField.equals(PaConstants.AUTO_STEP_PREFIX);
-            else
-                isAutoStep = false;
-
             // now work on ProofSteps, starting with step/hyp/ref
             // fields.
 
             final boolean isHypStep = prefixField
                 .equals(PaConstants.HYP_STEP_PREFIX);
 
+            final boolean isAutoStep = proofAsstPreferences
+                .isAutocompleteEnabled()
+                && prefixField.equals(PaConstants.AUTO_STEP_PREFIX);
+
             final DelimitedTextParser stepHypRefParser = new DelimitedTextParser(
-                isHypStep ? nextToken.substring(1) : nextToken);
+                isHypStep || isAutoStep ? nextToken.substring(1) : nextToken);
 
             String hypField = null;
             String refField = null;
@@ -1171,69 +1149,50 @@ public class ProofWorksheet {
 
             String stepField = null;
 
-            if (!isAutoStep) {
-                stepHypRefParser
-                    .setParseDelimiter(PaConstants.FIELD_DELIMITER_COLON);
-                stepHypRefParser.setQuoterEnabled(false);
-                final List<String> fields = stepHypRefParser.parseAll();
+            stepHypRefParser
+                .setParseDelimiter(PaConstants.FIELD_DELIMITER_COLON);
+            stepHypRefParser.setQuoterEnabled(false);
+            final List<String> fields = stepHypRefParser.parseAll();
 
-                stepField = validateStepField(isHypStep, fields.get(0));
+            switch (fields.size()) {
+                case 3:
+                    hypField = fields.get(1).isEmpty() ? null : fields.get(1);
+                    refField = fields.get(2).isEmpty() ? null : fields.get(2);
+                case 1:
+                    stepField = validateStepField(isHypStep, fields.get(0));
+                    break;
 
-                switch (fields.size()) {
-                    case 3:
-                        hypField = fields.get(1).isEmpty() ? null : fields
-                            .get(1);
-                        refField = fields.get(2).isEmpty() ? null : fields
-                            .get(2);
-                    case 1:
-                        stepField = validateStepField(isHypStep, fields.get(0));
-                        break;
+                case 2:
+                    stepField = validateStepField(isHypStep, fields.get(0));
+                    hypField = fields.get(1);
+                    if (hypField.length() > 0
+                        && hypField.charAt(0) == PaConstants.LOCAL_REF_ESCAPE_CHAR
+                        || logicalSystem.getStmtTbl().containsKey(hypField))
+                    {
+                        // Smells like the ref field. probably typed
+                        // step:ref
+                        // instead of step::ref
+                        refField = hypField;
+                        hypField = null;
+                    }
+                    else if (hypField.isEmpty())
+                        hypField = null;
+                    break;
 
-                    case 2:
-                        stepField = validateStepField(isHypStep, fields.get(0));
-                        hypField = fields.get(1);
-                        if (hypField.length() > 0
-                            && hypField.charAt(0) == PaConstants.LOCAL_REF_ESCAPE_CHAR
-                            || logicalSystem.getStmtTbl().containsKey(hypField))
-                        {
-                            // Smells like the ref field. probably typed
-                            // step:ref
-                            // instead of step::ref
-                            refField = hypField;
-                            hypField = null;
-                        }
-                        else if (hypField.isEmpty())
-                            hypField = null;
-                        break;
+                case 0:
+                    stepField = "";
+                    break;
 
-                    case 0:
-                        triggerLoadStructureException(
-                            PaConstants.ERRMSG_SHR_BAD,
-                            getErrorLabelIfPossible(),
-                            proofTextTokenizer.getCurrentLineNbr(), nextToken);
-
-                    default:
-                        triggerLoadStructureException(
-                            PaConstants.ERRMSG_SHR_BAD2,
-                            getErrorLabelIfPossible(), stepField,
-                            proofTextTokenizer.getCurrentLineNbr(), nextToken);
-                }
-                if (refField != null
-                    && refField.charAt(0) == PaConstants.LOCAL_REF_ESCAPE_CHAR)
-                {
-                    localRefField = refField.substring(1);
-                    refField = null;
-                }
+                default:
+                    triggerLoadStructureException(PaConstants.ERRMSG_SHR_BAD2,
+                        getErrorLabelIfPossible(), stepField,
+                        proofTextTokenizer.getCurrentLineNbr(), nextToken);
             }
-            else {
-                if (!nextToken.equals(PaConstants.AUTO_STEP_PREFIX)) {
-                    final ProofWorkStmt stmt = findMatchingStepNbr(nextToken);
-                    if (stmt != null)
-                        triggerLoadStructureException(
-                            PaConstants.ERRMSG_STEP_NBR_DUP,
-                            getErrorLabelIfPossible(), nextToken);
-                }
-                stepField = nextToken;
+            if (refField != null
+                && refField.charAt(0) == PaConstants.LOCAL_REF_ESCAPE_CHAR)
+            {
+                localRefField = refField.substring(1);
+                refField = null;
             }
 
             final int lineStartCharNbr = (int)proofTextTokenizer
@@ -1270,9 +1229,7 @@ public class ProofWorksheet {
                 continue;
             }
 
-            if (stepField.equals(PaConstants.QED_STEP_NBR) || isAutoStep
-                && stepField.equals(PaConstants.AUTO_QED_STEP_NBR))
-            {
+            if (stepField.equals(PaConstants.QED_STEP_NBR)) {
                 if (qedStep != null)
                     triggerLoadStructureException(
                         PaConstants.ERRMSG_MULT_QED_ERROR,
@@ -1292,9 +1249,7 @@ public class ProofWorksheet {
                 }
 
                 qedStep = new DerivationStep(this);
-
-                if (isAutoStep)
-                    qedStep.setAutoStep(true);
+                qedStep.setAutoStep(isAutoStep);
 
                 nextToken = qedStep.loadDerivationStep(origStepHypRefLength,
                     lineStartCharNbr, stepField, hypField, refField);
@@ -1310,14 +1265,12 @@ public class ProofWorksheet {
                         getErrorLabelIfPossible(), stepField);
 
                 final DerivationStep x = new DerivationStep(this);
-
-                if (isAutoStep)
-                    x.setAutoStep(true);
+                x.setAutoStep(isAutoStep);
 
                 if (localRefField != null) {
 
                     if (stepSelectorChoiceRequired
-                        && stepField.equals(stepRequest.step))
+                        && stepRequest.step.equals(stepField))
                         triggerLoadStructureException(
                             PaConstants.ERRMSG_LOCAL_REF_HAS_SELECTOR_CHOICE,
                             getErrorLabelIfPossible(), stepField);
@@ -1330,7 +1283,7 @@ public class ProofWorksheet {
                 else {
 
                     if (stepSelectorChoiceRequired
-                        && stepField.equals(stepRequest.step))
+                        && stepRequest.step.equals(stepField))
                     {
                         refField = ((Assrt)stepRequest.param1).getLabel();
                         stepSelectorChoiceRequired = false;
@@ -1362,6 +1315,8 @@ public class ProofWorksheet {
          * <<<<<This is the loadWorksheet "finale" section.>>>>>
          * =====================================================
          */
+
+        generateMissingStepLabels();
 
         if (stepRequest != null
             && (stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH || stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH))
@@ -1431,6 +1386,18 @@ public class ProofWorksheet {
         return nextToken;
 
     }
+
+    private void generateMissingStepLabels() {
+        for (final ProofWorkStmt stmt : proofWorkStmtList)
+            if (stmt instanceof ProofStepStmt
+                && ((ProofStepStmt)stmt).getStep().isEmpty())
+            {
+                ((ProofStepStmt)stmt).setStep(PaConstants.DERIVE_STEP_PREFIX
+                    + Integer.toString(generateNewDerivedStepNbr()));
+                ((ProofStepStmt)stmt).reloadStepHypRefInStmtText();
+            }
+    }
+
     private boolean setInputCursorStmtIfHere(final ProofWorkStmt proofWorkStmt,
         final int inputCursorPos, final String nextToken,
         final Tokenizer proofTextTokenizer)
@@ -1791,10 +1758,16 @@ public class ProofWorksheet {
     private String validateStepField(final boolean isHypStep,
         final String stepField) throws ProofAsstException
     {
-        if (stepField.equals("")
-            || stepField.equals(PaConstants.DEFAULT_STMT_LABEL))
+        if (stepField == null || stepField.isEmpty())
+            return "";
+        if (stepField.equals(PaConstants.DEFAULT_STMT_LABEL))
             triggerLoadStructureException(PaConstants.ERRMSG_STEP_NBR_MISSING,
                 getErrorLabelIfPossible());
+
+        if (stepField.contains("" + PaConstants.FIELD_DELIMITER_COMMA)
+            || stepField.contains(PaConstants.AUTO_STEP_PREFIX))
+            triggerLoadStructureException(PaConstants.ERRMSG_BAD_STEP,
+                getErrorLabelIfPossible(), stepField);
 
         final String outputStep = stepField.toLowerCase();
         if (outputStep.equals(PaConstants.QED_STEP_NBR)) {

@@ -52,24 +52,15 @@
 
 package mmj.pa;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
+import java.awt.*;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 
-import mmj.lang.Assrt;
-import mmj.lang.LangException;
-import mmj.lang.WorkVarManager;
+import mmj.lang.*;
 import mmj.search.SearchMgr;
 import mmj.tmff.TMFFPreferences;
 import mmj.util.UtilConstants;
@@ -1651,7 +1642,7 @@ public class ProofAsstPreferences {
         return autocompleteEnabled;
     }
 
-    public void setAutocompleteEnabled(final boolean autocompleteTurnedOn) {
-        this.autocompleteEnabled = autocompleteTurnedOn;
+    public void setAutocompleteEnabled(final boolean enabled) {
+        autocompleteEnabled = enabled;
     }
 }

@@ -68,19 +68,9 @@
 package mmj.pa;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import mmj.lang.Assrt;
-import mmj.lang.DjVars;
-import mmj.lang.Formula;
-import mmj.lang.LangException;
-import mmj.lang.ParseNode;
-import mmj.lang.ParseTree;
-import mmj.lang.Stmt;
-import mmj.lang.VarHyp;
-import mmj.lang.WorkVar;
+import mmj.lang.*;
 import mmj.mmio.MMIOError;
 import mmj.util.DelimitedTextParser;
 
@@ -575,8 +565,7 @@ public class DerivationStep extends ProofStepStmt {
 
         // this is in place for the ProofAsstAutoReformat RunParm
         // which in taken care of by ProofUnifier...
-        if (stmtTextAlreadyLoaded) {}
-        else {
+        if (!stmtTextAlreadyLoaded) {
             stmtText = buildStepHypRefSB();
             lineCnt = loadStmtText(stmtText, getFormula(), formulaParseTree);
         }
@@ -603,6 +592,7 @@ public class DerivationStep extends ProofStepStmt {
      * <p>
      * This is needed because Unify can alter Hyp and Ref.
      */
+    @Override
     public void reloadStepHypRefInStmtText() {
         reviseStepHypRefInStmtText(buildStepHypRefSB());
     }
@@ -631,8 +621,6 @@ public class DerivationStep extends ProofStepStmt {
         final StringBuilder sb = new StringBuilder();
 
         sb.append(getStep());
-        if (autoStep)
-            return sb;
         sb.append(PaConstants.FIELD_DELIMITER_COLON);
 
         if (hypStep.length > 0) {
@@ -1029,10 +1017,7 @@ public class DerivationStep extends ProofStepStmt {
 
     @Override
     public String toString() {
-        if (autoStep)
-            return getStep() + " " + getFormula();
-
-        String s = getStep() + ":";
+        String s = (autoStep ? "!" : "") + getStep() + ":";
         String delim = "";
         for (final String h : hypStep) {
             s += delim + h;
