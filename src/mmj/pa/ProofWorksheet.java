@@ -935,39 +935,13 @@ public class ProofWorksheet {
         final String generatedStep = PaConstants.DERIVE_STEP_PREFIX
             + Integer.toString(generateNewDerivedStepNbr());
 
-        ProofStepStmt[] generatedHyp;
-        String[] generatedHypStep;
-
-        boolean generatedHypFldIncomplete = false;
-        boolean generatedFormulaIsIncomplete = false;
-
-        if (!workVarList.isEmpty()) {
-            generatedHyp = new ProofStepStmt[1];
-            generatedHypStep = new String[1];
-            generatedHypStep[0] = PaConstants.DEFAULT_STMT_LABEL;
-            generatedHypFldIncomplete = true;
-            generatedFormulaIsIncomplete = true;
-        }
-        else {
-            generatedHyp = new ProofStepStmt[0];
-            generatedHypStep = new String[0];
-        }
-
         final DerivationStep out = new DerivationStep(this, generatedStep,
-            generatedHyp, generatedHypStep, formula, formulaParseTree,
-            generatedFormulaIsIncomplete, generatedHypFldIncomplete, true, // generated
-                                                                           // by
-                                                                           // derive
+            new ProofStepStmt[0], new String[0], formula, formulaParseTree,
+            false, false, proofAsstPreferences.getDeriveAutocomplete(),
             workVarList);
 
-        for (int i = 0; i < proofWorkStmtList.size(); i++)
-            if (proofWorkStmtList.get(i) == derivStep) {
-                proofWorkStmtList.add(i, out);
-                return out;
-            }
-
-        throw new IllegalArgumentException(
-            PaConstants.ERRMSG_DERIVE_FEATURE_STEP_NOTFND);
+        proofWorkStmtList.add(proofWorkStmtList.indexOf(derivStep), out);
+        return out;
     }
 
     /**
@@ -1136,8 +1110,7 @@ public class ProofWorksheet {
             final boolean isHypStep = prefixField
                 .equals(PaConstants.HYP_STEP_PREFIX);
 
-            final boolean isAutoStep = proofAsstPreferences
-                .isAutocompleteEnabled()
+            final boolean isAutoStep = proofAsstPreferences.getAutocomplete()
                 && prefixField.equals(PaConstants.AUTO_STEP_PREFIX);
 
             final DelimitedTextParser stepHypRefParser = new DelimitedTextParser(

@@ -72,40 +72,17 @@
 package mmj.util;
 
 import java.awt.Color;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
-import mmj.lang.Assrt;
-import mmj.lang.Cnst;
-import mmj.lang.LangException;
-import mmj.lang.LogicalSystem;
-import mmj.lang.Messages;
-import mmj.lang.Stmt;
-import mmj.lang.Theorem;
-import mmj.lang.VerifyException;
-import mmj.lang.WorkVarManager;
+import mmj.lang.*;
 import mmj.mmio.MMIOException;
-import mmj.pa.EraseWffsPreprocessRequest;
-import mmj.pa.PaConstants;
-import mmj.pa.PreprocessRequest;
-import mmj.pa.ProofAsst;
-import mmj.pa.ProofAsstPreferences;
+import mmj.pa.*;
 import mmj.tl.TheoremLoader;
-import mmj.verify.Grammar;
-import mmj.verify.HypsOrder;
-import mmj.verify.VerifyProofs;
+import mmj.verify.*;
 
 /**
  * Responsible for building and triggering ProofAsst.
@@ -450,6 +427,13 @@ public class ProofAsstBoss extends Boss {
             .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_AUTOCOMPLETE_ENABLED) == 0)
         {
             doProofAsstAutocompleteEnabled(runParm);
+            return true;
+        }
+
+        if (runParm.name
+            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_DERIVE_AUTOCOMPLETE) == 0)
+        {
+            doProofAsstDeriveAutocomplete(runParm);
             return true;
         }
 
@@ -1474,7 +1458,22 @@ public class ProofAsstBoss extends Boss {
     {
         final boolean autocomplete = editYesNoRunParm(runParm,
             UtilConstants.RUNPARM_PROOF_ASST_AUTOCOMPLETE_ENABLED, 1);
-        getProofAsstPreferences().setAutocompleteEnabled(autocomplete);
+        getProofAsstPreferences().setAutocomplete(autocomplete);
+    }
+
+    /**
+     * If this option is set then the proof assistant will support autocomplete
+     * derivation steps
+     * 
+     * @param runParm RunParmFile line.
+     * @throws VerifyException if an error occurred
+     */
+    public void doProofAsstDeriveAutocomplete(final RunParmArrayEntry runParm)
+        throws VerifyException
+    {
+        final boolean autocomplete = editYesNoRunParm(runParm,
+            UtilConstants.RUNPARM_PROOF_ASST_DERIVE_AUTOCOMPLETE, 1);
+        getProofAsstPreferences().setDeriveAutocomplete(autocomplete);
     }
 
     /**

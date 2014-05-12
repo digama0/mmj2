@@ -152,7 +152,9 @@ public class ProofAsstPreferences {
 
     private SearchMgr searchMgr;
 
-    private boolean autocompleteEnabled;
+    private boolean autocomplete;
+
+    private boolean deriveAutocomplete;
 
     /**
      * Default constructor.
@@ -219,7 +221,9 @@ public class ProofAsstPreferences {
 
         backgroundColor = PaConstants.DEFAULT_BACKGROUND_COLOR;
 
-        autocompleteEnabled = PaConstants.AUTOCOMPLETE_ENABLED_DEFAULT;
+        autocomplete = PaConstants.AUTOCOMPLETE_ENABLED_DEFAULT;
+
+        deriveAutocomplete = PaConstants.DERIVE_AUTOCOMPLETE_DEFAULT;
 
         setDjVarsSoftErrorsOption(PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_DEFAULT);
 
@@ -1638,11 +1642,19 @@ public class ProofAsstPreferences {
         searchMgr = searchmgr;
     }
 
-    public boolean isAutocompleteEnabled() {
-        return autocompleteEnabled;
+    public boolean getAutocomplete() {
+        return autocomplete;
     }
 
-    public void setAutocompleteEnabled(final boolean enabled) {
-        autocompleteEnabled = enabled;
+    public void setAutocomplete(final boolean enabled) {
+        autocomplete = enabled;
+    }
+
+    public boolean getDeriveAutocomplete() {
+        return autocomplete && deriveAutocomplete;
+    }
+
+    public void setDeriveAutocomplete(final boolean enabled) {
+        deriveAutocomplete = enabled;
     }
 }

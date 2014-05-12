@@ -229,7 +229,8 @@ public class ProofAsstGUI {
 
         updateScreenTitle(fileChooser.getSelectedFile());
 
-        buildGUI(PaConstants.SAMPLE_PROOF_TEXT);
+        buildGUI(proofAsstPreferences.getAutocomplete() ? PaConstants.AUTOCOMPLETE_SAMPLE_PROOF_TEXT
+            : PaConstants.SAMPLE_PROOF_TEXT);
     }
 
     /**
@@ -265,7 +266,8 @@ public class ProofAsstGUI {
                 buildFileChooser(new File(PaConstants.SAMPLE_PROOF_LABEL
                     + proofAsstPreferences.getDefaultFileNameSuffix()));
             updateScreenTitle(fileChooser.getSelectedFile());
-            buildGUI(PaConstants.SAMPLE_PROOF_TEXT);
+            buildGUI(proofAsstPreferences.getAutocomplete() ? PaConstants.AUTOCOMPLETE_SAMPLE_PROOF_TEXT
+                : PaConstants.SAMPLE_PROOF_TEXT);
         }
         else {
             buildFileChooser(startupProofWorksheetFile);

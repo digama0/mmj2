@@ -161,6 +161,8 @@ ProofAsstDefaultFileNameSuffix,.mmp
 ProofAsstDjVarsSoftErrors,GenerateReplacements
 ProofAsstProofFormat,Compressed
 ProofAsstProofFolder,myproofs
+ProofAsstAutocompleteEnabled,Yes
+ProofAsstDeriveAutocomplete,No
 ProofAsstAssrtListFreespace,5 
 *
 *====================================================================

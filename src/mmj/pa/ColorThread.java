@@ -256,7 +256,7 @@ class ColorThread extends Thread {
                 // stored in tokenStyles.
                 final int end = t.begin + t.length;
                 if (end <= doc.getLength()) {
-                    if (t.length <= 0 || t.type == null || t.begin < 0)
+                    if (t.length < 0 || t.type == null || t.begin < 0)
                         new IllegalStateException(
                             PaConstants.ERRMSG_TOKENIZER_FAIL)
                             .printStackTrace();

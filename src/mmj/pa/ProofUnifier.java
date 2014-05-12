@@ -644,8 +644,8 @@ public class ProofUnifier {
 
             if (derivStep.unificationStatus == PaConstants.UNIFICATION_STATUS_NOT_UNIFIED)
             {
-                if (!derivStep.isHypFldIncomplete())
-                    markUnificationFailure();
+                // if (!derivStep.isHypFldIncomplete())
+                // markUnificationFailure();
             }
             else if (derivStep.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED
                 || derivStep.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)

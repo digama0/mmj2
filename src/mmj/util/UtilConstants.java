@@ -1131,10 +1131,21 @@ public class UtilConstants {
      * <pre>
      * "ProofAsstAutocompleteEnabled": Yes or No
      * 
-     * Optional, default is No (disabled).
+     * Optional, default is Yes (enabled).
      * </pre>
      */
     public static final String RUNPARM_PROOF_ASST_AUTOCOMPLETE_ENABLED = "ProofAsstAutocompleteEnabled";
+
+    /**
+     * ProofAsstDeriveAutocomplete
+     * 
+     * <pre>
+     * "ProofAsstDeriveAutocomplete": Yes or No
+     * 
+     * Optional, default is No (disabled).
+     * </pre>
+     */
+    public static final String RUNPARM_PROOF_ASST_DERIVE_AUTOCOMPLETE = "ProofAsstDeriveAutocomplete";
 
     /**
      * ProofAsstHighlightingEnabled

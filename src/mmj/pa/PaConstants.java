@@ -934,6 +934,12 @@ public class PaConstants {
      * derivation steps.
      */
     public static final boolean AUTOCOMPLETE_ENABLED_DEFAULT = true;
+
+    /**
+     * If this option is true then the proof assistant will make new derive
+     * steps with the autocomplete flag already set.
+     */
+    public static final boolean DERIVE_AUTOCOMPLETE_DEFAULT = false;
     // ----------------------------------------------------------
     // Constants for AuxFrameGUI.java
     // ----------------------------------------------------------
@@ -1009,14 +1015,10 @@ public class PaConstants {
      */
     public static final int PROOF_TEXT_TAB_LENGTH = 1;
 
-    /**
-     * SAMPLE_PROOF_LABEL
-     */
+    /** SAMPLE_PROOF_LABEL */
     public static final String SAMPLE_PROOF_LABEL = "syllogism";
 
-    /**
-     * SAMPLE_PROOF_TEXT
-     */
+    /** SAMPLE_PROOF_TEXTS */
     public static final String SAMPLE_PROOF_TEXT = "$( <MM> <PROOF_ASST> THEOREM="
         + SAMPLE_PROOF_LABEL
         + " LOC_AFTER=\n"
@@ -1026,6 +1028,17 @@ public class PaConstants {
         + "3:2:           |- ( ph -> ( ps -> ch ) ) \n"
         + "4:3:           |- ( ( ph -> ps ) -> ( ph -> ch ) ) \n"
         + "qed:1,4:       |- ( ph -> ch ) \n" + "\n" + "$)\n";
+
+    /** AUTOCOMPLETE_SAMPLE_PROOF_TEXT */
+    public static final String AUTOCOMPLETE_SAMPLE_PROOF_TEXT = "$( <MM> <PROOF_ASST> THEOREM="
+        + SAMPLE_PROOF_LABEL
+        + " LOC_AFTER=\n"
+        + "\n"
+        + "h              |- ( ph -> ps ) \n"
+        + "h              |- ( ps -> ch ) \n"
+        + "!              |- ( ph -> ( ps -> ch ) ) \n"
+        + "!              |- ( ( ph -> ps ) -> ( ph -> ch ) ) \n"
+        + "!qed           |- ( ph -> ch ) \n" + "\n" + "$)\n";
 
     /**
      * PROOF_ASST_FRAME_TITLE
@@ -2639,10 +2652,6 @@ public class PaConstants {
     public static final String ERRMSG_DV_VAR_DUP = "E-PA-0368 Theorem %s:"
         + " Invalid symbol in Distinct Variable statement. Input token = %s"
         + " is a duplicate of another variable in the statement.";
-
-    public static final String ERRMSG_DERIVE_FEATURE_STEP_NOTFND = "A-PA-0369"
-        + " Programmer Error! Ooops. Sorry! Failed to find current derivation"
-        + " step while performing addDerivStepForDeriveFeature() function!";
 
     public static final String ERRMSG_FORMULA_REQ = "E-PA-0370 Theorem %s"
         + " Step %s: Formula is required on hypothesis steps and on the"

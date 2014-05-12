@@ -282,14 +282,14 @@ public class DerivationStep extends ProofStepStmt {
      *            {@link ProofStepStmt#formulaFldIncomplete}
      * @param generatedHypFldIncomplete see
      *            {@link DerivationStep#hypFldIncomplete}
-     * @param generatedFlag true means "generated".
+     * @param auto true if this is an autocomplete step
      * @param generatedWorkVarList List of Work Vars in formula
      */
     public DerivationStep(final ProofWorksheet w, final String generatedStep,
         final ProofStepStmt[] generatedHyp, final String[] generatedHypStep,
         final Formula generatedFormula, final ParseTree generatedParseTree,
         final boolean generatedFormulaFldIncomplete,
-        final boolean generatedHypFldIncomplete, final boolean generatedFlag,
+        final boolean generatedHypFldIncomplete, final boolean auto,
         final List<WorkVar> generatedWorkVarList)
     {
 
@@ -301,8 +301,9 @@ public class DerivationStep extends ProofStepStmt {
         updateFormulaParseTree(generatedParseTree);
 
         formulaFldIncomplete = generatedFormulaFldIncomplete;
-        hypFldIncomplete = generatedHypFldIncomplete;
-        generatedByDeriveFeature = generatedFlag;
+        setHypFldIncomplete(generatedHypFldIncomplete);
+        generatedByDeriveFeature = true;
+        autoStep = auto;
         if (generatedWorkVarList.isEmpty())
             workVarList = null;
         else
@@ -310,6 +311,8 @@ public class DerivationStep extends ProofStepStmt {
 
         stmtText = buildStepHypRefSB();
         lineCnt = loadStmtText(stmtText, generatedFormula, generatedParseTree);
+
+        reloadLogHypKeysAndMaxDepth();
 
     }
 
@@ -351,7 +354,7 @@ public class DerivationStep extends ProofStepStmt {
      */
     @Override
     public boolean stmtIsIncomplete() {
-        if (hypFldIncomplete || formulaFldIncomplete
+        if (isHypFldIncomplete() || formulaFldIncomplete
             || formulaParseTree == null)
             return true;
         return false;
@@ -481,7 +484,7 @@ public class DerivationStep extends ProofStepStmt {
 
         loadStepHypRefIntoStmtText(origStepHypRefLength, buildStepHypRefSB());
 
-        if (!hypFldIncomplete && !formulaFldIncomplete)
+        if (!isHypFldIncomplete() && !formulaFldIncomplete)
             w.incNbrDerivStepsReadyForUnify();
 
         reloadLogHypKeysAndMaxDepth();
@@ -602,7 +605,7 @@ public class DerivationStep extends ProofStepStmt {
      * during Unification Search.
      */
     public void reloadLogHypKeysAndMaxDepth() {
-        if (!hypFldIncomplete && !deriveStepHyps) {
+        if (!isHypFldIncomplete() && !deriveStepHyps) {
             logHypsL1HiLoKey = computeLogHypsL1HiLoKey();
             logHypsMaxDepth = computeLogHypsMaxDepth();
         }
@@ -824,13 +827,16 @@ public class DerivationStep extends ProofStepStmt {
 
             String s;
             while ((s = hypParser.nextField()) != null)
-                list.add(s.toLowerCase());
+                // strip all ? fields from auto steps
+                if (!isAutoStep() || !s.isEmpty()
+                    && !s.equals(PaConstants.DEFAULT_STMT_LABEL))
+                    list.add(s.toLowerCase());
         }
 
         setHypStepList(list.toArray(new String[list.size()]));
 
         for (final String step : hypStep)
-            if (step.compareTo(PaConstants.DEFAULT_STMT_LABEL) == 0)
+            if (step.equals(PaConstants.DEFAULT_STMT_LABEL))
                 questionMarks++;
 
         return questionMarks;
@@ -937,18 +943,20 @@ public class DerivationStep extends ProofStepStmt {
         throw new IllegalArgumentException(PaConstants.ERRMSG_SMOOSH_FAILED);
     }
 
-    /* OK, we are *not* in deriveStepHyps mode, so either a Ref was not entered,
+    /**
+     * OK, we are *not* in deriveStepHyps mode, so either a Ref was not entered,
      * or, the input nbrValidHyps > nbrExpectedHyps. For the old,
      * non-deriveStepHyps processing, the number of input hyps must match the
      * Ref's number of logical hypotheses, unless "?" or "" was input for one of
      * them. And "" hyps are automatically converted to "?". If any of the input
-     * hyps are "?" or "" then the step is given status "INCOMPLETE_HYPS". */
+     * hyps are "?" or "" then the step is given status "INCOMPLETE_HYPS".
+     */
     private void validateNonDeriveFeatureHyp(final int lineStartCharNbr,
         final int nbrExpectedHyps, final int nbrValidHyps)
         throws ProofAsstException
     {
 
-        hypFldIncomplete = false;
+        setHypFldIncomplete(false);
 
         for (int i = 0; i < hypStep.length; i++)
             if (hypStep[i].equals("")
@@ -956,7 +964,7 @@ public class DerivationStep extends ProofStepStmt {
             {
                 hypStep[i] = PaConstants.DEFAULT_STMT_LABEL;
 
-                hypFldIncomplete = true;
+                setHypFldIncomplete(true);
             }
 
         if (nbrExpectedHyps != -1 // a valid Ref was entered
