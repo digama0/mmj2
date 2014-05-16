@@ -68,9 +68,19 @@
 package mmj.pa;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-import mmj.lang.*;
+import mmj.lang.Assrt;
+import mmj.lang.DjVars;
+import mmj.lang.Formula;
+import mmj.lang.LangException;
+import mmj.lang.ParseNode;
+import mmj.lang.ParseTree;
+import mmj.lang.Stmt;
+import mmj.lang.VarHyp;
+import mmj.lang.WorkVar;
 import mmj.mmio.MMIOError;
 import mmj.util.DelimitedTextParser;
 
@@ -472,14 +482,12 @@ public class DerivationStep extends ProofStepStmt {
             else if (nbrValidHyps == nbrExpectedHyps)
                 resizeHypField(nbrExpectedHyps);
             else
-                validateNonDeriveFeatureHyp(lineStartCharNbr, nbrExpectedHyps,
-                    nbrValidHyps);
+                validateNonDeriveFeatureHyp(nbrExpectedHyps);
         }
         else {
             if (workVarList != null)
                 formulaFldIncomplete = true;
-            validateNonDeriveFeatureHyp(lineStartCharNbr, nbrExpectedHyps,
-                nbrValidHyps);
+            validateNonDeriveFeatureHyp(nbrExpectedHyps);
         }
 
         loadStepHypRefIntoStmtText(origStepHypRefLength, buildStepHypRefSB());
@@ -950,9 +958,11 @@ public class DerivationStep extends ProofStepStmt {
      * Ref's number of logical hypotheses, unless "?" or "" was input for one of
      * them. And "" hyps are automatically converted to "?". If any of the input
      * hyps are "?" or "" then the step is given status "INCOMPLETE_HYPS".
+     * 
+     * @param nbrExpectedHyps the expected hypotheses number
+     * @throws ProofAsstException throws if something was wrong
      */
-    private void validateNonDeriveFeatureHyp(final int lineStartCharNbr,
-        final int nbrExpectedHyps, final int nbrValidHyps)
+    private void validateNonDeriveFeatureHyp(final int nbrExpectedHyps)
         throws ProofAsstException
     {
 
