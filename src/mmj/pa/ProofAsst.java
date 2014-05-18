@@ -73,17 +73,52 @@
 
 package mmj.pa;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
 
 import mmj.gmff.GMFFException;
-import mmj.lang.*;
+import mmj.lang.Assrt;
+import mmj.lang.Axiom;
+import mmj.lang.Cnst;
+import mmj.lang.DjVars;
+import mmj.lang.Formula;
+import mmj.lang.Hyp;
+import mmj.lang.LangException;
+import mmj.lang.LogHyp;
+import mmj.lang.LogicalSystem;
+import mmj.lang.MObj;
+import mmj.lang.Messages;
+import mmj.lang.ParseNode;
+import mmj.lang.ParseTree;
 import mmj.lang.ParseTree.RPNStep;
+import mmj.lang.ScopeFrame;
+import mmj.lang.Stmt;
+import mmj.lang.Theorem;
+import mmj.lang.TheoremLoaderException;
+import mmj.lang.VarHyp;
+import mmj.lang.VerifyException;
 import mmj.mmio.MMIOError;
-import mmj.tl.*;
+import mmj.tl.MMTTheoremSet;
+import mmj.tl.TLRequest;
+import mmj.tl.TheoremLoader;
+import mmj.tl.TheoremLoaderCommitListener;
 import mmj.util.OutputBoss;
 import mmj.util.StopWatch;
-import mmj.verify.*;
+import mmj.verify.Grammar;
+import mmj.verify.HypsOrder;
+import mmj.verify.ProofDerivationStepEntry;
+import mmj.verify.VerifyProofs;
 
 /**
  * The {@code ProofAsst}, along with the rest of the {@code mmj.pa} package
@@ -895,6 +930,146 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         printVolumeTestStats(stats, wholeTestSuiteTime, timeTop);
     }
 
+    private void prepareAutomaticTransformations() {
+        final List<Theorem> theoremList = getSortedTheoremList(0);
+
+        new ArrayList<Theorem>();
+
+        // The list of binary equivalence operators:
+        final Set<Stmt> eqOperators = new HashSet<Stmt>();
+
+        // Try to find equivalence rules, like A = B <=> B = A
+        for (final Theorem theorem : theoremList) {
+            final VarHyp[] varHypArray = theorem.getMandVarHypArray();
+            final LogHyp[] logHyps = theorem.getLogHypArray();
+            final ParseTree theoremTree = theorem.getExprParseTree();
+            if (logHyps.length == 1) {
+                final ParseTree hypTree = logHyps[0].getExprParseTree();
+
+                if (varHypArray.length == 2
+                    && hypTree.getMaxDepth() == 2
+                    && theoremTree.getMaxDepth() == 2
+                    && theoremTree.getRoot().getChild().length == 2
+                    && hypTree.getRoot().getStmt() == theoremTree.getRoot()
+                        .getStmt()
+                    && hypTree.getRoot().getChild()[0].getStmt() == theoremTree
+                        .getRoot().getChild()[1].getStmt()
+                    && hypTree.getRoot().getChild()[1].getStmt() == theoremTree
+                        .getRoot().getChild()[0].getStmt())
+                {
+                    messages.accumInfoMessage("I-DBG Equivalence theorems: %s",
+                        theorem.toString());
+                    eqOperators.add(theoremTree.getRoot().getStmt());
+                }
+            }
+        }
+
+        // The list of binary equivalence operators:
+        final Set<Stmt> comOp = new HashSet<Stmt>();
+
+        // Find now commutative rules, like A + B = B + A
+        for (final Theorem theorem : theoremList) {
+            final VarHyp[] varHypArray = theorem.getMandVarHypArray();
+            // final LogHyp[] logHyps = theorem.getLogHypArray();
+            final ParseTree theoremTree = theorem.getExprParseTree();
+
+            // if (theorem.toString().equals("addcomi"))
+            // theorem.toString();
+
+            // TODO: adds the support of theorems like addcomi
+
+            if (/*logHyps.length == 0 &&*/varHypArray.length == 2
+                && theoremTree.getMaxDepth() == 3
+                && eqOperators.contains(theoremTree.getRoot().getStmt()))
+            {
+                final ParseNode[] subTrees = theoremTree.getRoot().getChild();
+
+                // it is the equivalence rule
+                assert subTrees.length == 2;
+
+                if (subTrees[0].getStmt() == subTrees[1].getStmt()
+                    && subTrees[0].getChild().length == 2
+                    && subTrees[0].getChild()[0].getStmt() == subTrees[1]
+                        .getChild()[1].getStmt()
+                    && subTrees[0].getChild()[1].getStmt() == subTrees[1]
+                        .getChild()[0].getStmt())
+                {
+                    messages.accumInfoMessage(
+                        "I-DBG commutative theorems: %s: %s",
+                        theorem.toString(), theorem.getFormula().toString());
+                    comOp.add(theoremTree.getRoot().getStmt());
+                }
+            }
+        }
+
+        final Set<Stmt> assocOp = new HashSet<Stmt>();
+
+        // Find now associative rules, like (A + B) + C = A + (B + C)
+        for (final Theorem theorem : theoremList) {
+            final VarHyp[] varHypArray = theorem.getMandVarHypArray();
+            // final LogHyp[] logHyps = theorem.getLogHypArray();
+            final ParseTree theoremTree = theorem.getExprParseTree();
+
+            // if (theorem.toString().equals("addcomi"))
+            // theorem.toString();
+
+            // TODO: adds the support of theorems like addcomi
+
+            if (/*logHyps.length == 0 &&*/varHypArray.length == 3
+                && theoremTree.getMaxDepth() == 4
+                && eqOperators.contains(theoremTree.getRoot().getStmt()))
+            {
+                final ParseNode[] subTrees = theoremTree.getRoot().getChild();
+
+                // it is the equivalence rule
+                assert subTrees.length == 2;
+
+                if (subTrees[0].getStmt() == subTrees[1].getStmt()) {
+                    final Stmt f = subTrees[0].getStmt();
+                    // we need to find one of the 2 templates:
+                    // 1) f(a, f(b, c)) = f(f(a, b), c)
+                    // 2) f(f(a, b), c) = f(a, f(b, c))
+                    for (int i = 0; i < 2; i++) {
+                        final int j = (i + 1) % 2;
+                        final ParseNode[] leftChild = subTrees[0].getChild();
+                        final ParseNode[] rightChild = subTrees[1].getChild();
+                        if (leftChild[i].getStmt() != f)
+                            continue;
+
+                        if (rightChild[j].getStmt() != f)
+                            continue;
+
+                        if (!isVarStmt(leftChild[j].getStmt()))
+                            continue;
+
+                        if (leftChild[j].getStmt() != rightChild[j].getChild()[j]
+                            .getStmt())
+                            continue;
+
+                        if (leftChild[i].getChild()[i].getStmt() != rightChild[i]
+                            .getStmt())
+                            continue;
+
+                        if (leftChild[i].getChild()[j].getStmt() != rightChild[j]
+                            .getChild()[i].getStmt())
+                            continue;
+
+                        messages
+                            .accumInfoMessage(
+                                "I-DBG associative theorems: %s: %s", theorem
+                                    .toString(), theorem.getFormula()
+                                    .toString());
+                        assocOp.add(theoremTree.getRoot().getStmt());
+                    }
+                }
+            }
+        }
+    }
+
+    private static boolean isVarStmt(final Stmt stmt) {
+        return stmt instanceof VarHyp;
+    }
+
     /**
      * Perform the optimizations for theorem search during "parallel"
      * unification
@@ -937,6 +1112,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         for (final Formula formula : formulaList)
             formula.sortConstList(comp);
+
+        prepareAutomaticTransformations();
     }
     /**
      * Import Theorem proofs from a given Reader.
