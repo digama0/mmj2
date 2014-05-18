@@ -51,7 +51,11 @@
 
 package mmj.lang;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 import mmj.verify.VerifyProofs;
 
@@ -97,7 +101,10 @@ public abstract class Assrt extends Stmt {
      * <p>
      * The sorted LogHyps are for the benefit of ProofAssistant.
      */
-    protected LogHyp[] sortedLogHypArray;
+    private LogHyp[] sortedLogHypArray;
+
+    /** The reverse permutation for sortedLogHypArray */
+    private int[] reversePermutationForSortedHyp;
 
     /**
      * The assertion's Mandatory Frame.
@@ -491,6 +498,7 @@ public abstract class Assrt extends Stmt {
     private void loadSortedLogHypArray() {
 
         final LogHyp[] outArray = new LogHyp[logHypArray.length];
+        final int[] rearrangeArray = new int[logHypArray.length];
 
         int outEnd;
         int outIndex;
@@ -528,12 +536,21 @@ public abstract class Assrt extends Stmt {
              * end of outLoop: insert here at outIndex, which means
              * shifting whatever is here downwards by one.
              */
-            for (int k = outEnd; k > outIndex; k--)
+            for (int k = outEnd; k > outIndex; k--) {
                 outArray[k] = outArray[k - 1];
+                rearrangeArray[k] = rearrangeArray[k - 1];
+            }
             outArray[outIndex] = holdLogHyp1;
+            rearrangeArray[outIndex] = i;
         }
 
         sortedLogHypArray = outArray; // whew!
+
+        final int[] reverseArray = new int[logHypArray.length];
+
+        for (int i = 0; i < logHypArray.length; i++)
+            reverseArray[rearrangeArray[i]] = i;
+        reversePermutationForSortedHyp = reverseArray;
     }
 
     /**
@@ -575,5 +592,10 @@ public abstract class Assrt extends Stmt {
      */
     public LogHyp[] getSortedLogHypArray() {
         return sortedLogHypArray;
+    }
+
+    /** @return the reverse permutation for sortedLogHypArray */
+    public int[] getReversePermutationForSortedHyp() {
+        return reversePermutationForSortedHyp;
     }
 }
