@@ -1758,16 +1758,15 @@ public class ProofAsstGUI {
         result.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
 
-                final JTextArea documentationText = new JTextArea();
+                final JTextPane documentationText = new JTextPane();
                 documentationText.setEditable(false);
+                documentationText.setContentType("text/html");
 
                 final JScrollPane documentationTextScroll = new JScrollPane(
                     documentationText, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                     JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-                documentationTextScroll.setMaximumSize(new Dimension(
-                    Short.MAX_VALUE, Short.MAX_VALUE));
-                documentationText.setText(UtilConstants.RUNPARM_LIST[0]
-                    .documentation());
+                documentationText.setText("<html>"
+                    + UtilConstants.RUNPARM_LIST[0].documentation());
 
                 final Vector<BatchCommand> commands = new Vector<BatchCommand>();
                 final JList<BatchCommand> commandList = new JList<BatchCommand>(
@@ -1776,15 +1775,12 @@ public class ProofAsstGUI {
                 commandList.setSelectedIndex(0);
                 commandList
                     .setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-                commandList.setVisibleRowCount(25);
 
                 final JTextField searchField = new JTextField("");
 
                 final JScrollPane commandListScroll = new JScrollPane(
                     commandList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                     JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-                commandListScroll.setMaximumSize(new Dimension(Short.MAX_VALUE,
-                    Short.MAX_VALUE));
 
                 final ListSelectionListener selectionListener = new ListSelectionListener()
                 {
@@ -1792,7 +1788,8 @@ public class ProofAsstGUI {
                         final BatchCommand selected = commandList
                             .getSelectedValue();
                         if (selected != null)
-                            documentationText.setText(selected.documentation());
+                            documentationText.setText("<html>"
+                                + selected.documentation() + "</html>");
                     }
                 };
                 final KeyListener searchFieldKeyListener = new KeyAdapter() {
@@ -1801,11 +1798,9 @@ public class ProofAsstGUI {
                         repackCommandList();
                     }
                     public void repackCommandList() {
-                        System.out.print("\nHI");
                         String searchString = searchField.getText();
                         searchString = searchString.toLowerCase();
                         commands.clear();
-                        System.out.print(searchString);
                         for (final BatchCommand element : UtilConstants.RUNPARM_LIST)
                             if (element.name().toLowerCase()
                                 .contains(searchString))
@@ -1834,6 +1829,9 @@ public class ProofAsstGUI {
                 batchDocumentationViewer.add(mainElements);
                 batchDocumentationViewer.pack();
                 commandList.setFixedCellWidth(commandList.getSize().width);
+                batchDocumentationViewer.setSize(new Dimension(
+                    batchDocumentationViewer.getSize().width, java.awt.Toolkit
+                        .getDefaultToolkit().getScreenSize().height / 2));
 
                 batchDocumentationViewer.setVisible(true);
             }
