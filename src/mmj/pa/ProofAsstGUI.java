@@ -93,6 +93,7 @@
 
 package mmj.pa;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -109,7 +110,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
@@ -118,6 +118,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.JColorChooser;
@@ -133,6 +134,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.JViewport;
 import javax.swing.KeyStroke;
@@ -142,6 +144,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.WindowConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.JTextComponent;
@@ -1754,69 +1758,83 @@ public class ProofAsstGUI {
         result.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
 
-                final JTextArea documentationText = new JTextArea(null, 20, 60);
-
+                final JTextArea documentationText = new JTextArea();
                 documentationText.setEditable(false);
 
                 final JScrollPane documentationTextScroll = new JScrollPane(
                     documentationText, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                    JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                    JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                documentationTextScroll.setMaximumSize(new Dimension(
+                    Short.MAX_VALUE, Short.MAX_VALUE));
+                documentationText.setText(UtilConstants.RUNPARM_LIST[0]
+                    .documentation());
 
+                final Vector<BatchCommand> commands = new Vector<BatchCommand>();
                 final JList<BatchCommand> commandList = new JList<BatchCommand>(
                     UtilConstants.RUNPARM_LIST);
                 commandList.setLayoutOrientation(JList.VERTICAL);
                 commandList.setSelectedIndex(0);
                 commandList
                     .setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                commandList.setVisibleRowCount(25);
 
-                final MouseListener mouseListener = new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(final MouseEvent e) {
-                        changeText();
-                    }
-                    @Override
-                    public void mouseReleased(final MouseEvent e) {
-                        changeText();
-                    }
-                    public void changeText() {
-                        documentationText.setText(commandList
-                            .getSelectedValue().documentation());
-                    }
-                };
-                final KeyListener keyListener = new KeyAdapter() {
-                    @Override
-                    public void keyPressed(final KeyEvent k) {
-                        documentationText.setText(commandList
-                            .getSelectedValue().documentation());
-                    }
-                    @Override
-                    public void keyReleased(final KeyEvent k) {
-                        changeText();
-                    }
-                    public void changeText() {
-                        documentationText.setText(commandList
-                            .getSelectedValue().documentation());
-                    }
-                };
-                commandList.addMouseListener(mouseListener);
-                commandList.addKeyListener(keyListener);
+                final JTextField searchField = new JTextField("");
 
-                final JScrollPane CommandListScroll = new JScrollPane(
+                final JScrollPane commandListScroll = new JScrollPane(
                     commandList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                     JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-                CommandListScroll.setPreferredSize(new Dimension(250, 400));
+                commandListScroll.setMaximumSize(new Dimension(Short.MAX_VALUE,
+                    Short.MAX_VALUE));
 
-                final JPanel mainElements = new JPanel();
-                mainElements.add(CommandListScroll);
-                mainElements.add(documentationTextScroll);
+                final ListSelectionListener selectionListener = new ListSelectionListener()
+                {
+                    public void valueChanged(final ListSelectionEvent e) {
+                        final BatchCommand selected = commandList
+                            .getSelectedValue();
+                        if (selected != null)
+                            documentationText.setText(selected.documentation());
+                    }
+                };
+                final KeyListener searchFieldKeyListener = new KeyAdapter() {
+                    @Override
+                    public void keyReleased(final KeyEvent k) {
+                        repackCommandList();
+                    }
+                    public void repackCommandList() {
+                        System.out.print("\nHI");
+                        String searchString = searchField.getText();
+                        searchString = searchString.toLowerCase();
+                        commands.clear();
+                        System.out.print(searchString);
+                        for (final BatchCommand element : UtilConstants.RUNPARM_LIST)
+                            if (element.name().toLowerCase()
+                                .contains(searchString))
+                                commands.add(element);
+                        commandList.setListData(commands);
+                    }
+                };
+                commandList.addListSelectionListener(selectionListener);
+                searchField.addKeyListener(searchFieldKeyListener);
+
+                final JPanel mainElements = new JPanel(new BorderLayout());
+
+                final JPanel choosingElement = new JPanel();
+                choosingElement.setLayout(new BorderLayout());
+                choosingElement.add(searchField, BorderLayout.PAGE_START);
+                choosingElement.add(commandListScroll, BorderLayout.CENTER);
+
+                mainElements.add(choosingElement, BorderLayout.WEST);
+                mainElements.add(documentationTextScroll, BorderLayout.CENTER);
 
                 final JFrame batchDocumentationViewer = new JFrame(
                     PaConstants.PA_GUI_HELP_BATCH_COMMAND_DOCUMENTATION_TITLE);
-                batchDocumentationViewer.setResizable(false);
+                batchDocumentationViewer.setResizable(true);
                 batchDocumentationViewer.setAlwaysOnTop(true);
 
                 batchDocumentationViewer.add(mainElements);
                 batchDocumentationViewer.pack();
+                commandList.setFixedCellWidth(commandList.getSize().width);
+
                 batchDocumentationViewer.setVisible(true);
             }
         });
