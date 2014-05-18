@@ -2323,7 +2323,34 @@ public class PaConstants {
         + " test progress: theorem %8d/%d, %s      ";
 
     public static final String ERRMSG_PA_TIME_TOP_HEADER = "I-PA-0128"
-        + " There is the list of most time consuming theorem unifications: ";
+        + " Here is the list of most time consuming theorem unifications: ";
+
+    public static final String ERRMSG_PA_DEFINITION_FAIL = " Axiom %s has"
+        + " failed the definitional soundness check.";
+
+    public static final String ERRMSG_PA_DEFINITION_FAIL_1 = "I-PA-0201"
+        + ERRMSG_PA_DEFINITION_FAIL + " The root symbol is not = or <->.";
+
+    public static final String ERRMSG_PA_DEFINITION_FAIL_2 = "I-PA-0202"
+        + ERRMSG_PA_DEFINITION_FAIL + " The previous axiom %s uses the symbol"
+        + " being defined in this axiom.";
+
+    public static final String ERRMSG_PA_DEFINITION_FAIL_3 = "I-PA-0203"
+        + ERRMSG_PA_DEFINITION_FAIL + " All variables in the definiendum are"
+        + " required NOT to be distinct.";
+
+    public static final String ERRMSG_PA_DEFINITION_FAIL_4 = "I-PA-0204"
+        + ERRMSG_PA_DEFINITION_FAIL + " All dummy variables in the definiens"
+        + " are required to be distinct from each other and from variables in"
+        + " the definiendum.";
+
+    public static final String ERRMSG_PA_DEFINITION_FAIL_5 = "I-PA-0205"
+        + ERRMSG_PA_DEFINITION_FAIL + " Non-set dummy variable found, and no"
+        + " justification theorem is available.";
+
+    public static final String ERRMSG_PA_DEFINITION_FAIL_6 = "I-PA-0206"
+        + ERRMSG_PA_DEFINITION_FAIL + " Dummy variable %s is possibly free in"
+        + " the definiendum, and no justification is available.";
 
     // ----------------------------------------------------------
     // Messages from ProofAsstGUI.java

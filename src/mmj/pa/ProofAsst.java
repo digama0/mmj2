@@ -73,48 +73,17 @@
 
 package mmj.pa;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 import mmj.gmff.GMFFException;
-import mmj.lang.Assrt;
-import mmj.lang.Cnst;
-import mmj.lang.DjVars;
-import mmj.lang.Formula;
-import mmj.lang.Hyp;
-import mmj.lang.LangException;
-import mmj.lang.LogHyp;
-import mmj.lang.LogicalSystem;
-import mmj.lang.MObj;
-import mmj.lang.Messages;
-import mmj.lang.ParseTree;
+import mmj.lang.*;
 import mmj.lang.ParseTree.RPNStep;
-import mmj.lang.ScopeFrame;
-import mmj.lang.Stmt;
-import mmj.lang.Theorem;
-import mmj.lang.TheoremLoaderException;
-import mmj.lang.VarHyp;
-import mmj.lang.VerifyException;
 import mmj.mmio.MMIOError;
-import mmj.tl.MMTTheoremSet;
-import mmj.tl.TLRequest;
-import mmj.tl.TheoremLoader;
-import mmj.tl.TheoremLoaderCommitListener;
+import mmj.tl.*;
 import mmj.util.OutputBoss;
 import mmj.util.StopWatch;
-import mmj.verify.Grammar;
-import mmj.verify.HypsOrder;
-import mmj.verify.ProofDerivationStepEntry;
-import mmj.verify.VerifyProofs;
+import mmj.verify.*;
 
 /**
  * The {@code ProofAsst}, along with the rest of the {@code mmj.pa} package
@@ -1347,6 +1316,376 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             numberExported++;
         }
     }
+
+    /**
+     * Perform the definition check on the selected definition. Note that this
+     * method is intrinsically tied to set.mm's definitions, and makes various
+     * references to specific axioms like wceq, wb, and df-sbc, although it can
+     * handle arbitrary new definitions under the basic structure of set.mm.
+     * 
+     * @param axiom the definition to check
+     * @param boundVars the boundVars cache (see
+     *            {@link #labelBoundVars(Axiom, Map)})
+     * @param messages Messages object for output messages.
+     * @return true if the test was passed
+     */
+    public boolean setMMDefinitionsCheck(final Axiom axiom,
+        final Map<Stmt, boolean[][]> boundVars, final Messages messages)
+    {
+        final ParseNode root = axiom.getExprParseTree().getRoot();
+        final String rootLabel = root.stmt.getLabel();
+        final Messages devnull = new Messages(); // eat all bad proof errors
+        final Cnst set = (Cnst)logicalSystem.getSymTbl().get("set");
+
+        // Rule 1: New definitions must be introduced using = or <->
+        if (!rootLabel.equals("wb") && !rootLabel.equals("wceq")) {
+            messages.accumInfoMessage(PaConstants.ERRMSG_PA_DEFINITION_FAIL_1,
+                axiom.getLabel());
+            return false;
+        }
+
+        final Stmt defined = root.child[0].stmt;
+        final int startSeq = defined.getSeq();
+        final int endSeq = axiom.getSeq();
+        // Rule 2: No axiom introduced before this one is allowed to use the
+        // symbol being defined in this definition, and the definition is not
+        // allowed to use itself (except once, in the definiendum)
+        for (final Stmt s : logicalSystem.getStmtTbl().values())
+            if (s instanceof Axiom && s.getSeq() > startSeq
+                && s.getSeq() <= endSeq)
+            {
+                boolean first = s == axiom;
+                for (final RPNStep step : s.getExprRPN())
+                    if (step.stmt == defined)
+                        if (first)
+                            first = false;
+                        else {
+                            messages.accumInfoMessage(
+                                PaConstants.ERRMSG_PA_DEFINITION_FAIL_2,
+                                axiom.getLabel(), s.getLabel());
+                            return false;
+                        }
+            }
+
+        // Collect all variables on the left into parameters, and all
+        // variables on the right but not on the left into dummies
+        final List<VarHyp> parameters = new ArrayList<VarHyp>();
+        final List<VarHyp> dummies = new ArrayList<VarHyp>();
+        collectVariables(parameters, dummies, root.child[0]);
+        collectVariables(dummies, parameters, root.child[1]);
+
+        final ScopeFrame frame = axiom.getMandFrame();
+        final List<VarHyp> taken = new ArrayList<VarHyp>();
+        // Rule 3: Every variable in the definiens should not be distinct
+        for (final VarHyp v1 : parameters) {
+            taken.add(v1);
+            for (final VarHyp v2 : parameters)
+                if (v1 != v2
+                    && ScopeFrame.isVarPairInDjArray(frame, v1.getVar(),
+                        v2.getVar()))
+                {
+                    messages.accumInfoMessage(
+                        PaConstants.ERRMSG_PA_DEFINITION_FAIL_3,
+                        axiom.getLabel());
+                    return false;
+                }
+        }
+
+        // Rule 4: Every dummy variable in the definiendum should be distinct
+        for (final VarHyp v1 : dummies) {
+            v1.accumVarHypListBySeq(taken);
+            for (final VarHyp v2 : parameters)
+                if (!ScopeFrame.isVarPairInDjArray(frame, v1.getVar(),
+                    v2.getVar()))
+                {
+                    messages.accumInfoMessage(
+                        PaConstants.ERRMSG_PA_DEFINITION_FAIL_4,
+                        axiom.getLabel());
+                    return false;
+                }
+            for (final VarHyp v2 : dummies)
+                if (v1 != v2
+                    && !ScopeFrame.isVarPairInDjArray(frame, v1.getVar(),
+                        v2.getVar()))
+                {
+                    messages.accumInfoMessage(
+                        PaConstants.ERRMSG_PA_DEFINITION_FAIL_4,
+                        axiom.getLabel());
+                    return false;
+                }
+        }
+
+        // If there are no dummy variables, no further processing is needed -
+        // the test is passed
+        if (dummies.isEmpty())
+            return true;
+
+        // Generate a 'justification' theorem and see if it unifies with
+        // something in the database
+        final ParseNode newRoot = new ParseNode(root.stmt);
+        final Map<VarHyp, ParseNode> assignments = new HashMap<VarHyp, ParseNode>();
+        final ProofWorksheet w = new ProofWorksheet("dummy",
+            proofAsstPreferences, logicalSystem, grammar, devnull);
+        w.loadComboFrameAndVarMap();
+        for (final VarHyp d : dummies)
+            assignments.put(d,
+                new ParseNode(getUnusedDummyVar(w, taken, d.getTyp())));
+        newRoot.child = new ParseNode[]{root.child[1],
+                reassignVariables(assignments, root.child[1])};
+        if (justify(w, newRoot))
+            return true;
+
+        // Okay, we couldn't directly find a justification theorem. Most later
+        // definitions will fall into this category. Our new approach will be
+        // to prove that each dummy is not free in the expression, that is,
+        // that we can prove ( ph -> A. x ph ) for each dummy variable x.
+
+        // we need this for showing not-free for class terms
+        final ParseNode dummy = new ParseNode(logicalSystem.getStmtTbl().get(
+            "cv"));
+        dummy.child = new ParseNode[]{new ParseNode(getUnusedDummyVar(w, taken,
+            set))};
+
+        for (final VarHyp v : dummies) {
+            // Rule 5: every dummy variable should be a set variable,
+            // unless there is a justification theorem
+            if (v.getTyp() != set) {
+                messages.accumInfoMessage(
+                    PaConstants.ERRMSG_PA_DEFINITION_FAIL_5, axiom.getLabel());
+                return false;
+            }
+
+            // Rule 6: every dummy variable must be bound
+            if (!proveBoundVar(w, boundVars, new ParseNode(v), dummy,
+                root.child[1], true)
+                && !proveBoundVar(w, boundVars, new ParseNode(v), dummy,
+                    root.child[1], true)
+                && !proveBoundVar(w, boundVars, new ParseNode(v), dummy,
+                    root.child[1], false))
+            {
+                messages.accumInfoMessage(
+                    PaConstants.ERRMSG_PA_DEFINITION_FAIL_6, axiom.getLabel(),
+                    v.getVar());
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Add an entry to the boundVars table for this definition. The boundVars
+     * table is a map from each definition to an array of arrays of booleans;
+     * the first index specifies the index of a set variable (the other indexes
+     * are null), while the second index refers to the index of another variable
+     * in the definition, which is true if occurrences of the set variable in
+     * the other variable are to be considered bound. For example, for df-sum
+     * {@code sum_ x e. A B}, there are three variables, and occurrences of
+     * {@code x} are bound in {@code B} but not in {@code A}; thus the boundVars
+     * table entry for df-sum would be <code>{{true, false, true}, null,
+     * null}</code>.
+     * 
+     * @param axiom the definition
+     * @param boundVars the boundVars table
+     */
+    public void labelBoundVars(final Axiom axiom,
+        final Map<Stmt, boolean[][]> boundVars)
+    {
+        ProofWorksheet w = null;
+        ParseNode dummy = null;
+        final Cnst set = (Cnst)logicalSystem.getSymTbl().get("set");
+        final ParseNode root = axiom.getExprParseTree().getRoot();
+        final ParseNode[] defn = root.child[0].child;
+        if (boundVars.get(root.child[0].stmt) != null)
+            return;
+        final boolean[][] val = new boolean[defn.length][];
+        for (int i = 0; i < defn.length; i++)
+            if (defn[i].stmt.getTyp() == set) {
+                if (w == null) {
+                    w = new ProofWorksheet("dummy", proofAsstPreferences,
+                        logicalSystem, grammar, new Messages());
+                    w.loadComboFrameAndVarMap();
+                    final List<VarHyp> taken = new ArrayList<VarHyp>();
+                    collectVariables(taken, Collections.<VarHyp> emptyList(),
+                        root.child[1]);
+
+                    dummy = boxToType(
+                        new ParseNode(getUnusedDummyVar(w, taken, set)), null,
+                        "class");
+                }
+                val[i] = new boolean[defn.length];
+                final Map<VarHyp, ParseNode> assignments = new HashMap<VarHyp, ParseNode>();
+                for (int j = 0; j < defn.length; j++) {
+                    if (!(defn[j].stmt instanceof VarHyp))
+                        return; // this definition is too complicated for us
+                    if (i == j) {
+                        val[i][j] = true;
+                        continue;
+                    }
+                    assignments.clear();
+                    assignments.put(
+                        (VarHyp)defn[j].stmt,
+                        boxToType(defn[i], boxToType(defn[i], null, "class"),
+                            defn[j].stmt.getTyp().getId()));
+                    val[i][j] = proveBoundVar(w, boundVars, defn[i], dummy,
+                        reassignVariables(assignments, root.child[1]), true);
+                }
+            }
+        boundVars.put(root.child[0].stmt, val);
+    }
+
+    private ParseNode boxToType(final ParseNode node, final ParseNode dummy,
+        final String goalType)
+    {
+        if (goalType.equals("set"))
+            return node;
+        ParseNode e1 = node;
+        if (node.stmt.getTyp().getId().equals("set")) {
+            e1 = new ParseNode(logicalSystem.getStmtTbl().get("cv"));
+            e1.child = new ParseNode[]{node};
+        }
+        if (goalType.equals("class"))
+            return e1;
+        ParseNode e2 = e1;
+        if (e1.stmt.getTyp().getId().equals("class")) {
+            e2 = new ParseNode(logicalSystem.getStmtTbl().get("wcel"));
+            e2.child = new ParseNode[]{dummy, e1};
+        }
+        return e2;
+    }
+
+    private VarHyp getUnusedDummyVar(final ProofWorksheet w,
+        final List<VarHyp> taken, final Cnst typ)
+    {
+        for (final Hyp h : w.comboFrame.hypArray)
+            if (h instanceof VarHyp && h.getTyp() == typ) {
+                final VarHyp v = (VarHyp)h;
+                if (!v.containedInVarHypListBySeq(taken)) {
+                    v.accumVarHypListBySeq(taken);
+                    return v;
+                }
+            }
+        return null;
+    }
+
+    private boolean isBound(final ProofWorksheet w, final ParseNode v,
+        final ParseNode dummy, final ParseNode root)
+    {
+        final ParseNode expr = boxToType(root, dummy, "wff");
+        final ParseNode wal = new ParseNode(logicalSystem.getStmtTbl().get(
+            "wal"));
+        wal.child = new ParseNode[]{expr, v};
+        final ParseNode wi = new ParseNode(logicalSystem.getStmtTbl().get("wi"));
+        wi.child = new ParseNode[]{expr, wal};
+        return justify(w, wi);
+    }
+
+    private boolean proveBoundVar(final ProofWorksheet w,
+        final Map<Stmt, boolean[][]> boundVars, final ParseNode v,
+        final ParseNode dummy, final ParseNode root, final boolean fast)
+    {
+        final boolean[] isBound = new boolean[root.child.length];
+        final boolean[] isBound2 = new boolean[isBound.length];
+        boolean allBound = true;
+        for (int i = 0; i < root.child.length; i++)
+            allBound &= isBound[i] = isBound2[i] = proveBoundVar(w, boundVars,
+                v, dummy, root.child[i], fast);
+        if (allBound)
+            return v.stmt != root.stmt;
+
+        boolean[][] val = boundVars.get(root.stmt);
+        if (val == null) {
+            if (!fast)
+                return isBound(w, v, dummy, root);
+
+            final ParseNode proto = root.stmt.getExprParseTree().getRoot();
+            val = new boolean[proto.child.length][];
+            for (int i = 0; i < val.length; i++) {
+                if (!proto.child[i].stmt.getTyp().getId().equals("set"))
+                    continue;
+
+                val[i] = new boolean[val.length];
+                final Map<VarHyp, ParseNode> assignments = new HashMap<VarHyp, ParseNode>();
+                for (int j = 0; j < val.length; j++)
+                    if (proto.child[j].stmt instanceof VarHyp) {
+                        assignments.clear();
+                        assignments.put(
+                            (VarHyp)proto.child[j].stmt,
+                            boxToType(proto.child[i],
+                                boxToType(proto.child[i], null, "class"),
+                                proto.child[j].stmt.getTyp().getId()));
+                        val[i][j] = proveBoundVar(w, boundVars, proto.child[i],
+                            dummy, reassignVariables(assignments, proto), false);
+                    }
+            }
+            boundVars.put(root.stmt, val);
+        }
+
+        for (int i = 0; i < val.length; i++)
+            if (val[i] != null && !isBound[i])
+                for (int j = 0; j < val.length; j++)
+                    isBound2[j] |= val[i][j];
+
+        for (int i = 0; i < val.length; i++)
+            if (!isBound2[i])
+                return !fast && isBound(w, v, dummy, root);
+        return true;
+    }
+
+    /**
+     * Generate a 'dummy' proof worksheet containing the given expression, and
+     * return true if the resulting theorem was successfully proven.
+     * 
+     * @param w The ProofWorksheet in which to work
+     * @param theorem the expression to prove
+     * @return true if a proof was found
+     */
+    private boolean justify(final ProofWorksheet w, final ParseNode theorem) {
+        final ParseTree tree = new ParseTree(theorem);
+        final Formula f = verifyProofs.convertRPNToFormula(tree.convertToRPN(),
+            null);
+        f.setTyp(getProvableLogicStmtTyp());
+        w.proofWorkStmtList.clear();
+        w.proofWorkStmtList.add(w.qedStep = new DerivationStep(w,
+            PaConstants.QED_STEP_NBR, new ProofStepStmt[0], new String[0], f,
+            tree, false, false, false, null));
+        try {
+            proofUnifier.unifyAllProofDerivationSteps(w, w.messages, true);
+        } catch (final VerifyException e) {
+            return false;
+        }
+        return w.qedStep.getProofTree() != null
+            && w.qedStep.djVarsErrorStatus != PaConstants.DJ_VARS_ERROR_STATUS_HARD_ERRORS;
+    }
+
+    private void collectVariables(final List<VarHyp> vars,
+        final List<VarHyp> exclusions, final ParseNode root)
+    {
+        if (root.stmt instanceof VarHyp) {
+            final VarHyp v = (VarHyp)root.stmt;
+            if (!v.containedInVarHypListBySeq(exclusions))
+                v.accumVarHypListBySeq(vars);
+        }
+        else
+            for (final ParseNode child : root.child)
+                collectVariables(vars, exclusions, child);
+    }
+
+    private ParseNode reassignVariables(
+        final Map<VarHyp, ParseNode> assignments, final ParseNode root)
+    {
+
+        ParseNode newRoot = null;
+        if (root.stmt instanceof VarHyp)
+            newRoot = assignments.get(root.stmt);
+        if (newRoot == null) {
+            newRoot = new ParseNode(root.stmt);
+            newRoot.child = new ParseNode[root.child.length];
+            for (int i = 0; i < root.child.length; i++)
+                newRoot.child[i] = reassignVariables(assignments, root.child[i]);
+        }
+        return newRoot;
+    }
+
     // Note: could do binary lookup for sequence number
     // within ArrayList which happens to be sorted.
     private Theorem getTheoremBackward(final int currProofMaxSeq,

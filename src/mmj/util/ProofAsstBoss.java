@@ -74,6 +74,7 @@ package mmj.util;
 import java.awt.Color;
 import java.io.*;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -448,6 +449,13 @@ public class ProofAsstBoss extends Boss {
             .compareToIgnoreCase(UtilConstants.RUNPARM_PREPROCESS_REQUEST_BATCH_TEST) == 0)
         {
             doPreprocessRequestBatchTest(runParm);
+            return true;
+        }
+
+        if (runParm.name
+            .compareToIgnoreCase(UtilConstants.RUNPARM_SET_MM_DEFINITIONS_CHECK) == 0)
+        {
+            doSetMMDefinitionsCheck(runParm);
             return true;
         }
 
@@ -1506,7 +1514,7 @@ public class ProofAsstBoss extends Boss {
         final Reader importReader = editProofAsstImportFileRunParm(runParm,
             UtilConstants.RUNPARM_STEP_SELECTOR_BATCH_TEST, 1);
 
-        // 2st option
+        // 2nd option
         final int cursorPos = editRunParmValueInteger(runParm.values[1].trim(),
             UtilConstants.RUNPARM_STEP_SELECTOR_BATCH_TEST).intValue();
 
@@ -1541,10 +1549,10 @@ public class ProofAsstBoss extends Boss {
         if (proofAsst == null)
             return;
 
-        final Messages messages = batchFramework.outputBoss.getMessages();
-        batchFramework.outputBoss.printAndClearMessages();
-
         final OutputBoss outputBoss = batchFramework.outputBoss;
+
+        final Messages messages = outputBoss.getMessages();
+        outputBoss.printAndClearMessages();
 
         editRunParmValuesLength(runParm,
             UtilConstants.RUNPARM_PREPROCESS_REQUEST_BATCH_TEST, 2);
@@ -1559,7 +1567,7 @@ public class ProofAsstBoss extends Boss {
         final String proofText = w.toString();
         r.close();
 
-        // 2st option
+        // 2nd option
         final PreprocessRequest preprocessRequest = editPreprocessRequestOption(
             runParm.values[1].trim(),
             UtilConstants.RUNPARM_PREPROCESS_REQUEST_BATCH_TEST);
@@ -1570,6 +1578,53 @@ public class ProofAsstBoss extends Boss {
         batchFramework.outputBoss.printAndClearMessages();
     }
 
+    /**
+     * Exercises the PreprocessRequest code.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws VerifyException if an error occurred
+     */
+    public void doSetMMDefinitionsCheck(final RunParmArrayEntry runParm)
+        throws VerifyException
+    {
+
+        // ensures that file loaded and grammar validated
+        // successfully, prints error message if not.
+        final ProofAsst proofAsst = getProofAsst();
+        if (proofAsst == null)
+            return;
+
+        final Messages messages = batchFramework.outputBoss.getMessages();
+        batchFramework.outputBoss.printAndClearMessages();
+
+        final Grammar grammar = batchFramework.grammarBoss.getGrammar();
+        final Cnst provableLogicStmtTyp = grammar
+            .getProvableLogicStmtTypArray()[0];
+
+        final Pattern[] exclusions = new Pattern[runParm.values.length];
+
+        for (int i = 0; i < exclusions.length; i++)
+            exclusions[i] = Pattern.compile(Pattern.quote(
+                runParm.values[i].trim()).replace("*", "\\E.*\\Q"));
+        final Set<Stmt> definitions = new TreeSet<Stmt>(MObj.SEQ);
+        sLoop: for (final Stmt s : proofAsst.getLogicalSystem().getStmtTbl()
+            .values())
+            if (s instanceof Axiom && s.getTyp() == provableLogicStmtTyp) {
+                for (final Pattern p : exclusions)
+                    if (p.matcher(s.getLabel()).matches())
+                        continue sLoop;
+                definitions.add(s);
+            }
+
+        final Map<Stmt, boolean[][]> boundVars = new HashMap<Stmt, boolean[][]>();
+        for (final Stmt s : definitions) {
+            proofAsst.labelBoundVars((Axiom)proofAsst.getLogicalSystem()
+                .getStmtTbl().get("df-sbc"), boundVars);
+            if (proofAsst.setMMDefinitionsCheck((Axiom)s, boundVars, messages))
+                proofAsst.labelBoundVars((Axiom)s, boundVars);
+            batchFramework.outputBoss.printAndClearMessages();
+        }
+    }
     private PreprocessRequest editPreprocessRequestOption(final String s,
         final String valueCaption) throws IllegalArgumentException
     {

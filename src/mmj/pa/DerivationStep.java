@@ -304,7 +304,7 @@ public class DerivationStep extends ProofStepStmt {
         setHypFldIncomplete(generatedHypFldIncomplete);
         generatedByDeriveFeature = true;
         autoStep = auto;
-        if (generatedWorkVarList.isEmpty())
+        if (generatedWorkVarList == null || generatedWorkVarList.isEmpty())
             workVarList = null;
         else
             workVarList = generatedWorkVarList;

@@ -189,6 +189,9 @@ ProofAsstAssrtListFreespace,5
 *StepSelectorBatchTest,C:\mmj2\data\mmp\tests\UT7000.mmp,326,6
 *PreprocessRequestBatchTest,C:\mmj2\data\mmp\tests\UT7001.mmp,EraseAndRederiveFormulas
 *
+* Test all the axioms in the database for definitional soundness, except the listed axioms
+*SetMMDefinitionsCheckWithExclusions,ax-*,df-bi,df-clab,df-cleq,df-clel
+*
 *==================================================
 * TheoremLoader -- Pre-ProofAsstGUI (recommended)
 *==================================================

@@ -1988,6 +1988,21 @@ public class UtilConstants {
                                                                                                         // (ex.
                                                                                                         // biigb,xxxid)
 
+    /**
+     * SetMMDefinitionsCheckWithExclusions
+     * <p>
+     * {@code 
+     * "SetMMDefinitionsCheckWithExclusions":
+     *     options = Assrt labels, comma separated, with * wildcard
+     * }
+     * <p>
+     * This option runs a soundness check on all axioms in the database, except
+     * those specified in the list. Recommended exclusions are
+     * {@code ax-*,df-bi,df-clab,df-cleq,df-clel}, which will always fail the
+     * check.
+     */
+    public static final String RUNPARM_SET_MM_DEFINITIONS_CHECK = "SetMMDefinitionsCheckWithExclusions";
+
     // ----------------------------------------------------------
     // Commands for mmj.tmff.Preferences.java interface
     // ----------------------------------------------------------

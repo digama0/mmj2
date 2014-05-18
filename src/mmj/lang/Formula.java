@@ -43,14 +43,7 @@
 
 package mmj.lang;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import mmj.mmio.SrcStmt;
 
@@ -133,15 +126,10 @@ public class Formula {
      * @param workFormula the formula's Sym array.
      */
     public Formula(final int workCnt, final Sym[] workFormula) {
-        cnt = workCnt;
-        sym = new Sym[cnt];
+        sym = new Sym[cnt = workCnt];
 
         // arraycopy was tried and it turned out to be slower!
-        // System.arraycopy(workFormula,
-        // 0,
-        // sym,
-        // 0,
-        // cnt);
+        // System.arraycopy(workFormula, 0, sym, 0, cnt);
         for (int i = 0; i < cnt; i++)
             sym[i] = workFormula[i];
     }
@@ -268,11 +256,7 @@ public class Formula {
         sym[0] = typ;
     }
 
-    /**
-     * Return Formula's Expression (sym[1]...sym[cnt - 1]).
-     * 
-     * @return Formula's Expression (sym[1]...sym[cnt - 1]).
-     */
+    /** @return Formula's Expression (sym[1]...sym[cnt - 1]). */
     public Sym[] getExpr() {
         final Sym[] expr = new Sym[cnt - 1];
 
@@ -281,20 +265,12 @@ public class Formula {
         return expr;
     }
 
-    /**
-     * Return Formula's length.
-     * 
-     * @return Formula's length.
-     */
+    /** @return Formula's length. */
     public int getCnt() {
         return cnt;
     }
 
-    /**
-     * Return Formula's symbol array.
-     * 
-     * @return Formula's symbol array.
-     */
+    /** @return Formula's symbol array. */
     public Sym[] getSym() {
         return sym;
     }

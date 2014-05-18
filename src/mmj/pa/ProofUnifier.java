@@ -1110,7 +1110,7 @@ public class ProofUnifier {
     }
 
     /**
-     * General case of hypotethis unification
+     * General case of hypothesis unification
      * 
      * @param assrtLogHypSubstArray a temporary-use array with some unification
      *            results
@@ -1784,7 +1784,7 @@ public class ProofUnifier {
     private void saveOtherDerivStepRefStuff(final DerivationStep d,
         final Assrt assrt, final ParseNode[] assrtSubst)
     {
-        // if we resolved autocomplete step then contert it to ordinary step!
+        // if we resolved autocomplete step then convert it to ordinary step!
         d.setAutoStep(false);
 
         d.setAssrtSubstList(assrtSubst);
