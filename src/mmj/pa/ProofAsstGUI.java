@@ -1331,7 +1331,6 @@ public class ProofAsstGUI {
         proofFont = font;
         proofTextPane.setFont(font);
         proofMessageArea.setFont(font);
-        mainFrame.pack();
     }
 
     private JMenu buildCancelMenu() {

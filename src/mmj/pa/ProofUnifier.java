@@ -64,33 +64,9 @@
 
 package mmj.pa;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
-import mmj.lang.Assrt;
-import mmj.lang.Cnst;
-import mmj.lang.DjVars;
-import mmj.lang.Formula;
-import mmj.lang.Hyp;
-import mmj.lang.LangException;
-import mmj.lang.LogHyp;
-import mmj.lang.LogicalSystem;
-import mmj.lang.MObj;
-import mmj.lang.Messages;
-import mmj.lang.ParseNode;
-import mmj.lang.ParseTree;
-import mmj.lang.Stmt;
-import mmj.lang.Sym;
-import mmj.lang.Theorem;
-import mmj.lang.Var;
-import mmj.lang.VarHyp;
-import mmj.lang.VerifyException;
-import mmj.lang.WorkVar;
-import mmj.lang.WorkVarHyp;
-import mmj.lang.WorkVarManager;
+import mmj.lang.*;
 import mmj.verify.Grammar;
 import mmj.verify.VerifyProofs;
 
@@ -2023,6 +1999,7 @@ public class ProofUnifier {
             derivStep.nbrHypsGenerated++;
         }
     }
+
     private void generateDerivStepFormula() {
 
         final ParseTree origParseTree = assrt.getExprParseTree();

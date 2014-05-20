@@ -828,17 +828,16 @@ public class ProofWorksheet {
     public ProofStepStmt findMatchingStepFormula(final Formula searchFormula,
         final ProofStepStmt exclusiveEndpointStep)
     {
-
-        for (final ProofWorkStmt o : getProofWorkStmtList()) {
-            if (o == exclusiveEndpointStep)
-                break;
-            if (o instanceof ProofStepStmt) {
-                final ProofStepStmt matchStep = (ProofStepStmt)o;
-                if (matchStep.getFormula() != null
-                    && matchStep.getFormula().equals(searchFormula))
-                    return matchStep;
+        if (searchFormula != null)
+            for (final ProofWorkStmt o : getProofWorkStmtList()) {
+                if (o == exclusiveEndpointStep)
+                    break;
+                if (o instanceof ProofStepStmt) {
+                    final ProofStepStmt matchStep = (ProofStepStmt)o;
+                    if (searchFormula.equals(matchStep.getFormula()))
+                        return matchStep;
+                }
             }
-        }
         return null;
     }
 
@@ -1208,24 +1207,34 @@ public class ProofWorksheet {
                         PaConstants.ERRMSG_MULT_QED_ERROR,
                         getErrorLabelIfPossible(), stepField);
 
-                if (localRefField != null)
-                    triggerLoadStructureException(
-                        PaConstants.ERRMSG_QED_HAS_LOCAL_REF,
-                        getErrorLabelIfPossible(), stepField);
-
-                if (stepSelectorChoiceRequired
-                    && stepField.equals(stepRequest.step))
-                {
-                    refField = ((Assrt)stepRequest.param1).getLabel();
-                    stepSelectorChoiceRequired = false;
-                    stepRequest = null; // done, so null it.
-                }
-
                 qedStep = new DerivationStep(this);
                 qedStep.setAutoStep(isAutoStep);
 
-                nextToken = qedStep.loadDerivationStep(origStepHypRefLength,
-                    lineStartCharNbr, stepField, hypField, refField);
+                if (localRefField != null) {
+                    if (stepSelectorChoiceRequired
+                        && stepRequest.step.equals(stepField))
+                        triggerLoadStructureException(
+                            PaConstants.ERRMSG_LOCAL_REF_HAS_SELECTOR_CHOICE,
+                            getErrorLabelIfPossible(), stepField);
+
+                    nextToken = qedStep.loadLocalRefDerivationStep(
+                        origStepHypRefLength, lineStartCharNbr, stepField,
+                        hypField, localRefField);
+                    stepsWithLocalRefs.add(qedStep);
+                }
+                else {
+                    if (stepSelectorChoiceRequired
+                        && stepField.equals(stepRequest.step))
+                    {
+                        refField = ((Assrt)stepRequest.param1).getLabel();
+                        stepSelectorChoiceRequired = false;
+                        stepRequest = null; // done, so null it.
+                    }
+
+                    nextToken = qedStep.loadDerivationStep(
+                        origStepHypRefLength, lineStartCharNbr, stepField,
+                        hypField, refField);
+                }
                 proofWorkStmtList.add(qedStep);
 
                 setInputCursorStmtIfHere(qedStep, inputCursorPos, nextToken,
@@ -1241,7 +1250,6 @@ public class ProofWorksheet {
                 x.setAutoStep(isAutoStep);
 
                 if (localRefField != null) {
-
                     if (stepSelectorChoiceRequired
                         && stepRequest.step.equals(stepField))
                         triggerLoadStructureException(
@@ -1437,9 +1445,29 @@ public class ProofWorksheet {
             }
         }
 
-        for (final ListIterator<DerivationStep> j = stepsWithLocalRefs
-            .listIterator(stepsWithLocalRefs.size()); j.hasPrevious();)
-            removeFromProofWorkStmtList(j.previous());
+        for (final DerivationStep s : stepsWithLocalRefs)
+            removeFromProofWorkStmtList(s);
+
+        // Delete all steps after the new qed step
+        final DerivationStep s = (DerivationStep)qedStep.getLocalRef();
+        if (s != null) {
+            qedStep = s;
+            s.setStep(PaConstants.QED_STEP_NBR);
+            s.reloadStepHypRefInStmtText();
+            s.reloadLogHypKeysAndMaxDepth();
+            s.resetSortedHypArray();
+            for (final ListIterator<ProofWorkStmt> i = proofWorkStmtList
+                .listIterator(proofWorkStmtList.indexOf(s) + 1); i.hasNext();)
+            {
+                final ProofWorkStmt x = i.next();
+                if (x instanceof DerivationStep) {
+                    if (proofInputCursor.cursorIsSet
+                        && x == proofInputCursor.proofWorkStmt)
+                        proofInputCursor.proofWorkStmt = null;
+                    i.remove();
+                }
+            }
+        }
     }
 
     // fix the cursor: localRef step going byebye!
@@ -1693,6 +1721,7 @@ public class ProofWorksheet {
                 return x;
         return null;
     }
+
     public ProofWorkStmt findMatchingStepNbr(final String newStepNbr) {
         for (final ProofWorkStmt x : proofWorkStmtList)
             if (x.hasMatchingStepNbr(newStepNbr))

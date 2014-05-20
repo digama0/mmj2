@@ -103,10 +103,7 @@ public class HypothesisStep extends ProofStepStmt {
      */
     @Override
     public boolean hasMatchingRefLabel(final String newRefLabel) {
-        if (getRefLabel().equals(newRefLabel))
-            return true;
-        else
-            return false;
+        return getRefLabel().equals(newRefLabel);
     }
 
     @Override

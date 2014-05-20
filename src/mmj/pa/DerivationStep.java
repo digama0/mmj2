@@ -68,19 +68,9 @@
 package mmj.pa;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import mmj.lang.Assrt;
-import mmj.lang.DjVars;
-import mmj.lang.Formula;
-import mmj.lang.LangException;
-import mmj.lang.ParseNode;
-import mmj.lang.ParseTree;
-import mmj.lang.Stmt;
-import mmj.lang.VarHyp;
-import mmj.lang.WorkVar;
+import mmj.lang.*;
 import mmj.mmio.MMIOError;
 import mmj.util.DelimitedTextParser;
 
@@ -533,26 +523,33 @@ public class DerivationStep extends ProofStepStmt {
         // already validated
         setStep(stepField);
 
+        final boolean isQedStep = getStep().equals(PaConstants.QED_STEP_NBR);
+
+        // !isQedStep means workVarsOk
+        final String nextT = loadStmtTextWithFormula(!isQedStep);
+
         // localRefField already has "#" stripped off and we know
         // that the remainder has length >= 0.
         if (localRefField.length() > 0)
             localRef = (ProofStepStmt)w
                 .findFirstMatchingRefOrStep(localRefField);
         else
-            localRef = null;
+            localRef = w.findMatchingStepFormula(getFormula(), this);
 
-        if (localRef == null || localRef.getLocalRef() != null)
+        if (localRef != null)
+            while (localRef.getLocalRef() != null)
+                localRef = localRef.getLocalRef();
+        else
             w.triggerLoadStructureException(localRefField.length(),
                 PaConstants.ERRMSG_BAD_LOCAL_REF, w.getErrorLabelIfPossible(),
                 getStep());
 
-        // note: load formula to get it out of the way
-        // and we know that this is NOT a qed step,
-        // so pass false in the next call
-        // boolean isQedStep =
-        // step.equals(PaConstants.QED_STEP_NBR);
-        // !isQedStep means workVarsOk
-        return loadStmtTextWithFormula(true);
+        if (isQedStep && localRef instanceof HypothesisStep)
+            w.triggerLoadStructureException(localRefField.length(),
+                PaConstants.ERRMSG_QED_HYP_LOCAL_REF,
+                w.getErrorLabelIfPossible(), getStep());
+
+        return nextT;
     }
 
     /**

@@ -2717,13 +2717,12 @@ public class PaConstants {
         + " character ('#') in the Step/Hyp/Ref field. A Hypothesis should not"
         + " refer to other hypotheses.";
 
-    public static final String ERRMSG_QED_HAS_LOCAL_REF = "E-PA-0378 Theorem %s"
-        + " Step %s: QED Derivation Step line input with Local Ref escape"
-        + " character ('#') in the Step/Hyp/Ref field. ";
+    public static final String ERRMSG_QED_HYP_LOCAL_REF = "E-PA-0378 Theorem %s"
+        + " Step %s: #LocalRef invalid. The QED step cannot reference a"
+        + " hypothesis step in a LocalRef.";
 
     public static final String ERRMSG_BAD_LOCAL_REF = "E-PA-0379 Theorem %s"
-        + " Step : #LocalRef invalid. Must match a previous step's Step or Ref,"
-        + " and cannot refer to a step that is itself using a #LocalRef.";
+        + " Step : #LocalRef invalid. Must match a previous step's Step or Ref.";
 
     public static final String ERRMSG_HYP_HAS_SELECTOR_CHOICE = "E-PA-0380"
         + " Theorem %s Step %s: StepSelectorDialog selection (now) points to"

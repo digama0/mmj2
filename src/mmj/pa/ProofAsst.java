@@ -1459,8 +1459,6 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             if (!proveBoundVar(w, boundVars, new ParseNode(v), dummy,
                 root.child[1], true)
                 && !proveBoundVar(w, boundVars, new ParseNode(v), dummy,
-                    root.child[1], true)
-                && !proveBoundVar(w, boundVars, new ParseNode(v), dummy,
                     root.child[1], false))
             {
                 messages.accumInfoMessage(
