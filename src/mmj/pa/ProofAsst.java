@@ -1336,7 +1336,6 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         final String rootLabel = root.stmt.getLabel();
         final Messages devnull = new Messages(); // eat all bad proof errors
         final Cnst set = (Cnst)logicalSystem.getSymTbl().get("set");
-
         // Rule 1: New definitions must be introduced using = or <->
         if (!rootLabel.equals("wb") && !rootLabel.equals("wceq")) {
             messages.accumInfoMessage(PaConstants.ERRMSG_PA_DEFINITION_FAIL_1,
@@ -1344,13 +1343,14 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             return false;
         }
 
+        boolean success = true;
         final Stmt defined = root.child[0].stmt;
         final int startSeq = defined.getSeq();
         final int endSeq = axiom.getSeq();
         // Rule 2: No axiom introduced before this one is allowed to use the
         // symbol being defined in this definition, and the definition is not
         // allowed to use itself (except once, in the definiendum)
-        for (final Stmt s : logicalSystem.getStmtTbl().values())
+        rule2: for (final Stmt s : logicalSystem.getStmtTbl().values())
             if (s instanceof Axiom && s.getSeq() > startSeq
                 && s.getSeq() <= endSeq)
             {
@@ -1363,7 +1363,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                             messages.accumInfoMessage(
                                 PaConstants.ERRMSG_PA_DEFINITION_FAIL_2,
                                 axiom.getLabel(), s.getLabel());
-                            return false;
+                            success = false;
+                            break rule2;
                         }
             }
 
@@ -1377,6 +1378,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         final ScopeFrame frame = axiom.getMandFrame();
         final List<VarHyp> taken = new ArrayList<VarHyp>();
         // Rule 3: Every variable in the definiens should not be distinct
+        final Set<Var> badVars = new TreeSet<Var>(DjVars.DV_ORDER);
         for (final VarHyp v1 : parameters) {
             taken.add(v1);
             for (final VarHyp v2 : parameters)
@@ -1384,41 +1386,67 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                     && ScopeFrame.isVarPairInDjArray(frame, v1.getVar(),
                         v2.getVar()))
                 {
-                    messages.accumInfoMessage(
-                        PaConstants.ERRMSG_PA_DEFINITION_FAIL_3,
-                        axiom.getLabel());
-                    return false;
+                    badVars.add(v1.getVar());
+                    badVars.add(v2.getVar());
                 }
+        }
+        if (!badVars.isEmpty()) {
+            success = false;
+            messages.accumInfoMessage(PaConstants.ERRMSG_PA_DEFINITION_FAIL_3,
+                axiom.getLabel(), badVars);
         }
 
         // Rule 4: Every dummy variable in the definiendum should be distinct
+        badVars.clear();
         for (final VarHyp v1 : dummies) {
             v1.accumVarHypListBySeq(taken);
-            for (final VarHyp v2 : parameters)
-                if (!ScopeFrame.isVarPairInDjArray(frame, v1.getVar(),
-                    v2.getVar()))
-                {
-                    messages.accumInfoMessage(
-                        PaConstants.ERRMSG_PA_DEFINITION_FAIL_4,
-                        axiom.getLabel());
-                    return false;
-                }
             for (final VarHyp v2 : dummies)
                 if (v1 != v2
                     && !ScopeFrame.isVarPairInDjArray(frame, v1.getVar(),
                         v2.getVar()))
                 {
-                    messages.accumInfoMessage(
-                        PaConstants.ERRMSG_PA_DEFINITION_FAIL_4,
-                        axiom.getLabel());
-                    return false;
+                    badVars.add(v1.getVar());
+                    badVars.add(v2.getVar());
                 }
+        }
+
+        final Set<Var> group = new TreeSet<Var>(DjVars.DV_ORDER);
+        String field = "";
+        for (final VarHyp v1 : parameters) {
+            group.clear();
+            for (final VarHyp v2 : dummies)
+                if (!ScopeFrame.isVarPairInDjArray(frame, v1.getVar(),
+                    v2.getVar()))
+                {
+                    if (group.isEmpty()) {
+                        group.addAll(badVars);
+                        group.add(v1.getVar());
+                    }
+                    group.add(v2.getVar());
+                }
+            if (!group.isEmpty()) {
+                field += "  " + PaConstants.DISTINCT_VARIABLES_STMT_TOKEN + " ";
+                for (final Var v : group)
+                    field += v + " ";
+                field += PaConstants.END_PROOF_STMT_TOKEN;
+            }
+        }
+        if (group.isEmpty() && !badVars.isEmpty()) {
+            field += "  " + PaConstants.DISTINCT_VARIABLES_STMT_TOKEN + " ";
+            for (final Var v : badVars)
+                field += v + " ";
+            field += PaConstants.END_PROOF_STMT_TOKEN;
+        }
+        if (!field.isEmpty()) {
+            messages.accumInfoMessage(PaConstants.ERRMSG_PA_DEFINITION_FAIL_4,
+                axiom.getLabel(), field);
+            success = false;
         }
 
         // If there are no dummy variables, no further processing is needed -
         // the test is passed
         if (dummies.isEmpty())
-            return true;
+            return success;
 
         // Generate a 'justification' theorem and see if it unifies with
         // something in the database
@@ -1433,7 +1461,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         newRoot.child = new ParseNode[]{root.child[1],
                 reassignVariables(assignments, root.child[1])};
         if (justify(w, newRoot))
-            return true;
+            return success;
 
         // Okay, we couldn't directly find a justification theorem. Most later
         // definitions will fall into this category. Our new approach will be
@@ -1446,6 +1474,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         dummy.child = new ParseNode[]{new ParseNode(getUnusedDummyVar(w, taken,
             set))};
 
+        badVars.clear();
         for (final VarHyp v : dummies) {
             // Rule 5: every dummy variable should be a set variable,
             // unless there is a justification theorem
@@ -1460,14 +1489,14 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 root.child[1], true)
                 && !proveBoundVar(w, boundVars, new ParseNode(v), dummy,
                     root.child[1], false))
-            {
-                messages.accumInfoMessage(
-                    PaConstants.ERRMSG_PA_DEFINITION_FAIL_6, axiom.getLabel(),
-                    v.getVar());
-                return false;
-            }
+                badVars.add(v.getVar());
         }
-        return true;
+        if (!badVars.isEmpty()) {
+            messages.accumInfoMessage(PaConstants.ERRMSG_PA_DEFINITION_FAIL_6,
+                axiom.getLabel(), badVars);
+            success = false;
+        }
+        return success;
     }
 
     /**
