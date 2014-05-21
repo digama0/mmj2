@@ -167,6 +167,8 @@ public class ProofUnifier {
 
     private final ParseNode[] compareNodeStack = new ParseNode[PaConstants.UNIFIER_NODE_STACK_SIZE];
 
+    private final ProofTransformations proofTransformations = new ProofTransformations();
+
     /*
      * Global "work" areas for processing a single
      * theorem:
@@ -2953,5 +2955,9 @@ public class ProofUnifier {
                 while (n < arrayCount)
                     array[m++] = array[n++];
             }
+    }
+
+    public ProofTransformations getProofTransformations() {
+        return proofTransformations;
     }
 }
