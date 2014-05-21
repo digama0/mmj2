@@ -16,22 +16,22 @@ public class BatchCommand {
     /**
      * Constructor of BatchCommand. Sets documentation to null.
      * 
-     * @param name_ name of the command that will be stored
+     * @param name name of the command that will be stored
      */
-    BatchCommand(final String name_) {
-        name = name_;
+    BatchCommand(final String name) {
+        this.name = name;
         documentation = null;
     }
 
     /**
      * Constructor of BatchCommand.
      * 
-     * @param name_ name of the command that will be stored
-     * @param documentation_ string with the documentation of this command
+     * @param name name of the command that will be stored
+     * @param documentation string with the documentation of this command
      */
-    BatchCommand(final String name_, final String documentation_) {
-        name = name_;
-        documentation = documentation_;
+    BatchCommand(final String name, final String documentation) {
+        this.name = name;
+        this.documentation = documentation;
     }
 
     /**
