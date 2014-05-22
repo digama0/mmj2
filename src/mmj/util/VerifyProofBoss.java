@@ -24,7 +24,11 @@ package mmj.util;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import mmj.lang.*;
+import mmj.lang.LogicalSystem;
+import mmj.lang.Messages;
+import mmj.lang.Stmt;
+import mmj.lang.Theorem;
+import mmj.lang.VerifyException;
 import mmj.mmio.MMIOException;
 import mmj.verify.VerifyProofs;
 
@@ -98,28 +102,30 @@ public class VerifyProofBoss extends Boss {
         IOException, VerifyException
     {
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR) == 0)
+        if (runParm.name
+            .compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR.name()) == 0)
         {
             verifyProofs = null;
             allProofsVerifiedSuccessfully = false;
             allStatementsParsedSuccessfully = false;
             return false; // not "consumed"
         }
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_FILE) == 0)
+        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_FILE
+            .name()) == 0)
         {
             allProofsVerifiedSuccessfully = false;
             allStatementsParsedSuccessfully = false;
             return false; // not "consumed"
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_VERIFY_PROOF) == 0)
+        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_VERIFY_PROOF
+            .name()) == 0)
         {
             doVerifyProof(runParm);
             return true; // not "consumed"
         }
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_VERIFY_PARSE) == 0)
+        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_VERIFY_PARSE
+            .name()) == 0)
         {
             doVerifyParse(runParm);
             return true; // not "consumed"
@@ -141,7 +147,8 @@ public class VerifyProofBoss extends Boss {
         throws IllegalArgumentException, IOException, VerifyException
     {
 
-        editRunParmValuesLength(runParm, UtilConstants.RUNPARM_VERIFY_PROOF, 1);
+        editRunParmValuesLength(runParm,
+            UtilConstants.RUNPARM_VERIFY_PROOF.name(), 1);
 
         final LogicalSystem logicalSystem = batchFramework.logicalSystemBoss
             .getLogicalSystem();
@@ -166,7 +173,7 @@ public class VerifyProofBoss extends Boss {
             }
             else {
                 final Theorem theorem = editRunParmValueTheorem(optionValue,
-                    UtilConstants.RUNPARM_VERIFY_PROOF, logicalSystem);
+                    UtilConstants.RUNPARM_VERIFY_PROOF.name(), logicalSystem);
                 final String errmsg = verifyProofs.verifyOneProof(theorem);
                 if (errmsg != null) {
                     messages.accumErrorMessage(errmsg);
@@ -193,7 +200,8 @@ public class VerifyProofBoss extends Boss {
         throws IllegalArgumentException, IOException, VerifyException
     {
 
-        editRunParmValuesLength(runParm, UtilConstants.RUNPARM_VERIFY_PARSE, 1);
+        editRunParmValuesLength(runParm,
+            UtilConstants.RUNPARM_VERIFY_PARSE.name(), 1);
 
         final LogicalSystem logicalSystem = batchFramework.logicalSystemBoss
             .getLogicalSystem();
@@ -215,7 +223,7 @@ public class VerifyProofBoss extends Boss {
         }
         else {
             final Stmt stmt = editRunParmValueStmt(optionValue,
-                UtilConstants.RUNPARM_VERIFY_PARSE, logicalSystem);
+                UtilConstants.RUNPARM_VERIFY_PARSE.name(), logicalSystem);
             final String errmsg = verifyProofs.verifyExprRPNAsProof(stmt);
             if (errmsg != null) {
                 messages.accumErrorMessage(errmsg);

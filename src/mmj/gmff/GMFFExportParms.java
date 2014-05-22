@@ -121,7 +121,7 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
      * @return String containing the relevant fields.
      */
     public String generateAuditReportText() {
-        final String s = UtilConstants.RUNPARM_GMFF_EXPORT_PARMS
+        final String s = UtilConstants.RUNPARM_GMFF_EXPORT_PARMS.name()
             + GMFFConstants.AUDIT_REPORT_COMMA + exportType
             + GMFFConstants.AUDIT_REPORT_COMMA + onoff
             + GMFFConstants.AUDIT_REPORT_COMMA + typesetDefKeyword
