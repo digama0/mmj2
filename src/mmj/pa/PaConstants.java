@@ -119,7 +119,9 @@ import javax.swing.text.StyleConstants;
 import mmj.gmff.GMFFConstants;
 import mmj.mmio.MMIOConstants;
 import mmj.util.UtilConstants;
-import mmj.verify.*;
+import mmj.verify.GrammarConstants;
+import mmj.verify.HypsOrder;
+import mmj.verify.ProofConstants;
 
 /**
  * (Most) Constants used in mmj.pa classes
@@ -2860,6 +2862,10 @@ public class PaConstants {
         + " with dummy variables. Choose \"Unify\" instead of \"Unify+Don't"
         + " convert WorkVars\" to automatically assign dummy variables to the"
         + " remaining WorkVars.";
+
+    public static final String ERRMSG_POSSIBLE_SUBST = "I-PA-0419 Step %s could"
+        + " be unified with assertion %s, but the unification requires"
+        + " dj variable restrictions: %s";
 
     // ----------------------------------------------------------
     // Messages from ProofAsstPreferences.java
