@@ -47,7 +47,10 @@
 
 package mmj.lang;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Stack;
 
 import mmj.lang.ParseTree.RPNStep;
 
@@ -424,6 +427,20 @@ public class ParseNode {
         out.child = new ParseNode[child.length];
         for (int i = 0; i < child.length; i++)
             out.child[i] = child[i].deepClone();
+        return out;
+    }
+
+    /**
+     * Clone of a ParseNode but leave the sub-trees the same.
+     * 
+     * @return ParseNode sub-tree matching the original's content.
+     */
+    public ParseNode cloneWithoutChildren() {
+        final ParseNode out = new ParseNode();
+        out.stmt = stmt;
+        out.child = new ParseNode[child.length];
+        for (int i = 0; i < child.length; i++)
+            out.child[i] = child[i];
         return out;
     }
 

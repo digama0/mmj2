@@ -99,7 +99,7 @@ public class ProofTransformations {
             // Find now commutative rules, like A + B = B + A
             if (/*logHyps.length == 0 &&*/varHypArray.length == 2
                 && theoremTree.getMaxDepth() == 3
-                && eqOperators.get(theoremTree.getRoot().getStmt()) != null)
+                && eqOperators.containsValue(theoremTree.getRoot().getStmt()))
             {
                 final ParseNode[] subTrees = theoremTree.getRoot().getChild();
 
@@ -152,14 +152,14 @@ public class ProofTransformations {
 
             final ParseNode[] hypSubTrees = hypTree.getRoot().getChild();
 
-            assert hypSubTrees.length == 2 : "it is the equivalence rule";
+            assert hypSubTrees.length == 2 : "It should be the equivalence rule!";
 
             if (!isVarNode(hypSubTrees[0]) || !isVarNode(hypSubTrees[1]))
                 continue;
 
             final ParseNode[] subTrees = theoremTree.getRoot().getChild();
 
-            assert subTrees.length == 2 : "it is the equivalence rule";
+            assert subTrees.length == 2 : "It should be the equivalence rule!";
 
             if (subTrees[0].getStmt() != subTrees[1].getStmt())
                 continue;
@@ -228,7 +228,7 @@ public class ProofTransformations {
 
             if (/*logHyps.length == 0 &&*/varHypArray.length == 3
                 && theoremTree.getMaxDepth() == 4
-                && eqOperators.get(theoremTree.getRoot().getStmt()) != null)
+                && eqOperators.containsValue(theoremTree.getRoot().getStmt()))
             {
                 final ParseNode[] subTrees = theoremTree.getRoot().getChild();
 
@@ -276,6 +276,146 @@ public class ProofTransformations {
             }
         }
     }
+
+    // ----------------------------------------------
+
+    public static class Transformation {
+        final ParseNode canonResult;
+        final ParseNode equivalence;
+        Transformation next;
+
+        public Transformation(final ParseNode canonResult,
+            final ParseNode equivalence)
+        {
+            this.canonResult = canonResult;
+            this.equivalence = equivalence;
+            next = null;
+        }
+
+        public Transformation(final ParseNode canonResult,
+            final ParseNode equivalence, final Transformation next)
+        {
+            this.canonResult = canonResult;
+            this.equivalence = equivalence;
+            this.next = next;
+        }
+
+        public void addToTheTail(final Transformation second) {
+            // TODO: optimize it!
+            Transformation last = this;
+            while (last.next != null)
+                last = last.next;
+
+            last.next = second;
+        }
+    }
+
+    // Concatenates transformations
+    private static Transformation concatTrs(final Transformation first,
+        final Transformation second)
+    {
+        assert first != null || second != null;
+        if (first != null) {
+            first.addToTheTail(second);
+            return first;
+        }
+        return second;
+    }
+
+    public Transformation getCanonicalForm(final ParseNode node) {
+        final Stmt stmt = node.getStmt();
+
+        final Theorem[] replTheorems = replaceOp.get(stmt);
+        final Theorem comTreorem = comOp.get(stmt);
+
+        final boolean subTreesCouldBeRepl = replTheorems != null;
+        final boolean comOper = comTreorem != null;
+
+        if (!comOper && !subTreesCouldBeRepl)
+            return null; // We could do nothing with this node!
+
+        Transformation resTr = null;
+
+        final int length = node.getChild().length;
+        final ParseNode[] origChildren = node.getChild();
+        ParseNode resNode = new ParseNode(stmt);
+
+        if (subTreesCouldBeRepl)
+            // Now we could reconstruct subtrees!
+            for (int i = 0; i < length; i++) {
+                final Theorem replTheorem = replTheorems[i];
+                if (replTheorem == null)
+                    // We can't transform this sub-tree
+                    continue;
+
+                // Get sub-node transformation:
+                final Transformation subTr = getCanonicalForm(origChildren[i]);
+
+                if (subTr == null)
+                    // We should not do any transformations
+                    continue;
+
+                final ParseNode prevVersion = resNode;
+                resNode = prevVersion.cloneWithoutChildren();
+
+                // Fill the next child
+                resNode.getChild()[i] = subTr.canonResult;
+
+                // Construct the next step of this node transformation:
+                final Stmt eqStmt = replTheorem.getExprParseTree().getRoot()
+                    .getStmt();
+                final ParseNode eqRoot = new ParseNode(eqStmt);
+                final ParseNode[] eqChildren = {prevVersion, resNode};
+                eqRoot.setChild(eqChildren);
+                final Transformation eqTr = new Transformation(resNode, eqRoot);
+
+                // Add subtree transformation:
+                final Transformation trStep = concatTrs(eqTr, subTr);
+
+                // Update the full transformation:
+                resTr = concatTrs(resTr, trStep);
+
+            }
+
+        if (comOper) {
+            // This node is the commutative operation node
+            assert length == 2;
+
+            if (compareNodes(resNode.getChild()[0], resNode.getChild()[1]) > 0)
+            {
+                final ParseNode prevVersion = resNode;
+                resNode = prevVersion.cloneWithoutChildren();
+
+                // Swap it!
+                final ParseNode tmp = resNode.getChild()[0];
+                resNode.getChild()[0] = resNode.getChild()[1];
+                resNode.getChild()[1] = tmp;
+
+                // Construct the next step of this node transformation:
+                final Stmt eqStmt = comTreorem.getExprParseTree().getRoot()
+                    .getStmt();
+                final ParseNode eqRoot = new ParseNode(eqStmt);
+                final ParseNode[] eqChildren = {prevVersion, resNode};
+                eqRoot.setChild(eqChildren);
+                final Transformation eqTr = new Transformation(resNode, eqRoot);
+                resTr = concatTrs(resTr, eqTr);
+            }
+        }
+        return resTr;
+    }
+    /**
+     * @param first The one operand
+     * @param second The other operand
+     * @return -1(less), 0(equal),1(greater)
+     */
+    private static int compareNodes(final ParseNode first,
+        final ParseNode second)
+    {
+
+        return 0;
+    }
+
+    // ------------Additional functions--------------
 
     private static boolean isVarNode(final ParseNode node) {
         return isVarStmt(node.getStmt());

@@ -84,6 +84,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import mmj.gmff.GMFFException;
 import mmj.lang.Assrt;
@@ -104,6 +106,7 @@ import mmj.lang.ScopeFrame;
 import mmj.lang.Stmt;
 import mmj.lang.Theorem;
 import mmj.lang.TheoremLoaderException;
+import mmj.lang.Var;
 import mmj.lang.VarHyp;
 import mmj.lang.VerifyException;
 import mmj.mmio.MMIOError;
