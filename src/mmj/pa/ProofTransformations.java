@@ -14,6 +14,7 @@ import mmj.lang.*;
  * This contains information for possible automatic transformations.
  */
 public class ProofTransformations {
+    private boolean isInit = false;
     /** The list of equivalence operators */
     private Map<Stmt, Theorem> eqOperators;
 
@@ -34,6 +35,8 @@ public class ProofTransformations {
     public void prepareAutomaticTransformations(
         final List<Theorem> theoremList, final Messages messages)
     {
+        isInit = true;
+
         eqOperators = new HashMap<Stmt, Theorem>();
         for (final Theorem theorem : theoremList)
             findEquivalenceRules(theorem, messages);
@@ -355,7 +358,7 @@ public class ProofTransformations {
 
         final int length = node.getChild().length;
         final ParseNode[] origChildren = node.getChild();
-        ParseNode resNode = new ParseNode(stmt);
+        ParseNode resNode = node;
 
         if (subTreesCouldBeRepl)
             // Now we could reconstruct subtrees!
@@ -420,6 +423,7 @@ public class ProofTransformations {
         }
         return resTr;
     }
+
     /**
      * @param first The one operand
      * @param second The other operand
@@ -428,10 +432,59 @@ public class ProofTransformations {
     private static int compareNodes(final ParseNode first,
         final ParseNode second)
     {
+        if (first.getStmt() == second.getStmt()) {
+            final int len = first.getChild().length;
+            for (int i = 0; i < len; i++) {
+                final int res = compareNodes(first.getChild()[i],
+                    second.getChild()[i]);
+                if (res != 0)
+                    return res;
+            }
 
-        return 0;
+            return 0;
+        }
+        return first.getStmt().getSeq() < second.getStmt().getSeq() ? -1 : 0;
     }
 
+    // -------------
+
+    public void tryToFindTransformations(final ProofWorksheet proofWorksheet,
+        final DerivationStep derivStep, final Messages messages)
+    {
+        if (!isInit)
+            return;
+
+        final Transformation dsCanonicalForm = getCanonicalForm(derivStep.formulaParseTree
+            .getRoot());
+        derivStep.setCanonicalTransformation(dsCanonicalForm);
+
+        for (final ProofWorkStmt proofWorkStmtObject : proofWorksheet
+            .getProofWorkStmtList())
+        {
+
+            if (proofWorkStmtObject == derivStep)
+                break;
+
+            if (!(proofWorkStmtObject instanceof ProofStepStmt))
+                continue;
+
+            final ProofStepStmt candidate = (ProofStepStmt)proofWorkStmtObject;
+
+            if (candidate.getCanonicalTransformation() == null)
+                if (!candidate.isSameCanonicalForm()) {
+                    final Transformation tr = getCanonicalForm(candidate.formulaParseTree
+                        .getRoot());
+                    candidate.setCanonicalTransformation(tr);
+                }
+
+            if (derivStep.getCanonicalForm().isDeepDup(
+                candidate.getCanonicalForm()))
+                messages.accumInfoMessage(
+                    "I-DBG found canonical forms correspondance: %s and %s",
+                    candidate.toString(), derivStep.toString());
+        }
+
+    }
     // ------------Additional functions--------------
 
     private static boolean isVarNode(final ParseNode node) {

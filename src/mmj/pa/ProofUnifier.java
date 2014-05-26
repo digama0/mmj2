@@ -654,6 +654,11 @@ public class ProofUnifier {
             .entrySet())
         {
             derivStep = elem.getKey();
+
+            for (int i = 0; i < autoDerivStepsCount; i++)
+                if (derivStep == autoDerivSteps[i])
+                    autoDerivSteps[i] = null;
+
             final UnifyResult res = elem.getValue();
 
             final AutoUnifyResultDetails details = res.details();
@@ -666,6 +671,13 @@ public class ProofUnifier {
             else
                 markAutoStepUnified(details.hypSortDerivArray);
         }
+
+        shiftEmptyElements(autoDerivSteps, autoDerivStepsCount);
+        autoDerivStepsCount -= autoBestResults.size();
+
+        for (int i = 0; i < autoDerivStepsCount; i++)
+            proofTransformations.tryToFindTransformations(proofWorksheet,
+                autoDerivSteps[i], messages);
     }
 
     /**
