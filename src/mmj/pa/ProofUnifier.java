@@ -64,36 +64,10 @@
 
 package mmj.pa;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
-import mmj.lang.Assrt;
-import mmj.lang.Cnst;
-import mmj.lang.DjVars;
-import mmj.lang.Formula;
-import mmj.lang.Hyp;
-import mmj.lang.LangException;
-import mmj.lang.LogHyp;
-import mmj.lang.LogicalSystem;
-import mmj.lang.MObj;
-import mmj.lang.Messages;
-import mmj.lang.ParseNode;
-import mmj.lang.ParseTree;
-import mmj.lang.Stmt;
-import mmj.lang.Sym;
-import mmj.lang.Theorem;
-import mmj.lang.Var;
-import mmj.lang.VarHyp;
-import mmj.lang.VerifyException;
-import mmj.lang.WorkVar;
-import mmj.lang.WorkVarHyp;
-import mmj.lang.WorkVarManager;
+import mmj.lang.*;
 import mmj.verify.Grammar;
 import mmj.verify.VerifyProofs;
 
@@ -211,8 +185,11 @@ public class ProofUnifier {
 
     private DerivationStep derivStep;
 
-    private int dsa1Count;
-    private DerivationStep[] dsa1;
+    private int derivStepsWithEmptyRefCount;
+    private DerivationStep[] derivStepsWithEmptyRef;
+
+    private int autoDerivStepsCount;
+    private DerivationStep[] autoDerivSteps;
 
     private ProofStepStmt[] derivStepHypArray;
     private final static ParseNode[] substAnswerImpossible = new ParseNode[0];
@@ -393,9 +370,12 @@ public class ProofUnifier {
                 || proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH || proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SEARCH_OPTIONS))
             return; // our work here is complete :-)
 
-        if (dsa1Count > 0)
+        if (derivStepsWithEmptyRefCount > 0)
             // still some left to unify!
-            parallelStepUnificationMethod();
+            emptyRefStepUnificationMethod();
+
+        if (autoDerivStepsCount > 0)
+            autoStepUnificationMethod();
 
         final DerivationStep qed = proofWorksheet.getQedStep();
 
@@ -526,8 +506,13 @@ public class ProofUnifier {
 
         // 2) Make pass for steps with Ref labels that don't
         // involve work vars or derives.
-        dsa1Count = 0;
-        dsa1 = new DerivationStep[proofWorksheet.getProofWorkStmtListCnt()];
+        derivStepsWithEmptyRefCount = 0;
+        derivStepsWithEmptyRef = new DerivationStep[proofWorksheet
+            .getProofWorkStmtListCnt()];
+
+        autoDerivStepsCount = 0;
+        autoDerivSteps = new DerivationStep[proofWorksheet
+            .getProofWorkStmtListCnt()];
 
         stepLoop: for (final ProofWorkStmt proofWorkStmtObject : proofWorksheet
             .getProofWorkStmtList())
@@ -564,9 +549,14 @@ public class ProofUnifier {
                     continue stepLoop;
                 }
 
+            if (derivStep.isAutoStep()) {
+                autoDerivSteps[autoDerivStepsCount++] = derivStep;
+                continue;
+            }
+
             // build array of steps for parallel unification loop
             if (derivStep.getRef() == null) {
-                dsa1[dsa1Count++] = derivStep;
+                derivStepsWithEmptyRef[derivStepsWithEmptyRefCount++] = derivStep;
                 continue;
             }
 
@@ -586,14 +576,18 @@ public class ProofUnifier {
 
             if (derivStep.djVarsErrorStatus != PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS)
                 // unified but build alternates list!!!
-                dsa1[dsa1Count++] = derivStep;
+                derivStepsWithEmptyRef[derivStepsWithEmptyRefCount++] = derivStep;
             continue;
         }
 
     }
 
-    private void parallelStepUnificationMethod() throws VerifyException {
-
+    /**
+     * This function deals only with auto steps
+     * 
+     * @throws VerifyException Verification exception
+     */
+    private void autoStepUnificationMethod() throws VerifyException {
         final int maxSeq = proofWorksheet.getMaxSeq();
         int nbrCompleted = 0;
 
@@ -608,65 +602,48 @@ public class ProofUnifier {
             assrtNbrLogHyps = assrt.getLogHypArrayLength();
 
             int i = -1;
-            final int max = dsa1Count; // fool optimizer
+            final int max = autoDerivStepsCount; // fool optimizer
             while (true) {
                 if (++i >= max)
                     break;
-                derivStep = dsa1[i];
+                derivStep = autoDerivSteps[i];
+                assert derivStep.isAutoStep();
 
-                if (derivStep.getHypNumber() == assrtNbrLogHyps
-                    || derivStep.isAutoStep())
-                {
-                    // this property could be changed after the next call, so
-                    // save it
-                    final boolean isAuto = derivStep.isAutoStep();
-                    final UnifyResult res = unifyStepWithoutWorkVars();
-                    if (res.proper()) {
-                        if (derivStep.djVarsErrorStatus == PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS)
-                        {
-                            // stick fork in it, this one is done!
-                            dsa1[i] = null;
-                            nbrCompleted++;
+                if (derivStep.getRef() != null)
+                    if (assrt != derivStep.getRef())
+                        continue;
 
-                            // if the step was auto
-                            if (isAuto)
-                                if (autoBestResults.get(derivStep) != null)
-                                    autoBestResults.remove(derivStep);
-                        }
-                    }
-                    else if (res.possible()) {
-                        // the step in this case should remains auto step
-                        assert derivStep.isAutoStep();
-                        final UnifyResult old = autoBestResults.get(derivStep);
-                        final UnifyResult best = bestAutoResult(old, res);
-                        if (best != old)
-                            autoBestResults.put(derivStep, best);
-                    }
+                // TODO: use derivStep.getHypNumber() <= assrtNbrLogHyps
+
+                final UnifyResult res = unifyStepWithoutWorkVars();
+                if (res.proper()) {
+                    // for auto step unification this assert should be true:
+                    assert derivStep.djVarsErrorStatus != PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS;
+                    // stick fork in it, this one is done!
+                    autoDerivSteps[i] = null;
+                    nbrCompleted++;
+
+                    if (autoBestResults.get(derivStep) != null)
+                        autoBestResults.remove(derivStep);
                 }
-                continue;
+                else if (res.possible()) {
+                    // the step in this case should remains auto step
+                    assert derivStep.isAutoStep();
+                    final UnifyResult old = autoBestResults.get(derivStep);
+                    final UnifyResult best = bestAutoResult(old, res);
+                    if (best != old)
+                        autoBestResults.put(derivStep, best);
+                }
             }
 
             // this could be optimized a little :-)
             if (nbrCompleted > 0) {
-                loopJ: for (int j = 0; j < dsa1Count - 1; j++)
-                    if (dsa1[j] == null) {
-                        int m = j;
-                        int n = j;
-                        while (true) {
-                            if (++n >= dsa1Count)
-                                break loopJ;
-                            if (dsa1[n] == null)
-                                continue;
-                            break;
-                        }
-                        while (n < dsa1Count)
-                            dsa1[m++] = dsa1[n++];
-                    }
-                dsa1Count -= nbrCompleted;
+                shiftEmptyElements(autoDerivSteps, autoDerivStepsCount);
+                autoDerivStepsCount -= nbrCompleted;
                 nbrCompleted = 0;
             }
 
-            if (dsa1Count > 0)
+            if (autoDerivStepsCount > 0)
                 continue;
             break;
         }
@@ -686,6 +663,60 @@ public class ProofUnifier {
                     derivStep.getStep(), assrt, details.softDjVarsErrorList);
             else
                 markAutoStepUnified(details.hypSortDerivArray);
+        }
+    }
+
+    /**
+     * This function deals with classic steps without 'ref' part
+     * 
+     * @throws VerifyException Verification exception
+     */
+    private void emptyRefStepUnificationMethod() throws VerifyException {
+        final int maxSeq = proofWorksheet.getMaxSeq();
+        int nbrCompleted = 0;
+
+        for (final Assrt a : unifySearchList) {
+            if (a.getSeq() >= maxSeq)
+                // halt the scan -- the list is sorted!!!
+                break;
+
+            assrt = a;
+            assrtNbrLogHyps = assrt.getLogHypArrayLength();
+
+            int i = -1;
+            final int max = derivStepsWithEmptyRefCount; // fool optimizer
+            while (true) {
+                if (++i >= max)
+                    break;
+                derivStep = derivStepsWithEmptyRef[i];
+                assert !derivStep.isAutoStep();
+
+                if (derivStep.getHypNumber() == assrtNbrLogHyps) {
+                    // this property could be changed after the next call, so
+                    // save it
+                    final UnifyResult res = unifyStepWithoutWorkVars();
+                    if (res.proper())
+                        if (derivStep.djVarsErrorStatus == PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS)
+                        {
+                            // stick fork in it, this one is done!
+                            derivStepsWithEmptyRef[i] = null;
+                            nbrCompleted++;
+                        }
+                }
+                continue;
+            }
+
+            // this could be optimized a little :-)
+            if (nbrCompleted > 0) {
+                shiftEmptyElements(derivStepsWithEmptyRef,
+                    derivStepsWithEmptyRefCount);
+                derivStepsWithEmptyRefCount -= nbrCompleted;
+                nbrCompleted = 0;
+            }
+
+            if (derivStepsWithEmptyRefCount > 0)
+                continue;
+            break;
         }
     }
     private boolean buildProofsAndErrorUnUnifiedSteps() {
@@ -1422,25 +1453,19 @@ public class ProofUnifier {
         return false;
     }
 
+    /** The information about possible auto unification */
     private static class AutoUnifyResultDetails {
-        final int djVarNum;
         final ProofStepStmt[] hypSortDerivArray;
         final ParseNode[] assrtSubst;
         final Assrt assertion;
         final List<DjVars> softDjVarsErrorList;
 
-        AutoUnifyResultDetails(final int djVarNum,
-            final ParseNode[] assrtSubst,
+        AutoUnifyResultDetails(final ParseNode[] assrtSubst,
             final ProofStepStmt[] hypSortDerivArray, final Assrt assertion,
             final List<DjVars> softDjVarsErrorList)
         {
-            this.djVarNum = djVarNum;
             this.assrtSubst = Arrays.copyOf(assrtSubst, assrtSubst.length);
-            /*
-            this.assrtSubst = new ParseNode[assrtSubst.length];
-            for (int i = 0; i < assrtSubst.length; i++)
-                this.assrtSubst[i] = assrtSubst[i].deepClone();
-            */
+
             this.hypSortDerivArray = Arrays.copyOf(hypSortDerivArray,
                 hypSortDerivArray.length);
             this.assertion = assertion;
@@ -1450,16 +1475,16 @@ public class ProofUnifier {
 
     }
 
+    /** The container for information about possible auto unification */
     private static class AutoUnifyPossibleResult implements UnifyResult {
         final AutoUnifyResultDetails details;
 
-        public AutoUnifyPossibleResult(final int djVarNum,
-            final ParseNode[] assrtSubst,
+        public AutoUnifyPossibleResult(final ParseNode[] assrtSubst,
             final ProofStepStmt[] hypSortDerivArray, final Assrt assertion,
             final List<DjVars> softDjVarsErrorList)
         {
-            details = new AutoUnifyResultDetails(djVarNum, assrtSubst,
-                hypSortDerivArray, assertion, softDjVarsErrorList);
+            details = new AutoUnifyResultDetails(assrtSubst, hypSortDerivArray,
+                assertion, softDjVarsErrorList);
         }
         public boolean possible() {
             return true;
@@ -1481,7 +1506,8 @@ public class ProofUnifier {
     }
 
     /**
-     * Returns the best auto unification result
+     * Returns the best auto unification result. No the best unification is an
+     * unification with minimal dj variable restrictions.
      * 
      * @param r1 the first unification result
      * @param r2 the second unification result
@@ -1498,30 +1524,47 @@ public class ProofUnifier {
         assert d1 != null;
         final AutoUnifyResultDetails d2 = r1.details();
         assert d2 != null;
-        if (d1.djVarNum <= d2.djVarNum)
+        if (d1.softDjVarsErrorList.size() <= d2.softDjVarsErrorList.size())
             return r1;
         else
             return r2;
     }
 
+    /**
+     * Simple recursive algorithm.
+     * <p>
+     * Possible future optimizations:
+     * <ol>
+     * <li>Cashe substitution resuls
+     * </ol>
+     * 
+     * @param assrtLogHypSubstArray the temporary-use array to hold results of
+     *            substitutions.
+     * @param hypSortDerivArray the result array with used hypotheses
+     * @param i the hypothesis number
+     * @return unification result
+     */
     private UnifyResult recursiveAutocomplete(
         final ParseNode[][] assrtLogHypSubstArray,
         final ProofStepStmt[] hypSortDerivArray, final int i)
     {
         if (i >= assrtLogHypArray.length) {
+            // Great, we succesfully substituted all logical hypotheses.
+            // Now we could check dj variable restrictions.
+
             final String msg = checkDerivStepUnifyAgainstDjVars(derivStep,
                 assrt, assrtSubst);
 
             if (msg == null && holdSoftDjVarsErrorList.isEmpty())
                 return okUnification;
             else if (!holdSoftDjVarsErrorList.isEmpty())
-                return new AutoUnifyPossibleResult(
-                    holdSoftDjVarsErrorList.size(), assrtSubst,
+                return new AutoUnifyPossibleResult(assrtSubst,
                     hypSortDerivArray, assrt, holdSoftDjVarsErrorList);
             else
                 return badUnification;
         }
 
+        // the best (with minimal dj variables) unification result
         UnifyResult best = null;
         for (final ProofWorkStmt proofWorkStmtObject : proofWorksheet
             .getProofWorkStmtList())
@@ -1542,13 +1585,21 @@ public class ProofUnifier {
                 candidate, i);
             if (ok) {
                 hypSortDerivArray[i] = candidate;
+
+                // recursively check remains hypotheses
                 final UnifyResult res = recursiveAutocomplete(
                     assrtLogHypSubstArray, hypSortDerivArray, i + 1);
+
                 if (res.proper())
                     return res;
                 else {
                     if (res.possible())
+                        // we found some possible unification but better try
+                        // another one.
+                        // If will found nothing better then use the best one.
                         best = bestAutoResult(best, res);
+
+                    // clear the data for this substitution
                     hypSortDerivArray[i] = null;
                     cleanupOneAssrtSubstLevel(i);
                 }
@@ -1560,20 +1611,29 @@ public class ProofUnifier {
         else
             return best;
     }
-
     private UnifyResult autocompleteUnifyWithoutWorkVars()
         throws VerifyException
     {
-        // TODO debug hbn!
+        // get sorted logical hypotheses array
         assrtLogHypArray = assrt.getSortedLogHypArray();
+        // it is not necessary but lets check that this array is used nowhere in
+        // this function
         derivStepHypArray = null;
 
         final ParseNode[][] assrtLogHypSubstArray = new ParseNode[assrtLogHypArray.length][];
         final ProofStepStmt[] hypSortDerivArray = new ProofStepStmt[assrtLogHypArray.length];
+
+        // Now we are using simple recursive algorithm because the speed is good
+        // enough
         final UnifyResult res = recursiveAutocomplete(assrtLogHypSubstArray,
             hypSortDerivArray, 0);
+
+        // If the unification is possible then it could be proper (all is ok) or
+        // possible but we wiil look for better!
+
         if (res.possible())
             if (res.proper()) {
+                // all is ok, so unify it here
                 markAutoStepUnified(hypSortDerivArray);
                 return okUnification;
             }
@@ -1587,7 +1647,7 @@ public class ProofUnifier {
     }
 
     private void markAutoStepUnified(final ProofStepStmt[] hypSortDerivArray) {
-        // rearrange it
+        // rearrange it, because we used sorted logical hypothesis array
         final ProofStepStmt[] hypDerivArray = new ProofStepStmt[assrt
             .getLogHypArrayLength()];
         final int[] rearrange = assrt.getReversePermutationForSortedHyp();
@@ -2879,5 +2939,24 @@ public class ProofUnifier {
             v = list1.get(i);
             v.accumVarListBySeq(list2);
         }
+    }
+
+    private static void shiftEmptyElements(final DerivationStep[] array,
+        final int arrayCount)
+    {
+        loopJ: for (int j = 0; j < arrayCount - 1; j++)
+            if (array[j] == null) {
+                int m = j;
+                int n = j;
+                while (true) {
+                    if (++n >= arrayCount)
+                        break loopJ;
+                    if (array[n] == null)
+                        continue;
+                    break;
+                }
+                while (n < arrayCount)
+                    array[m++] = array[n++];
+            }
     }
 }

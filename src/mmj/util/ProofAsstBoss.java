@@ -1781,6 +1781,10 @@ public class ProofAsstBoss extends Boss {
             return HypsOrder.ReverseOrder;
 
         if (exportHypsRandomizedParm
+            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_HALF_REVERSE) == 0)
+            return HypsOrder.HalfReverseOrder;
+
+        if (exportHypsRandomizedParm
             .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_AUTOCOMPLETE) == 0)
             return HypsOrder.Autocomplete;
 
