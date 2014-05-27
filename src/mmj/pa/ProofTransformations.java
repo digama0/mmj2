@@ -9,6 +9,7 @@ package mmj.pa;
 import java.util.*;
 
 import mmj.lang.*;
+import mmj.verify.VerifyProofs;
 
 /**
  * This contains information for possible automatic transformations.
@@ -393,7 +394,7 @@ public class ProofTransformations {
                 final Transformation trStep = concatTrs(eqTr, subTr);
 
                 // Update the full transformation:
-                resTr = concatTrs(resTr, trStep);
+                resTr = concatTrs(trStep, resTr);
 
             }
 
@@ -418,7 +419,7 @@ public class ProofTransformations {
                 final ParseNode[] eqChildren = {prevVersion, resNode};
                 eqRoot.setChild(eqChildren);
                 final Transformation eqTr = new Transformation(resNode, eqRoot);
-                resTr = concatTrs(resTr, eqTr);
+                resTr = concatTrs(eqTr, resTr);
             }
         }
         return resTr;
@@ -443,13 +444,25 @@ public class ProofTransformations {
 
             return 0;
         }
-        return first.getStmt().getSeq() < second.getStmt().getSeq() ? -1 : 0;
+        return first.getStmt().getSeq() < second.getStmt().getSeq() ? -1 : 1;
     }
 
     // -------------
 
+    private Formula showCanonicalForm(final VerifyProofs verifyProofs,
+        final ProofStepStmt proofStmt)
+    {
+        final ParseTree dbgParseTree = new ParseTree(
+            proofStmt.getCanonicalForm());
+        final Formula generatedFormula = verifyProofs.convertRPNToFormula(
+            dbgParseTree.convertToRPN(), PaConstants.DOT_STEP_CAPTION
+                + proofStmt.getStep());
+        return generatedFormula;
+    }
+
     public void tryToFindTransformations(final ProofWorksheet proofWorksheet,
-        final DerivationStep derivStep, final Messages messages)
+        final DerivationStep derivStep, final VerifyProofs verifyProofs,
+        final Messages messages)
     {
         if (!isInit)
             return;
@@ -457,6 +470,9 @@ public class ProofTransformations {
         final Transformation dsCanonicalForm = getCanonicalForm(derivStep.formulaParseTree
             .getRoot());
         derivStep.setCanonicalTransformation(dsCanonicalForm);
+
+        messages.accumInfoMessage("I-DBG Step %s has canonical form: %s",
+            derivStep, showCanonicalForm(verifyProofs, derivStep));
 
         for (final ProofWorkStmt proofWorkStmtObject : proofWorksheet
             .getProofWorkStmtList())
@@ -475,6 +491,10 @@ public class ProofTransformations {
                     final Transformation tr = getCanonicalForm(candidate.formulaParseTree
                         .getRoot());
                     candidate.setCanonicalTransformation(tr);
+
+                    messages.accumInfoMessage(
+                        "I-DBG Step %s has canonical form: %s", candidate,
+                        showCanonicalForm(verifyProofs, candidate));
                 }
 
             if (derivStep.getCanonicalForm().isDeepDup(
