@@ -2177,33 +2177,28 @@ public class ProofUnifier {
             PaConstants.FIELD_ID_REF);
     }
 
-    private void markUnificationFailure() {
+    public void reportUnificationFailures() {
+        final Set<DerivationStep> accessibleSteps = new HashSet<DerivationStep>();
+        addAccessibleSteps(accessibleSteps, proofWorksheet.qedStep);
 
-        if (derivStep.isGeneratedByDeriveFeature()
-            && derivStep.getHypNumber() == 0)
-        {
+        for (final ProofWorkStmt s : proofWorksheet.proofWorkStmtList)
+            if (accessibleSteps.contains(s)
+                && ((DerivationStep)s).getRef() == null)
+                messages.accumErrorMessage(PaConstants.ERRMSG_STEP_UNIFY_ERR,
+                    getErrorLabelIfPossible(proofWorksheet),
+                    ((DerivationStep)s).getStep());
+    }
 
-            // An attempt was made -- to get lucky --
-            // unifying the generated hypothesis step,
-            // but since it failed, there is no error,
-            // just an incompleteness for the user to
-            // deal with.
-            derivStep.setHypFldIncomplete(true);
-            derivStep.setHypList(new ProofStepStmt[1]);
-            derivStep.setHypStepList(new String[1]);
-            derivStep.setHypStep(0, PaConstants.DEFAULT_STMT_LABEL);
-            derivStep.reloadStepHypRefInStmtText();
-        }
-        else {
+    private void addAccessibleSteps(final Set<DerivationStep> accessibleSteps,
+        final DerivationStep step)
+    {
+        if (accessibleSteps.contains(step))
+            return;
 
-            derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFICATION_ERROR;
-
-            messages.accumErrorMessage(PaConstants.ERRMSG_STEP_UNIFY_ERR,
-                getErrorLabelIfPossible(proofWorksheet), derivStep.getStep());
-
-            proofWorksheet.getProofCursor().setCursorAtProofWorkStmt(derivStep,
-                PaConstants.FIELD_ID_REF);
-        }
+        accessibleSteps.add(step);
+        for (final ProofStepStmt hyp : step.getHypList())
+            if (hyp instanceof DerivationStep)
+                addAccessibleSteps(accessibleSteps, (DerivationStep)hyp);
     }
 
     private String getErrorLabelIfPossible(final ProofWorksheet proofWorksheet)

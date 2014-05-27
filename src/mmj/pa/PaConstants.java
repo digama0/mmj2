@@ -119,9 +119,7 @@ import javax.swing.text.StyleConstants;
 import mmj.gmff.GMFFConstants;
 import mmj.mmio.MMIOConstants;
 import mmj.util.UtilConstants;
-import mmj.verify.GrammarConstants;
-import mmj.verify.HypsOrder;
-import mmj.verify.ProofConstants;
+import mmj.verify.*;
 
 /**
  * (Most) Constants used in mmj.pa classes
@@ -2811,17 +2809,8 @@ public class PaConstants {
         + " with the referenced Assertion. Try the Unify/Step Selector Search"
         + " to find unifiable assertions for the step.";
 
-    public static final String ERRMSG_STEP_UNIFY_ERR = "E-PA-0411 Theorem %s"
-        + " Step %s: Unification failure in derivation proof step. The step's"
-        + " formula and/or its hypotheses could not be reconciled with an"
-        + " Assertion (axiom or theorem) in the loaded Metamath file(s). Either"
-        + " the Unification Search for a unifying Assertion failed due to a"
-        + " Not Found condition, or the Unification Search was not attempted"
-        + " because the proof step or one of its hypotheses contains Work"
-        + " Variables. Note that Unification Search is NOT performed for proof"
-        + " steps involving work variables -- you must enter an Assertion label"
-        + " for these steps. Try the Unify/Step Selector Search to find"
-        + " unifiable assertions for the step.";
+    public static final String ERRMSG_STEP_UNIFY_ERR = "I-PA-0411 Theorem %s"
+        + " Step %s: Step incomplete.";
 
     public static final String ERRMSG_UNIFY_SEARCH_EXCLUDE = "I-PA-0412"
         + " Excluded these assertions from Unification search list as requested"

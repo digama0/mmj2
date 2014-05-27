@@ -832,10 +832,7 @@ public class DerivationStep extends ProofStepStmt {
 
             String s;
             while ((s = hypParser.nextField()) != null)
-                // strip all ? fields from auto steps
-                if (!isAutoStep() || !s.isEmpty()
-                    && !s.equals(PaConstants.DEFAULT_STMT_LABEL))
-                    list.add(s.toLowerCase());
+                list.add(s.toLowerCase());
         }
 
         setHypStepList(list.toArray(new String[list.size()]));

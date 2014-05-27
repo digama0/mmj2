@@ -2121,12 +2121,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 .getProofFormatPacked() ? proofWorksheet
                 .getQedStepSquishedRPN() : proofWorksheet.getQedStepProofRPN();
 
-            if (rpnProof == null) {
-                /*
-                 * NOTE: no msg needed, we get a message on each
-                 * invalid step from the unify process.
-                 */
-            }
+            if (rpnProof == null)
+                proofUnifier.reportUnificationFailures();
             else {
                 if (proofAsstPreferences.getProofFormatCompressed()) {
                     final StringBuilder letters = new StringBuilder();
