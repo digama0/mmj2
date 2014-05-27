@@ -51,11 +51,7 @@
 
 package mmj.lang;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import mmj.verify.VerifyProofs;
 
@@ -514,6 +510,7 @@ public abstract class Assrt extends Stmt {
             outLoop: while (true) {
                 if (outIndex >= outEnd) {
                     outArray[outEnd] = holdLogHyp1;
+                    rearrangeArray[outEnd] = i;
                     continue iLoop;
                 }
                 diff = outArray[outIndex].getFormula().getCnt()
