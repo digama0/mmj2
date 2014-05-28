@@ -1110,7 +1110,7 @@ public class ProofUnifier {
                 else
                     continue;
             if (assrtLogHypArray.length == 1)
-                return okUnification; // Special Case 1
+                return badUnification; // Special Case 1
             break;
         }
 
