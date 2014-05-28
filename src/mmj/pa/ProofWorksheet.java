@@ -931,15 +931,25 @@ public class ProofWorksheet {
         final ParseTree formulaParseTree, final DerivationStep derivStep)
     {
 
+        final DerivationStep out = generateDerivStep(new ProofStepStmt[0],
+            new String[0], "", formula, formulaParseTree, workVarList);
+
+        proofWorkStmtList.add(proofWorkStmtList.indexOf(derivStep), out);
+        return out;
+    }
+
+    public DerivationStep generateDerivStep(final ProofStepStmt[] generatedHyp,
+        final String[] generatedHypStep, final String refLabel,
+        final Formula formula, final ParseTree formulaParseTree,
+        final List<WorkVar> workVarList)
+    {
         final String generatedStep = PaConstants.DERIVE_STEP_PREFIX
             + Integer.toString(generateNewDerivedStepNbr());
 
         final DerivationStep out = new DerivationStep(this, generatedStep,
-            new ProofStepStmt[0], new String[0], formula, formulaParseTree,
-            false, false, proofAsstPreferences.getDeriveAutocomplete(),
-            workVarList);
-
-        proofWorkStmtList.add(proofWorkStmtList.indexOf(derivStep), out);
+            generatedHyp, generatedHypStep, refLabel, formula,
+            formulaParseTree, false, false,
+            proofAsstPreferences.getDeriveAutocomplete(), workVarList);
         return out;
     }
 

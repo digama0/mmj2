@@ -276,6 +276,7 @@ public class DerivationStep extends ProofStepStmt {
      * @param generatedHyp array of ProofStepStmt
      * @param generatedStep array of step number strings
      * @param generatedHypStep array of hyp step numbers for the proof step
+     * @param refLabel Ref label of the proof step (could be "")
      * @param generatedFormula Formula of new step.
      * @param generatedParseTree Formula's ParseTree
      * @param generatedFormulaFldIncomplete see
@@ -287,14 +288,15 @@ public class DerivationStep extends ProofStepStmt {
      */
     public DerivationStep(final ProofWorksheet w, final String generatedStep,
         final ProofStepStmt[] generatedHyp, final String[] generatedHypStep,
-        final Formula generatedFormula, final ParseTree generatedParseTree,
+        final String refLabel, final Formula generatedFormula,
+        final ParseTree generatedParseTree,
         final boolean generatedFormulaFldIncomplete,
         final boolean generatedHypFldIncomplete, final boolean auto,
         final List<WorkVar> generatedWorkVarList)
     {
 
-        super(w, generatedStep, "", generatedFormula, false); // don't set
-                                                              // caret.
+        super(w, generatedStep, refLabel, generatedFormula, false); // don't set
+        // caret.
 
         hyp = generatedHyp;
         hypStep = generatedHypStep;

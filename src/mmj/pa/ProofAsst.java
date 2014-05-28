@@ -73,53 +73,17 @@
 
 package mmj.pa;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.io.*;
+import java.util.*;
 
 import mmj.gmff.GMFFException;
-import mmj.lang.Assrt;
-import mmj.lang.Axiom;
-import mmj.lang.Cnst;
-import mmj.lang.DjVars;
-import mmj.lang.Formula;
-import mmj.lang.Hyp;
-import mmj.lang.LangException;
-import mmj.lang.LogHyp;
-import mmj.lang.LogicalSystem;
-import mmj.lang.MObj;
-import mmj.lang.Messages;
-import mmj.lang.ParseNode;
-import mmj.lang.ParseTree;
+import mmj.lang.*;
 import mmj.lang.ParseTree.RPNStep;
-import mmj.lang.ScopeFrame;
-import mmj.lang.Stmt;
-import mmj.lang.Theorem;
-import mmj.lang.TheoremLoaderException;
-import mmj.lang.Var;
-import mmj.lang.VarHyp;
-import mmj.lang.VerifyException;
 import mmj.mmio.MMIOError;
-import mmj.tl.MMTTheoremSet;
-import mmj.tl.TLRequest;
-import mmj.tl.TheoremLoader;
-import mmj.tl.TheoremLoaderCommitListener;
+import mmj.tl.*;
 import mmj.util.OutputBoss;
 import mmj.util.StopWatch;
-import mmj.verify.Grammar;
-import mmj.verify.HypsOrder;
-import mmj.verify.ProofDerivationStepEntry;
-import mmj.verify.VerifyProofs;
+import mmj.verify.*;
 
 /**
  * The {@code ProofAsst}, along with the rest of the {@code mmj.pa} package
@@ -975,7 +939,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             formula.sortConstList(comp);
 
         final ProofTransformations pt = proofUnifier.getProofTransformations();
-        pt.prepareAutomaticTransformations(theoremList, messages);
+        pt.prepareAutomaticTransformations(getSortedAssrtSearchList(), messages);
     }
     /**
      * Import Theorem proofs from a given Reader.
@@ -1712,8 +1676,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         f.setTyp(getProvableLogicStmtTyp());
         w.proofWorkStmtList.clear();
         w.proofWorkStmtList.add(w.qedStep = new DerivationStep(w,
-            PaConstants.QED_STEP_NBR, new ProofStepStmt[0], new String[0], f,
-            tree, false, false, false, null));
+            PaConstants.QED_STEP_NBR, new ProofStepStmt[0], new String[0], "",
+            f, tree, false, false, false, null));
         try {
             proofUnifier.unifyAllProofDerivationSteps(w, w.messages, true);
         } catch (final VerifyException e) {
