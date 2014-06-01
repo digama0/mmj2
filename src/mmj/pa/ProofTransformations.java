@@ -16,8 +16,16 @@ import mmj.verify.VerifyProofs;
  */
 public class ProofTransformations {
     private boolean isInit = false;
+    Messages messages;
+
+    /** The map from type to corresponding equivalence operators */
+    private Map<Cnst, Stmt> eqMap;
+
     /** The list of equivalence operators */
     private Map<Stmt, Assrt> eqOperators;
+
+    /** The list of transitive rules for equivalence operators */
+    private Map<Stmt, Assrt> eqTransitivies;
 
     /** The list of commutative operators */
     private Map<Stmt, Assrt> comOp;
@@ -28,37 +36,51 @@ public class ProofTransformations {
     /** The list of associative operators */
     private Set<Stmt> assocOp;
 
+    private Cnst provableLogicStmtTyp;
+
     /** Empty default constructor */
     public ProofTransformations() {}
 
     // ----------------------------
 
     public void prepareAutomaticTransformations(final List<Assrt> assrtList,
-        final Messages messages)
+        final Messages messages, final Cnst provableLogicStmtTyp)
     {
         isInit = true;
+        this.messages = messages;
+        this.provableLogicStmtTyp = provableLogicStmtTyp;
 
         eqOperators = new HashMap<Stmt, Assrt>();
         for (final Assrt assrt : assrtList)
-            findEquivalenceRules(assrt, messages);
+            findEquivalenceCommutativeRules(assrt);
+
+        eqTransitivies = new HashMap<Stmt, Assrt>();
+        for (final Assrt assrt : assrtList)
+            findEquivalenceTransitiveRules(assrt);
+
+        filterOnlyEqRules();
 
         comOp = new HashMap<Stmt, Assrt>();
         for (final Assrt assrt : assrtList)
-            findCommutativeRules(assrt, messages);
+            findCommutativeRules(assrt);
 
         assocOp = new HashSet<Stmt>();
         for (final Assrt assrt : assrtList)
-            findAssociativeRules(assrt, messages);
+            findAssociativeRules(assrt);
 
         replaceOp = new HashMap<Stmt, Assrt[]>();
         for (final Assrt assrt : assrtList)
-            findReplaceRules(assrt, messages);
+            findReplaceRules(assrt);
     }
 
-    private void findEquivalenceRules(final Assrt assrt, final Messages messages)
-    {
-        // Try to find equivalence rules, like A = B <=> B = A
-        // TODO: find implication rules also
+    /**
+     * Find commutative equivalence rules, like A = B => B = A
+     * <p>
+     * TODO: Find rules in implication form also
+     * 
+     * @param assrt the candidate
+     */
+    private void findEquivalenceCommutativeRules(final Assrt assrt) {
         final VarHyp[] varHypArray = assrt.getMandVarHypArray();
         final LogHyp[] logHyps = assrt.getLogHypArray();
         final ParseTree assrtTree = assrt.getExprParseTree();
@@ -80,7 +102,9 @@ public class ProofTransformations {
         if (assrtTree.getRoot().getChild().length != 2)
             return;
 
-        if (hypTree.getRoot().getStmt() != assrtTree.getRoot().getStmt())
+        final Stmt stmt = assrtTree.getRoot().getStmt();
+
+        if (hypTree.getRoot().getStmt() != stmt)
             return;
 
         if (hypTree.getRoot().getChild()[0].getStmt() != assrtTree.getRoot()
@@ -91,13 +115,120 @@ public class ProofTransformations {
             .getChild()[0].getStmt())
             return;
 
-        messages.accumInfoMessage("I-DBG Equivalence assrts: %s",
-            assrt.toString());
-        eqOperators.put(assrtTree.getRoot().getStmt(), assrt);
+        messages.accumInfoMessage(
+            "I-DBG Equivalence commutative assrt: %s: %s", assrt.toString(),
+            assrt.getFormula().toString());
+
+        if (!eqOperators.containsKey(stmt))
+            eqOperators.put(stmt, assrt);
     }
 
-    private void findCommutativeRules(final Assrt assrt, final Messages messages)
-    {
+    /**
+     * Find transitive equivalence rules, like A = B & B = C => A = C
+     * <p>
+     * TODO: Find rules in implication form also
+     * 
+     * @param assrt the candidate
+     */
+    private void findEquivalenceTransitiveRules(final Assrt assrt) {
+        final VarHyp[] mandVarHypArray = assrt.getMandVarHypArray();
+        final LogHyp[] logHyps = assrt.getLogHypArray();
+        final ParseTree assrtTree = assrt.getExprParseTree();
+
+        if (logHyps.length != 2)
+            return;
+
+        final ParseTree hypTree1 = logHyps[0].getExprParseTree();
+        final ParseTree hypTree2 = logHyps[1].getExprParseTree();
+
+        if (mandVarHypArray.length != 2)
+            return;
+
+        if (hypTree1.getMaxDepth() != 2 || hypTree2.getMaxDepth() != 2)
+            return;
+
+        if (assrtTree.getMaxDepth() != 2)
+            return;
+
+        if (assrtTree.getRoot().getChild().length != 2)
+            return;
+
+        final Stmt stmt = assrtTree.getRoot().getStmt();
+
+        if (hypTree1.getRoot().getStmt() != stmt)
+            return;
+
+        if (hypTree2.getRoot().getStmt() != stmt)
+            return;
+
+        // check for 'A' in 'A = B & B = C => A = C'
+        if (hypTree1.getRoot().getChild()[0].getStmt() != assrtTree.getRoot()
+            .getChild()[0].getStmt())
+            return;
+
+        // check for 'B' in 'A = B & B = C'
+        if (hypTree1.getRoot().getChild()[1].getStmt() != hypTree2.getRoot()
+            .getChild()[0].getStmt())
+            return;
+
+        // check for 'C' in 'A = B & B = C => A = C'
+        if (hypTree2.getRoot().getChild()[1].getStmt() != assrtTree.getRoot()
+            .getChild()[1].getStmt())
+            return;
+
+        messages.accumInfoMessage("I-DBG Equivalence transitive assrt: %s: %s",
+            assrt.toString(), assrt.getFormula().toString());
+        if (!eqTransitivies.containsKey(stmt))
+            eqTransitivies.put(stmt, assrt);
+    }
+
+    private void filterOnlyEqRules() {
+        // We found candidates for equivalence from commutative and transitive
+        // sides. Now compare results and remove unsuitable!
+        while (true) {
+            boolean changed = false;
+
+            for (final Stmt eq : eqTransitivies.keySet())
+                if (!eqOperators.containsKey(eq)) {
+                    eqTransitivies.remove(eq);
+                    changed = true;
+                    break;
+                }
+
+            for (final Stmt eq : eqOperators.keySet())
+                if (!eqTransitivies.containsKey(eq)) {
+                    eqOperators.remove(eq);
+                    changed = true;
+                    break;
+                }
+
+            if (!changed)
+                break;
+        }
+
+        // Debug output:
+        for (final Stmt eq : eqTransitivies.keySet())
+            messages.accumInfoMessage("I-DBG Equivalence rules: %s: %s and %s",
+                eq, eqOperators.get(eq).getFormula().toString(), eqTransitivies
+                    .get(eq).getFormula().toString());
+
+        // Create the reverse map:
+        eqMap = new HashMap<Cnst, Stmt>();
+
+        for (final Stmt eq : eqOperators.keySet()) {
+            final Assrt assrt = eqOperators.get(eq);
+
+            final ParseTree assrtTree = assrt.getExprParseTree();
+            final Cnst type = assrtTree.getRoot().getChild()[0].getStmt()
+                .getTyp();
+            eqMap.put(type, eq);
+
+            messages.accumInfoMessage("I-DBG Type equivalence map: %s: %s",
+                type, eq);
+        }
+    }
+
+    private void findCommutativeRules(final Assrt assrt) {
         // TODO: adds the support of assrts like addcomi
         // Find commutative rules, like A + B = B + A
 
@@ -147,7 +278,7 @@ public class ProofTransformations {
         comOp.put(subTrees[0].getStmt(), assrt);
     }
 
-    private void findReplaceRules(final Assrt assrt, final Messages messages) {
+    private void findReplaceRules(final Assrt assrt) {
 
         assrt.getMandVarHypArray();
         final LogHyp[] logHyps = assrt.getLogHypArray();
@@ -231,8 +362,7 @@ public class ProofTransformations {
             assrt.toString(), assrt.getFormula().toString());
     }
 
-    private void findAssociativeRules(final Assrt assrt, final Messages messages)
-    {
+    private void findAssociativeRules(final Assrt assrt) {
         // Find now associative rules, like (A + B) + C = A + (B + C)
         final VarHyp[] varHypArray = assrt.getMandVarHypArray();
         // final LogHyp[] logHyps = assrt.getLogHypArray();
@@ -254,7 +384,7 @@ public class ProofTransformations {
 
         final ParseNode[] subTrees = assrtTree.getRoot().getChild();
 
-        // it is the equivalence rule
+        // it should be the equivalence rule
         assert subTrees.length == 2;
 
         if (subTrees[0].getStmt() != subTrees[1].getStmt())
@@ -300,41 +430,23 @@ public class ProofTransformations {
         final ParseNode canonResult;
         final ParseNode equivalence;
         final Assrt assrt;
-        Transformation next;
+        final Transformation[] subTransformations;
 
         public Transformation(final ParseNode canonResult,
-            final ParseNode equivalence, final Assrt assrt)
+            final ParseNode equivalence, final Assrt assrt, final int subTrSize)
         {
             this.canonResult = canonResult;
             this.equivalence = equivalence;
             this.assrt = assrt;
-            next = null;
-        }
-
-        public void addToTheTail(final Transformation second) {
-            // TODO: optimize it!
-            Transformation last = this;
-            while (last.next != null)
-                last = last.next;
-
-            last.next = second;
+            subTransformations = new Transformation[subTrSize];
         }
     }
 
-    // Concatenates transformations
-    private static Transformation concatTrs(final Transformation first,
-        final Transformation second)
-    {
-        assert first != null || second != null;
-        if (first != null) {
-            first.addToTheTail(second);
-            return first;
-        }
-        return second;
-    }
+    public Transformation getCanonicalForm(final ParseNode origlNode) {
+        final Stmt stmt = origlNode.getStmt();
 
-    public Transformation getCanonicalForm(final ParseNode node) {
-        final Stmt stmt = node.getStmt();
+        final Formula f = getFormula(verifyProofs, origlNode);// !!!delete it
+        f.toString();// !!!delete it
 
         final Assrt[] replAsserts = replaceOp.get(stmt);
         final Assrt comAssert = comOp.get(stmt);
@@ -347,9 +459,15 @@ public class ProofTransformations {
 
         Transformation resTr = null;
 
-        final int length = node.getChild().length;
-        final ParseNode[] origChildren = node.getChild();
-        ParseNode resNode = node;
+        final int length = origlNode.getChild().length;
+        final ParseNode[] origChildren = origlNode.getChild();
+        ParseNode resNode = origlNode;
+
+        final Cnst type = stmt.getTyp();
+        type.toString();
+
+        final Stmt eqOrigStmt = eqMap.get(type);
+        final Assrt eqTrans = eqTransitivies.get(eqOrigStmt);
 
         if (subTreesCouldBeRepl)
             // Now we could reconstruct subtrees!
@@ -373,20 +491,27 @@ public class ProofTransformations {
                 resNode.getChild()[i] = subTr.canonResult;
 
                 // Construct the next step of this node transformation:
-                final Stmt eqStmt = replAssert.getExprParseTree().getRoot()
-                    .getStmt();
-                final ParseNode eqRoot = new ParseNode(eqStmt);
-                final ParseNode[] eqChildren = {prevVersion, resNode};
-                eqRoot.setChild(eqChildren);
-                final Transformation eqTr = new Transformation(resNode, eqRoot,
-                    replAssert);
+                final Transformation eqTr = getTransformationStep(replAssert,
+                    prevVersion, resNode);
 
-                // Add subtree transformation:
-                final Transformation trStep = concatTrs(eqTr, subTr);
+                assert replAssert.getLogHypArray().length == 1;
 
-                // Update the full transformation:
-                resTr = concatTrs(trStep, resTr);
+                eqTr.subTransformations[0] = subTr;
 
+                if (resTr != null) {
+                    // It is not the first transformation and we should include
+                    // transitive equivalence!
+                    final Transformation transTr = getTransformationStep(
+                        eqTrans, origlNode, resNode);
+
+                    assert eqTrans.getLogHypArray().length == 2;
+
+                    transTr.subTransformations[0] = resTr;
+                    transTr.subTransformations[1] = eqTr;
+                    resTr = transTr;
+                }
+                else
+                    resTr = eqTr;
             }
 
         if (comOper) {
@@ -404,17 +529,42 @@ public class ProofTransformations {
                 resNode.getChild()[1] = tmp;
 
                 // Construct the next step of this node transformation:
-                final Stmt eqStmt = comAssert.getExprParseTree().getRoot()
-                    .getStmt();
-                final ParseNode eqRoot = new ParseNode(eqStmt);
-                final ParseNode[] eqChildren = {prevVersion, resNode};
-                eqRoot.setChild(eqChildren);
-                final Transformation eqTr = new Transformation(resNode, eqRoot,
-                    comAssert);
-                resTr = concatTrs(eqTr, resTr);
+                final Transformation eqTr = getTransformationStep(comAssert,
+                    prevVersion, resNode);
+
+                assert comAssert.getLogHypArray().length == 0;
+
+                if (resTr != null) {
+                    // It is not the first transformation and we should include
+                    // transitive equivalence!
+                    final Transformation transTr = getTransformationStep(
+                        eqTrans, origlNode, resNode);
+
+                    assert eqTrans.getLogHypArray().length == 2;
+
+                    transTr.subTransformations[0] = resTr;
+                    transTr.subTransformations[1] = eqTr;
+                    resTr = transTr;
+                }
+                else
+                    resTr = eqTr;
             }
         }
         return resTr;
+    }
+
+    private static Transformation getTransformationStep(final Assrt assrt,
+        final ParseNode left, final ParseNode right)
+    {
+        final Stmt stmt = assrt.getExprParseTree().getRoot().getStmt();
+        final int lenght = assrt.getLogHypArray().length;
+        final ParseNode eqRoot = new ParseNode(stmt);
+        final ParseNode[] eqChildren = {left, right};
+        eqRoot.setChild(eqChildren);
+        final Transformation tr = new Transformation(right, eqRoot, assrt,
+            lenght);
+        return tr;
+
     }
 
     /**
@@ -456,46 +606,55 @@ public class ProofTransformations {
         return generatedFormula;
     }
 
-    private DerivationStep printTransformations(final Transformation tr,
+    private ProofStepStmt outputTransformations(final Transformation tr,
         final VerifyProofs verifyProofs, final Messages messages,
-        final ProofWorksheet proofWorksheet)
+        final ProofWorksheet proofWorksheet, final DerivationStep derivStep)
     {
         if (tr == null)
             return null;
 
-        final DerivationStep prev = printTransformations(tr.next, verifyProofs,
-            messages, proofWorksheet);
+        final int len = tr.subTransformations.length;
+        final ProofStepStmt[] hyps = new ProofStepStmt[len];
+        final String[] steps = new String[len];
+
+        for (int i = 0; i < len; i++) {
+            final ProofStepStmt prev = outputTransformations(
+                tr.subTransformations[i], verifyProofs, messages,
+                proofWorksheet, derivStep);
+            hyps[i] = prev;
+            steps[i] = prev.getStep();
+        }
 
         final ParseTree tree = new ParseTree(tr.equivalence);
         final Formula generatedFormula = verifyProofs.convertRPNToFormula(
             tree.convertToRPN(), "tree"); // TODO: use constant
+        generatedFormula.setTyp(provableLogicStmtTyp);
 
-        final ProofStepStmt[] hyps;
-        String[] steps;
-        if (tr.assrt.getLogHypArray().length == 1) {
-            final ProofStepStmt[] hypss = {prev};
-            hyps = hypss;
-            final String[] stepss = {prev.getStep()};
-            steps = stepss;
-        }
-        else {
-            hyps = new ProofStepStmt[0];
-            steps = new String[0];
-        }
+        final ProofStepStmt findMatchingStepFormula = proofWorksheet
+            .findMatchingStepFormula(generatedFormula, derivStep);
 
-        final DerivationStep d = proofWorksheet.generateDerivStep(hyps, steps,
-            tr.assrt.getLabel(), generatedFormula, tree,
+        if (findMatchingStepFormula != null)
+            return findMatchingStepFormula;
+
+        final DerivationStep d = proofWorksheet.addDerivStep(derivStep, hyps,
+            steps, tr.assrt.getLabel(), generatedFormula, tree,
             Collections.<WorkVar> emptyList());
 
         messages.accumInfoMessage("I-DBG Transformation (%s): %s", tr.assrt, d);
         return d;
     }
+
     // ---------------------
 
+    ProofWorksheet proofWorksheet;
+    VerifyProofs verifyProofs;
+
     public void tryToFindTransformations(final ProofWorksheet proofWorksheet,
-        final DerivationStep derivStep, final VerifyProofs verifyProofs,
-        final Messages messages)
+        final DerivationStep derivStep, final VerifyProofs verifyProofs)
     {
+        this.proofWorksheet = proofWorksheet;
+        this.verifyProofs = verifyProofs;
+
         if (!isInit)
             return;
 
@@ -506,8 +665,8 @@ public class ProofTransformations {
         messages.accumInfoMessage("I-DBG Step %s has canonical form: %s",
             derivStep, showCanonicalForm(verifyProofs, derivStep));
 
-        printTransformations(dsCanonicalForm, verifyProofs, messages,
-            proofWorksheet);
+        outputTransformations(dsCanonicalForm, verifyProofs, messages,
+            proofWorksheet, derivStep);
 
         for (final ProofWorkStmt proofWorkStmtObject : proofWorksheet
             .getProofWorkStmtList())

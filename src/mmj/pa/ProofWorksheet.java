@@ -938,6 +938,19 @@ public class ProofWorksheet {
         return out;
     }
 
+    public DerivationStep addDerivStep(final DerivationStep derivStep,
+        final ProofStepStmt[] generatedHyp, final String[] generatedHypStep,
+        final String refLabel, final Formula formula,
+        final ParseTree formulaParseTree, final List<WorkVar> workVarList)
+    {
+
+        final DerivationStep out = generateDerivStep(generatedHyp,
+            generatedHypStep, refLabel, formula, formulaParseTree, workVarList);
+
+        proofWorkStmtList.add(proofWorkStmtList.indexOf(derivStep), out);
+        return out;
+    }
+
     public DerivationStep generateDerivStep(final ProofStepStmt[] generatedHyp,
         final String[] generatedHypStep, final String refLabel,
         final Formula formula, final ParseTree formulaParseTree,

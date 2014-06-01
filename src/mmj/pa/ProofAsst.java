@@ -939,7 +939,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             formula.sortConstList(comp);
 
         final ProofTransformations pt = proofUnifier.getProofTransformations();
-        pt.prepareAutomaticTransformations(getSortedAssrtSearchList(), messages);
+        pt.prepareAutomaticTransformations(getSortedAssrtSearchList(),
+            messages, getProvableLogicStmtTyp());
     }
     /**
      * Import Theorem proofs from a given Reader.
