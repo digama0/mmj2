@@ -677,7 +677,7 @@ public class ProofUnifier {
 
         for (int i = 0; i < autoDerivStepsCount; i++)
             proofTransformations.tryToFindTransformations(proofWorksheet,
-                autoDerivSteps[i], verifyProofs);
+                autoDerivSteps[i]);
     }
 
     /**

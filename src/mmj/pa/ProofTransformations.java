@@ -13,10 +13,25 @@ import mmj.verify.VerifyProofs;
 
 /**
  * This contains information for possible automatic transformations.
+ * <p>
+ * Canonical form for the parse node is a parse node with sorted
+ * commutative/associative transformations.
+ * <p>
+ * The functions in this class are separated into 5 parts:
+ * <ul>
+ * <li>Data structures initialization
+ * <li>Canonical form construction
+ * <li>Statements unification (using canonical forms)
+ * <li>Canonical form comparison
+ * <li>Auxiliary functions
+ * </ul>
  */
 public class ProofTransformations {
+    /** This field is true if this object was initialized */
     private boolean isInit = false;
-    Messages messages;
+
+    Messages messages; // for debug reasons
+    VerifyProofs verifyProofs; // for debug reasons
 
     /** The map from type to corresponding equivalence operators */
     private Map<Cnst, Stmt> eqMap;
@@ -36,6 +51,7 @@ public class ProofTransformations {
     /** The list of associative operators */
     private Set<Stmt> assocOp;
 
+    /** The symbol like |- in set.mm */
     private Cnst provableLogicStmtTyp;
 
     /** Empty default constructor */
@@ -44,10 +60,12 @@ public class ProofTransformations {
     // ----------------------------
 
     public void prepareAutomaticTransformations(final List<Assrt> assrtList,
-        final Messages messages, final Cnst provableLogicStmtTyp)
+        final Cnst provableLogicStmtTyp, final Messages messages,
+        final VerifyProofs verifyProofs)
     {
         isInit = true;
         this.messages = messages;
+        this.verifyProofs = verifyProofs;
         this.provableLogicStmtTyp = provableLogicStmtTyp;
 
         eqOperators = new HashMap<Stmt, Assrt>();
@@ -182,9 +200,11 @@ public class ProofTransformations {
             eqTransitivies.put(stmt, assrt);
     }
 
+    /**
+     * We found candidates for equivalence from commutative and transitive
+     * sides. Now compare results and remove unsuitable!
+     */
     private void filterOnlyEqRules() {
-        // We found candidates for equivalence from commutative and transitive
-        // sides. Now compare results and remove unsuitable!
         while (true) {
             boolean changed = false;
 
@@ -228,10 +248,13 @@ public class ProofTransformations {
         }
     }
 
+    /**
+     * Filters commutative rules, like A + B = B + A
+     * 
+     * @param assrt the candidate
+     */
     private void findCommutativeRules(final Assrt assrt) {
         // TODO: adds the support of assrts like addcomi
-        // Find commutative rules, like A + B = B + A
-
         final VarHyp[] varHypArray = assrt.getMandVarHypArray();
         final ParseTree assrtTree = assrt.getExprParseTree();
 
@@ -278,14 +301,18 @@ public class ProofTransformations {
         comOp.put(subTrees[0].getStmt(), assrt);
     }
 
+    /**
+     * Filters replace rules, like A = B => g(A) = g(B)
+     * 
+     * @param assrt the candidate
+     */
     private void findReplaceRules(final Assrt assrt) {
-
+        // TODO: find rules in the form of implication!
+        // TODO: logHyps could contains other hypotheses
         assrt.getMandVarHypArray();
         final LogHyp[] logHyps = assrt.getLogHypArray();
         final ParseTree assrtTree = assrt.getExprParseTree();
 
-        // TODO: find rules in the form of implication!
-        // TODO: logHyps could contains other hypotheses
         if (logHyps.length != 1)
             return;
 
@@ -362,16 +389,15 @@ public class ProofTransformations {
             assrt.toString(), assrt.getFormula().toString());
     }
 
+    /**
+     * Filters associative rules, like (A + B) + C = A + (B + C)
+     * 
+     * @param assrt the candidate
+     */
     private void findAssociativeRules(final Assrt assrt) {
-        // Find now associative rules, like (A + B) + C = A + (B + C)
         final VarHyp[] varHypArray = assrt.getMandVarHypArray();
         // final LogHyp[] logHyps = assrt.getLogHypArray();
         final ParseTree assrtTree = assrt.getExprParseTree();
-
-        // if (assrt.toString().equals("addcomi"))
-        // assrt.toString();
-
-        // TODO: adds the support of assrts like addcomi
 
         if (varHypArray.length != 3)
             return;
@@ -445,7 +471,7 @@ public class ProofTransformations {
     public Transformation getCanonicalForm(final ParseNode origlNode) {
         final Stmt stmt = origlNode.getStmt();
 
-        final Formula f = getFormula(verifyProofs, origlNode);// !!!delete it
+        final Formula f = getFormula(origlNode);// !!!delete it
         f.toString();// !!!delete it
 
         final Assrt[] replAsserts = replaceOp.get(stmt);
@@ -591,15 +617,23 @@ public class ProofTransformations {
 
     // -------------
 
-    private Formula showCanonicalForm(final VerifyProofs verifyProofs,
-        final ProofStepStmt proofStmt)
-    {
-        return getFormula(verifyProofs, proofStmt.getCanonicalForm());
+    /**
+     * This function is needed for debug
+     * 
+     * @param proofStmt the proof statement
+     * @return the corresponding canonical formula
+     */
+    private Formula getCanonicalFormula(final ProofStepStmt proofStmt) {
+        return getFormula(proofStmt.getCanonicalForm());
     }
 
-    private Formula getFormula(final VerifyProofs verifyProofs,
-        final ParseNode node)
-    {
+    /**
+     * This function is needed for debug
+     * 
+     * @param node the input node
+     * @return the corresponding formula
+     */
+    private Formula getFormula(final ParseNode node) {
         final ParseTree tree = new ParseTree(node);
         final Formula generatedFormula = verifyProofs.convertRPNToFormula(
             tree.convertToRPN(), "tree"); // TODO: use constant
@@ -646,24 +680,25 @@ public class ProofTransformations {
 
     // ---------------------
 
-    ProofWorksheet proofWorksheet;
-    VerifyProofs verifyProofs;
-
-    public void tryToFindTransformations(final ProofWorksheet proofWorksheet,
-        final DerivationStep derivStep, final VerifyProofs verifyProofs)
+    /**
+     * Tries to unify the derivation step by some automatic transformations
+     * 
+     * @param proofWorksheet the proof work sheet
+     * @param derivStep the derivation step
+     * @return true if it founds possible unification
+     */
+    public boolean tryToFindTransformations(
+        final ProofWorksheet proofWorksheet, final DerivationStep derivStep)
     {
-        this.proofWorksheet = proofWorksheet;
-        this.verifyProofs = verifyProofs;
-
         if (!isInit)
-            return;
+            return false;
 
         final Transformation dsCanonicalForm = getCanonicalForm(derivStep.formulaParseTree
             .getRoot());
         derivStep.setCanonicalTransformation(dsCanonicalForm);
 
         messages.accumInfoMessage("I-DBG Step %s has canonical form: %s",
-            derivStep, showCanonicalForm(verifyProofs, derivStep));
+            derivStep, getCanonicalFormula(derivStep));
 
         outputTransformations(dsCanonicalForm, verifyProofs, messages,
             proofWorksheet, derivStep);
@@ -688,18 +723,21 @@ public class ProofTransformations {
 
                     messages.accumInfoMessage(
                         "I-DBG Step %s has canonical form: %s", candidate,
-                        showCanonicalForm(verifyProofs, candidate));
+                        getCanonicalFormula(candidate));
                 }
 
             if (derivStep.getCanonicalForm().isDeepDup(
                 candidate.getCanonicalForm()))
+            {
                 messages.accumInfoMessage(
                     "I-DBG found canonical forms correspondance: %s and %s",
                     candidate.toString(), derivStep.toString());
+                return true;
+            }
         }
-
+        return false;
     }
-    // ------------Additional functions--------------
+    // ------------Auxiliary functions--------------
 
     private static boolean isVarNode(final ParseNode node) {
         return isVarStmt(node.getStmt());

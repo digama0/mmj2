@@ -940,7 +940,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         final ProofTransformations pt = proofUnifier.getProofTransformations();
         pt.prepareAutomaticTransformations(getSortedAssrtSearchList(),
-            messages, getProvableLogicStmtTyp());
+            getProvableLogicStmtTyp(), messages, verifyProofs);
     }
     /**
      * Import Theorem proofs from a given Reader.
