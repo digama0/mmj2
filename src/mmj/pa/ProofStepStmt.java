@@ -108,7 +108,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     int proofLevel;
 
     /** For the automatic transformations feature */
-    private ProofTransformations.Transformation canonicalTransformation;
+    private ProofTransformations.TransformationOld canonicalTransformation;
     /** For the automatic transformations feature */
     private boolean sameCanonicalForm = false;
 
@@ -713,12 +713,12 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
         this.formula = formula;
     }
 
-    public ProofTransformations.Transformation getCanonicalTransformation() {
+    public ProofTransformations.TransformationOld getCanonicalTransformation() {
         return canonicalTransformation;
     }
 
     public void setCanonicalTransformation(
-        final ProofTransformations.Transformation canonicalTransformation)
+        final ProofTransformations.TransformationOld canonicalTransformation)
     {
         if (canonicalTransformation == null)
             sameCanonicalForm = true;
