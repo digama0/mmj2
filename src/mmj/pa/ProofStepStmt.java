@@ -108,9 +108,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     int proofLevel;
 
     /** For the automatic transformations feature */
-    private ProofTransformations.TransformationOld canonicalTransformation;
-    /** For the automatic transformations feature */
-    private boolean sameCanonicalForm = false;
+    private ParseNode canonicalForm;
 
     /**
      * Default Constructor.
@@ -713,28 +711,11 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
         this.formula = formula;
     }
 
-    public ProofTransformations.TransformationOld getCanonicalTransformation() {
-        return canonicalTransformation;
-    }
-
-    public void setCanonicalTransformation(
-        final ProofTransformations.TransformationOld canonicalTransformation)
-    {
-        if (canonicalTransformation == null)
-            sameCanonicalForm = true;
-        else
-            sameCanonicalForm = false;
-        this.canonicalTransformation = canonicalTransformation;
-    }
-
-    public boolean isSameCanonicalForm() {
-        return sameCanonicalForm;
-    }
-
     public ParseNode getCanonicalForm() {
-        if (sameCanonicalForm)
-            return formulaParseTree.getRoot();
-        else
-            return canonicalTransformation.canonResult;
+        return canonicalForm;
+    }
+
+    public void setCanonicalForm(final ParseNode canonicalForm) {
+        this.canonicalForm = canonicalForm;
     }
 }
