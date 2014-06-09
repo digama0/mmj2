@@ -127,8 +127,6 @@ public abstract class BatchFramework {
 
     /*friendly*/GMFFBoss gmffBoss;
 
-    /*friendly*/BatchDocumentationBoss batchDocumentationBoss;
-
     /**
      * Initialize BatchFramework with Boss list and any captions that may have
      * been overridden.
@@ -170,9 +168,6 @@ public abstract class BatchFramework {
 
         gmffBoss = new GMFFBoss(this);
         addBossToBossList(gmffBoss);
-
-        batchDocumentationBoss = new BatchDocumentationBoss(this);
-        addBossToBossList(batchDocumentationBoss);
 
         addAnyExtraBossesToBossList();
 
