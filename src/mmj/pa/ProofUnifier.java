@@ -675,9 +675,15 @@ public class ProofUnifier {
         shiftEmptyElements(autoDerivSteps, autoDerivStepsCount);
         autoDerivStepsCount -= autoBestResults.size();
 
-        for (int i = 0; i < autoDerivStepsCount; i++)
-            proofTransformations.tryToFindTransformations(proofWorksheet,
-                autoDerivSteps[i]);
+        for (int i = 0; i < autoDerivStepsCount; i++) {
+            derivStep = autoDerivSteps[i];
+            assrt = proofTransformations.tryToFindTransformations(
+                proofWorksheet, derivStep);
+            if (assrt != null) {
+                derivStepHypArray = derivStep.getHypList();
+                markStepUnified(false, false, null);
+            }
+        }
     }
 
     /**
