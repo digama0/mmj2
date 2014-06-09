@@ -2257,53 +2257,6 @@ public class UtilConstants {
             + " </pre>\n" + "/\n");
 
     // ----------------------------------------------------------
-    // Commands for mmj.util.BatchDocumentationBoss interface to
-    // BatchDocuentation
-    // ----------
-
-    public static final BatchCommand RUNPARM_GENERATE_BATCH_DOCUMENTATION = new BatchCommand(
-        "GenerateBatchDocumentation",
-        " GenerateBatchDocumentation command.\n"
-            + " \n"
-            + " <pre>\n"
-            + " - Optional. Primarily used for testing. Exports Proof Worksheet\n"
-            + "             file(s) from the loaded Metamath database using\n"
-            + "             the current parameter settings (export parms, escapes, etc.)\n"
-            + " \n"
-            + "             May appear anywhere after the \"LoadFile\" RunParm,\n"
-            + "             but should appear after Proof Assistant parameters\n"
-            + "             initialized if the default Proof Assistant settings\n"
-            + "             are not used.\n"
-            + " \n"
-            + "  - Default = N/A -- used for batch testing.\n"
-            + " \n"
-            + "  - Value1 = theorem label or \"*\" (all). If theorem label\n"
-            + "             input then it is the starting point of the\n"
-            + "             export process, which will export the Max\n"
-            + "             Number of files beginning at that label.\n"
-            + "             If \"*\" input then the export begins at the\n"
-            + "             first label. Either way, files are exported\n"
-            + "             in MObj.seq number -- i.e. by order of appearance\n"
-            + "             in the loaded Metamath database (LogicalSystem.)\n"
-            + " \n"
-            + "  - Value2 = Max Number of proofs to export. Required.\n"
-            + " \n"
-            + "  - Value3 = Append File Name. Name of output file minus\n"
-            + "             the file type. Optional. If specified must\n"
-            + "             not contain any whitespace characters, or '/'\n"
-            + "             or '\\' or ':' characters (for safety.) All\n"
-            + "             exported Proof Worksheets will be appended\n"
-            + "             to the named file (written at the end instead\n"
-            + "             of the beginning.) Used for regression testing.\n"
-            + " \n" + "      - Examples:\n"
-            + "         *       1         2         3         4\n"
-            + "         *234567890123456789012345678901234567890\n"
-            + "         GMFFExportTheorem,syl,1\n"
-            + "         GMFFExportTheorem,*,100\n"
-            + "         GMFFExportTheorem,syl,100,Test20110915a\n"
-            + " </pre>\n" + "/\n");
-
-    // ----------------------------------------------------------
     // Constants mmj.util.TheoremLoaderBoss
     // ----------------------------------------------------------
 
@@ -3146,12 +3099,6 @@ public class UtilConstants {
     public static final String ERRMSG_PATH_SECURITY_ERROR_2 = " invalid. SecurityException on path access: ";
 
     // ----------------------------------------------------------
-    // Messages from BatchDocumentationBoss.java
-    // ----------------------------------------------------------
-    public static final String ERRMSG_BATCH_DOCUMENTATION_BOSS_ARGUMENT = "GenerateBatchDocumentation: "
-        + "Output file is not specified";
-
-    // ----------------------------------------------------------
     // Dump.java "report" literals.
     // ----------------------------------------------------------
 
@@ -3393,9 +3340,8 @@ public class UtilConstants {
             RUNPARM_JAVA_GARBAGE_COLLECTION, RUNPARM_CLEAR,
             RUNPARM_BOOK_MANAGER_ENABLED, RUNPARM_LOGIC_STMT_TYPE,
             RUNPARM_PROVABLE_LOGIC_STMT_TYPE,
-            RUNPARM_GENERATE_BATCH_DOCUMENTATION,
             RUNPARM_PROOF_ASST_AUTOCOMPLETE_ENABLED,
             RUNPARM_PROOF_ASST_DERIVE_AUTOCOMPLETE,
-            RUNPARM_PROOF_ASST_OPTIMIZE_THEOREM_SEARCH};
-
+            RUNPARM_PROOF_ASST_OPTIMIZE_THEOREM_SEARCH,
+            RUNPARM_PROVABLE_LOGIC_STMT_TYPE};
 }
