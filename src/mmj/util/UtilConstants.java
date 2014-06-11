@@ -598,17 +598,17 @@ public class UtilConstants {
 
     public static final BatchCommand RUNPARM_PROVABLE_LOGIC_STMT_TYPE = new BatchCommand(
         "ProvableLogicStmtType", " ProvableLogicStmtType.\n" + " <p>\n"
-            + " {@code \n" + " \"ProvableLogicStmtType\": default is \"|-\"\n"
-            + " }\n" + "\n");
+            + "<code> \n" + " \"ProvableLogicStmtType\": default is \"|-\"\n"
+            + " </code></p>\n" + "\n");
 
     public static final BatchCommand RUNPARM_LOGIC_STMT_TYPE = new BatchCommand(
-        "LogicStmtType", " LogicStmtType.\n" + " <p>\n" + " {@code \n"
-            + " \"LogicStmtType\": default is \"wff\"\n" + " }\n" + "\n");
+        "LogicStmtType", " LogicStmtType.\n" + " <p>\n" + "<code> \n"
+            + " \"LogicStmtType\": default is \"wff\"\n" + " </code></p>\n" + "\n");
 
     public static final BatchCommand RUNPARM_BOOK_MANAGER_ENABLED = new BatchCommand(
         "BookManagerEnabled", // default
-        " BookManagerEnabled.\n" + " <p>\n" + " {@code \n"
-            + " \"BookManagerEnabled\": default is \"yes\"\n" + " }\n" + "\n");
+        " BookManagerEnabled.\n" + " <p>\n" + " <code> \n"
+            + " \"BookManagerEnabled\": default is \"yes\"\n" + " </code>\n" + "\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.util.BatchMMJ2.java
@@ -622,9 +622,9 @@ public class UtilConstants {
             + "\n");
 
     public static final BatchCommand RUNPARM_JAVA_GARBAGE_COLLECTION = new BatchCommand(
-        "GarbageCollection", " GarbageCollection.\n" + " <p>\n" + " {@code \n"
+        "GarbageCollection", " GarbageCollection.\n" + " <p>\n" + " <code> \n"
             + " \"GarbageCollection\": frees up unused memory items.\n"
-            + " }\n" + "\n");
+            + " </code></p>\n" + "\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.util.OutputBoss.java
@@ -686,8 +686,7 @@ public class UtilConstants {
             + " \"StartInstrumentationTimer\": value1 = ID String,\n" + " \n"
             + "  ID String = Identifier in output message produced\n"
             + "              by StopInstrumentationTimer RunParm --\n"
-            + "              must match that ID String.\n" + " </pre>\n"
-            + "\n");
+            + "              must match that ID String.\n" + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_STOP_INSTRUMENTATION_TIMER = new BatchCommand(
         "StopInstrumentationTimer", " StopInstrumentationTimer\n" + " <p>\n"
@@ -767,8 +766,7 @@ public class UtilConstants {
 
     public static final BatchCommand RUNPARM_MAX_ERROR_MESSAGES = new BatchCommand(
         "MaxErrorMessages", " MaxErrorMessages.\n" + " \n" + " <pre>\n"
-            + " \"MaxErrorMessages\": 1 -> 999999999...\n" + " </pre>\n"
-            + "\n");
+            + " \"MaxErrorMessages\": 1 -> 999999999...\n" + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_MAX_INFO_MESSAGES = new BatchCommand(
         "MaxInfoMessages", " MaxInfoMessages.\n" + " \n" + " <pre>\n"
@@ -904,8 +902,7 @@ public class UtilConstants {
     public static final BatchCommand RUNPARM_INITIALIZE_GRAMMAR = new BatchCommand(
         "InitializeGrammar", // no
         " InitializeGrammar.\n" + " \n" + " <pre>\n"
-            + " \"InitializeGrammar\": no option values\n" + " </pre>\n"
-            + "\n");
+            + " \"InitializeGrammar\": no option values\n" + " </pre>\n" + "\n");
     // option
     // values
 
@@ -917,12 +914,12 @@ public class UtilConstants {
         "ProofAsstLookAndFeel",
         " ProofAsstLookAndFeel\n"
             + " <p>\n"
-            + " {@code \"ProofAsstLookAndFeel\"}: choose between any installed looks on\n"
-            + " your Java installation. Default is {@code Metal}, and available options\n"
-            + " on my computer are {@code Metal}, {@code Nimbus}, {@code CDE/Motif},\n"
-            + " {@code Windows}, and {@code Windows Classic}, although the specific\n"
+            + " <code> \"ProofAsstLookAndFeel\"</code>: choose between any installed looks on\n"
+            + " your Java installation. Default is <code> Metal</code>, and available options\n"
+            + " on my computer are <code> Metal</code>, <code> Nimbus</code>, <code> CDE/Motif</code>,\n"
+            + " <code> Windows</code>, and <code> Windows Classic</code>, although the specific\n"
             + " options depend on your installation. Input an invalid option here to get\n"
-            + " a list of available options in the error message.\n" + "\n");
+            + " a list of available options in the error message.\n</p>" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_DJ_VARS_SOFT_ERRORS = new BatchCommand(
         "ProofAsstDjVarsSoftErrors",
@@ -1185,8 +1182,7 @@ public class UtilConstants {
         " ProofAsstMaxUnifyAlternates DEPRECATED\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_MAX_UNIFY_HINTS = new BatchCommand(
-        "ProofAsstMaxUnifyHints", " ProofAsstMaxUnifyHints DEPRECATED\n"
-            + "\n");
+        "ProofAsstMaxUnifyHints", " ProofAsstMaxUnifyHints DEPRECATED\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_UNIFY_HINTS_IN_BATCH = new BatchCommand(
         "ProofAsstUnifyHintsInBatch",
@@ -1196,8 +1192,7 @@ public class UtilConstants {
         "StepSelectorMaxResults", " StepSelectorMaxResults\n" + " <p>\n"
             + " Limits the number of unifying assertions returned by the\n"
             + " StepSelectorSearch.\n" + " <p>\n"
-            + " Optional, default is 50 (see mmj.pa.PaConstants.java)\n"
-            + "\n");
+            + " Optional, default is 50 (see mmj.pa.PaConstants.java)\n" + "\n");
 
     public static final BatchCommand RUNPARM_STEP_SELECTOR_SHOW_SUBSTITUTIONS = new BatchCommand(
         "StepSelectorShowSubstitutions",
@@ -1263,14 +1258,14 @@ public class UtilConstants {
 
     public static final BatchCommand RUNPARM_PROOF_ASST_DUMMY_VAR_PREFIX = new BatchCommand(
         "ProofAsstDummyVarPrefix", " ProofAsstDummyVarPrefix\n" + " <p>\n"
-            + " {@code \n"
+            + " <code> \n"
             + " \"ProofAsstDummyVarPrefix\": length > 0, no embedded blanks\n"
             + " or unprintable characters.\n" + " \n"
             + " Dummy variables used to display un-determined variable\n"
             + " substitutions are given a prefix string and a number.\n"
             + " For example: $1, $2, etc.\n" + " \n"
             + " Optional, default is \"$ (see mmj.pa.PaConstants.java)\n"
-            + " + \n}\n" + "\n");
+            + " + \n</code></p>\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_DEFAULT_FILE_NAME_SUFFIX = new BatchCommand(
         "ProofAsstDefaultFileNameSuffix", " ProofAsstDefaultFileNameSuffix\n"
@@ -1303,7 +1298,7 @@ public class UtilConstants {
 
     public static final BatchCommand RUNPARM_RECHECK_PROOF_ASST_USING_PROOF_VERIFIER = new BatchCommand(
         "RecheckProofAsstUsingProofVerifier",
-        " RecheckProofAsstUsingProofVerifier\n" + " <p>\n" + " {@code \n"
+        " RecheckProofAsstUsingProofVerifier\n" + " <p>\n" + " <code> \n"
             + " \"RecheckProofAsstUsingProofVerifier,yes\"\n" + "  or\n"
             + " \"RecheckProofAsstUsingProofVerifier,no\"\n" + " \n"
             + " Optional, default = \"no\". If equal to \"yes\", then each\n"
@@ -1313,12 +1308,12 @@ public class UtilConstants {
             + " unnecessary since the Proof Assistant should provide\n"
             + " valid proofs, but it may be useful if question arise,\n"
             + " or if the user has spare CPU cycles and skepticism.\n" + "*"
-            + " }\n" + "\n");
+            + " </code></p>\n" + "\n");
 
     public static final BatchCommand RUNPARM_RUN_PROOF_ASST_GUI = new BatchCommand(
         "RunProofAsstGUI", // no
-        " RunProofAsstGUI\n" + " <p>\n" + " {@code \n"
-            + " \"RunProofAsstGUI\": no option values (for now...)\n" + " }\n"
+        " RunProofAsstGUI\n" + " <p>\n" + " <code> \n"
+            + " \"RunProofAsstGUI\": no option values (for now...)\n" + " </code></p>\n"
             + "\n");
     // option
     // values...for
@@ -1351,7 +1346,7 @@ public class UtilConstants {
             + " \n"
             + "                value5 = \"Correct\" (deprecated \"NotRandomized\",\n"
             + "                         default), \"Randomized\", \"Reverse\" and\n"
-            + "                         others (see {@code mmj.verify.HypsOrder}).\n"
+            + "                         others (see <code> mmj.verify.HypsOrder</code>).\n"
             + "                         Controls order of exported proof\n"
             + "                         step logical hypotheses (a testing\n"
             + "                         feature).\n"
@@ -1394,7 +1389,7 @@ public class UtilConstants {
             + " The \"ProofAsstProofFolder\", if present, is used with\n"
             + " relative filename. And take care to note that if export\n"
             + " is performed *after* ProofAsstGUI, the ProofAsstProofFolder\n"
-            + " may have been changed.\n" + " </pre>\n" + "\n");
+            + " may have been changed.\n" + " </pre></p>\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_OPTIMIZE_THEOREM_SEARCH = new BatchCommand(
         "ProofAsstOptimizeTheoremSearch",
@@ -1430,7 +1425,7 @@ public class UtilConstants {
             + " \n"
             + "                value4 = \"Correct\" (deprecated \"NotRandomized\",\n"
             + "                         default), \"Randomized\", \"Reverse\" and\n"
-            + "                         others (see {@code mmj.verify.HypsOrder}).\n"
+            + "                         others (see <code> mmj.verify.HypsOrder</code>).\n"
             + "                         Controls order of exported proof\n"
             + "                         step logical hypotheses (a testing\n"
             + "                         feature).\n"
@@ -1491,7 +1486,7 @@ public class UtilConstants {
             + " an \"absolute\" name such as \"c:\\my\\export.mmp\". The\n"
             + " \"ProofAsstProofFolder\", if present, is used with relative filename. And\n"
             + " take care to note that if export is performed *after* ProofAsstGUI, the\n"
-            + " ProofAsstProofFolder may have been changed.\n" + "\n");
+            + " ProofAsstProofFolder may have been changed.</p>\n" + "\n");
     // selection
     // and
     // optional
@@ -1582,10 +1577,10 @@ public class UtilConstants {
         "ProofAsstUnifySearchExclude", // options
         " ProofAsstUnifySearchExclude\n"
             + " <p>\n"
-            + " {@code \n"
+            + " <code> \n"
             + " \"ProofAsstUnifySearchExclude\": options = Assrt labels, comma\n"
             + "                                separated (ex: biigb,xxxid)\n"
-            + " }\n"
+            + " </code></p>\n"
             + " <p>\n"
             + " NOTE: The RunParm validation for these excluded Assrt labels will be very\n"
             + " lenient and will just ignore labels that are \"invalid\" or not in the\n"
@@ -1614,7 +1609,7 @@ public class UtilConstants {
             + " Variables error on a proof step and there is no unifying assertion that\n"
             + " doesn't have a Distinct Variables error.) In set.mm p0ex and snex are\n"
             + " appear as alternatives in a few proofs; mulid1 and mulid2 are another\n"
-            + " example.\n" + "\n");
+            + " example.</p>\n" + "\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.tmff.Preferences.java interface
