@@ -599,16 +599,16 @@ public class UtilConstants {
     public static final BatchCommand RUNPARM_PROVABLE_LOGIC_STMT_TYPE = new BatchCommand(
         "ProvableLogicStmtType", " ProvableLogicStmtType.\n" + " <p>\n"
             + " {@code \n" + " \"ProvableLogicStmtType\": default is \"|-\"\n"
-            + " }\n" + "/\n");
+            + " }\n" + "\n");
 
     public static final BatchCommand RUNPARM_LOGIC_STMT_TYPE = new BatchCommand(
         "LogicStmtType", " LogicStmtType.\n" + " <p>\n" + " {@code \n"
-            + " \"LogicStmtType\": default is \"wff\"\n" + " }\n" + "/\n");
+            + " \"LogicStmtType\": default is \"wff\"\n" + " }\n" + "\n");
 
     public static final BatchCommand RUNPARM_BOOK_MANAGER_ENABLED = new BatchCommand(
         "BookManagerEnabled", // default
         " BookManagerEnabled.\n" + " <p>\n" + " {@code \n"
-            + " \"BookManagerEnabled\": default is \"yes\"\n" + " }\n" + "/\n");
+            + " \"BookManagerEnabled\": default is \"yes\"\n" + " }\n" + "\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.util.BatchMMJ2.java
@@ -619,12 +619,12 @@ public class UtilConstants {
             + " \"Clear\":  clear loaded/derived mm data (files/grammar,etc)\n"
             + "          as well as all RunParm values except for\n"
             + "          SystemErrorFile and SystemOutputFile.\n" + " </pre>\n"
-            + "/\n");
+            + "\n");
 
     public static final BatchCommand RUNPARM_JAVA_GARBAGE_COLLECTION = new BatchCommand(
         "GarbageCollection", " GarbageCollection.\n" + " <p>\n" + " {@code \n"
             + " \"GarbageCollection\": frees up unused memory items.\n"
-            + " }\n" + "/\n");
+            + " }\n" + "\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.util.OutputBoss.java
@@ -660,7 +660,7 @@ public class UtilConstants {
             + " \n" + " Valid charset names on all Java Platforms:\n"
             + "     US-ASCII\n" + "     ISO-8859-1\n" + "     UTF-8\n"
             + "     UTF-16BE\n" + "     UTF-16LE\n" + "     UTF-16\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_SYSOUT_FILE = new BatchCommand(
         "SystemOutputFile", " SystemOutputFile.\n" + " <p>\n" + " \n"
@@ -670,7 +670,7 @@ public class UtilConstants {
             + "                     value3 = charset\n"
             + "                        see RUNPARM_SYSERR_FILE comments\n"
             + "                        for info on the above value parms!\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_OUTPUT_VERBOSITY = new BatchCommand(
         "OutputVerbosity", " OutputVerbosity\n" + " <p>\n" + " \n" + " <pre>\n"
@@ -678,7 +678,7 @@ public class UtilConstants {
             + "  Verbosity = 9999 is the default\n"
             + "            =    0 means only print error messages and\n"
             + "                 specifically requested output\n" + " </pre>\n"
-            + "/\n");
+            + "\n");
 
     public static final BatchCommand RUNPARM_START_INSTRUMENTATION_TIMER = new BatchCommand(
         "StartInstrumentationTimer", " StartInstrumentationTimer\n" + " <p>\n"
@@ -687,14 +687,14 @@ public class UtilConstants {
             + "  ID String = Identifier in output message produced\n"
             + "              by StopInstrumentationTimer RunParm --\n"
             + "              must match that ID String.\n" + " </pre>\n"
-            + "/\n");
+            + "\n");
 
     public static final BatchCommand RUNPARM_STOP_INSTRUMENTATION_TIMER = new BatchCommand(
         "StopInstrumentationTimer", " StopInstrumentationTimer\n" + " <p>\n"
             + " \n" + " <pre>\n"
             + " \"StopInstrumentationTimer\": value1 = ID String,\n" + " \n"
             + "  ID String = Identifier in StartInstrumentationTimer\n"
-            + "              RunParm -- must match.\n" + " </pre>\n" + "/\n");
+            + "              RunParm -- must match.\n" + " </pre>\n" + "\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.mmio.Systemizer.java
@@ -703,7 +703,7 @@ public class UtilConstants {
     public static final BatchCommand RUNPARM_LOAD_FILE = new BatchCommand(
         "LoadFile", " LoadFile.\n" + " \n" + " <pre>\n"
             + " \"LoadFile\": value1 = qual/unqual filename (varies by OS!)\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_LOAD_ENDPOINT_STMT_NBR = new BatchCommand(
         "LoadEndpointStmtNbr", " LoadEndpointStmtNbr.\n" + " \n" + " <pre>\n"
@@ -711,7 +711,7 @@ public class UtilConstants {
             + "                                 number of statements from\n"
             + "                                 input Metamath file(s).\n"
             + "                                 Must be greater than zero.\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_LOAD_ENDPOINT_STMT_LABEL = new BatchCommand(
         "LoadEndpointStmtLabel", " LoadEndpointStmtLabel.\n" + " \n"
@@ -720,7 +720,7 @@ public class UtilConstants {
             + "                                 statement label from\n"
             + "                                 input Metamath file(s).\n"
             + "                                 Must not be blank.\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_LOAD_COMMENTS = new BatchCommand(
         "LoadComments",
@@ -741,7 +741,7 @@ public class UtilConstants {
             + "                          loaded, except for $c and $v statements\n"
             + "                          which often have the description\n"
             + "                          after the declaration.\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_LOAD_PROOFS = new BatchCommand(
         "LoadProofs",
@@ -759,7 +759,7 @@ public class UtilConstants {
             + "                          If set to \"no\" then RunParm\n"
             + "                          \"VerifyProof\" will be ignored -- a\n"
             + "                          warning message is produced though.\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.lang.Messages.java
@@ -768,11 +768,11 @@ public class UtilConstants {
     public static final BatchCommand RUNPARM_MAX_ERROR_MESSAGES = new BatchCommand(
         "MaxErrorMessages", " MaxErrorMessages.\n" + " \n" + " <pre>\n"
             + " \"MaxErrorMessages\": 1 -> 999999999...\n" + " </pre>\n"
-            + "/\n");
+            + "\n");
 
     public static final BatchCommand RUNPARM_MAX_INFO_MESSAGES = new BatchCommand(
         "MaxInfoMessages", " MaxInfoMessages.\n" + " \n" + " <pre>\n"
-            + " \"MaxInfoMessages\": 1 -> 999999999...\n" + " </pre>\n" + "/\n");
+            + " \"MaxInfoMessages\": 1 -> 999999999...\n" + " </pre>\n" + "\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.lang.LogicalSystem.java
@@ -782,13 +782,13 @@ public class UtilConstants {
         "SymbolTableInitialSize", " SymbolTableInitialSize.\n" + " \n"
             + " <pre>\n"
             + " \"SymbolTableInitialSize\": default = 1500, min = 10\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_STMT_TBL_INITIAL_SIZE = new BatchCommand(
         "StatementTableInitialSize", " StatementTableInitialSize.\n" + " \n"
             + " <pre>\n"
             + " \"StatementTableInitialSize\": default = 30000, min = 100\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.lang.SeqAssigner.java
@@ -798,7 +798,7 @@ public class UtilConstants {
         "SeqAssignerIntervalSize", " SeqAssignerIntervalSize.\n" + " \n"
             + " <pre>\n"
             + " \"SeqAssignerIntervalSize\": default = 100, min = 1,\n"
-            + " max = 10000.\n" + " </pre>\n" + "/\n");
+            + " max = 10000.\n" + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE = new BatchCommand(
         "SeqAssignerIntervalTblInitialSize",
@@ -806,7 +806,7 @@ public class UtilConstants {
             + " \n"
             + " <pre>\n"
             + " \"SeqAssignerIntervalTblInitialSize\": default = 100, min = 10,\n"
-            + " max = 10000.\n" + " </pre>\n" + "/\n");
+            + " max = 10000.\n" + " </pre>\n" + "\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.verify.Grammar.java
@@ -818,7 +818,7 @@ public class UtilConstants {
             + " \n"
             + " <pre>\n"
             + " \"GrammarAmbiguityEdits\": \"basic\" (default) or \"complete\"\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_STATEMENT_AMBIGUITY_EDITS = new BatchCommand(
         "StatementAmbiguityEdits",
@@ -826,7 +826,7 @@ public class UtilConstants {
             + " \n"
             + " <pre>\n"
             + " \"StatementAmbiguityEdits\": \"basic\" (default) or \"complete\"\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.util.Dump.java
@@ -835,42 +835,42 @@ public class UtilConstants {
     public static final BatchCommand RUNPARM_MAX_STATEMENT_PRINT_COUNT = new BatchCommand(
         "MaxStatementPrintCount", " MaxStatementPrintCount.\n" + " \n"
             + " <pre>\n" + " \"MaxStatementPrintCount\": 1 -> 9999999999....\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_CAPTION = new BatchCommand(
         "Caption", " Caption.\n" + " \n" + " <pre>\n"
             + " \"Caption\": freeform caption for report output.\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_PRINT_SYNTAX_DETAILS = new BatchCommand(
         "PrintSyntaxDetails", // no
         " PrintSyntaxDetails.\n" + " \n" + " <pre>\n"
-            + " \"PrintSyntaxDetails\": no options\n" + " </pre>\n" + "/\n");
+            + " \"PrintSyntaxDetails\": no options\n" + " </pre>\n" + "\n");
     // options
 
     public static final BatchCommand RUNPARM_PRINT_STATEMENT_DETAILS = new BatchCommand(
         "PrintStatementDetails", // "*"
         " PrintStatementDetails.\n" + " \n" + " <pre>\n"
             + " \"PrintStatementDetails\": \"*\" or Stmt.label\n" + " </pre>\n"
-            + "/\n");
+            + "\n");
     // or
     // Stmt.label
 
     public static final BatchCommand RUNPARM_PRINT_BOOK_MANAGER_CHAPTERS = new BatchCommand(
         "PrintBookManagerChapters", " PrintBookManagerChapters\n" + " \n"
             + " <pre>\n" + " &quot;PrintBookManagerChapters&quot;\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_PRINT_BOOK_MANAGER_SECTIONS = new BatchCommand(
         "PrintBookManagerSections", " PrintBookManagerSections\n" + " \n"
             + " <pre>\n" + " &quot;PrintBookManagerSections&quot;\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_PRINT_BOOK_MANAGER_SECTION_DETAILS = new BatchCommand(
         "PrintBookManagerSectionDetails", // "*"
         " PrintBookManagerSectionDetails.\n" + " \n" + " <pre>\n"
             + " \"PrintBookManagerSectionDetails\": \"*\" or Section Number\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
     // or
     // Section
     // Number
@@ -882,13 +882,13 @@ public class UtilConstants {
     public static final BatchCommand RUNPARM_VERIFY_PROOF = new BatchCommand(
         "VerifyProof", // "*" or
         " VerifyProof.\n" + " \n" + " <pre>\n"
-            + " \"VerifyProof\": \"*\" or Stmt.label\n" + " </pre>\n" + "/\n");
+            + " \"VerifyProof\": \"*\" or Stmt.label\n" + " </pre>\n" + "\n");
     // Stmt.label
 
     public static final BatchCommand RUNPARM_VERIFY_PARSE = new BatchCommand(
         "VerifyParse", // "*" or
         " VerifyParse.\n" + " \n" + " <pre>\n"
-            + " \"VerifyParse\": \"*\" or Stmt.label\n" + " </pre>\n" + "/\n");
+            + " \"VerifyParse\": \"*\" or Stmt.label\n" + " </pre>\n" + "\n");
     // Stmt.label
 
     // ----------------------------------------------------------
@@ -899,13 +899,13 @@ public class UtilConstants {
                                                                                // or
                                                                                // Stmt.label
         " Parse.\n" + " \n" + " <pre>\n" + " \"Parse\": \"*\" or Stmt.label\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_INITIALIZE_GRAMMAR = new BatchCommand(
         "InitializeGrammar", // no
         " InitializeGrammar.\n" + " \n" + " <pre>\n"
             + " \"InitializeGrammar\": no option values\n" + " </pre>\n"
-            + "/\n");
+            + "\n");
     // option
     // values
 
@@ -922,7 +922,7 @@ public class UtilConstants {
             + " on my computer are {@code Metal}, {@code Nimbus}, {@code CDE/Motif},\n"
             + " {@code Windows}, and {@code Windows Classic}, although the specific\n"
             + " options depend on your installation. Input an invalid option here to get\n"
-            + " a list of available options in the error message.\n" + "/\n");
+            + " a list of available options in the error message.\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_DJ_VARS_SOFT_ERRORS = new BatchCommand(
         "ProofAsstDjVarsSoftErrors",
@@ -942,7 +942,7 @@ public class UtilConstants {
             + "                 for the theorem.\n" + " \n"
             + " Optional, default is \"GenerateReplacements\"\n" + " \n"
             + " NOTE: Superfluous $d statements are not detected!\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_PROOF_FORMAT = new BatchCommand(
         "ProofAsstProofFormat", " ProofAsstProofFormat\n" + " <p>\n" + " \n"
@@ -952,7 +952,7 @@ public class UtilConstants {
             + "     \"Compressed\"\n"
             + "              -- Full compression (with all caps encoding)\n"
             + " \n" + " Optional, default is \"Compressed\"\n" + " </pre>\n"
-            + "/\n");
+            + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_AUTOCOMPLETE_ENABLED = new BatchCommand(
         "ProofAsstAutocompleteEnabled", "ProofAsstAutocompleteEnabled\n" + "\n"
@@ -968,7 +968,7 @@ public class UtilConstants {
         "ProofAsstHighlightingEnabled", " ProofAsstHighlightingEnabled\n"
             + " \n" + " <pre>\n"
             + " \"ProofAsstHighlightingEnabled\": Yes or No\n" + " \n"
-            + " Optional, default is Yes (enabled).\n" + " </pre>\n" + "/\n");
+            + " Optional, default is Yes (enabled).\n" + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_HIGHLIGHTING_STYLE = new BatchCommand(
         "ProofAsstHighlightingStyle",
@@ -991,7 +991,7 @@ public class UtilConstants {
             + " class: CC33CC,inherit,inherit\n"
             + " set: FF0000,inherit,inherit\n"
             + " wff: 0000FF,inherit,inherit\n"
-            + " workvar: 008800,inherit,inherit\n" + " </pre>\n" + "/\n");
+            + " workvar: 008800,inherit,inherit\n" + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_FOREGROUND_COLOR_RGB = new BatchCommand(
         "ProofAsstForegroundColorRGB", " ProofAsstForegroundColorRGB\n" + " \n"
@@ -999,7 +999,7 @@ public class UtilConstants {
             + "                        \"0,0,0\" -- black (default)\n"
             + "                        thru\n"
             + "                        \"255,255,255\" -- white\n" + " \n"
-            + " Optional, default is \"0,0,0\" (black)\n" + " </pre>\n" + "/\n");
+            + " Optional, default is \"0,0,0\" (black)\n" + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_BACKGROUND_COLOR_RGB = new BatchCommand(
         "ProofAsstBackgroundColorRGB", //
@@ -1009,7 +1009,7 @@ public class UtilConstants {
             + "                        thru\n"
             + "                        \"0,0,0\" -- black\n" + " \n"
             + " Optional, default is \"255,255,255\" (white)\n" + " </pre>\n"
-            + "/\n");
+            + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_FONT_FAMILY = new BatchCommand(
         "ProofAsstFontFamily", // "Monospaced",
@@ -1032,7 +1032,7 @@ public class UtilConstants {
             + "         (TMFF) alignment Methods such as AlignColumn.\n"
             + "         TMFF will not align formula symbols properly\n"
             + "         when proportional fonts are used!!!\n" + " \n"
-            + " Optional, default is \"Monospaced\"\n" + " </pre>\n" + "/\n");
+            + " Optional, default is \"Monospaced\"\n" + " </pre>\n" + "\n");
     // "Courier New",
     // etc.
 
@@ -1040,13 +1040,13 @@ public class UtilConstants {
         "ProofAsstFontBold", // yes,
         " ProofAsstFontBold\n" + " \n" + " <pre>\n"
             + " \"ProofAsstFontBold\": Yes or No\n" + " \n"
-            + " Optional, default is Yes (bold).\n" + " </pre>\n" + "/\n");
+            + " Optional, default is Yes (bold).\n" + " </pre>\n" + "\n");
     // no
 
     public static final BatchCommand RUNPARM_PROOF_ASST_LINE_SPACING = new BatchCommand(
         "ProofAsstLineSpacing", " ProofAsstLineSpacing\n" + " \n" + " <pre>\n"
             + " \"ProofAsstLineSpacing\": float value, default 0\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_FONT_SIZE = new BatchCommand(
         "ProofAsstFontSize", // 8,
@@ -1054,7 +1054,7 @@ public class UtilConstants {
             + " \"ProofAsstFontSize\": 8 or 9, 10, 11, 12, 14, 16, 18\n"
             + "                      20, 22, 24, 26, 28, 36, 48, 72\n" + " \n"
             + " Optional, default is 14 (see mmj.pa.PaConstants.java)\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
     // 9,
     // ...
 
@@ -1066,7 +1066,7 @@ public class UtilConstants {
             + " window wraps around when the number of columns of\n"
             + " text exceeds ProofAsstTextColumns.\n" + " \n"
             + " Optional, default is 'off' (see mmj.pa.PaConstants.java)\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_TEXT_COLUMNS = new BatchCommand(
         "ProofAsstTextColumns", " ProofAsstTextColumns\n" + " \n" + " <pre>\n"
@@ -1080,7 +1080,7 @@ public class UtilConstants {
             + " (and because a double newline is needed at end of\n"
             + " formulas for legibility reasons.)\n" + " \n"
             + " Optional, default is 80 (see mmj.pa.PaConstants.java)\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_TEXT_ROWS = new BatchCommand(
         "ProofAsstTextRows", " ProofAsstTextRows\n" + " \n" + " <pre>\n"
@@ -1089,7 +1089,7 @@ public class UtilConstants {
             + " Provides a clue to the system about how big to make\n"
             + " the ProofAsstGUI proof text area window.\n" + " \n"
             + " Optional, default is 21 (see mmj.pa.PaConstants.java)\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_MAXIMIZED = new BatchCommand(
         "ProofAsstMaximized", " ProofAsstMaximized\n" + " \n" + " <pre>\n"
@@ -1098,7 +1098,7 @@ public class UtilConstants {
             + " If 'yes', maximizes the ProofAsstGUI main window on startup.\n"
             + " \n"
             + " Optional, default is 'no' (see mmj.pa.PaConstants.java)\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_TEXT_AT_TOP = new BatchCommand(
         "ProofAsstTextAtTop", " ProofAsstTextAtTop\n" + " \n" + " <pre>\n"
@@ -1108,7 +1108,7 @@ public class UtilConstants {
             + " above the error message text area; otherwise, their\n"
             + " positions are reversed (error messages at top).\n" + " \n"
             + " Optional, default is 'yes' (see mmj.pa.PaConstants.java)\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_INCOMPLETE_STEP_CURSOR = new BatchCommand(
         "ProofAsstIncompleteStepCursor", " ProofAsstIncompleteStepCursor\n"
@@ -1121,7 +1121,7 @@ public class UtilConstants {
             + " The cursor is positioned to the Ref sub-field within\n"
             + " a proof step.\n" + " \n"
             + " Optional, default is 'Last' (see mmj.pa.PaConstants.java)\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_ERROR_MESSAGE_ROWS = new BatchCommand(
         "ProofAsstErrorMessageRows", " ProofAsstErrorMessageRows\n" + " \n"
@@ -1130,7 +1130,7 @@ public class UtilConstants {
             + " Provides a clue to the system about how big to make\n"
             + " the ProofAsstGUI error message text area window.\n" + " \n"
             + " Optional, default is 4 (see mmj.pa.PaConstants.java)\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_ERROR_MESSAGE_COLUMNS = new BatchCommand(
         "ProofAsstErrorMessageColumns", " ProofAsstErrorMessageColumns\n"
@@ -1139,7 +1139,7 @@ public class UtilConstants {
             + " Provides a clue to the system about how wide to make\n"
             + " the ProofAsstGUI error message text area window.\n" + " \n"
             + " Optional, default is 80 (see mmj.pa.PaConstants.java)\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_FORMULA_LEFT_COL = new BatchCommand(
         "ProofAsstFormulaLeftCol", " ProofAsstFormulaLeftCol\n" + " \n"
@@ -1149,7 +1149,7 @@ public class UtilConstants {
             + " Controls program formatting, not user-input formulas.\n"
             + " \n"
             + " Optional, default is 20 (see mmj.pa.PaConstants.java)\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_FORMULA_RIGHT_COL = new BatchCommand(
         "ProofAsstFormulaRightCol", " ProofAsstFormulaRightCol\n" + " \n"
@@ -1159,7 +1159,7 @@ public class UtilConstants {
             + " Controls program formatting, not user-input formulas.\n"
             + " \n"
             + " Optional, default is 79 (see mmj.pa.PaConstants.java)\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_RPN_PROOF_LEFT_COL = new BatchCommand(
         "ProofAsstRPNProofLeftCol", " ProofAsstRPNProofLeftCol\n" + " \n"
@@ -1168,7 +1168,7 @@ public class UtilConstants {
             + "     less than ProofAsstRPNProofRightCol\n" + " \n"
             + " Controls program formatting of generated proof statements\n"
             + " \n" + " Optional, default is 6 (see mmj.pa.PaConstants.java)\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_RPN_PROOF_RIGHT_COL = new BatchCommand(
         "ProofAsstRPNProofRightCol", " ProofAsstRPNProofRightCol\n" + " \n"
@@ -1178,26 +1178,26 @@ public class UtilConstants {
             + " Controls program formatting of generated proof statements\n"
             + " \n"
             + " Optional, default is 79 (see mmj.pa.PaConstants.java)\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_MAX_UNIFY_ALTERNATES = new BatchCommand(
         "ProofAsstMaxUnifyAlternates",
-        " ProofAsstMaxUnifyAlternates DEPRECATED\n" + "/\n");
+        " ProofAsstMaxUnifyAlternates DEPRECATED\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_MAX_UNIFY_HINTS = new BatchCommand(
         "ProofAsstMaxUnifyHints", " ProofAsstMaxUnifyHints DEPRECATED\n"
-            + "/\n");
+            + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_UNIFY_HINTS_IN_BATCH = new BatchCommand(
         "ProofAsstUnifyHintsInBatch",
-        " ProofAsstUnifyHintsInBatch DEPRECATED\n" + "/\n");
+        " ProofAsstUnifyHintsInBatch DEPRECATED\n" + "\n");
 
     public static final BatchCommand RUNPARM_STEP_SELECTOR_MAX_RESULTS = new BatchCommand(
         "StepSelectorMaxResults", " StepSelectorMaxResults\n" + " <p>\n"
             + " Limits the number of unifying assertions returned by the\n"
             + " StepSelectorSearch.\n" + " <p>\n"
             + " Optional, default is 50 (see mmj.pa.PaConstants.java)\n"
-            + "/\n");
+            + "\n");
 
     public static final BatchCommand RUNPARM_STEP_SELECTOR_SHOW_SUBSTITUTIONS = new BatchCommand(
         "StepSelectorShowSubstitutions",
@@ -1205,21 +1205,21 @@ public class UtilConstants {
             + " <p>\n"
             + " Determines whether or not unifying assertions are shown as is or with the\n"
             + " substitutions required by unification.\n" + " <p>\n"
-            + " Default is true (see mmj.pa.PaConstants.java)\n" + "/\n");
+            + " Default is true (see mmj.pa.PaConstants.java)\n" + "\n");
 
     public static final BatchCommand RUNPARM_STEP_SELECTOR_DIALOG_PANE_WIDTH = new BatchCommand(
         "StepSelectorDialogPaneWidth", " StepSelectorDialogPaneWidth\n"
             + " <p>\n" + " Sets the pixel width of the StepSelectorDialog.\n"
             + " <p>\n"
             + " Optional, default is 720 (see mmj.pa.PaConstants.java)\n"
-            + "/\n");
+            + "\n");
 
     public static final BatchCommand RUNPARM_STEP_SELECTOR_DIALOG_PANE_HEIGHT = new BatchCommand(
         "StepSelectorDialogPaneHeight", " StepSelectorDialogPaneHeight\n"
             + " <p>\n" + " Sets the pixel width of the StepSelectorDialog.\n"
             + " <p>\n"
             + " Optional, default is 440 (see mmj.pa.PaConstants.java)\n"
-            + "/\n");
+            + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_ASSRT_LIST_FREESPACE = new BatchCommand(
         "ProofAsstAssrtListFreespace",
@@ -1227,7 +1227,7 @@ public class UtilConstants {
             + " <p>\n"
             + " Sets the amount of freespace in the ArrayLists used in the Proof\n"
             + " Assistant.\n" + " <p>\n"
-            + " Optional, default is 5, minimum 0, maximum 1000.\n" + "/\n");
+            + " Optional, default is 5, minimum 0, maximum 1000.\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_OUTPUT_CURSOR_INSTRUMENTATION = new BatchCommand(
         "ProofAsstOutputCursorInstrumentation",
@@ -1240,7 +1240,7 @@ public class UtilConstants {
             + " at the end of main functions, such as \"unify\".\n" + " <p>\n"
             + " <p>\n"
             + " Optional, default is no (see mmj.pa.PaConstants.java)\n"
-            + " \n" + " </code>\n" + "/\n");
+            + " \n" + " </code>\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_AUTO_REFORMAT = new BatchCommand(
         "ProofAsstAutoReformat", " ProofAsstAutoReformat\n" + " <p>\n"
@@ -1249,7 +1249,7 @@ public class UtilConstants {
             + " automatically reformatted after work variables\n"
             + " are resolved.\n" + " <p>\n"
             + " Optional, default is yes (see mmj.pa.PaConstants.java)\n"
-            + " \n" + " </code>\n" + "/\n");
+            + " \n" + " </code>\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_UNDO_REDO_ENABLED = new BatchCommand(
         "ProofAsstUndoRedoEnabled", " ProofAsstUndoRedoEnabled RunParm.\n"
@@ -1259,7 +1259,7 @@ public class UtilConstants {
             + " Normally this is turned on, but if desired, say\n"
             + " for performance reasons, the user can disable\n"
             + " Undo/Redo at start-up time via RunParm.\n" + " <p>\n"
-            + " Optional. Default = yes.\n" + " </code>\n" + "/\n");
+            + " Optional. Default = yes.\n" + " </code>\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_DUMMY_VAR_PREFIX = new BatchCommand(
         "ProofAsstDummyVarPrefix", " ProofAsstDummyVarPrefix\n" + " <p>\n"
@@ -1270,7 +1270,7 @@ public class UtilConstants {
             + " substitutions are given a prefix string and a number.\n"
             + " For example: $1, $2, etc.\n" + " \n"
             + " Optional, default is \"$ (see mmj.pa.PaConstants.java)\n"
-            + " + \n}\n" + "/\n");
+            + " + \n}\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_DEFAULT_FILE_NAME_SUFFIX = new BatchCommand(
         "ProofAsstDefaultFileNameSuffix", " ProofAsstDefaultFileNameSuffix\n"
@@ -1280,7 +1280,7 @@ public class UtilConstants {
             + " <p>\n"
             + " Optional. If this RunParm is not provided, the hardcoded\n"
             + " default \".txt\" is used as the default for Proof Worksheet\n"
-            + " file names.\n" + " </code>\n" + "/\n");
+            + " file names.\n" + " </code>\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_PROOF_FOLDER = new BatchCommand(
         "ProofAsstProofFolder", "*\n" + " ProofAsstProofFolder\n" + " <p>\n"
@@ -1290,7 +1290,7 @@ public class UtilConstants {
             + " Optional. If this RunParm is not provided, the user\n"
             + " of ProofAsstGUI is prompted during Save dialogs, and\n"
             + " the folder is remembered for the duration of the\n"
-            + " session.\n" + " </code>\n" + "/\n");
+            + " session.\n" + " </code>\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_STARTUP_PROOF_WORKSHEET = new BatchCommand(
         "ProofAsstStartupProofWorksheet", " ProofAsstStartupProofWorksheet\n"
@@ -1299,7 +1299,7 @@ public class UtilConstants {
             + "                      file to be displayed at ProofAsstGUI\n"
             + "                      startup. Must exist.\n" + " <p>\n"
             + " Optional. If this RunParm is not provided, a hardcoded\n"
-            + " Proof Worksheet (String) is displayd.\n" + " </code>\n" + "/\n");
+            + " Proof Worksheet (String) is displayd.\n" + " </code>\n" + "\n");
 
     public static final BatchCommand RUNPARM_RECHECK_PROOF_ASST_USING_PROOF_VERIFIER = new BatchCommand(
         "RecheckProofAsstUsingProofVerifier",
@@ -1313,13 +1313,13 @@ public class UtilConstants {
             + " unnecessary since the Proof Assistant should provide\n"
             + " valid proofs, but it may be useful if question arise,\n"
             + " or if the user has spare CPU cycles and skepticism.\n" + "*"
-            + " }\n" + "/\n");
+            + " }\n" + "\n");
 
     public static final BatchCommand RUNPARM_RUN_PROOF_ASST_GUI = new BatchCommand(
         "RunProofAsstGUI", // no
         " RunProofAsstGUI\n" + " <p>\n" + " {@code \n"
             + " \"RunProofAsstGUI\": no option values (for now...)\n" + " }\n"
-            + "/\n");
+            + "\n");
     // option
     // values...for
     // now...
@@ -1360,7 +1360,7 @@ public class UtilConstants {
             + "                         Print requests copy of Proof \n"
             + "                         Worksheet to be sent to the\n"
             + "                         SystemOutputFile (or System.out)\n"
-            + "                         in addition to the export file.<b>\n"
+            + "                         in addition to the export file.\n"
             + " \n"
             + "               value7 = \"DeriveFormulas\" or \"NoDeriveFormulas\"\n"
             + "                         (default) or \"\". If \"DeriveFormulas\"\n"
@@ -1394,7 +1394,7 @@ public class UtilConstants {
             + " The \"ProofAsstProofFolder\", if present, is used with\n"
             + " relative filename. And take care to note that if export\n"
             + " is performed *after* ProofAsstGUI, the ProofAsstProofFolder\n"
-            + " may have been changed.\n" + " </pre>\n" + "/\n");
+            + " may have been changed.\n" + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_OPTIMIZE_THEOREM_SEARCH = new BatchCommand(
         "ProofAsstOptimizeTheoremSearch",
@@ -1491,7 +1491,7 @@ public class UtilConstants {
             + " an \"absolute\" name such as \"c:\\my\\export.mmp\". The\n"
             + " \"ProofAsstProofFolder\", if present, is used with relative filename. And\n"
             + " take care to note that if export is performed *after* ProofAsstGUI, the\n"
-            + " ProofAsstProofFolder may have been changed.\n" + "/\n");
+            + " ProofAsstProofFolder may have been changed.\n" + "\n");
     // selection
     // and
     // optional
@@ -1529,7 +1529,7 @@ public class UtilConstants {
             + " the chosen item from the StepSelectorResults and invokes unify().\n"
             + " <p>\n"
             + " The StepSelectorResults are printed, as well as the ProofWorksheet after\n"
-            + " unification -- and any messages.\n" + "/\n");
+            + " unification -- and any messages.\n" + "\n");
 
     public static final BatchCommand RUNPARM_PREPROCESS_REQUEST_BATCH_TEST = new BatchCommand(
         "PreprocessRequestBatchTest", // all
@@ -1555,7 +1555,7 @@ public class UtilConstants {
             + " This RunParm is provided for regression testing.\n"
             + " <p>\n"
             + " The Proof Text is printed before and after preprocessing and unification.\n"
-            + " (and\n" + "/\n");
+            + " (and\n" + "\n");
     // options
     // mandatory:
     // filename,
@@ -1614,7 +1614,7 @@ public class UtilConstants {
             + " Variables error on a proof step and there is no unifying assertion that\n"
             + " doesn't have a Distinct Variables error.) In set.mm p0ex and snex are\n"
             + " appear as alternatives in a few proofs; mulid1 and mulid2 are another\n"
-            + " example.\n" + "/\n");
+            + " example.\n" + "\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.tmff.Preferences.java interface
@@ -1642,7 +1642,7 @@ public class UtilConstants {
             + "   <li>ByValue = \"Var\", \"Sym\", or \"Cnst\" (AlignColumn only)\n"
             + "   <li>AtNbr = 1, 2, or 3 (AlignColumn only)\n"
             + "   <li>AtValue = \"Var\", \"Sym\" or \"Cnst\" (AlignColumn only)\n"
-            + " </ol>\n" + " </code>\n" + "/\n");
+            + " </ol>\n" + " </code>\n" + "\n");
 
     public static final BatchCommand RUNPARM_TMFF_DEFINE_FORMAT = new BatchCommand(
         "TMFFDefineFormat",
@@ -1658,7 +1658,7 @@ public class UtilConstants {
             + "   <li>Format Nbr: 1, 2 or 3.\n"
             + "   <li>Scheme Name: must be non-blank, unique, not =\n"
             + "       \"Unformatted\". Not case sensitive.\n" + " </ol>\n"
-            + " </code>\n" + "/\n");
+            + " </code>\n" + "\n");
 
     public static final BatchCommand RUNPARM_TMFF_USE_FORMAT = new BatchCommand(
         "TMFFUseFormat",
@@ -1671,7 +1671,7 @@ public class UtilConstants {
             + " Note: Format '0' = Unformatted, turn TMFF off/disabled.\n"
             + " <p>\n" + " <code>\n" + " Parameters:\n" + " <ol>\n"
             + "   <li>Format Nbr: 0, 1, 2, 3, etc.\n" + " </ol>\n"
-            + " </code>\n" + "/\n");
+            + " </code>\n" + "\n");
 
     public static final BatchCommand RUNPARM_TMFF_ALT_FORMAT = new BatchCommand(
         "TMFFAltFormat",
@@ -1681,7 +1681,7 @@ public class UtilConstants {
             + " Edit/Reformat Proof - Swap Alt menu item is selected.\n"
             + " <p>\n" + " <p>\n" + " <code>\n" + " Parameters:\n" + " <ol>\n"
             + "   <li>Format Nbr: 0, 1, 2, 3, etc.\n" + " </ol>\n"
-            + " </code>\n" + "/\n");
+            + " </code>\n" + "\n");
 
     public static final BatchCommand RUNPARM_TMFF_USE_INDENT = new BatchCommand(
         "TMFFUseIndent",
@@ -1691,7 +1691,7 @@ public class UtilConstants {
             + " level in the proof tree.\n" + " <p>\n" + " <p>\n" + " <code>\n"
             + " Parameters:\n" + " <ol>\n"
             + "   <li>Indent Amount: 0, 1, 2, 3, or 4.\n" + " </ol>\n"
-            + " </code>\n" + "/\n");
+            + " </code>\n" + "\n");
 
     public static final BatchCommand RUNPARM_TMFF_ALT_INDENT = new BatchCommand(
         "TMFFAltIndent",
@@ -1703,7 +1703,7 @@ public class UtilConstants {
             + " selected.\n" + " <p>\n" + " <p>\n" + " <code>\n"
             + " Parameters:\n" + " <ol>\n"
             + "   <li>Alt Indent Amount: 0, 1, 2, 3, or 4.\n" + " </ol>\n"
-            + " </code>\n" + "/\n");
+            + " </code>\n" + "\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.util.WorkVarBoss interface to WorkVarManager
@@ -1759,7 +1759,7 @@ public class UtilConstants {
             + "         *234567890123456789012345678901234567890\n"
             + "         DefineWorkVarType,wff,&W,100\n"
             + "         DefineWorkVarType,set,&S,100\n"
-            + "         DefineWorkVarType,class,&C,100\n" + " </pre>\n" + "/\n");
+            + "         DefineWorkVarType,class,&C,100\n" + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_DECLARE_WORK_VARS = new BatchCommand(
         "DeclareWorkVars", " DeclareWorkVars command.\n" + " \n" + " <pre>\n"
@@ -1775,7 +1775,7 @@ public class UtilConstants {
             + "  - Value1 = N/A\n" + " \n" + "  - Examples\n" + " \n"
             + "     *       1         2         3         4\n"
             + "     *234567890123456789012345678901234567890\n"
-            + "     DeclareWorkVars\n" + " </pre>\n" + "/\n");
+            + "     DeclareWorkVars\n" + " </pre>\n" + "\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.util.SvcBoss interface to SvcCallback
@@ -1802,7 +1802,7 @@ public class UtilConstants {
             + " \n" + "      - Examples:\n"
             + "         *       1         2         3         4\n"
             + "         *234567890123456789012345678901234567890\n"
-            + "         SvcFolder,c:\\MyFolder\n" + " </pre>\n" + "/\n");
+            + "         SvcFolder,c:\\MyFolder\n" + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_SVC_CALLBACK_CLASS = new BatchCommand(
         "SvcCallbackClass", " SvcCallbackClass\n" + " <p>\n" + " \n"
@@ -1822,7 +1822,7 @@ public class UtilConstants {
             + "      - Examples:\n"
             + "         *       1         2         3         4\n"
             + "         *234567890123456789012345678901234567890\n"
-            + "         SvcCallbackClass,c:\\MyClass\n" + " </pre>\n" + "/\n");
+            + "         SvcCallbackClass,c:\\MyClass\n" + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_SVC_ARG = new BatchCommand(
         "SvcArg", " SvcArg\n" + " <p>\n" + " \n" + " <pre>\n"
@@ -1844,7 +1844,7 @@ public class UtilConstants {
             + "         *234567890123456789012345678901234567890\n"
             + "         SvcArg,OutFilePrefix,exp\n"
             + "         SvcArg,OutFileSuffix,zip\n"
-            + "         SvcArg,ZipOutput,yes\n" + " </pre>\n" + "/\n");
+            + "         SvcArg,ZipOutput,yes\n" + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_SVC_CALL = new BatchCommand(
         "SvcCall", " SvcCall\n" + " <p>\n" + " \n" + " <pre>\n"
@@ -1852,7 +1852,7 @@ public class UtilConstants {
             + " \n" + "      - Examples:\n"
             + "         *       1         2         3         4\n"
             + "         *234567890123456789012345678901234567890\n"
-            + "         SvcCall\n" + " </pre>\n" + "/\n");
+            + "         SvcCall\n" + " </pre>\n" + "\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.util.GMFFBoss interface
@@ -1996,7 +1996,7 @@ public class UtilConstants {
             + "         *234567890123456789012345678901234567890\n"
             + "         GMFFExportParms,althtml,ON,althtmldef,gmff\\althtml,.html,gmff\\althtml\\models,A,ISO-8859-1,general\n"
             + "         GMFFExportParms,html,ON,htmldef,gmff\\html,.html,gmff\\html\\models,A,ISO-8859-1,general\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_GMFF_USER_TEXT_ESCAPES = new BatchCommand(
         "GMFFUserTextEscapes",
@@ -2049,7 +2049,7 @@ public class UtilConstants {
             + "         *234567890123456789012345678901234567890\n"
             + "         GMFFUserTextEscapes,html,32,\"&nbsp;\",34,\"&quot;\",38,\"&amp;\",60,\"&lt;\",62,\"&gt;\" \n"
             + "         GMFFUserTextEscapes,althtml,32,\"&nbsp;\",34,\"&quot;\",38,\"&amp;\",60,\"&lt;\",62,\"&gt;\"\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_GMFF_USER_EXPORT_CHOICE = new BatchCommand(
         "GMFFUserExportChoice", " GMFFUserExportChoice command.\n" + " \n"
@@ -2067,7 +2067,7 @@ public class UtilConstants {
             + "         *234567890123456789012345678901234567890\n"
             + "         GMFFUserExportChoice,ALL \n"
             + "         GMFFUserExportChoice,html \n"
-            + "         GMFFUserExportChoice,althtml\n" + " </pre>\n" + "/\n");
+            + "         GMFFUserExportChoice,althtml\n" + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_GMFF_INITIALIZE = new BatchCommand(
         "GMFFInitialize",
@@ -2120,7 +2120,7 @@ public class UtilConstants {
             + "         *234567890123456789012345678901234567890\n"
             + "         GMFFInitialize\n"
             + "         GMFFInitialize,PrintTypesettingDefinitions\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_GMFF_PARSE_METAMATH_TYPESET_COMMENT = new BatchCommand(
         "GMFFParseMetamathTypesetComment",
@@ -2166,7 +2166,7 @@ public class UtilConstants {
             + "         *234567890123456789012345678901234567890\n"
             + "         GMFFParseMetamathTypesetComment,htmldef,mydirectory,mytypesetdefs.mm\n"
             + "         GMFFParseMetamathTypesetComment,htmldef,mydirectory,mytypesetdefs.mm,PRINT\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_GMFF_EXPORT_FROM_FOLDER = new BatchCommand(
         "GMFFExportFromFolder",
@@ -2212,7 +2212,7 @@ public class UtilConstants {
             + "         GMFFExportFromFolder,myproofs,syl,.mmp,1\n"
             + "         GMFFExportFromFolder,myproofs,*,.mmt,100\n"
             + "         GMFFExportFromFolder,myproofs,a2i,.mmt,5,Test20110915a\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_GMFF_EXPORT_THEOREM = new BatchCommand(
         "GMFFExportTheorem",
@@ -2254,7 +2254,7 @@ public class UtilConstants {
             + "         GMFFExportTheorem,syl,1\n"
             + "         GMFFExportTheorem,*,100\n"
             + "         GMFFExportTheorem,syl,100,Test20110915a\n"
-            + " </pre>\n" + "/\n");
+            + " </pre>\n" + "\n");
 
     // ----------------------------------------------------------
     // Constants mmj.util.TheoremLoaderBoss
