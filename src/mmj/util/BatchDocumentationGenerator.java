@@ -15,12 +15,20 @@ public class BatchDocumentationGenerator {
      * @param args - name of the file that will be filled with documentation.
      */
     public static void main(final String[] args) {
-        if (args.length >= 1)
+        if (args.length == 1)
             try {
                 generateDocumentation(args[0]);
             } catch (final FileNotFoundException e) {
-                return;
+                System.err.print("Error:File not found exception.\nFileName:\""
+                    + args[0] + "\"\nException" + e);
+                System.exit(-1);
             }
+        else {
+            System.err
+                .print("Error:Invalid number of arguments.\nNeeds:1 Given:"
+                    + args.length);
+            System.exit(-1);
+        }
     }
 
     /**
