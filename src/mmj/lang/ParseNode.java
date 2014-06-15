@@ -47,10 +47,7 @@
 
 package mmj.lang;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 import mmj.lang.ParseTree.RPNStep;
 
@@ -359,9 +356,29 @@ public class ParseNode {
         if (this == that)
             return true;
         for (int i = 0; i < child.length; i++)
-            if (!child[i].isDeepDup(that.child[i]))
+            if (child[i] != null) {
+                if (!child[i].isDeepDup(that.child[i]))
+                    return false;
+            }
+            else if (that.child[i] != null)
                 return false;
+
         return true;
+    }
+
+    /**
+     * Calculates the hash code based on children deep hash code. This
+     * implementation may be inefficient so in case of performance problems the
+     * function should be fixed.
+     * 
+     * @return true the hash code
+     */
+    public int deepHashCode() {
+        int hash = stmt.hashCode();
+        for (final ParseNode x : child)
+            if (x != null)
+                hash ^= x.deepHashCode();
+        return hash;
     }
 
     /**
@@ -431,7 +448,8 @@ public class ParseNode {
     }
 
     /**
-     * Clone of a ParseNode but leave the sub-trees the same.
+     * Clone of a ParseNode but leave the sub-trees the same. It could be
+     * dangerous form of cloning because we can't change children.
      * 
      * @return ParseNode sub-tree matching the original's content.
      */
