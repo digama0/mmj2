@@ -171,7 +171,8 @@ public class Formula {
     public void collectConstFrequenceAndInitConstList(
         final Map<Cnst, Integer> frequency)
     {
-        assert constList == null;
+        if (constList != null)
+            assert constList == null;
         final Set<Cnst> set = new HashSet<Cnst>();
         for (final Sym s : getSym())
             if (s instanceof Cnst) {

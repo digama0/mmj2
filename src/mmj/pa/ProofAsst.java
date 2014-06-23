@@ -904,7 +904,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         final Map<Cnst, Integer> frequency = new HashMap<Cnst, Integer>();
 
-        final List<Formula> formulaList = new ArrayList<Formula>();
+        final Set<Formula> formulaList = new LinkedHashSet<Formula>();
 
         for (final Theorem theorem : theoremList) {
             formulaList.add(theorem.getFormula());

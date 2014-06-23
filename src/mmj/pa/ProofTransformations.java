@@ -133,6 +133,8 @@ public class ProofTransformations {
         }
     }
 
+    private static ParseNode templateReplace = new ParseNode();
+
     private class PropertyTemplate {
         /** template could be null */
         private final ParseNode template;
@@ -168,7 +170,8 @@ public class ProofTransformations {
         }
 
         public ParseNode subst(final ParseNode substNode) {
-            return template.deepCloneWNodeSub(null, substNode.deepClone());
+            return template.deepCloneWNodeSub(templateReplace,
+                substNode.deepClone());
         }
     }
 
@@ -640,7 +643,7 @@ public class ProofTransformations {
     private static ParseNode getCorrespondingNodeRec(final ParseNode template,
         final ParseNode input)
     {
-        if (template == null)
+        if (template == templateReplace)
             return input;
         if (template.getStmt() != input.getStmt())
             return null;
@@ -682,7 +685,7 @@ public class ProofTransformations {
         int res = 0;
         for (int i = 0; i < children.length; i++)
             if (children[i].getStmt() == var) {
-                children[i] = null; // indicate entry point
+                children[i] = templateReplace; // indicate entry point
                 res++;
             }
             else
@@ -1541,7 +1544,7 @@ public class ProofTransformations {
                 if (left == null)
                     return leaf;
                 else
-                    return createBinaryNode(originalNode.getStmt(), left, leaf);
+                    return createBinaryNode(assocProp, left, leaf);
             }
 
             for (int i = 0; i < 2; i++)
@@ -1625,17 +1628,15 @@ public class ProofTransformations {
             hyps = new ProofStepStmt[3];
             final int n0 = assocProp.varIndexes[0];
             final int n1 = assocProp.varIndexes[1];
+            final ParseNode side;
+            if (firstForm)
+                side = stepNode.getChild()[0];
+            else
+                side = stepNode.getChild()[1];
             final ParseNode[] in = new ParseNode[3];
-            if (firstForm) {
-                in[0] = stepNode.getChild()[n0].getChild()[n0];
-                in[1] = stepNode.getChild()[n0].getChild()[n1];
-                in[2] = stepNode.getChild()[n1];
-            }
-            else {
-                in[0] = stepNode.getChild()[n0];
-                in[1] = stepNode.getChild()[n1].getChild()[n0];
-                in[2] = stepNode.getChild()[n1].getChild()[n1];
-            }
+            in[0] = side.getChild()[n0].getChild()[n0];
+            in[1] = side.getChild()[n0].getChild()[n1];
+            in[2] = side.getChild()[n1];
 
             for (int i = 0; i < 3; i++)
                 hyps[i] = closureProperty(info, assocProp, in[i]);
@@ -1669,16 +1670,22 @@ public class ProofTransformations {
         final boolean revert;
         final Assrt assocAssrt;
         final boolean firstForm;
+        final ParseNode left;
+        final ParseNode right;
         if (assocTr[from] != null) {
             assocAssrt = assocTr[from];
             revert = false;
             firstForm = true;
+            left = prevNode;
+            right = newNode;
         }
         else {
             final int other = (from + 1) % 2;
             assocAssrt = assocTr[other];
             revert = true;
             firstForm = false;
+            left = newNode;
+            right = prevNode;
         }
         assert assocAssrt != null;
 
@@ -1686,8 +1693,7 @@ public class ProofTransformations {
             .getStmt();
 
         // Create node f(f(a, b), c) = f(a, f(b, c))
-        final ParseNode stepNode = !revert ? createBinaryNode(equalStmt,
-            prevNode, newNode) : createBinaryNode(equalStmt, newNode, prevNode);
+        final ParseNode stepNode = createBinaryNode(equalStmt, left, right);
 
         ProofStepStmt res;
 
@@ -1789,6 +1795,8 @@ public class ProofTransformations {
     private boolean isAssociativeWithProp(final ParseNode originalNode,
         final GeneralizedStmt assocProp, final PreviousInfo info)
     {
+        if (assocProp.stmt != originalNode.getStmt())
+            return false;
         return isAssociativeWithProp(originalNode, assocProp.template,
             assocProp.constSubst, info);
     }
@@ -1797,7 +1805,8 @@ public class ProofTransformations {
         final PropertyTemplate template, final ConstSubst constSubst,
         final PreviousInfo info)
     {
-        assert originalNode.getChild().length == constSubst.constMap.length;
+        if (originalNode.getChild().length != constSubst.constMap.length)
+            assert originalNode.getChild().length == constSubst.constMap.length;
 
         if (template.isEmpty())
             return true;
@@ -2015,6 +2024,7 @@ public class ProofTransformations {
         final DerivationStep d = proofWorksheet.addDerivStep(derivStep, hyps,
             steps, assrt.getLabel(), generatedFormula, tree,
             Collections.<WorkVar> emptyList());
+        d.setRef(assrt);
         return d;
     }
 

@@ -350,9 +350,18 @@ public class ParseNode {
      * @return true if the sub-trees have identical contents.
      */
     public boolean isDeepDup(final ParseNode that) {
-        if (that == null || stmt != that.stmt
-            || child.length != that.child.length)
+        if (that == null || stmt != that.stmt)
             return false;
+
+        if (child == null && that.child == null)
+            return true;
+
+        if (child == null || that.child == null)
+            return false;
+
+        if (child.length != that.child.length)
+            return false;
+
         if (this == that)
             return true;
         for (int i = 0; i < child.length; i++)
@@ -374,6 +383,8 @@ public class ParseNode {
      * @return true the hash code
      */
     public int deepHashCode() {
+        if (stmt == null)
+            return 0;
         int hash = stmt.hashCode();
         for (final ParseNode x : child)
             if (x != null)
