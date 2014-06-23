@@ -61,4 +61,11 @@
             <classpath refid="mmj2.classpath"/>
         </java>
     </target>
+	<target name="batchCommandDocumentation" depends="build-jar">
+		<java classname="mmj.util.BatchDocumentationGenerator"  failonerror="true" fork="yes">
+			<arg line="doc/BatchCommandDocumentation.html">
+			</arg>
+			<classpath refid="mmj2.classpath"/>
+		</java>
+	</target>
 </project>
