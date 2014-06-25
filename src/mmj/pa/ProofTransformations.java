@@ -133,8 +133,10 @@ public class ProofTransformations {
         }
     }
 
+    /** The place in the template which could be replaced */
     private static ParseNode templateReplace = new ParseNode();
 
+    /** The template for some property. Usually it has form "var e. set" */
     private class PropertyTemplate {
         /** template could be null */
         private final ParseNode template;
@@ -174,37 +176,6 @@ public class ProofTransformations {
                 substNode.deepClone());
         }
     }
-
-    /** Generalized assertion */
-    /*
-    private class GenAssrt {
-        public final Assrt assrt;
-        public final ConstSubst constSubst;
-
-        public GenAssrt(final Assrt assrt, final ConstSubst constMap) {
-            this.assrt = assrt;
-            constSubst = constMap;
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            if (!(obj instanceof GenAssrt))
-                return false;
-            final GenAssrt that = (GenAssrt)obj;
-            if (assrt != that.assrt)
-                return false;
-
-            if (!constSubst.equals(that.constSubst))
-                return false;
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            return assrt.hashCode() ^ constSubst.hashCode();
-        }
-    }*/
 
     /** Empty default constructor */
     public ProofTransformations() {}
@@ -1076,6 +1047,8 @@ public class ProofTransformations {
         final ProofWorksheet proofWorksheet;
         final DerivationStep derivStep;
 
+        final List<DerivationStep> newSteps = new ArrayList<DerivationStep>();
+
         public WorksheetInfo(final ProofWorksheet proofWorksheet,
             final DerivationStep derivStep)
         {
@@ -1085,8 +1058,8 @@ public class ProofTransformations {
         }
 
         public ProofStepStmt getProofStepStmt(final ParseNode stepNode) {
-            final ProofStepStmt stepTr = getOrCreateProofStepStmt(
-                proofWorksheet, derivStep, stepNode, null, null);
+            final ProofStepStmt stepTr = getOrCreateProofStepStmt(this,
+                stepNode, null, null);
             return stepTr;
         }
     }
@@ -1254,9 +1227,8 @@ public class ProofTransformations {
 
                 // Create statement d:childTrStmt:replAssert
                 // |- g(A', B, C) = g(A', B', C)
-                final ProofStepStmt stepTr = createReplaceStep(
-                    info.proofWorksheet, info.derivStep, resNode, i,
-                    trgt.originalNode.getChild()[i], childTrStmt);
+                final ProofStepStmt stepTr = createReplaceStep(info, resNode,
+                    i, trgt.originalNode.getChild()[i], childTrStmt);
                 resNode = stepTr.formulaParseTree.getRoot().getChild()[1];
 
                 // resStmt now have the form g(A, B, C) = g(A', B, C)
@@ -1265,8 +1237,7 @@ public class ProofTransformations {
                 // => g(A, B, C) = g(A', B', C)
                 // Create statement d:resStmt,stepTr:transitive
                 // |- g(A, B, C) = g(A', B', C)
-                resStmt = transitiveConnectStep(info.proofWorksheet,
-                    info.derivStep, resStmt, stepTr);
+                resStmt = transitiveConnectStep(info, resStmt, stepTr);
             }
 
             assert resStmt != null;
@@ -1459,8 +1430,7 @@ public class ProofTransformations {
                     final ProofStepStmt assocTr = createAssociativeStep(info,
                         assocProp, from, prevNode, gNode);
 
-                    resStmt = transitiveConnectStep(info.proofWorksheet,
-                        info.derivStep, resStmt, assocTr);
+                    resStmt = transitiveConnectStep(info, resStmt, assocTr);
                 }
 
                 final AssocTree eAssT = gAssT.subTrees[from];
@@ -1508,12 +1478,10 @@ public class ProofTransformations {
                     final ParseNode prevGNode = gNode;
                     gNode = createAssocBinaryNode(from, assocProp, eNode, fNode);
 
-                    final ProofStepStmt replTr = createReplaceStep(
-                        info.proofWorksheet, info.derivStep, prevGNode, from,
-                        eNode, assocTr);
+                    final ProofStepStmt replTr = createReplaceStep(info,
+                        prevGNode, from, eNode, assocTr);
 
-                    resStmt = transitiveConnectStep(info.proofWorksheet,
-                        info.derivStep, resStmt, replTr);
+                    resStmt = transitiveConnectStep(info, resStmt, replTr);
                 }
                 else
                     break;
@@ -1530,8 +1498,7 @@ public class ProofTransformations {
                 replaceTarget, info);
 
             if (replTrStep != null)
-                resStmt = transitiveConnectStep(info.proofWorksheet,
-                    info.derivStep, resStmt, replTrStep);
+                resStmt = transitiveConnectStep(info, resStmt, replTrStep);
 
             return resStmt;
         }
@@ -1564,8 +1531,7 @@ public class ProofTransformations {
         }
     }
 
-    private ProofStepStmt createReplaceStep(
-        final ProofWorksheet proofWorksheet, final DerivationStep derivStep,
+    private ProofStepStmt createReplaceStep(final WorksheetInfo info,
         final ParseNode prevVersion, final int i, final ParseNode newSubTree,
         final ProofStepStmt childTrStmt)
     {
@@ -1583,9 +1549,8 @@ public class ProofTransformations {
 
         // Create statement d:childTrStmt:replAssert
         // |- g(A', B, C) = g(A', B', C)
-        final ProofStepStmt stepTr = getOrCreateProofStepStmt(proofWorksheet,
-            derivStep, stepNode, new ProofStepStmt[]{childTrStmt},
-            replAsserts[i]);
+        final ProofStepStmt stepTr = getOrCreateProofStepStmt(info, stepNode,
+            new ProofStepStmt[]{childTrStmt}, replAsserts[i]);
         return stepTr;
     }
 
@@ -1609,8 +1574,7 @@ public class ProofTransformations {
 
             hyps[n] = closureProperty(info, assocProp, child);
         }
-        res = getOrCreateProofStepStmt(info.proofWorksheet, info.derivStep,
-            stepNode, hyps, assrt);
+        res = getOrCreateProofStepStmt(info, stepNode, hyps, assrt);
         res.toString();
 
         return res;
@@ -1644,8 +1608,8 @@ public class ProofTransformations {
         else
             hyps = new ProofStepStmt[]{};
 
-        final ProofStepStmt res = getOrCreateProofStepStmt(info.proofWorksheet,
-            info.derivStep, stepNode, hyps, assocAssrt);
+        final ProofStepStmt res = getOrCreateProofStepStmt(info, stepNode,
+            hyps, assocAssrt);
 
         return res;
     }
@@ -1707,15 +1671,14 @@ public class ProofTransformations {
             final ParseNode revNode = createBinaryNode(equalStmt, prevNode,
                 newNode);
 
-            res = getOrCreateProofStepStmt(info.proofWorksheet, info.derivStep,
-                revNode, new ProofStepStmt[]{res}, eqComm);
+            res = getOrCreateProofStepStmt(info, revNode,
+                new ProofStepStmt[]{res}, eqComm);
         }
 
         return res;
     }
 
-    private ProofStepStmt transitiveConnectStep(
-        final ProofWorksheet proofWorksheet, final DerivationStep derivStep,
+    private ProofStepStmt transitiveConnectStep(final WorksheetInfo info,
         final ProofStepStmt prevRes, final ProofStepStmt newRes)
     {
         if (prevRes == null)
@@ -1735,9 +1698,8 @@ public class ProofTransformations {
         // => g(A, B, C) = g(A', B', C)
         // Create statement d:resStmt,stepTr:transitive
         // |- g(A, B, C) = g(A', B', C)
-        final ProofStepStmt resStmt = getOrCreateProofStepStmt(proofWorksheet,
-            derivStep, transitiveNode, new ProofStepStmt[]{prevRes, newRes},
-            transitive);
+        final ProofStepStmt resStmt = getOrCreateProofStepStmt(info,
+            transitiveNode, new ProofStepStmt[]{prevRes, newRes}, transitive);
 
         return resStmt;
     }
@@ -1997,17 +1959,18 @@ public class ProofTransformations {
         return generatedFormula;
     }
 
-    private ProofStepStmt getOrCreateProofStepStmt(
-        final ProofWorksheet proofWorksheet, final DerivationStep derivStep,
+    private ProofStepStmt getOrCreateProofStepStmt(final WorksheetInfo info,
         final ParseNode root, final ProofStepStmt[] hyps, final Assrt assrt)
     {
+        // final ProofWorksheet proofWorksheet, final DerivationStep derivStep;
+
         final ParseTree tree = new ParseTree(root);
         final Formula generatedFormula = verifyProofs.convertRPNToFormula(
             tree.convertToRPN(), "tree"); // TODO: use constant
         generatedFormula.setTyp(provableLogicStmtTyp);
 
-        final ProofStepStmt findMatchingStepFormula = proofWorksheet
-            .findMatchingStepFormula(generatedFormula, derivStep);
+        final ProofStepStmt findMatchingStepFormula = info.proofWorksheet
+            .findMatchingStepFormula(generatedFormula, info.derivStep);
 
         if (findMatchingStepFormula != null)
             return findMatchingStepFormula;
@@ -2021,29 +1984,29 @@ public class ProofTransformations {
         for (int i = 0; i < hyps.length; i++)
             steps[i] = hyps[i].getStep();
 
-        final DerivationStep d = proofWorksheet.addDerivStep(derivStep, hyps,
-            steps, assrt.getLabel(), generatedFormula, tree,
-            Collections.<WorkVar> emptyList());
+        final DerivationStep d = info.proofWorksheet.addDerivStep(
+            info.derivStep, hyps, steps, assrt.getLabel(), generatedFormula,
+            tree, Collections.<WorkVar> emptyList());
         d.setRef(assrt);
+        // d.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED;
+        info.newSteps.add(d);
         return d;
     }
 
     // ---------------------
 
-    private Assrt performTransformation(final ProofWorksheet proofWorksheet,
-        final DerivationStep derivStep, final ProofStepStmt source)
+    private Assrt performTransformation(final WorksheetInfo info,
+        final ProofStepStmt source)
     {
-        final WorksheetInfo info = new WorksheetInfo(proofWorksheet, derivStep);
-
         final Transformation dsTr = createTransformation(
-            derivStep.formulaParseTree.getRoot(), info);
+            info.derivStep.formulaParseTree.getRoot(), info);
         final Transformation tr = createTransformation(
             source.formulaParseTree.getRoot(), info);
 
         final ProofStepStmt eqResult = tr.transformMeToTarget(dsTr, info);
         eqResult.toString();
 
-        final Cnst type = derivStep.formulaParseTree.getRoot().getStmt()
+        final Cnst type = info.derivStep.formulaParseTree.getRoot().getStmt()
             .getTyp();
 
         final Assrt impl = eqImplications.get(type);
@@ -2059,8 +2022,11 @@ public class ProofTransformations {
         for (int i = 0; i < hypStep.length; i++)
             hypStep[i] = hypDerivArray[i].getStep();
 
-        derivStep.setHypList(hypDerivArray);
-        derivStep.setHypStepList(hypStep);
+        info.derivStep.setRef(impl);
+        info.derivStep.setRefLabel(impl.getLabel());
+        info.derivStep.setHypList(hypDerivArray);
+        info.derivStep.setHypStepList(hypStep);
+        info.derivStep.setAutoStep(false);
 
         return impl;
     }
@@ -2072,7 +2038,7 @@ public class ProofTransformations {
      * @param derivStep the derivation step
      * @return true if it founds possible unification
      */
-    private Assrt tryToFindTransformationsCore(
+    private List<DerivationStep> tryToFindTransformationsCore(
         final ProofWorksheet proofWorksheet, final DerivationStep derivStep)
     {
         if (!isInit)
@@ -2118,16 +2084,18 @@ public class ProofTransformations {
                 messages.accumInfoMessage(
                     "I-DBG found canonical forms correspondance: %s and %s",
                     candidate, derivStep);
-                final Assrt res = performTransformation(proofWorksheet,
-                    derivStep, candidate);
-                return res;
+                performTransformation(info, candidate);
+
+                // confirm unification for derivStep also!
+                info.newSteps.add(derivStep);
+                return info.newSteps;
             }
         }
         return null;
     }
 
-    public Assrt tryToFindTransformations(final ProofWorksheet proofWorksheet,
-        final DerivationStep derivStep)
+    public List<DerivationStep> tryToFindTransformations(
+        final ProofWorksheet proofWorksheet, final DerivationStep derivStep)
     {
         try {
             return tryToFindTransformationsCore(proofWorksheet, derivStep);

@@ -676,10 +676,19 @@ public class ProofUnifier {
         autoDerivStepsCount -= autoBestResults.size();
 
         for (int i = 0; i < autoDerivStepsCount; i++) {
-            derivStep = autoDerivSteps[i];
-            assrt = proofTransformations.tryToFindTransformations(
-                proofWorksheet, derivStep);
-            if (assrt != null) {
+            //derivStep = autoDerivSteps[i];
+            //assrt;
+            List<DerivationStep> list = proofTransformations.tryToFindTransformations(
+                proofWorksheet, autoDerivSteps[i]);
+            if (list != null) {
+                for (DerivationStep d : list) {
+                    derivStep = d;
+                    assrt = (Assrt)derivStep.getRef();
+                    assrtNbrLogHyps = assrt.getLogHypArrayLength();
+                    final UnifyResult res = unifyStepWithoutWorkVars();
+                    assert (res.proper());
+                    
+                }
                 derivStepHypArray = derivStep.getHypList();
                 markStepUnified(false, false, null);
             }
