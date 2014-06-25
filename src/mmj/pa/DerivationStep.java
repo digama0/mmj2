@@ -1042,11 +1042,11 @@ public class DerivationStep extends ProofStepStmt {
         return s + ":" + getRefLabel() + " " + getFormula();
     }
 
-    void setHypStep(final int i, final String s) {
+    public void setHypStep(final int i, final String s) {
         hypStep[i] = s;
     }
 
-    void setHypStepList(final String[] hypStep) {
+    public void setHypStepList(final String[] hypStep) {
         this.hypStep = hypStep;
     }
 

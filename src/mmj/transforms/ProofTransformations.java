@@ -4,12 +4,13 @@
 //* License terms: GNU General Public License Version 2                       */
 //*                or any later version                                       */
 //*****************************************************************************/
-package mmj.pa;
+package mmj.transforms;
 
 import java.util.*;
 import java.util.Map.Entry;
 
 import mmj.lang.*;
+import mmj.pa.*;
 import mmj.verify.VerifyProofs;
 
 /**

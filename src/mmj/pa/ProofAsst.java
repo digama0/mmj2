@@ -81,6 +81,7 @@ import mmj.lang.*;
 import mmj.lang.ParseTree.RPNStep;
 import mmj.mmio.MMIOError;
 import mmj.tl.*;
+import mmj.transforms.ProofTransformations;
 import mmj.util.OutputBoss;
 import mmj.util.StopWatch;
 import mmj.verify.*;
