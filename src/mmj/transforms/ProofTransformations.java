@@ -11,7 +11,6 @@ import java.util.Map.Entry;
 
 import mmj.lang.*;
 import mmj.pa.*;
-import mmj.verify.VerifyProofs;
 
 /**
  * This contains information for possible automatic transformations.
@@ -27,1043 +26,20 @@ import mmj.verify.VerifyProofs;
  * <li>Auxiliary functions
  * </ul>
  */
-public class ProofTransformations {
-    /** This field is true if this object was initialized */
-    private boolean isInit = false;
+public class ProofTransformations extends DataBaseInfo {
 
-    Messages messages; // for debug reasons
-
-    /** It is necessary for formula construction */
-    VerifyProofs verifyProofs;
-
-    /** The map from type to corresponding equivalence operators */
-    private Map<Cnst, Stmt> eqMap;
-
-    /** The list of commutative rules for equivalence operators: A = B => B = A */
-    private Map<Stmt, Assrt> eqCommutatives;
-
-    /**
-     * The list of transitive rules for equivalence operators:
-     * <p>
-     * A = B & B = C => A = C
-     */
-    private Map<Stmt, Assrt> eqTransitivies;
-
-    /**
-     * The map from type to equivalence implication rule: A & A <-> B => B.
-     * set.mm has only one element: (wff, <->)
-     */
-    private Map<Cnst, Assrt> eqImplications;
-
-    /** The list of implication operators : A & A -> B => B. */
-    private Map<Stmt, Assrt> implOp;
-
-    /**
-     * The list of closure lows: A e. CC & B e. CC => (A + B) e. CC
-     * <p>
-     * It is a map: Statement ( ( A F B ) in the example) -> map : constant
-     * elements ( + in the example) -> set of possible properties ( _ e. CC in
-     * the example). There could be many properties ( {" _ e. CC" , "_ e. RR" }
-     * for example ).
-     */
-    private Map<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt>>> closureRuleMap;
-
-    /** The list of statements with possible variable replace */
-    private Map<Stmt, Assrt[]> replaceOp;
-
-    /** The list of commutative operators */
-    private Map<Stmt, Assrt> comOp;
-
-    /**
-     * The map: associative operators -> array of 2 elements:
-     * <ul>
-     * <li>f(f(a, b), c) = f(a, f(b, c))
-     * <li>f(a, f(b, c)) = f(f(a, b), c)
-     * </ul>
-     */
-    private Map<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt[]>>> assocOp;
-
-    /** The symbol like |- in set.mm */
-    private Cnst provableLogicStmtTyp;
-
-    private class ConstSubst {
-        /** This array contains null elements. */
-        public final ParseNode[] constMap;
-        public final int hash;
-
-        public ConstSubst(final ParseNode[] constMap) {
-            this.constMap = constMap;
-            hash = calcHashCode();
-        }
-
-        public boolean isEmpty() {
-            for (final ParseNode node : constMap)
-                if (node != null)
-                    return false;
-            return true;
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            if (!(obj instanceof ConstSubst))
-                return false;
-            final ConstSubst that = (ConstSubst)obj;
-
-            assert constMap.length == that.constMap.length;
-            for (int i = 0; i < constMap.length; i++)
-                if (constMap[i] != that.constMap[i]) {
-                    if (constMap[i] == null || that.constMap[i] == null)
-                        return false;
-                    if (!constMap[i].isDeepDup(that.constMap[i]))
-                        return false;
-                }
-            return true;
-        }
-
-        private int calcHashCode() {
-            int hash = 0;
-            for (final ParseNode node : constMap)
-                if (node != null)
-                    hash ^= node.deepHashCode();
-            return hash;
-        }
-
-        @Override
-        public int hashCode() {
-            return hash;
-        }
-    }
-
-    /** The place in the template which could be replaced */
-    private static ParseNode templateReplace = new ParseNode();
-
-    /** The template for some property. Usually it has form "var e. set" */
-    private class PropertyTemplate {
-        /** template could be null */
-        private final ParseNode template;
-
-        public PropertyTemplate(final ParseNode template) {
-            this.template = template;
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            if (!(obj instanceof PropertyTemplate))
-                return false;
-            final PropertyTemplate that = (PropertyTemplate)obj;
-            if (template == that.template)
-                return true;
-
-            if (template == null || that.template == null)
-                return false;
-
-            return template.isDeepDup(that.template);
-        }
-
-        @Override
-        public int hashCode() {
-            if (template != null)
-                return template.deepHashCode();
-            else
-                return 0;
-        }
-
-        public boolean isEmpty() {
-            return template == null;
-        }
-
-        public ParseNode subst(final ParseNode substNode) {
-            return template.deepCloneWNodeSub(templateReplace,
-                substNode.deepClone());
-        }
-    }
-
-    /** Empty default constructor */
     public ProofTransformations() {}
 
-    // ----------------------------
-
-    public void prepareAutomaticTransformations(final List<Assrt> assrtList,
-        final Cnst provableLogicStmtTyp, final Messages messages,
-        final VerifyProofs verifyProofs)
-    {
-        isInit = true;
-        this.messages = messages;
-        this.verifyProofs = verifyProofs;
-        this.provableLogicStmtTyp = provableLogicStmtTyp;
-
-        eqCommutatives = new HashMap<Stmt, Assrt>();
-        for (final Assrt assrt : assrtList)
-            findEquivalenceCommutativeRules(assrt);
-
-        eqTransitivies = new HashMap<Stmt, Assrt>();
-        for (final Assrt assrt : assrtList)
-            findEquivalenceTransitiveRules(assrt);
-
-        filterOnlyEqRules();
-
-        implOp = new HashMap<Stmt, Assrt>();
-        eqImplications = new HashMap<Cnst, Assrt>();
-        for (final Assrt assrt : assrtList)
-            findImplicationRules(assrt);
-
-        replaceOp = new HashMap<Stmt, Assrt[]>();
-        for (final Assrt assrt : assrtList)
-            findReplaceRules(assrt);
-
-        closureRuleMap = new HashMap<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt>>>();
-        for (final Assrt assrt : assrtList)
-            findClosureRules(assrt);
-
-        comOp = new HashMap<Stmt, Assrt>();
-        for (final Assrt assrt : assrtList)
-            findCommutativeRules(assrt);
-
-        assocOp = new HashMap<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt[]>>>();
-        for (final Assrt assrt : assrtList)
-            findAssociativeRules(assrt);
-    }
-
-    /**
-     * Find commutative equivalence rules, like A = B => B = A
-     * <p>
-     * 
-     * @param assrt the candidate
-     */
-    private void findEquivalenceCommutativeRules(final Assrt assrt) {
-        final VarHyp[] varHypArray = assrt.getMandVarHypArray();
-        final LogHyp[] logHyps = assrt.getLogHypArray();
-        final ParseTree assrtTree = assrt.getExprParseTree();
-
-        if (logHyps.length != 1)
-            return;
-
-        final ParseTree hypTree = logHyps[0].getExprParseTree();
-
-        if (varHypArray.length != 2)
-            return;
-
-        if (hypTree.getMaxDepth() != 2)
-            return;
-
-        if (assrtTree.getMaxDepth() != 2)
-            return;
-
-        if (assrtTree.getRoot().getChild().length != 2)
-            return;
-
-        final Stmt stmt = assrtTree.getRoot().getStmt();
-
-        if (hypTree.getRoot().getStmt() != stmt)
-            return;
-
-        if (hypTree.getRoot().getChild()[0].getStmt() != assrtTree.getRoot()
-            .getChild()[1].getStmt())
-            return;
-
-        if (hypTree.getRoot().getChild()[1].getStmt() != assrtTree.getRoot()
-            .getChild()[0].getStmt())
-            return;
-
-        messages.accumInfoMessage(
-            "I-DBG Equivalence commutative assrt: %s: %s", assrt,
-            assrt.getFormula());
-
-        if (!eqCommutatives.containsKey(stmt))
-            eqCommutatives.put(stmt, assrt);
-    }
-
-    /**
-     * Find transitive equivalence rules, like A = B & B = C => A = C
-     * <p>
-     * 
-     * @param assrt the candidate
-     */
-    private void findEquivalenceTransitiveRules(final Assrt assrt) {
-        final VarHyp[] mandVarHypArray = assrt.getMandVarHypArray();
-        final LogHyp[] logHyps = assrt.getLogHypArray();
-        final ParseTree assrtTree = assrt.getExprParseTree();
-
-        if (logHyps.length != 2)
-            return;
-
-        final ParseTree hypTree1 = logHyps[0].getExprParseTree();
-        final ParseTree hypTree2 = logHyps[1].getExprParseTree();
-
-        if (mandVarHypArray.length != 2)
-            return;
-
-        if (hypTree1.getMaxDepth() != 2 || hypTree2.getMaxDepth() != 2)
-            return;
-
-        if (assrtTree.getMaxDepth() != 2)
-            return;
-
-        if (assrtTree.getRoot().getChild().length != 2)
-            return;
-
-        final Stmt stmt = assrtTree.getRoot().getStmt();
-
-        if (hypTree1.getRoot().getStmt() != stmt)
-            return;
-
-        if (hypTree2.getRoot().getStmt() != stmt)
-            return;
-
-        // check for 'A' in 'A = B & B = C => A = C'
-        if (hypTree1.getRoot().getChild()[0].getStmt() != assrtTree.getRoot()
-            .getChild()[0].getStmt())
-            return;
-
-        // check for 'B' in 'A = B & B = C'
-        if (hypTree1.getRoot().getChild()[1].getStmt() != hypTree2.getRoot()
-            .getChild()[0].getStmt())
-            return;
-
-        // check for 'C' in 'A = B & B = C => A = C'
-        if (hypTree2.getRoot().getChild()[1].getStmt() != assrtTree.getRoot()
-            .getChild()[1].getStmt())
-            return;
-
-        messages.accumInfoMessage("I-DBG Equivalence transitive assrt: %s: %s",
-            assrt, assrt.getFormula());
-        if (!eqTransitivies.containsKey(stmt))
-            eqTransitivies.put(stmt, assrt);
-    }
-
-    /**
-     * We found candidates for equivalence from commutative and transitive
-     * sides. Now compare results and remove unsuitable!
-     */
-    private void filterOnlyEqRules() {
-        while (true) {
-            boolean changed = false;
-
-            for (final Stmt eq : eqTransitivies.keySet())
-                if (!eqCommutatives.containsKey(eq)) {
-                    eqTransitivies.remove(eq);
-                    changed = true;
-                    break;
-                }
-
-            for (final Stmt eq : eqCommutatives.keySet())
-                if (!eqTransitivies.containsKey(eq)) {
-                    eqCommutatives.remove(eq);
-                    changed = true;
-                    break;
-                }
-
-            if (!changed)
-                break;
-        }
-
-        // Debug output:
-        for (final Stmt eq : eqTransitivies.keySet())
-            messages.accumInfoMessage("I-DBG Equivalence rules: %s: %s and %s",
-                eq, eqCommutatives.get(eq).getFormula(), eqTransitivies.get(eq)
-                    .getFormula());
-
-        // Create the reverse map:
-        eqMap = new HashMap<Cnst, Stmt>();
-
-        for (final Stmt eq : eqCommutatives.keySet()) {
-            final Assrt assrt = eqCommutatives.get(eq);
-
-            final ParseTree assrtTree = assrt.getExprParseTree();
-            final Cnst type = assrtTree.getRoot().getChild()[0].getStmt()
-                .getTyp();
-            eqMap.put(type, eq);
-
-            messages.accumInfoMessage("I-DBG Type equivalence map: %s: %s",
-                type, eq);
-        }
-    }
-
-    private boolean isEquivalence(final Stmt stmt) {
-        return eqCommutatives.containsKey(stmt);
-    }
-
-    /**
-     * Filters implication rules, like A & A -> B => B. Some of implications
-     * could be equivalence operators (<-> in set.mm).
-     * 
-     * @param assrt the candidate
-     */
-    private void findImplicationRules(final Assrt assrt) {
-        // TODO: adds the support of assrts like addcomi
-        final ParseTree assrtTree = assrt.getExprParseTree();
-
-        final LogHyp[] logHyps = assrt.getLogHypArray();
-        if (logHyps.length != 2)
-            return;
-
-        if (assrtTree.getMaxDepth() != 1)
-            return;
-
-        final ParseNode resNode = assrtTree.getRoot();
-
-        if (!isVarNode(resNode))
-            return;
-
-        final ParseNode log0Root = logHyps[0].getExprParseTree().getRoot();
-        final ParseNode log1Root = logHyps[1].getExprParseTree().getRoot();
-
-        ParseNode preHyp;
-        ParseNode implHyp;
-        if (isVarNode(log0Root)) {
-            preHyp = log0Root;
-            implHyp = log1Root;
-        }
-        else if (isVarNode(log1Root)) {
-            preHyp = log1Root;
-            implHyp = log0Root;
-        }
-        else
-            return;
-
-        if (implHyp.getChild().length != 2)
-            return;
-
-        // TODO: the order could be different!
-
-        if (implHyp.getChild()[0].getStmt() != preHyp.getStmt())
-            return;
-
-        if (implHyp.getChild()[1].getStmt() != resNode.getStmt())
-            return;
-
-        final Stmt stmt = implHyp.getStmt();
-
-        if (implOp.containsKey(stmt))
-            return;
-
-        messages.accumInfoMessage("I-DBG implication assrt: %s: %s", assrt,
-            assrt.getFormula());
-        implOp.put(stmt, assrt);
-
-        if (!isEquivalence(stmt))
-            return;
-
-        final Cnst type = resNode.getStmt().getTyp();
-
-        if (eqImplications.containsKey(type))
-            return;
-
-        messages.accumInfoMessage("I-DBG implication equal assrt: %s: %s",
-            type, assrt);
-
-        eqImplications.put(type, assrt);
-    }
-
-    /**
-     * Filters replace rules, like A = B => g(A) = g(B)
-     * 
-     * @param assrt the candidate
-     */
-    private void findReplaceRules(final Assrt assrt) {
-        assrt.getMandVarHypArray();
-        final LogHyp[] logHyps = assrt.getLogHypArray();
-        final ParseTree assrtTree = assrt.getExprParseTree();
-
-        if (logHyps.length != 1)
-            return;
-
-        // Maybe depth restriction could be weaken
-        if (assrtTree.getMaxDepth() != 3)
-            return;
-
-        if (eqCommutatives.get(assrtTree.getRoot().getStmt()) == null)
-            return;
-
-        final LogHyp testHyp = logHyps[0];
-
-        final ParseTree hypTree = testHyp.getExprParseTree();
-
-        if (eqCommutatives.get(hypTree.getRoot().getStmt()) == null)
-            return;
-
-        final ParseNode[] hypSubTrees = hypTree.getRoot().getChild();
-
-        assert hypSubTrees.length == 2 : "It should be the equivalence rule!";
-
-        if (!isVarNode(hypSubTrees[0]) || !isVarNode(hypSubTrees[1]))
-            return;
-
-        final ParseNode[] subTrees = assrtTree.getRoot().getChild();
-
-        assert subTrees.length == 2 : "It should be the equivalence rule!";
-
-        if (subTrees[0].getStmt() != subTrees[1].getStmt())
-            return;
-
-        final Stmt stmt = subTrees[0].getStmt();
-
-        final ParseNode[] leftChild = subTrees[0].getChild();
-        final ParseNode[] rightChild = subTrees[1].getChild();
-
-        // Fast compare, change if the depth of this assrt statement tree
-        // could be more then 3
-        int replPos = -1;
-        replaceCheck: for (int i = 0; i < leftChild.length; i++)
-            if (leftChild[i].getStmt() != rightChild[i].getStmt()) {
-                // Another place for replace? It is strange!
-                if (replPos != -1)
-                    return;
-
-                // We found the replace
-                replPos = i;
-
-                // Check that it is actually the swap of two variables
-                for (int k = 0; k < 2; k++) {
-                    final int m = (k + 1) % 2; // the other index
-                    if (leftChild[i].getStmt() == hypSubTrees[k].getStmt()
-                        && rightChild[i].getStmt() == hypSubTrees[m].getStmt())
-                        continue replaceCheck;
-                }
-
-                return;
-            }
-
-        Assrt[] repl = replaceOp.get(stmt);
-
-        if (repl == null) {
-            repl = new Assrt[subTrees[0].getChild().length];
-            replaceOp.put(stmt, repl);
-        }
-
-        // it is the first such assrt;
-        if (repl[replPos] != null)
-            return;
-
-        repl[replPos] = assrt;
-
-        messages.accumInfoMessage("I-DBG Replace assrts: %s: %s", assrt,
-            assrt.getFormula());
-    }
-
-    private boolean isFullReplaceStatement(final Stmt stmt) {
-        final Assrt[] replAssrts = replaceOp.get(stmt);
-
-        if (replAssrts == null)
-            return false;
-
-        for (final Assrt assrt : replAssrts)
-            if (assrt == null)
-                return false;
-
-        return true;
-    }
-
-    /**
-     * Filters commutative rules, like A + B = B + A
-     * 
-     * @param assrt the candidate
-     */
-    private void findCommutativeRules(final Assrt assrt) {
-        // TODO: adds the support of assrts like addcomi
-        final VarHyp[] varHypArray = assrt.getMandVarHypArray();
-        final ParseTree assrtTree = assrt.getExprParseTree();
-
-        final LogHyp[] logHyps = assrt.getLogHypArray();
-        if (logHyps.length != 0)
-            return;
-
-        if (varHypArray.length != 2)
-            return;
-
-        if (assrtTree.getMaxDepth() != 3)
-            return;
-
-        if (!isEquivalence(assrtTree.getRoot().getStmt()))
-            return;
-
-        final ParseNode[] subTrees = assrtTree.getRoot().getChild();
-
-        // it is the equivalence rule
-        assert subTrees.length == 2;
-
-        if (subTrees[0].getStmt() != subTrees[1].getStmt())
-            return;
-
-        if (subTrees[0].getChild().length != 2)
-            return;
-
-        if (subTrees[0].getChild()[0].getStmt() != subTrees[1].getChild()[1]
-            .getStmt())
-            return;
-
-        if (subTrees[0].getChild()[1].getStmt() != subTrees[1].getChild()[0]
-            .getStmt())
-            return;
-
-        final Stmt stmt = subTrees[0].getStmt();
-
-        if (comOp.containsKey(stmt))
-            return;
-
-        messages.accumInfoMessage("I-DBG commutative assrts: %s: %s", assrt,
-            assrt.getFormula());
-        comOp.put(stmt, assrt);
-    }
-
-    // -----------------------------------------------------------
-    // -----------------------------------------------------------
-    // -----------------------------------------------------------
-
-    private static final ParseNode endMarker = new ParseNode();
-
-    private static ParseNode getCorrespondingNodeRec(final ParseNode template,
-        final ParseNode input)
-    {
-        if (template == templateReplace)
-            return input;
-        if (template.getStmt() != input.getStmt())
-            return null;
-
-        ParseNode retNode = endMarker;
-
-        for (int i = 0; i < input.getChild().length; i++) {
-            final ParseNode res = getCorrespondingNodeRec(
-                template.getChild()[i], input.getChild()[i]);
-            if (res == null)
-                return null;
-            if (res != endMarker)
-                retNode = res;
-        }
-
-        return retNode;
-    }
-
-    private static ParseNode getCorrespondingNode(final ParseNode template,
-        final ParseNode input)
-    {
-        final ParseNode res = getCorrespondingNodeRec(template, input);
-        if (res == endMarker)
-            return null;
-        return res;
-    }
-
-    /**
-     * Replaces the variable var for null in the template
-     * 
-     * @param template the future template
-     * @param var the variable which should be replaced for null
-     * @return the number of replace operations
-     */
-    private static int prepareTemplate(final ParseNode template,
-        final VarHyp var)
-    {
-        final ParseNode[] children = template.getChild();
-        int res = 0;
-        for (int i = 0; i < children.length; i++)
-            if (children[i].getStmt() == var) {
-                children[i] = templateReplace; // indicate entry point
-                res++;
-            }
-            else
-                res += prepareTemplate(children[i], var);
-        return res;
-    }
-
-    private ParseNode createTemplateFromHyp(final Assrt assrt) {
-        final VarHyp[] varHypArray = assrt.getMandVarHypArray();
-
-        final LogHyp[] logHyps = assrt.getLogHypArray();
-        if (logHyps.length == 0)
-            return null;
-
-        if (logHyps.length != varHypArray.length)
-            return null;
-
-        final VarHyp[] vars0 = logHyps[0].getMandVarHypArray();
-        if (vars0.length != 1)
-            return null;
-
-        final VarHyp[] hypToVarHypMap = new VarHyp[logHyps.length];
-        hypToVarHypMap[0] = vars0[0];
-
-        // do not consider rules like |- ph & |- ps => |- ( ph <-> ps )
-        if (logHyps[0].getExprParseTree().getRoot().getStmt() == vars0[0])
-            return null;
-
-        // Here we need deep clone because next we will modify result
-        final ParseNode template = logHyps[0].getExprParseTree().getRoot()
-            .deepClone();
-        final int varNumEntrance = prepareTemplate(template, vars0[0]);
-        if (varNumEntrance != 1)
-            return null;
-
-        return template;
-    }
-
-    /**
-     * Filters transitive properties to result rules:
-     * <p>
-     * A e. CC & B e. CC => (A + B) e. CC
-     * <p>
-     * We filter assertions with next properties:
-     * <ul>
-     * <li>Hypothesis have the form P(x), P(y), P(z)
-     * <li>The assertion has the form P(f(x, y, z, a, b, c))
-     * <li>Function f have unique entrance for variables
-     * <li>Other f's children a, b, c should be constants
-     * </ul>
-     * 
-     * @param assrt the candidate
-     */
-    private void findClosureRules(final Assrt assrt) {
-        final VarHyp[] varHypArray = assrt.getMandVarHypArray();
-        final ParseTree assrtTree = assrt.getExprParseTree();
-
-        final LogHyp[] logHyps = assrt.getLogHypArray();
-        if (logHyps.length == 0)
-            return;
-
-        if (logHyps.length != varHypArray.length)
-            return;
-
-        final VarHyp[] vars0 = logHyps[0].getMandVarHypArray();
-        if (vars0.length != 1)
-            return;
-
-        final VarHyp[] hypToVarHypMap = new VarHyp[logHyps.length];
-        hypToVarHypMap[0] = vars0[0];
-
-        // Here we need deep clone because next we will modify result
-        final ParseNode template = createTemplateFromHyp(assrt);
-        if (template == null)
-            return;
-
-        for (int i = 1; i < logHyps.length; i++) {
-            final VarHyp[] varsi = logHyps[i].getMandVarHypArray();
-            if (varsi.length != 1)
-                return;
-            final VarHyp vari = varsi[0];
-
-            hypToVarHypMap[i] = vari;
-            final ParseNode res = getCorrespondingNode(template, logHyps[i]
-                .getExprParseTree().getRoot());
-            if (res == null)
-                return;
-            if (res.getStmt() != vari)
-                return;
-        }
-
-        final ParseNode root = assrtTree.getRoot();
-
-        final ParseNode res = getCorrespondingNode(template, root);
-        if (res == null)
-            return;
-
-        final Stmt stmt = res.getStmt();
-
-        final ParseNode[] children = res.getChild();
-
-        final int varToHypMap[] = new int[logHyps.length];
-        for (int i = 0; i < varToHypMap.length; i++)
-            varToHypMap[i] = -1;
-
-        final ParseNode[] constMap = new ParseNode[children.length];
-        int varNum = 0;
-        for (int i = 0; i < children.length; i++) {
-            final ParseNode child = children[i];
-            if (isVarNode(child)) {
-                if (varNum >= varToHypMap.length)
-                    return;
-
-                int resNum = -1;
-                for (int k = 0; k < hypToVarHypMap.length; k++)
-                    if (hypToVarHypMap[k] == child.getStmt()) {
-                        resNum = k;
-                        break;
-                    }
-                if (resNum == -1)
-                    return;
-
-                if (varToHypMap[varNum] != -1)
-                    return;
-
-                varToHypMap[varNum] = resNum;
-                varNum++;
-            }
-            else if (isConstNode(child))
-                // may we could use fast clone but it is not very important in
-                // the loading phase
-                constMap[i] = child.deepClone();
-            else
-                return;
-        }
-
-        boolean incorrectOrder = false;
-
-        final int[] hypToVarMap = new int[logHyps.length];
-        for (int i = 0; i < varToHypMap.length; i++) {
-            if (varToHypMap[i] == -1)
-                return;
-            hypToVarMap[varToHypMap[i]] = i;
-            if (varToHypMap[i] != i)
-                incorrectOrder = true;
-        }
-
-        // Theoretically we could process incorrect hypothesis order in
-        // theorems.
-        // But set.mm has no such theorems so lets implement simple case.
-        if (incorrectOrder)
-            return;
-
-        String hypString = "";
-        for (int i = 0; i < logHyps.length; i++) {
-            if (i != 0)
-                hypString += " & ";
-            hypString += logHyps[i].getFormula().toString();
-        }
-
-        Map<ConstSubst, Map<PropertyTemplate, Assrt>> assrtMap = closureRuleMap
-            .get(stmt);
-        if (assrtMap == null) {
-            assrtMap = new HashMap<ConstSubst, Map<PropertyTemplate, Assrt>>();
-            closureRuleMap.put(stmt, assrtMap);
-        }
-
-        final ConstSubst constSubst = new ConstSubst(constMap);
-
-        Map<PropertyTemplate, Assrt> templateSet = assrtMap.get(constSubst);
-        if (templateSet == null) {
-            templateSet = new HashMap<PropertyTemplate, Assrt>();
-            assrtMap.put(constSubst, templateSet);
-        }
-
-        final PropertyTemplate tn = new PropertyTemplate(template);
-
-        if (templateSet.containsKey(tn))
-            return; // some duplicate
-
-        templateSet.put(tn, assrt);
-
-        messages.accumInfoMessage(
-            "I-DBG transitive to result properties(%b): %s: %s => %s",
-            incorrectOrder, assrt, hypString, assrt.getFormula());
-    }
-
-    private boolean isTheSameConstMap(final ParseNode candidate,
-        final ParseNode[] constMap)
-    {
-        if (candidate.getChild().length != constMap.length)
-            return false;
-
-        for (int i = 0; i < constMap.length; i++) {
-            final ParseNode child = candidate.getChild()[i];
-            if (isConstNode(child)) {
-                if (constMap[i] == null)
-                    return false;
-                else if (!constMap[i].isDeepDup(child))
-                    return false;
-            }
-            else if (constMap[i] != null)
-                return false;
-
-        }
-        return true;
-    }
-
-    /**
-     * Filters associative rules, like (A + B) + C = A + (B + C)
-     * 
-     * @param assrt the candidate
-     */
-    private void findAssociativeRules(final Assrt assrt) {
-        final VarHyp[] varHypArray = assrt.getMandVarHypArray();
-        final ParseTree assrtTree = assrt.getExprParseTree();
-
-        // if (assrt.getLabel().equals("addassi"))
-        // assrt.toString();
-
-        final LogHyp[] logHyps = assrt.getLogHypArray();
-
-        ParseNode templNode = null;
-        if (logHyps.length != 0) {
-            templNode = createTemplateFromHyp(assrt);
-            if (templNode == null)
-                return;
-        }
-
-        if (varHypArray.length != 3)
-            return;
-
-        // if (assrtTree.getMaxDepth() != 4)
-        // return;
-
-        if (!isEquivalence(assrtTree.getRoot().getStmt()))
-            return;
-
-        final ParseNode[] subTrees = assrtTree.getRoot().getChild();
-
-        // it must be the equivalence rule
-        assert subTrees.length == 2;
-
-        if (subTrees[0].getStmt() != subTrees[1].getStmt())
-            return;
-
-        final Stmt stmt = subTrees[0].getStmt();
-
-        final ParseNode[] leftChildren = subTrees[0].getChild();
-        final ParseNode[] rightChildren = subTrees[1].getChild();
-
-        final ParseNode[] constMap = new ParseNode[leftChildren.length];
-        final int[] varPlace = new int[leftChildren.length];
-        for (int i = 0; i < varPlace.length; i++)
-            varPlace[i] = -1;
-        int curVarNum = 0;
-        for (int i = 0; i < leftChildren.length; i++)
-            if (isConstNode(leftChildren[i]))
-                constMap[i] = leftChildren[i];
-            else
-                varPlace[curVarNum++] = i;
-
-        if (!isTheSameConstMap(subTrees[1], constMap))
-            return;
-
-        // the statement contains more that 2 variables
-        if (curVarNum != 2)
-            return;
-
-        final ConstSubst constSubst = new ConstSubst(constMap);
-
-        if (templNode != null) {
-            final Map<ConstSubst, Map<PropertyTemplate, Assrt>> substMap = closureRuleMap
-                .get(stmt);
-
-            if (substMap == null)
-                return;
-
-            final Map<PropertyTemplate, Assrt> templateSet = substMap
-                .get(constSubst);
-            if (templateSet == null)
-                return;
-
-            if (!templateSet.containsKey(new PropertyTemplate(templNode)))
-                return;
-        }
-
-        // we need to find one of the 2 patterns:
-        // 0) f(f(a, b), c) = f(a, f(b, c))
-        // 1) f(a, f(b, c)) = f(f(a, b), c)
-        for (int i = 0; i < 2; i++) {
-            final int k = varPlace[i];
-            final int n = varPlace[(i + 1) % 2];
-            if (leftChildren[k].getStmt() != stmt)
-                continue;
-            if (!isTheSameConstMap(leftChildren[k], constMap))
-                continue;
-
-            if (rightChildren[n].getStmt() != stmt)
-                continue;
-
-            if (!isTheSameConstMap(rightChildren[n], constMap))
-                continue;
-
-            if (!isVarNode(leftChildren[n]))
-                continue;
-
-            if (leftChildren[n].getStmt() != rightChildren[n].getChild()[n]
-                .getStmt())
-                continue;
-
-            if (leftChildren[k].getChild()[k].getStmt() != rightChildren[k]
-                .getStmt())
-                continue;
-
-            if (leftChildren[k].getChild()[n].getStmt() != rightChildren[n]
-                .getChild()[k].getStmt())
-                continue;
-
-            if (!isFullReplaceStatement(stmt)) {
-                messages.accumInfoMessage("I-DBG found commutative assrts "
-                    + "but it has problems with replace: %s: %s", assrt,
-                    assrt.getFormula());
-                return;
-            }
-
-            if (!constSubst.isEmpty())
-                messages.accumInfoMessage(
-                    "I-DBG temporary associative assrts: %d. %s: %s", i, assrt,
-                    assrt.getFormula());
-            // return;
-
-            Map<ConstSubst, Map<PropertyTemplate, Assrt[]>> constSubstMap = assocOp
-                .get(stmt);
-
-            if (constSubstMap == null) {
-                constSubstMap = new HashMap<ConstSubst, Map<PropertyTemplate, Assrt[]>>();
-                assocOp.put(stmt, constSubstMap);
-            }
-
-            Map<PropertyTemplate, Assrt[]> propertyMap = constSubstMap
-                .get(constSubst);
-            if (propertyMap == null) {
-                propertyMap = new HashMap<PropertyTemplate, Assrt[]>();
-                constSubstMap.put(constSubst, propertyMap);
-            }
-
-            final PropertyTemplate template = new PropertyTemplate(templNode);
-            Assrt[] assoc = propertyMap.get(template);
-
-            if (assoc == null) {
-                assoc = new Assrt[2];
-                propertyMap.put(template, assoc);
-            }
-            /*
-            Assrt[] assoc = assocOp.get(stmt);
-
-            if (assoc == null) {
-                assoc = new Assrt[2];
-                assocOp.put(stmt, assoc);
-            }
-            */
-
-            if (assoc[i] != null)
-                continue;
-
-            messages.accumInfoMessage("I-DBG associative assrts: %d. %s: %s",
-                i, assrt, assrt.getFormula());
-            assoc[i] = assrt;
-            return;
-        }
-    }
-
-    // ------------------------------------------------------------------------
-    // ------------------------------------------------------------------------
-    // ------------------------------------------------------------------------
+    private final boolean dbg = true;
 
     /**
      * Now this class has only one implementation. But later it could be
      * extended!
      */
-    private static interface PreviousInfo {
+    /*
+    static interface PreviousInfo {
         public ProofStepStmt getProofStepStmt(final ParseNode stepNode);
-    }
-
-    /** Information about work sheet */
-    private class WorksheetInfo implements PreviousInfo {
-        final ProofWorksheet proofWorksheet;
-        final DerivationStep derivStep;
-
-        final List<DerivationStep> newSteps = new ArrayList<DerivationStep>();
-
-        public WorksheetInfo(final ProofWorksheet proofWorksheet,
-            final DerivationStep derivStep)
-        {
-            super();
-            this.proofWorksheet = proofWorksheet;
-            this.derivStep = derivStep;
-        }
-
-        public ProofStepStmt getProofStepStmt(final ParseNode stepNode) {
-            final ProofStepStmt stepTr = getOrCreateProofStepStmt(this,
-                stepNode, null, null);
-            return stepTr;
-        }
-    }
+    }*/
 
     /**
      * The transformation of {@link Transformation#originalNode} to any equal
@@ -1081,7 +57,7 @@ public class ProofTransformations {
          * @param info the information about previous statements
          * @return the canonical node for {@link Transformation#originalNode}
          */
-        abstract public ParseNode getCanonicalNode(PreviousInfo info);
+        abstract public ParseNode getCanonicalNode(WorksheetInfo info);
 
         /**
          * This function should construct derivation step sequence from this
@@ -1114,11 +90,9 @@ public class ProofTransformations {
             if (originalNode.isDeepDup(target.originalNode))
                 return null; // nothing to transform!
 
-            final Stmt equalStmt = eqMap.get(originalNode.getStmt().getTyp());
-
             // Create node g(A, B, C) = g(A', B', C')
-            final ParseNode stepNode = createBinaryNode(equalStmt,
-                originalNode, target.originalNode);
+            final ParseNode stepNode = eqInfo.createEqNode(originalNode,
+                target.originalNode);
 
             final ProofStepStmt stepTr = info.getProofStepStmt(stepNode);
 
@@ -1144,7 +118,7 @@ public class ProofTransformations {
         }
 
         @Override
-        public ParseNode getCanonicalNode(final PreviousInfo info) {
+        public ParseNode getCanonicalNode(final WorksheetInfo info) {
             return originalNode;
         }
 
@@ -1203,7 +177,7 @@ public class ProofTransformations {
                     .getRoot().getStmt();
 
                 // the symbol should be equivalence operator
-                assert isEquivalence(equalStmt);
+                assert eqInfo.isEquivalence(equalStmt);
 
                 // transform ith child
                 // the result should be some B = B' statement
@@ -1219,7 +193,7 @@ public class ProofTransformations {
 
                 // transformation should be transformation:
                 // check result childTrStmt statement
-                assert isEquivalence(childTrRoot.getStmt());
+                assert eqInfo.isEquivalence(childTrRoot.getStmt());
                 assert childTrRoot.getChild().length == 2;
                 assert childTrRoot.getChild()[0].isDeepDup(originalNode
                     .getChild()[i]);
@@ -1238,7 +212,7 @@ public class ProofTransformations {
                 // => g(A, B, C) = g(A', B', C)
                 // Create statement d:resStmt,stepTr:transitive
                 // |- g(A, B, C) = g(A', B', C)
-                resStmt = transitiveConnectStep(info, resStmt, stepTr);
+                resStmt = eqInfo.getTransitiveStep(info, resStmt, stepTr);
             }
 
             assert resStmt != null;
@@ -1252,7 +226,7 @@ public class ProofTransformations {
         }
 
         @Override
-        public ParseNode getCanonicalNode(final PreviousInfo info) {
+        public ParseNode getCanonicalNode(final WorksheetInfo info) {
             final Assrt[] replAsserts = replaceOp.get(originalNode.getStmt());
             final ParseNode resNode = originalNode.cloneWithoutChildren();
 
@@ -1316,7 +290,7 @@ public class ProofTransformations {
     }
 
     private AssocTree createAssocTree(final ParseNode curNode,
-        final GeneralizedStmt assocProp, final PreviousInfo info)
+        final GeneralizedStmt assocProp, final WorksheetInfo info)
     {
         final Stmt stmt = curNode.getStmt();
         final ParseNode[] childrent = curNode.getChild();
@@ -1431,7 +405,7 @@ public class ProofTransformations {
                     final ProofStepStmt assocTr = createAssociativeStep(info,
                         assocProp, from, prevNode, gNode);
 
-                    resStmt = transitiveConnectStep(info, resStmt, assocTr);
+                    resStmt = eqInfo.getTransitiveStep(info, resStmt, assocTr);
                 }
 
                 final AssocTree eAssT = gAssT.subTrees[from];
@@ -1482,7 +456,7 @@ public class ProofTransformations {
                     final ProofStepStmt replTr = createReplaceStep(info,
                         prevGNode, from, eNode, assocTr);
 
-                    resStmt = transitiveConnectStep(info, resStmt, replTr);
+                    resStmt = eqInfo.getTransitiveStep(info, resStmt, replTr);
                 }
                 else
                     break;
@@ -1499,13 +473,13 @@ public class ProofTransformations {
                 replaceTarget, info);
 
             if (replTrStep != null)
-                resStmt = transitiveConnectStep(info, resStmt, replTrStep);
+                resStmt = eqInfo.getTransitiveStep(info, resStmt, replTrStep);
 
             return resStmt;
         }
 
         private ParseNode constructCanonicalForm(ParseNode left,
-            final ParseNode cur, final PreviousInfo info)
+            final ParseNode cur, final WorksheetInfo info)
         {
             if (cur.getStmt() != originalNode.getStmt()) {
                 final ParseNode leaf = getCanonicalForm(cur, info);
@@ -1522,7 +496,7 @@ public class ProofTransformations {
         }
 
         @Override
-        public ParseNode getCanonicalNode(final PreviousInfo info) {
+        public ParseNode getCanonicalNode(final WorksheetInfo info) {
             return constructCanonicalForm(null, originalNode, info);
         }
 
@@ -1536,8 +510,9 @@ public class ProofTransformations {
         final ParseNode prevVersion, final int i, final ParseNode newSubTree,
         final ProofStepStmt childTrStmt)
     {
-        final Stmt equalStmt = eqMap.get(prevVersion.getStmt().getTyp());
         final Assrt[] replAsserts = replaceOp.get(prevVersion.getStmt());
+        final Stmt equalStmt = replAsserts[i].getExprParseTree().getRoot()
+            .getStmt();
         final ParseNode resNode = prevVersion.cloneWithoutChildren();
 
         // Fill the next child
@@ -1545,12 +520,12 @@ public class ProofTransformations {
         resNode.getChild()[i] = newSubTree;
 
         // Create node g(A', B, C) = g(A', B', C)
-        final ParseNode stepNode = createBinaryNode(equalStmt, prevVersion,
-            resNode);
+        final ParseNode stepNode = TrUtil.createBinaryNode(equalStmt,
+            prevVersion, resNode);
 
         // Create statement d:childTrStmt:replAssert
         // |- g(A', B, C) = g(A', B', C)
-        final ProofStepStmt stepTr = getOrCreateProofStepStmt(info, stepNode,
+        final ProofStepStmt stepTr = info.getOrCreateProofStepStmt(stepNode,
             new ProofStepStmt[]{childTrStmt}, replAsserts[i]);
         return stepTr;
     }
@@ -1575,7 +550,7 @@ public class ProofTransformations {
 
             hyps[n] = closureProperty(info, assocProp, child);
         }
-        res = getOrCreateProofStepStmt(info, stepNode, hyps, assrt);
+        res = info.getOrCreateProofStepStmt(stepNode, hyps, assrt);
         res.toString();
 
         return res;
@@ -1609,8 +584,8 @@ public class ProofTransformations {
         else
             hyps = new ProofStepStmt[]{};
 
-        final ProofStepStmt res = getOrCreateProofStepStmt(info, stepNode,
-            hyps, assocAssrt);
+        final ProofStepStmt res = info.getOrCreateProofStepStmt(stepNode, hyps,
+            assocAssrt);
 
         return res;
     }
@@ -1658,51 +633,16 @@ public class ProofTransformations {
             .getStmt();
 
         // Create node f(f(a, b), c) = f(a, f(b, c))
-        final ParseNode stepNode = createBinaryNode(equalStmt, left, right);
+        final ParseNode stepNode = TrUtil.createBinaryNode(equalStmt, left,
+            right);
 
-        ProofStepStmt res;
+        ProofStepStmt res = closurePropertyAssociative(info, assocProp,
+            assocAssrt, firstForm, stepNode);
 
-        res = closurePropertyAssociative(info, assocProp, assocAssrt,
-            firstForm, stepNode);
-        // res = getOrCreateProofStepStmt(info.proofWorksheet,
-        // info.derivStep, stepNode, new ProofStepStmt[]{}, assocAssrt);
-
-        if (revert) {
-            final Assrt eqComm = eqCommutatives.get(equalStmt);
-            final ParseNode revNode = createBinaryNode(equalStmt, prevNode,
-                newNode);
-
-            res = getOrCreateProofStepStmt(info, revNode,
-                new ProofStepStmt[]{res}, eqComm);
-        }
+        if (revert)
+            res = eqInfo.createReverse(info, res);
 
         return res;
-    }
-
-    private ProofStepStmt transitiveConnectStep(final WorksheetInfo info,
-        final ProofStepStmt prevRes, final ProofStepStmt newRes)
-    {
-        if (prevRes == null)
-            return newRes;
-
-        final ParseNode prevRoot = prevRes.formulaParseTree.getRoot();
-        final ParseNode newRoot = newRes.formulaParseTree.getRoot();
-        final Stmt equalStmt = prevRoot.getStmt();
-        final Assrt transitive = eqTransitivies.get(equalStmt);
-
-        final ParseNode transitiveNode = createBinaryNode(equalStmt,
-            prevRoot.getChild()[0], newRoot.getChild()[1]);
-
-        // resStmt now have the form g(A, B, C) = g(A', B, C)
-        // So create transitive:
-        // g(A, B, C) = g(A', B, C) & g(A', B, C) = g(A', B', C)
-        // => g(A, B, C) = g(A', B', C)
-        // Create statement d:resStmt,stepTr:transitive
-        // |- g(A, B, C) = g(A', B', C)
-        final ProofStepStmt resStmt = getOrCreateProofStepStmt(info,
-            transitiveNode, new ProofStepStmt[]{prevRes, newRes}, transitive);
-
-        return resStmt;
     }
 
     private static ParseNode createAssocBinaryNode(final int from,
@@ -1713,15 +653,6 @@ public class ProofTransformations {
             return createBinaryNode(assocProp, left, right);
         else
             return createBinaryNode(assocProp, right, left);
-    }
-
-    private static ParseNode createBinaryNode(final Stmt stmt,
-        final ParseNode left, final ParseNode right)
-    {
-        final ParseNode eqRoot = new ParseNode(stmt);
-        final ParseNode[] children = {left, right};
-        eqRoot.setChild(children);
-        return eqRoot;
     }
 
     private static ParseNode createBinaryNode(final GeneralizedStmt genStmt,
@@ -1748,7 +679,7 @@ public class ProofTransformations {
 
         for (int i = 0; i < constMap.length; i++) {
             final ParseNode child = originalNode.getChild()[i];
-            if (isConstNode(child))
+            if (TrUtil.isConstNode(child))
                 constMap[i] = child;
         }
 
@@ -1756,7 +687,7 @@ public class ProofTransformations {
     }
 
     private boolean isAssociativeWithProp(final ParseNode originalNode,
-        final GeneralizedStmt assocProp, final PreviousInfo info)
+        final GeneralizedStmt assocProp, final WorksheetInfo info)
     {
         if (assocProp.stmt != originalNode.getStmt())
             return false;
@@ -1766,7 +697,7 @@ public class ProofTransformations {
 
     private boolean isAssociativeWithProp(final ParseNode originalNode,
         final PropertyTemplate template, final ConstSubst constSubst,
-        final PreviousInfo info)
+        final WorksheetInfo info)
     {
         if (originalNode.getChild().length != constSubst.constMap.length)
             assert originalNode.getChild().length == constSubst.constMap.length;
@@ -1817,7 +748,7 @@ public class ProofTransformations {
 
     private GeneralizedStmt isAssociative(final ParseNode originalNode,
         final Map<ConstSubst, Map<PropertyTemplate, Assrt[]>> constSubstMap,
-        final PreviousInfo info)
+        final WorksheetInfo info)
     {
         final Stmt stmt = originalNode.getStmt();
         final ParseNode[] constMap = collectConstSubst(originalNode);
@@ -1873,7 +804,7 @@ public class ProofTransformations {
      * @return the transformation
      */
     private Transformation createTransformation(final ParseNode originalNode,
-        final PreviousInfo info)
+        final WorksheetInfo info)
     {
         final Stmt stmt = originalNode.getStmt();
 
@@ -1907,7 +838,7 @@ public class ProofTransformations {
     }
 
     private ParseNode getCanonicalForm(final ParseNode originalNode,
-        final PreviousInfo info)
+        final WorksheetInfo info)
     {
         return createTransformation(originalNode, info).getCanonicalNode(info);
     }
@@ -1960,44 +891,10 @@ public class ProofTransformations {
         return generatedFormula;
     }
 
-    private ProofStepStmt getOrCreateProofStepStmt(final WorksheetInfo info,
-        final ParseNode root, final ProofStepStmt[] hyps, final Assrt assrt)
-    {
-        // final ProofWorksheet proofWorksheet, final DerivationStep derivStep;
-
-        final ParseTree tree = new ParseTree(root);
-        final Formula generatedFormula = verifyProofs.convertRPNToFormula(
-            tree.convertToRPN(), "tree"); // TODO: use constant
-        generatedFormula.setTyp(provableLogicStmtTyp);
-
-        final ProofStepStmt findMatchingStepFormula = info.proofWorksheet
-            .findMatchingStepFormula(generatedFormula, info.derivStep);
-
-        if (findMatchingStepFormula != null)
-            return findMatchingStepFormula;
-
-        if (hyps == null || assrt == null)
-            return null;
-
-        assert assrt.getLogHypArray().length == hyps.length;
-
-        final String[] steps = new String[hyps.length];
-        for (int i = 0; i < hyps.length; i++)
-            steps[i] = hyps[i].getStep();
-
-        final DerivationStep d = info.proofWorksheet.addDerivStep(
-            info.derivStep, hyps, steps, assrt.getLabel(), generatedFormula,
-            tree, Collections.<WorkVar> emptyList());
-        d.setRef(assrt);
-        // d.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED;
-        info.newSteps.add(d);
-        return d;
-    }
-
     // ---------------------
 
-    private Assrt performTransformation(final WorksheetInfo info,
-        final ProofStepStmt source)
+    private void performTransformation(final WorksheetInfo info,
+        final ProofStepStmt source, final Assrt impl)
     {
         final Transformation dsTr = createTransformation(
             info.derivStep.formulaParseTree.getRoot(), info);
@@ -2007,12 +904,7 @@ public class ProofTransformations {
         final ProofStepStmt eqResult = tr.transformMeToTarget(dsTr, info);
         eqResult.toString();
 
-        final Cnst type = info.derivStep.formulaParseTree.getRoot().getStmt()
-            .getTyp();
-
-        final Assrt impl = eqImplications.get(type);
-
-        final boolean isNormalOrder = isVarNode(impl.getLogHypArray()[0]
+        final boolean isNormalOrder = TrUtil.isVarNode(impl.getLogHypArray()[0]
             .getExprParseTree().getRoot());
 
         final ProofStepStmt[] hypDerivArray = isNormalOrder ? new ProofStepStmt[]{
@@ -2029,7 +921,7 @@ public class ProofTransformations {
         info.derivStep.setHypStepList(hypStep);
         info.derivStep.setAutoStep(false);
 
-        return impl;
+        return;
     }
 
     /**
@@ -2042,12 +934,15 @@ public class ProofTransformations {
     private List<DerivationStep> tryToFindTransformationsCore(
         final ProofWorksheet proofWorksheet, final DerivationStep derivStep)
     {
-        if (!isInit)
+        if (!isInit())
             return null;
-        final WorksheetInfo info = new WorksheetInfo(proofWorksheet, derivStep);
+        final WorksheetInfo info = new WorksheetInfo(proofWorksheet, derivStep,
+            verifyProofs, provableLogicStmtTyp);
 
-        if (!eqImplications.containsKey(derivStep.formulaParseTree.getRoot()
-            .getStmt().getTyp()))
+        final Cnst derivType = info.derivStep.formulaParseTree.getRoot()
+            .getStmt().getTyp();
+        final Assrt implAssrt = getEqImplication(derivType);
+        if (implAssrt == null)
             return null;
 
         final Transformation dsTr = createTransformation(
@@ -2055,7 +950,7 @@ public class ProofTransformations {
         final ParseNode dsCanonicalForm = dsTr.getCanonicalNode(info);
         derivStep.setCanonicalForm(dsCanonicalForm);
 
-        messages.accumInfoMessage("I-DBG Step %s has canonical form: %s",
+        output.dbgMessage(dbg, "I-DBG Step %s has canonical form: %s",
             derivStep, getCanonicalFormula(derivStep));
 
         for (final ProofWorkStmt proofWorkStmtObject : proofWorksheet
@@ -2074,18 +969,17 @@ public class ProofTransformations {
                 candidate.setCanonicalForm(getCanonicalForm(
                     candidate.formulaParseTree.getRoot(), info));
 
-                messages.accumInfoMessage(
-                    "I-DBG Step %s has canonical form: %s", candidate,
-                    getCanonicalFormula(candidate));
+                output.dbgMessage(dbg, "I-DBG Step %s has canonical form: %s",
+                    candidate, getCanonicalFormula(candidate));
             }
 
             if (derivStep.getCanonicalForm().isDeepDup(
                 candidate.getCanonicalForm()))
             {
-                messages.accumInfoMessage(
+                output.dbgMessage(dbg,
                     "I-DBG found canonical forms correspondance: %s and %s",
                     candidate, derivStep);
-                performTransformation(info, candidate);
+                performTransformation(info, candidate, implAssrt);
 
                 // confirm unification for derivStep also!
                 info.newSteps.add(derivStep);
@@ -2102,31 +996,11 @@ public class ProofTransformations {
             return tryToFindTransformationsCore(proofWorksheet, derivStep);
         } catch (final Exception e) {
             // TODO: make string error constant!
-            messages.accumInfoMessage("E- autotramsformation problem:",
-                e.toString());
+            output.errorMessage("E- autotramsformation problem:", e.toString());
             e.printStackTrace();
             return null;
         }
     }
 
     // ------------Auxiliary functions--------------
-
-    private static boolean isVarNode(final ParseNode node) {
-        return isVarStmt(node.getStmt());
-    }
-
-    private static boolean isVarStmt(final Stmt stmt) {
-        return stmt instanceof VarHyp;
-    }
-
-    private static boolean isConstNode(final ParseNode node) {
-        if (isVarNode(node))
-            return false;
-
-        for (final ParseNode child : node.getChild())
-            if (!isConstNode(child))
-                return false;
-
-        return true;
-    }
 }
