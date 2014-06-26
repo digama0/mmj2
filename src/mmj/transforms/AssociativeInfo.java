@@ -8,13 +8,13 @@ import mmj.pa.ProofStepStmt;
 
 public class AssociativeInfo extends DBInfo {
     /** The information about equivalence rules */
-    private EquivalenceInfo eqInfo;
+    private final EquivalenceInfo eqInfo;
 
     /** The information about closure rules */
-    private ClosureInfo clInfo;
+    private final ClosureInfo clInfo;
 
     /** The information about replace rules */
-    private ReplaceInfo replInfo;
+    private final ReplaceInfo replInfo;
     /**
      * The map: associative operators -> array of 2 elements:
      * <ul>
@@ -24,11 +24,11 @@ public class AssociativeInfo extends DBInfo {
      */
     protected Map<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt[]>>> assocOp;
 
-    public void initMe(final EquivalenceInfo eqInfo, final ClosureInfo clInfo,
-        final ReplaceInfo replInfo, final List<Assrt> assrtList,
-        final TrOutput output, final boolean dbg)
+    public AssociativeInfo(final EquivalenceInfo eqInfo,
+        final ClosureInfo clInfo, final ReplaceInfo replInfo,
+        final List<Assrt> assrtList, final TrOutput output, final boolean dbg)
     {
-        super.initMe(output, dbg);
+        super(output, dbg);
         this.eqInfo = eqInfo;
         this.clInfo = clInfo;
         this.replInfo = replInfo;

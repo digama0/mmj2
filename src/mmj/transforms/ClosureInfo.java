@@ -13,12 +13,12 @@ public class ClosureInfo extends DBInfo {
      * the example). There could be many properties ( {" _ e. CC" , "_ e. RR" }
      * for example ).
      */
-    private Map<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt>>> closureRuleMap;
+    private final Map<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt>>> closureRuleMap;
 
-    public void initMe(final List<Assrt> assrtList, final TrOutput output,
+    public ClosureInfo(final List<Assrt> assrtList, final TrOutput output,
         final boolean dbg)
     {
-        super.initMe(output, dbg);
+        super(output, dbg);
 
         closureRuleMap = new HashMap<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt>>>();
         for (final Assrt assrt : assrtList)

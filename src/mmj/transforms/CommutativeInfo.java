@@ -6,15 +6,15 @@ import mmj.lang.*;
 
 public class CommutativeInfo extends DBInfo {
     /** The information about equivalence rules */
-    private EquivalenceInfo eqInfo;
+    private final EquivalenceInfo eqInfo;
 
     /** The list of commutative operators */
     protected Map<Stmt, Assrt> comOp;
 
-    public void initMe(final EquivalenceInfo eqInfo,
+    public CommutativeInfo(final EquivalenceInfo eqInfo,
         final List<Assrt> assrtList, final TrOutput output, final boolean dbg)
     {
-        super.initMe(output, dbg);
+        super(output, dbg);
         this.eqInfo = eqInfo;
 
         comOp = new HashMap<Stmt, Assrt>();

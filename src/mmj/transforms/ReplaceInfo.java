@@ -7,15 +7,15 @@ import mmj.pa.ProofStepStmt;
 
 public class ReplaceInfo extends DBInfo {
     /** The information about equivalence rules */
-    private EquivalenceInfo eqInfo;
+    private final EquivalenceInfo eqInfo;
 
     /** The list of statements with possible variable replace */
     protected Map<Stmt, Assrt[]> replaceOp;
 
-    public void initMe(final EquivalenceInfo eqInfo,
+    public ReplaceInfo(final EquivalenceInfo eqInfo,
         final List<Assrt> assrtList, final TrOutput output, final boolean dbg)
     {
-        super.initMe(output, dbg);
+        super(output, dbg);
         this.eqInfo = eqInfo;
 
         replaceOp = new HashMap<Stmt, Assrt[]>();

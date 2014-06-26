@@ -6,21 +6,21 @@ import mmj.lang.*;
 
 public class ImplicationInfo extends DBInfo {
     /** The information about equivalence rules */
-    private EquivalenceInfo eqInfo;
+    private final EquivalenceInfo eqInfo;
 
     /**
      * The map from type to equivalence implication rule: A & A <-> B => B.
      * set.mm has only one element: (wff, <->)
      */
-    private Map<Cnst, Assrt> eqImplications;
+    private final Map<Cnst, Assrt> eqImplications;
 
     /** The list of implication operators : A & A -> B => B. */
-    private Map<Stmt, Assrt> implOp;
+    private final Map<Stmt, Assrt> implOp;
 
-    public void initMe(final EquivalenceInfo eqInfo,
+    public ImplicationInfo(final EquivalenceInfo eqInfo,
         final List<Assrt> assrtList, final TrOutput output, final boolean dbg)
     {
-        super.initMe(output, dbg);
+        super(output, dbg);
         this.eqInfo = eqInfo;
         implOp = new HashMap<Stmt, Assrt>();
         eqImplications = new HashMap<Cnst, Assrt>();

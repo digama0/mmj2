@@ -30,19 +30,19 @@ public class TransformationManager {
     private final VerifyProofs verifyProofs;
 
     /** The information about equivalence rules */
-    public final EquivalenceInfo eqInfo = new EquivalenceInfo();
+    public final EquivalenceInfo eqInfo;
 
-    public final ImplicationInfo implInfo = new ImplicationInfo();
+    public final ImplicationInfo implInfo;
 
     /** The information about replace rules */
-    public final ReplaceInfo replInfo = new ReplaceInfo();
+    public final ReplaceInfo replInfo;
 
     /** The information about closure rules */
-    public final ClosureInfo clInfo = new ClosureInfo();
+    public final ClosureInfo clInfo;
 
-    public final AssociativeInfo assocInfo = new AssociativeInfo();
+    public final AssociativeInfo assocInfo;
 
-    public final CommutativeInfo comInfo = new CommutativeInfo();
+    public final CommutativeInfo comInfo;
 
     /** The symbol like |- in set.mm */
     protected Cnst provableLogicStmtTyp;
@@ -65,17 +65,18 @@ public class TransformationManager {
         this.verifyProofs = verifyProofs;
         this.provableLogicStmtTyp = provableLogicStmtTyp;
 
-        eqInfo.initMe(assrtList, output, dbg);
+        eqInfo = new EquivalenceInfo(assrtList, output, dbg);
 
-        clInfo.initMe(assrtList, output, dbg);
+        clInfo = new ClosureInfo(assrtList, output, dbg);
 
-        implInfo.initMe(eqInfo, assrtList, output, dbg);
+        implInfo = new ImplicationInfo(eqInfo, assrtList, output, dbg);
 
-        replInfo.initMe(eqInfo, assrtList, output, dbg);
+        replInfo = new ReplaceInfo(eqInfo, assrtList, output, dbg);
 
-        assocInfo.initMe(eqInfo, clInfo, replInfo, assrtList, output, dbg);
+        assocInfo = new AssociativeInfo(eqInfo, clInfo, replInfo, assrtList,
+            output, dbg);
 
-        comInfo.initMe(eqInfo, assrtList, output, dbg);
+        comInfo = new CommutativeInfo(eqInfo, assrtList, output, dbg);
     }
 
     // ----------------------------

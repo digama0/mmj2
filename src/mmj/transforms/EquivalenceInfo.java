@@ -12,25 +12,23 @@ public class EquivalenceInfo extends DBInfo {
     private Map<Cnst, Stmt> eqMap;
 
     /** The list of commutative rules for equivalence operators: A = B => B = A */
-    private Map<Stmt, Assrt> eqCommutatives;
+    private final Map<Stmt, Assrt> eqCommutatives;
 
     /**
      * The list of transitive rules for equivalence operators:
      * <p>
      * A = B & B = C => A = C
      */
-    private Map<Stmt, Assrt> eqTransitivies;
-
-    public EquivalenceInfo() {}
+    private final Map<Stmt, Assrt> eqTransitivies;
 
     // ------------------------------------------------------------------------
     // ------------------------Initialization----------------------------------
     // ------------------------------------------------------------------------
 
-    public void initMe(final List<Assrt> assrtList, final TrOutput output,
+    public EquivalenceInfo(final List<Assrt> assrtList, final TrOutput output,
         final boolean dbg)
     {
-        super.initMe(output, dbg);
+        super(output, dbg);
 
         eqCommutatives = new HashMap<Stmt, Assrt>();
         for (final Assrt assrt : assrtList)

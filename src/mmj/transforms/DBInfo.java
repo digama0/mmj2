@@ -1,6 +1,6 @@
 package mmj.transforms;
 
-public class DBInfo {
+public abstract class DBInfo {
     protected boolean dbg;
 
     /** This field is true if this object was initialized */
@@ -9,7 +9,7 @@ public class DBInfo {
     /** For the debug and error output */
     protected TrOutput output;
 
-    protected void initMe(final TrOutput output, final boolean dbg) {
+    protected DBInfo(final TrOutput output, final boolean dbg) {
         this.output = output;
         this.dbg = dbg;
         isInit = true;
