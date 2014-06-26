@@ -68,7 +68,7 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import mmj.lang.*;
-import mmj.transforms.DataBaseInfo;
+import mmj.transforms.TransformationManager;
 import mmj.verify.Grammar;
 import mmj.verify.VerifyProofs;
 
@@ -168,7 +168,7 @@ public class ProofUnifier {
 
     private final ParseNode[] compareNodeStack = new ParseNode[PaConstants.UNIFIER_NODE_STACK_SIZE];
 
-    private final DataBaseInfo proofTransformations = new DataBaseInfo();
+    private TransformationManager trManager;
 
     /*
      * Global "work" areas for processing a single
@@ -673,13 +673,16 @@ public class ProofUnifier {
                 markAutoStepUnified(details.hypSortDerivArray);
         }
 
+        if (trManager == null)
+            return;
+
         shiftEmptyElements(autoDerivSteps, autoDerivStepsCount);
         autoDerivStepsCount -= autoBestResults.size();
 
         for (int i = 0; i < autoDerivStepsCount; i++) {
             // derivStep = autoDerivSteps[i];
             // assrt;
-            final List<DerivationStep> list = proofTransformations
+            final List<DerivationStep> list = trManager
                 .tryToFindTransformations(proofWorksheet, autoDerivSteps[i]);
             if (list != null) {
                 for (final DerivationStep d : list) {
@@ -2985,7 +2988,8 @@ public class ProofUnifier {
             }
     }
 
-    public DataBaseInfo getProofTransformations() {
-        return proofTransformations;
+    public void setTransformationManager(final TransformationManager trManager)
+    {
+        this.trManager = trManager;
     }
 }

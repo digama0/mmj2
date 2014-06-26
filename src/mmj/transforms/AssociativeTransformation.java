@@ -12,17 +12,17 @@ class AssociativeTransformation extends Transformation {
     private final AssociativeInfo assocInfo;
     public final ClosureInfo clInfo;
 
-    public AssociativeTransformation(final DataBaseInfo dbInfo,
+    public AssociativeTransformation(final TransformationManager trManager,
         final ParseNode originalNode, final AssocTree structure,
         final GeneralizedStmt assocProp)
     {
-        super(dbInfo, originalNode);
+        super(trManager, originalNode);
         this.structure = structure;
         this.assocProp = assocProp;
 
-        replInfo = dbInfo.replInfo;
-        assocInfo = dbInfo.assocInfo;
-        clInfo = dbInfo.clInfo;
+        replInfo = trManager.replInfo;
+        assocInfo = trManager.assocInfo;
+        clInfo = trManager.clInfo;
     }
 
     @Override
@@ -167,9 +167,9 @@ class AssociativeTransformation extends Transformation {
         assert gAssT.subTrees[0].size == trgt.structure.subTrees[0].size;
         assert gAssT.subTrees[1].size == trgt.structure.subTrees[1].size;
 
-        final Transformation replaceMe = new ReplaceTransformation(dbInfo,
+        final Transformation replaceMe = new ReplaceTransformation(trManager,
             gNode);
-        final Transformation replaceTarget = new ReplaceTransformation(dbInfo,
+        final Transformation replaceTarget = new ReplaceTransformation(trManager,
             target.originalNode);
 
         final ProofStepStmt replTrStep = replaceMe.transformMeToTarget(
@@ -185,7 +185,7 @@ class AssociativeTransformation extends Transformation {
         final ParseNode cur, final WorksheetInfo info)
     {
         if (cur.getStmt() != originalNode.getStmt()) {
-            final ParseNode leaf = dbInfo.getCanonicalForm(cur, info);
+            final ParseNode leaf = trManager.getCanonicalForm(cur, info);
             if (left == null)
                 return leaf;
             else

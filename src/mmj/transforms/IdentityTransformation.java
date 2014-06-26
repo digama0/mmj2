@@ -6,10 +6,10 @@ import mmj.pa.ProofStepStmt;
 /** No transformation at all =) */
 class IdentityTransformation extends Transformation {
 
-    public IdentityTransformation(final DataBaseInfo dbInfo,
+    public IdentityTransformation(final TransformationManager trManager,
         final ParseNode originalNode)
     {
-        super(dbInfo, originalNode);
+        super(trManager, originalNode);
     }
 
     @Override

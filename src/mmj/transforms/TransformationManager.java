@@ -20,17 +20,14 @@ import mmj.verify.VerifyProofs;
  * <li>Auxiliary functions
  * </ul>
  */
-public class DataBaseInfo {
-
-    /** This field is true if this object was initialized */
-    private boolean isInit = false;
+public class TransformationManager {
 
     private final boolean dbg = true;
 
     protected TrOutput output;
 
     /** It is necessary for formula construction */
-    VerifyProofs verifyProofs;
+    private final VerifyProofs verifyProofs;
 
     /** The information about equivalence rules */
     public final EquivalenceInfo eqInfo = new EquivalenceInfo();
@@ -50,16 +47,20 @@ public class DataBaseInfo {
     /** The symbol like |- in set.mm */
     protected Cnst provableLogicStmtTyp;
 
-    /** Empty default constructor */
-    public DataBaseInfo() {}
-
-    // ----------------------------
-
-    public void prepareAutomaticTransformations(final List<Assrt> assrtList,
+    /**
+     * Note: Here will be performed a lot of work during the construction of
+     * this class!
+     * 
+     * @param assrtList the list all library asserts
+     * @param provableLogicStmtTyp this constant indicates
+     *            "provable logic statement type"
+     * @param messages the message manager
+     * @param verifyProofs the proof verification is needed for some actions
+     */
+    public TransformationManager(final List<Assrt> assrtList,
         final Cnst provableLogicStmtTyp, final Messages messages,
         final VerifyProofs verifyProofs)
     {
-        isInit = true;
         output = new TrOutput(messages);
         this.verifyProofs = verifyProofs;
         this.provableLogicStmtTyp = provableLogicStmtTyp;
@@ -77,9 +78,7 @@ public class DataBaseInfo {
         comInfo.initMe(eqInfo, assrtList, output, dbg);
     }
 
-    public boolean isInit() {
-        return isInit;
-    }
+    // ----------------------------
 
     // ------------------------------------------------------------------------
     // ---------------------Public transformation functions--------------------
@@ -196,8 +195,6 @@ public class DataBaseInfo {
     private List<DerivationStep> tryToFindTransformationsCore(
         final ProofWorksheet proofWorksheet, final DerivationStep derivStep)
     {
-        if (!isInit())
-            return null;
         final WorksheetInfo info = new WorksheetInfo(proofWorksheet, derivStep,
             verifyProofs, provableLogicStmtTyp);
 

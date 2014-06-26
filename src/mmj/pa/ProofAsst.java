@@ -81,7 +81,7 @@ import mmj.lang.*;
 import mmj.lang.ParseTree.RPNStep;
 import mmj.mmio.MMIOError;
 import mmj.tl.*;
-import mmj.transforms.DataBaseInfo;
+import mmj.transforms.TransformationManager;
 import mmj.util.OutputBoss;
 import mmj.util.StopWatch;
 import mmj.verify.*;
@@ -939,9 +939,10 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         for (final Formula formula : formulaList)
             formula.sortConstList(comp);
 
-        final DataBaseInfo pt = proofUnifier.getProofTransformations();
-        pt.prepareAutomaticTransformations(getSortedAssrtSearchList(),
-            getProvableLogicStmtTyp(), messages, verifyProofs);
+        final TransformationManager trManager = new TransformationManager(
+            getSortedAssrtSearchList(), getProvableLogicStmtTyp(), messages,
+            verifyProofs);
+        proofUnifier.setTransformationManager(trManager);
     }
     /**
      * Import Theorem proofs from a given Reader.

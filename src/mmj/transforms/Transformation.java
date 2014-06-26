@@ -12,17 +12,17 @@ public abstract class Transformation {
     /** The original node */
     public final ParseNode originalNode;
 
-    protected final DataBaseInfo dbInfo;
+    protected final TransformationManager trManager;
 
     // it is only the copy of the pointer
     protected final EquivalenceInfo eqInfo;
 
-    public Transformation(final DataBaseInfo dbInfo,
+    public Transformation(final TransformationManager trManager,
         final ParseNode originalNode)
     {
         this.originalNode = originalNode;
-        this.dbInfo = dbInfo;
-        eqInfo = dbInfo.eqInfo;
+        this.trManager = trManager;
+        eqInfo = trManager.eqInfo;
     }
 
     /**
@@ -77,7 +77,7 @@ public abstract class Transformation {
     // use it only for debug!
     @Override
     public String toString() {
-        final Formula f = dbInfo.getFormula(originalNode);
+        final Formula f = trManager.getFormula(originalNode);
         return f.toString();
     }
 }

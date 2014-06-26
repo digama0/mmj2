@@ -10,11 +10,11 @@ import mmj.pa.ProofStepStmt;
 public class ReplaceTransformation extends Transformation {
     private final ReplaceInfo replInfo;
 
-    public ReplaceTransformation(final DataBaseInfo dbInfo,
+    public ReplaceTransformation(final TransformationManager trManager,
         final ParseNode originalNode)
     {
-        super(dbInfo, originalNode);
-        replInfo = dbInfo.replInfo;
+        super(trManager, originalNode);
+        replInfo = trManager.replInfo;
     }
 
     @Override
@@ -59,9 +59,9 @@ public class ReplaceTransformation extends Transformation {
 
             // transform ith child
             // the result should be some B = B' statement
-            final ProofStepStmt childTrStmt = dbInfo.createTransformation(
+            final ProofStepStmt childTrStmt = trManager.createTransformation(
                 child, info).transformMeToTarget(
-                dbInfo.createTransformation(targetChild, info), info);
+                trManager.createTransformation(targetChild, info), info);
             if (childTrStmt == null)
                 continue; // noting to do
 
@@ -112,7 +112,7 @@ public class ReplaceTransformation extends Transformation {
         for (int i = 0; i < resNode.getChild().length; i++) {
             if (replAsserts[i] == null)
                 continue;
-            resNode.getChild()[i] = dbInfo.getCanonicalForm(
+            resNode.getChild()[i] = trManager.getCanonicalForm(
                 originalNode.getChild()[i], info);
         }
 
