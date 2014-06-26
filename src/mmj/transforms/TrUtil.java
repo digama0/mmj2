@@ -46,4 +46,33 @@ public class TrUtil {
         return constMap;
     }
 
+    public static ParseNode createBinaryNode(final GeneralizedStmt genStmt,
+        final ParseNode left, final ParseNode right)
+    {
+        final ParseNode eqRoot = new ParseNode(genStmt.stmt);
+        final int len = genStmt.constSubst.constMap.length;
+        final ParseNode[] vars = {left, right};
+        final ParseNode[] children = new ParseNode[len];
+        for (int i = 0; i < len; i++) {
+            final ParseNode c = genStmt.constSubst.constMap[i];
+            if (c != null)
+                children[i] = c.deepClone();
+        }
+        for (int i = 0; i < 2; i++)
+            children[genStmt.varIndexes[i]] = vars[i];
+    
+        eqRoot.setChild(children);
+        return eqRoot;
+    }
+
+    public static ParseNode createAssocBinaryNode(final int from,
+        final GeneralizedStmt assocProp, final ParseNode left,
+        final ParseNode right)
+    {
+        if (from == 0)
+            return createBinaryNode(assocProp, left, right);
+        else
+            return createBinaryNode(assocProp, right, left);
+    }
+
 }

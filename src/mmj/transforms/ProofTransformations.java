@@ -32,617 +32,19 @@ public class ProofTransformations extends DataBaseInfo {
     private final boolean dbg = true;
 
     /**
-     * The transformation of {@link Transformation#originalNode} to any equal
-     * node.
-     */
-    private abstract class Transformation {
-        /** The original node */
-        public final ParseNode originalNode;
-
-        public Transformation(final ParseNode originalNode) {
-            this.originalNode = originalNode;
-        }
-
-        /**
-         * @param info the information about previous statements
-         * @return the canonical node for {@link Transformation#originalNode}
-         */
-        abstract public ParseNode getCanonicalNode(WorksheetInfo info);
-
-        /**
-         * This function should construct derivation step sequence from this
-         * {@link Transformation#originalNode} to target's
-         * {@link Transformation#originalNode}
-         * 
-         * @param target the target transformation
-         * @param info the information about work sheet
-         * @return the proof step which confirms that this
-         *         {@link Transformation#originalNode} is equal to target
-         *         {@link Transformation#originalNode}. Could returns null it
-         *         this and target are equal.
-         */
-        public abstract ProofStepStmt transformMeToTarget(
-            final Transformation target, final WorksheetInfo info);
-
-        /**
-         * This function checks maybe we should not do anything! We should
-         * perform transformations if this function returns derivStep.
-         * 
-         * @param target the target transformation
-         * @param info the information about work sheet
-         * @return null (if target equals to this), statement (if it is already
-         *         exists) or info.derivStep if we should perform some
-         *         transformations!
-         */
-        protected ProofStepStmt checkTransformationNecessary(
-            final Transformation target, final WorksheetInfo info)
-        {
-            if (originalNode.isDeepDup(target.originalNode))
-                return null; // nothing to transform!
-
-            // Create node g(A, B, C) = g(A', B', C')
-            final ParseNode stepNode = eqInfo.createEqNode(originalNode,
-                target.originalNode);
-
-            final ProofStepStmt stepTr = info.getProofStepStmt(stepNode);
-
-            if (stepTr != null)
-                return stepTr;
-
-            return info.derivStep; // there is more complex case!
-        }
-
-        // use it only for debug!
-        @Override
-        public String toString() {
-            final Formula f = getFormula(originalNode);
-            return f.toString();
-        }
-    }
-
-    /** No transformation at all =) */
-    private class IdentityTransformation extends Transformation {
-
-        public IdentityTransformation(final ParseNode originalNode) {
-            super(originalNode);
-        }
-
-        @Override
-        public ParseNode getCanonicalNode(final WorksheetInfo info) {
-            return originalNode;
-        }
-
-        @Override
-        public ProofStepStmt transformMeToTarget(final Transformation target,
-            final WorksheetInfo info)
-        {
-            assert target.originalNode.isDeepDup(originalNode);
-            return null; // nothing to do
-        }
-    }
-
-    /**
-     * The replace transformation: we could transform children of corresponding
-     * node and replace them with its canonical form (or vice versa).
-     */
-    private class ReplaceTransformation extends Transformation {
-        public ReplaceTransformation(final ParseNode originalNode) {
-            super(originalNode);
-        }
-
-        @Override
-        public ProofStepStmt transformMeToTarget(final Transformation target,
-            final WorksheetInfo info)
-        {
-            assert target instanceof ReplaceTransformation;
-            final ReplaceTransformation trgt = (ReplaceTransformation)target;
-
-            final ProofStepStmt simpleRes = checkTransformationNecessary(
-                target, info);
-            if (simpleRes != info.derivStep)
-                return simpleRes;
-
-            // result transformation statement
-            ProofStepStmt resStmt = null;
-
-            // the current transformation result
-            ParseNode resNode = originalNode;
-
-            final Assrt[] replAsserts = replInfo.getReplaceAsserts(originalNode
-                .getStmt());
-
-            for (int i = 0; i < originalNode.getChild().length; i++) {
-                if (replAsserts[i] == null)
-                    continue;
-                // We replaced previous children and now we should transform ith
-                // child B
-
-                final ParseNode child = originalNode.getChild()[i];
-                final ParseNode targetChild = target.originalNode.getChild()[i];
-
-                assert replAsserts[i].getLogHypArrayLength() == 1;
-
-                // get the root symbol from g(A', B, C) = g(A', B', C)
-                // in set.mm it will be = or <->
-                final Stmt equalStmt = replAsserts[i].getExprParseTree()
-                    .getRoot().getStmt();
-
-                // the symbol should be equivalence operator
-                assert eqInfo.isEquivalence(equalStmt);
-
-                // transform ith child
-                // the result should be some B = B' statement
-                final ProofStepStmt childTrStmt = createTransformation(child,
-                    info).transformMeToTarget(
-                    createTransformation(targetChild, info), info);
-                if (childTrStmt == null)
-                    continue; // noting to do
-
-                // get the node B = B'
-                final ParseNode childTrRoot = childTrStmt.formulaParseTree
-                    .getRoot();
-
-                // transformation should be transformation:
-                // check result childTrStmt statement
-                assert eqInfo.isEquivalence(childTrRoot.getStmt());
-                assert childTrRoot.getChild().length == 2;
-                assert childTrRoot.getChild()[0].isDeepDup(originalNode
-                    .getChild()[i]);
-                assert childTrRoot.getChild()[1].isDeepDup(trgt.originalNode
-                    .getChild()[i]);
-
-                // Create statement d:childTrStmt:replAssert
-                // |- g(A', B, C) = g(A', B', C)
-                final ProofStepStmt stepTr = replInfo.createReplaceStep(info,
-                    resNode, i, trgt.originalNode.getChild()[i], childTrStmt);
-                resNode = stepTr.formulaParseTree.getRoot().getChild()[1];
-
-                // resStmt now have the form g(A, B, C) = g(A', B, C)
-                // So create transitive:
-                // g(A, B, C) = g(A', B, C) & g(A', B, C) = g(A', B', C)
-                // => g(A, B, C) = g(A', B', C)
-                // Create statement d:resStmt,stepTr:transitive
-                // |- g(A, B, C) = g(A', B', C)
-                resStmt = eqInfo.getTransitiveStep(info, resStmt, stepTr);
-            }
-
-            assert resStmt != null;
-
-            assert resStmt.formulaParseTree.getRoot().getChild()[0]
-                .isDeepDup(originalNode);
-            assert resStmt.formulaParseTree.getRoot().getChild()[1]
-                .isDeepDup(target.originalNode);
-
-            return resStmt;
-        }
-
-        @Override
-        public ParseNode getCanonicalNode(final WorksheetInfo info) {
-            final Assrt[] replAsserts = replInfo.getReplaceAsserts(originalNode
-                .getStmt());
-            final ParseNode resNode = originalNode.cloneWithoutChildren();
-
-            for (int i = 0; i < resNode.getChild().length; i++) {
-                if (replAsserts[i] == null)
-                    continue;
-                resNode.getChild()[i] = getCanonicalForm(
-                    originalNode.getChild()[i], info);
-            }
-
-            return resNode;
-        }
-    }
-
-    private static class AssocTree {
-        final int size;
-        final AssocTree[] subTrees;
-
-        AssocTree() {
-            size = 1;
-            subTrees = null;
-        }
-
-        AssocTree(final AssocTree left, final AssocTree right) {
-            subTrees = new AssocTree[]{left, right};
-            size = left.size + right.size;
-        }
-
-        AssocTree(final AssocTree[] subTrees) {
-            this.subTrees = subTrees;
-            assert subTrees.length == 2;
-            size = subTrees[0].size + subTrees[1].size;
-        }
-
-        AssocTree(final int from, final AssocTree left, final AssocTree right) {
-            assert from == 0 || from == 1;
-            subTrees = from == 0 ? new AssocTree[]{left, right}
-                : new AssocTree[]{right, left};
-            size = left.size + right.size;
-        }
-
-        AssocTree duplicate() {
-            if (subTrees != null)
-                return new AssocTree(subTrees[0].duplicate(),
-                    subTrees[1].duplicate());
-            else
-                return new AssocTree();
-        }
-
-        @Override
-        public String toString() {
-            String res = "";
-            res += size;
-
-            if (subTrees != null)
-                res += "[" + subTrees[0].toString() + ","
-                    + subTrees[1].toString() + "]";
-
-            return res;
-        }
-    }
-
-    private AssocTree createAssocTree(final ParseNode curNode,
-        final GeneralizedStmt assocProp, final WorksheetInfo info)
-    {
-        final Stmt stmt = curNode.getStmt();
-        final ParseNode[] childrent = curNode.getChild();
-
-        final Stmt assocStmt = assocProp.stmt;
-
-        if (stmt != assocStmt)
-            return new AssocTree();
-
-        final AssocTree[] subTrees = new AssocTree[2];
-
-        for (int i = 0; i < 2; i++) {
-            final ParseNode child = childrent[assocProp.varIndexes[i]];
-            if (AssociativeInfo.isAssociativeWithProp(child, assocProp, info))
-                subTrees[i] = createAssocTree(child, assocProp, info);
-            else
-                subTrees[i] = new AssocTree();
-        }
-
-        return new AssocTree(subTrees);
-    }
-
-    /** Only associative transformations */
-    private class AssociativeTransformation extends Transformation {
-        final AssocTree structure;
-        final GeneralizedStmt assocProp;
-
-        public AssociativeTransformation(final ParseNode originalNode,
-            final AssocTree structure, final GeneralizedStmt assocProp)
-        {
-            super(originalNode);
-            this.structure = structure;
-            this.assocProp = assocProp;
-        }
-
-        @Override
-        public ProofStepStmt transformMeToTarget(final Transformation target,
-            final WorksheetInfo info)
-        {
-            assert target instanceof AssociativeTransformation;
-            final AssociativeTransformation trgt = (AssociativeTransformation)target;
-
-            assert trgt.structure.size == structure.size;
-
-            final ProofStepStmt simpleRes = checkTransformationNecessary(
-                target, info);
-            if (simpleRes != info.derivStep)
-                return simpleRes;
-
-            originalNode.getStmt();
-
-            final int from;
-            final int to;
-            if (structure.subTrees[assocProp.varIndexes[0]].size > trgt.structure.subTrees[assocProp.varIndexes[0]].size)
-            {
-                from = assocProp.varIndexes[0];
-                to = assocProp.varIndexes[1];
-            }
-            else {
-                from = assocProp.varIndexes[1];
-                to = assocProp.varIndexes[0];
-            }
-
-            final int toSize = trgt.structure.subTrees[to].size;
-
-            AssocTree gAssT = structure.duplicate(); // g node
-            ParseNode gNode = originalNode;
-
-            // result transformation statement
-            ProofStepStmt resStmt = null;
-
-            while (true) {
-
-                // move subtrees to the other side
-                while (true) {
-                    // @formatter:off
-                    //         |g                  |                 +
-                    //        / \                 / \                +
-                    //       /   \               /   \               +
-                    //     e|     |f           a|     |              +
-                    //     / \          ==>          / \             +
-                    //    /   \                     /   \            +
-                    //  a|     |d                 d|     |f          +
-                    // @formatter:on
-
-                    final AssocTree eAssT = gAssT.subTrees[from];
-                    final AssocTree fAssT = gAssT.subTrees[to];
-
-                    if (fAssT.size >= toSize)
-                        break;
-
-                    final AssocTree aAssT = eAssT.subTrees[from];
-                    final AssocTree dAssT = eAssT.subTrees[to];
-
-                    if (dAssT.size + fAssT.size > toSize)
-                        break;
-
-                    gAssT = new AssocTree(from, aAssT, new AssocTree(from,
-                        dAssT, fAssT));
-
-                    final ParseNode eNode = gNode.getChild()[from];
-                    final ParseNode fNode = gNode.getChild()[to];
-                    final ParseNode aNode = eNode.getChild()[from];
-                    final ParseNode dNode = eNode.getChild()[to];
-
-                    final ParseNode prevNode = gNode;
-
-                    gNode = createAssocBinaryNode(from, assocProp, aNode,
-                        createAssocBinaryNode(from, assocProp, dNode, fNode));
-
-                    // transform to normal direction => 'from'
-                    final ProofStepStmt assocTr = createAssociativeStep(info,
-                        assocProp, from, prevNode, gNode);
-
-                    resStmt = eqInfo.getTransitiveStep(info, resStmt, assocTr);
-                }
-
-                final AssocTree eAssT = gAssT.subTrees[from];
-                final AssocTree fAssT = gAssT.subTrees[to];
-
-                if (fAssT.size != toSize) {
-                    final AssocTree aAssT = eAssT.subTrees[from];
-                    final AssocTree dAssT = eAssT.subTrees[to];
-                    final AssocTree bAssT = dAssT.subTrees[from];
-                    final AssocTree cAssT = dAssT.subTrees[to];
-
-                    // reconstruct 'from' part
-                    // @formatter:off
-                    //         |g                  |g            +
-                    //        / \                 / \            +
-                    //       /   \               /   \           +
-                    //     e|     |f          e'|     |f         +
-                    //     / \          ==>    / \               +
-                    //    /   \               /   \              +
-                    //  a|     |d            |     |c            +
-                    //        / \           / \                  +
-                    //       /   \         /   \                 +
-                    //     b|     |c     a|     |b               +
-                    // @formatter:on
-
-                    gAssT.subTrees[from] = new AssocTree(from, new AssocTree(
-                        from, aAssT, bAssT), cAssT);
-
-                    /*--*/ParseNode eNode = gNode.getChild()[from];
-                    final ParseNode fNode = gNode.getChild()[to];
-                    final ParseNode aNode = eNode.getChild()[from];
-                    final ParseNode dNode = eNode.getChild()[to];
-                    final ParseNode bNode = dNode.getChild()[from];
-                    final ParseNode cNode = dNode.getChild()[to];
-
-                    final ParseNode prevENode = eNode;
-                    eNode = createAssocBinaryNode(from, assocProp,
-                        createAssocBinaryNode(from, assocProp, aNode, bNode),
-                        cNode);
-
-                    // transform to other direction => 'to'
-                    final ProofStepStmt assocTr = createAssociativeStep(info,
-                        assocProp, to, prevENode, eNode);
-
-                    final ParseNode prevGNode = gNode;
-                    gNode = createAssocBinaryNode(from, assocProp, eNode, fNode);
-
-                    final ProofStepStmt replTr = replInfo.createReplaceStep(
-                        info, prevGNode, from, eNode, assocTr);
-
-                    resStmt = eqInfo.getTransitiveStep(info, resStmt, replTr);
-                }
-                else
-                    break;
-            }
-
-            assert gAssT.subTrees[0].size == trgt.structure.subTrees[0].size;
-            assert gAssT.subTrees[1].size == trgt.structure.subTrees[1].size;
-
-            final Transformation replaceMe = new ReplaceTransformation(gNode);
-            final Transformation replaceTarget = new ReplaceTransformation(
-                target.originalNode);
-
-            final ProofStepStmt replTrStep = replaceMe.transformMeToTarget(
-                replaceTarget, info);
-
-            if (replTrStep != null)
-                resStmt = eqInfo.getTransitiveStep(info, resStmt, replTrStep);
-
-            return resStmt;
-        }
-
-        private ParseNode constructCanonicalForm(ParseNode left,
-            final ParseNode cur, final WorksheetInfo info)
-        {
-            if (cur.getStmt() != originalNode.getStmt()) {
-                final ParseNode leaf = getCanonicalForm(cur, info);
-                if (left == null)
-                    return leaf;
-                else
-                    return createBinaryNode(assocProp, left, leaf);
-            }
-
-            for (int i = 0; i < 2; i++)
-                left = constructCanonicalForm(left, cur.getChild()[i], info);
-
-            return left;
-        }
-
-        @Override
-        public ParseNode getCanonicalNode(final WorksheetInfo info) {
-            return constructCanonicalForm(null, originalNode, info);
-        }
-
-        @Override
-        public String toString() {
-            return super.toString() + "\n" + structure;
-        }
-    }
-
-    private ProofStepStmt closureProperty(final WorksheetInfo info,
-        final GeneralizedStmt assocProp, final ParseNode node)
-    {
-        // PropertyTemplate template = assocProp.template;
-        final Assrt assrt = clInfo.getClosureAssert(assocProp);
-
-        assert assrt != null;
-
-        final ParseNode stepNode = assocProp.template.subst(node);
-
-        ProofStepStmt res = info.getProofStepStmt(stepNode);
-        if (res != null)
-            return res;
-
-        assert assocProp.varIndexes.length == assrt.getLogHypArrayLength();
-        final ProofStepStmt[] hyps = new ProofStepStmt[assocProp.varIndexes.length];
-        for (final int n : assocProp.varIndexes) {
-            final ParseNode child = node.getChild()[n];
-
-            hyps[n] = closureProperty(info, assocProp, child);
-        }
-        res = info.getOrCreateProofStepStmt(stepNode, hyps, assrt);
-        res.toString();
-
-        return res;
-    }
-
-    // First form: f(f(a, b), c) = f(a, f(b, c))
-    // Second form: f(a, f(b, c)) = f(f(a, b), c)
-    private ProofStepStmt closurePropertyAssociative(final WorksheetInfo info,
-        final GeneralizedStmt assocProp, final Assrt assocAssrt,
-        final boolean firstForm, final ParseNode stepNode)
-    {
-        final ProofStepStmt[] hyps;
-        if (!assocProp.template.isEmpty()) {
-
-            hyps = new ProofStepStmt[3];
-            final int n0 = assocProp.varIndexes[0];
-            final int n1 = assocProp.varIndexes[1];
-            final ParseNode side;
-            if (firstForm)
-                side = stepNode.getChild()[0];
-            else
-                side = stepNode.getChild()[1];
-            final ParseNode[] in = new ParseNode[3];
-            in[0] = side.getChild()[n0].getChild()[n0];
-            in[1] = side.getChild()[n0].getChild()[n1];
-            in[2] = side.getChild()[n1];
-
-            for (int i = 0; i < 3; i++)
-                hyps[i] = closureProperty(info, assocProp, in[i]);
-        }
-        else
-            hyps = new ProofStepStmt[]{};
-
-        final ProofStepStmt res = info.getOrCreateProofStepStmt(stepNode, hyps,
-            assocAssrt);
-
-        return res;
-    }
-
-    private ProofStepStmt createAssociativeStep(final WorksheetInfo info,
-        final GeneralizedStmt assocProp, final int from,
-        final ParseNode prevNode, final ParseNode newNode)
-    {
-        final Assrt[] assocTr = assocInfo.getAssocOp(assocProp);
-        assert assocTr != null;
-
-        final boolean revert;
-        final Assrt assocAssrt;
-        final boolean firstForm;
-        final ParseNode left;
-        final ParseNode right;
-        if (assocTr[from] != null) {
-            assocAssrt = assocTr[from];
-            revert = false;
-            firstForm = true;
-            left = prevNode;
-            right = newNode;
-        }
-        else {
-            final int other = (from + 1) % 2;
-            assocAssrt = assocTr[other];
-            revert = true;
-            firstForm = false;
-            left = newNode;
-            right = prevNode;
-        }
-        assert assocAssrt != null;
-
-        final Stmt equalStmt = assocAssrt.getExprParseTree().getRoot()
-            .getStmt();
-
-        // Create node f(f(a, b), c) = f(a, f(b, c))
-        final ParseNode stepNode = TrUtil.createBinaryNode(equalStmt, left,
-            right);
-
-        ProofStepStmt res = closurePropertyAssociative(info, assocProp,
-            assocAssrt, firstForm, stepNode);
-
-        if (revert)
-            res = eqInfo.createReverse(info, res);
-
-        return res;
-    }
-
-    private static ParseNode createAssocBinaryNode(final int from,
-        final GeneralizedStmt assocProp, final ParseNode left,
-        final ParseNode right)
-    {
-        if (from == 0)
-            return createBinaryNode(assocProp, left, right);
-        else
-            return createBinaryNode(assocProp, right, left);
-    }
-
-    private static ParseNode createBinaryNode(final GeneralizedStmt genStmt,
-        final ParseNode left, final ParseNode right)
-    {
-        final ParseNode eqRoot = new ParseNode(genStmt.stmt);
-        final int len = genStmt.constSubst.constMap.length;
-        final ParseNode[] vars = {left, right};
-        final ParseNode[] children = new ParseNode[len];
-        for (int i = 0; i < len; i++) {
-            final ParseNode c = genStmt.constSubst.constMap[i];
-            if (c != null)
-                children[i] = c.deepClone();
-        }
-        for (int i = 0; i < 2; i++)
-            children[genStmt.varIndexes[i]] = vars[i];
-
-        eqRoot.setChild(children);
-        return eqRoot;
-    }
-
-    /**
      * The main function to create transformation.
      * 
+     * @param dbInfo the information about database library
      * @param originalNode the source node
      * @param info the information about previous steps
      * @return the transformation
      */
-    private Transformation createTransformation(final ParseNode originalNode,
+    public static Transformation createTransformation(
+        final DataBaseInfo dbInfo, final ParseNode originalNode,
         final WorksheetInfo info)
     {
+        final ReplaceInfo replInfo = dbInfo.replInfo;
+        final AssociativeInfo assocInfo = dbInfo.assocInfo;
         final Stmt stmt = originalNode.getStmt();
 
         final Assrt[] replAsserts = replInfo.getReplaceAsserts(stmt);
@@ -656,23 +58,25 @@ public class ProofTransformations extends DataBaseInfo {
         final boolean subTreesCouldBeRepl = replAsserts != null;
 
         if (!subTreesCouldBeRepl)
-            return new IdentityTransformation(originalNode);
+            return new IdentityTransformation(dbInfo, originalNode);
 
         if (isAssoc)
-            return new AssociativeTransformation(originalNode, createAssocTree(
-                originalNode, assocProp, info), assocProp);
+            return new AssociativeTransformation(dbInfo, originalNode,
+                AssocTree.createAssocTree(originalNode, assocProp, info),
+                assocProp);
         else if (subTreesCouldBeRepl)
-            return new ReplaceTransformation(originalNode);
+            return new ReplaceTransformation(dbInfo, originalNode);
 
         // TODO: make the string constant!
         throw new IllegalStateException(
             "Error in createTransformation() algorithm");
     }
 
-    private ParseNode getCanonicalForm(final ParseNode originalNode,
-        final WorksheetInfo info)
+    public static ParseNode getCanonicalForm(final DataBaseInfo dbInfo,
+        final ParseNode originalNode, final WorksheetInfo info)
     {
-        return createTransformation(originalNode, info).getCanonicalNode(info);
+        return createTransformation(dbInfo, originalNode, info)
+            .getCanonicalNode(info);
     }
 
     /**
@@ -710,27 +114,14 @@ public class ProofTransformations extends DataBaseInfo {
         return getFormula(proofStmt.getCanonicalForm());
     }
 
-    /**
-     * This function is needed for debug
-     * 
-     * @param node the input node
-     * @return the corresponding formula
-     */
-    private Formula getFormula(final ParseNode node) {
-        final ParseTree tree = new ParseTree(node);
-        final Formula generatedFormula = verifyProofs.convertRPNToFormula(
-            tree.convertToRPN(), "tree"); // TODO: use constant
-        return generatedFormula;
-    }
-
     // ---------------------
 
     private void performTransformation(final WorksheetInfo info,
         final ProofStepStmt source, final Assrt impl)
     {
-        final Transformation dsTr = createTransformation(
+        final Transformation dsTr = createTransformation(this,
             info.derivStep.formulaParseTree.getRoot(), info);
-        final Transformation tr = createTransformation(
+        final Transformation tr = createTransformation(this,
             source.formulaParseTree.getRoot(), info);
 
         final ProofStepStmt eqResult = tr.transformMeToTarget(dsTr, info);
@@ -777,7 +168,7 @@ public class ProofTransformations extends DataBaseInfo {
         if (implAssrt == null)
             return null;
 
-        final Transformation dsTr = createTransformation(
+        final Transformation dsTr = createTransformation(this,
             derivStep.formulaParseTree.getRoot(), info);
         final ParseNode dsCanonicalForm = dsTr.getCanonicalNode(info);
         derivStep.setCanonicalForm(dsCanonicalForm);
@@ -798,7 +189,7 @@ public class ProofTransformations extends DataBaseInfo {
             final ProofStepStmt candidate = (ProofStepStmt)proofWorkStmtObject;
 
             if (candidate.getCanonicalForm() == null) {
-                candidate.setCanonicalForm(getCanonicalForm(
+                candidate.setCanonicalForm(getCanonicalForm(this,
                     candidate.formulaParseTree.getRoot(), info));
 
                 output.dbgMessage(dbg, "I-DBG Step %s has canonical form: %s",

@@ -18,19 +18,19 @@ public class DataBaseInfo {
     VerifyProofs verifyProofs;
 
     /** The information about equivalence rules */
-    protected EquivalenceInfo eqInfo = new EquivalenceInfo();
+    public final EquivalenceInfo eqInfo = new EquivalenceInfo();
 
-    protected ImplicationInfo implInfo = new ImplicationInfo();
+    public final ImplicationInfo implInfo = new ImplicationInfo();
 
     /** The information about replace rules */
-    protected ReplaceInfo replInfo = new ReplaceInfo();
+    public final ReplaceInfo replInfo = new ReplaceInfo();
 
     /** The information about closure rules */
-    protected ClosureInfo clInfo = new ClosureInfo();
+    public final ClosureInfo clInfo = new ClosureInfo();
 
-    protected AssociativeInfo assocInfo = new AssociativeInfo();
+    public final AssociativeInfo assocInfo = new AssociativeInfo();
 
-    protected CommutativeInfo comInfo = new CommutativeInfo();
+    public final CommutativeInfo comInfo = new CommutativeInfo();
 
     /** The symbol like |- in set.mm */
     protected Cnst provableLogicStmtTyp;
@@ -64,5 +64,18 @@ public class DataBaseInfo {
 
     public boolean isInit() {
         return isInit;
+    }
+
+    /**
+     * This function is needed for debug
+     * 
+     * @param node the input node
+     * @return the corresponding formula
+     */
+    protected Formula getFormula(final ParseNode node) {
+        final ParseTree tree = new ParseTree(node);
+        final Formula generatedFormula = verifyProofs.convertRPNToFormula(
+            tree.convertToRPN(), "tree"); // TODO: use constant
+        return generatedFormula;
     }
 }
