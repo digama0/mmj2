@@ -34,8 +34,8 @@ class AssociativeTransformation extends Transformation {
 
         assert trgt.structure.size == structure.size;
 
-        final ProofStepStmt simpleRes = checkTransformationNecessary(
-            target, info);
+        final ProofStepStmt simpleRes = checkTransformationNecessary(target,
+            info);
         if (simpleRes != info.derivStep)
             return simpleRes;
 
@@ -87,8 +87,8 @@ class AssociativeTransformation extends Transformation {
                 if (dAssT.size + fAssT.size > toSize)
                     break;
 
-                gAssT = new AssocTree(from, aAssT, new AssocTree(from,
-                    dAssT, fAssT));
+                gAssT = new AssocTree(from, aAssT, new AssocTree(from, dAssT,
+                    fAssT));
 
                 final ParseNode eNode = gNode.getChild()[from];
                 final ParseNode fNode = gNode.getChild()[to];
@@ -97,13 +97,13 @@ class AssociativeTransformation extends Transformation {
 
                 final ParseNode prevNode = gNode;
 
-                gNode = TrUtil.createAssocBinaryNode(from, assocProp,
-                    aNode, TrUtil.createAssocBinaryNode(from, assocProp,
-                        dNode, fNode));
+                gNode = TrUtil
+                    .createAssocBinaryNode(from, assocProp, aNode, TrUtil
+                        .createAssocBinaryNode(from, assocProp, dNode, fNode));
 
                 // transform to normal direction => 'from'
-                final ProofStepStmt assocTr = createAssociativeStep(info,
-                    from, prevNode, gNode);
+                final ProofStepStmt assocTr = createAssociativeStep(info, from,
+                    prevNode, gNode);
 
                 resStmt = eqInfo.getTransitiveStep(info, resStmt, assocTr);
             }
@@ -131,8 +131,8 @@ class AssociativeTransformation extends Transformation {
                 //     b|     |c     a|     |b               +
                 // @formatter:on
 
-                gAssT.subTrees[from] = new AssocTree(from, new AssocTree(
-                    from, aAssT, bAssT), cAssT);
+                gAssT.subTrees[from] = new AssocTree(from, new AssocTree(from,
+                    aAssT, bAssT), cAssT);
 
                 /*--*/ParseNode eNode = gNode.getChild()[from];
                 final ParseNode fNode = gNode.getChild()[to];
@@ -142,20 +142,21 @@ class AssociativeTransformation extends Transformation {
                 final ParseNode cNode = dNode.getChild()[to];
 
                 final ParseNode prevENode = eNode;
-                eNode = TrUtil.createAssocBinaryNode(from, assocProp,
-                    TrUtil.createAssocBinaryNode(from, assocProp, aNode,
-                        bNode), cNode);
+                eNode = TrUtil
+                    .createAssocBinaryNode(from, assocProp, TrUtil
+                        .createAssocBinaryNode(from, assocProp, aNode, bNode),
+                        cNode);
 
                 // transform to other direction => 'to'
-                final ProofStepStmt assocTr = createAssociativeStep(info,
-                    to, prevENode, eNode);
+                final ProofStepStmt assocTr = createAssociativeStep(info, to,
+                    prevENode, eNode);
 
                 final ParseNode prevGNode = gNode;
-                gNode = TrUtil.createAssocBinaryNode(from, assocProp,
-                    eNode, fNode);
+                gNode = TrUtil.createAssocBinaryNode(from, assocProp, eNode,
+                    fNode);
 
-                final ProofStepStmt replTr = replInfo.createReplaceStep(
-                    info, prevGNode, from, eNode, assocTr);
+                final ProofStepStmt replTr = replInfo.createReplaceStep(info,
+                    prevGNode, from, eNode, assocTr);
 
                 resStmt = eqInfo.getTransitiveStep(info, resStmt, replTr);
             }
@@ -168,8 +169,8 @@ class AssociativeTransformation extends Transformation {
 
         final Transformation replaceMe = new ReplaceTransformation(dbInfo,
             gNode);
-        final Transformation replaceTarget = new ReplaceTransformation(
-            dbInfo, target.originalNode);
+        final Transformation replaceTarget = new ReplaceTransformation(dbInfo,
+            target.originalNode);
 
         final ProofStepStmt replTrStep = replaceMe.transformMeToTarget(
             replaceTarget, info);
@@ -184,7 +185,7 @@ class AssociativeTransformation extends Transformation {
         final ParseNode cur, final WorksheetInfo info)
     {
         if (cur.getStmt() != originalNode.getStmt()) {
-            final ParseNode leaf = ProofTransformations.getCanonicalForm(dbInfo, cur, info);
+            final ParseNode leaf = dbInfo.getCanonicalForm(cur, info);
             if (left == null)
                 return leaf;
             else
@@ -274,10 +275,9 @@ class AssociativeTransformation extends Transformation {
 
     // First form: f(f(a, b), c) = f(a, f(b, c))
     // Second form: f(a, f(b, c)) = f(f(a, b), c)
-    private ProofStepStmt closurePropertyAssociative(
-        final WorksheetInfo info, final GeneralizedStmt assocProp,
-        final Assrt assocAssrt, final boolean firstForm,
-        final ParseNode stepNode)
+    private ProofStepStmt closurePropertyAssociative(final WorksheetInfo info,
+        final GeneralizedStmt assocProp, final Assrt assocAssrt,
+        final boolean firstForm, final ParseNode stepNode)
     {
         final ProofStepStmt[] hyps;
         if (!assocProp.template.isEmpty()) {
@@ -301,8 +301,8 @@ class AssociativeTransformation extends Transformation {
         else
             hyps = new ProofStepStmt[]{};
 
-        final ProofStepStmt res = info.getOrCreateProofStepStmt(stepNode,
-            hyps, assocAssrt);
+        final ProofStepStmt res = info.getOrCreateProofStepStmt(stepNode, hyps,
+            assocAssrt);
 
         return res;
     }

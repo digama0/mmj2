@@ -68,7 +68,7 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import mmj.lang.*;
-import mmj.transforms.ProofTransformations;
+import mmj.transforms.DataBaseInfo;
 import mmj.verify.Grammar;
 import mmj.verify.VerifyProofs;
 
@@ -168,7 +168,7 @@ public class ProofUnifier {
 
     private final ParseNode[] compareNodeStack = new ParseNode[PaConstants.UNIFIER_NODE_STACK_SIZE];
 
-    private final ProofTransformations proofTransformations = new ProofTransformations();
+    private final DataBaseInfo proofTransformations = new DataBaseInfo();
 
     /*
      * Global "work" areas for processing a single
@@ -2985,7 +2985,7 @@ public class ProofUnifier {
             }
     }
 
-    public ProofTransformations getProofTransformations() {
+    public DataBaseInfo getProofTransformations() {
         return proofTransformations;
     }
 }
