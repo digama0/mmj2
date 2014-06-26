@@ -5,7 +5,6 @@ import java.util.*;
 import mmj.lang.*;
 
 public class ClosureInfo extends DBInfo {
-
     /**
      * The list of closure lows: A e. CC & B e. CC => (A + B) e. CC
      * <p>

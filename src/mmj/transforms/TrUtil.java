@@ -34,4 +34,16 @@ public class TrUtil {
         return eqRoot;
     }
 
+    public static ParseNode[] collectConstSubst(final ParseNode originalNode) {
+        final ParseNode[] constMap = new ParseNode[originalNode.getChild().length];
+    
+        for (int i = 0; i < constMap.length; i++) {
+            final ParseNode child = originalNode.getChild()[i];
+            if (isConstNode(child))
+                constMap[i] = child;
+        }
+    
+        return constMap;
+    }
+
 }

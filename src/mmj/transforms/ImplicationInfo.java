@@ -5,7 +5,9 @@ import java.util.*;
 import mmj.lang.*;
 
 public class ImplicationInfo extends DBInfo {
+    /** The information about equivalence rules */
     private EquivalenceInfo eqInfo;
+
     /**
      * The map from type to equivalence implication rule: A & A <-> B => B.
      * set.mm has only one element: (wff, <->)

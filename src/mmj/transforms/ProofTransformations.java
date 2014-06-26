@@ -6,8 +6,7 @@
 //*****************************************************************************/
 package mmj.transforms;
 
-import java.util.*;
-import java.util.Map.Entry;
+import java.util.List;
 
 import mmj.lang.*;
 import mmj.pa.*;
@@ -297,7 +296,7 @@ public class ProofTransformations extends DataBaseInfo {
 
         for (int i = 0; i < 2; i++) {
             final ParseNode child = childrent[assocProp.varIndexes[i]];
-            if (isAssociativeWithProp(child, assocProp, info))
+            if (AssociativeInfo.isAssociativeWithProp(child, assocProp, info))
                 subTrees[i] = createAssocTree(child, assocProp, info);
             else
                 subTrees[i] = new AssocTree();
@@ -564,17 +563,7 @@ public class ProofTransformations extends DataBaseInfo {
         final GeneralizedStmt assocProp, final int from,
         final ParseNode prevNode, final ParseNode newNode)
     {
-        final Map<ConstSubst, Map<PropertyTemplate, Assrt[]>> constSubstMap = assocOp
-            .get(prevNode.getStmt());
-
-        assert constSubstMap != null;
-
-        final Map<PropertyTemplate, Assrt[]> propertyMap = constSubstMap
-            .get(assocProp.constSubst);
-
-        assert propertyMap != null;
-
-        final Assrt[] assocTr = propertyMap.get(assocProp.template);
+        final Assrt[] assocTr = assocInfo.getAssocOp(assocProp);
         assert assocTr != null;
 
         final boolean revert;
@@ -644,108 +633,6 @@ public class ProofTransformations extends DataBaseInfo {
         return eqRoot;
     }
 
-    private ParseNode[] collectConstSubst(final ParseNode originalNode) {
-        final ParseNode[] constMap = new ParseNode[originalNode.getChild().length];
-
-        for (int i = 0; i < constMap.length; i++) {
-            final ParseNode child = originalNode.getChild()[i];
-            if (TrUtil.isConstNode(child))
-                constMap[i] = child;
-        }
-
-        return constMap;
-    }
-
-    private boolean isAssociativeWithProp(final ParseNode originalNode,
-        final GeneralizedStmt assocProp, final WorksheetInfo info)
-    {
-        if (assocProp.stmt != originalNode.getStmt())
-            return false;
-        return isAssociativeWithProp(originalNode, assocProp.template,
-            assocProp.constSubst, info);
-    }
-
-    private boolean isAssociativeWithProp(final ParseNode originalNode,
-        final PropertyTemplate template, final ConstSubst constSubst,
-        final WorksheetInfo info)
-    {
-        if (originalNode.getChild().length != constSubst.constMap.length)
-            assert originalNode.getChild().length == constSubst.constMap.length;
-
-        if (template.isEmpty())
-            return true;
-
-        int varNum = 0;
-        for (int i = 0; i < constSubst.constMap.length; i++) {
-            final ParseNode child = originalNode.getChild()[i];
-            if (constSubst.constMap[i] == null) { // variable here
-                varNum++;
-                final ParseNode substProp = template.subst(child);
-                final ProofStepStmt stmt = info.getProofStepStmt(substProp);
-                if (stmt == null)
-                    if (child.getStmt() != originalNode.getStmt()
-                        || !isAssociativeWithProp(child, template, constSubst,
-                            info))
-                        return false;
-            }
-            else if (!constSubst.constMap[i].isDeepDup(child)) // check constant
-                return false;
-        }
-
-        assert varNum == 2;
-        return true;
-    }
-
-    private GeneralizedStmt isAssociative(final ParseNode originalNode,
-        final Map<ConstSubst, Map<PropertyTemplate, Assrt[]>> constSubstMap,
-        final WorksheetInfo info)
-    {
-        final Stmt stmt = originalNode.getStmt();
-        final ParseNode[] constMap = collectConstSubst(originalNode);
-
-        final int[] varIndexes = new int[2];
-
-        for (final Entry<ConstSubst, Map<PropertyTemplate, Assrt[]>> elem : constSubstMap
-            .entrySet())
-        {
-            final ConstSubst constSubst = elem.getKey();
-            int curVar = 0;
-
-            boolean ok = true;
-            for (int i = 0; i < constSubst.constMap.length; i++)
-                if (constSubst.constMap[i] != null) {
-                    if (constMap[i] == null
-                        || !constSubst.constMap[i].isDeepDup(constMap[i]))
-                    {
-                        ok = false;
-                        break;
-                    }
-                }
-                else {
-                    assert curVar < 2;
-                    varIndexes[curVar++] = i;
-                }
-
-            if (!ok)
-                continue;
-
-            final Map<PropertyTemplate, Assrt[]> propertyMap = elem.getValue();
-
-            for (final Entry<PropertyTemplate, Assrt[]> propElem : propertyMap
-                .entrySet())
-            {
-                final PropertyTemplate template = propElem.getKey();
-                final boolean res = isAssociativeWithProp(originalNode,
-                    template, constSubst, info);
-                if (res)
-                    return new GeneralizedStmt(constSubst, template,
-                        varIndexes, stmt);
-            }
-        }
-
-        return null;
-    }
-
     /**
      * The main function to create transformation.
      * 
@@ -760,16 +647,11 @@ public class ProofTransformations extends DataBaseInfo {
 
         final Assrt[] replAsserts = replInfo.getReplaceAsserts(stmt);
 
-        final Map<ConstSubst, Map<PropertyTemplate, Assrt[]>> constSubstMap = assocOp
-            .get(stmt);
-
         boolean isAssoc = false;
-        GeneralizedStmt assocProp = null;
-        if (constSubstMap != null) {
-            assocProp = isAssociative(originalNode, constSubstMap, info);
-            if (assocProp != null)
-                isAssoc = true;
-        }
+        final GeneralizedStmt assocProp = assocInfo.getGenStmtForAssocNode(
+            originalNode, info);
+        if (assocProp != null)
+            isAssoc = true;
 
         final boolean subTreesCouldBeRepl = replAsserts != null;
 

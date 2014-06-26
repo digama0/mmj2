@@ -6,6 +6,7 @@ import mmj.lang.*;
 import mmj.pa.ProofStepStmt;
 
 public class ReplaceInfo extends DBInfo {
+    /** The information about equivalence rules */
     private EquivalenceInfo eqInfo;
 
     /** The list of statements with possible variable replace */
