@@ -6,11 +6,7 @@ import mmj.lang.*;
 import mmj.pa.ProofStepStmt;
 
 /** This class could be used for equivalence transformations */
-public class EquivalenceInfo {
-    private boolean dbg;
-
-    /** This field is true if this object was initialized */
-    private boolean isInit = false;
+public class EquivalenceInfo extends DBInfo {
 
     /** The map from type to corresponding equivalence operators */
     private Map<Cnst, Stmt> eqMap;
@@ -25,8 +21,6 @@ public class EquivalenceInfo {
      */
     private Map<Stmt, Assrt> eqTransitivies;
 
-    private TrOutput output;
-
     public EquivalenceInfo() {}
 
     // ------------------------------------------------------------------------
@@ -36,9 +30,7 @@ public class EquivalenceInfo {
     public void initMe(final List<Assrt> assrtList, final TrOutput output,
         final boolean dbg)
     {
-        this.output = output;
-        this.dbg = dbg;
-        isInit = true;
+        super.initMe(output, dbg);
 
         eqCommutatives = new HashMap<Stmt, Assrt>();
         for (final Assrt assrt : assrtList)
@@ -210,7 +202,7 @@ public class EquivalenceInfo {
     // ------------------------------------------------------------------------
 
     /**
-     * Creates equivalence node (like a = b )
+     * Creates equivalence node (e.g. a = b )
      * 
      * @param left the left node
      * @param right the right node
@@ -227,11 +219,11 @@ public class EquivalenceInfo {
     }
 
     /**
-     * Creates reverse step for another equivalence step (like b = a for a = b)
+     * Creates reverse step for another equivalence step (e.g. b = a for a = b)
      * 
      * @param info the work sheet info
-     * @param source the source (like a = b)
-     * @return the equivalence node
+     * @param source the source (e.g. a = b)
+     * @return the reverse step
      */
     public ProofStepStmt createReverse(final WorksheetInfo info,
         final ProofStepStmt source)
@@ -257,9 +249,9 @@ public class EquivalenceInfo {
      * example of equivalence operator).
      * 
      * @param info the work sheet info
-     * @param first the first statement ( a = b )
-     * @param second the second statement ( b = c )
-     * @return the result statement ( a = c )
+     * @param first the first statement (e.g. a = b )
+     * @param second the second statement (e.g. b = c )
+     * @return the result statement (e.g. a = c )
      */
     public ProofStepStmt getTransitiveStep(final WorksheetInfo info,
         final ProofStepStmt first, final ProofStepStmt second)
@@ -287,10 +279,6 @@ public class EquivalenceInfo {
 
     public boolean isEquivalence(final Stmt stmt) {
         return eqCommutatives.containsKey(stmt);
-    }
-
-    public boolean isInit() {
-        return isInit;
     }
 
     public Stmt getEqStmt(final Cnst type) {

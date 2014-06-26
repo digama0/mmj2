@@ -17,16 +17,12 @@ public class DataBaseInfo {
     /** It is necessary for formula construction */
     VerifyProofs verifyProofs;
 
+    /** The information about equivalence rules */
     protected EquivalenceInfo eqInfo = new EquivalenceInfo();
 
-    /**
-     * The map from type to equivalence implication rule: A & A <-> B => B.
-     * set.mm has only one element: (wff, <->)
-     */
-    private Map<Cnst, Assrt> eqImplications;
+    protected ImplicationInfo implInfo = new ImplicationInfo();
 
-    /** The list of implication operators : A & A -> B => B. */
-    protected Map<Stmt, Assrt> implOp;
+    protected ReplaceInfo replInfo = new ReplaceInfo();
 
     /**
      * The list of closure lows: A e. CC & B e. CC => (A + B) e. CC
@@ -37,9 +33,6 @@ public class DataBaseInfo {
      * for example ).
      */
     protected Map<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt>>> closureRuleMap;
-
-    /** The list of statements with possible variable replace */
-    protected Map<Stmt, Assrt[]> replaceOp;
 
     /** The list of commutative operators */
     protected Map<Stmt, Assrt> comOp;
@@ -55,98 +48,6 @@ public class DataBaseInfo {
 
     /** The symbol like |- in set.mm */
     protected Cnst provableLogicStmtTyp;
-
-    protected class ConstSubst {
-        /** This array contains null elements. */
-        public final ParseNode[] constMap;
-        public final int hash;
-
-        public ConstSubst(final ParseNode[] constMap) {
-            this.constMap = constMap;
-            hash = calcHashCode();
-        }
-
-        public boolean isEmpty() {
-            for (final ParseNode node : constMap)
-                if (node != null)
-                    return false;
-            return true;
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            if (!(obj instanceof ConstSubst))
-                return false;
-            final ConstSubst that = (ConstSubst)obj;
-
-            assert constMap.length == that.constMap.length;
-            for (int i = 0; i < constMap.length; i++)
-                if (constMap[i] != that.constMap[i]) {
-                    if (constMap[i] == null || that.constMap[i] == null)
-                        return false;
-                    if (!constMap[i].isDeepDup(that.constMap[i]))
-                        return false;
-                }
-            return true;
-        }
-
-        protected int calcHashCode() {
-            int hash = 0;
-            for (final ParseNode node : constMap)
-                if (node != null)
-                    hash ^= node.deepHashCode();
-            return hash;
-        }
-
-        @Override
-        public int hashCode() {
-            return hash;
-        }
-    }
-
-    /** The place in the template which could be replaced */
-    protected static ParseNode templateReplace = new ParseNode();
-
-    /** The template for some property. Usually it has form "var e. set" */
-    protected class PropertyTemplate {
-        /** template could be null */
-        protected final ParseNode template;
-
-        public PropertyTemplate(final ParseNode template) {
-            this.template = template;
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            if (!(obj instanceof PropertyTemplate))
-                return false;
-            final PropertyTemplate that = (PropertyTemplate)obj;
-            if (template == that.template)
-                return true;
-
-            if (template == null || that.template == null)
-                return false;
-
-            return template.isDeepDup(that.template);
-        }
-
-        @Override
-        public int hashCode() {
-            if (template != null)
-                return template.deepHashCode();
-            else
-                return 0;
-        }
-
-        public boolean isEmpty() {
-            return template == null;
-        }
-
-        public ParseNode subst(final ParseNode substNode) {
-            return template.deepCloneWNodeSub(templateReplace,
-                substNode.deepClone());
-        }
-    }
 
     /** Empty default constructor */
     public DataBaseInfo() {}
@@ -164,14 +65,9 @@ public class DataBaseInfo {
 
         eqInfo.initMe(assrtList, output, dbg);
 
-        implOp = new HashMap<Stmt, Assrt>();
-        eqImplications = new HashMap<Cnst, Assrt>();
-        for (final Assrt assrt : assrtList)
-            findImplicationRules(assrt);
+        implInfo.initMe(eqInfo, assrtList, output, dbg);
 
-        replaceOp = new HashMap<Stmt, Assrt[]>();
-        for (final Assrt assrt : assrtList)
-            findReplaceRules(assrt);
+        replInfo.initMe(eqInfo, assrtList, output, dbg);
 
         closureRuleMap = new HashMap<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt>>>();
         for (final Assrt assrt : assrtList)
@@ -184,178 +80,6 @@ public class DataBaseInfo {
         assocOp = new HashMap<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt[]>>>();
         for (final Assrt assrt : assrtList)
             findAssociativeRules(assrt);
-    }
-
-    /**
-     * Filters implication rules, like A & A -> B => B. Some of implications
-     * could be equivalence operators (<-> in set.mm).
-     * 
-     * @param assrt the candidate
-     */
-    protected void findImplicationRules(final Assrt assrt) {
-        // TODO: adds the support of assrts like addcomi
-        final ParseTree assrtTree = assrt.getExprParseTree();
-
-        final LogHyp[] logHyps = assrt.getLogHypArray();
-        if (logHyps.length != 2)
-            return;
-
-        if (assrtTree.getMaxDepth() != 1)
-            return;
-
-        final ParseNode resNode = assrtTree.getRoot();
-
-        if (!TrUtil.isVarNode(resNode))
-            return;
-
-        final ParseNode log0Root = logHyps[0].getExprParseTree().getRoot();
-        final ParseNode log1Root = logHyps[1].getExprParseTree().getRoot();
-
-        ParseNode preHyp;
-        ParseNode implHyp;
-        if (TrUtil.isVarNode(log0Root)) {
-            preHyp = log0Root;
-            implHyp = log1Root;
-        }
-        else if (TrUtil.isVarNode(log1Root)) {
-            preHyp = log1Root;
-            implHyp = log0Root;
-        }
-        else
-            return;
-
-        if (implHyp.getChild().length != 2)
-            return;
-
-        // TODO: the order could be different!
-
-        if (implHyp.getChild()[0].getStmt() != preHyp.getStmt())
-            return;
-
-        if (implHyp.getChild()[1].getStmt() != resNode.getStmt())
-            return;
-
-        final Stmt stmt = implHyp.getStmt();
-
-        if (implOp.containsKey(stmt))
-            return;
-
-        output.dbgMessage(dbg, "I-DBG implication assrt: %s: %s", assrt,
-            assrt.getFormula());
-        implOp.put(stmt, assrt);
-
-        if (!eqInfo.isEquivalence(stmt))
-            return;
-
-        final Cnst type = resNode.getStmt().getTyp();
-
-        if (eqImplications.containsKey(type))
-            return;
-
-        output.dbgMessage(dbg, "I-DBG implication equal assrt: %s: %s", type,
-            assrt);
-
-        eqImplications.put(type, assrt);
-    }
-
-    /**
-     * Filters replace rules, like A = B => g(A) = g(B)
-     * 
-     * @param assrt the candidate
-     */
-    protected void findReplaceRules(final Assrt assrt) {
-        assrt.getMandVarHypArray();
-        final LogHyp[] logHyps = assrt.getLogHypArray();
-        final ParseTree assrtTree = assrt.getExprParseTree();
-
-        if (logHyps.length != 1)
-            return;
-
-        // Maybe depth restriction could be weaken
-        if (assrtTree.getMaxDepth() != 3)
-            return;
-
-        if (eqInfo.getEqCommutative(assrtTree.getRoot().getStmt()) == null)
-            return;
-
-        final LogHyp testHyp = logHyps[0];
-
-        final ParseTree hypTree = testHyp.getExprParseTree();
-
-        if (eqInfo.getEqCommutative(hypTree.getRoot().getStmt()) == null)
-            return;
-
-        final ParseNode[] hypSubTrees = hypTree.getRoot().getChild();
-
-        assert hypSubTrees.length == 2 : "It should be the equivalence rule!";
-
-        if (!TrUtil.isVarNode(hypSubTrees[0])
-            || !TrUtil.isVarNode(hypSubTrees[1]))
-            return;
-
-        final ParseNode[] subTrees = assrtTree.getRoot().getChild();
-
-        assert subTrees.length == 2 : "It should be the equivalence rule!";
-
-        if (subTrees[0].getStmt() != subTrees[1].getStmt())
-            return;
-
-        final Stmt stmt = subTrees[0].getStmt();
-
-        final ParseNode[] leftChild = subTrees[0].getChild();
-        final ParseNode[] rightChild = subTrees[1].getChild();
-
-        // Fast compare, change if the depth of this assrt statement tree
-        // could be more then 3
-        int replPos = -1;
-        replaceCheck: for (int i = 0; i < leftChild.length; i++)
-            if (leftChild[i].getStmt() != rightChild[i].getStmt()) {
-                // Another place for replace? It is strange!
-                if (replPos != -1)
-                    return;
-
-                // We found the replace
-                replPos = i;
-
-                // Check that it is actually the swap of two variables
-                for (int k = 0; k < 2; k++) {
-                    final int m = (k + 1) % 2; // the other index
-                    if (leftChild[i].getStmt() == hypSubTrees[k].getStmt()
-                        && rightChild[i].getStmt() == hypSubTrees[m].getStmt())
-                        continue replaceCheck;
-                }
-
-                return;
-            }
-
-        Assrt[] repl = replaceOp.get(stmt);
-
-        if (repl == null) {
-            repl = new Assrt[subTrees[0].getChild().length];
-            replaceOp.put(stmt, repl);
-        }
-
-        // it is the first such assrt;
-        if (repl[replPos] != null)
-            return;
-
-        repl[replPos] = assrt;
-
-        output.dbgMessage(dbg, "I-DBG Replace assrts: %s: %s", assrt,
-            assrt.getFormula());
-    }
-
-    protected boolean isFullReplaceStatement(final Stmt stmt) {
-        final Assrt[] replAssrts = replaceOp.get(stmt);
-
-        if (replAssrts == null)
-            return false;
-
-        for (final Assrt assrt : replAssrts)
-            if (assrt == null)
-                return false;
-
-        return true;
     }
 
     /**
@@ -419,7 +143,7 @@ public class DataBaseInfo {
     protected static ParseNode getCorrespondingNodeRec(
         final ParseNode template, final ParseNode input)
     {
-        if (template == templateReplace)
+        if (template == PropertyTemplate.templateReplace)
             return input;
         if (template.getStmt() != input.getStmt())
             return null;
@@ -461,7 +185,8 @@ public class DataBaseInfo {
         int res = 0;
         for (int i = 0; i < children.length; i++)
             if (children[i].getStmt() == var) {
-                children[i] = templateReplace; // indicate entry point
+                children[i] = PropertyTemplate.templateReplace; // indicate
+                                                                // entry point
                 res++;
             }
             else
@@ -781,7 +506,7 @@ public class DataBaseInfo {
                 .getChild()[k].getStmt())
                 continue;
 
-            if (!isFullReplaceStatement(stmt)) {
+            if (!replInfo.isFullReplaceStatement(stmt)) {
                 output.dbgMessage(dbg, "I-DBG found commutative assrts "
                     + "but it has problems with replace: %s: %s", assrt,
                     assrt.getFormula());
@@ -840,10 +565,4 @@ public class DataBaseInfo {
     public boolean isInit() {
         return isInit;
     }
-
-    public Assrt getEqImplication(final Cnst type) {
-        return eqImplications.get(type);
-    }
-    // protected Map<Stmt, Assrt> eqTransitivies;
-
 }

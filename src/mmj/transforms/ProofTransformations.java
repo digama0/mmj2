@@ -33,15 +33,6 @@ public class ProofTransformations extends DataBaseInfo {
     private final boolean dbg = true;
 
     /**
-     * Now this class has only one implementation. But later it could be
-     * extended!
-     */
-    /*
-    static interface PreviousInfo {
-        public ProofStepStmt getProofStepStmt(final ParseNode stepNode);
-    }*/
-
-    /**
      * The transformation of {@link Transformation#originalNode} to any equal
      * node.
      */
@@ -158,7 +149,8 @@ public class ProofTransformations extends DataBaseInfo {
             // the current transformation result
             ParseNode resNode = originalNode;
 
-            final Assrt[] replAsserts = replaceOp.get(originalNode.getStmt());
+            final Assrt[] replAsserts = replInfo.getReplaceAsserts(originalNode
+                .getStmt());
 
             for (int i = 0; i < originalNode.getChild().length; i++) {
                 if (replAsserts[i] == null)
@@ -202,8 +194,8 @@ public class ProofTransformations extends DataBaseInfo {
 
                 // Create statement d:childTrStmt:replAssert
                 // |- g(A', B, C) = g(A', B', C)
-                final ProofStepStmt stepTr = createReplaceStep(info, resNode,
-                    i, trgt.originalNode.getChild()[i], childTrStmt);
+                final ProofStepStmt stepTr = replInfo.createReplaceStep(info,
+                    resNode, i, trgt.originalNode.getChild()[i], childTrStmt);
                 resNode = stepTr.formulaParseTree.getRoot().getChild()[1];
 
                 // resStmt now have the form g(A, B, C) = g(A', B, C)
@@ -227,7 +219,8 @@ public class ProofTransformations extends DataBaseInfo {
 
         @Override
         public ParseNode getCanonicalNode(final WorksheetInfo info) {
-            final Assrt[] replAsserts = replaceOp.get(originalNode.getStmt());
+            final Assrt[] replAsserts = replInfo.getReplaceAsserts(originalNode
+                .getStmt());
             final ParseNode resNode = originalNode.cloneWithoutChildren();
 
             for (int i = 0; i < resNode.getChild().length; i++) {
@@ -453,8 +446,8 @@ public class ProofTransformations extends DataBaseInfo {
                     final ParseNode prevGNode = gNode;
                     gNode = createAssocBinaryNode(from, assocProp, eNode, fNode);
 
-                    final ProofStepStmt replTr = createReplaceStep(info,
-                        prevGNode, from, eNode, assocTr);
+                    final ProofStepStmt replTr = replInfo.createReplaceStep(
+                        info, prevGNode, from, eNode, assocTr);
 
                     resStmt = eqInfo.getTransitiveStep(info, resStmt, replTr);
                 }
@@ -504,30 +497,6 @@ public class ProofTransformations extends DataBaseInfo {
         public String toString() {
             return super.toString() + "\n" + structure;
         }
-    }
-
-    private ProofStepStmt createReplaceStep(final WorksheetInfo info,
-        final ParseNode prevVersion, final int i, final ParseNode newSubTree,
-        final ProofStepStmt childTrStmt)
-    {
-        final Assrt[] replAsserts = replaceOp.get(prevVersion.getStmt());
-        final Stmt equalStmt = replAsserts[i].getExprParseTree().getRoot()
-            .getStmt();
-        final ParseNode resNode = prevVersion.cloneWithoutChildren();
-
-        // Fill the next child
-        // So the new node has form g(A', B', C)
-        resNode.getChild()[i] = newSubTree;
-
-        // Create node g(A', B, C) = g(A', B', C)
-        final ParseNode stepNode = TrUtil.createBinaryNode(equalStmt,
-            prevVersion, resNode);
-
-        // Create statement d:childTrStmt:replAssert
-        // |- g(A', B, C) = g(A', B', C)
-        final ProofStepStmt stepTr = info.getOrCreateProofStepStmt(stepNode,
-            new ProofStepStmt[]{childTrStmt}, replAsserts[i]);
-        return stepTr;
     }
 
     private ProofStepStmt closureProperty(final WorksheetInfo info,
@@ -808,7 +777,7 @@ public class ProofTransformations extends DataBaseInfo {
     {
         final Stmt stmt = originalNode.getStmt();
 
-        final Assrt[] replAsserts = replaceOp.get(stmt);
+        final Assrt[] replAsserts = replInfo.getReplaceAsserts(stmt);
 
         final Map<ConstSubst, Map<PropertyTemplate, Assrt[]>> constSubstMap = assocOp
             .get(stmt);
@@ -941,7 +910,7 @@ public class ProofTransformations extends DataBaseInfo {
 
         final Cnst derivType = info.derivStep.formulaParseTree.getRoot()
             .getStmt().getTyp();
-        final Assrt implAssrt = getEqImplication(derivType);
+        final Assrt implAssrt = implInfo.getEqImplication(derivType);
         if (implAssrt == null)
             return null;
 
