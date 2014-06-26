@@ -86,6 +86,82 @@ public class ClosureInfo extends DBInfo {
         return res;
     }
 
+    private static ParseNode createTemplateNodeFromFirstHyp(final Assrt assrt) {
+        final VarHyp[] varHypArray = assrt.getMandVarHypArray();
+
+        final LogHyp[] logHyps = assrt.getLogHypArray();
+        if (logHyps.length == 0)
+            return null;
+
+        if (logHyps.length != varHypArray.length)
+            return null;
+
+        final VarHyp[] vars0 = logHyps[0].getMandVarHypArray();
+        if (vars0.length != 1)
+            return null;
+
+        final VarHyp var = vars0[0];
+
+        // do not consider rules like |- ph & |- ps => |- ( ph <-> ps )
+        if (logHyps[0].getExprParseTree().getRoot().getStmt() == var)
+            return null;
+
+        // Here we need deep clone because next we will modify result
+        final ParseNode templNode = logHyps[0].getExprParseTree().getRoot()
+            .deepClone();
+        final int varNumEntrance = prepareTemplate(templNode, var);
+        if (varNumEntrance != 1)
+            return null;
+
+        return templNode;
+    }
+
+    // The returned template could be empty!
+    private static PropertyTemplate createTemplateFromHyp(final Assrt assrt,
+        final VarHyp[] hypToVarHypMap)
+    {
+
+        final ParseNode templNode = createTemplateNodeFromFirstHyp(assrt);
+        if (templNode == null)
+            return null;
+
+        final LogHyp[] logHyps = assrt.getLogHypArray();
+
+        for (int i = 1; i < logHyps.length; i++) {
+            final VarHyp vari = hypToVarHypMap[i];
+            final ParseNode res = getCorrespondingNode(templNode, logHyps[i]
+                .getExprParseTree().getRoot());
+            if (res == null)
+                return null;
+            if (res.getStmt() != vari)
+                return null;
+        }
+
+        final PropertyTemplate template = new PropertyTemplate(templNode);
+        return template;
+    }
+
+    // Could return empty array with length 0
+    private static VarHyp[] getHypToVarMap(final Assrt assrt) {
+        final VarHyp[] varHypArray = assrt.getMandVarHypArray();
+        final LogHyp[] logHyps = assrt.getLogHypArray();
+
+        final VarHyp[] hypToVarHypMap = new VarHyp[logHyps.length];
+        if (logHyps.length != varHypArray.length)
+            return null;
+
+        for (int i = 0; i < logHyps.length; i++) {
+            final VarHyp[] varsi = logHyps[i].getMandVarHypArray();
+            if (varsi.length != 1)
+                return null;
+            final VarHyp vari = varsi[0];
+
+            hypToVarHypMap[i] = vari;
+        }
+
+        return hypToVarHypMap;
+    }
+
     /**
      * Filters transitive properties to result rules:
      * <p>
@@ -112,36 +188,20 @@ public class ClosureInfo extends DBInfo {
         if (logHyps.length != varHypArray.length)
             return;
 
-        final VarHyp[] vars0 = logHyps[0].getMandVarHypArray();
-        if (vars0.length != 1)
+        final VarHyp[] hypToVarHypMap = getHypToVarMap(assrt);
+        if (hypToVarHypMap == null)
             return;
-
-        final VarHyp[] hypToVarHypMap = new VarHyp[logHyps.length];
-        hypToVarHypMap[0] = vars0[0];
-
-        // Here we need deep clone because next we will modify result
-        final ParseNode template = createTemplateNodeFromHyp(assrt);
-        if (template == null)
-            return;
-
-        for (int i = 1; i < logHyps.length; i++) {
-            final VarHyp[] varsi = logHyps[i].getMandVarHypArray();
-            if (varsi.length != 1)
-                return;
-            final VarHyp vari = varsi[0];
-
-            hypToVarHypMap[i] = vari;
-            final ParseNode res = getCorrespondingNode(template, logHyps[i]
-                .getExprParseTree().getRoot());
-            if (res == null)
-                return;
-            if (res.getStmt() != vari)
-                return;
-        }
+        assert hypToVarHypMap.length != 0;
 
         final ParseNode root = assrtTree.getRoot();
 
-        final ParseNode res = getCorrespondingNode(template, root);
+        final PropertyTemplate template = createTemplateFromHyp(assrt,
+            hypToVarHypMap);
+
+        if (template == null)
+            return;
+
+        final ParseNode res = getCorrespondingNode(template.templNode, root);
         if (res == null)
             return;
 
@@ -223,12 +283,10 @@ public class ClosureInfo extends DBInfo {
             assrtMap.put(constSubst, templateSet);
         }
 
-        final PropertyTemplate tn = new PropertyTemplate(template);
-
-        if (templateSet.containsKey(tn))
+        if (templateSet.containsKey(template))
             return; // some duplicate
 
-        templateSet.put(tn, assrt);
+        templateSet.put(template, assrt);
 
         output.dbgMessage(dbg,
             "I-DBG transitive to result properties(%b): %s: %s => %s",
@@ -239,35 +297,15 @@ public class ClosureInfo extends DBInfo {
     // ----------------------------Detection-----------------------------------
     // ------------------------------------------------------------------------
 
-    public static ParseNode createTemplateNodeFromHyp(final Assrt assrt) {
-        final VarHyp[] varHypArray = assrt.getMandVarHypArray();
-
+    public static PropertyTemplate createTemplateFromHyp(final Assrt assrt) {
         final LogHyp[] logHyps = assrt.getLogHypArray();
         if (logHyps.length == 0)
+            return new PropertyTemplate(null);
+
+        final VarHyp[] hypToVarHypMap = getHypToVarMap(assrt);
+        if (hypToVarHypMap == null)
             return null;
-
-        if (logHyps.length != varHypArray.length)
-            return null;
-
-        final VarHyp[] vars0 = logHyps[0].getMandVarHypArray();
-        if (vars0.length != 1)
-            return null;
-
-        final VarHyp[] hypToVarHypMap = new VarHyp[logHyps.length];
-        hypToVarHypMap[0] = vars0[0];
-
-        // do not consider rules like |- ph & |- ps => |- ( ph <-> ps )
-        if (logHyps[0].getExprParseTree().getRoot().getStmt() == vars0[0])
-            return null;
-
-        // Here we need deep clone because next we will modify result
-        final ParseNode template = logHyps[0].getExprParseTree().getRoot()
-            .deepClone();
-        final int varNumEntrance = prepareTemplate(template, vars0[0]);
-        if (varNumEntrance != 1)
-            return null;
-
-        return template;
+        return createTemplateFromHyp(assrt, hypToVarHypMap);
     }
 
     // ------------------------------------------------------------------------

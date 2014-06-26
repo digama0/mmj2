@@ -76,7 +76,7 @@ public class TransformationManager {
         assocInfo = new AssociativeInfo(eqInfo, clInfo, replInfo, assrtList,
             output, dbg);
 
-        comInfo = new CommutativeInfo(eqInfo, assrtList, output, dbg);
+        comInfo = new CommutativeInfo(eqInfo, clInfo, assrtList, output, dbg);
     }
 
     // ----------------------------

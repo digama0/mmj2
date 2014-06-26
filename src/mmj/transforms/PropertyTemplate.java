@@ -8,10 +8,10 @@ public class PropertyTemplate {
     public static final ParseNode templateReplace = new ParseNode();
 
     /** template could be null */
-    protected final ParseNode template;
+    protected final ParseNode templNode;
 
     public PropertyTemplate(final ParseNode template) {
-        this.template = template;
+        this.templNode = template;
     }
 
     @Override
@@ -19,29 +19,29 @@ public class PropertyTemplate {
         if (!(obj instanceof PropertyTemplate))
             return false;
         final PropertyTemplate that = (PropertyTemplate)obj;
-        if (template == that.template)
+        if (templNode == that.templNode)
             return true;
 
-        if (template == null || that.template == null)
+        if (templNode == null || that.templNode == null)
             return false;
 
-        return template.isDeepDup(that.template);
+        return templNode.isDeepDup(that.templNode);
     }
 
     @Override
     public int hashCode() {
-        if (template != null)
-            return template.deepHashCode();
+        if (templNode != null)
+            return templNode.deepHashCode();
         else
             return 0;
     }
 
     public boolean isEmpty() {
-        return template == null;
+        return templNode == null;
     }
 
     public ParseNode subst(final ParseNode substNode) {
-        return template.deepCloneWNodeSub(PropertyTemplate.templateReplace,
+        return templNode.deepCloneWNodeSub(PropertyTemplate.templateReplace,
             substNode.deepClone());
     }
 }

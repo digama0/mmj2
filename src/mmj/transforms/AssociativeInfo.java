@@ -60,26 +60,18 @@ public class AssociativeInfo extends DBInfo {
      * @param assrt the candidate
      */
     protected void findAssociativeRules(final Assrt assrt) {
+        // Debug statements: coass, addassi
         final VarHyp[] varHypArray = assrt.getMandVarHypArray();
         final ParseTree assrtTree = assrt.getExprParseTree();
 
-        // if (assrt.getLabel().equals("addassi"))
-        // assrt.toString();
+        final PropertyTemplate template = ClosureInfo
+            .createTemplateFromHyp(assrt);
 
-        final LogHyp[] logHyps = assrt.getLogHypArray();
-
-        ParseNode templNode = null;
-        if (logHyps.length != 0) {
-            templNode = ClosureInfo.createTemplateNodeFromHyp(assrt);
-            if (templNode == null)
-                return;
-        }
+        if (template == null)
+            return;
 
         if (varHypArray.length != 3)
             return;
-
-        // if (assrtTree.getMaxDepth() != 4)
-        // return;
 
         if (!eqInfo.isEquivalence(assrtTree.getRoot().getStmt()))
             return;
@@ -94,33 +86,23 @@ public class AssociativeInfo extends DBInfo {
 
         final Stmt stmt = subTrees[0].getStmt();
 
-        final ParseNode[] leftChildren = subTrees[0].getChild();
-        final ParseNode[] rightChildren = subTrees[1].getChild();
+        final ConstSubst constSubst = ConstSubst.createFromNode(subTrees[0]);
 
-        final int[] varPlace = new int[leftChildren.length];
-        for (int i = 0; i < varPlace.length; i++)
-            varPlace[i] = -1;
-        int curVarNum = 0;
-        final ParseNode[] constMap = new ParseNode[leftChildren.length];
-        for (int i = 0; i < leftChildren.length; i++)
-            if (TrUtil.isConstNode(leftChildren[i]))
-                constMap[i] = leftChildren[i];
-            else
-                varPlace[curVarNum++] = i;
+        final int[] varPlace = constSubst.getVarPlace();
 
         // the statement contains more that 2 variables
-        if (curVarNum != 2)
+        if (varPlace.length != 2)
             return;
-
-        final ConstSubst constSubst = new ConstSubst(constMap);
 
         if (!constSubst.isTheSameConstMap(subTrees[1]))
             return;
 
-        final PropertyTemplate template = new PropertyTemplate(templNode);
         if (!template.isEmpty())
             if (clInfo.getClosureAssert(stmt, constSubst, template) == null)
                 return;
+
+        final ParseNode[] leftChildren = subTrees[0].getChild();
+        final ParseNode[] rightChildren = subTrees[1].getChild();
 
         // we need to find one of the 2 patterns:
         // 0) f(f(a, b), c) = f(a, f(b, c))
@@ -160,12 +142,6 @@ public class AssociativeInfo extends DBInfo {
                     assrt.getFormula());
                 return;
             }
-
-            if (!constSubst.isEmpty())
-                output.dbgMessage(dbg,
-                    "I-DBG temporary associative assrts: %d. %s: %s", i, assrt,
-                    assrt.getFormula());
-            // return;
 
             Map<ConstSubst, Map<PropertyTemplate, Assrt[]>> constSubstMap = assocOp
                 .get(stmt);

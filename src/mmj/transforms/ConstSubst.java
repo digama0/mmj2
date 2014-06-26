@@ -12,6 +12,15 @@ public class ConstSubst {
         hash = calcHashCode();
     }
 
+    public static ConstSubst createFromNode(final ParseNode node) {
+        final ParseNode[] children = node.getChild();
+        final ParseNode[] constMap = new ParseNode[children.length];
+        for (int i = 0; i < children.length; i++)
+            if (TrUtil.isConstNode(children[i]))
+                constMap[i] = children[i];
+        return new ConstSubst(constMap);
+    }
+
     public boolean isEmpty() {
         for (final ParseNode node : constMap)
             if (node != null)
@@ -71,25 +80,19 @@ public class ConstSubst {
         }
         return true;
     }
-    /*
-    public static boolean isTheSameConstMap(final ParseNode candidate,
-        final ParseNode[] constMap)
-    {
-        if (candidate.getChild().length != constMap.length)
-            return false;
 
-        for (int i = 0; i < constMap.length; i++) {
-            final ParseNode child = candidate.getChild()[i];
-            if (TrUtil.isConstNode(child)) {
-                if (constMap[i] == null)
-                    return false;
-                else if (!constMap[i].isDeepDup(child))
-                    return false;
-            }
-            else if (constMap[i] != null)
-                return false;
+    public int[] getVarPlace() {
+        int curVarNum = 0;
+        final int[] varPlace = new int[constMap.length];
+        for (int i = 0; i < varPlace.length; i++)
+            if (constMap[i] != null)
+                varPlace[i] = -1;
+            else
+                varPlace[curVarNum++] = i;
+        final int[] res = new int[curVarNum];
+        for (int i = 0; i < curVarNum; i++)
+            res[i] = varPlace[i];
 
-        }
-        return true;
-    }*/
+        return res;
+    }
 }
