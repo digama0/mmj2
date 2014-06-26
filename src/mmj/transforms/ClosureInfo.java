@@ -3,6 +3,7 @@ package mmj.transforms;
 import java.util.*;
 
 import mmj.lang.*;
+import mmj.pa.ProofStepStmt;
 
 public class ClosureInfo extends DBInfo {
     /**
@@ -14,6 +15,10 @@ public class ClosureInfo extends DBInfo {
      * for example ).
      */
     private final Map<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt>>> closureRuleMap;
+
+    // ------------------------------------------------------------------------
+    // ------------------------Initialization----------------------------------
+    // ------------------------------------------------------------------------
 
     public ClosureInfo(final List<Assrt> assrtList, final TrOutput output,
         final boolean dbg)
@@ -81,36 +86,6 @@ public class ClosureInfo extends DBInfo {
         return res;
     }
 
-    public static ParseNode createTemplateNodeFromHyp(final Assrt assrt) {
-        final VarHyp[] varHypArray = assrt.getMandVarHypArray();
-
-        final LogHyp[] logHyps = assrt.getLogHypArray();
-        if (logHyps.length == 0)
-            return null;
-
-        if (logHyps.length != varHypArray.length)
-            return null;
-
-        final VarHyp[] vars0 = logHyps[0].getMandVarHypArray();
-        if (vars0.length != 1)
-            return null;
-
-        final VarHyp[] hypToVarHypMap = new VarHyp[logHyps.length];
-        hypToVarHypMap[0] = vars0[0];
-
-        // do not consider rules like |- ph & |- ps => |- ( ph <-> ps )
-        if (logHyps[0].getExprParseTree().getRoot().getStmt() == vars0[0])
-            return null;
-
-        // Here we need deep clone because next we will modify result
-        final ParseNode template = logHyps[0].getExprParseTree().getRoot()
-            .deepClone();
-        final int varNumEntrance = prepareTemplate(template, vars0[0]);
-        if (varNumEntrance != 1)
-            return null;
-
-        return template;
-    }
     /**
      * Filters transitive properties to result rules:
      * <p>
@@ -259,6 +234,76 @@ public class ClosureInfo extends DBInfo {
             "I-DBG transitive to result properties(%b): %s: %s => %s",
             incorrectOrder, assrt, hypString, assrt.getFormula());
     }
+
+    // ------------------------------------------------------------------------
+    // ----------------------------Detection-----------------------------------
+    // ------------------------------------------------------------------------
+
+    public static ParseNode createTemplateNodeFromHyp(final Assrt assrt) {
+        final VarHyp[] varHypArray = assrt.getMandVarHypArray();
+
+        final LogHyp[] logHyps = assrt.getLogHypArray();
+        if (logHyps.length == 0)
+            return null;
+
+        if (logHyps.length != varHypArray.length)
+            return null;
+
+        final VarHyp[] vars0 = logHyps[0].getMandVarHypArray();
+        if (vars0.length != 1)
+            return null;
+
+        final VarHyp[] hypToVarHypMap = new VarHyp[logHyps.length];
+        hypToVarHypMap[0] = vars0[0];
+
+        // do not consider rules like |- ph & |- ps => |- ( ph <-> ps )
+        if (logHyps[0].getExprParseTree().getRoot().getStmt() == vars0[0])
+            return null;
+
+        // Here we need deep clone because next we will modify result
+        final ParseNode template = logHyps[0].getExprParseTree().getRoot()
+            .deepClone();
+        final int varNumEntrance = prepareTemplate(template, vars0[0]);
+        if (varNumEntrance != 1)
+            return null;
+
+        return template;
+    }
+
+    // ------------------------------------------------------------------------
+    // ----------------------------Transformations-----------------------------
+    // ------------------------------------------------------------------------
+
+    public ProofStepStmt closureProperty(final WorksheetInfo info,
+        final GeneralizedStmt assocProp, final ParseNode node)
+    {
+        // PropertyTemplate template = assocProp.template;
+        final Assrt assrt = getClosureAssert(assocProp);
+
+        assert assrt != null;
+
+        final ParseNode stepNode = assocProp.template.subst(node);
+
+        ProofStepStmt res = info.getProofStepStmt(stepNode);
+        if (res != null)
+            return res;
+
+        assert assocProp.varIndexes.length == assrt.getLogHypArrayLength();
+        final ProofStepStmt[] hyps = new ProofStepStmt[assocProp.varIndexes.length];
+        for (final int n : assocProp.varIndexes) {
+            final ParseNode child = node.getChild()[n];
+
+            hyps[n] = closureProperty(info, assocProp, child);
+        }
+        res = info.getOrCreateProofStepStmt(stepNode, hyps, assrt);
+        res.toString();
+
+        return res;
+    }
+
+    // ------------------------------------------------------------------------
+    // ------------------------------Getters-----------------------------------
+    // ------------------------------------------------------------------------
 
     public Assrt getClosureAssert(final GeneralizedStmt genStmt) {
         return getClosureAssert(genStmt.stmt, genStmt.constSubst,

@@ -1,6 +1,6 @@
 package mmj.transforms;
 
-import mmj.lang.*;
+import mmj.lang.ParseNode;
 import mmj.pa.ProofStepStmt;
 
 /** Only associative transformations */
@@ -102,8 +102,8 @@ class AssociativeTransformation extends Transformation {
                         .createAssocBinaryNode(from, assocProp, dNode, fNode));
 
                 // transform to normal direction => 'from'
-                final ProofStepStmt assocTr = createAssociativeStep(info, from,
-                    prevNode, gNode);
+                final ProofStepStmt assocTr = assocInfo.createAssociativeStep(
+                    info, assocProp, from, prevNode, gNode);
 
                 resStmt = eqInfo.getTransitiveStep(info, resStmt, assocTr);
             }
@@ -148,8 +148,8 @@ class AssociativeTransformation extends Transformation {
                         cNode);
 
                 // transform to other direction => 'to'
-                final ProofStepStmt assocTr = createAssociativeStep(info, to,
-                    prevENode, eNode);
+                final ProofStepStmt assocTr = assocInfo.createAssociativeStep(
+                    info, assocProp, to, prevENode, eNode);
 
                 final ParseNode prevGNode = gNode;
                 gNode = TrUtil.createAssocBinaryNode(from, assocProp, eNode,
@@ -169,8 +169,8 @@ class AssociativeTransformation extends Transformation {
 
         final Transformation replaceMe = new ReplaceTransformation(trManager,
             gNode);
-        final Transformation replaceTarget = new ReplaceTransformation(trManager,
-            target.originalNode);
+        final Transformation replaceTarget = new ReplaceTransformation(
+            trManager, target.originalNode);
 
         final ProofStepStmt replTrStep = replaceMe.transformMeToTarget(
             replaceTarget, info);
@@ -189,7 +189,7 @@ class AssociativeTransformation extends Transformation {
             if (left == null)
                 return leaf;
             else
-                return TrUtil.createBinaryNode(assocProp, left, leaf);
+                return TrUtil.createGenBinaryNode(assocProp, left, leaf);
         }
 
         for (int i = 0; i < 2; i++)
@@ -201,110 +201,6 @@ class AssociativeTransformation extends Transformation {
     @Override
     public ParseNode getCanonicalNode(final WorksheetInfo info) {
         return constructCanonicalForm(null, originalNode, info);
-    }
-
-    private ProofStepStmt createAssociativeStep(final WorksheetInfo info,
-        final int from, final ParseNode prevNode, final ParseNode newNode)
-    {
-        final Assrt[] assocTr = assocInfo.getAssocOp(assocProp);
-        assert assocTr != null;
-
-        final boolean revert;
-        final Assrt assocAssrt;
-        final boolean firstForm;
-        final ParseNode left;
-        final ParseNode right;
-        if (assocTr[from] != null) {
-            assocAssrt = assocTr[from];
-            revert = false;
-            firstForm = true;
-            left = prevNode;
-            right = newNode;
-        }
-        else {
-            final int other = (from + 1) % 2;
-            assocAssrt = assocTr[other];
-            revert = true;
-            firstForm = false;
-            left = newNode;
-            right = prevNode;
-        }
-        assert assocAssrt != null;
-
-        final Stmt equalStmt = assocAssrt.getExprParseTree().getRoot()
-            .getStmt();
-
-        // Create node f(f(a, b), c) = f(a, f(b, c))
-        final ParseNode stepNode = TrUtil.createBinaryNode(equalStmt, left,
-            right);
-
-        ProofStepStmt res = closurePropertyAssociative(info, assocProp,
-            assocAssrt, firstForm, stepNode);
-
-        if (revert)
-            res = eqInfo.createReverse(info, res);
-
-        return res;
-    }
-    private ProofStepStmt closureProperty(final WorksheetInfo info,
-        final GeneralizedStmt assocProp, final ParseNode node)
-    {
-        // PropertyTemplate template = assocProp.template;
-        final Assrt assrt = clInfo.getClosureAssert(assocProp);
-
-        assert assrt != null;
-
-        final ParseNode stepNode = assocProp.template.subst(node);
-
-        ProofStepStmt res = info.getProofStepStmt(stepNode);
-        if (res != null)
-            return res;
-
-        assert assocProp.varIndexes.length == assrt.getLogHypArrayLength();
-        final ProofStepStmt[] hyps = new ProofStepStmt[assocProp.varIndexes.length];
-        for (final int n : assocProp.varIndexes) {
-            final ParseNode child = node.getChild()[n];
-
-            hyps[n] = closureProperty(info, assocProp, child);
-        }
-        res = info.getOrCreateProofStepStmt(stepNode, hyps, assrt);
-        res.toString();
-
-        return res;
-    }
-
-    // First form: f(f(a, b), c) = f(a, f(b, c))
-    // Second form: f(a, f(b, c)) = f(f(a, b), c)
-    private ProofStepStmt closurePropertyAssociative(final WorksheetInfo info,
-        final GeneralizedStmt assocProp, final Assrt assocAssrt,
-        final boolean firstForm, final ParseNode stepNode)
-    {
-        final ProofStepStmt[] hyps;
-        if (!assocProp.template.isEmpty()) {
-
-            hyps = new ProofStepStmt[3];
-            final int n0 = assocProp.varIndexes[0];
-            final int n1 = assocProp.varIndexes[1];
-            final ParseNode side;
-            if (firstForm)
-                side = stepNode.getChild()[0];
-            else
-                side = stepNode.getChild()[1];
-            final ParseNode[] in = new ParseNode[3];
-            in[0] = side.getChild()[n0].getChild()[n0];
-            in[1] = side.getChild()[n0].getChild()[n1];
-            in[2] = side.getChild()[n1];
-
-            for (int i = 0; i < 3; i++)
-                hyps[i] = closureProperty(info, assocProp, in[i]);
-        }
-        else
-            hyps = new ProofStepStmt[]{};
-
-        final ProofStepStmt res = info.getOrCreateProofStepStmt(stepNode, hyps,
-            assocAssrt);
-
-        return res;
     }
 
     @Override

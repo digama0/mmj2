@@ -6,6 +6,11 @@ import java.util.Map.Entry;
 import mmj.lang.*;
 import mmj.pa.ProofStepStmt;
 
+/**
+ * The information about associative operations.
+ * <p>
+ * Note: the current implementation contains some stub implementations!
+ */
 public class AssociativeInfo extends DBInfo {
     /** The information about equivalence rules */
     private final EquivalenceInfo eqInfo;
@@ -16,13 +21,25 @@ public class AssociativeInfo extends DBInfo {
     /** The information about replace rules */
     private final ReplaceInfo replInfo;
     /**
-     * The map: associative operators -> array of 2 elements:
+     * The list of associative operators: ( ( A + B ) + C ) = ( A + ( B + C ) )
+     * <p>
+     * It is a map: Statement ( ( A F B ) in the example) -> map : constant
+     * elements ( + in the example) -> map : possible properties ( _ e. CC in
+     * the example) -> assert array. There could be many properties (
+     * {" _ e. CC" , "_ e. RR" } for example ).
+     * <p>
+     * The result array has 2 elements:
      * <ul>
      * <li>f(f(a, b), c) = f(a, f(b, c))
      * <li>f(a, f(b, c)) = f(f(a, b), c)
      * </ul>
+     * Usually, one element is null.
      */
     protected Map<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt[]>>> assocOp;
+
+    // ------------------------------------------------------------------------
+    // ------------------------Initialization----------------------------------
+    // ------------------------------------------------------------------------
 
     public AssociativeInfo(final EquivalenceInfo eqInfo,
         final ClosureInfo clInfo, final ReplaceInfo replInfo,
@@ -154,14 +171,16 @@ public class AssociativeInfo extends DBInfo {
                 .get(stmt);
 
             if (constSubstMap == null) {
-                constSubstMap = new HashMap<ConstSubst, Map<PropertyTemplate, Assrt[]>>();
+                // TODO: linked hash map stub!
+                constSubstMap = new LinkedHashMap<ConstSubst, Map<PropertyTemplate, Assrt[]>>();
                 assocOp.put(stmt, constSubstMap);
             }
 
             Map<PropertyTemplate, Assrt[]> propertyMap = constSubstMap
                 .get(constSubst);
             if (propertyMap == null) {
-                propertyMap = new HashMap<PropertyTemplate, Assrt[]>();
+                // TODO: linked hash map stub!
+                propertyMap = new LinkedHashMap<PropertyTemplate, Assrt[]>();
                 constSubstMap.put(constSubst, propertyMap);
             }
 
@@ -171,14 +190,6 @@ public class AssociativeInfo extends DBInfo {
                 assoc = new Assrt[2];
                 propertyMap.put(template, assoc);
             }
-            /*
-            Assrt[] assoc = assocOp.get(stmt);
-
-            if (assoc == null) {
-                assoc = new Assrt[2];
-                assocOp.put(stmt, assoc);
-            }
-            */
 
             if (assoc[i] != null)
                 continue;
@@ -190,34 +201,38 @@ public class AssociativeInfo extends DBInfo {
         }
     }
 
-    public static boolean isAssociativeWithProp(final ParseNode originalNode,
+    // ------------------------------------------------------------------------
+    // ----------------------------Detection-----------------------------------
+    // ------------------------------------------------------------------------
+
+    public static boolean isAssociativeWithProp(final ParseNode node,
         final GeneralizedStmt assocProp, final WorksheetInfo info)
     {
-        if (assocProp.stmt != originalNode.getStmt())
+        if (assocProp.stmt != node.getStmt())
             return false;
-        return isAssociativeWithProp(originalNode, assocProp.template,
+        return isAssociativeWithProp(node, assocProp.template,
             assocProp.constSubst, info);
     }
 
-    private static boolean isAssociativeWithProp(final ParseNode originalNode,
+    private static boolean isAssociativeWithProp(final ParseNode node,
         final PropertyTemplate template, final ConstSubst constSubst,
         final WorksheetInfo info)
     {
-        if (originalNode.getChild().length != constSubst.constMap.length)
-            assert originalNode.getChild().length == constSubst.constMap.length;
+        if (node.getChild().length != constSubst.constMap.length)
+            assert node.getChild().length == constSubst.constMap.length;
 
         if (template.isEmpty())
             return true;
 
         int varNum = 0;
         for (int i = 0; i < constSubst.constMap.length; i++) {
-            final ParseNode child = originalNode.getChild()[i];
+            final ParseNode child = node.getChild()[i];
             if (constSubst.constMap[i] == null) { // variable here
                 varNum++;
                 final ParseNode substProp = template.subst(child);
                 final ProofStepStmt stmt = info.getProofStepStmt(substProp);
                 if (stmt == null)
-                    if (child.getStmt() != originalNode.getStmt()
+                    if (child.getStmt() != node.getStmt()
                         || !isAssociativeWithProp(child, template, constSubst,
                             info))
                         return false;
@@ -230,6 +245,14 @@ public class AssociativeInfo extends DBInfo {
         return true;
     }
 
+    /**
+     * This function searches generalized statement for node which is considered
+     * to be the root of some associative actions
+     * 
+     * @param node the input node
+     * @param info the work sheet info
+     * @return the found generalized statement or null
+     */
     public GeneralizedStmt getGenStmtForAssocNode(final ParseNode node,
         final WorksheetInfo info)
     {
@@ -244,6 +267,7 @@ public class AssociativeInfo extends DBInfo {
 
         final int[] varIndexes = new int[2];
 
+        // TODO: here we use trivial search stub!
         for (final Entry<ConstSubst, Map<PropertyTemplate, Assrt[]>> elem : constSubstMap
             .entrySet())
         {
@@ -270,6 +294,7 @@ public class AssociativeInfo extends DBInfo {
 
             final Map<PropertyTemplate, Assrt[]> propertyMap = elem.getValue();
 
+            // TODO: here we use trivial search stub!
             for (final Entry<PropertyTemplate, Assrt[]> propElem : propertyMap
                 .entrySet())
             {
@@ -284,6 +309,104 @@ public class AssociativeInfo extends DBInfo {
 
         return null;
     }
+    // ------------------------------------------------------------------------
+    // ----------------------------Transformations-----------------------------
+    // ------------------------------------------------------------------------
+
+    /**
+     * Creates f(f(a, b), c) = f(a, f(b, c)) or f(a, f(b, c)) = f(f(a, b), c)
+     * statement.
+     * 
+     * @param info the work sheet info
+     * @param assocProp the generalized associative statement
+     * @param from 0 if we should use f(f(a, b), c) = f(a, f(b, c)) form and 1
+     *            if we should use f(a, f(b, c)) = f(f(a, b), c)
+     * @param firstNode the first node (f(f(a, b), c) or f(a, f(b, c)))
+     * @param secondNode the second node (f(a, f(b, c)) or f(f(a, b), c))
+     * @return the created step
+     */
+    public ProofStepStmt createAssociativeStep(final WorksheetInfo info,
+        final GeneralizedStmt assocProp, final int from,
+        final ParseNode firstNode, final ParseNode secondNode)
+    {
+        final Assrt[] assocTr = getAssocOp(assocProp);
+        assert assocTr != null;
+
+        final boolean revert;
+        final Assrt assocAssrt;
+        final boolean firstForm;
+        final ParseNode left;
+        final ParseNode right;
+        if (assocTr[from] != null) {
+            assocAssrt = assocTr[from];
+            revert = false;
+            firstForm = true;
+            left = firstNode;
+            right = secondNode;
+        }
+        else {
+            final int other = (from + 1) % 2;
+            assocAssrt = assocTr[other];
+            revert = true;
+            firstForm = false;
+            left = secondNode;
+            right = firstNode;
+        }
+        assert assocAssrt != null;
+
+        final Stmt equalStmt = assocAssrt.getExprParseTree().getRoot()
+            .getStmt();
+
+        // Create node f(f(a, b), c) = f(a, f(b, c))
+        final ParseNode stepNode = TrUtil.createBinaryNode(equalStmt, left,
+            right);
+
+        ProofStepStmt res = closurePropertyAssociative(info, assocProp,
+            assocAssrt, firstForm, stepNode);
+
+        if (revert)
+            res = eqInfo.createReverse(info, res);
+
+        return res;
+    }
+
+    // First form: f(f(a, b), c) = f(a, f(b, c))
+    // Second form: f(a, f(b, c)) = f(f(a, b), c)
+    private ProofStepStmt closurePropertyAssociative(final WorksheetInfo info,
+        final GeneralizedStmt assocProp, final Assrt assocAssrt,
+        final boolean firstForm, final ParseNode stepNode)
+    {
+        final ProofStepStmt[] hyps;
+        if (!assocProp.template.isEmpty()) {
+
+            hyps = new ProofStepStmt[3];
+            final int n0 = assocProp.varIndexes[0];
+            final int n1 = assocProp.varIndexes[1];
+            final ParseNode side;
+            if (firstForm)
+                side = stepNode.getChild()[0];
+            else
+                side = stepNode.getChild()[1];
+            final ParseNode[] in = new ParseNode[3];
+            in[0] = side.getChild()[n0].getChild()[n0];
+            in[1] = side.getChild()[n0].getChild()[n1];
+            in[2] = side.getChild()[n1];
+
+            for (int i = 0; i < 3; i++)
+                hyps[i] = clInfo.closureProperty(info, assocProp, in[i]);
+        }
+        else
+            hyps = new ProofStepStmt[]{};
+
+        final ProofStepStmt res = info.getOrCreateProofStepStmt(stepNode, hyps,
+            assocAssrt);
+
+        return res;
+    }
+
+    // ------------------------------------------------------------------------
+    // ------------------------------Getters-----------------------------------
+    // ------------------------------------------------------------------------
 
     public Assrt[] getAssocOp(final GeneralizedStmt genStmt) {
         return getAssocOp(genStmt.stmt, genStmt.constSubst, genStmt.template);

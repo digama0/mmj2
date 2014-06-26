@@ -7,7 +7,7 @@ public class TrUtil {
     private TrUtil() {}
 
     public static boolean isVarNode(final ParseNode node) {
-        return TrUtil.isVarStmt(node.getStmt());
+        return isVarStmt(node.getStmt());
     }
 
     public static boolean isVarStmt(final Stmt stmt) {
@@ -17,14 +17,22 @@ public class TrUtil {
     public static boolean isConstNode(final ParseNode node) {
         if (isVarNode(node))
             return false;
-    
+
         for (final ParseNode child : node.getChild())
             if (!isConstNode(child))
                 return false;
-    
+
         return true;
     }
 
+    /**
+     * Creates classical binary node
+     * 
+     * @param stmt the statement
+     * @param left the first (left) node
+     * @param right the second (right) node
+     * @return the created node
+     */
     public static ParseNode createBinaryNode(final Stmt stmt,
         final ParseNode left, final ParseNode right)
     {
@@ -36,17 +44,25 @@ public class TrUtil {
 
     public static ParseNode[] collectConstSubst(final ParseNode originalNode) {
         final ParseNode[] constMap = new ParseNode[originalNode.getChild().length];
-    
+
         for (int i = 0; i < constMap.length; i++) {
             final ParseNode child = originalNode.getChild()[i];
             if (isConstNode(child))
                 constMap[i] = child;
         }
-    
+
         return constMap;
     }
 
-    public static ParseNode createBinaryNode(final GeneralizedStmt genStmt,
+    /**
+     * Creates node for generalized statement.
+     * 
+     * @param genStmt the statement
+     * @param left the first (left) node
+     * @param right the second (right) node
+     * @return the created node
+     */
+    public static ParseNode createGenBinaryNode(final GeneralizedStmt genStmt,
         final ParseNode left, final ParseNode right)
     {
         final ParseNode eqRoot = new ParseNode(genStmt.stmt);
@@ -60,7 +76,7 @@ public class TrUtil {
         }
         for (int i = 0; i < 2; i++)
             children[genStmt.varIndexes[i]] = vars[i];
-    
+
         eqRoot.setChild(children);
         return eqRoot;
     }
@@ -70,9 +86,9 @@ public class TrUtil {
         final ParseNode right)
     {
         if (from == 0)
-            return createBinaryNode(assocProp, left, right);
+            return createGenBinaryNode(assocProp, left, right);
         else
-            return createBinaryNode(assocProp, right, left);
+            return createGenBinaryNode(assocProp, right, left);
     }
 
 }
