@@ -5,12 +5,11 @@ import mmj.pa.ProofStepStmt;
 
 /** Only associative transformations */
 class AssociativeTransformation extends Transformation {
-    final AssocTree structure;
-    final GeneralizedStmt assocProp;
+    private final AssocTree structure;
+    private final GeneralizedStmt assocProp;
 
     private final ReplaceInfo replInfo;
     private final AssociativeInfo assocInfo;
-    public final ClosureInfo clInfo;
 
     public AssociativeTransformation(final TransformationManager trManager,
         final ParseNode originalNode, final AssocTree structure,
@@ -22,7 +21,6 @@ class AssociativeTransformation extends Transformation {
 
         replInfo = trManager.replInfo;
         assocInfo = trManager.assocInfo;
-        clInfo = trManager.clInfo;
     }
 
     @Override
@@ -192,8 +190,10 @@ class AssociativeTransformation extends Transformation {
                 return TrUtil.createGenBinaryNode(assocProp, left, leaf);
         }
 
-        for (int i = 0; i < 2; i++)
-            left = constructCanonicalForm(left, cur.getChild()[i], info);
+        for (int i = 0; i < 2; i++) {
+            final ParseNode child = cur.getChild()[assocProp.varIndexes[i]];
+            left = constructCanonicalForm(left, child, info);
+        }
 
         return left;
     }

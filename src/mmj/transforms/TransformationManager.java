@@ -128,29 +128,6 @@ public class TransformationManager {
         return createTransformation(originalNode, info).getCanonicalNode(info);
     }
 
-    /**
-     * @param first The one operand
-     * @param second The other operand
-     * @return -1(less), 0(equal),1(greater)
-     */
-    @SuppressWarnings("unused")
-    private static int compareNodes(final ParseNode first,
-        final ParseNode second)
-    {
-        if (first.getStmt() == second.getStmt()) {
-            final int len = first.getChild().length;
-            for (int i = 0; i < len; i++) {
-                final int res = compareNodes(first.getChild()[i],
-                    second.getChild()[i]);
-                if (res != 0)
-                    return res;
-            }
-
-            return 0;
-        }
-        return first.getStmt().getSeq() < second.getStmt().getSeq() ? -1 : 1;
-    }
-
     // ------------------------------------------------------------------------
     // --------------------------Entry point part------------------------------
     // ------------------------------------------------------------------------

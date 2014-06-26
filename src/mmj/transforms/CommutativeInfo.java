@@ -3,19 +3,28 @@ package mmj.transforms;
 import java.util.*;
 
 import mmj.lang.*;
+import mmj.pa.ProofStepStmt;
 
+/**
+ * The information about commutative operations.
+ * <p>
+ * Note: the current implementation contains some stub implementations!
+ */
 public class CommutativeInfo extends DBInfo {
     /** The information about equivalence rules */
     private final EquivalenceInfo eqInfo;
 
-    /** The information about closure rules */
-    private final ClosureInfo clInfo;
+    final ClosureInfo clInfo;
 
-    /** The list of commutative operators */
+    /**
+     * The list of commutative operators: ( A + B ) = ( B + A )
+     * <p>
+     * It is a map: Statement ( ( A F B ) in the example) -> map : constant
+     * elements ( + in the example) -> map : possible properties ( _ e. CC in
+     * the example) -> assert. There could be many properties ( {" _ e. CC" ,
+     * "_ e. RR" } for example ).
+     */
     protected Map<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt>>> comOp;
-
-    // protected Map<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt[]>>>
-    // assocOp;
 
     // ------------------------------------------------------------------------
     // ------------------------Initialization----------------------------------
@@ -80,9 +89,10 @@ public class CommutativeInfo extends DBInfo {
         if (!constSubst.isTheSameConstMap(subTrees[1]))
             return;
 
-        if (!template.isEmpty())
-            if (clInfo.getClosureAssert(stmt, constSubst, template) == null)
-                return;
+        // It is unnecessary:
+        // if (!template.isEmpty())
+        // if (clInfo.getClosureAssert(stmt, constSubst, template) == null)
+        // return;
 
         final ParseNode[] leftChildren = subTrees[0].getChild();
         final ParseNode[] rightChildren = subTrees[1].getChild();
@@ -121,5 +131,88 @@ public class CommutativeInfo extends DBInfo {
         output.dbgMessage(dbg, "I-DBG commutative assrts: %s: %s", assrt,
             assrt.getFormula());
         propertyMap.put(template, assrt);
+    }
+
+    // ------------------------------------------------------------------------
+    // ----------------------------Detection-----------------------------------
+    // ------------------------------------------------------------------------
+
+    /**
+     * @param first The one operand
+     * @param second The other operand
+     * @return -1(less), 0(equal),1(greater)
+     */
+    public static int compareNodes(final ParseNode first, final ParseNode second)
+    {
+        if (first.getStmt() == second.getStmt()) {
+            final int len = first.getChild().length;
+            for (int i = 0; i < len; i++) {
+                final int res = compareNodes(first.getChild()[i],
+                    second.getChild()[i]);
+                if (res != 0)
+                    return res;
+            }
+
+            return 0;
+        }
+        return first.getStmt().getSeq() < second.getStmt().getSeq() ? -1 : 1;
+    }
+    // ------------------------------------------------------------------------
+    // ----------------------------Transformations-----------------------------
+    // ------------------------------------------------------------------------
+
+    // f(a, b) = f(b, a))
+    public ProofStepStmt closurePropertyCommutative(final WorksheetInfo info,
+        final GeneralizedStmt comProp, final Assrt comAssrt,
+        final ParseNode stepNode)
+    {
+        final ProofStepStmt[] hyps;
+        if (!comProp.template.isEmpty()) {
+
+            hyps = new ProofStepStmt[3];
+            final int n0 = comProp.varIndexes[0];
+            final int n1 = comProp.varIndexes[1];
+            final ParseNode side = stepNode.getChild()[0];
+            final ParseNode[] in = new ParseNode[2];
+            in[0] = side.getChild()[n0];
+            in[1] = side.getChild()[n1];
+
+            for (int i = 0; i < 2; i++)
+                hyps[i] = clInfo.closureProperty(info, comProp, in[i]);
+        }
+        else
+            hyps = new ProofStepStmt[]{};
+
+        final ProofStepStmt res = info.getOrCreateProofStepStmt(stepNode, hyps,
+            comAssrt);
+
+        return res;
+    }
+
+    // ------------------------------------------------------------------------
+    // ------------------------------Getters-----------------------------------
+    // ------------------------------------------------------------------------
+
+    public Assrt getComOp(final GeneralizedStmt genStmt) {
+        return getComOp(genStmt.stmt, genStmt.constSubst, genStmt.template);
+    }
+
+    public Assrt getComOp(final Stmt stmt, final ConstSubst constSubst,
+        final PropertyTemplate template)
+    {
+        final Map<ConstSubst, Map<PropertyTemplate, Assrt>> constSubstMap = comOp
+            .get(stmt);
+
+        if (constSubstMap == null)
+            return null;
+
+        final Map<PropertyTemplate, Assrt> propertyMap = constSubstMap
+            .get(constSubst);
+
+        if (propertyMap == null)
+            return null;
+
+        final Assrt comTr = propertyMap.get(template);
+        return comTr;
     }
 }

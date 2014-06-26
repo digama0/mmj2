@@ -20,6 +20,7 @@ public class AssociativeInfo extends DBInfo {
 
     /** The information about replace rules */
     private final ReplaceInfo replInfo;
+
     /**
      * The list of associative operators: ( ( A + B ) + C ) = ( A + ( B + C ) )
      * <p>
@@ -285,6 +286,7 @@ public class AssociativeInfo extends DBInfo {
 
         return null;
     }
+
     // ------------------------------------------------------------------------
     // ----------------------------Transformations-----------------------------
     // ------------------------------------------------------------------------
