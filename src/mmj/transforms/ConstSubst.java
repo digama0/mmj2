@@ -48,4 +48,48 @@ public class ConstSubst {
     public int hashCode() {
         return hash;
     }
+
+    /**
+     * @param candidate the candidate
+     * @return true if the candidate has exactly the same constant map
+     */
+    public boolean isTheSameConstMap(final ParseNode candidate) {
+        if (candidate.getChild().length != constMap.length)
+            return false;
+
+        for (int i = 0; i < constMap.length; i++) {
+            final ParseNode child = candidate.getChild()[i];
+            if (TrUtil.isConstNode(child)) {
+                if (constMap[i] == null)
+                    return false;
+                else if (!constMap[i].isDeepDup(child))
+                    return false;
+            }
+            else if (constMap[i] != null)
+                return false;
+
+        }
+        return true;
+    }
+    /*
+    public static boolean isTheSameConstMap(final ParseNode candidate,
+        final ParseNode[] constMap)
+    {
+        if (candidate.getChild().length != constMap.length)
+            return false;
+
+        for (int i = 0; i < constMap.length; i++) {
+            final ParseNode child = candidate.getChild()[i];
+            if (TrUtil.isConstNode(child)) {
+                if (constMap[i] == null)
+                    return false;
+                else if (!constMap[i].isDeepDup(child))
+                    return false;
+            }
+            else if (constMap[i] != null)
+                return false;
+
+        }
+        return true;
+    }*/
 }

@@ -503,8 +503,9 @@ public class ProofTransformations extends DataBaseInfo {
         final GeneralizedStmt assocProp, final ParseNode node)
     {
         // PropertyTemplate template = assocProp.template;
-        final Assrt assrt = closureRuleMap.get(assocProp.stmt)
-            .get(assocProp.constSubst).get(assocProp.template);
+        final Assrt assrt = clInfo.getClosureAssert(assocProp);
+
+        assert assrt != null;
 
         final ParseNode stepNode = assocProp.template.subst(node);
 
@@ -693,26 +694,6 @@ public class ProofTransformations extends DataBaseInfo {
 
         assert varNum == 2;
         return true;
-    }
-
-    private static class GeneralizedStmt {
-        final Stmt stmt;
-        final ConstSubst constSubst;
-        final PropertyTemplate template;
-
-        final int[] varIndexes;
-
-        public GeneralizedStmt(final ConstSubst constSubst,
-            final PropertyTemplate template, final int[] varIndexes,
-            final Stmt stmt)
-        {
-            super();
-            this.template = template;
-            this.constSubst = constSubst;
-            this.varIndexes = varIndexes;
-            this.stmt = stmt;
-            assert varIndexes.length == 2;
-        }
     }
 
     private GeneralizedStmt isAssociative(final ParseNode originalNode,

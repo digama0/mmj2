@@ -24,15 +24,7 @@ public class DataBaseInfo {
 
     protected ReplaceInfo replInfo = new ReplaceInfo();
 
-    /**
-     * The list of closure lows: A e. CC & B e. CC => (A + B) e. CC
-     * <p>
-     * It is a map: Statement ( ( A F B ) in the example) -> map : constant
-     * elements ( + in the example) -> set of possible properties ( _ e. CC in
-     * the example). There could be many properties ( {" _ e. CC" , "_ e. RR" }
-     * for example ).
-     */
-    protected Map<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt>>> closureRuleMap;
+    protected ClosureInfo clInfo = new ClosureInfo();
 
     /** The list of commutative operators */
     protected Map<Stmt, Assrt> comOp;
@@ -65,13 +57,11 @@ public class DataBaseInfo {
 
         eqInfo.initMe(assrtList, output, dbg);
 
+        clInfo.initMe(assrtList, output, dbg);
+
         implInfo.initMe(eqInfo, assrtList, output, dbg);
 
         replInfo.initMe(eqInfo, assrtList, output, dbg);
-
-        closureRuleMap = new HashMap<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt>>>();
-        for (final Assrt assrt : assrtList)
-            findClosureRules(assrt);
 
         comOp = new HashMap<Stmt, Assrt>();
         for (final Assrt assrt : assrtList)
@@ -138,263 +128,6 @@ public class DataBaseInfo {
     // -----------------------------------------------------------
     // -----------------------------------------------------------
 
-    protected static final ParseNode endMarker = new ParseNode();
-
-    protected static ParseNode getCorrespondingNodeRec(
-        final ParseNode template, final ParseNode input)
-    {
-        if (template == PropertyTemplate.templateReplace)
-            return input;
-        if (template.getStmt() != input.getStmt())
-            return null;
-
-        ParseNode retNode = endMarker;
-
-        for (int i = 0; i < input.getChild().length; i++) {
-            final ParseNode res = getCorrespondingNodeRec(
-                template.getChild()[i], input.getChild()[i]);
-            if (res == null)
-                return null;
-            if (res != endMarker)
-                retNode = res;
-        }
-
-        return retNode;
-    }
-
-    protected static ParseNode getCorrespondingNode(final ParseNode template,
-        final ParseNode input)
-    {
-        final ParseNode res = getCorrespondingNodeRec(template, input);
-        if (res == endMarker)
-            return null;
-        return res;
-    }
-
-    /**
-     * Replaces the variable var for null in the template
-     * 
-     * @param template the future template
-     * @param var the variable which should be replaced for null
-     * @return the number of replace operations
-     */
-    protected static int prepareTemplate(final ParseNode template,
-        final VarHyp var)
-    {
-        final ParseNode[] children = template.getChild();
-        int res = 0;
-        for (int i = 0; i < children.length; i++)
-            if (children[i].getStmt() == var) {
-                children[i] = PropertyTemplate.templateReplace; // indicate
-                                                                // entry point
-                res++;
-            }
-            else
-                res += prepareTemplate(children[i], var);
-        return res;
-    }
-
-    protected ParseNode createTemplateFromHyp(final Assrt assrt) {
-        final VarHyp[] varHypArray = assrt.getMandVarHypArray();
-
-        final LogHyp[] logHyps = assrt.getLogHypArray();
-        if (logHyps.length == 0)
-            return null;
-
-        if (logHyps.length != varHypArray.length)
-            return null;
-
-        final VarHyp[] vars0 = logHyps[0].getMandVarHypArray();
-        if (vars0.length != 1)
-            return null;
-
-        final VarHyp[] hypToVarHypMap = new VarHyp[logHyps.length];
-        hypToVarHypMap[0] = vars0[0];
-
-        // do not consider rules like |- ph & |- ps => |- ( ph <-> ps )
-        if (logHyps[0].getExprParseTree().getRoot().getStmt() == vars0[0])
-            return null;
-
-        // Here we need deep clone because next we will modify result
-        final ParseNode template = logHyps[0].getExprParseTree().getRoot()
-            .deepClone();
-        final int varNumEntrance = prepareTemplate(template, vars0[0]);
-        if (varNumEntrance != 1)
-            return null;
-
-        return template;
-    }
-
-    /**
-     * Filters transitive properties to result rules:
-     * <p>
-     * A e. CC & B e. CC => (A + B) e. CC
-     * <p>
-     * We filter assertions with next properties:
-     * <ul>
-     * <li>Hypothesis have the form P(x), P(y), P(z)
-     * <li>The assertion has the form P(f(x, y, z, a, b, c))
-     * <li>Function f have unique entrance for variables
-     * <li>Other f's children a, b, c should be constants
-     * </ul>
-     * 
-     * @param assrt the candidate
-     */
-    protected void findClosureRules(final Assrt assrt) {
-        final VarHyp[] varHypArray = assrt.getMandVarHypArray();
-        final ParseTree assrtTree = assrt.getExprParseTree();
-
-        final LogHyp[] logHyps = assrt.getLogHypArray();
-        if (logHyps.length == 0)
-            return;
-
-        if (logHyps.length != varHypArray.length)
-            return;
-
-        final VarHyp[] vars0 = logHyps[0].getMandVarHypArray();
-        if (vars0.length != 1)
-            return;
-
-        final VarHyp[] hypToVarHypMap = new VarHyp[logHyps.length];
-        hypToVarHypMap[0] = vars0[0];
-
-        // Here we need deep clone because next we will modify result
-        final ParseNode template = createTemplateFromHyp(assrt);
-        if (template == null)
-            return;
-
-        for (int i = 1; i < logHyps.length; i++) {
-            final VarHyp[] varsi = logHyps[i].getMandVarHypArray();
-            if (varsi.length != 1)
-                return;
-            final VarHyp vari = varsi[0];
-
-            hypToVarHypMap[i] = vari;
-            final ParseNode res = getCorrespondingNode(template, logHyps[i]
-                .getExprParseTree().getRoot());
-            if (res == null)
-                return;
-            if (res.getStmt() != vari)
-                return;
-        }
-
-        final ParseNode root = assrtTree.getRoot();
-
-        final ParseNode res = getCorrespondingNode(template, root);
-        if (res == null)
-            return;
-
-        final Stmt stmt = res.getStmt();
-
-        final ParseNode[] children = res.getChild();
-
-        final int varToHypMap[] = new int[logHyps.length];
-        for (int i = 0; i < varToHypMap.length; i++)
-            varToHypMap[i] = -1;
-
-        final ParseNode[] constMap = new ParseNode[children.length];
-        int varNum = 0;
-        for (int i = 0; i < children.length; i++) {
-            final ParseNode child = children[i];
-            if (TrUtil.isVarNode(child)) {
-                if (varNum >= varToHypMap.length)
-                    return;
-
-                int resNum = -1;
-                for (int k = 0; k < hypToVarHypMap.length; k++)
-                    if (hypToVarHypMap[k] == child.getStmt()) {
-                        resNum = k;
-                        break;
-                    }
-                if (resNum == -1)
-                    return;
-
-                if (varToHypMap[varNum] != -1)
-                    return;
-
-                varToHypMap[varNum] = resNum;
-                varNum++;
-            }
-            else if (TrUtil.isConstNode(child))
-                // may we could use fast clone but it is not very important in
-                // the loading phase
-                constMap[i] = child.deepClone();
-            else
-                return;
-        }
-
-        boolean incorrectOrder = false;
-
-        final int[] hypToVarMap = new int[logHyps.length];
-        for (int i = 0; i < varToHypMap.length; i++) {
-            if (varToHypMap[i] == -1)
-                return;
-            hypToVarMap[varToHypMap[i]] = i;
-            if (varToHypMap[i] != i)
-                incorrectOrder = true;
-        }
-
-        // Theoretically we could process incorrect hypothesis order in
-        // theorems.
-        // But set.mm has no such theorems so lets implement simple case.
-        if (incorrectOrder)
-            return;
-
-        String hypString = "";
-        for (int i = 0; i < logHyps.length; i++) {
-            if (i != 0)
-                hypString += " & ";
-            hypString += logHyps[i].getFormula().toString();
-        }
-
-        Map<ConstSubst, Map<PropertyTemplate, Assrt>> assrtMap = closureRuleMap
-            .get(stmt);
-        if (assrtMap == null) {
-            assrtMap = new HashMap<ConstSubst, Map<PropertyTemplate, Assrt>>();
-            closureRuleMap.put(stmt, assrtMap);
-        }
-
-        final ConstSubst constSubst = new ConstSubst(constMap);
-
-        Map<PropertyTemplate, Assrt> templateSet = assrtMap.get(constSubst);
-        if (templateSet == null) {
-            templateSet = new HashMap<PropertyTemplate, Assrt>();
-            assrtMap.put(constSubst, templateSet);
-        }
-
-        final PropertyTemplate tn = new PropertyTemplate(template);
-
-        if (templateSet.containsKey(tn))
-            return; // some duplicate
-
-        templateSet.put(tn, assrt);
-
-        output.dbgMessage(dbg,
-            "I-DBG transitive to result properties(%b): %s: %s => %s",
-            incorrectOrder, assrt, hypString, assrt.getFormula());
-    }
-
-    protected boolean isTheSameConstMap(final ParseNode candidate,
-        final ParseNode[] constMap)
-    {
-        if (candidate.getChild().length != constMap.length)
-            return false;
-
-        for (int i = 0; i < constMap.length; i++) {
-            final ParseNode child = candidate.getChild()[i];
-            if (TrUtil.isConstNode(child)) {
-                if (constMap[i] == null)
-                    return false;
-                else if (!constMap[i].isDeepDup(child))
-                    return false;
-            }
-            else if (constMap[i] != null)
-                return false;
-
-        }
-        return true;
-    }
-
     /**
      * Filters associative rules, like (A + B) + C = A + (B + C)
      * 
@@ -411,7 +144,7 @@ public class DataBaseInfo {
 
         ParseNode templNode = null;
         if (logHyps.length != 0) {
-            templNode = createTemplateFromHyp(assrt);
+            templNode = ClosureInfo.createTemplateNodeFromHyp(assrt);
             if (templNode == null)
                 return;
         }
@@ -438,19 +171,16 @@ public class DataBaseInfo {
         final ParseNode[] leftChildren = subTrees[0].getChild();
         final ParseNode[] rightChildren = subTrees[1].getChild();
 
-        final ParseNode[] constMap = new ParseNode[leftChildren.length];
         final int[] varPlace = new int[leftChildren.length];
         for (int i = 0; i < varPlace.length; i++)
             varPlace[i] = -1;
         int curVarNum = 0;
+        final ParseNode[] constMap = new ParseNode[leftChildren.length];
         for (int i = 0; i < leftChildren.length; i++)
             if (TrUtil.isConstNode(leftChildren[i]))
                 constMap[i] = leftChildren[i];
             else
                 varPlace[curVarNum++] = i;
-
-        if (!isTheSameConstMap(subTrees[1], constMap))
-            return;
 
         // the statement contains more that 2 variables
         if (curVarNum != 2)
@@ -458,21 +188,13 @@ public class DataBaseInfo {
 
         final ConstSubst constSubst = new ConstSubst(constMap);
 
-        if (templNode != null) {
-            final Map<ConstSubst, Map<PropertyTemplate, Assrt>> substMap = closureRuleMap
-                .get(stmt);
+        if (!constSubst.isTheSameConstMap(subTrees[1]))
+            return;
 
-            if (substMap == null)
+        final PropertyTemplate template = new PropertyTemplate(templNode);
+        if (!template.isEmpty())
+            if (clInfo.getClosureAssert(stmt, constSubst, template) == null)
                 return;
-
-            final Map<PropertyTemplate, Assrt> templateSet = substMap
-                .get(constSubst);
-            if (templateSet == null)
-                return;
-
-            if (!templateSet.containsKey(new PropertyTemplate(templNode)))
-                return;
-        }
 
         // we need to find one of the 2 patterns:
         // 0) f(f(a, b), c) = f(a, f(b, c))
@@ -482,13 +204,13 @@ public class DataBaseInfo {
             final int n = varPlace[(i + 1) % 2];
             if (leftChildren[k].getStmt() != stmt)
                 continue;
-            if (!isTheSameConstMap(leftChildren[k], constMap))
+            if (!constSubst.isTheSameConstMap(leftChildren[k]))
                 continue;
 
             if (rightChildren[n].getStmt() != stmt)
                 continue;
 
-            if (!isTheSameConstMap(rightChildren[n], constMap))
+            if (!constSubst.isTheSameConstMap(rightChildren[n]))
                 continue;
 
             if (!TrUtil.isVarNode(leftChildren[n]))
@@ -534,7 +256,6 @@ public class DataBaseInfo {
                 constSubstMap.put(constSubst, propertyMap);
             }
 
-            final PropertyTemplate template = new PropertyTemplate(templNode);
             Assrt[] assoc = propertyMap.get(template);
 
             if (assoc == null) {
@@ -559,8 +280,6 @@ public class DataBaseInfo {
             return;
         }
     }
-
-    // ------------Getters and setters--------------
 
     public boolean isInit() {
         return isInit;
