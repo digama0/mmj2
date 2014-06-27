@@ -91,4 +91,23 @@ public class TrUtil {
             return createGenBinaryNode(assocProp, right, left);
     }
 
+    public static int[] checkConstSubstAndGetVarPositions(final ConstSubst constSubst,
+        final ParseNode[] constMap)
+    {
+        int curVar = 0;
+        final int[] varIndexes = new int[2];
+        for (int i = 0; i < constSubst.constMap.length; i++)
+            if (constSubst.constMap[i] != null) {
+                if (constMap[i] == null
+                    || !constSubst.constMap[i].isDeepDup(constMap[i]))
+                    return null;
+            }
+            else {
+                assert curVar < 2;
+                varIndexes[curVar++] = i;
+            }
+    
+        return varIndexes;
+    }
+
 }

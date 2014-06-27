@@ -1,6 +1,7 @@
 package mmj.transforms;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 import mmj.lang.*;
 import mmj.pa.ProofStepStmt;
@@ -157,6 +158,74 @@ public class CommutativeInfo extends DBInfo {
         }
         return first.getStmt().getSeq() < second.getStmt().getSeq() ? -1 : 1;
     }
+
+    /**
+     * This function searches generalized statement for node which is considered
+     * to be the root of some commutative action
+     * 
+     * @param node the input node
+     * @param info the work sheet info
+     * @return the found generalized statement or null
+     */
+    public GeneralizedStmt getGenStmtForComNode(final ParseNode node,
+        final WorksheetInfo info)
+    {
+        final Stmt stmt = node.getStmt();
+        final Map<ConstSubst, Map<PropertyTemplate, Assrt>> constSubstMap = comOp
+            .get(stmt);
+
+        if (constSubstMap == null)
+            return null;
+
+        final ParseNode[] constMap = TrUtil.collectConstSubst(node);
+
+        // TODO: here we use trivial search stub!
+        for (final Entry<ConstSubst, Map<PropertyTemplate, Assrt>> elem : constSubstMap
+            .entrySet())
+        {
+            final ConstSubst constSubst = elem.getKey();
+
+            final int[] varIndexes = TrUtil.checkConstSubstAndGetVarPositions(
+                constSubst, constMap);
+
+            if (varIndexes == null)
+                continue;
+
+            final Map<PropertyTemplate, Assrt> propertyMap = elem.getValue();
+
+            // TODO: here we use trivial search stub!
+            for (final Entry<PropertyTemplate, Assrt> propElem : propertyMap
+                .entrySet())
+            {
+                final PropertyTemplate template = propElem.getKey();
+
+                final GeneralizedStmt genStmt = new GeneralizedStmt(constSubst,
+                    template, varIndexes, stmt);
+                final boolean res = isCommutativeWithProp(node, info, genStmt);
+                if (res)
+                    return genStmt;
+            }
+        }
+
+        return null;
+    }
+
+    private static boolean isCommutativeWithProp(final ParseNode node,
+        final WorksheetInfo info, final GeneralizedStmt genStmt)
+    {
+        if (genStmt.template.isEmpty())
+            return true;
+        for (int i = 0; i < 2; i++) {
+            final ParseNode child = node.getChild()[genStmt.varIndexes[i]];
+            final ParseNode substProp = genStmt.template.subst(child);
+            final ProofStepStmt stmt = info.getProofStepStmt(substProp);
+            if (stmt == null)
+                return false;
+        }
+
+        return true;
+    }
+
     // ------------------------------------------------------------------------
     // ----------------------------Transformations-----------------------------
     // ------------------------------------------------------------------------
@@ -168,8 +237,7 @@ public class CommutativeInfo extends DBInfo {
     {
         final ProofStepStmt[] hyps;
         if (!comProp.template.isEmpty()) {
-
-            hyps = new ProofStepStmt[3];
+            hyps = new ProofStepStmt[2];
             final int n0 = comProp.varIndexes[0];
             final int n1 = comProp.varIndexes[1];
             final ParseNode side = stepNode.getChild()[0];

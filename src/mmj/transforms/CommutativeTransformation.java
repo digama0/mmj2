@@ -1,7 +1,6 @@
 package mmj.transforms;
 
-import mmj.lang.Assrt;
-import mmj.lang.ParseNode;
+import mmj.lang.*;
 import mmj.pa.ProofStepStmt;
 
 /** Only commutative transformations */
@@ -45,6 +44,11 @@ public class CommutativeTransformation extends Transformation {
     {
         assert target instanceof CommutativeTransformation;
 
+        final ProofStepStmt simpleRes = checkTransformationNecessary(target,
+            info);
+        if (simpleRes != info.derivStep)
+            return simpleRes;
+
         final ParseNode canonicalMe = trManager.getCanonicalForm(
             originalNode.getChild()[comProp.varIndexes[0]], info);
         final ParseNode canonicalTrgt = trManager.getCanonicalForm(
@@ -60,8 +64,14 @@ public class CommutativeTransformation extends Transformation {
 
             final Assrt comAssrt = comInfo.getComOp(comProp);
 
+            final Stmt equalStmt = comAssrt.getExprParseTree().getRoot()
+                .getStmt();
+
+            // Create node f(a, b) = f(b, a)
+            final ParseNode stepNode = TrUtil.createBinaryNode(equalStmt,
+                originalNode, myNode);
             reverseStep = comInfo.closurePropertyCommutative(info, comProp,
-                comAssrt, myNode);
+                comAssrt, stepNode);
         }
         else {
             myNode = originalNode;
@@ -76,12 +86,13 @@ public class CommutativeTransformation extends Transformation {
             replaceTarget, info);
 
         final ProofStepStmt res;
-        if (reverseStep != null)
+        if (reverseStep != null && replTrStep != null)
             res = eqInfo.getTransitiveStep(info, reverseStep, replTrStep);
+        else if (reverseStep != null)
+            res = reverseStep;
         else
             res = replTrStep;
 
-        // TODO Auto-generated method stub
         return res;
     }
 }

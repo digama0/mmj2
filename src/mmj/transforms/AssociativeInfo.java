@@ -242,31 +242,15 @@ public class AssociativeInfo extends DBInfo {
 
         final ParseNode[] constMap = TrUtil.collectConstSubst(node);
 
-        final int[] varIndexes = new int[2];
-
         // TODO: here we use trivial search stub!
         for (final Entry<ConstSubst, Map<PropertyTemplate, Assrt[]>> elem : constSubstMap
             .entrySet())
         {
             final ConstSubst constSubst = elem.getKey();
-            int curVar = 0;
+            final int[] varIndexes = TrUtil.checkConstSubstAndGetVarPositions(
+                constSubst, constMap);
 
-            boolean ok = true;
-            for (int i = 0; i < constSubst.constMap.length; i++)
-                if (constSubst.constMap[i] != null) {
-                    if (constMap[i] == null
-                        || !constSubst.constMap[i].isDeepDup(constMap[i]))
-                    {
-                        ok = false;
-                        break;
-                    }
-                }
-                else {
-                    assert curVar < 2;
-                    varIndexes[curVar++] = i;
-                }
-
-            if (!ok)
+            if (varIndexes == null)
                 continue;
 
             final Map<PropertyTemplate, Assrt[]> propertyMap = elem.getValue();

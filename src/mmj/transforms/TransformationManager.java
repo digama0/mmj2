@@ -88,34 +88,42 @@ public class TransformationManager {
     /**
      * The main function to create transformation.
      * 
-     * @param originalNode the source node
+     * @param node the source node
      * @param info the information about previous steps
      * @return the transformation
      */
-    public Transformation createTransformation(final ParseNode originalNode,
+    public Transformation createTransformation(final ParseNode node,
         final WorksheetInfo info)
     {
-        final Stmt stmt = originalNode.getStmt();
+        final Stmt stmt = node.getStmt();
 
         final Assrt[] replAsserts = replInfo.getReplaceAsserts(stmt);
 
+        boolean isCom = false;
+        final GeneralizedStmt comProp = comInfo
+            .getGenStmtForComNode(node, info);
+        if (comProp != null)
+            isCom = true;
+
         boolean isAssoc = false;
         final GeneralizedStmt assocProp = assocInfo.getGenStmtForAssocNode(
-            originalNode, info);
+            node, info);
         if (assocProp != null)
             isAssoc = true;
 
         final boolean subTreesCouldBeRepl = replAsserts != null;
 
         if (!subTreesCouldBeRepl)
-            return new IdentityTransformation(this, originalNode);
+            return new IdentityTransformation(this, node);
 
-        if (isAssoc)
-            return new AssociativeTransformation(this, originalNode,
-                AssocTree.createAssocTree(originalNode, assocProp, info),
-                assocProp);
+        if (isCom)
+            return new CommutativeTransformation(this, node, comProp);
+
+        else if (isAssoc)
+            return new AssociativeTransformation(this, node,
+                AssocTree.createAssocTree(node, assocProp, info), assocProp);
         else if (subTreesCouldBeRepl)
-            return new ReplaceTransformation(this, originalNode);
+            return new ReplaceTransformation(this, node);
 
         // TODO: make the string constant!
         throw new IllegalStateException(
