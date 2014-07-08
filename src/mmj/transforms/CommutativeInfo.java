@@ -230,6 +230,48 @@ public class CommutativeInfo extends DBInfo {
     // ----------------------------Transformations-----------------------------
     // ------------------------------------------------------------------------
 
+    /**
+     * Creates f(a, b) = f(b, a) statement.
+     * 
+     * @param info the work sheet info
+     * @param comProp the generalized associative statement
+     * @param source the first node f(a, b)
+     * @param target the second node f(b, a)
+     * @return the created step
+     */
+    public ProofStepStmt createCommutativeStep(final WorksheetInfo info,
+        final GeneralizedStmt comProp, final ParseNode source,
+        final ParseNode target)
+    {
+        final ProofStepStmt[] hyps;
+        if (!comProp.template.isEmpty()) {
+            hyps = new ProofStepStmt[2];
+            final int n0 = comProp.varIndexes[0];
+            final int n1 = comProp.varIndexes[1];
+            final ParseNode side = source;
+            final ParseNode[] in = new ParseNode[2];
+            in[0] = side.getChild()[n0];
+            in[1] = side.getChild()[n1];
+
+            for (int i = 0; i < 2; i++)
+                hyps[i] = clInfo.closureProperty(info, comProp, in[i]);
+        }
+        else
+            hyps = new ProofStepStmt[]{};
+
+        final Assrt comAssrt = getComOp(comProp);
+        final Stmt equalStmt = comAssrt.getExprParseTree().getRoot().getStmt();
+
+        final ParseNode stepNode = TrUtil.createBinaryNode(equalStmt, source,
+            target);
+
+        final ProofStepStmt res = info.getOrCreateProofStepStmt(stepNode, hyps,
+            comAssrt);
+
+        return res;
+    }
+
+    /*
     // f(a, b) = f(b, a))
     public ProofStepStmt closurePropertyCommutative(final WorksheetInfo info,
         final GeneralizedStmt comProp, final Assrt comAssrt,
@@ -256,6 +298,7 @@ public class CommutativeInfo extends DBInfo {
 
         return res;
     }
+    */
 
     // ------------------------------------------------------------------------
     // ------------------------------Getters-----------------------------------

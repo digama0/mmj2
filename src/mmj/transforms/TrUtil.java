@@ -82,13 +82,13 @@ public class TrUtil {
     }
 
     public static ParseNode createAssocBinaryNode(final int from,
-        final GeneralizedStmt assocProp, final ParseNode left,
+        final GeneralizedStmt genStmt, final ParseNode left,
         final ParseNode right)
     {
         if (from == 0)
-            return createGenBinaryNode(assocProp, left, right);
+            return createGenBinaryNode(genStmt, left, right);
         else
-            return createGenBinaryNode(assocProp, right, left);
+            return createGenBinaryNode(genStmt, right, left);
     }
 
     public static int[] checkConstSubstAndGetVarPositions(final ConstSubst constSubst,

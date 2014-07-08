@@ -1,11 +1,11 @@
 package mmj.transforms;
 
-import mmj.lang.*;
+import mmj.lang.ParseNode;
 import mmj.pa.ProofStepStmt;
 
 /** Only commutative transformations */
 public class CommutativeTransformation extends Transformation {
-    private final GeneralizedStmt comProp;
+    private final GeneralizedStmt genStmt;
 
     public final CommutativeInfo comInfo;
 
@@ -13,7 +13,7 @@ public class CommutativeTransformation extends Transformation {
         final ParseNode originalNode, final GeneralizedStmt comProp)
     {
         super(trManager, originalNode);
-        this.comProp = comProp;
+        genStmt = comProp;
         comInfo = trManager.comInfo;
     }
 
@@ -21,7 +21,7 @@ public class CommutativeTransformation extends Transformation {
     public ParseNode getCanonicalNode(final WorksheetInfo info) {
         final ParseNode[] canonical = new ParseNode[2];
         for (int i = 0; i < 2; i++) {
-            final ParseNode child = originalNode.getChild()[comProp.varIndexes[i]];
+            final ParseNode child = originalNode.getChild()[genStmt.varIndexes[i]];
             canonical[i] = trManager.getCanonicalForm(child, info);
         }
 
@@ -35,7 +35,7 @@ public class CommutativeTransformation extends Transformation {
             second = canonical[0];
         }
 
-        return TrUtil.createGenBinaryNode(comProp, first, second);
+        return TrUtil.createGenBinaryNode(genStmt, first, second);
     }
 
     @Override
@@ -50,19 +50,22 @@ public class CommutativeTransformation extends Transformation {
             return simpleRes;
 
         final ParseNode canonicalMe = trManager.getCanonicalForm(
-            originalNode.getChild()[comProp.varIndexes[0]], info);
+            originalNode.getChild()[genStmt.varIndexes[0]], info);
         final ParseNode canonicalTrgt = trManager.getCanonicalForm(
-            target.originalNode.getChild()[comProp.varIndexes[0]], info);
+            target.originalNode.getChild()[genStmt.varIndexes[0]], info);
 
         final ProofStepStmt reverseStep;
         final ParseNode myNode;
         if (!canonicalMe.isDeepDup(canonicalTrgt)) {
-            final ParseNode left = originalNode.getChild()[comProp.varIndexes[0]];
-            final ParseNode right = originalNode.getChild()[comProp.varIndexes[1]];
+            final ParseNode left = originalNode.getChild()[genStmt.varIndexes[0]];
+            final ParseNode right = originalNode.getChild()[genStmt.varIndexes[1]];
 
-            myNode = TrUtil.createGenBinaryNode(comProp, right, left);
+            myNode = TrUtil.createGenBinaryNode(genStmt, right, left);
 
-            final Assrt comAssrt = comInfo.getComOp(comProp);
+            reverseStep = comInfo.createCommutativeStep(info, genStmt,
+                originalNode, myNode);
+            /*
+            final Assrt comAssrt = comInfo.getComOp(genStmt);
 
             final Stmt equalStmt = comAssrt.getExprParseTree().getRoot()
                 .getStmt();
@@ -70,8 +73,9 @@ public class CommutativeTransformation extends Transformation {
             // Create node f(a, b) = f(b, a)
             final ParseNode stepNode = TrUtil.createBinaryNode(equalStmt,
                 originalNode, myNode);
-            reverseStep = comInfo.closurePropertyCommutative(info, comProp,
+            reverseStep = comInfo.closurePropertyCommutative(info, genStmt,
                 comAssrt, stepNode);
+            */
         }
         else {
             myNode = originalNode;

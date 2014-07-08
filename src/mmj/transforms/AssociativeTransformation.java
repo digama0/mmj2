@@ -6,7 +6,7 @@ import mmj.pa.ProofStepStmt;
 /** Only associative transformations */
 class AssociativeTransformation extends Transformation {
     private final AssocTree structure;
-    private final GeneralizedStmt assocProp;
+    private final GeneralizedStmt genStmt;
 
     private final ReplaceInfo replInfo;
     private final AssociativeInfo assocInfo;
@@ -17,7 +17,7 @@ class AssociativeTransformation extends Transformation {
     {
         super(trManager, originalNode);
         this.structure = structure;
-        this.assocProp = assocProp;
+        genStmt = assocProp;
 
         replInfo = trManager.replInfo;
         assocInfo = trManager.assocInfo;
@@ -41,14 +41,14 @@ class AssociativeTransformation extends Transformation {
 
         final int from;
         final int to;
-        if (structure.subTrees[assocProp.varIndexes[0]].size > trgt.structure.subTrees[assocProp.varIndexes[0]].size)
+        if (structure.subTrees[genStmt.varIndexes[0]].size > trgt.structure.subTrees[genStmt.varIndexes[0]].size)
         {
-            from = assocProp.varIndexes[0];
-            to = assocProp.varIndexes[1];
+            from = genStmt.varIndexes[0];
+            to = genStmt.varIndexes[1];
         }
         else {
-            from = assocProp.varIndexes[1];
-            to = assocProp.varIndexes[0];
+            from = genStmt.varIndexes[1];
+            to = genStmt.varIndexes[0];
         }
 
         final int toSize = trgt.structure.subTrees[to].size;
@@ -95,13 +95,12 @@ class AssociativeTransformation extends Transformation {
 
                 final ParseNode prevNode = gNode;
 
-                gNode = TrUtil
-                    .createAssocBinaryNode(from, assocProp, aNode, TrUtil
-                        .createAssocBinaryNode(from, assocProp, dNode, fNode));
+                gNode = TrUtil.createAssocBinaryNode(from, genStmt, aNode,
+                    TrUtil.createAssocBinaryNode(from, genStmt, dNode, fNode));
 
-                // transform to normal direction => 'from'
+                // transform to normal direction => use 'from'
                 final ProofStepStmt assocTr = assocInfo.createAssociativeStep(
-                    info, assocProp, from, prevNode, gNode);
+                    info, genStmt, from, prevNode, gNode);
 
                 resStmt = eqInfo.getTransitiveStep(info, resStmt, assocTr);
             }
@@ -140,17 +139,16 @@ class AssociativeTransformation extends Transformation {
                 final ParseNode cNode = dNode.getChild()[to];
 
                 final ParseNode prevENode = eNode;
-                eNode = TrUtil
-                    .createAssocBinaryNode(from, assocProp, TrUtil
-                        .createAssocBinaryNode(from, assocProp, aNode, bNode),
-                        cNode);
+                eNode = TrUtil.createAssocBinaryNode(from, genStmt,
+                    TrUtil.createAssocBinaryNode(from, genStmt, aNode, bNode),
+                    cNode);
 
-                // transform to other direction => 'to'
+                // transform to other direction => use 'to'
                 final ProofStepStmt assocTr = assocInfo.createAssociativeStep(
-                    info, assocProp, to, prevENode, eNode);
+                    info, genStmt, to, prevENode, eNode);
 
                 final ParseNode prevGNode = gNode;
-                gNode = TrUtil.createAssocBinaryNode(from, assocProp, eNode,
+                gNode = TrUtil.createAssocBinaryNode(from, genStmt, eNode,
                     fNode);
 
                 final ProofStepStmt replTr = replInfo.createReplaceStep(info,
@@ -179,28 +177,13 @@ class AssociativeTransformation extends Transformation {
         return resStmt;
     }
 
-    private ParseNode constructCanonicalForm(ParseNode left,
-        final ParseNode cur, final WorksheetInfo info)
-    {
-        if (cur.getStmt() != originalNode.getStmt()) {
-            final ParseNode leaf = trManager.getCanonicalForm(cur, info);
-            if (left == null)
-                return leaf;
-            else
-                return TrUtil.createGenBinaryNode(assocProp, left, leaf);
-        }
-
-        for (int i = 0; i < 2; i++) {
-            final ParseNode child = cur.getChild()[assocProp.varIndexes[i]];
-            left = constructCanonicalForm(left, child, info);
-        }
-
-        return left;
-    }
-
     @Override
     public ParseNode getCanonicalNode(final WorksheetInfo info) {
-        return constructCanonicalForm(null, originalNode, info);
+        final CanonicalOperandHelper helper = new CanonicalOperandHelper(
+            originalNode, genStmt);
+        helper.collectOperandList(structure);
+        helper.convertOperandsToCanonical(trManager, info);
+        return helper.constructCanonical();
     }
 
     @Override
