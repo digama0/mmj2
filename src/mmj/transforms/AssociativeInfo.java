@@ -296,13 +296,11 @@ public class AssociativeInfo extends DBInfo {
 
         final boolean revert;
         final Assrt assocAssrt;
-        final boolean firstForm;
         final ParseNode left;
         final ParseNode right;
         if (assocTr[from] != null) {
             assocAssrt = assocTr[from];
             revert = false;
-            firstForm = true;
             left = firstNode;
             right = secondNode;
         }
@@ -310,7 +308,6 @@ public class AssociativeInfo extends DBInfo {
             final int other = (from + 1) % 2;
             assocAssrt = assocTr[other];
             revert = true;
-            firstForm = false;
             left = secondNode;
             right = firstNode;
         }
@@ -323,6 +320,7 @@ public class AssociativeInfo extends DBInfo {
         final ParseNode stepNode = TrUtil.createBinaryNode(equalStmt, left,
             right);
 
+        final boolean firstForm = assocTr[0] != null;
         ProofStepStmt res = closurePropertyAssociative(info, assocProp,
             assocAssrt, firstForm, stepNode);
 
@@ -344,6 +342,7 @@ public class AssociativeInfo extends DBInfo {
             hyps = new ProofStepStmt[3];
             final int n0 = assocProp.varIndexes[0];
             final int n1 = assocProp.varIndexes[1];
+            // Side should has form f(f(a, b), c)
             final ParseNode side;
             if (firstForm)
                 side = stepNode.getChild()[0];

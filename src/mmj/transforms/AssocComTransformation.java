@@ -52,10 +52,15 @@ public class AssocComTransformation extends Transformation {
             super();
             this.num = num;
         }
+
+        @Override
+        public String toString() {
+            return "IDX." + num;
+        }
     }
 
     /** Associative-commutative tree */
-    private static class ACTree {
+    private class ACTree {
         private ParseNode node;
         private boolean validParseNode = true;
         private ACTree parent;
@@ -67,7 +72,6 @@ public class AssocComTransformation extends Transformation {
         public ACTree(final ParseNode node, final int from, final ACTree left,
             final ACTree right)
         {
-            super();
             this.node = node;
             children = from == 0 ? new ACTree[]{left, right} : new ACTree[]{
                     right, left};
@@ -124,7 +128,7 @@ public class AssocComTransformation extends Transformation {
         }
 
         public void updateHeight() {
-            height = Math.max(children[0].height, children[1].height);
+            height = 1 + Math.max(children[0].height, children[1].height);
             if (parent != null)
                 parent.updateHeight();
         }
@@ -134,7 +138,7 @@ public class AssocComTransformation extends Transformation {
         }
 
         public LeafIndex leafIndex() {
-            assert leafs.length == 0;
+            assert leafs.length == 1;
             return leafs[0];
         }
 
@@ -188,6 +192,32 @@ public class AssocComTransformation extends Transformation {
 
             return true;
         }
+
+        @Override
+        public String toString() {
+            String res = "[" + hashCode();
+            res += ", " + (validParseNode ? "v" : "i");
+            res += ", '" + trManager.getFormula(node).toString() + "'";
+            if (parent != null)
+                res += ", p" + parent.hashCode();
+            if (children != null)
+                res += ", <" + children[0].hashCode() + ":"
+                    + children[1].hashCode() + ">";
+
+            res += ", {";
+
+            for (int i = 0; i < leafs.length; i++) {
+                final LeafIndex leaf = leafs[i];
+                if (i != 0)
+                    res += ",";
+                res += leaf.num;
+            }
+            res += "}";
+
+            res += ", h" + height + "]";
+
+            return res;
+        }
     }
 
     private ProofStepStmt performAssociativeTransformation(final ACTree what,
@@ -218,7 +248,9 @@ public class AssocComTransformation extends Transformation {
         final ParseNode aNode = aTree.node;
         final ParseNode fNode = fTree.node;
 
-        final int from = dTree.getParentChildNum();
+        // At the picture 'from' = 0. But 'd' number is 1. So 'from' should be
+        // the reverse of 'd' number
+        final int from = (dTree.getParentChildNum() + 1) % 2;
 
         final ParseNode tNode = TrUtil.createAssocBinaryNode(from, genStmt,
             dNode, fNode);
@@ -226,7 +258,7 @@ public class AssocComTransformation extends Transformation {
             aNode, tNode);
 
         final ACTree tTree = new ACTree(tNode, from, dTree, fTree);
-        final ACTree rTree = new ACTree(tNode, from, aTree, tTree);
+        final ACTree rTree = new ACTree(rNode, from, aTree, tTree);
         if (gParent != null)
             gParent.changeChild(gTree, rTree);
 
@@ -404,8 +436,8 @@ public class AssocComTransformation extends Transformation {
         }
     }
 
-    private ACTree[] getLvl(final ACTree input, final int height) {
-        ACTree[] curLvl = new ACTree[]{input};
+    private List<ACTree> getLvl(final ACTree input, final int height) {
+        List<ACTree> curLvl = Collections.singletonList(input);
         int curHeight = input.height;
 
         while (curHeight > height) {
@@ -417,7 +449,7 @@ public class AssocComTransformation extends Transformation {
                     if (child.height == curHeight)
                         lst.add(child);
 
-            curLvl = (ACTree[])lst.toArray();
+            curLvl = lst;
         }
         return curLvl;
     }
@@ -452,7 +484,7 @@ public class AssocComTransformation extends Transformation {
         }
     }
 
-    private static class CanonicalInfo {
+    private class CanonicalInfo {
         ParseNode node;
         ParseNode canonical;
         LeafIndex index;
@@ -463,6 +495,21 @@ public class AssocComTransformation extends Transformation {
             super();
             this.node = node;
             this.canonical = canonical;
+        }
+
+        @Override
+        public String toString() {
+            final String idxStr = index != null ? " : " + index.toString() : "";
+            String nextStr = "";
+
+            if (next != null)
+                if (next.index != null)
+                    nextStr = ", next " + next.index.toString();
+                else
+                    nextStr = ", next ...";
+
+            return "{" + trManager.getFormula(node) + " : "
+                + trManager.getFormula(canonical) + idxStr + nextStr + "}";
         }
     }
 
@@ -614,15 +661,15 @@ public class AssocComTransformation extends Transformation {
 
             // The list of leafs which we should move to the other side
             // Initialize it as all leafs and then remove inappropriate
-            final ACTree[] sideLeafs = getLvl(mySide, 1);
+            final List<ACTree> sideLeafs = getLvl(mySide, 1);
 
             // We could do the search more efficiently!
             // Calculate which leafs we should move to the other side!
             for (final LeafIndex leafIdx : tgtSide.leafs)
-                for (int i = 0; i < sideLeafs.length; i++)
-                    if (sideLeafs[i] != null)
-                        if (leafIdx.num == sideLeafs[i].leafIndex().num) {
-                            sideLeafs[i] = null;
+                for (int i = 0; i < sideLeafs.size(); i++)
+                    if (sideLeafs.get(i) != null)
+                        if (leafIdx.num == sideLeafs.get(i).leafIndex().num) {
+                            sideLeafs.set(i, null);
                             break;
                         }
 

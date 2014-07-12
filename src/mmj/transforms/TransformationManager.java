@@ -111,12 +111,23 @@ public class TransformationManager {
         if (assocProp != null)
             isAssoc = true;
 
+        boolean isAssocCom = false;
+        if (isAssoc) {
+            final Assrt comAssocAssrt = comInfo.getComOp(assocProp);
+            if (comAssocAssrt != null)
+                isAssocCom = true;
+        }
+
         final boolean subTreesCouldBeRepl = replAsserts != null;
 
         if (!subTreesCouldBeRepl)
             return new IdentityTransformation(this, node);
 
-        if (isCom)
+        if (isAssocCom)
+            // TODO: check the property!
+            return new AssocComTransformation(this, node,
+                AssocTree.createAssocTree(node, assocProp, info), assocProp);
+        else if (isCom)
             return new CommutativeTransformation(this, node, comProp);
 
         else if (isAssoc)
