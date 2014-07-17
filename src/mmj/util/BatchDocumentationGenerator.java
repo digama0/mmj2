@@ -5,6 +5,7 @@ package mmj.util;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 
 /**
  * this class is used to generate documentation about batch commands.
@@ -42,6 +43,10 @@ public class BatchDocumentationGenerator {
     private static void generateDocumentation(final String fileName)
         throws FileNotFoundException
     {
+        final BatchCommand commandList[] = UtilConstants.RUNPARM_LIST;
+
+        Arrays.sort(commandList);
+
         final PrintWriter documentation = new PrintWriter(fileName);
 
         documentation.append("<html>\n");
@@ -49,12 +54,11 @@ public class BatchDocumentationGenerator {
         documentation.append("<h1>Table of content</h1>\n");
 
         documentation.append("<ul>");
-        for (int index = 0; index < UtilConstants.RUNPARM_LIST.length; index++)
-        {
+        for (int index = 0; index < commandList.length; index++) {
             documentation.append("<li>");
             documentation.append("<a href=\"#command" + index);
             documentation.append("\">");
-            documentation.append(UtilConstants.RUNPARM_LIST[index].name());
+            documentation.append(commandList[index].name());
             documentation.append("</a>\n");
         }
         documentation.append("</ul>");
@@ -63,15 +67,13 @@ public class BatchDocumentationGenerator {
         documentation.append("<h1>Content</h1>\n");
         documentation.append("<br>");
 
-        for (int index = 0; index < UtilConstants.RUNPARM_LIST.length; index++)
-        {
+        for (int index = 0; index < commandList.length; index++) {
             documentation.append("<hr>\n");
             documentation.append("<h3 id=\"command");
             documentation.append(index + "\">");
-            documentation.append(UtilConstants.RUNPARM_LIST[index].name());
+            documentation.append(commandList[index].name());
             documentation.append("</h3>\n\n");
-            documentation.append(UtilConstants.RUNPARM_LIST[index]
-                .documentation());
+            documentation.append(commandList[index].documentation());
             documentation.append("\n<br>");
         }
 

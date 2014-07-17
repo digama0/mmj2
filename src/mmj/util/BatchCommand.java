@@ -8,7 +8,7 @@ package mmj.util;
  * This class contain batch command name and documentation of it and it's
  * options. It's created to unite command name and it's documentation.
  */
-public class BatchCommand {
+public class BatchCommand implements Comparable<BatchCommand> {
 
     private final String name;
     private final String documentation;
@@ -55,5 +55,18 @@ public class BatchCommand {
     @Override
     public String toString() {
         return name();
+    }
+
+    /**
+     * implementation of Comparable compareTo function. This function compares
+     * names of BatchCommands so the can be sorted in alphabetic order.
+     * 
+     * @param b - what to compare to.
+     * @return difference
+     */
+    public int compareTo(final BatchCommand b) {
+        if (b == this)
+            return 0;
+        return name().compareTo(b.name());
     }
 }
