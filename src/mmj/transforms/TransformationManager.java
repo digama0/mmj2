@@ -259,7 +259,7 @@ public class TransformationManager {
     {
         try {
             return tryToFindTransformationsCore(proofWorksheet, derivStep);
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             // TODO: make string error constant!
             output.errorMessage("E- autotramsformation problem:", e.toString());
             e.printStackTrace();

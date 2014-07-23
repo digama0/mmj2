@@ -54,6 +54,18 @@ public class AssocComTransformation extends Transformation {
         }
 
         @Override
+        public int hashCode() {
+            return num;
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (!(obj instanceof LeafIndex))
+                return false;
+            return num == ((LeafIndex)obj).num;
+        }
+
+        @Override
         public String toString() {
             return "IDX." + num;
         }
@@ -598,8 +610,8 @@ public class AssocComTransformation extends Transformation {
         ProofStepStmt result = null;
 
         if (tgtTree.leafsLength() == 2)
-            if (myTree.children[0].leafIndex() != tgtTree.children[0]
-                .leafIndex())
+            if (!myTree.children[0].leafIndex().equals(
+                tgtTree.children[0].leafIndex()))
                 result = createCommutativeStep(myTree.children[0], info);
 
         final Transformation replaceMe = new ReplaceTransformation(trManager,
