@@ -120,6 +120,7 @@ public class AssocComTransformation extends Transformation {
             validParseNode = false;
             assert prevChild.parent == this;
             children[prevChild.getParentChildNum()] = newChild;
+            newChild.parent = this;
             updateHeight();
         }
 
@@ -350,13 +351,12 @@ public class AssocComTransformation extends Transformation {
         return step.formulaParseTree.getRoot().getChild()[1];
     }
 
-    private ProofStepStmt move(ACTree what, final WorksheetInfo info) {
-        assert what != null;
-        assert what.parent != null;
-        assert what.parent.parent != null;
-
+    private ProofStepStmt move(final ACTree what, final WorksheetInfo info) {
         ProofStepStmt result = null;
         while (true) {
+            assert what != null;
+            assert what.parent != null;
+            assert what.parent.parent != null;
             assert what.validParseNode;
             assert what.parent.validParseNode;
             assert what.parent.parent.validParseNode;
@@ -397,6 +397,7 @@ public class AssocComTransformation extends Transformation {
             else {
                 final ACTree gTree = what.parent.parent;
                 final ACTree pTree = what.parent.parent.parent;
+                final int rgNumber = gTree.getParentChildNum();
                 final ParseNode pNode = what.parent.parent.parent.node;
                 if (!what.isSideChild()) {
                     // @formatter:off
@@ -436,34 +437,34 @@ public class AssocComTransformation extends Transformation {
 
                 final ParseNode newGNode = getRightPart(assocStep);
                 final ProofStepStmt replGNode = replInfo.createReplaceStep(
-                    info, pNode, genStmt.varIndexes[gTree.getParentChildNum()],
-                    newGNode, assocStep);
+                    info, pNode, genStmt.varIndexes[rgNumber], newGNode,
+                    assocStep);
 
                 final ParseNode newPNode = getRightPart(replGNode);
                 pTree.replaceNode(newPNode);
 
-                what = what.parent;
+                // what = what.parent;
                 result = replGNode;
             }
         }
     }
 
-    private List<ACTree> getLvl(final ACTree input, final int height) {
-        List<ACTree> curLvl = Collections.singletonList(input);
-        int curHeight = input.height;
-
-        while (curHeight > height) {
-            curHeight--;
-            final ArrayList<ACTree> lst = new ArrayList<ACTree>();
-
-            for (final ACTree tree : curLvl)
-                for (final ACTree child : tree.children)
-                    if (child.height == curHeight)
-                        lst.add(child);
-
-            curLvl = lst;
+    private void getLvl(final ACTree input, final int height,
+        final List<ACTree> res)
+    {
+        if (input.height == height) {
+            res.add(input);
+            return;
         }
-        return curLvl;
+
+        for (final ACTree child : input.children)
+            getLvl(child, height, res);
+    }
+
+    private List<ACTree> getLvl(final ACTree input, final int height) {
+        final List<ACTree> res = new ArrayList<ACTree>();
+        getLvl(input, height, res);
+        return res;
     }
 
     private int commonElements(final ACTree t1, final ACTree t2) {
