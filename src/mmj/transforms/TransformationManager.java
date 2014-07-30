@@ -206,7 +206,7 @@ public class TransformationManager {
         final ParseNode dsCanonicalForm = dsTr.getCanonicalNode(info);
         derivStep.setCanonicalForm(dsCanonicalForm);
 
-        output.dbgMessage(dbg, "I-DBG Step %s has canonical form: %s",
+        output.dbgMessage(dbg, "I-TR-DBG Step %s has canonical form: %s",
             derivStep, getCanonicalFormula(derivStep));
 
         for (final ProofWorkStmt proofWorkStmtObject : proofWorksheet
@@ -225,7 +225,7 @@ public class TransformationManager {
                 candidate.setCanonicalForm(getCanonicalForm(
                     candidate.formulaParseTree.getRoot(), info));
 
-                output.dbgMessage(dbg, "I-DBG Step %s has canonical form: %s",
+                output.dbgMessage(dbg, "I-TR-DBG Step %s has canonical form: %s",
                     candidate, getCanonicalFormula(candidate));
             }
 
@@ -233,7 +233,7 @@ public class TransformationManager {
                 candidate.getCanonicalForm()))
             {
                 output.dbgMessage(dbg,
-                    "I-DBG found canonical forms correspondance: %s and %s",
+                    "I-TR-DBG found canonical forms correspondance: %s and %s",
                     candidate, derivStep);
                 performTransformation(info, candidate, implAssrt);
 
@@ -261,12 +261,14 @@ public class TransformationManager {
             return tryToFindTransformationsCore(proofWorksheet, derivStep);
         } catch (final Throwable e) {
             // TODO: make string error constant!
-            output.errorMessage("E- autotramsformation problem:", e.toString());
-            e.printStackTrace();
+            if (dbg)
+                e.printStackTrace();
+
+            output.errorMessage(TrConstants.ERRMSG_UNEXPECTED_EXCEPTION,
+                e.toString());
             return null;
         }
     }
-
     // ------------------------------------------------------------------------
     // ------------------------Debug functions---------------------------------
     // ------------------------------------------------------------------------

@@ -138,7 +138,7 @@ public class AssociativeInfo extends DBInfo {
                 continue;
 
             if (!replInfo.isFullReplaceStatement(stmt)) {
-                output.dbgMessage(dbg, "I-DBG found commutative assrts "
+                output.dbgMessage(dbg, "I-TR-DBG found commutative assrts "
                     + "but it has problems with replace: %s: %s", assrt,
                     assrt.getFormula());
                 return;
@@ -171,7 +171,7 @@ public class AssociativeInfo extends DBInfo {
             if (assoc[i] != null)
                 continue;
 
-            output.dbgMessage(dbg, "I-DBG associative assrts: %d. %s: %s", i,
+            output.dbgMessage(dbg, "I-TR-DBG associative assrts: %d. %s: %s", i,
                 assrt, assrt.getFormula());
             assoc[i] = assrt;
             return;

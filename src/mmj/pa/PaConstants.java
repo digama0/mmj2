@@ -118,6 +118,7 @@ import javax.swing.text.StyleConstants;
 
 import mmj.gmff.GMFFConstants;
 import mmj.mmio.MMIOConstants;
+import mmj.transforms.TrConstants;
 import mmj.util.UtilConstants;
 import mmj.verify.*;
 
@@ -153,6 +154,8 @@ import mmj.verify.*;
  * <li>{@code TL} = mmj.tl package (Theorem Loader).
  * <li>{@code TM} = mmj.tmff.AlignColumn and related code
  * <li>{@code UT} = mmj.util package. (see {@link UtilConstants})
+ * <li>{@code TR} = mmj.transforms package (proof assistant) (see
+ * {@link TrConstants})
  * </ul>
  * <p>
  * <b>{@code 9999}</b> : sequential number within the source code, 0001 through

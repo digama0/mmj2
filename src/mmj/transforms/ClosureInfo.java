@@ -289,7 +289,7 @@ public class ClosureInfo extends DBInfo {
         templateSet.put(template, assrt);
 
         output.dbgMessage(dbg,
-            "I-DBG transitive to result properties(%b): %s: %s => %s",
+            "I-TR-DBG transitive to result properties(%b): %s: %s => %s",
             incorrectOrder, assrt, hypString, assrt.getFormula());
     }
 

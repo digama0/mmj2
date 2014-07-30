@@ -129,7 +129,7 @@ public class CommutativeInfo extends DBInfo {
         if (com != null)
             return;
 
-        output.dbgMessage(dbg, "I-DBG commutative assrts: %s: %s", assrt,
+        output.dbgMessage(dbg, "I-TR-DBG commutative assrts: %s: %s", assrt,
             assrt.getFormula());
         propertyMap.put(template, assrt);
     }

@@ -82,7 +82,7 @@ public class EquivalenceInfo extends DBInfo {
             .getChild()[0].getStmt())
             return;
 
-        output.dbgMessage(dbg, "I-DBG Equivalence commutative assrt: %s: %s",
+        output.dbgMessage(dbg, "I-TR-DBG Equivalence commutative assrt: %s: %s",
             assrt, assrt.getFormula());
 
         if (!eqCommutatives.containsKey(stmt))
@@ -141,7 +141,7 @@ public class EquivalenceInfo extends DBInfo {
             .getChild()[1].getStmt())
             return;
 
-        output.dbgMessage(dbg, "I-DBG Equivalence transitive assrt: %s: %s",
+        output.dbgMessage(dbg, "I-TR-DBG Equivalence transitive assrt: %s: %s",
             assrt, assrt.getFormula());
         if (!eqTransitivies.containsKey(stmt))
             eqTransitivies.put(stmt, assrt);
@@ -175,7 +175,7 @@ public class EquivalenceInfo extends DBInfo {
 
         // Debug output:
         for (final Stmt eq : eqTransitivies.keySet())
-            output.dbgMessage(dbg, "I-DBG Equivalence rules: %s: %s and %s",
+            output.dbgMessage(dbg, "I-TR-DBG Equivalence rules: %s: %s and %s",
                 eq, eqCommutatives.get(eq).getFormula(), eqTransitivies.get(eq)
                     .getFormula());
 
@@ -190,7 +190,7 @@ public class EquivalenceInfo extends DBInfo {
                 .getTyp();
             eqMap.put(type, eq);
 
-            output.dbgMessage(dbg, "I-DBG Type equivalence map: %s: %s", type,
+            output.dbgMessage(dbg, "I-TR-DBG Type equivalence map: %s: %s", type,
                 eq);
         }
     }

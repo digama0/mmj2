@@ -84,12 +84,12 @@ public class ImplicationInfo extends DBInfo {
 
         if (preHyp != log0Root) {
             output.dbgMessage(dbg,
-                "I-DBG the current implementation doesn't support A->B & A"
+                "I-TR-DBG the current implementation doesn't support A->B & A"
                     + " hypotheses order, assert %s", assrt);
             return;
         }
 
-        output.dbgMessage(dbg, "I-DBG implication assrt: %s: %s", assrt,
+        output.dbgMessage(dbg, "I-TR-DBG implication assrt: %s: %s", assrt,
             assrt.getFormula());
         implOp.put(stmt, assrt);
 
@@ -101,7 +101,7 @@ public class ImplicationInfo extends DBInfo {
         if (eqImplications.containsKey(type))
             return;
 
-        output.dbgMessage(dbg, "I-DBG implication equal assrt: %s: %s", type,
+        output.dbgMessage(dbg, "I-TR-DBG implication equal assrt: %s: %s", type,
             assrt);
 
         eqImplications.put(type, assrt);

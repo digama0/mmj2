@@ -105,7 +105,7 @@ public class ReplaceInfo extends DBInfo {
 
         repl[replPos] = assrt;
 
-        output.dbgMessage(dbg, "I-DBG Replace assrts: %s: %s", assrt,
+        output.dbgMessage(dbg, "I-TR-DBG Replace assrts: %s: %s", assrt,
             assrt.getFormula());
     }
 
