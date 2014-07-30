@@ -117,7 +117,8 @@ public class GrammarBoss extends Boss {
         IOException, VerifyException
     {
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR) == 0)
+        if (runParm.name
+            .compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR.name()) == 0)
         {
             grammar = null;
             grammarInitialized = false;
@@ -132,7 +133,8 @@ public class GrammarBoss extends Boss {
             return false; // not "consumed"
         }
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_FILE) == 0)
+        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_FILE
+            .name()) == 0)
         {
             grammar = null;
             grammarInitialized = false;
@@ -159,27 +161,31 @@ public class GrammarBoss extends Boss {
 //END-PATCH 2008-08-01
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_GRAMMAR_AMBIGUITY_EDITS) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_GRAMMAR_AMBIGUITY_EDITS
+                .name()) == 0)
         {
             editGrammarAmbiguityEdits(runParm);
             return true; // "consumed"
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_STATEMENT_AMBIGUITY_EDITS) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_STATEMENT_AMBIGUITY_EDITS
+                .name()) == 0)
         {
             editStatementAmbiguityEdits(runParm);
             return true; // "consumed"
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_INITIALIZE_GRAMMAR) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_INITIALIZE_GRAMMAR
+                .name()) == 0)
         {
             doInitializeGrammar(runParm);
             return true; // "consumed"
         }
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_PARSE) == 0)
+        if (runParm.name
+            .compareToIgnoreCase(UtilConstants.RUNPARM_PARSE.name()) == 0)
         {
             doParse(runParm);
             return true; // "consumed"
@@ -282,7 +288,7 @@ public class GrammarBoss extends Boss {
         throws IllegalArgumentException, IOException, VerifyException
     {
 
-        editRunParmValuesLength(runParm, UtilConstants.RUNPARM_PARSE, 1);
+        editRunParmValuesLength(runParm, UtilConstants.RUNPARM_PARSE.name(), 1);
 
         final LogicalSystem logicalSystem = batchFramework.logicalSystemBoss
             .getLogicalSystem();
@@ -312,7 +318,7 @@ public class GrammarBoss extends Boss {
         }
         else {
             final Stmt stmt = editRunParmValueStmt(optionValue,
-                UtilConstants.RUNPARM_PARSE, logicalSystem);
+                UtilConstants.RUNPARM_PARSE.name(), logicalSystem);
 
 //          Stmt[] exprRPN    =
             final ParseTree parseTree = grammar.parseOneStmt(messages,
@@ -400,9 +406,9 @@ public class GrammarBoss extends Boss {
         throws IllegalArgumentException
     {
         editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_GRAMMAR_AMBIGUITY_EDITS, 1);
+            UtilConstants.RUNPARM_GRAMMAR_AMBIGUITY_EDITS.name(), 1);
         grammarAmbiguityParm = editAmbiguityParm(runParm.values[0].trim(),
-            UtilConstants.RUNPARM_GRAMMAR_AMBIGUITY_EDITS);
+            UtilConstants.RUNPARM_GRAMMAR_AMBIGUITY_EDITS.name());
     }
 
     /**
@@ -415,9 +421,9 @@ public class GrammarBoss extends Boss {
         throws IllegalArgumentException
     {
         editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_STATEMENT_AMBIGUITY_EDITS, 1);
+            UtilConstants.RUNPARM_STATEMENT_AMBIGUITY_EDITS.name(), 1);
         statementAmbiguityParm = editAmbiguityParm(runParm.values[0].trim(),
-            UtilConstants.RUNPARM_STATEMENT_AMBIGUITY_EDITS);
+            UtilConstants.RUNPARM_STATEMENT_AMBIGUITY_EDITS.name());
     }
 
     /**

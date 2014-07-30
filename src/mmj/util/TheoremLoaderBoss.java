@@ -58,14 +58,16 @@ public class TheoremLoaderBoss extends Boss {
         IOException, VerifyException, TheoremLoaderException
     {
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR) == 0)
+        if (runParm.name
+            .compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR.name()) == 0)
         {
             theoremLoader = null;
             tlPreferences = null;
             return false; // not "consumed"
         }
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_FILE) == 0)
+        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_FILE
+            .name()) == 0)
         {
             theoremLoader = null;
             tlPreferences = null;

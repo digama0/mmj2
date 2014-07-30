@@ -1479,6 +1479,16 @@ public class PaConstants {
     public static final String PA_GUI_HELP_ABOUT_ITEM_TEXT = "About mmj2";
 
     /**
+     * ProofAsstGui Help Menu Batch Command documentation text
+     */
+    public static final String PA_GUI_HELP_MENU_BATCH_COMMAND_DOCUMENTATION_TEXT = "Batch command documentation";
+
+    /**
+     * ProofAsstGui Help Batch Command Documentation HEADER
+     */
+    public static final String PA_GUI_HELP_BATCH_COMMAND_DOCUMENTATION_TITLE = "Documentation viewer";
+
+    /**
      * ProofAsstGUI Exit Action Before Save
      */
     public static final String PA_GUI_ACTION_BEFORE_SAVE_EXIT = "Exit";

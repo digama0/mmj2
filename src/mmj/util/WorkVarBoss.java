@@ -53,27 +53,30 @@ public class WorkVarBoss extends Boss {
         throws IllegalArgumentException, VerifyException
     {
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR) == 0)
+        if (runParm.name
+            .compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR.name()) == 0)
         {
             workVarManager = null;
             return false; // not "consumed"
         }
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_FILE) == 0)
+        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_FILE
+            .name()) == 0)
         {
             workVarManager = null;
             return false; // not "consumed"
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_DEFINE_WORK_VAR_TYPE) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_DEFINE_WORK_VAR_TYPE
+                .name()) == 0)
         {
             editDefineWorkVarType(runParm);
             return true;
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_DECLARE_WORK_VARS) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_DECLARE_WORK_VARS.name()) == 0)
         {
             editDeclareWorkVars(runParm);
             return true;
@@ -122,10 +125,10 @@ public class WorkVarBoss extends Boss {
     {
 
         editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_DEFINE_WORK_VAR_TYPE, 3);
+            UtilConstants.RUNPARM_DEFINE_WORK_VAR_TYPE.name(), 3);
 
         final int nbrWorkVars = editRunParmValueReqPosInt(runParm,
-            UtilConstants.RUNPARM_DEFINE_WORK_VAR_TYPE, 3);
+            UtilConstants.RUNPARM_DEFINE_WORK_VAR_TYPE.name(), 3);
 
         getWorkVarManager().defineWorkVarType(
             batchFramework.grammarBoss.getGrammar(), runParm.values[0].trim(),

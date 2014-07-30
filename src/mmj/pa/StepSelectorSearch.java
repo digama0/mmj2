@@ -23,19 +23,9 @@
 
 package mmj.pa;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-import mmj.lang.Assrt;
-import mmj.lang.Cnst;
-import mmj.lang.Formula;
-import mmj.lang.Hyp;
-import mmj.lang.LogHyp;
-import mmj.lang.ParseNode;
-import mmj.lang.ParseTree;
-import mmj.lang.Theorem;
-import mmj.lang.VerifyException;
+import mmj.lang.*;
 import mmj.util.MergeSortedArrayLists;
 import mmj.verify.VerifyProofs;
 

@@ -100,102 +100,115 @@ public class OutputBoss extends Boss {
         IOException, VerifyException
     {
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR) == 0)
+        if (runParm.name
+            .compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR.name()) == 0)
         {
             setDefaults();
             return false;
         }
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_SYSOUT_FILE) == 0)
+        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_SYSOUT_FILE
+            .name()) == 0)
         {
             editSysOutFile(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_SYSERR_FILE) == 0)
+        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_SYSERR_FILE
+            .name()) == 0)
         {
             editSysErrFile(runParm);
             return true;
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_MAX_ERROR_MESSAGES) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_MAX_ERROR_MESSAGES
+                .name()) == 0)
         {
             editMaxErrorMessages(runParm);
             return true;
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_MAX_INFO_MESSAGES) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_MAX_INFO_MESSAGES.name()) == 0)
         {
             editMaxInfoMessages(runParm);
             return true;
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_MAX_STATEMENT_PRINT_COUNT) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_MAX_STATEMENT_PRINT_COUNT
+                .name()) == 0)
         {
             editMaxStatementPrintCount(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_CAPTION) == 0)
+        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_CAPTION
+            .name()) == 0)
         {
             editCaption(runParm);
             return true;
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PRINT_SYNTAX_DETAILS) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_PRINT_SYNTAX_DETAILS
+                .name()) == 0)
         {
             doPrintSyntaxDetails(runParm);
             return true; // "consumed"
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PRINT_STATEMENT_DETAILS) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_PRINT_STATEMENT_DETAILS
+                .name()) == 0)
         {
             doPrintStatementDetails(runParm);
             return true; // "consumed"
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_OUTPUT_VERBOSITY) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_OUTPUT_VERBOSITY.name()) == 0)
         {
             editOutputVerbosity(runParm);
             return true; // "consumed"
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_START_INSTRUMENTATION_TIMER) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_START_INSTRUMENTATION_TIMER
+                .name()) == 0)
         {
             editStartInstrumentationTimer(runParm);
             return true; // "consumed"
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_STOP_INSTRUMENTATION_TIMER) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_STOP_INSTRUMENTATION_TIMER
+                .name()) == 0)
         {
             editStopInstrumentationTimer(runParm);
             return true; // "consumed"
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PRINT_BOOK_MANAGER_CHAPTERS) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_PRINT_BOOK_MANAGER_CHAPTERS
+                .name()) == 0)
         {
             doPrintBookManagerChapters(runParm);
             return true; // "consumed"
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PRINT_BOOK_MANAGER_SECTIONS) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_PRINT_BOOK_MANAGER_SECTIONS
+                .name()) == 0)
         {
             doPrintBookManagerSections(runParm);
             return true; // "consumed"
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PRINT_BOOK_MANAGER_SECTION_DETAILS) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_PRINT_BOOK_MANAGER_SECTION_DETAILS
+                .name()) == 0)
         {
             doPrintBookManagerSectionDetails(runParm);
             return true; // "consumed"
@@ -382,7 +395,8 @@ public class OutputBoss extends Boss {
         }
         else {
             final Stmt stmt = editRunParmValueStmt(optionValue,
-                UtilConstants.RUNPARM_PRINT_STATEMENT_DETAILS, logicalSystem);
+                UtilConstants.RUNPARM_PRINT_STATEMENT_DETAILS.name(),
+                logicalSystem);
             d.printOneStatementDetails(stmt);
         }
         printAndClearMessages();
@@ -402,12 +416,14 @@ public class OutputBoss extends Boss {
             .getLogicalSystem();
 
         final BookManager bookManager = checkBookManagerReady(runParm,
-            UtilConstants.RUNPARM_PRINT_BOOK_MANAGER_CHAPTERS, logicalSystem);
+            UtilConstants.RUNPARM_PRINT_BOOK_MANAGER_CHAPTERS.name(),
+            logicalSystem);
 
         final Dump d = getDump();
 
         d.printBookManagerChapters(
-            UtilConstants.RUNPARM_PRINT_BOOK_MANAGER_CHAPTERS, bookManager);
+            UtilConstants.RUNPARM_PRINT_BOOK_MANAGER_CHAPTERS.name(),
+            bookManager);
 
         printAndClearMessages();
     }
@@ -426,12 +442,14 @@ public class OutputBoss extends Boss {
             .getLogicalSystem();
 
         final BookManager bookManager = checkBookManagerReady(runParm,
-            UtilConstants.RUNPARM_PRINT_BOOK_MANAGER_SECTIONS, logicalSystem);
+            UtilConstants.RUNPARM_PRINT_BOOK_MANAGER_SECTIONS.name(),
+            logicalSystem);
 
         final Dump d = getDump();
 
         d.printBookManagerSections(
-            UtilConstants.RUNPARM_PRINT_BOOK_MANAGER_SECTIONS, bookManager);
+            UtilConstants.RUNPARM_PRINT_BOOK_MANAGER_SECTIONS.name(),
+            bookManager);
 
         printAndClearMessages();
     }
@@ -450,7 +468,7 @@ public class OutputBoss extends Boss {
             .getLogicalSystem();
 
         final BookManager bookManager = checkBookManagerReady(runParm,
-            UtilConstants.RUNPARM_PRINT_BOOK_MANAGER_SECTION_DETAILS,
+            UtilConstants.RUNPARM_PRINT_BOOK_MANAGER_SECTION_DETAILS.name(),
             logicalSystem);
 
         final Dump d = getDump();
@@ -458,9 +476,10 @@ public class OutputBoss extends Boss {
         Section section = null;
         final String optionValue = runParm.values[0].trim();
         if (optionValue.compareTo(UtilConstants.RUNPARM_OPTION_VALUE_ALL) != 0)
-            section = editBookManagerSectionNbr(runParm,
-                UtilConstants.RUNPARM_PRINT_BOOK_MANAGER_SECTION_DETAILS, 1,
-                bookManager);
+            section = editBookManagerSectionNbr(
+                runParm,
+                UtilConstants.RUNPARM_PRINT_BOOK_MANAGER_SECTION_DETAILS.name(),
+                1, bookManager);
 
         d.printBookManagerSectionDetails(runParm, logicalSystem, bookManager,
             section);
@@ -500,7 +519,7 @@ public class OutputBoss extends Boss {
         closeSysOut();
         sysOut = null;
         sysOut = editPrintWriterRunParm(batchFramework.paths.getMMJ2Path(),
-            runParm, UtilConstants.RUNPARM_SYSOUT_FILE);
+            runParm, UtilConstants.RUNPARM_SYSOUT_FILE.name());
 
     }
 
@@ -517,7 +536,7 @@ public class OutputBoss extends Boss {
         closeSysErr();
         sysErr = null;
         sysErr = editPrintWriterRunParm(batchFramework.paths.getMMJ2Path(),
-            runParm, UtilConstants.RUNPARM_SYSERR_FILE);
+            runParm, UtilConstants.RUNPARM_SYSERR_FILE.name());
 
     }
 
@@ -532,7 +551,7 @@ public class OutputBoss extends Boss {
     {
 
         maxErrorMessagesParm = editRunParmValueReqPosInt(runParm,
-            UtilConstants.RUNPARM_MAX_ERROR_MESSAGES, 1);
+            UtilConstants.RUNPARM_MAX_ERROR_MESSAGES.name(), 1);
         if (messages != null) {
             printAndClearMessages();
             messages.reallocateErrorMessages(maxErrorMessagesParm);
@@ -550,7 +569,7 @@ public class OutputBoss extends Boss {
     {
 
         maxInfoMessagesParm = editRunParmValueReqPosInt(runParm,
-            UtilConstants.RUNPARM_MAX_INFO_MESSAGES, 1);
+            UtilConstants.RUNPARM_MAX_INFO_MESSAGES.name(), 1);
         if (messages != null) {
             printAndClearMessages();
             messages.reallocateInfoMessages(maxInfoMessagesParm);
@@ -567,7 +586,8 @@ public class OutputBoss extends Boss {
         throws IllegalArgumentException
     {
 
-        editRunParmValuesLength(runParm, UtilConstants.RUNPARM_CAPTION, 1);
+        editRunParmValuesLength(runParm, UtilConstants.RUNPARM_CAPTION.name(),
+            1);
         captionParm = runParm.values[0].trim();
         if (captionParm.length() == 0)
             captionParm = " ";
@@ -596,7 +616,7 @@ public class OutputBoss extends Boss {
     {
 
         maxStatementPrintCountParm = editRunParmValueReqPosInt(runParm,
-            UtilConstants.RUNPARM_MAX_STATEMENT_PRINT_COUNT, 1);
+            UtilConstants.RUNPARM_MAX_STATEMENT_PRINT_COUNT.name(), 1);
     }
 
     /**
@@ -610,7 +630,7 @@ public class OutputBoss extends Boss {
     {
 
         outputVerbosityParm = editRunParmValueReqInt(runParm,
-            UtilConstants.RUNPARM_OUTPUT_VERBOSITY, 1);
+            UtilConstants.RUNPARM_OUTPUT_VERBOSITY.name(), 1);
     }
 
     /**
@@ -624,7 +644,7 @@ public class OutputBoss extends Boss {
     {
 
         editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_START_INSTRUMENTATION_TIMER, 1);
+            UtilConstants.RUNPARM_START_INSTRUMENTATION_TIMER.name(), 1);
 
         getMessages().startInstrumentationTimer(runParm.values[0]);
     }
@@ -640,7 +660,7 @@ public class OutputBoss extends Boss {
     {
 
         editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_STOP_INSTRUMENTATION_TIMER, 1);
+            UtilConstants.RUNPARM_STOP_INSTRUMENTATION_TIMER.name(), 1);
 
         getMessages().stopInstrumentationTimer(runParm.values[0]);
         printAndClearMessages();

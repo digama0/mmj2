@@ -19,18 +19,8 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import mmj.lang.Assrt;
-import mmj.lang.BookManager;
-import mmj.lang.Chapter;
-import mmj.lang.Cnst;
-import mmj.lang.LogicalSystem;
-import mmj.lang.ScopeFrame;
-import mmj.lang.Section;
-import mmj.lang.Stmt;
-import mmj.pa.DerivationStep;
-import mmj.pa.ProofAsst;
-import mmj.pa.ProofAsstPreferences;
-import mmj.pa.ProofStepStmt;
+import mmj.lang.*;
+import mmj.pa.*;
 import mmj.verify.VerifyProofs;
 
 public class CompiledSearchArgs {

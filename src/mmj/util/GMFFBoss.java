@@ -44,13 +44,15 @@ public class GMFFBoss extends Boss {
         throws IllegalArgumentException, GMFFException
     {
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR) == 0)
+        if (runParm.name
+            .compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR.name()) == 0)
         {
             gmffManager = null;
             return false; // not "consumed"
         }
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_FILE) == 0)
+        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_FILE
+            .name()) == 0)
         {
             // don't need to do anything here because
             // LogicalSystemBoss executes
@@ -63,49 +65,54 @@ public class GMFFBoss extends Boss {
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_GMFF_INITIALIZE) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_GMFF_INITIALIZE.name()) == 0)
         {
             doGMFFInitialize(runParm);
             return true; // "consumed"
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_GMFF_EXPORT_PARMS) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_GMFF_EXPORT_PARMS.name()) == 0)
         {
             doRunParmGMFFExportParms(runParm);
             return true; // "consumed"
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_GMFF_USER_EXPORT_CHOICE) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_GMFF_USER_EXPORT_CHOICE
+                .name()) == 0)
         {
             doRunParmGMFFUserExportChoice(runParm);
             return true; // "consumed"
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_GMFF_USER_TEXT_ESCAPES) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_GMFF_USER_TEXT_ESCAPES
+                .name()) == 0)
         {
             doRunParmGMFFUserTextEscapes(runParm);
             return true; // "consumed"
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_GMFF_PARSE_METAMATH_TYPESET_COMMENT) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_GMFF_PARSE_METAMATH_TYPESET_COMMENT
+                .name()) == 0)
         {
             doGMFFParseMetamathTypesetComment(runParm);
             return true; // "consumed"
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_GMFF_EXPORT_FROM_FOLDER) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_GMFF_EXPORT_FROM_FOLDER
+                .name()) == 0)
         {
             doGMFFExportFromFolder(runParm);
             return true; // "consumed"
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_GMFF_EXPORT_THEOREM) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_GMFF_EXPORT_THEOREM
+                .name()) == 0)
         {
             doGMFFExportTheorem(runParm);
             return true; // "consumed"
@@ -182,7 +189,7 @@ public class GMFFBoss extends Boss {
     {
 
         editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_GMFF_EXPORT_PARMS, 8);
+            UtilConstants.RUNPARM_GMFF_EXPORT_PARMS.name(), 8);
 
         final String exportType = runParm.values[0].trim();
         final String onoff = runParm.values[1].trim();
@@ -215,7 +222,7 @@ public class GMFFBoss extends Boss {
     {
 
         editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_GMFF_USER_TEXT_ESCAPES, 3);
+            UtilConstants.RUNPARM_GMFF_USER_TEXT_ESCAPES.name(), 3);
 
         final String exportType = runParm.values[0].trim();
 
@@ -253,7 +260,7 @@ public class GMFFBoss extends Boss {
     {
 
         editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_GMFF_USER_EXPORT_CHOICE, 1);
+            UtilConstants.RUNPARM_GMFF_USER_EXPORT_CHOICE.name(), 1);
 
         final String exportTypeOrAll = runParm.values[0].trim();
 
@@ -273,7 +280,7 @@ public class GMFFBoss extends Boss {
         boolean runParmPrintOption = false;
 
         editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_GMFF_PARSE_METAMATH_TYPESET_COMMENT, 3);
+            UtilConstants.RUNPARM_GMFF_PARSE_METAMATH_TYPESET_COMMENT.name(), 3);
         try {
 
             if (runParm.values.length > 3) {
@@ -310,7 +317,7 @@ public class GMFFBoss extends Boss {
     {
 
         editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_GMFF_EXPORT_FROM_FOLDER, 4);
+            UtilConstants.RUNPARM_GMFF_EXPORT_FROM_FOLDER.name(), 4);
         try {
 
             final String inputDirectory = runParm.values[0].trim();
@@ -343,7 +350,7 @@ public class GMFFBoss extends Boss {
     {
 
         editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_GMFF_EXPORT_THEOREM, 2);
+            UtilConstants.RUNPARM_GMFF_EXPORT_THEOREM.name(), 2);
         try {
 
             final String theoremLabelOrAsterisk = runParm.values[0].trim();

@@ -40,7 +40,7 @@
     <target depends="build-project" name="build-doc">
         <javadoc sourcepath="src" destdir="doc/javadoc" additionalparam="-notimestamp"/>
     </target>
-    <target depends="build-jar,build-doc" name="build" />
+    <target depends="build-jar,build-doc,batchCommandDocumentation" name="build" />
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
     <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
         <copy todir="${ant.library.dir}">
@@ -61,4 +61,11 @@
             <classpath refid="mmj2.classpath"/>
         </java>
     </target>
+	<target name="batchCommandDocumentation" depends="build-jar">
+		<java classname="mmj.util.BatchDocumentationGenerator"  failonerror="true" fork="yes">
+			<arg line="doc/BatchCommandDocumentation.html">
+			</arg>
+			<classpath refid="mmj2.classpath"/>
+		</java>
+	</target>
 </project>

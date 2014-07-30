@@ -96,9 +96,12 @@ package mmj.pa;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.Vector;
 
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.text.*;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
@@ -107,6 +110,8 @@ import mmj.lang.*;
 import mmj.tl.*;
 import mmj.tmff.TMFFConstants;
 import mmj.tmff.TMFFException;
+import mmj.util.BatchCommand;
+import mmj.util.UtilConstants;
 import mmj.verify.HypsOrder;
 
 /**
@@ -1687,6 +1692,99 @@ public class ProofAsstGUI {
         return item;
     }
 
+    /**
+     * This function builds Batch Documentation item of HelpMenu. Batch
+     * documentation item opens a BatchDocumentation viewer, that shows
+     * documentation of commands.
+     * 
+     * @return JMenuItem - BatchDocumentation item.
+     */
+    private JMenuItem buildBatchCommandDocumentationHelpMenuItem() {
+        final JMenuItem result = new JMenuItem(
+            PaConstants.PA_GUI_HELP_MENU_BATCH_COMMAND_DOCUMENTATION_TEXT);
+        result.addActionListener(new ActionListener() {
+            public void actionPerformed(final ActionEvent e) {
+
+                final JTextPane documentationText = new JTextPane();
+                documentationText.setEditable(false);
+                documentationText.setContentType("text/html");
+
+                final JScrollPane documentationTextScroll = new JScrollPane(
+                    documentationText, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                    JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                documentationText.setText("<html>"
+                    + UtilConstants.RUNPARM_LIST[0].documentation());
+
+                final Vector<BatchCommand> commands = new Vector<BatchCommand>();
+                final JList<BatchCommand> commandList = new JList<BatchCommand>(
+                    UtilConstants.RUNPARM_LIST);
+                commandList.setLayoutOrientation(JList.VERTICAL);
+                commandList.setSelectedIndex(0);
+                commandList
+                    .setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+                final JTextField searchField = new JTextField("");
+
+                final JScrollPane commandListScroll = new JScrollPane(
+                    commandList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                    JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+                final ListSelectionListener selectionListener = new ListSelectionListener()
+                {
+                    public void valueChanged(final ListSelectionEvent e) {
+                        final BatchCommand selected = commandList
+                            .getSelectedValue();
+                        if (selected != null)
+                            documentationText.setText("<html>"
+                                + selected.documentation() + "</html>");
+                    }
+                };
+                final KeyListener searchFieldKeyListener = new KeyAdapter() {
+                    @Override
+                    public void keyReleased(final KeyEvent k) {
+                        repackCommandList();
+                    }
+                    public void repackCommandList() {
+                        String searchString = searchField.getText();
+                        searchString = searchString.toLowerCase();
+                        commands.clear();
+                        for (final BatchCommand element : UtilConstants.RUNPARM_LIST)
+                            if (element.name().toLowerCase()
+                                .contains(searchString))
+                                commands.add(element);
+                        commandList.setListData(commands);
+                    }
+                };
+                commandList.addListSelectionListener(selectionListener);
+                searchField.addKeyListener(searchFieldKeyListener);
+
+                final JPanel mainElements = new JPanel(new BorderLayout());
+
+                final JPanel choosingElement = new JPanel();
+                choosingElement.setLayout(new BorderLayout());
+                choosingElement.add(searchField, BorderLayout.PAGE_START);
+                choosingElement.add(commandListScroll, BorderLayout.CENTER);
+
+                mainElements.add(choosingElement, BorderLayout.WEST);
+                mainElements.add(documentationTextScroll, BorderLayout.CENTER);
+
+                final JFrame batchDocumentationViewer = new JFrame(
+                    PaConstants.PA_GUI_HELP_BATCH_COMMAND_DOCUMENTATION_TITLE);
+                batchDocumentationViewer.setResizable(true);
+                batchDocumentationViewer.setAlwaysOnTop(true);
+
+                batchDocumentationViewer.add(mainElements);
+                batchDocumentationViewer.pack();
+                commandList.setFixedCellWidth(commandList.getSize().width);
+                batchDocumentationViewer.setSize(new Dimension(
+                    batchDocumentationViewer.getSize().width, java.awt.Toolkit
+                        .getDefaultToolkit().getScreenSize().height / 2));
+
+                batchDocumentationViewer.setVisible(true);
+            }
+        });
+        return result;
+    }
     private JMenu buildHelpMenu() {
 
         final JMenu helpMenu = new JMenu(PaConstants.PA_GUI_HELP_MENU_TITLE);
@@ -1720,9 +1818,10 @@ public class ProofAsstGUI {
         });
         helpMenu.add(i);
 
+        helpMenu.add(buildBatchCommandDocumentationHelpMenuItem());
+
         return helpMenu;
     }
-
     // =============== Edit menu stuff ===============
 
     private Color getNewColor(final Color oldColor, final String title) {
