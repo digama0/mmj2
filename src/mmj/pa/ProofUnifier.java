@@ -678,8 +678,6 @@ public class ProofUnifier {
         autoDerivStepsCount -= autoBestResults.size();
 
         for (int i = 0; i < autoDerivStepsCount; i++) {
-            // derivStep = autoDerivSteps[i];
-            // assrt;
             final List<DerivationStep> list = trManager
                 .tryToFindTransformations(proofWorksheet, autoDerivSteps[i]);
             if (list != null) {

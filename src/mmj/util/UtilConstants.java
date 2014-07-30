@@ -1401,6 +1401,13 @@ public class UtilConstants {
         "Perform the optimizations for theorem search during \"parallel\"\n"
             + "unification.\n" + "\n");
 
+    public static final BatchCommand RUNPARM_PROOF_ASST_USE_AUTOTRANSFORMATIONS = new BatchCommand(
+        "ProofAsstUseAutotransformations",
+        "Auto-transformation options:\n <p>"
+            + "    value1 = Yes/No (use or do not use auto-transformations)\n <p>"
+            + "    value2 = Yes/No (use debug output or do not use it)\n"
+            + "\n");
+
     public static final BatchCommand RUNPARM_PROOF_ASST_BATCH_TEST = new BatchCommand(
         "ProofAsstBatchTest", // options
         " ProofAsstBatchTest\n"
@@ -3341,5 +3348,6 @@ public class UtilConstants {
             RUNPARM_PROOF_ASST_AUTOCOMPLETE_ENABLED,
             RUNPARM_PROOF_ASST_DERIVE_AUTOCOMPLETE,
             RUNPARM_PROOF_ASST_OPTIMIZE_THEOREM_SEARCH,
+            RUNPARM_PROOF_ASST_USE_AUTOTRANSFORMATIONS,
             RUNPARM_PROVABLE_LOGIC_STMT_TYPE};
 }

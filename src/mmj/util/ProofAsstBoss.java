@@ -476,6 +476,14 @@ public class ProofAsstBoss extends Boss {
         }
 
         if (runParm.name
+            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_USE_AUTOTRANSFORMATIONS
+                .name()) == 0)
+        {
+            doProofAsstUseAutotransformations(runParm);
+            return true;
+        }
+
+        if (runParm.name
             .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_DERIVE_AUTOCOMPLETE
                 .name()) == 0)
         {
@@ -1511,6 +1519,29 @@ public class ProofAsstBoss extends Boss {
         if (proofAsst == null)
             return;
         proofAsst.optimizeTheoremSearch();
+    }
+
+    /**
+     * Perform the initialization of auto-transformation component.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws VerifyException if an error occurred
+     */
+    public void doProofAsstUseAutotransformations(
+        final RunParmArrayEntry runParm) throws VerifyException
+    {
+        final ProofAsst proofAsst = getProofAsst();
+        if (proofAsst == null)
+            return;
+
+        final boolean enabled = editYesNoRunParm(runParm,
+            UtilConstants.RUNPARM_PROOF_ASST_USE_AUTOTRANSFORMATIONS.name(), 1);
+
+        final boolean debug = editYesNoRunParm(runParm,
+            UtilConstants.RUNPARM_PROOF_ASST_USE_AUTOTRANSFORMATIONS.name(), 2);
+
+        if (enabled)
+            proofAsst.initAutotransformations(debug);
     }
 
     /**

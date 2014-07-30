@@ -938,12 +938,21 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         for (final Formula formula : formulaList)
             formula.sortConstList(comp);
+    }
 
+    /**
+     * This function initialize auto-transformation component.
+     * 
+     * @param debugOutput when it is true auto-transformation component will
+     *            produce a lot of debug output
+     */
+    public void initAutotransformations(final boolean debugOutput) {
         final TransformationManager trManager = new TransformationManager(
             getSortedAssrtSearchList(), getProvableLogicStmtTyp(), messages,
             verifyProofs);
         proofUnifier.setTransformationManager(trManager);
     }
+
     /**
      * Import Theorem proofs from a given Reader.
      * 
