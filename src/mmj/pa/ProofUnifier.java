@@ -616,7 +616,7 @@ public class ProofUnifier {
                 final UnifyResult res = unifyStepWithoutWorkVars();
                 if (res.proper()) {
                     // for auto step unification this assert should be true:
-                    assert derivStep.djVarsErrorStatus != PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS;
+                    assert derivStep.djVarsErrorStatus == PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS;
                     // stick fork in it, this one is done!
                     autoDerivSteps[i] = null;
                     nbrCompleted++;
