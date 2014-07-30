@@ -549,14 +549,12 @@ public class ProofUnifier {
                     continue stepLoop;
                 }
 
-            if (derivStep.isAutoStep()) {
-                autoDerivSteps[autoDerivStepsCount++] = derivStep;
-                continue;
-            }
-
             // build array of steps for parallel unification loop
             if (derivStep.getRef() == null) {
-                derivStepsWithEmptyRef[derivStepsWithEmptyRefCount++] = derivStep;
+                if (derivStep.isAutoStep())
+                    autoDerivSteps[autoDerivStepsCount++] = derivStep;
+                else
+                    derivStepsWithEmptyRef[derivStepsWithEmptyRefCount++] = derivStep;
                 continue;
             }
 
