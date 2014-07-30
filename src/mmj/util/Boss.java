@@ -57,27 +57,13 @@
 package mmj.util;
 
 import java.awt.Color;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.Reader;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.util.Map;
 
 import mmj.gmff.GMFFException;
-import mmj.lang.LogicalSystem;
-import mmj.lang.Stmt;
-import mmj.lang.Theorem;
-import mmj.lang.TheoremLoaderException;
-import mmj.lang.VerifyException;
+import mmj.lang.*;
 import mmj.mmio.MMIOException;
 import mmj.pa.PaConstants;
 

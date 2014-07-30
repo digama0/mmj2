@@ -20,15 +20,9 @@
 package mmj.util;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import mmj.lang.LogicalSystem;
-import mmj.lang.Messages;
-import mmj.lang.VerifyException;
-import mmj.lang.WorkVarManager;
+import mmj.lang.*;
 import mmj.pa.ProofAsst;
 import mmj.pa.ProofAsstPreferences;
 import mmj.svc.SvcCallback;

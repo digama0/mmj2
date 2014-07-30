@@ -36,12 +36,8 @@ package mmj.util;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import mmj.lang.LogicalSystem;
-import mmj.lang.Messages;
-import mmj.lang.ParseTree;
+import mmj.lang.*;
 import mmj.lang.ParseTree.RPNStep;
-import mmj.lang.Stmt;
-import mmj.lang.VerifyException;
 import mmj.mmio.MMIOException;
 import mmj.verify.Grammar;
 import mmj.verify.GrammarConstants;

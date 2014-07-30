@@ -20,21 +20,12 @@
 
 package mmj.util;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
 
-import mmj.lang.LangException;
-import mmj.lang.LogicalSystem;
-import mmj.lang.Messages;
-import mmj.lang.Theorem;
-import mmj.lang.TheoremLoaderException;
-import mmj.lang.VerifyException;
+import mmj.lang.*;
 import mmj.mmio.MMIOException;
 import mmj.pa.ProofAsst;
-import mmj.tl.TheoremLoader;
-import mmj.tl.TlConstants;
-import mmj.tl.TlPreferences;
+import mmj.tl.*;
 
 /**
  * Responsible for building and referencing TheoremLoader.

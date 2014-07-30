@@ -72,46 +72,18 @@
 package mmj.util;
 
 import java.awt.Color;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.io.*;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
-import mmj.lang.Assrt;
-import mmj.lang.Axiom;
-import mmj.lang.Cnst;
-import mmj.lang.LangException;
-import mmj.lang.LogicalSystem;
-import mmj.lang.MObj;
-import mmj.lang.Messages;
-import mmj.lang.Stmt;
-import mmj.lang.Theorem;
-import mmj.lang.VerifyException;
-import mmj.lang.WorkVarManager;
+import mmj.lang.*;
 import mmj.mmio.MMIOException;
-import mmj.pa.EraseWffsPreprocessRequest;
-import mmj.pa.PaConstants;
-import mmj.pa.PreprocessRequest;
-import mmj.pa.ProofAsst;
-import mmj.pa.ProofAsstPreferences;
+import mmj.pa.*;
 import mmj.tl.TheoremLoader;
-import mmj.verify.Grammar;
-import mmj.verify.HypsOrder;
-import mmj.verify.VerifyProofs;
+import mmj.verify.*;
 
 /**
  * Responsible for building and triggering ProofAsst.
@@ -528,7 +500,8 @@ public class ProofAsstBoss extends Boss {
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_SET_MM_DEFINITIONS_CHECK) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_SET_MM_DEFINITIONS_CHECK
+                .name()) == 0)
         {
             doSetMMDefinitionsCheck(runParm);
             return true;

@@ -17,10 +17,7 @@ package mmj.tl;
 
 import java.util.List;
 
-import mmj.lang.LogicalSystem;
-import mmj.lang.Messages;
-import mmj.lang.Theorem;
-import mmj.lang.TheoremLoaderException;
+import mmj.lang.*;
 import mmj.pa.ProofAsst;
 import mmj.pa.ProofWorksheet;
 

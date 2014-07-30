@@ -24,11 +24,7 @@ package mmj.util;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import mmj.lang.LogicalSystem;
-import mmj.lang.Messages;
-import mmj.lang.Stmt;
-import mmj.lang.Theorem;
-import mmj.lang.VerifyException;
+import mmj.lang.*;
 import mmj.mmio.MMIOException;
 import mmj.verify.VerifyProofs;
 

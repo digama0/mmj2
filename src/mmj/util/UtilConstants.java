@@ -603,12 +603,14 @@ public class UtilConstants {
 
     public static final BatchCommand RUNPARM_LOGIC_STMT_TYPE = new BatchCommand(
         "LogicStmtType", " LogicStmtType.\n" + " <p>\n" + "<code> \n"
-            + " \"LogicStmtType\": default is \"wff\"\n" + " </code></p>\n" + "\n");
+            + " \"LogicStmtType\": default is \"wff\"\n" + " </code></p>\n"
+            + "\n");
 
     public static final BatchCommand RUNPARM_BOOK_MANAGER_ENABLED = new BatchCommand(
         "BookManagerEnabled", // default
         " BookManagerEnabled.\n" + " <p>\n" + " <code> \n"
-            + " \"BookManagerEnabled\": default is \"yes\"\n" + " </code>\n" + "\n");
+            + " \"BookManagerEnabled\": default is \"yes\"\n" + " </code>\n"
+            + "\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.util.BatchMMJ2.java
@@ -1313,8 +1315,8 @@ public class UtilConstants {
     public static final BatchCommand RUNPARM_RUN_PROOF_ASST_GUI = new BatchCommand(
         "RunProofAsstGUI", // no
         " RunProofAsstGUI\n" + " <p>\n" + " <code> \n"
-            + " \"RunProofAsstGUI\": no option values (for now...)\n" + " </code></p>\n"
-            + "\n");
+            + " \"RunProofAsstGUI\": no option values (for now...)\n"
+            + " </code></p>\n" + "\n");
     // option
     // values...for
     // now...
@@ -1549,8 +1551,7 @@ public class UtilConstants {
             + " <p>\n"
             + " This RunParm is provided for regression testing.\n"
             + " <p>\n"
-            + " The Proof Text is printed before and after preprocessing and unification.\n"
-            + " (and\n" + "\n");
+            + " The Proof Text is printed before and after preprocessing and unification.\n");
     // options
     // mandatory:
     // filename,
@@ -1558,20 +1559,19 @@ public class UtilConstants {
     // request
     // name
 
-    /**
-     * SetMMDefinitionsCheckWithExclusions
-     * <p>
-     * {@code 
-     * "SetMMDefinitionsCheckWithExclusions":
-     *     options = Assrt labels, comma separated, with * wildcard
-     * }
-     * <p>
-     * This option runs a soundness check on all axioms in the database, except
-     * those specified in the list. Recommended exclusions are
-     * {@code ax-*,df-bi,df-clab,df-cleq,df-clel}, which will always fail the
-     * check.
-     */
-    public static final String RUNPARM_SET_MM_DEFINITIONS_CHECK = "SetMMDefinitionsCheckWithExclusions";
+    public static final BatchCommand RUNPARM_SET_MM_DEFINITIONS_CHECK = new BatchCommand(
+        "SetMMDefinitionsCheckWithExclusions",
+        " SetMMDefinitionsCheckWithExclusions"
+            + " <p>"
+            + " <pre> "
+            + " \"SetMMDefinitionsCheckWithExclusions\":"
+            + "     options = Assrt labels, comma separated, with * wildcard"
+            + " </pre>"
+            + " <p>"
+            + " This option runs a soundness check on all axioms in the database, except"
+            + " those specified in the list. Recommended exclusions are"
+            + " {@code ax-*,df-bi,df-clab,df-cleq,df-clel}, which will always fail the"
+            + " check.");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_UNIFY_SEARCH_EXCLUDE = new BatchCommand(
         "ProofAsstUnifySearchExclude", // options
@@ -3276,7 +3276,7 @@ public class UtilConstants {
             RUNPARM_DEFINE_WORK_VAR_TYPE, RUNPARM_TMFF_ALT_INDENT,
             RUNPARM_TMFF_USE_INDENT, RUNPARM_TMFF_ALT_FORMAT,
             RUNPARM_TMFF_USE_FORMAT, RUNPARM_TMFF_DEFINE_FORMAT,
-            RUNPARM_TMFF_DEFINE_SCHEME,
+            RUNPARM_TMFF_DEFINE_SCHEME, RUNPARM_SET_MM_DEFINITIONS_CHECK,
             RUNPARM_PROOF_ASST_UNIFY_SEARCH_EXCLUDE,
             RUNPARM_PREPROCESS_REQUEST_BATCH_TEST,
             RUNPARM_STEP_SELECTOR_BATCH_TEST, RUNPARM_PROOF_ASST_BATCH_TEST,
