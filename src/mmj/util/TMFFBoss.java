@@ -89,49 +89,49 @@ public class TMFFBoss extends Boss {
         IOException, VerifyException
     {
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR) == 0)
+        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR.name()) == 0)
         {
             tmffPreferences = null;
             return false; // not "consumed"
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_TMFF_DEFINE_SCHEME) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_TMFF_DEFINE_SCHEME.name()) == 0)
         {
             editTMFFDefineScheme(runParm);
             return true;
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_TMFF_DEFINE_FORMAT) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_TMFF_DEFINE_FORMAT.name()) == 0)
         {
             editTMFFDefineFormat(runParm);
             return true;
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_TMFF_USE_FORMAT) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_TMFF_USE_FORMAT.name()) == 0)
         {
             editTMFFUseFormat(runParm);
             return true;
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_TMFF_ALT_FORMAT) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_TMFF_ALT_FORMAT.name()) == 0)
         {
             editTMFFAltFormat(runParm);
             return true;
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_TMFF_USE_INDENT) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_TMFF_USE_INDENT.name()) == 0)
         {
             editTMFFUseIndent(runParm);
             return true;
         }
 
         if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_TMFF_ALT_INDENT) == 0)
+            .compareToIgnoreCase(UtilConstants.RUNPARM_TMFF_ALT_INDENT.name()) == 0)
         {
             editTMFFAltIndent(runParm);
             return true;
