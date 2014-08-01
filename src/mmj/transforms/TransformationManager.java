@@ -22,7 +22,7 @@ import mmj.verify.VerifyProofs;
  */
 public class TransformationManager {
 
-    private final boolean dbg = true;
+    private final boolean dbg;
 
     protected TrOutput output;
 
@@ -56,14 +56,17 @@ public class TransformationManager {
      *            "provable logic statement type"
      * @param messages the message manager
      * @param verifyProofs the proof verification is needed for some actions
+     * @param debugOutput when it is true auto-transformation component will
+     *            produce a lot of debug output
      */
     public TransformationManager(final List<Assrt> assrtList,
         final Cnst provableLogicStmtTyp, final Messages messages,
-        final VerifyProofs verifyProofs)
+        final VerifyProofs verifyProofs, final boolean debugOutput)
     {
         output = new TrOutput(messages);
         this.verifyProofs = verifyProofs;
         this.provableLogicStmtTyp = provableLogicStmtTyp;
+        dbg = debugOutput;
 
         eqInfo = new EquivalenceInfo(assrtList, output, dbg);
 
@@ -225,8 +228,9 @@ public class TransformationManager {
                 candidate.setCanonicalForm(getCanonicalForm(
                     candidate.formulaParseTree.getRoot(), info));
 
-                output.dbgMessage(dbg, "I-TR-DBG Step %s has canonical form: %s",
-                    candidate, getCanonicalFormula(candidate));
+                output.dbgMessage(dbg,
+                    "I-TR-DBG Step %s has canonical form: %s", candidate,
+                    getCanonicalFormula(candidate));
             }
 
             if (derivStep.getCanonicalForm().isDeepDup(

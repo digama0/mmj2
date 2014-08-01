@@ -949,7 +949,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     public void initAutotransformations(final boolean debugOutput) {
         final TransformationManager trManager = new TransformationManager(
             getSortedAssrtSearchList(), getProvableLogicStmtTyp(), messages,
-            verifyProofs);
+            verifyProofs, debugOutput);
         proofUnifier.setTransformationManager(trManager);
     }
 

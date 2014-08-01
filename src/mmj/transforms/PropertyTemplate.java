@@ -5,13 +5,18 @@ import mmj.lang.ParseNode;
 /** The template for some property. Usually it has form "var e. set" */
 public class PropertyTemplate {
     /** The place in the template which could be replaced */
-    public static final ParseNode templateReplace = new ParseNode();
+    public static final ParseNode templateReplace = new ParseNode() {
+        @Override
+        public String toString() {
+            return "Template-stub";
+        }
+    };
 
     /** template could be null */
-    protected final ParseNode templNode;
+    public final ParseNode templNode;
 
     public PropertyTemplate(final ParseNode template) {
-        this.templNode = template;
+        templNode = template;
     }
 
     @Override
@@ -43,5 +48,13 @@ public class PropertyTemplate {
     public ParseNode subst(final ParseNode substNode) {
         return templNode.deepCloneWNodeSub(PropertyTemplate.templateReplace,
             substNode.deepClone());
+    }
+
+    @Override
+    public String toString() {
+        if (templNode == null)
+            return "Empty-template";
+
+        return "template { " + templNode.toString() + " }";
     }
 }

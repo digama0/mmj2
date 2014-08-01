@@ -111,6 +111,10 @@ public class AssociativeInfo extends DBInfo {
         for (int i = 0; i < 2; i++) {
             final int k = varPlace[i];
             final int n = varPlace[(i + 1) % 2];
+
+            final VarHyp kVar = varHypArray[k * 2];
+            final VarHyp nVar = varHypArray[n * 2];
+
             if (leftChildren[k].getStmt() != stmt)
                 continue;
             if (!constSubst.isTheSameConstMap(leftChildren[k]))
@@ -125,12 +129,21 @@ public class AssociativeInfo extends DBInfo {
             if (!TrUtil.isVarNode(leftChildren[n]))
                 continue;
 
+            if (leftChildren[n].getStmt() != nVar)
+                continue;
+
             if (leftChildren[n].getStmt() != rightChildren[n].getChild()[n]
                 .getStmt())
                 continue;
 
+            if (leftChildren[k].getChild()[k].getStmt() != kVar)
+                continue;
+
             if (leftChildren[k].getChild()[k].getStmt() != rightChildren[k]
                 .getStmt())
+                continue;
+
+            if (leftChildren[k].getChild()[n].getStmt() != varHypArray[1])
                 continue;
 
             if (leftChildren[k].getChild()[n].getStmt() != rightChildren[n]
@@ -138,7 +151,7 @@ public class AssociativeInfo extends DBInfo {
                 continue;
 
             if (!replInfo.isFullReplaceStatement(stmt)) {
-                output.dbgMessage(dbg, "I-TR-DBG found commutative assrts "
+                output.dbgMessage(dbg, "I-TR-DBG found associative assrts "
                     + "but it has problems with replace: %s: %s", assrt,
                     assrt.getFormula());
                 return;
@@ -171,8 +184,8 @@ public class AssociativeInfo extends DBInfo {
             if (assoc[i] != null)
                 continue;
 
-            output.dbgMessage(dbg, "I-TR-DBG associative assrts: %d. %s: %s", i,
-                assrt, assrt.getFormula());
+            output.dbgMessage(dbg, "I-TR-DBG associative assrts: %d. %s: %s",
+                i, assrt, assrt.getFormula());
             assoc[i] = assrt;
             return;
         }

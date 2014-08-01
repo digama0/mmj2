@@ -51,6 +51,10 @@ public class CommutativeInfo extends DBInfo {
      */
     protected void findCommutativeRules(final Assrt assrt) {
         // Debug statements: prcom, addcomi
+
+        if (assrt.getLabel().equals("normpari"))
+            assrt.toString();
+
         final VarHyp[] varHypArray = assrt.getMandVarHypArray();
         final ParseTree assrtTree = assrt.getExprParseTree();
 
@@ -100,6 +104,12 @@ public class CommutativeInfo extends DBInfo {
 
         final int k0 = varPlace[0];
         final int k1 = varPlace[1];
+
+        if (leftChildren[k0].getStmt() != varHypArray[0])
+            return;
+
+        if (leftChildren[k1].getStmt() != varHypArray[1])
+            return;
 
         if (leftChildren[k0].getStmt() != rightChildren[k1].getStmt())
             return;

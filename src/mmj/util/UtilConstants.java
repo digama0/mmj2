@@ -1403,7 +1403,7 @@ public class UtilConstants {
 
     public static final BatchCommand RUNPARM_PROOF_ASST_USE_AUTOTRANSFORMATIONS = new BatchCommand(
         "ProofAsstUseAutotransformations",
-        "Auto-transformation options:\n <p>"
+        "Auto-transformation options (it is temporary option and could be changed any moment):\n <p>"
             + "    value1 = Yes/No (use or do not use auto-transformations)\n <p>"
             + "    value2 = Yes/No (use debug output or do not use it)\n"
             + "\n");
