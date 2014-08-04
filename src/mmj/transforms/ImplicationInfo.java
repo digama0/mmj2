@@ -3,6 +3,7 @@ package mmj.transforms;
 import java.util.*;
 
 import mmj.lang.*;
+import mmj.pa.ProofStepStmt;
 
 public class ImplicationInfo extends DBInfo {
     /** The information about equivalence rules */
@@ -101,11 +102,40 @@ public class ImplicationInfo extends DBInfo {
         if (eqImplications.containsKey(type))
             return;
 
-        output.dbgMessage(dbg, "I-TR-DBG implication equal assrt: %s: %s", type,
-            assrt);
+        output.dbgMessage(dbg, "I-TR-DBG implication equal assrt: %s: %s",
+            type, assrt);
 
         eqImplications.put(type, assrt);
     }
+
+    // ------------------------------------------------------------------------
+    // ----------------------------Transformations-----------------------------
+    // ------------------------------------------------------------------------
+
+    /**
+     * Apply implication rule: like A & A -> B => B.
+     * 
+     * @param info the work sheet info
+     * @param min the precondition (in the example it is A)
+     * @param maj the implication (in the example it is A -> B)
+     * @param op implication operator (in the example it is ->)
+     * @return the result of implication (in the example it is B)
+     */
+    public ProofStepStmt applyImplicationRule(final WorksheetInfo info,
+        final ProofStepStmt min, final ProofStepStmt maj, final Stmt op)
+    {
+        final Assrt assrt = getImplOp(op);
+
+        final ParseNode stepNode = maj.formulaParseTree.getRoot().getChild()[1];
+
+        final ProofStepStmt stepTr = info.getOrCreateProofStepStmt(stepNode,
+            new ProofStepStmt[]{min, maj}, assrt);
+        return stepTr;
+    }
+
+    // ------------------------------------------------------------------------
+    // ------------------------------Getters-----------------------------------
+    // ------------------------------------------------------------------------
 
     public Assrt getEqImplication(final Cnst type) {
         return eqImplications.get(type);
@@ -113,5 +143,9 @@ public class ImplicationInfo extends DBInfo {
 
     public Assrt getImplOp(final Stmt op) {
         return implOp.get(op);
+    }
+
+    public boolean isImplOperator(final Stmt op) {
+        return implOp.containsKey(op);
     }
 }

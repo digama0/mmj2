@@ -74,7 +74,7 @@ public class TransformationManager {
 
         implInfo = new ImplicationInfo(eqInfo, assrtList, output, dbg);
 
-        replInfo = new ReplaceInfo(eqInfo, assrtList, output, dbg);
+        replInfo = new ReplaceInfo(eqInfo, implInfo, assrtList, output, dbg);
 
         assocInfo = new AssociativeInfo(eqInfo, clInfo, replInfo, assrtList,
             output, dbg);
@@ -100,7 +100,7 @@ public class TransformationManager {
     {
         final Stmt stmt = node.getStmt();
 
-        final Assrt[] replAsserts = replInfo.getReplaceAsserts(stmt);
+        final boolean[] replAsserts = replInfo.getPossibleReplaces(stmt);
 
         boolean isCom = false;
         final GeneralizedStmt comProp = comInfo

@@ -1,6 +1,7 @@
 package mmj.transforms;
 
-import mmj.lang.*;
+import mmj.lang.ParseNode;
+import mmj.lang.Stmt;
 import mmj.pa.ProofStepStmt;
 
 /**
@@ -35,11 +36,14 @@ public class ReplaceTransformation extends Transformation {
         // the current transformation result
         ParseNode resNode = originalNode;
 
-        final Assrt[] replAsserts = replInfo.getReplaceAsserts(originalNode
+        final boolean[] replAsserts = replInfo.getPossibleReplaces(originalNode
             .getStmt());
 
+        final Stmt equalStmt = eqInfo
+            .getEqStmt(originalNode.getStmt().getTyp());
+
         for (int i = 0; i < originalNode.getChild().length; i++) {
-            if (replAsserts[i] == null)
+            if (!replAsserts[i])
                 continue;
             // We replaced previous children and now we should transform ith
             // child B
@@ -47,12 +51,10 @@ public class ReplaceTransformation extends Transformation {
             final ParseNode child = originalNode.getChild()[i];
             final ParseNode targetChild = target.originalNode.getChild()[i];
 
-            assert replAsserts[i].getLogHypArrayLength() == 1;
-
             // get the root symbol from g(A', B, C) = g(A', B', C)
             // in set.mm it will be = or <->
-            final Stmt equalStmt = replAsserts[i].getExprParseTree().getRoot()
-                .getStmt();
+            // replAsserts[i].getExprParseTree().getRoot()
+            // .getStmt();
 
             // the symbol should be equivalence operator
             assert eqInfo.isEquivalence(equalStmt);
@@ -105,12 +107,12 @@ public class ReplaceTransformation extends Transformation {
 
     @Override
     public ParseNode getCanonicalNode(final WorksheetInfo info) {
-        final Assrt[] replAsserts = replInfo.getReplaceAsserts(originalNode
+        final boolean[] replAsserts = replInfo.getPossibleReplaces(originalNode
             .getStmt());
         final ParseNode resNode = originalNode.cloneWithoutChildren();
 
         for (int i = 0; i < resNode.getChild().length; i++) {
-            if (replAsserts[i] == null)
+            if (!replAsserts[i])
                 continue;
             resNode.getChild()[i] = trManager.getCanonicalForm(
                 originalNode.getChild()[i], info);
