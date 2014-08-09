@@ -34,6 +34,8 @@ public class TransformationManager {
 
     public final ImplicationInfo implInfo;
 
+    public final ConjunctionInfo conjInfo;
+
     /** The information about replace rules */
     public final ReplaceInfo replInfo;
 
@@ -70,9 +72,11 @@ public class TransformationManager {
 
         eqInfo = new EquivalenceInfo(assrtList, output, dbg);
 
-        clInfo = new ClosureInfo(assrtList, output, dbg);
+        conjInfo = new ConjunctionInfo(assrtList, output, dbg);
 
         implInfo = new ImplicationInfo(eqInfo, assrtList, output, dbg);
+
+        clInfo = new ClosureInfo(implInfo, conjInfo, assrtList, output, dbg);
 
         replInfo = new ReplaceInfo(eqInfo, implInfo, assrtList, output, dbg);
 

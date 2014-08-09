@@ -271,12 +271,9 @@ public class ReplaceInfo extends DBInfo {
     {
         assert replAsserts[i] != null;
         final ParseNode root = replAsserts[i].getExprParseTree().getRoot();
-        final Stmt implStmt = root.getStmt();
+
         final Stmt equalStmt = root.getChild()[1].getStmt();
         final ParseNode resNode = prevVersion.cloneWithoutChildren();
-
-        // maybe we should clone!
-        final ParseNode hypNode = childTrStmt.formulaParseTree.getRoot();
 
         // Fill the next child
         // So the new node has form g(A, B', C)
@@ -285,6 +282,14 @@ public class ReplaceInfo extends DBInfo {
         // Create node g(A, B, C) = g(A, B', C)
         final ParseNode eqNode = TrUtil.createBinaryNode(equalStmt,
             prevVersion, resNode);
+
+        return implInfo.applyImplicationRule(info, childTrStmt, eqNode,
+            replAsserts[i]);
+
+        /*
+        final Stmt implStmt = root.getStmt();
+
+        final ParseNode hypNode = childTrStmt.formulaParseTree.getRoot();
 
         // Create node B = B' -> g(A, B, C) = g(A, B', C)
         final ParseNode stepNode = TrUtil.createBinaryNode(implStmt, hypNode,
@@ -297,6 +302,7 @@ public class ReplaceInfo extends DBInfo {
 
         return implInfo.applyImplicationRule(info, childTrStmt, implStep,
             implStmt);
+        */
     }
 
     // ------------------------------------------------------------------------

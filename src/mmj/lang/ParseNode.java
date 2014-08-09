@@ -146,6 +146,17 @@ public class ParseNode {
     }
 
     /**
+     * Construct with a Stmt and children.
+     * 
+     * @param stmt a proof step.
+     * @param child children array
+     */
+    public ParseNode(final Stmt stmt, final ParseNode[] child) {
+        this.stmt = stmt;
+        this.child = child;
+    }
+
+    /**
      * Construct using a VarHyp.
      * 
      * @param varHyp a proof or parse step.

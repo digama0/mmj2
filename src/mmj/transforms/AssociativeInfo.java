@@ -89,6 +89,9 @@ public class AssociativeInfo extends DBInfo {
 
         final ConstSubst constSubst = ConstSubst.createFromNode(subTrees[0]);
 
+        if (constSubst == null)
+            return;
+
         final int[] varPlace = constSubst.getVarPlace();
 
         // the statement contains more that 2 variables
@@ -99,7 +102,7 @@ public class AssociativeInfo extends DBInfo {
             return;
 
         if (!template.isEmpty())
-            if (clInfo.getClosureAssert(stmt, constSubst, template) == null)
+            if (!clInfo.hasClosureAssert(stmt, constSubst, template))
                 return;
 
         final ParseNode[] leftChildren = subTrees[0].getChild();

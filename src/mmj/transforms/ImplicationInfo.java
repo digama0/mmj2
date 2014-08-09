@@ -13,18 +13,16 @@ public class ImplicationInfo extends DBInfo {
      * The map from type to equivalence implication rule: A & A <-> B => B.
      * set.mm has only one element: (wff, <->)
      */
-    private final Map<Cnst, Assrt> eqImplications;
+    private final Map<Cnst, Assrt> eqImplications = new HashMap<Cnst, Assrt>();
 
     /** The list of implication operators : A & A -> B => B. */
-    private final Map<Stmt, Assrt> implOp;
+    private final Map<Stmt, Assrt> implOp = new HashMap<Stmt, Assrt>();
 
     public ImplicationInfo(final EquivalenceInfo eqInfo,
         final List<Assrt> assrtList, final TrOutput output, final boolean dbg)
     {
         super(output, dbg);
         this.eqInfo = eqInfo;
-        implOp = new HashMap<Stmt, Assrt>();
-        eqImplications = new HashMap<Cnst, Assrt>();
         for (final Assrt assrt : assrtList)
             findImplicationRules(assrt);
     }
@@ -38,7 +36,7 @@ public class ImplicationInfo extends DBInfo {
      * 
      * @param assrt the candidate
      */
-    protected void findImplicationRules(final Assrt assrt) {
+    private void findImplicationRules(final Assrt assrt) {
         final ParseTree assrtTree = assrt.getExprParseTree();
 
         final LogHyp[] logHyps = assrt.getLogHypArray();
@@ -116,15 +114,49 @@ public class ImplicationInfo extends DBInfo {
      * Apply implication rule: like A & A -> B => B.
      * 
      * @param info the work sheet info
-     * @param min the precondition (in the example it is A)
-     * @param maj the implication (in the example it is A -> B)
+     * @param min the precondition (in the example it is statement A)
+     * @param maj the implication (in the example it is statement A -> B)
      * @param op implication operator (in the example it is ->)
-     * @return the result of implication (in the example it is B)
+     * @return the result of implication (in the example it is statement B)
      */
     public ProofStepStmt applyImplicationRule(final WorksheetInfo info,
         final ProofStepStmt min, final ProofStepStmt maj, final Stmt op)
     {
         final Assrt assrt = getImplOp(op);
+
+        final ParseNode stepNode = maj.formulaParseTree.getRoot().getChild()[1];
+
+        final ProofStepStmt stepTr = info.getOrCreateProofStepStmt(stepNode,
+            new ProofStepStmt[]{min, maj}, assrt);
+        return stepTr;
+    }
+
+    /**
+     * Apply implication rule: like A & A -> B => B.
+     * 
+     * @param info the work sheet info
+     * @param min the precondition (in the example it is statement A)
+     * @param implNode the implication part (in the example it is node B)
+     * @param majAssrt the assert to construct A -> B step
+     * @return the result of implication (in the example it is statement B)
+     */
+    public ProofStepStmt applyImplicationRule(final WorksheetInfo info,
+        final ProofStepStmt min, final ParseNode implNode, final Assrt majAssrt)
+    {
+        // implication operator (in the example it is ->)
+        final Stmt op = majAssrt.getExprParseTree().getRoot().getStmt();
+
+        final Assrt assrt = getImplOp(op);
+
+        final ParseNode hypNode = min.formulaParseTree.getRoot();
+
+        // Create node A -> B
+        final ParseNode majNode = TrUtil
+            .createBinaryNode(op, hypNode, implNode);
+
+        // |- A -> B
+        final ProofStepStmt maj = info.getOrCreateProofStepStmt(majNode,
+            new ProofStepStmt[]{}, majAssrt);
 
         final ParseNode stepNode = maj.formulaParseTree.getRoot().getChild()[1];
 

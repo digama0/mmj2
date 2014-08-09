@@ -12,12 +12,21 @@ public class ConstSubst {
         hash = calcHashCode();
     }
 
+    /**
+     * This function should be used only during "info"'s initialization. Do not
+     * use it during unification search!
+     * 
+     * @param node the input node
+     * @return constructed result (could be null)
+     */
     public static ConstSubst createFromNode(final ParseNode node) {
         final ParseNode[] children = node.getChild();
         final ParseNode[] constMap = new ParseNode[children.length];
         for (int i = 0; i < children.length; i++)
             if (TrUtil.isConstNode(children[i]))
                 constMap[i] = children[i];
+            else if (!TrUtil.isVarNode(children[i]))
+                return null;
         return new ConstSubst(constMap);
     }
 

@@ -110,4 +110,25 @@ public class TrUtil {
         return varIndexes;
     }
 
+    // Could return empty array with length 0
+    public static VarHyp[] getHypToVarMap(final Assrt assrt) {
+        final VarHyp[] varHypArray = assrt.getMandVarHypArray();
+        final LogHyp[] logHyps = assrt.getLogHypArray();
+    
+        final VarHyp[] hypToVarHypMap = new VarHyp[logHyps.length];
+        if (logHyps.length != varHypArray.length)
+            return null;
+    
+        for (int i = 0; i < logHyps.length; i++) {
+            final VarHyp[] varsi = logHyps[i].getMandVarHypArray();
+            if (varsi.length != 1)
+                return null;
+            final VarHyp vari = varsi[0];
+    
+            hypToVarHypMap[i] = vari;
+        }
+    
+        return hypToVarHypMap;
+    }
+
 }

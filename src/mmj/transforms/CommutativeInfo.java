@@ -84,6 +84,8 @@ public class CommutativeInfo extends DBInfo {
         final Stmt stmt = subTrees[0].getStmt();
 
         final ConstSubst constSubst = ConstSubst.createFromNode(subTrees[0]);
+        if (constSubst == null)
+            return;
 
         final int[] varPlace = constSubst.getVarPlace();
 
