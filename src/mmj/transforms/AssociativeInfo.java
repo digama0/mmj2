@@ -65,6 +65,9 @@ public class AssociativeInfo extends DBInfo {
         final VarHyp[] varHypArray = assrt.getMandVarHypArray();
         final ParseTree assrtTree = assrt.getExprParseTree();
 
+        if (assrt.getLabel().equals("addassi"))
+            assrt.toString();
+
         final PropertyTemplate template = ClosureInfo
             .createTemplateFromHyp(assrt);
 
@@ -89,8 +92,7 @@ public class AssociativeInfo extends DBInfo {
 
         final ConstSubst constSubst = ConstSubst.createFromNode(subTrees[0]);
 
-        if (constSubst == null)
-            return;
+        assert constSubst != null;
 
         final int[] varPlace = constSubst.getVarPlace();
 

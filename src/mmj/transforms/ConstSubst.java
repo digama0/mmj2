@@ -14,10 +14,11 @@ public class ConstSubst {
 
     /**
      * This function should be used only during "info"'s initialization. Do not
-     * use it during unification search!
+     * use it during unification search! It creates constant substitution for
+     * all constant nodes.
      * 
      * @param node the input node
-     * @return constructed result (could be null)
+     * @return constructed result
      */
     public static ConstSubst createFromNode(final ParseNode node) {
         final ParseNode[] children = node.getChild();
@@ -25,8 +26,6 @@ public class ConstSubst {
         for (int i = 0; i < children.length; i++)
             if (TrUtil.isConstNode(children[i]))
                 constMap[i] = children[i];
-            else if (!TrUtil.isVarNode(children[i]))
-                return null;
         return new ConstSubst(constMap);
     }
 
