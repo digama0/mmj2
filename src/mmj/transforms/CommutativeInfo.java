@@ -1,7 +1,6 @@
 package mmj.transforms;
 
-import java.util.*;
-import java.util.Map.Entry;
+import java.util.List;
 
 import mmj.lang.*;
 import mmj.pa.ProofStepStmt;
@@ -25,7 +24,21 @@ public class CommutativeInfo extends DBInfo {
      * the example) -> assert. There could be many properties ( {" _ e. CC" ,
      * "_ e. RR" } for example ).
      */
-    protected Map<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt>>> comOp;
+    private final ComplexRuleMap<Assrt> comOp = new ComplexRuleMap<Assrt>() {
+        @Override
+        public GeneralizedStmt detectGenStmtCore(final WorksheetInfo info,
+            final ParseNode node, final PropertyTemplate template,
+            final ConstSubst constSubst, final int[] varIndexes)
+        {
+            final Stmt stmt = node.getStmt();
+            final GeneralizedStmt genStmt = new GeneralizedStmt(constSubst,
+                template, varIndexes, stmt);
+            final boolean res = isCommutativeWithProp(node, info, genStmt);
+            if (res)
+                return genStmt;
+            return null;
+        }
+    };
 
     // ------------------------------------------------------------------------
     // ------------------------Initialization----------------------------------
@@ -39,7 +52,6 @@ public class CommutativeInfo extends DBInfo {
         this.eqInfo = eqInfo;
         this.clInfo = clInfo;
 
-        comOp = new HashMap<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt>>>();
         for (final Assrt assrt : assrtList)
             findCommutativeRules(assrt);
     }
@@ -119,31 +131,14 @@ public class CommutativeInfo extends DBInfo {
         if (leftChildren[k1].getStmt() != rightChildren[k0].getStmt())
             return;
 
-        Map<ConstSubst, Map<PropertyTemplate, Assrt>> constSubstMap = comOp
-            .get(stmt);
+        final Assrt com = comOp.addData(stmt, constSubst, template, assrt);
 
-        if (constSubstMap == null) {
-            // TODO: linked hash map stub!
-            constSubstMap = new LinkedHashMap<ConstSubst, Map<PropertyTemplate, Assrt>>();
-            comOp.put(stmt, constSubstMap);
-        }
-
-        Map<PropertyTemplate, Assrt> propertyMap = constSubstMap
-            .get(constSubst);
-        if (propertyMap == null) {
-            // TODO: linked hash map stub!
-            propertyMap = new LinkedHashMap<PropertyTemplate, Assrt>();
-            constSubstMap.put(constSubst, propertyMap);
-        }
-
-        final Assrt com = propertyMap.get(template);
-
-        if (com != null)
+        if (com != assrt)
             return;
 
         output.dbgMessage(dbg, "I-TR-DBG commutative assrts: %s: %s", assrt,
             assrt.getFormula());
-        propertyMap.put(template, assrt);
+        // propertyMap.put(template, assrt);
     }
 
     // ------------------------------------------------------------------------
@@ -182,44 +177,7 @@ public class CommutativeInfo extends DBInfo {
     public GeneralizedStmt getGenStmtForComNode(final ParseNode node,
         final WorksheetInfo info)
     {
-        final Stmt stmt = node.getStmt();
-        final Map<ConstSubst, Map<PropertyTemplate, Assrt>> constSubstMap = comOp
-            .get(stmt);
-
-        if (constSubstMap == null)
-            return null;
-
-        final ParseNode[] constMap = TrUtil.collectConstSubst(node);
-
-        // TODO: here we use trivial search stub!
-        for (final Entry<ConstSubst, Map<PropertyTemplate, Assrt>> elem : constSubstMap
-            .entrySet())
-        {
-            final ConstSubst constSubst = elem.getKey();
-
-            final int[] varIndexes = TrUtil.checkConstSubstAndGetVarPositions(
-                constSubst, constMap);
-
-            if (varIndexes == null)
-                continue;
-
-            final Map<PropertyTemplate, Assrt> propertyMap = elem.getValue();
-
-            // TODO: here we use trivial search stub!
-            for (final Entry<PropertyTemplate, Assrt> propElem : propertyMap
-                .entrySet())
-            {
-                final PropertyTemplate template = propElem.getKey();
-
-                final GeneralizedStmt genStmt = new GeneralizedStmt(constSubst,
-                    template, varIndexes, stmt);
-                final boolean res = isCommutativeWithProp(node, info, genStmt);
-                if (res)
-                    return genStmt;
-            }
-        }
-
-        return null;
+        return comOp.detectGenStmt(node, info);
     }
 
     private static boolean isCommutativeWithProp(final ParseNode node,
@@ -323,19 +281,6 @@ public class CommutativeInfo extends DBInfo {
     public Assrt getComOp(final Stmt stmt, final ConstSubst constSubst,
         final PropertyTemplate template)
     {
-        final Map<ConstSubst, Map<PropertyTemplate, Assrt>> constSubstMap = comOp
-            .get(stmt);
-
-        if (constSubstMap == null)
-            return null;
-
-        final Map<PropertyTemplate, Assrt> propertyMap = constSubstMap
-            .get(constSubst);
-
-        if (propertyMap == null)
-            return null;
-
-        final Assrt comTr = propertyMap.get(template);
-        return comTr;
+        return comOp.getData(stmt, constSubst, template);
     }
 }

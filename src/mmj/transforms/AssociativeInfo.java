@@ -1,7 +1,6 @@
 package mmj.transforms;
 
-import java.util.*;
-import java.util.Map.Entry;
+import java.util.List;
 
 import mmj.lang.*;
 import mmj.pa.ProofStepStmt;
@@ -22,7 +21,9 @@ public class AssociativeInfo extends DBInfo {
     private final ReplaceInfo replInfo;
 
     /**
-     * The list of associative operators: ( ( A + B ) + C ) = ( A + ( B + C ) )
+     * The collection of associative operators:
+     * <p>
+     * ( ( A + B ) + C ) = ( A + ( B + C ) )
      * <p>
      * It is a map: Statement ( ( A F B ) in the example) -> map : constant
      * elements ( + in the example) -> map : possible properties ( _ e. CC in
@@ -36,7 +37,22 @@ public class AssociativeInfo extends DBInfo {
      * </ul>
      * Usually, one element is null.
      */
-    protected Map<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt[]>>> assocOp;
+    private final ComplexRuleMap<Assrt[]> assocOp = new ComplexRuleMap<Assrt[]>()
+    {
+        @Override
+        public GeneralizedStmt detectGenStmtCore(final WorksheetInfo info,
+            final ParseNode node, final PropertyTemplate template,
+            final ConstSubst constSubst, final int[] varIndexes)
+        {
+            final Stmt stmt = node.getStmt();
+            final boolean res = isAssociativeWithProp(node, template,
+                constSubst, info);
+            if (res)
+                return new GeneralizedStmt(constSubst, template, varIndexes,
+                    stmt);
+            return null;
+        }
+    };
 
     // ------------------------------------------------------------------------
     // ------------------------Initialization----------------------------------
@@ -51,7 +67,6 @@ public class AssociativeInfo extends DBInfo {
         this.clInfo = clInfo;
         this.replInfo = replInfo;
 
-        assocOp = new HashMap<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt[]>>>();
         for (final Assrt assrt : assrtList)
             findAssociativeRules(assrt);
     }
@@ -162,29 +177,8 @@ public class AssociativeInfo extends DBInfo {
                 return;
             }
 
-            Map<ConstSubst, Map<PropertyTemplate, Assrt[]>> constSubstMap = assocOp
-                .get(stmt);
-
-            if (constSubstMap == null) {
-                // TODO: linked hash map stub!
-                constSubstMap = new LinkedHashMap<ConstSubst, Map<PropertyTemplate, Assrt[]>>();
-                assocOp.put(stmt, constSubstMap);
-            }
-
-            Map<PropertyTemplate, Assrt[]> propertyMap = constSubstMap
-                .get(constSubst);
-            if (propertyMap == null) {
-                // TODO: linked hash map stub!
-                propertyMap = new LinkedHashMap<PropertyTemplate, Assrt[]>();
-                constSubstMap.put(constSubst, propertyMap);
-            }
-
-            Assrt[] assoc = propertyMap.get(template);
-
-            if (assoc == null) {
-                assoc = new Assrt[2];
-                propertyMap.put(template, assoc);
-            }
+            final Assrt[] assoc = assocOp.addData(stmt, constSubst, template,
+                new Assrt[2]);
 
             if (assoc[i] != null)
                 continue;
@@ -213,8 +207,7 @@ public class AssociativeInfo extends DBInfo {
         final PropertyTemplate template, final ConstSubst constSubst,
         final WorksheetInfo info)
     {
-        if (node.getChild().length != constSubst.constMap.length)
-            assert node.getChild().length == constSubst.constMap.length;
+        assert node.getChild().length == constSubst.constMap.length;
 
         if (template.isEmpty())
             return true;
@@ -251,42 +244,7 @@ public class AssociativeInfo extends DBInfo {
     public GeneralizedStmt getGenStmtForAssocNode(final ParseNode node,
         final WorksheetInfo info)
     {
-        final Stmt stmt = node.getStmt();
-        final Map<ConstSubst, Map<PropertyTemplate, Assrt[]>> constSubstMap = assocOp
-            .get(stmt);
-
-        if (constSubstMap == null)
-            return null;
-
-        final ParseNode[] constMap = TrUtil.collectConstSubst(node);
-
-        // TODO: here we use trivial search stub!
-        for (final Entry<ConstSubst, Map<PropertyTemplate, Assrt[]>> elem : constSubstMap
-            .entrySet())
-        {
-            final ConstSubst constSubst = elem.getKey();
-            final int[] varIndexes = TrUtil.checkConstSubstAndGetVarPositions(
-                constSubst, constMap);
-
-            if (varIndexes == null)
-                continue;
-
-            final Map<PropertyTemplate, Assrt[]> propertyMap = elem.getValue();
-
-            // TODO: here we use trivial search stub!
-            for (final Entry<PropertyTemplate, Assrt[]> propElem : propertyMap
-                .entrySet())
-            {
-                final PropertyTemplate template = propElem.getKey();
-                final boolean res = isAssociativeWithProp(node, template,
-                    constSubst, info);
-                if (res)
-                    return new GeneralizedStmt(constSubst, template,
-                        varIndexes, stmt);
-            }
-        }
-
-        return null;
+        return assocOp.detectGenStmt(node, info);
     }
 
     // ------------------------------------------------------------------------
@@ -394,19 +352,6 @@ public class AssociativeInfo extends DBInfo {
     public Assrt[] getAssocOp(final Stmt stmt, final ConstSubst constSubst,
         final PropertyTemplate template)
     {
-        final Map<ConstSubst, Map<PropertyTemplate, Assrt[]>> constSubstMap = assocOp
-            .get(stmt);
-
-        if (constSubstMap == null)
-            return null;
-
-        final Map<PropertyTemplate, Assrt[]> propertyMap = constSubstMap
-            .get(constSubst);
-
-        if (propertyMap == null)
-            return null;
-
-        final Assrt[] assocTr = propertyMap.get(template);
-        return assocTr;
+        return assocOp.getData(stmt, constSubst, template);
     }
 }
