@@ -37,7 +37,7 @@ public class AssociativeInfo extends DBInfo {
      * </ul>
      * Usually, one element is null.
      */
-    private final ComplexRuleMap<Assrt[]> assocOp = new ComplexRuleMap<Assrt[]>()
+    private final AssocComComplexRuleMap<Assrt[]> assocOp = new AssocComComplexRuleMap<Assrt[]>()
     {
         @Override
         public GeneralizedStmt detectGenStmtCore(final WorksheetInfo info,
@@ -217,6 +217,16 @@ public class AssociativeInfo extends DBInfo {
             final ParseNode child = node.getChild()[i];
             if (constSubst.constMap[i] == null) { // variable here
                 varNum++;
+                if (child.getStmt() == node.getStmt()
+                    && isAssociativeWithProp(child, template, constSubst, info))
+                    continue;
+
+                if (!info.trManager.clInfo.hasClosureProperty(info, child,
+                    template))
+                    return false;
+
+                /*
+
                 final ParseNode substProp = template.subst(child);
                 final ProofStepStmt stmt = info.getProofStepStmt(substProp);
                 if (stmt == null)
@@ -224,6 +234,7 @@ public class AssociativeInfo extends DBInfo {
                         || !isAssociativeWithProp(child, template, constSubst,
                             info))
                         return false;
+                */
             }
             else if (!constSubst.constMap[i].isDeepDup(child)) // check constant
                 return false;
@@ -330,7 +341,8 @@ public class AssociativeInfo extends DBInfo {
             in[2] = side.getChild()[n1];
 
             for (int i = 0; i < 3; i++)
-                hyps[i] = clInfo.closureProperty(info, assocProp, in[i]);
+                hyps[i] = clInfo.closureProperty(info, assocProp.template,
+                    in[i]);
         }
         else
             hyps = new ProofStepStmt[]{};

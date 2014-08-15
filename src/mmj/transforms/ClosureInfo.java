@@ -4,6 +4,7 @@ import java.util.*;
 
 import mmj.lang.*;
 import mmj.pa.ProofStepStmt;
+import mmj.transforms.ComplexRuleMap.ComplexRuleVisitor;
 
 public class ClosureInfo extends DBInfo {
 
@@ -19,9 +20,12 @@ public class ClosureInfo extends DBInfo {
      * the example). There could be many properties ( {" _ e. CC" , "_ e. RR" }
      * for example ).
      */
-    private final Map<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt>>> closureRuleMap;
 
-    private final Map<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt>>> implClosureRuleMap;
+    private class ClosureComplexRuleMap extends ComplexRuleMap<Assrt> {}
+
+    private final ClosureComplexRuleMap closureRuleMap = new ClosureComplexRuleMap();
+
+    private final ClosureComplexRuleMap implClosureRuleMap = new ClosureComplexRuleMap();
 
     // ------------------------------------------------------------------------
     // ------------------------Initialization----------------------------------
@@ -34,9 +38,6 @@ public class ClosureInfo extends DBInfo {
         super(output, true); // TODO: CHANGE for dbg!!!
         this.implInfo = implInfo;
         this.conjInfo = conjInfo;
-
-        closureRuleMap = new HashMap<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt>>>();
-        implClosureRuleMap = new HashMap<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt>>>();
 
         for (final Assrt assrt : assrtList)
             findClosureRules(assrt);
@@ -288,7 +289,7 @@ public class ClosureInfo extends DBInfo {
     private void findClosureRulesCore(final Assrt assrt,
         final ParseNode mainRoot, final int hypNum,
         final PropertyTemplate template, final VarHyp[] hypToVarHypMap,
-        final Map<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt>>> resMap)
+        final ClosureComplexRuleMap resMap)
     {
         final ParseNode res = getCorrespondingNode(template.templNode, mainRoot);
         if (res == null)
@@ -350,25 +351,11 @@ public class ClosureInfo extends DBInfo {
         if (incorrectOrder)
             return;
 
-        Map<ConstSubst, Map<PropertyTemplate, Assrt>> assrtMap = resMap
-            .get(stmt);
-        if (assrtMap == null) {
-            assrtMap = new HashMap<ConstSubst, Map<PropertyTemplate, Assrt>>();
-            resMap.put(stmt, assrtMap);
-        }
-
         final ConstSubst constSubst = new ConstSubst(constMap);
 
-        Map<PropertyTemplate, Assrt> templateSet = assrtMap.get(constSubst);
-        if (templateSet == null) {
-            templateSet = new HashMap<PropertyTemplate, Assrt>();
-            assrtMap.put(constSubst, templateSet);
-        }
-
-        if (templateSet.containsKey(template))
-            return; // some duplicate
-
-        templateSet.put(template, assrt);
+        final Assrt addRes = resMap.addData(stmt, constSubst, template, assrt);
+        if (addRes != assrt)
+            return;
 
         output.dbgMessage(dbg,
             "I-TR-DBG transitive to result properties(%b): %s: %s",
@@ -401,138 +388,176 @@ public class ClosureInfo extends DBInfo {
      * then will generate "|- ( sin ` A ) e. CC"
      * 
      * @param info the work sheet info
-     * @param genStmt generalized statement (" _ e. CC" in the example)
+     * @param template template (" _ e. CC" in the example)
      * @param node the input node ("( sin ` A )" in the example)
      * @return top-level closure statement ("|- ( sin ` A ) e. CC" in the
      *         example)
      */
     public ProofStepStmt closureProperty(final WorksheetInfo info,
-        final GeneralizedStmt genStmt, final ParseNode node)
+        final PropertyTemplate template, final ParseNode node)
     {
-        final ParseNode stepNode = genStmt.template.subst(node);
+        final ParseNode stepNode = template.subst(node);
 
         ProofStepStmt res = info.getProofStepStmt(stepNode);
         if (res != null)
             return res;
 
-        final ProofStepStmt[] hyps = new ProofStepStmt[genStmt.varIndexes.length];
-        for (final int n : genStmt.varIndexes) {
-            final ParseNode child = node.getChild()[n];
+        if (hasClosurePropertyInternal(info, node, template, closureRuleMap)) {
+            final CreateClosureVisitor visitor = new CreateClosureVisitor() {
+                public ClosureComplexRuleMap getMap() {
+                    return closureRuleMap;
+                }
 
-            final ProofStepStmt closureHyp = closureProperty(info, genStmt,
-                child);
+                public ProofStepStmt createClosureStep(
+                    final ProofStepStmt[] hyps, final Assrt assrt)
+                {
+                    final ProofStepStmt r = info.getOrCreateProofStepStmt(
+                        stepNode, hyps, assrt);
+                    return r;
+                }
+            };
 
-            assert closureHyp != null;
+            res = tmp(info, template, node, visitor);
 
-            hyps[n] = closureHyp;
-        }
-
-        Assrt assrt = getClosureAssert(genStmt, closureRuleMap);
-        if (assrt != null) {
-            assert genStmt.varIndexes.length == assrt.getLogHypArrayLength();
-            res = info.getOrCreateProofStepStmt(stepNode, hyps, assrt);
+            assert res != null;
+            return res;
         }
         else {
-            assrt = getClosureAssert(genStmt, implClosureRuleMap);
-            assert assrt != null : "Incorrect call of closureProperty : "
-                + "there is no closure rule for statenet " + genStmt;
+            assert hasClosurePropertyInternal(info, node, template,
+                implClosureRuleMap) : "Incorrect call of closureProperty : "
+                + "there is no closure rule for node" + node + " and template "
+                + template;
+            final CreateClosureVisitor visitor = new CreateClosureVisitor() {
+                public ClosureComplexRuleMap getMap() {
+                    return implClosureRuleMap;
+                }
 
-            final ParseNode root = assrt.getExprParseTree().getRoot();
-            final ParseNode hypsPart = root.getChild()[0];
-            final ParseNode implRes = root.getChild()[1];
+                public ProofStepStmt createClosureStep(
+                    final ProofStepStmt[] hyps, final Assrt assrt)
+                {
+                    final ParseNode assrtRoot = assrt.getExprParseTree()
+                        .getRoot();
+                    final ParseNode hypsPartPattern = assrtRoot.getChild()[0];
+                    final ParseNode implRes = stepNode;
 
-            final ProofStepStmt implHyp = conjInfo.conctinateInTheSamePattern(
-                hyps, hypsPart, info);
-            res = implInfo.applyImplicationRule(info, implHyp, implRes, assrt);
+                    final ProofStepStmt implHyp = conjInfo
+                        .conctinateInTheSamePattern(hyps, hypsPartPattern, info);
+                    final ProofStepStmt r = implInfo.applyImplicationRule(info,
+                        implHyp, implRes, assrt);
+                    return r;
+                }
+            };
+            res = tmp(info, template, node, visitor);
+
+            assert res != null;
+            return res;
         }
+    }
 
+    private interface CreateClosureVisitor {
+        public ClosureComplexRuleMap getMap();
+        public ProofStepStmt createClosureStep(final ProofStepStmt[] hyps,
+            final Assrt assrt);
+    }
+
+    private ProofStepStmt tmp(final WorksheetInfo info,
+        final PropertyTemplate template, final ParseNode node,
+        final CreateClosureVisitor visitor)
+    {
+        final ProofStepStmt res = visitor.getMap().visitGenStmts(node, info,
+            new ComplexRuleVisitor<Assrt, ProofStepStmt>() {
+                public ProofStepStmt visit(final ParseNode node,
+                    final WorksheetInfo info, final ConstSubst constSubst,
+                    final int[] varIndexes,
+                    final Map<PropertyTemplate, Assrt> propertyMap)
+                {
+                    final Assrt assrt = propertyMap.get(template);
+                    if (assrt == null)
+                        return null;
+                    final ProofStepStmt[] hyps = new ProofStepStmt[varIndexes.length];
+                    for (int i = 0; i < varIndexes.length; i++) {
+                        final int n = varIndexes[i];
+                        // Variable position
+                        final ParseNode child = node.getChild()[n];
+                        assert child != null;
+                        final ProofStepStmt childRes = closureProperty(info,
+                            template, child);
+                        if (childRes == null)
+                            return null;
+
+                        hyps[i] = childRes;
+                    }
+                    final ProofStepStmt r = visitor.createClosureStep(hyps,
+                        assrt);
+                    return r;
+                }
+
+                public ProofStepStmt failValue() {
+                    return null;
+                }
+            });
         assert res != null;
         return res;
     }
 
-    /*
-    public boolean hasClosurePropertyInternal(final WorksheetInfo info,
+    // -------------
+
+    private boolean hasClosurePropertyInternal(final WorksheetInfo info,
         final ParseNode node, final PropertyTemplate template,
-        final Map<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt>>> map)
+        final ClosureComplexRuleMap map)
     {
-        final Stmt stmt = node.getStmt();
+        final Boolean res = map.visitGenStmts(node, info,
+            new ComplexRuleVisitor<Assrt, Boolean>() {
+                public Boolean visit(final ParseNode node,
+                    final WorksheetInfo info, final ConstSubst constSubst,
+                    final int[] varIndexes,
+                    final Map<PropertyTemplate, Assrt> propertyMap)
+                {
+                    if (!propertyMap.containsKey(template))
+                        return false;
+                    for (int i = 0; i < node.getChild().length; i++)
+                        if (constSubst.constMap[i] == null) {
+                            // Variable position
+                            final ParseNode child = node.getChild()[i];
+                            if (!hasClosureProperty(info, child, template))
+                                return false;
+                        }
+                    return true;
+                }
 
-        // Map<ConstSubst, Map<PropertyTemplate, Assrt>> constSubstMap =
-        // map.get(stmt);
-
-        final ConstSubst constSubst = ConstSubst.createFromNode(node);
-        // TODO: !!!
-
-        if (constSubst == null)
-            return false;
-
-        if (!hasClosureAssert(stmt, constSubst, template))
-            return false;
-
-        for (int i = 0; i < node.getChild().length; i++)
-            if (constSubst.constMap[i] == null) {
-                // Var position
-                final ParseNode child = node.getChild()[i];
-                if (!hasClosureProperty(info, child, template))
+                public Boolean failValue() {
                     return false;
-            }
-        return true;
+                }
+            });
+        return res;
     }
 
     public boolean hasClosureProperty(final WorksheetInfo info,
-        final GeneralizedStmt genStmt, final ParseNode node)
+        final ParseNode node, final PropertyTemplate template)
     {
-
-        final ParseNode substProp = genStmt.template.subst(node);
+        final ParseNode substProp = template.subst(node);
         final ProofStepStmt stmt = info.getProofStepStmt(substProp);
-
         if (stmt != null)
             return true;
-
+        return hasClosurePropertyInternal(info, node, template, closureRuleMap)
+            || hasClosurePropertyInternal(info, node, template,
+                implClosureRuleMap);
     }
-    */
 
     // ------------------------------------------------------------------------
     // ------------------------------Getters-----------------------------------
     // ------------------------------------------------------------------------
 
-    private Assrt getClosureAssert(final GeneralizedStmt genStmt,
-        final Map<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt>>> map)
-    {
-        return getClosureAssert(genStmt.stmt, genStmt.constSubst,
-            genStmt.template, map);
-    }
-
-    private Assrt getClosureAssert(final Stmt stmt,
-        final ConstSubst constSubst, final PropertyTemplate template,
-        final Map<Stmt, Map<ConstSubst, Map<PropertyTemplate, Assrt>>> map)
-    {
-        final Map<ConstSubst, Map<PropertyTemplate, Assrt>> substMap = map
-            .get(stmt);
-        if (substMap == null)
-            return null;
-
-        final Map<PropertyTemplate, Assrt> propertyMap = substMap
-            .get(constSubst);
-
-        if (propertyMap == null)
-            return null;
-
-        final Assrt assrt = propertyMap.get(template);
-        return assrt;
-    }
-
     public boolean hasClosureAssert(final Stmt stmt,
         final ConstSubst constSubst, final PropertyTemplate template)
     {
-        final Assrt assrt = getClosureAssert(stmt, constSubst, template,
-            closureRuleMap);
+        final Assrt assrt = closureRuleMap.getData(stmt, constSubst, template);
 
         if (assrt != null)
             return true;
 
-        final Assrt assrtImpl = getClosureAssert(stmt, constSubst, template,
-            implClosureRuleMap);
+        final Assrt assrtImpl = implClosureRuleMap.getData(stmt, constSubst,
+            template);
 
         return assrtImpl != null;
     }

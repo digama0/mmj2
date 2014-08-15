@@ -24,7 +24,8 @@ public class CommutativeInfo extends DBInfo {
      * the example) -> assert. There could be many properties ( {" _ e. CC" ,
      * "_ e. RR" } for example ).
      */
-    private final ComplexRuleMap<Assrt> comOp = new ComplexRuleMap<Assrt>() {
+    private final AssocComComplexRuleMap<Assrt> comOp = new AssocComComplexRuleMap<Assrt>()
+    {
         @Override
         public GeneralizedStmt detectGenStmtCore(final WorksheetInfo info,
             final ParseNode node, final PropertyTemplate template,
@@ -224,7 +225,7 @@ public class CommutativeInfo extends DBInfo {
             in[1] = side.getChild()[n1];
 
             for (int i = 0; i < 2; i++)
-                hyps[i] = clInfo.closureProperty(info, comProp, in[i]);
+                hyps[i] = clInfo.closureProperty(info, comProp.template, in[i]);
         }
         else
             hyps = new ProofStepStmt[]{};

@@ -12,23 +12,25 @@ import mmj.verify.VerifyProofs;
  * This class has local package visibility.
  */
 /*local*/class WorksheetInfo {
-    final ProofWorksheet proofWorksheet;
-    final DerivationStep derivStep;
+    public final ProofWorksheet proofWorksheet;
+    public final DerivationStep derivStep;
 
-    final List<DerivationStep> newSteps = new ArrayList<DerivationStep>();
+    public final List<DerivationStep> newSteps = new ArrayList<DerivationStep>();
+
+    public final TransformationManager trManager;
 
     private final VerifyProofs verifyProofs;
     private final Cnst provableLogicStmtTyp;
 
     public WorksheetInfo(final ProofWorksheet proofWorksheet,
-        final DerivationStep derivStep, final VerifyProofs verifyProofs,
-        final Cnst provableLogicStmtTyp)
+        final DerivationStep derivStep, final TransformationManager trManager)
     {
         super();
         this.proofWorksheet = proofWorksheet;
         this.derivStep = derivStep;
-        this.verifyProofs = verifyProofs;
-        this.provableLogicStmtTyp = provableLogicStmtTyp;
+        this.trManager = trManager;
+        verifyProofs = trManager.verifyProofs;
+        provableLogicStmtTyp = trManager.provableLogicStmtTyp;
     }
 
     public ProofStepStmt getProofStepStmt(final ParseNode stepNode) {

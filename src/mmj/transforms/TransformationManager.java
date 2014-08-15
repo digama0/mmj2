@@ -24,10 +24,13 @@ public class TransformationManager {
 
     private final boolean dbg;
 
-    protected TrOutput output;
+    private final TrOutput output;
 
     /** It is necessary for formula construction */
-    private final VerifyProofs verifyProofs;
+    public final VerifyProofs verifyProofs;
+
+    /** The symbol like |- in set.mm */
+    public final Cnst provableLogicStmtTyp;
 
     /** The information about equivalence rules */
     public final EquivalenceInfo eqInfo;
@@ -45,9 +48,6 @@ public class TransformationManager {
     public final AssociativeInfo assocInfo;
 
     public final CommutativeInfo comInfo;
-
-    /** The symbol like |- in set.mm */
-    protected Cnst provableLogicStmtTyp;
 
     /**
      * Note: Here will be performed a lot of work during the construction of
@@ -200,7 +200,7 @@ public class TransformationManager {
         final ProofWorksheet proofWorksheet, final DerivationStep derivStep)
     {
         final WorksheetInfo info = new WorksheetInfo(proofWorksheet, derivStep,
-            verifyProofs, provableLogicStmtTyp);
+            this);
 
         final Cnst derivType = info.derivStep.formulaParseTree.getRoot()
             .getStmt().getTyp();

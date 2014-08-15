@@ -8,6 +8,8 @@ import mmj.lang.Stmt;
 
 /**
  * This class implements complex rule map
+ * <p>
+ * TODO: improve the performance of constant substitution search
  * 
  * @param <Data> stored data
  */
@@ -68,15 +70,53 @@ public abstract class ComplexRuleMap<Data> {
         return data;
     }
 
-    public GeneralizedStmt detectGenStmt(final ParseNode node,
-        final WorksheetInfo info)
+    public interface ComplexRuleVisitor<Data, ResType> {
+        /**
+         * The core callback
+         * 
+         * @param node the input node
+         * @param info the work sheet info
+         * @param constSubst appropriate constant substitution
+         * @param varIndexes the indexes in the node children with variables
+         * @param propertyMap The map: template -> data
+         * @return If this function returns non-failure value the the visiting
+         *         process will be terminated and this result will be returned.
+         */
+        ResType visit(final ParseNode node, final WorksheetInfo info,
+            final ConstSubst constSubst, final int[] varIndexes,
+            final Map<PropertyTemplate, Data> propertyMap);
+
+        /**
+         * This value indicates that we should continue search. Also the value
+         * will be returned if nothing will be founded.
+         * 
+         * @return The constant for failure-value indication
+         */
+        ResType failValue();
+    }
+
+    /**
+     * Visits all appropriate constant substitutions for the node. Returns after
+     * the first non-failure visitor result value.
+     * 
+     * @param node the input node
+     * @param info the work sheet info
+     * @param visitor the callback for core work
+     * @param <ResType> the type of visitor result
+     * @return the visitor result
+     */
+    public final <ResType> ResType visitGenStmts(final ParseNode node,
+        final WorksheetInfo info,
+        final ComplexRuleVisitor<Data, ResType> visitor)
     {
         final Stmt stmt = node.getStmt();
         final Map<ConstSubst, Map<PropertyTemplate, Data>> constSubstMap = map
             .get(stmt);
 
+        final ResType failValue = visitor.failValue();
+
         if (constSubstMap == null)
-            return null;
+            return failValue;
 
         final ParseNode[] constMap = TrUtil.collectConstSubst(node);
 
@@ -93,22 +133,13 @@ public abstract class ComplexRuleMap<Data> {
 
             final Map<PropertyTemplate, Data> propertyMap = elem.getValue();
 
-            // TODO: here we use trivial search stub!
-            for (final Entry<PropertyTemplate, Data> propElem : propertyMap
-                .entrySet())
-            {
-                final PropertyTemplate template = propElem.getKey();
-                final GeneralizedStmt res = detectGenStmtCore(info, node,
-                    template, constSubst, varIndexes);
-                if (res != null)
-                    return res;
-            }
+            final ResType res = visitor.visit(node, info, constSubst,
+                varIndexes, propertyMap);
+
+            if (res != failValue && !res.equals(failValue))
+                return res;
         }
 
-        return null;
+        return failValue;
     }
-
-    public abstract GeneralizedStmt detectGenStmtCore(final WorksheetInfo info,
-        final ParseNode node, PropertyTemplate template, ConstSubst constSubst,
-        int[] varIndexes);
 }

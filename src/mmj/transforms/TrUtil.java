@@ -91,11 +91,16 @@ public class TrUtil {
             return createGenBinaryNode(genStmt, right, left);
     }
 
-    public static int[] checkConstSubstAndGetVarPositions(final ConstSubst constSubst,
-        final ParseNode[] constMap)
+    public static int[] checkConstSubstAndGetVarPositions(
+        final ConstSubst constSubst, final ParseNode[] constMap)
     {
+        int size = 0;
+        for (final ParseNode element : constSubst.constMap)
+            if (element == null)
+                size++;
+
         int curVar = 0;
-        final int[] varIndexes = new int[2];
+        final int[] varIndexes = new int[size];
         for (int i = 0; i < constSubst.constMap.length; i++)
             if (constSubst.constMap[i] != null) {
                 if (constMap[i] == null
@@ -103,10 +108,10 @@ public class TrUtil {
                     return null;
             }
             else {
-                assert curVar < 2;
+                assert curVar < size;
                 varIndexes[curVar++] = i;
             }
-    
+
         return varIndexes;
     }
 
@@ -114,20 +119,20 @@ public class TrUtil {
     public static VarHyp[] getHypToVarMap(final Assrt assrt) {
         final VarHyp[] varHypArray = assrt.getMandVarHypArray();
         final LogHyp[] logHyps = assrt.getLogHypArray();
-    
+
         final VarHyp[] hypToVarHypMap = new VarHyp[logHyps.length];
         if (logHyps.length != varHypArray.length)
             return null;
-    
+
         for (int i = 0; i < logHyps.length; i++) {
             final VarHyp[] varsi = logHyps[i].getMandVarHypArray();
             if (varsi.length != 1)
                 return null;
             final VarHyp vari = varsi[0];
-    
+
             hypToVarHypMap[i] = vari;
         }
-    
+
         return hypToVarHypMap;
     }
 
