@@ -125,6 +125,20 @@ public abstract class ComplexRuleMap<Data> {
             .entrySet())
         {
             final ConstSubst constSubst = elem.getKey();
+
+            /*
+             //debug code
+            if (node.toString().equals("[[cB, csin]; cfv, c1, caddc]; co"))
+                node.toString();
+
+            if (constSubst.constMap.length == 3
+                && constSubst.constMap[0] == null
+                && constSubst.constMap[1] != null
+                && constSubst.constMap[2] != null
+                && constSubst.constMap[1].toString().equals("c1")
+                && constSubst.constMap[2].toString().equals("caddc"))
+                constSubst.toString();
+            */
             final int[] varIndexes = TrUtil.checkConstSubstAndGetVarPositions(
                 constSubst, constMap);
 

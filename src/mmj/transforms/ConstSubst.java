@@ -103,4 +103,16 @@ public class ConstSubst {
 
         return res;
     }
+
+    @Override
+    public String toString() {
+        String res = "[";
+        for (int i = 0; i < constMap.length; i++) {
+            if (i != 0)
+                res += ", ";
+            res += constMap[i];
+        }
+        res += "]";
+        return res;
+    }
 }

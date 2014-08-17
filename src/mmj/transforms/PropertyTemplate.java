@@ -3,7 +3,7 @@ package mmj.transforms;
 import mmj.lang.ParseNode;
 
 /** The template for some property. Usually it has form "var e. set" */
-public class PropertyTemplate {
+public class PropertyTemplate extends ParseNodeHashElem {
     /** The place in the template which could be replaced */
     public static final ParseNode templateReplace = new ParseNode() {
         @Override
@@ -12,49 +12,50 @@ public class PropertyTemplate {
         }
     };
 
-    /** template could be null */
-    public final ParseNode templNode;
-
     public PropertyTemplate(final ParseNode template) {
-        templNode = template;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (!(obj instanceof PropertyTemplate))
-            return false;
-        final PropertyTemplate that = (PropertyTemplate)obj;
-        if (templNode == that.templNode)
-            return true;
-
-        if (templNode == null || that.templNode == null)
-            return false;
-
-        return templNode.isDeepDup(that.templNode);
-    }
-
-    @Override
-    public int hashCode() {
-        if (templNode != null)
-            return templNode.deepHashCode();
-        else
-            return 0;
-    }
-
-    public boolean isEmpty() {
-        return templNode == null;
+        super(template);
     }
 
     public ParseNode subst(final ParseNode substNode) {
-        return templNode.deepCloneWNodeSub(PropertyTemplate.templateReplace,
+        return node.deepCloneWNodeSub(PropertyTemplate.templateReplace,
             substNode.deepClone());
     }
 
-    @Override
-    public String toString() {
-        if (templNode == null)
-            return "Empty-template";
+    private static class ParseNodeRef {
+        ParseNode res;
+        boolean ok = true;
+    };
 
-        return "template { " + templNode.toString() + " }";
+    private static void extract(final ParseNodeRef res,
+        final ParseNode curTempl, final ParseNode input)
+    {
+        if (curTempl == templateReplace) {
+            if (res.res != null)
+                res.ok = false;
+            res.res = input;
+        }
+        else {
+            if (curTempl.getStmt() != input.getStmt()) {
+                res.ok = false;
+                return;
+            }
+
+            assert input.getChild().length == curTempl.getChild().length;
+
+            for (int i = 0; i < input.getChild().length; i++) {
+                extract(res, curTempl.getChild()[i], input.getChild()[i]);
+                if (!res.ok)
+                    return;
+            }
+        }
+    }
+
+    public ParseNode extractNode(final ParseNode input) {
+        final ParseNodeRef res = new ParseNodeRef();
+        extract(res, node, input);
+        if (res.ok)
+            return res.res;
+        else
+            return null;
     }
 }

@@ -12,6 +12,8 @@ import mmj.verify.VerifyProofs;
  * This class has local package visibility.
  */
 /*local*/class WorksheetInfo {
+    private final boolean finished = false;
+
     public final ProofWorksheet proofWorksheet;
     public final DerivationStep derivStep;
 
@@ -34,14 +36,16 @@ import mmj.verify.VerifyProofs;
     }
 
     public ProofStepStmt getProofStepStmt(final ParseNode stepNode) {
+        assert !finished;
         final ProofStepStmt stepTr = getOrCreateProofStepStmt(stepNode, null,
             null);
         return stepTr;
     }
 
-    ProofStepStmt getOrCreateProofStepStmt(final ParseNode root,
+    public ProofStepStmt getOrCreateProofStepStmt(final ParseNode root,
         final ProofStepStmt[] hyps, final Assrt assrt)
     {
+        assert !finished;
         final ParseTree tree = new ParseTree(root);
         final Formula generatedFormula = verifyProofs.convertRPNToFormula(
             tree.convertToRPN(), "tree"); // TODO: use constant
@@ -69,5 +73,33 @@ import mmj.verify.VerifyProofs;
         // d.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED;
         newSteps.add(d);
         return d;
+    }
+
+    public void finishDerivationStep(final ProofStepStmt[] hypDerivArray,
+        final Assrt assrt)
+    {
+        assert !finished;
+        final String[] hypStep = new String[hypDerivArray.length];
+        for (int i = 0; i < hypStep.length; i++)
+            hypStep[i] = hypDerivArray[i].getStep();
+
+        derivStep.setRef(assrt);
+        derivStep.setRefLabel(assrt.getLabel());
+        derivStep.setHypList(hypDerivArray);
+        derivStep.setHypStepList(hypStep);
+        derivStep.setAutoStep(false);
+        // confirm unification for derivStep also!
+        newSteps.add(derivStep);
+    }
+
+    public static class SubstParam {
+        final ProofStepStmt[] hypDerivArray;
+        final Assrt assrt;
+
+        public SubstParam(final ProofStepStmt[] hypDerivArray, final Assrt assrt)
+        {
+            this.hypDerivArray = hypDerivArray;
+            this.assrt = assrt;
+        }
     }
 }

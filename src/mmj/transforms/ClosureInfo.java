@@ -21,11 +21,19 @@ public class ClosureInfo extends DBInfo {
      * for example ).
      */
 
-    private class ClosureComplexRuleMap extends ComplexRuleMap<Assrt> {}
+    private static class ClosureComplexRuleMap extends ComplexRuleMap<Assrt> {}
 
     private final ClosureComplexRuleMap closureRuleMap = new ClosureComplexRuleMap();
 
     private final ClosureComplexRuleMap implClosureRuleMap = new ClosureComplexRuleMap();
+
+    private final Set<PropertyTemplate> possibleProperties = new HashSet<PropertyTemplate>();
+
+    /** The information about properties of constants */
+    private final Map<PropertyTemplate, Map<ParseNodeHashElem, Assrt>> constInfo;
+
+    /** This constant is needed for internal debug */
+    private static final boolean supportConstants = true;
 
     // ------------------------------------------------------------------------
     // ------------------------Initialization----------------------------------
@@ -35,15 +43,25 @@ public class ClosureInfo extends DBInfo {
         final ConjunctionInfo conjInfo, final List<Assrt> assrtList,
         final TrOutput output, final boolean dbg)
     {
-        super(output, true); // TODO: CHANGE for dbg!!!
+        super(output, dbg);
         this.implInfo = implInfo;
         this.conjInfo = conjInfo;
+        constInfo = new HashMap<PropertyTemplate, Map<ParseNodeHashElem, Assrt>>();
 
         for (final Assrt assrt : assrtList)
             findClosureRules(assrt);
 
         for (final Assrt assrt : assrtList)
             findImplClosureRules(assrt);
+
+        for (final Assrt assrt : assrtList)
+            findClosureRulesForConsts(assrt);
+
+        // debug output
+        if (dbg)
+            for (final PropertyTemplate template : possibleProperties)
+                output.dbgMessage(dbg, "I-TR-DBG transitive property: %s",
+                    template.toString());
     }
 
     private static final ParseNode endMarker = new ParseNode();
@@ -291,7 +309,7 @@ public class ClosureInfo extends DBInfo {
         final PropertyTemplate template, final VarHyp[] hypToVarHypMap,
         final ClosureComplexRuleMap resMap)
     {
-        final ParseNode res = getCorrespondingNode(template.templNode, mainRoot);
+        final ParseNode res = getCorrespondingNode(template.node, mainRoot);
         if (res == null)
             return;
 
@@ -357,11 +375,53 @@ public class ClosureInfo extends DBInfo {
         if (addRes != assrt)
             return;
 
+        possibleProperties.add(template);
+
         output.dbgMessage(dbg,
             "I-TR-DBG transitive to result properties(%b): %s: %s",
             incorrectOrder, assrt, assrt.getFormula());
     }
 
+    private void findClosureRulesForConsts(final Assrt assrt) {
+        final LogHyp[] logHyps = assrt.getLogHypArray();
+        final ParseTree assrtTree = assrt.getExprParseTree();
+
+        if (logHyps.length != 0)
+            return;
+
+        final ParseNode root = assrtTree.getRoot();
+
+        if (!TrUtil.isConstNode(root))
+            return;
+
+        for (final PropertyTemplate template : possibleProperties) {
+            final ParseNode core = template.extractNode(root);
+            if (core != null) {
+                /*
+                if (core.toString().equals("c1")
+                    && template.toString().equals(
+                        "node { [Template-stub, cc]; wcel }"))
+                    core.toString();
+                */
+                Map<ParseNodeHashElem, Assrt> cMap = constInfo.get(template);
+                if (cMap == null) {
+                    cMap = new HashMap<ParseNodeHashElem, Assrt>();
+                    constInfo.put(template, cMap);
+                }
+
+                final ParseNodeHashElem key = new ParseNodeHashElem(core);
+
+                if (cMap.containsKey(key))
+                    continue;
+
+                cMap.put(key, assrt);
+
+                output.dbgMessage(dbg,
+                    "I-TR-DBG transitive rule for constant %s: %s: %s", core,
+                    assrt, assrt.getFormula());
+            }
+        }
+    }
     // ------------------------------------------------------------------------
     // ----------------------------Detection-----------------------------------
     // ------------------------------------------------------------------------
@@ -396,7 +456,18 @@ public class ClosureInfo extends DBInfo {
     public ProofStepStmt closureProperty(final WorksheetInfo info,
         final PropertyTemplate template, final ParseNode node)
     {
+        return closurePropertyCommon(info, template, node, false);
+    }
+
+    public ProofStepStmt closurePropertyCommon(final WorksheetInfo info,
+        final PropertyTemplate template, final ParseNode node,
+        final boolean finishStatement)
+    {
         final ParseNode stepNode = template.subst(node);
+
+        if (finishStatement)
+            assert info.derivStep.formulaParseTree.getRoot()
+                .isDeepDup(stepNode);
 
         ProofStepStmt res = info.getProofStepStmt(stepNode);
         if (res != null)
@@ -411,22 +482,26 @@ public class ClosureInfo extends DBInfo {
                 public ProofStepStmt createClosureStep(
                     final ProofStepStmt[] hyps, final Assrt assrt)
                 {
-                    final ProofStepStmt r = info.getOrCreateProofStepStmt(
-                        stepNode, hyps, assrt);
-                    return r;
+                    if (!finishStatement) {
+                        final ProofStepStmt r = info.getOrCreateProofStepStmt(
+                            stepNode, hyps, assrt);
+                        return r;
+                    }
+                    else {
+                        info.finishDerivationStep(hyps, assrt);
+                        return info.derivStep;
+                    }
                 }
             };
 
-            res = tmp(info, template, node, visitor);
+            res = closureVisitorEntrance(info, template, node, visitor);
 
             assert res != null;
             return res;
         }
-        else {
-            assert hasClosurePropertyInternal(info, node, template,
-                implClosureRuleMap) : "Incorrect call of closureProperty : "
-                + "there is no closure rule for node" + node + " and template "
-                + template;
+        else if (hasClosurePropertyInternal(info, node, template,
+            implClosureRuleMap))
+        {
             final CreateClosureVisitor visitor = new CreateClosureVisitor() {
                 public ClosureComplexRuleMap getMap() {
                     return implClosureRuleMap;
@@ -442,12 +517,45 @@ public class ClosureInfo extends DBInfo {
 
                     final ProofStepStmt implHyp = conjInfo
                         .conctinateInTheSamePattern(hyps, hypsPartPattern, info);
-                    final ProofStepStmt r = implInfo.applyImplicationRule(info,
-                        implHyp, implRes, assrt);
-                    return r;
+                    if (!finishStatement) {
+                        final ProofStepStmt r = implInfo.applyImplicationRule(
+                            info, implHyp, implRes, assrt);
+                        return r;
+                    }
+                    else {
+                        implInfo.finishWithImplication(info, implHyp, implRes,
+                            assrt);
+                        return info.derivStep;
+                    }
                 }
             };
-            res = tmp(info, template, node, visitor);
+            res = closureVisitorEntrance(info, template, node, visitor);
+
+            assert res != null;
+            return res;
+        }
+        else {
+            // We should not be here if we does'nt support constant property
+            // auto completion
+            assert supportConstants;
+
+            // So it should be constant
+            assert TrUtil.isConstNode(node);
+
+            // TODO: DEBUG IT!!!!
+
+            final Map<ParseNodeHashElem, Assrt> cMap = constInfo.get(template);
+
+            assert cMap != null;
+
+            final Assrt assrt = cMap.get(new ParseNodeHashElem(node));
+
+            assert assrt != null;
+
+            final ParseNode root = assrt.getExprParseTree().getRoot();
+
+            res = info.getOrCreateProofStepStmt(root, new ProofStepStmt[]{},
+                assrt);
 
             assert res != null;
             return res;
@@ -460,7 +568,7 @@ public class ClosureInfo extends DBInfo {
             final Assrt assrt);
     }
 
-    private ProofStepStmt tmp(final WorksheetInfo info,
+    private ProofStepStmt closureVisitorEntrance(final WorksheetInfo info,
         final PropertyTemplate template, final ParseNode node,
         final CreateClosureVisitor visitor)
     {
@@ -480,6 +588,10 @@ public class ClosureInfo extends DBInfo {
                         // Variable position
                         final ParseNode child = node.getChild()[n];
                         assert child != null;
+
+                        if (!hasClosureProperty(info, child, template))
+                            return null;
+
                         final ProofStepStmt childRes = closureProperty(info,
                             template, child);
                         if (childRes == null)
@@ -515,6 +627,9 @@ public class ClosureInfo extends DBInfo {
                 {
                     if (!propertyMap.containsKey(template))
                         return false;
+
+                    assert propertyMap.get(template) != null;
+
                     for (int i = 0; i < node.getChild().length; i++)
                         if (constSubst.constMap[i] == null) {
                             // Variable position
@@ -539,9 +654,41 @@ public class ClosureInfo extends DBInfo {
         final ProofStepStmt stmt = info.getProofStepStmt(substProp);
         if (stmt != null)
             return true;
-        return hasClosurePropertyInternal(info, node, template, closureRuleMap)
-            || hasClosurePropertyInternal(info, node, template,
-                implClosureRuleMap);
+        if (hasClosurePropertyInternal(info, node, template, closureRuleMap))
+            return true;
+        if (hasClosurePropertyInternal(info, node, template, implClosureRuleMap))
+            return true;
+
+        if (supportConstants)
+            if (TrUtil.isConstNode(node)) {
+                final Map<ParseNodeHashElem, Assrt> cMap = constInfo
+                    .get(template);
+                if (cMap != null
+                    && cMap.containsKey(new ParseNodeHashElem(node)))
+                    return true;
+            }
+
+        return false;
+    }
+
+    // ------------------------------------------------------------------------
+    // ---------------------------Transformations------------------------------
+    // ------------------------------------------------------------------------
+
+    public boolean performClosureTransformation(final WorksheetInfo info) {
+        final ParseNode input = info.derivStep.formulaParseTree.getRoot();
+
+        // TODO: optimize it!!!
+        for (final PropertyTemplate template : possibleProperties) {
+            final ParseNode core = template.extractNode(input);
+            if (core == null)
+                continue;
+            if (hasClosureProperty(info, core, template)) {
+                closurePropertyCommon(info, template, core, true);
+                return true;
+            }
+        }
+        return false;
     }
 
     // ------------------------------------------------------------------------

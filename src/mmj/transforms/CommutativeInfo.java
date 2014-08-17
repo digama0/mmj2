@@ -65,9 +65,6 @@ public class CommutativeInfo extends DBInfo {
     protected void findCommutativeRules(final Assrt assrt) {
         // Debug statements: prcom, addcomi
 
-        if (assrt.getLabel().equals("normpari"))
-            assrt.toString();
-
         final VarHyp[] varHypArray = assrt.getMandVarHypArray();
         final ParseTree assrtTree = assrt.getExprParseTree();
 

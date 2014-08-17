@@ -176,17 +176,7 @@ public class TransformationManager {
                 source, eqResult}
             : new ProofStepStmt[]{eqResult, source};
 
-        final String[] hypStep = new String[hypDerivArray.length];
-        for (int i = 0; i < hypStep.length; i++)
-            hypStep[i] = hypDerivArray[i].getStep();
-
-        info.derivStep.setRef(impl);
-        info.derivStep.setRefLabel(impl.getLabel());
-        info.derivStep.setHypList(hypDerivArray);
-        info.derivStep.setHypStepList(hypStep);
-        info.derivStep.setAutoStep(false);
-
-        return;
+        info.finishDerivationStep(hypDerivArray, impl);
     }
 
     /**
@@ -245,11 +235,16 @@ public class TransformationManager {
                     candidate, derivStep);
                 performTransformation(info, candidate, implAssrt);
 
-                // confirm unification for derivStep also!
-                info.newSteps.add(derivStep);
                 return info.newSteps;
             }
         }
+
+        // Maybe it is closure assertion? Then we could automatically prove it!
+        // TODO: Now the used algorithm could consume a lot of time for the
+        // search!
+        if (clInfo.performClosureTransformation(info))
+            return info.newSteps;
+
         return null;
     }
 

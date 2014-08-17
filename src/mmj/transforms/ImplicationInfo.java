@@ -4,6 +4,7 @@ import java.util.*;
 
 import mmj.lang.*;
 import mmj.pa.ProofStepStmt;
+import mmj.transforms.WorksheetInfo.SubstParam;
 
 public class ImplicationInfo extends DBInfo {
     /** The information about equivalence rules */
@@ -143,6 +144,20 @@ public class ImplicationInfo extends DBInfo {
     public ProofStepStmt applyImplicationRule(final WorksheetInfo info,
         final ProofStepStmt min, final ParseNode implNode, final Assrt majAssrt)
     {
+        final SubstParam subst = getImplicationSubst(info, min, implNode,
+            majAssrt);
+
+        final ProofStepStmt maj = subst.hypDerivArray[1];
+        final ParseNode stepNode = maj.formulaParseTree.getRoot().getChild()[1];
+
+        final ProofStepStmt stepTr = info.getOrCreateProofStepStmt(stepNode,
+            subst.hypDerivArray, subst.assrt);
+        return stepTr;
+    }
+
+    private SubstParam getImplicationSubst(final WorksheetInfo info,
+        final ProofStepStmt min, final ParseNode implNode, final Assrt majAssrt)
+    {
         // implication operator (in the example it is ->)
         final Stmt op = majAssrt.getExprParseTree().getRoot().getStmt();
 
@@ -158,13 +173,17 @@ public class ImplicationInfo extends DBInfo {
         final ProofStepStmt maj = info.getOrCreateProofStepStmt(majNode,
             new ProofStepStmt[]{}, majAssrt);
 
-        final ParseNode stepNode = maj.formulaParseTree.getRoot().getChild()[1];
-
-        final ProofStepStmt stepTr = info.getOrCreateProofStepStmt(stepNode,
-            new ProofStepStmt[]{min, maj}, assrt);
-        return stepTr;
+        return new SubstParam(new ProofStepStmt[]{min, maj}, assrt);
     }
 
+    public void finishWithImplication(final WorksheetInfo info,
+        final ProofStepStmt min, final ParseNode implNode, final Assrt majAssrt)
+    {
+        final SubstParam subst = getImplicationSubst(info, min, implNode,
+            majAssrt);
+
+        info.finishDerivationStep(subst.hypDerivArray, subst.assrt);
+    }
     // ------------------------------------------------------------------------
     // ------------------------------Getters-----------------------------------
     // ------------------------------------------------------------------------
