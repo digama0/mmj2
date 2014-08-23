@@ -22,9 +22,9 @@ import mmj.verify.VerifyProofs;
  */
 public class TransformationManager {
 
-    private final boolean dbg;
+    public final boolean dbg;
 
-    private final TrOutput output;
+    public final TrOutput output;
 
     /** It is necessary for formula construction */
     public final VerifyProofs verifyProofs;
@@ -72,9 +72,9 @@ public class TransformationManager {
 
         eqInfo = new EquivalenceInfo(assrtList, output, dbg);
 
-        conjInfo = new ConjunctionInfo(assrtList, output, dbg);
-
         implInfo = new ImplicationInfo(eqInfo, assrtList, output, dbg);
+
+        conjInfo = new ConjunctionInfo(implInfo, assrtList, output, dbg);
 
         clInfo = new ClosureInfo(implInfo, conjInfo, assrtList, output, dbg);
 

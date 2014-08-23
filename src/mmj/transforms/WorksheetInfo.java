@@ -14,12 +14,24 @@ import mmj.verify.VerifyProofs;
 /*local*/class WorksheetInfo {
     private final boolean finished = false;
 
+    public final TrOutput output;
+    public final boolean dbg;
+
     public final ProofWorksheet proofWorksheet;
     public final DerivationStep derivStep;
 
     public final List<DerivationStep> newSteps = new ArrayList<DerivationStep>();
 
     public final TransformationManager trManager;
+
+    /**
+     * This field could be null. If it is not null, then we could use this
+     * prefix in hypothesis. For example, if the derivations step is
+     * "( ph -> ( A + B ) = C )", then we could search not only "A e. CC", but
+     * also "( ph -> A e. CC )"
+     */
+    public ParseNode implPrefix = null;
+    public Stmt implStatement = null;
 
     private final VerifyProofs verifyProofs;
     private final Cnst provableLogicStmtTyp;
@@ -31,6 +43,8 @@ import mmj.verify.VerifyProofs;
         this.proofWorksheet = proofWorksheet;
         this.derivStep = derivStep;
         this.trManager = trManager;
+        output = trManager.output;
+        dbg = trManager.dbg;
         verifyProofs = trManager.verifyProofs;
         provableLogicStmtTyp = trManager.provableLogicStmtTyp;
     }
@@ -70,27 +84,61 @@ import mmj.verify.VerifyProofs;
             steps, assrt.getLabel(), generatedFormula, tree,
             Collections.<WorkVar> emptyList());
         d.setRef(assrt);
-        // d.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED;
         newSteps.add(d);
+
+        if (dbg) {
+            final String str = getDebugString(d, hyps);
+            output.dbgMessage(dbg, "I-TR-DBG Emminted step: " + str);
+        }
+
         return d;
     }
 
-    public void finishDerivationStep(final ProofStepStmt[] hypDerivArray,
+    public void finishDerivationStep(final ProofStepStmt[] hyps,
         final Assrt assrt)
     {
         assert !finished;
-        final String[] hypStep = new String[hypDerivArray.length];
-        for (int i = 0; i < hypStep.length; i++)
-            hypStep[i] = hypDerivArray[i].getStep();
+        final String[] steps = new String[hyps.length];
+        for (int i = 0; i < steps.length; i++)
+            steps[i] = hyps[i].getStep();
 
         derivStep.setRef(assrt);
         derivStep.setRefLabel(assrt.getLabel());
-        derivStep.setHypList(hypDerivArray);
-        derivStep.setHypStepList(hypStep);
+        derivStep.setHypList(hyps);
+        derivStep.setHypStepList(steps);
         derivStep.setAutoStep(false);
         // confirm unification for derivStep also!
         newSteps.add(derivStep);
+
+        if (dbg) {
+            final String str = getDebugString(derivStep, hyps);
+            output.dbgMessage(dbg, "I-TR-DBG Finished step: " + str);
+        }
     }
+
+    private String getDebugString(final DerivationStep d,
+        final ProofStepStmt[] hyps)
+    {
+        String str = "";
+        for (int i = 0; i < hyps.length; i++) {
+            if (i != 0)
+                str += " & ";
+            str += hyps[i].toString();
+        }
+
+        str += " => " + d;
+        return str;
+    }
+
+    public ParseNode applyImplPrefix(final ParseNode core) {
+        return TrUtil.createBinaryNode(implStatement, implPrefix, core);
+    }
+
+    public boolean hasImplPrefix() {
+        return implPrefix != null;
+    }
+
+    // ----------------------------------------------
 
     public static class SubstParam {
         final ProofStepStmt[] hypDerivArray;
@@ -100,6 +148,32 @@ import mmj.verify.VerifyProofs;
         {
             this.hypDerivArray = hypDerivArray;
             this.assrt = assrt;
+        }
+    }
+
+    public static class GenProofStepStmt {
+        public final ProofStepStmt step;
+        public final ParseNode prefix;
+
+        public GenProofStepStmt(final ProofStepStmt step, final ParseNode prefix)
+        {
+            super();
+            this.step = step;
+            this.prefix = prefix;
+        }
+
+        public boolean hasPrefix() {
+            return prefix != null;
+        }
+
+        public ParseNode getCore() {
+            final ParseNode root = step.formulaParseTree.getRoot();
+            if (prefix == null)
+                return root;
+            else {
+                assert root.getChild().length == 2;
+                return root.getChild()[1];
+            }
         }
     }
 }

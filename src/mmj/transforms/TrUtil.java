@@ -117,18 +117,42 @@ public class TrUtil {
 
     // Could return empty array with length 0
     public static VarHyp[] getHypToVarMap(final Assrt assrt) {
+        return getHypToVarMap(assrt, null);
+    }
+
+    // Could return empty array with length 0
+    public static VarHyp[] getHypToVarMap(final Assrt assrt,
+        final VarHyp paramVar)
+    {
         final VarHyp[] varHypArray = assrt.getMandVarHypArray();
         final LogHyp[] logHyps = assrt.getLogHypArray();
 
         final VarHyp[] hypToVarHypMap = new VarHyp[logHyps.length];
-        if (logHyps.length != varHypArray.length)
+        if (paramVar == null) {
+            if (logHyps.length != varHypArray.length)
+                return null;
+        }
+        else if (1 + logHyps.length != varHypArray.length)
             return null;
 
         for (int i = 0; i < logHyps.length; i++) {
             final VarHyp[] varsi = logHyps[i].getMandVarHypArray();
-            if (varsi.length != 1)
-                return null;
-            final VarHyp vari = varsi[0];
+            final VarHyp vari;
+            if (paramVar == null) {
+                if (varsi.length != 1)
+                    return null;
+                vari = varsi[0];
+            }
+            else {
+                if (varsi.length != 2)
+                    return null;
+                if (paramVar == varsi[0])
+                    vari = varsi[1];
+                else if (paramVar == varsi[1])
+                    vari = varsi[0];
+                else
+                    return null;
+            }
 
             hypToVarHypMap[i] = vari;
         }

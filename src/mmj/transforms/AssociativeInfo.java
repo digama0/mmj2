@@ -222,7 +222,7 @@ public class AssociativeInfo extends DBInfo {
                     continue;
 
                 if (!info.trManager.clInfo.hasClosureProperty(info, child,
-                    template))
+                    template, true))
                     return false;
 
                 /*

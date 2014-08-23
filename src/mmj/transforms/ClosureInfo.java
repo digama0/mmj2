@@ -5,6 +5,7 @@ import java.util.*;
 import mmj.lang.*;
 import mmj.pa.ProofStepStmt;
 import mmj.transforms.ComplexRuleMap.ComplexRuleVisitor;
+import mmj.transforms.WorksheetInfo.GenProofStepStmt;
 
 public class ClosureInfo extends DBInfo {
 
@@ -456,91 +457,153 @@ public class ClosureInfo extends DBInfo {
     public ProofStepStmt closureProperty(final WorksheetInfo info,
         final PropertyTemplate template, final ParseNode node)
     {
-        return closurePropertyCommon(info, template, node, false);
+        return closurePropertyCommon(info, template, node, false, true).step;
     }
 
-    public ProofStepStmt closurePropertyCommon(final WorksheetInfo info,
+    public GenProofStepStmt closurePropertyCommon(final WorksheetInfo info,
         final PropertyTemplate template, final ParseNode node,
-        final boolean finishStatement)
+        final boolean finishStatement, final boolean searchWithPrefix)
     {
         final ParseNode stepNode = template.subst(node);
 
+        final int startCounter = debugCounter;
+        debugCounter++;
+
+        if (startCounter == 19)
+            toString();
+
         if (finishStatement)
-            assert info.derivStep.formulaParseTree.getRoot()
-                .isDeepDup(stepNode);
+            if (info.hasImplPrefix())
+                assert info.derivStep.formulaParseTree.getRoot().isDeepDup(
+                    TrUtil.createBinaryNode(info.implStatement,
+                        info.implPrefix, stepNode));
+            else
+                assert info.derivStep.formulaParseTree.getRoot().isDeepDup(
+                    stepNode);
 
-        ProofStepStmt res = info.getProofStepStmt(stepNode);
-        if (res != null)
-            return res;
+        final ProofStepStmt res1 = info.getProofStepStmt(stepNode);
+        if (res1 != null)
+            return new GenProofStepStmt(res1, null);
 
-        if (hasClosurePropertyInternal(info, node, template, closureRuleMap)) {
+        if (searchWithPrefix && info.hasImplPrefix()) {
+            final ParseNode implForm = info.applyImplPrefix(stepNode);
+            final ProofStepStmt stmtWithImpl = info.getProofStepStmt(implForm);
+            if (stmtWithImpl != null)
+                return new GenProofStepStmt(stmtWithImpl, info.implPrefix);
+        }
+
+        if (hasClosurePropertyInternal(info, node, template, closureRuleMap,
+            false))
+        {
             final CreateClosureVisitor visitor = new CreateClosureVisitor() {
                 public ClosureComplexRuleMap getMap() {
                     return closureRuleMap;
                 }
 
-                public ProofStepStmt createClosureStep(
-                    final ProofStepStmt[] hyps, final Assrt assrt)
+                public GenProofStepStmt createClosureStep(
+                    final GenProofStepStmt[] genHyps, final Assrt assrt)
                 {
+                    final ProofStepStmt[] hyps = new ProofStepStmt[genHyps.length];
+
+                    for (int i = 0; i < genHyps.length; i++) {
+                        assert genHyps[i].prefix == null;
+                        hyps[i] = genHyps[i].step;
+                    }
+
                     if (!finishStatement) {
-                        final ProofStepStmt r = info.getOrCreateProofStepStmt(
-                            stepNode, hyps, assrt);
-                        return r;
+                        if (info.hasImplPrefix()) {
+                            final ProofStepStmt r = info
+                                .getOrCreateProofStepStmt(stepNode, hyps, assrt);
+                            implInfo.finishStubRule(info, r);
+                            return new GenProofStepStmt(info.derivStep, null);
+                        }
+                        else {
+                            final ProofStepStmt r = info
+                                .getOrCreateProofStepStmt(stepNode, hyps, assrt);
+                            return new GenProofStepStmt(r, null);
+                        }
                     }
                     else {
                         info.finishDerivationStep(hyps, assrt);
-                        return info.derivStep;
+                        return new GenProofStepStmt(info.derivStep, null);
                     }
                 }
             };
 
-            res = closureVisitorEntrance(info, template, node, visitor);
+            final GenProofStepStmt res = closureVisitorEntrance(info, template,
+                node, visitor, false);
 
             assert res != null;
             return res;
         }
         else if (hasClosurePropertyInternal(info, node, template,
-            implClosureRuleMap))
+            implClosureRuleMap, searchWithPrefix))
         {
             final CreateClosureVisitor visitor = new CreateClosureVisitor() {
                 public ClosureComplexRuleMap getMap() {
                     return implClosureRuleMap;
                 }
 
-                public ProofStepStmt createClosureStep(
-                    final ProofStepStmt[] hyps, final Assrt assrt)
+                public GenProofStepStmt createClosureStep(
+                    final GenProofStepStmt[] hyps, final Assrt assrt)
                 {
                     final ParseNode assrtRoot = assrt.getExprParseTree()
                         .getRoot();
                     final ParseNode hypsPartPattern = assrtRoot.getChild()[0];
                     final ParseNode implRes = stepNode;
 
-                    final ProofStepStmt implHyp = conjInfo
+                    final GenProofStepStmt implHyp = conjInfo
                         .conctinateInTheSamePattern(hyps, hypsPartPattern, info);
                     if (!finishStatement) {
-                        final ProofStepStmt r = implInfo.applyImplicationRule(
-                            info, implHyp, implRes, assrt);
-                        return r;
+                        if (!implHyp.hasPrefix()) {
+                            final ProofStepStmt r = implInfo
+                                .applyImplicationRule(info, implHyp.step,
+                                    implRes, assrt);
+                            return new GenProofStepStmt(r, null);
+                        }
+                        else {
+                            final ProofStepStmt r = implInfo
+                                .applyTransitiveRule(info, implHyp.step,
+                                    implRes, assrt);
+                            return new GenProofStepStmt(r, implHyp.prefix);
+                        }
+                    }
+                    else if (!implHyp.hasPrefix()) {
+                        if (info.hasImplPrefix()) {
+                            final ProofStepStmt r = implInfo
+                                .applyImplicationRule(info, implHyp.step,
+                                    implRes, assrt);
+                            implInfo.finishStubRule(info, r);
+                            return new GenProofStepStmt(info.derivStep, null);
+                        }
+                        else {
+                            implInfo.finishWithImplication(info, implHyp.step,
+                                implRes, assrt);
+                            return new GenProofStepStmt(info.derivStep, null);
+                        }
                     }
                     else {
-                        implInfo.finishWithImplication(info, implHyp, implRes,
-                            assrt);
-                        return info.derivStep;
+                        implInfo.finishTransitiveRule(info, implHyp.step,
+                            implRes, assrt);
+                        return new GenProofStepStmt(info.derivStep,
+                            implHyp.prefix);
                     }
                 }
             };
-            res = closureVisitorEntrance(info, template, node, visitor);
+            final GenProofStepStmt res = closureVisitorEntrance(info, template,
+                node, visitor, searchWithPrefix);
 
             assert res != null;
             return res;
         }
         else {
-            // We should not be here if we does'nt support constant property
+            // We should not be here if we doesn't support constant property
             // auto completion
             assert supportConstants;
 
             // So it should be constant
-            assert TrUtil.isConstNode(node);
+            assert TrUtil.isConstNode(node) : "(-" + startCounter + ","
+                + debugCounter + "-)";
 
             // TODO: DEBUG IT!!!!
 
@@ -554,27 +617,27 @@ public class ClosureInfo extends DBInfo {
 
             final ParseNode root = assrt.getExprParseTree().getRoot();
 
-            res = info.getOrCreateProofStepStmt(root, new ProofStepStmt[]{},
-                assrt);
+            final ProofStepStmt res = info.getOrCreateProofStepStmt(root,
+                new ProofStepStmt[]{}, assrt);
 
             assert res != null;
-            return res;
+            return new GenProofStepStmt(res, null);
         }
     }
 
     private interface CreateClosureVisitor {
         public ClosureComplexRuleMap getMap();
-        public ProofStepStmt createClosureStep(final ProofStepStmt[] hyps,
-            final Assrt assrt);
+        public GenProofStepStmt createClosureStep(
+            final GenProofStepStmt[] hyps, final Assrt assrt);
     }
 
-    private ProofStepStmt closureVisitorEntrance(final WorksheetInfo info,
+    private GenProofStepStmt closureVisitorEntrance(final WorksheetInfo info,
         final PropertyTemplate template, final ParseNode node,
-        final CreateClosureVisitor visitor)
+        final CreateClosureVisitor visitor, final boolean searchWithPrefix)
     {
-        final ProofStepStmt res = visitor.getMap().visitGenStmts(node, info,
-            new ComplexRuleVisitor<Assrt, ProofStepStmt>() {
-                public ProofStepStmt visit(final ParseNode node,
+        final GenProofStepStmt res = visitor.getMap().visitGenStmts(node, info,
+            new ComplexRuleVisitor<Assrt, GenProofStepStmt>() {
+                public GenProofStepStmt visit(final ParseNode node,
                     final WorksheetInfo info, final ConstSubst constSubst,
                     final int[] varIndexes,
                     final Map<PropertyTemplate, Assrt> propertyMap)
@@ -582,29 +645,30 @@ public class ClosureInfo extends DBInfo {
                     final Assrt assrt = propertyMap.get(template);
                     if (assrt == null)
                         return null;
-                    final ProofStepStmt[] hyps = new ProofStepStmt[varIndexes.length];
+                    final GenProofStepStmt[] hyps = new GenProofStepStmt[varIndexes.length];
                     for (int i = 0; i < varIndexes.length; i++) {
                         final int n = varIndexes[i];
                         // Variable position
                         final ParseNode child = node.getChild()[n];
                         assert child != null;
 
-                        if (!hasClosureProperty(info, child, template))
+                        if (!hasClosureProperty(info, child, template,
+                            searchWithPrefix))
                             return null;
 
-                        final ProofStepStmt childRes = closureProperty(info,
-                            template, child);
+                        final GenProofStepStmt childRes = closurePropertyCommon(
+                            info, template, child, false, searchWithPrefix);
                         if (childRes == null)
                             return null;
 
                         hyps[i] = childRes;
                     }
-                    final ProofStepStmt r = visitor.createClosureStep(hyps,
+                    final GenProofStepStmt r = visitor.createClosureStep(hyps,
                         assrt);
                     return r;
                 }
 
-                public ProofStepStmt failValue() {
+                public GenProofStepStmt failValue() {
                     return null;
                 }
             });
@@ -614,9 +678,11 @@ public class ClosureInfo extends DBInfo {
 
     // -------------
 
+    private int debugCounter = 0;
+
     private boolean hasClosurePropertyInternal(final WorksheetInfo info,
         final ParseNode node, final PropertyTemplate template,
-        final ClosureComplexRuleMap map)
+        final ClosureComplexRuleMap map, final boolean searchWithPrefix)
     {
         final Boolean res = map.visitGenStmts(node, info,
             new ComplexRuleVisitor<Assrt, Boolean>() {
@@ -628,15 +694,31 @@ public class ClosureInfo extends DBInfo {
                     if (!propertyMap.containsKey(template))
                         return false;
 
-                    assert propertyMap.get(template) != null;
+                    final int prevDbg = debugCounter;
+
+                    if (prevDbg == 7)
+                        toString();
 
                     for (int i = 0; i < node.getChild().length; i++)
                         if (constSubst.constMap[i] == null) {
+                            debugCounter++;
                             // Variable position
                             final ParseNode child = node.getChild()[i];
-                            if (!hasClosureProperty(info, child, template))
+                            if (!hasClosureProperty(info, child, template,
+                                searchWithPrefix))
                                 return false;
                         }
+                    debugCounter++;
+
+                    output
+                        .dbgMessage(
+                            dbg,
+                            "I-TR-DBG (-%d, %d-) Closure property confirmed (map %s): node %s has property %s, assertion %s",
+                            prevDbg, debugCounter,
+                            map == closureRuleMap ? "simple" : "implication",
+                            info.trManager.getFormula(node), template,
+                            propertyMap.get(template));
+
                     return true;
                 }
 
@@ -648,15 +730,27 @@ public class ClosureInfo extends DBInfo {
     }
 
     public boolean hasClosureProperty(final WorksheetInfo info,
-        final ParseNode node, final PropertyTemplate template)
+        final ParseNode node, final PropertyTemplate template,
+        final boolean searchWithPrefix)
     {
         final ParseNode substProp = template.subst(node);
         final ProofStepStmt stmt = info.getProofStepStmt(substProp);
         if (stmt != null)
             return true;
-        if (hasClosurePropertyInternal(info, node, template, closureRuleMap))
+
+        if (searchWithPrefix && info.hasImplPrefix()) {
+            final ParseNode implForm = info.applyImplPrefix(substProp);
+            final ProofStepStmt stmtWithImpl = info.getProofStepStmt(implForm);
+            if (stmtWithImpl != null)
+                return true;
+        }
+
+        if (hasClosurePropertyInternal(info, node, template,
+            implClosureRuleMap, searchWithPrefix))
             return true;
-        if (hasClosurePropertyInternal(info, node, template, implClosureRuleMap))
+
+        if (hasClosurePropertyInternal(info, node, template, closureRuleMap,
+            false))
             return true;
 
         if (supportConstants)
@@ -675,19 +769,34 @@ public class ClosureInfo extends DBInfo {
     // ---------------------------Transformations------------------------------
     // ------------------------------------------------------------------------
 
-    public boolean performClosureTransformation(final WorksheetInfo info) {
-        final ParseNode input = info.derivStep.formulaParseTree.getRoot();
-
+    public boolean performClosureTransformationInternal(
+        final WorksheetInfo info, final ParseNode input)
+    {
         // TODO: optimize it!!!
         for (final PropertyTemplate template : possibleProperties) {
             final ParseNode core = template.extractNode(input);
             if (core == null)
                 continue;
-            if (hasClosureProperty(info, core, template)) {
-                closurePropertyCommon(info, template, core, true);
+            if (hasClosureProperty(info, core, template, true)) {
+                closurePropertyCommon(info, template, core, true, true);
                 return true;
             }
         }
+        return false;
+    }
+
+    public boolean performClosureTransformation(final WorksheetInfo info) {
+        final ParseNode root = info.derivStep.formulaParseTree.getRoot();
+
+        if (performClosureTransformationInternal(info, root))
+            return true;
+
+        final ParseNode core = implInfo.extractPrefixAndGetImplPart(info);
+
+        if (core != null)
+            if (performClosureTransformationInternal(info, core))
+                return true;
+
         return false;
     }
 

@@ -5,12 +5,23 @@ import java.util.Map.Entry;
 
 import mmj.lang.*;
 import mmj.pa.ProofStepStmt;
+import mmj.transforms.WorksheetInfo.GenProofStepStmt;
 
 // TODO: maybe we should remove it
 public class ConjunctionInfo extends DBInfo {
 
+    private final ImplicationInfo implInfo;
+
     /** The list of operations which have form A & B & ... => f(A, B, ...) */
     private final Map<Stmt, Assrt> gatheringOp = new HashMap<Stmt, Assrt>();
+
+    /**
+     * The list of operations which have form
+     * "p->A & p->B & ... => p->f(A, B, ...)".
+     * <p>
+     * It is map: implication operator -> gathering operator -> assertion
+     */
+    private final Map<Stmt, Map<Stmt, Assrt>> implGatheringOp = new HashMap<Stmt, Map<Stmt, Assrt>>();
 
     /**
      * Map for and operations:
@@ -19,10 +30,11 @@ public class ConjunctionInfo extends DBInfo {
      */
     private final Map<Stmt, Assrt[]> andPart = new HashMap<Stmt, Assrt[]>();
 
-    public ConjunctionInfo(final List<Assrt> assrtList, final TrOutput output,
-        final boolean dbg)
+    public ConjunctionInfo(final ImplicationInfo implInfo,
+        final List<Assrt> assrtList, final TrOutput output, final boolean dbg)
     {
         super(output, dbg);
+        this.implInfo = implInfo;
 
         for (final Assrt assrt : assrtList)
             findGatheringRules(assrt);
@@ -30,12 +42,86 @@ public class ConjunctionInfo extends DBInfo {
         for (final Assrt assrt : assrtList)
             findPartRules(assrt);
 
+        for (final Assrt assrt : assrtList)
+            findGatheringImplRules(assrt);
+
         filterAndOperations();
     }
 
-    private void findGatheringRules(final Assrt assrt) {
-        // if (assrt.getLabel().equals("pm3.2i"))
+    private void findGatheringImplRules(final Assrt assrt) {
+        // if (assrt.getLabel().equals("jca"))
         // assrt.toString();
+
+        final ParseTree assrtTree = assrt.getExprParseTree();
+
+        final LogHyp[] logHyps = assrt.getLogHypArray();
+        if (logHyps.length < 2)
+            return;
+        final ParseNode root = assrtTree.getRoot();
+        final Stmt implStmt = root.getStmt();
+
+        if (!implInfo.isImplOperator(implStmt))
+            return;
+
+        assert root.getChild().length == 2;
+
+        final ParseNode prefix = root.getChild()[0];
+
+        final ParseNode core = root.getChild()[1];
+
+        final Stmt stmt = core.getStmt();
+
+        if (!gatheringOp.containsKey(stmt))
+            return;
+
+        if (!TrUtil.isVarNode(prefix))
+            return;
+
+        final VarHyp prefixVar = (VarHyp)prefix.getStmt();
+
+        final VarHyp[] vars = TrUtil.getHypToVarMap(assrt, prefixVar);
+
+        if (vars == null)
+            return;
+        assert vars.length >= 2;
+
+        for (int i = 0; i < vars.length; i++) {
+            final ParseNode logRoot = logHyps[i].getExprParseTree().getRoot();
+            if (logRoot.getStmt() != implStmt)
+                return;
+            if (logRoot.getChild()[0].getStmt() != prefixVar)
+                return;
+            if (!TrUtil.isVarNode(logRoot.getChild()[1]))
+                return;
+        }
+
+        if (core.getChild().length != vars.length)
+            return;
+
+        for (int i = 0; i < core.getChild().length; i++) {
+            final ParseNode child = core.getChild()[i];
+            if (child.getStmt() != vars[i])
+                return;
+        }
+
+        Map<Stmt, Assrt> gathMap = implGatheringOp.get(implStmt);
+
+        if (gathMap == null) {
+            gathMap = new HashMap<Stmt, Assrt>();
+            implGatheringOp.put(implStmt, gathMap);
+        }
+
+        if (gathMap.containsKey(stmt))
+            return;
+
+        output.dbgMessage(dbg, "I-TR-DBG implication gathering assrt %s : %s",
+            assrt, assrt.getFormula());
+
+        gathMap.put(stmt, assrt);
+    }
+
+    private void findGatheringRules(final Assrt assrt) {
+        // Debug: pm3.2i
 
         final ParseTree assrtTree = assrt.getExprParseTree();
 
@@ -159,14 +245,14 @@ public class ConjunctionInfo extends DBInfo {
 
     private static class IndexCounter {
         public int idx = 0;
-        public final ProofStepStmt[] hyps;
+        public final GenProofStepStmt[] hyps;
 
-        public IndexCounter(final ProofStepStmt[] hyps) {
+        public IndexCounter(final GenProofStepStmt[] hyps) {
             this.hyps = hyps;
         }
     }
 
-    private ProofStepStmt conctinateInTheSamePatternInternal(
+    private GenProofStepStmt conctinateInTheSamePatternInternal(
         final ParseNode andPattern, final IndexCounter counter,
         final WorksheetInfo info)
     {
@@ -177,31 +263,62 @@ public class ConjunctionInfo extends DBInfo {
 
         // .formulaParseTree.getRoot()
         final ParseNode[] children = new ParseNode[length];
-        final ParseNode resNode = new ParseNode(stmt, children);
+        ParseNode resNode = new ParseNode(stmt, children);
 
-        final ProofStepStmt hyps[] = new ProofStepStmt[length];
+        final GenProofStepStmt genHyps[] = new GenProofStepStmt[length];
+
+        boolean hasPrefix = false;
 
         for (int i = 0; i < length; i++) {
             final ParseNode andChild = andPattern.getChild()[i];
-            final ProofStepStmt chidStep = conctinateInTheSamePatternInternal(
+            final GenProofStepStmt chidStep = conctinateInTheSamePatternInternal(
                 andChild, counter, info);
-            children[i] = chidStep.formulaParseTree.getRoot();
-            hyps[i] = chidStep;
+            children[i] = chidStep.getCore();
+            genHyps[i] = chidStep;
+            hasPrefix = hasPrefix || chidStep.hasPrefix();
         }
 
-        final Assrt assrt = gatheringOp.get(stmt);
+        final ProofStepStmt hyps[] = new ProofStepStmt[length];
+
+        if (!hasPrefix) {
+            for (int i = 0; i < length; i++)
+                hyps[i] = genHyps[i].step;
+            final Assrt assrt = gatheringOp.get(stmt);
+            final ProofStepStmt stepTr = info.getOrCreateProofStepStmt(resNode,
+                hyps, assrt);
+
+            return new GenProofStepStmt(stepTr, null);
+        }
+
+        for (int i = 0; i < length; i++)
+            if (genHyps[i].hasPrefix())
+                hyps[i] = genHyps[i].step;
+            else {
+                final ProofStepStmt hypStep = implInfo.applyStubRule(info,
+                    genHyps[i].step);
+                hyps[i] = hypStep;
+            }
+
+        final Map<Stmt, Assrt> gMap = implGatheringOp.get(info.implStatement);
+        assert gMap != null;
+        final Assrt assrt = gMap.get(stmt);
+        assert assrt != null;
+
+        resNode = TrUtil.createBinaryNode(info.implStatement, info.implPrefix,
+            resNode);
 
         final ProofStepStmt stepTr = info.getOrCreateProofStepStmt(resNode,
             hyps, assrt);
 
-        return stepTr;
+        return new GenProofStepStmt(stepTr, info.implPrefix);
 
     }
-    public ProofStepStmt conctinateInTheSamePattern(final ProofStepStmt[] hyps,
-        final ParseNode andPattern, final WorksheetInfo info)
+    public GenProofStepStmt conctinateInTheSamePattern(
+        final GenProofStepStmt[] hyps, final ParseNode andPattern,
+        final WorksheetInfo info)
     {
         final IndexCounter counter = new IndexCounter(hyps);
-        final ProofStepStmt res = conctinateInTheSamePatternInternal(
+        final GenProofStepStmt res = conctinateInTheSamePatternInternal(
             andPattern, counter, info);
         assert counter.hyps.length == counter.idx;
         return res;
