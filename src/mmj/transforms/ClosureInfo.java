@@ -511,17 +511,15 @@ public class ClosureInfo extends DBInfo {
                     }
 
                     if (!finishStatement) {
-                        if (info.hasImplPrefix()) {
-                            final ProofStepStmt r = info
-                                .getOrCreateProofStepStmt(stepNode, hyps, assrt);
-                            implInfo.finishStubRule(info, r);
-                            return new GenProofStepStmt(info.derivStep, null);
-                        }
-                        else {
-                            final ProofStepStmt r = info
-                                .getOrCreateProofStepStmt(stepNode, hyps, assrt);
-                            return new GenProofStepStmt(r, null);
-                        }
+                        final ProofStepStmt r = info.getOrCreateProofStepStmt(
+                            stepNode, hyps, assrt);
+                        return new GenProofStepStmt(r, null);
+                    }
+                    else if (info.hasImplPrefix()) {
+                        final ProofStepStmt r = info.getOrCreateProofStepStmt(
+                            stepNode, hyps, assrt);
+                        implInfo.finishStubRule(info, r);
+                        return new GenProofStepStmt(info.derivStep, null);
                     }
                     else {
                         info.finishDerivationStep(hyps, assrt);
