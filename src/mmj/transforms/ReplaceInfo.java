@@ -12,10 +12,16 @@ public class ReplaceInfo extends DBInfo {
 
     private final ImplicationInfo implInfo;
 
-    /** The list of statements with possible variable replace */
+    /**
+     * The list of rules for variable replacement:
+     * "B = B' => f(A,B,C) = f(A,B',C)"
+     */
     private final Map<Stmt, Assrt[]> replaceOp = new HashMap<Stmt, Assrt[]>();
 
-    /** The list of statements with possible variable replace */
+    /**
+     * The list of rules for variable replacement (implication form):
+     * "B = B' -> f(A,B,C) = f(A,B',C)"
+     */
     private final Map<Stmt, Assrt[]> implReplaceOp = new HashMap<Stmt, Assrt[]>();
 
     // ------------------------------------------------------------------------

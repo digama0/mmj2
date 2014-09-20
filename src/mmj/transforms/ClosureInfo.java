@@ -36,6 +36,12 @@ public class ClosureInfo extends DBInfo {
     /** This constant is needed for internal debug */
     private static final boolean supportConstants = true;
 
+    /**
+     * This field could be used for debug. The counter for some interesting
+     * situations. You could set breakpoint for some its value.
+     */
+    private int debugCounter = 0;
+
     // ------------------------------------------------------------------------
     // ------------------------Initialization----------------------------------
     // ------------------------------------------------------------------------
@@ -469,9 +475,6 @@ public class ClosureInfo extends DBInfo {
         final int startCounter = debugCounter;
         debugCounter++;
 
-        if (startCounter == 19)
-            toString();
-
         if (finishStatement)
             if (info.hasImplPrefix())
                 assert info.derivStep.formulaParseTree.getRoot().isDeepDup(
@@ -495,6 +498,7 @@ public class ClosureInfo extends DBInfo {
         if (hasClosurePropertyInternal(info, node, template, closureRuleMap,
             false))
         {
+            // We found possible f(A) & f(B) => f(g(A,B)) rule
             final CreateClosureVisitor visitor = new CreateClosureVisitor() {
                 public ClosureComplexRuleMap getMap() {
                     return closureRuleMap;
@@ -511,17 +515,25 @@ public class ClosureInfo extends DBInfo {
                     }
 
                     if (!finishStatement) {
+                        // It is not the last one step, we should generate
+                        // f(g(A,B)) step
                         final ProofStepStmt r = info.getOrCreateProofStepStmt(
                             stepNode, hyps, assrt);
                         return new GenProofStepStmt(r, null);
                     }
                     else if (info.hasImplPrefix()) {
+                        // It is the last one step and he has form
+                        // ph->f(g(A,B)), so we should generate
+                        // f(g(A,B)) step and then use ph->f(g(A,B)) target
+                        // derivation step
                         final ProofStepStmt r = info.getOrCreateProofStepStmt(
                             stepNode, hyps, assrt);
                         implInfo.finishStubRule(info, r);
                         return new GenProofStepStmt(info.derivStep, null);
                     }
                     else {
+                        // It is the last one step, and we should use
+                        // f(g(A,B)) target derivation step
                         info.finishDerivationStep(hyps, assrt);
                         return new GenProofStepStmt(info.derivStep, null);
                     }
@@ -537,6 +549,7 @@ public class ClosureInfo extends DBInfo {
         else if (hasClosurePropertyInternal(info, node, template,
             implClosureRuleMap, searchWithPrefix))
         {
+            // We found possible f(A) /\ f(B) -> f(g(A,B)) rule
             final CreateClosureVisitor visitor = new CreateClosureVisitor() {
                 public ClosureComplexRuleMap getMap() {
                     return implClosureRuleMap;
@@ -550,41 +563,65 @@ public class ClosureInfo extends DBInfo {
                     final ParseNode hypsPartPattern = assrtRoot.getChild()[0];
                     final ParseNode implRes = stepNode;
 
+                    // Precondition f(A) /\ f(B) step (or ph->(f(A) /\ f(B)) )
                     final GenProofStepStmt implHyp = conjInfo
                         .conctinateInTheSamePattern(hyps, hypsPartPattern, info);
                     if (!finishStatement) {
+                        assert implHyp != null;
+                        // It is not the last one step, we should generate
+                        // f(g(A,B)) step
                         if (!implHyp.hasPrefix()) {
+                            // The precondition has simple f(A) /\ f(B) form
+                            // We should generate simple f(g(A,B)) step
                             final ProofStepStmt r = implInfo
                                 .applyImplicationRule(info, implHyp.step,
                                     implRes, assrt);
                             return new GenProofStepStmt(r, null);
                         }
                         else {
+                            // The precondition has implication ph->(f(A)/\f(B))
+                            // form.
+                            // We should generate ph->f(g(A,B)) step
                             final ProofStepStmt r = implInfo
                                 .applyTransitiveRule(info, implHyp.step,
                                     implRes, assrt);
                             return new GenProofStepStmt(r, implHyp.prefix);
                         }
                     }
-                    else if (!implHyp.hasPrefix()) {
-                        if (info.hasImplPrefix()) {
-                            final ProofStepStmt r = implInfo
-                                .applyImplicationRule(info, implHyp.step,
-                                    implRes, assrt);
-                            implInfo.finishStubRule(info, r);
-                            return new GenProofStepStmt(info.derivStep, null);
+                    else {
+                        assert implHyp != null;
+                        // It is the last one step, and we should use
+                        // target derivation step
+                        if (!implHyp.hasPrefix()) {
+                            // The precondition has simple f(A) /\ f(B) form
+                            if (info.hasImplPrefix()) {
+                                // The target derivation step has ph->f(g(A,B))
+                                // form
+                                final ProofStepStmt r = implInfo
+                                    .applyImplicationRule(info, implHyp.step,
+                                        implRes, assrt);
+                                implInfo.finishStubRule(info, r);
+                                return new GenProofStepStmt(info.derivStep,
+                                    null);
+                            }
+                            else {
+                                // And target derivation step has simple
+                                // f(g(A,B)) form
+                                implInfo.finishWithImplication(info,
+                                    implHyp.step, implRes, assrt);
+                                return new GenProofStepStmt(info.derivStep,
+                                    null);
+                            }
                         }
                         else {
-                            implInfo.finishWithImplication(info, implHyp.step,
+                            // The precondition has implication ph->(f(A)/\f(B))
+                            // form and the target derivation step has
+                            // ph->f(g(A,B)) form.
+                            implInfo.finishTransitiveRule(info, implHyp.step,
                                 implRes, assrt);
-                            return new GenProofStepStmt(info.derivStep, null);
+                            return new GenProofStepStmt(info.derivStep,
+                                implHyp.prefix);
                         }
-                    }
-                    else {
-                        implInfo.finishTransitiveRule(info, implHyp.step,
-                            implRes, assrt);
-                        return new GenProofStepStmt(info.derivStep,
-                            implHyp.prefix);
                     }
                 }
             };
@@ -675,8 +712,6 @@ public class ClosureInfo extends DBInfo {
     }
 
     // -------------
-
-    private int debugCounter = 0;
 
     private boolean hasClosurePropertyInternal(final WorksheetInfo info,
         final ParseNode node, final PropertyTemplate template,
