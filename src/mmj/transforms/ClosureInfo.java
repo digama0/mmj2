@@ -13,6 +13,8 @@ public class ClosureInfo extends DBInfo {
 
     private final ConjunctionInfo conjInfo;
 
+    private static class ClosureComplexRuleMap extends ComplexRuleMap<Assrt> {}
+
     /**
      * The list of closure lows: A e. CC & B e. CC => (A + B) e. CC
      * <p>
@@ -21,11 +23,16 @@ public class ClosureInfo extends DBInfo {
      * the example). There could be many properties ( {" _ e. CC" , "_ e. RR" }
      * for example ).
      */
-
-    private static class ClosureComplexRuleMap extends ComplexRuleMap<Assrt> {}
-
     private final ClosureComplexRuleMap closureRuleMap = new ClosureComplexRuleMap();
 
+    /**
+     * The list of closure lows: ( A e. CC & B e. CC )-> (A + B) e. CC
+     * <p>
+     * It is a map: Statement ( ( A F B ) in the example) -> map : constant
+     * elements ( + in the example) -> set of possible properties ( _ e. CC in
+     * the example). There could be many properties ( {" _ e. CC" , "_ e. RR" }
+     * for example ).
+     */
     private final ClosureComplexRuleMap implClosureRuleMap = new ClosureComplexRuleMap();
 
     private final Set<PropertyTemplate> possibleProperties = new HashSet<PropertyTemplate>();
@@ -228,48 +235,61 @@ public class ClosureInfo extends DBInfo {
         if (template == null)
             return;
 
-        findClosureRulesCore(assrt, mainRoot, logHyps.length, template,
-            hypToVarHypMap, closureRuleMap);
-    }
-
-    private static void findVarsInParseNode(final ParseNode input,
-        final Set<VarHyp> res)
-    {
-        final Stmt stmt = input.getStmt();
-        if (stmt instanceof VarHyp)
-            res.add((VarHyp)stmt);
-        else
-            for (final ParseNode child : input.getChild())
-                findVarsInParseNode(child, res);
-    }
-
-    // Returns the only one variable or null
-    private VarHyp findOneVarInParseNode(final ParseNode input) {
-        final Set<VarHyp> res = new HashSet<VarHyp>();
-        findVarsInParseNode(input, res);
-        if (res.size() != 1)
-            return null;
-        else
-            return res.iterator().next();
+        findClosureRulesCore(assrt, mainRoot, template, hypToVarHypMap,
+            closureRuleMap);
     }
 
     private void findImplClosureRules(final Assrt assrt) {
-        final LogHyp[] logHyps = assrt.getLogHypArray();
         final ParseTree assrtTree = assrt.getExprParseTree();
-
-        if (logHyps.length != 0)
-            return;
 
         // Maybe depth restriction could be weaken
         if (assrtTree.getMaxDepth() != 4)
             return;
 
+        final ResultClosureInfo res = extractImplClosureInfo(assrt);
+        if (res == null)
+            return;
+
+        findClosureRulesCore(assrt, res.main, res.template, res.hypToVarHypMap,
+            implClosureRuleMap);
+    }
+
+    public class ResultClosureInfo {
+        /** The root of main part (after ->) */
+        public final ParseNode main;
+        /** The used template (e.g. x e. CC) */
+        public final PropertyTemplate template;
+        /** Array of used variables */
+        public final VarHyp[] hypToVarHypMap;
+
+        public ResultClosureInfo(final ParseNode main,
+            final PropertyTemplate template, final VarHyp[] hypToVarHypMap)
+        {
+            this.main = main;
+            this.template = template;
+            this.hypToVarHypMap = hypToVarHypMap;
+        }
+    }
+
+    /**
+     * Parses rules in implication form
+     * 
+     * @param assrt input assertion
+     * @return result information
+     */
+    public ResultClosureInfo extractImplClosureInfo(final Assrt assrt) {
+        final LogHyp[] logHyps = assrt.getLogHypArray();
+        final ParseTree assrtTree = assrt.getExprParseTree();
+
+        if (logHyps.length != 0)
+            return null;
+
         final ParseNode root = assrtTree.getRoot();
 
         if (!implInfo.isImplOperator(root.getStmt()))
-            return;
+            return null;
 
-        final ParseNode mainRoot = root.getChild()[1];
+        final ParseNode main = root.getChild()[1];
         final ParseNode hypNodePart = root.getChild()[0];
 
         final List<ParseNode> hypNodes = conjInfo.separateByAnd(hypNodePart);
@@ -277,49 +297,48 @@ public class ClosureInfo extends DBInfo {
         final VarHyp[] hypToVarHypMap = new VarHyp[hypNodes.size()];
 
         final ParseNode firstHyp = hypNodes.get(0);
-        final VarHyp firstVar = findOneVarInParseNode(firstHyp);
+        final VarHyp firstVar = TrUtil.findOneVarInParseNode(firstHyp);
 
         hypToVarHypMap[0] = firstVar;
 
         if (firstVar == null)
-            return;
+            return null;
 
         final ParseNode templNode = createTemplateNodeFromHypRoot(firstHyp,
             firstVar);
         if (templNode == null)
-            return;
+            return null;
 
         for (int i = 1; i < hypNodes.size(); i++) {
             final ParseNode hyp = hypNodes.get(i);
-            final VarHyp var = findOneVarInParseNode(hyp);
+            final VarHyp var = TrUtil.findOneVarInParseNode(hyp);
             if (var == null)
-                return;
+                return null;
             hypToVarHypMap[i] = var;
 
             final ParseNode res = getCorrespondingNode(templNode, hyp);
 
             if (res == null)
-                return;
+                return null;
 
             if (res.getStmt() != var)
-                return;
+                return null;
         }
 
         final PropertyTemplate template = new PropertyTemplate(templNode);
 
-        findClosureRulesCore(assrt, mainRoot, hypNodes.size(), template,
-            hypToVarHypMap, implClosureRuleMap);
+        return new ResultClosureInfo(main, template, hypToVarHypMap);
     }
 
     private void findClosureRulesCore(final Assrt assrt,
-        final ParseNode mainRoot, final int hypNum,
-        final PropertyTemplate template, final VarHyp[] hypToVarHypMap,
-        final ClosureComplexRuleMap resMap)
+        final ParseNode mainRoot, final PropertyTemplate template,
+        final VarHyp[] hypToVarHypMap, final ClosureComplexRuleMap resMap)
     {
         final ParseNode res = getCorrespondingNode(template.node, mainRoot);
         if (res == null)
             return;
 
+        final int hypNum = hypToVarHypMap.length;
         final Stmt stmt = res.getStmt();
 
         final ParseNode[] children = res.getChild();
@@ -429,9 +448,37 @@ public class ClosureInfo extends DBInfo {
             }
         }
     }
+
     // ------------------------------------------------------------------------
     // ----------------------------Detection-----------------------------------
     // ------------------------------------------------------------------------
+
+    public static class TemplDetectRes {
+        public final VarHyp[] hypToVarHypMap;
+        public final PropertyTemplate template;
+
+        public TemplDetectRes(final VarHyp[] hypToVarHypMap,
+            final PropertyTemplate template)
+        {
+            this.hypToVarHypMap = hypToVarHypMap;
+            this.template = template;
+        }
+    }
+
+    public static TemplDetectRes getTemplateAndVarHyps(final Assrt assrt) {
+        final LogHyp[] logHyps = assrt.getLogHypArray();
+        if (logHyps.length == 0)
+            return new TemplDetectRes(null, new PropertyTemplate(null));
+
+        final VarHyp[] hypToVarHypMap = TrUtil.getHypToVarMap(assrt);
+        if (hypToVarHypMap == null)
+            return null;
+        final PropertyTemplate template = createTemplateFromHyp(assrt,
+            hypToVarHypMap);
+        if (template == null)
+            return null;
+        return new TemplDetectRes(hypToVarHypMap, template);
+    }
 
     public static PropertyTemplate createTemplateFromHyp(final Assrt assrt) {
         final LogHyp[] logHyps = assrt.getLogHypArray();
@@ -565,7 +612,8 @@ public class ClosureInfo extends DBInfo {
 
                     // Precondition f(A) /\ f(B) step (or ph->(f(A) /\ f(B)) )
                     final GenProofStepStmt implHyp = conjInfo
-                        .conctinateInTheSamePattern(hyps, hypsPartPattern, info);
+                        .concatenateInTheSamePattern(hyps, hypsPartPattern,
+                            info);
                     if (!finishStatement) {
                         assert implHyp != null;
                         // It is not the last one step, we should generate

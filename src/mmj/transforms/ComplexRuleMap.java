@@ -7,7 +7,10 @@ import mmj.lang.ParseNode;
 import mmj.lang.Stmt;
 
 /**
- * This class implements complex rule map
+ * This class implements complex rule map. It is maps from: Statement (some
+ * operation, like (A F B), binary function), constant substitution (+ for
+ * example), closure property ( e. CC ) -> data (usually, assert or list of
+ * asserts).
  * <p>
  * TODO: improve the performance of constant substitution search
  * 

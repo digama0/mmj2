@@ -4,6 +4,8 @@ import java.util.List;
 
 import mmj.lang.*;
 import mmj.pa.ProofStepStmt;
+import mmj.transforms.ClosureInfo.ResultClosureInfo;
+import mmj.transforms.ClosureInfo.TemplDetectRes;
 
 /**
  * The information about commutative operations.
@@ -14,18 +16,11 @@ public class CommutativeInfo extends DBInfo {
     /** The information about equivalence rules */
     private final EquivalenceInfo eqInfo;
 
-    final ClosureInfo clInfo;
+    private final ClosureInfo clInfo;
+    private final ConjunctionInfo conjInfo;
+    private final ImplicationInfo implInfo;
 
-    /**
-     * The list of commutative operators: ( A + B ) = ( B + A )
-     * <p>
-     * It is a map: Statement ( ( A F B ) in the example) -> map : constant
-     * elements ( + in the example) -> map : possible properties ( _ e. CC in
-     * the example) -> assert. There could be many properties ( {" _ e. CC" ,
-     * "_ e. RR" } for example ).
-     */
-    private final AssocComComplexRuleMap<Assrt> comOp = new AssocComComplexRuleMap<Assrt>()
-    {
+    private class CommRuleMap extends AssocComComplexRuleMap<Assrt> {
         @Override
         public GeneralizedStmt detectGenStmtCore(final WorksheetInfo info,
             final ParseNode node, final PropertyTemplate template,
@@ -41,20 +36,39 @@ public class CommutativeInfo extends DBInfo {
         }
     };
 
+    /**
+     * The list of commutative operators: ( A + B ) = ( B + A ). Or more complex
+     * cases: "A e. CC & B e. CC => ( A + B ) = ( B + A )"
+     * <p>
+     * It is a map: Statement ( ( A F B ) in the example) -> map : constant
+     * elements ( + in the example) -> map : possible properties ( _ e. CC in
+     * the example) -> assert. There could be many properties ( {" _ e. CC" ,
+     * "_ e. RR" } for example ).
+     */
+    private final CommRuleMap comOp = new CommRuleMap();
+
+    // TODO: implement the usage of it!
+    private final CommRuleMap implComOp = new CommRuleMap();
+
     // ------------------------------------------------------------------------
     // ------------------------Initialization----------------------------------
     // ------------------------------------------------------------------------
 
     public CommutativeInfo(final EquivalenceInfo eqInfo,
-        final ClosureInfo clInfo, final List<Assrt> assrtList,
+        final ClosureInfo clInfo, final ConjunctionInfo conjInfo,
+        final ImplicationInfo implInfo, final List<Assrt> assrtList,
         final TrOutput output, final boolean dbg)
     {
         super(output, dbg);
         this.eqInfo = eqInfo;
         this.clInfo = clInfo;
+        this.conjInfo = conjInfo;
+        this.implInfo = implInfo;
 
-        for (final Assrt assrt : assrtList)
+        for (final Assrt assrt : assrtList) {
             findCommutativeRules(assrt);
+            findImplCommutativeRules(assrt);
+        }
     }
 
     /**
@@ -66,24 +80,52 @@ public class CommutativeInfo extends DBInfo {
         // Debug statements: prcom, addcomi
 
         final VarHyp[] varHypArray = assrt.getMandVarHypArray();
-        final ParseTree assrtTree = assrt.getExprParseTree();
+        final ParseNode root = assrt.getExprParseTree().getRoot();
 
-        if (assrt.getLabel().toString().equals("addcomi"))
-            assrt.toString();
+        // if (assrt.getLabel().toString().equals("addcomi"))
+        // assrt.toString();
 
-        final PropertyTemplate template = ClosureInfo
-            .createTemplateFromHyp(assrt);
+        final TemplDetectRes tDetectRes = ClosureInfo
+            .getTemplateAndVarHyps(assrt);
 
-        if (template == null)
+        if (tDetectRes == null)
             return;
+
+        final PropertyTemplate template = tDetectRes.template;
+
+        assert template != null;
 
         if (varHypArray.length != 2)
             return;
 
-        if (!eqInfo.isEquivalence(assrtTree.getRoot().getStmt()))
+        // Preserve the same order for variable hypotheses and for the
+        // commutative rule
+        if (!template.isEmpty())
+            for (int i = 0; i < varHypArray.length; i++)
+                if (varHypArray[i] != tDetectRes.hypToVarHypMap[i])
+                    return;
+
+        commutativeSearchCore(assrt, root, template, comOp);
+    }
+
+    private void findImplCommutativeRules(final Assrt assrt) {
+        final ResultClosureInfo res = clInfo.extractImplClosureInfo(assrt);
+        if (res == null)
             return;
 
-        final ParseNode[] subTrees = assrtTree.getRoot().getChild();
+        final ParseNode root = res.main;
+        final PropertyTemplate template = res.template;
+        commutativeSearchCore(assrt, root, template, implComOp);
+    }
+
+    private void commutativeSearchCore(final Assrt assrt, final ParseNode root,
+        final PropertyTemplate template, final CommRuleMap resMap)
+    {
+        final VarHyp[] varHypArray = assrt.getMandVarHypArray();
+        if (!eqInfo.isEquivalence(root.getStmt()))
+            return;
+
+        final ParseNode[] subTrees = root.getChild();
 
         // it is the equivalence rule
         assert subTrees.length == 2;
@@ -129,7 +171,7 @@ public class CommutativeInfo extends DBInfo {
         if (leftChildren[k1].getStmt() != rightChildren[k0].getStmt())
             return;
 
-        final Assrt com = comOp.addData(stmt, constSubst, template, assrt);
+        final Assrt com = resMap.addData(stmt, constSubst, template, assrt);
 
         if (com != assrt)
             return;
@@ -138,7 +180,6 @@ public class CommutativeInfo extends DBInfo {
             assrt.getFormula());
         // propertyMap.put(template, assrt);
     }
-
     // ------------------------------------------------------------------------
     // ----------------------------Detection-----------------------------------
     // ------------------------------------------------------------------------
@@ -175,7 +216,11 @@ public class CommutativeInfo extends DBInfo {
     public GeneralizedStmt getGenStmtForComNode(final ParseNode node,
         final WorksheetInfo info)
     {
-        return comOp.detectGenStmt(node, info);
+        final GeneralizedStmt res = comOp.detectGenStmt(node, info);
+        if (res != null)
+            return comOp.detectGenStmt(node, info);
+        else
+            return implComOp.detectGenStmt(node, info);
     }
 
     private static boolean isCommutativeWithProp(final ParseNode node,
@@ -186,6 +231,7 @@ public class CommutativeInfo extends DBInfo {
         for (int i = 0; i < 2; i++) {
             final ParseNode child = node.getChild()[genStmt.varIndexes[i]];
             final ParseNode substProp = genStmt.template.subst(child);
+            // TODO: is it correct way to find closure properties for arguments?
             final ProofStepStmt stmt = info.getProofStepStmt(substProp);
             if (stmt == null)
                 return false;
@@ -227,18 +273,45 @@ public class CommutativeInfo extends DBInfo {
         else
             hyps = new ProofStepStmt[]{};
 
-        final Assrt comAssrt = getComOp(comProp);
-        final Stmt equalStmt = comAssrt.getExprParseTree().getRoot().getStmt();
+        final Assrt comAssrt = getComOp(comProp, comOp);
 
-        final ParseNode stepNode = TrUtil.createBinaryNode(equalStmt, source,
-            target);
+        if (comAssrt != null) {
+            // the assertion has simple form,
+            // "A e. CC & B e. CC => ( A + B ) = ( B + A )"
+            final Stmt equalStmt = comAssrt.getExprParseTree().getRoot()
+                .getStmt();
 
-        final ProofStepStmt res = info.getOrCreateProofStepStmt(stepNode, hyps,
-            comAssrt);
+            final ParseNode stepNode = TrUtil.createBinaryNode(equalStmt,
+                source, target);
 
-        return res;
+            final ProofStepStmt res = info.getOrCreateProofStepStmt(stepNode,
+                hyps, comAssrt);
+            return res;
+        }
+        else {
+            // the assertion has implication form,
+            // "A e. CC & B e. CC -> ( A + B ) = ( B + A )"
+            final Assrt implComAssrt = getComOp(comProp, implComOp);
+
+            final ParseNode assrtRoot = implComAssrt.getExprParseTree()
+                .getRoot();
+            final Stmt equalStmt = assrtRoot.getChild()[1].getStmt();
+
+            final ParseNode stepNode = TrUtil.createBinaryNode(equalStmt,
+                source, target);
+            final ParseNode hypsPartPattern = assrtRoot.getChild()[0];
+            final ParseNode implRes = stepNode;
+
+            // Precondition f(A) /\ f(B) step (or ph->(f(A) /\ f(B)) )
+            final ProofStepStmt implHyp = conjInfo.concatenateInTheSamePattern(
+                hyps, hypsPartPattern, info);
+
+            final ProofStepStmt r = implInfo.applyImplicationRule(info,
+                implHyp, implRes, implComAssrt);
+            return r;
+        }
+
     }
-
     /*
     // f(a, b) = f(b, a))
     public ProofStepStmt closurePropertyCommutative(final WorksheetInfo info,
@@ -272,13 +345,16 @@ public class CommutativeInfo extends DBInfo {
     // ------------------------------Getters-----------------------------------
     // ------------------------------------------------------------------------
 
-    public Assrt getComOp(final GeneralizedStmt genStmt) {
-        return getComOp(genStmt.stmt, genStmt.constSubst, genStmt.template);
+    public boolean isComOp(final GeneralizedStmt genStmt) {
+        return getComOp(genStmt, comOp) != null
+            || getComOp(genStmt, implComOp) != null;
     }
 
-    public Assrt getComOp(final Stmt stmt, final ConstSubst constSubst,
-        final PropertyTemplate template)
+    public Assrt getComOp(final GeneralizedStmt genStmt,
+        final CommRuleMap resMap)
     {
-        return comOp.getData(stmt, constSubst, template);
+        // return getComOp(genStmt.stmt, genStmt.constSubst, genStmt.template);
+        return resMap.getData(genStmt.stmt, genStmt.constSubst,
+            genStmt.template);
     }
 }

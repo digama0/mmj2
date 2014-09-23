@@ -83,7 +83,8 @@ public class TransformationManager {
         assocInfo = new AssociativeInfo(eqInfo, clInfo, replInfo, assrtList,
             output, dbg);
 
-        comInfo = new CommutativeInfo(eqInfo, clInfo, assrtList, output, dbg);
+        comInfo = new CommutativeInfo(eqInfo, clInfo, conjInfo, implInfo,
+            assrtList, output, dbg);
     }
 
     // ----------------------------
@@ -119,11 +120,8 @@ public class TransformationManager {
             isAssoc = true;
 
         boolean isAssocCom = false;
-        if (isAssoc) {
-            final Assrt comAssocAssrt = comInfo.getComOp(assocProp);
-            if (comAssocAssrt != null)
-                isAssocCom = true;
-        }
+        if (isAssoc)
+            isAssocCom = comInfo.isComOp(assocProp);
 
         final boolean subTreesCouldBeRepl = replAsserts != null;
 
@@ -147,7 +145,6 @@ public class TransformationManager {
         throw new IllegalStateException(
             "Error in createTransformation() algorithm");
     }
-
     public ParseNode getCanonicalForm(final ParseNode originalNode,
         final WorksheetInfo info)
     {
@@ -201,15 +198,13 @@ public class TransformationManager {
         final Transformation dsTr = createTransformation(
             derivStep.formulaParseTree.getRoot(), info);
         final ParseNode dsCanonicalForm = dsTr.getCanonicalNode(info);
-        derivStep.setCanonicalForm(dsCanonicalForm);
 
         output.dbgMessage(dbg, "I-TR-DBG Step %s has canonical form: %s",
-            derivStep, getCanonicalFormula(derivStep));
+            derivStep, getFormula(dsCanonicalForm));
 
         for (final ProofWorkStmt proofWorkStmtObject : proofWorksheet
             .getProofWorkStmtList())
         {
-
             if (proofWorkStmtObject == derivStep)
                 break;
 
@@ -218,18 +213,12 @@ public class TransformationManager {
 
             final ProofStepStmt candidate = (ProofStepStmt)proofWorkStmtObject;
 
-            if (candidate.getCanonicalForm() == null) {
-                candidate.setCanonicalForm(getCanonicalForm(
-                    candidate.formulaParseTree.getRoot(), info));
+            final ParseNode candCanon = getCanonicalForm(
+                candidate.formulaParseTree.getRoot(), info);
+            output.dbgMessage(dbg, "I-TR-DBG Step %s has canonical form: %s",
+                candidate, getFormula(candCanon));
 
-                output.dbgMessage(dbg,
-                    "I-TR-DBG Step %s has canonical form: %s", candidate,
-                    getCanonicalFormula(candidate));
-            }
-
-            if (derivStep.getCanonicalForm().isDeepDup(
-                candidate.getCanonicalForm()))
-            {
+            if (dsCanonicalForm.isDeepDup(candCanon)) {
                 output.dbgMessage(dbg,
                     "I-TR-DBG found canonical forms correspondance: %s and %s",
                     candidate, derivStep);
@@ -287,15 +276,5 @@ public class TransformationManager {
         final Formula generatedFormula = verifyProofs.convertRPNToFormula(
             tree.convertToRPN(), "tree"); // TODO: use constant
         return generatedFormula;
-    }
-
-    /**
-     * This function is needed for debug
-     * 
-     * @param proofStmt the proof statement
-     * @return the corresponding canonical formula
-     */
-    protected Formula getCanonicalFormula(final ProofStepStmt proofStmt) {
-        return getFormula(proofStmt.getCanonicalForm());
     }
 }

@@ -7,7 +7,6 @@ import mmj.lang.*;
 import mmj.pa.ProofStepStmt;
 import mmj.transforms.WorksheetInfo.GenProofStepStmt;
 
-// TODO: maybe we should remove it
 public class ConjunctionInfo extends DBInfo {
 
     private final ImplicationInfo implInfo;
@@ -252,7 +251,7 @@ public class ConjunctionInfo extends DBInfo {
         }
     }
 
-    private GenProofStepStmt conctinateInTheSamePatternInternal(
+    private GenProofStepStmt concatenateInTheSamePatternInternal(
         final ParseNode andPattern, final IndexCounter counter,
         final WorksheetInfo info)
     {
@@ -271,7 +270,7 @@ public class ConjunctionInfo extends DBInfo {
 
         for (int i = 0; i < length; i++) {
             final ParseNode andChild = andPattern.getChild()[i];
-            final GenProofStepStmt chidStep = conctinateInTheSamePatternInternal(
+            final GenProofStepStmt chidStep = concatenateInTheSamePatternInternal(
                 andChild, counter, info);
             children[i] = chidStep.getCore();
             genHyps[i] = chidStep;
@@ -313,15 +312,36 @@ public class ConjunctionInfo extends DBInfo {
         return new GenProofStepStmt(stepTr, info.implPrefix);
 
     }
-    public GenProofStepStmt conctinateInTheSamePattern(
+
+    /**
+     * Concatenates the list of hypotheses into one hypothesis. The 'andPattern'
+     * is used for construction of this one hypothesis.
+     * 
+     * @param hyps input hypotheses list
+     * @param andPattern template
+     * @param info the work sheet info
+     * @return result one hypothesis
+     */
+    public GenProofStepStmt concatenateInTheSamePattern(
         final GenProofStepStmt[] hyps, final ParseNode andPattern,
         final WorksheetInfo info)
     {
         final IndexCounter counter = new IndexCounter(hyps);
-        final GenProofStepStmt res = conctinateInTheSamePatternInternal(
+        final GenProofStepStmt res = concatenateInTheSamePatternInternal(
             andPattern, counter, info);
         assert counter.hyps.length == counter.idx;
         return res;
+    }
+
+    public ProofStepStmt concatenateInTheSamePattern(
+        final ProofStepStmt[] hyps, final ParseNode andPattern,
+        final WorksheetInfo info)
+    {
+        final GenProofStepStmt[] genhyps = new GenProofStepStmt[hyps.length];
+        for (int i = 0; i < genhyps.length; i++)
+            genhyps[i] = new GenProofStepStmt(hyps[i], null);
+
+        return concatenateInTheSamePattern(genhyps, andPattern, info).step;
     }
 
     public boolean isAndOperation(final Stmt stmt) {

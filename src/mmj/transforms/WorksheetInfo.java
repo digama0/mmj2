@@ -51,13 +51,24 @@ import mmj.verify.VerifyProofs;
         provableLogicStmtTyp = trManager.provableLogicStmtTyp;
     }
 
-    public ProofStepStmt getProofStepStmt(final ParseNode stepNode) {
+    /**
+     * @param root searched expression
+     * @return an existed step with root equals to "root" or null
+     */
+    public ProofStepStmt getProofStepStmt(final ParseNode root) {
         assert !finished;
-        final ProofStepStmt stepTr = getOrCreateProofStepStmt(stepNode, null,
-            null);
+        final ProofStepStmt stepTr = getOrCreateProofStepStmt(root, null, null);
         return stepTr;
     }
 
+    /**
+     * @param root searched expression
+     * @param hyps hypotheses needed for result step construction (could be null
+     *            if we want existed step)
+     * @param assrt assert needed for result step construction (could be null if
+     *            we want existed step)
+     * @return an existed step with root equals to stepNode or new step
+     */
     public ProofStepStmt getOrCreateProofStepStmt(final ParseNode root,
         final ProofStepStmt[] hyps, final Assrt assrt)
     {

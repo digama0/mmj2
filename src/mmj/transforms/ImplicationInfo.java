@@ -47,6 +47,11 @@ public class ImplicationInfo extends DBInfo {
                         implOp.get(stmt));
     }
 
+    /**
+     * Checks the assert for the form: A -> B & B -> C => A -> C
+     * 
+     * @param assrt checked assert
+     */
     private void findTransitiveRules(final Assrt assrt) {
         // Debug:
 

@@ -4,6 +4,7 @@ import java.util.List;
 
 import mmj.lang.*;
 import mmj.pa.ProofStepStmt;
+import mmj.transforms.ClosureInfo.TemplDetectRes;
 
 /**
  * The information about associative operations.
@@ -80,17 +81,28 @@ public class AssociativeInfo extends DBInfo {
         final VarHyp[] varHypArray = assrt.getMandVarHypArray();
         final ParseTree assrtTree = assrt.getExprParseTree();
 
-        if (assrt.getLabel().equals("addassi"))
-            assrt.toString();
+        // if (assrt.getLabel().equals("addassi"))
+        // assrt.toString();
 
-        final PropertyTemplate template = ClosureInfo
-            .createTemplateFromHyp(assrt);
+        final TemplDetectRes tDetectRes = ClosureInfo
+            .getTemplateAndVarHyps(assrt);
 
-        if (template == null)
+        if (tDetectRes == null)
             return;
+
+        final PropertyTemplate template = tDetectRes.template;
+
+        assert template != null;
 
         if (varHypArray.length != 3)
             return;
+
+        // Preserve the same order for variable hypotheses and for the
+        // commutative rule
+        if (!template.isEmpty())
+            for (int i = 0; i < varHypArray.length; i++)
+                if (varHypArray[i] != tDetectRes.hypToVarHypMap[i])
+                    return;
 
         if (!eqInfo.isEquivalence(assrtTree.getRoot().getStmt()))
             return;
@@ -361,7 +373,7 @@ public class AssociativeInfo extends DBInfo {
         return getAssocOp(genStmt.stmt, genStmt.constSubst, genStmt.template);
     }
 
-    public Assrt[] getAssocOp(final Stmt stmt, final ConstSubst constSubst,
+    private Assrt[] getAssocOp(final Stmt stmt, final ConstSubst constSubst,
         final PropertyTemplate template)
     {
         return assocOp.getData(stmt, constSubst, template);

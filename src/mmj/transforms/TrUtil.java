@@ -1,5 +1,8 @@
 package mmj.transforms;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import mmj.lang.*;
 
 public class TrUtil {
@@ -160,4 +163,24 @@ public class TrUtil {
         return hypToVarHypMap;
     }
 
+    public static void findVarsInParseNode(final ParseNode input,
+        final Set<VarHyp> res)
+    {
+        final Stmt stmt = input.getStmt();
+        if (stmt instanceof VarHyp)
+            res.add((VarHyp)stmt);
+        else
+            for (final ParseNode child : input.getChild())
+                findVarsInParseNode(child, res);
+    }
+
+    // Returns the only one variable or null
+    public static VarHyp findOneVarInParseNode(final ParseNode input) {
+        final Set<VarHyp> res = new HashSet<VarHyp>();
+        findVarsInParseNode(input, res);
+        if (res.size() != 1)
+            return null;
+        else
+            return res.iterator().next();
+    }
 }
