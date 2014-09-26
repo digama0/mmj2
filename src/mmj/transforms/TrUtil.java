@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import mmj.lang.*;
+import mmj.transforms.ClosureInfo.TemplDetectRes;
 
 public class TrUtil {
     // Do not create objects with this type!
@@ -182,5 +183,34 @@ public class TrUtil {
             return null;
         else
             return res.iterator().next();
+    }
+
+    public static PropertyTemplate getTransformOperationTemplate(
+        final Assrt assrt)
+    {
+        final VarHyp[] varHypArray = assrt.getMandVarHypArray();
+
+        final TemplDetectRes tDetectRes = ClosureInfo
+            .getTemplateAndVarHyps(assrt);
+
+        if (tDetectRes == null)
+            return null;
+
+        final PropertyTemplate template = tDetectRes.template;
+
+        assert template != null;
+
+        // Preserve the same order for variable hypotheses and for the
+        // commutative rule
+        if (!template.isEmpty()) {
+            if (varHypArray.length != tDetectRes.hypToVarHypMap.length)
+                return null;
+
+            for (int i = 0; i < varHypArray.length; i++)
+                if (varHypArray[i] != tDetectRes.hypToVarHypMap[i])
+                    return null;
+        }
+
+        return template;
     }
 }

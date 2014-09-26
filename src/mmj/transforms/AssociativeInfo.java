@@ -4,7 +4,7 @@ import java.util.List;
 
 import mmj.lang.*;
 import mmj.pa.ProofStepStmt;
-import mmj.transforms.ClosureInfo.TemplDetectRes;
+import mmj.transforms.ClosureInfo.ResultClosureInfo;
 
 /**
  * The information about associative operations.
@@ -20,6 +20,22 @@ public class AssociativeInfo extends DBInfo {
 
     /** The information about replace rules */
     private final ReplaceInfo replInfo;
+
+    private class AssocRuleMap extends AssocComComplexRuleMap<Assrt[]> {
+        @Override
+        public GeneralizedStmt detectGenStmtCore(final WorksheetInfo info,
+            final ParseNode node, final PropertyTemplate template,
+            final ConstSubst constSubst, final int[] varIndexes)
+        {
+            final Stmt stmt = node.getStmt();
+            final boolean res = isAssociativeWithProp(node, template,
+                constSubst, info);
+            if (res)
+                return new GeneralizedStmt(constSubst, template, varIndexes,
+                    stmt);
+            return null;
+        }
+    };
 
     /**
      * The collection of associative operators:
@@ -38,22 +54,9 @@ public class AssociativeInfo extends DBInfo {
      * </ul>
      * Usually, one element is null.
      */
-    private final AssocComComplexRuleMap<Assrt[]> assocOp = new AssocComComplexRuleMap<Assrt[]>()
-    {
-        @Override
-        public GeneralizedStmt detectGenStmtCore(final WorksheetInfo info,
-            final ParseNode node, final PropertyTemplate template,
-            final ConstSubst constSubst, final int[] varIndexes)
-        {
-            final Stmt stmt = node.getStmt();
-            final boolean res = isAssociativeWithProp(node, template,
-                constSubst, info);
-            if (res)
-                return new GeneralizedStmt(constSubst, template, varIndexes,
-                    stmt);
-            return null;
-        }
-    };
+    private final AssocRuleMap assocOp = new AssocRuleMap();
+
+    private final AssocRuleMap implAssocOp = new AssocRuleMap();
 
     // ------------------------------------------------------------------------
     // ------------------------Initialization----------------------------------
@@ -68,46 +71,52 @@ public class AssociativeInfo extends DBInfo {
         this.clInfo = clInfo;
         this.replInfo = replInfo;
 
-        for (final Assrt assrt : assrtList)
+        for (final Assrt assrt : assrtList) {
             findAssociativeRules(assrt);
+            findImplAssociativeRules(assrt);
+        }
     }
     /**
      * Filters associative rules, like (A + B) + C = A + (B + C)
      * 
      * @param assrt the candidate
      */
-    protected void findAssociativeRules(final Assrt assrt) {
+    private void findAssociativeRules(final Assrt assrt) {
         // Debug statements: coass, addassi
-        final VarHyp[] varHypArray = assrt.getMandVarHypArray();
-        final ParseTree assrtTree = assrt.getExprParseTree();
+        final ParseNode root = assrt.getExprParseTree().getRoot();
 
-        // if (assrt.getLabel().equals("addassi"))
-        // assrt.toString();
+        final PropertyTemplate template = TrUtil
+            .getTransformOperationTemplate(assrt);
 
-        final TemplDetectRes tDetectRes = ClosureInfo
-            .getTemplateAndVarHyps(assrt);
-
-        if (tDetectRes == null)
+        if (template == null)
             return;
 
-        final PropertyTemplate template = tDetectRes.template;
+        associativeSearchCore(assrt, root, template, assocOp);
+    }
 
-        assert template != null;
+    private void findImplAssociativeRules(final Assrt assrt) {
+        final ResultClosureInfo res = clInfo.extractImplClosureInfo(assrt);
+        if (res == null)
+            return;
+
+        final ParseNode root = res.main;
+        final PropertyTemplate template = res.template;
+
+        associativeSearchCore(assrt, root, template, implAssocOp);
+    }
+
+    private void associativeSearchCore(final Assrt assrt, final ParseNode root,
+        final PropertyTemplate template, final AssocRuleMap resMap)
+    {
+        final VarHyp[] varHypArray = assrt.getMandVarHypArray();
 
         if (varHypArray.length != 3)
             return;
 
-        // Preserve the same order for variable hypotheses and for the
-        // commutative rule
-        if (!template.isEmpty())
-            for (int i = 0; i < varHypArray.length; i++)
-                if (varHypArray[i] != tDetectRes.hypToVarHypMap[i])
-                    return;
-
-        if (!eqInfo.isEquivalence(assrtTree.getRoot().getStmt()))
+        if (!eqInfo.isEquivalence(root.getStmt()))
             return;
 
-        final ParseNode[] subTrees = assrtTree.getRoot().getChild();
+        final ParseNode[] subTrees = root.getChild();
 
         // it must be the equivalence rule
         assert subTrees.length == 2;
@@ -236,17 +245,6 @@ public class AssociativeInfo extends DBInfo {
                 if (!info.trManager.clInfo.hasClosureProperty(info, child,
                     template, true))
                     return false;
-
-                /*
-
-                final ParseNode substProp = template.subst(child);
-                final ProofStepStmt stmt = info.getProofStepStmt(substProp);
-                if (stmt == null)
-                    if (child.getStmt() != node.getStmt()
-                        || !isAssociativeWithProp(child, template, constSubst,
-                            info))
-                        return false;
-                */
             }
             else if (!constSubst.constMap[i].isDeepDup(child)) // check constant
                 return false;
@@ -268,6 +266,12 @@ public class AssociativeInfo extends DBInfo {
         final WorksheetInfo info)
     {
         return assocOp.detectGenStmt(node, info);
+        /*
+        final GeneralizedStmt res = assocOp.detectGenStmt(node, info);
+        if (res != null)
+            return res;
+        return implAssocOp.detectGenStmt(node, info);
+        */
     }
 
     // ------------------------------------------------------------------------
@@ -369,13 +373,8 @@ public class AssociativeInfo extends DBInfo {
     // ------------------------------Getters-----------------------------------
     // ------------------------------------------------------------------------
 
-    public Assrt[] getAssocOp(final GeneralizedStmt genStmt) {
-        return getAssocOp(genStmt.stmt, genStmt.constSubst, genStmt.template);
-    }
-
-    private Assrt[] getAssocOp(final Stmt stmt, final ConstSubst constSubst,
-        final PropertyTemplate template)
-    {
-        return assocOp.getData(stmt, constSubst, template);
+    private Assrt[] getAssocOp(final GeneralizedStmt genStmt) {
+        return assocOp.getData(genStmt.stmt, genStmt.constSubst,
+            genStmt.template);
     }
 }

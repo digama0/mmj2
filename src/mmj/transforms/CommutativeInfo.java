@@ -5,7 +5,6 @@ import java.util.List;
 import mmj.lang.*;
 import mmj.pa.ProofStepStmt;
 import mmj.transforms.ClosureInfo.ResultClosureInfo;
-import mmj.transforms.ClosureInfo.TemplDetectRes;
 
 /**
  * The information about commutative operations.
@@ -78,37 +77,20 @@ public class CommutativeInfo extends DBInfo {
      */
     protected void findCommutativeRules(final Assrt assrt) {
         // Debug statements: prcom, addcomi
-
-        final VarHyp[] varHypArray = assrt.getMandVarHypArray();
         final ParseNode root = assrt.getExprParseTree().getRoot();
 
-        // if (assrt.getLabel().toString().equals("addcomi"))
-        // assrt.toString();
+        final PropertyTemplate template = TrUtil
+            .getTransformOperationTemplate(assrt);
 
-        final TemplDetectRes tDetectRes = ClosureInfo
-            .getTemplateAndVarHyps(assrt);
-
-        if (tDetectRes == null)
+        if (template == null)
             return;
-
-        final PropertyTemplate template = tDetectRes.template;
-
-        assert template != null;
-
-        if (varHypArray.length != 2)
-            return;
-
-        // Preserve the same order for variable hypotheses and for the
-        // commutative rule
-        if (!template.isEmpty())
-            for (int i = 0; i < varHypArray.length; i++)
-                if (varHypArray[i] != tDetectRes.hypToVarHypMap[i])
-                    return;
 
         commutativeSearchCore(assrt, root, template, comOp);
     }
 
     private void findImplCommutativeRules(final Assrt assrt) {
+        // Debug statements: gcdcom
+
         final ResultClosureInfo res = clInfo.extractImplClosureInfo(assrt);
         if (res == null)
             return;
@@ -122,6 +104,10 @@ public class CommutativeInfo extends DBInfo {
         final PropertyTemplate template, final CommRuleMap resMap)
     {
         final VarHyp[] varHypArray = assrt.getMandVarHypArray();
+
+        if (varHypArray.length != 2)
+            return;
+
         if (!eqInfo.isEquivalence(root.getStmt()))
             return;
 
@@ -230,10 +216,9 @@ public class CommutativeInfo extends DBInfo {
             return true;
         for (int i = 0; i < 2; i++) {
             final ParseNode child = node.getChild()[genStmt.varIndexes[i]];
-            final ParseNode substProp = genStmt.template.subst(child);
-            // TODO: is it correct way to find closure properties for arguments?
-            final ProofStepStmt stmt = info.getProofStepStmt(substProp);
-            if (stmt == null)
+
+            if (!info.trManager.clInfo.hasClosureProperty(info, child,
+                genStmt.template, true))
                 return false;
         }
 
