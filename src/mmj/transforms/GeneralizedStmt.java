@@ -35,11 +35,15 @@ class GeneralizedStmt {
     public GeneralizedStmt(final ConstSubst constSubst,
         final PropertyTemplate template, final int[] varIndexes, final Stmt stmt)
     {
-        super();
         this.template = template;
         this.constSubst = constSubst;
         this.varIndexes = varIndexes;
         this.stmt = stmt;
         assert varIndexes.length == 2;
+    }
+
+    @Override
+    public String toString() {
+        return stmt.toString() + ":" + constSubst + " with " + template;
     }
 }

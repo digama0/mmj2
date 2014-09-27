@@ -44,7 +44,7 @@ public class EquivalenceInfo extends DBInfo {
     /**
      * Find commutative equivalence rules, like A = B => B = A
      * <p>
-     * 
+     *
      * @param assrt the candidate
      */
     protected void findEquivalenceCommutativeRules(final Assrt assrt) {
@@ -82,8 +82,9 @@ public class EquivalenceInfo extends DBInfo {
             .getChild()[0].getStmt())
             return;
 
-        output.dbgMessage(dbg, "I-TR-DBG Equivalence commutative assrt: %s: %s",
-            assrt, assrt.getFormula());
+        output.dbgMessage(dbg,
+            "I-TR-DBG Equivalence commutative assrt: %s: %s", assrt,
+            assrt.getFormula());
 
         if (!eqCommutatives.containsKey(stmt))
             eqCommutatives.put(stmt, assrt);
@@ -92,7 +93,7 @@ public class EquivalenceInfo extends DBInfo {
     /**
      * Find transitive equivalence rules, like A = B & B = C => A = C
      * <p>
-     * 
+     *
      * @param assrt the candidate
      */
     protected void findEquivalenceTransitiveRules(final Assrt assrt) {
@@ -190,8 +191,8 @@ public class EquivalenceInfo extends DBInfo {
                 .getTyp();
             eqMap.put(type, eq);
 
-            output.dbgMessage(dbg, "I-TR-DBG Type equivalence map: %s: %s", type,
-                eq);
+            output.dbgMessage(dbg, "I-TR-DBG Type equivalence map: %s: %s",
+                type, eq);
         }
     }
 
@@ -201,7 +202,7 @@ public class EquivalenceInfo extends DBInfo {
 
     /**
      * Creates equivalence node (e.g. a = b )
-     * 
+     *
      * @param left the left node
      * @param right the right node
      * @return the equivalence node
@@ -218,7 +219,7 @@ public class EquivalenceInfo extends DBInfo {
 
     /**
      * Creates reverse step for another equivalence step (e.g. b = a for a = b)
-     * 
+     *
      * @param info the work sheet info
      * @param source the source (e.g. a = b)
      * @return the reverse step
@@ -245,7 +246,7 @@ public class EquivalenceInfo extends DBInfo {
     /**
      * This function creates transitive inference for two steps (= is the
      * example of equivalence operator).
-     * 
+     *
      * @param info the work sheet info
      * @param first the first statement (e.g. a = b )
      * @param second the second statement (e.g. b = c )

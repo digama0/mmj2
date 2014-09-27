@@ -15,6 +15,9 @@ public class AssociativeInfo extends DBInfo {
     /** The information about equivalence rules */
     private final EquivalenceInfo eqInfo;
 
+    private final ConjunctionInfo conjInfo;
+    private final ImplicationInfo implInfo;
+
     /** The information about closure rules */
     private final ClosureInfo clInfo;
 
@@ -64,21 +67,25 @@ public class AssociativeInfo extends DBInfo {
 
     public AssociativeInfo(final EquivalenceInfo eqInfo,
         final ClosureInfo clInfo, final ReplaceInfo replInfo,
+        final ConjunctionInfo conjInfo, final ImplicationInfo implInfo,
         final List<Assrt> assrtList, final TrOutput output, final boolean dbg)
     {
         super(output, dbg);
         this.eqInfo = eqInfo;
         this.clInfo = clInfo;
         this.replInfo = replInfo;
+        this.conjInfo = conjInfo;
+        this.implInfo = implInfo;
 
         for (final Assrt assrt : assrtList) {
             findAssociativeRules(assrt);
             findImplAssociativeRules(assrt);
         }
     }
+
     /**
      * Filters associative rules, like (A + B) + C = A + (B + C)
-     * 
+     *
      * @param assrt the candidate
      */
     private void findAssociativeRules(final Assrt assrt) {
@@ -198,7 +205,7 @@ public class AssociativeInfo extends DBInfo {
                 return;
             }
 
-            final Assrt[] assoc = assocOp.addData(stmt, constSubst, template,
+            final Assrt[] assoc = resMap.addData(stmt, constSubst, template,
                 new Assrt[2]);
 
             if (assoc[i] != null)
@@ -257,7 +264,7 @@ public class AssociativeInfo extends DBInfo {
     /**
      * This function searches generalized statement for node which is considered
      * to be the root of some associative actions
-     * 
+     *
      * @param node the input node
      * @param info the work sheet info
      * @return the found generalized statement or null
@@ -265,13 +272,10 @@ public class AssociativeInfo extends DBInfo {
     public GeneralizedStmt getGenStmtForAssocNode(final ParseNode node,
         final WorksheetInfo info)
     {
-        return assocOp.detectGenStmt(node, info);
-        /*
         final GeneralizedStmt res = assocOp.detectGenStmt(node, info);
         if (res != null)
             return res;
         return implAssocOp.detectGenStmt(node, info);
-        */
     }
 
     // ------------------------------------------------------------------------
@@ -281,7 +285,7 @@ public class AssociativeInfo extends DBInfo {
     /**
      * Creates f(f(a, b), c) = f(a, f(b, c)) or f(a, f(b, c)) = f(f(a, b), c)
      * statement.
-     * 
+     *
      * @param info the work sheet info
      * @param assocProp the generalized associative statement
      * @param from 0 if we should use f(f(a, b), c) = f(a, f(b, c)) form and 1
@@ -294,7 +298,15 @@ public class AssociativeInfo extends DBInfo {
         final GeneralizedStmt assocProp, final int from,
         final ParseNode firstNode, final ParseNode secondNode)
     {
-        final Assrt[] assocTr = getAssocOp(assocProp);
+        Assrt[] assocTr = getAssocOp(assocProp, assocOp);
+        final boolean implForm;
+        if (assocTr == null) {
+            implForm = true;
+            assocTr = getAssocOp(assocProp, implAssocOp);
+        }
+        else
+            implForm = false;
+
         assert assocTr != null;
 
         final boolean revert;
@@ -316,16 +328,23 @@ public class AssociativeInfo extends DBInfo {
         }
         assert assocAssrt != null;
 
-        final Stmt equalStmt = assocAssrt.getExprParseTree().getRoot()
-            .getStmt();
+        final Stmt equalStmt;
+
+        if (!implForm)
+            equalStmt = assocAssrt.getExprParseTree().getRoot().getStmt();
+        else {
+            final ParseNode assrtRoot = assocAssrt.getExprParseTree().getRoot();
+            equalStmt = assrtRoot.getChild()[1].getStmt();
+        }
 
         // Create node f(f(a, b), c) = f(a, f(b, c))
         final ParseNode stepNode = TrUtil.createBinaryNode(equalStmt, left,
             right);
 
         final boolean firstForm = assocTr[0] != null;
+
         ProofStepStmt res = closurePropertyAssociative(info, assocProp,
-            assocAssrt, firstForm, stepNode);
+            assocAssrt, firstForm, stepNode, implForm);
 
         if (revert)
             res = eqInfo.createReverse(info, res);
@@ -337,7 +356,8 @@ public class AssociativeInfo extends DBInfo {
     // Second form: f(a, f(b, c)) = f(f(a, b), c)
     private ProofStepStmt closurePropertyAssociative(final WorksheetInfo info,
         final GeneralizedStmt assocProp, final Assrt assocAssrt,
-        final boolean firstForm, final ParseNode stepNode)
+        final boolean firstForm, final ParseNode stepNode,
+        final boolean implForm)
     {
         final ProofStepStmt[] hyps;
         if (!assocProp.template.isEmpty()) {
@@ -360,11 +380,25 @@ public class AssociativeInfo extends DBInfo {
                 hyps[i] = clInfo.closureProperty(info, assocProp.template,
                     in[i]);
         }
-        else
+        else {
+            assert !implForm;
             hyps = new ProofStepStmt[]{};
+        }
 
-        final ProofStepStmt res = info.getOrCreateProofStepStmt(stepNode, hyps,
-            assocAssrt);
+        final ProofStepStmt res;
+        if (!implForm)
+            res = info.getOrCreateProofStepStmt(stepNode, hyps, assocAssrt);
+        else {
+            final ParseNode assrtRoot = assocAssrt.getExprParseTree().getRoot();
+            final ParseNode hypsPartPattern = assrtRoot.getChild()[0];
+            // Precondition f(A) /\ f(B) /\ f(C) step
+            // (or ph->(f(A) /\ f(B) /\ f(C)))
+            final ProofStepStmt implHyp = conjInfo.concatenateInTheSamePattern(
+                hyps, hypsPartPattern, info);
+
+            res = implInfo.applyImplicationRule(info, implHyp, stepNode,
+                assocAssrt);
+        }
 
         return res;
     }
@@ -373,8 +407,9 @@ public class AssociativeInfo extends DBInfo {
     // ------------------------------Getters-----------------------------------
     // ------------------------------------------------------------------------
 
-    private Assrt[] getAssocOp(final GeneralizedStmt genStmt) {
-        return assocOp.getData(genStmt.stmt, genStmt.constSubst,
-            genStmt.template);
+    private Assrt[] getAssocOp(final GeneralizedStmt genStmt,
+        final AssocRuleMap map)
+    {
+        return map.getData(genStmt.stmt, genStmt.constSubst, genStmt.template);
     }
 }

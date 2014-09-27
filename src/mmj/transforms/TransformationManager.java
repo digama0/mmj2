@@ -52,7 +52,7 @@ public class TransformationManager {
     /**
      * Note: Here will be performed a lot of work during the construction of
      * this class!
-     * 
+     *
      * @param assrtList the list all library asserts
      * @param provableLogicStmtTyp this constant indicates
      *            "provable logic statement type"
@@ -80,8 +80,8 @@ public class TransformationManager {
 
         replInfo = new ReplaceInfo(eqInfo, implInfo, assrtList, output, dbg);
 
-        assocInfo = new AssociativeInfo(eqInfo, clInfo, replInfo, assrtList,
-            output, dbg);
+        assocInfo = new AssociativeInfo(eqInfo, clInfo, replInfo, conjInfo,
+            implInfo, assrtList, output, dbg);
 
         comInfo = new CommutativeInfo(eqInfo, clInfo, conjInfo, implInfo,
             assrtList, output, dbg);
@@ -95,7 +95,7 @@ public class TransformationManager {
 
     /**
      * The main function to create transformation.
-     * 
+     *
      * @param node the source node
      * @param info the information about previous steps
      * @return the transformation
@@ -178,7 +178,7 @@ public class TransformationManager {
 
     /**
      * Tries to unify the derivation step by some automatic transformations
-     * 
+     *
      * @param proofWorksheet the proof work sheet
      * @param derivStep the derivation step
      * @return true if it founds possible unification
@@ -240,7 +240,7 @@ public class TransformationManager {
     /**
      * The main entry point transformation function. This function tries to find
      * the transformation which leads to the derivation step from earlier steps.
-     * 
+     *
      * @param proofWorksheet the proof work sheet
      * @param derivStep the
      * @return the list of generated steps (and also derivStep) or null if the
@@ -267,7 +267,7 @@ public class TransformationManager {
 
     /**
      * This function is needed for debug
-     * 
+     *
      * @param node the input node
      * @return the corresponding formula
      */
