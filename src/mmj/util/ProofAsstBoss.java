@@ -516,6 +516,14 @@ public class ProofAsstBoss extends Boss {
         }
 
         if (runParm.name
+            .compareToIgnoreCase(UtilConstants.RUNPARM_IMPORT_OPEN_THEORY_ARTICLE
+                .name()) == 0)
+        {
+            doImportOpenTheoryArticle(runParm);
+            return true;
+        }
+
+        if (runParm.name
             .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_STARTUP_PROOF_WORKSHEET
                 .name()) == 0)
         {
@@ -1715,6 +1723,50 @@ public class ProofAsstBoss extends Boss {
             batchFramework.outputBoss.printAndClearMessages();
         }
     }
+    /**
+     * Exercises the PreprocessRequest code.
+     * 
+     * @param runParm RunParmFile line.
+     * @throws VerifyException if an error occurred
+     */
+    public void doImportOpenTheoryArticle(final RunParmArrayEntry runParm)
+        throws VerifyException
+    {
+
+        // ensures that file loaded and grammar validated
+        // successfully, prints error message if not.
+        final ProofAsst proofAsst = getProofAsst();
+        if (proofAsst == null)
+            return;
+
+        batchFramework.outputBoss.getMessages();
+        batchFramework.outputBoss.printAndClearMessages();
+        if (runParm.values.length == 0)
+            throw new IllegalArgumentException(
+                UtilConstants.ERRMSG_RUNPARM_NOT_ENOUGH_FIELDS_1 + runParm.name
+                    + UtilConstants.ERRMSG_RUNPARM_NOT_ENOUGH_FIELDS_2 + 1
+                    + UtilConstants.ERRMSG_RUNPARM_NOT_ENOUGH_FIELDS_3);
+
+        int[] thms = new int[runParm.values.length - 1];
+        for (int i = 1; i < runParm.values.length; i++)
+            if (runParm.values[i].equals("*")) {
+                thms = null;
+                break;
+            }
+            else if (runParm.values[i].matches("[0-9]+"))
+                thms[i - 1] = Integer.valueOf(runParm.values[i]);
+        Arrays.sort(thms);
+        try {
+            new mmj.oth.Reader(runParm.values[0], thms,
+                proofAsst.getLogicalSystem());
+        } catch (final FileNotFoundException e) {
+            throw new IllegalArgumentException(
+                UtilConstants.ERRMSG_FILE_NOTFND_1 + runParm.name
+                    + UtilConstants.ERRMSG_FILE_NOTFND_2 + runParm.values[0]
+                    + UtilConstants.ERRMSG_FILE_NOTFND_3);
+        }
+    }
+
     private PreprocessRequest editPreprocessRequestOption(final String s,
         final String valueCaption) throws IllegalArgumentException
     {

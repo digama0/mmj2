@@ -1583,6 +1583,25 @@ public class UtilConstants {
             + " {@code ax-*,df-bi,df-clab,df-cleq,df-clel}, which will always fail the"
             + " check.");
 
+    public static final BatchCommand RUNPARM_IMPORT_OPEN_THEORY_ARTICLE = new BatchCommand(
+        "ImportOpenTheoryArticle",
+        " ImportOpenTheoryArticle"
+            + " <p>"
+            + " <pre> "
+            + " \"ImportOpenTheoryArticle,filename,thm,thm,...\":\n"
+            + "\n"
+            + "     filename = path to .art file\n"
+            + "\n"
+            + "     thm = comma-separated list of lines with theorem references,\n"
+            + "           or * to import all theorems in the file"
+            + " </pre>"
+            + " <p>"
+            + " This option imports theorems from an OpenTheory article [.art] file\n"
+            + " and imports selected theorems, labeled by the line numbers,\n"
+            + " into the LogicalSystem.  Assumes that the main file loaded is\n"
+            + " hol.mm or a derivative using the same axiomatization.\n\n"
+            + " OpenTheory: http://www.gilith.com/research/opentheory/\n");
+
     public static final BatchCommand RUNPARM_PROOF_ASST_UNIFY_SEARCH_EXCLUDE = new BatchCommand(
         "ProofAsstUnifySearchExclude", // options
         " ProofAsstUnifySearchExclude\n"
