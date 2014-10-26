@@ -49,7 +49,7 @@ public class ImplicationInfo extends DBInfo {
 
     /**
      * Checks the assert for the form: A -> B & B -> C => A -> C
-     * 
+     *
      * @param assrt checked assert
      */
     private void findTransitiveRules(final Assrt assrt) {
@@ -113,7 +113,7 @@ public class ImplicationInfo extends DBInfo {
      * only left to right direction. The rules in the form A & B <- A => B are
      * not supported! Also we don't support the reverse hypotheses order, for
      * example A -> B & A => B
-     * 
+     *
      * @param assrt the candidate
      */
     private void findImplicationRules(final Assrt assrt) {
@@ -231,7 +231,7 @@ public class ImplicationInfo extends DBInfo {
 
     /**
      * Apply implication rule: like A -> B & B -> C => A -> C.
-     * 
+     *
      * @param info the work sheet info
      * @param min the precondition (in the example it is statement A -> B)
      * @param implNode the implication part (in the example it is node C)
@@ -278,7 +278,7 @@ public class ImplicationInfo extends DBInfo {
 
     /**
      * Finish implication rule: like A -> B & B -> C => A -> C.
-     * 
+     *
      * @param info the work sheet info
      * @param min the precondition (in the example it is statement A -> B)
      * @param implNode the implication part (in the example it is node C)
@@ -321,6 +321,10 @@ public class ImplicationInfo extends DBInfo {
 
     /**
      * Apply stub implication rule: like B => A -> B.
+     *
+     * @param info the work sheet info
+     * @param core the hypothesis (B in the example)
+     * @return the implication (A->B in the example)
      */
     public ProofStepStmt applyStubRule(final WorksheetInfo info,
         final ProofStepStmt core)
@@ -339,6 +343,9 @@ public class ImplicationInfo extends DBInfo {
 
     /**
      * Finish stub implication rule: like B => A -> B.
+     *
+     * @param info the work sheet info
+     * @param core the hypothesis (B in the example)
      */
     public void finishStubRule(final WorksheetInfo info,
         final ProofStepStmt core)
@@ -350,7 +357,7 @@ public class ImplicationInfo extends DBInfo {
 
     /**
      * Apply implication rule: like A & A -> B => B.
-     * 
+     *
      * @param info the work sheet info
      * @param min the precondition (in the example it is statement A)
      * @param maj the implication (in the example it is statement A -> B)
@@ -371,7 +378,7 @@ public class ImplicationInfo extends DBInfo {
 
     /**
      * Apply implication rule: like A & A -> B => B.
-     * 
+     *
      * @param info the work sheet info
      * @param min the precondition (in the example it is statement A)
      * @param implNode the implication part (in the example it is node B)
@@ -417,7 +424,7 @@ public class ImplicationInfo extends DBInfo {
      * Completes implication derivation step with input hypotheses. For example
      * for "A & A -> B => B" it will complete target derivation step B with
      * hypothesis A and A -> B.
-     * 
+     *
      * @param info the work sheet info
      * @param min the precondition (in the example it is statement A)
      * @param implNode the implication part (in the example it is node B)
@@ -432,7 +439,27 @@ public class ImplicationInfo extends DBInfo {
         info.finishDerivationStep(subst.hypDerivArray, subst.assrt);
     }
 
-    public ParseNode extractPrefixAndGetImplPart(final WorksheetInfo info) {
+    public static class ExtractImplResult {
+        public final ParseNode implPrefix;
+        public final Stmt implStatement;
+        public final ParseNode core;
+
+        public ExtractImplResult(final ParseNode implPrefix,
+            final Stmt implStatement, final ParseNode core)
+        {
+            this.implPrefix = implPrefix;
+            this.implStatement = implStatement;
+            this.core = core;
+        }
+    }
+
+    /**
+     * @param info the work sheet info
+     * @return returns right part of implication (after ->)
+     */
+    public ExtractImplResult extractPrefixAndGetImplPart(
+        final WorksheetInfo info)
+    {
         final ParseNode root = info.derivStep.formulaParseTree.getRoot();
         for (final Entry<Stmt, Assrt> elem : implOp.entrySet()) {
             final Stmt stmt = elem.getKey();
@@ -441,9 +468,10 @@ public class ImplicationInfo extends DBInfo {
 
             if (root.getStmt() == stmt) {
                 assert root.getChild().length == 2;
-                info.implPrefix = root.getChild()[0];
-                info.implStatement = stmt;
-                return root.getChild()[1];
+                final ParseNode implPrefix = root.getChild()[0];
+                final Stmt implStatement = stmt;
+                final ParseNode core = root.getChild()[1];
+                return new ExtractImplResult(implPrefix, implStatement, core);
             }
         }
         // The target derivation step is not an implication " ( ph -> ps )"

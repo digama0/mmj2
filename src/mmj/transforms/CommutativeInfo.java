@@ -72,7 +72,7 @@ public class CommutativeInfo extends DBInfo {
 
     /**
      * Filters commutative rules, like A + B = B + A
-     * 
+     *
      * @param assrt the candidate
      */
     protected void findCommutativeRules(final Assrt assrt) {
@@ -194,7 +194,7 @@ public class CommutativeInfo extends DBInfo {
     /**
      * This function searches generalized statement for node which is considered
      * to be the root of some commutative action
-     * 
+     *
      * @param node the input node
      * @param info the work sheet info
      * @return the found generalized statement or null
@@ -204,7 +204,7 @@ public class CommutativeInfo extends DBInfo {
     {
         final GeneralizedStmt res = comOp.detectGenStmt(node, info);
         if (res != null)
-            return comOp.detectGenStmt(node, info);
+            return res;
         else
             return implComOp.detectGenStmt(node, info);
     }
@@ -217,8 +217,8 @@ public class CommutativeInfo extends DBInfo {
         for (int i = 0; i < 2; i++) {
             final ParseNode child = node.getChild()[genStmt.varIndexes[i]];
 
-            if (!info.trManager.clInfo.hasClosureProperty(info, child,
-                genStmt.template, true))
+            if (!info.trManager.clInfo.getClosurePossibility(info, child,
+                genStmt.template, true).hasClosure())
                 return false;
         }
 
@@ -231,7 +231,7 @@ public class CommutativeInfo extends DBInfo {
 
     /**
      * Creates f(a, b) = f(b, a) statement.
-     * 
+     *
      * @param info the work sheet info
      * @param comProp the generalized associative statement
      * @param source the first node f(a, b)

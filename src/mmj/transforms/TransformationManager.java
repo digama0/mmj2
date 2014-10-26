@@ -4,6 +4,7 @@ import java.util.List;
 
 import mmj.lang.*;
 import mmj.pa.*;
+import mmj.transforms.ImplicationInfo.ExtractImplResult;
 import mmj.verify.VerifyProofs;
 
 /**
@@ -189,14 +190,24 @@ public class TransformationManager {
         final WorksheetInfo info = new WorksheetInfo(proofWorksheet, derivStep,
             this);
 
-        final Cnst derivType = info.derivStep.formulaParseTree.getRoot()
-            .getStmt().getTyp();
+        // If derivation step has form "prefix -> core", then this prefix could
+        // be used in transformations
+        final ExtractImplResult extrImplRes = implInfo
+            .extractPrefixAndGetImplPart(info);
+        if (extrImplRes != null)
+            if (TrUtil.isVarNode(extrImplRes.implPrefix))
+                // Now we support only simple "one-variable" prefixes
+                info.setImplicationPrefix(extrImplRes.implPrefix,
+                    extrImplRes.implStatement);
+
+        final ParseNode derivRoot = derivStep.formulaParseTree.getRoot();
+        final Cnst derivType = derivRoot.getStmt().getTyp();
         final Assrt implAssrt = implInfo.getEqImplication(derivType);
         if (implAssrt == null)
             return null;
 
-        final Transformation dsTr = createTransformation(
-            derivStep.formulaParseTree.getRoot(), info);
+        final Transformation dsTr = createTransformation(derivRoot, info);
+        // Get canonical form for destination statement
         final ParseNode dsCanonicalForm = dsTr.getCanonicalNode(info);
 
         output.dbgMessage(dbg, "I-TR-DBG Step %s has canonical form: %s",
@@ -218,6 +229,7 @@ public class TransformationManager {
             output.dbgMessage(dbg, "I-TR-DBG Step %s has canonical form: %s",
                 candidate, getFormula(candCanon));
 
+            // Compare canonical forms for destination and for candidate
             if (dsCanonicalForm.isDeepDup(candCanon)) {
                 output.dbgMessage(dbg,
                     "I-TR-DBG found canonical forms correspondance: %s and %s",

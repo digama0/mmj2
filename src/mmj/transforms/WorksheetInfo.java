@@ -196,4 +196,11 @@ import mmj.verify.VerifyProofs;
             }
         }
     }
+
+    public void setImplicationPrefix(final ParseNode implPrefix,
+        final Stmt implStatement)
+    {
+        this.implPrefix = implPrefix;
+        this.implStatement = implStatement;
+    }
 }

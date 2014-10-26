@@ -5,6 +5,7 @@ import java.util.*;
 import mmj.lang.*;
 import mmj.pa.ProofStepStmt;
 import mmj.transforms.ComplexRuleMap.ComplexRuleVisitor;
+import mmj.transforms.ImplicationInfo.ExtractImplResult;
 import mmj.transforms.WorksheetInfo.GenProofStepStmt;
 
 public class ClosureInfo extends DBInfo {
@@ -113,7 +114,7 @@ public class ClosureInfo extends DBInfo {
 
     /**
      * Replaces the variable var for null in the template
-     * 
+     *
      * @param template the future template
      * @param var the variable which should be replaced for null
      * @return the number of replace operations
@@ -208,7 +209,7 @@ public class ClosureInfo extends DBInfo {
      * <li>Function f have unique entrance for variables
      * <li>Other f's children a, b, c should be constants
      * </ul>
-     * 
+     *
      * @param assrt the candidate
      */
     private void findClosureRules(final Assrt assrt) {
@@ -273,7 +274,7 @@ public class ClosureInfo extends DBInfo {
 
     /**
      * Parses rules in implication form
-     * 
+     *
      * @param assrt input assertion
      * @return result information
      */
@@ -500,7 +501,7 @@ public class ClosureInfo extends DBInfo {
      * recursively. For example, suppose we have |- A e. CC. The this function
      * for the input " _ e. CC" and "( sin ` A )" will find "|- A e. CC" and
      * then will generate "|- ( sin ` A ) e. CC"
-     * 
+     *
      * @param info the work sheet info
      * @param template template (" _ e. CC" in the example)
      * @param node the input node ("( sin ` A )" in the example)
@@ -542,169 +543,182 @@ public class ClosureInfo extends DBInfo {
                 return new GenProofStepStmt(stmtWithImpl, info.implPrefix);
         }
 
-        if (hasClosurePropertyInternal(info, node, template, closureRuleMap,
-            false))
-        {
-            // We found possible f(A) & f(B) => f(g(A,B)) rule
-            final CreateClosureVisitor visitor = new CreateClosureVisitor() {
-                public ClosureComplexRuleMap getMap() {
-                    return closureRuleMap;
-                }
+        final ClosureResult clRes = getClosurePossibility(info, node, template,
+            searchWithPrefix);
 
-                public GenProofStepStmt createClosureStep(
-                    final GenProofStepStmt[] genHyps, final Assrt assrt)
+        switch (clRes) {
+            case CONSTANT_RULE: {
+                // We should not be here if we doesn't support constant property
+                // auto completion
+                assert supportConstants;
+
+                // So it should be constant
+                assert TrUtil.isConstNode(node) : "(-" + startCounter + ","
+                    + debugCounter + "-)";
+
+                // TODO: DEBUG IT!!!!
+
+                final Map<ParseNodeHashElem, Assrt> cMap = constInfo
+                    .get(template);
+
+                assert cMap != null;
+
+                final Assrt assrt = cMap.get(new ParseNodeHashElem(node));
+
+                assert assrt != null;
+
+                final ParseNode root = assrt.getExprParseTree().getRoot();
+
+                final ProofStepStmt res = info.getOrCreateProofStepStmt(root,
+                    new ProofStepStmt[]{}, assrt);
+
+                assert res != null;
+                return new GenProofStepStmt(res, null);
+            }
+            case SIMPLE_RULE: {
+                // We found possible f(A) & f(B) => f(g(A,B)) rule
+                final CreateClosureVisitor visitor = new CreateClosureVisitor()
                 {
-                    final ProofStepStmt[] hyps = new ProofStepStmt[genHyps.length];
-
-                    for (int i = 0; i < genHyps.length; i++) {
-                        assert genHyps[i].prefix == null;
-                        hyps[i] = genHyps[i].step;
+                    public ClosureComplexRuleMap getMap() {
+                        return closureRuleMap;
                     }
 
-                    if (!finishStatement) {
-                        // It is not the last one step, we should generate
-                        // f(g(A,B)) step
-                        final ProofStepStmt r = info.getOrCreateProofStepStmt(
-                            stepNode, hyps, assrt);
-                        return new GenProofStepStmt(r, null);
-                    }
-                    else if (info.hasImplPrefix()) {
-                        // It is the last one step and he has form
-                        // ph->f(g(A,B)), so we should generate
-                        // f(g(A,B)) step and then use ph->f(g(A,B)) target
-                        // derivation step
-                        final ProofStepStmt r = info.getOrCreateProofStepStmt(
-                            stepNode, hyps, assrt);
-                        implInfo.finishStubRule(info, r);
-                        return new GenProofStepStmt(info.derivStep, null);
-                    }
-                    else {
-                        // It is the last one step, and we should use
-                        // f(g(A,B)) target derivation step
-                        info.finishDerivationStep(hyps, assrt);
-                        return new GenProofStepStmt(info.derivStep, null);
-                    }
-                }
-            };
+                    public GenProofStepStmt createClosureStep(
+                        final GenProofStepStmt[] genHyps, final Assrt assrt)
+                    {
+                        final ProofStepStmt[] hyps = new ProofStepStmt[genHyps.length];
 
-            final GenProofStepStmt res = closureVisitorEntrance(info, template,
-                node, visitor, false);
+                        for (int i = 0; i < genHyps.length; i++) {
+                            assert genHyps[i].prefix == null;
+                            hyps[i] = genHyps[i].step;
+                        }
 
-            assert res != null;
-            return res;
-        }
-        else if (hasClosurePropertyInternal(info, node, template,
-            implClosureRuleMap, searchWithPrefix))
-        {
-            // We found possible f(A) /\ f(B) -> f(g(A,B)) rule
-            final CreateClosureVisitor visitor = new CreateClosureVisitor() {
-                public ClosureComplexRuleMap getMap() {
-                    return implClosureRuleMap;
-                }
-
-                public GenProofStepStmt createClosureStep(
-                    final GenProofStepStmt[] hyps, final Assrt assrt)
-                {
-                    final ParseNode assrtRoot = assrt.getExprParseTree()
-                        .getRoot();
-                    final ParseNode hypsPartPattern = assrtRoot.getChild()[0];
-                    final ParseNode implRes = stepNode;
-
-                    // Precondition f(A) /\ f(B) step (or ph->(f(A) /\ f(B)) )
-                    final GenProofStepStmt implHyp = conjInfo
-                        .concatenateInTheSamePattern(hyps, hypsPartPattern,
-                            info);
-                    if (!finishStatement) {
-                        assert implHyp != null;
-                        // It is not the last one step, we should generate
-                        // f(g(A,B)) step
-                        if (!implHyp.hasPrefix()) {
-                            // The precondition has simple f(A) /\ f(B) form
-                            // We should generate simple f(g(A,B)) step
-                            final ProofStepStmt r = implInfo
-                                .applyImplicationRule(info, implHyp.step,
-                                    implRes, assrt);
+                        if (!finishStatement) {
+                            // It is not the last one step, we should generate
+                            // f(g(A,B)) step
+                            final ProofStepStmt r = info
+                                .getOrCreateProofStepStmt(stepNode, hyps, assrt);
                             return new GenProofStepStmt(r, null);
                         }
+                        else if (info.hasImplPrefix()) {
+                            // It is the last one step and he has form
+                            // ph->f(g(A,B)), so we should generate
+                            // f(g(A,B)) step and then use ph->f(g(A,B)) target
+                            // derivation step
+                            final ProofStepStmt r = info
+                                .getOrCreateProofStepStmt(stepNode, hyps, assrt);
+                            implInfo.finishStubRule(info, r);
+                            return new GenProofStepStmt(info.derivStep, null);
+                        }
                         else {
-                            // The precondition has implication ph->(f(A)/\f(B))
-                            // form.
-                            // We should generate ph->f(g(A,B)) step
-                            final ProofStepStmt r = implInfo
-                                .applyTransitiveRule(info, implHyp.step,
-                                    implRes, assrt);
-                            return new GenProofStepStmt(r, implHyp.prefix);
+                            // It is the last one step, and we should use
+                            // f(g(A,B)) target derivation step
+                            info.finishDerivationStep(hyps, assrt);
+                            return new GenProofStepStmt(info.derivStep, null);
                         }
                     }
-                    else {
-                        assert implHyp != null;
-                        // It is the last one step, and we should use
-                        // target derivation step
-                        if (!implHyp.hasPrefix()) {
-                            // The precondition has simple f(A) /\ f(B) form
-                            if (info.hasImplPrefix()) {
-                                // The target derivation step has ph->f(g(A,B))
-                                // form
+                };
+
+                final GenProofStepStmt res = closureVisitorEntrance(info,
+                    template, node, visitor, false);
+
+                assert res != null;
+                return res;
+            }
+            case USED_PREFIX_RULE: {
+                // We found possible f(A) /\ f(B) -> f(g(A,B)) rule
+                final CreateClosureVisitor visitor = new CreateClosureVisitor()
+                {
+                    public ClosureComplexRuleMap getMap() {
+                        return implClosureRuleMap;
+                    }
+
+                    public GenProofStepStmt createClosureStep(
+                        final GenProofStepStmt[] hyps, final Assrt assrt)
+                    {
+                        final ParseNode assrtRoot = assrt.getExprParseTree()
+                            .getRoot();
+                        final ParseNode hypsPartPattern = assrtRoot.getChild()[0];
+                        final ParseNode implRes = stepNode;
+
+                        // Precondition f(A) /\ f(B) step (or ph->(f(A) /\ f(B))
+                        // )
+                        final GenProofStepStmt implHyp = conjInfo
+                            .concatenateInTheSamePattern(hyps, hypsPartPattern,
+                                info);
+                        if (!finishStatement) {
+                            assert implHyp != null;
+                            // It is not the last one step, we should generate
+                            // f(g(A,B)) step
+                            if (!implHyp.hasPrefix()) {
+                                // The precondition has simple f(A) /\ f(B) form
+                                // We should generate simple f(g(A,B)) step
                                 final ProofStepStmt r = implInfo
                                     .applyImplicationRule(info, implHyp.step,
                                         implRes, assrt);
-                                implInfo.finishStubRule(info, r);
-                                return new GenProofStepStmt(info.derivStep,
-                                    null);
+                                return new GenProofStepStmt(r, null);
                             }
                             else {
-                                // And target derivation step has simple
-                                // f(g(A,B)) form
-                                implInfo.finishWithImplication(info,
-                                    implHyp.step, implRes, assrt);
-                                return new GenProofStepStmt(info.derivStep,
-                                    null);
+                                // The precondition has implication
+                                // ph->(f(A)/\f(B))
+                                // form.
+                                // We should generate ph->f(g(A,B)) step
+                                final ProofStepStmt r = implInfo
+                                    .applyTransitiveRule(info, implHyp.step,
+                                        implRes, assrt);
+                                return new GenProofStepStmt(r, implHyp.prefix);
                             }
                         }
                         else {
-                            // The precondition has implication ph->(f(A)/\f(B))
-                            // form and the target derivation step has
-                            // ph->f(g(A,B)) form.
-                            implInfo.finishTransitiveRule(info, implHyp.step,
-                                implRes, assrt);
-                            return new GenProofStepStmt(info.derivStep,
-                                implHyp.prefix);
+                            assert implHyp != null;
+                            // It is the last one step, and we should use
+                            // target derivation step
+                            if (!implHyp.hasPrefix()) {
+                                // The precondition has simple f(A) /\ f(B) form
+                                if (info.hasImplPrefix()) {
+                                    // The target derivation step has
+                                    // ph->f(g(A,B))
+                                    // form
+                                    final ProofStepStmt r = implInfo
+                                        .applyImplicationRule(info,
+                                            implHyp.step, implRes, assrt);
+                                    implInfo.finishStubRule(info, r);
+                                    return new GenProofStepStmt(info.derivStep,
+                                        null);
+                                }
+                                else {
+                                    // And target derivation step has simple
+                                    // f(g(A,B)) form
+                                    implInfo.finishWithImplication(info,
+                                        implHyp.step, implRes, assrt);
+                                    return new GenProofStepStmt(info.derivStep,
+                                        null);
+                                }
+                            }
+                            else {
+                                // The precondition has implication
+                                // ph->(f(A)/\f(B))
+                                // form and the target derivation step has
+                                // ph->f(g(A,B)) form.
+                                implInfo.finishTransitiveRule(info,
+                                    implHyp.step, implRes, assrt);
+                                return new GenProofStepStmt(info.derivStep,
+                                    implHyp.prefix);
+                            }
                         }
                     }
-                }
-            };
-            final GenProofStepStmt res = closureVisitorEntrance(info, template,
-                node, visitor, searchWithPrefix);
+                };
+                final GenProofStepStmt res = closureVisitorEntrance(info,
+                    template, node, visitor, searchWithPrefix);
 
-            assert res != null;
-            return res;
-        }
-        else {
-            // We should not be here if we doesn't support constant property
-            // auto completion
-            assert supportConstants;
-
-            // So it should be constant
-            assert TrUtil.isConstNode(node) : "(-" + startCounter + ","
-                + debugCounter + "-)";
-
-            // TODO: DEBUG IT!!!!
-
-            final Map<ParseNodeHashElem, Assrt> cMap = constInfo.get(template);
-
-            assert cMap != null;
-
-            final Assrt assrt = cMap.get(new ParseNodeHashElem(node));
-
-            assert assrt != null;
-
-            final ParseNode root = assrt.getExprParseTree().getRoot();
-
-            final ProofStepStmt res = info.getOrCreateProofStepStmt(root,
-                new ProofStepStmt[]{}, assrt);
-
-            assert res != null;
-            return new GenProofStepStmt(res, null);
+                assert res != null;
+                return res;
+            }
+            case NO_CLOSURE_RULE:
+                throw new IllegalStateException(
+                    "Unchecked call of this function");
+            default:
+                throw new IllegalStateException("Unknown constant: " + clRes);
         }
     }
 
@@ -735,8 +749,8 @@ public class ClosureInfo extends DBInfo {
                         final ParseNode child = node.getChild()[n];
                         assert child != null;
 
-                        if (!hasClosureProperty(info, child, template,
-                            searchWithPrefix))
+                        if (!getClosurePossibility(info, child, template,
+                            searchWithPrefix).hasClosure())
                             return null;
 
                         final GenProofStepStmt childRes = closurePropertyCommon(
@@ -760,79 +774,133 @@ public class ClosureInfo extends DBInfo {
     }
 
     // -------------
+    public static enum ClosureResult {
+        NO_CLOSURE_RULE {
+            @Override
+            boolean hasClosure() {
+                return false;
+            }
 
-    private boolean hasClosurePropertyInternal(final WorksheetInfo info,
-        final ParseNode node, final PropertyTemplate template,
-        final ClosureComplexRuleMap map, final boolean searchWithPrefix)
+            @Override
+            int num() {
+                return 1;
+            }
+        },
+        USED_PREFIX_RULE {
+            @Override
+            boolean hasClosure() {
+                return true;
+            }
+
+            @Override
+            int num() {
+                return 2;
+            }
+        },
+        SIMPLE_RULE {
+            @Override
+            boolean hasClosure() {
+                return true;
+            }
+
+            @Override
+            int num() {
+                return 3;
+            }
+        },
+        CONSTANT_RULE {
+            @Override
+            boolean hasClosure() {
+                return true;
+            }
+
+            @Override
+            int num() {
+                return 4;
+            }
+        };
+
+        boolean hasClosure() {
+            return false;
+        }
+
+        int num() {
+            return 0;
+        }
+    }
+
+    static public ClosureResult mergeSearchResults(final ClosureResult r1,
+        final ClosureResult r2)
     {
-        final Boolean res = map.visitGenStmts(node, info,
-            new ComplexRuleVisitor<Assrt, Boolean>() {
-                public Boolean visit(final ParseNode node,
+        if (r1.num() < r2.num())
+            return r1;
+        else
+            return r2;
+    }
+
+    private ClosureResult getClosurePossibilityInternal(
+        final WorksheetInfo info, final ParseNode node,
+        final PropertyTemplate template, final ClosureComplexRuleMap map,
+        final boolean searchWithPrefix)
+    {
+        final ClosureResult res = map.visitGenStmts(node, info,
+            new ComplexRuleVisitor<Assrt, ClosureResult>() {
+                public ClosureResult visit(final ParseNode node,
                     final WorksheetInfo info, final ConstSubst constSubst,
                     final int[] varIndexes,
                     final Map<PropertyTemplate, Assrt> propertyMap)
                 {
                     if (!propertyMap.containsKey(template))
-                        return false;
+                        return ClosureResult.NO_CLOSURE_RULE;
 
                     final int prevDbg = debugCounter;
 
                     if (prevDbg == 7)
                         toString();
 
+                    ClosureResult childResMerge = ClosureResult.SIMPLE_RULE;
                     for (int i = 0; i < node.getChild().length; i++)
                         if (constSubst.constMap[i] == null) {
                             debugCounter++;
                             // Variable position
                             final ParseNode child = node.getChild()[i];
-                            if (!hasClosureProperty(info, child, template,
-                                searchWithPrefix))
-                                return false;
+                            final ClosureResult propRes = getClosurePossibility(
+                                info, child, template, searchWithPrefix);
+                            if (!propRes.hasClosure())
+                                return ClosureResult.NO_CLOSURE_RULE;
+                            childResMerge = mergeSearchResults(childResMerge,
+                                propRes);
                         }
                     debugCounter++;
 
                     output
                         .dbgMessage(
                             dbg,
-                            "I-TR-DBG (-%d, %d-) Closure property confirmed (map %s): node %s has property %s, assertion %s",
+                            "I-TR-DBG (-%d, %d-) Closure property confirmed"
+                                + "(map %s): node %s has property %s, assertion %s",
                             prevDbg, debugCounter,
                             map == closureRuleMap ? "simple" : "implication",
                             info.trManager.getFormula(node), template,
                             propertyMap.get(template));
 
-                    return true;
+                    return childResMerge;
                 }
 
-                public Boolean failValue() {
-                    return false;
+                public ClosureResult failValue() {
+                    return ClosureResult.NO_CLOSURE_RULE;
                 }
             });
         return res;
     }
 
-    public boolean hasClosureProperty(final WorksheetInfo info,
+    public ClosureResult getClosurePossibility(final WorksheetInfo info,
         final ParseNode node, final PropertyTemplate template,
         final boolean searchWithPrefix)
     {
         final ParseNode substProp = template.subst(node);
         final ProofStepStmt stmt = info.getProofStepStmt(substProp);
         if (stmt != null)
-            return true;
-
-        if (searchWithPrefix && info.hasImplPrefix()) {
-            final ParseNode implForm = info.applyImplPrefix(substProp);
-            final ProofStepStmt stmtWithImpl = info.getProofStepStmt(implForm);
-            if (stmtWithImpl != null)
-                return true;
-        }
-
-        if (hasClosurePropertyInternal(info, node, template,
-            implClosureRuleMap, searchWithPrefix))
-            return true;
-
-        if (hasClosurePropertyInternal(info, node, template, closureRuleMap,
-            false))
-            return true;
+            return ClosureResult.SIMPLE_RULE;
 
         if (supportConstants)
             if (TrUtil.isConstNode(node)) {
@@ -840,12 +908,30 @@ public class ClosureInfo extends DBInfo {
                     .get(template);
                 if (cMap != null
                     && cMap.containsKey(new ParseNodeHashElem(node)))
-                    return true;
+                    return ClosureResult.CONSTANT_RULE;
             }
 
-        return false;
-    }
+        final ClosureResult simple = getClosurePossibilityInternal(info, node,
+            template, closureRuleMap, false);
+        assert simple == ClosureResult.SIMPLE_RULE
+            || simple == ClosureResult.NO_CLOSURE_RULE;
+        if (simple.hasClosure())
+            return simple;
 
+        final ClosureResult implRes = getClosurePossibilityInternal(info, node,
+            template, implClosureRuleMap, searchWithPrefix);
+        if (implRes.hasClosure())
+            return implRes;
+
+        if (searchWithPrefix && info.hasImplPrefix()) {
+            final ParseNode implForm = info.applyImplPrefix(substProp);
+            final ProofStepStmt stmtWithImpl = info.getProofStepStmt(implForm);
+            if (stmtWithImpl != null)
+                return ClosureResult.USED_PREFIX_RULE;
+        }
+
+        return ClosureResult.NO_CLOSURE_RULE;
+    }
     // ------------------------------------------------------------------------
     // ---------------------------Transformations------------------------------
     // ------------------------------------------------------------------------
@@ -858,7 +944,8 @@ public class ClosureInfo extends DBInfo {
             final ParseNode core = template.extractNode(input);
             if (core == null)
                 continue;
-            if (hasClosureProperty(info, core, template, true)) {
+            if (getClosurePossibility(info, core, template, true).hasClosure())
+            {
                 closurePropertyCommon(info, template, core, true, true);
                 return true;
             }
@@ -872,11 +959,15 @@ public class ClosureInfo extends DBInfo {
         if (performClosureTransformationInternal(info, root))
             return true;
 
-        final ParseNode core = implInfo.extractPrefixAndGetImplPart(info);
+        final ExtractImplResult extrImplRes = implInfo
+            .extractPrefixAndGetImplPart(info);
 
-        if (core != null)
-            if (performClosureTransformationInternal(info, core))
+        if (extrImplRes != null) {
+            info.setImplicationPrefix(extrImplRes.implPrefix,
+                extrImplRes.implStatement);
+            if (performClosureTransformationInternal(info, extrImplRes.core))
                 return true;
+        }
 
         return false;
     }

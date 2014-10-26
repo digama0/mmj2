@@ -249,8 +249,8 @@ public class AssociativeInfo extends DBInfo {
                     && isAssociativeWithProp(child, template, constSubst, info))
                     continue;
 
-                if (!info.trManager.clInfo.hasClosureProperty(info, child,
-                    template, true))
+                if (!info.trManager.clInfo.getClosurePossibility(info, child,
+                    template, true).hasClosure())
                     return false;
             }
             else if (!constSubst.constMap[i].isDeepDup(child)) // check constant
