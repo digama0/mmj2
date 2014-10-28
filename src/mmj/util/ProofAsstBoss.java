@@ -81,6 +81,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 
 import mmj.lang.*;
 import mmj.mmio.MMIOException;
+import mmj.oth.ArtReader;
 import mmj.pa.*;
 import mmj.tl.TheoremLoader;
 import mmj.verify.*;
@@ -1755,18 +1756,20 @@ public class ProofAsstBoss extends Boss {
             }
             else if (runParm.values[i].matches("[0-9]+"))
                 thms[i - 1] = Integer.valueOf(runParm.values[i]);
-        Arrays.sort(thms);
+        if (thms != null)
+            Arrays.sort(thms);
         try {
-            new mmj.oth.Reader(runParm.values[0], thms,
-                proofAsst.getLogicalSystem());
+            new ArtReader(runParm.values[0], thms, proofAsst,
+                batchFramework.workVarBoss.getWorkVarManager());
         } catch (final FileNotFoundException e) {
             throw new IllegalArgumentException(
                 UtilConstants.ERRMSG_FILE_NOTFND_1 + runParm.name
                     + UtilConstants.ERRMSG_FILE_NOTFND_2 + runParm.values[0]
                     + UtilConstants.ERRMSG_FILE_NOTFND_3);
+        } catch (final LangException e) {
+            e.printStackTrace();
         }
     }
-
     private PreprocessRequest editPreprocessRequestOption(final String s,
         final String valueCaption) throws IllegalArgumentException
     {

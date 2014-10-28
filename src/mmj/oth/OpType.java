@@ -2,17 +2,30 @@ package mmj.oth;
 
 import java.util.*;
 
-public class OpType implements Type {
-    List<Type> args;
-    TypeOp op;
+import mmj.lang.Cnst;
+import mmj.lang.ParseNode;
 
-    public OpType(final List<Type> args, final TypeOp op) {
-        this.args = args;
-        this.op = op;
+public class OpType extends Type {
+    private List<Type> args;
+    private TypeOp op;
+
+    private OpType() {}
+    public static OpType get(final List<Type> args, final TypeOp op) {
+        final OpType o = new OpType();
+        o.args = args;
+        o.op = op;
+        return Type.pool.intern(o).asOp();
+    }
+
+    public List<Type> getArgs() {
+        return args;
+    }
+    public TypeOp getOp() {
+        return op;
     }
 
     public static OpType to(final Type a, final Type b) {
-        return new OpType(Arrays.asList(a, b), Reader.FUN);
+        return get(Arrays.asList(a, b), ArtReader.FUN);
     }
 
     @Override
@@ -24,6 +37,7 @@ public class OpType implements Type {
         return op.toString() + args;
     }
 
+    @Override
     public Set<VarType> getTypeVars() {
         final Set<VarType> s = new HashSet<VarType>();
         for (final Type t : args)
@@ -37,10 +51,25 @@ public class OpType implements Type {
             && op.equals(((OpType)obj).op);
     }
 
+    @Override
     public Type subst(final List<List<List<Object>>> subst) {
         final List<Type> l = new ArrayList<Type>();
         for (final Type ty : args)
             l.add(ty.subst(subst));
-        return new OpType(l, op);
+        return get(l, op);
+    }
+
+    @Override
+    protected ParseNode generateTypeProof(final Interpreter i) {
+        final String name = OTConstants.mapConstants(op.n);
+        final Cnst c = i.getConstant(name);
+        if (c != null) {
+            final ParseNode[] child = new ParseNode[args.size()];
+            int j = 0;
+            for (final Type t : args)
+                child[j++] = t.getTypeProof(i);
+            return i.c(i.getTypeTerm(c), child);
+        }
+        throw new UnsupportedOperationException();
     }
 }

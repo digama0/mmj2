@@ -137,6 +137,34 @@ public abstract class Assrt extends Stmt {
     }
 
     /**
+     * Construct using a boatload of parameters.
+     * 
+     * @param seq MObj.seq number
+     * @param scopeDefList the Scope list
+     * @param symTbl Symbol Table (Map)
+     * @param stmtTbl Statement Table (Map)
+     * @param labelS Label String identifying the Assrt
+     * @param symList Formula's Expression (2nd thru nth syms)
+     * @throws LangException variety of errors :)
+     */
+    public Assrt(final int seq, final List<ScopeDef> scopeDefList,
+        final Map<String, Sym> symTbl, final Map<String, Stmt> stmtTbl,
+        final String labelS, final Sym[] symList) throws LangException
+    {
+        super(seq, symTbl, stmtTbl, labelS);
+
+        final List<Hyp> exprHypList = new ArrayList<Hyp>();
+        formula = new LogicFormula(symList.length, symList);
+        ((LogicFormula)formula).verifyExprSymsDefAndActive(exprHypList);
+
+        varHypArray = exprHypList.toArray(new VarHyp[exprHypList.size()]);
+
+        mandFrame = buildMandFrame(scopeDefList, exprHypList);
+
+        loadLogHypArray();
+    }
+
+    /**
      * Return the *mandatory* varHypArray.
      * <p>
      * Note: the "varHypArray" contains only *mandatory* VarHyp's, hence the

@@ -212,6 +212,14 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         return proofAsstGUI;
     }
 
+    public VerifyProofs getVerifyProofs() {
+        return verifyProofs;
+    }
+
+    public Grammar getGrammar() {
+        return grammar;
+    }
+
     public List<Assrt> sortAssrtListForSearch(final List<Assrt> list) {
         final List<Assrt> sorted = new ArrayList<Assrt>(list);
         Collections.sort(sorted, Assrt.NBR_LOG_HYP_SEQ);

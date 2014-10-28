@@ -43,4 +43,11 @@ public class Name {
     public String toString() {
         return s;
     }
+
+    public String fullName() {
+        String str = "";
+        for (final String n : ns)
+            str += n + ".";
+        return str + s;
+    }
 }

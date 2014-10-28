@@ -2,11 +2,17 @@ package mmj.oth;
 
 import java.util.*;
 
-public class VarTerm extends Term {
-    Var v;
+import mmj.lang.ParseNode;
+import mmj.lang.Stmt;
 
-    public VarTerm(final Var v) {
-        this.v = v;
+public class VarTerm extends Term {
+    private Var v;
+
+    private VarTerm() {}
+    public static VarTerm get(final Var v) {
+        final VarTerm t = new VarTerm();
+        t.v = v;
+        return Term.pool.intern(t).asVar();
     }
 
     @Override
@@ -42,7 +48,7 @@ public class VarTerm extends Term {
         for (final List<Object> pr : subst.get(1))
             if (v2.equals(pr.get(0)))
                 return (Term)pr.get(1);
-        return new VarTerm(v2);
+        return VarTerm.get(v2);
     }
 
     @Override
@@ -53,7 +59,17 @@ public class VarTerm extends Term {
     }
 
     @Override
-    Term substPlain(final Map<Var, Var> subst) {
-        return new VarTerm(v.subst(subst));
+    public Term substPlain(final Map<Var, Var> subst) {
+        return VarTerm.get(v.subst(subst));
+    }
+    @Override
+    protected void generateTypeProof(final Interpreter i) {
+        final ParseNode tp = v.t.getTypeProof(i);
+        Stmt s = i.getTermVar(OTConstants.mapTermVar(v.n, false));
+        if (!s.getTyp().getId().equals(OTConstants.HOL_VAR_CNST))
+            s = i.getTermVar(OTConstants.mapTermVar(v.n, true));
+        final ParseNode vp = i.c(s);
+        termProof = i.c(OTConstants.HOL_VAR_TERM, tp, vp);
+        typeProof = i.c(OTConstants.HOL_VAR_TYPE, tp, vp);
     }
 }

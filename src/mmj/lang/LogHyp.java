@@ -89,6 +89,32 @@ public class LogHyp extends Hyp {
     }
 
     /**
+     * Construct LogHyp using pre-built Sym array.
+     * 
+     * @param seq MObj.seq number
+     * @param symTbl Symbol Table (Map)
+     * @param stmtTbl Statement Table (Map)
+     * @param symList list of Syms comprising Expression
+     * @param labelS Statement label String.
+     * @throws LangException if duplicate, etc.
+     */
+    public LogHyp(final int seq, final Map<String, Sym> symTbl,
+        final Map<String, Stmt> stmtTbl, final Sym[] symList,
+        final String labelS) throws LangException
+    {
+        super(seq, symTbl, stmtTbl, labelS, true); // true = "active"
+
+        final List<Hyp> exprHypList = new ArrayList<Hyp>();
+
+        formula = new LogicFormula(symList.length, symList);
+
+        varHypArray = new VarHyp[exprHypList.size()];
+        for (int i = 0; i < varHypArray.length; i++)
+            varHypArray[i] = (VarHyp)exprHypList.get(i);
+
+    }
+
+    /**
      * Construct temp LogHyp using precomputed values and doing no validation.
      * 
      * @param tempLogHypSeq MObj.seq

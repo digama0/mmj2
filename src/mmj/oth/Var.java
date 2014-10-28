@@ -2,6 +2,9 @@ package mmj.oth;
 
 import java.util.Map;
 
+import mmj.lang.ParseNode;
+import mmj.lang.VarHyp;
+
 public class Var {
     Name n;
     Type t;
@@ -29,5 +32,12 @@ public class Var {
     @Override
     public String toString() {
         return n.toString();
+    }
+
+    public static Var createFromVarHyp(final Interpreter i, final VarHyp v,
+        final ParseNode type)
+    {
+        return new Var(Type.createFromParseNode(i, type),
+            OTConstants.mapTypeVar(v.getVar().getId()));
     }
 }

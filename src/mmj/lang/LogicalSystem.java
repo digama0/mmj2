@@ -53,6 +53,7 @@ package mmj.lang;
 import java.util.*;
 
 import mmj.gmff.GMFFManager;
+import mmj.lang.ParseTree.RPNStep;
 import mmj.mmio.BlockList;
 import mmj.tl.*;
 
@@ -340,6 +341,31 @@ public class LogicalSystem implements SystemLoader {
 
         return djVars;
     }
+    /**
+     * Add DjVars (Disjoint Variables Restriction) to Logical System. See also
+     * {@link #addDjVars(String, String)}.
+     * 
+     * @param djVar1 disjoint variable 1
+     * @param djVar2 disjoint variable 2
+     * @return DjVars (pair) added to LogicalSystem.within the current scope,
+     *         *or* the existing DjVars object in the current scope.
+     * @throws LangException if duplicate vars, etc. (see
+     *             {@code mmj.lang.LangConstants.java})
+     */
+    public DjVars addDjVars(final Var djVar1, final Var djVar2)
+        throws LangException
+    {
+
+        DjVars djVars = new DjVars(djVar1, djVar2);
+
+        final int i = currScopeDef.scopeDjVars.indexOf(djVars);
+        if (i == -1)
+            currScopeDef.scopeDjVars.add(djVars);
+        else
+            djVars = currScopeDef.scopeDjVars.get(i);
+
+        return djVars;
+    }
 
     /**
      * Add LogHyp (Logical Hypothesis) to Logical System.
@@ -383,6 +409,60 @@ public class LogicalSystem implements SystemLoader {
 
         final LogHyp logHyp = new LogHyp(seqAssigner.nextSeq(), symTbl,
             stmtTbl, symList, labelS, typS);
+
+        final Stmt existingStmt = stmtTbl.put(labelS, logHyp);
+
+        dupCheckStmtAdd(existingStmt);
+
+        currScopeDef.scopeLogHyp.add(logHyp);
+
+        bookManager.assignChapterSectionNbrs(logHyp);
+
+        return logHyp;
+
+    }
+
+    /**
+     * Add LogHyp (Logical Hypothesis) to Logical System.
+     * <p>
+     * Basically a clone of {@code addAxiom} below, except that:
+     * <p>
+     * <ul>
+     * <li>there is no Frame for a logical hypothesis
+     * <li><code>LogHyp is a {@code Hyp}, not an
+     *         {@code Assrt} and has
+     *         attribute {@code "VarHyp[] varHypArray}.
+     * </ul>
+     * <p>
+     * Required processing:
+     * <p>
+     * 1) validates input label, type and expression symbols, and in the process
+     * obtaining references to their existing definitions in LogicalSystem:
+     * <p>
+     * <ul>
+     * <li>must be active in scope
+     * <li>not be a duplicate
+     * <li>active VarHyp must exist for each Var.
+     * </ul>
+     * <p>
+     * 2) construct the LogHyp object
+     * <p>
+     * 3) add it to the stmtTbl and to the existing scope.
+     * <p>
+     * 4) return it to the caller
+     * 
+     * @param labelS logical hypothesis label string
+     * @param symList list containing expression symbol strings (zero or more
+     *            symbols).
+     * @return LogHyp newly constructed LogHyp added to LogicalSystem.
+     * @throws LangException if duplicate label, undefined vars, etc.
+     */
+    public LogHyp addLogHyp(final String labelS, final Sym[] symList)
+        throws LangException
+    {
+
+        final LogHyp logHyp = new LogHyp(seqAssigner.nextSeq(), symTbl,
+            stmtTbl, symList, labelS);
 
         final Stmt existingStmt = stmtTbl.put(labelS, logHyp);
 
@@ -469,6 +549,32 @@ public class LogicalSystem implements SystemLoader {
     }
 
     /**
+     * Add Axiom to Logical System. See also
+     * {@link #addAxiom(String, String, List)}.
+     * 
+     * @param labelS axiom label string
+     * @param symList list containing axiom expression sym objects (one or more
+     *            symbols).
+     * @return Axiom newly constructed Axiom added to LogicalSystem.
+     * @throws LangException if duplicate label, undefined vars, etc.
+     */
+    public Axiom addAxiom(final String labelS, final Sym[] symList)
+        throws LangException
+    {
+
+        final Axiom axiom = new Axiom(seqAssigner.nextSeq(), scopeDefList,
+            symTbl, stmtTbl, labelS, symList);
+
+        final Stmt existingStmt = stmtTbl.put(labelS, axiom);
+
+        dupCheckStmtAdd(existingStmt);
+
+        bookManager.assignChapterSectionNbrs(axiom);
+
+        return axiom;
+    }
+
+    /**
      * Add Theorem to Logical System.
      * <p>
      * addTheorem is basically a clone of addAxiom except that it builds an
@@ -515,6 +621,36 @@ public class LogicalSystem implements SystemLoader {
         final Theorem theorem = new Theorem(seqAssigner.nextSeq(),
             scopeDefList, symTbl, stmtTbl, labelS, column, typS, symList,
             proofList, messages);
+
+        final Stmt existingStmt = stmtTbl.put(labelS, theorem);
+
+        dupCheckStmtAdd(existingStmt);
+
+        bookManager.assignChapterSectionNbrs(theorem);
+
+        return theorem;
+    }
+
+    /**
+     * Add Theorem to Logical System. See also
+     * {@link #addTheorem(String, int, String, List, List, Messages)}.
+     * 
+     * @param labelS axiom label string
+     * @param column the column at which the "$p" line starts
+     * @param symList array containing axiom expression.
+     * @param proofList array containing RPN proof.
+     * @param messages for error reporting
+     * @return Theorem newly constructed Theorem added to LogicalSystem.
+     * @throws LangException if duplicate label, undefined vars, etc.
+     */
+    public Theorem addTheorem(final String labelS, final int column,
+        final Sym[] symList, final RPNStep[] proofList, final Messages messages)
+        throws LangException
+    {
+
+        final Theorem theorem = new Theorem(seqAssigner.nextSeq(),
+            scopeDefList, symTbl, stmtTbl, labelS, column, symList, proofList,
+            messages);
 
         final Stmt existingStmt = stmtTbl.put(labelS, theorem);
 

@@ -223,11 +223,11 @@ public class EarleyParser implements GrammaticalParser {
      * @param formulaTypIn Cnst Type Code of the Formula to be parsed.
      * @param parseNodeHolderExprIn Formula's Expression, preloaded into a
      *            ParseNodeHolder[] (see
-     *            Formula(dot)getParseNodeHolderExpr(mandVarHypArray).
+     *            {@link Formula#getParseNodeHolderExpr(VarHyp[])}.
      * @param highestSeqIn restricts the parse to statements with a sequence
      *            number less than or equal to highestSeq. Set this to
-     *            Integer(dot)MAX_VALUE to enable grammatical parsing using all
-     *            available rules.
+     *            {@link Integer#MAX_VALUE} to enable grammatical parsing using
+     *            all available rules.
      * @return int specifies the number of ParseTree objects stored into
      *         parseTreeArray; a number greater than 1 indicates grammatical
      *         ambiguity, by definition, since there is more than one way to

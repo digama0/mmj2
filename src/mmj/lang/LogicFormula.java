@@ -83,23 +83,53 @@ public class LogicFormula extends Formula {
         final List<String> symList, final List<Hyp> hypList)
         throws LangException
     {
-        for (final String symS : symList) {
-            sym[cnt] = symTbl.get(symS);
-            if (sym[cnt] == null)
+        for (final String symS : symList)
+            sym[cnt++] = symTbl.get(symS);
+        verifyExprSymsDefAndActive(hypList);
+    }
+
+    /**
+     * Verifies that each Sym id in Expression is active and accumulates the
+     * matching VarHyp's in the input exprHypList param.
+     * <p>
+     * <ol>
+     * <li>verify that each symbol string in an expression is defined and
+     * active, and that each referenced variable is defined by an active
+     * variable hypothesis (in scope). NOTE: this routine is not used for
+     * disjoint variables because they do not have "expressions" as such, and
+     * also, they may not have active variable hypotheses.
+     * <li>build a Sym[] as the symbol strings are scanned, thus converting the
+     * source strings to unique object references.
+     * <li>while building Sym[], build the set of variable hypotheses for the
+     * variables in the expression, and store them in the input hypList.
+     * 
+     * @param sym expression's symbols
+     * @param hypList List of Hyp's. Is updated with unique variable hypotheses
+     *            in the expression. Because the list is maintained in database
+     *            statement sequence order, hypList should either be empty (new)
+     *            before the call, or already be in that order (see
+     *            {@code accumHypInList}.
+     * @throws LangException if duplicate symbol, etc. (see
+     *             {@code mmj.lang.LangConstants.java})
+     */
+    public void verifyExprSymsDefAndActive(final List<Hyp> hypList)
+        throws LangException
+    {
+        for (final Sym s : sym) {
+            if (s == null)
                 throw new LangException(LangConstants.ERRMSG_EXPR_SYM_NOT_DEF,
-                    symS);
-            if (!sym[cnt].isActive())
+                    s);
+            if (!s.isActive())
                 throw new LangException(
-                    LangConstants.ERRMSG_EXPR_SYM_NOT_ACTIVE, symS);
-            if (sym[cnt] instanceof Var) {
-                final VarHyp varHyp = ((Var)sym[cnt]).getActiveVarHyp();
+                    LangConstants.ERRMSG_EXPR_SYM_NOT_ACTIVE, s);
+            if (s instanceof Var) {
+                final VarHyp varHyp = ((Var)s).getActiveVarHyp();
                 if (varHyp == null)
                     throw new LangException(
-                        LangConstants.ERRMSG_EXPR_VAR_W_O_ACTIVE_VAR_HYP, symS);
+                        LangConstants.ERRMSG_EXPR_VAR_W_O_ACTIVE_VAR_HYP, s);
                 // add varHyp to mandatory hypotheses in hypList
                 Formula.accumHypInList(hypList, varHyp);
             }
-            cnt++;
         }
     }
 

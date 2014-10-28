@@ -2,13 +2,18 @@ package mmj.oth;
 
 import java.util.*;
 
-public class AbsTerm extends Term {
-    Var x;
-    Term b;
+import mmj.lang.ParseNode;
 
-    public AbsTerm(final Var x, final Term b) {
-        this.x = x;
-        this.b = b;
+public class AbsTerm extends Term {
+    private Var x;
+    private Term b;
+
+    private AbsTerm() {}
+    public static AbsTerm get(final Var x, final Term b) {
+        final AbsTerm t = new AbsTerm();
+        t.x = x;
+        t.b = b;
+        return Term.pool.intern(t).asAbs();
     }
 
     @Override
@@ -16,10 +21,17 @@ public class AbsTerm extends Term {
         return "\\" + x + ". " + b;
     }
 
+    public Var getVar() {
+        return x;
+    }
+    public Term getB() {
+        return b;
+    }
+
     @Override
     public boolean strictEquals(final Term obj) {
-        return obj instanceof AbsTerm && x.equals(((AbsTerm)obj).x)
-            && b.strictEquals(((AbsTerm)obj).b);
+        return obj instanceof AbsTerm && x.equals(obj.asAbs().x)
+            && b.strictEquals(obj.asAbs().b);
     }
 
     @Override
@@ -51,15 +63,15 @@ public class AbsTerm extends Term {
             {
                 final Var dummy = new Var(x2.t, Name.dummy());
                 final List subst2 = Arrays.asList(Collections.EMPTY_LIST,
-                    Arrays.asList(Arrays.asList(x2, new VarTerm(dummy))));
-                return new AbsTerm(dummy, b.subst(subst2).subst(subst));
+                    Arrays.asList(Arrays.asList(x2, VarTerm.get(dummy))));
+                return AbsTerm.get(dummy, b.subst(subst2).subst(subst));
             }
-        return new AbsTerm(x2, b.subst(subst));
+        return AbsTerm.get(x2, b.subst(subst));
     }
 
     @Override
-    Term substPlain(final Map<Var, Var> subst) {
-        return new AbsTerm(x.subst(subst), b.substPlain(subst));
+    public Term substPlain(final Map<Var, Var> subst) {
+        return get(x.subst(subst), b.substPlain(subst));
     }
 
     @Override
@@ -74,6 +86,16 @@ public class AbsTerm extends Term {
         else
             subst.put(x, old);
         return ae;
+    }
+
+    @Override
+    protected void generateTypeProof(final Interpreter i) {
+        final ParseNode xp = x.t.getTypeProof(i);
+        final ParseNode v = i.c(i.getTermVar(x.n.s));
+        final ParseNode bp = b.getTermProof(i);
+        termProof = i.c(OTConstants.HOL_ABS_TERM, xp, v, bp);
+        typeProof = i.c(OTConstants.HOL_ABS_TYPE, xp,
+            b.getType().getTypeProof(i), v, bp, b.getTypeProof(i));
     }
 
 }

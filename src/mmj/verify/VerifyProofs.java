@@ -228,6 +228,19 @@ public class VerifyProofs implements ProofVerifier {
      * @return String error message if error(s), or null.
      */
     public String verifyOneProof(final Theorem theorem) {
+        return verifyOneProof(theorem, null);
+    }
+
+    /**
+     * Verify a single proof.
+     * 
+     * @param theorem Theorem object reference.
+     * @param softDjVarsErrorList the collected list of soft DJ vars errors
+     * @return String error message if error(s), or null.
+     */
+    public String verifyOneProof(final Theorem theorem,
+        final List<DjVars> softDjVarsErrorList)
+    {
 
         String errMsg = null;
         boolean needToRetry = true;
@@ -238,8 +251,8 @@ public class VerifyProofs implements ProofVerifier {
                 try {
                     errMsg = null;
                     loadTheoremGlobalVerifyVars(theorem);
-                    proofDjVarsSoftErrorsIgnore = false;
-                    proofSoftDjVarsErrorList = null;
+                    proofDjVarsSoftErrorsIgnore = softDjVarsErrorList != null;
+                    proofSoftDjVarsErrorList = softDjVarsErrorList;
 
                     verifyProof();
                     needToRetry = false;
@@ -248,9 +261,11 @@ public class VerifyProofs implements ProofVerifier {
                     reInitArrays(retryCnt);
                 } catch (final VerifyException e) {
                     needToRetry = false;
+                    e.printStackTrace();
                     errMsg = e.getMessage();
                 }
         } catch (final VerifyException e) {
+            e.printStackTrace();
             errMsg = e.getMessage();
         }
 
@@ -1258,6 +1273,7 @@ public class VerifyProofs implements ProofVerifier {
                     reInitArrays(retryCnt);
                 } catch (final VerifyException e) {
                     needToRetry = false;
+                    e.printStackTrace();
                     errMsg = e.getMessage();
                 }
         } catch (final VerifyException e) {

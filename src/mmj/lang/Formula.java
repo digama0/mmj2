@@ -703,4 +703,8 @@ public class Formula {
             }
         return max;
     }
+
+    public ParseNode getProof() {
+        return null;
+    }
 }

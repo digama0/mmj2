@@ -1,10 +1,52 @@
 package mmj.oth;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-public interface Type {
-    Set<VarType> getTypeVars();
+import mmj.lang.ParseNode;
+import mmj.lang.VarHyp;
+import mmj.util.InternPool;
 
-    Type subst(List<List<List<Object>>> subst);
+public abstract class Type {
+    protected static InternPool<Type> pool = new InternPool<Type>();
+
+    public OpType asOp() {
+        return (OpType)this;
+    }
+    public VarType asConst() {
+        return (VarType)this;
+    }
+    public VarType asVar() {
+        return (VarType)this;
+    }
+
+    public abstract Set<VarType> getTypeVars();
+
+    private ParseNode proof = null;
+
+    public ParseNode getTypeProof(final Interpreter i) {
+        return proof == null ? proof = generateTypeProof(i) : proof;
+    }
+    protected abstract ParseNode generateTypeProof(final Interpreter i);
+
+    public abstract Type subst(List<List<List<Object>>> subst);
+    public static Type createFromParseNode(final Interpreter i,
+        final ParseNode type)
+    {
+        if (type == null)
+            throw new UnsupportedOperationException("Type inference failed");
+        if (type.stmt.getLabel().equals(OTConstants.HOL_FUN_TYPE))
+            return OpType.get(Arrays.asList(
+                createFromParseNode(i, type.child[0]),
+                createFromParseNode(i, type.child[1])),
+                new TypeOp(OTConstants.mapTypeVar(OTConstants.FUN)));
+        if (type.stmt instanceof VarHyp)
+            return VarType.get(OTConstants.mapTypeVar(((VarHyp)type.stmt)
+                .getVar().getId()));
+        if (type.stmt.getFormula().getCnt() == 2)
+            return OpType.get(
+                Collections.<Type> emptyList(),
+                new TypeOp(OTConstants.mapTypeVar(type.stmt.getFormula()
+                    .getSym()[1].getId())));
+        throw new UnsupportedOperationException("Unknown type constructor");
+    }
 }

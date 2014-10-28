@@ -63,13 +63,26 @@ public class GeneratedProofStmt extends ProofWorkStmt {
      */
     public GeneratedProofStmt(final ProofWorksheet w, final RPNStep[] rpnProof)
     {
+        this(w, rpnProof, w.getRPNProofLeftCol(), w.proofAsstPreferences
+            .getRPNProofRightCol());
+    }
+
+    /**
+     * Constructor for GeneratedProofStmt using explicit left and right bounds.
+     * 
+     * @param w the owner ProofWorksheet
+     * @param rpnProof Proof Stmt Array in RPN format
+     * @param left the left column of the output
+     * @param right the right column of the output
+     */
+    public GeneratedProofStmt(final ProofWorksheet w, final RPNStep[] rpnProof,
+        final int left, final int right)
+    {
         super(w);
 
         lineCnt = 1;
 
         stmtText = new StringBuilder(rpnProof.length * 5); // 5=guess
-        final int left = w.getRPNProofLeftCol();
-        final int right = w.proofAsstPreferences.getRPNProofRightCol();
         final StringBuilder indentLeft = new StringBuilder(left - 1);
         for (int i = 1; i < left; i++)
             indentLeft.append(' ');
@@ -85,7 +98,8 @@ public class GeneratedProofStmt extends ProofWorkStmt {
         while (true) {
             if (ps < rpnProof.length) {
                 if (rpnProof[ps].backRef == 0)
-                    x = rpnProof[ps].stmt.getLabel();
+                    x = rpnProof[ps].stmt == null ? "?" : rpnProof[ps].stmt
+                        .getLabel();
                 else if (rpnProof[ps].backRef < 0)
                     x = -rpnProof[ps].backRef + ":"
                         + rpnProof[ps].stmt.getLabel();

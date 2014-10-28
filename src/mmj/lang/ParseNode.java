@@ -197,7 +197,7 @@ public class ParseNode {
      * here, set to 1000 in Proof Assistant. Hard to imagine exceeding the size
      * so we'll accept the possibility of array out-of-bounds exception and just
      * recompile if needed (for now... see
-     * mmj.pa.PaConstants.UNIFIER_NODE_STACK_SIZE ).
+     * {@link mmj.pa.PaConstants#UNIFIER_NODE_STACK_SIZE}).
      * 
      * @param subtreeRoot root of parse subtree to unify with this
      * @param varHypArray the VarHyp's in this subtree
@@ -519,8 +519,8 @@ public class ParseNode {
      *            substitutions.
      * @return new ParseNode.
      */
-    public ParseNode deepCloneApplyingAssrtSubst(final Hyp[] assrtHypArray,
-        final ParseNode[] assrtSubst)
+    public <T extends Hyp> ParseNode deepCloneApplyingAssrtSubst(
+        final T[] assrtHypArray, final ParseNode[] assrtSubst)
     {
         if (!(stmt instanceof VarHyp)) {
             final ParseNode out = new ParseNode(stmt);
@@ -883,16 +883,17 @@ public class ParseNode {
      * @param workVarList List of WorkVar objects in subtree.
      */
     public void accumSetOfWorkVarsUsed(final List<WorkVar> workVarList) {
-        if (stmt instanceof WorkVarHyp) {
-            final WorkVar v = ((WorkVarHyp)stmt).getWorkVar();
-            for (int i = 0; i < workVarList.size(); i++)
-                if (workVarList.get(i) == v)
-                    return;
-            workVarList.add(v);
-        }
-        else
-            for (final ParseNode element : child)
-                element.accumSetOfWorkVarsUsed(workVarList);
+        if (workVarList != null)
+            if (stmt instanceof WorkVarHyp) {
+                final WorkVar v = ((WorkVarHyp)stmt).getWorkVar();
+                for (int i = 0; i < workVarList.size(); i++)
+                    if (workVarList.get(i) == v)
+                        return;
+                workVarList.add(v);
+            }
+            else
+                for (final ParseNode element : child)
+                    element.accumSetOfWorkVarsUsed(workVarList);
     }
 
     /**
@@ -992,6 +993,30 @@ public class ParseNode {
             this.excludeVarHyps = excludeVarHyps;
             nodeStack = new Stack<ParseNode>();
             pushIfNotExcluded(parsenode1);
+        }
+    }
+
+    public static class DeepKey {
+        public ParseNode value;
+
+        public DeepKey(final ParseNode v) {
+            value = v;
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            return obj instanceof DeepKey
+                && value.isDeepDup(((DeepKey)obj).value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.deepHashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value.toString();
         }
     }
 

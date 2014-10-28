@@ -186,8 +186,8 @@ public class ParseTree {
      *            substitutions.
      * @return new ParseTree.
      */
-    public ParseTree deepCloneApplyingAssrtSubst(final Hyp[] assrtHypArray,
-        final ParseNode[] assrtSubst)
+    public <T extends Hyp> ParseTree deepCloneApplyingAssrtSubst(
+        final T[] assrtHypArray, final ParseNode[] assrtSubst)
     {
         return new ParseTree(root.deepCloneApplyingAssrtSubst(assrtHypArray,
             assrtSubst));

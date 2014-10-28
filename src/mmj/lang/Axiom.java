@@ -147,6 +147,26 @@ public class Axiom extends Assrt {
     }
 
     /**
+     * Construct using pre-built sym array.
+     * 
+     * @param seq MObj.seq sequence number
+     * @param scopeDefList Scope info in effect at the time
+     * @param symTbl Symbol Table (Map)
+     * @param stmtTbl Statement Table (Map)
+     * @param labelS Axiom label String
+     * @param symList Axiom Expression Sym List.
+     * @throws LangException if an error occurred
+     */
+    public Axiom(final int seq, final List<ScopeDef> scopeDefList,
+        final Map<String, Sym> symTbl, final Map<String, Stmt> stmtTbl,
+        final String labelS, final Sym[] symList) throws LangException
+    {
+        super(seq, scopeDefList, symTbl, stmtTbl, labelS, symList);
+
+        widthOfWidestExprCnst = formula.computeWidthOfWidestExprCnst();
+    }
+
+    /**
      * Return Axiom's syntaxAxiomVarHypReseq.
      * <p>
      * Array of indexes for resequencing a Syntax Axiom's VarHyp's from order of

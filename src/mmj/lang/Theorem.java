@@ -113,6 +113,36 @@ public class Theorem extends Assrt {
     }
 
     /**
+     * Construct Theorem with a pre-built proof array.
+     * 
+     * @param seq MObj.seq sequence number
+     * @param scopeDefList Scope info in effect at the time
+     * @param symTbl Symbol Table (Map)
+     * @param stmtTbl Statement Table (Map)
+     * @param labelS Theorem label String
+     * @param column Starting column
+     * @param symList Theorem Sym List (includes type code)
+     * @param rpnList Theorem Proof RPN List.
+     * @param messages for error reporting
+     * @throws LangException if an error occurred
+     * @see mmj.lang.Theorem#editProofListDefAndActive(Map stmtTbl, List
+     *      proofList)
+     */
+    public Theorem(final int seq, final List<ScopeDef> scopeDefList,
+        final Map<String, Sym> symTbl, final Map<String, Stmt> stmtTbl,
+        final String labelS, final int column, final Sym[] symList,
+        final RPNStep[] rpnList, final Messages messages) throws LangException
+    {
+        super(seq, scopeDefList, symTbl, stmtTbl, labelS, symList);
+
+        optFrame = buildOptFrame(scopeDefList);
+        this.column = column;
+
+        proof = rpnList;
+
+    }
+
+    /**
      * Construct Theorem using the entire enchilada from mmj.mmio.SrcStmt.java
      * including compressed proof blocks.
      * 
