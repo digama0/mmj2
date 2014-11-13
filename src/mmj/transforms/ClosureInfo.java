@@ -6,7 +6,6 @@ import mmj.lang.*;
 import mmj.pa.ProofStepStmt;
 import mmj.transforms.ComplexRuleMap.ComplexRuleVisitor;
 import mmj.transforms.ImplicationInfo.ExtractImplResult;
-import mmj.transforms.WorksheetInfo.GenProofStepStmt;
 
 public class ClosureInfo extends DBInfo {
 
@@ -501,20 +500,19 @@ public class ClosureInfo extends DBInfo {
      * recursively. For example, suppose we have |- A e. CC. The this function
      * for the input " _ e. CC" and "( sin ` A )" will find "|- A e. CC" and
      * then will generate "|- ( sin ` A ) e. CC"
+     * <p>
+     * TODO: remove this function
      *
      * @param info the work sheet info
      * @param template template (" _ e. CC" in the example)
      * @param node the input node ("( sin ` A )" in the example)
+     * @param finishStatement true if the result statement is a target statement
+     * @param searchWithPrefix true if we could search closure rules with
+     *            implication prefix
      * @return top-level closure statement ("|- ( sin ` A ) e. CC" in the
      *         example)
      */
-    public ProofStepStmt closureProperty(final WorksheetInfo info,
-        final PropertyTemplate template, final ParseNode node)
-    {
-        return closurePropertyCommon(info, template, node, false, true).step;
-    }
-
-    public GenProofStepStmt closurePropertyCommon(final WorksheetInfo info,
+    public GenProofStepStmt closureProperty(final WorksheetInfo info,
         final PropertyTemplate template, final ParseNode node,
         final boolean finishStatement, final boolean searchWithPrefix)
     {
@@ -556,8 +554,6 @@ public class ClosureInfo extends DBInfo {
                 assert TrUtil.isConstNode(node) : "(-" + startCounter + ","
                     + debugCounter + "-)";
 
-                // TODO: DEBUG IT!!!!
-
                 final Map<ParseNodeHashElem, Assrt> cMap = constInfo
                     .get(template);
 
@@ -586,12 +582,8 @@ public class ClosureInfo extends DBInfo {
                     public GenProofStepStmt createClosureStep(
                         final GenProofStepStmt[] genHyps, final Assrt assrt)
                     {
-                        final ProofStepStmt[] hyps = new ProofStepStmt[genHyps.length];
-
-                        for (int i = 0; i < genHyps.length; i++) {
-                            assert genHyps[i].prefix == null;
-                            hyps[i] = genHyps[i].step;
-                        }
+                        final ProofStepStmt[] hyps = TrUtil
+                            .convertGenToSimpleProofSteps(genHyps);
 
                         if (!finishStatement) {
                             // It is not the last one step, we should generate
@@ -643,37 +635,21 @@ public class ClosureInfo extends DBInfo {
 
                         // Precondition f(A) /\ f(B) step (or ph->(f(A) /\ f(B))
                         // )
-                        final GenProofStepStmt implHyp = conjInfo
+                        final GenProofStepStmt hypGenStep = conjInfo
                             .concatenateInTheSamePattern(hyps, hypsPartPattern,
                                 info);
                         if (!finishStatement) {
-                            assert implHyp != null;
-                            // It is not the last one step, we should generate
-                            // f(g(A,B)) step
-                            if (!implHyp.hasPrefix()) {
-                                // The precondition has simple f(A) /\ f(B) form
-                                // We should generate simple f(g(A,B)) step
-                                final ProofStepStmt r = implInfo
-                                    .applyImplicationRule(info, implHyp.step,
-                                        implRes, assrt);
-                                return new GenProofStepStmt(r, null);
-                            }
-                            else {
-                                // The precondition has implication
-                                // ph->(f(A)/\f(B))
-                                // form.
-                                // We should generate ph->f(g(A,B)) step
-                                final ProofStepStmt r = implInfo
-                                    .applyTransitiveRule(info, implHyp.step,
-                                        implRes, assrt);
-                                return new GenProofStepStmt(r, implHyp.prefix);
-                            }
+                            assert hypGenStep != null;
+                            // It is not the last one step
+
+                            return implInfo.applyHyp(info, hypGenStep,
+                                stepNode, assrt);
                         }
                         else {
-                            assert implHyp != null;
+                            assert hypGenStep != null;
                             // It is the last one step, and we should use
                             // target derivation step
-                            if (!implHyp.hasPrefix()) {
+                            if (!hypGenStep.hasPrefix()) {
                                 // The precondition has simple f(A) /\ f(B) form
                                 if (info.hasImplPrefix()) {
                                     // The target derivation step has
@@ -681,7 +657,8 @@ public class ClosureInfo extends DBInfo {
                                     // form
                                     final ProofStepStmt r = implInfo
                                         .applyImplicationRule(info,
-                                            implHyp.step, implRes, assrt);
+                                            hypGenStep.getSimpleStep(),
+                                            implRes, assrt);
                                     implInfo.finishStubRule(info, r);
                                     return new GenProofStepStmt(info.derivStep,
                                         null);
@@ -690,7 +667,8 @@ public class ClosureInfo extends DBInfo {
                                     // And target derivation step has simple
                                     // f(g(A,B)) form
                                     implInfo.finishWithImplication(info,
-                                        implHyp.step, implRes, assrt);
+                                        hypGenStep.getSimpleStep(), implRes,
+                                        assrt);
                                     return new GenProofStepStmt(info.derivStep,
                                         null);
                                 }
@@ -701,9 +679,10 @@ public class ClosureInfo extends DBInfo {
                                 // form and the target derivation step has
                                 // ph->f(g(A,B)) form.
                                 implInfo.finishTransitiveRule(info,
-                                    implHyp.step, implRes, assrt);
+                                    hypGenStep.getImplicationStep(), implRes,
+                                    assrt);
                                 return new GenProofStepStmt(info.derivStep,
-                                    implHyp.prefix);
+                                    hypGenStep.getPrefix());
                             }
                         }
                     }
@@ -753,8 +732,8 @@ public class ClosureInfo extends DBInfo {
                             searchWithPrefix).hasClosure())
                             return null;
 
-                        final GenProofStepStmt childRes = closurePropertyCommon(
-                            info, template, child, false, searchWithPrefix);
+                        final GenProofStepStmt childRes = closureProperty(info,
+                            template, child, false, searchWithPrefix);
                         if (childRes == null)
                             return null;
 
@@ -946,7 +925,7 @@ public class ClosureInfo extends DBInfo {
                 continue;
             if (getClosurePossibility(info, core, template, true).hasClosure())
             {
-                closurePropertyCommon(info, template, core, true, true);
+                closureProperty(info, template, core, true, true);
                 return true;
             }
         }

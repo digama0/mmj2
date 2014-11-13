@@ -1,7 +1,6 @@
 package mmj.transforms;
 
 import mmj.lang.ParseNode;
-import mmj.pa.ProofStepStmt;
 
 /** Only commutative transformations */
 public class CommutativeTransformation extends Transformation {
@@ -39,14 +38,14 @@ public class CommutativeTransformation extends Transformation {
     }
 
     @Override
-    public ProofStepStmt transformMeToTarget(final Transformation target,
+    public GenProofStepStmt transformMeToTarget(final Transformation target,
         final WorksheetInfo info)
     {
         assert target instanceof CommutativeTransformation;
 
-        final ProofStepStmt simpleRes = checkTransformationNecessary(target,
+        final GenProofStepStmt simpleRes = checkTransformationNecessary(target,
             info);
-        if (simpleRes != info.derivStep)
+        if (simpleRes != MORE_COMPLEX_TRANSFORMATION)
             return simpleRes;
 
         final ParseNode canonicalMe = trManager.getCanonicalForm(
@@ -54,7 +53,7 @@ public class CommutativeTransformation extends Transformation {
         final ParseNode canonicalTrgt = trManager.getCanonicalForm(
             target.originalNode.getChild()[genStmt.varIndexes[0]], info);
 
-        final ProofStepStmt reverseStep;
+        final GenProofStepStmt reverseStep;
         final ParseNode myNode;
         if (!canonicalMe.isDeepDup(canonicalTrgt)) {
             final ParseNode left = originalNode.getChild()[genStmt.varIndexes[0]];
@@ -86,10 +85,10 @@ public class CommutativeTransformation extends Transformation {
             myNode);
         final Transformation replaceTarget = new ReplaceTransformation(
             trManager, target.originalNode);
-        final ProofStepStmt replTrStep = replaceMe.transformMeToTarget(
+        final GenProofStepStmt replTrStep = replaceMe.transformMeToTarget(
             replaceTarget, info);
 
-        final ProofStepStmt res;
+        final GenProofStepStmt res;
         if (reverseStep != null && replTrStep != null)
             res = eqInfo.getTransitiveStep(info, reverseStep, replTrStep);
         else if (reverseStep != null)

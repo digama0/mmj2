@@ -171,32 +171,6 @@ import mmj.verify.VerifyProofs;
         }
     }
 
-    public static class GenProofStepStmt {
-        public final ProofStepStmt step;
-        public final ParseNode prefix;
-
-        public GenProofStepStmt(final ProofStepStmt step, final ParseNode prefix)
-        {
-            super();
-            this.step = step;
-            this.prefix = prefix;
-        }
-
-        public boolean hasPrefix() {
-            return prefix != null;
-        }
-
-        public ParseNode getCore() {
-            final ParseNode root = step.formulaParseTree.getRoot();
-            if (prefix == null)
-                return root;
-            else {
-                assert root.getChild().length == 2;
-                return root.getChild()[1];
-            }
-        }
-    }
-
     public void setImplicationPrefix(final ParseNode implPrefix,
         final Stmt implStatement)
     {

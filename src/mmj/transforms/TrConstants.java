@@ -54,7 +54,7 @@ public class TrConstants {
     // Messages
     // ----------------------------------------------------------
     public static final String ERRMSG_UNEXPECTED_EXCEPTION = "A-TR-0001 Unexpected exception: ";
-    public static final String ERRMSG_MISSING_IMPL_TRIV_RULE = "E-TR-0002 The input library has no trivial"
+    public static final String ERRMSG_MISSING_IMPL_TRIV_RULE = "E-TR-0002 The input library has no trivial "
         + "implication rule for %s implication (main assertion %s).";
 
 }

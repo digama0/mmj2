@@ -21,6 +21,8 @@ public class EquivalenceInfo extends DBInfo {
      */
     private final Map<Stmt, Assrt> eqTransitivies;
 
+    // TODO: collect these rules in implication form!
+
     // ------------------------------------------------------------------------
     // ------------------------Initialization----------------------------------
     // ------------------------------------------------------------------------
@@ -224,7 +226,7 @@ public class EquivalenceInfo extends DBInfo {
      * @param source the source (e.g. a = b)
      * @return the reverse step
      */
-    public ProofStepStmt createReverse(final WorksheetInfo info,
+    public ProofStepStmt createSimpleReverseStep(final WorksheetInfo info,
         final ProofStepStmt source)
     {
         final ParseNode root = source.formulaParseTree.getRoot();
@@ -252,7 +254,7 @@ public class EquivalenceInfo extends DBInfo {
      * @param second the second statement (e.g. b = c )
      * @return the result statement (e.g. a = c )
      */
-    public ProofStepStmt getTransitiveStep(final WorksheetInfo info,
+    private ProofStepStmt getTransitiveSimpleStep(final WorksheetInfo info,
         final ProofStepStmt first, final ProofStepStmt second)
     {
         if (first == null)
@@ -275,6 +277,44 @@ public class EquivalenceInfo extends DBInfo {
 
         return resStmt;
     }
+
+    /**
+     * Creates reverse step for another equivalence step (e.g. b = a for a = b)
+     *
+     * @param info the work sheet info
+     * @param source the source (e.g. a = b)
+     * @return the reverse step
+     */
+    public GenProofStepStmt createReverseStep(final WorksheetInfo info,
+        final GenProofStepStmt source)
+    {
+        if (!source.hasPrefix())
+            return new GenProofStepStmt(createSimpleReverseStep(info,
+                source.getSimpleStep()), null);
+        throw new IllegalStateException("TODO: implement it!");
+    }
+
+    /**
+     * This function creates transitive inference for two steps (= is the
+     * example of equivalence operator).
+     *
+     * @param info the work sheet info
+     * @param first the first statement (e.g. a = b )
+     * @param second the second statement (e.g. b = c )
+     * @return the result statement (e.g. a = c )
+     */
+    public GenProofStepStmt getTransitiveStep(final WorksheetInfo info,
+        final GenProofStepStmt first, final GenProofStepStmt second)
+    {
+        if (!first.hasPrefix() && !second.hasPrefix())
+            return new GenProofStepStmt(getTransitiveSimpleStep(info,
+                first.getSimpleStep(), second.getSimpleStep()), null);
+        throw new IllegalStateException("TODO: implement it!");
+    }
+
+    // -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     public boolean isEquivalence(final Stmt stmt) {
         return eqCommutatives.containsKey(stmt);

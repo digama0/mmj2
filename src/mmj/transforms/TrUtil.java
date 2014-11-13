@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import mmj.lang.*;
+import mmj.pa.ProofStepStmt;
 import mmj.transforms.ClosureInfo.TemplDetectRes;
 
 public class TrUtil {
@@ -31,7 +32,7 @@ public class TrUtil {
 
     /**
      * Creates classical binary node
-     * 
+     *
      * @param stmt the statement
      * @param left the first (left) node
      * @param right the second (right) node
@@ -60,7 +61,7 @@ public class TrUtil {
 
     /**
      * Creates node for generalized statement.
-     * 
+     *
      * @param genStmt the statement
      * @param left the first (left) node
      * @param right the second (right) node
@@ -212,5 +213,62 @@ public class TrUtil {
         }
 
         return template;
+    }
+
+    /**
+     * This function converts the array of generalized steps into array of
+     * simple proof steps. Be sure that every general step is actually a simple
+     * one.
+     *
+     * @param genSteps steps in generalized form
+     * @return simplified steps
+     */
+    static public ProofStepStmt[] convertGenToSimpleProofSteps(
+        final GenProofStepStmt[] genSteps)
+    {
+        final ProofStepStmt[] simpleSteps = new ProofStepStmt[genSteps.length];
+
+        for (int i = 0; i < genSteps.length; i++)
+            simpleSteps[i] = genSteps[i].getSimpleStep();
+        return simpleSteps;
+    }
+
+    public static GenProofStepStmt applyClosureProperties(
+        final boolean implForm, final GenProofStepStmt[] hyps,
+        final WorksheetInfo info, final Assrt assrt, final ParseNode left,
+        final ParseNode right)
+    {
+        final ImplicationInfo implInfo = info.trManager.implInfo;
+        final ConjunctionInfo conjInfo = info.trManager.conjInfo;
+
+        final Stmt equalStmt;
+
+        if (!implForm)
+            equalStmt = assrt.getExprParseTree().getRoot().getStmt();
+        else {
+            final ParseNode assrtRoot = assrt.getExprParseTree().getRoot();
+            equalStmt = assrtRoot.getChild()[1].getStmt();
+        }
+
+        // Create node f(f(a, b), c) = f(a, f(b, c))
+        final ParseNode stepNode = createBinaryNode(equalStmt, left, right);
+
+        if (!implForm) {
+            assert !TransformationManager.SEARCH_PREFIX;
+            final ProofStepStmt[] simpleHyps = convertGenToSimpleProofSteps(hyps);
+
+            final ProofStepStmt res = info.getOrCreateProofStepStmt(stepNode,
+                simpleHyps, assrt);
+            return new GenProofStepStmt(res, null);
+        }
+        else {
+            final ParseNode assrtRoot = assrt.getExprParseTree().getRoot();
+            final ParseNode hypsPartPattern = assrtRoot.getChild()[0];
+
+            final GenProofStepStmt hypGenStep = conjInfo
+                .concatenateInTheSamePattern(hyps, hypsPartPattern, info);
+
+            return implInfo.applyHyp(info, hypGenStep, stepNode, assrt);
+        }
     }
 }

@@ -1,7 +1,6 @@
 package mmj.transforms;
 
 import mmj.lang.ParseNode;
-import mmj.pa.ProofStepStmt;
 
 /** Only associative transformations */
 class AssociativeTransformation extends Transformation {
@@ -24,7 +23,7 @@ class AssociativeTransformation extends Transformation {
     }
 
     @Override
-    public ProofStepStmt transformMeToTarget(final Transformation target,
+    public GenProofStepStmt transformMeToTarget(final Transformation target,
         final WorksheetInfo info)
     {
         assert target instanceof AssociativeTransformation;
@@ -32,12 +31,10 @@ class AssociativeTransformation extends Transformation {
 
         assert trgt.structure.size == structure.size;
 
-        final ProofStepStmt simpleRes = checkTransformationNecessary(target,
+        final GenProofStepStmt simpleRes = checkTransformationNecessary(target,
             info);
-        if (simpleRes != info.derivStep)
+        if (simpleRes != MORE_COMPLEX_TRANSFORMATION)
             return simpleRes;
-
-        originalNode.getStmt();
 
         final int from;
         final int to;
@@ -57,7 +54,7 @@ class AssociativeTransformation extends Transformation {
         ParseNode gNode = originalNode;
 
         // result transformation statement
-        ProofStepStmt resStmt = null;
+        GenProofStepStmt resStmt = null;
 
         while (true) {
 
@@ -99,8 +96,8 @@ class AssociativeTransformation extends Transformation {
                     TrUtil.createAssocBinaryNode(from, genStmt, dNode, fNode));
 
                 // transform to normal direction => use 'from'
-                final ProofStepStmt assocTr = assocInfo.createAssociativeStep(
-                    info, genStmt, from, prevNode, gNode);
+                final GenProofStepStmt assocTr = assocInfo
+                    .createAssociativeStep(info, genStmt, from, prevNode, gNode);
 
                 resStmt = eqInfo.getTransitiveStep(info, resStmt, assocTr);
             }
@@ -144,15 +141,15 @@ class AssociativeTransformation extends Transformation {
                     cNode);
 
                 // transform to other direction => use 'to'
-                final ProofStepStmt assocTr = assocInfo.createAssociativeStep(
-                    info, genStmt, to, prevENode, eNode);
+                final GenProofStepStmt assocTr = assocInfo
+                    .createAssociativeStep(info, genStmt, to, prevENode, eNode);
 
                 final ParseNode prevGNode = gNode;
                 gNode = TrUtil.createAssocBinaryNode(from, genStmt, eNode,
                     fNode);
 
-                final ProofStepStmt replTr = replInfo.createReplaceStep(info,
-                    prevGNode, from, eNode, assocTr);
+                final GenProofStepStmt replTr = replInfo.createReplaceStep(
+                    info, prevGNode, from, eNode, assocTr);
 
                 resStmt = eqInfo.getTransitiveStep(info, resStmt, replTr);
             }
@@ -168,7 +165,7 @@ class AssociativeTransformation extends Transformation {
         final Transformation replaceTarget = new ReplaceTransformation(
             trManager, target.originalNode);
 
-        final ProofStepStmt replTrStep = replaceMe.transformMeToTarget(
+        final GenProofStepStmt replTrStep = replaceMe.transformMeToTarget(
             replaceTarget, info);
 
         if (replTrStep != null)

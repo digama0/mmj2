@@ -2,7 +2,6 @@ package mmj.transforms;
 
 import mmj.lang.ParseNode;
 import mmj.lang.Stmt;
-import mmj.pa.ProofStepStmt;
 
 /**
  * The replace transformation: we could transform children of corresponding node
@@ -19,19 +18,19 @@ public class ReplaceTransformation extends Transformation {
     }
 
     @Override
-    public ProofStepStmt transformMeToTarget(final Transformation target,
+    public GenProofStepStmt transformMeToTarget(final Transformation target,
         final WorksheetInfo info)
     {
         assert target instanceof ReplaceTransformation;
         final ReplaceTransformation trgt = (ReplaceTransformation)target;
 
-        final ProofStepStmt simpleRes = checkTransformationNecessary(target,
+        final GenProofStepStmt simpleRes = checkTransformationNecessary(target,
             info);
-        if (simpleRes != info.derivStep)
+        if (simpleRes != MORE_COMPLEX_TRANSFORMATION)
             return simpleRes;
 
         // result transformation statement
-        ProofStepStmt resStmt = null;
+        GenProofStepStmt resStmt = null;
 
         // the current transformation result
         ParseNode resNode = originalNode;
@@ -61,15 +60,14 @@ public class ReplaceTransformation extends Transformation {
 
             // transform ith child
             // the result should be some B = B' statement
-            final ProofStepStmt childTrStmt = trManager.createTransformation(
-                child, info).transformMeToTarget(
-                trManager.createTransformation(targetChild, info), info);
+            final GenProofStepStmt childTrStmt = trManager
+                .createTransformation(child, info).transformMeToTarget(
+                    trManager.createTransformation(targetChild, info), info);
             if (childTrStmt == null)
                 continue; // noting to do
 
             // get the node B = B'
-            final ParseNode childTrRoot = childTrStmt.formulaParseTree
-                .getRoot();
+            final ParseNode childTrRoot = childTrStmt.getCore();
 
             // transformation should be transformation:
             // check result childTrStmt statement
@@ -82,9 +80,9 @@ public class ReplaceTransformation extends Transformation {
 
             // Create statement d:childTrStmt:replAssert
             // |- g(A', B, C) = g(A', B', C)
-            final ProofStepStmt stepTr = replInfo.createReplaceStep(info,
+            final GenProofStepStmt stepTr = replInfo.createReplaceStep(info,
                 resNode, i, trgt.originalNode.getChild()[i], childTrStmt);
-            resNode = stepTr.formulaParseTree.getRoot().getChild()[1];
+            resNode = stepTr.getCore().getChild()[1];
 
             // resStmt now have the form g(A, B, C) = g(A', B, C)
             // So create transitive:
@@ -97,10 +95,8 @@ public class ReplaceTransformation extends Transformation {
 
         assert resStmt != null;
 
-        assert resStmt.formulaParseTree.getRoot().getChild()[0]
-            .isDeepDup(originalNode);
-        assert resStmt.formulaParseTree.getRoot().getChild()[1]
-            .isDeepDup(target.originalNode);
+        assert resStmt.getCore().getChild()[0].isDeepDup(originalNode);
+        assert resStmt.getCore().getChild()[1].isDeepDup(target.originalNode);
 
         return resStmt;
     }

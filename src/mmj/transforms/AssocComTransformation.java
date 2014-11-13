@@ -3,7 +3,6 @@ package mmj.transforms;
 import java.util.*;
 
 import mmj.lang.ParseNode;
-import mmj.pa.ProofStepStmt;
 
 /** Associative and commutative transformations */
 public class AssocComTransformation extends Transformation {
@@ -233,8 +232,8 @@ public class AssocComTransformation extends Transformation {
         }
     }
 
-    private ProofStepStmt performAssociativeTransformation(final ACTree what,
-        final WorksheetInfo info)
+    private GenProofStepStmt performAssociativeTransformation(
+        final ACTree what, final WorksheetInfo info)
     {
         // @formatter:off
         // 'what' - it is 'a' node or 'd' node
@@ -275,16 +274,16 @@ public class AssocComTransformation extends Transformation {
         if (gParent != null)
             gParent.changeChild(gTree, rTree);
 
-        final ProofStepStmt assocStep = assocInfo.createAssociativeStep(info,
-            genStmt, from, gNode, rNode);
+        final GenProofStepStmt assocStep = assocInfo.createAssociativeStep(
+            info, genStmt, from, gNode, rNode);
         return assocStep;
     }
 
-    private ProofStepStmt createCommutativeStep(final ACTree what,
+    private GenProofStepStmt createCommutativeStep(final ACTree what,
         final WorksheetInfo info)
     {
         // @formatter:off
-        // Swap 'd = what' and 'a' nodes: 
+        // Swap 'd = what' and 'a' nodes:
         //     e|                    e'|                 +
         //     / \          ==>       / \                +
         //    /   \                  /   \               +
@@ -305,7 +304,7 @@ public class AssocComTransformation extends Transformation {
 
         eTree.swapChildren();
 
-        final ProofStepStmt comStep = comInfo.createCommutativeStep(info,
+        final GenProofStepStmt comStep = comInfo.createCommutativeStep(info,
             genStmt, eNode, newENode);
 
         eTree.replaceNode(newENode);
@@ -313,11 +312,11 @@ public class AssocComTransformation extends Transformation {
         return comStep;
     }
 
-    private ProofStepStmt performCommutativeTransformation(final ACTree what,
-        final WorksheetInfo info)
+    private GenProofStepStmt performCommutativeTransformation(
+        final ACTree what, final WorksheetInfo info)
     {
         // @formatter:off
-        // Swap 'd = what' and 'a' nodes: 
+        // Swap 'd = what' and 'a' nodes:
         //      |g                     |g'               +
         //      |                      |                 +
         //      |                      |                 +
@@ -333,12 +332,13 @@ public class AssocComTransformation extends Transformation {
 
         final ParseNode gNode = gTree.node;
 
-        final ProofStepStmt comStep = createCommutativeStep(what, info);
+        final GenProofStepStmt comStep = createCommutativeStep(what, info);
 
         final ParseNode newENode = getRightPart(comStep);
 
-        final ProofStepStmt replStep = replInfo.createReplaceStep(info, gNode,
-            genStmt.varIndexes[eTree.getParentChildNum()], newENode, comStep);
+        final GenProofStepStmt replStep = replInfo.createReplaceStep(info,
+            gNode, genStmt.varIndexes[eTree.getParentChildNum()], newENode,
+            comStep);
 
         final ParseNode newGNode = getRightPart(replStep);
         gTree.replaceNode(newGNode);
@@ -346,13 +346,13 @@ public class AssocComTransformation extends Transformation {
         return replStep;
     }
 
-    private static ParseNode getRightPart(final ProofStepStmt step) {
-        assert step.formulaParseTree.getRoot().getChild().length == 2;
-        return step.formulaParseTree.getRoot().getChild()[1];
+    private static ParseNode getRightPart(final GenProofStepStmt step) {
+        assert step.getCore().getChild().length == 2;
+        return step.getCore().getChild()[1];
     }
 
-    private ProofStepStmt move(final ACTree what, final WorksheetInfo info) {
-        ProofStepStmt result = null;
+    private GenProofStepStmt move(final ACTree what, final WorksheetInfo info) {
+        GenProofStepStmt result = null;
         while (true) {
             assert what != null;
             assert what.parent != null;
@@ -373,7 +373,7 @@ public class AssocComTransformation extends Transformation {
                     //    /   \                  /   \               +
                     //  d|     |a              a|     |d             +
                     // @formatter:on
-                    final ProofStepStmt replStep = performCommutativeTransformation(
+                    final GenProofStepStmt replStep = performCommutativeTransformation(
                         what, info);
                     result = eqInfo.getTransitiveStep(info, result, replStep);
                 }
@@ -388,7 +388,7 @@ public class AssocComTransformation extends Transformation {
                 //    /   \                     /   \            +
                 //  a|     |d                 d|     |f          +
                 // @formatter:on
-                final ProofStepStmt assocStep = performAssociativeTransformation(
+                final GenProofStepStmt assocStep = performAssociativeTransformation(
                     what, info);
 
                 result = eqInfo.getTransitiveStep(info, result, assocStep);
@@ -410,7 +410,7 @@ public class AssocComTransformation extends Transformation {
                     //    /   \                  /   \               +
                     //  a|     |d              d|     |a             +
                     // @formatter:on
-                    final ProofStepStmt replStep = performCommutativeTransformation(
+                    final GenProofStepStmt replStep = performCommutativeTransformation(
                         what, info);
                     result = eqInfo.getTransitiveStep(info, result, replStep);
                 }
@@ -428,7 +428,7 @@ public class AssocComTransformation extends Transformation {
                 //  d|     |a                 a|     |f          +
                 // @formatter:on
 
-                ProofStepStmt assocStep = performAssociativeTransformation(
+                GenProofStepStmt assocStep = performAssociativeTransformation(
                     what, info);
 
                 assocStep = eqInfo.getTransitiveStep(info, result, assocStep);
@@ -436,7 +436,7 @@ public class AssocComTransformation extends Transformation {
                 assert !pTree.validParseNode;
 
                 final ParseNode newGNode = getRightPart(assocStep);
-                final ProofStepStmt replGNode = replInfo.createReplaceStep(
+                final GenProofStepStmt replGNode = replInfo.createReplaceStep(
                     info, pNode, genStmt.varIndexes[rgNumber], newGNode,
                     assocStep);
 
@@ -605,10 +605,10 @@ public class AssocComTransformation extends Transformation {
         return new TreeConstructor(first).constructTree(assocTree, topNode);
     }
 
-    private ProofStepStmt performSimpleTransformation(final WorksheetInfo info,
-        final ACTree myTree, final ACTree tgtTree)
+    private GenProofStepStmt performSimpleTransformation(
+        final WorksheetInfo info, final ACTree myTree, final ACTree tgtTree)
     {
-        ProofStepStmt result = null;
+        GenProofStepStmt result = null;
 
         if (tgtTree.leafsLength() == 2)
             if (!myTree.children[0].leafIndex().equals(
@@ -620,7 +620,7 @@ public class AssocComTransformation extends Transformation {
         final Transformation replaceTarget = new ReplaceTransformation(
             trManager, tgtTree.node);
 
-        final ProofStepStmt replTrStep = replaceMe.transformMeToTarget(
+        final GenProofStepStmt replTrStep = replaceMe.transformMeToTarget(
             replaceTarget, info);
 
         if (replTrStep != null)
@@ -629,8 +629,8 @@ public class AssocComTransformation extends Transformation {
         return result;
     }
 
-    private ProofStepStmt performTreeTransformation(final WorksheetInfo info,
-        ACTree myTree, final ACTree tgtTree)
+    private GenProofStepStmt performTreeTransformation(
+        final WorksheetInfo info, ACTree myTree, final ACTree tgtTree)
     {
         // The number of leafs should be equal
         assert tgtTree.leafsLength() == myTree.leafsLength();
@@ -650,7 +650,7 @@ public class AssocComTransformation extends Transformation {
         else
             startSide = 1;
 
-        ProofStepStmt result = null;
+        GenProofStepStmt result = null;
         for (int sideI = 0; sideI < 2; sideI++) {
             final int side = (startSide + sideI) % 2;
             final ACTree tgtSide = tgtTree.children[side];
@@ -660,7 +660,8 @@ public class AssocComTransformation extends Transformation {
 
             // +1 because of integer arithmetic properties
             if (nElems < (tgtSide.leafsLength() + 1) / 2) {
-                final ProofStepStmt swap = createCommutativeStep(mySide, info);
+                final GenProofStepStmt swap = createCommutativeStep(mySide,
+                    info);
                 myTree = mySide.getRoot();
                 mySide = mySide.getBrother();
 
@@ -691,7 +692,7 @@ public class AssocComTransformation extends Transformation {
                 if (leaf != null) {
                     // The result statement says that the previous 'tree' is
                     // equal to the current 'tree':
-                    final ProofStepStmt stmt = move(leaf, info);
+                    final GenProofStepStmt stmt = move(leaf, info);
                     result = eqInfo.getTransitiveStep(info, result, stmt);
 
                     myTree = leaf.getRoot();
@@ -703,14 +704,14 @@ public class AssocComTransformation extends Transformation {
         for (int i = 0; i < 2; i++) {
             myTree.children[i].parent = null;
             tgtTree.children[i].parent = null;
-            final ProofStepStmt childResult = performTreeTransformation(info,
-                myTree.children[i], tgtTree.children[i]);
+            final GenProofStepStmt childResult = performTreeTransformation(
+                info, myTree.children[i], tgtTree.children[i]);
 
             if (childResult == null)
                 continue; // all nodes already at the right place!
 
             final ParseNode newChild = getRightPart(childResult);
-            final ProofStepStmt replChildStep = replInfo.createReplaceStep(
+            final GenProofStepStmt replChildStep = replInfo.createReplaceStep(
                 info, node, genStmt.varIndexes[i], newChild, childResult);
             node = getRightPart(replChildStep);
             result = eqInfo.getTransitiveStep(info, result, replChildStep);
@@ -719,7 +720,7 @@ public class AssocComTransformation extends Transformation {
     }
 
     @Override
-    public ProofStepStmt transformMeToTarget(final Transformation target,
+    public GenProofStepStmt transformMeToTarget(final Transformation target,
         final WorksheetInfo info)
     {
         assert target instanceof AssocComTransformation;

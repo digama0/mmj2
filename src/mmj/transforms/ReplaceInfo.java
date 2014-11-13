@@ -79,7 +79,7 @@ public class ReplaceInfo extends DBInfo {
 
     /**
      * Filters replace rules, like A = B => g(A) = g(B)
-     * 
+     *
      * @param assrt the candidate
      */
     private void findReplaceRules(final Assrt assrt) {
@@ -101,7 +101,7 @@ public class ReplaceInfo extends DBInfo {
 
     /**
      * Filters replace rules in implication form, like A = B -> g(A) = g(B)
-     * 
+     *
      * @param assrt the candidate
      */
     private void findImplReplaceRules(final Assrt assrt) {
@@ -222,7 +222,7 @@ public class ReplaceInfo extends DBInfo {
     /**
      * Creates replace step (e.g. g(A, B, C) <-> g(A, B', C)). Note: the
      * equivalence operators for 'g' and for 'B' could differ!
-     * 
+     *
      * @param info the work sheet info
      * @param prevVersion the source node (e.g. g(A, B, C) )
      * @param i the position for replace (e.g. 1 (second))
@@ -230,7 +230,7 @@ public class ReplaceInfo extends DBInfo {
      * @param childTrStmt the equivalence of children (e.g. B = B' )
      * @return the replace step
      */
-    public ProofStepStmt createReplaceStep(final WorksheetInfo info,
+    public ProofStepStmt createSimpleReplaceStep(final WorksheetInfo info,
         final ParseNode prevVersion, final int i, final ParseNode newSubTree,
         final ProofStepStmt childTrStmt)
     {
@@ -291,24 +291,27 @@ public class ReplaceInfo extends DBInfo {
 
         return implInfo.applyImplicationRule(info, childTrStmt, eqNode,
             replAsserts[i]);
+    }
 
-        /*
-        final Stmt implStmt = root.getStmt();
-
-        final ParseNode hypNode = childTrStmt.formulaParseTree.getRoot();
-
-        // Create node B = B' -> g(A, B, C) = g(A, B', C)
-        final ParseNode stepNode = TrUtil.createBinaryNode(implStmt, hypNode,
-            eqNode);
-
-        // Create statement d:childTrStmt:replAssert
-        // |- B = B' -> g(A, B, C) = g(A, B', C)
-        final ProofStepStmt implStep = info.getOrCreateProofStepStmt(stepNode,
-            new ProofStepStmt[]{}, replAsserts[i]);
-
-        return implInfo.applyImplicationRule(info, childTrStmt, implStep,
-            implStmt);
-        */
+    /**
+     * Creates replace step (e.g. g(A, B, C) <-> g(A, B', C)). Note: the
+     * equivalence operators for 'g' and for 'B' could differ!
+     *
+     * @param info the work sheet info
+     * @param prevVersion the source node (e.g. g(A, B, C) )
+     * @param i the position for replace (e.g. 1 (second))
+     * @param newSubTree the new child (e.g. B')
+     * @param childTrStmt the equivalence of children (e.g. B = B' )
+     * @return the replace step
+     */
+    public GenProofStepStmt createReplaceStep(final WorksheetInfo info,
+        final ParseNode prevVersion, final int i, final ParseNode newSubTree,
+        final GenProofStepStmt childTrStmt)
+    {
+        if (!childTrStmt.hasPrefix())
+            return new GenProofStepStmt(createSimpleReplaceStep(info,
+                prevVersion, i, newSubTree, childTrStmt.getSimpleStep()), null);
+        throw new IllegalStateException("TODO: implement it!");
     }
 
     // ------------------------------------------------------------------------

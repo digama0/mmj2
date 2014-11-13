@@ -3,7 +3,6 @@ package mmj.transforms;
 import java.util.List;
 
 import mmj.lang.*;
-import mmj.pa.ProofStepStmt;
 import mmj.transforms.ClosureInfo.ResultClosureInfo;
 
 /**
@@ -14,9 +13,6 @@ import mmj.transforms.ClosureInfo.ResultClosureInfo;
 public class AssociativeInfo extends DBInfo {
     /** The information about equivalence rules */
     private final EquivalenceInfo eqInfo;
-
-    private final ConjunctionInfo conjInfo;
-    private final ImplicationInfo implInfo;
 
     /** The information about closure rules */
     private final ClosureInfo clInfo;
@@ -67,15 +63,12 @@ public class AssociativeInfo extends DBInfo {
 
     public AssociativeInfo(final EquivalenceInfo eqInfo,
         final ClosureInfo clInfo, final ReplaceInfo replInfo,
-        final ConjunctionInfo conjInfo, final ImplicationInfo implInfo,
         final List<Assrt> assrtList, final TrOutput output, final boolean dbg)
     {
         super(output, dbg);
         this.eqInfo = eqInfo;
         this.clInfo = clInfo;
         this.replInfo = replInfo;
-        this.conjInfo = conjInfo;
-        this.implInfo = implInfo;
 
         for (final Assrt assrt : assrtList) {
             findAssociativeRules(assrt);
@@ -294,7 +287,7 @@ public class AssociativeInfo extends DBInfo {
      * @param secondNode the second node (f(a, f(b, c)) or f(f(a, b), c))
      * @return the created step
      */
-    public ProofStepStmt createAssociativeStep(final WorksheetInfo info,
+    public GenProofStepStmt createAssociativeStep(final WorksheetInfo info,
         final GeneralizedStmt assocProp, final int from,
         final ParseNode firstNode, final ParseNode secondNode)
     {
@@ -328,79 +321,84 @@ public class AssociativeInfo extends DBInfo {
         }
         assert assocAssrt != null;
 
-        final Stmt equalStmt;
-
-        if (!implForm)
-            equalStmt = assocAssrt.getExprParseTree().getRoot().getStmt();
-        else {
-            final ParseNode assrtRoot = assocAssrt.getExprParseTree().getRoot();
-            equalStmt = assrtRoot.getChild()[1].getStmt();
-        }
-
-        // Create node f(f(a, b), c) = f(a, f(b, c))
-        final ParseNode stepNode = TrUtil.createBinaryNode(equalStmt, left,
-            right);
-
         final boolean firstForm = assocTr[0] != null;
 
-        ProofStepStmt res = closurePropertyAssociative(info, assocProp,
-            assocAssrt, firstForm, stepNode, implForm);
+        GenProofStepStmt res = closurePropertyAssociative(info, assocProp,
+            assocAssrt, firstForm, left, right, implForm);
 
         if (revert)
-            res = eqInfo.createReverse(info, res);
+            res = eqInfo.createReverseStep(info, res);
 
         return res;
     }
 
     // First form: f(f(a, b), c) = f(a, f(b, c))
     // Second form: f(a, f(b, c)) = f(f(a, b), c)
-    private ProofStepStmt closurePropertyAssociative(final WorksheetInfo info,
-        final GeneralizedStmt assocProp, final Assrt assocAssrt,
-        final boolean firstForm, final ParseNode stepNode,
-        final boolean implForm)
+    private GenProofStepStmt closurePropertyAssociative(
+        final WorksheetInfo info, final GeneralizedStmt assocProp,
+        final Assrt assocAssrt, final boolean firstForm, final ParseNode left,
+        final ParseNode right, final boolean implForm)
     {
-        final ProofStepStmt[] hyps;
+        final GenProofStepStmt[] hyps;
         if (!assocProp.template.isEmpty()) {
 
-            hyps = new ProofStepStmt[3];
+            hyps = new GenProofStepStmt[3];
             final int n0 = assocProp.varIndexes[0];
             final int n1 = assocProp.varIndexes[1];
             // Side should has form f(f(a, b), c)
             final ParseNode side;
             if (firstForm)
-                side = stepNode.getChild()[0];
+                side = left;
             else
-                side = stepNode.getChild()[1];
+                side = right;
             final ParseNode[] in = new ParseNode[3];
             in[0] = side.getChild()[n0].getChild()[n0];
             in[1] = side.getChild()[n0].getChild()[n1];
             in[2] = side.getChild()[n1];
 
             for (int i = 0; i < 3; i++)
-                hyps[i] = clInfo.closureProperty(info, assocProp.template,
-                    in[i]);
+                hyps[i] = clInfo.closureProperty(info,
+                    assocProp.template, in[i], false, true);
         }
         else {
             assert !implForm;
-            hyps = new ProofStepStmt[]{};
+            hyps = new GenProofStepStmt[]{};
         }
 
-        final ProofStepStmt res;
-        if (!implForm)
-            res = info.getOrCreateProofStepStmt(stepNode, hyps, assocAssrt);
+        return TrUtil.applyClosureProperties(implForm, hyps, info, assocAssrt,
+            left, right);
+
+        /*
+        if (!implForm) {
+            assert !TransformationManager.SEARCH_PREFIX;
+            final ProofStepStmt[] simpleHyps = TrUtil
+                .convertGenToSimpleProofSteps(hyps);
+
+            final ProofStepStmt res = info.getOrCreateProofStepStmt(stepNode,
+                simpleHyps, assocAssrt);
+            return new GenProofStepStmt(res, null);
+        }
         else {
             final ParseNode assrtRoot = assocAssrt.getExprParseTree().getRoot();
             final ParseNode hypsPartPattern = assrtRoot.getChild()[0];
-            // Precondition f(A) /\ f(B) /\ f(C) step
-            // (or ph->(f(A) /\ f(B) /\ f(C)))
-            final ProofStepStmt implHyp = conjInfo.concatenateInTheSamePattern(
-                hyps, hypsPartPattern, info);
 
-            res = implInfo.applyImplicationRule(info, implHyp, stepNode,
-                assocAssrt);
+            final GenProofStepStmt implHyp = conjInfo
+                .concatenateInTheSamePattern(hyps, hypsPartPattern, info);
+
+            // TODO: the same code has ClosureInfo.closurePropertyCommon()
+            // Make common function!
+            if (!implHyp.hasPrefix()) {
+                final ProofStepStmt r = implInfo.applyImplicationRule(info,
+                    implHyp.step, stepNode, assocAssrt);
+                return new GenProofStepStmt(r, null);
+            }
+            else {
+                final ProofStepStmt r = implInfo.applyTransitiveRule(info,
+                    implHyp.step, stepNode, assocAssrt);
+                return new GenProofStepStmt(r, implHyp.prefix);
+            }
         }
-
-        return res;
+        */
     }
 
     // ------------------------------------------------------------------------

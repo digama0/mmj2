@@ -3,7 +3,6 @@ package mmj.transforms;
 import java.util.List;
 
 import mmj.lang.*;
-import mmj.pa.ProofStepStmt;
 import mmj.transforms.ClosureInfo.ResultClosureInfo;
 
 /**
@@ -16,8 +15,6 @@ public class CommutativeInfo extends DBInfo {
     private final EquivalenceInfo eqInfo;
 
     private final ClosureInfo clInfo;
-    private final ConjunctionInfo conjInfo;
-    private final ImplicationInfo implInfo;
 
     private class CommRuleMap extends AssocComComplexRuleMap<Assrt> {
         @Override
@@ -54,15 +51,12 @@ public class CommutativeInfo extends DBInfo {
     // ------------------------------------------------------------------------
 
     public CommutativeInfo(final EquivalenceInfo eqInfo,
-        final ClosureInfo clInfo, final ConjunctionInfo conjInfo,
-        final ImplicationInfo implInfo, final List<Assrt> assrtList,
+        final ClosureInfo clInfo, final List<Assrt> assrtList,
         final TrOutput output, final boolean dbg)
     {
         super(output, dbg);
         this.eqInfo = eqInfo;
         this.clInfo = clInfo;
-        this.conjInfo = conjInfo;
-        this.implInfo = implInfo;
 
         for (final Assrt assrt : assrtList) {
             findCommutativeRules(assrt);
@@ -238,13 +232,13 @@ public class CommutativeInfo extends DBInfo {
      * @param target the second node f(b, a)
      * @return the created step
      */
-    public ProofStepStmt createCommutativeStep(final WorksheetInfo info,
+    public GenProofStepStmt createCommutativeStep(final WorksheetInfo info,
         final GeneralizedStmt comProp, final ParseNode source,
         final ParseNode target)
     {
-        final ProofStepStmt[] hyps;
+        final GenProofStepStmt[] hyps;
         if (!comProp.template.isEmpty()) {
-            hyps = new ProofStepStmt[2];
+            hyps = new GenProofStepStmt[2];
             final int n0 = comProp.varIndexes[0];
             final int n1 = comProp.varIndexes[1];
             final ParseNode side = source;
@@ -253,78 +247,29 @@ public class CommutativeInfo extends DBInfo {
             in[1] = side.getChild()[n1];
 
             for (int i = 0; i < 2; i++)
-                hyps[i] = clInfo.closureProperty(info, comProp.template, in[i]);
+                hyps[i] = clInfo.closureProperty(info, comProp.template,
+                    in[i], false, true);
         }
         else
-            hyps = new ProofStepStmt[]{};
+            hyps = new GenProofStepStmt[]{};
 
         final Assrt comAssrt = getComOp(comProp, comOp);
 
+        final Assrt assrt;
+
+        final boolean implForm;
         if (comAssrt != null) {
-            // the assertion has simple form,
-            // "A e. CC & B e. CC => ( A + B ) = ( B + A )"
-            final Stmt equalStmt = comAssrt.getExprParseTree().getRoot()
-                .getStmt();
-
-            final ParseNode stepNode = TrUtil.createBinaryNode(equalStmt,
-                source, target);
-
-            final ProofStepStmt res = info.getOrCreateProofStepStmt(stepNode,
-                hyps, comAssrt);
-            return res;
+            implForm = false;
+            assrt = comAssrt;
         }
         else {
-            // the assertion has implication form,
-            // "A e. CC & B e. CC -> ( A + B ) = ( B + A )"
-            final Assrt implComAssrt = getComOp(comProp, implComOp);
-
-            final ParseNode assrtRoot = implComAssrt.getExprParseTree()
-                .getRoot();
-            final Stmt equalStmt = assrtRoot.getChild()[1].getStmt();
-
-            final ParseNode stepNode = TrUtil.createBinaryNode(equalStmt,
-                source, target);
-            final ParseNode hypsPartPattern = assrtRoot.getChild()[0];
-            final ParseNode implRes = stepNode;
-
-            // Precondition f(A) /\ f(B) step (or ph->(f(A) /\ f(B)) )
-            final ProofStepStmt implHyp = conjInfo.concatenateInTheSamePattern(
-                hyps, hypsPartPattern, info);
-
-            final ProofStepStmt r = implInfo.applyImplicationRule(info,
-                implHyp, implRes, implComAssrt);
-            return r;
+            implForm = true;
+            assrt = getComOp(comProp, implComOp);
         }
 
+        return TrUtil.applyClosureProperties(implForm, hyps, info, assrt,
+            source, target);
     }
-    /*
-    // f(a, b) = f(b, a))
-    public ProofStepStmt closurePropertyCommutative(final WorksheetInfo info,
-        final GeneralizedStmt comProp, final Assrt comAssrt,
-        final ParseNode stepNode)
-    {
-        final ProofStepStmt[] hyps;
-        if (!comProp.template.isEmpty()) {
-            hyps = new ProofStepStmt[2];
-            final int n0 = comProp.varIndexes[0];
-            final int n1 = comProp.varIndexes[1];
-            final ParseNode side = stepNode.getChild()[0];
-            final ParseNode[] in = new ParseNode[2];
-            in[0] = side.getChild()[n0];
-            in[1] = side.getChild()[n1];
-
-            for (int i = 0; i < 2; i++)
-                hyps[i] = clInfo.closureProperty(info, comProp, in[i]);
-        }
-        else
-            hyps = new ProofStepStmt[]{};
-
-        final ProofStepStmt res = info.getOrCreateProofStepStmt(stepNode, hyps,
-            comAssrt);
-
-        return res;
-    }
-    */
 
     // ------------------------------------------------------------------------
     // ------------------------------Getters-----------------------------------

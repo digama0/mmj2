@@ -477,6 +477,38 @@ public class ImplicationInfo extends DBInfo {
         // The target derivation step is not an implication " ( ph -> ps )"
         return null;
     }
+
+    /**
+     * Apply implication rule (one or another pattern depend on hypothesis
+     * form):
+     * <p>
+     * A -> B & B -> C => A -> C.
+     * <p>
+     * B & B -> C => C.
+     *
+     * @param info the work sheet info
+     * @param hypGenStep the hypothesis (in the example it is B or "A -> B")
+     * @param stepNode the result node (in the example it is C)
+     * @param assrt the assertion to construct B -> C step
+     * @return the result of implication (in the example it is statement C or
+     *         "A -> C")
+     */
+    public GenProofStepStmt applyHyp(final WorksheetInfo info,
+        final GenProofStepStmt hypGenStep, final ParseNode stepNode,
+        final Assrt assrt)
+    {
+        if (!hypGenStep.hasPrefix()) {
+            final ProofStepStmt r = applyImplicationRule(info,
+                hypGenStep.getSimpleStep(), stepNode, assrt);
+            return new GenProofStepStmt(r, null);
+        }
+        else {
+            final ProofStepStmt r = applyTransitiveRule(info,
+                hypGenStep.getImplicationStep(), stepNode, assrt);
+            return new GenProofStepStmt(r, hypGenStep.getPrefix());
+        }
+    }
+
     // ------------------------------------------------------------------------
     // ------------------------------Getters-----------------------------------
     // ------------------------------------------------------------------------

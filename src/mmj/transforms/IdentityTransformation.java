@@ -1,7 +1,6 @@
 package mmj.transforms;
 
 import mmj.lang.ParseNode;
-import mmj.pa.ProofStepStmt;
 
 /** No transformation at all =) */
 class IdentityTransformation extends Transformation {
@@ -18,7 +17,7 @@ class IdentityTransformation extends Transformation {
     }
 
     @Override
-    public ProofStepStmt transformMeToTarget(final Transformation target,
+    public GenProofStepStmt transformMeToTarget(final Transformation target,
         final WorksheetInfo info)
     {
         assert target.originalNode.isDeepDup(originalNode);

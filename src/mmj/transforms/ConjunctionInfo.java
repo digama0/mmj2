@@ -5,7 +5,6 @@ import java.util.Map.Entry;
 
 import mmj.lang.*;
 import mmj.pa.ProofStepStmt;
-import mmj.transforms.WorksheetInfo.GenProofStepStmt;
 
 public class ConjunctionInfo extends DBInfo {
 
@@ -281,7 +280,7 @@ public class ConjunctionInfo extends DBInfo {
 
         if (!hasPrefix) {
             for (int i = 0; i < length; i++)
-                hyps[i] = genHyps[i].step;
+                hyps[i] = genHyps[i].getSimpleStep();
             final Assrt assrt = gatheringOp.get(stmt);
             final ProofStepStmt stepTr = info.getOrCreateProofStepStmt(resNode,
                 hyps, assrt);
@@ -291,10 +290,10 @@ public class ConjunctionInfo extends DBInfo {
 
         for (int i = 0; i < length; i++)
             if (genHyps[i].hasPrefix())
-                hyps[i] = genHyps[i].step;
+                hyps[i] = genHyps[i].getImplicationStep();
             else {
                 final ProofStepStmt hypStep = implInfo.applyStubRule(info,
-                    genHyps[i].step);
+                    genHyps[i].getSimpleStep());
                 hyps[i] = hypStep;
             }
 
@@ -316,7 +315,7 @@ public class ConjunctionInfo extends DBInfo {
     /**
      * Concatenates the list of hypotheses into one hypothesis. The 'andPattern'
      * is used for construction of this one hypothesis.
-     * 
+     *
      * @param hyps input hypotheses list
      * @param andPattern template
      * @param info the work sheet info
@@ -331,17 +330,6 @@ public class ConjunctionInfo extends DBInfo {
             andPattern, counter, info);
         assert counter.hyps.length == counter.idx;
         return res;
-    }
-
-    public ProofStepStmt concatenateInTheSamePattern(
-        final ProofStepStmt[] hyps, final ParseNode andPattern,
-        final WorksheetInfo info)
-    {
-        final GenProofStepStmt[] genhyps = new GenProofStepStmt[hyps.length];
-        for (int i = 0; i < genhyps.length; i++)
-            genhyps[i] = new GenProofStepStmt(hyps[i], null);
-
-        return concatenateInTheSamePattern(genhyps, andPattern, info).step;
     }
 
     public boolean isAndOperation(final Stmt stmt) {

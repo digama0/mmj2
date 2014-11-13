@@ -22,6 +22,13 @@ import mmj.verify.VerifyProofs;
  * </ul>
  */
 public class TransformationManager {
+    /**
+     * This constant indicates whether we should try to indicate implication
+     * prefix and perform auto-transformations with it.
+     * <p>
+     * TODO: make it parameter
+     */
+    public final static boolean SEARCH_PREFIX = false;
 
     public final boolean dbg;
 
@@ -81,11 +88,10 @@ public class TransformationManager {
 
         replInfo = new ReplaceInfo(eqInfo, implInfo, assrtList, output, dbg);
 
-        assocInfo = new AssociativeInfo(eqInfo, clInfo, replInfo, conjInfo,
-            implInfo, assrtList, output, dbg);
+        assocInfo = new AssociativeInfo(eqInfo, clInfo, replInfo, assrtList,
+            output, dbg);
 
-        comInfo = new CommutativeInfo(eqInfo, clInfo, conjInfo, implInfo,
-            assrtList, output, dbg);
+        comInfo = new CommutativeInfo(eqInfo, clInfo, assrtList, output, dbg);
     }
 
     // ----------------------------
@@ -164,8 +170,12 @@ public class TransformationManager {
         final Transformation tr = createTransformation(
             source.formulaParseTree.getRoot(), info);
 
-        final ProofStepStmt eqResult = tr.transformMeToTarget(dsTr, info);
-        eqResult.toString();
+        final GenProofStepStmt res = tr.transformMeToTarget(dsTr, info);
+
+        // we have to remove prefix on previous steps
+        assert !res.hasPrefix();
+
+        final ProofStepStmt eqResult = res.getSimpleStep();
 
         final boolean isNormalOrder = TrUtil.isVarNode(impl.getLogHypArray()[0]
             .getExprParseTree().getRoot());
@@ -190,15 +200,17 @@ public class TransformationManager {
         final WorksheetInfo info = new WorksheetInfo(proofWorksheet, derivStep,
             this);
 
-        // If derivation step has form "prefix -> core", then this prefix could
-        // be used in transformations
-        final ExtractImplResult extrImplRes = implInfo
-            .extractPrefixAndGetImplPart(info);
-        if (extrImplRes != null)
-            if (TrUtil.isVarNode(extrImplRes.implPrefix))
-                // Now we support only simple "one-variable" prefixes
-                info.setImplicationPrefix(extrImplRes.implPrefix,
-                    extrImplRes.implStatement);
+        if (SEARCH_PREFIX) {
+            // If derivation step has form "prefix -> core", then this prefix
+            // could be used in transformations
+            final ExtractImplResult extrImplRes = implInfo
+                .extractPrefixAndGetImplPart(info);
+            if (extrImplRes != null)
+                if (TrUtil.isVarNode(extrImplRes.implPrefix))
+                    // Now we support only simple "one-variable" prefixes
+                    info.setImplicationPrefix(extrImplRes.implPrefix,
+                        extrImplRes.implStatement);
+        }
 
         final ParseNode derivRoot = derivStep.formulaParseTree.getRoot();
         final Cnst derivType = derivRoot.getStmt().getTyp();
