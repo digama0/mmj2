@@ -306,6 +306,9 @@ public class EquivalenceInfo extends DBInfo {
     public GenProofStepStmt getTransitiveStep(final WorksheetInfo info,
         final GenProofStepStmt first, final GenProofStepStmt second)
     {
+        if (first == null)
+            return second;
+
         if (!first.hasPrefix() && !second.hasPrefix())
             return new GenProofStepStmt(getTransitiveSimpleStep(info,
                 first.getSimpleStep(), second.getSimpleStep()), null);

@@ -617,6 +617,7 @@ public class ClosureInfo extends DBInfo {
                 assert res != null;
                 return res;
             }
+            case SIMPLE_RULE_IMPL:
             case USED_PREFIX_RULE: {
                 // We found possible f(A) /\ f(B) -> f(g(A,B)) rule
                 final CreateClosureVisitor visitor = new CreateClosureVisitor()
@@ -638,6 +639,9 @@ public class ClosureInfo extends DBInfo {
                         final GenProofStepStmt hypGenStep = conjInfo
                             .concatenateInTheSamePattern(hyps, hypsPartPattern,
                                 info);
+                        if (hypGenStep.hasPrefix())
+                            assert clRes == ClosureResult.USED_PREFIX_RULE;
+
                         if (!finishStatement) {
                             assert hypGenStep != null;
                             // It is not the last one step
@@ -748,6 +752,12 @@ public class ClosureInfo extends DBInfo {
                     return null;
                 }
             });
+
+        if (res == null)
+            output.dbgMessage(true,
+                "I-TR-ERR fail to find appropriate statelemt: %s(%s), %s",
+                node, info.trManager.getFormula(node), template);
+
         assert res != null;
         return res;
     }
@@ -774,6 +784,19 @@ public class ClosureInfo extends DBInfo {
             @Override
             int num() {
                 return 2;
+            }
+        },
+        // Almost the same as SIMPLE_RULE
+        // The only difference is in the search transformation algorithm
+        SIMPLE_RULE_IMPL {
+            @Override
+            boolean hasClosure() {
+                return true;
+            }
+
+            @Override
+            int num() {
+                return SIMPLE_RULE.num();
             }
         },
         SIMPLE_RULE {
@@ -808,19 +831,19 @@ public class ClosureInfo extends DBInfo {
         }
     }
 
-    static public ClosureResult mergeSearchResults(final ClosureResult r1,
-        final ClosureResult r2)
+    static public ClosureResult mergeSearchResults(
+        final ClosureResult preferred, final ClosureResult other)
     {
-        if (r1.num() < r2.num())
-            return r1;
+        if (preferred.num() <= other.num())
+            return preferred;
         else
-            return r2;
+            return other;
     }
 
     private ClosureResult getClosurePossibilityInternal(
         final WorksheetInfo info, final ParseNode node,
         final PropertyTemplate template, final ClosureComplexRuleMap map,
-        final boolean searchWithPrefix)
+        final boolean searchWithPrefix, final ClosureResult simpleRes)
     {
         final ClosureResult res = map.visitGenStmts(node, info,
             new ComplexRuleVisitor<Assrt, ClosureResult>() {
@@ -837,7 +860,7 @@ public class ClosureInfo extends DBInfo {
                     if (prevDbg == 7)
                         toString();
 
-                    ClosureResult childResMerge = ClosureResult.SIMPLE_RULE;
+                    ClosureResult childResMerge = simpleRes;
                     for (int i = 0; i < node.getChild().length; i++)
                         if (constSubst.constMap[i] == null) {
                             debugCounter++;
@@ -891,14 +914,15 @@ public class ClosureInfo extends DBInfo {
             }
 
         final ClosureResult simple = getClosurePossibilityInternal(info, node,
-            template, closureRuleMap, false);
+            template, closureRuleMap, false, ClosureResult.SIMPLE_RULE);
         assert simple == ClosureResult.SIMPLE_RULE
             || simple == ClosureResult.NO_CLOSURE_RULE;
         if (simple.hasClosure())
             return simple;
 
         final ClosureResult implRes = getClosurePossibilityInternal(info, node,
-            template, implClosureRuleMap, searchWithPrefix);
+            template, implClosureRuleMap, searchWithPrefix,
+            ClosureResult.SIMPLE_RULE_IMPL);
         if (implRes.hasClosure())
             return implRes;
 

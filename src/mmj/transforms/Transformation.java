@@ -89,13 +89,15 @@ public abstract class Transformation {
         if (stepTr != null)
             return new GenProofStepStmt(stepTr, null);
 
-        // Create node "prefix -> ( g(A, B, C) = g(A', B', C') )"
-        final ParseNode implNode = info.applyImplPrefix(stepNode);
+        if (info.hasImplPrefix()) {
+            // Create node "prefix -> ( g(A, B, C) = g(A', B', C') )"
+            final ParseNode implNode = info.applyImplPrefix(stepNode);
 
-        final ProofStepStmt implTr = info.getProofStepStmt(implNode);
+            final ProofStepStmt implTr = info.getProofStepStmt(implNode);
 
-        if (implTr != null)
-            return new GenProofStepStmt(implTr, info.implPrefix);
+            if (implTr != null)
+                return new GenProofStepStmt(implTr, info.implPrefix);
+        }
 
         return MORE_COMPLEX_TRANSFORMATION; // there is more complex case!
     }
