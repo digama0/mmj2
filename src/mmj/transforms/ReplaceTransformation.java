@@ -37,6 +37,8 @@ public class ReplaceTransformation extends Transformation {
 
         final boolean[] replAsserts = replInfo.getPossibleReplaces(originalNode
             .getStmt());
+        
+        assert replAsserts != null;
 
         final Stmt equalStmt = eqInfo
             .getEqStmt(originalNode.getStmt().getTyp());
@@ -105,6 +107,8 @@ public class ReplaceTransformation extends Transformation {
     public ParseNode getCanonicalNode(final WorksheetInfo info) {
         final boolean[] replAsserts = replInfo.getPossibleReplaces(originalNode
             .getStmt());
+        assert replAsserts != null;
+
         final ParseNode resNode = originalNode.cloneWithoutChildren();
 
         for (int i = 0; i < resNode.getChild().length; i++) {

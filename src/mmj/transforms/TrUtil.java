@@ -41,6 +41,9 @@ public class TrUtil {
     public static ParseNode createBinaryNode(final Stmt stmt,
         final ParseNode left, final ParseNode right)
     {
+        assert left != null;
+        assert right != null;
+        assert stmt != null;
         final ParseNode eqRoot = new ParseNode(stmt);
         final ParseNode[] children = {left, right};
         eqRoot.setChild(children);
@@ -254,7 +257,8 @@ public class TrUtil {
         final ParseNode stepNode = createBinaryNode(equalStmt, left, right);
 
         if (!implForm) {
-            assert !TransformationManager.SEARCH_PREFIX;
+            if (hyps.length != 0)
+                assert !TransformationManager.SEARCH_PREFIX;
             final ProofStepStmt[] simpleHyps = convertGenToSimpleProofSteps(hyps);
 
             final ProofStepStmt res = info.getOrCreateProofStepStmt(stepNode,

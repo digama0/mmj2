@@ -265,9 +265,11 @@ public class AssociativeInfo extends DBInfo {
     public GeneralizedStmt getGenStmtForAssocNode(final ParseNode node,
         final WorksheetInfo info)
     {
+
         final GeneralizedStmt res = assocOp.detectGenStmt(node, info);
         if (res != null)
-            return res;
+            if (!TransformationManager.SEARCH_PREFIX || res.template.isEmpty())
+                return res;
         return implAssocOp.detectGenStmt(node, info);
     }
 
@@ -291,14 +293,21 @@ public class AssociativeInfo extends DBInfo {
         final GeneralizedStmt assocProp, final int from,
         final ParseNode firstNode, final ParseNode secondNode)
     {
-        Assrt[] assocTr = getAssocOp(assocProp, assocOp);
-        final boolean implForm;
+        Assrt[] assocTr = null;
+        boolean implForm = false;
+
+        if (!TransformationManager.SEARCH_PREFIX
+            || assocProp.template.isEmpty())
+        {
+            assocTr = getAssocOp(assocProp, assocOp);
+            if (assocTr != null)
+                implForm = false;
+        }
+
         if (assocTr == null) {
             implForm = true;
             assocTr = getAssocOp(assocProp, implAssocOp);
         }
-        else
-            implForm = false;
 
         assert assocTr != null;
 
@@ -357,8 +366,8 @@ public class AssociativeInfo extends DBInfo {
             in[2] = side.getChild()[n1];
 
             for (int i = 0; i < 3; i++)
-                hyps[i] = clInfo.closureProperty(info,
-                    assocProp.template, in[i], false, true);
+                hyps[i] = clInfo.closureProperty(info, assocProp.template,
+                    in[i], false, true);
         }
         else {
             assert !implForm;
@@ -367,38 +376,6 @@ public class AssociativeInfo extends DBInfo {
 
         return TrUtil.applyClosureProperties(implForm, hyps, info, assocAssrt,
             left, right);
-
-        /*
-        if (!implForm) {
-            assert !TransformationManager.SEARCH_PREFIX;
-            final ProofStepStmt[] simpleHyps = TrUtil
-                .convertGenToSimpleProofSteps(hyps);
-
-            final ProofStepStmt res = info.getOrCreateProofStepStmt(stepNode,
-                simpleHyps, assocAssrt);
-            return new GenProofStepStmt(res, null);
-        }
-        else {
-            final ParseNode assrtRoot = assocAssrt.getExprParseTree().getRoot();
-            final ParseNode hypsPartPattern = assrtRoot.getChild()[0];
-
-            final GenProofStepStmt implHyp = conjInfo
-                .concatenateInTheSamePattern(hyps, hypsPartPattern, info);
-
-            // TODO: the same code has ClosureInfo.closurePropertyCommon()
-            // Make common function!
-            if (!implHyp.hasPrefix()) {
-                final ProofStepStmt r = implInfo.applyImplicationRule(info,
-                    implHyp.step, stepNode, assocAssrt);
-                return new GenProofStepStmt(r, null);
-            }
-            else {
-                final ProofStepStmt r = implInfo.applyTransitiveRule(info,
-                    implHyp.step, stepNode, assocAssrt);
-                return new GenProofStepStmt(r, implHyp.prefix);
-            }
-        }
-        */
     }
 
     // ------------------------------------------------------------------------

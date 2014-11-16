@@ -219,35 +219,7 @@ public class ReplaceInfo extends DBInfo {
     // ------------------------Transformations---------------------------------
     // ------------------------------------------------------------------------
 
-    /**
-     * Creates replace step (e.g. g(A, B, C) <-> g(A, B', C)). Note: the
-     * equivalence operators for 'g' and for 'B' could differ!
-     *
-     * @param info the work sheet info
-     * @param prevVersion the source node (e.g. g(A, B, C) )
-     * @param i the position for replace (e.g. 1 (second))
-     * @param newSubTree the new child (e.g. B')
-     * @param childTrStmt the equivalence of children (e.g. B = B' )
-     * @return the replace step
-     */
-    public ProofStepStmt createSimpleReplaceStep(final WorksheetInfo info,
-        final ParseNode prevVersion, final int i, final ParseNode newSubTree,
-        final ProofStepStmt childTrStmt)
-    {
-        Assrt[] replAsserts = replaceOp.get(prevVersion.getStmt());
-        if (replAsserts != null && replAsserts[i] != null)
-            return createReplaceStepHyp(info, prevVersion, i, newSubTree,
-                childTrStmt, replAsserts);
-
-        replAsserts = implReplaceOp.get(prevVersion.getStmt());
-        assert replAsserts != null;
-        assert replAsserts[i] != null;
-
-        return createReplaceStepImpl(info, prevVersion, i, newSubTree,
-            childTrStmt, replAsserts);
-    }
-
-    private ProofStepStmt createReplaceStepHyp(final WorksheetInfo info,
+    private ProofStepStmt createReplaceStepSimple(final WorksheetInfo info,
         final ParseNode prevVersion, final int i, final ParseNode newSubTree,
         final ProofStepStmt childTrStmt, final Assrt[] replAsserts)
     {
@@ -271,9 +243,9 @@ public class ReplaceInfo extends DBInfo {
         return stepTr;
     }
 
-    private ProofStepStmt createReplaceStepImpl(final WorksheetInfo info,
+    private GenProofStepStmt createReplaceStepImpl(final WorksheetInfo info,
         final ParseNode prevVersion, final int i, final ParseNode newSubTree,
-        final ProofStepStmt childTrStmt, final Assrt[] replAsserts)
+        final GenProofStepStmt childTrStmt, final Assrt[] replAsserts)
     {
         assert replAsserts[i] != null;
         final ParseNode root = replAsserts[i].getExprParseTree().getRoot();
@@ -289,8 +261,7 @@ public class ReplaceInfo extends DBInfo {
         final ParseNode eqNode = TrUtil.createBinaryNode(equalStmt,
             prevVersion, resNode);
 
-        return implInfo.applyImplicationRule(info, childTrStmt, eqNode,
-            replAsserts[i]);
+        return implInfo.applyHyp(info, childTrStmt, eqNode, replAsserts[i]);
     }
 
     /**
@@ -308,10 +279,20 @@ public class ReplaceInfo extends DBInfo {
         final ParseNode prevVersion, final int i, final ParseNode newSubTree,
         final GenProofStepStmt childTrStmt)
     {
-        if (!childTrStmt.hasPrefix())
-            return new GenProofStepStmt(createSimpleReplaceStep(info,
-                prevVersion, i, newSubTree, childTrStmt.getSimpleStep()), null);
-        throw new IllegalStateException("TODO: implement it!");
+        if (!childTrStmt.hasPrefix()) {
+            final Assrt[] replAsserts = replaceOp.get(prevVersion.getStmt());
+            if (replAsserts != null && replAsserts[i] != null)
+                return new GenProofStepStmt(createReplaceStepSimple(info,
+                    prevVersion, i, newSubTree, childTrStmt.getSimpleStep(),
+                    replAsserts), null);
+        }
+
+        final Assrt[] replAsserts = implReplaceOp.get(prevVersion.getStmt());
+        assert replAsserts != null;
+        assert replAsserts[i] != null;
+
+        return createReplaceStepImpl(info, prevVersion, i, newSubTree,
+            childTrStmt, replAsserts);
     }
 
     // ------------------------------------------------------------------------
@@ -319,13 +300,22 @@ public class ReplaceInfo extends DBInfo {
     // ------------------------------------------------------------------------
 
     public boolean[] getPossibleReplaces(final Stmt stmt) {
-        final Assrt[][] assrts = new Assrt[][]{replaceOp.get(stmt),
-                implReplaceOp.get(stmt)};
+        final Assrt[][] assrts;
+        final Assrt[] simple = replaceOp.get(stmt);
+        final Assrt[] implForm = replaceOp.get(stmt);
+        if (!TransformationManager.SEARCH_PREFIX) {
+            assrts = new Assrt[][]{simple, implForm};
+            if (simple != null && implForm != null)
+                assert simple.length == implForm.length;
+        }
+        else
+            assrts = new Assrt[][]{implForm};
 
         boolean[] res = null;
         for (final Assrt[] assrt : assrts)
             if (assrt != null) {
-                res = new boolean[assrt.length];
+                if (res == null)
+                    res = new boolean[assrt.length];
                 for (int i = 0; i < assrt.length; i++)
                     if (assrt[i] != null)
                         res[i] = true;

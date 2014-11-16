@@ -198,9 +198,9 @@ public class CommutativeInfo extends DBInfo {
     {
         final GeneralizedStmt res = comOp.detectGenStmt(node, info);
         if (res != null)
-            return res;
-        else
-            return implComOp.detectGenStmt(node, info);
+            if (!TransformationManager.SEARCH_PREFIX || res.template.isEmpty())
+                return res;
+        return implComOp.detectGenStmt(node, info);
     }
 
     private static boolean isCommutativeWithProp(final ParseNode node,
@@ -247,22 +247,23 @@ public class CommutativeInfo extends DBInfo {
             in[1] = side.getChild()[n1];
 
             for (int i = 0; i < 2; i++)
-                hyps[i] = clInfo.closureProperty(info, comProp.template,
-                    in[i], false, true);
+                hyps[i] = clInfo.closureProperty(info, comProp.template, in[i],
+                    false, true);
         }
         else
             hyps = new GenProofStepStmt[]{};
 
-        final Assrt comAssrt = getComOp(comProp, comOp);
+        Assrt assrt = null;
+        boolean implForm = false;
 
-        final Assrt assrt;
-
-        final boolean implForm;
-        if (comAssrt != null) {
-            implForm = false;
-            assrt = comAssrt;
+        if (!TransformationManager.SEARCH_PREFIX || comProp.template.isEmpty())
+        {
+            assrt = getComOp(comProp, comOp);
+            if (assrt != null)
+                implForm = false;
         }
-        else {
+
+        if (assrt == null) {
             implForm = true;
             assrt = getComOp(comProp, implComOp);
         }
@@ -276,8 +277,13 @@ public class CommutativeInfo extends DBInfo {
     // ------------------------------------------------------------------------
 
     public boolean isComOp(final GeneralizedStmt genStmt) {
-        return getComOp(genStmt, comOp) != null
-            || getComOp(genStmt, implComOp) != null;
+
+        if (getComOp(genStmt, comOp) != null)
+            if (!TransformationManager.SEARCH_PREFIX
+                || genStmt.template.isEmpty())
+                return true;
+
+        return getComOp(genStmt, implComOp) != null;
     }
 
     public Assrt getComOp(final GeneralizedStmt genStmt,

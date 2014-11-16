@@ -103,7 +103,7 @@ import mmj.verify.VerifyProofs;
 
         if (dbg) {
             final String str = getDebugString(d, hyps);
-            output.dbgMessage(dbg, "I-TR-DBG Emminted step: " + str);
+            output.dbgMessage(dbg, "I-TR-DBG Emmited step: " + str);
         }
 
         return d;

@@ -308,7 +308,7 @@ public class EquivalenceInfo extends DBInfo {
     {
         if (first == null)
             return second;
-
+        
         if (!first.hasPrefix() && !second.hasPrefix())
             return new GenProofStepStmt(getTransitiveSimpleStep(info,
                 first.getSimpleStep(), second.getSimpleStep()), null);
