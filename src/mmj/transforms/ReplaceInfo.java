@@ -131,10 +131,10 @@ public class ReplaceInfo extends DBInfo {
         final ParseNode hypNode, final Map<Stmt, Assrt[]> resMap)
     {
 
-        if (eqInfo.getEqCommutative(replRoot.getStmt()) == null)
+        if (!eqInfo.isEquivalence(replRoot.getStmt()))
             return;
 
-        if (eqInfo.getEqCommutative(hypNode.getStmt()) == null)
+        if (!eqInfo.isEquivalence(hypNode.getStmt()))
             return;
 
         final ParseNode[] hypSubTrees = hypNode.getChild();

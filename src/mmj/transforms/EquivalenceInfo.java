@@ -23,6 +23,24 @@ public class EquivalenceInfo extends DBInfo {
 
     // TODO: collect these rules in implication form!
 
+    private boolean fillDeductRules = false;
+
+    /**
+     * The map from implication operator to the list of commutative deduction
+     * rules for equivalence operators:
+     * <p>
+     * p -> A = B => p -> B = A
+     */
+    private final Map<Stmt, Map<Stmt, Assrt>> eqDeductCom;
+
+    /**
+     * The map from implication operator to the list of transitive deduction
+     * rules for equivalence operators:
+     * <p>
+     * p -> A = B & p -> B = C => p -> A = C
+     */
+    private final Map<Stmt, Map<Stmt, Assrt>> eqDeductTrans;
+
     // ------------------------------------------------------------------------
     // ------------------------Initialization----------------------------------
     // ------------------------------------------------------------------------
@@ -41,6 +59,43 @@ public class EquivalenceInfo extends DBInfo {
             findEquivalenceTransitiveRules(assrt);
 
         filterOnlyEqRules();
+
+        eqDeductCom = new HashMap<Stmt, Map<Stmt, Assrt>>();
+        eqDeductTrans = new HashMap<Stmt, Map<Stmt, Assrt>>();
+    }
+
+    public void fillDeductRules(final List<Assrt> assrtList,
+        final ImplicationInfo implInfo)
+    {
+        assert !fillDeductRules;
+        fillDeductRules = true;
+
+        for (final Assrt assrt : assrtList)
+            findEquivalenceCommutativeDeductionRules(assrt, implInfo);
+
+        for (final Assrt assrt : assrtList)
+            findEquivalenceTransitiveDeductionRules(assrt, implInfo);
+
+        final Collection<Stmt> implOps = implInfo.getImplForPrefixOperators();
+        for (final Stmt op : implOps) {
+            final Map<Stmt, Assrt> dedCom = eqDeductCom.get(op);
+            final Map<Stmt, Assrt> dedTrans = eqDeductTrans.get(op);
+            for (final Stmt eqOp : eqCommutatives.keySet()) {
+                // TODO: make constants for error messages
+                if (!dedCom.containsKey(eqOp))
+                    output
+                        .errorMessage(
+                            "The library has no deduction commutative "
+                                + "assertion for implication operator %s and equivalence statement %s",
+                            op, eqOp);
+                if (!dedTrans.containsKey(eqOp))
+                    output
+                        .errorMessage(
+                            "The library has no deduction transitive "
+                                + "assertion for implication operator %s and equivalence statement %s",
+                            op, eqOp);
+            }
+        }
     }
 
     /**
@@ -49,7 +104,7 @@ public class EquivalenceInfo extends DBInfo {
      *
      * @param assrt the candidate
      */
-    protected void findEquivalenceCommutativeRules(final Assrt assrt) {
+    private void findEquivalenceCommutativeRules(final Assrt assrt) {
         final VarHyp[] varHypArray = assrt.getMandVarHypArray();
         final LogHyp[] logHyps = assrt.getLogHypArray();
         final ParseTree assrtTree = assrt.getExprParseTree();
@@ -68,28 +123,122 @@ public class EquivalenceInfo extends DBInfo {
         if (assrtTree.getMaxDepth() != 2)
             return;
 
-        if (assrtTree.getRoot().getChild().length != 2)
+        final ParseNode root = assrtTree.getRoot();
+        if (root.getChild().length != 2)
             return;
 
-        final Stmt stmt = assrtTree.getRoot().getStmt();
+        final Stmt stmt = root.getStmt();
 
-        if (hypTree.getRoot().getStmt() != stmt)
+        final ParseNode hypRoot = hypTree.getRoot();
+        if (hypRoot.getStmt() != stmt)
             return;
 
-        if (hypTree.getRoot().getChild()[0].getStmt() != assrtTree.getRoot()
-            .getChild()[1].getStmt())
+        if (hypRoot.getChild()[0].getStmt() != root.getChild()[1].getStmt())
             return;
 
-        if (hypTree.getRoot().getChild()[1].getStmt() != assrtTree.getRoot()
-            .getChild()[0].getStmt())
+        if (hypRoot.getChild()[1].getStmt() != root.getChild()[0].getStmt())
+            return;
+
+        if (eqCommutatives.containsKey(stmt))
             return;
 
         output.dbgMessage(dbg,
             "I-TR-DBG Equivalence commutative assrt: %s: %s", assrt,
             assrt.getFormula());
 
-        if (!eqCommutatives.containsKey(stmt))
-            eqCommutatives.put(stmt, assrt);
+        eqCommutatives.put(stmt, assrt);
+    }
+
+    private void findEquivalenceTransitiveDeductionRules(final Assrt assrt,
+        final ImplicationInfo implInfo)
+    {
+        final VarHyp[] mandVarHypArray = assrt.getMandVarHypArray();
+        final LogHyp[] logHyps = assrt.getLogHypArray();
+        final ParseTree assrtTree = assrt.getExprParseTree();
+
+        if (logHyps.length != 2)
+            return;
+
+        final ParseTree hyp1Tree = logHyps[0].getExprParseTree();
+        final ParseTree hyp2Tree = logHyps[1].getExprParseTree();
+
+        if (mandVarHypArray.length != 3)
+            return;
+
+        if (hyp1Tree.getMaxDepth() != 3 || hyp2Tree.getMaxDepth() != 3)
+            return;
+
+        if (assrtTree.getMaxDepth() != 3)
+            return;
+
+        final ParseNode root = assrtTree.getRoot();
+        if (root.getChild().length != 2)
+            return;
+
+        final Stmt implOp = root.getStmt();
+        if (!implInfo.isImplForPrefixOperator(implOp))
+            return;
+
+        final ParseNode hyp1Root = hyp1Tree.getRoot();
+        final ParseNode hyp2Root = hyp2Tree.getRoot();
+
+        if (hyp1Root.getStmt() != implOp)
+            return;
+        if (hyp2Root.getStmt() != implOp)
+            return;
+
+        final ParseNode prefix = root.getChild()[0];
+        if (prefix.getStmt() != mandVarHypArray[0])
+            return;
+
+        final ParseNode hyp1Prefix = hyp1Root.getChild()[0];
+        if (hyp1Prefix.getStmt() != mandVarHypArray[0])
+            return;
+        final ParseNode hyp2Prefix = hyp2Root.getChild()[0];
+        if (hyp2Prefix.getStmt() != mandVarHypArray[0])
+            return;
+
+        final ParseNode core = root.getChild()[1];
+        final ParseNode hyp1Core = hyp1Root.getChild()[1];
+        final ParseNode hyp2Core = hyp2Root.getChild()[1];
+
+        final Stmt stmt = core.getStmt();
+
+        if (!isEquivalence(stmt))
+            return;
+
+        if (hyp1Core.getStmt() != stmt)
+            return;
+        if (hyp2Core.getStmt() != stmt)
+            return;
+
+        // check for 'A' in 'A = B & B = C => A = C'
+        if (hyp1Core.getChild()[0].getStmt() != core.getChild()[0].getStmt())
+            return;
+
+        // check for 'B' in 'A = B & B = C'
+        if (hyp1Core.getChild()[1].getStmt() != hyp2Core.getChild()[0]
+            .getStmt())
+            return;
+
+        // check for 'C' in 'A = B & B = C => A = C'
+        if (hyp2Core.getChild()[1].getStmt() != core.getChild()[1].getStmt())
+            return;
+
+        Map<Stmt, Assrt> eqTransMap = eqDeductTrans.get(implOp);
+        if (eqTransMap == null) {
+            eqTransMap = new HashMap<Stmt, Assrt>();
+            eqDeductTrans.put(implOp, eqTransMap);
+        }
+
+        if (eqTransMap.containsKey(stmt))
+            return;
+
+        output.dbgMessage(dbg,
+            "I-TR-DBG Equivalence transitive deduction assrt: %s: %s", assrt,
+            assrt.getFormula());
+
+        eqTransMap.put(stmt, assrt);
     }
 
     /**
@@ -98,7 +247,7 @@ public class EquivalenceInfo extends DBInfo {
      *
      * @param assrt the candidate
      */
-    protected void findEquivalenceTransitiveRules(final Assrt assrt) {
+    private void findEquivalenceTransitiveRules(final Assrt assrt) {
         final VarHyp[] mandVarHypArray = assrt.getMandVarHypArray();
         final LogHyp[] logHyps = assrt.getLogHypArray();
         final ParseTree assrtTree = assrt.getExprParseTree();
@@ -106,55 +255,60 @@ public class EquivalenceInfo extends DBInfo {
         if (logHyps.length != 2)
             return;
 
-        final ParseTree hypTree1 = logHyps[0].getExprParseTree();
-        final ParseTree hypTree2 = logHyps[1].getExprParseTree();
+        final ParseTree hyp1Tree = logHyps[0].getExprParseTree();
+        final ParseTree hyp2Tree = logHyps[1].getExprParseTree();
 
         if (mandVarHypArray.length != 2)
             return;
 
-        if (hypTree1.getMaxDepth() != 2 || hypTree2.getMaxDepth() != 2)
+        if (hyp1Tree.getMaxDepth() != 2 || hyp2Tree.getMaxDepth() != 2)
             return;
 
         if (assrtTree.getMaxDepth() != 2)
             return;
 
-        if (assrtTree.getRoot().getChild().length != 2)
+        final ParseNode root = assrtTree.getRoot();
+        if (root.getChild().length != 2)
             return;
 
-        final Stmt stmt = assrtTree.getRoot().getStmt();
+        final Stmt stmt = root.getStmt();
 
-        if (hypTree1.getRoot().getStmt() != stmt)
+        final ParseNode hyp1Root = hyp1Tree.getRoot();
+        final ParseNode hyp2Root = hyp2Tree.getRoot();
+
+        if (hyp1Root.getStmt() != stmt)
             return;
 
-        if (hypTree2.getRoot().getStmt() != stmt)
+        if (hyp2Root.getStmt() != stmt)
             return;
 
         // check for 'A' in 'A = B & B = C => A = C'
-        if (hypTree1.getRoot().getChild()[0].getStmt() != assrtTree.getRoot()
-            .getChild()[0].getStmt())
+        if (hyp1Root.getChild()[0].getStmt() != root.getChild()[0].getStmt())
             return;
 
         // check for 'B' in 'A = B & B = C'
-        if (hypTree1.getRoot().getChild()[1].getStmt() != hypTree2.getRoot()
-            .getChild()[0].getStmt())
+        if (hyp1Root.getChild()[1].getStmt() != hyp2Root.getChild()[0]
+            .getStmt())
             return;
 
         // check for 'C' in 'A = B & B = C => A = C'
-        if (hypTree2.getRoot().getChild()[1].getStmt() != assrtTree.getRoot()
-            .getChild()[1].getStmt())
+        if (hyp2Root.getChild()[1].getStmt() != root.getChild()[1].getStmt())
+            return;
+
+        if (eqTransitivies.containsKey(stmt))
             return;
 
         output.dbgMessage(dbg, "I-TR-DBG Equivalence transitive assrt: %s: %s",
             assrt, assrt.getFormula());
-        if (!eqTransitivies.containsKey(stmt))
-            eqTransitivies.put(stmt, assrt);
+
+        eqTransitivies.put(stmt, assrt);
     }
 
     /**
      * We found candidates for equivalence from commutative and transitive
      * sides. Now compare results and remove unsuitable!
      */
-    protected void filterOnlyEqRules() {
+    private void filterOnlyEqRules() {
         while (true) {
             boolean changed = false;
 
@@ -198,6 +352,84 @@ public class EquivalenceInfo extends DBInfo {
         }
     }
 
+    // can be tested on eqcomd
+    private void findEquivalenceCommutativeDeductionRules(final Assrt assrt,
+        final ImplicationInfo implInfo)
+    {
+        final VarHyp[] varHypArray = assrt.getMandVarHypArray();
+        final LogHyp[] logHyps = assrt.getLogHypArray();
+        final ParseTree assrtTree = assrt.getExprParseTree();
+
+        if (logHyps.length != 1)
+            return;
+
+        final ParseTree hypTree = logHyps[0].getExprParseTree();
+
+        if (varHypArray.length != 3)
+            return;
+
+        if (hypTree.getMaxDepth() != 3)
+            return;
+
+        if (assrtTree.getMaxDepth() != 3)
+            return;
+
+        final ParseNode root = assrtTree.getRoot();
+
+        if (root.getChild().length != 2)
+            return;
+
+        final Stmt implOp = root.getStmt();
+        if (!implInfo.isImplForPrefixOperator(implOp))
+            return;
+
+        final ParseNode hypRoot = hypTree.getRoot();
+        if (hypRoot.getStmt() != implOp)
+            return;
+
+        final ParseNode prefix = root.getChild()[0];
+        if (prefix.getStmt() != varHypArray[0])
+            return;
+
+        final ParseNode hypPrefix = hypRoot.getChild()[0];
+        if (hypPrefix.getStmt() != varHypArray[0])
+            return;
+
+        final ParseNode core = root.getChild()[1];
+        final ParseNode hypCore = hypRoot.getChild()[1];
+
+        final Stmt stmt = core.getStmt();
+
+        if (!isEquivalence(stmt))
+            return;
+
+        if (hypCore.getStmt() != stmt)
+            return;
+
+        assert core.getChild().length == 2;
+
+        if (hypCore.getChild()[0].getStmt() != core.getChild()[1].getStmt())
+            return;
+
+        if (hypCore.getChild()[1].getStmt() != core.getChild()[0].getStmt())
+            return;
+
+        Map<Stmt, Assrt> eqComMap = eqDeductCom.get(implOp);
+        if (eqComMap == null) {
+            eqComMap = new HashMap<Stmt, Assrt>();
+            eqDeductCom.put(implOp, eqComMap);
+        }
+
+        if (eqComMap.containsKey(stmt))
+            return;
+
+        output.dbgMessage(dbg,
+            "I-TR-DBG Equivalence commutative deduction assrt: %s: %s", assrt,
+            assrt.getFormula());
+
+        eqComMap.put(stmt, assrt);
+    }
+
     // ------------------------------------------------------------------------
     // ------------------------Transformations---------------------------------
     // ------------------------------------------------------------------------
@@ -226,74 +458,36 @@ public class EquivalenceInfo extends DBInfo {
      * @param source the source (e.g. a = b)
      * @return the reverse step
      */
-    public ProofStepStmt createSimpleReverseStep(final WorksheetInfo info,
-        final ProofStepStmt source)
-    {
-        final ParseNode root = source.formulaParseTree.getRoot();
-        final Stmt equalStmt = root.getStmt();
-        final ParseNode left = root.getChild()[0];
-        final ParseNode right = root.getChild()[1];
-        final Assrt eqComm = getEqCommutative(equalStmt);
-
-        assert eqComm != null;
-
-        final ParseNode revNode = TrUtil.createBinaryNode(equalStmt, right,
-            left);
-
-        final ProofStepStmt res = info.getOrCreateProofStepStmt(revNode,
-            new ProofStepStmt[]{source}, eqComm);
-        return res;
-    }
-
-    /**
-     * This function creates transitive inference for two steps (= is the
-     * example of equivalence operator).
-     *
-     * @param info the work sheet info
-     * @param first the first statement (e.g. a = b )
-     * @param second the second statement (e.g. b = c )
-     * @return the result statement (e.g. a = c )
-     */
-    private ProofStepStmt getTransitiveSimpleStep(final WorksheetInfo info,
-        final ProofStepStmt first, final ProofStepStmt second)
-    {
-        if (first == null)
-            return second;
-
-        final ParseNode firstRoot = first.formulaParseTree.getRoot();
-        final ParseNode secondRoot = second.formulaParseTree.getRoot();
-        final Stmt equalStmt = firstRoot.getStmt();
-
-        assert equalStmt == secondRoot.getStmt();
-        assert firstRoot.getChild()[1].isDeepDup(secondRoot.getChild()[0]);
-
-        final Assrt transitive = getEqTransitive(equalStmt);
-
-        final ParseNode transitiveNode = TrUtil.createBinaryNode(equalStmt,
-            firstRoot.getChild()[0], secondRoot.getChild()[1]);
-
-        final ProofStepStmt resStmt = info.getOrCreateProofStepStmt(
-            transitiveNode, new ProofStepStmt[]{first, second}, transitive);
-
-        return resStmt;
-    }
-
-    /**
-     * Creates reverse step for another equivalence step (e.g. b = a for a = b)
-     *
-     * @param info the work sheet info
-     * @param source the source (e.g. a = b)
-     * @return the reverse step
-     */
     public GenProofStepStmt createReverseStep(final WorksheetInfo info,
         final GenProofStepStmt source)
     {
+        /*
         if (!source.hasPrefix())
             return new GenProofStepStmt(createSimpleReverseStep(info,
                 source.getSimpleStep()), null);
-        throw new IllegalStateException("TODO: implement it!");
-    }
+         */
+        final ParseNode core = source.getCore();
+        final Stmt equalStmt = core.getStmt();
+        final ParseNode left = core.getChild()[0];
+        final ParseNode right = core.getChild()[1];
 
+        ParseNode revNode = TrUtil.createBinaryNode(equalStmt, right, left);
+
+        final Assrt eqComm;
+        if (!source.hasPrefix())
+            eqComm = getEqCommutative(equalStmt);
+        else {
+            revNode = TrUtil.createBinaryNode(info.implStatement,
+                info.implPrefix, revNode);
+            eqComm = getEqDeductCommutative(info.implStatement, equalStmt);
+        }
+
+        assert eqComm != null;
+        final ProofStepStmt res = info.getOrCreateProofStepStmt(revNode,
+            new ProofStepStmt[]{source.getAnyStep()}, eqComm);
+
+        return new GenProofStepStmt(res, source.getPrefixOrNull());
+    }
     /**
      * This function creates transitive inference for two steps (= is the
      * example of equivalence operator).
@@ -308,11 +502,49 @@ public class EquivalenceInfo extends DBInfo {
     {
         if (first == null)
             return second;
-        
+
+        /*
         if (!first.hasPrefix() && !second.hasPrefix())
             return new GenProofStepStmt(getTransitiveSimpleStep(info,
                 first.getSimpleStep(), second.getSimpleStep()), null);
         throw new IllegalStateException("TODO: implement it!");
+        */
+
+        final ParseNode firstCore = first.getCore();
+        final ParseNode secondCore = second.getCore();
+        final Stmt equalStmt = firstCore.getStmt();
+
+        assert equalStmt == secondCore.getStmt();
+        assert firstCore.getChild()[1].isDeepDup(secondCore.getChild()[0]);
+
+        ParseNode resNode = TrUtil.createBinaryNode(equalStmt,
+            firstCore.getChild()[0], secondCore.getChild()[1]);
+
+        ParseNode prefix = null;
+        ProofStepStmt firstStep = first.getAnyStep();
+        ProofStepStmt secondStep = second.getAnyStep();
+        final Assrt transitive;
+        if (first.hasPrefix() || second.hasPrefix()) {
+            prefix = info.implPrefix;
+            if (!first.hasPrefix())
+                firstStep = info.trManager.implInfo.applyStubRule(info,
+                    firstStep);
+            if (!second.hasPrefix())
+                secondStep = info.trManager.implInfo.applyStubRule(info,
+                    secondStep);
+
+            transitive = getEqDeductTransitive(info.implStatement, equalStmt);;
+            resNode = TrUtil.createBinaryNode(info.implStatement,
+                info.implPrefix, resNode);
+        }
+        else
+            transitive = getEqTransitive(equalStmt);
+
+        final ProofStepStmt resStmt = info.getOrCreateProofStepStmt(resNode,
+            new ProofStepStmt[]{firstStep, secondStep}, transitive);
+
+        return new GenProofStepStmt(resStmt, prefix);
+
     }
 
     // -------------------------------------------------------------------------
@@ -327,11 +559,25 @@ public class EquivalenceInfo extends DBInfo {
         return eqMap.get(type);
     }
 
-    public Assrt getEqCommutative(final Stmt stmt) {
+    private Assrt getEqCommutative(final Stmt stmt) {
         return eqCommutatives.get(stmt);
     }
 
-    public Assrt getEqTransitive(final Stmt stmt) {
+    private Assrt getEqTransitive(final Stmt stmt) {
         return eqTransitivies.get(stmt);
+    }
+
+    private Assrt getEqDeductCommutative(final Stmt implOp, final Stmt eqOp) {
+        final Map<Stmt, Assrt> dedCom = eqDeductCom.get(implOp);
+        // final Map<Stmt, Assrt> dedTrans = eqDeductTrans.get(op);
+        if (dedCom == null)
+            return null;
+        return dedCom.get(eqOp);
+    }
+    private Assrt getEqDeductTransitive(final Stmt implOp, final Stmt eqOp) {
+        final Map<Stmt, Assrt> dedTrans = eqDeductTrans.get(implOp);
+        if (dedTrans == null)
+            return null;
+        return dedTrans.get(eqOp);
     }
 }

@@ -28,7 +28,7 @@ public class TransformationManager {
      * <p>
      * TODO: make it parameter
      */
-    public final static boolean SEARCH_PREFIX = false;
+    public final static boolean SEARCH_PREFIX = true;
 
     public final boolean dbg;
 
@@ -81,6 +81,8 @@ public class TransformationManager {
         eqInfo = new EquivalenceInfo(assrtList, output, dbg);
 
         implInfo = new ImplicationInfo(eqInfo, assrtList, output, dbg);
+
+        eqInfo.fillDeductRules(assrtList, implInfo);
 
         conjInfo = new ConjunctionInfo(implInfo, assrtList, output, dbg);
 

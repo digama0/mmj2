@@ -2,6 +2,7 @@ package mmj.transforms;
 
 import mmj.lang.ParseNode;
 import mmj.lang.Stmt;
+import mmj.pa.ProofStepStmt;
 
 /**
  * The replace transformation: we could transform children of corresponding node
@@ -35,9 +36,17 @@ public class ReplaceTransformation extends Transformation {
         // the current transformation result
         ParseNode resNode = originalNode;
 
+        boolean couldSemplifyGenStep = false;
+        if (info.implStatement == originalNode.getStmt()) {
+            assert originalNode.getChild().length == 2;
+            if (originalNode.getChild()[0].isDeepDup(info.implPrefix)
+                && target.originalNode.getChild()[0].isDeepDup(info.implPrefix))
+                couldSemplifyGenStep = true;
+        }
+
         final boolean[] replAsserts = replInfo.getPossibleReplaces(originalNode
             .getStmt());
-        
+
         assert replAsserts != null;
 
         final Stmt equalStmt = eqInfo
@@ -67,6 +76,13 @@ public class ReplaceTransformation extends Transformation {
                     trManager.createTransformation(targetChild, info), info);
             if (childTrStmt == null)
                 continue; // noting to do
+
+            if (couldSemplifyGenStep && i == 1 && childTrStmt.hasPrefix()) {
+                final ProofStepStmt res = info.trManager.implInfo
+                    .applyDisrtibutiveRule(info,
+                        childTrStmt.getImplicationStep());
+                return new GenProofStepStmt(res, null);
+            }
 
             // get the node B = B'
             final ParseNode childTrRoot = childTrStmt.getCore();

@@ -27,6 +27,16 @@ public class ImplicationInfo extends DBInfo {
     /** The list of rules to construct trivial implications : B => A -> B. */
     private final Map<Stmt, Assrt> addPrefixRules = new HashMap<Stmt, Assrt>();
 
+    /**
+     * The list of distributive rules for implication and equality:
+     * <p>
+     * th -> (ph <-> ps) => (th -> ph) <-> (th -> ps)
+     * <p>
+     * It is constructed as a map : (implication operator X equality operator)
+     * -> assertion
+     */
+    private final Map<Stmt, Map<Stmt, Assrt>> distrRules = new HashMap<Stmt, Map<Stmt, Assrt>>();
+
     public ImplicationInfo(final EquivalenceInfo eqInfo,
         final List<Assrt> assrtList, final TrOutput output, final boolean dbg)
     {
@@ -35,7 +45,7 @@ public class ImplicationInfo extends DBInfo {
         for (final Assrt assrt : assrtList)
             findImplicationRules(assrt);
         for (final Assrt assrt : assrtList)
-            findAddFrefixRules(assrt);
+            findAddPrefixRules(assrt);
         for (final Assrt assrt : assrtList)
             findTransitiveRules(assrt);
 
@@ -45,6 +55,82 @@ public class ImplicationInfo extends DBInfo {
                     output.errorMessage(
                         TrConstants.ERRMSG_MISSING_IMPL_TRIV_RULE, stmt,
                         implOp.get(stmt));
+
+        for (final Assrt assrt : assrtList)
+            findDistributiveRules(assrt);
+        // TODO: add check!
+    }
+
+    private void findDistributiveRules(final Assrt assrt) {
+        final ParseTree assrtTree = assrt.getExprParseTree();
+
+        final LogHyp[] logHyps = assrt.getLogHypArray();
+        if (logHyps.length != 1)
+            return;
+
+        final ParseNode root = assrtTree.getRoot();
+
+        final Stmt eqStatement = root.getStmt();
+
+        if (!eqInfo.isEquivalence(eqStatement))
+            return;
+
+        final Stmt implStmt = root.getChild()[0].getStmt();
+
+        if (!implOp.containsKey(implStmt))
+            return;
+
+        if (root.getChild()[1].getStmt() != implStmt)
+            return;
+
+        if (!TrUtil.isVarNode(root.getChild()[0].getChild()[0]))
+            return;
+        if (!TrUtil.isVarNode(root.getChild()[0].getChild()[1]))
+            return;
+        if (!TrUtil.isVarNode(root.getChild()[1].getChild()[1]))
+            return;
+
+        if (root.getChild()[0].getChild()[0].getStmt() != root.getChild()[1]
+            .getChild()[0].getStmt())
+            return;
+        if (root.getChild()[0].getChild()[1].getStmt() == root.getChild()[1]
+            .getChild()[1].getStmt())
+            return;
+
+        final ParseNode log0Root = logHyps[0].getExprParseTree().getRoot();
+
+        if (log0Root.getStmt() != implStmt)
+            return;
+
+        if (log0Root.getChild()[0].getStmt() != root.getChild()[0].getChild()[0]
+            .getStmt())
+            return;
+
+        if (log0Root.getChild()[1].getStmt() != eqStatement)
+            return;
+
+        if (log0Root.getChild()[1].getChild()[0].getStmt() != root.getChild()[0]
+            .getChild()[1].getStmt())
+            return;
+
+        if (log0Root.getChild()[1].getChild()[1].getStmt() != root.getChild()[1]
+            .getChild()[1].getStmt())
+            return;
+
+        Map<Stmt, Assrt> map = distrRules.get(implStmt);
+        if (map == null) {
+            map = new HashMap<Stmt, Assrt>();
+            distrRules.put(implStmt, map);
+        }
+
+        if (map.containsKey(eqStatement))
+            return;
+
+        output.dbgMessage(dbg,
+            "I-TR-DBG distributive rule for implication: %s: %s", assrt,
+            assrt.getFormula());
+
+        map.put(eqStatement, assrt);
     }
 
     /**
@@ -186,7 +272,7 @@ public class ImplicationInfo extends DBInfo {
         eqImplications.put(type, assrt);
     }
 
-    private void findAddFrefixRules(final Assrt assrt) {
+    private void findAddPrefixRules(final Assrt assrt) {
         // Debug: a1i
 
         final ParseTree assrtTree = assrt.getExprParseTree();
@@ -463,7 +549,7 @@ public class ImplicationInfo extends DBInfo {
         final ParseNode root = info.derivStep.formulaParseTree.getRoot();
         for (final Entry<Stmt, Assrt> elem : implOp.entrySet()) {
             final Stmt stmt = elem.getKey();
-            if (eqInfo.isEquivalence(stmt))
+            if (!isImplForPrefixOperator(stmt))
                 continue; // it is not true implication construction.
 
             if (root.getStmt() == stmt) {
@@ -509,6 +595,31 @@ public class ImplicationInfo extends DBInfo {
         }
     }
 
+    public ProofStepStmt applyDisrtibutiveRule(final WorksheetInfo info,
+        final ProofStepStmt hyp)
+    {
+        final ParseNode root = hyp.formulaParseTree.getRoot();
+        final Stmt implStmt = root.getStmt();
+        assert isImplOperator(implStmt);
+        final Stmt eqStmt = root.getChild()[1].getStmt();
+        assert eqInfo.isEquivalence(eqStmt);
+
+        final ParseNode precond = root.getChild()[0];
+        final ParseNode first = root.getChild()[1].getChild()[0];
+        final ParseNode second = root.getChild()[1].getChild()[1];
+
+        final ParseNode stepNode = TrUtil.createBinaryNode(eqStmt,
+            TrUtil.createBinaryNode(implStmt, precond, first),
+            TrUtil.createBinaryNode(implStmt, precond, second));
+
+        final Assrt distr = getDistributiveRule(implStmt, eqStmt);
+        assert distr != null;
+
+        final ProofStepStmt res = info.getOrCreateProofStepStmt(stepNode,
+            new ProofStepStmt[]{hyp}, distr);
+
+        return res;
+    }
     // ------------------------------------------------------------------------
     // ------------------------------Getters-----------------------------------
     // ------------------------------------------------------------------------
@@ -529,4 +640,20 @@ public class ImplicationInfo extends DBInfo {
         return addPrefixRules.get(implOp);
     }
 
+    public boolean isImplForPrefixOperator(final Stmt op) {
+        return implOp.containsKey(op) && !eqInfo.isEquivalence(op);
+    }
+
+    public Collection<Stmt> getImplForPrefixOperators() {
+        final Set<Stmt> res = new HashSet<Stmt>();
+        for (final Stmt op : implOp.keySet())
+            if (!eqInfo.isEquivalence(op))
+                res.add(op);
+        return res;
+    }
+
+    private Assrt getDistributiveRule(final Stmt implOp, final Stmt eqOp) {
+        // TODO: implement check for this
+        return distrRules.get(implOp).get(eqOp);
+    }
 }

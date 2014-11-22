@@ -43,6 +43,10 @@ public class GenProofStepStmt {
         return prefix;
     }
 
+    public final ParseNode getPrefixOrNull() {
+        return prefix;
+    }
+
     public ParseNode getCore() {
         final ParseNode root = step.formulaParseTree.getRoot();
         if (prefix == null)
@@ -60,6 +64,10 @@ public class GenProofStepStmt {
 
     ProofStepStmt getImplicationStep() {
         assert hasPrefix();
+        return step;
+    }
+
+    ProofStepStmt getAnyStep() {
         return step;
     }
 }
