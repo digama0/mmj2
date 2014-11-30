@@ -25,10 +25,8 @@ public class TransformationManager {
     /**
      * This constant indicates whether we should try to indicate implication
      * prefix and perform auto-transformations with it.
-     * <p>
-     * TODO: make it parameter
      */
-    public final static boolean SEARCH_PREFIX = true;
+    public final boolean supportImplicationPrefix;
 
     public final boolean dbg;
 
@@ -66,17 +64,21 @@ public class TransformationManager {
      *            "provable logic statement type"
      * @param messages the message manager
      * @param verifyProofs the proof verification is needed for some actions
+     * @param supportPrefix when it is true auto-transformation component will
+     *            try to use implication prefix in transformations
      * @param debugOutput when it is true auto-transformation component will
      *            produce a lot of debug output
      */
     public TransformationManager(final List<Assrt> assrtList,
         final Cnst provableLogicStmtTyp, final Messages messages,
-        final VerifyProofs verifyProofs, final boolean debugOutput)
+        final VerifyProofs verifyProofs, final boolean supportPrefix,
+        final boolean debugOutput)
     {
         output = new TrOutput(messages);
         this.verifyProofs = verifyProofs;
         this.provableLogicStmtTyp = provableLogicStmtTyp;
         dbg = debugOutput;
+        supportImplicationPrefix = supportPrefix;
 
         eqInfo = new EquivalenceInfo(assrtList, output, dbg);
 
@@ -114,7 +116,7 @@ public class TransformationManager {
     {
         final Stmt stmt = node.getStmt();
 
-        final boolean[] replAsserts = replInfo.getPossibleReplaces(stmt);
+        final boolean[] replAsserts = replInfo.getPossibleReplaces(stmt, info);
 
         boolean isCom = false;
         final GeneralizedStmt comProp = comInfo
@@ -130,7 +132,7 @@ public class TransformationManager {
 
         boolean isAssocCom = false;
         if (isAssoc)
-            isAssocCom = comInfo.isComOp(assocProp);
+            isAssocCom = comInfo.isComOp(assocProp, info);
 
         final boolean subTreesCouldBeRepl = replAsserts != null;
 
@@ -138,7 +140,6 @@ public class TransformationManager {
             return new IdentityTransformation(this, node);
 
         if (isAssocCom)
-            // TODO: check the property!
             return new AssocComTransformation(this, node,
                 AssocTree.createAssocTree(node, assocProp, info), assocProp);
         else if (isCom)
@@ -150,9 +151,8 @@ public class TransformationManager {
         else if (subTreesCouldBeRepl)
             return new ReplaceTransformation(this, node);
 
-        // TODO: make the string constant!
         throw new IllegalStateException(
-            "Error in createTransformation() algorithm");
+            TrConstants.ERRMSG_ILLEGAL_STATE_IN_CREATE_TRANSFORMATION);
     }
     public ParseNode getCanonicalForm(final ParseNode originalNode,
         final WorksheetInfo info)
@@ -202,7 +202,7 @@ public class TransformationManager {
         final WorksheetInfo info = new WorksheetInfo(proofWorksheet, derivStep,
             this);
 
-        if (SEARCH_PREFIX) {
+        if (supportImplicationPrefix) {
             // If derivation step has form "prefix -> core", then this prefix
             // could be used in transformations
             final ExtractImplResult extrImplRes = implInfo
@@ -278,7 +278,6 @@ public class TransformationManager {
         try {
             return tryToFindTransformationsCore(proofWorksheet, derivStep);
         } catch (final Throwable e) {
-            // TODO: make string error constant!
             if (dbg)
                 e.printStackTrace();
 
@@ -300,7 +299,7 @@ public class TransformationManager {
     protected Formula getFormula(final ParseNode node) {
         final ParseTree tree = new ParseTree(node);
         final Formula generatedFormula = verifyProofs.convertRPNToFormula(
-            tree.convertToRPN(), "tree"); // TODO: use constant
+            tree.convertToRPN(), "tree");
         return generatedFormula;
     }
 }

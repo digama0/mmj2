@@ -148,7 +148,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
     /**
      * Constructor.
-     * 
+     *
      * @param proofAsstPreferences variable settings
      * @param logicalSystem the loaded Metamath data
      * @param grammar the mmj.verify.Grammar object
@@ -177,7 +177,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
     /**
      * Triggers the Proof Assistant GUI.
-     * 
+     *
      * @param m the mmj.lang.Messages object used to store error and
      *            informational messages.
      */
@@ -220,7 +220,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
     /**
      * Initialized Unification lookup tables, etc. for Unification.
-     * 
+     *
      * @param messages the mmj.lang.Messages object used to store error and
      *            informational messages.
      * @return initializedOK flag.
@@ -242,7 +242,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     /**
      * Applies a set of updates from the TheoremLoader as specified in the
      * mmtTheoremSet object to the ProofAsst local caches of data.
-     * 
+     *
      * @param mmtTheoremSet MMTTheoremSet object containing the adds and updates
      *            already made to theorems in the LogicalSystem.
      */
@@ -265,7 +265,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * <p>
      * This is here because the Proof Assistant GUI doesn't know how to do
      * anything...
-     * 
+     *
      * @return Messages object.
      */
     public Messages verifyAllProofs() {
@@ -278,7 +278,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * <p>
      * This is here because the Proof Assistant GUI doesn't know how to do
      * anything...
-     * 
+     *
      * @return Messages object.
      */
     public Messages loadTheoremsFromMMTFolder() {
@@ -292,7 +292,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
     /**
      * Invokes GMFF to export the current Proof Worksheet.
-     * 
+     *
      * @param proofText Proof Worksheet text string.
      * @return Messages object.
      */
@@ -317,7 +317,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * <p>
      * This is here because the Proof Assistant GUI doesn't know how to do
      * anything...
-     * 
+     *
      * @param theorem the theorem to extract
      * @return Messages object.
      */
@@ -346,7 +346,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * Why? Because the ProofAsstGUI.java program has no access to or knowledge
      * of LogicalSystem, Grammar, etc. The only external knowledge it has is
      * ProofAsstPreferences.
-     * 
+     *
      * @param newTheoremLabel the name of the new proof
      * @return ProofWorksheet initialized skeleton proof
      */
@@ -380,7 +380,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * Why? Because the ProofAsstGUI.java program has no access to or knowledge
      * of LogicalSystem, Grammar, etc. The only external knowledge it has is
      * ProofAsstPreferences.
-     * 
+     *
      * @param currProofMaxSeq sequence number of current proof on ProofAsstGUI
      *            screen.
      * @return ProofWorksheet initialized skeleton proof
@@ -416,7 +416,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * Fetches a Theorem using an input Label String.
      * <p>
      * Note: this method is called by ProofAsstGUI.java!
-     * 
+     *
      * @param theoremLabel label of Theorem to retrieve from statement table.
      * @return Theorem or null if Label not found or is not a Theorem Stmt
      *         label.
@@ -437,7 +437,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * Builds ProofWorksheet for an existing theorem.
      * <p>
      * Note: this method is called by ProofAsstGUI.java!
-     * 
+     *
      * @param oldTheorem theorem to get
      * @param exportFormatUnified true means include step Ref labels
      * @param hypsOrder the order of step Hyps
@@ -475,7 +475,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * it a whole lot we can change it.
      * <p>
      * Note: this method is called by ProofAsstGUI.java!
-     * 
+     *
      * @param currProofMaxSeq sequence number of ProofWorksheet from
      *            ProofAsstGUI currProofMaxSeq field.
      * @param exportFormatUnified true means include step Ref labels
@@ -527,7 +527,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * it a whole lot we can change it.
      * <p>
      * Note: this method is called by ProofAsstGUI.java!
-     * 
+     *
      * @param currProofMaxSeq sequence number of ProofWorksheet from
      *            ProofAsstGUI currProofMaxSeq field.
      * @param exportFormatUnified true means include step Ref labels
@@ -581,7 +581,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * able to read a file of proof texts (which is a feature designed for
      * testing purposes, but still available to a user via the BatchMMJ2
      * facility.)
-     * 
+     *
      * @param proofText proof text from ProofAsstGUI screen, or any String
      *            conforming to the formatting rules of ProofAsst.
      * @param renumReq renumbering of proof steps requested
@@ -650,7 +650,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * <p>
      * Reformatting is not attempted if the ProofWorksheet has structural errors
      * (returned from the parser).
-     * 
+     *
      * @param inputCursorStep set to true to reformat just the proof step
      *            underneath the cursor.
      * @param proofText proof text from ProofAsstGUI screen, or any String
@@ -683,7 +683,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * Import Theorem proofs from memory and unifies.
      * <p>
      * This is a simulation routine for testing purposes.
-     * 
+     *
      * @param messages Messages object for output messages.
      * @param selectorAll true if process all theorems, false or null, ignore
      *            param.
@@ -715,7 +715,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * Imports one theorem proof from memory and unifies.
      * <p>
      * This is a simulation routine for testing purposes.
-     * 
+     *
      * @param selectorTheorem process selected theorem.
      * @param outputBoss mmj.util.OutputBoss object, if not null means, please
      *            print the proof test.
@@ -786,7 +786,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * Import Theorem proofs from memory and unifies.
      * <p>
      * This is a simulation routine for testing purposes.
-     * 
+     *
      * @param selectorAll true if process all theorems, false or null, ignore
      *            param.
      * @param selectorCount use if not null to restrict the number of theorems
@@ -942,20 +942,24 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
     /**
      * This function initialize auto-transformation component.
-     * 
+     *
      * @param debugOutput when it is true auto-transformation component will
      *            produce a lot of debug output
+     * @param supportPrefix when it is true auto-transformation component will
+     *            try to use implication prefix in transformations
      */
-    public void initAutotransformations(final boolean debugOutput) {
+    public void initAutotransformations(final boolean debugOutput,
+        final boolean supportPrefix)
+    {
         final TransformationManager trManager = new TransformationManager(
             getSortedAssrtSearchList(), getProvableLogicStmtTyp(), messages,
-            verifyProofs, debugOutput);
+            verifyProofs, supportPrefix, debugOutput);
         proofUnifier.setTransformationManager(trManager);
     }
 
     /**
      * Import Theorem proofs from a given Reader.
-     * 
+     *
      * @param importReader source of proofs
      * @param messages Messages object for output messages.
      * @param selectorAll true if process all theorems, false or null, ignore
@@ -1119,7 +1123,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
     /**
      * Exercises the PreprocessRequest code for one proof.
-     * 
+     *
      * @param proofText one Proof Text Area in a String.
      * @param messages Messages object for output messages.
      * @param outputBoss mmj.util.OutputBoss object, if not null means, please
@@ -1155,7 +1159,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
     /**
      * Exercises the StepSelectorSearch for one proof.
-     * 
+     *
      * @param importReader source of proofs
      * @param messages Messages object for output messages.
      * @param outputBoss mmj.util.OutputBoss object, if not null means, please
@@ -1275,7 +1279,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * <p>
      * An incomplete input proof generates an incomplete output proof as well as
      * an error message.
-     * 
+     *
      * @param exportWriter destination for output proofs.
      * @param messages Messages object for output messages.
      * @param selectorAll true if process all theorems, false or null, ignore
@@ -1337,7 +1341,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * method is intrinsically tied to set.mm's definitions, and makes various
      * references to specific axioms like wceq, wb, and df-sbc, although it can
      * handle arbitrary new definitions under the basic structure of set.mm.
-     * 
+     *
      * @param axiom the definition to check
      * @param boundVars the boundVars cache (see
      *            {@link #labelBoundVars(Axiom, Map)})
@@ -1525,7 +1529,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * {@code x} are bound in {@code B} but not in {@code A}; thus the boundVars
      * table entry for df-sum would be <code>{{true, false, true}, null,
      * null}</code>.
-     * 
+     *
      * @param axiom the definition
      * @param boundVars the boundVars table
      */
@@ -1676,7 +1680,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     /**
      * Generate a 'dummy' proof worksheet containing the given expression, and
      * return true if the resulting theorem was successfully proven.
-     * 
+     *
      * @param w The ProofWorksheet in which to work
      * @param theorem the expression to prove
      * @return true if a proof was found
@@ -1778,7 +1782,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * and "structural" edits so that other logic such as ProofUnifier have a
      * clean ProofWorksheet. A "structural error" means an error like a formula
      * with a syntax error, or a Hyp referring to a non-existent step, etc.
-     * 
+     *
      * @param proofText proof text from ProofAsstGUI screen, or any String
      *            conforming to the formatting rules of ProofAsst.
      * @param errorFound boolean array of 1 element that is output as true if an
@@ -1834,7 +1838,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * This function compares {@code candidate} time information with the
      * content of {@code timeTop} array and updates {@code timeTop} if it is
      * needed.
-     * 
+     *
      * @param timeTop The array with already collected information about longest
      *            theorem unifications.
      * @param candidate The information about some theorem test.
@@ -2299,7 +2303,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * each mandFrame.djVarsArray[i] in the ProofWorksheet's
      * comboFrame.djVarsArray (which happens to be sorted); if not found, then
      * the mandFrame.djVarsArray[i] element is Superflous...
-     * 
+     *
      * @param proofWorksheet the owner ProofWorksheet
      */
     private void importCompareDJs(final ProofWorksheet proofWorksheet) {

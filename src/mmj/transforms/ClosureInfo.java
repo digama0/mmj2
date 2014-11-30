@@ -43,12 +43,6 @@ public class ClosureInfo extends DBInfo {
     /** This constant is needed for internal debug */
     private static final boolean supportConstants = true;
 
-    /**
-     * This field could be used for debug. The counter for some interesting
-     * situations. You could set breakpoint for some its value.
-     */
-    private int debugCounter = 0;
-
     // ------------------------------------------------------------------------
     // ------------------------Initialization----------------------------------
     // ------------------------------------------------------------------------
@@ -500,8 +494,6 @@ public class ClosureInfo extends DBInfo {
      * recursively. For example, suppose we have |- A e. CC. The this function
      * for the input " _ e. CC" and "( sin ` A )" will find "|- A e. CC" and
      * then will generate "|- ( sin ` A ) e. CC"
-     * <p>
-     * TODO: remove this function
      *
      * @param info the work sheet info
      * @param template template (" _ e. CC" in the example)
@@ -517,9 +509,6 @@ public class ClosureInfo extends DBInfo {
         final boolean finishStatement, final boolean searchWithPrefix)
     {
         final ParseNode stepNode = template.subst(node);
-
-        final int startCounter = debugCounter;
-        debugCounter++;
 
         if (finishStatement)
             if (info.hasImplPrefix())
@@ -551,8 +540,7 @@ public class ClosureInfo extends DBInfo {
                 assert supportConstants;
 
                 // So it should be constant
-                assert TrUtil.isConstNode(node) : "(-" + startCounter + ","
-                    + debugCounter + "-)";
+                assert TrUtil.isConstNode(node);
 
                 final Map<ParseNodeHashElem, Assrt> cMap = constInfo
                     .get(template);
@@ -753,11 +741,6 @@ public class ClosureInfo extends DBInfo {
                 }
             });
 
-        if (res == null)
-            output.dbgMessage(true,
-                "I-TR-ERR fail to find appropriate statelemt: %s(%s), %s",
-                node, info.trManager.getFormula(node), template);
-
         assert res != null;
         return res;
     }
@@ -855,15 +838,9 @@ public class ClosureInfo extends DBInfo {
                     if (!propertyMap.containsKey(template))
                         return ClosureResult.NO_CLOSURE_RULE;
 
-                    final int prevDbg = debugCounter;
-
-                    if (prevDbg == 7)
-                        toString();
-
                     ClosureResult childResMerge = simpleRes;
                     for (int i = 0; i < node.getChild().length; i++)
                         if (constSubst.constMap[i] == null) {
-                            debugCounter++;
                             // Variable position
                             final ParseNode child = node.getChild()[i];
                             final ClosureResult propRes = getClosurePossibility(
@@ -873,17 +850,6 @@ public class ClosureInfo extends DBInfo {
                             childResMerge = mergeSearchResults(childResMerge,
                                 propRes);
                         }
-                    debugCounter++;
-
-                    output
-                        .dbgMessage(
-                            dbg,
-                            "I-TR-DBG (-%d, %d-) Closure property confirmed"
-                                + "(map %s): node %s has property %s, assertion %s",
-                            prevDbg, debugCounter,
-                            map == closureRuleMap ? "simple" : "implication",
-                            info.trManager.getFormula(node), template,
-                            propertyMap.get(template));
 
                     return childResMerge;
                 }

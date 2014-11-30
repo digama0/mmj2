@@ -43,7 +43,16 @@ public class CommutativeInfo extends DBInfo {
      */
     private final CommRuleMap comOp = new CommRuleMap();
 
-    // TODO: implement the usage of it!
+    /**
+     * The list of commutative operators:
+     * <p>
+     * "A e. CC /\ B e. CC -> ( A + B ) = ( B + A )"
+     * <p>
+     * It is a map: Statement ( ( A F B ) in the example) -> map : constant
+     * elements ( + in the example) -> map : possible properties ( _ e. CC in
+     * the example) -> assert. There could be many properties ( {" _ e. CC" ,
+     * "_ e. RR" } for example ).
+     */
     private final CommRuleMap implComOp = new CommRuleMap();
 
     // ------------------------------------------------------------------------
@@ -198,7 +207,7 @@ public class CommutativeInfo extends DBInfo {
     {
         final GeneralizedStmt res = comOp.detectGenStmt(node, info);
         if (res != null)
-            if (!TransformationManager.SEARCH_PREFIX || res.template.isEmpty())
+            if (!info.hasImplPrefix() || res.template.isEmpty())
                 return res;
         return implComOp.detectGenStmt(node, info);
     }
@@ -256,8 +265,7 @@ public class CommutativeInfo extends DBInfo {
         Assrt assrt = null;
         boolean implForm = false;
 
-        if (!TransformationManager.SEARCH_PREFIX || comProp.template.isEmpty())
-        {
+        if (!info.hasImplPrefix() || comProp.template.isEmpty()) {
             assrt = getComOp(comProp, comOp);
             if (assrt != null)
                 implForm = false;
@@ -276,11 +284,12 @@ public class CommutativeInfo extends DBInfo {
     // ------------------------------Getters-----------------------------------
     // ------------------------------------------------------------------------
 
-    public boolean isComOp(final GeneralizedStmt genStmt) {
+    public boolean isComOp(final GeneralizedStmt genStmt,
+        final WorksheetInfo info)
+    {
 
         if (getComOp(genStmt, comOp) != null)
-            if (!TransformationManager.SEARCH_PREFIX
-                || genStmt.template.isEmpty())
+            if (!info.hasImplPrefix() || genStmt.template.isEmpty())
                 return true;
 
         return getComOp(genStmt, implComOp) != null;

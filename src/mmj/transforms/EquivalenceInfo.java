@@ -5,24 +5,28 @@ import java.util.*;
 import mmj.lang.*;
 import mmj.pa.ProofStepStmt;
 
-/** This class could be used for equivalence transformations */
+/**
+ * This class is used for equivalence transformations.
+ * <p>
+ * Note: Now there is a restriction: the library has to define only one
+ * equivalence operator for every type. In set.mm we have 2 types: wff, class.
+ */
 public class EquivalenceInfo extends DBInfo {
 
     /** The map from type to corresponding equivalence operators */
-    private Map<Cnst, Stmt> eqMap;
+    private final Map<Cnst, Stmt> eqMap = new HashMap<Cnst, Stmt>();
 
     /** The list of commutative rules for equivalence operators: A = B => B = A */
-    private final Map<Stmt, Assrt> eqCommutatives;
+    private final Map<Stmt, Assrt> eqCommutatives = new HashMap<Stmt, Assrt>();
 
     /**
      * The list of transitive rules for equivalence operators:
      * <p>
      * A = B & B = C => A = C
      */
-    private final Map<Stmt, Assrt> eqTransitivies;
+    private final Map<Stmt, Assrt> eqTransitivies = new HashMap<Stmt, Assrt>();
 
-    // TODO: collect these rules in implication form!
-
+    /** The indicator that we collected rules in deduction form */
     private boolean fillDeductRules = false;
 
     /**
@@ -31,7 +35,7 @@ public class EquivalenceInfo extends DBInfo {
      * <p>
      * p -> A = B => p -> B = A
      */
-    private final Map<Stmt, Map<Stmt, Assrt>> eqDeductCom;
+    private final Map<Stmt, Map<Stmt, Assrt>> eqDeductCom = new HashMap<Stmt, Map<Stmt, Assrt>>();
 
     /**
      * The map from implication operator to the list of transitive deduction
@@ -39,7 +43,7 @@ public class EquivalenceInfo extends DBInfo {
      * <p>
      * p -> A = B & p -> B = C => p -> A = C
      */
-    private final Map<Stmt, Map<Stmt, Assrt>> eqDeductTrans;
+    private final Map<Stmt, Map<Stmt, Assrt>> eqDeductTrans = new HashMap<Stmt, Map<Stmt, Assrt>>();
 
     // ------------------------------------------------------------------------
     // ------------------------Initialization----------------------------------
@@ -50,18 +54,13 @@ public class EquivalenceInfo extends DBInfo {
     {
         super(output, dbg);
 
-        eqCommutatives = new HashMap<Stmt, Assrt>();
         for (final Assrt assrt : assrtList)
             findEquivalenceCommutativeRules(assrt);
 
-        eqTransitivies = new HashMap<Stmt, Assrt>();
         for (final Assrt assrt : assrtList)
             findEquivalenceTransitiveRules(assrt);
 
         filterOnlyEqRules();
-
-        eqDeductCom = new HashMap<Stmt, Map<Stmt, Assrt>>();
-        eqDeductTrans = new HashMap<Stmt, Map<Stmt, Assrt>>();
     }
 
     public void fillDeductRules(final List<Assrt> assrtList,
@@ -81,19 +80,14 @@ public class EquivalenceInfo extends DBInfo {
             final Map<Stmt, Assrt> dedCom = eqDeductCom.get(op);
             final Map<Stmt, Assrt> dedTrans = eqDeductTrans.get(op);
             for (final Stmt eqOp : eqCommutatives.keySet()) {
-                // TODO: make constants for error messages
                 if (!dedCom.containsKey(eqOp))
-                    output
-                        .errorMessage(
-                            "The library has no deduction commutative "
-                                + "assertion for implication operator %s and equivalence statement %s",
-                            op, eqOp);
+                    output.errorMessage(
+                        TrConstants.ERRMSG_MISSING_EQUAL_COMMUT_DEDUCT_RULE,
+                        op, eqOp);
                 if (!dedTrans.containsKey(eqOp))
-                    output
-                        .errorMessage(
-                            "The library has no deduction transitive "
-                                + "assertion for implication operator %s and equivalence statement %s",
-                            op, eqOp);
+                    output.errorMessage(
+                        TrConstants.ERRMSG_MISSING_EQUAL_TRANSIT_DEDUCT_RULE,
+                        op, eqOp);
             }
         }
     }
@@ -336,22 +330,26 @@ public class EquivalenceInfo extends DBInfo {
                 eq, eqCommutatives.get(eq).getFormula(), eqTransitivies.get(eq)
                     .getFormula());
 
-        // Create the reverse map:
-        eqMap = new HashMap<Cnst, Stmt>();
-
         for (final Stmt eq : eqCommutatives.keySet()) {
             final Assrt assrt = eqCommutatives.get(eq);
 
             final ParseTree assrtTree = assrt.getExprParseTree();
             final Cnst type = assrtTree.getRoot().getChild()[0].getStmt()
                 .getTyp();
+
+            if (eqMap.containsKey(type)) {
+                output.errorMessage(
+                    TrConstants.ERRMSG_MORE_THEN_ONE_EQUALITY_OPERATOR, eq,
+                    eqMap.get(type), type);
+                continue;
+            }
+
             eqMap.put(type, eq);
 
             output.dbgMessage(dbg, "I-TR-DBG Type equivalence map: %s: %s",
                 type, eq);
         }
     }
-
     // can be tested on eqcomd
     private void findEquivalenceCommutativeDeductionRules(final Assrt assrt,
         final ImplicationInfo implInfo)
@@ -503,13 +501,6 @@ public class EquivalenceInfo extends DBInfo {
         if (first == null)
             return second;
 
-        /*
-        if (!first.hasPrefix() && !second.hasPrefix())
-            return new GenProofStepStmt(getTransitiveSimpleStep(info,
-                first.getSimpleStep(), second.getSimpleStep()), null);
-        throw new IllegalStateException("TODO: implement it!");
-        */
-
         final ParseNode firstCore = first.getCore();
         final ParseNode secondCore = second.getCore();
         final Stmt equalStmt = firstCore.getStmt();
@@ -552,7 +543,7 @@ public class EquivalenceInfo extends DBInfo {
     // -------------------------------------------------------------------------
 
     public boolean isEquivalence(final Stmt stmt) {
-        return eqCommutatives.containsKey(stmt);
+        return eqMap.containsValue(stmt);
     }
 
     public Stmt getEqStmt(final Cnst type) {
@@ -569,7 +560,6 @@ public class EquivalenceInfo extends DBInfo {
 
     private Assrt getEqDeductCommutative(final Stmt implOp, final Stmt eqOp) {
         final Map<Stmt, Assrt> dedCom = eqDeductCom.get(implOp);
-        // final Map<Stmt, Assrt> dedTrans = eqDeductTrans.get(op);
         if (dedCom == null)
             return null;
         return dedCom.get(eqOp);

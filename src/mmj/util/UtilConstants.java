@@ -170,7 +170,7 @@ import mmj.verify.ProofConstants;
  * <b>{@code 9999}</b> : sequential number within the source code, 0001 through
  * 9999.
  * <p>
- * {@code 
+ * {@code
  * =============================================================
  * }
  * <p>
@@ -193,10 +193,10 @@ import mmj.verify.ProofConstants;
  * first. These are the settings that modify subsequent processing and stay in
  * effect until superceded.
  * <p>
- * 
+ *
  * <pre>
  *  "Executable" RunParms:
- * 
+ *
  *      000000000011111111112
  *      012345678901234567890...
  *      ----------------------------
@@ -220,12 +220,12 @@ import mmj.verify.ProofConstants;
  *      RunProofAsstGUI
  *      SvcCall
  *      ExtractTheoremToMMTFolder
- * 
- * 
+ *
+ *
  *  Example #1 RunParmFile to load 1 file, verify proofs, edit
  *  grammar, parse, print syntax and statement details, and
  *  print BookManager data:
- * 
+ *
  *      000000000011111111112
  *      012345678901234567890...
  *      MaxStatementPrintCount,9999
@@ -240,7 +240,7 @@ import mmj.verify.ProofConstants;
  *      PrintBookManagerChapters
  *      PrintBookManagerSections
  *      PrintBookManagerSectionDetails,*
- * 
+ *
  *  Example #2 RunParmFile doing the exact same thing except
  *  this time:
  *      - specifying the default values AND
@@ -259,44 +259,44 @@ import mmj.verify.ProofConstants;
  *      - Trigger the ProofAsstGUI
  *      - generous use of blank comment lines for readability!
  *      - and THEN we clear and load a different file!
- * 
+ *
  *      000000000011111111112
  *      012345678901234567890...
- * 
+ *
  *      OutputVerbosity,9999
  *       CommentLine: Example #2 - default charsets="" and
  *                    new/update parameter
  *      SystemErrorFile,c:\my\mmjSyserrTest001.txt,new,""
  *      SystemOutputFile,c:\my\mmjSysoutTest001.txt,new,""
- * 
+ *
  *      MaxErrorMessages,500
  *      MaxInfoMessages,500
- * 
+ *
  *      SymbolTableInitialSize,600
  *      StatementTableInitialSize,30000
- * 
+ *
  *      SeqAssignerIntervalSize,100
  *      SeqAssignerIntervalTblInitialSize,100
- * 
+ *
  *      LoadEndpointStmtNbr,5000
  *      LoadEndpointStmtLabel,FermatsLastTheorem
  *      LoadComments,yes
  *      LoadProofs,yes
- * 
+ *
  *      ProvableLogicStmtType,|-
  *      LogicStmtType,wff
- * 
+ *
  *      BookManagerEnabled,yes
- * 
+ *
  *      GrammarAmbiguityEdits,basic
  *      StatementAmbiguityEdits,basic
- * 
+ *
  *      MaxStatementPrintCount,9999
  *      Caption,Example #2
- * 
+ *
  *      LoadFile,c:\metamath\expset.mm
  *      LoadFile,c:\metamath\expset2.mm
- * 
+ *
  *      TheoremLoaderMMTFolder,c:\my\mmtFolder
  *      TheoremLoaderDjVarsOption,Replace
  *      TheoremLoaderAuditMessages,Yes
@@ -307,14 +307,14 @@ import mmj.verify.ProofConstants;
  *      UnifyPlusStoreInMMTFolder,syl.mmp
  *      UnifyPlusStoreInLogSysAndMMTFolder,syl.mmp
  *      ExtractTheoremToMMTFolder,syl
- * 
+ *
  *      VerifyProof,*
  *      Parse,*
- * 
+ *
  *      VerifyParse,*
- * 
+ *
  *  ===TMFF stuff follows===
- * 
+ *
  *      TMFFDefineScheme,AlignVarDepth1,AlignColumn,1,Var,1,Var
  *      TMFFDefineScheme,AlignVarDepth2,AlignColumn,2,Var,1,Var
  *      TMFFDefineScheme,AlignVarDepth3,AlignColumn,3,Var,1,Var
@@ -330,12 +330,12 @@ import mmj.verify.ProofConstants;
  *      TMFFDefineScheme,TwoColumnAlignmentDepth4,TwoColumnAlignment,4
  *      TMFFDefineScheme,TwoColumnAlignmentDepth5,TwoColumnAlignment,5
  *      TMFFDefineScheme,TwoColumnAlignmentDepth99,TwoColumnAlignment,99
- * 
+ *
  *  Note: "Unformatted" and Format 0 are hardcoded --
  *       they cannot be redefined via RunParms.
- * 
+ *
  * TMFFDefineScheme,Unformatted,Unformatted
- * 
+ *
  *      TMFFDefineFormat,1,AlignVarDepth1
  *      TMFFDefineFormat,2,AlignVarDepth2
  *      TMFFDefineFormat,3,AlignVarDepth3
@@ -351,24 +351,24 @@ import mmj.verify.ProofConstants;
  *      TMFFDefineFormat,13,TwoColumnAlignmentDepth3
  *      TMFFDefineFormat,14,TwoColumnAlignmentDepth4
  *      TMFFDefineFormat,15,TwoColumnAlignmentDepth5
- * 
+ *
  *      TMFFUseFormat,3
  *      TMFFAltFormat,7
  *      TMFFUseIndent,0
  *      TMFFAltIndent,1
- * 
+ *
  *      PrintSyntaxDetails
  *      PrintStatementDetails,*
  *      PrintBookManagerChapters
  *      PrintBookManagerSections
  *      PrintBookManagerSectionDetails,*
- * 
+ *
  *      ProofAsstFontSize,14
  *      ProofAsstFontBold,yes
  *      ProofAsstFontFamily,Monospaced
  *      ProofAsstForegroundColorRGB,0,0,0
  *      ProofAsstBackgroundColorRGB,255,255,255
- * 
+ *
  *      ProofAsstFormulaLeftCol,20
  *      ProofAsstFormulaRightCol,79
  *      ProofAsstTextColumns,80
@@ -377,10 +377,10 @@ import mmj.verify.ProofConstants;
  *      ProofAsstErrorMessageColumns,80
  *      ProofAsstTextAtTop,yes
  *      ProofAsstIncompleteStepCursor,Last
- * 
+ *
  *      ProofAsstRPNProofLeftCol,6
  *      ProofAsstRPNProofRightCol,79
- * 
+ *
  *      ProofAsstOutputCursorInstrumentation,no
  *      ProofAsstAutoReformat,yes
  *      ProofAsstProofFolder,c:\my\proofs
@@ -391,18 +391,18 @@ import mmj.verify.ProofConstants;
  *      ProofAsstBatchTest,*,c:\my\export.mmp,un-unified,NotRandomized,NoPrint
  *      StepSelectorBatchTest,c:\my\export.mmp,50,0
  *      PreprocessRequestBatchTest,c:\my\export.mmp,EraseAndRederiveFormulas
- * 
+ *
  *      ProofAsstStartupProofWorksheet,c:\mmj2\data\mmp\PATutorial\Page101.mmp
- * 
+ *
  *      StepSelectorMaxResults,50
  *      StepSelectorShowSubstitutions,yes
  *      StepSelectorDialogPaneWidth,720
  *      StepSelectorDialogPaneHeight,440
- * 
+ *
  *      ProofAsstAssrtListFreespace,5
- * 
+ *
  *      RunProofAsstGUI
- * 
+ *
  *       Comment: now load & process another .mm file!!!!
  *      clear
  *      GarbageCollection
@@ -410,7 +410,7 @@ import mmj.verify.ProofConstants;
  *      VerifyProof,*
  *      PrintSyntaxDetails
  *      PrintStatementDetails,*
- * 
+ *
  *       Comment: now load another .mm and make SvcCallback!!!!
  *      clear
  *      GarbageCollection
@@ -424,10 +424,10 @@ import mmj.verify.ProofConstants;
  *      SvcArg,ExportFormat,mmjbert
  *      SvcArg,whatever,whatever
  *      SvcCall
- * 
+ *
  * </pre>
  * <p>
- * 
+ *
  * <pre>
  *  =============================================================
  *  ----> RunParm Default Values. Some options have defaults
@@ -438,7 +438,7 @@ import mmj.verify.ProofConstants;
  *               mmj.verify.ProofConstants.java
  *               mmj.pa.PaConstants.java
  *               mmj.tl.TlConstants.java
- * 
+ *
  *  =============================================================
  * </pre>
  */
@@ -1406,7 +1406,7 @@ public class UtilConstants {
         "Auto-transformation options (it is temporary option and could be changed any moment):\n <p>"
             + "    value1 = Yes/No (use or do not use auto-transformations)\n <p>"
             + "    value2 = Yes/No (use debug output or do not use it)\n"
-            + "\n");
+            + "    value3 = Yes/No (support implication prefix)\n" + "\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_BATCH_TEST = new BatchCommand(
         "ProofAsstBatchTest", // options

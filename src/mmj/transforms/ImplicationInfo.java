@@ -1,4 +1,3 @@
-// TODO: Name refactoring!
 package mmj.transforms;
 
 import java.util.*;
@@ -8,6 +7,12 @@ import mmj.lang.*;
 import mmj.pa.ProofStepStmt;
 import mmj.transforms.WorksheetInfo.SubstParam;
 
+/**
+ * This class is used for implication transformations.
+ * <p>
+ * Note: in theory we support several implication operators for one type. But it
+ * wasn't tested.
+ */
 public class ImplicationInfo extends DBInfo {
     /** The information about equivalence rules */
     private final EquivalenceInfo eqInfo;
@@ -32,10 +37,9 @@ public class ImplicationInfo extends DBInfo {
      * <p>
      * th -> (ph <-> ps) => (th -> ph) <-> (th -> ps)
      * <p>
-     * It is constructed as a map : (implication operator X equality operator)
-     * -> assertion
+     * It is constructed as a map : implication operator -> assertion
      */
-    private final Map<Stmt, Map<Stmt, Assrt>> distrRules = new HashMap<Stmt, Map<Stmt, Assrt>>();
+    private final Map<Stmt, Assrt> distrRules = new HashMap<Stmt, Assrt>();
 
     public ImplicationInfo(final EquivalenceInfo eqInfo,
         final List<Assrt> assrtList, final TrOutput output, final boolean dbg)
@@ -58,7 +62,11 @@ public class ImplicationInfo extends DBInfo {
 
         for (final Assrt assrt : assrtList)
             findDistributiveRules(assrt);
-        // TODO: add check!
+
+        for (final Stmt imOp : implOp.keySet())
+            if (!eqInfo.isEquivalence(imOp) && !distrRules.containsKey(imOp))
+                output.errorMessage(TrConstants.ERRMSG_MISSING_IMPL_DISRT_RULE,
+                    imOp, implOp.get(imOp));
     }
 
     private void findDistributiveRules(final Assrt assrt) {
@@ -117,20 +125,18 @@ public class ImplicationInfo extends DBInfo {
             .getChild()[1].getStmt())
             return;
 
-        Map<Stmt, Assrt> map = distrRules.get(implStmt);
-        if (map == null) {
-            map = new HashMap<Stmt, Assrt>();
-            distrRules.put(implStmt, map);
-        }
+        // We assume that there could be only one equivalence operator for every
+        // type
+        assert eqInfo.getEqStmt(root.getChild()[0].getStmt().getTyp()) == eqStatement;
 
-        if (map.containsKey(eqStatement))
+        if (distrRules.containsKey(implStmt))
             return;
 
         output.dbgMessage(dbg,
             "I-TR-DBG distributive rule for implication: %s: %s", assrt,
             assrt.getFormula());
 
-        map.put(eqStatement, assrt);
+        distrRules.put(implStmt, assrt);
     }
 
     /**
@@ -612,7 +618,7 @@ public class ImplicationInfo extends DBInfo {
             TrUtil.createBinaryNode(implStmt, precond, first),
             TrUtil.createBinaryNode(implStmt, precond, second));
 
-        final Assrt distr = getDistributiveRule(implStmt, eqStmt);
+        final Assrt distr = getDistributiveRule(implStmt);
         assert distr != null;
 
         final ProofStepStmt res = info.getOrCreateProofStepStmt(stepNode,
@@ -652,8 +658,7 @@ public class ImplicationInfo extends DBInfo {
         return res;
     }
 
-    private Assrt getDistributiveRule(final Stmt implOp, final Stmt eqOp) {
-        // TODO: implement check for this
-        return distrRules.get(implOp).get(eqOp);
+    private Assrt getDistributiveRule(final Stmt implOp) {
+        return distrRules.get(implOp);
     }
 }

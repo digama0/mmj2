@@ -299,11 +299,13 @@ public class ReplaceInfo extends DBInfo {
     // ------------------------------Getters-----------------------------------
     // ------------------------------------------------------------------------
 
-    public boolean[] getPossibleReplaces(final Stmt stmt) {
+    public boolean[] getPossibleReplaces(final Stmt stmt,
+        final WorksheetInfo info)
+    {
         final Assrt[][] assrts;
         final Assrt[] simple = replaceOp.get(stmt);
         final Assrt[] implForm = replaceOp.get(stmt);
-        if (!TransformationManager.SEARCH_PREFIX) {
+        if (!info.hasImplPrefix()) {
             assrts = new Assrt[][]{simple, implForm};
             if (simple != null && implForm != null)
                 assert simple.length == implForm.length;

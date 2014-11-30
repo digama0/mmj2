@@ -258,7 +258,7 @@ public class TrUtil {
 
         if (!implForm) {
             if (hyps.length != 0)
-                assert !TransformationManager.SEARCH_PREFIX;
+                assert !info.hasImplPrefix();
             final ProofStepStmt[] simpleHyps = convertGenToSimpleProofSteps(hyps);
 
             final ProofStepStmt res = info.getOrCreateProofStepStmt(stepNode,

@@ -268,7 +268,7 @@ public class AssociativeInfo extends DBInfo {
 
         final GeneralizedStmt res = assocOp.detectGenStmt(node, info);
         if (res != null)
-            if (!TransformationManager.SEARCH_PREFIX || res.template.isEmpty())
+            if (!info.hasImplPrefix() || res.template.isEmpty())
                 return res;
         return implAssocOp.detectGenStmt(node, info);
     }
@@ -296,9 +296,7 @@ public class AssociativeInfo extends DBInfo {
         Assrt[] assocTr = null;
         boolean implForm = false;
 
-        if (!TransformationManager.SEARCH_PREFIX
-            || assocProp.template.isEmpty())
-        {
+        if (!info.hasImplPrefix() || assocProp.template.isEmpty()) {
             assocTr = getAssocOp(assocProp, assocOp);
             if (assocTr != null)
                 implForm = false;

@@ -36,8 +36,6 @@ import mmj.verify.VerifyProofs;
     private final VerifyProofs verifyProofs;
     private final Cnst provableLogicStmtTyp;
 
-    private int debugCounter = 0;
-
     public WorksheetInfo(final ProofWorksheet proofWorksheet,
         final DerivationStep derivStep, final TransformationManager trManager)
     {
@@ -87,8 +85,6 @@ import mmj.verify.VerifyProofs;
         if (hyps == null || assrt == null)
             return null;
 
-        debugCounter++;
-
         assert assrt.getLogHypArray().length == hyps.length;
 
         final String[] steps = new String[hyps.length];
@@ -113,10 +109,6 @@ import mmj.verify.VerifyProofs;
         final Assrt assrt)
     {
         assert !finished;
-        debugCounter++;
-
-        if (debugCounter == 3)
-            toString();
 
         final String[] steps = new String[hyps.length];
         for (int i = 0; i < steps.length; i++)
@@ -139,7 +131,7 @@ import mmj.verify.VerifyProofs;
     private String getDebugString(final DerivationStep d,
         final ProofStepStmt[] hyps)
     {
-        String str = "(+" + debugCounter + "+): ";
+        String str = "";
         for (int i = 0; i < hyps.length; i++) {
             if (i != 0)
                 str += " & ";

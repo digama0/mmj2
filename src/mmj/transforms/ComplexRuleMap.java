@@ -13,7 +13,7 @@ import mmj.lang.Stmt;
  * asserts).
  * <p>
  * TODO: improve the performance of constant substitution search
- * 
+ *
  * @param <Data> stored data
  */
 public abstract class ComplexRuleMap<Data> {
@@ -43,7 +43,7 @@ public abstract class ComplexRuleMap<Data> {
 
     /**
      * Adds new data and returns it or returns the old version
-     * 
+     *
      * @param stmt the statement
      * @param constSubst the constant map
      * @param template the template
@@ -76,7 +76,7 @@ public abstract class ComplexRuleMap<Data> {
     public interface ComplexRuleVisitor<Data, ResType> {
         /**
          * The core callback
-         * 
+         *
          * @param node the input node
          * @param info the work sheet info
          * @param constSubst appropriate constant substitution
@@ -92,7 +92,7 @@ public abstract class ComplexRuleMap<Data> {
         /**
          * This value indicates that we should continue search. Also the value
          * will be returned if nothing will be founded.
-         * 
+         *
          * @return The constant for failure-value indication
          */
         ResType failValue();
@@ -101,7 +101,7 @@ public abstract class ComplexRuleMap<Data> {
     /**
      * Visits all appropriate constant substitutions for the node. Returns after
      * the first non-failure visitor result value.
-     * 
+     *
      * @param node the input node
      * @param info the work sheet info
      * @param visitor the callback for core work
@@ -129,19 +129,6 @@ public abstract class ComplexRuleMap<Data> {
         {
             final ConstSubst constSubst = elem.getKey();
 
-            /*
-             //debug code
-            if (node.toString().equals("[[cB, csin]; cfv, c1, caddc]; co"))
-                node.toString();
-
-            if (constSubst.constMap.length == 3
-                && constSubst.constMap[0] == null
-                && constSubst.constMap[1] != null
-                && constSubst.constMap[2] != null
-                && constSubst.constMap[1].toString().equals("c1")
-                && constSubst.constMap[2].toString().equals("caddc"))
-                constSubst.toString();
-            */
             final int[] varIndexes = TrUtil.checkConstSubstAndGetVarPositions(
                 constSubst, constMap);
 

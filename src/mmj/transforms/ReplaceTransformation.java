@@ -1,7 +1,6 @@
 package mmj.transforms;
 
 import mmj.lang.ParseNode;
-import mmj.lang.Stmt;
 import mmj.pa.ProofStepStmt;
 
 /**
@@ -36,21 +35,18 @@ public class ReplaceTransformation extends Transformation {
         // the current transformation result
         ParseNode resNode = originalNode;
 
-        boolean couldSemplifyGenStep = false;
+        boolean couldSimplifyGenStep = false;
         if (info.implStatement == originalNode.getStmt()) {
             assert originalNode.getChild().length == 2;
             if (originalNode.getChild()[0].isDeepDup(info.implPrefix)
                 && target.originalNode.getChild()[0].isDeepDup(info.implPrefix))
-                couldSemplifyGenStep = true;
+                couldSimplifyGenStep = true;
         }
 
-        final boolean[] replAsserts = replInfo.getPossibleReplaces(originalNode
-            .getStmt());
+        final boolean[] replAsserts = replInfo.getPossibleReplaces(
+            originalNode.getStmt(), info);
 
         assert replAsserts != null;
-
-        final Stmt equalStmt = eqInfo
-            .getEqStmt(originalNode.getStmt().getTyp());
 
         for (int i = 0; i < originalNode.getChild().length; i++) {
             if (!replAsserts[i])
@@ -66,9 +62,6 @@ public class ReplaceTransformation extends Transformation {
             // replAsserts[i].getExprParseTree().getRoot()
             // .getStmt();
 
-            // the symbol should be equivalence operator
-            assert eqInfo.isEquivalence(equalStmt);
-
             // transform ith child
             // the result should be some B = B' statement
             final GenProofStepStmt childTrStmt = trManager
@@ -77,7 +70,10 @@ public class ReplaceTransformation extends Transformation {
             if (childTrStmt == null)
                 continue; // noting to do
 
-            if (couldSemplifyGenStep && i == 1 && childTrStmt.hasPrefix()) {
+            // If child transformation has implication prefix and has form
+            // "ph -> ( child <-> chald') " and this node has form "ph -> child"
+            // then we could apply distributive rule!
+            if (couldSimplifyGenStep && i == 1 && childTrStmt.hasPrefix()) {
                 final ProofStepStmt res = info.trManager.implInfo
                     .applyDisrtibutiveRule(info,
                         childTrStmt.getImplicationStep());
@@ -121,8 +117,8 @@ public class ReplaceTransformation extends Transformation {
 
     @Override
     public ParseNode getCanonicalNode(final WorksheetInfo info) {
-        final boolean[] replAsserts = replInfo.getPossibleReplaces(originalNode
-            .getStmt());
+        final boolean[] replAsserts = replInfo.getPossibleReplaces(
+            originalNode.getStmt(), info);
         assert replAsserts != null;
 
         final ParseNode resNode = originalNode.cloneWithoutChildren();
