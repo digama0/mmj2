@@ -1,3 +1,9 @@
+//*****************************************************************************/
+//* Copyright (C) 2014                                                        */
+//* ALEXEY MERKULOV  steelart (dot) alex (at) gmail (dot) com                 */
+//* License terms: GNU General Public License Version 2                       */
+//*                or any later version                                       */
+//*****************************************************************************/
 package mmj.transforms;
 
 import mmj.lang.ParseNode;
@@ -49,7 +55,7 @@ public class AssocTree {
 
     /**
      * This function calculates associative structure.
-     * 
+     *
      * @param curNode the input node
      * @param assocProp the property of associative node
      * @param info the work sheet info

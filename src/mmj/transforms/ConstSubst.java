@@ -1,3 +1,9 @@
+//*****************************************************************************/
+//* Copyright (C) 2014                                                        */
+//* ALEXEY MERKULOV  steelart (dot) alex (at) gmail (dot) com                 */
+//* License terms: GNU General Public License Version 2                       */
+//*                or any later version                                       */
+//*****************************************************************************/
 package mmj.transforms;
 
 import mmj.lang.ParseNode;
@@ -16,7 +22,7 @@ public class ConstSubst {
      * This function should be used only during "info"'s initialization. Do not
      * use it during unification search! It creates constant substitution for
      * all constant nodes.
-     * 
+     *
      * @param node the input node
      * @return constructed result
      */
