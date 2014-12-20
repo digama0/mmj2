@@ -296,7 +296,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
         int wvCnt = 0;
         for (int i = 0; i < workVarList.size(); i++) {
             workVar = workVarList.get(i);
-            substNode = ((WorkVarHyp)workVar.getActiveVarHyp()).paSubst;
+            substNode = ((WorkVarHyp)workVar.getActiveVarHyp()).getSubst();
             if (substNode == null)
                 continue;
             wvArray[wvCnt] = workVar.getId();

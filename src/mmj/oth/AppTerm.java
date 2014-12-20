@@ -43,6 +43,13 @@ public class AppTerm extends Term {
     }
 
     @Override
+    public Set<Var> boundVars() {
+        final HashSet<Var> s = new HashSet<Var>(f.boundVars());
+        s.addAll(x.boundVars());
+        return s;
+    }
+
+    @Override
     public Set<VarType> getSubTypeVars() {
         final HashSet<VarType> s = new HashSet<VarType>(f.getSubTypeVars());
         s.addAll(x.getSubTypeVars());

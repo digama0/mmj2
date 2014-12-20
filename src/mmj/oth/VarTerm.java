@@ -3,7 +3,6 @@ package mmj.oth;
 import java.util.*;
 
 import mmj.lang.ParseNode;
-import mmj.lang.Stmt;
 
 public class VarTerm extends Term {
     private Var v;
@@ -33,6 +32,11 @@ public class VarTerm extends Term {
     }
 
     @Override
+    public Set<Var> boundVars() {
+        return Collections.emptySet();
+    }
+
+    @Override
     public Type getType() {
         return v.t;
     }
@@ -44,7 +48,7 @@ public class VarTerm extends Term {
 
     @Override
     public Term subst(final List<List<List<Object>>> subst) {
-        final Var v2 = new Var(v.t.subst(subst), v.n);
+        final Var v2 = Var.get(v.t.subst(subst), v.n);
         for (final List<Object> pr : subst.get(1))
             if (v2.equals(pr.get(0)))
                 return (Term)pr.get(1);
@@ -65,10 +69,7 @@ public class VarTerm extends Term {
     @Override
     protected void generateTypeProof(final Interpreter i) {
         final ParseNode tp = v.t.getTypeProof(i);
-        Stmt s = i.getTermVar(OTConstants.mapTermVar(v.n, false));
-        if (!s.getTyp().getId().equals(OTConstants.HOL_VAR_CNST))
-            s = i.getTermVar(OTConstants.mapTermVar(v.n, true));
-        final ParseNode vp = i.c(s);
+        final ParseNode vp = i.c(v.toVarHyp(i));
         termProof = i.c(OTConstants.HOL_VAR_TERM, tp, vp);
         typeProof = i.c(OTConstants.HOL_VAR_TYPE, tp, vp);
     }

@@ -1,7 +1,6 @@
 package mmj.oth;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.*;
 
 import mmj.lang.LangException;
@@ -80,6 +79,7 @@ public class ArtReader {
 
                     thm = new Thm(line, cmd, Arrays.asList(th), th.assum,
                         ConstTerm.eq(AbsTerm.get(v, t), AbsTerm.get(v, u)));
+                    thm.aux = v;
                     stack.push(thm);
                     System.out.println(thm);
                 }
@@ -243,13 +243,13 @@ public class ArtReader {
                     final ConstTerm rept = ConstTerm.get(OpType.to(tNew, tOld),
                         rep);
 
-                    final VarTerm dummy = VarTerm.get(new Var(tNew, VAR_A));
+                    final VarTerm dummy = VarTerm.get(Var.get(tNew, VAR_A));
                     thm = new Thm(line, cmd, Arrays.asList(thl),
                         Collections.EMPTY_LIST, ConstTerm.eq(
                             AppTerm.get(abst, AppTerm.get(rept, dummy)), dummy));
                     stack.push(thm);
 
-                    final VarTerm dummy2 = VarTerm.get(new Var(tOld, VAR_R));
+                    final VarTerm dummy2 = VarTerm.get(Var.get(tOld, VAR_R));
                     thm2 = new Thm(line, OTConstants.ART_DEFINE_TYPE_OP_2,
                         Arrays.asList(thl), Collections.EMPTY_LIST,
                         ConstTerm.eq(AppTerm.get(t.getF(), dummy2), ConstTerm
@@ -309,8 +309,11 @@ public class ArtReader {
                 }
                 else if (cmd.equals(OTConstants.ART_SUBST)) {
                     final Thm old = (Thm)stack.pop();
-                    thm = old
-                        .subst(line, (List<List<List<Object>>>)stack.pop());
+                    final List<List<List<Object>>> subst = (List<List<List<Object>>>)stack
+                        .pop();
+                    thm = old.subst(line, subst);
+                    thm.aux = subst;
+                    old.exportable = true;
                     stack.push(thm);
                     System.out.println(thm);
                 }
@@ -319,6 +322,7 @@ public class ArtReader {
                     final List<Term> l = (List<Term>)stack.pop();
                     final Thm orig = (Thm)stack.pop();
                     thm = new Thm(line, cmd, Arrays.asList(orig), l, t);
+                    thm.exportable = true;
                     if (!thm.equals(orig))
                         throw new IllegalStateException(
                             "theorem not alpha-equivalent:\n" + orig + "\n"
@@ -332,7 +336,7 @@ public class ArtReader {
 //                    System.out.println(t);
                 }
                 else if (cmd.equals(OTConstants.ART_VAR)) {
-                    final Var v = new Var((Type)stack.pop(), (Name)stack.pop());
+                    final Var v = Var.get((Type)stack.pop(), (Name)stack.pop());
                     stack.push(v);
 //                    System.out.println(v);
                 }
@@ -374,6 +378,10 @@ public class ArtReader {
             for (final Thm t : thms)
                 System.out.println("  " + t);
             sc.close();
+            try {
+                if (interp != null)
+                    interp.writer.close();
+            } catch (final IOException e) {}
         }
     }
 

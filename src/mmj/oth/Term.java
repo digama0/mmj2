@@ -22,6 +22,12 @@ public abstract class Term {
     }
 
     public abstract Set<Var> freeVars();
+    public abstract Set<Var> boundVars();
+    public boolean allVarsContains(final Name n) {
+        return Var.getFromName(freeVars(), n) != null
+            || Var.getFromName(boundVars(), n) != null;
+    }
+
     public abstract Type getType();
     public abstract Set<VarType> getSubTypeVars();
     public abstract Term substPlain(Map<Var, Var> subst);

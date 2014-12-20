@@ -755,7 +755,7 @@ public class ParseNode {
         final ParseNode out = new ParseNode();
 
         if (stmt instanceof VarHyp) {
-            final ParseNode vHNode = ((VarHyp)stmt).paSubst;
+            final ParseNode vHNode = ((VarHyp)stmt).getSubst();
             if (vHNode == null)
                 throw new IllegalArgumentException(
                     LangConstants.ERRMSG_NULL_TARGET_VAR_HYP_PA_SUBST);
@@ -817,11 +817,11 @@ public class ParseNode {
             || !(stmt instanceof WorkVarHyp))
             return stmt;
 
-        if (((VarHyp)stmt).paSubst == null)
+        if (((VarHyp)stmt).getSubst() == null)
             return null; // found nothing
 
-        return ((VarHyp)stmt).paSubst
-            .checkWorkVarHasOccursInValidRename(searchWorkVarHyp);
+        return ((VarHyp)stmt).getSubst().checkWorkVarHasOccursInValidRename(
+            searchWorkVarHyp);
     }
 
     /**
@@ -837,8 +837,8 @@ public class ParseNode {
         if (searchWorkVarHyp == stmt)
             return true;
         if (stmt instanceof WorkVarHyp)
-            return ((VarHyp)stmt).paSubst != null
-                && ((VarHyp)stmt).paSubst.hasOccursIn(searchWorkVarHyp);
+            return ((VarHyp)stmt).getSubst() != null
+                && ((VarHyp)stmt).getSubst().hasOccursIn(searchWorkVarHyp);
         for (final ParseNode element : child)
             if (element.hasOccursIn(searchWorkVarHyp))
                 return true;
@@ -852,7 +852,7 @@ public class ParseNode {
      * @return true if subtree contains an updated WorkVar.
      */
     public boolean hasUpdatedWorkVar() {
-        if (stmt instanceof WorkVarHyp && ((VarHyp)stmt).paSubst != null)
+        if (stmt instanceof WorkVarHyp && ((VarHyp)stmt).getSubst() != null)
             return true;
         for (final ParseNode element : child)
             if (element.hasUpdatedWorkVar())
@@ -868,8 +868,9 @@ public class ParseNode {
      */
     public ParseNode cloneResolvingUpdatedWorkVars() {
         if (stmt instanceof WorkVarHyp)
-            return ((VarHyp)stmt).paSubst == null ? new ParseNode((VarHyp)stmt)
-                : ((VarHyp)stmt).paSubst.cloneResolvingUpdatedWorkVars();
+            return ((VarHyp)stmt).getSubst() == null ? new ParseNode(
+                (VarHyp)stmt) : ((VarHyp)stmt).getSubst()
+                .cloneResolvingUpdatedWorkVars();
         final ParseNode out = new ParseNode(stmt);
         out.child = new ParseNode[child.length];
         for (int i = 0; i < child.length; i++)
@@ -951,8 +952,8 @@ public class ParseNode {
      */
     public ParseNode deepCloneApplyingWorkVarUpdates() {
 
-        if (stmt instanceof WorkVarHyp && ((VarHyp)stmt).paSubst != null)
-            return ((VarHyp)stmt).paSubst;
+        if (stmt instanceof WorkVarHyp && ((VarHyp)stmt).getSubst() != null)
+            return ((VarHyp)stmt).getSubst();
 
         final ParseNode out = new ParseNode(stmt);
         out.child = new ParseNode[child.length];

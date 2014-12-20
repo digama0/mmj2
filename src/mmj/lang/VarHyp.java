@@ -35,6 +35,8 @@ package mmj.lang;
 import java.util.List;
 import java.util.Map;
 
+import mmj.oth.OTConstants;
+
 /**
  * VarHyp -- Variable Hypothesis -- corresponds to the Metamath "$f" statement,
  * or "floating hypothesis" statement.
@@ -80,7 +82,7 @@ public class VarHyp extends Hyp {
      * Yes, this is a hokey scratchpad. In theory an array of paSubst could be
      * devised, with one entry for each thread :-) Or not.
      */
-    public ParseNode paSubst;
+    private ParseNode paSubst;
 
     /**
      * Construct VarHyp using sequence number plus label, Type Code and Var
@@ -171,6 +173,17 @@ public class VarHyp extends Hyp {
      */
     public void setVar(final Var var) {
         ((VarHypFormula)formula).setVarHypVar(var);
+    }
+
+    public ParseNode getSubst() {
+        return paSubst;
+    }
+
+    public void setSubst(final ParseNode subst) {
+        if (subst != null)
+            if (getTyp().getId().equals(OTConstants.HOL_VAR_CNST))
+                hashCode();
+        paSubst = subst;
     }
 
     /**

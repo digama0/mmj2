@@ -336,12 +336,12 @@ public class WorkVarManager {
                 if (!allocated[i][j])
                     continue;
 
-                if ((holdParseNode = declaredWorkVarHyp[i][j].paSubst) == null)
+                if ((holdParseNode = declaredWorkVarHyp[i][j].getSubst()) == null)
                     continue;
 
                 if (holdParseNode.hasUpdatedWorkVar())
-                    declaredWorkVarHyp[i][j].paSubst = holdParseNode
-                        .cloneResolvingUpdatedWorkVars();
+                    declaredWorkVarHyp[i][j].setSubst(holdParseNode
+                        .cloneResolvingUpdatedWorkVars());
 
                 dealloc(i, j);
             }
@@ -452,7 +452,7 @@ public class WorkVarManager {
 
         if (!allocated[i][j]) {
             allocated[i][j] = true;
-            declaredWorkVar[i][j].getActiveVarHyp().paSubst = null;
+            declaredWorkVar[i][j].getActiveVarHyp().setSubst(null);
         }
         prevAllocIndex[i] = j;
         return declaredWorkVar[i][j];

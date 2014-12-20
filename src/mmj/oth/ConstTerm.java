@@ -48,6 +48,11 @@ public class ConstTerm extends Term {
     }
 
     @Override
+    public Set<Var> boundVars() {
+        return Collections.emptySet();
+    }
+
+    @Override
     public Set<VarType> getSubTypeVars() {
         return t.getTypeVars();
     }

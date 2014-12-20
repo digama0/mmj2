@@ -9,8 +9,10 @@ public class Thm {
     public final String ref;
     public final List<Thm> hyp;
     public List<Term> assum;
+    public Object aux;
     public Term t;
     public int num;
+    public boolean exportable;
 
     public Thm(final int num, final String ref, final List<Thm> hyp,
         final List<Term> assum, final Term t)
@@ -20,6 +22,8 @@ public class Thm {
         this.assum = assum;
         this.t = t;
         this.num = num;
+        aux = null;
+        exportable = false;
     }
 
     @Override
@@ -87,22 +91,59 @@ public class Thm {
     public ParseNode getProof(final Interpreter i, final ParseNode expr)
         throws LangException
     {
-        if (num == 1058)
+        final HashMap<DeepKey, VarHyp> subst = new HashMap<DeepKey, VarHyp>();
+        assert i.alphaEquiv(t.getTermProof(i), expr.child[1], subst);
+        for (final Term a : assum)
+            assert i.findEquivalent(expr.child[0], a.getTermProof(i), subst) != null;
+        final ParseNode proof = getProof2(i, expr);
+        assert proof != null;
+        assert i.proofToExpr(proof).isDeepDup(expr);
+        return proof;
+    }
+
+    /**
+     * Convert a HOL proof to the Metamath style. The input is the actual form
+     * of the output theorem; the invariant is that the consequent represented
+     * by this {@link Thm} object is alpha-equivalent to the consequent of the
+     * expression, and every hypothesis is alpha-equivalent to some term in the
+     * context list of the hypothesis to the expression (i.e. the hypothesis
+     * list of this object is alpha-equivalent to a subset of the given
+     * hypothesis list).
+     * 
+     * @param i The parent {@link Interpreter} object
+     * @param expr The goal expression; should be non-null with root stmt
+     *            {@link OTConstants#HOL_PROOF_TERM}
+     * @return a proof of the expression, or a blank proof {@code "?"} if the
+     *         proof could not be translated successfully. (Blanks may appear in
+     *         a sub-term of the expression if the failure occurred further down
+     *         the proof.)
+     * @throws LangException for some reason
+     */
+    public ParseNode getProof2(final Interpreter i, final ParseNode expr)
+        throws LangException
+    {
+        if (num == 9805)
             hashCode();
+        final Assrt old = (Assrt)i.getLogicalSystem().getStmtTbl()
+            .get(i.prefix + "_" + num);
+        if (old != null) {
+            ParseNode thm = i.testTheorem(expr, old, null);
+            if (thm != null)
+                return thm;
+            final ParseNode goal = getExprProof(i);
+            if ((thm = i.reduceAssumptions(expr, goal,
+                i.testTheorem(goal, old, null))) != null)
+                return thm;
+        }
         if (ref.equals(OTConstants.ART_THM))
             return hyp.get(0).getProof(i, expr);
-        final List<Integer> obligations = new ArrayList<Integer>();
-        ParseNode thm = i.findMatchingTheorem(expr, obligations);
-        if (thm != null) {
-            assert obligations.isEmpty();
+        ParseNode thm = i.findMatchingTheorem(expr);
+        if (thm != null)
             return thm;
-        }
         final ParseNode trim = trim(i, expr);
-        thm = i.findMatchingTheorem(trim, obligations);
-        if (thm != null) {
-            assert obligations.isEmpty();
+        thm = i.findMatchingTheorem(trim);
+        if (thm != null)
             return i.reduceAssumptions(expr, trim, thm);
-        }
         if (ref.equals(OTConstants.ART_DEDUCT)) {
             final ParseNode r = expr.child[0];
             final Thm th1 = hyp.get(0), th2 = hyp.get(1);
@@ -138,21 +179,28 @@ public class Thm {
             final ParseNode r = expr.child[0];
             final Thm th1 = hyp.get(0), th2 = hyp.get(1);
             final ParseNode a = th1.t.getTermProof(i);
-            final ParseNode b = th2.t.asApp().getX().getTermProof(i);
+            final ParseNode b = expr.child[1];
             final ParseNode p1 = th1.getProof(i,
                 i.c(OTConstants.HOL_PROOF_TERM, r, a));
-            final ParseNode p2 = th2.getProof(i, i.c(
-                OTConstants.HOL_PROOF_TERM, r, i.c(OTConstants.HOL_OV_TERM,
-                    i.c(OTConstants.HOL_EQ_TERM), a, b)));
+            final ParseNode p2 = th2.getProof(i,
+                i.c(OTConstants.HOL_PROOF_TERM, r, i.makeEq(a, b)));
             return i.c(OTConstants.HOL_THM_MPBI, r, a, b, p1, p2);
         }
         if (ref.equals(OTConstants.ART_SUBST)) {
             final Thm th = hyp.get(0);
-            thm = i.testTheorem(trim, i.addThm(th, false), obligations);
+            final Assrt s = i.addThm(th, false);
+            thm = i.testTheorem(trim, s, null);
+            if (thm == null) {
+                final ParseNode goal = getExprProof(i);
+                if ((thm = i.reduceAssumptions(expr, goal,
+                    i.testTheorem(goal, s, null))) != null)
+                    return thm;
+                return i.reduceAssumptions(expr, goal,
+                    i.testTheoremGen(goal, s, null));
+            }
             return i.reduceAssumptions(expr, trim, thm);
         }
         if (ref.equals(OTConstants.ART_APP_THM)) {
-            final ParseNode eq = i.c(OTConstants.HOL_EQ_TERM);
             final ParseNode r = expr.child[0];
             final ParseNode e1 = expr.child[1];
             final String leftLabel = e1.child[1].stmt.getLabel();
@@ -167,14 +215,16 @@ public class Thm {
                 final ParseNode be = left.getF().asApp().getX().getType()
                     .getTypeProof(i);
                 final ParseNode ga = left.getType().getTypeProof(i);
-                final ParseNode ft = left.getF().asApp().getF().getTypeProof(i);
-                final ParseNode at = left.getF().asApp().getX().getTypeProof(i);
-                final ParseNode bt = left.getX().getTypeProof(i);
+                final ParseNode ft = i.cleanTypeProof(
+                    f,
+                    i.c(OTConstants.HOL_FUN_TYPE, al,
+                        i.c(OTConstants.HOL_FUN_TYPE, be, ga)));
+                final ParseNode at = i.cleanTypeProof(a, al);
+                final ParseNode bt = i.cleanTypeProof(b, be);
                 final ParseNode w = i.c(
                     OTConstants.HOL_PROOF_TERM,
                     r,
-                    i.c(OTConstants.HOL_OV_TERM,
-                        eq,
+                    i.makeEq(
                         i.c(OTConstants.HOL_APP_TERM,
                             i.c(OTConstants.HOL_APP_TERM, f, a), b), c));
                 return i.c(OTConstants.HOL_THM_COVTRI, al, be, ga, f, r, a, b,
@@ -190,16 +240,16 @@ public class Thm {
                 final ParseNode be = right.getF().asApp().getX().getType()
                     .getTypeProof(i);
                 final ParseNode ga = right.getType().getTypeProof(i);
-                final ParseNode ft = right.getF().asApp().getF()
-                    .getTypeProof(i);
-                final ParseNode at = right.getF().asApp().getX()
-                    .getTypeProof(i);
-                final ParseNode bt = right.getX().getTypeProof(i);
+                final ParseNode ft = i.cleanTypeProof(
+                    f,
+                    i.c(OTConstants.HOL_FUN_TYPE, al,
+                        i.c(OTConstants.HOL_FUN_TYPE, be, ga)));
+                final ParseNode at = i.cleanTypeProof(a, al);
+                final ParseNode bt = i.cleanTypeProof(b, be);
                 final ParseNode w = i.c(
                     OTConstants.HOL_PROOF_TERM,
                     r,
-                    i.c(OTConstants.HOL_OV_TERM,
-                        eq,
+                    i.makeEq(
                         c,
                         i.c(OTConstants.HOL_APP_TERM,
                             i.c(OTConstants.HOL_APP_TERM, f, a), b)));
@@ -215,12 +265,13 @@ public class Thm {
                     .asApp();
                 final ParseNode al = left.getX().getType().getTypeProof(i);
                 final ParseNode be = left.getType().getTypeProof(i);
-                final ParseNode ft = left.getF().getTypeProof(i);
-                final ParseNode at = left.getX().getTypeProof(i);
+                final ParseNode ft = i.cleanTypeProof(f,
+                    i.c(OTConstants.HOL_FUN_TYPE, al, be));
+                final ParseNode at = i.cleanTypeProof(a, al);
                 final ParseNode wf = i.c(OTConstants.HOL_PROOF_TERM, r,
-                    i.c(OTConstants.HOL_OV_TERM, eq, f, t));
+                    i.makeEq(f, t));
                 final ParseNode wa = i.c(OTConstants.HOL_PROOF_TERM, r,
-                    i.c(OTConstants.HOL_OV_TERM, eq, a, b));
+                    i.makeEq(a, b));
                 final ParseNode pf = hyp.get(0).getProof(i, wf);
                 final ParseNode pa = hyp.get(1).getProof(i, wa);
                 return i.c(OTConstants.HOL_THM_CEQ12, al, be, f, r, t, a, b,
@@ -238,25 +289,45 @@ public class Thm {
             final ParseNode al = e1.child[1].child[0];
             final ParseNode x = e1.child[1].child[1];
             final ParseNode a = e1.child[1].child[2];
-            final ParseNode y = e1.child[2].child[1];
+            ParseNode y = e1.child[2].child[1];
             final ParseNode b = e1.child[2].child[2];
-            if (x.stmt != y.stmt)
-                throw new UnsupportedOperationException();
+            final ParseNode v = i.c(((Var)aux).toVarHyp(i));
+            if (x.stmt != v.stmt || y.stmt != v.stmt) {
+                final ParseNode target = i.c(OTConstants.HOL_VAR_TYPE, al, v);
+                final ParseNode a2 = i.genSubst(a, Collections.singletonMap(
+                    new DeepKey(i.c(OTConstants.HOL_VAR_TERM, al, x)), target));
+                final ParseNode b2 = i.genSubst(b, Collections.singletonMap(
+                    new DeepKey(i.c(OTConstants.HOL_VAR_TERM, al, y)), target));
+                final ParseNode wff = i.c(
+                    OTConstants.HOL_PROOF_TERM,
+                    r,
+                    i.makeEq(i.c(OTConstants.HOL_ABS_TERM, al, v, a2),
+                        i.c(OTConstants.HOL_ABS_TERM, al, v, b2)));
+                return i.reduceAssumptions(expr, wff, getProof(i, wff));
+            }
             final AbsTerm left = t.asApp().getF().asApp().getX().asAbs();
             final ParseNode be = left.getB().getType().getTypeProof(i);
-            final ParseNode at = left.getB().getTypeProof(i);
-            final ParseNode p = th.getProof(i, i.c(OTConstants.HOL_PROOF_TERM,
-                r, i.c(OTConstants.HOL_OV_TERM, i.c(OTConstants.HOL_EQ_TERM),
-                    a, b)));
-            return i.c(OTConstants.HOL_THM_LEQ, al, be, x, r, a, b, at, p);
+            final ParseNode at = i.cleanTypeProof(a, be);
+            final ParseNode p = th.getProof(i,
+                i.c(OTConstants.HOL_PROOF_TERM, r, i.makeEq(a, b)));
+            final List<VarHyp> rVars = new ArrayList<VarHyp>();
+            r.accumVarHypUsedListBySeq(rVars);
+            if (!((VarHyp)x.stmt).containedInVarHypListBySeq(rVars))
+                return i.c(OTConstants.HOL_THM_LEQ, al, be, x, r, a, b, at, p);
+
+            a.accumVarHypUsedListBySeq(rVars);
+            b.accumVarHypUsedListBySeq(rVars);
+            ((VarHyp)x.stmt).accumVarHypListBySeq(rVars);
+            y = i.c(i.getDummy(rVars));
+            return i.c(OTConstants.HOL_THM_LEQF, al, be, x, y, r, a, b, at, p,
+                i.hbProver.prove(i.makeHB(r, al, x, y)));
         }
         if (ref.equals(OTConstants.ART_ASSUME))
-            return i.proveSimp(expr);
+            return i.simpProver.prove(expr);
         if (ref.equals(OTConstants.ART_REFL))
-            return i.reduceAssumptions(expr, trim, i.proveEq(trim));
+            return i.reduceAssumptions(expr, trim, i.eqProver.prove(trim));
         return new ParseNode();
     }
-
     private ParseNode trim(final Interpreter i, final ParseNode expr) {
         ParseNode out = null;
         final ParseNode e0 = expr.child[0];

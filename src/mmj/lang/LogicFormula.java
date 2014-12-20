@@ -29,9 +29,14 @@ public class LogicFormula extends Formula {
      * 
      * @param workCnt length of formula.
      * @param workFormula Formula Sym array.
+     * @param exprHypList List of Hyps, updated in function.
+     * @throws LangException if an error occurred
      */
-    public LogicFormula(final int workCnt, final Sym[] workFormula) {
+    public LogicFormula(final int workCnt, final Sym[] workFormula,
+        final List<Hyp> exprHypList) throws LangException
+    {
         super(workCnt, workFormula);
+        verifyExprSymsDefAndActive(exprHypList);
     }
 
     /**

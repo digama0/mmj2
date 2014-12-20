@@ -154,8 +154,7 @@ public abstract class Assrt extends Stmt {
         super(seq, symTbl, stmtTbl, labelS);
 
         final List<Hyp> exprHypList = new ArrayList<Hyp>();
-        formula = new LogicFormula(symList.length, symList);
-        ((LogicFormula)formula).verifyExprSymsDefAndActive(exprHypList);
+        formula = new LogicFormula(symList.length, symList, exprHypList);
 
         varHypArray = exprHypList.toArray(new VarHyp[exprHypList.size()]);
 
@@ -316,7 +315,7 @@ public abstract class Assrt extends Stmt {
      *            assertion's expression.
      * @return ScopeFrame Metamath ("mandatory") Frame for the Assrt.
      */
-    private ScopeFrame buildMandFrame(final List<ScopeDef> scopeDefList,
+    private static ScopeFrame buildMandFrame(final List<ScopeDef> scopeDefList,
         final List<Hyp> hypList)
     {
         for (final ScopeDef scopeDef : scopeDefList)
@@ -356,7 +355,7 @@ public abstract class Assrt extends Stmt {
      * @return boolean -- true if both DjVars variables are present in hypList,
      *         otherwise false.
      */
-    private boolean areBothDjVarsInHypList(final List<Hyp> hypList,
+    private static boolean areBothDjVarsInHypList(final List<Hyp> hypList,
         final DjVars djVars)
     {
         boolean loFound = false;

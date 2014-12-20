@@ -106,7 +106,7 @@ public class LogHyp extends Hyp {
 
         final List<Hyp> exprHypList = new ArrayList<Hyp>();
 
-        formula = new LogicFormula(symList.length, symList);
+        formula = new LogicFormula(symList.length, symList, exprHypList);
 
         varHypArray = new VarHyp[exprHypList.size()];
         for (int i = 0; i < varHypArray.length; i++)

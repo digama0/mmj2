@@ -101,7 +101,7 @@ public class Theorem extends Assrt {
     {
         super(seq, scopeDefList, symTbl, stmtTbl, labelS, typS, symList);
 
-        optFrame = buildOptFrame(scopeDefList);
+        optFrame = buildOptFrame(mandFrame, scopeDefList);
         this.column = column;
 
         try {
@@ -135,7 +135,7 @@ public class Theorem extends Assrt {
     {
         super(seq, scopeDefList, symTbl, stmtTbl, labelS, symList);
 
-        optFrame = buildOptFrame(scopeDefList);
+        optFrame = buildOptFrame(mandFrame, scopeDefList);
         this.column = column;
 
         proof = rpnList;
@@ -174,7 +174,7 @@ public class Theorem extends Assrt {
     {
         super(seq, scopeDefList, symTbl, stmtTbl, labelS, typS, symList);
 
-        optFrame = buildOptFrame(scopeDefList);
+        optFrame = buildOptFrame(mandFrame, scopeDefList);
         this.column = column;
 
         try {
@@ -337,17 +337,20 @@ public class Theorem extends Assrt {
      * that are not already present in (the mandatory) djVarsArray.
      * </ol>
      * 
+     * @param mandFrame The mandatory frame
      * @param scopeDefList List containing all presently active ScopeDef's.
      * @return OptFrame -- Optional variable hypotheses and disjoint variable
      *         restrictions.
      */
-    private ScopeFrame buildOptFrame(final List<ScopeDef> scopeDefList) {
+    public static ScopeFrame buildOptFrame(final ScopeFrame mandFrame,
+        final List<ScopeDef> scopeDefList)
+    {
         final ScopeFrame oF = new ScopeFrame();
         final List<Hyp> optHypList = new ArrayList<Hyp>();
 
         for (final ScopeDef scopeDef : scopeDefList)
             for (final VarHyp varHyp : scopeDef.scopeVarHyp)
-                if (!isHypInMandHypArray(varHyp))
+                if (!isHypInHypArray(mandFrame, varHyp))
                     accumHypInList(optHypList, varHyp);
 
         // could not get this to compile.?!
@@ -490,8 +493,9 @@ public class Theorem extends Assrt {
                 .toArray(new DjVars[optDjVarsUpdateList.size()]));
     }
 
-    private boolean isHypInMandHypArray(final Hyp hyp) {
-        for (final Hyp element : mandFrame.hypArray)
+    private static boolean isHypInHypArray(final ScopeFrame frame, final Hyp hyp)
+    {
+        for (final Hyp element : frame.hypArray)
             if (hyp == element)
                 return true;
         return false;

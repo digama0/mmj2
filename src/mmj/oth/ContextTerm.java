@@ -42,6 +42,13 @@ public class ContextTerm extends Term {
     }
 
     @Override
+    public Set<Var> boundVars() {
+        final HashSet<Var> s = new HashSet<Var>(l.boundVars());
+        s.addAll(r.boundVars());
+        return s;
+    }
+
+    @Override
     public Set<VarType> getSubTypeVars() {
         final HashSet<VarType> s = new HashSet<VarType>(l.getSubTypeVars());
         s.addAll(r.getSubTypeVars());

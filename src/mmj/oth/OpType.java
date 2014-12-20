@@ -46,6 +46,15 @@ public class OpType extends Type {
     }
 
     @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + args.hashCode();
+        result = prime * result + op.hashCode();
+        return result;
+    }
+
+    @Override
     public boolean equals(final Object obj) {
         return obj instanceof OpType && args.equals(((OpType)obj).args)
             && op.equals(((OpType)obj).op);

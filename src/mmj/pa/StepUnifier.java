@@ -216,7 +216,7 @@ public class StepUnifier {
     private void loadAssrtSubst(final ParseNode[] assrtSubst) {
         for (int i = 0; i < assrtHypArray.length; i++)
             if (assrtHypArray[i] instanceof VarHyp) {
-                assrtSubst[i] = ((VarHyp)assrtHypArray[i]).paSubst;
+                assrtSubst[i] = ((VarHyp)assrtHypArray[i]).getSubst();
                 if (assrtSubst[i].hasUpdatedWorkVar())
                     assrtSubst[i] = assrtSubst[i]
                         .cloneResolvingUpdatedWorkVars();
@@ -291,7 +291,7 @@ public class StepUnifier {
         // initializeTargetVarHypPASubst
         for (int i = 0; i < assrtHypArray.length; i++)
             if (assrtHypArray[i] instanceof VarHyp)
-                ((VarHyp)assrtHypArray[i]).paSubst = null;
+                ((VarHyp)assrtHypArray[i]).setSubst(null);
 
         // allocateNewProofStepStuff
         appliedCnt = 0;
@@ -547,7 +547,7 @@ public class StepUnifier {
                 continue;
 
             sourceVarHyp = (VarHyp)assrtHypArray[i];
-            if (sourceVarHyp.paSubst != null)
+            if (sourceVarHyp.getSubst() != null)
                 continue;
 
             workVarHyp = workVarManager.allocWorkVarHyp(sourceVarHyp.getTyp());
@@ -556,10 +556,10 @@ public class StepUnifier {
                 true), // generatedDuringAccum
                 F_LEVEL_NBR); // fLevel
 
-            sourceVarHyp.paSubst = new ParseNode(workVarHyp);
+            sourceVarHyp.setSubst(new ParseNode(workVarHyp));
 
             addToAppliedArray(new UnifySubst(sourceVarHyp,
-                sourceVarHyp.paSubst, true), // generatedDuringAccum
+                sourceVarHyp.getSubst(), true), // generatedDuringAccum
                 F_LEVEL_NBR); // fLevel
         }
     }
@@ -577,8 +577,8 @@ public class StepUnifier {
                 sourceNode, // toNode
                 false); // generatedDuringAccum
 
-            if (currLevel == F_LEVEL_NBR && targetVarHyp.paSubst == null) {
-                targetVarHyp.paSubst = sourceNode;
+            if (currLevel == F_LEVEL_NBR && targetVarHyp.getSubst() == null) {
+                targetVarHyp.setSubst(sourceNode);
                 addToAppliedArray(targetSubst, F_LEVEL_NBR); // fLevel index
             }
             else
@@ -610,7 +610,7 @@ public class StepUnifier {
             if (!curr.generatedDuringAccum)
                 toParseNode = curr.toNode.cloneTargetToSourceVars();
 
-            if (curr.fromHyp.paSubst == null) {
+            if (curr.fromHyp.getSubst() == null) {
                 final int returnCode = toParseNode
                     .checkWorkVarHasOccursIn((WorkVarHyp)curr.fromHyp);
 
@@ -622,13 +622,13 @@ public class StepUnifier {
             }
         }
 
-        if (curr.fromHyp.paSubst == null) {
-            curr.fromHyp.paSubst = toParseNode;
+        if (curr.fromHyp.getSubst() == null) {
+            curr.fromHyp.setSubst(toParseNode);
             addToAppliedArray(curr, currLevel);
             return true;
         }
 
-        return subunify(curr.fromHyp.paSubst, toParseNode);
+        return subunify(curr.fromHyp.getSubst(), toParseNode);
     }
 
     // clone of mergeSubst()
@@ -641,7 +641,7 @@ public class StepUnifier {
             if (!currGeneratedDuringAccum)
                 toParseNode = currToNode.cloneTargetToSourceVars();
 
-            if (currFromHyp.paSubst == null) {
+            if (currFromHyp.getSubst() == null) {
                 final int returnCode = toParseNode
                     .checkWorkVarHasOccursIn((WorkVarHyp)currFromHyp);
 
@@ -653,14 +653,14 @@ public class StepUnifier {
             }
         }
 
-        if (currFromHyp.paSubst == null) {
-            currFromHyp.paSubst = toParseNode;
+        if (currFromHyp.getSubst() == null) {
+            currFromHyp.setSubst(toParseNode);
             addToAppliedArray(new UnifySubst(currFromHyp, currToNode,
                 currGeneratedDuringAccum), currLevel);
             return true;
         }
 
-        return subunify(currFromHyp.paSubst, toParseNode);
+        return subunify(currFromHyp.getSubst(), toParseNode);
     }
 
     /**
@@ -749,7 +749,7 @@ public class StepUnifier {
             // apply a substitution value more than once per
             // variable during unification -- so if the VarHyp
             // is mentioned in array "applied", erase .paSubst.
-            appliedSubst.fromHyp.paSubst = null;
+            appliedSubst.fromHyp.setSubst(null);
 
             if (appliedSubst.fromHyp instanceof WorkVarHyp
                 && appliedSubst.toNode == null)

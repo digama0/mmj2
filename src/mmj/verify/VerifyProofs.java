@@ -232,6 +232,44 @@ public class VerifyProofs implements ProofVerifier {
     }
 
     /**
+     * Evaluate a single proof, and return the expression that results.
+     * 
+     * @param proofTree Proof tree.
+     * @param mandFrame the local mandatory scope frame
+     * @param optFrame the local optional scope frame
+     * @return Formula resulting from QED step.
+     * @throws VerifyException if an error occurs
+     */
+    public Formula evaluateProof(final ParseTree proofTree,
+        final ScopeFrame mandFrame, final ScopeFrame optFrame)
+        throws VerifyException
+    {
+
+        boolean needToRetry = true;
+
+        reInitArrays(0);
+        while (needToRetry)
+            try {
+                isExprRPNVerify = false;
+                proofStmtLabel = "evaluateProof()";
+                proofStmtFormula = null;
+                proof = proofTree.convertToRPN();
+                proofStmtFrame = mandFrame;
+                proofStmtOptFrame = optFrame;
+                proofDjVarsSoftErrorsIgnore = true;
+                proofSoftDjVarsErrorList = null;
+
+                verifyProof();
+                needToRetry = false;
+            } catch (final ArrayIndexOutOfBoundsException e) {
+                retryCnt++;
+                reInitArrays(retryCnt);
+            }
+
+        return pStack.peek();
+    }
+
+    /**
      * Verify a single proof.
      * 
      * @param theorem Theorem object reference.
@@ -879,7 +917,7 @@ public class VerifyProofs implements ProofVerifier {
                 raiseVerifyException(Integer.toString(stepNbr), " ",
                     ProofConstants.ERRMSG_PROOF_STACK_GT_1_AT_END);
 
-        if (!proofStmtFormula.equals(pStack.peek()))
+        if (proofStmtFormula != null && !proofStmtFormula.equals(pStack.peek()))
             if (isExprRPNVerify && proofStmtFormula.exprEquals(pStack.peek())) {}
             else
                 raiseVerifyException(Integer.toString(stepNbr + 1), " ",

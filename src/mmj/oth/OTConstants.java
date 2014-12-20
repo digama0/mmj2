@@ -69,9 +69,12 @@ public class OTConstants {
     public static String HOL_VAR_TYPE = "wv";
     public static String HOL_OV_TYPE = "wov";
     public static String HOL_CT_TYPE = "wct";
+    public static String HOL_THM_WEQI = "weqi";
 
     public static String HOL_THM_JCA = "jca";
+    public static String HOL_THM_TRUD = "trud";
     public static String HOL_THM_A1I = "a1i";
+    public static String HOL_THM_SYL = "syl";
     public static String HOL_THM_SYLIB = "sylib";
     public static String HOL_THM_EQTYPRI = "eqtypri";
     public static String HOL_THM_MPBI = "mpbi";
@@ -82,10 +85,15 @@ public class OTConstants {
     public static String HOL_THM_COVTRI = "covtri";
     public static String HOL_THM_COVTRRI = "covtrri";
     public static String HOL_THM_LEQ = "leq";
+    public static String HOL_THM_LEQF = "leqf";
     public static String HOL_THM_BETA = "beta";
     public static String HOL_THM_CL = "cl";
     public static String HOL_THM_ADANTL = "adantl";
     public static String HOL_THM_ADANTR = "adantr";
+    public static String HOL_THM_AX4 = "ax4";
+    public static String HOL_THM_AX4G = "ax4g";
+    public static String HOL_THM_CBVD = "cbvd";
+    public static String HOL_THM_CBVDF = "cbvdf";
 
     public static String HOL_DEF_PFX = "df-";
 
@@ -94,6 +102,9 @@ public class OTConstants {
     private static Set<String> binaryOps = new HashSet<String>();
     public static List<String> equalityThms = new ArrayList<String>();
     public static List<String> simpThms = new ArrayList<String>();
+    public static List<String> hbThms = new ArrayList<String>();
+    public static Set<String> avoidThms = new HashSet<String>();
+    public static Map<String, int[][]> boundVarOverrides = new HashMap<String, int[][]>();
 
     static {
         map.put(new Name("Data.Bool.T"), "T.");
@@ -129,6 +140,17 @@ public class OTConstants {
         simpThms.add("ct1");
         simpThms.add("ct2");
         simpThms.add("jca");
+
+        hbThms.add("ax-17");
+        hbThms.add("hbl1");
+        hbThms.add("hbct");
+        hbThms.add("hbc");
+        hbThms.add("hbov");
+        hbThms.add("hbl");
+
+        avoidThms.add("ax4");
+
+        boundVarOverrides.put("cbv.2", new int[][]{{0, 2}, {0, 3}});
     }
 
     public static final String mapConstants(final Name n) {
@@ -142,6 +164,9 @@ public class OTConstants {
     }
 
     public static final String mapTermVar(final Name n, final boolean force) {
+        /*if (n.ns.size() == 1 && n.ns.get(0).equals("dummy")
+            && n.s.charAt(0) == 'x')
+            return "&V" + n.s.substring(1);*/
         final String s = map.get(n);
         return s == null ? force ? "term_" + n.s : n.s : s;
     }

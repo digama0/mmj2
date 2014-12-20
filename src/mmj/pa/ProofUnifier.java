@@ -2546,7 +2546,7 @@ public class ProofUnifier {
         ParseNode substNode;
         for (int i = 0; i < updatedWorkVarList.size(); i++) {
             workVar = updatedWorkVarList.get(i);
-            substNode = ((WorkVarHyp)workVar.getActiveVarHyp()).paSubst;
+            substNode = ((WorkVarHyp)workVar.getActiveVarHyp()).getSubst();
             if (substNode == null)
                 throw new IllegalArgumentException(
                     PaConstants.ERRMSG_UPD_WV_ASSIGNED_NULL_VALUE);
@@ -2780,8 +2780,7 @@ public class ProofUnifier {
                             proofWorksheet.getTheorem().getLabel(), typ,
                             typUnusedOptionalVarHyps.size());
 
-                    vH.paSubst = // this is a really key step :-)
-                    new ParseNode((VarHyp)typUnusedOptionalVarHyps.get(next++));
+                    vH.setSubst(new ParseNode((VarHyp)typUnusedOptionalVarHyps.get(next++)));
                 }
             }
         }
