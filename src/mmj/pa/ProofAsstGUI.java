@@ -96,6 +96,7 @@ package mmj.pa;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.*;
@@ -110,6 +111,7 @@ import mmj.lang.*;
 import mmj.tl.*;
 import mmj.tmff.TMFFConstants;
 import mmj.tmff.TMFFException;
+import mmj.transforms.DeductionTransformation;
 import mmj.util.BatchCommand;
 import mmj.util.UtilConstants;
 import mmj.verify.HypsOrder;
@@ -1423,6 +1425,14 @@ public class ProofAsstGUI {
         startUnifyEraseNoConvertItem.setMnemonic(KeyEvent.VK_Y);
         unifyMenu.add(startUnifyEraseNoConvertItem);
 
+        final JMenuItem switchDeduction = new JMenuItem(new AbstractAction() {
+            public void actionPerformed(final ActionEvent e) {
+                deductionSwitcherAction();
+            }
+        });
+        switchDeduction.setText("__Deduction__switcher__"); /* TODO:DS: Add consant */
+        unifyMenu.add(switchDeduction);
+
         final JMenuItem startUnifyWStepSelectorSearchItem = new JMenuItem(
             stepSelectorChoiceAction(new StepRequest(
                 PaConstants.STEP_REQUEST_SELECTOR_SEARCH)));
@@ -2148,6 +2158,18 @@ public class ProofAsstGUI {
         }
     }
 
+    private void deductionSwitcherAction() {
+        final LogicalSystem logicalSystem = proofAsst.getLogicalSystem();
+        if (logicalSystem == null)
+            return;
+
+        final String newTheoremLabel = getNewTheoremLabel();
+
+        startRequestAction(new RequestDeductiveProof(newTheoremLabel));
+
+        System.out.println("Finished");
+    }
+
     private void updateMainFrameTitle(final File newFile) {
         startRequestAction(new Request() {
             @Override
@@ -2509,7 +2531,53 @@ public class ProofAsstGUI {
         void send() throws InterruptedException {}
         abstract void receive();
     }
+    class RequestDeductiveProof extends Request {
+        String newTheoremLabel;
+        ProofWorksheet w;
 
+        RequestDeductiveProof(final String newTheoremLabel) {
+            this.newTheoremLabel = newTheoremLabel;
+        }
+        @Override
+        void send() {
+            final DeductionTransformation analyser = new DeductionTransformation();
+
+            final Map<String, Stmt> map = proofAsst.getLogicalSystem()
+                .getStmtTbl();
+
+            Assrt result = proofAsst.getTheorem(newTheoremLabel);
+            result = analyser
+                .findMoreDeductive(result, map.values().iterator());
+            if (result == null) {
+                System.out
+                    .println("No alternative for theorem. Must create one");
+                result = analyser.createMoreDeductive(
+                    proofAsst.getTheorem(newTheoremLabel),
+                    proofAsst.getLogicalSystem(), proofAsst.getMessages());
+                if (result == null) {
+                    System.out.println("Theorem wasn't created");
+                    w = proofAsst.startNewProof(newTheoremLabel + "_d");
+                    return;
+                }
+                w = proofAsst.getExistingProof((Theorem)result, true, null);
+            }
+            else {
+                System.out.println("There is already an alternative");
+                w = proofAsst.getExistingProof((Theorem)result, true, null);
+            }
+
+        }
+        @Override
+        void receive() {
+            proofTheoremLabel = ""; // tricky - force title update
+            displayProofWorksheet(w, true);
+
+            clearUndoRedoCaches();
+            savedSinceNew = false;
+            disposeOfOldSelectorDialog();
+
+        }
+    }
     class WorksheetRequest extends Request {
         ProofWorksheet w;
 
