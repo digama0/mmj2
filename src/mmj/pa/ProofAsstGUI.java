@@ -2559,11 +2559,13 @@ public class ProofAsstGUI {
                     w = proofAsst.startNewProof(newTheoremLabel + "_d");
                     return;
                 }
-                w = proofAsst.getExistingProof((Theorem)result, true, null);
+                w = proofAsst.getExistingProof((Theorem)result, true,
+                    HypsOrder.RandomizedOrder);
             }
             else {
                 System.out.println("There is already an alternative");
-                w = proofAsst.getExistingProof((Theorem)result, true, null);
+                w = proofAsst.getExistingProof((Theorem)result, true,
+                    HypsOrder.RandomizedOrder);
             }
 
         }

@@ -736,8 +736,8 @@ public class DeductionTransformation {
 
             try {
                 final Theorem result = logicalSystem.addTheorem(
-                    axiom.getLabel() + "_d", 100, axiom.getTyp().getId(),
-                    assrt, proof, messages);
+                    axiom.getLabel() + "_d", 10, axiom.getTyp().getId(), assrt,
+                    proof, messages);
 
                 if (result == null)
                     System.out.println("Was unable to create axiom-theorem");
@@ -910,7 +910,7 @@ public class DeductionTransformation {
 
         try {
             final Theorem result = logicalSystem.addTheorem(theorem.getLabel()
-                + "_d", 100, theorem.getTyp().getId(), assrt, proof, messages);
+                + "_d", 10, theorem.getTyp().getId(), assrt, proof, messages);
 
             if (result == null) {
                 System.out
@@ -922,7 +922,7 @@ public class DeductionTransformation {
             exprRoot.setStmt(wi);
 
             if (wi == null || wka == null)
-                System.out.println("SHEIT NO SHIT WAS DONE!");
+                System.out.println("TOO BAD. NOTHING WAS DONE.");
             final ParseNode[] children = new ParseNode[2];
             children[0] = new ParseNode(wka);
             children[0].child = new ParseNode[0];
