@@ -2540,14 +2540,19 @@ public class ProofAsstGUI {
         }
         @Override
         void send() {
-            final DeductionTransformation analyser = new DeductionTransformation();
+            final DeductionTransformation analyser = new DeductionTransformation(
+                proofAsst, proofAsst.getMessages());
 
             final Map<String, Stmt> map = proofAsst.getLogicalSystem()
                 .getStmtTbl();
 
-            Assrt result = proofAsst.getTheorem(newTheoremLabel);
-            result = analyser
-                .findMoreDeductive(result, map.values().iterator());
+            final Assrt some = (Assrt)analyser.findByName(proofAsst
+                .getLogicalSystem().getStmtTbl(), newTheoremLabel);
+            if (some == null)
+                return;
+
+            Assrt result = analyser.findMoreDeductive(some, map.values()
+                .iterator());
             if (result == null) {
                 System.out
                     .println("No alternative for theorem. Must create one");
