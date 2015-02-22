@@ -4,6 +4,7 @@ import java.util.*;
 
 import mmj.lang.*;
 import mmj.lang.ParseTree.RPNStep;
+import mmj.pa.ProofAsst;
 
 /**
  * This class is a prototype of a class that increase the deduction level of a
@@ -25,6 +26,16 @@ import mmj.lang.ParseTree.RPNStep;
  * be called here "more deductive form"
  */
 public class DeductionTransformation {
+
+    final private ProofAsst proofAsst;
+    final private Messages messages;
+
+    public DeductionTransformation(final ProofAsst useProofAsst,
+        final Messages useMessages)
+    {
+        proofAsst = useProofAsst;
+        messages = useMessages;
+    }
 
     /**
      * This function finds assertion with more deductive form.
@@ -83,7 +94,7 @@ public class DeductionTransformation {
             assrt2.getExprParseTree()) == false)
             return false;
         final Vector<LogHyp> hyp1 = getHypothesis(assrt1);
-        final Vector<LogHyp> hyp2 = getHypothesis(assrt2);
+        Vector<LogHyp> hyp2 = getHypothesis(assrt2);
         if (hyp1.size() != hyp2.size())
             return false;
         while (hyp1.size() != 0) {
@@ -99,6 +110,11 @@ public class DeductionTransformation {
             if (match == false)
                 return false;
         }
+        final Stmt antecedent = assrt2.getExprParseTree().getRoot().child[0].stmt;
+        hyp2 = getHypothesis(assrt2);
+        for (int i = 0; i < hyp2.size(); i++)
+            if (hyp2.get(i).getExprParseTree().getRoot().child[0].stmt != antecedent)
+                return false;
         if (checkVar(assrt1, assrt2) != null)
             return true;
         return false;
@@ -121,8 +137,14 @@ public class DeductionTransformation {
             return result;
 
         for (final RPNStep element : node)
-            if (element.stmt instanceof LogHyp)
-                result.add((LogHyp)element.stmt);
+            if (element != null) {
+                if (element.stmt instanceof LogHyp)
+                    result.add((LogHyp)element.stmt);
+            }
+            else {
+                System.out.println("NAME:" + stmt.getLabel());
+                return null;
+            }
 
         final Vector<LogHyp> cleared = new Vector<LogHyp>();
         for (int i = 0; i < result.size(); i++) {
@@ -136,7 +158,6 @@ public class DeductionTransformation {
         }
         return cleared;
     }
-
     /**
      * This function makes more careful check if one assertion is more deductive
      * than the other. It looks which variables in assertion corresponds to
@@ -161,6 +182,10 @@ public class DeductionTransformation {
         final LogHyp deductionHypsTemp[] = assrt2.getLogHypArray();
         final Vector<ParseTree> baseHyps = new Vector<ParseTree>();
         final Vector<ParseTree> deductionHyps = new Vector<ParseTree>();
+
+        if (baseHypsTemp.length != deductionHypsTemp.length)
+            return null;
+
         for (int i = 0; i < baseHypsTemp.length; i++) {
             baseHyps.add(baseHypsTemp[i].getExprParseTree());
             deductionHyps.add(deductionHypsTemp[i].getExprParseTree());
@@ -201,90 +226,113 @@ public class DeductionTransformation {
 
         for (int i = 0; i < baseTrees.size(); i++)
             if (baseTrees.get(i).size() == 1) {
-                fillNameMap(baseTrees.get(i).get(0),
-                    deductionTrees.get(i).get(0), nameMap);
+                if (fillNameMap(baseTrees.get(i).get(0), deductionTrees.get(i)
+                    .get(0), nameMap) == false)
+                    return null;
+
+                System.out.println("EQ:");
+                debug(0, baseTrees.get(i).get(0).getRoot());
+                debug(0, deductionTrees.get(i).get(0).getRoot());
                 baseTrees.remove(i);
                 deductionTrees.remove(i);
                 i--;
             }
 
+        for (int i = 0; i < nameMap.size(); i++)
+            System.out.println("M:" + nameMap.values().toArray()[i] + " | "
+                + nameMap.keySet().toArray()[i]);
+
         if (baseTrees.size() == 0)
             return nameMap;
 
-        int length = 0;
         for (int i = 0; i < baseTrees.size(); i++)
-            length += baseTrees.get(i).size();
+            baseTrees.get(i).size();
         final Vector<Vector<Integer>> match = new Vector<Vector<Integer>>();
         for (int i = 0; i < baseTrees.size(); i++) {
             match.add(new Vector<Integer>());
             for (int j = 0; j < baseTrees.get(i).size(); j++)
                 match.get(i).add(0);
         }
-
-        int changeIndex = 0;
-        int changeGroup = 0;
-        int currentIndex = 0;
-        int groupIndex = 0;
-        int iterator = 0;
+        for (int i = 0; i < deductionTrees.get(0).size(); i++) {
+            System.out.println("[" + i + "]");
+            debug(0, deductionTrees.get(0).get(i).getRoot());
+            debug(0, baseTrees.get(0).get(i).getRoot());
+        }
         boolean success = false;
         final Map<VarHyp, VarHyp> currentMap = new HashMap<VarHyp, VarHyp>();
-        if (assrt1.getLabel().equals("syl") && assrt2.getLabel().equals("syld"))
-            System.out.println("smth");
-
+        final Vector<Vector<ParseTree>> baseTreesCopy = new Vector<Vector<ParseTree>>();
+        final Vector<Vector<ParseTree>> deductionTreesCopy = new Vector<Vector<ParseTree>>();
         while (true) {
+            baseTreesCopy.clear();
+            deductionTreesCopy.clear();
+            for (int i = 0; i < baseTrees.size(); i++) {
+                baseTreesCopy.add(new Vector<ParseTree>(baseTrees.get(i)));
+                deductionTreesCopy.add(new Vector<ParseTree>(deductionTrees
+                    .get(i)));
+            }
             currentMap.clear();
             currentMap.putAll(nameMap);
 
-            currentIndex = 0;
-            groupIndex = 0;
-            iterator = 0;
-            while (iterator < length) {
-                success = true;
-                final boolean result = fillNameMap(baseTrees.get(groupIndex)
-                    .get(currentIndex),
-                    deductionTrees.get(groupIndex).get(currentIndex),
-                    currentMap);
-                if (result == false) {
-                    success = false;
-                    break;
-                }
+            System.out.println("go");
+            for (int i = 0; i < currentMap.size(); i++)
+                System.out.println("M:" + currentMap.values().toArray()[i]
+                    + " | " + currentMap.keySet().toArray()[i]);
+            success = true;
 
-                currentIndex++;
-                if (currentIndex == baseTrees.get(groupIndex).size()) {
-                    currentIndex = 0;
-                    groupIndex++;
-                }
-                iterator++;
-            }
-
-            changeIndex = 0;
-            changeGroup = 0;
-            while (true) {
-                int num = match.get(changeGroup).get(changeIndex);
-                num++;
-                if (num == match.get(changeGroup).size()) {
-                    match.get(changeGroup).set(changeIndex, 0);
-                    changeIndex++;
-                    if (changeIndex == baseTrees.get(changeGroup).size()) {
-                        changeIndex = 0;
-                        groupIndex++;
-                        if (groupIndex >= baseTrees.size())
-                            return null;
+            for (int checkGroupIndex = 0; checkGroupIndex < baseTrees.size(); checkGroupIndex++)
+            {
+                final int currentSize = baseTrees.get(checkGroupIndex).size();
+                for (int checkEntryIndex = 0; checkEntryIndex < currentSize; checkEntryIndex++)
+                {
+                    for (int i = 0; i < deductionTreesCopy.get(0).size(); i++) {
+                        System.out.println("[" + i + "]");
+                        debug(0, deductionTreesCopy.get(0).get(i).getRoot());
+                        debug(0, baseTreesCopy.get(0).get(i).getRoot());
                     }
-                    continue;
+                    success = fillNameMap(
+                        baseTreesCopy.get(checkGroupIndex).get(checkEntryIndex),
+                        deductionTreesCopy.get(checkGroupIndex).get(
+                            match.get(checkGroupIndex).get(checkEntryIndex)),
+                        currentMap);
+                    deductionTreesCopy.get(checkGroupIndex).removeElementAt(
+                        match.get(checkGroupIndex).get(checkEntryIndex));
+                    System.out.print("\n");
+                    if (success == false)
+                        break;
+                }
+                if (success == false)
+                    break;
+            }
+            if (success == true)
+                return currentMap;
+
+            System.out.println("do");
+            int changeIndex = 0;
+            int changeGroup = 0;
+            while (true)
+                if (match.get(changeGroup).get(changeIndex) >= match.get(
+                    changeGroup).size()
+                    - changeIndex - 1)
+                {
+                    if (changeGroup == baseTrees.size() - 1
+                        && changeIndex == baseTrees.get(baseTrees.size() - 1)
+                            .size() - 1)
+                        return null;
+                    if (changeIndex + 1 == match.get(changeGroup).size())
+                        changeGroup++;
+                    else {
+                        match.get(changeGroup).set(changeIndex, 0);
+                        changeIndex++;
+                    }
                 }
                 else {
-                    match.get(changeGroup).set(changeIndex, num);
+                    match.get(changeGroup).set(changeIndex,
+                        match.get(changeGroup).get(changeIndex) + 1);
                     break;
                 }
-            }
-
-            if (success == false)
-                continue;
-            return currentMap;
         }
-    }
 
+    }
     /**
      * This function adds to map which variables in the assertion corresponds to
      * which variables in deduction assertion.
@@ -327,16 +375,24 @@ public class DeductionTransformation {
 
         if (tree1.getChild().length != tree2.getChild().length)
             return false;
+
+        System.out.print(tree1.getStmt().getLabel() + " ");
+
         if (tree1.stmt instanceof VarHyp) {
             if (tree2.stmt instanceof VarHyp) {
                 final VarHyp hyp1 = (VarHyp)tree1.stmt;
                 final VarHyp hyp2 = (VarHyp)tree2.stmt;
                 final VarHyp get = nameMap.get(hyp1);
-                if (get == null)
+                if (get == null) {
+                    System.out.print(hyp1.getLabel() + "(" + hyp2.getLabel()
+                        + ") ");
                     nameMap.put(hyp1, hyp2);
-                else if (get != hyp2)
+                }
+                else if (get != hyp2) {
+                    System.out.print("(" + get.getLabel() + " vs "
+                        + hyp2.getLabel() + ")");
                     return false;
-                return true;
+                }
             }
             else
                 return false;
@@ -348,6 +404,7 @@ public class DeductionTransformation {
             if (fillNameMap(tree1.getChild()[i], tree2.getChild()[i], nameMap) == false)
                 return false;
 
+        System.out.print("true");
         return true;
     }
 
@@ -461,10 +518,6 @@ public class DeductionTransformation {
         if (leftChildNode.stmt instanceof VarHyp == false)
             return false;
 
-        System.out.println("X");
-        debug(1, node1);
-        System.out.println("Y");
-        debug(1, node2);
         if (areTreesEqual(node1, node2.getChild()[1], nameMap) == true)
             return true;
 
@@ -533,6 +586,17 @@ public class DeductionTransformation {
         final Vector<Integer> result = new Vector<Integer>();
         final Hyp baseHyps[] = base.getMandFrame().hypArray;
         final Hyp deductionHyps[] = deduction.getMandFrame().hypArray;
+        System.out.println("BASE:" + base.getLabel() + "|" + base.getFormula()
+            + " DED:" + deduction.getLabel() + "|" + deduction.getFormula());
+        for (final Hyp baseHyp2 : baseHyps)
+            System.out.println("B:" + baseHyp2.getLabel());
+
+        for (final Hyp deductionHyp : deductionHyps)
+            System.out.println("d:" + deductionHyp.getLabel());
+
+        for (int i = 0; i < map.values().size(); i++)
+            System.out.println("h:" + map.values().toArray()[i]);
+
         for (final Hyp baseHyp : baseHyps)
             for (int j = 0; j < deductionHyps.length; j++) {
                 if (baseHyp instanceof VarHyp) {
@@ -552,6 +616,9 @@ public class DeductionTransformation {
                     }
                 }
             }
+        for (int i = 0; i < result.size(); i++)
+            System.out.println("r:" + result.get(i));
+
         final VarHyp left = (VarHyp)deduction.getExprParseTree().getRoot()
             .getChild()[0].stmt;
         int leftIndex = 0;
@@ -561,7 +628,7 @@ public class DeductionTransformation {
                 leftIndex = i;
                 break;
             }
-        for (int i = leftIndex + 1; i < deductionHyps.length; i++)
+        for (int i = leftIndex + 1; i < result.size(); i++)
             result.set(i, result.get(i) - 1);
         System.out.println("Theorem:" + base.getLabel());
         int j = 0;
@@ -578,7 +645,6 @@ public class DeductionTransformation {
         }
         return result;
     }
-
     /**
      * This function adds theorem labels to proof list that will proof more
      * deductive form of given theorem. (Recursive)
@@ -587,14 +653,41 @@ public class DeductionTransformation {
      * @param thrm - map that maps assertions to their more deductive equivalent
      * @param hyp - map that maps hypothesis to their more deductive equivalent
      * @param node - parse node (usually the root of the tree)
+     * @param isNodeVarHyp - is current node a Variable hypotheses
      */
     void fillProofList(final Vector<String> proof,
         final Map<Assrt, Assrt> thrm, final Map<LogHyp, LogHyp> hyp,
-        final ParseNode node)
+        final ParseNode node, final boolean isNodeVarHyp)
     {
-
+        System.out.println("Entering:" + node.stmt.getLabel());
         boolean customFill = false;
-        if (node.stmt instanceof Theorem) {
+
+        if (node.stmt instanceof LogHyp) {
+            proof.add(node.stmt.getLabel() + "_d");
+            return;
+        }
+        if (node.stmt instanceof Theorem && isNodeVarHyp == false) {
+            final Theorem current = (Theorem)node.stmt;
+            final Hyp hyps[] = current.getMandFrame().hypArray;
+            final boolean isVarHyp[] = new boolean[hyps.length];
+            for (int i = 0; i < hyps.length; i++)
+                if (hyps[i] instanceof VarHyp)
+                    isVarHyp[i] = true;
+                else
+                    isVarHyp[i] = false;
+            Assrt moreDeductive = thrm.get(current);
+            if (moreDeductive == null)
+                moreDeductive = findMoreDeductive(current, proofAsst
+                    .getLogicalSystem().getStmtTbl().values().iterator());
+            if (moreDeductive == null)
+                moreDeductive = createMoreDeductive(current,
+                    proofAsst.getLogicalSystem(), messages);
+            if (moreDeductive == null) {
+                System.out.println("Coudn't create more deductive for:"
+                    + current.getLabel());
+                return;
+            }
+            thrm.put(current, moreDeductive);
             final Map<VarHyp, VarHyp> map = checkVar((Assrt)node.stmt,
                 thrm.get(node.stmt));
             if (map == null)
@@ -605,14 +698,38 @@ public class DeductionTransformation {
                 if (order.get(i) == -1)
                     proof.add("wka");
                 else
-                    fillProofList(proof, thrm, hyp, node.child[order.get(i)]);
+                    fillProofList(proof, thrm, hyp, node.child[order.get(i)],
+                        isVarHyp[order.get(i)]);
             customFill = true;
+            proof.add(moreDeductive.getLabel());
         }
 
-        if (node.stmt instanceof Axiom
+        if (node.stmt instanceof Axiom && isNodeVarHyp == false
             && node.stmt.getLabel().equals("wi") == false
             && node.stmt.getLabel().equals("wn") == false)
         {
+            final Axiom current = (Axiom)node.stmt;
+            final Hyp hyps[] = current.getMandFrame().hypArray;
+            final boolean isVarHyp[] = new boolean[hyps.length];
+            for (int i = 0; i < hyps.length; i++)
+                if (hyps[i] instanceof VarHyp)
+                    isVarHyp[i] = true;
+                else
+                    isVarHyp[i] = false;
+            Assrt moreDeductive = thrm.get(current);
+            if (moreDeductive == null)
+                moreDeductive = findMoreDeductive(current, proofAsst
+                    .getLogicalSystem().getStmtTbl().values().iterator());
+            if (moreDeductive == null)
+                moreDeductive = createMoreDeductiveAxiom(current,
+                    proofAsst.getLogicalSystem(), messages);
+            if (moreDeductive == null) {
+                System.out.println("Coudn't create more deductive for:"
+                    + current.getLabel());
+                return;
+            }
+            thrm.put(current, moreDeductive);
+
             final Map<VarHyp, VarHyp> map = checkVar((Assrt)node.stmt,
                 thrm.get(node.stmt));
             if (map == null)
@@ -623,35 +740,17 @@ public class DeductionTransformation {
                 if (order.get(i) == -1)
                     proof.add("wka");
                 else
-                    fillProofList(proof, thrm, hyp, node.child[order.get(i)]);
+                    fillProofList(proof, thrm, hyp, node.child[order.get(i)],
+                        isVarHyp[order.get(i)]);
             customFill = true;
+            proof.add(moreDeductive.getLabel());
         }
-        if (customFill == false)
+        if (customFill == false) {
             for (final ParseNode element : node.child)
-                fillProofList(proof, thrm, hyp, element);
-
-        if (node.stmt instanceof Theorem) {
-            System.out.println("Adding:" + thrm.get(node.stmt).getLabel()
-                + " in replacement for Theorem:" + node.stmt);
-            proof.add(thrm.get(node.stmt).getLabel());
-        }
-        else if (node.stmt instanceof LogHyp) {
-            System.out.println("Adding:" + hyp.get(node.stmt).getLabel()
-                + " in replacement for LogHyp:" + node.stmt);
-            proof.add(hyp.get(node.stmt).getLabel());
-        }
-        else if (node.stmt instanceof Axiom) {
-            if (node.stmt.getLabel().equals("wi"))
-                proof.add("wi");
-            else if (node.stmt.getLabel().equals("wn"))
-                proof.add("wn");
-            else
-                proof.add(thrm.get(node.stmt).getLabel());
-        }
-        else
+                fillProofList(proof, thrm, hyp, element, true);
             proof.add(node.stmt.getLabel());
+        }
     }
-
     /**
      * this function has debbuging use only
      */
@@ -684,7 +783,7 @@ public class DeductionTransformation {
     /**
      * this function has debbuging use only
      */
-    Stmt findByName(final Map<String, Stmt> map, final String name) {
+    public Stmt findByName(final Map<String, Stmt> map, final String name) {
         final Iterator<Stmt> iterator = map.values().iterator();
         while (iterator.hasNext()) {
             final Stmt next = iterator.next();
@@ -702,7 +801,7 @@ public class DeductionTransformation {
      * @param messages - messages to display errors
      * @return more deductive axiom
      */
-    Theorem createMoreDeductive(final Axiom axiom,
+    Theorem createMoreDeductiveAxiom(final Axiom axiom,
         final LogicalSystem logicalSystem, final Messages messages)
     {
         final Vector<LogHyp> logHyps = getHypothesis(axiom);
@@ -717,15 +816,15 @@ public class DeductionTransformation {
 
             proof.add("wka");
             final VarHyp axiomMandVarHyps[] = axiom.getMandVarHypArray();
-            for (final VarHyp axiomMandVarHyp : axiomMandVarHyps) {
-                System.out.println("Mandatory var:"
-                    + axiomMandVarHyp.getLabel());
+            for (final VarHyp axiomMandVarHyp : axiomMandVarHyps)
                 proof.add(axiomMandVarHyp.getLabel());
-            }
 
             proof.add(axiom.getLabel());
 
             proof.add("a1i");
+
+            for (int i = 0; i < proof.size(); i++)
+                System.out.println("PROOF:" + proof.get(i));
 
             assrt.add("(");
             assrt.add("ka");
@@ -735,8 +834,9 @@ public class DeductionTransformation {
             assrt.add(")");
 
             try {
+                logicalSystem.beginScope();
                 final Theorem result = logicalSystem.addTheorem(
-                    axiom.getLabel() + "_d", 10, axiom.getTyp().getId(), assrt,
+                    axiom.getLabel() + "_d", 5, axiom.getTyp().getId(), assrt,
                     proof, messages);
 
                 if (result == null)
@@ -760,12 +860,7 @@ public class DeductionTransformation {
 
                 System.out.println("Successful creating axiom replacer");
 
-                final VarHyp varHypTestArray[] = result.getMandVarHypArray();
-                for (final VarHyp element : varHypTestArray) {
-                    System.out.println("Mandatory var:" + element.getLabel());
-                    proof.add(element.getLabel());
-                }
-
+                logicalSystem.endScope();
                 return result;
 
             } catch (final LangException e) {
@@ -794,43 +889,57 @@ public class DeductionTransformation {
         final Stmt wi = findByName(logicalSystem.getStmtTbl(), "wi");
 
         final Stmt wka = findByName(logicalSystem.getStmtTbl(), "wka");
-        final Map<String, Stmt> stmts = logicalSystem.getStmtTbl();
 
-        final Vector<Assrt> usedTheorems = getAssrt(theorem);
         final HashMap<Assrt, Assrt> deductiveTheoremMap = new HashMap<Assrt, Assrt>();
-        for (int i = 0; i < usedTheorems.size(); i++) {
-            if (usedTheorems.get(i).getLabel().equals("wi")
-                || usedTheorems.get(i).getLabel().equals("wn"))
-                continue;
-            Assrt moreDeductive = findMoreDeductive(usedTheorems.get(i), stmts
-                .values().iterator());
-            if (moreDeductive == null) {
-                System.out.println("Cant find:" + usedTheorems.get(i));
-                if (usedTheorems.get(i) instanceof Axiom) {
-                    System.out.println("Everything is based on axiom: "
-                        + usedTheorems.get(i).getLabel());
-                    moreDeductive = createMoreDeductive(
-                        (Axiom)usedTheorems.get(i), logicalSystem, messages);
-                    if (moreDeductive == null)
-                        return null;
-                }
-                else {
-                    System.out.println("Creating more deductive:"
-                        + usedTheorems.get(i).getLabel());
-                    moreDeductive = createMoreDeductive(
-                        (Theorem)usedTheorems.get(i), logicalSystem, messages);
-                }
-                if (moreDeductive == null) {
-                    System.out.println("Cant get more deductive for "
-                        + usedTheorems.get(i).getLabel());
-                    return null;
-                }
-            }
-            deductiveTheoremMap.put(usedTheorems.get(i), moreDeductive);
-        }
+        getAssrt(theorem);
 
         final Vector<LogHyp> hyps = getHypothesis(theorem);
         final HashMap<LogHyp, LogHyp> deductiveHypMap = new HashMap<LogHyp, LogHyp>();
+
+        final RPNStep steps[] = theorem.getProof();
+        final ParseTree tree = new ParseTree(steps);
+        final ParseNode node = tree.getRoot();
+        final Vector<String> proof = new Vector<String>();
+        final Vector<String> assrt = new Vector<String>();
+        /*
+         * for (final RPNStep step : steps) { if (step.stmt instanceof Theorem)
+         * p    roof.add(deductiveTheoremMap.get(step.stmt).getLabel()); if
+         * (step.stmt instanceof LogHyp)
+         * proof.add(deductiveHypMap.get(step.stmt).getLabel()); else
+         * proof.add(step.stmt.toString()); }
+         */
+        /*  if ( theorem.getLabel().equals("con4d") == true )*/
+        fillProofList(proof, deductiveTheoremMap, deductiveHypMap, node, false);
+        /*  else {
+                proof.add("wka");      // ka
+                proof.add("wph");      // ph
+                proof.add("wps");      // !ps -> !ch
+                proof.add("wn");       //
+                proof.add("wch");      //
+                proof.add("wn");       // 
+                proof.add("wi");       //
+                proof.add("wch");      // ch -> ps
+                proof.add("wps");      // 
+                proof.add("wi");       //
+                proof.add("con4d.1_d");// ( ka -> ( ph -> ( !ps -> !ch ) ) )
+                proof.add("wps");      // 
+                proof.add("wch");      // 
+                proof.add("wka");      // 
+                proof.add("ax-3_d");   // ( ka -> ( ( !ps -> !ch ) -> ( ch -> ps ) ) )
+                proof.add("syld");     //
+            }*/
+        for (int i = 0; i < proof.size(); i++)
+            System.out.println("T:" + proof.get(i));
+
+        assrt.add("(");
+        assrt.add("ka");
+        assrt.add("->");
+        for (int j = 1; j < theorem.getFormula().getSym().length; j++)
+            assrt.add(theorem.getFormula().getSym()[j].toString());
+        assrt.add(")");
+
+        logicalSystem.beginScope();
+
         for (int i = 0; i < hyps.size(); i++) {
             final Vector<String> symbols = new Vector<String>();
             symbols.add("(");
@@ -866,51 +975,9 @@ public class DeductionTransformation {
             }
         }
 
-        final RPNStep steps[] = theorem.getProof();
-        final ParseTree tree = new ParseTree(steps);
-        final ParseNode node = tree.getRoot();
-        final Vector<String> proof = new Vector<String>();
-        final Vector<String> assrt = new Vector<String>();
-        /*
-         * for (final RPNStep step : steps) { if (step.stmt instanceof Theorem)
-         * p    roof.add(deductiveTheoremMap.get(step.stmt).getLabel()); if
-         * (step.stmt instanceof LogHyp)
-         * proof.add(deductiveHypMap.get(step.stmt).getLabel()); else
-         * proof.add(step.stmt.toString()); }
-         */
-        /*  if ( theorem.getLabel().equals("con4d") == true )*/
-        fillProofList(proof, deductiveTheoremMap, deductiveHypMap, node);
-        /*  else {
-                proof.add("wka");      // ka
-                proof.add("wph");      // ph
-                proof.add("wps");      // !ps -> !ch
-                proof.add("wn");       //
-                proof.add("wch");      //
-                proof.add("wn");       // 
-                proof.add("wi");       //
-                proof.add("wch");      // ch -> ps
-                proof.add("wps");      // 
-                proof.add("wi");       //
-                proof.add("con4d.1_d");// ( ka -> ( ph -> ( !ps -> !ch ) ) )
-                proof.add("wps");      // 
-                proof.add("wch");      // 
-                proof.add("wka");      // 
-                proof.add("ax-3_d");   // ( ka -> ( ( !ps -> !ch ) -> ( ch -> ps ) ) )
-                proof.add("syld");     //
-            }*/
-        for (int i = 0; i < proof.size(); i++)
-            System.out.println("T:" + proof.get(i));
-
-        assrt.add("(");
-        assrt.add("ka");
-        assrt.add("->");
-        for (int j = 1; j < theorem.getFormula().getSym().length; j++)
-            assrt.add(theorem.getFormula().getSym()[j].toString());
-        assrt.add(")");
-
         try {
             final Theorem result = logicalSystem.addTheorem(theorem.getLabel()
-                + "_d", 10, theorem.getTyp().getId(), assrt, proof, messages);
+                + "_d", 5, theorem.getTyp().getId(), assrt, proof, messages);
 
             if (result == null) {
                 System.out
@@ -922,7 +989,7 @@ public class DeductionTransformation {
             exprRoot.setStmt(wi);
 
             if (wi == null || wka == null)
-                System.out.println("TOO BAD. NOTHING WAS DONE.");
+                System.out.println("SHEIT NO SHIT WAS DONE!");
             final ParseNode[] children = new ParseNode[2];
             children[0] = new ParseNode(wka);
             children[0].child = new ParseNode[0];
@@ -936,6 +1003,8 @@ public class DeductionTransformation {
             result.setExprParseTree(new ParseTree(exprRoot));
 
             findAndFixNullChild(exprRoot);
+
+            logicalSystem.endScope();
 
             return result;
         } catch (final LangException e) {
