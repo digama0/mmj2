@@ -2,8 +2,7 @@ package mmj.oth;
 
 import java.util.*;
 
-import mmj.lang.Cnst;
-import mmj.lang.Stmt;
+import mmj.lang.*;
 
 public class ConstTerm extends Term {
     private Const c;
@@ -78,15 +77,25 @@ public class ConstTerm extends Term {
     }
 
     @Override
-    public void generateTypeProof(final Interpreter i) {
-        final Cnst cnst = i.getConstant(OTConstants.mapConstants(c.n));
+    public ParseNode getTermProof(final ProofContext p) {
+        final Cnst cnst = p.i.getConstant(OTConstants.mapConstants(c.n));
+        if (cnst != null)
+            return p.c(p.i.getTermAxiom(cnst));
+        else
+            throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public ParseNode getTypeProof(final ProofContext p, final ParseNode wff) {
+        final Cnst cnst = p.i.getConstant(OTConstants.mapConstants(c.n));
         if (cnst != null) {
-            termProof = i.c(i.getTermAxiom(cnst));
-            final Stmt ty = i.getTypeAxiom(cnst);
-            typeProof = ty.getMandHypArrayLength() == 0 ? i.c(ty) : i.c(ty, ty
-                .getExprParseTree().getRoot().child[0].unifyWithSubtree(
-                t.getTypeProof(i), ty.getMandVarHypArray(), i.unifyNodeStack,
-                i.compareNodeStack));
+            final Stmt ty = p.i.getTypeAxiom(cnst);
+            return p.c(
+                ty,
+                ty.getExprParseTree()
+                    .getRoot()
+                    .unifyWithSubtree(wff, ty.getMandVarHypArray(),
+                        p.i.unifyNodeStack, p.i.compareNodeStack));
         }
         else
             throw new UnsupportedOperationException();

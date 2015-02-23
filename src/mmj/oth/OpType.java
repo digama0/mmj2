@@ -69,15 +69,15 @@ public class OpType extends Type {
     }
 
     @Override
-    protected ParseNode generateTypeProof(final Interpreter i) {
+    protected ParseNode generateTypeProof(final ProofContext p) {
         final String name = OTConstants.mapConstants(op.n);
-        final Cnst c = i.getConstant(name);
+        final Cnst c = p.i.getConstant(name);
         if (c != null) {
             final ParseNode[] child = new ParseNode[args.size()];
             int j = 0;
             for (final Type t : args)
-                child[j++] = t.getTypeProof(i);
-            return i.c(i.getTypeTerm(c), child);
+                child[j++] = t.getTypeProof(p);
+            return p.c(p.i.getTypeTerm(c), child);
         }
         throw new UnsupportedOperationException();
     }

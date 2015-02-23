@@ -104,13 +104,13 @@ public class AbsTerm extends Term {
     }
 
     @Override
-    protected void generateTypeProof(final Interpreter i) {
-        final ParseNode xp = x.t.getTypeProof(i);
-        final ParseNode v = i.c(x.toVarHyp(i));
-        final ParseNode bp = b.getTermProof(i);
-        termProof = i.c(OTConstants.HOL_ABS_TERM, xp, v, bp);
-        typeProof = i.c(OTConstants.HOL_ABS_TYPE, xp,
-            b.getType().getTypeProof(i), v, bp, b.getTypeProof(i));
+    protected void generateTypeProof(final ProofContext p) {
+        final ParseNode xp = x.t.getTypeProof(p);
+        final ParseNode v = p.c(x.toVarHyp(p));
+        final ParseNode bp = b.getTermProof(p);
+        termProof = p.c(OTConstants.HOL_ABS_TERM, xp, v, bp);
+        typeProof = p.c(OTConstants.HOL_ABS_TYPE, xp,
+            b.getType().getTypeProof(p), v, bp, b.getTypeProof(p));
     }
 
 }

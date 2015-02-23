@@ -78,28 +78,38 @@ public class AppTerm extends Term {
     }
 
     @Override
-    protected void generateTypeProof(final Interpreter i) {
-        if (f instanceof AppTerm && OTConstants.isBinaryOp(f.asApp().f)) {
-            final ConstTerm op = f.asApp().f.asConst();
+    protected ParseNode getTermProof(final ProofContext p) {
+        final Term c = f.asApp().f;
+        if (c instanceof ConstTerm
+            && c.asConst().getConst().n.fullName().equals(OTConstants.EQUALS))
+        {
             final Term x1 = f.asApp().x;
-            final ParseNode ft = op.getTermProof(i);
-            final ParseNode x1t = x1.getTermProof(i);
-            final ParseNode x2t = x.getTermProof(i);
-            termProof = i.c(OTConstants.HOL_OV_TERM, ft, x1t, x2t);
-            final List<Type> l = f.getType().asOp().getArgs();
-            typeProof = i.c(OTConstants.HOL_OV_TYPE,
-                x1.getType().getTypeProof(i), l.get(0).getTypeProof(i), l
-                    .get(1).getTypeProof(i), ft, x1t, x2t, op.getTypeProof(i),
-                x1.getTypeProof(i), x.getTypeProof(i));
+            final ParseNode eq = p.c(OTConstants.SET_EQ_WFF,
+                x1.getTermProof(p), x.getTermProof(p));
+            return p.c(OTConstants.SET_WT_CLS, eq);
         }
         else {
-            final ParseNode ft = f.getTermProof(i);
-            final ParseNode xt = x.getTermProof(i);
-            termProof = i.c(OTConstants.HOL_APP_TERM, ft, xt);
+            final ParseNode ft = f.getTermProof(p);
+            final ParseNode xt = x.getTermProof(p);
+            return p.c(OTConstants.SET_FV_CLS, ft, xt);
+        }
+    }
+
+    @Override
+    protected ParseNode getTypeProof(final ProofContext p, final ParseNode wff)
+    {
+        final Term c = f.asApp().f;
+        if (c instanceof ConstTerm
+            && c.asConst().getConst().n.fullName().equals(OTConstants.EQUALS))
+            return p.c(OTConstants.SET_BOOL_TYPE, wff, getTermProof(p));
+        else {
+            final ParseNode ft = f.getTermProof(p);
+            final ParseNode xt = x.getTermProof(p);
+            termProof = p.c(OTConstants.HOL_APP_TERM, ft, xt);
             final List<Type> l = f.getType().asOp().getArgs();
-            typeProof = i.c(OTConstants.HOL_APP_TYPE, l.get(0).getTypeProof(i),
-                l.get(1).getTypeProof(i), ft, xt, f.getTypeProof(i),
-                x.getTypeProof(i));
+            typeProof = p.c(OTConstants.SET_FV_TYPE, wff, l.get(0)
+                .getTypeProof(p), l.get(1).getTypeProof(p), ft, xt, f
+                .getTypeProof(p), x.getTypeProof(p));
         }
     }
 }

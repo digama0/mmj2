@@ -49,12 +49,12 @@ public class VarType extends Type {
     }
 
     @Override
-    protected ParseNode generateTypeProof(final Interpreter i) {
+    protected ParseNode generateTypeProof(final ProofContext p) {
         final String name = OTConstants.mapTypeVar(n);
-        final mmj.lang.Var v = (mmj.lang.Var)i.getLogicalSystem().getSymTbl()
+        final mmj.lang.Var v = (mmj.lang.Var)p.i.getLogicalSystem().getSymTbl()
             .get(name);
         if (v != null)
-            return i.c(v.getActiveVarHyp());
+            return p.c(v.getActiveVarHyp());
         else
             throw new UnsupportedOperationException();
     }

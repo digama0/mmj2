@@ -78,11 +78,11 @@ public class ContextTerm extends Term {
     }
 
     @Override
-    protected void generateTypeProof(final Interpreter i) {
-        final ParseNode lt = l.getTermProof(i);
-        final ParseNode rt = r.getTermProof(i);
-        termProof = i.c(OTConstants.HOL_CT_TERM, lt, rt);
-        typeProof = i.c(OTConstants.HOL_CT_TYPE, lt, rt, l.getTypeProof(i),
-            r.getTypeProof(i));
+    protected void generateTypeProof(final ProofContext p) {
+        final ParseNode lt = l.getTermProof(p);
+        final ParseNode rt = r.getTermProof(p);
+        termProof = p.c(OTConstants.HOL_CT_TERM, lt, rt);
+        typeProof = p.c(OTConstants.HOL_CT_TYPE, lt, rt, l.getTypeProof(p),
+            r.getTypeProof(p));
     }
 }

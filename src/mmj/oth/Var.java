@@ -45,17 +45,17 @@ public class Var {
         return n.toString();
     }
 
-    public VarHyp toVarHyp(final Interpreter i) {
+    public VarHyp toVarHyp(final ProofContext p) {
         final Name r = rename.get(n).get(t);
-        final VarHyp s = i.getTermVar(OTConstants.mapTermVar(r, false));
-        return s.getTyp().getId().equals(OTConstants.HOL_VAR_CNST) ? s : i
+        final VarHyp s = p.i.getTermVar(OTConstants.mapTermVar(r, false));
+        return s.getTyp().getId().equals(OTConstants.HOL_VAR_CNST) ? s : p.i
             .getTermVar(OTConstants.mapTermVar(r, true));
     }
 
-    public static Var createFromVarHyp(final Interpreter i, final VarHyp v,
+    public static Var createFromVarHyp(final ProofContext p, final VarHyp v,
         final ParseNode type)
     {
-        return Var.get(Type.createFromParseNode(i, type),
+        return Var.get(Type.createFromParseNode(p, type),
             OTConstants.mapTypeVar(v.getVar().getId()));
     }
 

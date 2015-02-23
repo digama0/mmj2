@@ -67,10 +67,10 @@ public class VarTerm extends Term {
         return VarTerm.get(v.subst(subst));
     }
     @Override
-    protected void generateTypeProof(final Interpreter i) {
-        final ParseNode tp = v.t.getTypeProof(i);
-        final ParseNode vp = i.c(v.toVarHyp(i));
-        termProof = i.c(OTConstants.HOL_VAR_TERM, tp, vp);
-        typeProof = i.c(OTConstants.HOL_VAR_TYPE, tp, vp);
+    protected void generateTypeProof(final ProofContext p) {
+        final ParseNode tp = v.t.getTypeProof(p);
+        final ParseNode vp = p.c(v.toVarHyp(p));
+        termProof = p.c(OTConstants.HOL_VAR_TERM, tp, vp);
+        typeProof = p.c(OTConstants.HOL_VAR_TYPE, tp, vp);
     }
 }
