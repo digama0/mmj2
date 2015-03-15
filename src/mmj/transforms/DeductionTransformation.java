@@ -78,7 +78,7 @@ public class DeductionTransformation {
      * @param assrt2 - assertion that can have more deductive form
      * @return true if it is more deductive, false if not.
      */
-    boolean isMoreDeductive(final Assrt assrt1, final Assrt assrt2) {
+    private boolean isMoreDeductive(final Assrt assrt1, final Assrt assrt2) {
 
         if (assrt1.getExprParseTree() == null
             || assrt2.getExprParseTree() == null)
@@ -122,7 +122,7 @@ public class DeductionTransformation {
      * @param stmt - statement which hypothesis will be returned
      * @return hypothesis of given statement
      */
-    Vector<LogHyp> getHypothesis(final Stmt stmt) {
+    private Vector<LogHyp> getHypothesis(final Stmt stmt) {
 
         final Vector<LogHyp> result = new Vector<LogHyp>();
 
@@ -164,7 +164,8 @@ public class DeductionTransformation {
      * @return map where key is variables of assertion and values is variables
      *         of deductive assertion.
      */
-    Map<VarHyp, VarHyp> checkVar(final Assrt assrt1, final Assrt assrt2) {
+    private Map<VarHyp, VarHyp> checkVar(final Assrt assrt1, final Assrt assrt2)
+    {
         final Map<VarHyp, VarHyp> nameMap = new HashMap<VarHyp, VarHyp>();
         final Vector<Vector<ParseTree>> baseTrees = new Vector<Vector<ParseTree>>();
         final Vector<Vector<ParseTree>> deductionTrees = new Vector<Vector<ParseTree>>();
@@ -338,8 +339,8 @@ public class DeductionTransformation {
      * @return true if 0 or more variables were added, false if some values
      *         stored in nameMap doesn't match.
      */
-    boolean fillNameMap(final ParseTree base, final ParseTree deduction,
-        final Map<VarHyp, VarHyp> nameMap)
+    private boolean fillNameMap(final ParseTree base,
+        final ParseTree deduction, final Map<VarHyp, VarHyp> nameMap)
     {
         final ParseNode node2 = deduction.getRoot();
         final ParseNode node1 = base.getRoot();
@@ -362,7 +363,7 @@ public class DeductionTransformation {
      * @return true if 0 or more variables were added, false if some values
      *         stored in nameMap doesn't match.
      */
-    boolean fillNameMap(final ParseNode tree1, final ParseNode tree2,
+    private boolean fillNameMap(final ParseNode tree1, final ParseNode tree2,
         final Map<VarHyp, VarHyp> nameMap)
     {
         if (tree1 == null || tree2 == null)
@@ -409,7 +410,7 @@ public class DeductionTransformation {
      * @param theorem - theorem that will be used to get assertions
      * @return vector with assertions or null if error.
      */
-    Vector<Assrt> getAssrt(final Theorem theorem) {
+    private Vector<Assrt> getAssrt(final Theorem theorem) {
         final Vector<Assrt> result = new Vector<Assrt>();
         final RPNStep[] node = theorem.getProof();
 
@@ -440,7 +441,8 @@ public class DeductionTransformation {
      * @param formula2 more deductive formula
      * @return true if more deductive, false if not
      */
-    boolean isMoreDeductive(final ParseTree formula1, final ParseTree formula2)
+    private boolean isMoreDeductive(final ParseTree formula1,
+        final ParseTree formula2)
     {
         final ParseNode node2 = formula2.getRoot();
         final ParseNode node1 = formula1.getRoot();
@@ -465,7 +467,8 @@ public class DeductionTransformation {
      * @param tree2 more deductive formula
      * @return true if more deductive, false if not
      */
-    boolean areTreesEqual(final ParseNode tree1, final ParseNode tree2) {
+    private boolean areTreesEqual(final ParseNode tree1, final ParseNode tree2)
+    {
         if (tree1 == null || tree2 == null)
             return false;
 
@@ -499,8 +502,8 @@ public class DeductionTransformation {
      * @param nameMap map generated with checkVars function
      * @return true if more deductive, false if not
      */
-    boolean isMoreDeductive(final ParseTree formula1, final ParseTree formula2,
-        final Map<VarHyp, VarHyp> nameMap)
+    private boolean isMoreDeductive(final ParseTree formula1,
+        final ParseTree formula2, final Map<VarHyp, VarHyp> nameMap)
     {
         formula1.getRoot();
         final ParseNode node2 = formula2.getRoot();
@@ -527,7 +530,7 @@ public class DeductionTransformation {
      * @param nameMap map generated with checkVars function
      * @return true if more deductive, false if not
      */
-    boolean areTreesEqual(final ParseNode tree1, final ParseNode tree2,
+    private boolean areTreesEqual(final ParseNode tree1, final ParseNode tree2,
         final Map<VarHyp, VarHyp> nameMap)
     {
         if (tree1 == null || tree2 == null)
@@ -575,8 +578,8 @@ public class DeductionTransformation {
      *         deductive assertion then element of vector with index Q will
      *         contain -1
      */
-    Vector<Integer> getOrder(final Map<VarHyp, VarHyp> map, final Assrt base,
-        final Assrt deduction)
+    private Vector<Integer> getOrder(final Map<VarHyp, VarHyp> map,
+        final Assrt base, final Assrt deduction)
     {
         final Vector<Integer> result = new Vector<Integer>();
         final Hyp baseHyps[] = base.getMandFrame().hypArray;
@@ -650,7 +653,7 @@ public class DeductionTransformation {
      * @param node - parse node (usually the root of the tree)
      * @param isNodeVarHyp - is current node a Variable hypotheses
      */
-    void fillProofList(final Vector<String> proof,
+    private void fillProofList(final Vector<String> proof,
         final Map<Assrt, Assrt> thrm, final Map<LogHyp, LogHyp> hyp,
         final ParseNode node, final boolean isNodeVarHyp)
     {
@@ -748,8 +751,11 @@ public class DeductionTransformation {
     }
     /**
      * this function has debbuging use only
+     *
+     * @param indent number of '-' symbols in the start of printed string
+     * @param node node to be printed
      */
-    void debug(final int indent, final ParseNode node) {
+    private void debug(final int indent, final ParseNode node) {
         for (int i = 0; i < indent; i++)
             System.out.print("-");
         System.out.print(":" + node.stmt.getLabel());
@@ -764,9 +770,9 @@ public class DeductionTransformation {
     /**
      * this function has debbuging use only
      *
-     * @param node
+     * @param node parse tree node
      */
-    void findAndFixNullChild(final ParseNode node) {
+    private void findAndFixNullChild(final ParseNode node) {
         if (node.child == null) {
             System.out.println("FOUND NULL CHILD!");
             node.child = new ParseNode[0];
@@ -777,8 +783,16 @@ public class DeductionTransformation {
 
     /**
      * this function has debbuging use only
+     *
+     * @param map a map from names to statements
+     * @param name searched name of statement
+     * @return found statement or null
      */
     public Stmt findByName(final Map<String, Stmt> map, final String name) {
+        // TODO: this function is used from other files but has comment
+        // 'debbuging use only'
+
+        // TODO: Why not just use "return map.get(name);"
         for (final Stmt stmt : map.values())
             if (stmt.getLabel().equals(name))
                 return stmt;
@@ -793,7 +807,7 @@ public class DeductionTransformation {
      * @param messages - messages to display errors
      * @return more deductive axiom
      */
-    Theorem createMoreDeductiveAxiom(final Axiom axiom,
+    private Theorem createMoreDeductiveAxiom(final Axiom axiom,
         final LogicalSystem logicalSystem, final Messages messages)
     {
         final Vector<LogHyp> logHyps = getHypothesis(axiom);
