@@ -195,7 +195,7 @@ public class ProofAsstGUI {
      * <p>
      * Equals MObj.seq if proof theorem already exists. Otherwise, set to
      * LOC_AFTER stmt sequnce + 1 if LOC_AFTER input (else Integer.MAX_VALUE).
-     * 
+     *
      * @return currProofMaxSeq number of Proof Worksheet theorem.
      */
     public int getCurrProofMaxSeq() {
@@ -207,7 +207,7 @@ public class ProofAsstGUI {
      * <p>
      * Equals MObj.seq if proof theorem already exists. Otherwise, set to
      * LOC_AFTER stmt sequnce + 1 if LOC_AFTER input (else Integer.MAX_VALUE).
-     * 
+     *
      * @param currProofMaxSeq number of Proof Worksheet theorem.
      */
     public void setCurrProofMaxSeq(final int currProofMaxSeq) {
@@ -242,7 +242,7 @@ public class ProofAsstGUI {
 
     /**
      * Normal constructor for setting up ProofAsstGUI.
-     * 
+     *
      * @param proofAsst ProofAsst object
      * @param proofAsstPreferences variable settings
      * @param theoremLoader mmj.tl.TheoremLoader object
@@ -1706,7 +1706,7 @@ public class ProofAsstGUI {
      * This function builds Batch Documentation item of HelpMenu. Batch
      * documentation item opens a BatchDocumentation viewer, that shows
      * documentation of commands.
-     * 
+     *
      * @return JMenuItem - BatchDocumentation item.
      */
     private JMenuItem buildBatchCommandDocumentationHelpMenuItem() {
@@ -2546,13 +2546,11 @@ public class ProofAsstGUI {
             final Map<String, Stmt> map = proofAsst.getLogicalSystem()
                 .getStmtTbl();
 
-            final Assrt some = (Assrt)analyser.findByName(proofAsst
-                .getLogicalSystem().getStmtTbl(), newTheoremLabel);
+            final Assrt some = (Assrt)analyser.findByName(map, newTheoremLabel);
             if (some == null)
                 return;
 
-            Assrt result = analyser.findMoreDeductive(some, map.values()
-                .iterator());
+            Assrt result = analyser.findMoreDeductive(some, map.values());
             if (result == null) {
                 System.out
                     .println("No alternative for theorem. Must create one");
@@ -2631,7 +2629,7 @@ public class ProofAsstGUI {
          * <p>
          * Builds object for sending processing request and receiving the
          * finished results.
-         * 
+         *
          * @param r Request object reference
          */
         public RequestThreadStuff(final Request r) {
@@ -2815,7 +2813,7 @@ public class ProofAsstGUI {
 
     /**
      * Test code to invoke GUI from command line.
-     * 
+     *
      * @param args String array holding command line parms
      */
     public static void main(final String[] args) {

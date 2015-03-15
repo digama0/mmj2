@@ -39,27 +39,25 @@ public class DeductionTransformation {
 
     /**
      * This function finds assertion with more deductive form.
-     * 
+     *
      * @param assrt - theorem of which more deductive form will be found
-     * @param stmts - iterator of StmtTbl that will be searched
+     * @param stmts - collection of statemets that will be searched
      * @return theorem with more deductive form or null if not found
      */
-    public Assrt findMoreDeductive(final Assrt assrt, final Iterator<Stmt> stmts)
+    public Assrt findMoreDeductive(final Assrt assrt,
+        final Collection<Stmt> stmts)
     {
         if (assrt.getLabel().equals("wi"))
             return null;
         if (assrt.getLabel().equals("ax-mp"))
-            while (stmts.hasNext()) {
-                final Stmt next = stmts.next();
-                if (next.getLabel().equals("mpd")) {
-                    final Assrt ret = (Assrt)next;
+            for (final Stmt stmt : stmts)
+                if (stmt.getLabel().equals("mpd")) {
+                    final Assrt ret = (Assrt)stmt;
                     return ret;
                 }
-            }
         Assrt match = null;
         if (assrt instanceof Theorem || assrt instanceof Axiom)
-            while (stmts.hasNext()) {
-                final Stmt current = stmts.next();
+            for (final Stmt current : stmts)
                 if (current instanceof Theorem || current instanceof Axiom) {
                     final Assrt compare = (Assrt)current;
                     if (isMoreDeductive(assrt, compare)) {
@@ -69,15 +67,13 @@ public class DeductionTransformation {
                             match = compare;
                     }
                 }
-
-            }
         return match;
     }
 
     /**
      * This function check's if one assertion has more deductive form than the
      * other.
-     * 
+     *
      * @param assrt1 - first assertion
      * @param assrt2 - assertion that can have more deductive form
      * @return true if it is more deductive, false if not.
@@ -90,8 +86,8 @@ public class DeductionTransformation {
             System.out.print("null at " + assrt1.getLabel());
             return false;
         }
-        if (isMoreDeductive(assrt1.getExprParseTree(),
-            assrt2.getExprParseTree()) == false)
+        if (!isMoreDeductive(assrt1.getExprParseTree(),
+            assrt2.getExprParseTree()))
             return false;
         final Vector<LogHyp> hyp1 = getHypothesis(assrt1);
         Vector<LogHyp> hyp2 = getHypothesis(assrt2);
@@ -107,7 +103,7 @@ public class DeductionTransformation {
                     match = true;
                     break;
                 }
-            if (match == false)
+            if (!match)
                 return false;
         }
         final Stmt antecedent = assrt2.getExprParseTree().getRoot().child[0].stmt;
@@ -122,7 +118,7 @@ public class DeductionTransformation {
 
     /**
      * This function return list of hypothesis used by an assertion.
-     * 
+     *
      * @param stmt - statement which hypothesis will be returned
      * @return hypothesis of given statement
      */
@@ -162,7 +158,7 @@ public class DeductionTransformation {
      * This function makes more careful check if one assertion is more deductive
      * than the other. It looks which variables in assertion corresponds to
      * which variables in other assertion.
-     * 
+     *
      * @param assrt1 - assertion
      * @param assrt2 - assertion that has more deductive form
      * @return map where key is variables of assertion and values is variables
@@ -195,18 +191,17 @@ public class DeductionTransformation {
         while (baseHyps.size() >= 1)
             for (int j = 0; j < deductionHyps.size(); j++) {
                 found = false;
-                if (isMoreDeductive(baseHyps.get(0), deductionHyps.get(j)) == true)
-                {
+                if (isMoreDeductive(baseHyps.get(0), deductionHyps.get(j))) {
                     for (int k = 0; k < baseTrees.size(); k++)
                         if (areTreesEqual(baseHyps.get(0).getRoot(), baseTrees
-                            .get(k).get(0).getRoot()) == true)
+                            .get(k).get(0).getRoot()))
                         {
                             found = true;
                             baseTrees.get(k).add(baseHyps.get(0));
                             deductionTrees.get(k).add(deductionHyps.get(j));
                             break;
                         }
-                    if (found == false) {
+                    if (!found) {
                         found = true;
                         final Vector<ParseTree> baseAddition = new Vector<ParseTree>();
                         baseAddition.add(baseHyps.get(0));
@@ -220,14 +215,14 @@ public class DeductionTransformation {
                     baseHyps.remove(0);
                     deductionHyps.remove(j);
                 }
-                if (found == true)
+                if (found)
                     break;
             }
 
         for (int i = 0; i < baseTrees.size(); i++)
             if (baseTrees.get(i).size() == 1) {
-                if (fillNameMap(baseTrees.get(i).get(0), deductionTrees.get(i)
-                    .get(0), nameMap) == false)
+                if (!fillNameMap(baseTrees.get(i).get(0), deductionTrees.get(i)
+                    .get(0), nameMap))
                     return null;
 
                 System.out.println("EQ:");
@@ -297,13 +292,13 @@ public class DeductionTransformation {
                     deductionTreesCopy.get(checkGroupIndex).removeElementAt(
                         match.get(checkGroupIndex).get(checkEntryIndex));
                     System.out.print("\n");
-                    if (success == false)
+                    if (!success)
                         break;
                 }
-                if (success == false)
+                if (!success)
                     break;
             }
-            if (success == true)
+            if (success)
                 return currentMap;
 
             System.out.println("do");
@@ -336,7 +331,7 @@ public class DeductionTransformation {
     /**
      * This function adds to map which variables in the assertion corresponds to
      * which variables in deduction assertion.
-     * 
+     *
      * @param base - assertion
      * @param deduction - more deductive assertion
      * @param nameMap - map with variables
@@ -349,10 +344,10 @@ public class DeductionTransformation {
         final ParseNode node2 = deduction.getRoot();
         final ParseNode node1 = base.getRoot();
 
-        if (node2.stmt.getLabel().equals("wi") == false)
+        if (!node2.stmt.getLabel().equals("wi"))
             return false;
         final ParseNode leftChildNode = node2.getChild()[0];
-        if (leftChildNode.stmt instanceof VarHyp == false)
+        if (!(leftChildNode.stmt instanceof VarHyp))
             return false;
 
         return fillNameMap(node1, node2.getChild()[1], nameMap);
@@ -360,7 +355,7 @@ public class DeductionTransformation {
     /**
      * This function adds to map which variables in the assertion corresponds to
      * which variables in deduction assertion. (Recursive)
-     * 
+     *
      * @param tree1 tree
      * @param tree2 tree that represents more deductive form
      * @param nameMap - map with variables
@@ -401,7 +396,7 @@ public class DeductionTransformation {
             return false;
 
         for (int i = 0; i < tree1.getChild().length; i++)
-            if (fillNameMap(tree1.getChild()[i], tree2.getChild()[i], nameMap) == false)
+            if (!fillNameMap(tree1.getChild()[i], tree2.getChild()[i], nameMap))
                 return false;
 
         System.out.print("true");
@@ -410,7 +405,7 @@ public class DeductionTransformation {
 
     /**
      * This function returns assertions that were used to proof this theorem.
-     * 
+     *
      * @param theorem - theorem that will be used to get assertions
      * @return vector with assertions or null if error.
      */
@@ -440,21 +435,20 @@ public class DeductionTransformation {
     /**
      * This function checks if one tree represents more deductive form than the
      * other tree. BUT it doesn't care which variables are used.
-     * 
+     *
      * @param formula1 formula
      * @param formula2 more deductive formula
      * @return true if more deductive, false if not
      */
     boolean isMoreDeductive(final ParseTree formula1, final ParseTree formula2)
     {
-        formula1.getRoot();
         final ParseNode node2 = formula2.getRoot();
         final ParseNode node1 = formula1.getRoot();
 
-        if (node2.stmt.getLabel().equals("wi") == false)
+        if (!node2.stmt.getLabel().equals("wi"))
             return false;
         final ParseNode leftChildNode = node2.getChild()[0];
-        if (leftChildNode.stmt instanceof VarHyp == false)
+        if (!(leftChildNode.stmt instanceof VarHyp))
             return false;
 
         if (areTreesEqual(node1, node2.getChild()[1]))
@@ -466,7 +460,7 @@ public class DeductionTransformation {
     /**
      * This function checks if one tree represents more deductive form than the
      * other tree. BUT it doesn't care which variables are used. (Recursive)
-     * 
+     *
      * @param tree1 formula
      * @param tree2 more deductive formula
      * @return true if more deductive, false if not
@@ -490,7 +484,7 @@ public class DeductionTransformation {
             return false;
 
         for (int i = 0; i < tree1.getChild().length; i++)
-            if (areTreesEqual(tree1.getChild()[i], tree2.getChild()[i]) == false)
+            if (!areTreesEqual(tree1.getChild()[i], tree2.getChild()[i]))
                 return false;
 
         return true;
@@ -499,7 +493,7 @@ public class DeductionTransformation {
     /**
      * This function checks if one tree represents more deductive form than the
      * other tree. IT DOES care which variables are used.
-     * 
+     *
      * @param formula1 formula
      * @param formula2 more deductive formula
      * @param nameMap map generated with checkVars function
@@ -512,13 +506,13 @@ public class DeductionTransformation {
         final ParseNode node2 = formula2.getRoot();
         final ParseNode node1 = formula1.getRoot();
 
-        if (node2.stmt.getLabel().equals("wi") == false)
+        if (!node2.stmt.getLabel().equals("wi"))
             return false;
         final ParseNode leftChildNode = node2.getChild()[0];
-        if (leftChildNode.stmt instanceof VarHyp == false)
+        if (!(leftChildNode.stmt instanceof VarHyp))
             return false;
 
-        if (areTreesEqual(node1, node2.getChild()[1], nameMap) == true)
+        if (areTreesEqual(node1, node2.getChild()[1], nameMap))
             return true;
 
         return false;
@@ -527,7 +521,7 @@ public class DeductionTransformation {
     /**
      * This function checks if one tree represents more deductive form than the
      * other tree. IT DOES care which variables are used. (Recursive)
-     * 
+     *
      * @param tree1 formula
      * @param tree2 more deductive formula
      * @param nameMap map generated with checkVars function
@@ -558,7 +552,8 @@ public class DeductionTransformation {
             return false;
 
         for (int i = 0; i < tree1.getChild().length; i++)
-            if (areTreesEqual(tree1.getChild()[i], tree2.getChild()[i], nameMap) == false)
+            if (!areTreesEqual(tree1.getChild()[i], tree2.getChild()[i],
+                nameMap))
                 return false;
 
         return true;
@@ -569,7 +564,7 @@ public class DeductionTransformation {
      * mandatory hypothesis of more deductive assertion has. This function
      * returns which mandatory hypothesis of assertion corresponds to which
      * mandatory hypothesis of more deductive assertion.
-     * 
+     *
      * @param map map created with checkVars function
      * @param base assertion
      * @param deduction more deductive assertion
@@ -609,7 +604,7 @@ public class DeductionTransformation {
                 if (baseHyp instanceof LogHyp) {
                     final LogHyp work = (LogHyp)baseHyp;
                     if (isMoreDeductive(work.getExprParseTree(),
-                        deductionHyps[j].getExprParseTree(), map) == true)
+                        deductionHyps[j].getExprParseTree(), map))
                     {
                         result.add(j);
                         break;
@@ -648,7 +643,7 @@ public class DeductionTransformation {
     /**
      * This function adds theorem labels to proof list that will proof more
      * deductive form of given theorem. (Recursive)
-     * 
+     *
      * @param proof - vector with strings of proof
      * @param thrm - map that maps assertions to their more deductive equivalent
      * @param hyp - map that maps hypothesis to their more deductive equivalent
@@ -666,7 +661,7 @@ public class DeductionTransformation {
             proof.add(node.stmt.getLabel() + "_d");
             return;
         }
-        if (node.stmt instanceof Theorem && isNodeVarHyp == false) {
+        if (node.stmt instanceof Theorem && !isNodeVarHyp) {
             final Theorem current = (Theorem)node.stmt;
             final Hyp hyps[] = current.getMandFrame().hypArray;
             final boolean isVarHyp[] = new boolean[hyps.length];
@@ -678,7 +673,7 @@ public class DeductionTransformation {
             Assrt moreDeductive = thrm.get(current);
             if (moreDeductive == null)
                 moreDeductive = findMoreDeductive(current, proofAsst
-                    .getLogicalSystem().getStmtTbl().values().iterator());
+                    .getLogicalSystem().getStmtTbl().values());
             if (moreDeductive == null)
                 moreDeductive = createMoreDeductive(current,
                     proofAsst.getLogicalSystem(), messages);
@@ -704,9 +699,9 @@ public class DeductionTransformation {
             proof.add(moreDeductive.getLabel());
         }
 
-        if (node.stmt instanceof Axiom && isNodeVarHyp == false
-            && node.stmt.getLabel().equals("wi") == false
-            && node.stmt.getLabel().equals("wn") == false)
+        if (node.stmt instanceof Axiom && !isNodeVarHyp
+            && !node.stmt.getLabel().equals("wi")
+            && !node.stmt.getLabel().equals("wn"))
         {
             final Axiom current = (Axiom)node.stmt;
             final Hyp hyps[] = current.getMandFrame().hypArray;
@@ -719,7 +714,7 @@ public class DeductionTransformation {
             Assrt moreDeductive = thrm.get(current);
             if (moreDeductive == null)
                 moreDeductive = findMoreDeductive(current, proofAsst
-                    .getLogicalSystem().getStmtTbl().values().iterator());
+                    .getLogicalSystem().getStmtTbl().values());
             if (moreDeductive == null)
                 moreDeductive = createMoreDeductiveAxiom(current,
                     proofAsst.getLogicalSystem(), messages);
@@ -745,7 +740,7 @@ public class DeductionTransformation {
             customFill = true;
             proof.add(moreDeductive.getLabel());
         }
-        if (customFill == false) {
+        if (!customFill) {
             for (final ParseNode element : node.child)
                 fillProofList(proof, thrm, hyp, element, true);
             proof.add(node.stmt.getLabel());
@@ -768,7 +763,7 @@ public class DeductionTransformation {
 
     /**
      * this function has debbuging use only
-     * 
+     *
      * @param node
      */
     void findAndFixNullChild(final ParseNode node) {
@@ -784,18 +779,15 @@ public class DeductionTransformation {
      * this function has debbuging use only
      */
     public Stmt findByName(final Map<String, Stmt> map, final String name) {
-        final Iterator<Stmt> iterator = map.values().iterator();
-        while (iterator.hasNext()) {
-            final Stmt next = iterator.next();
-            if (next.getLabel().equals(name) == true)
-                return next;
-        }
+        for (final Stmt stmt : map.values())
+            if (stmt.getLabel().equals(name))
+                return stmt;
         return null;
     }
 
     /**
      * this function creates more deductive theorem of the given axiom
-     * 
+     *
      * @param axiom - axiom of which the more deductive theorem will be created
      * @param logicalSystem - logical system where this theorem is stored
      * @param messages - messages to display errors
@@ -877,7 +869,7 @@ public class DeductionTransformation {
 
     /**
      * This function creates more deductive theorem
-     * 
+     *
      * @param theorem - subject of transformation
      * @param logicalSystem - logical system where theorem is stored
      * @param messages - messages to display errors
@@ -916,15 +908,15 @@ public class DeductionTransformation {
                 proof.add("wps");      // !ps -> !ch
                 proof.add("wn");       //
                 proof.add("wch");      //
-                proof.add("wn");       // 
+                proof.add("wn");       //
                 proof.add("wi");       //
                 proof.add("wch");      // ch -> ps
-                proof.add("wps");      // 
+                proof.add("wps");      //
                 proof.add("wi");       //
                 proof.add("con4d.1_d");// ( ka -> ( ph -> ( !ps -> !ch ) ) )
-                proof.add("wps");      // 
-                proof.add("wch");      // 
-                proof.add("wka");      // 
+                proof.add("wps");      //
+                proof.add("wch");      //
+                proof.add("wka");      //
                 proof.add("ax-3_d");   // ( ka -> ( ( !ps -> !ch ) -> ( ch -> ps ) ) )
                 proof.add("syld");     //
             }*/
