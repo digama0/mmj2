@@ -74,7 +74,6 @@ package mmj.util;
 import java.awt.Color;
 import java.io.*;
 import java.util.*;
-import java.util.regex.Pattern;
 
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -131,153 +130,140 @@ public class ProofAsstBoss extends Boss {
             return false; // not "consumed"
         }
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_FILE
-            .name()) == 0)
+        if (runParm.name
+            .compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_FILE.name()) == 0)
         {
             proofAsst = null;
             proofAsstPreferences = null;
             return false; // not "consumed"
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_LOOK_AND_FEEL
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_LOOK_AND_FEEL.name()) == 0)
         {
             editProofAsstLookAndFeel(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_DJ_VARS_SOFT_ERRORS
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_DJ_VARS_SOFT_ERRORS.name()) == 0)
         {
             editProofAsstDjVarsSoftErrors(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_PROOF_FORMAT
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_PROOF_FORMAT.name()) == 0)
         {
             editProofAsstProofFormat(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_INCOMPLETE_STEP_CURSOR
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_INCOMPLETE_STEP_CURSOR
                 .name()) == 0)
         {
             editProofAsstIncompleteStepCursor(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_HIGHLIGHTING_ENABLED
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_HIGHLIGHTING_ENABLED
                 .name()) == 0)
         {
             editProofAsstHighlightingEnabled(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_HIGHLIGHTING_STYLE
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_HIGHLIGHTING_STYLE.name()) == 0)
         {
             editProofAsstHighlightingStyle(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_FOREGROUND_COLOR_RGB
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_FOREGROUND_COLOR_RGB
                 .name()) == 0)
         {
             editProofAsstForegroundColorRGB(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_BACKGROUND_COLOR_RGB
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_BACKGROUND_COLOR_RGB
                 .name()) == 0)
         {
             editProofAsstBackgroundColorRGB(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_FONT_SIZE
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_FONT_SIZE.name()) == 0)
         {
             editProofAsstFontSize(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_FONT_FAMILY
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_FONT_FAMILY.name()) == 0)
         {
             editProofAsstFontFamily(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_FONT_BOLD
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_FONT_BOLD.name()) == 0)
         {
             editProofAsstFontBold(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_LINE_SPACING
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_LINE_SPACING.name()) == 0)
         {
             editProofAsstLineSpacing(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_TEXT_COLUMNS
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_TEXT_COLUMNS.name()) == 0)
         {
             editProofAsstTextColumns(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_TEXT_ROWS
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_TEXT_ROWS.name()) == 0)
         {
             editProofAsstTextRows(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_ERROR_MESSAGE_ROWS
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_ERROR_MESSAGE_ROWS.name()) == 0)
         {
             editProofAsstErrorMessageRows(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_ERROR_MESSAGE_COLUMNS
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_ERROR_MESSAGE_COLUMNS
                 .name()) == 0)
         {
             editProofAsstErrorMessageColumns(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_MAXIMIZED
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_MAXIMIZED.name()) == 0)
         {
             editProofAsstMaximized(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_TEXT_AT_TOP
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_TEXT_AT_TOP.name()) == 0)
         {
             editProofAsstTextAtTop(runParm);
             return true;
@@ -291,241 +277,215 @@ public class ProofAsstBoss extends Boss {
 //          return true;
 //      }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_FORMULA_LEFT_COL
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_FORMULA_LEFT_COL.name()) == 0)
         {
             editProofAsstFormulaLeftCol(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_FORMULA_RIGHT_COL
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_FORMULA_RIGHT_COL.name()) == 0)
         {
             editProofAsstFormulaRightCol(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_RPN_PROOF_LEFT_COL
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_RPN_PROOF_LEFT_COL.name()) == 0)
         {
             editProofAsstRPNProofLeftCol(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_RPN_PROOF_RIGHT_COL
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_RPN_PROOF_RIGHT_COL.name()) == 0)
         {
             editProofAsstRPNProofRightCol(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_MAX_UNIFY_ALTERNATES
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_MAX_UNIFY_ALTERNATES.name()) == 0)
             // DEPRECATED
             return true;
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_MAX_UNIFY_HINTS
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_MAX_UNIFY_HINTS.name()) == 0)
             // DEPRECATED
             return true;
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_UNIFY_HINTS_IN_BATCH
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_UNIFY_HINTS_IN_BATCH.name()) == 0)
             // DEPRECATED
             return true;
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_STEP_SELECTOR_MAX_RESULTS
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_STEP_SELECTOR_MAX_RESULTS.name()) == 0)
         {
             editStepSelectorMaxResults(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_STEP_SELECTOR_SHOW_SUBSTITUTIONS
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_STEP_SELECTOR_SHOW_SUBSTITUTIONS
                 .name()) == 0)
         {
             editStepSelectorShowSubstitutions(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_STEP_SELECTOR_DIALOG_PANE_WIDTH
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_STEP_SELECTOR_DIALOG_PANE_WIDTH
                 .name()) == 0)
         {
             editStepSelectorDialogPaneWidth(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_STEP_SELECTOR_DIALOG_PANE_HEIGHT
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_STEP_SELECTOR_DIALOG_PANE_HEIGHT
                 .name()) == 0)
         {
             editStepSelectorDialogPaneHeight(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_ASSRT_LIST_FREESPACE
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_ASSRT_LIST_FREESPACE
                 .name()) == 0)
         {
             editProofAsstAssrtListFreespace(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_OUTPUT_CURSOR_INSTRUMENTATION
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_OUTPUT_CURSOR_INSTRUMENTATION
                 .name()) == 0)
         {
             editProofAsstOutputCursorInstrumentation(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_AUTO_REFORMAT
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_AUTO_REFORMAT.name()) == 0)
         {
             editProofAsstAutoReformat(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_UNDO_REDO_ENABLED
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_UNDO_REDO_ENABLED.name()) == 0)
         {
             editProofAsstUndoRedoEnabled(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_DUMMY_VAR_PREFIX
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_DUMMY_VAR_PREFIX.name()) == 0)
             // deprecated.
             return true;
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_DEFAULT_FILE_NAME_SUFFIX
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_DEFAULT_FILE_NAME_SUFFIX
                 .name()) == 0)
         {
             editProofAsstDefaultFileNameSuffix(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_PROOF_FOLDER
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_PROOF_FOLDER.name()) == 0)
         {
             editProofAsstProofFolder(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_RECHECK_PROOF_ASST_USING_PROOF_VERIFIER
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_RECHECK_PROOF_ASST_USING_PROOF_VERIFIER
                 .name()) == 0)
         {
             editRecheckProofAsstUsingProofVerifier(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_UNIFY_SEARCH_EXCLUDE
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_UNIFY_SEARCH_EXCLUDE
                 .name()) == 0)
         {
             editProofAsstUnifySearchExclude(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_EXPORT_TO_FILE
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_EXPORT_TO_FILE.name()) == 0)
         {
             doProofAsstExportToFile(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_BATCH_TEST
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_BATCH_TEST.name()) == 0)
         {
             doProofAsstBatchTest(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_OPTIMIZE_THEOREM_SEARCH
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_OPTIMIZE_THEOREM_SEARCH
                 .name()) == 0)
         {
             doProofAsstTheoremSearchOptimization(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_AUTOCOMPLETE_ENABLED
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_AUTOCOMPLETE_ENABLED
                 .name()) == 0)
         {
             doProofAsstAutocompleteEnabled(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_USE_AUTOTRANSFORMATIONS
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_USE_AUTOTRANSFORMATIONS
                 .name()) == 0)
         {
             doProofAsstUseAutotransformations(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_DERIVE_AUTOCOMPLETE
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_DERIVE_AUTOCOMPLETE.name()) == 0)
         {
             doProofAsstDeriveAutocomplete(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_STEP_SELECTOR_BATCH_TEST
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_STEP_SELECTOR_BATCH_TEST.name()) == 0)
         {
             doStepSelectorBatchTest(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PREPROCESS_REQUEST_BATCH_TEST
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PREPROCESS_REQUEST_BATCH_TEST.name()) == 0)
         {
             doPreprocessRequestBatchTest(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_SET_MM_DEFINITIONS_CHECK
-                .name()) == 0)
-        {
-            doSetMMDefinitionsCheck(runParm);
-            return true;
-        }
-
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROOF_ASST_STARTUP_PROOF_WORKSHEET
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_PROOF_ASST_STARTUP_PROOF_WORKSHEET
                 .name()) == 0)
         {
             editProofAsstStartupProofWorksheet(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_RUN_PROOF_ASST_GUI
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_RUN_PROOF_ASST_GUI.name()) == 0)
         {
             doRunProofAsstGUI(runParm);
             return true; // "consumed"
@@ -555,8 +515,8 @@ public class ProofAsstBoss extends Boss {
 
         final Grammar grammar = batchFramework.grammarBoss.getGrammar();
 
-        if (grammar.getGrammarInitialized()
-            && batchFramework.grammarBoss.getAllStatementsParsedSuccessfully())
+        if (grammar.getGrammarInitialized() && batchFramework.grammarBoss
+            .getAllStatementsParsedSuccessfully())
         {
 
             final ProofAsstPreferences proofAsstPreferences = getProofAsstPreferences();
@@ -583,8 +543,8 @@ public class ProofAsstBoss extends Boss {
         }
         else {
             proofAsst = null;
-            messages
-                .accumErrorMessage(UtilConstants.ERRMSG_PA_REQUIRES_GRAMMAR_INIT);
+            messages.accumErrorMessage(
+                UtilConstants.ERRMSG_PA_REQUIRES_GRAMMAR_INIT);
         }
 
         batchFramework.outputBoss.printAndClearMessages();
@@ -616,13 +576,13 @@ public class ProofAsstBoss extends Boss {
                     return;
                 }
         } catch (final Exception e) {
-            throw new IllegalArgumentException(LangException.format(
-                PaConstants.ERRMSG_SET_LOOK_AND_FEEL, runParm.values[0],
-                Arrays.toString(names)));
+            throw new IllegalArgumentException(
+                LangException.format(PaConstants.ERRMSG_SET_LOOK_AND_FEEL,
+                    runParm.values[0], Arrays.toString(names)));
         }
-        throw new IllegalArgumentException(LangException.format(
-            PaConstants.ERRMSG_LOOK_AND_FEEL_MISSING, runParm.values[0],
-            Arrays.toString(names)));
+        throw new IllegalArgumentException(
+            LangException.format(PaConstants.ERRMSG_LOOK_AND_FEEL_MISSING,
+                runParm.values[0], Arrays.toString(names)));
     }
     /**
      * edit ProofAsstDjVarsSoftErrors RunParm.
@@ -630,14 +590,14 @@ public class ProofAsstBoss extends Boss {
      * @param runParm run parm parsed into RunParmArrayEntry object
      * @throws IllegalArgumentException if an error occurred
      */
-    protected void editProofAsstDjVarsSoftErrors(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
+    protected void editProofAsstDjVarsSoftErrors(
+        final RunParmArrayEntry runParm) throws IllegalArgumentException
     {
 
         editRunParmValuesLength(runParm,
             UtilConstants.RUNPARM_PROOF_ASST_DJ_VARS_SOFT_ERRORS.name(), 1);
-        if (getProofAsstPreferences().setDjVarsSoftErrorsOption(
-            runParm.values[0].trim()))
+        if (getProofAsstPreferences()
+            .setDjVarsSoftErrorsOption(runParm.values[0].trim()))
             return; // ok, valid!
 
         throw new IllegalArgumentException(LangException.format(
@@ -656,8 +616,8 @@ public class ProofAsstBoss extends Boss {
 
         editRunParmValuesLength(runParm,
             UtilConstants.RUNPARM_PROOF_ASST_PROOF_FORMAT.name(), 1);
-        if (getProofAsstPreferences().setProofFormatOption(
-            runParm.values[0].trim()))
+        if (getProofAsstPreferences()
+            .setProofFormatOption(runParm.values[0].trim()))
             return; // ok, valid!
 
         throw new IllegalArgumentException(LangException.format(
@@ -676,8 +636,8 @@ public class ProofAsstBoss extends Boss {
 
         editRunParmValuesLength(runParm,
             UtilConstants.RUNPARM_PROOF_ASST_INCOMPLETE_STEP_CURSOR.name(), 1);
-        if (getProofAsstPreferences().setIncompleteStepCursor(
-            runParm.values[0].trim()))
+        if (getProofAsstPreferences()
+            .setIncompleteStepCursor(runParm.values[0].trim()))
             return; // ok, valid!
 
         throw new IllegalArgumentException(LangException.format(
@@ -850,8 +810,8 @@ public class ProofAsstBoss extends Boss {
         editRunParmValuesLength(runParm, valueCaption, 1);
 
         try {
-            getProofAsstPreferences().setLineSpacing(
-                Float.parseFloat(runParm.values[0].trim()));
+            getProofAsstPreferences()
+                .setLineSpacing(Float.parseFloat(runParm.values[0].trim()));
         } catch (final NumberFormatException e) {
             throw new IllegalArgumentException(
                 UtilConstants.ERRMSG_RUNPARM_NBR_FORMAT_ERROR_1 + valueCaption
@@ -909,8 +869,8 @@ public class ProofAsstBoss extends Boss {
      * @param runParm run parm parsed into RunParmArrayEntry object
      * @throws IllegalArgumentException IllegalArgumentException
      */
-    protected void editProofAsstErrorMessageRows(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
+    protected void editProofAsstErrorMessageRows(
+        final RunParmArrayEntry runParm) throws IllegalArgumentException
     {
 
         final int textRows = editRunParmValueReqPosInt(runParm,
@@ -990,7 +950,8 @@ public class ProofAsstBoss extends Boss {
         final int formulaLeftCol = editRunParmValueReqPosInt(runParm,
             UtilConstants.RUNPARM_PROOF_ASST_FORMULA_LEFT_COL.name(), 1);
         if (formulaLeftCol < PaConstants.PROOF_ASST_FORMULA_LEFT_COL_MIN
-            || formulaLeftCol > getProofAsstPreferences().getFormulaRightCol() - 1)
+            || formulaLeftCol > getProofAsstPreferences().getFormulaRightCol()
+                - 1)
             throw new IllegalArgumentException(
                 UtilConstants.ERRMSG_RUNPARM_PA_FLC_RANGE_ERR_1
                     + PaConstants.PROOF_ASST_FORMULA_LEFT_COL_MIN
@@ -1035,8 +996,8 @@ public class ProofAsstBoss extends Boss {
             UtilConstants.RUNPARM_PROOF_ASST_RPN_PROOF_LEFT_COL.name(), 1);
         if (rpnProofLeftCol != 0
             && rpnProofLeftCol < PaConstants.PROOF_ASST_RPN_PROOF_LEFT_COL_MIN
-            || rpnProofLeftCol > getProofAsstPreferences()
-                .getRPNProofRightCol() - 1)
+            || rpnProofLeftCol > getProofAsstPreferences().getRPNProofRightCol()
+                - 1)
             throw new IllegalArgumentException(
                 UtilConstants.ERRMSG_RUNPARM_PA_RLC_RANGE_ERR_1
                     + PaConstants.PROOF_ASST_RPN_PROOF_LEFT_COL_MIN
@@ -1051,8 +1012,8 @@ public class ProofAsstBoss extends Boss {
      * @param runParm run parm parsed into RunParmArrayEntry object
      * @throws IllegalArgumentException if an error occurre
      */
-    protected void editProofAsstRPNProofRightCol(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
+    protected void editProofAsstRPNProofRightCol(
+        final RunParmArrayEntry runParm) throws IllegalArgumentException
     {
 
         final int rpnProofRightCol = editRunParmValueReqPosInt(runParm,
@@ -1085,8 +1046,8 @@ public class ProofAsstBoss extends Boss {
             UtilConstants.RUNPARM_STEP_SELECTOR_MAX_RESULTS.name(), 1);
 
         final ProofAsstPreferences p = getProofAsstPreferences();
-        p.setStepSelectorMaxResults(p.validateStepSelectorMaxResults(Integer
-            .toString(stepSelectorMaxResults)));
+        p.setStepSelectorMaxResults(p.validateStepSelectorMaxResults(
+            Integer.toString(stepSelectorMaxResults)));
     }
 
     /**
@@ -1107,8 +1068,9 @@ public class ProofAsstBoss extends Boss {
             valueFieldNbr);
 
         final ProofAsstPreferences p = getProofAsstPreferences();
-        p.setStepSelectorShowSubstitutions(p
-            .validateStepSelectorShowSubstitutions(runParm.values[valueFieldNbr - 1]));
+        p.setStepSelectorShowSubstitutions(
+            p.validateStepSelectorShowSubstitutions(
+                runParm.values[valueFieldNbr - 1]));
     }
 
     /**
@@ -1131,8 +1093,8 @@ public class ProofAsstBoss extends Boss {
                     + PaConstants.STEP_SELECTOR_DIALOG_PANE_WIDTH_MIN
                     + UtilConstants.ERRMSG_RUNPARM_SS_DLG_PANE_WIDTH_ERR_2
                     + PaConstants.STEP_SELECTOR_DIALOG_PANE_WIDTH_MAX);
-        getProofAsstPreferences().setStepSelectorDialogPaneWidth(
-            stepSelectorDialogPaneWidth);
+        getProofAsstPreferences()
+            .setStepSelectorDialogPaneWidth(stepSelectorDialogPaneWidth);
     }
 
     /**
@@ -1155,8 +1117,8 @@ public class ProofAsstBoss extends Boss {
                     + PaConstants.STEP_SELECTOR_DIALOG_PANE_HEIGHT_MIN
                     + UtilConstants.ERRMSG_RUNPARM_SS_DLG_PANE_HEIGHT_ERR_2
                     + PaConstants.STEP_SELECTOR_DIALOG_PANE_HEIGHT_MAX);
-        getProofAsstPreferences().setStepSelectorDialogPaneHeight(
-            stepSelectorDialogPaneHeight);
+        getProofAsstPreferences()
+            .setStepSelectorDialogPaneHeight(stepSelectorDialogPaneHeight);
     }
 
     /**
@@ -1176,8 +1138,8 @@ public class ProofAsstBoss extends Boss {
             throw new IllegalArgumentException(
                 UtilConstants.ERRMSG_RUNPARM_PROOF_ASST_FREESPACE_ERR_1
                     + PaConstants.ASSRT_LIST_FREESPACE_MAX);
-        getProofAsstPreferences().setAssrtListFreespace(
-            proofAsstAssrtListFreespace);
+        getProofAsstPreferences()
+            .setAssrtListFreespace(proofAsstAssrtListFreespace);
     }
 
     /**
@@ -1192,10 +1154,11 @@ public class ProofAsstBoss extends Boss {
 
         final String defaultFileNameSuffix = editProofWorksheetFileNameSuffix(
             runParm,
-            UtilConstants.RUNPARM_PROOF_ASST_DEFAULT_FILE_NAME_SUFFIX.name(), 1); // field
-                                                                                  // nbr
-        getProofAsstPreferences().setDefaultFileNameSuffix(
-            defaultFileNameSuffix);
+            UtilConstants.RUNPARM_PROOF_ASST_DEFAULT_FILE_NAME_SUFFIX.name(),
+            1); // field
+                // nbr
+        getProofAsstPreferences()
+            .setDefaultFileNameSuffix(defaultFileNameSuffix);
 
     }
 
@@ -1235,8 +1198,8 @@ public class ProofAsstBoss extends Boss {
         // of
         // folder
 
-        getProofAsstPreferences().setStartupProofWorksheetFile(
-            startupProofWorksheetFile);
+        getProofAsstPreferences()
+            .setStartupProofWorksheetFile(startupProofWorksheetFile);
     }
 
     /**
@@ -1251,9 +1214,10 @@ public class ProofAsstBoss extends Boss {
 
         final boolean instrumentation = editYesNoRunParm(runParm,
             UtilConstants.RUNPARM_PROOF_ASST_OUTPUT_CURSOR_INSTRUMENTATION
-                .name(), 1);
-        getProofAsstPreferences().setOutputCursorInstrumentation(
-            instrumentation);
+                .name(),
+            1);
+        getProofAsstPreferences()
+            .setOutputCursorInstrumentation(instrumentation);
     }
 
     /**
@@ -1298,7 +1262,8 @@ public class ProofAsstBoss extends Boss {
 
         final boolean recheck = editYesNoRunParm(runParm,
             UtilConstants.RUNPARM_RECHECK_PROOF_ASST_USING_PROOF_VERIFIER
-                .name(), 1);
+                .name(),
+            1);
         getProofAsstPreferences()
             .setRecheckProofAsstUsingProofVerifier(recheck);
     }
@@ -1671,58 +1636,11 @@ public class ProofAsstBoss extends Boss {
         batchFramework.outputBoss.printAndClearMessages();
     }
 
-    /**
-     * Exercises the PreprocessRequest code.
-     *
-     * @param runParm RunParmFile line.
-     * @throws VerifyException if an error occurred
-     */
-    public void doSetMMDefinitionsCheck(final RunParmArrayEntry runParm)
-        throws VerifyException
-    {
-
-        // ensures that file loaded and grammar validated
-        // successfully, prints error message if not.
-        final ProofAsst proofAsst = getProofAsst();
-        if (proofAsst == null)
-            return;
-
-        final Messages messages = batchFramework.outputBoss.getMessages();
-        batchFramework.outputBoss.printAndClearMessages();
-
-        final Grammar grammar = batchFramework.grammarBoss.getGrammar();
-        final Cnst provableLogicStmtTyp = grammar
-            .getProvableLogicStmtTypArray()[0];
-
-        final Pattern[] exclusions = new Pattern[runParm.values.length];
-
-        for (int i = 0; i < exclusions.length; i++)
-            exclusions[i] = Pattern.compile(Pattern.quote(
-                runParm.values[i].trim()).replace("*", "\\E.*\\Q"));
-        final Set<Stmt> definitions = new TreeSet<Stmt>(MObj.SEQ);
-        sLoop: for (final Stmt s : proofAsst.getLogicalSystem().getStmtTbl()
-            .values())
-            if (s instanceof Axiom && s.getTyp() == provableLogicStmtTyp) {
-                for (final Pattern p : exclusions)
-                    if (p.matcher(s.getLabel()).matches())
-                        continue sLoop;
-                definitions.add(s);
-            }
-
-        final Map<Stmt, boolean[][]> boundVars = new HashMap<Stmt, boolean[][]>();
-        for (final Stmt s : definitions) {
-            proofAsst.labelBoundVars((Axiom)proofAsst.getLogicalSystem()
-                .getStmtTbl().get("df-sbc"), boundVars);
-            if (proofAsst.setMMDefinitionsCheck((Axiom)s, boundVars, messages))
-                proofAsst.labelBoundVars((Axiom)s, boundVars);
-            batchFramework.outputBoss.printAndClearMessages();
-        }
-    }
     private PreprocessRequest editPreprocessRequestOption(final String s,
         final String valueCaption) throws IllegalArgumentException
     {
-        if (s
-            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_ERASE_AND_REDERIVE_FORMULAS) == 0)
+        if (s.compareToIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_ERASE_AND_REDERIVE_FORMULAS) == 0)
             return new EraseWffsPreprocessRequest();
 
         throw new IllegalArgumentException(
@@ -1766,12 +1684,13 @@ public class ProofAsstBoss extends Boss {
      */
     protected BufferedWriter editProofAsstExportFileRunParm(
         final RunParmArrayEntry runParm, final String valueCaption)
-        throws IllegalArgumentException
+            throws IllegalArgumentException
     {
 
         final String fileNameParm = editFileNameParm(runParm, valueCaption, 2);
 
-        final String fileUsageParm = editFileUsageParm(runParm, valueCaption, 3);
+        final String fileUsageParm = editFileUsageParm(runParm, valueCaption,
+            3);
 
         final boolean exportFormatUnified = editProofAsstExportFormatUnifiedParm(
             runParm, valueCaption, 4);
@@ -1811,12 +1730,12 @@ public class ProofAsstBoss extends Boss {
         if (exportFormatUnifiedParm.length() == 0)
             return PaConstants.PROOF_ASST_EXPORT_FORMAT_UNIFIED_DEFAULT;
 
-        if (exportFormatUnifiedParm
-            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_EXPORT_UNIFIED) == 0)
+        if (exportFormatUnifiedParm.compareToIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_EXPORT_UNIFIED) == 0)
             return true;
 
-        if (exportFormatUnifiedParm
-            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_EXPORT_UN_UNIFIED) == 0)
+        if (exportFormatUnifiedParm.compareToIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_EXPORT_UN_UNIFIED) == 0)
             return false;
 
         throw new IllegalArgumentException(
@@ -1850,39 +1769,39 @@ public class ProofAsstBoss extends Boss {
         if (runParm.values.length < valueFieldNbr)
             return PaConstants.PROOF_ASST_EXPORT_HYPS_ORDER_DEFAULT;
 
-        final String exportHypsRandomizedParm = runParm.values[valueFieldNbr - 1]
-            .trim();
+        final String exportHypsRandomizedParm = runParm.values[valueFieldNbr
+            - 1].trim();
         if (exportHypsRandomizedParm.length() == 0)
             return PaConstants.PROOF_ASST_EXPORT_HYPS_ORDER_DEFAULT;
 
-        if (exportHypsRandomizedParm
-            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_RANDOMIZED) == 0)
+        if (exportHypsRandomizedParm.compareToIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_RANDOMIZED) == 0)
             return HypsOrder.RandomizedOrder;
 
         // deprecated old version
-        if (exportHypsRandomizedParm
-            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_NOT_RANDOMIZED) == 0)
+        if (exportHypsRandomizedParm.compareToIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_NOT_RANDOMIZED) == 0)
             return HypsOrder.CorrectOrder;
 
         // new version
-        if (exportHypsRandomizedParm
-            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_CORRECT) == 0)
+        if (exportHypsRandomizedParm.compareToIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_CORRECT) == 0)
             return HypsOrder.CorrectOrder;
 
-        if (exportHypsRandomizedParm
-            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_REVERSE) == 0)
+        if (exportHypsRandomizedParm.compareToIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_REVERSE) == 0)
             return HypsOrder.ReverseOrder;
 
-        if (exportHypsRandomizedParm
-            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_HALF_REVERSE) == 0)
+        if (exportHypsRandomizedParm.compareToIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_HALF_REVERSE) == 0)
             return HypsOrder.HalfReverseOrder;
 
-        if (exportHypsRandomizedParm
-            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_AUTOCOMPLETE) == 0)
+        if (exportHypsRandomizedParm.compareToIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_AUTOCOMPLETE) == 0)
             return HypsOrder.Autocomplete;
 
-        if (exportHypsRandomizedParm
-            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_SOME_ORDER) == 0)
+        if (exportHypsRandomizedParm.compareToIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_SOME_ORDER) == 0)
             return HypsOrder.SomeOrder;
 
         final String exceptionMsg = LangException.format(
@@ -1919,17 +1838,17 @@ public class ProofAsstBoss extends Boss {
         if (runParm.values.length < valueFieldNbr)
             return PaConstants.PROOF_ASST_EXPORT_DERIVE_FORMULAS_DEFAULT;
 
-        final String exportDeriveFormulasParm = runParm.values[valueFieldNbr - 1]
-            .trim();
+        final String exportDeriveFormulasParm = runParm.values[valueFieldNbr
+            - 1].trim();
         if (exportDeriveFormulasParm.length() == 0)
             return PaConstants.PROOF_ASST_EXPORT_DERIVE_FORMULAS_DEFAULT;
 
-        if (exportDeriveFormulasParm
-            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_DERIVE_FORMULAS) == 0)
+        if (exportDeriveFormulasParm.compareToIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_DERIVE_FORMULAS) == 0)
             return true;
 
-        if (exportDeriveFormulasParm
-            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_NO_DERIVE_FORMULAS) == 0)
+        if (exportDeriveFormulasParm.compareToIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_NO_DERIVE_FORMULAS) == 0)
             return false;
 
         throw new IllegalArgumentException(
@@ -1969,12 +1888,12 @@ public class ProofAsstBoss extends Boss {
         if (importCompareDJsParm.length() == 0)
             return PaConstants.PROOF_ASST_IMPORT_COMPARE_DJS_DEFAULT;
 
-        if (importCompareDJsParm
-            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_COMPARE_DJS) == 0)
+        if (importCompareDJsParm.compareToIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_COMPARE_DJS) == 0)
             return true;
 
-        if (importCompareDJsParm
-            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_NO_COMPARE_DJS) == 0)
+        if (importCompareDJsParm.compareToIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_NO_COMPARE_DJS) == 0)
             return false;
 
         throw new IllegalArgumentException(
@@ -2014,17 +1933,16 @@ public class ProofAsstBoss extends Boss {
         if (importUpdateDJsParm.length() == 0)
             return PaConstants.PROOF_ASST_IMPORT_UPDATE_DJS_DEFAULT;
 
-        if (importUpdateDJsParm
-            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_UPDATE_DJS) == 0)
+        if (importUpdateDJsParm.compareToIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_UPDATE_DJS) == 0)
             return true;
 
-        if (importUpdateDJsParm
-            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_NO_UPDATE_DJS) == 0)
+        if (importUpdateDJsParm.compareToIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_NO_UPDATE_DJS) == 0)
             return false;
 
         throw new IllegalArgumentException(
-            UtilConstants.ERRMSG_IMPORT_UPDATE_DJS_PARM_UNRECOG_1
-                + valueCaption
+            UtilConstants.ERRMSG_IMPORT_UPDATE_DJS_PARM_UNRECOG_1 + valueCaption
                 + UtilConstants.ERRMSG_IMPORT_UPDATE_DJS_PARM_UNRECOG_2
                 + valueFieldNbr
                 + UtilConstants.ERRMSG_IMPORT_UPDATE_DJS_PARM_UNRECOG_3
@@ -2058,12 +1976,12 @@ public class ProofAsstBoss extends Boss {
         if (asciiRetestParm.length() == 0)
             return PaConstants.PROOF_ASST_ASCII_RETEST_DEFAULT;
 
-        if (asciiRetestParm
-            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_ASCII_RETEST) == 0)
+        if (asciiRetestParm.compareToIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_ASCII_RETEST) == 0)
             return true;
 
-        if (asciiRetestParm
-            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_NO_ASCII_RETEST) == 0)
+        if (asciiRetestParm.compareToIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_NO_ASCII_RETEST) == 0)
             return false;
 
         throw new IllegalArgumentException(
@@ -2090,7 +2008,7 @@ public class ProofAsstBoss extends Boss {
      */
     protected boolean editProofAsstPrintParm(final RunParmArrayEntry runParm,
         final String valueCaption, final int valueFieldNbr)
-        throws IllegalArgumentException
+            throws IllegalArgumentException
     {
 
         if (runParm.values.length < valueFieldNbr)
@@ -2100,12 +2018,12 @@ public class ProofAsstBoss extends Boss {
         if (printParm.length() == 0)
             return PaConstants.PROOF_ASST_PRINT_DEFAULT;
 
-        if (printParm
-            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_PRINT) == 0)
+        if (printParm.compareToIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_PRINT) == 0)
             return true;
 
-        if (printParm
-            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_NO_PRINT) == 0)
+        if (printParm.compareToIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_NO_PRINT) == 0)
             return false;
 
         throw new IllegalArgumentException(
@@ -2173,8 +2091,8 @@ public class ProofAsstBoss extends Boss {
 
         if (proofAsstPreferences == null) {
             proofAsstPreferences = new ProofAsstPreferences();
-            proofAsstPreferences.setTMFFPreferences(batchFramework.tmffBoss
-                .getTMFFPreferences());
+            proofAsstPreferences.setTMFFPreferences(
+                batchFramework.tmffBoss.getTMFFPreferences());
         }
 
         return proofAsstPreferences;

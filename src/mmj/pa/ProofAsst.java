@@ -103,7 +103,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     // global variables stored here for convenience
     private ProofAsstGUI proofAsstGUI;
     private final ProofAsstPreferences proofAsstPreferences;
-    private final ProofUnifier proofUnifier;
+    public final ProofUnifier proofUnifier;
     private final LogicalSystem logicalSystem;
     private final Grammar grammar;
     private final VerifyProofs verifyProofs;
@@ -230,8 +230,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         initializedOK = proofUnifier.initializeLookupTables(messages);
         proofAsstPreferences.getSearchMgr().initOtherEnvAreas(this,
             logicalSystem, grammar, verifyProofs, messages);
-        logicalSystem.getBookManager().getDirectSectionDependencies(
-            logicalSystem);
+        logicalSystem.getBookManager()
+            .getDirectSectionDependencies(logicalSystem);
         return initializedOK;
     }
 
@@ -305,8 +305,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             if (confirmationMessage != null)
                 messages.accumInfoMessage(confirmationMessage);
         } catch (final GMFFException e) {
-            messages
-                .accumErrorMessage(PaConstants.ERRMSG_PA_GUI_EXPORT_VIA_GMFF_FAILED);
+            messages.accumErrorMessage(
+                PaConstants.ERRMSG_PA_GUI_EXPORT_VIA_GMFF_FAILED);
             messages.accumErrorMessage(e.getMessage());
         }
         return messages;
@@ -496,7 +496,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             messages.accumErrorMessage(
                 PaConstants.ERRMSG_PA_FWD_BACK_SEARCH_NOTFND, "forward");
             w = new ProofWorksheet(proofAsstPreferences,
-            /* oh yeah, we got 'em */messages, /* structuralErrors=*/true,
+                /* oh yeah, we got 'em */messages, /* structuralErrors=*/true,
                 cursor);
         }
         else {
@@ -504,8 +504,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 hypsOrder, /* deriveFormulas=*/false);
 
             if (w == null)
-                w = new ProofWorksheet(theorem.getLabel(),
-                    proofAsstPreferences, logicalSystem, grammar, messages);
+                w = new ProofWorksheet(theorem.getLabel(), proofAsstPreferences,
+                    logicalSystem, grammar, messages);
             else
                 w.setProofCursor(cursor);
         }
@@ -560,8 +560,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 hypsOrder, false); // deriveFormulas
 
             if (w == null)
-                w = new ProofWorksheet(theorem.getLabel(),
-                    proofAsstPreferences, logicalSystem, grammar, messages);
+                w = new ProofWorksheet(theorem.getLabel(), proofAsstPreferences,
+                    logicalSystem, grammar, messages);
             else
                 w.setProofCursor(cursor);
         }
@@ -665,8 +665,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         final boolean[] errorFound = new boolean[1];
 
-        final ProofWorksheet proofWorksheet = getParsedProofWorksheet(
-            proofText, errorFound, inputCursorPos, null);
+        final ProofWorksheet proofWorksheet = getParsedProofWorksheet(proofText,
+            errorFound, inputCursorPos, null);
 
         if (errorFound[0] == false) {
             proofWorksheet.setProofCursor(proofWorksheet.proofInputCursor);
@@ -973,8 +973,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * @param asciiRetest instructs program to re-unify the output Proof
      *            Worksheet text after unification.
      */
-    public void importFromFileAndUnify(
-        final Reader importReader, // already open
+    public void importFromFileAndUnify(final Reader importReader, // already
+                                                                  // open
         final Messages messages, final Boolean selectorAll,
         final Integer selectorCount, final Theorem selectorTheorem,
         final OutputBoss outputBoss, final boolean asciiRetest)
@@ -1033,7 +1033,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
                         if (asciiRetest)
                             proofAsstPreferences
-                                .setRecheckProofAsstUsingProofVerifier(verifierRecheck);
+                                .setRecheckProofAsstUsingProofVerifier(
+                                    verifierRecheck);
 
                         updatedProofText = proofWorksheet.getOutputProofText();
 
@@ -1167,8 +1168,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * @param cursorPos offset of input cursor.
      * @param selectionNumber choice from StepSelectorResults
      */
-    public void stepSelectorBatchTest(
-        final Reader importReader, // already open
+    public void stepSelectorBatchTest(final Reader importReader, // already open
         final Messages messages, final OutputBoss outputBoss,
         final int cursorPos, final int selectionNumber)
     {
@@ -1291,8 +1291,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * @param outputBoss mmj.util.OutputBoss object, if not null means, please
      *            print the proof test.
      */
-    public void exportToFile(
-        final Writer exportWriter, // already open
+    public void exportToFile(final Writer exportWriter, // already open
         final Messages messages, final Boolean selectorAll,
         final Integer selectorCount, final Theorem selectorTheorem,
         final OutputBoss outputBoss)
@@ -1310,7 +1309,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         if (selectorTheorem != null) {
             final String proofText = exportOneTheorem(exportWriter,
-                selectorTheorem, exportFormatUnified, hypsOrder, deriveFormulas);
+                selectorTheorem, exportFormatUnified, hypsOrder,
+                deriveFormulas);
             if (proofText != null)
                 printProof(outputBoss, selectorTheorem.getLabel(), proofText);
             return;
@@ -1336,402 +1336,6 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         }
     }
 
-    /**
-     * Perform the definition check on the selected definition. Note that this
-     * method is intrinsically tied to set.mm's definitions, and makes various
-     * references to specific axioms like wceq, wb, and df-sbc, although it can
-     * handle arbitrary new definitions under the basic structure of set.mm.
-     *
-     * @param axiom the definition to check
-     * @param boundVars the boundVars cache (see
-     *            {@link #labelBoundVars(Axiom, Map)})
-     * @param messages Messages object for output messages.
-     * @return true if the test was passed
-     */
-    public boolean setMMDefinitionsCheck(final Axiom axiom,
-        final Map<Stmt, boolean[][]> boundVars, final Messages messages)
-    {
-        final ParseNode root = axiom.getExprParseTree().getRoot();
-        final String rootLabel = root.stmt.getLabel();
-        final Messages devnull = new Messages(); // eat all bad proof errors
-        final Cnst set = (Cnst)logicalSystem.getSymTbl().get("set");
-        // Rule 1: New definitions must be introduced using = or <->
-        if (!rootLabel.equals("wb") && !rootLabel.equals("wceq")) {
-            messages.accumInfoMessage(PaConstants.ERRMSG_PA_DEFINITION_FAIL_1,
-                axiom.getLabel());
-            return false;
-        }
-
-        boolean success = true;
-        final Stmt defined = root.child[0].stmt;
-        final int startSeq = defined.getSeq();
-        final int endSeq = axiom.getSeq();
-        // Rule 2: No axiom introduced before this one is allowed to use the
-        // symbol being defined in this definition, and the definition is not
-        // allowed to use itself (except once, in the definiendum)
-        rule2: for (final Stmt s : logicalSystem.getStmtTbl().values())
-            if (s instanceof Axiom && s.getSeq() > startSeq
-                && s.getSeq() <= endSeq)
-            {
-                boolean first = s == axiom;
-                for (final RPNStep step : s.getExprRPN())
-                    if (step.stmt == defined)
-                        if (first)
-                            first = false;
-                        else {
-                            messages.accumInfoMessage(
-                                PaConstants.ERRMSG_PA_DEFINITION_FAIL_2,
-                                axiom.getLabel(), s.getLabel());
-                            success = false;
-                            break rule2;
-                        }
-            }
-
-        // Collect all variables on the left into parameters, and all
-        // variables on the right but not on the left into dummies
-        final List<VarHyp> parameters = new ArrayList<VarHyp>();
-        final List<VarHyp> dummies = new ArrayList<VarHyp>();
-        collectVariables(parameters, dummies, root.child[0]);
-        collectVariables(dummies, parameters, root.child[1]);
-
-        final ScopeFrame frame = axiom.getMandFrame();
-        final List<VarHyp> taken = new ArrayList<VarHyp>();
-        // Rule 3: Every variable in the definiens should not be distinct
-        final Set<Var> badVars = new TreeSet<Var>(DjVars.DV_ORDER);
-        for (final VarHyp v1 : parameters) {
-            taken.add(v1);
-            for (final VarHyp v2 : parameters)
-                if (v1 != v2
-                    && ScopeFrame.isVarPairInDjArray(frame, v1.getVar(),
-                        v2.getVar()))
-                {
-                    badVars.add(v1.getVar());
-                    badVars.add(v2.getVar());
-                }
-        }
-        if (!badVars.isEmpty()) {
-            success = false;
-            messages.accumInfoMessage(PaConstants.ERRMSG_PA_DEFINITION_FAIL_3,
-                axiom.getLabel(), badVars);
-        }
-
-        // Rule 4: Every dummy variable in the definiendum should be distinct
-        badVars.clear();
-        for (final VarHyp v1 : dummies) {
-            v1.accumVarHypListBySeq(taken);
-            for (final VarHyp v2 : dummies)
-                if (v1 != v2
-                    && !ScopeFrame.isVarPairInDjArray(frame, v1.getVar(),
-                        v2.getVar()))
-                {
-                    badVars.add(v1.getVar());
-                    badVars.add(v2.getVar());
-                }
-        }
-
-        final Set<Var> group = new TreeSet<Var>(DjVars.DV_ORDER);
-        String field = "";
-        for (final VarHyp v1 : parameters) {
-            group.clear();
-            for (final VarHyp v2 : dummies)
-                if (!ScopeFrame.isVarPairInDjArray(frame, v1.getVar(),
-                    v2.getVar()))
-                {
-                    if (group.isEmpty()) {
-                        group.addAll(badVars);
-                        group.add(v1.getVar());
-                    }
-                    group.add(v2.getVar());
-                }
-            if (!group.isEmpty()) {
-                field += "  " + PaConstants.DISTINCT_VARIABLES_STMT_TOKEN + " ";
-                for (final Var v : group)
-                    field += v + " ";
-                field += PaConstants.END_PROOF_STMT_TOKEN;
-            }
-        }
-        if (group.isEmpty() && !badVars.isEmpty()) {
-            field += "  " + PaConstants.DISTINCT_VARIABLES_STMT_TOKEN + " ";
-            for (final Var v : badVars)
-                field += v + " ";
-            field += PaConstants.END_PROOF_STMT_TOKEN;
-        }
-        if (!field.isEmpty()) {
-            messages.accumInfoMessage(PaConstants.ERRMSG_PA_DEFINITION_FAIL_4,
-                axiom.getLabel(), field);
-            success = false;
-        }
-
-        // If there are no dummy variables, no further processing is needed -
-        // the test is passed
-        if (dummies.isEmpty())
-            return success;
-
-        // Generate a 'justification' theorem and see if it unifies with
-        // something in the database
-        final ParseNode newRoot = new ParseNode(root.stmt);
-        final Map<VarHyp, ParseNode> assignments = new HashMap<VarHyp, ParseNode>();
-        final ProofWorksheet w = new ProofWorksheet("dummy",
-            proofAsstPreferences, logicalSystem, grammar, devnull);
-        w.loadComboFrameAndVarMap();
-        for (final VarHyp d : dummies)
-            assignments.put(d,
-                new ParseNode(getUnusedDummyVar(w, taken, d.getTyp())));
-        newRoot.child = new ParseNode[]{root.child[1],
-                reassignVariables(assignments, root.child[1])};
-        if (justify(w, newRoot))
-            return success;
-
-        // Okay, we couldn't directly find a justification theorem. Most later
-        // definitions will fall into this category. Our new approach will be
-        // to prove that each dummy is not free in the expression, that is,
-        // that we can prove ( ph -> A. x ph ) for each dummy variable x.
-
-        // we need this for showing not-free for class terms
-        final ParseNode dummy = new ParseNode(logicalSystem.getStmtTbl().get(
-            "cv"));
-        dummy.child = new ParseNode[]{new ParseNode(getUnusedDummyVar(w, taken,
-            set))};
-
-        badVars.clear();
-        for (final VarHyp v : dummies) {
-            // Rule 5: every dummy variable should be a set variable,
-            // unless there is a justification theorem
-            if (v.getTyp() != set) {
-                messages.accumInfoMessage(
-                    PaConstants.ERRMSG_PA_DEFINITION_FAIL_5, axiom.getLabel());
-                return false;
-            }
-
-            // Rule 6: every dummy variable must be bound
-            if (!proveBoundVar(w, boundVars, new ParseNode(v), dummy,
-                root.child[1], true)
-                && !proveBoundVar(w, boundVars, new ParseNode(v), dummy,
-                    root.child[1], false))
-                badVars.add(v.getVar());
-        }
-        if (!badVars.isEmpty()) {
-            messages.accumInfoMessage(PaConstants.ERRMSG_PA_DEFINITION_FAIL_6,
-                axiom.getLabel(), badVars);
-            success = false;
-        }
-        return success;
-    }
-
-    /**
-     * Add an entry to the boundVars table for this definition. The boundVars
-     * table is a map from each definition to an array of arrays of booleans;
-     * the first index specifies the index of a set variable (the other indexes
-     * are null), while the second index refers to the index of another variable
-     * in the definition, which is true if occurrences of the set variable in
-     * the other variable are to be considered bound. For example, for df-sum
-     * {@code sum_ x e. A B}, there are three variables, and occurrences of
-     * {@code x} are bound in {@code B} but not in {@code A}; thus the boundVars
-     * table entry for df-sum would be <code>{{true, false, true}, null,
-     * null}</code>.
-     *
-     * @param axiom the definition
-     * @param boundVars the boundVars table
-     */
-    public void labelBoundVars(final Axiom axiom,
-        final Map<Stmt, boolean[][]> boundVars)
-    {
-        ProofWorksheet w = null;
-        ParseNode dummy = null;
-        final Cnst set = (Cnst)logicalSystem.getSymTbl().get("set");
-        final ParseNode root = axiom.getExprParseTree().getRoot();
-        final ParseNode[] defn = root.child[0].child;
-        if (boundVars.get(root.child[0].stmt) != null)
-            return;
-        final boolean[][] val = new boolean[defn.length][];
-        for (int i = 0; i < defn.length; i++)
-            if (defn[i].stmt.getTyp() == set) {
-                if (w == null) {
-                    w = new ProofWorksheet("dummy", proofAsstPreferences,
-                        logicalSystem, grammar, new Messages());
-                    w.loadComboFrameAndVarMap();
-                    final List<VarHyp> taken = new ArrayList<VarHyp>();
-                    collectVariables(taken, Collections.<VarHyp> emptyList(),
-                        root.child[1]);
-
-                    dummy = boxToType(
-                        new ParseNode(getUnusedDummyVar(w, taken, set)), null,
-                        "class");
-                }
-                val[i] = new boolean[defn.length];
-                final Map<VarHyp, ParseNode> assignments = new HashMap<VarHyp, ParseNode>();
-                for (int j = 0; j < defn.length; j++) {
-                    if (!(defn[j].stmt instanceof VarHyp))
-                        return; // this definition is too complicated for us
-                    if (i == j) {
-                        val[i][j] = true;
-                        continue;
-                    }
-                    assignments.clear();
-                    assignments.put(
-                        (VarHyp)defn[j].stmt,
-                        boxToType(defn[i], boxToType(defn[i], null, "class"),
-                            defn[j].stmt.getTyp().getId()));
-                    val[i][j] = proveBoundVar(w, boundVars, defn[i], dummy,
-                        reassignVariables(assignments, root.child[1]), true);
-                }
-            }
-        boundVars.put(root.child[0].stmt, val);
-    }
-
-    private ParseNode boxToType(final ParseNode node, final ParseNode dummy,
-        final String goalType)
-    {
-        if (goalType.equals("set"))
-            return node;
-        ParseNode e1 = node;
-        if (node.stmt.getTyp().getId().equals("set")) {
-            e1 = new ParseNode(logicalSystem.getStmtTbl().get("cv"));
-            e1.child = new ParseNode[]{node};
-        }
-        if (goalType.equals("class"))
-            return e1;
-        ParseNode e2 = e1;
-        if (e1.stmt.getTyp().getId().equals("class")) {
-            e2 = new ParseNode(logicalSystem.getStmtTbl().get("wcel"));
-            e2.child = new ParseNode[]{dummy, e1};
-        }
-        return e2;
-    }
-
-    private VarHyp getUnusedDummyVar(final ProofWorksheet w,
-        final List<VarHyp> taken, final Cnst typ)
-    {
-        for (final Hyp h : w.comboFrame.hypArray)
-            if (h instanceof VarHyp && h.getTyp() == typ) {
-                final VarHyp v = (VarHyp)h;
-                if (!v.containedInVarHypListBySeq(taken)) {
-                    v.accumVarHypListBySeq(taken);
-                    return v;
-                }
-            }
-        return null;
-    }
-
-    private boolean isBound(final ProofWorksheet w, final ParseNode v,
-        final ParseNode dummy, final ParseNode root)
-    {
-        final ParseNode expr = boxToType(root, dummy, "wff");
-        final ParseNode wal = new ParseNode(logicalSystem.getStmtTbl().get(
-            "wal"));
-        wal.child = new ParseNode[]{expr, v};
-        final ParseNode wi = new ParseNode(logicalSystem.getStmtTbl().get("wi"));
-        wi.child = new ParseNode[]{expr, wal};
-        return justify(w, wi);
-    }
-
-    private boolean proveBoundVar(final ProofWorksheet w,
-        final Map<Stmt, boolean[][]> boundVars, final ParseNode v,
-        final ParseNode dummy, final ParseNode root, final boolean fast)
-    {
-        final boolean[] isBound = new boolean[root.child.length];
-        final boolean[] isBound2 = new boolean[isBound.length];
-        boolean allBound = true;
-        for (int i = 0; i < root.child.length; i++)
-            allBound &= isBound[i] = isBound2[i] = proveBoundVar(w, boundVars,
-                v, dummy, root.child[i], fast);
-        if (allBound)
-            return v.stmt != root.stmt;
-
-        boolean[][] val = boundVars.get(root.stmt);
-        if (val == null) {
-            if (!fast)
-                return isBound(w, v, dummy, root);
-
-            final ParseNode proto = root.stmt.getExprParseTree().getRoot();
-            val = new boolean[proto.child.length][];
-            for (int i = 0; i < val.length; i++) {
-                if (!proto.child[i].stmt.getTyp().getId().equals("set"))
-                    continue;
-
-                val[i] = new boolean[val.length];
-                final Map<VarHyp, ParseNode> assignments = new HashMap<VarHyp, ParseNode>();
-                for (int j = 0; j < val.length; j++)
-                    if (proto.child[j].stmt instanceof VarHyp) {
-                        assignments.clear();
-                        assignments.put(
-                            (VarHyp)proto.child[j].stmt,
-                            boxToType(proto.child[i],
-                                boxToType(proto.child[i], null, "class"),
-                                proto.child[j].stmt.getTyp().getId()));
-                        val[i][j] = proveBoundVar(w, boundVars, proto.child[i],
-                            dummy, reassignVariables(assignments, proto), false);
-                    }
-            }
-            boundVars.put(root.stmt, val);
-        }
-
-        for (int i = 0; i < val.length; i++)
-            if (val[i] != null && !isBound[i])
-                for (int j = 0; j < val.length; j++)
-                    isBound2[j] |= val[i][j];
-
-        for (int i = 0; i < val.length; i++)
-            if (!isBound2[i])
-                return !fast && isBound(w, v, dummy, root);
-        return true;
-    }
-
-    /**
-     * Generate a 'dummy' proof worksheet containing the given expression, and
-     * return true if the resulting theorem was successfully proven.
-     *
-     * @param w The ProofWorksheet in which to work
-     * @param theorem the expression to prove
-     * @return true if a proof was found
-     */
-    private boolean justify(final ProofWorksheet w, final ParseNode theorem) {
-        final ParseTree tree = new ParseTree(theorem);
-        final Formula f = verifyProofs.convertRPNToFormula(tree.convertToRPN(),
-            null);
-        f.setTyp(getProvableLogicStmtTyp());
-        w.proofWorkStmtList.clear();
-        w.proofWorkStmtList.add(w.qedStep = new DerivationStep(w,
-            PaConstants.QED_STEP_NBR, new ProofStepStmt[0], new String[0], "",
-            f, tree, false, false, false, null));
-        try {
-            proofUnifier.unifyAllProofDerivationSteps(w, w.messages, true);
-        } catch (final VerifyException e) {
-            return false;
-        }
-        return w.qedStep.getProofTree() != null
-            && w.qedStep.djVarsErrorStatus != PaConstants.DJ_VARS_ERROR_STATUS_HARD_ERRORS;
-    }
-
-    private void collectVariables(final List<VarHyp> vars,
-        final List<VarHyp> exclusions, final ParseNode root)
-    {
-        if (root.stmt instanceof VarHyp) {
-            final VarHyp v = (VarHyp)root.stmt;
-            if (!v.containedInVarHypListBySeq(exclusions))
-                v.accumVarHypListBySeq(vars);
-        }
-        else
-            for (final ParseNode child : root.child)
-                collectVariables(vars, exclusions, child);
-    }
-
-    private ParseNode reassignVariables(
-        final Map<VarHyp, ParseNode> assignments, final ParseNode root)
-    {
-
-        ParseNode newRoot = null;
-        if (root.stmt instanceof VarHyp)
-            newRoot = assignments.get(root.stmt);
-        if (newRoot == null) {
-            newRoot = new ParseNode(root.stmt);
-            newRoot.child = new ParseNode[root.child.length];
-            for (int i = 0; i < root.child.length; i++)
-                newRoot.child[i] = reassignVariables(assignments, root.child[i]);
-        }
-        return newRoot;
-    }
-
     // Note: could do binary lookup for sequence number
     // within ArrayList which happens to be sorted.
     private Theorem getTheoremBackward(final int currProofMaxSeq,
@@ -1740,8 +1344,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         final List<Assrt> searchList = proofUnifier
             .getUnifySearchListByMObjSeq();
 
-        for (final ListIterator<Assrt> li = searchList.listIterator(searchList
-            .size()); li.hasPrevious();)
+        for (final ListIterator<Assrt> li = searchList
+            .listIterator(searchList.size()); li.hasPrevious();)
         {
             final Assrt assrt = li.previous();
             if (assrt.getSeq() < currProofMaxSeq && assrt instanceof Theorem)
@@ -1822,8 +1426,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 e.lineNbr, e.columnNbr, e.charNbr);
         } catch (final IOException e) {
             e.printStackTrace();
-            messages.accumErrorMessage(
-                PaConstants.ERRMSG_PA_UNIFY_SEVERE_ERROR,
+            messages.accumErrorMessage(PaConstants.ERRMSG_PA_UNIFY_SEVERE_ERROR,
                 getErrorLabelIfPossible(proofWorksheet), e.getMessage());
             proofWorksheet = updateWorksheetWithException(proofWorksheet, -1,
                 -1, -1);
@@ -1843,15 +1446,14 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      *            theorem unifications.
      * @param candidate The information about some theorem test.
      */
-    private void addResultToVolumeTestTimeTop(
-        final TheoremTestResult[] timeTop, final TheoremTestResult candidate)
+    private void addResultToVolumeTestTimeTop(final TheoremTestResult[] timeTop,
+        final TheoremTestResult candidate)
     {
         if (timeTop == null)
             return;
 
         // simple comparator: could compare null objects also!
-        final Comparator<TheoremTestResult> comp = new Comparator<TheoremTestResult>()
-        {
+        final Comparator<TheoremTestResult> comp = new Comparator<TheoremTestResult>() {
             public int compare(final TheoremTestResult left,
                 final TheoremTestResult right)
             {
@@ -1877,8 +1479,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             // we need to add this candidate to timeTop array
 
             // shift array
-            System.arraycopy(timeTop, pos, timeTop, pos + 1, timeTop.length
-                - pos - 1);
+            System.arraycopy(timeTop, pos, timeTop, pos + 1,
+                timeTop.length - pos - 1);
 
             // add alement
             timeTop[pos] = candidate;
@@ -1888,12 +1490,10 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     private void printVolumeTestStats(final VolumeTestStats stats,
         final StopWatch wholeTestTime, final TheoremTestResult[] timeTop)
     {
-        messages
-            .accumInfoMessage(PaConstants.ERRMSG_PA_TESTMSG_03,
-                stats.nbrTestTheoremsProcessed,
-                stats.nbrTestNotProvedPerfectly,
-                stats.nbrTestProvedDifferently,
-                wholeTestTime.getElapsedTimeInStr());
+        messages.accumInfoMessage(PaConstants.ERRMSG_PA_TESTMSG_03,
+            stats.nbrTestTheoremsProcessed, stats.nbrTestNotProvedPerfectly,
+            stats.nbrTestProvedDifferently,
+            wholeTestTime.getElapsedTimeInStr());
 
         if (timeTop != null) {
             messages.accumInfoMessage(PaConstants.ERRMSG_PA_TIME_TOP_HEADER);
@@ -1926,8 +1526,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         int s;
         if (q.getProofTree() == null)
             s = 4; // arbitrary
-        else if (q.djVarsErrorStatus == PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS)
-        {
+        else if (q.djVarsErrorStatus == PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS) {
             if (!q.verifyProofError)
                 s = PROVED_PERFECTLY; // proved perfectly
             else {
@@ -1954,8 +1553,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 newProof = new RPNStep[0];
             else
                 newProof = q.getProofTree().convertToRPNExpanded();
-            final RPNStep[] oldProof = new ParseTree(result.proofWorksheet
-                .getTheorem().getProof()).convertToRPNExpanded();
+            final RPNStep[] oldProof = new ParseTree(
+                result.proofWorksheet.getTheorem().getProof())
+                    .convertToRPNExpanded();
 
             boolean differenceFound = false;
             String oldStmtDiff = "";
@@ -2026,9 +1626,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             }
         } catch (final IOException e) {
             e.printStackTrace();
-            throw new IllegalArgumentException(LangException.format(
-                PaConstants.ERRMSG_PA_PRINT_IO_ERROR, theoremLabel,
-                e.getMessage()));
+            throw new IllegalArgumentException(
+                LangException.format(PaConstants.ERRMSG_PA_PRINT_IO_ERROR,
+                    theoremLabel, e.getMessage()));
         }
 
     }
@@ -2055,14 +1655,13 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             false); // deriveFormulas
     }
 
-    private String exportOneTheorem(
-        final Writer exportWriter, // already open
+    private String exportOneTheorem(final Writer exportWriter, // already open
         final Theorem theorem, final boolean exportFormatUnified,
         final HypsOrder hypsOrder, final boolean deriveFormulas)
     {
 
-        final ProofWorksheet proofWorksheet = getExportedProofWorksheet(
-            theorem, exportFormatUnified, hypsOrder, deriveFormulas);
+        final ProofWorksheet proofWorksheet = getExportedProofWorksheet(theorem,
+            exportFormatUnified, hypsOrder, deriveFormulas);
 
         if (proofWorksheet == null)
             return null;
@@ -2070,9 +1669,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         final String proofText = proofWorksheet.getOutputProofText();
 
         if (proofText == null)
-            throw new IllegalArgumentException(LangException.format(
-                PaConstants.ERRMSG_PA_EXPORT_STRUCT_ERROR,
-                getErrorLabelIfPossible(proofWorksheet)));
+            throw new IllegalArgumentException(
+                LangException.format(PaConstants.ERRMSG_PA_EXPORT_STRUCT_ERROR,
+                    getErrorLabelIfPossible(proofWorksheet)));
 
         if (exportWriter != null)
             try {
@@ -2116,9 +1715,10 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         if (proofWorksheet.getNbrDerivStepsReadyForUnify() > 0
             || proofWorksheet.stepRequest != null
-            && (proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH
-                || proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH
-                || proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SEARCH_OPTIONS || proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_GENERAL_SEARCH))
+                && (proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH
+                    || proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH
+                    || proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SEARCH_OPTIONS
+                    || proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_GENERAL_SEARCH))
         {
 
             try {
@@ -2137,8 +1737,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             }
 
             final RPNStep[] rpnProof = proofAsstPreferences
-                .getProofFormatPacked() ? proofWorksheet
-                .getQedStepSquishedRPN() : proofWorksheet.getQedStepProofRPN();
+                .getProofFormatPacked() ? proofWorksheet.getQedStepSquishedRPN()
+                    : proofWorksheet.getQedStepProofRPN();
 
             if (rpnProof == null)
                 proofUnifier.reportUnificationFailures();
@@ -2156,8 +1756,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                         .getRPNProofRightCol()
                         - proofWorksheet.getRPNProofLeftCol() + 1;
                     final List<Stmt> parenList = logicalSystem
-                        .getProofCompression().compress(
-                            proofWorksheet.getTheoremLabel(), width,
+                        .getProofCompression()
+                        .compress(proofWorksheet.getTheoremLabel(), width,
                             mandHypList, optHypList, rpnProof, letters);
 
                     proofWorksheet.addGeneratedProofStmt(parenList,
@@ -2212,13 +1812,14 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             outputBoss.sysOutPrint("\n");
         } catch (final IOException e) {
             e.printStackTrace();
-            throw new IllegalArgumentException(LangException.format(
-                PaConstants.ERRMSG_PA_PRINT_IO_ERROR, theoremLabel,
-                e.getMessage()));
+            throw new IllegalArgumentException(
+                LangException.format(PaConstants.ERRMSG_PA_PRINT_IO_ERROR,
+                    theoremLabel, e.getMessage()));
         }
     }
 
-    private String getErrorLabelIfPossible(final ProofWorksheet proofWorksheet)
+    private String getErrorLabelIfPossible(
+        final ProofWorksheet proofWorksheet)
     {
         String label = "unknownLabel";
         if (proofWorksheet != null && proofWorksheet.getTheoremLabel() != null)
@@ -2254,7 +1855,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 // for one thing, "dummylink" generates an
                 // exception because its proof is invalid
                 // for the mmj2 Proof Assistant.
-                !proofAsstPreferences.checkUnifySearchExclude((Assrt)stmt))
+            !proofAsstPreferences.checkUnifySearchExclude((Assrt)stmt))
                 sortedTheoremList.add((Theorem)stmt);
 
         Collections.sort(sortedTheoremList, MObj.SEQ);
@@ -2311,8 +1912,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         final ScopeFrame mandFrame = proofWorksheet.theorem.getMandFrame();
         int compare;
         loopI: for (int i = 0; i < mandFrame.djVarsArray.length; i++) {
-            for (int j = 0; j < proofWorksheet.comboFrame.djVarsArray.length; j++)
-            {
+            for (int j = 0; j < proofWorksheet.comboFrame.djVarsArray.length; j++) {
                 compare = mandFrame.djVarsArray[i]
                     .compareTo(proofWorksheet.comboFrame.djVarsArray[j]);
                 if (compare > 0)

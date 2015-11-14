@@ -181,38 +181,38 @@ import mmj.verify.ProofDerivationStepEntry;
  */
 public class ProofWorksheet {
 
-    ProofAsstPreferences proofAsstPreferences;
-    LogicalSystem logicalSystem;
-    Grammar grammar;
-    Messages messages;
-    Tokenizer proofTextTokenizer;
-    TMFFPreferences tmffPreferences;
-    TMFFStateParams tmffSP;
-    StringBuilder tmffFormulaSB;
+    public ProofAsstPreferences proofAsstPreferences;
+    public LogicalSystem logicalSystem;
+    public Grammar grammar;
+    public Messages messages;
+    public Tokenizer proofTextTokenizer;
+    public TMFFPreferences tmffPreferences;
+    public TMFFStateParams tmffSP;
+    public StringBuilder tmffFormulaSB;
 
-    StepSelectorResults stepSelectorResults = null;
-    StepRequest stepRequest = null;
+    public StepSelectorResults stepSelectorResults = null;
+    public StepRequest stepRequest = null;
 
-    SearchOutput searchOutput = null;
+    public SearchOutput searchOutput = null;
 
-    /* friendly */boolean structuralErrors;
-    /* friendly */int nbrDerivStepsReadyForUnify = 0;
+    /* friendly */public boolean structuralErrors;
+    /* friendly */public int nbrDerivStepsReadyForUnify = 0;
 
     /*  hasWorkVarsOrDerives is set to true in DerivationStep
         and is used in ProofUnifier to decide whether or not
      * to make a preliminary pass through the Proof Worksheet
      * to deal with WorkVars and/or DeriveStep/DeriveFormula.
      */
-    /* friendly */boolean hasWorkVarsOrDerives;
+    /* friendly */public boolean hasWorkVarsOrDerives;
 
-    /* friendly */boolean newTheorem = true;
-    /* friendly */Theorem theorem;
-    /* friendly */Stmt locAfter;
+    /* friendly */public boolean newTheorem = true;
+    /* friendly */public Theorem theorem;
+    /* friendly */public Stmt locAfter;
 
-    /* friendly */int maxSeq = Integer.MAX_VALUE;
+    /* friendly */public int maxSeq = Integer.MAX_VALUE;
 
-    /* friendly */ScopeFrame comboFrame;
-    /* friendly */Map<String, Var> comboVarMap;
+    /* friendly */public ScopeFrame comboFrame;
+    /* friendly */public Map<String, Var> comboVarMap;
 
     public VarHyp getVarHypFromComboFrame(final Var v) {
         final Hyp[] a = comboFrame.hypArray;
@@ -222,28 +222,28 @@ public class ProofWorksheet {
         return null;
     }
 
-    /* friendly */List<ProofWorkStmt> proofWorkStmtList;
-    /* friendly */HeaderStmt headerStmt;
+    /* friendly */public List<ProofWorkStmt> proofWorkStmtList;
+    /* friendly */public HeaderStmt headerStmt;
 
-    /* friendly */FooterStmt footerStmt;
+    /* friendly */public FooterStmt footerStmt;
 
-    /* friendly */DerivationStep qedStep;
+    /* friendly */public DerivationStep qedStep;
 
     // set when created after successful unification...
-    /* friendly */GeneratedProofStmt generatedProofStmt;
+    /* friendly */public GeneratedProofStmt generatedProofStmt;
 
-    /* friendly */int greatestStepNbr;
+    /* friendly */public int greatestStepNbr;
 
-    /* friendly */int dvStmtCnt;
-    /* friendly */DistinctVariablesStmt[] dvStmtArray;
+    /* friendly */public int dvStmtCnt;
+    /* friendly */public DistinctVariablesStmt[] dvStmtArray;
 
-    /* friendly */int hypStepCnt;
+    /* friendly */public int hypStepCnt;
 
-    /* friendly */ProofAsstCursor proofCursor;
+    /* friendly */public ProofAsstCursor proofCursor;
 
-    /* friendly */ProofAsstCursor proofInputCursor;
+    /* friendly */public ProofAsstCursor proofInputCursor;
 
-    /* friendly */List<List<DjVars>> proofSoftDjVarsErrorList;
+    /* friendly */public List<List<DjVars>> proofSoftDjVarsErrorList;
 
     /**
      * Constructor for skeletal ProofWorksheet. This constructor is used in
@@ -251,7 +251,7 @@ public class ProofWorksheet {
      * "structuralErrors". When the GUI displays a worksheet with structural
      * errors it does not update its proofTextArea, and thus, the original user
      * input is left untouched.
-     * 
+     *
      * @param proofAsstPreferences variable settings
      * @param messages the mmj.lang.Messages object used to store error and
      *            informational messages.
@@ -275,7 +275,7 @@ public class ProofWorksheet {
     /**
      * Constructor creating empty ProofWorksheet to be loaded using a Tokenizer.
      * This constructor is used by ProofWorksheetParser.next().
-     * 
+     *
      * @param proofTextTokenizer the mmj.mmio.Tokenizer input stream parser.
      * @param proofAsstPreferences variable settings
      * @param logicalSystem the loaded Metamath data
@@ -313,7 +313,7 @@ public class ProofWorksheet {
      * ProofAsst.startNewProof(). Note: the ProofWorksheet created here is not a
      * fully populated object -- it is destined for a one-way trip to the output
      * screen via the GUI.
-     * 
+     *
      * @param newTheoremLabel Theorem label String.
      * @param proofAsstPreferences variable settings
      * @param logicalSystem the loaded Metamath data
@@ -358,7 +358,7 @@ public class ProofWorksheet {
      * proof. Note: the worksheet created by this constructor is "skeletal" in
      * the sense that it is destined for output only. This constructor is used
      * by ProofAsst.exportToFile().
-     * 
+     *
      * @param theorem to be used to create ProofWorksheet.
      * @param proofDerivationStepList List of
      *            mmj.verify.ProofDerivationStepEntry created by VerifyProofs
@@ -422,7 +422,7 @@ public class ProofWorksheet {
      * or a parse error, theorem label not found, etc. When ProofWorksheet is
      * done validating a proof it must be *clean* for ProofUnifier (or else bad
      * things would happen.)
-     * 
+     *
      * @return boolean structuralErrors
      */
     public boolean hasStructuralErrors() {
@@ -433,7 +433,7 @@ public class ProofWorksheet {
      * Sets structuralErrors switch for ProofWorksheet.
      * <p>
      * See hasStructuralErrors() for more info.
-     * 
+     *
      * @param structuralErrors boolean, true or false.
      */
     public void setStructuralErrors(final boolean structuralErrors) {
@@ -446,7 +446,7 @@ public class ProofWorksheet {
      * Note: a derivation step with a "?" in its Hyp field is not ready for
      * unification, but interestingly, a subsequent step that refers to that
      * step as one of its Hyps, can be unified (it just can't be "proved".)
-     * 
+     *
      * @return number of derivation steps in the proof that are ready for
      *         Unification.
      */
@@ -461,7 +461,7 @@ public class ProofWorksheet {
     /**
      * Returns the isNewTheorem boolean value indicating whether the theorem is
      * new or is already in the Metamath file that was loaded.
-     * 
+     *
      * @return boolean isNewTheorem, which if true means that the theorem being
      *         proved is not already in the Metamath database that was loaded.
      */
@@ -475,7 +475,7 @@ public class ProofWorksheet {
 
     /**
      * Returns the ProofWorksheet's Theorem reference.
-     * 
+     *
      * @return Theorem may be null if new theorem or errors in ProofWorksheet!
      */
     public Theorem getTheorem() {
@@ -492,7 +492,7 @@ public class ProofWorksheet {
      * The maxSeq value sets a boundary for parsing, proofs, formulas, etc. A
      * Metamath statement cannot legitimately use or refer to another Metamath
      * statement with a sequence number >= its own (no recursive references.)
-     * 
+     *
      * @return maxSeq number in use for the current proof.
      */
     public int getMaxSeq() {
@@ -535,7 +535,7 @@ public class ProofWorksheet {
      * for use in every step (and note that DjVars apply to every step
      * regardless of the location of the $d ProofWorkStmt within the Proof Text
      * area.
-     * 
+     *
      * @return MandFrame combined with OptFrame values for the theorem.
      */
     public ScopeFrame getComboFrame() {
@@ -545,7 +545,7 @@ public class ProofWorksheet {
     /**
      * Gets the hypStepCnt counter of the number of HypothesisStep statements in
      * the ProofWorksheet.
-     * 
+     *
      * @return the hypStepCnt.
      */
     public int getHypStepCnt() {
@@ -554,7 +554,7 @@ public class ProofWorksheet {
 
     /**
      * Returns a given HypothesisStep from the ProofWorkStmtList.
-     * 
+     *
      * @param h the LogHyp sought in the ProofWorkStmtList.
      * @return the HypothesisStep if found, or null.
      */
@@ -576,7 +576,7 @@ public class ProofWorksheet {
 
     /**
      * Returns an Iterable over the ProofWorksheet ProofWorkStmt ArrayList.
-     * 
+     *
      * @return Iterable over ProofWorkStmtList.
      */
     public Iterable<ProofWorkStmt> getProofWorkStmtList() {
@@ -585,7 +585,7 @@ public class ProofWorksheet {
 
     /**
      * Returns the count of items in the ProofWorksheet ProofWorkStmt ArrayList.
-     * 
+     *
      * @return count of items in ProofWorkStmtList.
      */
     public int getProofWorkStmtListCnt() {
@@ -600,7 +600,7 @@ public class ProofWorksheet {
      * total the previous lineCnt's and add 1. (But if lineCnt is wrong, then we
      * are doomed -- note that TMFF went to a lot of trouble to obtain lineCnt,
      * and lineCnt is computed during parsing of an input ProofWorksheet!)
-     * 
+     *
      * @param x the owner ProofWorkStmt
      * @return line number in ProofWorksheet text area.
      */
@@ -617,7 +617,7 @@ public class ProofWorksheet {
     /**
      * Determines which ProofWorkStmt is located at a given line number of the
      * screen text area.
-     * 
+     *
      * @param n the line number
      * @return ProofWorkStmt at the input line number, or null.
      */
@@ -634,7 +634,7 @@ public class ProofWorksheet {
     /**
      * Computes the total number of text area lines required to display all
      * ProofWorkStmt objects in the ProofWorksheet.
-     * 
+     *
      * @return total number of lines required for ProofWorkStmt's.
      */
     public int computeTotalLineCnt() {
@@ -646,7 +646,7 @@ public class ProofWorksheet {
 
     /**
      * Returns the ProofWorksheet FooterStmt object.
-     * 
+     *
      * @return FooterStmt of ProofWorksheet.
      */
     public FooterStmt getFooterStmt() {
@@ -658,7 +658,7 @@ public class ProofWorksheet {
      * <p>
      * Note: the nomenclature here "qed step" is something made up for
      * ProofAssistant to make things easier to explain.
-     * 
+     *
      * @return the final DerivationStep in the ProofWorksheet.
      */
     public DerivationStep getQedStep() {
@@ -670,7 +670,7 @@ public class ProofWorksheet {
      * <p>
      * Note that each DerivationStep will have its own proof -- if the proof is
      * valid -- but the QED step's proof is the proof of the theorem itself!
-     * 
+     *
      * @return the RPN proof of the final DerivationStep in the ProofWorksheet.
      */
     public RPNStep[] getQedStepProofRPN() {
@@ -698,7 +698,7 @@ public class ProofWorksheet {
 
     /**
      * Get the ProofWorksheet ProofCursor object.
-     * 
+     *
      * @return ProofCursor object for ProofWorksheet.
      */
     public ProofAsstCursor getProofCursor() {
@@ -707,7 +707,7 @@ public class ProofWorksheet {
 
     /**
      * Set the ProofWorksheet ProofCursor object.
-     * 
+     *
      * @param proofCursor object for ProofWorksheet.
      */
     public void setProofCursor(final ProofAsstCursor proofCursor) {
@@ -788,7 +788,7 @@ public class ProofWorksheet {
 
     /**
      * Returns the theorem label, if present.
-     * 
+     *
      * @return String containing theorem label, may be null;
      */
     public String getTheoremLabel() {
@@ -818,7 +818,7 @@ public class ProofWorksheet {
     /**
      * Searches up to an exclusive endpoint in the proofWorkStmtList for a step
      * whose formula matches the input formula.
-     * 
+     *
      * @param searchFormula Formula we're looking for
      * @param exclusiveEndpointStep Exclusive endpoint of the search (return
      *            null as soon as this step is reached, even if its formula
@@ -844,7 +844,7 @@ public class ProofWorksheet {
     /**
      * Renumbers each ProofWorkStmt according to an input renumberInterval and
      * alters each Hyp reference to conform to the new step numbers.
-     * 
+     *
      * @param renumberStart is the number to start at. Commonly equal to 1.
      * @param renumberInterval is the number to add to each new step number.
      *            Commonly equal to 1.
@@ -878,7 +878,7 @@ public class ProofWorksheet {
     }
     /**
      * Reformats all or just one ProofStepStmt using TMFF.
-     * 
+     *
      * @param inputCursorStep set to true to reformat just the proof step
      *            underneath the cursor.
      */
@@ -919,7 +919,7 @@ public class ProofWorksheet {
      * unification can be attempted using no Hyps. If this fails then because
      * the step is marked "generated", the step can be updated to show Hyp "?"
      * (this is a helpful feature for the users, going the extra mile...)
-     * 
+     *
      * @param workVarList List of Work Vars in formula.
      * @param formula Formula of new step.
      * @param formulaParseTree ParseTree of new Formula
@@ -960,21 +960,21 @@ public class ProofWorksheet {
             + Integer.toString(generateNewDerivedStepNbr());
 
         final DerivationStep out = new DerivationStep(this, generatedStep,
-            generatedHyp, generatedHypStep, refLabel, formula,
-            formulaParseTree, false, false,
-            proofAsstPreferences.getDeriveAutocomplete(), workVarList);
+            generatedHyp, generatedHypStep, refLabel, formula, formulaParseTree,
+            false, false, proofAsstPreferences.getDeriveAutocomplete(),
+            workVarList);
         return out;
     }
 
     /**
      * Generates the next value of greatestStepNbr for use in the ProofUnifier
      * Derive feature and returns the new value.
-     * 
+     *
      * @return value of new greatestStepNbr.
      */
     public int generateNewDerivedStepNbr() {
-        updateNextGreatestStepNbr(greatestStepNbr
-            + PaConstants.GREATEST_STEP_NBR_INCREMENT_AMT);
+        updateNextGreatestStepNbr(
+            greatestStepNbr + PaConstants.GREATEST_STEP_NBR_INCREMENT_AMT);
         return greatestStepNbr;
     }
 
@@ -1004,7 +1004,7 @@ public class ProofWorksheet {
      * the next ProofWorksheet or null if EOF. (Each routine that loads a
      * statement will return the next token after the end of the statement's
      * input text.)
-     * 
+     *
      * @param nextToken the first token to be loaded.
      * @param inputCursorPos offset plus one of Caret in Proof TextArea or -1 if
      *            not available.
@@ -1016,8 +1016,8 @@ public class ProofWorksheet {
      * @throws ProofAsstException if an error occurred
      */
     public String loadWorksheet(String nextToken, final int inputCursorPos,
-        final StepRequest stepRequestIn) throws IOException, MMIOError,
-        ProofAsstException
+        final StepRequest stepRequestIn)
+            throws IOException, MMIOError, ProofAsstException
     {
 
         /*  If StepSelectorDialog user chose an Assrt
@@ -1028,7 +1028,8 @@ public class ProofWorksheet {
         boolean stepSelectorChoiceRequired = false;
         stepRequest = stepRequestIn;
         if (stepRequest != null
-            && (stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_CHOICE || stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH_CHOICE))
+            && (stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_CHOICE
+                || stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH_CHOICE))
             if (stepRequest.param1 == null)
                 stepRequest = null;
             else
@@ -1161,7 +1162,8 @@ public class ProofWorksheet {
                     stepField = validateStepField(isHypStep, fields.get(0));
                     hypField = fields.get(1);
                     if (hypField.length() > 0
-                        && hypField.charAt(0) == PaConstants.LOCAL_REF_ESCAPE_CHAR
+                        && hypField
+                            .charAt(0) == PaConstants.LOCAL_REF_ESCAPE_CHAR
                         || logicalSystem.getStmtTbl().containsKey(hypField))
                     {
                         // Smells like the ref field. probably typed
@@ -1254,9 +1256,8 @@ public class ProofWorksheet {
                         stepRequest = null; // done, so null it.
                     }
 
-                    nextToken = qedStep.loadDerivationStep(
-                        origStepHypRefLength, lineStartCharNbr, stepField,
-                        hypField, refField);
+                    nextToken = qedStep.loadDerivationStep(origStepHypRefLength,
+                        lineStartCharNbr, stepField, hypField, refField);
                 }
                 proofWorkStmtList.add(qedStep);
 
@@ -1302,11 +1303,11 @@ public class ProofWorksheet {
 
                 if (setInputCursorStmtIfHere(x, inputCursorPos, nextToken,
                     proofTextTokenizer))
-                    if (localRefField != null
-                        && stepRequest != null
+                    if (localRefField != null && stepRequest != null
                         && (stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH
                             || stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH
-                            || stepRequest.request == PaConstants.STEP_REQUEST_GENERAL_SEARCH || stepRequest.request == PaConstants.STEP_REQUEST_SEARCH_OPTIONS))
+                            || stepRequest.request == PaConstants.STEP_REQUEST_GENERAL_SEARCH
+                            || stepRequest.request == PaConstants.STEP_REQUEST_SEARCH_OPTIONS))
                         triggerLoadStructureException(
                             PaConstants.ERRMSG_LOCAL_REF_HAS_SELECTOR_SEARCH,
                             getErrorLabelIfPossible(), stepField);
@@ -1323,7 +1324,8 @@ public class ProofWorksheet {
         generateMissingStepLabels();
 
         if (stepRequest != null
-            && (stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH || stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH))
+            && (stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH
+                || stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH))
         {
             if (!proofInputCursor.cursorIsSet
                 || !(proofInputCursor.proofWorkStmt instanceof DerivationStep))
@@ -1374,8 +1376,7 @@ public class ProofWorksheet {
          * it as a structural defect if the count is wrong!!!
          */
         if (!isNewTheorem() && theorem.getLogHypArrayLength() != hypStepCnt)
-            throw new ProofAsstException(
-                1, // line
+            throw new ProofAsstException(1, // line
                 PaConstants.PROOF_TEXT_HEADER_1.length() + 1, // col
                 -1, // char
                 PaConstants.ERRMSG_THRM_NBR_HYPS_ERROR,
@@ -1406,11 +1407,11 @@ public class ProofWorksheet {
         final int inputCursorPos, final String nextToken,
         final Tokenizer proofTextTokenizer)
     {
-        if (inputCursorPos == -1
-            || proofInputCursor.cursorIsSet
+        if (inputCursorPos == -1 || proofInputCursor.cursorIsSet
             || inputCursorPos > proofTextTokenizer.getCurrentCharNbr()
-                - nextToken.length() || proofWorkStmt instanceof ProofStepStmt
-            && ((ProofStepStmt)proofWorkStmt).getLocalRef() != null)
+                - nextToken.length()
+            || proofWorkStmt instanceof ProofStepStmt
+                && ((ProofStepStmt)proofWorkStmt).getLocalRef() != null)
             return false;
         proofInputCursor.setCursorAtProofWorkStmt(proofWorkStmt,
             PaConstants.FIELD_ID_REF);
@@ -1420,8 +1421,7 @@ public class ProofWorksheet {
     private void setInputCursorPosIfHere(final int inputCursorPos,
         final String nextToken, final Tokenizer proofTextTokenizer)
     {
-        if (inputCursorPos == -1
-            || proofInputCursor.cursorIsSet
+        if (inputCursorPos == -1 || proofInputCursor.cursorIsSet
             || inputCursorPos > proofTextTokenizer.getCurrentCharNbr()
                 - nextToken.length())
             return;
@@ -1531,7 +1531,7 @@ public class ProofWorksheet {
      * <p>
      * Note: with word wrap 'on', newlines are ignored in JTextArea, so we
      * insert spacer lines.
-     * 
+     *
      * @return Proof Error Message Text area as String.
      */
     public String getOutputMessageText() {
@@ -1545,7 +1545,7 @@ public class ProofWorksheet {
      * <p>
      * Note: with word wrap 'on', newlines are ignored in JTextArea, so we
      * insert spacer lines.
-     * 
+     *
      * @param messages Messages object.
      * @return Proof Error Message Text area as String.
      */
@@ -1556,10 +1556,11 @@ public class ProofWorksheet {
             return null;
 
         final StringBuilder sb = new StringBuilder(
-            (messages.getErrorMessageCnt() + messages.getInfoMessageCnt()) * 80); // guessing
-                                                                                  // average
-                                                                                  // message
-                                                                                  // length
+            (messages.getErrorMessageCnt() + messages.getInfoMessageCnt())
+                * 80); // guessing
+                       // average
+                       // message
+                       // length
         String[] msgArray = messages.getErrorMessageArray();
         int msgCount = messages.getErrorMessageCnt();
         for (int i = 0; i < msgCount; i++) {
@@ -1610,7 +1611,7 @@ public class ProofWorksheet {
      * <p>
      * Note: with word wrap 'on', newlines are ignored in JTextArea, so we
      * insert spacer lines.
-     * 
+     *
      * @return Proof Text area as String.
      */
     public String getOutputProofText() {
@@ -1628,7 +1629,7 @@ public class ProofWorksheet {
      * Insert a GeneratedProofStmt into the ProofWorksheet
      * <p>
      * Note: this is used by ProofAsst after successful unification.
-     * 
+     *
      * @param rpnProof Proof Stmt array.
      */
     public void addGeneratedProofStmt(final RPNStep[] rpnProof) {
@@ -1652,7 +1653,7 @@ public class ProofWorksheet {
      * Returns the GeneratedProofStmt from the ProofWorksheet
      * <p>
      * Note: returns null if unification unsuccessful or not yet performed.
-     * 
+     *
      * @return generatedProofStmt or null if not unified successfully.
      */
     public GeneratedProofStmt getGeneratedProofStmt() {
@@ -1663,7 +1664,7 @@ public class ProofWorksheet {
      * Returns the DistinctVariablesStmt array from the ProofWorksheet.
      * <p>
      * Note: may return null.
-     * 
+     *
      * @return DistinctVariablesStmt array or null if there are none.
      */
     public DistinctVariablesStmt[] getDvStmtArray() {
@@ -1818,13 +1819,13 @@ public class ProofWorksheet {
         setStructuralErrors(true);
         throw new ProofAsstException(proofTextTokenizer.getCurrentLineNbr(),
             proofTextTokenizer.getCurrentColumnNbr(),
-            proofTextTokenizer.getCurrentCharNbr(), errorMessage
-                + PaConstants.ERRMSG_READER_POSITION_LITERAL, args);
+            proofTextTokenizer.getCurrentCharNbr(),
+            errorMessage + PaConstants.ERRMSG_READER_POSITION_LITERAL, args);
     }
 
     public void triggerLoadStructureException(final int errorFldChars,
         final String errorMessage, final Object... args)
-        throws ProofAsstException
+            throws ProofAsstException
     {
         setStructuralErrors(true);
         throw new ProofAsstException(proofTextTokenizer.getCurrentLineNbr(),
@@ -1861,8 +1862,7 @@ public class ProofWorksheet {
 
         for (final LogHyp element : logHypArray) {
 
-            hypothesisStep = new HypothesisStep(this,
-                String.valueOf(++stepNbr), // step
+            hypothesisStep = new HypothesisStep(this, String.valueOf(++stepNbr), // step
                 element.getLabel(), // refLabel
                 element.getFormula(), // formula
                 element.getExprParseTree(), false, // set caret

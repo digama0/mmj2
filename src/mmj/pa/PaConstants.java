@@ -593,10 +593,11 @@ public class PaConstants {
 
     /**
      * Sets default syntax highlighting styles.
-     * 
+     *
      * @param map the style map
      */
-    public static void doStyleDefaults(final Map<String, SimpleAttributeSet> map)
+    public static void doStyleDefaults(
+        final Map<String, SimpleAttributeSet> map)
     {
         SimpleAttributeSet style = new SimpleAttributeSet();
         map.put(PROOF_ASST_STYLE_DEFAULT, style);
@@ -656,7 +657,7 @@ public class PaConstants {
 
     /**
      * Set style parameters.
-     * 
+     *
      * @param style The style attribute set
      * @param color the foreground color
      * @param bold true for bold, false for plain, null for inherit
@@ -1023,9 +1024,7 @@ public class PaConstants {
 
     /** SAMPLE_PROOF_TEXTS */
     public static final String SAMPLE_PROOF_TEXT = "$( <MM> <PROOF_ASST> THEOREM="
-        + SAMPLE_PROOF_LABEL
-        + " LOC_AFTER=\n"
-        + "\n"
+        + SAMPLE_PROOF_LABEL + " LOC_AFTER=\n" + "\n"
         + "h1::           |- ( ph -> ps ) \n"
         + "h2::           |- ( ps -> ch ) \n"
         + "3:2:           |- ( ph -> ( ps -> ch ) ) \n"
@@ -1034,9 +1033,7 @@ public class PaConstants {
 
     /** AUTOCOMPLETE_SAMPLE_PROOF_TEXT */
     public static final String AUTOCOMPLETE_SAMPLE_PROOF_TEXT = "$( <MM> <PROOF_ASST> THEOREM="
-        + SAMPLE_PROOF_LABEL
-        + " LOC_AFTER=\n"
-        + "\n"
+        + SAMPLE_PROOF_LABEL + " LOC_AFTER=\n" + "\n"
         + "h              |- ( ph -> ps ) \n"
         + "h              |- ( ps -> ch ) \n"
         + "!              |- ( ph -> ( ps -> ch ) ) \n"
@@ -1581,17 +1578,14 @@ public class PaConstants {
     /**
      * Proof Assistant GUI Help About Part 1
      */
-    public static final String HELP_ABOUT_TEXT = "mmj2 Version "
-        + VERSION
-        + " as of "
-        + VERSION_DATE
-        + ".\n\n"
+    public static final String HELP_ABOUT_TEXT = "mmj2 Version " + VERSION
+        + " as of " + VERSION_DATE + ".\n\n"
         + "Copyright (C) 2005 thru 2011 MEL O'CAT via X178G243 (at) yahoo (dot) com \n"
         + "License terms: GNU General Public License Version 2 or any later version.\n\n"
         + "Note: The following copyright is included because ProofAsstGUI.java\n"
         + "has several snippets of code that are very similar, if not identical\n"
         + "to snippets of code in the Java Tutorial.\n\n"
-        + "Copyright� 1995-2004 Sun Microsystems, Inc. All Rights Reserved.\n"
+        + "Copyright\u00a9 1995-2004 Sun Microsystems, Inc. All Rights Reserved.\n"
         + "Redistribution and use in source and binary forms, with or without\n"
         + "modification, are permitted provided that the following conditions are\n"
         + "met\n"
@@ -1722,8 +1716,7 @@ public class PaConstants {
         + "second Undo restores the text. We at MMJ2 Laboratories, Inc. sincerely\n"
         + "apologize for this sadly deficient behavior. Be assured that we will be\n"
         + "complaining on your behalf to someone, somewhere, sometime about this shoddy\n"
-        + "workmanship.\n\n"
-        + "* Redo -- 'Undoes' an Undo.\n\n"
+        + "workmanship.\n\n" + "* Redo -- 'Undoes' an Undo.\n\n"
         + "* Cut -- Standard text 'cut' operation on selected text. The 'cut' text is\n"
         + "copied to the clipboard.\n\n"
         + "* Copy -- Standard text 'copy' operation which copies the selected text to\n"
@@ -1825,8 +1818,7 @@ public class PaConstants {
         + "* Set Step Selector Show Substitutions -- true/false option to display, or\n"
         + "not, substitutions from the proof into unifiable assertions (default = true).\n"
         + "If false, assertions are displayed as they appear in the input .mm\n"
-        + "file.\n\n\n"
-        + "===== TL Menu (Theorem Loader) =====\n\n"
+        + "file.\n\n\n" + "===== TL Menu (Theorem Loader) =====\n\n"
         + "* Unify + Store In LogSys and MMT Folder -- Validates the Proof Worksheet,\n"
         + "and if proof unification is successful, writes the theorem to the MMT Folder\n"
         + "and stores it in the Logical System in memory.\n\n"
@@ -1875,8 +1867,7 @@ public class PaConstants {
         + "========= GMFF Menu =========\n\n"
         + "* Export Via GMFF -- GMFF (Graphics Mode Formula Formatting) exports the\n"
         + "Proof Worksheet as html file(s) in the \\mmj2jar\\gmff directory.\n"
-        + "See \\mmj2\\doc\\GMFFDoc\\* \n\n\n"
-        + "==== Help Menu ====\n\n"
+        + "See \\mmj2\\doc\\GMFFDoc\\* \n\n\n" + "==== Help Menu ====\n\n"
         + "* General Help Info -- This page.\n\n"
         + "* About mmj2 -- Some copyright information *plus* very interesting data\n"
         + "about your computer's memory: 'Max' =  the maximum amount of memory that the\n"
@@ -2337,33 +2328,6 @@ public class PaConstants {
 
     public static final String ERRMSG_PA_TIME_TOP_HEADER = "I-PA-0128"
         + " Here is the list of most time consuming theorem unifications: ";
-
-    public static final String ERRMSG_PA_DEFINITION_FAIL = " Axiom %s has"
-        + " failed the definitional soundness check.";
-
-    public static final String ERRMSG_PA_DEFINITION_FAIL_1 = "I-PA-0201"
-        + ERRMSG_PA_DEFINITION_FAIL + " The root symbol is not = or <->.";
-
-    public static final String ERRMSG_PA_DEFINITION_FAIL_2 = "I-PA-0202"
-        + ERRMSG_PA_DEFINITION_FAIL + " The previous axiom %s uses the symbol"
-        + " being defined in this axiom.";
-
-    public static final String ERRMSG_PA_DEFINITION_FAIL_3 = "I-PA-0203"
-        + ERRMSG_PA_DEFINITION_FAIL + " Variables %s in the definiendum are"
-        + " required NOT to be distinct.";
-
-    public static final String ERRMSG_PA_DEFINITION_FAIL_4 = "I-PA-0204"
-        + ERRMSG_PA_DEFINITION_FAIL + " All dummy variables in the definiens"
-        + " are required to be distinct from each other and from variables in"
-        + " the definiendum. The following DJ conditions need to be added:\n%s";
-
-    public static final String ERRMSG_PA_DEFINITION_FAIL_5 = "I-PA-0205"
-        + ERRMSG_PA_DEFINITION_FAIL + " Non-set dummy variable found, and no"
-        + " justification theorem is available.";
-
-    public static final String ERRMSG_PA_DEFINITION_FAIL_6 = "I-PA-0206"
-        + ERRMSG_PA_DEFINITION_FAIL + " Dummy variables %s are possibly free"
-        + " in the definiendum, and no justification is available.";
 
     // ----------------------------------------------------------
     // Messages from ProofAsstGUI.java

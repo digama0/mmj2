@@ -105,27 +105,29 @@ public abstract class BatchFramework {
     /*friendly*/String runParmExecutableCaption;
     /*friendly*/String runParmCommentCaption;
 
-    /*friendly*/List<Boss> bossList;
+    /*friendly*/public List<Boss> bossList;
 
-    /*friendly*/OutputBoss outputBoss;
+    /*friendly*/public OutputBoss outputBoss;
 
-    /*friendly*/LogicalSystemBoss logicalSystemBoss;
+    /*friendly*/public LogicalSystemBoss logicalSystemBoss;
 
-    /*friendly*/VerifyProofBoss verifyProofBoss;
+    /*friendly*/public VerifyProofBoss verifyProofBoss;
 
-    /*friendly*/GrammarBoss grammarBoss;
+    /*friendly*/public GrammarBoss grammarBoss;
 
-    /*friendly*/ProofAsstBoss proofAsstBoss;
+    /*friendly*/public ProofAsstBoss proofAsstBoss;
 
-    /*friendly*/TMFFBoss tmffBoss;
+    /*friendly*/public TMFFBoss tmffBoss;
 
-    /*friendly*/WorkVarBoss workVarBoss;
+    /*friendly*/public WorkVarBoss workVarBoss;
 
-    /*friendly*/SvcBoss svcBoss;
+    /*friendly*/public SvcBoss svcBoss;
 
-    /*friendly*/TheoremLoaderBoss theoremLoaderBoss;
+    /*friendly*/public TheoremLoaderBoss theoremLoaderBoss;
 
-    /*friendly*/GMFFBoss gmffBoss;
+    /*friendly*/public GMFFBoss gmffBoss;
+
+    /*friendly*/public MacroBoss macroBoss;
 
     /**
      * Initialize BatchFramework with Boss list and any captions that may have
@@ -169,6 +171,9 @@ public abstract class BatchFramework {
         gmffBoss = new GMFFBoss(this);
         addBossToBossList(gmffBoss);
 
+        macroBoss = new MacroBoss(this);
+        addBossToBossList(macroBoss);
+
         addAnyExtraBossesToBossList();
 
         // NOTE: LogicalSystemBoss should be at the end
@@ -198,7 +203,7 @@ public abstract class BatchFramework {
      * displaying of startup errors. Abnormal termination -- "Fail" -- error
      * messages are displayed here by calling the MMJ2 Fail Popup Window
      * directly.
-     * 
+     *
      * @param args command line parms for RunParmFile constructor. (See
      *            CommandLineArguments.java for detailed doc
      * @return return code 0 if BatchFramework was successful (however many
@@ -266,7 +271,7 @@ public abstract class BatchFramework {
 
     /**
      * Add a processing Boss to the Boss List.
-     * 
+     *
      * @param boss The processing Boss
      */
     public void addBossToBossList(final Boss boss) {
@@ -300,7 +305,7 @@ public abstract class BatchFramework {
 
     /**
      * Processes a single RunParmFile line.
-     * 
+     *
      * @param runParm RunParmFileLine parsed into a RunParmArrayEntry object.
      * @throws IOException if an error occurred in the RunParm
      * @throws GMFFException if an error occurred in the RunParm
@@ -324,18 +329,16 @@ public abstract class BatchFramework {
             printExecutableRunParmLine(runParmExecutableCaption, runParmCnt,
                 runParm);
 
-            if (runParm.name
-                .equalsIgnoreCase(UtilConstants.RUNPARM_JAVA_GARBAGE_COLLECTION
-                    .name()))
+            if (runParm.name.equalsIgnoreCase(
+                UtilConstants.RUNPARM_JAVA_GARBAGE_COLLECTION.name()))
                 System.gc();
             else {
                 boolean consumed = false;
                 for (final Boss b : bossList)
                     if (consumed = b.doRunParmCommand(runParm))
                         break;
-                if (!consumed
-                    && !runParm.name
-                        .equalsIgnoreCase(UtilConstants.RUNPARM_CLEAR.name()))
+                if (!consumed && !runParm.name
+                    .equalsIgnoreCase(UtilConstants.RUNPARM_CLEAR.name()))
                     throw new IllegalArgumentException(
                         UtilConstants.ERRMSG_RUNPARM_NAME_INVALID_1
                             + runParm.name
@@ -346,7 +349,7 @@ public abstract class BatchFramework {
 
     /**
      * Compares the current RunParmArrayEntry name to an input command.
-     * 
+     *
      * @param command RunParm command to compare to the current command name.
      * @return true if equal, ignoring case, otherwise false.
      */
@@ -361,7 +364,7 @@ public abstract class BatchFramework {
     /**
      * Override this to change or eliminate the printout of each executable
      * RunParmFile line.
-     * 
+     *
      * @param caption to print
      * @param cnt RunParmFile line number
      * @param runParm RunParmFile line parsed into object RunParmArrayEntry.
@@ -370,15 +373,15 @@ public abstract class BatchFramework {
     public void printExecutableRunParmLine(final String caption, final int cnt,
         final RunParmArrayEntry runParm) throws IOException
     {
-        outputBoss.sysOutPrintln(caption + cnt
-            + UtilConstants.ERRMSG_EQUALS_LITERAL + runParm,
+        outputBoss.sysOutPrintln(
+            caption + cnt + UtilConstants.ERRMSG_EQUALS_LITERAL + runParm,
             UtilConstants.RUNPARM_LINE_DUMP_VERBOSITY);
     }
 
     /**
      * Override this to change or eliminate the printout of each Comment
      * RunParmFile line.
-     * 
+     *
      * @param caption to print
      * @param cnt RunParmFile line number
      * @param runParm RunParmFile line parsed into object RunParmArrayEntry.
@@ -387,14 +390,14 @@ public abstract class BatchFramework {
     public void printCommentRunParmLine(final String caption, final int cnt,
         final RunParmArrayEntry runParm) throws IOException
     {
-        outputBoss.sysOutPrintln(caption + cnt
-            + UtilConstants.ERRMSG_EQUALS_LITERAL + runParm,
+        outputBoss.sysOutPrintln(
+            caption + cnt + UtilConstants.ERRMSG_EQUALS_LITERAL + runParm,
             UtilConstants.RUNPARM_LINE_DUMP_VERBOSITY);
     }
 
     /**
      * Returns the canonical path name of the RunParmFile.
-     * 
+     *
      * @return canonical path of RunParmFile or empty string if RunParmFile is
      *         null.
      */
