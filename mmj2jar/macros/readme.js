@@ -20,7 +20,9 @@
  * 
  * which will output 'hello world' to the console. This looks for a file
  * macros/echo.js containing the code. Since it is not precompiled, this file
- * can be changed at any time - a program restart is not necessary.
+ * can be changed at any time - a program restart is not necessary. (However,
+ * init.js is only run once at the start of the program, so any changes to it
+ * will not be reflected until the program is restarted.)
  * 
  * There are three other RunParms which control macro execution:
  * 
@@ -98,6 +100,15 @@
  * Print text to the console, for RunMacro invocations, or the message box in
  * $m invocations. Use print() instead to always print to the console.
  * 
+ * setKeyCommand(String key, function f):
+ * Execute a callback when a key is pressed. The "key" string here is the same
+ * format as KeyStroke.getKeyStroke(), and includes such things as "ctrl K" or
+ * "alt shift T".
+ * 
+ * unify():
+ * Unify a proof worksheet. Same as ctrl-U. Useful in conjunction with
+ * post(AFTER_UNIFY, f) for more exotic unification actions.
+ * 
  * post(CallbackType type, function f):
  * Call the function f when the given callback event occurs. Use this when you
  * need more complete information on the worksheet state from later in the
@@ -107,6 +118,8 @@
  * 
  * The function is only performed once.
  * The available callback types, arranged roughly in chronological order:
+ * BUILD_GUI: (For init.js) After the GUI is built and the proofAsstGUI
+ *   variable is valid
  * BEFORE_PARSE: Before parsing is started
  * [$m calls happen here, during parsing of the statement loop] 
  * WORKSHEET_PARSE: Once the statement loop finishes and all proof statements

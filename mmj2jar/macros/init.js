@@ -38,8 +38,28 @@ function eval(code) {
 	reset();
 })();
 macroManager.setPrepMacro("prep");
-
+post(CallbackType.BUILD_GUI, function() {
+	proofAsstGUI = proofAsst.proofAsstGUI;
+	function log() {
+		messages.accumInfoMessage(
+			Array.prototype.slice.call(arguments).join(" "),[]);
+	}
+});
+function setKeyCommand(key, f) {
+	post(CallbackType.BUILD_GUI, function() {
+		with (new JavaImporter(Packages.javax.swing)) {
+			var window = proofAsstGUI.mainFrame.getContentPane();
+			window.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+				.put(KeyStroke.getKeyStroke(key), key);
+			window.getActionMap().put(key,
+				new (Java.extend(AbstractAction, f))());
+		}
+	});
+}
+function unify() {
+	proofAsstGUI.unificationAction(false, false,
+		null, null, null).actionPerformed(null);
+}
 ////////////////////////////////////////////////////////
 // USER SPACE: perform extra custom initializations here
 ////////////////////////////////////////////////////////
-

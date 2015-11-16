@@ -195,6 +195,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         proofAsstGUI = new ProofAsstGUI(this, proofAsstPreferences,
             theoremLoader);
 
+        if (macroManager != null)
+            macroManager.runCallback(CallbackType.BUILD_GUI);
+
         proofAsstGUI.showMainFrame();
     }
 
