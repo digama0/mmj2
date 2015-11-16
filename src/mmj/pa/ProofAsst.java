@@ -80,6 +80,7 @@ import mmj.gmff.GMFFException;
 import mmj.lang.*;
 import mmj.lang.ParseTree.RPNStep;
 import mmj.mmio.MMIOError;
+import mmj.pa.MacroManager.CallbackType;
 import mmj.tl.*;
 import mmj.transforms.TransformationManager;
 import mmj.util.OutputBoss;
@@ -109,6 +110,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     private final VerifyProofs verifyProofs;
     private Messages messages;
     private final TheoremLoader theoremLoader;
+    public final MacroManager macroManager;
 
     // -----------------------------------------------------------------
     // -------------------------LOCAL CLASSES---------------------------
@@ -154,10 +156,12 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * @param grammar the mmj.verify.Grammar object
      * @param verifyProofs the mmj.verify.VerifyProofs object
      * @param theoremLoader the mmj.tl.TheoremLoader object
+     * @param macroManager the mmj.pa.MacroManager object
      */
     public ProofAsst(final ProofAsstPreferences proofAsstPreferences,
         final LogicalSystem logicalSystem, final Grammar grammar,
-        final VerifyProofs verifyProofs, final TheoremLoader theoremLoader)
+        final VerifyProofs verifyProofs, final TheoremLoader theoremLoader,
+        final MacroManager macroManager)
     {
 
         this.proofAsstPreferences = proofAsstPreferences;
@@ -165,6 +169,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         this.grammar = grammar;
         this.verifyProofs = verifyProofs;
         this.theoremLoader = theoremLoader;
+        this.macroManager = macroManager;
 
         proofUnifier = new ProofUnifier(proofAsstPreferences, logicalSystem,
             grammar, verifyProofs);
@@ -626,6 +631,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                     PaConstants.PROOF_STEP_RENUMBER_START,
                     PaConstants.PROOF_STEP_RENUMBER_INTERVAL);
 
+            proofWorksheet.runCallback(CallbackType.AFTER_RENUMBER);
+
             unifyProofWorksheet(proofWorksheet, noConvertWV, printOkMessages);
         }
 
@@ -638,6 +645,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             }
 
         proofWorksheet.outputCursorInstrumentationIfEnabled();
+
+        proofWorksheet.runCallback(CallbackType.AFTER_UNIFY);
 
         return proofWorksheet;
 
@@ -1004,7 +1013,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         try {
             proofWorksheetParser = new ProofWorksheetParser(importReader,
                 PaConstants.PROOF_TEXT_READER_CAPTION, proofAsstPreferences,
-                logicalSystem, grammar, messages);
+                logicalSystem, grammar, messages, macroManager);
 
             while (true) {
 
@@ -1183,7 +1192,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         try {
             proofWorksheetParser = new ProofWorksheetParser(importReader,
                 PaConstants.PROOF_TEXT_READER_CAPTION, proofAsstPreferences,
-                logicalSystem, grammar, messages);
+                logicalSystem, grammar, messages, macroManager);
 
             proofWorksheet = proofWorksheetParser.next(cursorPos + 1,
                 new StepRequest(PaConstants.STEP_REQUEST_SELECTOR_SEARCH));
@@ -1408,7 +1417,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         try {
             proofWorksheetParser = new ProofWorksheetParser(proofText,
                 "Proof Text", proofAsstPreferences, logicalSystem, grammar,
-                messages);
+                messages, macroManager);
 
             proofWorksheet = proofWorksheetParser.next(inputCursorPos,
                 stepRequest);

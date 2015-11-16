@@ -2028,6 +2028,11 @@ public class PaConstants {
     public static final String END_PROOF_STMT_TOKEN = "$.";
 
     /**
+     * Macro execution token.
+     */
+    public static final String MACRO_STMT_TOKEN = "$m";
+
+    /**
      * Distinct Variables ProofWorkStmt token.
      */
     public static final String DISTINCT_VARIABLES_STMT_TOKEN = "$d";
@@ -2724,6 +2729,9 @@ public class PaConstants {
     public static final String ERRMSG_DV_VAR_SCOPE_ERR = "E-PA-0385 Theorem %s:"
         + " Invalid variable symbol in Distinct Variable statement."
         + " Input token = %s is a not an active variable in the current scope.";
+
+    public static final String ERRMSG_MACRO_FAIL = "E-PA-0386 Macro %s failed"
+        + " to execute.\n%s";
 
     // ----------------------------------------------------------
     // Messages from ProofUnifier.java

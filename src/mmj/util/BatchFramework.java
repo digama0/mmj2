@@ -91,7 +91,7 @@ public abstract class BatchFramework {
 
     protected CommandLineArguments commandLineArguments;
 
-    /*friendly*/Paths paths;
+    /*friendly*/public Paths paths;
 
     /*friendly*/MMJ2FailPopupWindow mmj2FailPopupWindow;
 

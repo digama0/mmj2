@@ -115,6 +115,7 @@ import mmj.lang.*;
 import mmj.lang.ParseTree.RPNStep;
 import mmj.mmio.MMIOError;
 import mmj.mmio.Tokenizer;
+import mmj.pa.MacroManager.CallbackType;
 import mmj.search.SearchOutput;
 import mmj.tmff.TMFFPreferences;
 import mmj.tmff.TMFFStateParams;
@@ -189,6 +190,7 @@ public class ProofWorksheet {
     public TMFFPreferences tmffPreferences;
     public TMFFStateParams tmffSP;
     public StringBuilder tmffFormulaSB;
+    public MacroManager macroManager;
 
     public StepSelectorResults stepSelectorResults = null;
     public StepRequest stepRequest = null;
@@ -282,11 +284,12 @@ public class ProofWorksheet {
      * @param grammar the mmj.verify.Grammar object
      * @param messages the mmj.lang.Messages object used to store error and
      *            informational messages.
+     * @param macroManager the mmj.pa.MacroManager object
      */
     public ProofWorksheet(final Tokenizer proofTextTokenizer,
         final ProofAsstPreferences proofAsstPreferences,
         final LogicalSystem logicalSystem, final Grammar grammar,
-        final Messages messages)
+        final Messages messages, final MacroManager macroManager)
     {
 
         this.proofTextTokenizer = proofTextTokenizer;
@@ -294,6 +297,7 @@ public class ProofWorksheet {
         this.logicalSystem = logicalSystem;
         this.grammar = grammar;
         this.messages = messages;
+        this.macroManager = macroManager;
 
         proofCursor = new ProofAsstCursor();
         proofInputCursor = new ProofAsstCursor();
@@ -895,6 +899,8 @@ public class ProofWorksheet {
 
         if (o == getQedStep())
             doubleSpaceQedStep();
+
+        runCallback(CallbackType.AFTER_REFORMAT);
     }
 
     /**
@@ -1019,6 +1025,7 @@ public class ProofWorksheet {
         final StepRequest stepRequestIn)
             throws IOException, MMIOError, ProofAsstException
     {
+        runCallback(CallbackType.BEFORE_PARSE);
 
         /*  If StepSelectorDialog user chose an Assrt
             then we'll splice it into the relevant step
@@ -1110,6 +1117,25 @@ public class ProofWorksheet {
 
                 setInputCursorStmtIfHere(x, inputCursorPos, nextToken,
                     proofTextTokenizer);
+                continue;
+            }
+
+            if (nextToken.equals(PaConstants.MACRO_STMT_TOKEN)) {
+                final MacroStmt x = new MacroStmt(this);
+                nextToken = x.load(nextToken);
+                proofWorkStmtList.add(x);
+
+                setInputCursorStmtIfHere(x, inputCursorPos, nextToken,
+                    proofTextTokenizer);
+                if (macroManager != null)
+                    try {
+                        macroManager.runMacro(x);
+                    } catch (final IllegalArgumentException e) {
+                        triggerLoadStructureException(
+                            PaConstants.ERRMSG_MACRO_FAIL, x.macroName,
+                            e.getMessage());
+                        e.printStackTrace();
+                    }
                 continue;
             }
 
@@ -1321,6 +1347,8 @@ public class ProofWorksheet {
          * =====================================================
          */
 
+        runCallback(CallbackType.WORKSHEET_PARSE);
+
         generateMissingStepLabels();
 
         if (stepRequest != null
@@ -1366,6 +1394,8 @@ public class ProofWorksheet {
         if (!stepsWithLocalRefs.isEmpty())
             makeLocalRefRevisionsToWorksheet(stepsWithLocalRefs);
 
+        runCallback(CallbackType.AFTER_LOCAL_REFS);
+
         loadWorksheetStmtArrays();
 
         if (dvStmtCnt > 0)
@@ -1387,6 +1417,8 @@ public class ProofWorksheet {
          * Compute level numbers for the proof steps.
          */
         loadWorksheetProofLevelNumbers();
+
+        runCallback(CallbackType.AFTER_PARSE);
 
         return nextToken;
 
@@ -2026,5 +2058,15 @@ public class ProofWorksheet {
         for (final ProofWorkStmt x : proofWorkStmtList)
             if (x instanceof DistinctVariablesStmt)
                 dvStmtArray[dv++] = (DistinctVariablesStmt)x;
+    }
+
+    /**
+     * Run a macro callback.
+     *
+     * @param c The type of callback (event trigger)
+     */
+    public void runCallback(final CallbackType c) {
+        if (macroManager != null)
+            macroManager.runCallback(c);
     }
 }

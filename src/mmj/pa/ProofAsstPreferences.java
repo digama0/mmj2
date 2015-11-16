@@ -225,11 +225,13 @@ public class ProofAsstPreferences {
 
         deriveAutocomplete = PaConstants.DERIVE_AUTOCOMPLETE_DEFAULT;
 
-        setDjVarsSoftErrorsOption(PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_DEFAULT);
+        setDjVarsSoftErrorsOption(
+            PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_DEFAULT);
 
         setProofFormatOption(PaConstants.PROOF_ASST_PROOF_COMPRESSED);
 
-        setIncompleteStepCursor(PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_DEFAULT);
+        setIncompleteStepCursor(
+            PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_DEFAULT);
 
         // Note: this default constructor is available for test
         // of ProofAsstGUI in batch mode -- but is
@@ -239,7 +241,7 @@ public class ProofAsstPreferences {
         // eventually result in an exception if not
         // updated with an actual WorkVarmanager. We
         // are *not* invoking the default WorkVarManager()
-        // constructor here because, in all likelyhood,
+        // constructor here because, in all likelihood,
         // all of its work would need to be thrown away
         // and redone with the correct WorkVar settings.
         workVarManager = null;
@@ -249,7 +251,7 @@ public class ProofAsstPreferences {
     }
     /**
      * Set proof folder used for storing proof text areas in ProofAsstGUI.
-     * 
+     *
      * @param proofFolder proof folder used for storing proof text areas
      */
     public void setProofFolder(final File proofFolder) {
@@ -258,7 +260,7 @@ public class ProofAsstPreferences {
 
     /**
      * Get proof folder used for storing proof text areas in ProofAsstGUI.
-     * 
+     *
      * @return proofFolder proof folder used for storing proof text areas
      */
     public File getProofFolder() {
@@ -268,7 +270,7 @@ public class ProofAsstPreferences {
     /**
      * Set startup Proof Worksheet File to be displayed when the ProofAsstGUI is
      * first displayed. in ProofAsstGUI.
-     * 
+     *
      * @param startupProofWorksheetFile File object or null.
      */
     public void setStartupProofWorksheetFile(
@@ -280,7 +282,7 @@ public class ProofAsstPreferences {
     /**
      * Get startup Proof Worksheet File to be displayed when the ProofAsstGUI is
      * first displayed.
-     * 
+     *
      * @return startupProofWorksheetFile File object or null.
      */
     public File getStartupProofWorksheetFile() {
@@ -289,7 +291,7 @@ public class ProofAsstPreferences {
 
     /**
      * Set default file name suffix.
-     * 
+     *
      * @param defaultFileNameSuffix such as ".txt" or ".mmp"
      */
     public void setDefaultFileNameSuffix(final String defaultFileNameSuffix) {
@@ -298,7 +300,7 @@ public class ProofAsstPreferences {
 
     /**
      * Get default file name suffix.
-     * 
+     *
      * @return defaultFileNameSuffix such as ".txt" or ".mmp"
      */
     public String getDefaultFileNameSuffix() {
@@ -313,7 +315,7 @@ public class ProofAsstPreferences {
      * font can be used but symbol alignments may be off.
      * <p>
      * Note: The default is "Monospaced", which works just fine...
-     * 
+     *
      * @param fontFamily for ProofAsstGUI
      */
     public synchronized void setFontFamily(final String fontFamily) {
@@ -322,7 +324,7 @@ public class ProofAsstPreferences {
 
     /**
      * Get Font Family Name used in ProofAsstGUI.
-     * 
+     *
      * @return font family name used in ProofAsstGUI.
      */
     public synchronized String getFontFamily() {
@@ -333,7 +335,7 @@ public class ProofAsstPreferences {
      * Set Font style to bold or regular.
      * <p>
      * Note: The default is "Bold", which seems excellent to me.
-     * 
+     *
      * @param fontBold yes or no parameter.
      */
     public synchronized void setFontBold(final boolean fontBold) {
@@ -342,7 +344,7 @@ public class ProofAsstPreferences {
 
     /**
      * Get Font Bold style parameter used in ProofAsstGUI.
-     * 
+     *
      * @return fontBold yes or no.
      */
     public synchronized boolean getFontBold() {
@@ -358,7 +360,7 @@ public class ProofAsstPreferences {
      * those settings propagate to these ProofAsstPreferences (but are not
      * stored externally for use in the next session -- permanent setting should
      * be made in the RunParm file.)
-     * 
+     *
      * @param fontSize font size for ProofAsstGUI
      */
     public synchronized void setFontSize(final int fontSize) {
@@ -367,7 +369,7 @@ public class ProofAsstPreferences {
 
     /**
      * Get font size used in ProofAsstGUI.
-     * 
+     *
      * @return fontSize font size for ProofAsstGUI.
      */
     public synchronized int getFontSize() {
@@ -376,7 +378,7 @@ public class ProofAsstPreferences {
 
     /**
      * Set line spacing used in ProofAsstGUI.
-     * 
+     *
      * @param lineSpacing line spacing for ProofAsstGUI
      */
     public synchronized void setLineSpacing(final float lineSpacing) {
@@ -385,7 +387,7 @@ public class ProofAsstPreferences {
 
     /**
      * Get font size used in ProofAsstGUI.
-     * 
+     *
      * @return fontSize font size for ProofAsstGUI.
      */
     public synchronized float getLineSpacing() {
@@ -398,7 +400,7 @@ public class ProofAsstPreferences {
      * If line wrap is on then Newlines (carraige returns) will not be used to
      * split formulas. Instead, space characters will be written to fill out the
      * remaining text columns on the line.
-     * 
+     *
      * @param lineWrap setting, on or off.
      */
     public void setLineWrap(final boolean lineWrap) {
@@ -407,7 +409,7 @@ public class ProofAsstPreferences {
 
     /**
      * Get the current lineWrap setting.
-     * 
+     *
      * @return lineWrap setting.
      */
     public boolean getLineWrap() {
@@ -422,7 +424,7 @@ public class ProofAsstPreferences {
      * <p>
      * A formula can be longer than this number, and the Frame should scroll --
      * assuming that lineWrap is off and there are no NewLines.
-     * 
+     *
      * @param textColumns number of text columns.
      */
     public void setTextColumns(final int textColumns) {
@@ -437,7 +439,7 @@ public class ProofAsstPreferences {
      * <p>
      * A formula can be longer than this number, and the Frame should scroll --
      * assuming that lineWrap is off and there are no NewLines.
-     * 
+     *
      * @return number of text columns used to display formulas.
      */
     public int getTextColumns() {
@@ -446,7 +448,7 @@ public class ProofAsstPreferences {
 
     /**
      * Set number of text rows used to display formulas.
-     * 
+     *
      * @param textRows number of text rows.
      */
     public void setTextRows(final int textRows) {
@@ -455,7 +457,7 @@ public class ProofAsstPreferences {
 
     /**
      * Get number of text rows used to display formulas.
-     * 
+     *
      * @return number of text rows used to display formulas.
      */
     public int getTextRows() {
@@ -464,7 +466,7 @@ public class ProofAsstPreferences {
 
     /**
      * Set number of error message rows on the ProofAsstGUI.
-     * 
+     *
      * @param errorMessageRows number of error message rows.
      */
     public void setErrorMessageRows(final int errorMessageRows) {
@@ -473,7 +475,7 @@ public class ProofAsstPreferences {
 
     /**
      * Get number of error message rows on the ProofAsstGUI.
-     * 
+     *
      * @return number of error message rows
      */
     public int getErrorMessageRows() {
@@ -482,7 +484,7 @@ public class ProofAsstPreferences {
 
     /**
      * Set number of error message columns on the ProofAsstGUI.
-     * 
+     *
      * @param errorMessageColumns number of error message columns.
      */
     public void setErrorMessageColumns(final int errorMessageColumns) {
@@ -491,7 +493,7 @@ public class ProofAsstPreferences {
 
     /**
      * Get number of error message columns on the ProofAsstGUI.
-     * 
+     *
      * @return number of of error message columns
      */
     public int getErrorMessageColumns() {
@@ -500,7 +502,7 @@ public class ProofAsstPreferences {
 
     /**
      * Set Proof Maximized option for ProofAsstGUI.
-     * 
+     *
      * @param maximized true to maximize the view on startup
      */
     public void setMaximized(final boolean maximized) {
@@ -509,7 +511,7 @@ public class ProofAsstPreferences {
 
     /**
      * Get Proof Maximized option for ProofAsstGUI.
-     * 
+     *
      * @return the value
      */
     public boolean getMaximized() {
@@ -518,7 +520,7 @@ public class ProofAsstPreferences {
 
     /**
      * Set Proof Text At Top option for ProofAsstGUI.
-     * 
+     *
      * @param textAtTop true to put the main view at the top and messages below.
      */
     public void setTextAtTop(final boolean textAtTop) {
@@ -527,7 +529,7 @@ public class ProofAsstPreferences {
 
     /**
      * Get Proof Text At Top option for ProofAsstGUI.
-     * 
+     *
      * @return the value
      */
     public boolean getTextAtTop() {
@@ -536,7 +538,7 @@ public class ProofAsstPreferences {
 
     /**
      * Set formula left column used in formatting proof text areas.
-     * 
+     *
      * @param formulaLeftCol formula LeftCol used for formatting formula text
      *            areas
      */
@@ -546,7 +548,7 @@ public class ProofAsstPreferences {
 
     /**
      * Get formula left column used in formatting proof text areas.
-     * 
+     *
      * @return formulaLeftCol formula LeftCol used for formatting formula text
      *         areas
      */
@@ -556,7 +558,7 @@ public class ProofAsstPreferences {
 
     /**
      * Set formula right column used in formatting proof text areas.
-     * 
+     *
      * @param formulaRightCol formula RightCol used for formatting formula text
      *            areas
      */
@@ -566,7 +568,7 @@ public class ProofAsstPreferences {
 
     /**
      * Get formula right column used in formatting proof text areas.
-     * 
+     *
      * @return formulaRightCol formula RightCol used for formatting formula text
      *         areas
      */
@@ -577,7 +579,7 @@ public class ProofAsstPreferences {
     /**
      * Set left column number for RPN statement labels when creating
      * ProofAsstWorksheet.GeneratedProofStmt
-     * 
+     *
      * @param rpnProofLeftCol left column for RPN label
      */
     public void setRPNProofLeftCol(final int rpnProofLeftCol) {
@@ -587,7 +589,7 @@ public class ProofAsstPreferences {
     /**
      * Get left column number for RPN statement labels when creating
      * ProofAsstWorksheet.GeneratedProofStmt
-     * 
+     *
      * @return rpnProofLeftCol left column or RPN label
      */
     public int getRPNProofLeftCol() {
@@ -597,7 +599,7 @@ public class ProofAsstPreferences {
     /**
      * Set right column number for RPN statement labels when creating
      * ProofAsstWorksheet.GeneratedProofStmt
-     * 
+     *
      * @param rpnProofRightCol right column for RPN label
      */
     public void setRPNProofRightCol(final int rpnProofRightCol) {
@@ -607,7 +609,7 @@ public class ProofAsstPreferences {
     /**
      * Get right column number for RPN statement labels when creating
      * ProofAsstWorksheet.GeneratedProofStmt
-     * 
+     *
      * @return rpnProofRightCol right column or RPN label
      */
     public int getRPNProofRightCol() {
@@ -618,7 +620,7 @@ public class ProofAsstPreferences {
      * Set on/off indicator instructing Proof Assistant to double-check every
      * proof steps generated proof tree using the Proof Engine
      * (mmj.verify.VerifyProofs.java).
-     * 
+     *
      * @param value the new value
      */
     public void setRecheckProofAsstUsingProofVerifier(final boolean value) {
@@ -629,7 +631,7 @@ public class ProofAsstPreferences {
      * Get on/off indicator instructing Proof Assistant to double-check every
      * proof steps generated proof tree using the Proof Engine
      * (mmj.verify.VerifyProofs.java).
-     * 
+     *
      * @return recheckProofAsstUsingProofVerifier
      */
     public boolean getRecheckProofAsstUsingProofVerifier() {
@@ -644,7 +646,7 @@ public class ProofAsstPreferences {
      * which is triggered via BatchMMJ2 "RunParm ProofAsstExportToFile" as well
      * as the "ProofAsstBatchTest" (the latter when no input file is specified
      * and an "export to memory" is implicitly requested.)
-     * 
+     *
      * @param exportFormatUnified yes/no.
      */
     public void setExportFormatUnified(final boolean exportFormatUnified) {
@@ -659,7 +661,7 @@ public class ProofAsstPreferences {
      * which is triggered via BatchMMJ2 "RunParm ProofAsstExportToFile" as well
      * as the "ProofAsstBatchTest" (the latter when no input file is specified
      * and an "export to memory" is implicitly requested.)
-     * 
+     *
      * @return exportFormatUnified yes/no.
      */
     public boolean getExportFormatUnified() {
@@ -674,7 +676,7 @@ public class ProofAsstPreferences {
      * which is triggered via BatchMMJ2 "RunParm ProofAsstExportToFile" as well
      * as the "ProofAsstBatchTest" (the latter when no input file is specified
      * and an "export to memory" is implicitly requested.)
-     * 
+     *
      * @param exportHypsOrder the order.
      */
     public void setExportHypsOrder(final HypsOrder exportHypsOrder) {
@@ -689,7 +691,7 @@ public class ProofAsstPreferences {
      * which is triggered via BatchMMJ2 "RunParm ProofAsstExportToFile" as well
      * as the "ProofAsstBatchTest" (the latter when no input file is specified
      * and an "export to memory" is implicitly requested.)
-     * 
+     *
      * @return ExportHypsRandomized
      */
     public HypsOrder getExportHypsOrder() {
@@ -705,7 +707,7 @@ public class ProofAsstPreferences {
      * which is triggered via BatchMMJ2 "RunParm ProofAsstExportToFile" as well
      * as the "ProofAsstBatchTest" (the latter when no input file is specified
      * and an "export to memory" is implicitly requested.)
-     * 
+     *
      * @param exportDeriveFormulas yes/no.
      */
     public void setExportDeriveFormulas(final boolean exportDeriveFormulas) {
@@ -721,7 +723,7 @@ public class ProofAsstPreferences {
      * which is triggered via BatchMMJ2 "RunParm ProofAsstExportToFile" as well
      * as the "ProofAsstBatchTest" (the latter when no input file is specified
      * and an "export to memory" is implicitly requested.)
-     * 
+     *
      * @return exportDeriveFormulas
      */
     public boolean getExportDeriveFormulas() {
@@ -731,7 +733,7 @@ public class ProofAsstPreferences {
     /**
      * Set on/off indicator instructing the Proof Assistant Batch Test Import to
      * compare generated Dj Vars with the originals.
-     * 
+     *
      * @param importCompareDJs yes/no.
      */
     public void setImportCompareDJs(final boolean importCompareDJs) {
@@ -741,7 +743,7 @@ public class ProofAsstPreferences {
     /**
      * Set on/off indicator instructing the Proof Assistant Batch Test Import to
      * compare generated Dj Vars with the originals.
-     * 
+     *
      * @return importCompareDJs
      */
     public boolean getImportCompareDJs() {
@@ -752,7 +754,7 @@ public class ProofAsstPreferences {
      * Set on/off indicator instructing the Proof Assistant Batch Test Import to
      * update the originals that are stored in memory (does not update the .mm
      * file though.)
-     * 
+     *
      * @param importUpdateDJs yes/no.
      */
     public void setImportUpdateDJs(final boolean importUpdateDJs) {
@@ -763,7 +765,7 @@ public class ProofAsstPreferences {
      * Set on/off indicator instructing the Proof Assistant Batch Test Import to
      * update the originals that are stored in memory (does not update the .mm
      * file though.)
-     * 
+     *
      * @return importUpdateDJs
      */
     public boolean getImportUpdateDJs() {
@@ -777,7 +779,7 @@ public class ProofAsstPreferences {
      * This feature is primarily needed for redundant theorems that are carried
      * in a Metamath database because they have a different proof (other
      * possibilities exist.)
-     * 
+     *
      * @param unifySearchExclude array
      */
     public void setUnifySearchExclude(final Assrt[] unifySearchExclude) {
@@ -791,7 +793,7 @@ public class ProofAsstPreferences {
      * This feature is primarily needed for redundant theorems that are carried
      * in a Metamath database because they have a different proof (other
      * possibilities exist.)
-     * 
+     *
      * @return unifySearchExclude array
      */
     public Assrt[] getUnifySearchExclude() {
@@ -806,7 +808,7 @@ public class ProofAsstPreferences {
      * the number were very large a hash table could be used, but the array is
      * searched only during the first pass through the LogicalSystem Statement
      * Table (see ProofUnifier.java).
-     * 
+     *
      * @param assrt the given assertion
      * @return true if assertion should be excluded
      */
@@ -820,7 +822,7 @@ public class ProofAsstPreferences {
     /**
      * Sets boolean value enabling or disabling "instrumentation" of the
      * OutputCursor for regression testing.
-     * 
+     *
      * @param outputCursorInstrumentation true or false.
      */
     public void setOutputCursorInstrumentation(
@@ -832,7 +834,7 @@ public class ProofAsstPreferences {
     /**
      * Gets boolean value enabling or disabling "instrumentation" of the
      * OutputCursor for regression testing.
-     * 
+     *
      * @return outputCursorInstrumentation true or false.
      */
     public boolean getOutputCursorInstrumentation() {
@@ -842,7 +844,7 @@ public class ProofAsstPreferences {
     /**
      * Sets boolean value enabling or disabling AutoReformat of proof step
      * formulas after Work Variables are resolved.
-     * 
+     *
      * @param autoReformat true or false.
      */
     public void setAutoReformat(final boolean autoReformat) {
@@ -852,7 +854,7 @@ public class ProofAsstPreferences {
     /**
      * Gets boolean value enabling or disabling AutoReformat of proof step
      * formulas after Work Variables are resolved.
-     * 
+     *
      * @return autoReformat true or false.
      */
     public boolean getAutoReformat() {
@@ -862,7 +864,7 @@ public class ProofAsstPreferences {
     /**
      * Sets boolean value enabling or disabling use of Undo/Redo Menu Items on
      * the Proof Assistant GUI.
-     * 
+     *
      * @param undoRedoEnabled true or false.
      */
     public void setUndoRedoEnabled(final boolean undoRedoEnabled) {
@@ -872,7 +874,7 @@ public class ProofAsstPreferences {
     /**
      * Gets boolean value enabling or disabling use of Undo/Redo Menu Items on
      * the Proof Assistant GUI.
-     * 
+     *
      * @return undoRedoEnabled true or false.
      */
     public boolean getUndoRedoEnabled() {
@@ -881,7 +883,7 @@ public class ProofAsstPreferences {
 
     /**
      * Sets syntax highlighting for Proof Asst GUI.
-     * 
+     *
      * @param highlightingEnabled true or false
      */
     public void setHighlightingEnabled(final boolean highlightingEnabled) {
@@ -890,7 +892,7 @@ public class ProofAsstPreferences {
 
     /**
      * Gets syntax highlighting for Proof Asst GUI.
-     * 
+     *
      * @return highlightingEnabled true or false
      */
     public boolean getHighlightingEnabled() {
@@ -899,7 +901,7 @@ public class ProofAsstPreferences {
 
     /**
      * Sets syntax highlighting for Proof Asst GUI.
-     * 
+     *
      * @param key The name of one of the styles of the syntax highlighting
      * @param color the foreground color
      * @param bold true for bold, false for plain, null for inherit
@@ -908,7 +910,7 @@ public class ProofAsstPreferences {
      */
     public void setHighlightingStyle(final String key, final Color color,
         final Boolean bold, final Boolean italic)
-        throws IllegalArgumentException
+            throws IllegalArgumentException
     {
         final SimpleAttributeSet style = highlighting.get(key);
         if (style == null) {
@@ -922,18 +924,18 @@ public class ProofAsstPreferences {
 
     /**
      * Gets syntax highlighting for Proof Asst GUI.
-     * 
+     *
      * @param key the token type
      * @return the style settings for the given token type
      */
     public AttributeSet getHighlightingStyle(final String key) {
         final AttributeSet style = highlighting.get(key);
-        return style != null ? style : highlighting
-            .get(PaConstants.PROOF_ASST_STYLE_ERROR);
+        return style != null ? style
+            : highlighting.get(PaConstants.PROOF_ASST_STYLE_ERROR);
     }
     /**
      * Sets foreground color for Proof Asst GUI.
-     * 
+     *
      * @param foregroundColor Color object
      */
     public void setForegroundColor(final Color foregroundColor) {
@@ -942,7 +944,7 @@ public class ProofAsstPreferences {
 
     /**
      * Gets foreground color for Proof Asst GUI.
-     * 
+     *
      * @return foregroundColor Color object
      */
     public Color getForegroundColor() {
@@ -951,7 +953,7 @@ public class ProofAsstPreferences {
 
     /**
      * Sets background color for Proof Asst GUI.
-     * 
+     *
      * @param backgroundColor Color object
      */
     public void setBackgroundColor(final Color backgroundColor) {
@@ -960,7 +962,7 @@ public class ProofAsstPreferences {
 
     /**
      * Gets background color for Proof Asst GUI.
-     * 
+     *
      * @return backgroundColor Color object
      */
     public Color getBackgroundColor() {
@@ -969,7 +971,7 @@ public class ProofAsstPreferences {
 
     /**
      * Set TMFF Prefernces.
-     * 
+     *
      * @param tmffPreferences instance of TMFFPreferences.
      */
     public void setTMFFPreferences(final TMFFPreferences tmffPreferences) {
@@ -978,7 +980,7 @@ public class ProofAsstPreferences {
 
     /**
      * Get TMFF Preferences.
-     * 
+     *
      * @return tmffPreferences instances.
      */
     public TMFFPreferences getTMFFPreferences() {
@@ -987,7 +989,7 @@ public class ProofAsstPreferences {
 
     /**
      * Set WorkVarManager
-     * 
+     *
      * @param workVarManager instance of WorkVarManager.
      */
     public void setWorkVarManager(final WorkVarManager workVarManager) {
@@ -996,7 +998,7 @@ public class ProofAsstPreferences {
 
     /**
      * Get WorkVarManager.
-     * 
+     *
      * @return workVarManager instance.
      */
     public WorkVarManager getWorkVarManager() {
@@ -1005,7 +1007,7 @@ public class ProofAsstPreferences {
 
     /**
      * Set StepUnifier
-     * 
+     *
      * @param stepUnifier instance of StepUnifier or null.
      */
     public void setStepUnifier(final StepUnifier stepUnifier) {
@@ -1014,7 +1016,7 @@ public class ProofAsstPreferences {
 
     /**
      * Get StepUnifier.
-     * 
+     *
      * @return stepUnifier instance.
      */
     public StepUnifier getStepUnifier() {
@@ -1023,7 +1025,7 @@ public class ProofAsstPreferences {
 
     /**
      * Get StepUnifier Instance.
-     * 
+     *
      * @return stepUnifier instance.
      */
     public StepUnifier getStepUnifierInstance() {
@@ -1040,15 +1042,14 @@ public class ProofAsstPreferences {
      * handling.
      * <p>
      * This routine is used by ProofAsstPreferences.
-     * 
+     *
      * @return Soft Dj Vars Error List
      */
     public String getSoftDjErrorOptionListString() {
 
         final StringBuilder sb = new StringBuilder();
 
-        for (int i = 0; i < PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_TABLE.length; i++)
-        {
+        for (int i = 0; i < PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_TABLE.length; i++) {
             sb.append(i + 1);
             sb.append(" - ");
             sb.append(PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_TABLE[i]);
@@ -1064,7 +1065,7 @@ public class ProofAsstPreferences {
      * A simple routine to build a list of all defined Fonts Families.
      * <p>
      * This routine is used by ProofAsstPreferences.
-     * 
+     *
      * @return Font Family List String
      */
     public String getFontListString() {
@@ -1114,7 +1115,7 @@ public class ProofAsstPreferences {
      * A stupid routine to validate a Font Family Name.
      * <p>
      * This routine is used by ProofAsstPreferences.
-     * 
+     *
      * @param familyName font family name, which must be available in
      *            GraphicsEnvironment.getAllFonts().
      * @return Family Name adjust for cap/lower variations.
@@ -1150,7 +1151,7 @@ public class ProofAsstPreferences {
      * as an index.
      * <p>
      * This routine is used by ProofAsstPreferences.
-     * 
+     *
      * @param option number corresponding to Dj Vars Soft Error Option name
      * @return Dj Vars Soft Error Option Name String
      * @throws ProofAsstException if input option number is out of range or is
@@ -1204,8 +1205,8 @@ public class ProofAsstPreferences {
     public String getDjVarsSoftErrorsOptionNbr() {
         final String s = getDjVarsSoftErrorsOption();
         for (int i = 0; i < PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_TABLE.length; i++)
-            if (s
-                .compareTo(PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_TABLE[i]) == 0)
+            if (s.compareTo(
+                PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_TABLE[i]) == 0)
                 return Integer.toString(i + 1);
         throw new IllegalArgumentException("");
     }
@@ -1254,8 +1255,8 @@ public class ProofAsstPreferences {
         // [ ]
         //
 
-        if (s
-            .compareToIgnoreCase(PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_REPLACEMENTS) == 0)
+        if (s.compareToIgnoreCase(
+            PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_REPLACEMENTS) == 0)
         {
 
             djVarsSoftErrorsIgnore = false;
@@ -1268,8 +1269,8 @@ public class ProofAsstPreferences {
             return true; // no error
         }
 
-        if (s
-            .compareToIgnoreCase(PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_NEW) == 0)
+        if (s.compareToIgnoreCase(
+            PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_NEW) == 0)
         {
 
             djVarsSoftErrorsIgnore = false;
@@ -1282,8 +1283,8 @@ public class ProofAsstPreferences {
             return true; // no error
         }
 
-        if (s
-            .compareToIgnoreCase(PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_DIFFERENCES) == 0)
+        if (s.compareToIgnoreCase(
+            PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_DIFFERENCES) == 0)
         {
 
             djVarsSoftErrorsIgnore = false;
@@ -1296,8 +1297,8 @@ public class ProofAsstPreferences {
             return true; // no error
         }
 
-        if (s
-            .compareToIgnoreCase(PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_REPORT) == 0)
+        if (s.compareToIgnoreCase(
+            PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_REPORT) == 0)
         {
 
             djVarsSoftErrorsIgnore = false;
@@ -1311,8 +1312,8 @@ public class ProofAsstPreferences {
             return true; // no error
         }
 
-        if (s
-            .compareToIgnoreCase(PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_IGNORE) == 0)
+        if (s.compareToIgnoreCase(
+            PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_IGNORE) == 0)
         {
 
             djVarsSoftErrorsIgnore = true;
@@ -1345,7 +1346,8 @@ public class ProofAsstPreferences {
             return true; // no error
         }
 
-        if (s.compareToIgnoreCase(PaConstants.PROOF_ASST_PROOF_COMPRESSED) == 0)
+        if (s.compareToIgnoreCase(
+            PaConstants.PROOF_ASST_PROOF_COMPRESSED) == 0)
         {
             proofFormatPacked = true;
             proofFormatCompressed = true;
@@ -1362,7 +1364,7 @@ public class ProofAsstPreferences {
      * The entered number, minus 1, is looked up in
      * PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE using the option
      * number as an index.
-     * 
+     *
      * @param option number corresponding to Incomplete Step Cursor option name
      * @return Incomplete Step Cursor Option Name String
      * @throws ProofAsstException if input option number is out of range or is
@@ -1391,15 +1393,17 @@ public class ProofAsstPreferences {
 
     /**
      * Validates ProofAsstIncompleteStepCursor option and updates.
-     * 
+     *
      * @param s either "First", "Last" or "AsIs".
      * @return true if valid otherwise false.
      */
     public boolean setIncompleteStepCursor(final String s) {
         final boolean first = PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_FIRST
-            .equalsIgnoreCase(s), last = PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_LAST
-            .equalsIgnoreCase(s), asis = PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_ASIS
-            .equalsIgnoreCase(s);
+            .equalsIgnoreCase(s),
+            last = PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_LAST
+                .equalsIgnoreCase(s),
+            asis = PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_ASIS
+                .equalsIgnoreCase(s);
 
         if (first || last || asis) {
             incompleteStepCursor = s;
@@ -1413,7 +1417,7 @@ public class ProofAsstPreferences {
 
     /**
      * Get incompleteStepCursor parameter.
-     * 
+     *
      * @return incompleteStepCursor parameter.
      */
     public String getIncompleteStepCursor() {
@@ -1422,7 +1426,7 @@ public class ProofAsstPreferences {
 
     /**
      * Get incompleteStepCursorFirst parameter.
-     * 
+     *
      * @return incompleteStepCursorFirst parameter.
      */
     public boolean getIncompleteStepCursorFirst() {
@@ -1431,7 +1435,7 @@ public class ProofAsstPreferences {
 
     /**
      * Get incompleteStepCursorLast parameter.
-     * 
+     *
      * @return incompleteStepCursorLast parameter.
      */
     public boolean getIncompleteStepCursorLast() {
@@ -1440,14 +1444,14 @@ public class ProofAsstPreferences {
 
     /**
      * Get current incompleteStepCursor option number.
-     * 
+     *
      * @return incompleteStepCursor option number.
      */
     public String getIncompleteStepCursorOptionNbr() {
         final String s = getIncompleteStepCursor();
         for (int i = 0; i < PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE.length; i++)
-            if (s
-                .compareTo(PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE[i]) == 0)
+            if (s.compareTo(
+                PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE[i]) == 0)
                 return Integer.toString(i + 1);
         throw new IllegalArgumentException("");
     }
@@ -1455,15 +1459,14 @@ public class ProofAsstPreferences {
     /**
      * A simple routine to build a list of all options for Incomplete Step
      * Cursor options.
-     * 
+     *
      * @return Incomplete Step Cursor option list string.
      */
     public String getIncompleteStepCursorOptionListString() {
 
         final StringBuilder sb = new StringBuilder();
 
-        for (int i = 0; i < PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE.length; i++)
-        {
+        for (int i = 0; i < PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE.length; i++) {
             sb.append(i + 1);
             sb.append(" - ");
             sb.append(PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE[i]);
@@ -1479,7 +1482,7 @@ public class ProofAsstPreferences {
      * A stupid routine to validate StepSelectorMaxResults.
      * <p>
      * This routine is used by ProofAsstGUI.
-     * 
+     *
      * @param maxResultsString integer max results for StepSelectorSearch.
      * @return maxResults number.
      * @throws IllegalArgumentException if an error occurred
@@ -1495,18 +1498,17 @@ public class ProofAsstPreferences {
             } catch (final NumberFormatException e) {}
 
         if (n < 1 || n > PaConstants.STEP_SELECTOR_MAX_RESULTS_MAXIMUM)
-            throw new IllegalArgumentException(
-                LangException.format(
-                    PaConstants.ERRMSG_INVALID_STEP_SELECTOR_MAX_RESULTS_NBR,
-                    maxResultsString,
-                    PaConstants.STEP_SELECTOR_MAX_RESULTS_MAXIMUM));
+            throw new IllegalArgumentException(LangException.format(
+                PaConstants.ERRMSG_INVALID_STEP_SELECTOR_MAX_RESULTS_NBR,
+                maxResultsString,
+                PaConstants.STEP_SELECTOR_MAX_RESULTS_MAXIMUM));
 
         return n;
     }
 
     /**
      * Sets maximum number of StepSelector Results.
-     * 
+     *
      * @param stepSelectorMaxResults number
      */
     public void setStepSelectorMaxResults(final int stepSelectorMaxResults) {
@@ -1515,7 +1517,7 @@ public class ProofAsstPreferences {
 
     /**
      * Gets maximum number of StepSelector Results.
-     * 
+     *
      * @return stepSelectorMaxResults number
      */
     public int getStepSelectorMaxResults() {
@@ -1526,7 +1528,7 @@ public class ProofAsstPreferences {
      * A stupid routine to validate StepSelectorShowSubstitutions.
      * <p>
      * This routine is used by ProofAsstGUI.
-     * 
+     *
      * @param showSubstitutionsString yes or no or true or false or on or off.
      * @return boolean true or false
      * @throws IllegalArgumentException if invalid value.
@@ -1549,14 +1551,14 @@ public class ProofAsstPreferences {
         else
             s = " ";
 
-        throw new IllegalArgumentException(LangException.format(
-            PaConstants.ERRMSG_INVALID_BOOLEAN,
-            UtilConstants.RUNPARM_STEP_SELECTOR_SHOW_SUBSTITUTIONS, s));
+        throw new IllegalArgumentException(
+            LangException.format(PaConstants.ERRMSG_INVALID_BOOLEAN,
+                UtilConstants.RUNPARM_STEP_SELECTOR_SHOW_SUBSTITUTIONS, s));
     }
 
     /**
      * Sets StepSelectorShowSubstitutions RunParm option.
-     * 
+     *
      * @param stepSelectorShowSubstitutions option.
      */
     public void setStepSelectorShowSubstitutions(
@@ -1567,7 +1569,7 @@ public class ProofAsstPreferences {
 
     /**
      * Gets StepSelectorShowSubstitutions RunParm option.
-     * 
+     *
      * @return stepSelectorShowSubstitutions option
      */
     public boolean getStepSelectorShowSubstitutions() {
@@ -1576,7 +1578,7 @@ public class ProofAsstPreferences {
 
     /**
      * Sets StepSelectorDialogPaneWidth RunParm option.
-     * 
+     *
      * @param stepSelectorDialogPaneWidth option.
      */
     public void setStepSelectorDialogPaneWidth(
@@ -1587,7 +1589,7 @@ public class ProofAsstPreferences {
 
     /**
      * Gets StepSelectorDialogPaneWidth RunParm option.
-     * 
+     *
      * @return stepSelectorDialogPaneWidth option
      */
     public int getStepSelectorDialogPaneWidth() {
@@ -1596,7 +1598,7 @@ public class ProofAsstPreferences {
 
     /**
      * Sets StepSelectorDialogPaneHeight RunParm option.
-     * 
+     *
      * @param stepSelectorDialogPaneHeight option.
      */
     public void setStepSelectorDialogPaneHeight(
@@ -1607,7 +1609,7 @@ public class ProofAsstPreferences {
 
     /**
      * Gets StepSelectorDialogPaneHeight RunParm option.
-     * 
+     *
      * @return stepSelectorDialogPaneHeight option
      */
     public int getStepSelectorDialogPaneHeight() {
@@ -1616,7 +1618,7 @@ public class ProofAsstPreferences {
 
     /**
      * Sets ProofAsstAssrtListFreespace RunParm option.
-     * 
+     *
      * @param assrtListFreespace option.
      */
     public void setAssrtListFreespace(final int assrtListFreespace) {
@@ -1625,7 +1627,7 @@ public class ProofAsstPreferences {
 
     /**
      * Gets ProofAsstAssrtListFreespace RunParm option.
-     * 
+     *
      * @return proofAsstAssrtListFreespace option
      */
     public int getAssrtListFreespace() {

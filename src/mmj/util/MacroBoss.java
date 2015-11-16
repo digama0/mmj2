@@ -15,13 +15,9 @@
 
 package mmj.util;
 
-import java.io.*;
-import java.util.List;
-
-import javax.script.*;
-
-import mmj.lang.LangException;
 import mmj.lang.VerifyException;
+import mmj.pa.MacroManager;
+import mmj.pa.MacroManager.ExecutionMode;
 
 /**
  * Manages access to the WorkVarManager resource and processes Work Var
@@ -35,11 +31,7 @@ import mmj.lang.VerifyException;
  */
 public class MacroBoss extends Boss {
 
-    private File macroFolder;
-    private String macroExtension;
-    private ScriptEngineFactory factory;
-    private ScriptEngine engine;
-    private FileReader prepMacro;
+    private MacroManager macroManager;
 
     /**
      * Constructor with BatchFramework for access to environment.
@@ -65,7 +57,7 @@ public class MacroBoss extends Boss {
         if (runParm.name
             .compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR.name()) == 0)
         {
-            macroFolder = null;
+            macroManager = null;
             return false; // not "consumed"
         }
 
@@ -90,13 +82,6 @@ public class MacroBoss extends Boss {
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PREP_MACRO.name()) == 0)
-        {
-            setPrepMacro(runParm);
-            return true;
-        }
-
         if (runParm.name
             .compareToIgnoreCase(UtilConstants.RUNPARM_RUN_MACRO.name()) == 0)
         {
@@ -116,9 +101,9 @@ public class MacroBoss extends Boss {
     protected void setMacroFolder(final RunParmArrayEntry runParm)
         throws IllegalArgumentException
     {
-        macroFolder = editExistingFolderRunParm(
-            batchFramework.paths.getMMJ2Path(), runParm,
-            UtilConstants.RUNPARM_MACRO_FOLDER.name(), 1);
+        getMacroManager().setMacroFolder(
+            editExistingFolderRunParm(batchFramework.paths.getMMJ2Path(),
+                runParm, UtilConstants.RUNPARM_MACRO_FOLDER.name(), 1));
     }
 
     /**
@@ -132,33 +117,8 @@ public class MacroBoss extends Boss {
     {
         editRunParmValuesLength(runParm,
             UtilConstants.RUNPARM_MACRO_LANGUAGE.name(), 2);
-        setMacroLanguage(runParm.values[0], runParm.values[1]);
-    }
-
-    protected void setMacroLanguage(final String language,
-        final String extension)
-    {
-        setMacroLanguage(language, extension, LangException
-            .format(UtilConstants.ERRMSG_MACRO_LANGUAGE_MISSING_1, language));
-    }
-
-    private void setMacroLanguage(final String language, final String extension,
-        String errMsg)
-    {
-        final List<ScriptEngineFactory> engineFactories = new ScriptEngineManager()
-            .getEngineFactories();
-        for (final ScriptEngineFactory f : engineFactories) {
-            final List<String> names = f.getNames();
-            if (names.contains(language)) {
-                factory = f;
-                macroExtension = extension;
-                return;
-            }
-            errMsg += LangException.format(
-                UtilConstants.ERRMSG_MACRO_LANGUAGE_MISSING_2,
-                f.getEngineName(), names);
-        }
-        throw new IllegalArgumentException(errMsg);
+        getMacroManager().setMacroLanguage(runParm.values[0],
+            runParm.values[1]);
     }
 
     /**
@@ -173,26 +133,7 @@ public class MacroBoss extends Boss {
     {
         editRunParmValuesLength(runParm, UtilConstants.RUNPARM_RUN_MACRO.name(),
             1);
-        getEngine(runParm.values[0]);
-    }
-
-    /**
-     * Validate Prep Macro RunParm.
-     *
-     * @param runParm run parm parsed into RunParmArrayEntry object
-     * @throws IllegalArgumentException if an error occurred
-     */
-    protected void setPrepMacro(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
-        editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_PREP_MACRO.name(), 1);
-        try {
-            prepMacro = getMacroReader(runParm.values[0]);
-        } catch (final FileNotFoundException e) {
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_PREP_MACRO_DOES_NOT_EXIST);
-        }
+        getMacroManager().getEngine(runParm.values[0]);
     }
 
     /**
@@ -207,76 +148,20 @@ public class MacroBoss extends Boss {
     {
         editRunParmValuesLength(runParm, UtilConstants.RUNPARM_RUN_MACRO.name(),
             1);
-        getEngine();
-        try {
-            engine.put("args", runParm.values);
-            if (prepMacro == null)
-                try {
-                    prepMacro = getMacroReader(
-                        UtilConstants.RUNPARM_OPTION_PREP_MACRO);
-                } catch (final FileNotFoundException e) {}
-            if (prepMacro != null)
-                engine.eval(prepMacro);
-            runMacro(runParm.values[0]);
-        } catch (final ScriptException e) {
-            throw new IllegalArgumentException("Error in PrepMacro", e);
-        }
+        getMacroManager().runMacro(ExecutionMode.RUNPARM, runParm.values);
     }
 
     /**
-     * Run a macro with the given name.
+     * Fetches a reference to the MacroManager, first initializing it if
+     * necessary.
      *
-     * @param name Name of the macro, looked up in macros/ folder
-     * @throws IllegalArgumentException if an error occurred
+     * @return MacroManager object ready to go.
      */
-    public void runMacro(final String name) throws IllegalArgumentException {
-        try {
-            engine.eval(getMacroReader(name));
-        } catch (final FileNotFoundException e) {
-            throw new IllegalArgumentException(e);
-        } catch (final ScriptException e) {
-            throw new IllegalArgumentException(
-                "Error in macro " + name + "\n" + e.getMessage(), e);
-        }
-    }
+    public MacroManager getMacroManager() {
 
-    public ScriptEngine getEngine() {
-        return getEngine(UtilConstants.RUNPARM_OPTION_INIT_MACRO);
-    }
-    public ScriptEngine getEngine(final String initMacro) {
-        if (engine == null) {
-            if (factory == null)
-                setMacroLanguage(UtilConstants.RUNPARM_OPTION_MACRO_LANGUAGE,
-                    UtilConstants.RUNPARM_OPTION_MACRO_EXTENSION,
-                    LangException.format(
-                        UtilConstants.ERRMSG_MACRO_LANGUAGE_DEFAULT_MISSING_1,
-                        UtilConstants.RUNPARM_OPTION_MACRO_LANGUAGE));
-            engine = factory.getScriptEngine();
-            try {
-                engine.put("batchFramework", batchFramework);
-                engine.eval(getMacroReader(initMacro));
-            } catch (final FileNotFoundException e) {
+        if (macroManager == null)
+            macroManager = new MacroManager(batchFramework);
 
-            } catch (final ScriptException e) {
-                throw new IllegalArgumentException(e);
-            }
-        }
-        return engine;
-    }
-
-    private FileReader getMacroReader(String fileNameIn)
-        throws FileNotFoundException
-    {
-        final File filePath = macroFolder == null
-            ? batchFramework.paths.getMMJ2Path() : macroFolder;
-        if (macroExtension != null && !macroExtension.isEmpty()) {
-            final int index = fileNameIn.lastIndexOf('.');
-            if (index == -1)
-                fileNameIn = fileNameIn + "." + macroExtension;
-        }
-        File f = new File(fileNameIn);
-        if (filePath != null && !f.isAbsolute())
-            f = new File(filePath, fileNameIn);
-        return new FileReader(f);
+        return macroManager;
     }
 }

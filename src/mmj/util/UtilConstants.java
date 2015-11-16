@@ -2160,20 +2160,7 @@ public class UtilConstants {
             + "             directory.\n" + " \n" + "      - Examples:\n"
             + "         *       1         2         3         4\n"
             + "         *234567890123456789012345678901234567890\n"
-            + "         RunMacroInitialization,init.js\n" + " </pre>\n" + "\n");
-
-    public static final BatchCommand RUNPARM_PREP_MACRO = new BatchCommand(
-        "PrepMacro",
-        " PrepMacro command.\n" + " \n" + " <pre>\n"
-            + " Sets the given macro as the preparation macro, which is run\n"
-            + " immediately before any call to RunMacro.\n" + "\n"
-            + "  - Value1 = File name.  Path name is relative to the macro/\n"
-            + "             directory. Default is 'prep.js', fails silently\n"
-            + "             if the specified macro does not exist." + " \n"
-            + "      - Examples:\n"
-            + "         *       1         2         3         4\n"
-            + "         *234567890123456789012345678901234567890\n"
-            + "         PrepMacro,prep.js\n" + " </pre>\n" + "\n");
+            + "         RunMacroInitialization,init\n" + " </pre>\n" + "\n");
 
     public static final BatchCommand RUNPARM_RUN_MACRO = new BatchCommand(
         "RunMacro",
@@ -2188,7 +2175,7 @@ public class UtilConstants {
             + " \n" + "      - Examples:\n"
             + "         *       1         2         3         4\n"
             + "         *234567890123456789012345678901234567890\n"
-            + "         RunMacro,echo.js,Hello World\n" + " </pre>\n" + "\n");
+            + "         RunMacro,echo,Hello World\n" + " </pre>\n" + "\n");
 
     // ----------------------------------------------------------
     // Constants mmj.util.TheoremLoaderBoss
@@ -2493,12 +2480,12 @@ public class UtilConstants {
     /**
      * Default initialization macro.
      */
-    public static final String RUNPARM_OPTION_INIT_MACRO = "init.js";
+    public static final String RUNPARM_OPTION_INIT_MACRO = "init";
 
     /**
      * Default preparation macro.
      */
-    public static final String RUNPARM_OPTION_PREP_MACRO = "prep.js";
+    public static final String RUNPARM_OPTION_PREP_MACRO = "prep";
 
     // ----------------------------------------------------------
     // ----------------------------------------------------------
@@ -3312,6 +3299,5 @@ public class UtilConstants {
             RUNPARM_PROOF_ASST_DERIVE_AUTOCOMPLETE,
             RUNPARM_PROOF_ASST_OPTIMIZE_THEOREM_SEARCH,
             RUNPARM_PROOF_ASST_USE_AUTOTRANSFORMATIONS, RUNPARM_MACRO_FOLDER,
-            RUNPARM_MACRO_LANGUAGE, RUNPARM_RUN_MACRO_INIT, RUNPARM_PREP_MACRO,
-            RUNPARM_RUN_MACRO};
+            RUNPARM_MACRO_LANGUAGE, RUNPARM_RUN_MACRO_INIT, RUNPARM_RUN_MACRO};
 }

@@ -532,8 +532,11 @@ public class ProofAsstBoss extends Boss {
             final TheoremLoader theoremLoader = batchFramework.theoremLoaderBoss
                 .getTheoremLoader();
 
+            final MacroManager macroManager = batchFramework.macroBoss
+                .getMacroManager();
+
             proofAsst = new ProofAsst(proofAsstPreferences, logicalSystem,
-                grammar, verifyProofs, theoremLoader);
+                grammar, verifyProofs, theoremLoader, macroManager);
 
             if (!proofAsst.getInitializedOK())
                 proofAsst.initializeLookupTables(messages);
