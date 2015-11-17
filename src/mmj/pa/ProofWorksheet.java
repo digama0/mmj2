@@ -1025,6 +1025,7 @@ public class ProofWorksheet {
         final StepRequest stepRequestIn)
             throws IOException, MMIOError, ProofAsstException
     {
+
         runCallback(CallbackType.BEFORE_PARSE);
 
         /*  If StepSelectorDialog user chose an Assrt

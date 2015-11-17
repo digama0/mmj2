@@ -623,6 +623,12 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 return updateWorksheetWithException(null, -1, -1, -1);
             }
 
+        if (macroManager != null) {
+            macroManager.set("proofText", proofTextEdited);
+            macroManager.runCallback(CallbackType.PREPROCESS);
+            proofTextEdited = (String)macroManager.get("proofText");
+        }
+
         final boolean[] errorFound = new boolean[1];
         final ProofWorksheet proofWorksheet = getParsedProofWorksheet(
             proofTextEdited, errorFound, inputCursorPos, stepRequest);
@@ -1443,6 +1449,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             proofWorksheet = updateWorksheetWithException(proofWorksheet, -1,
                 -1, -1);
         } finally {
+            if (macroManager != null)
+                macroManager.runCallback(CallbackType.PARSE_FAILED);
             if (proofWorksheetParser != null)
                 proofWorksheetParser.closeReader();
         }

@@ -120,6 +120,9 @@
  * The available callback types, arranged roughly in chronological order:
  * BUILD_GUI: (For init.js) After the GUI is built and the proofAsstGUI
  *   variable is valid
+ * PREPROCESS: Preprocessing of the worksheet string. This callback has access
+ *   to a variable proofText, changes to which will be reflected as
+ *   preprocessing actions. 
  * BEFORE_PARSE: Before parsing is started
  * [$m calls happen here, during parsing of the statement loop] 
  * WORKSHEET_PARSE: Once the statement loop finishes and all proof statements

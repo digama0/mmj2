@@ -53,6 +53,7 @@ public class MacroManager {
         this.batchFramework = batchFramework;
         callbacks = new HashMap<CallbackType, Runnable>();
     }
+
     /**
      * Sets the folder in which to find macros.
      *
@@ -99,6 +100,26 @@ public class MacroManager {
     }
 
     /**
+     * Get a named variable's value.
+     *
+     * @param key the variable name
+     * @return The variable value
+     */
+    public Object get(final String key) {
+        return getEngine().get(key);
+    }
+
+    /**
+     * Set a named variable's value.
+     *
+     * @param key the variable name
+     * @param value The variable value
+     */
+    public void set(final String key, final Object value) {
+        getEngine().put(key, value);
+    }
+
+    /**
      * Run a macro given an argument list.
      *
      * @param mode The method in which this macro is getting called (for
@@ -106,13 +127,13 @@ public class MacroManager {
      * @param args The argument list; {@code args[0]} is the macro name.
      * @throws IllegalArgumentException if there are any errors
      */
-    public void runMacro(final ExecutionMode mode, final String[] args)
-        throws IllegalArgumentException
+    public synchronized void runMacro(final ExecutionMode mode,
+        final String[] args) throws IllegalArgumentException
     {
         getEngine();
         try {
-            engine.put("executionMode", mode);
-            engine.put("args", args);
+            set("executionMode", mode);
+            set("args", args);
             if (prepMacro == null)
                 try {
                     prepMacro = getMacroFile(
@@ -145,10 +166,16 @@ public class MacroManager {
      *
      * @param c The type of callback (event trigger)
      */
-    public void runCallback(final CallbackType c) {
+    public synchronized void runCallback(final CallbackType c) {
         final Runnable r = callbacks.get(c);
         if (r != null)
-            r.run();
+            try {
+                r.run();
+            } catch (final Throwable e) {
+                e.printStackTrace();
+                batchFramework.outputBoss.getMessages().accumErrorMessage(
+                    "Error in callback " + c + ":\n" + e.getMessage(), e);
+            }
     }
 
     /**
@@ -157,7 +184,7 @@ public class MacroManager {
      * @param macroStmt The macro statement (from e.g. a proof worksheet)
      * @throws IllegalArgumentException if there are any errors
      */
-    public void runMacro(final MacroStmt macroStmt)
+    public synchronized void runMacro(final MacroStmt macroStmt)
         throws IllegalArgumentException
     {
         getEngine().put("macroStmt", macroStmt);
@@ -171,7 +198,9 @@ public class MacroManager {
      * @param name Name of the macro, looked up in macros/ folder
      * @throws IllegalArgumentException if an error occurred
      */
-    public void runMacroRaw(final String name) throws IllegalArgumentException {
+    public synchronized void runMacroRaw(final String name)
+        throws IllegalArgumentException
+    {
         try {
             engine.eval(new FileReader(getMacroFile(name)));
         } catch (final FileNotFoundException e) {
@@ -190,7 +219,9 @@ public class MacroManager {
      * @return the return value of the evaluation
      * @throws ScriptException if an error occurred
      */
-    public Object evalRaw(final String code) throws ScriptException {
+    public synchronized Object evalRaw(final String code)
+        throws ScriptException
+    {
         return engine.eval(code);
     }
 
@@ -208,7 +239,7 @@ public class MacroManager {
                         UtilConstants.RUNPARM_OPTION_MACRO_LANGUAGE));
             engine = factory.getScriptEngine();
             try {
-                engine.put("batchFramework", batchFramework);
+                set("batchFramework", batchFramework);
                 engine.eval(new FileReader(getMacroFile(initMacro)));
             } catch (final FileNotFoundException e) {
 
@@ -240,8 +271,8 @@ public class MacroManager {
     }
 
     public enum CallbackType {
-        BUILD_GUI, BEFORE_PARSE, WORKSHEET_PARSE, AFTER_LOCAL_REFS, AFTER_PARSE,
-        AFTER_REFORMAT, AFTER_RENUMBER, AFTER_UNIFY_REFS, AFTER_UNIFY_EMPTY,
-        AFTER_UNIFY_AUTO, AFTER_UNIFY
+        BUILD_GUI, PREPROCESS, BEFORE_PARSE, WORKSHEET_PARSE, AFTER_LOCAL_REFS,
+        AFTER_PARSE, PARSE_FAILED, AFTER_REFORMAT, AFTER_RENUMBER,
+        AFTER_UNIFY_REFS, AFTER_UNIFY_EMPTY, AFTER_UNIFY_AUTO, AFTER_UNIFY
     }
 }
