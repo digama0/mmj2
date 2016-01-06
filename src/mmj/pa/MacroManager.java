@@ -55,6 +55,16 @@ public class MacroManager {
     }
 
     /**
+     * Gets the folder in which to find macros.
+     * 
+     * @return
+     * @return the folder
+     */
+    public File getMacroFolder() {
+        return macroFolder;
+    }
+
+    /**
      * Sets the folder in which to find macros.
      *
      * @param folder the folder

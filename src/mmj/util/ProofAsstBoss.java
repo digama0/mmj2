@@ -81,6 +81,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import mmj.lang.*;
 import mmj.mmio.MMIOException;
 import mmj.pa.*;
+import mmj.pa.MacroManager.ExecutionMode;
 import mmj.tl.TheoremLoader;
 import mmj.verify.*;
 
@@ -481,6 +482,14 @@ public class ProofAsstBoss extends Boss {
                 .name()) == 0)
         {
             editProofAsstStartupProofWorksheet(runParm);
+            return true;
+        }
+
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_SET_MM_DEFINITIONS_CHECK.name()) == 0)
+        {
+            // DEPRECATED
+            doSetMMDefinitionsCheck(runParm);
             return true;
         }
 
@@ -1637,6 +1646,31 @@ public class ProofAsstBoss extends Boss {
             preprocessRequest);
 
         batchFramework.outputBoss.printAndClearMessages();
+    }
+
+    /**
+     * Run the set.mm definition check.
+     *
+     * @param runParm RunParmFile line.
+     * @throws VerifyException if an error occurred
+     * @deprecated Use {@link MacroManager#runMacro(ExecutionMode, String[])}
+     *             with macro {@code definitionCheck}.
+     */
+    @Deprecated
+    public void doSetMMDefinitionsCheck(final RunParmArrayEntry runParm)
+        throws VerifyException
+    {
+        final MacroManager macroManager = batchFramework.macroBoss
+            .getMacroManager();
+        if (macroManager.getMacroFolder() == null)
+            macroManager.setMacroFolder(buildFileObjectForExistingFolder(
+                batchFramework.paths.getMMJ2Path(),
+                UtilConstants.RUNPARM_SET_MM_DEFINITIONS_CHECK.name(),
+                "macros"));
+        final String[] args = new String[runParm.values.length + 1];
+        args[0] = "definitionCheck";
+        System.arraycopy(runParm.values, 0, args, 1, runParm.values.length);
+        macroManager.runMacro(ExecutionMode.RUNPARM, args);
     }
 
     private PreprocessRequest editPreprocessRequestOption(final String s,

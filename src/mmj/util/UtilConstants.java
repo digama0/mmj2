@@ -1530,6 +1530,20 @@ public class UtilConstants {
     // request
     // name
 
+    public static final BatchCommand RUNPARM_SET_MM_DEFINITIONS_CHECK = new BatchCommand(
+        "SetMMDefinitionsCheckWithExclusions",
+        " SetMMDefinitionsCheckWithExclusions\n" + " <p>\n" + " <pre> \n"
+            + " \"SetMMDefinitionsCheckWithExclusions\":\n"
+            + "     options = Assrt labels, comma separated, with * wildcard\n"
+            + " </pre>\n" + " <p>\n"
+            + " This option runs a soundness check on all axioms in the database, except\n"
+            + " those specified in the list. Recommended exclusions are\n"
+            + " <code>ax-*,df-bi,df-clab,df-cleq,df-clel</code>, which will always fail the\n"
+            + " check.\n" + " <p>\n"
+            + " This RunParm option is deprecated; its functionality has been replaced by\n"
+            + " <code>RunMacro,definitionCheck,...</code> with the same arguments.\n"
+            + "\n");
+
     public static final BatchCommand RUNPARM_PROOF_ASST_UNIFY_SEARCH_EXCLUDE = new BatchCommand(
         "ProofAsstUnifySearchExclude", // options
         " ProofAsstUnifySearchExclude\n" + " <p>\n" + " <code> \n"
