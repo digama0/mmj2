@@ -891,6 +891,12 @@ public class UtilConstants {
     // Commands for mmj.lang.SyntaxVerifier.java interface
     // ----------------------------------------------------------
 
+    public static final BatchCommand RUNPARM_SET_PARSER = new BatchCommand(
+        "SetParser", // no
+        " SetParser.\n" + " \n" + " <pre>\n"
+            + " \"SetParser\": fully qualified parser implementation class name.\n"
+            + " </pre>\n" + "\n");
+
     public static final BatchCommand RUNPARM_PARSE = new BatchCommand("Parse", // "*"
                                                                                // or
                                                                                // Stmt.label
@@ -2718,6 +2724,9 @@ public class UtilConstants {
 
     public static final String ERRMSG_PARSE_RPN_1 = "I-UT-0031 Parse RPN for Statement ";
     public static final String ERRMSG_PARSE_RPN_2 = " = ";
+
+    public static final String ERRMSG_RUNPARM_PARSER_BAD_CLASS = "I-UT-0032 "
+        + "Class %s does not exist or is not an implementation of mmj.verify.GrammaticalParser";
 
     // ----------------------------------------------------------
     // Messages from LogicalSystemBoss.java

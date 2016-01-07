@@ -175,7 +175,7 @@ public class EarleyParser implements GrammaticalParser {
     /**
      * Construct using reference to Grammar and a parameter signifying the
      * maximum length of a formula in the database.
-     * 
+     *
      * @param grammarIn Grammar object
      * @param maxFormulaLengthIn gives us a hint about what to expect.
      */
@@ -208,7 +208,7 @@ public class EarleyParser implements GrammaticalParser {
      * <p>
      * The user can control whether or not the first successful parse is
      * returned by passing in an array of length = 1.
-     * 
+     *
      * @param parseTreeArrayIn holds generated ParseTrees, therefore, length
      *            must be greater than 0. The user can control whether or not
      *            the first successful parse is returned by passing in an array
@@ -283,9 +283,8 @@ public class EarleyParser implements GrammaticalParser {
                         GrammarConstants.ERRMSG_MAX_RETRIES_EXCEEDED_1
                             + GrammarConstants.MAX_PARSE_RETRIES
                             + GrammarConstants.ERRMSG_MAX_RETRIES_EXCEEDED_2);
-                System.err
-                    .println(GrammarConstants.ERRMSG_RETRY_TO_BE_INITIATED
-                        + e.getMessage());
+                System.err.println(GrammarConstants.ERRMSG_RETRY_TO_BE_INITIATED
+                    + e.getMessage());
                 reInitArrays(retryCnt);
             }
 
@@ -308,7 +307,7 @@ public class EarleyParser implements GrammaticalParser {
      * Type Codes, which includes the Logical Statement Type Codes (eg. if
      * Formula Type Code is "wff" then if there is a Nulls Permitted Rule for
      * "wff", return that, else no parse is possible.)
-     * 
+     *
      * @return parse count -- number of parse trees generated.
      */
     private int EarleyParserSpecialCase1() {
@@ -352,7 +351,7 @@ public class EarleyParser implements GrammaticalParser {
      * when parsing a Metamath database in its entirety, we do not send variable
      * hypotheses through the parser, therefore we ignore that scenario in this
      * special case.)
-     * 
+     *
      * @return parse count -- number of parse trees generated.
      */
     private int EarleyParserSpecialCase2() {
@@ -363,9 +362,8 @@ public class EarleyParser implements GrammaticalParser {
             parseTreeArray[parseCnt++] = new ParseTree(
                 parseNodeHolderExpr[0].parseNode);
         else {
-            gR = formulaTyp
-                .findFromTypConversionRule(((VarHyp)parseNodeHolderExpr[0].mObj)
-                    .getTyp());
+            gR = formulaTyp.findFromTypConversionRule(
+                ((VarHyp)parseNodeHolderExpr[0].mObj).getTyp());
             if (gR != null && gR.getMaxSeqNbr() <= highestSeq)
                 parseTreeArray[parseCnt++] = new ParseTree(
                     gR.buildGrammaticalParseNode(parseNodeHolderExpr));
@@ -382,7 +380,7 @@ public class EarleyParser implements GrammaticalParser {
      * Expression with just one symbol ("T.") and the symbol is a "gimme" so
      * don't send it through the entire Earley Parse, just build the parse tree
      * and exit!
-     * 
+     *
      * @param cnst the Cnst
      * @throws VerifyException if an error occurs
      */
@@ -398,10 +396,10 @@ public class EarleyParser implements GrammaticalParser {
 
         final NotationRule notationRule = cnst.getLen1CnstNotationRule();
         if (notationRule != null &&
-        // notationRule.getIsGimmeMatchNbr() == 1 &&
-        // don't need to check gimmeMatchNbr because expression
-        // length is one so this is the only possible parse...
-            notationRule.getMaxSeqNbr() <= highestSeq)
+            // notationRule.getIsGimmeMatchNbr() == 1 &&
+            // don't need to check gimmeMatchNbr because expression
+            // length is one so this is the only possible parse...
+        notationRule.getMaxSeqNbr() <= highestSeq)
             parseTreeArray[parseCnt++] = new ParseTree(
                 notationRule.buildGrammaticalParseNode(emptyParamArray));
         return;
@@ -431,8 +429,8 @@ public class EarleyParser implements GrammaticalParser {
                     notationRule.getMaxSeqNbr() <= highestSeq)
                 {
 
-                    expr[dest] = new ParseNodeHolder(
-                        notationRule.buildGrammaticalParseNode(emptyParamArray));
+                    expr[dest] = new ParseNodeHolder(notationRule
+                        .buildGrammaticalParseNode(emptyParamArray));
 
                     continue;
                 }
@@ -464,8 +462,7 @@ public class EarleyParser implements GrammaticalParser {
             }
             else
                 throw new IllegalStateException(
-                    GrammarConstants.ERRMSG_START_RULE_TYPE_UNDEF_1
-                        + formulaTyp
+                    GrammarConstants.ERRMSG_START_RULE_TYPE_UNDEF_1 + formulaTyp
                         + GrammarConstants.ERRMSG_START_RULE_TYPE_UNDEF_2);
         }
         else {
@@ -507,7 +504,7 @@ public class EarleyParser implements GrammaticalParser {
 // */
 
         if (earleyCnt == 0 && p <= pLast)
-            parseCnt = (p - 1) * -1;
+            parseCnt = 1 - p;
         else
             buildTrees();
     }
@@ -565,8 +562,8 @@ public class EarleyParser implements GrammaticalParser {
                      * code checked for == (equal) and that excluded far too
                      * many -- the valid ones! haha. OK, here goes...
                      */
-                    if (ruleExprFirstSym == nextSym
-                        || ruleExprFirstSym.earleyFIRSTContainsSymbol(nextSym))
+                    if (ruleExprFirstSym == nextSym || ruleExprFirstSym
+                        .earleyFIRSTContainsSymbol(nextSym))
                     {
                         addPredictionToItemSet(currPos, // itemset nbr
                             notationRule, // rule
@@ -618,8 +615,7 @@ public class EarleyParser implements GrammaticalParser {
         int qMax = pCompletedItemSetCnt[currPos];
         while (true) {
 
-            for (pCompletedItemSetIndex = qStart; pCompletedItemSetIndex < qMax; pCompletedItemSetIndex++)
-            {
+            for (pCompletedItemSetIndex = qStart; pCompletedItemSetIndex < qMax; pCompletedItemSetIndex++) {
                 completedItem = completedItemSet[pCompletedItemSetIndex];
                 mMinus1 = completedItem.atIndex - 1;
                 typR = completedItem.rule.getGrammarRuleTyp();
@@ -709,7 +705,8 @@ public class EarleyParser implements GrammaticalParser {
     }
 
     private void addActiveItemToItemSet(final int outputSetNbr,
-        final EarleyItem oldItem, final int newDotIndex, final Cnst newAfterDot)
+        final EarleyItem oldItem, final int newDotIndex,
+        final Cnst newAfterDot)
     {
 // /*
 //      System.out.println(
@@ -769,7 +766,8 @@ public class EarleyParser implements GrammaticalParser {
         pPredictorTyp[pPredictorTypCnt++] = typ;
     }
 
-    private boolean addToBringForwardTypSet(final int prevSetNbr, final Cnst typ)
+    private boolean addToBringForwardTypSet(final int prevSetNbr,
+        final Cnst typ)
     {
         final Cnst[] bringForwardTyp = pBringForwardTyp[prevSetNbr];
         for (int i = 0; i < pBringForwardTypCnt[prevSetNbr]; i++)
@@ -854,7 +852,8 @@ public class EarleyParser implements GrammaticalParser {
         }
     }
 
-    private void addTypToRuleTypAndFIRSTTyp(final Cnst typ, final Cnst firstTyp)
+    private void addTypToRuleTypAndFIRSTTyp(final Cnst typ,
+        final Cnst firstTyp)
     {
         int i = 0;
         while (true)
@@ -967,8 +966,10 @@ public class EarleyParser implements GrammaticalParser {
          * Hmmmmm...better safe than sorry.
          */
         int hardFailureMaximum;
-        if (grammar.getNotationGRSet().size() < GrammarConstants.EARLEY_PARSE_MIN_ITEMSET_MAXIMUM)
-            hardFailureMaximum = 2 * GrammarConstants.EARLEY_PARSE_MIN_ITEMSET_MAXIMUM;
+        if (grammar.getNotationGRSet()
+            .size() < GrammarConstants.EARLEY_PARSE_MIN_ITEMSET_MAXIMUM)
+            hardFailureMaximum = 2
+                * GrammarConstants.EARLEY_PARSE_MIN_ITEMSET_MAXIMUM;
         else
             hardFailureMaximum = 2 * grammar.getNotationGRSet().size();
 
@@ -996,8 +997,8 @@ public class EarleyParser implements GrammaticalParser {
                         + pCompletedItemSetMax
                         + GrammarConstants.ERRMSG_EARLEY_C_ITEMSET_OVERFLOW_2);
 
-        initArrays(pMax, pItemSetMax, pCompletedItemSetMax,
-            pBringForwardTypMax, pPredictorTypMax);
+        initArrays(pMax, pItemSetMax, pCompletedItemSetMax, pBringForwardTypMax,
+            pPredictorTypMax);
 
     }
 
@@ -1101,7 +1102,8 @@ public class EarleyParser implements GrammaticalParser {
         ParseNodeHolder firstRootHolder;
         ParseNodeHolder nextRootHolder;
         final ParseNodeHolder[] convParam = new ParseNodeHolder[1];
-        itemLoop: for (int i = pCompletedItemSetCnt[exprThru] - 1; i >= 0; i--)
+        itemLoop: for (int i = pCompletedItemSetCnt[exprThru]
+            - 1; i >= 0; i--)
         {
             earleyItem = completedSet[i];
             if (earleyItem.atIndex != exprFrom
@@ -1136,7 +1138,8 @@ public class EarleyParser implements GrammaticalParser {
                 else {
                     convParam[0] = nextRootHolder;
                     parseTreeArray[parseCnt++] = new ParseTree(
-                        typeConversionRule.buildGrammaticalParseNode(convParam));
+                        typeConversionRule
+                            .buildGrammaticalParseNode(convParam));
                 }
                 if (parseCnt >= parseTreeArray.length)
                     break itemLoop;
@@ -1244,7 +1247,7 @@ public class EarleyParser implements GrammaticalParser {
 
         /**
          * creates rule map
-         * 
+         *
          * @param itemIndex Index into completedItemSet[exprThru] of EarleyItem
          * @param exprFrom Index location of start of parameter
          * @param exprThru Index location of end of parameter
@@ -1260,7 +1263,7 @@ public class EarleyParser implements GrammaticalParser {
 
         /**
          * initializes hypMap[i] within a rule map.
-         * 
+         *
          * @param hypPos index in ruleFormatExpression where a sub-map must be
          *            constructed.
          * @param ruleFormatExpr expression from grammar rule.
@@ -1376,7 +1379,7 @@ public class EarleyParser implements GrammaticalParser {
          * Note: as written, this routine doesn't track the twinTreesCnt or
          * twinTreesNeeded variables -- it *assumes* that the routine that
          * generated these twins has already done so. Uh oh :)
-         * 
+         *
          * @param rule the GrammarRule
          */
         private void updateParseNodeHolderWithParams(final GrammarRule rule) {
@@ -1429,8 +1432,7 @@ public class EarleyParser implements GrammaticalParser {
                  */
                 spin = hypMap.length - 1;
                 do {
-                    if (paramArray[spin].fwd != hypMap[spin].firstParseNodeHolder)
-                    {
+                    if (paramArray[spin].fwd != hypMap[spin].firstParseNodeHolder) {
                         paramArray[spin] = paramArray[spin].fwd;
                         carry = false;
                         break;
@@ -1461,7 +1463,7 @@ public class EarleyParser implements GrammaticalParser {
          * {@code EarleyRuleMap} elements may themselves require deeper
          * mappings. The reason for breadth-first is that want to quickly
          * determine the invalid hypothesis mappings.
-         * 
+         *
          * @param hypMap (i/o parameter) array to be loaded
          * @param rule The GrammarRule matched by the EarleyParser to a
          *            subsequence of {@code expr}
@@ -1698,7 +1700,8 @@ public class EarleyParser implements GrammaticalParser {
              * expr.
              */
             if (expr[hypMapEntry.exprThru].mObj instanceof Cnst
-                || expr[hypMapEntry.exprThru].parseNode.getStmt().getTyp() != hypMapEntry.typ)
+                || expr[hypMapEntry.exprThru].parseNode.getStmt()
+                    .getTyp() != hypMapEntry.typ)
                 return false;
 
             if (mapIndex == 0)

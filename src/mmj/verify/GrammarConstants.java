@@ -456,15 +456,9 @@ public class GrammarConstants {
         + " Unambiguous because every Notation Grammar Rule"
         + " is a 'Gimme Match'. and no other grammar errors" + " were found.";
 
-    public static final String ERRMSG_NOTATION_VARHYP_NOTFND_1 = "A-GR-0048 Oops! Creating a NotationRule from"
-        + " existing NotationRule with baseSyntaxAxiom Label = ";
-    public static final String ERRMSG_NOTATION_VARHYP_NOTFND_2 = ", but cannot locate the new VarHyp ParseNode!";
-
-    public static final String ERRMSG_NOTATION_VARHYP_2_NOTFND_1 = "A-GR-0049 Oops! Creating a NotationRule from"
-        + " existing NotationRule with baseSyntaxAxiom Label = ";
-    public static final String ERRMSG_NOTATION_VARHYP_2_NOTFND_2 = ", paramVarHypNode nbr = ";
-    public static final String ERRMSG_NOTATION_VARHYP_2_NOTFND_3 = ", new paramTransformationTree = ";
-    public static final String ERRMSG_NOTATION_VARHYP_2_NOTFND_4 = ". Cannot locate new VarHyp ParseNode!";
+    public static final String ERRMSG_NOTATION_VARHYP_NOTFND = "A-GR-0048 Oops! Creating a NotationRule from"
+        + " existing NotationRule with baseSyntaxAxiom %s, paramVarHypNode nbr %d, new paramTransformationTree"
+        + " = %s. Cannot locate new VarHyp ParseNode!";
 
     public static final String ERRMSG_NOTATION_GRFOREST_DUP_1 = "A-GR-0050 Oops! Failed add of new NotationRule"
         + " derived from SyntaxAxiom label = ";
@@ -477,4 +471,5 @@ public class GrammarConstants {
     public static final String ERRMSG_N_PARSE_TREES_2 = " ParseTree[";
     public static final String ERRMSG_N_PARSE_TREES_3 = "] = ";
 
+    public static final Class<? extends GrammaticalParser> DEFAULT_PARSER_PROTOTYPE = EarleyParser.class;
 }

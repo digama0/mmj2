@@ -11,6 +11,8 @@
 
 package mmj.verify;
 
+import java.util.ArrayList;
+
 import mmj.lang.*;
 
 /**
@@ -24,7 +26,7 @@ import mmj.lang.*;
  * Tree/Forests, though it may be that use of the Tree/Forest structures are not
  * needed (perhaps an essential use will be found in
  * mmj.verify.GrammarAmbiguity).
- * 
+ *
  * @see <a href="../../CreatingGrammarRulesFromSyntaxAxioms.html">
  *      CreatingGrammarRulesFromSyntaxAxioms.html</a>
  * @see <a href="../../ConsolidatedListOfGrammarValidations.html">
@@ -66,7 +68,7 @@ public class NotationRule extends GrammarRule {
     /**
      * Constructor -- default GrammarRule for base Syntax Axioms, which means no
      * parameter "transformations".
-     * 
+     *
      * @param grammar The Grammar.
      * @param baseSyntaxAxiom Syntax Axiom.
      */
@@ -80,7 +82,7 @@ public class NotationRule extends GrammarRule {
     /**
      * NotationRule "base" Syntax Axiom rule builder, which means no parameter
      * "transformations".
-     * 
+     *
      * @param grammar The Grammar.
      * @param baseSyntaxAxiom Syntax Axiom.
      * @return new NotationRule.
@@ -98,7 +100,7 @@ public class NotationRule extends GrammarRule {
     /**
      * Construct new NotationRule using a Notation rule which is being "cloned"
      * and modified by substituting the paramTransformationTree from a
-     * NullsPermittedRule for one of the existing rule's variable hypothesis
+     * GrammarRule for one of the existing rule's variable hypothesis
      * paramTransformationTree nodes.
      * <p>
      * Note that the output paramTransformationTree is built using a deep clone
@@ -108,113 +110,63 @@ public class NotationRule extends GrammarRule {
      * course assumes that once a GrammarRule is created and fully populated
      * that it is never modified (changing the grammar means rebuilding it, in
      * other words.)
-     * 
+     *
      * @param grammar The Grammar.
      * @param oldNotationRule rule being "cloned".
      * @param matchIndex index to paramVarHypNode array indicating which VarHyp
      *            is being substituted.
-     * @param nullsPermittedRule the modifying rule.
+     * @param substRule the modifying rule.
      */
     public NotationRule(final Grammar grammar,
         final NotationRule oldNotationRule, final int matchIndex,
-        final NullsPermittedRule nullsPermittedRule)
+        final GrammarRule substRule)
     {
         super(grammar);
-
-        final ParseTree substParseTransformationTree = nullsPermittedRule.paramTransformationTree;
-        final int substMaxSeqNbr = nullsPermittedRule.getMaxSeqNbr();
+        final ParseTree substParseTransformationTree = substRule.paramTransformationTree;
+        final int substMaxSeqNbr = substRule.getMaxSeqNbr();
 
         if (oldNotationRule.maxSeqNbr > substMaxSeqNbr)
             maxSeqNbr = oldNotationRule.maxSeqNbr;
         else
             maxSeqNbr = substMaxSeqNbr;
 
-        nbrHypParamsUsed = oldNotationRule.nbrHypParamsUsed - 1;
+        nbrHypParamsUsed = oldNotationRule.nbrHypParamsUsed - 1
+            + substRule.nbrHypParamsUsed;
 
         paramTransformationTree = oldNotationRule.paramTransformationTree
             .deepCloneWNodeSub(oldNotationRule.paramVarHypNode[matchIndex],
                 substParseTransformationTree.getRoot());
 
-        paramVarHypNode = new ParseNode[oldNotationRule.paramVarHypNode.length];
-        for (int i = 0; i < paramVarHypNode.length; i++) {
-            // bypass VarHyp being nulled and those already null...
-            if (i == matchIndex || oldNotationRule.paramVarHypNode[i] == null)
-                continue;
-            paramVarHypNode[i] = paramTransformationTree.findChildVarHypNode(i);
-            if (paramVarHypNode[i] == null)
-                throw new IllegalStateException(
-                    GrammarConstants.ERRMSG_NOTATION_VARHYP_NOTFND_1
-                        + oldNotationRule.getBaseSyntaxAxiom().getLabel()
-                        + GrammarConstants.ERRMSG_NOTATION_VARHYP_NOTFND_2);
+        if (substRule.nbrHypParamsUsed > 1) {
+            new ArrayList<ParseNode>(nbrHypParamsUsed);
+            paramVarHypNode = new ParseNode[nbrHypParamsUsed];
+            paramTransformationTree.getRoot().accumVarHypArray(paramVarHypNode,
+                0);
         }
-
-        isGimmeMatchNbr = oldNotationRule.isGimmeMatchNbr;
-    }
-
-    /**
-     * Build new NotationRule using a Notation rule which is being "cloned" and
-     * modified by substituting the paramTransformationTree from a
-     * TypeConversionRule for one of the existing rule's variable hypothesis
-     * paramTransformationTree nodes.
-     * <p>
-     * Note that the output paramTransformationTree is built using a deep clone
-     * of the existing rule's paramTransformationTree, but the substituting tree
-     * does not need cloning BECAUSE when the GrammaticalParser builds a
-     * ParseTree for an expression, *it* does a full cloning operation; this, of
-     * course assumes that once a GrammarRule is created and fully populated
-     * that it is never modified (changing the grammar means rebuilding it, in
-     * other words.)
-     * 
-     * @param grammar The Grammar.
-     * @param oldNotationRule rule being "cloned".
-     * @param matchIndex index to paramVarHypNode array indicating which VarHyp
-     *            is being substituted.
-     * @param typeConversionRule the modifying rule.
-     */
-    public NotationRule(final Grammar grammar,
-        final NotationRule oldNotationRule, final int matchIndex,
-        final TypeConversionRule typeConversionRule)
-    {
-        super(grammar);
-
-        final ParseTree substParseTransformationTree = typeConversionRule.paramTransformationTree;
-        final int substMaxSeqNbr = typeConversionRule.getMaxSeqNbr();
-
-        if (oldNotationRule.maxSeqNbr > substMaxSeqNbr)
-            maxSeqNbr = oldNotationRule.maxSeqNbr;
-        else
-            maxSeqNbr = substMaxSeqNbr;
-
-        nbrHypParamsUsed = oldNotationRule.nbrHypParamsUsed;
-
-        paramTransformationTree = oldNotationRule.paramTransformationTree
-            .deepCloneWNodeSub(oldNotationRule.paramVarHypNode[matchIndex],
-                substParseTransformationTree.getRoot());
-
-        paramVarHypNode = new ParseNode[oldNotationRule.paramVarHypNode.length];
-        for (int i = 0; i < paramVarHypNode.length; i++) {
-            // bypass VarHyps that are already null...
-            if (oldNotationRule.paramVarHypNode[i] == null)
-                continue;
-            paramVarHypNode[i] = paramTransformationTree.findChildVarHypNode(i);
-            if (paramVarHypNode[i] == null)
-                throw new IllegalStateException(
-                    GrammarConstants.ERRMSG_NOTATION_VARHYP_2_NOTFND_1
-                        + oldNotationRule.getBaseSyntaxAxiom().getLabel()
-                        + GrammarConstants.ERRMSG_NOTATION_VARHYP_2_NOTFND_2
-                        + i
-                        + GrammarConstants.ERRMSG_NOTATION_VARHYP_2_NOTFND_3
-                        + paramTransformationTree.toString()
-                        + GrammarConstants.ERRMSG_NOTATION_VARHYP_2_NOTFND_4);
+        else {
+            paramVarHypNode = new ParseNode[oldNotationRule.paramVarHypNode.length];
+            for (int i = 0; i < paramVarHypNode.length; i++) {
+                // bypass VarHyp being nulled and those already null...
+                if (oldNotationRule.paramVarHypNode[i] == null
+                    || substRule instanceof NullsPermittedRule
+                        && i == matchIndex)
+                    continue;
+                paramVarHypNode[i] = paramTransformationTree
+                    .findChildVarHypNode(i);
+                if (paramVarHypNode[i] == null)
+                    throw new IllegalStateException(LangException.format(
+                        GrammarConstants.ERRMSG_NOTATION_VARHYP_NOTFND,
+                        oldNotationRule.getBaseSyntaxAxiom().getLabel(), i,
+                        paramTransformationTree.toString()));
+            }
         }
-
         isGimmeMatchNbr = oldNotationRule.isGimmeMatchNbr;
     }
 
     /**
      * Return a duplicate of the input ruleFormatExpr if it exists, or return
      * null.
-     * 
+     *
      * @param grammar The Grammar.
      * @param ruleFormatExprIn the expression to check.
      * @return GrammarRule if duplicate found, or null.
@@ -235,7 +187,7 @@ public class NotationRule extends GrammarRule {
 
     /**
      * Add rule format expression to the Rule Forest.
-     * 
+     *
      * @param grammar The Grammar object (Mr Big).
      * @param ruleFormatExprIn the expression to add.
      */
@@ -284,7 +236,7 @@ public class NotationRule extends GrammarRule {
      * automatically come into play. This also means that a "B to A" conversion
      * will combine with a "C to B" conversion to generate a "C to A" conversion
      * -- eventually.
-     * 
+     *
      * @param grammar The Grammar.
      */
     @Override
@@ -302,7 +254,7 @@ public class NotationRule extends GrammarRule {
      * Derives new grammar rules from an existing NotationRule and a
      * NullsPermittedRule, which will be applied to matching variable hypothesis
      * nodes in the NotationRule.
-     * 
+     *
      * @param grammar The Grammar.
      * @param nullsPermittedRule the modifying rule.
      */
@@ -321,8 +273,9 @@ public class NotationRule extends GrammarRule {
             return;
 
         // check to see if formula has zero Cnst symbols
-        if (getBaseSyntaxAxiom().getMandVarHypArray().length == getBaseSyntaxAxiom()
-            .getFormula().getCnt() - 1)
+        if (getBaseSyntaxAxiom()
+            .getMandVarHypArray().length == getBaseSyntaxAxiom().getFormula()
+                .getCnt() - 1)
         {
             if (nbrHypParamsUsed == 1) {
                 final NullsPermittedRule nPR = new NullsPermittedRule(grammar,
@@ -362,7 +315,8 @@ public class NotationRule extends GrammarRule {
          */
         NotationRule nR;
         while (true) {
-            nR = new NotationRule(grammar, this, matchIndex, nullsPermittedRule);
+            nR = new NotationRule(grammar, this, matchIndex,
+                nullsPermittedRule);
             grammar.derivedRuleQueueAdd(nR);
             matchIndex = findMatchingVarHypTyp(matchIndex + 1,
                 nullsPermittedRuleTyp);
@@ -381,7 +335,7 @@ public class NotationRule extends GrammarRule {
      * that the new derived rule goes into the queue and is then itself used to
      * create new rules (if any). Eventually all matching combinations are
      * considered without the complexity of dealing with them here.
-     * 
+     *
      * @param grammar The Grammar.
      * @param typeConversionRule the modifying rule.
      */
@@ -401,7 +355,8 @@ public class NotationRule extends GrammarRule {
                 typeConversionRuleTyp);
             if (matchIndex < 0)
                 return;
-            nR = new NotationRule(grammar, this, matchIndex, typeConversionRule);
+            nR = new NotationRule(grammar, this, matchIndex,
+                typeConversionRule);
             grammar.derivedRuleQueueAdd(nR);
             matchIndex++;
         }
@@ -410,7 +365,7 @@ public class NotationRule extends GrammarRule {
     /**
      * Returns the ruleFormatExpr for the Notation Rule after retrieving it from
      * the Grammar Rule Tree/Forest.
-     * 
+     *
      * @return ruleFormatExpr for the NotationRule.
      */
     @Override
@@ -429,7 +384,7 @@ public class NotationRule extends GrammarRule {
 
     /**
      * Return gRTail for the NotationRule.
-     * 
+     *
      * @return gRTail for the NotationRule.
      */
     public GRNode getGRTail() {
@@ -438,7 +393,7 @@ public class NotationRule extends GrammarRule {
 
     /**
      * Set the gRTail for the NotationRule.
-     * 
+     *
      * @param gRTail for the NotationRule.
      */
     public void setGRTail(final GRNode gRTail) {
@@ -447,7 +402,7 @@ public class NotationRule extends GrammarRule {
 
     /**
      * Return isGimmeMatchNbr for the NotationRule.
-     * 
+     *
      * @return isGimmeMatchNbr for the NotationRule.
      */
     public int getIsGimmeMatchNbr() {
@@ -456,7 +411,7 @@ public class NotationRule extends GrammarRule {
 
     /**
      * Set isGimmeMatchNbr for the NotationRule.
-     * 
+     *
      * @param isGimmeMatchNbr for the NotationRule.
      */
     public void setIsGimmeMatchNbr(final int isGimmeMatchNbr) {

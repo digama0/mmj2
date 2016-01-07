@@ -17,13 +17,11 @@ import mmj.lang.*;
 
 /**
  * Bottom Up Parser, too slow and stupid for set.mm use.
- * 
+ *
  * @see <a href="http://www.cs.vu.nl/%7Edick/PTAPG.html"> Parsing Techniques --
  *      A Practical Guide</a>
- * @deprecated abandoned in favor of EarleyParser.java
  * @see <a href="EarleyParser.html">EarleyParser</a>
  */
-@Deprecated
 public class BottomUpParser implements GrammaticalParser {
 
     private int retryCnt = -1;
@@ -64,11 +62,12 @@ public class BottomUpParser implements GrammaticalParser {
     /**
      * Construct using reference to Grammar and a parameter signifying the
      * maximum length of a formula in the database.
-     * 
+     *
      * @param grammarIn Grammar object
      * @param maxFormulaLengthIn gives us a hint about what to expect.
      */
-    public BottomUpParser(final Grammar grammarIn, final int maxFormulaLengthIn)
+    public BottomUpParser(final Grammar grammarIn,
+        final int maxFormulaLengthIn)
     {
         grammar = grammarIn;
         maxFormulaLength = maxFormulaLengthIn;
@@ -82,7 +81,7 @@ public class BottomUpParser implements GrammaticalParser {
      * <p>
      * The user can control whether or not the first successful parse is
      * returned by passing in an array of length = 1.
-     * 
+     *
      * @param parseTreeArrayIn -- holds generated ParseTrees, therefore, length
      *            must be greater than 0. The user can control whether or not
      *            the first successful parse is returned by passing in an array
@@ -141,9 +140,8 @@ public class BottomUpParser implements GrammaticalParser {
                         GrammarConstants.ERRMSG_MAX_RETRIES_EXCEEDED_1
                             + GrammarConstants.MAX_PARSE_RETRIES
                             + GrammarConstants.ERRMSG_MAX_RETRIES_EXCEEDED_2);
-                System.err
-                    .println(GrammarConstants.ERRMSG_RETRY_TO_BE_INITIATED
-                        + e.getMessage());
+                System.err.println(GrammarConstants.ERRMSG_RETRY_TO_BE_INITIATED
+                    + e.getMessage());
                 reInitArrays(retryCnt);
             }
 
@@ -166,7 +164,7 @@ public class BottomUpParser implements GrammaticalParser {
      * Type Codes, which includes the Logical Statement Type Codes (eg. if
      * Formula Type Code is "wff" then if there is a Nulls Permitted Rule for
      * "wff", return that, else no parse is possible.)
-     * 
+     *
      * @return {@code parseCnt}
      */
     private int BottomUpParserSpecialCase1() {
@@ -212,7 +210,7 @@ public class BottomUpParser implements GrammaticalParser {
      * when parsing a Metamath database in its entirety, we do not send variable
      * hypotheses through the parser, therefore we ignore that scenario in this
      * special case.)
-     * 
+     *
      * @return {@code parseCnt}
      */
     private int BottomUpParserSpecialCase2() {
@@ -223,9 +221,8 @@ public class BottomUpParser implements GrammaticalParser {
             parseTreeArray[parseCnt++] = new ParseTree(
                 parseNodeHolderExpr[0].parseNode);
         else {
-            gR = formulaTyp
-                .findFromTypConversionRule(((VarHyp)parseNodeHolderExpr[0].mObj)
-                    .getTyp());
+            gR = formulaTyp.findFromTypConversionRule(
+                ((VarHyp)parseNodeHolderExpr[0].mObj).getTyp());
             if (gR != null && gR.getMaxSeqNbr() <= highestSeq)
                 parseTreeArray[parseCnt++] = new ParseTree(
                     gR.buildGrammaticalParseNode(parseNodeHolderExpr));

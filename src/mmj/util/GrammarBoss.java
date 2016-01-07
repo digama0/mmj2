@@ -39,8 +39,7 @@ import java.io.IOException;
 import mmj.lang.*;
 import mmj.lang.ParseTree.RPNStep;
 import mmj.mmio.MMIOException;
-import mmj.verify.Grammar;
-import mmj.verify.GrammarConstants;
+import mmj.verify.*;
 
 /**
  * Responsible for building and using Grammar.
@@ -79,9 +78,11 @@ public class GrammarBoss extends Boss {
     protected Boolean grammarAmbiguityParm;
     protected Boolean statementAmbiguityParm;
 
+    protected Class<? extends GrammaticalParser> parserPrototype;
+
     /**
      * Constructor with BatchFramework for access to environment.
-     * 
+     *
      * @param batchFramework for access to environment.
      */
     public GrammarBoss(final BatchFramework batchFramework) {
@@ -90,7 +91,7 @@ public class GrammarBoss extends Boss {
 
     /**
      * Returns true if Grammar initialized successfully.
-     * 
+     *
      * @return true if Grammar initialized successfully.
      */
     public boolean getGrammarInitialized() {
@@ -99,7 +100,7 @@ public class GrammarBoss extends Boss {
 
     /**
      * Returns true if all statements parsed successfully.
-     * 
+     *
      * @return true if all statements parsed successfully.
      */
     public boolean getAllStatementsParsedSuccessfully() {
@@ -108,7 +109,7 @@ public class GrammarBoss extends Boss {
 
     /**
      * Executes a single command from the RunParmFile.
-     * 
+     *
      * @param runParm the RunParmFile line to execute.
      */
     @Override
@@ -130,17 +131,19 @@ public class GrammarBoss extends Boss {
 //END-PATCH 2008-08-01 MOVED TO LogicalSystemBoss
             grammarAmbiguityParm = null;
             statementAmbiguityParm = null;
+            parserPrototype = GrammarConstants.DEFAULT_PARSER_PROTOTYPE;
             return false; // not "consumed"
         }
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_FILE
-            .name()) == 0)
+        if (runParm.name
+            .compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_FILE.name()) == 0)
         {
             grammar = null;
             grammarInitialized = false;
             allStatementsParsedSuccessfully = false;
             grammarAmbiguityParm = null;
             statementAmbiguityParm = null;
+            parserPrototype = GrammarConstants.DEFAULT_PARSER_PROTOTYPE;
             return false; // not "consumed"
         }
 
@@ -160,25 +163,29 @@ public class GrammarBoss extends Boss {
 //      }
 //END-PATCH 2008-08-01
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_GRAMMAR_AMBIGUITY_EDITS
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_GRAMMAR_AMBIGUITY_EDITS.name()) == 0)
         {
             editGrammarAmbiguityEdits(runParm);
             return true; // "consumed"
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_STATEMENT_AMBIGUITY_EDITS
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_STATEMENT_AMBIGUITY_EDITS.name()) == 0)
         {
             editStatementAmbiguityEdits(runParm);
             return true; // "consumed"
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_INITIALIZE_GRAMMAR
-                .name()) == 0)
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_SET_PARSER.name()) == 0)
+        {
+            editParser(runParm);
+            return true; // "consumed"
+        }
+
+        if (runParm.name.compareToIgnoreCase(
+            UtilConstants.RUNPARM_INITIALIZE_GRAMMAR.name()) == 0)
         {
             doInitializeGrammar(runParm);
             return true; // "consumed"
@@ -205,7 +212,7 @@ public class GrammarBoss extends Boss {
      * would result in doubled-up error messages. The Initialize Grammar RunParm
      * Command should be used prior to PrintSyntaxDetails if a
      * "load and print syntax" is desired.
-     * 
+     *
      * @return Grammar object, ready to go.
      */
     public Grammar getGrammar() {
@@ -255,14 +262,39 @@ public class GrammarBoss extends Boss {
         else
             sComplete = statementAmbiguityParm.booleanValue();
 
-        grammar = new Grammar(pTyp, lTyp, gComplete, sComplete);
+        grammar = new Grammar(pTyp, lTyp, gComplete, sComplete,
+            parserPrototype);
 
         return grammar;
     }
 
     /**
      * Executes the InitializeGrammar command, prints any messages, etc.
-     * 
+     *
+     * @param runParm RunParmFile line.
+     * @throws IllegalArgumentException if an error occurred
+     * @throws IOException if an error occurred
+     * @throws VerifyException if an error occurred
+     */
+    @SuppressWarnings("unchecked")
+    public void editParser(final RunParmArrayEntry runParm)
+        throws IllegalArgumentException, IOException, VerifyException
+    {
+        editRunParmValuesLength(runParm,
+            UtilConstants.RUNPARM_GRAMMAR_AMBIGUITY_EDITS.name(), 1);
+        try {
+            parserPrototype = (Class<? extends GrammaticalParser>)Class
+                .forName(runParm.values[0].trim());
+        } catch (final ClassNotFoundException e) {
+            throw new IllegalArgumentException(LangException.format(
+                UtilConstants.ERRMSG_RUNPARM_PARSER_BAD_CLASS,
+                runParm.values[0].trim()));
+        }
+    }
+
+    /**
+     * Executes the InitializeGrammar command, prints any messages, etc.
+     *
      * @param runParm RunParmFile line.
      * @throws IllegalArgumentException if an error occurred
      * @throws IOException if an error occurred
@@ -278,7 +310,7 @@ public class GrammarBoss extends Boss {
 
     /**
      * Executes the Parse command, prints any messages, etc.
-     * 
+     *
      * @param runParm RunParmFile line.
      * @throws IllegalArgumentException if an error occurred
      * @throws IOException if an error occurred
@@ -307,7 +339,8 @@ public class GrammarBoss extends Boss {
         }
 
         final String optionValue = runParm.values[0].trim();
-        if (optionValue.compareTo(UtilConstants.RUNPARM_OPTION_VALUE_ALL) == 0)
+        if (optionValue
+            .compareTo(UtilConstants.RUNPARM_OPTION_VALUE_ALL) == 0)
         {
             grammar.parseAllFormulas(messages, logicalSystem.getSymTbl(),
                 logicalSystem.getStmtTbl());
@@ -398,7 +431,7 @@ public class GrammarBoss extends Boss {
 
     /**
      * Validate Grammar Ambiguity Edits Runparm.
-     * 
+     *
      * @param runParm RunParmFile line.
      * @throws IllegalArgumentException if an error occurred
      */
@@ -413,7 +446,7 @@ public class GrammarBoss extends Boss {
 
     /**
      * Validate Statement Ambiguity Edits Runparm.
-     * 
+     *
      * @param runParm RunParmFile line.
      * @throws IllegalArgumentException if an error occurred
      */
@@ -428,7 +461,7 @@ public class GrammarBoss extends Boss {
 
     /**
      * Validate an Ambiguity Edits Runparm.
-     * 
+     *
      * @param ambiguityParm String, "basic" or "complete".
      * @param valueCaption Caption for RunParm value.
      * @return true signifies Complete, false signifies Basic.
@@ -441,8 +474,8 @@ public class GrammarBoss extends Boss {
         if (ambiguityParm
             .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_VALUE_BASIC) == 0)
             return new Boolean(false);
-        if (ambiguityParm
-            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_VALUE_COMPLETE) == 0)
+        if (ambiguityParm.compareToIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_VALUE_COMPLETE) == 0)
             return new Boolean(true);
 
         throw new IllegalArgumentException(

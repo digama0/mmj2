@@ -66,7 +66,7 @@ public class ParseNodeHolder {
     /**
      * Constructor -- input is a ParseNode, so derive MObj from the input
      * ParseNode.stmt.
-     * 
+     *
      * @param parseNode the input ParseNode
      */
     public ParseNodeHolder(final ParseNode parseNode) {
@@ -77,7 +77,7 @@ public class ParseNodeHolder {
     /**
      * Constructor -- input is Cnst, so no ParseNode available, just load the
      * MObj for use in ParseTree generation...
-     * 
+     *
      * @param cnst the input Cnst
      */
     public ParseNodeHolder(final Cnst cnst) {
@@ -86,7 +86,7 @@ public class ParseNodeHolder {
 
     /**
      * Constructor -- input is VarHyp so create default VarHyp ParseNode.
-     * 
+     *
      * @param varHyp the input VarHyp
      */
     public ParseNodeHolder(final VarHyp varHyp) {
@@ -99,7 +99,7 @@ public class ParseNodeHolder {
      * <p>
      * Converts to "ruleFormatExpr" -- each item in the Cnst array is a
      * grammaticl Type Code or a Cnst.
-     * 
+     *
      * @param parseNodeHolderExpr array of ParseNodeHolder.
      * @return ruleFormatExpr version of ParseNodeHolder array.
      */
@@ -117,7 +117,7 @@ public class ParseNodeHolder {
      * <p>
      * If mObj is a Cnst, return it, otherwise return the Type Code of
      * parseNode.
-     * 
+     *
      * @return cnst Cnst or Type Code.
      */
     public Cnst getCnstOrTyp() {
@@ -128,7 +128,7 @@ public class ParseNodeHolder {
 
     /**
      * return Cnst or Label of ParseNode.stmt.
-     * 
+     *
      * @return String Cnst.id if mObj is Cnst, else label of
      *         parseNodeHolder.stmt.
      */
@@ -140,7 +140,7 @@ public class ParseNodeHolder {
 
     /**
      * Copy "twin chain" to string for diagnostic use.
-     * 
+     *
      * @return String representing twin chain.
      */
     public String dumpTwinChainToString() {
@@ -165,7 +165,7 @@ public class ParseNodeHolder {
      * Add a node to a ParseNodeHolder's twin chain.
      * <p>
      * Inserts at the front of the list.
-     * 
+     *
      * @param x the node to add
      */
     public void addToTwinChain(final ParseNodeHolder x) {
@@ -174,6 +174,11 @@ public class ParseNodeHolder {
         x.fwd = fwd;
         x.bwd = this;
         x.fwd.bwd = fwd = x;
+    }
+
+    @Override
+    public String toString() {
+        return mObj.toString();
     }
 
 }
