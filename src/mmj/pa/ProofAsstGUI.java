@@ -1718,18 +1718,18 @@ public class ProofAsstGUI {
             public void actionPerformed(final ActionEvent e) {
 
                 final JTextPane documentationText = new JTextPane();
+                final BatchCommand[] list = UtilConstants.RUNPARM_LIST;
                 documentationText.setEditable(false);
                 documentationText.setContentType("text/html");
 
                 final JScrollPane documentationTextScroll = new JScrollPane(
                     documentationText, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                     JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-                documentationText.setText(
-                    "<html>" + UtilConstants.RUNPARM_LIST[0].documentation());
+                documentationText.setText("<html>" + list[0].documentation());
 
                 final Vector<BatchCommand> commands = new Vector<BatchCommand>();
                 final JList<BatchCommand> commandList = new JList<BatchCommand>(
-                    UtilConstants.RUNPARM_LIST);
+                    list);
                 commandList.setLayoutOrientation(JList.VERTICAL);
                 commandList.setSelectedIndex(0);
                 commandList
@@ -1759,7 +1759,7 @@ public class ProofAsstGUI {
                         String searchString = searchField.getText();
                         searchString = searchString.toLowerCase();
                         commands.clear();
-                        for (final BatchCommand element : UtilConstants.RUNPARM_LIST)
+                        for (final BatchCommand element : list)
                             if (element.name().toLowerCase()
                                 .contains(searchString))
                                 commands.add(element);
