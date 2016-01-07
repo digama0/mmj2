@@ -69,7 +69,7 @@ public class TMFFBoss extends Boss {
 
     /**
      * Constructor with BatchFramework for access to environment.
-     * 
+     *
      * @param batchFramework for access to environment.
      */
     public TMFFBoss(final BatchFramework batchFramework) {
@@ -78,7 +78,7 @@ public class TMFFBoss extends Boss {
 
     /**
      * Executes a single command from the RunParmFile.
-     * 
+     *
      * @param runParm the RunParmFile line to execute.
      * @return boolean "consumed" indicating that the input runParm should not
      *         be processed again.
@@ -89,50 +89,37 @@ public class TMFFBoss extends Boss {
         IOException, VerifyException
     {
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_CLEAR.matches(runParm)) {
             tmffPreferences = null;
             return false; // not "consumed"
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_TMFF_DEFINE_SCHEME.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_TMFF_DEFINE_SCHEME.matches(runParm)) {
             editTMFFDefineScheme(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_TMFF_DEFINE_FORMAT.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_TMFF_DEFINE_FORMAT.matches(runParm)) {
             editTMFFDefineFormat(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_TMFF_USE_FORMAT.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_TMFF_USE_FORMAT.matches(runParm)) {
             editTMFFUseFormat(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_TMFF_ALT_FORMAT.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_TMFF_ALT_FORMAT.matches(runParm)) {
             editTMFFAltFormat(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_TMFF_USE_INDENT.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_TMFF_USE_INDENT.matches(runParm)) {
             editTMFFUseIndent(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_TMFF_ALT_INDENT.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_TMFF_ALT_INDENT.matches(runParm)) {
             editTMFFAltIndent(runParm);
             return true;
         }
@@ -142,7 +129,7 @@ public class TMFFBoss extends Boss {
 
     /**
      * TMFFDefineScheme RunParm validation and loading.
-     * 
+     *
      * @param runParm run parm parsed into RunParmArrayEntry object
      */
     protected void editTMFFDefineScheme(final RunParmArrayEntry runParm) {
@@ -163,7 +150,7 @@ public class TMFFBoss extends Boss {
 
     /**
      * TMFFDefineFormat RunParm validation and loading.
-     * 
+     *
      * @param runParm run parm parsed into RunParmArrayEntry object
      */
     protected void editTMFFDefineFormat(final RunParmArrayEntry runParm) {
@@ -186,7 +173,7 @@ public class TMFFBoss extends Boss {
      * number *and* if a format number other than 0 (unformatted) is requested,
      * checks to see that TMFF can be run (i.e. that the Grammar has been
      * initialized and all input statements have been parsed).
-     * 
+     *
      * @param runParm run parm parsed into RunParmArrayEntry object
      */
     protected void editTMFFUseFormat(final RunParmArrayEntry runParm) {
@@ -198,7 +185,8 @@ public class TMFFBoss extends Boss {
                 UtilConstants.ERRMSG_RUNPARM_USE_FORMAT_ERR_1 + e.getMessage());
         }
 
-        if (getTMFFPreferences().getCurrFormatNbr() != TMFFConstants.TMFF_UNFORMATTED_FORMAT_NBR_0)
+        if (getTMFFPreferences()
+            .getCurrFormatNbr() != TMFFConstants.TMFF_UNFORMATTED_FORMAT_NBR_0)
             checkTMFFCanBeRunNow();
     }
 
@@ -207,7 +195,7 @@ public class TMFFBoss extends Boss {
      * number *and* if a format number other than 0 (unformatted) is requested,
      * checks to see that TMFF can be run (i.e. that the Grammar has been
      * initialized and all input statements have been parsed).
-     * 
+     *
      * @param runParm run parm parsed into RunParmArrayEntry object
      */
     protected void editTMFFAltFormat(final RunParmArrayEntry runParm) {
@@ -225,7 +213,7 @@ public class TMFFBoss extends Boss {
      * number *and* if a format number other than 0 (unformatted) is requested,
      * checks to see that TMFF can be run (i.e. that the Grammar has been
      * initialized and all input statements have been parsed).
-     * 
+     *
      * @param runParm run parm parsed into RunParmArrayEntry object
      */
     protected void editTMFFUseIndent(final RunParmArrayEntry runParm) {
@@ -243,7 +231,7 @@ public class TMFFBoss extends Boss {
      * number *and* if a format number other than 0 (unformatted) is requested,
      * checks to see that TMFF can be run (i.e. that the Grammar has been
      * initialized and all input statements have been parsed).
-     * 
+     *
      * @param runParm run parm parsed into RunParmArrayEntry object
      */
     protected void editTMFFAltIndent(final RunParmArrayEntry runParm) {
@@ -259,7 +247,7 @@ public class TMFFBoss extends Boss {
     /**
      * Fetches a reference to the TMFFPreferences, first initializing it if
      * necessary.
-     * 
+     *
      * @return TMFFPreferences object ready to go.
      */
     public TMFFPreferences getTMFFPreferences() {
@@ -271,7 +259,7 @@ public class TMFFBoss extends Boss {
 
     /**
      * Construct TMFFPreferences object from scratch.
-     * 
+     *
      * @return TMFFPreferences object ready to go.
      */
     protected TMFFPreferences buildTMFFPreferences() {
@@ -295,8 +283,8 @@ public class TMFFBoss extends Boss {
 
         final Grammar grammar = batchFramework.grammarBoss.getGrammar();
 
-        if (grammar.getGrammarInitialized()
-            && batchFramework.grammarBoss.getAllStatementsParsedSuccessfully())
+        if (grammar.getGrammarInitialized() && batchFramework.grammarBoss
+            .getAllStatementsParsedSuccessfully())
         {
             // ok, fine.
         }

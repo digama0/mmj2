@@ -37,7 +37,7 @@ public abstract class TMFFMethod {
      * methods TMFFFlat and TMFFUnformatted have maxDepth = Integer.MAX_VALUE
      * which results in no maxDepth line breaks from happening -- therefore,
      * they do not allow updates after initial construction of the method.
-     * 
+     *
      * @param maxDepth parameter.
      * @return boolean - true only if update performed.
      */
@@ -45,7 +45,7 @@ public abstract class TMFFMethod {
 
     /**
      * Validates the maxDepth parameter.
-     * 
+     *
      * @param maxDepth parameter.
      * @return maxDepth parameter.
      */
@@ -58,14 +58,14 @@ public abstract class TMFFMethod {
 
     /**
      * Validates the maxDepth parameter.
-     * 
+     *
      * @param maxDepthString parameter.
      * @return maxDepth parameter.
      */
     public static int validateMaxDepth(final String maxDepthString) {
         try {
-            return TMFFMethod.validateMaxDepth(Integer.parseInt(maxDepthString
-                .trim()));
+            return TMFFMethod
+                .validateMaxDepth(Integer.parseInt(maxDepthString.trim()));
         } catch (final NumberFormatException e) {
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_BAD_MAX_DEPTH_1);
@@ -79,7 +79,7 @@ public abstract class TMFFMethod {
 
     /**
      * Constructor for TMFFMethod using user parameters.
-     * 
+     *
      * @param maxDepthString maximum sub-tree depth for a sub-expression that
      *            will not trigger a line-break, not counting leaf nodes, and
      *            non-Notation Syntax Axioms such as Type Conversions.
@@ -91,7 +91,7 @@ public abstract class TMFFMethod {
 
     /**
      * Standard constructor for TMFFMethod.
-     * 
+     *
      * @param maxDepth maximum sub-tree depth for a sub-expression that will not
      *            trigger a line-break, not counting leaf nodes, and
      *            non-Notation Syntax Axioms such as Type Conversions.
@@ -104,12 +104,13 @@ public abstract class TMFFMethod {
     /**
      * A crude TMFFMethod factory used to construct a TMFFMethod using BatchMMJ2
      * RunParm values from the TMFFDefineScheme command.
-     * 
+     *
      * @param param String parameter array corresponding to the BatchMMJ2
      *            RunParm command TMFFDefineScheme.
      * @return TMFFMethod constructed according to the user parameters.
      */
-    public static TMFFMethod ConstructMethodWithUserParams(final String[] param)
+    public static TMFFMethod ConstructMethodWithUserParams(
+        final String[] param)
     {
 
         String methodName = null;
@@ -138,19 +139,19 @@ public abstract class TMFFMethod {
                 TMFFConstants.ERRMSG_MISSING_USER_METHOD_NAME_1);
 
         if (methodName
-            .compareToIgnoreCase(TMFFConstants.TMFF_METHOD_USER_NAME_ALIGN_COLUMN) == 0)
+            .equalsIgnoreCase(TMFFConstants.TMFF_METHOD_USER_NAME_ALIGN_COLUMN))
             return new TMFFAlignColumn(param3, param4, param5, param6);
 
-        if (methodName
-            .compareToIgnoreCase(TMFFConstants.TMFF_METHOD_USER_NAME_TWO_COLUMN_ALIGNMENT) == 0)
+        if (methodName.equalsIgnoreCase(
+            TMFFConstants.TMFF_METHOD_USER_NAME_TWO_COLUMN_ALIGNMENT))
             return new TMFFTwoColumnAlignment(param3);
 
         if (methodName
-            .compareToIgnoreCase(TMFFConstants.TMFF_METHOD_USER_NAME_FLAT) == 0)
+            .equalsIgnoreCase(TMFFConstants.TMFF_METHOD_USER_NAME_FLAT))
             return new TMFFFlat(param3);
 
         if (methodName
-            .compareToIgnoreCase(TMFFConstants.TMFF_METHOD_USER_NAME_UNFORMATTED) == 0)
+            .equalsIgnoreCase(TMFFConstants.TMFF_METHOD_USER_NAME_UNFORMATTED))
             return new TMFFUnformatted(param3);
 
         throw new IllegalArgumentException(
@@ -170,7 +171,7 @@ public abstract class TMFFMethod {
      * an example.
      * <p>
      * NOTE: TMFFUnformatted AND TMFFFlat override this method!
-     * 
+     *
      * @param tmffSP TMFFStateParams initialized, ready for use.
      * @param parseTree for the formula to be formatted. If left null, -1 is
      *            returned.
@@ -211,7 +212,7 @@ public abstract class TMFFMethod {
      * be done -- the array index would be set at the start of formula rendering
      * and each method would invoke the 'i-th' TMFFMethod in the current node's
      * stmt object (except for VarHyps). Bit of work but not too hard.
-     * 
+     *
      * @param tmffSP the TMFF state data
      * @param currNode the current node of the tree
      * @param leftmostColNbr the indent amount

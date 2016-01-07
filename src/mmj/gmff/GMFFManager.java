@@ -102,7 +102,7 @@ public class GMFFManager {
      * Sets up GMFF data structures but does not load them. Sets
      * {@code gmffInitialized} to {@code  false} to trigger initialization when
      * the first GMFF service request is received.
-     * 
+     *
      * @param filePath path for building directories.
      * @param messages The Messages object.
      */
@@ -136,7 +136,7 @@ public class GMFFManager {
      * <p>
      * This function is called by GMFFBoss in response to a
      * {@code GMFFInitialize} RunParm.
-     * 
+     *
      * @param printTypesettingDefinitions prints data from Metamath $t Comments
      *            for which there are {@code GMFFExportParms} with matching
      *            {@code typesetDefs} (we don't load data from the $t's unless
@@ -164,7 +164,7 @@ public class GMFFManager {
      * <p>
      * This function is called by {@code GMFFBoss} in response to a
      * {@code GMFFExportParms} RunParm.
-     * 
+     *
      * @param inputGMFFExportParms data from GMFFExportParms RunParm.
      */
     public void accumInputGMFFExportParms(
@@ -184,7 +184,7 @@ public class GMFFManager {
      * <p>
      * This function is called by {@code GMFFBoss} in response to a
      * {@code GMFFUserTextEscapes} RunParm.
-     * 
+     *
      * @param inputGMFFUserTextEscapes data from GMFFUserTextEscapes RunParm.
      */
     public void accumInputGMFFUserTextEscapesList(
@@ -204,7 +204,7 @@ public class GMFFManager {
      * <p>
      * This function is called by {@code LogicalSystem} during processing of a
      * {@code LoadFile} RunParm.
-     * 
+     *
      * @param comment String Metamath $t Comment statement as stored in
      *            {@code SrcStmt} (the "$(" and "$)" delimiters are removed at
      *            this pointand the first token is "$t").
@@ -225,10 +225,11 @@ public class GMFFManager {
      * <p>
      * This function is called by {@code GMFFBoss} in response to a
      * {@code GMFFUserExportChoice} RunParm.
-     * 
+     *
      * @param choice from GMFFUserExportChoice RunParm.
      */
-    public void setInputGMFFUserExportChoice(final GMFFUserExportChoice choice)
+    public void setInputGMFFUserExportChoice(
+        final GMFFUserExportChoice choice)
     {
         inputGMFFUserExportChoice = choice;
         forceReinitialization();
@@ -249,7 +250,7 @@ public class GMFFManager {
      * only if the symbol string is really a valid symbol (and is not a
      * {@code WorkVar}.) (GMFF not not require that Proof Worksheets be valid,
      * just that the Proof Worksheet format is loosely followed.)
-     * 
+     *
      * @param symTbl The Symbol Table Map from {@code LogicalSystem}
      */
     public void setSymTbl(final Map<String, Sym> symTbl) {
@@ -258,7 +259,7 @@ public class GMFFManager {
 
     /**
      * Gets the {@code symTbl} for use in generating GMFF exports.
-     * 
+     *
      * @return The Symbol Table Map, {@code symTbl} from {@code LogicalSystem}
      */
     public Map<String, Sym> getSymTbl() {
@@ -267,7 +268,7 @@ public class GMFFManager {
 
     /**
      * Gets the {@code messages} object.
-     * 
+     *
      * @return The Messages object used to store error and informational
      *         messages during mmj2 processing.
      */
@@ -277,7 +278,7 @@ public class GMFFManager {
 
     /**
      * Returns the {@code gmffInitialized} boolean variable.
-     * 
+     *
      * @return true if GMFF already initialized, otherwise false.
      */
     public boolean isGMFFInitialized() {
@@ -304,7 +305,7 @@ public class GMFFManager {
      * <p>
      * Refer to mmj2\doc\gmffdoc\C:\mmj2jar\GMFFDoc\GMFFRunParms.txt for more
      * info about the parameters on the {@code GMFFExportFromFolder} RunParm.
-     * 
+     *
      * @param inputDirectory The Directory to export Proof Worksheets from
      * @param theoremLabelOrAsterisk Either a theorem label or "*". If theorem
      *            label input then that is used as the starting point, otherwise
@@ -321,7 +322,7 @@ public class GMFFManager {
     public void exportFromFolder(final String inputDirectory,
         final String theoremLabelOrAsterisk, final String inputFileType,
         final String maxNumberToExport, final String appendFileNameIn)
-        throws GMFFException
+            throws GMFFException
     {
 
         String confirmationMessage;
@@ -331,7 +332,8 @@ public class GMFFManager {
 
         final String fileType = validateFileType(inputFileType);
 
-        final String labelOrAsterisk = validateTheoremLabelOrAsterisk(theoremLabelOrAsterisk);
+        final String labelOrAsterisk = validateTheoremLabelOrAsterisk(
+            theoremLabelOrAsterisk);
 
         final String appendFileName = validateAppendFileName(appendFileNameIn);
 
@@ -352,8 +354,8 @@ public class GMFFManager {
                 lowestNamePrefix);
 
             if (fileArray.length == 0) {
-                messages
-                    .accumErrorMessage(GMFFConstants.ERRMSG_NO_PROOF_FILES_SELECTED_ERROR_1
+                messages.accumErrorMessage(
+                    GMFFConstants.ERRMSG_NO_PROOF_FILES_SELECTED_ERROR_1
                         + inputDirectory
                         + GMFFConstants.ERRMSG_NO_PROOF_FILES_SELECTED_ERROR_2
                         + fileType);
@@ -362,10 +364,10 @@ public class GMFFManager {
 
             for (int i = 0; i < fileArray.length && i < max; i++) {
 
-                final String proofWorksheetText = GMFFInputFile
-                    .getFileContents(fileArray[i], " ",
-                        GMFFConstants.PROOF_WORKSHEET_MESSAGE_DESCRIPTOR,
-                        GMFFConstants.PROOF_WORKSHEET_BUFFER_SIZE);
+                final String proofWorksheetText = GMFFInputFile.getFileContents(
+                    fileArray[i], " ",
+                    GMFFConstants.PROOF_WORKSHEET_MESSAGE_DESCRIPTOR,
+                    GMFFConstants.PROOF_WORKSHEET_BUFFER_SIZE);
 
                 confirmationMessage = exportProofWorksheet(proofWorksheetText,
                     appendFileName);
@@ -397,7 +399,7 @@ public class GMFFManager {
      * <p>
      * Refer to mmj2\doc\gmffdoc\C:\mmj2jar\GMFFDoc\GMFFRunParms.txt for more
      * info about the parameters on the {@code GMFFExportThereom} RunParm.
-     * 
+     *
      * @param theoremLabelOrAsterisk Either a theorem label or "*". If theorem
      *            label input then that is used as the starting point, otherwise
      *            processing begins at the first file in the directory.
@@ -419,7 +421,8 @@ public class GMFFManager {
         if (!gmffInitialized)
             initialization();
 
-        final String labelOrAsterisk = validateTheoremLabelOrAsterisk(theoremLabelOrAsterisk);
+        final String labelOrAsterisk = validateTheoremLabelOrAsterisk(
+            theoremLabelOrAsterisk);
 
         final String appendFileName = validateAppendFileName(appendFileNameIn);
 
@@ -449,8 +452,8 @@ public class GMFFManager {
                 gmffExportOneTheorem(theorem, appendFileName, proofAsst);
             }
             if (i == 0) {
-                messages
-                    .accumErrorMessage(GMFFConstants.ERRMSG_NO_THEOREMS_SELECTED_ERROR_1
+                messages.accumErrorMessage(
+                    GMFFConstants.ERRMSG_NO_THEOREMS_SELECTED_ERROR_1
                         + labelOrAsterisk);
                 return;
             }
@@ -470,7 +473,7 @@ public class GMFFManager {
      * incomplete or invalid, or if it contains no assertions, an error message
      * results (and if input argument {@code theorem} is null an
      * {@code IllegalArgumentException} will result ;-)
-     * 
+     *
      * @param theorem {@code Theorem} to be exported.
      * @param appendFileName Specifies an append-mode file name to which
      *            exported proof will be written -- within the folder specified
@@ -482,7 +485,7 @@ public class GMFFManager {
      */
     public void gmffExportOneTheorem(final Theorem theorem,
         final String appendFileName, final ProofAsst proofAsst)
-        throws GMFFException
+            throws GMFFException
     {
 
         if (!gmffInitialized)
@@ -492,8 +495,8 @@ public class GMFFManager {
         try {
             proofWorksheetText = proofAsst.exportOneTheorem(theorem);
         } catch (final IllegalArgumentException e) {
-            messages
-                .accumErrorMessage(GMFFConstants.ERRMSG_GMFF_THEOREM_EXPORT_PA_ERROR_1
+            messages.accumErrorMessage(
+                GMFFConstants.ERRMSG_GMFF_THEOREM_EXPORT_PA_ERROR_1
                     + theorem.getLabel()
                     + GMFFConstants.ERRMSG_GMFF_THEOREM_EXPORT_PA_ERROR_2
                     + e.getMessage());
@@ -501,8 +504,8 @@ public class GMFFManager {
         }
 
         if (proofWorksheetText == null)
-            messages
-                .accumErrorMessage(GMFFConstants.ERRMSG_GMFF_THEOREM_EXPORT_PA_ERROR_1
+            messages.accumErrorMessage(
+                GMFFConstants.ERRMSG_GMFF_THEOREM_EXPORT_PA_ERROR_1
                     + theorem.getLabel());
         else {
             final String confirmationMessage = exportProofWorksheet(
@@ -524,7 +527,7 @@ public class GMFFManager {
      * incomplete or invalid, or if it contains no assertions, an error message
      * results -- and if input argument {@code theoremLabel} is null or invalid
      * an exception is thrown...
-     * 
+     *
      * @param theoremLabel label of {@code Theorem} to be exported.
      * @param appendFileName Specifies an append-mode file name to which
      *            exported proof will be written -- within the folder specified
@@ -536,7 +539,7 @@ public class GMFFManager {
      */
     public void gmffExportOneTheorem(final String theoremLabel,
         final String appendFileName, final ProofAsst proofAsst)
-        throws GMFFException
+            throws GMFFException
     {
 
         if (!gmffInitialized)
@@ -546,8 +549,8 @@ public class GMFFManager {
         try {
             proofWorksheetText = proofAsst.exportOneTheorem(theoremLabel);
         } catch (final IllegalArgumentException e) {
-            messages
-                .accumErrorMessage(GMFFConstants.ERRMSG_GMFF_THEOREM_EXPORT_PA_ERROR_1
+            messages.accumErrorMessage(
+                GMFFConstants.ERRMSG_GMFF_THEOREM_EXPORT_PA_ERROR_1
                     + theoremLabel
                     + GMFFConstants.ERRMSG_GMFF_THEOREM_EXPORT_PA_ERROR_2
                     + e.getMessage());
@@ -555,8 +558,8 @@ public class GMFFManager {
         }
 
         if (proofWorksheetText == null)
-            messages
-                .accumErrorMessage(GMFFConstants.ERRMSG_GMFF_THEOREM_EXPORT_PA_ERROR_1
+            messages.accumErrorMessage(
+                GMFFConstants.ERRMSG_GMFF_THEOREM_EXPORT_PA_ERROR_1
                     + theoremLabel);
         else {
             final String confirmationMessage = exportProofWorksheet(
@@ -586,7 +589,7 @@ public class GMFFManager {
      * them in return.
      * <li>returns the accumulated confirmation messages to the caller.
      * </ol>
-     * 
+     *
      * @param proofText String containing text in the format of an mmj2 Proof
      *            Worksheet.
      * @param appendFileName name of a file to which export data should be
@@ -632,7 +635,7 @@ public class GMFFManager {
      * <p>
      * The code is quick and dirty because it is just used for testing.
      * Efficiency not an issue.
-     * 
+     *
      * @param typesetDefKeyword The Metamath $t keyword to select for parsing
      *            (e.g. "htmldef")
      * @param myDirectory The directory containing the Metamath .mm file to
@@ -645,8 +648,7 @@ public class GMFFManager {
      * @throws GMFFException if errors found.
      */
     public void parseMetamathTypesetComment(final String typesetDefKeyword,
-        final String myDirectory,
-        final String myMetamathTypesetCommentFileName,
+        final String myDirectory, final String myMetamathTypesetCommentFileName,
         final boolean runParmPrintOption) throws GMFFException
     {
 
@@ -659,8 +661,8 @@ public class GMFFManager {
             GMFFConstants.METAMATH_DOLLAR_T_BUFFER_SIZE);
 
         if (runParmPrintOption)
-            messages
-                .accumInfoMessage(GMFFConstants.ERRMSG_INPUT_DOLLAR_T_COMMENT_MM_FILE_1
+            messages.accumInfoMessage(
+                GMFFConstants.ERRMSG_INPUT_DOLLAR_T_COMMENT_MM_FILE_1
                     + myFolder.getAbsolutePath()
                     + GMFFConstants.ERRMSG_INPUT_DOLLAR_T_COMMENT_MM_FILE_2
                     + myMetamathTypesetCommentFileName
@@ -680,8 +682,8 @@ public class GMFFManager {
 
         list.add(myTypesetDefs);
 
-        final TypesetDefCommentParser parser = new TypesetDefCommentParser(
-            list, messages);
+        final TypesetDefCommentParser parser = new TypesetDefCommentParser(list,
+            messages);
 
         parser.doIt(mmDollarTComment);
 
@@ -714,8 +716,8 @@ public class GMFFManager {
             sb.append(MMIOConstants.NEW_LINE_CHAR);
 
             sb.append(GMFFConstants.INITIALIZATION_AUDIT_REPORT_4_EP_1);
-            sb.append(selectedExporters[i].gmffExportParms
-                .generateAuditReportText());
+            sb.append(
+                selectedExporters[i].gmffExportParms.generateAuditReportText());
             sb.append(MMIOConstants.NEW_LINE_CHAR);
             sb.append(MMIOConstants.NEW_LINE_CHAR);
 
@@ -775,7 +777,7 @@ public class GMFFManager {
      * <li>load final list of Selected (chosen) {@code Exporter}s.
      * <li>set {@code gmffInitialized = true}
      * </ol>
-     * 
+     *
      * @throws GMFFException if an error occurred
      */
     private void initialization() throws GMFFException {
@@ -803,7 +805,7 @@ public class GMFFManager {
      * parms merged on top.
      * <p>
      * Validates the ExportParms after building the consolidated list.
-     * 
+     *
      * @return the list of GMFFExportParms
      * @throws GMFFException if an error occurred
      */
@@ -841,7 +843,7 @@ public class GMFFManager {
      * escapes merged on top.
      * <p>
      * Validates the text escapes after building the consolidated list.
-     * 
+     *
      * @return the list of GMFFUserTextEscapes
      * @throws GMFFException if an error occurred
      */
@@ -912,7 +914,7 @@ public class GMFFManager {
         GMFFUserTextEscapes t;
         for (final GMFFExportParms p : exportParmsList) {
 
-            if (p.onoff.compareToIgnoreCase(GMFFConstants.EXPORT_PARM_ON) != 0)
+            if (!p.onoff.equalsIgnoreCase(GMFFConstants.EXPORT_PARM_ON))
                 continue;
             t = null;
             for (final GMFFUserTextEscapes u : userTextEscapesList)
@@ -1013,7 +1015,7 @@ public class GMFFManager {
         int nbrSelected = 0;
 
         if (gmffUserExportChoice.exportTypeOrAll
-            .compareToIgnoreCase(GMFFConstants.USER_EXPORT_CHOICE_ALL) == 0)
+            .equalsIgnoreCase(GMFFConstants.USER_EXPORT_CHOICE_ALL))
             nbrSelected = gmffExporterList.size();
         else
             for (final GMFFExporter e : gmffExporterList)
@@ -1029,7 +1031,7 @@ public class GMFFManager {
 
             for (final GMFFExporter exporter : gmffExporterList)
                 if (gmffUserExportChoice.exportTypeOrAll
-                    .compareToIgnoreCase(GMFFConstants.USER_EXPORT_CHOICE_ALL) == 0
+                    .equalsIgnoreCase(GMFFConstants.USER_EXPORT_CHOICE_ALL)
                     || gmffUserExportChoice.exportTypeOrAll
                         .equals(exporter.gmffExportParms.exportType))
                     selected[i++] = exporter;
@@ -1038,7 +1040,8 @@ public class GMFFManager {
         return selected;
     }
 
-    private String validateFileType(final String fileType) throws GMFFException
+    private String validateFileType(final String fileType)
+        throws GMFFException
     {
 
         if (!GMFFExportParms.isPresentWithNoWhitespace(fileType)
@@ -1119,7 +1122,7 @@ public class GMFFManager {
             throw new GMFFException(
                 GMFFConstants.ERRMSG_INVALID_METAMATH_TYPESET_COMMENT_ERROR_1);
 
-        return mmComment.substring(startC
-            + MMIOConstants.MM_START_COMMENT_KEYWORD.length(), endC);
+        return mmComment.substring(
+            startC + MMIOConstants.MM_START_COMMENT_KEYWORD.length(), endC);
     }
 }

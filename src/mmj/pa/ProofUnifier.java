@@ -2856,7 +2856,7 @@ public class ProofUnifier {
         }
 
         // accumulate optional formula var hyps into "in use" list
-        if (d.getStep().compareToIgnoreCase(PaConstants.QED_STEP_NBR) != 0)
+        if (!d.getStep().equalsIgnoreCase(PaConstants.QED_STEP_NBR))
             d.formulaParseTree.getRoot().accumListVarHypUsedListBySeq(
                 optionalVarHypList, optionalVarHypsInUseList);
 

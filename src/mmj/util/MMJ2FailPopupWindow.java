@@ -62,7 +62,7 @@ public class MMJ2FailPopupWindow {
 
     /**
      * Standard constructor.
-     * 
+     *
      * @param batchFramework The {@code BatchFramework} object.
      * @param enabled true to enable display of the popup window, otherwise
      *            false.
@@ -78,7 +78,7 @@ public class MMJ2FailPopupWindow {
     /**
      * Sets {@code enabled} switch to turn on/off display of the
      * {@code MMJ2FailPopupWindow}.
-     * 
+     *
      * @param enabled true to enable display of the popup window, otherwise
      *            false.
      */
@@ -108,7 +108,7 @@ public class MMJ2FailPopupWindow {
      * <p>
      * Note: if {@code MMJ2FailPopupWindow} is not {@code enabled} the Dialog is
      * not shown.
-     * 
+     *
      * @param failMessage the final mmj2 message before abnormal termination of
      *            processing.
      */
@@ -136,11 +136,8 @@ public class MMJ2FailPopupWindow {
      */
     public void accumStartupErrors() {
         startupErrors = null;
-        if (!enabled
-            || !startupMode
-            || batchFramework
-                .isCurrentRunParmCommand(UtilConstants.RUNPARM_VERIFY_PROOF
-                    .name()))
+        if (!enabled || !startupMode || UtilConstants.RUNPARM_VERIFY_PROOF
+            .name().equalsIgnoreCase(batchFramework.currentRunParmCommand))
             return;
 
         final Messages messages = batchFramework.outputBoss.getMessages();
@@ -182,9 +179,7 @@ public class MMJ2FailPopupWindow {
 
         showAuxFrameGUI();
 
-        JOptionPane.showMessageDialog(
-            auxFrameGUI.getFrame(),
-            startupErrors,
+        JOptionPane.showMessageDialog(auxFrameGUI.getFrame(), startupErrors,
             UtilConstants.MMJ2_FAIL_STARTUP_DIALOG_TITLE + " "
                 + batchFramework.getRunParmFileAbsolutePath(),
             JOptionPane.ERROR_MESSAGE);

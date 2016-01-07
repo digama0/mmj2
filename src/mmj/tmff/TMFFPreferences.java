@@ -144,8 +144,7 @@ public class TMFFPreferences {
 
         TMFFScheme s;
 
-        for (final String[] element : TMFFConstants.TMFF_DEFAULT_DEFINE_SCHEME_PARAMS)
-        {
+        for (final String[] element : TMFFConstants.TMFF_DEFAULT_DEFINE_SCHEME_PARAMS) {
             s = new TMFFScheme(element);
             putToSchemeMap(s);
         }
@@ -156,8 +155,7 @@ public class TMFFPreferences {
 
         TMFFFormat f;
 
-        for (final String[] element : TMFFConstants.TMFF_DEFAULT_DEFINE_FORMAT_PARAMS)
-        {
+        for (final String[] element : TMFFConstants.TMFF_DEFAULT_DEFINE_FORMAT_PARAMS) {
             s = getDefinedScheme(element[1]);
             if (s == null)
                 throw new IllegalArgumentException(
@@ -186,7 +184,7 @@ public class TMFFPreferences {
      * ProofWorksheet considerable work is needed to parse formulas from
      * Derivation Proof Steps for exported proofs. Therefore, if TMFF is
      * disabled the grammatical parsing process can be skipped.
-     * 
+     *
      * @return true if TMFF is enabled, else false.
      */
     public boolean isTMFFEnabled() {
@@ -201,7 +199,7 @@ public class TMFFPreferences {
      * ParseTree, Formula and TMFFStateParams instance.
      * <p>
      * This is intended to be the main way of invoking TMFF formatting.
-     * 
+     *
      * @param tmffSP TMFFStateParams initialized, ready for use.
      * @param parseTree of the Formula to be rendered. If left null, the formula
      *            will be output in unformatted mode.
@@ -211,7 +209,8 @@ public class TMFFPreferences {
      *         the formula could not be formatted.
      */
     public int renderFormula(final TMFFStateParams tmffSP,
-        final ParseTree parseTree, final Formula formula, final int proofLevel)
+        final ParseTree parseTree, final Formula formula,
+        final int proofLevel)
     {
 
         int nbrLines = -1;
@@ -255,7 +254,7 @@ public class TMFFPreferences {
      * This is the *old* method for which proof level is not used. It is used
      * when the caller wishes to set Formula Left Column independently in
      * tmffSP.
-     * 
+     *
      * @param tmffSP TMFFStateParams initialized, ready for use.
      * @param parseTree of the Formula to be rendered. If left null, the formula
      *            will be output in unformatted mode.
@@ -297,7 +296,7 @@ public class TMFFPreferences {
 
     /**
      * Returns the TMFFFormat presently in use.
-     * 
+     *
      * @return TMFFFormat in use now, which may be the default format
      *         "Unformatted".
      */
@@ -307,7 +306,7 @@ public class TMFFPreferences {
 
     /**
      * Returns the default Format.
-     * 
+     *
      * @return default TMFFFormat.
      */
     public TMFFFormat getTMFFUnformattedFormat() {
@@ -316,7 +315,7 @@ public class TMFFPreferences {
 
     /**
      * Returns the default Scheme
-     * 
+     *
      * @return default TMFFFormat.
      */
     public TMFFScheme getTMFFUnformattedScheme() {
@@ -325,7 +324,7 @@ public class TMFFPreferences {
 
     /**
      * Set formula left column used in formatting proof text areas.
-     * 
+     *
      * @param formulaLeftCol formula LeftCol used for formatting formula text
      *            areas
      */
@@ -335,7 +334,7 @@ public class TMFFPreferences {
 
     /**
      * Get formula left column used in formatting proof text areas.
-     * 
+     *
      * @return formulaLeftCol formula LeftCol used for formatting formula text
      *         areas
      */
@@ -345,7 +344,7 @@ public class TMFFPreferences {
 
     /**
      * Set formula right column used in formatting proof text areas.
-     * 
+     *
      * @param formulaRightCol formula RightCol used for formatting formula text
      *            areas
      */
@@ -355,7 +354,7 @@ public class TMFFPreferences {
 
     /**
      * Get formula right column used in formatting proof text areas.
-     * 
+     *
      * @return formulaRightCol formula RightCol used for formatting formula text
      *         areas
      */
@@ -371,7 +370,7 @@ public class TMFFPreferences {
      * <p>
      * A formula can be longer than this number, and the Frame should scroll --
      * assuming that lineWrap is off and there are no NewLines.
-     * 
+     *
      * @param textColumns number of text columns.
      */
     public void setTextColumns(final int textColumns) {
@@ -380,7 +379,7 @@ public class TMFFPreferences {
 
     /**
      * Get number of text columns used to display formulas.
-     * 
+     *
      * @return textColumns number of text columns used to display formulas.
      */
     public int getTextColumns() {
@@ -389,7 +388,7 @@ public class TMFFPreferences {
 
     /**
      * Set number of text rows used to display formulas.
-     * 
+     *
      * @param textRows number of text rows.
      */
     public void setTextRows(final int textRows) {
@@ -398,7 +397,7 @@ public class TMFFPreferences {
 
     /**
      * Get number of text rows used to display formulas.
-     * 
+     *
      * @return textRows number of text rows used to display formulas.
      */
     public int getTextRows() {
@@ -411,7 +410,7 @@ public class TMFFPreferences {
      * If line wrap is on then Newlines (carraige returns) will not be used to
      * split formulas. Instead, space characters will be written to fill out the
      * remaining text columns on the line.
-     * 
+     *
      * @param lineWrap setting, on or off.
      */
     public void setLineWrap(final boolean lineWrap) {
@@ -420,7 +419,7 @@ public class TMFFPreferences {
 
     /**
      * Get the current lineWrap setting.
-     * 
+     *
      * @return lineWrap setting.
      */
     public boolean getLineWrap() {
@@ -429,7 +428,7 @@ public class TMFFPreferences {
 
     /**
      * Set current Format number using user parameters.
-     * 
+     *
      * @param param String array containing current Format number in array
      *            element 0.
      */
@@ -451,7 +450,7 @@ public class TMFFPreferences {
 
     /**
      * Set Alternate Format number using user parameters.
-     * 
+     *
      * @param param String array containing alternate Format number in array
      *            element 0.
      */
@@ -473,7 +472,7 @@ public class TMFFPreferences {
 
     /**
      * Set Use Indent amount using user parameters.
-     * 
+     *
      * @param param String array containing alternate Indent amount in array
      *            element 0.
      */
@@ -495,7 +494,7 @@ public class TMFFPreferences {
 
     /**
      * Set Alt Indent amount using user parameters.
-     * 
+     *
      * @param param String array containing alternate Indent amount in array
      *            element 0.
      */
@@ -519,7 +518,7 @@ public class TMFFPreferences {
      * A slightly redundant routine to validate an input indent amount.
      * <p>
      * This routine is used by ProofAsstGUI.
-     * 
+     *
      * @param s Indent amountString.
      * @return Indent amount if input is valid.
      * @throws TMFFException if input is invalid.
@@ -542,7 +541,7 @@ public class TMFFPreferences {
      * A slightly redundant routine to validate an input format number.
      * <p>
      * This routine is used by ProofAsstGUI.
-     * 
+     *
      * @param s Format Number String.
      * @return Format Number if input is valid.
      * @throws TMFFException if input is invalid.
@@ -569,7 +568,7 @@ public class TMFFPreferences {
      * Scheme Name.
      * <p>
      * This routine is used by ProofAsstGUI.
-     * 
+     *
      * @return Format List String
      */
     public String getFormatListString() {
@@ -588,7 +587,7 @@ public class TMFFPreferences {
 
     /**
      * Set current Format number.
-     * 
+     *
      * @param currFormatNbr 0 thru max number.
      */
     public void setCurrFormatNbr(final int currFormatNbr) {
@@ -603,7 +602,7 @@ public class TMFFPreferences {
 
     /**
      * Get current Format Number.
-     * 
+     *
      * @return TMFF format number in use.
      */
     public int getCurrFormatNbr() {
@@ -641,7 +640,7 @@ public class TMFFPreferences {
 
     /**
      * Set alternate Format number.
-     * 
+     *
      * @param altFormatNbr 0 thru max number.
      */
     public void setAltFormatNbr(final int altFormatNbr) {
@@ -656,7 +655,7 @@ public class TMFFPreferences {
 
     /**
      * Get alternate Format Number.
-     * 
+     *
      * @return TMFF alt format number in use.
      */
     public int getAltFormatNbr() {
@@ -665,7 +664,7 @@ public class TMFFPreferences {
 
     /**
      * Set Use Indent number.
-     * 
+     *
      * @param useIndent 0 thru max number.
      */
     public void setUseIndent(final int useIndent) {
@@ -679,7 +678,7 @@ public class TMFFPreferences {
 
     /**
      * Get Use Indent Amount.
-     * 
+     *
      * @return TMFF Use Indent amount in use.
      */
     public int getUseIndent() {
@@ -688,7 +687,7 @@ public class TMFFPreferences {
 
     /**
      * Set Alt Indent amount.
-     * 
+     *
      * @param altIndent 0 thru max number.
      */
     public void setAltIndent(final int altIndent) {
@@ -702,7 +701,7 @@ public class TMFFPreferences {
 
     /**
      * Get Alt Indent Amount.
-     * 
+     *
      * @return TMFF alternate indent amount number in use.
      */
     public int getAltIndent() {
@@ -711,7 +710,7 @@ public class TMFFPreferences {
 
     /**
      * Add newly defined Scheme to Preferences data.
-     * 
+     *
      * @param s TMFFScheme to be added to the TMFFPreferences data.
      * @return TMFF format number in use.
      */
@@ -725,7 +724,7 @@ public class TMFFPreferences {
 
     /**
      * Update existing Format definition.
-     * 
+     *
      * @param newFormat to store into the Preferences data.
      */
     public void updateDefinedFormat(final TMFFFormat newFormat) {
@@ -739,12 +738,13 @@ public class TMFFPreferences {
      * new object. (It has to do a replace because the object type could
      * theoretically be different -- for example, "TMFFFlat" instead of
      * "TMFFAlignColumn".)
-     * 
+     *
      * @param newScheme to update into the Preferences data.
      */
     public void updateDefinedScheme(final TMFFScheme newScheme) {
 
-        final TMFFScheme oldScheme = getDefinedScheme(newScheme.getSchemeName());
+        final TMFFScheme oldScheme = getDefinedScheme(
+            newScheme.getSchemeName());
         if (oldScheme == null)
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_UPDATE_SCHEME_NOTFND_BUG_1
@@ -752,7 +752,7 @@ public class TMFFPreferences {
 
         for (final TMFFFormat element : tmffFormatArray)
             if (element.getFormatScheme().getSchemeName()
-                .compareToIgnoreCase(oldScheme.getSchemeName()) == 0)
+                .equalsIgnoreCase(oldScheme.getSchemeName()))
                 element.setFormatScheme(newScheme);
 
         putToSchemeMap(newScheme);
@@ -760,7 +760,7 @@ public class TMFFPreferences {
 
     /**
      * Get already defined Scheme from Preferences data.
-     * 
+     *
      * @param definedSchemeName to be looked up.
      * @return TMFF format number in use.
      */
@@ -783,7 +783,7 @@ public class TMFFPreferences {
      * methods TMFFFlat and TMFFUnformatted have maxDepth = Integer.MAX_VALUE
      * which results in no maxDepth line breaks from happening -- therefore,
      * they do not allow updates after initial construction of the method.
-     * 
+     *
      * @param maxDepth parameter.
      * @return boolean - returns false if maxDepth invalid (i.e. not a positive
      *         integer).

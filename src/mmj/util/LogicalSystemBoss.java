@@ -73,7 +73,7 @@ public class LogicalSystemBoss extends Boss {
 
     /**
      * Constructor with BatchFramework for access to environment.
-     * 
+     *
      * @param batchFramework for access to environment.
      */
     public LogicalSystemBoss(final BatchFramework batchFramework) {
@@ -83,7 +83,7 @@ public class LogicalSystemBoss extends Boss {
 
     /**
      * Returns true if LogicalSystem loaded successfully.
-     * 
+     *
      * @return true if LogicalSystem loaded successfully.
      */
     public boolean getLogicalSystemLoaded() {
@@ -92,7 +92,7 @@ public class LogicalSystemBoss extends Boss {
 
     /**
      * Executes a single command from the RunParmFile.
-     * 
+     *
      * @param runParm the RunParmFile line to execute.
      */
     @Override
@@ -101,95 +101,63 @@ public class LogicalSystemBoss extends Boss {
         IOException, VerifyException
     {
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_CLEAR.matches(runParm)) {
             initStateVariables();
             return false; // not "consumed"
         }
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_SYM_TBL_INITIAL_SIZE
-                .name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_SYM_TBL_INITIAL_SIZE.matches(runParm)) {
             editSymTblInitialSize(runParm);
             return true; // "consumed"
         }
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_STMT_TBL_INITIAL_SIZE
-                .name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_STMT_TBL_INITIAL_SIZE.matches(runParm)) {
             editStmtTblInitialSize(runParm);
             return true; // "consumed"
         }
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_ENDPOINT_STMT_LABEL
-                .name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_LOAD_ENDPOINT_STMT_LABEL.matches(runParm)) {
             editLoadEndpointStmtLabel(runParm);
             return true; // "consumed"
         }
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_ENDPOINT_STMT_NBR
-                .name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_LOAD_ENDPOINT_STMT_NBR.matches(runParm)) {
             editLoadEndpointStmtNbr(runParm);
             return true; // "consumed"
         }
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_COMMENTS.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_LOAD_COMMENTS.matches(runParm)) {
             editLoadComments(runParm);
             return true; // "consumed"
         }
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_PROOFS
-            .name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_LOAD_PROOFS.matches(runParm)) {
             editLoadProofs(runParm);
             return true; // "consumed"
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROVABLE_LOGIC_STMT_TYPE
-                .name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_PROVABLE_LOGIC_STMT_TYPE.matches(runParm)) {
             editProvableLogicStmtType(runParm);
             return true; // "consumed"
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_LOGIC_STMT_TYPE.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_LOGIC_STMT_TYPE.matches(runParm)) {
             editLogicStmtType(runParm);
             return true; // "consumed"
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_BOOK_MANAGER_ENABLED
-                .name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_BOOK_MANAGER_ENABLED.matches(runParm)) {
             editBookManagerEnabled(runParm);
             return true; // "consumed"
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_SEQ_ASSIGNER_INTERVAL_SIZE
-                .name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_SEQ_ASSIGNER_INTERVAL_SIZE.matches(runParm)) {
             editSeqAssignerIntervalSize(runParm);
             return true; // "consumed"
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE
-                .name()) == 0)
+        if (UtilConstants.RUNPARM_SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE
+            .matches(runParm))
         {
             editSeqAssignerIntervalTblInitialSize(runParm);
             return true; // "consumed"
         }
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_FILE
-            .name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_LOAD_FILE.matches(runParm)) {
             doLoadFile(runParm);
             return true; // "consumed"
         }
@@ -233,7 +201,7 @@ public class LogicalSystemBoss extends Boss {
      * no load errors -- then throw an exception. Either the RunParmFile lines
      * are misordered or the LoadFile command is missing, or the Metamath file
      * has errors, or?
-     * 
+     *
      * @return LogicalSystem object reference.
      */
     public LogicalSystem getLogicalSystem() {
@@ -257,7 +225,7 @@ public class LogicalSystemBoss extends Boss {
      * (there is only one Tokenizer at present and it hardcodes character values
      * based on the Metamath.pdf specification.) To make this change it would be
      * necessary to create a Tokenizer interface.
-     * 
+     *
      * @param runParm RunParmFile line.
      * @throws IllegalArgumentException if an error occurred
      * @throws MMIOException if an error occurred
@@ -271,8 +239,8 @@ public class LogicalSystemBoss extends Boss {
 
         logicalSystemLoaded = false;
 
-        editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_LOAD_FILE.name(), 1);
+        editRunParmValuesLength(runParm, UtilConstants.RUNPARM_LOAD_FILE.name(),
+            1);
 
         final Messages messages = batchFramework.outputBoss.getMessages();
 
@@ -334,7 +302,7 @@ public class LogicalSystemBoss extends Boss {
     /**
      * Returns the current value of the LoadProofs RunParm or its default
      * setting.
-     * 
+     *
      * @return LoadProofs RunParm value (or its default).
      */
     public boolean getLoadProofs() {
@@ -343,7 +311,7 @@ public class LogicalSystemBoss extends Boss {
 
     /**
      * Validate Symbol Table Initial Size Parameter.
-     * 
+     *
      * @param runParm RunParmFile line.
      * @throws IllegalArgumentException if an error occurred
      */
@@ -358,7 +326,7 @@ public class LogicalSystemBoss extends Boss {
      * Validate Load Endpoint Statement Number Parameter.
      * <p>
      * Must be a positive integer.
-     * 
+     *
      * @param runParm RunParmFile line.
      * @throws IllegalArgumentException if an error occurred
      */
@@ -373,7 +341,7 @@ public class LogicalSystemBoss extends Boss {
      * Validate Load Endpoint Statement Label Parameter.
      * <p>
      * Must not be blank.
-     * 
+     *
      * @param runParm RunParmFile line.
      * @throws IllegalArgumentException if an error occurred
      */
@@ -392,7 +360,7 @@ public class LogicalSystemBoss extends Boss {
      * Validate Load Comments Parameter.
      * <p>
      * Must equal yes or no.
-     * 
+     *
      * @param runParm RunParmFile line.
      * @throws IllegalArgumentException if an error occurred
      */
@@ -408,7 +376,7 @@ public class LogicalSystemBoss extends Boss {
      * Validate Load Proofs Parameter.
      * <p>
      * Must equal yes or no.
-     * 
+     *
      * @param runParm RunParmFile line.
      * @throws IllegalArgumentException if an error occurred
      */
@@ -422,7 +390,7 @@ public class LogicalSystemBoss extends Boss {
 
     /**
      * Validate Statement Table Initial Size Parameter.
-     * 
+     *
      * @param runParm RunParmFile line.
      * @throws IllegalArgumentException if an error occurred
      */
@@ -435,7 +403,7 @@ public class LogicalSystemBoss extends Boss {
 
     /**
      * Validate Provable Logic Statement Type Runparm.
-     * 
+     *
      * @param runParm RunParmFile line.
      * @throws IllegalArgumentException if an error occurred
      */
@@ -456,7 +424,7 @@ public class LogicalSystemBoss extends Boss {
 
     /**
      * Validate Logic Statement Type Runparm.
-     * 
+     *
      * @param runParm RunParmFile line.
      * @throws IllegalArgumentException if an error occurred
      */
@@ -477,7 +445,7 @@ public class LogicalSystemBoss extends Boss {
      * Validate Book Manager Enabled Parameter.
      * <p>
      * Must equal yes or no.
-     * 
+     *
      * @param runParm RunParmFile line.
      * @throws IllegalArgumentException if an error occurred
      */
@@ -498,7 +466,7 @@ public class LogicalSystemBoss extends Boss {
      * Validate SeqAssigner Interval Size Parameter.
      * <p>
      * Must be a positive integer within a given range.
-     * 
+     *
      * @param runParm RunParmFile line.
      * @throws IllegalArgumentException if an error occurred
      */
@@ -514,7 +482,7 @@ public class LogicalSystemBoss extends Boss {
      * Validate SeqAssigner Interval Table Initial Size Parameter.
      * <p>
      * Must be a positive integer within a given range.
-     * 
+     *
      * @param runParm RunParmFile line.
      * @throws IllegalArgumentException if an error occurred
      */
@@ -525,7 +493,7 @@ public class LogicalSystemBoss extends Boss {
             runParm,
             UtilConstants.RUNPARM_SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE.name(),
             1);
-        SeqAssigner
-            .validateIntervalTblInitialSize(seqAssignerIntervalTblInitialSizeParm);
+        SeqAssigner.validateIntervalTblInitialSize(
+            seqAssignerIntervalTblInitialSizeParm);
     }
 }

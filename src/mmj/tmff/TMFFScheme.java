@@ -30,7 +30,7 @@ public class TMFFScheme {
 
     /**
      * Constructor for TMFFScheme used by TMFFBoss and BatchMMJ2.
-     * 
+     *
      * @param param String parameter array corresponding to the BatchMMJ2
      *            RunParm command TMFFDefineScheme.
      */
@@ -50,7 +50,7 @@ public class TMFFScheme {
 
     /**
      * Standard constructor for TMFFScheme.
-     * 
+     *
      * @param schemeName name assigned to the scheme by the user.
      * @param method TMFFMethod to be assigned to the scheme.
      */
@@ -69,7 +69,7 @@ public class TMFFScheme {
 
     /**
      * Get the TMFFMethod instance assigned to this TMFFScheme.
-     * 
+     *
      * @return tmffMethod instance.
      */
     public TMFFMethod getTMFFMethod() {
@@ -78,7 +78,7 @@ public class TMFFScheme {
 
     /**
      * Set TMFFMethod assigned to this TMFFScheme.
-     * 
+     *
      * @param tmffMethod pre-instantiated TMFFMethod.
      */
     public void setTMFFMethod(final TMFFMethod tmffMethod) {
@@ -86,7 +86,7 @@ public class TMFFScheme {
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_SCHEME_METHOD_MISSING_1);
         if (TMFFConstants.TMFF_UNFORMATTED_SCHEME_NAME
-            .compareToIgnoreCase(getSchemeName()) == 0)
+            .equalsIgnoreCase(getSchemeName()))
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_SCHEME_CANNOT_BE_UPDATED_1
                     + TMFFConstants.TMFF_UNFORMATTED_SCHEME_NAME
@@ -97,7 +97,7 @@ public class TMFFScheme {
 
     /**
      * Get the name assigned to this TMFFScheme.
-     * 
+     *
      * @return schemeName string.
      */
     public String getSchemeName() {
@@ -111,7 +111,7 @@ public class TMFFScheme {
      * that is validated elsewhere.
      * <p>
      * Scheme Name "Unformatted" is RESERVED and cannot be assigned.
-     * 
+     *
      * @param schemeName non-null, non-empty String.
      */
     public void setSchemeName(final String schemeName) {
@@ -120,7 +120,7 @@ public class TMFFScheme {
                 TMFFConstants.ERRMSG_SCHEME_NAME_REQUIRED_1);
 
         if (TMFFConstants.TMFF_UNFORMATTED_SCHEME_NAME
-            .compareToIgnoreCase(schemeName) == 0)
+            .equalsIgnoreCase(schemeName))
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_SCHEME_NM_CANT_BE_ASSIGNED_1
                     + TMFFConstants.TMFF_UNFORMATTED_SCHEME_NAME

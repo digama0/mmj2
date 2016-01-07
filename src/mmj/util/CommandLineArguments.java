@@ -70,14 +70,14 @@ public class CommandLineArguments {
      * <li>args[4] = svcPath. Optional. May be blank or empty string. If no path
      * specified the default path for the mmj2 Service Feature is Current Path.
      * </ol>
-     * 
+     *
      * @param args Array of String. runParmFileName, displayMMJ2FailPopupWindow,
      *            mmj2Path, metamathPath, svcPath, testOption.
      * @throws IOException if an error occurred
      * @throws IllegalArgumentException if errors found.
      */
-    public CommandLineArguments(final String[] args) throws IOException,
-        IllegalArgumentException
+    public CommandLineArguments(final String[] args)
+        throws IOException, IllegalArgumentException
     {
 
         if (args.length > UtilConstants.RUNPARM_FILE_NAME_ARGUMENT_INDEX)
@@ -107,7 +107,8 @@ public class CommandLineArguments {
 
         displayArgumentOptionReportPart3(args);
 
-        displayMMJ2FailPopupWindow = getDisplayMMJ2FailPopupWindowVar(displayMMJ2FailPopupWindowArgument);
+        displayMMJ2FailPopupWindow = getDisplayMMJ2FailPopupWindowVar(
+            displayMMJ2FailPopupWindowArgument);
 
         displayArgumentOptionReportPart4(args);
 
@@ -117,7 +118,7 @@ public class CommandLineArguments {
 
     /**
      * Returns the {@code Paths} object.
-     * 
+     *
      * @return The {@code Paths} object.
      */
     public Paths getPaths() {
@@ -126,7 +127,7 @@ public class CommandLineArguments {
 
     /**
      * Returns the {@code RunParmFile} object.
-     * 
+     *
      * @return The {@code RunParmFile} object.
      */
     public RunParmFile getRunParmFile() {
@@ -135,7 +136,7 @@ public class CommandLineArguments {
 
     /**
      * Returns the {@code displayMMJ2FailPopupWindow} value;
-     * 
+     *
      * @return The {@code displayMMJ2FailPopupWindow} value;
      */
     public boolean getDisplayMMJ2FailPopupWindow() {
@@ -148,7 +149,7 @@ public class CommandLineArguments {
      * <p>
      * Note that blanks and empty string values have been previously converted
      * to {@code null}.
-     * 
+     *
      * @param displayMMJ2FailPopupWindowArgument must equal Y, N or null.
      * @return Y or N.
      * @throws IllegalArgumentException if input not equal to Y, N or null.
@@ -161,10 +162,10 @@ public class CommandLineArguments {
 
         if (displayMMJ2FailPopupWindowArgument != null)
             if (displayMMJ2FailPopupWindowArgument
-                .compareToIgnoreCase(UtilConstants.YES_ARGUMENT) == 0)
+                .equalsIgnoreCase(UtilConstants.YES_ARGUMENT))
                 var = true;
             else if (displayMMJ2FailPopupWindowArgument
-                .compareToIgnoreCase(UtilConstants.NO_ARGUMENT) == 0)
+                .equalsIgnoreCase(UtilConstants.NO_ARGUMENT))
                 var = false;
             else
                 throw new IllegalArgumentException(
@@ -180,7 +181,7 @@ public class CommandLineArguments {
      * The java command line argument array element specified by
      * {@code argIndex} is returned after converting it to {@code null} if it is
      * blank or an empty string.
-     * 
+     *
      * @param args Java command line arguments array
      * @param argIndex index into args indicating the arg to retrieve
      * @return The arg element specified by argIndex is returned after
@@ -212,9 +213,9 @@ public class CommandLineArguments {
 
         System.out.println(UtilConstants.ARGUMENTS_OPTION_REPORT_LINE_2);
         for (int i = 0; i < args.length; i++)
-            System.out.println(UtilConstants.ARGUMENTS_OPTION_REPORT_LINE_3A
-                + (i + 1) + UtilConstants.ARGUMENTS_OPTION_REPORT_LINE_3B
-                + args[i]);
+            System.out
+                .println(UtilConstants.ARGUMENTS_OPTION_REPORT_LINE_3A + (i + 1)
+                    + UtilConstants.ARGUMENTS_OPTION_REPORT_LINE_3B + args[i]);
     }
 
     private void displayArgumentOptionReportPart3(final String[] args)

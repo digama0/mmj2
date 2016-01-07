@@ -54,37 +54,27 @@ public class MacroBoss extends Boss {
         throws IllegalArgumentException, VerifyException
     {
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_CLEAR.matches(runParm)) {
             macroManager = null;
             return false; // not "consumed"
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_MACRO_FOLDER.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_MACRO_FOLDER.matches(runParm)) {
             setMacroFolder(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_MACRO_LANGUAGE.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_MACRO_LANGUAGE.matches(runParm)) {
             setMacroLanguage(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_RUN_MACRO_INIT.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_RUN_MACRO_INIT.matches(runParm)) {
             runMacroInit(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_RUN_MACRO.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_RUN_MACRO.matches(runParm)) {
             runMacro(runParm);
             return true;
         }

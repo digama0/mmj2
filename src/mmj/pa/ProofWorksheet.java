@@ -1954,7 +1954,7 @@ public class ProofWorksheet {
             e = proofDerivationStepList.get(i);
 
             if (deriveFormulas
-                && e.step.compareToIgnoreCase(PaConstants.QED_STEP_NBR) != 0
+                && !e.step.equalsIgnoreCase(PaConstants.QED_STEP_NBR)
                 && !e.isHyp)
             {
                 derivationStep = new DerivationStep(this, e.step, e.hypStep,

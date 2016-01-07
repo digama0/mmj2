@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package mmj.util;
 
@@ -15,7 +15,7 @@ public class BatchCommand implements Comparable<BatchCommand> {
 
     /**
      * Constructor of BatchCommand. Sets documentation to null.
-     * 
+     *
      * @param name name of the command that will be stored
      */
     BatchCommand(final String name) {
@@ -25,7 +25,7 @@ public class BatchCommand implements Comparable<BatchCommand> {
 
     /**
      * Constructor of BatchCommand.
-     * 
+     *
      * @param name name of the command that will be stored
      * @param documentation string with the documentation of this command
      */
@@ -36,7 +36,7 @@ public class BatchCommand implements Comparable<BatchCommand> {
 
     /**
      * Getter of name string
-     * 
+     *
      * @return name string
      */
     public final String name() {
@@ -44,8 +44,16 @@ public class BatchCommand implements Comparable<BatchCommand> {
     }
 
     /**
+     * Getter of name string
+     *
+     * @return name string
+     */
+    public boolean matches(final RunParmArrayEntry runParm) {
+        return runParm.name.equalsIgnoreCase(name());
+    }
+    /**
      * Getter of documentation string
-     * 
+     *
      * @return string with documentation
      */
     public final String documentation() {
@@ -60,7 +68,7 @@ public class BatchCommand implements Comparable<BatchCommand> {
     /**
      * implementation of Comparable compareTo function. This function compares
      * names of BatchCommands so the can be sorted in alphabetic order.
-     * 
+     *
      * @param b - what to compare to.
      * @return difference
      */

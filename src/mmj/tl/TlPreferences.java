@@ -46,7 +46,7 @@ public class TlPreferences {
 
     /**
      * Constructor for TlPreferences.
-     * 
+     *
      * @param logicalSystem LogicalSystem object.
      */
     public TlPreferences(final LogicalSystem logicalSystem) {
@@ -57,19 +57,22 @@ public class TlPreferences {
 
         setAuditMessages(TlConstants.THEOREM_LOADER_AUDIT_MESSAGES_DEFAULT);
 
-        setStoreFormulasAsIs(TlConstants.THEOREM_LOADER_STORE_FORMULAS_ASIS_DEFAULT);
+        setStoreFormulasAsIs(
+            TlConstants.THEOREM_LOADER_STORE_FORMULAS_ASIS_DEFAULT);
 
-        setStoreMMIndentAmt(TlConstants.THEOREM_LOADER_STORE_MM_INDENT_AMT_DEFAULT);
+        setStoreMMIndentAmt(
+            TlConstants.THEOREM_LOADER_STORE_MM_INDENT_AMT_DEFAULT);
 
-        setStoreMMRightCol(TlConstants.THEOREM_LOADER_STORE_MM_RIGHT_COL_DEFAULT);
+        setStoreMMRightCol(
+            TlConstants.THEOREM_LOADER_STORE_MM_RIGHT_COL_DEFAULT);
 
-        setProvableLogicStmtTypeParm(logicalSystem
-            .getProvableLogicStmtTypeParm());
+        setProvableLogicStmtTypeParm(
+            logicalSystem.getProvableLogicStmtTypeParm());
     }
 
     /**
      * Get the MMTFolder in use now. Constructor for TlPreferences.
-     * 
+     *
      * @return MMTFolder in use now, which may be pointing to a null File object
      *         if not yet specified.
      */
@@ -79,7 +82,7 @@ public class TlPreferences {
 
     /**
      * Get the Dj Vars Option string.
-     * 
+     *
      * @return Dj Vars Option string.
      */
     public String getDjVarsOption() {
@@ -88,7 +91,7 @@ public class TlPreferences {
 
     /**
      * Get the Dj Vars Merge Option flag.
-     * 
+     *
      * @return the Dj Vars Merge Option flag.
      */
     public boolean getDjVarsMerge() {
@@ -97,7 +100,7 @@ public class TlPreferences {
 
     /**
      * Get the Dj Vars Replace Option flag.
-     * 
+     *
      * @return the Dj Vars Replace Option flag.
      */
     public boolean getDjVarsReplace() {
@@ -106,7 +109,7 @@ public class TlPreferences {
 
     /**
      * Get the Dj Vars NoUpdate Option flag.
-     * 
+     *
      * @return the Dj Vars NoUpdate Option flag.
      */
     public boolean getDjVarsNoUpdate() {
@@ -115,7 +118,7 @@ public class TlPreferences {
 
     /**
      * Get the auditMessages flag.
-     * 
+     *
      * @return auditMessages flag.
      */
     public boolean getAuditMessages() {
@@ -124,7 +127,7 @@ public class TlPreferences {
 
     /**
      * Get the storeFormulasAsIs flag.
-     * 
+     *
      * @return storeFormulasAsIs flag.
      */
     public boolean getStoreFormulasAsIs() {
@@ -133,7 +136,7 @@ public class TlPreferences {
 
     /**
      * Get the storeMMIndentAmt.
-     * 
+     *
      * @return storeMMIndentAmt.
      */
     public int getStoreMMIndentAmt() {
@@ -142,7 +145,7 @@ public class TlPreferences {
 
     /**
      * Get the storeMMRightCol.
-     * 
+     *
      * @return storeMMRightCol.
      */
     public int getStoreMMRightCol() {
@@ -151,7 +154,7 @@ public class TlPreferences {
 
     /**
      * Get the cached value of the Provable Logic Statement Type string value.
-     * 
+     *
      * @return provableLogicStmtTypeParm.
      */
     public String getProvableLogicStmtTypeParm() {
@@ -163,7 +166,7 @@ public class TlPreferences {
      * <p>
      * If valid the dvVarsMerge, djVarsReplace and djVarsNoUpdate flags are set,
      * as well as the Dj Vars option itself. If invalid no updates are made.
-     * 
+     *
      * @param s Dj Vars Option string.
      * @return true if Dj Vars Option valid, else false.
      */
@@ -178,8 +181,8 @@ public class TlPreferences {
         // [ ]
         //
 
-        if (s
-            .compareToIgnoreCase(TlConstants.THEOREM_LOADER_DJ_VARS_OPTION_NO_UPDATE) == 0)
+        if (s.equalsIgnoreCase(
+            TlConstants.THEOREM_LOADER_DJ_VARS_OPTION_NO_UPDATE))
         {
 
             djVarsNoUpdate = true;
@@ -189,8 +192,8 @@ public class TlPreferences {
             return true; // no error
         }
 
-        if (s
-            .compareToIgnoreCase(TlConstants.THEOREM_LOADER_DJ_VARS_OPTION_MERGE) == 0)
+        if (s.equalsIgnoreCase(
+            TlConstants.THEOREM_LOADER_DJ_VARS_OPTION_MERGE))
         {
 
             djVarsNoUpdate = false;
@@ -200,8 +203,8 @@ public class TlPreferences {
             return true; // no error
         }
 
-        if (s
-            .compareToIgnoreCase(TlConstants.THEOREM_LOADER_DJ_VARS_OPTION_REPLACE) == 0)
+        if (s.equalsIgnoreCase(
+            TlConstants.THEOREM_LOADER_DJ_VARS_OPTION_REPLACE))
         {
 
             djVarsNoUpdate = false;
@@ -218,7 +221,7 @@ public class TlPreferences {
      * Validate and set the Audit Messages Option.
      * <p>
      * If valid the auditMessages flag is set. If invalid, no updates are made.
-     * 
+     *
      * @param s Audit Messages option.
      * @return true if Audit Messages Option valid, else false.
      */
@@ -233,17 +236,17 @@ public class TlPreferences {
         // [ ]
         //
 
-        if (s.compareToIgnoreCase(TlConstants.SYNONYM_TRUE_1) == 0
-            || s.compareToIgnoreCase(TlConstants.SYNONYM_TRUE_2) == 0
-            || s.compareToIgnoreCase(TlConstants.SYNONYM_TRUE_3) == 0)
+        if (s.equalsIgnoreCase(TlConstants.SYNONYM_TRUE_1)
+            || s.equalsIgnoreCase(TlConstants.SYNONYM_TRUE_2)
+            || s.equalsIgnoreCase(TlConstants.SYNONYM_TRUE_3))
         {
             setAuditMessages(true);
             return true;
         }
 
-        if (s.compareToIgnoreCase(TlConstants.SYNONYM_FALSE_1) == 0
-            || s.compareToIgnoreCase(TlConstants.SYNONYM_FALSE_2) == 0
-            || s.compareToIgnoreCase(TlConstants.SYNONYM_FALSE_3) == 0)
+        if (s.equalsIgnoreCase(TlConstants.SYNONYM_FALSE_1)
+            || s.equalsIgnoreCase(TlConstants.SYNONYM_FALSE_2)
+            || s.equalsIgnoreCase(TlConstants.SYNONYM_FALSE_3))
         {
             setAuditMessages(false);
             return true;
@@ -254,7 +257,7 @@ public class TlPreferences {
 
     /**
      * Set the auditMessages flag.
-     * 
+     *
      * @param b auditMessages flag.
      */
     public void setAuditMessages(final boolean b) {
@@ -266,7 +269,7 @@ public class TlPreferences {
      * <p>
      * If valid the storeFormulasAsIs flag is set. If invalid, no updates are
      * made.
-     * 
+     *
      * @param s Store Formulas AsIs option.
      * @return true if Store Formulas AsIs Option valid, else false.
      */
@@ -281,17 +284,17 @@ public class TlPreferences {
         // [ ]
         //
 
-        if (s.compareToIgnoreCase(TlConstants.SYNONYM_TRUE_1) == 0
-            || s.compareToIgnoreCase(TlConstants.SYNONYM_TRUE_2) == 0
-            || s.compareToIgnoreCase(TlConstants.SYNONYM_TRUE_3) == 0)
+        if (s.equalsIgnoreCase(TlConstants.SYNONYM_TRUE_1)
+            || s.equalsIgnoreCase(TlConstants.SYNONYM_TRUE_2)
+            || s.equalsIgnoreCase(TlConstants.SYNONYM_TRUE_3))
         {
             setStoreFormulasAsIs(true);
             return true;
         }
 
-        if (s.compareToIgnoreCase(TlConstants.SYNONYM_FALSE_1) == 0
-            || s.compareToIgnoreCase(TlConstants.SYNONYM_FALSE_2) == 0
-            || s.compareToIgnoreCase(TlConstants.SYNONYM_FALSE_3) == 0)
+        if (s.equalsIgnoreCase(TlConstants.SYNONYM_FALSE_1)
+            || s.equalsIgnoreCase(TlConstants.SYNONYM_FALSE_2)
+            || s.equalsIgnoreCase(TlConstants.SYNONYM_FALSE_3))
         {
             setStoreFormulasAsIs(false);
             return true;
@@ -302,7 +305,7 @@ public class TlPreferences {
 
     /**
      * Set the storeFormulasAsIs flag.
-     * 
+     *
      * @param b storeFormulasAsIs flag.
      */
     public void setStoreFormulasAsIs(final boolean b) {
@@ -313,7 +316,7 @@ public class TlPreferences {
      * Validate and set the Store MM Indent Amt Option.
      * <p>
      * If valid the storeMMIndentAmt is set. If invalid, no updates are made.
-     * 
+     *
      * @param s Store MM Indent Amt string.
      * @return true if Store MM Indent Amt Option valid, else false.
      */
@@ -343,7 +346,7 @@ public class TlPreferences {
 
     /**
      * Set the storeMMIndentAmt.
-     * 
+     *
      * @param n storeMMIndentAmt.
      */
     public void setStoreMMIndentAmt(final int n) {
@@ -354,7 +357,7 @@ public class TlPreferences {
      * Validate and set the Store MM Right Col Option.
      * <p>
      * If valid the storeMMRightCol is set. If invalid, no updates are made.
-     * 
+     *
      * @param s Store MM Right Col string.
      * @return true if Store MM Right Col Option valid, else false.
      */
@@ -384,7 +387,7 @@ public class TlPreferences {
 
     /**
      * Set the storeMMRightCol.
-     * 
+     *
      * @param n storeMMRightCol.
      */
     public void setStoreMMRightCol(final int n) {
@@ -396,7 +399,7 @@ public class TlPreferences {
      * <p>
      * If valid the provableLogicStmtTypeParm is set. If invalid, no updates are
      * made.
-     * 
+     *
      * @param s Provable Logic Stmt Type Parm string.
      * @return true if Provable Logic Stmt Type Parm. valid, else false.
      */
@@ -413,7 +416,7 @@ public class TlPreferences {
      * Set the MMT Folder using a pathname String.
      * <p>
      * If valid the mmtFolder is set. If invalid, no updates are made.
-     * 
+     *
      * @param filePath path for s. May be null, absolute or relative.
      * @param s MMT Folder pathname, absolute or relative.
      * @return null if no errors, otherwise error message string.
@@ -432,7 +435,7 @@ public class TlPreferences {
      * Set the MMT Folder using a File object.
      * <p>
      * If valid the mmtFolder is set. If invalid, no updates are made.
-     * 
+     *
      * @param file MMT Folder File object.
      * @return null if no errors, otherwise error message string.
      */

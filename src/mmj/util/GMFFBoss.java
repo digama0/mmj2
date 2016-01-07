@@ -27,7 +27,7 @@ public class GMFFBoss extends Boss {
 
     /**
      * Constructor with BatchFramework for access to environment.
-     * 
+     *
      * @param batchFramework for access to environment.
      */
     public GMFFBoss(final BatchFramework batchFramework) {
@@ -36,7 +36,7 @@ public class GMFFBoss extends Boss {
 
     /**
      * Executes a single command from the RunParmFile.
-     * 
+     *
      * @param runParm the RunParmFile line to execute.
      */
     @Override
@@ -44,16 +44,12 @@ public class GMFFBoss extends Boss {
         throws IllegalArgumentException, GMFFException
     {
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_CLEAR.matches(runParm)) {
             gmffManager = null;
             return false; // not "consumed"
         }
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_FILE
-            .name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_LOAD_FILE.matches(runParm)) {
             // don't need to do anything here because
             // LogicalSystemBoss executes
             // gmffManager.forceReinitialization() --
@@ -64,56 +60,39 @@ public class GMFFBoss extends Boss {
             return false; // not "consumed"
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_GMFF_INITIALIZE.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_GMFF_INITIALIZE.matches(runParm)) {
             doGMFFInitialize(runParm);
             return true; // "consumed"
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_GMFF_EXPORT_PARMS.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_GMFF_EXPORT_PARMS.matches(runParm)) {
             doRunParmGMFFExportParms(runParm);
             return true; // "consumed"
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_GMFF_USER_EXPORT_CHOICE
-                .name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_GMFF_USER_EXPORT_CHOICE.matches(runParm)) {
             doRunParmGMFFUserExportChoice(runParm);
             return true; // "consumed"
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_GMFF_USER_TEXT_ESCAPES
-                .name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_GMFF_USER_TEXT_ESCAPES.matches(runParm)) {
             doRunParmGMFFUserTextEscapes(runParm);
             return true; // "consumed"
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_GMFF_PARSE_METAMATH_TYPESET_COMMENT
-                .name()) == 0)
+        if (UtilConstants.RUNPARM_GMFF_PARSE_METAMATH_TYPESET_COMMENT
+            .matches(runParm))
         {
             doGMFFParseMetamathTypesetComment(runParm);
             return true; // "consumed"
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_GMFF_EXPORT_FROM_FOLDER
-                .name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_GMFF_EXPORT_FROM_FOLDER.matches(runParm)) {
             doGMFFExportFromFolder(runParm);
             return true; // "consumed"
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_GMFF_EXPORT_THEOREM
-                .name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_GMFF_EXPORT_THEOREM.matches(runParm)) {
             doGMFFExportTheorem(runParm);
             return true; // "consumed"
         }
@@ -132,7 +111,7 @@ public class GMFFBoss extends Boss {
      * here would result in doubled-up error messages. The Initialize
      * gmffManagerRunParm Command should be used prior to PrintSyntaxDetails if
      * a "load and print syntax" is desired.
-     * 
+     *
      * @return gmffManagerobject, ready to go.
      */
     public GMFFManager getGMFFManager() {
@@ -146,7 +125,7 @@ public class GMFFBoss extends Boss {
     /**
      * Executes GMFFManager initializeGMFF function and prints any messages,
      * etc.
-     * 
+     *
      * @param runParm RunParmFile line.
      * @throws GMFFException on invalid parameter
      */
@@ -159,8 +138,8 @@ public class GMFFBoss extends Boss {
         if (runParm.values.length > 0) {
             parmString = runParm.values[0].trim();
             if (parmString.length() > 0)
-                if (parmString
-                    .compareToIgnoreCase(GMFFConstants.PRINT_TYPESETTING_DEFINITIONS) == 0)
+                if (parmString.equalsIgnoreCase(
+                    GMFFConstants.PRINT_TYPESETTING_DEFINITIONS))
                     printTypesettingDefinitionsReport = true;
                 else
                     throw new GMFFException(
@@ -171,8 +150,8 @@ public class GMFFBoss extends Boss {
         try {
             getGMFFManager().gmffInitialize(printTypesettingDefinitionsReport);
         } catch (final GMFFException e) {
-            batchFramework.outputBoss.getMessages().accumErrorMessage(
-                e.getMessage());
+            batchFramework.outputBoss.getMessages()
+                .accumErrorMessage(e.getMessage());
         }
 
         batchFramework.outputBoss.printAndClearMessages();
@@ -280,14 +259,15 @@ public class GMFFBoss extends Boss {
         boolean runParmPrintOption = false;
 
         editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_GMFF_PARSE_METAMATH_TYPESET_COMMENT.name(), 3);
+            UtilConstants.RUNPARM_GMFF_PARSE_METAMATH_TYPESET_COMMENT.name(),
+            3);
         try {
 
             if (runParm.values.length > 3) {
                 final String parmString = runParm.values[3].trim();
                 if (parmString.length() > 0)
                     if (parmString
-                        .compareToIgnoreCase(GMFFConstants.RUNPARM_PRINT_OPTION) == 0)
+                        .equalsIgnoreCase(GMFFConstants.RUNPARM_PRINT_OPTION))
                         runParmPrintOption = true;
                     else
                         throw new GMFFException(
@@ -304,8 +284,8 @@ public class GMFFBoss extends Boss {
                 myDirectory, myMetamathTypesetCommentFileName,
                 runParmPrintOption);
         } catch (final GMFFException e) {
-            batchFramework.outputBoss.getMessages().accumErrorMessage(
-                e.getMessage());
+            batchFramework.outputBoss.getMessages()
+                .accumErrorMessage(e.getMessage());
         }
 
         batchFramework.outputBoss.printAndClearMessages();
@@ -337,8 +317,8 @@ public class GMFFBoss extends Boss {
                 theoremLabelOrAsterisk, inputFileType, maxNumberToExport,
                 appendFileName);
         } catch (final GMFFException e) {
-            batchFramework.outputBoss.getMessages().accumErrorMessage(
-                e.getMessage());
+            batchFramework.outputBoss.getMessages()
+                .accumErrorMessage(e.getMessage());
         }
 
         batchFramework.outputBoss.printAndClearMessages();
@@ -375,10 +355,10 @@ public class GMFFBoss extends Boss {
             getGMFFManager().exportTheorem(theoremLabelOrAsterisk,
                 maxNumberToExport, appendFileName, proofAsst);
         } catch (final Exception e) {
-            batchFramework.outputBoss.getMessages().accumErrorMessage(
-                e.getMessage());
-            batchFramework.outputBoss.getMessages().accumErrorMessage(
-                UtilConstants.ERRMSG_GMFF_RUNPARM_ERROR_1
+            batchFramework.outputBoss.getMessages()
+                .accumErrorMessage(e.getMessage());
+            batchFramework.outputBoss.getMessages()
+                .accumErrorMessage(UtilConstants.ERRMSG_GMFF_RUNPARM_ERROR_1
                     + UtilConstants.RUNPARM_GMFF_EXPORT_THEOREM
                     + UtilConstants.ERRMSG_GMFF_RUNPARM_ERROR_2);
         }

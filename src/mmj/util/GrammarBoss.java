@@ -118,9 +118,7 @@ public class GrammarBoss extends Boss {
         IOException, VerifyException
     {
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_CLEAR.matches(runParm)) {
             grammar = null;
             grammarInitialized = false;
             allStatementsParsedSuccessfully = false;
@@ -135,9 +133,7 @@ public class GrammarBoss extends Boss {
             return false; // not "consumed"
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_FILE.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_LOAD_FILE.matches(runParm)) {
             grammar = null;
             grammarInitialized = false;
             allStatementsParsedSuccessfully = false;
@@ -148,52 +144,40 @@ public class GrammarBoss extends Boss {
         }
 
 //PATCH 2008-08-01: MOVE TO LogicalSystemBoss
-//      if (runParm.name.compareToIgnoreCase(
-//          UtilConstants.RUNPARM_PROVABLE_LOGIC_STMT_TYPE)
+//      if (UtilConstants.RUNPARM_PROVABLE_LOGIC_STMT_TYPE.matches(runParm))
 //          == 0) {
 //          editProvableLogicStmtType(runParm);
 //          return true; // "consumed"
 //      }
 //
-//      if (runParm.name.compareToIgnoreCase(
-//          UtilConstants.RUNPARM_LOGIC_STMT_TYPE)
+//      if (UtilConstants.RUNPARM_LOGIC_STMT_TYPE.matches(runParm))
 //          == 0) {
 //          editLogicStmtType(runParm);
 //          return true; // "consumed"
 //      }
 //END-PATCH 2008-08-01
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_GRAMMAR_AMBIGUITY_EDITS.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_GRAMMAR_AMBIGUITY_EDITS.matches(runParm)) {
             editGrammarAmbiguityEdits(runParm);
             return true; // "consumed"
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_STATEMENT_AMBIGUITY_EDITS.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_STATEMENT_AMBIGUITY_EDITS.matches(runParm)) {
             editStatementAmbiguityEdits(runParm);
             return true; // "consumed"
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_SET_PARSER.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_SET_PARSER.matches(runParm)) {
             editParser(runParm);
             return true; // "consumed"
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_INITIALIZE_GRAMMAR.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_INITIALIZE_GRAMMAR.matches(runParm)) {
             doInitializeGrammar(runParm);
             return true; // "consumed"
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PARSE.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_PARSE.matches(runParm)) {
             doParse(runParm);
             return true; // "consumed"
         }
@@ -472,10 +456,10 @@ public class GrammarBoss extends Boss {
     {
 
         if (ambiguityParm
-            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_VALUE_BASIC) == 0)
+            .equalsIgnoreCase(UtilConstants.RUNPARM_OPTION_VALUE_BASIC))
             return new Boolean(false);
-        if (ambiguityParm.compareToIgnoreCase(
-            UtilConstants.RUNPARM_OPTION_VALUE_COMPLETE) == 0)
+        if (ambiguityParm
+            .equalsIgnoreCase(UtilConstants.RUNPARM_OPTION_VALUE_COMPLETE))
             return new Boolean(true);
 
         throw new IllegalArgumentException(

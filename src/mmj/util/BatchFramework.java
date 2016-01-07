@@ -348,20 +348,6 @@ public abstract class BatchFramework {
     }
 
     /**
-     * Compares the current RunParmArrayEntry name to an input command.
-     *
-     * @param command RunParm command to compare to the current command name.
-     * @return true if equal, ignoring case, otherwise false.
-     */
-    public boolean isCurrentRunParmCommand(final String command) {
-        if (currentRunParmCommand != null
-            && currentRunParmCommand.compareToIgnoreCase(command) == 0)
-            return true;
-        else
-            return false;
-    }
-
-    /**
      * Override this to change or eliminate the printout of each executable
      * RunParmFile line.
      *

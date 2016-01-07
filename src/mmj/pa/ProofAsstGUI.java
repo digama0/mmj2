@@ -1137,13 +1137,13 @@ public class ProofAsstGUI {
                     .getFontFamily();
                 final String newFontFamily = getNewFontFamily(oldFontFamily);
 
-                if (newFontFamily != null
-                    && newFontFamily.compareToIgnoreCase(oldFontFamily) != 0)
-                    if (newFontFamily.length() > 0) {
-                        proofAsstPreferences.setFontFamily(newFontFamily);
-                        buildProofFont();
-                        proofTextPane.setFont(proofFont);
-                    }
+                if (newFontFamily != null && !newFontFamily.isEmpty()
+                    && !newFontFamily.equalsIgnoreCase(oldFontFamily))
+                {
+                    proofAsstPreferences.setFontFamily(newFontFamily);
+                    buildProofFont();
+                    proofTextPane.setFont(proofFont);
+                }
             }
         });
         setFontFamilyItem
@@ -2643,14 +2643,15 @@ public class ProofAsstGUI {
             setProofTextAreaText(s, reset);
 
         s = w.getTheoremLabel();
-        if (s != null && proofTheoremLabel != null)
-            if (s.compareToIgnoreCase(proofTheoremLabel) != 0) {
-                updateFileChooserFileForProofLabel(s);
-                updateScreenTitle(fileChooser.getSelectedFile());
-                updateMainFrameTitle();
-                proofTheoremLabel = s;
-                savedSinceNew = false;
-            }
+        if (s != null && proofTheoremLabel != null
+            && !s.equalsIgnoreCase(proofTheoremLabel))
+        {
+            updateFileChooserFileForProofLabel(s);
+            updateScreenTitle(fileChooser.getSelectedFile());
+            updateMainFrameTitle();
+            proofTheoremLabel = s;
+            savedSinceNew = false;
+        }
 
         setProofTextAreaCursorPos(w);
         displayRequestMessages(w.getOutputMessageText());

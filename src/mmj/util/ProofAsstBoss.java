@@ -123,379 +123,320 @@ public class ProofAsstBoss extends Boss {
         IOException, VerifyException
     {
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_CLEAR.matches(runParm)) {
             proofAsst = null;
             proofAsstPreferences = null;
             return false; // not "consumed"
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_FILE.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_LOAD_FILE.matches(runParm)) {
             proofAsst = null;
             proofAsstPreferences = null;
             return false; // not "consumed"
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_LOOK_AND_FEEL.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_PROOF_ASST_LOOK_AND_FEEL.matches(runParm)) {
             editProofAsstLookAndFeel(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_DJ_VARS_SOFT_ERRORS.name()) == 0)
+        if (UtilConstants.RUNPARM_PROOF_ASST_DJ_VARS_SOFT_ERRORS
+            .matches(runParm))
         {
             editProofAsstDjVarsSoftErrors(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_PROOF_FORMAT.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_PROOF_ASST_PROOF_FORMAT.matches(runParm)) {
             editProofAsstProofFormat(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_INCOMPLETE_STEP_CURSOR
-                .name()) == 0)
+        if (UtilConstants.RUNPARM_PROOF_ASST_INCOMPLETE_STEP_CURSOR
+            .matches(runParm))
         {
             editProofAsstIncompleteStepCursor(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_HIGHLIGHTING_ENABLED
-                .name()) == 0)
+        if (UtilConstants.RUNPARM_PROOF_ASST_HIGHLIGHTING_ENABLED
+            .matches(runParm))
         {
             editProofAsstHighlightingEnabled(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_HIGHLIGHTING_STYLE.name()) == 0)
+        if (UtilConstants.RUNPARM_PROOF_ASST_HIGHLIGHTING_STYLE
+            .matches(runParm))
         {
             editProofAsstHighlightingStyle(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_FOREGROUND_COLOR_RGB
-                .name()) == 0)
+        if (UtilConstants.RUNPARM_PROOF_ASST_FOREGROUND_COLOR_RGB
+            .matches(runParm))
         {
             editProofAsstForegroundColorRGB(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_BACKGROUND_COLOR_RGB
-                .name()) == 0)
+        if (UtilConstants.RUNPARM_PROOF_ASST_BACKGROUND_COLOR_RGB
+            .matches(runParm))
         {
             editProofAsstBackgroundColorRGB(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_FONT_SIZE.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_PROOF_ASST_FONT_SIZE.matches(runParm)) {
             editProofAsstFontSize(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_FONT_FAMILY.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_PROOF_ASST_FONT_FAMILY.matches(runParm)) {
             editProofAsstFontFamily(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_FONT_BOLD.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_PROOF_ASST_FONT_BOLD.matches(runParm)) {
             editProofAsstFontBold(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_LINE_SPACING.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_PROOF_ASST_LINE_SPACING.matches(runParm)) {
             editProofAsstLineSpacing(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_TEXT_COLUMNS.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_PROOF_ASST_TEXT_COLUMNS.matches(runParm)) {
             editProofAsstTextColumns(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_TEXT_ROWS.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_PROOF_ASST_TEXT_ROWS.matches(runParm)) {
             editProofAsstTextRows(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_ERROR_MESSAGE_ROWS.name()) == 0)
+        if (UtilConstants.RUNPARM_PROOF_ASST_ERROR_MESSAGE_ROWS
+            .matches(runParm))
         {
             editProofAsstErrorMessageRows(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_ERROR_MESSAGE_COLUMNS
-                .name()) == 0)
+        if (UtilConstants.RUNPARM_PROOF_ASST_ERROR_MESSAGE_COLUMNS
+            .matches(runParm))
         {
             editProofAsstErrorMessageColumns(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_MAXIMIZED.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_PROOF_ASST_MAXIMIZED.matches(runParm)) {
             editProofAsstMaximized(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_TEXT_AT_TOP.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_PROOF_ASST_TEXT_AT_TOP.matches(runParm)) {
             editProofAsstTextAtTop(runParm);
             return true;
         }
 
 //->lineWrap disabled because couldn't get Java Swing to work with it
-//      if (runParm.name.compareToIgnoreCase(
+//      if (
 //              UtilConstants.RUNPARM_PROOF_ASST_LINE_WRAP)
 //          == 0) {
 //          editProofAsstLineWrap(runParm);
 //          return true;
 //      }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_FORMULA_LEFT_COL.name()) == 0)
+        if (UtilConstants.RUNPARM_PROOF_ASST_FORMULA_LEFT_COL
+            .matches(runParm))
         {
             editProofAsstFormulaLeftCol(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_FORMULA_RIGHT_COL.name()) == 0)
+        if (UtilConstants.RUNPARM_PROOF_ASST_FORMULA_RIGHT_COL
+            .matches(runParm))
         {
             editProofAsstFormulaRightCol(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_RPN_PROOF_LEFT_COL.name()) == 0)
+        if (UtilConstants.RUNPARM_PROOF_ASST_RPN_PROOF_LEFT_COL
+            .matches(runParm))
         {
             editProofAsstRPNProofLeftCol(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_RPN_PROOF_RIGHT_COL.name()) == 0)
+        if (UtilConstants.RUNPARM_PROOF_ASST_RPN_PROOF_RIGHT_COL
+            .matches(runParm))
         {
             editProofAsstRPNProofRightCol(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_MAX_UNIFY_ALTERNATES.name()) == 0)
+        if (UtilConstants.RUNPARM_PROOF_ASST_MAX_UNIFY_ALTERNATES
+            .matches(runParm))
             // DEPRECATED
             return true;
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_MAX_UNIFY_HINTS.name()) == 0)
+        if (UtilConstants.RUNPARM_PROOF_ASST_MAX_UNIFY_HINTS.matches(runParm))
             // DEPRECATED
             return true;
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_UNIFY_HINTS_IN_BATCH.name()) == 0)
+        if (UtilConstants.RUNPARM_PROOF_ASST_UNIFY_HINTS_IN_BATCH
+            .matches(runParm))
             // DEPRECATED
             return true;
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_STEP_SELECTOR_MAX_RESULTS.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_STEP_SELECTOR_MAX_RESULTS.matches(runParm)) {
             editStepSelectorMaxResults(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_STEP_SELECTOR_SHOW_SUBSTITUTIONS
-                .name()) == 0)
+        if (UtilConstants.RUNPARM_STEP_SELECTOR_SHOW_SUBSTITUTIONS
+            .matches(runParm))
         {
             editStepSelectorShowSubstitutions(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_STEP_SELECTOR_DIALOG_PANE_WIDTH
-                .name()) == 0)
+        if (UtilConstants.RUNPARM_STEP_SELECTOR_DIALOG_PANE_WIDTH
+            .matches(runParm))
         {
             editStepSelectorDialogPaneWidth(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_STEP_SELECTOR_DIALOG_PANE_HEIGHT
-                .name()) == 0)
+        if (UtilConstants.RUNPARM_STEP_SELECTOR_DIALOG_PANE_HEIGHT
+            .matches(runParm))
         {
             editStepSelectorDialogPaneHeight(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_ASSRT_LIST_FREESPACE
-                .name()) == 0)
+        if (UtilConstants.RUNPARM_PROOF_ASST_ASSRT_LIST_FREESPACE
+            .matches(runParm))
         {
             editProofAsstAssrtListFreespace(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_OUTPUT_CURSOR_INSTRUMENTATION
-                .name()) == 0)
+        if (UtilConstants.RUNPARM_PROOF_ASST_OUTPUT_CURSOR_INSTRUMENTATION
+            .matches(runParm))
         {
             editProofAsstOutputCursorInstrumentation(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_AUTO_REFORMAT.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_PROOF_ASST_AUTO_REFORMAT.matches(runParm)) {
             editProofAsstAutoReformat(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_UNDO_REDO_ENABLED.name()) == 0)
+        if (UtilConstants.RUNPARM_PROOF_ASST_UNDO_REDO_ENABLED
+            .matches(runParm))
         {
             editProofAsstUndoRedoEnabled(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_DUMMY_VAR_PREFIX.name()) == 0)
+        if (UtilConstants.RUNPARM_PROOF_ASST_DUMMY_VAR_PREFIX.matches(runParm))
             // deprecated.
             return true;
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_DEFAULT_FILE_NAME_SUFFIX
-                .name()) == 0)
+        if (UtilConstants.RUNPARM_PROOF_ASST_DEFAULT_FILE_NAME_SUFFIX
+            .matches(runParm))
         {
             editProofAsstDefaultFileNameSuffix(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_PROOF_FOLDER.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_PROOF_ASST_PROOF_FOLDER.matches(runParm)) {
             editProofAsstProofFolder(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_RECHECK_PROOF_ASST_USING_PROOF_VERIFIER
-                .name()) == 0)
+        if (UtilConstants.RUNPARM_RECHECK_PROOF_ASST_USING_PROOF_VERIFIER
+            .matches(runParm))
         {
             editRecheckProofAsstUsingProofVerifier(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_UNIFY_SEARCH_EXCLUDE
-                .name()) == 0)
+        if (UtilConstants.RUNPARM_PROOF_ASST_UNIFY_SEARCH_EXCLUDE
+            .matches(runParm))
         {
             editProofAsstUnifySearchExclude(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_EXPORT_TO_FILE.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_PROOF_ASST_EXPORT_TO_FILE.matches(runParm)) {
             doProofAsstExportToFile(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_BATCH_TEST.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_PROOF_ASST_BATCH_TEST.matches(runParm)) {
             doProofAsstBatchTest(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_OPTIMIZE_THEOREM_SEARCH
-                .name()) == 0)
+        if (UtilConstants.RUNPARM_PROOF_ASST_OPTIMIZE_THEOREM_SEARCH
+            .matches(runParm))
         {
             doProofAsstTheoremSearchOptimization(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_AUTOCOMPLETE_ENABLED
-                .name()) == 0)
+        if (UtilConstants.RUNPARM_PROOF_ASST_AUTOCOMPLETE_ENABLED
+            .matches(runParm))
         {
             doProofAsstAutocompleteEnabled(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_USE_AUTOTRANSFORMATIONS
-                .name()) == 0)
+        if (UtilConstants.RUNPARM_PROOF_ASST_USE_AUTOTRANSFORMATIONS
+            .matches(runParm))
         {
             doProofAsstUseAutotransformations(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_DERIVE_AUTOCOMPLETE.name()) == 0)
+        if (UtilConstants.RUNPARM_PROOF_ASST_DERIVE_AUTOCOMPLETE
+            .matches(runParm))
         {
             doProofAsstDeriveAutocomplete(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_STEP_SELECTOR_BATCH_TEST.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_STEP_SELECTOR_BATCH_TEST.matches(runParm)) {
             doStepSelectorBatchTest(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PREPROCESS_REQUEST_BATCH_TEST.name()) == 0)
+        if (UtilConstants.RUNPARM_PREPROCESS_REQUEST_BATCH_TEST
+            .matches(runParm))
         {
             doPreprocessRequestBatchTest(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_PROOF_ASST_STARTUP_PROOF_WORKSHEET
-                .name()) == 0)
+        if (UtilConstants.RUNPARM_PROOF_ASST_STARTUP_PROOF_WORKSHEET
+            .matches(runParm))
         {
             editProofAsstStartupProofWorksheet(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_SET_MM_DEFINITIONS_CHECK.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_SET_MM_DEFINITIONS_CHECK.matches(runParm)) {
             // DEPRECATED
             doSetMMDefinitionsCheck(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(
-            UtilConstants.RUNPARM_RUN_PROOF_ASST_GUI.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_RUN_PROOF_ASST_GUI.matches(runParm)) {
             doRunProofAsstGUI(runParm);
             return true; // "consumed"
         }
@@ -1676,8 +1617,8 @@ public class ProofAsstBoss extends Boss {
     private PreprocessRequest editPreprocessRequestOption(final String s,
         final String valueCaption) throws IllegalArgumentException
     {
-        if (s.compareToIgnoreCase(
-            UtilConstants.RUNPARM_OPTION_ERASE_AND_REDERIVE_FORMULAS) == 0)
+        if (s.equalsIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_ERASE_AND_REDERIVE_FORMULAS))
             return new EraseWffsPreprocessRequest();
 
         throw new IllegalArgumentException(
@@ -1767,12 +1708,12 @@ public class ProofAsstBoss extends Boss {
         if (exportFormatUnifiedParm.length() == 0)
             return PaConstants.PROOF_ASST_EXPORT_FORMAT_UNIFIED_DEFAULT;
 
-        if (exportFormatUnifiedParm.compareToIgnoreCase(
-            UtilConstants.RUNPARM_OPTION_PROOF_ASST_EXPORT_UNIFIED) == 0)
+        if (exportFormatUnifiedParm.equalsIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_EXPORT_UNIFIED))
             return true;
 
-        if (exportFormatUnifiedParm.compareToIgnoreCase(
-            UtilConstants.RUNPARM_OPTION_PROOF_ASST_EXPORT_UN_UNIFIED) == 0)
+        if (exportFormatUnifiedParm.equalsIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_EXPORT_UN_UNIFIED))
             return false;
 
         throw new IllegalArgumentException(
@@ -1811,34 +1752,34 @@ public class ProofAsstBoss extends Boss {
         if (exportHypsRandomizedParm.length() == 0)
             return PaConstants.PROOF_ASST_EXPORT_HYPS_ORDER_DEFAULT;
 
-        if (exportHypsRandomizedParm.compareToIgnoreCase(
-            UtilConstants.RUNPARM_OPTION_PROOF_ASST_RANDOMIZED) == 0)
+        if (exportHypsRandomizedParm.equalsIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_RANDOMIZED))
             return HypsOrder.RandomizedOrder;
 
         // deprecated old version
-        if (exportHypsRandomizedParm.compareToIgnoreCase(
-            UtilConstants.RUNPARM_OPTION_PROOF_ASST_NOT_RANDOMIZED) == 0)
+        if (exportHypsRandomizedParm.equalsIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_NOT_RANDOMIZED))
             return HypsOrder.CorrectOrder;
 
         // new version
-        if (exportHypsRandomizedParm.compareToIgnoreCase(
-            UtilConstants.RUNPARM_OPTION_PROOF_ASST_CORRECT) == 0)
+        if (exportHypsRandomizedParm
+            .equalsIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_CORRECT))
             return HypsOrder.CorrectOrder;
 
-        if (exportHypsRandomizedParm.compareToIgnoreCase(
-            UtilConstants.RUNPARM_OPTION_PROOF_ASST_REVERSE) == 0)
+        if (exportHypsRandomizedParm
+            .equalsIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_REVERSE))
             return HypsOrder.ReverseOrder;
 
-        if (exportHypsRandomizedParm.compareToIgnoreCase(
-            UtilConstants.RUNPARM_OPTION_PROOF_ASST_HALF_REVERSE) == 0)
+        if (exportHypsRandomizedParm.equalsIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_HALF_REVERSE))
             return HypsOrder.HalfReverseOrder;
 
-        if (exportHypsRandomizedParm.compareToIgnoreCase(
-            UtilConstants.RUNPARM_OPTION_PROOF_ASST_AUTOCOMPLETE) == 0)
+        if (exportHypsRandomizedParm.equalsIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_AUTOCOMPLETE))
             return HypsOrder.Autocomplete;
 
-        if (exportHypsRandomizedParm.compareToIgnoreCase(
-            UtilConstants.RUNPARM_OPTION_PROOF_ASST_SOME_ORDER) == 0)
+        if (exportHypsRandomizedParm.equalsIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_SOME_ORDER))
             return HypsOrder.SomeOrder;
 
         final String exceptionMsg = LangException.format(
@@ -1880,12 +1821,12 @@ public class ProofAsstBoss extends Boss {
         if (exportDeriveFormulasParm.length() == 0)
             return PaConstants.PROOF_ASST_EXPORT_DERIVE_FORMULAS_DEFAULT;
 
-        if (exportDeriveFormulasParm.compareToIgnoreCase(
-            UtilConstants.RUNPARM_OPTION_PROOF_ASST_DERIVE_FORMULAS) == 0)
+        if (exportDeriveFormulasParm.equalsIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_DERIVE_FORMULAS))
             return true;
 
-        if (exportDeriveFormulasParm.compareToIgnoreCase(
-            UtilConstants.RUNPARM_OPTION_PROOF_ASST_NO_DERIVE_FORMULAS) == 0)
+        if (exportDeriveFormulasParm.equalsIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_NO_DERIVE_FORMULAS))
             return false;
 
         throw new IllegalArgumentException(
@@ -1925,12 +1866,12 @@ public class ProofAsstBoss extends Boss {
         if (importCompareDJsParm.length() == 0)
             return PaConstants.PROOF_ASST_IMPORT_COMPARE_DJS_DEFAULT;
 
-        if (importCompareDJsParm.compareToIgnoreCase(
-            UtilConstants.RUNPARM_OPTION_PROOF_ASST_COMPARE_DJS) == 0)
+        if (importCompareDJsParm.equalsIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_COMPARE_DJS))
             return true;
 
-        if (importCompareDJsParm.compareToIgnoreCase(
-            UtilConstants.RUNPARM_OPTION_PROOF_ASST_NO_COMPARE_DJS) == 0)
+        if (importCompareDJsParm.equalsIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_NO_COMPARE_DJS))
             return false;
 
         throw new IllegalArgumentException(
@@ -1970,12 +1911,12 @@ public class ProofAsstBoss extends Boss {
         if (importUpdateDJsParm.length() == 0)
             return PaConstants.PROOF_ASST_IMPORT_UPDATE_DJS_DEFAULT;
 
-        if (importUpdateDJsParm.compareToIgnoreCase(
-            UtilConstants.RUNPARM_OPTION_PROOF_ASST_UPDATE_DJS) == 0)
+        if (importUpdateDJsParm.equalsIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_UPDATE_DJS))
             return true;
 
-        if (importUpdateDJsParm.compareToIgnoreCase(
-            UtilConstants.RUNPARM_OPTION_PROOF_ASST_NO_UPDATE_DJS) == 0)
+        if (importUpdateDJsParm.equalsIgnoreCase(
+            UtilConstants.RUNPARM_OPTION_PROOF_ASST_NO_UPDATE_DJS))
             return false;
 
         throw new IllegalArgumentException(
@@ -2013,12 +1954,12 @@ public class ProofAsstBoss extends Boss {
         if (asciiRetestParm.length() == 0)
             return PaConstants.PROOF_ASST_ASCII_RETEST_DEFAULT;
 
-        if (asciiRetestParm.compareToIgnoreCase(
-            UtilConstants.RUNPARM_OPTION_ASCII_RETEST) == 0)
+        if (asciiRetestParm
+            .equalsIgnoreCase(UtilConstants.RUNPARM_OPTION_ASCII_RETEST))
             return true;
 
-        if (asciiRetestParm.compareToIgnoreCase(
-            UtilConstants.RUNPARM_OPTION_NO_ASCII_RETEST) == 0)
+        if (asciiRetestParm
+            .equalsIgnoreCase(UtilConstants.RUNPARM_OPTION_NO_ASCII_RETEST))
             return false;
 
         throw new IllegalArgumentException(
@@ -2055,12 +1996,12 @@ public class ProofAsstBoss extends Boss {
         if (printParm.length() == 0)
             return PaConstants.PROOF_ASST_PRINT_DEFAULT;
 
-        if (printParm.compareToIgnoreCase(
-            UtilConstants.RUNPARM_OPTION_PROOF_ASST_PRINT) == 0)
+        if (printParm
+            .equalsIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_PRINT))
             return true;
 
-        if (printParm.compareToIgnoreCase(
-            UtilConstants.RUNPARM_OPTION_PROOF_ASST_NO_PRINT) == 0)
+        if (printParm
+            .equalsIgnoreCase(UtilConstants.RUNPARM_OPTION_PROOF_ASST_NO_PRINT))
             return false;
 
         throw new IllegalArgumentException(

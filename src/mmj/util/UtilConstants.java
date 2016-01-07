@@ -2205,17 +2205,27 @@ public class UtilConstants {
     // Constants mmj.util.TheoremLoaderBoss
     // ----------------------------------------------------------
 
-    public static final String RUNPARM_THEOREM_LOADER_DJ_VARS_OPTION = "TheoremLoaderDjVarsOption";
-    public static final String RUNPARM_THEOREM_LOADER_MMT_FOLDER = "TheoremLoaderMMTFolder";
-    public static final String RUNPARM_THEOREM_LOADER_AUDIT_MESSAGES = "TheoremLoaderAuditMessages";
-    public static final String RUNPARM_LOAD_THEOREMS_FROM_MMT_FOLDER = "LoadTheoremsFromMMTFolder";
-    public static final String RUNPARM_EXTRACT_THEOREM_TO_MMT_FOLDER = "ExtractTheoremToMMTFolder";
-    public static final String RUNPARM_UNIFY_PLUS_STORE_IN_LOG_SYS_AND_MMT_FOLDER = "UnifyPlusStoreInLogSysAndMMTFolder";
-    public static final String RUNPARM_UNIFY_PLUS_STORE_IN_MMT_FOLDER = "UnifyPlusStoreInMMTFolder";
+    public static final BatchCommand RUNPARM_THEOREM_LOADER_DJ_VARS_OPTION = new BatchCommand(
+        "TheoremLoaderDjVarsOption");
+    public static final BatchCommand RUNPARM_THEOREM_LOADER_MMT_FOLDER = new BatchCommand(
+        "TheoremLoaderMMTFolder");
+    public static final BatchCommand RUNPARM_THEOREM_LOADER_AUDIT_MESSAGES = new BatchCommand(
+        "TheoremLoaderAuditMessages");
+    public static final BatchCommand RUNPARM_LOAD_THEOREMS_FROM_MMT_FOLDER = new BatchCommand(
+        "LoadTheoremsFromMMTFolder");
+    public static final BatchCommand RUNPARM_EXTRACT_THEOREM_TO_MMT_FOLDER = new BatchCommand(
+        "ExtractTheoremToMMTFolder");
+    public static final BatchCommand RUNPARM_UNIFY_PLUS_STORE_IN_LOG_SYS_AND_MMT_FOLDER = new BatchCommand(
+        "UnifyPlusStoreInLogSysAndMMTFolder");
+    public static final BatchCommand RUNPARM_UNIFY_PLUS_STORE_IN_MMT_FOLDER = new BatchCommand(
+        "UnifyPlusStoreInMMTFolder");
 
-    public static final String RUNPARM_THEOREM_LOADER_STORE_FORMULAS_ASIS = "TheoremLoaderStoreFormulasAsIs";
-    public static final String RUNPARM_THEOREM_LOADER_STORE_MM_INDENT_AMT = "TheoremLoaderStoreMMIndentAmt";
-    public static final String RUNPARM_THEOREM_LOADER_STORE_MM_RIGHT_COL = "TheoremLoaderStoreMMRightCol";
+    public static final BatchCommand RUNPARM_THEOREM_LOADER_STORE_FORMULAS_ASIS = new BatchCommand(
+        "TheoremLoaderStoreFormulasAsIs");
+    public static final BatchCommand RUNPARM_THEOREM_LOADER_STORE_MM_INDENT_AMT = new BatchCommand(
+        "TheoremLoaderStoreMMIndentAmt");
+    public static final BatchCommand RUNPARM_THEOREM_LOADER_STORE_MM_RIGHT_COL = new BatchCommand(
+        "TheoremLoaderStoreMMRightCol");
 
     public static final int THEOREM_LOADER_BOSS_FILE_BUFFER_SIZE = 32768;
 

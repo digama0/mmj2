@@ -80,7 +80,7 @@ public abstract class Boss {
 
     /**
      * Constructor with BatchFramework for access to environment.
-     * 
+     *
      * @param batchFramework for access to environment.
      */
     public Boss(final BatchFramework batchFramework) {
@@ -89,7 +89,7 @@ public abstract class Boss {
 
     /**
      * Executes a single command from the RunParmFile.
-     * 
+     *
      * @param runParm the RunParmFile line to execute.
      * @return {@code true} if the RunParm was "consumed"
      * @throws IllegalArgumentException if an error occurred in the RunParm
@@ -110,7 +110,7 @@ public abstract class Boss {
 
     /**
      * Validate existing folder RunParm (must exist!)
-     * 
+     *
      * @param filePath path used to resolve file name. May be null or absolute
      *            or relative path.
      * @param runParm RunParmFile line parsed into RunParmArrayEntry.
@@ -133,7 +133,7 @@ public abstract class Boss {
 
     /**
      * Validate existing folder RunParm (must exist!)
-     * 
+     *
      * @param filePath path name for building files. May be null, relative or
      *            absolute.
      * @param runParm RunParmFile line parsed into RunParmArrayEntry.
@@ -156,7 +156,7 @@ public abstract class Boss {
 
     /**
      * Validate Proof Worksheet File Name Suffix
-     * 
+     *
      * @param runParm RunParmFile line.
      * @param valueCaption name of RunParm, for error message output.
      * @param valueFieldNbr number of field in RunParm line.
@@ -172,12 +172,12 @@ public abstract class Boss {
             .trim();
         if (fileNameSuffixParm
             .compareTo(PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_TXT) == 0
-            || fileNameSuffixParm
-                .compareTo(PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_TXT2) == 0
+            || fileNameSuffixParm.compareTo(
+                PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_TXT2) == 0
             || fileNameSuffixParm
                 .compareTo(PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP) == 0
-            || fileNameSuffixParm
-                .compareTo(PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP2) == 0)
+            || fileNameSuffixParm.compareTo(
+                PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP2) == 0)
             return fileNameSuffixParm;
 
         throw new IllegalArgumentException(
@@ -188,16 +188,16 @@ public abstract class Boss {
 
     /**
      * Validate name of folder
-     * 
+     *
      * @param runParm RunParmFile line.
      * @param valueCaption name of RunParm, for error message output.
      * @param valueFieldNbr number of field in RunParm line.
      * @return String validated folder name.
      * @throws IllegalArgumentException if an error occurred
      */
-    protected String editExistingFolderNameParm(
-        final RunParmArrayEntry runParm, final String valueCaption,
-        final int valueFieldNbr) throws IllegalArgumentException
+    protected String editExistingFolderNameParm(final RunParmArrayEntry runParm,
+        final String valueCaption, final int valueFieldNbr)
+            throws IllegalArgumentException
     {
         editRunParmValuesLength(runParm, valueCaption, 1);
         final String folderNameParm = runParm.values[valueFieldNbr - 1].trim();
@@ -211,7 +211,7 @@ public abstract class Boss {
 
     /**
      * Build a File object for a Folder Name
-     * 
+     *
      * @param filePath path used to resolve file name. May be null or absolute
      *            or relative path.
      * @param valueCaption name of RunParm, for error message output.
@@ -221,7 +221,7 @@ public abstract class Boss {
      */
     protected File buildFileObjectForExistingFolder(final File filePath,
         final String valueCaption, final String folderNameParm)
-        throws IllegalArgumentException
+            throws IllegalArgumentException
     {
 
         File folder = new File(folderNameParm);
@@ -255,14 +255,15 @@ public abstract class Boss {
                     + UtilConstants.ERRMSG_FOLDER_MISC_ERROR_2
 //              + folderNameParm
                     + folder.getAbsolutePath()
-                    + UtilConstants.ERRMSG_FOLDER_MISC_ERROR_3 + e.getMessage());
+                    + UtilConstants.ERRMSG_FOLDER_MISC_ERROR_3
+                    + e.getMessage());
         }
         return folder;
     }
 
     /**
      * Build a File object for an existing File Name
-     * 
+     *
      * @param filePath path name for building files. May be null, relative or
      *            absolute.
      * @param valueCaption name of RunParm, for error message output.
@@ -272,7 +273,7 @@ public abstract class Boss {
      */
     protected File buildFileObjectForExistingFile(final File filePath,
         final String valueCaption, final String fileNameParm)
-        throws IllegalArgumentException
+            throws IllegalArgumentException
     {
 
         File file = new File(fileNameParm);
@@ -313,7 +314,7 @@ public abstract class Boss {
 
     /**
      * Validate PrintWriter RunParm and its options.
-     * 
+     *
      * @param filePath path for building files. May be null, absolute, or
      *            relative.
      * @param runParm RunParmFile line parsed into RunParmArrayEntry.
@@ -323,12 +324,13 @@ public abstract class Boss {
      */
     protected PrintWriter editPrintWriterRunParm(final File filePath,
         final RunParmArrayEntry runParm, final String valueCaption)
-        throws IllegalArgumentException
+            throws IllegalArgumentException
     {
 
         final String fileNameParm = editFileNameParm(runParm, valueCaption, 1);
 
-        final String fileUsageParm = editFileUsageParm(runParm, valueCaption, 2);
+        final String fileUsageParm = editFileUsageParm(runParm, valueCaption,
+            2);
 
         final String fileCharsetParm = editFileCharsetParm(runParm,
             valueCaption, 3);
@@ -339,7 +341,7 @@ public abstract class Boss {
 
     /**
      * Construct a PrintWriter using RunParm options.
-     * 
+     *
      * @param filePath path for building files. May be null, absolute or
      *            relative.
      * @param valueCaption name of RunParm, for error message output.
@@ -352,7 +354,7 @@ public abstract class Boss {
     protected PrintWriter doConstructPrintWriter(final File filePath,
         final String valueCaption, final String fileNameParm,
         final String fileUsageParm, final String fileCharsetParm)
-        throws IllegalArgumentException
+            throws IllegalArgumentException
     {
 
         PrintWriter printWriter = null;
@@ -390,12 +392,12 @@ public abstract class Boss {
                             + UtilConstants.ERRMSG_FILE_UPDATE_NOT_ALLOWED_4);
 
             if (fileCharsetParm.length() == 0)
-                printWriter = new PrintWriter(new BufferedWriter(
-                    new FileWriter(file)));
+                printWriter = new PrintWriter(
+                    new BufferedWriter(new FileWriter(file)));
             else
-                printWriter = new PrintWriter(new BufferedWriter(
-                    new OutputStreamWriter(new FileOutputStream(file),
-                        fileCharsetParm)));
+                printWriter = new PrintWriter(
+                    new BufferedWriter(new OutputStreamWriter(
+                        new FileOutputStream(file), fileCharsetParm)));
         } catch (final Exception e) {
             throw new IllegalArgumentException(
                 UtilConstants.ERRMSG_FILE_MISC_ERROR_1 + valueCaption
@@ -410,7 +412,7 @@ public abstract class Boss {
     /**
      * Construct a Buffered File Reader using RunParm options plus an optional
      * parent directory File object.
-     * 
+     *
      * @param valueCaption name of RunParm, for error message output.
      * @param fileNameParm RunParmFile line parsed into RunParmArrayEntry.
      * @param parentDirectory the root directory
@@ -419,7 +421,7 @@ public abstract class Boss {
      */
     protected Reader doConstructBufferedFileReader(final String valueCaption,
         final String fileNameParm, final File parentDirectory)
-        throws IllegalArgumentException
+            throws IllegalArgumentException
     {
 
         Reader bufferedFileReader = null;
@@ -466,7 +468,7 @@ public abstract class Boss {
     /**
      * Construct a Buffered File Writer using RunParm options plus an optional
      * parent directory File object.
-     * 
+     *
      * @param valueCaption name of RunParm, for error message output.
      * @param fileNameParm RunParmFile line parsed into RunParmArrayEntry.
      * @param fileUsageParm "new" or "update"
@@ -477,7 +479,7 @@ public abstract class Boss {
     protected BufferedWriter doConstructBufferedFileWriter(
         final String valueCaption, final String fileNameParm,
         final String fileUsageParm, final File parentDirectory)
-        throws IllegalArgumentException
+            throws IllegalArgumentException
     {
 
         BufferedWriter bufferedFileWriter = null;
@@ -532,7 +534,7 @@ public abstract class Boss {
 
     /**
      * Validate File Name.
-     * 
+     *
      * @param runParm RunParmFile line.
      * @param valueCaption name of RunParm, for error message output.
      * @param valueFieldNbr number of field in RunParm line.
@@ -541,7 +543,7 @@ public abstract class Boss {
      */
     protected String editFileNameParm(final RunParmArrayEntry runParm,
         final String valueCaption, final int valueFieldNbr)
-        throws IllegalArgumentException
+            throws IllegalArgumentException
     {
         editRunParmValuesLength(runParm, valueCaption, 1);
         final String fileNameParm = runParm.values[valueFieldNbr - 1].trim();
@@ -555,7 +557,7 @@ public abstract class Boss {
 
     /**
      * Validate File Usage Parm ("new" or "update").
-     * 
+     *
      * @param runParm RunParmFile line.
      * @param valueCaption name of RunParm, for error message output.
      * @param valueFieldNbr number of field in RunParm line.
@@ -564,7 +566,7 @@ public abstract class Boss {
      */
     protected String editFileUsageParm(final RunParmArrayEntry runParm,
         final String valueCaption, final int valueFieldNbr)
-        throws IllegalArgumentException
+            throws IllegalArgumentException
     {
 
         if (runParm.values.length < valueFieldNbr)
@@ -575,29 +577,27 @@ public abstract class Boss {
             return UtilConstants.OPTION_FILE_OUT_USAGE_DEFAULT;
 
         if (fileUsageParm
-            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_FILE_OUT_NEW) == 0)
+            .equalsIgnoreCase(UtilConstants.RUNPARM_OPTION_FILE_OUT_NEW))
             return UtilConstants.RUNPARM_OPTION_FILE_OUT_NEW;
 
         if (fileUsageParm
-            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_FILE_OUT_UPDATE) == 0)
+            .equalsIgnoreCase(UtilConstants.RUNPARM_OPTION_FILE_OUT_UPDATE))
             return UtilConstants.RUNPARM_OPTION_FILE_OUT_UPDATE;
 
         throw new IllegalArgumentException(
             UtilConstants.ERRMSG_FILE_USAGE_PARM_UNRECOG_1 + valueCaption
-                + UtilConstants.ERRMSG_FILE_USAGE_PARM_UNRECOG_2
-                + valueFieldNbr
+                + UtilConstants.ERRMSG_FILE_USAGE_PARM_UNRECOG_2 + valueFieldNbr
                 + UtilConstants.ERRMSG_FILE_USAGE_PARM_UNRECOG_3
                 + UtilConstants.RUNPARM_OPTION_FILE_OUT_NEW
                 + UtilConstants.ERRMSG_FILE_USAGE_PARM_UNRECOG_4
                 + UtilConstants.RUNPARM_OPTION_FILE_OUT_UPDATE
-                + UtilConstants.ERRMSG_FILE_USAGE_PARM_UNRECOG_5
-                + fileUsageParm
+                + UtilConstants.ERRMSG_FILE_USAGE_PARM_UNRECOG_5 + fileUsageParm
                 + UtilConstants.ERRMSG_FILE_USAGE_PARM_UNRECOG_6);
     }
 
     /**
      * Validate File Charset Parm ("" or "UTF-8", etc).
-     * 
+     *
      * @param runParm RunParmFile line.
      * @param valueCaption name of RunParm, for error message output.
      * @param valueFieldNbr number of field in RunParm line.
@@ -606,7 +606,7 @@ public abstract class Boss {
      */
     protected String editFileCharsetParm(final RunParmArrayEntry runParm,
         final String valueCaption, final int valueFieldNbr)
-        throws IllegalArgumentException
+            throws IllegalArgumentException
     {
 
         if (runParm.values.length < valueFieldNbr)
@@ -645,7 +645,7 @@ public abstract class Boss {
      * Get SelectorAll RunParm Option if present or null.
      * <p>
      * If "*" input returns true Boolean value otherwise, null;
-     * 
+     *
      * @param runParm RunParmFile line.
      * @param valueCaption name of RunParm, for error message output.
      * @param valueFieldNbr number of field in RunParm line.
@@ -657,8 +657,8 @@ public abstract class Boss {
     {
 
         if (runParm.values.length >= valueFieldNbr
-            && runParm.values[valueFieldNbr - 1].trim().equals(
-                UtilConstants.RUNPARM_OPTION_VALUE_ALL))
+            && runParm.values[valueFieldNbr - 1].trim()
+                .equals(UtilConstants.RUNPARM_OPTION_VALUE_ALL))
             return Boolean.valueOf(true);
         else
             return null;
@@ -669,7 +669,7 @@ public abstract class Boss {
      * <p>
      * If positive integer input returns Integer value, otherwise, if negative
      * or zero integer, throws an exception. If none of the above returns null;
-     * 
+     *
      * @param runParm RunParmFile line.
      * @param valueCaption name of RunParm, for error message output.
      * @param valueFieldNbr number of field in RunParm line.
@@ -685,8 +685,8 @@ public abstract class Boss {
         if (runParm.values.length >= valueFieldNbr)
             try {
                 // NumberFormatException if not integer
-                count = Integer.valueOf(runParm.values[valueFieldNbr - 1]
-                    .trim());
+                count = Integer
+                    .valueOf(runParm.values[valueFieldNbr - 1].trim());
                 // IllegalArgumentException if not > 0
                 count = Integer.valueOf(editRunParmValueReqPosInt(runParm,
                     valueCaption, valueFieldNbr));
@@ -701,7 +701,7 @@ public abstract class Boss {
      * <p>
      * If present, and not a valid Theorem label, an IllegalArgumentException is
      * thrown.
-     * 
+     *
      * @param runParm RunParmFile line.
      * @param valueCaption name of RunParm, for error message output.
      * @param valueFieldNbr number of field in RunParm line.
@@ -712,7 +712,7 @@ public abstract class Boss {
     protected Theorem getSelectorTheoremRunParmOption(
         final RunParmArrayEntry runParm, final String valueCaption,
         final int valueFieldNbr, final Map<String, Stmt> stmtTbl)
-        throws IllegalArgumentException
+            throws IllegalArgumentException
     {
 
         Object mapValue;
@@ -741,7 +741,7 @@ public abstract class Boss {
 
     /**
      * Validate Required Yes/No Parm.
-     * 
+     *
      * @param runParm RunParmFile line.
      * @param valueCaption name of RunParm, for error message output.
      * @param valueFieldNbr number of field in RunParm line.
@@ -750,13 +750,13 @@ public abstract class Boss {
      */
     protected boolean editYesNoRunParm(final RunParmArrayEntry runParm,
         final String valueCaption, final int valueFieldNbr)
-        throws IllegalArgumentException
+            throws IllegalArgumentException
     {
 
         editRunParmValuesLength(runParm, valueCaption, valueFieldNbr);
         boolean yesNoBoolean;
-        final String yesNoParm = runParm.values[valueFieldNbr - 1]
-            .toLowerCase().trim();
+        final String yesNoParm = runParm.values[valueFieldNbr - 1].toLowerCase()
+            .trim();
         if (yesNoParm.equals(UtilConstants.RUNPARM_OPTION_YES)
             || yesNoParm.equals(UtilConstants.RUNPARM_OPTION_YES_ABBREVIATED))
             yesNoBoolean = true;
@@ -764,15 +764,14 @@ public abstract class Boss {
             || yesNoParm.equals(UtilConstants.RUNPARM_OPTION_NO_ABBREVIATED))
             yesNoBoolean = false;
         else
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_RECHECK_PA_1 + valueCaption
-                    + UtilConstants.ERRMSG_RECHECK_PA_2);
+            throw new IllegalArgumentException(UtilConstants.ERRMSG_RECHECK_PA_1
+                + valueCaption + UtilConstants.ERRMSG_RECHECK_PA_2);
         return yesNoBoolean;
     }
 
     /**
      * Validate Required On/Off Parm.
-     * 
+     *
      * @param runParm RunParmFile line.
      * @param valueCaption name of RunParm, for error message output.
      * @param valueFieldNbr number of field in RunParm line.
@@ -781,13 +780,13 @@ public abstract class Boss {
      */
     protected boolean editOnOffRunParm(final RunParmArrayEntry runParm,
         final String valueCaption, final int valueFieldNbr)
-        throws IllegalArgumentException
+            throws IllegalArgumentException
     {
 
         editRunParmValuesLength(runParm, valueCaption, valueFieldNbr);
         boolean onOffBoolean;
-        final String onOffParm = runParm.values[valueFieldNbr - 1]
-            .toLowerCase().trim();
+        final String onOffParm = runParm.values[valueFieldNbr - 1].toLowerCase()
+            .trim();
         if (onOffParm.equals(UtilConstants.RUNPARM_OPTION_ON))
             onOffBoolean = true;
         else if (onOffParm.equals(UtilConstants.RUNPARM_OPTION_OFF))
@@ -801,15 +800,14 @@ public abstract class Boss {
 
     /**
      * Validate Required, RGB Color Parms
-     * 
+     *
      * @param runParm RunParmFile line.
      * @param valueCaption name of RunParm, for error message output.
      * @return int positive integer.
      * @throws IllegalArgumentException if an error occurred
      */
-    protected Color editRunParmValueReqRGBColor(
-        final RunParmArrayEntry runParm, final String valueCaption)
-        throws IllegalArgumentException
+    protected Color editRunParmValueReqRGBColor(final RunParmArrayEntry runParm,
+        final String valueCaption) throws IllegalArgumentException
     {
 
         editRunParmValuesLength(runParm, valueCaption,
@@ -817,8 +815,7 @@ public abstract class Boss {
 
         final int[] rgb = new int[UtilConstants.RUNPARM_NBR_RGB_COLOR_VALUES];
 
-        for (int valueFieldNbr = 0; valueFieldNbr < UtilConstants.RUNPARM_NBR_RGB_COLOR_VALUES; valueFieldNbr++)
-        {
+        for (int valueFieldNbr = 0; valueFieldNbr < UtilConstants.RUNPARM_NBR_RGB_COLOR_VALUES; valueFieldNbr++) {
 
             rgb[valueFieldNbr] = editRunParmValueInteger(
                 runParm.values[valueFieldNbr], valueCaption);
@@ -840,7 +837,7 @@ public abstract class Boss {
 
     /**
      * Validate Required, Positive Integer Parm.
-     * 
+     *
      * @param runParm RunParmFile line.
      * @param valueCaption name of RunParm, for error message output.
      * @param valueFieldNbr number of field in RunParm line.
@@ -849,7 +846,7 @@ public abstract class Boss {
      */
     protected int editRunParmValueReqPosInt(final RunParmArrayEntry runParm,
         final String valueCaption, final int valueFieldNbr)
-        throws IllegalArgumentException
+            throws IllegalArgumentException
     {
 
         editRunParmValuesLength(runParm, valueCaption, valueFieldNbr);
@@ -860,7 +857,7 @@ public abstract class Boss {
 
     /**
      * Validate Required, Non-negative Integer Parm.
-     * 
+     *
      * @param runParm RunParmFile line.
      * @param valueCaption name of RunParm, for error message output.
      * @param valueFieldNbr number of field in RunParm line.
@@ -880,7 +877,7 @@ public abstract class Boss {
 
     /**
      * Validate Required Integer Parm.
-     * 
+     *
      * @param runParm RunParmFile line.
      * @param valueCaption name of RunParm, for error message output.
      * @param valueFieldNbr number of field in RunParm line.
@@ -889,7 +886,7 @@ public abstract class Boss {
      */
     protected int editRunParmValueReqInt(final RunParmArrayEntry runParm,
         final String valueCaption, final int valueFieldNbr)
-        throws IllegalArgumentException
+            throws IllegalArgumentException
     {
 
         editRunParmValuesLength(runParm, valueCaption, valueFieldNbr);
@@ -900,7 +897,7 @@ public abstract class Boss {
 
     /**
      * Validate Required Number of RunParm fields.
-     * 
+     *
      * @param runParm RunParmFile line.
      * @param valueCaption name of RunParm, for error message output.
      * @param requiredNbrValueFields required number of fields in the RunParm
@@ -909,7 +906,7 @@ public abstract class Boss {
      */
     protected void editRunParmValuesLength(final RunParmArrayEntry runParm,
         final String valueCaption, final int requiredNbrValueFields)
-        throws IllegalArgumentException
+            throws IllegalArgumentException
     {
 
         if (runParm.values.length < requiredNbrValueFields)
@@ -922,7 +919,7 @@ public abstract class Boss {
 
     /**
      * Validate Integer Parm.
-     * 
+     *
      * @param integerString String supposedly containing a number.
      * @param valueCaption name of RunParm, for error message output.
      * @return int an integer.
@@ -946,7 +943,7 @@ public abstract class Boss {
 
     /**
      * Validate Positive Integer Parm.
-     * 
+     *
      * @param i an integer, supposedly positive.
      * @param valueCaption name of RunParm, for error message output.
      * @return int a positive integer.
@@ -959,13 +956,14 @@ public abstract class Boss {
         if (n <= 0)
             throw new IllegalArgumentException(
                 UtilConstants.ERRMSG_RUNPARM_NBR_LE_ZERO_1 + valueCaption
-                    + UtilConstants.ERRMSG_RUNPARM_NBR_LE_ZERO_2 + i.toString());
+                    + UtilConstants.ERRMSG_RUNPARM_NBR_LE_ZERO_2
+                    + i.toString());
         return n;
     }
 
     /**
      * Validate Non-Negative Integer Parm.
-     * 
+     *
      * @param i an integer, supposedly greater than or equal to zero.
      * @param valueCaption name of RunParm, for error message output.
      * @return int a positive integer.
@@ -978,13 +976,14 @@ public abstract class Boss {
         if (n < 0)
             throw new IllegalArgumentException(
                 UtilConstants.ERRMSG_RUNPARM_NBR_LT_ZERO_1 + valueCaption
-                    + UtilConstants.ERRMSG_RUNPARM_NBR_LT_ZERO_2 + i.toString());
+                    + UtilConstants.ERRMSG_RUNPARM_NBR_LT_ZERO_2
+                    + i.toString());
         return n;
     }
 
     /**
      * Validate RunParm Theorem Label String.
-     * 
+     *
      * @param stmtLabel String, supposedly a Theorem label.
      * @param valueCaption name of RunParm, for error message output.
      * @param logicalSystem Uh-oh, Mr. Big. Heavy validation using
@@ -994,7 +993,7 @@ public abstract class Boss {
      */
     protected Theorem editRunParmValueTheorem(final String stmtLabel,
         final String valueCaption, final LogicalSystem logicalSystem)
-        throws IllegalArgumentException
+            throws IllegalArgumentException
     {
         final Stmt stmt = editRunParmValueStmt(stmtLabel, valueCaption,
             logicalSystem);
@@ -1008,7 +1007,7 @@ public abstract class Boss {
 
     /**
      * Validate RunParm Statement Label String.
-     * 
+     *
      * @param stmtLabel String, supposedly a Stmt label.
      * @param valueCaption name of RunParm, for error message output.
      * @param logicalSystem Uh-oh, Mr. Big. Heavy validation using
@@ -1018,7 +1017,7 @@ public abstract class Boss {
      */
     protected Stmt editRunParmValueStmt(final String stmtLabel,
         final String valueCaption, final LogicalSystem logicalSystem)
-        throws IllegalArgumentException
+            throws IllegalArgumentException
     {
         if (stmtLabel.length() == 0)
             throw new IllegalArgumentException(
@@ -1038,7 +1037,7 @@ public abstract class Boss {
     /**
      * Validate RunParm String with length greater than zero and no embedded
      * blanks or unprintable characters.
-     * 
+     *
      * @param runParm RunParmFile line.
      * @param valueCaption name of RunParm, for error message output.
      * @param valueFieldNbr required number of fields in the RunParm line.

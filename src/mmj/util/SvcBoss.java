@@ -45,7 +45,7 @@ public class SvcBoss extends Boss {
 
     /**
      * Constructor with BatchFramework for access to environment.
-     * 
+     *
      * @param batchFramework for access to environment.
      */
     public SvcBoss(final BatchFramework batchFramework) {
@@ -55,7 +55,7 @@ public class SvcBoss extends Boss {
     /**
      * Sets the SvcCallback object which allows designated user code to use mmj2
      * as a service.
-     * 
+     *
      * @param svcCallback entry point to user code.
      */
     public void setSvcCallback(final SvcCallback svcCallback) {
@@ -65,7 +65,7 @@ public class SvcBoss extends Boss {
     /**
      * Gets the SvcCallback object which allows designated user code to use mmj2
      * as a service.
-     * 
+     *
      * @return svcCallback entry point to user code.
      */
     public SvcCallback getSvcCallback() {
@@ -74,7 +74,7 @@ public class SvcBoss extends Boss {
 
     /**
      * Executes a single command from the RunParmFile.
-     * 
+     *
      * @param runParm the RunParmFile line to execute.
      * @return boolean "consumed" indicating that the input runParm should not
      *         be processed again.
@@ -84,9 +84,7 @@ public class SvcBoss extends Boss {
         throws IllegalArgumentException, VerifyException
     {
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_CLEAR.matches(runParm)) {
 
             // erase input parameters but NOT SvcCallback
             // (unless derived from svcCallbackClass). SvcCallback
@@ -102,31 +100,22 @@ public class SvcBoss extends Boss {
             return false; // not "consumed"
         }
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_SVC_FOLDER
-            .name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_SVC_FOLDER.matches(runParm)) {
             editSvcFolder(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_SVC_CALLBACK_CLASS
-                .name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_SVC_CALLBACK_CLASS.matches(runParm)) {
             editSvcCallbackClass(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_SVC_ARG
-            .name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_SVC_ARG.matches(runParm)) {
             editSvcArg(runParm);
             return true;
         }
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_SVC_CALL
-            .name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_SVC_CALL.matches(runParm)) {
             editSvcCall(runParm);
             return true;
         }
@@ -136,7 +125,7 @@ public class SvcBoss extends Boss {
 
     /**
      * Validate SvcFolder.
-     * 
+     *
      * @param runParm run parm parsed into RunParmArrayEntry object
      * @throws VerifyException if an error occurred
      */
@@ -147,14 +136,14 @@ public class SvcBoss extends Boss {
         editRunParmValuesLength(runParm,
             UtilConstants.RUNPARM_SVC_FOLDER.name(), 1);
 
-        svcFolder = editExistingFolderRunParm(
-            batchFramework.paths.getSvcPath(), runParm,
-            UtilConstants.RUNPARM_SVC_FOLDER.name(), 1); // field nbr of folder
+        svcFolder = editExistingFolderRunParm(batchFramework.paths.getSvcPath(),
+            runParm, UtilConstants.RUNPARM_SVC_FOLDER.name(), 1); // field nbr
+                                                                  // of folder
     }
 
     /**
      * Validate SvcCallbackClass name and instantiate one of them for use later.
-     * 
+     *
      * @param runParm run parm parsed into RunParmArrayEntry object
      */
     protected void editSvcCallbackClass(final RunParmArrayEntry runParm) {
@@ -187,7 +176,7 @@ public class SvcBoss extends Boss {
 
     /**
      * Validate arguments for SvcCallback.
-     * 
+     *
      * @param runParm run parm parsed into RunParmArrayEntry object
      * @throws VerifyException if an error occurred
      */
@@ -216,7 +205,7 @@ public class SvcBoss extends Boss {
 
     /**
      * Call the designated SvcCallback object.
-     * 
+     *
      * @param runParm run parm parsed into RunParmArrayEntry object
      * @throws VerifyException if an error occurred
      */

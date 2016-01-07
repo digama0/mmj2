@@ -58,7 +58,7 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
     /**
      * A GMFF utility to confirm that a given string is not null or empty, and
      * that it contains no whitespace.
-     * 
+     *
      * @param s The string to be validated.
      * @return true if valid, otherwise false.
      */
@@ -78,7 +78,7 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
      * the parameters.
      * <p>
      * See mmj2\doc\GMFFDoc\GMFFRunParms.txt
-     * 
+     *
      * @param exportType Export Type (e.g. "html" or "althtml")
      * @param onoff OnOff ("ON" or "OFF")
      * @param typesetDefKeyword Metamath $t comment keyword (e.g. "htmldef" or
@@ -117,7 +117,7 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
 
     /**
      * Converts to Audit Report string for testing purposes.
-     * 
+     *
      * @return String containing the relevant fields.
      */
     public String generateAuditReportText() {
@@ -143,7 +143,7 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
      * <p>
      * However, if {@code onoff} set to "OFF" the following parameters are not
      * validated.
-     * 
+     *
      * @param filePath path for building directories. May be null, absolute or
      *            relative.
      * @param messages The Messages object.
@@ -169,7 +169,7 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
         }
 
         // stop validation if this set of export parms disabled!
-        if (onoff.compareToIgnoreCase(GMFFConstants.EXPORT_PARM_OFF) == 0)
+        if (onoff.equalsIgnoreCase(GMFFConstants.EXPORT_PARM_OFF))
             return !errorsFound;
 
         try {
@@ -231,7 +231,7 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
      * <li>Not null or empty string
      * <li>Must contain no whitespace
      * </ul>
-     * 
+     *
      * @throws GMFFException if error found.
      */
     public void validateExportType() throws GMFFException {
@@ -248,19 +248,19 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
      * <li>Must contain no whitespace
      * <li>equal to ON or OFF
      * </ul>
-     * 
+     *
      * @throws GMFFException if error found.
      */
     public void validateOnOff() throws GMFFException {
 
         if (GMFFExportParms.isPresentWithNoWhitespace(onoff)
-            && onoff.compareToIgnoreCase(GMFFConstants.EXPORT_PARM_ON) == 0
-            || onoff.compareToIgnoreCase(GMFFConstants.EXPORT_PARM_OFF) == 0)
+            && onoff.equalsIgnoreCase(GMFFConstants.EXPORT_PARM_ON)
+            || onoff.equalsIgnoreCase(GMFFConstants.EXPORT_PARM_OFF))
         {}
         else
-            throw new GMFFException(GMFFConstants.ERRMSG_ON_OFF_BAD_MISSING_1
-                + exportType + GMFFConstants.ERRMSG_ON_OFF_BAD_MISSING_2
-                + onoff);
+            throw new GMFFException(
+                GMFFConstants.ERRMSG_ON_OFF_BAD_MISSING_1 + exportType
+                    + GMFFConstants.ERRMSG_ON_OFF_BAD_MISSING_2 + onoff);
     }
 
     /**
@@ -270,7 +270,7 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
      * <li>Not null or empty string
      * <li>Must contain no whitespace
      * </ul>
-     * 
+     *
      * @throws GMFFException if error found.
      */
     public void validateTypesetDefKeyword() throws GMFFException {
@@ -292,7 +292,7 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
      * <li>Must be able to create {@code GMFFFolder} using
      * {@code exportDirectory} parameter.
      * </ul>
-     * 
+     *
      * @param filePath path for building directory. May be null, absolute or
      *            relative.
      * @return GMFFFolder for Export Directory parameter.
@@ -305,18 +305,16 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
         GMFFFolder folder;
         if (!GMFFExportParms.isPresentWithNoWhitespace(exportDirectory))
             throw new GMFFException(
-                GMFFConstants.ERRMSG_EXPORT_DIRECTORY_BAD_MISSING_1
-                    + exportType
+                GMFFConstants.ERRMSG_EXPORT_DIRECTORY_BAD_MISSING_1 + exportType
                     + GMFFConstants.ERRMSG_EXPORT_DIRECTORY_BAD_MISSING_2
                     + exportDirectory);
 
         try {
             folder = new GMFFFolder(filePath, exportDirectory, exportType);
         } catch (final GMFFException e) {
-            throw new GMFFException(
-                GMFFConstants.ERRMSG_EXPORT_DIRECTORY_BAD2_1 + exportType
-                    + GMFFConstants.ERRMSG_EXPORT_DIRECTORY_BAD2_2
-                    + e.getMessage());
+            throw new GMFFException(GMFFConstants.ERRMSG_EXPORT_DIRECTORY_BAD2_1
+                + exportType + GMFFConstants.ERRMSG_EXPORT_DIRECTORY_BAD2_2
+                + e.getMessage());
         }
 
         return folder;
@@ -330,7 +328,7 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
      * <li>Must contain no whitespace
      * <li>Must begin with "."
      * </ul>
-     * 
+     *
      * @throws GMFFException if error found.
      */
     public void validateExportFileType() throws GMFFException {
@@ -338,8 +336,7 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
         if (!GMFFExportParms.isPresentWithNoWhitespace(exportFileType)
             || exportFileType.charAt(0) != GMFFConstants.FILE_TYPE_DOT)
             throw new GMFFException(
-                GMFFConstants.ERRMSG_EXPORT_FILE_TYPE_BAD_MISSING_1
-                    + exportType
+                GMFFConstants.ERRMSG_EXPORT_FILE_TYPE_BAD_MISSING_1 + exportType
                     + GMFFConstants.ERRMSG_EXPORT_FILE_TYPE_BAD_MISSING_2
                     + exportFileType);
     }
@@ -353,7 +350,7 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
      * <li>Must be able to create {@code GMFFFolder} using
      * {@code modelsDirectory} parameter.
      * </ul>
-     * 
+     *
      * @param filePath path for building directory. May be null, absolute or
      *            relative.
      * @return Models Folder.
@@ -366,18 +363,16 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
         GMFFFolder folder;
         if (!GMFFExportParms.isPresentWithNoWhitespace(modelsDirectory))
             throw new GMFFException(
-                GMFFConstants.ERRMSG_MODELS_DIRECTORY_BAD_MISSING_1
-                    + exportType
+                GMFFConstants.ERRMSG_MODELS_DIRECTORY_BAD_MISSING_1 + exportType
                     + GMFFConstants.ERRMSG_MODELS_DIRECTORY_BAD_MISSING_2
                     + modelsDirectory);
 
         try {
             folder = new GMFFFolder(filePath, modelsDirectory, exportType);
         } catch (final GMFFException e) {
-            throw new GMFFException(
-                GMFFConstants.ERRMSG_MODELS_DIRECTORY_BAD2_1 + exportType
-                    + GMFFConstants.ERRMSG_MODELS_DIRECTORY_BAD2_2
-                    + e.getMessage());
+            throw new GMFFException(GMFFConstants.ERRMSG_MODELS_DIRECTORY_BAD2_1
+                + exportType + GMFFConstants.ERRMSG_MODELS_DIRECTORY_BAD2_2
+                + e.getMessage());
         }
         return folder;
     }
@@ -389,16 +384,16 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
      * <li>Not null or empty string
      * <li>Must equal "A" :-)
      * </ul>
-     * 
+     *
      * @throws GMFFException if error found.
      */
     public void validateModelId() throws GMFFException {
 
         if (!GMFFExportParms.isPresentWithNoWhitespace(modelId)
             || !modelId.equals(GMFFConstants.MODEL_A))
-            throw new GMFFException(GMFFConstants.ERRMSG_MODEL_ID_BAD_MISSING_1
-                + exportType + GMFFConstants.ERRMSG_MODEL_ID_BAD_MISSING_2
-                + modelId);
+            throw new GMFFException(
+                GMFFConstants.ERRMSG_MODEL_ID_BAD_MISSING_1 + exportType
+                    + GMFFConstants.ERRMSG_MODEL_ID_BAD_MISSING_2 + modelId);
     }
 
     /**
@@ -408,15 +403,14 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
      * <li>Not null or empty string
      * <li>{@code Charset.isSupported(charsetEncoding) == true}
      * </ul>
-     * 
+     *
      * @throws GMFFException if error found.
      */
     public void validateCharsetEncoding() throws GMFFException {
 
         if (!GMFFExportParms.isPresentWithNoWhitespace(charsetEncoding))
             throw new GMFFException(
-                GMFFConstants.ERRMSG_CHARSET_ENCODING_BAD_MISSING_1
-                    + exportType
+                GMFFConstants.ERRMSG_CHARSET_ENCODING_BAD_MISSING_1 + exportType
                     + GMFFConstants.ERRMSG_CHARSET_ENCODING_BAD_MISSING_2
                     + charsetEncoding);
 
@@ -434,8 +428,7 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
 
         if (!isSupported)
             throw new GMFFException(
-                GMFFConstants.ERRMSG_CHARSET_ENCODING_UNSUPPORTED_1
-                    + exportType
+                GMFFConstants.ERRMSG_CHARSET_ENCODING_UNSUPPORTED_1 + exportType
                     + GMFFConstants.ERRMSG_CHARSET_ENCODING_UNSUPPORTED_2
                     + charsetEncoding
                     + GMFFConstants.ERRMSG_CHARSET_ENCODING_UNSUPPORTED_3);
@@ -449,15 +442,14 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
      * <li>Must contain no whitespace
      * <li>Must not contain "/", "\" or ":"
      * </ul>
-     * 
+     *
      * @throws GMFFException if error found.
      */
     public void validateOutputFileName() throws GMFFException {
 
-        if (outputFileName == null
-            ||
+        if (outputFileName == null ||
 
-            GMFFExportParms.isPresentWithNoWhitespace(outputFileName)
+        GMFFExportParms.isPresentWithNoWhitespace(outputFileName)
             && outputFileName
                 .indexOf(GMFFConstants.OUTPUT_FILE_NAME_ERR_CHAR_1) == -1
             && outputFileName
@@ -476,7 +468,7 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
 
     /**
      * converts to String
-     * 
+     *
      * @return returns GMFFExportParms.exportType string;
      */
     @Override
@@ -486,7 +478,7 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
 
     /**
      * Computes hashcode for this GMFFExportParms
-     * 
+     *
      * @return hashcode for the GMFFExportParms
      *         (GMFFExportParms.exportType.hashcode())
      */
@@ -501,7 +493,7 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
      * Equal if and only if the GMFFExportParms exportType strings are equal and
      * the obj to be compared to this object is not null and is a
      * GMFFExportParms as well.
-     * 
+     *
      * @param obj another GMFFExportParms -- otherwise will return false.
      * @return returns true if equal, otherwise false.
      */
@@ -513,7 +505,7 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
 
     /**
      * Compares GMFFExportParms object based on the primary key, exportType.
-     * 
+     *
      * @param obj GMFFExportParms object to compare to this GMFFExportParms
      * @return returns negative, zero, or a positive int if this GMFFExportParms
      *         object is less than, equal to or greater than the input parameter
@@ -526,8 +518,7 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
     /**
      * EXPORT_TYPE sequences by GMFFExportParms.exportType.
      */
-    public static final Comparator<GMFFExportParms> EXPORT_TYPE = new Comparator<GMFFExportParms>()
-    {
+    public static final Comparator<GMFFExportParms> EXPORT_TYPE = new Comparator<GMFFExportParms>() {
         public int compare(final GMFFExportParms o1, final GMFFExportParms o2) {
             return o1.compareTo(o2);
         }

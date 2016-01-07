@@ -1136,7 +1136,7 @@ public class ProofAsstPreferences {
             .getAllFonts();
 
         for (final Font element : f)
-            if (element.getFamily().compareToIgnoreCase(n) == 0)
+            if (element.getFamily().equalsIgnoreCase(n))
                 return element.getFamily();
         throw new ProofAsstException(
             PaConstants.ERRMSG_INVALID_FONT_FAMILY_NAME, familyName);
@@ -1255,8 +1255,8 @@ public class ProofAsstPreferences {
         // [ ]
         //
 
-        if (s.compareToIgnoreCase(
-            PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_REPLACEMENTS) == 0)
+        if (s.equalsIgnoreCase(
+            PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_REPLACEMENTS))
         {
 
             djVarsSoftErrorsIgnore = false;
@@ -1269,8 +1269,8 @@ public class ProofAsstPreferences {
             return true; // no error
         }
 
-        if (s.compareToIgnoreCase(
-            PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_NEW) == 0)
+        if (s.equalsIgnoreCase(
+            PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_NEW))
         {
 
             djVarsSoftErrorsIgnore = false;
@@ -1283,8 +1283,8 @@ public class ProofAsstPreferences {
             return true; // no error
         }
 
-        if (s.compareToIgnoreCase(
-            PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_DIFFERENCES) == 0)
+        if (s.equalsIgnoreCase(
+            PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_DIFFERENCES))
         {
 
             djVarsSoftErrorsIgnore = false;
@@ -1297,8 +1297,8 @@ public class ProofAsstPreferences {
             return true; // no error
         }
 
-        if (s.compareToIgnoreCase(
-            PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_REPORT) == 0)
+        if (s.equalsIgnoreCase(
+            PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_REPORT))
         {
 
             djVarsSoftErrorsIgnore = false;
@@ -1312,8 +1312,8 @@ public class ProofAsstPreferences {
             return true; // no error
         }
 
-        if (s.compareToIgnoreCase(
-            PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_IGNORE) == 0)
+        if (s.equalsIgnoreCase(
+            PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_IGNORE))
         {
 
             djVarsSoftErrorsIgnore = true;
@@ -1334,21 +1334,19 @@ public class ProofAsstPreferences {
         if (s == null)
             return false; // error
 
-        if (s.compareToIgnoreCase(PaConstants.PROOF_ASST_PROOF_NORMAL) == 0) {
+        if (s.equalsIgnoreCase(PaConstants.PROOF_ASST_PROOF_NORMAL)) {
             proofFormatPacked = false;
             proofFormatCompressed = false;
             return true; // no error
         }
 
-        if (s.compareToIgnoreCase(PaConstants.PROOF_ASST_PROOF_PACKED) == 0) {
+        if (s.equalsIgnoreCase(PaConstants.PROOF_ASST_PROOF_PACKED)) {
             proofFormatPacked = true;
             proofFormatCompressed = false;
             return true; // no error
         }
 
-        if (s.compareToIgnoreCase(
-            PaConstants.PROOF_ASST_PROOF_COMPRESSED) == 0)
-        {
+        if (s.equalsIgnoreCase(PaConstants.PROOF_ASST_PROOF_COMPRESSED)) {
             proofFormatPacked = true;
             proofFormatCompressed = true;
             return true; // no error

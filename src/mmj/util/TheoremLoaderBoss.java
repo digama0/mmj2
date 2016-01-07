@@ -38,7 +38,7 @@ public class TheoremLoaderBoss extends Boss {
 
     /**
      * Constructor with BatchFramework for access to environment.
-     * 
+     *
      * @param batchFramework for access to environment.
      */
     public TheoremLoaderBoss(final BatchFramework batchFramework) {
@@ -47,7 +47,7 @@ public class TheoremLoaderBoss extends Boss {
 
     /**
      * Executes a single command from the RunParmFile.
-     * 
+     *
      * @param runParm the RunParmFile line to execute.
      * @return boolean "consumed" indicating that the input runParm should not
      *         be processed again.
@@ -58,87 +58,81 @@ public class TheoremLoaderBoss extends Boss {
         IOException, VerifyException, TheoremLoaderException
     {
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_CLEAR.matches(runParm)) {
             theoremLoader = null;
             tlPreferences = null;
             return false; // not "consumed"
         }
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_FILE
-            .name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_LOAD_FILE.matches(runParm)) {
             theoremLoader = null;
             tlPreferences = null;
             return false; // not "consumed"
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_THEOREM_LOADER_DJ_VARS_OPTION) == 0)
+        if (UtilConstants.RUNPARM_THEOREM_LOADER_DJ_VARS_OPTION
+            .matches(runParm))
         {
             editTheoremLoaderDjVarsOption(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_THEOREM_LOADER_AUDIT_MESSAGES) == 0)
+        if (UtilConstants.RUNPARM_THEOREM_LOADER_AUDIT_MESSAGES
+            .matches(runParm))
         {
             editTheoremLoaderAuditMessages(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_THEOREM_LOADER_MMT_FOLDER) == 0)
-        {
+        if (UtilConstants.RUNPARM_THEOREM_LOADER_MMT_FOLDER.matches(runParm)) {
             editTheoremLoaderMMTFolder(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_THEOREMS_FROM_MMT_FOLDER) == 0)
+        if (UtilConstants.RUNPARM_LOAD_THEOREMS_FROM_MMT_FOLDER
+            .matches(runParm))
         {
             editLoadTheoremsFromMMTFolder(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_EXTRACT_THEOREM_TO_MMT_FOLDER) == 0)
+        if (UtilConstants.RUNPARM_EXTRACT_THEOREM_TO_MMT_FOLDER
+            .matches(runParm))
         {
             editExtractTheoremToMMTFolder(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_THEOREM_LOADER_STORE_FORMULAS_ASIS) == 0)
+        if (UtilConstants.RUNPARM_THEOREM_LOADER_STORE_FORMULAS_ASIS
+            .matches(runParm))
         {
             editTheoremLoaderStoreFormulasAsIs(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_THEOREM_LOADER_STORE_MM_INDENT_AMT) == 0)
+        if (UtilConstants.RUNPARM_THEOREM_LOADER_STORE_MM_INDENT_AMT
+            .matches(runParm))
         {
             editTheoremLoaderStoreMMIndentAmt(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_THEOREM_LOADER_STORE_MM_RIGHT_COL) == 0)
+        if (UtilConstants.RUNPARM_THEOREM_LOADER_STORE_MM_RIGHT_COL
+            .matches(runParm))
         {
             editTheoremLoaderStoreMMRightCol(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_UNIFY_PLUS_STORE_IN_LOG_SYS_AND_MMT_FOLDER) == 0)
+        if (UtilConstants.RUNPARM_UNIFY_PLUS_STORE_IN_LOG_SYS_AND_MMT_FOLDER
+            .matches(runParm))
         {
             editUnifyPlusStoreInLogSysAndMMTFolder(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_UNIFY_PLUS_STORE_IN_MMT_FOLDER) == 0)
+        if (UtilConstants.RUNPARM_UNIFY_PLUS_STORE_IN_MMT_FOLDER
+            .matches(runParm))
         {
             editUnifyPlusStoreInMMTFolder(runParm);
             return true;
@@ -153,7 +147,7 @@ public class TheoremLoaderBoss extends Boss {
      * <p>
      * Note: must re-initialize the TMFFPreferences reference in TlPreferences
      * because TMFFBoss controls which instance of TMFFPreferences is active!!!
-     * 
+     *
      * @return TlPreferences object ready to go.
      */
     public TlPreferences getTlPreferences() {
@@ -171,7 +165,7 @@ public class TheoremLoaderBoss extends Boss {
 
     /**
      * Fetch a TheoremLoader object.
-     * 
+     *
      * @return TheoremLoader object, ready to go, or null;.
      * @throws VerifyException if an error occurred
      */
@@ -191,14 +185,15 @@ public class TheoremLoaderBoss extends Boss {
 
     /**
      * edit TheoremLoaderDjVarsOption RunParm.
-     * 
+     *
      * @param runParm run parm parsed into RunParmArrayEntry object
      */
-    protected void editTheoremLoaderDjVarsOption(final RunParmArrayEntry runParm)
+    protected void editTheoremLoaderDjVarsOption(
+        final RunParmArrayEntry runParm)
     {
 
         editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_THEOREM_LOADER_DJ_VARS_OPTION, 1);
+            UtilConstants.RUNPARM_THEOREM_LOADER_DJ_VARS_OPTION.name(), 1);
         if (getTlPreferences().setDjVarsOption(runParm.values[0].trim()))
             return; // ok, valid!
 
@@ -215,7 +210,7 @@ public class TheoremLoaderBoss extends Boss {
 
     /**
      * edit TheoremLoaderAuditMessages RunParm.
-     * 
+     *
      * @param runParm run parm parsed into RunParmArrayEntry object
      */
     protected void editTheoremLoaderAuditMessages(
@@ -223,7 +218,7 @@ public class TheoremLoaderBoss extends Boss {
     {
 
         editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_THEOREM_LOADER_AUDIT_MESSAGES, 1);
+            UtilConstants.RUNPARM_THEOREM_LOADER_AUDIT_MESSAGES.name(), 1);
         if (getTlPreferences().setAuditMessages(runParm.values[0].trim()))
             return; // ok, valid!
 
@@ -241,13 +236,13 @@ public class TheoremLoaderBoss extends Boss {
 
     /**
      * Validate Theorem Loader MMT Folder Runparm.
-     * 
+     *
      * @param runParm run parm parsed into RunParmArrayEntry object
      */
     protected void editTheoremLoaderMMTFolder(final RunParmArrayEntry runParm) {
 
         editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_THEOREM_LOADER_MMT_FOLDER, 1);
+            UtilConstants.RUNPARM_THEOREM_LOADER_MMT_FOLDER.name(), 1);
 
         final String errorMessage = getTlPreferences().setMMTFolder(
             batchFramework.paths.getMMJ2Path(), runParm.values[0].trim());
@@ -262,7 +257,7 @@ public class TheoremLoaderBoss extends Boss {
 
     /**
      * edit TheoremLoaderStoreFormulasAsIs RunParm.
-     * 
+     *
      * @param runParm run parm parsed into RunParmArrayEntry object
      */
     protected void editTheoremLoaderStoreFormulasAsIs(
@@ -270,7 +265,7 @@ public class TheoremLoaderBoss extends Boss {
     {
 
         editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_THEOREM_LOADER_STORE_FORMULAS_ASIS, 1);
+            UtilConstants.RUNPARM_THEOREM_LOADER_STORE_FORMULAS_ASIS.name(), 1);
         if (getTlPreferences().setStoreFormulasAsIs(runParm.values[0].trim()))
             return; // ok, valid!
 
@@ -288,7 +283,7 @@ public class TheoremLoaderBoss extends Boss {
 
     /**
      * edit TheoremLoaderStoreMMIndentAmt RunParm.
-     * 
+     *
      * @param runParm run parm parsed into RunParmArrayEntry object
      */
     protected void editTheoremLoaderStoreMMIndentAmt(
@@ -296,7 +291,7 @@ public class TheoremLoaderBoss extends Boss {
     {
 
         editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_THEOREM_LOADER_STORE_MM_INDENT_AMT, 1);
+            UtilConstants.RUNPARM_THEOREM_LOADER_STORE_MM_INDENT_AMT.name(), 1);
         if (getTlPreferences().setStoreMMIndentAmt(runParm.values[0].trim()))
             return; // ok, valid!
 
@@ -314,7 +309,7 @@ public class TheoremLoaderBoss extends Boss {
 
     /**
      * edit TheoremLoaderStoreMMRightCol RunParm.
-     * 
+     *
      * @param runParm run parm parsed into RunParmArrayEntry object
      */
     protected void editTheoremLoaderStoreMMRightCol(
@@ -322,7 +317,7 @@ public class TheoremLoaderBoss extends Boss {
     {
 
         editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_THEOREM_LOADER_STORE_MM_RIGHT_COL, 1);
+            UtilConstants.RUNPARM_THEOREM_LOADER_STORE_MM_RIGHT_COL.name(), 1);
         if (getTlPreferences().setStoreMMRightCol(runParm.values[0].trim()))
             return; // ok, valid!
 
@@ -338,12 +333,12 @@ public class TheoremLoaderBoss extends Boss {
 
     }
 
-    protected void editLoadTheoremsFromMMTFolder(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
+    protected void editLoadTheoremsFromMMTFolder(
+        final RunParmArrayEntry runParm) throws IllegalArgumentException
     {
 
         editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_LOAD_THEOREMS_FROM_MMT_FOLDER, 1);
+            UtilConstants.RUNPARM_LOAD_THEOREMS_FROM_MMT_FOLDER.name(), 1);
 
         final String label = runParm.values[0].trim();
 
@@ -357,8 +352,8 @@ public class TheoremLoaderBoss extends Boss {
             final TheoremLoader theoremLoader = getTheoremLoader();
 
             if (label.equals(UtilConstants.RUNPARM_OPTION_VALUE_ALL))
-                theoremLoader
-                    .loadTheoremsFromMMTFolder(logicalSystem, messages);
+                theoremLoader.loadTheoremsFromMMTFolder(logicalSystem,
+                    messages);
             else
                 theoremLoader.loadTheoremsFromMMTFolder(label, logicalSystem,
                     messages);
@@ -379,18 +374,18 @@ public class TheoremLoaderBoss extends Boss {
                 + errorMessage);
     }
 
-    protected void editExtractTheoremToMMTFolder(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
+    protected void editExtractTheoremToMMTFolder(
+        final RunParmArrayEntry runParm) throws IllegalArgumentException
     {
 
         editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_EXTRACT_THEOREM_TO_MMT_FOLDER, 1);
+            UtilConstants.RUNPARM_EXTRACT_THEOREM_TO_MMT_FOLDER.name(), 1);
 
         final LogicalSystem logicalSystem = batchFramework.logicalSystemBoss
             .getLogicalSystem();
 
         final Theorem theorem = getSelectorTheoremRunParmOption(runParm,
-            UtilConstants.RUNPARM_EXTRACT_THEOREM_TO_MMT_FOLDER, 1,
+            UtilConstants.RUNPARM_EXTRACT_THEOREM_TO_MMT_FOLDER.name(), 1,
             logicalSystem.getStmtTbl());
 
         String errorMessage = null;
@@ -422,7 +417,9 @@ public class TheoremLoaderBoss extends Boss {
     {
 
         editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_UNIFY_PLUS_STORE_IN_LOG_SYS_AND_MMT_FOLDER, 1);
+            UtilConstants.RUNPARM_UNIFY_PLUS_STORE_IN_LOG_SYS_AND_MMT_FOLDER
+                .name(),
+            1);
 
         Reader proofWorksheetReader = null;
         String errorMessage = null;
@@ -441,18 +438,17 @@ public class TheoremLoaderBoss extends Boss {
             final TheoremLoader theoremLoader = getTheoremLoader();
 
             proofWorksheetReader = batchFramework.proofAsstBoss
-                .editProofAsstImportFileRunParm(
-                    runParm,
-                    UtilConstants.RUNPARM_UNIFY_PLUS_STORE_IN_LOG_SYS_AND_MMT_FOLDER,
+                .editProofAsstImportFileRunParm(runParm,
+                    UtilConstants.RUNPARM_UNIFY_PLUS_STORE_IN_LOG_SYS_AND_MMT_FOLDER
+                        .name(),
                     1);
 
             final String proofWorksheetText = getProofWorksheetText(
                 proofWorksheetReader, runParm,
-                UtilConstants.RUNPARM_UNIFY_PLUS_STORE_IN_MMT_FOLDER, 1);
+                UtilConstants.RUNPARM_UNIFY_PLUS_STORE_IN_MMT_FOLDER.name(), 1);
 
-            theoremLoader.unifyPlusStoreInLogSysAndMMTFolder(
-                proofWorksheetText, logicalSystem, messages, proofAsst,
-                runParm.values[0].trim());
+            theoremLoader.unifyPlusStoreInLogSysAndMMTFolder(proofWorksheetText,
+                logicalSystem, messages, proofAsst, runParm.values[0].trim());
 
             batchFramework.outputBoss.printAndClearMessages();
             closeReader(proofWorksheetReader);
@@ -473,12 +469,12 @@ public class TheoremLoaderBoss extends Boss {
                 + errorMessage);
     }
 
-    protected void editUnifyPlusStoreInMMTFolder(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
+    protected void editUnifyPlusStoreInMMTFolder(
+        final RunParmArrayEntry runParm) throws IllegalArgumentException
     {
 
         editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_UNIFY_PLUS_STORE_IN_MMT_FOLDER, 1);
+            UtilConstants.RUNPARM_UNIFY_PLUS_STORE_IN_MMT_FOLDER.name(), 1);
 
         Reader proofWorksheetReader = null;
         String errorMessage = null;
@@ -496,11 +492,12 @@ public class TheoremLoaderBoss extends Boss {
 
             proofWorksheetReader = batchFramework.proofAsstBoss
                 .editProofAsstImportFileRunParm(runParm,
-                    UtilConstants.RUNPARM_UNIFY_PLUS_STORE_IN_MMT_FOLDER, 1);
+                    UtilConstants.RUNPARM_UNIFY_PLUS_STORE_IN_MMT_FOLDER.name(),
+                    1);
 
             final String proofWorksheetText = getProofWorksheetText(
                 proofWorksheetReader, runParm,
-                UtilConstants.RUNPARM_UNIFY_PLUS_STORE_IN_MMT_FOLDER, 1);
+                UtilConstants.RUNPARM_UNIFY_PLUS_STORE_IN_MMT_FOLDER.name(), 1);
 
             final TheoremLoader theoremLoader = getTheoremLoader();
 

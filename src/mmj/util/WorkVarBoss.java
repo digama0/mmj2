@@ -34,7 +34,7 @@ public class WorkVarBoss extends Boss {
 
     /**
      * Constructor with BatchFramework for access to environment.
-     * 
+     *
      * @param batchFramework for access to environment.
      */
     public WorkVarBoss(final BatchFramework batchFramework) {
@@ -43,7 +43,7 @@ public class WorkVarBoss extends Boss {
 
     /**
      * Executes a single command from the RunParmFile.
-     * 
+     *
      * @param runParm the RunParmFile line to execute.
      * @return boolean "consumed" indicating that the input runParm should not
      *         be processed again.
@@ -53,31 +53,22 @@ public class WorkVarBoss extends Boss {
         throws IllegalArgumentException, VerifyException
     {
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_CLEAR.matches(runParm)) {
             workVarManager = null;
             return false; // not "consumed"
         }
 
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_FILE
-            .name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_LOAD_FILE.matches(runParm)) {
             workVarManager = null;
             return false; // not "consumed"
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_DEFINE_WORK_VAR_TYPE
-                .name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_DEFINE_WORK_VAR_TYPE.matches(runParm)) {
             editDefineWorkVarType(runParm);
             return true;
         }
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_DECLARE_WORK_VARS.name()) == 0)
-        {
+        if (UtilConstants.RUNPARM_DECLARE_WORK_VARS.matches(runParm)) {
             editDeclareWorkVars(runParm);
             return true;
         }
@@ -90,7 +81,7 @@ public class WorkVarBoss extends Boss {
      * <p>
      * Requires that a LogicalSystem be loaded with a .mm file and that an
      * initialized Grammar object be available.
-     * 
+     *
      * @return WorkVarManager object, ready to go, or null.
      */
     public WorkVarManager getWorkVarManager() {
@@ -105,8 +96,8 @@ public class WorkVarBoss extends Boss {
         if (grammar.getGrammarInitialized())
             workVarManager = new WorkVarManager(grammar);
         else
-            messages
-                .accumErrorMessage(UtilConstants.ERRMSG_WV_MGR_REQUIRES_GRAMMAR_INIT);
+            messages.accumErrorMessage(
+                UtilConstants.ERRMSG_WV_MGR_REQUIRES_GRAMMAR_INIT);
 
         batchFramework.outputBoss.printAndClearMessages();
 
@@ -115,7 +106,7 @@ public class WorkVarBoss extends Boss {
 
     /**
      * Validate DefineWorkVarType RunParm.
-     * 
+     *
      * @param runParm run parm parsed into RunParmArrayEntry object
      * @throws VerifyException if an error occurred
      * @throws IllegalArgumentException if an error occurred
@@ -137,7 +128,7 @@ public class WorkVarBoss extends Boss {
 
     /**
      * Create and initialize the Work Vars to be used.
-     * 
+     *
      * @param runParm run parm parsed into RunParmArrayEntry object
      * @throws VerifyException if an error occurred
      * @throws IllegalArgumentException if an error occurred
