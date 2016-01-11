@@ -41,10 +41,12 @@
 
 package mmj.util;
 
-import java.io.*;
+import static mmj.util.UtilConstants.*;
+
+import java.io.IOException;
+import java.io.PrintWriter;
 
 import mmj.lang.*;
-import mmj.mmio.MMIOException;
 import mmj.tmff.TMFFPreferences;
 import mmj.verify.Grammar;
 
@@ -87,103 +89,43 @@ public class OutputBoss extends Boss {
     public OutputBoss(final BatchFramework batchFramework) {
         super(batchFramework);
         setDefaults();
-    }
 
-    /**
-     * Executes a single command from the RunParmFile.
-     *
-     * @param runParm the RunParmFile line to execute.
-     */
-    @Override
-    public boolean doRunParmCommand(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException, MMIOException, FileNotFoundException,
-        IOException, VerifyException
-    {
+        putCommand(RUNPARM_CLEAR, this::setDefaults);
 
-        if (UtilConstants.RUNPARM_CLEAR.matches(runParm)) {
-            setDefaults();
-            return false;
-        }
+        putCommand(RUNPARM_SYSOUT_FILE, this::editSysOutFile);
 
-        if (UtilConstants.RUNPARM_SYSOUT_FILE.matches(runParm)) {
-            editSysOutFile(runParm);
-            return true;
-        }
+        putCommand(RUNPARM_SYSERR_FILE, this::editSysErrFile);
 
-        if (UtilConstants.RUNPARM_SYSERR_FILE.matches(runParm)) {
-            editSysErrFile(runParm);
-            return true;
-        }
+        putCommand(RUNPARM_MAX_ERROR_MESSAGES, this::editMaxErrorMessages);
 
-        if (UtilConstants.RUNPARM_MAX_ERROR_MESSAGES.matches(runParm)) {
-            editMaxErrorMessages(runParm);
-            return true;
-        }
+        putCommand(RUNPARM_MAX_INFO_MESSAGES, this::editMaxInfoMessages);
 
-        if (UtilConstants.RUNPARM_MAX_INFO_MESSAGES.matches(runParm)) {
-            editMaxInfoMessages(runParm);
-            return true;
-        }
+        putCommand(RUNPARM_MAX_STATEMENT_PRINT_COUNT,
+            this::editMaxStatementPrintCount);
 
-        if (UtilConstants.RUNPARM_MAX_STATEMENT_PRINT_COUNT.matches(runParm)) {
-            editMaxStatementPrintCount(runParm);
-            return true;
-        }
+        putCommand(RUNPARM_CAPTION, this::editCaption);
 
-        if (UtilConstants.RUNPARM_CAPTION.matches(runParm)) {
-            editCaption(runParm);
-            return true;
-        }
+        putCommand(RUNPARM_PRINT_SYNTAX_DETAILS, this::doPrintSyntaxDetails);
 
-        if (UtilConstants.RUNPARM_PRINT_SYNTAX_DETAILS.matches(runParm)) {
-            doPrintSyntaxDetails(runParm);
-            return true; // "consumed"
-        }
+        putCommand(RUNPARM_PRINT_STATEMENT_DETAILS,
+            this::doPrintStatementDetails);
 
-        if (UtilConstants.RUNPARM_PRINT_STATEMENT_DETAILS.matches(runParm)) {
-            doPrintStatementDetails(runParm);
-            return true; // "consumed"
-        }
+        putCommand(RUNPARM_OUTPUT_VERBOSITY, this::editOutputVerbosity);
 
-        if (UtilConstants.RUNPARM_OUTPUT_VERBOSITY.matches(runParm)) {
-            editOutputVerbosity(runParm);
-            return true; // "consumed"
-        }
+        putCommand(RUNPARM_START_INSTRUMENTATION_TIMER,
+            this::editStartInstrumentationTimer);
 
-        if (UtilConstants.RUNPARM_START_INSTRUMENTATION_TIMER
-            .matches(runParm))
-        {
-            editStartInstrumentationTimer(runParm);
-            return true; // "consumed"
-        }
+        putCommand(RUNPARM_STOP_INSTRUMENTATION_TIMER,
+            this::editStopInstrumentationTimer);
 
-        if (UtilConstants.RUNPARM_STOP_INSTRUMENTATION_TIMER.matches(runParm)) {
-            editStopInstrumentationTimer(runParm);
-            return true; // "consumed"
-        }
+        putCommand(RUNPARM_PRINT_BOOK_MANAGER_CHAPTERS,
+            this::doPrintBookManagerChapters);
 
-        if (UtilConstants.RUNPARM_PRINT_BOOK_MANAGER_CHAPTERS
-            .matches(runParm))
-        {
-            doPrintBookManagerChapters(runParm);
-            return true; // "consumed"
-        }
+        putCommand(RUNPARM_PRINT_BOOK_MANAGER_SECTIONS,
+            this::doPrintBookManagerSections);
 
-        if (UtilConstants.RUNPARM_PRINT_BOOK_MANAGER_SECTIONS
-            .matches(runParm))
-        {
-            doPrintBookManagerSections(runParm);
-            return true; // "consumed"
-        }
-
-        if (UtilConstants.RUNPARM_PRINT_BOOK_MANAGER_SECTION_DETAILS
-            .matches(runParm))
-        {
-            doPrintBookManagerSectionDetails(runParm);
-            return true; // "consumed"
-        }
-
-        return false;
+        putCommand(RUNPARM_PRINT_BOOK_MANAGER_SECTION_DETAILS,
+            this::doPrintBookManagerSectionDetails);
     }
 
     /**
@@ -230,8 +172,7 @@ public class OutputBoss extends Boss {
      * @throws IOException if an error occurred
      */
     public void sysOutPrintln(final String s, final int v) throws IOException {
-        if (v > outputVerbosityParm) {}
-        else
+        if (v <= outputVerbosityParm)
             sysOutPrintln(s);
 
     }
@@ -261,8 +202,7 @@ public class OutputBoss extends Boss {
      */
     public void sysOutPrint(final String s, final int v) throws IOException {
 
-        if (v > outputVerbosityParm) {}
-        else
+        if (v <= outputVerbosityParm)
             sysOutPrint(s);
     }
 
@@ -321,13 +261,8 @@ public class OutputBoss extends Boss {
 
     /**
      * Executes the PrintSyntaxDetails command, prints any messages, etc.
-     *
-     * @param runParm RunParmFile line.
-     * @throws IllegalArgumentException if an error occurred
      */
-    public void doPrintSyntaxDetails(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
+    public void doPrintSyntaxDetails() {
 
         final LogicalSystem logicalSystem = batchFramework.logicalSystemBoss
             .getLogicalSystem();
@@ -341,59 +276,39 @@ public class OutputBoss extends Boss {
 
     /**
      * Executes the PrintStatementDetails command, prints any messages, etc.
-     *
-     * @param runParm RunParmFile line.
-     * @throws IllegalArgumentException if an error occurred
      */
-    public void doPrintStatementDetails(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
+    public void doPrintStatementDetails() {
 
         final LogicalSystem logicalSystem = batchFramework.logicalSystemBoss
             .getLogicalSystem();
 
         final Dump d = getDump();
 
-        final String optionValue = runParm.values[0].trim();
-        if (optionValue
-            .compareTo(UtilConstants.RUNPARM_OPTION_VALUE_ALL) == 0)
-        {
+        if (get(1).equalsIgnoreCase(RUNPARM_OPTION_VALUE_ALL)) {
             int n = maxStatementPrintCountParm;
             if (n <= 0)
-                n = UtilConstants.MAX_STATEMENT_PRINT_COUNT_DEFAULT;
+                n = MAX_STATEMENT_PRINT_COUNT_DEFAULT;
             d.printStatementDetails(getCaption(), logicalSystem.getStmtTbl(),
                 n);
         }
-        else {
-            final Stmt stmt = editRunParmValueStmt(optionValue,
-                UtilConstants.RUNPARM_PRINT_STATEMENT_DETAILS.name(),
-                logicalSystem);
-            d.printOneStatementDetails(stmt);
-        }
+        else
+            d.printOneStatementDetails(getStmt(1, logicalSystem));
         printAndClearMessages();
     }
 
     /**
      * Executes the PrintBookManagerChapters command.
-     *
-     * @param runParm RunParmFile line.
-     * @throws IllegalArgumentException if an error occurred
      */
-    public void doPrintBookManagerChapters(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
+    public void doPrintBookManagerChapters() {
 
         final LogicalSystem logicalSystem = batchFramework.logicalSystemBoss
             .getLogicalSystem();
 
-        final BookManager bookManager = checkBookManagerReady(runParm,
-            UtilConstants.RUNPARM_PRINT_BOOK_MANAGER_CHAPTERS.name(),
-            logicalSystem);
+        final BookManager bookManager = checkBookManagerReady(logicalSystem);
 
         final Dump d = getDump();
 
-        d.printBookManagerChapters(
-            UtilConstants.RUNPARM_PRINT_BOOK_MANAGER_CHAPTERS.name(),
+        d.printBookManagerChapters(RUNPARM_PRINT_BOOK_MANAGER_CHAPTERS.name(),
             bookManager);
 
         printAndClearMessages();
@@ -401,25 +316,17 @@ public class OutputBoss extends Boss {
 
     /**
      * Executes the PrintBookManagerSections command.
-     *
-     * @param runParm RunParmFile line.
-     * @throws IllegalArgumentException if an error occurred
      */
-    public void doPrintBookManagerSections(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
+    public void doPrintBookManagerSections() {
 
         final LogicalSystem logicalSystem = batchFramework.logicalSystemBoss
             .getLogicalSystem();
 
-        final BookManager bookManager = checkBookManagerReady(runParm,
-            UtilConstants.RUNPARM_PRINT_BOOK_MANAGER_SECTIONS.name(),
-            logicalSystem);
+        final BookManager bookManager = checkBookManagerReady(logicalSystem);
 
         final Dump d = getDump();
 
-        d.printBookManagerSections(
-            UtilConstants.RUNPARM_PRINT_BOOK_MANAGER_SECTIONS.name(),
+        d.printBookManagerSections(RUNPARM_PRINT_BOOK_MANAGER_SECTIONS.name(),
             bookManager);
 
         printAndClearMessages();
@@ -427,29 +334,20 @@ public class OutputBoss extends Boss {
 
     /**
      * Executes the PrintBookManagerSectionDetails command
-     *
-     * @param runParm RunParmFile line.
-     * @throws IllegalArgumentException if an error occurred
      */
-    public void doPrintBookManagerSectionDetails(
-        final RunParmArrayEntry runParm) throws IllegalArgumentException
-    {
+    public void doPrintBookManagerSectionDetails() {
 
         final LogicalSystem logicalSystem = batchFramework.logicalSystemBoss
             .getLogicalSystem();
 
-        final BookManager bookManager = checkBookManagerReady(runParm,
-            UtilConstants.RUNPARM_PRINT_BOOK_MANAGER_SECTION_DETAILS.name(),
-            logicalSystem);
+        final BookManager bookManager = checkBookManagerReady(logicalSystem);
 
         final Dump d = getDump();
 
         Section section = null;
         final String optionValue = runParm.values[0].trim();
-        if (optionValue.compareTo(UtilConstants.RUNPARM_OPTION_VALUE_ALL) != 0)
-            section = editBookManagerSectionNbr(runParm,
-                UtilConstants.RUNPARM_PRINT_BOOK_MANAGER_SECTION_DETAILS.name(),
-                1, bookManager);
+        if (optionValue.compareTo(RUNPARM_OPTION_VALUE_ALL) != 0)
+            section = editBookManagerSectionNbr(1, bookManager);
 
         d.printBookManagerSectionDetails(runParm, logicalSystem, bookManager,
             section);
@@ -478,50 +376,27 @@ public class OutputBoss extends Boss {
 
     /**
      * Validate System Output File Runparm.
-     *
-     * @param runParm RunParmFile line parsed into RunParmArrayEntry.
-     * @throws IllegalArgumentException if an error occurred
      */
-    protected void editSysOutFile(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
-
+    protected void editSysOutFile() {
         closeSysOut();
-        sysOut = null;
-        sysOut = editPrintWriterRunParm(batchFramework.paths.getMMJ2Path(),
-            runParm, UtilConstants.RUNPARM_SYSOUT_FILE.name());
+        sysOut = getPrintWriter(batchFramework.paths.getMMJ2Path());
 
     }
 
     /**
      * Validate System Error File Runparm.
-     *
-     * @param runParm RunParmFile line parsed into RunParmArrayEntry.
-     * @throws IllegalArgumentException if an error occurred
      */
-    protected void editSysErrFile(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
-
+    protected void editSysErrFile() {
         closeSysErr();
-        sysErr = null;
-        sysErr = editPrintWriterRunParm(batchFramework.paths.getMMJ2Path(),
-            runParm, UtilConstants.RUNPARM_SYSERR_FILE.name());
-
+        sysErr = getPrintWriter(batchFramework.paths.getMMJ2Path());
     }
 
     /**
      * Validate Max Error Messages Runparm.
-     *
-     * @param runParm RunParmFile line parsed into RunParmArrayEntry.
-     * @throws IllegalArgumentException if an error occurred
      */
-    protected void editMaxErrorMessages(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
+    protected void editMaxErrorMessages() {
 
-        maxErrorMessagesParm = editRunParmValueReqPosInt(runParm,
-            UtilConstants.RUNPARM_MAX_ERROR_MESSAGES.name(), 1);
+        maxErrorMessagesParm = getPosInt(1);
         if (messages != null) {
             printAndClearMessages();
             messages.reallocateErrorMessages(maxErrorMessagesParm);
@@ -530,16 +405,10 @@ public class OutputBoss extends Boss {
 
     /**
      * Validate Max Info Messages Runparm.
-     *
-     * @param runParm RunParmFile line parsed into RunParmArrayEntry.
-     * @throws IllegalArgumentException if an error occurred
      */
-    protected void editMaxInfoMessages(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
+    protected void editMaxInfoMessages() {
 
-        maxInfoMessagesParm = editRunParmValueReqPosInt(runParm,
-            UtilConstants.RUNPARM_MAX_INFO_MESSAGES.name(), 1);
+        maxInfoMessagesParm = getPosInt(1);
         if (messages != null) {
             printAndClearMessages();
             messages.reallocateInfoMessages(maxInfoMessagesParm);
@@ -548,18 +417,10 @@ public class OutputBoss extends Boss {
 
     /**
      * Validate Caption Runparm.
-     *
-     * @param runParm RunParmFile line parsed into RunParmArrayEntry.
-     * @throws IllegalArgumentException if an error occurred
      */
-    protected void editCaption(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
-
-        editRunParmValuesLength(runParm, UtilConstants.RUNPARM_CAPTION.name(),
-            1);
-        captionParm = runParm.values[0].trim();
-        if (captionParm.length() == 0)
+    protected void editCaption() {
+        captionParm = get(1);
+        if (captionParm.isEmpty())
             captionParm = " ";
     }
 
@@ -577,62 +438,30 @@ public class OutputBoss extends Boss {
 
     /**
      * Validate Max Statement Print Count RunParm.
-     *
-     * @param runParm RunParmFile line parsed into RunParmArrayEntry.
-     * @throws IllegalArgumentException if an error occurred
      */
-    protected void editMaxStatementPrintCount(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
-
-        maxStatementPrintCountParm = editRunParmValueReqPosInt(runParm,
-            UtilConstants.RUNPARM_MAX_STATEMENT_PRINT_COUNT.name(), 1);
+    protected void editMaxStatementPrintCount() {
+        maxStatementPrintCountParm = getPosInt(1);
     }
 
     /**
      * Validate OutputVerbosity Runparm.
-     *
-     * @param runParm RunParmFile line parsed into RunParmArrayEntry.
-     * @throws IllegalArgumentException if an error occurred
      */
-    protected void editOutputVerbosity(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
-
-        outputVerbosityParm = editRunParmValueReqInt(runParm,
-            UtilConstants.RUNPARM_OUTPUT_VERBOSITY.name(), 1);
+    protected void editOutputVerbosity() {
+        outputVerbosityParm = getInt(1);
     }
 
     /**
      * Validate StartInstrumentationTimer Runparm.
-     *
-     * @param runParm RunParmFile line parsed into RunParmArrayEntry.
-     * @throws IllegalArgumentException if an error occurred
      */
-    protected void editStartInstrumentationTimer(
-        final RunParmArrayEntry runParm) throws IllegalArgumentException
-    {
-
-        editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_START_INSTRUMENTATION_TIMER.name(), 1);
-
-        getMessages().startInstrumentationTimer(runParm.values[0]);
+    protected void editStartInstrumentationTimer() {
+        getMessages().startInstrumentationTimer(get(1));
     }
 
     /**
      * Validate StopInstrumentationTimer Runparm.
-     *
-     * @param runParm RunParmFile line parsed into RunParmArrayEntry.
-     * @throws IllegalArgumentException if an error occurred
      */
-    protected void editStopInstrumentationTimer(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
-
-        editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_STOP_INSTRUMENTATION_TIMER.name(), 1);
-
-        getMessages().stopInstrumentationTimer(runParm.values[0]);
+    protected void editStopInstrumentationTimer() {
+        getMessages().stopInstrumentationTimer(get(1));
         printAndClearMessages();
     }
 
@@ -642,20 +471,17 @@ public class OutputBoss extends Boss {
      * Caution: throws IllegalArgumentException if BookManager is not enabled!
      * Ouch.
      *
-     * @param runParm RunParmFile line.
-     * @param valueCaption String identifying RunParm value
      * @param logicalSystem the LogicalSystem in use.
      * @return BookManager object in enabled status.
      */
-    protected BookManager checkBookManagerReady(final RunParmArrayEntry runParm,
-        final String valueCaption, final LogicalSystem logicalSystem)
+    protected BookManager checkBookManagerReady(
+        final LogicalSystem logicalSystem)
     {
 
         final BookManager bookManager = logicalSystem.getBookManager();
         if (!bookManager.isEnabled())
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_BOOK_MANAGER_NOT_ENABLED_1 + valueCaption
-                    + UtilConstants.ERRMSG_BOOK_MANAGER_NOT_ENABLED_2);
+            throw error(ERRMSG_BOOK_MANAGER_NOT_ENABLED,
+                RUNPARM_BOOK_MANAGER_ENABLED, RUNPARM_LOAD_FILE);
         return bookManager;
     }
 
@@ -663,29 +489,21 @@ public class OutputBoss extends Boss {
      * Checks to see if BookManager is initialized and enabled.
      * <p>
      * Caution: throws IllegalArgumentException if Section Number is not a
-     * positive interer, or if it is not found within the BookManager! Ouch.
+     * positive integer, or if it is not found within the BookManager! Ouch.
      *
-     * @param runParm RunParmFile line.
-     * @param valueCaption String identifying RunParm value
      * @param valueFieldNbr number of value field within RunParm.
      * @param bookManager the BookManager to check
      * @return Section BookManager section.
      */
-    protected Section editBookManagerSectionNbr(final RunParmArrayEntry runParm,
-        final String valueCaption, final int valueFieldNbr,
+    protected Section editBookManagerSectionNbr(final int valueFieldNbr,
         final BookManager bookManager)
     {
 
-        final int sectionNbr = editRunParmValueReqPosInt(runParm, valueCaption,
-            valueFieldNbr);
+        final int sectionNbr = getPosInt(valueFieldNbr);
 
         final Section section = bookManager.getSection(sectionNbr);
         if (section == null)
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_BOOK_MANAGER_SECTION_NBR_NOT_FOUND_1
-                    + sectionNbr
-                    + UtilConstants.ERRMSG_BOOK_MANAGER_SECTION_NBR_NOT_FOUND_2
-                    + valueCaption);
+            throw error(ERRMSG_BOOK_MANAGER_SECTION_NBR_NOT_FOUND, sectionNbr);
         return section;
     }
 
@@ -714,8 +532,7 @@ public class OutputBoss extends Boss {
 
         if (sysErr.checkError()) {
             sysErr = null;
-            throw new IOException(
-                UtilConstants.ERRMSG_SYSERR_PRINT_WRITER_IO_ERROR_1);
+            throw new IOException(ERRMSG_SYSERR_PRINT_WRITER_IO_ERROR);
         }
     }
 
@@ -728,8 +545,7 @@ public class OutputBoss extends Boss {
 
         if (sysOut.checkError()) {
             sysOut = null;
-            throw new IOException(
-                UtilConstants.ERRMSG_SYSOUT_PRINT_WRITER_IO_ERROR_1);
+            throw new IOException(ERRMSG_SYSOUT_PRINT_WRITER_IO_ERROR);
         }
     }
 
@@ -749,18 +565,19 @@ public class OutputBoss extends Boss {
             sysErr.close();
     }
 
-    private void setDefaults() {
+    private boolean setDefaults() {
         maxErrorMessagesParm = LangConstants.MAX_ERROR_MESSAGES_DEFAULT;
 
         maxInfoMessagesParm = LangConstants.MAX_INFO_MESSAGES_DEFAULT;
 
         messages = null;
 
-        maxStatementPrintCountParm = UtilConstants.MAX_STATEMENT_PRINT_COUNT_DEFAULT;
+        maxStatementPrintCountParm = MAX_STATEMENT_PRINT_COUNT_DEFAULT;
 
         dump = null;
 
-        outputVerbosityParm = UtilConstants.OUTPUT_VERBOSITY_DEFAULT;
+        outputVerbosityParm = OUTPUT_VERBOSITY_DEFAULT;
 
+        return false;
     }
 }

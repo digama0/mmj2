@@ -33,7 +33,8 @@ public class SearchMgr {
         int i = 0;
         for (int j = 0; j < s.length(); j++) {
             final char c = s.charAt(j);
-            if (i >= 80 && Character.isWhitespace(c) || c == '\n' || c == '\r')
+            if (i >= 80 && Character.isWhitespace(c) || c == '\n'
+                || c == '\r')
             {
                 sb.append('\n');
                 i = 0;
@@ -74,17 +75,17 @@ public class SearchMgr {
         SearchOptionsConstants.CHECK_SEARCH_OPTIONS_FIELD_ATTR_IDS();
         SearchOptionsConstants.CHECK_SEARCH_ARGS_FIELD_IDS(searchArgs);
         SearchOptionsConstants.CHECK_SEARCH_OPTIONS_BUTTON_ATTR_IDS();
-        searchOptionsFontSize = proofAsstPreferences.getFontSize();
-        searchOptionsFontBold = proofAsstPreferences.getFontBold();
+        searchOptionsFontSize = proofAsstPreferences.fontSize.get();
+        searchOptionsFontBold = proofAsstPreferences.fontBold.get();
         searchOptionsFont = buildInitialSearchFont(searchOptionsFontBold,
             searchOptionsFontSize);
-        searchResultsFontSize = proofAsstPreferences.getFontSize();
-        searchResultsFontBold = proofAsstPreferences.getFontBold();
+        searchResultsFontSize = proofAsstPreferences.fontSize.get();
+        searchResultsFontBold = proofAsstPreferences.fontBold.get();
         searchResultsFont = buildInitialSearchFont(searchResultsFontBold,
             searchResultsFontSize);
         searchSelectionPreferredSize = new Dimension(
-            proofAsstPreferences.getStepSelectorDialogPaneWidth(),
-            proofAsstPreferences.getStepSelectorDialogPaneHeight());
+            proofAsstPreferences.stepSelectorDialogPaneWidth.get(),
+            proofAsstPreferences.stepSelectorDialogPaneHeight.get());
     }
 
     public void initOtherEnvAreas(final ProofAsst proofAsst,
@@ -183,7 +184,8 @@ public class SearchMgr {
     public void execApplySearchSelection(final int i) {
         if (!popupMessageSearchResultsTestMode()
             && (!getStepSearchMode() || searchArgs.stepSearchStmt == null))
-            execShowSearchResultsPopupMessage(SearchConstants.ERRMSG_CANT_APPLY_OLD_SEARCH_RESULTS);
+            execShowSearchResultsPopupMessage(
+                SearchConstants.ERRMSG_CANT_APPLY_OLD_SEARCH_RESULTS);
         final Assrt assrt = i == -1 ? null
             : searchOutput.sortedAssrtResultsList.get(i);
         getProofAsst().getProofAsstGUI().unifyWithStepSelectorChoice(
@@ -222,7 +224,8 @@ public class SearchMgr {
 
     public boolean popupMessageSearchOptionsTestMode() {
         if (getProofAsst() == null) {
-            execShowSearchOptionsPopupMessage(SearchConstants.ERRMSG_FUNCTION_INOPERABLE_IN_TEST_MODE);
+            execShowSearchOptionsPopupMessage(
+                SearchConstants.ERRMSG_FUNCTION_INOPERABLE_IN_TEST_MODE);
             return true;
         }
         return false;
@@ -231,7 +234,8 @@ public class SearchMgr {
     public void searchOptionsSearchButtonPressed() {
         if (!popupMessageSearchOptionsTestMode()
             && !getProofAsst().getProofAsstGUI().searchAndShowResults())
-            execShowSearchOptionsPopupMessage(SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
+            execShowSearchOptionsPopupMessage(
+                SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
     }
 
     public void searchOptionsCancelButtonPressed() {
@@ -244,25 +248,29 @@ public class SearchMgr {
             return;
         final String s = getSearchOptionsNewStmtLabel();
         if (s != null && !getProofAsst().getProofAsstGUI().newGeneralSearch(s))
-            execShowSearchOptionsPopupMessage(SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
+            execShowSearchOptionsPopupMessage(
+                SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
     }
 
     public void searchOptionsRefineButtonPressed() {
         if (!popupMessageSearchOptionsTestMode()
             && !getProofAsst().getProofAsstGUI().refineAndShowResults())
-            execShowSearchOptionsPopupMessage(SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
+            execShowSearchOptionsPopupMessage(
+                SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
     }
 
     public void searchOptionsPAButtonPressed() {
         if (!popupMessageSearchOptionsTestMode()
             && !getProofAsst().getProofAsstGUI().reshowProofAsstGUI())
-            execShowSearchOptionsPopupMessage(SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
+            execShowSearchOptionsPopupMessage(
+                SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
     }
 
     public void searchOptionsSRButtonPressed() {
         if (!popupMessageSearchOptionsTestMode()
             && !getProofAsst().getProofAsstGUI().reshowSearchResults())
-            execShowSearchOptionsPopupMessage(SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
+            execShowSearchOptionsPopupMessage(
+                SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
     }
 
     public void showSearchOptionsHelp() {
@@ -273,13 +281,15 @@ public class SearchMgr {
     public void searchOptionsPlusButtonPressed() {
         if (!popupMessageSearchOptionsTestMode()
             && !getProofAsst().getProofAsstGUI().searchOptionsPlusButton())
-            execShowSearchOptionsPopupMessage(SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
+            execShowSearchOptionsPopupMessage(
+                SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
     }
 
     public void searchOptionsMinusButtonPressed() {
         if (!popupMessageSearchOptionsTestMode()
             && !getProofAsst().getProofAsstGUI().searchOptionsMinusButton())
-            execShowSearchOptionsPopupMessage(SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
+            execShowSearchOptionsPopupMessage(
+                SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
     }
 
     public int increaseSearchOptionsFontSize() {
@@ -291,7 +301,8 @@ public class SearchMgr {
     }
 
     public int decreaseSearchOptionsFontSize() {
-        searchOptionsFontSize = computeSmallerNewFontSize(searchOptionsFontSize);
+        searchOptionsFontSize = computeSmallerNewFontSize(
+            searchOptionsFontSize);
         final Font font = searchOptionsFont
             .deriveFont((float)searchOptionsFontSize);
         searchOptionsFont = font;
@@ -300,7 +311,8 @@ public class SearchMgr {
 
     public boolean popupMessageSearchResultsTestMode() {
         if (getProofAsst() == null) {
-            execShowSearchResultsPopupMessage(SearchConstants.ERRMSG_FUNCTION_INOPERABLE_IN_TEST_MODE);
+            execShowSearchResultsPopupMessage(
+                SearchConstants.ERRMSG_FUNCTION_INOPERABLE_IN_TEST_MODE);
             return true;
         }
         return false;
@@ -308,7 +320,8 @@ public class SearchMgr {
 
     public void searchResultsApplyButtonPressed() {
         if (!popupMessageSearchResultsTestMode())
-            execApplySearchSelection(getSearchResultsFrame().getSelectedIndex());
+            execApplySearchSelection(
+                getSearchResultsFrame().getSelectedIndex());
     }
 
     public void searchResultsCancelButtonPressed() {
@@ -319,13 +332,15 @@ public class SearchMgr {
     public void searchResultsPAButtonPressed() {
         if (!popupMessageSearchResultsTestMode()
             && !getProofAsst().getProofAsstGUI().reshowProofAsstGUI())
-            execShowSearchResultsPopupMessage(SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
+            execShowSearchResultsPopupMessage(
+                SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
     }
 
     public void searchResultsSOButtonPressed() {
         if (!popupMessageSearchResultsTestMode()
             && !getProofAsst().getProofAsstGUI().reshowSearchOptions())
-            execShowSearchResultsPopupMessage(SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
+            execShowSearchResultsPopupMessage(
+                SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
     }
 
     public void showSearchResultsHelp() {
@@ -336,13 +351,15 @@ public class SearchMgr {
     public void searchResultsPlusButtonPressed() {
         if (!popupMessageSearchResultsTestMode()
             && !getProofAsst().getProofAsstGUI().searchResultsPlusButton())
-            execShowSearchResultsPopupMessage(SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
+            execShowSearchResultsPopupMessage(
+                SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
     }
 
     public void searchResultsMinusButtonPressed() {
         if (!popupMessageSearchResultsTestMode()
             && !getProofAsst().getProofAsstGUI().searchResultsMinusButton())
-            execShowSearchResultsPopupMessage(SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
+            execShowSearchResultsPopupMessage(
+                SearchConstants.ERRMSG_PA_GUI_TASK_ALREADY_RUNNING);
     }
 
     public int increaseSearchResultsFontSize() {
@@ -354,7 +371,8 @@ public class SearchMgr {
     }
 
     public int decreaseSearchResultsFontSize() {
-        searchResultsFontSize = computeSmallerNewFontSize(searchResultsFontSize);
+        searchResultsFontSize = computeSmallerNewFontSize(
+            searchResultsFontSize);
         final Font font = searchResultsFont
             .deriveFont((float)searchResultsFontSize);
         searchResultsFont = font;
@@ -460,8 +478,8 @@ public class SearchMgr {
     }
 
     private Font buildInitialSearchFont(final boolean bold, final int size) {
-        return new Font(proofAsstPreferences.getFontFamily(), bold ? Font.BOLD
-            : Font.PLAIN, size);
+        return new Font(proofAsstPreferences.fontFamily.get(),
+            bold ? Font.BOLD : Font.PLAIN, size);
     }
 
     private String getSearchOptionsNewStmtLabel() {

@@ -100,7 +100,7 @@ public abstract class BatchFramework {
     protected RunParmFile runParmFile;
     /*friendly*/int runParmCnt;
 
-    /*friendly*/String currentRunParmCommand;
+    /*friendly*/BatchCommand currentRunParmCommand;
 
     /*friendly*/String runParmExecutableCaption;
     /*friendly*/String runParmCommentCaption;
@@ -145,36 +145,15 @@ public abstract class BatchFramework {
         bossList = new ArrayList<Boss>();
 
         outputBoss = new OutputBoss(this);
-        addBossToBossList(outputBoss);
-
         verifyProofBoss = new VerifyProofBoss(this);
-        addBossToBossList(verifyProofBoss);
-
         grammarBoss = new GrammarBoss(this);
-        addBossToBossList(grammarBoss);
-
         proofAsstBoss = new ProofAsstBoss(this);
-        addBossToBossList(proofAsstBoss);
-
         tmffBoss = new TMFFBoss(this);
-        addBossToBossList(tmffBoss);
-
         workVarBoss = new WorkVarBoss(this);
-        addBossToBossList(workVarBoss);
-
         svcBoss = new SvcBoss(this);
-        addBossToBossList(svcBoss);
-
         theoremLoaderBoss = new TheoremLoaderBoss(this);
-        addBossToBossList(theoremLoaderBoss);
-
         gmffBoss = new GMFFBoss(this);
-        addBossToBossList(gmffBoss);
-
         macroBoss = new MacroBoss(this);
-        addBossToBossList(macroBoss);
-
-        addAnyExtraBossesToBossList();
 
         // NOTE: LogicalSystemBoss should be at the end
         // because the "LoadFile" RunParm is a signal
@@ -183,7 +162,6 @@ public abstract class BatchFramework {
         // example, Grammar requires reinitialization
         // for new input .mm files.)
         logicalSystemBoss = new LogicalSystemBoss(this);
-        addBossToBossList(logicalSystemBoss);
 
         setRunParmExecutableCaption();
         setRunParmCommentCaption();
@@ -270,25 +248,6 @@ public abstract class BatchFramework {
     }
 
     /**
-     * Add a processing Boss to the Boss List.
-     *
-     * @param boss The processing Boss
-     */
-    public void addBossToBossList(final Boss boss) {
-        bossList.add(boss);
-    }
-
-    /**
-     * Placeholder to be overridden to dynamically add a new processing Boss to
-     * the list.
-     * <p>
-     * Override this to include extra processing. Each Boss on the bossList will
-     * get a chance to process each RunParmFile line that hasn't already been
-     * "consumed" by other bosses.
-     */
-    public void addAnyExtraBossesToBossList() {}
-
-    /**
      * Override this to alter what prints out before an executable RunParmFile
      * line is processed.
      */
@@ -321,7 +280,7 @@ public abstract class BatchFramework {
         runParmCnt++;
 
         // capture this for use by MMJ2FailPopupWindow
-        currentRunParmCommand = runParm.name;
+        currentRunParmCommand = runParm.cmd;
 
         if (runParm.commentLine != null)
             printCommentRunParmLine(runParmCommentCaption, runParmCnt, runParm);

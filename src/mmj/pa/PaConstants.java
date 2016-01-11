@@ -198,49 +198,23 @@ public class PaConstants {
     public static final int PROOF_STEP_RENUMBER_INTERVAL = 1;
 
     /**
-     * PROOF_ASST_INCOMPLETE_STEP_CURSOR_LAST = "Last".
-     * <p>
-     * Controls how cursor positioned after Unification if there are no errors
-     * and at least one "incomplete" proof step: set cursor to Last incomplete
-     * proof step.
-     */
-    public static final String PROOF_ASST_INCOMPLETE_STEP_CURSOR_LAST = "Last";
-
-    /**
-     * PROOF_ASST_INCOMPLETE_STEP_CURSOR_FIRST = "First".
-     * <p>
      * Controls how cursor positioned after Unification if there are no errors
      * and at least one "incomplete" proof step: set cursor to First incomplete
      * proof step.
      */
-    public static final String PROOF_ASST_INCOMPLETE_STEP_CURSOR_FIRST = "First";
+    public enum IncompleteStepCursor {
+        /**
+         * Set cursor where it was when Ctrl-U was presed (same step but on Ref
+         * field.)
+         */
+        AsIs,
 
-    /**
-     * PROOF_ASST_INCOMPLETE_STEP_CURSOR_ASIS = "AsIs".
-     * <p>
-     * Controls how cursor positioned after Unification if there are no errors
-     * and at least one "incomplete" proof step: set cursor where it was when
-     * Ctrl-U was presed (same step but on Ref field.)
-     */
-    public static final String PROOF_ASST_INCOMPLETE_STEP_CURSOR_ASIS = "AsIs";
+        /** Set cursor to First incomplete proof step. */
+        First,
 
-    /**
-     * PROOF_ASST_INCOMPLETE_STEP_CURSOR_DEFAULT = "AsIs".
-     * <p>
-     * Controls how cursor positioned after Unification if there are no errors
-     * and at least one "incomplete" proof step.
-     */
-    public static final String PROOF_ASST_INCOMPLETE_STEP_CURSOR_DEFAULT = PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_ASIS; // "AsIs";
-
-    /**
-     * PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE
-     * <p>
-     * Used in ProofAsstGUI to display the choices.
-     */
-    public static final String[] PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE = {
-            PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_ASIS,
-            PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_FIRST,
-            PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_LAST};
+        /** Set cursor to Last incomplete proof step. */
+        Last
+    }
 
     /**
      * Caption of list of options for Incomplete Step Cursor positioning.
@@ -446,56 +420,24 @@ public class PaConstants {
     public static final int PROOF_ASST_RPN_PROOF_RIGHT_COL_MAX = Integer.MAX_VALUE;
 
     /**
-     * ProofAsstDjVarsSoftErrors Ignore option
-     */
-    public static final String PROOF_ASST_DJ_VARS_SOFT_ERRORS_IGNORE = "Ignore";
-
-    /**
-     * ProofAsstDjVarsSoftErrors Report option
-     */
-    public static final String PROOF_ASST_DJ_VARS_SOFT_ERRORS_REPORT = "Report";
-
-    /**
-     * ProofAsstDjVarsSoftErrors GenerateNew option
-     */
-    public static final String PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_NEW = "GenerateNew";
-
-    /**
-     * ProofAsstDjVarsSoftErrors GenerateReplacements option
-     */
-    public static final String PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_REPLACEMENTS = "GenerateReplacements";
-
-    /**
-     * ProofAsstDjVarsSoftErrors GenerateDifferences option
-     */
-    public static final String PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_DIFFERENCES = "GenerateDifferences";
-
-    /**
      * ProofAsstDjVarsSoftErrors Default value
      */
-    public static final String PROOF_ASST_DJ_VARS_SOFT_ERRORS_DEFAULT = PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_REPLACEMENTS;
+    public static final DjVarsSoftErrors PROOF_ASST_DJ_VARS_SOFT_ERRORS_DEFAULT = DjVarsSoftErrors.GenerateReplacements;
 
-    public static final String[] PROOF_ASST_DJ_VARS_SOFT_ERRORS_TABLE = {
-            PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_IGNORE,
-            PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_REPORT,
-            PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_NEW,
-            PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_REPLACEMENTS,
-            PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_DIFFERENCES};
+    public enum DjVarsSoftErrors {
+        Ignore(false), Report(false), GenerateNew(true),
+        GenerateReplacements(true), GenerateDifferences(true);
 
-    /**
-     * ProofAsstProofFormat Normal option
-     */
-    public static final String PROOF_ASST_PROOF_NORMAL = "Normal";
+        public boolean generate;
 
-    /**
-     * ProofAsstProofFormat Packed option
-     */
-    public static final String PROOF_ASST_PROOF_PACKED = "Packed";
+        private DjVarsSoftErrors(final boolean generate) {
+            this.generate = generate;
+        }
+    }
 
-    /**
-     * ProofAsstProofFormat Compressed option
-     */
-    public static final String PROOF_ASST_PROOF_COMPRESSED = "Compressed";
+    public enum ProofFormat {
+        Normal, Packed, Compressed
+    }
 
     // ----------------------------------------------------------
     // Constants for ProofAsstPreferences.java
@@ -727,8 +669,8 @@ public class PaConstants {
 
     public static final String PROOF_ASST_SOFT_DJ_ERROR_OPTION_LIST = "Valid Soft Dj Vars Error Options: ";
 
-    public static final String PROOF_ASST_COMPRESSION_LIST = "Valid Proof Compression Options:\n\n"
-        + "1 - Normal\n2 - Packed\n3 - Compressed (Default)\n\nEnter Proof Compression Number";
+    public static final String PROOF_ASST_COMPRESSION_LIST = "Valid Proof Compression Options: ";
+    public static final String PROOF_ASST_COMPRESSION_PROMPT = "Enter Proof Compression Number";
 
     public static final String PROOF_ASST_FONT_FAMILY_LIST = "Valid font family names defined in your system: ";
 
@@ -758,13 +700,13 @@ public class PaConstants {
     public static final boolean PROOF_ASST_EXPORT_FORMAT_UNIFIED_DEFAULT = false;
 
     /**
-     * Default Option Value 5 "NotRandomized" for ProofAsstExportToFile RunParm
-     * and Option Value 4 for ProofAsstBatchTest (when no input file specified).
+     * Default Option Value 5 "Correct" for ProofAsstExportToFile RunParm and
+     * Option Value 4 for ProofAsstBatchTest (when no input file specified).
      * <p>
      * Means that Ref (statement labels) should NOT be included on exported
      * derivation proof steps. This is the default.
      */
-    public static final HypsOrder PROOF_ASST_EXPORT_HYPS_ORDER_DEFAULT = HypsOrder.CorrectOrder;
+    public static final HypsOrder PROOF_ASST_EXPORT_HYPS_ORDER_DEFAULT = HypsOrder.Correct;
 
     /**
      * Default Option Value 6 "NoPrint" for ProofAsstExportToFile RunParm and
@@ -1057,29 +999,19 @@ public class PaConstants {
     public static final String PA_GUI_FILE_CHOOSER_DESCRIPTION = "Text and mmj2 Proof Asst files";
 
     /**
-     * ProofAsstGUI File Chooser valid file name suffix ".TXT".
-     */
-    public static final String PA_GUI_FILE_CHOOSER_FILE_SUFFIX_TXT = ".TXT";
-
-    /**
      * ProofAsstGUI File Chooser valid file name suffix ".txt"
      */
-    public static final String PA_GUI_FILE_CHOOSER_FILE_SUFFIX_TXT2 = ".txt";
-
-    /**
-     * ProofAsstGUI File Chooser valid file name suffix ".MMP".
-     */
-    public static final String PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP = ".MMP";
+    public static final String PA_GUI_FILE_CHOOSER_FILE_SUFFIX_TXT = ".txt";
 
     /**
      * ProofAsstGUI File Chooser valid file name suffix ".mmp"
      */
-    public static final String PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP2 = ".mmp";
+    public static final String PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP = ".mmp";
 
     /**
      * ProofAsstGUI Default file name suffix
      */
-    public static final String PA_GUI_DEFAULT_FILE_NAME_SUFFIX = PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP2; // .txt
+    public static final String PA_GUI_DEFAULT_FILE_NAME_SUFFIX = PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP; // .mmp
 
     /**
      * ProofAsstGUI Save before window closes question
@@ -1438,8 +1370,7 @@ public class PaConstants {
     /**
      * Prompt for Set Theorem Loader Dj Vars Option Item Action dialog.
      */
-    public static final String PA_GUI_SET_TL_DJ_VARS_OPTION_PROMPT = "Enter Theorem Loader DjVars Option:\n"
-        + "Merge, Replace or NoUpdate";
+    public static final String PA_GUI_SET_TL_DJ_VARS_OPTION_PROMPT = "Enter Theorem Loader DjVars Option:";
 
     /**
      * Prompt for Set Theorem Loader MMT Folder Item Action dialog.
@@ -2853,8 +2784,7 @@ public class PaConstants {
         + " RunParm. Choices are: 'Ignore', 'Report', 'GenerateNew',"
         + " 'GenerateReplacements', and 'GenerateDifferences'.";
 
-    public static final String ERRMSG_INVALID_SOFT_DJ_ERROR_OPTION_NBR = ""
-        + "E-PA-0503 Invalid Soft Dj Vars Error Option Number = %s";
+    public static final String ERRMSG_INVALID_OPTION = "Not a valid option; try again";
 
     public static final String ERRMSG_INVALID_INCOMPLETE_STEP_CURSOR = "E-PA-0504"
         + " Invalid option input = %s for ProofAsstIncompleteStepCursor"
@@ -2863,12 +2793,11 @@ public class PaConstants {
     public static final String ERRMSG_INVALID_INCOMPLETE_STEP_CURSOR_OPTION_NBR = ""
         + "E-PA-0505 Invalid Incomplete Step Cursor Option Number = %s";
 
-    public static final String ERRMSG_INVALID_STEP_SELECTOR_MAX_RESULTS_NBR = ""
-        + "E-PA-0506 Invalid StepSelectorMaxResults Number = %s. Must be"
-        + " between (inclusive) 1 and %d";
+    public static final String ERRMSG_INVALID_INT_RANGE = "E-PA-0506 "
+        + "Invalid %s setting = %d. Must be between %d (inclusive) and %d.";
 
     public static final String ERRMSG_INVALID_BOOLEAN = "E-PA-0507"
-        + " Invalid %s option = %s. Must equal 'yes', 'no', 'on', 'off',"
+        + " Invalid option = %s. Must equal 'yes', 'no', 'on', 'off',"
         + " 'true' or 'false'.";
 
     public static final String ERRMSG_INVALID_PROOF_FORMAT = "E-PA-0508"

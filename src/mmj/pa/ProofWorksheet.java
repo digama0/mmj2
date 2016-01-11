@@ -116,6 +116,7 @@ import mmj.lang.ParseTree.RPNStep;
 import mmj.mmio.MMIOError;
 import mmj.mmio.Tokenizer;
 import mmj.pa.MacroManager.CallbackType;
+import mmj.pa.PaConstants.DjVarsSoftErrors;
 import mmj.search.SearchOutput;
 import mmj.tmff.TMFFPreferences;
 import mmj.tmff.TMFFStateParams;
@@ -411,7 +412,7 @@ public class ProofWorksheet {
     }
 
     private void initTMFF() {
-        tmffPreferences = proofAsstPreferences.getTMFFPreferences();
+        tmffPreferences = proofAsstPreferences.tmffPreferences;
 
         tmffFormulaSB = new StringBuilder();
 
@@ -769,16 +770,21 @@ public class ProofWorksheet {
         }
 
         if (!proofCursor.cursorIsSet)
-            if (proofAsstPreferences.getIncompleteStepCursorLast())
-                posCursorAtLastIncompleteStmt();
-            else if (proofAsstPreferences.getIncompleteStepCursorFirst())
-                posCursorAtFirstIncompleteStmt();
-            else
-                proofCursor = proofInputCursor;
+            switch (proofAsstPreferences.incompleteStepCursor.get()) {
+                case Last:
+                    posCursorAtLastIncompleteStmt();
+                    break;
+                case First:
+                    posCursorAtFirstIncompleteStmt();
+                    break;
+                case AsIs:
+                    proofCursor = proofInputCursor;
+                    break;
+            }
     }
 
     public void outputCursorInstrumentationIfEnabled() {
-        if (proofAsstPreferences.getOutputCursorInstrumentation())
+        if (proofAsstPreferences.outputCursorInstrumentation.get())
             messages.accumInfoMessage(proofCursor
                 .outputCursorInstrumentation(getErrorLabelIfPossible()));
     }
@@ -811,7 +817,7 @@ public class ProofWorksheet {
     }
 
     public int getRPNProofLeftCol() {
-        final int column = proofAsstPreferences.getRPNProofLeftCol();
+        final int column = proofAsstPreferences.rpnProofLeftCol.get();
         if (column != 0)
             return column;
         if (theorem != null && theorem.getColumn() >= 0)
@@ -967,7 +973,7 @@ public class ProofWorksheet {
 
         final DerivationStep out = new DerivationStep(this, generatedStep,
             generatedHyp, generatedHypStep, refLabel, formula, formulaParseTree,
-            false, false, proofAsstPreferences.getDeriveAutocomplete(),
+            false, false, proofAsstPreferences.deriveAutocomplete.get(),
             workVarList);
         return out;
     }
@@ -1160,7 +1166,7 @@ public class ProofWorksheet {
             final boolean isHypStep = prefixField
                 .equals(PaConstants.HYP_STEP_PREFIX);
 
-            final boolean isAutoStep = proofAsstPreferences.getAutocomplete()
+            final boolean isAutoStep = proofAsstPreferences.autocomplete.get()
                 && prefixField.equals(PaConstants.AUTO_STEP_PREFIX);
 
             final DelimitedTextParser stepHypRefParser = new DelimitedTextParser(
@@ -1726,18 +1732,17 @@ public class ProofWorksheet {
             .sortAndCombineDvListOfLists(proofSoftDjVarsErrorList);
 
         DjVars[] replDvArray;
-        if (proofAsstPreferences.getDjVarsSoftErrorsGenerateNew())
-            // don't use existing $d's if GenerateNew
-            replDvArray = diffDvArray;
-        else
-            replDvArray = DjVars.sortAndCombineDvArrays(comboFrame.djVarsArray,
+        final DjVarsSoftErrors softErrors = proofAsstPreferences.djVarsSoftErrors
+            .get();
+        // don't use existing $d's if GenerateNew
+        replDvArray = softErrors == DjVarsSoftErrors.GenerateNew ? diffDvArray
+            : DjVars.sortAndCombineDvArrays(comboFrame.djVarsArray,
                 diffDvArray);
 
         List<List<Var>> dvGroups1;
-        if (proofAsstPreferences.getDjVarsSoftErrorsGenerateDiffs())
-            dvGroups1 = ScopeFrame.consolidateDvGroups(diffDvArray);
-        else
-            dvGroups1 = ScopeFrame.consolidateDvGroups(replDvArray);
+        dvGroups1 = ScopeFrame.consolidateDvGroups(
+            softErrors == DjVarsSoftErrors.GenerateDifferences ? diffDvArray
+                : replDvArray);
 
         final List<List<Var>> dvGroups = DistinctVariablesStmt
             .eliminateDvGroupsAlreadyPresent(dvStmtArray, dvGroups1);

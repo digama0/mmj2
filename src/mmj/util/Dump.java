@@ -41,6 +41,7 @@ import java.util.*;
 
 import mmj.lang.*;
 import mmj.lang.ParseTree.RPNStep;
+import mmj.pa.SessionStore;
 import mmj.tmff.TMFFPreferences;
 import mmj.tmff.TMFFStateParams;
 import mmj.verify.*;
@@ -67,28 +68,27 @@ public class Dump {
      * Default constructor which will print to System.out.
      */
     public Dump() {
-        setTMFFPreferences(new TMFFPreferences());
+        this(null);
     }
 
     /**
      * Construct Dump using a PrintWriter for output.
-     * 
+     *
      * @param sysOut the PrintWriter
      */
     public Dump(final PrintWriter sysOut) {
-        this.sysOut = sysOut;
-        setTMFFPreferences(new TMFFPreferences());
+        setSysOut(sysOut);
     }
 
     /**
      * Sets Dump's SysOut to a new PrintWriter, or null to revert to writing to
      * System.out.
-     * 
+     *
      * @param sysOut a PrintWriter, or null for System.out output.
      */
     public void setSysOut(final PrintWriter sysOut) {
         this.sysOut = sysOut;
-        setTMFFPreferences(new TMFFPreferences());
+        setTMFFPreferences(new TMFFPreferences(new SessionStore()));
     }
 
     /**
@@ -96,7 +96,7 @@ public class Dump {
      * set of values.
      * <p>
      * Note: mmj.util.OutputBoss uses this.
-     * 
+     *
      * @param tmffPreferences TMFF Preference parameters.
      */
     public void setTMFFPreferences(final TMFFPreferences tmffPreferences) {
@@ -105,7 +105,7 @@ public class Dump {
 
     /**
      * Print a line from a StringBuilder.
-     * 
+     *
      * @param sb StringBuilder line to be printed.
      */
     public void sysOutDumpAPrintLn(final StringBuilder sb) {
@@ -114,7 +114,7 @@ public class Dump {
 
     /**
      * Print a line from a String.
-     * 
+     *
      * @param s String line to be printed.
      */
     public void sysOutDumpAPrintLn(final String s) {
@@ -127,7 +127,7 @@ public class Dump {
     /**
      * "printSyntaxDetails" is used by BatchMMJ2 to print all syntax-related
      * information about a LogicalSystem and its Grammar.
-     * 
+     *
      * @param caption identifying caption for the report.
      * @param logicalSystem a LogicalSystem object.
      * @param grammar a Grammar object derived from the Logical System.
@@ -172,26 +172,25 @@ public class Dump {
         }
         sysOutDumpAPrintLn(" ");
         final Collection<Sym> symTblValues = logicalSystem.getSymTbl().values();
-        dumpSymTbl(1, UtilConstants.DUMP_LOGSYS_SYM_TBL + caption, symTblValues);
+        dumpSymTbl(1, UtilConstants.DUMP_LOGSYS_SYM_TBL + caption,
+            symTblValues);
 
         if (grammar != null && grammar.getGrammarInitialized()) {
 
             sysOutDumpAPrintLn(" ");
-            dumpGrammarRuleCollection(
-                UtilConstants.DUMP_GRAMMAR_RULE_MAX_PRINT, 1,
-                UtilConstants.DUMP_NULLS_PERMITTED_LIST,
+            dumpGrammarRuleCollection(UtilConstants.DUMP_GRAMMAR_RULE_MAX_PRINT,
+                1, UtilConstants.DUMP_NULLS_PERMITTED_LIST,
                 grammar.getNullsPermittedGRList());
 
             sysOutDumpAPrintLn(" ");
-            dumpGrammarRuleCollection(
-                UtilConstants.DUMP_GRAMMAR_RULE_MAX_PRINT, 1,
-                UtilConstants.DUMP_TYPE_CONVERSION_LIST,
+            dumpGrammarRuleCollection(UtilConstants.DUMP_GRAMMAR_RULE_MAX_PRINT,
+                1, UtilConstants.DUMP_TYPE_CONVERSION_LIST,
                 grammar.getTypeConversionGRList());
 
             sysOutDumpAPrintLn(" ");
-            dumpGrammarRuleCollection(
-                UtilConstants.DUMP_GRAMMAR_RULE_MAX_PRINT, 1,
-                UtilConstants.DUMP_NOTATION_LIST, grammar.getNotationGRSet());
+            dumpGrammarRuleCollection(UtilConstants.DUMP_GRAMMAR_RULE_MAX_PRINT,
+                1, UtilConstants.DUMP_NOTATION_LIST,
+                grammar.getNotationGRSet());
 
             sysOutDumpAPrintLn(" ");
             dumpTheGrammar(1, grammar.getVarHypTypSet(), symTblValues);
@@ -202,7 +201,7 @@ public class Dump {
     /**
      * "printOneStatementDetails" is used by BatchMMJ2 to print information
      * about a single Stmt.
-     * 
+     *
      * @param stmt a Stmt object.
      */
     public void printOneStatementDetails(final Stmt stmt) {
@@ -213,7 +212,7 @@ public class Dump {
     /**
      * "printStatementDetails" is used by BatchMMJ2 to print Metamath Statement
      * details, up to the limit imposed by maxStatementPrintCountParm.
-     * 
+     *
      * @param caption identifying caption for the report.
      * @param stmtTbl Statement Table (Map)
      * @param maxStatementPrintCountParm max number of Stmt's to print.
@@ -235,7 +234,7 @@ public class Dump {
      * <p>
      * This function is used primarily as a way to generate test output but the
      * RunParm "PrintBookManagerChapters" may be useful for mmj2 users.
-     * 
+     *
      * @param caption identifying caption for the report.
      * @param bookManager the BookManager in use.
      */
@@ -254,7 +253,7 @@ public class Dump {
      * <p>
      * This function is used primarily as a way to generate test output but the
      * RunParm "PrintBookManagerSections" may be useful for mmj2 users.
-     * 
+     *
      * @param caption identifying caption for the report.
      * @param bookManager the BookManager in use.
      */
@@ -273,7 +272,7 @@ public class Dump {
      * <p>
      * This function is used primarily as a way to generate test output but the
      * RunParm "PrintBookManagerSectionDetails" may be useful for mmj2 users.
-     * 
+     *
      * @param runParm contains RunParm name and values.
      * @param logicalSystem the LogicalSystem in use.
      * @param bookManager the BookManager in use.
@@ -287,8 +286,7 @@ public class Dump {
 
         sysOutDumpAPrintLn(" ");
 
-        dumpBookManagerSectionDetails(
-            1, // indentNbr
+        dumpBookManagerSectionDetails(1, // indentNbr
             runParm, bookManager,
             bookManager.getSectionMObjIterable(logicalSystem), section);
     }
@@ -297,6 +295,7 @@ public class Dump {
     public int keyArrayCount = 0;
 
     public static final String[] indentTbl = new String[31];
+
     static {
         final StringBuilder s = new StringBuilder();
         for (int i = 0; i < 31; i++) {
@@ -308,18 +307,18 @@ public class Dump {
     public void dumpLogSys(final int indentNbr, final String caption,
         final LogicalSystem logSys)
     {
-        sysOutDumpAPrintLn(indentTbl[indentNbr]
-            + UtilConstants.DUMP_LOGICAL_SYSTEM + caption
-            + UtilConstants.DUMP_START);
+        sysOutDumpAPrintLn(
+            indentTbl[indentNbr] + UtilConstants.DUMP_LOGICAL_SYSTEM + caption
+                + UtilConstants.DUMP_START);
 
         final Collection<Sym> symTbl = logSys.getSymTbl().values();
         final Collection<Stmt> stmtTbl = logSys.getStmtTbl().values();
 
         dumpLogSysCounts(indentNbr + 1, caption, symTbl, stmtTbl);
         sysOutDumpAPrintLn(indentTbl[indentNbr]);
-        sysOutDumpAPrintLn(indentTbl[indentNbr]
-            + UtilConstants.DUMP_LOGICAL_SYSTEM + caption
-            + UtilConstants.DUMP_END);
+        sysOutDumpAPrintLn(
+            indentTbl[indentNbr] + UtilConstants.DUMP_LOGICAL_SYSTEM + caption
+                + UtilConstants.DUMP_END);
     }
 
     public void dumpLogSysCounts(final int indentNbr, final String caption,
@@ -354,14 +353,14 @@ public class Dump {
         final Collection<? extends Sym> symTbl)
     {
         sysOutDumpAPrintLn(indentTbl[indentNbr]);
-        sysOutDumpAPrintLn(indentTbl[indentNbr] + UtilConstants.DUMP_SYM_TBL
-            + caption);
-        sysOutDumpAPrintLn(indentTbl[indentNbr]
-            + UtilConstants.DUMP_SYM_TBL_UNDERSCORE);
+        sysOutDumpAPrintLn(
+            indentTbl[indentNbr] + UtilConstants.DUMP_SYM_TBL + caption);
+        sysOutDumpAPrintLn(
+            indentTbl[indentNbr] + UtilConstants.DUMP_SYM_TBL_UNDERSCORE);
 
         if (symTbl == null) {
-            sysOutDumpAPrintLn(indentTbl[indentNbr]
-                + UtilConstants.DUMP_SYM_TBL_IS_EMPTY);
+            sysOutDumpAPrintLn(
+                indentTbl[indentNbr] + UtilConstants.DUMP_SYM_TBL_IS_EMPTY);
             return;
         }
 
@@ -387,12 +386,12 @@ public class Dump {
         sysOutDumpAPrintLn(indentTbl[indentNbr]);
         sysOutDumpAPrintLn(indentTbl[indentNbr] + UtilConstants.DUMP_STMT_TBL
             + caption + UtilConstants.DUMP_OF_FIRST + maxDumpCnt);
-        sysOutDumpAPrintLn(indentTbl[indentNbr]
-            + UtilConstants.DUMP_STMT_TBL_UNDERSCORE);
+        sysOutDumpAPrintLn(
+            indentTbl[indentNbr] + UtilConstants.DUMP_STMT_TBL_UNDERSCORE);
 
         if (stmtTbl == null) {
-            sysOutDumpAPrintLn(indentTbl[indentNbr]
-                + UtilConstants.DUMP_STMT_TBL_IS_EMPTY);
+            sysOutDumpAPrintLn(
+                indentTbl[indentNbr] + UtilConstants.DUMP_STMT_TBL_IS_EMPTY);
             return;
         }
 
@@ -621,7 +620,7 @@ public class Dump {
             // ok!
             final TMFFStateParams tmffSP = new TMFFStateParams(sb, sb.length(),
                 tmffPreferences);
-            tmffSP.setLeftmostColNbr(sb.length() + 2); // local override!
+            tmffSP.leftmostColNbr = sb.length() + 2; // local override!
             tmffPreferences.renderFormula(tmffSP, stmt.getExprParseTree(),
                 stmt.getFormula());
         }
@@ -690,9 +689,8 @@ public class Dump {
         if (cnst.getLen1CnstNotationRule() != null)
             sb.append(UtilConstants.DUMP_LEN1_CNST_RULE_NBR
                 + cnst.getLen1CnstNotationRule().getRuleNbr()
-                + UtilConstants.DUMP_LEN1_CNST_AXIOM
-                + cnst.getLen1CnstNotationRule().getBaseSyntaxAxiom()
-                    .getLabel());
+                + UtilConstants.DUMP_LEN1_CNST_AXIOM + cnst
+                    .getLen1CnstNotationRule().getBaseSyntaxAxiom().getLabel());
 
         final Collection<Cnst> coll = cnst.getEarleyFIRST();
         if (coll != null) {
@@ -721,9 +719,9 @@ public class Dump {
     {
 
         sysOutDumpAPrintLn(indentTbl[indentNbr]);
-        sysOutDumpAPrintLn(indentTbl[indentNbr]
-            + UtilConstants.DUMP_RULE_COLLECTION + caption
-            + UtilConstants.DUMP_OF_FIRST + maxDumpCnt);
+        sysOutDumpAPrintLn(
+            indentTbl[indentNbr] + UtilConstants.DUMP_RULE_COLLECTION + caption
+                + UtilConstants.DUMP_OF_FIRST + maxDumpCnt);
         sysOutDumpAPrintLn(indentTbl[indentNbr]
             + UtilConstants.DUMP_RULE_COLLECTION_UNDERSCORE);
 
@@ -919,8 +917,8 @@ public class Dump {
         for (final Cnst grammarTyp : grammarTypSet) {
             final List<GrammarRule> grammarTypRulesList = new ArrayList<GrammarRule>();
             for (final Cnst cnst : cnstWithRules)
-                for (final NotationRule g : GRForest.getRuleCollection(cnst
-                    .getGRRoot()))
+                for (final NotationRule g : GRForest
+                    .getRuleCollection(cnst.getGRRoot()))
                     if (g.getGrammarRuleTyp() == grammarTyp)
                         grammarTypRulesList.add(g);
             if (grammarTypRulesList.isEmpty())
@@ -955,10 +953,10 @@ public class Dump {
     {
 
         sysOutDumpAPrintLn(indentTbl[indentNbr]);
-        sysOutDumpAPrintLn(indentTbl[indentNbr] + runParm.name + ","
-            + runParm.values[0]);
-        sysOutDumpAPrintLn(indentTbl[indentNbr]
-            + UtilConstants.DUMP_STMT_TBL_UNDERSCORE);
+        sysOutDumpAPrintLn(
+            indentTbl[indentNbr] + runParm.name + "," + runParm.values[0]);
+        sysOutDumpAPrintLn(
+            indentTbl[indentNbr] + UtilConstants.DUMP_STMT_TBL_UNDERSCORE);
 
         int prevChapterNbr = -1;
         int prevSectionNbr = -1;
@@ -997,8 +995,8 @@ public class Dump {
 
         sysOutDumpAPrintLn(indentTbl[indentNbr]);
         sysOutDumpAPrintLn(indentTbl[indentNbr] + caption);
-        sysOutDumpAPrintLn(indentTbl[indentNbr]
-            + UtilConstants.DUMP_STMT_TBL_UNDERSCORE);
+        sysOutDumpAPrintLn(
+            indentTbl[indentNbr] + UtilConstants.DUMP_STMT_TBL_UNDERSCORE);
 
         for (final Chapter c : coll)
             dumpOneBookManagerChapter(indentNbr, c);
@@ -1010,8 +1008,8 @@ public class Dump {
 
         sysOutDumpAPrintLn(indentTbl[indentNbr]);
         sysOutDumpAPrintLn(indentTbl[indentNbr] + caption);
-        sysOutDumpAPrintLn(indentTbl[indentNbr]
-            + UtilConstants.DUMP_STMT_TBL_UNDERSCORE);
+        sysOutDumpAPrintLn(
+            indentTbl[indentNbr] + UtilConstants.DUMP_STMT_TBL_UNDERSCORE);
 
         for (final Section s : coll)
             dumpOneBookManagerSection(indentNbr, s);

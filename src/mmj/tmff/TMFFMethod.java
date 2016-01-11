@@ -15,6 +15,8 @@
 
 package mmj.tmff;
 
+import org.json.JSONArray;
+
 import mmj.lang.*;
 
 /**
@@ -42,6 +44,13 @@ public abstract class TMFFMethod {
      * @return boolean - true only if update performed.
      */
     public abstract boolean updateMaxDepth(int maxDepth);
+
+    /**
+     * Output the array form of this method's parameters.
+     *
+     * @return A JSON array
+     */
+    public abstract JSONArray asArray();
 
     /**
      * Validates the maxDepth parameter.
@@ -101,6 +110,10 @@ public abstract class TMFFMethod {
         this.maxDepth = TMFFMethod.validateMaxDepth(maxDepth);
     }
 
+    private static <T> T opt(final T[] param, final int n) {
+        return n < param.length ? param[n] : null;
+    }
+
     /**
      * A crude TMFFMethod factory used to construct a TMFFMethod using BatchMMJ2
      * RunParm values from the TMFFDefineScheme command.
@@ -109,53 +122,34 @@ public abstract class TMFFMethod {
      *            RunParm command TMFFDefineScheme.
      * @return TMFFMethod constructed according to the user parameters.
      */
-    public static TMFFMethod ConstructMethodWithUserParams(
+    public static TMFFMethod constructMethodWithUserParams(
         final String[] param)
     {
 
-        String methodName = null;
-        String param3 = null;
-        String param4 = null;
-        String param5 = null;
-        String param6 = null;
-        int pIndex = 1;
-        if (param.length > pIndex) {
-            methodName = param[pIndex++];
-            if (param.length > pIndex) {
-                param3 = param[pIndex++];
-                if (param.length > pIndex) {
-                    param4 = param[pIndex++];
-                    if (param.length > pIndex) {
-                        param5 = param[pIndex++];
-                        if (param.length > pIndex)
-                            param6 = param[pIndex++];
-                    }
-                }
-            }
-        }
-
+        final String methodName = opt(param, 1);
         if (methodName == null)
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_MISSING_USER_METHOD_NAME_1);
+                TMFFConstants.ERRMSG_MISSING_USER_METHOD_NAME);
 
         if (methodName
             .equalsIgnoreCase(TMFFConstants.TMFF_METHOD_USER_NAME_ALIGN_COLUMN))
-            return new TMFFAlignColumn(param3, param4, param5, param6);
+            return new TMFFAlignColumn(opt(param, 2), opt(param, 3),
+                opt(param, 4), opt(param, 5));
 
         if (methodName.equalsIgnoreCase(
             TMFFConstants.TMFF_METHOD_USER_NAME_TWO_COLUMN_ALIGNMENT))
-            return new TMFFTwoColumnAlignment(param3);
+            return new TMFFTwoColumnAlignment(opt(param, 2));
 
         if (methodName
             .equalsIgnoreCase(TMFFConstants.TMFF_METHOD_USER_NAME_FLAT))
-            return new TMFFFlat(param3);
+            return new TMFFFlat();
 
         if (methodName
             .equalsIgnoreCase(TMFFConstants.TMFF_METHOD_USER_NAME_UNFORMATTED))
-            return new TMFFUnformatted(param3);
+            return new TMFFUnformatted();
 
-        throw new IllegalArgumentException(
-            TMFFConstants.ERRMSG_BAD_USER_METHOD_NAME_1 + methodName);
+        throw new IllegalArgumentException(LangException
+            .format(TMFFConstants.ERRMSG_BAD_USER_METHOD_NAME, methodName));
     }
 
     /**

@@ -11,8 +11,7 @@
 
 package mmj.util;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * RunParmArrayEntry holds a RunParm "name" string AND an array(0->n) of RunParm
@@ -33,6 +32,8 @@ public class RunParmArrayEntry implements Comparable<RunParmArrayEntry> {
      * Generally, this would be a keyword.
      */
     public String name;
+
+    public BatchCommand cmd;
 
     /**
      * values is an array of String corresponding to fields 1 -> n of a
@@ -60,7 +61,7 @@ public class RunParmArrayEntry implements Comparable<RunParmArrayEntry> {
      * <li>UtilConstants.RUNPARM_FIELD_DELIMITER_DEFAULT
      * <li>UtilConstants.RUNPARM_FIELD_QUOTER_DEFAULT
      * </ul>
-     * 
+     *
      * @param name the name of the RunParm
      * @param values the arguments to the RunParm
      */
@@ -73,6 +74,18 @@ public class RunParmArrayEntry implements Comparable<RunParmArrayEntry> {
             .valueOf(UtilConstants.RUNPARM_FIELD_DELIMITER_DEFAULT);
 
         quoter = String.valueOf(UtilConstants.RUNPARM_FIELD_QUOTER_DEFAULT);
+
+        getCmd();
+    }
+
+    private void getCmd() {
+        final String nameLower = name.toLowerCase();
+        cmd = Arrays.stream(UtilConstants.RUNPARM_LIST)
+            .filter(c -> c.nameLower().equals(nameLower)).findAny()
+            .orElseThrow(() -> new IllegalArgumentException(
+                UtilConstants.ERRMSG_RUNPARM_NAME_INVALID_1 + name
+                    + UtilConstants.ERRMSG_RUNPARM_NAME_INVALID_2));
+        name = cmd.name();
 
     }
 
@@ -91,7 +104,7 @@ public class RunParmArrayEntry implements Comparable<RunParmArrayEntry> {
      * If the line is not a comment but is empty or null, an
      * IllegalArgumentException is thrown. Otherwise, the name and values are
      * extracted using DelimitedTextParser.
-     * 
+     *
      * @param parser pre-loaded DelimitedTextParser object.
      */
     public RunParmArrayEntry(final DelimitedTextParser parser) {
@@ -121,6 +134,7 @@ public class RunParmArrayEntry implements Comparable<RunParmArrayEntry> {
                 UtilConstants.ERRMSG_PARSER_LINE_EMPTY);
 
         name = name.trim();
+        getCmd();
 
         while ((value = parser.nextField()) != null)
             arrayList.add(value);
@@ -133,7 +147,7 @@ public class RunParmArrayEntry implements Comparable<RunParmArrayEntry> {
      * <p>
      * This won't work well with a bunch of comment lines thrown in, or
      * duplicates!
-     * 
+     *
      * @return hashcode equal to name.hashCode().
      */
     @Override
@@ -144,7 +158,7 @@ public class RunParmArrayEntry implements Comparable<RunParmArrayEntry> {
     /**
      * Compute for equality with another RunParmArrayEntry based on name String
      * equals().
-     * 
+     *
      * @return true if obj is a RunParmArrayEntry and name.equals(blah.name),
      *         else false.
      */
@@ -156,7 +170,7 @@ public class RunParmArrayEntry implements Comparable<RunParmArrayEntry> {
 
     /**
      * Compares RunParmArrayEntry object based on the name.
-     * 
+     *
      * @param obj RunParmArrayEntry object to compare to this.
      * @return returns negative, zero, or a positive int if this
      *         RunParmArrayEntry object is less than, equal to or greater than
@@ -168,7 +182,7 @@ public class RunParmArrayEntry implements Comparable<RunParmArrayEntry> {
 
     /**
      * Converts RunParmArrayEntry to a String.
-     * 
+     *
      * @return String version of RunParmArrayEntry, which will be in a
      *         normalized form, with field delimiters and quoters placed amongst
      *         name and values fields according to the contents of those fields

@@ -22,6 +22,7 @@ import mmj.lang.*;
 import mmj.lang.ParseTree.RPNStep;
 import mmj.mmio.*;
 import mmj.pa.PaConstants;
+import mmj.tl.TlConstants.DjVarsOption;
 
 /**
  * TheoremStmtGroup represents the contents of a MMTTheoremFile as well as state
@@ -86,7 +87,7 @@ public class TheoremStmtGroup {
      * <p>
      * The constructor loads the input file into the TheoremStmtGroup and
      * performs data validation of the input data.
-     * 
+     *
      * @param mmtTheoremFile MMTTheoremFile to be read.
      * @param logicalSystem LogicalSystem object.
      * @param messages Messages object.
@@ -153,7 +154,7 @@ public class TheoremStmtGroup {
      * {@code theoremStmtGroupUsedList} and {@code usedByTheoremStmtGroupList}.
      * These lists are the basis for determining the order in which theorems are
      * loaded into the Logical System.
-     * 
+     *
      * @param logicalSystem LogicalSystem object.
      * @param theoremStmtGroupTbl the MMTTheoremSet Map containing the MMT
      *            Theorems in the set.
@@ -163,7 +164,7 @@ public class TheoremStmtGroup {
     public void validateTheoremSrcStmtProofLabels(
         final LogicalSystem logicalSystem,
         final Map<String, TheoremStmtGroup> theoremStmtGroupTbl)
-        throws TheoremLoaderException
+            throws TheoremLoaderException
     {
 
         final Map<String, Stmt> stmtTbl = logicalSystem.getStmtTbl();
@@ -223,7 +224,7 @@ public class TheoremStmtGroup {
      * MMTTheoremSet. Otherwise it goes into the waiting list. (When a theorem
      * is stored into the LogicalSystem it is removed from the
      * theoremStmtGroupUsedList of each theorem which refers to it.)
-     * 
+     *
      * @param readyQueue queue of MMTTheorems ready for updating into the
      *            LogicalSystem.
      * @param waitingList list of MMTTheorems which are not yet ready to update
@@ -247,7 +248,7 @@ public class TheoremStmtGroup {
      * which theorems need requeueing, the updated theorem's
      * usedByTheoremStmtGroup list is read and each theorem in that list is
      * requeued.
-     * 
+     *
      * @param readyQueue queue of MMTTheorems ready for updating into the
      *            LogicalSystem.
      * @param waitingList list of MMTTheorems which are not yet ready to update
@@ -257,7 +258,8 @@ public class TheoremStmtGroup {
      */
     public void queueDependentsForUpdate(
         final Deque<TheoremStmtGroup> readyQueue,
-        final List<TheoremStmtGroup> waitingList) throws TheoremLoaderException
+        final List<TheoremStmtGroup> waitingList)
+            throws TheoremLoaderException
     {
         for (final TheoremStmtGroup g : usedByTheoremStmtGroupList)
             g.reQueueAfterUsedTheoremUpdated(this, readyQueue, waitingList);
@@ -278,7 +280,7 @@ public class TheoremStmtGroup {
      * which theorems need requeueing, the updated theorem's
      * usedByTheoremStmtGroup list is read and each theorem in that list is
      * requeued.
-     * 
+     *
      * @param logicalSystem LogicalSystem object.
      * @param messages Messages object.
      * @param tlPreferences TlPreferences object.
@@ -287,12 +289,13 @@ public class TheoremStmtGroup {
      */
     public void updateLogicalSystem(final LogicalSystem logicalSystem,
         final Messages messages, final TlPreferences tlPreferences)
-        throws TheoremLoaderException, LangException
+            throws TheoremLoaderException, LangException
     {
         if (getIsTheoremNew())
             addTheoremToLogicalSystem(logicalSystem, messages, tlPreferences);
         else
-            updateTheoremInLogicalSystem(logicalSystem, messages, tlPreferences);
+            updateTheoremInLogicalSystem(logicalSystem, messages,
+                tlPreferences);
 
         if (!isProofIncomplete) {
             final ProofVerifier proofVerifier = logicalSystem
@@ -314,7 +317,7 @@ public class TheoremStmtGroup {
      * <p>
      * If the theorem was updated then the previous value of the theorem's proof
      * and its $d restrictions are restored.
-     * 
+     *
      * @param stmtTbl the LogicalSystem object's stmtTbl.
      */
     public void reverseStmtTblUpdates(final Map<String, Stmt> stmtTbl) {
@@ -331,7 +334,7 @@ public class TheoremStmtGroup {
 
     /**
      * Gets the isTheoremNew flag.
-     * 
+     *
      * @return isTheoremNew flag.
      */
     public boolean getIsTheoremNew() {
@@ -340,7 +343,7 @@ public class TheoremStmtGroup {
 
     /**
      * Gets the theorem label.
-     * 
+     *
      * @return theorem label.
      */
     public String getTheoremLabel() {
@@ -349,7 +352,7 @@ public class TheoremStmtGroup {
 
     /**
      * Returns the MMTTheoremFile absolute pathname.
-     * 
+     *
      * @return MMTTheoremFile absolute pathname.
      */
     public String getSourceFileName() {
@@ -358,7 +361,7 @@ public class TheoremStmtGroup {
 
     /**
      * Gets the wasTheoremUpdated flag.
-     * 
+     *
      * @return wasTheoremUpdated flag.
      */
     public boolean getWasTheoremUpdated() {
@@ -367,7 +370,7 @@ public class TheoremStmtGroup {
 
     /**
      * Gets the wasTheoremInserted flag.
-     * 
+     *
      * @return wasTheoremInserted flag.
      */
     public boolean getWasTheoremInserted() {
@@ -376,7 +379,7 @@ public class TheoremStmtGroup {
 
     /**
      * Gets the wasTheoremAppended flag.
-     * 
+     *
      * @return wasTheoremAppended flag.
      */
     public boolean getWasTheoremAppended() {
@@ -386,7 +389,7 @@ public class TheoremStmtGroup {
     /**
      * Gets the Theorem object or null if the theorem is new and has not yet
      * been stored in the Logical System.
-     * 
+     *
      * @return Theorem object or null.
      */
     public Theorem getTheorem() {
@@ -395,7 +398,7 @@ public class TheoremStmtGroup {
 
     /**
      * Gets the wasLogHypInserted flag array.
-     * 
+     *
      * @return wasLogHypInserted flag array.
      */
     public boolean[] getWasLogHypInsertedArray() {
@@ -404,7 +407,7 @@ public class TheoremStmtGroup {
 
     /**
      * Gets the wasLogHypAppended flag array.
-     * 
+     *
      * @return wasLogHypAppended flag array.
      */
     public boolean[] getWasLogHypAppendedArray() {
@@ -414,7 +417,7 @@ public class TheoremStmtGroup {
     /**
      * Gets the LogHyp array which may contain nulls if the Theorem is new and
      * has not yet been stored in the Logical System.
-     * 
+     *
      * @return LogHyp array.
      */
     public LogHyp[] getLogHypArray() {
@@ -423,7 +426,7 @@ public class TheoremStmtGroup {
 
     /**
      * Gets the BookManager insertSectionNbr for the theorem.
-     * 
+     *
      * @return BookManager insertSectionNbr for the theorem.
      */
     public int getInsertSectionNbr() {
@@ -432,7 +435,7 @@ public class TheoremStmtGroup {
 
     /**
      * Returns the assigned sequence number array for new Logical Hypotheses.
-     * 
+     *
      * @return assigned seq numbers of new Logical Hypotheses.
      */
     public int[] getAssignedLogHypSeq() {
@@ -441,7 +444,7 @@ public class TheoremStmtGroup {
 
     /**
      * Returns the assigned sequence number for a new Theorem.
-     * 
+     *
      * @return assigned seq numbers of a new Theorem.
      */
     public int getAssignedTheoremSeq() {
@@ -450,7 +453,7 @@ public class TheoremStmtGroup {
 
     /**
      * Converts TheoremStmtGroup to String.
-     * 
+     *
      * @return returns TheoremStmtGroup string;
      */
     @Override
@@ -470,7 +473,7 @@ public class TheoremStmtGroup {
 
     /**
      * Compares TheoremStmtGroup object based on the label.
-     * 
+     *
      * @param obj TheoremStmtGroup object to compare to this TheoremStmtGroup
      * @return returns negative, zero, or a positive int if this
      *         TheoremStmtGroup object is less than, equal to or greater than
@@ -498,9 +501,9 @@ public class TheoremStmtGroup {
     /**
      * SEQ sequences by TheoremStmtGroup.theorem.getSeq().
      */
-    public static final Comparator<TheoremStmtGroup> SEQ = new Comparator<TheoremStmtGroup>()
-    {
-        public int compare(final TheoremStmtGroup o1, final TheoremStmtGroup o2)
+    public static final Comparator<TheoremStmtGroup> SEQ = new Comparator<TheoremStmtGroup>() {
+        public int compare(final TheoremStmtGroup o1,
+            final TheoremStmtGroup o2)
         {
             return o1.theorem.getSeq() - o2.theorem.getSeq();
         }
@@ -509,10 +512,10 @@ public class TheoremStmtGroup {
     /**
      * NBR_LOG_HYP_SEQ sequences by number of LogHyps and Seq.
      */
-    public static final Comparator<TheoremStmtGroup> NBR_LOG_HYP_SEQ = new Comparator<TheoremStmtGroup>()
-    {
+    public static final Comparator<TheoremStmtGroup> NBR_LOG_HYP_SEQ = new Comparator<TheoremStmtGroup>() {
 
-        public int compare(final TheoremStmtGroup o1, final TheoremStmtGroup o2)
+        public int compare(final TheoremStmtGroup o1,
+            final TheoremStmtGroup o2)
         {
             int n = o1.theorem.getLogHypArrayLength()
                 - o2.theorem.getLogHypArrayLength();
@@ -535,7 +538,8 @@ public class TheoremStmtGroup {
     private void reQueueAfterUsedTheoremUpdated(
         final TheoremStmtGroup usedTheoremStmtGroup,
         final Deque<TheoremStmtGroup> readyQueue,
-        final List<TheoremStmtGroup> waitingList) throws TheoremLoaderException
+        final List<TheoremStmtGroup> waitingList)
+            throws TheoremLoaderException
     {
 
         updateMaxExistingMObjRef(usedTheoremStmtGroup.theorem);
@@ -623,7 +627,8 @@ public class TheoremStmtGroup {
                             TlConstants.ERRMSG_EXTRA_THEOREM_STMT_1
                                 + mmtTheoremFile.getSourceFileName());
 
-                    if (mmtTheoremFile.getLabel().compareTo(currSrcStmt.label) != 0)
+                    if (mmtTheoremFile.getLabel()
+                        .compareTo(currSrcStmt.label) != 0)
                         throw new TheoremLoaderException(
                             TlConstants.ERRMSG_THEOREM_LABEL_MISMATCH_1
                                 + mmtTheoremFile.getLabel()
@@ -722,7 +727,7 @@ public class TheoremStmtGroup {
      * Compute a variety of facts about the SrcStmt objects read in from the
      * MMTTheoremFile and check for validity of the data using the
      * LogicalSystem.
-     * 
+     *
      * @param logicalSystem the LogicalSystem
      * @param messages the error messages object
      * @param tlPreferences the Theorem Loader settings
@@ -730,7 +735,7 @@ public class TheoremStmtGroup {
      */
     private void validateStmtGroupData(final LogicalSystem logicalSystem,
         final Messages messages, final TlPreferences tlPreferences)
-        throws TheoremLoaderException
+            throws TheoremLoaderException
     {
 
         final Map<String, Sym> symTbl = logicalSystem.getSymTbl();
@@ -756,7 +761,7 @@ public class TheoremStmtGroup {
     private void validateLogHypSrcStmt(final TlPreferences tlPreferences,
         final SrcStmt logHypSrcStmt, final Map<String, Sym> symTbl,
         final Map<String, Stmt> stmtTbl, final int logHypIndex)
-        throws TheoremLoaderException
+            throws TheoremLoaderException
     {
 
         checkSymMObjRef(logHypSrcStmt, symTbl);
@@ -790,7 +795,7 @@ public class TheoremStmtGroup {
 
     private void validateTheoremSrcStmt(final TlPreferences tlPreferences,
         final Map<String, Sym> symTbl, final Map<String, Stmt> stmtTbl)
-        throws TheoremLoaderException
+            throws TheoremLoaderException
     {
 
         checkSymMObjRef(theoremSrcStmt, symTbl);
@@ -822,8 +827,7 @@ public class TheoremStmtGroup {
 
             if (!t.getFormula().srcStmtEquals(theoremSrcStmt))
                 throw new TheoremLoaderException(
-                    TlConstants.ERRMSG_THEOREM_FORMULA_MISMATCH_1
-                        + theoremLabel
+                    TlConstants.ERRMSG_THEOREM_FORMULA_MISMATCH_1 + theoremLabel
                         + TlConstants.ERRMSG_THEOREM_FORMULA_MISMATCH_2
                         + theoremSrcStmt.seq
                         + TlConstants.ERRMSG_THEOREM_FORMULA_MISMATCH_3
@@ -842,9 +846,8 @@ public class TheoremStmtGroup {
     private void validateMMTTypeCd(final TlPreferences tlPreferences,
         final SrcStmt currSrcStmt) throws TheoremLoaderException
     {
-        if (currSrcStmt.typ != null
-            && currSrcStmt.typ.equals(tlPreferences
-                .getProvableLogicStmtTypeParm()))
+        if (currSrcStmt.typ != null && currSrcStmt.typ
+            .equals(tlPreferences.getProvableLogicStmtTypeParm()))
             return;
 
         throw new TheoremLoaderException(
@@ -937,17 +940,17 @@ public class TheoremStmtGroup {
     // =======================================================
     //
 
-    private void updateTheoremInLogicalSystem(
-        final LogicalSystem logicalSystem, final Messages messages,
-        final TlPreferences tlPreferences) throws TheoremLoaderException,
-        LangException
+    private void updateTheoremInLogicalSystem(final LogicalSystem logicalSystem,
+        final Messages messages, final TlPreferences tlPreferences)
+            throws TheoremLoaderException, LangException
     {
 
         wasTheoremUpdated = true;
 
         theorem.setProof(logicalSystem.getStmtTbl(), theoremSrcStmt.proofList);
 
-        if (tlPreferences.getDjVarsNoUpdate()) {}
+        final DjVarsOption djVarsOption = tlPreferences.djVarsOption.get();
+        if (djVarsOption == DjVarsOption.NoUpdate) {}
         else {
 
             final List<DjVars> mandDjVarsUpdateList = new LinkedList<DjVars>();
@@ -955,14 +958,14 @@ public class TheoremStmtGroup {
             buildMandAndOptDjVarsUpdateLists(logicalSystem.getSymTbl(),
                 mandDjVarsUpdateList, optDjVarsUpdateList);
 
-            if (tlPreferences.getDjVarsMerge())
+            if (djVarsOption == DjVarsOption.Merge)
                 theorem.mergeDjVars(mandDjVarsUpdateList, optDjVarsUpdateList);
-            else if (tlPreferences.getDjVarsReplace())
-                theorem
-                    .replaceDjVars(mandDjVarsUpdateList, optDjVarsUpdateList);
+            else if (djVarsOption == DjVarsOption.Replace)
+                theorem.replaceDjVars(mandDjVarsUpdateList,
+                    optDjVarsUpdateList);
         }
 
-        if (tlPreferences.getAuditMessages()) {
+        if (tlPreferences.auditMessages.get()) {
             final StringBuilder sb = new StringBuilder();
             sb.append(TlConstants.ERRMSG_AUDIT_MSG_THEOREM_UPD_1);
             sb.append(theorem.getLabel());
@@ -980,7 +983,7 @@ public class TheoremStmtGroup {
 
     private void addTheoremToLogicalSystem(final LogicalSystem logicalSystem,
         final Messages messages, final TlPreferences tlPreferences)
-        throws TheoremLoaderException, LangException
+            throws TheoremLoaderException, LangException
     {
 
         SrcStmt currSrcStmt;
@@ -993,8 +996,8 @@ public class TheoremStmtGroup {
         for (int i = 0; i < logHypArray.length; i++) {
             currSrcStmt = logHypSrcStmtList.get(i);
 
-            final LogHyp s = (LogHyp)logicalSystem.getStmtTbl().get(
-                currSrcStmt.label);
+            final LogHyp s = (LogHyp)logicalSystem.getStmtTbl()
+                .get(currSrcStmt.label);
             if (s != null)
                 // another new mmt theorem already added it, so...
                 throw new TheoremLoaderException(
@@ -1026,9 +1029,9 @@ public class TheoremStmtGroup {
             logHypArray[i] = loadLogHyp(logicalSystem, assignedLogHypSeq[i],
                 currSrcStmt);
 
-            if (tlPreferences.getAuditMessages())
-                messages.accumInfoMessage(buildAddAuditMessage(logHypArray[i],
-                    wasLogHypAppended[i]));
+            if (tlPreferences.auditMessages.get())
+                messages.accumInfoMessage(
+                    buildAddAuditMessage(logHypArray[i], wasLogHypAppended[i]));
 
             updateMaxExistingMObjRef(logHypArray[i]);
 
@@ -1038,8 +1041,8 @@ public class TheoremStmtGroup {
 
         assignedTheoremSeq = -1;
         if (!mustAppend && maxExistingMObjRef != null)
-            assignedTheoremSeq = seqAssigner.nextInsertSeq(maxExistingMObjRef
-                .getSeq());
+            assignedTheoremSeq = seqAssigner
+                .nextInsertSeq(maxExistingMObjRef.getSeq());
 
         if (assignedTheoremSeq == -1) {
 
@@ -1069,12 +1072,13 @@ public class TheoremStmtGroup {
             theorem.replaceDjVars(mandDjVarsUpdateList, optDjVarsUpdateList);
         }
 
-        if (tlPreferences.getAuditMessages())
-            messages.accumInfoMessage(buildAddAuditMessage(theorem,
-                wasTheoremAppended));
+        if (tlPreferences.auditMessages.get())
+            messages.accumInfoMessage(
+                buildAddAuditMessage(theorem, wasTheoremAppended));
     }
 
-    private String buildAddAuditMessage(final Stmt stmt, final boolean appended)
+    private String buildAddAuditMessage(final Stmt stmt,
+        final boolean appended)
     {
         final StringBuilder sb = new StringBuilder();
         sb.append(TlConstants.ERRMSG_AUDIT_MSG_THEOREM_ADD_1);
@@ -1113,8 +1117,8 @@ public class TheoremStmtGroup {
         return sb.toString();
     }
 
-    private void buildMandAndOptDjVarsUpdateLists(
-        final Map<String, Sym> symTbl, final List<DjVars> mandDjVarsUpdateList,
+    private void buildMandAndOptDjVarsUpdateLists(final Map<String, Sym> symTbl,
+        final List<DjVars> mandDjVarsUpdateList,
         final List<DjVars> optDjVarsUpdateList) throws LangException
     {
         final List<List<String>> inputDjVarsStmtList = new ArrayList<List<String>>();
@@ -1158,8 +1162,8 @@ public class TheoremStmtGroup {
         stmt.setExprParseTree(parseTree);
     }
 
-    private Theorem loadTheorem(final LogicalSystem logicalSystem, final int seq)
-        throws LangException
+    private Theorem loadTheorem(final LogicalSystem logicalSystem,
+        final int seq) throws LangException
     {
 
         final Theorem theorem = logicalSystem.addTheoremForTheoremLoader(seq,
@@ -1174,7 +1178,7 @@ public class TheoremStmtGroup {
 
     /**
      * Sends logical hypothesis to LogicalSystem.
-     * 
+     *
      * @param logicalSystem the LogicalSystem
      * @param seq preassigned MObj seq number
      * @param currSrcStmt the logical hypothesis

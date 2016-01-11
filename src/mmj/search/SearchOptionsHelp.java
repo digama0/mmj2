@@ -28,9 +28,10 @@ public class SearchOptionsHelp extends AuxFrameGUI {
     private void setFrameValues() {
         setFrameText(SearchOptionsConstants.GENERAL_HELP_INFO_TEXT);
         setFrameTitle(SearchOptionsConstants.GENERAL_HELP_FRAME_TITLE);
-        setFrameFontSize(proofAsstPreferences.getSearchMgr()
-            .getSearchOptionsFontSize());
-        setFrameFont(proofAsstPreferences.getSearchMgr().getSearchOptionsFont());
+        setFrameFontSize(
+            proofAsstPreferences.getSearchMgr().getSearchOptionsFontSize());
+        setFrameFont(
+            proofAsstPreferences.getSearchMgr().getSearchOptionsFont());
     }
 
     public static void main(final String[] args) {

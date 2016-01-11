@@ -15,7 +15,8 @@
 
 package mmj.util;
 
-import mmj.lang.VerifyException;
+import static mmj.util.UtilConstants.*;
+
 import mmj.pa.MacroManager;
 import mmj.pa.MacroManager.ExecutionMode;
 
@@ -40,104 +41,50 @@ public class MacroBoss extends Boss {
      */
     public MacroBoss(final BatchFramework batchFramework) {
         super(batchFramework);
-    }
 
-    /**
-     * Executes a single command from the RunParmFile.
-     *
-     * @param runParm the RunParmFile line to execute.
-     * @return boolean "consumed" indicating that the input runParm should not
-     *         be processed again.
-     */
-    @Override
-    public boolean doRunParmCommand(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException, VerifyException
-    {
-
-        if (UtilConstants.RUNPARM_CLEAR.matches(runParm)) {
+        putCommand(RUNPARM_CLEAR, () -> {
             macroManager = null;
             return false; // not "consumed"
-        }
+        });
 
-        if (UtilConstants.RUNPARM_MACRO_FOLDER.matches(runParm)) {
-            setMacroFolder(runParm);
-            return true;
-        }
+        putCommand(RUNPARM_MACRO_FOLDER, this::setMacroFolder);
 
-        if (UtilConstants.RUNPARM_MACRO_LANGUAGE.matches(runParm)) {
-            setMacroLanguage(runParm);
-            return true;
-        }
+        putCommand(RUNPARM_MACRO_LANGUAGE, this::setMacroLanguage);
 
-        if (UtilConstants.RUNPARM_RUN_MACRO_INIT.matches(runParm)) {
-            runMacroInit(runParm);
-            return true;
-        }
+        putCommand(RUNPARM_RUN_MACRO_INIT, this::runMacroInit);
 
-        if (UtilConstants.RUNPARM_RUN_MACRO.matches(runParm)) {
-            runMacro(runParm);
-            return true;
-        }
-
-        return false;
+        putCommand(RUNPARM_RUN_MACRO, this::runMacro);
     }
 
     /**
      * Validate Macro Folder RunParm.
-     *
-     * @param runParm run parm parsed into RunParmArrayEntry object
-     * @throws IllegalArgumentException if an error occurred
      */
-    protected void setMacroFolder(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
-        getMacroManager().setMacroFolder(
-            editExistingFolderRunParm(batchFramework.paths.getMMJ2Path(),
-                runParm, UtilConstants.RUNPARM_MACRO_FOLDER.name(), 1));
+    protected void setMacroFolder() {
+        getMacroManager().macroFolder
+            .set(getExistingFolder(batchFramework.paths.getMMJ2Path(), 1));
     }
 
     /**
      * Validate Macro Language RunParm.
-     *
-     * @param runParm run parm parsed into RunParmArrayEntry object
-     * @throws IllegalArgumentException if an error occurred
      */
-    protected void setMacroLanguage(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
-        editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_MACRO_LANGUAGE.name(), 2);
-        getMacroManager().setMacroLanguage(runParm.values[0],
-            runParm.values[1]);
+    protected void setMacroLanguage() {
+        require(2);
+        if (getMacroManager().macroLanguage.set(get(1)))
+            getMacroManager().macroExtension.set(get(2));
     }
 
     /**
      * Validate RunMacro RunParm.
-     *
-     * @param runParm run parm parsed into RunParmArrayEntry object
-     * @throws VerifyException if an error occurred
-     * @throws IllegalArgumentException if an error occurred
      */
-    protected void runMacroInit(final RunParmArrayEntry runParm)
-        throws VerifyException, IllegalArgumentException
-    {
-        editRunParmValuesLength(runParm, UtilConstants.RUNPARM_RUN_MACRO.name(),
-            1);
-        getMacroManager().getEngine(runParm.values[0]);
+    protected void runMacroInit() {
+        getMacroManager().getEngine(get(1));
     }
 
     /**
      * Validate RunMacro RunParm.
-     *
-     * @param runParm run parm parsed into RunParmArrayEntry object
-     * @throws VerifyException if an error occurred
-     * @throws IllegalArgumentException if an error occurred
      */
-    protected void runMacro(final RunParmArrayEntry runParm)
-        throws VerifyException, IllegalArgumentException
-    {
-        editRunParmValuesLength(runParm, UtilConstants.RUNPARM_RUN_MACRO.name(),
-            1);
+    protected void runMacro() {
+        require(1);
         getMacroManager().runMacro(ExecutionMode.RUNPARM, runParm.values);
     }
 

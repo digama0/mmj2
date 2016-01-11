@@ -48,9 +48,20 @@ public class BatchCommand implements Comparable<BatchCommand> {
      *
      * @return name string
      */
-    public boolean matches(final RunParmArrayEntry runParm) {
-        return runParm.name.equalsIgnoreCase(name());
+    public final String nameLower() {
+        return name.toLowerCase();
     }
+
+    @Override
+    public int hashCode() {
+        return nameLower().hashCode();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return nameLower().equals(((BatchCommand)obj).nameLower());
+    }
+
     /**
      * Getter of documentation string
      *
@@ -75,6 +86,6 @@ public class BatchCommand implements Comparable<BatchCommand> {
     public int compareTo(final BatchCommand b) {
         if (b == this)
             return 0;
-        return name().compareTo(b.name());
+        return nameLower().compareTo(b.nameLower());
     }
 }

@@ -96,7 +96,10 @@ package mmj.pa;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.Arrays;
 import java.util.Vector;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -227,11 +230,11 @@ public class ProofAsstGUI {
         proofAsst = null;
         proofAsstPreferences = new ProofAsstPreferences();
         buildFileChooser(new File(PaConstants.SAMPLE_PROOF_LABEL
-            + proofAsstPreferences.getDefaultFileNameSuffix()));
+            + proofAsstPreferences.defaultFileNameSuffix.get()));
 
         updateScreenTitle(fileChooser.getSelectedFile());
 
-        buildGUI(proofAsstPreferences.getAutocomplete()
+        buildGUI(proofAsstPreferences.autocomplete.get()
             ? PaConstants.AUTOCOMPLETE_SAMPLE_PROOF_TEXT
             : PaConstants.SAMPLE_PROOF_TEXT);
     }
@@ -254,19 +257,19 @@ public class ProofAsstGUI {
         tlPreferences = theoremLoader.getTlPreferences();
         buildMMTFolderChooser();
 
-        final File startupProofWorksheetFile = proofAsstPreferences
-            .getStartupProofWorksheetFile();
+        final File startupProofWorksheetFile = proofAsstPreferences.startupProofWorksheetFile
+            .get();
 
         if (startupProofWorksheetFile == null) {
-            if (proofAsstPreferences.getProofFolder() != null)
-                buildFileChooser(new File(proofAsstPreferences.getProofFolder(),
-                    PaConstants.SAMPLE_PROOF_LABEL
-                        + proofAsstPreferences.getDefaultFileNameSuffix()));
+            final File folder = proofAsstPreferences.proofFolder.get();
+            if (folder != null)
+                buildFileChooser(new File(folder, PaConstants.SAMPLE_PROOF_LABEL
+                    + proofAsstPreferences.defaultFileNameSuffix.get()));
             else
                 buildFileChooser(new File(PaConstants.SAMPLE_PROOF_LABEL
-                    + proofAsstPreferences.getDefaultFileNameSuffix()));
+                    + proofAsstPreferences.defaultFileNameSuffix.get()));
             updateScreenTitle(fileChooser.getSelectedFile());
-            buildGUI(proofAsstPreferences.getAutocomplete()
+            buildGUI(proofAsstPreferences.autocomplete.get()
                 ? PaConstants.AUTOCOMPLETE_SAMPLE_PROOF_TEXT
                 : PaConstants.SAMPLE_PROOF_TEXT);
         }
@@ -417,7 +420,7 @@ public class ProofAsstGUI {
 
         myPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 
-        if (proofAsstPreferences.getTextAtTop()) {
+        if (proofAsstPreferences.textAtTop.get()) {
             buildGUIProofTextStuff(newProofText);
             buildGUIMessageTextStuff();
             myPane.setResizeWeight(1);
@@ -443,7 +446,7 @@ public class ProofAsstGUI {
         // textArea.setLineWrap(proofAsstPreferences.getLineWrap());
         proofTextPane.setCursor(null); // use arrow instead of thingamabob
 
-        if (proofAsstPreferences.getUndoRedoEnabled()) {
+        if (proofAsstPreferences.undoRedoEnabled.get()) {
             final Runnable r = new Runnable() {
                 public void run() {
                     updateUndoRedoItems();
@@ -483,20 +486,20 @@ public class ProofAsstGUI {
 
     private void buildGUIMessageTextStuff() {
         proofMessageArea = new JTextArea(PaConstants.PROOF_ASST_GUI_STARTUP_MSG,
-            proofAsstPreferences.getErrorMessageRows(),
-            proofAsstPreferences.getErrorMessageColumns());
-        final Font frameFont = new Font(proofAsstPreferences.getFontFamily(),
-            proofAsstPreferences.getFontBold() ? Font.BOLD : Font.PLAIN,
-            proofAsstPreferences.getFontSize());
+            proofAsstPreferences.errorMessageRows.get(),
+            proofAsstPreferences.errorMessageColumns.get());
+        final Font frameFont = new Font(proofAsstPreferences.fontFamily.get(),
+            proofAsstPreferences.fontBold.get() ? Font.BOLD : Font.PLAIN,
+            proofAsstPreferences.fontSize.get());
 
         proofMessageArea.setFont(frameFont);
         proofMessageArea.setLineWrap(true);
         proofMessageArea.setWrapStyleWord(true);
         proofMessageArea.setEditable(true);
         proofMessageArea
-            .setForeground(proofAsstPreferences.getForegroundColor());
+            .setForeground(proofAsstPreferences.foregroundColor.get());
         proofMessageArea
-            .setBackground(proofAsstPreferences.getBackgroundColor());
+            .setBackground(proofAsstPreferences.backgroundColor.get());
 
         proofMessageScrollPane = new JScrollPane(proofMessageArea);
         proofMessageScrollPane.setVerticalScrollBarPolicy(
@@ -513,7 +516,7 @@ public class ProofAsstGUI {
     }
 
     private void buildMMTFolderChooser() {
-        final MMTFolder mmtFolder = tlPreferences.getMMTFolder();
+        final MMTFolder mmtFolder = tlPreferences.mmtFolder.get();
         if (mmtFolder.getFolderFile() == null)
             mmtFolderChooser = new JFileChooser();
         else {
@@ -527,7 +530,7 @@ public class ProofAsstGUI {
 
     private void buildFileChooser(final File defaultFile) {
 
-        fileChooser = new JFileChooser(proofAsstPreferences.getProofFolder());
+        fileChooser = new JFileChooser(proofAsstPreferences.proofFolder.get());
 
         fileChooser.addChoosableFileFilter(new ProofAsstFileFilter());
 
@@ -545,7 +548,7 @@ public class ProofAsstGUI {
             prevParent = prevFile.getParent();
 
         final File newFile = new File(prevParent,
-            label + proofAsstPreferences.getDefaultFileNameSuffix());
+            label + proofAsstPreferences.defaultFileNameSuffix.get());
 
         fileChooser.setSelectedFile(newFile);
 
@@ -559,16 +562,10 @@ public class ProofAsstGUI {
             if (file.isDirectory())
                 return true;
             final String fileName = file.getName();
-            if (fileName != null && (fileName
+            return fileName != null && (fileName.toLowerCase()
                 .endsWith(PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP)
-                || fileName
-                    .endsWith(PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP2)
-                || fileName
-                    .endsWith(PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_TXT)
-                || fileName.endsWith(
-                    PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_TXT2)))
-                return true;
-            return false;
+                || fileName.toLowerCase()
+                    .endsWith(PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_TXT));
         }
         @Override
         public String getDescription() {
@@ -578,7 +575,7 @@ public class ProofAsstGUI {
     }
 
     private void clearUndoRedoCaches() {
-        if (proofAsstPreferences.getUndoRedoEnabled()) {
+        if (proofAsstPreferences.undoRedoEnabled.get()) {
             undoManager.discardAllEdits();
             updateUndoRedoItems();
         }
@@ -675,7 +672,8 @@ public class ProofAsstGUI {
      *                 build title using just ProofAsstGUI caption.
      */
     private String buildScreenTitle(final File file) {
-        final int maxLength = proofAsstPreferences.getTextColumns() - 15;
+        final int maxLength = proofAsstPreferences.tmffPreferences.textColumns
+            .get() - 15;
 
         if (file == null || file.getName().length() > maxLength)
             return PaConstants.PROOF_ASST_FRAME_TITLE;
@@ -719,12 +717,12 @@ public class ProofAsstGUI {
     }
 
     private void buildProofFont() {
-        if (proofAsstPreferences.getFontBold())
-            proofFont = new Font(proofAsstPreferences.getFontFamily(),
-                Font.BOLD, proofAsstPreferences.getFontSize());
+        if (proofAsstPreferences.fontBold.get())
+            proofFont = new Font(proofAsstPreferences.fontFamily.get(),
+                Font.BOLD, proofAsstPreferences.fontSize.get());
         else
-            proofFont = new Font(proofAsstPreferences.getFontFamily(),
-                Font.PLAIN, proofAsstPreferences.getFontSize());
+            proofFont = new Font(proofAsstPreferences.fontFamily.get(),
+                Font.PLAIN, proofAsstPreferences.fontSize.get());
     }
 
     private JPopupMenu buildPopupMenu() {
@@ -920,7 +918,7 @@ public class ProofAsstGUI {
                 @Override
                 void send() {
                     w = proofAsst.getExistingProof(oldTheorem, true,
-                        HypsOrder.CorrectOrder);
+                        HypsOrder.Correct);
                 }
             });
         fileGetProofItem
@@ -937,7 +935,7 @@ public class ProofAsstGUI {
                 void send() {
                     w = proofAsst.getNextProof(getCurrProofMaxSeq(), //
                         true, // proof unified
-                        HypsOrder.CorrectOrder);
+                        HypsOrder.Correct);
                 }
             });
         fileGetFwdProofItem
@@ -954,7 +952,7 @@ public class ProofAsstGUI {
                 void send() {
                     w = proofAsst.getPreviousProof(getCurrProofMaxSeq(), //
                         true, // proof unified
-                        HypsOrder.CorrectOrder);
+                        HypsOrder.Correct);
                 }
             });
         fileGetBwdProofItem
@@ -1018,15 +1016,13 @@ public class ProofAsstGUI {
 
         fileMenu.add(fileExportViaGMFFItem());
 
-        final JMenuItem fileExitItem = new JMenuItem(new AbstractAction() {
-            public void actionPerformed(final ActionEvent e) {
-                if (saveIfAskedBeforeAction(true,
-                    PaConstants.PA_GUI_ACTION_BEFORE_SAVE_EXIT) == JOptionPane.CANCEL_OPTION)
-                    return;
+        final JMenuItem fileExitItem = new JMenuItem(
+            PaConstants.PA_GUI_FILE_MENU_EXIT_ITEM_TEXT);
+        fileExitItem.addActionListener(e -> {
+            if (saveIfAskedBeforeAction(true,
+                PaConstants.PA_GUI_ACTION_BEFORE_SAVE_EXIT) != JOptionPane.CANCEL_OPTION)
                 System.exit(0);
-            }
         });
-        fileExitItem.setText(PaConstants.PA_GUI_FILE_MENU_EXIT_ITEM_TEXT);
         fileExitItem.setMnemonic(KeyEvent.VK_X);
         fileExitItem.setAccelerator(
             KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
@@ -1039,7 +1035,7 @@ public class ProofAsstGUI {
         final JMenu editMenu = new JMenu(PaConstants.PA_GUI_EDIT_MENU_TITLE);
         editMenu.setMnemonic(KeyEvent.VK_E);
 
-        if (proofAsstPreferences.getUndoRedoEnabled()) {
+        if (proofAsstPreferences.undoRedoEnabled.get()) {
             editUndoItem = new JMenuItem(new Request() {
                 @Override
                 void receive() {
@@ -1102,58 +1098,45 @@ public class ProofAsstGUI {
         editMenu.add(pasteItem);
 
         final JMenuItem setIncompleteStepCursorItem = new JMenuItem(
-            new AbstractAction()
-        {
-                public void actionPerformed(final ActionEvent e) {
-                    final String newIncompleteStepCursorOption = getNewIncompleteStepCursorOption();
-
-                    if (newIncompleteStepCursorOption != null)
-                        proofAsstPreferences.setIncompleteStepCursor(
-                            newIncompleteStepCursorOption);
-                }
-            });
-        setIncompleteStepCursorItem.setText(
             PaConstants.PA_GUI_EDIT_MENU_SET_INCOMPLETE_STEP_CURSOR_ITEM_TEXT);
+        setIncompleteStepCursorItem.addActionListener(
+            enumSettingAction(proofAsstPreferences.incompleteStepCursor,
+                PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_OPTION_LIST,
+                PaConstants.PA_GUI_SET_INCOMPLETE_STEP_CURSOR_OPTION_PROMPT));
         editMenu.add(setIncompleteStepCursorItem);
 
         final JMenuItem setSoftDjErrorItem = new JMenuItem(
-            new AbstractAction()
-        {
-                public void actionPerformed(final ActionEvent e) {
-                    final String newSoftDjErrorOption = getNewSoftDjErrorOption();
-
-                    if (newSoftDjErrorOption != null)
-                        proofAsstPreferences
-                            .setDjVarsSoftErrorsOption(newSoftDjErrorOption);
-                }
-            });
-        setSoftDjErrorItem
-            .setText(PaConstants.PA_GUI_EDIT_MENU_SET_SOFT_DJ_ERROR_ITEM_TEXT);
+            PaConstants.PA_GUI_EDIT_MENU_SET_SOFT_DJ_ERROR_ITEM_TEXT);
+        setSoftDjErrorItem.addActionListener(
+            enumSettingAction(proofAsstPreferences.djVarsSoftErrors,
+                PaConstants.PROOF_ASST_SOFT_DJ_ERROR_OPTION_LIST,
+                PaConstants.PA_GUI_SET_SOFT_DJ_ERROR_OPTION_PROMPT));
         editMenu.add(setSoftDjErrorItem);
 
-        final JMenuItem setFontFamilyItem = new JMenuItem(new AbstractAction() {
-            public void actionPerformed(final ActionEvent e) {
-                final String oldFontFamily = proofAsstPreferences
-                    .getFontFamily();
-                final String newFontFamily = getNewFontFamily(oldFontFamily);
-
+        final JMenuItem setFontFamilyItem = new JMenuItem(
+            PaConstants.PA_GUI_EDIT_MENU_SET_FONT_FAMILY_ITEM_TEXT);
+        setFontFamilyItem.addActionListener(repromptAction(
+            () -> PaConstants.PROOF_ASST_FONT_FAMILY_LIST + "\n"
+                + proofAsstPreferences.getFontListString() + "\n"
+                + PaConstants.PA_GUI_SET_FONT_FAMILY_PROMPT,
+            proofAsstPreferences.fontFamily, s -> {
+                final String newFontFamily = proofAsstPreferences
+                    .validateFontFamily(s);
                 if (newFontFamily != null && !newFontFamily.isEmpty()
-                    && !newFontFamily.equalsIgnoreCase(oldFontFamily))
-                {
-                    proofAsstPreferences.setFontFamily(newFontFamily);
+                    && !newFontFamily.equalsIgnoreCase(s)
+                    && proofAsstPreferences.fontFamily.set(newFontFamily))
+            {
                     buildProofFont();
                     proofTextPane.setFont(proofFont);
                 }
-            }
-        });
-        setFontFamilyItem
-            .setText(PaConstants.PA_GUI_EDIT_MENU_SET_FONT_FAMILY_ITEM_TEXT);
+                return false;
+            }));
         editMenu.add(setFontFamilyItem);
 
         fontStyleBoldItem = new JMenuItem(new AbstractAction() {
             public void actionPerformed(final ActionEvent e) {
-                if (!proofAsstPreferences.getFontBold()) {
-                    proofAsstPreferences.setFontBold(true);
+                if (!proofAsstPreferences.fontBold.get()) {
+                    proofAsstPreferences.fontBold.set(true);
                     fontStyleBoldItem.setEnabled(false);
                     fontStylePlainItem.setEnabled(true);
                     updateFrameFont(proofFont.deriveFont(Font.BOLD));
@@ -1163,16 +1146,13 @@ public class ProofAsstGUI {
         });
         fontStyleBoldItem
             .setText(PaConstants.PA_GUI_EDIT_MENU_FONT_STYLE_BOLD_ITEM_TEXT);
-        if (proofAsstPreferences.getFontBold())
-            fontStyleBoldItem.setEnabled(false);
-        else
-            fontStyleBoldItem.setEnabled(true);
+        fontStyleBoldItem.setEnabled(!proofAsstPreferences.fontBold.get());
         editMenu.add(fontStyleBoldItem);
 
         fontStylePlainItem = new JMenuItem(new AbstractAction() {
             public void actionPerformed(final ActionEvent e) {
-                if (proofAsstPreferences.getFontBold()) {
-                    proofAsstPreferences.setFontBold(false);
+                if (proofAsstPreferences.fontBold.get()) {
+                    proofAsstPreferences.fontBold.set(false);
                     fontStylePlainItem.setEnabled(false);
                     fontStyleBoldItem.setEnabled(true);
                     updateFrameFont(proofFont.deriveFont(Font.PLAIN));
@@ -1182,22 +1162,19 @@ public class ProofAsstGUI {
         });
         fontStylePlainItem
             .setText(PaConstants.PA_GUI_EDIT_MENU_FONT_STYLE_PLAIN_ITEM_TEXT);
-        if (proofAsstPreferences.getFontBold())
-            fontStylePlainItem.setEnabled(true);
-        else
-            fontStylePlainItem.setEnabled(false);
+        fontStylePlainItem.setEnabled(proofAsstPreferences.fontBold.get());
         editMenu.add(fontStylePlainItem);
 
         final JMenuItem largerFontItem = new JMenuItem(new AbstractAction() {
             public void actionPerformed(final ActionEvent e) {
-                int fontSize = proofAsstPreferences.getFontSize()
+                int fontSize = proofAsstPreferences.fontSize.get()
                     + PaConstants.PROOF_ASST_FONT_SIZE_CHG_AMT;
 
                 // 2007-12-06 - FIX BUG
                 if (fontSize > PaConstants.PROOF_ASST_FONT_SIZE_MAX)
                     fontSize = PaConstants.PROOF_ASST_FONT_SIZE_MAX;
 
-                proofAsstPreferences.setFontSize(fontSize);
+                proofAsstPreferences.fontSize.set(fontSize);
                 updateFrameFont(proofFont.deriveFont((float)fontSize));
 
             }
@@ -1209,14 +1186,14 @@ public class ProofAsstGUI {
 
         final JMenuItem smallerFontItem = new JMenuItem(new AbstractAction() {
             public void actionPerformed(final ActionEvent e) {
-                int fontSize = proofAsstPreferences.getFontSize()
+                int fontSize = proofAsstPreferences.fontSize.get()
                     - PaConstants.PROOF_ASST_FONT_SIZE_CHG_AMT;
 
                 // 2007-12-06 - FIX BUG
                 if (fontSize < PaConstants.PROOF_ASST_FONT_SIZE_MIN)
                     fontSize = PaConstants.PROOF_ASST_FONT_SIZE_MIN;
 
-                proofAsstPreferences.setFontSize(fontSize);
+                proofAsstPreferences.fontSize.set(fontSize);
                 updateFrameFont(proofFont.deriveFont((float)fontSize));
             }
         });
@@ -1230,8 +1207,8 @@ public class ProofAsstGUI {
             new AbstractAction()
         {
                 public void actionPerformed(final ActionEvent e) {
-                    final Color oldColor = proofAsstPreferences
-                        .getForegroundColor();
+                    final Color oldColor = proofAsstPreferences.foregroundColor
+                        .get();
                     final String colorChooserTitle = new String(
                         PaConstants.PA_GUI_EDIT_MENU_SET_FOREGROUND_ITEM_TEXT
                             + PaConstants.COLOR_CHOOSE_TITLE_2
@@ -1243,7 +1220,7 @@ public class ProofAsstGUI {
                     final Color newColor = getNewColor(oldColor,
                         colorChooserTitle);
                     if (!newColor.equals(oldColor)) {
-                        proofAsstPreferences.setForegroundColor(newColor);
+                        proofAsstPreferences.foregroundColor.set(newColor);
                         proofTextPane.setForeground(newColor);
                     }
                 }
@@ -1256,8 +1233,8 @@ public class ProofAsstGUI {
             new AbstractAction()
         {
                 public void actionPerformed(final ActionEvent e) {
-                    final Color oldColor = proofAsstPreferences
-                        .getBackgroundColor();
+                    final Color oldColor = proofAsstPreferences.backgroundColor
+                        .get();
                     final String colorChooserTitle = new String(
                         PaConstants.PA_GUI_EDIT_MENU_SET_BACKGROUND_ITEM_TEXT
                             + PaConstants.COLOR_CHOOSE_TITLE_2
@@ -1269,7 +1246,7 @@ public class ProofAsstGUI {
                     final Color newColor = getNewColor(oldColor,
                         colorChooserTitle);
                     if (!newColor.equals(oldColor)) {
-                        proofAsstPreferences.setBackgroundColor(newColor);
+                        proofAsstPreferences.backgroundColor.set(newColor);
                         proofTextPane.setBackground(newColor);
                     }
                 }
@@ -1278,37 +1255,34 @@ public class ProofAsstGUI {
             .setText(PaConstants.PA_GUI_EDIT_MENU_SET_BACKGROUND_ITEM_TEXT);
         editMenu.add(setBackgroundColorItem);
 
-        final JMenuItem setFormatNbrItem = new JMenuItem(new AbstractAction() {
-            public void actionPerformed(final ActionEvent e) {
-                final int oldFormatNbr = proofAsstPreferences
-                    .getTMFFPreferences().getCurrFormatNbr();
-
-                final int newFormatNbr = getNewFormatNbr(oldFormatNbr);
-
-                if (newFormatNbr != oldFormatNbr) {
-                    if (newFormatNbr < 0)
-                        return;
-                    proofAsstPreferences.getTMFFPreferences()
-                        .setCurrFormatNbr(newFormatNbr);
-                }
-            }
-        });
-        setFormatNbrItem
-            .setText(PaConstants.PA_GUI_EDIT_MENU_SET_FORMAT_NBR_ITEM_TEXT);
+        final JMenuItem setFormatNbrItem = new JMenuItem(
+            PaConstants.PA_GUI_EDIT_MENU_SET_FORMAT_NBR_ITEM_TEXT);
+        setFormatNbrItem.addActionListener(repromptAction(
+            proofAsstPreferences.tmffPreferences.getFormatListString() + "\n"
+                + PaConstants.PA_GUI_SET_FORMAT_NBR_PROMPT,
+            proofAsstPreferences.tmffPreferences.currFormatNbr, s -> {
+                final int n = Integer.parseInt(s);
+                if (n >= 0 && n <= TMFFConstants.TMFF_MAX_FORMAT_NBR)
+                    return proofAsstPreferences.tmffPreferences.currFormatNbr
+                        .set(n);
+                throw new IllegalArgumentException(
+                    TMFFConstants.ERRMSG_ERR_FORMAT_NBR_INPUT_1
+                        + Integer.toString(TMFFConstants.TMFF_MAX_FORMAT_NBR));
+            }));
         editMenu.add(setFormatNbrItem);
 
         final JMenuItem setIndentItem = new JMenuItem(new AbstractAction() {
             public void actionPerformed(final ActionEvent e) {
-                final int oldIndent = proofAsstPreferences.getTMFFPreferences()
-                    .getUseIndent();
+                final int oldIndent = proofAsstPreferences.tmffPreferences.useIndent
+                    .get();
 
                 final int newIndent = getNewIndent(oldIndent);
 
                 if (newIndent != oldIndent) {
                     if (newIndent < 0)
                         return;
-                    proofAsstPreferences.getTMFFPreferences()
-                        .setUseIndent(newIndent);
+                    proofAsstPreferences.tmffPreferences.useIndent
+                        .set(newIndent);
                 }
             }
         });
@@ -1334,6 +1308,7 @@ public class ProofAsstGUI {
         editMenu.add(reformatSwapAltItem);
 
         return editMenu;
+
     }
 
     private void updateFrameFont(final Font font) {
@@ -1453,29 +1428,21 @@ public class ProofAsstGUI {
             KeyStroke.getKeyStroke(KeyEvent.VK_9, ActionEvent.CTRL_MASK));
         unifyMenu.add(reshowStepSelectorDialogItem);
 
-        final JMenuItem setMaxResultsItem = new JMenuItem(new AbstractAction() {
-            public void actionPerformed(final ActionEvent e) {
-                final int newMaxResults = getNewMaxResults();
-
-                if (newMaxResults != -1)
-                    proofAsstPreferences
-                        .setStepSelectorMaxResults(newMaxResults);
-            }
-        });
-        setMaxResultsItem
-            .setText(PaConstants.PA_GUI_UNIFY_MENU_SET_MAX_RESULTS_ITEM_TEXT);
+        final JMenuItem setMaxResultsItem = new JMenuItem(
+            PaConstants.PA_GUI_UNIFY_MENU_SET_MAX_RESULTS_ITEM_TEXT);
+        setMaxResultsItem.addActionListener(
+            repromptAction(PaConstants.PA_GUI_SET_MAX_RESULTS_OPTION_PROMPT,
+                proofAsstPreferences.stepSelectorMaxResults,
+                proofAsstPreferences.stepSelectorMaxResults::setString));
         unifyMenu.add(setMaxResultsItem);
 
         final JMenuItem setShowSubstitutionsItem = new JMenuItem(
-            new AbstractAction()
-        {
-                public void actionPerformed(final ActionEvent e) {
-                    proofAsstPreferences.setStepSelectorShowSubstitutions(
-                        getNewShowSubstitutions());
-                }
-            });
-        setShowSubstitutionsItem
-            .setText(PaConstants.PA_GUI_UNIFY_MENU_SET_SHOW_SUBST_ITEM_TEXT);
+            PaConstants.PA_GUI_UNIFY_MENU_SET_SHOW_SUBST_ITEM_TEXT);
+        setShowSubstitutionsItem.addActionListener(
+            repromptAction(PaConstants.PA_GUI_SET_MAX_RESULTS_OPTION_PROMPT,
+                proofAsstPreferences.stepSelectorShowSubstitutions,
+                s -> proofAsstPreferences.stepSelectorShowSubstitutions
+                    .set(ProofAsstPreferences.parseBoolean(s))));
         unifyMenu.add(setShowSubstitutionsItem);
 
         return unifyMenu;
@@ -1609,64 +1576,47 @@ public class ProofAsstGUI {
         i.setText(PaConstants.PA_GUI_TL_MENU_VERIFY_ALL_PROOFS_TEXT);
         tlMenu.add(i);
 
-        i = new JMenuItem(new AbstractAction() {
-            public void actionPerformed(final ActionEvent e) {
-                getNewMMTFolder();
-            }
-        });
-        i.setText(PaConstants.PA_GUI_TL_MENU_MMT_FOLDER_TEXT);
+        i = new JMenuItem(PaConstants.PA_GUI_TL_MENU_MMT_FOLDER_TEXT);
+        i.addActionListener(e -> getNewMMTFolder());
         tlMenu.add(i);
 
-        i = new JMenuItem(new AbstractAction() {
-            public void actionPerformed(final ActionEvent e) {
-                getNewTLDjVarsOption();
-            }
-        });
-        i.setText(PaConstants.PA_GUI_TL_MENU_DJ_VARS_OPTION_TEXT);
+        i = new JMenuItem(PaConstants.PA_GUI_TL_MENU_DJ_VARS_OPTION_TEXT);
+        i.addActionListener(enumSettingAction(tlPreferences.djVarsOption, "",
+            PaConstants.PA_GUI_SET_TL_DJ_VARS_OPTION_PROMPT));
         tlMenu.add(i);
 
-        i = new JMenuItem(new AbstractAction() {
-            public void actionPerformed(final ActionEvent e) {
-                getNewTLAuditMessages();
-            }
-        });
-        i.setText(PaConstants.PA_GUI_TL_MENU_AUDIT_MESSAGES_TEXT);
+        i = new JMenuItem(PaConstants.PA_GUI_TL_MENU_AUDIT_MESSAGES_TEXT);
+        i.addActionListener(repromptAction(
+            PaConstants.PA_GUI_SET_TL_AUDIT_MESSAGES_OPTION_PROMPT,
+            tlPreferences.auditMessages::get,
+            tlPreferences.auditMessages::setString));
         tlMenu.add(i);
 
-        i = new JMenuItem(new AbstractAction() {
-            public void actionPerformed(final ActionEvent e) {
-                final String newProofCompression = getNewProofCompression();
-
-                if (newProofCompression != null)
-                    proofAsstPreferences
-                        .setProofFormatOption(newProofCompression);
-            }
-        });
-        i.setText(PaConstants.PA_GUI_TL_MENU_COMPRESSION_TEXT);
+        i = new JMenuItem(PaConstants.PA_GUI_TL_MENU_COMPRESSION_TEXT);
+        i.addActionListener(enumSettingAction(proofAsstPreferences.proofFormat,
+            PaConstants.PROOF_ASST_COMPRESSION_LIST,
+            PaConstants.PROOF_ASST_COMPRESSION_PROMPT));
         tlMenu.add(i);
 
-        i = new JMenuItem(new AbstractAction() {
-            public void actionPerformed(final ActionEvent e) {
-                getNewTLStoreMMIndentAmt();
-            }
-        });
-        i.setText(PaConstants.PA_GUI_TL_MENU_STORE_MM_INDENT_AMT_TEXT);
+        i = new JMenuItem(PaConstants.PA_GUI_TL_MENU_STORE_MM_INDENT_AMT_TEXT);
+        i.addActionListener(repromptAction(
+            PaConstants.PA_GUI_SET_TL_STORE_MM_INDENT_AMT_OPTION_PROMPT,
+            tlPreferences.storeMMIndentAmt::get,
+            tlPreferences.storeMMIndentAmt::setString));
         tlMenu.add(i);
 
-        i = new JMenuItem(new AbstractAction() {
-            public void actionPerformed(final ActionEvent e) {
-                getNewTLStoreMMRightCol();
-            }
-        });
-        i.setText(PaConstants.PA_GUI_TL_MENU_STORE_MM_RIGHT_COL_TEXT);
+        i = new JMenuItem(PaConstants.PA_GUI_TL_MENU_STORE_MM_RIGHT_COL_TEXT);
+        i.addActionListener(repromptAction(
+            PaConstants.PA_GUI_SET_TL_STORE_MM_RIGHT_COL_OPTION_PROMPT,
+            tlPreferences.storeMMRightCol::get,
+            tlPreferences.storeMMRightCol::setString));
         tlMenu.add(i);
 
-        i = new JMenuItem(new AbstractAction() {
-            public void actionPerformed(final ActionEvent e) {
-                getNewTLStoreFormulasAsIs();
-            }
-        });
-        i.setText(PaConstants.PA_GUI_TL_MENU_STORE_FORMULAS_AS_IS_TEXT);
+        i = new JMenuItem(PaConstants.PA_GUI_TL_MENU_STORE_FORMULAS_AS_IS_TEXT);
+        i.addActionListener(repromptAction(
+            PaConstants.PA_GUI_SET_TL_STORE_FORMULAS_AS_IS_OPTION_PROMPT,
+            tlPreferences.storeFormulasAsIs::get,
+            tlPreferences.storeFormulasAsIs::setString));
         tlMenu.add(i);
 
         return tlMenu;
@@ -1853,7 +1803,7 @@ public class ProofAsstGUI {
             @Override
             public void actionPerformed(final ActionEvent e) {
                 if (swapAlt)
-                    proofAsstPreferences.getTMFFPreferences()
+                    proofAsstPreferences.tmffPreferences
                         .toggleAltFormatAndIndentParms();
                 super.actionPerformed(e);
             }
@@ -1870,39 +1820,6 @@ public class ProofAsstGUI {
                 displayProofWorksheet(w, false);
             }
         };
-    }
-
-    private int getNewFormatNbr(final int oldFormatNbr) {
-        int newFormatNbr = -1;
-        String s = Integer.toString(oldFormatNbr);
-
-        final String formatListString = proofAsstPreferences
-            .getTMFFPreferences().getFormatListString();
-
-        final String origPromptString = formatListString + "\n"
-            + PaConstants.PA_GUI_SET_FORMAT_NBR_PROMPT;
-
-        String promptString = origPromptString;
-
-        while (true) {
-            s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
-            if (s == null)
-                break; // cancelled input
-            s = s.trim();
-            if (s.equals("")) {
-                promptString = origPromptString;
-                continue;
-            }
-            try {
-                newFormatNbr = proofAsstPreferences.getTMFFPreferences()
-                    .validateFormatNbrString(s);
-                break;
-            } catch (final TMFFException e) {
-                promptString = origPromptString + "\n" + e.getMessage();
-            }
-        }
-
-        return newFormatNbr;
     }
 
     private int getNewIndent(final int oldIndent) {
@@ -1924,7 +1841,7 @@ public class ProofAsstGUI {
                 continue;
             }
             try {
-                newIndent = proofAsstPreferences.getTMFFPreferences()
+                newIndent = proofAsstPreferences.tmffPreferences
                     .validateIndentString(s);
                 break;
             } catch (final TMFFException e) {
@@ -1935,98 +1852,59 @@ public class ProofAsstGUI {
         return newIndent;
     }
 
-    private String getNewIncompleteStepCursorOption() {
+    public <T extends Enum<T>> ActionListener enumSettingAction(
+        final Setting<T> setting, final String list, final String prompt)
+    {
+        String origPromptString = list + "\n";
 
-        String s = proofAsstPreferences.getIncompleteStepCursorOptionNbr();
+        final T[] values = setting.getDefault().getDeclaringClass()
+            .getEnumConstants();
+        for (int i = 0; i < values.length; i++)
+            origPromptString += i + 1 + " - " + values[i] + '\n';
 
-        final String incompleteStepCursorOptionListString = proofAsstPreferences
-            .getIncompleteStepCursorOptionListString();
-
-        final String origPromptString = PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_OPTION_LIST
-            + "\n" + incompleteStepCursorOptionListString + "\n"
-            + PaConstants.PA_GUI_SET_INCOMPLETE_STEP_CURSOR_OPTION_PROMPT;
-
-        String promptString = origPromptString;
-
-        while (true) {
-            s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
-            if (s == null)
-                return s; // cancelled input
-            s = s.trim();
-            if (s.equals("")) {
-                promptString = origPromptString;
-                continue;
-            }
-            try {
-                return proofAsstPreferences
-                    .validateIncompleteStepCursorOptionNbr(s);
-            } catch (final ProofAsstException e) {
-                promptString = origPromptString + "\n" + e.getMessage();
-            }
-        }
+        origPromptString += "\n\n" + prompt;
+        return repromptAction(origPromptString,
+            () -> Arrays.asList(values).indexOf(setting.get()) + 1 + "", s -> {
+                final int n = Integer.parseInt(s) - 1;
+                return n >= 0 && n < values.length && setting.set(values[n]);
+            });
     }
 
-    private String getNewSoftDjErrorOption() {
-
-        String s = proofAsstPreferences.getDjVarsSoftErrorsOptionNbr();
-
-        final String softDjErrorOptionListString = proofAsstPreferences
-            .getSoftDjErrorOptionListString();
-
-        final String origPromptString = PaConstants.PROOF_ASST_SOFT_DJ_ERROR_OPTION_LIST
-            + "\n" + softDjErrorOptionListString + "\n"
-            + PaConstants.PA_GUI_SET_SOFT_DJ_ERROR_OPTION_PROMPT;
-
-        String promptString = origPromptString;
-
-        while (true) {
-            s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
-            if (s == null)
-                return s; // cancelled input
-            s = s.trim();
-            if (s.equals("")) {
-                promptString = origPromptString;
-                continue;
-            }
-            try {
-                return proofAsstPreferences
-                    .validateDjVarsSoftErrorsOptionNbr(s);
-            } catch (final ProofAsstException e) {
-                promptString = origPromptString + "\n" + e.getMessage();
-            }
-        }
+    public <T> ActionListener repromptAction(final String prompt,
+        final Supplier<?> initial, final Predicate<String> validator)
+    {
+        return repromptAction(() -> prompt, initial, validator);
     }
 
-    private String getNewFontFamily(final String oldFontFamily) {
+    public <T> ActionListener repromptAction(final Supplier<String> prompt,
+        final Supplier<?> initial, final Predicate<String> validator)
+    {
+        return ev -> {
+            String s = initial.get().toString();
+            final String origPromptString = prompt.get();
 
-        String s = oldFontFamily;
+            String promptString = origPromptString;
 
-        final String fontListString = proofAsstPreferences.getFontListString();
-
-        final String origPromptString = PaConstants.PROOF_ASST_FONT_FAMILY_LIST
-            + "\n" + fontListString + "\n"
-            + PaConstants.PA_GUI_SET_FONT_FAMILY_PROMPT;
-
-        String promptString = origPromptString;
-
-        while (true) {
-            s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
-            if (s == null)
-                break; // cancelled input
-            s = s.trim();
-            if (s.equals("")) {
-                promptString = origPromptString;
-                continue;
+            while (true) {
+                s = JOptionPane.showInputDialog(getMainFrame(), promptString,
+                    s);
+                if (s == null)
+                    return; // cancelled input
+                s = s.trim();
+                if (s.isEmpty()) {
+                    promptString = origPromptString;
+                    continue;
+                }
+                try {
+                    if (validator.test(s))
+                        return;
+                    promptString = origPromptString + "\n"
+                        + PaConstants.ERRMSG_INVALID_OPTION;
+                } catch (final Exception e) {
+                    promptString = origPromptString + "\n" + e.getMessage();
+                }
             }
-            try {
-                s = proofAsstPreferences.validateFontFamily(s);
-                break;
-            } catch (final ProofAsstException e) {
-                promptString = origPromptString + "\n" + e.getMessage();
-            }
-        }
-
-        return s;
+        };
     }
 
     // =============== File menu stuff ===============
@@ -2202,59 +2080,6 @@ public class ProofAsstGUI {
     // | Unify menu stuff |
     // ------------------------------------------------------
 
-    private boolean getNewShowSubstitutions() {
-
-        String s = Boolean
-            .toString(proofAsstPreferences.getStepSelectorShowSubstitutions());
-
-        final String origPromptString = PaConstants.PA_GUI_SET_SHOW_SUBST_OPTION_PROMPT;
-
-        String promptString = origPromptString;
-
-        while (true) {
-            s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
-            if (s == null)
-                return proofAsstPreferences.getStepSelectorShowSubstitutions();
-            s = s.trim();
-            if (s.equals("")) {
-                promptString = origPromptString;
-                continue;
-            }
-            try {
-                return proofAsstPreferences
-                    .validateStepSelectorShowSubstitutions(s);
-            } catch (final IllegalArgumentException e) {
-                promptString = origPromptString + "\n" + e.getMessage();
-            }
-        }
-    }
-
-    private int getNewMaxResults() {
-
-        String s = Integer
-            .toString(proofAsstPreferences.getStepSelectorMaxResults());
-
-        final String origPromptString = PaConstants.PA_GUI_SET_MAX_RESULTS_OPTION_PROMPT;
-
-        String promptString = origPromptString;
-
-        while (true) {
-            s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
-            if (s == null)
-                return -1; // cancelled input
-            s = s.trim();
-            if (s.equals("")) {
-                promptString = origPromptString;
-                continue;
-            }
-            try {
-                return proofAsstPreferences.validateStepSelectorMaxResults(s);
-            } catch (final IllegalArgumentException e) {
-                promptString = origPromptString + "\n" + e.getMessage();
-            }
-        }
-    }
-
     public Request unificationAction(final boolean renumReq,
         final boolean noConvertWV, final PreprocessRequest preprocessRequest,
         final StepRequest stepRequest, final TLRequest tlRequest)
@@ -2341,7 +2166,7 @@ public class ProofAsstGUI {
 
     public MMTFolder getNewMMTFolder() {
         String title = "";
-        File file = tlPreferences.getMMTFolder().getFolderFile();
+        File file = tlPreferences.mmtFolder.get().getFolderFile();
         if (file != null)
             title = file.getAbsolutePath();
         mmtFolderChooser.setDialogTitle(title);
@@ -2362,147 +2187,7 @@ public class ProofAsstGUI {
             }
             break;
         }
-        return tlPreferences.getMMTFolder();
-    }
-
-    private String getNewTLDjVarsOption() {
-        String s = tlPreferences.getDjVarsOption();
-        final String origPromptString = PaConstants.PA_GUI_SET_TL_DJ_VARS_OPTION_PROMPT;
-        String promptString = origPromptString;
-
-        while (true) {
-            s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
-            if (s == null)
-                return tlPreferences.getDjVarsOption();
-            s = s.trim();
-            if (s.equals("")) {
-                promptString = origPromptString;
-                continue;
-            }
-            if (tlPreferences.setDjVarsOption(s))
-                return tlPreferences.getDjVarsOption();
-            promptString = origPromptString + "\n"
-                + TlConstants.ERRMSG_INVALID_DJ_VARS_OPTION_1 + s
-                + TlConstants.ERRMSG_INVALID_DJ_VARS_OPTION_2;
-        }
-    }
-
-    private String getNewProofCompression() {
-        String s = Integer
-            .toString(proofAsstPreferences.getProofFormatNumber());
-        final String origPromptString = PaConstants.PROOF_ASST_COMPRESSION_LIST;
-        String promptString = origPromptString;
-
-        while (true) {
-            s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
-            if (s == null)
-                return s; // cancelled input
-            s = s.trim();
-            if (s.equals("")) {
-                promptString = origPromptString;
-                continue;
-            }
-            if (s.equals("1"))
-                return PaConstants.PROOF_ASST_PROOF_NORMAL;
-            if (s.equals("2"))
-                return PaConstants.PROOF_ASST_PROOF_PACKED;
-            if (s.equals("3"))
-                return PaConstants.PROOF_ASST_PROOF_COMPRESSED;
-            promptString = origPromptString + "\n"
-                + "Not a valid option; try again";
-        }
-    }
-
-    private int getNewTLStoreMMIndentAmt() {
-        String s = Integer.toString(tlPreferences.getStoreMMIndentAmt());
-        final String origPromptString = PaConstants.PA_GUI_SET_TL_STORE_MM_INDENT_AMT_OPTION_PROMPT;
-        String promptString = origPromptString;
-
-        while (true) {
-            s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
-            if (s == null)
-                return tlPreferences.getStoreMMIndentAmt();
-            s = s.trim();
-            if (s.equals("")) {
-                promptString = origPromptString;
-                continue;
-            }
-            if (tlPreferences.setStoreMMIndentAmt(s))
-                return tlPreferences.getStoreMMIndentAmt();
-            promptString = origPromptString + "\n"
-                + TlConstants.ERRMSG_INVALID_STORE_MM_INDENT_AMT_1 + s
-                + TlConstants.ERRMSG_INVALID_STORE_MM_INDENT_AMT_2;
-        }
-    }
-
-    private int getNewTLStoreMMRightCol() {
-        String s = Integer.toString(tlPreferences.getStoreMMRightCol());
-        final String origPromptString = PaConstants.PA_GUI_SET_TL_STORE_MM_RIGHT_COL_OPTION_PROMPT;
-        String promptString = origPromptString;
-
-        while (true) {
-            s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
-            if (s == null)
-                return tlPreferences.getStoreMMRightCol();
-            s = s.trim();
-            if (s.equals("")) {
-                promptString = origPromptString;
-                continue;
-            }
-            if (tlPreferences.setStoreMMRightCol(s))
-                return tlPreferences.getStoreMMRightCol();
-            promptString = origPromptString + "\n"
-                + TlConstants.ERRMSG_INVALID_STORE_MM_RIGHT_COL_1 + s
-                + TlConstants.ERRMSG_INVALID_STORE_MM_RIGHT_COL_2;
-        }
-    }
-
-    private boolean getNewTLStoreFormulasAsIs() {
-        String s = Boolean.toString(tlPreferences.getStoreFormulasAsIs());
-        final String origPromptString = PaConstants.PA_GUI_SET_TL_STORE_FORMULAS_AS_IS_OPTION_PROMPT;
-        String promptString = origPromptString;
-
-        while (true) {
-            s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
-            if (s == null)
-                return tlPreferences.getStoreFormulasAsIs();
-            s = s.trim();
-            if (s.equals("")) {
-                promptString = origPromptString;
-                continue;
-            }
-            if (tlPreferences.setStoreFormulasAsIs(s))
-                return tlPreferences.getStoreFormulasAsIs();
-            promptString = origPromptString + "\n"
-                + TlConstants.ERRMSG_INVALID_STORE_FORMULAS_ASIS_1 + s
-                + TlConstants.ERRMSG_INVALID_STORE_FORMULAS_ASIS_2;
-        }
-    }
-
-    private boolean getNewTLAuditMessages() {
-
-        String s = Boolean.toString(tlPreferences.getAuditMessages());
-
-        final String origPromptString = PaConstants.PA_GUI_SET_TL_AUDIT_MESSAGES_OPTION_PROMPT;
-
-        String promptString = origPromptString;
-
-        while (true) {
-            s = JOptionPane.showInputDialog(getMainFrame(), promptString, s);
-            if (s == null)
-                return tlPreferences.getAuditMessages();
-            s = s.trim();
-            if (s.equals("")) {
-                promptString = origPromptString;
-                continue;
-            }
-            if (tlPreferences.setAuditMessages(s))
-                return tlPreferences.getAuditMessages();
-            promptString = origPromptString + "\n"
-                + TlConstants.ERRMSG_INVALID_AUDIT_MESSAGES_1 + s
-                + TlConstants.ERRMSG_INVALID_AUDIT_MESSAGES_2;
-
-        }
+        return tlPreferences.mmtFolder.get();
     }
 
     // ------------------------------------------------------
@@ -2741,7 +2426,7 @@ public class ProofAsstGUI {
      * Show the GUI's main frame (screen).
      */
     public void showMainFrame() {
-        showFrame(getMainFrame(), proofAsstPreferences.getMaximized());
+        showFrame(getMainFrame(), proofAsstPreferences.maximized.get());
     }
 
     private void showFrame(final JFrame jFrame, final boolean maximize) {

@@ -39,7 +39,7 @@ public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
      * obtained from the MMTFolder.
      * <p>
      * Validation of the input theorems is performed.
-     * 
+     *
      * @param fileArray array of Files designating MMTTheoremFiles to be loaded
      *            into the MMTTheoremSet.
      * @param logicalSystem LogicalSystem object.
@@ -82,7 +82,7 @@ public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
      * Constructs the MMTTheoremSet using a single input MMTTheoremFile.
      * <p>
      * Validation of the input theorem is performed.
-     * 
+     *
      * @param mmtTheoremFile MMTTheoremFile to be loaded into the MMTTheoremSet.
      * @param logicalSystem LogicalSystem object.
      * @param messages Messages object.
@@ -118,7 +118,7 @@ public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
      * <p>
      * Note: this method is called by mmj.lang.BookManager.java during
      * "commit()" processing at the end of the TheoremLoader load process.
-     * 
+     *
      * @param comparator Comparator for TheoremStmtGroup.
      * @return List of added TheoremStmtGroup objects sorted using the input
      *         Comparator.
@@ -145,7 +145,7 @@ public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
      * <p>
      * Note: this method is called by mmj.pa.ProofAsst.java during "commit()"
      * processing at the end of the TheoremLoader load process.
-     * 
+     *
      * @param comparator Comparator for mmj.lang.Assrt.
      * @return List of added Theorem objects sorted using the input Comparator.
      */
@@ -169,7 +169,7 @@ public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
      * <p>
      * Note: this is used in LogicalSystem and SeqAssigner during rollback()
      * processing (fyi).
-     * 
+     *
      * @return Iterator over TheoremStmtGroup objects contained in the
      *         MMTTheoremSet theoremStmtGroupTbl.
      */
@@ -188,7 +188,7 @@ public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
      * logicalSystem.theoremLoaderCommit() is called to finalize the updates.
      * <p>
      * FYI, this is called by TheoremLoader.
-     * 
+     *
      * @throws TheoremLoaderException if any errors are encountered during the
      *             update process.
      * @throws IllegalArgumentException if either rollback or commit of the
@@ -228,14 +228,14 @@ public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
         catch (final TheoremLoaderException e) {
             final String s = buildUpdateFailureMsg(e.getMessage());
             logicalSystem.theoremLoaderRollback(this, s, messages,
-                tlPreferences.getAuditMessages());
+                tlPreferences.auditMessages.get());
             throw new TheoremLoaderException(s);
         }
 
         catch (final LangException e) {
             final String s = buildUpdateFailureMsg(e.getMessage());
             logicalSystem.theoremLoaderRollback(this, s, messages,
-                tlPreferences.getAuditMessages());
+                tlPreferences.auditMessages.get());
             throw new TheoremLoaderException(s);
 
         }
@@ -250,7 +250,8 @@ public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
         return TlConstants.ERRMSG_UPDATE_FAILURE_1 + e;
     }
 
-    private Map<String, TheoremStmtGroup> buildTheoremStmtGroupTbl(final int n)
+    private Map<String, TheoremStmtGroup> buildTheoremStmtGroupTbl(
+        final int n)
     {
         return new HashMap<String, TheoremStmtGroup>(n * 4 / 3 + 2);
     }
@@ -259,8 +260,8 @@ public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
         throws TheoremLoaderException
     {
 
-        final TheoremStmtGroup dupTheoremStmtGroup = theoremStmtGroupTbl.put(
-            t.getTheoremLabel(), t);
+        final TheoremStmtGroup dupTheoremStmtGroup = theoremStmtGroupTbl
+            .put(t.getTheoremLabel(), t);
 
         if (dupTheoremStmtGroup != null)
             throw new TheoremLoaderException(
@@ -279,7 +280,8 @@ public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
     }
 
     private void generateCyclicRefException(
-        final List<TheoremStmtGroup> waitingList) throws TheoremLoaderException
+        final List<TheoremStmtGroup> waitingList)
+            throws TheoremLoaderException
     {
 
         final StringBuilder sb = new StringBuilder(

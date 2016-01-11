@@ -62,7 +62,7 @@ public class StepSelectorSearch {
 
     /**
      * Constructor for StepSelectorSearch
-     * 
+     *
      * @param proofAsstPreferences the ProofAsstPreferences object
      * @param verifyProofs the VerifyProofs object
      * @param provableLogicStmtTyp a Provable Logic Stmt Type Code
@@ -87,7 +87,7 @@ public class StepSelectorSearch {
 //            Assrt.NBR_LOG_HYP_SEQ);
 
         final int listSize = unifySearchList.size()
-            * (100 + proofAsstPreferences.getAssrtListFreespace()) / 100;
+            * (100 + proofAsstPreferences.assrtListFreespace.get()) / 100;
         assrtAList = new ArrayList<Assrt>(listSize);
 
         assrtAList.addAll(unifySearchList);
@@ -114,7 +114,7 @@ public class StepSelectorSearch {
      * <p>
      * Always returns at least one StepSelectorResult item, "***END***" with
      * Assrt = null (or n items + "***MORE***").
-     * 
+     *
      * @param derivStep DerivationStep from ProofWorksheet
      * @return StepSelectorResults containing unifying assertions and
      *         corresponding formulas.
@@ -196,8 +196,7 @@ public class StepSelectorSearch {
                         }
                 }
                 else if (hypIndex < // 95% of Assrts
-                PaConstants.STEP_SELECTOR_SEARCH_HYP_LOOKUP_MAX)
-                {
+                PaConstants.STEP_SELECTOR_SEARCH_HYP_LOOKUP_MAX) {
                     hypIndex++; // so skip forward
                     assrtIndex = computeSearchStart(hypIndex);
                     continue hypLoop;
@@ -207,7 +206,8 @@ public class StepSelectorSearch {
             break;
         }
 
-        return store.createStepSelectorResults(derivStep.getStep(), storeOverflow);
+        return store.createStepSelectorResults(derivStep.getStep(),
+            storeOverflow);
     }
 
     public List<Assrt> getSortedAssrtSearchList() {
@@ -220,7 +220,7 @@ public class StepSelectorSearch {
      * <p>
      * Assumes that assrtArray is not empty and that it is sorted by
      * Assrt.NBR_LOG_HYP_SEQ.
-     * 
+     *
      * @param nbrHyps number of hypotheses on derivation step.
      * @return if not found, then return Integer.MAX_VALUE, otherwise the index
      *         of the first assertion with number of LogHyps >= input nbrHyps.
@@ -306,17 +306,17 @@ public class StepSelectorSearch {
         int cntLines = 0;
 
         Formula conclusionFormula;
-        if (proofAsstPreferences.getStepSelectorShowSubstitutions())
-            conclusionFormula = buildStepSelectionSubstFormula(assrt
-                .getExprParseTree());
+        if (proofAsstPreferences.stepSelectorShowSubstitutions.get())
+            conclusionFormula = buildStepSelectionSubstFormula(
+                assrt.getExprParseTree());
         else
             conclusionFormula = assrt.getFormula();
 
         final Formula[] logHypFormula = new Formula[assrtNbrLogHyps];
         for (int i = 0; i < assrtNbrLogHyps; i++)
-            if (proofAsstPreferences.getStepSelectorShowSubstitutions())
-                logHypFormula[i] = buildStepSelectionSubstFormula(assrtLogHypArray[i]
-                    .getExprParseTree());
+            if (proofAsstPreferences.stepSelectorShowSubstitutions.get())
+                logHypFormula[i] = buildStepSelectionSubstFormula(
+                    assrtLogHypArray[i].getExprParseTree());
             else
                 logHypFormula[i] = assrtLogHypArray[i].getFormula();
 
@@ -358,15 +358,16 @@ public class StepSelectorSearch {
         return store.add(assrt, lineArray);
     }
 
-    private Formula buildStepSelectionSubstFormula(final ParseTree inParseTree)
+    private Formula buildStepSelectionSubstFormula(
+        final ParseTree inParseTree)
     {
 
-        final ParseTree outParseTree = inParseTree.deepCloneApplyingAssrtSubst(
-            assrtHypArray, assrtSubst);
+        final ParseTree outParseTree = inParseTree
+            .deepCloneApplyingAssrtSubst(assrtHypArray, assrtSubst);
 
         final Formula outFormula = verifyProofs.convertRPNToFormula(
-            outParseTree.convertToRPN(), PaConstants.DOT_STEP_CAPTION
-                + derivStep.getStep());
+            outParseTree.convertToRPN(),
+            PaConstants.DOT_STEP_CAPTION + derivStep.getStep());
 
         outFormula.setTyp(provableLogicStmtTyp);
 

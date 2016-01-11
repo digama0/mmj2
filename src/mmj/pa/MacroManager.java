@@ -35,12 +35,14 @@ import mmj.util.UtilConstants;
  * Assistant -- and nowhere else.
  */
 public class MacroManager {
+    private static String PFX = "Macro.";
 
-    private File macroFolder;
-    private String macroExtension;
+    public Setting<File> macroFolder;
+    public Setting<String> macroLanguage;
+    public Setting<String> macroExtension;
     private ScriptEngineFactory factory;
     private ScriptEngine engine;
-    private File prepMacro;
+    public Setting<File> prepMacro;
     private final BatchFramework batchFramework;
     private final Map<CallbackType, Runnable> callbacks;
 
@@ -52,61 +54,41 @@ public class MacroManager {
     public MacroManager(final BatchFramework batchFramework) {
         this.batchFramework = batchFramework;
         callbacks = new HashMap<CallbackType, Runnable>();
-    }
 
-    /**
-     * Gets the folder in which to find macros.
-     * 
-     * @return
-     * @return the folder
-     */
-    public File getMacroFolder() {
-        return macroFolder;
-    }
+        final SessionStore store = batchFramework.proofAsstBoss.getStore();
+        macroFolder = store.addFileSetting(PFX + "folder", "macros");
+        macroFolder.addListener((o, value) -> value != null);
+        prepMacro = store.addFileSetting(PFX + "prepMacro",
+            UtilConstants.RUNPARM_OPTION_PREP_MACRO, macroFolder::get, a -> {
+                try {
+                    return getMacroFile(a);
+                } catch (final FileNotFoundException e) {
+                    return null;
+                }
+            });
+        macroLanguage = store.addSetting(PFX + "language",
+            UtilConstants.RUNPARM_OPTION_MACRO_LANGUAGE);
+        macroLanguage.addListener((o, language) -> {
+            String errMsg = LangException.format(
+                UtilConstants.ERRMSG_MACRO_LANGUAGE_MISSING_1, language);
 
-    /**
-     * Sets the folder in which to find macros.
-     *
-     * @param folder the folder
-     */
-    public void setMacroFolder(final File folder) {
-        macroFolder = folder;
-    }
-
-    public void setMacroLanguage(final String language,
-        final String extension)
-    {
-        setMacroLanguage(language, extension, LangException
-            .format(UtilConstants.ERRMSG_MACRO_LANGUAGE_MISSING_1, language));
-    }
-
-    private void setMacroLanguage(final String language, final String extension,
-        String errMsg)
-    {
-        final List<ScriptEngineFactory> engineFactories = new ScriptEngineManager()
-            .getEngineFactories();
-        for (final ScriptEngineFactory f : engineFactories) {
-            final List<String> names = f.getNames();
-            if (names.contains(language)) {
-                factory = f;
-                macroExtension = extension;
-                return;
+            final List<ScriptEngineFactory> engineFactories = new ScriptEngineManager()
+                .getEngineFactories();
+            for (final ScriptEngineFactory f : engineFactories) {
+                final List<String> names = f.getNames();
+                if (names.contains(language)) {
+                    factory = f;
+                    return true;
+                }
+                errMsg += LangException.format(
+                    UtilConstants.ERRMSG_MACRO_LANGUAGE_MISSING_2,
+                    f.getEngineName(), names);
             }
-            errMsg += LangException.format(
-                UtilConstants.ERRMSG_MACRO_LANGUAGE_MISSING_2,
-                f.getEngineName(), names);
-        }
-        throw new IllegalArgumentException(errMsg);
-    }
+            throw new IllegalArgumentException(errMsg);
+        });
+        macroExtension = store.addSetting(PFX + "extension",
+            UtilConstants.RUNPARM_OPTION_MACRO_EXTENSION);
 
-    /**
-     * Set a hook before RunMacro invocations.
-     *
-     * @param prep The macro to run before every call to RunMacro
-     * @throws FileNotFoundException if the macro could not be found
-     */
-    public void setPrepMacro(final String prep) throws FileNotFoundException {
-        prepMacro = getMacroFile(prep);
     }
 
     /**
@@ -144,13 +126,9 @@ public class MacroManager {
         try {
             set("executionMode", mode);
             set("args", args);
-            if (prepMacro == null)
-                try {
-                    prepMacro = getMacroFile(
-                        UtilConstants.RUNPARM_OPTION_PREP_MACRO);
-                } catch (final FileNotFoundException e) {}
-            if (prepMacro != null)
-                engine.eval(new FileReader(prepMacro));
+            final File prep = prepMacro.get();
+            if (prep != null)
+                engine.eval(new FileReader(prep));
             runMacroRaw(args[0]);
         } catch (final ScriptException e) {
             e.printStackTrace();
@@ -241,12 +219,6 @@ public class MacroManager {
 
     public ScriptEngine getEngine(final String initMacro) {
         if (engine == null) {
-            if (factory == null)
-                setMacroLanguage(UtilConstants.RUNPARM_OPTION_MACRO_LANGUAGE,
-                    UtilConstants.RUNPARM_OPTION_MACRO_EXTENSION,
-                    LangException.format(
-                        UtilConstants.ERRMSG_MACRO_LANGUAGE_DEFAULT_MISSING_1,
-                        UtilConstants.RUNPARM_OPTION_MACRO_LANGUAGE));
             engine = factory.getScriptEngine();
             try {
                 set("batchFramework", batchFramework);
@@ -261,16 +233,14 @@ public class MacroManager {
     }
 
     private File getMacroFile(String fileNameIn) throws FileNotFoundException {
-        final File filePath = macroFolder == null
-            ? batchFramework.paths.getMMJ2Path() : macroFolder;
-        if (macroExtension != null && !macroExtension.isEmpty()) {
+        if (!macroExtension.get().isEmpty()) {
             final int index = fileNameIn.lastIndexOf('.');
             if (index == -1)
-                fileNameIn = fileNameIn + "." + macroExtension;
+                fileNameIn = fileNameIn + "." + macroExtension.get();
         }
         File f = new File(fileNameIn);
-        if (filePath != null && !f.isAbsolute())
-            f = new File(filePath, fileNameIn);
+        if (!f.isAbsolute())
+            f = new File(macroFolder.get(), fileNameIn);
         if (!f.exists())
             throw new FileNotFoundException(fileNameIn);
         return f;

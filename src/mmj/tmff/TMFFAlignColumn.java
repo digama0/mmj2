@@ -21,7 +21,10 @@
 
 package mmj.tmff;
 
+import org.json.JSONArray;
+
 import mmj.lang.*;
+import mmj.tmff.TMFFConstants.AlignType;
 
 /**
  * TMFFAlignColumn aligns portions of a sub-expression into a single column when
@@ -71,8 +74,8 @@ import mmj.lang.*;
 public class TMFFAlignColumn extends TMFFMethod {
 
     protected int alignAtNbr;
-    protected int alignAtValue;
-    protected int alignByValue;
+    protected AlignType alignAtValue;
+    protected AlignType alignByValue;
 
     /**
      * Helper to calculate the arbitrary code number signifying Cnst or Var
@@ -82,33 +85,33 @@ public class TMFFAlignColumn extends TMFFMethod {
      * @return TMFFConstants.ALIGN_CNST if the input Sym is a Cnst, else,
      *         TMFFConstants.ALIGN_VAR.
      */
-    public static int getAlignTypeValue(final Sym sym) {
-        if (sym instanceof Cnst)
-            return TMFFConstants.ALIGN_CNST;
-        else
-            return TMFFConstants.ALIGN_VAR;
+    public static AlignType getAlignTypeValue(final Sym sym) {
+        return sym instanceof Cnst ? AlignType.Cnst : AlignType.Var;
+    }
+
+    private static AlignType validateAlignType(final String value,
+        final String var)
+    {
+        if (value != null)
+            try {
+                return AlignType.valueOf(value);
+            } catch (final IllegalArgumentException e) {
+                throw new IllegalArgumentException(LangException
+                    .format(TMFFConstants.ERRMSG_BAD_BY_VALUE, var, value));
+            }
+        throw new IllegalArgumentException(
+            LangException.format(TMFFConstants.ERRMSG_MISSING_BY_VALUE, var));
     }
 
     /**
-     * Validates an alignment type string and converts it into the numeric
-     * equivalent used internally by the program (sym = 1, etc.)
+     * Validates an alignment type string and converts it into the enum
+     * equivalent used internally by the program
      *
      * @param byValue string: sym, var, cnst, etc.
      * @return numeric equivalent to byValue string (see TMFFConstants.ALIGN_*).
      */
-    public static int validateByValue(final String byValue) {
-        if (byValue != null) {
-
-            for (int i = 0; i < TMFFConstants.ALIGN_TYPE.length; i++)
-                if (TMFFConstants.ALIGN_TYPE[i].equalsIgnoreCase(byValue))
-                    return ++i;
-
-            throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_BAD_BY_VALUE_1 + byValue
-                    + TMFFConstants.ERRMSG_BAD_BY_VALUE_2);
-        }
-        throw new IllegalArgumentException(
-            TMFFConstants.ERRMSG_MISSING_BY_VALUE_1);
+    public static AlignType validateByValue(final String byValue) {
+        return validateAlignType(byValue, TMFFConstants.TMFF_BY_VALUE);
     }
 
     /**
@@ -118,19 +121,8 @@ public class TMFFAlignColumn extends TMFFMethod {
      * @param atValue string: sym, var, cnst, etc.
      * @return numeric equivalent to byValue string (see TMFFConstants.ALIGN_*).
      */
-    public static int validateAtValue(final String atValue) {
-        if (atValue != null) {
-
-            for (int i = 0; i < TMFFConstants.ALIGN_TYPE.length; i++)
-                if (TMFFConstants.ALIGN_TYPE[i].equalsIgnoreCase(atValue))
-                    return ++i;
-
-            throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_BAD_AT_VALUE_1 + atValue
-                    + TMFFConstants.ERRMSG_BAD_AT_VALUE_2);
-        }
-        throw new IllegalArgumentException(
-            TMFFConstants.ERRMSG_MISSING_AT_VALUE_1);
+    public static AlignType validateAtValue(final String atValue) {
+        return validateAlignType(atValue, TMFFConstants.TMFF_AT_VALUE);
     }
 
     /**
@@ -217,11 +209,18 @@ public class TMFFAlignColumn extends TMFFMethod {
     {
         super(maxDepthString);
 
-        alignByValue = TMFFAlignColumn.validateByValue(byValueString);
+        alignByValue = validateByValue(byValueString);
 
-        alignAtNbr = TMFFAlignColumn.validateAtNbr(atNbrString);
+        alignAtNbr = validateAtNbr(atNbrString);
 
-        alignAtValue = TMFFAlignColumn.validateAtValue(atValueString);
+        alignAtValue = validateAtValue(atValueString);
+    }
+
+    @Override
+    public JSONArray asArray() {
+        return new JSONArray(TMFFConstants.TMFF_METHOD_USER_NAME_ALIGN_COLUMN,
+            maxDepth, alignByValue.toString(), alignAtNbr,
+            alignAtValue.toString());
     }
 
     /**
@@ -244,7 +243,7 @@ public class TMFFAlignColumn extends TMFFMethod {
         final ParseNode currNode, final int leftmostColNbr)
     {
 
-        int symAlignType = 0;
+        AlignType symAlignType = null;
         int alignTypeCnt = 0;
 
         boolean align = false;
@@ -286,7 +285,7 @@ public class TMFFAlignColumn extends TMFFMethod {
             pos = tmffSP.prevColNbr + 2; // default
             if (alignPosition == -1) {
                 if (symAlignType == alignAtValue
-                    || alignAtValue == TMFFConstants.ALIGN_SYM)
+                    || alignAtValue == AlignType.Sym)
                 {
 
                     alignTypeCnt++;
@@ -298,13 +297,13 @@ public class TMFFAlignColumn extends TMFFMethod {
                 }
             }
             else if (symAlignType == alignByValue
-                || alignByValue == TMFFConstants.ALIGN_SYM)
+                || alignByValue == AlignType.Sym)
             {
                 align = true;
                 pos = alignPosition;
             }
 
-            if (symAlignType == TMFFConstants.ALIGN_CNST) {
+            if (symAlignType == AlignType.Cnst) {
 
                 token = formulaSymArray[symI].getId();
 

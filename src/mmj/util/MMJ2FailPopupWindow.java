@@ -136,8 +136,8 @@ public class MMJ2FailPopupWindow {
      */
     public void accumStartupErrors() {
         startupErrors = null;
-        if (!enabled || !startupMode || UtilConstants.RUNPARM_VERIFY_PROOF
-            .name().equalsIgnoreCase(batchFramework.currentRunParmCommand))
+        if (!enabled || !startupMode
+            || batchFramework.currentRunParmCommand == UtilConstants.RUNPARM_VERIFY_PROOF)
             return;
 
         final Messages messages = batchFramework.outputBoss.getMessages();

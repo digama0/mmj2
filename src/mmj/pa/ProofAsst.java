@@ -81,6 +81,7 @@ import mmj.lang.*;
 import mmj.lang.ParseTree.RPNStep;
 import mmj.mmio.MMIOError;
 import mmj.pa.MacroManager.CallbackType;
+import mmj.pa.PaConstants.ProofFormat;
 import mmj.tl.*;
 import mmj.transforms.TransformationManager;
 import mmj.util.OutputBoss;
@@ -703,21 +704,16 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * This is a simulation routine for testing purposes.
      *
      * @param messages Messages object for output messages.
-     * @param selectorAll true if process all theorems, false or null, ignore
-     *            param.
-     * @param selectorCount use if not null to restrict the number of theorems
-     *            present.
-     * @param selectorTheorem just process one theorem, ignore selectorCount and
-     *            selectorAll.
+     * @param selectorCount use to restrict the number of theorems present.
+     * @param selectorTheorem just process one theorem, ignore selectorCount.
      * @param outputBoss mmj.util.OutputBoss object, if not null means, please
      *            print the proof test.
      * @param asciiRetest instructs program to re-unify the output Proof
      *            Worksheet text after unification.
      */
     public void importFromMemoryAndUnify(final Messages messages,
-        final Boolean selectorAll, final Integer selectorCount,
-        final Theorem selectorTheorem, final OutputBoss outputBoss,
-        final boolean asciiRetest)
+        final int selectorCount, final Theorem selectorTheorem,
+        final OutputBoss outputBoss, final boolean asciiRetest)
     {
         this.messages = messages;
 
@@ -725,8 +721,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             importFromMemoryAndUnifyOneTheorem(selectorTheorem, outputBoss,
                 asciiRetest);
         else
-            importFromMemoryAndUnifyManyTheorems(selectorAll, selectorCount,
-                outputBoss, asciiRetest);
+            importFromMemoryAndUnifyManyTheorems(selectorCount, outputBoss,
+                asciiRetest);
     }
 
     /**
@@ -746,20 +742,20 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     {
         assert selectorTheorem != null;
 
-        final boolean unifiedFormat = proofAsstPreferences
-            .getExportFormatUnified();
-        final HypsOrder hypsOrder = proofAsstPreferences.getExportHypsOrder();
-        final boolean deriveFormulas = proofAsstPreferences
-            .getExportDeriveFormulas();
-        final boolean verifierRecheck = proofAsstPreferences
-            .getRecheckProofAsstUsingProofVerifier();
+        final boolean unifiedFormat = proofAsstPreferences.exportFormatUnified
+            .get();
+        final HypsOrder hypsOrder = proofAsstPreferences.exportHypsOrder.get();
+        final boolean deriveFormulas = proofAsstPreferences.exportDeriveFormulas
+            .get();
+        final boolean verifierRecheck = proofAsstPreferences.recheckProofAsstUsingProofVerifier
+            .get();
 
         final String proofText = exportOneTheorem(null, // to memory not writer
             selectorTheorem, unifiedFormat, hypsOrder, deriveFormulas);
         if (proofText != null) {
             if (asciiRetest)
-                proofAsstPreferences
-                    .setRecheckProofAsstUsingProofVerifier(false);
+                proofAsstPreferences.recheckProofAsstUsingProofVerifier
+                    .set(false);
 
             final StopWatch testStopWatch = new StopWatch(true);
             final ProofWorksheet proofWorksheet = unify(false, // no renum
@@ -772,8 +768,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             testStopWatch.stop();
 
             if (asciiRetest)
-                proofAsstPreferences
-                    .setRecheckProofAsstUsingProofVerifier(verifierRecheck);
+                proofAsstPreferences.recheckProofAsstUsingProofVerifier
+                    .set(verifierRecheck);
 
             final TheoremTestResult result = new TheoremTestResult(
                 testStopWatch, proofWorksheet, selectorTheorem);
@@ -805,39 +801,29 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * <p>
      * This is a simulation routine for testing purposes.
      *
-     * @param selectorAll true if process all theorems, false or null, ignore
-     *            param.
-     * @param selectorCount use if not null to restrict the number of theorems
-     *            present.
+     * @param selectorCount use to restrict the number of theorems present.
      * @param outputBoss mmj.util.OutputBoss object, if not null means, please
      *            print the proof test.
      * @param asciiRetest instructs program to re-unify the output Proof
      *            Worksheet text after unification.
      */
-    public void importFromMemoryAndUnifyManyTheorems(final Boolean selectorAll,
-        final Integer selectorCount, final OutputBoss outputBoss,
-        final boolean asciiRetest)
+    public void importFromMemoryAndUnifyManyTheorems(final int selectorCount,
+        final OutputBoss outputBoss, final boolean asciiRetest)
     {
-        final boolean unifiedFormat = proofAsstPreferences
-            .getExportFormatUnified();
-        final HypsOrder hypsOrder = proofAsstPreferences.getExportHypsOrder();
-        final boolean deriveFormulas = proofAsstPreferences
-            .getExportDeriveFormulas();
-        final boolean verifierRecheck = proofAsstPreferences
-            .getRecheckProofAsstUsingProofVerifier();
+        final boolean unifiedFormat = proofAsstPreferences.exportFormatUnified
+            .get();
+        final HypsOrder hypsOrder = proofAsstPreferences.exportHypsOrder.get();
+        final boolean deriveFormulas = proofAsstPreferences.exportDeriveFormulas
+            .get();
+        final boolean verifierRecheck = proofAsstPreferences.recheckProofAsstUsingProofVerifier
+            .get();
 
         final VolumeTestStats stats = new VolumeTestStats();
 
         final List<Theorem> theoremList = getSortedTheoremList(0);
 
-        int numberToProcess = 0;
+        final int numberToProcess = Math.min(selectorCount, theoremList.size());
         int numberProcessed = 0;
-        if (selectorAll != null) {
-            if (selectorAll.booleanValue())
-                numberToProcess = theoremList.size();
-        }
-        else if (selectorCount != null)
-            numberToProcess = selectorCount.intValue();
 
         final boolean smallTest = numberToProcess < PaConstants.PA_TESTMSG_THEOREM_NUMBER_THRESHOLD;
 
@@ -849,6 +835,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             if (numberProcessed >= numberToProcess
                 || messages.maxErrorMessagesReached())
                 break;
+
             // This whole function is needed for debug and regression tests.
             // The biggest test is set.mm which consumes a lot of time.
             // So, I think, it will be good to watch the progress dynamically.
@@ -862,8 +849,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 unifiedFormat, hypsOrder, deriveFormulas);
             if (proofText != null) {
                 if (asciiRetest)
-                    proofAsstPreferences
-                        .setRecheckProofAsstUsingProofVerifier(false);
+                    proofAsstPreferences.recheckProofAsstUsingProofVerifier
+                        .set(false);
                 // for Volume Testing
 
                 final StopWatch testStopWatch = new StopWatch(true);
@@ -877,8 +864,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 testStopWatch.stop();
 
                 if (asciiRetest)
-                    proofAsstPreferences
-                        .setRecheckProofAsstUsingProofVerifier(verifierRecheck);
+                    proofAsstPreferences.recheckProofAsstUsingProofVerifier
+                        .set(verifierRecheck);
 
                 final TheoremTestResult result = new TheoremTestResult(
                     testStopWatch, proofWorksheet, theorem);
@@ -980,12 +967,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      *
      * @param importReader source of proofs
      * @param messages Messages object for output messages.
-     * @param selectorAll true if process all theorems, false or null, ignore
-     *            param.
-     * @param selectorCount use if not null to restrict the number of theorems
-     *            present.
-     * @param selectorTheorem just process one theorem, ignore selectorCount and
-     *            selectorAll.
+     * @param numberToProcess use to restrict the number of theorems present.
+     * @param selectorTheorem just process one theorem, ignore numberToProcess.
      * @param outputBoss mmj.util.OutputBoss object, if not null means, please
      *            print the proof test.
      * @param asciiRetest instructs program to re-unify the output Proof
@@ -993,15 +976,15 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      */
     public void importFromFileAndUnify(final Reader importReader, // already
                                                                   // open
-        final Messages messages, final Boolean selectorAll,
-        final Integer selectorCount, final Theorem selectorTheorem,
-        final OutputBoss outputBoss, final boolean asciiRetest)
+        final Messages messages, final int numberToProcess,
+        final Theorem selectorTheorem, final OutputBoss outputBoss,
+        final boolean asciiRetest)
     {
 
         this.messages = messages;
 
-        final boolean verifierRecheck = proofAsstPreferences
-            .getRecheckProofAsstUsingProofVerifier();
+        final boolean verifierRecheck = proofAsstPreferences.recheckProofAsstUsingProofVerifier
+            .get();
 
         ProofWorksheetParser proofWorksheetParser = null;
         ProofWorksheet proofWorksheet = null;
@@ -1009,15 +992,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         String theoremLabel;
 
-        int numberToProcess = 0;
         int numberProcessed = 0;
-
-        if (selectorAll != null) {
-            if (selectorAll.booleanValue())
-                numberToProcess = Integer.MAX_VALUE;
-        }
-        else if (selectorCount != null)
-            numberToProcess = selectorCount.intValue();
 
         try {
             proofWorksheetParser = new ProofWorksheetParser(importReader,
@@ -1044,15 +1019,14 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                     if (selectorTheorem.getLabel().equals(theoremLabel)) {
 
                         if (asciiRetest)
-                            proofAsstPreferences
-                                .setRecheckProofAsstUsingProofVerifier(false);
+                            proofAsstPreferences.recheckProofAsstUsingProofVerifier
+                                .set(false);
 
                         unifyProofWorksheet(proofWorksheet, false, true);
 
                         if (asciiRetest)
-                            proofAsstPreferences
-                                .setRecheckProofAsstUsingProofVerifier(
-                                    verifierRecheck);
+                            proofAsstPreferences.recheckProofAsstUsingProofVerifier
+                                .set(verifierRecheck);
 
                         updatedProofText = proofWorksheet.getOutputProofText();
 
@@ -1084,14 +1058,14 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                     break;
 
                 if (asciiRetest)
-                    proofAsstPreferences
-                        .setRecheckProofAsstUsingProofVerifier(false);
+                    proofAsstPreferences.recheckProofAsstUsingProofVerifier
+                        .set(false);
 
                 unifyProofWorksheet(proofWorksheet, false, true);
 
                 if (asciiRetest)
-                    proofAsstPreferences
-                        .setRecheckProofAsstUsingProofVerifier(verifierRecheck);
+                    proofAsstPreferences.recheckProofAsstUsingProofVerifier
+                        .set(verifierRecheck);
 
                 updatedProofText = proofWorksheet.getOutputProofText();
 
@@ -1300,28 +1274,23 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      *
      * @param exportWriter destination for output proofs.
      * @param messages Messages object for output messages.
-     * @param selectorAll true if process all theorems, false or null, ignore
-     *            param.
-     * @param selectorCount use if not null to restrict the number of theorems
-     *            present.
-     * @param selectorTheorem just process one theorem, ignore selectorCount and
-     *            selectorAll.
+     * @param numberToExport use to restrict the number of theorems present.
+     * @param selectorTheorem just process one theorem, ignore numberToExport.
      * @param outputBoss mmj.util.OutputBoss object, if not null means, please
      *            print the proof test.
      */
     public void exportToFile(final Writer exportWriter, // already open
-        final Messages messages, final Boolean selectorAll,
-        final Integer selectorCount, final Theorem selectorTheorem,
-        final OutputBoss outputBoss)
+        final Messages messages, final int numberToExport,
+        final Theorem selectorTheorem, final OutputBoss outputBoss)
     {
 
-        final boolean exportFormatUnified = proofAsstPreferences
-            .getExportFormatUnified();
+        final boolean exportFormatUnified = proofAsstPreferences.exportFormatUnified
+            .get();
 
-        final HypsOrder hypsOrder = proofAsstPreferences.getExportHypsOrder();
+        final HypsOrder hypsOrder = proofAsstPreferences.exportHypsOrder.get();
 
-        final boolean deriveFormulas = proofAsstPreferences
-            .getExportDeriveFormulas();
+        final boolean deriveFormulas = proofAsstPreferences.exportDeriveFormulas
+            .get();
 
         this.messages = messages;
 
@@ -1334,17 +1303,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             return;
         }
 
-        int numberToExport = 0;
         int numberExported = 0;
-        if (selectorAll != null) {
-            if (selectorAll.booleanValue())
-                numberToExport = Integer.MAX_VALUE;
-        }
-        else if (selectorCount != null)
-            numberToExport = selectorCount.intValue();
-
         for (final Theorem theorem : getSortedTheoremList(0)) {
-            if (numberExported < numberToExport)
+            if (numberExported >= numberToExport)
                 break;
             final String proofText = exportOneTheorem(exportWriter, theorem,
                 exportFormatUnified, hypsOrder, deriveFormulas);
@@ -1671,7 +1632,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     public String exportOneTheorem(final Theorem theorem) {
         return exportOneTheorem(null, // no export writer
             theorem, true, // exportFormatUnified
-            HypsOrder.CorrectOrder, // hypsRandomized
+            HypsOrder.Correct, // hypsRandomized
             false); // deriveFormulas
     }
 
@@ -1756,14 +1717,15 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 return;
             }
 
-            final RPNStep[] rpnProof = proofAsstPreferences
-                .getProofFormatPacked() ? proofWorksheet.getQedStepSquishedRPN()
-                    : proofWorksheet.getQedStepProofRPN();
+            final ProofFormat format = proofAsstPreferences.proofFormat.get();
+            final RPNStep[] rpnProof = format == ProofFormat.Normal
+                ? proofWorksheet.getQedStepProofRPN()
+                : proofWorksheet.getQedStepSquishedRPN();
 
             if (rpnProof == null)
                 proofUnifier.reportUnificationFailures();
             else {
-                if (proofAsstPreferences.getProofFormatCompressed()) {
+                if (format == ProofFormat.Compressed) {
                     final StringBuilder letters = new StringBuilder();
 
                     final List<Hyp> mandHypList = new ArrayList<Hyp>();
@@ -1772,9 +1734,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                         proofWorksheet.getQedStep(), mandHypList, optHypList,
                         true);
 
-                    final int width = proofWorksheet.proofAsstPreferences
-                        .getRPNProofRightCol()
-                        - proofWorksheet.getRPNProofLeftCol() + 1;
+                    final int width = proofWorksheet.proofAsstPreferences.rpnProofRightCol
+                        .get() - proofWorksheet.getRPNProofLeftCol() + 1;
                     final List<Stmt> parenList = logicalSystem
                         .getProofCompression()
                         .compress(proofWorksheet.getTheoremLabel(), width,
@@ -1785,7 +1746,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 }
                 else
                     proofWorksheet.addGeneratedProofStmt(rpnProof);
-                if (proofAsstPreferences.getDjVarsSoftErrorsGenerate()
+                if (proofAsstPreferences.djVarsSoftErrors.get().generate
                     && proofWorksheet.proofSoftDjVarsErrorList != null
                     && !proofWorksheet.proofSoftDjVarsErrorList.isEmpty())
                     proofWorksheet.generateAndAddDjVarsStmts();
@@ -1890,15 +1851,15 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     private void checkAndCompareUpdateDJs(final ProofWorksheet proofWorksheet) {
         if (proofWorksheet.getQedStepProofRPN() == null
             || proofWorksheet.newTheorem
-            || !proofAsstPreferences.getDjVarsSoftErrorsGenerate()
+            || !proofAsstPreferences.djVarsSoftErrors.get().generate
             || proofWorksheet.proofSoftDjVarsErrorList == null
             || proofWorksheet.proofSoftDjVarsErrorList.isEmpty())
             return;
 
-        if (proofAsstPreferences.getImportCompareDJs())
+        if (proofAsstPreferences.importCompareDJs.get())
             importCompareDJs(proofWorksheet);
 
-        if (proofAsstPreferences.getImportUpdateDJs())
+        if (proofAsstPreferences.importUpdateDJs.get())
             importUpdateDJs(proofWorksheet);
 
     }

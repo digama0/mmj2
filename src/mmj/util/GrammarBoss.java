@@ -33,12 +33,10 @@
 
 package mmj.util;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import static mmj.util.UtilConstants.*;
 
 import mmj.lang.*;
 import mmj.lang.ParseTree.RPNStep;
-import mmj.mmio.MMIOException;
 import mmj.verify.*;
 
 /**
@@ -75,8 +73,8 @@ public class GrammarBoss extends Boss {
 //  protected String         logicStmtTypeParm;
 //END-PATCH
 
-    protected Boolean grammarAmbiguityParm;
-    protected Boolean statementAmbiguityParm;
+    protected boolean grammarAmbiguityParm;
+    protected boolean statementAmbiguityParm;
 
     protected Class<? extends GrammaticalParser> parserPrototype;
 
@@ -87,6 +85,45 @@ public class GrammarBoss extends Boss {
      */
     public GrammarBoss(final BatchFramework batchFramework) {
         super(batchFramework);
+
+        grammarAmbiguityParm = GrammarConstants.DEFAULT_COMPLETE_GRAMMAR_AMBIG_EDITS;
+        statementAmbiguityParm = GrammarConstants.DEFAULT_COMPLETE_STATEMENT_AMBIG_EDITS;
+
+        putCommand(RUNPARM_CLEAR, this::clear);
+        putCommand(RUNPARM_LOAD_FILE, this::clear);
+
+//PATCH 2008-08-01: MOVE TO LogicalSystemBoss
+//        putCommand(RUNPARM_PROVABLE_LOGIC_STMT_TYPE,
+//            this::editProvableLogicStmtType);
+//        putCommand(RUNPARM_LOGIC_STMT_TYPE, this::editLogicStmtType);
+//END-PATCH 2008-08-01
+
+        putCommand(RUNPARM_GRAMMAR_AMBIGUITY_EDITS,
+            this::editGrammarAmbiguityEdits);
+
+        putCommand(RUNPARM_STATEMENT_AMBIGUITY_EDITS,
+            this::editStatementAmbiguityEdits);
+
+        putCommand(RUNPARM_SET_PARSER, this::editParser);
+
+        putCommand(RUNPARM_INITIALIZE_GRAMMAR, this::doInitializeGrammar);
+
+        putCommand(RUNPARM_PARSE, this::doParse);
+    }
+
+    private boolean clear() {
+        grammar = null;
+        grammarInitialized = false;
+        allStatementsParsedSuccessfully = false;
+//PATCH 2008-08-01 MOVED TO LogicalSystemBoss
+//          provableLogicStmtTypeParm
+//                            = null;
+//          logicStmtTypeParm = null;
+//END-PATCH 2008-08-01 MOVED TO LogicalSystemBoss
+        grammarAmbiguityParm = GrammarConstants.DEFAULT_COMPLETE_GRAMMAR_AMBIG_EDITS;
+        statementAmbiguityParm = GrammarConstants.DEFAULT_COMPLETE_STATEMENT_AMBIG_EDITS;
+        parserPrototype = GrammarConstants.DEFAULT_PARSER_PROTOTYPE;
+        return false; // not "consumed"
     }
 
     /**
@@ -105,84 +142,6 @@ public class GrammarBoss extends Boss {
      */
     public boolean getAllStatementsParsedSuccessfully() {
         return allStatementsParsedSuccessfully;
-    }
-
-    /**
-     * Executes a single command from the RunParmFile.
-     *
-     * @param runParm the RunParmFile line to execute.
-     */
-    @Override
-    public boolean doRunParmCommand(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException, MMIOException, FileNotFoundException,
-        IOException, VerifyException
-    {
-
-        if (UtilConstants.RUNPARM_CLEAR.matches(runParm)) {
-            grammar = null;
-            grammarInitialized = false;
-            allStatementsParsedSuccessfully = false;
-//PATCH 2008-08-01 MOVED TO LogicalSystemBoss
-//          provableLogicStmtTypeParm
-//                            = null;
-//          logicStmtTypeParm = null;
-//END-PATCH 2008-08-01 MOVED TO LogicalSystemBoss
-            grammarAmbiguityParm = null;
-            statementAmbiguityParm = null;
-            parserPrototype = GrammarConstants.DEFAULT_PARSER_PROTOTYPE;
-            return false; // not "consumed"
-        }
-
-        if (UtilConstants.RUNPARM_LOAD_FILE.matches(runParm)) {
-            grammar = null;
-            grammarInitialized = false;
-            allStatementsParsedSuccessfully = false;
-            grammarAmbiguityParm = null;
-            statementAmbiguityParm = null;
-            parserPrototype = GrammarConstants.DEFAULT_PARSER_PROTOTYPE;
-            return false; // not "consumed"
-        }
-
-//PATCH 2008-08-01: MOVE TO LogicalSystemBoss
-//      if (UtilConstants.RUNPARM_PROVABLE_LOGIC_STMT_TYPE.matches(runParm))
-//          == 0) {
-//          editProvableLogicStmtType(runParm);
-//          return true; // "consumed"
-//      }
-//
-//      if (UtilConstants.RUNPARM_LOGIC_STMT_TYPE.matches(runParm))
-//          == 0) {
-//          editLogicStmtType(runParm);
-//          return true; // "consumed"
-//      }
-//END-PATCH 2008-08-01
-
-        if (UtilConstants.RUNPARM_GRAMMAR_AMBIGUITY_EDITS.matches(runParm)) {
-            editGrammarAmbiguityEdits(runParm);
-            return true; // "consumed"
-        }
-
-        if (UtilConstants.RUNPARM_STATEMENT_AMBIGUITY_EDITS.matches(runParm)) {
-            editStatementAmbiguityEdits(runParm);
-            return true; // "consumed"
-        }
-
-        if (UtilConstants.RUNPARM_SET_PARSER.matches(runParm)) {
-            editParser(runParm);
-            return true; // "consumed"
-        }
-
-        if (UtilConstants.RUNPARM_INITIALIZE_GRAMMAR.matches(runParm)) {
-            doInitializeGrammar(runParm);
-            return true; // "consumed"
-        }
-
-        if (UtilConstants.RUNPARM_PARSE.matches(runParm)) {
-            doParse(runParm);
-            return true; // "consumed"
-        }
-
-        return false;
     }
 
     /**
@@ -226,67 +185,37 @@ public class GrammarBoss extends Boss {
 //          lTyp                  = new String[1];
 //          lTyp[0]               = logicStmtTypeParm;
 //      }
-
-        final String[] pTyp = new String[1];
-        pTyp[0] = logicalSystem.getProvableLogicStmtTypeParm();
-        final String[] lTyp = new String[1];
-        lTyp[0] = logicalSystem.getLogicStmtTypeParm();
-
 //END-PATCH 2008-08-01
 
-        boolean gComplete;
-        if (grammarAmbiguityParm == null)
-            gComplete = GrammarConstants.DEFAULT_COMPLETE_GRAMMAR_AMBIG_EDITS;
-        else
-            gComplete = grammarAmbiguityParm.booleanValue();
+        final String[] pTyp = new String[]{
+                logicalSystem.getProvableLogicStmtTypeParm()};
+        final String[] lTyp = new String[]{
+                logicalSystem.getLogicStmtTypeParm()};
 
-        boolean sComplete;
-        if (statementAmbiguityParm == null)
-            sComplete = GrammarConstants.DEFAULT_COMPLETE_STATEMENT_AMBIG_EDITS;
-        else
-            sComplete = statementAmbiguityParm.booleanValue();
-
-        grammar = new Grammar(pTyp, lTyp, gComplete, sComplete,
-            parserPrototype);
+        grammar = new Grammar(pTyp, lTyp, grammarAmbiguityParm,
+            statementAmbiguityParm, parserPrototype);
 
         return grammar;
     }
 
     /**
-     * Executes the InitializeGrammar command, prints any messages, etc.
-     *
-     * @param runParm RunParmFile line.
-     * @throws IllegalArgumentException if an error occurred
-     * @throws IOException if an error occurred
-     * @throws VerifyException if an error occurred
+     * Set the grammar parser by class name.
      */
     @SuppressWarnings("unchecked")
-    public void editParser(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException, IOException, VerifyException
-    {
-        editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_GRAMMAR_AMBIGUITY_EDITS.name(), 1);
+    public void editParser() {
         try {
             parserPrototype = (Class<? extends GrammaticalParser>)Class
-                .forName(runParm.values[0].trim());
+                .forName(get(1));
         } catch (final ClassNotFoundException e) {
             throw new IllegalArgumentException(LangException.format(
-                UtilConstants.ERRMSG_RUNPARM_PARSER_BAD_CLASS,
-                runParm.values[0].trim()));
+                ERRMSG_RUNPARM_PARSER_BAD_CLASS, runParm.values[0].trim()));
         }
     }
 
     /**
      * Executes the InitializeGrammar command, prints any messages, etc.
-     *
-     * @param runParm RunParmFile line.
-     * @throws IllegalArgumentException if an error occurred
-     * @throws IOException if an error occurred
-     * @throws VerifyException if an error occurred
      */
-    public void doInitializeGrammar(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException, IOException, VerifyException
-    {
+    public void doInitializeGrammar() {
         initializeGrammar();
         batchFramework.outputBoss.printAndClearMessages();
         return;
@@ -294,18 +223,8 @@ public class GrammarBoss extends Boss {
 
     /**
      * Executes the Parse command, prints any messages, etc.
-     *
-     * @param runParm RunParmFile line.
-     * @throws IllegalArgumentException if an error occurred
-     * @throws IOException if an error occurred
-     * @throws VerifyException if an error occurred
      */
-    public void doParse(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException, IOException, VerifyException
-    {
-
-        editRunParmValuesLength(runParm, UtilConstants.RUNPARM_PARSE.name(), 1);
-
+    public void doParse() {
         final LogicalSystem logicalSystem = batchFramework.logicalSystemBoss
             .getLogicalSystem();
 
@@ -322,35 +241,23 @@ public class GrammarBoss extends Boss {
             }
         }
 
-        final String optionValue = runParm.values[0].trim();
-        if (optionValue
-            .compareTo(UtilConstants.RUNPARM_OPTION_VALUE_ALL) == 0)
-        {
+        if (get(1).equals(RUNPARM_OPTION_VALUE_ALL)) {
             grammar.parseAllFormulas(messages, logicalSystem.getSymTbl(),
                 logicalSystem.getStmtTbl());
-            if (messages.getErrorMessageCnt() == 0)
-                allStatementsParsedSuccessfully = true;
-            else
-                allStatementsParsedSuccessfully = false;
+            allStatementsParsedSuccessfully = messages
+                .getErrorMessageCnt() == 0;
         }
         else {
-            final Stmt stmt = editRunParmValueStmt(optionValue,
-                UtilConstants.RUNPARM_PARSE.name(), logicalSystem);
+            final Stmt stmt = getStmt(1, logicalSystem);
 
-//          Stmt[] exprRPN    =
             final ParseTree parseTree = grammar.parseOneStmt(messages,
                 logicalSystem.getSymTbl(), logicalSystem.getStmtTbl(), stmt);
-//          if (exprRPN != null) {
             if (parseTree != null) {
                 final RPNStep[] exprRPN = parseTree.convertToRPN();
-                final StringBuilder sb = new StringBuilder();
-                sb.append(UtilConstants.ERRMSG_PARSE_RPN_1);
-                sb.append(stmt.getLabel());
-                sb.append(UtilConstants.ERRMSG_PARSE_RPN_2);
-                for (final RPNStep element : exprRPN) {
-                    sb.append(element);
-                    sb.append(" ");
-                }
+                final StringBuilder sb = new StringBuilder(
+                    String.format(ERRMSG_PARSE_RPN, stmt));
+                for (final RPNStep element : exprRPN)
+                    sb.append(element).append(" ");
                 messages.accumInfoMessage(sb.toString());
             }
             if (messages.getErrorMessageCnt() != 0)
@@ -389,7 +296,7 @@ public class GrammarBoss extends Boss {
 //          throws IllegalArgumentException {
 //      editRunParmValuesLength(
 //               runParm,
-//               UtilConstants.RUNPARM_PROVABLE_LOGIC_STMT_TYPE,
+//               RUNPARM_PROVABLE_LOGIC_STMT_TYPE,
 //               1);
 //      provableLogicStmtTypeParm
 //                            = runParm.values[0].trim();
@@ -406,7 +313,7 @@ public class GrammarBoss extends Boss {
 //          throws IllegalArgumentException {
 //      editRunParmValuesLength(
 //               runParm,
-//               UtilConstants.RUNPARM_LOGIC_STMT_TYPE,
+//               RUNPARM_LOGIC_STMT_TYPE,
 //               1);
 //      logicStmtTypeParm     = runParm.values[0].trim();
 //
@@ -415,59 +322,19 @@ public class GrammarBoss extends Boss {
 
     /**
      * Validate Grammar Ambiguity Edits Runparm.
-     *
-     * @param runParm RunParmFile line.
-     * @throws IllegalArgumentException if an error occurred
      */
-    protected void editGrammarAmbiguityEdits(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
-        editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_GRAMMAR_AMBIGUITY_EDITS.name(), 1);
-        grammarAmbiguityParm = editAmbiguityParm(runParm.values[0].trim(),
-            UtilConstants.RUNPARM_GRAMMAR_AMBIGUITY_EDITS.name());
+    protected void editGrammarAmbiguityEdits() {
+        grammarAmbiguityParm = getBoolean(1,
+            GrammarConstants.DEFAULT_COMPLETE_GRAMMAR_AMBIG_EDITS,
+            RUNPARM_OPTION_VALUE_COMPLETE, RUNPARM_OPTION_VALUE_BASIC);
     }
 
     /**
      * Validate Statement Ambiguity Edits Runparm.
-     *
-     * @param runParm RunParmFile line.
-     * @throws IllegalArgumentException if an error occurred
      */
-    protected void editStatementAmbiguityEdits(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
-        editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_STATEMENT_AMBIGUITY_EDITS.name(), 1);
-        statementAmbiguityParm = editAmbiguityParm(runParm.values[0].trim(),
-            UtilConstants.RUNPARM_STATEMENT_AMBIGUITY_EDITS.name());
-    }
-
-    /**
-     * Validate an Ambiguity Edits Runparm.
-     *
-     * @param ambiguityParm String, "basic" or "complete".
-     * @param valueCaption Caption for RunParm value.
-     * @return true signifies Complete, false signifies Basic.
-     * @throws IllegalArgumentException if an error occurred
-     */
-    protected Boolean editAmbiguityParm(final String ambiguityParm,
-        final String valueCaption) throws IllegalArgumentException
-    {
-
-        if (ambiguityParm
-            .equalsIgnoreCase(UtilConstants.RUNPARM_OPTION_VALUE_BASIC))
-            return new Boolean(false);
-        if (ambiguityParm
-            .equalsIgnoreCase(UtilConstants.RUNPARM_OPTION_VALUE_COMPLETE))
-            return new Boolean(true);
-
-        throw new IllegalArgumentException(
-            UtilConstants.ERRMSG_AMBIG_EDIT_LEVEL_INVALID_1 + valueCaption
-                + UtilConstants.ERRMSG_AMBIG_EDIT_LEVEL_INVALID_2
-                + UtilConstants.RUNPARM_OPTION_VALUE_BASIC
-                + UtilConstants.ERRMSG_AMBIG_EDIT_LEVEL_INVALID_3
-                + UtilConstants.RUNPARM_OPTION_VALUE_COMPLETE
-                + UtilConstants.ERRMSG_AMBIG_EDIT_LEVEL_INVALID_4);
+    protected void editStatementAmbiguityEdits() {
+        statementAmbiguityParm = getBoolean(1,
+            GrammarConstants.DEFAULT_COMPLETE_STATEMENT_AMBIG_EDITS,
+            RUNPARM_OPTION_VALUE_COMPLETE, RUNPARM_OPTION_VALUE_BASIC);
     }
 }

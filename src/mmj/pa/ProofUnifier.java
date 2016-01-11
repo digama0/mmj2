@@ -69,6 +69,7 @@ import java.util.Map.Entry;
 
 import mmj.lang.*;
 import mmj.pa.MacroManager.CallbackType;
+import mmj.pa.PaConstants.DjVarsSoftErrors;
 import mmj.transforms.TransformationManager;
 import mmj.verify.Grammar;
 import mmj.verify.VerifyProofs;
@@ -277,17 +278,17 @@ public class ProofUnifier {
                 unifySearchListUnsorted.add((Assrt)stmt);
 
         final int listSize = unifySearchListUnsorted.size()
-            * (100 + proofAsstPreferences.getAssrtListFreespace()) / 100;
+            * (100 + proofAsstPreferences.assrtListFreespace.get()) / 100;
         unifySearchList = new ArrayList<Assrt>(listSize);
 
         unifySearchList.addAll(unifySearchListUnsorted);
 
         Collections.sort(unifySearchList, MObj.SEQ);
 
-        final Assrt[] excl = proofAsstPreferences.getUnifySearchExclude();
-        if (excl.length > 0)
+        final Set<Assrt> excl = proofAsstPreferences.unifySearchExclude.get();
+        if (!excl.isEmpty())
             messages.accumInfoMessage(PaConstants.ERRMSG_UNIFY_SEARCH_EXCLUDE,
-                Arrays.toString(excl));
+                excl);
 
         stepSelectorSearch = new StepSelectorSearch(proofAsstPreferences,
             verifyProofs, provableLogicStmtTyp, unifySearchList);
@@ -672,7 +673,8 @@ public class ProofUnifier {
             assrt = details.assertion;
             assrtSubst = details.assrtSubst;
 
-            if (proofAsstPreferences.getDjVarsSoftErrorsReport())
+            if (proofAsstPreferences.djVarsSoftErrors
+                .get() == DjVarsSoftErrors.Report)
                 messages.accumInfoMessage(PaConstants.ERRMSG_POSSIBLE_SUBST,
                     derivStep.getStep(), assrt, details.softDjVarsErrorList);
             else
@@ -798,7 +800,8 @@ public class ProofUnifier {
             }
 
             if (derivStep.djVarsErrorStatus == PaConstants.DJ_VARS_ERROR_STATUS_HARD_ERRORS
-                || proofAsstPreferences.getDjVarsSoftErrorsReport()
+                || proofAsstPreferences.djVarsSoftErrors
+                    .get() == DjVarsSoftErrors.Report
                     && derivStep.djVarsErrorStatus == PaConstants.DJ_VARS_ERROR_STATUS_SOFT_ERRORS)
             {
 
@@ -924,7 +927,7 @@ public class ProofUnifier {
 
         derivStep.setProofTree(new ParseTree(proofRoot));
 
-        if (proofAsstPreferences.getRecheckProofAsstUsingProofVerifier())
+        if (proofAsstPreferences.recheckProofAsstUsingProofVerifier.get())
             if (!checkDerivStepProofUsingVerify()) {
                 messages.accumErrorMessage(
                     PaConstants.ERRMSG_VERIFY_RECHECK_ERR,
@@ -1961,7 +1964,8 @@ public class ProofUnifier {
                         derivStep.djVarsErrorStatus = PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS;
                     else {
                         derivStep.djVarsErrorStatus = PaConstants.DJ_VARS_ERROR_STATUS_SOFT_ERRORS;
-                        if (proofAsstPreferences.getDjVarsSoftErrorsReport())
+                        if (proofAsstPreferences.djVarsSoftErrors
+                            .get() == DjVarsSoftErrors.Report)
                             derivStep.buildSoftDjErrorMessage(
                                 holdSoftDjVarsErrorList);
                     }
@@ -2066,7 +2070,8 @@ public class ProofUnifier {
             else {
                 d.djVarsErrorStatus = PaConstants.DJ_VARS_ERROR_STATUS_SOFT_ERRORS;
 
-                if (proofAsstPreferences.getDjVarsSoftErrorsReport())
+                if (proofAsstPreferences.djVarsSoftErrors
+                    .get() == DjVarsSoftErrors.Report)
                     d.buildSoftDjErrorMessage(holdSoftDjVarsErrorList);
             }
         }
@@ -2183,8 +2188,7 @@ public class ProofUnifier {
                 + derivStep.getStep(),
             checkUnificationRef, checkUnificationAssrtSubst,
             proofWorksheet.getComboFrame(),
-            proofAsstPreferences.getDjVarsSoftErrorsIgnore(),
-            proofAsstPreferences.getDjVarsSoftErrorsGenerateNew(),
+            proofAsstPreferences.djVarsSoftErrors.get(),
             holdSoftDjVarsErrorList);
 
         if (errmsg == null)
@@ -2592,7 +2596,7 @@ public class ProofUnifier {
         newFormula.setTyp(provableLogicStmtTyp);
 
         boolean stmtTextAlreadyUpdated = false;
-        if (!proofAsstPreferences.getAutoReformat())
+        if (!proofAsstPreferences.autoReformat.get())
             stmtTextAlreadyUpdated = d
                 .updateStmtTextWithWorkVarUpdates(verifyProofs);
 

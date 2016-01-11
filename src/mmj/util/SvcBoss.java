@@ -19,8 +19,11 @@
 
 package mmj.util;
 
+import static mmj.util.UtilConstants.*;
+
 import java.io.File;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import mmj.lang.*;
 import mmj.pa.ProofAsst;
@@ -39,9 +42,7 @@ public class SvcBoss extends Boss {
     private SvcCallback svcCallback;
     private String svcCallbackClass;
     private File svcFolder;
-    private List<String> svcArgKeyList;
-    private List<String> svcArgValueList;
-    private Map<String, String> svcArgs;
+    private Map<String, String> svcArgs = new HashMap<>();
 
     /**
      * Constructor with BatchFramework for access to environment.
@@ -50,6 +51,52 @@ public class SvcBoss extends Boss {
      */
     public SvcBoss(final BatchFramework batchFramework) {
         super(batchFramework);
+
+        putCommand(RUNPARM_CLEAR, () -> {
+            // erase input parameters but NOT SvcCallback
+            // (unless derived from svcCallbackClass). SvcCallback
+            // can be passed via call from BatchMMJ2
+            // as well as via RunParm.
+            if (svcCallbackClass != null) {
+                svcCallbackClass = null;
+                svcCallback = null;
+            }
+            svcArgs = new HashMap<>();
+            return false; // not "consumed"
+        });
+
+        putCommand(RUNPARM_SVC_FOLDER, this::editSvcFolder);
+
+        putCommand(RUNPARM_SVC_CALLBACK_CLASS, this::editSvcCallbackClass);
+
+        putCommand(RUNPARM_SVC_ARG, this::editSvcArg);
+
+        putCommand(RUNPARM_SVC_CALL, this::editSvcCall);
+    }
+
+    /**
+     * Validate SvcFolder.
+     */
+    protected void editSvcFolder() {
+        svcFolder = getExistingFolder(batchFramework.paths.getSvcPath(), 1);
+    }
+
+    /**
+     * Validate SvcCallbackClass name and instantiate one of them for use later.
+     */
+    protected void editSvcCallbackClass() {
+        svcCallbackClass = get(1);
+        try {
+            svcCallback = (SvcCallback)Class.forName(svcCallbackClass)
+                .newInstance();
+        } catch (final ClassCastException e) {
+            throw error(ERRMSG_SVC_CALLBACK_CLASS_CAST_ERROR, e,
+                svcCallbackClass, e.getMessage());
+        } catch (final Exception e) {
+            throw error(ERRMSG_SVC_CALLBACK_CLASS_INIT_ERROR, e,
+                svcCallbackClass, e.getMessage());
+        }
+
     }
 
     /**
@@ -73,145 +120,18 @@ public class SvcBoss extends Boss {
     }
 
     /**
-     * Executes a single command from the RunParmFile.
-     *
-     * @param runParm the RunParmFile line to execute.
-     * @return boolean "consumed" indicating that the input runParm should not
-     *         be processed again.
-     */
-    @Override
-    public boolean doRunParmCommand(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException, VerifyException
-    {
-
-        if (UtilConstants.RUNPARM_CLEAR.matches(runParm)) {
-
-            // erase input parameters but NOT SvcCallback
-            // (unless derived from svcCallbackClass). SvcCallback
-            // can be passed via call from BatchMMJ2
-            // as well as via RunParm.
-            if (svcCallbackClass != null) {
-                svcCallbackClass = null;
-                svcCallback = null;
-            }
-            svcArgKeyList = null;
-            svcArgValueList = null;
-            svcArgs = null;
-            return false; // not "consumed"
-        }
-
-        if (UtilConstants.RUNPARM_SVC_FOLDER.matches(runParm)) {
-            editSvcFolder(runParm);
-            return true;
-        }
-
-        if (UtilConstants.RUNPARM_SVC_CALLBACK_CLASS.matches(runParm)) {
-            editSvcCallbackClass(runParm);
-            return true;
-        }
-
-        if (UtilConstants.RUNPARM_SVC_ARG.matches(runParm)) {
-            editSvcArg(runParm);
-            return true;
-        }
-
-        if (UtilConstants.RUNPARM_SVC_CALL.matches(runParm)) {
-            editSvcCall(runParm);
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Validate SvcFolder.
-     *
-     * @param runParm run parm parsed into RunParmArrayEntry object
-     * @throws VerifyException if an error occurred
-     */
-    protected void editSvcFolder(final RunParmArrayEntry runParm)
-        throws VerifyException
-    {
-
-        editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_SVC_FOLDER.name(), 1);
-
-        svcFolder = editExistingFolderRunParm(batchFramework.paths.getSvcPath(),
-            runParm, UtilConstants.RUNPARM_SVC_FOLDER.name(), 1); // field nbr
-                                                                  // of folder
-    }
-
-    /**
-     * Validate SvcCallbackClass name and instantiate one of them for use later.
-     *
-     * @param runParm run parm parsed into RunParmArrayEntry object
-     */
-    protected void editSvcCallbackClass(final RunParmArrayEntry runParm) {
-
-        editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_SVC_CALLBACK_CLASS.name(), 1);
-
-        svcCallbackClass = runParm.values[0].trim();
-        Object o;
-        try {
-            o = Class.forName(svcCallbackClass).newInstance();
-        } catch (final Throwable t) {
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_SVC_CALLBACK_CLASS_INIT_ERROR_1
-                    + svcCallbackClass
-                    + UtilConstants.ERRMSG_SVC_CALLBACK_CLASS_INIT_ERROR_2
-                    + t.getMessage());
-        }
-        try {
-            svcCallback = (SvcCallback)o;
-        } catch (final Throwable t) {
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_SVC_CALLBACK_CLASS_CAST_ERROR_1
-                    + svcCallbackClass
-                    + UtilConstants.ERRMSG_SVC_CALLBACK_CLASS_CAST_ERROR_2
-                    + t.getMessage());
-        }
-
-    }
-
-    /**
      * Validate arguments for SvcCallback.
-     *
-     * @param runParm run parm parsed into RunParmArrayEntry object
-     * @throws VerifyException if an error occurred
      */
-    protected void editSvcArg(final RunParmArrayEntry runParm)
-        throws VerifyException
-    {
-
-        editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_SVC_FOLDER.name(), 2);
-
-        if (svcArgKeyList == null) {
-            svcArgKeyList = new ArrayList<String>();
-            svcArgValueList = new ArrayList<String>();
-        }
-
-        if (runParm.values[0].length() == 0
-            || runParm.values[0].trim().length() == 0
-            || svcArgKeyList.contains(runParm.values[0]))
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_SVC_ARG_ERROR_1 + runParm.values[0]
-                    + UtilConstants.ERRMSG_SVC_ARG_ERROR_2 + runParm.values[1]);
-
-        svcArgKeyList.add(runParm.values[0]);
-        svcArgValueList.add(runParm.values[1]);
+    protected void editSvcArg() {
+        require(2);
+        if (svcArgs.put(get(1), get(2)) != null)
+            throw error(ERRMSG_SVC_ARG_ERROR, get(1), get(2));
     }
 
     /**
      * Call the designated SvcCallback object.
-     *
-     * @param runParm run parm parsed into RunParmArrayEntry object
-     * @throws VerifyException if an error occurred
      */
-    protected void editSvcCall(final RunParmArrayEntry runParm)
-        throws VerifyException
-    {
+    protected void editSvcCall() {
 
         final Messages messages = batchFramework.outputBoss.getMessages();
 
@@ -227,8 +147,7 @@ public class SvcBoss extends Boss {
 
         final ProofAsst proofAsst = batchFramework.proofAsstBoss.getProofAsst();
         if (proofAsst == null)
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_SVC_CALL_PROOF_ASST_MISSING_1);
+            throw error(ERRMSG_SVC_CALL_PROOF_ASST_MISSING);
 
         if (!proofAsst.getInitializedOK())
             proofAsst.initializeLookupTables(messages);
@@ -242,23 +161,10 @@ public class SvcBoss extends Boss {
         final TheoremLoader theoremLoader = batchFramework.theoremLoaderBoss
             .getTheoremLoader();
         if (theoremLoader == null)
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_SVC_CALL_THEOREM_LOADER_MISSING_1);
+            throw error(ERRMSG_SVC_CALL_THEOREM_LOADER_MISSING);
 
         final TlPreferences tlPreferences = batchFramework.theoremLoaderBoss
             .getTlPreferences();
-
-        if (svcArgKeyList == null) {
-            svcArgKeyList = new ArrayList<String>();
-            svcArgValueList = new ArrayList<String>();
-        }
-        int n = svcArgKeyList.size();
-        if (n < 12)
-            n = 12;
-        n = 4 * n / 3; // 75% load capacity
-        svcArgs = new HashMap<String, String>(n);
-        for (int i = 0; i < svcArgKeyList.size(); i++)
-            svcArgs.put(svcArgKeyList.get(i), svcArgValueList.get(i));
 
         svcCallback.go(messages, outputBoss, logicalSystem, verifyProofs,
             grammar, workVarManager, proofAsstPreferences, proofAsst,

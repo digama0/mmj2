@@ -13,8 +13,8 @@ import java.util.Random;
  * (mainly) loading or storing. The order is used in debug goals.
  */
 public enum HypsOrder {
-    /** Canonical correct metamath hypotheses order */
-    CorrectOrder {
+    /** Means that logical hypotheses should be left in the original order. */
+    Correct {
         @Override
         public void reorder(final String[] hypStep) {
             // do nothing!
@@ -22,8 +22,11 @@ public enum HypsOrder {
 
     },
 
-    /** Randomized metamath hypotheses order */
-    RandomizedOrder {
+    /**
+     * Means that logical hypotheses should be randomized on exported proof
+     * steps.
+     */
+    Randomized {
         @Override
         public void reorder(final String[] hypStep) {
             if (hypStep.length < 2)
@@ -40,8 +43,8 @@ public enum HypsOrder {
         }
     },
 
-    /** Reverse hypotheses order */
-    ReverseOrder {
+    /** Means that logical hypotheses should be emitted in reverse order. */
+    Reverse {
         @Override
         public void reorder(final String[] hypStep) {
             if (hypStep.length < 2)
@@ -58,8 +61,11 @@ public enum HypsOrder {
         }
     },
 
-    /** First half - in correct order, second part - in reverse order */
-    HalfReverseOrder {
+    /**
+     * Means that the first half of logical hypotheses should be emitted in
+     * canonical order, but the second part should be emitted in reverse order.
+     */
+    HalfReverse {
         @Override
         public void reorder(final String[] hypStep) {
             if (hypStep.length < 3)
@@ -79,6 +85,9 @@ public enum HypsOrder {
     },
 
     /**
+     * Means that logical hypotheses list should be empty and autocompleted by
+     * autocomplete feature.
+     * <p>
      * This is not the order, actually. The generated derivation step will not
      * have the hypotheses list - it should be autocompleted!
      */
@@ -90,7 +99,11 @@ public enum HypsOrder {
         }
     },
 
-    /** Unspecified order which should be used for performance experiments. */
+    /**
+     * Means that the logical hypotheses should be emitted in some order,
+     * depending on current debug goals. The order is not fixed and this option
+     * should be used for performance experiments.
+     */
     SomeOrder {
         @Override
         public void reorder(final String[] hypStep) {

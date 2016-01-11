@@ -67,6 +67,7 @@ import java.util.*;
 import mmj.lang.*;
 import mmj.lang.ParseTree.RPNStep;
 import mmj.pa.PaConstants;
+import mmj.pa.PaConstants.DjVarsSoftErrors;
 
 /**
  * VerifyProofs implements the proof verification process described in
@@ -394,8 +395,7 @@ public class VerifyProofs implements ProofVerifier {
      * @param derivStepRef Assertion justifying the step
      * @param derivStepAssrtSubst array of substitution subtrees
      * @param derivStepComboFrame MandFrame for step.
-     * @param djVarsSoftErrorsIgnore whether to ignore soft DjVars errors
-     * @param djVarsSoftErrorsGenerateNew whether to generate missing DjVars
+     * @param djVarsSoftErrors whether to ignore or generate missing DjVars
      *            restrictions
      * @param softDjVarsErrorList the output list of violated DjVars
      * @return String error message if error(s), or null.
@@ -404,8 +404,7 @@ public class VerifyProofs implements ProofVerifier {
         final String derivStepStmtLabel, // theorem
         final Assrt derivStepRef, final ParseNode[] derivStepAssrtSubst,
         final ScopeFrame derivStepComboFrame,
-        final boolean djVarsSoftErrorsIgnore,
-        final boolean djVarsSoftErrorsGenerateNew,
+        final DjVarsSoftErrors djVarsSoftErrors,
         final List<DjVars> softDjVarsErrorList)
     {
 
@@ -417,7 +416,7 @@ public class VerifyProofs implements ProofVerifier {
         proofStmtFrame = derivStepComboFrame;
         proofStmtOptFrame = dummyOptFrame;
 
-        proofDjVarsSoftErrorsIgnore = djVarsSoftErrorsIgnore;
+        proofDjVarsSoftErrorsIgnore = djVarsSoftErrors == DjVarsSoftErrors.Ignore;
 
         proofSoftDjVarsErrorList = softDjVarsErrorList;
 
@@ -431,7 +430,7 @@ public class VerifyProofs implements ProofVerifier {
                     errMsg = null;
                     loadDerivStepDjVarsSubst(derivStepAssrtSubst);
                     if (substCnt > 0) {
-                        if (djVarsSoftErrorsGenerateNew)
+                        if (djVarsSoftErrors == DjVarsSoftErrors.GenerateNew)
                             // do not use existing $d's
                             proofStmtFrame = dummyMandFrame;
                         checkDjVars();

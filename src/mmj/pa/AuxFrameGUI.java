@@ -63,12 +63,12 @@ public class AuxFrameGUI {
 
     /**
      * The standard constructor.
-     * 
+     *
      * @param proofAsstPreferences variable settings
      */
     public AuxFrameGUI(final ProofAsstPreferences proofAsstPreferences) {
         this.proofAsstPreferences = proofAsstPreferences;
-        frameFontSize = proofAsstPreferences.getFontSize();
+        frameFontSize = proofAsstPreferences.fontSize.get();
         frameFont = new Font(frameFontFamily, 1, frameFontSize);
     }
 
@@ -110,7 +110,7 @@ public class AuxFrameGUI {
 
     /**
      * Set word wrap on or off.
-     * 
+     *
      * @param wordWrap true or false.
      */
     public void setWrapStyleWord(final boolean wordWrap) {
@@ -122,7 +122,7 @@ public class AuxFrameGUI {
      * <p>
      * Setting the title does not update what is already displayed (though we
      * could modify this routine to make that happen, if desired.)
-     * 
+     *
      * @param frameTitle String title to show.
      */
     public void setFrameTitle(final String frameTitle) {
@@ -134,7 +134,7 @@ public class AuxFrameGUI {
      * <p>
      * Setting the text updates the JTextArea text value after invoking
      * setFrameText(frameText);
-     * 
+     *
      * @param frameText String text area to show.
      */
     public void changeFrameText(final String frameText) {
@@ -149,7 +149,7 @@ public class AuxFrameGUI {
      * <p>
      * Setting the text does not update what is already displayed (though we
      * could modify this routine to make that happen, if desired.)
-     * 
+     *
      * @param frameText String text area to show.
      */
     public void setFrameText(final String frameText) {
@@ -167,8 +167,8 @@ public class AuxFrameGUI {
         try {
             frameTextArea.setCaretPosition(0);
             final JViewport v = frameScrollPane.getViewport();
-            v.scrollRectToVisible(new Rectangle(/*x=*/0, /*y=*/0,
-            /*width=*/1, /*height=*/1));
+            v.scrollRectToVisible(
+                new Rectangle(/*x=*/0, /*y=*/0, /*width=*/1, /*height=*/1));
         } catch (final Exception e) {
             // ignore, don't care, did our best.
         }
@@ -176,7 +176,7 @@ public class AuxFrameGUI {
 
     /**
      * Get the Frame.
-     * 
+     *
      * @return JFrame frame.
      */
     public JFrame getFrame() {
@@ -185,7 +185,7 @@ public class AuxFrameGUI {
 
     /**
      * Builds the JFrame with default settings.
-     * 
+     *
      * @return the new JFrame
      */
     public JFrame buildFrame() {
@@ -209,8 +209,8 @@ public class AuxFrameGUI {
 
         final JScrollPane frameScrollPane = new JScrollPane(frameTextArea);
 
-        frameScrollPane
-            .setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        frameScrollPane.setVerticalScrollBarPolicy(
+            ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         frame.getContentPane().add(frameScrollPane);
 
@@ -230,24 +230,24 @@ public class AuxFrameGUI {
             new DefaultEditorKit.CutAction());
         cutItem.setText("Cut");
         cutItem.setMnemonic(KeyEvent.VK_T);
-        cutItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,
-            ActionEvent.CTRL_MASK));
+        cutItem.setAccelerator(
+            KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
         editMenu.add(cutItem);
 
         final JMenuItem copyItem = new JMenuItem(
             new DefaultEditorKit.CopyAction());
         copyItem.setText("Copy");
         copyItem.setMnemonic(KeyEvent.VK_C);
-        copyItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
-            ActionEvent.CTRL_MASK));
+        copyItem.setAccelerator(
+            KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK));
         editMenu.add(copyItem);
 
         final JMenuItem pasteItem = new JMenuItem(
             new DefaultEditorKit.PasteAction());
         pasteItem.setText("Paste");
         pasteItem.setMnemonic(KeyEvent.VK_P);
-        pasteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V,
-            ActionEvent.CTRL_MASK));
+        pasteItem.setAccelerator(
+            KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK));
         editMenu.add(pasteItem);
 
         final JMenuItem largerFontItem = new JMenuItem(new AbstractAction() {
@@ -256,8 +256,8 @@ public class AuxFrameGUI {
             }
         });
         largerFontItem.setText("Larger Font Size");
-        largerFontItem.setAccelerator(KeyStroke.getKeyStroke(
-            KeyEvent.VK_EQUALS, ActionEvent.CTRL_MASK));
+        largerFontItem.setAccelerator(
+            KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, ActionEvent.CTRL_MASK));
         editMenu.add(largerFontItem);
         final JMenuItem smallerFontItem = new JMenuItem(new AbstractAction() {
             public void actionPerformed(final ActionEvent e) {
@@ -265,8 +265,8 @@ public class AuxFrameGUI {
             }
         });
         smallerFontItem.setText("Smaller Font Size");
-        smallerFontItem.setAccelerator(KeyStroke.getKeyStroke(
-            KeyEvent.VK_MINUS, ActionEvent.CTRL_MASK));
+        smallerFontItem.setAccelerator(
+            KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, ActionEvent.CTRL_MASK));
         editMenu.add(smallerFontItem);
         return editMenu;
 
@@ -286,7 +286,7 @@ public class AuxFrameGUI {
          * <p>
          * We construct this thing and establish it to be displayed on the event
          * queue thread.
-         * 
+         *
          * @param showFrame is the Frame to be displayed
          */
         public FrameShower(final JFrame showFrame) {
@@ -307,7 +307,7 @@ public class AuxFrameGUI {
      * <p>
      * We construct the thing and establish it to be displayed on the event
      * queue thread using "EventQueue.invokeLater()".
-     * 
+     *
      * @param jFrame is the Frame to be displayed
      */
     public void showFrame(final JFrame jFrame) {
@@ -318,7 +318,7 @@ public class AuxFrameGUI {
 
     /**
      * main entry point for testing using defaults.
-     * 
+     *
      * @param args Command line argument String array (not used).
      */
     public static void main(final String[] args) {

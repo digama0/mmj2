@@ -21,7 +21,7 @@ public class HighlightedDocument extends DefaultStyledDocument {
         final ProofAsstPreferences prefs)
     {
         programmatic = changed = false;
-        if (prefs.getHighlightingEnabled()) {
+        if (prefs.highlightingEnabled.get()) {
             colorer = new ColorThread(this, prefs);
             reader = new DocumentReader();
             tokenizer = new WorksheetTokenizer(proofAsst, reader);
@@ -33,11 +33,11 @@ public class HighlightedDocument extends DefaultStyledDocument {
         }
 
         final UIDefaults defs = UIManager.getDefaults();
-        final Color bg = prefs.getBackgroundColor();
+        final Color bg = prefs.backgroundColor.get();
         defs.put("TextPane[Enabled].backgroundPainter", bg);
         defs.put("TextPane.background", bg);
         defs.put("TextPane.inactiveBackground", bg);
-        if (prefs.getLineWrap())
+        if (prefs.tmffPreferences.lineWrap.get())
             textPane = new JTextPane(this);
         else
             textPane = new JTextPane(this) {
@@ -49,10 +49,10 @@ public class HighlightedDocument extends DefaultStyledDocument {
             };
         textPane.putClientProperty("Nimbus.Overrides", defs);
 
-        textPane.setForeground(prefs.getForegroundColor());
-        textPane.setCaretColor(prefs.getForegroundColor());
+        textPane.setForeground(prefs.foregroundColor.get());
+        textPane.setCaretColor(prefs.foregroundColor.get());
         final SimpleAttributeSet style = new SimpleAttributeSet();
-        StyleConstants.setLineSpacing(style, prefs.getLineSpacing());
+        StyleConstants.setLineSpacing(style, prefs.lineSpacing.get());
         setParagraphAttributes(0, getLength(), style, false);
     }
 
@@ -66,7 +66,7 @@ public class HighlightedDocument extends DefaultStyledDocument {
     /**
      * Color a section of the document. The actual coloring will start somewhere
      * before the requested position and continue as long as needed.
-     * 
+     *
      * @param position the starting point for the coloring.
      * @param adjustment amount of text inserted or removed at the starting
      *            point.
@@ -168,8 +168,8 @@ public class HighlightedDocument extends DefaultStyledDocument {
                     && current.charAt(begin) == replacement.charAt(begin))
                     begin++;
                 int end = length, end2 = replacement.length();
-                while (end > begin && end2 > begin
-                    && current.charAt(end - 1) == replacement.charAt(end2 - 1))
+                while (end > begin && end2 > begin && current
+                    .charAt(end - 1) == replacement.charAt(end2 - 1))
                 {
                     end--;
                     end2--;
@@ -188,8 +188,8 @@ public class HighlightedDocument extends DefaultStyledDocument {
             }
         } catch (final BadLocationException e) {}
         if (colorer != null)
-            colorer.block(blockUntil == null ? Integer.MAX_VALUE : textPane
-                .viewToModel(blockUntil));
+            colorer.block(blockUntil == null ? Integer.MAX_VALUE
+                : textPane.viewToModel(blockUntil));
         programmatic = false;
         if (reset)
             clearChanged();
@@ -209,7 +209,7 @@ public class HighlightedDocument extends DefaultStyledDocument {
     public class DocumentReader extends Reader implements Readable {
         /**
          * Updates the reader to reflect a change in the underlying model.
-         * 
+         *
          * @param pos the location of the insert/delete
          * @param adjustment the number of characters added/deleted
          */
@@ -238,7 +238,7 @@ public class HighlightedDocument extends DefaultStyledDocument {
 
         /**
          * Save a position for reset.
-         * 
+         *
          * @param readAheadLimit ignored.
          */
         @Override
@@ -248,7 +248,7 @@ public class HighlightedDocument extends DefaultStyledDocument {
 
         /**
          * This reader supports mark and reset.
-         * 
+         *
          * @return true
          */
         @Override
@@ -258,7 +258,7 @@ public class HighlightedDocument extends DefaultStyledDocument {
 
         /**
          * Read a single character.
-         * 
+         *
          * @return the character or -1 if the end of the document has been
          *         reached.
          */
@@ -279,7 +279,7 @@ public class HighlightedDocument extends DefaultStyledDocument {
         /**
          * Read and fill the buffer. This method will always fill the buffer
          * unless the end of the document is reached.
-         * 
+         *
          * @param cbuf the buffer to fill.
          * @return the number of characters read or -1 if no more characters are
          *         available in the document.
@@ -292,7 +292,7 @@ public class HighlightedDocument extends DefaultStyledDocument {
         /**
          * Read and fill the buffer. This method will always fill the buffer
          * unless the end of the document is reached.
-         * 
+         *
          * @param cbuf the buffer to fill.
          * @param off offset into the buffer to begin the fill.
          * @param len maximum number of characters to put in the buffer.
@@ -345,7 +345,7 @@ public class HighlightedDocument extends DefaultStyledDocument {
         /**
          * Skip characters of input. This method will always skip the maximum
          * number of characters unless the end of the file is reached.
-         * 
+         *
          * @param n number of characters to skip.
          * @return the actual number of characters skipped.
          */
@@ -364,7 +364,7 @@ public class HighlightedDocument extends DefaultStyledDocument {
 
         /**
          * Seek to the given position in the document.
-         * 
+         *
          * @param n the offset to which to seek.
          */
         public void seek(final long n) {

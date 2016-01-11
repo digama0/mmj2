@@ -15,6 +15,10 @@
 
 package mmj.util;
 
+import static mmj.util.UtilConstants.*;
+
+import java.util.function.BooleanSupplier;
+
 import mmj.lang.*;
 import mmj.verify.Grammar;
 
@@ -39,41 +43,18 @@ public class WorkVarBoss extends Boss {
      */
     public WorkVarBoss(final BatchFramework batchFramework) {
         super(batchFramework);
-    }
 
-    /**
-     * Executes a single command from the RunParmFile.
-     *
-     * @param runParm the RunParmFile line to execute.
-     * @return boolean "consumed" indicating that the input runParm should not
-     *         be processed again.
-     */
-    @Override
-    public boolean doRunParmCommand(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException, VerifyException
-    {
-
-        if (UtilConstants.RUNPARM_CLEAR.matches(runParm)) {
+        final BooleanSupplier clear = () -> {
             workVarManager = null;
             return false; // not "consumed"
-        }
+        };
 
-        if (UtilConstants.RUNPARM_LOAD_FILE.matches(runParm)) {
-            workVarManager = null;
-            return false; // not "consumed"
-        }
+        putCommand(RUNPARM_CLEAR, clear);
+        putCommand(RUNPARM_LOAD_FILE, clear);
 
-        if (UtilConstants.RUNPARM_DEFINE_WORK_VAR_TYPE.matches(runParm)) {
-            editDefineWorkVarType(runParm);
-            return true;
-        }
+        putCommand(RUNPARM_DEFINE_WORK_VAR_TYPE, this::editDefineWorkVarType);
 
-        if (UtilConstants.RUNPARM_DECLARE_WORK_VARS.matches(runParm)) {
-            editDeclareWorkVars(runParm);
-            return true;
-        }
-
-        return false;
+        putCommand(RUNPARM_DECLARE_WORK_VARS, this::editDeclareWorkVars);
     }
 
     /**
@@ -96,8 +77,7 @@ public class WorkVarBoss extends Boss {
         if (grammar.getGrammarInitialized())
             workVarManager = new WorkVarManager(grammar);
         else
-            messages.accumErrorMessage(
-                UtilConstants.ERRMSG_WV_MGR_REQUIRES_GRAMMAR_INIT);
+            messages.accumErrorMessage(ERRMSG_WV_MGR_REQUIRES_GRAMMAR_INIT);
 
         batchFramework.outputBoss.printAndClearMessages();
 
@@ -106,39 +86,28 @@ public class WorkVarBoss extends Boss {
 
     /**
      * Validate DefineWorkVarType RunParm.
-     *
-     * @param runParm run parm parsed into RunParmArrayEntry object
-     * @throws VerifyException if an error occurred
-     * @throws IllegalArgumentException if an error occurred
      */
-    protected void editDefineWorkVarType(final RunParmArrayEntry runParm)
-        throws VerifyException, IllegalArgumentException
-    {
-
-        editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_DEFINE_WORK_VAR_TYPE.name(), 3);
-
-        final int nbrWorkVars = editRunParmValueReqPosInt(runParm,
-            UtilConstants.RUNPARM_DEFINE_WORK_VAR_TYPE.name(), 3);
-
-        getWorkVarManager().defineWorkVarType(
-            batchFramework.grammarBoss.getGrammar(), runParm.values[0].trim(),
-            runParm.values[1].trim(), nbrWorkVars);
+    protected void editDefineWorkVarType() {
+        require(3);
+        try {
+            getWorkVarManager().defineWorkVarType(
+                batchFramework.grammarBoss.getGrammar(), get(1), get(2),
+                getPosInt(3));
+        } catch (final VerifyException e) {
+            throw error(e.getMessage(), e);
+        }
     }
 
     /**
      * Create and initialize the Work Vars to be used.
-     *
-     * @param runParm run parm parsed into RunParmArrayEntry object
-     * @throws VerifyException if an error occurred
-     * @throws IllegalArgumentException if an error occurred
      */
-    protected void editDeclareWorkVars(final RunParmArrayEntry runParm)
-        throws VerifyException, IllegalArgumentException
-    {
-
-        getWorkVarManager().declareWorkVars(
-            batchFramework.grammarBoss.getGrammar(),
-            batchFramework.logicalSystemBoss.getLogicalSystem());
+    protected void editDeclareWorkVars() {
+        try {
+            getWorkVarManager().declareWorkVars(
+                batchFramework.grammarBoss.getGrammar(),
+                batchFramework.logicalSystemBoss.getLogicalSystem());
+        } catch (final VerifyException e) {
+            throw error(e.getMessage(), e);
+        }
     }
 }

@@ -14,6 +14,8 @@
 
 package mmj.tmff;
 
+import mmj.lang.LangException;
+
 /**
  * TMFFScheme holds an instantiated TMFFMethod and a name assigned by a user to
  * the Scheme.
@@ -38,14 +40,14 @@ public class TMFFScheme {
 
         if (param.length < 1 || param[0] == null || param[0].length() == 0)
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_SCHEME_NAME_REQUIRED_1);
+                TMFFConstants.ERRMSG_SCHEME_NAME_REQUIRED);
         schemeName = param[0];
 
         if (param.length < 2 || param[1] == null || param[1].length() == 0)
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_SCHEME_METHOD_MISSING_1);
+                TMFFConstants.ERRMSG_SCHEME_METHOD_MISSING);
 
-        tmffMethod = TMFFMethod.ConstructMethodWithUserParams(param);
+        tmffMethod = TMFFMethod.constructMethodWithUserParams(param);
     }
 
     /**
@@ -57,12 +59,12 @@ public class TMFFScheme {
     public TMFFScheme(final String schemeName, final TMFFMethod method) {
         if (schemeName == null || schemeName.length() == 0)
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_SCHEME_NAME_REQUIRED_1);
+                TMFFConstants.ERRMSG_SCHEME_NAME_REQUIRED);
         this.schemeName = schemeName;
 
         if (method == null)
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_SCHEME_METHOD_MISSING_1);
+                TMFFConstants.ERRMSG_SCHEME_METHOD_MISSING);
         tmffMethod = method;
 
     }
@@ -84,13 +86,12 @@ public class TMFFScheme {
     public void setTMFFMethod(final TMFFMethod tmffMethod) {
         if (tmffMethod == null)
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_SCHEME_METHOD_MISSING_1);
+                TMFFConstants.ERRMSG_SCHEME_METHOD_MISSING);
         if (TMFFConstants.TMFF_UNFORMATTED_SCHEME_NAME
             .equalsIgnoreCase(getSchemeName()))
-            throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_SCHEME_CANNOT_BE_UPDATED_1
-                    + TMFFConstants.TMFF_UNFORMATTED_SCHEME_NAME
-                    + TMFFConstants.ERRMSG_SCHEME_CANNOT_BE_UPDATED_2);
+            throw new IllegalArgumentException(LangException.format(
+                TMFFConstants.ERRMSG_SCHEME_CANNOT_BE_UPDATED,
+                TMFFConstants.TMFF_UNFORMATTED_SCHEME_NAME));
 
         this.tmffMethod = tmffMethod;
     }
@@ -117,14 +118,13 @@ public class TMFFScheme {
     public void setSchemeName(final String schemeName) {
         if (schemeName == null || schemeName.length() == 0)
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_SCHEME_NAME_REQUIRED_1);
+                TMFFConstants.ERRMSG_SCHEME_NAME_REQUIRED);
 
         if (TMFFConstants.TMFF_UNFORMATTED_SCHEME_NAME
             .equalsIgnoreCase(schemeName))
-            throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_SCHEME_NM_CANT_BE_ASSIGNED_1
-                    + TMFFConstants.TMFF_UNFORMATTED_SCHEME_NAME
-                    + TMFFConstants.ERRMSG_SCHEME_NM_CANT_BE_ASSIGNED_2);
+            throw new IllegalArgumentException(LangException.format(
+                TMFFConstants.ERRMSG_SCHEME_NM_CANT_BE_ASSIGNED,
+                TMFFConstants.TMFF_UNFORMATTED_SCHEME_NAME));
 
         this.schemeName = schemeName;
     }
