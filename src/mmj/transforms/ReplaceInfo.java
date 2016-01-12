@@ -123,11 +123,11 @@ public class ReplaceInfo extends DBInfo {
 
         final ParseNode root = assrtTree.getRoot();
 
-        if (!implInfo.isImplOperator(root.getStmt()))
+        if (!implInfo.isImplOperator(root.stmt))
             return;
 
-        final ParseNode replRoot = root.getChild()[1];
-        final ParseNode hypNode = root.getChild()[0];
+        final ParseNode replRoot = root.child[1];
+        final ParseNode hypNode = root.child[0];
 
         coreCheck(assrt, replRoot, hypNode, implReplaceOp);
     }
@@ -137,13 +137,13 @@ public class ReplaceInfo extends DBInfo {
         final ParseNode hypNode, final Map<Stmt, Assrt[]> resMap)
     {
 
-        if (!eqInfo.isEquivalence(replRoot.getStmt()))
+        if (!eqInfo.isEquivalence(replRoot.stmt))
             return;
 
-        if (!eqInfo.isEquivalence(hypNode.getStmt()))
+        if (!eqInfo.isEquivalence(hypNode.stmt))
             return;
 
-        final ParseNode[] hypSubTrees = hypNode.getChild();
+        final ParseNode[] hypSubTrees = hypNode.child;
 
         assert hypSubTrees.length == 2 : "It should be the equivalence rule!";
 
@@ -151,23 +151,23 @@ public class ReplaceInfo extends DBInfo {
             || !TrUtil.isVarNode(hypSubTrees[1]))
             return;
 
-        final ParseNode[] subTrees = replRoot.getChild();
+        final ParseNode[] subTrees = replRoot.child;
 
         assert subTrees.length == 2 : "It should be the equivalence rule!";
 
-        if (subTrees[0].getStmt() != subTrees[1].getStmt())
+        if (subTrees[0].stmt != subTrees[1].stmt)
             return;
 
-        final Stmt stmt = subTrees[0].getStmt();
+        final Stmt stmt = subTrees[0].stmt;
 
-        final ParseNode[] leftChild = subTrees[0].getChild();
-        final ParseNode[] rightChild = subTrees[1].getChild();
+        final ParseNode[] leftChild = subTrees[0].child;
+        final ParseNode[] rightChild = subTrees[1].child;
 
         // Fast compare, change if the depth of this assrt statement tree
         // could be more then 3
         int replPos = -1;
         replaceCheck: for (int i = 0; i < leftChild.length; i++)
-            if (leftChild[i].getStmt() != rightChild[i].getStmt()) {
+            if (leftChild[i].stmt != rightChild[i].stmt) {
                 // Another place for replace? It is strange!
                 if (replPos != -1)
                     return;
@@ -178,8 +178,8 @@ public class ReplaceInfo extends DBInfo {
                 // Check that it is actually the swap of two variables
                 for (int k = 0; k < 2; k++) {
                     final int m = (k + 1) % 2; // the other index
-                    if (leftChild[i].getStmt() == hypSubTrees[k].getStmt()
-                        && rightChild[i].getStmt() == hypSubTrees[m].getStmt())
+                    if (leftChild[i].stmt == hypSubTrees[k].stmt
+                        && rightChild[i].stmt == hypSubTrees[m].stmt)
                         continue replaceCheck;
                 }
 
@@ -189,7 +189,7 @@ public class ReplaceInfo extends DBInfo {
         Assrt[] repl = resMap.get(stmt);
 
         if (repl == null) {
-            repl = new Assrt[subTrees[0].getChild().length];
+            repl = new Assrt[subTrees[0].child.length];
             resMap.put(stmt, repl);
         }
 
@@ -230,13 +230,12 @@ public class ReplaceInfo extends DBInfo {
         final ProofStepStmt childTrStmt, final Assrt[] replAsserts)
     {
         assert replAsserts[i] != null;
-        final Stmt equalStmt = replAsserts[i].getExprParseTree().getRoot()
-            .getStmt();
-        final ParseNode resNode = prevVersion.cloneWithoutChildren();
+        final Stmt equalStmt = replAsserts[i].getExprParseTree().getRoot().stmt;
+        final ParseNode resNode = prevVersion.shallowClone();
 
         // Fill the next child
         // So the new node has form g(A, B', C)
-        resNode.getChild()[i] = newSubTree;
+        resNode.child[i] = newSubTree;
 
         // Create node g(A, B, C) = g(A, B', C)
         final ParseNode stepNode = TrUtil.createBinaryNode(equalStmt,
@@ -256,12 +255,12 @@ public class ReplaceInfo extends DBInfo {
         assert replAsserts[i] != null;
         final ParseNode root = replAsserts[i].getExprParseTree().getRoot();
 
-        final Stmt equalStmt = root.getChild()[1].getStmt();
-        final ParseNode resNode = prevVersion.cloneWithoutChildren();
+        final Stmt equalStmt = root.child[1].stmt;
+        final ParseNode resNode = prevVersion.shallowClone();
 
         // Fill the next child
         // So the new node has form g(A, B', C)
-        resNode.getChild()[i] = newSubTree;
+        resNode.child[i] = newSubTree;
 
         // Create node g(A, B, C) = g(A, B', C)
         final ParseNode eqNode = TrUtil.createBinaryNode(equalStmt,
@@ -286,14 +285,14 @@ public class ReplaceInfo extends DBInfo {
         final GenProofStepStmt childTrStmt)
     {
         if (!childTrStmt.hasPrefix()) {
-            final Assrt[] replAsserts = replaceOp.get(prevVersion.getStmt());
+            final Assrt[] replAsserts = replaceOp.get(prevVersion.stmt);
             if (replAsserts != null && replAsserts[i] != null)
                 return new GenProofStepStmt(createReplaceStepSimple(info,
                     prevVersion, i, newSubTree, childTrStmt.getSimpleStep(),
                     replAsserts), null);
         }
 
-        final Assrt[] replAsserts = implReplaceOp.get(prevVersion.getStmt());
+        final Assrt[] replAsserts = implReplaceOp.get(prevVersion.stmt);
         assert replAsserts != null;
         assert replAsserts[i] != null;
 

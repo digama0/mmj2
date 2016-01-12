@@ -623,6 +623,11 @@ public class PaConstants {
     }
 
     /**
+     * PROOF_ASST_FORMULA_LEFT_COL_DEFAULT
+     */
+    public static final String PROOF_ASST_SETTINGS_FILE_DEFAULT = "store.json";
+
+    /**
      * PROOF_ASST_ERROR_MESSAGE_ROWS_DEFAULT = 4
      */
     public static final int PROOF_ASST_ERROR_MESSAGE_ROWS_DEFAULT = 4;
@@ -2608,6 +2613,9 @@ public class PaConstants {
 //    public static final String ERRMSG_FORMULA_OR_REF_REQ_2 = " Step ";
 //    public static final String ERRMSG_FORMULA_OR_REF_REQ_3 = ": Formula or Ref required on derivation"
 //        + " steps (Formula is always required on the 'qed' step).";
+
+    public static final String ERRMSG_CYCLIC_DEPENDENCY = "E-PA-0372 Theorem %s:"
+        + " Cyclic dependency detected in derivation steps. Steps involved:\n%s\n";
 
     public static final String ERRMSG_STMT_LABEL_DUP_OF_SYM_ID = "E-PA-0373"
         + " Theorem %s: theorem label duplicates a symbol id. This is"

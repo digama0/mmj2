@@ -26,7 +26,7 @@ public class CommutativeTransformation extends Transformation {
     public ParseNode getCanonicalNode(final WorksheetInfo info) {
         final ParseNode[] canonical = new ParseNode[2];
         for (int i = 0; i < 2; i++) {
-            final ParseNode child = originalNode.getChild()[genStmt.varIndexes[i]];
+            final ParseNode child = originalNode.child[genStmt.varIndexes[i]];
             canonical[i] = trManager.getCanonicalForm(child, info);
         }
 
@@ -55,15 +55,15 @@ public class CommutativeTransformation extends Transformation {
             return simpleRes;
 
         final ParseNode canonicalMe = trManager.getCanonicalForm(
-            originalNode.getChild()[genStmt.varIndexes[0]], info);
+            originalNode.child[genStmt.varIndexes[0]], info);
         final ParseNode canonicalTrgt = trManager.getCanonicalForm(
-            target.originalNode.getChild()[genStmt.varIndexes[0]], info);
+            target.originalNode.child[genStmt.varIndexes[0]], info);
 
         final GenProofStepStmt reverseStep;
         final ParseNode myNode;
         if (!canonicalMe.isDeepDup(canonicalTrgt)) {
-            final ParseNode left = originalNode.getChild()[genStmt.varIndexes[0]];
-            final ParseNode right = originalNode.getChild()[genStmt.varIndexes[1]];
+            final ParseNode left = originalNode.child[genStmt.varIndexes[0]];
+            final ParseNode right = originalNode.child[genStmt.varIndexes[1]];
 
             myNode = TrUtil.createGenBinaryNode(genStmt, right, left);
 

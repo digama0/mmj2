@@ -2211,6 +2211,38 @@ public class UtilConstants {
             + "         RunMacro,echo,Hello World\n" + " </pre>\n" + "\n");
 
     // ----------------------------------------------------------
+    // Commands for mmj.util.StoreBoss
+    // ----------------------------------------------------------
+
+    public static final BatchCommand RUNPARM_SET_SETTINGS_FILE = new BatchCommand(
+        "SettingsFile",
+        "*\n" + " SettingsFile\n" + " <p>\n"
+            + " \"SettingsFile\": file name relative to mmj2 path.\n" + " <p>\n"
+            + " Set the file for use by 'LoadSettings' and 'SaveSettings'"
+            + " RunParms. Default value is 'store.json'.");
+
+    public static final BatchCommand RUNPARM_DISABLE_SETTINGS = new BatchCommand(
+        "DisableSettings",
+        "*\n" + " DisableSettings\n" + " <p>\n"
+            + " \"DisableSettings\": no options\n" + " <p>\n"
+            + " Turn off the saving and loading of settings to the SettingsFile\n"
+            + " on startup and shutdown. Use SettingsFile RunParm to re-enable.");
+
+    public static final BatchCommand RUNPARM_LOAD_SETTINGS = new BatchCommand(
+        "LoadSettings",
+        "*\n" + " LoadSettings\n" + " <p>\n"
+            + " \"LoadSettings\": file name relative to mmj2 path.\n" + " <p>\n"
+            + " Load settings from the given file if it exists. If no file given,\n"
+            + " use the file set by 'SettingsFile,xxx' RunParm.");
+
+    public static final BatchCommand RUNPARM_SAVE_SETTINGS = new BatchCommand(
+        "SaveSettings",
+        "*\n" + " SaveSettings\n" + " <p>\n"
+            + " \"SaveSettings\": file name relative to mmj2 path.\n" + " <p>\n"
+            + " Save settings to the given file. If no file given,\n"
+            + " use the file set by 'SettingsFile,xxx' RunParm.");
+
+    // ----------------------------------------------------------
     // Constants mmj.util.TheoremLoaderBoss
     // ----------------------------------------------------------
 

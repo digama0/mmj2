@@ -256,7 +256,7 @@ public class BottomUpParser implements GrammaticalParser {
                     pStackRFE[0][i] = (Cnst)parseNodeHolderExpr[i].mObj;
             }
             else
-                pStackRFE[0][i] = parseNodeHolderExpr[i].parseNode.getStmt()
+                pStackRFE[0][i] = parseNodeHolderExpr[i].parseNode.stmt
                     .getTyp();
         pStackRFECnt[0] = parseNodeHolderExpr.length;
         pStackIndex = 0;

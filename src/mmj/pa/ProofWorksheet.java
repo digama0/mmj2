@@ -120,7 +120,6 @@ import mmj.pa.PaConstants.DjVarsSoftErrors;
 import mmj.search.SearchOutput;
 import mmj.tmff.TMFFPreferences;
 import mmj.tmff.TMFFStateParams;
-import mmj.util.DelimitedTextParser;
 import mmj.verify.Grammar;
 import mmj.verify.ProofDerivationStepEntry;
 
@@ -1169,31 +1168,27 @@ public class ProofWorksheet {
             final boolean isAutoStep = proofAsstPreferences.autocomplete.get()
                 && prefixField.equals(PaConstants.AUTO_STEP_PREFIX);
 
-            final DelimitedTextParser stepHypRefParser = new DelimitedTextParser(
-                isHypStep || isAutoStep ? nextToken.substring(1) : nextToken);
-
             String hypField = null;
             String refField = null;
             String localRefField = null;
 
             String stepField = null;
 
-            stepHypRefParser
-                .setParseDelimiter(PaConstants.FIELD_DELIMITER_COLON);
-            stepHypRefParser.setQuoterEnabled(false);
-            final List<String> fields = stepHypRefParser.parseAll();
+            final String[] fields = (isHypStep || isAutoStep
+                ? nextToken.substring(1) : nextToken)
+                    .split(PaConstants.FIELD_DELIMITER_COLON + "+");
 
-            switch (fields.size()) {
+            switch (fields.length) {
                 case 3:
-                    hypField = fields.get(1).isEmpty() ? null : fields.get(1);
-                    refField = fields.get(2).isEmpty() ? null : fields.get(2);
+                    hypField = fields[1].isEmpty() ? null : fields[1];
+                    refField = fields[2].isEmpty() ? null : fields[2];
                 case 1:
-                    stepField = validateStepField(isHypStep, fields.get(0));
+                    stepField = validateStepField(isHypStep, fields[0]);
                     break;
 
                 case 2:
-                    stepField = validateStepField(isHypStep, fields.get(0));
-                    hypField = fields.get(1);
+                    stepField = validateStepField(isHypStep, fields[0]);
+                    hypField = fields[1];
                     if (hypField.length() > 0
                         && hypField
                             .charAt(0) == PaConstants.LOCAL_REF_ESCAPE_CHAR
@@ -1358,6 +1353,10 @@ public class ProofWorksheet {
 
         generateMissingStepLabels();
 
+        for (final ProofWorkStmt x : proofWorkStmtList)
+            if (x instanceof DerivationStep)
+                ((DerivationStep)x).validateHyps();
+
         if (stepRequest != null
             && (stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH
                 || stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH))
@@ -1419,6 +1418,8 @@ public class ProofWorksheet {
                 PaConstants.ERRMSG_THRM_NBR_HYPS_ERROR,
                 getErrorLabelIfPossible(), hypStepCnt,
                 theorem.getLogHypArrayLength());
+
+        reorderProofSteps();
 
         /**
          * Compute level numbers for the proof steps.
@@ -1537,6 +1538,56 @@ public class ProofWorksheet {
         if (proofInputCursor.cursorIsSet && x == proofInputCursor.proofWorkStmt)
             proofInputCursor.proofWorkStmt = null;
         proofWorkStmtList.remove(x);
+    }
+
+    private void reorderProofSteps() throws ProofAsstException {
+        final LinkedList<ProofWorkStmt> oldStmtList = new LinkedList<>(
+            proofWorkStmtList);
+        proofWorkStmtList = new ArrayList<>(oldStmtList.size());
+        final Set<ProofStepStmt> validStmts = new HashSet<>();
+        final Set<ProofStepStmt> waitingOn = new HashSet<>();
+
+        int length = 0;
+        do
+            for (int i = 0; i < oldStmtList.size();) {
+                final ProofWorkStmt stmt = oldStmtList.get(i);
+                if (stmt == qedStep)
+                    break;
+                boolean valid = true;
+                if (stmt instanceof DerivationStep)
+                    for (final ProofStepStmt e : ((DerivationStep)stmt)
+                        .getHypList())
+                        if (e != null && !validStmts.contains(e)) {
+                            valid = false;
+                            waitingOn.add(e);
+                        }
+                if (valid) {
+                    proofWorkStmtList.add(oldStmtList.remove(i));
+                    if (stmt instanceof ProofStepStmt)
+                        validStmts.add((ProofStepStmt)stmt);
+                    if (waitingOn.contains(stmt))
+                        break;
+                }
+                else
+                    i++;
+            }
+        while (length < (length = proofWorkStmtList.size()));
+        final List<String> loop = new ArrayList<>();
+        for (int i = 0; i < oldStmtList.size();) {
+            final ProofWorkStmt stmt = oldStmtList.get(i);
+            if (stmt instanceof DerivationStep && stmt != qedStep) {
+                loop.add(((DerivationStep)stmt).getStep());
+                i++;
+            }
+            else {
+                proofWorkStmtList.add(oldStmtList.remove(i));
+                if (stmt instanceof ProofStepStmt)
+                    validStmts.add((ProofStepStmt)stmt);
+            }
+        }
+        if (!oldStmtList.isEmpty())
+            triggerLoadStructureException(PaConstants.ERRMSG_CYCLIC_DEPENDENCY,
+                getTheoremLabel(), loop);
     }
 
     /**

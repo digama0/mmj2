@@ -91,10 +91,10 @@ class AssociativeTransformation extends Transformation {
                 gAssT = new AssocTree(from, aAssT, new AssocTree(from, dAssT,
                     fAssT));
 
-                final ParseNode eNode = gNode.getChild()[from];
-                final ParseNode fNode = gNode.getChild()[to];
-                final ParseNode aNode = eNode.getChild()[from];
-                final ParseNode dNode = eNode.getChild()[to];
+                final ParseNode eNode = gNode.child[from];
+                final ParseNode fNode = gNode.child[to];
+                final ParseNode aNode = eNode.child[from];
+                final ParseNode dNode = eNode.child[to];
 
                 final ParseNode prevNode = gNode;
 
@@ -134,12 +134,12 @@ class AssociativeTransformation extends Transformation {
                 gAssT.subTrees[from] = new AssocTree(from, new AssocTree(from,
                     aAssT, bAssT), cAssT);
 
-                /*--*/ParseNode eNode = gNode.getChild()[from];
-                final ParseNode fNode = gNode.getChild()[to];
-                final ParseNode aNode = eNode.getChild()[from];
-                final ParseNode dNode = eNode.getChild()[to];
-                final ParseNode bNode = dNode.getChild()[from];
-                final ParseNode cNode = dNode.getChild()[to];
+                /*--*/ParseNode eNode = gNode.child[from];
+                final ParseNode fNode = gNode.child[to];
+                final ParseNode aNode = eNode.child[from];
+                final ParseNode dNode = eNode.child[to];
+                final ParseNode bNode = dNode.child[from];
+                final ParseNode cNode = dNode.child[to];
 
                 final ParseNode prevENode = eNode;
                 eNode = TrUtil.createAssocBinaryNode(from, genStmt,

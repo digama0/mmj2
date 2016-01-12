@@ -55,7 +55,7 @@ public class MacroManager {
         this.batchFramework = batchFramework;
         callbacks = new HashMap<CallbackType, Runnable>();
 
-        final SessionStore store = batchFramework.proofAsstBoss.getStore();
+        final SessionStore store = batchFramework.storeBoss.getStore();
         macroFolder = store.addFileSetting(PFX + "folder", "macros");
         macroFolder.addListener((o, value) -> value != null);
         prepMacro = store.addFileSetting(PFX + "prepMacro",
@@ -85,7 +85,8 @@ public class MacroManager {
                     f.getEngineName(), names);
             }
             throw new IllegalArgumentException(errMsg);
-        });
+        } , true);
+
         macroExtension = store.addSetting(PFX + "extension",
             UtilConstants.RUNPARM_OPTION_MACRO_EXTENSION);
 
@@ -109,6 +110,18 @@ public class MacroManager {
      */
     public void set(final String key, final Object value) {
         getEngine().put(key, value);
+    }
+
+    /**
+     * Set the preparation macro. Shorthand for {@link #prepMacro}
+     * {@code .setString(prep)}.
+     *
+     * @param prep The macro name relative to the macro directory (
+     *            {@link #macroFolder}).
+     * @return True if the change was successful
+     */
+    public boolean setPrepMacro(final String prep) {
+        return prepMacro.setString(prep);
     }
 
     /**

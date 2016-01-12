@@ -27,7 +27,7 @@ public class ConstSubst {
      * @return constructed result
      */
     public static ConstSubst createFromNode(final ParseNode node) {
-        final ParseNode[] children = node.getChild();
+        final ParseNode[] children = node.child;
         final ParseNode[] constMap = new ParseNode[children.length];
         for (int i = 0; i < children.length; i++)
             if (TrUtil.isConstNode(children[i]))
@@ -77,11 +77,11 @@ public class ConstSubst {
      * @return true if the candidate has exactly the same constant map
      */
     public boolean isTheSameConstMap(final ParseNode candidate) {
-        if (candidate.getChild().length != constMap.length)
+        if (candidate.child.length != constMap.length)
             return false;
 
         for (int i = 0; i < constMap.length; i++) {
-            final ParseNode child = candidate.getChild()[i];
+            final ParseNode child = candidate.child[i];
             if (TrUtil.isConstNode(child)) {
                 if (constMap[i] == null)
                     return false;

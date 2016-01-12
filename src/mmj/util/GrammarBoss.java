@@ -194,6 +194,7 @@ public class GrammarBoss extends Boss {
 
         grammar = new Grammar(pTyp, lTyp, grammarAmbiguityParm,
             statementAmbiguityParm, parserPrototype);
+        grammar.setStore(batchFramework.storeBoss.getStore());
 
         return grammar;
     }

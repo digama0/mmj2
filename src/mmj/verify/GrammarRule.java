@@ -232,7 +232,7 @@ public abstract class GrammarRule implements Comparable<GrammarRule> {
         paramTransformationTree = new ParseTree(paramTransformationRoot);
 
         final ParseNode[] child = new ParseNode[nbrHypParamsUsed];
-        paramTransformationRoot.setChild(child);
+        paramTransformationRoot.child = child;
 
         paramVarHypNode = new ParseNode[nbrHypParamsUsed];
 
@@ -482,7 +482,7 @@ public abstract class GrammarRule implements Comparable<GrammarRule> {
      * @return GrammarRule's "base" Syntax Axiom.
      */
     public Axiom getBaseSyntaxAxiom() {
-        return (Axiom)paramTransformationTree.getRoot().getStmt();
+        return (Axiom)paramTransformationTree.getRoot().stmt;
     }
 
     /**
@@ -736,14 +736,14 @@ public abstract class GrammarRule implements Comparable<GrammarRule> {
     protected int findMatchingVarHypTyp(int nextSearch, final Cnst searchTyp) {
         for (; nextSearch < paramVarHypNode.length; nextSearch++)
             if (paramVarHypNode[nextSearch] != null) {
-                if (!(paramVarHypNode[nextSearch].getStmt() instanceof VarHyp))
+                if (!(paramVarHypNode[nextSearch].stmt instanceof VarHyp))
                     throw new IllegalStateException(
                         GrammarConstants.ERRMSG_BOGUS_PARAM_VARHYP_NODE_1
                             + nextSearch
                             + GrammarConstants.ERRMSG_BOGUS_PARAM_VARHYP_NODE_2
-                            + paramVarHypNode[nextSearch].getStmt().getLabel()
+                            + paramVarHypNode[nextSearch].stmt.getLabel()
                             + GrammarConstants.ERRMSG_BOGUS_PARAM_VARHYP_NODE_3);
-                if (paramVarHypNode[nextSearch].getStmt().getTyp() == searchTyp)
+                if (paramVarHypNode[nextSearch].stmt.getTyp() == searchTyp)
                     return nextSearch;
             }
         return -1;

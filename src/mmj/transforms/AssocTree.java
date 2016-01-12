@@ -64,8 +64,8 @@ public class AssocTree {
     public static AssocTree createAssocTree(final ParseNode curNode,
         final GeneralizedStmt assocProp, final WorksheetInfo info)
     {
-        final Stmt stmt = curNode.getStmt();
-        final ParseNode[] childrent = curNode.getChild();
+        final Stmt stmt = curNode.stmt;
+        final ParseNode[] childrent = curNode.child;
 
         final Stmt assocStmt = assocProp.stmt;
 

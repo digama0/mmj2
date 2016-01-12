@@ -41,8 +41,7 @@
 package mmj.util;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import mmj.gmff.GMFFException;
 import mmj.lang.TheoremLoaderException;
@@ -107,6 +106,8 @@ public abstract class BatchFramework {
 
     /*friendly*/public List<Boss> bossList;
 
+    /*friendly*/public StoreBoss storeBoss;
+
     /*friendly*/public OutputBoss outputBoss;
 
     /*friendly*/public LogicalSystemBoss logicalSystemBoss;
@@ -144,6 +145,7 @@ public abstract class BatchFramework {
         batchFrameworkInitialized = true;
         bossList = new ArrayList<Boss>();
 
+        storeBoss = new StoreBoss(this);
         outputBoss = new OutputBoss(this);
         verifyProofBoss = new VerifyProofBoss(this);
         grammarBoss = new GrammarBoss(this);
@@ -219,8 +221,11 @@ public abstract class BatchFramework {
 
         if (retCd == 0)
             try {
-                while (runParmFile.hasNext())
-                    executeRunParmCommand(runParmFile.next());
+                final LinkedList<RunParmArrayEntry> list = new LinkedList<>();
+                runParmFile.forEachRemaining(list::add);
+                runParmFile.close();
+                for (final RunParmArrayEntry runParm : list)
+                    executeRunParmCommand(runParm);
             } catch (final Exception e) {
                 failMessage = e.getMessage();
                 System.err.println(failMessage);
@@ -229,7 +234,7 @@ public abstract class BatchFramework {
                 try {
                     outputBoss.sysErrPrintln(failMessage);
                 } catch (final IOException f) {
-                    failMessage = failMessage + f.getMessage();
+                    failMessage += f.getMessage();
                     System.err.println(failMessage);
                 }
             } catch (final Error e) {

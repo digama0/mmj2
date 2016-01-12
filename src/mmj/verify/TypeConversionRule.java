@@ -203,7 +203,7 @@ public class TypeConversionRule extends GrammarRule {
                     GrammarConstants.ERRMSG_TYPCONV_VARHYP_NOTFND_1
                         + oldNotationRule.getBaseSyntaxAxiom().getLabel()
                         + GrammarConstants.ERRMSG_TYPCONV_VARHYP_NOTFND_2);
-            convTyp = paramVarHypNode[i].getStmt().getTyp();
+            convTyp = paramVarHypNode[i].stmt.getTyp();
         }
     }
 
@@ -255,7 +255,7 @@ public class TypeConversionRule extends GrammarRule {
                 GrammarConstants.ERRMSG_TYPCONV_2_VARHYP_NOTFND_1
                     + oldTCRule.getBaseSyntaxAxiom().getLabel()
                     + GrammarConstants.ERRMSG_TYPCONV_2_VARHYP_NOTFND_2);
-        convTyp = paramVarHypNode[matchIndex].getStmt().getTyp();
+        convTyp = paramVarHypNode[matchIndex].stmt.getTyp();
     }
 
     /**
@@ -271,7 +271,7 @@ public class TypeConversionRule extends GrammarRule {
         final Axiom baseSyntaxAxiom, final ParseNodeHolder[] parseNodeHolderExpr)
     {
         final Cnst toTyp = baseSyntaxAxiom.getTyp();
-        final Cnst fromTyp = parseNodeHolderExpr[0].parseNode.getStmt()
+        final Cnst fromTyp = parseNodeHolderExpr[0].parseNode.stmt
             .getTyp();
 
         if (TypeConversionRule.isLoop(fromTyp, toTyp)) {

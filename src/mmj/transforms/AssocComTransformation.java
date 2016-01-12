@@ -205,7 +205,7 @@ public class AssocComTransformation extends Transformation {
                 return true;
 
             for (int i = 0; i < 2; i++)
-                if (children[i].node != node.getChild()[genStmt.varIndexes[i]])
+                if (children[i].node != node.child[genStmt.varIndexes[i]])
                     return false;
 
             return true;
@@ -353,8 +353,10 @@ public class AssocComTransformation extends Transformation {
     }
 
     private static ParseNode getRightPart(final GenProofStepStmt step) {
-        assert step.getCore().getChild().length == 2;
-        return step.getCore().getChild()[1];
+        ParseNode r = step.getCore();
+        assert r.child.length == 2;
+        ParseNode r1 = step.getCore();
+        return r1.child[1];
     }
 
     private GenProofStepStmt move(final ACTree what, final WorksheetInfo info) {
@@ -549,7 +551,7 @@ public class AssocComTransformation extends Transformation {
         }
         else
             for (int i = 0; i < 2; i++) {
-                final ParseNode child = curNode.getChild()[genStmt.varIndexes[i]];
+                final ParseNode child = curNode.child[genStmt.varIndexes[i]];
                 constructCanonicalInfoList(info, assocTree.subTrees[i], child,
                     resList);
             }
@@ -572,9 +574,9 @@ public class AssocComTransformation extends Transformation {
                 return res;
             }
             final ACTree left = constructTree(assocTree.subTrees[0],
-                curNode.getChild()[genStmt.varIndexes[0]]);
+                curNode.child[genStmt.varIndexes[0]]);
             final ACTree right = constructTree(assocTree.subTrees[1],
-                curNode.getChild()[genStmt.varIndexes[1]]);
+                curNode.child[genStmt.varIndexes[1]]);
 
             return new ACTree(curNode, 0, left, right);
         }

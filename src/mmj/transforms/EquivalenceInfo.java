@@ -124,19 +124,19 @@ public class EquivalenceInfo extends DBInfo {
             return;
 
         final ParseNode root = assrtTree.getRoot();
-        if (root.getChild().length != 2)
+        if (root.child.length != 2)
             return;
 
-        final Stmt stmt = root.getStmt();
+        final Stmt stmt = root.stmt;
 
         final ParseNode hypRoot = hypTree.getRoot();
-        if (hypRoot.getStmt() != stmt)
+        if (hypRoot.stmt != stmt)
             return;
 
-        if (hypRoot.getChild()[0].getStmt() != root.getChild()[1].getStmt())
+        if (hypRoot.child[0].stmt != root.child[1].stmt)
             return;
 
-        if (hypRoot.getChild()[1].getStmt() != root.getChild()[0].getStmt())
+        if (hypRoot.child[1].stmt != root.child[0].stmt)
             return;
 
         if (eqCommutatives.containsKey(stmt))
@@ -172,57 +172,56 @@ public class EquivalenceInfo extends DBInfo {
             return;
 
         final ParseNode root = assrtTree.getRoot();
-        if (root.getChild().length != 2)
+        if (root.child.length != 2)
             return;
 
-        final Stmt implOp = root.getStmt();
+        final Stmt implOp = root.stmt;
         if (!implInfo.isImplForPrefixOperator(implOp))
             return;
 
         final ParseNode hyp1Root = hyp1Tree.getRoot();
         final ParseNode hyp2Root = hyp2Tree.getRoot();
 
-        if (hyp1Root.getStmt() != implOp)
+        if (hyp1Root.stmt != implOp)
             return;
-        if (hyp2Root.getStmt() != implOp)
-            return;
-
-        final ParseNode prefix = root.getChild()[0];
-        if (prefix.getStmt() != mandVarHypArray[0])
+        if (hyp2Root.stmt != implOp)
             return;
 
-        final ParseNode hyp1Prefix = hyp1Root.getChild()[0];
-        if (hyp1Prefix.getStmt() != mandVarHypArray[0])
-            return;
-        final ParseNode hyp2Prefix = hyp2Root.getChild()[0];
-        if (hyp2Prefix.getStmt() != mandVarHypArray[0])
+        final ParseNode prefix = root.child[0];
+        if (prefix.stmt != mandVarHypArray[0])
             return;
 
-        final ParseNode core = root.getChild()[1];
-        final ParseNode hyp1Core = hyp1Root.getChild()[1];
-        final ParseNode hyp2Core = hyp2Root.getChild()[1];
+        final ParseNode hyp1Prefix = hyp1Root.child[0];
+        if (hyp1Prefix.stmt != mandVarHypArray[0])
+            return;
+        final ParseNode hyp2Prefix = hyp2Root.child[0];
+        if (hyp2Prefix.stmt != mandVarHypArray[0])
+            return;
 
-        final Stmt stmt = core.getStmt();
+        final ParseNode core = root.child[1];
+        final ParseNode hyp1Core = hyp1Root.child[1];
+        final ParseNode hyp2Core = hyp2Root.child[1];
+
+        final Stmt stmt = core.stmt;
 
         if (!isEquivalence(stmt))
             return;
 
-        if (hyp1Core.getStmt() != stmt)
+        if (hyp1Core.stmt != stmt)
             return;
-        if (hyp2Core.getStmt() != stmt)
+        if (hyp2Core.stmt != stmt)
             return;
 
         // check for 'A' in 'A = B & B = C => A = C'
-        if (hyp1Core.getChild()[0].getStmt() != core.getChild()[0].getStmt())
+        if (hyp1Core.child[0].stmt != core.child[0].stmt)
             return;
 
         // check for 'B' in 'A = B & B = C'
-        if (hyp1Core.getChild()[1].getStmt() != hyp2Core.getChild()[0]
-            .getStmt())
+        if (hyp1Core.child[1].stmt != hyp2Core.child[0].stmt)
             return;
 
         // check for 'C' in 'A = B & B = C => A = C'
-        if (hyp2Core.getChild()[1].getStmt() != core.getChild()[1].getStmt())
+        if (hyp2Core.child[1].stmt != core.child[1].stmt)
             return;
 
         Map<Stmt, Assrt> eqTransMap = eqDeductTrans.get(implOp);
@@ -268,31 +267,30 @@ public class EquivalenceInfo extends DBInfo {
             return;
 
         final ParseNode root = assrtTree.getRoot();
-        if (root.getChild().length != 2)
+        if (root.child.length != 2)
             return;
 
-        final Stmt stmt = root.getStmt();
+        final Stmt stmt = root.stmt;
 
         final ParseNode hyp1Root = hyp1Tree.getRoot();
         final ParseNode hyp2Root = hyp2Tree.getRoot();
 
-        if (hyp1Root.getStmt() != stmt)
+        if (hyp1Root.stmt != stmt)
             return;
 
-        if (hyp2Root.getStmt() != stmt)
+        if (hyp2Root.stmt != stmt)
             return;
 
         // check for 'A' in 'A = B & B = C => A = C'
-        if (hyp1Root.getChild()[0].getStmt() != root.getChild()[0].getStmt())
+        if (hyp1Root.child[0].stmt != root.child[0].stmt)
             return;
 
         // check for 'B' in 'A = B & B = C'
-        if (hyp1Root.getChild()[1].getStmt() != hyp2Root.getChild()[0]
-            .getStmt())
+        if (hyp1Root.child[1].stmt != hyp2Root.child[0].stmt)
             return;
 
         // check for 'C' in 'A = B & B = C => A = C'
-        if (hyp2Root.getChild()[1].getStmt() != root.getChild()[1].getStmt())
+        if (hyp2Root.child[1].stmt != root.child[1].stmt)
             return;
 
         if (eqTransitivies.containsKey(stmt))
@@ -340,7 +338,7 @@ public class EquivalenceInfo extends DBInfo {
             final Assrt assrt = eqCommutatives.get(eq);
 
             final ParseTree assrtTree = assrt.getExprParseTree();
-            final Cnst type = assrtTree.getRoot().getChild()[0].getStmt()
+            final Cnst type = assrtTree.getRoot().child[0].stmt
                 .getTyp();
 
             if (eqMap.containsKey(type)) {
@@ -380,42 +378,42 @@ public class EquivalenceInfo extends DBInfo {
 
         final ParseNode root = assrtTree.getRoot();
 
-        if (root.getChild().length != 2)
+        if (root.child.length != 2)
             return;
 
-        final Stmt implOp = root.getStmt();
+        final Stmt implOp = root.stmt;
         if (!implInfo.isImplForPrefixOperator(implOp))
             return;
 
         final ParseNode hypRoot = hypTree.getRoot();
-        if (hypRoot.getStmt() != implOp)
+        if (hypRoot.stmt != implOp)
             return;
 
-        final ParseNode prefix = root.getChild()[0];
-        if (prefix.getStmt() != varHypArray[0])
+        final ParseNode prefix = root.child[0];
+        if (prefix.stmt != varHypArray[0])
             return;
 
-        final ParseNode hypPrefix = hypRoot.getChild()[0];
-        if (hypPrefix.getStmt() != varHypArray[0])
+        final ParseNode hypPrefix = hypRoot.child[0];
+        if (hypPrefix.stmt != varHypArray[0])
             return;
 
-        final ParseNode core = root.getChild()[1];
-        final ParseNode hypCore = hypRoot.getChild()[1];
+        final ParseNode core = root.child[1];
+        final ParseNode hypCore = hypRoot.child[1];
 
-        final Stmt stmt = core.getStmt();
+        final Stmt stmt = core.stmt;
 
         if (!isEquivalence(stmt))
             return;
 
-        if (hypCore.getStmt() != stmt)
+        if (hypCore.stmt != stmt)
             return;
 
-        assert core.getChild().length == 2;
+        assert core.child.length == 2;
 
-        if (hypCore.getChild()[0].getStmt() != core.getChild()[1].getStmt())
+        if (hypCore.child[0].stmt != core.child[1].stmt)
             return;
 
-        if (hypCore.getChild()[1].getStmt() != core.getChild()[0].getStmt())
+        if (hypCore.child[1].stmt != core.child[0].stmt)
             return;
 
         Map<Stmt, Assrt> eqComMap = eqDeductCom.get(implOp);
@@ -446,8 +444,8 @@ public class EquivalenceInfo extends DBInfo {
      * @return the equivalence node
      */
     public ParseNode createEqNode(final ParseNode left, final ParseNode right) {
-        final Cnst type = left.getStmt().getTyp();
-        assert type == right.getStmt().getTyp();
+        final Cnst type = left.stmt.getTyp();
+        assert type == right.stmt.getTyp();
         final Stmt equalStmt = getEqStmt(type);
         assert equalStmt != null;
 
@@ -471,9 +469,9 @@ public class EquivalenceInfo extends DBInfo {
                 source.getSimpleStep()), null);
          */
         final ParseNode core = source.getCore();
-        final Stmt equalStmt = core.getStmt();
-        final ParseNode left = core.getChild()[0];
-        final ParseNode right = core.getChild()[1];
+        final Stmt equalStmt = core.stmt;
+        final ParseNode left = core.child[0];
+        final ParseNode right = core.child[1];
 
         ParseNode revNode = TrUtil.createBinaryNode(equalStmt, right, left);
 
@@ -509,13 +507,13 @@ public class EquivalenceInfo extends DBInfo {
 
         final ParseNode firstCore = first.getCore();
         final ParseNode secondCore = second.getCore();
-        final Stmt equalStmt = firstCore.getStmt();
+        final Stmt equalStmt = firstCore.stmt;
 
-        assert equalStmt == secondCore.getStmt();
-        assert firstCore.getChild()[1].isDeepDup(secondCore.getChild()[0]);
+        assert equalStmt == secondCore.stmt;
+        assert firstCore.child[1].isDeepDup(secondCore.child[0]);
 
         ParseNode resNode = TrUtil.createBinaryNode(equalStmt,
-            firstCore.getChild()[0], secondCore.getChild()[1]);
+            firstCore.child[0], secondCore.child[1]);
 
         ParseNode prefix = null;
         ProofStepStmt firstStep = first.getAnyStep();

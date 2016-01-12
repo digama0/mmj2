@@ -139,16 +139,8 @@ public class ParseNode {
     /**
      * Default constructor.
      */
-    public ParseNode() {}
-
-    /**
-     * Construct with a Stmt.
-     *
-     * @param stmt a proof step.
-     */
-    public ParseNode(final Stmt stmt) {
-        this.stmt = stmt;
-        child = null;
+    public ParseNode() {
+        this(null);
     }
 
     /**
@@ -157,7 +149,7 @@ public class ParseNode {
      * @param stmt a proof step.
      * @param child children array
      */
-    public ParseNode(final Stmt stmt, final ParseNode[] child) {
+    public ParseNode(final Stmt stmt, final ParseNode... child) {
         this.stmt = stmt;
         this.child = child;
     }
@@ -170,42 +162,6 @@ public class ParseNode {
     public ParseNode(final VarHyp varHyp) {
         stmt = varHyp;
         child = new ParseNode[0];
-    }
-
-    /**
-     * Return ParseNode's Stmt.
-     *
-     * @return stmt (could be null depending on the context).
-     */
-    public Stmt getStmt() {
-        return stmt;
-    }
-
-    /**
-     * Set ParseNode's Stmt.
-     *
-     * @param stmt a proof or parse step.
-     */
-    public void setStmt(final Stmt stmt) {
-        this.stmt = stmt;
-    }
-
-    /**
-     * Return ParseNode's Child ParseNode array.
-     *
-     * @return child ParseNode array.
-     */
-    public ParseNode[] getChild() {
-        return child;
-    }
-
-    /**
-     * Return ParseNode's Child ParseNode array.
-     *
-     * @param child ParseNode array.
-     */
-    public void setChild(final ParseNode[] child) {
-        this.child = child;
     }
 
     /**
@@ -370,12 +326,6 @@ public class ParseNode {
         if (that == null || stmt != that.stmt)
             return false;
 
-        if (child == null && that.child == null)
-            return true;
-
-        if (child == null || that.child == null)
-            return false;
-
         if (child.length != that.child.length)
             return false;
 
@@ -423,8 +373,8 @@ public class ParseNode {
     public ParseNode deepCloneWithGrammarHypSubs(final ParseNode[] matchNode,
         final ParseNodeHolder[] expandedReseqParam)
     {
-        final ParseNode out = new ParseNode(stmt);
-        out.child = new ParseNode[expandedReseqParam.length];
+        final ParseNode out = new ParseNode(stmt,
+            new ParseNode[expandedReseqParam.length]);
         for (int i = 0; i < out.child.length; i++)
             if (expandedReseqParam[i] == null)
                 out.child[i] = child[i].deepClone();
@@ -452,12 +402,9 @@ public class ParseNode {
     {
         if (this == matchNode)
             return substNode;
-        final ParseNode out = new ParseNode(stmt);
-        if (child != null) {
-            out.child = new ParseNode[child.length];
-            for (int i = 0; i < child.length; i++)
-                out.child[i] = child[i].deepCloneWNodeSub(matchNode, substNode);
-        }
+        final ParseNode out = new ParseNode(stmt, new ParseNode[child.length]);
+        for (int i = 0; i < child.length; i++)
+            out.child[i] = child[i].deepCloneWNodeSub(matchNode, substNode);
         return out;
     }
 
@@ -467,9 +414,7 @@ public class ParseNode {
      * @return ParseNode sub-tree matching the original's content.
      */
     public ParseNode deepClone() {
-        final ParseNode out = new ParseNode();
-        out.stmt = stmt;
-        out.child = new ParseNode[child.length];
+        final ParseNode out = new ParseNode(stmt, new ParseNode[child.length]);
         for (int i = 0; i < child.length; i++)
             out.child[i] = child[i].deepClone();
         return out;
@@ -481,7 +426,7 @@ public class ParseNode {
      *
      * @return ParseNode sub-tree matching the original's content.
      */
-    public ParseNode cloneWithoutChildren() {
+    public ParseNode shallowClone() {
         final ParseNode out = new ParseNode();
         out.stmt = stmt;
         out.child = new ParseNode[child.length];
@@ -509,8 +454,8 @@ public class ParseNode {
         final ParseNode[] assrtSubst, final List<WorkVar> workVarList)
     {
         if (!(stmt instanceof VarHyp)) {
-            final ParseNode out = new ParseNode(stmt);
-            out.child = new ParseNode[child.length];
+            final ParseNode out = new ParseNode(stmt,
+                new ParseNode[child.length]);
             for (int i = 0; i < child.length; i++)
                 out.child[i] = child[i].deepCloneApplyingAssrtSubst(
                     assrtHypArray, assrtSubst, workVarList);
@@ -540,8 +485,8 @@ public class ParseNode {
         final ParseNode[] assrtSubst)
     {
         if (!(stmt instanceof VarHyp)) {
-            final ParseNode out = new ParseNode(stmt);
-            out.child = new ParseNode[child.length];
+            final ParseNode out = new ParseNode(stmt,
+                new ParseNode[child.length]);
             for (int i = 0; i < child.length; i++)
                 out.child[i] = child[i]
                     .deepCloneApplyingAssrtSubst(assrtHypArray, assrtSubst);
@@ -560,8 +505,7 @@ public class ParseNode {
         if (stmt instanceof VarHyp)
             return stack.pop();
 
-        final ParseNode out = new ParseNode(stmt);
-        out.child = new ParseNode[child.length];
+        final ParseNode out = new ParseNode(stmt, new ParseNode[child.length]);
         final int[] reseq = stmt instanceof Axiom
             ? ((Axiom)stmt).getSyntaxAxiomVarHypReseq() : null;
         for (int i = child.length - 1; i >= 0; i--) {
@@ -622,9 +566,8 @@ public class ParseNode {
     }
 
     private void resetAppearances() {
-        if (child != null)
-            for (final ParseNode n : child)
-                n.resetAppearances();
+        for (final ParseNode n : child)
+            n.resetAppearances();
         firstAppearance = 0;
         size = 0;
     }
@@ -636,20 +579,19 @@ public class ParseNode {
         sizeExpanded = 1;
         if (stmt != null)
             formulaSize = stmt.getFormula().cnt;
-        if (child != null)
-            for (final ParseNode element : child) {
-                element.getCounts();
-                sizeExpanded += element.sizeExpanded;
-                formulaSize += element.formulaSize - 2;
-                if (element.firstAppearance >= 0) {
-                    element.firstAppearance = -1;
-                    size += element.size;
-                }
-                else {
-                    element.firstAppearance = -2;
-                    size++;
-                }
+        for (final ParseNode element : child) {
+            element.getCounts();
+            sizeExpanded += element.sizeExpanded;
+            formulaSize += element.formulaSize - 2;
+            if (element.firstAppearance >= 0) {
+                element.firstAppearance = -1;
+                size += element.size;
             }
+            else {
+                element.firstAppearance = -2;
+                size++;
+            }
+        }
     }
 
     public boolean squishTree(final List<ParseNode> encountered) {
@@ -705,12 +647,10 @@ public class ParseNode {
             list[dat[0]++] = s;
         }
         else {
-            if (child != null)
-                for (final ParseNode n : child)
-                    n.convertToRPN(pressLeaf, list, dat);
+            for (final ParseNode n : child)
+                n.convertToRPN(pressLeaf, list, dat);
             final RPNStep s = new RPNStep(stmt);
-            if (firstAppearance == -2
-                && (pressLeaf || child != null && child.length > 0))
+            if (firstAppearance == -2 && (pressLeaf || child.length > 0))
                 s.backRef = -(firstAppearance = ++dat[1]);
             list[dat[0]++] = s;
         }
@@ -724,9 +664,8 @@ public class ParseNode {
      * @return dest of *next* output Stmt array item.
      */
     public int convertToRPNExpanded(final RPNStep[] outRPN, int dest) {
-        if (child != null)
-            for (final ParseNode n : child)
-                dest = n.convertToRPNExpanded(outRPN, dest);
+        for (final ParseNode n : child)
+            dest = n.convertToRPNExpanded(outRPN, dest);
 
         outRPN[dest++] = new RPNStep(stmt);
         return dest;
@@ -954,8 +893,7 @@ public class ParseNode {
         if (stmt instanceof WorkVarHyp)
             return ((VarHyp)stmt).paSubst == null ? new ParseNode((VarHyp)stmt)
                 : ((VarHyp)stmt).paSubst.cloneResolvingUpdatedWorkVars();
-        final ParseNode out = new ParseNode(stmt);
-        out.child = new ParseNode[child.length];
+        final ParseNode out = new ParseNode(stmt, new ParseNode[child.length]);
         for (int i = 0; i < child.length; i++)
             out.child[i] = child[i].cloneResolvingUpdatedWorkVars();
         return out;
@@ -1055,8 +993,7 @@ public class ParseNode {
         if (stmt instanceof WorkVarHyp && ((VarHyp)stmt).paSubst != null)
             return ((VarHyp)stmt).paSubst;
 
-        final ParseNode out = new ParseNode(stmt);
-        out.child = new ParseNode[child.length];
+        final ParseNode out = new ParseNode(stmt, new ParseNode[child.length]);
         for (int i = 0; i < child.length; i++)
             out.child[i] = child[i].deepCloneApplyingWorkVarUpdates();
         return out;
@@ -1099,7 +1036,7 @@ public class ParseNode {
 
     @Override
     public String toString() {
-        return child == null || child.length == 0 ? stmt.toString()
+        return child.length == 0 ? stmt.toString()
             : Arrays.toString(child) + "; " + stmt;
     }
 }

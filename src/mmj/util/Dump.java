@@ -615,7 +615,7 @@ public class Dump {
         sb.append(UtilConstants.DUMP_FORMULA);
 
         if (tmffPreferences.isTMFFEnabled() && stmt.getExprParseTree() != null
-            && stmt.getExprParseTree().getRoot().getStmt() != stmt)
+            && stmt.getExprParseTree().getRoot().stmt != stmt)
         {
             // ok!
             final TMFFStateParams tmffSP = new TMFFStateParams(sb, sb.length(),
@@ -782,7 +782,7 @@ public class Dump {
             if (pVHN[i] == null)
                 sb.append(" ");
             else {
-                sb.append(pVHN[i].getStmt().getLabel());
+                sb.append(pVHN[i].stmt.getLabel());
                 sb.append(" ");
             }
         }

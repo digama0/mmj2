@@ -118,7 +118,7 @@ public abstract class ComplexRuleMap<Data> {
         final WorksheetInfo info,
         final ComplexRuleVisitor<Data, ResType> visitor)
     {
-        final Stmt stmt = node.getStmt();
+        final Stmt stmt = node.stmt;
         final Map<ConstSubst, Map<PropertyTemplate, Data>> constSubstMap = map
             .get(stmt);
 

@@ -43,6 +43,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import mmj.lang.*;
+import mmj.pa.SessionStore;
 
 /**
  * Grammar processes a mmj LogicalSystem, extracts a Grammar, which it also
@@ -166,10 +167,11 @@ public class Grammar implements SyntaxVerifier {
     private int notationGRGimmeMatchCnt;
 
     // global variables stored here for mere convenience
-    private Map<String, Sym> symTbl;
+    public Map<String, Sym> symTbl;
 
-    private Map<String, Stmt> stmtTbl;
+    public Map<String, Stmt> stmtTbl;
     private Messages messages;
+    private SessionStore store;
 
     private int lastGrammarRuleNbr = 0;
 
@@ -298,6 +300,10 @@ public class Grammar implements SyntaxVerifier {
         this(GrammarConstants.DEFAULT_PROVABLE_LOGIC_STMT_TYP_CODES,
             GrammarConstants.DEFAULT_LOGIC_STMT_TYP_CODES);
 
+    }
+
+    public void setStore(final SessionStore store) {
+        this.store = store;
     }
 
     /**
@@ -707,8 +713,7 @@ public class Grammar implements SyntaxVerifier {
         if (parseTreeCnt <= 0)
             return null;
         if (parseTreeCnt == 1) {
-            if (parseTreeArray[0].getRoot().getStmt()
-                .getLabel() == syntaxAxiomLabel)
+            if (parseTreeArray[0].getRoot().stmt.getLabel() == syntaxAxiomLabel)
                 return null;
             return GrammarConstants.ERRMSG_GRAMMAR_RULE_PARSEABLE_1
                 + syntaxAxiomLabel
@@ -884,13 +889,10 @@ public class Grammar implements SyntaxVerifier {
         final VarHyp[] varHypArray)
     {
 
-        final ParseNode root = new ParseNode();
-        root.setStmt(stmt);
-
-        final ParseNode[] children = new ParseNode[varHypArray.length];
+        final ParseNode root = new ParseNode(stmt,
+            new ParseNode[varHypArray.length]);
         for (int i = 0; i < varHypArray.length; i++)
-            children[i] = new ParseNode(varHypArray[i]);
-        root.setChild(children);
+            root.child[i] = new ParseNode(varHypArray[i]);
 
         return new ParseTree(root);
     }
@@ -1007,6 +1009,8 @@ public class Grammar implements SyntaxVerifier {
         } catch (final SecurityException e) {
             throw new IllegalArgumentException(e);
         }
+
+        grammaticalParser.addSettings(store);
 
         GrammarAmbiguity g = new GrammarAmbiguity(this,
             doCompleteGrammarAmbiguityEdits);

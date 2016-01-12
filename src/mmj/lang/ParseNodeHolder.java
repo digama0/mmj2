@@ -70,7 +70,7 @@ public class ParseNodeHolder {
      * @param parseNode the input ParseNode
      */
     public ParseNodeHolder(final ParseNode parseNode) {
-        mObj = parseNode.getStmt();
+        mObj = parseNode.stmt;
         this.parseNode = parseNode;
     }
 
@@ -123,7 +123,7 @@ public class ParseNodeHolder {
     public Cnst getCnstOrTyp() {
         if (mObj instanceof Cnst)
             return (Cnst)mObj;
-        return parseNode.getStmt().getTyp();
+        return parseNode.stmt.getTyp();
     }
 
     /**
@@ -135,7 +135,7 @@ public class ParseNodeHolder {
     public String getCnstIdOrLabel() {
         if (mObj instanceof Cnst)
             return ((Cnst)mObj).getId();
-        return parseNode.getStmt().getLabel();
+        return parseNode.stmt.getLabel();
     }
 
     /**

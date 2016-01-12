@@ -85,14 +85,14 @@ public class ClosureInfo extends DBInfo {
     {
         if (template == PropertyTemplate.templateReplace)
             return input;
-        if (template.getStmt() != input.getStmt())
+        if (template.stmt != input.stmt)
             return null;
 
         ParseNode retNode = endMarker;
 
-        for (int i = 0; i < input.getChild().length; i++) {
+        for (int i = 0; i < input.child.length; i++) {
             final ParseNode res = getCorrespondingNodeRec(
-                template.getChild()[i], input.getChild()[i]);
+                template.child[i], input.child[i]);
             if (res == null)
                 return null;
             if (res != endMarker)
@@ -121,10 +121,10 @@ public class ClosureInfo extends DBInfo {
     private static int prepareTemplate(final ParseNode template,
         final VarHyp var)
     {
-        final ParseNode[] children = template.getChild();
+        final ParseNode[] children = template.child;
         int res = 0;
         for (int i = 0; i < children.length; i++)
-            if (children[i].getStmt() == var) {
+            if (children[i].stmt == var) {
                 children[i] = PropertyTemplate.templateReplace; // indicate
                                                                 // entry point
                 res++;
@@ -138,7 +138,7 @@ public class ClosureInfo extends DBInfo {
         final ParseNode hypRoot, final VarHyp var)
     {
         // do not consider rules like |- ph & |- ps => |- ( ph <-> ps )
-        if (hypRoot.getStmt() == var)
+        if (hypRoot.stmt == var)
             return null;
 
         // Here we need deep clone because next we will modify result
@@ -188,7 +188,7 @@ public class ClosureInfo extends DBInfo {
                 .getExprParseTree().getRoot());
             if (res == null)
                 return null;
-            if (res.getStmt() != vari)
+            if (res.stmt != vari)
                 return null;
         }
 
@@ -286,11 +286,11 @@ public class ClosureInfo extends DBInfo {
 
         final ParseNode root = assrtTree.getRoot();
 
-        if (!implInfo.isImplOperator(root.getStmt()))
+        if (!implInfo.isImplOperator(root.stmt))
             return null;
 
-        final ParseNode main = root.getChild()[1];
-        final ParseNode hypNodePart = root.getChild()[0];
+        final ParseNode main = root.child[1];
+        final ParseNode hypNodePart = root.child[0];
 
         final List<ParseNode> hypNodes = conjInfo.separateByAnd(hypNodePart);
 
@@ -321,7 +321,7 @@ public class ClosureInfo extends DBInfo {
             if (res == null)
                 return null;
 
-            if (res.getStmt() != var)
+            if (res.stmt != var)
                 return null;
         }
 
@@ -339,9 +339,9 @@ public class ClosureInfo extends DBInfo {
             return;
 
         final int hypNum = hypToVarHypMap.length;
-        final Stmt stmt = res.getStmt();
+        final Stmt stmt = res.stmt;
 
-        final ParseNode[] children = res.getChild();
+        final ParseNode[] children = res.child;
 
         final int varToHypMap[] = new int[hypNum];
         for (int i = 0; i < varToHypMap.length; i++)
@@ -357,7 +357,7 @@ public class ClosureInfo extends DBInfo {
 
                 int resNum = -1;
                 for (int k = 0; k < hypToVarHypMap.length; k++)
-                    if (hypToVarHypMap[k] == child.getStmt()) {
+                    if (hypToVarHypMap[k] == child.stmt) {
                         resNum = k;
                         break;
                     }
@@ -625,7 +625,7 @@ public class ClosureInfo extends DBInfo {
                     {
                         final ParseNode assrtRoot = assrt.getExprParseTree()
                             .getRoot();
-                        final ParseNode hypsPartPattern = assrtRoot.getChild()[0];
+                        final ParseNode hypsPartPattern = assrtRoot.child[0];
                         final ParseNode implRes = stepNode;
 
                         // Precondition f(A) /\ f(B) step (or ph->(f(A) /\ f(B))
@@ -723,7 +723,7 @@ public class ClosureInfo extends DBInfo {
                     for (int i = 0; i < varIndexes.length; i++) {
                         final int n = varIndexes[i];
                         // Variable position
-                        final ParseNode child = node.getChild()[n];
+                        final ParseNode child = node.child[n];
                         assert child != null;
 
                         if (!getClosurePossibility(info, child, template,
@@ -845,10 +845,10 @@ public class ClosureInfo extends DBInfo {
                         return ClosureResult.NO_CLOSURE_RULE;
 
                     ClosureResult childResMerge = simpleRes;
-                    for (int i = 0; i < node.getChild().length; i++)
+                    for (int i = 0; i < node.child.length; i++)
                         if (constSubst.constMap[i] == null) {
                             // Variable position
-                            final ParseNode child = node.getChild()[i];
+                            final ParseNode child = node.child[i];
                             final ClosureResult propRes = getClosurePossibility(
                                 info, child, template, searchWithPrefix);
                             if (!propRes.hasClosure())

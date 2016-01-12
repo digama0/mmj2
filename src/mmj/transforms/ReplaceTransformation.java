@@ -42,26 +42,26 @@ public class ReplaceTransformation extends Transformation {
         ParseNode resNode = originalNode;
 
         boolean couldSimplifyGenStep = false;
-        if (info.implStatement == originalNode.getStmt()) {
-            assert originalNode.getChild().length == 2;
-            if (originalNode.getChild()[0].isDeepDup(info.implPrefix)
-                && target.originalNode.getChild()[0].isDeepDup(info.implPrefix))
+        if (info.implStatement == originalNode.stmt) {
+            assert originalNode.child.length == 2;
+            if (originalNode.child[0].isDeepDup(info.implPrefix)
+                && target.originalNode.child[0].isDeepDup(info.implPrefix))
                 couldSimplifyGenStep = true;
         }
 
         final boolean[] replAsserts = replInfo.getPossibleReplaces(
-            originalNode.getStmt(), info);
+            originalNode.stmt, info);
 
         assert replAsserts != null;
 
-        for (int i = 0; i < originalNode.getChild().length; i++) {
+        for (int i = 0; i < originalNode.child.length; i++) {
             if (!replAsserts[i])
                 continue;
             // We replaced previous children and now we should transform ith
             // child B
 
-            final ParseNode child = originalNode.getChild()[i];
-            final ParseNode targetChild = target.originalNode.getChild()[i];
+            final ParseNode child = originalNode.child[i];
+            final ParseNode targetChild = target.originalNode.child[i];
 
             // get the root symbol from g(A', B, C) = g(A', B', C)
             // in set.mm it will be = or <->
@@ -91,18 +91,18 @@ public class ReplaceTransformation extends Transformation {
 
             // transformation should be transformation:
             // check result childTrStmt statement
-            assert eqInfo.isEquivalence(childTrRoot.getStmt());
-            assert childTrRoot.getChild().length == 2;
-            assert childTrRoot.getChild()[0]
-                .isDeepDup(originalNode.getChild()[i]);
-            assert childTrRoot.getChild()[1].isDeepDup(trgt.originalNode
-                .getChild()[i]);
+            assert eqInfo.isEquivalence(childTrRoot.stmt);
+            assert childTrRoot.child.length == 2;
+            assert childTrRoot.child[0]
+                .isDeepDup(originalNode.child[i]);
+            assert childTrRoot.child[1].isDeepDup(trgt.originalNode.child[i]);
 
             // Create statement d:childTrStmt:replAssert
             // |- g(A', B, C) = g(A', B', C)
             final GenProofStepStmt stepTr = replInfo.createReplaceStep(info,
-                resNode, i, trgt.originalNode.getChild()[i], childTrStmt);
-            resNode = stepTr.getCore().getChild()[1];
+                resNode, i, trgt.originalNode.child[i], childTrStmt);
+            ParseNode r = stepTr.getCore();
+            resNode = r.child[1];
 
             // resStmt now have the form g(A, B, C) = g(A', B, C)
             // So create transitive:
@@ -114,9 +114,11 @@ public class ReplaceTransformation extends Transformation {
         }
 
         assert resStmt != null;
+        ParseNode r = resStmt.getCore();
 
-        assert resStmt.getCore().getChild()[0].isDeepDup(originalNode);
-        assert resStmt.getCore().getChild()[1].isDeepDup(target.originalNode);
+        assert r.child[0].isDeepDup(originalNode);
+        ParseNode r1 = resStmt.getCore();
+        assert r1.child[1].isDeepDup(target.originalNode);
 
         return resStmt;
     }
@@ -124,16 +126,16 @@ public class ReplaceTransformation extends Transformation {
     @Override
     public ParseNode getCanonicalNode(final WorksheetInfo info) {
         final boolean[] replAsserts = replInfo.getPossibleReplaces(
-            originalNode.getStmt(), info);
+            originalNode.stmt, info);
         assert replAsserts != null;
 
-        final ParseNode resNode = originalNode.cloneWithoutChildren();
+        final ParseNode resNode = originalNode.shallowClone();
 
-        for (int i = 0; i < resNode.getChild().length; i++) {
+        for (int i = 0; i < resNode.child.length; i++) {
             if (!replAsserts[i])
                 continue;
-            resNode.getChild()[i] = trManager.getCanonicalForm(
-                originalNode.getChild()[i], info);
+            resNode.child[i] = trManager.getCanonicalForm(
+                originalNode.child[i], info);
         }
 
         return resNode;

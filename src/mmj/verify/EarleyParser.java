@@ -1700,7 +1700,7 @@ public class EarleyParser implements GrammaticalParser {
              * expr.
              */
             if (expr[hypMapEntry.exprThru].mObj instanceof Cnst
-                || expr[hypMapEntry.exprThru].parseNode.getStmt()
+                || expr[hypMapEntry.exprThru].parseNode.stmt
                     .getTyp() != hypMapEntry.typ)
                 return false;
 

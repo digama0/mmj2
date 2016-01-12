@@ -59,7 +59,7 @@ import mmj.verify.VerifyProofs;
  * Assrt is an "Assertion", of which there are two main kinds, Axiom and Theorem
  * -- known in Metamath as "Axiomatic Assertions" and "Provable Assertions".
  * What do Assertions have in common that Hypotheses do not? "Mandatory" Frames.
- * 
+ *
  * @see <a href="../../MetamathERNotes.html"> Nomenclature and
  *      Entity-Relationship Notes</a>
  */
@@ -109,7 +109,7 @@ public abstract class Assrt extends Stmt {
 
     /**
      * Construct using a boatload of parameters.
-     * 
+     *
      * @param seq MObj.seq number
      * @param scopeDefList the Scope list
      * @param symTbl Symbol Table (Map)
@@ -122,7 +122,7 @@ public abstract class Assrt extends Stmt {
     public Assrt(final int seq, final List<ScopeDef> scopeDefList,
         final Map<String, Sym> symTbl, final Map<String, Stmt> stmtTbl,
         final String labelS, final String typS, final List<String> symList)
-        throws LangException
+            throws LangException
     {
         super(seq, symTbl, stmtTbl, labelS);
 
@@ -142,7 +142,7 @@ public abstract class Assrt extends Stmt {
      * Note: the "varHypArray" contains only *mandatory* VarHyp's, hence the
      * name of this function, which is intended to highlight the point. These
      * are the VarHyp's use in the Assrt's Formula.
-     * 
+     *
      * @return varHypArray which contains only mandatory VarHyp's.
      */
     @Override
@@ -152,7 +152,7 @@ public abstract class Assrt extends Stmt {
 
     /**
      * Return the logHypArray.
-     * 
+     *
      * @return logHypArray for the Assrt.
      */
     public LogHyp[] getLogHypArray() {
@@ -161,7 +161,7 @@ public abstract class Assrt extends Stmt {
 
     /**
      * Return the logHypArray length
-     * 
+     *
      * @return Assrt's logHypArray length.
      */
     public int getLogHypArrayLength() {
@@ -170,7 +170,7 @@ public abstract class Assrt extends Stmt {
 
     /**
      * Set the logHypArray.
-     * 
+     *
      * @param logHypArray for the Assrt.
      */
     public void setLogHypArray(final LogHyp[] logHypArray) {
@@ -179,7 +179,7 @@ public abstract class Assrt extends Stmt {
 
     /**
      * Return the *mandatory* Hyp Array.Length
-     * 
+     *
      * @return hypArray length from the Assrt's MandFrame.
      */
     @Override
@@ -189,7 +189,7 @@ public abstract class Assrt extends Stmt {
 
     /**
      * Set the *mandatory* VarHyp Array.
-     * 
+     *
      * @param varHypArray VarHyp's used by the Assrt.
      */
     public void setMandVarHypArray(final VarHyp[] varHypArray) {
@@ -198,7 +198,7 @@ public abstract class Assrt extends Stmt {
 
     /**
      * Get the Assrt's MandFrame.
-     * 
+     *
      * @return Assrt's MandFrame.
      */
     public ScopeFrame getMandFrame() {
@@ -207,7 +207,7 @@ public abstract class Assrt extends Stmt {
 
     /**
      * Set the Assrt's MandFrame.
-     * 
+     *
      * @param mandFrame Assrt's MandFrame.
      */
     public void setMandFrame(final ScopeFrame mandFrame) {
@@ -228,7 +228,7 @@ public abstract class Assrt extends Stmt {
      * assertion. In a sense, Metamath scopes are merely notational shorthand,
      * and as Metamath.pdf explains, every assertion has an "Extended Frame"
      * (look it up for more info.)
-     * 
+     *
      * @return true (assertions are always "active")
      */
     @Override
@@ -281,7 +281,7 @@ public abstract class Assrt extends Stmt {
      * is not referenced directly in ddeeq1; rather, it employs w in the proof.
      * DjVars that do not match variable hypotheses are therefore added to the
      * OptFrame for use in proof verification!
-     * 
+     *
      * @see VerifyProofs#checkSubstToVars(int,int)
      * @param scopeDefList Scope List as of this Stmt's definition.
      * @param hypList Already partly filled in with variable hypotheses from the
@@ -321,7 +321,7 @@ public abstract class Assrt extends Stmt {
      * referenced in a list of hypotheses.
      * <p>
      * Note: checks only the VarHyp's.
-     * 
+     *
      * @param hypList -- List containing hypotheses
      * @param djVars -- DjVars object containing 2 variables to be checked
      *            against the variables referenced in hypList.
@@ -358,7 +358,7 @@ public abstract class Assrt extends Stmt {
      * Because hypList is maintained in database statement sequence order,
      * hypList should either be empty (new) before the call, or already be in
      * that order.
-     * 
+     *
      * @param <T> the actual type of the list
      * @param hypList List of Hyp's, updated here.
      * @param hypNew Candidate Hyp to be added to hypList if not already there.
@@ -393,7 +393,7 @@ public abstract class Assrt extends Stmt {
     /**
      * Dynamically computes, if needed, the larges maximum depth of parse trees
      * of logHypArray, and caches the value for later use.
-     * 
+     *
      * @return greatest maxDepth of parse trees for logHypArray.
      */
     public int getLogHypsMaxDepth() {
@@ -401,7 +401,8 @@ public abstract class Assrt extends Stmt {
             int hypMaxDepth = 0;
             int hypDepth;
             for (final LogHyp element : logHypArray)
-                if ((hypDepth = element.getExprParseTree().getMaxDepth()) > hypMaxDepth)
+                if ((hypDepth = element.getExprParseTree()
+                    .getMaxDepth()) > hypMaxDepth)
                     hypMaxDepth = hypDepth;
             setLogHypsMaxDepth(hypMaxDepth);
         }
@@ -412,7 +413,7 @@ public abstract class Assrt extends Stmt {
     /**
      * Dynamically computes, if needed, the Hi and Lo keys of Level 1 (root) of
      * parse trees of logHypArray, and caches the value for later use.
-     * 
+     *
      * @return Level 1 HiLoKey of parse trees for logHypArray.
      */
     public String getLogHypsL1HiLoKey() {
@@ -425,7 +426,7 @@ public abstract class Assrt extends Stmt {
                 int lowNbr = Integer.MAX_VALUE;
                 int highNbr = Integer.MIN_VALUE;
                 for (final LogHyp element : logHypArray) {
-                    hStmt = element.getExprParseTree().getRoot().getStmt();
+                    hStmt = element.getExprParseTree().getRoot().stmt;
                     if (hStmt instanceof VarHyp) {
                         setLogHypsL1HiLoKey("");
                         return logHypsL1HiLoKey;
@@ -450,7 +451,7 @@ public abstract class Assrt extends Stmt {
 //not needed in StepSelectorSearch anymore, so comment out for now
     /**
      * Sorts a list of Assrt into an array.
-     * 
+     *
      * @param assrtList List of Assrt to be sorted.
      * @param comparator Comparator to be used for the sort.
      * @return Array of Assrt with size equal to the number of elements in the
@@ -468,15 +469,9 @@ public abstract class Assrt extends Stmt {
     /**
      * NBR_LOG_HYP_SEQ sequences by Stmt.seq
      */
-    public static final Comparator<Assrt> NBR_LOG_HYP_SEQ = new Comparator<Assrt>()
-    {
-        public int compare(final Assrt o1, final Assrt o2) {
-            int n = o1.logHypArray.length - o2.logHypArray.length;
-            if (n == 0)
-                n = o1.seq - o2.seq;
-            return n;
-        }
-    };
+    public static final Comparator<Assrt> NBR_LOG_HYP_SEQ = Comparator
+        .comparingInt((final Assrt a) -> a.logHypArray.length)
+        .thenComparingInt(a -> a.seq);
 
     /**
      * Loads sortedLogHypArray from logHypArray.
@@ -524,7 +519,8 @@ public abstract class Assrt extends Stmt {
                 while (true) {
                     outIndex++; // find formula with diff length
                     if (outIndex < outEnd)
-                        if (outArray[outIndex].getFormula().getCnt() == iFormulaLength)
+                        if (outArray[outIndex].getFormula()
+                            .getCnt() == iFormulaLength)
                             continue;
                     break outLoop; // insert here at outIndex
                 }
@@ -553,7 +549,7 @@ public abstract class Assrt extends Stmt {
     /**
      * See if the LogHyp has any variables in common with the assertion. Note:
      * both of the VarHyp arrays are sorted in database order (*.getSeq());
-     * 
+     *
      * @param holdLogHyp1 the LogHyp the query
      * @return true if there is a common variable
      */
@@ -584,7 +580,7 @@ public abstract class Assrt extends Stmt {
 
     /**
      * Return the sortedLogHypArray.
-     * 
+     *
      * @return sortedLogHypArray for the Assrt.
      */
     public LogHyp[] getSortedLogHypArray() {

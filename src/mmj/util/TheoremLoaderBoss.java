@@ -102,7 +102,7 @@ public class TheoremLoaderBoss extends Boss {
         if (tlPreferences == null)
             tlPreferences = new TlPreferences(
                 batchFramework.logicalSystemBoss.getLogicalSystem(),
-                batchFramework.proofAsstBoss.getStore());
+                batchFramework.storeBoss.getStore());
 
         return tlPreferences;
     }

@@ -28,7 +28,7 @@ public class CommutativeInfo extends DBInfo {
             final ParseNode node, final PropertyTemplate template,
             final ConstSubst constSubst, final int[] varIndexes)
         {
-            final Stmt stmt = node.getStmt();
+            final Stmt stmt = node.stmt;
             final GeneralizedStmt genStmt = new GeneralizedStmt(constSubst,
                 template, varIndexes, stmt);
             final boolean res = isCommutativeWithProp(node, info, genStmt);
@@ -117,18 +117,18 @@ public class CommutativeInfo extends DBInfo {
         if (varHypArray.length != 2)
             return;
 
-        if (!eqInfo.isEquivalence(root.getStmt()))
+        if (!eqInfo.isEquivalence(root.stmt))
             return;
 
-        final ParseNode[] subTrees = root.getChild();
+        final ParseNode[] subTrees = root.child;
 
         // it is the equivalence rule
         assert subTrees.length == 2;
 
-        if (subTrees[0].getStmt() != subTrees[1].getStmt())
+        if (subTrees[0].stmt != subTrees[1].stmt)
             return;
 
-        final Stmt stmt = subTrees[0].getStmt();
+        final Stmt stmt = subTrees[0].stmt;
 
         final ConstSubst constSubst = ConstSubst.createFromNode(subTrees[0]);
         if (constSubst == null)
@@ -142,28 +142,30 @@ public class CommutativeInfo extends DBInfo {
 
         if (!constSubst.isTheSameConstMap(subTrees[1]))
             return;
+        ParseNode r = subTrees[0];
 
         // It is unnecessary:
         // if (!template.isEmpty())
         // if (clInfo.getClosureAssert(stmt, constSubst, template) == null)
         // return;
 
-        final ParseNode[] leftChildren = subTrees[0].getChild();
-        final ParseNode[] rightChildren = subTrees[1].getChild();
+        final ParseNode[] leftChildren = r.child;
+        ParseNode r1 = subTrees[1];
+        final ParseNode[] rightChildren = r1.child;
 
         final int k0 = varPlace[0];
         final int k1 = varPlace[1];
 
-        if (leftChildren[k0].getStmt() != varHypArray[0])
+        if (leftChildren[k0].stmt != varHypArray[0])
             return;
 
-        if (leftChildren[k1].getStmt() != varHypArray[1])
+        if (leftChildren[k1].stmt != varHypArray[1])
             return;
 
-        if (leftChildren[k0].getStmt() != rightChildren[k1].getStmt())
+        if (leftChildren[k0].stmt != rightChildren[k1].stmt)
             return;
 
-        if (leftChildren[k1].getStmt() != rightChildren[k0].getStmt())
+        if (leftChildren[k1].stmt != rightChildren[k0].stmt)
             return;
 
         final Assrt com = resMap.addData(stmt, constSubst, template, assrt);
@@ -186,18 +188,18 @@ public class CommutativeInfo extends DBInfo {
      */
     public static int compareNodes(final ParseNode first, final ParseNode second)
     {
-        if (first.getStmt() == second.getStmt()) {
-            final int len = first.getChild().length;
+        if (first.stmt == second.stmt) {
+            final int len = first.child.length;
             for (int i = 0; i < len; i++) {
-                final int res = compareNodes(first.getChild()[i],
-                    second.getChild()[i]);
+                final int res = compareNodes(first.child[i],
+                    second.child[i]);
                 if (res != 0)
                     return res;
             }
 
             return 0;
         }
-        return first.getStmt().getSeq() < second.getStmt().getSeq() ? -1 : 1;
+        return first.stmt.getSeq() < second.stmt.getSeq() ? -1 : 1;
     }
 
     /**
@@ -224,7 +226,7 @@ public class CommutativeInfo extends DBInfo {
         if (genStmt.template.isEmpty())
             return true;
         for (int i = 0; i < 2; i++) {
-            final ParseNode child = node.getChild()[genStmt.varIndexes[i]];
+            final ParseNode child = node.child[genStmt.varIndexes[i]];
 
             if (!info.trManager.clInfo.getClosurePossibility(info, child,
                 genStmt.template, true).hasClosure())
@@ -258,8 +260,8 @@ public class CommutativeInfo extends DBInfo {
             final int n1 = comProp.varIndexes[1];
             final ParseNode side = source;
             final ParseNode[] in = new ParseNode[2];
-            in[0] = side.getChild()[n0];
-            in[1] = side.getChild()[n1];
+            in[0] = side.child[n0];
+            in[1] = side.child[n1];
 
             for (int i = 0; i < 2; i++)
                 hyps[i] = clInfo.closureProperty(info, comProp.template, in[i],

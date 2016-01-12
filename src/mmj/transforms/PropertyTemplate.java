@@ -41,15 +41,15 @@ public class PropertyTemplate extends ParseNodeHashElem {
             res.res = input;
         }
         else {
-            if (curTempl.getStmt() != input.getStmt()) {
+            if (curTempl.stmt != input.stmt) {
                 res.ok = false;
                 return;
             }
 
-            assert input.getChild().length == curTempl.getChild().length;
+            assert input.child.length == curTempl.child.length;
 
-            for (int i = 0; i < input.getChild().length; i++) {
-                extract(res, curTempl.getChild()[i], input.getChild()[i]);
+            for (int i = 0; i < input.child.length; i++) {
+                extract(res, curTempl.child[i], input.child[i]);
                 if (!res.ok)
                     return;
             }

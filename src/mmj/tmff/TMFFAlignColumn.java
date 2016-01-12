@@ -257,7 +257,7 @@ public class TMFFAlignColumn extends TMFFMethod {
 
         Axiom axiom = null;
 
-        final Stmt stmt = currNode.getStmt();
+        final Stmt stmt = currNode.stmt;
 
         final Sym[] formulaSymArray = stmt.getFormula().getSym();
 
@@ -323,14 +323,14 @@ public class TMFFAlignColumn extends TMFFMethod {
                 return -1;
 
             // fix for problem 20070705.2
-            if (currNode.getChild().length == 0)
+            if (currNode.child.length == 0)
                 return -1;
 
             varI++;
             if (reseq == null)
-                subNode = currNode.getChild()[varI];
+                subNode = currNode.child[varI];
             else
-                subNode = currNode.getChild()[reseq[varI]];
+                subNode = currNode.child[reseq[varI]];
 
             // finagle: we want to pad to position pos - 2 because
             // the output tokens will be prefixed by " ".

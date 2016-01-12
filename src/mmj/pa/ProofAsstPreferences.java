@@ -129,6 +129,8 @@ public class ProofAsstPreferences {
     public Setting<Boolean> maximized;
     /** Proof Text At Top option for ProofAsstGUI. */
     public Setting<Boolean> textAtTop;
+    /** Proof GUI on-screen location. */
+    public Setting<Rectangle> bounds;
 
     /**
      * Get left column number for RPN statement labels when creating
@@ -200,7 +202,7 @@ public class ProofAsstPreferences {
      * in a Metamath database because they have a different proof (other
      * possibilities exist.)
      */
-    public Setting<Set<Assrt>> unifySearchExclude;
+    public Setting<Set<String>> unifySearchExclude;
 
     public Setting<Integer> stepSelectorMaxResults;
     public Setting<Boolean> stepSelectorShowSubstitutions;
@@ -244,6 +246,8 @@ public class ProofAsstPreferences {
 
     public Setting<Boolean> autocomplete;
     public Setting<Boolean> deriveAutocomplete;
+
+    public Setting<String> proofTheoremLabel;
 
     private WorkVarManager workVarManager;
 
@@ -299,10 +303,12 @@ public class ProofAsstPreferences {
                 PaConstants.PROOF_ASST_ERROR_MESSAGE_COLUMNS_DEFAULT),
             PaConstants.PROOF_ASST_ERROR_MESSAGE_COLUMNS_MIN,
             PaConstants.PROOF_ASST_ERROR_MESSAGE_COLUMNS_MAX);
-        maximized = store.addSetting(PFX + "lineSpacing",
+        maximized = store.addSetting(PFX + "maximized",
             PaConstants.PROOF_ASST_MAXIMIZED_DEFAULT);
         textAtTop = store.addSetting(PFX + "lineSpacing",
             PaConstants.PROOF_ASST_TEXT_AT_TOP_DEFAULT);
+        bounds = store.new NullSetting<Rectangle>(PFX + "bounds",
+            Serializer.RECT_SERIALIZER);
 
         rpnProofLeftCol = setIntBound(
             store.addSetting(PFX + "rpnProofLeftCol",
@@ -337,8 +343,9 @@ public class ProofAsstPreferences {
         importUpdateDJs = store.addSetting(PFX + "importUpdateDJs",
             PaConstants.PROOF_ASST_IMPORT_UPDATE_DJS_DEFAULT);
 
-        unifySearchExclude = store.addSetting(PFX + "unifySearchExclude",
-            new HashSet<>());
+        // The ~ is so that it sorts at the end with other big keys
+        unifySearchExclude = store.addSetting("~" + PFX + "unifySearchExclude",
+            new HashSet<>(), Serializer.<String> identity().set());
 
         stepSelectorMaxResults = setIntBound(
             store.addSetting(PFX + "stepSelectorMaxResults",
@@ -375,10 +382,8 @@ public class ProofAsstPreferences {
         highlightingEnabled = store.addSetting(PFX + "highlightingEnabled",
             PaConstants.HIGHLIGHTING_ENABLED_DEFAULT);
 
-        if (highlightingEnabled.get()) {
-            highlighting = new HashMap<String, SimpleAttributeSet>();
-            PaConstants.doStyleDefaults(highlighting);
-        }
+        if (highlightingEnabled.get())
+            PaConstants.doStyleDefaults(highlighting = new HashMap<>());
 
         foregroundColor = store.addSetting(PFX + "foregroundColor",
             PaConstants.DEFAULT_FOREGROUND_COLOR);
@@ -402,6 +407,9 @@ public class ProofAsstPreferences {
             .set(value && deriveAutocomplete.get()));
         deriveAutocomplete.addListener(
             (o, value) -> autocomplete.set(value || autocomplete.get()));
+
+        proofTheoremLabel = store.new NullSetting<String>(
+            PFX + "proofTheoremLabel", "", Serializer.identity());
 
         // Note: this default constructor is available for test
         // of ProofAsstGUI in batch mode -- but is
@@ -437,10 +445,7 @@ public class ProofAsstPreferences {
      * @return true if assertion should be excluded
      */
     public boolean checkUnifySearchExclude(final Assrt assrt) {
-        for (final Assrt element : unifySearchExclude.get())
-            if (assrt == element)
-                return true;
-        return false;
+        return unifySearchExclude.get().contains(assrt.getLabel());
     }
 
     /**

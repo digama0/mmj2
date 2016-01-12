@@ -18,7 +18,7 @@ public class TrUtil {
     private TrUtil() {}
 
     public static boolean isVarNode(final ParseNode node) {
-        return isVarStmt(node.getStmt());
+        return isVarStmt(node.stmt);
     }
 
     public static boolean isVarStmt(final Stmt stmt) {
@@ -29,7 +29,7 @@ public class TrUtil {
         if (isVarNode(node))
             return false;
 
-        for (final ParseNode child : node.getChild())
+        for (final ParseNode child : node.child)
             if (!isConstNode(child))
                 return false;
 
@@ -50,17 +50,14 @@ public class TrUtil {
         assert left != null;
         assert right != null;
         assert stmt != null;
-        final ParseNode eqRoot = new ParseNode(stmt);
-        final ParseNode[] children = {left, right};
-        eqRoot.setChild(children);
-        return eqRoot;
+        return new ParseNode(stmt, left, right);
     }
 
     public static ParseNode[] collectConstSubst(final ParseNode originalNode) {
-        final ParseNode[] constMap = new ParseNode[originalNode.getChild().length];
+        final ParseNode[] constMap = new ParseNode[originalNode.child.length];
 
         for (int i = 0; i < constMap.length; i++) {
-            final ParseNode child = originalNode.getChild()[i];
+            final ParseNode child = originalNode.child[i];
             if (isConstNode(child))
                 constMap[i] = child;
         }
@@ -79,7 +76,6 @@ public class TrUtil {
     public static ParseNode createGenBinaryNode(final GeneralizedStmt genStmt,
         final ParseNode left, final ParseNode right)
     {
-        final ParseNode eqRoot = new ParseNode(genStmt.stmt);
         final int len = genStmt.constSubst.constMap.length;
         final ParseNode[] vars = {left, right};
         final ParseNode[] children = new ParseNode[len];
@@ -91,8 +87,7 @@ public class TrUtil {
         for (int i = 0; i < 2; i++)
             children[genStmt.varIndexes[i]] = vars[i];
 
-        eqRoot.setChild(children);
-        return eqRoot;
+        return new ParseNode(genStmt.stmt, children);
     }
 
     public static ParseNode createAssocBinaryNode(final int from,
@@ -177,11 +172,10 @@ public class TrUtil {
     public static void findVarsInParseNode(final ParseNode input,
         final Set<VarHyp> res)
     {
-        final Stmt stmt = input.getStmt();
-        if (stmt instanceof VarHyp)
-            res.add((VarHyp)stmt);
+        if (input.stmt instanceof VarHyp)
+            res.add((VarHyp)input.stmt);
         else
-            for (final ParseNode child : input.getChild())
+            for (final ParseNode child : input.child)
                 findVarsInParseNode(child, res);
     }
 
@@ -253,10 +247,10 @@ public class TrUtil {
         final Stmt equalStmt;
 
         if (!implForm)
-            equalStmt = assrt.getExprParseTree().getRoot().getStmt();
+            equalStmt = assrt.getExprParseTree().getRoot().stmt;
         else {
             final ParseNode assrtRoot = assrt.getExprParseTree().getRoot();
-            equalStmt = assrtRoot.getChild()[1].getStmt();
+            equalStmt = assrtRoot.child[1].stmt;
         }
 
         // Create node f(f(a, b), c) = f(a, f(b, c))
@@ -265,7 +259,8 @@ public class TrUtil {
         if (!implForm) {
             if (hyps.length != 0)
                 assert !info.hasImplPrefix();
-            final ProofStepStmt[] simpleHyps = convertGenToSimpleProofSteps(hyps);
+            final ProofStepStmt[] simpleHyps = convertGenToSimpleProofSteps(
+                hyps);
 
             final ProofStepStmt res = info.getOrCreateProofStepStmt(stepNode,
                 simpleHyps, assrt);
@@ -273,7 +268,7 @@ public class TrUtil {
         }
         else {
             final ParseNode assrtRoot = assrt.getExprParseTree().getRoot();
-            final ParseNode hypsPartPattern = assrtRoot.getChild()[0];
+            final ParseNode hypsPartPattern = assrtRoot.child[0];
 
             final GenProofStepStmt hypGenStep = conjInfo
                 .concatenateInTheSamePattern(hyps, hypsPartPattern, info);

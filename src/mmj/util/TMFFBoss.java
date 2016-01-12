@@ -161,7 +161,7 @@ public class TMFFBoss extends Boss {
      */
     protected TMFFPreferences buildTMFFPreferences() {
 
-        return new TMFFPreferences(batchFramework.proofAsstBoss.getStore());
+        return new TMFFPreferences(batchFramework.storeBoss.getStore());
     }
 
     /**

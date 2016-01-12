@@ -120,7 +120,7 @@ public class TransformationManager {
     public Transformation createTransformation(final ParseNode node,
         final WorksheetInfo info)
     {
-        final Stmt stmt = node.getStmt();
+        final Stmt stmt = node.stmt;
 
         final boolean[] replAsserts = replInfo.getPossibleReplaces(stmt, info);
 
@@ -221,7 +221,7 @@ public class TransformationManager {
         }
 
         final ParseNode derivRoot = derivStep.formulaParseTree.getRoot();
-        final Cnst derivType = derivRoot.getStmt().getTyp();
+        final Cnst derivType = derivRoot.stmt.getTyp();
         final Assrt implAssrt = implInfo.getEqImplication(derivType);
         if (implAssrt == null)
             return null;

@@ -32,7 +32,7 @@ public class AssociativeInfo extends DBInfo {
             final ParseNode node, final PropertyTemplate template,
             final ConstSubst constSubst, final int[] varIndexes)
         {
-            final Stmt stmt = node.getStmt();
+            final Stmt stmt = node.stmt;
             final boolean res = isAssociativeWithProp(node, template,
                 constSubst, info);
             if (res)
@@ -119,18 +119,18 @@ public class AssociativeInfo extends DBInfo {
         if (varHypArray.length != 3)
             return;
 
-        if (!eqInfo.isEquivalence(root.getStmt()))
+        if (!eqInfo.isEquivalence(root.stmt))
             return;
 
-        final ParseNode[] subTrees = root.getChild();
+        final ParseNode[] subTrees = root.child;
 
         // it must be the equivalence rule
         assert subTrees.length == 2;
 
-        if (subTrees[0].getStmt() != subTrees[1].getStmt())
+        if (subTrees[0].stmt != subTrees[1].stmt)
             return;
 
-        final Stmt stmt = subTrees[0].getStmt();
+        final Stmt stmt = subTrees[0].stmt;
 
         final ConstSubst constSubst = ConstSubst.createFromNode(subTrees[0]);
 
@@ -149,8 +149,8 @@ public class AssociativeInfo extends DBInfo {
             if (!clInfo.hasClosureAssert(stmt, constSubst, template))
                 return;
 
-        final ParseNode[] leftChildren = subTrees[0].getChild();
-        final ParseNode[] rightChildren = subTrees[1].getChild();
+        final ParseNode[] leftChildren = subTrees[0].child;
+        final ParseNode[] rightChildren = subTrees[1].child;
 
         // we need to find one of the 2 patterns:
         // 0) f(f(a, b), c) = f(a, f(b, c))
@@ -162,12 +162,12 @@ public class AssociativeInfo extends DBInfo {
             final VarHyp kVar = varHypArray[k * 2];
             final VarHyp nVar = varHypArray[n * 2];
 
-            if (leftChildren[k].getStmt() != stmt)
+            if (leftChildren[k].stmt != stmt)
                 continue;
             if (!constSubst.isTheSameConstMap(leftChildren[k]))
                 continue;
 
-            if (rightChildren[n].getStmt() != stmt)
+            if (rightChildren[n].stmt != stmt)
                 continue;
 
             if (!constSubst.isTheSameConstMap(rightChildren[n]))
@@ -176,25 +176,22 @@ public class AssociativeInfo extends DBInfo {
             if (!TrUtil.isVarNode(leftChildren[n]))
                 continue;
 
-            if (leftChildren[n].getStmt() != nVar)
+            if (leftChildren[n].stmt != nVar)
                 continue;
 
-            if (leftChildren[n].getStmt() != rightChildren[n].getChild()[n]
-                .getStmt())
+            if (leftChildren[n].stmt != rightChildren[n].child[n].stmt)
                 continue;
 
-            if (leftChildren[k].getChild()[k].getStmt() != kVar)
+            if (leftChildren[k].child[k].stmt != kVar)
                 continue;
 
-            if (leftChildren[k].getChild()[k].getStmt() != rightChildren[k]
-                .getStmt())
+            if (leftChildren[k].child[k].stmt != rightChildren[k].stmt)
                 continue;
 
-            if (leftChildren[k].getChild()[n].getStmt() != varHypArray[1])
+            if (leftChildren[k].child[n].stmt != varHypArray[1])
                 continue;
 
-            if (leftChildren[k].getChild()[n].getStmt() != rightChildren[n]
-                .getChild()[k].getStmt())
+            if (leftChildren[k].child[n].stmt != rightChildren[n].child[k].stmt)
                 continue;
 
             if (!replInfo.isFullReplaceStatement(stmt)) {
@@ -224,7 +221,7 @@ public class AssociativeInfo extends DBInfo {
     public static boolean isAssociativeWithProp(final ParseNode node,
         final GeneralizedStmt assocProp, final WorksheetInfo info)
     {
-        if (assocProp.stmt != node.getStmt())
+        if (assocProp.stmt != node.stmt)
             return false;
         return isAssociativeWithProp(node, assocProp.template,
             assocProp.constSubst, info);
@@ -234,17 +231,17 @@ public class AssociativeInfo extends DBInfo {
         final PropertyTemplate template, final ConstSubst constSubst,
         final WorksheetInfo info)
     {
-        assert node.getChild().length == constSubst.constMap.length;
+        assert node.child.length == constSubst.constMap.length;
 
         if (template.isEmpty())
             return true;
 
         int varNum = 0;
         for (int i = 0; i < constSubst.constMap.length; i++) {
-            final ParseNode child = node.getChild()[i];
+            final ParseNode child = node.child[i];
             if (constSubst.constMap[i] == null) { // variable here
                 varNum++;
-                if (child.getStmt() == node.getStmt()
+                if (child.stmt == node.stmt
                     && isAssociativeWithProp(child, template, constSubst, info))
                     continue;
 
@@ -365,9 +362,9 @@ public class AssociativeInfo extends DBInfo {
             else
                 side = right;
             final ParseNode[] in = new ParseNode[3];
-            in[0] = side.getChild()[n0].getChild()[n0];
-            in[1] = side.getChild()[n0].getChild()[n1];
-            in[2] = side.getChild()[n1];
+            in[0] = side.child[n0].child[n0];
+            in[1] = side.child[n0].child[n1];
+            in[2] = side.child[n1];
 
             for (int i = 0; i < 3; i++)
                 hyps[i] = clInfo.closureProperty(info, assocProp.template,

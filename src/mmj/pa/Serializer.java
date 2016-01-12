@@ -13,6 +13,7 @@
 package mmj.pa;
 
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.io.File;
 import java.lang.reflect.Array;
 import java.util.*;
@@ -20,6 +21,8 @@ import java.util.function.*;
 import java.util.stream.Collectors;
 
 import org.json.*;
+
+import mmj.lang.*;
 
 public interface Serializer<T> {
     /**
@@ -158,10 +161,21 @@ public interface Serializer<T> {
                 throw new IllegalArgumentException(e);
             }
         } , value -> {
-            final JSONArray a = new JSONArray().put(value.getRed())
-                .put(value.getGreen()).put(value.getBlue());
+            final JSONArray a = new JSONArray(value.getRed(), value.getGreen(),
+                value.getBlue());
             return value.getAlpha() == 255 ? a : a.put(value.getAlpha());
         });
+
+    public static final Serializer<Rectangle> RECT_SERIALIZER = Serializer
+        .of(o -> {
+            final JSONArray a = (JSONArray)o;
+            try {
+                return new Rectangle(a.getInt(0), a.getInt(1), a.getInt(2),
+                    a.getInt(3));
+            } catch (final JSONException e) {
+                throw new IllegalArgumentException(e);
+            }
+        } , r -> new JSONArray(r.x, r.y, r.width, r.height));
 
     @SuppressWarnings("unchecked")
     public static <T> Serializer<T[]> getArraySerializer(final Class<T> clazz) {
@@ -169,17 +183,38 @@ public interface Serializer<T> {
             .array(n -> (T[])Array.newInstance(clazz, n));
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T extends Stmt> Serializer<T> getStmtSerializer(
+        final LogicalSystem logicalSystem)
+    {
+        final Map<String, Stmt> t = logicalSystem.getStmtTbl();
+        return Serializer.of(o -> (T)t.get(o), Stmt::getLabel);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends Sym> Serializer<T> getSymSerializer(
+        final LogicalSystem logicalSystem)
+    {
+        final Map<String, Sym> t = logicalSystem.getSymTbl();
+        return Serializer.of(o -> (T)t.get(o), Sym::getId);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> Serializer<T> identity() {
+        return Serializer.of(o -> (T)o, v -> v);
+    }
+
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static <T> Serializer<T> getSerializer(final Class<T> clazz) {
         Serializer s;
-        if (clazz.isAssignableFrom(Enum.class))
+        if (Enum.class.isAssignableFrom(clazz))
             s = getEnumSerializer((Class)clazz);
         else if (clazz == Color.class)
             s = COLOR_SERIALIZER;
         else if (clazz.isArray())
             s = getArraySerializer(clazz.getComponentType());
         else
-            s = Serializer.of(o -> o, v -> v);
+            s = identity();
         return s;
     }
 

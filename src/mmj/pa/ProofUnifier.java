@@ -285,7 +285,7 @@ public class ProofUnifier {
 
         Collections.sort(unifySearchList, MObj.SEQ);
 
-        final Set<Assrt> excl = proofAsstPreferences.unifySearchExclude.get();
+        final Set<String> excl = proofAsstPreferences.unifySearchExclude.get();
         if (!excl.isEmpty())
             messages.accumInfoMessage(PaConstants.ERRMSG_UNIFY_SEARCH_EXCLUDE,
                 excl);
@@ -886,7 +886,6 @@ public class ProofUnifier {
                     buildNewTheoremLogHyp(i,
                         (HypothesisStep)holdHypProofStepStmt);
                 holdHypNode = new ParseNode(holdHypProofStepStmt.getRef());
-                holdHypNode.setChild(new ParseNode[0]);
             }
             else {
                 final DerivationStep d = (DerivationStep)holdHypProofStepStmt;
@@ -918,12 +917,11 @@ public class ProofUnifier {
                         derivStep.getStep(), i));
         }
 
-        final ParseNode proofRoot = new ParseNode(derivStep.getRef());
-
         // Note that the proof tree root has a "child" array
         // that is merely a parallel array of the ref's
         // hypArray (holding VarHyp and LogHyp entires)!
-        proofRoot.setChild(derivStep.getAssrtSubstList());
+        final ParseNode proofRoot = new ParseNode(derivStep.getRef(),
+            derivStep.getAssrtSubstList());
 
         derivStep.setProofTree(new ParseTree(proofRoot));
 
@@ -1195,11 +1193,10 @@ public class ProofUnifier {
                     return false; // unification impossible!
             }
             else { // this checks LevelOne
-                final Stmt assrtParseRootStmt = assrtParseTree.getRoot()
-                    .getStmt();
+                final Stmt assrtParseRootStmt = assrtParseTree.getRoot().stmt;
 
-                if (assrtParseRootStmt != derivStep.formulaParseTree.getRoot()
-                    .getStmt() && !(assrtParseRootStmt instanceof VarHyp))
+                if (assrtParseRootStmt != derivStep.formulaParseTree
+                    .getRoot().stmt && !(assrtParseRootStmt instanceof VarHyp))
                     return false; // unification impossible!
             }
         }

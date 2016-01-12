@@ -106,8 +106,6 @@ public class ProofAsstBoss extends Boss {
 
     private ProofAsstPreferences proofAsstPreferences;
 
-    private SessionStore store;
-
     /**
      * Constructor with BatchFramework for access to environment.
      *
@@ -618,7 +616,6 @@ public class ProofAsstBoss extends Boss {
      * Validate ProofAsstUnifySearchExclude
      */
     protected void editProofAsstUnifySearchExclude() {
-
         final Grammar grammar = batchFramework.grammarBoss.getGrammar();
         final Cnst provableLogicStmtTyp = grammar
             .getProvableLogicStmtTypArray()[0];
@@ -630,7 +627,7 @@ public class ProofAsstBoss extends Boss {
             .stream(runParm.values).map(value -> stmtTbl.get(value.trim()))
             .filter(stmt -> stmt instanceof Assrt
                 && stmt.getFormula().getTyp() == provableLogicStmtTyp)
-            .map(stmt -> (Assrt)stmt).collect(Collectors.toSet()));
+            .map(stmt -> stmt.getLabel()).collect(Collectors.toSet()));
     }
 
     /**
@@ -1027,6 +1024,8 @@ public class ProofAsstBoss extends Boss {
         if (!proofAsst.getInitializedOK())
             proofAsst.initializeLookupTables(messages);
 
+        batchFramework.storeBoss.autoload();
+
         // start GUI w/clear Messages area; GUI will
         // use Messages but display on error screen (frame).
         batchFramework.outputBoss.printAndClearMessages();
@@ -1051,29 +1050,11 @@ public class ProofAsstBoss extends Boss {
      *
      * @return ProofAsstPreferences object ready to go.
      */
-    public SessionStore getStore() {
-
-        if (store == null) {
-            store = new SessionStore();
-            store.setMMJ2Path(batchFramework.paths::getMMJ2Path);
-        }
-        return store;
-    }
-
-    /**
-     * Fetches a reference to the ProofAsstPreferences, first initializing it if
-     * necessary.
-     * <p>
-     * Note: must re-initialize the TMFFPreferences reference in
-     * ProofAsstPreferences because TMFFBoss controls which instance of
-     * TMFFPreferences is active!!!
-     *
-     * @return ProofAsstPreferences object ready to go.
-     */
     public ProofAsstPreferences getProofAsstPreferences() {
 
         if (proofAsstPreferences == null) {
-            proofAsstPreferences = new ProofAsstPreferences(getStore());
+            proofAsstPreferences = new ProofAsstPreferences(
+                batchFramework.storeBoss.getStore());
             proofAsstPreferences.tmffPreferences = batchFramework.tmffBoss
                 .getTMFFPreferences();
         }

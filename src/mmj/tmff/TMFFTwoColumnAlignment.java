@@ -128,7 +128,7 @@ public class TMFFTwoColumnAlignment extends TMFFMethod {
         final ParseNode currNode, final int leftmostColNbr)
     {
 
-        final Stmt stmt = currNode.getStmt();
+        final Stmt stmt = currNode.stmt;
         final Sym[] formulaSymArray = stmt.getFormula().getSym();
 
         Axiom axiom = null;
@@ -184,9 +184,9 @@ public class TMFFTwoColumnAlignment extends TMFFMethod {
             varI++;
 
             if (reseq == null)
-                subNode = currNode.getChild()[varI];
+                subNode = currNode.child[varI];
             else
-                subNode = currNode.getChild()[reseq[varI]];
+                subNode = currNode.child[reseq[varI]];
 
             // finagle: we want to pad to position pos - 2 because
             // the output tokens will be prefixed by " ".

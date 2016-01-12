@@ -112,7 +112,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
 
     /**
      * Default Constructor.
-     * 
+     *
      * @param w the owning ProofWorksheet
      */
     public ProofStepStmt(final ProofWorksheet w) {
@@ -127,7 +127,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      * the GUI, hence, the object references, etc. are not loaded. After display
      * to the GUI this worksheet disappears -- recreated via "load" each time
      * the user selects "StartUnification".
-     * 
+     *
      * @param w The owning ProofWorksheet
      * @param step step number of the ProofStepStmt
      * @param refLabel Ref label of the ProofStepStmt
@@ -163,7 +163,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      * <p>
      * Note: does not update a non-zero proofLevel because a step can be used
      * more than once as an hypothesis, so different level numbers could result.
-     * 
+     *
      * @param proofLevel value to store if existing level is zero.
      */
     public void loadProofLevel(final int proofLevel) {
@@ -173,7 +173,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
 
     /**
      * Computes column number in the proof step text of the input field id.
-     * 
+     *
      * @param fieldId value identify ProofWorkStmt field for cursor positioning,
      *            as defined in PaConstants.FIELD_ID_*.
      * @return column of input fieldId or default value of 1 if there is an
@@ -198,7 +198,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      * ProofWorkStmt.stmtText and sets the output column to the column *after*
      * the 2nd colon -- but returns 1 if whitespace is found before the 2nd
      * colon in the stmtText.
-     * 
+     *
      * @return column of Ref subfield in proof step of 1 if there is an error.
      */
     public int computeFieldIdColRef() {
@@ -228,7 +228,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     /**
      * Updates the ProofStepStmt ParseTree, resetting maxDepth and levelOneTwo
      * data.
-     * 
+     *
      * @param parseTree the new ParseTree for the step.
      */
     public void updateFormulaParseTree(final ParseTree parseTree) {
@@ -249,7 +249,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     /**
      * Updates the workVarList for the ProofStepStmt and if the revised
      * workVarList is null turns off the formulaFldIncomplete flag.
-     * 
+     *
      * @param workVarList List of WorkVar listing the WorkVar used in the step
      *            formula.
      */
@@ -267,10 +267,8 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      * Updates stmtText in place using substitution values assigned to work
      * variables used in the step.
      * <p>
-     * NOTE: This is a dirty little hack :-)
-     * </p
-     * ?
-     * 
+     * NOTE: This is a dirty little hack :-) </p ?
+     *
      * @param verifyProofs instance of VerifyProofs for use converting an RPN
      *            list to a formula.
      * @return true if stmtText updated successfully.
@@ -300,8 +298,8 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
             if (substNode == null)
                 continue;
             wvArray[wvCnt] = workVar.getId();
-            formula = verifyProofs.convertRPNToFormula(
-                substNode.convertToRPN(true), "");
+            formula = verifyProofs
+                .convertRPNToFormula(substNode.convertToRPN(true), "");
             wvSubstStringArray[wvCnt] = formula.exprToString();
             wvCnt++;
         }
@@ -322,8 +320,8 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
             int outStmtTextOffset = 0;
             int len = 0;
 
-            final Tokenizer tokenizer = new Tokenizer(new StringReader(
-                stmtText.toString()), "");
+            final Tokenizer tokenizer = new Tokenizer(
+                new StringReader(stmtText.toString()), "");
 
             // bypass 1st token and surrounding whitespace
             len = tokenizer.getWhiteSpace(outStmtText, outStmtTextOffset);
@@ -389,7 +387,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      * validate Step/Hyp/Ref after doing the formula. The big problem being
      * solved here is positioning the caret as accurately as possible to the
      * first reported error on the line.
-     * 
+     *
      * @param workVarsOk indicator to allow/disallow WorkVar syms in this
      *            formula.
      * @return String showing the proof text statement
@@ -480,7 +478,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     /**
      * Function to determine whether the ProofWorkStmt Ref Label matches the
      * input string (always false in base class.)
-     * 
+     *
      * @param ref string to compare to ProofWorkStmt refLabel string.
      * @return true if ProofStepStmt Ref label matches the input string.
      */
@@ -491,7 +489,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
 
     /**
      * Compares input Step number to this step.
-     * 
+     *
      * @param newStepNbr step number to compare
      * @return true if equal, false if not equal.
      */
@@ -502,7 +500,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
 
     /**
      * Sets the Ref Stmt for the step.
-     * 
+     *
      * @param ref Stmt in LogicalSystem
      */
     public void setRef(final Stmt ref) {
@@ -511,7 +509,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
 
     /**
      * Gets the Ref Stmt for the step.
-     * 
+     *
      * @return Ref stmt for the ProofStepStmt;
      */
     public Stmt getRef() {
@@ -523,7 +521,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      * <p>
      * Note: refLabel is input first and Ref is derived, but for new Theorems,
      * Ref may not exist, which is why we carry both around at all times.
-     * 
+     *
      * @param refLabel Ref label for the step.
      */
     public void setRefLabel(final String refLabel) {
@@ -532,7 +530,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
 
     /**
      * Gets the Ref label for the step.
-     * 
+     *
      * @return Ref label for the step.
      */
     public String getRefLabel() {
@@ -551,7 +549,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      * <p>
      * Objective is to avoid changing the position of the other tokens within
      * the text area -- as much as possible.
-     * 
+     *
      * @param textArea step stmtText area or similar text area.
      * @param newTextPrefix revised first token of text area.
      */
@@ -592,7 +590,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      * Renders formula into stepHypRef string buffer and returns the number of
      * lines in the formula. (This assumes that stepHypRef requires only one
      * line, which, theoretically could be wrong!)
-     * 
+     *
      * @param stepHypRef the string buffer
      * @param formula the formula
      * @param parseTree of the Formula to be rendered. If left null, the formula
@@ -634,8 +632,9 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
         if (formulaParseTree == null)
             w.triggerLoadStructureException(
                 (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
-                    - formulaStartCharNbr, PaConstants.ERRMSG_PARSE_ERR,
-                w.getErrorLabelIfPossible(), step);
+                    - formulaStartCharNbr,
+                PaConstants.ERRMSG_PARSE_ERR, w.getErrorLabelIfPossible(),
+                step);
     }
 
     // assumes formula already loaded (first), and possibly
@@ -685,7 +684,8 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     public abstract void reloadStepHypRefInStmtText();
 
     // assumes StmtText already contains StepHypRef
-    protected void reviseStepHypRefInStmtText(final StringBuilder newStepHypRef)
+    protected void reviseStepHypRefInStmtText(
+        final StringBuilder newStepHypRef)
     {
         ProofStepStmt.reviseStepHypRefInStmtTextArea(stmtText, newStepHypRef);
     }
@@ -693,7 +693,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     /**
      * Renumbers step numbers using a HashMap containing old and new step number
      * pairs.
-     * 
+     *
      * @param renumberMap contains key/value pairs defining newly assigned step
      *            numbers.
      */
@@ -717,5 +717,10 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
 
     public void setCanonicalForm(final ParseNode canonicalForm) {
         this.canonicalForm = canonicalForm;
+    }
+
+    @Override
+    public int hashCode() {
+        return step.hashCode();
     }
 }

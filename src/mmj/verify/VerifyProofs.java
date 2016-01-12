@@ -718,10 +718,10 @@ public class VerifyProofs implements ProofVerifier {
             nodeStack.push(derivStepAssrtSubst[i]);
             while (!nodeStack.isEmpty()) {
                 node = nodeStack.pop();
-                if (node.getStmt() instanceof VarHyp)
-                    wExpr[wExprCnt++] = ((VarHyp)node.getStmt()).getVar();
+                if (node.stmt instanceof VarHyp)
+                    wExpr[wExprCnt++] = ((VarHyp)node.stmt).getVar();
                 else {
-                    child = node.getChild();
+                    child = node.child;
                     for (final ParseNode element : child)
                         nodeStack.push(element);
                 }

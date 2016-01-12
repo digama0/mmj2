@@ -11,24 +11,35 @@
 
 package mmj.verify;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import mmj.lang.*;
+import mmj.pa.*;
 
 /**
  * LR Parser
  */
 public class LRParser implements GrammaticalParser {
+    private static final String PFX = "~LRParser.";
+
+    private SessionStore store;
+    private Setting<Integer> grammarHash;
 
     private final Grammar grammar;
-    private int notationRuleCnt = -1;
 
-    private final Map<ParseSet, Integer> setLookup = new HashMap<ParseSet, Integer>();
+    private Setting<Map<String, Integer>> startStatesSetting;
+    private Setting<List<ParseTableRow>> rowsSetting;
+
+    private Map<String, Integer> startStates;
+    private List<ParseTableRow> rows;
+
     private final List<ParseSet> sets = new ArrayList<ParseSet>();
-    private final List<Map<Cnst, Integer>> transitions = new ArrayList<Map<Cnst, Integer>>();
-    private final List<NotationRule> reductions = new ArrayList<NotationRule>();
-    private final Map<Cnst, Integer> startStates = new HashMap<Cnst, Integer>();
+    private final Map<ParseSet, Integer> setLookup = new HashMap<ParseSet, Integer>();
     private final Map<Cnst, List<NotationRule>> rulesByTyp = new HashMap<Cnst, List<NotationRule>>();
     private final Map<Cnst, Set<Cnst>> nontermClosure = new HashMap<Cnst, Set<Cnst>>();
     private final Map<Cnst, Set<Cnst>> initialByTyp = new HashMap<Cnst, Set<Cnst>>();
@@ -48,25 +59,50 @@ public class LRParser implements GrammaticalParser {
         grammar = grammarIn;
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public void addSettings(final SessionStore store) {
+        this.store = store;
+        // As a crude lock on the grammar hash, only allow setting to and from 0
+        grammarHash = store.addSetting(PFX + "grammarHash", 0)
+            .addListener((o, value) -> o == 0 || value == 0);
+
+        // Doing some type abuse here: since a JSONObject extends
+        // Map<String, Object> we can treat it like a Map<String, Integer> as
+        // long as nothing sneaks in
+        final Map<String, Integer> startDef = (Map<String, Integer>)(Object)new JSONObject();
+        startStatesSetting = store
+            .addSetting(PFX + "startStates", startDef, Serializer.identity())
+            .addListener((o, value) -> o == startDef || value == startDef);
+
+        final List<ParseTableRow> rowDef = new ArrayList<>();
+        rowsSetting = store.new ListSetting<ParseTableRow>(PFX + "rows", rowDef,
+            ParseTableRow.serializer(grammar))
+                .addListener((o, value) -> o == rowDef || value == rowDef);
+    }
+
     private void initialize() {
+        startStates = new HashMap<>();
+        rows = new ArrayList<>();
+
         for (final Cnst typ : grammar.getVarHypTypSet()) {
             rulesByTyp.put(typ, new ArrayList<NotationRule>());
             nontermClosure.put(typ, new HashSet<Cnst>());
             initialByTyp.put(typ, new HashSet<Cnst>());
             followByTyp.put(typ, new HashSet<Cnst>());
         }
-        final Set<NotationRule> notationRules = grammar.getNotationGRSet();
-        notationRuleCnt = notationRules.size();
-        for (final NotationRule notationRule : notationRules) {
+        for (final NotationRule notationRule : grammar.getNotationGRSet()) {
             final Cnst typ = notationRule.getGrammarRuleTyp();
-            rulesByTyp.get(typ).add(notationRule);
             if (notationRule.getIsGimmeMatchNbr() != 1) {
+                rulesByTyp.get(typ).add(notationRule);
                 final Cnst head = notationRule.getRuleFormatExprFirst();
                 if (head.isVarTyp())
                     nontermClosure.get(typ).add(head);
                 else
                     initialByTyp.get(typ).add(head);
             }
+            else
+                getClass();
         }
         boolean changed;
         do {
@@ -80,7 +116,7 @@ public class LRParser implements GrammaticalParser {
                 initialByTyp.get(typ).addAll(initialByTyp.get(c));
         do {
             changed = false;
-            for (final NotationRule notationRule : notationRules) {
+            for (final NotationRule notationRule : grammar.getNotationGRSet()) {
                 final Cnst[] ruleFormatExpr = notationRule.getRuleFormatExpr();
                 for (int i = 0; i < ruleFormatExpr.length; i++)
                     if (ruleFormatExpr[i].isVarTyp()) {
@@ -102,34 +138,34 @@ public class LRParser implements GrammaticalParser {
             final ParseSet set = new ParseSet();
             set.initials.add(typ);
             makeClosure(set);
-            startStates.put(typ, Integer.valueOf(getState(set)));
+            startStates.put(typ.getId(), Integer.valueOf(getState(set)));
         }
 
         while (!conflicts.isEmpty()) {
             final int index = conflicts.pop();
             Set<Integer> backStates = new TreeSet<Integer>();
             backStates.add(index);
-            final NotationRule reduce = reductions.get(index);
-            for (int i = reduce.getRuleFormatExpr().length; i > 0; i--) {
+            final ParseTableRow row = rows.get(index);
+            for (int i = row.args; i > 0; i--) {
                 final Set<Integer> newStates = new TreeSet<Integer>();
                 for (final int j : backStates)
                     newStates.addAll(backtrack.get(j));
                 backStates = newStates;
             }
-            final Set<Cnst> badTokens = transitions.get(index).keySet();
+            final Set<String> badTokens = row.transitions.keySet();
             for (final int back : backStates) {
-                final int fwd = transitions.get(back)
-                    .get(reduce.getGrammarRuleTyp());
+                final ParseTableRow backRow = rows.get(back);
+                final int fwd = backRow.getTransition(row.typeCode);
                 boolean bad = false;
-                for (final Cnst head : badTokens)
-                    bad |= transitions.get(fwd).containsKey(head);
+                for (final String head : badTokens)
+                    bad |= rows.get(fwd).transitions.containsKey(head);
                 if (bad) {
                     final ParseSet goal = new ParseSet();
-                    final Cnst typ = reduce.getGrammarRuleTyp();
-                    final Cnst dir = reduce.getRuleFormatExprFirst();
+                    final Cnst typ = row.reduce.getGrammarRuleTyp();
+                    final Cnst dir = row.reduce.getRuleFormatExprFirst();
                     for (final ParseState state : sets.get(back)) {
                         final Cnst head = state.head();
-                        if (head.equals(dir) && state.rule != reduce)
+                        if (head.equals(dir) && state.rule != row.reduce)
                             goal.add(state.advance());
                         else if (head.equals(typ)) {
                             final Cnst[] expr = state.rule.getRuleFormatExpr();
@@ -138,7 +174,7 @@ public class LRParser implements GrammaticalParser {
                                 if (expr[i].isVarTyp())
                                     matchIndex++;
                             final NotationRule construct = new NotationRule(
-                                grammar, state.rule, matchIndex, reduce);
+                                grammar, state.rule, matchIndex, row.reduce);
                             NotationRule derivedRule = newRules
                                 .get(construct.getParamTransformationTree());
                             if (derivedRule == null) {
@@ -155,16 +191,29 @@ public class LRParser implements GrammaticalParser {
                     }
                     makeClosure(goal);
                     final int goalIndex = getState(goal);
-                    transitions.get(back).put(dir, goalIndex);
+                    backRow.transitions.put(dir.getId(), goalIndex);
                     backtrack.get(goalIndex).add(back);
                 }
             }
         }
 
         // Release resources after generation
-        // sets.clear();
+        sets.clear();
+        setLookup.clear();
         rulesByTyp.clear();
+        nontermClosure.clear();
+        initialByTyp.clear();
+        followByTyp.clear();
+        backtrack.clear();
+        newRules.clear();
         ParseState.clearCache();
+
+        grammarHash.reset();
+        grammarHash.set(grammar.getNotationGRSet().hashCode());
+        startStatesSetting.reset();
+        startStatesSetting.set(startStates);
+        rowsSetting.reset();
+        rowsSetting.set(rows);
     }
 
     private int getState(final ParseSet set) {
@@ -173,10 +222,9 @@ public class LRParser implements GrammaticalParser {
             index = sets.size();
             sets.add(set);
             setLookup.put(set, index);
-            final HashMap<Cnst, Integer> map = new HashMap<Cnst, Integer>();
-            transitions.add(map);
+            final ParseTableRow row = new ParseTableRow();
+            rows.add(row);
             NotationRule reduce = null;
-            reductions.add(null);
             backtrack.add(new TreeSet<Integer>());
             for (final ParseState e : set) {
                 final Cnst head = e.head();
@@ -188,21 +236,21 @@ public class LRParser implements GrammaticalParser {
                     else
                         reduce = e.rule;
                 }
-                else if (!map.containsKey(head)) {
+                else if (!row.transitions.containsKey(head.getId())) {
                     final ParseSet goal = new ParseSet();
                     for (final ParseState state : set)
                         if (head.equals(state.head()))
                             goal.add(state.advance());
                     makeClosure(goal);
                     final int goalIndex = getState(goal);
-                    map.put(head, goalIndex);
+                    row.transitions.put(head.getId(), goalIndex);
                     backtrack.get(goalIndex).add(index);
                     if (reduce != null && followByTyp
                         .get(reduce.getGrammarRuleTyp()).contains(head))
                         conflicts.add(index);
                 }
             }
-            reductions.set(index, reduce);
+            row.setReduction(reduce);
         }
         return index;
     }
@@ -229,6 +277,23 @@ public class LRParser implements GrammaticalParser {
                         waiting.add(to);
                 }
         }*/
+    }
+
+    public void load(final boolean fromFile) {
+        if (grammarHash.get().equals(grammar.getNotationGRSet().hashCode())) {
+            startStates = startStatesSetting.get();
+            rows = rowsSetting.get();
+        }
+        if (startStates == null || startStates.isEmpty())
+            if (fromFile) {
+                try {
+                    store.load(true, grammarHash.key(),
+                        startStatesSetting.key(), rowsSetting.key());
+                } catch (final IOException e) {}
+                load(false);
+            }
+            else
+                initialize();
     }
 
     /**
@@ -269,19 +334,28 @@ public class LRParser implements GrammaticalParser {
         final Cnst formulaTypIn, final ParseNodeHolder[] parseNodeHolderExprIn,
         final int highestSeqIn) throws VerifyException
     {
-        // Special case: single variable
-        if (parseNodeHolderExprIn.length == 1
-            && parseNodeHolderExprIn[0].mObj instanceof VarHyp)
-        {
-            parseTreeArrayIn[0] = new ParseTree(
-                new ParseNode((VarHyp)parseNodeHolderExprIn[0].mObj));
-            return 1;
+        // Special case: single token
+        if (parseNodeHolderExprIn.length == 1) {
+            final MObj mObj = parseNodeHolderExprIn[0].mObj;
+            if (mObj instanceof VarHyp) {
+                parseTreeArrayIn[0] = new ParseTree(
+                    new ParseNode((VarHyp)mObj));
+                return 1;
+            }
+            NotationRule rule;
+            if (mObj instanceof Cnst
+                && (rule = ((Cnst)mObj).getLen1CnstNotationRule()) != null)
+            {
+                parseTreeArrayIn[0] = new ParseTree(
+                    new ParseNode(rule.getBaseSyntaxAxiom()));
+                return 1;
+            }
+            return -1;
         }
 
         // Check notation rules to make sure the grammar has not changed since
         // last initialization
-        if (notationRuleCnt != grammar.getNotationGRSet().size())
-            initialize();
+        load(true);
         int index = 0;
         final Deque<Integer> stateStack = new ArrayDeque<Integer>();
         final ArrayDeque<ParseNode> outStack = new ArrayDeque<ParseNode>();
@@ -294,17 +368,28 @@ public class LRParser implements GrammaticalParser {
                     GrammarConstants.ERRMSG_START_RULE_TYPE_UNDEF_1
                         + formulaTypIn
                         + GrammarConstants.ERRMSG_START_RULE_TYPE_UNDEF_2);
-        stateStack.push(startStates.get(startRuleTyp));
+        stateStack.push(startStates.get(startRuleTyp.getId()));
         while (true) {
             final ParseNodeHolder lookahead = index < parseNodeHolderExprIn.length
                 ? parseNodeHolderExprIn[index] : null;
             final int state = stateStack.peek().intValue();
-            Integer transition;
-            NotationRule reduce;
-            if (lookahead != null && (transition = transitions.get(state)
-                .get(lookahead.getCnstOrTyp())) != null)
-            {
-                if (!(lookahead.mObj instanceof Cnst)) {
+            Integer transition = null;
+            final ParseTableRow row = rows.get(state);
+            NotationRule gimmeMatch = null;
+            if (lookahead != null) {
+                Cnst c = lookahead.getCnstOrTyp();
+                gimmeMatch = c.getLen1CnstNotationRule();
+                if (gimmeMatch != null && gimmeMatch.getIsGimmeMatchNbr() == 1)
+                    c = gimmeMatch.getGrammarRuleTyp();
+                else
+                    gimmeMatch = null;
+                transition = row.getTransition(c);
+            }
+            if (transition != null) {
+                if (gimmeMatch != null)
+                    outStack
+                        .push(new ParseNode(gimmeMatch.getBaseSyntaxAxiom()));
+                else if (!(lookahead.mObj instanceof Cnst)) {
                     final VarHyp hyp = lookahead.mObj instanceof Var
                         ? ((Var)lookahead.mObj).getActiveVarHyp()
                         : (VarHyp)lookahead.mObj;
@@ -313,20 +398,20 @@ public class LRParser implements GrammaticalParser {
                 stateStack.push(transition);
                 index++;
             }
-            else if ((reduce = reductions.get(state)) != null) {
-                outStack.push(reduce.getParamTransformationTree().getRoot()
+            else if (row.typeCode != null) {
+                outStack.push(row.paramTransformationTree.getRoot()
                     .deepCloneApplyingStackSubst(outStack));
-                for (int i = reduce.getRuleFormatExpr().length; i > 0; i--)
+                for (int i = row.args; i > 0; i--)
                     stateStack.pop();
-                transition = transitions.get(stateStack.peek())
-                    .get(reduce.getGrammarRuleTyp());
+                transition = rows.get(stateStack.peek())
+                    .getTransition(row.typeCode);
                 if (transition != null)
                     stateStack.push(transition);
                 else
                     break;
             }
             else
-                return 1 - index;
+                return -index;
         }
         parseTreeArrayIn[0] = new ParseTree(outStack.pop());
         return 1;
@@ -529,6 +614,59 @@ public class LRParser implements GrammaticalParser {
         public boolean equals(final Object obj) {
             return extra.equals(((ParseSet)obj).extra)
                 && initials.equals(((ParseSet)obj).initials);
+        }
+    }
+
+    private static class ParseTableRow {
+        public JSONObject transitions;
+        public String typeCode;
+        public ParseTree paramTransformationTree;
+        public int args;
+        public NotationRule reduce;
+
+        public ParseTableRow() {
+            transitions = new JSONObject();
+        }
+
+        public Integer getTransition(final Cnst c) {
+            return getTransition(c.getId());
+        }
+
+        public Integer getTransition(final String s) {
+            return (Integer)transitions.opt(s);
+        }
+
+        public void setReduction(final NotationRule reduce) {
+            if ((this.reduce = reduce) != null) {
+                typeCode = reduce.getGrammarRuleTyp().getId();
+                paramTransformationTree = reduce.getParamTransformationTree();
+                args = reduce.getRuleFormatExpr().length;
+            }
+        }
+
+        public static Serializer<ParseTableRow> serializer(
+            final Grammar grammar)
+        {
+            final Serializer<ParseTree> ser = ParseTree
+                .serializer(grammar.stmtTbl);
+            return Serializer.of(o -> {
+                final JSONArray map = (JSONArray)o;
+                final ParseTableRow row = new ParseTableRow();
+                row.transitions = map.optJSONObject(0);
+                if (map.length() > 1) {
+                    row.typeCode = map.getString(1);
+                    row.paramTransformationTree = ser.deserialize(map.get(2));
+                    row.args = map.getInt(3);
+                }
+                return row;
+            } , row -> {
+                final JSONArray a = new JSONArray().put(row.transitions == null
+                    ? JSONObject.NULL : row.transitions);
+                return row.typeCode == null ? a
+                    : a.put(row.typeCode)
+                        .put(ser.serialize(row.paramTransformationTree))
+                        .put(row.args);
+            });
         }
     }
 }

@@ -26,8 +26,9 @@ public class SessionStore {
 
     private static final String KEY_STORE = "store";
     private static final String KEY_OVERRIDE = "manual";
+    private static final String KEY_REMOVE = "remove";
 
-    private File file;
+    private File file = new File(PaConstants.PROOF_ASST_SETTINGS_FILE_DEFAULT);
     private Supplier<File> path;
 
     Map<String, JSONSerializable> settings = new TreeMap<>();
@@ -57,34 +58,72 @@ public class SessionStore {
      * @throws IOException If there is an error during the read
      */
     public JSONObject load(final boolean intoSettings) throws IOException {
-        if (file == null)
-            return null;
+        return load(intoSettings, (String[])null);
+    }
+
+    /**
+     * Load the data from the storage file, merging the loaded data with the
+     * keys already loaded in memory.
+     *
+     * @param intoSettings True if keys present in both the file and settings
+     *            should take their values from the file, false to take
+     *            conflicts from settings.
+     * @param settingsToLoad A list of settings to load, or null to load all
+     * @return The in-memory JSON representation of the merged file
+     * @throws IOException If there is an error during the read
+     */
+    public JSONObject load(final boolean intoSettings,
+        final String... settingsToLoad) throws IOException
+    {
         try {
-            final Object dat = new JSONTokener(new FileReader(file))
-                .nextValue();
+            Object dat = null;
+            if (file != null && file.exists() && file.length() != 0)
+                try (FileReader r = new FileReader(file)) {
+                    dat = new JSONTokener(r).nextValue();
+                }
             final JSONObject o = dat instanceof JSONObject ? (JSONObject)dat
                 : new JSONObject();
             JSONObject store = o.optJSONObject(KEY_STORE);
             if (store == null)
                 o.put(KEY_STORE, store = new JSONObject());
-            merge(intoSettings, store);
-            merge(true, o.optJSONObject(KEY_OVERRIDE));
+            JSONArray remove = o.optJSONArray(KEY_REMOVE);
+            if (remove == null)
+                o.put(KEY_REMOVE, remove = new JSONArray());
+            for (final Object key : remove)
+                store.remove(key);
+            remove.clear();
+            merge(intoSettings, store, settingsToLoad);
+            merge(true, o.optJSONObject(KEY_OVERRIDE), settingsToLoad);
             return o;
         } catch (final JSONException e) {
             throw new IOException(e);
         }
     }
 
-    private void merge(final boolean intoSettings, final JSONObject store) {
+    private void merge(final boolean intoSettings, final JSONObject store,
+        final String... settingsToLoad)
+    {
         if (store == null)
             return;
-        for (final Entry<String, JSONSerializable> e : settings.entrySet())
-            if (intoSettings)
-                e.getValue().read(store.get(e.getKey()));
-            else
-                store.put(e.getKey(), e.getValue().write());
+        if (settingsToLoad == null)
+            for (final Entry<String, JSONSerializable> e : settings.entrySet())
+                mergeOne(intoSettings, store, e.getKey(), e.getValue());
+        else
+            for (final String key : settingsToLoad)
+                mergeOne(intoSettings, store, key, settings.get(key));
     }
 
+    private void mergeOne(final boolean intoSettings, final JSONObject store,
+        final String key, final JSONSerializable setting)
+    {
+        if (intoSettings) {
+            final Object value = store.opt(key);
+            if (value != null)
+                setting.read(value);
+        }
+        else
+            store.put(key, setting.write());
+    }
     public void addSerializable(final String key, final Consumer<?> read,
         final Supplier<?> write)
     {
@@ -111,8 +150,9 @@ public class SessionStore {
     public void save() throws IOException {
         if (file == null)
             return;
+        final String dat = load(false).toString(2);
         try (PrintStream s = new PrintStream(file)) {
-            s.println(load(false).toString());
+            s.println(dat);
         }
     }
 
@@ -151,7 +191,7 @@ public class SessionStore {
         final Supplier<File> path, final Function<String, File> in)
     {
         final NullSetting<String> base = new NullSetting<>(key, def,
-            Serializer.getSerializer(String.class));
+            Serializer.identity());
         final Serializer<File> ser = Serializer.getFileSerializer(path);
         return new ExtSetting<String, File>(base,
             s -> s == null ? null : in.apply(s),
@@ -164,9 +204,7 @@ public class SessionStore {
     }
 
     public Setting<Boolean> addSetting(final String key, final boolean def) {
-        return new StoreSetting<Boolean>(key, def,
-            Serializer.getSerializer(Boolean.class))
-        {
+        return new StoreSetting<Boolean>(key, def, Serializer.identity()) {
             @Override
             public boolean setString(final String newValue) {
                 return ProofAsstPreferences.parseBoolean(newValue);
@@ -316,12 +354,24 @@ public class SessionStore {
 
         @Override
         protected boolean setRaw(final T newValue) {
-            return base.set(out.apply(newValue));
+            try {
+                return base.set(out.apply(newValue));
+            } catch (final ClassCastException e) {
+                throw new IllegalArgumentException(
+                    "Error in setting '" + key() + "': value " + newValue
+                        + " has type " + newValue.getClass() + ", expected "
+                        + getDefault().getClass());
+            }
         }
 
         @Override
         public String key() {
             return base.key();
+        }
+
+        @Override
+        public String toString() {
+            return key() + " = " + toJSONString();
         }
     }
 

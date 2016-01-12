@@ -174,8 +174,8 @@ public class SearchUnifier {
         if (s.length() > 0) {
             if (!s.equals(parseTree1.getLevelOneTwo()))
                 return false;
-            final Stmt stmt = parseTree.getRoot().getStmt();
-            if (stmt != parseTree1.getRoot().getStmt()
+            final Stmt stmt = parseTree.getRoot().stmt;
+            if (stmt != parseTree1.getRoot().stmt
                 && !(stmt instanceof VarHyp))
                 return false;
         }

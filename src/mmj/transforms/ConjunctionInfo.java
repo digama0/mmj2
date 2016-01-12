@@ -62,18 +62,18 @@ public class ConjunctionInfo extends DBInfo {
         if (logHyps.length < 2)
             return;
         final ParseNode root = assrtTree.getRoot();
-        final Stmt implStmt = root.getStmt();
+        final Stmt implStmt = root.stmt;
 
         if (!implInfo.isImplOperator(implStmt))
             return;
 
-        assert root.getChild().length == 2;
+        assert root.child.length == 2;
 
-        final ParseNode prefix = root.getChild()[0];
+        final ParseNode prefix = root.child[0];
 
-        final ParseNode core = root.getChild()[1];
+        final ParseNode core = root.child[1];
 
-        final Stmt stmt = core.getStmt();
+        final Stmt stmt = core.stmt;
 
         if (!gatheringOp.containsKey(stmt))
             return;
@@ -81,7 +81,7 @@ public class ConjunctionInfo extends DBInfo {
         if (!TrUtil.isVarNode(prefix))
             return;
 
-        final VarHyp prefixVar = (VarHyp)prefix.getStmt();
+        final VarHyp prefixVar = (VarHyp)prefix.stmt;
 
         final VarHyp[] vars = TrUtil.getHypToVarMap(assrt, prefixVar);
 
@@ -91,20 +91,20 @@ public class ConjunctionInfo extends DBInfo {
 
         for (int i = 0; i < vars.length; i++) {
             final ParseNode logRoot = logHyps[i].getExprParseTree().getRoot();
-            if (logRoot.getStmt() != implStmt)
+            if (logRoot.stmt != implStmt)
                 return;
-            if (logRoot.getChild()[0].getStmt() != prefixVar)
+            if (logRoot.child[0].stmt != prefixVar)
                 return;
-            if (!TrUtil.isVarNode(logRoot.getChild()[1]))
+            if (!TrUtil.isVarNode(logRoot.child[1]))
                 return;
         }
 
-        if (core.getChild().length != vars.length)
+        if (core.child.length != vars.length)
             return;
 
-        for (int i = 0; i < core.getChild().length; i++) {
-            final ParseNode child = core.getChild()[i];
-            if (child.getStmt() != vars[i])
+        for (int i = 0; i < core.child.length; i++) {
+            final ParseNode child = core.child[i];
+            if (child.stmt != vars[i])
                 return;
         }
 
@@ -144,15 +144,15 @@ public class ConjunctionInfo extends DBInfo {
 
         final ParseNode root = assrtTree.getRoot();
 
-        if (root.getChild().length != vars.length)
+        if (root.child.length != vars.length)
             return;
 
-        for (int i = 0; i < root.getChild().length; i++) {
-            final ParseNode child = root.getChild()[i];
-            if (child.getStmt() != vars[i])
+        for (int i = 0; i < root.child.length; i++) {
+            final ParseNode child = root.child[i];
+            if (child.stmt != vars[i])
                 return;
         }
-        final Stmt stmt = root.getStmt();
+        final Stmt stmt = root.stmt;
 
         if (gatheringOp.containsKey(stmt))
             return;
@@ -179,18 +179,18 @@ public class ConjunctionInfo extends DBInfo {
             return;
 
         final ParseNode logRoot = logHyps[0].getExprParseTree().getRoot();
-        final Stmt stmt = logRoot.getStmt();
+        final Stmt stmt = logRoot.stmt;
 
         if (!gatheringOp.containsKey(stmt))
             return;
 
         int num = -1;
-        final ParseNode[] ars = logRoot.getChild();
+        final ParseNode[] ars = logRoot.child;
         for (int i = 0; i < ars.length; i++) {
             final ParseNode arg = ars[i];
             if (!TrUtil.isVarNode(arg))
                 return;
-            if (arg.getStmt() == root.getStmt())
+            if (arg.stmt == root.stmt)
                 num = i;
         }
 
@@ -232,12 +232,12 @@ public class ConjunctionInfo extends DBInfo {
     private void separateByAndInternal(final ParseNode input,
         final List<ParseNode> res)
     {
-        if (!isAndOperation(input.getStmt())) {
+        if (!isAndOperation(input.stmt)) {
             res.add(input);
             return;
         }
 
-        for (final ParseNode child : input.getChild())
+        for (final ParseNode child : input.child)
             separateByAndInternal(child, res);
     }
 
@@ -260,8 +260,8 @@ public class ConjunctionInfo extends DBInfo {
         final ParseNode andPattern, final IndexCounter counter,
         final WorksheetInfo info)
     {
-        final Stmt stmt = andPattern.getStmt();
-        final int length = andPattern.getChild().length;
+        final Stmt stmt = andPattern.stmt;
+        final int length = andPattern.child.length;
         if (!isAndOperation(stmt))
             return counter.hyps[counter.idx++];
 
@@ -274,7 +274,7 @@ public class ConjunctionInfo extends DBInfo {
         boolean hasPrefix = false;
 
         for (int i = 0; i < length; i++) {
-            final ParseNode andChild = andPattern.getChild()[i];
+            final ParseNode andChild = andPattern.child[i];
             final GenProofStepStmt chidStep = concatenateInTheSamePatternInternal(
                 andChild, counter, info);
             children[i] = chidStep.getCore();

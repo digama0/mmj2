@@ -32,11 +32,11 @@ public class CanonicalOperandHelper {
             return;
         }
 
-        if (curNode.getStmt() != originalNode.getStmt())
-            assert curNode.getStmt() == originalNode.getStmt();
+        if (curNode.stmt != originalNode.stmt)
+            assert curNode.stmt == originalNode.stmt;
 
         for (int i = 0; i < 2; i++) {
-            final ParseNode child = curNode.getChild()[genStmt.varIndexes[i]];
+            final ParseNode child = curNode.child[genStmt.varIndexes[i]];
             collectOperandList(child, curStruct.subTrees[i]);
         }
     }

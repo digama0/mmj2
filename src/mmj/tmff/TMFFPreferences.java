@@ -207,7 +207,8 @@ public class TMFFPreferences {
         tmffUnformattedFormat = tmffFormatArray[TMFF_UNFORMATTED_FORMAT_NBR_0];
         tmffUnformattedScheme = tmffUnformattedFormat.getFormatScheme();
 
-        store.addSerializable(PFX + "formatArray",
+        // The ~ is so that it sorts at the end with other big keys
+        store.addSerializable("~" + PFX + "formatArray",
             (final JSONObject o) -> o.entrySet().parallelStream()
                 .map(e -> new String[]{e.getKey().toString(),
                         (String)e.getValue()})
@@ -217,12 +218,13 @@ public class TMFFPreferences {
                     f -> f.getFormatScheme().getSchemeName(), (a, b) -> a,
                     JSONObject::new)));
 
-        store.addSerializable(PFX + "schemeMap", (final JSONObject o) -> {
+        store.addSerializable("~" + PFX + "schemeMap", (final JSONObject o) -> {
             for (final Entry<String, Object> e : o.entrySet()) {
                 final List<Object> a = new ArrayList<Object>(
                     (JSONArray)e.getValue());
                 a.add(0, e.getKey());
-                putToSchemeMap(new TMFFScheme(a.toArray(new String[a.size()])));
+                putToSchemeMap(new TMFFScheme(
+                    a.stream().map(Object::toString).toArray(String[]::new)));
             }
         } , () -> tmffSchemeMap.values().parallelStream()
             .collect(Collectors.toMap(s -> s.getSchemeName(),

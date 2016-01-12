@@ -294,8 +294,8 @@ public class Axiom extends Assrt {
          */
         if (formula.sym.length == 2 && varHypArray.length == 1)
             // is Type Conversion Syntax Axiom...has to be!
-            return child[0].getStmt().renderParsedSubExpr(sb, maxDepth,
-                maxLength, child[0].getChild());
+            return child[0].stmt.renderParsedSubExpr(sb, maxDepth, maxLength,
+                child[0].child);
 
         /*
          * Process the syntax axiom's expression, outputting
@@ -332,7 +332,7 @@ public class Axiom extends Assrt {
             else
                 subNode = child[syntaxAxiomVarHypReseq[varCnt]];
 
-            substNbrHyps = subNode.getStmt().getMandVarHypArray().length;
+            substNbrHyps = subNode.stmt.getMandVarHypArray().length;
 
             /* If child node is TypeConversion, NullsPermitted or
              * NamedTypedConstant Syntax Axiom substituting
@@ -341,17 +341,17 @@ public class Axiom extends Assrt {
              */
             if (substNbrHyps == 0 // all Cnst or is NullsPermitted
                 || substNbrHyps == 1
-                    && subNode.getStmt().getFormula().getCnt() == 2)
-                sLen = subNode.getStmt().renderParsedSubExpr(sb, maxDepth,
-                    maxLength, subNode.getChild());
+                    && subNode.stmt.getFormula().getCnt() == 2)
+                sLen = subNode.stmt.renderParsedSubExpr(sb, maxDepth,
+                    maxLength, subNode.child);
             else {
                 /* See following call to outputSubExpr to
                  * see how maxDepth is recursively decremented.
                  */
                 if (maxDepth < 2)
                     return -1;
-                sLen = subNode.getStmt().renderParsedSubExpr(sb, maxDepth - 1,
-                    maxLength, subNode.getChild());
+                sLen = subNode.stmt.renderParsedSubExpr(sb, maxDepth - 1,
+                    maxLength, subNode.child);
             }
 
             if (sLen < 0)

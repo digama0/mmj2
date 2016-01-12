@@ -84,56 +84,51 @@ public class ImplicationInfo extends DBInfo {
 
         final ParseNode root = assrtTree.getRoot();
 
-        final Stmt eqStatement = root.getStmt();
+        final Stmt eqStatement = root.stmt;
 
         if (!eqInfo.isEquivalence(eqStatement))
             return;
 
-        final Stmt implStmt = root.getChild()[0].getStmt();
+        final Stmt implStmt = root.child[0].stmt;
 
         if (!implOp.containsKey(implStmt))
             return;
 
-        if (root.getChild()[1].getStmt() != implStmt)
+        if (root.child[1].stmt != implStmt)
             return;
 
-        if (!TrUtil.isVarNode(root.getChild()[0].getChild()[0]))
+        if (!TrUtil.isVarNode(root.child[0].child[0]))
             return;
-        if (!TrUtil.isVarNode(root.getChild()[0].getChild()[1]))
+        if (!TrUtil.isVarNode(root.child[0].child[1]))
             return;
-        if (!TrUtil.isVarNode(root.getChild()[1].getChild()[1]))
+        if (!TrUtil.isVarNode(root.child[1].child[1]))
             return;
 
-        if (root.getChild()[0].getChild()[0].getStmt() != root.getChild()[1]
-            .getChild()[0].getStmt())
+        if (root.child[0].child[0].stmt != root.child[1].child[0].stmt)
             return;
-        if (root.getChild()[0].getChild()[1].getStmt() == root.getChild()[1]
-            .getChild()[1].getStmt())
+        if (root.child[0].child[1].stmt == root.child[1].child[1].stmt)
             return;
 
         final ParseNode log0Root = logHyps[0].getExprParseTree().getRoot();
 
-        if (log0Root.getStmt() != implStmt)
+        if (log0Root.stmt != implStmt)
             return;
 
-        if (log0Root.getChild()[0].getStmt() != root.getChild()[0].getChild()[0]
-            .getStmt())
+        if (log0Root.child[0].stmt != root.child[0].child[0].stmt)
             return;
 
-        if (log0Root.getChild()[1].getStmt() != eqStatement)
+        if (log0Root.child[1].stmt != eqStatement)
             return;
 
-        if (log0Root.getChild()[1].getChild()[0].getStmt() != root.getChild()[0]
-            .getChild()[1].getStmt())
+        if (log0Root.child[1].child[0].stmt != root.child[0].child[1].stmt)
             return;
 
-        if (log0Root.getChild()[1].getChild()[1].getStmt() != root.getChild()[1]
-            .getChild()[1].getStmt())
+        if (log0Root.child[1].child[1].stmt != root.child[1].child[1].stmt)
             return;
 
         // We assume that there could be only one equivalence operator for every
         // type
-        assert eqInfo.getEqStmt(root.getChild()[0].getStmt().getTyp()) == eqStatement;
+        assert eqInfo.getEqStmt(root.child[0].stmt.getTyp()) == eqStatement;
 
         if (distrRules.containsKey(implStmt))
             return;
@@ -161,7 +156,7 @@ public class ImplicationInfo extends DBInfo {
 
         final ParseNode root = assrtTree.getRoot();
 
-        final Stmt implStmt = root.getStmt();
+        final Stmt implStmt = root.stmt;
 
         if (!implOp.containsKey(implStmt))
             return;
@@ -169,15 +164,15 @@ public class ImplicationInfo extends DBInfo {
         final ParseNode log0Root = logHyps[0].getExprParseTree().getRoot();
         final ParseNode log1Root = logHyps[1].getExprParseTree().getRoot();
 
-        if (log0Root.getStmt() != implStmt)
+        if (log0Root.stmt != implStmt)
             return;
 
-        if (log1Root.getStmt() != implStmt)
+        if (log1Root.stmt != implStmt)
             return;
 
-        final Stmt stmtA = log0Root.getChild()[0].getStmt();
-        final Stmt stmtB = log0Root.getChild()[1].getStmt();
-        final Stmt stmtC = log1Root.getChild()[1].getStmt();
+        final Stmt stmtA = log0Root.child[0].stmt;
+        final Stmt stmtB = log0Root.child[1].stmt;
+        final Stmt stmtC = log1Root.child[1].stmt;
 
         if (!TrUtil.isVarStmt(stmtA))
             return;
@@ -188,13 +183,13 @@ public class ImplicationInfo extends DBInfo {
         if (!TrUtil.isVarStmt(stmtC))
             return;
 
-        if (stmtA != root.getChild()[0].getStmt())
+        if (stmtA != root.child[0].stmt)
             return;
 
-        if (stmtB != log1Root.getChild()[0].getStmt())
+        if (stmtB != log1Root.child[0].stmt)
             return;
 
-        if (stmtC != root.getChild()[1].getStmt())
+        if (stmtC != root.child[1].stmt)
             return;
 
         if (implTrans.containsKey(implStmt))
@@ -245,16 +240,16 @@ public class ImplicationInfo extends DBInfo {
         else
             return;
 
-        if (implHyp.getChild().length != 2)
+        if (implHyp.child.length != 2)
             return;
 
-        if (implHyp.getChild()[0].getStmt() != preHyp.getStmt())
+        if (implHyp.child[0].stmt != preHyp.stmt)
             return;
 
-        if (implHyp.getChild()[1].getStmt() != resNode.getStmt())
+        if (implHyp.child[1].stmt != resNode.stmt)
             return;
 
-        final Stmt stmt = implHyp.getStmt();
+        final Stmt stmt = implHyp.stmt;
 
         if (implOp.containsKey(stmt))
             return;
@@ -273,7 +268,7 @@ public class ImplicationInfo extends DBInfo {
         if (!eqInfo.isEquivalence(stmt))
             return;
 
-        final Cnst type = resNode.getStmt().getTyp();
+        final Cnst type = resNode.stmt.getTyp();
 
         if (eqImplications.containsKey(type))
             return;
@@ -295,7 +290,7 @@ public class ImplicationInfo extends DBInfo {
 
         final ParseNode root = assrtTree.getRoot();
 
-        final Stmt implStmt = root.getStmt();
+        final Stmt implStmt = root.stmt;
 
         if (!implOp.containsKey(implStmt))
             return;
@@ -304,12 +299,12 @@ public class ImplicationInfo extends DBInfo {
         if (!TrUtil.isVarNode(log0Root))
             return;
 
-        assert root.getChild().length == 2;
+        assert root.child.length == 2;
 
-        final ParseNode child0 = root.getChild()[0];
-        final ParseNode child1 = root.getChild()[1];
+        final ParseNode child0 = root.child[0];
+        final ParseNode child1 = root.child[1];
 
-        if (child1.getStmt() != log0Root.getStmt())
+        if (child1.stmt != log0Root.stmt)
             return;
 
         if (!TrUtil.isVarNode(child0))
@@ -340,7 +335,7 @@ public class ImplicationInfo extends DBInfo {
         final ProofStepStmt min, final ParseNode implNode, final Assrt majAssrt)
     {
         // implication operator (in the example it is ->)
-        final Stmt op = majAssrt.getExprParseTree().getRoot().getStmt();
+        final Stmt op = majAssrt.getExprParseTree().getRoot().stmt;
 
         final Assrt assrt = implTrans.get(op);
 
@@ -348,11 +343,11 @@ public class ImplicationInfo extends DBInfo {
 
         final ParseNode hypRoot = min.formulaParseTree.getRoot();
 
-        assert hypRoot.getStmt() == op;
-        assert hypRoot.getChild().length == 2;
+        assert hypRoot.stmt == op;
+        assert hypRoot.child.length == 2;
 
-        final ParseNode hypPrefix = hypRoot.getChild()[0];
-        final ParseNode hypCore = hypRoot.getChild()[1];
+        final ParseNode hypPrefix = hypRoot.child[0];
+        final ParseNode hypCore = hypRoot.child[1];
 
         // Create node A -> B
         final ParseNode majNode = TrUtil
@@ -363,8 +358,9 @@ public class ImplicationInfo extends DBInfo {
             new ProofStepStmt[]{}, majAssrt);
 
         final ProofStepStmt[] hypDerivArray = new ProofStepStmt[]{min, maj};
+        ParseNode r = maj.formulaParseTree.getRoot();
 
-        final ParseNode stepImplRes = maj.formulaParseTree.getRoot().getChild()[1];
+        final ParseNode stepImplRes = r.child[1];
 
         final ParseNode stepNode = TrUtil.createBinaryNode(op, hypPrefix,
             stepImplRes);
@@ -386,7 +382,7 @@ public class ImplicationInfo extends DBInfo {
         final ProofStepStmt min, final ParseNode implNode, final Assrt majAssrt)
     {
         // implication operator (in the example it is ->)
-        final Stmt op = majAssrt.getExprParseTree().getRoot().getStmt();
+        final Stmt op = majAssrt.getExprParseTree().getRoot().stmt;
 
         final Assrt assrt = implTrans.get(op);
 
@@ -394,15 +390,15 @@ public class ImplicationInfo extends DBInfo {
 
         final ParseNode hypRoot = min.formulaParseTree.getRoot();
 
-        assert hypRoot.getStmt() == op;
-        assert hypRoot.getChild().length == 2;
+        assert hypRoot.stmt == op;
+        assert hypRoot.child.length == 2;
 
-        final ParseNode hypPrefix = hypRoot.getChild()[0];
-        final ParseNode hypCore = hypRoot.getChild()[1];
+        final ParseNode hypPrefix = hypRoot.child[0];
+        final ParseNode hypCore = hypRoot.child[1];
 
         assert hypPrefix.isDeepDup(info.implPrefix);
-        assert hypPrefix.isDeepDup(info.derivStep.formulaParseTree.getRoot()
-            .getChild()[0]);
+        ParseNode r = info.derivStep.formulaParseTree.getRoot();
+        assert hypPrefix.isDeepDup(r.child[0]);
 
         // Create node A -> B
         final ParseNode majNode = TrUtil
@@ -466,8 +462,9 @@ public class ImplicationInfo extends DBInfo {
         final ProofStepStmt min, final ProofStepStmt maj, final Stmt op)
     {
         final Assrt assrt = getImplOp(op);
+        ParseNode r = maj.formulaParseTree.getRoot();
 
-        final ParseNode stepNode = maj.formulaParseTree.getRoot().getChild()[1];
+        final ParseNode stepNode = r.child[1];
 
         final ProofStepStmt stepTr = info.getOrCreateProofStepStmt(stepNode,
             new ProofStepStmt[]{min, maj}, assrt);
@@ -490,7 +487,8 @@ public class ImplicationInfo extends DBInfo {
             majAssrt);
 
         final ProofStepStmt maj = subst.hypDerivArray[1];
-        final ParseNode stepNode = maj.formulaParseTree.getRoot().getChild()[1];
+        ParseNode r = maj.formulaParseTree.getRoot();
+        final ParseNode stepNode = r.child[1];
 
         final ProofStepStmt stepTr = info.getOrCreateProofStepStmt(stepNode,
             subst.hypDerivArray, subst.assrt);
@@ -501,7 +499,7 @@ public class ImplicationInfo extends DBInfo {
         final ProofStepStmt min, final ParseNode implNode, final Assrt majAssrt)
     {
         // implication operator (in the example it is ->)
-        final Stmt op = majAssrt.getExprParseTree().getRoot().getStmt();
+        final Stmt op = majAssrt.getExprParseTree().getRoot().stmt;
 
         final Assrt assrt = getImplOp(op);
 
@@ -564,11 +562,11 @@ public class ImplicationInfo extends DBInfo {
             if (!isImplForPrefixOperator(stmt))
                 continue; // it is not true implication construction.
 
-            if (root.getStmt() == stmt) {
-                assert root.getChild().length == 2;
-                final ParseNode implPrefix = root.getChild()[0];
+            if (root.stmt == stmt) {
+                assert root.child.length == 2;
+                final ParseNode implPrefix = root.child[0];
                 final Stmt implStatement = stmt;
-                final ParseNode core = root.getChild()[1];
+                final ParseNode core = root.child[1];
                 return new ExtractImplResult(implPrefix, implStatement, core);
             }
         }
@@ -611,14 +609,16 @@ public class ImplicationInfo extends DBInfo {
         final ProofStepStmt hyp)
     {
         final ParseNode root = hyp.formulaParseTree.getRoot();
-        final Stmt implStmt = root.getStmt();
+        final Stmt implStmt = root.stmt;
         assert isImplOperator(implStmt);
-        final Stmt eqStmt = root.getChild()[1].getStmt();
+        final Stmt eqStmt = root.child[1].stmt;
         assert eqInfo.isEquivalence(eqStmt);
 
-        final ParseNode precond = root.getChild()[0];
-        final ParseNode first = root.getChild()[1].getChild()[0];
-        final ParseNode second = root.getChild()[1].getChild()[1];
+        final ParseNode precond = root.child[0];
+        ParseNode r = root.child[1];
+        final ParseNode first = r.child[0];
+        ParseNode r1 = root.child[1];
+        final ParseNode second = r1.child[1];
 
         final ParseNode stepNode = TrUtil.createBinaryNode(eqStmt,
             TrUtil.createBinaryNode(implStmt, precond, first),

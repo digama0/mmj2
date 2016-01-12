@@ -44,6 +44,9 @@ package mmj.lang;
 import java.util.Comparator;
 import java.util.Map;
 
+import org.json.JSONObject;
+import org.json.JSONString;
+
 import mmj.lang.ParseTree.RPNStep;
 
 /**
@@ -78,11 +81,11 @@ import mmj.lang.ParseTree.RPNStep;
  * <li>$( -- Comment, not presently stored in mmj (terminating "$)")
  * <li>${ -- mmj.lang.ScopeDef.java (terminating "$}")
  * </ul>
- * 
+ *
  * @see <a href="../../MetamathERNotes.html"> Nomenclature and
  *      Entity-Relationship Notes</a>
  */
-public abstract class Stmt extends MObj {
+public abstract class Stmt extends MObj implements JSONString {
     /**
      * note: label must NOT be changed after Stmt added to stmtTbl because
      * stmtTbl is a Map (map behavior undefined)
@@ -148,7 +151,7 @@ public abstract class Stmt extends MObj {
 
     /**
      * Construct using sequence number and id string.
-     * 
+     *
      * @param seq MObj.seq number
      * @param symTbl Symbol Table (Map)
      * @param stmtTbl Statement Table (Map)
@@ -158,7 +161,7 @@ public abstract class Stmt extends MObj {
      */
     public Stmt(final int seq, final Map<String, Sym> symTbl,
         final Map<String, Stmt> stmtTbl, final String labelS)
-        throws LangException
+            throws LangException
     {
         super(seq);
 
@@ -166,7 +169,8 @@ public abstract class Stmt extends MObj {
             throw new IllegalArgumentException(
                 LangConstants.ERRMSG_STMT_LABEL_STRING_EMPTY);
         if (stmtTbl.containsKey(labelS))
-            throw new LangException(LangConstants.ERRMSG_DUP_STMT_LABEL, labelS);
+            throw new LangException(LangConstants.ERRMSG_DUP_STMT_LABEL,
+                labelS);
         if (symTbl.containsKey(labelS))
             throw new LangException(
                 LangConstants.ERRMSG_STMT_LABEL_DUP_OF_SYM_ID, labelS);
@@ -176,7 +180,7 @@ public abstract class Stmt extends MObj {
 
     /**
      * Construct temp Stmt using precomputed values and doing no validation.
-     * 
+     *
      * @param tempSeq MObj.seq
      * @param tempLabel Stmt.label
      * @param tempFormula Stmt.formula
@@ -206,14 +210,14 @@ public abstract class Stmt extends MObj {
      * exprRPN (grammatical parses), but since Syntax Axioms must be defined at
      * the global level, the question of a Stmt being "active" is only relevant
      * to proofs.
-     * 
+     *
      * @return is Stmt "active"
      */
     public abstract boolean isActive();
 
     /**
      * Return mandatory VarHyp Array
-     * 
+     *
      * @return mandatory VarHyp Array
      */
     public abstract VarHyp[] getMandVarHypArray();
@@ -221,7 +225,7 @@ public abstract class Stmt extends MObj {
     /**
      * Return mandatory Hyp Array length Note: the Hyp array is different from
      * the VarHyp array because the Hyp array can also include LogHyp's.
-     * 
+     *
      * @return mandatory Hyp Array Length
      */
     public abstract int getMandHypArrayLength();
@@ -244,7 +248,7 @@ public abstract class Stmt extends MObj {
      * Depth is computed as 1 for each Notation Syntax Axiom Node. VarHyp nodes
      * and Nulls Permitted, Type Conversion and NamedTypedConstant Syntax Axiom
      * nodes are assigned depth = 0 for purposes of depth checking.
-     * 
+     *
      * @param sb StringBuilder already initialized for appending characters.
      * @param maxDepth maximum depth of Notation Syntax axioms in sub-tree to be
      *            printed. Set to Integer.MAX_VALUE to turn off depth checking.
@@ -260,7 +264,7 @@ public abstract class Stmt extends MObj {
 
     /**
      * Return Stmt label.
-     * 
+     *
      * @return Stmt label
      */
     public String getLabel() {
@@ -269,7 +273,7 @@ public abstract class Stmt extends MObj {
 
     /**
      * Return Stmt Formula.
-     * 
+     *
      * @return Stmt Formula
      */
     public Formula getFormula() {
@@ -278,7 +282,7 @@ public abstract class Stmt extends MObj {
 
     /**
      * Return Stmt Type Code.
-     * 
+     *
      * @return Stmt Type Code.
      */
     public Cnst getTyp() {
@@ -296,7 +300,7 @@ public abstract class Stmt extends MObj {
 
     /**
      * Set Stmt Type Code.
-     * 
+     *
      * @param typ Stmt Type Code.
      */
     public void setTyp(final Cnst typ) {
@@ -305,7 +309,7 @@ public abstract class Stmt extends MObj {
 
     /**
      * Return exprRPN, the statement's parse RPN.
-     * 
+     *
      * @return exprRPN.
      */
     public RPNStep[] getExprRPN() {
@@ -317,7 +321,7 @@ public abstract class Stmt extends MObj {
 
     /**
      * Set exprRPN, the statement's parse RPN.
-     * 
+     *
      * @param exprRPN array of Stmt!
      */
     public void setExprRPN(final RPNStep[] exprRPN) {
@@ -332,7 +336,7 @@ public abstract class Stmt extends MObj {
      * Set the computed max depth value for the LogHyps in an Assrt. The
      * set/reset functions are here for convenience of updating via Grammar when
      * statements are reparsed.
-     * 
+     *
      * @param logHypsMaxDepth the new max depth value
      */
     public void setLogHypsMaxDepth(final int logHypsMaxDepth) {
@@ -351,7 +355,7 @@ public abstract class Stmt extends MObj {
      * Set the computed Hi/Lo key for an Assertions LogHyps. The set/reset
      * functions are here for convenience of updating via Grammar when
      * statements are reparsed.
-     * 
+     *
      * @param logHypsL1HiLoKey computed value.
      */
     public void setLogHypsL1HiLoKey(final String logHypsL1HiLoKey) {
@@ -368,7 +372,7 @@ public abstract class Stmt extends MObj {
 
     /**
      * Get exprParseTree, the statement's parse tree.
-     * 
+     *
      * @return exprParseTree Parse Tree from Grammar
      */
     public ParseTree getExprParseTree() {
@@ -377,7 +381,7 @@ public abstract class Stmt extends MObj {
 
     /**
      * Set exprParseTree, the statement's parse tree.
-     * 
+     *
      * @param parseTree Parse Tree from Grammar
      */
     public void setExprParseTree(final ParseTree parseTree) {
@@ -402,12 +406,22 @@ public abstract class Stmt extends MObj {
      * Converts to String.
      * <p>
      * Output is simply Stmt.label.
-     * 
+     *
      * @return returns Stmt string;
      */
     @Override
     public String toString() {
         return label;
+    }
+
+    /**
+     * Needed for JSONification of Stmts.
+     *
+     * @return returns Stmt string;
+     */
+    @Override
+    public String toJSONString() {
+        return JSONObject.quote(label);
     }
 
     /*
@@ -430,8 +444,8 @@ public abstract class Stmt extends MObj {
      */
     @Override
     public boolean equals(final Object obj) {
-        return this == obj || obj instanceof Stmt
-            && label.equals(((Stmt)obj).label);
+        return this == obj
+            || obj instanceof Stmt && label.equals(((Stmt)obj).label);
     }
 
     /**
@@ -443,8 +457,7 @@ public abstract class Stmt extends MObj {
         }
     };
 
-    public static final Comparator<Stmt> DESC_NBR_PROOF_REFS = new Comparator<Stmt>()
-    {
+    public static final Comparator<Stmt> DESC_NBR_PROOF_REFS = new Comparator<Stmt>() {
         public int compare(final Stmt o1, final Stmt o2) {
             final int i = o2.nbrProofRefs - o1.nbrProofRefs;
             return i != 0 ? i : LABEL.compare(o1, o2);

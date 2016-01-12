@@ -58,8 +58,8 @@ public class GenProofStepStmt {
         if (prefix == null)
             return root;
         else {
-            assert root.getChild().length == 2;
-            return root.getChild()[1];
+            assert root.child.length == 2;
+            return root.child[1];
         }
     }
 
