@@ -114,7 +114,7 @@ public class Systemizer {
         this.messages = messages;
         this.systemLoader = systemLoader;
 
-        filesAlreadyLoaded = new ArrayList<String>();
+        filesAlreadyLoaded = new ArrayList<>();
         tokenizer = null;
         statementizer = null;
 
@@ -124,7 +124,7 @@ public class Systemizer {
 
         loadProofs = MMIOConstants.LOAD_PROOFS_DEFAULT;
 
-        defaultProofList = new ArrayList<String>(1);
+        defaultProofList = new ArrayList<>(1);
         defaultProofList.add(MMIOConstants.MISSING_PROOF_STEP);
 
     }
@@ -235,7 +235,7 @@ public class Systemizer {
         statementizer = new Statementizer(tokenizer);
 
         // init stack of include files
-        fileList = new ArrayList<IncludeFile>();
+        fileList = new ArrayList<>();
 
         eofReached = false;
         getNextStmt();

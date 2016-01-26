@@ -181,7 +181,7 @@ public class TrUtil {
 
     // Returns the only one variable or null
     public static VarHyp findOneVarInParseNode(final ParseNode input) {
-        final Set<VarHyp> res = new HashSet<VarHyp>();
+        final Set<VarHyp> res = new HashSet<>();
         findVarsInParseNode(input, res);
         if (res.size() != 1)
             return null;
@@ -259,11 +259,12 @@ public class TrUtil {
         if (!implForm) {
             if (hyps.length != 0)
                 assert !info.hasImplPrefix();
-            final ProofStepStmt[] simpleHyps = convertGenToSimpleProofSteps(
-                hyps);
 
-            final ProofStepStmt res = info.getOrCreateProofStepStmt(stepNode,
-                simpleHyps, assrt);
+            ProofStepStmt res = info.getProofStepStmt(stepNode);
+            if (res == null)
+                res = info.createProofStepStmt(stepNode,
+                    convertGenToSimpleProofSteps(hyps), assrt);
+
             return new GenProofStepStmt(res, null);
         }
         else {

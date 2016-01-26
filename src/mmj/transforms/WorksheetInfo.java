@@ -26,7 +26,7 @@ import mmj.verify.VerifyProofs;
     public final ProofWorksheet proofWorksheet;
     public final DerivationStep derivStep;
 
-    public final List<DerivationStep> newSteps = new ArrayList<DerivationStep>();
+    public final List<DerivationStep> newSteps = new ArrayList<>();
 
     public final TransformationManager trManager;
 
@@ -61,8 +61,7 @@ import mmj.verify.VerifyProofs;
      */
     public ProofStepStmt getProofStepStmt(final ParseNode root) {
         assert !finished;
-        final ProofStepStmt stepTr = getOrCreateProofStepStmt(root, null, null);
-        return stepTr;
+        return getOrCreateProofStepStmt(root, null, null);
     }
 
     /**
@@ -76,17 +75,35 @@ import mmj.verify.VerifyProofs;
     public ProofStepStmt getOrCreateProofStepStmt(final ParseNode root,
         final ProofStepStmt[] hyps, final Assrt assrt)
     {
+        return getOrCreateProofStepStmt(root, hyps, assrt, true);
+    }
+
+    /**
+     * @param root searched expression
+     * @param hyps hypotheses needed for result step construction (could be null
+     *            if we want existed step)
+     * @param assrt assert needed for result step construction (could be null if
+     *            we want existed step)
+     * @param get True to search for matching steps
+     * @return an existed step with root equals to stepNode or new step
+     */
+    public ProofStepStmt getOrCreateProofStepStmt(final ParseNode root,
+        final ProofStepStmt[] hyps, final Assrt assrt, final boolean get)
+    {
         assert !finished;
         final ParseTree tree = new ParseTree(root);
-        final Formula generatedFormula = verifyProofs.convertRPNToFormula(
-            tree.convertToRPN(), "tree"); // TODO: use constant
+        final Formula generatedFormula = verifyProofs
+            .convertRPNToFormula(tree.convertToRPN(), "tree"); // TODO: use
+                                                               // constant
         generatedFormula.setTyp(provableLogicStmtTyp);
 
-        final ProofStepStmt findMatchingStepFormula = proofWorksheet
-            .findMatchingStepFormula(generatedFormula, derivStep);
+        if (get) {
+            final ProofStepStmt findMatchingStepFormula = proofWorksheet
+                .findMatchingStepFormula(generatedFormula, derivStep);
 
-        if (findMatchingStepFormula != null)
-            return findMatchingStepFormula;
+            if (findMatchingStepFormula != null)
+                return findMatchingStepFormula;
+        }
 
         if (hyps == null || assrt == null)
             return null;
@@ -101,6 +118,43 @@ import mmj.verify.VerifyProofs;
             steps, assrt.getLabel(), generatedFormula, tree,
             Collections.<WorkVar> emptyList());
         d.setRef(assrt);
+        newSteps.add(d);
+
+        if (dbg) {
+            final String str = getDebugString(d, hyps);
+            output.dbgMessage(dbg, "I-TR-DBG Emmited step: " + str);
+        }
+
+        return d;
+    }
+
+    /**
+     * @param root searched expression
+     * @param hyps hypotheses needed for result step construction (could be null
+     *            if we want existed step)
+     * @param assrt assert needed for result step construction (could be null if
+     *            we want existed step)
+     * @return an existed step with root equals to stepNode or new step
+     */
+    public DerivationStep createProofStepStmt(final ParseNode root,
+        final ProofStepStmt[] hyps, final Assrt assrt)
+    {
+        assert !finished;
+        return (DerivationStep)getOrCreateProofStepStmt(root, hyps, assrt,
+            false);
+    }
+
+    public DerivationStep giveUpProofStepStmt(final ParseNode root) {
+        final ParseTree tree = new ParseTree(root);
+        final Formula generatedFormula = verifyProofs
+            .convertRPNToFormula(tree.convertToRPN(), "tree"); // TODO: use
+                                                               // constant
+        generatedFormula.setTyp(provableLogicStmtTyp);
+
+        final ProofStepStmt[] hyps = new ProofStepStmt[0];
+        final DerivationStep d = proofWorksheet.addDerivStep(derivStep, hyps,
+            new String[0], null, generatedFormula, tree,
+            Collections.<WorkVar> emptyList());
         newSteps.add(d);
 
         if (dbg) {
@@ -162,7 +216,8 @@ import mmj.verify.VerifyProofs;
         final ProofStepStmt[] hypDerivArray;
         final Assrt assrt;
 
-        public SubstParam(final ProofStepStmt[] hypDerivArray, final Assrt assrt)
+        public SubstParam(final ProofStepStmt[] hypDerivArray,
+            final Assrt assrt)
         {
             this.hypDerivArray = hypDerivArray;
             this.assrt = assrt;

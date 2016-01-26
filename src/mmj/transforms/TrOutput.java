@@ -26,6 +26,6 @@ public class TrOutput {
             return;
 
         // messages.accumInfoMessage(infoMessage, args);
-        System.err.format(infoMessage + "\n", args);
+        System.out.format(infoMessage + "\n", args);
     }
 }

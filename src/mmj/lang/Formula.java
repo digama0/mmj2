@@ -173,7 +173,7 @@ public class Formula {
     {
         if (constList != null)
             assert constList == null;
-        final Set<Cnst> set = new HashSet<Cnst>();
+        final Set<Cnst> set = new HashSet<>();
         for (final Sym s : getSym())
             if (s instanceof Cnst) {
                 final Cnst c = (Cnst)s;
@@ -427,7 +427,7 @@ public class Formula {
      *             the Formula's Var's.
      */
     public VarHyp[] buildMandVarHypArray(final Hyp[] tempHypArray) {
-        final List<VarHyp> hypList = new ArrayList<VarHyp>();
+        final List<VarHyp> hypList = new ArrayList<>();
         // start at i = 1 to bypass the Cnst at Formula.sym[0]
         for (int i = 1; i < cnt; i++) {
             if (!(sym[i] instanceof Var))

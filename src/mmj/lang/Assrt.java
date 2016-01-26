@@ -126,7 +126,7 @@ public abstract class Assrt extends Stmt {
     {
         super(seq, symTbl, stmtTbl, labelS);
 
-        final List<Hyp> exprHypList = new ArrayList<Hyp>();
+        final List<Hyp> exprHypList = new ArrayList<>();
         formula = new LogicFormula(symTbl, typS, symList, exprHypList);
 
         varHypArray = exprHypList.toArray(new VarHyp[exprHypList.size()]);
@@ -301,7 +301,7 @@ public abstract class Assrt extends Stmt {
                 Assrt.accumHypInList(hypList, logHyp);
             }
 
-        final List<DjVars> djVarsList = new ArrayList<DjVars>();
+        final List<DjVars> djVarsList = new ArrayList<>();
         for (final ScopeDef scopeDef : scopeDefList)
             for (final DjVars djVars : scopeDef.scopeDjVars)
                 if (areBothDjVarsInHypList(hypList, djVars)

@@ -222,7 +222,7 @@ public class DjVars implements Comparable<DjVars> {
         final List<List<Var>> comboDvGroups)
     {
 
-        final List<StringBuilder> list = new LinkedList<StringBuilder>();
+        final List<StringBuilder> list = new LinkedList<>();
 
         for (final List<Var> i : comboDvGroups) {
             final StringBuilder sb = new StringBuilder();
@@ -255,7 +255,7 @@ public class DjVars implements Comparable<DjVars> {
         final DjVars[] array2)
     {
 
-        final List<DjVars> mergedList = new LinkedList<DjVars>();
+        final List<DjVars> mergedList = new LinkedList<>();
 
         if (array1 != null)
             for (final DjVars element : array1)
@@ -278,7 +278,7 @@ public class DjVars implements Comparable<DjVars> {
         final List<List<DjVars>> list1)
     {
 
-        final List<DjVars> mergedList = new LinkedList<DjVars>();
+        final List<DjVars> mergedList = new LinkedList<>();
 
         if (list1 != null)
             for (final List<DjVars> i : list1)

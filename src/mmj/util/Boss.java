@@ -80,7 +80,7 @@ public abstract class Boss {
 
     protected BatchFramework batchFramework;
 
-    private final Map<BatchCommand, BooleanSupplier> ops = new HashMap<BatchCommand, BooleanSupplier>();
+    private final Map<BatchCommand, BooleanSupplier> ops = new HashMap<>();
 
     protected RunParmArrayEntry runParm;
 

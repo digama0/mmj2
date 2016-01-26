@@ -125,7 +125,7 @@ public class RunParmArrayEntry implements Comparable<RunParmArrayEntry> {
             commentLine = null; // is not comment line
         }
 
-        final List<String> arrayList = new ArrayList<String>(5);
+        final List<String> arrayList = new ArrayList<>(5);
 
         String value = null;
 

@@ -53,7 +53,7 @@ import mmj.pa.SessionStore;
  * replacement rules -- from a Metamath ".mm" file/database. The distinction
  * made between "building" and extracting what is already there is important
  * because Metamath's set.mm database uses "overloaded functions", such as "weq"
- * and "wceq", which are tecnically "ambiguous" (two valid parse trees exist.)
+ * and "wceq", which are technically "ambiguous" (two valid parse trees exist.)
  * <p>
  * These "non-essential" ambiguities are resolved during grammar generation by a
  * process of "combinatorial explosion", which creates a Notation Rule for every
@@ -327,7 +327,7 @@ public class Grammar implements SyntaxVerifier {
      * Initialize derivedRuleQueue.
      */
     public void derivedRuleQueueInit() {
-        derivedRuleQueue = new PriorityQueue<GrammarRule>(
+        derivedRuleQueue = new PriorityQueue<>(
             GrammarConstants.MAX_DERIVED_RULE_QUEUE_SIZE,
             GrammarRule.MAX_SEQ_NBR);
     }
@@ -602,7 +602,7 @@ public class Grammar implements SyntaxVerifier {
                 return null;
         }
         return grammaticalParseOneFormula(formula, varHypArray, highestSeq,
-            defaultStmt.getLabel());
+            defaultStmt == null ? null : defaultStmt.getLabel());
     }
 
     /**
@@ -627,7 +627,7 @@ public class Grammar implements SyntaxVerifier {
                 return;
         }
 
-        final Set<Stmt> stmtTblBySeq = new TreeSet<Stmt>(MObj.SEQ);
+        final Set<Stmt> stmtTblBySeq = new TreeSet<>(MObj.SEQ);
         stmtTblBySeq.addAll(stmtTbl.values());
 
         for (final Stmt stmt : stmtTblBySeq) {
@@ -963,7 +963,7 @@ public class Grammar implements SyntaxVerifier {
 
         grammarInitialized = false;
 
-        final Set<Axiom> allSyntaxAxiomSet = new TreeSet<Axiom>(MObj.SEQ);
+        final Set<Axiom> allSyntaxAxiomSet = new TreeSet<>(MObj.SEQ);
 
         if (!setInitialGrammarTableValues(allSyntaxAxiomSet))
             return false;
@@ -1042,12 +1042,12 @@ public class Grammar implements SyntaxVerifier {
         provableLogicStmtTypArray = new Cnst[provableLogicStmtTypCodes.length];
         logicStmtTypArray = new Cnst[logicStmtTypCodes.length];
 
-        varHypTypSet = new TreeSet<Cnst>(MObj.SEQ);
-        syntaxAxiomTypSet = new TreeSet<Cnst>(MObj.SEQ);
-        nullsPermittedTypSet = new TreeSet<Cnst>(MObj.SEQ);
-        nullsPermittedGRList = new ArrayList<NullsPermittedRule>(5);
-        typeConversionGRList = new ArrayList<TypeConversionRule>(5);
-        notationGRSet = new TreeSet<NotationRule>(GrammarRule.MAX_SEQ_NBR);
+        varHypTypSet = new TreeSet<>(MObj.SEQ);
+        syntaxAxiomTypSet = new TreeSet<>(MObj.SEQ);
+        nullsPermittedTypSet = new TreeSet<>(MObj.SEQ);
+        nullsPermittedGRList = new ArrayList<>(5);
+        typeConversionGRList = new ArrayList<>(5);
+        notationGRSet = new TreeSet<>(GrammarRule.MAX_SEQ_NBR);
 //      baseGRSet                = new TreeSet(
 //                                          GrammarRule.MAX_SEQ_NBR);
         notationGRGimmeMatchCnt = 0;

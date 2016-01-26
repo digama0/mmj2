@@ -119,14 +119,14 @@ public class BookManager implements TheoremLoaderCommitListener {
         this.provableLogicStmtTypeParm = provableLogicStmtTypeParm;
 
         if (enabled) {
-            chapterList = new ArrayList<Chapter>(
+            chapterList = new ArrayList<>(
                 LangConstants.ALLOC_NBR_BOOK_CHAPTERS_INITIAL);
-            sectionList = new ArrayList<Section>(
+            sectionList = new ArrayList<>(
                 LangConstants.ALLOC_NBR_BOOK_SECTIONS_INITIAL);
         }
         else {
-            chapterList = new ArrayList<Chapter>(1);
-            sectionList = new ArrayList<Section>(1);
+            chapterList = new ArrayList<>(1);
+            sectionList = new ArrayList<>(1);
         }
     }
 

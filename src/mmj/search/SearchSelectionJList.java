@@ -21,7 +21,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.*;
 
-public class SearchSelectionJList extends JList {
+public class SearchSelectionJList extends JList<String> {
 
     public SearchSelectionJList(final SearchMgr searchMgr) {
         this.searchMgr = searchMgr;

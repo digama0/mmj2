@@ -179,7 +179,7 @@ public class TMFFPreferences {
 
         tmffFormatArray = new TMFFFormat[TMFF_MAX_FORMAT_NBR + 1];
 
-        tmffSchemeMap = new HashMap<String, TMFFScheme>();
+        tmffSchemeMap = new HashMap<>();
 
         /*
          * Load default Schemes
@@ -220,7 +220,7 @@ public class TMFFPreferences {
 
         store.addSerializable("~" + PFX + "schemeMap", (final JSONObject o) -> {
             for (final Entry<String, Object> e : o.entrySet()) {
-                final List<Object> a = new ArrayList<Object>(
+                final List<Object> a = new ArrayList<>(
                     (JSONArray)e.getValue());
                 a.add(0, e.getKey());
                 putToSchemeMap(new TMFFScheme(

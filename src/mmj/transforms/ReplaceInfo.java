@@ -22,13 +22,13 @@ public class ReplaceInfo extends DBInfo {
      * The list of rules for variable replacement:
      * "B = B' => f(A,B,C) = f(A,B',C)"
      */
-    private final Map<Stmt, Assrt[]> replaceOp = new HashMap<Stmt, Assrt[]>();
+    private final Map<Stmt, Assrt[]> replaceOp = new HashMap<>();
 
     /**
      * The list of rules for variable replacement (implication form):
      * "B = B' -> f(A,B,C) = f(A,B',C)"
      */
-    private final Map<Stmt, Assrt[]> implReplaceOp = new HashMap<Stmt, Assrt[]>();
+    private final Map<Stmt, Assrt[]> implReplaceOp = new HashMap<>();
 
     // ------------------------------------------------------------------------
     // ------------------------Initialization----------------------------------

@@ -26,7 +26,7 @@ public abstract class ComplexRuleMap<Data> {
     protected final Map<Stmt, Map<ConstSubst, Map<PropertyTemplate, Data>>> map;
 
     public ComplexRuleMap() {
-        map = new HashMap<Stmt, Map<ConstSubst, Map<PropertyTemplate, Data>>>();
+        map = new HashMap<>();
     }
 
     public Data getData(final Stmt stmt, final ConstSubst constSubst,
@@ -61,13 +61,13 @@ public abstract class ComplexRuleMap<Data> {
     {
         Map<ConstSubst, Map<PropertyTemplate, Data>> substMap = map.get(stmt);
         if (substMap == null) {
-            substMap = new HashMap<ConstSubst, Map<PropertyTemplate, Data>>();
+            substMap = new HashMap<>();
             map.put(stmt, substMap);
         }
 
         Map<PropertyTemplate, Data> propertyMap = substMap.get(constSubst);
         if (propertyMap == null) {
-            propertyMap = new HashMap<PropertyTemplate, Data>();
+            propertyMap = new HashMap<>();
             substMap.put(constSubst, propertyMap);
         }
 

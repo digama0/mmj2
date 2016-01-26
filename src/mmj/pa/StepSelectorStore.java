@@ -33,7 +33,7 @@ public class StepSelectorStore {
     private final int maxResults;
     private int cntResults = 0;
 
-    private final List<StepSelectorItem> storeList = new LinkedList<StepSelectorItem>();
+    private final List<StepSelectorItem> storeList = new LinkedList<>();
 
     /**
      * Simple factory to hide constructor details.

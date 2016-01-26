@@ -139,7 +139,7 @@ public class Dump {
         dumpLogSysCounts(1, UtilConstants.DUMP_LOGSYS_COUNTS + caption,
             logicalSystem.getSymTbl(), logicalSystem.getStmtTbl());
 
-        final Set<Sym> provableLogicStmtTypSet = new TreeSet<Sym>(MObj.SEQ);
+        final Set<Sym> provableLogicStmtTypSet = new TreeSet<>(MObj.SEQ);
         if (grammar != null && grammar.getGrammarInitialized()) {
             final Cnst[] provableLogicStmtTypArray = grammar
                 .getProvableLogicStmtTypArray();
@@ -149,7 +149,7 @@ public class Dump {
             dumpSymTbl(1, UtilConstants.DUMP_PROVABLE_TYP_SET + caption,
                 provableLogicStmtTypSet);
 
-            final Set<Cnst> logicStmtTypSet = new TreeSet<Cnst>(MObj.SEQ);
+            final Set<Cnst> logicStmtTypSet = new TreeSet<>(MObj.SEQ);
             final Cnst[] logicStmtTypArray = grammar.getLogicStmtTypArray();
             for (final Cnst element : logicStmtTypArray)
                 logicStmtTypSet.add(element);
@@ -364,7 +364,7 @@ public class Dump {
             return;
         }
 
-        final Set<Sym> symSet = new TreeSet<Sym>(MObj.SEQ);
+        final Set<Sym> symSet = new TreeSet<>(MObj.SEQ);
         symSet.addAll(symTbl);
 
         for (final Sym sym : symSet)
@@ -395,7 +395,7 @@ public class Dump {
             return;
         }
 
-        final Set<Stmt> stmtSet = new TreeSet<Stmt>(MObj.SEQ);
+        final Set<Stmt> stmtSet = new TreeSet<>(MObj.SEQ);
         stmtSet.addAll(stmtTbl);
 
         int dumpCnt = 0;
@@ -731,7 +731,7 @@ public class Dump {
             return;
         }
 
-        final Set<GrammarRule> gRSet = new TreeSet<GrammarRule>(
+        final Set<GrammarRule> gRSet = new TreeSet<>(
             GrammarRule.RULE_NBR);
         gRSet.addAll(grammarRuleCollection);
 
@@ -884,7 +884,7 @@ public class Dump {
         final Collection<Cnst> grammarTypSet, final Collection<Sym> symTbl)
     {
 
-        final Set<Cnst> cnstWithRules = new TreeSet<Cnst>(Sym.ID);
+        final Set<Cnst> cnstWithRules = new TreeSet<>(Sym.ID);
 
         for (final Sym sym : symTbl) {
             if (!(sym instanceof Cnst))
@@ -915,7 +915,7 @@ public class Dump {
         final String continueRuleLit = UtilConstants.DUMP_RULE_CONTINUATION_LIT;
 
         for (final Cnst grammarTyp : grammarTypSet) {
-            final List<GrammarRule> grammarTypRulesList = new ArrayList<GrammarRule>();
+            final List<GrammarRule> grammarTypRulesList = new ArrayList<>();
             for (final Cnst cnst : cnstWithRules)
                 for (final NotationRule g : GRForest
                     .getRuleCollection(cnst.getGRRoot()))

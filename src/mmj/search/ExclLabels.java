@@ -49,7 +49,7 @@ public class ExclLabels extends SearchArgsTextField {
         final Pattern dot = Pattern.compile(Pattern.quote("."));
         final Pattern whitespace = Pattern.compile("\\s");
         final String[] labels = comma.split(text);
-        final List<Pattern> patterns = new ArrayList<Pattern>(labels.length);
+        final List<Pattern> patterns = new ArrayList<>(labels.length);
         loopI: for (int i = 0; i < labels.length; i++) {
             final String label = labels[i].trim();
             if (label.length() == 0)

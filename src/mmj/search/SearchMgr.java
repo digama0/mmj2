@@ -189,8 +189,8 @@ public class SearchMgr {
         final Assrt assrt = i == -1 ? null
             : searchOutput.sortedAssrtResultsList.get(i);
         getProofAsst().getProofAsstGUI().unifyWithStepSelectorChoice(
-            new StepRequest(PaConstants.STEP_REQUEST_SELECTOR_CHOICE,
-                searchArgs.stepSearchStmt.getStep(), assrt));
+            new StepRequest.SelectorChoice(searchArgs.stepSearchStmt.getStep(),
+                assrt));
     }
 
     public void execReshowProofAsstGUI() {

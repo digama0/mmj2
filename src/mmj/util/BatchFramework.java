@@ -143,7 +143,7 @@ public abstract class BatchFramework {
      */
     public void initializeBatchFramework() {
         batchFrameworkInitialized = true;
-        bossList = new ArrayList<Boss>();
+        bossList = new ArrayList<>();
 
         storeBoss = new StoreBoss(this);
         outputBoss = new OutputBoss(this);

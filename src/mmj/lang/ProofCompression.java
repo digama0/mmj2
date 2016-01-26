@@ -254,9 +254,9 @@ public class ProofCompression {
     }
 
     private void initArrays() {
-        otherStmt = new ArrayList<Stmt>(
+        otherStmt = new ArrayList<>(
             LangConstants.COMPRESS_OTHER_STMT_INIT_LEN);
-        step = new ArrayList<RPNStep>(LangConstants.COMPRESS_STEP_INIT_LEN);
+        step = new ArrayList<>(LangConstants.COMPRESS_STEP_INIT_LEN);
     }
 
     public List<Stmt> compress(final String theoremLabel, final int width,
@@ -264,10 +264,10 @@ public class ProofCompression {
         final RPNStep[] rpnProof, final StringBuilder letters)
     {
         this.theoremLabel = theoremLabel;
-        final List<Stmt> parenStmt = new ArrayList<Stmt>();
+        final List<Stmt> parenStmt = new ArrayList<>();
         int linePos = 2;
-        final List<Stmt> proofOrdered = new ArrayList<Stmt>();
-        final List<Integer> proofOrdBackrefs = new ArrayList<Integer>();
+        final List<Stmt> proofOrdered = new ArrayList<>();
+        final List<Integer> proofOrdBackrefs = new ArrayList<>();
         for (final RPNStep s : rpnProof)
             if (s != null && s.backRef <= 0 && s.stmt != null
                 && !mandHypArray.contains(s.stmt)
@@ -290,7 +290,7 @@ public class ProofCompression {
         final int[] values = new int[proofOrdered.size()];
         for (int i = 0; i < values.length; i++)
             values[i] = proofOrdered.get(i).getLabel().length() + 1;
-        final PriorityQueue<Integer> sortedByBackrefs = new PriorityQueue<Integer>(
+        final PriorityQueue<Integer> sortedByBackrefs = new PriorityQueue<>(
             proofOrdered.size(), new Comparator<Integer>() {
                 public int compare(final Integer a, final Integer b) {
                     final int i = proofOrdBackrefs.get(b)
@@ -307,7 +307,7 @@ public class ProofCompression {
             cutoff *= LangConstants.COMPRESS_HIGH_BASE;
         }
         Integer pos;
-        final List<Integer> lengthBlock = new LinkedList<Integer>();
+        final List<Integer> lengthBlock = new LinkedList<>();
         while ((pos = sortedByBackrefs.poll()) != null) {
             if (i++ == cutoff) {
                 i = 1;
@@ -386,7 +386,7 @@ public class ProofCompression {
                 worth[i + 1][s] = s >= value ? Math.max(worth[i][s], value
                     + worth[i][s - value]) : worth[i][s];
         }
-        final Deque<Integer> included = new ArrayDeque<Integer>();
+        final Deque<Integer> included = new ArrayDeque<>();
         int s = size;
         for (int i = items.size() - 1; i >= 0; i--)
             if (worth[i + 1][s] != worth[i][s]) {

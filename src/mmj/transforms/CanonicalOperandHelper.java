@@ -14,7 +14,7 @@ import mmj.lang.ParseNode;
 public class CanonicalOperandHelper {
     private final ParseNode originalNode;
     private final GeneralizedStmt genStmt;
-    public final List<ParseNode> operandList = new ArrayList<ParseNode>();
+    public final List<ParseNode> operandList = new ArrayList<>();
 
     public CanonicalOperandHelper(final ParseNode originalNode,
         final GeneralizedStmt genStmt)

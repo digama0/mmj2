@@ -17,7 +17,7 @@ public class ConjunctionInfo extends DBInfo {
     private final ImplicationInfo implInfo;
 
     /** The list of operations which have form A & B & ... => f(A, B, ...) */
-    private final Map<Stmt, Assrt> gatheringOp = new HashMap<Stmt, Assrt>();
+    private final Map<Stmt, Assrt> gatheringOp = new HashMap<>();
 
     /**
      * The list of operations which have form
@@ -25,14 +25,14 @@ public class ConjunctionInfo extends DBInfo {
      * <p>
      * It is map: implication operator -> gathering operator -> assertion
      */
-    private final Map<Stmt, Map<Stmt, Assrt>> implGatheringOp = new HashMap<Stmt, Map<Stmt, Assrt>>();
+    private final Map<Stmt, Map<Stmt, Assrt>> implGatheringOp = new HashMap<>();
 
     /**
      * Map for and operations:
      * <p>
      * f --> { f(A, B, ...) => A , f(A, B, ...) => B, ... }
      */
-    private final Map<Stmt, Assrt[]> andPart = new HashMap<Stmt, Assrt[]>();
+    private final Map<Stmt, Assrt[]> andPart = new HashMap<>();
 
     public ConjunctionInfo(final ImplicationInfo implInfo,
         final List<Assrt> assrtList, final TrOutput output, final boolean dbg)
@@ -111,7 +111,7 @@ public class ConjunctionInfo extends DBInfo {
         Map<Stmt, Assrt> gathMap = implGatheringOp.get(implStmt);
 
         if (gathMap == null) {
-            gathMap = new HashMap<Stmt, Assrt>();
+            gathMap = new HashMap<>();
             implGatheringOp.put(implStmt, gathMap);
         }
 
@@ -214,7 +214,7 @@ public class ConjunctionInfo extends DBInfo {
     }
 
     private void filterAndOperations() {
-        final Set<Stmt> needRemove = new HashSet<Stmt>();
+        final Set<Stmt> needRemove = new HashSet<>();
 
         for (final Entry<Stmt, Assrt[]> elem : andPart.entrySet())
             for (final Assrt assrt : elem.getValue())
@@ -242,7 +242,7 @@ public class ConjunctionInfo extends DBInfo {
     }
 
     public List<ParseNode> separateByAnd(final ParseNode input) {
-        final List<ParseNode> res = new ArrayList<ParseNode>();
+        final List<ParseNode> res = new ArrayList<>();
         separateByAndInternal(input, res);
         return res;
     }

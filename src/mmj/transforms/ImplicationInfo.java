@@ -27,16 +27,16 @@ public class ImplicationInfo extends DBInfo {
      * The map from type to equivalence implication rule: A & A <-> B => B.
      * set.mm has only one element: (wff, <->)
      */
-    private final Map<Cnst, Assrt> eqImplications = new HashMap<Cnst, Assrt>();
+    private final Map<Cnst, Assrt> eqImplications = new HashMap<>();
 
     /** The list of implication operators : A & A -> B => B. */
-    private final Map<Stmt, Assrt> implOp = new HashMap<Stmt, Assrt>();
+    private final Map<Stmt, Assrt> implOp = new HashMap<>();
 
     /** The list of transitive rules: A -> B & B -> C => A -> C */
-    private final Map<Stmt, Assrt> implTrans = new HashMap<Stmt, Assrt>();
+    private final Map<Stmt, Assrt> implTrans = new HashMap<>();
 
     /** The list of rules to construct trivial implications : B => A -> B. */
-    private final Map<Stmt, Assrt> addPrefixRules = new HashMap<Stmt, Assrt>();
+    private final Map<Stmt, Assrt> addPrefixRules = new HashMap<>();
 
     /**
      * The list of distributive rules for implication and equality:
@@ -45,7 +45,7 @@ public class ImplicationInfo extends DBInfo {
      * <p>
      * It is constructed as a map : implication operator -> assertion
      */
-    private final Map<Stmt, Assrt> distrRules = new HashMap<Stmt, Assrt>();
+    private final Map<Stmt, Assrt> distrRules = new HashMap<>();
 
     public ImplicationInfo(final EquivalenceInfo eqInfo,
         final List<Assrt> assrtList, final TrOutput output, final boolean dbg)
@@ -657,7 +657,7 @@ public class ImplicationInfo extends DBInfo {
     }
 
     public Collection<Stmt> getImplForPrefixOperators() {
-        final Set<Stmt> res = new HashSet<Stmt>();
+        final Set<Stmt> res = new HashSet<>();
         for (final Stmt op : implOp.keySet())
             if (!eqInfo.isEquivalence(op))
                 res.add(op);

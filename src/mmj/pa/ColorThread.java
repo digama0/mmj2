@@ -42,7 +42,7 @@ class ColorThread extends Thread {
      * need to be able to retrieve ranges from it, it is stored in a balanced
      * tree.
      */
-    private final TreeSet<DocPosition> iniPositions = new TreeSet<DocPosition>();
+    private final TreeSet<DocPosition> iniPositions = new TreeSet<>();
 
     /**
      * As we go through and remove invalid positions we will also be finding new
@@ -51,12 +51,12 @@ class ColorThread extends Thread {
      * simply add it to the list of positions once all the old positions have
      * been removed.
      */
-    private final HashSet<DocPosition> newPositions = new HashSet<DocPosition>();
+    private final HashSet<DocPosition> newPositions = new HashSet<>();
 
     /**
      * Vector that stores the communication between the two threads.
      */
-    private volatile Deque<RecolorEvent> events = new ArrayDeque<RecolorEvent>();
+    private volatile Deque<RecolorEvent> events = new ArrayDeque<>();
 
     private final Object docLock = new Object();
 
@@ -83,7 +83,7 @@ class ColorThread extends Thread {
         final ProofAsstPreferences prefs)
     {
         super("ColorThread");
-        document = new WeakReference<HighlightedDocument>(doc);
+        document = new WeakReference<>(doc);
         preferences = prefs;
         start();
     }

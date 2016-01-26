@@ -23,20 +23,20 @@ public class ScopeDef {
     /**
      * List of "active" Var's within a scope level.
      */
-    List<Var> scopeVar = new ArrayList<Var>();
+    List<Var> scopeVar = new ArrayList<>();
 
     /**
      * List of "active" VarHyp's within a scope level.
      */
-    List<VarHyp> scopeVarHyp = new ArrayList<VarHyp>();
+    List<VarHyp> scopeVarHyp = new ArrayList<>();
 
     /**
      * List of "active" LogHyp's within a scope level.
      */
-    List<LogHyp> scopeLogHyp = new ArrayList<LogHyp>();
+    List<LogHyp> scopeLogHyp = new ArrayList<>();
 
     /**
      * List of "active" DjVar's within a scope level.
      */
-    List<DjVars> scopeDjVars = new ArrayList<DjVars>();
+    List<DjVars> scopeDjVars = new ArrayList<>();
 }

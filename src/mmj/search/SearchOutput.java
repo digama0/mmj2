@@ -24,9 +24,9 @@ public class SearchOutput {
 
     String searchTitle;
     int searchReturnCode = 0;
-    List<SearchError> searchErrorList = new ArrayList<SearchError>();
+    List<SearchError> searchErrorList = new ArrayList<>();
     String step = "";
-    List<Assrt> sortedAssrtResultsList = new ArrayList<Assrt>(
+    List<Assrt> sortedAssrtResultsList = new ArrayList<>(
         Arrays.asList((Assrt)null));
     int[] sortedAssrtScoreArray = new int[]{0};
     String[] selectionArray = new String[]{SearchResultsConstants.SELECTION_NO_SEARCH_RUN_YET_LITERAL};

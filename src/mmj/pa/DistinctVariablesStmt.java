@@ -99,7 +99,7 @@ public class DistinctVariablesStmt extends ProofWorkStmt {
         final DistinctVariablesStmt[] dvStmtArray,
         final List<List<Var>> dvGroupsIn)
     {
-        final List<List<Var>> out = new ArrayList<List<Var>>(dvStmtArray.length
+        final List<List<Var>> out = new ArrayList<>(dvStmtArray.length
             + dvGroupsIn.size());
 
         loopX: for (final List<Var> dvGroup : dvGroupsIn) {
@@ -201,7 +201,7 @@ public class DistinctVariablesStmt extends ProofWorkStmt {
 
         final String firstDv = loadStmtTextGetRequiredToken(firstToken);
 
-        final List<Var> dvList = new ArrayList<Var>();
+        final List<Var> dvList = new ArrayList<>();
 
         validateDvAndAccumInList(firstDv, dvList);
 

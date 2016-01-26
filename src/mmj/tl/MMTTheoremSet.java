@@ -127,7 +127,7 @@ public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
         final Comparator<? super TheoremStmtGroup> comparator)
     {
 
-        final List<TheoremStmtGroup> outList = new ArrayList<TheoremStmtGroup>(
+        final List<TheoremStmtGroup> outList = new ArrayList<>(
             nbrOfAdds);
 
         for (final TheoremStmtGroup t : this)
@@ -152,7 +152,7 @@ public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
     public List<Theorem> buildSortedAssrtListOfAdds(
         final Comparator<? super Theorem> comparator)
     {
-        final List<Theorem> outList = new ArrayList<Theorem>(nbrOfAdds);
+        final List<Theorem> outList = new ArrayList<>(nbrOfAdds);
 
         for (final TheoremStmtGroup t : this)
             if (t.getIsTheoremNew())
@@ -196,8 +196,8 @@ public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
      */
     public void updateLogicalSystem() throws TheoremLoaderException {
 
-        final Deque<TheoremStmtGroup> readyQueue = new LinkedList<TheoremStmtGroup>();
-        final List<TheoremStmtGroup> waitingList = new LinkedList<TheoremStmtGroup>();
+        final Deque<TheoremStmtGroup> readyQueue = new LinkedList<>();
+        final List<TheoremStmtGroup> waitingList = new LinkedList<>();
 
         for (final TheoremStmtGroup x : this)
             x.queueForUpdates(readyQueue, waitingList);
@@ -253,7 +253,7 @@ public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
     private Map<String, TheoremStmtGroup> buildTheoremStmtGroupTbl(
         final int n)
     {
-        return new HashMap<String, TheoremStmtGroup>(n * 4 / 3 + 2);
+        return new HashMap<>(n * 4 / 3 + 2);
     }
 
     private void putToTheoremStmtGroupTbl(final TheoremStmtGroup t)

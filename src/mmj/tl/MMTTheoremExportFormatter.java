@@ -197,7 +197,7 @@ public class MMTTheoremExportFormatter {
     }
 
     private void init() {
-        list = new LinkedList<StringBuilder>();
+        list = new LinkedList<>();
 
         needScopeLines = false;
 

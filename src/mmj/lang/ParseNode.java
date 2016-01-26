@@ -166,89 +166,84 @@ public class ParseNode {
 
     /**
      * Unify an input parse subtree (expression) with this subtree and return an
-     * array of substitions if successful, or null. Using fixed size work stacks
-     * here, set to 1000 in Proof Assistant. Hard to imagine exceeding the size
-     * so we'll accept the possibility of array out-of-bounds exception and just
-     * recompile if needed (for now... see
-     * mmj.pa.PaConstants.UNIFIER_NODE_STACK_SIZE ).
+     * array of substitutions if successful, or null.
      *
      * @param subtreeRoot root of parse subtree to unify with this
      * @param varHypArray the VarHyp's in this subtree
-     * @param unifyNodeStack fixed size work stack
-     * @param compareNodeStack fixed size work stack
+     * @param unifyNodeStack work stack
+     * @param compareNodeStack work stack
      * @return array of subtrees that represent substitutions for the
      *         corresponding VarHyps in the input varHypArray (may contain
      *         nulls).
      */
     public ParseNode[] unifyWithSubtree(final ParseNode subtreeRoot,
-        final VarHyp[] varHypArray, final ParseNode[] unifyNodeStack,
-        final ParseNode[] compareNodeStack)
+        final VarHyp[] varHypArray, final Deque<ParseNode> unifyNodeStack,
+        final Deque<ParseNode> compareNodeStack)
     {
-
-        unifyNodeStack[0] = this;
-        unifyNodeStack[1] = subtreeRoot;
-
-        int stackCnt = 2;
+        unifyNodeStack.push(this);
+        unifyNodeStack.push(subtreeRoot);
 
         final ParseNode[] substArray = new ParseNode[varHypArray.length];
 
         ParseNode myNode;
         ParseNode subtreeNode;
 
-        stackLoop: while (stackCnt > 0) {
-            subtreeNode = unifyNodeStack[--stackCnt];
-            myNode = unifyNodeStack[--stackCnt];
+        while (!unifyNodeStack.isEmpty()) {
+            subtreeNode = unifyNodeStack.pop();
+            myNode = unifyNodeStack.pop();
 
             if (myNode.stmt != subtreeNode.stmt) {
                 if (!(myNode.stmt instanceof VarHyp)
                     || myNode.stmt.getTyp() != subtreeNode.stmt.getTyp())
+                {
                     // mismatch and/or myNode not VarHyp
+                    unifyNodeStack.clear();
                     return null;
+                }
             }
             // ok, matching syntax nodes
             else if (!(myNode.stmt instanceof VarHyp)) {
                 for (int i = myNode.child.length - 1; i >= 0; i--) {
-                    unifyNodeStack[stackCnt++] = myNode.child[i];
-                    unifyNodeStack[stackCnt++] = subtreeNode.child[i];
+                    unifyNodeStack.push(myNode.child[i]);
+                    unifyNodeStack.push(subtreeNode.child[i]);
                 }
                 continue;
             }
-
             // ok, accum the subst while checking for (erroneous)
             // two different subst values for a single VarHyp
-            for (int i = 0; i < varHypArray.length; i++)
-                if (varHypArray[i] == myNode.stmt) {
-                    if (substArray[i] == null)
-                        substArray[i] = subtreeNode;
-                    else if (!substArray[i].isDeepDup(subtreeNode,
-                        compareNodeStack))
-                        return null; // bad subst, 2 diff values
-                    continue stackLoop; // next!!!
+            final int i = Arrays.asList(varHypArray).indexOf(myNode.stmt);
+            if (i < 0) {
+                // if we're here then we messed up!
+                String msg = "", delim = "";
+                for (final VarHyp element : varHypArray) {
+                    msg += delim + element.getLabel();
+                    delim = " ";
                 }
-
-            // if we're here then we messed up!
-            String msg = "", delim = "";
-            for (final VarHyp element : varHypArray) {
-                msg += delim + element.getLabel();
-                delim = " ";
+                throw new IllegalArgumentException(LangException.format(
+                    LangConstants.ERRMSG_UNIFY_SUBST_HYP_NOTFND,
+                    myNode.stmt.getLabel(), msg));
             }
-            throw new IllegalArgumentException(LangException.format(
-                LangConstants.ERRMSG_UNIFY_SUBST_HYP_NOTFND,
-                myNode.stmt.getLabel(), msg));
+            if (substArray[i] == null)
+                substArray[i] = subtreeNode;
+            else if (!substArray[i].isDeepDup(subtreeNode, compareNodeStack)) {
+                unifyNodeStack.clear();
+                return null; // bad subst, 2 diff values
+            }
         }
         return substArray;
     }
 
-    public int unifyWithSubtree(final ParseNode parsenode,
-        final ParseNode[] nodeStack, final ParseNode[] otherStack,
+    public int unifyWithSubtree(final ParseNode parseNode,
+        final Deque<ParseNode> nodeStack, final Deque<ParseNode> otherStack,
         final VarHypSubst[] subtree)
     {
-        nodeStack[0] = this;
-        nodeStack[1] = parsenode;
+        nodeStack.push(this);
+        nodeStack.push(parseNode);
+
         int count = 0;
-        stackLoop: for (int stack = 2; stack > 0; count++) {
-            final ParseNode thatNode = nodeStack[--stack];
-            final ParseNode myNode = nodeStack[--stack];
+        stackLoop: for (; !nodeStack.isEmpty(); count++) {
+            final ParseNode thatNode = nodeStack.pop();
+            final ParseNode myNode = nodeStack.pop();
             if (myNode.stmt != thatNode.stmt) {
                 if (!(myNode.stmt instanceof VarHyp)
                     || myNode.stmt.getTyp() != thatNode.stmt.getTyp())
@@ -256,8 +251,8 @@ public class ParseNode {
             }
             else if (!(myNode.stmt instanceof VarHyp)) {
                 for (int i = myNode.child.length - 1; i >= 0; i--) {
-                    nodeStack[stack++] = myNode.child[i];
-                    nodeStack[stack++] = thatNode.child[i];
+                    nodeStack.push(myNode.child[i]);
+                    nodeStack.push(thatNode.child[i]);
                 }
                 continue;
             }
@@ -282,37 +277,37 @@ public class ParseNode {
      * instead.
      *
      * @param that ParseNode to compare to this ParseNode.
-     * @param compareNodeStack fixed length work stack for ParseNodes.
+     * @param compareNodeStack work stack for ParseNodes.
      * @return true if the sub-trees have identical contents.
      */
     public boolean isDeepDup(final ParseNode that,
-        final ParseNode[] compareNodeStack)
+        final Deque<ParseNode> compareNodeStack)
     {
 
         ParseNode myNode = this;
         ParseNode thatNode = that;
 
-        int stackCnt = 0;
         while (thatNode != null && myNode.stmt == thatNode.stmt
             && myNode.child.length == thatNode.child.length)
         {
             int i = myNode.child.length - 1;
             if (i < 0) {
-                if (stackCnt <= 0)
+                if (compareNodeStack.isEmpty())
                     return true;
-                thatNode = compareNodeStack[--stackCnt];
-                myNode = compareNodeStack[--stackCnt];
+                thatNode = compareNodeStack.pop();
+                myNode = compareNodeStack.pop();
             }
             else {
                 while (i > 0) {
-                    compareNodeStack[stackCnt++] = myNode.child[i];
-                    compareNodeStack[stackCnt++] = thatNode.child[i];
+                    compareNodeStack.push(myNode.child[i]);
+                    compareNodeStack.push(thatNode.child[i]);
                     i--;
                 }
                 thatNode = thatNode.child[0];
                 myNode = myNode.child[0];
             }
         }
+        compareNodeStack.clear();
         return false;
     }
 
@@ -476,12 +471,13 @@ public class ParseNode {
      * (Deep) Clone a ParseNode while substituting a set of VarHyp substitutions
      * specified by a parallel Hyp array.
      *
+     * @param <T> Type of assrtHypArray
      * @param assrtHypArray parallel array for assrtSubst
      * @param assrtSubst array of ParseNode sub-tree roots specifying hyp
      *            substitutions.
      * @return new ParseNode.
      */
-    public ParseNode deepCloneApplyingAssrtSubst(final Hyp[] assrtHypArray,
+    public <T> ParseNode deepCloneApplyingAssrtSubst(final T[] assrtHypArray,
         final ParseNode[] assrtSubst)
     {
         if (!(stmt instanceof VarHyp)) {
@@ -1029,7 +1025,7 @@ public class ParseNode {
             final boolean excludeVarHyps)
         {
             this.excludeVarHyps = excludeVarHyps;
-            nodeStack = new Stack<ParseNode>();
+            nodeStack = new Stack<>();
             pushIfNotExcluded(parsenode1);
         }
     }

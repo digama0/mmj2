@@ -307,7 +307,7 @@ public class ProofAsstPreferences {
             PaConstants.PROOF_ASST_MAXIMIZED_DEFAULT);
         textAtTop = store.addSetting(PFX + "lineSpacing",
             PaConstants.PROOF_ASST_TEXT_AT_TOP_DEFAULT);
-        bounds = store.new NullSetting<Rectangle>(PFX + "bounds",
+        bounds = store.new NullSetting<>(PFX + "bounds",
             Serializer.RECT_SERIALIZER);
 
         rpnProofLeftCol = setIntBound(
@@ -408,7 +408,7 @@ public class ProofAsstPreferences {
         deriveAutocomplete.addListener(
             (o, value) -> autocomplete.set(value || autocomplete.get()));
 
-        proofTheoremLabel = store.new NullSetting<String>(
+        proofTheoremLabel = store.new NullSetting<>(
             PFX + "proofTheoremLabel", "", Serializer.identity());
 
         // Note: this default constructor is available for test
@@ -463,7 +463,7 @@ public class ProofAsstPreferences {
     {
         final SimpleAttributeSet style = highlighting.get(key);
         if (style == null) {
-            final List<String> list = new ArrayList<String>(
+            final List<String> list = new ArrayList<>(
                 highlighting.keySet());
             Collections.sort(list);
             throw new IllegalArgumentException(list.toString());
@@ -547,7 +547,7 @@ public class ProofAsstPreferences {
 
         final Font[] f = g.getAllFonts();
 
-        final Set<String> t = new TreeSet<String>();
+        final Set<String> t = new TreeSet<>();
 
         for (final Font element : f)
             t.add(element.getFamily());

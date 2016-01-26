@@ -1,5 +1,6 @@
-ExecutionMode = Packages.mmj.pa.MacroManager.ExecutionMode;
-CallbackType = Packages.mmj.pa.MacroManager.CallbackType;
+mmj = Packages.mmj;
+ExecutionMode = mmj.pa.MacroManager.ExecutionMode;
+CallbackType = mmj.pa.MacroManager.CallbackType;
 messages = batchFramework.outputBoss.messages;
 grammar = batchFramework.grammarBoss.grammar;
 proofAsst = batchFramework.proofAsstBoss.proofAsst;
@@ -7,7 +8,7 @@ logicalSystem = batchFramework.logicalSystemBoss.logicalSystem;
 verifyProofs = batchFramework.verifyProofBoss.verifyProofs;
 proofAsstPreferences = batchFramework.proofAsstBoss.proofAsstPreferences;
 macroManager = batchFramework.macroBoss.macroManager;
-log = print;
+log = function(s) { print.apply(this, arguments); return s; }
 function debug(object, indent) {
 	if (!indent) indent = '';
 	var output = '\n' + indent + '{\n';
@@ -20,10 +21,16 @@ function debug(object, indent) {
 	return found ? output + indent + '}' : object;
 }
 function runMacro(name) {
-	macroManager.runMacro(name)
+	macroManager.runMacroRaw(name)
 }
 function eval(code) {
 	macroManager.evalRaw(code)
+}
+function getSym(sym) {
+	return logicalSystem.getSymTbl().get(sym);
+}
+function getStmt(stmt) {
+	return logicalSystem.getStmtTbl().get(stmt);
 }
 (function() {
 	var callbacks = [];
@@ -64,8 +71,9 @@ macroManager.setPrepMacro("prep");
 post(CallbackType.BUILD_GUI, function() {
 	proofAsstGUI = proofAsst.proofAsstGUI;
 	function log() {
-		messages.accumInfoMessage(
-			Array.prototype.slice.call(arguments).join(" "),[]);
+		var s = Array.prototype.slice.call(arguments).join(" ");
+		messages.accumInfoMessage(s,[]);
+		return s;
 	}
 });
 function setKeyCommand(key, f) {
@@ -79,6 +87,10 @@ function setKeyCommand(key, f) {
 		}
 	});
 }
+post(CallbackType.TRANSFORMATION_SET_UP, function() {
+	runMacro("transformations");
+	return true;
+});
 function unify() {
 	proofAsstGUI.unificationAction(false, false,
 		null, null, null).actionPerformed(null);

@@ -53,7 +53,7 @@ public class MacroManager {
      */
     public MacroManager(final BatchFramework batchFramework) {
         this.batchFramework = batchFramework;
-        callbacks = new HashMap<CallbackType, Runnable>();
+        callbacks = new HashMap<>();
 
         final SessionStore store = batchFramework.storeBoss.getStore();
         macroFolder = store.addFileSetting(PFX + "folder", "macros");
@@ -140,8 +140,10 @@ public class MacroManager {
             set("executionMode", mode);
             set("args", args);
             final File prep = prepMacro.get();
-            if (prep != null)
+            if (prep != null) {
+                set(ScriptEngine.FILENAME, prep.getName());
                 engine.eval(new FileReader(prep));
+            }
             runMacroRaw(args[0]);
         } catch (final ScriptException e) {
             e.printStackTrace();
@@ -203,7 +205,9 @@ public class MacroManager {
         throws IllegalArgumentException
     {
         try {
-            engine.eval(new FileReader(getMacroFile(name)));
+            final File file = getMacroFile(name);
+            set(ScriptEngine.FILENAME, file.getName());
+            engine.eval(new FileReader(file));
         } catch (final FileNotFoundException e) {
             throw new IllegalArgumentException(e);
         } catch (final ScriptException e) {
@@ -235,7 +239,9 @@ public class MacroManager {
             engine = factory.getScriptEngine();
             try {
                 set("batchFramework", batchFramework);
-                engine.eval(new FileReader(getMacroFile(initMacro)));
+                final File file = getMacroFile(initMacro);
+                set(ScriptEngine.FILENAME, file.getName());
+                engine.eval(new FileReader(file));
             } catch (final FileNotFoundException e) {
 
             } catch (final ScriptException e) {
@@ -266,6 +272,7 @@ public class MacroManager {
     public enum CallbackType {
         BUILD_GUI, PREPROCESS, BEFORE_PARSE, WORKSHEET_PARSE, AFTER_LOCAL_REFS,
         AFTER_PARSE, PARSE_FAILED, AFTER_REFORMAT, AFTER_RENUMBER,
-        AFTER_UNIFY_REFS, AFTER_UNIFY_EMPTY, AFTER_UNIFY_AUTO, AFTER_UNIFY
+        AFTER_UNIFY_REFS, AFTER_UNIFY_EMPTY, TRANSFORMATION_SET_UP,
+        AFTER_UNIFY_AUTO, AFTER_UNIFY
     }
 }

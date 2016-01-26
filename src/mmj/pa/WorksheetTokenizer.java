@@ -279,7 +279,7 @@ public class WorksheetTokenizer {
         final DocumentReader reader)
     {
         logSys = proofAsst == null ? null : proofAsst.getLogicalSystem();
-        tokenQueue = new ArrayDeque<WorksheetTokenizer.Token>();
+        tokenQueue = new ArrayDeque<>();
         try {
             reset(reader, 0);
         } catch (final IOException e) {

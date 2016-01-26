@@ -116,6 +116,9 @@ import java.util.Map;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import mmj.gmff.GMFFConstants;
 import mmj.mmio.MMIOConstants;
 import mmj.transforms.TrConstants;
@@ -261,18 +264,6 @@ public class PaConstants {
     // ----------------------------------------------------------
     // Constants for ProofUnifier.java
     // ----------------------------------------------------------
-
-    /**
-     * UNIFIER_NODE_STACK_SIZE = 1000
-     * <p>
-     * Stacks used for parse node unification and comparisons are held in fixed
-     * length arrays for the duration, across multiple executions of the GUI.
-     * The size is a function of the depth of the deepest parse tree and the
-     * number of child nodes at each level on the longest path. Ergo, 1000
-     * should be, five or ten times as big as needed. This could be made into a
-     * RunParm should be, probably...
-     */
-    public static final int UNIFIER_NODE_STACK_SIZE = 1000;
 
     /**
      * UNIFIER_MAX_LOG_HYPS = 100
@@ -621,11 +612,6 @@ public class PaConstants {
         else
             StyleConstants.setItalic(style, italic);
     }
-
-    /**
-     * PROOF_ASST_FORMULA_LEFT_COL_DEFAULT
-     */
-    public static final String PROOF_ASST_SETTINGS_FILE_DEFAULT = "store.json";
 
     /**
      * PROOF_ASST_ERROR_MESSAGE_ROWS_DEFAULT = 4
@@ -1071,12 +1057,22 @@ public class PaConstants {
     /**
      * ProofAsstGUI File Menu Save As Item Text
      */
-    public static final String PA_GUI_FILE_MENU_SAVE_AS_ITEM_TEXT = "SaveAs...";
+    public static final String PA_GUI_FILE_MENU_SAVE_AS_ITEM_TEXT = "Save As...";
 
     /**
      * ProofAsstGUI File Menu Export Via GMFF Item Text
      */
     public static final String PA_GUI_FILE_MENU_EXPORT_VIA_GMFF_ITEM_TEXT = "Export Via GMFF";
+
+    /**
+     * ProofAsstGUI File Menu Load Settings Item Text
+     */
+    public static final String PA_GUI_FILE_MENU_LOAD_SETTINGS = "Load Settings";
+
+    /**
+     * ProofAsstGUI File Menu Save Settings Item Text
+     */
+    public static final String PA_GUI_FILE_MENU_SAVE_SETTINGS = "Save Settings";
 
     /**
      * ProofAsstGUI File Menu Exit Item Text
@@ -2059,28 +2055,6 @@ public class PaConstants {
     public static final int STEP_UNIFIER_APPLIED_ARRAY_LEN_MAX = 8000;
 
     // ----------------------------------------------------------
-    // Constants for StepRequest.java
-    // ----------------------------------------------------------
-
-    /**
-     * STEP_REQUEST_SELECTOR_SEARCH = 81.
-     */
-    public static final int STEP_REQUEST_SELECTOR_SEARCH = 81;
-
-    /**
-     * STEP_REQUEST_SELECTOR_CHOICE = 82.
-     */
-    public static final int STEP_REQUEST_SELECTOR_CHOICE = 82;
-
-    public static final int STEP_REQUEST_STEP_SEARCH = 91;
-
-    public static final int STEP_REQUEST_GENERAL_SEARCH = 92;
-
-    public static final int STEP_REQUEST_SEARCH_OPTIONS = 93;
-
-    public static final int STEP_REQUEST_STEP_SEARCH_CHOICE = 94;
-
-    // ----------------------------------------------------------
     // Constants for StepSelectorDialog.java
     // ----------------------------------------------------------
 
@@ -2854,6 +2828,68 @@ public class PaConstants {
 
     public static final String ERRMSG_SELECTOR_SEARCH_ASSRT_LIST_EMPTY = "A-PA-0902"
         + "Input list of assertions (for unification) empty!";
+
+    // ----------------------------------------------------------
+    // Messages from StoreBoss.java
+    // ----------------------------------------------------------
+
+    /**
+     * PROOF_ASST_SETTINGS_FILE_DEFAULT
+     */
+    public static final String PROOF_ASST_SETTINGS_FILE_DEFAULT = "store.json";
+
+    public static final String BACKUP_SUFFIX = ".bak";
+
+    /**
+     * PROOF_ASST_SETTINGS_FILE_DEFAULT
+     */
+    public static final JSONObject JSON_INTRODUCTION = new JSONObject()
+        .put(SessionStore.KEY_STORE, new JSONObject())
+        .put(SessionStore.KEY_OVERRIDE, new JSONObject())
+        .put(SessionStore.KEY_REMOVE, new JSONArray())
+        .put("-comments", new JSONArray(
+            " ======================= The store.json File ========================== ",
+            "                                                                        ",
+            " mmj2 uses a JSON file for saving and loading settings, called          ",
+            " store.json by default. Since it is written by both users and the       ",
+            " computer, care must be taken so that the file is not corrupted.        ",
+            "                                                                        ",
+            " The top level is divided into a few sections. The first one, called    ",
+            " '-comments', is this introduction. JSON does not allow comments in the ",
+            " strict sense, so we can make do with a collection of strings.          ",
+            "                                                                        ",
+            " The main section, used by mmj2, is called 'store'. It is a collection  ",
+            " of mappings from keys like 'ProofAsst.maximized' to values appropriate ",
+            " for their types in the main program. It is safe to change these values,",
+            " and doing so will update their values in memory when the file is read  ",
+            " in on startup. You can also force a file read by using the RunParm     ",
+            " 'LoadSettings'.                                                        ",
+            "                                                                        ",
+            " Another section, called 'manual', is in the same format as 'store',    ",
+            " and any key-value mappings in 'manual' override the settings in        ",
+            " 'store'. Since the program only changes the values in 'store', this    ",
+            " has the effect of keeping these settings from changing from the chosen ",
+            " values.                                                                ",
+            "                                                                        ",
+            " Finally, the section 'remove' is provided to simplify editing of the   ",
+            " 'store' section. Upon reading the file, mmj2 will immediately delete   ",
+            " any keys from store that are in the list of keys under 'remove',       ",
+            " without loading them into memory. It will also clear the 'remove'      ",
+            " section afterward.                                                     ",
+            "                                                                        ",
+            " The meaning of the different keys is given in the program. Many of     ",
+            " them have corresponding RunParm settings, for example the key          ",
+            " 'ProofAsst.maximized' vs. the RunParm 'ProofAsstMaximized'. The        ",
+            " determination of which one 'trumps' the other depends on which is read ",
+            " first in the RunParms file. All JSON settings are set when the         ",
+            " LoadSettings RunParm is encountered, unless there is no such RunParm,  ",
+            " in which case it will come immediately before RunProofAsstGUI (so      ",
+            " usually settings in this file take precedence over the RunParms).      ",
+            " This way most settings transfer from one run to the next. To override  ",
+            " this behavior (so that it instead reverts to some chosen value after   ",
+            " every restart) you can either add a RunParm and a LoadSettings before  ",
+            " that, or you can put the desired key-value pair in the 'manual'        ",
+            " section.                                                               "));
 
     // ----------------------------------------------------------
     // Messages from EraseWffsPreprocessRequest.java

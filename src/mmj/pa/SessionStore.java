@@ -13,6 +13,7 @@
 package mmj.pa;
 
 import java.io.*;
+import java.nio.file.*;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.*;
@@ -24,9 +25,9 @@ import mmj.pa.BaseSetting.JSONSerializable;
 
 public class SessionStore {
 
-    private static final String KEY_STORE = "store";
-    private static final String KEY_OVERRIDE = "manual";
-    private static final String KEY_REMOVE = "remove";
+    public static final String KEY_STORE = "store";
+    public static final String KEY_OVERRIDE = "manual";
+    public static final String KEY_REMOVE = "remove";
 
     private File file = new File(PaConstants.PROOF_ASST_SETTINGS_FILE_DEFAULT);
     private Supplier<File> path;
@@ -81,6 +82,8 @@ public class SessionStore {
                 try (FileReader r = new FileReader(file)) {
                     dat = new JSONTokener(r).nextValue();
                 }
+            if (dat == null)
+                dat = PaConstants.JSON_INTRODUCTION;
             final JSONObject o = dat instanceof JSONObject ? (JSONObject)dat
                 : new JSONObject();
             JSONObject store = o.optJSONObject(KEY_STORE);
@@ -150,6 +153,10 @@ public class SessionStore {
     public void save() throws IOException {
         if (file == null)
             return;
+        Files.copy(file.toPath(),
+            file.toPath()
+                .resolveSibling(file.getName() + PaConstants.BACKUP_SUFFIX),
+            StandardCopyOption.REPLACE_EXISTING);
         final String dat = load(false).toString(2);
         try (PrintStream s = new PrintStream(file)) {
             s.println(dat);
@@ -161,19 +168,19 @@ public class SessionStore {
     }
 
     public <T> Setting<T> addSetting(final String key, final T def) {
-        return new StoreSetting<T>(key, def);
+        return new StoreSetting<>(key, def);
     }
 
     public <T> Setting<T> addSetting(final String key, final T def,
         final Class<T> clazz)
     {
-        return new StoreSetting<T>(key, def, clazz);
+        return new StoreSetting<>(key, def, clazz);
     }
 
     public <T> Setting<T> addSetting(final String key, final T def,
         final Serializer<T> serializer)
     {
-        return new StoreSetting<T>(key, def, serializer);
+        return new StoreSetting<>(key, def, serializer);
     }
 
     public Setting<File> addFileSetting(final String key, final String def) {

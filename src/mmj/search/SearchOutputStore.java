@@ -24,7 +24,7 @@ public class SearchOutputStore {
     private final int maxResults;
     private int cntResults = 0;
     private final int outputSortNbr;
-    private final List<SearchSelectionItem> storeList = new LinkedList<SearchSelectionItem>();
+    private final List<SearchSelectionItem> storeList = new LinkedList<>();
 
     public SearchOutputStore(final int maxResults, final int outputSortNbr) {
         this.maxResults = maxResults;
@@ -43,7 +43,7 @@ public class SearchOutputStore {
         final Comparator<SearchSelectionItem> sort = SearchSelectionItem.OUTPUT_SORTS[outputSortNbr];
         if (sort != null)
             Collections.sort(storeList, sort);
-        searchOutput.sortedAssrtResultsList = new ArrayList<Assrt>(
+        searchOutput.sortedAssrtResultsList = new ArrayList<>(
             storeList.size());
         searchOutput.sortedAssrtScoreArray = new int[storeList.size()];
         searchOutput.selectionArray = new String[storeList.size()];

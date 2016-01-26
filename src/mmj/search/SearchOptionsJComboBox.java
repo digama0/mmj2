@@ -20,31 +20,33 @@ import java.util.Vector;
 
 import javax.swing.*;
 
-public abstract class SearchOptionsJComboBox extends JComboBox implements
-    SearchOptionsScrnMapField
+public abstract class SearchOptionsJComboBox extends JComboBox<String>
+    implements SearchOptionsScrnMapField
 {
 
-    public static DefaultComboBoxModel buildUpdateableComboBoxModel(final int i)
+    public static DefaultComboBoxModel<String> buildUpdateableComboBoxModel(
+        final int i)
     {
-        final Vector<String> vector = new Vector<String>();
+        final Vector<String> vector = new Vector<>();
         final String[] as = SearchOptionsConstants.FIELD_ATTR[i].comboBoxItems;
         for (final String element : as)
             vector.add(element);
 
-        return new DefaultComboBoxModel(vector);
+        return new DefaultComboBoxModel<>(vector);
     }
 
-    public static DefaultComboBoxModel buildUpdateableComboBoxModel(
+    public static DefaultComboBoxModel<String> buildUpdateableComboBoxModel(
         final String[] as)
     {
-        final Vector<String> vector = new Vector<String>();
+        final Vector<String> vector = new Vector<>();
         for (final String element : as)
             vector.add(element);
 
-        return new DefaultComboBoxModel(vector);
+        return new DefaultComboBoxModel<>(vector);
     }
 
-    public SearchOptionsJComboBox(final int i, final ComboBoxModel comboboxmodel)
+    public SearchOptionsJComboBox(final int i,
+        final ComboBoxModel<String> comboboxmodel)
     {
         super(comboboxmodel);
         defaultValue = null;
@@ -54,7 +56,8 @@ public abstract class SearchOptionsJComboBox extends JComboBox implements
         setDefaultToCurrentValue();
     }
 
-    public SearchOptionsJComboBox(final int i, final String[] as, final String s)
+    public SearchOptionsJComboBox(final int i, final String[] as,
+        final String s)
     {
         super(as);
         defaultValue = null;

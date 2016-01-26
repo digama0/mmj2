@@ -470,7 +470,7 @@ public class AssocComTransformation extends Transformation {
     }
 
     private List<ACTree> getLvl(final ACTree input, final int height) {
-        final List<ACTree> res = new ArrayList<ACTree>();
+        final List<ACTree> res = new ArrayList<>();
         getLvl(input, height, res);
         return res;
     }
@@ -586,7 +586,7 @@ public class AssocComTransformation extends Transformation {
         final ParseNode topNode, final AssocTree assocTree)
     {
 
-        final List<CanonicalInfo> resList = new ArrayList<CanonicalInfo>(
+        final List<CanonicalInfo> resList = new ArrayList<>(
             assocTree.size);
         constructCanonicalInfoList(info, assocTree, topNode, resList);
 

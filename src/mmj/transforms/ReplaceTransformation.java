@@ -49,8 +49,8 @@ public class ReplaceTransformation extends Transformation {
                 couldSimplifyGenStep = true;
         }
 
-        final boolean[] replAsserts = replInfo.getPossibleReplaces(
-            originalNode.stmt, info);
+        final boolean[] replAsserts = replInfo
+            .getPossibleReplaces(originalNode.stmt, info);
 
         assert replAsserts != null;
 
@@ -77,7 +77,7 @@ public class ReplaceTransformation extends Transformation {
                 continue; // noting to do
 
             // If child transformation has implication prefix and has form
-            // "ph -> ( child <-> chald') " and this node has form "ph -> child"
+            // "ph -> ( child <-> child') " and this node has form "ph -> child"
             // then we could apply distributive rule!
             if (couldSimplifyGenStep && i == 1 && childTrStmt.hasPrefix()) {
                 final ProofStepStmt res = info.trManager.implInfo
@@ -93,15 +93,14 @@ public class ReplaceTransformation extends Transformation {
             // check result childTrStmt statement
             assert eqInfo.isEquivalence(childTrRoot.stmt);
             assert childTrRoot.child.length == 2;
-            assert childTrRoot.child[0]
-                .isDeepDup(originalNode.child[i]);
+            assert childTrRoot.child[0].isDeepDup(originalNode.child[i]);
             assert childTrRoot.child[1].isDeepDup(trgt.originalNode.child[i]);
 
             // Create statement d:childTrStmt:replAssert
             // |- g(A', B, C) = g(A', B', C)
             final GenProofStepStmt stepTr = replInfo.createReplaceStep(info,
                 resNode, i, trgt.originalNode.child[i], childTrStmt);
-            ParseNode r = stepTr.getCore();
+            final ParseNode r = stepTr.getCore();
             resNode = r.child[1];
 
             // resStmt now have the form g(A, B, C) = g(A', B, C)
@@ -114,10 +113,10 @@ public class ReplaceTransformation extends Transformation {
         }
 
         assert resStmt != null;
-        ParseNode r = resStmt.getCore();
+        final ParseNode r = resStmt.getCore();
 
         assert r.child[0].isDeepDup(originalNode);
-        ParseNode r1 = resStmt.getCore();
+        final ParseNode r1 = resStmt.getCore();
         assert r1.child[1].isDeepDup(target.originalNode);
 
         return resStmt;
@@ -125,8 +124,8 @@ public class ReplaceTransformation extends Transformation {
 
     @Override
     public ParseNode getCanonicalNode(final WorksheetInfo info) {
-        final boolean[] replAsserts = replInfo.getPossibleReplaces(
-            originalNode.stmt, info);
+        final boolean[] replAsserts = replInfo
+            .getPossibleReplaces(originalNode.stmt, info);
         assert replAsserts != null;
 
         final ParseNode resNode = originalNode.shallowClone();
@@ -134,8 +133,8 @@ public class ReplaceTransformation extends Transformation {
         for (int i = 0; i < resNode.child.length; i++) {
             if (!replAsserts[i])
                 continue;
-            resNode.child[i] = trManager.getCanonicalForm(
-                originalNode.child[i], info);
+            resNode.child[i] = trManager.getCanonicalForm(originalNode.child[i],
+                info);
         }
 
         return resNode;

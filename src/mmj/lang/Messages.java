@@ -332,7 +332,7 @@ public class Messages {
     public void startInstrumentationTimer(final String timerID) {
 
         if (instrumentationTable == null)
-            instrumentationTable = new Hashtable<String, InstrumentationTimer>();
+            instrumentationTable = new Hashtable<>();
 
         instrumentationTable.put(timerID.trim(), new InstrumentationTimer());
     }
@@ -344,7 +344,7 @@ public class Messages {
         final String timerID = inTimerID.trim();
 
         if (instrumentationTable == null)
-            instrumentationTable = new Hashtable<String, InstrumentationTimer>();
+            instrumentationTable = new Hashtable<>();
 
         final InstrumentationTimer tThen = instrumentationTable.get(timerID);
 

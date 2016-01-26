@@ -422,7 +422,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
                 PaConstants.ERRMSG_BAD_TYP_CD2, w.getErrorLabelIfPossible(),
                 step, nextT, w.getProvableLogicStmtTyp().getId());
 
-        final List<Sym> symList = new ArrayList<Sym>();
+        final List<Sym> symList = new ArrayList<>();
         symList.add(w.getProvableLogicStmtTyp());
 
         nextT = loadStmtTextGetRequiredToken(nextT);
@@ -617,7 +617,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
 
     protected void accumWorkVarList(final WorkVar workVar) {
         if (workVarList == null) {
-            workVarList = new ArrayList<WorkVar>(3); // arbitrary guess...
+            workVarList = new ArrayList<>(3); // arbitrary guess...
             workVarList.add(workVar);
         }
         else if (!workVarList.contains(workVar))

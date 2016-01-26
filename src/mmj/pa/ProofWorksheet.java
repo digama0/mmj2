@@ -247,6 +247,8 @@ public class ProofWorksheet {
 
     /* friendly */public List<List<DjVars>> proofSoftDjVarsErrorList;
 
+    public List<DerivationStep> stepsWithLocalRefs;
+
     /**
      * Constructor for skeletal ProofWorksheet. This constructor is used in
      * ProofAsst.updateWorksheetWithException(). to create a worksheet that has
@@ -271,7 +273,7 @@ public class ProofWorksheet {
         setStructuralErrors(structuralErrors);
         this.proofCursor = proofCursor;
         proofInputCursor = new ProofAsstCursor();
-        proofWorkStmtList = new ArrayList<ProofWorkStmt>();
+        proofWorkStmtList = new ArrayList<>();
     }
 
     /**
@@ -302,7 +304,8 @@ public class ProofWorksheet {
         proofCursor = new ProofAsstCursor();
         proofInputCursor = new ProofAsstCursor();
 
-        proofWorkStmtList = new ArrayList<ProofWorkStmt>();
+        proofWorkStmtList = new ArrayList<>();
+        stepsWithLocalRefs = new ArrayList<>();
 
         // initialize StepUnifier prior to parsing input
         // tokens, which may contain work variables!!!
@@ -339,7 +342,7 @@ public class ProofWorksheet {
         proofCursor = new ProofAsstCursor();
         proofInputCursor = new ProofAsstCursor();
 
-        proofWorkStmtList = new ArrayList<ProofWorkStmt>();
+        proofWorkStmtList = new ArrayList<>();
 
         initTMFF();
 
@@ -399,7 +402,7 @@ public class ProofWorksheet {
 
         loadComboFrameAndVarMap(); // for formula parsing
 
-        proofWorkStmtList = new ArrayList<ProofWorkStmt>();
+        proofWorkStmtList = new ArrayList<>();
 
         buildHeader(theorem.getLabel());
 
@@ -571,7 +574,7 @@ public class ProofWorksheet {
     }
 
     public Set<WorkVar> buildProofWorksheetWorkVarSet() {
-        final Set<WorkVar> workVars = new HashSet<WorkVar>();
+        final Set<WorkVar> workVars = new HashSet<>();
         for (final ProofWorkStmt proofWorkStmt : getProofWorkStmtList())
             if (proofWorkStmt instanceof ProofStepStmt)
                 ((ProofStepStmt)proofWorkStmt).accumSetOfWorkVarsUsed(workVars);
@@ -864,7 +867,7 @@ public class ProofWorksheet {
 
         int renumber = renumberStart;
 
-        final Map<String, String> renumberMap = new HashMap<String, String>(
+        final Map<String, String> renumberMap = new HashMap<>(
             getProofWorkStmtListCnt() * 2);
 
         for (final ProofWorkStmt o : getProofWorkStmtList()) {
@@ -1040,15 +1043,13 @@ public class ProofWorksheet {
          */
         boolean stepSelectorChoiceRequired = false;
         stepRequest = stepRequestIn;
-        if (stepRequest != null
-            && (stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_CHOICE
-                || stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH_CHOICE))
-            if (stepRequest.param1 == null)
+        if (stepRequest instanceof StepRequest.SelectorChoice
+            || stepRequest == StepRequest.StepSearchChoice)
+            if (stepRequest == StepRequest.StepSearchChoice
+                || ((StepRequest.SelectorChoice)stepRequest).param1 == null)
                 stepRequest = null;
             else
                 stepSelectorChoiceRequired = true;
-
-        final List<DerivationStep> stepsWithLocalRefs = new ArrayList<DerivationStep>();
 
         if (nextToken.length() == 0)
             triggerLoadStructureException(PaConstants.ERRMSG_PROOF_EMPTY);
@@ -1273,7 +1274,6 @@ public class ProofWorksheet {
                     nextToken = qedStep.loadLocalRefDerivationStep(
                         origStepHypRefLength, lineStartCharNbr, stepField,
                         hypField, localRefField);
-                    stepsWithLocalRefs.add(qedStep);
                 }
                 else {
                     if (stepSelectorChoiceRequired
@@ -1311,7 +1311,6 @@ public class ProofWorksheet {
                     nextToken = x.loadLocalRefDerivationStep(
                         origStepHypRefLength, lineStartCharNbr, stepField,
                         hypField, localRefField);
-                    stepsWithLocalRefs.add(x);
                 }
                 else {
 
@@ -1332,10 +1331,8 @@ public class ProofWorksheet {
                 if (setInputCursorStmtIfHere(x, inputCursorPos, nextToken,
                     proofTextTokenizer))
                     if (localRefField != null && stepRequest != null
-                        && (stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH
-                            || stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH
-                            || stepRequest.request == PaConstants.STEP_REQUEST_GENERAL_SEARCH
-                            || stepRequest.request == PaConstants.STEP_REQUEST_SEARCH_OPTIONS))
+                        && (stepRequest != null && stepRequest.simple
+                            || stepRequest == StepRequest.GeneralSearch))
                         triggerLoadStructureException(
                             PaConstants.ERRMSG_LOCAL_REF_HAS_SELECTOR_SEARCH,
                             getErrorLabelIfPossible(), stepField);
@@ -1357,9 +1354,8 @@ public class ProofWorksheet {
             if (x instanceof DerivationStep)
                 ((DerivationStep)x).validateHyps();
 
-        if (stepRequest != null
-            && (stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH
-                || stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH))
+        if (stepRequest == StepRequest.SelectorSearch
+            || stepRequest == StepRequest.StepSearch)
         {
             if (!proofInputCursor.cursorIsSet
                 || !(proofInputCursor.proofWorkStmt instanceof DerivationStep))
@@ -1371,8 +1367,7 @@ public class ProofWorksheet {
             stepRequest.param1 = proofInputCursor.proofWorkStmt;
         }
 
-        if (stepRequest != null
-            && stepRequest.request == PaConstants.STEP_REQUEST_SEARCH_OPTIONS)
+        if (stepRequest == StepRequest.SearchOptions)
             if (proofInputCursor.cursorIsSet
                 && proofInputCursor.proofWorkStmt instanceof DerivationStep)
             {
@@ -1385,9 +1380,7 @@ public class ProofWorksheet {
                 stepRequest.param1 = null;
             }
 
-        if (stepRequest != null
-            && stepRequest.request == PaConstants.STEP_REQUEST_GENERAL_SEARCH)
-        {
+        if (stepRequest == StepRequest.GeneralSearch) {
             stepRequest.step = null;
             stepRequest.param1 = null;
         }
@@ -1397,8 +1390,7 @@ public class ProofWorksheet {
                 PaConstants.ERRMSG_SELECTOR_CHOICE_STEP_NOTFND,
                 getErrorLabelIfPossible());
 
-        if (!stepsWithLocalRefs.isEmpty())
-            makeLocalRefRevisionsToWorksheet(stepsWithLocalRefs);
+        makeLocalRefRevisionsToWorksheet();
 
         runCallback(CallbackType.AFTER_LOCAL_REFS);
 
@@ -1473,9 +1465,9 @@ public class ProofWorksheet {
      * to the step the localRef is pointing to. And then
      * delete each localRef step from the ProofWorksheet.
      */
-    private void makeLocalRefRevisionsToWorksheet(
-        final List<DerivationStep> stepsWithLocalRefs)
-    {
+    public void makeLocalRefRevisionsToWorksheet() {
+        if (stepsWithLocalRefs.isEmpty())
+            return;
         for (final ListIterator<ProofWorkStmt> i = proofWorkStmtList
             .listIterator(proofWorkStmtList.size()); i.hasPrevious();)
         {
@@ -1510,6 +1502,7 @@ public class ProofWorksheet {
 
         for (final DerivationStep s : stepsWithLocalRefs)
             removeFromProofWorkStmtList(s);
+        stepsWithLocalRefs.clear();
 
         // Delete all steps after the new qed step
         final DerivationStep s = (DerivationStep)qedStep.getLocalRef();

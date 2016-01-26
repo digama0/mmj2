@@ -57,7 +57,7 @@ import java.util.Map;
  * the potential exists to maintain a list of activeVarHyp's and Var's by Type
  * Code... and the list would never be null for those Type Codes that are part
  * of the grammar.
- * 
+ *
  * @see <a href="../../MetamathERNotes.html"> Nomenclature and
  *      Entity-Relationship Notes</a>
  */
@@ -73,7 +73,7 @@ public class Var extends Sym {
      * <p>
      * If the Var symbol duplicates a Cnst symbol or if the Var is already
      * "active", a LangException is thrown.
-     * 
+     *
      * @param seq MObj.seq number (discarded if Var already exists.)
      * @param symTbl Map containing all {@code Sym}s.
      * @param stmtTbl Map containing all {@code Stmt}s.
@@ -115,7 +115,7 @@ public class Var extends Sym {
 
     /**
      * Construct using sequence number and id string.
-     * 
+     *
      * @param seq MObj.seq number
      * @param id Sym id string
      * @param active true if this var is "active"
@@ -128,7 +128,7 @@ public class Var extends Sym {
 
     /**
      * Construct using sequence number and id string.
-     * 
+     *
      * @param seq MObj.seq number
      * @param symTbl Symbol Table
      * @param stmtTbl Statement Table
@@ -148,7 +148,7 @@ public class Var extends Sym {
 
     /**
      * Marks a Var as "active" or "inactive".
-     * 
+     *
      * @param active set Sym {@code true} or {@code false}.
      */
     public void setActive(final boolean active) {
@@ -165,7 +165,7 @@ public class Var extends Sym {
      * The question "is Sym 'x' active" has relevance only in relation to a
      * Stmt: only "active" {@code Sym}s can be used in a given {@code Stmt}'s
      * Formula.
-     * 
+     *
      * @return is Sym "active"
      */
     @Override
@@ -178,7 +178,7 @@ public class Var extends Sym {
      * <p>
      * For speed and convenience, an active Var maintains its current VarHyp;
      * this saves having to do a difficult look-up :)
-     * 
+     *
      * @param activeVarHyp or null.
      */
     public void setActiveVarHyp(final VarHyp activeVarHyp) {
@@ -190,7 +190,7 @@ public class Var extends Sym {
      * <p>
      * For speed and convenience, an active Var maintains its current VarHyp;
      * this saves having to do a difficult look-up :)
-     * 
+     *
      * @return Returns {@code Var.activeVarHyp} (may be null).
      */
     public VarHyp getActiveVarHyp() {
@@ -201,7 +201,7 @@ public class Var extends Sym {
      * Fetches the VarHyp for a Var given an VarHyp array.
      * <p>
      * A tedious little routine to help our friend Formula.
-     * 
+     *
      * @see mmj.lang.Formula
      * @param varHypArray array of VarHyp such as one would find in an Assrt or
      *            LogHyp.
@@ -211,7 +211,9 @@ public class Var extends Sym {
 
         // originally coded with getActiveVarHyp() but
         // decided that that could introduce bizarre side effects
-        // down the road...ouch!
+        // down the road...ouch! Now just use if varHypArray == null.
+        if (varHypArray == null)
+            return getActiveVarHyp();
 
         // VarHyp vH = getActiveVarHyp();
         VarHyp vH = null;
@@ -229,7 +231,7 @@ public class Var extends Sym {
      * Fetches the VarHyp for a Var given a Hyp array.
      * <p>
      * A tedious little routine to help our friend Formula.
-     * 
+     *
      * @see mmj.lang.Formula
      * @param hypArray array of Hyp such as one would find in a ScopeFrame.
      * @return returns matching VarHyp or null if not found.
@@ -252,7 +254,7 @@ public class Var extends Sym {
      * <p>
      * If so, a reference to the existing Var is returned. Otherwise,
      * LangException generated!
-     * 
+     *
      * @param symTbl Map of already defined {@code Sym}s.
      * @param varS String identifying a variable.
      * @return Var matching input String.
@@ -280,7 +282,7 @@ public class Var extends Sym {
      * <p>
      * If so, a reference to the existing Var is returned. Otherwise,
      * LangException generated!
-     * 
+     *
      * @param symTbl Map of already defined {@code Sym}s.
      * @param varS String identifying a variable.
      * @return Var matching input String.
@@ -308,7 +310,7 @@ public class Var extends Sym {
      * Because varList is maintained in database statement sequence order,
      * hypList should either be empty (new) before the call, or already be in
      * that order.
-     * 
+     *
      * @param varList List of Var's, updated here.
      */
     public void accumVarListBySeq(final List<Var> varList) {
@@ -340,7 +342,7 @@ public class Var extends Sym {
     /**
      * Searches for this Var in an ArrayList maintained in database input
      * sequence.
-     * 
+     *
      * @param varList List of Var's
      * @return true if found, else false.
      */

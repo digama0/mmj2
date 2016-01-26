@@ -207,7 +207,7 @@ public class VerifyProofs implements ProofVerifier {
     public void verifyAllProofs(final Messages messages,
         final Map<String, Stmt> stmtTbl)
     {
-        final List<Stmt> list = new ArrayList<Stmt>(stmtTbl.values());
+        final List<Stmt> list = new ArrayList<>(stmtTbl.values());
         Collections.sort(list, MObj.SEQ);
         for (final Stmt stmt : list) {
             if (messages.maxErrorMessagesReached())
@@ -474,7 +474,7 @@ public class VerifyProofs implements ProofVerifier {
     {
 
         final LogHyp[] theoremLogHypArray = theorem.getLogHypArray();
-        final List<ProofDerivationStepEntry> derivStepList = new ArrayList<ProofDerivationStepEntry>(
+        final List<ProofDerivationStepEntry> derivStepList = new ArrayList<>(
             theoremLogHypArray.length);
 
         int renumberStep = PaConstants.PROOF_STEP_RENUMBER_START;
@@ -536,11 +536,11 @@ public class VerifyProofs implements ProofVerifier {
         final int numHyps = derivStepList.size();
         int stepName = PaConstants.PROOF_STEP_RENUMBER_START
             + numHyps * PaConstants.PROOF_STEP_RENUMBER_INTERVAL;
-        final Deque<ProofDerivationStepEntry> undischargedStack = new ArrayDeque<ProofDerivationStepEntry>();
+        final Deque<ProofDerivationStepEntry> undischargedStack = new ArrayDeque<>();
 
         // parallel arrays
-        final List<Formula> backrefs = new ArrayList<Formula>();
-        final List<ProofDerivationStepEntry> backrefSteps = new ArrayList<ProofDerivationStepEntry>();
+        final List<Formula> backrefs = new ArrayList<>();
+        final List<ProofDerivationStepEntry> backrefSteps = new ArrayList<>();
 
         sLoop: for (stepNbr = 0; stepNbr < proof.length; stepNbr++) {
             if (proof[stepNbr] == null
@@ -704,7 +704,7 @@ public class VerifyProofs implements ProofVerifier {
 
         final Hyp[] hypArray = stepFrame.hypArray;
 
-        final Stack<ParseNode> nodeStack = new Stack<ParseNode>();
+        final Stack<ParseNode> nodeStack = new Stack<>();
 
         ParseNode node;
         ParseNode[] child;
@@ -802,7 +802,7 @@ public class VerifyProofs implements ProofVerifier {
      * @throws VerifyException if an error occurred
      */
     private void verifyProof() throws VerifyException {
-        final List<Formula> backrefs = new ArrayList<Formula>();
+        final List<Formula> backrefs = new ArrayList<>();
         for (stepNbr = 0; stepNbr < proof.length; stepNbr++) {
             if (proof[stepNbr] == null
                 || proof[stepNbr].backRef <= 0 && proof[stepNbr].stmt == null)
@@ -1211,7 +1211,7 @@ public class VerifyProofs implements ProofVerifier {
 
         pStackMax = ProofConstants.PROOF_PSTACK_INIT_LEN;
         pStackHighwater = 0;
-        pStack = new ArrayDeque<Formula>(pStackMax);
+        pStack = new ArrayDeque<>(pStackMax);
 
         wExprCnt = 0;
         wExprMax = ProofConstants.PROOF_WEXPR_INIT_LEN;
@@ -1271,7 +1271,7 @@ public class VerifyProofs implements ProofVerifier {
     }
 
     private Formula generateFormulaFromRPN() throws VerifyException {
-        final List<Formula> backrefs = new ArrayList<Formula>();
+        final List<Formula> backrefs = new ArrayList<>();
         for (stepNbr = 0; stepNbr < proof.length; stepNbr++) {
             if (proof[stepNbr] == null
                 || proof[stepNbr].backRef <= 0 && proof[stepNbr].stmt == null)

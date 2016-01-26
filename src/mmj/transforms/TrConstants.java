@@ -61,13 +61,20 @@ public class TrConstants {
     // ----------------------------------------------------------
     public static final String ERRMSG_UNEXPECTED_EXCEPTION = "A-TR-0001 Unexpected exception: ";
     public static final String ERRMSG_ILLEGAL_STATE_IN_CREATE_TRANSFORMATION = "A-TR-0003 Error in createTransformation() algorithm";
+
     public static final String ERRMSG_MORE_THEN_ONE_EQUALITY_OPERATOR = "E-TR-0101 More then one operator (%s and %s) defines equality between two objects with type %s";
     public static final String ERRMSG_MISSING_IMPL_TRIV_RULE = "E-TR-0102 The input library has no trivial "
         + "implication rule for %s implication operator (main assertion %s).";
     public static final String ERRMSG_MISSING_IMPL_DISRT_RULE = "E-TR-0103 The input library has no "
         + "implication distributive rule for %s implication operator (main assertion %s).";
-    public static final String ERRMSG_MISSING_EQUAL_COMMUT_DEDUCT_RULE = "E-TR-0104  The library has no deduction commutative "
+    public static final String ERRMSG_MISSING_EQUAL_COMMUT_DEDUCT_RULE = "E-TR-0104 The library has no deduction commutative "
         + "assertion for implication operator %s and equivalence operator %s";
-    public static final String ERRMSG_MISSING_EQUAL_TRANSIT_DEDUCT_RULE = "E-TR-0104  The library has no deduction transitive "
+    public static final String ERRMSG_MISSING_EQUAL_TRANSIT_DEDUCT_RULE = "E-TR-0105 The library has no deduction transitive "
         + "assertion for implication operator %s and equivalence operator %s";
+
+    public static final String ERRMSG_LOOP_IN_TRANSFORMATIONS = "W-TR-0201 "
+        + "One or more loops has been detected during generation of\n"
+        + "simplification rules. This can be addressed by adding the rules to\n"
+        + "badAssrtList in macros/transformations.js, skipping the preferred\n"
+        + "simplification rule if desired. Offending $p and $a rules:\n";
 }

@@ -113,18 +113,18 @@ public class GMFFManager {
         this.filePath = filePath;
         this.messages = messages;
 
-        typesetDefinitionsCache = new ArrayList<String>(1);
+        typesetDefinitionsCache = new ArrayList<>(1);
 
         nbrTypesetDefinitionsProcessedSoFar = 0;
 
-        inputGMFFExportParmsList = new ArrayList<GMFFExportParms>(
+        inputGMFFExportParmsList = new ArrayList<>(
             GMFFConstants.DEFAULT_EXPORT_PARMS.length);
 
-        inputGMFFUserTextEscapesList = new ArrayList<GMFFUserTextEscapes>(
+        inputGMFFUserTextEscapesList = new ArrayList<>(
             GMFFConstants.DEFAULT_EXPORT_PARMS.length);
         inputGMFFUserExportChoice = null;
 
-        exporterTypesetDefsList = new ArrayList<GMFFExporterTypesetDefs>(
+        exporterTypesetDefsList = new ArrayList<>(
             GMFFConstants.DEFAULT_EXPORT_PARMS.length);
     }
 
@@ -677,7 +677,7 @@ public class GMFFManager {
         final GMFFExporterTypesetDefs myTypesetDefs = new GMFFExporterTypesetDefs(
             typesetDefKeyword, GMFFConstants.METAMATH_DOLLAR_T_MAP_SIZE);
 
-        final List<GMFFExporterTypesetDefs> list = new ArrayList<GMFFExporterTypesetDefs>(
+        final List<GMFFExporterTypesetDefs> list = new ArrayList<>(
             1);
 
         list.add(myTypesetDefs);
@@ -811,7 +811,7 @@ public class GMFFManager {
      */
     private List<GMFFExportParms> loadExportParmsList() throws GMFFException {
 
-        final List<GMFFExportParms> listOut = new ArrayList<GMFFExportParms>(
+        final List<GMFFExportParms> listOut = new ArrayList<>(
             GMFFConstants.DEFAULT_EXPORT_PARMS.length);
 
         // load defaults:
@@ -851,7 +851,7 @@ public class GMFFManager {
         throws GMFFException
     {
 
-        final List<GMFFUserTextEscapes> listOut = new ArrayList<GMFFUserTextEscapes>(
+        final List<GMFFUserTextEscapes> listOut = new ArrayList<>(
             GMFFConstants.DEFAULT_USER_TEXT_ESCAPES.length);
 
         // load defaults:
@@ -908,7 +908,7 @@ public class GMFFManager {
 
     private List<GMFFExporter> loadExporterList() throws GMFFException {
 
-        final List<GMFFExporter> x = new ArrayList<GMFFExporter>(
+        final List<GMFFExporter> x = new ArrayList<>(
             exportParmsList.size());
 
         GMFFUserTextEscapes t;

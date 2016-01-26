@@ -14,6 +14,8 @@ package mmj.verify;
 import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -38,15 +40,16 @@ public class LRParser implements GrammaticalParser {
     private Map<String, Integer> startStates;
     private List<ParseTableRow> rows;
 
-    private final List<ParseSet> sets = new ArrayList<ParseSet>();
-    private final Map<ParseSet, Integer> setLookup = new HashMap<ParseSet, Integer>();
-    private final Map<Cnst, List<NotationRule>> rulesByTyp = new HashMap<Cnst, List<NotationRule>>();
-    private final Map<Cnst, Set<Cnst>> nontermClosure = new HashMap<Cnst, Set<Cnst>>();
-    private final Map<Cnst, Set<Cnst>> initialByTyp = new HashMap<Cnst, Set<Cnst>>();
-    private final Map<Cnst, Set<Cnst>> followByTyp = new HashMap<Cnst, Set<Cnst>>();
-    private final Deque<Integer> conflicts = new ArrayDeque<Integer>();
-    private final List<Set<Integer>> backtrack = new ArrayList<Set<Integer>>();
-    private final Map<ParseTree, NotationRule> newRules = new HashMap<ParseTree, NotationRule>();
+    private final List<ParseSet> sets = new ArrayList<>();
+    private final Map<ParseSet, Integer> setLookup = new HashMap<>();
+    private final Map<Cnst, List<NotationRule>> rulesByTyp = new HashMap<>();
+    private final Map<Cnst, Set<Cnst>> nontermClosure = new HashMap<>();
+    private final Map<Cnst, Set<Cnst>> initialByTyp = new HashMap<>();
+    private final Map<Cnst, Set<Cnst>> followByTyp = new HashMap<>();
+    private final Deque<Integer> stateQueue = new ArrayDeque<>();
+    private final Deque<Integer> conflicts = new ArrayDeque<>();
+    private final List<Set<Integer>> backtrack = new ArrayList<>();
+    private final Map<ParseTree, NotationRule> newRules = new HashMap<>();
 
     /**
      * Construct using reference to Grammar and a parameter signifying the
@@ -76,7 +79,7 @@ public class LRParser implements GrammaticalParser {
             .addListener((o, value) -> o == startDef || value == startDef);
 
         final List<ParseTableRow> rowDef = new ArrayList<>();
-        rowsSetting = store.new ListSetting<ParseTableRow>(PFX + "rows", rowDef,
+        rowsSetting = store.new ListSetting<>(PFX + "rows", rowDef,
             ParseTableRow.serializer(grammar))
                 .addListener((o, value) -> o == rowDef || value == rowDef);
     }
@@ -108,7 +111,7 @@ public class LRParser implements GrammaticalParser {
         do {
             changed = false;
             for (final Entry<Cnst, Set<Cnst>> e : nontermClosure.entrySet())
-                for (final Cnst c : new ArrayList<Cnst>(e.getValue()))
+                for (final Cnst c : new ArrayList<>(e.getValue()))
                     changed |= e.getValue().addAll(nontermClosure.get(c));
         } while (changed);
         for (final Cnst typ : grammar.getVarHypTypSet())
@@ -138,16 +141,19 @@ public class LRParser implements GrammaticalParser {
             final ParseSet set = new ParseSet();
             set.initials.add(typ);
             makeClosure(set);
-            startStates.put(typ.getId(), Integer.valueOf(getState(set)));
+            startStates.put(typ.getId(), getState(set));
         }
+
+        while (!stateQueue.isEmpty())
+            developState(stateQueue.pop());
 
         while (!conflicts.isEmpty()) {
             final int index = conflicts.pop();
-            Set<Integer> backStates = new TreeSet<Integer>();
+            Set<Integer> backStates = new TreeSet<>();
             backStates.add(index);
             final ParseTableRow row = rows.get(index);
             for (int i = row.args; i > 0; i--) {
-                final Set<Integer> newStates = new TreeSet<Integer>();
+                final Set<Integer> newStates = new TreeSet<>();
                 for (final int j : backStates)
                     newStates.addAll(backtrack.get(j));
                 backStates = newStates;
@@ -193,6 +199,9 @@ public class LRParser implements GrammaticalParser {
                     final int goalIndex = getState(goal);
                     backRow.transitions.put(dir.getId(), goalIndex);
                     backtrack.get(goalIndex).add(back);
+
+                    while (!stateQueue.isEmpty())
+                        developState(stateQueue.pop());
                 }
             }
         }
@@ -209,14 +218,14 @@ public class LRParser implements GrammaticalParser {
         ParseState.clearCache();
 
         grammarHash.reset();
-        grammarHash.set(grammar.getNotationGRSet().hashCode());
+        grammarHash.set(grammar.getNotationGRSet().size());
         startStatesSetting.reset();
         startStatesSetting.set(startStates);
         rowsSetting.reset();
         rowsSetting.set(rows);
     }
 
-    private int getState(final ParseSet set) {
+    private Integer getState(final ParseSet set) {
         Integer index = setLookup.get(set);
         if (index == null) {
             index = sets.size();
@@ -224,9 +233,18 @@ public class LRParser implements GrammaticalParser {
             setLookup.put(set, index);
             final ParseTableRow row = new ParseTableRow();
             rows.add(row);
-            NotationRule reduce = null;
             backtrack.add(new TreeSet<Integer>());
-            for (final ParseState e : set) {
+            stateQueue.add(index);
+        }
+        return index;
+    }
+
+    private void developState(final Integer index) {
+        System.out.print("*");
+        final ParseSet set = sets.get(index);
+        final ParseTableRow row = rows.get(index);
+        row.setReduction(
+            set.reduce(null, (NotationRule reduce, final ParseState e) -> {
                 final Cnst head = e.head();
                 if (head == null) {
                     if (reduce != null)
@@ -238,9 +256,10 @@ public class LRParser implements GrammaticalParser {
                 }
                 else if (!row.transitions.containsKey(head.getId())) {
                     final ParseSet goal = new ParseSet();
-                    for (final ParseState state : set)
+                    set.forEach(state -> {
                         if (head.equals(state.head()))
                             goal.add(state.advance());
+                    });
                     makeClosure(goal);
                     final int goalIndex = getState(goal);
                     row.transitions.put(head.getId(), goalIndex);
@@ -249,10 +268,8 @@ public class LRParser implements GrammaticalParser {
                         .get(reduce.getGrammarRuleTyp()).contains(head))
                         conflicts.add(index);
                 }
-            }
-            row.setReduction(reduce);
-        }
-        return index;
+                return reduce;
+            }));
     }
 
     private void makeClosure(final ParseSet set) {
@@ -280,7 +297,7 @@ public class LRParser implements GrammaticalParser {
     }
 
     public void load(final boolean fromFile) {
-        if (grammarHash.get().equals(grammar.getNotationGRSet().hashCode())) {
+        if (grammarHash.get().equals(grammar.getNotationGRSet().size())) {
             startStates = startStatesSetting.get();
             rows = rowsSetting.get();
         }
@@ -357,8 +374,8 @@ public class LRParser implements GrammaticalParser {
         // last initialization
         load(true);
         int index = 0;
-        final Deque<Integer> stateStack = new ArrayDeque<Integer>();
-        final ArrayDeque<ParseNode> outStack = new ArrayDeque<ParseNode>();
+        final Deque<Integer> stateStack = new ArrayDeque<>();
+        final ArrayDeque<ParseNode> outStack = new ArrayDeque<>();
         Cnst startRuleTyp = formulaTypIn;
         if (formulaTypIn.isProvableLogicStmtTyp())
             if (grammar.getLogicStmtTypArray().length > 0)
@@ -418,7 +435,7 @@ public class LRParser implements GrammaticalParser {
     }
 
     private static class ParseState implements Comparable<ParseState> {
-        static Map<ParseState, ParseState> cache = new HashMap<ParseState, ParseState>();
+        static Map<ParseState, ParseState> cache = new HashMap<>();
         final NotationRule rule;
         final int position;
 
@@ -490,13 +507,13 @@ public class LRParser implements GrammaticalParser {
     }
 
     public class ParseSet implements Collection<ParseState> {
-        Set<ParseState> extra = new TreeSet<ParseState>();
-        Set<Cnst> initials = new HashSet<Cnst>();
+        Set<ParseState> extra = new TreeSet<>();
+        Set<Cnst> initials = new HashSet<>();
 
         public ParseSet() {}
         public ParseSet(final ParseSet other) {
-            extra = new TreeSet<ParseState>(other.extra);
-            initials = new TreeSet<Cnst>(other.initials);
+            extra = new TreeSet<>(other.extra);
+            initials = new TreeSet<>(other.initials);
         }
 
         public int size() {
@@ -519,6 +536,7 @@ public class LRParser implements GrammaticalParser {
             return false;
         }
 
+        // Don't use, too slow - use forEach() instead
         public Iterator<ParseState> iterator() {
             return new Iterator<ParseState>() {
                 Iterator<Cnst> iInit = initials.iterator();
@@ -555,6 +573,24 @@ public class LRParser implements GrammaticalParser {
                     return next != null;
                 }
             };
+        }
+        @Override
+        public void forEach(final Consumer<? super ParseState> f) {
+            for (final ParseState state : extra)
+                f.accept(state);
+            for (final Cnst c : initials)
+                for (final NotationRule rule : rulesByTyp.get(c))
+                    f.accept(ParseState.get(rule));
+        }
+        public <T> T reduce(T accum,
+            final BiFunction<T, ? super ParseState, T> f)
+        {
+            for (final ParseState state : extra)
+                accum = f.apply(accum, state);
+            for (final Cnst c : initials)
+                for (final NotationRule rule : rulesByTyp.get(c))
+                    accum = f.apply(accum, ParseState.get(rule));
+            return accum;
         }
         public Object[] toArray() {
             throw new UnsupportedOperationException();

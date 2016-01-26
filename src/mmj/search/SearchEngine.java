@@ -43,7 +43,6 @@ public class SearchEngine {
     private int assrtNbrLogHyps = 0;
     private Hyp[] assrtHypArray = null;
     private LogHyp[] assrtLogHypArray = null;
-    private ParseNode assrtRoot = null;
     private ParseNode[] assrtSubst = null;
     private boolean stepSearchMode = false;
     private boolean substitutions = false;
@@ -72,14 +71,15 @@ public class SearchEngine {
         stepSearchMode = searchArgs.stepSearchMode;
         setAssrtAList(searchArgs.sortedAssrtSearchList);
         store = null;
-        proofAsstPreferences.getWorkVarManager().deallocAndReallocAll(
-            searchArgs.proofWorksheet);
+        proofAsstPreferences.getWorkVarManager()
+            .deallocAndReallocAll(searchArgs.proofWorksheet);
         compiledSearchArgs = searchArgs.compile(searchMgr, bookManager,
             searchOutput, proofAsst, proofAsstPreferences, verifyProofs,
             provableLogicStmtTyp);
         if (searchOutput.searchReturnCode == 0) {
-            final FutureTask<SearchOutput> search = new FutureTask<SearchOutput>(
-                new Callable<SearchOutput>() {
+            final FutureTask<SearchOutput> search = new FutureTask<>(
+                new Callable<SearchOutput>()
+            {
                     public SearchOutput call() throws Exception {
                         return searchTask();
                     }
@@ -250,9 +250,8 @@ public class SearchEngine {
                 if (!bitset.get(assrt.getChapterNbr()))
                     return false;
             }
-            else if (compiledSearchArgs.searchUseSecHierarchy
-                && !bitset.get(BookManager.getOrigSectionNbr(assrt
-                    .getSectionNbr())))
+            else if (compiledSearchArgs.searchUseSecHierarchy && !bitset
+                .get(BookManager.getOrigSectionNbr(assrt.getSectionNbr())))
                 return false;
         return true;
     }
@@ -305,12 +304,11 @@ public class SearchEngine {
     }
 
     private boolean unifyStepFormulaWithWorkVars() throws VerifyException {
-        assrtRoot = assrt.getExprParseTree().getRoot();
+        assrt.getExprParseTree().getRoot();
         ParseNode parseNode = null;
         if (derivStep.formulaParseTree != null)
             parseNode = derivStep.formulaParseTree.getRoot();
-        return stepUnifier.unifyAndMergeStepFormula(false, assrtRoot,
-            parseNode, assrtHypArray, assrtLogHypArray);
+        return stepUnifier.unifyAndMergeStepFormula(false, assrt, parseNode);
     }
 
     private int computeScore() {
@@ -341,10 +339,11 @@ public class SearchEngine {
         final Formula[] aformula = new Formula[assrtNbrLogHyps];
         Formula formula;
         if (stepSearchMode && substitutions) {
-            formula = buildSearchSelectionSubstFormula(assrt.getExprParseTree());
+            formula = buildSearchSelectionSubstFormula(
+                assrt.getExprParseTree());
             for (int l = 0; l < assrtNbrLogHyps; l++)
-                aformula[l] = buildSearchSelectionSubstFormula(assrtLogHypArray[l]
-                    .getExprParseTree());
+                aformula[l] = buildSearchSelectionSubstFormula(
+                    assrtLogHypArray[l].getExprParseTree());
 
         }
         else {
@@ -387,13 +386,14 @@ public class SearchEngine {
         }
         return store.add(assrt, selection, score);
     }
-    private Formula buildSearchSelectionSubstFormula(final ParseTree parseTree)
+    private Formula buildSearchSelectionSubstFormula(
+        final ParseTree parseTree)
     {
-        final ParseTree parseTree1 = parseTree.deepCloneApplyingAssrtSubst(
-            assrtHypArray, assrtSubst);
+        final ParseTree parseTree1 = parseTree
+            .deepCloneApplyingAssrtSubst(assrtHypArray, assrtSubst);
         final Formula formula = verifyProofs.convertRPNToFormula(
-            parseTree1.convertToRPN(), SearchConstants.DOT_STEP_CAPTION
-                + derivStep.getStep());
+            parseTree1.convertToRPN(),
+            SearchConstants.DOT_STEP_CAPTION + derivStep.getStep());
         formula.setTyp(provableLogicStmtTyp);
         return formula;
     }

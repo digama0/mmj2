@@ -131,7 +131,7 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
         this.intervalSize = intervalSize;
 
         SeqAssigner.validateIntervalTblInitialSize(intervalTblInitialSize);
-        intervalTbl = new HashMap<Integer, BitSet>(intervalTblInitialSize);
+        intervalTbl = new HashMap<>(intervalTblInitialSize);
     }
 
     /**

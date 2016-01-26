@@ -57,7 +57,6 @@ public class StepSelectorSearch {
     private int assrtNbrLogHyps;
     private Hyp[] assrtHypArray;
     private LogHyp[] assrtLogHypArray;
-    private ParseNode assrtRoot;
     private ParseNode[] assrtSubst;
 
     /**
@@ -88,7 +87,7 @@ public class StepSelectorSearch {
 
         final int listSize = unifySearchList.size()
             * (100 + proofAsstPreferences.assrtListFreespace.get()) / 100;
-        assrtAList = new ArrayList<Assrt>(listSize);
+        assrtAList = new ArrayList<>(listSize);
 
         assrtAList.addAll(unifySearchList);
 
@@ -99,12 +98,12 @@ public class StepSelectorSearch {
         final List<Theorem> listOfAssrtAddsSortedBySeq)
     {
 
-        final List<Theorem> addList = new ArrayList<Theorem>(
+        final List<Theorem> addList = new ArrayList<>(
             listOfAssrtAddsSortedBySeq);
 
         Collections.sort(addList, Assrt.NBR_LOG_HYP_SEQ);
 
-        new MergeSortedArrayLists<Assrt>(assrtAList, addList,
+        new MergeSortedArrayLists<>(assrtAList, addList,
             Assrt.NBR_LOG_HYP_SEQ, true); // abortIfDupsFound
     }
 
@@ -290,13 +289,13 @@ public class StepSelectorSearch {
 
         assrtHypArray = assrt.getMandFrame().hypArray;
         assrtLogHypArray = assrt.getLogHypArray();
-        assrtRoot = assrt.getExprParseTree().getRoot();
+        assrt.getExprParseTree().getRoot();
 
         ParseNode stepRoot = null;
         if (derivStep.formulaParseTree != null)
             stepRoot = derivStep.formulaParseTree.getRoot();
-        return stepUnifier.unifyAndMergeStepFormula(/* commit = */false,
-            assrtRoot, stepRoot, assrtHypArray, assrtLogHypArray);
+        return stepUnifier.unifyAndMergeStepFormula(/* commit = */false, assrt,
+            stepRoot);
     }
 
     private boolean addAssrtToStore(final StepSelectorStore store) {

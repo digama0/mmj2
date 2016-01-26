@@ -221,8 +221,16 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         return proofAsstGUI;
     }
 
+    public ProofAsstPreferences getPreferences() {
+        return proofAsstPreferences;
+    }
+
+    public Grammar getGrammar() {
+        return grammar;
+    }
+
     public List<Assrt> sortAssrtListForSearch(final List<Assrt> list) {
-        final List<Assrt> sorted = new ArrayList<Assrt>(list);
+        final List<Assrt> sorted = new ArrayList<>(list);
         Collections.sort(sorted, Assrt.NBR_LOG_HYP_SEQ);
         return sorted;
     }
@@ -908,9 +916,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     public void optimizeTheoremSearch() {
         final List<Theorem> theoremList = getSortedTheoremList(0);
 
-        final Map<Cnst, Integer> frequency = new HashMap<Cnst, Integer>();
+        final Map<Cnst, Integer> frequency = new HashMap<>();
 
-        final Set<Formula> formulaList = new LinkedHashSet<Formula>();
+        final Set<Formula> formulaList = new LinkedHashSet<>();
 
         for (final Theorem theorem : theoremList) {
             formulaList.add(theorem.getFormula());
@@ -956,7 +964,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     public void initAutotransformations(final boolean debugOutput,
         final boolean supportPrefix)
     {
-        final TransformationManager trManager = new TransformationManager(
+        final TransformationManager trManager = new TransformationManager(this,
             getSortedAssrtSearchList(), getProvableLogicStmtTyp(), messages,
             verifyProofs, supportPrefix, debugOutput);
         proofUnifier.setTransformationManager(trManager);
@@ -1178,7 +1186,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 logicalSystem, grammar, messages, macroManager);
 
             proofWorksheet = proofWorksheetParser.next(cursorPos + 1,
-                new StepRequest(PaConstants.STEP_REQUEST_SELECTOR_SEARCH));
+                StepRequest.SelectorSearch);
 
             final String theoremLabel = proofWorksheet.getTheoremLabel();
 
@@ -1224,9 +1232,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 getErrorLabelIfPossible(proofWorksheet), step, selectionNumber,
                 assrt.getLabel(), selection);
 
-            final StepRequest stepRequestChoice = new StepRequest(
-                PaConstants.STEP_REQUEST_SELECTOR_CHOICE, results.step,
-                results.refArray[selectionNumber]);
+            final StepRequest stepRequestChoice = new StepRequest.SelectorChoice(
+                results.step, results.refArray[selectionNumber]);
 
             proofWorksheet = unify(false, // no renumReq,
                 false, // convert work vars
@@ -1696,10 +1703,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         if (proofWorksheet.getNbrDerivStepsReadyForUnify() > 0
             || proofWorksheet.stepRequest != null
-                && (proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH
-                    || proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH
-                    || proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SEARCH_OPTIONS
-                    || proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_GENERAL_SEARCH))
+                && proofWorksheet.stepRequest.simple
+            || proofWorksheet.stepRequest == StepRequest.GeneralSearch)
         {
 
             try {
@@ -1728,8 +1733,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 if (format == ProofFormat.Compressed) {
                     final StringBuilder letters = new StringBuilder();
 
-                    final List<Hyp> mandHypList = new ArrayList<Hyp>();
-                    final List<VarHyp> optHypList = new ArrayList<VarHyp>();
+                    final List<Hyp> mandHypList = new ArrayList<>();
+                    final List<VarHyp> optHypList = new ArrayList<>();
                     ProofUnifier.separateMandAndOptFrame(proofWorksheet,
                         proofWorksheet.getQedStep(), mandHypList, optHypList,
                         true);
@@ -1826,7 +1831,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
     private List<Theorem> getSortedTheoremList(final int lowestMObjSeq) {
 
-        final ArrayList<Theorem> sortedTheoremList = new ArrayList<Theorem>(
+        final ArrayList<Theorem> sortedTheoremList = new ArrayList<>(
             logicalSystem.getStmtTbl().size());
 
         for (final Stmt stmt : logicalSystem.getStmtTbl().values())
@@ -1889,7 +1894,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * @param proofWorksheet the owner ProofWorksheet
      */
     private void importCompareDJs(final ProofWorksheet proofWorksheet) {
-        final List<DjVars> superfluous = new ArrayList<DjVars>();
+        final List<DjVars> superfluous = new ArrayList<>();
         final ScopeFrame mandFrame = proofWorksheet.theorem.getMandFrame();
         int compare;
         loopI: for (int i = 0; i < mandFrame.djVarsArray.length; i++) {
@@ -1915,7 +1920,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     }
 
     private void importUpdateDJs(final ProofWorksheet proofWorksheet) {
-        final List<DjVars> list = new ArrayList<DjVars>();
+        final List<DjVars> list = new ArrayList<>();
 
         final ScopeFrame mandFrame = proofWorksheet.theorem.getMandFrame();
 

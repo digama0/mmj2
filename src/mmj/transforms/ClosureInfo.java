@@ -41,7 +41,7 @@ public class ClosureInfo extends DBInfo {
      */
     private final ClosureComplexRuleMap implClosureRuleMap = new ClosureComplexRuleMap();
 
-    private final Set<PropertyTemplate> possibleProperties = new HashSet<PropertyTemplate>();
+    private final Set<PropertyTemplate> possibleProperties = new HashSet<>();
 
     /** The information about properties of constants */
     private final Map<PropertyTemplate, Map<ParseNodeHashElem, Assrt>> constInfo;
@@ -60,7 +60,7 @@ public class ClosureInfo extends DBInfo {
         super(output, dbg);
         this.implInfo = implInfo;
         this.conjInfo = conjInfo;
-        constInfo = new HashMap<PropertyTemplate, Map<ParseNodeHashElem, Assrt>>();
+        constInfo = new HashMap<>();
 
         for (final Assrt assrt : assrtList)
             findClosureRules(assrt);
@@ -91,8 +91,8 @@ public class ClosureInfo extends DBInfo {
         ParseNode retNode = endMarker;
 
         for (int i = 0; i < input.child.length; i++) {
-            final ParseNode res = getCorrespondingNodeRec(
-                template.child[i], input.child[i]);
+            final ParseNode res = getCorrespondingNodeRec(template.child[i],
+                input.child[i]);
             if (res == null)
                 return null;
             if (res != endMarker)
@@ -184,8 +184,8 @@ public class ClosureInfo extends DBInfo {
 
         for (int i = 1; i < logHyps.length; i++) {
             final VarHyp vari = hypToVarHypMap[i];
-            final ParseNode res = getCorrespondingNode(templNode, logHyps[i]
-                .getExprParseTree().getRoot());
+            final ParseNode res = getCorrespondingNode(templNode,
+                logHyps[i].getExprParseTree().getRoot());
             if (res == null)
                 return null;
             if (res.stmt != vari)
@@ -431,7 +431,7 @@ public class ClosureInfo extends DBInfo {
                 */
                 Map<ParseNodeHashElem, Assrt> cMap = constInfo.get(template);
                 if (cMap == null) {
-                    cMap = new HashMap<ParseNodeHashElem, Assrt>();
+                    cMap = new HashMap<>();
                     constInfo.put(template, cMap);
                 }
 
@@ -518,12 +518,12 @@ public class ClosureInfo extends DBInfo {
 
         if (finishStatement)
             if (info.hasImplPrefix())
-                assert info.derivStep.formulaParseTree.getRoot().isDeepDup(
-                    TrUtil.createBinaryNode(info.implStatement,
+                assert info.derivStep.formulaParseTree.getRoot()
+                    .isDeepDup(TrUtil.createBinaryNode(info.implStatement,
                         info.implPrefix, stepNode));
             else
-                assert info.derivStep.formulaParseTree.getRoot().isDeepDup(
-                    stepNode);
+                assert info.derivStep.formulaParseTree.getRoot()
+                    .isDeepDup(stepNode);
 
         final ProofStepStmt res1 = info.getProofStepStmt(stepNode);
         if (res1 != null)
@@ -560,15 +560,14 @@ public class ClosureInfo extends DBInfo {
                 final ParseNode root = assrt.getExprParseTree().getRoot();
 
                 final ProofStepStmt res = info.getOrCreateProofStepStmt(root,
-                    new ProofStepStmt[]{}, assrt);
+                    new ProofStepStmt[0], assrt);
 
                 assert res != null;
                 return new GenProofStepStmt(res, null);
             }
             case SIMPLE_RULE: {
                 // We found possible f(A) & f(B) => f(g(A,B)) rule
-                final CreateClosureVisitor visitor = new CreateClosureVisitor()
-                {
+                final CreateClosureVisitor visitor = new CreateClosureVisitor() {
                     public ClosureComplexRuleMap getMap() {
                         return closureRuleMap;
                     }
@@ -583,7 +582,8 @@ public class ClosureInfo extends DBInfo {
                             // It is not the last one step, we should generate
                             // f(g(A,B)) step
                             final ProofStepStmt r = info
-                                .getOrCreateProofStepStmt(stepNode, hyps, assrt);
+                                .getOrCreateProofStepStmt(stepNode, hyps,
+                                    assrt);
                             return new GenProofStepStmt(r, null);
                         }
                         else if (info.hasImplPrefix()) {
@@ -592,7 +592,8 @@ public class ClosureInfo extends DBInfo {
                             // f(g(A,B)) step and then use ph->f(g(A,B)) target
                             // derivation step
                             final ProofStepStmt r = info
-                                .getOrCreateProofStepStmt(stepNode, hyps, assrt);
+                                .getOrCreateProofStepStmt(stepNode, hyps,
+                                    assrt);
                             implInfo.finishStubRule(info, r);
                             return new GenProofStepStmt(info.derivStep, null);
                         }
@@ -614,8 +615,7 @@ public class ClosureInfo extends DBInfo {
             case SIMPLE_RULE_IMPL:
             case USED_PREFIX_RULE: {
                 // We found possible f(A) /\ f(B) -> f(g(A,B)) rule
-                final CreateClosureVisitor visitor = new CreateClosureVisitor()
-                {
+                final CreateClosureVisitor visitor = new CreateClosureVisitor() {
                     public ClosureComplexRuleMap getMap() {
                         return implClosureRuleMap;
                     }
@@ -640,8 +640,8 @@ public class ClosureInfo extends DBInfo {
                             assert hypGenStep != null;
                             // It is not the last one step
 
-                            return implInfo.applyHyp(info, hypGenStep,
-                                stepNode, assrt);
+                            return implInfo.applyHyp(info, hypGenStep, stepNode,
+                                assrt);
                         }
                         else {
                             assert hypGenStep != null;
@@ -655,8 +655,8 @@ public class ClosureInfo extends DBInfo {
                                     // form
                                     final ProofStepStmt r = implInfo
                                         .applyImplicationRule(info,
-                                            hypGenStep.getSimpleStep(),
-                                            implRes, assrt);
+                                            hypGenStep.getSimpleStep(), implRes,
+                                            assrt);
                                     implInfo.finishStubRule(info, r);
                                     return new GenProofStepStmt(info.derivStep,
                                         null);
@@ -701,8 +701,8 @@ public class ClosureInfo extends DBInfo {
 
     private interface CreateClosureVisitor {
         public ClosureComplexRuleMap getMap();
-        public GenProofStepStmt createClosureStep(
-            final GenProofStepStmt[] hyps, final Assrt assrt);
+        public GenProofStepStmt createClosureStep(final GenProofStepStmt[] hyps,
+            final Assrt assrt);
     }
 
     private GenProofStepStmt closureVisitorEntrance(final WorksheetInfo info,
@@ -710,12 +710,13 @@ public class ClosureInfo extends DBInfo {
         final CreateClosureVisitor visitor, final boolean searchWithPrefix)
     {
         final GenProofStepStmt res = visitor.getMap().visitGenStmts(node, info,
-            new ComplexRuleVisitor<Assrt, GenProofStepStmt>() {
+            new ComplexRuleVisitor<Assrt, GenProofStepStmt>()
+        {
                 public GenProofStepStmt visit(final ParseNode node,
                     final WorksheetInfo info, final ConstSubst constSubst,
                     final int[] varIndexes,
                     final Map<PropertyTemplate, Assrt> propertyMap)
-                {
+            {
                     final Assrt assrt = propertyMap.get(template);
                     if (assrt == null)
                         return null;
@@ -727,7 +728,7 @@ public class ClosureInfo extends DBInfo {
                         assert child != null;
 
                         if (!getClosurePossibility(info, child, template,
-                            searchWithPrefix).hasClosure())
+                            searchWithPrefix).hasClosure)
                             return null;
 
                         final GenProofStepStmt childRes = closureProperty(info,
@@ -753,77 +754,31 @@ public class ClosureInfo extends DBInfo {
 
     // -------------
     public static enum ClosureResult {
-        NO_CLOSURE_RULE {
-            @Override
-            boolean hasClosure() {
-                return false;
-            }
+        NO_CLOSURE_RULE(false, 1),
 
-            @Override
-            int num() {
-                return 1;
-            }
-        },
-        USED_PREFIX_RULE {
-            @Override
-            boolean hasClosure() {
-                return true;
-            }
+        USED_PREFIX_RULE(true, 2),
 
-            @Override
-            int num() {
-                return 2;
-            }
-        },
+        SIMPLE_RULE(true, 3),
+
         // Almost the same as SIMPLE_RULE
         // The only difference is in the search transformation algorithm
-        SIMPLE_RULE_IMPL {
-            @Override
-            boolean hasClosure() {
-                return true;
-            }
+        SIMPLE_RULE_IMPL(true, 3),
 
-            @Override
-            int num() {
-                return SIMPLE_RULE.num();
-            }
-        },
-        SIMPLE_RULE {
-            @Override
-            boolean hasClosure() {
-                return true;
-            }
+        CONSTANT_RULE(true, 4);
 
-            @Override
-            int num() {
-                return 3;
-            }
-        },
-        CONSTANT_RULE {
-            @Override
-            boolean hasClosure() {
-                return true;
-            }
+        boolean hasClosure;
+        int num;
 
-            @Override
-            int num() {
-                return 4;
-            }
-        };
-
-        boolean hasClosure() {
-            return false;
-        }
-
-        int num() {
-            return 0;
+        private ClosureResult(final boolean hasClosure, final int num) {
+            this.hasClosure = hasClosure;
+            this.num = num;
         }
     }
 
     static public ClosureResult mergeSearchResults(
         final ClosureResult preferred, final ClosureResult other)
     {
-        if (preferred.num() <= other.num())
+        if (preferred.num <= other.num)
             return preferred;
         else
             return other;
@@ -835,12 +790,13 @@ public class ClosureInfo extends DBInfo {
         final boolean searchWithPrefix, final ClosureResult simpleRes)
     {
         final ClosureResult res = map.visitGenStmts(node, info,
-            new ComplexRuleVisitor<Assrt, ClosureResult>() {
+            new ComplexRuleVisitor<Assrt, ClosureResult>()
+        {
                 public ClosureResult visit(final ParseNode node,
                     final WorksheetInfo info, final ConstSubst constSubst,
                     final int[] varIndexes,
                     final Map<PropertyTemplate, Assrt> propertyMap)
-                {
+            {
                     if (!propertyMap.containsKey(template))
                         return ClosureResult.NO_CLOSURE_RULE;
 
@@ -851,7 +807,7 @@ public class ClosureInfo extends DBInfo {
                             final ParseNode child = node.child[i];
                             final ClosureResult propRes = getClosurePossibility(
                                 info, child, template, searchWithPrefix);
-                            if (!propRes.hasClosure())
+                            if (!propRes.hasClosure)
                                 return ClosureResult.NO_CLOSURE_RULE;
                             childResMerge = mergeSearchResults(childResMerge,
                                 propRes);
@@ -889,13 +845,13 @@ public class ClosureInfo extends DBInfo {
             template, closureRuleMap, false, ClosureResult.SIMPLE_RULE);
         assert simple == ClosureResult.SIMPLE_RULE
             || simple == ClosureResult.NO_CLOSURE_RULE;
-        if (simple.hasClosure())
+        if (simple.hasClosure)
             return simple;
 
         final ClosureResult implRes = getClosurePossibilityInternal(info, node,
             template, implClosureRuleMap, searchWithPrefix,
             ClosureResult.SIMPLE_RULE_IMPL);
-        if (implRes.hasClosure())
+        if (implRes.hasClosure)
             return implRes;
 
         if (searchWithPrefix && info.hasImplPrefix()) {
@@ -919,8 +875,7 @@ public class ClosureInfo extends DBInfo {
             final ParseNode core = template.extractNode(input);
             if (core == null)
                 continue;
-            if (getClosurePossibility(info, core, template, true).hasClosure())
-            {
+            if (getClosurePossibility(info, core, template, true).hasClosure) {
                 closureProperty(info, template, core, true, true);
                 return true;
             }

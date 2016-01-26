@@ -66,7 +66,7 @@ public class GMFFUserTextEscapes implements Comparable<GMFFUserTextEscapes> {
     {
 
         this.exportType = exportType;
-        escapePairList = new ArrayList<EscapePair>(escapePairs.length);
+        escapePairList = new ArrayList<>(escapePairs.length);
         for (final EscapePair escapePair : escapePairs)
             escapePairList.add(escapePair);
     }

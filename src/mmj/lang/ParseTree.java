@@ -231,8 +231,8 @@ public class ParseTree {
      *             RPN (null statment or RPN incomplete.)
      */
     public ParseTree(final RPNStep[] rpn) {
-        final Deque<ParseNode> stack = new ArrayDeque<ParseNode>();
-        final List<ParseNode> backrefs = new ArrayList<ParseNode>();
+        final Deque<ParseNode> stack = new ArrayDeque<>();
+        final List<ParseNode> backrefs = new ArrayList<>();
         for (final RPNStep s : rpn)
             if (s != null && s.stmt == null && s.backRef > 0)
                 stack.push(backrefs.get(s.backRef - 1));

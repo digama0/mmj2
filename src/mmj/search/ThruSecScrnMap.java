@@ -20,11 +20,12 @@ import java.awt.event.ActionListener;
 
 import javax.swing.DefaultComboBoxModel;
 
-public class ThruSecScrnMap extends SearchOptionsJComboBox implements
-    ActionListener
+public class ThruSecScrnMap extends SearchOptionsJComboBox
+    implements ActionListener
 {
 
-    public ThruSecScrnMap(final DefaultComboBoxModel defaultcomboboxmodel,
+    public ThruSecScrnMap(
+        final DefaultComboBoxModel<String> defaultcomboboxmodel,
         final String[][] as)
     {
         super(46, defaultcomboboxmodel);

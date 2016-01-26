@@ -102,10 +102,10 @@ public class TheoremStmtGroup {
 
         this.mmtTheoremFile = mmtTheoremFile;
 
-        dvSrcStmtList = new ArrayList<SrcStmt>(
+        dvSrcStmtList = new ArrayList<>(
             TlConstants.DEFAULT_DV_SRC_STMT_LIST_SIZE);
 
-        logHypSrcStmtList = new ArrayList<SrcStmt>(
+        logHypSrcStmtList = new ArrayList<>(
             TlConstants.DEFAULT_LOG_HYP_SRC_STMT_LIST_SIZE);
 
         final Statementizer statementizer = mmtTheoremFile
@@ -121,8 +121,8 @@ public class TheoremStmtGroup {
         wasLogHypAppended = new boolean[n];
         assignedLogHypSeq = new int[n];
 
-        theoremStmtGroupUsedList = new LinkedList<TheoremStmtGroup>();
-        usedByTheoremStmtGroupList = new LinkedList<TheoremStmtGroup>();
+        theoremStmtGroupUsedList = new LinkedList<>();
+        usedByTheoremStmtGroupList = new LinkedList<>();
 
         validateStmtGroupData(logicalSystem, messages, tlPreferences);
 
@@ -953,8 +953,8 @@ public class TheoremStmtGroup {
         if (djVarsOption == DjVarsOption.NoUpdate) {}
         else {
 
-            final List<DjVars> mandDjVarsUpdateList = new LinkedList<DjVars>();
-            final List<DjVars> optDjVarsUpdateList = new LinkedList<DjVars>();
+            final List<DjVars> mandDjVarsUpdateList = new LinkedList<>();
+            final List<DjVars> optDjVarsUpdateList = new LinkedList<>();
             buildMandAndOptDjVarsUpdateLists(logicalSystem.getSymTbl(),
                 mandDjVarsUpdateList, optDjVarsUpdateList);
 
@@ -1064,8 +1064,8 @@ public class TheoremStmtGroup {
 
         if (!dvSrcStmtList.isEmpty()) {
 
-            final List<DjVars> mandDjVarsUpdateList = new LinkedList<DjVars>();
-            final List<DjVars> optDjVarsUpdateList = new LinkedList<DjVars>();
+            final List<DjVars> mandDjVarsUpdateList = new LinkedList<>();
+            final List<DjVars> optDjVarsUpdateList = new LinkedList<>();
             buildMandAndOptDjVarsUpdateLists(logicalSystem.getSymTbl(),
                 mandDjVarsUpdateList, optDjVarsUpdateList);
 
@@ -1121,7 +1121,7 @@ public class TheoremStmtGroup {
         final List<DjVars> mandDjVarsUpdateList,
         final List<DjVars> optDjVarsUpdateList) throws LangException
     {
-        final List<List<String>> inputDjVarsStmtList = new ArrayList<List<String>>();
+        final List<List<String>> inputDjVarsStmtList = new ArrayList<>();
         for (final SrcStmt currSrcStmt : dvSrcStmtList)
             // note: DjVar Vars used in an existing theorem must
             // be defined in the mandatory or optional

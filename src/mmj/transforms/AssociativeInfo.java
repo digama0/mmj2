@@ -49,8 +49,8 @@ public class AssociativeInfo extends DBInfo {
      * <p>
      * It is a map: Statement ( ( A F B ) in the example) -> map : constant
      * elements ( + in the example) -> map : possible properties ( _ e. CC in
-     * the example) -> assert array. There could be many properties (
-     * {" _ e. CC" , "_ e. RR" } for example ).
+     * the example) -> assert array. There could be many properties ( {
+     * " _ e. CC" , "_ e. RR" } for example ).
      * <p>
      * The result array has 2 elements:
      * <ul>
@@ -195,9 +195,10 @@ public class AssociativeInfo extends DBInfo {
                 continue;
 
             if (!replInfo.isFullReplaceStatement(stmt)) {
-                output.dbgMessage(dbg, "I-TR-DBG found associative assrts "
-                    + "but it has problems with replace: %s: %s", assrt,
-                    assrt.getFormula());
+                output.dbgMessage(dbg,
+                    "I-TR-DBG found associative assrts "
+                        + "but it has problems with replace: %s: %s",
+                    assrt, assrt.getFormula());
                 return;
             }
 
@@ -207,8 +208,8 @@ public class AssociativeInfo extends DBInfo {
             if (assoc[i] != null)
                 continue;
 
-            output.dbgMessage(dbg, "I-TR-DBG associative assrts: %d. %s: %s",
-                i, assrt, assrt.getFormula());
+            output.dbgMessage(dbg, "I-TR-DBG associative assrts: %d. %s: %s", i,
+                assrt, assrt.getFormula());
             assoc[i] = assrt;
             return;
         }
@@ -246,7 +247,7 @@ public class AssociativeInfo extends DBInfo {
                     continue;
 
                 if (!info.trManager.clInfo.getClosurePossibility(info, child,
-                    template, true).hasClosure())
+                    template, true).hasClosure)
                     return false;
             }
             else if (!constSubst.constMap[i].isDeepDup(child)) // check constant

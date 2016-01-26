@@ -15,17 +15,21 @@
 
 package mmj.search;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import mmj.lang.*;
 import mmj.pa.PaConstants;
 
 public class SearchUnifier {
 
+    private final Deque<ParseNode> unifyNodeStack;
+    private final Deque<ParseNode> compareNodeStack;
+    private int varHypSubstArrayCnt;
+    private final VarHypSubst[] varHypSubstArray;
+
     public SearchUnifier() {
-        unifyNodeStack = new ParseNode[PaConstants.UNIFIER_NODE_STACK_SIZE];
-        compareNodeStack = new ParseNode[PaConstants.UNIFIER_NODE_STACK_SIZE];
+        unifyNodeStack = new ArrayDeque<>();
+        compareNodeStack = new ArrayDeque<>();
         varHypSubstArrayCnt = -1;
         varHypSubstArray = new VarHypSubst[PaConstants.UNIFIER_MAX_VAR_HYPS];
         varHypSubstArrayCnt = -1;
@@ -175,8 +179,7 @@ public class SearchUnifier {
             if (!s.equals(parseTree1.getLevelOneTwo()))
                 return false;
             final Stmt stmt = parseTree.getRoot().stmt;
-            if (stmt != parseTree1.getRoot().stmt
-                && !(stmt instanceof VarHyp))
+            if (stmt != parseTree1.getRoot().stmt && !(stmt instanceof VarHyp))
                 return false;
         }
         return parseTree.getMaxDepth() <= parseTree1.getMaxDepth()
@@ -211,7 +214,7 @@ public class SearchUnifier {
     {
         for (final mmj.lang.ParseNode.SubTreeIterator subtreeiterator = parseTree
             .getRoot().subTreeIterator(excludeVarHyps); subtreeiterator
-            .hasNext();)
+                .hasNext();)
         {
             final ParseNode parseNode = subtreeiterator.next();
             if (unifyExprStandard(parseNode, parseTree1.getRoot()))
@@ -241,7 +244,7 @@ public class SearchUnifier {
     {
         for (final mmj.lang.ParseNode.SubTreeIterator subtreeiterator = parseTree
             .getRoot().subTreeIterator(excludeVarHyps); subtreeiterator
-            .hasNext();)
+                .hasNext();)
         {
             final ParseNode parseNode = subtreeiterator.next();
             if (unifyExprStandard(parseNode, parseTree1.getRoot()))
@@ -256,7 +259,7 @@ public class SearchUnifier {
     {
         for (final mmj.lang.ParseNode.SubTreeIterator subtreeiterator = parseTree
             .getRoot().subTreeIterator(excludeVarHyps); subtreeiterator
-            .hasNext();)
+                .hasNext();)
         {
             final ParseNode parseNode = subtreeiterator.next();
             if (unifyExprStandard(parseTree1.getRoot(), parseNode))
@@ -271,7 +274,7 @@ public class SearchUnifier {
     {
         for (final mmj.lang.ParseNode.SubTreeIterator subtreeiterator = parseTree
             .getRoot().subTreeIterator(excludeVarHyps); subtreeiterator
-            .hasNext();)
+                .hasNext();)
         {
             final ParseNode parseNode = subtreeiterator.next();
             if (unifyExprStandard(parseTree1.getRoot(), parseNode))
@@ -309,7 +312,7 @@ public class SearchUnifier {
     private boolean checkVarHypSubstEQ(final int numHyps) {
         if (varHypSubstArrayCnt != numHyps)
             return false;
-        final List<VarHyp> arraylist = new ArrayList<VarHyp>(
+        final List<VarHyp> arraylist = new ArrayList<>(
             varHypSubstArrayCnt + 1);
         for (int j = 0; j < varHypSubstArrayCnt; j++) {
             if (!(varHypSubstArray[j].sourceNode.stmt instanceof VarHyp))
@@ -320,9 +323,4 @@ public class SearchUnifier {
 
         return arraylist.size() == numHyps;
     }
-
-    private final ParseNode[] unifyNodeStack;
-    private final ParseNode[] compareNodeStack;
-    private int varHypSubstArrayCnt;
-    private final VarHypSubst[] varHypSubstArray;
 }

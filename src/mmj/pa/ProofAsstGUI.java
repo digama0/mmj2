@@ -484,8 +484,8 @@ public class ProofAsstGUI {
             @Override
             public void mouseClicked(final MouseEvent e) {
                 if (e.getClickCount() == 2)
-                    startRequestAction(stepSelectorChoiceAction(new StepRequest(
-                        PaConstants.STEP_REQUEST_SELECTOR_SEARCH)));
+                    startRequestAction(
+                        stepSelectorChoiceAction(StepRequest.SelectorSearch));
             }
         });
 
@@ -764,8 +764,7 @@ public class ProofAsstGUI {
         i.setText(PaConstants.PA_GUI_POPUP_MENU_REFORMAT_SWAP_ALT_STEP_TEXT);
         m.add(i);
 
-        i = new JMenuItem(stepSelectorChoiceAction(
-            new StepRequest(PaConstants.STEP_REQUEST_SELECTOR_SEARCH)));
+        i = new JMenuItem(stepSelectorChoiceAction(StepRequest.SelectorSearch));
         i.setText(PaConstants.PA_GUI_UNIFY_MENU_STEP_SELECTOR_SEARCH_ITEM_TEXT);
         m.add(i);
 
@@ -837,39 +836,69 @@ public class ProofAsstGUI {
         final JMenu fileMenu = new JMenu(PaConstants.PA_GUI_FILE_MENU_TITLE);
         fileMenu.setMnemonic(KeyEvent.VK_F);
 
-        final JMenuItem fileSaveItem = new JMenuItem(new AbstractAction() {
+        JMenuItem i = new JMenuItem(new AbstractAction() {
             public void actionPerformed(final ActionEvent e) {
                 saveFile(false);
             }
         });
-        fileSaveItem.setText(PaConstants.PA_GUI_FILE_MENU_SAVE_ITEM_TEXT);
-        fileSaveItem.setMnemonic(KeyEvent.VK_S);
-        fileSaveItem.setAccelerator(
+        i.setText(PaConstants.PA_GUI_FILE_MENU_SAVE_ITEM_TEXT);
+        i.setMnemonic(KeyEvent.VK_S);
+        i.setAccelerator(
             KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
-        fileMenu.add(fileSaveItem);
+        fileMenu.add(i);
 
-        final JMenuItem fileNewItem = new JMenuItem(new WorksheetRequest() {
+        i = new JMenuItem(PaConstants.PA_GUI_FILE_MENU_SAVE_AS_ITEM_TEXT);
+        i.addActionListener(e -> {
+            final File oldFile = fileChooser.getSelectedFile();
+
+            final int returnVal = fileChooser.showSaveDialog(getMainFrame());
+
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                final File newFile = fileChooser.getSelectedFile();
+                if (newFile.exists()) {
+                    if (getYesNoAnswer(PaConstants.ERRMSG_PA_GUI_FILE_EXISTS,
+                        newFile.getAbsolutePath()) == JOptionPane.YES_OPTION)
+                        saveProofTextFile(newFile);
+                    else
+                        fileChooser.setSelectedFile(oldFile);
+                }
+                else
+                    saveProofTextFile(newFile);
+            }
+            updateMainFrameTitleIfNecessary(false);
+
+            // this prevents a title and filename update if the
+            // user changes the THEOREM= label now...because they
+            // used SaveAs we are taking them at their word that
+            // this is the file name to use regardless!!!
+
+            // tricky - avoid title update
+            proofAsstPreferences.proofTheoremLabel.set(null);
+        });
+        i.setMnemonic(KeyEvent.VK_A);
+        fileMenu.add(i);
+
+        i = new JMenuItem(new WorksheetRequest() {
             @Override
             void send() {
                 w = proofAsst.startNewProof(getNewTheoremLabel());
             }
         });
-        fileNewItem.setText(PaConstants.PA_GUI_FILE_MENU_NEW_ITEM_TEXT);
-        fileNewItem.setMnemonic(KeyEvent.VK_N);
-        fileMenu.add(fileNewItem);
+        i.setText(PaConstants.PA_GUI_FILE_MENU_NEW_ITEM_TEXT);
+        i.setMnemonic(KeyEvent.VK_N);
+        fileMenu.add(i);
 
-        final JMenuItem fileNewNextItem = new JMenuItem(new WorksheetRequest() {
+        i = new JMenuItem(new WorksheetRequest() {
             @Override
             void send() {
                 w = proofAsst.startNewNextProof(getCurrProofMaxSeq());
             }
         });
-        fileNewNextItem
-            .setText(PaConstants.PA_GUI_FILE_MENU_NEW_NEXT_ITEM_TEXT);
-        fileNewNextItem.setMnemonic(KeyEvent.VK_E);
-        fileMenu.add(fileNewNextItem);
+        i.setText(PaConstants.PA_GUI_FILE_MENU_NEW_NEXT_ITEM_TEXT);
+        i.setMnemonic(KeyEvent.VK_E);
+        fileMenu.add(i);
 
-        final JMenuItem fileOpenItem = new JMenuItem(new Request() {
+        i = new JMenuItem(new Request() {
             String s;
             File file;
 
@@ -919,125 +948,99 @@ public class ProofAsstGUI {
             }
 
         });
-        fileOpenItem.setText(PaConstants.PA_GUI_FILE_MENU_OPEN_ITEM_TEXT);
-        fileOpenItem.setMnemonic(KeyEvent.VK_P);
-        fileOpenItem.setAccelerator(
+        i.setText(PaConstants.PA_GUI_FILE_MENU_OPEN_ITEM_TEXT);
+        i.setMnemonic(KeyEvent.VK_P);
+        i.setAccelerator(
             KeyStroke.getKeyStroke(KeyEvent.VK_P, ActionEvent.CTRL_MASK));
-        fileMenu.add(fileOpenItem);
+        fileMenu.add(i);
 
-        final JMenuItem fileGetProofItem = new JMenuItem(
-            new WorksheetRequest()
-        {
-                Theorem oldTheorem;
+        i = new JMenuItem(new WorksheetRequest() {
+            Theorem oldTheorem;
 
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    if ((oldTheorem = getTheorem()) != null)
-                        super.actionPerformed(e);
-                }
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                if ((oldTheorem = getTheorem()) != null)
+                    super.actionPerformed(e);
+            }
 
-                @Override
-                void send() {
-                    w = proofAsst.getExistingProof(oldTheorem, true,
-                        HypsOrder.Correct);
-                }
-            });
-        fileGetProofItem
-            .setText(PaConstants.PA_GUI_FILE_MENU_GET_PROOF_ITEM_TEXT);
-        fileGetProofItem.setMnemonic(KeyEvent.VK_G);
-        fileGetProofItem.setAccelerator(
+            @Override
+            void send() {
+                w = proofAsst.getExistingProof(oldTheorem, true,
+                    HypsOrder.Correct);
+            }
+        });
+        i.setText(PaConstants.PA_GUI_FILE_MENU_GET_PROOF_ITEM_TEXT);
+        i.setMnemonic(KeyEvent.VK_G);
+        i.setAccelerator(
             KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.CTRL_MASK));
-        fileMenu.add(fileGetProofItem);
+        fileMenu.add(i);
 
-        final JMenuItem fileGetFwdProofItem = new JMenuItem(
-            new WorksheetRequest()
-        {
-                @Override
-                void send() {
-                    w = proofAsst.getNextProof(getCurrProofMaxSeq(), //
-                        true, // proof unified
-                        HypsOrder.Correct);
-                }
-            });
-        fileGetFwdProofItem
-            .setText(PaConstants.PA_GUI_FILE_MENU_GET_FWD_PROOF_ITEM_TEXT);
-        fileGetFwdProofItem.setMnemonic(KeyEvent.VK_F);
-        fileGetFwdProofItem.setAccelerator(
+        i = new JMenuItem(new WorksheetRequest() {
+            @Override
+            void send() {
+                w = proofAsst.getNextProof(getCurrProofMaxSeq(), //
+                    true, // proof unified
+                    HypsOrder.Correct);
+            }
+        });
+        i.setText(PaConstants.PA_GUI_FILE_MENU_GET_FWD_PROOF_ITEM_TEXT);
+        i.setMnemonic(KeyEvent.VK_F);
+        i.setAccelerator(
             KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK));
-        fileMenu.add(fileGetFwdProofItem);
+        fileMenu.add(i);
 
-        final JMenuItem fileGetBwdProofItem = new JMenuItem(
-            new WorksheetRequest()
-        {
-                @Override
-                void send() {
-                    w = proofAsst.getPreviousProof(getCurrProofMaxSeq(), //
-                        true, // proof unified
-                        HypsOrder.Correct);
-                }
-            });
-        fileGetBwdProofItem
-            .setText(PaConstants.PA_GUI_FILE_MENU_GET_BWD_PROOF_ITEM_TEXT);
-        fileGetBwdProofItem.setMnemonic(KeyEvent.VK_B);
-        fileGetBwdProofItem.setAccelerator(
+        i = new JMenuItem(new WorksheetRequest() {
+            @Override
+            void send() {
+                w = proofAsst.getPreviousProof(getCurrProofMaxSeq(), //
+                    true, // proof unified
+                    HypsOrder.Correct);
+            }
+        });
+        i.setText(PaConstants.PA_GUI_FILE_MENU_GET_BWD_PROOF_ITEM_TEXT);
+        i.setMnemonic(KeyEvent.VK_B);
+        i.setAccelerator(
             KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK));
-        fileMenu.add(fileGetBwdProofItem);
+        fileMenu.add(i);
 
-        final JMenuItem fileCloseItem = new JMenuItem(new AbstractAction() {
-            public void actionPerformed(final ActionEvent e) {
-                if (saveIfAskedBeforeAction(false,
-                    PaConstants.PA_GUI_ACTION_BEFORE_SAVE_CLOSE) == JOptionPane.CANCEL_OPTION)
-                    return;
+        i = new JMenuItem(PaConstants.PA_GUI_FILE_MENU_CLOSE_ITEM_TEXT);
+        i.addActionListener(e -> {
+            if (saveIfAskedBeforeAction(false,
+                PaConstants.PA_GUI_ACTION_BEFORE_SAVE_CLOSE) == JOptionPane.CANCEL_OPTION)
+                return;
 
-                setProofTextAreaText("", true);
+            setProofTextAreaText("", true);
 
-                updateMainFrameTitle(null);
+            updateMainFrameTitle(null);
 
-                clearUndoRedoCaches();
-                savedSinceNew = false;
-                disposeOfOldSelectorDialog();
-            }
+            clearUndoRedoCaches();
+            savedSinceNew = false;
+            disposeOfOldSelectorDialog();
         });
-        fileCloseItem.setText(PaConstants.PA_GUI_FILE_MENU_CLOSE_ITEM_TEXT);
-        fileCloseItem.setMnemonic(KeyEvent.VK_L);
-        fileMenu.add(fileCloseItem);
-
-        final JMenuItem fileSaveAsItem = new JMenuItem(new AbstractAction() {
-            public void actionPerformed(final ActionEvent e) {
-                final File oldFile = fileChooser.getSelectedFile();
-
-                final int returnVal = fileChooser
-                    .showSaveDialog(getMainFrame());
-
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    final File newFile = fileChooser.getSelectedFile();
-                    if (newFile.exists()) {
-                        if (getYesNoAnswer(
-                            PaConstants.ERRMSG_PA_GUI_FILE_EXISTS, newFile
-                                .getAbsolutePath()) == JOptionPane.YES_OPTION)
-                            saveProofTextFile(newFile);
-                        else
-                            fileChooser.setSelectedFile(oldFile);
-                    }
-                    else
-                        saveProofTextFile(newFile);
-                }
-                updateMainFrameTitleIfNecessary(false);
-
-                // this prevents a title and filename update if the
-                // user changes the THEOREM= label now...because they
-                // used SaveAs we are taking them at their word that
-                // this is the file name to use regardless!!!
-
-                // tricky - avoid title update
-                proofAsstPreferences.proofTheoremLabel.set(null);
-            }
-        });
-        fileSaveAsItem.setText(PaConstants.PA_GUI_FILE_MENU_SAVE_AS_ITEM_TEXT);
-        fileSaveAsItem.setMnemonic(KeyEvent.VK_A);
-        fileMenu.add(fileSaveAsItem);
+        i.setMnemonic(KeyEvent.VK_L);
+        fileMenu.add(i);
 
         fileMenu.add(fileExportViaGMFFItem());
+
+        i = new JMenuItem(PaConstants.PA_GUI_FILE_MENU_LOAD_SETTINGS);
+        i.addActionListener(ev -> {
+            try {
+                proofAsstPreferences.getStore().load(true);
+            } catch (final IOException e) {
+                e.printStackTrace();
+            }
+        });
+        fileMenu.add(i);
+
+        i = new JMenuItem(PaConstants.PA_GUI_FILE_MENU_SAVE_SETTINGS);
+        i.addActionListener(ev -> {
+            try {
+                proofAsstPreferences.getStore().save();
+            } catch (final IOException e) {
+                e.printStackTrace();
+            }
+        });
+        fileMenu.add(i);
 
         final JMenuItem fileExitItem = new JMenuItem(
             PaConstants.PA_GUI_FILE_MENU_EXIT_ITEM_TEXT);
@@ -1427,8 +1430,7 @@ public class ProofAsstGUI {
         unifyMenu.add(startUnifyEraseNoConvertItem);
 
         final JMenuItem startUnifyWStepSelectorSearchItem = new JMenuItem(
-            stepSelectorChoiceAction(
-                new StepRequest(PaConstants.STEP_REQUEST_SELECTOR_SEARCH)));
+            stepSelectorChoiceAction(StepRequest.SelectorSearch));
         startUnifyWStepSelectorSearchItem.setText(
             PaConstants.PA_GUI_UNIFY_MENU_STEP_SELECTOR_SEARCH_ITEM_TEXT);
         startUnifyWStepSelectorSearchItem.setMnemonic(KeyEvent.VK_S);
@@ -1705,9 +1707,8 @@ public class ProofAsstGUI {
                     JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
                 documentationText.setText("<html>" + list[0].documentation());
 
-                final Vector<BatchCommand> commands = new Vector<BatchCommand>();
-                final JList<BatchCommand> commandList = new JList<BatchCommand>(
-                    list);
+                final Vector<BatchCommand> commands = new Vector<>();
+                final JList<BatchCommand> commandList = new JList<>(list);
                 commandList.setLayoutOrientation(JList.VERTICAL);
                 commandList.setSelectedIndex(0);
                 commandList
@@ -2125,12 +2126,12 @@ public class ProofAsstGUI {
             @Override
             void receive() {
                 if (stepRequest != null
-                    && (stepRequest.request == PaConstants.STEP_REQUEST_GENERAL_SEARCH
-                        || stepRequest.request == PaConstants.STEP_REQUEST_SEARCH_OPTIONS))
+                    && (stepRequest == StepRequest.GeneralSearch
+                        || stepRequest == StepRequest.SearchOptions))
                     proofAsstPreferences.getSearchMgr()
                         .execShowSearchOptions(w);
                 else if (stepRequest != null
-                    && stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH
+                    && stepRequest == StepRequest.StepSearch
                     && w.searchOutput != null)
                 {
                     final String s = ProofWorksheet
@@ -2147,8 +2148,7 @@ public class ProofAsstGUI {
                 }
                 else {
                     displayProofWorksheet(w, false);
-                    if (stepRequest != null
-                        && stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_CHOICE)
+                    if (stepRequest instanceof StepRequest.SelectorChoice)
                         getMainFrame().setVisible(true);
                 }
             }
@@ -2170,18 +2170,15 @@ public class ProofAsstGUI {
     }
 
     private JMenuItem searchOptionsItem() {
-        return new JMenuItem(searchChoiceAction(
-            new StepRequest(PaConstants.STEP_REQUEST_SEARCH_OPTIONS)));
+        return new JMenuItem(searchChoiceAction(StepRequest.SearchOptions));
     }
 
     private JMenuItem stepSearchItem() {
-        return new JMenuItem(searchChoiceAction(
-            new StepRequest(PaConstants.STEP_REQUEST_STEP_SEARCH)));
+        return new JMenuItem(searchChoiceAction(StepRequest.StepSearch));
     }
 
     private JMenuItem generalSearchItem() {
-        return new JMenuItem(searchChoiceAction(
-            new StepRequest(PaConstants.STEP_REQUEST_GENERAL_SEARCH)));
+        return new JMenuItem(searchChoiceAction(StepRequest.GeneralSearch));
     }
 
     public Request searchChoiceAction(final StepRequest stepRequest) {
@@ -2449,6 +2446,10 @@ public class ProofAsstGUI {
             if (proofAsstPreferences.maximized.get())
                 mainFrame.setExtendedState(
                     mainFrame.getExtendedState() | Frame.MAXIMIZED_BOTH);
+            mainFrame.toFront();
+            mainFrame.requestFocus();
+            proofTextPane.requestFocusInWindow();
+            mainFrame.repaint();
         });
     }
 

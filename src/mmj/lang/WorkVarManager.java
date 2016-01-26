@@ -72,9 +72,9 @@ public class WorkVarManager {
     public WorkVarManager(final Grammar grammar) {
         final int len = grammar.getVarHypTypSet().size();
 
-        definedTypCdList = new ArrayList<Cnst>(len);
-        definedWorkVarPrefixList = new ArrayList<String>(len);
-        definedNbrWorkVarsList = new ArrayList<Integer>(len);
+        definedTypCdList = new ArrayList<>(len);
+        definedWorkVarPrefixList = new ArrayList<>(len);
+        definedNbrWorkVarsList = new ArrayList<>(len);
     }
 
     /**

@@ -541,11 +541,9 @@ public class DerivationStep extends ProofStepStmt {
 
         // localRefField already has "#" stripped off and we know
         // that the remainder has length >= 0.
-        if (localRefField.length() > 0)
-            localRef = (ProofStepStmt)w
-                .findFirstMatchingRefOrStep(localRefField);
-        else
-            localRef = w.findMatchingStepFormula(getFormula(), this);
+        setLocalRef(localRefField.isEmpty()
+            ? w.findMatchingStepFormula(getFormula(), this)
+            : (ProofStepStmt)w.findFirstMatchingRefOrStep(localRefField));
 
         if (localRef != null)
             while (localRef.getLocalRef() != null)
@@ -660,7 +658,10 @@ public class DerivationStep extends ProofStepStmt {
             }
         }
         sb.append(PaConstants.FIELD_DELIMITER_COLON);
-        if (getRefLabel() != null)
+        if (getLocalRef() != null)
+            sb.append(PaConstants.LOCAL_REF_ESCAPE_CHAR)
+                .append(getLocalRef().getStep());
+        else if (getRefLabel() != null)
             sb.append(getRefLabel());
         return sb;
     }
@@ -837,7 +838,7 @@ public class DerivationStep extends ProofStepStmt {
 
         int questionMarks = 0;
 
-        final List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<>();
 
         if (hypField != null && !hypField.equals("")) {
 
@@ -1051,7 +1052,11 @@ public class DerivationStep extends ProofStepStmt {
             s += delim + h;
             delim = ",";
         }
-        return s + ":" + getRefLabel() + " " + getFormula();
+        final ProofStepStmt lref = getLocalRef();
+        final String ref = getRefLabel();
+        return s + ":"
+            + (lref != null ? "#" + lref.getStep() : ref != null ? ref : "")
+            + " " + getFormula();
     }
 
     public void setHypStep(final int i, final String s) {
@@ -1089,6 +1094,15 @@ public class DerivationStep extends ProofStepStmt {
     @Override
     public ProofStepStmt getLocalRef() {
         return localRef;
+    }
+
+    public void setLocalRef(final ProofStepStmt localRef) {
+        if (this.localRef == null) {
+            this.localRef = localRef;
+            w.stepsWithLocalRefs.add(this);
+        }
+        else
+            this.localRef = localRef;
     }
 
     public boolean isGeneratedByDeriveFeature() {

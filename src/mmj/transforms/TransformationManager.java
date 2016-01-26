@@ -6,11 +6,17 @@
 //*****************************************************************************/
 package mmj.transforms;
 
-import java.util.List;
+import java.util.*;
+import java.util.function.Predicate;
 
 import mmj.lang.*;
 import mmj.pa.*;
+import mmj.pa.MacroManager.CallbackType;
 import mmj.transforms.ImplicationInfo.ExtractImplResult;
+import mmj.transforms.Prover.AssrtProver;
+import mmj.transforms.Prover.ProverResult;
+import mmj.transforms.Provers.UseWhenPossible;
+import mmj.util.TopologicalSorter;
 import mmj.verify.VerifyProofs;
 
 /**
@@ -61,6 +67,10 @@ public class TransformationManager {
 
     public final CommutativeInfo comInfo;
 
+    public final List<Prover> provers;
+
+    public final ProofAsst proofAsst;
+
     /**
      * Note: Here will be performed a lot of work during the construction of
      * this class!
@@ -70,16 +80,18 @@ public class TransformationManager {
      *            "provable logic statement type"
      * @param messages the message manager
      * @param verifyProofs the proof verification is needed for some actions
+     * @param proofAsst The proof asst
      * @param supportPrefix when it is true auto-transformation component will
      *            try to use implication prefix in transformations
      * @param debugOutput when it is true auto-transformation component will
      *            produce a lot of debug output
      */
-    public TransformationManager(final List<Assrt> assrtList,
-        final Cnst provableLogicStmtTyp, final Messages messages,
-        final VerifyProofs verifyProofs, final boolean supportPrefix,
-        final boolean debugOutput)
+    public TransformationManager(final ProofAsst proofAsst,
+        final List<Assrt> assrtList, final Cnst provableLogicStmtTyp,
+        final Messages messages, final VerifyProofs verifyProofs,
+        final boolean supportPrefix, final boolean debugOutput)
     {
+        this.proofAsst = proofAsst;
         output = new TrOutput(messages);
         this.verifyProofs = verifyProofs;
         this.provableLogicStmtTyp = provableLogicStmtTyp;
@@ -102,6 +114,75 @@ public class TransformationManager {
             output, dbg);
 
         comInfo = new CommutativeInfo(eqInfo, clInfo, assrtList, output, dbg);
+
+        provers = new ArrayList<>();
+
+        setUpProvers(assrtList);
+    }
+
+    private void setUpProvers(final List<Assrt> assrtList) {
+        if (proofAsst.macroManager != null) {
+            proofAsst.macroManager.set("trManager", this);
+            proofAsst.macroManager.set("assrtList", assrtList);
+            proofAsst.macroManager
+                .runCallback(CallbackType.TRANSFORMATION_SET_UP);
+        }
+        else
+            buildUWPProvers(assrtList, (assrt) -> true);
+    }
+
+    /**
+     * Create {@link UseWhenPossible} provers for eligible assrts in the
+     * database.
+     *
+     * @param assrtList The list of available assrts, sorted by number of
+     *            loghyps
+     * @param isLegal A filter for the assrtList: any illegal assrts will not be
+     *            used to build provers
+     */
+    public void buildUWPProvers(final List<Assrt> assrtList,
+        final Predicate<Assrt> isLegal)
+    {
+        final List<AssrtProver> extraProvers = new ArrayList<>();
+        assrtLoop: for (final Assrt assrt : assrtList)
+            if (!isLegal.test(assrt))
+                continue;
+            else if (assrt.getLogHypArrayLength() == 0)
+                provers.add(new Provers.UseWhenPossible(assrt));
+            else if (assrt
+                .getMandHypArrayLength() == assrt.getLogHypArrayLength()
+                    + assrt.getMandVarHypArray().length)
+            {
+                final int len = assrt.getFormula().getCnt();
+                for (final Hyp hyp : assrt.getMandFrame().hypArray)
+                    if (hyp instanceof LogHyp
+                        && hyp.getFormula().getCnt() >= len)
+                        continue assrtLoop;
+                extraProvers.add(new Provers.UseWhenPossible(assrt));
+            }
+        final Map<Assrt, List<AssrtProver>> map = new HashMap<>();
+        for (final AssrtProver p : extraProvers)
+            for (final AssrtProver p2 : extraProvers)
+                if (p2 != p && p.prove(null,
+                    p2.assrt.getExprParseTree().getRoot()) != null)
+                    map.computeIfAbsent(p.assrt, k -> new ArrayList<>())
+                        .add(p2);
+
+        final TopologicalSorter<AssrtProver> sorter = new TopologicalSorter<>(
+            extraProvers,
+            p -> map.getOrDefault(p.assrt, Collections.emptyList()), true);
+        sorter.sort();
+
+        if (!sorter.getWithLoops().isEmpty()) {
+            final StringBuilder sb = new StringBuilder(
+                TrConstants.ERRMSG_LOOP_IN_TRANSFORMATIONS);
+            for (final AssrtProver p : sorter.getWithLoops())
+                sb.append(p.assrt + " > " + map.get(p.assrt));
+            output.dbgMessage(dbg, sb.toString());
+        }
+        for (final AssrtProver p : sorter.getSorted())
+            if (!sorter.getWithLoops().contains(p))
+                provers.add(p);
     }
 
     // ----------------------------
@@ -125,14 +206,14 @@ public class TransformationManager {
         final boolean[] replAsserts = replInfo.getPossibleReplaces(stmt, info);
 
         boolean isCom = false;
-        final GeneralizedStmt comProp = comInfo
-            .getGenStmtForComNode(node, info);
+        final GeneralizedStmt comProp = comInfo.getGenStmtForComNode(node,
+            info);
         if (comProp != null)
             isCom = true;
 
         boolean isAssoc = false;
-        final GeneralizedStmt assocProp = assocInfo.getGenStmtForAssocNode(
-            node, info);
+        final GeneralizedStmt assocProp = assocInfo.getGenStmtForAssocNode(node,
+            info);
         if (assocProp != null)
             isAssoc = true;
 
@@ -185,11 +266,11 @@ public class TransformationManager {
 
         final ProofStepStmt eqResult = res.getSimpleStep();
 
-        final boolean isNormalOrder = TrUtil.isVarNode(impl.getLogHypArray()[0]
-            .getExprParseTree().getRoot());
+        final boolean isNormalOrder = TrUtil
+            .isVarNode(impl.getLogHypArray()[0].getExprParseTree().getRoot());
 
-        final ProofStepStmt[] hypDerivArray = isNormalOrder ? new ProofStepStmt[]{
-                source, eqResult}
+        final ProofStepStmt[] hypDerivArray = isNormalOrder
+            ? new ProofStepStmt[]{source, eqResult}
             : new ProofStepStmt[]{eqResult, source};
 
         info.finishDerivationStep(hypDerivArray, impl);
@@ -198,16 +279,14 @@ public class TransformationManager {
     /**
      * Tries to unify the derivation step by some automatic transformations
      *
-     * @param proofWorksheet the proof work sheet
-     * @param derivStep the derivation step
+     * @param info The context
+     * @param reverseTransformations True if we should try the reverse
+     *            transformation module
      * @return true if it founds possible unification
      */
     private List<DerivationStep> tryToFindTransformationsCore(
-        final ProofWorksheet proofWorksheet, final DerivationStep derivStep)
+        final WorksheetInfo info, final boolean reverseTransformations)
     {
-        final WorksheetInfo info = new WorksheetInfo(proofWorksheet, derivStep,
-            this);
-
         if (supportImplicationPrefix) {
             // If derivation step has form "prefix -> core", then this prefix
             // could be used in transformations
@@ -220,7 +299,11 @@ public class TransformationManager {
                         extrImplRes.implStatement);
         }
 
-        final ParseNode derivRoot = derivStep.formulaParseTree.getRoot();
+        final ParseNode derivRoot = info.derivStep.formulaParseTree.getRoot();
+        if (reverseTransformations
+            && findReverseTransformations(info, derivRoot, true) != null)
+            return info.newSteps;
+
         final Cnst derivType = derivRoot.stmt.getTyp();
         final Assrt implAssrt = implInfo.getEqImplication(derivType);
         if (implAssrt == null)
@@ -231,12 +314,12 @@ public class TransformationManager {
         final ParseNode dsCanonicalForm = dsTr.getCanonicalNode(info);
 
         output.dbgMessage(dbg, "I-TR-DBG Step %s has canonical form: %s",
-            derivStep, getFormula(dsCanonicalForm));
+            info.derivStep, getFormula(dsCanonicalForm));
 
-        for (final ProofWorkStmt proofWorkStmtObject : proofWorksheet
+        for (final ProofWorkStmt proofWorkStmtObject : info.proofWorksheet
             .getProofWorkStmtList())
         {
-            if (proofWorkStmtObject == derivStep)
+            if (proofWorkStmtObject == info.derivStep)
                 break;
 
             if (!(proofWorkStmtObject instanceof ProofStepStmt))
@@ -253,7 +336,7 @@ public class TransformationManager {
             if (dsCanonicalForm.isDeepDup(candCanon)) {
                 output.dbgMessage(dbg,
                     "I-TR-DBG found canonical forms correspondance: %s and %s",
-                    candidate, derivStep);
+                    candidate, info.derivStep);
                 performTransformation(info, candidate, implAssrt);
 
                 return info.newSteps;
@@ -269,6 +352,45 @@ public class TransformationManager {
         return null;
     }
 
+    public ProofStepStmt findReverseTransformations(final WorksheetInfo info,
+        final ParseNode root, final boolean finish)
+    {
+        final ProofStepStmt stmt = info.getProofStepStmt(root);
+        if (stmt != null) {
+            if (finish)
+                info.derivStep.setLocalRef(stmt);
+            return stmt;
+        }
+        int np = 0;
+        for (final Prover p : provers) {
+            np++;
+            if (np == 14221 && root.toString()
+                .equals("[[[c1, c2, cmul]; co, cc0, caddc]; co, c2]; wceq"))
+                getClass();
+            final ProverResult result = p.prove(info, root);
+            if (result == null)
+                continue;
+            final ProofStepStmt[] hyps = new ProofStepStmt[result.subst.length];
+            for (int i = 0; i < hyps.length; i++)
+                hyps[i] = findReverseTransformations(info, result.subst[i],
+                    false);
+            if (finish) {
+                info.finishDerivationStep(hyps, result.assrt);
+                return info.derivStep;
+            }
+            else
+                return info.createProofStepStmt(root, hyps, result.assrt);
+        }
+        if (finish)
+            return null;
+        final DerivationStep badStep = info.giveUpProofStepStmt(root);
+        final List<DerivationStep> steps = tryToFindTransformationsCore(
+            new WorksheetInfo(info.proofWorksheet, badStep, this), false);
+        if (steps != null)
+            info.newSteps.addAll(steps);
+        return badStep;
+    }
+
     /**
      * The main entry point transformation function. This function tries to find
      * the transformation which leads to the derivation step from earlier steps.
@@ -282,7 +404,9 @@ public class TransformationManager {
         final ProofWorksheet proofWorksheet, final DerivationStep derivStep)
     {
         try {
-            return tryToFindTransformationsCore(proofWorksheet, derivStep);
+            final WorksheetInfo info = new WorksheetInfo(proofWorksheet,
+                derivStep, this);
+            return tryToFindTransformationsCore(info, true);
         } catch (final Throwable e) {
             if (dbg)
                 e.printStackTrace();
@@ -304,8 +428,8 @@ public class TransformationManager {
      */
     protected Formula getFormula(final ParseNode node) {
         final ParseTree tree = new ParseTree(node);
-        final Formula generatedFormula = verifyProofs.convertRPNToFormula(
-            tree.convertToRPN(), "tree");
+        final Formula generatedFormula = verifyProofs
+            .convertRPNToFormula(tree.convertToRPN(), "tree");
         return generatedFormula;
     }
 }

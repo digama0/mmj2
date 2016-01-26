@@ -22,12 +22,12 @@ import javax.swing.DefaultComboBoxModel;
 
 import mmj.lang.LangException;
 
-public class OperScrnMap extends SearchOptionsJComboBox implements
-    ActionListener
+public class OperScrnMap extends SearchOptionsJComboBox
+    implements ActionListener
 {
 
     public OperScrnMap(final int i,
-        final DefaultComboBoxModel defaultcomboboxmodel)
+        final DefaultComboBoxModel<String> defaultcomboboxmodel)
     {
         super(SearchOptionsConstants.OPER_FIELD_ID[i], defaultcomboboxmodel);
         operType = -1;
@@ -89,8 +89,8 @@ public class OperScrnMap extends SearchOptionsJComboBox implements
             if (s.equals(SearchOptionsConstants.OPER_VALUES[i]))
                 return SearchOptionsConstants.OPER_TYPE[i];
 
-        throw new IllegalArgumentException(LangException.format(
-            SearchOptionsConstants.ERRMSG_OPER_SEL_INVALID, s));
+        throw new IllegalArgumentException(LangException
+            .format(SearchOptionsConstants.ERRMSG_OPER_SEL_INVALID, s));
     }
 
     private int operType;

@@ -98,7 +98,7 @@ public class ScopeFrame {
         final DistinctVariablesStmt[] distinctVariablesStmtArray)
     {
 
-        final List<DjVars> dvList = new ArrayList<DjVars>();
+        final List<DjVars> dvList = new ArrayList<>();
 
         final Var[][] dvGroupArray = new Var[distinctVariablesStmtArray.length][];
         for (int i = 0; i < distinctVariablesStmtArray.length; i++)
@@ -186,7 +186,7 @@ public class ScopeFrame {
      */
     public static List<List<Var>> consolidateDvGroups(final DjVars[] dvArray) {
 
-        final List<List<Var>> dvGroupList = new ArrayList<List<Var>>();
+        final List<List<Var>> dvGroupList = new ArrayList<>();
 
         // "done" is a parallel array for dvArray. done[i] set to
         // true when dvArray[i] has been stored in the output.
@@ -200,7 +200,7 @@ public class ScopeFrame {
         // corresponding dvArray elements can be marked "done" --
         // and if the candidate is rejected, the checked contents
         // are discarded (this saves an extra scan of dvArray).
-        final List<Integer> checked = new ArrayList<Integer>();
+        final List<Integer> checked = new ArrayList<>();
 
         // choices are to insert a new Var just *before* the end
         // of a dvGroup's last Var or *at* the end. See below...
@@ -240,7 +240,7 @@ public class ScopeFrame {
                     continue;
 
                 // the minimum length of a dvGroup is 2
-                final List<Var> dvGroup = new ArrayList<Var>();
+                final List<Var> dvGroup = new ArrayList<>();
                 dvGroup.add(dvArray[i].getVarLo());
                 dvGroup.add(dvArray[i].getVarHi());
                 done[i] = true;
@@ -310,7 +310,7 @@ public class ScopeFrame {
     public ScopeFrame(final ScopeDef scopeDef, final int maxSeq) {
 
         if (maxSeq < Integer.MAX_VALUE) {
-            final List<Hyp> arrayList = new ArrayList<Hyp>(
+            final List<Hyp> arrayList = new ArrayList<>(
                 scopeDef.scopeVarHyp.size());
             for (final Hyp hyp : scopeDef.scopeVarHyp)
                 if (hyp.getSeq() < maxSeq)
@@ -321,7 +321,7 @@ public class ScopeFrame {
             hypArray = scopeDef.scopeVarHyp
                 .toArray(new Hyp[scopeDef.scopeVarHyp.size()]);
 
-        final List<DjVars> arrayList = new ArrayList<DjVars>(
+        final List<DjVars> arrayList = new ArrayList<>(
             scopeDef.scopeDjVars.size());
         for (final DjVars djVars : scopeDef.scopeDjVars)
             if (djVars.getVarLo().getSeq() < maxSeq
@@ -343,7 +343,7 @@ public class ScopeFrame {
 
         List<Hyp> hyps;
 
-        hyps = new ArrayList<Hyp>(mandFrame.hypArray.length
+        hyps = new ArrayList<>(mandFrame.hypArray.length
             + optFrame.hypArray.length);
 
         for (final Hyp hyp : mandFrame.hypArray)
@@ -403,7 +403,7 @@ public class ScopeFrame {
      * @param dvGroupArray array of array of disjoint variables.
      */
     public void addDjVarGroups(final Var[][] dvGroupArray) {
-        final List<DjVars> arrayList = new ArrayList<DjVars>(
+        final List<DjVars> arrayList = new ArrayList<>(
             Arrays.asList(djVarsArray));
 
         loadDvGroupsIntoList(arrayList, dvGroupArray);
@@ -423,7 +423,7 @@ public class ScopeFrame {
      * @return Map of Vars for VarHyps in ScopeFrame.hypArray.
      */
     public Map<String, Var> getVarMap() {
-        final Map<String, Var> varMap = new HashMap<String, Var>(
+        final Map<String, Var> varMap = new HashMap<>(
             hypArray.length * 3 / 2 + 1);
         for (final Hyp hyp : hypArray)
             if (hyp instanceof VarHyp) {

@@ -67,7 +67,7 @@ public class StepSelectorDialog extends JDialog {
         });
         getRootPane().setDefaultButton(setButton);
 
-        stepSelectorDialogList = new JList<String>();
+        stepSelectorDialogList = new JList<>();
         stepSelectorDialogList.setFont(proofFont);
         stepSelectorDialogList.setListData(stepSelectorResults.selectionArray);
         stepSelectorDialogList
@@ -134,8 +134,7 @@ public class StepSelectorDialog extends JDialog {
         setVisible(false);
 
         proofAsstGUI.unifyWithStepSelectorChoice(
-            new StepRequest(PaConstants.STEP_REQUEST_SELECTOR_CHOICE,
-                stepSelectorResults.step, choice));
+            new StepRequest.SelectorChoice(stepSelectorResults.step, choice));
     }
 
     private void popupSelectionItem() {

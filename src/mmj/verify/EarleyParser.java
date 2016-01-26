@@ -809,7 +809,7 @@ public class EarleyParser implements GrammaticalParser {
             final Cnst typ = notationRule.getGrammarRuleTyp();
             List<NotationRule> ruleSet = typ.getEarleyRules();
             if (ruleSet == null)
-                typ.setEarleyRules(ruleSet = new LinkedList<NotationRule>());
+                typ.setEarleyRules(ruleSet = new LinkedList<>());
             ruleSet.add(notationRule);
 
             final Cnst first = notationRule.getRuleFormatExprFirst();
@@ -820,7 +820,7 @@ public class EarleyParser implements GrammaticalParser {
 
             Set<Cnst> firstSet = typ.getEarleyFIRST();
             if (firstSet == null)
-                typ.setEarleyFIRST(firstSet = new HashSet<Cnst>(firstCapacity));
+                typ.setEarleyFIRST(firstSet = new HashSet<>(firstCapacity));
             firstSet.add(first);
         }
 

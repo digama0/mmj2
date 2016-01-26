@@ -142,7 +142,7 @@ public class CommutativeInfo extends DBInfo {
 
         if (!constSubst.isTheSameConstMap(subTrees[1]))
             return;
-        ParseNode r = subTrees[0];
+        final ParseNode r = subTrees[0];
 
         // It is unnecessary:
         // if (!template.isEmpty())
@@ -150,7 +150,7 @@ public class CommutativeInfo extends DBInfo {
         // return;
 
         final ParseNode[] leftChildren = r.child;
-        ParseNode r1 = subTrees[1];
+        final ParseNode r1 = subTrees[1];
         final ParseNode[] rightChildren = r1.child;
 
         final int k0 = varPlace[0];
@@ -186,13 +186,13 @@ public class CommutativeInfo extends DBInfo {
      * @param second The other operand
      * @return -1(less), 0(equal),1(greater)
      */
-    public static int compareNodes(final ParseNode first, final ParseNode second)
+    public static int compareNodes(final ParseNode first,
+        final ParseNode second)
     {
         if (first.stmt == second.stmt) {
             final int len = first.child.length;
             for (int i = 0; i < len; i++) {
-                final int res = compareNodes(first.child[i],
-                    second.child[i]);
+                final int res = compareNodes(first.child[i], second.child[i]);
                 if (res != 0)
                     return res;
             }
@@ -229,7 +229,7 @@ public class CommutativeInfo extends DBInfo {
             final ParseNode child = node.child[genStmt.varIndexes[i]];
 
             if (!info.trManager.clInfo.getClosurePossibility(info, child,
-                genStmt.template, true).hasClosure())
+                genStmt.template, true).hasClosure)
                 return false;
         }
 

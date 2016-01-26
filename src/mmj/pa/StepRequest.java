@@ -15,42 +15,44 @@
 
 package mmj.pa;
 
-import mmj.lang.Assrt;
-
 /**
  * StepRequest contains the StepSelector search results and is passed to the
- * ProofAsstGUI for use in generating the StepSelectorDialog.
+ * ProofAsstGUI for use in generating the StepSelectorDialog. It is modeled
+ * after an enum, although it is not because one of the possible values has
+ * extra parameters.
  */
 public class StepRequest {
 
-    public int request;
+    public static final StepRequest SelectorSearch = new StepRequest(true);
+
+    public static final StepRequest StepSearch = new StepRequest(true);
+
+    public static final StepRequest GeneralSearch = new StepRequest(false);
+
+    public static final StepRequest SearchOptions = new StepRequest(true);
+
+    public static final StepRequest StepSearchChoice = new StepRequest(false);
+
+    public boolean simple;
     public String step;
     public Object param1;
 
-    public boolean extendedSearchChoiceMade = false;
-    public int extendedSearchHypNbr = -1;
-    public Assrt extendedSearchHypRefAssrt = null;
+    public static class SelectorChoice extends StepRequest {
 
-    /**
-     * Constructor for StepRequest
-     * 
-     * @param request code
-     * @param step for which the Step Selector was run.
-     * @param param1 parameter depending on code.
-     */
-    public StepRequest(final int request, final String step, final Object param1)
-    {
-        this.request = request;
-        this.step = step;
-        this.param1 = param1;
-    }
-    /**
-     * Constructor for StepRequest
-     * 
-     * @param request code
-     */
-    public StepRequest(final int request) {
-        this(request, null, null);
+        /**
+         * Constructor for StepRequest
+         *
+         * @param step for which the Step Selector was run.
+         * @param param1 parameter depending on code.
+         */
+        public SelectorChoice(final String step, final Object param1) {
+            super(false);
+            this.step = step;
+            this.param1 = param1;
+        }
     }
 
+    private StepRequest(final boolean simple) {
+        this.simple = simple;
+    }
 }
