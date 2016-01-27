@@ -52,7 +52,7 @@ public class Paths {
         System.out.print(UtilConstants.MMJ2_PATH_REPORT_LINE_1 + s);
 
         mmj2Path = loadPathArgument(mmj2PathArgument,
-            UtilConstants.MMJ2_PATH_ARGUMENT_LITERAL);
+            UtilConstants.MMJ2_PATH_ARGUMENT_LITERAL).getCanonicalFile();
 
         System.out.print(UtilConstants.PATH_REPORT_E_G_CAPTION_1
             + buildMMJ2FilePath(UtilConstants.PATH_REPORT_EXAMPLE_FILE_NAME)

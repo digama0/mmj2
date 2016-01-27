@@ -2116,7 +2116,9 @@ public class ProofWorksheet {
      * @param c The type of callback (event trigger)
      */
     public void runCallback(final CallbackType c) {
-        if (macroManager != null)
+        if (macroManager != null) {
+            macroManager.set("proofWorksheet", this);
             macroManager.runCallback(c);
+        }
     }
 }

@@ -101,6 +101,9 @@ public interface Prover {
         public ProverResult prove(final WorksheetInfo info,
             final ParseNode root)
         {
+            if (info != null
+                && assrt.getSeq() >= info.proofWorksheet.getMaxSeq())
+                return null;
             final HypProverResult r = hypProve(info, root);
             if (r == null)
                 return null;

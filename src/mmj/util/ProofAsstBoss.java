@@ -748,12 +748,9 @@ public class ProofAsstBoss extends Boss {
         if (proofAsst == null)
             return;
 
-        final boolean enabled = getYesNo(1);
-
-        if (enabled) {
-            require(3);
-            proofAsst.initAutotransformations(getYesNo(2), getYesNo(3));
-        }
+        require(3);
+        proofAsst.initAutotransformations(getYesNo(1), getYesNo(2),
+            getYesNo(3));
     }
 
     /**

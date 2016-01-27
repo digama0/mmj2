@@ -72,6 +72,8 @@ import java.util.*;
 
 import mmj.lang.*;
 import mmj.mmio.MMIOError;
+import mmj.pa.PaConstants.DjVarsErrorStatus;
+import mmj.pa.PaConstants.UnificationStatus;
 import mmj.util.DelimitedTextParser;
 
 /**
@@ -125,8 +127,8 @@ public class DerivationStep extends ProofStepStmt {
     // So they could be left as public
     // ---------------------------------------------------------------
 
-    int unificationStatus;
-    int djVarsErrorStatus;
+    UnificationStatus unificationStatus = UnificationStatus.NotUnified;
+    DjVarsErrorStatus djVarsErrorStatus;
 
     List<DjVars> softDjVarsErrorList;
 

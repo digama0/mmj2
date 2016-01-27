@@ -1821,36 +1821,65 @@ public class PaConstants {
     // Constants for ProofWorksheet.java
     // ----------------------------------------------------------
 
-    // unificationStatus meanings:
-    // 0 = not unified: this is the default and will be the final result if
-    // unification is not even attempted (perhaps due to hypFldIncomplete).
-    // 1 = unification error: signifies that unification failed; either the
-    // input Ref was wrong, or the unification search did not find a match.
-    // 2 = attempt cancelled - unification could not be performed but we didn't
-    // find out until derivStepFormula or derivStepHyp was performed for the
-    // step or one of its hyps; incomplete formulas prevent unification
-    // attempts!
-    // 3 = unified but incomplete hyps: signifies that one or more hypotheses
-    // used were not successfully unified or are missing
-    // 4 = unified but work vars: signifies that work vars are present in the
-    // step formula or the step hypotheses.
-    // 5 = unified: good to go for proof building attempt.
-    public static final int UNIFICATION_STATUS_NOT_UNIFIED = 0;
-    public static final int UNIFICATION_STATUS_UNIFICATION_ERROR = 1;
-    public static final int UNIFICATION_STATUS_ATTEMPT_CANCELLED = 2;
-    public static final int UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS = 3;
-    public static final int UNIFICATION_STATUS_UNIFIED_W_WORK_VARS = 4;
-    public static final int UNIFICATION_STATUS_UNIFIED = 5;
+    public enum UnificationStatus {
+        /**
+         * Not unified: this is the default and will be the final result if
+         * unification is not even attempted (perhaps due to hypFldIncomplete).
+         */
+        NotUnified(false),
 
-    // djVarsErrorStatus meanings:
-    // 0 = No Dj Vars Errors
-    // 1 = Soft Dj Vars Errors; user must add $d statements to satisfy unifying
-    // Ref.
-    // 2 = Hard Dj Vars Errors; formula violates
-    // $d restriction(s) of unifying Ref.
-    public static final int DJ_VARS_ERROR_STATUS_NO_ERRORS = 0;
-    public static final int DJ_VARS_ERROR_STATUS_SOFT_ERRORS = 1;
-    public static final int DJ_VARS_ERROR_STATUS_HARD_ERRORS = 2;
+        /**
+         * Unification error: signifies that unification failed; either the
+         * input Ref was wrong, or the unification search did not find a match.
+         */
+        UnificationError(false),
+
+        /**
+         * Attempt cancelled: unification could not be performed but we didn't
+         * find out until derivStepFormula or derivStepHyp was performed for the
+         * step or one of its hyps; incomplete formulas prevent unification
+         * attempts!
+         */
+        AttemptCancelled(false),
+
+        /**
+         * Unified but incomplete hyps: signifies that one or more hypotheses
+         * used were not successfully unified or are missing
+         */
+        UnifiedWIncompleteHyps(false),
+
+        /**
+         * Unified but work vars: signifies that work vars are present in the
+         * step formula or the step hypotheses.
+         */
+        UnifiedWWorkVars(true),
+
+        /** Unified: good to go for proof building attempt. */
+        Unified(true);
+
+        public boolean proper;
+
+        private UnificationStatus(final boolean proper) {
+            this.proper = proper;
+        }
+    }
+
+    public enum DjVarsErrorStatus {
+        /** No Dj Vars Errors */
+        None,
+
+        /**
+         * Soft Dj Vars Errors; user must add $d statements to satisfy unifying
+         * Ref.
+         */
+        Soft,
+
+        /**
+         * Hard Dj Vars Errors; formula violates $d restriction(s) of unifying
+         * Ref.
+         */
+        Hard
+    }
 
     /**
      * Descriptions for ProofWorkStmt.status values.

@@ -368,7 +368,8 @@ public class TransformationManager {
                 .equals("[[[c1, c2, cmul]; co, cc0, caddc]; co, c2]; wceq"))
                 getClass();
             final ProverResult result = p.prove(info, root);
-            if (result == null)
+            if (result == null
+                || result.assrt.getSeq() >= info.proofWorksheet.getMaxSeq())
                 continue;
             final ProofStepStmt[] hyps = new ProofStepStmt[result.subst.length];
             for (int i = 0; i < hyps.length; i++)

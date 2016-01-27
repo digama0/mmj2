@@ -2020,6 +2020,7 @@ public class ProofAsstGUI {
                 sb.append(cBuffer, 0, len);
             r.close();
             newProofText = sb.toString();
+            proofAsstPreferences.startupProofWorksheetFile.set(file);
         } catch (final IOException e) {
             newProofText = LangException.format(
                 PaConstants.ERRMSG_PA_GUI_READ_PROOF_IO_ERR, e.getMessage());

@@ -78,6 +78,7 @@ post(CallbackType.BUILD_GUI, function() {
 });
 function setKeyCommand(key, f) {
 	post(CallbackType.BUILD_GUI, function() {
+		proofAsstGUI = proofAsst.proofAsstGUI;
 		with (new JavaImporter(Packages.javax.swing)) {
 			var window = proofAsstGUI.mainFrame.getContentPane();
 			window.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
@@ -87,6 +88,10 @@ function setKeyCommand(key, f) {
 		}
 	});
 }
+post(CallbackType.BEFORE_PARSE, function() {
+	messages = proofWorksheet.messages;
+	return true;
+});
 post(CallbackType.TRANSFORMATION_SET_UP, function() {
 	runMacro("transformations");
 	return true;
@@ -95,6 +100,7 @@ function unify() {
 	proofAsstGUI.unificationAction(false, false,
 		null, null, null).actionPerformed(null);
 }
+
 ////////////////////////////////////////////////////////
 // USER SPACE: perform extra custom initializations here
 ////////////////////////////////////////////////////////

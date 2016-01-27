@@ -81,6 +81,7 @@ import mmj.lang.*;
 import mmj.lang.ParseTree.RPNStep;
 import mmj.mmio.MMIOError;
 import mmj.pa.MacroManager.CallbackType;
+import mmj.pa.PaConstants.DjVarsErrorStatus;
 import mmj.pa.PaConstants.ProofFormat;
 import mmj.tl.*;
 import mmj.transforms.TransformationManager;
@@ -172,8 +173,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         this.theoremLoader = theoremLoader;
         this.macroManager = macroManager;
 
-        proofUnifier = new ProofUnifier(proofAsstPreferences, logicalSystem,
-            grammar, verifyProofs);
+        proofUnifier = new ProofUnifier(this);
 
         messages = null;
 
@@ -227,6 +227,10 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
     public Grammar getGrammar() {
         return grammar;
+    }
+
+    public VerifyProofs getVerifyProofs() {
+        return verifyProofs;
     }
 
     public List<Assrt> sortAssrtListForSearch(final List<Assrt> list) {
@@ -956,17 +960,21 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     /**
      * This function initialize auto-transformation component.
      *
+     * @param enabled Set to false to de-initialize an already loaded
+     *            transformation manager
      * @param debugOutput when it is true auto-transformation component will
      *            produce a lot of debug output
      * @param supportPrefix when it is true auto-transformation component will
      *            try to use implication prefix in transformations
      */
-    public void initAutotransformations(final boolean debugOutput,
-        final boolean supportPrefix)
+    public void initAutotransformations(final boolean enabled,
+        final boolean debugOutput, final boolean supportPrefix)
     {
-        final TransformationManager trManager = new TransformationManager(this,
-            getSortedAssrtSearchList(), getProvableLogicStmtTyp(), messages,
-            verifyProofs, supportPrefix, debugOutput);
+        final TransformationManager trManager = enabled
+            ? new TransformationManager(this, getSortedAssrtSearchList(),
+                getProvableLogicStmtTyp(), messages, verifyProofs,
+                supportPrefix, debugOutput)
+            : null;
         proofUnifier.setTransformationManager(trManager);
     }
 
@@ -1514,7 +1522,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         int s;
         if (q.getProofTree() == null)
             s = 4; // arbitrary
-        else if (q.djVarsErrorStatus == PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS) {
+        else if (q.djVarsErrorStatus == DjVarsErrorStatus.None) {
             if (!q.verifyProofError)
                 s = PROVED_PERFECTLY; // proved perfectly
             else {

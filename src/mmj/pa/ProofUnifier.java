@@ -69,7 +69,7 @@ import java.util.Map.Entry;
 
 import mmj.lang.*;
 import mmj.pa.MacroManager.CallbackType;
-import mmj.pa.PaConstants.DjVarsSoftErrors;
+import mmj.pa.PaConstants.*;
 import mmj.transforms.TransformationManager;
 import mmj.verify.Grammar;
 import mmj.verify.VerifyProofs;
@@ -172,6 +172,8 @@ public class ProofUnifier {
 
     private TransformationManager trManager;
 
+    public PostUnifyHook postUnifyHook;
+
     /*
      * Global "work" areas for processing a single
      * theorem:
@@ -227,19 +229,13 @@ public class ProofUnifier {
     /**
      * Standard constructor for set up.
      *
-     * @param proofAsstPreferences variable settings
-     * @param logicalSystem the loaded Metamath data
-     * @param grammar the mmj.verify.Grammar object
-     * @param verifyProofs the mmj.verify.VerifyProofs object
+     * @param proofAsst the main ProofAsst object
      */
-    public ProofUnifier(final ProofAsstPreferences proofAsstPreferences,
-        final LogicalSystem logicalSystem, final Grammar grammar,
-        final VerifyProofs verifyProofs)
-    {
-        this.proofAsstPreferences = proofAsstPreferences;
-        this.logicalSystem = logicalSystem;
-        this.grammar = grammar;
-        this.verifyProofs = verifyProofs;
+    public ProofUnifier(final ProofAsst proofAsst) {
+        proofAsstPreferences = proofAsst.getPreferences();
+        logicalSystem = proofAsst.getLogicalSystem();
+        grammar = proofAsst.getGrammar();
+        verifyProofs = proofAsst.getVerifyProofs();
 
         stepUnifier = proofAsstPreferences.getStepUnifierInstance();
 
@@ -389,12 +385,11 @@ public class ProofUnifier {
 
         final DerivationStep qed = proofWorksheet.getQedStep();
 
-        if (qed.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED
-            || qed.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
+        if (qed.unificationStatus.proper)
             // do fixup before convertWorkVarsToDummyVars()
             chainWorkVarAndIncompleteHypStatuses();
 
-        if (qed.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
+        if (qed.unificationStatus == UnificationStatus.UnifiedWWorkVars)
             if (noConvertWV) {
                 final DerivationStep d = getFirstWorkVarStep(qed);
                 if (d != null) {
@@ -447,8 +442,7 @@ public class ProofUnifier {
             else
                 continue;
 
-            if (derivStep.unificationStatus != PaConstants.UNIFICATION_STATUS_UNIFIED
-                && derivStep.unificationStatus != PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
+            if (!derivStep.unificationStatus.proper)
                 continue;
 
             for (int i = 0; i < derivStep.getHypNumber(); i++) {
@@ -457,21 +451,17 @@ public class ProofUnifier {
                     continue;
                 final DerivationStep dH = (DerivationStep)derivStep.getHyp(i);
 
-                if (derivStep.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED)
+                if (derivStep.unificationStatus == UnificationStatus.Unified)
                     if (dH.workVarList != null
-                        || dH.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
-                        derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS;
+                        || dH.unificationStatus == UnificationStatus.UnifiedWWorkVars)
+                        derivStep.unificationStatus = UnificationStatus.UnifiedWWorkVars;
 
-                if (dH.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS)
-                    derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS;
+                if (dH.unificationStatus == UnificationStatus.UnifiedWIncompleteHyps)
+                    derivStep.unificationStatus = UnificationStatus.UnifiedWIncompleteHyps;
 
-                if (dH.isHypFldIncomplete()
-                    || dH.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS
-                    || dH.unificationStatus != PaConstants.UNIFICATION_STATUS_UNIFIED
-                        && dH.unificationStatus != PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
-                {
+                if (dH.isHypFldIncomplete() || !dH.unificationStatus.proper) {
 
-                    derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS;
+                    derivStep.unificationStatus = UnificationStatus.UnifiedWIncompleteHyps;
 
                     break;
                 }
@@ -537,7 +527,7 @@ public class ProofUnifier {
                 && derivStep.hasWorkVarsInStepOrItsHyps())
                 continue;
 
-            if (derivStep.unificationStatus != PaConstants.UNIFICATION_STATUS_NOT_UNIFIED)
+            if (derivStep.unificationStatus != UnificationStatus.NotUnified)
                 // already unified/failed in
                 // unifyStepsInvolvingWorkVars()
                 continue;
@@ -553,7 +543,7 @@ public class ProofUnifier {
                     // just be bypassed and considered incomplete
                     // based on the idea that the failed earlier
                     // step will generate a message
-                    derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_ATTEMPT_CANCELLED;
+                    derivStep.unificationStatus = UnificationStatus.AttemptCancelled;
                     continue stepLoop;
                 }
 
@@ -580,7 +570,7 @@ public class ProofUnifier {
                 continue;
             }
 
-            if (derivStep.djVarsErrorStatus != PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS)
+            if (derivStep.djVarsErrorStatus != DjVarsErrorStatus.None)
                 // unified but build alternates list!!!
                 derivStepsWithEmptyRef[derivStepsWithEmptyRefCount++] = derivStep;
             continue;
@@ -624,7 +614,7 @@ public class ProofUnifier {
                 final UnifyResult res = unifyStepWithoutWorkVars();
                 if (res.proper()) {
                     // for auto step unification this assert should be true:
-                    assert derivStep.djVarsErrorStatus == PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS;
+                    assert derivStep.djVarsErrorStatus == DjVarsErrorStatus.None;
                     // stick fork in it, this one is done!
                     autoDerivSteps[i] = null;
                     nbrCompleted++;
@@ -732,7 +722,7 @@ public class ProofUnifier {
                     // save it
                     final UnifyResult res = unifyStepWithoutWorkVars();
                     if (res.proper())
-                        if (derivStep.djVarsErrorStatus == PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS) {
+                        if (derivStep.djVarsErrorStatus == DjVarsErrorStatus.None) {
                             // stick fork in it, this one is done!
                             derivStepsWithEmptyRef[i] = null;
                             nbrCompleted++;
@@ -769,23 +759,22 @@ public class ProofUnifier {
             else
                 continue;
 
-            if (derivStep.djVarsErrorStatus == PaConstants.DJ_VARS_ERROR_STATUS_HARD_ERRORS)
+            if (derivStep.djVarsErrorStatus == DjVarsErrorStatus.Hard)
                 hardDjVarsErrorsFound = true;
 
-            if (derivStep.unificationStatus == PaConstants.UNIFICATION_STATUS_NOT_UNIFIED) {
+            if (derivStep.unificationStatus == UnificationStatus.NotUnified) {
                 // if (!derivStep.isHypFldIncomplete())
                 // markUnificationFailure();
             }
-            else if (derivStep.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED
-                || derivStep.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
+            else if (derivStep.unificationStatus.proper)
                 attemptProofOfDerivStep();
 
-            if (derivStep.djVarsErrorStatus == PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS)
+            if (derivStep.djVarsErrorStatus == DjVarsErrorStatus.None)
                 continue;
 
             // accum ArrayLists of DjVars into ProofWorksheet
             // ArrayList of Arraylists of DjVars...
-            if (derivStep.djVarsErrorStatus == PaConstants.DJ_VARS_ERROR_STATUS_SOFT_ERRORS
+            if (derivStep.djVarsErrorStatus == DjVarsErrorStatus.Soft
                 && derivStep.softDjVarsErrorList != null
                 && !derivStep.softDjVarsErrorList.isEmpty())
             {
@@ -796,10 +785,10 @@ public class ProofUnifier {
                     .add(derivStep.softDjVarsErrorList);
             }
 
-            if (derivStep.djVarsErrorStatus == PaConstants.DJ_VARS_ERROR_STATUS_HARD_ERRORS
+            if (derivStep.djVarsErrorStatus == DjVarsErrorStatus.Hard
                 || proofAsstPreferences.djVarsSoftErrors
                     .get() == DjVarsSoftErrors.Report
-                    && derivStep.djVarsErrorStatus == PaConstants.DJ_VARS_ERROR_STATUS_SOFT_ERRORS)
+                    && derivStep.djVarsErrorStatus == DjVarsErrorStatus.Soft)
             {
 
                 if (derivStep.alternateRefList != null)
@@ -824,8 +813,7 @@ public class ProofUnifier {
                 derivStep = (DerivationStep)proofWorkStmtObject;
 
                 if (derivStep.djVarsErrorStatus == // already reported
-                PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS
-                    && derivStep.alternateRefList != null
+                DjVarsErrorStatus.None && derivStep.alternateRefList != null
                     && !derivStep.alternateRefList.isEmpty())
                 {
                     messages
@@ -889,12 +877,12 @@ public class ProofUnifier {
                 final ParseTree hypProofTree = d.getProofTree();
                 if (hypProofTree != null) {
                     holdHypNode = hypProofTree.getRoot();
-                    if (d.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
-                        derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS;
+                    if (d.unificationStatus == UnificationStatus.UnifiedWWorkVars)
+                        derivStep.unificationStatus = UnificationStatus.UnifiedWWorkVars;
                 }
                 else {
                     // No need for message as the prev step has one.
-                    derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS;
+                    derivStep.unificationStatus = UnificationStatus.UnifiedWWorkVars;
                     return;
                 }
             }
@@ -1915,9 +1903,8 @@ public class ProofUnifier {
         String djMsg = null;
 
         // if not first unification for this step
-        if (derivStep.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED
-            || derivStep.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS
-            || derivStep.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
+        if (derivStep.unificationStatus.proper
+            || derivStep.unificationStatus == UnificationStatus.UnifiedWIncompleteHyps)
         {
 
             // yes, ok to check/recheck Dj Vars if Work Vars involved...
@@ -1934,19 +1921,19 @@ public class ProofUnifier {
             djMsg = checkDerivStepUnifyAgainstDjVars(derivStep, assrt,
                 assrtSubst);
 
-            if (derivStep.djVarsErrorStatus == PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS) {
+            if (derivStep.djVarsErrorStatus == DjVarsErrorStatus.None) {
                 addToAlternatesList(assrt);
                 return;
             }
 
-            if (derivStep.djVarsErrorStatus == PaConstants.DJ_VARS_ERROR_STATUS_HARD_ERRORS) {
+            if (derivStep.djVarsErrorStatus == DjVarsErrorStatus.Hard) {
                 if (djMsg == null) {
                     derivStep.setHeldDjErrorMessage(null);
                     if (holdSoftDjVarsErrorList == null
                         || holdSoftDjVarsErrorList.isEmpty())
-                        derivStep.djVarsErrorStatus = PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS;
+                        derivStep.djVarsErrorStatus = DjVarsErrorStatus.None;
                     else {
-                        derivStep.djVarsErrorStatus = PaConstants.DJ_VARS_ERROR_STATUS_SOFT_ERRORS;
+                        derivStep.djVarsErrorStatus = DjVarsErrorStatus.Soft;
                         if (proofAsstPreferences.djVarsSoftErrors
                             .get() == DjVarsSoftErrors.Report)
                             derivStep.buildSoftDjErrorMessage(
@@ -1965,7 +1952,7 @@ public class ProofUnifier {
                     || holdSoftDjVarsErrorList.isEmpty()))
                 {
 
-                    derivStep.djVarsErrorStatus = PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS;
+                    derivStep.djVarsErrorStatus = DjVarsErrorStatus.None;
 
                     derivStep.setHeldDjErrorMessage(null);
                     addToAlternatesList((Assrt)derivStep.getRef());
@@ -1979,9 +1966,12 @@ public class ProofUnifier {
         }
 
         // OK! First unification for this step
-        derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED;
+        derivStep.unificationStatus = UnificationStatus.Unified;
 
         rearrangeHyps(swapHyps, rearrangeDerivAssrtXRef);
+
+        if (derivStep.isAutoStep() && postUnifyHook != null)
+            postUnifyHook.process(derivStep, assrt, assrtSubst);
 
         if (usedUnifyWithWorkVars) {
 
@@ -2005,22 +1995,22 @@ public class ProofUnifier {
             saveOtherDerivStepRefStuff(derivStep, assrt, assrtSubst);
 
         if (derivStep.workVarList != null)
-            derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS;
+            derivStep.unificationStatus = UnificationStatus.UnifiedWWorkVars;
         for (int i = 0; i < derivStep.getHypNumber(); i++) {
             if (!(derivStep.getHyp(i) instanceof DerivationStep))
                 continue;
             final DerivationStep dH = (DerivationStep)derivStep.getHyp(i);
 
             if (dH.workVarList != null
-                || dH.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
-                derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS;
+                || dH.unificationStatus == UnificationStatus.UnifiedWWorkVars)
+                derivStep.unificationStatus = UnificationStatus.UnifiedWWorkVars;
 
             if (dH.isHypFldIncomplete()) {
                 messages.accumInfoMessage(PaConstants.ERRMSG_INCOMPLETE_HYPS,
                     getErrorLabelIfPossible(proofWorksheet),
                     derivStep.getStep(), derivStep.getRefLabel());
 
-                derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS;
+                derivStep.unificationStatus = UnificationStatus.UnifiedWIncompleteHyps;
                 break;
             }
         }
@@ -2049,9 +2039,9 @@ public class ProofUnifier {
             d.setHeldDjErrorMessage(null);
             if (holdSoftDjVarsErrorList == null
                 || holdSoftDjVarsErrorList.isEmpty())
-                d.djVarsErrorStatus = PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS;
+                d.djVarsErrorStatus = DjVarsErrorStatus.None;
             else {
-                d.djVarsErrorStatus = PaConstants.DJ_VARS_ERROR_STATUS_SOFT_ERRORS;
+                d.djVarsErrorStatus = DjVarsErrorStatus.Soft;
 
                 if (proofAsstPreferences.djVarsSoftErrors
                     .get() == DjVarsSoftErrors.Report)
@@ -2060,7 +2050,7 @@ public class ProofUnifier {
         }
         else { // HARD dj error on first unification for this step
 
-            d.djVarsErrorStatus = PaConstants.DJ_VARS_ERROR_STATUS_HARD_ERRORS;
+            d.djVarsErrorStatus = DjVarsErrorStatus.Hard;
 
             d.setHeldDjErrorMessage(djMsg);
         }
@@ -2183,7 +2173,7 @@ public class ProofUnifier {
 
     private void markRefUnificationFailure(final Assrt assrt) {
 
-        derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFICATION_ERROR;
+        derivStep.unificationStatus = UnificationStatus.UnificationError;
 
         messages.accumErrorMessage(PaConstants.ERRMSG_REF_UNIFY_ERR,
             getErrorLabelIfPossible(proofWorksheet), derivStep.getStep(),
@@ -2371,7 +2361,7 @@ public class ProofUnifier {
                     && derivStep.getHyp(i).formulaParseTree == null)
                 {
                     // this will just be bypassed and considered incomplete
-                    derivStep.unificationStatus = PaConstants.UNIFICATION_STATUS_ATTEMPT_CANCELLED;
+                    derivStep.unificationStatus = UnificationStatus.AttemptCancelled;
                     continue stepLoop;
                 }
 
@@ -2482,11 +2472,11 @@ public class ProofUnifier {
 
             doUpdateDerivationStepAssrtSubst(d);
 
-            final int saveUnificationStatus = d.unificationStatus;
+            final UnificationStatus saveUnificationStatus = d.unificationStatus;
             doUpdateWorkVarUnificationStatus(d);
 
             if (saveUnificationStatus != d.unificationStatus
-                && d.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED)
+                && d.unificationStatus == UnificationStatus.Unified)
             {
                 // must redo DjVars edits!!!
                 doInitialStepDjEdits(d, (Assrt)d.getRef(),
@@ -2599,21 +2589,19 @@ public class ProofUnifier {
         // work var situation
 
         // this weird looking if statement means status is
-        // unified but not equal to UNIFIED_W_INCOMPLETE_HYPS
-        if (d.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS
-            || d.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED)
-        {
-            d.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED;
+        // unified but not equal to UnifiedWIncompleteHyps
+        if (d.unificationStatus.proper) {
+            d.unificationStatus = UnificationStatus.Unified;
             if (d.workVarList != null)
-                d.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS;
+                d.unificationStatus = UnificationStatus.UnifiedWWorkVars;
             else
                 for (int i = 0; i < d.getHypNumber(); i++) {
                     if (!(d.getHyp(i) instanceof DerivationStep))
                         continue;
                     if (d.getHyp(i).workVarList != null
                         || ((DerivationStep)d.getHyp(
-                            i)).unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
-                        d.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS;
+                            i)).unificationStatus == UnificationStatus.UnifiedWWorkVars)
+                        d.unificationStatus = UnificationStatus.UnifiedWWorkVars;
                 }
         }
     }
@@ -2808,8 +2796,8 @@ public class ProofUnifier {
 
         doUpdateDerivationStepAssrtSubst(d);
 
-        if (d.unificationStatus == PaConstants.UNIFICATION_STATUS_UNIFIED_W_WORK_VARS)
-            d.unificationStatus = PaConstants.UNIFICATION_STATUS_UNIFIED;
+        if (d.unificationStatus == UnificationStatus.UnifiedWWorkVars)
+            d.unificationStatus = UnificationStatus.Unified;
 
         if (redoDjVarsEdits) {
             doInitialStepDjEdits(d, (Assrt)d.getRef(), d.getAssrtSubstList());
@@ -2979,5 +2967,10 @@ public class ProofUnifier {
         final TransformationManager trManager)
     {
         this.trManager = trManager;
+    }
+
+    public interface PostUnifyHook {
+        void process(final DerivationStep d, final Assrt assrt,
+            final ParseNode[] assrtSubst);
     }
 }

@@ -307,4 +307,84 @@ useWhenPossibleExt("eqtri", function (info, root, r) {
     return true;
 });
 
+/////////////////////////
+// Structure detection //
+/////////////////////////
+
+/**
+ * This function looks for steps of the form |- A = ( Const ` B ) and returns
+ * the substitutions for A, B, and F = Const
+ */ 
+function getStructure(root) {
+	var groups = patternMatch("A = ( F ` B )", root);
+	if (!groups) return null;
+	var sym = groups.get("F").stmt.getFormula().getSym();
+	return sym.length == 2 && sym[1] instanceof mmj.lang.Cnst &&
+			groups.get("A").stmt instanceof mmj.lang.VarHyp &&
+			groups.get("B").stmt instanceof mmj.lang.VarHyp ? groups : null;
+}
+
+var activeStructure = null;
+
+function Maxifier() {
+	var elementList = {}, modeMap = {}, maxStr = null, maxCount = 0;
+	return {
+		get el() {
+			return maxStr == null ? null : elementList[maxStr];
+		},
+		add: function(root) {
+			var groups = getStructure(root);
+			if (groups == null) return;
+			var b = groups.get("B");
+			var str = b.stmt.getVar().getId();
+			if (!modeMap[str]) {
+				elementList[str] = {base: b, groups: {}};
+				modeMap[str] = 1;
+			} else modeMap[str]++;
+			var f = groups.get("F");
+			elementList[str].groups[f.stmt.getFormula().getSym()[1]] =
+				{fv: root.child[1], val: groups.get("A")};
+			if (modeMap[str] > maxCount) {
+				maxStr = str;
+				maxCount = modeMap[str];
+			}
+		}
+	}
+}
+
+post(CallbackType.AFTER_PARSE, function() {
+	var max = Maxifier();
+	for each (var step in proofWorksheet.proofWorkStmtList)
+		if (step instanceof mmj.pa.HypothesisStep)
+			max.add(step.formulaParseTree.getRoot());
+	activeStructure = max.el;
+	return true;
+});
+
+proofAsst.proofUnifier.postUnifyHook = function(d, assrt, assrtSubst) {
+	if (activeStructure == null) return;
+	var max = Maxifier();
+	var hypArray = assrt.getMandFrame().hypArray;
+	var vars = {};
+	for (var i=0; i<hypArray.length; i++)
+		if (hypArray[i] instanceof mmj.lang.VarHyp)
+			vars[hypArray[i].getVar().getId()] = i;
+		else
+			max.add(hypArray[i].getExprParseTree().getRoot());
+	if (max.el == null) return;
+	var i = vars[max.el.base.stmt.getVar().getId()];
+	var hyp = assrtSubst[i].stmt;
+	if (hyp instanceof mmj.lang.WorkVarHyp)
+		assrtSubst[i] = hyp.paSubst = activeStructure.base;
+	else return;
+	for (var key in max.el.groups) {
+		var o = max.el.groups[key];
+		i = vars[o.val.stmt.getVar().getId()];
+		hyp = assrtSubst[i].stmt;
+		if (hyp instanceof mmj.lang.WorkVarHyp)
+			assrtSubst[i] = hyp.paSubst = key in activeStructure.groups ?
+				activeStructure.groups[key].val : o.fv;
+	}
+};
+
 })()
