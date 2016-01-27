@@ -7,7 +7,7 @@ proofAsst = batchFramework.proofAsstBoss.proofAsst;
 logicalSystem = batchFramework.logicalSystemBoss.logicalSystem;
 verifyProofs = batchFramework.verifyProofBoss.verifyProofs;
 proofAsstPreferences = batchFramework.proofAsstBoss.proofAsstPreferences;
-macroManager = batchFramework.macroBoss.macroManager;
+macroManager = batchFramework.macroBoss.getMacroManager(true);
 log = function(s) { print.apply(this, arguments); return s; }
 function debug(object, indent) {
 	if (!indent) indent = '';
