@@ -46,6 +46,11 @@ public class SrcStmt {
     public String label = null;
 
     /**
+     * The column that a VarHyp, LogHyp, Theorem or Axiom starts at.
+     */
+    public int column = 0;
+
+    /**
      * Every SrcStmt has a keyword, even a comment (char 1 = '$', always.)
      */
     public String keyword = null;

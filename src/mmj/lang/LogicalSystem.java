@@ -496,6 +496,7 @@ public class LogicalSystem implements SystemLoader {
      * 6) return it to the caller
      * 
      * @param labelS axiom label string
+     * @param column the column at which the "$p" line starts
      * @param typS axiom type code (symbol) string
      * @param symList list containing axiom expression symbol strings (zero or
      *            more symbols).
@@ -505,14 +506,15 @@ public class LogicalSystem implements SystemLoader {
      * @return Theorem newly constructed Theorem added to LogicalSystem.
      * @throws LangException if duplicate label, undefined vars, etc.
      */
-    public Theorem addTheorem(final String labelS, final String typS,
-        final List<String> symList, final List<String> proofList,
-        final Messages messages) throws LangException
+    public Theorem addTheorem(final String labelS, final int column,
+        final String typS, final List<String> symList,
+        final List<String> proofList, final Messages messages)
+        throws LangException
     {
 
         final Theorem theorem = new Theorem(seqAssigner.nextSeq(),
-            scopeDefList, symTbl, stmtTbl, labelS, typS, symList, proofList,
-            messages);
+            scopeDefList, symTbl, stmtTbl, labelS, column, typS, symList,
+            proofList, messages);
 
         final Stmt existingStmt = stmtTbl.put(labelS, theorem);
 
@@ -544,7 +546,7 @@ public class LogicalSystem implements SystemLoader {
         final List<String> proofList) throws LangException
     {
         final Theorem theorem = new Theorem(seq, scopeDefList, symTbl, stmtTbl,
-            labelS, typS, symList, proofList, null);
+            labelS, -1, typS, symList, proofList, null);
 
         final Stmt existingStmt = stmtTbl.put(labelS, theorem);
 
@@ -564,6 +566,7 @@ public class LogicalSystem implements SystemLoader {
      * This variant is invoked when the input contains a compressed proof.
      * 
      * @param labelS axiom label string
+     * @param column the column at which the "$p" line starts
      * @param typS axiom type code (symbol) string
      * @param symList list containing axiom expression symbol strings (zero or
      *            more symbols).
@@ -576,15 +579,15 @@ public class LogicalSystem implements SystemLoader {
      * @return Theorem newly constructed Theorem added to LogicalSystem.
      * @throws LangException if duplicate label, undefined vars, etc.
      */
-    public Theorem addTheorem(final String labelS, final String typS,
-        final List<String> symList, final List<String> proofList,
-        final BlockList proofBlockList, final Messages messages)
-        throws LangException
+    public Theorem addTheorem(final String labelS, final int column,
+        final String typS, final List<String> symList,
+        final List<String> proofList, final BlockList proofBlockList,
+        final Messages messages) throws LangException
     {
 
         final Theorem theorem = new Theorem(seqAssigner.nextSeq(),
-            scopeDefList, symTbl, stmtTbl, labelS, typS, symList, proofList,
-            proofBlockList, getProofCompression(), messages);
+            scopeDefList, symTbl, stmtTbl, labelS, column, typS, symList,
+            proofList, proofBlockList, getProofCompression(), messages);
 
         final Stmt existingStmt = stmtTbl.put(labelS, theorem);
 

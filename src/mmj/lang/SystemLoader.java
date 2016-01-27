@@ -115,6 +115,7 @@ public interface SystemLoader {
      * Add Theorem to Logical System.
      * 
      * @param labelS axiom label string
+     * @param column the column at which the "$p" line starts
      * @param typS axiom type code (symbol) string
      * @param symList list containing axiom expression symbol strings (zero or
      *            more symbols).
@@ -124,8 +125,9 @@ public interface SystemLoader {
      * @return Theorem newly constructed Theorem added to LogicalSystem.
      * @throws LangException if duplicate label, undefined vars, etc.
      */
-    Theorem addTheorem(String labelS, String typS, List<String> symList,
-        List<String> proofList, Messages messages) throws LangException;
+    Theorem addTheorem(String labelS, int column, String typS,
+        List<String> symList, List<String> proofList, Messages messages)
+        throws LangException;
 
     /**
      * Add Theorem to Logical System.
@@ -133,6 +135,7 @@ public interface SystemLoader {
      * This variant is invoked when the input contains a compressed proof.
      * 
      * @param labelS axiom label string
+     * @param column the column at which the "$p" line starts
      * @param typS axiom type code (symbol) string
      * @param symList list containing axiom expression symbol strings (zero or
      *            more symbols).
@@ -145,9 +148,9 @@ public interface SystemLoader {
      * @return Theorem newly constructed Theorem added to LogicalSystem.
      * @throws LangException if duplicate label, undefined vars, etc.
      */
-    Theorem addTheorem(String labelS, String typS, List<String> symList,
-        List<String> proofList, BlockList proofBlockList, Messages messages)
-        throws LangException;
+    Theorem addTheorem(String labelS, int column, String typS,
+        List<String> symList, List<String> proofList, BlockList proofBlockList,
+        Messages messages) throws LangException;
 
     /**
      * Begin a new (nested) scope level for the Logical System.
