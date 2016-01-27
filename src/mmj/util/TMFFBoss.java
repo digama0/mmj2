@@ -21,11 +21,10 @@
 
 package mmj.util;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import static mmj.tmff.TMFFConstants.TMFF_UNFORMATTED_FORMAT_NBR_0;
+import static mmj.util.UtilConstants.*;
 
-import mmj.lang.VerifyException;
-import mmj.mmio.MMIOException;
+import mmj.pa.Setting;
 import mmj.tmff.*;
 import mmj.verify.Grammar;
 
@@ -69,83 +68,34 @@ public class TMFFBoss extends Boss {
 
     /**
      * Constructor with BatchFramework for access to environment.
-     * 
+     *
      * @param batchFramework for access to environment.
      */
     public TMFFBoss(final BatchFramework batchFramework) {
         super(batchFramework);
-    }
 
-    /**
-     * Executes a single command from the RunParmFile.
-     * 
-     * @param runParm the RunParmFile line to execute.
-     * @return boolean "consumed" indicating that the input runParm should not
-     *         be processed again.
-     */
-    @Override
-    public boolean doRunParmCommand(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException, MMIOException, FileNotFoundException,
-        IOException, VerifyException
-    {
-
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR) == 0)
-        {
+        putCommand(RUNPARM_CLEAR, () -> {
             tmffPreferences = null;
             return false; // not "consumed"
-        }
+        });
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_TMFF_DEFINE_SCHEME) == 0)
-        {
-            editTMFFDefineScheme(runParm);
-            return true;
-        }
+        putCommand(RUNPARM_TMFF_DEFINE_SCHEME, this::editTMFFDefineScheme);
+        putCommand(RUNPARM_TMFF_DEFINE_FORMAT, this::editTMFFDefineFormat);
 
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_TMFF_DEFINE_FORMAT) == 0)
-        {
-            editTMFFDefineFormat(runParm);
-            return true;
-        }
-
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_TMFF_USE_FORMAT) == 0)
-        {
-            editTMFFUseFormat(runParm);
-            return true;
-        }
-
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_TMFF_ALT_FORMAT) == 0)
-        {
-            editTMFFAltFormat(runParm);
-            return true;
-        }
-
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_TMFF_USE_INDENT) == 0)
-        {
-            editTMFFUseIndent(runParm);
-            return true;
-        }
-
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_TMFF_ALT_INDENT) == 0)
-        {
-            editTMFFAltIndent(runParm);
-            return true;
-        }
-
-        return false;
+        putCommand(RUNPARM_TMFF_USE_FORMAT,
+            () -> editTMFFUseFormat(getTMFFPreferences().currFormatNbr));
+        putCommand(RUNPARM_TMFF_ALT_FORMAT,
+            () -> editTMFFUseFormat(getTMFFPreferences().altFormatNbr));
+        putCommand(RUNPARM_TMFF_USE_INDENT,
+            () -> getTMFFPreferences().useIndent.set(getInt(1)));
+        putCommand(RUNPARM_TMFF_ALT_INDENT,
+            () -> getTMFFPreferences().altIndent.set(getInt(1)));
     }
 
     /**
      * TMFFDefineScheme RunParm validation and loading.
-     * 
-     * @param runParm run parm parsed into RunParmArrayEntry object
      */
-    protected void editTMFFDefineScheme(final RunParmArrayEntry runParm) {
+    protected void editTMFFDefineScheme() {
 
         final TMFFPreferences p = getTMFFPreferences();
 
@@ -155,18 +105,14 @@ public class TMFFBoss extends Boss {
             if (!p.addDefinedScheme(tmffScheme))
                 p.updateDefinedScheme(tmffScheme);
         } catch (final IllegalArgumentException e) {
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_RUNPARM_DEFINE_SCHEME_ERR_1
-                    + e.getMessage());
+            throw error(e.getMessage(), e);
         }
     }
 
     /**
      * TMFFDefineFormat RunParm validation and loading.
-     * 
-     * @param runParm run parm parsed into RunParmArrayEntry object
      */
-    protected void editTMFFDefineFormat(final RunParmArrayEntry runParm) {
+    protected void editTMFFDefineFormat() {
 
         final TMFFPreferences p = getTMFFPreferences();
 
@@ -175,9 +121,7 @@ public class TMFFBoss extends Boss {
 
             p.updateDefinedFormat(tmffFormat);
         } catch (final IllegalArgumentException e) {
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_RUNPARM_DEFINE_FORMAT_ERR_1
-                    + e.getMessage());
+            throw error(e.getMessage(), e);
         }
     }
 
@@ -186,80 +130,21 @@ public class TMFFBoss extends Boss {
      * number *and* if a format number other than 0 (unformatted) is requested,
      * checks to see that TMFF can be run (i.e. that the Grammar has been
      * initialized and all input statements have been parsed).
-     * 
-     * @param runParm run parm parsed into RunParmArrayEntry object
+     *
+     * @param setting The setting to adjust
      */
-    protected void editTMFFUseFormat(final RunParmArrayEntry runParm) {
+    protected void editTMFFUseFormat(final Setting<Integer> setting) {
+        setting.set(getInt(1));
 
-        try {
-            getTMFFPreferences().setCurrFormatNbr(runParm.values);
-        } catch (final IllegalArgumentException e) {
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_RUNPARM_USE_FORMAT_ERR_1 + e.getMessage());
-        }
-
-        if (getTMFFPreferences().getCurrFormatNbr() != TMFFConstants.TMFF_UNFORMATTED_FORMAT_NBR_0)
+        if (getTMFFPreferences().currFormatNbr
+            .get() != TMFF_UNFORMATTED_FORMAT_NBR_0)
             checkTMFFCanBeRunNow();
-    }
-
-    /**
-     * TMFFAltFormat RunParm validation and loading. Checks for valid format
-     * number *and* if a format number other than 0 (unformatted) is requested,
-     * checks to see that TMFF can be run (i.e. that the Grammar has been
-     * initialized and all input statements have been parsed).
-     * 
-     * @param runParm run parm parsed into RunParmArrayEntry object
-     */
-    protected void editTMFFAltFormat(final RunParmArrayEntry runParm) {
-
-        try {
-            getTMFFPreferences().setAltFormatNbr(runParm.values);
-        } catch (final IllegalArgumentException e) {
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_RUNPARM_ALT_FORMAT_ERR_1 + e.getMessage());
-        }
-    }
-
-    /**
-     * TMFFUseIndent RunParm validation and loading. Checks for valid format
-     * number *and* if a format number other than 0 (unformatted) is requested,
-     * checks to see that TMFF can be run (i.e. that the Grammar has been
-     * initialized and all input statements have been parsed).
-     * 
-     * @param runParm run parm parsed into RunParmArrayEntry object
-     */
-    protected void editTMFFUseIndent(final RunParmArrayEntry runParm) {
-
-        try {
-            getTMFFPreferences().setUseIndent(runParm.values);
-        } catch (final IllegalArgumentException e) {
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_RUNPARM_USE_INDENT_ERR_1 + e.getMessage());
-        }
-    }
-
-    /**
-     * TMFFAltIndent RunParm validation and loading. Checks for valid format
-     * number *and* if a format number other than 0 (unformatted) is requested,
-     * checks to see that TMFF can be run (i.e. that the Grammar has been
-     * initialized and all input statements have been parsed).
-     * 
-     * @param runParm run parm parsed into RunParmArrayEntry object
-     */
-    protected void editTMFFAltIndent(final RunParmArrayEntry runParm) {
-
-        try {
-            getTMFFPreferences().setAltIndent(runParm.values);
-        } catch (final IllegalArgumentException e) {
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_RUNPARM_ALT_INDENT_ERR_1 + e.getMessage());
-        }
     }
 
     /**
      * Fetches a reference to the TMFFPreferences, first initializing it if
      * necessary.
-     * 
+     *
      * @return TMFFPreferences object ready to go.
      */
     public TMFFPreferences getTMFFPreferences() {
@@ -271,12 +156,12 @@ public class TMFFBoss extends Boss {
 
     /**
      * Construct TMFFPreferences object from scratch.
-     * 
+     *
      * @return TMFFPreferences object ready to go.
      */
     protected TMFFPreferences buildTMFFPreferences() {
 
-        return new TMFFPreferences();
+        return new TMFFPreferences(batchFramework.storeBoss.getStore());
     }
 
     /**
@@ -295,13 +180,8 @@ public class TMFFBoss extends Boss {
 
         final Grammar grammar = batchFramework.grammarBoss.getGrammar();
 
-        if (grammar.getGrammarInitialized()
-            && batchFramework.grammarBoss.getAllStatementsParsedSuccessfully())
-        {
-            // ok, fine.
-        }
-        else
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_TMFF_REQUIRES_GRAMMAR_INIT);
+        if (!grammar.getGrammarInitialized()
+            || !batchFramework.grammarBoss.getAllStatementsParsedSuccessfully())
+            throw error(ERRMSG_TMFF_REQUIRES_GRAMMAR_INIT);
     }
 }

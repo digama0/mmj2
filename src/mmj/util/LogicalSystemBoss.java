@@ -22,7 +22,8 @@
 
 package mmj.util;
 
-import java.io.FileNotFoundException;
+import static mmj.util.UtilConstants.*;
+
 import java.io.IOException;
 
 import mmj.gmff.GMFFManager;
@@ -73,116 +74,50 @@ public class LogicalSystemBoss extends Boss {
 
     /**
      * Constructor with BatchFramework for access to environment.
-     * 
+     *
      * @param batchFramework for access to environment.
      */
     public LogicalSystemBoss(final BatchFramework batchFramework) {
         super(batchFramework);
         initStateVariables();
+
+        putCommand(RUNPARM_CLEAR, () -> {
+            initStateVariables();
+            return false; // not "consumed"
+        });
+
+        putCommand(RUNPARM_SYM_TBL_INITIAL_SIZE, this::editSymTblInitialSize);
+        putCommand(RUNPARM_STMT_TBL_INITIAL_SIZE, this::editStmtTblInitialSize);
+        putCommand(RUNPARM_LOAD_ENDPOINT_STMT_LABEL,
+            this::editLoadEndpointStmtLabel);
+        putCommand(RUNPARM_LOAD_ENDPOINT_STMT_NBR,
+            this::editLoadEndpointStmtNbr);
+        putCommand(RUNPARM_LOAD_COMMENTS, this::editLoadComments);
+        putCommand(RUNPARM_LOAD_PROOFS, this::editLoadProofs);
+
+        putCommand(RUNPARM_PROVABLE_LOGIC_STMT_TYPE,
+            this::editProvableLogicStmtType);
+
+        putCommand(RUNPARM_LOGIC_STMT_TYPE, this::editLogicStmtType);
+
+        putCommand(RUNPARM_BOOK_MANAGER_ENABLED, this::editBookManagerEnabled);
+
+        putCommand(RUNPARM_SEQ_ASSIGNER_INTERVAL_SIZE,
+            this::editSeqAssignerIntervalSize);
+
+        putCommand(RUNPARM_SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE,
+            this::editSeqAssignerIntervalTblInitialSize);
+
+        putCommand(RUNPARM_LOAD_FILE, this::doLoadFile);
     }
 
     /**
      * Returns true if LogicalSystem loaded successfully.
-     * 
+     *
      * @return true if LogicalSystem loaded successfully.
      */
     public boolean getLogicalSystemLoaded() {
         return logicalSystemLoaded;
-    }
-
-    /**
-     * Executes a single command from the RunParmFile.
-     * 
-     * @param runParm the RunParmFile line to execute.
-     */
-    @Override
-    public boolean doRunParmCommand(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException, MMIOException, FileNotFoundException,
-        IOException, VerifyException
-    {
-
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR) == 0)
-        {
-            initStateVariables();
-            return false; // not "consumed"
-        }
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_SYM_TBL_INITIAL_SIZE) == 0)
-        {
-            editSymTblInitialSize(runParm);
-            return true; // "consumed"
-        }
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_STMT_TBL_INITIAL_SIZE) == 0)
-        {
-            editStmtTblInitialSize(runParm);
-            return true; // "consumed"
-        }
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_ENDPOINT_STMT_LABEL) == 0)
-        {
-            editLoadEndpointStmtLabel(runParm);
-            return true; // "consumed"
-        }
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_ENDPOINT_STMT_NBR) == 0)
-        {
-            editLoadEndpointStmtNbr(runParm);
-            return true; // "consumed"
-        }
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_COMMENTS) == 0)
-        {
-            editLoadComments(runParm);
-            return true; // "consumed"
-        }
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_PROOFS) == 0)
-        {
-            editLoadProofs(runParm);
-            return true; // "consumed"
-        }
-
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_PROVABLE_LOGIC_STMT_TYPE) == 0)
-        {
-            editProvableLogicStmtType(runParm);
-            return true; // "consumed"
-        }
-
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_LOGIC_STMT_TYPE) == 0)
-        {
-            editLogicStmtType(runParm);
-            return true; // "consumed"
-        }
-
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_BOOK_MANAGER_ENABLED) == 0)
-        {
-            editBookManagerEnabled(runParm);
-            return true; // "consumed"
-        }
-
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_SEQ_ASSIGNER_INTERVAL_SIZE) == 0)
-        {
-            editSeqAssignerIntervalSize(runParm);
-            return true; // "consumed"
-        }
-
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE) == 0)
-        {
-            editSeqAssignerIntervalTblInitialSize(runParm);
-            return true; // "consumed"
-        }
-
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_FILE) == 0)
-        {
-            doLoadFile(runParm);
-            return true; // "consumed"
-        }
-        return false;
     }
 
     private void initStateVariables() {
@@ -222,18 +157,13 @@ public class LogicalSystemBoss extends Boss {
      * no load errors -- then throw an exception. Either the RunParmFile lines
      * are misordered or the LoadFile command is missing, or the Metamath file
      * has errors, or?
-     * 
+     *
      * @return LogicalSystem object reference.
      */
     public LogicalSystem getLogicalSystem() {
-        if (!logicalSystemLoaded)
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_MM_FILE_NOT_LOADED_1
-                    + UtilConstants.RUNPARM_LOAD_FILE
-                    + UtilConstants.ERRMSG_MM_FILE_NOT_LOADED_2
-                    + UtilConstants.RUNPARM_LOAD_FILE
-                    + UtilConstants.ERRMSG_MM_FILE_NOT_LOADED_3);
-        return logicalSystem;
+        if (logicalSystemLoaded)
+            return logicalSystem;
+        throw error(ERRMSG_MM_FILE_NOT_LOADED, RUNPARM_LOAD_FILE);
     }
 
     /**
@@ -246,21 +176,12 @@ public class LogicalSystemBoss extends Boss {
      * (there is only one Tokenizer at present and it hardcodes character values
      * based on the Metamath.pdf specification.) To make this change it would be
      * necessary to create a Tokenizer interface.
-     * 
-     * @param runParm RunParmFile line.
-     * @throws IllegalArgumentException if an error occurred
-     * @throws MMIOException if an error occurred
-     * @throws FileNotFoundException if an error occurred
-     * @throws IOException if an error occurred
      */
-    public void doLoadFile(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException, MMIOException, FileNotFoundException,
-        IOException
-    {
+    public void doLoadFile() {
 
         logicalSystemLoaded = false;
 
-        editRunParmValuesLength(runParm, UtilConstants.RUNPARM_LOAD_FILE, 1);
+        require(1);
 
         final Messages messages = batchFramework.outputBoss.getMessages();
 
@@ -310,8 +231,11 @@ public class LogicalSystemBoss extends Boss {
         systemizer.setLoadComments(loadComments);
         systemizer.setLoadProofs(loadProofs);
 
-        systemizer.load(batchFramework.paths.getMetamathPath(),
-            runParm.values[0].trim());
+        try {
+            systemizer.load(batchFramework.paths.getMetamathPath(), get(1));
+        } catch (MMIOException | IOException e) {
+            throw error(e.getMessage(), e);
+        }
 
         if (messages.getErrorMessageCnt() == 0)
             logicalSystemLoaded = true;
@@ -322,7 +246,7 @@ public class LogicalSystemBoss extends Boss {
     /**
      * Returns the current value of the LoadProofs RunParm or its default
      * setting.
-     * 
+     *
      * @return LoadProofs RunParm value (or its default).
      */
     public boolean getLoadProofs() {
@@ -331,154 +255,106 @@ public class LogicalSystemBoss extends Boss {
 
     /**
      * Validate Symbol Table Initial Size Parameter.
-     * 
-     * @param runParm RunParmFile line.
+     *
      * @throws IllegalArgumentException if an error occurred
      */
-    protected void editSymTblInitialSize(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
-        symTblInitialSizeParm = editRunParmValueReqPosInt(runParm,
-            UtilConstants.RUNPARM_SYM_TBL_INITIAL_SIZE, 1);
+    protected void editSymTblInitialSize() {
+        symTblInitialSizeParm = getPosInt(1);
     }
 
     /**
      * Validate Load Endpoint Statement Number Parameter.
      * <p>
      * Must be a positive integer.
-     * 
-     * @param runParm RunParmFile line.
+     *
      * @throws IllegalArgumentException if an error occurred
      */
-    protected void editLoadEndpointStmtNbr(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
-        loadEndpointStmtNbrParm = editRunParmValueReqPosInt(runParm,
-            UtilConstants.RUNPARM_LOAD_ENDPOINT_STMT_NBR, 1);
+    protected void editLoadEndpointStmtNbr() {
+        loadEndpointStmtNbrParm = getPosInt(1);
     }
 
     /**
      * Validate Load Endpoint Statement Label Parameter.
      * <p>
      * Must not be blank.
-     * 
-     * @param runParm RunParmFile line.
+     *
      * @throws IllegalArgumentException if an error occurred
      */
-    protected void editLoadEndpointStmtLabel(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
-        editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_LOAD_ENDPOINT_STMT_LABEL, 1);
-        loadEndpointStmtLabelParm = runParm.values[0].trim();
-        if (loadEndpointStmtLabelParm.equals(""))
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_LOAD_ENDPOINT_LABEL_BLANK);
+    protected void editLoadEndpointStmtLabel() {
+        loadEndpointStmtLabelParm = get(1);
+        if (loadEndpointStmtLabelParm.isEmpty())
+            throw error(ERRMSG_LOAD_ENDPOINT_LABEL_BLANK);
     }
 
     /**
      * Validate Load Comments Parameter.
      * <p>
      * Must equal yes or no.
-     * 
-     * @param runParm RunParmFile line.
+     *
      * @throws IllegalArgumentException if an error occurred
      */
-    protected void editLoadComments(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
-
-        loadComments = editYesNoRunParm(runParm,
-            UtilConstants.RUNPARM_LOAD_COMMENTS, 1);
+    protected void editLoadComments() {
+        loadComments = getYesNo(1);
     }
 
     /**
      * Validate Load Proofs Parameter.
      * <p>
      * Must equal yes or no.
-     * 
-     * @param runParm RunParmFile line.
+     *
      * @throws IllegalArgumentException if an error occurred
      */
-    protected void editLoadProofs(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
-
-        loadProofs = editYesNoRunParm(runParm,
-            UtilConstants.RUNPARM_LOAD_PROOFS, 1);
+    protected void editLoadProofs() {
+        loadProofs = getYesNo(1);
     }
 
     /**
      * Validate Statement Table Initial Size Parameter.
-     * 
-     * @param runParm RunParmFile line.
+     *
      * @throws IllegalArgumentException if an error occurred
      */
-    protected void editStmtTblInitialSize(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
-        symTblInitialSizeParm = editRunParmValueReqPosInt(runParm,
-            UtilConstants.RUNPARM_STMT_TBL_INITIAL_SIZE, 1);
+    protected void editStmtTblInitialSize() {
+        symTblInitialSizeParm = getPosInt(1);
     }
 
     /**
      * Validate Provable Logic Statement Type Runparm.
-     * 
-     * @param runParm RunParmFile line.
+     *
      * @throws IllegalArgumentException if an error occurred
      */
-    protected void editProvableLogicStmtType(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
-        editRunParmValuesLength(runParm,
-            UtilConstants.RUNPARM_PROVABLE_LOGIC_STMT_TYPE, 1);
+    protected void editProvableLogicStmtType() {
+        provableLogicStmtTypeParm = get(1);
 
-        provableLogicStmtTypeParm = runParm.values[0].trim();
-
-        if (provableLogicStmtTypeParm.length() < 1
+        if (provableLogicStmtTypeParm.isEmpty()
             || provableLogicStmtTypeParm.indexOf(' ') != -1)
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_PROVABLE_TYP_CD_BOGUS_1);
+            throw error(ERRMSG_PROVABLE_TYP_CD_BOGUS);
 
     }
 
     /**
      * Validate Logic Statement Type Runparm.
-     * 
-     * @param runParm RunParmFile line.
-     * @throws IllegalArgumentException if an error occurred
      */
-    protected void editLogicStmtType(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
-        editRunParmValuesLength(runParm, UtilConstants.RUNPARM_LOGIC_STMT_TYPE,
-            1);
-        logicStmtTypeParm = runParm.values[0].trim();
+    protected void editLogicStmtType() {
+        logicStmtTypeParm = get(1);
 
-        if (logicStmtTypeParm.length() < 1
-            || logicStmtTypeParm.indexOf(' ') != -1)
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_LOGIC_TYP_CD_BOGUS_1);
+        if (logicStmtTypeParm.isEmpty() || logicStmtTypeParm.indexOf(' ') != -1)
+            throw error(ERRMSG_LOGIC_TYP_CD_BOGUS);
     }
 
     /**
      * Validate Book Manager Enabled Parameter.
      * <p>
      * Must equal yes or no.
-     * 
-     * @param runParm RunParmFile line.
+     *
      * @throws IllegalArgumentException if an error occurred
      */
-    protected void editBookManagerEnabled(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
+    protected void editBookManagerEnabled() {
 
-        bookManagerEnabledParm = editYesNoRunParm(runParm,
-            UtilConstants.RUNPARM_BOOK_MANAGER_ENABLED, 1);
+        bookManagerEnabledParm = getYesNo(1);
 
         if (bookManager != null)
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_BOOK_MANAGER_ALREADY_EXISTS_1);
+            throw error(ERRMSG_BOOK_MANAGER_ALREADY_EXISTS, runParm.name,
+                RUNPARM_LOAD_FILE);
 
     }
 
@@ -486,15 +362,11 @@ public class LogicalSystemBoss extends Boss {
      * Validate SeqAssigner Interval Size Parameter.
      * <p>
      * Must be a positive integer within a given range.
-     * 
-     * @param runParm RunParmFile line.
+     *
      * @throws IllegalArgumentException if an error occurred
      */
-    protected void editSeqAssignerIntervalSize(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException
-    {
-        seqAssignerIntervalSizeParm = editRunParmValueReqPosInt(runParm,
-            UtilConstants.RUNPARM_SEQ_ASSIGNER_INTERVAL_SIZE, 1);
+    protected void editSeqAssignerIntervalSize() {
+        seqAssignerIntervalSizeParm = getPosInt(1);
         SeqAssigner.validateIntervalSize(seqAssignerIntervalSizeParm);
     }
 
@@ -502,17 +374,12 @@ public class LogicalSystemBoss extends Boss {
      * Validate SeqAssigner Interval Table Initial Size Parameter.
      * <p>
      * Must be a positive integer within a given range.
-     * 
-     * @param runParm RunParmFile line.
+     *
      * @throws IllegalArgumentException if an error occurred
      */
-    protected void editSeqAssignerIntervalTblInitialSize(
-        final RunParmArrayEntry runParm) throws IllegalArgumentException
-    {
-        seqAssignerIntervalTblInitialSizeParm = editRunParmValueReqPosInt(
-            runParm,
-            UtilConstants.RUNPARM_SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE, 1);
-        SeqAssigner
-            .validateIntervalTblInitialSize(seqAssignerIntervalTblInitialSizeParm);
+    protected void editSeqAssignerIntervalTblInitialSize() {
+        seqAssignerIntervalTblInitialSizeParm = getPosInt(1);
+        SeqAssigner.validateIntervalTblInitialSize(
+            seqAssignerIntervalTblInitialSizeParm);
     }
 }

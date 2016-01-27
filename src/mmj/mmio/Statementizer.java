@@ -373,7 +373,7 @@ public class Statementizer {
                     break;
                 }
 
-                x.symList = new ArrayList<String>(40);
+                x.symList = new ArrayList<>(40);
 
                 switch (nextToken.charAt(1)) {
 
@@ -422,7 +422,7 @@ public class Statementizer {
                 if (nextToken.length() != MMIOConstants.MM_KEYWORD_LEN)
                     raiseParseException(MMIOConstants.ERRMSG_INV_KEYWORD
                         + x.keyword);
-                x.symList = new ArrayList<String>(40);
+                x.symList = new ArrayList<>(40);
                 switch (nextToken.charAt(1)) {
                     case MMIOConstants.MM_LOG_HYP_KEYWORD_CHAR:
                         getLogHypSrcStmt(x);
@@ -434,7 +434,7 @@ public class Statementizer {
                         getAxiomaticAssrtSrcStmt(x);
                         break;
                     case MMIOConstants.MM_PROVABLE_ASSRT_KEYWORD_CHAR:
-                        x.proofList = new ArrayList<String>(100);
+                        x.proofList = new ArrayList<>(100);
                         getProvableAssrtSrcStmt(x);
                         // x.proofList.trimToSize();
                         break;

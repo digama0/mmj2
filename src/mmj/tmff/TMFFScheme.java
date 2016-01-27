@@ -14,6 +14,8 @@
 
 package mmj.tmff;
 
+import mmj.lang.LangException;
+
 /**
  * TMFFScheme holds an instantiated TMFFMethod and a name assigned by a user to
  * the Scheme.
@@ -30,7 +32,7 @@ public class TMFFScheme {
 
     /**
      * Constructor for TMFFScheme used by TMFFBoss and BatchMMJ2.
-     * 
+     *
      * @param param String parameter array corresponding to the BatchMMJ2
      *            RunParm command TMFFDefineScheme.
      */
@@ -38,38 +40,38 @@ public class TMFFScheme {
 
         if (param.length < 1 || param[0] == null || param[0].length() == 0)
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_SCHEME_NAME_REQUIRED_1);
+                TMFFConstants.ERRMSG_SCHEME_NAME_REQUIRED);
         schemeName = param[0];
 
         if (param.length < 2 || param[1] == null || param[1].length() == 0)
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_SCHEME_METHOD_MISSING_1);
+                TMFFConstants.ERRMSG_SCHEME_METHOD_MISSING);
 
-        tmffMethod = TMFFMethod.ConstructMethodWithUserParams(param);
+        tmffMethod = TMFFMethod.constructMethodWithUserParams(param);
     }
 
     /**
      * Standard constructor for TMFFScheme.
-     * 
+     *
      * @param schemeName name assigned to the scheme by the user.
      * @param method TMFFMethod to be assigned to the scheme.
      */
     public TMFFScheme(final String schemeName, final TMFFMethod method) {
         if (schemeName == null || schemeName.length() == 0)
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_SCHEME_NAME_REQUIRED_1);
+                TMFFConstants.ERRMSG_SCHEME_NAME_REQUIRED);
         this.schemeName = schemeName;
 
         if (method == null)
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_SCHEME_METHOD_MISSING_1);
+                TMFFConstants.ERRMSG_SCHEME_METHOD_MISSING);
         tmffMethod = method;
 
     }
 
     /**
      * Get the TMFFMethod instance assigned to this TMFFScheme.
-     * 
+     *
      * @return tmffMethod instance.
      */
     public TMFFMethod getTMFFMethod() {
@@ -78,26 +80,25 @@ public class TMFFScheme {
 
     /**
      * Set TMFFMethod assigned to this TMFFScheme.
-     * 
+     *
      * @param tmffMethod pre-instantiated TMFFMethod.
      */
     public void setTMFFMethod(final TMFFMethod tmffMethod) {
         if (tmffMethod == null)
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_SCHEME_METHOD_MISSING_1);
+                TMFFConstants.ERRMSG_SCHEME_METHOD_MISSING);
         if (TMFFConstants.TMFF_UNFORMATTED_SCHEME_NAME
-            .compareToIgnoreCase(getSchemeName()) == 0)
-            throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_SCHEME_CANNOT_BE_UPDATED_1
-                    + TMFFConstants.TMFF_UNFORMATTED_SCHEME_NAME
-                    + TMFFConstants.ERRMSG_SCHEME_CANNOT_BE_UPDATED_2);
+            .equalsIgnoreCase(getSchemeName()))
+            throw new IllegalArgumentException(LangException.format(
+                TMFFConstants.ERRMSG_SCHEME_CANNOT_BE_UPDATED,
+                TMFFConstants.TMFF_UNFORMATTED_SCHEME_NAME));
 
         this.tmffMethod = tmffMethod;
     }
 
     /**
      * Get the name assigned to this TMFFScheme.
-     * 
+     *
      * @return schemeName string.
      */
     public String getSchemeName() {
@@ -111,20 +112,19 @@ public class TMFFScheme {
      * that is validated elsewhere.
      * <p>
      * Scheme Name "Unformatted" is RESERVED and cannot be assigned.
-     * 
+     *
      * @param schemeName non-null, non-empty String.
      */
     public void setSchemeName(final String schemeName) {
         if (schemeName == null || schemeName.length() == 0)
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_SCHEME_NAME_REQUIRED_1);
+                TMFFConstants.ERRMSG_SCHEME_NAME_REQUIRED);
 
         if (TMFFConstants.TMFF_UNFORMATTED_SCHEME_NAME
-            .compareToIgnoreCase(schemeName) == 0)
-            throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_SCHEME_NM_CANT_BE_ASSIGNED_1
-                    + TMFFConstants.TMFF_UNFORMATTED_SCHEME_NAME
-                    + TMFFConstants.ERRMSG_SCHEME_NM_CANT_BE_ASSIGNED_2);
+            .equalsIgnoreCase(schemeName))
+            throw new IllegalArgumentException(LangException.format(
+                TMFFConstants.ERRMSG_SCHEME_NM_CANT_BE_ASSIGNED,
+                TMFFConstants.TMFF_UNFORMATTED_SCHEME_NAME));
 
         this.schemeName = schemeName;
     }

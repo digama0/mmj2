@@ -48,13 +48,14 @@ public class ProofWorksheetParser {
     private final LogicalSystem logicalSystem;
     private final Grammar grammar;
     private final Messages messages;
+    private final MacroManager macroManager;
 
     private String nextToken;
     private final Tokenizer proofTextTokenizer;
 
     /**
      * Constructor.
-     * 
+     *
      * @param proofTextReader Reader of ProofWorksheet tokens
      * @param proofTextSource Comment for debugging/testing
      * @param proofAsstPreferences variable settings
@@ -62,6 +63,7 @@ public class ProofWorksheetParser {
      * @param grammar the mmj.verify.Grammar object
      * @param messages the mmj.lang.Messages object used to store error and
      *            informational messages.
+     * @param macroManager the mmj.pa.MacroManager object
      * @throws IOException if an error occurred
      * @throws MMIOError if an error occurred
      */
@@ -69,7 +71,8 @@ public class ProofWorksheetParser {
         final String proofTextSource,
         final ProofAsstPreferences proofAsstPreferences,
         final LogicalSystem logicalSystem, final Grammar grammar,
-        final Messages messages) throws IOException, MMIOError
+        final Messages messages, final MacroManager macroManager)
+            throws IOException, MMIOError
     {
 
         this.proofTextReader = proofTextReader;
@@ -77,6 +80,7 @@ public class ProofWorksheetParser {
         this.logicalSystem = logicalSystem;
         this.grammar = grammar;
         this.messages = messages;
+        this.macroManager = macroManager;
 
         proofTextTokenizer = new Tokenizer(proofTextReader, proofTextSource);
 
@@ -88,7 +92,7 @@ public class ProofWorksheetParser {
 
     /**
      * Constructor.
-     * 
+     *
      * @param proofText String containing ProofWorksheet tokens
      * @param proofTextSource Comment for debugging/testing
      * @param proofAsstPreferences variable settings
@@ -96,6 +100,7 @@ public class ProofWorksheetParser {
      * @param grammar the mmj.verify.Grammar object
      * @param messages the mmj.lang.Messages object used to store error and
      *            informational messages.
+     * @param macroManager the mmj.pa.MacroManager object
      * @throws IOException if an error occurred
      * @throws MMIOError if an error occurred
      */
@@ -103,15 +108,16 @@ public class ProofWorksheetParser {
         final String proofTextSource,
         final ProofAsstPreferences proofAsstPreferences,
         final LogicalSystem logicalSystem, final Grammar grammar,
-        final Messages messages) throws IOException, MMIOError
+        final Messages messages, final MacroManager macroManager)
+            throws IOException, MMIOError
     {
-        this(new StringReader(proofText), proofTextSource,
-            proofAsstPreferences, logicalSystem, grammar, messages);
+        this(new StringReader(proofText), proofTextSource, proofAsstPreferences,
+            logicalSystem, grammar, messages, macroManager);
     }
 
     /**
      * Constructor.
-     * 
+     *
      * @param proofFile File object specifying ProofWorksheet token file for
      *            input.
      * @param proofTextSource Comment for debugging/testing
@@ -120,6 +126,7 @@ public class ProofWorksheetParser {
      * @param grammar the mmj.verify.Grammar object
      * @param messages the mmj.lang.Messages object used to store error and
      *            informational messages.
+     * @param macroManager the mmj.pa.MacroManager object
      * @throws IOException if an error occurred
      * @throws MMIOError if an error occurred
      */
@@ -127,11 +134,13 @@ public class ProofWorksheetParser {
         final String proofTextSource,
         final ProofAsstPreferences proofAsstPreferences,
         final LogicalSystem logicalSystem, final Grammar grammar,
-        final Messages messages) throws IOException, MMIOError
+        final Messages messages, final MacroManager macroManager)
+            throws IOException, MMIOError
     {
 
         this(new BufferedReader(new FileReader(proofFile)), proofTextSource,
-            proofAsstPreferences, logicalSystem, grammar, messages);
+            proofAsstPreferences, logicalSystem, grammar, messages,
+            macroManager);
     }
 
     /**
@@ -148,7 +157,7 @@ public class ProofWorksheetParser {
 
     /**
      * Checks to see if another ProofWorksheet is available.
-     * 
+     *
      * @return true if at least one more ProofWorksheet token exists to be
      *         processed.
      */
@@ -162,21 +171,21 @@ public class ProofWorksheetParser {
     /**
      * Returns the next ProofWorksheet from the input source for situations when
      * input cursor position not available.
-     * 
+     *
      * @return ProofWorksheet or throws an exception!
      * @throws IOException if an error occurred
      * @throws MMIOError if an error occurred
      * @throws ProofAsstException if an error occurred
      */
-    public ProofWorksheet next() throws IOException, MMIOError,
-        ProofAsstException
+    public ProofWorksheet next()
+        throws IOException, MMIOError, ProofAsstException
     {
         return next(-1, null);
     }
 
     /**
      * Returns the next ProofWorksheet from the input source.
-     * 
+     *
      * @param inputCursorPos offset plus one of Caret in Proof TextArea;
      * @param stepRequest may be null, or StepSelector Search or Choice request
      *            and will be loaded into the ProofWorksheet.
@@ -186,13 +195,13 @@ public class ProofWorksheetParser {
      * @throws ProofAsstException if an error occurred
      */
     public ProofWorksheet next(final int inputCursorPos,
-        final StepRequest stepRequest) throws IOException, MMIOError,
-        ProofAsstException
+        final StepRequest stepRequest)
+            throws IOException, MMIOError, ProofAsstException
     {
 
         final ProofWorksheet proofWorksheet = new ProofWorksheet(
             proofTextTokenizer, proofAsstPreferences, logicalSystem, grammar,
-            messages);
+            messages, macroManager);
 
         /*
          * loadWorksheet() returns next token *after* this

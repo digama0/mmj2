@@ -33,11 +33,11 @@ public class StepSelectorStore {
     private final int maxResults;
     private int cntResults = 0;
 
-    private final List<StepSelectorItem> storeList = new LinkedList<StepSelectorItem>();
+    private final List<StepSelectorItem> storeList = new LinkedList<>();
 
     /**
      * Simple factory to hide constructor details.
-     * 
+     *
      * @param proofAsstPreferences contains parameters needed by StepSelector
      *            and friends.
      * @return the new StepSelectorStore
@@ -50,12 +50,12 @@ public class StepSelectorStore {
 
     /**
      * Simple constructor for the most basic StepSelectorStore.
-     * 
+     *
      * @param proofAsstPreferences contains parameters needed by StepSelector
      *            and friends.
      */
     public StepSelectorStore(final ProofAsstPreferences proofAsstPreferences) {
-        maxResults = proofAsstPreferences.getStepSelectorMaxResults();
+        maxResults = proofAsstPreferences.stepSelectorMaxResults.get();
     }
 
     /**
@@ -68,7 +68,7 @@ public class StepSelectorStore {
      * selection array along with a null Assrt. Otherwise it outputs
      * "***END***". The purpose it to inform the user that rerunning the
      * StepSelector may or may not be useful.
-     * 
+     *
      * @param step Step String corresponding to the ProofWorksheet step (number)
      *            for which the StepSelector was run.
      * @param storeOverflow indicates whether or not additional results were
@@ -94,9 +94,8 @@ public class StepSelectorStore {
             final StringBuilder sb = new StringBuilder("<html>");
             String delim = "";
             for (final String element : item.selection) {
-                sb.append(delim).append(
-                    element.replace("&", "&amp;").replace("<", "&lt;")
-                        .replace(">", "&gt;"));
+                sb.append(delim).append(element.replace("&", "&amp;")
+                    .replace("<", "&lt;").replace(">", "&gt;"));
                 delim = "<br/>";
             }
             selectionArray[n++] = sb.append("</html>").toString();
@@ -107,7 +106,7 @@ public class StepSelectorStore {
     /**
      * Adds a StepSelectorSearch result to the data store if the store is not
      * already full.
-     * 
+     *
      * @param assrt Assertion that is unifiable with the proof step.
      * @param selection Strings showing formula as it will appear in the
      *            StepSelectorDialog.
@@ -122,13 +121,10 @@ public class StepSelectorStore {
     /**
      * Checks to see if the store has fewer result items than permitted
      * according the Proof Assistant Preferences StepSelectorMaxResults value.
-     * 
+     *
      * @return true if store is full otherwise false.
      */
     public boolean isFull() {
-        if (cntResults < maxResults)
-            return false;
-        else
-            return true;
+        return cntResults >= maxResults;
     }
 }

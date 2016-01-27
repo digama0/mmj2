@@ -39,9 +39,11 @@
 
 package mmj.verify;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import mmj.lang.*;
+import mmj.pa.SessionStore;
 
 /**
  * Grammar processes a mmj LogicalSystem, extracts a Grammar, which it also
@@ -51,7 +53,7 @@ import mmj.lang.*;
  * replacement rules -- from a Metamath ".mm" file/database. The distinction
  * made between "building" and extracting what is already there is important
  * because Metamath's set.mm database uses "overloaded functions", such as "weq"
- * and "wceq", which are tecnically "ambiguous" (two valid parse trees exist.)
+ * and "wceq", which are technically "ambiguous" (two valid parse trees exist.)
  * <p>
  * These "non-essential" ambiguities are resolved during grammar generation by a
  * process of "combinatorial explosion", which creates a Notation Rule for every
@@ -100,7 +102,7 @@ import mmj.lang.*;
  * mathematically impossible. So that is definitely an opportunity for
  * achievement, right there. It will take a bit longer than initially expected
  * :)
- * 
+ *
  * @see <a href="../../ConsolidatedListOfGrammarValidations.html">
  *      ConsolidatedListOfGrammarValidations.html</a>
  * @see <a href="../../BasicsOfSyntaxAxiomsAndTypes.html">
@@ -146,7 +148,7 @@ public class Grammar implements SyntaxVerifier {
      * initialization is required before verification (and since there is no
      * rollback capability, we require want a clean slate before beginning the
      * updates.)
-     * 
+     *
      * @see mmj.lang.LogicalSystem
      */
     private boolean grammarInitialized;
@@ -165,10 +167,11 @@ public class Grammar implements SyntaxVerifier {
     private int notationGRGimmeMatchCnt;
 
     // global variables stored here for mere convenience
-    private Map<String, Sym> symTbl;
+    public Map<String, Sym> symTbl;
 
-    private Map<String, Stmt> stmtTbl;
+    public Map<String, Stmt> stmtTbl;
     private Messages messages;
+    private SessionStore store;
 
     private int lastGrammarRuleNbr = 0;
 
@@ -177,6 +180,8 @@ public class Grammar implements SyntaxVerifier {
     }
 
     private GrammaticalParser grammaticalParser;
+
+    private Class<? extends GrammaticalParser> parserPrototype;
 
     /**
      * Computed maximum?
@@ -192,7 +197,7 @@ public class Grammar implements SyntaxVerifier {
 
     /**
      * Constructor.
-     * 
+     *
      * @param provableLogicStmtTypCodes lists Type Codes used on Theorems
      *            involving Logical Statements thus identifying all other Type
      *            Codes as Syntax Type Codes -- if array is empty or null, the
@@ -212,11 +217,13 @@ public class Grammar implements SyntaxVerifier {
      *            meaning that the Stmt is ambiguous, an error. Note that this
      *            option will often require much more time due to generation of
      *            many duplicate parse trees (not an error).
+     * @param parserPrototype A pluggable parser implementation
      */
     public Grammar(final String[] provableLogicStmtTypCodes,
         final String[] logicStmtTypCodes,
         final boolean doCompleteGrammarAmbiguityEdits,
-        final boolean doCompleteStmtAmbiguityEdits)
+        final boolean doCompleteStmtAmbiguityEdits,
+        final Class<? extends GrammaticalParser> parserPrototype)
     {
 
         this.provableLogicStmtTypCodes = provableLogicStmtTypCodes;
@@ -224,6 +231,7 @@ public class Grammar implements SyntaxVerifier {
         editGrammarConstructorTypParams();
 
         this.doCompleteGrammarAmbiguityEdits = doCompleteGrammarAmbiguityEdits;
+        this.parserPrototype = parserPrototype;
 
         if (doCompleteStmtAmbiguityEdits)
             parseTreeMax = GrammarConstants.PARSE_TREE_MAX_FOR_AMBIG_EDIT;
@@ -234,7 +242,7 @@ public class Grammar implements SyntaxVerifier {
 
     /**
      * Constructor using default doCompleteStmtAmbiguityEdits value.
-     * 
+     *
      * @param provableLogicStmtTypCodes lists Type Codes used on Theorems
      *            involving Logical Statements thus identifying all other Type
      *            Codes as Syntax Type Codes -- if array is empty or null, the
@@ -257,14 +265,15 @@ public class Grammar implements SyntaxVerifier {
 
         this(provableLogicStmtTypCodes, logicStmtTypCodes,
             doCompleteGrammarAmbiguityEdits,
-            GrammarConstants.DEFAULT_COMPLETE_STATEMENT_AMBIG_EDITS);
+            GrammarConstants.DEFAULT_COMPLETE_STATEMENT_AMBIG_EDITS,
+            GrammarConstants.DEFAULT_PARSER_PROTOTYPE);
 
     }
 
     /**
      * Constructor using default doCompleteStmtAmbiguityEdits and
      * doCompleteGrammarAmbiguityEdits values.
-     * 
+     *
      * @param provableLogicStmtTypCodes lists Type Codes used on Theorems
      *            involving Logical Statements thus identifying all other Type
      *            Codes as Syntax Type Codes -- if array is empty or null, the
@@ -278,8 +287,7 @@ public class Grammar implements SyntaxVerifier {
     {
 
         this(provableLogicStmtTypCodes, logicStmtTypCodes,
-            GrammarConstants.DEFAULT_COMPLETE_GRAMMAR_AMBIG_EDITS,
-            GrammarConstants.DEFAULT_COMPLETE_STATEMENT_AMBIG_EDITS);
+            GrammarConstants.DEFAULT_COMPLETE_GRAMMAR_AMBIG_EDITS);
 
     }
 
@@ -290,15 +298,17 @@ public class Grammar implements SyntaxVerifier {
      */
     public Grammar() {
         this(GrammarConstants.DEFAULT_PROVABLE_LOGIC_STMT_TYP_CODES,
-            GrammarConstants.DEFAULT_LOGIC_STMT_TYP_CODES,
-            GrammarConstants.DEFAULT_COMPLETE_GRAMMAR_AMBIG_EDITS,
-            GrammarConstants.DEFAULT_COMPLETE_STATEMENT_AMBIG_EDITS);
+            GrammarConstants.DEFAULT_LOGIC_STMT_TYP_CODES);
 
+    }
+
+    public void setStore(final SessionStore store) {
+        this.store = store;
     }
 
     /**
      * Return grammarInitialized flag.
-     * 
+     *
      * @return grammarInitialized flag.
      */
     public boolean getGrammarInitialized() {
@@ -317,14 +327,14 @@ public class Grammar implements SyntaxVerifier {
      * Initialize derivedRuleQueue.
      */
     public void derivedRuleQueueInit() {
-        derivedRuleQueue = new PriorityQueue<GrammarRule>(
+        derivedRuleQueue = new PriorityQueue<>(
             GrammarConstants.MAX_DERIVED_RULE_QUEUE_SIZE,
             GrammarRule.MAX_SEQ_NBR);
     }
 
     /**
      * Set derivedRuleQueue.
-     * 
+     *
      * @param p PriorityQueue.
      */
     public void setDerivedRuleQueue(final PriorityQueue<GrammarRule> p) {
@@ -333,7 +343,7 @@ public class Grammar implements SyntaxVerifier {
 
     /**
      * Add rule to derivedRuleQueue.
-     * 
+     *
      * @param gR GrammarRule to add.
      */
     public void derivedRuleQueueAdd(final GrammarRule gR) {
@@ -342,7 +352,7 @@ public class Grammar implements SyntaxVerifier {
 
     /**
      * Read GrammarRule from derivedRuleQueue.
-     * 
+     *
      * @return GrammarRule, or null if queue empty.
      */
     public GrammarRule derivedRuleQueueRead() {
@@ -351,7 +361,7 @@ public class Grammar implements SyntaxVerifier {
 
     /**
      * Return size of Symbol Table.
-     * 
+     *
      * @return size of Symbol Table.
      */
     public int getSymTblSize() {
@@ -360,7 +370,7 @@ public class Grammar implements SyntaxVerifier {
 
     /**
      * Add NotationRule to Notation Rule Set.
-     * 
+     *
      * @param notationRule to add to set.
      */
     public void notationGRSetAdd(final NotationRule notationRule) {
@@ -369,7 +379,7 @@ public class Grammar implements SyntaxVerifier {
 
     /**
      * Return NotationRule Set.
-     * 
+     *
      * @return Set of NotationRules.
      */
     public Set<NotationRule> getNotationGRSet() {
@@ -399,7 +409,7 @@ public class Grammar implements SyntaxVerifier {
 
     /**
      * Set Count of NotationRules deemed to be "gimme matches".
-     * 
+     *
      * @param cnt Count of NotationRules deemed to be "gimme matches".
      */
     public void setNotationGRGimmeMatchCnt(final int cnt) {
@@ -408,7 +418,7 @@ public class Grammar implements SyntaxVerifier {
 
     /**
      * Get Count of NotationRules deemed to be "gimme matches".
-     * 
+     *
      * @return Count of NotationRules deemed to be "gimme matches".
      */
     public int getNotationGRGimmeMatchCnt() {
@@ -417,7 +427,7 @@ public class Grammar implements SyntaxVerifier {
 
     /**
      * Add TypeConversionRule to List.
-     * 
+     *
      * @param typeConversionRule to be added.
      * @return index of new rule in list.
      */
@@ -431,7 +441,7 @@ public class Grammar implements SyntaxVerifier {
 
     /**
      * Return TypeConversionRule List.
-     * 
+     *
      * @return TypeConversionRule List.
      */
     public List<TypeConversionRule> getTypeConversionGRList() {
@@ -440,7 +450,7 @@ public class Grammar implements SyntaxVerifier {
 
     /**
      * Add NullsPermittedRule to List.
-     * 
+     *
      * @param r NullsPermittedRule to be added.
      * @return index of new NullsPermittedRule.
      */
@@ -452,7 +462,7 @@ public class Grammar implements SyntaxVerifier {
 
     /**
      * Return NullsPermittedRule List.
-     * 
+     *
      * @return NullsPermittedRule List.
      */
     public List<NullsPermittedRule> getNullsPermittedGRList() {
@@ -463,7 +473,7 @@ public class Grammar implements SyntaxVerifier {
      * Return NullsPermittedRule Type Code Set.
      * <p>
      * This is the set of Type Codes for which Nulls are permitted.
-     * 
+     *
      * @return NullsPermittedRule Type Code Set.
      */
     public Set<Cnst> getNullsPermittedTypSet() {
@@ -473,7 +483,7 @@ public class Grammar implements SyntaxVerifier {
     /**
      * Return VarHyp Type Code Set. This is the set of Type Codes with defined
      * VarHyp's.
-     * 
+     *
      * @return VarHyp Type Code Set.
      */
     public Set<Cnst> getVarHypTypSet() {
@@ -484,7 +494,7 @@ public class Grammar implements SyntaxVerifier {
      * Return Syntax Axiom Type Code Set.
      * <p>
      * This is the set of Type Codes for Syntax Axioms are defined.
-     * 
+     *
      * @return Syntax Axiom Type Code Set.
      */
     public Set<Cnst> getSyntaxAxiomTypSet() {
@@ -495,7 +505,7 @@ public class Grammar implements SyntaxVerifier {
      * Return Array of Logic Stmt Type Codes (like "wff").
      * <p>
      * At this time, the array will have exactly one element.
-     * 
+     *
      * @return Array of Logic Stmt Type Codes.
      */
     public Cnst[] getLogicStmtTypArray() {
@@ -505,7 +515,7 @@ public class Grammar implements SyntaxVerifier {
     /**
      * Return Array of Provable Logic Stmt Type Codes (like "|-"). At this time,
      * the array will have exactly one element.
-     * 
+     *
      * @return Array of Logic Stmt Type Codes.
      */
     public Cnst[] getProvableLogicStmtTypArray() {
@@ -520,7 +530,7 @@ public class Grammar implements SyntaxVerifier {
      * <p>
      * Note: access to symTbl and stmtTbl is required in case the grammar needs
      * to be re-initialized.
-     * 
+     *
      * @param messages Messages object for error/info messages.
      * @param symTbl Symbol Table (Map).
      * @param stmtTbl Statement Table (Map).
@@ -543,8 +553,8 @@ public class Grammar implements SyntaxVerifier {
                 return null;
         }
 
-        if (stmt instanceof VarHyp || stmt instanceof Axiom
-            && ((Axiom)stmt).getIsSyntaxAxiom())
+        if (stmt instanceof VarHyp
+            || stmt instanceof Axiom && ((Axiom)stmt).getIsSyntaxAxiom())
             // return stmt.getExprRPN();
             return stmt.getExprParseTree();
 
@@ -565,7 +575,7 @@ public class Grammar implements SyntaxVerifier {
      * the entire grammar -- which ought to result in the same parse, unless the
      * grammar is ambiguous (new Grammar Rules should be "disjoint" from
      * previous ones.)
-     * 
+     *
      * @param messages Messages object for error/info messages.
      * @param symTbl Symbol Table (Map).
      * @param stmtTbl Statement Table (Map).
@@ -577,8 +587,8 @@ public class Grammar implements SyntaxVerifier {
      */
     public ParseTree parseFormula(final Messages messages,
         final Map<String, Sym> symTbl, final Map<String, Stmt> stmtTbl,
-        final Formula formula, final VarHyp[] varHypArray,
-        final int highestSeq, final Stmt defaultStmt)
+        final Formula formula, final VarHyp[] varHypArray, final int highestSeq,
+        final Stmt defaultStmt)
     {
 
         checkVerifySyntaxParams(messages, symTbl, stmtTbl);
@@ -592,18 +602,19 @@ public class Grammar implements SyntaxVerifier {
                 return null;
         }
         return grammaticalParseOneFormula(formula, varHypArray, highestSeq,
-            defaultStmt.getLabel());
+            defaultStmt == null ? null : defaultStmt.getLabel());
     }
 
     /**
      * Parse all Statement Formulas and update stmtTbl with results.
-     * 
+     *
      * @param messages Messages object for error/info messages.
      * @param symTblParam Symbol Table (Map).
      * @param stmtTblParam Statement Table (Map).
      */
     public void parseAllFormulas(final Messages messages,
-        final Map<String, Sym> symTblParam, final Map<String, Stmt> stmtTblParam)
+        final Map<String, Sym> symTblParam,
+        final Map<String, Stmt> stmtTblParam)
     {
         checkVerifySyntaxParams(messages, symTblParam, stmtTblParam);
         if (!grammarInitialized) {
@@ -616,15 +627,15 @@ public class Grammar implements SyntaxVerifier {
                 return;
         }
 
-        final Set<Stmt> stmtTblBySeq = new TreeSet<Stmt>(MObj.SEQ);
+        final Set<Stmt> stmtTblBySeq = new TreeSet<>(MObj.SEQ);
         stmtTblBySeq.addAll(stmtTbl.values());
 
         for (final Stmt stmt : stmtTblBySeq) {
             if (messages.maxErrorMessagesReached())
                 break;
             final VarHyp[] varHypArray = stmt.getMandVarHypArray();
-            if (stmt instanceof VarHyp || stmt instanceof Axiom
-                && ((Axiom)stmt).getIsSyntaxAxiom())
+            if (stmt instanceof VarHyp
+                || stmt instanceof Axiom && ((Axiom)stmt).getIsSyntaxAxiom())
                 // already done during initializeGrammarTables()
                 continue;
             ParseTree exprParseTree = grammaticalParseOneFormula(
@@ -655,14 +666,15 @@ public class Grammar implements SyntaxVerifier {
      * The intended use of this function would be to initialize the grammar
      * without parsing every statement (parsing every statement in set.mm
      * requires 8ish seconds!)
-     * 
+     *
      * @param messages Messages object for error/info messages.
      * @param symTblParam Symbol Table (Map).
      * @param stmtTblParam Statement Table (Map).
      * @return true if grammar initializes successfully, else false.
      */
     public boolean initializeGrammar(final Messages messages,
-        final Map<String, Sym> symTblParam, final Map<String, Stmt> stmtTblParam)
+        final Map<String, Sym> symTblParam,
+        final Map<String, Stmt> stmtTblParam)
     {
         grammarInitialized = false;
 
@@ -679,7 +691,7 @@ public class Grammar implements SyntaxVerifier {
      * Alternate access to parse algorithm for syntax axiom/ grammar rule type
      * expressions which considers a the existence of a parse tree to be an
      * error.
-     * 
+     *
      * @param formulaTyp Type Code of the Expression to be parsed.
      * @param parseNodeHolderExpr Expression rewritten with VarHyp's replacing
      *            Var's.
@@ -701,7 +713,7 @@ public class Grammar implements SyntaxVerifier {
         if (parseTreeCnt <= 0)
             return null;
         if (parseTreeCnt == 1) {
-            if (parseTreeArray[0].getRoot().getStmt().getLabel() == syntaxAxiomLabel)
+            if (parseTreeArray[0].getRoot().stmt.getLabel() == syntaxAxiomLabel)
                 return null;
             return GrammarConstants.ERRMSG_GRAMMAR_RULE_PARSEABLE_1
                 + syntaxAxiomLabel
@@ -725,7 +737,7 @@ public class Grammar implements SyntaxVerifier {
      * theory this could cause a problem if a non-syntax error comes out and is
      * taken as a syntax error by the user. However, with the current parser
      * that should not be a problem (as seen in the following method).
-     * 
+     *
      * @param formula formula to be parsed.
      * @param hypArray Hyp's for Formula's Var's.
      * @param highestSeq Maximum Stmt.seq that may be used to parse the
@@ -765,10 +777,11 @@ public class Grammar implements SyntaxVerifier {
                 formula.getTyp(), formula.getParseNodeHolderExpr(varHypArray),
                 highestSeq);
             if (parseTreeCnt < 0)
-                accumErrorMsgInList(GrammarConstants.ERRMSG_PARSE_FAILED_AT_POS_1
-                    + defaultStmtLabel
-                    + GrammarConstants.ERRMSG_PARSE_FAILED_AT_POS_2
-                    + (parseTreeCnt * -1 + 1));
+                accumErrorMsgInList(
+                    GrammarConstants.ERRMSG_PARSE_FAILED_AT_POS_1
+                        + defaultStmtLabel
+                        + GrammarConstants.ERRMSG_PARSE_FAILED_AT_POS_2
+                        + (1 - parseTreeCnt));
             else
                 switch (parseTreeCnt) {
                     case 1:
@@ -787,12 +800,13 @@ public class Grammar implements SyntaxVerifier {
 //                      exprRPN =
 //                          parseTreeArray[0].convertToRPN();
                         exprParseTree = parseTreeArray[0];
-                        accumInfoMsgInList(GrammarConstants.ERRMSG_2_PARSE_TREES_1
-                            + defaultStmtLabel
-                            + GrammarConstants.ERRMSG_2_PARSE_TREES_2
-                            + parseTreeArray[0].toString()
-                            + GrammarConstants.ERRMSG_2_PARSE_TREES_3
-                            + parseTreeArray[1].toString());
+                        accumInfoMsgInList(
+                            GrammarConstants.ERRMSG_2_PARSE_TREES_1
+                                + defaultStmtLabel
+                                + GrammarConstants.ERRMSG_2_PARSE_TREES_2
+                                + parseTreeArray[0].toString()
+                                + GrammarConstants.ERRMSG_2_PARSE_TREES_3
+                                + parseTreeArray[1].toString());
                         break;
                     default:
                         /**
@@ -822,7 +836,8 @@ public class Grammar implements SyntaxVerifier {
     }
 
     private void checkVerifySyntaxParams(final Messages messagesParam,
-        final Map<String, Sym> symTblParam, final Map<String, Stmt> stmtTblParam)
+        final Map<String, Sym> symTblParam,
+        final Map<String, Stmt> stmtTblParam)
     {
 
         // store as global variables for convenience throughout
@@ -865,7 +880,7 @@ public class Grammar implements SyntaxVerifier {
      * expression, even if the expression has not been parsed into
      * sub-expressions with Syntax Axioms; just feed the RPN into an analogue of
      * the Proof Verifier with its stack and variable substitution algorithms.
-     * 
+     *
      * @param stmt the Stmt for which to build the parse tree
      * @param varHypArray the set of VarHyps
      * @return the new ParseTree
@@ -874,13 +889,10 @@ public class Grammar implements SyntaxVerifier {
         final VarHyp[] varHypArray)
     {
 
-        final ParseNode root = new ParseNode();
-        root.setStmt(stmt);
-
-        final ParseNode[] children = new ParseNode[varHypArray.length];
+        final ParseNode root = new ParseNode(stmt,
+            new ParseNode[varHypArray.length]);
         for (int i = 0; i < varHypArray.length; i++)
-            children[i] = new ParseNode(varHypArray[i]);
-        root.setChild(children);
+            root.child[i] = new ParseNode(varHypArray[i]);
 
         return new ParseTree(root);
     }
@@ -941,11 +953,17 @@ public class Grammar implements SyntaxVerifier {
         }
     }
 
+    public void setParserPrototype(
+        final Class<? extends GrammaticalParser> proto)
+    {
+        parserPrototype = proto;
+    }
+
     private boolean initializeGrammarTables() throws VerifyException {
 
         grammarInitialized = false;
 
-        final Set<Axiom> allSyntaxAxiomSet = new TreeSet<Axiom>(MObj.SEQ);
+        final Set<Axiom> allSyntaxAxiomSet = new TreeSet<>(MObj.SEQ);
 
         if (!setInitialGrammarTableValues(allSyntaxAxiomSet))
             return false;
@@ -955,8 +973,7 @@ public class Grammar implements SyntaxVerifier {
         for (final Axiom axiom : allSyntaxAxiomSet) {
             if (messages.maxErrorMessagesReached())
                 break;
-            if (!GrammarRule.add(axiom, this))
-                errorsFound = true;
+            errorsFound |= !GrammarRule.add(axiom, this);
         }
 
         setDerivedRuleQueue(null);
@@ -964,9 +981,6 @@ public class Grammar implements SyntaxVerifier {
         if (errorsFound)
             return false;
 
-// //*
-//      grammaticalParser = new BottomUpParser(this,
-// //*
         /**
          * Note: the BottomUpParser is perfectly acceptable for parsing Grammar
          * Rules, and it may even be somewhat better for ambiguous grammars as
@@ -980,7 +994,23 @@ public class Grammar implements SyntaxVerifier {
          * amount of code used in a run, the EarleyParser is being used now
          * everywhere.
          */
-        grammaticalParser = new EarleyParser(this, maxFormulaCnt);
+        try {
+            grammaticalParser = parserPrototype
+                .getConstructor(Grammar.class, int.class)
+                .newInstance(this, maxFormulaCnt);
+        } catch (final InstantiationException e) {
+            throw new IllegalArgumentException(e);
+        } catch (final IllegalAccessException e) {
+            throw new IllegalArgumentException(e);
+        } catch (final InvocationTargetException e) {
+            throw new IllegalArgumentException(e);
+        } catch (final NoSuchMethodException e) {
+            throw new IllegalArgumentException(e);
+        } catch (final SecurityException e) {
+            throw new IllegalArgumentException(e);
+        }
+
+        grammaticalParser.addSettings(store);
 
         GrammarAmbiguity g = new GrammarAmbiguity(this,
             doCompleteGrammarAmbiguityEdits);
@@ -1012,12 +1042,12 @@ public class Grammar implements SyntaxVerifier {
         provableLogicStmtTypArray = new Cnst[provableLogicStmtTypCodes.length];
         logicStmtTypArray = new Cnst[logicStmtTypCodes.length];
 
-        varHypTypSet = new TreeSet<Cnst>(MObj.SEQ);
-        syntaxAxiomTypSet = new TreeSet<Cnst>(MObj.SEQ);
-        nullsPermittedTypSet = new TreeSet<Cnst>(MObj.SEQ);
-        nullsPermittedGRList = new ArrayList<NullsPermittedRule>(5);
-        typeConversionGRList = new ArrayList<TypeConversionRule>(5);
-        notationGRSet = new TreeSet<NotationRule>(GrammarRule.MAX_SEQ_NBR);
+        varHypTypSet = new TreeSet<>(MObj.SEQ);
+        syntaxAxiomTypSet = new TreeSet<>(MObj.SEQ);
+        nullsPermittedTypSet = new TreeSet<>(MObj.SEQ);
+        nullsPermittedGRList = new ArrayList<>(5);
+        typeConversionGRList = new ArrayList<>(5);
+        notationGRSet = new TreeSet<>(GrammarRule.MAX_SEQ_NBR);
 //      baseGRSet                = new TreeSet(
 //                                          GrammarRule.MAX_SEQ_NBR);
         notationGRGimmeMatchCnt = 0;
@@ -1049,11 +1079,11 @@ public class Grammar implements SyntaxVerifier {
                 cnst.setGrammaticalTyp(true);
             }
             else {
-                accumErrorMsgInList(GrammarConstants.ERRMSG_PROVABLE_TYP_NOT_A_CNST_1
-                    + i
-                    + GrammarConstants.ERRMSG_PROVABLE_TYP_NOT_A_CNST_2
-                    + provableLogicStmtTypCodes[i]
-                    + GrammarConstants.ERRMSG_PROVABLE_TYP_NOT_A_CNST_3);
+                accumErrorMsgInList(
+                    GrammarConstants.ERRMSG_PROVABLE_TYP_NOT_A_CNST_1 + i
+                        + GrammarConstants.ERRMSG_PROVABLE_TYP_NOT_A_CNST_2
+                        + provableLogicStmtTypCodes[i]
+                        + GrammarConstants.ERRMSG_PROVABLE_TYP_NOT_A_CNST_3);
                 errorsFound = true;
             }
         }
@@ -1067,11 +1097,11 @@ public class Grammar implements SyntaxVerifier {
                 cnst.setGrammaticalTyp(true);
             }
             else {
-                accumErrorMsgInList(GrammarConstants.ERRMSG_LOGIC_TYP_NOT_A_CNST_1
-                    + i
-                    + GrammarConstants.ERRMSG_LOGIC_TYP_NOT_A_CNST_2
-                    + logicStmtTypCodes[i]
-                    + GrammarConstants.ERRMSG_LOGIC_TYP_NOT_A_CNST_3);
+                accumErrorMsgInList(
+                    GrammarConstants.ERRMSG_LOGIC_TYP_NOT_A_CNST_1 + i
+                        + GrammarConstants.ERRMSG_LOGIC_TYP_NOT_A_CNST_2
+                        + logicStmtTypCodes[i]
+                        + GrammarConstants.ERRMSG_LOGIC_TYP_NOT_A_CNST_3);
                 errorsFound = true;
             }
         }
@@ -1100,12 +1130,14 @@ public class Grammar implements SyntaxVerifier {
 //              Stmt[] varHypRPN = new Stmt[1]; //default RPN
 //              varHypRPN[0]     = stmt;        //looks circular, eh?
 //              stmt.setExprRPN(varHypRPN);
-                stmt.setExprParseTree(new ParseTree(new ParseNode((VarHyp)stmt)));
+                stmt.setExprParseTree(
+                    new ParseTree(new ParseNode((VarHyp)stmt)));
 
                 if (cnst.isProvableLogicStmtTyp()) {
-                    accumErrorMsgInList(GrammarConstants.ERRMSG_VARHYP_TYP_PROVABLE_1
-                        + stmt.getLabel()
-                        + GrammarConstants.ERRMSG_VARHYP_TYP_PROVABLE_2);
+                    accumErrorMsgInList(
+                        GrammarConstants.ERRMSG_VARHYP_TYP_PROVABLE_1
+                            + stmt.getLabel()
+                            + GrammarConstants.ERRMSG_VARHYP_TYP_PROVABLE_2);
                     errorsFound = true;
                 }
                 continue;
@@ -1159,15 +1191,15 @@ public class Grammar implements SyntaxVerifier {
 
         final ScopeFrame mandFrame = axiom.getMandFrame();
         if (mandFrame.djVarsArray.length != 0) {
-            accumErrorMsgInList(GrammarConstants.ERRMSG_DJ_VARS_ON_SYNTAX_1
-                + axiom.getLabel()
-                + GrammarConstants.ERRMSG_DJ_VARS_ON_SYNTAX_2);
+            accumErrorMsgInList(
+                GrammarConstants.ERRMSG_DJ_VARS_ON_SYNTAX_1 + axiom.getLabel()
+                    + GrammarConstants.ERRMSG_DJ_VARS_ON_SYNTAX_2);
             errorsFound = true;
         }
         if (mandFrame.hypArray.length != varHypArray.length) {
-            accumErrorMsgInList(GrammarConstants.ERRMSG_LOGHYP_FOR_SYNTAX_1
-                + axiom.getLabel()
-                + GrammarConstants.ERRMSG_LOGHYP_FOR_SYNTAX_2);
+            accumErrorMsgInList(
+                GrammarConstants.ERRMSG_LOGHYP_FOR_SYNTAX_1 + axiom.getLabel()
+                    + GrammarConstants.ERRMSG_LOGHYP_FOR_SYNTAX_2);
             errorsFound = true;
         }
 
@@ -1199,19 +1231,21 @@ public class Grammar implements SyntaxVerifier {
                 for (int i = 0; i < varHypArray.length; i++)
                     if (varHypArray[i].getVar() == var) {
                         if (dest >= reseqVarHyp.length) {
-                            accumErrorMsgInList(GrammarConstants.ERRMSG_SYNTAX_VARHYP_MISMATCH_1
-                                + axiom.getLabel()
-                                + GrammarConstants.ERRMSG_SYNTAX_VARHYP_MISMATCH_2
-                                + axiom.getFormula().toString());
+                            accumErrorMsgInList(
+                                GrammarConstants.ERRMSG_SYNTAX_VARHYP_MISMATCH_1
+                                    + axiom.getLabel()
+                                    + GrammarConstants.ERRMSG_SYNTAX_VARHYP_MISMATCH_2
+                                    + axiom.getFormula().toString());
                             errorsFound = true;
                         }
                         else if (reseqVarHyp[dest] != 0) {
-                            accumErrorMsgInList(GrammarConstants.ERRMSG_SYNTAX_VAR_GT_1_OCC_1
-                                + axiom.getLabel()
-                                + GrammarConstants.ERRMSG_SYNTAX_VAR_GT_1_OCC_2
-                                + sym[src].toString()
-                                + GrammarConstants.ERRMSG_SYNTAX_VAR_GT_1_OCC_3
-                                + axiom.getFormula().toString());
+                            accumErrorMsgInList(
+                                GrammarConstants.ERRMSG_SYNTAX_VAR_GT_1_OCC_1
+                                    + axiom.getLabel()
+                                    + GrammarConstants.ERRMSG_SYNTAX_VAR_GT_1_OCC_2
+                                    + sym[src].toString()
+                                    + GrammarConstants.ERRMSG_SYNTAX_VAR_GT_1_OCC_3
+                                    + axiom.getFormula().toString());
                             errorsFound = true;
                         }
                         else {
@@ -1223,10 +1257,11 @@ public class Grammar implements SyntaxVerifier {
                     }
             }
             if (dest != reseqVarHyp.length) {
-                accumErrorMsgInList(GrammarConstants.ERRMSG_SYNTAX_VARHYP_MISMATCH_1
-                    + axiom.getLabel()
-                    + GrammarConstants.ERRMSG_SYNTAX_VARHYP_MISMATCH_2
-                    + axiom.getFormula().toString());
+                accumErrorMsgInList(
+                    GrammarConstants.ERRMSG_SYNTAX_VARHYP_MISMATCH_1
+                        + axiom.getLabel()
+                        + GrammarConstants.ERRMSG_SYNTAX_VARHYP_MISMATCH_2
+                        + axiom.getFormula().toString());
                 errorsFound = true;
             }
         }
@@ -1240,7 +1275,7 @@ public class Grammar implements SyntaxVerifier {
     /**
      * this final bit of work requires that a pass through all of the Syntax
      * Axioms AND other statements has already been completed.
-     * 
+     *
      * @param axiom the axiom to initialize
      * @return true if no errors were found
      */
@@ -1282,11 +1317,12 @@ public class Grammar implements SyntaxVerifier {
             // errorsFound = true;
             // }
             if (cnst.isGrammaticalTyp()) {
-                accumErrorMsgInList(GrammarConstants.ERRMSG_SYNTAX_USES_TYP_AS_CNST_1
-                    + axiom.getLabel()
-                    + GrammarConstants.ERRMSG_SYNTAX_USES_TYP_AS_CNST_2
-                    + cnst.toString()
-                    + GrammarConstants.ERRMSG_SYNTAX_USES_TYP_AS_CNST_3);
+                accumErrorMsgInList(
+                    GrammarConstants.ERRMSG_SYNTAX_USES_TYP_AS_CNST_1
+                        + axiom.getLabel()
+                        + GrammarConstants.ERRMSG_SYNTAX_USES_TYP_AS_CNST_2
+                        + cnst.toString()
+                        + GrammarConstants.ERRMSG_SYNTAX_USES_TYP_AS_CNST_3);
                 errorsFound = true;
             }
         }

@@ -25,11 +25,25 @@ import java.io.File;
 import java.util.List;
 
 import mmj.lang.*;
+import mmj.pa.Serializer;
+import mmj.pa.SessionStore;
 
 /**
  * MMTFolder is a helper class for the Theorem Loader.
  */
 public class MMTFolder {
+
+    public static Serializer<MMTFolder> serializer(final SessionStore store) {
+        final Serializer<File> fSer = Serializer
+            .getFileSerializer(store::getMMJ2Path);
+        return Serializer.of(o -> {
+            try {
+                return new MMTFolder(fSer.deserialize(o));
+            } catch (final Exception e) {
+                throw new IllegalArgumentException(e);
+            }
+        } , v -> fSer.serialize(v.folderFile));
+    }
 
     private File folderFile;
 
@@ -42,7 +56,7 @@ public class MMTFolder {
 
     /**
      * Constructor for MMTFolder using pathname String.
-     * 
+     *
      * @param filePath path for mmtFolderName. May be null or absolute or
      *            relative path name.
      * @param mmtFolderName String containing absolute or relative pathname.
@@ -70,21 +84,21 @@ public class MMTFolder {
                 else
                     throw new TheoremLoaderException(
                         TlConstants.ERRMSG_NOT_A_MMT_FOLDER_1
-//                      + mmtFolderName
+                            // + mmtFolderName
                             + folderFile.getAbsolutePath()
                             + TlConstants.ERRMSG_NOT_A_MMT_FOLDER_2);
             }
             else
                 throw new TheoremLoaderException(
                     TlConstants.ERRMSG_MMT_FOLDER_NOTFND_1
-//                  + mmtFolderName
+                        // + mmtFolderName
                         + folderFile.getAbsolutePath()
                         + TlConstants.ERRMSG_MMT_FOLDER_NOTFND_2);
 
         } catch (final SecurityException e) {
             throw new TheoremLoaderException(
                 TlConstants.ERRMSG_MMT_FOLDER_MISC_ERROR_1
-//              + mmtFolderName
+                    // + mmtFolderName
                     + folderFile.getAbsolutePath()
                     + TlConstants.ERRMSG_MMT_FOLDER_MISC_ERROR_2
                     + e.getMessage());
@@ -93,7 +107,7 @@ public class MMTFolder {
 
     /**
      * Constructor for MMTFolder using File object.
-     * 
+     *
      * @param file File object.
      * @throws TheoremLoaderException if input file is null, doesn't exist, is
      *             not a directory, or if there is a SecurityException.
@@ -132,7 +146,7 @@ public class MMTFolder {
 
     /**
      * Returns the File object for the MMTFolder.
-     * 
+     *
      * @return File object for the MMTFolder.
      */
     public File getFolderFile() {
@@ -142,7 +156,7 @@ public class MMTFolder {
     /**
      * Builds the MMTTheoremSet object for an MMTFolder using all the files in
      * the folder with file type ".mmt".
-     * 
+     *
      * @param logicalSystem LogicalSystem object.
      * @param messages Messages object.
      * @param tlPreferences TlPreferences object.
@@ -176,7 +190,7 @@ public class MMTFolder {
     /**
      * Builds an MMTTheoremSet object for a single theorem in a file in the
      * MMTFolder.
-     * 
+     *
      * @param theoremLabel Metamath label of the theorem to load into the
      *            MMTTheoremSet.
      * @param logicalSystem LogicalSystem object.
@@ -210,7 +224,7 @@ public class MMTFolder {
      * <p>
      * Note: the input mmtTheoremLines List does not contain newline characters.
      * Those are created by the program in a platform neutral manner.
-     * 
+     *
      * @param theoremLabel Metamath label of the theorem to store into the
      *            MMTTheoremSet.
      * @param mmtTheoremLines List of StringBuilder objects with one line (no
@@ -224,7 +238,7 @@ public class MMTFolder {
      */
     public MMTTheoremFile storeMMTTheoremFile(final String theoremLabel,
         final List<StringBuilder> mmtTheoremLines)
-        throws TheoremLoaderException
+            throws TheoremLoaderException
     {
 
         if (folderFile == null)
@@ -241,7 +255,7 @@ public class MMTFolder {
 
     /**
      * Returns the absolute pathname of the MMTFolder.
-     * 
+     *
      * @return Absolute pathname of the MMTFolder or null if the underlying File
      *         is null.TheoremFile.
      */

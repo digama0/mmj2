@@ -52,7 +52,7 @@ import mmj.pa.DistinctVariablesStmt;
  * mmj.lang.ScopeDef.java -- actually, a list of ScopeDef's. And DjVars are
  * stored in mmj.lang.ScopeFrame.java and mmj.lang.OptFrame.java as part of a
  * successful system load operation.
- * 
+ *
  * @see <a href="../../MetamathERNotes.html"> Nomenclature and
  *      Entity-Relationship Notes</a>
  */
@@ -75,7 +75,7 @@ public class DjVars implements Comparable<DjVars> {
     /**
      * Helper routine for Theorem Loader to confirm that both DjVars variables
      * are in the Extended Frame of a theorem.
-     * 
+     *
      * @param djVars DjVars object to check.
      * @param mandFrame Mandatory Frame from a Theorem.
      * @param optFrame Optional Frame from a Theorem.
@@ -124,7 +124,7 @@ public class DjVars implements Comparable<DjVars> {
     /**
      * Helper routine for Proof Assistant to confirm that a DjVars variable is
      * defined in the Theorem's Extended Frame.
-     * 
+     *
      * @param djVarsVar variable object to check.
      * @param mandFrame Mandatory Frame from a Theorem.
      * @param optFrame Optional Frame from a Theorem.
@@ -165,7 +165,7 @@ public class DjVars implements Comparable<DjVars> {
      * The input DistinctVariablesStmt array objects are consolidated to remove
      * duplicates, sorted and then merged to create a concise set of $d
      * statements.
-     * 
+     *
      * @param distinctVariablesStmtArray array of Proof Worksheet
      *            DistinctVariablesStmt objects.
      * @return List of StringBuilders containing $d statements (not containing
@@ -190,7 +190,7 @@ public class DjVars implements Comparable<DjVars> {
     /**
      * Builds a LinkedList of StringBuilders containing the Metamath format text
      * $d statements for the theorem.
-     * 
+     *
      * @param theorem the theorem for which $d statements are needed.
      * @return List of StringBuilders containing $d statements (not containing
      *         any newlines).
@@ -213,7 +213,7 @@ public class DjVars implements Comparable<DjVars> {
      * Converts a ArrayList of Lists containing distinct variables into a
      * LinkedList of StringBuilders containing Metamath format text $d
      * statements.
-     * 
+     *
      * @param comboDvGroups List of Lists containing distinct variables.
      * @return List of StringBuilders containing $d statements not containing
      *         any newlines.
@@ -222,7 +222,7 @@ public class DjVars implements Comparable<DjVars> {
         final List<List<Var>> comboDvGroups)
     {
 
-        final List<StringBuilder> list = new LinkedList<StringBuilder>();
+        final List<StringBuilder> list = new LinkedList<>();
 
         for (final List<Var> i : comboDvGroups) {
             final StringBuilder sb = new StringBuilder();
@@ -246,7 +246,7 @@ public class DjVars implements Comparable<DjVars> {
     /**
      * Merges two arrays of DjVars returning a single array in ascending
      * compareTo order with duplicates eliminated.
-     * 
+     *
      * @param array1 1st array of DjVars objects, may be null.
      * @param array2 2nd array of DjVars objects, may be null.
      * @return consolidated, sorted array of DjVars objects.
@@ -255,7 +255,7 @@ public class DjVars implements Comparable<DjVars> {
         final DjVars[] array2)
     {
 
-        final List<DjVars> mergedList = new LinkedList<DjVars>();
+        final List<DjVars> mergedList = new LinkedList<>();
 
         if (array1 != null)
             for (final DjVars element : array1)
@@ -270,7 +270,7 @@ public class DjVars implements Comparable<DjVars> {
     /**
      * Merges lists of lists of DjVars returning a single array in ascending
      * compareTo order with duplicates eliminated.
-     * 
+     *
      * @param list1 List containing List elements of DjVars objects.
      * @return consolidated, sorted array of DjVars objects.
      */
@@ -278,7 +278,7 @@ public class DjVars implements Comparable<DjVars> {
         final List<List<DjVars>> list1)
     {
 
-        final List<DjVars> mergedList = new LinkedList<DjVars>();
+        final List<DjVars> mergedList = new LinkedList<>();
 
         if (list1 != null)
             for (final List<DjVars> i : list1)
@@ -292,7 +292,7 @@ public class DjVars implements Comparable<DjVars> {
     /**
      * Consolidates a DjVars object into an existing LinkedList maintaining the
      * list in compareTo order.
-     * 
+     *
      * @param mergedList the list to merge into
      * @param dvPair the DjVars to merge
      */
@@ -328,7 +328,7 @@ public class DjVars implements Comparable<DjVars> {
      * specified for use in a proof step, and it is guaranteed that that proof
      * step will have its own VarHyp's (or else there would be a different
      * error.)
-     * 
+     *
      * @param symTbl Symbol Table (Map)
      * @param loS Var1 id String.
      * @param hiS Var2 id String.
@@ -346,7 +346,7 @@ public class DjVars implements Comparable<DjVars> {
     /**
      * Construct using two Var's. The input variables are compared and switched
      * if necessary into varLo and varHi based on Var.id.
-     * 
+     *
      * @param lo Var 1.
      * @param hi Var 2.
      * @throws LangException if the two Var id's are identical.
@@ -358,7 +358,7 @@ public class DjVars implements Comparable<DjVars> {
     /**
      * Set the contents of this DjVars object. The input variables are compared
      * and switched if necessary into varLo and varHi based on Var.id.
-     * 
+     *
      * @param lo Var 1.
      * @param hi Var 2.
      * @throws LangException if the two Var id's are identical.
@@ -380,7 +380,7 @@ public class DjVars implements Comparable<DjVars> {
 
     /**
      * Return the "low" Dj Var, varLo.
-     * 
+     *
      * @return varLo the "low" Var based on Var.id.
      */
     public Var getVarLo() {
@@ -389,7 +389,7 @@ public class DjVars implements Comparable<DjVars> {
 
     /**
      * Return the "high" Dj Var, varHi.
-     * 
+     *
      * @return varHi the "high" Var based on Var.id.
      */
     public Var getVarHi() {
@@ -398,7 +398,7 @@ public class DjVars implements Comparable<DjVars> {
 
     /**
      * Converts DjVars to String.
-     * 
+     *
      * @return returns DjVars string;
      */
     @Override
@@ -435,7 +435,7 @@ public class DjVars implements Comparable<DjVars> {
 
     /**
      * Compares DjVars object based on the variables.
-     * 
+     *
      * @param obj Order object to compare to this Order
      * @return returns negative, zero, or a positive int if this Order object is
      *         less than, equal to or greater than the input parameter obj.
@@ -461,6 +461,12 @@ public class DjVars implements Comparable<DjVars> {
      */
     public static Comparator<? super Var> DV_ORDER = new Comparator<Var>() {
         public int compare(final Var o1, final Var o2) {
+            if (o1.getActiveVarHyp() == null && o2.getActiveVarHyp() == null)
+                return o1.getId().compareTo(o2.getId());
+
+            if (o1.getActiveVarHyp() == null || o2.getActiveVarHyp() == null)
+                return o1.getActiveVarHyp() != null ? -1 : 1;
+
             final boolean s1 = o1.getActiveVarHyp().getTyp().isSetTyp();
             final boolean s2 = o2.getActiveVarHyp().getTyp().isSetTyp();
             if (s1 == s2)

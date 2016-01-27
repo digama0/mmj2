@@ -15,6 +15,8 @@
 
 package mmj.tmff;
 
+import org.json.JSONArray;
+
 import mmj.lang.*;
 
 /**
@@ -33,40 +35,17 @@ import mmj.lang.*;
 public class TMFFFlat extends TMFFMethod {
 
     /**
-     * Default constructor.
-     */
-    public TMFFFlat() {
-        super();
-    }
-
-    /**
-     * Constructor for TMFFFlat using user parameters.
-     * <p>
-     * Sets maxDepth to Integer.MAX_VALUE so that no depth breaks are triggered.
-     * 
-     * @param maxDepthString maximum sub-tree depth for a sub-expression that
-     *            will not trigger a line-break, not counting leaf nodes, and
-     *            non-Notation Syntax Axioms such as Type Conversions. Doesn't
-     *            apply to TMFFFlat but provided as common element to TMFFMethod
-     *            class...
-     */
-    public TMFFFlat(final String maxDepthString) {
-        super(Integer.MAX_VALUE);
-    }
-
-    /**
      * Standard constructor for TMFFFlat.
      * <p>
      * Sets maxDepth to Integer.MAX_VALUE so that no depth breaks are triggered.
-     * 
-     * @param maxDepth maximum sub-tree depth for a sub-expression that will not
-     *            trigger a line-break, not counting leaf nodes, and
-     *            non-Notation Syntax Axioms such as Type Conversions. Doesn't
-     *            apply to TMFFFlat but provided as common element to TMFFMethod
-     *            class...
      */
-    public TMFFFlat(final int maxDepth) {
+    public TMFFFlat() {
         super(Integer.MAX_VALUE);
+    }
+
+    @Override
+    public JSONArray asArray() {
+        return new JSONArray().put(TMFFConstants.TMFF_METHOD_USER_NAME_FLAT);
     }
 
     /**
@@ -78,7 +57,7 @@ public class TMFFFlat extends TMFFMethod {
      * Sets rightmostColNbr to Integer.MAX_VALUE so that no line width breaks
      * are triggered -- and this is done regardless of the user setting for the
      * rightmost column number (overrides that setting.)
-     * 
+     *
      * @param tmffSP TMFFStateParams initialized, ready for use.
      * @param parseTree ParseTree for the formula to be formatted.
      * @param formula formula to be formatted.
@@ -134,7 +113,7 @@ public class TMFFFlat extends TMFFMethod {
      * methods TMFFFlat and TMFFUnformatted have maxDepth = Integer.MAX_VALUE
      * which results in no maxDepth line breaks from happening -- therefore,
      * they do not allow updates after initial construction of the method.
-     * 
+     *
      * @param maxDepth parameter.
      * @return boolean - true only if update performed.
      */

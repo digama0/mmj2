@@ -15,6 +15,8 @@
 
 package mmj.tmff;
 
+import org.json.JSONArray;
+
 import mmj.lang.*;
 
 /**
@@ -37,15 +39,22 @@ public abstract class TMFFMethod {
      * methods TMFFFlat and TMFFUnformatted have maxDepth = Integer.MAX_VALUE
      * which results in no maxDepth line breaks from happening -- therefore,
      * they do not allow updates after initial construction of the method.
-     * 
+     *
      * @param maxDepth parameter.
      * @return boolean - true only if update performed.
      */
     public abstract boolean updateMaxDepth(int maxDepth);
 
     /**
+     * Output the array form of this method's parameters.
+     *
+     * @return A JSON array
+     */
+    public abstract JSONArray asArray();
+
+    /**
      * Validates the maxDepth parameter.
-     * 
+     *
      * @param maxDepth parameter.
      * @return maxDepth parameter.
      */
@@ -58,14 +67,14 @@ public abstract class TMFFMethod {
 
     /**
      * Validates the maxDepth parameter.
-     * 
+     *
      * @param maxDepthString parameter.
      * @return maxDepth parameter.
      */
     public static int validateMaxDepth(final String maxDepthString) {
         try {
-            return TMFFMethod.validateMaxDepth(Integer.parseInt(maxDepthString
-                .trim()));
+            return TMFFMethod
+                .validateMaxDepth(Integer.parseInt(maxDepthString.trim()));
         } catch (final NumberFormatException e) {
             throw new IllegalArgumentException(
                 TMFFConstants.ERRMSG_BAD_MAX_DEPTH_1);
@@ -79,7 +88,7 @@ public abstract class TMFFMethod {
 
     /**
      * Constructor for TMFFMethod using user parameters.
-     * 
+     *
      * @param maxDepthString maximum sub-tree depth for a sub-expression that
      *            will not trigger a line-break, not counting leaf nodes, and
      *            non-Notation Syntax Axioms such as Type Conversions.
@@ -91,7 +100,7 @@ public abstract class TMFFMethod {
 
     /**
      * Standard constructor for TMFFMethod.
-     * 
+     *
      * @param maxDepth maximum sub-tree depth for a sub-expression that will not
      *            trigger a line-break, not counting leaf nodes, and
      *            non-Notation Syntax Axioms such as Type Conversions.
@@ -101,60 +110,46 @@ public abstract class TMFFMethod {
         this.maxDepth = TMFFMethod.validateMaxDepth(maxDepth);
     }
 
+    private static <T> T opt(final T[] param, final int n) {
+        return n < param.length ? param[n] : null;
+    }
+
     /**
      * A crude TMFFMethod factory used to construct a TMFFMethod using BatchMMJ2
      * RunParm values from the TMFFDefineScheme command.
-     * 
+     *
      * @param param String parameter array corresponding to the BatchMMJ2
      *            RunParm command TMFFDefineScheme.
      * @return TMFFMethod constructed according to the user parameters.
      */
-    public static TMFFMethod ConstructMethodWithUserParams(final String[] param)
+    public static TMFFMethod constructMethodWithUserParams(
+        final String[] param)
     {
 
-        String methodName = null;
-        String param3 = null;
-        String param4 = null;
-        String param5 = null;
-        String param6 = null;
-        int pIndex = 1;
-        if (param.length > pIndex) {
-            methodName = param[pIndex++];
-            if (param.length > pIndex) {
-                param3 = param[pIndex++];
-                if (param.length > pIndex) {
-                    param4 = param[pIndex++];
-                    if (param.length > pIndex) {
-                        param5 = param[pIndex++];
-                        if (param.length > pIndex)
-                            param6 = param[pIndex++];
-                    }
-                }
-            }
-        }
-
+        final String methodName = opt(param, 1);
         if (methodName == null)
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_MISSING_USER_METHOD_NAME_1);
+                TMFFConstants.ERRMSG_MISSING_USER_METHOD_NAME);
 
         if (methodName
-            .compareToIgnoreCase(TMFFConstants.TMFF_METHOD_USER_NAME_ALIGN_COLUMN) == 0)
-            return new TMFFAlignColumn(param3, param4, param5, param6);
+            .equalsIgnoreCase(TMFFConstants.TMFF_METHOD_USER_NAME_ALIGN_COLUMN))
+            return new TMFFAlignColumn(opt(param, 2), opt(param, 3),
+                opt(param, 4), opt(param, 5));
+
+        if (methodName.equalsIgnoreCase(
+            TMFFConstants.TMFF_METHOD_USER_NAME_TWO_COLUMN_ALIGNMENT))
+            return new TMFFTwoColumnAlignment(opt(param, 2));
 
         if (methodName
-            .compareToIgnoreCase(TMFFConstants.TMFF_METHOD_USER_NAME_TWO_COLUMN_ALIGNMENT) == 0)
-            return new TMFFTwoColumnAlignment(param3);
+            .equalsIgnoreCase(TMFFConstants.TMFF_METHOD_USER_NAME_FLAT))
+            return new TMFFFlat();
 
         if (methodName
-            .compareToIgnoreCase(TMFFConstants.TMFF_METHOD_USER_NAME_FLAT) == 0)
-            return new TMFFFlat(param3);
+            .equalsIgnoreCase(TMFFConstants.TMFF_METHOD_USER_NAME_UNFORMATTED))
+            return new TMFFUnformatted();
 
-        if (methodName
-            .compareToIgnoreCase(TMFFConstants.TMFF_METHOD_USER_NAME_UNFORMATTED) == 0)
-            return new TMFFUnformatted(param3);
-
-        throw new IllegalArgumentException(
-            TMFFConstants.ERRMSG_BAD_USER_METHOD_NAME_1 + methodName);
+        throw new IllegalArgumentException(LangException
+            .format(TMFFConstants.ERRMSG_BAD_USER_METHOD_NAME, methodName));
     }
 
     /**
@@ -170,7 +165,7 @@ public abstract class TMFFMethod {
      * an example.
      * <p>
      * NOTE: TMFFUnformatted AND TMFFFlat override this method!
-     * 
+     *
      * @param tmffSP TMFFStateParams initialized, ready for use.
      * @param parseTree for the formula to be formatted. If left null, -1 is
      *            returned.
@@ -211,7 +206,7 @@ public abstract class TMFFMethod {
      * be done -- the array index would be set at the start of formula rendering
      * and each method would invoke the 'i-th' TMFFMethod in the current node's
      * stmt object (except for VarHyps). Bit of work but not too hard.
-     * 
+     *
      * @param tmffSP the TMFF state data
      * @param currNode the current node of the tree
      * @param leftmostColNbr the indent amount

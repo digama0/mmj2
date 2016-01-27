@@ -19,6 +19,7 @@ import java.io.File;
 
 import mmj.mmio.MMIOConstants;
 import mmj.pa.PaConstants;
+import mmj.transforms.TrConstants;
 import mmj.util.UtilConstants;
 import mmj.verify.GrammarConstants;
 import mmj.verify.ProofConstants;
@@ -55,6 +56,8 @@ import mmj.verify.ProofConstants;
  * <li>{@code TL} = mmj.tl package (Theorem Loader).
  * <li>{@code TM} = mmj.tmff.AlignColumn and related code
  * <li>{@code UT} = mmj.util package. (see {@link UtilConstants})
+ * <li>{@code TR} = mmj.transforms package (proof assistant) (see
+ * {@link TrConstants})
  * </ul>
  * <p>
  * <b>{@code 9999}</b> : sequential number within the source code, 0001 through
@@ -118,10 +121,10 @@ public class GMFFConstants {
         + File.separator + "models" + File.separator + "html";
 
     public static final GMFFExportParms DEFAULT_EXPORT_PARMS_HTML = new GMFFExportParms(
-        GMFFConstants.EXPORT_TYPE_HTML, GMFFConstants.EXPORT_PARM_ON,
-        "htmldef", GMFFConstants.DEFAULT_GMFF_HTML_DIRECTORY, ".html",
-        GMFFConstants.DEFAULT_GMFF_MODELS_HTML_DIRECTORY,
-        GMFFConstants.MODEL_A, GMFFConstants.CHARSET_ENCODING_ISO_8859_1,
+        GMFFConstants.EXPORT_TYPE_HTML, GMFFConstants.EXPORT_PARM_ON, "htmldef",
+        GMFFConstants.DEFAULT_GMFF_HTML_DIRECTORY, ".html",
+        GMFFConstants.DEFAULT_GMFF_MODELS_HTML_DIRECTORY, GMFFConstants.MODEL_A,
+        GMFFConstants.CHARSET_ENCODING_ISO_8859_1,
         GMFFConstants.DEFAULT_OUTPUT_FILE_NAME);
 
     public static final String DEFAULT_GMFF_ALTHTML_DIRECTORY = "gmff"
@@ -387,8 +390,7 @@ public class GMFFConstants {
         + "To see the typesetting definitions as loaded by mmj2,"
         + " add a GMFFInitialize RunParm immediately before the"
         + " RunProofAsstGUI RunParm, as follows:\n"
-        + "\nGMFFInitialize,PrintTypesettingDefinitions"
-        + "\nRunProofAsstGUI"
+        + "\nGMFFInitialize,PrintTypesettingDefinitions" + "\nRunProofAsstGUI"
         + "\n\nThen restart mmj2.";
 
     public static final String ERRMSG_MANDATORY_MODEL_NOT_FOUND_ERROR_1 = "E-GM-0202 Mandatory export model file not found. Theorem = ";
@@ -630,8 +632,6 @@ public class GMFFConstants {
     public static final String ERRMSG_ESCAPE_PAIR_REPLACEMENT_MISSING_1 = "E-GM-0902 User Text Escapes Parm error. Export Type = ";
     public static final String ERRMSG_ESCAPE_PAIR_REPLACEMENT_MISSING_1B = " Escape Pair replacement string is required.";
 
-    public static final String ERRMSG_CAPTION_ESCAPE_PAIR_NUM = "GMFFUserTextEscapes.num";
-
     // ==================================================
     // Messages for GMFFUserExportChoice
     // ==================================================
@@ -654,14 +654,14 @@ public class GMFFConstants {
     // Messages for GMFFBoss
     // ==================================================
 
-    public static final String ERRMSG_GMFF_INITIALIZE_PARM_0_ERR_1 = "A-GM-1201 Invalid parameter on GMFFInitialize RunParm: "
-        + " expecting blank or 'PrintTypesettingDefinitions'." + " Found = ";
+    public static final String ERRMSG_GMFF_INITIALIZE_PARM_0_ERR = "A-GM-1201 "
+        + "Invalid parameter:  expecting blank or '%s'. Found = %s";
 
     public static final String ERRMSG_GMFF_INITIALIZATION_ERROR_1 = "A-GM-1202 Error found during GMFF initialization."
         + " Please review previous messages to determine the"
         + " cause of the problem.";
 
-    public static final String ERRMSG_GMFF_PARSE_RUNPARM_PARM_4_ERR_1 = "A-GM-1203 Invalid parameter on GMFFParseMetamathTypesetComment"
-        + " RunParm: expecting blank or 'PRINT'." + " Found = ";
+    public static final String ERRMSG_GMFF_PARSE_RUNPARM_PARM_4_ERR = "A-GM-1203 "
+        + "Invalid parameter: expecting blank or '%s'. Found %s";
 
 }

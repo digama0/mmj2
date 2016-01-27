@@ -62,7 +62,7 @@ public class GMFFExporterTypesetDefs {
     {
 
         this.typesetDefKeyword = typesetDefKeyword;
-        typesetDefMap = new HashMap<String, String>(initMapSize);
+        typesetDefMap = new HashMap<>(initMapSize);
     }
 
     /**
@@ -91,7 +91,7 @@ public class GMFFExporterTypesetDefs {
         sb.append(MMIOConstants.NEW_LINE_CHAR);
 
         final Set<String> set = typesetDefMap.keySet();
-        final List<String> arrayList = new ArrayList<String>(set.size());
+        final List<String> arrayList = new ArrayList<>(set.size());
         arrayList.addAll(set);
         Collections.sort(arrayList);
         for (final String sym : arrayList) {

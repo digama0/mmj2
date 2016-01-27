@@ -29,6 +29,8 @@ package mmj.lang;
 
 import java.util.*;
 
+import mmj.pa.Serializer;
+
 /**
  * A simple tree structure to hold a ParseNode root.
  */
@@ -68,7 +70,7 @@ public class ParseTree {
 
     /**
      * Constructor - creates ParseTree using a ParseNode root.
-     * 
+     *
      * @param root the root node
      */
     public ParseTree(final ParseNode root) {
@@ -77,7 +79,7 @@ public class ParseTree {
 
     /**
      * Return root of tree.
-     * 
+     *
      * @return ParseNode root of tree.
      */
     public ParseNode getRoot() {
@@ -86,7 +88,7 @@ public class ParseTree {
 
     /**
      * Set root of tree.
-     * 
+     *
      * @param root of tree.
      */
     public void setRoot(final ParseNode root) {
@@ -99,7 +101,7 @@ public class ParseTree {
      * Check ParseTree array for duplicates.
      * <p>
      * No longer used, except in BottomUpParser.
-     * 
+     *
      * @param parseCount number of trees in array.
      * @param parseTreeArray array of trees.
      * @return true if duplicate found, else false.
@@ -116,7 +118,7 @@ public class ParseTree {
      * Check another ParseTree for duplication.
      * <p>
      * No longer used, except in BottomUpParser.
-     * 
+     *
      * @param parseTree tree to compare.
      * @return true if duplicate, else false.
      */
@@ -135,7 +137,7 @@ public class ParseTree {
 
     /**
      * (Deep) Clone a ParseTree.
-     * 
+     *
      * @return true if duplicate, else false.
      */
     public ParseTree deepClone() {
@@ -144,7 +146,7 @@ public class ParseTree {
 
     /**
      * (Deep) Clone a ParseTree while substituting a given node with another.
-     * 
+     *
      * @param matchNode node to replace.
      * @param substNode new node to substitute.
      * @return new ParseTree.
@@ -162,7 +164,7 @@ public class ParseTree {
      * dummy VarHyp substitutions.
      * <p>
      * This function is a helper for mmj.pa.ProofUnifier.
-     * 
+     *
      * @param assrtHypArray parallel array for assrtSubst
      * @param assrtSubst array of ParseNode sub-tree roots specifying hyp
      *            substitutions.
@@ -180,7 +182,7 @@ public class ParseTree {
     /**
      * (Deep) Clone a ParseTree while substituting a set of VarHyp substitutions
      * specified by a parallel Hyp array.
-     * 
+     *
      * @param assrtHypArray parallel array for assrtSubst
      * @param assrtSubst array of ParseNode sub-tree roots specifying hyp
      *            substitutions.
@@ -189,15 +191,15 @@ public class ParseTree {
     public ParseTree deepCloneApplyingAssrtSubst(final Hyp[] assrtHypArray,
         final ParseNode[] assrtSubst)
     {
-        return new ParseTree(root.deepCloneApplyingAssrtSubst(assrtHypArray,
-            assrtSubst));
+        return new ParseTree(
+            root.deepCloneApplyingAssrtSubst(assrtHypArray, assrtSubst));
     }
 
     /**
      * (Deep) Clone a ParseTree while substituting a set of Work Var updates.
      * <p>
      * This function is a helper for mmj.pa.ProofUnifier.
-     * 
+     *
      * @return new ParseTree.
      */
     public ParseTree deepCloneApplyingWorkVarUpdates() {
@@ -209,13 +211,12 @@ public class ParseTree {
      * <p>
      * This feat is useful for GrammarRule parse trees, which contain at most
      * one VarHyp per root.child[i].
-     * 
+     *
      * @param childIndex index into ParseNode.child array.
      * @return first VarHyp ParseNode at/under child[i].
      */
     public ParseNode findChildVarHypNode(final int childIndex) {
-        final ParseNode[] child = root.getChild();
-        return child[childIndex].findFirstVarHypNode();
+        return root.child[childIndex].findFirstVarHypNode();
     }
 
     /**
@@ -224,14 +225,14 @@ public class ParseTree {
      * Note: A Metamath proof may contain a "?" to indicate a missing step.
      * Missing steps are stored in mmj.lang.Theorem.proof[] as a "null" stmt
      * reference. --> if rpn[i] == null, throw IllegalArgumentException
-     * 
+     *
      * @param rpn Stmt array, may be parse or proof RPN.
      * @throws IllegalArgumentException if ParseTree cannot be built from the
      *             RPN (null statment or RPN incomplete.)
      */
     public ParseTree(final RPNStep[] rpn) {
-        final Deque<ParseNode> stack = new ArrayDeque<ParseNode>();
-        final List<ParseNode> backrefs = new ArrayList<ParseNode>();
+        final Deque<ParseNode> stack = new ArrayDeque<>();
+        final List<ParseNode> backrefs = new ArrayList<>();
         for (final RPNStep s : rpn)
             if (s != null && s.stmt == null && s.backRef > 0)
                 stack.push(backrefs.get(s.backRef - 1));
@@ -276,7 +277,7 @@ public class ParseTree {
      * Proof Parse Tree, or even whether or not the ParseTree is "valid". That
      * is not the concern of this routine, however.
      * </ol>
-     * 
+     *
      * @return RPN Stmt array.
      */
     public RPNStep[] convertToRPNExpanded() {
@@ -287,13 +288,13 @@ public class ParseTree {
         final int dest = root.convertToRPNExpanded(outRPN, 0);
         if (dest != outRPN.length)
             throw new IllegalStateException(LangException.format(
-                LangConstants.ERRMSG_TREE_CONV_TO_RPN_FAILURE, outRPN.length
-                    - dest));
+                LangConstants.ERRMSG_TREE_CONV_TO_RPN_FAILURE,
+                outRPN.length - dest));
         return outRPN;
     }
     /**
      * Compresses ("squishes") the tree to re-use repeated subtrees.
-     * 
+     *
      * @return this object
      */
     public ParseTree squishTree() {
@@ -316,7 +317,7 @@ public class ParseTree {
      * Stores backreference information in "packed" and "compressed" formats.
      * <p>
      * In packed format, proof steps come in three different flavors: unmarked
-     * (for example {@code syl}) and marked (for example {@code syl:5}), as well
+     * (for example {@code syl}) and marked (for example {@code 5:syl}), as well
      * as backreference steps (just written as numbers i.e. {@code 5}). In
      * compressed format the same rules apply, except it is harder to read.
      * Marked steps get a {@code Z} after the number, and backreferences are
@@ -341,6 +342,23 @@ public class ParseTree {
             this.stmt = stmt;
         }
 
+        public RPNStep(final Map<String, Stmt> stmtTbl, final String str) {
+            final String[] split = str.split(":", 2);
+            if (split.length > 1) {
+                stmt = stmtTbl.get(split[1]);
+                backRef = -Integer.parseInt(split[0]);
+            }
+            else if (str.equals("?")) {
+                stmt = null;
+                backRef = 0;
+            }
+            else {
+                stmt = stmtTbl.get(str);
+                if (stmt == null)
+                    backRef = Integer.parseInt(str);
+            }
+        }
+
         @Override
         public String toString() {
             if (backRef < 0)
@@ -350,13 +368,20 @@ public class ParseTree {
             else
                 return Integer.toString(backRef);
         }
+
+        public static Serializer<RPNStep> serializer(
+            final Map<String, Stmt> stmtTbl)
+        {
+            return Serializer.of(o -> new RPNStep(stmtTbl, (String)o),
+                RPNStep::toString);
+        }
     }
 
     /**
      * Count parse nodes in a ParseTree.
      * <p>
      * If root is null, count = zero.
-     * 
+     *
      * @param expanded true to count repeated subtrees multiple times, false to
      *            count them as size 1 stubs in subsequent occurrences
      * @return number of parse nodes in ParseTree.
@@ -371,7 +396,7 @@ public class ParseTree {
     /**
      * Gets the maximum depth of the tree after calculating it if the answer is
      * not already known.
-     * 
+     *
      * @return maximum depth of the parse tree
      */
     public int getMaxDepth() {
@@ -382,7 +407,7 @@ public class ParseTree {
 
     /**
      * Sets the maximum depth of the tree.
-     * 
+     *
      * @param maxDepth maximum depth of the parse tree
      */
     private void setMaxDepth(final int maxDepth) {
@@ -399,22 +424,22 @@ public class ParseTree {
     /**
      * Computes the levelOneTwo string (key) value after calculating it if the
      * answer is not already known.
-     * 
+     *
      * @return levelOneTwo key string.
      */
     public String getLevelOneTwo() {
         if (levelOneTwo != null)
             return levelOneTwo;
-        Stmt stmt = root.getStmt();
+        Stmt stmt = root.stmt;
         if (stmt instanceof VarHyp)
             setLevelOneTwo("");
         else {
-            final ParseNode[] child = root.getChild();
+            final ParseNode[] child = root.child;
             if (child.length > 0) {
                 int i = 0;
                 String answer = stmt.getLabel() + " ";
                 while (true) {
-                    stmt = child[i].getStmt();
+                    stmt = child[i].stmt;
                     if (stmt instanceof VarHyp) {
                         setLevelOneTwo("");
                         return levelOneTwo;
@@ -436,7 +461,7 @@ public class ParseTree {
 
     /**
      * Sets the levelOneTwo string key value.
-     * 
+     *
      * @param levelOneTwo string key.
      */
     private void setLevelOneTwo(final String levelOneTwo) {
@@ -455,17 +480,24 @@ public class ParseTree {
      * <p>
      * Note: this can fail if the ParseTree is invalid. Intended for
      * testing/diagnostic use.
-     * 
+     *
      * @return String containing ParseTree statement labels in RPN order.
      */
     @Override
     public String toString() {
         final RPNStep[] rpn = convertToRPN();
         final StringBuilder sb = new StringBuilder();
-        for (final RPNStep element : rpn) {
-            sb.append(element);
-            sb.append(" ");
-        }
+        for (final RPNStep element : rpn)
+            sb.append(element).append(" ");
         return sb.toString();
+    }
+
+    public static Serializer<ParseTree> serializer(
+        final Map<String, Stmt> stmtTbl)
+    {
+        final Serializer<RPNStep[]> ser = RPNStep.serializer(stmtTbl)
+            .array(RPNStep[]::new);
+        return Serializer.of(o -> new ParseTree(ser.deserialize(o)),
+            tree -> ser.serialize(tree.convertToRPN()));
     }
 }

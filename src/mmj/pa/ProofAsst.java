@@ -80,8 +80,13 @@ import mmj.gmff.GMFFException;
 import mmj.lang.*;
 import mmj.lang.ParseTree.RPNStep;
 import mmj.mmio.MMIOError;
+import mmj.pa.MacroManager.CallbackType;
+import mmj.pa.PaConstants.DjVarsErrorStatus;
+import mmj.pa.PaConstants.ProofFormat;
 import mmj.tl.*;
+import mmj.transforms.TransformationManager;
 import mmj.util.OutputBoss;
+import mmj.util.StopWatch;
 import mmj.verify.*;
 
 /**
@@ -101,31 +106,64 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     // global variables stored here for convenience
     private ProofAsstGUI proofAsstGUI;
     private final ProofAsstPreferences proofAsstPreferences;
-    private final ProofUnifier proofUnifier;
+    public final ProofUnifier proofUnifier;
     private final LogicalSystem logicalSystem;
     private final Grammar grammar;
     private final VerifyProofs verifyProofs;
     private Messages messages;
     private final TheoremLoader theoremLoader;
+    public final MacroManager macroManager;
 
-    // for volume testing
-    private int nbrTestTheoremsProcessed;
-    private int nbrTestNotProvedPerfectly;
-    private int nbrTestProvedDifferently;
-    private List<Theorem> sortedTheoremList;
+    // -----------------------------------------------------------------
+    // -------------------------LOCAL CLASSES---------------------------
+    // -----------------------------------------------------------------
+
+    /** Information about theorem unification. */
+    private static class TheoremTestResult {
+        public final StopWatch stopWatch;
+        public final ProofWorksheet proofWorksheet;
+        public final Theorem theorem;
+
+        public TheoremTestResult(final StopWatch stopWatch,
+            final ProofWorksheet proofWorksheet, final Theorem theorem)
+        {
+            this.stopWatch = stopWatch;
+            this.proofWorksheet = proofWorksheet;
+            this.theorem = theorem;
+        }
+
+        // define it for debug reasons
+        @Override
+        public String toString() {
+            return theorem.toString() + ":" + stopWatch.getElapsedTimeInStr();
+        }
+    }
+
+    /** Statistic information about theorem unification tests. */
+    private static class VolumeTestStats {
+        public int nbrTestTheoremsProcessed = 0;
+        public int nbrTestNotProvedPerfectly = 0;
+        public int nbrTestProvedDifferently = 0;
+    }
+
+    // -----------------------------------------------------------------
+    // ----------------------------METHODS------------------------------
+    // -----------------------------------------------------------------
 
     /**
      * Constructor.
-     * 
+     *
      * @param proofAsstPreferences variable settings
      * @param logicalSystem the loaded Metamath data
      * @param grammar the mmj.verify.Grammar object
      * @param verifyProofs the mmj.verify.VerifyProofs object
      * @param theoremLoader the mmj.tl.TheoremLoader object
+     * @param macroManager the mmj.pa.MacroManager object
      */
     public ProofAsst(final ProofAsstPreferences proofAsstPreferences,
         final LogicalSystem logicalSystem, final Grammar grammar,
-        final VerifyProofs verifyProofs, final TheoremLoader theoremLoader)
+        final VerifyProofs verifyProofs, final TheoremLoader theoremLoader,
+        final MacroManager macroManager)
     {
 
         this.proofAsstPreferences = proofAsstPreferences;
@@ -133,9 +171,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         this.grammar = grammar;
         this.verifyProofs = verifyProofs;
         this.theoremLoader = theoremLoader;
+        this.macroManager = macroManager;
 
-        proofUnifier = new ProofUnifier(proofAsstPreferences, logicalSystem,
-            grammar, verifyProofs);
+        proofUnifier = new ProofUnifier(this);
 
         messages = null;
 
@@ -145,7 +183,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
     /**
      * Triggers the Proof Assistant GUI.
-     * 
+     *
      * @param m the mmj.lang.Messages object used to store error and
      *            informational messages.
      */
@@ -157,6 +195,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         proofAsstGUI = new ProofAsstGUI(this, proofAsstPreferences,
             theoremLoader);
+
+        if (macroManager != null)
+            macroManager.runCallback(CallbackType.BUILD_GUI);
 
         proofAsstGUI.showMainFrame();
     }
@@ -180,15 +221,27 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         return proofAsstGUI;
     }
 
+    public ProofAsstPreferences getPreferences() {
+        return proofAsstPreferences;
+    }
+
+    public Grammar getGrammar() {
+        return grammar;
+    }
+
+    public VerifyProofs getVerifyProofs() {
+        return verifyProofs;
+    }
+
     public List<Assrt> sortAssrtListForSearch(final List<Assrt> list) {
-        final List<Assrt> sorted = new ArrayList<Assrt>(list);
+        final List<Assrt> sorted = new ArrayList<>(list);
         Collections.sort(sorted, Assrt.NBR_LOG_HYP_SEQ);
         return sorted;
     }
 
     /**
      * Initialized Unification lookup tables, etc. for Unification.
-     * 
+     *
      * @param messages the mmj.lang.Messages object used to store error and
      *            informational messages.
      * @return initializedOK flag.
@@ -198,8 +251,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         initializedOK = proofUnifier.initializeLookupTables(messages);
         proofAsstPreferences.getSearchMgr().initOtherEnvAreas(this,
             logicalSystem, grammar, verifyProofs, messages);
-        logicalSystem.getBookManager().getDirectSectionDependencies(
-            logicalSystem);
+        logicalSystem.getBookManager()
+            .getDirectSectionDependencies(logicalSystem);
         return initializedOK;
     }
 
@@ -210,7 +263,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     /**
      * Applies a set of updates from the TheoremLoader as specified in the
      * mmtTheoremSet object to the ProofAsst local caches of data.
-     * 
+     *
      * @param mmtTheoremSet MMTTheoremSet object containing the adds and updates
      *            already made to theorems in the LogicalSystem.
      */
@@ -233,7 +286,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * <p>
      * This is here because the Proof Assistant GUI doesn't know how to do
      * anything...
-     * 
+     *
      * @return Messages object.
      */
     public Messages verifyAllProofs() {
@@ -246,7 +299,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * <p>
      * This is here because the Proof Assistant GUI doesn't know how to do
      * anything...
-     * 
+     *
      * @return Messages object.
      */
     public Messages loadTheoremsFromMMTFolder() {
@@ -260,7 +313,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
     /**
      * Invokes GMFF to export the current Proof Worksheet.
-     * 
+     *
      * @param proofText Proof Worksheet text string.
      * @return Messages object.
      */
@@ -273,8 +326,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             if (confirmationMessage != null)
                 messages.accumInfoMessage(confirmationMessage);
         } catch (final GMFFException e) {
-            messages
-                .accumErrorMessage(PaConstants.ERRMSG_PA_GUI_EXPORT_VIA_GMFF_FAILED);
+            messages.accumErrorMessage(
+                PaConstants.ERRMSG_PA_GUI_EXPORT_VIA_GMFF_FAILED);
             messages.accumErrorMessage(e.getMessage());
         }
         return messages;
@@ -285,7 +338,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * <p>
      * This is here because the Proof Assistant GUI doesn't know how to do
      * anything...
-     * 
+     *
      * @param theorem the theorem to extract
      * @return Messages object.
      */
@@ -314,7 +367,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * Why? Because the ProofAsstGUI.java program has no access to or knowledge
      * of LogicalSystem, Grammar, etc. The only external knowledge it has is
      * ProofAsstPreferences.
-     * 
+     *
      * @param newTheoremLabel the name of the new proof
      * @return ProofWorksheet initialized skeleton proof
      */
@@ -348,7 +401,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * Why? Because the ProofAsstGUI.java program has no access to or knowledge
      * of LogicalSystem, Grammar, etc. The only external knowledge it has is
      * ProofAsstPreferences.
-     * 
+     *
      * @param currProofMaxSeq sequence number of current proof on ProofAsstGUI
      *            screen.
      * @return ProofWorksheet initialized skeleton proof
@@ -384,7 +437,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * Fetches a Theorem using an input Label String.
      * <p>
      * Note: this method is called by ProofAsstGUI.java!
-     * 
+     *
      * @param theoremLabel label of Theorem to retrieve from statement table.
      * @return Theorem or null if Label not found or is not a Theorem Stmt
      *         label.
@@ -405,18 +458,18 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * Builds ProofWorksheet for an existing theorem.
      * <p>
      * Note: this method is called by ProofAsstGUI.java!
-     * 
+     *
      * @param oldTheorem theorem to get
      * @param exportFormatUnified true means include step Ref labels
-     * @param hypsRandomized true means step Hyps randomized on ProofWorksheet.
+     * @param hypsOrder the order of step Hyps
      * @return ProofWorksheet initialized.
      */
     public ProofWorksheet getExistingProof(final Theorem oldTheorem,
-        final boolean exportFormatUnified, final boolean hypsRandomized)
+        final boolean exportFormatUnified, final HypsOrder hypsOrder)
     {
 
         ProofWorksheet w = getExportedProofWorksheet(oldTheorem,
-            exportFormatUnified, hypsRandomized, false); // deriveFormulas
+            exportFormatUnified, hypsOrder, false); // deriveFormulas
 
         final ProofAsstCursor cursor = ProofAsstCursor.makeProofStartCursor();
 
@@ -443,15 +496,15 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * it a whole lot we can change it.
      * <p>
      * Note: this method is called by ProofAsstGUI.java!
-     * 
+     *
      * @param currProofMaxSeq sequence number of ProofWorksheet from
      *            ProofAsstGUI currProofMaxSeq field.
      * @param exportFormatUnified true means include step Ref labels
-     * @param hypsRandomized true means step Hyps randomized on ProofWorksheet.
+     * @param hypsOrder the order of step Hyps
      * @return ProofWorksheet initialized.
      */
     public ProofWorksheet getNextProof(final int currProofMaxSeq,
-        final boolean exportFormatUnified, final boolean hypsRandomized)
+        final boolean exportFormatUnified, final HypsOrder hypsOrder)
     {
 
         ProofWorksheet w;
@@ -464,16 +517,16 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             messages.accumErrorMessage(
                 PaConstants.ERRMSG_PA_FWD_BACK_SEARCH_NOTFND, "forward");
             w = new ProofWorksheet(proofAsstPreferences,
-            /* oh yeah, we got 'em */messages, /* structuralErrors=*/true,
+                /* oh yeah, we got 'em */messages, /* structuralErrors=*/true,
                 cursor);
         }
         else {
             w = getExportedProofWorksheet(theorem, exportFormatUnified,
-                hypsRandomized, /* deriveFormulas=*/false);
+                hypsOrder, /* deriveFormulas=*/false);
 
             if (w == null)
-                w = new ProofWorksheet(theorem.getLabel(),
-                    proofAsstPreferences, logicalSystem, grammar, messages);
+                w = new ProofWorksheet(theorem.getLabel(), proofAsstPreferences,
+                    logicalSystem, grammar, messages);
             else
                 w.setProofCursor(cursor);
         }
@@ -495,15 +548,15 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * it a whole lot we can change it.
      * <p>
      * Note: this method is called by ProofAsstGUI.java!
-     * 
+     *
      * @param currProofMaxSeq sequence number of ProofWorksheet from
      *            ProofAsstGUI currProofMaxSeq field.
      * @param exportFormatUnified true means include step Ref labels
-     * @param hypsRandomized true means step Hyps randomized on ProofWorksheet.
+     * @param hypsOrder the order of step Hyps
      * @return ProofWorksheet initialized.
      */
     public ProofWorksheet getPreviousProof(final int currProofMaxSeq,
-        final boolean exportFormatUnified, final boolean hypsRandomized)
+        final boolean exportFormatUnified, final HypsOrder hypsOrder)
     {
 
         ProofWorksheet w;
@@ -525,11 +578,11 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         }
         else {
             w = getExportedProofWorksheet(theorem, exportFormatUnified,
-                hypsRandomized, false); // deriveFormulas
+                hypsOrder, false); // deriveFormulas
 
             if (w == null)
-                w = new ProofWorksheet(theorem.getLabel(),
-                    proofAsstPreferences, logicalSystem, grammar, messages);
+                w = new ProofWorksheet(theorem.getLabel(), proofAsstPreferences,
+                    logicalSystem, grammar, messages);
             else
                 w.setProofCursor(cursor);
         }
@@ -549,7 +602,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * able to read a file of proof texts (which is a feature designed for
      * testing purposes, but still available to a user via the BatchMMJ2
      * facility.)
-     * 
+     *
      * @param proofText proof text from ProofAsstGUI screen, or any String
      *            conforming to the formatting rules of ProofAsst.
      * @param renumReq renumbering of proof steps requested
@@ -562,13 +615,14 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * @param stepRequest may be null, or StepSelector Search or Choice request
      *            and will be loaded into the ProofWorksheet.
      * @param tlRequest may be null or a TLRequest.
+     * @param printOkMessages whether we could print any messages except errors?
      * @return ProofWorksheet unified.
      */
     public ProofWorksheet unify(final boolean renumReq,
         final boolean noConvertWV, final String proofText,
         final PreprocessRequest preprocessRequest,
         final StepRequest stepRequest, final TLRequest tlRequest,
-        final int inputCursorPos)
+        final int inputCursorPos, final boolean printOkMessages)
     {
 
         String proofTextEdited;
@@ -582,6 +636,12 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 return updateWorksheetWithException(null, -1, -1, -1);
             }
 
+        if (macroManager != null) {
+            macroManager.set("proofText", proofTextEdited);
+            macroManager.runCallback(CallbackType.PREPROCESS);
+            proofTextEdited = (String)macroManager.get("proofText");
+        }
+
         final boolean[] errorFound = new boolean[1];
         final ProofWorksheet proofWorksheet = getParsedProofWorksheet(
             proofTextEdited, errorFound, inputCursorPos, stepRequest);
@@ -593,7 +653,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                     PaConstants.PROOF_STEP_RENUMBER_START,
                     PaConstants.PROOF_STEP_RENUMBER_INTERVAL);
 
-            unifyProofWorksheet(proofWorksheet, noConvertWV);
+            proofWorksheet.runCallback(CallbackType.AFTER_RENUMBER);
+
+            unifyProofWorksheet(proofWorksheet, noConvertWV, printOkMessages);
         }
 
         if (tlRequest != null && proofWorksheet.getGeneratedProofStmt() != null)
@@ -606,6 +668,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         proofWorksheet.outputCursorInstrumentationIfEnabled();
 
+        proofWorksheet.runCallback(CallbackType.AFTER_UNIFY);
+
         return proofWorksheet;
 
     }
@@ -617,7 +681,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * <p>
      * Reformatting is not attempted if the ProofWorksheet has structural errors
      * (returned from the parser).
-     * 
+     *
      * @param inputCursorStep set to true to reformat just the proof step
      *            underneath the cursor.
      * @param proofText proof text from ProofAsstGUI screen, or any String
@@ -632,8 +696,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         final boolean[] errorFound = new boolean[1];
 
-        final ProofWorksheet proofWorksheet = getParsedProofWorksheet(
-            proofText, errorFound, inputCursorPos, null);
+        final ProofWorksheet proofWorksheet = getParsedProofWorksheet(proofText,
+            errorFound, inputCursorPos, null);
 
         if (errorFound[0] == false) {
             proofWorksheet.setProofCursor(proofWorksheet.proofInputCursor);
@@ -650,114 +714,179 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * Import Theorem proofs from memory and unifies.
      * <p>
      * This is a simulation routine for testing purposes.
-     * 
+     *
      * @param messages Messages object for output messages.
-     * @param selectorAll true if process all theorems, false or null, ignore
-     *            param.
-     * @param selectorCount use if not null to restrict the number of theorems
-     *            present.
-     * @param selectorTheorem just process one theorem, ignore selectorCount and
-     *            selectorAll.
+     * @param selectorCount use to restrict the number of theorems present.
+     * @param selectorTheorem just process one theorem, ignore selectorCount.
      * @param outputBoss mmj.util.OutputBoss object, if not null means, please
      *            print the proof test.
      * @param asciiRetest instructs program to re-unify the output Proof
      *            Worksheet text after unification.
      */
     public void importFromMemoryAndUnify(final Messages messages,
-        final Boolean selectorAll, final Integer selectorCount,
-        final Theorem selectorTheorem, final OutputBoss outputBoss,
-        final boolean asciiRetest)
+        final int selectorCount, final Theorem selectorTheorem,
+        final OutputBoss outputBoss, final boolean asciiRetest)
     {
         this.messages = messages;
 
-        final boolean unifiedFormat = proofAsstPreferences
-            .getExportFormatUnified();
-        final boolean hypsRandomized = proofAsstPreferences
-            .getExportHypsRandomized();
-        final boolean deriveFormulas = proofAsstPreferences
-            .getExportDeriveFormulas();
-        final boolean verifierRecheck = proofAsstPreferences
-            .getRecheckProofAsstUsingProofVerifier();
+        if (selectorTheorem != null)
+            importFromMemoryAndUnifyOneTheorem(selectorTheorem, outputBoss,
+                asciiRetest);
+        else
+            importFromMemoryAndUnifyManyTheorems(selectorCount, outputBoss,
+                asciiRetest);
+    }
 
-        String proofText;
-        ProofWorksheet proofWorksheet;
-        String updatedProofText;
-        if (selectorTheorem != null) {
-            proofText = exportOneTheorem(null, // to memory not writer
-                selectorTheorem, unifiedFormat, hypsRandomized, deriveFormulas);
-            if (proofText != null) {
-                if (asciiRetest)
-                    proofAsstPreferences
-                        .setRecheckProofAsstUsingProofVerifier(false);
-                proofWorksheet = unify(false, // no renum
+    /**
+     * Imports one theorem proof from memory and unifies.
+     * <p>
+     * This is a simulation routine for testing purposes.
+     *
+     * @param selectorTheorem process selected theorem.
+     * @param outputBoss mmj.util.OutputBoss object, if not null means, please
+     *            print the proof test.
+     * @param asciiRetest instructs program to re-unify the output Proof
+     *            Worksheet text after unification.
+     */
+    public void importFromMemoryAndUnifyOneTheorem(
+        final Theorem selectorTheorem, final OutputBoss outputBoss,
+        final boolean asciiRetest)
+    {
+        assert selectorTheorem != null;
+
+        final boolean unifiedFormat = proofAsstPreferences.exportFormatUnified
+            .get();
+        final HypsOrder hypsOrder = proofAsstPreferences.exportHypsOrder.get();
+        final boolean deriveFormulas = proofAsstPreferences.exportDeriveFormulas
+            .get();
+        final boolean verifierRecheck = proofAsstPreferences.recheckProofAsstUsingProofVerifier
+            .get();
+
+        final String proofText = exportOneTheorem(null, // to memory not writer
+            selectorTheorem, unifiedFormat, hypsOrder, deriveFormulas);
+        if (proofText != null) {
+            if (asciiRetest)
+                proofAsstPreferences.recheckProofAsstUsingProofVerifier
+                    .set(false);
+
+            final StopWatch testStopWatch = new StopWatch(true);
+            final ProofWorksheet proofWorksheet = unify(false, // no renum
+                true, // don't convert work vars
+                proofText, null, // no preprocess
+                null, // no step request
+                null, // no TL request
+                -1, // inputCursorPos
+                true); // printOkMessages
+            testStopWatch.stop();
+
+            if (asciiRetest)
+                proofAsstPreferences.recheckProofAsstUsingProofVerifier
+                    .set(verifierRecheck);
+
+            final TheoremTestResult result = new TheoremTestResult(
+                testStopWatch, proofWorksheet, selectorTheorem);
+
+            volumeTestOutputRoutine(result, null, true);
+
+            final String updatedProofText = proofWorksheet.getOutputProofText();
+
+            // retest
+            if (updatedProofText != null && asciiRetest)
+                unify(false, // no renum
                     true, // don't convert work vars
-                    proofText, null, // no preprocess
+                    updatedProofText, null, // no preprocess request
                     null, // no step request
                     null, // no TL request
-                    -1); // inputCursorPos
-                if (asciiRetest)
-                    proofAsstPreferences
-                        .setRecheckProofAsstUsingProofVerifier(verifierRecheck);
-                updatedProofText = proofWorksheet.getOutputProofText();
+                    -1, // inputCursorPos
+                    true); // printOkMessages
 
-                // retest
-                if (updatedProofText != null && asciiRetest)
-                    unify(false, // no renum
-                        true, // don't convert work vars
-                        updatedProofText, null, // no preprocess request
-                        null, // no step request
-                        null, // no TL request
-                        -1); // inputCursorPos
-
-                if (updatedProofText != null) {
-                    printProof(outputBoss,
-                        getErrorLabelIfPossible(proofWorksheet),
-                        updatedProofText);
-                    checkAndCompareUpdateDJs(proofWorksheet);
-                }
+            if (updatedProofText != null) {
+                printProof(outputBoss, getErrorLabelIfPossible(proofWorksheet),
+                    updatedProofText);
+                checkAndCompareUpdateDJs(proofWorksheet);
             }
-            return;
         }
+    }
 
-        initVolumeTestStats();
+    /**
+     * Import Theorem proofs from memory and unifies.
+     * <p>
+     * This is a simulation routine for testing purposes.
+     *
+     * @param selectorCount use to restrict the number of theorems present.
+     * @param outputBoss mmj.util.OutputBoss object, if not null means, please
+     *            print the proof test.
+     * @param asciiRetest instructs program to re-unify the output Proof
+     *            Worksheet text after unification.
+     */
+    public void importFromMemoryAndUnifyManyTheorems(final int selectorCount,
+        final OutputBoss outputBoss, final boolean asciiRetest)
+    {
+        final boolean unifiedFormat = proofAsstPreferences.exportFormatUnified
+            .get();
+        final HypsOrder hypsOrder = proofAsstPreferences.exportHypsOrder.get();
+        final boolean deriveFormulas = proofAsstPreferences.exportDeriveFormulas
+            .get();
+        final boolean verifierRecheck = proofAsstPreferences.recheckProofAsstUsingProofVerifier
+            .get();
 
-        int numberToProcess = 0;
+        final VolumeTestStats stats = new VolumeTestStats();
+
+        final List<Theorem> theoremList = getSortedTheoremList(0);
+
+        final int numberToProcess = Math.min(selectorCount, theoremList.size());
         int numberProcessed = 0;
-        if (selectorAll != null) {
-            if (selectorAll.booleanValue())
-                numberToProcess = Integer.MAX_VALUE;
-        }
-        else if (selectorCount != null)
-            numberToProcess = selectorCount.intValue();
 
-        for (final Theorem theorem : getSortedTheoremIterable(0)) {
+        final boolean smallTest = numberToProcess < PaConstants.PA_TESTMSG_THEOREM_NUMBER_THRESHOLD;
+
+        final TheoremTestResult[] timeTop = smallTest ? null
+            : new TheoremTestResult[PaConstants.PA_TESTMSG_THEOREM_TIME_TOP_NUMBER];
+
+        final StopWatch wholeTestSuiteTime = new StopWatch(true);
+        for (final Theorem theorem : theoremList) {
             if (numberProcessed >= numberToProcess
                 || messages.maxErrorMessagesReached())
-                return;
-            nbrTestTheoremsProcessed++;
-            proofText = exportOneTheorem(null, theorem, unifiedFormat,
-                hypsRandomized, deriveFormulas);
+                break;
+
+            // This whole function is needed for debug and regression tests.
+            // The biggest test is set.mm which consumes a lot of time.
+            // So, I think, it will be good to watch the progress dynamically.
+            final String dbgCountMsg = LangException.format(
+                PaConstants.ERRMSG_PA_TESTMSG_PROGRESS, numberProcessed + 1,
+                numberToProcess, theorem.getLabel());
+            System.err.print(dbgCountMsg);
+
+            stats.nbrTestTheoremsProcessed++;
+            final String proofText = exportOneTheorem(null, theorem,
+                unifiedFormat, hypsOrder, deriveFormulas);
             if (proofText != null) {
                 if (asciiRetest)
-                    proofAsstPreferences
-                        .setRecheckProofAsstUsingProofVerifier(false);
+                    proofAsstPreferences.recheckProofAsstUsingProofVerifier
+                        .set(false);
                 // for Volume Testing
-                final long startNanoTime = System.nanoTime();
-                proofWorksheet = unify(false, // no renum
+
+                final StopWatch testStopWatch = new StopWatch(true);
+                final ProofWorksheet proofWorksheet = unify(false, // no renum
                     true, // don't convert work vars
                     proofText, null, // no preprocess
                     null, // no step request
                     null, // no TL request
-                    -1); // inputCursorPos
-                final long endNanoTime = System.nanoTime();
+                    -1, // inputCursorPos
+                    smallTest); // printOkMessages
+                testStopWatch.stop();
 
                 if (asciiRetest)
-                    proofAsstPreferences
-                        .setRecheckProofAsstUsingProofVerifier(verifierRecheck);
+                    proofAsstPreferences.recheckProofAsstUsingProofVerifier
+                        .set(verifierRecheck);
 
-                volumeTestOutputRoutine(startNanoTime, endNanoTime,
-                    proofWorksheet, theorem);
-                updatedProofText = proofWorksheet.getOutputProofText();
+                final TheoremTestResult result = new TheoremTestResult(
+                    testStopWatch, proofWorksheet, theorem);
+
+                addResultToVolumeTestTimeTop(timeTop, result);
+
+                volumeTestOutputRoutine(result, stats, smallTest);
+                final String updatedProofText = proofWorksheet
+                    .getOutputProofText();
 
                 // retest
                 if (updatedProofText != null && asciiRetest)
@@ -766,7 +895,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                         updatedProofText, null, // no preprocess request
                         null, // no step request
                         null, // no TL request
-                        -1); // inputCursorPos
+                        -1, // inputCursorPos
+                        smallTest); // printOkMessages
 
                 if (updatedProofText != null) {
                     printProof(outputBoss,
@@ -777,36 +907,100 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             }
             numberProcessed++;
         }
-        printVolumeTestStats();
+        System.err.println(); // for debug reasons
+        wholeTestSuiteTime.stop();
+
+        printVolumeTestStats(stats, wholeTestSuiteTime, timeTop);
+    }
+
+    /**
+     * Perform the optimizations for theorem search during "parallel"
+     * unification
+     */
+    public void optimizeTheoremSearch() {
+        final List<Theorem> theoremList = getSortedTheoremList(0);
+
+        final Map<Cnst, Integer> frequency = new HashMap<>();
+
+        final Set<Formula> formulaList = new LinkedHashSet<>();
+
+        for (final Theorem theorem : theoremList) {
+            formulaList.add(theorem.getFormula());
+            for (final LogHyp logHyp : theorem.getLogHypArray())
+                formulaList.add(logHyp.getFormula());
+        }
+
+        for (final Formula formula : formulaList)
+            formula.collectConstFrequenceAndInitConstList(frequency);
+
+        final Comparator<Cnst> comp = new Comparator<Cnst>() {
+            public int compare(final Cnst o1, final Cnst o2) {
+                final Integer i1 = frequency.get(o1);
+                final Integer i2 = frequency.get(o2);
+
+                if (i1 == i2)
+                    return o1.getSeq() - o2.getSeq();
+
+                if (i1 == null)
+                    return 1;
+                if (i2 == null)
+                    return -1;
+
+                if (i1.intValue() != i2.intValue())
+                    return i1 - i2;
+                else
+                    return o1.getSeq() - o2.getSeq();
+            }
+        };
+
+        for (final Formula formula : formulaList)
+            formula.sortConstList(comp);
+    }
+
+    /**
+     * This function initialize auto-transformation component.
+     *
+     * @param enabled Set to false to de-initialize an already loaded
+     *            transformation manager
+     * @param debugOutput when it is true auto-transformation component will
+     *            produce a lot of debug output
+     * @param supportPrefix when it is true auto-transformation component will
+     *            try to use implication prefix in transformations
+     */
+    public void initAutotransformations(final boolean enabled,
+        final boolean debugOutput, final boolean supportPrefix)
+    {
+        final TransformationManager trManager = enabled
+            ? new TransformationManager(this, getSortedAssrtSearchList(),
+                getProvableLogicStmtTyp(), messages, verifyProofs,
+                supportPrefix, debugOutput)
+            : null;
+        proofUnifier.setTransformationManager(trManager);
     }
 
     /**
      * Import Theorem proofs from a given Reader.
-     * 
+     *
      * @param importReader source of proofs
      * @param messages Messages object for output messages.
-     * @param selectorAll true if process all theorems, false or null, ignore
-     *            param.
-     * @param selectorCount use if not null to restrict the number of theorems
-     *            present.
-     * @param selectorTheorem just process one theorem, ignore selectorCount and
-     *            selectorAll.
+     * @param numberToProcess use to restrict the number of theorems present.
+     * @param selectorTheorem just process one theorem, ignore numberToProcess.
      * @param outputBoss mmj.util.OutputBoss object, if not null means, please
      *            print the proof test.
      * @param asciiRetest instructs program to re-unify the output Proof
      *            Worksheet text after unification.
      */
-    public void importFromFileAndUnify(
-        final Reader importReader, // already open
-        final Messages messages, final Boolean selectorAll,
-        final Integer selectorCount, final Theorem selectorTheorem,
-        final OutputBoss outputBoss, final boolean asciiRetest)
+    public void importFromFileAndUnify(final Reader importReader, // already
+                                                                  // open
+        final Messages messages, final int numberToProcess,
+        final Theorem selectorTheorem, final OutputBoss outputBoss,
+        final boolean asciiRetest)
     {
 
         this.messages = messages;
 
-        final boolean verifierRecheck = proofAsstPreferences
-            .getRecheckProofAsstUsingProofVerifier();
+        final boolean verifierRecheck = proofAsstPreferences.recheckProofAsstUsingProofVerifier
+            .get();
 
         ProofWorksheetParser proofWorksheetParser = null;
         ProofWorksheet proofWorksheet = null;
@@ -814,20 +1008,12 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         String theoremLabel;
 
-        int numberToProcess = 0;
         int numberProcessed = 0;
-
-        if (selectorAll != null) {
-            if (selectorAll.booleanValue())
-                numberToProcess = Integer.MAX_VALUE;
-        }
-        else if (selectorCount != null)
-            numberToProcess = selectorCount.intValue();
 
         try {
             proofWorksheetParser = new ProofWorksheetParser(importReader,
                 PaConstants.PROOF_TEXT_READER_CAPTION, proofAsstPreferences,
-                logicalSystem, grammar, messages);
+                logicalSystem, grammar, messages, macroManager);
 
             while (true) {
 
@@ -849,14 +1035,14 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                     if (selectorTheorem.getLabel().equals(theoremLabel)) {
 
                         if (asciiRetest)
-                            proofAsstPreferences
-                                .setRecheckProofAsstUsingProofVerifier(false);
+                            proofAsstPreferences.recheckProofAsstUsingProofVerifier
+                                .set(false);
 
-                        unifyProofWorksheet(proofWorksheet, false);
+                        unifyProofWorksheet(proofWorksheet, false, true);
 
                         if (asciiRetest)
-                            proofAsstPreferences
-                                .setRecheckProofAsstUsingProofVerifier(verifierRecheck);
+                            proofAsstPreferences.recheckProofAsstUsingProofVerifier
+                                .set(verifierRecheck);
 
                         updatedProofText = proofWorksheet.getOutputProofText();
 
@@ -867,7 +1053,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                                 updatedProofText, null, // no preprocess request
                                 null, // no step request
                                 null, // no TL request
-                                -1); // inputCursorPos
+                                -1, // inputCursorPos
+                                true); // printOkMessages
 
                         if (updatedProofText != null) {
                             printProof(outputBoss,
@@ -887,14 +1074,14 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                     break;
 
                 if (asciiRetest)
-                    proofAsstPreferences
-                        .setRecheckProofAsstUsingProofVerifier(false);
+                    proofAsstPreferences.recheckProofAsstUsingProofVerifier
+                        .set(false);
 
-                unifyProofWorksheet(proofWorksheet, false);
+                unifyProofWorksheet(proofWorksheet, false, true);
 
                 if (asciiRetest)
-                    proofAsstPreferences
-                        .setRecheckProofAsstUsingProofVerifier(verifierRecheck);
+                    proofAsstPreferences.recheckProofAsstUsingProofVerifier
+                        .set(verifierRecheck);
 
                 updatedProofText = proofWorksheet.getOutputProofText();
 
@@ -905,7 +1092,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                         updatedProofText, null, // no preprocess request
                         null, // no step request
                         null, // no TL request
-                        -1); // inputCursorPos
+                        -1, // inputCursorPos
+                        true); // printOkMessages
 
                 if (updatedProofText != null) {
                     printProof(outputBoss,
@@ -944,7 +1132,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
     /**
      * Exercises the PreprocessRequest code for one proof.
-     * 
+     *
      * @param proofText one Proof Text Area in a String.
      * @param messages Messages object for output messages.
      * @param outputBoss mmj.util.OutputBoss object, if not null means, please
@@ -967,7 +1155,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             false, // convert work vars
             proofText, preprocessRequest, null, // no step request
             null, // no TL request
-            -1); // inputCursorPos
+            -1, // inputCursorPos
+            true); // printOkMessages
 
         updatedProofText = proofWorksheet.getOutputProofText();
 
@@ -979,7 +1168,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
     /**
      * Exercises the StepSelectorSearch for one proof.
-     * 
+     *
      * @param importReader source of proofs
      * @param messages Messages object for output messages.
      * @param outputBoss mmj.util.OutputBoss object, if not null means, please
@@ -987,8 +1176,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * @param cursorPos offset of input cursor.
      * @param selectionNumber choice from StepSelectorResults
      */
-    public void stepSelectorBatchTest(
-        final Reader importReader, // already open
+    public void stepSelectorBatchTest(final Reader importReader, // already open
         final Messages messages, final OutputBoss outputBoss,
         final int cursorPos, final int selectionNumber)
     {
@@ -1003,16 +1191,16 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         try {
             proofWorksheetParser = new ProofWorksheetParser(importReader,
                 PaConstants.PROOF_TEXT_READER_CAPTION, proofAsstPreferences,
-                logicalSystem, grammar, messages);
+                logicalSystem, grammar, messages, macroManager);
 
             proofWorksheet = proofWorksheetParser.next(cursorPos + 1,
-                new StepRequest(PaConstants.STEP_REQUEST_SELECTOR_SEARCH));
+                StepRequest.SelectorSearch);
 
             final String theoremLabel = proofWorksheet.getTheoremLabel();
 
             if (!proofWorksheet.hasStructuralErrors()) {
                 origProofText = proofWorksheet.getOutputProofText();
-                unifyProofWorksheet(proofWorksheet, false);
+                unifyProofWorksheet(proofWorksheet, false, true);
             }
             if (proofWorksheet.hasStructuralErrors()) {
                 messages.accumErrorMessage(
@@ -1052,15 +1240,14 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 getErrorLabelIfPossible(proofWorksheet), step, selectionNumber,
                 assrt.getLabel(), selection);
 
-            final StepRequest stepRequestChoice = new StepRequest(
-                PaConstants.STEP_REQUEST_SELECTOR_CHOICE, results.step,
-                results.refArray[selectionNumber]);
+            final StepRequest stepRequestChoice = new StepRequest.SelectorChoice(
+                results.step, results.refArray[selectionNumber]);
 
             proofWorksheet = unify(false, // no renumReq,
                 false, // convert work vars
                 origProofText, null, // no preprocessRequest,
                 stepRequestChoice, null, // no TL request
-                cursorPos + 1);
+                cursorPos + 1, true); // printOkMessages
 
             updatedProofText = proofWorksheet.getOutputProofText();
             if (updatedProofText != null)
@@ -1099,64 +1286,50 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * <p>
      * An incomplete input proof generates an incomplete output proof as well as
      * an error message.
-     * 
+     *
      * @param exportWriter destination for output proofs.
      * @param messages Messages object for output messages.
-     * @param selectorAll true if process all theorems, false or null, ignore
-     *            param.
-     * @param selectorCount use if not null to restrict the number of theorems
-     *            present.
-     * @param selectorTheorem just process one theorem, ignore selectorCount and
-     *            selectorAll.
+     * @param numberToExport use to restrict the number of theorems present.
+     * @param selectorTheorem just process one theorem, ignore numberToExport.
      * @param outputBoss mmj.util.OutputBoss object, if not null means, please
      *            print the proof test.
      */
-    public void exportToFile(
-        final Writer exportWriter, // already open
-        final Messages messages, final Boolean selectorAll,
-        final Integer selectorCount, final Theorem selectorTheorem,
-        final OutputBoss outputBoss)
+    public void exportToFile(final Writer exportWriter, // already open
+        final Messages messages, final int numberToExport,
+        final Theorem selectorTheorem, final OutputBoss outputBoss)
     {
 
-        final boolean exportFormatUnified = proofAsstPreferences
-            .getExportFormatUnified();
+        final boolean exportFormatUnified = proofAsstPreferences.exportFormatUnified
+            .get();
 
-        final boolean hypsRandomized = proofAsstPreferences
-            .getExportHypsRandomized();
+        final HypsOrder hypsOrder = proofAsstPreferences.exportHypsOrder.get();
 
-        final boolean deriveFormulas = proofAsstPreferences
-            .getExportDeriveFormulas();
+        final boolean deriveFormulas = proofAsstPreferences.exportDeriveFormulas
+            .get();
 
         this.messages = messages;
 
         if (selectorTheorem != null) {
             final String proofText = exportOneTheorem(exportWriter,
-                selectorTheorem, exportFormatUnified, hypsRandomized,
+                selectorTheorem, exportFormatUnified, hypsOrder,
                 deriveFormulas);
             if (proofText != null)
                 printProof(outputBoss, selectorTheorem.getLabel(), proofText);
             return;
         }
 
-        int numberToExport = 0;
         int numberExported = 0;
-        if (selectorAll != null) {
-            if (selectorAll.booleanValue())
-                numberToExport = Integer.MAX_VALUE;
-        }
-        else if (selectorCount != null)
-            numberToExport = selectorCount.intValue();
-
-        for (final Theorem theorem : getSortedTheoremIterable(0)) {
-            if (numberExported < numberToExport)
+        for (final Theorem theorem : getSortedTheoremList(0)) {
+            if (numberExported >= numberToExport)
                 break;
             final String proofText = exportOneTheorem(exportWriter, theorem,
-                exportFormatUnified, hypsRandomized, deriveFormulas);
+                exportFormatUnified, hypsOrder, deriveFormulas);
             if (proofText != null)
                 printProof(outputBoss, theorem.getLabel(), proofText);
             numberExported++;
         }
     }
+
     // Note: could do binary lookup for sequence number
     // within ArrayList which happens to be sorted.
     private Theorem getTheoremBackward(final int currProofMaxSeq,
@@ -1165,8 +1338,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         final List<Assrt> searchList = proofUnifier
             .getUnifySearchListByMObjSeq();
 
-        for (final ListIterator<Assrt> li = searchList.listIterator(searchList
-            .size()); li.hasPrevious();)
+        for (final ListIterator<Assrt> li = searchList
+            .listIterator(searchList.size()); li.hasPrevious();)
         {
             final Assrt assrt = li.previous();
             if (assrt.getSeq() < currProofMaxSeq && assrt instanceof Theorem)
@@ -1207,7 +1380,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * and "structural" edits so that other logic such as ProofUnifier have a
      * clean ProofWorksheet. A "structural error" means an error like a formula
      * with a syntax error, or a Hyp referring to a non-existent step, etc.
-     * 
+     *
      * @param proofText proof text from ProofAsstGUI screen, or any String
      *            conforming to the formatting rules of ProofAsst.
      * @param errorFound boolean array of 1 element that is output as true if an
@@ -1229,7 +1402,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         try {
             proofWorksheetParser = new ProofWorksheetParser(proofText,
                 "Proof Text", proofAsstPreferences, logicalSystem, grammar,
-                messages);
+                messages, macroManager);
 
             proofWorksheet = proofWorksheetParser.next(inputCursorPos,
                 stepRequest);
@@ -1247,77 +1420,138 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 e.lineNbr, e.columnNbr, e.charNbr);
         } catch (final IOException e) {
             e.printStackTrace();
-            messages.accumErrorMessage(
-                PaConstants.ERRMSG_PA_UNIFY_SEVERE_ERROR,
+            messages.accumErrorMessage(PaConstants.ERRMSG_PA_UNIFY_SEVERE_ERROR,
                 getErrorLabelIfPossible(proofWorksheet), e.getMessage());
             proofWorksheet = updateWorksheetWithException(proofWorksheet, -1,
                 -1, -1);
         } finally {
+            if (macroManager != null)
+                macroManager.runCallback(CallbackType.PARSE_FAILED);
             if (proofWorksheetParser != null)
                 proofWorksheetParser.closeReader();
         }
         return proofWorksheet;
     }
 
-    private void initVolumeTestStats() {
-        nbrTestTheoremsProcessed = 0;
-        nbrTestNotProvedPerfectly = 0;
-        nbrTestProvedDifferently = 0;
+    /**
+     * This function compares {@code candidate} time information with the
+     * content of {@code timeTop} array and updates {@code timeTop} if it is
+     * needed.
+     *
+     * @param timeTop The array with already collected information about longest
+     *            theorem unifications.
+     * @param candidate The information about some theorem test.
+     */
+    private void addResultToVolumeTestTimeTop(final TheoremTestResult[] timeTop,
+        final TheoremTestResult candidate)
+    {
+        if (timeTop == null)
+            return;
+
+        // simple comparator: could compare null objects also!
+        final Comparator<TheoremTestResult> comp = new Comparator<TheoremTestResult>() {
+            public int compare(final TheoremTestResult left,
+                final TheoremTestResult right)
+            {
+                if (left == right)
+                    return 0;
+
+                if (left == null)
+                    return 1;
+
+                if (right == null)
+                    return -1;
+
+                return -StopWatch.compare(left.stopWatch, right.stopWatch);
+            }
+        };
+
+        // find insert position
+        int pos = Arrays.binarySearch(timeTop, candidate, comp);
+        if (pos < 0)
+            pos = -(pos + 1);
+
+        if (pos < timeTop.length) {
+            // we need to add this candidate to timeTop array
+
+            // shift array
+            System.arraycopy(timeTop, pos, timeTop, pos + 1,
+                timeTop.length - pos - 1);
+
+            // add alement
+            timeTop[pos] = candidate;
+        }
     }
 
-    private void printVolumeTestStats() {
+    private void printVolumeTestStats(final VolumeTestStats stats,
+        final StopWatch wholeTestTime, final TheoremTestResult[] timeTop)
+    {
         messages.accumInfoMessage(PaConstants.ERRMSG_PA_TESTMSG_03,
-            nbrTestTheoremsProcessed, nbrTestNotProvedPerfectly,
-            nbrTestProvedDifferently);
+            stats.nbrTestTheoremsProcessed, stats.nbrTestNotProvedPerfectly,
+            stats.nbrTestProvedDifferently,
+            wholeTestTime.getElapsedTimeInStr());
+
+        if (timeTop != null) {
+            messages.accumInfoMessage(PaConstants.ERRMSG_PA_TIME_TOP_HEADER);
+
+            for (final TheoremTestResult result : timeTop)
+                volumeTestOutputRoutine(result, null, true);
+        }
     }
 
-    private void volumeTestOutputRoutine(final long startNanoTime,
-        final long endNanoTime, final ProofWorksheet proofWorksheet,
-        final Theorem theorem)
+    private void volumeTestOutputRoutine(final TheoremTestResult result,
+        final VolumeTestStats stats, final boolean printOkTheorems)
     {
 
-        final DerivationStep q = proofWorksheet.getQedStep();
+        final DerivationStep q = result.proofWorksheet.getQedStep();
 
         if (q == null) {
-            nbrTestNotProvedPerfectly++;
+            if (stats != null)
+                stats.nbrTestNotProvedPerfectly++;
             messages.accumInfoMessage(PaConstants.ERRMSG_PA_TESTMSG_01,
-                theorem.getLabel(), (startNanoTime + 50000000) / endNanoTime,
-                9999999, "No qed step found!");
+                result.theorem.getLabel(),
+                result.stopWatch.getElapsedTimeInStr(), 9999999,
+                "No qed step found!");
             return;
         }
 
         // this 's' is for batch testing. the numbers
         // are for backward compatibility to the old
         // ProofWorkStmt.status values.
+        final int PROVED_PERFECTLY = 8;
         int s;
-        if (q.proofTree == null)
+        if (q.getProofTree() == null)
             s = 4; // arbitrary
-        else if (q.djVarsErrorStatus == PaConstants.DJ_VARS_ERROR_STATUS_NO_ERRORS)
-        {
+        else if (q.djVarsErrorStatus == DjVarsErrorStatus.None) {
             if (!q.verifyProofError)
-                s = 8; // proved perfectly
+                s = PROVED_PERFECTLY; // proved perfectly
             else {
                 s = 10; // verify proof err
-                nbrTestNotProvedPerfectly++;
+                if (stats != null)
+                    stats.nbrTestNotProvedPerfectly++;
             }
         }
         else {
             s = 9; // dj vars error
-            nbrTestNotProvedPerfectly++;
+            if (stats != null)
+                stats.nbrTestNotProvedPerfectly++;
         }
 
-        messages.accumInfoMessage(PaConstants.ERRMSG_PA_TESTMSG_01,
-            theorem.getLabel(), (startNanoTime + 50000000) / endNanoTime, s,
-            PaConstants.STATUS_DESC[s]);
+        if (printOkTheorems || s != PROVED_PERFECTLY)
+            messages.accumInfoMessage(PaConstants.ERRMSG_PA_TESTMSG_01,
+                result.theorem.getLabel(),
+                result.stopWatch.getElapsedTimeInStr(), s,
+                PaConstants.STATUS_DESC[s]);
 
         if (q != null) {
             RPNStep[] newProof;
-            if (q.proofTree == null)
+            if (q.getProofTree() == null)
                 newProof = new RPNStep[0];
             else
-                newProof = q.proofTree.convertToRPNExpanded();
-            final RPNStep[] oldProof = new ParseTree(proofWorksheet
-                .getTheorem().getProof()).convertToRPNExpanded();
+                newProof = q.getProofTree().convertToRPNExpanded();
+            final RPNStep[] oldProof = new ParseTree(
+                result.proofWorksheet.getTheorem().getProof())
+                    .convertToRPNExpanded();
 
             boolean differenceFound = false;
             String oldStmtDiff = "";
@@ -1354,10 +1588,11 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 }
             }
 
-            if (differenceFound) {
-                nbrTestProvedDifferently++;
+            if (differenceFound && printOkTheorems) {
+                if (stats != null)
+                    stats.nbrTestProvedDifferently++;
                 messages.accumInfoMessage(PaConstants.ERRMSG_PA_TESTMSG_02,
-                    theorem.getLabel(), oldStmtDiff, newStmtDiff);
+                    result.theorem.getLabel(), oldStmtDiff, newStmtDiff);
             }
 
         }
@@ -1387,9 +1622,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             }
         } catch (final IOException e) {
             e.printStackTrace();
-            throw new IllegalArgumentException(LangException.format(
-                PaConstants.ERRMSG_PA_PRINT_IO_ERROR, theoremLabel,
-                e.getMessage()));
+            throw new IllegalArgumentException(
+                LangException.format(PaConstants.ERRMSG_PA_PRINT_IO_ERROR,
+                    theoremLabel, e.getMessage()));
         }
 
     }
@@ -1412,18 +1647,17 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     public String exportOneTheorem(final Theorem theorem) {
         return exportOneTheorem(null, // no export writer
             theorem, true, // exportFormatUnified
-            false, // hypsRandomized
+            HypsOrder.Correct, // hypsRandomized
             false); // deriveFormulas
     }
 
-    private String exportOneTheorem(
-        final Writer exportWriter, // already open
+    private String exportOneTheorem(final Writer exportWriter, // already open
         final Theorem theorem, final boolean exportFormatUnified,
-        final boolean hypsRandomized, final boolean deriveFormulas)
+        final HypsOrder hypsOrder, final boolean deriveFormulas)
     {
 
-        final ProofWorksheet proofWorksheet = getExportedProofWorksheet(
-            theorem, exportFormatUnified, hypsRandomized, deriveFormulas);
+        final ProofWorksheet proofWorksheet = getExportedProofWorksheet(theorem,
+            exportFormatUnified, hypsOrder, deriveFormulas);
 
         if (proofWorksheet == null)
             return null;
@@ -1431,9 +1665,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         final String proofText = proofWorksheet.getOutputProofText();
 
         if (proofText == null)
-            throw new IllegalArgumentException(LangException.format(
-                PaConstants.ERRMSG_PA_EXPORT_STRUCT_ERROR,
-                getErrorLabelIfPossible(proofWorksheet)));
+            throw new IllegalArgumentException(
+                LangException.format(PaConstants.ERRMSG_PA_EXPORT_STRUCT_ERROR,
+                    getErrorLabelIfPossible(proofWorksheet)));
 
         if (exportWriter != null)
             try {
@@ -1448,7 +1682,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     }
 
     private ProofWorksheet getExportedProofWorksheet(final Theorem theorem,
-        final boolean exportFormatUnified, final boolean hypsRandomized,
+        final boolean exportFormatUnified, final HypsOrder hypsOrder,
         final boolean deriveFormulas)
     {
 
@@ -1457,7 +1691,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         try {
             proofDerivationStepList = verifyProofs.getProofDerivationSteps(
-                theorem, exportFormatUnified, hypsRandomized,
+                theorem, exportFormatUnified, hypsOrder,
                 getProvableLogicStmtTyp());
 
             proofWorksheet = new ProofWorksheet(theorem,
@@ -1472,14 +1706,13 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     }
 
     private void unifyProofWorksheet(final ProofWorksheet proofWorksheet,
-        final boolean noConvertWV)
+        final boolean noConvertWV, final boolean printOkMessages)
     {
 
         if (proofWorksheet.getNbrDerivStepsReadyForUnify() > 0
             || proofWorksheet.stepRequest != null
-            && (proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SELECTOR_SEARCH
-                || proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH
-                || proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_SEARCH_OPTIONS || proofWorksheet.stepRequest.request == PaConstants.STEP_REQUEST_GENERAL_SEARCH))
+                && proofWorksheet.stepRequest.simple
+            || proofWorksheet.stepRequest == StepRequest.GeneralSearch)
         {
 
             try {
@@ -1497,32 +1730,28 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 return;
             }
 
-            final RPNStep[] rpnProof = proofAsstPreferences
-                .getProofFormatPacked() ? proofWorksheet
-                .getQedStepSquishedRPN() : proofWorksheet.getQedStepProofRPN();
+            final ProofFormat format = proofAsstPreferences.proofFormat.get();
+            final RPNStep[] rpnProof = format == ProofFormat.Normal
+                ? proofWorksheet.getQedStepProofRPN()
+                : proofWorksheet.getQedStepSquishedRPN();
 
-            if (rpnProof == null) {
-                /*
-                 * NOTE: no msg needed, we get a message on each
-                 * invalid step from the unify process.
-                 */
-            }
+            if (rpnProof == null)
+                proofUnifier.reportUnificationFailures();
             else {
-                if (proofAsstPreferences.getProofFormatCompressed()) {
+                if (format == ProofFormat.Compressed) {
                     final StringBuilder letters = new StringBuilder();
 
-                    final List<Hyp> mandHypList = new ArrayList<Hyp>();
-                    final List<VarHyp> optHypList = new ArrayList<VarHyp>();
+                    final List<Hyp> mandHypList = new ArrayList<>();
+                    final List<VarHyp> optHypList = new ArrayList<>();
                     ProofUnifier.separateMandAndOptFrame(proofWorksheet,
                         proofWorksheet.getQedStep(), mandHypList, optHypList,
                         true);
 
-                    final int width = proofWorksheet.proofAsstPreferences
-                        .getRPNProofRightCol()
-                        - proofWorksheet.getRPNProofLeftCol() + 1;
+                    final int width = proofWorksheet.proofAsstPreferences.rpnProofRightCol
+                        .get() - proofWorksheet.getRPNProofLeftCol() + 1;
                     final List<Stmt> parenList = logicalSystem
-                        .getProofCompression().compress(
-                            proofWorksheet.getTheoremLabel(), width,
+                        .getProofCompression()
+                        .compress(proofWorksheet.getTheoremLabel(), width,
                             mandHypList, optHypList, rpnProof, letters);
 
                     proofWorksheet.addGeneratedProofStmt(parenList,
@@ -1530,53 +1759,21 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 }
                 else
                     proofWorksheet.addGeneratedProofStmt(rpnProof);
-                if (proofAsstPreferences.getDjVarsSoftErrorsGenerate()
+                if (proofAsstPreferences.djVarsSoftErrors.get().generate
                     && proofWorksheet.proofSoftDjVarsErrorList != null
                     && !proofWorksheet.proofSoftDjVarsErrorList.isEmpty())
                     proofWorksheet.generateAndAddDjVarsStmts();
-                messages.accumInfoMessage(
-                    PaConstants.ERRMSG_PA_RPN_PROOF_GENERATED,
-                    getErrorLabelIfPossible(proofWorksheet));
+
+                if (printOkMessages)
+                    messages.accumInfoMessage(
+                        PaConstants.ERRMSG_PA_RPN_PROOF_GENERATED,
+                        getErrorLabelIfPossible(proofWorksheet));
             }
         }
         else
             messages.accumInfoMessage(PaConstants.ERRMSG_PA_NOTHING_TO_UNIFY,
                 getErrorLabelIfPossible(proofWorksheet));
-        incompleteStepCursorPositioning(proofWorksheet);
-    }
-    private void incompleteStepCursorPositioning(
-        final ProofWorksheet proofWorksheet)
-    {
-
-        if (proofWorksheet.getQedStepProofRPN() != null) {
-            proofWorksheet.proofCursor.setDontScroll(false);
-            proofWorksheet.posCursorAtQedStmt();
-            return;
-        }
-
-        proofWorksheet.proofCursor.setDontScroll(true);
-
-        if (!proofWorksheet.proofCursor.cursorIsSet) {
-
-            if (proofAsstPreferences.getIncompleteStepCursorLast()) {
-                proofWorksheet.posCursorAtLastIncompleteOrQedStmt();
-                return;
-            }
-
-            if (proofAsstPreferences.getIncompleteStepCursorFirst()) {
-                proofWorksheet.posCursorAtFirstIncompleteOrQedStmt();
-                return;
-            }
-
-            // if (proofWorksheet.hasIncompleteStmt()) {
-            proofWorksheet.proofInputCursor.setDontScroll(true);
-            // }
-            // else {
-            // proofWorksheet.proofInputCursor.setDontScroll(false);
-            // }
-
-            proofWorksheet.setProofCursor(proofWorksheet.proofInputCursor);
-        }
+        proofWorksheet.incompleteStepCursorPositioning();
     }
 
     private ProofWorksheet updateWorksheetWithException(final ProofWorksheet w,
@@ -1609,13 +1806,14 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             outputBoss.sysOutPrint("\n");
         } catch (final IOException e) {
             e.printStackTrace();
-            throw new IllegalArgumentException(LangException.format(
-                PaConstants.ERRMSG_PA_PRINT_IO_ERROR, theoremLabel,
-                e.getMessage()));
+            throw new IllegalArgumentException(
+                LangException.format(PaConstants.ERRMSG_PA_PRINT_IO_ERROR,
+                    theoremLabel, e.getMessage()));
         }
     }
 
-    private String getErrorLabelIfPossible(final ProofWorksheet proofWorksheet)
+    private String getErrorLabelIfPossible(
+        final ProofWorksheet proofWorksheet)
     {
         String label = "unknownLabel";
         if (proofWorksheet != null && proofWorksheet.getTheoremLabel() != null)
@@ -1636,14 +1834,13 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             lowestMObjSeq = theorem.getSeq();
         }
 
-        return getSortedTheoremIterable(lowestMObjSeq);
+        return getSortedTheoremList(lowestMObjSeq);
     }
 
-    private Iterable<Theorem> getSortedTheoremIterable(final int lowestMObjSeq)
-    {
+    private List<Theorem> getSortedTheoremList(final int lowestMObjSeq) {
 
-        sortedTheoremList = new ArrayList<Theorem>(logicalSystem.getStmtTbl()
-            .size());
+        final ArrayList<Theorem> sortedTheoremList = new ArrayList<>(
+            logicalSystem.getStmtTbl().size());
 
         for (final Stmt stmt : logicalSystem.getStmtTbl().values())
             if (stmt.getSeq() >= lowestMObjSeq && stmt instanceof Theorem
@@ -1652,7 +1849,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 // for one thing, "dummylink" generates an
                 // exception because its proof is invalid
                 // for the mmj2 Proof Assistant.
-                !proofAsstPreferences.checkUnifySearchExclude((Assrt)stmt))
+            !proofAsstPreferences.checkUnifySearchExclude((Assrt)stmt))
                 sortedTheoremList.add((Theorem)stmt);
 
         Collections.sort(sortedTheoremList, MObj.SEQ);
@@ -1667,15 +1864,15 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     private void checkAndCompareUpdateDJs(final ProofWorksheet proofWorksheet) {
         if (proofWorksheet.getQedStepProofRPN() == null
             || proofWorksheet.newTheorem
-            || !proofAsstPreferences.getDjVarsSoftErrorsGenerate()
+            || !proofAsstPreferences.djVarsSoftErrors.get().generate
             || proofWorksheet.proofSoftDjVarsErrorList == null
             || proofWorksheet.proofSoftDjVarsErrorList.isEmpty())
             return;
 
-        if (proofAsstPreferences.getImportCompareDJs())
+        if (proofAsstPreferences.importCompareDJs.get())
             importCompareDJs(proofWorksheet);
 
-        if (proofAsstPreferences.getImportUpdateDJs())
+        if (proofAsstPreferences.importUpdateDJs.get())
             importUpdateDJs(proofWorksheet);
 
     }
@@ -1701,16 +1898,15 @@ public class ProofAsst implements TheoremLoaderCommitListener {
      * each mandFrame.djVarsArray[i] in the ProofWorksheet's
      * comboFrame.djVarsArray (which happens to be sorted); if not found, then
      * the mandFrame.djVarsArray[i] element is Superflous...
-     * 
+     *
      * @param proofWorksheet the owner ProofWorksheet
      */
     private void importCompareDJs(final ProofWorksheet proofWorksheet) {
-        final List<DjVars> superfluous = new ArrayList<DjVars>();
+        final List<DjVars> superfluous = new ArrayList<>();
         final ScopeFrame mandFrame = proofWorksheet.theorem.getMandFrame();
         int compare;
         loopI: for (int i = 0; i < mandFrame.djVarsArray.length; i++) {
-            for (int j = 0; j < proofWorksheet.comboFrame.djVarsArray.length; j++)
-            {
+            for (int j = 0; j < proofWorksheet.comboFrame.djVarsArray.length; j++) {
                 compare = mandFrame.djVarsArray[i]
                     .compareTo(proofWorksheet.comboFrame.djVarsArray[j]);
                 if (compare > 0)
@@ -1732,7 +1928,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     }
 
     private void importUpdateDJs(final ProofWorksheet proofWorksheet) {
-        final List<DjVars> list = new ArrayList<DjVars>();
+        final List<DjVars> list = new ArrayList<>();
 
         final ScopeFrame mandFrame = proofWorksheet.theorem.getMandFrame();
 

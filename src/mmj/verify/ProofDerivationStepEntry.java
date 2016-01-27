@@ -96,6 +96,8 @@ public class ProofDerivationStepEntry {
      */
     public int proofLevel;
 
+    public boolean isAutoStep;
+
     @Override
     public String toString() {
         String s = (isHyp ? "h" : "") + step + ":";

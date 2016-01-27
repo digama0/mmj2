@@ -33,7 +33,7 @@ public class TheoremLoader {
 
     /**
      * Main constructor for TheoremLoader.
-     * 
+     *
      * @param tlPreferences TlPreferences object.
      */
     public TheoremLoader(final TlPreferences tlPreferences) {
@@ -43,7 +43,7 @@ public class TheoremLoader {
     /**
      * Unifies mmj2 Proof Text area and stores the theorem in the Logical System
      * and MMT Folder.
-     * 
+     *
      * @param proofWorksheetText text area holding an mmj2 Proof Worksheet.
      * @param logicalSystem LogicalSystem object.
      * @param messages Messages object.
@@ -56,7 +56,8 @@ public class TheoremLoader {
     public ProofWorksheet unifyPlusStoreInLogSysAndMMTFolder(
         final String proofWorksheetText, final LogicalSystem logicalSystem,
         final Messages messages, final ProofAsst proofAsst,
-        final String inputProofWorksheetFileName) throws TheoremLoaderException
+        final String inputProofWorksheetFileName)
+            throws TheoremLoaderException
     {
 
         final ProofWorksheet proofWorksheet = getUnifiedProofWorksheet(
@@ -70,7 +71,7 @@ public class TheoremLoader {
 
     /**
      * Unifies mmj2 Proof Text area and stores the theorem in the MMT Folder.
-     * 
+     *
      * @param proofWorksheetText text area holding an mmj2 Proof Worksheet.
      * @param logicalSystem LogicalSystem object.
      * @param messages Messages object.
@@ -83,7 +84,8 @@ public class TheoremLoader {
     public ProofWorksheet unifyPlusStoreInMMTFolder(
         final String proofWorksheetText, final LogicalSystem logicalSystem,
         final Messages messages, final ProofAsst proofAsst,
-        final String inputProofWorksheetFileName) throws TheoremLoaderException
+        final String inputProofWorksheetFileName)
+            throws TheoremLoaderException
     {
 
         final ProofWorksheet proofWorksheet = getUnifiedProofWorksheet(
@@ -96,7 +98,7 @@ public class TheoremLoader {
 
     /**
      * Stores a unified ProofWorksheet in the Logical System and the MMT Folder.
-     * 
+     *
      * @param proofWorksheet ProofWorksheet object already successfully unified.
      * @param logicalSystem LogicalSystem object.
      * @param messages Messages object.
@@ -117,7 +119,7 @@ public class TheoremLoader {
 
     /**
      * Stores a unified ProofWorksheet in the MMT Folder.
-     * 
+     *
      * @param proofWorksheet ProofWorksheet object already successfully unified.
      * @param logicalSystem LogicalSystem object.
      * @param messages Messages object.
@@ -141,7 +143,7 @@ public class TheoremLoader {
         final List<StringBuilder> mmtTheoremLines = mmtTheoremExportFormatter
             .buildStringBuilderLineList(proofWorksheet);
 
-        tlPreferences.getMMTFolder().storeMMTTheoremFile(
+        tlPreferences.mmtFolder.get().storeMMTTheoremFile(
             proofWorksheet.getTheoremLabel(), mmtTheoremLines);
 
     }
@@ -150,7 +152,7 @@ public class TheoremLoader {
      * Loads all MMT Theorems in the MMT Folder into the Logical System.
      * <p>
      * Note: the current MMT Folder is obtained from the TlPreferences object.
-     * 
+     *
      * @param logicalSystem LogicalSystem object.
      * @param messages Messages object.
      * @throws TheoremLoaderException if data errors encountered.
@@ -159,7 +161,7 @@ public class TheoremLoader {
         final Messages messages) throws TheoremLoaderException
     {
 
-        final MMTTheoremSet mmtTheoremSet = tlPreferences.getMMTFolder()
+        final MMTTheoremSet mmtTheoremSet = tlPreferences.mmtFolder.get()
             .constructMMTTheoremSet(logicalSystem, messages, tlPreferences);
 
         mmtTheoremSet.updateLogicalSystem();
@@ -170,7 +172,7 @@ public class TheoremLoader {
      * <p>
      * Note: the input theoremLabel is used to construct the file name to be
      * read from the MMT Folder.
-     * 
+     *
      * @param theoremLabel label of the theorem to be loaded.
      * @param logicalSystem LogicalSystem object.
      * @param messages Messages object.
@@ -178,10 +180,10 @@ public class TheoremLoader {
      */
     public void loadTheoremsFromMMTFolder(final String theoremLabel,
         final LogicalSystem logicalSystem, final Messages messages)
-        throws TheoremLoaderException
+            throws TheoremLoaderException
     {
 
-        final MMTTheoremSet mmtTheoremSet = tlPreferences.getMMTFolder()
+        final MMTTheoremSet mmtTheoremSet = tlPreferences.mmtFolder.get()
             .constructMMTTheoremSet(theoremLabel, logicalSystem, messages,
                 tlPreferences);
 
@@ -194,7 +196,7 @@ public class TheoremLoader {
      * <p>
      * Note: the theorem Label is used to construct the file name to be written
      * to the MMT Folder.
-     * 
+     *
      * @param theorem Theorem to be written to the MMT Folder.
      * @param logicalSystem LogicalSystem object.
      * @param messages Messages object.
@@ -202,7 +204,7 @@ public class TheoremLoader {
      */
     public void extractTheoremToMMTFolder(final Theorem theorem,
         final LogicalSystem logicalSystem, final Messages messages)
-        throws TheoremLoaderException
+            throws TheoremLoaderException
     {
 
         final MMTTheoremExportFormatter mmtTheoremExportFormatter = new MMTTheoremExportFormatter(
@@ -211,13 +213,13 @@ public class TheoremLoader {
         final List<StringBuilder> mmtTheoremLines = mmtTheoremExportFormatter
             .buildStringBuilderLineList(theorem);
 
-        tlPreferences.getMMTFolder().storeMMTTheoremFile(theorem.getLabel(),
+        tlPreferences.mmtFolder.get().storeMMTTheoremFile(theorem.getLabel(),
             mmtTheoremLines);
     }
 
     /**
      * Unifies an mmj2 Proof Text area.
-     * 
+     *
      * @param proofWorksheetText text of a ProofWorksheet.
      * @param proofAsst ProofAsst object
      * @param filenameOrDataSourceId text for diagnostics
@@ -234,7 +236,8 @@ public class TheoremLoader {
             proofWorksheetText, null, // preprocessRequest
             null, // stepRequest
             null, // no TL request
-            -1); // inputCursorPos
+            -1, // inputCursorPos
+            true); // printOkMessages
 
         if (proofWorksheet.getGeneratedProofStmt() == null)
             throw new TheoremLoaderException(

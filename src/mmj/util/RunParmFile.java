@@ -18,6 +18,7 @@
 package mmj.util;
 
 import java.io.*;
+import java.util.Iterator;
 
 /**
  * RunParmFile reads lines designed to be parsed by DelimitedTextParser and
@@ -29,7 +30,7 @@ import java.io.*;
  * Coincidentally (ha), the "String[] args" parameter for the constructor is the
  * same as the BatchMMJ2 command line parms.
  */
-public class RunParmFile {
+public class RunParmFile implements Iterator<RunParmArrayEntry>, Closeable {
 
     private File runParmFile;
 
@@ -45,7 +46,7 @@ public class RunParmFile {
 
     /**
      * Dumps the absolute path names to System.out for testing purposes.
-     * 
+     *
      * @param paths the path names
      * @param runParmFileNameArgument if an error occurred
      * @throws IOException if an error occurred
@@ -63,15 +64,15 @@ public class RunParmFile {
                 absolutePath = f.getAbsolutePath();
         }
 
-        System.out.println(UtilConstants.RUN_PARM_FILE_REPORT_LINE_1
-            + absolutePath
+        System.out
+            .println(UtilConstants.RUN_PARM_FILE_REPORT_LINE_1 + absolutePath
 //			+ UtilConstants.RUN_PARM_FILE_REPORT_LINE_2
-            );
+        );
     }
 
     /**
      * Construct using {@code Paths} object and runParmFileName argument.
-     * 
+     *
      * @param paths mmj2 Paths object.
      * @param runParmFileNameArgument file name of RunParm file.
      * @throws IOException if an error occurred
@@ -92,8 +93,8 @@ public class RunParmFile {
         }
 
         try {
-            runParmFileReader = new BufferedReader(new InputStreamReader(
-                new FileInputStream(runParmFile)));
+            runParmFileReader = new BufferedReader(
+                new InputStreamReader(new FileInputStream(runParmFile)));
         } catch (final FileNotFoundException e) {
             throw new IllegalArgumentException(
                 UtilConstants.ERRMSG_RUNPARM_FILE_NOT_FOUND_1
@@ -118,7 +119,7 @@ public class RunParmFile {
 
     /**
      * Checks to see if another line of input is available.
-     * 
+     *
      * @return true if another line of input is available.
      */
     public boolean hasNext() {
@@ -130,15 +131,11 @@ public class RunParmFile {
     /**
      * Returns next line of RunParmFile formatted as a fully parsed
      * RunParmArrayEntry object.
-     * 
+     *
      * @return RunParmArrayEntry object.
-     * @throws IllegalStateException if called after EOF.
      * @throws IllegalArgumentException if parsing problem.
-     * @throws IOException if I/O error on RunParmFile.
      */
-    public RunParmArrayEntry next() throws IOException,
-        IllegalArgumentException, IllegalStateException
-    {
+    public RunParmArrayEntry next() {
 
         RunParmArrayEntry ae = null;
 
@@ -150,10 +147,14 @@ public class RunParmFile {
             eofReached = true;
         }
         else {
-            ae = new RunParmArrayEntry(new DelimitedTextParser(inputLine,
-                delimiter, quoter));
+            ae = new RunParmArrayEntry(
+                new DelimitedTextParser(inputLine, delimiter, quoter));
 
-            inputLine = runParmFileReader.readLine();
+            try {
+                inputLine = runParmFileReader.readLine();
+            } catch (final IOException e) {
+                throw new IllegalArgumentException(e);
+            }
         }
 
         return ae;
@@ -161,7 +162,7 @@ public class RunParmFile {
 
     /**
      * Close RunParmFile.
-     * 
+     *
      * @throws IOException if IO error
      */
     public void close() throws IOException {
@@ -171,7 +172,7 @@ public class RunParmFile {
 
     /**
      * Returns the canonical path name of the RunParmFile.
-     * 
+     *
      * @return canonical path of RunParmFile or empty string if RunParmFile is
      *         null.
      */

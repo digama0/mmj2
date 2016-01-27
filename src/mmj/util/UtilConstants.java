@@ -124,11 +124,14 @@
 
 package mmj.util;
 
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+
 import mmj.gmff.GMFFConstants;
 import mmj.mmio.MMIOConstants;
 import mmj.pa.PaConstants;
-import mmj.verify.GrammarConstants;
-import mmj.verify.ProofConstants;
+import mmj.transforms.TrConstants;
+import mmj.verify.*;
 
 /**
  * (Most) Constants used in mmj.util classes
@@ -162,12 +165,14 @@ import mmj.verify.ProofConstants;
  * <li>{@code TL} = mmj.tl package (Theorem Loader).
  * <li>{@code TM} = mmj.tmff.AlignColumn and related code
  * <li>{@code UT} = mmj.util package. (see {@link UtilConstants})
+ * <li>{@code TR} = mmj.transforms package (proof assistant) (see
+ * {@link TrConstants})
  * </ul>
  * <p>
  * <b>{@code 9999}</b> : sequential number within the source code, 0001 through
  * 9999.
  * <p>
- * {@code 
+ * {@code
  * =============================================================
  * }
  * <p>
@@ -190,10 +195,10 @@ import mmj.verify.ProofConstants;
  * first. These are the settings that modify subsequent processing and stay in
  * effect until superceded.
  * <p>
- * 
+ *
  * <pre>
  *  "Executable" RunParms:
- * 
+ *
  *      000000000011111111112
  *      012345678901234567890...
  *      ----------------------------
@@ -217,12 +222,12 @@ import mmj.verify.ProofConstants;
  *      RunProofAsstGUI
  *      SvcCall
  *      ExtractTheoremToMMTFolder
- * 
- * 
+ *
+ *
  *  Example #1 RunParmFile to load 1 file, verify proofs, edit
  *  grammar, parse, print syntax and statement details, and
  *  print BookManager data:
- * 
+ *
  *      000000000011111111112
  *      012345678901234567890...
  *      MaxStatementPrintCount,9999
@@ -237,7 +242,7 @@ import mmj.verify.ProofConstants;
  *      PrintBookManagerChapters
  *      PrintBookManagerSections
  *      PrintBookManagerSectionDetails,*
- * 
+ *
  *  Example #2 RunParmFile doing the exact same thing except
  *  this time:
  *      - specifying the default values AND
@@ -256,44 +261,44 @@ import mmj.verify.ProofConstants;
  *      - Trigger the ProofAsstGUI
  *      - generous use of blank comment lines for readability!
  *      - and THEN we clear and load a different file!
- * 
+ *
  *      000000000011111111112
  *      012345678901234567890...
- * 
+ *
  *      OutputVerbosity,9999
  *       CommentLine: Example #2 - default charsets="" and
  *                    new/update parameter
  *      SystemErrorFile,c:\my\mmjSyserrTest001.txt,new,""
  *      SystemOutputFile,c:\my\mmjSysoutTest001.txt,new,""
- * 
+ *
  *      MaxErrorMessages,500
  *      MaxInfoMessages,500
- * 
+ *
  *      SymbolTableInitialSize,600
  *      StatementTableInitialSize,30000
- * 
+ *
  *      SeqAssignerIntervalSize,100
  *      SeqAssignerIntervalTblInitialSize,100
- * 
+ *
  *      LoadEndpointStmtNbr,5000
  *      LoadEndpointStmtLabel,FermatsLastTheorem
  *      LoadComments,yes
  *      LoadProofs,yes
- * 
+ *
  *      ProvableLogicStmtType,|-
  *      LogicStmtType,wff
- * 
+ *
  *      BookManagerEnabled,yes
- * 
+ *
  *      GrammarAmbiguityEdits,basic
  *      StatementAmbiguityEdits,basic
- * 
+ *
  *      MaxStatementPrintCount,9999
  *      Caption,Example #2
- * 
+ *
  *      LoadFile,c:\metamath\expset.mm
  *      LoadFile,c:\metamath\expset2.mm
- * 
+ *
  *      TheoremLoaderMMTFolder,c:\my\mmtFolder
  *      TheoremLoaderDjVarsOption,Replace
  *      TheoremLoaderAuditMessages,Yes
@@ -304,14 +309,14 @@ import mmj.verify.ProofConstants;
  *      UnifyPlusStoreInMMTFolder,syl.mmp
  *      UnifyPlusStoreInLogSysAndMMTFolder,syl.mmp
  *      ExtractTheoremToMMTFolder,syl
- * 
+ *
  *      VerifyProof,*
  *      Parse,*
- * 
+ *
  *      VerifyParse,*
- * 
+ *
  *  ===TMFF stuff follows===
- * 
+ *
  *      TMFFDefineScheme,AlignVarDepth1,AlignColumn,1,Var,1,Var
  *      TMFFDefineScheme,AlignVarDepth2,AlignColumn,2,Var,1,Var
  *      TMFFDefineScheme,AlignVarDepth3,AlignColumn,3,Var,1,Var
@@ -327,12 +332,12 @@ import mmj.verify.ProofConstants;
  *      TMFFDefineScheme,TwoColumnAlignmentDepth4,TwoColumnAlignment,4
  *      TMFFDefineScheme,TwoColumnAlignmentDepth5,TwoColumnAlignment,5
  *      TMFFDefineScheme,TwoColumnAlignmentDepth99,TwoColumnAlignment,99
- * 
+ *
  *  Note: "Unformatted" and Format 0 are hardcoded --
  *       they cannot be redefined via RunParms.
- * 
+ *
  * TMFFDefineScheme,Unformatted,Unformatted
- * 
+ *
  *      TMFFDefineFormat,1,AlignVarDepth1
  *      TMFFDefineFormat,2,AlignVarDepth2
  *      TMFFDefineFormat,3,AlignVarDepth3
@@ -348,24 +353,24 @@ import mmj.verify.ProofConstants;
  *      TMFFDefineFormat,13,TwoColumnAlignmentDepth3
  *      TMFFDefineFormat,14,TwoColumnAlignmentDepth4
  *      TMFFDefineFormat,15,TwoColumnAlignmentDepth5
- * 
+ *
  *      TMFFUseFormat,3
  *      TMFFAltFormat,7
  *      TMFFUseIndent,0
  *      TMFFAltIndent,1
- * 
+ *
  *      PrintSyntaxDetails
  *      PrintStatementDetails,*
  *      PrintBookManagerChapters
  *      PrintBookManagerSections
  *      PrintBookManagerSectionDetails,*
- * 
+ *
  *      ProofAsstFontSize,14
  *      ProofAsstFontBold,yes
  *      ProofAsstFontFamily,Monospaced
  *      ProofAsstForegroundColorRGB,0,0,0
  *      ProofAsstBackgroundColorRGB,255,255,255
- * 
+ *
  *      ProofAsstFormulaLeftCol,20
  *      ProofAsstFormulaRightCol,79
  *      ProofAsstTextColumns,80
@@ -374,10 +379,10 @@ import mmj.verify.ProofConstants;
  *      ProofAsstErrorMessageColumns,80
  *      ProofAsstTextAtTop,yes
  *      ProofAsstIncompleteStepCursor,Last
- * 
+ *
  *      ProofAsstRPNProofLeftCol,6
  *      ProofAsstRPNProofRightCol,79
- * 
+ *
  *      ProofAsstOutputCursorInstrumentation,no
  *      ProofAsstAutoReformat,yes
  *      ProofAsstProofFolder,c:\my\proofs
@@ -388,18 +393,18 @@ import mmj.verify.ProofConstants;
  *      ProofAsstBatchTest,*,c:\my\export.mmp,un-unified,NotRandomized,NoPrint
  *      StepSelectorBatchTest,c:\my\export.mmp,50,0
  *      PreprocessRequestBatchTest,c:\my\export.mmp,EraseAndRederiveFormulas
- * 
+ *
  *      ProofAsstStartupProofWorksheet,c:\mmj2\data\mmp\PATutorial\Page101.mmp
- * 
+ *
  *      StepSelectorMaxResults,50
  *      StepSelectorShowSubstitutions,yes
  *      StepSelectorDialogPaneWidth,720
  *      StepSelectorDialogPaneHeight,440
- * 
+ *
  *      ProofAsstAssrtListFreespace,5
- * 
+ *
  *      RunProofAsstGUI
- * 
+ *
  *       Comment: now load & process another .mm file!!!!
  *      clear
  *      GarbageCollection
@@ -407,7 +412,7 @@ import mmj.verify.ProofConstants;
  *      VerifyProof,*
  *      PrintSyntaxDetails
  *      PrintStatementDetails,*
- * 
+ *
  *       Comment: now load another .mm and make SvcCallback!!!!
  *      clear
  *      GarbageCollection
@@ -421,10 +426,9 @@ import mmj.verify.ProofConstants;
  *      SvcArg,ExportFormat,mmjbert
  *      SvcArg,whatever,whatever
  *      SvcCall
- * 
  * </pre>
  * <p>
- * 
+ *
  * <pre>
  *  =============================================================
  *  ----> RunParm Default Values. Some options have defaults
@@ -435,7 +439,7 @@ import mmj.verify.ProofConstants;
  *               mmj.verify.ProofConstants.java
  *               mmj.pa.PaConstants.java
  *               mmj.tl.TlConstants.java
- * 
+ *
  *  =============================================================
  * </pre>
  */
@@ -497,8 +501,8 @@ public class UtilConstants {
     public static final String YES_ARGUMENT = "Y";
     public static final String NO_ARGUMENT = "N";
 
-    public static final String ERRMSG_COMMAND_LINE_ARGUMENTS_FORMAT = "\nmmj2 Command Line format follows:\n\n"
-        + "java JAVAPARMS -jar mmj2.jar ARG1 ARG2 ARG3 ARG4 ARG5\n\n"
+    public static final String ERRMSG_COMMAND_LINE_ARGUMENTS_FORMAT = "\nmmj2 Command Line format follows:\n"
+        + "java JAVAPARMS -jar mmj2.jar ARG1 ARG2 ARG3 ARG4 ARG5\n"
         + "    where JAVAPARMS = -Xincgc -Xms128M -Xmx256M (you may customize)\n"
         + "          ARG1      = RunParms File Name (e.g. RunParms.txt)\n"
         + "          ARG2      = y or n (displayMMJ2FailPopupWindow)\n"
@@ -596,2099 +600,1682 @@ public class UtilConstants {
     // Commands for mmj.util.LogicalSystemBoss.java
     // ----------------------------------------------------------
 
-    /**
-     * ProvableLogicStmtType.
-     * <p>
-     * {@code 
-     * "ProvableLogicStmtType": default is "|-"
-     * }
-     */
-    public static final String RUNPARM_PROVABLE_LOGIC_STMT_TYPE = "ProvableLogicStmtType"; // default
-                                                                                           // is
-                                                                                           // "|-"
+    public static final BatchCommand RUNPARM_PROVABLE_LOGIC_STMT_TYPE = new BatchCommand(
+        "ProvableLogicStmtType",
+        " ProvableLogicStmtType.\n" + " <p>\n" + "<code> \n"
+            + " \"ProvableLogicStmtType\": default is \"|-\"\n"
+            + " </code></p>\n" + "\n");
 
-    /**
-     * LogicStmtType.
-     * <p>
-     * {@code 
-     * "LogicStmtType": default is "wff"
-     * }
-     */
-    public static final String RUNPARM_LOGIC_STMT_TYPE = "LogicStmtType"; // default
-                                                                          // is
-                                                                          // "wff"
+    public static final BatchCommand RUNPARM_LOGIC_STMT_TYPE = new BatchCommand(
+        "LogicStmtType",
+        " LogicStmtType.\n" + " <p>\n" + "<code> \n"
+            + " \"LogicStmtType\": default is \"wff\"\n" + " </code></p>\n"
+            + "\n");
 
-    /**
-     * BookManagerEnabled.
-     * <p>
-     * {@code 
-     * "BookManagerEnabled": default is "yes"
-     * }
-     */
-    public static final String RUNPARM_BOOK_MANAGER_ENABLED = "BookManagerEnabled"; // default
-                                                                                    // is
-                                                                                    // "yes"
+    public static final BatchCommand RUNPARM_BOOK_MANAGER_ENABLED = new BatchCommand(
+        "BookManagerEnabled", // default
+        " BookManagerEnabled.\n" + " <p>\n" + " <code> \n"
+            + " \"BookManagerEnabled\": default is \"yes\"\n" + " </code>\n"
+            + "\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.util.BatchMMJ2.java
     // ----------------------------------------------------------
 
-    /**
-     * Clear.
-     * <p>
-     * 
-     * <pre>
-     * "Clear":  clear loaded/derived mm data (files/grammar,etc)
-     *          as well as all RunParm values except for
-     *          SystemErrorFile and SystemOutputFile.
-     * </pre>
-     */
-    public static final String RUNPARM_CLEAR = "Clear";
+    public static final BatchCommand RUNPARM_CLEAR = new BatchCommand("Clear",
+        " Clear.\n" + " <p>\n" + " \n" + " <pre>\n"
+            + " \"Clear\":  clear loaded/derived mm data (files/grammar,etc)\n"
+            + "          as well as all RunParm values except for\n"
+            + "          SystemErrorFile and SystemOutputFile.\n" + " </pre>\n"
+            + "\n");
 
-    /**
-     * GarbageCollection.
-     * <p>
-     * {@code 
-     * "GarbageCollection": frees up unused memory items.
-     * }
-     */
-    public static final String RUNPARM_JAVA_GARBAGE_COLLECTION = "GarbageCollection";
+    public static final BatchCommand RUNPARM_JAVA_GARBAGE_COLLECTION = new BatchCommand(
+        "GarbageCollection",
+        " GarbageCollection.\n" + " <p>\n" + " <code> \n"
+            + " \"GarbageCollection\": frees up unused memory items.\n"
+            + " </code></p>\n" + "\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.util.OutputBoss.java
     // ----------------------------------------------------------
 
-    /**
-     * SystemErrorFile.
-     * <p>
-     * 
-     * <pre>
-     * "SystemErrorFile": value1 = filename,
-     * 
-     *                    value2 = new (default) or update.
-     *                      The system will NOT touch an existing
-     *                      file unless given "update",
-     *                      AND if "new" is specified an error is
-     *                      reported, halting processing ASAP if
-     *                      the file already exists. If the file
-     *                      does exist and Update is specified,
-     *                      then it is overwritten (not appended),
-     *                      but no error is reported for Update
-     *                      if the file does not exist.
-     * 
-     *                    value3 = charset. Note: the program
-     *                      will not stop you from appending
-     *                      a different charset to an existing
-     *                      file, thus hopelessly mixing up your
-     *                      data, so have fun but be careful!
-     * 
-     * info on charsets
-     * file:///C:/Program%20Files/Java/jdk1.5.0_02/docs/api/java/nio/charset/Charset.html
-     * 
-     * Valid charset names on all Java Platforms:
-     *     US-ASCII
-     *     ISO-8859-1
-     *     UTF-8
-     *     UTF-16BE
-     *     UTF-16LE
-     *     UTF-16
-     * </pre>
-     */
-    public static final String RUNPARM_SYSERR_FILE = "SystemErrorFile";
+    public static final BatchCommand RUNPARM_SYSERR_FILE = new BatchCommand(
+        "SystemErrorFile",
+        " SystemErrorFile.\n" + " <p>\n" + " \n" + " <pre>\n"
+            + " \"SystemErrorFile\": value1 = filename,\n" + " \n"
+            + "                    value2 = new (default) or update.\n"
+            + "                      The system will NOT touch an existing\n"
+            + "                      file unless given \"update\",\n"
+            + "                      AND if \"new\" is specified an error is\n"
+            + "                      reported, halting processing ASAP if\n"
+            + "                      the file already exists. If the file\n"
+            + "                      does exist and Update is specified,\n"
+            + "                      then it is overwritten (not appended),\n"
+            + "                      but no error is reported for Update\n"
+            + "                      if the file does not exist.\n" + " \n"
+            + "                    value3 = charset. Note: the program\n"
+            + "                      will not stop you from appending\n"
+            + "                      a different charset to an existing\n"
+            + "                      file, thus hopelessly mixing up your\n"
+            + "                      data, so have fun but be careful!\n"
+            + " \n" + " info on charsets\n"
+            + " file:///C:/Program%20Files/Java/jdk1.5.0_02/docs/api/java/nio/charset/Charset.html\n"
+            + " \n" + " Valid charset names on all Java Platforms:\n"
+            + "     US-ASCII\n" + "     ISO-8859-1\n" + "     UTF-8\n"
+            + "     UTF-16BE\n" + "     UTF-16LE\n" + "     UTF-16\n"
+            + " </pre>\n" + "\n");
 
-    /**
-     * SystemOutputFile.
-     * <p>
-     * 
-     * <pre>
-     * "SystemOutputFile": value1 = filename,
-     * 
-     *                     value2 = new (default), or
-     *                        update
-     * 
-     *                     value3 = charset
-     *                        see RUNPARM_SYSERR_FILE comments
-     *                        for info on the above value parms!
-     * </pre>
-     */
-    public static final String RUNPARM_SYSOUT_FILE = "SystemOutputFile";
+    public static final BatchCommand RUNPARM_SYSOUT_FILE = new BatchCommand(
+        "SystemOutputFile",
+        " SystemOutputFile.\n" + " <p>\n" + " \n" + " <pre>\n"
+            + " \"SystemOutputFile\": value1 = filename,\n" + " \n"
+            + "                     value2 = new (default), or\n"
+            + "                        update\n" + " \n"
+            + "                     value3 = charset\n"
+            + "                        see RUNPARM_SYSERR_FILE comments\n"
+            + "                        for info on the above value parms!\n"
+            + " </pre>\n" + "\n");
 
-    /**
-     * OutputVerbosity
-     * <p>
-     * 
-     * <pre>
-     * "OutputVerbosity": value1 = integer,
-     * 
-     *  Verbosity = 9999 is the default
-     *            =    0 means only print error messages and
-     *                 specifically requested output
-     * </pre>
-     */
-    public static final String RUNPARM_OUTPUT_VERBOSITY = "OutputVerbosity";
+    public static final BatchCommand RUNPARM_OUTPUT_VERBOSITY = new BatchCommand(
+        "OutputVerbosity",
+        " OutputVerbosity\n" + " <p>\n" + " \n" + " <pre>\n"
+            + " \"OutputVerbosity\": value1 = integer,\n" + " \n"
+            + "  Verbosity = 9999 is the default\n"
+            + "            =    0 means only print error messages and\n"
+            + "                 specifically requested output\n" + " </pre>\n"
+            + "\n");
 
-    /**
-     * StartInstrumentationTimer
-     * <p>
-     * 
-     * <pre>
-     * "StartInstrumentationTimer": value1 = ID String,
-     * 
-     *  ID String = Identifier in output message produced
-     *              by StopInstrumentationTimer RunParm --
-     *              must match that ID String.
-     * </pre>
-     */
-    public static final String RUNPARM_START_INSTRUMENTATION_TIMER = "StartInstrumentationTimer";
+    public static final BatchCommand RUNPARM_START_INSTRUMENTATION_TIMER = new BatchCommand(
+        "StartInstrumentationTimer",
+        " StartInstrumentationTimer\n" + " <p>\n" + " \n" + " <pre>\n"
+            + " \"StartInstrumentationTimer\": value1 = ID String,\n" + " \n"
+            + "  ID String = Identifier in output message produced\n"
+            + "              by StopInstrumentationTimer RunParm --\n"
+            + "              must match that ID String.\n" + " </pre>\n"
+            + "\n");
 
-    /**
-     * StopInstrumentationTimer
-     * <p>
-     * 
-     * <pre>
-     * "StopInstrumentationTimer": value1 = ID String,
-     * 
-     *  ID String = Identifier in StartInstrumentationTimer
-     *              RunParm -- must match.
-     * </pre>
-     */
-    public static final String RUNPARM_STOP_INSTRUMENTATION_TIMER = "StopInstrumentationTimer";
+    public static final BatchCommand RUNPARM_STOP_INSTRUMENTATION_TIMER = new BatchCommand(
+        "StopInstrumentationTimer",
+        " StopInstrumentationTimer\n" + " <p>\n" + " \n" + " <pre>\n"
+            + " \"StopInstrumentationTimer\": value1 = ID String,\n" + " \n"
+            + "  ID String = Identifier in StartInstrumentationTimer\n"
+            + "              RunParm -- must match.\n" + " </pre>\n" + "\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.mmio.Systemizer.java
     // ----------------------------------------------------------
 
-    /**
-     * LoadFile.
-     * 
-     * <pre>
-     * "LoadFile": value1 = qual/unqual filename (varies by OS!)
-     * </pre>
-     */
-    public static final String RUNPARM_LOAD_FILE = "LoadFile";
+    public static final BatchCommand RUNPARM_LOAD_FILE = new BatchCommand(
+        "LoadFile",
+        " LoadFile.\n" + " \n" + " <pre>\n"
+            + " \"LoadFile\": value1 = qual/unqual filename (varies by OS!)\n"
+            + " </pre>\n" + "\n");
 
-    /**
-     * LoadEndpointStmtNbr.
-     * 
-     * <pre>
-     * "LoadEndpointStmtNbr": value1 = stop after loading given
-     *                                 number of statements from
-     *                                 input Metamath file(s).
-     *                                 Must be greater than zero.
-     * </pre>
-     */
-    public static final String RUNPARM_LOAD_ENDPOINT_STMT_NBR = "LoadEndpointStmtNbr";
+    public static final BatchCommand RUNPARM_LOAD_ENDPOINT_STMT_NBR = new BatchCommand(
+        "LoadEndpointStmtNbr",
+        " LoadEndpointStmtNbr.\n" + " \n" + " <pre>\n"
+            + " \"LoadEndpointStmtNbr\": value1 = stop after loading given\n"
+            + "                                 number of statements from\n"
+            + "                                 input Metamath file(s).\n"
+            + "                                 Must be greater than zero.\n"
+            + " </pre>\n" + "\n");
 
-    /**
-     * LoadEndpointStmtLabel.
-     * 
-     * <pre>
-     * "LoadEndpointStmtLabel": value1 = stop after loading given
-     *                                 statement label from
-     *                                 input Metamath file(s).
-     *                                 Must not be blank.
-     * </pre>
-     */
-    public static final String RUNPARM_LOAD_ENDPOINT_STMT_LABEL = "LoadEndpointStmtLabel";
+    public static final BatchCommand RUNPARM_LOAD_ENDPOINT_STMT_LABEL = new BatchCommand(
+        "LoadEndpointStmtLabel",
+        " LoadEndpointStmtLabel.\n" + " \n" + " <pre>\n"
+            + " \"LoadEndpointStmtLabel\": value1 = stop after loading given\n"
+            + "                                 statement label from\n"
+            + "                                 input Metamath file(s).\n"
+            + "                                 Must not be blank.\n"
+            + " </pre>\n" + "\n");
 
-    /**
-     * LoadComments
-     * 
-     * <pre>
-     * "LoadComments": value1 = yes/no (default = yes)
-     *                          load Metamath comments
-     *                          into LogicalSystem as Descriptions for
-     *                          the MObj's. The comment immediately
-     *                          preceding the $p statement is treated
-     *                          as the description (must be the statement
-     *                          immediately prior to the $p statement.)
-     * 
-     *                          Only Theorem descriptions are loaded
-     *                          now -- which is for Proof Assistant --
-     *                          but in principle, the rest could be
-     *                          loaded, except for $c and $v statements
-     *                          which often have the description
-     *                          after the declaration.
-     * </pre>
-     */
-    public static final String RUNPARM_LOAD_COMMENTS = "LoadComments";
+    public static final BatchCommand RUNPARM_LOAD_COMMENTS = new BatchCommand(
+        "LoadComments",
+        " LoadComments\n" + " \n" + " <pre>\n"
+            + " \"LoadComments\": value1 = yes/no (default = yes)\n"
+            + "                          load Metamath comments\n"
+            + "                          into LogicalSystem as Descriptions for\n"
+            + "                          the MObj's. The comment immediately\n"
+            + "                          preceding the $p statement is treated\n"
+            + "                          as the description (must be the statement\n"
+            + "                          immediately prior to the $p statement.)\n"
+            + " \n"
+            + "                          Only Theorem descriptions are loaded\n"
+            + "                          now -- which is for Proof Assistant --\n"
+            + "                          but in principle, the rest could be\n"
+            + "                          loaded, except for $c and $v statements\n"
+            + "                          which often have the description\n"
+            + "                          after the declaration.\n" + " </pre>\n"
+            + "\n");
 
-    /**
-     * LoadProofs
-     * 
-     * <pre>
-     * "LoadProofs": value1 = yes/no (default = yes)
-     *                          load Metamath proofs from input .mm
-     *                          file.
-     * 
-     *                          Use "no" to conserve memory and
-     *                          shorten start-up time for the Proof
-     *                          Assistant.
-     * 
-     *                          If set to "no" then RunParm
-     *                          "VerifyProof" will be ignored -- a
-     *                          warning message is produced though.
-     * </pre>
-     */
-    public static final String RUNPARM_LOAD_PROOFS = "LoadProofs";
+    public static final BatchCommand RUNPARM_LOAD_PROOFS = new BatchCommand(
+        "LoadProofs",
+        " LoadProofs\n" + " \n" + " <pre>\n"
+            + " \"LoadProofs\": value1 = yes/no (default = yes)\n"
+            + "                          load Metamath proofs from input .mm\n"
+            + "                          file.\n" + " \n"
+            + "                          Use \"no\" to conserve memory and\n"
+            + "                          shorten start-up time for the Proof\n"
+            + "                          Assistant.\n" + " \n"
+            + "                          If set to \"no\" then RunParm\n"
+            + "                          \"VerifyProof\" will be ignored -- a\n"
+            + "                          warning message is produced though.\n"
+            + " </pre>\n" + "\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.lang.Messages.java
     // ----------------------------------------------------------
 
-    /**
-     * MaxErrorMessages.
-     * 
-     * <pre>
-     * "MaxErrorMessages": 1 -> 999999999...
-     * </pre>
-     */
-    public static final String RUNPARM_MAX_ERROR_MESSAGES = "MaxErrorMessages";
+    public static final BatchCommand RUNPARM_MAX_ERROR_MESSAGES = new BatchCommand(
+        "MaxErrorMessages",
+        " MaxErrorMessages.\n" + " \n" + " <pre>\n"
+            + " \"MaxErrorMessages\": 1 -> 999999999...\n" + " </pre>\n"
+            + "\n");
 
-    /**
-     * MaxInfoMessages.
-     * 
-     * <pre>
-     * "MaxInfoMessages": 1 -> 999999999...
-     * </pre>
-     */
-    public static final String RUNPARM_MAX_INFO_MESSAGES = "MaxInfoMessages"; // 1
-                                                                              // ->
-                                                                              // 999999999...
+    public static final BatchCommand RUNPARM_MAX_INFO_MESSAGES = new BatchCommand(
+        "MaxInfoMessages", " MaxInfoMessages.\n" + " \n" + " <pre>\n"
+            + " \"MaxInfoMessages\": 1 -> 999999999...\n" + " </pre>\n" + "\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.lang.LogicalSystem.java
     // ----------------------------------------------------------
 
-    /**
-     * SymbolTableInitialSize.
-     * 
-     * <pre>
-     * "SymbolTableInitialSize": default = 1500, min = 10
-     * </pre>
-     */
-    public static final String RUNPARM_SYM_TBL_INITIAL_SIZE = "SymbolTableInitialSize"; // default
-                                                                                        // =
-                                                                                        // 600,
-                                                                                        // min
-                                                                                        // =
-                                                                                        // 10
+    public static final BatchCommand RUNPARM_SYM_TBL_INITIAL_SIZE = new BatchCommand(
+        "SymbolTableInitialSize",
+        " SymbolTableInitialSize.\n" + " \n" + " <pre>\n"
+            + " \"SymbolTableInitialSize\": default = 1500, min = 10\n"
+            + " </pre>\n" + "\n");
 
-    /**
-     * StatementTableInitialSize.
-     * 
-     * <pre>
-     * "StatementTableInitialSize": default = 30000, min = 100
-     * </pre>
-     */
-    public static final String RUNPARM_STMT_TBL_INITIAL_SIZE = "StatementTableInitialSize"; // default
-                                                                                            // =
-                                                                                            // 45000,
-                                                                                            // min
-                                                                                            // =
-                                                                                            // 100
+    public static final BatchCommand RUNPARM_STMT_TBL_INITIAL_SIZE = new BatchCommand(
+        "StatementTableInitialSize",
+        " StatementTableInitialSize.\n" + " \n" + " <pre>\n"
+            + " \"StatementTableInitialSize\": default = 30000, min = 100\n"
+            + " </pre>\n" + "\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.lang.SeqAssigner.java
     // ----------------------------------------------------------
 
-    /**
-     * SeqAssignerIntervalSize.
-     * 
-     * <pre>
-     * "SeqAssignerIntervalSize": default = 100, min = 1,
-     * max = 10000.
-     * </pre>
-     */
-    public static final String RUNPARM_SEQ_ASSIGNER_INTERVAL_SIZE = "SeqAssignerIntervalSize"; // default=1000,
-                                                                                               // min=1,
-                                                                                               // max=10000
+    public static final BatchCommand RUNPARM_SEQ_ASSIGNER_INTERVAL_SIZE = new BatchCommand(
+        "SeqAssignerIntervalSize",
+        " SeqAssignerIntervalSize.\n" + " \n" + " <pre>\n"
+            + " \"SeqAssignerIntervalSize\": default = 100, min = 1,\n"
+            + " max = 10000.\n" + " </pre>\n" + "\n");
 
-    /**
-     * SeqAssignerIntervalTblInitialSize.
-     * 
-     * <pre>
-     * "SeqAssignerIntervalTblInitialSize": default = 100, min = 10,
-     * max = 10000.
-     * </pre>
-     */
-    public static final String RUNPARM_SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE = "SeqAssignerIntervalTblInitialSize"; // default=100,
-                                                                                                                     // min=10,
-                                                                                                                     // max=10000
+    public static final BatchCommand RUNPARM_SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE = new BatchCommand(
+        "SeqAssignerIntervalTblInitialSize",
+        " SeqAssignerIntervalTblInitialSize.\n" + " \n" + " <pre>\n"
+            + " \"SeqAssignerIntervalTblInitialSize\": default = 100, min = 10,\n"
+            + " max = 10000.\n" + " </pre>\n" + "\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.verify.Grammar.java
     // ----------------------------------------------------------
 
-    /**
-     * GrammarAmbiguityEdits.
-     * 
-     * <pre>
-     * "GrammarAmbiguityEdits": "basic" (default) or "complete"
-     * </pre>
-     */
-    public static final String RUNPARM_GRAMMAR_AMBIGUITY_EDITS = "GrammarAmbiguityEdits"; // "basic"
-                                                                                          // (default)
-                                                                                          // or
-                                                                                          // "complete"
+    public static final BatchCommand RUNPARM_GRAMMAR_AMBIGUITY_EDITS = new BatchCommand(
+        "GrammarAmbiguityEdits",
+        " GrammarAmbiguityEdits.\n" + " \n" + " <pre>\n"
+            + " \"GrammarAmbiguityEdits\": \"basic\" (default) or \"complete\"\n"
+            + " </pre>\n" + "\n");
 
-    /**
-     * StatementAmbiguityEdits.
-     * 
-     * <pre>
-     * "StatementAmbiguityEdits": "basic" (default) or "complete"
-     * </pre>
-     */
-    public static final String RUNPARM_STATEMENT_AMBIGUITY_EDITS = "StatementAmbiguityEdits"; // "basic"
-                                                                                              // (default)
-                                                                                              // or
-                                                                                              // "complete"
+    public static final BatchCommand RUNPARM_STATEMENT_AMBIGUITY_EDITS = new BatchCommand(
+        "StatementAmbiguityEdits",
+        " StatementAmbiguityEdits.\n" + " \n" + " <pre>\n"
+            + " \"StatementAmbiguityEdits\": \"basic\" (default) or \"complete\"\n"
+            + " </pre>\n" + "\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.util.Dump.java
     // ----------------------------------------------------------
 
-    /**
-     * MaxStatementPrintCount.
-     * 
-     * <pre>
-     * "MaxStatementPrintCount": 1 -> 9999999999....
-     * </pre>
-     */
-    public static final String RUNPARM_MAX_STATEMENT_PRINT_COUNT = "MaxStatementPrintCount"; // 1
-                                                                                             // ->
-                                                                                             // 9999999999....
+    public static final BatchCommand RUNPARM_MAX_STATEMENT_PRINT_COUNT = new BatchCommand(
+        "MaxStatementPrintCount",
+        " MaxStatementPrintCount.\n" + " \n" + " <pre>\n"
+            + " \"MaxStatementPrintCount\": 1 -> 9999999999....\n" + " </pre>\n"
+            + "\n");
 
-    /**
-     * Caption.
-     * 
-     * <pre>
-     * "Caption": freeform caption for report output.
-     * </pre>
-     */
-    public static final String RUNPARM_CAPTION = "Caption"; // freeform caption
-                                                            // for report
-                                                            // output.
+    public static final BatchCommand RUNPARM_CAPTION = new BatchCommand(
+        "Caption",
+        " Caption.\n" + " \n" + " <pre>\n"
+            + " \"Caption\": freeform caption for report output.\n"
+            + " </pre>\n" + "\n");
 
-    /**
-     * PrintSyntaxDetails.
-     * 
-     * <pre>
-     * "PrintSyntaxDetails": no options
-     * </pre>
-     */
-    public static final String RUNPARM_PRINT_SYNTAX_DETAILS = "PrintSyntaxDetails"; // no
-                                                                                    // options
+    public static final BatchCommand RUNPARM_PRINT_SYNTAX_DETAILS = new BatchCommand(
+        "PrintSyntaxDetails", // no
+        " PrintSyntaxDetails.\n" + " \n" + " <pre>\n"
+            + " \"PrintSyntaxDetails\": no options\n" + " </pre>\n" + "\n");
+    // options
 
-    /**
-     * PrintStatementDetails.
-     * 
-     * <pre>
-     * "PrintStatementDetails": "*" or Stmt.label
-     * </pre>
-     */
-    public static final String RUNPARM_PRINT_STATEMENT_DETAILS = "PrintStatementDetails"; // "*"
-                                                                                          // or
-                                                                                          // Stmt.label
+    public static final BatchCommand RUNPARM_PRINT_STATEMENT_DETAILS = new BatchCommand(
+        "PrintStatementDetails", // "*"
+        " PrintStatementDetails.\n" + " \n" + " <pre>\n"
+            + " \"PrintStatementDetails\": \"*\" or Stmt.label\n" + " </pre>\n"
+            + "\n");
+    // or
+    // Stmt.label
 
-    /**
-     * PrintBookManagerChapters
-     * 
-     * <pre>
-     * &quot;PrintBookManagerChapters&quot;
-     * </pre>
-     */
-    public static final String RUNPARM_PRINT_BOOK_MANAGER_CHAPTERS = "PrintBookManagerChapters";
+    public static final BatchCommand RUNPARM_PRINT_BOOK_MANAGER_CHAPTERS = new BatchCommand(
+        "PrintBookManagerChapters",
+        " PrintBookManagerChapters\n" + " \n" + " <pre>\n"
+            + " &quot;PrintBookManagerChapters&quot;\n" + " </pre>\n" + "\n");
 
-    /**
-     * PrintBookManagerSections
-     * 
-     * <pre>
-     * &quot;PrintBookManagerSections&quot;
-     * </pre>
-     */
-    public static final String RUNPARM_PRINT_BOOK_MANAGER_SECTIONS = "PrintBookManagerSections";
+    public static final BatchCommand RUNPARM_PRINT_BOOK_MANAGER_SECTIONS = new BatchCommand(
+        "PrintBookManagerSections",
+        " PrintBookManagerSections\n" + " \n" + " <pre>\n"
+            + " &quot;PrintBookManagerSections&quot;\n" + " </pre>\n" + "\n");
 
-    /**
-     * PrintBookManagerSectionDetails.
-     * 
-     * <pre>
-     * "PrintBookManagerSectionDetails": "*" or Section Number
-     * </pre>
-     */
-    public static final String RUNPARM_PRINT_BOOK_MANAGER_SECTION_DETAILS = "PrintBookManagerSectionDetails"; // "*"
-                                                                                                              // or
-                                                                                                              // Section
-                                                                                                              // Number
+    public static final BatchCommand RUNPARM_PRINT_BOOK_MANAGER_SECTION_DETAILS = new BatchCommand(
+        "PrintBookManagerSectionDetails", // "*"
+        " PrintBookManagerSectionDetails.\n" + " \n" + " <pre>\n"
+            + " \"PrintBookManagerSectionDetails\": \"*\" or Section Number\n"
+            + " </pre>\n" + "\n");
+            // or
+            // Section
+            // Number
 
     // ----------------------------------------------------------
     // Commands for mmj.lang.ProofVerifier.java interface
     // ----------------------------------------------------------
 
-    /**
-     * VerifyProof.
-     * 
-     * <pre>
-     * "VerifyProof": "*" or Stmt.label
-     * </pre>
-     */
-    public static final String RUNPARM_VERIFY_PROOF = "VerifyProof"; // "*" or
-                                                                     // Stmt.label
+    public static final BatchCommand RUNPARM_VERIFY_PROOF = new BatchCommand(
+        "VerifyProof", // "*" or
+        " VerifyProof.\n" + " \n" + " <pre>\n"
+            + " \"VerifyProof\": \"*\" or Stmt.label\n" + " </pre>\n" + "\n");
+    // Stmt.label
 
-    /**
-     * VerifyParse.
-     * 
-     * <pre>
-     * "VerifyParse": "*" or Stmt.label
-     * </pre>
-     */
-    public static final String RUNPARM_VERIFY_PARSE = "VerifyParse"; // "*" or
-                                                                     // Stmt.label
+    public static final BatchCommand RUNPARM_VERIFY_PARSE = new BatchCommand(
+        "VerifyParse", // "*" or
+        " VerifyParse.\n" + " \n" + " <pre>\n"
+            + " \"VerifyParse\": \"*\" or Stmt.label\n" + " </pre>\n" + "\n");
+            // Stmt.label
 
     // ----------------------------------------------------------
     // Commands for mmj.lang.SyntaxVerifier.java interface
     // ----------------------------------------------------------
 
-    /**
-     * Parse.
-     * 
-     * <pre>
-     * "Parse": "*" or Stmt.label
-     * </pre>
-     */
-    public static final String RUNPARM_PARSE = "Parse"; // "*" or Stmt.label
+    public static final BatchCommand RUNPARM_SET_PARSER = new BatchCommand(
+        "SetParser", // no
+        " SetParser.\n" + " \n" + " <pre>\n"
+            + " \"SetParser\": fully qualified parser implementation class name.\n"
+            + " </pre>\n" + "\n");
 
-    /**
-     * InitializeGrammar.
-     * 
-     * <pre>
-     * "InitializeGrammar": no option values
-     * </pre>
-     */
-    public static final String RUNPARM_INITIALIZE_GRAMMAR = "InitializeGrammar"; // no
-                                                                                 // option
-                                                                                 // values
+    public static final BatchCommand RUNPARM_PARSE = new BatchCommand("Parse", // "*"
+                                                                               // or
+                                                                               // Stmt.label
+        " Parse.\n" + " \n" + " <pre>\n" + " \"Parse\": \"*\" or Stmt.label\n"
+            + " </pre>\n" + "\n");
+
+    public static final BatchCommand RUNPARM_INITIALIZE_GRAMMAR = new BatchCommand(
+        "InitializeGrammar", // no
+        " InitializeGrammar.\n" + " \n" + " <pre>\n"
+            + " \"InitializeGrammar\": no option values\n" + " </pre>\n"
+            + "\n");
+            // option
+            // values
 
     // ----------------------------------------------------------
     // Commands for mmj.pa.ProofAsst.java interface
     // ----------------------------------------------------------
 
-    /**
-     * ProofAsstLookAndFeel
-     * <p>
-     * {@code "ProofAsstLookAndFeel"}: choose between any installed looks on
-     * your Java installation. Default is {@code Metal}, and available options
-     * on my computer are {@code Metal}, {@code Nimbus}, {@code CDE/Motif},
-     * {@code Windows}, and {@code Windows Classic}, although the specific
-     * options depend on your installation. Input an invalid option here to get
-     * a list of available options in the error message.
-     */
-    public static final String RUNPARM_PROOF_ASST_LOOK_AND_FEEL = "ProofAsstLookAndFeel";
+    public static final BatchCommand RUNPARM_PROOF_ASST_STORE = new BatchCommand(
+        "ProofAsstStore",
+        " ProofAsstStore\n" + " <p>\n"
+            + " <code> \"ProofAsstStore\"</code>: define a file for automatic saving \n"
+            + " and loading of preferences.\n</p>" + "\n");
 
-    /**
-     * ProofAsstDjVarsSoftErrors
-     * 
-     * <pre>
-     * "ProofAsstDjVarsSoftErrors":
-     * 
-     *     "Ignore" -- Don't check for missing $d statements
-     *     "Report" -- Create missing $d statement error messages.
-     *     "GenerateReplacements"
-     *              -- Generate complete set of $d statements if
-     *                 any omissions are detected
-     *     "GenerateDifferences"
-     *              -- Generate set of $d statements to add to the
-     *                 $d's in the Proof Worksheet and .mm database
-     *                 for the theorem.
-     * 
-     * Optional, default is "GenerateReplacements"
-     * 
-     * NOTE: Superfluous $d statements are not detected!
-     * </pre>
-     */
-    public static final String RUNPARM_PROOF_ASST_DJ_VARS_SOFT_ERRORS = "ProofAsstDjVarsSoftErrors";
+    public static final BatchCommand RUNPARM_PROOF_ASST_LOOK_AND_FEEL = new BatchCommand(
+        "ProofAsstLookAndFeel",
+        " ProofAsstLookAndFeel\n" + " <p>\n"
+            + " <code> \"ProofAsstLookAndFeel\"</code>: choose between any installed looks on\n"
+            + " your Java installation. Default is <code> Metal</code>, and available options\n"
+            + " on my computer are <code> Metal</code>, <code> Nimbus</code>, <code> CDE/Motif</code>,\n"
+            + " <code> Windows</code>, and <code> Windows Classic</code>, although the specific\n"
+            + " options depend on your installation. Input an invalid option here to get\n"
+            + " a list of available options in the error message.\n</p>"
+            + "\n");
 
-    /**
-     * ProofAsstProofFormat
-     * <p>
-     * 
-     * <pre>
-     * "ProofAsstProofFormat":
-     * 
-     *     "Normal" -- Uncompressed RPN proof
-     *     "Packed" -- RPN proof with backreferences
-     *     "Compressed"
-     *              -- Full compression (with all caps encoding)
-     * 
-     * Optional, default is "Compressed"
-     * </pre>
-     */
-    public static final String RUNPARM_PROOF_ASST_PROOF_FORMAT = "ProofAsstProofFormat";
+    public static final BatchCommand RUNPARM_PROOF_ASST_DJ_VARS_SOFT_ERRORS = new BatchCommand(
+        "ProofAsstDjVarsSoftErrors",
+        " ProofAsstDjVarsSoftErrors\n" + " \n" + " <pre>\n"
+            + " \"ProofAsstDjVarsSoftErrors\":\n" + " \n"
+            + "     \"Ignore\" -- Don't check for missing $d statements\n"
+            + "     \"Report\" -- Create missing $d statement error messages.\n"
+            + "     \"GenerateReplacements\"\n"
+            + "              -- Generate complete set of $d statements if\n"
+            + "                 any omissions are detected\n"
+            + "     \"GenerateDifferences\"\n"
+            + "              -- Generate set of $d statements to add to the\n"
+            + "                 $d's in the Proof Worksheet and .mm database\n"
+            + "                 for the theorem.\n" + " \n"
+            + " Optional, default is \"GenerateReplacements\"\n" + " \n"
+            + " NOTE: Superfluous $d statements are not detected!\n"
+            + " </pre>\n" + "\n");
 
-    /**
-     * ProofAsstHighlightingEnabled
-     * 
-     * <pre>
-     * "ProofAsstHighlightingEnabled": Yes or No
-     * 
-     * Optional, default is Yes (enabled).
-     * </pre>
-     */
-    public static final String RUNPARM_PROOF_ASST_HIGHLIGHTING_ENABLED = "ProofAsstHighlightingEnabled";
+    public static final BatchCommand RUNPARM_PROOF_ASST_PROOF_FORMAT = new BatchCommand(
+        "ProofAsstProofFormat",
+        " ProofAsstProofFormat\n" + " <p>\n" + " \n" + " <pre>\n"
+            + " \"ProofAsstProofFormat\":\n" + " \n"
+            + "     \"Normal\" -- Uncompressed RPN proof\n"
+            + "     \"Packed\" -- RPN proof with backreferences\n"
+            + "     \"Compressed\"\n"
+            + "              -- Full compression (with all caps encoding)\n"
+            + " \n" + " Optional, default is \"Compressed\"\n" + " </pre>\n"
+            + "\n");
 
-    /**
-     * ProofAsstHighlightingStyle
-     * 
-     * <pre>
-     * "ProofAsstHighlightingStyle": type, color RGB, bold yes/no, italic yes/no
-     * </pre>
-     * 
-     * The color RGB should be given as 6 hex digits (i.e. '00FFC0'), and any of
-     * the three fields can be set to 'Inherit' to use the global
-     * color/bold/italic settings. Style types and defaults are:
-     * 
-     * <pre>
-     * default: Inherit,Inherit,Inherit
-     * comment: 808080,No,Yes
-     * stephypref: 8A2908,Inherit,Inherit
-     * class: CC33CC,Inherit,Inherit
-     * set: FF0000,Inherit,Inherit
-     * wff: 0000FF,Inherit,Inherit
-     * workvar: 008800,Inherit,Inherit
-     * </pre>
-     */
-    public static final String RUNPARM_PROOF_ASST_HIGHLIGHTING_STYLE = "ProofAsstHighlightingStyle";
+    public static final BatchCommand RUNPARM_PROOF_ASST_AUTOCOMPLETE_ENABLED = new BatchCommand(
+        "ProofAsstAutocompleteEnabled",
+        "ProofAsstAutocompleteEnabled\n" + "\n" + "<pre>\n"
+            + "\"ProofAsstAutocompleteEnabled\": Yes or No\n" + "\n"
+            + "Optional, default is Yes (enabled).\n" + "</pre>\n");
 
-    /**
-     * ProofAsstForegroundColorRGB
-     * 
-     * <pre>
-     * "ProofAsstForegroundColorRGB":
-     *                        "0,0,0" -- black (default)
-     *                        thru
-     *                        "255,255,255" -- white
-     * 
-     * Optional, default is "0,0,0" (black)
-     * </pre>
-     */
-    public static final String RUNPARM_PROOF_ASST_FOREGROUND_COLOR_RGB = "ProofAsstForegroundColorRGB";
+    public static final BatchCommand RUNPARM_PROOF_ASST_DERIVE_AUTOCOMPLETE = new BatchCommand(
+        "ProofAsstDeriveAutocomplete",
+        "ProofAsstDeriveAutocomplete\n" + "\n" + "<pre>\n"
+            + "\"ProofAsstDeriveAutocomplete\": Yes or No\n" + "\n"
+            + "Optional, default is No (disabled).\n" + "</pre>\n");
 
-    /**
-     * ProofAsstBackgroundColorRGB
-     * <p>
-     * 
-     * <pre>
-     * "ProofAsstBackgroundColorRGB":
-     *                        "255,255,255" -- white (default)
-     *                        thru
-     *                        "0,0,0" -- black
-     * 
-     * Optional, default is "255,255,255" (white)
-     * </pre>
-     */
-    public static final String RUNPARM_PROOF_ASST_BACKGROUND_COLOR_RGB = "ProofAsstBackgroundColorRGB"; //
+    public static final BatchCommand RUNPARM_PROOF_ASST_HIGHLIGHTING_ENABLED = new BatchCommand(
+        "ProofAsstHighlightingEnabled",
+        " ProofAsstHighlightingEnabled\n" + " \n" + " <pre>\n"
+            + " \"ProofAsstHighlightingEnabled\": Yes or No\n" + " \n"
+            + " Optional, default is Yes (enabled).\n" + " </pre>\n" + "\n");
 
-    /**
-     * ProofAsstFontFamily
-     * 
-     * <pre>
-     * "ProofAsstFontFamily": "Monospaced", (the default),
-     *                        "Serif",
-     *                        "SansSerif",
-     *                        "Monospaced",
-     *                        "Dialog",
-     *                        "DialogInput"...
-     *                        etc.
-     * One way to view the list of Font Family Names defined
-     * on a system is to input an invalid Font Family Name
-     * on the ProofAsstFontFamily command -- a list will be
-     * displayed as part of a punitively long error message :)
-     * 
-     * NOTE!!! Fixed-width fonts such as Monospaced or Courier
-     *         are essential for Proof Assistant if you plan
-     *         on using the Text Mode Formula Formatting
-     *         (TMFF) alignment Methods such as AlignColumn.
-     *         TMFF will not align formula symbols properly
-     *         when proportional fonts are used!!!
-     * 
-     * Optional, default is "Monospaced"
-     * </pre>
-     */
-    public static final String RUNPARM_PROOF_ASST_FONT_FAMILY = "ProofAsstFontFamily"; // "Monospaced",
-                                                                                       // "Courier New",
-                                                                                       // etc.
+    public static final BatchCommand RUNPARM_PROOF_ASST_HIGHLIGHTING_STYLE = new BatchCommand(
+        "ProofAsstHighlightingStyle",
+        " ProofAsstHighlightingStyle\n" + " \n" + " <pre>\n"
+            + " \"ProofAsstHighlightingStyle\": type, color RGB, bold yes/no, italic yes/no\n"
+            + " </pre>\n" + " \n"
+            + " The color RGB should be given as 6 hex digits (i.e. '00FFC0'), and any of\n"
+            + " the three fields can be set to 'Inherit' to use the global\n"
+            + " color/bold/italic settings. Style types and defaults are:\n"
+            + " \n" + " <pre>\n" + " default: inherit,inherit,inherit\n"
+            + " comment: 808080,no,yes\n" + " keyword: 808080,yes,inherit\n"
+            + " error: FF0000,yes,inherit\n" + " proof: 808080,no,inherit\n"
+            + " step: 8A2908,yes,inherit\n" + " hyp: 8A2908,inherit,inherit\n"
+            + " ref: 0044DD,yes,inherit\n"
+            + " localref: 008800,inherit,inherit\n"
+            + " specialstep: B58900,yes,inherit\n"
+            + " class: CC33CC,inherit,inherit\n"
+            + " set: FF0000,inherit,inherit\n"
+            + " wff: 0000FF,inherit,inherit\n"
+            + " workvar: 008800,inherit,inherit\n" + " </pre>\n" + "\n");
 
-    /**
-     * ProofAsstFontBold
-     * 
-     * <pre>
-     * "ProofAsstFontBold": Yes or No
-     * 
-     * Optional, default is Yes (bold).
-     * </pre>
-     */
-    public static final String RUNPARM_PROOF_ASST_FONT_BOLD = "ProofAsstFontBold"; // yes,
-                                                                                   // no
+    public static final BatchCommand RUNPARM_PROOF_ASST_FOREGROUND_COLOR_RGB = new BatchCommand(
+        "ProofAsstForegroundColorRGB",
+        " ProofAsstForegroundColorRGB\n" + " \n" + " <pre>\n"
+            + " \"ProofAsstForegroundColorRGB\":\n"
+            + "                        \"0,0,0\" -- black (default)\n"
+            + "                        thru\n"
+            + "                        \"255,255,255\" -- white\n" + " \n"
+            + " Optional, default is \"0,0,0\" (black)\n" + " </pre>\n" + "\n");
 
-    /**
-     * ProofAsstFontSize
-     * 
-     * <pre>
-     * "ProofAsstFontSize": 8 or 9, 10, 11, 12, 14, 16, 18
-     *                      20, 22, 24, 26, 28, 36, 48, 72
-     * 
-     * Optional, default is 14 (see mmj.pa.PaConstants.java)
-     * </pre>
-     */
-    public static final String RUNPARM_PROOF_ASST_FONT_SIZE = "ProofAsstFontSize"; // 8,
-                                                                                   // 9,
-                                                                                   // ...
+    public static final BatchCommand RUNPARM_PROOF_ASST_BACKGROUND_COLOR_RGB = new BatchCommand(
+        "ProofAsstBackgroundColorRGB", //
+        " ProofAsstBackgroundColorRGB\n" + " <p>\n" + " \n" + " <pre>\n"
+            + " \"ProofAsstBackgroundColorRGB\":\n"
+            + "                        \"255,255,255\" -- white (default)\n"
+            + "                        thru\n"
+            + "                        \"0,0,0\" -- black\n" + " \n"
+            + " Optional, default is \"255,255,255\" (white)\n" + " </pre>\n"
+            + "\n");
 
-    /**
-     * ProofAsstLineWrap
-     * 
-     * <pre>
-     * "ProofAsstLineWrap":
-     *     equal to 'on'
-     *     or       'off'
-     * 
-     * Controls whether or not text displayed in the proof
-     * window wraps around when the number of columns of
-     * text exceeds ProofAsstTextColumns.
-     * 
-     * Optional, default is 'off' (see mmj.pa.PaConstants.java)
-     * </pre>
-     */
-    public static final String RUNPARM_PROOF_ASST_LINE_WRAP = "ProofAsstLineWrap";
+    public static final BatchCommand RUNPARM_PROOF_ASST_FONT_FAMILY = new BatchCommand(
+        "ProofAsstFontFamily", // "Monospaced",
+        " ProofAsstFontFamily\n" + " \n" + " <pre>\n"
+            + " \"ProofAsstFontFamily\": \"Monospaced\", (the default),\n"
+            + "                        \"Serif\",\n"
+            + "                        \"SansSerif\",\n"
+            + "                        \"Monospaced\",\n"
+            + "                        \"Dialog\",\n"
+            + "                        \"DialogInput\"...\n"
+            + "                        etc.\n"
+            + " One way to view the list of Font Family Names defined\n"
+            + " on a system is to input an invalid Font Family Name\n"
+            + " on the ProofAsstFontFamily command -- a list will be\n"
+            + " displayed as part of a punitively long error message :)\n"
+            + " \n"
+            + " NOTE!!! Fixed-width fonts such as Monospaced or Courier\n"
+            + "         are essential for Proof Assistant if you plan\n"
+            + "         on using the Text Mode Formula Formatting\n"
+            + "         (TMFF) alignment Methods such as AlignColumn.\n"
+            + "         TMFF will not align formula symbols properly\n"
+            + "         when proportional fonts are used!!!\n" + " \n"
+            + " Optional, default is \"Monospaced\"\n" + " </pre>\n" + "\n");
+    // "Courier New",
+    // etc.
 
-    /**
-     * ProofAsstTextColumns
-     * 
-     * <pre>
-     * "ProofAsstTextColumns":
-     *     greater than 39 and
-     *     less than 1000
-     * 
-     * Controls program formatting, not user-input formulas.
-     * Defines the column width of the window, which can
-     * be greater than or less than the width of the screen
-     * or the formulas! Primary effect seen with LineWrap ON
-     * because intra-formula line breaks are done with spaces
-     * (and because a double newline is needed at end of
-     * formulas for legibility reasons.)
-     * 
-     * Optional, default is 80 (see mmj.pa.PaConstants.java)
-     * </pre>
-     */
-    public static final String RUNPARM_PROOF_ASST_TEXT_COLUMNS = "ProofAsstTextColumns";
+    public static final BatchCommand RUNPARM_PROOF_ASST_FONT_BOLD = new BatchCommand(
+        "ProofAsstFontBold", // yes,
+        " ProofAsstFontBold\n" + " \n" + " <pre>\n"
+            + " \"ProofAsstFontBold\": Yes or No\n" + " \n"
+            + " Optional, default is Yes (bold).\n" + " </pre>\n" + "\n");
+    // no
 
-    /**
-     * ProofAsstTextRows
-     * 
-     * <pre>
-     * "ProofAsstTextRows":
-     *     greater than 1 and
-     *     less than 100
-     * 
-     * Provides a clue to the system about how big to make
-     * the ProofAsstGUI proof text area window.
-     * 
-     * Optional, default is 21 (see mmj.pa.PaConstants.java)
-     * </pre>
-     */
-    public static final String RUNPARM_PROOF_ASST_TEXT_ROWS = "ProofAsstTextRows";
+    public static final BatchCommand RUNPARM_PROOF_ASST_LINE_SPACING = new BatchCommand(
+        "ProofAsstLineSpacing",
+        " ProofAsstLineSpacing\n" + " \n" + " <pre>\n"
+            + " \"ProofAsstLineSpacing\": float value, default 0\n"
+            + " </pre>\n" + "\n");
 
-    /**
-     * ProofAsstMaximized
-     * 
-     * <pre>
-     * "ProofAsstMaximized":
-     *     'yes' or 'no' or 'y' or 'n' or 'Y' or 'N'
-     * 
-     * If 'yes', maximizes the ProofAsstGUI main window on startup.
-     * 
-     * Optional, default is 'no' (see mmj.pa.PaConstants.java)
-     * </pre>
-     */
-    public static final String RUNPARM_PROOF_ASST_MAXIMIZED = "ProofAsstMaximized";
+    public static final BatchCommand RUNPARM_PROOF_ASST_FONT_SIZE = new BatchCommand(
+        "ProofAsstFontSize", // 8,
+        " ProofAsstFontSize\n" + " \n" + " <pre>\n"
+            + " \"ProofAsstFontSize\": 8 or 9, 10, 11, 12, 14, 16, 18\n"
+            + "                      20, 22, 24, 26, 28, 36, 48, 72\n" + " \n"
+            + " Optional, default is 14 (see mmj.pa.PaConstants.java)\n"
+            + " </pre>\n" + "\n");
+    // 9,
+    // ...
 
-    /**
-     * ProofAsstTextAtTop
-     * 
-     * <pre>
-     * "ProofAsstTextAtTop":
-     *     'yes' or 'no' or 'y' or 'n' or 'Y' or 'N'
-     * 
-     * If 'yes', positions the ProofAsstGUI proof text area
-     * above the error message text area; otherwise, their
-     * positions are reversed (error messages at top).
-     * 
-     * Optional, default is 'yes' (see mmj.pa.PaConstants.java)
-     * </pre>
-     */
-    public static final String RUNPARM_PROOF_ASST_TEXT_AT_TOP = "ProofAsstTextAtTop";
+    public static final BatchCommand RUNPARM_PROOF_ASST_LINE_WRAP = new BatchCommand(
+        "ProofAsstLineWrap",
+        " ProofAsstLineWrap\n" + " \n" + " <pre>\n"
+            + " \"ProofAsstLineWrap\":\n" + "     equal to 'on'\n"
+            + "     or       'off'\n" + " \n"
+            + " Controls whether or not text displayed in the proof\n"
+            + " window wraps around when the number of columns of\n"
+            + " text exceeds ProofAsstTextColumns.\n" + " \n"
+            + " Optional, default is 'off' (see mmj.pa.PaConstants.java)\n"
+            + " </pre>\n" + "\n");
 
-    /**
-     * ProofAsstIncompleteStepCursor
-     * 
-     * <pre>
-     * "ProofAsstIncompleteStepCursor":
-     *     'First', 'Last', or 'AsIs' (not case sensitive).
-     * 
-     * Pertains to cursor positioning when no unification
-     * errors found and there is at least one incomplete
-     * proof step; 'First' means position cursor to the
-     * first incomplete proof step, etc.
-     * 
-     * The cursor is positioned to the Ref sub-field within
-     * a proof step.
-     * 
-     * Optional, default is 'Last' (see mmj.pa.PaConstants.java)
-     * </pre>
-     */
-    public static final String RUNPARM_PROOF_ASST_INCOMPLETE_STEP_CURSOR = "ProofAsstIncompleteStepCursor";
+    public static final BatchCommand RUNPARM_PROOF_ASST_TEXT_COLUMNS = new BatchCommand(
+        "ProofAsstTextColumns",
+        " ProofAsstTextColumns\n" + " \n" + " <pre>\n"
+            + " \"ProofAsstTextColumns\":\n" + "     greater than 39 and\n"
+            + "     less than 1000\n" + " \n"
+            + " Controls program formatting, not user-input formulas.\n"
+            + " Defines the column width of the window, which can\n"
+            + " be greater than or less than the width of the screen\n"
+            + " or the formulas! Primary effect seen with LineWrap ON\n"
+            + " because intra-formula line breaks are done with spaces\n"
+            + " (and because a double newline is needed at end of\n"
+            + " formulas for legibility reasons.)\n" + " \n"
+            + " Optional, default is 80 (see mmj.pa.PaConstants.java)\n"
+            + " </pre>\n" + "\n");
 
-    /**
-     * ProofAsstErrorMessageRows
-     * 
-     * <pre>
-     * "ProofAsstErrorMessageRows":
-     *     greater than 1 and
-     *     less than 100
-     * 
-     * Provides a clue to the system about how big to make
-     * the ProofAsstGUI error message text area window.
-     * 
-     * Optional, default is 4 (see mmj.pa.PaConstants.java)
-     * </pre>
-     */
-    public static final String RUNPARM_PROOF_ASST_ERROR_MESSAGE_ROWS = "ProofAsstErrorMessageRows";
+    public static final BatchCommand RUNPARM_PROOF_ASST_TEXT_ROWS = new BatchCommand(
+        "ProofAsstTextRows",
+        " ProofAsstTextRows\n" + " \n" + " <pre>\n"
+            + " \"ProofAsstTextRows\":\n" + "     greater than 1 and\n"
+            + "     less than 100\n" + " \n"
+            + " Provides a clue to the system about how big to make\n"
+            + " the ProofAsstGUI proof text area window.\n" + " \n"
+            + " Optional, default is 21 (see mmj.pa.PaConstants.java)\n"
+            + " </pre>\n" + "\n");
 
-    /**
-     * ProofAsstErrorMessageColumns
-     * 
-     * <pre>
-     * "ProofAsstErrorMessageColumns":
-     *     greater than 39 and
-     *     less than 1000
-     * 
-     * Provides a clue to the system about how wide to make
-     * the ProofAsstGUI error message text area window.
-     * 
-     * Optional, default is 80 (see mmj.pa.PaConstants.java)
-     * </pre>
-     */
-    public static final String RUNPARM_PROOF_ASST_ERROR_MESSAGE_COLUMNS = "ProofAsstErrorMessageColumns";
+    public static final BatchCommand RUNPARM_PROOF_ASST_MAXIMIZED = new BatchCommand(
+        "ProofAsstMaximized",
+        " ProofAsstMaximized\n" + " \n" + " <pre>\n"
+            + " \"ProofAsstMaximized\":\n"
+            + "     'yes' or 'no' or 'y' or 'n' or 'Y' or 'N'\n" + " \n"
+            + " If 'yes', maximizes the ProofAsstGUI main window on startup.\n"
+            + " \n"
+            + " Optional, default is 'no' (see mmj.pa.PaConstants.java)\n"
+            + " </pre>\n" + "\n");
 
-    /**
-     * ProofAsstFormulaLeftCol
-     * 
-     * <pre>
-     * "ProofAsstFormulaLeftCol":
-     *     greater than 1 and
-     *     less than ProofAsstFormulaRightCol
-     * 
-     * Controls program formatting, not user-input formulas.
-     * 
-     * Optional, default is 20 (see mmj.pa.PaConstants.java)
-     * </pre>
-     */
-    public static final String RUNPARM_PROOF_ASST_FORMULA_LEFT_COL = "ProofAsstFormulaLeftCol";
+    public static final BatchCommand RUNPARM_PROOF_ASST_TEXT_AT_TOP = new BatchCommand(
+        "ProofAsstTextAtTop",
+        " ProofAsstTextAtTop\n" + " \n" + " <pre>\n"
+            + " \"ProofAsstTextAtTop\":\n"
+            + "     'yes' or 'no' or 'y' or 'n' or 'Y' or 'N'\n" + " \n"
+            + " If 'yes', positions the ProofAsstGUI proof text area\n"
+            + " above the error message text area; otherwise, their\n"
+            + " positions are reversed (error messages at top).\n" + " \n"
+            + " Optional, default is 'yes' (see mmj.pa.PaConstants.java)\n"
+            + " </pre>\n" + "\n");
 
-    /**
-     * ProofAsstFormulaRightCol
-     * 
-     * <pre>
-     * "ProofAsstFormulaRightCol":
-     *     greater than ProofAsstFormulaLeftCol and
-     *     less than 9999
-     * 
-     * Controls program formatting, not user-input formulas.
-     * 
-     * Optional, default is 79 (see mmj.pa.PaConstants.java)
-     * </pre>
-     */
-    public static final String RUNPARM_PROOF_ASST_FORMULA_RIGHT_COL = "ProofAsstFormulaRightCol";
+    public static final BatchCommand RUNPARM_PROOF_ASST_INCOMPLETE_STEP_CURSOR = new BatchCommand(
+        "ProofAsstIncompleteStepCursor",
+        " ProofAsstIncompleteStepCursor\n" + " \n" + " <pre>\n"
+            + " \"ProofAsstIncompleteStepCursor\":\n"
+            + "     'First', 'Last', or 'AsIs' (not case sensitive).\n" + " \n"
+            + " Pertains to cursor positioning when no unification\n"
+            + " errors found and there is at least one incomplete\n"
+            + " proof step; 'First' means position cursor to the\n"
+            + " first incomplete proof step, etc.\n" + " \n"
+            + " The cursor is positioned to the Ref sub-field within\n"
+            + " a proof step.\n" + " \n"
+            + " Optional, default is 'Last' (see mmj.pa.PaConstants.java)\n"
+            + " </pre>\n" + "\n");
 
-    /**
-     * ProofAsstRPNProofLeftCol
-     * 
-     * <pre>
-     * "ProofAsstRPNProofLeftCol":
-     *     greater than 3 and
-     *     less than ProofAsstRPNProofRightCol
-     * 
-     * Controls program formatting of generated proof statements
-     * 
-     * Optional, default is 6 (see mmj.pa.PaConstants.java)
-     * </pre>
-     */
-    public static final String RUNPARM_PROOF_ASST_RPN_PROOF_LEFT_COL = "ProofAsstRPNProofLeftCol";
+    public static final BatchCommand RUNPARM_PROOF_ASST_ERROR_MESSAGE_ROWS = new BatchCommand(
+        "ProofAsstErrorMessageRows",
+        " ProofAsstErrorMessageRows\n" + " \n" + " <pre>\n"
+            + " \"ProofAsstErrorMessageRows\":\n" + "     greater than 1 and\n"
+            + "     less than 100\n" + " \n"
+            + " Provides a clue to the system about how big to make\n"
+            + " the ProofAsstGUI error message text area window.\n" + " \n"
+            + " Optional, default is 4 (see mmj.pa.PaConstants.java)\n"
+            + " </pre>\n" + "\n");
 
-    /**
-     * ProofAsstRPNProofRightCol
-     * 
-     * <pre>
-     * "ProofAsstRPNProofRightCol":
-     *     greater than ProofAsstRPNProofLeftCol and
-     *     less than 9999
-     * 
-     * Controls program formatting of generated proof statements
-     * 
-     * Optional, default is 79 (see mmj.pa.PaConstants.java)
-     * </pre>
-     */
-    public static final String RUNPARM_PROOF_ASST_RPN_PROOF_RIGHT_COL = "ProofAsstRPNProofRightCol";
+    public static final BatchCommand RUNPARM_PROOF_ASST_ERROR_MESSAGE_COLUMNS = new BatchCommand(
+        "ProofAsstErrorMessageColumns",
+        " ProofAsstErrorMessageColumns\n" + " \n" + " <pre>\n"
+            + " \"ProofAsstErrorMessageColumns\":\n"
+            + "     greater than 39 and\n" + "     less than 1000\n" + " \n"
+            + " Provides a clue to the system about how wide to make\n"
+            + " the ProofAsstGUI error message text area window.\n" + " \n"
+            + " Optional, default is 80 (see mmj.pa.PaConstants.java)\n"
+            + " </pre>\n" + "\n");
 
-    /**
-     * ProofAsstMaxUnifyAlternates DEPRECATED
-     */
-    public static final String RUNPARM_PROOF_ASST_MAX_UNIFY_ALTERNATES = "ProofAsstMaxUnifyAlternates";
+    public static final BatchCommand RUNPARM_PROOF_ASST_FORMULA_LEFT_COL = new BatchCommand(
+        "ProofAsstFormulaLeftCol",
+        " ProofAsstFormulaLeftCol\n" + " \n" + " <pre>\n"
+            + " \"ProofAsstFormulaLeftCol\":\n" + "     greater than 1 and\n"
+            + "     less than ProofAsstFormulaRightCol\n" + " \n"
+            + " Controls program formatting, not user-input formulas.\n" + " \n"
+            + " Optional, default is 20 (see mmj.pa.PaConstants.java)\n"
+            + " </pre>\n" + "\n");
 
-    /**
-     * ProofAsstMaxUnifyHints DEPRECATED
-     */
-    public static final String RUNPARM_PROOF_ASST_MAX_UNIFY_HINTS = "ProofAsstMaxUnifyHints";
+    public static final BatchCommand RUNPARM_PROOF_ASST_FORMULA_RIGHT_COL = new BatchCommand(
+        "ProofAsstFormulaRightCol",
+        " ProofAsstFormulaRightCol\n" + " \n" + " <pre>\n"
+            + " \"ProofAsstFormulaRightCol\":\n"
+            + "     greater than ProofAsstFormulaLeftCol and\n"
+            + "     less than 9999\n" + " \n"
+            + " Controls program formatting, not user-input formulas.\n" + " \n"
+            + " Optional, default is 79 (see mmj.pa.PaConstants.java)\n"
+            + " </pre>\n" + "\n");
 
-    /**
-     * ProofAsstUnifyHintsInBatch DEPRECATED
-     */
-    public static final String RUNPARM_PROOF_ASST_UNIFY_HINTS_IN_BATCH = "ProofAsstUnifyHintsInBatch";
+    public static final BatchCommand RUNPARM_PROOF_ASST_RPN_PROOF_LEFT_COL = new BatchCommand(
+        "ProofAsstRPNProofLeftCol",
+        " ProofAsstRPNProofLeftCol\n" + " \n" + " <pre>\n"
+            + " \"ProofAsstRPNProofLeftCol\":\n" + "     greater than 3 and\n"
+            + "     less than ProofAsstRPNProofRightCol\n" + " \n"
+            + " Controls program formatting of generated proof statements\n"
+            + " \n" + " Optional, default is 6 (see mmj.pa.PaConstants.java)\n"
+            + " </pre>\n" + "\n");
 
-    /**
-     * StepSelectorMaxResults
-     * <p>
-     * Limits the number of unifying assertions returned by the
-     * StepSelectorSearch.
-     * <p>
-     * Optional, default is 50 (see mmj.pa.PaConstants.java)
-     */
-    public static final String RUNPARM_STEP_SELECTOR_MAX_RESULTS = "StepSelectorMaxResults";
+    public static final BatchCommand RUNPARM_PROOF_ASST_RPN_PROOF_RIGHT_COL = new BatchCommand(
+        "ProofAsstRPNProofRightCol",
+        " ProofAsstRPNProofRightCol\n" + " \n" + " <pre>\n"
+            + " \"ProofAsstRPNProofRightCol\":\n"
+            + "     greater than ProofAsstRPNProofLeftCol and\n"
+            + "     less than 9999\n" + " \n"
+            + " Controls program formatting of generated proof statements\n"
+            + " \n" + " Optional, default is 79 (see mmj.pa.PaConstants.java)\n"
+            + " </pre>\n" + "\n");
 
-    /**
-     * StepSelectorShowSubstitutions
-     * <p>
-     * Determines whether or not unifying assertions are shown as is or with the
-     * substitutions required by unification.
-     * <p>
-     * Default is true (see mmj.pa.PaConstants.java)
-     */
-    public static final String RUNPARM_STEP_SELECTOR_SHOW_SUBSTITUTIONS = "StepSelectorShowSubstitutions";
+    @Deprecated
+    public static final BatchCommand RUNPARM_PROOF_ASST_MAX_UNIFY_ALTERNATES = new BatchCommand(
+        "ProofAsstMaxUnifyAlternates",
+        " ProofAsstMaxUnifyAlternates DEPRECATED\n" + "\n");
 
-    /**
-     * StepSelectorDialogPaneWidth
-     * <p>
-     * Sets the pixel width of the StepSelectorDialog.
-     * <p>
-     * Optional, default is 720 (see mmj.pa.PaConstants.java)
-     */
-    public static final String RUNPARM_STEP_SELECTOR_DIALOG_PANE_WIDTH = "StepSelectorDialogPaneWidth";
+    @Deprecated
+    public static final BatchCommand RUNPARM_PROOF_ASST_MAX_UNIFY_HINTS = new BatchCommand(
+        "ProofAsstMaxUnifyHints",
+        " ProofAsstMaxUnifyHints DEPRECATED\n" + "\n");
 
-    /**
-     * StepSelectorDialogPaneHeight
-     * <p>
-     * Sets the pixel width of the StepSelectorDialog.
-     * <p>
-     * Optional, default is 440 (see mmj.pa.PaConstants.java)
-     */
-    public static final String RUNPARM_STEP_SELECTOR_DIALOG_PANE_HEIGHT = "StepSelectorDialogPaneHeight";
+    @Deprecated
+    public static final BatchCommand RUNPARM_PROOF_ASST_UNIFY_HINTS_IN_BATCH = new BatchCommand(
+        "ProofAsstUnifyHintsInBatch",
+        " ProofAsstUnifyHintsInBatch DEPRECATED\n" + "\n");
 
-    /**
-     * ProofAsstAssrtListFreespace
-     * <p>
-     * Sets the amount of freespace in the ArrayLists used in the Proof
-     * Assistant.
-     * <p>
-     * Optional, default is 5, minimum 0, maximum 1000.
-     */
-    public static final String RUNPARM_PROOF_ASST_ASSRT_LIST_FREESPACE = "ProofAsstAssrtListFreespace";
+    public static final BatchCommand RUNPARM_STEP_SELECTOR_MAX_RESULTS = new BatchCommand(
+        "StepSelectorMaxResults",
+        " StepSelectorMaxResults\n" + " <p>\n"
+            + " Limits the number of unifying assertions returned by the\n"
+            + " StepSelectorSearch.\n" + " <p>\n"
+            + " Optional, default is 50 (see mmj.pa.PaConstants.java)\n"
+            + "\n");
 
-    /**
-     * ProofAsstOutputCursorInstrumentation
-     * <p>
-     * <code>
-     * "ProofAsstOutputCursorInstrumentation": yes or no.
-     * <p>
-     * Used to generate "instrumentation" info messages
-     * for use in regression testing. OutputCursor
-     * state information is generated by ProofAsst.java
-     * at the end of main functions, such as "unify".
-     * <p>
-     * <p>
-     * Optional, default is no (see mmj.pa.PaConstants.java)
-     * 
-     * </code>
-     */
-    public static final String RUNPARM_PROOF_ASST_OUTPUT_CURSOR_INSTRUMENTATION = "ProofAsstOutputCursorInstrumentation";
+    public static final BatchCommand RUNPARM_STEP_SELECTOR_SHOW_SUBSTITUTIONS = new BatchCommand(
+        "StepSelectorShowSubstitutions",
+        " StepSelectorShowSubstitutions\n" + " <p>\n"
+            + " Determines whether or not unifying assertions are shown as is or with the\n"
+            + " substitutions required by unification.\n" + " <p>\n"
+            + " Default is true (see mmj.pa.PaConstants.java)\n" + "\n");
 
-    /**
-     * ProofAsstAutoReformat
-     * <p>
-     * <code>
-     * "ProofAsstAutoReformat": yes or no.
-     * <p>
-     * Specifies whether or not proof step formulas are
-     * automatically reformatted after work variables
-     * are resolved.
-     * <p>
-     * Optional, default is yes (see mmj.pa.PaConstants.java)
-     * 
-     * </code>
-     */
-    public static final String RUNPARM_PROOF_ASST_AUTO_REFORMAT = "ProofAsstAutoReformat";
+    public static final BatchCommand RUNPARM_STEP_SELECTOR_DIALOG_PANE_WIDTH = new BatchCommand(
+        "StepSelectorDialogPaneWidth",
+        " StepSelectorDialogPaneWidth\n" + " <p>\n"
+            + " Sets the pixel width of the StepSelectorDialog.\n" + " <p>\n"
+            + " Optional, default is 720 (see mmj.pa.PaConstants.java)\n"
+            + "\n");
 
-    /**
-     * ProofAsstUndoRedoEnabled RunParm.
-     * <p>
-     * <code>
-     * Controls whether or not the Proof Assistant GUI
-     * provides Undo/Redo support.
-     * <p>
-     * Normally this is turned on, but if desired, say
-     * for performance reasons, the user can disable
-     * Undo/Redo at start-up time via RunParm.
-     * <p>
-     * Optional. Default = yes.
-     * </code>
-     */
-    public static final String RUNPARM_PROOF_ASST_UNDO_REDO_ENABLED = "ProofAsstUndoRedoEnabled";
+    public static final BatchCommand RUNPARM_STEP_SELECTOR_DIALOG_PANE_HEIGHT = new BatchCommand(
+        "StepSelectorDialogPaneHeight",
+        " StepSelectorDialogPaneHeight\n" + " <p>\n"
+            + " Sets the pixel width of the StepSelectorDialog.\n" + " <p>\n"
+            + " Optional, default is 440 (see mmj.pa.PaConstants.java)\n"
+            + "\n");
 
-    /**
-     * ProofAsstDummyVarPrefix
-     * <p>
-     * {@code 
-     * "ProofAsstDummyVarPrefix": length > 0, no embedded blanks
-     * or unprintable characters.
-     * 
-     * Dummy variables used to display un-determined variable
-     * substitutions are given a prefix string and a number.
-     * For example: $1, $2, etc.
-     * 
-     * Optional, default is "$ (see mmj.pa.PaConstants.java)
-     *
-     * }
-     */
-    public static final String RUNPARM_PROOF_ASST_DUMMY_VAR_PREFIX = "ProofAsstDummyVarPrefix";
+    public static final BatchCommand RUNPARM_PROOF_ASST_ASSRT_LIST_FREESPACE = new BatchCommand(
+        "ProofAsstAssrtListFreespace",
+        " ProofAsstAssrtListFreespace\n" + " <p>\n"
+            + " Sets the amount of freespace in the ArrayLists used in the Proof\n"
+            + " Assistant.\n" + " <p>\n"
+            + " Optional, default is 5, minimum 0, maximum 1000.\n" + "\n");
 
-    /**
-     * ProofAsstDefaultFileNameSuffix
-     * <p>
-     * <code>
-     * "ProofAsstDefaultFileNameSuffix": ".txt", ".TXT",
-     *                                   ".mmp" or ".MMP"
-     * <p>
-     * Optional. If this RunParm is not provided, the hardcoded
-     * default ".txt" is used as the default for Proof Worksheet
-     * file names.
-     * </code>
-     */
-    public static final String RUNPARM_PROOF_ASST_DEFAULT_FILE_NAME_SUFFIX = "ProofAsstDefaultFileNameSuffix";
+    public static final BatchCommand RUNPARM_PROOF_ASST_OUTPUT_CURSOR_INSTRUMENTATION = new BatchCommand(
+        "ProofAsstOutputCursorInstrumentation",
+        " ProofAsstOutputCursorInstrumentation\n" + " <p>\n" + " <code>\n"
+            + " \"ProofAsstOutputCursorInstrumentation\": yes or no.\n"
+            + " <p>\n" + " Used to generate \"instrumentation\" info messages\n"
+            + " for use in regression testing. OutputCursor\n"
+            + " state information is generated by ProofAsst.java\n"
+            + " at the end of main functions, such as \"unify\".\n" + " <p>\n"
+            + " <p>\n"
+            + " Optional, default is no (see mmj.pa.PaConstants.java)\n" + " \n"
+            + " </code>\n" + "\n");
 
-    /**
-     * ProofAsstProofFolder
-     * <p>
-     * <code>
-     * "ProofAsstProofFolder": directory name, no "\" at end
-     *                      of name. Must exist.
-     * <p>
-     * Optional. If this RunParm is not provided, the user
-     * of ProofAsstGUI is prompted during Save dialogs, and
-     * the folder is remembered for the duration of the
-     * session.
-     * </code>
-     */
-    public static final String RUNPARM_PROOF_ASST_PROOF_FOLDER = "ProofAsstProofFolder";
+    public static final BatchCommand RUNPARM_PROOF_ASST_AUTO_REFORMAT = new BatchCommand(
+        "ProofAsstAutoReformat",
+        " ProofAsstAutoReformat\n" + " <p>\n" + " <code>\n"
+            + " \"ProofAsstAutoReformat\": yes or no.\n" + " <p>\n"
+            + " Specifies whether or not proof step formulas are\n"
+            + " automatically reformatted after work variables\n"
+            + " are resolved.\n" + " <p>\n"
+            + " Optional, default is yes (see mmj.pa.PaConstants.java)\n"
+            + " \n" + " </code>\n" + "\n");
 
-    /**
-     * ProofAsstStartupProofWorksheet
-     * <p>
-     * <code>
-     * "ProofAsstStartupProofWorksheet": name of Proof Worksheet
-     *                      file to be displayed at ProofAsstGUI
-     *                      startup. Must exist.
-     * <p>
-     * Optional. If this RunParm is not provided, a hardcoded
-     * Proof Worksheet (String) is displayd.
-     * </code>
-     */
-    public static final String RUNPARM_PROOF_ASST_STARTUP_PROOF_WORKSHEET = "ProofAsstStartupProofWorksheet";
+    public static final BatchCommand RUNPARM_PROOF_ASST_UNDO_REDO_ENABLED = new BatchCommand(
+        "ProofAsstUndoRedoEnabled",
+        " ProofAsstUndoRedoEnabled RunParm.\n" + " <p>\n" + " <code>\n"
+            + " Controls whether or not the Proof Assistant GUI\n"
+            + " provides Undo/Redo support.\n" + " <p>\n"
+            + " Normally this is turned on, but if desired, say\n"
+            + " for performance reasons, the user can disable\n"
+            + " Undo/Redo at start-up time via RunParm.\n" + " <p>\n"
+            + " Optional. Default = yes.\n" + " </code>\n" + "\n");
 
-    /**
-     * RecheckProofAsstUsingProofVerifier
-     * <p>
-     * {@code 
-     * "RecheckProofAsstUsingProofVerifier,yes"
-     *  or
-     * "RecheckProofAsstUsingProofVerifier,no"
-     * 
-     * Optional, default = "no". If equal to "yes", then each
-     * derivation proof step's generated Metamath RPN proof
-     * is double-checked using the full Metamath Proof Engine,
-     * AKA "Proof Verifier". In theory this should be
-     * unnecessary since the Proof Assistant should provide
-     * valid proofs, but it may be useful if question arise,
-     * or if the user has spare CPU cycles and skepticism.
-     *
-     * }
-     */
-    public static final String RUNPARM_RECHECK_PROOF_ASST_USING_PROOF_VERIFIER = "RecheckProofAsstUsingProofVerifier";
+    @Deprecated
+    public static final BatchCommand RUNPARM_PROOF_ASST_DUMMY_VAR_PREFIX = new BatchCommand(
+        "ProofAsstDummyVarPrefix",
+        " ProofAsstDummyVarPrefix\n" + " <p>\n" + " <code> \n"
+            + " \"ProofAsstDummyVarPrefix\": length > 0, no embedded blanks\n"
+            + " or unprintable characters.\n" + " \n"
+            + " Dummy variables used to display un-determined variable\n"
+            + " substitutions are given a prefix string and a number.\n"
+            + " For example: $1, $2, etc.\n" + " \n"
+            + " Optional, default is \"$ (see mmj.pa.PaConstants.java)\n"
+            + " + \n</code></p>\n" + "\n");
 
-    /**
-     * RunProofAsstGUI
-     * <p>
-     * {@code 
-     * "RunProofAsstGUI": no option values (for now...)
-     * }
-     */
-    public static final String RUNPARM_RUN_PROOF_ASST_GUI = "RunProofAsstGUI"; // no
-                                                                               // option
-                                                                               // values...for
-                                                                               // now...
+    public static final BatchCommand RUNPARM_PROOF_ASST_DEFAULT_FILE_NAME_SUFFIX = new BatchCommand(
+        "ProofAsstDefaultFileNameSuffix",
+        " ProofAsstDefaultFileNameSuffix\n" + " <p>\n" + " <code>\n"
+            + " \"ProofAsstDefaultFileNameSuffix\": \".txt\", \".TXT\",\n"
+            + "                                   \".mmp\" or \".MMP\"\n"
+            + " <p>\n"
+            + " Optional. If this RunParm is not provided, the hardcoded\n"
+            + " default \".txt\" is used as the default for Proof Worksheet\n"
+            + " file names.\n" + " </code>\n" + "\n");
 
-    /**
-     * ProofAsstExportToFile
-     * <p>
-     * 
-     * <pre>
-     * "ProofAsstExportToFile":
-     *                value1 = filename; absolute or
-     *                         relative (to current
-     *                         directory or if provided
-     *                         the ProofAsstProofFolder,
-     *                         which is input via RunParm
-     *                         and also during use of
-     *                         ProofAsstGUI
-     * 
-     *                value2 = "*"    - all theorems
-     *                         label  - a single theorem
-     *                         99999  - a given number of theorems
-     * 
-     *                value3 = Optional: new (default),
-     *                         or update
-     * 
-     *                value4 = un-unified (default) or
-     *                                   unified.
-     * 
-     *                value5 = Randomized or NotRandomized
-     *                         (default).
-     *                         Controls order of exported proof
-     *                         step logical hypotheses (a testing
-     *                         feature).
-     * 
-     *                value6 = Print or NoPrint (default)
-     *                         Print requests copy of Proof 
-     *                         Worksheet to be sent to the
-     *                         SystemOutputFile (or System.out)
-     *                         in addition to the export file.<b>
-     * 
-     *               value7 = "DeriveFormulas" or "NoDeriveFormulas"
-     *                         (default) or "". If "DeriveFormulas"
-     *                         then the exported Proof Worksheets
-     *                         are written with blank formulas to
-     *                         trigger the Derive Formula feature
-     *                         in the Proof Assistant during later
-     *                         import. Note that the theorem's
-     *                         logical hypotheses and "qed" step
-     *                         cannot be derived -- formula is
-     *                         always required for these steps,
-     *                         so "DeriveFormulas" applies only to
-     *                         non-Qed derivation proof steps.
-     * 
-     * This RunParm is provided for use in high-volume testing.
-     * It exports proofs to a file in the format required
-     * by the Proof Assistant GUI. To import the proof file and
-     * test the Unification function, use RunParm
-     * 'ProofAsstBatchTest', specifying the file name.
-     * 
-     * Option value3 has two variations: un-unified means the
-     * exported derivation proof steps do not have Ref labels,
-     * whereas unified means Ref labels are present.
-     * 
-     * Note: this feature is not a full export of a Metamath
-     * file as it does not export $d or anything besides theorems
-     * and their logical hypotheses.
-     * 
-     * Note: a relative filename such as "export.mmp" can be
-     * input or an "absolute" name such as "c:\my\export.mmp".
-     * The "ProofAsstProofFolder", if present, is used with
-     * relative filename. And take care to note that if export
-     * is performed *after* ProofAsstGUI, the ProofAsstProofFolder
-     * may have been changed.
-     * </pre>
-     */
-    public static final String RUNPARM_PROOF_ASST_EXPORT_TO_FILE = "ProofAsstExportToFile"; // options:
-                                                                                            // selector,
-                                                                                            // filename,
-                                                                                            // file
-                                                                                            // usage,
-                                                                                            // unified/un-unified
+    public static final BatchCommand RUNPARM_PROOF_ASST_PROOF_FOLDER = new BatchCommand(
+        "ProofAsstProofFolder",
+        "*\n" + " ProofAsstProofFolder\n" + " <p>\n" + " <code>\n"
+            + " \"ProofAsstProofFolder\": directory name, no \"\\\" at end\n"
+            + "                      of name. Must exist.\n" + " <p>\n"
+            + " Optional. If this RunParm is not provided, the user\n"
+            + " of ProofAsstGUI is prompted during Save dialogs, and\n"
+            + " the folder is remembered for the duration of the\n"
+            + " session.\n" + " </code>\n" + "\n");
 
-    /**
-     * ProofAsstBatchTest
-     * <p>
-     * 
-     * <pre>
-     * "ProofAsstBatchTest": value1 = selection, either
-     * 
-     *                      "*"    - all theorems
-     *                      label  - a single theorem
-     *                      99999  - a given number of theorems
-     * 
-     *                      value2 = Optional: 
-     *                               a file name, either absolute
-     *                               or relative (to the current
-     *                               directory, or if provided
-     *                               the ProofAsstProofFolder,
-     *                               which is input via RunParm
-     *                               and also during use of
-     *                               ProofAsstGUI<.) If no file
-     *                               name input, skeleton proofs
-     *                               are generated from memory 
-     *                               (the .mm file loaded :)
-     * 
-     *                value3 = un-unified (default) or
-     *                         unified proof format.
-     * 
-     *                value4 = Randomized or NotRandomized
-     *                         (default).
-     *                         Controls order of exported proof
-     *                         step logical hypotheses (a testing
-     *                         feature).
-     * 
-     *                value5 = Print or NoPrint (default)
-     *                         Print requests copy of Proof 
-     *                         Worksheet to be sent to the
-     *                         SystemOutputFile (or System.out)
-     *                         in addition to the export file.
-     * 
-     *                value6 = "DeriveFormulas" or "NoDeriveFormulas"
-     *                         (default) or "". If "DeriveFormulas"
-     *                         then the exported Proof Worksheets
-     *                         are written with blank formulas to
-     *                         trigger the Derive Formula feature
-     *                         in the Proof Assistant during later
-     *                         import. Note that the theorem's
-     *                         logical hypotheses and "qed" step
-     *                         cannot be derived -- formula is
-     *                         always required for these steps,
-     *                         so "DeriveFormulas" applies only to
-     *                         non-Qed derivation proof steps.
-     * 
-     *                value7 = "CompareDJs" or "NoCompareDJs"
-     *                          (default) or "".
-     * 
-     *                          See mmj2\data\runparm\windows
-     *                          \AnnotatedRunParms.txt for more
-     *                          info.
-     * 
-     *                value8 = "UpdateDJs" or "NoUpdateDJs"
-     *                         (default) or "".
-     * 
-     *                          See mmj2\data\runparm\windows
-     *                          \AnnotatedRunParms.txt for more
-     *                          info.
-     * </pre>
-     * <p>
-     * This RunParm is provided for use in high-volume testing.
-     * <p>
-     * RunParm option value2 is input to specify an input file containing proofs
-     * in the format used on the Proof Assistant GUI screen. This is optional,
-     * and if not provided, the program simulates an input file using the
-     * currently loaded Metamath data
-     * <p>
-     * In "simulation" mode (no input file), the program exports a proof
-     * "to memory", just as it would have been created for the
-     * ProofAsstExportToFile RunParm (which is why the unified/un-unified and
-     * Randomized/ NotRandomized options are provided here also.) The The
-     * export-simulated proof is run through the Unification process for testing
-     * purposes. RunParm option value1 provides a selection capability, and this
-     * capability works with or without an input file. Specify "*" to test
-     * unification of all proofs, either in the input file or those loaded into
-     * the system. Specifying a number, for example 99, runs the test for the
-     * first 99 theorems (database sequence if input file not provided).
-     * Finally, specifying a theorem label runs the test for just that one
-     * theorem. Note: a relative filename such as "export.mmp" can be input or
-     * an "absolute" name such as "c:\my\export.mmp". The
-     * "ProofAsstProofFolder", if present, is used with relative filename. And
-     * take care to note that if export is performed *after* ProofAsstGUI, the
-     * ProofAsstProofFolder may have been changed.
-     */
-    public static final String RUNPARM_PROOF_ASST_BATCH_TEST = "ProofAsstBatchTest"; // options
-                                                                                     // selection
-                                                                                     // and
-                                                                                     // optional
-                                                                                     // file
-                                                                                     // name.
-    /**
-     * StepSelectorBatchTest
-     * <p>
-     * 
-     * <pre>
-     * "StepSelectorBatchTest":
-     * 
-     *                value1 = Mandatory: 
-     *                         a file name, either absolute
-     *                         or relative (to the current
-     *                         directory, or if provided
-     *                         the ProofAsstProofFolder,
-     *                         which is input via RunParm
-     *                         and also during use of
-     *                         ProofAsstGUI<.)
-     * 
-     *                value2 = cursor position:
-     *                         char offset position in Proof Worksheet
-     * 
-     *                value3 = selection number
-     *                         zero to 99999999.
-     * </pre>
-     * <p>
-     * This RunParm is provided for regression testing.
-     * <p>
-     * Specify the cursor position within the Proof Worksheet and the number to
-     * be selected from the StepSelectorDialog for the request. The program
-     * initiates a StepSelectorSearch and then if there are no errors, selects
-     * the chosen item from the StepSelectorResults and invokes unify().
-     * <p>
-     * The StepSelectorResults are printed, as well as the ProofWorksheet after
-     * unification -- and any messages.
-     */
-    public static final String RUNPARM_STEP_SELECTOR_BATCH_TEST = "StepSelectorBatchTest"; // all
-                                                                                           // options
-                                                                                           // mandatory:
-                                                                                           // filename,
-                                                                                           // cursor
-                                                                                           // pos,
-                                                                                           // and
-                                                                                           // selection
-                                                                                           // number.
+    public static final BatchCommand RUNPARM_PROOF_ASST_STARTUP_PROOF_WORKSHEET = new BatchCommand(
+        "ProofAsstStartupProofWorksheet",
+        " ProofAsstStartupProofWorksheet\n" + " <p>\n" + " <code>\n"
+            + " \"ProofAsstStartupProofWorksheet\": name of Proof Worksheet\n"
+            + "                      file to be displayed at ProofAsstGUI\n"
+            + "                      startup. Must exist.\n" + " <p>\n"
+            + " Optional. If this RunParm is not provided, a hardcoded\n"
+            + " Proof Worksheet (String) is displayd.\n" + " </code>\n" + "\n");
 
-    /**
-     * PreprocessRequestBatchTest
-     * <p>
-     * 
-     * <pre>
-     * "PreprocessRequestBatchTest":
-     * 
-     *                value1 = Mandatory: 
-     *                         a file name, either absolute
-     *                         or relative (to the current
-     *                         directory, or if provided
-     *                         the ProofAsstProofFolder,
-     *                         which is input via RunParm
-     *                         and also during use of
-     *                         ProofAsstGUI<.)
-     * 
-     *                value2 = "EraseAndRederiveFormulas" is the only
-     *                         valid option at this time.
-     * </pre>
-     * <p>
-     * This RunParm is provided for regression testing.
-     * <p>
-     * The Proof Text is printed before and after preprocessing and unification.
-     * (and
-     */
-    public static final String RUNPARM_PREPROCESS_REQUEST_BATCH_TEST = "PreprocessRequestBatchTest"; // all
-                                                                                                     // options
-                                                                                                     // mandatory:
-                                                                                                     // filename,
-                                                                                                     // and
-                                                                                                     // request
-                                                                                                     // name
+    public static final BatchCommand RUNPARM_RECHECK_PROOF_ASST_USING_PROOF_VERIFIER = new BatchCommand(
+        "RecheckProofAsstUsingProofVerifier",
+        " RecheckProofAsstUsingProofVerifier\n" + " <p>\n" + " <code> \n"
+            + " \"RecheckProofAsstUsingProofVerifier,yes\"\n" + "  or\n"
+            + " \"RecheckProofAsstUsingProofVerifier,no\"\n" + " \n"
+            + " Optional, default = \"no\". If equal to \"yes\", then each\n"
+            + " derivation proof step's generated Metamath RPN proof\n"
+            + " is double-checked using the full Metamath Proof Engine,\n"
+            + " AKA \"Proof Verifier\". In theory this should be\n"
+            + " unnecessary since the Proof Assistant should provide\n"
+            + " valid proofs, but it may be useful if question arise,\n"
+            + " or if the user has spare CPU cycles and skepticism.\n" + "*"
+            + " </code></p>\n" + "\n");
 
-    /**
-     * ProofAsstUnifySearchExclude
-     * <p>
-     * {@code 
-     * "ProofAsstUnifySearchExclude": options = Assrt labels, comma
-     *                                separated (ex: biigb,xxxid)
-     * }
-     * <p>
-     * NOTE: The RunParm validation for these excluded Assrt labels will be very
-     * lenient and will just ignore labels that are "invalid" or not in the
-     * Statment Table. The reason is that the exclusion list is expected to be
-     * very stable and the new RunParm "LoadEndpointStmtNbr" allows loading of
-     * just a portion of a Metamath file; if we required perfection in the
-     * exclusion list the usability of LoadEndPointStmtNbr would drop
-     * dramatically (see also LoadEndpointStmtLabel).
-     * <p>
-     * This RunParm instructs ProofUnifier.java to not attempt to unify the
-     * specified assertion labels with any proof steps -- unless the user
-     * specifically enters them on a proof step.
-     * <p>
-     * The Unification process scans the loaded Metamath file assertion
-     * (LogicalSystem.stmtTbl) in ascending database sequence and accepts the
-     * first match it finds. Generally that works fine, but in a few cases, such
-     * as duplicate theorems that are present simply because of an alternate
-     * proof, this feature is helpful (though it would possibly be easier to put
-     * biigb after bii and avoid the situation in the first place.)
-     * <p>
-     * The *problem* of multiple valid unifications for a proof step may affect
-     * a small number of theorems. The list of alternatives can be obtained by
-     * specifically entering a valid assertion label that does *not* unify --
-     * the program then provides a message detailing the possible choices. (The
-     * message with alternatives is also produced if there is a Distinct
-     * Variables error on a proof step and there is no unifying assertion that
-     * doesn't have a Distinct Variables error.) In set.mm p0ex and snex are
-     * appear as alternatives in a few proofs; mulid1 and mulid2 are another
-     * example.
-     */
-    public static final String RUNPARM_PROOF_ASST_UNIFY_SEARCH_EXCLUDE = "ProofAsstUnifySearchExclude"; // options
-                                                                                                        // =
-                                                                                                        // Assrt
-                                                                                                        // labels
-                                                                                                        // comma
-                                                                                                        // separated
-                                                                                                        // (ex.
-                                                                                                        // biigb,xxxid)
+    public static final BatchCommand RUNPARM_RUN_PROOF_ASST_GUI = new BatchCommand(
+        "RunProofAsstGUI", // no
+        " RunProofAsstGUI\n" + " <p>\n" + " <code> \n"
+            + " \"RunProofAsstGUI\": no option values (for now...)\n"
+            + " </code></p>\n" + "\n");
+    // option
+    // values...for
+    // now...
+
+    public static final BatchCommand RUNPARM_PROOF_ASST_EXPORT_TO_FILE = new BatchCommand(
+        "ProofAsstExportToFile", // options:
+        " ProofAsstExportToFile\n" + " <p>\n" + " \n" + " <pre>\n"
+            + " \"ProofAsstExportToFile\":\n"
+            + "                value1 = filename; absolute or\n"
+            + "                         relative (to current\n"
+            + "                         directory or if provided\n"
+            + "                         the ProofAsstProofFolder,\n"
+            + "                         which is input via RunParm\n"
+            + "                         and also during use of\n"
+            + "                         ProofAsstGUI\n" + " \n"
+            + "                value2 = \"*\"    - all theorems\n"
+            + "                         label  - a single theorem\n"
+            + "                         99999  - a given number of theorems\n"
+            + " \n" + "                value3 = Optional: new (default),\n"
+            + "                         or update\n" + " \n"
+            + "                value4 = un-unified (default) or\n"
+            + "                                   unified.\n" + " \n"
+            + "                value5 = \"Correct\" (deprecated \"NotRandomized\",\n"
+            + "                         default), \"Randomized\", \"Reverse\" and\n"
+            + "                         others (see <code> mmj.verify.HypsOrder</code>).\n"
+            + "                         Controls order of exported proof\n"
+            + "                         step logical hypotheses (a testing\n"
+            + "                         feature).\n" + " \n"
+            + "                value6 = Print or NoPrint (default)\n"
+            + "                         Print requests copy of Proof \n"
+            + "                         Worksheet to be sent to the\n"
+            + "                         SystemOutputFile (or System.out)\n"
+            + "                         in addition to the export file.\n"
+            + " \n"
+            + "               value7 = \"DeriveFormulas\" or \"NoDeriveFormulas\"\n"
+            + "                         (default) or \"\". If \"DeriveFormulas\"\n"
+            + "                         then the exported Proof Worksheets\n"
+            + "                         are written with blank formulas to\n"
+            + "                         trigger the Derive Formula feature\n"
+            + "                         in the Proof Assistant during later\n"
+            + "                         import. Note that the theorem's\n"
+            + "                         logical hypotheses and \"qed\" step\n"
+            + "                         cannot be derived -- formula is\n"
+            + "                         always required for these steps,\n"
+            + "                         so \"DeriveFormulas\" applies only to\n"
+            + "                         non-Qed derivation proof steps.\n"
+            + " \n"
+            + " This RunParm is provided for use in high-volume testing.\n"
+            + " It exports proofs to a file in the format required\n"
+            + " by the Proof Assistant GUI. To import the proof file and\n"
+            + " test the Unification function, use RunParm\n"
+            + " 'ProofAsstBatchTest', specifying the file name.\n" + " \n"
+            + " Option value3 has two variations: un-unified means the\n"
+            + " exported derivation proof steps do not have Ref labels,\n"
+            + " whereas unified means Ref labels are present.\n" + " \n"
+            + " Note: this feature is not a full export of a Metamath\n"
+            + " file as it does not export $d or anything besides theorems\n"
+            + " and their logical hypotheses.\n" + " \n"
+            + " Note: a relative filename such as \"export.mmp\" can be\n"
+            + " input or an \"absolute\" name such as \"c:\\my\\export.mmp\".\n"
+            + " The \"ProofAsstProofFolder\", if present, is used with\n"
+            + " relative filename. And take care to note that if export\n"
+            + " is performed *after* ProofAsstGUI, the ProofAsstProofFolder\n"
+            + " may have been changed.\n" + " </pre></p>\n" + "\n");
+
+    public static final BatchCommand RUNPARM_PROOF_ASST_OPTIMIZE_THEOREM_SEARCH = new BatchCommand(
+        "ProofAsstOptimizeTheoremSearch",
+        "Perform the optimizations for theorem search during \"parallel\"\n"
+            + "unification.\n" + "\n");
+
+    public static final BatchCommand RUNPARM_PROOF_ASST_USE_AUTOTRANSFORMATIONS = new BatchCommand(
+        "ProofAsstUseAutotransformations",
+        "Auto-transformation options (it is temporary option and could be changed any moment):\n <p>"
+            + "    value1 = Yes/No (use or do not use auto-transformations)\n <p>"
+            + "    value2 = Yes/No (use debug output or do not use it)\n"
+            + "    value3 = Yes/No (support implication prefix)\n" + "\n");
+
+    public static final BatchCommand RUNPARM_PROOF_ASST_BATCH_TEST = new BatchCommand(
+        "ProofAsstBatchTest", // options
+        " ProofAsstBatchTest\n" + " <p>\n" + " \n" + " <pre>\n"
+            + " \"ProofAsstBatchTest\": value1 = selection, either\n" + " \n"
+            + "                      \"*\"    - all theorems\n"
+            + "                      label  - a single theorem\n"
+            + "                      99999  - a given number of theorems\n"
+            + " \n" + "                      value2 = Optional: \n"
+            + "                               a file name, either absolute\n"
+            + "                               or relative (to the current\n"
+            + "                               directory, or if provided\n"
+            + "                               the ProofAsstProofFolder,\n"
+            + "                               which is input via RunParm\n"
+            + "                               and also during use of\n"
+            + "                               ProofAsstGUI<.) If no file\n"
+            + "                               name input, skeleton proofs\n"
+            + "                               are generated from memory \n"
+            + "                               (the .mm file loaded :)\n" + " \n"
+            + "                value3 = un-unified (default) or\n"
+            + "                         unified proof format.\n" + " \n"
+            + "                value4 = \"Correct\" (deprecated \"NotRandomized\",\n"
+            + "                         default), \"Randomized\", \"Reverse\" and\n"
+            + "                         others (see <code> mmj.verify.HypsOrder</code>).\n"
+            + "                         Controls order of exported proof\n"
+            + "                         step logical hypotheses (a testing\n"
+            + "                         feature).\n" + " \n"
+            + "                value5 = Print or NoPrint (default)\n"
+            + "                         Print requests copy of Proof \n"
+            + "                         Worksheet to be sent to the\n"
+            + "                         SystemOutputFile (or System.out)\n"
+            + "                         in addition to the export file.\n"
+            + " \n"
+            + "                value6 = \"DeriveFormulas\" or \"NoDeriveFormulas\"\n"
+            + "                         (default) or \"\". If \"DeriveFormulas\"\n"
+            + "                         then the exported Proof Worksheets\n"
+            + "                         are written with blank formulas to\n"
+            + "                         trigger the Derive Formula feature\n"
+            + "                         in the Proof Assistant during later\n"
+            + "                         import. Note that the theorem's\n"
+            + "                         logical hypotheses and \"qed\" step\n"
+            + "                         cannot be derived -- formula is\n"
+            + "                         always required for these steps,\n"
+            + "                         so \"DeriveFormulas\" applies only to\n"
+            + "                         non-Qed derivation proof steps.\n"
+            + " \n"
+            + "                value7 = \"CompareDJs\" or \"NoCompareDJs\"\n"
+            + "                          (default) or \"\".\n" + " \n"
+            + "                          See mmj2\\data\\runparm\\windows\n"
+            + "                          \\AnnotatedRunParms.txt for more\n"
+            + "                          info.\n" + " \n"
+            + "                value8 = \"UpdateDJs\" or \"NoUpdateDJs\"\n"
+            + "                         (default) or \"\".\n" + " \n"
+            + "                          See mmj2\\data\\runparm\\windows\n"
+            + "                          \\AnnotatedRunParms.txt for more\n"
+            + "                          info.\n" + " </pre>\n" + " <p>\n"
+            + " This RunParm is provided for use in high-volume testing.\n"
+            + " <p>\n"
+            + " RunParm option value2 is input to specify an input file containing proofs\n"
+            + " in the format used on the Proof Assistant GUI screen. This is optional,\n"
+            + " and if not provided, the program simulates an input file using the\n"
+            + " currently loaded Metamath data\n" + " <p>\n"
+            + " In \"simulation\" mode (no input file), the program exports a proof\n"
+            + " \"to memory\", just as it would have been created for the\n"
+            + " ProofAsstExportToFile RunParm (which is why the unified/un-unified and\n"
+            + " Randomized/ NotRandomized options are provided here also.) The The\n"
+            + " export-simulated proof is run through the Unification process for testing\n"
+            + " purposes. RunParm option value1 provides a selection capability, and this\n"
+            + " capability works with or without an input file. Specify \"*\" to test\n"
+            + " unification of all proofs, either in the input file or those loaded into\n"
+            + " the system. Specifying a number, for example 99, runs the test for the\n"
+            + " first 99 theorems (database sequence if input file not provided).\n"
+            + " Finally, specifying a theorem label runs the test for just that one\n"
+            + " theorem. Note: a relative filename such as \"export.mmp\" can be input or\n"
+            + " an \"absolute\" name such as \"c:\\my\\export.mmp\". The\n"
+            + " \"ProofAsstProofFolder\", if present, is used with relative filename. And\n"
+            + " take care to note that if export is performed *after* ProofAsstGUI, the\n"
+            + " ProofAsstProofFolder may have been changed.</p>\n" + "\n");
+    // selection
+    // and
+    // optional
+    // file
+    // name.
+    public static final BatchCommand RUNPARM_STEP_SELECTOR_BATCH_TEST = new BatchCommand(
+        "StepSelectorBatchTest", // all
+        " StepSelectorBatchTest\n" + " <p>\n" + " \n" + " <pre>\n"
+            + " \"StepSelectorBatchTest\":\n" + " \n"
+            + "                value1 = Mandatory: \n"
+            + "                         a file name, either absolute\n"
+            + "                         or relative (to the current\n"
+            + "                         directory, or if provided\n"
+            + "                         the ProofAsstProofFolder,\n"
+            + "                         which is input via RunParm\n"
+            + "                         and also during use of\n"
+            + "                         ProofAsstGUI<.)\n" + " \n"
+            + "                value2 = cursor position:\n"
+            + "                         char offset position in Proof Worksheet\n"
+            + " \n" + "                value3 = selection number\n"
+            + "                         zero to 99999999.\n" + " </pre>\n"
+            + " <p>\n" + " This RunParm is provided for regression testing.\n"
+            + " <p>\n"
+            + " Specify the cursor position within the Proof Worksheet and the number to\n"
+            + " be selected from the StepSelectorDialog for the request. The program\n"
+            + " initiates a StepSelectorSearch and then if there are no errors, selects\n"
+            + " the chosen item from the StepSelectorResults and invokes unify().\n"
+            + " <p>\n"
+            + " The StepSelectorResults are printed, as well as the ProofWorksheet after\n"
+            + " unification -- and any messages.\n" + "\n");
+
+    public static final BatchCommand RUNPARM_PREPROCESS_REQUEST_BATCH_TEST = new BatchCommand(
+        "PreprocessRequestBatchTest", // all
+        " PreprocessRequestBatchTest\n" + " <p>\n" + " \n" + " <pre>\n"
+            + " \"PreprocessRequestBatchTest\":\n" + " \n"
+            + "                value1 = Mandatory: \n"
+            + "                         a file name, either absolute\n"
+            + "                         or relative (to the current\n"
+            + "                         directory, or if provided\n"
+            + "                         the ProofAsstProofFolder,\n"
+            + "                         which is input via RunParm\n"
+            + "                         and also during use of\n"
+            + "                         ProofAsstGUI<.)\n" + " \n"
+            + "                value2 = \"EraseAndRederiveFormulas\" is the only\n"
+            + "                         valid option at this time.\n"
+            + " </pre>\n" + " <p>\n"
+            + " This RunParm is provided for regression testing.\n" + " <p>\n"
+            + " The Proof Text is printed before and after preprocessing and unification.\n");
+    // options
+    // mandatory:
+    // filename,
+    // and
+    // request
+    // name
+
+    @Deprecated
+    public static final BatchCommand RUNPARM_SET_MM_DEFINITIONS_CHECK = new BatchCommand(
+        "SetMMDefinitionsCheckWithExclusions",
+        " SetMMDefinitionsCheckWithExclusions\n" + " <p>\n" + " <pre> \n"
+            + " \"SetMMDefinitionsCheckWithExclusions\":\n"
+            + "     options = Assrt labels, comma separated, with * wildcard\n"
+            + " </pre>\n" + " <p>\n"
+            + " This option runs a soundness check on all axioms in the database, except\n"
+            + " those specified in the list. Recommended exclusions are\n"
+            + " <code>ax-*,df-bi,df-clab,df-cleq,df-clel</code>, which will always fail the\n"
+            + " check.\n" + " <p>\n"
+            + " This RunParm option is deprecated; its functionality has been replaced by\n"
+            + " <code>RunMacro,definitionCheck,...</code> with the same arguments.\n"
+            + "\n");
+
+    public static final BatchCommand RUNPARM_PROOF_ASST_UNIFY_SEARCH_EXCLUDE = new BatchCommand(
+        "ProofAsstUnifySearchExclude", // options
+        " ProofAsstUnifySearchExclude\n" + " <p>\n" + " <code> \n"
+            + " \"ProofAsstUnifySearchExclude\": options = Assrt labels, comma\n"
+            + "                                separated (ex: biigb,xxxid)\n"
+            + " </code></p>\n" + " <p>\n"
+            + " NOTE: The RunParm validation for these excluded Assrt labels will be very\n"
+            + " lenient and will just ignore labels that are \"invalid\" or not in the\n"
+            + " Statment Table. The reason is that the exclusion list is expected to be\n"
+            + " very stable and the new RunParm \"LoadEndpointStmtNbr\" allows loading of\n"
+            + " just a portion of a Metamath file; if we required perfection in the\n"
+            + " exclusion list the usability of LoadEndPointStmtNbr would drop\n"
+            + " dramatically (see also LoadEndpointStmtLabel).\n" + " <p>\n"
+            + " This RunParm instructs ProofUnifier.java to not attempt to unify the\n"
+            + " specified assertion labels with any proof steps -- unless the user\n"
+            + " specifically enters them on a proof step.\n" + " <p>\n"
+            + " The Unification process scans the loaded Metamath file assertion\n"
+            + " (LogicalSystem.stmtTbl) in ascending database sequence and accepts the\n"
+            + " first match it finds. Generally that works fine, but in a few cases, such\n"
+            + " as duplicate theorems that are present simply because of an alternate\n"
+            + " proof, this feature is helpful (though it would possibly be easier to put\n"
+            + " biigb after bii and avoid the situation in the first place.)\n"
+            + " <p>\n"
+            + " The *problem* of multiple valid unifications for a proof step may affect\n"
+            + " a small number of theorems. The list of alternatives can be obtained by\n"
+            + " specifically entering a valid assertion label that does *not* unify --\n"
+            + " the program then provides a message detailing the possible choices. (The\n"
+            + " message with alternatives is also produced if there is a Distinct\n"
+            + " Variables error on a proof step and there is no unifying assertion that\n"
+            + " doesn't have a Distinct Variables error.) In set.mm p0ex and snex are\n"
+            + " appear as alternatives in a few proofs; mulid1 and mulid2 are another\n"
+            + " example.</p>\n" + "\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.tmff.Preferences.java interface
     // ----------------------------------------------------------
 
-    /**
-     * TMFFDefineScheme command.
-     * <p>
-     * Defines TMFF Schemes that may be referenced subsequently in TMFF Formats
-     * (TMFFDefineFormat can only refer to a TMFF Scheme that is already
-     * defined.)
-     * <p>
-     * Note: a Scheme can be re-defined in a subsequent RunParm. This would
-     * normally be of use only in a testing situation.
-     * <p>
-     * <code>
-     * Parameters:
-     * <ol>
-     *   <li>Scheme Name: must be non-blank, unique, not =
-     *       "Unformatted". Not case sensitive.
-     *   <li>Method Name: = "AlignColumn" or "Flat". Not case
-     *       sensitive.
-     *   <li>MaxDepth = subtree depth max before triggering break
-     *   <li>ByValue = "Var", "Sym", or "Cnst" (AlignColumn only)
-     *   <li>AtNbr = 1, 2, or 3 (AlignColumn only)
-     *   <li>AtValue = "Var", "Sym" or "Cnst" (AlignColumn only)
-     * </ol>
-     * </code>
-     */
-    public static final String RUNPARM_TMFF_DEFINE_SCHEME = "TMFFDefineScheme";
+    public static final BatchCommand RUNPARM_TMFF_DEFINE_SCHEME = new BatchCommand(
+        "TMFFDefineScheme",
+        " TMFFDefineScheme command.\n" + " <p>\n"
+            + " Defines TMFF Schemes that may be referenced subsequently in TMFF Formats\n"
+            + " (TMFFDefineFormat can only refer to a TMFF Scheme that is already\n"
+            + " defined.)\n" + " <p>\n"
+            + " Note: a Scheme can be re-defined in a subsequent RunParm. This would\n"
+            + " normally be of use only in a testing situation.\n" + " <p>\n"
+            + " <code>\n" + " Parameters:\n" + " <ol>\n"
+            + "   <li>Scheme Name: must be non-blank, unique, not =\n"
+            + "       \"Unformatted\". Not case sensitive.\n"
+            + "   <li>Method Name: = \"AlignColumn\" or \"Flat\". Not case\n"
+            + "       sensitive.\n"
+            + "   <li>MaxDepth = subtree depth max before triggering break\n"
+            + "   <li>ByValue = \"Var\", \"Sym\", or \"Cnst\" (AlignColumn only)\n"
+            + "   <li>AtNbr = 1, 2, or 3 (AlignColumn only)\n"
+            + "   <li>AtValue = \"Var\", \"Sym\" or \"Cnst\" (AlignColumn only)\n"
+            + " </ol>\n" + " </code>\n" + "\n");
 
-    /**
-     * TMFFDefineFormat command.
-     * <p>
-     * Defines TMFF Formats that may be referenced subsequently in the
-     * TMFFUseFormat command (TMFFUseFormat can only refer to a TMFF Scheme that
-     * is already defined, which includes the pre-defined, built-in Formats.)
-     * <p>
-     * Note: a Format can be re-defined in a subsequent RunParm. This would
-     * normally be of use only in a testing situation.
-     * <p>
-     * <code>
-     * Parameters:
-     * <ol>
-     *   <li>Format Nbr: 1, 2 or 3.
-     *   <li>Scheme Name: must be non-blank, unique, not =
-     *       "Unformatted". Not case sensitive.
-     * </ol>
-     * </code>
-     */
-    public static final String RUNPARM_TMFF_DEFINE_FORMAT = "TMFFDefineFormat";
+    public static final BatchCommand RUNPARM_TMFF_DEFINE_FORMAT = new BatchCommand(
+        "TMFFDefineFormat",
+        " TMFFDefineFormat command.\n" + " <p>\n"
+            + " Defines TMFF Formats that may be referenced subsequently in the\n"
+            + " TMFFUseFormat command (TMFFUseFormat can only refer to a TMFF Scheme that\n"
+            + " is already defined, which includes the pre-defined, built-in Formats.)\n"
+            + " <p>\n"
+            + " Note: a Format can be re-defined in a subsequent RunParm. This would\n"
+            + " normally be of use only in a testing situation.\n" + " <p>\n"
+            + " <code>\n" + " Parameters:\n" + " <ol>\n"
+            + "   <li>Format Nbr: 1, 2 or 3.\n"
+            + "   <li>Scheme Name: must be non-blank, unique, not =\n"
+            + "       \"Unformatted\". Not case sensitive.\n" + " </ol>\n"
+            + " </code>\n" + "\n");
 
-    /**
-     * TMFFUseFormat command.
-     * <p>
-     * Specifies which TMFF Format is in use during subsequent processing.
-     * <p>
-     * Note: multiple TMFFUseFormat commands can be input, but only one format
-     * can be in effect at a single time.
-     * <p>
-     * Note: Format '0' = Unformatted, turn TMFF off/disabled.
-     * <p>
-     * <code>
-     * Parameters:
-     * <ol>
-     *   <li>Format Nbr: 0, 1, 2, 3, etc.
-     * </ol>
-     * </code>
-     */
-    public static final String RUNPARM_TMFF_USE_FORMAT = "TMFFUseFormat";
+    public static final BatchCommand RUNPARM_TMFF_USE_FORMAT = new BatchCommand(
+        "TMFFUseFormat",
+        " TMFFUseFormat command.\n" + " <p>\n"
+            + " Specifies which TMFF Format is in use during subsequent processing.\n"
+            + " <p>\n"
+            + " Note: multiple TMFFUseFormat commands can be input, but only one format\n"
+            + " can be in effect at a single time.\n" + " <p>\n"
+            + " Note: Format '0' = Unformatted, turn TMFF off/disabled.\n"
+            + " <p>\n" + " <code>\n" + " Parameters:\n" + " <ol>\n"
+            + "   <li>Format Nbr: 0, 1, 2, 3, etc.\n" + " </ol>\n"
+            + " </code>\n" + "\n");
 
-    /**
-     * TMFFAltFormat command.
-     * <p>
-     * Specifies the alternate TMFF Format to be used when the ProofAsstGUI
-     * Edit/Reformat Proof - Swap Alt menu item is selected.
-     * <p>
-     * <p>
-     * <code>
-     * Parameters:
-     * <ol>
-     *   <li>Format Nbr: 0, 1, 2, 3, etc.
-     * </ol>
-     * </code>
-     */
-    public static final String RUNPARM_TMFF_ALT_FORMAT = "TMFFAltFormat";
+    public static final BatchCommand RUNPARM_TMFF_ALT_FORMAT = new BatchCommand(
+        "TMFFAltFormat",
+        " TMFFAltFormat command.\n" + " <p>\n"
+            + " Specifies the alternate TMFF Format to be used when the ProofAsstGUI\n"
+            + " Edit/Reformat Proof - Swap Alt menu item is selected.\n"
+            + " <p>\n" + " <p>\n" + " <code>\n" + " Parameters:\n" + " <ol>\n"
+            + "   <li>Format Nbr: 0, 1, 2, 3, etc.\n" + " </ol>\n"
+            + " </code>\n" + "\n");
 
-    /**
-     * TMFFUseIndent command.
-     * <p>
-     * Specifies the number of columns to indent a proof step formula for each
-     * level in the proof tree.
-     * <p>
-     * <p>
-     * <code>
-     * Parameters:
-     * <ol>
-     *   <li>Indent Amount: 0, 1, 2, 3, or 4.
-     * </ol>
-     * </code>
-     */
-    public static final String RUNPARM_TMFF_USE_INDENT = "TMFFUseIndent";
+    public static final BatchCommand RUNPARM_TMFF_USE_INDENT = new BatchCommand(
+        "TMFFUseIndent",
+        " TMFFUseIndent command.\n" + " <p>\n"
+            + " Specifies the number of columns to indent a proof step formula for each\n"
+            + " level in the proof tree.\n" + " <p>\n" + " <p>\n" + " <code>\n"
+            + " Parameters:\n" + " <ol>\n"
+            + "   <li>Indent Amount: 0, 1, 2, 3, or 4.\n" + " </ol>\n"
+            + " </code>\n" + "\n");
 
-    /**
-     * TMFFAltIndent command.
-     * <p>
-     * Specifies the number of columns to indent a proof step formula for each
-     * level in the proof tree. Specifies the alternate TMFF Indent Amount to be
-     * used when the ProofAsstGUI Edit/Reformat Proof - Swap Alt menu item is
-     * selected.
-     * <p>
-     * <p>
-     * <code>
-     * Parameters:
-     * <ol>
-     *   <li>Alt Indent Amount: 0, 1, 2, 3, or 4.
-     * </ol>
-     * </code>
-     */
-    public static final String RUNPARM_TMFF_ALT_INDENT = "TMFFAltIndent";
+    public static final BatchCommand RUNPARM_TMFF_ALT_INDENT = new BatchCommand(
+        "TMFFAltIndent",
+        " TMFFAltIndent command.\n" + " <p>\n"
+            + " Specifies the number of columns to indent a proof step formula for each\n"
+            + " level in the proof tree. Specifies the alternate TMFF Indent Amount to be\n"
+            + " used when the ProofAsstGUI Edit/Reformat Proof - Swap Alt menu item is\n"
+            + " selected.\n" + " <p>\n" + " <p>\n" + " <code>\n"
+            + " Parameters:\n" + " <ol>\n"
+            + "   <li>Alt Indent Amount: 0, 1, 2, 3, or 4.\n" + " </ol>\n"
+            + " </code>\n" + "\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.util.WorkVarBoss interface to WorkVarManager
     // ----------------------------------------------------------
 
-    /**
-     * DefineWorkVarType command.
-     * 
-     * <pre>
-     * : - Optional. May appear anywhere after the "Parse" RunParm
-     *              within an input RunParm file, and takes effect
-     *              when the next DeclareWorkVars RunParm command is
-     *              processed. If not input prior to first use -- the
-     *              Proof Assistant -- the default settings are
-     *              automatically used.
-     * 
-     *  - Default = One default DefineWorkVarType RunParm is
-     *              generated for each grammatical Type Code.
-     *              specifying a prefix of "&x" where "x" is
-     *              the first character of the grammatical
-     *              type code, converted to lower case if
-     *              necessary; 100 work variables are defined
-     *              by default for each grammatical type code.
-     * 
-     *  - Value1 = Grammatical Type Code (e.g. "wff", "class",
-     *             "set", etc.) Must be a valid grammatical
-     *             Type Code.
-     * 
-     *  - Value2 = Work Variable Prefix for the grammatical
-     *             Type Code. Must generate unique variable and
-     *             variable hypothesis names when concatenated
-     *             with the Work Variable numerical suffix (1,
-     *             2, ..., 11, ..., etc.) Note that Work
-     *             Variable Hypothesis labels are generated
-     *             automatically and are the same as the Work
-     *             Variables. A Work Variable Prefix must
-     *             consist solely of valid Metamath math
-     *             symbol characters (not "$", for example,
-     *             or embedded blanks.)
-     * 
-     *  - Value3 = Number of Work Variables to be declared for the
-     *             grammatical Type Code. Must be greater than 9
-     *             and less than 1000 ("stinginess" is recommended to
-     *             avoid wasted processing and memory allocations...
-     *             but, in the event that the supply of available
-     *             Work Variables is exhausted during processing
-     *             a pop-up GUI error message will be displayed; the
-     *             RunParms will need to be modified and re-input
-     *             in a subsequent run...)
-     * 
-     *      - Examples:
-     *         *       1         2         3         4
-     *         *234567890123456789012345678901234567890
-     *         DefineWorkVarType,wff,&W,100
-     *         DefineWorkVarType,set,&S,100
-     *         DefineWorkVarType,class,&C,100
-     * </pre>
-     */
-    public static final String RUNPARM_DEFINE_WORK_VAR_TYPE = "DefineWorkVarType";
+    public static final BatchCommand RUNPARM_DEFINE_WORK_VAR_TYPE = new BatchCommand(
+        "DefineWorkVarType",
+        " DefineWorkVarType command.\n" + " \n" + " <pre>\n"
+            + " : - Optional. May appear anywhere after the \"Parse\" RunParm\n"
+            + "              within an input RunParm file, and takes effect\n"
+            + "              when the next DeclareWorkVars RunParm command is\n"
+            + "              processed. If not input prior to first use -- the\n"
+            + "              Proof Assistant -- the default settings are\n"
+            + "              automatically used.\n" + " \n"
+            + "  - Default = One default DefineWorkVarType RunParm is\n"
+            + "              generated for each grammatical Type Code.\n"
+            + "              specifying a prefix of \"&x\" where \"x\" is\n"
+            + "              the first character of the grammatical\n"
+            + "              type code, converted to lower case if\n"
+            + "              necessary; 100 work variables are defined\n"
+            + "              by default for each grammatical type code.\n"
+            + " \n"
+            + "  - Value1 = Grammatical Type Code (e.g. \"wff\", \"class\",\n"
+            + "             \"set\", etc.) Must be a valid grammatical\n"
+            + "             Type Code.\n" + " \n"
+            + "  - Value2 = Work Variable Prefix for the grammatical\n"
+            + "             Type Code. Must generate unique variable and\n"
+            + "             variable hypothesis names when concatenated\n"
+            + "             with the Work Variable numerical suffix (1,\n"
+            + "             2, ..., 11, ..., etc.) Note that Work\n"
+            + "             Variable Hypothesis labels are generated\n"
+            + "             automatically and are the same as the Work\n"
+            + "             Variables. A Work Variable Prefix must\n"
+            + "             consist solely of valid Metamath math\n"
+            + "             symbol characters (not \"$\", for example,\n"
+            + "             or embedded blanks.)\n" + " \n"
+            + "  - Value3 = Number of Work Variables to be declared for the\n"
+            + "             grammatical Type Code. Must be greater than 9\n"
+            + "             and less than 1000 (\"stinginess\" is recommended to\n"
+            + "             avoid wasted processing and memory allocations...\n"
+            + "             but, in the event that the supply of available\n"
+            + "             Work Variables is exhausted during processing\n"
+            + "             a pop-up GUI error message will be displayed; the\n"
+            + "             RunParms will need to be modified and re-input\n"
+            + "             in a subsequent run...)\n" + " \n"
+            + "      - Examples:\n"
+            + "         *       1         2         3         4\n"
+            + "         *234567890123456789012345678901234567890\n"
+            + "         DefineWorkVarType,wff,&W,100\n"
+            + "         DefineWorkVarType,set,&S,100\n"
+            + "         DefineWorkVarType,class,&C,100\n" + " </pre>\n" + "\n");
 
-    /**
-     * DeclareWorkVars command.
-     * 
-     * <pre>
-     *  - Optional. May appear anywhere after the "Parse" RunParm
-     *              within an input, and takes effect immediately
-     *              (any existing Work Variables are deleted and
-     *              a new set is created.)
-     * 
-     *  - Default = A default DeclareWorkVars RunParm is executed
-     *              automatically when first need arises (e.g. at
-     *              Proof Assistant start-up), if none have been
-     *              input since the last Clear RunParm or the start
-     *              of the RunParm file.
-     * 
-     *  - Value1 = N/A
-     * 
-     *  - Examples
-     * 
-     *     *       1         2         3         4
-     *     *234567890123456789012345678901234567890
-     *     DeclareWorkVars
-     * </pre>
-     */
-    public static final String RUNPARM_DECLARE_WORK_VARS = "DeclareWorkVars";
+    public static final BatchCommand RUNPARM_DECLARE_WORK_VARS = new BatchCommand(
+        "DeclareWorkVars",
+        " DeclareWorkVars command.\n" + " \n" + " <pre>\n"
+            + "  - Optional. May appear anywhere after the \"Parse\" RunParm\n"
+            + "              within an input, and takes effect immediately\n"
+            + "              (any existing Work Variables are deleted and\n"
+            + "              a new set is created.)\n" + " \n"
+            + "  - Default = A default DeclareWorkVars RunParm is executed\n"
+            + "              automatically when first need arises (e.g. at\n"
+            + "              Proof Assistant start-up), if none have been\n"
+            + "              input since the last Clear RunParm or the start\n"
+            + "              of the RunParm file.\n" + " \n"
+            + "  - Value1 = N/A\n" + " \n" + "  - Examples\n" + " \n"
+            + "     *       1         2         3         4\n"
+            + "     *234567890123456789012345678901234567890\n"
+            + "     DeclareWorkVars\n" + " </pre>\n" + "\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.util.SvcBoss interface to SvcCallback
     // ----------------------------------------------------------
 
-    /**
-     * SvcFolder
-     * <p>
-     * 
-     * <pre>
-     * "SvcFolder": directory name, no "\" at end of name.
-     *              Must exist and must be a directory.
-     * 
-     * : - Optional. Must appear prior to the SvcCall RunParm.
-     * 
-     *  - Default = If not input, output Svc files are directed
-     *              to the current directory.
-     * 
-     *  - Value1 = Directory Name. No "\" or "/" at the end
-     *             of name. Must exist and must be the name of
-     *             a directory. The separator symbol is OS 
-     *             dependent (Windows uses "\", *nix/Max = "/").
-     * 
-     *      - Examples:
-     *         *       1         2         3         4
-     *         *234567890123456789012345678901234567890
-     *         SvcFolder,c:\MyFolder
-     * </pre>
-     */
-    public static final String RUNPARM_SVC_FOLDER = "SvcFolder";
+    public static final BatchCommand RUNPARM_SVC_FOLDER = new BatchCommand(
+        "SvcFolder",
+        " SvcFolder\n" + " <p>\n" + " \n" + " <pre>\n"
+            + " \"SvcFolder\": directory name, no \"\\\" at end of name.\n"
+            + "              Must exist and must be a directory.\n" + " \n"
+            + " : - Optional. Must appear prior to the SvcCall RunParm.\n"
+            + " \n"
+            + "  - Default = If not input, output Svc files are directed\n"
+            + "              to the current directory.\n" + " \n"
+            + "  - Value1 = Directory Name. No \"\\\" or \"/\" at the end\n"
+            + "             of name. Must exist and must be the name of\n"
+            + "             a directory. The separator symbol is OS \n"
+            + "             dependent (Windows uses \"\\\", *nix/Max = \"/\").\n"
+            + " \n" + "      - Examples:\n"
+            + "         *       1         2         3         4\n"
+            + "         *234567890123456789012345678901234567890\n"
+            + "         SvcFolder,c:\\MyFolder\n" + " </pre>\n" + "\n");
 
-    /**
-     * SvcCallbackClass
-     * <p>
-     * 
-     * <pre>
-     * "SvcCallbackClass": Name of class which implements the
-     *              mmj.svc.SvcCallback interface in "callee"
-     *              mode. Must have a default constructor.
-     * 
-     *      NOTE: Do not input this RunParm if you are using
-     *            SvcCallback in "caller" mode because it will
-     *            override the specific instance of your class
-     *            which you pass as an argument to
-     *            BatchMMJ2.generateSvcCallback()
-     * 
-     * : - Optional. SvcCallback can be provided via a call to
-     *              BatchMMJ2.setSvcCallback().
-     * 
-     *  - Default = None.
-     * 
-     *  - Value1 = SvcCallbackClass class name.
-     * 
-     *      - Examples:
-     *         *       1         2         3         4
-     *         *234567890123456789012345678901234567890
-     *         SvcCallbackClass,c:\MyClass
-     * </pre>
-     */
-    public static final String RUNPARM_SVC_CALLBACK_CLASS = "SvcCallbackClass";
+    public static final BatchCommand RUNPARM_SVC_CALLBACK_CLASS = new BatchCommand(
+        "SvcCallbackClass",
+        " SvcCallbackClass\n" + " <p>\n" + " \n" + " <pre>\n"
+            + " \"SvcCallbackClass\": Name of class which implements the\n"
+            + "              mmj.svc.SvcCallback interface in \"callee\"\n"
+            + "              mode. Must have a default constructor.\n" + " \n"
+            + "      NOTE: Do not input this RunParm if you are using\n"
+            + "            SvcCallback in \"caller\" mode because it will\n"
+            + "            override the specific instance of your class\n"
+            + "            which you pass as an argument to\n"
+            + "            BatchMMJ2.generateSvcCallback()\n" + " \n"
+            + " : - Optional. SvcCallback can be provided via a call to\n"
+            + "              BatchMMJ2.setSvcCallback().\n" + " \n"
+            + "  - Default = None.\n" + " \n"
+            + "  - Value1 = SvcCallbackClass class name.\n" + " \n"
+            + "      - Examples:\n"
+            + "         *       1         2         3         4\n"
+            + "         *234567890123456789012345678901234567890\n"
+            + "         SvcCallbackClass,c:\\MyClass\n" + " </pre>\n" + "\n");
 
-    /**
-     * SvcArg
-     * <p>
-     * 
-     * <pre>
-     * "SvcArg": Key/Value Pair loaded into Map which is passed
-     *           to SvcCallback.go(). Key/Value pairs are minimally
-     *           validated to ensure that each Key is at least
-     *           one character long and unique. The Key/Value parm
-     *           contents are parsed using the same separator
-     *           and delimter characters used for the rest of
-     *           the RunParms. Multiple SvcArgs can be input.
-     * 
-     * : - Optional.
-     * 
-     *  - Default = None.
-     * 
-     *  - Value1 = Key. Non-blank string at least one character
-     *             in length. Must not be a duplicate of any
-     *             other SvcArg key.
-     * 
-     *  - Value2 = Value. String zero or more characters in
-     *             length.
-     * 
-     *      - Examples:
-     *         *       1         2         3         4
-     *         *234567890123456789012345678901234567890
-     *         SvcArg,OutFilePrefix,exp
-     *         SvcArg,OutFileSuffix,zip
-     *         SvcArg,ZipOutput,yes
-     * </pre>
-     */
-    public static final String RUNPARM_SVC_ARG = "SvcArg";
+    public static final BatchCommand RUNPARM_SVC_ARG = new BatchCommand(
+        "SvcArg",
+        " SvcArg\n" + " <p>\n" + " \n" + " <pre>\n"
+            + " \"SvcArg\": Key/Value Pair loaded into Map which is passed\n"
+            + "           to SvcCallback.go(). Key/Value pairs are minimally\n"
+            + "           validated to ensure that each Key is at least\n"
+            + "           one character long and unique. The Key/Value parm\n"
+            + "           contents are parsed using the same separator\n"
+            + "           and delimter characters used for the rest of\n"
+            + "           the RunParms. Multiple SvcArgs can be input.\n"
+            + " \n" + " : - Optional.\n" + " \n" + "  - Default = None.\n"
+            + " \n"
+            + "  - Value1 = Key. Non-blank string at least one character\n"
+            + "             in length. Must not be a duplicate of any\n"
+            + "             other SvcArg key.\n" + " \n"
+            + "  - Value2 = Value. String zero or more characters in\n"
+            + "             length.\n" + " \n" + "      - Examples:\n"
+            + "         *       1         2         3         4\n"
+            + "         *234567890123456789012345678901234567890\n"
+            + "         SvcArg,OutFilePrefix,exp\n"
+            + "         SvcArg,OutFileSuffix,zip\n"
+            + "         SvcArg,ZipOutput,yes\n" + " </pre>\n" + "\n");
 
-    /**
-     * SvcCall
-     * <p>
-     * 
-     * <pre>
-     * "SvcCall": Command to perform call to SvcCallback.go().
-     * 
-     *      - Examples:
-     *         *       1         2         3         4
-     *         *234567890123456789012345678901234567890
-     *         SvcCall
-     * </pre>
-     */
-    public static final String RUNPARM_SVC_CALL = "SvcCall";
+    public static final BatchCommand RUNPARM_SVC_CALL = new BatchCommand(
+        "SvcCall",
+        " SvcCall\n" + " <p>\n" + " \n" + " <pre>\n"
+            + " \"SvcCall\": Command to perform call to SvcCallback.go().\n"
+            + " \n" + "      - Examples:\n"
+            + "         *       1         2         3         4\n"
+            + "         *234567890123456789012345678901234567890\n"
+            + "         SvcCall\n" + " </pre>\n" + "\n");
 
     // ----------------------------------------------------------
     // Commands for mmj.util.GMFFBoss interface
     // ----------------------------------------------------------
 
-    /**
-     * GMFFExportParms command.
-     * 
-     * <pre>
-     * 
-     * - Optional. Default values are shown above. Modifications
-     *   to the defaults as well as additional settings for new
-     *   export types are made with this RunParm. Validation is
-     *   deferred until GMFF Initialization except for the number
-     *   of RunParm parameters -- i.e. use of this RunParm does not
-     *   trigger GMFF Initialization.
-     * 
-     * - May appear anywhere after the "LoadFile" RunParm
-     *   but preferably the GMFF RunParms -- if used at
-     *   all -- appear just prior to starting the Proof
-     *   Assistant. For testing purposes, if input Proof
-     *   Worksheet files are used and they contain Work
-     *   Variables then the GMFF RunParms should appear
-     *   after the WorkVar RunParms.
-     * 
-     * - Value1     = Export Type (Unicode or .gif)
-     *   - defaults: althtml and html
-     *   - Export Type must be unique. It is the key in the export
-     *     parms (and text escapes) lists built using default
-     *     settings merged with the input RunParms GMFFExportParms
-     *     entries.
-     *   - A second GMFFExportParms RunParm with the same Export
-     *     Type updates the first.
-     * 
-     * - Value2     = on/off
-     *   - default ON
-     *   - ON or OFF to enable/disable this export type.
-     *   - Note that by default, both html and althtml are ON.
-     *   - Setting all export types OFF disables GMFF exports.
-     *   - If OFF the rest of the input parameters are not validated
-     *     or stored.
-     * 
-     * - Value3     = Typesetting Definition Keyword in .mm file
-     *               (in the $t typesetting comment) for this export.
-     *   - defaults: althtmldef and htmldef (or latex but latex is
-     *     not supported by the GMFF Model files provided and only
-     *     Model A is coded into the program.)
-     * 
-     * - Value4     = Export Directory.
-     *   - defaults: gmff\althtml and gmff\html
-     *   - Directory where exports are written. Also, gmff\html
-     *     contains .gif files for symbols.
-     * 
-     * - Value5     = export File Type
-     *   - default: .html (.html or .htm might be good choices :-)
-     * 
-     * - Value6     = GMFF Models Directory -- Directory containing
-     *                html fragment files serving as models for exports.
-     *   - defaults: gmff\althtml\models and GMFF\html\models
-     * 
-     * - Value7     = Model Id. Only "A" is valid now.
-     *   - defaults: Model Id."A"
-     * 
-     * - Value8     = Charset Encoding name.
-     *   - default: ISO-8859-1
-     *   - Must match the html fragment for the specified Model Id
-     *     which contains the html <head> keyword...but the program
-     *     does not validate this! Model A specifies ISO-8859-1
-     *     (same as Metamath Proof Explorer).
-     *   - Valid charset encodings on all Java platforms are:
-     *     - US-ASCII
-     *     - ISO-8859-1
-     *     - UTF-8
-     *     - UTF-16BE
-     *     - UTF-16LE
-     *     - UTF-16
-     * 
-     *  - Value9 = OutputFileName 
-     * 
-     *              Name of output file minus the file type. 
-     *              Optional. 
-     * 
-     *              - If not specified the output file name is 
-     *                constructed from the proof theorem's label 
-     *                + the Export File Type. 
-     * 
-     *                - Note! The OutputFileName applies to all 
-     *                  exports, including those via the 
-     *                  GMFFExportTheorem and GMFFExportFromFolder 
-     *                  RunParms in addition to ProofAsstGUI 
-     *                  export requests. To export to individual 
-     *                  theorem-named files you must input a 
-     *                  new GMFEExportTheorems RunParm!!! 
-     * 
-     *              - If specified must not contain any 
-     *                whitespace characters, or '/' or '\' or ':' 
-     *                characters (for safety.) 
-     * 
-     *                - All/any exported Proof Worksheets will be 
-     *                  output to the named file suffixed with the 
-     *                  GMFFExportParms file type -- except that 
-     *                  the GMFFExportTheorem and 
-     *                  GMFFExportFromFolder AppendFileName 
-     *                  parameter overrides the OutputFileName 
-     *                  parameter on the GMFFExportParms RunParm! 
-     * 
-     * 
-     * - NOTE: There is nothing in the GMFF program code specific
-     *         to html. All html-specific information is external
-     *         to the code, and is specified via the GMFF RunParms,
-     *         the GMFF \models directory files, and the Metamath
-     *         $t typesetting definitions.
-     * 
-     *         - Since mmj2 allows you to input more than one
-     *           LoadFile RunParm, you could create an extra $t
-     *           comment in a second input .mm file and output
-     *           export data in whatever format you desire...
-     *           the only proviso being that the GMFF code knows
-     *           the names of the \models files for Model A. So
-     *           either your extra export type must match the
-     *           pattern of \models files (with regards to the
-     *           parts which are filled in by the code vs. what
-     *           is in the fragments), or another model would
-     *           need to be added to the GMFF code.
-     * 
-     *           - Model A is a "minimalist" version of a webpage
-     *             which typesets only proof step formulas plus the
-     *             theorem label, which is output as text but is
-     *             treated as a variable in the model.)
-     * 
-     *           - The one thing you cannot do with this design is
-     *             export to a language which is based on the formula
-     *             parse trees, for example MathML. Exporting and
-     *             typesetting based on parse trees -- as opposed to
-     *             formulas comprised of sequences of symbols -- would
-     *             require extra code in GMFF.
-     * 
-     *      - Examples (these are the defaults):
-     *         *       1         2         3         4
-     *         *234567890123456789012345678901234567890
-     *         GMFFExportParms,althtml,ON,althtmldef,gmff\althtml,.html,gmff\althtml\models,A,ISO-8859-1,general
-     *         GMFFExportParms,html,ON,htmldef,gmff\html,.html,gmff\html\models,A,ISO-8859-1,general
-     * </pre>
-     */
-    public static final String RUNPARM_GMFF_EXPORT_PARMS = "GMFFExportParms";
+    public static final BatchCommand RUNPARM_GMFF_EXPORT_PARMS = new BatchCommand(
+        "GMFFExportParms",
+        " GMFFExportParms command.\n" + " \n" + " <pre>\n" + " \n"
+            + " - Optional. Default values are shown above. Modifications\n"
+            + "   to the defaults as well as additional settings for new\n"
+            + "   export types are made with this RunParm. Validation is\n"
+            + "   deferred until GMFF Initialization except for the number\n"
+            + "   of RunParm parameters -- i.e. use of this RunParm does not\n"
+            + "   trigger GMFF Initialization.\n" + " \n"
+            + " - May appear anywhere after the \"LoadFile\" RunParm\n"
+            + "   but preferably the GMFF RunParms -- if used at\n"
+            + "   all -- appear just prior to starting the Proof\n"
+            + "   Assistant. For testing purposes, if input Proof\n"
+            + "   Worksheet files are used and they contain Work\n"
+            + "   Variables then the GMFF RunParms should appear\n"
+            + "   after the WorkVar RunParms.\n" + " \n"
+            + " - Value1     = Export Type (Unicode or .gif)\n"
+            + "   - defaults: althtml and html\n"
+            + "   - Export Type must be unique. It is the key in the export\n"
+            + "     parms (and text escapes) lists built using default\n"
+            + "     settings merged with the input RunParms GMFFExportParms\n"
+            + "     entries.\n"
+            + "   - A second GMFFExportParms RunParm with the same Export\n"
+            + "     Type updates the first.\n" + " \n"
+            + " - Value2     = on/off\n" + "   - default ON\n"
+            + "   - ON or OFF to enable/disable this export type.\n"
+            + "   - Note that by default, both html and althtml are ON.\n"
+            + "   - Setting all export types OFF disables GMFF exports.\n"
+            + "   - If OFF the rest of the input parameters are not validated\n"
+            + "     or stored.\n" + " \n"
+            + " - Value3     = Typesetting Definition Keyword in .mm file\n"
+            + "               (in the $t typesetting comment) for this export.\n"
+            + "   - defaults: althtmldef and htmldef (or latex but latex is\n"
+            + "     not supported by the GMFF Model files provided and only\n"
+            + "     Model A is coded into the program.)\n" + " \n"
+            + " - Value4     = Export Directory.\n"
+            + "   - defaults: gmff\\althtml and gmff\\html\n"
+            + "   - Directory where exports are written. Also, gmff\\html\n"
+            + "     contains .gif files for symbols.\n" + " \n"
+            + " - Value5     = export File Type\n"
+            + "   - default: .html (.html or .htm might be good choices :-)\n"
+            + " \n"
+            + " - Value6     = GMFF Models Directory -- Directory containing\n"
+            + "                html fragment files serving as models for exports.\n"
+            + "   - defaults: gmff\\althtml\\models and GMFF\\html\\models\n"
+            + " \n" + " - Value7     = Model Id. Only \"A\" is valid now.\n"
+            + "   - defaults: Model Id.\"A\"\n" + " \n"
+            + " - Value8     = Charset Encoding name.\n"
+            + "   - default: ISO-8859-1\n"
+            + "   - Must match the html fragment for the specified Model Id\n"
+            + "     which contains the html <head> keyword...but the program\n"
+            + "     does not validate this! Model A specifies ISO-8859-1\n"
+            + "     (same as Metamath Proof Explorer).\n"
+            + "   - Valid charset encodings on all Java platforms are:\n"
+            + "     - US-ASCII\n" + "     - ISO-8859-1\n" + "     - UTF-8\n"
+            + "     - UTF-16BE\n" + "     - UTF-16LE\n" + "     - UTF-16\n"
+            + " \n" + "  - Value9 = OutputFileName \n" + " \n"
+            + "              Name of output file minus the file type. \n"
+            + "              Optional. \n" + " \n"
+            + "              - If not specified the output file name is \n"
+            + "                constructed from the proof theorem's label \n"
+            + "                + the Export File Type. \n" + " \n"
+            + "                - Note! The OutputFileName applies to all \n"
+            + "                  exports, including those via the \n"
+            + "                  GMFFExportTheorem and GMFFExportFromFolder \n"
+            + "                  RunParms in addition to ProofAsstGUI \n"
+            + "                  export requests. To export to individual \n"
+            + "                  theorem-named files you must input a \n"
+            + "                  new GMFEExportTheorems RunParm!!! \n" + " \n"
+            + "              - If specified must not contain any \n"
+            + "                whitespace characters, or '/' or '\\' or ':' \n"
+            + "                characters (for safety.) \n" + " \n"
+            + "                - All/any exported Proof Worksheets will be \n"
+            + "                  output to the named file suffixed with the \n"
+            + "                  GMFFExportParms file type -- except that \n"
+            + "                  the GMFFExportTheorem and \n"
+            + "                  GMFFExportFromFolder AppendFileName \n"
+            + "                  parameter overrides the OutputFileName \n"
+            + "                  parameter on the GMFFExportParms RunParm! \n"
+            + " \n" + " \n"
+            + " - NOTE: There is nothing in the GMFF program code specific\n"
+            + "         to html. All html-specific information is external\n"
+            + "         to the code, and is specified via the GMFF RunParms,\n"
+            + "         the GMFF \\models directory files, and the Metamath\n"
+            + "         $t typesetting definitions.\n" + " \n"
+            + "         - Since mmj2 allows you to input more than one\n"
+            + "           LoadFile RunParm, you could create an extra $t\n"
+            + "           comment in a second input .mm file and output\n"
+            + "           export data in whatever format you desire...\n"
+            + "           the only proviso being that the GMFF code knows\n"
+            + "           the names of the \\models files for Model A. So\n"
+            + "           either your extra export type must match the\n"
+            + "           pattern of \\models files (with regards to the\n"
+            + "           parts which are filled in by the code vs. what\n"
+            + "           is in the fragments), or another model would\n"
+            + "           need to be added to the GMFF code.\n" + " \n"
+            + "           - Model A is a \"minimalist\" version of a webpage\n"
+            + "             which typesets only proof step formulas plus the\n"
+            + "             theorem label, which is output as text but is\n"
+            + "             treated as a variable in the model.)\n" + " \n"
+            + "           - The one thing you cannot do with this design is\n"
+            + "             export to a language which is based on the formula\n"
+            + "             parse trees, for example MathML. Exporting and\n"
+            + "             typesetting based on parse trees -- as opposed to\n"
+            + "             formulas comprised of sequences of symbols -- would\n"
+            + "             require extra code in GMFF.\n" + " \n"
+            + "      - Examples (these are the defaults):\n"
+            + "         *       1         2         3         4\n"
+            + "         *234567890123456789012345678901234567890\n"
+            + "         GMFFExportParms,althtml,ON,althtmldef,gmff\\althtml,.html,gmff\\althtml\\models,A,ISO-8859-1,general\n"
+            + "         GMFFExportParms,html,ON,htmldef,gmff\\html,.html,gmff\\html\\models,A,ISO-8859-1,general\n"
+            + " </pre>\n" + "\n");
 
-/**
-     * GMFFUserTextEscapes command.
-     * <pre>
-     * - Optional:
-     *   - These "escapes" convert certain output text characters
-     *     to an alternative character sequence that represents
-     *     the escaped text characters in the output language
-     *     (e.g. html).
-     * 
-     *     - Escapes are necessary because certain text characters
-     *       which may be used in a Proof Worksheet have special,
-     *       non-text significance in html. Characters such as '&',
-     *     '>', '<', etc. are used in the html language.
-     * 
-     *     - The space character is escaped into "&nbsp;" so that
-     *       Proof Worksheet text spacing is maintained (otherwise
-     *       browsers would collapse or ignore output spaces in
-     *       certain situations.)
-     * 
-     * - Value1 - Export Type (Unicode or .gif).
-     *   - Defaults: althtml and html
-     *   - Must match the Export Type on one of the GMFFExportParms
-     *     RunParms or the default GMFFExportParms
-     * 
-     * - ValueN - Decimal number of Metamath ASCII character
-     *            to be "escaped" in the output html file.
-     * - ValueN+1
-     *          - Character string to replace escaped character.
-     * 
-     * - Default Escape Pairs (for both html and althtml):
-     *   -  32 (' ') -> "&nbsp;"
-     *   -  34 ('"') -> "&quot;"
-     *   -  38 ('&') -> "&amp;"
-     *   -  60 ('<') -> "&lt;"
-     *   -  62 ('>') -> "&gt;"
-     * 
-     * - NOTE: User Text to be "escaped" is whatever text
-     *         in the Proof Worksheet is not "typeset" using
-     *         the Metamath $t typesetting definitions --
-     *         and any mmj2 Proof Worksheet text stored in
-     *         a \models directory (e.g. Proof Worksheet Header
-     *         text contains both "<" and ">", which are stored
-     *         in the \models directory in escaped format
-     *         (so it does not need to be escaped again.)
-     * 
-     *      - Examples (these are the defaults):
-     *         *       1         2         3         4
-     *         *234567890123456789012345678901234567890
-     *         GMFFUserTextEscapes,html,32,"&nbsp;",34,"&quot;",38,"&amp;",60,"&lt;",62,"&gt;" 
-     *         GMFFUserTextEscapes,althtml,32,"&nbsp;",34,"&quot;",38,"&amp;",60,"&lt;",62,"&gt;"
-     * </pre>
-     */
-    public static final String RUNPARM_GMFF_USER_TEXT_ESCAPES = "GMFFUserTextEscapes";
+    public static final BatchCommand RUNPARM_GMFF_USER_TEXT_ESCAPES = new BatchCommand(
+        "GMFFUserTextEscapes",
+        " GMFFUserTextEscapes command.\n" + " <pre>\n" + " - Optional:\n"
+            + "   - These \"escapes\" convert certain output text characters\n"
+            + "     to an alternative character sequence that represents\n"
+            + "     the escaped text characters in the output language\n"
+            + "     (e.g. html).\n" + " \n"
+            + "     - Escapes are necessary because certain text characters\n"
+            + "       which may be used in a Proof Worksheet have special,\n"
+            + "       non-text significance in html. Characters such as '&',\n"
+            + "     '>', '<', etc. are used in the html language.\n" + " \n"
+            + "     - The space character is escaped into \"&nbsp;\" so that\n"
+            + "       Proof Worksheet text spacing is maintained (otherwise\n"
+            + "       browsers would collapse or ignore output spaces in\n"
+            + "       certain situations.)\n" + " \n"
+            + " - Value1 - Export Type (Unicode or .gif).\n"
+            + "   - Defaults: althtml and html\n"
+            + "   - Must match the Export Type on one of the GMFFExportParms\n"
+            + "     RunParms or the default GMFFExportParms\n" + " \n"
+            + " - ValueN - Decimal number of Metamath ASCII character\n"
+            + "            to be \"escaped\" in the output html file.\n"
+            + " - ValueN+1\n"
+            + "          - Character string to replace escaped character.\n"
+            + " \n" + " - Default Escape Pairs (for both html and althtml):\n"
+            + "   -  32 (' ') -> \"&nbsp;\"\n"
+            + "   -  34 ('\"') -> \"&quot;\"\n"
+            + "   -  38 ('&') -> \"&amp;\"\n" + "   -  60 ('<') -> \"&lt;\"\n"
+            + "   -  62 ('>') -> \"&gt;\"\n" + " \n"
+            + " - NOTE: User Text to be \"escaped\" is whatever text\n"
+            + "         in the Proof Worksheet is not \"typeset\" using\n"
+            + "         the Metamath $t typesetting definitions --\n"
+            + "         and any mmj2 Proof Worksheet text stored in\n"
+            + "         a \\models directory (e.g. Proof Worksheet Header\n"
+            + "         text contains both \"<\" and \">\", which are stored\n"
+            + "         in the \\models directory in escaped format\n"
+            + "         (so it does not need to be escaped again.)\n" + " \n"
+            + "      - Examples (these are the defaults):\n"
+            + "         *       1         2         3         4\n"
+            + "         *234567890123456789012345678901234567890\n"
+            + "         GMFFUserTextEscapes,html,32,\"&nbsp;\",34,\"&quot;\",38,\"&amp;\",60,\"&lt;\",62,\"&gt;\" \n"
+            + "         GMFFUserTextEscapes,althtml,32,\"&nbsp;\",34,\"&quot;\",38,\"&amp;\",60,\"&lt;\",62,\"&gt;\"\n"
+            + " </pre>\n" + "\n");
 
-    /**
-     * GMFFUserExportChoice command.
-     * 
-     * <pre>
-     * - Optional:
-     *   - These "escapes" convert certain output text characters
-     *     to an alternative character sequence that represents
-     *     the escaped text characters in the output language
-     *     (e.g. html).
-     * 
-     * - Value1 - Export Type (Unicode or .gif).
-     *   - Defaults: althtml and html
-     *   - Must match the Export Type on one of the GMFFExportParms
-     *     RunParms or the default GMFFExportParms
-     * 
-     *      - Examples ("ALL" is the default):
-     *         *       1         2         3         4
-     *         *234567890123456789012345678901234567890
-     *         GMFFUserExportChoice,ALL 
-     *         GMFFUserExportChoice,html 
-     *         GMFFUserExportChoice,althtml
-     * </pre>
-     */
-    public static final String RUNPARM_GMFF_USER_EXPORT_CHOICE = "GMFFUserExportChoice";
+    public static final BatchCommand RUNPARM_GMFF_USER_EXPORT_CHOICE = new BatchCommand(
+        "GMFFUserExportChoice",
+        " GMFFUserExportChoice command.\n" + " \n" + " <pre>\n"
+            + " - Optional:\n"
+            + "   - These \"escapes\" convert certain output text characters\n"
+            + "     to an alternative character sequence that represents\n"
+            + "     the escaped text characters in the output language\n"
+            + "     (e.g. html).\n" + " \n"
+            + " - Value1 - Export Type (Unicode or .gif).\n"
+            + "   - Defaults: althtml and html\n"
+            + "   - Must match the Export Type on one of the GMFFExportParms\n"
+            + "     RunParms or the default GMFFExportParms\n" + " \n"
+            + "      - Examples (\"ALL\" is the default):\n"
+            + "         *       1         2         3         4\n"
+            + "         *234567890123456789012345678901234567890\n"
+            + "         GMFFUserExportChoice,ALL \n"
+            + "         GMFFUserExportChoice,html \n"
+            + "         GMFFUserExportChoice,althtml\n" + " </pre>\n" + "\n");
 
-    /**
-     * GMFFInitialize command.
-     * 
-     * <pre>
-     * - Optional. Forces initialization or re-initialization
-     *             using whatever GMFF RunParm options, default
-     *             settings and Metamath $t typesetting definitions have
-     *             been input.
-     *        - NOTE: GMFFInitialize prints an audit message showing the final set
-     *        of parms in effect: selected Exporter ExportParms,
-     *        UserTextEscapes and UserExportChoice ... plus
-     *        typeset definition symbol counts by def keyword.
-     * 
-     *  - The audit report is printed only if GMFF initialization is
-     *    successful.
-     * 
-     *  - May appear anywhere after the "LoadFile" RunParm
-     *    but preferably the GMFF RunParms -- if used at
-     *    all -- appear just prior to starting the Proof
-     *    Assistant. For testing purposes, if input Proof
-     *    Worksheet files are used and they contain Work
-     *    Variables then the GMFF RunParms should appear
-     *    after the WorkVar RunParms.
-     * 
-     * - If GMFFInitialize is not used then initialization
-     *   takes place only if/when the first GMFF export is
-     *   attempted. Reinitialization can occur if one or
-     *   more additional LoadFile commands have executed
-     *   since initialization and new Metamath $t typsetting
-     *   definitions have been input. (And of course, the
-     *   "Clear" RunParms resets all state variables, which
-     *   would force reinitialization if additional LoadFile
-     *   commands and GMFF export processing were to occur.)
-     * 
-     * - Initialization may result in error messages about
-     *   the contents of the input .mm Metamath file's $t
-     *   typesetting commands, as well as any other start-up
-     *   errors from GMFF.)
-     * 
-     *  - Default = N/A -- GMFF initialization is automatic.
-     * 
-     * 
-     * - Value1 -  "PrintTypesettingDefinitions" or spaces.
-     *   - Optional
-     *   - Prints the defined symbols and their definitions (replacement
-     *     text.)
-     * 
-     * 
-     *      - Examples:
-     *         *       1         2         3         4
-     *         *234567890123456789012345678901234567890
-     *         GMFFInitialize
-     *         GMFFInitialize,PrintTypesettingDefinitions
-     * </pre>
-     */
-    public static final String RUNPARM_GMFF_INITIALIZE = "GMFFInitialize";
+    public static final BatchCommand RUNPARM_GMFF_INITIALIZE = new BatchCommand(
+        "GMFFInitialize",
+        " GMFFInitialize command.\n" + " \n" + " <pre>\n"
+            + " - Optional. Forces initialization or re-initialization\n"
+            + "             using whatever GMFF RunParm options, default\n"
+            + "             settings and Metamath $t typesetting definitions have\n"
+            + "             been input.\n"
+            + "        - NOTE: GMFFInitialize prints an audit message showing the final set\n"
+            + "        of parms in effect: selected Exporter ExportParms,\n"
+            + "        UserTextEscapes and UserExportChoice ... plus\n"
+            + "        typeset definition symbol counts by def keyword.\n"
+            + " \n"
+            + "  - The audit report is printed only if GMFF initialization is\n"
+            + "    successful.\n" + " \n"
+            + "  - May appear anywhere after the \"LoadFile\" RunParm\n"
+            + "    but preferably the GMFF RunParms -- if used at\n"
+            + "    all -- appear just prior to starting the Proof\n"
+            + "    Assistant. For testing purposes, if input Proof\n"
+            + "    Worksheet files are used and they contain Work\n"
+            + "    Variables then the GMFF RunParms should appear\n"
+            + "    after the WorkVar RunParms.\n" + " \n"
+            + " - If GMFFInitialize is not used then initialization\n"
+            + "   takes place only if/when the first GMFF export is\n"
+            + "   attempted. Reinitialization can occur if one or\n"
+            + "   more additional LoadFile commands have executed\n"
+            + "   since initialization and new Metamath $t typsetting\n"
+            + "   definitions have been input. (And of course, the\n"
+            + "   \"Clear\" RunParms resets all state variables, which\n"
+            + "   would force reinitialization if additional LoadFile\n"
+            + "   commands and GMFF export processing were to occur.)\n" + " \n"
+            + " - Initialization may result in error messages about\n"
+            + "   the contents of the input .mm Metamath file's $t\n"
+            + "   typesetting commands, as well as any other start-up\n"
+            + "   errors from GMFF.)\n" + " \n"
+            + "  - Default = N/A -- GMFF initialization is automatic.\n" + " \n"
+            + " \n"
+            + " - Value1 -  \"PrintTypesettingDefinitions\" or spaces.\n"
+            + "   - Optional\n"
+            + "   - Prints the defined symbols and their definitions (replacement\n"
+            + "     text.)\n" + " \n" + " \n" + "      - Examples:\n"
+            + "         *       1         2         3         4\n"
+            + "         *234567890123456789012345678901234567890\n"
+            + "         GMFFInitialize\n"
+            + "         GMFFInitialize,PrintTypesettingDefinitions\n"
+            + " </pre>\n" + "\n");
 
-    /**
-     * GMFFParseMetamathTypesetComment command.
-     * 
-     * <pre>
-     * - Optional. Primarily used for testing. Executes
-     *             standalone parse of a single Metamath $t comment
-     *             (does not affect the state of GMFF or anything
-     *             else -- except Messages.)
-     * 
-     *             NOTE: the input file should contain only
-     *             the $t comment!
-     * 
-     *             May appear anywhere after the "LoadFile" RunParm.
-     *             (Although it is "standalone" and affects only the
-     *             Messages and GMFFManager objects, the LoadFile
-     *             command creates the LogicalSystem object which holds
-     *             the GMFFManager object.)
-     * 
-     *             A dump of the parse results is generated along with
-     *             statistics. The dump is in the form of a very long
-     *             "info" message.
-     * 
-     *  - Default = N/A -- used for batch testing.
-     * 
-     *  - Value1 = Typesetting Definition Keyword in .mm file
-     *              (in the $t typesetting comment) to be selected
-     *             for parsing.
-     * 
-     *  - Value2 = directory containing MM file
-     * 
-     *  - Value3 = Metamath .mm file containing just a $t comment.
-     * 
-     * 
-     *  - Value4 -  "PRINT" or spaces.
-     *   - Optional
-     *   - Prints the input file as well as the parsed symbols and
-     *     their definitions (replacement text.)
-     * 
-     *      - Examples:
-     *         *       1         2         3         4
-     *         *234567890123456789012345678901234567890
-     *         GMFFParseMetamathTypesetComment,htmldef,mydirectory,mytypesetdefs.mm
-     *         GMFFParseMetamathTypesetComment,htmldef,mydirectory,mytypesetdefs.mm,PRINT
-     * </pre>
-     */
-    public static final String RUNPARM_GMFF_PARSE_METAMATH_TYPESET_COMMENT = "GMFFParseMetamathTypesetComment";
+    public static final BatchCommand RUNPARM_GMFF_PARSE_METAMATH_TYPESET_COMMENT = new BatchCommand(
+        "GMFFParseMetamathTypesetComment",
+        " GMFFParseMetamathTypesetComment command.\n" + " \n" + " <pre>\n"
+            + " - Optional. Primarily used for testing. Executes\n"
+            + "             standalone parse of a single Metamath $t comment\n"
+            + "             (does not affect the state of GMFF or anything\n"
+            + "             else -- except Messages.)\n" + " \n"
+            + "             NOTE: the input file should contain only\n"
+            + "             the $t comment!\n" + " \n"
+            + "             May appear anywhere after the \"LoadFile\" RunParm.\n"
+            + "             (Although it is \"standalone\" and affects only the\n"
+            + "             Messages and GMFFManager objects, the LoadFile\n"
+            + "             command creates the LogicalSystem object which holds\n"
+            + "             the GMFFManager object.)\n" + " \n"
+            + "             A dump of the parse results is generated along with\n"
+            + "             statistics. The dump is in the form of a very long\n"
+            + "             \"info\" message.\n" + " \n"
+            + "  - Default = N/A -- used for batch testing.\n" + " \n"
+            + "  - Value1 = Typesetting Definition Keyword in .mm file\n"
+            + "              (in the $t typesetting comment) to be selected\n"
+            + "             for parsing.\n" + " \n"
+            + "  - Value2 = directory containing MM file\n" + " \n"
+            + "  - Value3 = Metamath .mm file containing just a $t comment.\n"
+            + " \n" + " \n" + "  - Value4 -  \"PRINT\" or spaces.\n"
+            + "   - Optional\n"
+            + "   - Prints the input file as well as the parsed symbols and\n"
+            + "     their definitions (replacement text.)\n" + " \n"
+            + "      - Examples:\n"
+            + "         *       1         2         3         4\n"
+            + "         *234567890123456789012345678901234567890\n"
+            + "         GMFFParseMetamathTypesetComment,htmldef,mydirectory,mytypesetdefs.mm\n"
+            + "         GMFFParseMetamathTypesetComment,htmldef,mydirectory,mytypesetdefs.mm,PRINT\n"
+            + " </pre>\n" + "\n");
 
-    /**
-     * GMFFExportFromFolder command.
-     * 
-     * <pre>
-     * - Optional. Primarily used for testing. Exports Proof Worksheet
-     *             file(s) from a given directory using the current
-     *             parameter settings (export parms, escapes, etc.)
-     * 
-     *             May appear anywhere after the "LoadFile" RunParm,
-     *             but should appear after Work Var allocations, at
-     *             least.
-     * 
-     *  - Default = N/A -- used for batch testing.
-     * 
-     *  - Value1 = directory containing Proof Worksheet files
-     * 
-     *  - Value2 = theorem label or "*" (all). If theorem label
-     *             input then it is the starting point of the
-     *             export process, which will export the Max
-     *             Number of files beginning at that label.
-     *             If "*" input then the export begins at the
-     *             first label. Either way, files are exported
-     *             in lexicographic order -- i.e. alphabetically.
-     * 
-     *  - Value3 = file type of input Proof Worksheet files
-     *             (normally either .mmp or .mmt)
-     * 
-     *  - Value4 = Max Number of proofs to export. Required.
-     * 
-     *  - Value5 = Append File Name. Name of output file minus
-     *             the file type. Optional. If specified must
-     *             not contain any whitespace characters, or '/'
-     *             or '\' or ':' characters (for safety.) All
-     *             exported Proof Worksheets will be appended
-     *             to the named file (written at the end instead
-     *             of the beginning.) Used for regression testing.
-     * 
-     *      - Examples:
-     *         *       1         2         3         4
-     *         *234567890123456789012345678901234567890
-     *         GMFFExportFromFolder,myproofs,syl,.mmp,1
-     *         GMFFExportFromFolder,myproofs,*,.mmt,100
-     *         GMFFExportFromFolder,myproofs,a2i,.mmt,5,Test20110915a
-     * </pre>
-     */
-    public static final String RUNPARM_GMFF_EXPORT_FROM_FOLDER = "GMFFExportFromFolder";
+    public static final BatchCommand RUNPARM_GMFF_EXPORT_FROM_FOLDER = new BatchCommand(
+        "GMFFExportFromFolder",
+        " GMFFExportFromFolder command.\n" + " \n" + " <pre>\n"
+            + " - Optional. Primarily used for testing. Exports Proof Worksheet\n"
+            + "             file(s) from a given directory using the current\n"
+            + "             parameter settings (export parms, escapes, etc.)\n"
+            + " \n"
+            + "             May appear anywhere after the \"LoadFile\" RunParm,\n"
+            + "             but should appear after Work Var allocations, at\n"
+            + "             least.\n" + " \n"
+            + "  - Default = N/A -- used for batch testing.\n" + " \n"
+            + "  - Value1 = directory containing Proof Worksheet files\n"
+            + " \n"
+            + "  - Value2 = theorem label or \"*\" (all). If theorem label\n"
+            + "             input then it is the starting point of the\n"
+            + "             export process, which will export the Max\n"
+            + "             Number of files beginning at that label.\n"
+            + "             If \"*\" input then the export begins at the\n"
+            + "             first label. Either way, files are exported\n"
+            + "             in lexicographic order -- i.e. alphabetically.\n"
+            + " \n" + "  - Value3 = file type of input Proof Worksheet files\n"
+            + "             (normally either .mmp or .mmt)\n" + " \n"
+            + "  - Value4 = Max Number of proofs to export. Required.\n" + " \n"
+            + "  - Value5 = Append File Name. Name of output file minus\n"
+            + "             the file type. Optional. If specified must\n"
+            + "             not contain any whitespace characters, or '/'\n"
+            + "             or '\\' or ':' characters (for safety.) All\n"
+            + "             exported Proof Worksheets will be appended\n"
+            + "             to the named file (written at the end instead\n"
+            + "             of the beginning.) Used for regression testing.\n"
+            + " \n" + "      - Examples:\n"
+            + "         *       1         2         3         4\n"
+            + "         *234567890123456789012345678901234567890\n"
+            + "         GMFFExportFromFolder,myproofs,syl,.mmp,1\n"
+            + "         GMFFExportFromFolder,myproofs,*,.mmt,100\n"
+            + "         GMFFExportFromFolder,myproofs,a2i,.mmt,5,Test20110915a\n"
+            + " </pre>\n" + "\n");
 
-    /**
-     * GMFFExportTheorem command.
-     * 
-     * <pre>
-     * - Optional. Primarily used for testing. Exports Proof Worksheet
-     *             file(s) from the loaded Metamath database using
-     *             the current parameter settings (export parms, escapes, etc.)
-     * 
-     *             May appear anywhere after the "LoadFile" RunParm,
-     *             but should appear after Proof Assistant parameters
-     *             initialized if the default Proof Assistant settings
-     *             are not used.
-     * 
-     *  - Default = N/A -- used for batch testing.
-     * 
-     *  - Value1 = theorem label or "*" (all). If theorem label
-     *             input then it is the starting point of the
-     *             export process, which will export the Max
-     *             Number of files beginning at that label.
-     *             If "*" input then the export begins at the
-     *             first label. Either way, files are exported
-     *             in MObj.seq number -- i.e. by order of appearance
-     *             in the loaded Metamath database (LogicalSystem.)
-     * 
-     *  - Value2 = Max Number of proofs to export. Required.
-     * 
-     *  - Value3 = Append File Name. Name of output file minus
-     *             the file type. Optional. If specified must
-     *             not contain any whitespace characters, or '/'
-     *             or '\' or ':' characters (for safety.) All
-     *             exported Proof Worksheets will be appended
-     *             to the named file (written at the end instead
-     *             of the beginning.) Used for regression testing.
-     * 
-     *      - Examples:
-     *         *       1         2         3         4
-     *         *234567890123456789012345678901234567890
-     *         GMFFExportTheorem,syl,1
-     *         GMFFExportTheorem,*,100
-     *         GMFFExportTheorem,syl,100,Test20110915a
-     * </pre>
-     */
-    public static final String RUNPARM_GMFF_EXPORT_THEOREM = "GMFFExportTheorem";
+    public static final BatchCommand RUNPARM_GMFF_EXPORT_THEOREM = new BatchCommand(
+        "GMFFExportTheorem",
+        " GMFFExportTheorem command.\n" + " \n" + " <pre>\n"
+            + " - Optional. Primarily used for testing. Exports Proof Worksheet\n"
+            + "             file(s) from the loaded Metamath database using\n"
+            + "             the current parameter settings (export parms, escapes, etc.)\n"
+            + " \n"
+            + "             May appear anywhere after the \"LoadFile\" RunParm,\n"
+            + "             but should appear after Proof Assistant parameters\n"
+            + "             initialized if the default Proof Assistant settings\n"
+            + "             are not used.\n" + " \n"
+            + "  - Default = N/A -- used for batch testing.\n" + " \n"
+            + "  - Value1 = theorem label or \"*\" (all). If theorem label\n"
+            + "             input then it is the starting point of the\n"
+            + "             export process, which will export the Max\n"
+            + "             Number of files beginning at that label.\n"
+            + "             If \"*\" input then the export begins at the\n"
+            + "             first label. Either way, files are exported\n"
+            + "             in MObj.seq number -- i.e. by order of appearance\n"
+            + "             in the loaded Metamath database (LogicalSystem.)\n"
+            + " \n" + "  - Value2 = Max Number of proofs to export. Required.\n"
+            + " \n"
+            + "  - Value3 = Append File Name. Name of output file minus\n"
+            + "             the file type. Optional. If specified must\n"
+            + "             not contain any whitespace characters, or '/'\n"
+            + "             or '\\' or ':' characters (for safety.) All\n"
+            + "             exported Proof Worksheets will be appended\n"
+            + "             to the named file (written at the end instead\n"
+            + "             of the beginning.) Used for regression testing.\n"
+            + " \n" + "      - Examples:\n"
+            + "         *       1         2         3         4\n"
+            + "         *234567890123456789012345678901234567890\n"
+            + "         GMFFExportTheorem,syl,1\n"
+            + "         GMFFExportTheorem,*,100\n"
+            + "         GMFFExportTheorem,syl,100,Test20110915a\n" + " </pre>\n"
+            + "\n");
+
+    // ----------------------------------------------------------
+    // Commands for mmj.util.MacroBoss
+    // ----------------------------------------------------------
+
+    /** Default macro enabled state = true */
+    public static final boolean RUNPARM_MACRO_ENABLED_DEFAULT = true;
+
+    public static final BatchCommand RUNPARM_MACRO_ENABLED = new BatchCommand(
+        "MacrosEnabled",
+        "*\n" + " MacrosEnabled\n" + " <p>\n" + " <code>\n"
+            + " \"MacrosEnabled\": yes or no.\n" + " <p>\n"
+            + " Set macros on or off, default = yes.\n" + " </code>\n" + "\n");
+
+    public static final BatchCommand RUNPARM_MACRO_FOLDER = new BatchCommand(
+        "MacroFolder",
+        "*\n" + " MacroFolder\n" + " <p>\n" + " <code>\n"
+            + " \"MacroFolder\": directory name, no \"\\\" at end\n"
+            + "                  of name. Must exist.\n" + " <p>\n"
+            + " Optional. Search location for macros. If this\n"
+            + " RunParm is not provided, the current directory is used"
+            + " instead.\n" + " </code>\n" + "\n");
+
+    public static final BatchCommand RUNPARM_MACRO_LANGUAGE = new BatchCommand(
+        "MacroLanguage",
+        " MacroLanguage command.\n" + " \n" + " <pre>\n"
+            + " Set the language for macro scripts. Valid values depend on\n"
+            + " your installation; input an invalid language to see the list\n"
+            + " of possibilities.\n" + "\n"
+            + "  - Value1 = Language name, default 'js', which corresponds to\n"
+            + "             'rhino' on JRE7- and 'nashorn' on JDK8+.\n" + " \n"
+            + "  - Value2 = Default file extension, attached to macros with\n"
+            + "             no specified extensions, default 'js'.\n" + " \n"
+            + "      - Examples:\n"
+            + "         *       1         2         3         4\n"
+            + "         *234567890123456789012345678901234567890\n"
+            + "         MacroLanguage,js,js\n"
+            + "         MacroLanguage,BeanShell,bsh\n"
+            + "         MacroLanguage,jruby,rb\n" + " </pre>\n" + "\n");
+
+    public static final BatchCommand RUNPARM_RUN_MACRO_INIT = new BatchCommand(
+        "RunMacroInitialization",
+        " RunMacroInitialization command.\n" + " \n" + " <pre>\n"
+            + " Run the given macro for initialization. Will replace the\n"
+            + " existing script context if a macro has already been run.\n"
+            + " Optional, default is 'init.js', which is run immediately\n"
+            + " before a call to RunMacro if this command is not run first.\n"
+            + "\n"
+            + "  - Value1 = File name.  Path name is relative to the macro/\n"
+            + "             directory.\n" + " \n" + "      - Examples:\n"
+            + "         *       1         2         3         4\n"
+            + "         *234567890123456789012345678901234567890\n"
+            + "         RunMacroInitialization,init\n" + " </pre>\n" + "\n");
+
+    public static final BatchCommand RUNPARM_RUN_MACRO = new BatchCommand(
+        "RunMacro",
+        " RunMacro command.\n" + " \n" + " <pre>\n"
+            + " : - Optional. Run a BeanShell macro in the macro/ directory.\n"
+            + "               May appear anywhere in the RunParms list.\n"
+            + " \n"
+            + "  - Value1 = File name.  Path name is relative to the macro/"
+            + "             directory.\n" + " \n"
+            + "  - ...    = An arbitrary number of additional parameters are\n"
+            + "             permitted; they are passed unchanged to the macro.\n"
+            + " \n" + "      - Examples:\n"
+            + "         *       1         2         3         4\n"
+            + "         *234567890123456789012345678901234567890\n"
+            + "         RunMacro,echo,Hello World\n" + " </pre>\n" + "\n");
+
+    // ----------------------------------------------------------
+    // Commands for mmj.util.StoreBoss
+    // ----------------------------------------------------------
+
+    public static final BatchCommand RUNPARM_SET_SETTINGS_FILE = new BatchCommand(
+        "SettingsFile",
+        "*\n" + " SettingsFile\n" + " <p>\n"
+            + " \"SettingsFile\": file name relative to mmj2 path.\n" + " <p>\n"
+            + " Set the file for use by 'LoadSettings' and 'SaveSettings'"
+            + " RunParms. Default value is 'store.json'.");
+
+    public static final BatchCommand RUNPARM_DISABLE_SETTINGS = new BatchCommand(
+        "DisableSettings",
+        "*\n" + " DisableSettings\n" + " <p>\n"
+            + " \"DisableSettings\": no options\n" + " <p>\n"
+            + " Turn off the saving and loading of settings to the SettingsFile\n"
+            + " on startup and shutdown. Use SettingsFile RunParm to re-enable.");
+
+    public static final BatchCommand RUNPARM_LOAD_SETTINGS = new BatchCommand(
+        "LoadSettings",
+        "*\n" + " LoadSettings\n" + " <p>\n"
+            + " \"LoadSettings\": file name relative to mmj2 path.\n" + " <p>\n"
+            + " Load settings from the given file if it exists. If no file given,\n"
+            + " use the file set by 'SettingsFile,xxx' RunParm.");
+
+    public static final BatchCommand RUNPARM_SAVE_SETTINGS = new BatchCommand(
+        "SaveSettings",
+        "*\n" + " SaveSettings\n" + " <p>\n"
+            + " \"SaveSettings\": file name relative to mmj2 path.\n" + " <p>\n"
+            + " Save settings to the given file. If no file given,\n"
+            + " use the file set by 'SettingsFile,xxx' RunParm.");
 
     // ----------------------------------------------------------
     // Constants mmj.util.TheoremLoaderBoss
     // ----------------------------------------------------------
 
-    public static final String RUNPARM_THEOREM_LOADER_DJ_VARS_OPTION = "TheoremLoaderDjVarsOption";
-    public static final String RUNPARM_THEOREM_LOADER_MMT_FOLDER = "TheoremLoaderMMTFolder";
-    public static final String RUNPARM_THEOREM_LOADER_AUDIT_MESSAGES = "TheoremLoaderAuditMessages";
-    public static final String RUNPARM_LOAD_THEOREMS_FROM_MMT_FOLDER = "LoadTheoremsFromMMTFolder";
-    public static final String RUNPARM_EXTRACT_THEOREM_TO_MMT_FOLDER = "ExtractTheoremToMMTFolder";
-    public static final String RUNPARM_UNIFY_PLUS_STORE_IN_LOG_SYS_AND_MMT_FOLDER = "UnifyPlusStoreInLogSysAndMMTFolder";
-    public static final String RUNPARM_UNIFY_PLUS_STORE_IN_MMT_FOLDER = "UnifyPlusStoreInMMTFolder";
+    public static final BatchCommand RUNPARM_THEOREM_LOADER_DJ_VARS_OPTION = new BatchCommand(
+        "TheoremLoaderDjVarsOption");
+    public static final BatchCommand RUNPARM_THEOREM_LOADER_MMT_FOLDER = new BatchCommand(
+        "TheoremLoaderMMTFolder");
+    public static final BatchCommand RUNPARM_THEOREM_LOADER_AUDIT_MESSAGES = new BatchCommand(
+        "TheoremLoaderAuditMessages");
+    public static final BatchCommand RUNPARM_LOAD_THEOREMS_FROM_MMT_FOLDER = new BatchCommand(
+        "LoadTheoremsFromMMTFolder");
+    public static final BatchCommand RUNPARM_EXTRACT_THEOREM_TO_MMT_FOLDER = new BatchCommand(
+        "ExtractTheoremToMMTFolder");
+    public static final BatchCommand RUNPARM_UNIFY_PLUS_STORE_IN_LOG_SYS_AND_MMT_FOLDER = new BatchCommand(
+        "UnifyPlusStoreInLogSysAndMMTFolder");
+    public static final BatchCommand RUNPARM_UNIFY_PLUS_STORE_IN_MMT_FOLDER = new BatchCommand(
+        "UnifyPlusStoreInMMTFolder");
 
-    public static final String RUNPARM_THEOREM_LOADER_STORE_FORMULAS_ASIS = "TheoremLoaderStoreFormulasAsIs";
-    public static final String RUNPARM_THEOREM_LOADER_STORE_MM_INDENT_AMT = "TheoremLoaderStoreMMIndentAmt";
-    public static final String RUNPARM_THEOREM_LOADER_STORE_MM_RIGHT_COL = "TheoremLoaderStoreMMRightCol";
+    public static final BatchCommand RUNPARM_THEOREM_LOADER_STORE_FORMULAS_ASIS = new BatchCommand(
+        "TheoremLoaderStoreFormulasAsIs");
+    public static final BatchCommand RUNPARM_THEOREM_LOADER_STORE_MM_INDENT_AMT = new BatchCommand(
+        "TheoremLoaderStoreMMIndentAmt");
+    public static final BatchCommand RUNPARM_THEOREM_LOADER_STORE_MM_RIGHT_COL = new BatchCommand(
+        "TheoremLoaderStoreMMRightCol");
 
     public static final int THEOREM_LOADER_BOSS_FILE_BUFFER_SIZE = 32768;
 
@@ -2789,22 +2376,60 @@ public class UtilConstants {
     public static final String RUNPARM_OPTION_PROOF_ASST_EXPORT_UN_UNIFIED = "un-unified";
 
     /**
-     * Option Value 5 "Randomized" for ProofAsstExportToFile RunParm and Option
-     * Value 4 for ProofAsstBatchTest.
-     * <p>
-     * Means that logical hypotheses should be randomized on exported proof
-     * steps.
-     */
-    public static final String RUNPARM_OPTION_PROOF_ASST_RANDOMIZED = "randomized";
-
-    /**
      * Option Value 5 "NotRandomized" for ProofAsstExportToFile RunParm and
      * Option Value 4 for ProofAsstBatchTest.
      * <p>
-     * Means that logical hypotheses should be not be randomized on exported
-     * proof steps, but left in the original order.
+     * This option is deprecated and means the same as {@link HypsOrder#Correct}
+     * .
      */
-    public static final String RUNPARM_OPTION_PROOF_ASST_NOT_RANDOMIZED = "notrandomized";
+    @Deprecated
+    public static final String RUNPARM_OPTION_PROOF_ASST_NOT_RANDOMIZED = "NotRandomized";
+
+    /**
+     * Option Value 5 "Correct" for ProofAsstExportToFile RunParm and Option
+     * Value 4 for ProofAsstBatchTest.
+     * <p>
+     * This option has the same meaning as notrandomized above
+     * <p>
+     * Means that logical hypotheses should be left in the original order.
+     */
+    public static final String RUNPARM_OPTION_PROOF_ASST_CORRECT = "correct";
+
+    /**
+     * Option Value 5 "Reverse" for ProofAsstExportToFile RunParm and Option
+     * Value 4 for ProofAsstBatchTest.
+     * <p>
+     * Means that logical hypotheses should be emitted in reverse order.
+     */
+    public static final String RUNPARM_OPTION_PROOF_ASST_REVERSE = "reverse";
+
+    /**
+     * Option Value 5 "HalfReverse" for ProofAsstExportToFile RunParm and Option
+     * Value 4 for ProofAsstBatchTest.
+     * <p>
+     * Means that the first half of logical hypotheses should be emitted in
+     * canonical order, but the second part should be emitted in reverse order.
+     */
+    public static final String RUNPARM_OPTION_PROOF_ASST_HALF_REVERSE = "halfreverse";
+
+    /**
+     * Option Value 5 "Autocomplete" for ProofAsstExportToFile RunParm and
+     * Option Value 4 for ProofAsstBatchTest.
+     * <p>
+     * Means that logical hypotheses list should be empty and autocompleted by
+     * autocomplete feature.
+     */
+    public static final String RUNPARM_OPTION_PROOF_ASST_AUTOCOMPLETE = "autocomplete";
+
+    /**
+     * Option Value 5 "SomeOrder" for ProofAsstExportToFile RunParm and Option
+     * Value 4 for ProofAsstBatchTest.
+     * <p>
+     * Means that the logical hypotheses should be emitted in some order,
+     * depending on current debug goals. The order is not fixed and this option
+     * should be used for preformance experements.
+     */
+    public static final String RUNPARM_OPTION_PROOF_ASST_SOME_ORDER = "someorder";
 
     /**
      * Option Value 6 "Print" for ProofAsstExportToFile RunParm and Option Value
@@ -2818,14 +2443,6 @@ public class UtilConstants {
     public static final String RUNPARM_OPTION_PROOF_ASST_PRINT = "Print";
 
     /**
-     * Option Value 6 "NoPrint" for ProofAsstExportToFile RunParm and Option
-     * Value 5 for ProofAsstBatchTest.
-     * <p>
-     * "NoPrint" is the default.
-     */
-    public static final String RUNPARM_OPTION_PROOF_ASST_NO_PRINT = "NoPrint";
-
-    /**
      * Option Value 7 "DeriveFormulas for ProofAsstExportToFile RunParm and
      * Option Value 6 for ProofAsstBatchTest.
      * <p>
@@ -2833,14 +2450,6 @@ public class UtilConstants {
      * up to the Proof Unifier to "Derive" the formulas.
      */
     public static final String RUNPARM_OPTION_PROOF_ASST_DERIVE_FORMULAS = "DeriveFormulas";
-
-    /**
-     * Option Value 7 "NoDeriveFormulas" for ProofAsstExportToFile RunParm and
-     * Option Value 6 for ProofAsstBatchTest.
-     * <p>
-     * "NoDeriveFormulas" is the default.
-     */
-    public static final String RUNPARM_OPTION_PROOF_ASST_NO_DERIVE_FORMULAS = "NoDeriveFormulas";
 
     /**
      * Option Value 7 for ProofAsstBatchTest.
@@ -2851,25 +2460,11 @@ public class UtilConstants {
     public static final String RUNPARM_OPTION_PROOF_ASST_COMPARE_DJS = "CompareDJs";
 
     /**
-     * Option Value 7 for ProofAsstBatchTest.
-     * <p>
-     * "NoCompareDJs" is the default.
-     */
-    public static final String RUNPARM_OPTION_PROOF_ASST_NO_COMPARE_DJS = "NoCompareDJs";
-
-    /**
      * Option Value 8 for ProofAsstBatchTest.
      * <p>
      * Updates generated DjVars pairs after unification.
      */
     public static final String RUNPARM_OPTION_PROOF_ASST_UPDATE_DJS = "UpdateDJs";
-
-    /**
-     * Option Value 8 for ProofAsstBatchTest.
-     * <p>
-     * "NoUpdateDJs" is the default.
-     */
-    public static final String RUNPARM_OPTION_PROOF_ASST_NO_UPDATE_DJS = "NoUpdateDJs";
 
     /**
      * Option Value 9 for ProofAsstBatchTest.
@@ -2879,32 +2474,9 @@ public class UtilConstants {
     public static final String RUNPARM_OPTION_ASCII_RETEST = "AsciiRetest";
 
     /**
-     * Option Value 9 for ProofAsstBatchTest.
-     * <p>
-     * Re-unifies the output Proof Worksheet after unification. NoAsciiRetest is
-     * the default.
-     */
-    public static final String RUNPARM_OPTION_NO_ASCII_RETEST = "NoAsciiRetest";
-
-    /**
      * Option "inherit"
      */
     public static final String RUNPARM_OPTION_INHERIT = "inherit";
-
-    /**
-     * Maximum RGB Color Value = 255
-     */
-    public static final int RUNPARM_OPTION_MAX_RGB_COLOR = 255;
-
-    /**
-     * Minimum RGB Color Value = 0
-     */
-    public static final int RUNPARM_OPTION_MIN_RGB_COLOR = 0;
-
-    /**
-     * Number of RGB color values = 3
-     */
-    public static final int RUNPARM_NBR_RGB_COLOR_VALUES = 3;
 
     /**
      * Default value for OutputVerbosity
@@ -2916,6 +2488,27 @@ public class UtilConstants {
      */
     public static final String RUNPARM_OPTION_ERASE_AND_REDERIVE_FORMULAS = "EraseAndRederiveFormulas";
 
+    /**
+     * Default macro language 'js' corresponds to 'nashorn' on JDK8 and 'rhino'
+     * on older versions.
+     */
+    public static final String RUNPARM_OPTION_MACRO_LANGUAGE = "js";
+
+    /**
+     * Default macro extension.
+     */
+    public static final String RUNPARM_OPTION_MACRO_EXTENSION = "js";
+
+    /**
+     * Default initialization macro.
+     */
+    public static final String RUNPARM_OPTION_INIT_MACRO = "init";
+
+    /**
+     * Default preparation macro.
+     */
+    public static final String RUNPARM_OPTION_PREP_MACRO = "prep";
+
     // ----------------------------------------------------------
     // ----------------------------------------------------------
 
@@ -2923,7 +2516,7 @@ public class UtilConstants {
     // Messages from RunParmFile.java
     // ----------------------------------------------------------
 
-//  OSBSOLETE AS OF MMJ2 PATH ENHANCEMENT
+//  OBSOLETE AS OF MMJ2 PATH ENHANCEMENT
 //  public static final String ERRMSG_RUNPARM_ARG1_ERROR =
 //      "A-UT-0001 First argument must be RunParmFile"
 //      + " filename string";
@@ -3001,166 +2594,133 @@ public class UtilConstants {
     // Messages from Boss.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_FILE_USAGE_ERR_EXISTS_1 = "A-UT-0017 RunParm name ";
-    public static final String ERRMSG_FILE_USAGE_ERR_EXISTS_2 = " file name parm ";
-    public static final String ERRMSG_FILE_USAGE_ERR_EXISTS_3 = " already exists but ";
-    public static final String ERRMSG_FILE_USAGE_ERR_EXISTS_4 = " was specified.";
+    public static final String ERRMSG_RUN_PARM_ERROR = "Error in RunParm %s: ";
 
-    public static final String ERRMSG_FILE_UPDATE_NOT_ALLOWED_1 = "A-UT-0018 RunParm name ";
-    public static final String ERRMSG_FILE_UPDATE_NOT_ALLOWED_2 = " file name parm ";
-    public static final String ERRMSG_FILE_UPDATE_NOT_ALLOWED_3 = " already exists and ";
-    public static final String ERRMSG_FILE_UPDATE_NOT_ALLOWED_4 = " was specified, but the existing file is a directory,"
-        + " or update is not allowed.";
+    public static final String ERRMSG_FILE_USAGE_ERR_EXISTS = "A-UT-0017 "
+        + "File name parm %s already exists but %s was specified.";
 
-    public static final String ERRMSG_FILE_MISC_ERROR_1 = "A-UT-0019 RunParm name ";
-    public static final String ERRMSG_FILE_MISC_ERROR_2 = " file name parm ";
-    public static final String ERRMSG_FILE_MISC_ERROR_3 = " is supposed to be a file name. However, a file error was"
-        + " encountered with the specified name. Message = ";
+    public static final String ERRMSG_FILE_UPDATE_NOT_ALLOWED = "A-UT-0018 "
+        + "File name parm %s already exists and %s was specified,"
+        + " but the existing file is a directory, or update is not allowed.";
 
-    public static final String ERRMSG_FILE_NAME_BLANK_1 = "A-UT-0020 RunParm name ";
-    public static final String ERRMSG_FILE_NAME_BLANK_2 = " value field number ";
-    public static final String ERRMSG_FILE_NAME_BLANK_3 = " is blank or an empty string. Expecting a file name.";
+    public static final String ERRMSG_FILE_MISC_ERROR = "A-UT-0019 "
+        + "File name parm %s is supposed to be a file name. However, a file error was"
+        + " encountered with the specified name. Message = %s";
 
-    public static final String ERRMSG_FILE_USAGE_PARM_UNRECOG_1 = "A-UT-0021 RunParm name ";
-    public static final String ERRMSG_FILE_USAGE_PARM_UNRECOG_2 = " value field number ";
-    public static final String ERRMSG_FILE_USAGE_PARM_UNRECOG_3 = " must equal '";
-    public static final String ERRMSG_FILE_USAGE_PARM_UNRECOG_4 = "' or '";
-    public static final String ERRMSG_FILE_USAGE_PARM_UNRECOG_5 = "'. Value input was '";
-    public static final String ERRMSG_FILE_USAGE_PARM_UNRECOG_6 = "'";
+    public static final String ERRMSG_FILE_NAME_BLANK = "A-UT-0020 Value field "
+        + "number %d is blank or an empty string. Expecting a file name.";
 
-    public static final String ERRMSG_FILE_CHARSET_INVALID_1 = "A-UT-0022 RunParm name ";
-    public static final String ERRMSG_FILE_CHARSET_INVALID_2 = " value field number ";
-    public static final String ERRMSG_FILE_CHARSET_INVALID_3 = " = ";
-    public static final String ERRMSG_FILE_CHARSET_INVALID_4 = " is not a valid Charset name. Message returned by"
-        + " system follows: ";
+    public static final String ERRMSG_FILE_USAGE_PARM_UNRECOG = "A-UT-0021 "
+        + "Value field number %d must equal '%s' or '%s'. Value input was '%s'";
 
-    public static final String ERRMSG_FILE_CHARSET_UNSUPPORTED_1 = "A-UT-0023 RunParm name ";
-    public static final String ERRMSG_FILE_CHARSET_UNSUPPORTED_2 = " value field number ";
-    public static final String ERRMSG_FILE_CHARSET_UNSUPPORTED_3 = " = ";
-    public static final String ERRMSG_FILE_CHARSET_UNSUPPORTED_4 = " is a valid Charset name but is not"
+    public static final String ERRMSG_FILE_CHARSET_INVALID = "A-UT-0022 "
+        + "Value field number %d = %s is not a valid Charset name. Message "
+        + "returned by system follows: %s";
+
+    public static final String ERRMSG_FILE_CHARSET_UNSUPPORTED = "A-UT-0023 "
+        + "Value field number %d = %s is a valid Charset name but is not"
         + " supported by your Java system environment.";
 
-    public static final String ERRMSG_RUNPARM_NOT_ENOUGH_FIELDS_1 = "A-UT-0024 RunParm name ";
-    public static final String ERRMSG_RUNPARM_NOT_ENOUGH_FIELDS_2 = " must have at least ";
-    public static final String ERRMSG_RUNPARM_NOT_ENOUGH_FIELDS_3 = " value fields";
+    public static final String ERRMSG_RUNPARM_NOT_ENOUGH_FIELDS = "A-UT-0024 "
+        + "RunParm %s must have at least %d value fields";
 
-    public static final String ERRMSG_RUNPARM_NBR_FORMAT_ERROR_1 = "A-UT-0025 RunParm name ";
-    public static final String ERRMSG_RUNPARM_NBR_FORMAT_ERROR_2 = " value is formatted incorrectly. Should be"
-        + " a simple integer number. Parse message follows: ";
+    public static final String ERRMSG_RUNPARM_NBR_FORMAT_ERROR = "A-UT-0025 "
+        + "Value is formatted incorrectly. Should be"
+        + " a simple integer number. Parse message follows: %s";
 
-    public static final String ERRMSG_RUNPARM_NBR_LE_ZERO_1 = "A-UT-0026 RunParm name ";
-    public static final String ERRMSG_RUNPARM_NBR_LE_ZERO_2 = " value must be a simple integer number"
-        + " greater than 0. Found input value = ";
+    public static final String ERRMSG_RUNPARM_NBR_LE_ZERO = "A-UT-0026 Value "
+        + "must be a simple integer number greater than 0. Found input value = %d";
 
-    public static final String ERRMSG_RUNPARM_STMT_NOT_THEOREM_1 = "A-UT-0027 RunParm name ";
-    public static final String ERRMSG_RUNPARM_STMT_NOT_THEOREM_2 = " value = ";
-    public static final String ERRMSG_RUNPARM_STMT_NOT_THEOREM_3 = " is the label of a Stmt, but is not the label of a theorem."
+    public static final String ERRMSG_RUNPARM_STMT_NOT_THEOREM = "A-UT-0027 "
+        + "Value = %s is the label of a Stmt, but is not the label of a theorem."
         + " Therefore, VerifyProof cannot be performed.";
 
-    public static final String ERRMSG_RUNPARM_STMT_LABEL_BLANK_1 = "A-UT-0028 RunParm name ";
-    public static final String ERRMSG_RUNPARM_STMT_LABEL_BLANK_2 = " value is blank. A valid Stmt label is required.";
+    public static final String ERRMSG_RUNPARM_STMT_LABEL_BLANK = "A-UT-0028 "
+        + "Value field number %d is blank. A valid Stmt label is required.";
 
-    public static final String ERRMSG_RUNPARM_STMT_LABEL_NOTFND_1 = "A-UT-0029 RunParm name ";
-    public static final String ERRMSG_RUNPARM_STMT_LABEL_NOTFND_2 = " value = ";
-    public static final String ERRMSG_RUNPARM_STMT_LABEL_NOTFND_3 = " is not a valid Stmt label in the"
+    public static final String ERRMSG_RUNPARM_STMT_LABEL_NOTFND = "A-UT-0029 "
+        + "Value = %s is not a valid Stmt label in the"
         + " LogicalSystem that is presently loaded.";
 
-    public static final String ERRMSG_FOLDER_NAME_BLANK_1 = "A-UT-0101 RunParm name ";
-    public static final String ERRMSG_FOLDER_NAME_BLANK_2 = " value field number ";
-    public static final String ERRMSG_FOLDER_NAME_BLANK_3 = " is blank or an empty string. Expecting a FOLDER name.";
+    public static final String ERRMSG_FOLDER_NAME_BLANK = "A-UT-0101 "
+        + "Value field number %d is blank or an empty string. Expecting a FOLDER name.";
 
-    public static final String ERRMSG_NOT_A_FOLDER_1 = "A-UT-0102 RunParm name ";
-    public static final String ERRMSG_NOT_A_FOLDER_2 = " folder name parm ";
-    public static final String ERRMSG_NOT_A_FOLDER_3 = " exists, but is not a folder/directory (is a file?).";
+    public static final String ERRMSG_NOT_A_FOLDER = "A-UT-0102 Folder name "
+        + "parm %s exists, but is not a folder/directory (is a file?).";
 
-    public static final String ERRMSG_FOLDER_NOTFND_1 = "A-UT-0103 RunParm name ";
-    public static final String ERRMSG_FOLDER_NOTFND_2 = " folder name parm ";
-    public static final String ERRMSG_FOLDER_NOTFND_3 = " invalid. No such folder (or file) found!";
+    public static final String ERRMSG_FOLDER_NOTFND = "A-UT-0103 Folder name "
+        + "parm %s invalid. No such folder (or file) found!";
 
-    public static final String ERRMSG_FOLDER_MISC_ERROR_1 = "A-UT-0104 RunParm name ";
-    public static final String ERRMSG_FOLDER_MISC_ERROR_2 = " folder name parm ";
-    public static final String ERRMSG_FOLDER_MISC_ERROR_3 = " is supposed to be a folder. However, an error was"
-        + " encountered while using the specified name. Message = ";
+    public static final String ERRMSG_FOLDER_MISC_ERROR = "A-UT-0104 "
+        + "Folder name parm %s is supposed to be a folder. However, an error was"
+        + " encountered while using the specified name. Message = %s";
 
-    public static final String ERRMSG_RECHECK_PA_1 = "A-UT-0105 RunParm name ";
-    public static final String ERRMSG_RECHECK_PA_2 = " value not equal to 'yes' or 'no'.";
+    public static final String ERRMSG_RECHECK_PA = "A-UT-0105 Value %s not equal to 'yes' or 'no'.";
 
-    public static final String ERRMSG_BAD_ON_OFF_PARM_1 = "A-UT-0106 RunParm name ";
-    public static final String ERRMSG_BAD_ON_OFF_PARM_2 = " value not equal to 'on' or 'off'.";
+    public static final String ERRMSG_BAD_ON_OFF_PARM = "A-UT-0106 Value %s not equal to 'on' or 'off'.";
 
-    public static final String ERRMSG_FILE_NOTFND_1 = "A-UT-0107 RunParm name ";
-    public static final String ERRMSG_FILE_NOTFND_2 = " file name parm ";
-    public static final String ERRMSG_FILE_NOTFND_3 = " not found.";
+    public static final String ERRMSG_FILE_NOTFND = "A-UT-0107 File name parm %s not found.";
 
-    public static final String ERRMSG_FILE_READ_NOT_ALLOWED_1 = "A-UT-0108 RunParm name ";
-    public static final String ERRMSG_FILE_READ_NOT_ALLOWED_2 = " file name parm ";
-    public static final String ERRMSG_FILE_READ_NOT_ALLOWED_3 = " exists, but the existing file is a directory or"
+    public static final String ERRMSG_FILE_READ_NOT_ALLOWED = "A-UT-0108 "
+        + "File name parm %s exists, but the existing file is a directory or"
         + " read access is not allowed.";
 
-    public static final String ERRMSG_RUNPARM_NONBLANK_PRINT_STR_BAD_1 = "A-UT-0109 RunParm name ";
-    public static final String ERRMSG_RUNPARM_NONBLANK_PRINT_STR_BAD_2 = " value invalid. Must be a printable string of length 1 or"
+    public static final String ERRMSG_RUNPARM_NONBLANK_PRINT_STR_BAD = "A-UT-0109 "
+        + "Value invalid. Must be a printable string of length 1 or"
         + " more consisting only of non-blank printable characters"
         + " (7-bit ASCII only, just like Metamath.)";
 
-    public static final String ERRMSG_RUNPARM_RGB_RANGE_1 = "A-UT-0110 RunParm name ";
-    public static final String ERRMSG_RUNPARM_RGB_RANGE_2 = " value less than minimum RGB value ";
-    public static final String ERRMSG_RUNPARM_RGB_RANGE_3 = ", or greater than maximum RGB value ";
-    public static final String ERRMSG_RUNPARM_RGB_RANGE_4 = ". Input RGB number = ";
+    public static final String ERRMSG_NOT_A_FILE = "A-UT-0111 File name parm %s "
+        + "exists, but is a folder/directory, not a file!";
 
-    public static final String ERRMSG_NOT_A_FILE_1 = "A-UT-0111 RunParm name ";
-    public static final String ERRMSG_NOT_A_FILE_2 = " file name parm ";
-    public static final String ERRMSG_NOT_A_FILE_3 = " exists, but is a folder/directory, not a file!";
+    public static final String ERRMSG_BAD_FILE_NAME_SUFFIX = "A-UT-0112 "
+        + "File name parm %s must equal '.txt', '.TXT', '.mmp' or '.MMP'.";
 
-    public static final String ERRMSG_BAD_FILE_NAME_SUFFIX_1 = "A-UT-0112 RunParm name ";
-    public static final String ERRMSG_BAD_FILE_NAME_SUFFIX_2 = " file name parm ";
-    public static final String ERRMSG_BAD_FILE_NAME_SUFFIX_3 = " must equal '.txt', '.TXT', '.mmp' or '.MMP'.";
+    public static final String ERRMSG_RUNPARM_NBR_LT_ZERO = "A-UT-0113 "
+        + "Value must be a simple integer number"
+        + " greater than or equal to 0. Found input value = %d";
 
-    public static final String ERRMSG_RUNPARM_NBR_LT_ZERO_1 = "A-UT-0113 RunParm name ";
-    public static final String ERRMSG_RUNPARM_NBR_LT_ZERO_2 = " value must be a simple integer number"
-        + " greater than or equal to 0. Found input value = ";
+    public static final String ERRMSG_RUNPARM_RGB_FORMAT = "A-UT-0114 "
+        + "Must have 6 hexadecimal digits format. Input = %s";
 
-    public static final String ERRMSG_RUNPARM_RGB_FORMAT_1 = "A-UT-0114 RunParm name ";
-    public static final String ERRMSG_RUNPARM_RGB_FORMAT_2 = " must have 6 hexadecimal digits format. Input = ";
+    public static final String ERRMSG_BOOLEAN_UNRECOG = "A-UT-0045 "
+        + "Value field number %d must equal '%s' or '%s'. Value input was '%s'";
 
     // ----------------------------------------------------------
     // Messages from GrammarBoss.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_AMBIG_EDIT_LEVEL_INVALID_1 = "A-UT-0030 RunParm name ";
-    public static final String ERRMSG_AMBIG_EDIT_LEVEL_INVALID_2 = " value is blank or invalid. Must equal '";
-    public static final String ERRMSG_AMBIG_EDIT_LEVEL_INVALID_3 = "' or '";
-    public static final String ERRMSG_AMBIG_EDIT_LEVEL_INVALID_4 = "'";
+    public static final String ERRMSG_PARSE_RPN = "I-UT-0031 Parse RPN for Statement %s = ";
 
-    public static final String ERRMSG_PARSE_RPN_1 = "I-UT-0031 Parse RPN for Statement ";
-    public static final String ERRMSG_PARSE_RPN_2 = " = ";
+    public static final String ERRMSG_RUNPARM_PARSER_BAD_CLASS = "I-UT-0032 "
+        + "Class %s does not exist or is not an implementation of mmj.verify.GrammaticalParser";
 
     // ----------------------------------------------------------
     // Messages from LogicalSystemBoss.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_MM_FILE_NOT_LOADED_1 = "A-UT-0032 Cannot complete current RunParmFile request"
-        + " because either, a) the previous ";
-    public static final String ERRMSG_MM_FILE_NOT_LOADED_2 = " RunParm processing detected errors in"
-        + " the input Metamath file; or b) a ";
-    public static final String ERRMSG_MM_FILE_NOT_LOADED_3 = " RunParm must be input before the"
-        + " current RunParmFile line."
+    public static final String ERRMSG_MM_FILE_NOT_LOADED = "A-UT-0032 Cannot "
+        + "complete current RunParmFile request because either, a) the previous "
+        + "%1$s RunParm processing detected errors in the input Metamath file; or b) "
+        + "a %1$s RunParm must be input before the current RunParmFile line."
         + "\nReview previous error messages to find the error.";
 
-    public static final String ERRMSG_LOAD_ENDPOINT_LABEL_BLANK = " A-UT-0201 RunParm LoadEndpointStmtLabel has blank"
+    public static final String ERRMSG_LOAD_ENDPOINT_LABEL_BLANK = " A-UT-0201 RunParm has blank"
         + " label. Delete/Comment out the RunParm or specify a"
         + " bogus Statement Label, such as Z999ZZZZZ if you do not"
         + " wish to limit the load of Metamath statements.";
 
-    public static final String ERRMSG_PROVABLE_TYP_CD_BOGUS_1 = "A-UT-0202 ProvableLogicStmtType invalid. Is blank"
-        + " or is zero-length string";
+    public static final String ERRMSG_PROVABLE_TYP_CD_BOGUS = "A-UT-0202 "
+        + "ProvableLogicStmtType invalid. Is blank or is zero-length string";
 
-    public static final String ERRMSG_LOGIC_TYP_CD_BOGUS_1 = "A-UT-0203 LogicStmtType invalid. Is blank"
-        + " or is zero-length string";
+    public static final String ERRMSG_LOGIC_TYP_CD_BOGUS = "A-UT-0203 "
+        + "LogicStmtType invalid. Is blank or is zero-length string";
 
-    public static final String ERRMSG_BOOK_MANAGER_ALREADY_EXISTS_1 = "A-UT-0204 BookManager already constructed."
-        + " The 'BookManagerEnabled' RunParm must be located before"
-        + " the 'LoadFile' RunParm command and the enabled/disabled"
-        + " status cannot be changed after LoadFile is executed!";
+    public static final String ERRMSG_BOOK_MANAGER_ALREADY_EXISTS = "A-UT-0204 "
+        + "BookManager already constructed."
+        + " The '%1$s' RunParm must be located before"
+        + " the '%2$s' RunParm command and the enabled/disabled"
+        + " status cannot be changed after %2$s is executed!";
 
     // ----------------------------------------------------------
     // Messages from Dump.java
@@ -3173,17 +2733,16 @@ public class UtilConstants {
     // Messages from OutputBoss.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_SYSOUT_PRINT_WRITER_IO_ERROR_1 = "A-UT-0034 OutputBoss found IO error on sysOut PrintWriter.";
+    public static final String ERRMSG_SYSOUT_PRINT_WRITER_IO_ERROR = "A-UT-0034 OutputBoss found IO error on sysOut PrintWriter.";
 
-    public static final String ERRMSG_SYSERR_PRINT_WRITER_IO_ERROR_1 = "A-UT-0035 OutputBoss found IO error on sysErr PrintWriter.";
+    public static final String ERRMSG_SYSERR_PRINT_WRITER_IO_ERROR = "A-UT-0035 OutputBoss found IO error on sysErr PrintWriter.";
 
-    public static final String ERRMSG_BOOK_MANAGER_NOT_ENABLED_1 = "A-UT-1203 OutputBoss found BookManager not enabled when"
-        + " processing RunParm command ";
-    public static final String ERRMSG_BOOK_MANAGER_NOT_ENABLED_2 = ". Use RunParm command 'BookManagerEnabled,yes' prior"
-        + " to the LoadFile RunParm to enable the BookManager.";
+    public static final String ERRMSG_BOOK_MANAGER_NOT_ENABLED = "A-UT-1203 "
+        + "OutputBoss found BookManager not enabled. Use RunParm command '%s,yes' prior"
+        + " to the %s RunParm to enable the BookManager.";
 
-    public static final String ERRMSG_BOOK_MANAGER_SECTION_NBR_NOT_FOUND_1 = "A-UT-1204 BookManager Section Number ";
-    public static final String ERRMSG_BOOK_MANAGER_SECTION_NBR_NOT_FOUND_2 = " not found when processing RunParm command ";
+    public static final String ERRMSG_BOOK_MANAGER_SECTION_NBR_NOT_FOUND = ""
+        + "A-UT-1204 BookManager Section Number %d not found";
 
     // ----------------------------------------------------------
     // Messages from ProofAsstBoss.java
@@ -3195,8 +2754,7 @@ public class UtilConstants {
         + " that a .mm file be loaded, that the Grammar be"
         + " successfully initialized (no errors), and that"
         + " all Metamath statements be grammatically parsed"
-        + " prior to running the ProofAsst (for use in"
-        + " unification)."
+        + " prior to running the ProofAsst (for use in" + " unification)."
         + "\nFor more information, see:"
         + " ..\\mmj2\\mmj2jar\\AnnotatedRunParms.txt."
         + "\nReview previous error messages to find the error.";
@@ -3222,75 +2780,26 @@ public class UtilConstants {
     public static final String ERRMSG_RUNPARM_PA_RRC_RANGE_ERR_1 = "A-UT-0041 ProofAsstRPNProofRightCol RunParm must be between ";
     public static final String ERRMSG_RUNPARM_PA_RRC_RANGE_ERR_2 = " (inclusive) and ";
 
-    public static final String ERRMSG_SELECTOR_MISSING_1 = "A-UT-0042 RunParm name ";
-    public static final String ERRMSG_SELECTOR_MISSING_2 = " value field number ";
-    public static final String ERRMSG_SELECTOR_MISSING_3 = ", the 'Selector' option is blank, null or empty";
+    public static final String ERRMSG_SELECTOR_MISSING = "A-UT-0042 "
+        + "Value field number %d, the 'Selector' option is blank, null or empty";
 
-    public static final String ERRMSG_SELECTOR_NOT_A_STMT_1 = "A-UT-0043 RunParm name ";
-    public static final String ERRMSG_SELECTOR_NOT_A_STMT_2 = " value field number ";
-    public static final String ERRMSG_SELECTOR_NOT_A_STMT_3 = " with value (statement label) = ";
-    public static final String ERRMSG_SELECTOR_NOT_A_STMT_4 = " not found in Logical System Statement Table.";
+    public static final String ERRMSG_SELECTOR_NOT_A_STMT = "A-UT-0043 "
+        + "Value field number %d with value (statement label) = %s not found "
+        + "in Logical System Statement Table.";
 
-    public static final String ERRMSG_SELECTOR_NOT_A_THEOREM_1 = "A-UT-0044 RunParm name ";
-    public static final String ERRMSG_SELECTOR_NOT_A_THEOREM_2 = " value field number ";
-    public static final String ERRMSG_SELECTOR_NOT_A_THEOREM_3 = " with value (statement label) = ";
-    public static final String ERRMSG_SELECTOR_NOT_A_THEOREM_4 = " found in Logical System Statement Table but the"
-        + " statement found is not a theorem.";
+    public static final String ERRMSG_SELECTOR_NOT_A_THEOREM = "A-UT-0044 "
+        + "Value field number %d with value (statement label) = %s found "
+        + "in Logical System Statement Table but the statement found is not a theorem.";
 
-    public static final String ERRMSG_EXPORT_UNIFIED_PARM_UNRECOG_1 = "A-UT-0045 RunParm name ";
-    public static final String ERRMSG_EXPORT_UNIFIED_PARM_UNRECOG_2 = " value field number ";
-    public static final String ERRMSG_EXPORT_UNIFIED_PARM_UNRECOG_3 = " must equal '";
-    public static final String ERRMSG_EXPORT_UNIFIED_PARM_UNRECOG_4 = "' or '";
-    public static final String ERRMSG_EXPORT_UNIFIED_PARM_UNRECOG_5 = "'. Value input was '";
-    public static final String ERRMSG_EXPORT_UNIFIED_PARM_UNRECOG_6 = "'";
-
-    public static final String ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG_1 = "A-UT-0046 RunParm name ";
-    public static final String ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG_2 = " value field number ";
-    public static final String ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG_3 = " must equal '";
-    public static final String ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG_4 = "' or '";
-    public static final String ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG_5 = "'. Value input was '";
-    public static final String ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG_6 = "'";
-
-    public static final String ERRMSG_EXPORT_PRINT_PARM_UNRECOG_1 = "A-UT-0047 RunParm name ";
-    public static final String ERRMSG_EXPORT_PRINT_PARM_UNRECOG_2 = " value field number ";
-    public static final String ERRMSG_EXPORT_PRINT_PARM_UNRECOG_3 = " must equal '";
-    public static final String ERRMSG_EXPORT_PRINT_PARM_UNRECOG_4 = "' or '";
-    public static final String ERRMSG_EXPORT_PRINT_PARM_UNRECOG_5 = "'. Value input was '";
-    public static final String ERRMSG_EXPORT_PRINT_PARM_UNRECOG_6 = "'";
+    public static final String ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG = "A-UT-0046 "
+        + "Value field number %d must equal '%s' (same as deprecated '%s'), "
+        + "'%s', '%s', '%s', '%s' or '%s'. Value input was '%s'.";
 
     // see mmj.pa.PaConstants.java for min/max values
     public static final String ERRMSG_RUNPARM_PA_TEXT_COL_RANGE_ERR_1 = "A-UT-0048 ProofAsstTextColumns RunParm must be between ";
     public static final String ERRMSG_RUNPARM_PA_TEXT_COL_RANGE_ERR_2 = " (inclusive) and ";
 
     public static final String PROOF_ASST_FONT_FAMILY_LIST_CAPTION = " List of Font Families defined in the system: \n";
-
-    public static final String ERRMSG_EXPORT_DERIVE_FORMULAS_PARM_UNRECOG_1 = "A-UT-0049 RunParm name ";
-    public static final String ERRMSG_EXPORT_DERIVE_FORMULAS_PARM_UNRECOG_2 = " value field number ";
-    public static final String ERRMSG_EXPORT_DERIVE_FORMULAS_PARM_UNRECOG_3 = " must equal '";
-    public static final String ERRMSG_EXPORT_DERIVE_FORMULAS_PARM_UNRECOG_4 = "' or '";
-    public static final String ERRMSG_EXPORT_DERIVE_FORMULAS_PARM_UNRECOG_5 = "'. Value input was '";
-    public static final String ERRMSG_EXPORT_DERIVE_FORMULAS_PARM_UNRECOG_6 = "'";
-
-    public static final String ERRMSG_IMPORT_COMPARE_DJS_PARM_UNRECOG_1 = "A-UT-0050 RunParm name ";
-    public static final String ERRMSG_IMPORT_COMPARE_DJS_PARM_UNRECOG_2 = " value field number ";
-    public static final String ERRMSG_IMPORT_COMPARE_DJS_PARM_UNRECOG_3 = " must equal '";
-    public static final String ERRMSG_IMPORT_COMPARE_DJS_PARM_UNRECOG_4 = "' or '";
-    public static final String ERRMSG_IMPORT_COMPARE_DJS_PARM_UNRECOG_5 = "'. Value input was '";
-    public static final String ERRMSG_IMPORT_COMPARE_DJS_PARM_UNRECOG_6 = "'";
-
-    public static final String ERRMSG_IMPORT_UPDATE_DJS_PARM_UNRECOG_1 = "A-UT-0051 RunParm name ";
-    public static final String ERRMSG_IMPORT_UPDATE_DJS_PARM_UNRECOG_2 = " value field number ";
-    public static final String ERRMSG_IMPORT_UPDATE_DJS_PARM_UNRECOG_3 = " must equal '";
-    public static final String ERRMSG_IMPORT_UPDATE_DJS_PARM_UNRECOG_4 = "' or '";
-    public static final String ERRMSG_IMPORT_UPDATE_DJS_PARM_UNRECOG_5 = "'. Value input was '";
-    public static final String ERRMSG_IMPORT_UPDATE_DJS_PARM_UNRECOG_6 = "'";
-
-    public static final String ERRMSG_ASCII_RETEST_PARM_UNRECOG_1 = "A-UT-0052 RunParm name ";
-    public static final String ERRMSG_ASCII_RETEST_PARM_UNRECOG_2 = " value field number ";
-    public static final String ERRMSG_ASCII_RETEST_PARM_UNRECOG_3 = " must equal '";
-    public static final String ERRMSG_ASCII_RETEST_PARM_UNRECOG_4 = "' or '";
-    public static final String ERRMSG_ASCII_RETEST_PARM_UNRECOG_5 = "'. Value input was '";
-    public static final String ERRMSG_ASCII_RETEST_PARM_UNRECOG_6 = "'";
 
     // see mmj.pa.PaConstants.java for min/max values
     public static final String ERRMSG_RUNPARM_PA_TEXT_ROW_RANGE_ERR_1 = "A-UT-0053 ProofAsstTextRows RunParm must be between ";
@@ -3304,25 +2813,23 @@ public class UtilConstants {
     public static final String ERRMSG_RUNPARM_PA_ERR_MSG_COL_RANGE_ERR_1 = "A-UT-0055 ProofAsstErrorMessageColumns RunParm must be between ";
     public static final String ERRMSG_RUNPARM_PA_ERR_MSG_COL_RANGE_ERR_2 = " (inclusive) and ";
 
-    public static final String ERRMSG_PREPROCESS_OPTION_UNRECOG_1 = "A-UT-0056 PreprocessRequestBatchTest RunParm Option must be"
-        + "'EraseAndRederiveFormulas' at this time (there is only one"
-        + " type of PreprocessRequest now.) Input was ";
+    public static final String ERRMSG_PREPROCESS_OPTION_UNRECOG = "A-UT-0056 "
+        + "Option must be 'EraseAndRederiveFormulas' at this time (there is only one"
+        + " type of PreprocessRequest now.) Input was '%s'.";
 
     // see mmj.pa.PaConstants.java for min/max values
-    public static final String ERRMSG_RUNPARM_SS_DLG_PANE_WIDTH_ERR_1 = "A-UT-0057 StepSelectorDialogPaneWidth RunParm must be between ";
-
-    public static final String ERRMSG_RUNPARM_SS_DLG_PANE_WIDTH_ERR_2 = " (inclusive) and ";
+    public static final String ERRMSG_RUNPARM_SS_DLG_PANE_WIDTH_ERR = "A-UT-0057 "
+        + "StepSelectorDialogPaneWidth RunParm must be between %d (inclusive) and %d";
 
     // see mmj.pa.PaConstants.java for min/max values
-    public static final String ERRMSG_RUNPARM_SS_DLG_PANE_HEIGHT_ERR_1 = "A-UT-0058 StepSelectorDialogPaneHeight RunParm must be between ";
-
-    public static final String ERRMSG_RUNPARM_SS_DLG_PANE_HEIGHT_ERR_2 = " (inclusive) and ";
+    public static final String ERRMSG_RUNPARM_SS_DLG_PANE_HEIGHT_ERR = "A-UT-0058 "
+        + "StepSelectorDialogPaneHeight RunParm must be between %d (inclusive) and %d";
 
     // see mmj.pa.PaConstants.java for max value
     public static final String ERRMSG_RUNPARM_PROOF_ASST_FREESPACE_ERR_1 = "A-UT-0059 ProofAsstAssrtListFreespace RunParm must be"
         + " greater than or equal to zero and no greater than ";
 
-    public static final String ERRMSG_RUNPARM_PA_STYLE_UNKNOWN = "A-UT-0060 ProofAsstErrorMessageColumns RunParm must be one of ";
+    public static final String ERRMSG_RUNPARM_PA_STYLE_UNKNOWN = "A-UT-0060 ProofAsstErrorMessageColumns RunParm must be one of %s";
 
     // ----------------------------------------------------------
     // Messages from TMFFBoss.java
@@ -3336,29 +2843,10 @@ public class UtilConstants {
         + " successful 'Load' and 'Parse,*' commands. It is required"
         + " that a .mm file be loaded, that the Grammar be"
         + " successfully initialized (no errors), and that"
-        + " all Metamath statements be grammatically parsed"
-        + " first!"
+        + " all Metamath statements be grammatically parsed" + " first!"
         + "\nFor more information, see:"
         + " ..\\mmj2\\mmj2jar\\AnnotatedRunParms.txt."
         + "\nReview previous error messages to find the error.";
-
-    public static final String ERRMSG_RUNPARM_DEFINE_SCHEME_ERR_1 = "A-UT-0602 TMFFDefineScheme RunParm Error. Detailed"
-        + " error message follows: ";
-
-    public static final String ERRMSG_RUNPARM_DEFINE_FORMAT_ERR_1 = "A-UT-0603 TMFFDefineFormat RunParm Error. Detailed"
-        + " error message follows: ";
-
-    public static final String ERRMSG_RUNPARM_USE_FORMAT_ERR_1 = "A-UT-0604 TMFFUseFormat RunParm Error. Detailed"
-        + " error message follows: ";
-
-    public static final String ERRMSG_RUNPARM_ALT_FORMAT_ERR_1 = "A-UT-0605 TMFFAltFormat RunParm Error. Detailed"
-        + " error message follows: ";
-
-    public static final String ERRMSG_RUNPARM_USE_INDENT_ERR_1 = "A-UT-0606 TMFFUseIndent RunParm Error. Detailed"
-        + " error message follows: ";
-
-    public static final String ERRMSG_RUNPARM_ALT_INDENT_ERR_1 = "A-UT-0607 TMFFAltIndent RunParm Error. Detailed"
-        + " error message follows: ";
 
     // ----------------------------------------------------------
     // Messages from VerifyProofBoss.java
@@ -3386,31 +2874,27 @@ public class UtilConstants {
     // Messages from SvcBoss.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_SVC_CALLBACK_CLASS_INIT_ERROR_1 = "A-UT-0901 SvcBoss encountered a problem during the load"
-        + " and instantiation of the input SvcCallbackClass name =";
+    public static final String ERRMSG_SVC_CALLBACK_CLASS_INIT_ERROR = "A-UT-0901 "
+        + "SvcBoss encountered a problem during the load"
+        + " and instantiation of the input name = %. The specific error message "
+        + "returned by the Java Runtime Environment follows: ";
 
-    public static final String ERRMSG_SVC_CALLBACK_CLASS_INIT_ERROR_2 = ". The specific error message returned by the Java Runtime"
-        + " Environment follows: ";
-
-    public static final String ERRMSG_SVC_CALLBACK_CLASS_CAST_ERROR_1 = "A-UT-0902 SvcBoss encountered a problem during the 'cast'"
+    public static final String ERRMSG_SVC_CALLBACK_CLASS_CAST_ERROR = "A-UT-0902 "
+        + "SvcBoss encountered a problem during the 'cast'"
         + " of the input class object to the SvcCallback interface."
-        + " The input SvcCallbackClass name =";
+        + " The input name = %s. The specific error message returned by the Java Runtime"
+        + " Environment follows: %s";
 
-    public static final String ERRMSG_SVC_CALLBACK_CLASS_CAST_ERROR_2 = ". The specific error message returned by the Java Runtime"
-        + " Environment follows: ";
+    public static final String ERRMSG_SVC_ARG_ERROR = "A-UT-0903 Input SrvArg "
+        + "invalid. Key value must be unique non-blank character string with length > 1."
+        + " Input Key parameter = %s. Input Value parameter = %s.";
 
-    public static final String ERRMSG_SVC_ARG_ERROR_1 = "A-UT-0903 Input SrvArg invalid. Key value must be"
-        + " unique non-blank character string with length > 1."
-        + " Input Key parameter = ";
-
-    public static final String ERRMSG_SVC_ARG_ERROR_2 = ". Input Value parameter = ";
-
-    public static final String ERRMSG_SVC_CALL_PROOF_ASST_MISSING_1 = "A-UT-0904 SvcCall command not completed:"
+    public static final String ERRMSG_SVC_CALL_PROOF_ASST_MISSING = "A-UT-0904"
         + " Unable to initialize ProofAsst object (probably"
         + " because a load, verify or parse RunParm command"
-        + " encountered an error. Check previous error" + " messages.";
+        + " encountered an error). Check previous error messages.";
 
-    public static final String ERRMSG_SVC_CALL_THEOREM_LOADER_MISSING_1 = "A-UT-0905 SvcCall command not completed:"
+    public static final String ERRMSG_SVC_CALL_THEOREM_LOADER_MISSING = "A-UT-0905"
         + " Unable to initialize TheoremLoader object."
         + " Check previous error messages (for clues :-)";
 
@@ -3426,30 +2910,24 @@ public class UtilConstants {
     // Messages from TheoremLoaderBoss.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_THEOREM_LOADER_RUN_PARM_ERROR_1 = "A-UT-1101 Error encountered in Theorem Loader RunParm ";
-
-    public static final String ERRMSG_THEOREM_LOADER_RUN_PARM_ERROR_2 = ". Explanatory message details follow: ";
-
-    public static final String ERRMSG_THEOREM_LOADER_READER_ERROR_1 = "A-UT-1102 IO error encountered reading Proof Worksheet file ";
-
-    public static final String ERRMSG_THEOREM_LOADER_READER_ERROR_2 = ". RunParm = ";
-    public static final String ERRMSG_THEOREM_LOADER_READER_ERROR_3 = ". Detailed IOException Message follows: ";
+    public static final String ERRMSG_THEOREM_LOADER_READER_ERROR = "A-UT-1102 "
+        + "IO error encountered reading Proof Worksheet file %s. Detailed IOException Message follows: %s";
 
     // ----------------------------------------------------------
     // Messages from GMFFBoss.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_GMFF_INITIALIZATION_ERROR_1 = "A-UT-1201 Errors encountered during GMFFInitialize RunParm."
+    public static final String ERRMSG_GMFF_INITIALIZATION_ERROR = "A-UT-1201 "
         + " GMFF not successfully initialized.";
 
-    public static final String ERRMSG_GMFF_PROOF_ASST_MISSING_1 = "A-UT-1202 GMFF command ";
-    public static final String ERRMSG_GMFF_PROOF_ASST_MISSING_2 = " not completed:"
+    public static final String ERRMSG_GMFF_PROOF_ASST_MISSING = "A-UT-1202"
+        + " GMFF command not completed:"
         + " Unable to initialize ProofAsst object (probably"
         + " because a load, verify or parse RunParm command"
         + " encountered an error. Check previous error" + " messages.";
 
-    public static final String ERRMSG_GMFF_RUNPARM_ERROR_1 = "E-UT-1203 GMFF command ";
-    public static final String ERRMSG_GMFF_RUNPARM_ERROR_2 = " encountered a problem. Please review previous"
+    public static final String ERRMSG_GMFF_RUNPARM_ERROR = "E-UT-1203"
+        + " GMFF command encountered a problem. Please review previous"
         + " messages to diagnose the problem.";
 
     // ----------------------------------------------------------
@@ -3471,6 +2949,22 @@ public class UtilConstants {
 
     public static final String ERRMSG_PATH_SECURITY_ERROR_1 = "A-UT-1402 Command Line ";
     public static final String ERRMSG_PATH_SECURITY_ERROR_2 = " invalid. SecurityException on path access: ";
+
+    // ----------------------------------------------------------
+    // Messages from MacroBoss.java
+    // ----------------------------------------------------------
+
+    public static final String ERRMSG_MACRO_LANGUAGE_MISSING_1 = "E-UT-1501"
+        + " MacroLanguage '%s' does not exist.\n";
+    public static final String ERRMSG_MACRO_LANGUAGE_MISSING_2 = "To use %s, set language to one of %s.";
+
+    public static final String ERRMSG_MACRO_LANGUAGE_DEFAULT_MISSING_1 = "E-UT-1502"
+        + " You attempted to use a macro, but the default Macro language '%s'"
+        + " does not exist. Use 'MacroLanguage,xxx' with one of the following"
+        + " installed languages:\n";
+
+    public static final String ERRMSG_PREP_MACRO_DOES_NOT_EXIST = "E-UT-1503"
+        + " The given PrepMacro file %s does not exist.";
 
     // ----------------------------------------------------------
     // Dump.java "report" literals.
@@ -3643,4 +3137,19 @@ public class UtilConstants {
     public static final String DUMP_BM_DOT = ".";
     public static final String DUMP_BM_EQ_COL = "=: ";
 
+    /**
+     * Array of every documented command, obtained by reflection by searching
+     * this class for static BatchCommand fields
+     */
+    public static final BatchCommand[] RUNPARM_LIST = Arrays
+        .stream(UtilConstants.class.getDeclaredFields())
+        .filter(f -> Modifier.isStatic(f.getModifiers())
+            && BatchCommand.class.isAssignableFrom(f.getType()))
+        .map(f -> {
+            try {
+                return (BatchCommand)f.get(null);
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
+            }
+        }).sorted().toArray(BatchCommand[]::new);
 }

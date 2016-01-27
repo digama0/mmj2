@@ -58,26 +58,18 @@ import mmj.verify.VerifyProofs;
 public abstract class ProofStepStmt extends ProofWorkStmt {
 
     /**
-     * this is obtained from the input proof text line on input, and for
-     * generated statements, is obtained from ProofAsstPreferences.
-     */
-    int formulaStartColNbr; // to be honored!
-
-    /**
      * obtained on input, used for carat positioning on errors during input
      * validation.
      */
-    int formulaStartCharNbr;
+    protected int formulaStartCharNbr;
 
-    public String step;
+    private String step;
 
-    Stmt ref;
+    private Stmt ref;
 
-    String refLabel;
+    private String refLabel;
 
-    ProofStepStmt localRef;
-
-    Formula formula;
+    private Formula formula;
 
     /**
      * null if no workVars in formula, otherwise contains list of workVars in
@@ -91,23 +83,6 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      */
     public ParseTree formulaParseTree;
 
-    /** new fields for Proof Assistant "Derive" Feature */
-    boolean generatedByDeriveFeature; // for Derive
-
-    /**
-     * new fields in replacement of ProofWorkStmt.status these will only ever be
-     * set to true on DerivationStep's.
-     * <ul>
-     * <li>set to true if "?" is entered in the Hyp field of a step and a Ref is
-     * not entered, signifying that the step is not ready for unification
-     * (because the user doesn't know the Hyps that correlate with the formula
-     * and we cannot perform a search with this incomplete information.)
-     * <li>NOTE: this is not set to true in the case where deriveStepHyps ==
-     * true; "hypFldIncomplete" is a special situation in which unification
-     * cannot be attempted; it is not an "error" by the user, just a delayed
-     * entry...
-     */
-    boolean hypFldIncomplete;
     /**
      * Set to true if the formula contains dummy/work variables and a Ref is not
      * entered, signifying that the step is not ready for unification (the
@@ -132,9 +107,12 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      */
     int proofLevel;
 
+    /** For the automatic transformations feature */
+    private ParseNode canonicalForm;
+
     /**
      * Default Constructor.
-     * 
+     *
      * @param w the owning ProofWorksheet
      */
     public ProofStepStmt(final ProofWorksheet w) {
@@ -149,19 +127,21 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      * the GUI, hence, the object references, etc. are not loaded. After display
      * to the GUI this worksheet disappears -- recreated via "load" each time
      * the user selects "StartUnification".
-     * 
+     *
      * @param w The owning ProofWorksheet
      * @param step step number of the ProofStepStmt
      * @param refLabel Ref label of the ProofStepStmt
+     * @param formula the proof step formula
      * @param setCaret true means position caret of TextArea to this statement.
      */
     public ProofStepStmt(final ProofWorksheet w, final String step,
-        final String refLabel, final boolean setCaret)
+        final String refLabel, final Formula formula, final boolean setCaret)
     {
 
         super(w);
         this.step = step;
         this.refLabel = refLabel;
+        this.formula = formula;
 
         if (setCaret)
             w.proofCursor.setCursorAtProofWorkStmt(this,
@@ -173,13 +153,17 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
         return step;
     }
 
+    public void setStep(final String step) {
+        this.step = step;
+    }
+
     /**
      * Loads the proofLevel number with the input proofLevel but only if the
      * existing proofLevel is zero.
      * <p>
      * Note: does not update a non-zero proofLevel because a step can be used
      * more than once as an hypothesis, so different level numbers could result.
-     * 
+     *
      * @param proofLevel value to store if existing level is zero.
      */
     public void loadProofLevel(final int proofLevel) {
@@ -189,7 +173,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
 
     /**
      * Computes column number in the proof step text of the input field id.
-     * 
+     *
      * @param fieldId value identify ProofWorkStmt field for cursor positioning,
      *            as defined in PaConstants.FIELD_ID_*.
      * @return column of input fieldId or default value of 1 if there is an
@@ -214,7 +198,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      * ProofWorkStmt.stmtText and sets the output column to the column *after*
      * the 2nd colon -- but returns 1 if whitespace is found before the 2nd
      * colon in the stmtText.
-     * 
+     *
      * @return column of Ref subfield in proof step of 1 if there is an error.
      */
     public int computeFieldIdColRef() {
@@ -244,7 +228,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     /**
      * Updates the ProofStepStmt ParseTree, resetting maxDepth and levelOneTwo
      * data.
-     * 
+     *
      * @param parseTree the new ParseTree for the step.
      */
     public void updateFormulaParseTree(final ParseTree parseTree) {
@@ -265,7 +249,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     /**
      * Updates the workVarList for the ProofStepStmt and if the revised
      * workVarList is null turns off the formulaFldIncomplete flag.
-     * 
+     *
      * @param workVarList List of WorkVar listing the WorkVar used in the step
      *            formula.
      */
@@ -283,10 +267,8 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      * Updates stmtText in place using substitution values assigned to work
      * variables used in the step.
      * <p>
-     * NOTE: This is a dirty little hack :-)
-     * </p
-     * ?
-     * 
+     * NOTE: This is a dirty little hack :-) </p ?
+     *
      * @param verifyProofs instance of VerifyProofs for use converting an RPN
      *            list to a formula.
      * @return true if stmtText updated successfully.
@@ -316,8 +298,8 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
             if (substNode == null)
                 continue;
             wvArray[wvCnt] = workVar.getId();
-            formula = verifyProofs.convertRPNToFormula(
-                substNode.convertToRPN(true), "");
+            formula = verifyProofs
+                .convertRPNToFormula(substNode.convertToRPN(true), "");
             wvSubstStringArray[wvCnt] = formula.exprToString();
             wvCnt++;
         }
@@ -338,8 +320,8 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
             int outStmtTextOffset = 0;
             int len = 0;
 
-            final Tokenizer tokenizer = new Tokenizer(new StringReader(
-                stmtText.toString()), "");
+            final Tokenizer tokenizer = new Tokenizer(
+                new StringReader(stmtText.toString()), "");
 
             // bypass 1st token and surrounding whitespace
             len = tokenizer.getWhiteSpace(outStmtText, outStmtTextOffset);
@@ -405,7 +387,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      * validate Step/Hyp/Ref after doing the formula. The big problem being
      * solved here is positioning the caret as accurately as possible to the
      * first reported error on the line.
-     * 
+     *
      * @param workVarsOk indicator to allow/disallow WorkVar syms in this
      *            formula.
      * @return String showing the proof text statement
@@ -432,8 +414,6 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
         if (nextT.length() == 0 || nextT.length() == colNbr)
             return nextT;
 
-        formulaStartColNbr = colNbr;
-
         // save char nbr for later use positioning caret
         formulaStartCharNbr = (int)w.proofTextTokenizer.getCurrentCharNbr();
 
@@ -442,7 +422,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
                 PaConstants.ERRMSG_BAD_TYP_CD2, w.getErrorLabelIfPossible(),
                 step, nextT, w.getProvableLogicStmtTyp().getId());
 
-        final List<Sym> symList = new ArrayList<Sym>();
+        final List<Sym> symList = new ArrayList<>();
         symList.add(w.getProvableLogicStmtTyp());
 
         nextT = loadStmtTextGetRequiredToken(nextT);
@@ -498,35 +478,29 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     /**
      * Function to determine whether the ProofWorkStmt Ref Label matches the
      * input string (always false in base class.)
-     * 
+     *
      * @param ref string to compare to ProofWorkStmt refLabel string.
      * @return true if ProofStepStmt Ref label matches the input string.
      */
     @Override
     public boolean hasMatchingRefLabel(final String ref) {
-        if (refLabel != null && refLabel.equals(ref))
-            return true;
-        else
-            return false;
+        return refLabel != null && refLabel.equals(ref);
     }
 
     /**
      * Compares input Step number to this step.
-     * 
+     *
      * @param newStepNbr step number to compare
      * @return true if equal, false if not equal.
      */
     @Override
     public boolean hasMatchingStepNbr(final String newStepNbr) {
-        if (step.equals(newStepNbr))
-            return true;
-        else
-            return false;
+        return step.equals(newStepNbr);
     }
 
     /**
      * Sets the Ref Stmt for the step.
-     * 
+     *
      * @param ref Stmt in LogicalSystem
      */
     public void setRef(final Stmt ref) {
@@ -535,7 +509,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
 
     /**
      * Gets the Ref Stmt for the step.
-     * 
+     *
      * @return Ref stmt for the ProofStepStmt;
      */
     public Stmt getRef() {
@@ -547,7 +521,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      * <p>
      * Note: refLabel is input first and Ref is derived, but for new Theorems,
      * Ref may not exist, which is why we carry both around at all times.
-     * 
+     *
      * @param refLabel Ref label for the step.
      */
     public void setRefLabel(final String refLabel) {
@@ -556,7 +530,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
 
     /**
      * Gets the Ref label for the step.
-     * 
+     *
      * @return Ref label for the step.
      */
     public String getRefLabel() {
@@ -575,7 +549,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      * <p>
      * Objective is to avoid changing the position of the other tokens within
      * the text area -- as much as possible.
-     * 
+     *
      * @param textArea step stmtText area or similar text area.
      * @param newTextPrefix revised first token of text area.
      */
@@ -616,7 +590,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      * Renders formula into stepHypRef string buffer and returns the number of
      * lines in the formula. (This assumes that stepHypRef requires only one
      * line, which, theoretically could be wrong!)
-     * 
+     *
      * @param stepHypRef the string buffer
      * @param formula the formula
      * @param parseTree of the Formula to be rendered. If left null, the formula
@@ -643,7 +617,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
 
     protected void accumWorkVarList(final WorkVar workVar) {
         if (workVarList == null) {
-            workVarList = new ArrayList<WorkVar>(3); // arbitrary guess...
+            workVarList = new ArrayList<>(3); // arbitrary guess...
             workVarList.add(workVar);
         }
         else if (!workVarList.contains(workVar))
@@ -658,8 +632,9 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
         if (formulaParseTree == null)
             w.triggerLoadStructureException(
                 (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
-                    - formulaStartCharNbr, PaConstants.ERRMSG_PARSE_ERR,
-                w.getErrorLabelIfPossible(), step);
+                    - formulaStartCharNbr,
+                PaConstants.ERRMSG_PARSE_ERR, w.getErrorLabelIfPossible(),
+                step);
     }
 
     // assumes formula already loaded (first), and possibly
@@ -700,8 +675,17 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
             stmtText.replace(0, nbrSpaces - 1, stepHypRef.toString());
     }
 
+    /**
+     * Updates the Step/Hyp/Ref field in the statement text area of the proof
+     * step.
+     * <p>
+     * This is needed because Unify can alter Hyp and Ref.
+     */
+    public abstract void reloadStepHypRefInStmtText();
+
     // assumes StmtText already contains StepHypRef
-    protected void reviseStepHypRefInStmtText(final StringBuilder newStepHypRef)
+    protected void reviseStepHypRefInStmtText(
+        final StringBuilder newStepHypRef)
     {
         ProofStepStmt.reviseStepHypRefInStmtTextArea(stmtText, newStepHypRef);
     }
@@ -709,9 +693,34 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
     /**
      * Renumbers step numbers using a HashMap containing old and new step number
      * pairs.
-     * 
+     *
      * @param renumberMap contains key/value pairs defining newly assigned step
      *            numbers.
      */
     public abstract void renum(Map<String, String> renumberMap);
+
+    public ProofStepStmt getLocalRef() {
+        return null;
+    }
+
+    public Formula getFormula() {
+        return formula;
+    }
+
+    public void setFormula(final Formula formula) {
+        this.formula = formula;
+    }
+
+    public ParseNode getCanonicalForm() {
+        return canonicalForm;
+    }
+
+    public void setCanonicalForm(final ParseNode canonicalForm) {
+        this.canonicalForm = canonicalForm;
+    }
+
+    @Override
+    public int hashCode() {
+        return step.hashCode();
+    }
 }

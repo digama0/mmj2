@@ -38,7 +38,7 @@ public class GMFFUserExportChoice {
 
     /**
      * The standard constructor for GMFFUserExportChoice.
-     * 
+     *
      * @param exportTypeOrAll String containing either a single Export Type or
      *            the literal "ALL".
      */
@@ -49,18 +49,18 @@ public class GMFFUserExportChoice {
 
     /**
      * Converts to Audit Report string for testing purposes.
-     * 
+     *
      * @return String containing the relevant fields.
      */
     public String generateAuditReportText() {
-        final String s = UtilConstants.RUNPARM_GMFF_USER_EXPORT_CHOICE
+        final String s = UtilConstants.RUNPARM_GMFF_USER_EXPORT_CHOICE.name()
             + GMFFConstants.AUDIT_REPORT_COMMA + exportTypeOrAll;
         return s;
     }
 
     /**
      * Validates the User Export Choice.
-     * 
+     *
      * @param exportParmsList List of GMFFExportParms used to validate
      *            exportType (must be used in the Export Parms.)
      * @throws GMFFException if User Export Choice invalid.
@@ -72,7 +72,7 @@ public class GMFFUserExportChoice {
         if (GMFFExportParms.isPresentWithNoWhitespace(exportTypeOrAll)) {
 
             if (exportTypeOrAll
-                .compareToIgnoreCase(GMFFConstants.USER_EXPORT_CHOICE_ALL) == 0)
+                .equalsIgnoreCase(GMFFConstants.USER_EXPORT_CHOICE_ALL))
                 return;
 
             for (final GMFFExportParms ep : exportParmsList)

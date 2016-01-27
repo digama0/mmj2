@@ -41,8 +41,7 @@
 package mmj.util;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import mmj.gmff.GMFFException;
 import mmj.lang.TheoremLoaderException;
@@ -91,7 +90,7 @@ public abstract class BatchFramework {
 
     protected CommandLineArguments commandLineArguments;
 
-    /*friendly*/Paths paths;
+    /*friendly*/public Paths paths;
 
     /*friendly*/MMJ2FailPopupWindow mmj2FailPopupWindow;
 
@@ -100,32 +99,36 @@ public abstract class BatchFramework {
     protected RunParmFile runParmFile;
     /*friendly*/int runParmCnt;
 
-    /*friendly*/String currentRunParmCommand;
+    /*friendly*/BatchCommand currentRunParmCommand;
 
     /*friendly*/String runParmExecutableCaption;
     /*friendly*/String runParmCommentCaption;
 
-    /*friendly*/List<Boss> bossList;
+    /*friendly*/public List<Boss> bossList;
 
-    /*friendly*/OutputBoss outputBoss;
+    /*friendly*/public StoreBoss storeBoss;
 
-    /*friendly*/LogicalSystemBoss logicalSystemBoss;
+    /*friendly*/public OutputBoss outputBoss;
 
-    /*friendly*/VerifyProofBoss verifyProofBoss;
+    /*friendly*/public LogicalSystemBoss logicalSystemBoss;
 
-    /*friendly*/GrammarBoss grammarBoss;
+    /*friendly*/public VerifyProofBoss verifyProofBoss;
 
-    /*friendly*/ProofAsstBoss proofAsstBoss;
+    /*friendly*/public GrammarBoss grammarBoss;
 
-    /*friendly*/TMFFBoss tmffBoss;
+    /*friendly*/public ProofAsstBoss proofAsstBoss;
 
-    /*friendly*/WorkVarBoss workVarBoss;
+    /*friendly*/public TMFFBoss tmffBoss;
 
-    /*friendly*/SvcBoss svcBoss;
+    /*friendly*/public WorkVarBoss workVarBoss;
 
-    /*friendly*/TheoremLoaderBoss theoremLoaderBoss;
+    /*friendly*/public SvcBoss svcBoss;
 
-    /*friendly*/GMFFBoss gmffBoss;
+    /*friendly*/public TheoremLoaderBoss theoremLoaderBoss;
+
+    /*friendly*/public GMFFBoss gmffBoss;
+
+    /*friendly*/public MacroBoss macroBoss;
 
     /**
      * Initialize BatchFramework with Boss list and any captions that may have
@@ -140,36 +143,19 @@ public abstract class BatchFramework {
      */
     public void initializeBatchFramework() {
         batchFrameworkInitialized = true;
-        bossList = new ArrayList<Boss>();
+        bossList = new ArrayList<>();
 
+        storeBoss = new StoreBoss(this);
         outputBoss = new OutputBoss(this);
-        addBossToBossList(outputBoss);
-
         verifyProofBoss = new VerifyProofBoss(this);
-        addBossToBossList(verifyProofBoss);
-
         grammarBoss = new GrammarBoss(this);
-        addBossToBossList(grammarBoss);
-
         proofAsstBoss = new ProofAsstBoss(this);
-        addBossToBossList(proofAsstBoss);
-
         tmffBoss = new TMFFBoss(this);
-        addBossToBossList(tmffBoss);
-
         workVarBoss = new WorkVarBoss(this);
-        addBossToBossList(workVarBoss);
-
         svcBoss = new SvcBoss(this);
-        addBossToBossList(svcBoss);
-
         theoremLoaderBoss = new TheoremLoaderBoss(this);
-        addBossToBossList(theoremLoaderBoss);
-
         gmffBoss = new GMFFBoss(this);
-        addBossToBossList(gmffBoss);
-
-        addAnyExtraBossesToBossList();
+        macroBoss = new MacroBoss(this);
 
         // NOTE: LogicalSystemBoss should be at the end
         // because the "LoadFile" RunParm is a signal
@@ -178,7 +164,6 @@ public abstract class BatchFramework {
         // example, Grammar requires reinitialization
         // for new input .mm files.)
         logicalSystemBoss = new LogicalSystemBoss(this);
-        addBossToBossList(logicalSystemBoss);
 
         setRunParmExecutableCaption();
         setRunParmCommentCaption();
@@ -198,7 +183,7 @@ public abstract class BatchFramework {
      * displaying of startup errors. Abnormal termination -- "Fail" -- error
      * messages are displayed here by calling the MMJ2 Fail Popup Window
      * directly.
-     * 
+     *
      * @param args command line parms for RunParmFile constructor. (See
      *            CommandLineArguments.java for detailed doc
      * @return return code 0 if BatchFramework was successful (however many
@@ -236,8 +221,11 @@ public abstract class BatchFramework {
 
         if (retCd == 0)
             try {
-                while (runParmFile.hasNext())
-                    executeRunParmCommand(runParmFile.next());
+                final LinkedList<RunParmArrayEntry> list = new LinkedList<>();
+                runParmFile.forEachRemaining(list::add);
+                runParmFile.close();
+                for (final RunParmArrayEntry runParm : list)
+                    executeRunParmCommand(runParm);
             } catch (final Exception e) {
                 failMessage = e.getMessage();
                 System.err.println(failMessage);
@@ -246,7 +234,7 @@ public abstract class BatchFramework {
                 try {
                     outputBoss.sysErrPrintln(failMessage);
                 } catch (final IOException f) {
-                    failMessage = failMessage + f.getMessage();
+                    failMessage += f.getMessage();
                     System.err.println(failMessage);
                 }
             } catch (final Error e) {
@@ -265,25 +253,6 @@ public abstract class BatchFramework {
     }
 
     /**
-     * Add a processing Boss to the Boss List.
-     * 
-     * @param boss The processing Boss
-     */
-    public void addBossToBossList(final Boss boss) {
-        bossList.add(boss);
-    }
-
-    /**
-     * Placeholder to be overridden to dynamically add a new processing Boss to
-     * the list.
-     * <p>
-     * Override this to include extra processing. Each Boss on the bossList will
-     * get a chance to process each RunParmFile line that hasn't already been
-     * "consumed" by other bosses.
-     */
-    public void addAnyExtraBossesToBossList() {}
-
-    /**
      * Override this to alter what prints out before an executable RunParmFile
      * line is processed.
      */
@@ -300,7 +269,7 @@ public abstract class BatchFramework {
 
     /**
      * Processes a single RunParmFile line.
-     * 
+     *
      * @param runParm RunParmFileLine parsed into a RunParmArrayEntry object.
      * @throws IOException if an error occurred in the RunParm
      * @throws GMFFException if an error occurred in the RunParm
@@ -316,7 +285,7 @@ public abstract class BatchFramework {
         runParmCnt++;
 
         // capture this for use by MMJ2FailPopupWindow
-        currentRunParmCommand = runParm.name;
+        currentRunParmCommand = runParm.cmd;
 
         if (runParm.commentLine != null)
             printCommentRunParmLine(runParmCommentCaption, runParmCnt, runParm);
@@ -324,17 +293,16 @@ public abstract class BatchFramework {
             printExecutableRunParmLine(runParmExecutableCaption, runParmCnt,
                 runParm);
 
-            if (runParm.name
-                .equalsIgnoreCase(UtilConstants.RUNPARM_JAVA_GARBAGE_COLLECTION))
+            if (runParm.name.equalsIgnoreCase(
+                UtilConstants.RUNPARM_JAVA_GARBAGE_COLLECTION.name()))
                 System.gc();
             else {
                 boolean consumed = false;
                 for (final Boss b : bossList)
                     if (consumed = b.doRunParmCommand(runParm))
                         break;
-                if (!consumed
-                    && !runParm.name
-                        .equalsIgnoreCase(UtilConstants.RUNPARM_CLEAR))
+                if (!consumed && !runParm.name
+                    .equalsIgnoreCase(UtilConstants.RUNPARM_CLEAR.name()))
                     throw new IllegalArgumentException(
                         UtilConstants.ERRMSG_RUNPARM_NAME_INVALID_1
                             + runParm.name
@@ -344,23 +312,9 @@ public abstract class BatchFramework {
     }
 
     /**
-     * Compares the current RunParmArrayEntry name to an input command.
-     * 
-     * @param command RunParm command to compare to the current command name.
-     * @return true if equal, ignoring case, otherwise false.
-     */
-    public boolean isCurrentRunParmCommand(final String command) {
-        if (currentRunParmCommand != null
-            && currentRunParmCommand.compareToIgnoreCase(command) == 0)
-            return true;
-        else
-            return false;
-    }
-
-    /**
      * Override this to change or eliminate the printout of each executable
      * RunParmFile line.
-     * 
+     *
      * @param caption to print
      * @param cnt RunParmFile line number
      * @param runParm RunParmFile line parsed into object RunParmArrayEntry.
@@ -369,15 +323,15 @@ public abstract class BatchFramework {
     public void printExecutableRunParmLine(final String caption, final int cnt,
         final RunParmArrayEntry runParm) throws IOException
     {
-        outputBoss.sysOutPrintln(caption + cnt
-            + UtilConstants.ERRMSG_EQUALS_LITERAL + runParm,
+        outputBoss.sysOutPrintln(
+            caption + cnt + UtilConstants.ERRMSG_EQUALS_LITERAL + runParm,
             UtilConstants.RUNPARM_LINE_DUMP_VERBOSITY);
     }
 
     /**
      * Override this to change or eliminate the printout of each Comment
      * RunParmFile line.
-     * 
+     *
      * @param caption to print
      * @param cnt RunParmFile line number
      * @param runParm RunParmFile line parsed into object RunParmArrayEntry.
@@ -386,14 +340,14 @@ public abstract class BatchFramework {
     public void printCommentRunParmLine(final String caption, final int cnt,
         final RunParmArrayEntry runParm) throws IOException
     {
-        outputBoss.sysOutPrintln(caption + cnt
-            + UtilConstants.ERRMSG_EQUALS_LITERAL + runParm,
+        outputBoss.sysOutPrintln(
+            caption + cnt + UtilConstants.ERRMSG_EQUALS_LITERAL + runParm,
             UtilConstants.RUNPARM_LINE_DUMP_VERBOSITY);
     }
 
     /**
      * Returns the canonical path name of the RunParmFile.
-     * 
+     *
      * @return canonical path of RunParmFile or empty string if RunParmFile is
      *         null.
      */

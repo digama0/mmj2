@@ -98,12 +98,12 @@ public class StepUnifier {
     /**
      * T "substAnswer" array contains the results of unifyLogHypFormula() stored
      * at these coordinates
-     * 
+     *
      * <pre>
      *     row   = derivStepHypArray[i]  (1st dimension)
      *     col   = assrtLogHypArray[j]   (2nd dimension)
      * </pre>
-     * 
+     *
      * We use the following conventions:
      * <ul>
      * <li>substAnswer[i][j] == null means that unifyLogHypFormula() has not
@@ -128,12 +128,12 @@ public class StepUnifier {
      * assrtLogHypArray.
      * <p>
      * {@code derivAssrtXRef[I] = N} says:
-     * 
+     *
      * <pre>
      *     derivStepHypArray[I] unifies with
      *     assrtLogHypArray[N]
      * </pre>
-     * 
+     *
      * in the final, completed deriv step unification.
      */
     private int[] derivAssrtXRef;
@@ -146,7 +146,7 @@ public class StepUnifier {
 
     /**
      * Constructor for StepUnifier.
-     * 
+     *
      * @param workVarManager instance of WorkVarManager.
      */
     public StepUnifier(final WorkVarManager workVarManager) {
@@ -196,7 +196,7 @@ public class StepUnifier {
      * var "A" is marked as deallocated, then the program *knows* that it must
      * update proof step 3's formula and parse tree, and that maybe proof step 3
      * no longer has any work variables (or not...)
-     * 
+     *
      * @return the substituted list of ParseNodes
      */
     public ParseNode[] finalizeAndLoadAssrtSubst() {
@@ -232,7 +232,7 @@ public class StepUnifier {
      * derivAssrtXRef[0] = 2 that means that the first (sorted) element of
      * derivStepHypArray unifies with the 3rd (sorted) element of
      * assrtLogHypArray.
-     * 
+     *
      * @return derivAssrtXRef array of int indexes.
      */
     public int[] getDerivAssrtXRef() {
@@ -266,27 +266,23 @@ public class StepUnifier {
      * <p>
      * Then unify/merge the proof step formula but not, yet, the logical
      * hypotheses.
-     * 
+     *
      * @param commit see {@link #commit}
-     * @param assrtRoot the root of the Assrt ParseTree
+     * @param assrt the Assrt
      * @param stepRoot the root of the step's formula ParseTree
-     * @param assrtHypArray the mandatory hypArray
-     * @param assrtLogHypArray the logHypArray
      * @return true if the proof step formula unifies with the input assertion's
      *         formula; otherwise false.
      * @throws VerifyException if an error occurs
      */
     public boolean unifyAndMergeStepFormula(final boolean commit,
-        final ParseNode assrtRoot, final ParseNode stepRoot,
-        final Hyp[] assrtHypArray, final LogHyp[] assrtLogHypArray)
-        throws VerifyException
+        final Assrt assrt, final ParseNode stepRoot) throws VerifyException
     {
 
         // INITIALIZE/START ProofStep
         // ==========================
         this.commit = commit;
-        this.assrtHypArray = assrtHypArray;
-        this.assrtLogHypArray = assrtLogHypArray;
+        assrtHypArray = assrt.getMandFrame().hypArray;
+        assrtLogHypArray = assrt.getLogHypArray();
 
         // initializeTargetVarHypPASubst
         for (int i = 0; i < assrtHypArray.length; i++)
@@ -308,7 +304,7 @@ public class StepUnifier {
         currLevel = F_LEVEL_NBR;
         currLevelDeferred = UnifySubst.EMPTY_LIST;
         currLevelDeferredLast = null;
-        if (unifyLevel(assrtRoot, stepRoot)) {
+        if (unifyLevel(assrt.getExprParseTree().getRoot(), stepRoot)) {
             allocWorkVarsForUnassignedSourceVars();
             if (mergeCurrLevelSubst())
                 return true;
@@ -326,7 +322,7 @@ public class StepUnifier {
      * The derivation step hypothesis order used ought to be the order input by
      * the user -- only if that order is wrong should unifyAndMergeHypsSorted()
      * be used.
-     * 
+     *
      * @param derivStepHypArray the hypArray for the derivation step
      * @return array assrtSubst, a ParseNode array parallel to
      *         assrt.MandFrame.hyp.
@@ -346,8 +342,9 @@ public class StepUnifier {
                 sourceRoot = derivStepHypArray[currLevel].formulaParseTree
                     .getRoot();
 
-            if (unifyLogHypFormula(assrtLogHypArray[currLevel]
-                .getExprParseTree().getRoot(), sourceRoot) != UnifySubst.IMPOSSIBLE)
+            if (unifyLogHypFormula(
+                assrtLogHypArray[currLevel].getExprParseTree().getRoot(),
+                sourceRoot) != UnifySubst.IMPOSSIBLE)
                 if (mergeCurrLevelSubst())
                     continue;
 
@@ -380,7 +377,7 @@ public class StepUnifier {
      * derivation step's main formula, then that hypothesis is placed ahead of
      * the other. This sort order is based on empirical observation -- and seems
      * to work ok.
-     * 
+     *
      * @param assrtLogHypArray the logHypArray
      * @param derivStepHypArray the hypArray for the derivation step
      * @return array assrtSubst, a ParseNode array parallel to
@@ -552,14 +549,15 @@ public class StepUnifier {
 
             workVarHyp = workVarManager.allocWorkVarHyp(sourceVarHyp.getTyp());
 
-            addToAppliedArray(new UnifySubst(workVarHyp, null, // null toNode
-                true), // generatedDuringAccum
+            addToAppliedArray(
+                new UnifySubst(workVarHyp, null, // null toNode
+                    true), // generatedDuringAccum
                 F_LEVEL_NBR); // fLevel
 
             sourceVarHyp.paSubst = new ParseNode(workVarHyp);
 
-            addToAppliedArray(new UnifySubst(sourceVarHyp,
-                sourceVarHyp.paSubst, true), // generatedDuringAccum
+            addToAppliedArray(
+                new UnifySubst(sourceVarHyp, sourceVarHyp.paSubst, true), // generatedDuringAccum
                 F_LEVEL_NBR); // fLevel
         }
     }
@@ -594,8 +592,8 @@ public class StepUnifier {
         }
 
         if (sourceNode.stmt instanceof WorkVarHyp) {
-            addToCurrLevelDeferred(new UnifySubst((VarHyp)sourceNode.stmt,
-                targetNode, false));
+            addToCurrLevelDeferred(
+                new UnifySubst((VarHyp)sourceNode.stmt, targetNode, false));
             return true;
         }
 
@@ -672,7 +670,7 @@ public class StepUnifier {
      * THEREFORE any substitutions generated during this process can only, by
      * definition, be applied to WORK VARIABLES (because there are no
      * substitutions to the source variables themselves.)
-     * 
+     *
      * @param n1 one node of the subunification
      * @param n2 the other node
      * @return true if subunification was successful
@@ -711,7 +709,8 @@ public class StepUnifier {
             currLevelDeferred = deferredSubst;
     }
 
-    private void addToAppliedArray(final UnifySubst unifySubst, int levelIndex)
+    private void addToAppliedArray(final UnifySubst unifySubst,
+        int levelIndex)
     {
         if (appliedCnt >= applied.length) {
             if (appliedCnt >= PaConstants.STEP_UNIFIER_APPLIED_ARRAY_LEN_MAX)

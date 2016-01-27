@@ -21,15 +21,16 @@ import javax.swing.plaf.basic.BasicComboBoxEditor;
 public class ForWhatScrnMap extends SearchOptionsJComboBox {
 
     public ForWhatScrnMap(final int i, final String[] as,
-        final DefaultComboBoxModel defaultcomboboxmodel)
+        final DefaultComboBoxModel<String> defaultcomboboxmodel)
     {
-        super(SearchOptionsConstants.FOR_WHAT_FIELD_ID[i], defaultcomboboxmodel);
+        super(SearchOptionsConstants.FOR_WHAT_FIELD_ID[i],
+            defaultcomboboxmodel);
         setEditable(true);
         setEditor(new BasicComboBoxEditor());
         setSelectedItem(SearchOptionsConstants.FIELD_ATTR[fieldId].defaultText);
         setDefaultToCurrentValue();
-        setBorder(BorderFactory.createLineBorder(
-            SearchOptionsConstants.FOR_WHAT_BORDER_COLOR, 3));
+        setBorder(BorderFactory
+            .createLineBorder(SearchOptionsConstants.FOR_WHAT_BORDER_COLOR, 3));
         ((JTextField)getEditor().getEditorComponent())
             .addMouseListener(new SearchJTextFieldPopupMenuListener(
                 new SearchJTextFieldPopupMenu()));
@@ -49,7 +50,7 @@ public class ForWhatScrnMap extends SearchOptionsJComboBox {
         do {
             if (j >= i)
                 break;
-            if (s.equals(((String)getItemAt(j)).trim())) {
+            if (s.equals(getItemAt(j).trim())) {
                 removeItemAt(j);
                 break;
             }
@@ -70,7 +71,7 @@ public class ForWhatScrnMap extends SearchOptionsJComboBox {
         final int i = getItemCount();
         final String[] as = new String[i];
         for (int j = 0; j < i; j++)
-            as[j] = ((String)getItemAt(j)).trim();
+            as[j] = getItemAt(j).trim();
 
         return as;
     }

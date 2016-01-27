@@ -22,12 +22,12 @@ import javax.swing.DefaultComboBoxModel;
 
 import mmj.lang.LangException;
 
-public class FormatScrnMap extends SearchOptionsJComboBox implements
-    ActionListener
+public class FormatScrnMap extends SearchOptionsJComboBox
+    implements ActionListener
 {
 
     public FormatScrnMap(final int i,
-        final DefaultComboBoxModel defaultComboBoxModel,
+        final DefaultComboBoxModel<String> defaultComboBoxModel,
         final OperScrnMap operScrnMap)
     {
         super(SearchOptionsConstants.FORMAT_FIELD_ID[i], defaultComboBoxModel);
@@ -84,8 +84,8 @@ public class FormatScrnMap extends SearchOptionsJComboBox implements
             if (s.equals(SearchOptionsConstants.FORMAT_VALUES[i]))
                 return SearchOptionsConstants.FORMAT_ID[i];
 
-        throw new IllegalArgumentException(LangException.format(
-            SearchOptionsConstants.ERRMSG_FORMAT_SEL_INVALID, s));
+        throw new IllegalArgumentException(LangException
+            .format(SearchOptionsConstants.ERRMSG_FORMAT_SEL_INVALID, s));
     }
 
     private void formatIdUpdate(final int i) {

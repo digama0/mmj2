@@ -243,18 +243,18 @@ public class CompiledSearchArgs {
     private void compileStepSearchArgs() {
         final DerivationStep derivationStep = searchArgs.stepSearchStmt;
         nbrDerivStepHyps = 0;
-        for (final ProofStepStmt element : derivationStep.hyp) {
+        for (final ProofStepStmt element : derivationStep.getHypList()) {
             if (element == null)
                 continue;
             if (element.formulaParseTree == null)
                 throw new IllegalArgumentException(
                     SearchConstants.ERRMSG_SEARCH_NULL_PARSE_TREE_1
                         + SearchConstants.DOT_STEP_CAPTION
-                        + derivationStep.step);
+                        + derivationStep.getStep());
             nbrDerivStepHyps++;
         }
 
-        if (nbrDerivStepHyps == derivationStep.hyp.length)
+        if (nbrDerivStepHyps == derivationStep.getHypNumber())
             derivStepHypWildcards = false;
         else
             derivStepHypWildcards = true;

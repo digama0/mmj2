@@ -57,12 +57,11 @@ public class StepSelectorSearch {
     private int assrtNbrLogHyps;
     private Hyp[] assrtHypArray;
     private LogHyp[] assrtLogHypArray;
-    private ParseNode assrtRoot;
     private ParseNode[] assrtSubst;
 
     /**
      * Constructor for StepSelectorSearch
-     * 
+     *
      * @param proofAsstPreferences the ProofAsstPreferences object
      * @param verifyProofs the VerifyProofs object
      * @param provableLogicStmtTyp a Provable Logic Stmt Type Code
@@ -87,8 +86,8 @@ public class StepSelectorSearch {
 //            Assrt.NBR_LOG_HYP_SEQ);
 
         final int listSize = unifySearchList.size()
-            * (100 + proofAsstPreferences.getAssrtListFreespace()) / 100;
-        assrtAList = new ArrayList<Assrt>(listSize);
+            * (100 + proofAsstPreferences.assrtListFreespace.get()) / 100;
+        assrtAList = new ArrayList<>(listSize);
 
         assrtAList.addAll(unifySearchList);
 
@@ -99,12 +98,12 @@ public class StepSelectorSearch {
         final List<Theorem> listOfAssrtAddsSortedBySeq)
     {
 
-        final List<Theorem> addList = new ArrayList<Theorem>(
+        final List<Theorem> addList = new ArrayList<>(
             listOfAssrtAddsSortedBySeq);
 
         Collections.sort(addList, Assrt.NBR_LOG_HYP_SEQ);
 
-        new MergeSortedArrayLists<Assrt>(assrtAList, addList,
+        new MergeSortedArrayLists<>(assrtAList, addList,
             Assrt.NBR_LOG_HYP_SEQ, true); // abortIfDupsFound
     }
 
@@ -114,7 +113,7 @@ public class StepSelectorSearch {
      * <p>
      * Always returns at least one StepSelectorResult item, "***END***" with
      * Assrt = null (or n items + "***MORE***").
-     * 
+     *
      * @param derivStep DerivationStep from ProofWorksheet
      * @return StepSelectorResults containing unifying assertions and
      *         corresponding formulas.
@@ -136,7 +135,7 @@ public class StepSelectorSearch {
         /* count and double-check input
          */
         int nbrDerivStepHyps = 0;
-        for (final ProofStepStmt element : derivStep.hyp) {
+        for (final ProofStepStmt element : derivStep.getHypList()) {
             if (element == null)
                 continue;
             /* This is bogus -- but a hyp[i]'s deriveStepFormula
@@ -145,7 +144,7 @@ public class StepSelectorSearch {
             if (element.formulaParseTree == null)
                 throw new VerifyException(
                     PaConstants.ERRMSG_SELECTOR_SEARCH_NULL_PARSE_TREE,
-                    derivStep.step);
+                    derivStep.getStep());
             nbrDerivStepHyps++;
         }
 
@@ -161,7 +160,7 @@ public class StepSelectorSearch {
         /* See if log hyp "wildcards" to be searched.
          */
         int maxHyps;
-        if (nbrDerivStepHyps == derivStep.hyp.length)
+        if (nbrDerivStepHyps == derivStep.getHypNumber())
             maxHyps = nbrDerivStepHyps;
         else
             maxHyps = Integer.MAX_VALUE;
@@ -196,8 +195,7 @@ public class StepSelectorSearch {
                         }
                 }
                 else if (hypIndex < // 95% of Assrts
-                PaConstants.STEP_SELECTOR_SEARCH_HYP_LOOKUP_MAX)
-                {
+                PaConstants.STEP_SELECTOR_SEARCH_HYP_LOOKUP_MAX) {
                     hypIndex++; // so skip forward
                     assrtIndex = computeSearchStart(hypIndex);
                     continue hypLoop;
@@ -207,7 +205,8 @@ public class StepSelectorSearch {
             break;
         }
 
-        return store.createStepSelectorResults(derivStep.step, storeOverflow);
+        return store.createStepSelectorResults(derivStep.getStep(),
+            storeOverflow);
     }
 
     public List<Assrt> getSortedAssrtSearchList() {
@@ -220,7 +219,7 @@ public class StepSelectorSearch {
      * <p>
      * Assumes that assrtArray is not empty and that it is sorted by
      * Assrt.NBR_LOG_HYP_SEQ.
-     * 
+     *
      * @param nbrHyps number of hypotheses on derivation step.
      * @return if not found, then return Integer.MAX_VALUE, otherwise the index
      *         of the first assertion with number of LogHyps >= input nbrHyps.
@@ -290,13 +289,13 @@ public class StepSelectorSearch {
 
         assrtHypArray = assrt.getMandFrame().hypArray;
         assrtLogHypArray = assrt.getLogHypArray();
-        assrtRoot = assrt.getExprParseTree().getRoot();
+        assrt.getExprParseTree().getRoot();
 
         ParseNode stepRoot = null;
         if (derivStep.formulaParseTree != null)
             stepRoot = derivStep.formulaParseTree.getRoot();
-        return stepUnifier.unifyAndMergeStepFormula(/* commit = */false,
-            assrtRoot, stepRoot, assrtHypArray, assrtLogHypArray);
+        return stepUnifier.unifyAndMergeStepFormula(/* commit = */false, assrt,
+            stepRoot);
     }
 
     private boolean addAssrtToStore(final StepSelectorStore store) {
@@ -306,17 +305,17 @@ public class StepSelectorSearch {
         int cntLines = 0;
 
         Formula conclusionFormula;
-        if (proofAsstPreferences.getStepSelectorShowSubstitutions())
-            conclusionFormula = buildStepSelectionSubstFormula(assrt
-                .getExprParseTree());
+        if (proofAsstPreferences.stepSelectorShowSubstitutions.get())
+            conclusionFormula = buildStepSelectionSubstFormula(
+                assrt.getExprParseTree());
         else
             conclusionFormula = assrt.getFormula();
 
         final Formula[] logHypFormula = new Formula[assrtNbrLogHyps];
         for (int i = 0; i < assrtNbrLogHyps; i++)
-            if (proofAsstPreferences.getStepSelectorShowSubstitutions())
-                logHypFormula[i] = buildStepSelectionSubstFormula(assrtLogHypArray[i]
-                    .getExprParseTree());
+            if (proofAsstPreferences.stepSelectorShowSubstitutions.get())
+                logHypFormula[i] = buildStepSelectionSubstFormula(
+                    assrtLogHypArray[i].getExprParseTree());
             else
                 logHypFormula[i] = assrtLogHypArray[i].getFormula();
 
@@ -358,15 +357,16 @@ public class StepSelectorSearch {
         return store.add(assrt, lineArray);
     }
 
-    private Formula buildStepSelectionSubstFormula(final ParseTree inParseTree)
+    private Formula buildStepSelectionSubstFormula(
+        final ParseTree inParseTree)
     {
 
-        final ParseTree outParseTree = inParseTree.deepCloneApplyingAssrtSubst(
-            assrtHypArray, assrtSubst);
+        final ParseTree outParseTree = inParseTree
+            .deepCloneApplyingAssrtSubst(assrtHypArray, assrtSubst);
 
         final Formula outFormula = verifyProofs.convertRPNToFormula(
-            outParseTree.convertToRPN(), PaConstants.DOT_STEP_CAPTION
-                + derivStep.step);
+            outParseTree.convertToRPN(),
+            PaConstants.DOT_STEP_CAPTION + derivStep.getStep());
 
         outFormula.setTyp(provableLogicStmtTyp);
 

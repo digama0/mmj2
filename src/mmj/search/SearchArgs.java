@@ -71,11 +71,11 @@ public class SearchArgs {
             bool[0], inWhat[1], part[1], format[1], oper[1], forWhat[1],
             bool[1], inWhat[2], part[2], format[2], oper[2], forWhat[2],
             bool[2], inWhat[3], part[3], format[3], oper[3], forWhat[3],
-            bool[3], exclLabels, minProofRefs, resultsChecked, maxTime,
-            minHyps, maxExtResults, substitutions, maxHyps, maxIncompHyps,
-            comments, maxResults, prevStepsChecked, autoSelect,
-            chapSecHierarchy, reuseDerivSteps, stats, fromChap, fromSec,
-            thruChap, thruSec, outputSort};
+            bool[3], exclLabels, minProofRefs, resultsChecked, maxTime, minHyps,
+            maxExtResults, substitutions, maxHyps, maxIncompHyps, comments,
+            maxResults, prevStepsChecked, autoSelect, chapSecHierarchy,
+            reuseDerivSteps, stats, fromChap, fromSec, thruChap, thruSec,
+            outputSort};
 
     public SearchArgs() {
         initSearchArgsToDefaults();
@@ -94,8 +94,8 @@ public class SearchArgs {
     void initSearchArgsToDefaults() {
         initSearchKeys();
         for (final SearchArgsField element : arg)
-            element
-                .set(SearchOptionsConstants.FIELD_ATTR[element.getFieldId()].defaultText);
+            element.set(SearchOptionsConstants.FIELD_ATTR[element
+                .getFieldId()].defaultText);
 
     }
 
@@ -138,8 +138,8 @@ public class SearchArgs {
         if (searchReferenceStmt == null) {
             if (locAfterLabel != null && !locAfterLabel.equals("")
                 && !locAfterLabel.equals(PaConstants.DEFAULT_STMT_LABEL))
-                searchReferenceStmt = logicalSystem.getStmtTbl().get(
-                    locAfterLabel);
+                searchReferenceStmt = logicalSystem.getStmtTbl()
+                    .get(locAfterLabel);
         }
         else
             loadComboFrame(searchReferenceStmt, logicalSystem);
@@ -149,10 +149,7 @@ public class SearchArgs {
         stepRequest = w.getStepRequest();
         if (stepRequest == null)
             return;
-        if (stepRequest.request == PaConstants.STEP_REQUEST_STEP_SEARCH
-            || stepRequest.request == PaConstants.STEP_REQUEST_SEARCH_OPTIONS
-            && stepRequest.param1 != null)
-        {
+        if (stepRequest == StepRequest.StepSearch) {
             stepSearchMode = true;
             stepSearchStmt = (DerivationStep)stepRequest.param1;
         }

@@ -313,7 +313,7 @@ public class Theorem extends Assrt {
      */
     private ScopeFrame buildOptFrame(final List<ScopeDef> scopeDefList) {
         final ScopeFrame oF = new ScopeFrame();
-        final List<Hyp> optHypList = new ArrayList<Hyp>();
+        final List<Hyp> optHypList = new ArrayList<>();
 
         for (final ScopeDef scopeDef : scopeDefList)
             for (final VarHyp varHyp : scopeDef.scopeVarHyp)
@@ -324,7 +324,7 @@ public class Theorem extends Assrt {
         // oF.optHypArray = optHypList.toArray(oF.optHypArray);
         oF.hypArray = optHypList.toArray(new Hyp[optHypList.size()]);
 
-        final List<DjVars> optDjVarsList = new ArrayList<DjVars>();
+        final List<DjVars> optDjVarsList = new ArrayList<>();
         for (final ScopeDef scopeDef : scopeDefList)
             for (final DjVars djVars : scopeDef.scopeDjVars)
                 if (!optDjVarsList.contains(djVars)

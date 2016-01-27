@@ -15,7 +15,7 @@
 
 /*
  * GeneratedProofStmt.java  0.07 08/01/2008
- * 
+ *
  * Version 0.04:
  *     - Un-nested inner class
  *     - replace ProofWorkStmt.status
@@ -48,7 +48,7 @@ public class GeneratedProofStmt extends ProofWorkStmt {
 
     /**
      * Default Constructor.
-     * 
+     *
      * @param w the owner ProofWorksheet
      */
     public GeneratedProofStmt(final ProofWorksheet w) {
@@ -57,11 +57,12 @@ public class GeneratedProofStmt extends ProofWorkStmt {
 
     /**
      * Standard Constructor for GeneratedProofStmt.
-     * 
+     *
      * @param w the owner ProofWorksheet
      * @param rpnProof Proof Stmt Array in RPN format
      */
-    public GeneratedProofStmt(final ProofWorksheet w, final RPNStep[] rpnProof)
+    public GeneratedProofStmt(final ProofWorksheet w,
+        final RPNStep[] rpnProof)
     {
         super(w);
 
@@ -69,7 +70,7 @@ public class GeneratedProofStmt extends ProofWorkStmt {
 
         stmtText = new StringBuilder(rpnProof.length * 5); // 5=guess
         final int left = w.getRPNProofLeftCol();
-        final int right = w.proofAsstPreferences.getRPNProofRightCol();
+        final int right = w.proofAsstPreferences.rpnProofRightCol.get();
         final StringBuilder indentLeft = new StringBuilder(left - 1);
         for (int i = 1; i < left; i++)
             indentLeft.append(' ');
@@ -131,7 +132,7 @@ public class GeneratedProofStmt extends ProofWorkStmt {
 
         stmtText = new StringBuilder(parenList.size() * 5 + letters.length()); // 5=guess
         final int left = w.getRPNProofLeftCol();
-        final int right = w.proofAsstPreferences.getRPNProofRightCol();
+        final int right = w.proofAsstPreferences.rpnProofRightCol.get();
         final StringBuilder indentLeft = new StringBuilder(left - 1);
         for (int i = 1; i < left; i++)
             indentLeft.append(' ');
@@ -205,7 +206,7 @@ public class GeneratedProofStmt extends ProofWorkStmt {
 
     /**
      * Function used for cursor positioning.
-     * 
+     *
      * @param fieldId value identify ProofWorkStmt field for cursor positioning,
      *            as defined in PaConstants.FIELD_ID_*.
      * @return column of input fieldId or default value of 1 if there is an

@@ -106,8 +106,8 @@ public class ParsedSearchTerm {
                 + e.getMessage();
             return;
         }
-        final List<VarHyp> varHyps = new ArrayList<VarHyp>();
-        final List<Sym> symList = new ArrayList<Sym>();
+        final List<VarHyp> varHyps = new ArrayList<>();
+        final List<Sym> symList = new ArrayList<>();
         symList.add(searchMgr.getProvableLogicStmtTyp());
         while (true) {
             final StringBuilder sb = new StringBuilder();

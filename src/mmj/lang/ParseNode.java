@@ -50,6 +50,7 @@ package mmj.lang;
 import java.util.*;
 
 import mmj.lang.ParseTree.RPNStep;
+import mmj.verify.VerifyProofs;
 
 /**
  * Parse Node is an n-way tree node for Metamath Stmt trees.
@@ -124,6 +125,11 @@ public class ParseNode {
     private int sizeExpanded;
 
     /**
+     * Cached expanded size of node subtree.
+     */
+    private int formulaSize;
+
+    /**
      * This temporary variable is 0 if the node has one parent, -1 if the node
      * has multiple parents, and a positive integer when the RPN index of the
      * first parent is known.
@@ -133,21 +139,24 @@ public class ParseNode {
     /**
      * Default constructor.
      */
-    public ParseNode() {}
+    public ParseNode() {
+        this(null);
+    }
 
     /**
-     * Construct with a Stmt.
-     * 
+     * Construct with a Stmt and children.
+     *
      * @param stmt a proof step.
+     * @param child children array
      */
-    public ParseNode(final Stmt stmt) {
+    public ParseNode(final Stmt stmt, final ParseNode... child) {
         this.stmt = stmt;
-        child = null;
+        this.child = child;
     }
 
     /**
      * Construct using a VarHyp.
-     * 
+     *
      * @param varHyp a proof or parse step.
      */
     public ParseNode(final VarHyp varHyp) {
@@ -156,126 +165,85 @@ public class ParseNode {
     }
 
     /**
-     * Return ParseNode's Stmt.
-     * 
-     * @return stmt (could be null depending on the context).
-     */
-    public Stmt getStmt() {
-        return stmt;
-    }
-
-    /**
-     * Set ParseNode's Stmt.
-     * 
-     * @param stmt a proof or parse step.
-     */
-    public void setStmt(final Stmt stmt) {
-        this.stmt = stmt;
-    }
-
-    /**
-     * Return ParseNode's Child ParseNode array.
-     * 
-     * @return child ParseNode array.
-     */
-    public ParseNode[] getChild() {
-        return child;
-    }
-
-    /**
-     * Return ParseNode's Child ParseNode array.
-     * 
-     * @param child ParseNode array.
-     */
-    public void setChild(final ParseNode[] child) {
-        this.child = child;
-    }
-
-    /**
      * Unify an input parse subtree (expression) with this subtree and return an
-     * array of substitions if successful, or null. Using fixed size work stacks
-     * here, set to 1000 in Proof Assistant. Hard to imagine exceeding the size
-     * so we'll accept the possibility of array out-of-bounds exception and just
-     * recompile if needed (for now... see
-     * mmj.pa.PaConstants.UNIFIER_NODE_STACK_SIZE ).
-     * 
+     * array of substitutions if successful, or null.
+     *
      * @param subtreeRoot root of parse subtree to unify with this
      * @param varHypArray the VarHyp's in this subtree
-     * @param unifyNodeStack fixed size work stack
-     * @param compareNodeStack fixed size work stack
+     * @param unifyNodeStack work stack
+     * @param compareNodeStack work stack
      * @return array of subtrees that represent substitutions for the
      *         corresponding VarHyps in the input varHypArray (may contain
      *         nulls).
      */
     public ParseNode[] unifyWithSubtree(final ParseNode subtreeRoot,
-        final VarHyp[] varHypArray, final ParseNode[] unifyNodeStack,
-        final ParseNode[] compareNodeStack)
+        final VarHyp[] varHypArray, final Deque<ParseNode> unifyNodeStack,
+        final Deque<ParseNode> compareNodeStack)
     {
-
-        unifyNodeStack[0] = this;
-        unifyNodeStack[1] = subtreeRoot;
-
-        int stackCnt = 2;
+        unifyNodeStack.push(this);
+        unifyNodeStack.push(subtreeRoot);
 
         final ParseNode[] substArray = new ParseNode[varHypArray.length];
 
         ParseNode myNode;
         ParseNode subtreeNode;
 
-        stackLoop: while (stackCnt > 0) {
-            subtreeNode = unifyNodeStack[--stackCnt];
-            myNode = unifyNodeStack[--stackCnt];
+        while (!unifyNodeStack.isEmpty()) {
+            subtreeNode = unifyNodeStack.pop();
+            myNode = unifyNodeStack.pop();
 
             if (myNode.stmt != subtreeNode.stmt) {
                 if (!(myNode.stmt instanceof VarHyp)
                     || myNode.stmt.getTyp() != subtreeNode.stmt.getTyp())
+                {
                     // mismatch and/or myNode not VarHyp
+                    unifyNodeStack.clear();
                     return null;
+                }
             }
             // ok, matching syntax nodes
             else if (!(myNode.stmt instanceof VarHyp)) {
                 for (int i = myNode.child.length - 1; i >= 0; i--) {
-                    unifyNodeStack[stackCnt++] = myNode.child[i];
-                    unifyNodeStack[stackCnt++] = subtreeNode.child[i];
+                    unifyNodeStack.push(myNode.child[i]);
+                    unifyNodeStack.push(subtreeNode.child[i]);
                 }
                 continue;
             }
-
             // ok, accum the subst while checking for (erroneous)
             // two different subst values for a single VarHyp
-            for (int i = 0; i < varHypArray.length; i++)
-                if (varHypArray[i] == myNode.stmt) {
-                    if (substArray[i] == null)
-                        substArray[i] = subtreeNode;
-                    else if (!substArray[i].isDeepDup(subtreeNode,
-                        compareNodeStack))
-                        return null; // bad subst, 2 diff values
-                    continue stackLoop; // next!!!
+            final int i = Arrays.asList(varHypArray).indexOf(myNode.stmt);
+            if (i < 0) {
+                // if we're here then we messed up!
+                String msg = "", delim = "";
+                for (final VarHyp element : varHypArray) {
+                    msg += delim + element.getLabel();
+                    delim = " ";
                 }
-
-            // if we're here then we messed up!
-            String msg = "", delim = "";
-            for (final VarHyp element : varHypArray) {
-                msg += delim + element.getLabel();
-                delim = " ";
+                throw new IllegalArgumentException(LangException.format(
+                    LangConstants.ERRMSG_UNIFY_SUBST_HYP_NOTFND,
+                    myNode.stmt.getLabel(), msg));
             }
-            throw new IllegalArgumentException(LangException.format(
-                LangConstants.ERRMSG_UNIFY_SUBST_HYP_NOTFND,
-                myNode.stmt.getLabel(), msg));
+            if (substArray[i] == null)
+                substArray[i] = subtreeNode;
+            else if (!substArray[i].isDeepDup(subtreeNode, compareNodeStack)) {
+                unifyNodeStack.clear();
+                return null; // bad subst, 2 diff values
+            }
         }
         return substArray;
     }
 
-    public int unifyWithSubtree(final ParseNode parsenode,
-        final ParseNode[] nodeStack, final ParseNode[] otherStack,
+    public int unifyWithSubtree(final ParseNode parseNode,
+        final Deque<ParseNode> nodeStack, final Deque<ParseNode> otherStack,
         final VarHypSubst[] subtree)
     {
-        nodeStack[0] = this;
-        nodeStack[1] = parsenode;
+        nodeStack.push(this);
+        nodeStack.push(parseNode);
+
         int count = 0;
-        stackLoop: for (int stack = 2; stack > 0; count++) {
-            final ParseNode thatNode = nodeStack[--stack];
-            final ParseNode myNode = nodeStack[--stack];
+        stackLoop: for (; !nodeStack.isEmpty(); count++) {
+            final ParseNode thatNode = nodeStack.pop();
+            final ParseNode myNode = nodeStack.pop();
             if (myNode.stmt != thatNode.stmt) {
                 if (!(myNode.stmt instanceof VarHyp)
                     || myNode.stmt.getTyp() != thatNode.stmt.getTyp())
@@ -283,8 +251,8 @@ public class ParseNode {
             }
             else if (!(myNode.stmt instanceof VarHyp)) {
                 for (int i = myNode.child.length - 1; i >= 0; i--) {
-                    nodeStack[stack++] = myNode.child[i];
-                    nodeStack[stack++] = thatNode.child[i];
+                    nodeStack.push(myNode.child[i]);
+                    nodeStack.push(thatNode.child[i]);
                 }
                 continue;
             }
@@ -307,58 +275,83 @@ public class ParseNode {
      * Determine if sub-tree is a duplicate of this sub-tree. This is the
      * non-recursive version of isDeepDup(), which can be used equivalently
      * instead.
-     * 
+     *
      * @param that ParseNode to compare to this ParseNode.
-     * @param compareNodeStack fixed length work stack for ParseNodes.
+     * @param compareNodeStack work stack for ParseNodes.
      * @return true if the sub-trees have identical contents.
      */
     public boolean isDeepDup(final ParseNode that,
-        final ParseNode[] compareNodeStack)
+        final Deque<ParseNode> compareNodeStack)
     {
 
         ParseNode myNode = this;
         ParseNode thatNode = that;
 
-        int stackCnt = 0;
         while (thatNode != null && myNode.stmt == thatNode.stmt
             && myNode.child.length == thatNode.child.length)
         {
             int i = myNode.child.length - 1;
             if (i < 0) {
-                if (stackCnt <= 0)
+                if (compareNodeStack.isEmpty())
                     return true;
-                thatNode = compareNodeStack[--stackCnt];
-                myNode = compareNodeStack[--stackCnt];
+                thatNode = compareNodeStack.pop();
+                myNode = compareNodeStack.pop();
             }
             else {
                 while (i > 0) {
-                    compareNodeStack[stackCnt++] = myNode.child[i];
-                    compareNodeStack[stackCnt++] = thatNode.child[i];
+                    compareNodeStack.push(myNode.child[i]);
+                    compareNodeStack.push(thatNode.child[i]);
                     i--;
                 }
                 thatNode = thatNode.child[0];
                 myNode = myNode.child[0];
             }
         }
+        compareNodeStack.clear();
         return false;
     }
 
     /**
      * Determine if sub-tree is a duplicate of this sub-tree.
-     * 
+     *
      * @param that ParseNode to compare to this ParseNode.
      * @return true if the sub-trees have identical contents.
      */
     public boolean isDeepDup(final ParseNode that) {
-        if (that == null || stmt != that.stmt
-            || child.length != that.child.length)
+        if (that == null || stmt != that.stmt)
             return false;
+
+        if (child.length != that.child.length)
+            return false;
+
         if (this == that)
             return true;
         for (int i = 0; i < child.length; i++)
-            if (!child[i].isDeepDup(that.child[i]))
+            if (child[i] != null) {
+                if (!child[i].isDeepDup(that.child[i]))
+                    return false;
+            }
+            else if (that.child[i] != null)
                 return false;
+
         return true;
+    }
+
+    /**
+     * Calculates the hash code based on children deep hash code. This
+     * implementation may be inefficient so in case of performance problems the
+     * function should be fixed.
+     *
+     * @return true the hash code
+     */
+    public int deepHashCode() {
+        if (stmt == null)
+            return 0;
+        int hash = stmt.hashCode();
+        for (final ParseNode x : child)
+            if (x != null)
+                hash ^= x.deepHashCode();
+        return hash;
     }
 
     /**
@@ -366,7 +359,7 @@ public class ParseNode {
      * corresponding matchNode array node. see
      * GrammarRule.buildGrammaticalParseNode for an example. (this is kind of
      * ugly to look at!)
-     * 
+     *
      * @param matchNode ParseNode array of matching ParseNodes.
      * @param expandedReseqParam ParseNodeHolder array of nodes to splice in to
      *            the original tree where a matchNode is found.
@@ -375,8 +368,8 @@ public class ParseNode {
     public ParseNode deepCloneWithGrammarHypSubs(final ParseNode[] matchNode,
         final ParseNodeHolder[] expandedReseqParam)
     {
-        final ParseNode out = new ParseNode(stmt);
-        out.child = new ParseNode[expandedReseqParam.length];
+        final ParseNode out = new ParseNode(stmt,
+            new ParseNode[expandedReseqParam.length]);
         for (int i = 0; i < out.child.length; i++)
             if (expandedReseqParam[i] == null)
                 out.child[i] = child[i].deepClone();
@@ -394,7 +387,7 @@ public class ParseNode {
      * sub-tree. Note that the original tree is on top, so we're layering
      * another formula on top, with substituted expressions replacing the
      * formula's hypotheses.
-     * 
+     *
      * @param matchNode ParseNode to look for and replace.
      * @param substNode ParseNode to replace matchNode.
      * @return output ParseNode, unchanged or substituted.
@@ -404,26 +397,36 @@ public class ParseNode {
     {
         if (this == matchNode)
             return substNode;
-        final ParseNode out = new ParseNode(stmt);
-        if (child != null) {
-            out.child = new ParseNode[child.length];
-            for (int i = 0; i < child.length; i++)
-                out.child[i] = child[i].deepCloneWNodeSub(matchNode, substNode);
-        }
+        final ParseNode out = new ParseNode(stmt, new ParseNode[child.length]);
+        for (int i = 0; i < child.length; i++)
+            out.child[i] = child[i].deepCloneWNodeSub(matchNode, substNode);
         return out;
     }
 
     /**
      * Deep clone of a ParseNode sub-tree.
-     * 
+     *
      * @return ParseNode sub-tree matching the original's content.
      */
     public ParseNode deepClone() {
+        final ParseNode out = new ParseNode(stmt, new ParseNode[child.length]);
+        for (int i = 0; i < child.length; i++)
+            out.child[i] = child[i].deepClone();
+        return out;
+    }
+
+    /**
+     * Clone of a ParseNode but leave the sub-trees the same. It could be
+     * dangerous form of cloning because we can't change children.
+     *
+     * @return ParseNode sub-tree matching the original's content.
+     */
+    public ParseNode shallowClone() {
         final ParseNode out = new ParseNode();
         out.stmt = stmt;
         out.child = new ParseNode[child.length];
         for (int i = 0; i < child.length; i++)
-            out.child[i] = child[i].deepClone();
+            out.child[i] = child[i];
         return out;
     }
 
@@ -434,7 +437,7 @@ public class ParseNode {
      * <p>
      * This function is a helper for mmj.pa.ProofUnifier and its friend
      * mmj.pa.ProofWorksheet.
-     * 
+     *
      * @param assrtHypArray parallel array for assrtSubst
      * @param assrtSubst array of ParseNode sub-tree roots specifying hyp
      *            substitutions.
@@ -446,8 +449,8 @@ public class ParseNode {
         final ParseNode[] assrtSubst, final List<WorkVar> workVarList)
     {
         if (!(stmt instanceof VarHyp)) {
-            final ParseNode out = new ParseNode(stmt);
-            out.child = new ParseNode[child.length];
+            final ParseNode out = new ParseNode(stmt,
+                new ParseNode[child.length]);
             for (int i = 0; i < child.length; i++)
                 out.child[i] = child[i].deepCloneApplyingAssrtSubst(
                     assrtHypArray, assrtSubst, workVarList);
@@ -467,21 +470,22 @@ public class ParseNode {
     /**
      * (Deep) Clone a ParseNode while substituting a set of VarHyp substitutions
      * specified by a parallel Hyp array.
-     * 
+     *
+     * @param <T> Type of assrtHypArray
      * @param assrtHypArray parallel array for assrtSubst
      * @param assrtSubst array of ParseNode sub-tree roots specifying hyp
      *            substitutions.
      * @return new ParseNode.
      */
-    public ParseNode deepCloneApplyingAssrtSubst(final Hyp[] assrtHypArray,
+    public <T> ParseNode deepCloneApplyingAssrtSubst(final T[] assrtHypArray,
         final ParseNode[] assrtSubst)
     {
         if (!(stmt instanceof VarHyp)) {
-            final ParseNode out = new ParseNode(stmt);
-            out.child = new ParseNode[child.length];
+            final ParseNode out = new ParseNode(stmt,
+                new ParseNode[child.length]);
             for (int i = 0; i < child.length; i++)
-                out.child[i] = child[i].deepCloneApplyingAssrtSubst(
-                    assrtHypArray, assrtSubst);
+                out.child[i] = child[i]
+                    .deepCloneApplyingAssrtSubst(assrtHypArray, assrtSubst);
             return out;
         }
 
@@ -493,12 +497,25 @@ public class ParseNode {
             LangConstants.ERRMSG_ASSRT_SUBST_HYP_NOTFND, stmt.getLabel()));
     }
 
+    public ParseNode deepCloneApplyingStackSubst(final Deque<ParseNode> stack) {
+        if (stmt instanceof VarHyp)
+            return stack.pop();
+
+        final ParseNode out = new ParseNode(stmt, new ParseNode[child.length]);
+        final int[] reseq = stmt instanceof Axiom
+            ? ((Axiom)stmt).getSyntaxAxiomVarHypReseq() : null;
+        for (int i = child.length - 1; i >= 0; i--) {
+            final int j = reseq == null ? i : reseq[i];
+            out.child[j] = child[j].deepCloneApplyingStackSubst(stack);
+        }
+        return out;
+    }
     /**
      * Finds *first* VarHyp node in a sub-tree.
      * <p>
      * This is useful mainly for GrammarRule parse trees which have at most one
      * VarHyp per ParseTree.root.child[i].
-     * 
+     *
      * @return first ParseNode among sub-trees of a ParseNode's children that is
      *         a VarHyp.
      */
@@ -516,7 +533,7 @@ public class ParseNode {
 
     /**
      * Calculates the maximum depth of a parse sub-tree.
-     * 
+     *
      * @return maximum depth of parse sub-tree
      */
     public int calcMaxDepth() {
@@ -533,7 +550,7 @@ public class ParseNode {
     /**
      * Counts nodes in a ParseNode sub-tree, and initializes the
      * {@link #firstAppearance} field.
-     * 
+     *
      * @param expanded {@code true} if repeated subtrees are to be counted as
      *            fully expanded, {@code false} to count them as stubs of size 1
      * @return the number of nodes
@@ -545,9 +562,8 @@ public class ParseNode {
     }
 
     private void resetAppearances() {
-        if (child != null)
-            for (final ParseNode n : child)
-                n.resetAppearances();
+        for (final ParseNode n : child)
+            n.resetAppearances();
         firstAppearance = 0;
         size = 0;
     }
@@ -557,19 +573,21 @@ public class ParseNode {
             return;
         size = 1;
         sizeExpanded = 1;
-        if (child != null)
-            for (final ParseNode element : child) {
-                element.getCounts();
-                sizeExpanded += element.sizeExpanded;
-                if (element.firstAppearance >= 0) {
-                    element.firstAppearance = -1;
-                    size += element.size;
-                }
-                else {
-                    element.firstAppearance = -2;
-                    size++;
-                }
+        if (stmt != null)
+            formulaSize = stmt.getFormula().cnt;
+        for (final ParseNode element : child) {
+            element.getCounts();
+            sizeExpanded += element.sizeExpanded;
+            formulaSize += element.formulaSize - 2;
+            if (element.firstAppearance >= 0) {
+                element.firstAppearance = -1;
+                size += element.size;
             }
+            else {
+                element.firstAppearance = -2;
+                size++;
+            }
+        }
     }
 
     public boolean squishTree(final List<ParseNode> encountered) {
@@ -599,7 +617,7 @@ public class ParseNode {
      * <p>
      * Intended for creating the RPN for an expression rather than an entire
      * formula (with ParseTree).
-     * 
+     *
      * @param pressLeaf {@code true} if nodes with no children should be
      *            backreferenced
      * @return RPN Stmt array.
@@ -611,8 +629,8 @@ public class ParseNode {
         convertToRPN(pressLeaf, outRPN, dat);
         if (dat[0] != outRPN.length)
             throw new IllegalStateException(LangException.format(
-                LangConstants.ERRMSG_SUBTREE_CONV_TO_RPN_FAILURE, outRPN.length
-                    - dat[0]));
+                LangConstants.ERRMSG_SUBTREE_CONV_TO_RPN_FAILURE,
+                outRPN.length - dat[0]));
         return outRPN;
     }
 
@@ -625,12 +643,10 @@ public class ParseNode {
             list[dat[0]++] = s;
         }
         else {
-            if (child != null)
-                for (final ParseNode n : child)
-                    n.convertToRPN(pressLeaf, list, dat);
+            for (final ParseNode n : child)
+                n.convertToRPN(pressLeaf, list, dat);
             final RPNStep s = new RPNStep(stmt);
-            if (firstAppearance == -2
-                && (pressLeaf || child != null && child.length > 0))
+            if (firstAppearance == -2 && (pressLeaf || child.length > 0))
                 s.backRef = -(firstAppearance = ++dat[1]);
             list[dat[0]++] = s;
         }
@@ -638,18 +654,66 @@ public class ParseNode {
 
     /**
      * Converts a sub-tree to Reverse Polish Notation.
-     * 
+     *
      * @param outRPN Stmt Array where RPN will be stored.
      * @param dest location in output array to write the next Stmt reference.
      * @return dest of *next* output Stmt array item.
      */
     public int convertToRPNExpanded(final RPNStep[] outRPN, int dest) {
-        if (child != null)
-            for (final ParseNode n : child)
-                dest = n.convertToRPNExpanded(outRPN, dest);
+        for (final ParseNode n : child)
+            dest = n.convertToRPNExpanded(outRPN, dest);
 
         outRPN[dest++] = new RPNStep(stmt);
         return dest;
+    }
+
+    /**
+     * @return the length of the formula string returned by
+     *         {@link #convertToFormula()}.
+     */
+    public int countFormulaLength() {
+        getCounts();
+        return formulaSize;
+    }
+
+    /**
+     * Converts a sub-tree expression to a Formula object. Only works for syntax
+     * proofs; for the more general case of unifying proofs see
+     * {@link VerifyProofs#convertRPNToFormula(RPNStep[], String)} and
+     * {@link #convertToRPN(boolean)}.
+     *
+     * @return a formula
+     */
+    public Formula convertToFormula() {
+        final Sym[] out = new Sym[countFormulaLength()];
+        out[0] = stmt.getTyp();
+        return new Formula(convertToFormula(out, 1), out);
+    }
+
+    /**
+     * Accumulate a Sym array for creating formulas. Only works for syntax
+     * proofs; for the more general case of unifying proofs see
+     * {@link VerifyProofs#convertRPNToFormula(RPNStep[], String)} and
+     * {@link #convertToRPN(boolean)}.
+     *
+     * @param array The array to accumulate into
+     * @param index The current length of the array
+     * @return The final length of the array
+     */
+    public int convertToFormula(final Sym[] array, int index) {
+        final Formula f = stmt.getFormula();
+        int elementIndex = 0;
+        final int[] reseq = stmt instanceof Axiom
+            ? ((Axiom)stmt).getSyntaxAxiomVarHypReseq() : null;
+        for (int i = 1; i < f.cnt; i++) {
+            final Sym s = f.sym[i];
+            if (s instanceof Var && !(stmt instanceof VarHyp))
+                index = child[reseq == null ? elementIndex++
+                    : reseq[elementIndex++]].convertToFormula(array, index);
+            else
+                array[index++] = s;
+        }
+        return index;
     }
 
     /**
@@ -670,7 +734,7 @@ public class ParseNode {
      * Depth is computed as 1 for each Notation Syntax Axiom Node. VarHyp nodes
      * and Nulls Permitted, Type Conversion and NamedTypedConstant Syntax Axiom
      * nodes are assigned depth = 0 for purposes of depth checking.
-     * 
+     *
      * @param sb StringBuilder already initialized for appending characters.
      * @param maxDepth maximum depth of Notation Syntax axioms in sub-tree to be
      *            printed. Set to Integer.MAX_VALUE to turn off depth checking.
@@ -701,7 +765,7 @@ public class ParseNode {
      * definition, target variables; we do not expect any of them to be work
      * variables, and furthermore, we expect all of them to have assigned
      * values.
-     * 
+     *
      * @return ParseNode sub-tree converted to use WorkVarHyps.
      */
     public ParseNode cloneTargetToSourceVars() {
@@ -738,7 +802,7 @@ public class ParseNode {
      * such as &W1 := & W3 := &W1, etc. Not to mention &W1 := &W2 := &W3 := &W1.
      * THESE are "ok" as long as the subtree depth remains 1 (e.g. not &W1 := (
      * &W2 -> &W1 ).
-     * 
+     *
      * @param searchWorkVarHyp the object of the search.
      * @return occurs Type: 0 = no occurrences, 1 = occurs in error (invalid
      *         loop) -1 = valid rename
@@ -747,7 +811,8 @@ public class ParseNode {
 
         if (stmt instanceof WorkVarHyp) {
 
-            final Stmt targetStmt = checkWorkVarHasOccursInValidRename(searchWorkVarHyp);
+            final Stmt targetStmt = checkWorkVarHasOccursInValidRename(
+                searchWorkVarHyp);
 
             if (targetStmt == null)
                 return LangConstants.WV_OCCURS_IN_NOT_AT_ALL;
@@ -783,7 +848,7 @@ public class ParseNode {
      * <p>
      * This is used in UnifyWorkManager to perform the "occurs in" check used by
      * Robinson's unification algorithm.
-     * 
+     *
      * @param searchWorkVarHyp is what we are looking for.
      * @return true iff input searchStmt found in subtree.
      */
@@ -802,7 +867,7 @@ public class ParseNode {
     /**
      * Returns true if subtree contains a WorkVar which has a non-null assigned
      * substitution update.
-     * 
+     *
      * @return true if subtree contains an updated WorkVar.
      */
     public boolean hasUpdatedWorkVar() {
@@ -817,15 +882,14 @@ public class ParseNode {
     /**
      * Clone subtree replacing any updated Work Vars with clones of their
      * updating subtrees.
-     * 
+     *
      * @return cloned subtree containing no Work Vars which have updates.
      */
     public ParseNode cloneResolvingUpdatedWorkVars() {
         if (stmt instanceof WorkVarHyp)
             return ((VarHyp)stmt).paSubst == null ? new ParseNode((VarHyp)stmt)
                 : ((VarHyp)stmt).paSubst.cloneResolvingUpdatedWorkVars();
-        final ParseNode out = new ParseNode(stmt);
-        out.child = new ParseNode[child.length];
+        final ParseNode out = new ParseNode(stmt, new ParseNode[child.length]);
         for (int i = 0; i < child.length; i++)
             out.child[i] = child[i].cloneResolvingUpdatedWorkVars();
         return out;
@@ -833,7 +897,7 @@ public class ParseNode {
 
     /**
      * Updates an ArrayList to maintain a set of Work Vars used in a subtree.
-     * 
+     *
      * @param workVarList List of WorkVar objects in subtree.
      */
     public void accumSetOfWorkVarsUsed(final List<WorkVar> workVarList) {
@@ -851,16 +915,34 @@ public class ParseNode {
 
     /**
      * Updates an ArrayList to maintain a set of Var Hyps used in a subtree.
-     * 
+     *
      * @param varHypList List of VarHyp objects in subtree.
      */
-    public void accumVarHypUsedListBySeq(final List<? super VarHyp> varHypList)
+    public void accumVarHypUsedListBySeq(
+        final List<? super VarHyp> varHypList)
     {
         if (stmt instanceof VarHyp)
             ((VarHyp)stmt).accumVarHypListBySeq(varHypList);
         else
             for (final ParseNode element : child)
                 element.accumVarHypUsedListBySeq(varHypList);
+    }
+
+    /**
+     * Updates an array to maintain a set of parse trees correponding to the Var
+     * Hyps used in a subtree.
+     *
+     * @param varHypList List of VarHyp objects in subtree.
+     * @param index The number of accumulated VarHyps so far
+     * @return The total number of accumulated VarHyps
+     */
+    public int accumVarHypArray(final ParseNode[] varHypList, int index) {
+        if (stmt instanceof VarHyp)
+            varHypList[index++] = this;
+        else
+            for (final ParseNode element : child)
+                index = element.accumVarHypArray(varHypList, index);
+        return index;
     }
 
     /**
@@ -872,7 +954,7 @@ public class ParseNode {
      * <p>
      * Note: in ProofUnifier this is used to accumulate a list of optional
      * variables that are in use in a proof.
-     * 
+     *
      * @param optionalVarHypList List of Var Hyps being sought for accumulation.
      * @param optionalVarHypsInUseList List of Var Hyps accumulated which are in
      *            the formula and are in the input varList.
@@ -899,7 +981,7 @@ public class ParseNode {
      * <p>
      * This function is a helper for mmj.pa.ProofUnifier and its friend
      * mmj.pa.ProofWorksheet.
-     * 
+     *
      * @return new ParseNode subtree.
      */
     public ParseNode deepCloneApplyingWorkVarUpdates() {
@@ -907,8 +989,7 @@ public class ParseNode {
         if (stmt instanceof WorkVarHyp && ((VarHyp)stmt).paSubst != null)
             return ((VarHyp)stmt).paSubst;
 
-        final ParseNode out = new ParseNode(stmt);
-        out.child = new ParseNode[child.length];
+        final ParseNode out = new ParseNode(stmt, new ParseNode[child.length]);
         for (int i = 0; i < child.length; i++)
             out.child[i] = child[i].deepCloneApplyingWorkVarUpdates();
         return out;
@@ -944,14 +1025,14 @@ public class ParseNode {
             final boolean excludeVarHyps)
         {
             this.excludeVarHyps = excludeVarHyps;
-            nodeStack = new Stack<ParseNode>();
+            nodeStack = new Stack<>();
             pushIfNotExcluded(parsenode1);
         }
     }
 
     @Override
     public String toString() {
-        return child == null || child.length == 0 ? stmt.toString() : Arrays
-            .toString(child) + "; " + stmt;
+        return child.length == 0 ? stmt.toString()
+            : Arrays.toString(child) + "; " + stmt;
     }
 }

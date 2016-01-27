@@ -22,12 +22,12 @@ import javax.swing.DefaultComboBoxModel;
 
 import mmj.lang.LangException;
 
-public class PartScrnMap extends SearchOptionsJComboBox implements
-    ActionListener
+public class PartScrnMap extends SearchOptionsJComboBox
+    implements ActionListener
 {
 
     public PartScrnMap(final int i,
-        final DefaultComboBoxModel defaultComboBoxModel,
+        final DefaultComboBoxModel<String> defaultComboBoxModel,
         final FormatScrnMap formatScrnMap)
     {
         super(SearchOptionsConstants.PART_FIELD_ID[i], defaultComboBoxModel);
@@ -88,8 +88,8 @@ public class PartScrnMap extends SearchOptionsJComboBox implements
             if (s.equals(SearchOptionsConstants.PART_VALUES[i]))
                 return i;
 
-        throw new IllegalArgumentException(LangException.format(
-            SearchOptionsConstants.ERRMSG_PART_SEL_INVALID, s));
+        throw new IllegalArgumentException(LangException
+            .format(SearchOptionsConstants.ERRMSG_PART_SEL_INVALID, s));
     }
 
     private void partIdUpdate(final int i) {

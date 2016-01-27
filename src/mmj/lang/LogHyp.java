@@ -78,7 +78,7 @@ public class LogHyp extends Hyp {
     {
         super(seq, symTbl, stmtTbl, labelS, true); // true = "active"
 
-        final List<Hyp> exprHypList = new ArrayList<Hyp>();
+        final List<Hyp> exprHypList = new ArrayList<>();
 
         formula = new LogicFormula(symTbl, typS, symList, exprHypList);
 

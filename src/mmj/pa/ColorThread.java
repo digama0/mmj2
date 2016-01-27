@@ -42,7 +42,7 @@ class ColorThread extends Thread {
      * need to be able to retrieve ranges from it, it is stored in a balanced
      * tree.
      */
-    private final TreeSet<DocPosition> iniPositions = new TreeSet<DocPosition>();
+    private final TreeSet<DocPosition> iniPositions = new TreeSet<>();
 
     /**
      * As we go through and remove invalid positions we will also be finding new
@@ -51,12 +51,14 @@ class ColorThread extends Thread {
      * simply add it to the list of positions once all the old positions have
      * been removed.
      */
-    private final HashSet<DocPosition> newPositions = new HashSet<DocPosition>();
+    private final HashSet<DocPosition> newPositions = new HashSet<>();
 
     /**
      * Vector that stores the communication between the two threads.
      */
-    private volatile LinkedList<RecolorEvent> events = new LinkedList<RecolorEvent>();
+    private volatile Deque<RecolorEvent> events = new ArrayDeque<>();
+
+    private final Object docLock = new Object();
 
     /**
      * The amount of change that has occurred before the place in the document
@@ -69,6 +71,8 @@ class ColorThread extends Thread {
      */
     private volatile int lastPosition = -1;
 
+    private volatile int blockCutoff = -2;
+
     /**
      * Creates the coloring thread for the given document.
      * 
@@ -79,7 +83,7 @@ class ColorThread extends Thread {
         final ProofAsstPreferences prefs)
     {
         super("ColorThread");
-        document = new WeakReference<HighlightedDocument>(doc);
+        document = new WeakReference<>(doc);
         preferences = prefs;
         start();
     }
@@ -129,6 +133,17 @@ class ColorThread extends Thread {
         }
     }
 
+    public void block(final int blockUntil) {
+        synchronized (this) {
+            blockCutoff = blockUntil;
+            while (!events.isEmpty() && lastPosition < blockUntil)
+                try {
+                    wait();
+                } catch (final InterruptedException e) {}
+            blockCutoff = -2;
+        }
+    }
+
     /**
      * The colorer runs forever and may sleep for long periods of time. It
      * should be interrupted every time there is something for it to do.
@@ -141,10 +156,14 @@ class ColorThread extends Thread {
                 synchronized (events) {
                     // get the next event to process - stalling until the
                     // event becomes available
-                    while (events.isEmpty() && document.get() != null)
+                    while (events.isEmpty() && document.get() != null) {
                         // stop waiting after a second in case document
                         // has been cleared.
+                        synchronized (this) {
+                            notifyAll();
+                        }
                         events.wait(1000);
+                    }
                     re = events.removeFirst();
                 }
                 processEvent(re.position, re.adjustment);
@@ -198,10 +217,8 @@ class ColorThread extends Thread {
 
         // adjust the positions of everything after the
         // insertion/removal.
-        workingSet = iniPositions.tailSet(startRequest);
-        workingIt = workingSet.iterator();
-        while (workingIt.hasNext())
-            workingIt.next().adjustPosition(adjustment);
+        for (final DocPosition pos : iniPositions.tailSet(startRequest))
+            pos.adjustPosition(adjustment);
 
         // now go through and highlight as much as needed
         workingSet = iniPositions.tailSet(dpStart);
@@ -213,31 +230,22 @@ class ColorThread extends Thread {
             Token t;
             boolean done = false;
             dpEnd = dpStart;
-            synchronized (doc) {
-                // After the lexer has been set up, scroll the
-                // reader so that it
+            synchronized (docLock) {
+                // After the lexer has been set up, scroll the reader so that it
                 // is in the correct spot as well.
                 reader.seek(dpStart.getPosition());
-                // we are playing some games with the lexer for
-                // efficiency.
-                // we could just create a new lexer each time here,
-                // but instead,
-                // we will just reset it so that it thinks it is
-                // starting at the
-                // beginning of the document but reporting a funny
-                // start position.
-                // Reseting the lexer causes the close() method on
-                // the reader
-                // to be called but because the close() method has
-                // no effect on the
-                // DocumentReader, we can do this.
+                // we are playing some games with the lexer for efficiency.
+                // we could just create a new lexer each time here, but instead,
+                // we will just reset it so that it thinks it is starting at the
+                // beginning of the document but reporting a funny start
+                // position. Reseting the lexer causes the close() method on the
+                // reader to be called but because the close() method has no
+                // effect on the DocumentReader, we can do this.
                 syntaxLexer.reset(reader, dpStart.getPosition());
-                // we will highlight tokens until we reach a good
-                // stopping place.
-                // the first obvious stopping place is the end of
-                // the document.
-                // the lexer will return null at the end of the
-                // document and wee
+                // we will highlight tokens until we reach a good stopping
+                // place.
+                // the first obvious stopping place is the end of the document.
+                // the lexer will return null at the end of the document and we
                 // need to stop there.
                 t = syntaxLexer.getNextToken();
             }
@@ -248,12 +256,27 @@ class ColorThread extends Thread {
                 // stored in tokenStyles.
                 final int end = t.begin + t.length;
                 if (end <= doc.getLength()) {
-                    doc.setCharacterAttributes(t.begin + change, t.length,
-                        preferences.getHighlightingStyle(t.type), true);
+                    if (t.length < 0 || t.type == null || t.begin < 0)
+                        new IllegalStateException(
+                            PaConstants.ERRMSG_TOKENIZER_FAIL)
+                            .printStackTrace();
+                    else
+                        try {
+                            doc.setCharacterAttributes(t.begin + change,
+                                t.length,
+                                preferences.getHighlightingStyle(t.type), true);
+                        } catch (final RuntimeException e) {
+                            System.err.println("Ignoring exception:");
+                            e.printStackTrace();
+                        }
                     // record the position of the last bit of
                     // text that we colored
                     dpEnd = new DocPosition(t.begin);
                 }
+                if (lastPosition < blockCutoff && end + change >= blockCutoff)
+                    synchronized (this) {
+                        notifyAll();
+                    }
                 lastPosition = end + change;
                 // The other more complicated reason for doing no
                 // more highlighting
@@ -296,7 +319,7 @@ class ColorThread extends Thread {
                     // initial states from this time.
                     newPositions.add(dpEnd);
                 }
-                synchronized (doc) {
+                synchronized (docLock) {
                     t = syntaxLexer.getNextToken();
                 }
             }
@@ -326,7 +349,7 @@ class ColorThread extends Thread {
             iniPositions.addAll(newPositions);
             newPositions.clear();
         } catch (final IOException x) {}
-        synchronized (doc) {
+        synchronized (docLock) {
             lastPosition = -1;
             change = 0;
         }

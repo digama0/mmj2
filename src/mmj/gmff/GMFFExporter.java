@@ -125,7 +125,7 @@ public abstract class GMFFExporter {
                 escapeSubstitutions[pair.num][i] = pair.replacement.charAt(i);
         }
 
-        modelFileCacheMap = new HashMap<String, String>(
+        modelFileCacheMap = new HashMap<>(
             GMFFConstants.EXPORTER_MODEL_CACHE_INIT_SIZE);
 
     }

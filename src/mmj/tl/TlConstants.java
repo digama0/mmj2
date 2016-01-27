@@ -20,6 +20,7 @@ package mmj.tl;
 import mmj.gmff.GMFFConstants;
 import mmj.mmio.MMIOConstants;
 import mmj.pa.PaConstants;
+import mmj.transforms.TrConstants;
 import mmj.util.UtilConstants;
 import mmj.verify.GrammarConstants;
 import mmj.verify.ProofConstants;
@@ -56,6 +57,8 @@ import mmj.verify.ProofConstants;
  * <li>{@code TL} = mmj.tl package (Theorem Loader).
  * <li>{@code TM} = mmj.tmff.AlignColumn and related code
  * <li>{@code UT} = mmj.util package. (see {@link UtilConstants})
+ * <li>{@code TR} = mmj.transforms package (proof assistant) (see
+ * {@link TrConstants})
  * </ul>
  * <p>
  * <b>{@code 9999}</b> : sequential number within the source code, 0001 through
@@ -110,39 +113,28 @@ public class TlConstants {
     // ----------------------------------------------------------
 
     /**
-     * THEOREM_LOADER_DJ_VARS_OPTION_NO_UPDATE = "NoUpdate"
-     */
-    public static final String THEOREM_LOADER_DJ_VARS_OPTION_NO_UPDATE = "NoUpdate";
-
-    /**
-     * THEOREM_LOADER_DJ_VARS_OPTION_MERGE = "Merge"
-     */
-    public static final String THEOREM_LOADER_DJ_VARS_OPTION_MERGE = "Merge";
-
-    /**
-     * THEOREM_LOADER_DJ_VARS_OPTION_MERGE = "Replace"
-     */
-    public static final String THEOREM_LOADER_DJ_VARS_OPTION_REPLACE = "Replace";
-
-    /**
      * THEOREM_LOADER_DJ_VARS_OPTION_DEFAULT = "NoUpdate"
      */
-    public static final String THEOREM_LOADER_DJ_VARS_OPTION_DEFAULT = TlConstants.THEOREM_LOADER_DJ_VARS_OPTION_NO_UPDATE;
+    public static final DjVarsOption THEOREM_LOADER_DJ_VARS_OPTION_DEFAULT = DjVarsOption.NoUpdate;
+
+    public enum DjVarsOption {
+        NoUpdate, Merge, Replace
+    }
 
     /**
      * THEOREM_LOADER_AUDIT_MESSAGES_DEFAULT = "Yes"
      */
-    public static final String THEOREM_LOADER_AUDIT_MESSAGES_DEFAULT = TlConstants.SYNONYM_TRUE_1;
+    public static final boolean THEOREM_LOADER_AUDIT_MESSAGES_DEFAULT = true;
 
     /**
      * THEOREM_LOADER_STORE_FORMULAS_ASIS_DEFAULT = "yes"
      */
-    public static final String THEOREM_LOADER_STORE_FORMULAS_ASIS_DEFAULT = TlConstants.SYNONYM_TRUE_1;
+    public static final boolean THEOREM_LOADER_STORE_FORMULAS_ASIS_DEFAULT = true;
 
     /**
      * THEOREM_LOADER_STORE_MM_INDENT_AMT_DEFAULT = 2
      */
-    public static final String THEOREM_LOADER_STORE_MM_INDENT_AMT_DEFAULT = "2";
+    public static final int THEOREM_LOADER_STORE_MM_INDENT_AMT_DEFAULT = 2;
 
     /**
      * THEOREM_LOADER_STORE_MM_INDENT_AMT_MIN = 0
@@ -157,7 +149,7 @@ public class TlConstants {
     /**
      * THEOREM_LOADER_STORE_MM_RIGHT_COL_DEFAULT = 79
      */
-    public static final String THEOREM_LOADER_STORE_MM_RIGHT_COL_DEFAULT = "79";
+    public static final int THEOREM_LOADER_STORE_MM_RIGHT_COL_DEFAULT = 79;
 
     /**
      * THEOREM_LOADER_STORE_MM_RIGHT_COL_MIN = 70
@@ -447,17 +439,16 @@ public class TlConstants {
     // Messages from mmj.util.TheoremLoaderBoss.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_INVALID_DJ_VARS_OPTION_1 = "E-TL-0501 Invalid input for Theorem Loader Audit"
-        + " Messages. Input = ";
-    public static final String ERRMSG_INVALID_DJ_VARS_OPTION_2 = ".\n Valid choices are:"
-        + " 'NoUpdate'," + " 'Merge', and" + " 'Replace'.";
+    public static final String ERRMSG_INVALID_DJ_VARS_OPTION = "E-TL-0501 "
+        + "Invalid input for Theorem Loader Audit Messages. Input = %s.\n"
+        + " Valid choices are: 'NoUpdate'," + " 'Merge', and" + " 'Replace'.";
 
-    public static final String ERRMSG_INVALID_AUDIT_MESSAGES_1 = "E-TL-0502 Invalid input for Theorem Loader Dj Vars"
-        + " Option. Input = ";
-    public static final String ERRMSG_INVALID_AUDIT_MESSAGES_2 = ".\n Valid choices are:"
-        + " 'Yes', 'True' or 'On', and" + " 'No', 'False' or 'Off'";
+    public static final String ERRMSG_INVALID_BOOLEAN = "E-TL-0502 "
+        + "Invalid input = %s.\n Valid choices are:"
+        + " 'Yes', 'True' or 'On', and 'No', 'False' or 'Off'";
 
-    public static final String ERRMSG_INVALID_STORE_FORMULAS_ASIS_1 = "E-TL-0503 Invalid input for Theorem Loader Store"
+    public static final String ERRMSG_INVALID_STORE_FORMULAS_ASIS_1 = "E-TL-0503 "
+        + "Invalid input for Theorem Loader Store"
         + " Formulas AsIs Option. Input = ";
     public static final String ERRMSG_INVALID_STORE_FORMULAS_ASIS_2 = ".\n Valid choices are:"
         + " 'Yes', 'True' or 'On', and" + " 'No', 'False' or 'Off'";

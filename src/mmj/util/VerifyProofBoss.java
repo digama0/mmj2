@@ -21,11 +21,9 @@
 
 package mmj.util;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import static mmj.util.UtilConstants.*;
 
 import mmj.lang.*;
-import mmj.mmio.MMIOException;
 import mmj.verify.VerifyProofs;
 
 /**
@@ -51,16 +49,32 @@ public class VerifyProofBoss extends Boss {
 
     /**
      * Constructor with BatchFramework for access to environment.
-     * 
+     *
      * @param batchFramework for access to environment.
      */
     public VerifyProofBoss(final BatchFramework batchFramework) {
         super(batchFramework);
+
+        putCommand(RUNPARM_CLEAR, () -> {
+            verifyProofs = null;
+            allProofsVerifiedSuccessfully = false;
+            allStatementsParsedSuccessfully = false;
+            return false; // not "consumed"
+        });
+        putCommand(RUNPARM_LOAD_FILE, () -> {
+            allProofsVerifiedSuccessfully = false;
+            allStatementsParsedSuccessfully = false;
+            return false; // not "consumed"
+        });
+
+        putCommand(RUNPARM_VERIFY_PROOF, this::doVerifyProof);
+        putCommand(RUNPARM_VERIFY_PARSE, this::doVerifyParse);
+
     }
 
     /**
      * Returns true if all proofs verified successfully.
-     * 
+     *
      * @return true if all proofs verified successfully.
      */
     public boolean getAllProofsVerifiedSuccessfully() {
@@ -69,7 +83,7 @@ public class VerifyProofBoss extends Boss {
 
     /**
      * Returns true if all statements parsed successfully.
-     * 
+     *
      * @return true if all statements parsed successfully.
      */
     public boolean getAllStatementsParsedSuccessfully() {
@@ -78,7 +92,7 @@ public class VerifyProofBoss extends Boss {
 
     /**
      * Return initialized VerifyProofs object
-     * 
+     *
      * @return VerifyProofs object
      */
     public VerifyProofs getVerifyProofs() {
@@ -87,61 +101,9 @@ public class VerifyProofBoss extends Boss {
     }
 
     /**
-     * Executes a single command from the RunParmFile.
-     * 
-     * @param runParm the RunParmFile line to execute.
-     */
-    @Override
-    public boolean doRunParmCommand(final RunParmArrayEntry runParm)
-
-    throws IllegalArgumentException, MMIOException, FileNotFoundException,
-        IOException, VerifyException
-    {
-
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_CLEAR) == 0)
-        {
-            verifyProofs = null;
-            allProofsVerifiedSuccessfully = false;
-            allStatementsParsedSuccessfully = false;
-            return false; // not "consumed"
-        }
-        if (runParm.name.compareToIgnoreCase(UtilConstants.RUNPARM_LOAD_FILE) == 0)
-        {
-            allProofsVerifiedSuccessfully = false;
-            allStatementsParsedSuccessfully = false;
-            return false; // not "consumed"
-        }
-
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_VERIFY_PROOF) == 0)
-        {
-            doVerifyProof(runParm);
-            return true; // not "consumed"
-        }
-        if (runParm.name
-            .compareToIgnoreCase(UtilConstants.RUNPARM_VERIFY_PARSE) == 0)
-        {
-            doVerifyParse(runParm);
-            return true; // not "consumed"
-        }
-
-        return false;
-
-    }
-
-    /**
      * Executes the VerifyProof command, prints any messages, etc.
-     * 
-     * @param runParm RunParmFile line.
-     * @throws IllegalArgumentException if an error occurred
-     * @throws IOException if an error occurred
-     * @throws VerifyException if an error occurred
      */
-    public void doVerifyProof(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException, IOException, VerifyException
-    {
-
-        editRunParmValuesLength(runParm, UtilConstants.RUNPARM_VERIFY_PROOF, 1);
+    public void doVerifyProof() {
 
         final LogicalSystem logicalSystem = batchFramework.logicalSystemBoss
             .getLogicalSystem();
@@ -151,27 +113,17 @@ public class VerifyProofBoss extends Boss {
         final Messages messages = batchFramework.outputBoss.getMessages();
 
         if (!batchFramework.logicalSystemBoss.getLoadProofs())
-            messages
-                .accumInfoMessage(UtilConstants.ERRMSG_IGNORING_VERIFY_PROOF_RUNPARM);
+            messages.accumInfoMessage(ERRMSG_IGNORING_VERIFY_PROOF_RUNPARM);
+        else if (get(1).equals(RUNPARM_OPTION_VALUE_ALL)) {
+            verifyProofs.verifyAllProofs(messages, logicalSystem.getStmtTbl());
+            allProofsVerifiedSuccessfully = messages.getErrorMessageCnt() == 0;
+        }
         else {
-            final String optionValue = runParm.values[0].trim();
-            if (optionValue.compareTo(UtilConstants.RUNPARM_OPTION_VALUE_ALL) == 0)
-            {
-                verifyProofs.verifyAllProofs(messages,
-                    logicalSystem.getStmtTbl());
-                if (messages.getErrorMessageCnt() == 0)
-                    allProofsVerifiedSuccessfully = true;
-                else
-                    allProofsVerifiedSuccessfully = true;
-            }
-            else {
-                final Theorem theorem = editRunParmValueTheorem(optionValue,
-                    UtilConstants.RUNPARM_VERIFY_PROOF, logicalSystem);
-                final String errmsg = verifyProofs.verifyOneProof(theorem);
-                if (errmsg != null) {
-                    messages.accumErrorMessage(errmsg);
-                    allProofsVerifiedSuccessfully = false;
-                }
+            final Theorem theorem = getTheorem(1, logicalSystem);
+            final String errmsg = verifyProofs.verifyOneProof(theorem);
+            if (errmsg != null) {
+                messages.accumErrorMessage(errmsg);
+                allProofsVerifiedSuccessfully = false;
             }
         }
 
@@ -183,17 +135,8 @@ public class VerifyProofBoss extends Boss {
 
     /**
      * Executes the VerifyParse command, prints any messages, etc.
-     * 
-     * @param runParm RunParmFile line.
-     * @throws IllegalArgumentException if an error occurred
-     * @throws IOException if an error occurred
-     * @throws VerifyException if an error occurred
      */
-    public void doVerifyParse(final RunParmArrayEntry runParm)
-        throws IllegalArgumentException, IOException, VerifyException
-    {
-
-        editRunParmValuesLength(runParm, UtilConstants.RUNPARM_VERIFY_PARSE, 1);
+    public void doVerifyParse() {
 
         final LogicalSystem logicalSystem = batchFramework.logicalSystemBoss
             .getLogicalSystem();
@@ -202,20 +145,14 @@ public class VerifyProofBoss extends Boss {
 
         final Messages messages = batchFramework.outputBoss.getMessages();
 
-        final String optionValue = runParm.values[0].trim();
-        if (optionValue.compareTo(UtilConstants.RUNPARM_OPTION_VALUE_ALL) == 0)
-        {
+        if (get(1).equals(RUNPARM_OPTION_VALUE_ALL)) {
             verifyProofs.verifyAllExprRPNAsProofs(messages,
                 logicalSystem.getStmtTbl());
-            if (messages.getErrorMessageCnt() == 0)
-                allStatementsParsedSuccessfully = true;
-            else
-                allStatementsParsedSuccessfully = false;
-
+            allStatementsParsedSuccessfully = messages
+                .getErrorMessageCnt() == 0;
         }
         else {
-            final Stmt stmt = editRunParmValueStmt(optionValue,
-                UtilConstants.RUNPARM_VERIFY_PARSE, logicalSystem);
+            final Stmt stmt = getStmt(1, logicalSystem);
             final String errmsg = verifyProofs.verifyExprRPNAsProof(stmt);
             if (errmsg != null) {
                 messages.accumErrorMessage(errmsg);

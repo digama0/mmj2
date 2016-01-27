@@ -18,7 +18,7 @@ package mmj.gmff;
 /**
  * Custom exception for GMFF.
  */
-public class GMFFException extends Exception {
+public class GMFFException extends RuntimeException {
 
     /**
      * Default Constructor.
@@ -29,7 +29,7 @@ public class GMFFException extends Exception {
 
     /**
      * Contructor with error message.
-     * 
+     *
      * @param errorMessage error message.
      */
     public GMFFException(final String errorMessage) {

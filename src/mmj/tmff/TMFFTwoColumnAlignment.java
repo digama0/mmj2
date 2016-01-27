@@ -22,6 +22,8 @@
 
 package mmj.tmff;
 
+import org.json.JSONArray;
+
 import mmj.lang.*;
 
 /**
@@ -36,34 +38,34 @@ import mmj.lang.*;
  * broken up across multiple lines.
  * <p>
  * <p>
- * 
+ *
  * <pre>
  * Example:
- * 
+ *
  *     maxDepth = 1
- * 
+ *
  *        render "( a -> b )" as follows:
- * 
+ *
  *               "(  a
  *                -> b )"
- * 
+ *
  *            where "a" and "b" are metavariables that
  *            may be replaced by sub-expressions of
  *            arbitrary length and depth.
- * 
+ *
  *            Note that the trailing constant is appended
  *            to the current line (or if no more room exists
  *            then it is indented 4 columns from the right
  *            column's position.
- * 
+ *
  * Example:
  *     maxDepth = 1
- * 
+ *
  *        render "a (_ b" as follows:
- * 
+ *
  *               "   a
  *                (_ b"
- * 
+ *
  *            where "a" and "b" are metavariables that
  *            may be replaced by sub-expressions of
  *            arbitrary length and depth.
@@ -80,7 +82,7 @@ public class TMFFTwoColumnAlignment extends TMFFMethod {
 
     /**
      * Standard constructor for TMFFTwoColumnAlignment.
-     * 
+     *
      * @param maxDepth maximum sub-tree depth for a sub-expression that will not
      *            trigger a line-break, not counting leaf nodes, and
      *            non-Notation Syntax Axioms such as Type Conversions.
@@ -91,7 +93,7 @@ public class TMFFTwoColumnAlignment extends TMFFMethod {
 
     /**
      * Constructor for TMFFTwoColumnAlignment from user parameters.
-     * 
+     *
      * @param maxDepthString maximum sub-tree depth for a sub-expression that
      *            will not trigger a line-break, not counting leaf nodes, and
      *            non-Notation Syntax Axioms such as Type Conversions.
@@ -100,9 +102,15 @@ public class TMFFTwoColumnAlignment extends TMFFMethod {
         super(maxDepthString);
     }
 
+    @Override
+    public JSONArray asArray() {
+        return new JSONArray(
+            TMFFConstants.TMFF_METHOD_USER_NAME_TWO_COLUMN_ALIGNMENT, maxDepth);
+    }
+
     /**
      * Updates maxDepth for a TMFFMethod if the Method allows updates.
-     * 
+     *
      * @param maxDepth parameter.
      * @return boolean - true only if update performed.
      */
@@ -120,7 +128,7 @@ public class TMFFTwoColumnAlignment extends TMFFMethod {
         final ParseNode currNode, final int leftmostColNbr)
     {
 
-        final Stmt stmt = currNode.getStmt();
+        final Stmt stmt = currNode.stmt;
         final Sym[] formulaSymArray = stmt.getFormula().getSym();
 
         Axiom axiom = null;
@@ -176,9 +184,9 @@ public class TMFFTwoColumnAlignment extends TMFFMethod {
             varI++;
 
             if (reseq == null)
-                subNode = currNode.getChild()[varI];
+                subNode = currNode.child[varI];
             else
-                subNode = currNode.getChild()[reseq[varI]];
+                subNode = currNode.child[reseq[varI]];
 
             // finagle: we want to pad to position pos - 2 because
             // the output tokens will be prefixed by " ".

@@ -308,7 +308,7 @@ public class DelimitedTextParser {
     public List<String> parseAll() throws IllegalArgumentException,
         IllegalStateException
     {
-        final List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<>();
         while (true) {
             final String field = nextField();
             if (field == null)

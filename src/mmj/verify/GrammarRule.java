@@ -25,7 +25,7 @@ import mmj.lang.*;
  * <p>
  * Whew!!! The thing is a pantsload. I get tired just thinking about all this
  * stuff.
- * 
+ *
  * @see <a href="../../CreatingGrammarRulesFromSyntaxAxioms.html">
  *      CreatingGrammarRulesFromSyntaxAxioms.html</a>
  * @see <a href="../../ConsolidatedListOfGrammarValidations.html">
@@ -38,7 +38,7 @@ import mmj.lang.*;
  * @see <a href="../../MetamathERNotes.html"> Nomenclature and
  *      Entity-Relationship Notes</a>
  */
-public abstract class GrammarRule {
+public abstract class GrammarRule implements Comparable<GrammarRule> {
 
     /**
      * ruleNbr uniquely identifies a GrammarRule.
@@ -46,7 +46,7 @@ public abstract class GrammarRule {
      * Rule Numbers are sssigned in sequence of rule creation, which corresponds
      * to precedence -- that is, Metamath database sequence and how the Grammar
      * Rules are generated.
-     * 
+     *
      * @see mmj.verify.Grammar#assignNextGrammarRuleNbr()
      */
     protected int ruleNbr;
@@ -101,8 +101,8 @@ public abstract class GrammarRule {
 
     /**
      * ruleFormatExpr contains the GrammarRule's Expression rewritten where each
-     * Var's VarHyp's Type Code replaces the Var or VarHyp (ie
-     * "( wff -> wff )").
+     * Var's VarHyp's Type Code replaces the Var or VarHyp (ie "( wff -> wff )"
+     * ).
      * <p>
      * This was a late addition to GrammarRule caused by the need of
      * EarleyParser's Predictor and Lookahead to know the first symbol of a
@@ -139,7 +139,7 @@ public abstract class GrammarRule {
 
     /**
      * Add rule format expression to the Rule Forest.
-     * 
+     *
      * @param grammar The Grammar object (Mr Big).
      * @param ruleFormatExpr the expression to add.
      */
@@ -171,7 +171,7 @@ public abstract class GrammarRule {
      * automatically come into play. This also means that a "B to A" conversion
      * will combine with a "C to B" conversion to generate a "C to A" conversion
      * -- eventually.
-     * 
+     *
      * @param grammar The Grammar.
      */
     public abstract void deriveAdditionalRules(Grammar grammar);
@@ -179,7 +179,7 @@ public abstract class GrammarRule {
     /**
      * Return a duplicate of the input ruleFormatExpr if it exists, or return
      * null.
-     * 
+     *
      * @param grammar The Grammar.
      * @param ruleFormatExpr the expression to add.
      * @return GrammarRule if duplicate found, or null.
@@ -192,7 +192,7 @@ public abstract class GrammarRule {
      * <p>
      * This is pretty obsolete now that ruleFormatExpr is stored in GrammarRule,
      * but it is still used in Dump (for now).
-     * 
+     *
      * @return ruleFormatExpr GrammarRule Expression in rule format.
      */
     public abstract Cnst[] getForestRuleExpr();
@@ -204,7 +204,7 @@ public abstract class GrammarRule {
 
     /**
      * Constructor -- create skeleton GrammarRule w/ruleNbr.
-     * 
+     *
      * @param grammar The Grammar.
      */
     public GrammarRule(final Grammar grammar) {
@@ -215,7 +215,7 @@ public abstract class GrammarRule {
     /**
      * Constructor -- default GrammarRule for base Syntax Axioms, which means no
      * parameter "transformations".
-     * 
+     *
      * @param grammar The Grammar.
      * @param baseSyntaxAxiom Syntax Axiom.
      */
@@ -226,12 +226,13 @@ public abstract class GrammarRule {
         final VarHyp[] varHypArray = baseSyntaxAxiom.getMandVarHypArray();
         nbrHypParamsUsed = varHypArray.length;
 
-        final ParseNode paramTransformationRoot = new ParseNode(baseSyntaxAxiom);
+        final ParseNode paramTransformationRoot = new ParseNode(
+            baseSyntaxAxiom);
 
         paramTransformationTree = new ParseTree(paramTransformationRoot);
 
         final ParseNode[] child = new ParseNode[nbrHypParamsUsed];
-        paramTransformationRoot.setChild(child);
+        paramTransformationRoot.child = child;
 
         paramVarHypNode = new ParseNode[nbrHypParamsUsed];
 
@@ -245,8 +246,7 @@ public abstract class GrammarRule {
     /**
      * RULE_NBR sequences by GrammarRule.ruleNbr
      */
-    public static final Comparator<GrammarRule> RULE_NBR = new Comparator<GrammarRule>()
-    {
+    public static final Comparator<GrammarRule> RULE_NBR = new Comparator<GrammarRule>() {
         public int compare(final GrammarRule o1, final GrammarRule o2) {
             return o1.ruleNbr - o2.ruleNbr;
         }
@@ -255,8 +255,7 @@ public abstract class GrammarRule {
     /**
      * MAX_SEQ_NBR sequences by GrammarRule.maxSeqNbr & ruleNbr
      */
-    public static final Comparator<GrammarRule> MAX_SEQ_NBR = new Comparator<GrammarRule>()
-    {
+    public static final Comparator<GrammarRule> MAX_SEQ_NBR = new Comparator<GrammarRule>() {
         public int compare(final GrammarRule o1, final GrammarRule o2) {
             int c = o1.maxSeqNbr - o2.maxSeqNbr;
             if (c == 0)
@@ -272,19 +271,20 @@ public abstract class GrammarRule {
      * This is a major function in GrammarRule. Hairy.
      * <p>
      * Checks for Type Conversion "loop" on Syntax Axiom base Grammar Rule,
-     * 
+     *
      * @param baseSyntaxAxiom Syntax Axiom.
      * @param grammar The Grammar.
      * @return true if rule added successfully, else false.
      */
-    public static boolean add(final Axiom baseSyntaxAxiom, final Grammar grammar)
+    public static boolean add(final Axiom baseSyntaxAxiom,
+        final Grammar grammar)
     {
 
         boolean errorsFound = false;
 
         final ParseNodeHolder[] parseNodeHolderExpr = baseSyntaxAxiom
-            .getFormula().getParseNodeHolderExpr(
-                baseSyntaxAxiom.getMandVarHypArray());
+            .getFormula()
+            .getParseNodeHolderExpr(baseSyntaxAxiom.getMandVarHypArray());
 
         GrammarRule baseRule;
         if ((baseRule = GrammarRule.buildBaseRule(grammar, baseSyntaxAxiom,
@@ -327,7 +327,7 @@ public abstract class GrammarRule {
                 {
                     errorsFound = true;
                     grammar.accumErrorMsgInList(
-                    // mod Sep-23-2005 chg msg text
+                        // mod Sep-23-2005 chg msg text
                         GrammarConstants.ERRMSG_DUP_RULE_DIFF_TYP_1
                             + derivedRule.getBaseSyntaxAxiom().getTyp()
                             + GrammarConstants.ERRMSG_DUP_RULE_DIFF_TYP_2
@@ -356,12 +356,12 @@ public abstract class GrammarRule {
         GrammarRule grammarRule;
 
         if (parseNodeHolderExpr.length == 0)
-            grammarRule = NullsPermittedRule
-                .buildBaseRule(grammar, syntaxAxiom);
+            grammarRule = NullsPermittedRule.buildBaseRule(grammar,
+                syntaxAxiom);
         else if (parseNodeHolderExpr.length == 1
             && !(parseNodeHolderExpr[0].mObj instanceof Cnst))
-            grammarRule = TypeConversionRule.buildBaseRule(grammar,
-                syntaxAxiom, parseNodeHolderExpr);
+            grammarRule = TypeConversionRule.buildBaseRule(grammar, syntaxAxiom,
+                parseNodeHolderExpr);
         else
             grammarRule = NotationRule.buildBaseRule(grammar, syntaxAxiom);
 
@@ -370,7 +370,7 @@ public abstract class GrammarRule {
 
     /**
      * Computes hashcode for this GrammarRule.
-     * 
+     *
      * @return hashcode for the GrammarRule
      */
     @Override
@@ -380,14 +380,14 @@ public abstract class GrammarRule {
 
     /**
      * Compares GrammarRule object based on the seq.
-     * 
+     *
      * @param obj GrammarRule object to compare to this GrammarRule
      * @return returns negative, zero, or a positive int if this GrammarRule
      *         object is less than, equal to or greater than the input parameter
      *         obj.
      */
-    public int compareTo(final Object obj) {
-        return ruleNbr - ((GrammarRule)obj).ruleNbr;
+    public int compareTo(final GrammarRule obj) {
+        return ruleNbr - obj.ruleNbr;
     }
 
     /**
@@ -396,7 +396,7 @@ public abstract class GrammarRule {
      * Equal if and only if the GrammarRule sequence numbers are equal. and the
      * obj to be compared to this object is not null and is a GrammarRule as
      * well.
-     * 
+     *
      * @return returns true if equal, otherwise false.
      */
     @Override
@@ -405,9 +405,17 @@ public abstract class GrammarRule {
             && ruleNbr == ((GrammarRule)obj).ruleNbr;
     }
 
+    @Override
+    public String toString() {
+        String s = getGrammarRuleTyp() + " ->";
+        for (final Cnst element : ruleFormatExpr)
+            s += " " + element;
+        return s;
+    }
+
     /**
      * Return GrammarRule's ruleNbr.
-     * 
+     *
      * @return GrammarRule's ruleNbr.
      */
     public int getRuleNbr() {
@@ -416,7 +424,7 @@ public abstract class GrammarRule {
 
     /**
      * Return GrammarRule's paramTransformationTree.
-     * 
+     *
      * @return GrammarRule's paramTransformationTree.
      */
     public ParseTree getParamTransformationTree() {
@@ -425,7 +433,7 @@ public abstract class GrammarRule {
 
     /**
      * Return GrammarRule's paramVarHypNode array.
-     * 
+     *
      * @return GrammarRule's paramVarHypNode array.
      */
     public ParseNode[] getParamVarHypNode() {
@@ -434,7 +442,7 @@ public abstract class GrammarRule {
 
     /**
      * Return GrammarRule's maxSeqNbr.
-     * 
+     *
      * @return GrammarRule's maxSeqNbr.
      */
     public int getMaxSeqNbr() {
@@ -443,7 +451,7 @@ public abstract class GrammarRule {
 
     /**
      * Set GrammarRule's maxSeqNbr.
-     * 
+     *
      * @param maxSeqNbr GrammarRule's maxSeqNbr.
      */
     public void setMaxSeqNbr(final int maxSeqNbr) {
@@ -452,7 +460,7 @@ public abstract class GrammarRule {
 
     /**
      * Return GrammarRule's nbrHypParamsUsed.
-     * 
+     *
      * @return GrammarRule's nbrHypParamsUsed.
      */
     public int getNbrHypParamsUsed() {
@@ -461,7 +469,7 @@ public abstract class GrammarRule {
 
     /**
      * Set GrammarRule's nbrHypParamsUsed.
-     * 
+     *
      * @param nbrHypParamsUsed GrammarRule's nbrHypParamsUsed.
      */
     public void setNbrHypParamsUsed(final int nbrHypParamsUsed) {
@@ -470,16 +478,16 @@ public abstract class GrammarRule {
 
     /**
      * Return GrammarRule's "base" Syntax Axiom.
-     * 
+     *
      * @return GrammarRule's "base" Syntax Axiom.
      */
     public Axiom getBaseSyntaxAxiom() {
-        return (Axiom)paramTransformationTree.getRoot().getStmt();
+        return (Axiom)paramTransformationTree.getRoot().stmt;
     }
 
     /**
      * Return GrammarRule's "base" Syntax Axiom's varHypReseq array.
-     * 
+     *
      * @return GrammarRule's "base" Syntax Axiom's varHypReseq array.
      */
     public int[] getSyntaxAxiomVarHypReseq() {
@@ -488,7 +496,7 @@ public abstract class GrammarRule {
 
     /**
      * Return GrammarRule's Type Code.
-     * 
+     *
      * @return GrammarRule's Type Code.
      */
     public Cnst getGrammarRuleTyp() {
@@ -497,7 +505,7 @@ public abstract class GrammarRule {
 
     /**
      * Return GrammarRule's ruleHypPos array.
-     * 
+     *
      * @return GrammarRule's ruleHypPos array.
      */
     public int[] getRuleHypPos() {
@@ -506,7 +514,7 @@ public abstract class GrammarRule {
 
     /**
      * Return GrammarRule's ruleFormatExpr.
-     * 
+     *
      * @return GrammarRule's ruleFormatExpr.
      */
     public Cnst[] getRuleFormatExpr() {
@@ -515,7 +523,7 @@ public abstract class GrammarRule {
 
     /**
      * Set GrammarRule's ruleFormatExpr.
-     * 
+     *
      * @param rfe GrammarRule's ruleFormatExpr.
      */
     public void setRuleFormatExpr(final Cnst[] rfe) {
@@ -529,7 +537,7 @@ public abstract class GrammarRule {
 
     /**
      * Return GrammarRule's ruleFormatExpr as String of Stmt labels.
-     * 
+     *
      * @return GrammarRule's ruleFormatExpr as String.
      */
     public String getRuleFormatExprAsString() {
@@ -538,7 +546,7 @@ public abstract class GrammarRule {
 
     /**
      * Return a GrammarRule's ruleFormatExpr as String of Stmt labels.
-     * 
+     *
      * @param rfe ruleFormatExpr.
      * @return GrammarRule's ruleFormatExpr as String.
      */
@@ -553,7 +561,7 @@ public abstract class GrammarRule {
 
     /**
      * Return the first symbol of a GrammarRule's ruleFormatExpr.
-     * 
+     *
      * @return first symbol of a GrammarRule's ruleFormatExpr.
      */
     public Cnst getRuleFormatExprFirst() {
@@ -565,7 +573,7 @@ public abstract class GrammarRule {
 
     /**
      * Return the "i-th" symbol of a GrammarRule's ruleFormatExpr.
-     * 
+     *
      * @param i the index
      * @return i-th symbol of a GrammarRule's ruleFormatExpr or null of i is
      *         beyond the end of the expression.
@@ -579,7 +587,7 @@ public abstract class GrammarRule {
 
     /**
      * Return GrammarRule's isBaseRule flag.
-     * 
+     *
      * @return GrammarRule's isBaseRule flag.
      */
     public boolean getIsBaseRule() {
@@ -588,7 +596,7 @@ public abstract class GrammarRule {
 
     /**
      * Set GrammarRule's isBaseRule flag.
-     * 
+     *
      * @param isBaseRule flag.
      */
     public void setIsBaseRule(final boolean isBaseRule) {
@@ -607,43 +615,19 @@ public abstract class GrammarRule {
      * the resulting formula and/or ruleFormatExpr and/or ParseNodeHolderExpr --
      * an element of paramVarHypNode == null *must be* a null substitution, by
      * virtue of the above considerations.
-     * 
+     *
      * @return parseNodeHolder format expression.
      */
     public ParseNodeHolder[] getParseNodeHolderExpr() {
-        final Sym[] baseSym = getBaseSyntaxAxiom().getFormula().getSym();
-        final ParseNodeHolder[] parseNodeHolderExpr = new ParseNodeHolder[baseSym.length
-            - 1 - (paramVarHypNode.length - nbrHypParamsUsed)];
-
-        final int[] varHypReseq = getSyntaxAxiomVarHypReseq();
-        final VarHyp[] substVarHyp = new VarHyp[paramVarHypNode.length];
-        int paramNbr;
-
-        if (varHypReseq == null) {
-            for (int i = 0; i < paramVarHypNode.length; i++)
-                if (paramVarHypNode[i] != null)
-                    substVarHyp[i] = (VarHyp)paramVarHypNode[i].getStmt();
+        final Formula f = paramTransformationTree.getRoot().convertToFormula();
+        final ParseNodeHolder[] parseNodeHolderExpr = new ParseNodeHolder[f
+            .getCnt() - 1];
+        for (int i = 0; i < parseNodeHolderExpr.length; i++) {
+            final Sym s = f.getSym()[i + 1];
+            parseNodeHolderExpr[i] = s instanceof Cnst
+                ? new ParseNodeHolder((Cnst)s)
+                : new ParseNodeHolder(((Var)s).getActiveVarHyp());
         }
-        else
-            for (int i = 0; i < paramVarHypNode.length; i++) {
-                paramNbr = varHypReseq[i];
-                if (paramVarHypNode[paramNbr] != null)
-                    substVarHyp[i] = (VarHyp)paramVarHypNode[paramNbr]
-                        .getStmt();
-            }
-        int dest = 0;
-        paramNbr = 0;
-        // start at 1 because first Sym in Formula is Type Code.
-        for (int i = 1; i < baseSym.length; i++)
-            if (baseSym[i] instanceof Cnst)
-                parseNodeHolderExpr[dest++] = new ParseNodeHolder(
-                    (Cnst)baseSym[i]);
-            else {
-                if (substVarHyp[paramNbr] != null)
-                    parseNodeHolderExpr[dest++] = new ParseNodeHolder(
-                        substVarHyp[paramNbr]);
-                paramNbr++;
-            }
         return parseNodeHolderExpr;
     }
 
@@ -662,41 +646,17 @@ public abstract class GrammarRule {
      * the resulting formula and/or ruleFormatExpr and/or ParseNodeHolderExpr --
      * an element of paramVarHypNode == null *must be* a null substitution, by
      * virtue of the above considerations.
-     * 
+     *
      * @return ruleFormatExpr expression.
      */
     public Cnst[] buildRuleFormatExpr() {
-        final Sym[] baseSym = getBaseSyntaxAxiom().getFormula().getSym();
-        final Cnst[] rfe = new Cnst[baseSym.length - 1
-            - (paramVarHypNode.length - nbrHypParamsUsed)];
-
-        final int[] varHypReseq = getSyntaxAxiomVarHypReseq();
-        final VarHyp[] substVarHyp = new VarHyp[paramVarHypNode.length];
-        int paramNbr;
-
-        if (varHypReseq == null) {
-            for (int i = 0; i < paramVarHypNode.length; i++)
-                if (paramVarHypNode[i] != null)
-                    substVarHyp[i] = (VarHyp)paramVarHypNode[i].getStmt();
+        final Formula f = paramTransformationTree.getRoot().convertToFormula();
+        final Cnst[] rfe = new Cnst[f.getCnt() - 1];
+        for (int i = 0; i < rfe.length; i++) {
+            final Sym s = f.getSym()[i + 1];
+            rfe[i] = s instanceof Cnst ? (Cnst)s
+                : ((Var)s).getActiveVarHyp().getTyp();
         }
-        else
-            for (int i = 0; i < paramVarHypNode.length; i++) {
-                paramNbr = varHypReseq[i];
-                if (paramVarHypNode[paramNbr] != null)
-                    substVarHyp[i] = (VarHyp)paramVarHypNode[paramNbr]
-                        .getStmt();
-            }
-        int dest = 0;
-        paramNbr = 0;
-        // start at 1 because first Sym in Formula is Type Code.
-        for (int i = 1; i < baseSym.length; i++)
-            if (baseSym[i] instanceof Cnst)
-                rfe[dest++] = (Cnst)baseSym[i];
-            else {
-                if (substVarHyp[paramNbr] != null)
-                    rfe[dest++] = substVarHyp[paramNbr].getTyp();
-                paramNbr++;
-            }
         return rfe;
     }
 
@@ -728,7 +688,7 @@ public abstract class GrammarRule {
      * Nulls Permitted transformations along with variable hypotheses that are
      * to be substituted. In other words, blame Nulls Permitted for this
      * complexificationizing.
-     * 
+     *
      * @param paramArray substitutions for variable hypothesis nodes of the
      *            Grammar Rule's paramTransformationTree.
      * @return the output ParseNode
@@ -752,8 +712,8 @@ public abstract class GrammarRule {
                 if (paramVarHypNode[i] != null)
                     expandedReseqParam[varHypReseq[i]] = paramArray[src++];
 
-        return paramTransformationTree.getRoot().deepCloneWithGrammarHypSubs(
-            paramVarHypNode, expandedReseqParam);
+        return paramTransformationTree.getRoot()
+            .deepCloneWithGrammarHypSubs(paramVarHypNode, expandedReseqParam);
 
     }
 
@@ -763,7 +723,7 @@ public abstract class GrammarRule {
      * <p>
      * This is a key function used in deriving additional rules using a
      * TypeConversionRule or NullsPermittedRule.
-     * 
+     *
      * @param nextSearch starting index of search.
      * @param searchTyp Type Code sought among paramVarHypNodes.
      * @return index of node in paramVarHypNode with matching type or -1 if not
@@ -776,14 +736,14 @@ public abstract class GrammarRule {
     protected int findMatchingVarHypTyp(int nextSearch, final Cnst searchTyp) {
         for (; nextSearch < paramVarHypNode.length; nextSearch++)
             if (paramVarHypNode[nextSearch] != null) {
-                if (!(paramVarHypNode[nextSearch].getStmt() instanceof VarHyp))
+                if (!(paramVarHypNode[nextSearch].stmt instanceof VarHyp))
                     throw new IllegalStateException(
                         GrammarConstants.ERRMSG_BOGUS_PARAM_VARHYP_NODE_1
                             + nextSearch
                             + GrammarConstants.ERRMSG_BOGUS_PARAM_VARHYP_NODE_2
-                            + paramVarHypNode[nextSearch].getStmt().getLabel()
+                            + paramVarHypNode[nextSearch].stmt.getLabel()
                             + GrammarConstants.ERRMSG_BOGUS_PARAM_VARHYP_NODE_3);
-                if (paramVarHypNode[nextSearch].getStmt().getTyp() == searchTyp)
+                if (paramVarHypNode[nextSearch].stmt.getTyp() == searchTyp)
                     return nextSearch;
             }
         return -1;

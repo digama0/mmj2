@@ -25,6 +25,7 @@ package mmj.tmff;
 import mmj.gmff.GMFFConstants;
 import mmj.mmio.MMIOConstants;
 import mmj.pa.PaConstants;
+import mmj.transforms.TrConstants;
 import mmj.util.UtilConstants;
 import mmj.verify.GrammarConstants;
 import mmj.verify.ProofConstants;
@@ -61,6 +62,8 @@ import mmj.verify.ProofConstants;
  * <li>{@code TL} = mmj.tl package (Theorem Loader).
  * <li>{@code TM} = mmj.tmff.AlignColumn and related code
  * <li>{@code UT} = mmj.util package. (see {@link UtilConstants})
+ * <li>{@code TR} = mmj.transforms package (proof assistant) (see
+ * {@link TrConstants})
  * </ul>
  * <p>
  * <b>{@code 9999}</b> : sequential number within the source code, 0001 through
@@ -73,29 +76,15 @@ public class TMFFConstants {
      * *------------------------------------------------*/
 
     /**
-     * Arbitrary code number signifying formatting alignment by Sym within
-     * Syntax Axiom.
-     */
-    public static final int ALIGN_SYM = 1;
-    /**
-     * Arbitrary code number signifying formatting alignment by Cnst within
-     * Syntax Axiom.
-     */
-    public static final int ALIGN_CNST = 2;
-    /**
-     * Arbitrary code number signifying formatting alignment by Var within
-     * Syntax Axiom.
-     */
-    public static final int ALIGN_VAR = 3;
-
-    /**
      * List of alignment type names as input by users.
      * <p>
      * The sequence of elements of this table must match the numeric values for
      * ALIGN_SYM, etc. The array index + 1 must equal the ALIGN_SYM, etc.
      * number!!!
      */
-    public static final String[] ALIGN_TYPE = {"Sym", "Cnst", "Var"};
+    public enum AlignType {
+        Sym, Cnst, Var
+    };
 
     /**
      * Minimum valid (useful) AtNbr for TMFFAlignColumn.
@@ -221,19 +210,26 @@ public class TMFFConstants {
      */
     public static final int TMFF_ALT_INDENT_DEFAULT = 1;
 
+    /** TMFFMethod 'byValue' parameter. */
+    public static final String TMFF_BY_VALUE = "byValue";
+
+    /** TMFFMethod 'atValue' parameter. */
+    public static final String TMFF_AT_VALUE = "atValue";
+
     // ==================================================
     // Messages for TMFFAlignColumn:
     // ==================================================
-    public static final String ERRMSG_BAD_BY_VALUE_1 = "A-TM-0001 Invalid 'byValue' String = ";
-    public static final String ERRMSG_BAD_BY_VALUE_2 = " input! Should be 'Cnst', 'Var' or 'Sym'.";
+    public static final String ERRMSG_BAD_BY_VALUE = "A-TM-0001 "
+        + "Invalid '%s' String = %s input! Should be 'Cnst', 'Var' or 'Sym'.";
 
-    public static final String ERRMSG_MISSING_BY_VALUE_1 = "A-TM-0002 Missing 'byValue' String parameter!";
+    public static final String ERRMSG_MISSING_BY_VALUE = "A-TM-0002 "
+        + "Missing '%s' String parameter!";
 
     public static final String ERRMSG_BAD_AT_NBR_1 = "A-TM-0003 Invalid 'atNbr' = ";
     public static final String ERRMSG_BAD_AT_NBR_2 = " input! Should be 1, 2, or 3.";
 
-    public static final String ERRMSG_BAD_AT_VALUE_1 = "A-TM-0004 Invalid 'atValue' String = ";
-    public static final String ERRMSG_BAD_AT_VALUE_2 = " input! Should be 'Cnst', 'Var' or 'Sym'.";
+    public static final String ERRMSG_BAD_AT_VALUE = "A-TM-0004 "
+        + "Invalid '%s' String = %s input! Should be 'Cnst', 'Var' or 'Sym'.";
 
     public static final String ERRMSG_MISSING_AT_VALUE_1 = "A-TM-0005 Missing 'atValue' String parameter!";
 
@@ -274,9 +270,9 @@ public class TMFFConstants {
     public static final String ERRMSG_BAD_MAX_DEPTH_1 = "A-TM-0201 Invalid maxDepth parameter, must be a"
         + " positive integer. Input = ";
 
-    public static final String ERRMSG_BAD_USER_METHOD_NAME_1 = "A-TM-0202 Invalid (user) name of TMFF Method = ";
+    public static final String ERRMSG_BAD_USER_METHOD_NAME = "A-TM-0202 Invalid (user) name of TMFF Method = %s";
 
-    public static final String ERRMSG_MISSING_USER_METHOD_NAME_1 = "A-TM-0203 Missing (user) name of TMFF Method";
+    public static final String ERRMSG_MISSING_USER_METHOD_NAME = "A-TM-0203 Missing (user) name of TMFF Method";
 
     // ==================================================
     // Messages for TMFFPreferences:
@@ -285,13 +281,14 @@ public class TMFFConstants {
     public static final String ERRMSG_RENDER_FORMULA_ERROR_1 = "A-TM-0301 Programmer Error. The default formula"
         + " formatting routine failed horribly. Call 911.";
 
-    public static final String ERRMSG_BAD_PREF_FORMAT_NBR_1 = "A-TM-0302 Input format number = ";
-    public static final String ERRMSG_BAD_PREF_FORMAT_NBR_2 = " is invalid. Must be within the range of 0 and ";
+    public static final String ERRMSG_BAD_PREF_FORMAT_NBR = "A-TM-0302 "
+        + "Input format number %d is invalid. Must be within the range of 0 and %d.";
 
     public static final String ERRMSG_ERR_FORMAT_NBR_INPUT_1 = " Input Format Nbr must be a number between 0 and ";
 
-    public static final String ERRMSG_FORMAT_SCHEME_NAME_NOTFND_1 = "A-TM-0303 TMFFDefineFormat Scheme Name not found "
-        + "among previously defined Schemes. Input name = ";
+    public static final String ERRMSG_FORMAT_SCHEME_NAME_NOTFND = "A-TM-0303 "
+        + "TMFFDefineFormat Scheme Name not found "
+        + "among previously defined Schemes. Input name = %s";
 
     public static final String ERRMSG_FORMAT_NBR_MISSING2_1 = "A-TM-0304 TMFFUseFormat Format Number not input!";
 
@@ -306,8 +303,8 @@ public class TMFFConstants {
 
     public static final String ERRMSG_USE_INDENT_MISSING2_1 = "A-TM-0308 TMFFUseIndent Use Indent amount not input!";
 
-    public static final String ERRMSG_BAD_USE_INDENT_1 = "A-TM-0309 Input Use Indent amount = ";
-    public static final String ERRMSG_BAD_USE_INDENT_2 = " is invalid. Must be within the range of 0 and ";
+    public static final String ERRMSG_BAD_USE_INDENT = "A-TM-0309 "
+        + "Input Use Indent amount %d is invalid. Must be within the range of 0 and %d";
 
     public static final String ERRMSG_ALT_INDENT_MISSING2_1 = "A-TM-0310 TMFFAltIndent Alt Indent amount not input!";
 
@@ -320,15 +317,15 @@ public class TMFFConstants {
     // Messages for TMFFScheme:
     // ==================================================
 
-    public static final String ERRMSG_SCHEME_METHOD_MISSING_1 = "A-TM-0401 TMFFScheme Method is required!";
+    public static final String ERRMSG_SCHEME_METHOD_MISSING = "A-TM-0401 TMFFScheme Method is required!";
 
-    public static final String ERRMSG_SCHEME_CANNOT_BE_UPDATED_1 = "A-TM-0402 Scheme ";
-    public static final String ERRMSG_SCHEME_CANNOT_BE_UPDATED_2 = " is RESERVED and cannot be updated.";
+    public static final String ERRMSG_SCHEME_CANNOT_BE_UPDATED = "A-TM-0402 "
+        + "Scheme %s is RESERVED and cannot be updated.";
 
-    public static final String ERRMSG_SCHEME_NAME_REQUIRED_1 = "A-TM-0403 Scheme Name is required!";
+    public static final String ERRMSG_SCHEME_NAME_REQUIRED = "A-TM-0403 Scheme Name is required!";
 
-    public static final String ERRMSG_SCHEME_NM_CANT_BE_ASSIGNED_1 = "A-TM-0404 Scheme Name ";
-    public static final String ERRMSG_SCHEME_NM_CANT_BE_ASSIGNED_2 = " is RESERVED and cannot be assigned.";
+    public static final String ERRMSG_SCHEME_NM_CANT_BE_ASSIGNED = "A-TM-0404 "
+        + "Scheme Name %s is RESERVED and cannot be assigned.";
 
     // ==================================================
     // Messages for TMFFUnformatted:

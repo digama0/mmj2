@@ -104,7 +104,7 @@ public class MergeSortedArrayLists<T> {
         if ((nextSrc = getNextSrc()) == null)
             return;
 
-        buf = new LinkedList<T>();
+        buf = new LinkedList<>();
 
         dest = destList;
         maxDestBuf = dest.size();

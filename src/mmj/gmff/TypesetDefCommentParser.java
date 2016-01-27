@@ -96,7 +96,7 @@ public class TypesetDefCommentParser {
         this.messages = messages;
 
         typesetDefKeyword = new String[exporterTypesetDefsList.size()];
-        typesetDefMap = new ArrayList<Map<String, String>>(
+        typesetDefMap = new ArrayList<>(
             exporterTypesetDefsList.size());
 
         int i = 0;

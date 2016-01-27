@@ -1,7 +1,130 @@
 Finalize Release ToDo's
 =======================
 
+Future ToDo's
+=============
+    - "!step::ref" form:
+      Unify with some previous steps and with the assertion ref. This should
+      search among previous steps for matching hypotheses, and if they are not
+      found it should generate them. In any case the '!' should go away after
+      unification.
+    
+    - "!step:hyp:" form:
+      It should try to find unifications using all of the mentioned steps and
+      possibly others (so if too many steps are suggested it will not unify even
+      if some subset of the given steps do). !step:: should therefore unify
+      against any combination of previous steps. Similarly to the previous,
+      if the hyps are given in a certain order, it should try to.
+    
+    - "!step:hyp:ref" form:
+      If there are the correct number of hyps given to ref, then it should act
+      just like step:hyp:ref, but if there are too few hyps it should act more
+      like case "!step::ref", where the extra hyps are searched from the list of
+      previous steps.
 
+    - "step:?:" form:
+      Mario has been trying to change the default usage for incomplete steps
+      from "step:?:" to "step::" or "!step::" (depending on the
+      DeriveAutocomplete RunParm), but there are still some things that need to
+      be hashed out. Mario thinks "!step:?,hyp:" should search for refs with at
+      least two hyps, forcing the second hyp to be the named one, unless there
+      are no matches, in which case it should revert to trying any combination
+      (but it should still not match any hyp with one or no hyps).
+
+    - Step selector behavior fix:
+      The step selector search was originally designed so that clicking on a
+      step with zero incomplete hyps gives the list only of steps that match
+      exactly the given hyps, while if any incomplete hyps are given it gives a
+      list of all unifying refs that use the given hyps and possibly others.
+      This means that clicking on the now-default incomplete step "!step::"
+      gives (usually) nothing, whereas clicking on "step:?:" gives all possible
+      unifying refs. To fix this, Mario plans to eliminate the no-incomplete-hyp
+      behavior and just always give a list of unifying assertions that use all
+      those in the list and possibly others. SInce they are ordered by number of
+      hyps used, those that don't use any extra hyps will always appear at the
+      top anyway.
+    
+    - Error notification behavior change:
+      Mario thinks the best behavior would be to have all steps that have no ref
+      and are reachable from the QED step to give error I-PA-0403, since it is
+      these steps that prevent the theorem from being proven. User often accrues
+      steps that go nowhere because he decided to take a different route or
+      anything similar, and having these steps draw his attention is a
+      distraction.
+      
+    - Remove step duplicates:
+      Alexey proposes to made some hot key to remove step duplicates.
+      Mario thinks it might even be reasonable to do this automatically on every
+      unify, although that's probably aggressive enough to be a RunParm disabled
+      by default.
+    
+    - Investigate the possibility to generate completed set.mm theorems:
+      If it is omitted, so it should be implemented. 
+    
+    - Add the configuration of the search order in auto steps:
+      Now implemented the search only from top to bottom. Mario proposes to
+      search in increasing order of hypotheses.
+    
+    - Use existing old mmp proof with updated new set.mm theorem:
+      Automatic generation of the hyp & qed formulas, which are currently fatal
+      errors if they are typed incorrectly, which is annoying if you want to
+      change the theorem statement in the database, especially since mmj2
+      already knows what is supposed to be there, and just errors if you didn't
+      type what it expects, as if it was a password or something. Mario made a
+      change to at least tell the user the correct formulation in the error
+      message, so you can copy that in, but really it should just go ahead and
+      change the step formula to match its expectation (even if there is already
+      a formula there).
+    
+    - Versioning the mmp files:
+      Backward syntax compatibility is a very important thing but sometimes
+      should be violated in order to change some strange behavior. Alexey
+      thinks, it will be better to include in the mmp header the mmj2 syntax
+      version. So every new mmj2 version could translate any old mmp files to
+      the new syntax. That would fix the detection problem as well, since the
+      version difference would trigger a migration script. Mario proposes to
+      replace "<MM>" with "<MM2>" in the header; this version number is a simple
+      integer that is independent of mmj2 versions and is incremented whenever
+      there is a backwards-incompatible spec change.
+      
+    - Hypotheses syntax refactoring:
+       Alexey doesn't like the fact that d1:: should be referenced as d1, but
+       H1:: should be referenced as 1. It is uncommon practice in the computer
+       languages to use Latin letters as word prefixes. It will be better to
+       change it as early as possible. Mario has a new suggestion for the
+       hypothesis step syntax:
+         $e step::thm.1
+       This would be more in keeping with our practice of using $character as
+       keywords, and would also match the metamath keyword. The two colons is
+       simply because Mario thinks using one would make the spec harder to
+       understand, if step:hyp:ref had too many exceptions, and people are
+       already used to it.
+    
+    - The find and replace:
+      The simplest implementation to begin with is a simple find and replace
+      that applies only to formulas, and has built in word boundary tokens in
+      the regex so that replacing "s" with "t" only replaces instances of the
+      variable s and doesn't make "seq" -> "teq". The input would just be two
+      space-separated token strings like a fragment of a formula, and it would
+      replace that token string in all formulas or in the formulas of the
+      selected lines, hopefully also ignoring the extra white space provided by
+      the formatter TMFF. For example, you could replace "x , y" -> "z , w" in
+      (the short example version):
+       |- A = { < x , y > | < x , y > = < y , x >}
+
+    - Add "no dj restriction" statement
+      We propose to add some kind of $n x ph $ (or any other letter). That you
+      could use to force mmj2 to *not* generate $d x ph under any circumstances,
+      and treat an attempt to do so as a hard error.
+      The whole point of "soft errors" and calling them that is because from
+      metamath's perspective, they are indeed errors, but from the user's
+      perspective, they are just annotations that can be generated as necessary.
+      This reflects a view on the part of the logician that variables are
+      distinct until mentioned otherwise, not vice-versa, which is metamath's
+      approach. The $n/$s approach is our "until mentioned otherwise", while
+      $d's are really for output only, and are not input during a proof.
+    
+       
 Task List for Release on 1-Nov-2011
 ===================================
  

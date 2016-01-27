@@ -117,14 +117,22 @@ RecheckProofAsstUsingProofVerifier,no
 ProofAsstLookAndFeel,Metal
 ProofAsstUndoRedoEnabled,yes
 ProofAsstFontSize,14
-ProofAsstFontBold,yes
+ProofAsstFontBold,no
 ProofAsstFontFamily,Monospaced
+ProofAsstLineSpacing,0
 ProofAsstForegroundColorRGB,0,0,0
 ProofAsstBackgroundColorRGB,255,255,255
 ProofAsstHighlightingEnabled,yes
 ProofAsstHighlightingStyle,default,inherit,inherit,inherit
 ProofAsstHighlightingStyle,comment,808080,no,yes
-ProofAsstHighlightingStyle,stephypref,8A2908,inherit,inherit
+ProofAsstHighlightingStyle,keyword,808080,yes,inherit
+ProofAsstHighlightingStyle,error,FF0000,yes,inherit
+ProofAsstHighlightingStyle,proof,808080,no,inherit
+ProofAsstHighlightingStyle,step,8A2908,yes,inherit
+ProofAsstHighlightingStyle,hyp,8A2908,inherit,inherit
+ProofAsstHighlightingStyle,ref,0044DD,yes,inherit
+ProofAsstHighlightingStyle,localref,008800,inherit,inherit
+ProofAsstHighlightingStyle,specialstep,B58900,yes,inherit
 ProofAsstHighlightingStyle,class,CC33CC,inherit,inherit
 ProofAsstHighlightingStyle,set,FF0000,inherit,inherit
 ProofAsstHighlightingStyle,wff,0000FF,inherit,inherit
@@ -153,6 +161,8 @@ ProofAsstDefaultFileNameSuffix,.mmp
 ProofAsstDjVarsSoftErrors,GenerateReplacements
 ProofAsstProofFormat,Compressed
 ProofAsstProofFolder,myproofs
+ProofAsstAutocompleteEnabled,Yes
+ProofAsstDeriveAutocomplete,No
 ProofAsstAssrtListFreespace,5 
 *
 *====================================================================
@@ -178,6 +188,9 @@ ProofAsstAssrtListFreespace,5
 *PrintStatementDetails,aceq1
 *StepSelectorBatchTest,C:\mmj2\data\mmp\tests\UT7000.mmp,326,6
 *PreprocessRequestBatchTest,C:\mmj2\data\mmp\tests\UT7001.mmp,EraseAndRederiveFormulas
+*
+* Test all the axioms in the database for definitional soundness, except the listed axioms
+*SetMMDefinitionsCheckWithExclusions,ax-*,df-bi,df-clab,df-cleq,df-clel
 *
 *==================================================
 * TheoremLoader -- Pre-ProofAsstGUI (recommended)

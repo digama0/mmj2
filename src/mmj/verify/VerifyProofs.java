@@ -67,6 +67,7 @@ import java.util.*;
 import mmj.lang.*;
 import mmj.lang.ParseTree.RPNStep;
 import mmj.pa.PaConstants;
+import mmj.pa.PaConstants.DjVarsSoftErrors;
 
 /**
  * VerifyProofs implements the proof verification process described in
@@ -98,7 +99,7 @@ import mmj.pa.PaConstants;
  * FYI, here is the basic verification algorithm, which leaves out the ugly
  * details of disjoint variable restrictions and substitutions:
  * <p>
- * 
+ *
  * <pre>
  *     1. init proof work stack, etc.
  *     2. loop through theorem proof array, for each proof[] step:
@@ -121,16 +122,14 @@ import mmj.pa.PaConstants;
  *     4. if stack entry not equal to stmt to be proved formula
  *            ==>exception, last entry not equal! disproved!
  *     5. ok! proved.
- * 
  * </pre>
- * 
+ *
  * @see <a href="../../mmjProofVerification.html"> More on Proof
  *      Verification</a>
  * @see <a href="../../MetamathERNotes.html"> Nomenclature and
  *      Entity-Relationship Notes</a>
  */
 public class VerifyProofs implements ProofVerifier {
-
     private int retryCnt = -1;
 
     // *******************************************
@@ -183,7 +182,6 @@ public class VerifyProofs implements ProofVerifier {
      * Constructor - default.
      */
     public VerifyProofs() {
-
         // don't allocate the stacks until verification requested.
         retryCnt = -1;
 
@@ -202,14 +200,14 @@ public class VerifyProofs implements ProofVerifier {
 
     /**
      * Verify all proofs in Statement Table.
-     * 
+     *
      * @param messages Messages object for output error messages.
      * @param stmtTbl Statement Table (map).
      */
     public void verifyAllProofs(final Messages messages,
         final Map<String, Stmt> stmtTbl)
     {
-        final List<Stmt> list = new ArrayList<Stmt>(stmtTbl.values());
+        final List<Stmt> list = new ArrayList<>(stmtTbl.values());
         Collections.sort(list, MObj.SEQ);
         for (final Stmt stmt : list) {
             if (messages.maxErrorMessagesReached())
@@ -224,7 +222,7 @@ public class VerifyProofs implements ProofVerifier {
 
     /**
      * Verify a single proof.
-     * 
+     *
      * @param theorem Theorem object reference.
      * @return String error message if error(s), or null.
      */
@@ -265,7 +263,7 @@ public class VerifyProofs implements ProofVerifier {
      * Note: even VarHyp and Syntax Axioms are assigned default RPN's, so this
      * should work -- unless there are errors in the Metamath file, or in the
      * grammar itself.
-     * 
+     *
      * @param messages Messages object for output error messages.
      * @param stmtTbl Statement Table (map).
      */
@@ -287,7 +285,7 @@ public class VerifyProofs implements ProofVerifier {
      * Note: even VarHyp and Syntax Axioms are assigned default RPN's, so this
      * should work -- unless there are errors in the Metamath file, or in the
      * grammar itself.
-     * 
+     *
      * @param exprRPNStmt Stmt with RPN to verify.
      * @return String error message if error(s), or null.
      */
@@ -330,15 +328,14 @@ public class VerifyProofs implements ProofVerifier {
      * Metamath because it needs to be available in Proof Verifier (and
      * elsewhere), but must not be used when the Assertion is referenced in a
      * proof (especially not be pushed onto the stack!)
-     * 
+     *
      * @param derivStepStmtLabel label + "Step" + step number
      * @param derivStepFormula formula of proof step
      * @param derivStepProofTree step proof tree.
      * @param derivStepComboFrame MandFrame for step.
      * @return String error message if error(s), or null.
      */
-    public String verifyDerivStepProof(
-        final String derivStepStmtLabel, // theorem
+    public String verifyDerivStepProof(final String derivStepStmtLabel, // theorem
         final Formula derivStepFormula, final ParseTree derivStepProofTree,
         final ScopeFrame derivStepComboFrame)
     {
@@ -392,25 +389,22 @@ public class VerifyProofs implements ProofVerifier {
      * Metamath because it needs to be available in Proof Verifier (and
      * elsewhere), but must not be used when the Assertion is referenced in a
      * proof (especially not be pushed onto the stack!)
-     * 
+     *
      * @param derivStepNbr string, may equal "qed"
      * @param derivStepStmtLabel label + "Step" + step number
      * @param derivStepRef Assertion justifying the step
      * @param derivStepAssrtSubst array of substitution subtrees
      * @param derivStepComboFrame MandFrame for step.
-     * @param djVarsSoftErrorsIgnore whether to ignore soft DjVars errors
-     * @param djVarsSoftErrorsGenerateNew whether to generate missing DjVars
+     * @param djVarsSoftErrors whether to ignore or generate missing DjVars
      *            restrictions
      * @param softDjVarsErrorList the output list of violated DjVars
      * @return String error message if error(s), or null.
      */
-    public String verifyDerivStepDjVars(
-        final String derivStepNbr,
+    public String verifyDerivStepDjVars(final String derivStepNbr,
         final String derivStepStmtLabel, // theorem
         final Assrt derivStepRef, final ParseNode[] derivStepAssrtSubst,
         final ScopeFrame derivStepComboFrame,
-        final boolean djVarsSoftErrorsIgnore,
-        final boolean djVarsSoftErrorsGenerateNew,
+        final DjVarsSoftErrors djVarsSoftErrors,
         final List<DjVars> softDjVarsErrorList)
     {
 
@@ -422,7 +416,7 @@ public class VerifyProofs implements ProofVerifier {
         proofStmtFrame = derivStepComboFrame;
         proofStmtOptFrame = dummyOptFrame;
 
-        proofDjVarsSoftErrorsIgnore = djVarsSoftErrorsIgnore;
+        proofDjVarsSoftErrorsIgnore = djVarsSoftErrors == DjVarsSoftErrors.Ignore;
 
         proofSoftDjVarsErrorList = softDjVarsErrorList;
 
@@ -436,7 +430,7 @@ public class VerifyProofs implements ProofVerifier {
                     errMsg = null;
                     loadDerivStepDjVarsSubst(derivStepAssrtSubst);
                     if (substCnt > 0) {
-                        if (djVarsSoftErrorsGenerateNew)
+                        if (djVarsSoftErrors == DjVarsSoftErrors.GenerateNew)
                             // do not use existing $d's
                             proofStmtFrame = dummyMandFrame;
                         checkDjVars();
@@ -461,13 +455,13 @@ public class VerifyProofs implements ProofVerifier {
     /**
      * Builds and returns an ArrayList of proof steps for export via the Proof
      * Assistant.
-     * 
+     *
      * @param theorem the theorem whose proof will be exported
      * @param exportFormatUnified set to true if proof step label is output on
      *            each step (else, it is only output on Logical Hypothesis
      *            steps.)
-     * @param hypsRandomized set to true if proof step hyps should be rearranged
-     *            in random order (a testing feature.)
+     * @param hypsOrder the order in which step hyps should be arranged (a
+     *            testing feature.)
      * @param provableLogicStmtTyp type code of proof derivation steps to
      *            return.
      * @return List of ProofDerivationStepEntry objects.
@@ -475,12 +469,12 @@ public class VerifyProofs implements ProofVerifier {
      */
     public List<ProofDerivationStepEntry> getProofDerivationSteps(
         final Theorem theorem, final boolean exportFormatUnified,
-        final boolean hypsRandomized, final Cnst provableLogicStmtTyp)
-        throws VerifyException
+        final HypsOrder hypsOrder, final Cnst provableLogicStmtTyp)
+            throws VerifyException
     {
 
         final LogHyp[] theoremLogHypArray = theorem.getLogHypArray();
-        final List<ProofDerivationStepEntry> derivStepList = new ArrayList<ProofDerivationStepEntry>(
+        final List<ProofDerivationStepEntry> derivStepList = new ArrayList<>(
             theoremLogHypArray.length);
 
         int renumberStep = PaConstants.PROOF_STEP_RENUMBER_START;
@@ -502,7 +496,7 @@ public class VerifyProofs implements ProofVerifier {
             loadTheoremGlobalVerifyVars(theorem);
             proof = new ParseTree(proof).squishTree().convertToRPN();
             loadProofDerivStepList(theorem, derivStepList, exportFormatUnified,
-                hypsRandomized, provableLogicStmtTyp);
+                hypsOrder, provableLogicStmtTyp);
         } catch (final IllegalArgumentException e) {
             throw new VerifyException(e.getMessage());
         }
@@ -512,6 +506,7 @@ public class VerifyProofs implements ProofVerifier {
         return derivStepList;
 
     }
+
     /**
      * Loads an array list of ProofDerivationStepEntry objects for the
      * non-syntax assertion and the logical hypothesis steps of the proof.
@@ -520,36 +515,36 @@ public class VerifyProofs implements ProofVerifier {
      * exportFormatUnified == true or if the step is a logical hypothesis step.
      * <p>
      * This is a clone of verifyProof()!!!!
-     * 
+     *
      * @param theorem the theorem whose proof will be exported
      * @param derivStepList the list to load with ProofDerivationStepEntry
      *            objects, already loaded with the proof's hyp steps
      * @param exportFormatUnified set to true if proof step label is output on
      *            each step (else, it is only output on Logical Hypothesis
      *            steps.)
-     * @param hypsRandomized set to true if proof step hyps should be rearranged
-     *            in random order (a testing feature.)
+     * @param hypsOrder the order in which hyps should be emitted (a testing
+     *            feature.)
      * @param provableLogicStmtTyp type code of proof derivation steps to
      *            return.
      * @throws VerifyException if an error occurred
      */
     private void loadProofDerivStepList(final Theorem theorem,
         final List<ProofDerivationStepEntry> derivStepList,
-        final boolean exportFormatUnified, final boolean hypsRandomized,
+        final boolean exportFormatUnified, final HypsOrder hypsOrder,
         final Cnst provableLogicStmtTyp) throws VerifyException
     {
         final int numHyps = derivStepList.size();
-        int stepName = PaConstants.PROOF_STEP_RENUMBER_START + numHyps
-            * PaConstants.PROOF_STEP_RENUMBER_INTERVAL;
-        final Deque<ProofDerivationStepEntry> undischargedStack = new ArrayDeque<ProofDerivationStepEntry>();
+        int stepName = PaConstants.PROOF_STEP_RENUMBER_START
+            + numHyps * PaConstants.PROOF_STEP_RENUMBER_INTERVAL;
+        final Deque<ProofDerivationStepEntry> undischargedStack = new ArrayDeque<>();
 
         // parallel arrays
-        final List<Formula> backrefs = new ArrayList<Formula>();
-        final List<ProofDerivationStepEntry> backrefSteps = new ArrayList<ProofDerivationStepEntry>();
+        final List<Formula> backrefs = new ArrayList<>();
+        final List<ProofDerivationStepEntry> backrefSteps = new ArrayList<>();
 
         sLoop: for (stepNbr = 0; stepNbr < proof.length; stepNbr++) {
-            if (proof[stepNbr] == null || proof[stepNbr].backRef <= 0
-                && proof[stepNbr].stmt == null)
+            if (proof[stepNbr] == null
+                || proof[stepNbr].backRef <= 0 && proof[stepNbr].stmt == null)
                 raiseVerifyException(Integer.toString(stepNbr + 1), " ",
                     ProofConstants.ERRMSG_PROOF_STEP_INCOMPLETE);
 
@@ -597,8 +592,8 @@ public class VerifyProofs implements ProofVerifier {
                 }
                 pStack.push(stepFormula);
                 if (stepFormula.getTyp() == provableLogicStmtTyp
-                    && !(stepAssrt instanceof Axiom && ((Axiom)stepAssrt)
-                        .getIsSyntaxAxiom()))
+                    && !(stepAssrt instanceof Axiom
+                        && ((Axiom)stepAssrt).getIsSyntaxAxiom()))
                 {
                     final ProofDerivationStepEntry e = new ProofDerivationStepEntry();
                     e.isHyp = false;
@@ -626,25 +621,35 @@ public class VerifyProofs implements ProofVerifier {
             pStack.push(stepSubstFormula);
 
             if (stepFormula.getTyp() == provableLogicStmtTyp
-                && !(stepAssrt instanceof Axiom && ((Axiom)stepAssrt)
-                    .getIsSyntaxAxiom()))
+                && !(stepAssrt instanceof Axiom
+                    && ((Axiom)stepAssrt).getIsSyntaxAxiom()))
             {
                 final ProofDerivationStepEntry e = new ProofDerivationStepEntry();
                 e.isHyp = false;
                 e.step = Integer.toString(stepName);
                 final int logHypCnt = stepAssrt.getLogHypArrayLength();
-                e.hypStep = new String[logHypCnt];
-                if (logHypCnt > undischargedStack.size())
-                    raiseVerifyException(Integer.toString(stepNbr + 1),
-                        stepLabel,
-                        ProofConstants.ERRMSG_LOGHYP_STACK_DEFICIENT,
-                        proofStmtLabel);
-                for (int i = logHypCnt - 1; i >= 0; i--) {
-                    final ProofDerivationStepEntry h = undischargedStack.pop();
-                    e.hypStep[i] = h.step;
+
+                if (hypsOrder == HypsOrder.Autocomplete) {
+                    // special case: we not need hypotheses!
+                    e.hypStep = new String[0];
+                    e.isAutoStep = true;
                 }
-                if (hypsRandomized)
-                    doRandomizeHypSteps(e.hypStep);
+                else {
+                    e.hypStep = new String[logHypCnt];
+                    if (logHypCnt > undischargedStack.size())
+                        raiseVerifyException(Integer.toString(stepNbr + 1),
+                            stepLabel,
+                            ProofConstants.ERRMSG_LOGHYP_STACK_DEFICIENT,
+                            proofStmtLabel);
+                    for (int i = logHypCnt - 1; i >= 0; i--) {
+                        final ProofDerivationStepEntry h = undischargedStack
+                            .pop();
+                        e.hypStep[i] = h.step;
+                    }
+
+                    hypsOrder.reorder(e.hypStep);
+                }
+
                 if (exportFormatUnified)
                     e.refLabel = stepLabel;
                 e.formula = stepSubstFormula;
@@ -680,23 +685,6 @@ public class VerifyProofs implements ProofVerifier {
             qedStep.formulaParseTree = theorem.getExprParseTree();
         }
     }
-    private void doRandomizeHypSteps(final String[] hypStep) {
-        if (hypStep.length < 2)
-            return;
-
-        String s;
-
-        int swap;
-
-        final Random random = new Random(System.nanoTime());
-
-        for (int i = 0; i < hypStep.length; i++) {
-            swap = random.nextInt(hypStep.length);
-            s = hypStep[swap];
-            hypStep[swap] = hypStep[i];
-            hypStep[i] = s;
-        }
-    }
 
     /**
      * Converts a single derivation step's ParseNode subtree array into a
@@ -707,15 +695,16 @@ public class VerifyProofs implements ProofVerifier {
      * means that we have to travel through the input array selecting only those
      * array elements corresponding to variable hypotheses in the stepAssrt's
      * hypArray (ignoring LogHyp entries).
-     * 
+     *
      * @param derivStepAssrtSubst the ParseNode subtree array
      */
-    private void loadDerivStepDjVarsSubst(final ParseNode[] derivStepAssrtSubst)
+    private void loadDerivStepDjVarsSubst(
+        final ParseNode[] derivStepAssrtSubst)
     {
 
         final Hyp[] hypArray = stepFrame.hypArray;
 
-        final Stack<ParseNode> nodeStack = new Stack<ParseNode>();
+        final Stack<ParseNode> nodeStack = new Stack<>();
 
         ParseNode node;
         ParseNode[] child;
@@ -729,10 +718,10 @@ public class VerifyProofs implements ProofVerifier {
             nodeStack.push(derivStepAssrtSubst[i]);
             while (!nodeStack.isEmpty()) {
                 node = nodeStack.pop();
-                if (node.getStmt() instanceof VarHyp)
-                    wExpr[wExprCnt++] = ((VarHyp)node.getStmt()).getVar();
+                if (node.stmt instanceof VarHyp)
+                    wExpr[wExprCnt++] = ((VarHyp)node.stmt).getVar();
                 else {
-                    child = node.getChild();
+                    child = node.child;
                     for (final ParseNode element : child)
                         nodeStack.push(element);
                 }
@@ -769,8 +758,8 @@ public class VerifyProofs implements ProofVerifier {
         proof = exprRPNStmt.getExprRPN();
 
         if (proof == null)
-            throw new IllegalArgumentException("Proof is null for Stmt ="
-                + exprRPNStmt.getLabel());
+            throw new IllegalArgumentException(
+                "Proof is null for Stmt =" + exprRPNStmt.getLabel());
 
         dummyMandFrame.hypArray = exprRPNStmt.getMandVarHypArray();
         proofStmtFrame = dummyMandFrame;
@@ -807,15 +796,16 @@ public class VerifyProofs implements ProofVerifier {
      * </ol>
      * <p>
      * NOTE: try to catch ArrayIndexOutOfBoundsException and reallocate arrays
-     * with larger size... </pre>
-     * 
+     * with larger size...
+     * </pre>
+     *
      * @throws VerifyException if an error occurred
      */
     private void verifyProof() throws VerifyException {
-        final List<Formula> backrefs = new ArrayList<Formula>();
+        final List<Formula> backrefs = new ArrayList<>();
         for (stepNbr = 0; stepNbr < proof.length; stepNbr++) {
-            if (proof[stepNbr] == null || proof[stepNbr].backRef <= 0
-                && proof[stepNbr].stmt == null)
+            if (proof[stepNbr] == null
+                || proof[stepNbr].backRef <= 0 && proof[stepNbr].stmt == null)
                 raiseVerifyException(Integer.toString(stepNbr + 1), " ",
                     ProofConstants.ERRMSG_PROOF_STEP_INCOMPLETE);
 
@@ -872,7 +862,9 @@ public class VerifyProofs implements ProofVerifier {
                     ProofConstants.ERRMSG_PROOF_STACK_GT_1_AT_END);
 
         if (!proofStmtFormula.equals(pStack.peek()))
-            if (isExprRPNVerify && proofStmtFormula.exprEquals(pStack.peek())) {}
+            if (isExprRPNVerify
+                && proofStmtFormula.exprEquals(pStack.peek()))
+            {}
             else
                 raiseVerifyException(Integer.toString(stepNbr + 1), " ",
                     ProofConstants.ERRMSG_FINAL_STACK_ENTRY_UNEQUAL
@@ -880,12 +872,12 @@ public class VerifyProofs implements ProofVerifier {
     }
     /**
      * ok, some input, work and output areas in global (class) work areas...
-     * 
+     *
      * <pre>
      * input: -  ScopeFrame stepFrame  -->  (frame for theorem referenced
      *              Hyp[]  hypArray;        in proof step, contains
      *                                      mandatory hypothesis array.)
-     * 
+     *
      *        -  Formula[] pStack;         (the proof stack, which should
      *           int       pStackCnt       contain 'n' entries at the end
      *                                     that have types matching the
@@ -894,9 +886,9 @@ public class VerifyProofs implements ProofVerifier {
      *                                     substitutions which force the
      *                                     hypArray entriesto match
      *                                     (and if not, error!))
-     * 
+     *
      * output:-  SubstMapEntry[] subst --> contains output array of:
-     * 
+     *
      *              Sym substFrom (variable from proof step mandatory
      *                             hypotheses)
      *              Sym[] substTo (expression/variable to substitute
@@ -904,7 +896,7 @@ public class VerifyProofs implements ProofVerifier {
      *                             in the proof step's mandatory
      *                             hypotheses and assertion.)
      * </pre>
-     * 
+     *
      * @throws VerifyException if DjVars (restriction) violation found.
      */
     private void findUniqueSubstMapping() throws VerifyException {
@@ -926,9 +918,7 @@ public class VerifyProofs implements ProofVerifier {
         for (int i = 0; i < substCnt; i++) {
             final Hyp hyp = stepFrame.hypArray[i];
             if (hyp.getTyp() != stackTop[i].getTyp())
-                raiseVerifyException(
-                    Integer.toString(stepNbr + 1),
-                    stepLabel,
+                raiseVerifyException(Integer.toString(stepNbr + 1), stepLabel,
                     ProofConstants.ERRMSG_HYP_TYP_MISMATCH_STACK_TYP
                         + hyp.getTyp() + ProofConstants.ERRMSG_STACK_ITEM_TYP
                         + stackTop[i].getTyp());
@@ -976,7 +966,7 @@ public class VerifyProofs implements ProofVerifier {
      * <p>
      * NOTE: DO NOT substitute for the Type constant at the beginning of the
      * formula.
-     * 
+     *
      * @param f the formula
      * @return a new Formula
      */
@@ -1008,25 +998,25 @@ public class VerifyProofs implements ProofVerifier {
 
     /**
      * ok, some input, work and output areas in global (class) work areas...
-     * 
+     *
      * <pre>
      * input: -  ScopeFrame proofStmtFrame (frame for theorem to be proved)
-     * 
+     *
      *        -  ScopeFrame stepFrame    (frame for theorem referenced
      *                                   in proof step)
-     * 
+     *
      *        -  SubstMapEntry[] subst --> contains array of:
-     * 
+     *
      *              Sym substFrom (variable from proof step mandatory
      *                             hypotheses)
      *              Sym[] substTo (expression/variable to substitute
      *                              FOR each occurrence of substFrom
      *                              in the proof step's mandatory
      *                              hypotheses and assertion.)
-     * 
+     *
      *        -  stepNbrOutputString (already computed...)
      * </pre>
-     * 
+     *
      * @throws VerifyException if DjVars (restriction) violation found!
      */
     private void checkDjVars() throws VerifyException {
@@ -1063,26 +1053,26 @@ public class VerifyProofs implements ProofVerifier {
      * proved!
      * </ol>
      * ok, some input, work and output areas in global (class) work areas...
-     * 
+     *
      * <pre>
      * input: -  ScopeFrame proofStmtFrame (frame for theorem to be proved)
      *           Opt       proofStmtOptFrame (frame for theorem to be
      *                     proved)
-     * 
+     *
      *        -  SubstMapEntry[] subst --> contains array of:
-     * 
+     *
      *              Sym substFrom (variable from proof step mandatory
      *                            hypotheses)
-     * 
+     *
      *              Sym[] substTo (expression/variable to substitute FOR
      *                             each occurrence of substFrom in the
      *                             proof step's mandatory hypotheses and
      *                             assertion.)
-     * 
+     *
      *        -  stepNbr and stepLabel, ready for diagnostic purposes!
      *        -  stepNbrOutputString (already computed...)
      * </pre>
-     * 
+     *
      * @param x the index of the first SubstMapEntry of the pair
      * @param y the index of the second SubstMapEntry of the pair
      * @throws VerifyException if DjVars (restriction) violation found!
@@ -1108,15 +1098,16 @@ public class VerifyProofs implements ProofVerifier {
                 if (!ScopeFrame.isVarPairInDjArray(proofStmtFrame, (Var)symI,
                     (Var)symJ)
                     && !ScopeFrame.isVarPairInDjArray(proofStmtOptFrame,
-                        (Var)symI, (Var)symJ) &&
+                        (Var)symI, (Var)symJ)
+                    &&
                     // don't report "soft" Dj WorkVar errors
                     !(symI instanceof WorkVar || symJ instanceof WorkVar))
                 {
                     // this is for the benefit of ProofAsst...
                     if (proofSoftDjVarsErrorList != null) {
                         try {
-                            proofSoftDjVarsErrorList.add(new DjVars((Var)symI,
-                                (Var)symJ));
+                            proofSoftDjVarsErrorList
+                                .add(new DjVars((Var)symI, (Var)symJ));
                         } catch (final LangException e) {
                             throw new IllegalArgumentException(e);
                         }
@@ -1132,7 +1123,7 @@ public class VerifyProofs implements ProofVerifier {
     }
     public void raiseVerifyException(final String stepNbrIndexString,
         final String stepLabel, final String errmsg, final Object... args)
-        throws VerifyException
+            throws VerifyException
     {
         throw new VerifyException(LangException.format(errmsg, args)
             + ProofConstants.ERRMSG_THEOREM_LABEL + proofStmtLabel
@@ -1220,7 +1211,7 @@ public class VerifyProofs implements ProofVerifier {
 
         pStackMax = ProofConstants.PROOF_PSTACK_INIT_LEN;
         pStackHighwater = 0;
-        pStack = new ArrayDeque<Formula>(pStackMax);
+        pStack = new ArrayDeque<>(pStackMax);
 
         wExprCnt = 0;
         wExprMax = ProofConstants.PROOF_WEXPR_INIT_LEN;
@@ -1237,7 +1228,7 @@ public class VerifyProofs implements ProofVerifier {
 
     /**
      * Generate Formula from RPN.
-     * 
+     *
      * @param formulaRPN to be converted to a Formula
      * @param stepLabelForMessages used for abend message :)
      * @return Formula generated from RPN
@@ -1280,10 +1271,10 @@ public class VerifyProofs implements ProofVerifier {
     }
 
     private Formula generateFormulaFromRPN() throws VerifyException {
-        final List<Formula> backrefs = new ArrayList<Formula>();
+        final List<Formula> backrefs = new ArrayList<>();
         for (stepNbr = 0; stepNbr < proof.length; stepNbr++) {
-            if (proof[stepNbr] == null || proof[stepNbr].backRef <= 0
-                && proof[stepNbr].stmt == null)
+            if (proof[stepNbr] == null
+                || proof[stepNbr].backRef <= 0 && proof[stepNbr].stmt == null)
                 raiseVerifyException(Integer.toString(stepNbr + 1), " ",
                     ProofConstants.ERRMSG_PROOF_STEP_INCOMPLETE);
 

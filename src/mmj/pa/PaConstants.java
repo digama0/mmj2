@@ -116,11 +116,14 @@ import java.util.Map;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import mmj.gmff.GMFFConstants;
 import mmj.mmio.MMIOConstants;
+import mmj.transforms.TrConstants;
 import mmj.util.UtilConstants;
-import mmj.verify.GrammarConstants;
-import mmj.verify.ProofConstants;
+import mmj.verify.*;
 
 /**
  * (Most) Constants used in mmj.pa classes
@@ -154,6 +157,8 @@ import mmj.verify.ProofConstants;
  * <li>{@code TL} = mmj.tl package (Theorem Loader).
  * <li>{@code TM} = mmj.tmff.AlignColumn and related code
  * <li>{@code UT} = mmj.util package. (see {@link UtilConstants})
+ * <li>{@code TR} = mmj.transforms package (proof assistant) (see
+ * {@link TrConstants})
  * </ul>
  * <p>
  * <b>{@code 9999}</b> : sequential number within the source code, 0001 through
@@ -162,10 +167,10 @@ import mmj.verify.ProofConstants;
 public class PaConstants {
 
     /** Version number string. */
-    public static final String VERSION = "2.3";
+    public static final String VERSION = "2.4";
 
     /** Date for latest version. */
-    public static final String VERSION_DATE = "4-Feb-2014";
+    public static final String VERSION_DATE = "26-Jan-2016";
 
     public static final String SYNONYM_TRUE_1 = "true";
     public static final String SYNONYM_TRUE_2 = "on";
@@ -196,49 +201,23 @@ public class PaConstants {
     public static final int PROOF_STEP_RENUMBER_INTERVAL = 1;
 
     /**
-     * PROOF_ASST_INCOMPLETE_STEP_CURSOR_LAST = "Last".
-     * <p>
-     * Controls how cursor positioned after Unification if there are no errors
-     * and at least one "incomplete" proof step: set cursor to Last incomplete
-     * proof step.
-     */
-    public static final String PROOF_ASST_INCOMPLETE_STEP_CURSOR_LAST = "Last";
-
-    /**
-     * PROOF_ASST_INCOMPLETE_STEP_CURSOR_FIRST = "First".
-     * <p>
      * Controls how cursor positioned after Unification if there are no errors
      * and at least one "incomplete" proof step: set cursor to First incomplete
      * proof step.
      */
-    public static final String PROOF_ASST_INCOMPLETE_STEP_CURSOR_FIRST = "First";
+    public enum IncompleteStepCursor {
+        /**
+         * Set cursor where it was when Ctrl-U was presed (same step but on Ref
+         * field.)
+         */
+        AsIs,
 
-    /**
-     * PROOF_ASST_INCOMPLETE_STEP_CURSOR_ASIS = "AsIs".
-     * <p>
-     * Controls how cursor positioned after Unification if there are no errors
-     * and at least one "incomplete" proof step: set cursor where it was when
-     * Ctrl-U was presed (same step but on Ref field.)
-     */
-    public static final String PROOF_ASST_INCOMPLETE_STEP_CURSOR_ASIS = "AsIs";
+        /** Set cursor to First incomplete proof step. */
+        First,
 
-    /**
-     * PROOF_ASST_INCOMPLETE_STEP_CURSOR_DEFAULT = "AsIs".
-     * <p>
-     * Controls how cursor positioned after Unification if there are no errors
-     * and at least one "incomplete" proof step.
-     */
-    public static final String PROOF_ASST_INCOMPLETE_STEP_CURSOR_DEFAULT = PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_ASIS; // "AsIs";
-
-    /**
-     * PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE
-     * <p>
-     * Used in ProofAsstGUI to display the choices.
-     */
-    public static final String[] PROOF_ASST_INCOMPLETE_STEP_CURSOR_TABLE = {
-            PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_ASIS,
-            PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_FIRST,
-            PaConstants.PROOF_ASST_INCOMPLETE_STEP_CURSOR_LAST};
+        /** Set cursor to Last incomplete proof step. */
+        Last
+    }
 
     /**
      * Caption of list of options for Incomplete Step Cursor positioning.
@@ -252,6 +231,18 @@ public class PaConstants {
      */
     public static final String PA_GUI_SET_INCOMPLETE_STEP_CURSOR_OPTION_PROMPT = "Enter Incomplete Step Cursor Option Number";
 
+    /**
+     * While testing by ProofAsstBatchTest option the proof assistant will show
+     * detailed messages for every theorem only if their whole number will be
+     * less then this threshold.
+     */
+    public static final int PA_TESTMSG_THEOREM_NUMBER_THRESHOLD = 20;
+
+    /**
+     * The number of the theorems which will be shown in the end of
+     * ProofAsstBatchTest testing.
+     */
+    public static final int PA_TESTMSG_THEOREM_TIME_TOP_NUMBER = 10;
     // ----------------------------------------------------------
     // Constants for ProofAsstCursor.java
     // ----------------------------------------------------------
@@ -273,18 +264,6 @@ public class PaConstants {
     // ----------------------------------------------------------
     // Constants for ProofUnifier.java
     // ----------------------------------------------------------
-
-    /**
-     * UNIFIER_NODE_STACK_SIZE = 1000
-     * <p>
-     * Stacks used for parse node unification and comparisons are held in fixed
-     * length arrays for the duration, across multiple executions of the GUI.
-     * The size is a function of the depth of the deepest parse tree and the
-     * number of child nodes at each level on the longest path. Ergo, 1000
-     * should be, five or ten times as big as needed. This could be made into a
-     * RunParm should be, probably...
-     */
-    public static final int UNIFIER_NODE_STACK_SIZE = 1000;
 
     /**
      * UNIFIER_MAX_LOG_HYPS = 100
@@ -432,56 +411,24 @@ public class PaConstants {
     public static final int PROOF_ASST_RPN_PROOF_RIGHT_COL_MAX = Integer.MAX_VALUE;
 
     /**
-     * ProofAsstDjVarsSoftErrors Ignore option
-     */
-    public static final String PROOF_ASST_DJ_VARS_SOFT_ERRORS_IGNORE = "Ignore";
-
-    /**
-     * ProofAsstDjVarsSoftErrors Report option
-     */
-    public static final String PROOF_ASST_DJ_VARS_SOFT_ERRORS_REPORT = "Report";
-
-    /**
-     * ProofAsstDjVarsSoftErrors GenerateNew option
-     */
-    public static final String PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_NEW = "GenerateNew";
-
-    /**
-     * ProofAsstDjVarsSoftErrors GenerateReplacements option
-     */
-    public static final String PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_REPLACEMENTS = "GenerateReplacements";
-
-    /**
-     * ProofAsstDjVarsSoftErrors GenerateDifferences option
-     */
-    public static final String PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_DIFFERENCES = "GenerateDifferences";
-
-    /**
      * ProofAsstDjVarsSoftErrors Default value
      */
-    public static final String PROOF_ASST_DJ_VARS_SOFT_ERRORS_DEFAULT = PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_REPLACEMENTS;
+    public static final DjVarsSoftErrors PROOF_ASST_DJ_VARS_SOFT_ERRORS_DEFAULT = DjVarsSoftErrors.GenerateReplacements;
 
-    public static final String[] PROOF_ASST_DJ_VARS_SOFT_ERRORS_TABLE = {
-            PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_IGNORE,
-            PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_REPORT,
-            PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_NEW,
-            PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_REPLACEMENTS,
-            PaConstants.PROOF_ASST_DJ_VARS_SOFT_ERRORS_GENERATE_DIFFERENCES};
+    public enum DjVarsSoftErrors {
+        Ignore(false), Report(false), GenerateNew(true),
+        GenerateReplacements(true), GenerateDifferences(true);
 
-    /**
-     * ProofAsstProofFormat Normal option
-     */
-    public static final String PROOF_ASST_PROOF_NORMAL = "Normal";
+        public boolean generate;
 
-    /**
-     * ProofAsstProofFormat Packed option
-     */
-    public static final String PROOF_ASST_PROOF_PACKED = "Packed";
+        private DjVarsSoftErrors(final boolean generate) {
+            this.generate = generate;
+        }
+    }
 
-    /**
-     * ProofAsstProofFormat Compressed option
-     */
-    public static final String PROOF_ASST_PROOF_COMPRESSED = "Compressed";
+    public enum ProofFormat {
+        Normal, Packed, Compressed
+    }
 
     // ----------------------------------------------------------
     // Constants for ProofAsstPreferences.java
@@ -500,7 +447,12 @@ public class PaConstants {
     /**
      * PROOF_ASST_FONT_BOLD_DEFAULT = yes
      */
-    public static final boolean PROOF_ASST_FONT_BOLD_DEFAULT = true;
+    public static final boolean PROOF_ASST_FONT_BOLD_DEFAULT = false;
+
+    /**
+     * PROOF_ASST_LINE_SPACING_DEFAULT = 0
+     */
+    public static final float PROOF_ASST_LINE_SPACING_DEFAULT = 0;
 
     /**
      * PROOF_ASST_STYLE_COMMENT = 'comment'
@@ -508,9 +460,44 @@ public class PaConstants {
     public static final String PROOF_ASST_STYLE_COMMENT = "comment";
 
     /**
-     * PROOF_ASST_STYLE_SHR = 'stephypref'
+     * PROOF_ASST_STYLE_ERROR = 'error'
      */
-    public static final String PROOF_ASST_STYLE_SHR = "stephypref";
+    public static final String PROOF_ASST_STYLE_ERROR = "error";
+
+    /**
+     * PROOF_ASST_STYLE_KEYWORD = 'keyword'
+     */
+    public static final String PROOF_ASST_STYLE_KEYWORD = "keyword";
+
+    /**
+     * PROOF_ASST_STYLE_PROOF = 'proof'
+     */
+    public static final String PROOF_ASST_STYLE_PROOF = "proof";
+
+    /**
+     * PROOF_ASST_STYLE_STEP = 'step'
+     */
+    public static final String PROOF_ASST_STYLE_STEP = "step";
+
+    /**
+     * PROOF_ASST_STYLE_REF = 'hyp'
+     */
+    public static final String PROOF_ASST_STYLE_HYP = "hyp";
+
+    /**
+     * PROOF_ASST_STYLE_REF = 'ref'
+     */
+    public static final String PROOF_ASST_STYLE_REF = "ref";
+
+    /**
+     * PROOF_ASST_STYLE_LOCREF = 'localref'
+     */
+    public static final String PROOF_ASST_STYLE_LOCREF = "localref";
+
+    /**
+     * PROOF_ASST_STYLE_SPECIAL_STEP = 'specialstep'
+     */
+    public static final String PROOF_ASST_STYLE_SPECIAL_STEP = "specialstep";
 
     /**
      * PROOF_ASST_STYLE_COMMENT = 'class'
@@ -539,28 +526,63 @@ public class PaConstants {
 
     /**
      * Sets default syntax highlighting styles.
-     * 
+     *
      * @param map the style map
      */
-    public static void doStyleDefaults(final Map<String, SimpleAttributeSet> map)
+    public static void doStyleDefaults(
+        final Map<String, SimpleAttributeSet> map)
     {
         SimpleAttributeSet style = new SimpleAttributeSet();
         map.put(PROOF_ASST_STYLE_DEFAULT, style);
+
         style = new SimpleAttributeSet();
         map.put(PROOF_ASST_STYLE_COMMENT, style);
         setStyle(style, Color.GRAY, false, true);
+
         style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_SHR, style);
+        map.put(PROOF_ASST_STYLE_KEYWORD, style);
+        setStyle(style, Color.GRAY, true, null);
+
+        style = new SimpleAttributeSet();
+        map.put(PROOF_ASST_STYLE_ERROR, style);
+        setStyle(style, Color.RED, true, null);
+
+        style = new SimpleAttributeSet();
+        map.put(PROOF_ASST_STYLE_PROOF, style);
+        setStyle(style, Color.GRAY, false, null);
+
+        style = new SimpleAttributeSet();
+        map.put(PROOF_ASST_STYLE_STEP, style);
+        setStyle(style, new Color(0x8A2908), true, null);
+
+        style = new SimpleAttributeSet();
+        map.put(PROOF_ASST_STYLE_HYP, style);
         setStyle(style, new Color(0x8A2908), null, null);
+
+        style = new SimpleAttributeSet();
+        map.put(PROOF_ASST_STYLE_REF, style);
+        setStyle(style, new Color(0x0044DD), true, null);
+
+        style = new SimpleAttributeSet();
+        map.put(PROOF_ASST_STYLE_LOCREF, style);
+        setStyle(style, new Color(0x008800), null, null);
+
+        style = new SimpleAttributeSet();
+        map.put(PROOF_ASST_STYLE_SPECIAL_STEP, style);
+        setStyle(style, new Color(0xB58900), true, null);
+
         style = new SimpleAttributeSet();
         map.put(PROOF_ASST_STYLE_CLASS, style);
         setStyle(style, new Color(0xCC33CC), null, null);
+
         style = new SimpleAttributeSet();
         map.put(PROOF_ASST_STYLE_SET, style);
         setStyle(style, Color.RED, null, null);
+
         style = new SimpleAttributeSet();
         map.put(PROOF_ASST_STYLE_WFF, style);
         setStyle(style, Color.BLUE, null, null);
+
         style = new SimpleAttributeSet();
         map.put(PROOF_ASST_STYLE_WORKVAR, style);
         setStyle(style, new Color(0x008800), null, null);
@@ -568,7 +590,7 @@ public class PaConstants {
 
     /**
      * Set style parameters.
-     * 
+     *
      * @param style The style attribute set
      * @param color the foreground color
      * @param bold true for bold, false for plain, null for inherit
@@ -638,8 +660,8 @@ public class PaConstants {
 
     public static final String PROOF_ASST_SOFT_DJ_ERROR_OPTION_LIST = "Valid Soft Dj Vars Error Options: ";
 
-    public static final String PROOF_ASST_COMPRESSION_LIST = "Valid Proof Compression Options:\n\n"
-        + "1 - Normal\n2 - Packed\n3 - Compressed (Default)\n\nEnter Proof Compression Number";
+    public static final String PROOF_ASST_COMPRESSION_LIST = "Valid Proof Compression Options: ";
+    public static final String PROOF_ASST_COMPRESSION_PROMPT = "Enter Proof Compression Number";
 
     public static final String PROOF_ASST_FONT_FAMILY_LIST = "Valid font family names defined in your system: ";
 
@@ -669,13 +691,13 @@ public class PaConstants {
     public static final boolean PROOF_ASST_EXPORT_FORMAT_UNIFIED_DEFAULT = false;
 
     /**
-     * Default Option Value 5 "NotRandomized" for ProofAsstExportToFile RunParm
-     * and Option Value 4 for ProofAsstBatchTest (when no input file specified).
+     * Default Option Value 5 "Correct" for ProofAsstExportToFile RunParm and
+     * Option Value 4 for ProofAsstBatchTest (when no input file specified).
      * <p>
      * Means that Ref (statement labels) should NOT be included on exported
      * derivation proof steps. This is the default.
      */
-    public static final boolean PROOF_ASST_EXPORT_HYPS_RANDOMIZED_DEFAULT = false;
+    public static final HypsOrder PROOF_ASST_EXPORT_HYPS_ORDER_DEFAULT = HypsOrder.Correct;
 
     /**
      * Default Option Value 6 "NoPrint" for ProofAsstExportToFile RunParm and
@@ -844,6 +866,17 @@ public class PaConstants {
      */
     public static final Color DEFAULT_BACKGROUND_COLOR = Color.WHITE;
 
+    /**
+     * If this option is true then the proof assistant will support autocomplete
+     * derivation steps.
+     */
+    public static final boolean AUTOCOMPLETE_ENABLED_DEFAULT = true;
+
+    /**
+     * If this option is true then the proof assistant will make new derive
+     * steps with the autocomplete flag already set.
+     */
+    public static final boolean DERIVE_AUTOCOMPLETE_DEFAULT = false;
     // ----------------------------------------------------------
     // Constants for AuxFrameGUI.java
     // ----------------------------------------------------------
@@ -919,23 +952,26 @@ public class PaConstants {
      */
     public static final int PROOF_TEXT_TAB_LENGTH = 1;
 
-    /**
-     * SAMPLE_PROOF_LABEL
-     */
+    /** SAMPLE_PROOF_LABEL */
     public static final String SAMPLE_PROOF_LABEL = "syllogism";
 
-    /**
-     * SAMPLE_PROOF_TEXT
-     */
+    /** SAMPLE_PROOF_TEXTS */
     public static final String SAMPLE_PROOF_TEXT = "$( <MM> <PROOF_ASST> THEOREM="
-        + SAMPLE_PROOF_LABEL
-        + " LOC_AFTER=\n"
-        + "\n"
+        + SAMPLE_PROOF_LABEL + " LOC_AFTER=\n" + "\n"
         + "h1::           |- ( ph -> ps ) \n"
         + "h2::           |- ( ps -> ch ) \n"
         + "3:2:           |- ( ph -> ( ps -> ch ) ) \n"
         + "4:3:           |- ( ( ph -> ps ) -> ( ph -> ch ) ) \n"
         + "qed:1,4:       |- ( ph -> ch ) \n" + "\n" + "$)\n";
+
+    /** AUTOCOMPLETE_SAMPLE_PROOF_TEXT */
+    public static final String AUTOCOMPLETE_SAMPLE_PROOF_TEXT = "$( <MM> <PROOF_ASST> THEOREM="
+        + SAMPLE_PROOF_LABEL + " LOC_AFTER=\n" + "\n"
+        + "h              |- ( ph -> ps ) \n"
+        + "h              |- ( ps -> ch ) \n"
+        + "!              |- ( ph -> ( ps -> ch ) ) \n"
+        + "!              |- ( ( ph -> ps ) -> ( ph -> ch ) ) \n"
+        + "!qed           |- ( ph -> ch ) \n" + "\n" + "$)\n";
 
     /**
      * PROOF_ASST_FRAME_TITLE
@@ -954,29 +990,19 @@ public class PaConstants {
     public static final String PA_GUI_FILE_CHOOSER_DESCRIPTION = "Text and mmj2 Proof Asst files";
 
     /**
-     * ProofAsstGUI File Chooser valid file name suffix ".TXT".
-     */
-    public static final String PA_GUI_FILE_CHOOSER_FILE_SUFFIX_TXT = ".TXT";
-
-    /**
      * ProofAsstGUI File Chooser valid file name suffix ".txt"
      */
-    public static final String PA_GUI_FILE_CHOOSER_FILE_SUFFIX_TXT2 = ".txt";
-
-    /**
-     * ProofAsstGUI File Chooser valid file name suffix ".MMP".
-     */
-    public static final String PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP = ".MMP";
+    public static final String PA_GUI_FILE_CHOOSER_FILE_SUFFIX_TXT = ".txt";
 
     /**
      * ProofAsstGUI File Chooser valid file name suffix ".mmp"
      */
-    public static final String PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP2 = ".mmp";
+    public static final String PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP = ".mmp";
 
     /**
      * ProofAsstGUI Default file name suffix
      */
-    public static final String PA_GUI_DEFAULT_FILE_NAME_SUFFIX = PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP2; // .txt
+    public static final String PA_GUI_DEFAULT_FILE_NAME_SUFFIX = PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP; // .mmp
 
     /**
      * ProofAsstGUI Save before window closes question
@@ -1031,12 +1057,22 @@ public class PaConstants {
     /**
      * ProofAsstGUI File Menu Save As Item Text
      */
-    public static final String PA_GUI_FILE_MENU_SAVE_AS_ITEM_TEXT = "SaveAs...";
+    public static final String PA_GUI_FILE_MENU_SAVE_AS_ITEM_TEXT = "Save As...";
 
     /**
      * ProofAsstGUI File Menu Export Via GMFF Item Text
      */
     public static final String PA_GUI_FILE_MENU_EXPORT_VIA_GMFF_ITEM_TEXT = "Export Via GMFF";
+
+    /**
+     * ProofAsstGUI File Menu Load Settings Item Text
+     */
+    public static final String PA_GUI_FILE_MENU_LOAD_SETTINGS = "Load Settings";
+
+    /**
+     * ProofAsstGUI File Menu Save Settings Item Text
+     */
+    public static final String PA_GUI_FILE_MENU_SAVE_SETTINGS = "Save Settings";
 
     /**
      * ProofAsstGUI File Menu Exit Item Text
@@ -1335,8 +1371,7 @@ public class PaConstants {
     /**
      * Prompt for Set Theorem Loader Dj Vars Option Item Action dialog.
      */
-    public static final String PA_GUI_SET_TL_DJ_VARS_OPTION_PROMPT = "Enter Theorem Loader DjVars Option:\n"
-        + "Merge, Replace or NoUpdate";
+    public static final String PA_GUI_SET_TL_DJ_VARS_OPTION_PROMPT = "Enter Theorem Loader DjVars Option:";
 
     /**
      * Prompt for Set Theorem Loader MMT Folder Item Action dialog.
@@ -1371,6 +1406,16 @@ public class PaConstants {
      * ProofAsstGUI Help About Item Text
      */
     public static final String PA_GUI_HELP_ABOUT_ITEM_TEXT = "About mmj2";
+
+    /**
+     * ProofAsstGui Help Menu Batch Command documentation text
+     */
+    public static final String PA_GUI_HELP_MENU_BATCH_COMMAND_DOCUMENTATION_TEXT = "Batch command documentation";
+
+    /**
+     * ProofAsstGui Help Batch Command Documentation HEADER
+     */
+    public static final String PA_GUI_HELP_BATCH_COMMAND_DOCUMENTATION_TITLE = "Documentation viewer";
 
     /**
      * ProofAsstGUI Exit Action Before Save
@@ -1418,14 +1463,9 @@ public class PaConstants {
     public static final String PA_GUI_YES_NO_TITLE = "getYesNoAnswer()";
 
     /**
-     * ProofAsstGUI Save New Proof Text File Dialog Title
+     * ProofAsstGUI Save Proof Text File Dialog Title
      */
-    public static final String PA_GUI_SAVE_NEW_PROOF_TEXT_TITLE = "SaveNewProofTextFile()";
-
-    /**
-     * ProofAsstGUI Save Old Proof Text File Dialog Title
-     */
-    public static final String PA_GUI_SAVE_OLD_PROOF_TEXT_TITLE = "SaveOldProofTextFile()";
+    public static final String PA_GUI_SAVE_PROOF_TEXT_TITLE = "SaveProofTextFile()";
 
     /**
      * Default Theorem Label For Error Messages
@@ -1470,17 +1510,14 @@ public class PaConstants {
     /**
      * Proof Assistant GUI Help About Part 1
      */
-    public static final String HELP_ABOUT_TEXT = "mmj2 Version "
-        + VERSION
-        + " as of "
-        + VERSION_DATE
-        + ".\n\n"
+    public static final String HELP_ABOUT_TEXT = "mmj2 Version " + VERSION
+        + " as of " + VERSION_DATE + ".\n\n"
         + "Copyright (C) 2005 thru 2011 MEL O'CAT via X178G243 (at) yahoo (dot) com \n"
         + "License terms: GNU General Public License Version 2 or any later version.\n\n"
         + "Note: The following copyright is included because ProofAsstGUI.java\n"
         + "has several snippets of code that are very similar, if not identical\n"
         + "to snippets of code in the Java Tutorial.\n\n"
-        + "Copyright� 1995-2004 Sun Microsystems, Inc. All Rights Reserved.\n"
+        + "Copyright\u00a9 1995-2004 Sun Microsystems, Inc. All Rights Reserved.\n"
         + "Redistribution and use in source and binary forms, with or without\n"
         + "modification, are permitted provided that the following conditions are\n"
         + "met\n"
@@ -1611,8 +1648,7 @@ public class PaConstants {
         + "second Undo restores the text. We at MMJ2 Laboratories, Inc. sincerely\n"
         + "apologize for this sadly deficient behavior. Be assured that we will be\n"
         + "complaining on your behalf to someone, somewhere, sometime about this shoddy\n"
-        + "workmanship.\n\n"
-        + "* Redo -- 'Undoes' an Undo.\n\n"
+        + "workmanship.\n\n" + "* Redo -- 'Undoes' an Undo.\n\n"
         + "* Cut -- Standard text 'cut' operation on selected text. The 'cut' text is\n"
         + "copied to the clipboard.\n\n"
         + "* Copy -- Standard text 'copy' operation which copies the selected text to\n"
@@ -1714,8 +1750,7 @@ public class PaConstants {
         + "* Set Step Selector Show Substitutions -- true/false option to display, or\n"
         + "not, substitutions from the proof into unifiable assertions (default = true).\n"
         + "If false, assertions are displayed as they appear in the input .mm\n"
-        + "file.\n\n\n"
-        + "===== TL Menu (Theorem Loader) =====\n\n"
+        + "file.\n\n\n" + "===== TL Menu (Theorem Loader) =====\n\n"
         + "* Unify + Store In LogSys and MMT Folder -- Validates the Proof Worksheet,\n"
         + "and if proof unification is successful, writes the theorem to the MMT Folder\n"
         + "and stores it in the Logical System in memory.\n\n"
@@ -1764,8 +1799,7 @@ public class PaConstants {
         + "========= GMFF Menu =========\n\n"
         + "* Export Via GMFF -- GMFF (Graphics Mode Formula Formatting) exports the\n"
         + "Proof Worksheet as html file(s) in the \\mmj2jar\\gmff directory.\n"
-        + "See \\mmj2\\doc\\GMFFDoc\\* \n\n\n"
-        + "==== Help Menu ====\n\n"
+        + "See \\mmj2\\doc\\GMFFDoc\\* \n\n\n" + "==== Help Menu ====\n\n"
         + "* General Help Info -- This page.\n\n"
         + "* About mmj2 -- Some copyright information *plus* very interesting data\n"
         + "about your computer's memory: 'Max' =  the maximum amount of memory that the\n"
@@ -1787,36 +1821,65 @@ public class PaConstants {
     // Constants for ProofWorksheet.java
     // ----------------------------------------------------------
 
-    // unificationStatus meanings:
-    // 0 = not unified: this is the default and will be the final result if
-    // unification is not even attempted (perhaps due to hypFldIncomplete).
-    // 1 = unification error: signifies that unification failed; either the
-    // input Ref was wrong, or the unification search did not find a match.
-    // 2 = attempt cancelled - unification could not be performed but we didn't
-    // find out until derivStepFormula or derivStepHyp was performed for the
-    // step or one of its hyps; incomplete formulas prevent unification
-    // attempts!
-    // 3 = unified but incomplete hyps: signifies that one or more hypotheses
-    // used were not successfully unified or are missing
-    // 4 = unified but work vars: signifies that work vars are present in the
-    // step formula or the step hypotheses.
-    // 5 = unified: good to go for proof building attempt.
-    public static final int UNIFICATION_STATUS_NOT_UNIFIED = 0;
-    public static final int UNIFICATION_STATUS_UNIFICATION_ERROR = 1;
-    public static final int UNIFICATION_STATUS_ATTEMPT_CANCELLED = 2;
-    public static final int UNIFICATION_STATUS_UNIFIED_W_INCOMPLETE_HYPS = 3;
-    public static final int UNIFICATION_STATUS_UNIFIED_W_WORK_VARS = 4;
-    public static final int UNIFICATION_STATUS_UNIFIED = 5;
+    public enum UnificationStatus {
+        /**
+         * Not unified: this is the default and will be the final result if
+         * unification is not even attempted (perhaps due to hypFldIncomplete).
+         */
+        NotUnified(false),
 
-    // djVarsErrorStatus meanings:
-    // 0 = No Dj Vars Errors
-    // 1 = Soft Dj Vars Errors; user must add $d statements to satisfy unifying
-    // Ref.
-    // 2 = Hard Dj Vars Errors; formula violates
-    // $d restriction(s) of unifying Ref.
-    public static final int DJ_VARS_ERROR_STATUS_NO_ERRORS = 0;
-    public static final int DJ_VARS_ERROR_STATUS_SOFT_ERRORS = 1;
-    public static final int DJ_VARS_ERROR_STATUS_HARD_ERRORS = 2;
+        /**
+         * Unification error: signifies that unification failed; either the
+         * input Ref was wrong, or the unification search did not find a match.
+         */
+        UnificationError(false),
+
+        /**
+         * Attempt cancelled: unification could not be performed but we didn't
+         * find out until derivStepFormula or derivStepHyp was performed for the
+         * step or one of its hyps; incomplete formulas prevent unification
+         * attempts!
+         */
+        AttemptCancelled(false),
+
+        /**
+         * Unified but incomplete hyps: signifies that one or more hypotheses
+         * used were not successfully unified or are missing
+         */
+        UnifiedWIncompleteHyps(false),
+
+        /**
+         * Unified but work vars: signifies that work vars are present in the
+         * step formula or the step hypotheses.
+         */
+        UnifiedWWorkVars(true),
+
+        /** Unified: good to go for proof building attempt. */
+        Unified(true);
+
+        public boolean proper;
+
+        private UnificationStatus(final boolean proper) {
+            this.proper = proper;
+        }
+    }
+
+    public enum DjVarsErrorStatus {
+        /** No Dj Vars Errors */
+        None,
+
+        /**
+         * Soft Dj Vars Errors; user must add $d statements to satisfy unifying
+         * Ref.
+         */
+        Soft,
+
+        /**
+         * Hard Dj Vars Errors; formula violates $d restriction(s) of unifying
+         * Ref.
+         */
+        Hard
+    }
 
     /**
      * Descriptions for ProofWorkStmt.status values.
@@ -1926,6 +1989,11 @@ public class PaConstants {
     public static final String END_PROOF_STMT_TOKEN = "$.";
 
     /**
+     * Macro execution token.
+     */
+    public static final String MACRO_STMT_TOKEN = "$m";
+
+    /**
      * Distinct Variables ProofWorkStmt token.
      */
     public static final String DISTINCT_VARIABLES_STMT_TOKEN = "$d";
@@ -1944,6 +2012,11 @@ public class PaConstants {
      * Hyp ProofStep ProofWorkStmt token prefix
      */
     public static final String HYP_STEP_PREFIX = "h";
+
+    /**
+     * Autocomplete ProofStep ProofWorkStmt token prefix
+     */
+    public static final String AUTO_STEP_PREFIX = "!";
 
     /**
      * Comment ProofWorkStmt token prefix
@@ -2009,28 +2082,6 @@ public class PaConstants {
      * Used for backout of unification updates.
      */
     public static final int STEP_UNIFIER_APPLIED_ARRAY_LEN_MAX = 8000;
-
-    // ----------------------------------------------------------
-    // Constants for StepRequest.java
-    // ----------------------------------------------------------
-
-    /**
-     * STEP_REQUEST_SELECTOR_SEARCH = 81.
-     */
-    public static final int STEP_REQUEST_SELECTOR_SEARCH = 81;
-
-    /**
-     * STEP_REQUEST_SELECTOR_CHOICE = 82.
-     */
-    public static final int STEP_REQUEST_SELECTOR_CHOICE = 82;
-
-    public static final int STEP_REQUEST_STEP_SEARCH = 91;
-
-    public static final int STEP_REQUEST_GENERAL_SEARCH = 92;
-
-    public static final int STEP_REQUEST_SEARCH_OPTIONS = 93;
-
-    public static final int STEP_REQUEST_STEP_SEARCH_CHOICE = 94;
 
     // ----------------------------------------------------------
     // Constants for StepSelectorDialog.java
@@ -2164,7 +2215,7 @@ public class PaConstants {
         + " I/O error encountered! Message text follows: %s";
 
     public static final String ERRMSG_PA_TESTMSG_01 = "I-PA-0113 Theorem %s:"
-        + " Unification Time Elapsed (tenths of sec) = %d, Status = %d: %s";
+        + " Unification Time Elapsed = %s, Status = %d: %s";
 
     public static final String ERRMSG_PA_TESTMSG_02 = "I-PA-0114 Theorem %s:"
         + " Unified and Proved in Import Batch Test but the new"
@@ -2173,8 +2224,8 @@ public class PaConstants {
         + " new proof stmt = %s (empty String means proof lengths differed.)";
 
     public static final String ERRMSG_PA_TESTMSG_03 = "I-PA-0115 TEST TOTALS:"
-        + " nbrTestTheoremsProcessed = %d, nbrTestNotProvedPerfectly = %d,"
-        + " nbrTestProvedDifferently = %d";
+        + " Theorems processed = %d, Test NOT proved perfectly = %d,"
+        + " Test proved differently = %d, Whole test time = %s";
 
     public static final String ERRMSG_PA_FWD_BACK_SEARCH_NOTFND = "E-PA-0116"
         + " No (existing) theorems found in the %s direction. Forward/Backward"
@@ -2215,6 +2266,12 @@ public class PaConstants {
     public static final String ERRMSG_PA_START_THEOREM_NOT_FOUND = "E-PA-0126"
         + " Starting theorem %s for build of sorted list not found -- or input"
         + " label is not a Metamath theorem.";
+
+    public static final String ERRMSG_PA_TESTMSG_PROGRESS = "\rI-PA-0127 Unification"
+        + " test progress: theorem %8d/%d, %s      ";
+
+    public static final String ERRMSG_PA_TIME_TOP_HEADER = "I-PA-0128"
+        + " Here is the list of most time consuming theorem unifications: ";
 
     // ----------------------------------------------------------
     // Messages from ProofAsstGUI.java
@@ -2337,9 +2394,8 @@ public class PaConstants {
 //    public static final String ERRMSG_STEP_LE_0_2 = " Step ";
 //    public static final String ERRMSG_STEP_LE_0_3 = ": step number is less than or equal to zero!";
 
-//    public static final String ERRMSG_STEP_NOT_INT_1 = "E-PA-0324 Theorem ";
-//    public static final String ERRMSG_STEP_NOT_INT_2 = " Step ";
-//    public static final String ERRMSG_STEP_NOT_INT_3 = ": Step number is not a valid integer number.";
+    public static final String ERRMSG_BAD_STEP = "E-PA-0324 Theorem %s"
+        + " Step %s: Invalid step name.";
 
     public static final String ERRMSG_STEP_NBR_DUP = "E-PA-0325"
         + " Theorem %s Step %s: Duplicate Step number.";
@@ -2545,10 +2601,6 @@ public class PaConstants {
         + " Invalid symbol in Distinct Variable statement. Input token = %s"
         + " is a duplicate of another variable in the statement.";
 
-    public static final String ERRMSG_DERIVE_FEATURE_STEP_NOTFND = "A-PA-0369"
-        + " Programmer Error! Ooops. Sorry! Failed to find current derivation"
-        + " step while performing addDerivStepForDeriveFeature() function!";
-
     public static final String ERRMSG_FORMULA_REQ = "E-PA-0370 Theorem %s"
         + " Step %s: Formula is required on hypothesis steps and on the"
         + " derivation 'qed' step.";
@@ -2564,6 +2616,9 @@ public class PaConstants {
 //    public static final String ERRMSG_FORMULA_OR_REF_REQ_2 = " Step ";
 //    public static final String ERRMSG_FORMULA_OR_REF_REQ_3 = ": Formula or Ref required on derivation"
 //        + " steps (Formula is always required on the 'qed' step).";
+
+    public static final String ERRMSG_CYCLIC_DEPENDENCY = "E-PA-0372 Theorem %s:"
+        + " Cyclic dependency detected in derivation steps. Steps involved:\n%s\n";
 
     public static final String ERRMSG_STMT_LABEL_DUP_OF_SYM_ID = "E-PA-0373"
         + " Theorem %s: theorem label duplicates a symbol id. This is"
@@ -2586,13 +2641,12 @@ public class PaConstants {
         + " character ('#') in the Step/Hyp/Ref field. A Hypothesis should not"
         + " refer to other hypotheses.";
 
-    public static final String ERRMSG_QED_HAS_LOCAL_REF = "E-PA-0378 Theorem %s"
-        + " Step %s: QED Derivation Step line input with Local Ref escape"
-        + " character ('#') in the Step/Hyp/Ref field. ";
+    public static final String ERRMSG_QED_HYP_LOCAL_REF = "E-PA-0378 Theorem %s"
+        + " Step %s: #LocalRef invalid. The QED step cannot reference a"
+        + " hypothesis step in a LocalRef.";
 
     public static final String ERRMSG_BAD_LOCAL_REF = "E-PA-0379 Theorem %s"
-        + " Step : #LocalRef invalid. Must match a previous step's Step or Ref,"
-        + " and cannot refer to a step that is itself using a #LocalRef.";
+        + " Step : #LocalRef invalid. Must match a previous step's Step or Ref.";
 
     public static final String ERRMSG_HYP_HAS_SELECTOR_CHOICE = "E-PA-0380"
         + " Theorem %s Step %s: StepSelectorDialog selection (now) points to"
@@ -2617,6 +2671,9 @@ public class PaConstants {
     public static final String ERRMSG_DV_VAR_SCOPE_ERR = "E-PA-0385 Theorem %s:"
         + " Invalid variable symbol in Distinct Variable statement."
         + " Input token = %s is a not an active variable in the current scope.";
+
+    public static final String ERRMSG_MACRO_FAIL = "E-PA-0386 Macro %s failed"
+        + " to execute.\n%s";
 
     // ----------------------------------------------------------
     // Messages from ProofUnifier.java
@@ -2679,17 +2736,8 @@ public class PaConstants {
         + " with the referenced Assertion. Try the Unify/Step Selector Search"
         + " to find unifiable assertions for the step.";
 
-    public static final String ERRMSG_STEP_UNIFY_ERR = "E-PA-0411 Theorem %s"
-        + " Step %s: Unification failure in derivation proof step. The step's"
-        + " formula and/or its hypotheses could not be reconciled with an"
-        + " Assertion (axiom or theorem) in the loaded Metamath file(s). Either"
-        + " the Unification Search for a unifying Assertion failed due to a"
-        + " Not Found condition, or the Unification Search was not attempted"
-        + " because the proof step or one of its hypotheses contains Work"
-        + " Variables. Note that Unification Search is NOT performed for proof"
-        + " steps involving work variables -- you must enter an Assertion label"
-        + " for these steps. Try the Unify/Step Selector Search to find"
-        + " unifiable assertions for the step.";
+    public static final String ERRMSG_STEP_UNIFY_ERR = "I-PA-0411 Theorem %s"
+        + " Step %s: Step incomplete.";
 
     public static final String ERRMSG_UNIFY_SEARCH_EXCLUDE = "I-PA-0412"
         + " Excluded these assertions from Unification search list as requested"
@@ -2731,6 +2779,10 @@ public class PaConstants {
         + " convert WorkVars\" to automatically assign dummy variables to the"
         + " remaining WorkVars.";
 
+    public static final String ERRMSG_POSSIBLE_SUBST = "I-PA-0419 Step %s could"
+        + " be unified with assertion %s, but the unification requires"
+        + " dj variable restrictions: %s";
+
     // ----------------------------------------------------------
     // Messages from ProofAsstPreferences.java
     // ----------------------------------------------------------
@@ -2743,8 +2795,7 @@ public class PaConstants {
         + " RunParm. Choices are: 'Ignore', 'Report', 'GenerateNew',"
         + " 'GenerateReplacements', and 'GenerateDifferences'.";
 
-    public static final String ERRMSG_INVALID_SOFT_DJ_ERROR_OPTION_NBR = ""
-        + "E-PA-0503 Invalid Soft Dj Vars Error Option Number = %s";
+    public static final String ERRMSG_INVALID_OPTION = "Not a valid option; try again";
 
     public static final String ERRMSG_INVALID_INCOMPLETE_STEP_CURSOR = "E-PA-0504"
         + " Invalid option input = %s for ProofAsstIncompleteStepCursor"
@@ -2753,12 +2804,11 @@ public class PaConstants {
     public static final String ERRMSG_INVALID_INCOMPLETE_STEP_CURSOR_OPTION_NBR = ""
         + "E-PA-0505 Invalid Incomplete Step Cursor Option Number = %s";
 
-    public static final String ERRMSG_INVALID_STEP_SELECTOR_MAX_RESULTS_NBR = ""
-        + "E-PA-0506 Invalid StepSelectorMaxResults Number = %s. Must be"
-        + " between (inclusive) 1 and %d";
+    public static final String ERRMSG_INVALID_INT_RANGE = "E-PA-0506 "
+        + "Invalid %s setting = %d. Must be between %d (inclusive) and %d.";
 
     public static final String ERRMSG_INVALID_BOOLEAN = "E-PA-0507"
-        + " Invalid %s option = %s. Must equal 'yes', 'no', 'on', 'off',"
+        + " Invalid option = %s. Must equal 'yes', 'no', 'on', 'off',"
         + " 'true' or 'false'.";
 
     public static final String ERRMSG_INVALID_PROOF_FORMAT = "E-PA-0508"
@@ -2809,6 +2859,68 @@ public class PaConstants {
         + "Input list of assertions (for unification) empty!";
 
     // ----------------------------------------------------------
+    // Messages from StoreBoss.java
+    // ----------------------------------------------------------
+
+    /**
+     * PROOF_ASST_SETTINGS_FILE_DEFAULT
+     */
+    public static final String PROOF_ASST_SETTINGS_FILE_DEFAULT = "store.json";
+
+    public static final String BACKUP_SUFFIX = ".bak";
+
+    /**
+     * PROOF_ASST_SETTINGS_FILE_DEFAULT
+     */
+    public static final JSONObject JSON_INTRODUCTION = new JSONObject()
+        .put(SessionStore.KEY_STORE, new JSONObject())
+        .put(SessionStore.KEY_OVERRIDE, new JSONObject())
+        .put(SessionStore.KEY_REMOVE, new JSONArray())
+        .put("-comments", new JSONArray(
+            " ======================= The store.json File ========================== ",
+            "                                                                        ",
+            " mmj2 uses a JSON file for saving and loading settings, called          ",
+            " store.json by default. Since it is written by both users and the       ",
+            " computer, care must be taken so that the file is not corrupted.        ",
+            "                                                                        ",
+            " The top level is divided into a few sections. The first one, called    ",
+            " '-comments', is this introduction. JSON does not allow comments in the ",
+            " strict sense, so we can make do with a collection of strings.          ",
+            "                                                                        ",
+            " The main section, used by mmj2, is called 'store'. It is a collection  ",
+            " of mappings from keys like 'ProofAsst.maximized' to values appropriate ",
+            " for their types in the main program. It is safe to change these values,",
+            " and doing so will update their values in memory when the file is read  ",
+            " in on startup. You can also force a file read by using the RunParm     ",
+            " 'LoadSettings'.                                                        ",
+            "                                                                        ",
+            " Another section, called 'manual', is in the same format as 'store',    ",
+            " and any key-value mappings in 'manual' override the settings in        ",
+            " 'store'. Since the program only changes the values in 'store', this    ",
+            " has the effect of keeping these settings from changing from the chosen ",
+            " values.                                                                ",
+            "                                                                        ",
+            " Finally, the section 'remove' is provided to simplify editing of the   ",
+            " 'store' section. Upon reading the file, mmj2 will immediately delete   ",
+            " any keys from store that are in the list of keys under 'remove',       ",
+            " without loading them into memory. It will also clear the 'remove'      ",
+            " section afterward.                                                     ",
+            "                                                                        ",
+            " The meaning of the different keys is given in the program. Many of     ",
+            " them have corresponding RunParm settings, for example the key          ",
+            " 'ProofAsst.maximized' vs. the RunParm 'ProofAsstMaximized'. The        ",
+            " determination of which one 'trumps' the other depends on which is read ",
+            " first in the RunParms file. All JSON settings are set when the         ",
+            " LoadSettings RunParm is encountered, unless there is no such RunParm,  ",
+            " in which case it will come immediately before RunProofAsstGUI (so      ",
+            " usually settings in this file take precedence over the RunParms).      ",
+            " This way most settings transfer from one run to the next. To override  ",
+            " this behavior (so that it instead reverts to some chosen value after   ",
+            " every restart) you can either add a RunParm and a LoadSettings before  ",
+            " that, or you can put the desired key-value pair in the 'manual'        ",
+            " section.                                                               "));
+
+    // ----------------------------------------------------------
     // Messages from EraseWffsPreprocessRequest.java
     // ----------------------------------------------------------
 
@@ -2816,4 +2928,10 @@ public class PaConstants {
         + "Unable to process Proof text area during preprocessing edit"
         + " operation. Specific error message follows: %s";
 
+    // ----------------------------------------------------------
+    // Messages from ColorThread.java
+    // ----------------------------------------------------------
+
+    public static final String ERRMSG_TOKENIZER_FAIL = "E-PA-1101"
+        + " Programmer error in WorksheetTokenizer syntax highlighter.";
 }

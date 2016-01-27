@@ -82,7 +82,7 @@ import java.util.Map;
  * "wi $a wff ( ph -> ph ) $." would it be saying that there is one variable or
  * two? And if two, what would be their sequence on the hypothesis stack. Thus,
  * we'll have to have a validation error message for this scenario!
- * 
+ *
  * @see <a href="../../MetamathERNotes.html"> Nomenclature and
  *      Entity-Relationship Notes</a>
  */
@@ -95,11 +95,16 @@ public class Axiom extends Assrt {
     private int[] syntaxAxiomVarHypReseq;
 
     /**
+     * The permutation inverse of {@link #syntaxAxiomVarHypReseq}.
+     */
+    private int[] syntaxAxiomVarHypReseqInv;
+
+    /**
      * Is this Axiom a "Syntax Axiom"? Hmmm...
      * <p>
      * An Axiom is a "Syntax Axiom" if its Type Code is not equal to a
      * mmj.verify.Grammar "provableLogicStmtTyp" (i.e. "|-", the default.)
-     * 
+     *
      * @see mmj.verify.Grammar
      */
     private boolean isSyntaxAxiom;
@@ -126,7 +131,7 @@ public class Axiom extends Assrt {
 
     /**
      * Construct using the whole enchilada of parameters!
-     * 
+     *
      * @param seq MObj.seq sequence number
      * @param scopeDefList Scope info in effect at the time
      * @param symTbl Symbol Table (Map)
@@ -139,7 +144,7 @@ public class Axiom extends Assrt {
     public Axiom(final int seq, final List<ScopeDef> scopeDefList,
         final Map<String, Sym> symTbl, final Map<String, Stmt> stmtTbl,
         final String labelS, final String typS, final List<String> symList)
-        throws LangException
+            throws LangException
     {
         super(seq, scopeDefList, symTbl, stmtTbl, labelS, typS, symList);
 
@@ -151,7 +156,7 @@ public class Axiom extends Assrt {
      * <p>
      * Array of indexes for resequencing a Syntax Axiom's VarHyp's from order of
      * appearance in the Axiom's Formula to database sequence.
-     * 
+     *
      * @return Axiom's syntaxAxiomVarHypReseq (may be null).
      */
     public int[] getSyntaxAxiomVarHypReseq() {
@@ -159,15 +164,36 @@ public class Axiom extends Assrt {
     }
 
     /**
+     * Return Axiom's syntaxAxiomVarHypReseqInv.
+     * <p>
+     * Array of indexes for resequencing a Syntax Axiom's VarHyp's from database
+     * sequence to order of appearance in the Axiom's Formula.
+     *
+     * @return Axiom's syntaxAxiomVarHypReseqInv (may be null).
+     */
+    public int[] getSyntaxAxiomVarHypReseqInv() {
+        return syntaxAxiomVarHypReseqInv;
+    }
+
+    /**
      * Set Axiom's syntaxAxiomVarHypReseq (may be null).
      * <p>
      * Array of indexes for resequencing a Syntax Axiom's VarHyp's from order of
      * appearance in the Axiom's Formula to database sequence.
-     * 
+     *
      * @param syntaxAxiomVarHypReseq array of int.
      */
     public void setSyntaxAxiomVarHypReseq(final int[] syntaxAxiomVarHypReseq) {
         this.syntaxAxiomVarHypReseq = syntaxAxiomVarHypReseq;
+        syntaxAxiomVarHypReseqInv = null;
+        if (syntaxAxiomVarHypReseq == null)
+            syntaxAxiomVarHypReseqInv = null;
+        else {
+            syntaxAxiomVarHypReseqInv = new int[syntaxAxiomVarHypReseq.length];
+            for (int i = 0; i < syntaxAxiomVarHypReseq.length; i++)
+                syntaxAxiomVarHypReseqInv[syntaxAxiomVarHypReseq[i]] = i;
+        }
+
     }
 
     /**
@@ -179,7 +205,7 @@ public class Axiom extends Assrt {
      * <p>
      * This answer is unavailable until Grammar has been initialized
      * successfully.
-     * 
+     *
      * @return isSyntaxAxiom true or false.
      */
     public boolean getIsSyntaxAxiom() {
@@ -190,7 +216,7 @@ public class Axiom extends Assrt {
      * Set isSyntaxAxiom, true or false. An Axiom is a "Syntax Axiom" if its
      * Type Code is not equal to a mmj.verify.Grammar "provableLogicStmtTyp"
      * (i.e. "|-", the default -- see mmj.verify.Grammar).
-     * 
+     *
      * @param isSyntaxAxiom true or false.
      */
     public void setIsSyntaxAxiom(final boolean isSyntaxAxiom) {
@@ -202,7 +228,7 @@ public class Axiom extends Assrt {
      * <p>
      * True for Syntax Axiom whose Formula Expression contains a Sym such that
      * ((Cnst)sym[i])).getNbrOccInSyntaxAxioms == 1.
-     * 
+     *
      * @return syntaxAxiomHasUniqueCnst true or false.
      */
     public boolean getSyntaxAxiomHasUniqueCnst() {
@@ -214,7 +240,7 @@ public class Axiom extends Assrt {
      * <p>
      * True for Syntax Axiom whose Formula Expression contains a Sym such that
      * ((Cnst)sym[i])).getNbrOccInSyntaxAxioms == 1.
-     * 
+     *
      * @param syntaxAxiomHasUniqueCnst true or false.
      */
     public void setSyntaxAxiomHasUniqueCnst(
@@ -241,7 +267,7 @@ public class Axiom extends Assrt {
      * Depth is computed as 1 for each Notation Syntax Axiom Node. VarHyp nodes
      * and Nulls Permitted, Type Conversion and NamedTypedConstant Syntax Axiom
      * nodes are assigned depth = 0 for purposes of depth checking.
-     * 
+     *
      * @param sb StringBuilder already initialized for appending characters.
      * @param maxDepth maximum depth of Notation Syntax axioms in sub-tree to be
      *            printed. Set to Integer.MAX_VALUE to turn off depth checking.
@@ -258,8 +284,8 @@ public class Axiom extends Assrt {
     {
 
         if (!getIsSyntaxAxiom())
-            throw new IllegalArgumentException(LangException.format(
-                LangConstants.ERRMSG_BAD_PARSE_STMT, getLabel()));
+            throw new IllegalArgumentException(LangException
+                .format(LangConstants.ERRMSG_BAD_PARSE_STMT, getLabel()));
 
         /*
          * For TypeConversion Syntax Axiom, make recursive
@@ -268,8 +294,8 @@ public class Axiom extends Assrt {
          */
         if (formula.sym.length == 2 && varHypArray.length == 1)
             // is Type Conversion Syntax Axiom...has to be!
-            return child[0].getStmt().renderParsedSubExpr(sb, maxDepth,
-                maxLength, child[0].getChild());
+            return child[0].stmt.renderParsedSubExpr(sb, maxDepth, maxLength,
+                child[0].child);
 
         /*
          * Process the syntax axiom's expression, outputting
@@ -306,7 +332,7 @@ public class Axiom extends Assrt {
             else
                 subNode = child[syntaxAxiomVarHypReseq[varCnt]];
 
-            substNbrHyps = subNode.getStmt().getMandVarHypArray().length;
+            substNbrHyps = subNode.stmt.getMandVarHypArray().length;
 
             /* If child node is TypeConversion, NullsPermitted or
              * NamedTypedConstant Syntax Axiom substituting
@@ -315,17 +341,17 @@ public class Axiom extends Assrt {
              */
             if (substNbrHyps == 0 // all Cnst or is NullsPermitted
                 || substNbrHyps == 1
-                && subNode.getStmt().getFormula().getCnt() == 2)
-                sLen = subNode.getStmt().renderParsedSubExpr(sb, maxDepth,
-                    maxLength, subNode.getChild());
+                    && subNode.stmt.getFormula().getCnt() == 2)
+                sLen = subNode.stmt.renderParsedSubExpr(sb, maxDepth,
+                    maxLength, subNode.child);
             else {
                 /* See following call to outputSubExpr to
                  * see how maxDepth is recursively decremented.
                  */
                 if (maxDepth < 2)
                     return -1;
-                sLen = subNode.getStmt().renderParsedSubExpr(sb, maxDepth - 1,
-                    maxLength, subNode.getChild());
+                sLen = subNode.stmt.renderParsedSubExpr(sb, maxDepth - 1,
+                    maxLength, subNode.child);
             }
 
             if (sLen < 0)
@@ -343,7 +369,7 @@ public class Axiom extends Assrt {
      * Formula's Expression.
      * <p>
      * Used for the TMFF project, and used only with Syntax Axioms.
-     * 
+     *
      * @return length in characters of the widest constant in the Axiom's
      *         Formula's Expression.
      */

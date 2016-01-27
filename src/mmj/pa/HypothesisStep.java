@@ -80,11 +80,10 @@ public class HypothesisStep extends ProofStepStmt {
         final ParseTree parseTree, final boolean setCaret, final int proofLevel)
     {
 
-        super(w, step, refLabel, setCaret);
+        super(w, step, refLabel, formula, setCaret);
 
         this.proofLevel = proofLevel;
 
-        this.formula = formula;
         updateFormulaParseTree(parseTree);
 
         stmtText = buildStepHypRefSB();
@@ -104,21 +103,28 @@ public class HypothesisStep extends ProofStepStmt {
      */
     @Override
     public boolean hasMatchingRefLabel(final String newRefLabel) {
-        if (refLabel.equals(newRefLabel))
-            return true;
-        else
-            return false;
+        return getRefLabel().equals(newRefLabel);
     }
 
     @Override
     public void renum(final Map<String, String> renumberMap) {
 
-        final String newNum = renumberMap.get(step);
+        final String newNum = renumberMap.get(getStep());
         if (newNum != null) {
-            step = newNum;
-            final StringBuilder sb = buildStepHypRefSB(); // hyp version
-            reviseStepHypRefInStmtText(sb);
+            setStep(newNum);
+            reloadStepHypRefInStmtText();
         }
+    }
+
+    /**
+     * Updates the Step/Hyp/Ref field in the statement text area of the proof
+     * step.
+     * <p>
+     * This is needed because Unify can alter Hyp and Ref.
+     */
+    @Override
+    public void reloadStepHypRefInStmtText() {
+        reviseStepHypRefInStmtText(buildStepHypRefSB());
     }
 
     /**
@@ -132,7 +138,7 @@ public class HypothesisStep extends ProofStepStmt {
     @Override
     public void tmffReformat() {
         stmtText = buildStepHypRefSB();
-        lineCnt = loadStmtText(stmtText, formula, formulaParseTree);
+        lineCnt = loadStmtText(stmtText, getFormula(), formulaParseTree);
     }
 
     /**
@@ -161,17 +167,17 @@ public class HypothesisStep extends ProofStepStmt {
     {
 
         // update ProofStepStmt fields
-        step = stepField;
-        refLabel = refField;
+        setStep(stepField);
+        setRefLabel(refField);
 
         final String nextT = loadStmtTextWithFormula(false); // false =
                                                              // !workVarsOk
 
-        if (formula == null)
+        if (getFormula() == null)
             w.triggerLoadStructureException(
                 (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                     - lineStartCharNbr, PaConstants.ERRMSG_FORMULA_REQ,
-                w.getErrorLabelIfPossible(), step);
+                w.getErrorLabelIfPossible(), getStep());
 
         if (w.isNewTheorem()) {
             getValidNewTheoremLogHypRef(lineStartCharNbr);
@@ -179,7 +185,7 @@ public class HypothesisStep extends ProofStepStmt {
         }
         else {
             getValidOldTheoremLogHypRef(lineStartCharNbr);
-            formulaParseTree = ref.getExprParseTree();
+            formulaParseTree = getRef().getExprParseTree();
         }
 
         loadStepHypRefIntoStmtText(origStepHypRefLength, buildStepHypRefSB());
@@ -209,55 +215,55 @@ public class HypothesisStep extends ProofStepStmt {
     private void getValidOldTheoremLogHypRef(final int lineStartCharNbr)
         throws ProofAsstException
     {
-        ref = null;
+        setRef(null);
         final LogHyp[] logHypArray = w.theorem.getLogHypArray();
-        if (refLabel == null) {
+        if (getRefLabel() == null) {
             for (final LogHyp element : logHypArray)
-                if (formula.equals(element.getFormula())) {
-                    if (dupLogHypFormulas(formula))
+                if (getFormula().equals(element.getFormula())) {
+                    if (dupLogHypFormulas(getFormula()))
                         w.triggerLoadStructureException(
                             (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                                 - lineStartCharNbr,
                             PaConstants.ERRMSG_DUP_LOG_HYPS,
-                            w.getErrorLabelIfPossible(), step);
-                    ref = element;
-                    refLabel = ref.getLabel();
+                            w.getErrorLabelIfPossible(), getStep());
+                    setRef(element);
+                    setRefLabel(getRef().getLabel());
                 }
-            if (ref == null)
+            if (getRef() == null)
                 w.triggerLoadStructureException(
                     (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                         - lineStartCharNbr, PaConstants.ERRMSG_HYP_FORMULA_ERR,
-                    w.getErrorLabelIfPossible(), step);
+                    w.getErrorLabelIfPossible(), getStep());
         }
         else {
             // refLabel was input
-            ref = w.logicalSystem.getStmtTbl().get(refLabel);
-            if (ref == null)
+            setRef(w.logicalSystem.getStmtTbl().get(getRefLabel()));
+            if (getRef() == null)
                 w.triggerLoadStructureException(
                     (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                         - lineStartCharNbr, PaConstants.ERRMSG_REF_NOTFND2,
-                    w.getErrorLabelIfPossible(), step, refLabel);
-            if (!(ref instanceof LogHyp))
+                    w.getErrorLabelIfPossible(), getStep(), getRefLabel());
+            if (!(getRef() instanceof LogHyp))
                 w.triggerLoadStructureException(
                     (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                         - lineStartCharNbr, PaConstants.ERRMSG_REF_NOT_LOGHYP,
-                    w.getErrorLabelIfPossible(), step, refLabel);
+                    w.getErrorLabelIfPossible(), getStep(), getRefLabel());
             int i;
             for (i = 0; i < logHypArray.length; i++)
-                if (ref == logHypArray[i])
+                if (getRef() == logHypArray[i])
                     break;
             if (i >= logHypArray.length)
                 w.triggerLoadStructureException(
                     (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                         - lineStartCharNbr, PaConstants.ERRMSG_LOGHYP_MISMATCH,
-                    w.getErrorLabelIfPossible(), step, refLabel);
-            if (!formula.equals(ref.getFormula()))
+                    w.getErrorLabelIfPossible(), getStep(), getRefLabel());
+            if (!getFormula().equals(getRef().getFormula()))
                 w.triggerLoadStructureException(
                     (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                         - lineStartCharNbr,
                     PaConstants.ERRMSG_HYP_FORMULA_ERR2,
-                    w.getErrorLabelIfPossible(), step, refLabel,
-                    ref.getFormula());
+                    w.getErrorLabelIfPossible(), getStep(), getRefLabel(),
+                    getRef().getFormula());
         }
         checkDupHypRefLabel(lineStartCharNbr);
     }
@@ -265,7 +271,7 @@ public class HypothesisStep extends ProofStepStmt {
     private boolean dupLogHypFormulas(final Formula f) {
         for (final ProofWorkStmt x : w.proofWorkStmtList)
             if (x instanceof HypothesisStep)
-                if (((HypothesisStep)x).formula.equals(f))
+                if (((HypothesisStep)x).getFormula().equals(f))
                     return true;
         return false;
     }
@@ -295,36 +301,36 @@ public class HypothesisStep extends ProofStepStmt {
     private void getValidNewTheoremLogHypRef(final int lineStartCharNbr)
         throws ProofAsstException
     {
-        ref = null;
-        if (refLabel == null)
-            refLabel = w.getTheoremLabel() + "."
-                + Integer.toString(w.hypStepCnt + 1);
+        setRef(null);
+        if (getRefLabel() == null)
+            setRefLabel(w.getTheoremLabel() + "."
+                + Integer.toString(w.hypStepCnt + 1));
 
         checkDupHypRefLabel(lineStartCharNbr);
 
-        final Stmt stmt = w.logicalSystem.getStmtTbl().get(refLabel);
+        final Stmt stmt = w.logicalSystem.getStmtTbl().get(getRefLabel());
         if (stmt != null)
             w.triggerLoadStructureException(
                 (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                     - lineStartCharNbr, PaConstants.ERRMSG_HYP_REF_DUP,
-                w.getErrorLabelIfPossible(), step, refLabel);
-        if (!Statementizer.areLabelCharsValid(refLabel))
+                w.getErrorLabelIfPossible(), getStep(), getRefLabel());
+        if (!Statementizer.areLabelCharsValid(getRefLabel()))
             w.triggerLoadStructureException(
                 (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                     - lineStartCharNbr, PaConstants.ERRMSG_REF_CHAR_PROHIB,
-                w.getErrorLabelIfPossible(), step, refLabel);
-        if (Statementizer.isLabelOnProhibitedList(refLabel))
+                w.getErrorLabelIfPossible(), getStep(), getRefLabel());
+        if (Statementizer.isLabelOnProhibitedList(getRefLabel()))
             w.triggerLoadStructureException(
                 (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                     - lineStartCharNbr, PaConstants.ERRMSG_PROHIB_LABEL2,
-                w.getErrorLabelIfPossible(), step, refLabel);
+                w.getErrorLabelIfPossible(), getStep(), getRefLabel());
 
-        if (w.logicalSystem.getSymTbl().containsKey(refLabel))
+        if (w.logicalSystem.getSymTbl().containsKey(getRefLabel()))
             w.triggerLoadStructureException(
                 (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                     - lineStartCharNbr,
                 PaConstants.ERRMSG_STMT_LABEL_DUP_OF_SYM_ID2,
-                w.getErrorLabelIfPossible(), step, refLabel);
+                w.getErrorLabelIfPossible(), getStep(), getRefLabel());
 
     }
 
@@ -333,11 +339,11 @@ public class HypothesisStep extends ProofStepStmt {
     {
 
         for (final ProofWorkStmt x : w.proofWorkStmtList)
-            if (x.hasMatchingRefLabel(refLabel))
+            if (x.hasMatchingRefLabel(getRefLabel()))
                 w.triggerLoadStructureException(
                     (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                         - lineStartCharNbr, PaConstants.ERRMSG_DUP_HYP_REF,
-                    w.getErrorLabelIfPossible(), step, refLabel);
+                    w.getErrorLabelIfPossible(), getStep(), getRefLabel());
     }
 
     private StringBuilder buildStepHypRefSB() {
@@ -345,16 +351,16 @@ public class HypothesisStep extends ProofStepStmt {
         final StringBuilder sb = new StringBuilder();
 
         sb.append(PaConstants.HYP_STEP_PREFIX);
-        sb.append(step);
+        sb.append(getStep());
         sb.append(PaConstants.FIELD_DELIMITER_COLON);
         sb.append(PaConstants.FIELD_DELIMITER_COLON);
-        if (refLabel != null)
-            sb.append(refLabel);
+        if (getRefLabel() != null)
+            sb.append(getRefLabel());
         return sb;
     }
 
     @Override
     public String toString() {
-        return "h" + step + "::" + refLabel + " " + formula;
+        return "h" + getStep() + "::" + getRefLabel() + " " + getFormula();
     }
 }

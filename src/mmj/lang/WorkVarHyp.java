@@ -19,6 +19,7 @@ public class WorkVarHyp extends VarHyp {
 
     /**
      * Index into WorkVarManager index of Work Variables for a given Type Code.
+     * Now it is never used
      */
     int workVarIndex;
 

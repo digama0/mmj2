@@ -84,7 +84,7 @@ public class MinProofWorksheet {
      */
     public MinProofWorksheet(final Messages messages) {
         this.messages = messages;
-        minProofWorkStmtList = new ArrayList<MinProofWorkStmt>();
+        minProofWorkStmtList = new ArrayList<>();
     }
 
     /**
@@ -114,7 +114,7 @@ public class MinProofWorksheet {
         final LineNumberReader lineReader = new LineNumberReader(
             new StringReader(proofText));
 
-        final List<List<String>> lineList = new ArrayList<List<String>>();
+        final List<List<String>> lineList = new ArrayList<>();
         List<String> tokenList;
         String line;
 
@@ -253,7 +253,7 @@ public class MinProofWorksheet {
      */
     /* friendly */List<String> tokenize(final String line) {
 
-        final List<String> tokenList = new ArrayList<String>();
+        final List<String> tokenList = new ArrayList<>();
 
         StringBuilder sb = new StringBuilder();
 

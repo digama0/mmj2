@@ -93,7 +93,7 @@ public abstract class SearchDataLine {
                         + searchInWhatChoice);
         }
         initForNextSearch();
-        quotedSearchTermList = new ArrayList<QuotedSearchTerm>();
+        quotedSearchTermList = new ArrayList<>();
         loadQuotedSearchTermList(csa);
     }
 

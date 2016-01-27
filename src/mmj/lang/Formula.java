@@ -83,7 +83,17 @@ public class Formula {
     /**
      * Formula is just an array of Sym with a Count.
      */
-    Sym[] sym;
+    final Sym[] sym;
+
+    /**
+     * The sorted list of all constants in this formula.
+     */
+    private Cnst[] constList = null;
+
+    /**
+     * The comparator for the sorted list of all constants in this formula.
+     */
+    private Comparator<Cnst> constComp = null;
 
     /**
      * Construct a temporary dummy Formula for transient use. This is useful in
@@ -116,15 +126,10 @@ public class Formula {
      * @param workFormula the formula's Sym array.
      */
     public Formula(final int workCnt, final Sym[] workFormula) {
-        cnt = workCnt;
-        sym = new Sym[cnt];
+        sym = new Sym[cnt = workCnt];
 
         // arraycopy was tried and it turned out to be slower!
-        // System.arraycopy(workFormula,
-        // 0,
-        // sym,
-        // 0,
-        // cnt);
+        // System.arraycopy(workFormula, 0, sym, 0, cnt);
         for (int i = 0; i < cnt; i++)
             sym[i] = workFormula[i];
     }
@@ -157,6 +162,84 @@ public class Formula {
     }
 
     /**
+     * This function should be used to collect frequency statistic for some
+     * metamath library and create an array of constant symbols.
+     * 
+     * @param frequency the map from constant to its frequency in the metamath
+     *            library
+     */
+    public void collectConstFrequenceAndInitConstList(
+        final Map<Cnst, Integer> frequency)
+    {
+        if (constList != null)
+            assert constList == null;
+        final Set<Cnst> set = new HashSet<>();
+        for (final Sym s : getSym())
+            if (s instanceof Cnst) {
+                final Cnst c = (Cnst)s;
+                if (!set.contains(c)) {
+                    set.add(c);
+                    if (frequency != null) {
+                        final Integer numObj = frequency.get(c);
+                        int num = numObj != null ? numObj : 0;
+                        num++;
+                        frequency.put(c, num);
+                    }
+                }
+            }
+        constList = set.toArray(new Cnst[set.size()]);
+    }
+
+    /**
+     * When the frequency information has been collected this function should be
+     * used in order to sort the constant symbols array
+     * 
+     * @param comp the comparator
+     */
+    public void sortConstList(final Comparator<Cnst> comp) {
+        assert constComp == null;
+        constComp = comp;
+        Arrays.sort(constList, comp);
+    }
+
+    /**
+     * This function is needed to exclude quickly the incompatible with this
+     * formulas.
+     * 
+     * @param other the other formula which should be checked for constant set
+     *            inclusion
+     * @return true if all constants from this formula are in the other formula
+     */
+    public boolean preunificationCheck(final Formula other) {
+        if (constList == null)
+            return true;
+        assert constComp != null;
+
+        if (other.constList == null) {
+            other.collectConstFrequenceAndInitConstList(null);
+            other.sortConstList(constComp);
+        }
+
+        if (other.constList.length < constList.length)
+            return false;
+
+        int i = 0, k = 0;
+
+        mainLoop: while (i < constList.length) {
+            while (k < other.constList.length) {
+                if (constList[i] == other.constList[k]) {
+                    i++;
+                    k++;
+                    continue mainLoop;
+                }
+                k++;
+            }
+            return false;
+        }
+
+        return true;
+    }
+    /**
      * Return Formula Type Code.
      * 
      * @return Formula Type Code (which is sym[0]).
@@ -174,11 +257,7 @@ public class Formula {
         sym[0] = typ;
     }
 
-    /**
-     * Return Formula's Expression (sym[1]...sym[cnt - 1]).
-     * 
-     * @return Formula's Expression (sym[1]...sym[cnt - 1]).
-     */
+    /** @return Formula's Expression (sym[1]...sym[cnt - 1]). */
     public Sym[] getExpr() {
         final Sym[] expr = new Sym[cnt - 1];
 
@@ -187,20 +266,12 @@ public class Formula {
         return expr;
     }
 
-    /**
-     * Return Formula's length.
-     * 
-     * @return Formula's length.
-     */
+    /** @return Formula's length. */
     public int getCnt() {
         return cnt;
     }
 
-    /**
-     * Return Formula's symbol array.
-     * 
-     * @return Formula's symbol array.
-     */
+    /** @return Formula's symbol array. */
     public Sym[] getSym() {
         return sym;
     }
@@ -356,7 +427,7 @@ public class Formula {
      *             the Formula's Var's.
      */
     public VarHyp[] buildMandVarHypArray(final Hyp[] tempHypArray) {
-        final List<VarHyp> hypList = new ArrayList<VarHyp>();
+        final List<VarHyp> hypList = new ArrayList<>();
         // start at i = 1 to bypass the Cnst at Formula.sym[0]
         for (int i = 1; i < cnt; i++) {
             if (!(sym[i] instanceof Var))

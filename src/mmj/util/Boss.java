@@ -56,15 +56,17 @@
 
 package mmj.util;
 
+import static mmj.util.UtilConstants.*;
+
 import java.awt.Color;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BooleanSupplier;
 
-import mmj.gmff.GMFFException;
 import mmj.lang.*;
-import mmj.mmio.MMIOException;
 import mmj.pa.PaConstants;
 
 /**
@@ -78,281 +80,235 @@ public abstract class Boss {
 
     protected BatchFramework batchFramework;
 
+    private final Map<BatchCommand, BooleanSupplier> ops = new HashMap<>();
+
+    protected RunParmArrayEntry runParm;
+
     /**
      * Constructor with BatchFramework for access to environment.
-     * 
+     *
      * @param batchFramework for access to environment.
      */
     public Boss(final BatchFramework batchFramework) {
         this.batchFramework = batchFramework;
+        batchFramework.bossList.add(this);
+    }
+
+    protected void putCommand(final BatchCommand cmd,
+        final BooleanSupplier op)
+    {
+        ops.put(cmd, op);
+    }
+
+    protected void putCommand(final BatchCommand cmd, final Runnable op) {
+        putCommand(cmd, () -> {
+            if (op != null)
+                op.run();
+            return true;
+        });
     }
 
     /**
      * Executes a single command from the RunParmFile.
-     * 
-     * @param runParm the RunParmFile line to execute.
+     *
+     * @param curRunParm the RunParmFile line to execute.
      * @return {@code true} if the RunParm was "consumed"
-     * @throws IllegalArgumentException if an error occurred in the RunParm
-     * @throws MMIOException if an error occurred in the RunParm
-     * @throws FileNotFoundException if an error occurred in the RunParm
-     * @throws IOException if an error occurred in the RunParm
-     * @throws VerifyException if an error occurred in the RunParm
-     * @throws TheoremLoaderException if an error occurred in the RunParm
-     * @throws GMFFException if an error occurred in the RunParm
      */
-    public abstract boolean doRunParmCommand(RunParmArrayEntry runParm)
-        throws IllegalArgumentException, MMIOException, FileNotFoundException,
-        IOException, VerifyException, TheoremLoaderException, GMFFException;
+    public boolean doRunParmCommand(final RunParmArrayEntry curRunParm) {
+        runParm = curRunParm;
+        final BooleanSupplier op = ops.get(curRunParm.cmd);
+        return op != null && op.getAsBoolean();
+    }
 
     // =======================================================
     // === bazillions of subroutines used by Boss subclasses
     // =======================================================
 
     /**
+     * Validate Required Number of RunParm fields.
+     *
+     * @param n required number of fields in the RunParm line.
+     * @throws IllegalArgumentException if an error occurred
+     */
+    protected void require(final int n) {
+        if (runParm.values.length < n)
+            throw error(ERRMSG_RUNPARM_NOT_ENOUGH_FIELDS, runParm.cmd, n);
+    }
+
+    /**
+     * Get a RunParm field.
+     *
+     * @param valueFieldNbr the index of the value field, starting at 1
+     * @return The n-th element of the value field
+     */
+    public String get(final int valueFieldNbr) {
+        require(valueFieldNbr);
+        return runParm.values[valueFieldNbr - 1].trim();
+    }
+
+    /**
+     * Get a non-blank RunParm field.
+     *
+     * @param valueFieldNbr the index of the value field, starting at 1
+     * @param errMsg The error message to give if the value is blank
+     * @return The n-th element of the value field
+     */
+    public String getNonBlank(final int valueFieldNbr, final String errMsg) {
+        final String s = get(valueFieldNbr);
+        if (s.isEmpty())
+            throw error(errMsg, valueFieldNbr);
+        return s;
+    }
+
+    /**
+     * Get a RunParm field.
+     *
+     * @param valueFieldNbr the index of the value field, starting at 1
+     * @return The n-th element of the value field
+     */
+    public String opt(final int valueFieldNbr) {
+        if (runParm.values.length > valueFieldNbr)
+            return null;
+        final String s = get(valueFieldNbr);
+        return s.isEmpty() ? null : s;
+    }
+
+    /**
      * Validate existing folder RunParm (must exist!)
-     * 
+     *
      * @param filePath path used to resolve file name. May be null or absolute
      *            or relative path.
-     * @param runParm RunParmFile line parsed into RunParmArrayEntry.
-     * @param valueCaption name of RunParm, for error message output.
      * @param valueFieldNbr number of field in RunParm line.
      * @return File object for folder
-     * @throws IllegalArgumentException if an error occurred
      */
-    protected File editExistingFolderRunParm(final File filePath,
-        final RunParmArrayEntry runParm, final String valueCaption,
-        final int valueFieldNbr) throws IllegalArgumentException
+    protected File getExistingFolder(final File filePath,
+        final int valueFieldNbr)
     {
-
-        final String folderNameParm = editExistingFolderNameParm(runParm,
-            valueCaption, valueFieldNbr);
-
-        return buildFileObjectForExistingFolder(filePath, valueCaption,
-            folderNameParm);
+        return getExistingFolder(filePath,
+            getNonBlank(valueFieldNbr, ERRMSG_FOLDER_NAME_BLANK));
     }
 
     /**
      * Validate existing folder RunParm (must exist!)
-     * 
-     * @param filePath path name for building files. May be null, relative or
-     *            absolute.
-     * @param runParm RunParmFile line parsed into RunParmArrayEntry.
-     * @param valueCaption name of RunParm, for error message output.
-     * @param valueFieldNbr number of field in RunParm line.
-     * @return File object for file.
-     * @throws IllegalArgumentException if an error occurred
-     */
-    protected File editExistingFileRunParm(final File filePath,
-        final RunParmArrayEntry runParm, final String valueCaption,
-        final int valueFieldNbr) throws IllegalArgumentException
-    {
-
-        final String fileNameParm = editFileNameParm(runParm, valueCaption,
-            valueFieldNbr);
-
-        return buildFileObjectForExistingFile(filePath, valueCaption,
-            fileNameParm);
-    }
-
-    /**
-     * Validate Proof Worksheet File Name Suffix
-     * 
-     * @param runParm RunParmFile line.
-     * @param valueCaption name of RunParm, for error message output.
-     * @param valueFieldNbr number of field in RunParm line.
-     * @return String validated file name suffix
-     * @throws IllegalArgumentException if an error occurred
-     */
-    protected String editProofWorksheetFileNameSuffix(
-        final RunParmArrayEntry runParm, final String valueCaption,
-        final int valueFieldNbr) throws IllegalArgumentException
-    {
-        editRunParmValuesLength(runParm, valueCaption, 1);
-        final String fileNameSuffixParm = runParm.values[valueFieldNbr - 1]
-            .trim();
-        if (fileNameSuffixParm
-            .compareTo(PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_TXT) == 0
-            || fileNameSuffixParm
-                .compareTo(PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_TXT2) == 0
-            || fileNameSuffixParm
-                .compareTo(PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP) == 0
-            || fileNameSuffixParm
-                .compareTo(PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP2) == 0)
-            return fileNameSuffixParm;
-
-        throw new IllegalArgumentException(
-            UtilConstants.ERRMSG_BAD_FILE_NAME_SUFFIX_1 + valueCaption
-                + UtilConstants.ERRMSG_BAD_FILE_NAME_SUFFIX_2 + valueFieldNbr
-                + UtilConstants.ERRMSG_BAD_FILE_NAME_SUFFIX_3);
-    }
-
-    /**
-     * Validate name of folder
-     * 
-     * @param runParm RunParmFile line.
-     * @param valueCaption name of RunParm, for error message output.
-     * @param valueFieldNbr number of field in RunParm line.
-     * @return String validated folder name.
-     * @throws IllegalArgumentException if an error occurred
-     */
-    protected String editExistingFolderNameParm(
-        final RunParmArrayEntry runParm, final String valueCaption,
-        final int valueFieldNbr) throws IllegalArgumentException
-    {
-        editRunParmValuesLength(runParm, valueCaption, 1);
-        final String folderNameParm = runParm.values[valueFieldNbr - 1].trim();
-        if (folderNameParm.length() == 0)
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_FOLDER_NAME_BLANK_1 + valueCaption
-                    + UtilConstants.ERRMSG_FOLDER_NAME_BLANK_2 + valueFieldNbr
-                    + UtilConstants.ERRMSG_FOLDER_NAME_BLANK_3);
-        return folderNameParm;
-    }
-
-    /**
-     * Build a File object for a Folder Name
-     * 
+     *
      * @param filePath path used to resolve file name. May be null or absolute
      *            or relative path.
-     * @param valueCaption name of RunParm, for error message output.
-     * @param folderNameParm name of folder
-     * @return File File object for folder
-     * @throws IllegalArgumentException if an error occurred
+     * @param folderNameParm The folder name
+     * @return File object for folder
      */
-    protected File buildFileObjectForExistingFolder(final File filePath,
-        final String valueCaption, final String folderNameParm)
-        throws IllegalArgumentException
+    protected File getExistingFolder(final File filePath,
+        final String folderNameParm)
     {
-
         File folder = new File(folderNameParm);
         try {
             if (filePath == null || folder.isAbsolute()) {}
             else
                 folder = new File(filePath, folderNameParm);
-            if (folder.exists()) {
-                if (folder.isDirectory()) {
-                    // okey dokey!
-                }
-                else
-                    throw new IllegalArgumentException(
-                        UtilConstants.ERRMSG_NOT_A_FOLDER_1 + valueCaption
-                            + UtilConstants.ERRMSG_NOT_A_FOLDER_2
-//                      + folderNameParm
-                            + folder.getAbsolutePath()
-                            + UtilConstants.ERRMSG_NOT_A_FOLDER_3);
-            }
-            else
-                throw new IllegalArgumentException(
-                    UtilConstants.ERRMSG_FOLDER_NOTFND_1 + valueCaption
-                        + UtilConstants.ERRMSG_FOLDER_NOTFND_2
-//                  + folderNameParm
-                        + folder.getAbsolutePath()
-                        + UtilConstants.ERRMSG_FOLDER_NOTFND_3);
+            if (!folder.exists())
+                throw error(ERRMSG_FOLDER_NOTFND, folder.getAbsolutePath());
+            if (!folder.isDirectory())
+                throw error(ERRMSG_NOT_A_FOLDER, folder.getAbsolutePath());
 
         } catch (final Exception e) {
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_FOLDER_MISC_ERROR_1 + valueCaption
-                    + UtilConstants.ERRMSG_FOLDER_MISC_ERROR_2
-//              + folderNameParm
-                    + folder.getAbsolutePath()
-                    + UtilConstants.ERRMSG_FOLDER_MISC_ERROR_3 + e.getMessage());
+            throw error(ERRMSG_FOLDER_MISC_ERROR, folder.getAbsolutePath(),
+                e.getMessage());
         }
         return folder;
     }
 
     /**
-     * Build a File object for an existing File Name
-     * 
+     * Validate existing folder RunParm (must exist!)
+     *
      * @param filePath path name for building files. May be null, relative or
      *            absolute.
-     * @param valueCaption name of RunParm, for error message output.
+     * @param valueFieldNbr number of field in RunParm line.
+     * @return File object for file.
+     */
+    protected File getExistingFile(final File filePath,
+        final int valueFieldNbr)
+    {
+        return getExistingFile(filePath, getFileName(valueFieldNbr));
+    }
+
+    /**
+     * Validate Proof Worksheet File Name Suffix
+     *
+     * @param valueFieldNbr number of field in RunParm line.
+     * @return String validated file name suffix
+     */
+    protected String getFileNameSuffix(final int valueFieldNbr) {
+        final String fileNameSuffixParm = get(valueFieldNbr);
+        if (fileNameSuffixParm
+            .equalsIgnoreCase(PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_TXT)
+            || fileNameSuffixParm.equalsIgnoreCase(
+                PaConstants.PA_GUI_FILE_CHOOSER_FILE_SUFFIX_MMP))
+            return fileNameSuffixParm;
+
+        throw error(ERRMSG_BAD_FILE_NAME_SUFFIX, valueFieldNbr);
+    }
+
+    /**
+     * Build a File object for an existing File Name
+     *
+     * @param filePath path name for building files. May be null, relative or
+     *            absolute.
      * @param fileNameParm name of file
      * @return File File object for file.
      * @throws IllegalArgumentException if an error occurred
      */
-    protected File buildFileObjectForExistingFile(final File filePath,
-        final String valueCaption, final String fileNameParm)
-        throws IllegalArgumentException
+    protected File getExistingFile(final File filePath,
+        final String fileNameParm)
     {
 
         File file = new File(fileNameParm);
         try {
-            if (filePath == null || file.isAbsolute()) {}
-            else
+            if (filePath != null && !file.isAbsolute())
                 file = new File(filePath, fileNameParm);
-            if (file.exists()) {
-                if (!file.isDirectory()) {
-                    // okey dokey!
-                }
-                else
-                    throw new IllegalArgumentException(
-                        UtilConstants.ERRMSG_NOT_A_FILE_1 + valueCaption
-                            + UtilConstants.ERRMSG_NOT_A_FILE_2
-//                      + fileNameParm
-                            + file.getAbsolutePath()
-                            + UtilConstants.ERRMSG_NOT_A_FILE_3);
-            }
-            else
-                throw new IllegalArgumentException(
-                    UtilConstants.ERRMSG_FILE_NOTFND_1 + valueCaption
-                        + UtilConstants.ERRMSG_FILE_NOTFND_2
-//                  + fileNameParm
-                        + file.getAbsolutePath()
-                        + UtilConstants.ERRMSG_FILE_NOTFND_3);
-
+            if (!file.exists())
+                throw error(ERRMSG_FILE_NOTFND, file.getAbsolutePath());
+            else if (file.isDirectory())
+                throw error(ERRMSG_NOT_A_FILE, file.getAbsolutePath());
         } catch (final Exception e) {
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_FILE_MISC_ERROR_1 + valueCaption
-                    + UtilConstants.ERRMSG_FILE_MISC_ERROR_2
-//              + fileNameParm
-                    + file.getAbsolutePath()
-                    + UtilConstants.ERRMSG_FILE_MISC_ERROR_3 + e.getMessage());
+            throw error(ERRMSG_FILE_MISC_ERROR, e, file.getAbsolutePath(),
+                e.getMessage());
         }
         return file;
     }
 
     /**
      * Validate PrintWriter RunParm and its options.
-     * 
+     *
      * @param filePath path for building files. May be null, absolute, or
      *            relative.
-     * @param runParm RunParmFile line parsed into RunParmArrayEntry.
-     * @param valueCaption name of RunParm, for error message output.
      * @return PrintWriter object.
      * @throws IllegalArgumentException if an error occurred
      */
-    protected PrintWriter editPrintWriterRunParm(final File filePath,
-        final RunParmArrayEntry runParm, final String valueCaption)
-        throws IllegalArgumentException
-    {
+    protected PrintWriter getPrintWriter(final File filePath) {
 
-        final String fileNameParm = editFileNameParm(runParm, valueCaption, 1);
+        final String fileNameParm = getFileName(1);
 
-        final String fileUsageParm = editFileUsageParm(runParm, valueCaption, 2);
+        final String fileUsageParm = getFileUsage(2);
 
-        final String fileCharsetParm = editFileCharsetParm(runParm,
-            valueCaption, 3);
+        final String fileCharsetParm = getFileCharset(3);
 
-        return doConstructPrintWriter(filePath, valueCaption, fileNameParm,
-            fileUsageParm, fileCharsetParm);
+        return buildPrintWriter(filePath, fileNameParm, fileUsageParm,
+            fileCharsetParm);
     }
 
     /**
      * Construct a PrintWriter using RunParm options.
-     * 
+     *
      * @param filePath path for building files. May be null, absolute or
      *            relative.
-     * @param valueCaption name of RunParm, for error message output.
      * @param fileNameParm RunParmFile line parsed into RunParmArrayEntry.
      * @param fileUsageParm "new" or "update"
      * @param fileCharsetParm optional, "UTF-8", etc.
      * @return PrintWriter object.
      * @throws IllegalArgumentException if an error occurred
      */
-    protected PrintWriter doConstructPrintWriter(final File filePath,
-        final String valueCaption, final String fileNameParm,
-        final String fileUsageParm, final String fileCharsetParm)
-        throws IllegalArgumentException
+    protected PrintWriter buildPrintWriter(final File filePath,
+        final String fileNameParm, final String fileUsageParm,
+        final String fileCharsetParm)
     {
 
         PrintWriter printWriter = null;
@@ -362,47 +318,23 @@ public abstract class Boss {
             else
                 file = new File(filePath, fileNameParm);
             if (file.exists())
-                if (fileUsageParm
-                    .compareTo(UtilConstants.RUNPARM_OPTION_FILE_OUT_NEW) == 0)
-                    throw new IllegalArgumentException(
-                        UtilConstants.ERRMSG_FILE_USAGE_ERR_EXISTS_1
-                            + valueCaption
-                            + UtilConstants.ERRMSG_FILE_USAGE_ERR_EXISTS_2
-//                      + fileNameParm
-                            + file.getAbsolutePath()
-                            + UtilConstants.ERRMSG_FILE_USAGE_ERR_EXISTS_3
-                            + UtilConstants.RUNPARM_OPTION_FILE_OUT_NEW
-                            + UtilConstants.ERRMSG_FILE_USAGE_ERR_EXISTS_4);
-                else if (file.isFile() && file.canWrite()
-                    && !file.isDirectory())
-                {
-                    // okey dokey!
-                }
-                else
-                    throw new IllegalArgumentException(
-                        UtilConstants.ERRMSG_FILE_UPDATE_NOT_ALLOWED_1
-                            + valueCaption
-                            + UtilConstants.ERRMSG_FILE_UPDATE_NOT_ALLOWED_2
-//                      + fileNameParm
-                            + file.getAbsolutePath()
-                            + UtilConstants.ERRMSG_FILE_UPDATE_NOT_ALLOWED_3
-                            + UtilConstants.RUNPARM_OPTION_FILE_OUT_UPDATE
-                            + UtilConstants.ERRMSG_FILE_UPDATE_NOT_ALLOWED_4);
+                if (fileUsageParm.compareTo(RUNPARM_OPTION_FILE_OUT_NEW) == 0)
+                    throw error(ERRMSG_FILE_USAGE_ERR_EXISTS,
+                        file.getAbsolutePath(), RUNPARM_OPTION_FILE_OUT_NEW);
+                else if (!file.isFile() || !file.canWrite())
+                    throw error(ERRMSG_FILE_UPDATE_NOT_ALLOWED,
+                        file.getAbsolutePath(), RUNPARM_OPTION_FILE_OUT_UPDATE);
 
-            if (fileCharsetParm.length() == 0)
-                printWriter = new PrintWriter(new BufferedWriter(
-                    new FileWriter(file)));
+            if (fileCharsetParm.isEmpty())
+                printWriter = new PrintWriter(
+                    new BufferedWriter(new FileWriter(file)));
             else
-                printWriter = new PrintWriter(new BufferedWriter(
-                    new OutputStreamWriter(new FileOutputStream(file),
-                        fileCharsetParm)));
+                printWriter = new PrintWriter(
+                    new BufferedWriter(new OutputStreamWriter(
+                        new FileOutputStream(file), fileCharsetParm)));
         } catch (final Exception e) {
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_FILE_MISC_ERROR_1 + valueCaption
-                    + UtilConstants.ERRMSG_FILE_MISC_ERROR_2
-//              + fileNameParm
-                    + file.getAbsolutePath()
-                    + UtilConstants.ERRMSG_FILE_MISC_ERROR_3 + e.getMessage());
+            throw error(ERRMSG_FILE_MISC_ERROR, e, file.getAbsolutePath(),
+                e.getMessage());
         }
         return printWriter;
     }
@@ -410,16 +342,14 @@ public abstract class Boss {
     /**
      * Construct a Buffered File Reader using RunParm options plus an optional
      * parent directory File object.
-     * 
-     * @param valueCaption name of RunParm, for error message output.
+     *
      * @param fileNameParm RunParmFile line parsed into RunParmArrayEntry.
      * @param parentDirectory the root directory
      * @return BufferedReader file object.
      * @throws IllegalArgumentException if an error occurred
      */
-    protected Reader doConstructBufferedFileReader(final String valueCaption,
-        final String fileNameParm, final File parentDirectory)
-        throws IllegalArgumentException
+    protected Reader buildBufferedFileReader(final String fileNameParm,
+        final File parentDirectory)
     {
 
         Reader bufferedFileReader = null;
@@ -434,31 +364,14 @@ public abstract class Boss {
 
         try {
             if (!file.exists())
-                throw new IllegalArgumentException(
-                    UtilConstants.ERRMSG_FILE_NOTFND_1 + valueCaption
-                        + UtilConstants.ERRMSG_FILE_NOTFND_2
-//                  + fileNameParm
-                        + file.getAbsolutePath()
-                        + UtilConstants.ERRMSG_FILE_NOTFND_3);
-            if (file.isFile() && file.canRead() && !file.isDirectory()) {
-                // okey dokey!
-            }
-            else
-                throw new IllegalArgumentException(
-                    UtilConstants.ERRMSG_FILE_READ_NOT_ALLOWED_1 + valueCaption
-                        + UtilConstants.ERRMSG_FILE_READ_NOT_ALLOWED_2
-//                  + fileNameParm
-                        + file.getAbsolutePath()
-                        + UtilConstants.ERRMSG_FILE_READ_NOT_ALLOWED_3);
-
+                throw error(ERRMSG_FILE_NOTFND, file.getAbsolutePath());
+            if (!file.isFile() || !file.canRead())
+                throw error(ERRMSG_FILE_READ_NOT_ALLOWED,
+                    file.getAbsolutePath());
             bufferedFileReader = new BufferedReader(new FileReader(file));
         } catch (final Exception e) {
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_FILE_MISC_ERROR_1 + valueCaption
-                    + UtilConstants.ERRMSG_FILE_MISC_ERROR_2
-//              + fileNameParm
-                    + file.getAbsolutePath()
-                    + UtilConstants.ERRMSG_FILE_MISC_ERROR_3 + e.getMessage());
+            throw error(ERRMSG_FILE_MISC_ERROR, e, file.getAbsolutePath(),
+                e.getMessage());
         }
         return bufferedFileReader;
     }
@@ -466,234 +379,129 @@ public abstract class Boss {
     /**
      * Construct a Buffered File Writer using RunParm options plus an optional
      * parent directory File object.
-     * 
-     * @param valueCaption name of RunParm, for error message output.
+     *
      * @param fileNameParm RunParmFile line parsed into RunParmArrayEntry.
      * @param fileUsageParm "new" or "update"
      * @param parentDirectory the root directory
      * @return BufferedWriter file object.
      * @throws IllegalArgumentException if an error occurred
      */
-    protected BufferedWriter doConstructBufferedFileWriter(
-        final String valueCaption, final String fileNameParm,
+    protected BufferedWriter buildBufferedFileWriter(final String fileNameParm,
         final String fileUsageParm, final File parentDirectory)
-        throws IllegalArgumentException
     {
 
         BufferedWriter bufferedFileWriter = null;
         File file = new File(fileNameParm);
-        if (parentDirectory == null || file.isAbsolute()) {
-            // ok, use as-is
-        }
-        else
+        if (parentDirectory != null && !file.isAbsolute())
             // fileName relative to parentDirectory.
             file = new File(parentDirectory, fileNameParm);
-
         try {
             if (file.exists())
-                if (fileUsageParm
-                    .compareTo(UtilConstants.RUNPARM_OPTION_FILE_OUT_NEW) == 0)
-                    throw new IllegalArgumentException(
-                        UtilConstants.ERRMSG_FILE_USAGE_ERR_EXISTS_1
-                            + valueCaption
-                            + UtilConstants.ERRMSG_FILE_USAGE_ERR_EXISTS_2
-//                      + fileNameParm
-                            + file.getAbsolutePath()
-                            + UtilConstants.ERRMSG_FILE_USAGE_ERR_EXISTS_3
-                            + UtilConstants.RUNPARM_OPTION_FILE_OUT_NEW
-                            + UtilConstants.ERRMSG_FILE_USAGE_ERR_EXISTS_4);
-                else if (file.isFile() && file.canWrite()
-                    && !file.isDirectory())
-                {
-                    // okey dokey!
-                }
-                else
-                    throw new IllegalArgumentException(
-                        UtilConstants.ERRMSG_FILE_UPDATE_NOT_ALLOWED_1
-                            + valueCaption
-                            + UtilConstants.ERRMSG_FILE_UPDATE_NOT_ALLOWED_2
-//                      + fileNameParm
-                            + file.getAbsolutePath()
-                            + UtilConstants.ERRMSG_FILE_UPDATE_NOT_ALLOWED_3
-                            + UtilConstants.RUNPARM_OPTION_FILE_OUT_UPDATE
-                            + UtilConstants.ERRMSG_FILE_UPDATE_NOT_ALLOWED_4);
+                if (fileUsageParm.equals(RUNPARM_OPTION_FILE_OUT_NEW))
+                    throw error(ERRMSG_FILE_USAGE_ERR_EXISTS,
+                        file.getAbsolutePath(), RUNPARM_OPTION_FILE_OUT_NEW);
+                else if (!file.isFile() || !file.canWrite())
+                    throw error(ERRMSG_FILE_UPDATE_NOT_ALLOWED,
+                        file.getAbsolutePath(), RUNPARM_OPTION_FILE_OUT_UPDATE);
 
             bufferedFileWriter = new BufferedWriter(new FileWriter(file));
         } catch (final Exception e) {
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_FILE_MISC_ERROR_1 + valueCaption
-                    + UtilConstants.ERRMSG_FILE_MISC_ERROR_2
-//              + fileNameParm
-                    + file.getAbsolutePath()
-                    + UtilConstants.ERRMSG_FILE_MISC_ERROR_3 + e.getMessage());
+            throw error(ERRMSG_FILE_MISC_ERROR, e, file.getAbsolutePath(),
+                e.getMessage());
         }
         return bufferedFileWriter;
     }
 
     /**
      * Validate File Name.
-     * 
-     * @param runParm RunParmFile line.
-     * @param valueCaption name of RunParm, for error message output.
+     *
      * @param valueFieldNbr number of field in RunParm line.
      * @return String validated file name.
      * @throws IllegalArgumentException if an error occurred
      */
-    protected String editFileNameParm(final RunParmArrayEntry runParm,
-        final String valueCaption, final int valueFieldNbr)
-        throws IllegalArgumentException
-    {
-        editRunParmValuesLength(runParm, valueCaption, 1);
-        final String fileNameParm = runParm.values[valueFieldNbr - 1].trim();
-        if (fileNameParm.length() == 0)
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_FILE_NAME_BLANK_1 + valueCaption
-                    + UtilConstants.ERRMSG_FILE_NAME_BLANK_2 + valueFieldNbr
-                    + UtilConstants.ERRMSG_FILE_NAME_BLANK_3);
-        return fileNameParm;
+    protected String getFileName(final int valueFieldNbr) {
+        return getNonBlank(valueFieldNbr, ERRMSG_FILE_NAME_BLANK);
     }
 
     /**
      * Validate File Usage Parm ("new" or "update").
-     * 
-     * @param runParm RunParmFile line.
-     * @param valueCaption name of RunParm, for error message output.
+     *
      * @param valueFieldNbr number of field in RunParm line.
      * @return String validated file usage parm.
      * @throws IllegalArgumentException if an error occurred
      */
-    protected String editFileUsageParm(final RunParmArrayEntry runParm,
-        final String valueCaption, final int valueFieldNbr)
-        throws IllegalArgumentException
-    {
+    protected String getFileUsage(final int valueFieldNbr) {
 
         if (runParm.values.length < valueFieldNbr)
-            return UtilConstants.OPTION_FILE_OUT_USAGE_DEFAULT;
+            return OPTION_FILE_OUT_USAGE_DEFAULT;
 
-        final String fileUsageParm = runParm.values[valueFieldNbr - 1].trim();
+        final String fileUsageParm = get(valueFieldNbr);
         if (fileUsageParm.length() == 0)
-            return UtilConstants.OPTION_FILE_OUT_USAGE_DEFAULT;
+            return OPTION_FILE_OUT_USAGE_DEFAULT;
 
-        if (fileUsageParm
-            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_FILE_OUT_NEW) == 0)
-            return UtilConstants.RUNPARM_OPTION_FILE_OUT_NEW;
+        if (fileUsageParm.equalsIgnoreCase(RUNPARM_OPTION_FILE_OUT_NEW))
+            return RUNPARM_OPTION_FILE_OUT_NEW;
 
-        if (fileUsageParm
-            .compareToIgnoreCase(UtilConstants.RUNPARM_OPTION_FILE_OUT_UPDATE) == 0)
-            return UtilConstants.RUNPARM_OPTION_FILE_OUT_UPDATE;
+        if (fileUsageParm.equalsIgnoreCase(RUNPARM_OPTION_FILE_OUT_UPDATE))
+            return RUNPARM_OPTION_FILE_OUT_UPDATE;
 
-        throw new IllegalArgumentException(
-            UtilConstants.ERRMSG_FILE_USAGE_PARM_UNRECOG_1 + valueCaption
-                + UtilConstants.ERRMSG_FILE_USAGE_PARM_UNRECOG_2
-                + valueFieldNbr
-                + UtilConstants.ERRMSG_FILE_USAGE_PARM_UNRECOG_3
-                + UtilConstants.RUNPARM_OPTION_FILE_OUT_NEW
-                + UtilConstants.ERRMSG_FILE_USAGE_PARM_UNRECOG_4
-                + UtilConstants.RUNPARM_OPTION_FILE_OUT_UPDATE
-                + UtilConstants.ERRMSG_FILE_USAGE_PARM_UNRECOG_5
-                + fileUsageParm
-                + UtilConstants.ERRMSG_FILE_USAGE_PARM_UNRECOG_6);
+        throw error(ERRMSG_FILE_USAGE_PARM_UNRECOG, valueFieldNbr,
+            RUNPARM_OPTION_FILE_OUT_NEW, RUNPARM_OPTION_FILE_OUT_UPDATE,
+            fileUsageParm);
     }
 
     /**
      * Validate File Charset Parm ("" or "UTF-8", etc).
-     * 
-     * @param runParm RunParmFile line.
-     * @param valueCaption name of RunParm, for error message output.
+     *
      * @param valueFieldNbr number of field in RunParm line.
      * @return String validated file usage parm.
      * @throws IllegalArgumentException if an error occurred
      */
-    protected String editFileCharsetParm(final RunParmArrayEntry runParm,
-        final String valueCaption, final int valueFieldNbr)
-        throws IllegalArgumentException
-    {
+    protected String getFileCharset(final int valueFieldNbr) {
 
         if (runParm.values.length < valueFieldNbr)
             return "";
 
-        final String fileCharsetParm = runParm.values[valueFieldNbr - 1].trim();
-        if (fileCharsetParm.length() == 0)
+        final String fileCharsetParm = get(valueFieldNbr);
+        if (fileCharsetParm.isEmpty())
             return "";
 
         boolean isSupported;
         try {
             isSupported = Charset.isSupported(fileCharsetParm);
         } catch (final IllegalCharsetNameException e) {
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_FILE_CHARSET_INVALID_1 + valueCaption
-                    + UtilConstants.ERRMSG_FILE_CHARSET_INVALID_2
-                    + valueFieldNbr
-                    + UtilConstants.ERRMSG_FILE_CHARSET_INVALID_3
-                    + fileCharsetParm
-                    + UtilConstants.ERRMSG_FILE_CHARSET_INVALID_4
-                    + e.getMessage());
+            throw error(ERRMSG_FILE_CHARSET_INVALID, e, valueFieldNbr,
+                fileCharsetParm, e.getMessage());
         }
 
         if (!isSupported)
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_FILE_CHARSET_UNSUPPORTED_1 + valueCaption
-                    + UtilConstants.ERRMSG_FILE_CHARSET_UNSUPPORTED_2
-                    + valueFieldNbr
-                    + UtilConstants.ERRMSG_FILE_CHARSET_UNSUPPORTED_3
-                    + fileCharsetParm
-                    + UtilConstants.ERRMSG_FILE_CHARSET_UNSUPPORTED_4);
+            throw error(ERRMSG_FILE_CHARSET_UNSUPPORTED, valueFieldNbr,
+                fileCharsetParm);
         return fileCharsetParm;
     }
 
     /**
-     * Get SelectorAll RunParm Option if present or null.
+     * Get SelectorCount RunParm Option.
      * <p>
-     * If "*" input returns true Boolean value otherwise, null;
-     * 
-     * @param runParm RunParmFile line.
-     * @param valueCaption name of RunParm, for error message output.
+     * If "*" input returns {@link Integer#MAX_VALUE}, if positive integer input
+     * returns integer value, otherwise, if negative or zero integer, throws an
+     * exception. If none of the above returns 0.
+     *
      * @param valueFieldNbr number of field in RunParm line.
-     * @return boolean true(yes) or false(no)
+     * @return 0 for non-integer values, the number if integer
      */
-    protected Boolean getSelectorAllRunParmOption(
-        final RunParmArrayEntry runParm, final String valueCaption,
-        final int valueFieldNbr)
-    {
-
-        if (runParm.values.length >= valueFieldNbr
-            && runParm.values[valueFieldNbr - 1].trim().equals(
-                UtilConstants.RUNPARM_OPTION_VALUE_ALL))
-            return Boolean.valueOf(true);
-        else
-            return null;
-    }
-
-    /**
-     * Get SelectorCount RunParm Option if present or null.
-     * <p>
-     * If positive integer input returns Integer value, otherwise, if negative
-     * or zero integer, throws an exception. If none of the above returns null;
-     * 
-     * @param runParm RunParmFile line.
-     * @param valueCaption name of RunParm, for error message output.
-     * @param valueFieldNbr number of field in RunParm line.
-     * @return boolean true(yes) or false(no)
-     * @throws IllegalArgumentException if an error occurred
-     */
-    protected Integer getSelectorCountRunParmOption(
-        final RunParmArrayEntry runParm, final String valueCaption,
-        final int valueFieldNbr) throws IllegalArgumentException
-    {
-
-        Integer count = null;
-        if (runParm.values.length >= valueFieldNbr)
-            try {
-                // NumberFormatException if not integer
-                count = Integer.valueOf(runParm.values[valueFieldNbr - 1]
-                    .trim());
-                // IllegalArgumentException if not > 0
-                count = Integer.valueOf(editRunParmValueReqPosInt(runParm,
-                    valueCaption, valueFieldNbr));
-            } catch (final NumberFormatException e) {
-                count = null;
-            }
-        return count;
+    protected int getSelectorCount(final int valueFieldNbr) {
+        final String s = get(valueFieldNbr);
+        if (s.equals(RUNPARM_OPTION_VALUE_ALL))
+            return Integer.MAX_VALUE;
+        try {
+            // NumberFormatException if not integer
+            Integer.parseInt(s);
+            // IllegalArgumentException if not > 0
+            return getPosInt(valueFieldNbr);
+        } catch (final NumberFormatException e) {
+            return 0;
+        }
     }
 
     /**
@@ -701,381 +509,268 @@ public abstract class Boss {
      * <p>
      * If present, and not a valid Theorem label, an IllegalArgumentException is
      * thrown.
-     * 
-     * @param runParm RunParmFile line.
-     * @param valueCaption name of RunParm, for error message output.
+     *
      * @param valueFieldNbr number of field in RunParm line.
      * @param stmtTbl stmtTbl map from LogicalSystem.
      * @return Theorem or null
      * @throws IllegalArgumentException if an error occurred
      */
-    protected Theorem getSelectorTheoremRunParmOption(
-        final RunParmArrayEntry runParm, final String valueCaption,
-        final int valueFieldNbr, final Map<String, Stmt> stmtTbl)
-        throws IllegalArgumentException
+    protected Theorem getSelectorTheorem(final int valueFieldNbr,
+        final Map<String, Stmt> stmtTbl)
     {
 
-        Object mapValue;
-        String label;
-        if (runParm.values.length >= valueFieldNbr) {
-            label = runParm.values[valueFieldNbr - 1].trim();
-            mapValue = stmtTbl.get(label);
-            if (mapValue == null)
-                throw new IllegalArgumentException(
-                    UtilConstants.ERRMSG_SELECTOR_NOT_A_STMT_1 + valueCaption
-                        + UtilConstants.ERRMSG_SELECTOR_NOT_A_STMT_2
-                        + valueFieldNbr
-                        + UtilConstants.ERRMSG_SELECTOR_NOT_A_STMT_3 + label
-                        + UtilConstants.ERRMSG_SELECTOR_NOT_A_STMT_4);
-            if (mapValue instanceof Theorem)
-                return (Theorem)mapValue;
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_SELECTOR_NOT_A_THEOREM_1 + valueCaption
-                    + UtilConstants.ERRMSG_SELECTOR_NOT_A_THEOREM_2
-                    + valueFieldNbr
-                    + UtilConstants.ERRMSG_SELECTOR_NOT_A_THEOREM_3 + label
-                    + UtilConstants.ERRMSG_SELECTOR_NOT_A_THEOREM_4);
-        }
-        return null;
+        final String label = get(valueFieldNbr);
+        final Stmt mapValue = stmtTbl.get(label);
+        if (mapValue == null)
+            throw error(ERRMSG_SELECTOR_NOT_A_STMT, valueFieldNbr, label);
+        if (mapValue instanceof Theorem)
+            return (Theorem)mapValue;
+        throw error(ERRMSG_SELECTOR_NOT_A_THEOREM, valueFieldNbr, label);
     }
 
     /**
      * Validate Required Yes/No Parm.
-     * 
-     * @param runParm RunParmFile line.
-     * @param valueCaption name of RunParm, for error message output.
+     *
      * @param valueFieldNbr number of field in RunParm line.
      * @return boolean true(yes) or false(no)
      * @throws IllegalArgumentException if an error occurred
      */
-    protected boolean editYesNoRunParm(final RunParmArrayEntry runParm,
-        final String valueCaption, final int valueFieldNbr)
-        throws IllegalArgumentException
-    {
-
-        editRunParmValuesLength(runParm, valueCaption, valueFieldNbr);
-        boolean yesNoBoolean;
-        final String yesNoParm = runParm.values[valueFieldNbr - 1]
-            .toLowerCase().trim();
-        if (yesNoParm.equals(UtilConstants.RUNPARM_OPTION_YES)
-            || yesNoParm.equals(UtilConstants.RUNPARM_OPTION_YES_ABBREVIATED))
-            yesNoBoolean = true;
-        else if (yesNoParm.equals(UtilConstants.RUNPARM_OPTION_NO)
-            || yesNoParm.equals(UtilConstants.RUNPARM_OPTION_NO_ABBREVIATED))
-            yesNoBoolean = false;
+    protected boolean getYesNo(final int valueFieldNbr) {
+        final String yesNoParm = get(valueFieldNbr).toLowerCase();
+        if (yesNoParm.equals(RUNPARM_OPTION_YES)
+            || yesNoParm.equals(RUNPARM_OPTION_YES_ABBREVIATED))
+            return true;
+        else if (yesNoParm.equals(RUNPARM_OPTION_NO)
+            || yesNoParm.equals(RUNPARM_OPTION_NO_ABBREVIATED))
+            return false;
         else
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_RECHECK_PA_1 + valueCaption
-                    + UtilConstants.ERRMSG_RECHECK_PA_2);
-        return yesNoBoolean;
+            throw error(ERRMSG_RECHECK_PA, yesNoParm);
     }
 
     /**
      * Validate Required On/Off Parm.
-     * 
-     * @param runParm RunParmFile line.
-     * @param valueCaption name of RunParm, for error message output.
+     *
      * @param valueFieldNbr number of field in RunParm line.
      * @return boolean true(yes) or false(no)
      * @throws IllegalArgumentException if an error occurred
      */
-    protected boolean editOnOffRunParm(final RunParmArrayEntry runParm,
-        final String valueCaption, final int valueFieldNbr)
-        throws IllegalArgumentException
+    protected boolean getOnOff(final int valueFieldNbr) {
+
+        final String onOffParm = get(valueFieldNbr).toLowerCase();
+        if (onOffParm.equals(RUNPARM_OPTION_ON))
+            return true;
+        else if (onOffParm.equals(RUNPARM_OPTION_OFF))
+            return false;
+        else
+            throw error(ERRMSG_BAD_ON_OFF_PARM, onOffParm);
+    }
+
+    /**
+     * Validate a boolean value named by the {@code yes} string, with the
+     * {@code no} string being {@code No} prepended to the {@code yes} string.
+     *
+     * @param valueFieldNbr number of field in RunParm line.
+     * @param blank Value to return if the field is blank
+     * @param yes Value to return true
+     * @return boolean The read value
+     */
+    protected boolean getBoolean(final int valueFieldNbr, final boolean blank,
+        final String yes)
+    {
+        return getBoolean(valueFieldNbr, blank, yes, "No" + yes);
+    }
+
+    /**
+     * Validate a boolean value named by the {@code yes} and {@code no} strings.
+     *
+     * @param valueFieldNbr number of field in RunParm line.
+     * @param blank Value to return if the field is blank
+     * @param yes Value to return true
+     * @param no Value to return false
+     * @return boolean The read value
+     */
+    protected boolean getBoolean(final int valueFieldNbr, final boolean blank,
+        final String yes, final String no)
     {
 
-        editRunParmValuesLength(runParm, valueCaption, valueFieldNbr);
-        boolean onOffBoolean;
-        final String onOffParm = runParm.values[valueFieldNbr - 1]
-            .toLowerCase().trim();
-        if (onOffParm.equals(UtilConstants.RUNPARM_OPTION_ON))
-            onOffBoolean = true;
-        else if (onOffParm.equals(UtilConstants.RUNPARM_OPTION_OFF))
-            onOffBoolean = false;
-        else
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_BAD_ON_OFF_PARM_1 + valueCaption
-                    + UtilConstants.ERRMSG_BAD_ON_OFF_PARM_2);
-        return onOffBoolean;
+        final String printParm = opt(valueFieldNbr);
+
+        if (printParm == null)
+            return blank;
+
+        if (printParm.equalsIgnoreCase(yes))
+            return true;
+
+        if (printParm.equalsIgnoreCase(no))
+            return false;
+
+        throw error(ERRMSG_BOOLEAN_UNRECOG, valueFieldNbr, yes, no, printParm);
+    }
+
+    /**
+     * Validate Enum Parm.
+     *
+     * @param valueFieldNbr number of field in RunParm line.
+     * @param blank Value to return if blank
+     * @param exceptionMsg String to return if the input did not match any
+     *            values
+     * @param <E> The enum type
+     * @return The interpreted enum value
+     */
+    protected <E extends Enum<E>> E getEnum(final int valueFieldNbr,
+        final E blank, final String exceptionMsg)
+    {
+        final String s = opt(valueFieldNbr);
+
+        if (s == null)
+            return blank;
+
+        for (final E e : blank.getDeclaringClass().getEnumConstants())
+            if (s.equalsIgnoreCase(e.toString()))
+                return e;
+
+        throw error(exceptionMsg);
     }
 
     /**
      * Validate Required, RGB Color Parms
-     * 
-     * @param runParm RunParmFile line.
-     * @param valueCaption name of RunParm, for error message output.
-     * @return int positive integer.
+     *
+     * @return Color value
      * @throws IllegalArgumentException if an error occurred
      */
-    protected Color editRunParmValueReqRGBColor(
-        final RunParmArrayEntry runParm, final String valueCaption)
-        throws IllegalArgumentException
-    {
-
-        editRunParmValuesLength(runParm, valueCaption,
-            UtilConstants.RUNPARM_NBR_RGB_COLOR_VALUES);
-
-        final int[] rgb = new int[UtilConstants.RUNPARM_NBR_RGB_COLOR_VALUES];
-
-        for (int valueFieldNbr = 0; valueFieldNbr < UtilConstants.RUNPARM_NBR_RGB_COLOR_VALUES; valueFieldNbr++)
-        {
-
-            rgb[valueFieldNbr] = editRunParmValueInteger(
-                runParm.values[valueFieldNbr], valueCaption);
-
-            if (rgb[valueFieldNbr] < UtilConstants.RUNPARM_OPTION_MIN_RGB_COLOR
-                || rgb[valueFieldNbr] > UtilConstants.RUNPARM_OPTION_MAX_RGB_COLOR)
-                throw new IllegalArgumentException(
-                    UtilConstants.ERRMSG_RUNPARM_RGB_RANGE_1 + valueCaption
-                        + UtilConstants.ERRMSG_RUNPARM_RGB_RANGE_2
-                        + UtilConstants.RUNPARM_OPTION_MIN_RGB_COLOR
-                        + UtilConstants.ERRMSG_RUNPARM_RGB_RANGE_3
-                        + UtilConstants.RUNPARM_OPTION_MAX_RGB_COLOR
-                        + UtilConstants.ERRMSG_RUNPARM_RGB_RANGE_4
-                        + Integer.toString(rgb[valueFieldNbr]));
-        }
-
-        return new Color(rgb[0], rgb[1], rgb[2]);
-    }
-
-    /**
-     * Validate Required, Positive Integer Parm.
-     * 
-     * @param runParm RunParmFile line.
-     * @param valueCaption name of RunParm, for error message output.
-     * @param valueFieldNbr number of field in RunParm line.
-     * @return int positive integer.
-     * @throws IllegalArgumentException if an error occurred
-     */
-    protected int editRunParmValueReqPosInt(final RunParmArrayEntry runParm,
-        final String valueCaption, final int valueFieldNbr)
-        throws IllegalArgumentException
-    {
-
-        editRunParmValuesLength(runParm, valueCaption, valueFieldNbr);
-        final Integer i = editRunParmValueInteger(
-            runParm.values[valueFieldNbr - 1], valueCaption);
-        return editRunParmPositiveInteger(i, valueCaption);
-    }
-
-    /**
-     * Validate Required, Non-negative Integer Parm.
-     * 
-     * @param runParm RunParmFile line.
-     * @param valueCaption name of RunParm, for error message output.
-     * @param valueFieldNbr number of field in RunParm line.
-     * @return int positive integer.
-     * @throws IllegalArgumentException if an error occurred
-     */
-    protected int editRunParmValueReqNonNegativeInt(
-        final RunParmArrayEntry runParm, final String valueCaption,
-        final int valueFieldNbr) throws IllegalArgumentException
-    {
-
-        editRunParmValuesLength(runParm, valueCaption, valueFieldNbr);
-        final Integer i = editRunParmValueInteger(
-            runParm.values[valueFieldNbr - 1], valueCaption);
-        return editRunParmNonNegativeInteger(i, valueCaption);
+    protected Color getColor() {
+        return new Color(getInt(1), getInt(2), getInt(3));
     }
 
     /**
      * Validate Required Integer Parm.
-     * 
-     * @param runParm RunParmFile line.
-     * @param valueCaption name of RunParm, for error message output.
+     *
      * @param valueFieldNbr number of field in RunParm line.
      * @return int integer.
      * @throws IllegalArgumentException if an error occurred
      */
-    protected int editRunParmValueReqInt(final RunParmArrayEntry runParm,
-        final String valueCaption, final int valueFieldNbr)
-        throws IllegalArgumentException
-    {
-
-        editRunParmValuesLength(runParm, valueCaption, valueFieldNbr);
-        final Integer i = editRunParmValueInteger(
-            runParm.values[valueFieldNbr - 1], valueCaption);
-        return i;
-    }
-
-    /**
-     * Validate Required Number of RunParm fields.
-     * 
-     * @param runParm RunParmFile line.
-     * @param valueCaption name of RunParm, for error message output.
-     * @param requiredNbrValueFields required number of fields in the RunParm
-     *            line.
-     * @throws IllegalArgumentException if an error occurred
-     */
-    protected void editRunParmValuesLength(final RunParmArrayEntry runParm,
-        final String valueCaption, final int requiredNbrValueFields)
-        throws IllegalArgumentException
-    {
-
-        if (runParm.values.length < requiredNbrValueFields)
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_RUNPARM_NOT_ENOUGH_FIELDS_1 + valueCaption
-                    + UtilConstants.ERRMSG_RUNPARM_NOT_ENOUGH_FIELDS_2
-                    + requiredNbrValueFields
-                    + UtilConstants.ERRMSG_RUNPARM_NOT_ENOUGH_FIELDS_3);
+    protected int getInt(final int valueFieldNbr) {
+        return parseInt(get(valueFieldNbr));
     }
 
     /**
      * Validate Integer Parm.
-     * 
-     * @param integerString String supposedly containing a number.
-     * @param valueCaption name of RunParm, for error message output.
+     *
+     * @param value a string to convert
      * @return int an integer.
      * @throws IllegalArgumentException if an error occurred
      */
-    protected Integer editRunParmValueInteger(final String integerString,
-        final String valueCaption) throws IllegalArgumentException
-    {
-
-        Integer i = null;
+    protected int parseInt(final String value) {
         try {
-            i = Integer.valueOf(integerString.trim());
+            return Integer.parseInt(value);
         } catch (final NumberFormatException e) {
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_RUNPARM_NBR_FORMAT_ERROR_1 + valueCaption
-                    + UtilConstants.ERRMSG_RUNPARM_NBR_FORMAT_ERROR_2
-                    + e.getMessage());
+            throw error(ERRMSG_RUNPARM_NBR_FORMAT_ERROR, e.getMessage());
         }
-        return i;
     }
 
     /**
      * Validate Positive Integer Parm.
-     * 
-     * @param i an integer, supposedly positive.
-     * @param valueCaption name of RunParm, for error message output.
+     *
+     * @param valueFieldNbr number of field in RunParm line.
      * @return int a positive integer.
      * @throws IllegalArgumentException if an error occurred
      */
-    protected int editRunParmPositiveInteger(final Integer i,
-        final String valueCaption) throws IllegalArgumentException
-    {
-        final int n = i.intValue();
+    protected int getPosInt(final int valueFieldNbr) {
+        final int n = getInt(valueFieldNbr);
         if (n <= 0)
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_RUNPARM_NBR_LE_ZERO_1 + valueCaption
-                    + UtilConstants.ERRMSG_RUNPARM_NBR_LE_ZERO_2 + i.toString());
+            throw error(ERRMSG_RUNPARM_NBR_LE_ZERO, n);
         return n;
     }
 
     /**
      * Validate Non-Negative Integer Parm.
-     * 
-     * @param i an integer, supposedly greater than or equal to zero.
-     * @param valueCaption name of RunParm, for error message output.
+     *
+     * @param valueFieldNbr number of field in RunParm line.
      * @return int a positive integer.
      * @throws IllegalArgumentException if an error occurred
      */
-    protected int editRunParmNonNegativeInteger(final Integer i,
-        final String valueCaption) throws IllegalArgumentException
-    {
-        final int n = i.intValue();
+    protected int getNonnegInt(final int valueFieldNbr) {
+        final int n = getInt(valueFieldNbr);
         if (n < 0)
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_RUNPARM_NBR_LT_ZERO_1 + valueCaption
-                    + UtilConstants.ERRMSG_RUNPARM_NBR_LT_ZERO_2 + i.toString());
+            throw error(ERRMSG_RUNPARM_NBR_LT_ZERO, n);
         return n;
     }
 
     /**
      * Validate RunParm Theorem Label String.
-     * 
-     * @param stmtLabel String, supposedly a Theorem label.
-     * @param valueCaption name of RunParm, for error message output.
+     *
+     * @param valueFieldNbr number of field in RunParm line.
      * @param logicalSystem Uh-oh, Mr. Big. Heavy validation using
      *            LogicalSystem.stmtTbl.
      * @return Theorem if stmtLabel is valid.
      * @throws IllegalArgumentException if an error occurred
      */
-    protected Theorem editRunParmValueTheorem(final String stmtLabel,
-        final String valueCaption, final LogicalSystem logicalSystem)
-        throws IllegalArgumentException
+    protected Theorem getTheorem(final int valueFieldNbr,
+        final LogicalSystem logicalSystem)
     {
-        final Stmt stmt = editRunParmValueStmt(stmtLabel, valueCaption,
-            logicalSystem);
+        final Stmt stmt = getStmt(valueFieldNbr, logicalSystem);
         if (stmt instanceof Theorem)
             return (Theorem)stmt;
-        throw new IllegalArgumentException(
-            UtilConstants.ERRMSG_RUNPARM_STMT_NOT_THEOREM_1 + valueCaption
-                + UtilConstants.ERRMSG_RUNPARM_STMT_NOT_THEOREM_2 + stmtLabel
-                + UtilConstants.ERRMSG_RUNPARM_STMT_NOT_THEOREM_3);
+        throw error(ERRMSG_RUNPARM_STMT_NOT_THEOREM, stmt);
     }
 
     /**
      * Validate RunParm Statement Label String.
-     * 
-     * @param stmtLabel String, supposedly a Stmt label.
-     * @param valueCaption name of RunParm, for error message output.
+     *
+     * @param valueFieldNbr number of field in RunParm line.
      * @param logicalSystem Uh-oh, Mr. Big. Heavy validation using
      *            LogicalSystem.stmtTbl.
      * @return Stmt if stmtLabel is valid.
      * @throws IllegalArgumentException if an error occurred
      */
-    protected Stmt editRunParmValueStmt(final String stmtLabel,
-        final String valueCaption, final LogicalSystem logicalSystem)
-        throws IllegalArgumentException
+    protected Stmt getStmt(final int valueFieldNbr,
+        final LogicalSystem logicalSystem)
     {
-        if (stmtLabel.length() == 0)
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_RUNPARM_STMT_LABEL_BLANK_1 + valueCaption
-                    + UtilConstants.ERRMSG_RUNPARM_STMT_LABEL_BLANK_2);
-
+        final String stmtLabel = getNonBlank(valueFieldNbr,
+            ERRMSG_RUNPARM_STMT_LABEL_BLANK);
         final Stmt stmt = logicalSystem.getStmtTbl().get(stmtLabel);
         if (stmt == null)
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_RUNPARM_STMT_LABEL_NOTFND_1 + valueCaption
-                    + UtilConstants.ERRMSG_RUNPARM_STMT_LABEL_NOTFND_2
-                    + stmtLabel
-                    + UtilConstants.ERRMSG_RUNPARM_STMT_LABEL_NOTFND_3);
+            throw error(ERRMSG_RUNPARM_STMT_LABEL_NOTFND, stmtLabel);
         return stmt;
+    }
+
+    protected IllegalArgumentException error(final String format,
+        final Object... args)
+    {
+        return error(format, null, args);
+    }
+
+    protected IllegalArgumentException error(final String format,
+        final Exception e, final Object... args)
+    {
+        return new IllegalArgumentException(
+            LangException.format(ERRMSG_RUN_PARM_ERROR, runParm.name)
+                + LangException.format(format, args),
+            e);
+    }
+
+    protected void accumErrorMessage(final String format,
+        final Object... args)
+    {
+        batchFramework.outputBoss.getMessages().accumErrorMessage(
+            LangException.format(ERRMSG_RUN_PARM_ERROR, runParm.name)
+                + LangException.format(format, args));
     }
 
     /**
      * Validate RunParm String with length greater than zero and no embedded
      * blanks or unprintable characters.
-     * 
-     * @param runParm RunParmFile line.
-     * @param valueCaption name of RunParm, for error message output.
+     *
      * @param valueFieldNbr required number of fields in the RunParm line.
      * @return String if valid.
      * @throws IllegalArgumentException if an error occurred
      */
-    protected String editRunParmPrintableNoBlanksString(
-        final RunParmArrayEntry runParm, final String valueCaption,
-        final int valueFieldNbr) throws IllegalArgumentException
-    {
+    protected String getPrintableNoBlanksString(final int valueFieldNbr) {
+        final String s = get(valueFieldNbr);
 
-        editRunParmValuesLength(runParm, valueCaption, valueFieldNbr);
-
-        final String printableNoBlanksString = runParm.values[valueFieldNbr - 1]
-            .trim();
-
-        boolean err = true;
-        char c;
-        if (printableNoBlanksString.length() > 0) {
-            err = false;
-            for (int i = 0; i < printableNoBlanksString.length(); i++) {
-
-                c = printableNoBlanksString.charAt(i);
-                if (c > 127 || Character.isWhitespace(c)
-                    || Character.isISOControl(c))
-                {
-                    err = true;
-                    break;
-                }
-            }
-        }
-
-        if (err)
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_RUNPARM_NONBLANK_PRINT_STR_BAD_1
-                    + valueCaption
-                    + UtilConstants.ERRMSG_RUNPARM_NONBLANK_PRINT_STR_BAD_2);
-        return printableNoBlanksString;
+        if (s.isEmpty() || s.chars().anyMatch(c -> c > 127
+            || Character.isWhitespace(c) || Character.isISOControl(c)))
+            throw error(ERRMSG_RUNPARM_NONBLANK_PRINT_STR_BAD);
+        return s;
     }
 }

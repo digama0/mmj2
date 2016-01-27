@@ -28,7 +28,7 @@ public class StepSelectorDialog extends JDialog {
 
     private final StepSelectorResults stepSelectorResults;
     private final ProofAsstGUI proofAsstGUI;
-    private final JList stepSelectorDialogList;
+    private final JList<String> stepSelectorDialogList;
     private final StepSelectorDialog stepSelectorDialog;
 
     public StepSelectorDialog(final Frame proofAsstGUIFrame,
@@ -36,7 +36,8 @@ public class StepSelectorDialog extends JDialog {
         final ProofAsstPreferences proofAsstPreferences, final Font proofFont)
     {
 
-        super(proofAsstGUIFrame, PaConstants.STEP_SELECTOR_DIALOG_TITLE, false/*= not modal*/);
+        super(proofAsstGUIFrame, PaConstants.STEP_SELECTOR_DIALOG_TITLE,
+            false/*= not modal*/);
 
         final ActionListener hideListener = new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
@@ -66,7 +67,7 @@ public class StepSelectorDialog extends JDialog {
         });
         getRootPane().setDefaultButton(setButton);
 
-        stepSelectorDialogList = new JList();
+        stepSelectorDialogList = new JList<>();
         stepSelectorDialogList.setFont(proofFont);
         stepSelectorDialogList.setListData(stepSelectorResults.selectionArray);
         stepSelectorDialogList
@@ -83,11 +84,13 @@ public class StepSelectorDialog extends JDialog {
             }
         });
 
-        final JScrollPane listScroller = new JScrollPane(stepSelectorDialogList);
+        final JScrollPane listScroller = new JScrollPane(
+            stepSelectorDialogList);
 
-        final int width = proofAsstPreferences.getStepSelectorDialogPaneWidth();
-        final int height = proofAsstPreferences
-            .getStepSelectorDialogPaneHeight();
+        final int width = proofAsstPreferences.stepSelectorDialogPaneWidth
+            .get();
+        final int height = proofAsstPreferences.stepSelectorDialogPaneHeight
+            .get();
 
         listScroller.setPreferredSize(new Dimension(width, height));
         listScroller.setMinimumSize(new Dimension(width, height));
@@ -130,9 +133,8 @@ public class StepSelectorDialog extends JDialog {
             choice = stepSelectorResults.refArray[i];
         setVisible(false);
 
-        proofAsstGUI.unifyWithStepSelectorChoice(new StepRequest(
-            PaConstants.STEP_REQUEST_SELECTOR_CHOICE, stepSelectorResults.step,
-            choice));
+        proofAsstGUI.unifyWithStepSelectorChoice(
+            new StepRequest.SelectorChoice(stepSelectorResults.step, choice));
     }
 
     private void popupSelectionItem() {

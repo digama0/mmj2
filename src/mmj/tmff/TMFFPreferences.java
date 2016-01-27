@@ -38,12 +38,19 @@
 
 package mmj.tmff;
 
-import java.util.HashMap;
-import java.util.Map;
+import static mmj.pa.SessionStore.setIntBound;
+import static mmj.tmff.TMFFConstants.*;
 
-import mmj.lang.Formula;
-import mmj.lang.ParseTree;
-import mmj.pa.PaConstants;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import mmj.lang.*;
+import mmj.pa.*;
 
 /**
  * Holds user settings/preferences used by the Text Mode Formula Formatting
@@ -54,125 +61,175 @@ import mmj.pa.PaConstants;
  * inside of ProofAsstPreferences.
  */
 public class TMFFPreferences {
+    private static final String PFX = "TMFF.";
 
-    private int formulaLeftCol;
+    /** Formula left column used in formatting proof text areas. */
+    public Setting<Integer> formulaLeftCol;
 
-    private int formulaRightCol;
+    /** Formula right column used in formatting proof text areas. */
+    public Setting<Integer> formulaRightCol;
 
-    private int textColumns;
+    /**
+     * Number of text columns used to display formulas.
+     * <p>
+     * This number is used to line wrapping and basically corresponds to the
+     * window used to display formulas.
+     * <p>
+     * A formula can be longer than this number, and the Frame should scroll --
+     * assuming that lineWrap is off and there are no NewLines.
+     */
+    public Setting<Integer> textColumns;
 
-    private int textRows;
+    /** Number of text rows used to display formulas. */
+    public Setting<Integer> textRows;
 
-    private boolean lineWrap;
+    /**
+     * Line wrap on or off.
+     * <p>
+     * If line wrap is on then Newlines (carriage returns) will not be used to
+     * split formulas. Instead, space characters will be written to fill out the
+     * remaining text columns on the line.
+     */
+    public Setting<Boolean> lineWrap;
 
-    private int currFormatNbr;
+    public Setting<Integer> currFormatNbr;
 
-    private int altFormatNbr;
-    private int useIndent;
-    private int altIndent;
+    public Setting<Integer> altFormatNbr;
+    public Setting<Integer> useIndent;
+    public Setting<Integer> altIndent;
 
     /*
      * See toggleAltFormatAndIndentParms() for info on how
      * these are used.
      */
-    private boolean inAltFormatNow;
-    private int prevFormatNbr;
-    private int prevIndent;
+    public Setting<Boolean> inAltFormatNow;
+    public Setting<Integer> prevFormatNbr;
+    public Setting<Integer> prevIndent;
 
     /*
      * The TMFFSchemes defined for use. We'll use the HashMap
      * to check for duplicates and process updates (via
      * RunParms in BatchMMJ2.)
      */
-    private Map<String, TMFFScheme> tmffSchemeMap;
+    private final Map<String, TMFFScheme> tmffSchemeMap;
 
     /*
      * The (4) Formats available for use: 0, 1, 2, 3
-     * (the number is subject to change, see TMFFConstants.java).
+     * (the number is subject to change, see java).
      * Number 0 is the default Format, which is coded to
      * output the "old" way: unformatted.
      */
-    private TMFFFormat[] tmffFormatArray;
+    private final TMFFFormat[] tmffFormatArray;
 
     /*
      * These output the "old" way: unformatted strings.
      */
-    private TMFFScheme tmffUnformattedScheme;
-    private TMFFFormat tmffUnformattedFormat;
+    private final TMFFScheme tmffUnformattedScheme;
+    private final TMFFFormat tmffUnformattedFormat;
 
     /**
      * Default constructor for TMFFPreferences.
+     *
+     * @param store The session store
      */
-    public TMFFPreferences() {
-        loadPreferenceDefaults();
-    }
+    public TMFFPreferences(final SessionStore store) {
+        formulaLeftCol = setIntBound(
+            store.addSetting(PFX + "formulaLeftCol",
+                PaConstants.PROOF_ASST_FORMULA_LEFT_COL_DEFAULT),
+            () -> PaConstants.PROOF_ASST_FORMULA_LEFT_COL_MIN,
+            () -> formulaRightCol.get() - 1);
+        formulaRightCol = setIntBound(
+            store.addSetting(PFX + "formulaRightCol",
+                PaConstants.PROOF_ASST_FORMULA_RIGHT_COL_DEFAULT),
+            () -> formulaLeftCol.get() + 1,
+            () -> PaConstants.PROOF_ASST_FORMULA_RIGHT_COL_MAX);
 
-    /**
-     * Loads the hardcoded default TMFFPreferences values.
-     * <p>
-     * This method is provided as a public service so that, in theory, the user
-     * can experiment or alter maxDepth in various Formats using
-     * {@code updateMaxDepthAcrossMethods()} and then reload the original Format
-     * values -- which will also wipe out any RunParm Preferences input for the
-     * run.
-     */
-    public void loadPreferenceDefaults() {
-        formulaLeftCol = PaConstants.PROOF_ASST_FORMULA_LEFT_COL_DEFAULT;
-        formulaRightCol = PaConstants.PROOF_ASST_FORMULA_RIGHT_COL_DEFAULT;
-        textColumns = PaConstants.PROOF_ASST_TEXT_COLUMNS_DEFAULT;
-        textRows = PaConstants.PROOF_ASST_TEXT_ROWS_DEFAULT;
+        textColumns = setIntBound(
+            store.addSetting(PFX + "textColumns",
+                PaConstants.PROOF_ASST_TEXT_COLUMNS_DEFAULT),
+            PaConstants.PROOF_ASST_TEXT_COLUMNS_MIN,
+            PaConstants.PROOF_ASST_TEXT_COLUMNS_MAX);
+        textRows = setIntBound(
+            store.addSetting(PFX + "textRows",
+                PaConstants.PROOF_ASST_TEXT_ROWS_DEFAULT),
+            PaConstants.PROOF_ASST_TEXT_ROWS_MIN,
+            PaConstants.PROOF_ASST_TEXT_ROWS_MAX);
 
-        lineWrap = PaConstants.PROOF_ASST_LINE_WRAP_DEFAULT;
+        lineWrap = store.addSetting(PFX + "lineWrap",
+            PaConstants.PROOF_ASST_LINE_WRAP_DEFAULT);
 
-        currFormatNbr = TMFFConstants.TMFF_CURR_FORMAT_NBR_DEFAULT;
-        altFormatNbr = TMFFConstants.TMFF_ALT_FORMAT_NBR_DEFAULT;
+        currFormatNbr = setIntBound(store.addSetting(PFX + "currFormatNbr",
+            TMFF_CURR_FORMAT_NBR_DEFAULT), 0, TMFF_MAX_FORMAT_NBR);
+        altFormatNbr = setIntBound(
+            store.addSetting(PFX + "altFormatNbr", TMFF_ALT_FORMAT_NBR_DEFAULT),
+            0, TMFF_MAX_FORMAT_NBR);
 
-        useIndent = TMFFConstants.TMFF_USE_INDENT_DEFAULT;
-        altIndent = TMFFConstants.TMFF_ALT_INDENT_DEFAULT;
+        useIndent = setIntBound(
+            store.addSetting(PFX + "useIndent", TMFF_USE_INDENT_DEFAULT), 0,
+            TMFF_MAX_INDENT);
+        altIndent = setIntBound(
+            store.addSetting(PFX + "altIndent", TMFF_ALT_INDENT_DEFAULT), 0,
+            TMFF_MAX_INDENT);
 
-        inAltFormatNow = false;
-        prevFormatNbr = TMFFConstants.TMFF_CURR_FORMAT_NBR_DEFAULT;
-        prevIndent = TMFFConstants.TMFF_USE_INDENT_DEFAULT;
+        inAltFormatNow = store.addSetting(PFX + "inAltFormatNow", false);
+        prevFormatNbr = store.addSetting(PFX + "prevFormatNbr",
+            TMFF_CURR_FORMAT_NBR_DEFAULT);
+        prevIndent = store.addSetting(PFX + "prevIndent",
+            TMFF_USE_INDENT_DEFAULT);
 
-        tmffFormatArray = new TMFFFormat[TMFFConstants.TMFF_MAX_FORMAT_NBR + 1];
+        tmffFormatArray = new TMFFFormat[TMFF_MAX_FORMAT_NBR + 1];
 
-        tmffSchemeMap = new HashMap<String, TMFFScheme>();
+        tmffSchemeMap = new HashMap<>();
 
         /*
          * Load default Schemes
          */
 
-        TMFFScheme s;
-
-        for (final String[] element : TMFFConstants.TMFF_DEFAULT_DEFINE_SCHEME_PARAMS)
-        {
-            s = new TMFFScheme(element);
-            putToSchemeMap(s);
-        }
+        for (final String[] element : TMFF_DEFAULT_DEFINE_SCHEME_PARAMS)
+            putToSchemeMap(new TMFFScheme(element));
 
         /*
          * Load default Formats
          */
 
-        TMFFFormat f;
-
-        for (final String[] element : TMFFConstants.TMFF_DEFAULT_DEFINE_FORMAT_PARAMS)
-        {
-            s = getDefinedScheme(element[1]);
+        final Consumer<String[]> read = element -> {
+            final TMFFScheme s = getDefinedScheme(element[1]);
             if (s == null)
-                throw new IllegalArgumentException(
-                    TMFFConstants.ERRMSG_FORMAT_SCHEME_NAME_NOTFND_1
-                        + element[1]);
-            f = new TMFFFormat(element[0], s);
+                throw new IllegalArgumentException(LangException
+                    .format(ERRMSG_FORMAT_SCHEME_NAME_NOTFND, element[1]));
+            final TMFFFormat f = new TMFFFormat(element[0], s);
 
             tmffFormatArray[f.getFormatNbr()] = f;
-        }
+        };
+        Arrays.stream(TMFF_DEFAULT_DEFINE_FORMAT_PARAMS).forEach(read);
 
-        /*
-         * Load default Format 0 holders
-         */
-        tmffUnformattedFormat = tmffFormatArray[TMFFConstants.TMFF_UNFORMATTED_FORMAT_NBR_0];
+        /* Load default Format 0 holders */
+        tmffUnformattedFormat = tmffFormatArray[TMFF_UNFORMATTED_FORMAT_NBR_0];
         tmffUnformattedScheme = tmffUnformattedFormat.getFormatScheme();
+
+        // The ~ is so that it sorts at the end with other big keys
+        store.addSerializable("~" + PFX + "formatArray",
+            (final JSONObject o) -> o.entrySet().parallelStream()
+                .map(e -> new String[]{e.getKey().toString(),
+                        (String)e.getValue()})
+                .forEach(read),
+            () -> Arrays.stream(tmffFormatArray).filter(f -> f != null)
+                .collect(Collectors.toMap(f -> f.getFormatNbr() + "",
+                    f -> f.getFormatScheme().getSchemeName(), (a, b) -> a,
+                    JSONObject::new)));
+
+        store.addSerializable("~" + PFX + "schemeMap", (final JSONObject o) -> {
+            for (final Entry<String, Object> e : o.entrySet()) {
+                final List<Object> a = new ArrayList<>(
+                    (JSONArray)e.getValue());
+                a.add(0, e.getKey());
+                putToSchemeMap(new TMFFScheme(
+                    a.stream().map(Object::toString).toArray(String[]::new)));
+            }
+        } , () -> tmffSchemeMap.values().parallelStream()
+            .collect(Collectors.toMap(s -> s.getSchemeName(),
+                s -> s.getTMFFMethod().asArray(), (a, b) -> a,
+                JSONObject::new)));
 
     }
 
@@ -186,11 +243,11 @@ public class TMFFPreferences {
      * ProofWorksheet considerable work is needed to parse formulas from
      * Derivation Proof Steps for exported proofs. Therefore, if TMFF is
      * disabled the grammatical parsing process can be skipped.
-     * 
+     *
      * @return true if TMFF is enabled, else false.
      */
     public boolean isTMFFEnabled() {
-        if (getCurrFormatNbr() == TMFFConstants.TMFF_UNFORMATTED_FORMAT_NBR_0)
+        if (currFormatNbr.get() == TMFF_UNFORMATTED_FORMAT_NBR_0)
             return false;
         else
             return true;
@@ -201,7 +258,7 @@ public class TMFFPreferences {
      * ParseTree, Formula and TMFFStateParams instance.
      * <p>
      * This is intended to be the main way of invoking TMFF formatting.
-     * 
+     *
      * @param tmffSP TMFFStateParams initialized, ready for use.
      * @param parseTree of the Formula to be rendered. If left null, the formula
      *            will be output in unformatted mode.
@@ -211,7 +268,8 @@ public class TMFFPreferences {
      *         the formula could not be formatted.
      */
     public int renderFormula(final TMFFStateParams tmffSP,
-        final ParseTree parseTree, final Formula formula, final int proofLevel)
+        final ParseTree parseTree, final Formula formula,
+        final int proofLevel)
     {
 
         int nbrLines = -1;
@@ -220,14 +278,14 @@ public class TMFFPreferences {
 
             final int savedLength = tmffSP.sb.length();
             final int savedColNbr = tmffSP.prevColNbr;
-            final int savedLeftmostColNbr = tmffSP.getLeftmostColNbr();
+            final int savedLeftmostColNbr = tmffSP.leftmostColNbr;
 
-            tmffSP.setLeftmostColNbr(getFormulaLeftCol(), getUseIndent(),
+            tmffSP.setLeftmostColNbr(formulaLeftCol.get(), useIndent.get(),
                 proofLevel);
             nbrLines = getCurrFormat().getFormatScheme().getTMFFMethod()
                 .renderFormula(tmffSP, parseTree, formula);
 
-            tmffSP.setLeftmostColNbr(savedLeftmostColNbr);
+            tmffSP.leftmostColNbr = savedLeftmostColNbr;
 
             if (nbrLines > 0)
                 return nbrLines;
@@ -241,8 +299,7 @@ public class TMFFPreferences {
             tmffSP, null, // parse tree not needed!
             formula);
         if (nbrLines < 1)
-            throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_RENDER_FORMULA_ERROR_1);
+            throw new IllegalArgumentException(ERRMSG_RENDER_FORMULA_ERROR_1);
 
         return nbrLines;
 
@@ -255,7 +312,7 @@ public class TMFFPreferences {
      * This is the *old* method for which proof level is not used. It is used
      * when the caller wishes to set Formula Left Column independently in
      * tmffSP.
-     * 
+     *
      * @param tmffSP TMFFStateParams initialized, ready for use.
      * @param parseTree of the Formula to be rendered. If left null, the formula
      *            will be output in unformatted mode.
@@ -288,8 +345,7 @@ public class TMFFPreferences {
             tmffSP, null, // parse tree not needed!
             formula);
         if (nbrLines < 1)
-            throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_RENDER_FORMULA_ERROR_1);
+            throw new IllegalArgumentException(ERRMSG_RENDER_FORMULA_ERROR_1);
 
         return nbrLines;
 
@@ -297,17 +353,17 @@ public class TMFFPreferences {
 
     /**
      * Returns the TMFFFormat presently in use.
-     * 
+     *
      * @return TMFFFormat in use now, which may be the default format
      *         "Unformatted".
      */
     public TMFFFormat getCurrFormat() {
-        return tmffFormatArray[getCurrFormatNbr()];
+        return tmffFormatArray[currFormatNbr.get()];
     }
 
     /**
      * Returns the default Format.
-     * 
+     *
      * @return default TMFFFormat.
      */
     public TMFFFormat getTMFFUnformattedFormat() {
@@ -316,7 +372,7 @@ public class TMFFPreferences {
 
     /**
      * Returns the default Scheme
-     * 
+     *
      * @return default TMFFFormat.
      */
     public TMFFScheme getTMFFUnformattedScheme() {
@@ -324,202 +380,10 @@ public class TMFFPreferences {
     }
 
     /**
-     * Set formula left column used in formatting proof text areas.
-     * 
-     * @param formulaLeftCol formula LeftCol used for formatting formula text
-     *            areas
-     */
-    public void setFormulaLeftCol(final int formulaLeftCol) {
-        this.formulaLeftCol = formulaLeftCol;
-    }
-
-    /**
-     * Get formula left column used in formatting proof text areas.
-     * 
-     * @return formulaLeftCol formula LeftCol used for formatting formula text
-     *         areas
-     */
-    public int getFormulaLeftCol() {
-        return formulaLeftCol;
-    }
-
-    /**
-     * Set formula right column used in formatting proof text areas.
-     * 
-     * @param formulaRightCol formula RightCol used for formatting formula text
-     *            areas
-     */
-    public void setFormulaRightCol(final int formulaRightCol) {
-        this.formulaRightCol = formulaRightCol;
-    }
-
-    /**
-     * Get formula right column used in formatting proof text areas.
-     * 
-     * @return formulaRightCol formula RightCol used for formatting formula text
-     *         areas
-     */
-    public int getFormulaRightCol() {
-        return formulaRightCol;
-    }
-
-    /**
-     * Set number of text columns used to display formulas.
-     * <p>
-     * This number is used to line wrapping and basically corresponds to the
-     * window used to display formulas.
-     * <p>
-     * A formula can be longer than this number, and the Frame should scroll --
-     * assuming that lineWrap is off and there are no NewLines.
-     * 
-     * @param textColumns number of text columns.
-     */
-    public void setTextColumns(final int textColumns) {
-        this.textColumns = textColumns;
-    }
-
-    /**
-     * Get number of text columns used to display formulas.
-     * 
-     * @return textColumns number of text columns used to display formulas.
-     */
-    public int getTextColumns() {
-        return textColumns;
-    }
-
-    /**
-     * Set number of text rows used to display formulas.
-     * 
-     * @param textRows number of text rows.
-     */
-    public void setTextRows(final int textRows) {
-        this.textRows = textRows;
-    }
-
-    /**
-     * Get number of text rows used to display formulas.
-     * 
-     * @return textRows number of text rows used to display formulas.
-     */
-    public int getTextRows() {
-        return textRows;
-    }
-
-    /**
-     * Set line wrap on or off.
-     * <p>
-     * If line wrap is on then Newlines (carraige returns) will not be used to
-     * split formulas. Instead, space characters will be written to fill out the
-     * remaining text columns on the line.
-     * 
-     * @param lineWrap setting, on or off.
-     */
-    public void setLineWrap(final boolean lineWrap) {
-        this.lineWrap = lineWrap;
-    }
-
-    /**
-     * Get the current lineWrap setting.
-     * 
-     * @return lineWrap setting.
-     */
-    public boolean getLineWrap() {
-        return lineWrap;
-    }
-
-    /**
-     * Set current Format number using user parameters.
-     * 
-     * @param param String array containing current Format number in array
-     *            element 0.
-     */
-    public void setCurrFormatNbr(final String[] param) {
-
-        if (param.length < 1 || param[0] == null || param[0].length() == 0)
-            throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_FORMAT_NBR_MISSING2_1);
-
-        try {
-            setCurrFormatNbr(Integer.parseInt(param[0].trim()));
-        } catch (final NumberFormatException e) {
-            throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_BAD_PREF_FORMAT_NBR_1 + param[0].trim()
-                    + TMFFConstants.ERRMSG_BAD_PREF_FORMAT_NBR_2
-                    + TMFFConstants.TMFF_MAX_FORMAT_NBR);
-        }
-    }
-
-    /**
-     * Set Alternate Format number using user parameters.
-     * 
-     * @param param String array containing alternate Format number in array
-     *            element 0.
-     */
-    public void setAltFormatNbr(final String[] param) {
-
-        if (param.length < 1 || param[0] == null || param[0].length() == 0)
-            throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_ALT_FORMAT_NBR_MISSING2_1);
-
-        try {
-            setAltFormatNbr(Integer.parseInt(param[0].trim()));
-        } catch (final NumberFormatException e) {
-            throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_BAD_ALT_FORMAT_NBR_1 + param[0].trim()
-                    + TMFFConstants.ERRMSG_BAD_ALT_FORMAT_NBR_2
-                    + TMFFConstants.TMFF_MAX_FORMAT_NBR);
-        }
-    }
-
-    /**
-     * Set Use Indent amount using user parameters.
-     * 
-     * @param param String array containing alternate Indent amount in array
-     *            element 0.
-     */
-    public void setUseIndent(final String[] param) {
-
-        if (param.length < 1 || param[0] == null || param[0].length() == 0)
-            throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_USE_INDENT_MISSING2_1);
-
-        try {
-            setUseIndent(Integer.parseInt(param[0].trim()));
-        } catch (final NumberFormatException e) {
-            throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_BAD_USE_INDENT_1 + param[0].trim()
-                    + TMFFConstants.ERRMSG_BAD_USE_INDENT_2
-                    + TMFFConstants.TMFF_MAX_INDENT);
-        }
-    }
-
-    /**
-     * Set Alt Indent amount using user parameters.
-     * 
-     * @param param String array containing alternate Indent amount in array
-     *            element 0.
-     */
-    public void setAltIndent(final String[] param) {
-
-        if (param.length < 1 || param[0] == null || param[0].length() == 0)
-            throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_ALT_INDENT_MISSING2_1);
-
-        try {
-            setAltIndent(Integer.parseInt(param[0].trim()));
-        } catch (final NumberFormatException e) {
-            throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_BAD_ALT_INDENT_1 + param[0].trim()
-                    + TMFFConstants.ERRMSG_BAD_ALT_INDENT_2
-                    + TMFFConstants.TMFF_MAX_INDENT);
-        }
-    }
-
-    /**
      * A slightly redundant routine to validate an input indent amount.
      * <p>
      * This routine is used by ProofAsstGUI.
-     * 
+     *
      * @param s Indent amountString.
      * @return Indent amount if input is valid.
      * @throws TMFFException if input is invalid.
@@ -530,35 +394,12 @@ public class TMFFPreferences {
             if (s.length() > 0)
                 try {
                     final int n = Integer.parseInt(s);
-                    if (n >= 0 && n <= TMFFConstants.TMFF_MAX_INDENT)
+                    if (n >= 0 && n <= TMFF_MAX_INDENT)
                         return n;
                 } catch (final NumberFormatException e) {}
         }
-        throw new TMFFException(TMFFConstants.ERRMSG_ERR_INDENT_INPUT_1
-            + Integer.toString(TMFFConstants.TMFF_MAX_INDENT));
-    }
-
-    /**
-     * A slightly redundant routine to validate an input format number.
-     * <p>
-     * This routine is used by ProofAsstGUI.
-     * 
-     * @param s Format Number String.
-     * @return Format Number if input is valid.
-     * @throws TMFFException if input is invalid.
-     */
-    public int validateFormatNbrString(String s) throws TMFFException {
-        if (s != null) {
-            s = s.trim();
-            if (s.length() > 0)
-                try {
-                    final int n = Integer.parseInt(s);
-                    if (n >= 0 && n <= TMFFConstants.TMFF_MAX_FORMAT_NBR)
-                        return n;
-                } catch (final NumberFormatException e) {}
-        }
-        throw new TMFFException(TMFFConstants.ERRMSG_ERR_FORMAT_NBR_INPUT_1
-            + Integer.toString(TMFFConstants.TMFF_MAX_FORMAT_NBR));
+        throw new TMFFException(
+            ERRMSG_ERR_INDENT_INPUT_1 + Integer.toString(TMFF_MAX_INDENT));
     }
 
     /**
@@ -569,45 +410,14 @@ public class TMFFPreferences {
      * Scheme Name.
      * <p>
      * This routine is used by ProofAsstGUI.
-     * 
+     *
      * @return Format List String
      */
     public String getFormatListString() {
-
-        final StringBuilder sb = new StringBuilder();
-
-        for (final TMFFFormat element : tmffFormatArray) {
-            sb.append(Integer.toString(element.getFormatNbr()));
-            sb.append(" - ");
-            sb.append(element.getFormatScheme().getSchemeName());
-            sb.append('\n');
-        }
-
-        return sb.toString();
-    }
-
-    /**
-     * Set current Format number.
-     * 
-     * @param currFormatNbr 0 thru max number.
-     */
-    public void setCurrFormatNbr(final int currFormatNbr) {
-        if (currFormatNbr < 0
-            || currFormatNbr > TMFFConstants.TMFF_MAX_FORMAT_NBR)
-            throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_BAD_PREF_FORMAT_NBR_1 + currFormatNbr
-                    + TMFFConstants.ERRMSG_BAD_PREF_FORMAT_NBR_2
-                    + TMFFConstants.TMFF_MAX_FORMAT_NBR);
-        this.currFormatNbr = currFormatNbr;
-    }
-
-    /**
-     * Get current Format Number.
-     * 
-     * @return TMFF format number in use.
-     */
-    public int getCurrFormatNbr() {
-        return currFormatNbr;
+        return Arrays.stream(tmffFormatArray)
+            .map(element -> element.getFormatNbr() + " - "
+                + element.getFormatScheme().getSchemeName() + "\n")
+            .collect(Collectors.joining());
     }
 
     /**
@@ -625,93 +435,23 @@ public class TMFFPreferences {
      */
     public void toggleAltFormatAndIndentParms() {
 
-        if (inAltFormatNow) {
-            setCurrFormatNbr(prevFormatNbr);
-            setUseIndent(prevIndent);
-            inAltFormatNow = false;
+        if (inAltFormatNow.get()) {
+            currFormatNbr.set(prevFormatNbr.get());
+            useIndent.set(prevIndent.get());
+            inAltFormatNow.set(false);
         }
         else {
-            prevFormatNbr = getCurrFormatNbr();
-            prevIndent = getUseIndent();
-            setCurrFormatNbr(altFormatNbr);
-            setUseIndent(altIndent);
-            inAltFormatNow = true;
+            prevFormatNbr.set(currFormatNbr.get());
+            prevIndent.set(useIndent.get());
+            currFormatNbr.set(altFormatNbr.get());
+            useIndent.set(altIndent.get());
+            inAltFormatNow.set(true);
         }
-    }
-
-    /**
-     * Set alternate Format number.
-     * 
-     * @param altFormatNbr 0 thru max number.
-     */
-    public void setAltFormatNbr(final int altFormatNbr) {
-        if (altFormatNbr < 0
-            || altFormatNbr > TMFFConstants.TMFF_MAX_FORMAT_NBR)
-            throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_BAD_ALT_FORMAT_NBR_1 + altFormatNbr
-                    + TMFFConstants.ERRMSG_BAD_ALT_FORMAT_NBR_2
-                    + TMFFConstants.TMFF_MAX_FORMAT_NBR);
-        this.altFormatNbr = altFormatNbr;
-    }
-
-    /**
-     * Get alternate Format Number.
-     * 
-     * @return TMFF alt format number in use.
-     */
-    public int getAltFormatNbr() {
-        return altFormatNbr;
-    }
-
-    /**
-     * Set Use Indent number.
-     * 
-     * @param useIndent 0 thru max number.
-     */
-    public void setUseIndent(final int useIndent) {
-        if (useIndent < 0 || useIndent > TMFFConstants.TMFF_MAX_INDENT)
-            throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_BAD_USE_INDENT_1 + useIndent
-                    + TMFFConstants.ERRMSG_BAD_USE_INDENT_2
-                    + TMFFConstants.TMFF_MAX_INDENT);
-        this.useIndent = useIndent;
-    }
-
-    /**
-     * Get Use Indent Amount.
-     * 
-     * @return TMFF Use Indent amount in use.
-     */
-    public int getUseIndent() {
-        return useIndent;
-    }
-
-    /**
-     * Set Alt Indent amount.
-     * 
-     * @param altIndent 0 thru max number.
-     */
-    public void setAltIndent(final int altIndent) {
-        if (altIndent < 0 || altIndent > TMFFConstants.TMFF_MAX_INDENT)
-            throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_BAD_ALT_INDENT_1 + altIndent
-                    + TMFFConstants.ERRMSG_BAD_ALT_INDENT_2
-                    + TMFFConstants.TMFF_MAX_INDENT);
-        this.altIndent = altIndent;
-    }
-
-    /**
-     * Get Alt Indent Amount.
-     * 
-     * @return TMFF alternate indent amount number in use.
-     */
-    public int getAltIndent() {
-        return altIndent;
     }
 
     /**
      * Add newly defined Scheme to Preferences data.
-     * 
+     *
      * @param s TMFFScheme to be added to the TMFFPreferences data.
      * @return TMFF format number in use.
      */
@@ -725,7 +465,7 @@ public class TMFFPreferences {
 
     /**
      * Update existing Format definition.
-     * 
+     *
      * @param newFormat to store into the Preferences data.
      */
     public void updateDefinedFormat(final TMFFFormat newFormat) {
@@ -739,20 +479,20 @@ public class TMFFPreferences {
      * new object. (It has to do a replace because the object type could
      * theoretically be different -- for example, "TMFFFlat" instead of
      * "TMFFAlignColumn".)
-     * 
+     *
      * @param newScheme to update into the Preferences data.
      */
     public void updateDefinedScheme(final TMFFScheme newScheme) {
 
-        final TMFFScheme oldScheme = getDefinedScheme(newScheme.getSchemeName());
+        final TMFFScheme oldScheme = getDefinedScheme(
+            newScheme.getSchemeName());
         if (oldScheme == null)
             throw new IllegalArgumentException(
-                TMFFConstants.ERRMSG_UPDATE_SCHEME_NOTFND_BUG_1
-                    + newScheme.getSchemeName());
+                ERRMSG_UPDATE_SCHEME_NOTFND_BUG_1 + newScheme.getSchemeName());
 
         for (final TMFFFormat element : tmffFormatArray)
             if (element.getFormatScheme().getSchemeName()
-                .compareToIgnoreCase(oldScheme.getSchemeName()) == 0)
+                .equalsIgnoreCase(oldScheme.getSchemeName()))
                 element.setFormatScheme(newScheme);
 
         putToSchemeMap(newScheme);
@@ -760,7 +500,7 @@ public class TMFFPreferences {
 
     /**
      * Get already defined Scheme from Preferences data.
-     * 
+     *
      * @param definedSchemeName to be looked up.
      * @return TMFF format number in use.
      */
@@ -783,7 +523,7 @@ public class TMFFPreferences {
      * methods TMFFFlat and TMFFUnformatted have maxDepth = Integer.MAX_VALUE
      * which results in no maxDepth line breaks from happening -- therefore,
      * they do not allow updates after initial construction of the method.
-     * 
+     *
      * @param maxDepth parameter.
      * @return boolean - returns false if maxDepth invalid (i.e. not a positive
      *         integer).

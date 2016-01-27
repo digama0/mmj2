@@ -241,7 +241,7 @@ public class GRForest {
 
     public static Collection<NotationRule> getRuleCollection(final GRNode root)
     {
-        final List<NotationRule> ruleCollection = new ArrayList<NotationRule>();
+        final List<NotationRule> ruleCollection = new ArrayList<>();
         if (root != null)
             root.loadRuleCollection(ruleCollection);
         return ruleCollection;

@@ -152,7 +152,7 @@ public class LogicalSystem implements SystemLoader {
         this.bookManager = bookManager;
 
         this.seqAssigner = seqAssigner;
-        theoremLoaderCommitListeners = new LinkedList<TheoremLoaderCommitListener>();
+        theoremLoaderCommitListeners = new LinkedList<>();
 
         if (symTblInitialSize < LangConstants.SYM_TBL_INITIAL_SIZE_MINIMUM)
             throw new IllegalArgumentException(LangException.format(
@@ -164,14 +164,14 @@ public class LogicalSystem implements SystemLoader {
                 LangConstants.ERRMSG_STMT_TBL_TOO_SMALL,
                 LangConstants.STMT_TBL_INITIAL_SIZE_MINIMUM));
 
-        symTbl = new HashMap<String, Sym>(symTblInitialSize);
-        stmtTbl = new HashMap<String, Stmt>(stmtTblInitialSize);
+        symTbl = new HashMap<>(symTblInitialSize);
+        stmtTbl = new HashMap<>(stmtTblInitialSize);
 
         this.syntaxVerifier = syntaxVerifier;
         this.proofVerifier = proofVerifier;
 
         // init stack of scope levels
-        scopeDefList = new ArrayList<ScopeDef>();
+        scopeDefList = new ArrayList<>();
         beginScope(); // initialize global scope level
 
         gmffManager.setSymTbl(symTbl);

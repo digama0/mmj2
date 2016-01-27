@@ -12,6 +12,7 @@
 package mmj.verify;
 
 import mmj.lang.*;
+import mmj.pa.SessionStore;
 
 /**
  * GrammaticalParser is an interface established so that the Grammar class can
@@ -22,7 +23,7 @@ public interface GrammaticalParser {
 
     /**
      * Parse (syntactical analysis) of a single Expression.
-     * 
+     *
      * @param parseTreeArrayIn Array of ParseTree to be filled in with completed
      *            ParseTree objects by the parser.
      * @param formulaTypIn Type Code that the Expression must parse *to*, AKA
@@ -40,5 +41,13 @@ public interface GrammaticalParser {
      */
     public int parseExpr(ParseTree[] parseTreeArrayIn, Cnst formulaTypIn,
         ParseNodeHolder[] parseNodeHolderExprIn, int highestSeqIn)
-        throws VerifyException;
+            throws VerifyException;
+
+    /**
+     * (Optionally) add some settings to the global storage to improve load
+     * times.
+     *
+     * @param store The setting storage
+     */
+    default void addSettings(final SessionStore store) {}
 }

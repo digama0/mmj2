@@ -29,7 +29,7 @@ public class Paths {
 
     /**
      * Standard constructor.
-     * 
+     *
      * @param mmj2PathArgument null or existing mmj2 directory.
      * @param metamathPathArgument null or existing Metamath directory.
      * @param svcPathArgument null or existing Svc directory.
@@ -38,7 +38,7 @@ public class Paths {
      */
     public Paths(final String mmj2PathArgument,
         final String metamathPathArgument, final String svcPathArgument)
-        throws IllegalArgumentException, IOException
+            throws IllegalArgumentException, IOException
     {
 
         String s;
@@ -52,12 +52,12 @@ public class Paths {
         System.out.print(UtilConstants.MMJ2_PATH_REPORT_LINE_1 + s);
 
         mmj2Path = loadPathArgument(mmj2PathArgument,
-            UtilConstants.MMJ2_PATH_ARGUMENT_LITERAL);
+            UtilConstants.MMJ2_PATH_ARGUMENT_LITERAL).getCanonicalFile();
 
         System.out.print(UtilConstants.PATH_REPORT_E_G_CAPTION_1
             + buildMMJ2FilePath(UtilConstants.PATH_REPORT_EXAMPLE_FILE_NAME)
-                .getCanonicalPath() + UtilConstants.PATH_REPORT_E_G_CAPTION_2
-            + "\n");
+                .getCanonicalPath()
+            + UtilConstants.PATH_REPORT_E_G_CAPTION_2 + "\n");
 
         // metamath path
         if (metamathPathArgument == null)
@@ -70,12 +70,10 @@ public class Paths {
         metamathPath = loadPathArgument(metamathPathArgument,
             UtilConstants.METAMATH_PATH_ARGUMENT_LITERAL);
 
-        System.out
-            .print(UtilConstants.PATH_REPORT_E_G_CAPTION_1
-                + buildMetamathFilePath(
-                    UtilConstants.PATH_REPORT_EXAMPLE_FILE_NAME)
-                    .getCanonicalPath()
-                + UtilConstants.PATH_REPORT_E_G_CAPTION_2 + "\n");
+        System.out.print(UtilConstants.PATH_REPORT_E_G_CAPTION_1
+            + buildMetamathFilePath(UtilConstants.PATH_REPORT_EXAMPLE_FILE_NAME)
+                .getCanonicalPath()
+            + UtilConstants.PATH_REPORT_E_G_CAPTION_2 + "\n");
 
         // svc path
         if (svcPathArgument == null)
@@ -89,8 +87,8 @@ public class Paths {
             UtilConstants.SVC_PATH_ARGUMENT_LITERAL);
         System.out.print(UtilConstants.PATH_REPORT_E_G_CAPTION_1
             + buildSvcFilePath(UtilConstants.PATH_REPORT_EXAMPLE_FILE_NAME)
-                .getCanonicalPath() + UtilConstants.PATH_REPORT_E_G_CAPTION_2
-            + "\n");
+                .getCanonicalPath()
+            + UtilConstants.PATH_REPORT_E_G_CAPTION_2 + "\n");
     }
 
     /**
@@ -101,7 +99,7 @@ public class Paths {
      * <p>
      * Otherwise, if {@code mmj2Path} is null then the output {@code File} is
      * relative to the Current Path.
-     * 
+     *
      * @param pathName name of file or directory.
      * @return File object relative to mmj2Path unless input pathName is
      *         absolute or mmj2Path is null, in which case the output File is
@@ -126,7 +124,7 @@ public class Paths {
      * <p>
      * Otherwise, if {@code metamathPath} is null then the output {@code File}
      * is relative to the Current Path.
-     * 
+     *
      * @param pathName name of file or directory.
      * @return File object relative to metamathPath unless input pathName is
      *         absolute or metamathPath is null, in which case the output File
@@ -151,7 +149,7 @@ public class Paths {
      * <p>
      * Otherwise, if {@code svcPath} is null then the output {@code File} is
      * relative to the Current Path.
-     * 
+     *
      * @param pathName name of file or directory.
      * @return File object relative to svcPath unless input pathName is absolute
      *         or svcPath is null, in which case the output File is relative to
@@ -170,7 +168,7 @@ public class Paths {
 
     /**
      * Gets the mmj2Path.
-     * 
+     *
      * @return The mmj2Path File object.
      */
     public File getMMJ2Path() {
@@ -179,7 +177,7 @@ public class Paths {
 
     /**
      * Gets the metamathPath.
-     * 
+     *
      * @return The mmj2Path File object.
      */
     public File getMetamathPath() {
@@ -188,7 +186,7 @@ public class Paths {
 
     /**
      * Gets the svcPath.
-     * 
+     *
      * @return The mmj2Path File object.
      */
     public File getSvcPath() {
@@ -200,7 +198,7 @@ public class Paths {
     {
 
         if (pathArgument == null)
-            return null;
+            return new File(".");
 
         final File path = new File(pathArgument);
 
@@ -215,8 +213,7 @@ public class Paths {
                         + UtilConstants.ERRMSG_COMMAND_LINE_ARGUMENTS_FORMAT);
         } catch (final SecurityException e) {
             throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_PATH_SECURITY_ERROR_1
-                    + pathArgumentLiteral
+                UtilConstants.ERRMSG_PATH_SECURITY_ERROR_1 + pathArgumentLiteral
                     + UtilConstants.ERRMSG_PATH_SECURITY_ERROR_2
                     + path.getAbsolutePath()
                     + UtilConstants.ERRMSG_COMMAND_LINE_ARGUMENTS_FORMAT);

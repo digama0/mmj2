@@ -145,7 +145,7 @@ public class GMFFFolder {
         final String fileType)
     {
 
-        final Map<String, File> treeMap = new TreeMap<String, File>();
+        final Map<String, File> treeMap = new TreeMap<>();
 
         for (final File element : fileArray) {
 
