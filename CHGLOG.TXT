@@ -8,6 +8,116 @@
 
 
 ================================================================================
+26-Jan-2016:
+
+    CHANGES:
+
+      This long-overdue update includes many many features worked on over a long
+      period, so I may be forgetting some features in the list.
+
+    * Line spacing can be adjusted with the ProofAsstLineSpacing RunParm.
+
+    * Batch Commands are now handled uniformly, with automatic documentation
+      populating the Help > Batch command documentation list.
+
+    * A new more powerful form of Derive is introduced, called Autocomplete
+      steps. This will be used in the future as a general "perform advanced
+      simplifications" tactic. Control of the feature is provided by the
+      'ProofAsstAutocompleteEnabled,Yes' step (enabled by default). It is
+      recommended that 'ProofAsstDeriveAutocomplete,Yes' be enabled to get the
+      full advantage of autocomplete steps, as this will automatically enable
+      autocomplete on newly created steps (causing a cascade effect of
+      derivations of multi-step proofs).
+
+    * A definitional soundness checker has been added for set.mm. It can be run
+      via
+
+        SetMMDefinitionsCheckWithExclusions,ax-*,df-bi,df-clab,df-cleq,df-clel
+          (deprecated)
+
+      or
+
+        RunMacro,definitionCheck,ax-*,df-bi,df-clab,df-cleq,df-clel
+
+      It will check the listed axioms against a simple test for conservativity.
+
+    * Local refs can now be empty; a step '1:2,3:# |- formula' will search for
+      previous steps deriving '|- formula' and merge the steps if one is found.
+
+    * The autocomplete step framework is extended with Auto-transformations,
+      which will detect commutative and associative operations and automatically
+      derive equivalence proofs from a proven step to an autocomplete goal step.
+      The behavior is enabled by the RunParm:
+
+        ProofAsstUseAutotransformations,yes,no,yes
+
+    * A macro system has been added, for writing extra functionality outside
+      mmj2 in Javascript. Macros are stored in the mmj2jar/macros folder, and
+      the current set of macros is designed for use with set.mm. Future
+      set.mm-specific functionality (such as the definition checker above)
+      should be added as macros, keeping the mmj2 source agnostic to any
+      particular .mm framework.
+
+      Macros are enabled by default, via 'MacrosEnabled,yes'. The macro folder
+      can be set with MacroFolder, and the language can even be changed via
+      MacroLanguage (this is not recommended, since all the pre-written macros
+      are in Javascript and JRE 8 does not ship with any other script engines
+      by default). Macros can be run either via RunParm using RunMacro, or by
+      typing a $m statement into the proof text area such as
+
+        $m echo Hello!
+
+      Many macros also operate by hooking into any of several callbacks for
+      various points during the read/unify/print loop. See macros/readme.js for
+      more info.
+
+    * A new parser, LRParser, has been implemented as an alternative to the
+      standard EarleyParser. It can be selected with:
+      
+        SetParser,mmj.verify.LRParser
+
+      It takes much longer to generate the initial parse table, but subsequent
+      parsing is much faster under most conditions. The parse table problem
+      is alleviated by saving and loading the parse table to a file (see the
+      next point).
+
+    * Saving and loading of settings has been implemented. The file store.json
+      is a JSON file that contains many of the settings used by mmj2, and it is
+      read just before RunProofAsstGUI and saved just before exit (if the
+      program is exited correctly). This allows font settings, window
+      positioning, etc. to persist between runs of the program, as well as
+      caching expensive-to-compute data such as the LR parse tables. It is also
+      designed to be at least somewhat human-readable; see store.json.
+
+    * The entire codebase has been converted to use Java 8. This does not affect
+      most users, but it will likely require that users upgrade to Java 8 if
+      they have not already.
+
+    * Steps can now refer to later steps, provided that no dependency cycles
+      ensue. They will be automatically reordered on unification.
+
+    * A new system for "reverse transformations" extends the auto-transformation
+      system (with no change to the RunParm). This enables the loading of
+      automatic reduction rules when the hypotheses are simpler than the
+      conclusion, with no new variables. This is sufficient to support most
+      kinds of closure proofs and equality proofs.
+
+    * The transformations.js macro adds set.mm-specific transformation rules
+      to the transformation system, which includes:
+      
+      - A long list of invalid reduction rules (so that the reverse
+        transformation system does not apply undesirable reductions);
+
+      - The arithmetic prover detailed in http://arxiv.org/abs/1503.02349;
+
+      - Automatic structure detection for theorems that use structures from
+        abstract algebra. For example, if the theorem hypothesis includes
+        "|- .+ = ( +g ` G )", then any group theorem that has a similar
+        hypothesis will match ".+" and "G" to the definitions at the top of the
+        worksheet, and any other structure slots will be discharged via 'eqid'.
+      
+
+================================================================================
 4-Feb-2014:
 
     CHANGES:

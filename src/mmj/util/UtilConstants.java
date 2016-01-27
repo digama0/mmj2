@@ -2155,6 +2155,15 @@ public class UtilConstants {
     // Commands for mmj.util.MacroBoss
     // ----------------------------------------------------------
 
+    /** Default macro enabled state = true */
+    public static final boolean RUNPARM_MACRO_ENABLED_DEFAULT = true;
+
+    public static final BatchCommand RUNPARM_MACRO_ENABLED = new BatchCommand(
+        "MacrosEnabled",
+        "*\n" + " MacrosEnabled\n" + " <p>\n" + " <code>\n"
+            + " \"MacrosEnabled\": yes or no.\n" + " <p>\n"
+            + " Set macros on or off, default = yes.\n" + " </code>\n" + "\n");
+
     public static final BatchCommand RUNPARM_MACRO_FOLDER = new BatchCommand(
         "MacroFolder",
         "*\n" + " MacroFolder\n" + " <p>\n" + " <code>\n"

@@ -308,7 +308,7 @@ public class ProofAsstBoss extends Boss {
                 .getTheoremLoader();
 
             final MacroManager macroManager = batchFramework.macroBoss
-                .getMacroManager();
+                .getMacroManager(false);
 
             proofAsst = new ProofAsst(proofAsstPreferences, logicalSystem,
                 grammar, verifyProofs, theoremLoader, macroManager);
@@ -847,7 +847,7 @@ public class ProofAsstBoss extends Boss {
     @Deprecated
     public void doSetMMDefinitionsCheck() {
         final MacroManager macroManager = batchFramework.macroBoss
-            .getMacroManager();
+            .getMacroManager(true);
         final String[] args = new String[runParm.values.length + 1];
         args[0] = "definitionCheck";
         System.arraycopy(runParm.values, 0, args, 1, runParm.values.length);

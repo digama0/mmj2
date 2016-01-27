@@ -34,6 +34,8 @@ public class MacroBoss extends Boss {
 
     private MacroManager macroManager;
 
+    private boolean macroEnabled = UtilConstants.RUNPARM_MACRO_ENABLED_DEFAULT;
+
     /**
      * Constructor with BatchFramework for access to environment.
      *
@@ -44,8 +46,11 @@ public class MacroBoss extends Boss {
 
         putCommand(RUNPARM_CLEAR, () -> {
             macroManager = null;
+            macroEnabled = UtilConstants.RUNPARM_MACRO_ENABLED_DEFAULT;
             return false; // not "consumed"
         });
+
+        putCommand(RUNPARM_MACRO_ENABLED, this::setMacroEnabled);
 
         putCommand(RUNPARM_MACRO_FOLDER, this::setMacroFolder);
 
@@ -59,8 +64,16 @@ public class MacroBoss extends Boss {
     /**
      * Validate Macro Folder RunParm.
      */
+    protected void setMacroEnabled() {
+        if (!(macroEnabled = getYesNo(1)))
+            macroManager = null;
+    }
+
+    /**
+     * Validate Macro Folder RunParm.
+     */
     protected void setMacroFolder() {
-        getMacroManager().macroFolder
+        getMacroManager(true).macroFolder
             .set(getExistingFolder(batchFramework.paths.getMMJ2Path(), 1));
     }
 
@@ -69,15 +82,15 @@ public class MacroBoss extends Boss {
      */
     protected void setMacroLanguage() {
         require(2);
-        if (getMacroManager().macroLanguage.set(get(1)))
-            getMacroManager().macroExtension.set(get(2));
+        if (getMacroManager(true).macroLanguage.set(get(1)))
+            getMacroManager(true).macroExtension.set(get(2));
     }
 
     /**
      * Validate RunMacro RunParm.
      */
     protected void runMacroInit() {
-        getMacroManager().getEngine(get(1));
+        getMacroManager(true).getEngine(get(1));
     }
 
     /**
@@ -85,18 +98,19 @@ public class MacroBoss extends Boss {
      */
     protected void runMacro() {
         require(1);
-        getMacroManager().runMacro(ExecutionMode.RUNPARM, runParm.values);
+        getMacroManager(true).runMacro(ExecutionMode.RUNPARM, runParm.values);
     }
 
     /**
      * Fetches a reference to the MacroManager, first initializing it if
      * necessary.
-     *
+     * 
+     * @param force True to ignore the macro enabled setting
      * @return MacroManager object ready to go.
      */
-    public MacroManager getMacroManager() {
+    public MacroManager getMacroManager(final boolean force) {
 
-        if (macroManager == null)
+        if ((macroEnabled |= force) && macroManager == null)
             macroManager = new MacroManager(batchFramework);
 
         return macroManager;
