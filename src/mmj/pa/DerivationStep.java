@@ -438,13 +438,10 @@ public class DerivationStep extends ProofStepStmt {
         // !isQedStep means workVarsOk
         final String nextT = loadStmtTextWithFormula(!isQedStep);
 
+        boolean emptyQed = false;
         if (getFormula() == null)
-            if (isQedStep)
-                w.triggerLoadStructureException(
-                    (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
-                        - lineStartCharNbr,
-                    PaConstants.ERRMSG_FORMULA_REQ, w.getErrorLabelIfPossible(),
-                    getStep());
+            if (emptyQed = isQedStep)
+                setFormula(w.theorem.getFormula());
             else {
                 deriveStepFormula = true;
                 w.hasWorkVarsOrDerives = true;
@@ -468,7 +465,11 @@ public class DerivationStep extends ProofStepStmt {
         parseHypField(hypField);
         hyp = new ProofStepStmt[hypStep.length];
 
-        loadStepHypRefIntoStmtText(origStepHypRefLength, buildStepHypRefSB());
+        if (emptyQed)
+            tmffReformat();
+        else
+            loadStepHypRefIntoStmtText(origStepHypRefLength,
+                buildStepHypRefSB());
 
         return nextT;
     }

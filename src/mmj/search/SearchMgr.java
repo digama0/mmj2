@@ -95,7 +95,7 @@ public class SearchMgr {
         this.proofAsst = proofAsst;
         this.logicalSystem = logicalSystem;
         this.grammar = grammar;
-        bookManager = logicalSystem.getBookManager();
+        bookManager = logicalSystem.bookManager;
         provableLogicStmtTyp = grammar.getProvableLogicStmtTypArray()[0];
         searchArgs.sortedAssrtSearchList = proofAsst.getSortedAssrtSearchList();
         searchEngine = new SearchEngine(this, proofAsst, proofAsstPreferences,

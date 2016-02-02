@@ -573,35 +573,31 @@ public class TheoremStmtGroup {
     {
 
         SrcStmt currSrcStmt;
-        char c;
         try {
             while ((currSrcStmt = statementizer.getStmt()) != null) {
 
-                c = currSrcStmt.keyword.charAt(1);
+                switch (currSrcStmt.keyword) {
+                    case MMIOConstants.MM_BEGIN_COMMENT_KEYWORD:
+                        continue;
 
-                if (c == MMIOConstants.MM_BEGIN_COMMENT_KEYWORD_CHAR)
-                    continue;
+                    case MMIOConstants.MM_AXIOMATIC_ASSRT_KEYWORD:
+                    case MMIOConstants.MM_VAR_HYP_KEYWORD:
+                    case MMIOConstants.MM_VAR_KEYWORD:
+                    case MMIOConstants.MM_CNST_KEYWORD:
+                    case MMIOConstants.MM_BEGIN_FILE_KEYWORD:
+                        throw new TheoremLoaderException(LangException.format(
+                            TlConstants.ERRMSG_MMT_THEOREM_FILE_BAD_KEYWORD,
+                            mmtTheoremFile.getSourceFileName(),
+                            currSrcStmt.keyword));
 
-                if (c == MMIOConstants.MM_AXIOMATIC_ASSRT_KEYWORD_CHAR
-                    || c == MMIOConstants.MM_VAR_HYP_KEYWORD_CHAR
-                    || c == MMIOConstants.MM_VAR_KEYWORD_CHAR
-                    || c == MMIOConstants.MM_CNST_KEYWORD_CHAR
-                    || c == MMIOConstants.MM_BEGIN_FILE_KEYWORD_CHAR)
-                    throw new TheoremLoaderException(
-                        TlConstants.ERRMSG_MMT_THEOREM_FILE_BAD_KEYWORD_1
-                            + mmtTheoremFile.getSourceFileName()
-                            + TlConstants.ERRMSG_MMT_THEOREM_FILE_BAD_KEYWORD_2
-                            + c);
+                    case MMIOConstants.MM_BEGIN_SCOPE_KEYWORD:
+                        if (currSrcStmt.seq > 1)
+                            throw new TheoremLoaderException(
+                                TlConstants.ERRMSG_BEGIN_SCOPE_MUST_BE_FIRST_1
+                                    + mmtTheoremFile.getSourceFileName());
 
-                if (c == MMIOConstants.MM_BEGIN_SCOPE_KEYWORD_CHAR) {
-
-                    if (currSrcStmt.seq > 1)
-                        throw new TheoremLoaderException(
-                            TlConstants.ERRMSG_BEGIN_SCOPE_MUST_BE_FIRST_1
-                                + mmtTheoremFile.getSourceFileName());
-
-                    beginScopeSrcStmt = currSrcStmt;
-                    continue;
+                        beginScopeSrcStmt = currSrcStmt;
+                        continue;
                 }
 
                 if (endScopeSrcStmt != null)
@@ -609,83 +605,76 @@ public class TheoremStmtGroup {
                         TlConstants.ERRMSG_END_SCOPE_MUST_BE_LAST_1
                             + mmtTheoremFile.getSourceFileName());
 
-                if (c == MMIOConstants.MM_END_SCOPE_KEYWORD_CHAR) {
+                switch (currSrcStmt.keyword) {
+                    case MMIOConstants.MM_END_SCOPE_KEYWORD:
 
-                    if (beginScopeSrcStmt == null)
-                        throw new TheoremLoaderException(
-                            TlConstants.ERRMSG_BEGIN_SCOPE_MISSING_1_1
-                                + mmtTheoremFile.getSourceFileName());
+                        if (beginScopeSrcStmt == null)
+                            throw new TheoremLoaderException(
+                                TlConstants.ERRMSG_BEGIN_SCOPE_MISSING_1_1
+                                    + mmtTheoremFile.getSourceFileName());
 
-                    endScopeSrcStmt = currSrcStmt;
-                    continue;
+                        endScopeSrcStmt = currSrcStmt;
+                        continue;
+                    case MMIOConstants.MM_PROVABLE_ASSRT_KEYWORD:
+
+                        if (theoremSrcStmt != null)
+                            throw new TheoremLoaderException(
+                                TlConstants.ERRMSG_EXTRA_THEOREM_STMT_1
+                                    + mmtTheoremFile.getSourceFileName());
+
+                        if (mmtTheoremFile.getLabel()
+                            .compareTo(currSrcStmt.label) != 0)
+                            throw new TheoremLoaderException(
+                                TlConstants.ERRMSG_THEOREM_LABEL_MISMATCH_1
+                                    + mmtTheoremFile.getLabel()
+                                    + TlConstants.ERRMSG_THEOREM_LABEL_MISMATCH_2
+                                    + mmtTheoremFile.getSourceFileName());
+
+                        if (isLabelInLogHypList(currSrcStmt.label))
+                            throw new TheoremLoaderException(
+                                TlConstants.ERRMSG_THEOREM_LABEL_HYP_DUP_1
+                                    + currSrcStmt.label
+                                    + TlConstants.ERRMSG_THEOREM_LABEL_HYP_DUP_2
+                                    + mmtTheoremFile.getSourceFileName());
+
+                        if (currSrcStmt.proofBlockList != null)
+                            throw new TheoremLoaderException(
+                                TlConstants.ERRMSG_THEOREM_PROOF_COMPRESSED_1
+                                    + mmtTheoremFile.getSourceFileName());
+
+                        theoremSrcStmt = currSrcStmt;
+                        continue;
+                    case MMIOConstants.MM_LOG_HYP_KEYWORD:
+
+                        if (theoremSrcStmt != null)
+                            throw new TheoremLoaderException(
+                                TlConstants.ERRMSG_THEOREM_LOG_HYP_SEQ_ERR_1
+                                    + mmtTheoremFile.getSourceFileName());
+
+                        if (isLabelInLogHypList(currSrcStmt.label))
+                            throw new TheoremLoaderException(
+                                TlConstants.ERRMSG_LOG_HYP_LABEL_HYP_DUP_1
+                                    + currSrcStmt.label
+                                    + TlConstants.ERRMSG_LOG_HYP_LABEL_HYP_DUP_2
+                                    + mmtTheoremFile.getSourceFileName());
+
+                        logHypSrcStmtList.add(currSrcStmt);
+                        continue;
+                    case MMIOConstants.MM_DJ_VAR_KEYWORD:
+
+                        if (theoremSrcStmt != null)
+                            throw new TheoremLoaderException(
+                                TlConstants.ERRMSG_THEOREM_DV_SEQ_ERR_1
+                                    + mmtTheoremFile.getSourceFileName());
+
+                        dvSrcStmtList.add(currSrcStmt);
+                        continue;
+                    default:
+                        throw new TheoremLoaderException(LangException.format(
+                            TlConstants.ERRMSG_MMT_THEOREM_FILE_BOGUS_KEYWORD,
+                            mmtTheoremFile.getSourceFileName(),
+                            currSrcStmt.keyword));
                 }
-
-                if (c == MMIOConstants.MM_PROVABLE_ASSRT_KEYWORD_CHAR) {
-
-                    if (theoremSrcStmt != null)
-                        throw new TheoremLoaderException(
-                            TlConstants.ERRMSG_EXTRA_THEOREM_STMT_1
-                                + mmtTheoremFile.getSourceFileName());
-
-                    if (mmtTheoremFile.getLabel()
-                        .compareTo(currSrcStmt.label) != 0)
-                        throw new TheoremLoaderException(
-                            TlConstants.ERRMSG_THEOREM_LABEL_MISMATCH_1
-                                + mmtTheoremFile.getLabel()
-                                + TlConstants.ERRMSG_THEOREM_LABEL_MISMATCH_2
-                                + mmtTheoremFile.getSourceFileName());
-
-                    if (isLabelInLogHypList(currSrcStmt.label))
-                        throw new TheoremLoaderException(
-                            TlConstants.ERRMSG_THEOREM_LABEL_HYP_DUP_1
-                                + currSrcStmt.label
-                                + TlConstants.ERRMSG_THEOREM_LABEL_HYP_DUP_2
-                                + mmtTheoremFile.getSourceFileName());
-
-                    if (currSrcStmt.proofBlockList != null)
-                        throw new TheoremLoaderException(
-                            TlConstants.ERRMSG_THEOREM_PROOF_COMPRESSED_1
-                                + mmtTheoremFile.getSourceFileName());
-
-                    theoremSrcStmt = currSrcStmt;
-                    continue;
-                }
-
-                if (c == MMIOConstants.MM_LOG_HYP_KEYWORD_CHAR) {
-
-                    if (theoremSrcStmt != null)
-                        throw new TheoremLoaderException(
-                            TlConstants.ERRMSG_THEOREM_LOG_HYP_SEQ_ERR_1
-                                + mmtTheoremFile.getSourceFileName());
-
-                    if (isLabelInLogHypList(currSrcStmt.label))
-                        throw new TheoremLoaderException(
-                            TlConstants.ERRMSG_LOG_HYP_LABEL_HYP_DUP_1
-                                + currSrcStmt.label
-                                + TlConstants.ERRMSG_LOG_HYP_LABEL_HYP_DUP_2
-                                + mmtTheoremFile.getSourceFileName());
-
-                    logHypSrcStmtList.add(currSrcStmt);
-                    continue;
-                }
-
-                if (c == MMIOConstants.MM_DJ_VAR_KEYWORD_CHAR) {
-
-                    if (theoremSrcStmt != null)
-                        throw new TheoremLoaderException(
-                            TlConstants.ERRMSG_THEOREM_DV_SEQ_ERR_1
-                                + mmtTheoremFile.getSourceFileName());
-
-                    dvSrcStmtList.add(currSrcStmt);
-                    continue;
-                }
-
-                throw new TheoremLoaderException(
-                    TlConstants.ERRMSG_MMT_THEOREM_FILE_BOGUS_KEYWORD_1
-                        + mmtTheoremFile.getSourceFileName()
-                        + TlConstants.ERRMSG_MMT_THEOREM_FILE_BOGUS_KEYWORD_2
-                        + c);
-
             }
 
             if (theoremSrcStmt == null)
@@ -987,7 +976,7 @@ public class TheoremStmtGroup {
     {
 
         SrcStmt currSrcStmt;
-        final SeqAssigner seqAssigner = logicalSystem.getSeqAssigner();
+        final SeqAssigner seqAssigner = logicalSystem.seqAssigner;
 
         logicalSystem.beginScope();
 

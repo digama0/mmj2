@@ -2355,11 +2355,6 @@ public class PaConstants {
         + " Expecting valid StepHypRef token in line number %d."
         + " Found token = %s";
 
-    public static final String ERRMSG_HYP_HAS_HYP = "E-PA-0316 Theorem %s"
-        + " Step %s: Hypothesis Proof Step line input with hyp references in"
-        + " the Step/Hyp/Ref field. A Hypothesis should not refer to other"
-        + " hypotheses.";
-
     public static final String ERRMSG_QED_NOT_END = "E-PA-0317 Theorem %s"
         + " Step %s: Oops. If it is not terribly inconvenient, would you please"
         + " put the 'qed' proof step statement after all other proof step"
@@ -2375,12 +2370,6 @@ public class PaConstants {
 
     public static final String ERRMSG_QED_NOT_END2 = "E-PA-0319 Theorem %s"
         + " Step %s: The 'qed' proof step must be the final proof step.";
-
-    public static final String ERRMSG_THRM_NBR_HYPS_ERROR = "E-PA-0320 Theorem %s:"
-        + " Oops. The number of logical hypothesis proof steps input %d,"
-        + " does not match the number defined for the theorem, which is %d."
-        + " FYI, the File/New menu item provides a skeleton Proof Text area"
-        + " that will show the expected hypotheses.";
 
     public static final String ERRMSG_STEP_NBR_MISSING = "E-PA-0321 Theorem %s"
         + " Step ?: Step number missing on Proof Step.";
@@ -2601,21 +2590,12 @@ public class PaConstants {
         + " Invalid symbol in Distinct Variable statement. Input token = %s"
         + " is a duplicate of another variable in the statement.";
 
-    public static final String ERRMSG_FORMULA_REQ = "E-PA-0370 Theorem %s"
-        + " Step %s: Formula is required on hypothesis steps and on the"
-        + " derivation 'qed' step.";
-
     public static final String ERRMSG_REF_NBR_HYPS_LT_INPUT = "E-PA-0371"
         + " Theorem %s Step %s: Number of hyp steps specified = %d is greater"
         + " than the number expected = %d for Ref = %s -- according to the"
         + " database, anyway. Input '?' if you are not yet ready to specify the"
         + " hyp step(s). Or, leave the Ref field blank to allow Unify to find"
         + " the applicable statement label.";
-
-//    public static final String ERRMSG_FORMULA_OR_REF_REQ_1 = "E-PA-0372 Theorem ";
-//    public static final String ERRMSG_FORMULA_OR_REF_REQ_2 = " Step ";
-//    public static final String ERRMSG_FORMULA_OR_REF_REQ_3 = ": Formula or Ref required on derivation"
-//        + " steps (Formula is always required on the 'qed' step).";
 
     public static final String ERRMSG_CYCLIC_DEPENDENCY = "E-PA-0372 Theorem %s:"
         + " Cyclic dependency detected in derivation steps. Steps involved:\n%s\n";

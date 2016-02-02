@@ -204,7 +204,7 @@ public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
 
         TheoremStmtGroup readyTheoremStmtGroup;
 
-        logicalSystem.getSeqAssigner().turnOnCheckpointing();
+        logicalSystem.seqAssigner.turnOnCheckpointing();
 
         try {
             while (true) {

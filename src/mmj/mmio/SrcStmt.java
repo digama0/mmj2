@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Simple data structure holding "work" components of a MetaMath source
  * statement.
- * 
+ *
  * @see <a href="../../MetamathERNotes.html"> Nomenclature and
  *      Entity-Relationship Notes</a>
  */
@@ -66,7 +66,7 @@ public class SrcStmt {
      * symlist is the 2nd through nth symbols in the Metamath source statement.
      * <p>
      * DjVar, Var, Cnst, VarHyp, LogHyp, Theorem and Axiom have symList:
-     * 
+     *
      * <pre>
      *     DjVar:                   at least 2 sym Strings
      *     Var & Cnst:              at least 1
@@ -114,29 +114,13 @@ public class SrcStmt {
     public String includeFileName = null;
 
     /**
-     * Default constructor.
-     */
-    public SrcStmt() {
-        return;
-    }
-
-    /**
-     * Construct using sequence number.
-     * 
-     * @param seqNbr the sequence number of the source statement
-     */
-    public SrcStmt(final int seqNbr) {
-        seq = seqNbr;
-    }
-
-    /**
      * Construct using sequence number and MetaMath keyword.
-     * 
+     *
      * @param seqNbr the sequence number of the source statement
      * @param keyword the MetaMath source keyword token
      */
     public SrcStmt(final int seqNbr, final String keyword) {
-        this(seqNbr);
+        seq = seqNbr;
         this.keyword = keyword;
     }
 }

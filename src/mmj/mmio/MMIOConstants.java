@@ -57,6 +57,8 @@
 
 package mmj.mmio;
 
+import java.util.*;
+
 import mmj.gmff.GMFFConstants;
 import mmj.pa.PaConstants;
 import mmj.transforms.TrConstants;
@@ -82,8 +84,8 @@ import mmj.verify.ProofConstants;
  * the following non-printable (white space) characters: space, tab, carriage
  * return, line feed, and form feed.:
  * <ul>
- * <li> {@code ` ~ ! @ # $ % ^ & * ( ) - _ = + }
- * <li> <code>[ ] { } ; : ' " , . < > / ? \ | </code>
+ * <li>{@code ` ~ ! @ # $ % ^ & * ( ) - _ = + }
+ * <li><code>[ ] { } ; : ' " , . < > / ? \ | </code>
  * <p>
  * There are two primary types of constants: parameters that are "hardcoded"
  * which affect/control processing, and error/info messages.
@@ -133,116 +135,104 @@ public class MMIOConstants {
 
     public static final int READER_BUFFER_SIZE = 32768;
 
+    /**
+     * Printable character. Contains all ASCII printable characters (character
+     * codes 32-126), except for {@link #WHITE_SPACE} characters.
+     */
     public static final byte PRINTABLE = 1;
+
+    /**
+     * Whitespace character. Contains the space, tab, form feed, carriage
+     * return, and new line characters.
+     */
     public static final byte WHITE_SPACE = 2;
+    /**
+     * Label character. Contains alphabetic characters, and the characters
+     * {@code '-', '_', '.'}.
+     */
     public static final byte LABEL = 4;
+
+    /**
+     * Math symbol character, contains all {@link #PRINTABLE} characters except
+     * {@code '$'}.
+     */
     public static final byte MATH_SYMBOL = 8;
+
+    /** File name character, same as {@link #MATH_SYMBOL}. */
     public static final byte FILE_NAME = 16;
+
+    /**
+     * Proof step character. Contains {@link #LABEL} characters and {@code '?'}.
+     */
     public static final byte PROOF_STEP = 32;
 
     public static final byte[] VALID_CHAR_ARRAY = new byte[256];
 
-    public static final byte[] LABEL_CHARS = {'0', '1', '2', '3', '4', '5',
-            '6', '7', '8', '9',
-
-            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
-            'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-
-            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-            'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-
-            '-', '_', '.'};
-
-    public static final byte[] OTHER_MATH_SYMBOL_CHARS = {'`', '~', '!', '@',
-            '#', '%', '^', '&', '*', '(', ')', '=', '+',
-
-            '[', ']', '{', '}', ';', ':', '\'', '\"', ',', '<', '>', '/', '\\',
-            '|'
-
-    };
-
-    public static final byte[] OTHER_PROOF_STEP_CHARS = {'?'};
-
-    public static final byte[] OTHER_PRINTABLE_CHARS = {'$'};
-
-    public static final byte[] WHITE_SPACE_CHARS =
-
-    {'\r', // carriage return
-            '\n', // new line
-            '\f', // form feed
-            '\t', // tab (horizontal tab)
-            ' ' // space
-    };
-
     static {
-        for (int i = 0; i < LABEL_CHARS.length; i++)
-            VALID_CHAR_ARRAY[LABEL_CHARS[i]] |= PRINTABLE | MATH_SYMBOL
-                | FILE_NAME | PROOF_STEP | LABEL;
-        for (int i = 0; i < OTHER_PROOF_STEP_CHARS.length; i++)
-            VALID_CHAR_ARRAY[OTHER_PROOF_STEP_CHARS[i]] |= PRINTABLE
-                | MATH_SYMBOL | FILE_NAME | PROOF_STEP;
-        for (int i = 0; i < OTHER_MATH_SYMBOL_CHARS.length; i++)
-            VALID_CHAR_ARRAY[OTHER_MATH_SYMBOL_CHARS[i]] |= PRINTABLE
-                | MATH_SYMBOL | FILE_NAME;
-        for (int i = 0; i < OTHER_PRINTABLE_CHARS.length; i++)
-            VALID_CHAR_ARRAY[OTHER_PRINTABLE_CHARS[i]] |= PRINTABLE;
-        for (int i = 0; i < WHITE_SPACE_CHARS.length; i++)
-            VALID_CHAR_ARRAY[WHITE_SPACE_CHARS[i]] |= WHITE_SPACE;
+        for (final byte labelChar : new byte[]{'0', '1', '2', '3', '4', '5',
+                '6', '7', '8', '9',
+
+                'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+                'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+
+                'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+                'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+
+                '-', '_', '.'})
+            VALID_CHAR_ARRAY[labelChar] |= PRINTABLE | MATH_SYMBOL | FILE_NAME
+                | PROOF_STEP | LABEL;
+        VALID_CHAR_ARRAY['?'] |= PRINTABLE | MATH_SYMBOL | FILE_NAME
+            | PROOF_STEP;
+        for (final byte otherMathSymbolChar : new byte[]{'`', '~', '!', '@',
+                '#', '%', '^', '&', '*', '(', ')', '=', '+',
+
+                '[', ']', '{', '}', ';', ':', '\'', '\"', ',', '<', '>', '/',
+                '\\', '|'})
+            VALID_CHAR_ARRAY[otherMathSymbolChar] |= PRINTABLE | MATH_SYMBOL
+                | FILE_NAME;
+        VALID_CHAR_ARRAY['$'] |= PRINTABLE;
+        for (final byte whiteSpace : new byte[]{'\r', '\n', '\f', '\t', ' '})
+            VALID_CHAR_ARRAY[whiteSpace] |= WHITE_SPACE;
     }
 
     /* avoid conflicts with OS File name restrictions */
-    public static final String[] PROHIBITED_LABELS = {
-            "NUL",
-            "CON",
-            "PRN",
-            "AUX", // "CLOCK$",
-            "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8",
-            "COM9", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7",
-            "LPT8", "LPT9", "nul", "con",
-            "prn",
-            "aux", // "clock$",
-            "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8",
-            "com9", "lpt1", "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7",
-            "lpt8", "lpt9"};
+    public static final Set<String> PROHIBITED_LABELS = new HashSet<>(
+        Arrays.asList("NUL", "CON", "PRN", "AUX", "COM1", "COM2", "COM3",
+            "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2",
+            "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9", "nul",
+            "con", "prn", "aux", "com1", "com2", "com3", "com4", "com5", "com6",
+            "com7", "com8", "com9", "lpt1", "lpt2", "lpt3", "lpt4", "lpt5",
+            "lpt6", "lpt7", "lpt8", "lpt9"));
 
-    public static final int MM_KEYWORD_LEN = 2;
     public static final char MM_KEYWORD_1ST_CHAR = '$';
 
-    public static final char MM_CNST_KEYWORD_CHAR = 'c';
-    public static final char MM_VAR_KEYWORD_CHAR = 'v';
-    public static final char MM_DJ_VAR_KEYWORD_CHAR = 'd';
-    public static final char MM_VAR_HYP_KEYWORD_CHAR = 'f';
-    public static final char MM_LOG_HYP_KEYWORD_CHAR = 'e';
-    public static final char MM_AXIOMATIC_ASSRT_KEYWORD_CHAR = 'a';
-    public static final char MM_PROVABLE_ASSRT_KEYWORD_CHAR = 'p';
+    public static final String MM_CNST_KEYWORD = "$c";
+    public static final String MM_VAR_KEYWORD = "$v";
+    public static final String MM_DJ_VAR_KEYWORD = "$d";
+    public static final String MM_VAR_HYP_KEYWORD = "$f";
+    public static final String MM_LOG_HYP_KEYWORD = "$e";
+    public static final String MM_AXIOMATIC_ASSRT_KEYWORD = "$a";
+    public static final String MM_PROVABLE_ASSRT_KEYWORD = "$p";
 
-    public static final char MM_BEGIN_SCOPE_KEYWORD_CHAR = '{';
-    public static final char MM_END_SCOPE_KEYWORD_CHAR = '}';
+    public static final String MM_BEGIN_SCOPE_KEYWORD = "${";
+    public static final String MM_END_SCOPE_KEYWORD = "$}";
 
-    public static final char MM_BEGIN_COMMENT_KEYWORD_CHAR = '(';
-    public static final char MM_END_COMMENT_KEYWORD_CHAR = ')';
+    public static final String MM_BEGIN_COMMENT_KEYWORD = "$(";
+    public static final String MM_END_COMMENT_KEYWORD = "$)";
 
     public static final char MM_BEGIN_COMPRESSED_PROOF_LIST_CHAR = '(';
     public static final char MM_END_COMPRESSED_PROOF_LIST_CHAR = ')';
 
     public static final char MM_END_STMT_KEYWORD_CHAR = '.';
 
-    public static final char MM_BEGIN_FILE_KEYWORD_CHAR = '[';
-    public static final char MM_END_FILE_KEYWORD_CHAR = ']';
+    public static final String MM_BEGIN_FILE_KEYWORD = "$[";
+    public static final String MM_END_FILE_KEYWORD = "$]";
 
     public static final String MM_END_STMT_KEYWORD = "$.";
     public static final String MM_START_PROOF_KEYWORD = "$=";
 
-    public static final String MM_END_COMMENT_KEYWORD = "$)";
-    public static final String MM_START_COMMENT_KEYWORD = "$(";
-    public static final String MM_END_FILE_KEYWORD = "$]";
-
-    // "~" precedes labels used withing Metamath .mm comment statements
+    // "~" precedes labels used within Metamath .mm comment statements
     public static final String MM_LABEL_IN_COMMENT_ESCAPE_STRING = "~";
-
-    public static final String MM_JAVA_REGEX_WHITESPACE = "\\s";
-
-    public static final String MM_JAVA_REGEX_NEWLINE = "\\n";
 
     // from Systemizer.java (AND mmj.gmff.TypesetDefCommentParser.java)
 

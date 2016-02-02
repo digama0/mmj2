@@ -230,9 +230,9 @@ public class TlConstants {
     public static final String ERRMSG_MMT_THEOREM_FILE_IO_ERROR_1 = "E-TL-0301 I/O Exception on read of .mmt Theorem File = ";
     public static final String ERRMSG_MMT_THEOREM_FILE_IO_ERROR_2 = ". Detailed I/O Exception Message follows: ";
 
-    public static final String ERRMSG_MMT_THEOREM_FILE_BAD_KEYWORD_1 = "E-TL-0302 Invalid Metamath Keyword read in file = ";
-    public static final String ERRMSG_MMT_THEOREM_FILE_BAD_KEYWORD_2 = ". The Theorem Loader accepts only ${, $}, $e, $p and $d"
-        + " Metamath Keywords. The Keyword value read was $";
+    public static final String ERRMSG_MMT_THEOREM_FILE_BAD_KEYWORD = "E-TL-0302 "
+        + "Invalid Metamath Keyword read in file %s. The Theorem Loader accepts "
+        + "only ${, $}, $e, $p and $d Metamath Keywords. The Keyword value read was %s";
 
     public static final String ERRMSG_BEGIN_SCOPE_MUST_BE_FIRST_1 = "E-TL-0303 A Begin Scope ('${') Metamath statement,"
         + " if present, must be the first Metamath statement"
@@ -288,9 +288,9 @@ public class TlConstants {
         + " ('$d') and/or Logical Hypothesis ('$e') Metamath"
         + " statements. Input file name = ";
 
-    public static final String ERRMSG_MMT_THEOREM_FILE_BOGUS_KEYWORD_1 = "E-TL-0315 Unrecognized Metamath Keyword read in file = ";
-    public static final String ERRMSG_MMT_THEOREM_FILE_BOGUS_KEYWORD_2 = ". The Theorem Loader accepts only ${, $}, $e, $p and $d"
-        + " Metamath Keywords. The Keyword value read was $";
+    public static final String ERRMSG_MMT_THEOREM_FILE_BOGUS_KEYWORD = "E-TL-0315 "
+        + "Unrecognized Metamath Keyword read in file %s. The Theorem Loader "
+        + "accepts only ${, $}, $e, $p and $d Metamath Keywords. The Keyword value read was %s";
 
     public static final String ERRMSG_SRC_STMT_SYM_NOTFND_1 = "E-TL-0316 Symbol in Metamath statement not found in the"
         + " Logical System Symbol Table. Symbol = ";

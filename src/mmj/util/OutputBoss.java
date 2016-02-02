@@ -478,7 +478,7 @@ public class OutputBoss extends Boss {
         final LogicalSystem logicalSystem)
     {
 
-        final BookManager bookManager = logicalSystem.getBookManager();
+        final BookManager bookManager = logicalSystem.bookManager;
         if (!bookManager.isEnabled())
             throw error(ERRMSG_BOOK_MANAGER_NOT_ENABLED,
                 RUNPARM_BOOK_MANAGER_ENABLED, RUNPARM_LOAD_FILE);

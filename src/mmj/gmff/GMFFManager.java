@@ -677,8 +677,7 @@ public class GMFFManager {
         final GMFFExporterTypesetDefs myTypesetDefs = new GMFFExporterTypesetDefs(
             typesetDefKeyword, GMFFConstants.METAMATH_DOLLAR_T_MAP_SIZE);
 
-        final List<GMFFExporterTypesetDefs> list = new ArrayList<>(
-            1);
+        final List<GMFFExporterTypesetDefs> list = new ArrayList<>(1);
 
         list.add(myTypesetDefs);
 
@@ -908,8 +907,7 @@ public class GMFFManager {
 
     private List<GMFFExporter> loadExporterList() throws GMFFException {
 
-        final List<GMFFExporter> x = new ArrayList<>(
-            exportParmsList.size());
+        final List<GMFFExporter> x = new ArrayList<>(exportParmsList.size());
 
         GMFFUserTextEscapes t;
         for (final GMFFExportParms p : exportParmsList) {
@@ -1113,7 +1111,7 @@ public class GMFFManager {
     {
 
         final int startC = mmComment
-            .indexOf(MMIOConstants.MM_START_COMMENT_KEYWORD);
+            .indexOf(MMIOConstants.MM_BEGIN_COMMENT_KEYWORD);
 
         final int endC = mmComment
             .lastIndexOf(MMIOConstants.MM_END_COMMENT_KEYWORD);
@@ -1123,6 +1121,6 @@ public class GMFFManager {
                 GMFFConstants.ERRMSG_INVALID_METAMATH_TYPESET_COMMENT_ERROR_1);
 
         return mmComment.substring(
-            startC + MMIOConstants.MM_START_COMMENT_KEYWORD.length(), endC);
+            startC + MMIOConstants.MM_BEGIN_COMMENT_KEYWORD.length(), endC);
     }
 }

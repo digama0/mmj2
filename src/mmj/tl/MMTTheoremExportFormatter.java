@@ -207,18 +207,13 @@ public class MMTTheoremExportFormatter {
     }
 
     private void outputBeginScope() {
-        final StringBuilder sb = startNewLine(indentAmt);
-        sb.append(MMIOConstants.MM_KEYWORD_1ST_CHAR);
-        sb.append(MMIOConstants.MM_BEGIN_SCOPE_KEYWORD_CHAR);
-        list.add(sb);
+        list.add(startNewLine(indentAmt)
+            .append(MMIOConstants.MM_BEGIN_SCOPE_KEYWORD));
     }
 
     private void outputEndScope() {
-
-        final StringBuilder sb = startNewLine(indentAmt);
-        sb.append(MMIOConstants.MM_KEYWORD_1ST_CHAR);
-        sb.append(MMIOConstants.MM_END_SCOPE_KEYWORD_CHAR);
-        list.add(sb);
+        list.add(
+            startNewLine(indentAmt).append(MMIOConstants.MM_END_SCOPE_KEYWORD));
     }
 
     private void outputLogHypLines(final Theorem theorem) {
@@ -277,8 +272,7 @@ public class MMTTheoremExportFormatter {
         final StringBuilder prefix = startNewLine(leftOffset);
         prefix.append(hypothesisStep.getRefLabel());
         prefix.append(' ');
-        prefix.append(MMIOConstants.MM_KEYWORD_1ST_CHAR);
-        prefix.append(MMIOConstants.MM_LOG_HYP_KEYWORD_CHAR);
+        prefix.append(MMIOConstants.MM_LOG_HYP_KEYWORD);
 
         final int continuationOffset = prefix.length() + indentAmt;
 
@@ -289,7 +283,7 @@ public class MMTTheoremExportFormatter {
         ProofStepStmt.reviseStepHypRefInStmtTextArea(textArea, prefix);
 
         final String s = textArea.toString();
-        final String[] textLines = s.split(MMIOConstants.MM_JAVA_REGEX_NEWLINE);
+        final String[] textLines = s.split("\\n");
 
         for (int i = 0; i < textLines.length - 1; i++)
             if (textLines[i].length() > 0)
@@ -337,8 +331,7 @@ public class MMTTheoremExportFormatter {
         sb.append(logHyp.getLabel());
         sb.append(' ');
 
-        sb.append(MMIOConstants.MM_KEYWORD_1ST_CHAR);
-        sb.append(MMIOConstants.MM_LOG_HYP_KEYWORD_CHAR);
+        sb.append(MMIOConstants.MM_LOG_HYP_KEYWORD);
         sb.append(' ');
 
         final int continuationOffset = sb.length();
@@ -360,15 +353,14 @@ public class MMTTheoremExportFormatter {
 
         StringBuilder sb = startNewLine(leftOffset);
 
-        sb.append(MMIOConstants.MM_START_COMMENT_KEYWORD);
+        sb.append(MMIOConstants.MM_BEGIN_COMMENT_KEYWORD);
         sb.append(' ');
 
         int col = sb.length();
         final int continuationOffset = col;
 
         // split description using "\\s" whitespace regular expression.
-        final String[] tokenArray = description
-            .split(MMIOConstants.MM_JAVA_REGEX_WHITESPACE);
+        final String[] tokenArray = description.split("\\s");
 
         String token;
         int i = -1;
@@ -414,8 +406,7 @@ public class MMTTheoremExportFormatter {
         sb.append(theorem.getLabel());
         sb.append(' ');
 
-        sb.append(MMIOConstants.MM_KEYWORD_1ST_CHAR);
-        sb.append(MMIOConstants.MM_PROVABLE_ASSRT_KEYWORD_CHAR);
+        sb.append(MMIOConstants.MM_PROVABLE_ASSRT_KEYWORD);
         sb.append(' ');
 
         final int continuationOffset = sb.length();
@@ -436,8 +427,7 @@ public class MMTTheoremExportFormatter {
         final StringBuilder prefix = startNewLine(leftOffset);
         prefix.append(proofWorksheet.getTheoremLabel());
         prefix.append(' ');
-        prefix.append(MMIOConstants.MM_KEYWORD_1ST_CHAR);
-        prefix.append(MMIOConstants.MM_PROVABLE_ASSRT_KEYWORD_CHAR);
+        prefix.append(MMIOConstants.MM_PROVABLE_ASSRT_KEYWORD);
 
         final int continuationOffset = prefix.length() + indentAmt;
 
@@ -449,7 +439,7 @@ public class MMTTheoremExportFormatter {
         ProofStepStmt.reviseStepHypRefInStmtTextArea(textArea, prefix);
 
         final String s = textArea.toString();
-        final String[] textLines = s.split(MMIOConstants.MM_JAVA_REGEX_NEWLINE);
+        final String[] textLines = s.split("\\n");
 
         for (int i = 0; i < textLines.length - 1; i++)
             if (textLines[i].length() > 0)

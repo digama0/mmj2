@@ -53,8 +53,7 @@
 package mmj.mmio;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import mmj.lang.*;
 
@@ -71,67 +70,67 @@ import mmj.lang.*;
  * <li>Has no concept of comment statements that are embedded inside other
  * statements -- if comments are ever to be used, this needs a redesign!
  * </ul>
- * 
+ *
  * @see <a href="../../MetamathERNotes.html"> Nomenclature and
  *      Entity-Relationship Notes</a>
  */
 public class Systemizer {
 
-    private Tokenizer tokenizer;
-    private Statementizer statementizer;
+    private Tokenizer tokenizer = null;
+    private Statementizer statementizer = null;
 
     private Messages messages;
 
     private SystemLoader systemLoader;
 
     private boolean eofReached = false;
-    private List<IncludeFile> fileList = null;
-    private List<String> filesAlreadyLoaded = null;
+    private Deque<IncludeFile> fileList = null;
+    private final List<String> filesAlreadyLoaded = new ArrayList<>();
 
     private SrcStmt currSrcStmt = null;
 
-    private LoadLimit loadLimit = null;
+    private final LoadLimit loadLimit = new LoadLimit();
 
-    private boolean loadComments = false;
+    private boolean loadComments = MMIOConstants.LOAD_COMMENTS_DEFAULT;
 
-    private boolean loadProofs = true;
+    private boolean loadProofs = MMIOConstants.LOAD_PROOFS_DEFAULT;
 
-    private List<String> defaultProofList = null;
+    private final List<String> defaultProofList = new ArrayList<>(
+        Arrays.asList(MMIOConstants.MISSING_PROOF_STEP));
 
     /**
-     * Construct {@code Systemizer} from a {@code Messages} object and a
-     * {@code SystemLoader} object.
-     * 
+     * Initialize (or re-initialize) a {@code Systemizer} from a
+     * {@code Messages} object and a {@code SystemLoader} object.
+     *
      * @param messages -- repository of error and info messages that provides a
      *            limit on the number of errors output before processing is
      *            halted.
      * @param systemLoader -- a SystemLoader initialized with any customizing
      *            parameters and ready to be loaded with data.
+     * @param loadProofs If true then Metamath proofs are loaded into
+     *            LogicalSystem, otherwise just a "?" proof is stored with each
+     *            Theorem.
+     * @param loadComments If true then Metamath comments (at least, for
+     *            Theorems) will be loaded.
+     * @param loadEndpointStmtLabel last Metamath statement label to load.
+     * @param loadEndpointStmtNbr maximum number of Metamath statements to be
+     *            loaded.
      */
-    public Systemizer(final Messages messages, final SystemLoader systemLoader)
+    public void init(final Messages messages, final SystemLoader systemLoader,
+        final int loadEndpointStmtNbr, final String loadEndpointStmtLabel,
+        final boolean loadComments, final boolean loadProofs)
     {
-
         this.messages = messages;
         this.systemLoader = systemLoader;
-
-        filesAlreadyLoaded = new ArrayList<>();
-        tokenizer = null;
-        statementizer = null;
-
-        loadLimit = new LoadLimit();
-
-        loadComments = MMIOConstants.LOAD_COMMENTS_DEFAULT;
-
-        loadProofs = MMIOConstants.LOAD_PROOFS_DEFAULT;
-
-        defaultProofList = new ArrayList<>(1);
-        defaultProofList.add(MMIOConstants.MISSING_PROOF_STEP);
-
+        loadLimit.loadEndpointStmtNbr = loadEndpointStmtNbr;
+        loadLimit.loadEndpointStmtLabel = loadEndpointStmtLabel;
+        this.loadComments = loadComments;
+        this.loadProofs = loadProofs;
     }
 
     /**
      * Get SystemLoader, as-is.
-     * 
+     *
      * @return -- SystemLoader structure in use.
      */
     public SystemLoader getSystemLoader() {
@@ -139,18 +138,8 @@ public class Systemizer {
     }
 
     /**
-     * Set SystemLoader
-     * 
-     * @param systemLoader {@code SystemLoader} can be input or changed after
-     *            construction.
-     */
-    public void setSystemLoader(final SystemLoader systemLoader) {
-        this.systemLoader = systemLoader;
-    }
-
-    /**
      * Get {@code Messages} object
-     * 
+     *
      * @return {@code Messages} object
      */
     public Messages getMessages() {
@@ -158,62 +147,10 @@ public class Systemizer {
     }
 
     /**
-     * Set Messages object
-     * 
-     * @param messages {@code Messages} object can be set or changed after
-     *            construction.
-     */
-    public void setMessages(final Messages messages) {
-        this.messages = messages;
-    }
-
-    /**
-     * Set LoadLimit Stmt Nbr parm
-     * 
-     * @param stmtNbr maximum number of Metamath statements to be loaded.
-     */
-    public void setLimitLoadEndpointStmtNbr(final int stmtNbr) {
-        loadLimit.setLoadEndpointStmtNbr(stmtNbr);
-    }
-
-    /**
-     * Set LoadLimit Stmt Label parm
-     * 
-     * @param stmtLabel last Metamath statement label to load.
-     */
-    public void setLimitLoadEndpointStmtLabel(final String stmtLabel) {
-        loadLimit.setLoadEndpointStmtLabel(stmtLabel);
-    }
-
-    /**
-     * Set loadComments boolean parm.
-     * <p>
-     * If loadComments is true then Metamath comments (at least, for Theorems)
-     * will be loaded.
-     * 
-     * @param loadComments true/false load Metamath Comments.
-     */
-    public void setLoadComments(final boolean loadComments) {
-        this.loadComments = loadComments;
-    }
-
-    /**
-     * Set loadProofs boolean parm.
-     * <p>
-     * If loadProofs is true then Metamath proofs are loaded into LogicalSystem,
-     * otherwise just a "?" proof is stored with each Theorem.
-     * 
-     * @param loadProofs true/false load Metamath Proofs in Theorem objects.
-     */
-    public void setLoadProofs(final boolean loadProofs) {
-        this.loadProofs = loadProofs;
-    }
-
-    /**
      * Loads MetaMath source file via {@code SystemLoader}.
      * <p>
      * Note: multiple files can be loaded in serial fashion.
-     * 
+     *
      * @param filePath -- File object holding directory path for readerIn. Used
      *            to look up Metamath include files. May be null, or absolute
      *            path, or relative.
@@ -235,7 +172,7 @@ public class Systemizer {
         statementizer = new Statementizer(tokenizer);
 
         // init stack of include files
-        fileList = new ArrayList<>();
+        fileList = new ArrayDeque<>();
 
         eofReached = false;
         getNextStmt();
@@ -244,7 +181,7 @@ public class Systemizer {
         else {
             while (!eofReached && !messages.maxErrorMessagesReached()) {
                 loadStmt(filePath);
-                if (loadLimit.getEndpointReached()) {
+                if (loadLimit.endpointReached) {
                     finalizePrematureEOF();
                     tokenizer.close();
                     return messages;
@@ -260,7 +197,7 @@ public class Systemizer {
 
     /**
      * Clone of Load function using fileNameIn instead of readerIn
-     * 
+     *
      * @param filePath -- File object holding directory path for fileNameIn --
      *            and used to look up Metamath include files. May be null, or
      *            absolute path, or relative.
@@ -279,16 +216,18 @@ public class Systemizer {
         Reader readerIn;
         File f = new File(fileNameIn);
         try {
-            f = isInFilesAlreadyLoaded(filesAlreadyLoaded, filePath, fileNameIn);
+            f = isInFilesAlreadyLoaded(filesAlreadyLoaded, filePath,
+                fileNameIn);
             if (f == null)
-                throw new MMIOException(MMIOConstants.ERRMSG_LOAD_REQ_FILE_DUP
-                    + fileNameIn);
+                throw new MMIOException(
+                    MMIOConstants.ERRMSG_LOAD_REQ_FILE_DUP + fileNameIn);
 
-            readerIn = new BufferedReader(new InputStreamReader(
-                new FileInputStream(f)), MMIOConstants.READER_BUFFER_SIZE);
+            readerIn = new BufferedReader(
+                new InputStreamReader(new FileInputStream(f)),
+                MMIOConstants.READER_BUFFER_SIZE);
         } catch (final FileNotFoundException e) {
             throw new MMIOError(MMIOConstants.ERRMSG_LOAD_REQ_FILE_NOTFND +
-            // fileNameIn);
+                // fileNameIn);
                 f.getAbsolutePath());
         }
 
@@ -297,7 +236,7 @@ public class Systemizer {
 
     /**
      * Clone of Load function using fileNameIn instead of readerIn.
-     * 
+     *
      * @param filePath -- File object holding directory path for fileNameIn --
      *            and used to look up Metamath include files. May be null, or
      *            absolute path, or relative.
@@ -324,7 +263,7 @@ public class Systemizer {
      * parent file. Also, it must bypass statements with errors and keep
      * processing until the maximum number of parse errors is reached, or end of
      * file.
-     * 
+     *
      * @throws IOException if an error occurred
      */
     private void getNextStmt() throws IOException {
@@ -360,58 +299,58 @@ public class Systemizer {
      * that an unrecognized keyword indicates a programming error. None such
      * should be returned by Statementizer -- or else this routine's logic is
      * bogus!
-     * 
+     *
      * @param filePath the path to the .mm file
      * @throws IOException if an error occurred
      */
     private void loadStmt(final File filePath) throws IOException {
         try {
-            switch (currSrcStmt.keyword.charAt(1)) {
+            switch (currSrcStmt.keyword) {
 
-            // these case statements are sequenced by guesstimated
-            // frequency of occurrence in www.metamath.org\set.mm
+                // these case statements are sequenced by guesstimated
+                // frequency of occurrence in www.metamath.org\set.mm
 
-                case MMIOConstants.MM_BEGIN_COMMENT_KEYWORD_CHAR:
+                case MMIOConstants.MM_BEGIN_COMMENT_KEYWORD:
                     loadComment(currSrcStmt.comment);
                     break;
 
-                case MMIOConstants.MM_PROVABLE_ASSRT_KEYWORD_CHAR:
+                case MMIOConstants.MM_PROVABLE_ASSRT_KEYWORD:
                     loadTheorem();
                     break;
 
-                case MMIOConstants.MM_LOG_HYP_KEYWORD_CHAR:
+                case MMIOConstants.MM_LOG_HYP_KEYWORD:
                     loadLogHyp();
                     break;
 
-                case MMIOConstants.MM_BEGIN_SCOPE_KEYWORD_CHAR:
+                case MMIOConstants.MM_BEGIN_SCOPE_KEYWORD:
                     loadBeginScope();
                     break;
 
-                case MMIOConstants.MM_END_SCOPE_KEYWORD_CHAR:
+                case MMIOConstants.MM_END_SCOPE_KEYWORD:
                     loadEndScope();
                     break;
 
-                case MMIOConstants.MM_AXIOMATIC_ASSRT_KEYWORD_CHAR:
+                case MMIOConstants.MM_AXIOMATIC_ASSRT_KEYWORD:
                     loadAxiom();
                     break;
 
-                case MMIOConstants.MM_VAR_HYP_KEYWORD_CHAR:
+                case MMIOConstants.MM_VAR_HYP_KEYWORD:
                     loadVarHyp();
                     break;
 
-                case MMIOConstants.MM_VAR_KEYWORD_CHAR:
+                case MMIOConstants.MM_VAR_KEYWORD:
                     loadVar();
                     break;
 
-                case MMIOConstants.MM_DJ_VAR_KEYWORD_CHAR:
+                case MMIOConstants.MM_DJ_VAR_KEYWORD:
                     loadDjVar();
                     break;
 
-                case MMIOConstants.MM_CNST_KEYWORD_CHAR:
+                case MMIOConstants.MM_CNST_KEYWORD:
                     loadCnst();
                     break;
 
-                case MMIOConstants.MM_BEGIN_FILE_KEYWORD_CHAR:
+                case MMIOConstants.MM_BEGIN_FILE_KEYWORD:
                     initIncludeFile(filePath);
                     break;
 
@@ -437,7 +376,7 @@ public class Systemizer {
     /**
      * Sends each constant symbol to SystemLoader, which handles final
      * validations, etc.
-     * 
+     *
      * @throws LangException if an error occurred
      */
     private void loadCnst() throws LangException {
@@ -449,7 +388,7 @@ public class Systemizer {
     /**
      * Sends each var symbol to SystemLoader, which handles final validations,
      * etc.
-     * 
+     *
      * @throws LangException if an error occurred
      */
     private void loadVar() throws LangException {
@@ -460,7 +399,7 @@ public class Systemizer {
 
     /**
      * Sends variable hypothesis to SystemLoader.
-     * 
+     *
      * @throws LangException if an error occurred
      */
     private void loadVarHyp() throws LangException {
@@ -473,7 +412,7 @@ public class Systemizer {
 
     /**
      * Sends logical hypothesis to SystemLoader.
-     * 
+     *
      * @throws LangException if an error occurred
      */
     private void loadLogHyp() throws LangException {
@@ -484,7 +423,7 @@ public class Systemizer {
 
     /**
      * Sends axiom to SystemLoader.
-     * 
+     *
      * @throws LangException if an error occurred
      */
     private void loadAxiom() throws LangException {
@@ -509,7 +448,7 @@ public class Systemizer {
      * <p>
      * If comments are to be loaded and a description is available for the
      * Theorem, store the description in the new Theorem object.
-     * 
+     *
      * @throws LangException if an error occurred
      */
     private void loadTheorem() throws LangException {
@@ -521,11 +460,10 @@ public class Systemizer {
                     currSrcStmt.column, currSrcStmt.typ, currSrcStmt.symList,
                     currSrcStmt.proofList, messages);
             else
-                theorem = systemLoader
-                    .addTheorem(currSrcStmt.label, currSrcStmt.column,
-                        currSrcStmt.typ, currSrcStmt.symList,
-                        currSrcStmt.proofList, currSrcStmt.proofBlockList,
-                        messages);
+                theorem = systemLoader.addTheorem(currSrcStmt.label,
+                    currSrcStmt.column, currSrcStmt.typ, currSrcStmt.symList,
+                    currSrcStmt.proofList, currSrcStmt.proofBlockList,
+                    messages);
         }
         else
             theorem = systemLoader.addTheorem(currSrcStmt.label,
@@ -538,7 +476,7 @@ public class Systemizer {
 
     /**
      * Sends End Scope command to SystemLoader.
-     * 
+     *
      * @throws LangException if an error occurred
      */
     private void loadEndScope() throws LangException {
@@ -547,7 +485,7 @@ public class Systemizer {
 
     /**
      * Sends Dj Vars to SystemLoader.
-     * 
+     *
      * @throws LangException if an error occurred
      */
     private void loadDjVar() throws LangException {
@@ -574,14 +512,15 @@ public class Systemizer {
      * Note: per agreement with Norm, the "$t" token identifying typesetting
      * definitions in a comment is the first non-whitespace token after the "$("
      * in the comment.
-     * 
+     *
      * @param comment the comment string
      */
     private void loadComment(final String comment) {
 
         // for GMFFManager, grab this $t comment!
         final int i = Statementizer.bypassWhitespace(comment, 1);
-        if (comment.startsWith(MMIOConstants.TYPESETTING_COMMENT_ID_STRING, i))
+        if (comment.startsWith(MMIOConstants.TYPESETTING_COMMENT_ID_STRING,
+            i))
         {
             systemLoader.cacheTypesettingCommentForGMFF(comment);
             return; // exit, this not the droid you looking for.
@@ -604,13 +543,13 @@ public class Systemizer {
     /**
      * Switches to the indicated include file, making sure to save the new
      * tokenizer reference for use in error reporting.
-     * 
+     *
      * @param filePath the path to this .mm file (not the include)
      * @throws MMIOException if an error occurred
      * @throws IOException if an error occurred
      */
-    private void initIncludeFile(final File filePath) throws MMIOException,
-        IOException
+    private void initIncludeFile(final File filePath)
+        throws MMIOException, IOException
     {
 
         File f = new File(currSrcStmt.includeFileName);
@@ -623,8 +562,9 @@ public class Systemizer {
             tokenizer = IncludeFile.initIncludeFile(fileList, f,
                 currSrcStmt.includeFileName, statementizer);
         } catch (final FileNotFoundException e) {
-            raiseParseException(MMIOConstants.ERRMSG_INCL_FILE_NOTFND_1
-                + f.getAbsolutePath() + MMIOConstants.ERRMSG_INCL_FILE_NOTFND_2);
+            raiseParseException(
+                MMIOConstants.ERRMSG_INCL_FILE_NOTFND_1 + f.getAbsolutePath()
+                    + MMIOConstants.ERRMSG_INCL_FILE_NOTFND_2);
         }
     }
 
@@ -633,7 +573,7 @@ public class Systemizer {
      * if it is unable to switch back to the parent source file (should always
      * work...or there is a logic error...or someone deleted the parent file
      * while we were busy processing a nested include file.)
-     * 
+     *
      * @throws IOException if an error occurred
      */
     private void termIncludeFile() throws IOException {
@@ -692,19 +632,16 @@ public class Systemizer {
     }
 
     private void handleLangErrorMessage(final String eMessage) {
-        messages
-            .accumErrorMessage(eMessage + MMIOConstants.ERRMSG_TXT_SOURCE_ID
-                + tokenizer.getSourceId() + MMIOConstants.ERRMSG_TXT_LINE
-                + tokenizer.getCurrentLineNbr()
-                + MMIOConstants.ERRMSG_TXT_COLUMN
-                + tokenizer.getCurrentColumnNbr());
+        messages.accumErrorMessage(eMessage + MMIOConstants.ERRMSG_TXT_SOURCE_ID
+            + tokenizer.getSourceId() + MMIOConstants.ERRMSG_TXT_LINE
+            + tokenizer.getCurrentLineNbr() + MMIOConstants.ERRMSG_TXT_COLUMN
+            + tokenizer.getCurrentColumnNbr());
 
     }
 
     private void handleLangEOFErrorMessage(final String eMessage) {
-        messages.accumErrorMessage(eMessage
-            + MMIOConstants.ERRMSG_TXT_SOURCE_ID + MMIOConstants.EOF_ERRMSG
-            + tokenizer.getSourceId());
+        messages.accumErrorMessage(eMessage + MMIOConstants.ERRMSG_TXT_SOURCE_ID
+            + MMIOConstants.EOF_ERRMSG + tokenizer.getSourceId());
     }
 
     private void handleParseErrorMessage(final String eMessage) {
@@ -718,40 +655,25 @@ public class Systemizer {
     }
 
     private class LoadLimit {
-        int loadEndpointStmtNbr;
-        String loadEndpointStmtLabel;
-        boolean endpointReached;
+        public int loadEndpointStmtNbr = 0;
+        public String loadEndpointStmtLabel = null;
+        public boolean endpointReached = false;
 
-        public LoadLimit() {
-            loadEndpointStmtNbr = 0;
-            loadEndpointStmtLabel = null;
-            endpointReached = false;
-        }
-        public void setLoadEndpointStmtNbr(final int loadEndpointStmtNbr) {
-            this.loadEndpointStmtNbr = loadEndpointStmtNbr;
-        }
-        public void setLoadEndpointStmtLabel(final String loadEndpointStmtLabel)
-        {
-            this.loadEndpointStmtLabel = loadEndpointStmtLabel;
-        }
         public boolean checkEndpointReached(final SrcStmt srcStmt) {
             if (loadEndpointStmtNbr > 0 && srcStmt.seq >= loadEndpointStmtNbr) {
                 endpointReached = true;
-                messages
-                    .accumInfoMessage(MMIOConstants.ERRMSG_LOAD_LIMIT_STMT_NBR_REACHED
+                messages.accumInfoMessage(
+                    MMIOConstants.ERRMSG_LOAD_LIMIT_STMT_NBR_REACHED
                         + loadEndpointStmtNbr);
             }
             if (loadEndpointStmtLabel != null && srcStmt.label != null
                 && srcStmt.label.equals(loadEndpointStmtLabel))
             {
                 endpointReached = true;
-                messages
-                    .accumInfoMessage(MMIOConstants.ERRMSG_LOAD_LIMIT_STMT_LABEL_REACHED
+                messages.accumInfoMessage(
+                    MMIOConstants.ERRMSG_LOAD_LIMIT_STMT_LABEL_REACHED
                         + loadEndpointStmtLabel);
             }
-            return endpointReached;
-        }
-        public boolean getEndpointReached() {
             return endpointReached;
         }
     }

@@ -74,20 +74,20 @@ import mmj.tl.*;
  * In fact, a GUI system need not use {@code mmj.mmio} or
  * {@code Systemizer.java} at all (however it should be noted that none of this
  * code is "thread aware" as of now...)
- * 
+ *
  * @see <a href="../../MetamathERNotes.html"> Nomenclature and
  *      Entity-Relationship Notes</a>
  */
 public class LogicalSystem implements SystemLoader {
 
-    private final String provableLogicStmtTypeParm;
-    private final String logicStmtTypeParm;
+    public final String provableLogicStmtTypeParm;
+    public final String logicStmtTypeParm;
 
-    private final BookManager bookManager;
+    public final BookManager bookManager;
 
-    private final GMFFManager gmffManager;
+    public final GMFFManager gmffManager;
 
-    private final SeqAssigner seqAssigner;
+    public final SeqAssigner seqAssigner;
     private final List<TheoremLoaderCommitListener> theoremLoaderCommitListeners;
 
     private final List<ScopeDef> scopeDefList;
@@ -108,7 +108,7 @@ public class LogicalSystem implements SystemLoader {
 
     /**
      * Construct with full set of parameters.
-     * 
+     *
      * @param provableLogicStmtTypeParm Type Code String of provable statements.
      *            Defaults to "|-".
      * @param logicStmtTypeParm Type Code String value of logic expressions.
@@ -142,7 +142,8 @@ public class LogicalSystem implements SystemLoader {
         final String logicStmtTypeParm, final GMFFManager gmffManager,
         final BookManager bookManager, final SeqAssigner seqAssigner,
         final int symTblInitialSize, final int stmtTblInitialSize,
-        final ProofVerifier proofVerifier, final SyntaxVerifier syntaxVerifier)
+        final ProofVerifier proofVerifier,
+        final SyntaxVerifier syntaxVerifier)
     {
 
         this.provableLogicStmtTypeParm = provableLogicStmtTypeParm;
@@ -155,14 +156,14 @@ public class LogicalSystem implements SystemLoader {
         theoremLoaderCommitListeners = new LinkedList<>();
 
         if (symTblInitialSize < LangConstants.SYM_TBL_INITIAL_SIZE_MINIMUM)
-            throw new IllegalArgumentException(LangException.format(
-                LangConstants.ERRMSG_SYM_TBL_TOO_SMALL,
-                LangConstants.SYM_TBL_INITIAL_SIZE_MINIMUM));
+            throw new IllegalArgumentException(
+                LangException.format(LangConstants.ERRMSG_SYM_TBL_TOO_SMALL,
+                    LangConstants.SYM_TBL_INITIAL_SIZE_MINIMUM));
 
         if (stmtTblInitialSize < LangConstants.STMT_TBL_INITIAL_SIZE_MINIMUM)
-            throw new IllegalArgumentException(LangException.format(
-                LangConstants.ERRMSG_STMT_TBL_TOO_SMALL,
-                LangConstants.STMT_TBL_INITIAL_SIZE_MINIMUM));
+            throw new IllegalArgumentException(
+                LangException.format(LangConstants.ERRMSG_STMT_TBL_TOO_SMALL,
+                    LangConstants.STMT_TBL_INITIAL_SIZE_MINIMUM));
 
         symTbl = new HashMap<>(symTblInitialSize);
         stmtTbl = new HashMap<>(stmtTblInitialSize);
@@ -193,7 +194,7 @@ public class LogicalSystem implements SystemLoader {
      * done for consistency with the other addXXX methods -- we want everyone to
      * use the only objects that exist in LogicalSystem... otherwise, CHAOS
      * would occur!
-     * 
+     *
      * @param id Constant's symbol string to be added to the Logical System.
      * @return Cnst added to LogicalSystem.
      * @throws LangException if duplicate symbol, etc.
@@ -229,15 +230,15 @@ public class LogicalSystem implements SystemLoader {
      * <p>
      * 4) return the variable object that now exists in the symbol table (a key
      * step so that everyone is using the same object!!!)
-     * 
+     *
      * @param id Var's symbol string to be added to the Logical System.
      * @return Var added to LogicalSystem.
      * @throws LangException if duplicate symbol, etc.
      */
     public Var addVar(final String id) throws LangException {
 
-        final Var v = Var
-            .declareVar(seqAssigner.nextSeq(), symTbl, stmtTbl, id);
+        final Var v = Var.declareVar(seqAssigner.nextSeq(), symTbl, stmtTbl,
+            id);
         currScopeDef.scopeVar.add(v);
 
         bookManager.assignChapterSectionNbrs(v);
@@ -269,7 +270,7 @@ public class LogicalSystem implements SystemLoader {
      * to the scope array list of VarHyp's
      * <p>
      * 6) return the VarHyp object that now exists in the statement table.
-     * 
+     *
      * @param labelS String label of variable hypothesis
      * @param typS String Metamath constant character (type code)
      * @param varS String Metamath variable character
@@ -318,7 +319,7 @@ public class LogicalSystem implements SystemLoader {
      * pair of variables is not already there (we cannot use "==" in this case
      * because DjVars are not maintained as "unique" in the same way as Sym's
      * and Stmt's.)
-     * 
+     *
      * @param djVar1S disjoint variable symbol string 1
      * @param djVar2S disjoint variable symbol string 2
      * @return DjVars (pair) added to LogicalSystem.within the current scope,
@@ -348,9 +349,8 @@ public class LogicalSystem implements SystemLoader {
      * <p>
      * <ul>
      * <li>there is no Frame for a logical hypothesis
-     * <li><code>LogHyp is a {@code Hyp}, not an
-     *         {@code Assrt} and has
-     *         attribute {@code "VarHyp[] varHypArray}.
+     * <li><code>LogHyp is a {@code Hyp}, not an {@code Assrt} and has attribute
+     * {@code "VarHyp[] varHypArray}.
      * </ul>
      * <p>
      * Required processing:
@@ -369,7 +369,7 @@ public class LogicalSystem implements SystemLoader {
      * 3) add it to the stmtTbl and to the existing scope.
      * <p>
      * 4) return it to the caller
-     * 
+     *
      * @param labelS logical hypothesis label string
      * @param typS logical hypothesis type code (symbol) string
      * @param symList list containing expression symbol strings (zero or more
@@ -381,8 +381,8 @@ public class LogicalSystem implements SystemLoader {
         final List<String> symList) throws LangException
     {
 
-        final LogHyp logHyp = new LogHyp(seqAssigner.nextSeq(), symTbl,
-            stmtTbl, symList, labelS, typS);
+        final LogHyp logHyp = new LogHyp(seqAssigner.nextSeq(), symTbl, stmtTbl,
+            symList, labelS, typS);
 
         final Stmt existingStmt = stmtTbl.put(labelS, logHyp);
 
@@ -401,7 +401,7 @@ public class LogicalSystem implements SystemLoader {
      * <p>
      * The main difference from the regular addLogHyp is that the BookManager is
      * not called.
-     * 
+     *
      * @param seq preassigned MObj seq number
      * @param labelS logical hypothesis label string
      * @param typS logical hypothesis type code (symbol) string
@@ -444,7 +444,7 @@ public class LogicalSystem implements SystemLoader {
      * 4) add it to the stmtTbl
      * <p>
      * 5) return it to the caller
-     * 
+     *
      * @param labelS axiom label string
      * @param typS axiom type code (symbol) string
      * @param symList list containing axiom expression symbol strings (zero or
@@ -494,7 +494,7 @@ public class LogicalSystem implements SystemLoader {
      * 5) add it to the stmtTbl
      * <p>
      * 6) return it to the caller
-     * 
+     *
      * @param labelS axiom label string
      * @param column the column at which the "$p" line starts
      * @param typS axiom type code (symbol) string
@@ -509,12 +509,12 @@ public class LogicalSystem implements SystemLoader {
     public Theorem addTheorem(final String labelS, final int column,
         final String typS, final List<String> symList,
         final List<String> proofList, final Messages messages)
-        throws LangException
+            throws LangException
     {
 
-        final Theorem theorem = new Theorem(seqAssigner.nextSeq(),
-            scopeDefList, symTbl, stmtTbl, labelS, column, typS, symList,
-            proofList, messages);
+        final Theorem theorem = new Theorem(seqAssigner.nextSeq(), scopeDefList,
+            symTbl, stmtTbl, labelS, column, typS, symList, proofList,
+            messages);
 
         final Stmt existingStmt = stmtTbl.put(labelS, theorem);
 
@@ -530,7 +530,7 @@ public class LogicalSystem implements SystemLoader {
      * <p>
      * Main difference of regular addTheorem is that it does not call
      * BookManager.
-     * 
+     *
      * @param seq preassigned MObj seq number
      * @param labelS axiom label string
      * @param typS axiom type code (symbol) string
@@ -564,7 +564,7 @@ public class LogicalSystem implements SystemLoader {
      * stores it with the new Theorem object.
      * <p>
      * This variant is invoked when the input contains a compressed proof.
-     * 
+     *
      * @param labelS axiom label string
      * @param column the column at which the "$p" line starts
      * @param typS axiom type code (symbol) string
@@ -585,9 +585,9 @@ public class LogicalSystem implements SystemLoader {
         final Messages messages) throws LangException
     {
 
-        final Theorem theorem = new Theorem(seqAssigner.nextSeq(),
-            scopeDefList, symTbl, stmtTbl, labelS, column, typS, symList,
-            proofList, proofBlockList, getProofCompression(), messages);
+        final Theorem theorem = new Theorem(seqAssigner.nextSeq(), scopeDefList,
+            symTbl, stmtTbl, labelS, column, typS, symList, proofList,
+            proofBlockList, getProofCompression(), messages);
 
         final Stmt existingStmt = stmtTbl.put(labelS, theorem);
 
@@ -605,7 +605,7 @@ public class LogicalSystem implements SystemLoader {
      * by 1 (all of the hard work is in endScope()!)
      * <p>
      * Note: *global* scope has level number = 0.
-     * 
+     *
      * @see mmj.lang.ScopeDef
      */
     public void beginScope() {
@@ -633,7 +633,7 @@ public class LogicalSystem implements SystemLoader {
      * <li>remove the scope level from the stack
      * <li>decrement current scope level number
      * </ol>
-     * 
+     *
      * @see mmj.lang.ScopeDef
      * @throws LangException if scope is already at the global scope level.
      */
@@ -671,7 +671,7 @@ public class LogicalSystem implements SystemLoader {
      * each Begin Scope. At the time this routine is called, the ScopeDef list
      * should contain just one entry, the "global" scope level (which is, by
      * definition, level 0.)
-     * 
+     *
      * @param messages Messages object to error reporting.
      * @param prematureEOF signals LoadLimit requested by user has been reached,
      *            so stop loading even if in the middle of a scope level.
@@ -693,26 +693,26 @@ public class LogicalSystem implements SystemLoader {
                     break;
                 }
             else
-                messages
-                    .accumErrorMessage(LangConstants.ERRMSG_MISSING_END_SCOPE_AT_EOF);
+                messages.accumErrorMessage(
+                    LangConstants.ERRMSG_MISSING_END_SCOPE_AT_EOF);
     }
 
     /**
      * Does Syntactical Analysis of the grammar and all statements in the
      * LogicalSystem.
-     * 
+     *
      * @param messages {@code Messages} object for reporting errors.
      * @throws VerifyException if an error occurred
      */
-    public void verifyAllSyntax(final Messages messages) throws VerifyException
+    public void verifyAllSyntax(final Messages messages)
+        throws VerifyException
     {
         syntaxVerifier.parseAllFormulas(messages, symTbl, stmtTbl);
-
     }
 
     /**
      * Verifies every theorem's proof according to Metamath.pdf specifications.
-     * 
+     *
      * @param messages {@code Messages} object for reporting errors.
      * @throws VerifyException if an error occurred
      */
@@ -730,7 +730,7 @@ public class LogicalSystem implements SystemLoader {
      * proofs.
      * <p>
      * Should not be necessary in normal use, but is very helpful for testing.
-     * 
+     *
      * @param messages {@code Messages} object for reporting errors.
      * @throws VerifyException if an error occurred
      */
@@ -746,7 +746,7 @@ public class LogicalSystem implements SystemLoader {
      * scopeDefList is an List of ScopeDef objects where element 0 is global
      * scope, element 1 is scope level 1, etc. At the end of LoadFile the
      * scopeDefList should contain only 1 element -- the global ScopeDef.
-     * 
+     *
      * @return List of ScopeDef objects.
      */
     public List<ScopeDef> getScopeDefList() {
@@ -755,7 +755,7 @@ public class LogicalSystem implements SystemLoader {
 
     /**
      * Get current ScopeDef object in use.
-     * 
+     *
      * @return current ScopeDef object in use.
      */
     public ScopeDef getCurrScopeDef() {
@@ -766,7 +766,7 @@ public class LogicalSystem implements SystemLoader {
      * Get current scope level.
      * <p>
      * Level 0 is global scope, 1 is level 1, etc.
-     * 
+     *
      * @return current scope level.
      */
     public int getScopeLvl() {
@@ -782,11 +782,12 @@ public class LogicalSystem implements SystemLoader {
 
     /**
      * Sets the current ProofVerifier.
-     * 
+     *
      * @param newProofVerifier a ProofVerifier or null is ok.
      * @return the old ProofVerifier in use in LogicalSystem.
      */
-    public ProofVerifier setProofVerifier(final ProofVerifier newProofVerifier)
+    public ProofVerifier setProofVerifier(
+        final ProofVerifier newProofVerifier)
     {
         final ProofVerifier oldProofVerifier = proofVerifier;
         proofVerifier = newProofVerifier;
@@ -802,7 +803,7 @@ public class LogicalSystem implements SystemLoader {
 
     /**
      * Sets the current SyntaxVerifier.
-     * 
+     *
      * @param newSyntaxVerifier a SyntaxVerifier or null is ok.
      * @return the old SyntaxVerifier in use in LogicalSystem.
      */
@@ -820,7 +821,7 @@ public class LogicalSystem implements SystemLoader {
      * <p>
      * Note: in theory, symTbl is an excellent candidate for being a real class.
      * There are numerous operations involving it, and more possibilities.
-     * 
+     *
      * @return symTbl map of all {@code Cnst}s and {@code Var}s.
      */
     public Map<String, Sym> getSymTbl() {
@@ -834,7 +835,7 @@ public class LogicalSystem implements SystemLoader {
      * Note: in theory, stmtTbl is an excellent candidate for being a real
      * class. There are numerous operations involving it, and more
      * possibilities.
-     * 
+     *
      * @return stmtTbl map of all {@code Hyp}s and {@code Assrt}s.
      */
     public Map<String, Stmt> getStmtTbl() {
@@ -846,7 +847,7 @@ public class LogicalSystem implements SystemLoader {
      * <p>
      * Reuses the existing ProofCompression instance if present, otherwise
      * constructs one.
-     * 
+     *
      * @return ProofCompression instance.
      */
     public ProofCompression getProofCompression() {
@@ -857,7 +858,7 @@ public class LogicalSystem implements SystemLoader {
 
     /**
      * Sets the reference to the local ProofCompression instance.
-     * 
+     *
      * @param proofCompression instance or null.
      */
     public void setProofCompression(final ProofCompression proofCompression) {
@@ -868,7 +869,7 @@ public class LogicalSystem implements SystemLoader {
      * Returns the provable logic stmt type code string value.
      * <p>
      * (Default value is "|-", fyi.)
-     * 
+     *
      * @return provableLogicStmtTypeParm.
      */
     public String getProvableLogicStmtTypeParm() {
@@ -879,7 +880,7 @@ public class LogicalSystem implements SystemLoader {
      * Returns the logic stmt type code string value.
      * <p>
      * (Default value is "wff", fyi.)
-     * 
+     *
      * @return logicStmtTypeParm.
      */
     public String getLogicStmtTypeParm() {
@@ -888,7 +889,7 @@ public class LogicalSystem implements SystemLoader {
 
     /**
      * Returns the GMFF Manager.
-     * 
+     *
      * @return GMFF Manager in use (may not be enabled!)
      */
     public GMFFManager getGMFFManager() {
@@ -906,7 +907,7 @@ public class LogicalSystem implements SystemLoader {
      * Note: per agreement with Norm, the "$t" token identifying typesetting
      * definitions in a comment is the first non-whitespace token after the "$("
      * in the comment.
-     * 
+     *
      * @param comment Typesetting definition comment ("$t) from Metamath file
      *            minus the "$(" and "$)" tokens.
      */
@@ -915,19 +916,10 @@ public class LogicalSystem implements SystemLoader {
     }
 
     /**
-     * Returns the Book Manager.
-     * 
-     * @return Book Manager in use (may not be enabled!)
-     */
-    public BookManager getBookManager() {
-        return bookManager;
-    }
-
-    /**
      * Add new BookManager Chapter.
      * <p>
      * See mmj.lang.BookManager.java for more info.
-     * 
+     *
      * @param chapterTitle Title of chapter or blank or empty String.
      */
     public void addNewChapter(final String chapterTitle) {
@@ -939,7 +931,7 @@ public class LogicalSystem implements SystemLoader {
      * Add new BookManager Section.
      * <p>
      * See mmj.lang.BookManager.java for more info.
-     * 
+     *
      * @param sectionTitle Title of section or blank or empty String.
      */
     public void addNewSection(final String sectionTitle) {
@@ -951,20 +943,11 @@ public class LogicalSystem implements SystemLoader {
      * Is BookManager enabled?
      * <p>
      * If BookManager is enabled then Chapters and Sections will be stored.
-     * 
+     *
      * @return true if BookManager is enabled.
      */
     public boolean isBookManagerEnabled() {
         return bookManager.isEnabled();
-    }
-
-    /**
-     * Returns the SeqAssigner.
-     * 
-     * @return seqAssigner.
-     */
-    public SeqAssigner getSeqAssigner() {
-        return seqAssigner;
     }
 
     /**
@@ -977,7 +960,7 @@ public class LogicalSystem implements SystemLoader {
     /**
      * Adds a TheoremLoaderCommitListener to the TheoremLoaderCommitListener
      * list if the instance is not already in the list.
-     * 
+     *
      * @param t TheoremLoaderCommitListener object.
      */
     public void accumTheoremLoaderCommitListener(
@@ -991,7 +974,7 @@ public class LogicalSystem implements SystemLoader {
     /**
      * Removes a TheoremLoaderCommitListener from the
      * TheoremLoaderCommitListener list if the instance is in the list.
-     * 
+     *
      * @param t TheoremLoaderCommitListener object.
      */
     public void removeTheoremLoaderCommitListener(
@@ -1011,7 +994,7 @@ public class LogicalSystem implements SystemLoader {
      * <p>
      * Scans the mmtTheoremSet and un-does each TheoremStmtGroup object's
      * updates, if any,
-     * 
+     *
      * @param mmtTheoremSet set of MMTTheoremStmtGroups which may or may not
      *            have already been updated into mmj2.
      * @param errorMessage an explanatory message about the cause of the
@@ -1065,7 +1048,7 @@ public class LogicalSystem implements SystemLoader {
      * <p>
      * Sends commit() request to every TheoremLoaderCommitListener.
      * <p>
-     * 
+     *
      * @param mmtTheoremSet set of MMTTheoremStmtGroups which may or may not
      *            have already been updated into mmj2.
      * @throws IllegalArgumentException if the commit operation fails.
@@ -1099,9 +1082,8 @@ public class LogicalSystem implements SystemLoader {
     private void dupCheckStmtAdd(final Stmt existingStmt) {
 
         if (existingStmt != null)
-            throw new IllegalArgumentException(
-                LangException
-                    .format(LangConstants.ERRMSG_DUP_STMT_MAP_PUT_ATTEMPT
-                        + existingStmt.getLabel()));
+            throw new IllegalArgumentException(LangException
+                .format(LangConstants.ERRMSG_DUP_STMT_MAP_PUT_ATTEMPT
+                    + existingStmt.getLabel()));
     }
 }

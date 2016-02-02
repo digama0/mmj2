@@ -131,7 +131,7 @@ import mmj.verify.HypsOrder;
  * <p>
  * The main issues dealt with in the GUI have to do with doing all of the screen
  * updating code on the Java event thread. Unification is performed using a
- * separate thread which "calls back" to ProofAsstGUI when/if the Unificatin
+ * separate thread which "calls back" to ProofAsstGUI when/if the Unification
  * process is complete. (As of February 2006, the longest theorem unification
  * computation is around 1/2 second.)
  */
